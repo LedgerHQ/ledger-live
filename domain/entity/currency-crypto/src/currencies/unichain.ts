@@ -37,9 +37,6 @@ export const unichain = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 130,
-  },
   explorerViews: [
     {
       tx: "https://uniscan.xyz/tx/$hash",

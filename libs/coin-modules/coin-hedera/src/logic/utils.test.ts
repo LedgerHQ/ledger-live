@@ -45,6 +45,7 @@ import {
   getBlockHash,
   isStakingTransaction,
   extractCompanyFromNodeDescription,
+  mapMirrorNodesToValidators,
   sortValidators,
   getDefaultValidator,
   getDelegationStatus,
@@ -64,7 +65,6 @@ import {
   resolveConfig,
   base64ToUrlSafeBase64,
   getHederaTransactionBodyBytes,
-  mapMirrorNodesToValidators,
 } from "./utils";
 
 jest.mock("../config");

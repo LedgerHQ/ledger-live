@@ -11,9 +11,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import type { PayTabNavigatorParamList } from "../../types";
 import { usePayTabViewModel } from "./usePayTabViewModel";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
-
-const payAnalyticsAdapter = { track: () => undefined };
 
 // ledger-live-mobile does not depend on expo-web-browser directly — only
 // @features/flow-pay-card-auth does, and importing it here would fail typecheck since the app has
@@ -41,7 +38,7 @@ const mockedReadCardUsEnv = jest.mocked(readCardUsEnv);
 
 const HOSTED_MANIFEST = { id: "baanx-hosted-url", url: "https://ledger.baanxapi.test" };
 
-const SIGNUP_PATH = "/onboarding/signup";
+const HOSTED_UI = "https://hosted.test";
 
 const CARD_ASSET: CardAssetRow = {
   id: "wallet-btc",
@@ -56,10 +53,18 @@ const CARD_ASSET: CardAssetRow = {
 };
 
 function PayTabViewModelProbe() {
-  const { login, onTopUp, onChooseCardType, cardAssets, cardSettingsActions, cardFormatters } =
-    usePayTabViewModel();
+  const { card } = usePayTabViewModel();
+  const {
+    login,
+    onTopUp,
+    onChooseCardType,
+    onViewRewards,
+    assets: cardAssets,
+    cardSettingsActions,
+    formatters,
+  } = card;
   const { oauthConfig, callback } = login;
-  const formatted = cardFormatters?.countervalue?.(1250);
+  const formatted = formatters?.countervalue?.(1250);
 
   return (
     <>
@@ -71,10 +76,14 @@ function PayTabViewModelProbe() {
       <Text testID="oauth-callback">{JSON.stringify(callback)}</Text>
       <Text testID="countervalue-integer">{formatted?.integerPart}</Text>
       <Text testID="countervalue-decimal">{formatted?.decimalPart}</Text>
+      <Text testID="transaction-amount">
+        {formatters?.transactionAmount?.("-0.104873912345678901", "eth", "crypto")}
+      </Text>
       <Pressable testID="top-up" onPress={onTopUp} />
       <Pressable testID="choose-card-type" onPress={onChooseCardType} />
-      <Pressable testID="asset-top-up" onPress={() => cardAssets.onTopUp?.(CARD_ASSET)} />
-      <Pressable testID="asset-withdraw" onPress={() => cardAssets.onWithdraw?.(CARD_ASSET)} />
+      <Pressable testID="view-rewards" onPress={onViewRewards} />
+      <Pressable testID="asset-top-up" onPress={() => cardAssets?.onTopUp?.(CARD_ASSET)} />
+      <Pressable testID="asset-withdraw" onPress={() => cardAssets?.onWithdraw?.(CARD_ASSET)} />
       <Text testID="has-manage-pin">
         {String(typeof cardSettingsActions?.onManagePin === "function")}
       </Text>
@@ -83,8 +92,8 @@ function PayTabViewModelProbe() {
       </Text>
       <Pressable testID="press-manage-pin" onPress={cardSettingsActions?.onManagePin} />
       <Pressable testID="press-access-baanx" onPress={cardSettingsActions?.onAccessBaanx} />
-      <Pressable testID="press-add-asset" onPress={cardAssets.onAddAsset} />
-      <Pressable testID="login-signup" onPress={() => void login.openHostedPage?.(SIGNUP_PATH)} />
+      <Pressable testID="press-add-asset" onPress={cardAssets?.onAddAsset} />
+      <Text testID="login-open-hosted-page">{String(login.openHostedPage)}</Text>
     </>
   );
 }
@@ -110,16 +119,14 @@ function renderViewModel(
   options?: Parameters<typeof render>[1],
 ) {
   return render(
-    <PayAnalyticsProvider adapter={payAnalyticsAdapter}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name={ScreenName.PayTab}
-          component={PayTabViewModelProbe}
-          initialParams={params}
-        />
-        <Stack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
-      </Stack.Navigator>
-    </PayAnalyticsProvider>,
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name={ScreenName.PayTab}
+        component={PayTabViewModelProbe}
+        initialParams={params}
+      />
+      <Stack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
+    </Stack.Navigator>,
     options,
   );
 }
@@ -136,9 +143,15 @@ async function expectHostedPage(url: string) {
   expect(screen.getByTestId("base-platform")).toHaveTextContent("baanx-hosted-url");
 }
 
+async function expectSecureBrowser(url: string) {
+  await waitFor(() => expect(mockedOpenSecureBrowser).toHaveBeenCalledWith(url, PAY_TAB_DEEP_LINK));
+  expect(screen.queryByTestId("base-screen")).toBeNull();
+}
+
 describe("usePayTabViewModel", () => {
   beforeEach(() => {
     mockedOpenSecureBrowser.mockClear();
+    setEnv("CARD_BAANX_HOSTED_UI", HOSTED_UI);
     mockedReadCardUsEnv.mockResolvedValue(false);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockedManifest.mockReturnValue(HOSTED_MANIFEST as ReturnType<typeof useLiveAppManifest>);
@@ -167,6 +180,12 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("countervalue-decimal")).toHaveTextContent("50");
   });
 
+  it("should format transaction amounts with the decimals the rest of the product shows", () => {
+    renderViewModel();
+
+    expect(screen.getByTestId("transaction-amount")).toHaveTextContent("-0.104873\u00a0ETH");
+  });
+
   it("should follow a change of the Card env vars", () => {
     // What the debug settings do. The login has to take the new tenant without a restart.
     renderViewModel();
@@ -191,13 +210,12 @@ describe("usePayTabViewModel", () => {
     expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
-  it("should open the choose card type page of the hosted UI on the Baanx manifest", async () => {
+  it("should open the choose card type page of the hosted UI in the secure browser", async () => {
     const { user } = renderViewModel();
 
     await user.press(screen.getByTestId("choose-card-type"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/order-card");
-    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+    await expectSecureBrowser("https://hosted.test/order-card");
   });
 
   it("should name the US app on the choose card type page for a US card holder", async () => {
@@ -207,16 +225,31 @@ describe("usePayTabViewModel", () => {
 
     await user.press(screen.getByTestId("choose-card-type"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/order-card?app_id=LEDGERUS");
+    await expectSecureBrowser("https://hosted.test/order-card?app_id=LEDGERUS");
   });
 
-  it("should hand the login flow the opener that sends signup to the Baanx manifest", async () => {
+  it("should open the cashback page of the hosted UI in the secure browser", async () => {
     const { user } = renderViewModel();
 
-    await user.press(screen.getByTestId("login-signup"));
+    await user.press(screen.getByTestId("view-rewards"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/onboarding/signup");
-    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+    await expectSecureBrowser("https://hosted.test/cashback");
+  });
+
+  it("should name the US app on the cashback page for a US card holder", async () => {
+    setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
+    mockedReadCardUsEnv.mockResolvedValue(true);
+    const { user } = renderViewModel();
+
+    await user.press(screen.getByTestId("view-rewards"));
+
+    await expectSecureBrowser("https://hosted.test/cashback?app_id=LEDGERUS");
+  });
+
+  it("should leave signup to the secure browser of the login flow", () => {
+    renderViewModel();
+
+    expect(screen.getByTestId("login-open-hosted-page")).toHaveTextContent("undefined");
   });
 
   it("should pre-select the asset the holder tops up from", async () => {
@@ -246,7 +279,7 @@ describe("usePayTabViewModel", () => {
     expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
-  it("should open the withdrawal page of the hosted UI for the asset", async () => {
+  it("should open the withdrawal page of the hosted UI on the Baanx manifest", async () => {
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
     const { user } = renderViewModel();
@@ -254,6 +287,17 @@ describe("usePayTabViewModel", () => {
     await user.press(screen.getByTestId("asset-withdraw"));
 
     await expectHostedPage("https://ledger.baanxapi.test/withdrawal?app_id=LEDGERUS&currency=btc");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+  });
+
+  it("should open the legacy card live app on withdraw when the legacyTopUp param is on", async () => {
+    const { user } = renderViewModelWithLegacyTopUp();
+
+    await user.press(screen.getByTestId("asset-withdraw"));
+
+    await waitFor(() => expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card"));
+    expect(screen.getByTestId("base-goto")).toHaveTextContent("undefined");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
   it("should name the US app on the top up page for a US card holder", async () => {
@@ -301,12 +345,12 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("has-access-baanx")).toHaveTextContent("true");
   });
 
-  it("should open the manage PIN hosted page on the Baanx manifest", async () => {
+  it("should open the manage PIN hosted page in the secure browser", async () => {
     const { user } = renderViewModel();
 
     await user.press(screen.getByTestId("press-manage-pin"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/set-pin");
+    await expectSecureBrowser("https://hosted.test/set-pin");
   });
 
   it("should name the US app on the manage PIN hosted page for a US card holder", async () => {
@@ -316,15 +360,15 @@ describe("usePayTabViewModel", () => {
 
     await user.press(screen.getByTestId("press-manage-pin"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/set-pin?app_id=LEDGERUS");
+    await expectSecureBrowser("https://hosted.test/set-pin?app_id=LEDGERUS");
   });
 
-  it("should open the access Baanx hosted page on the Baanx manifest", async () => {
+  it("should open the access Baanx hosted page in the secure browser", async () => {
     const { user } = renderViewModel();
 
     await user.press(screen.getByTestId("press-access-baanx"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/");
+    await expectSecureBrowser("https://hosted.test/");
   });
 
   it("should name the US app on the access Baanx hosted page for a US card holder", async () => {
@@ -334,15 +378,15 @@ describe("usePayTabViewModel", () => {
 
     await user.press(screen.getByTestId("press-access-baanx"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/?app_id=LEDGERUS");
+    await expectSecureBrowser("https://hosted.test/?app_id=LEDGERUS");
   });
 
-  it("should open the add asset hosted crypto dashboard", async () => {
+  it("should open the add asset hosted crypto dashboard in the secure browser", async () => {
     const { user } = renderViewModel();
 
     await user.press(screen.getByTestId("press-add-asset"));
 
-    await expectHostedPage("https://ledger.baanxapi.test/dashboard/accounts/crypto");
+    await expectSecureBrowser("https://hosted.test/dashboard/accounts/crypto");
   });
 
   it("should name the US app on the add asset hosted crypto dashboard", async () => {
@@ -352,20 +396,23 @@ describe("usePayTabViewModel", () => {
 
     await user.press(screen.getByTestId("press-add-asset"));
 
-    await expectHostedPage(
-      "https://ledger.baanxapi.test/dashboard/accounts/crypto?app_id=LEDGERUS",
-    );
+    await expectSecureBrowser("https://hosted.test/dashboard/accounts/crypto?app_id=LEDGERUS");
   });
 
-  it("should report a warning instead of throwing when the hosted page fails to open", async () => {
+  it("should report a warning instead of throwing when the top up page fails to open", async () => {
     const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
     // No manifest in the catalog: the opener throws, and the caller has to swallow it.
     mockedManifest.mockReturnValue(undefined);
     const { user } = renderViewModel();
 
-    await user.press(screen.getByTestId("press-manage-pin"));
+    await user.press(screen.getByTestId("top-up"));
 
-    await waitFor(() => expect(warn).toHaveBeenCalledWith("[card] manage pin page did not open"));
+    await waitFor(() =>
+      expect(warn).toHaveBeenCalledWith(
+        "[card] the hosted asset page did not open",
+        expect.any(Error),
+      ),
+    );
 
     warn.mockRestore();
   });

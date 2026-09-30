@@ -19,7 +19,7 @@ import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Stepper from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
@@ -29,7 +29,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import { St, StepId, StepProps } from "./types";
 import { findDelegationByValidator } from "./utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
-import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking";
 
 export type Data = {
   account: Account;

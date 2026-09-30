@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingHubContent from "~/renderer/components/PostOnboardingHub/PostOnboardingHubContent";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 const PostOnboardingScreen = () => {
   const { t } = useTranslation();

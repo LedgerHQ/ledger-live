@@ -3,6 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { resolveEligibleAddressCurrencyIds } from "@features/platform-contacts";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import {
   mockContact,
@@ -264,7 +265,7 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("My addresses");
+      expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("My addresses (Me)");
       expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("0 address");
     });
   });
@@ -273,7 +274,7 @@ describe("Contacts integration", () => {
     renderContactsScreen({ contacts: { contacts: [] } });
 
     expect(screen.getByTestId("contacts-page")).toBeVisible();
-    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("My addresses");
+    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("My addresses (Me)");
   });
 
   it("should render saved contacts in alphabetical order when contacts exist", () => {
@@ -288,7 +289,7 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-section-D")).toBeVisible();
     expect(screen.getByTestId("contacts-section-O")).toBeVisible();
 
-    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("My addresses");
+    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("My addresses (Me)");
     expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("3 addresses");
     expect(screen.getByTestId("contacts-saved-row-contact-ada")).toHaveTextContent("Ada");
     expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
@@ -441,7 +442,7 @@ describe("Contacts integration", () => {
       within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
         "contacts-detail-name",
       ),
-    ).toHaveTextContent("My addresses");
+    ).toHaveTextContent("My addresses (Me)");
     expect(
       within(screen.getByTestId("contacts-detail-address-list")).getByText("3 addresses"),
     ).toBeVisible();
@@ -460,7 +461,7 @@ describe("Contacts integration", () => {
 
     expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
-    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses");
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("My addresses (Me)");
     expect(screen.getByText("Add your address")).toBeVisible();
     expect(screen.getByText("Save your own addresses")).toBeVisible();
   });
@@ -475,7 +476,7 @@ describe("Contacts integration", () => {
       within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
         "contacts-detail-name",
       ),
-    ).toHaveTextContent("My addresses");
+    ).toHaveTextContent("My addresses (Me)");
     expect(screen.queryByText("No saved addresses for Ada")).not.toBeInTheDocument();
   });
 
@@ -501,7 +502,7 @@ describe("Contacts integration", () => {
 
     expect(store.getState().modularDialog.isOpen).toBe(true);
     expect(store.getState().modularDialog.dialogParams?.selectableNetworkIds).toEqual(
-      resolveEligibleAddressCurrencyIds(["evm"]),
+      resolveEligibleAddressCurrencyIds(["evm"], undefined, [], resolveCurrencyConfig),
     );
     expect(store.getState().modularDialog.dialogParams?.presentation).toBe("embedded");
     expect(store.getState().modularDialog.dialogParams?.onAccountSelected).toBeUndefined();
@@ -992,7 +993,7 @@ describe("Contacts integration", () => {
         within(screen.getByTestId("contacts-detail-address-list")).getByTestId(
           "contacts-detail-name",
         ),
-      ).toHaveTextContent("My addresses");
+      ).toHaveTextContent("My addresses (Me)");
     });
   });
 

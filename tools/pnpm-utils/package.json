@@ -1,9 +1,0 @@
-{
-  "name": "@ledgerhq/pnpm-utils",
-  "version": "1.0.1",
-  "private": true,
-  "description": "pnpm utility functions",
-  "main": "index.js",
-  "author": "",
-  "license": "ISC"
-}

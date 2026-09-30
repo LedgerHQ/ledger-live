@@ -3,7 +3,7 @@ import { render } from "@tests/test-renderer";
 import TrackDrawerScreen from "../TrackDrawerScreen";
 import { MODULAR_DRAWER_PAGE_NAME } from "../modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { screen } from "~/analytics/segment";
+import { trackPage } from "@shared/analytics";
 
 describe("TrackDrawerScreen", () => {
   beforeEach(() => {
@@ -19,17 +19,16 @@ describe("TrackDrawerScreen", () => {
       />,
     );
 
-    expect(screen).toHaveBeenCalledWith(
-      MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
-      undefined,
-      expect.objectContaining({
-        source: "sourcetest",
-        flow: "flowtest",
-      }),
-      true,
-      true,
-      false,
-      false,
+    expect(trackPage).toHaveBeenCalledWith(
+      {
+        category: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
+        name: undefined,
+        props: expect.objectContaining({
+          source: "sourcetest",
+          flow: "flowtest",
+        }),
+      },
+      { updateRoutes: true, refreshSource: true, avoidDuplicates: false, mandatory: false },
     );
   });
 
@@ -49,18 +48,17 @@ describe("TrackDrawerScreen", () => {
       />,
     );
 
-    expect(screen).toHaveBeenCalledWith(
-      MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
-      undefined,
-      expect.objectContaining({
-        source: "sourcetest",
-        flow: "flowtest",
-        asset_component_features: expect.anything(),
-      }),
-      true,
-      true,
-      false,
-      false,
+    expect(trackPage).toHaveBeenCalledWith(
+      {
+        category: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
+        name: undefined,
+        props: expect.objectContaining({
+          source: "sourcetest",
+          flow: "flowtest",
+          asset_component_features: expect.anything(),
+        }),
+      },
+      { updateRoutes: true, refreshSource: true, avoidDuplicates: false, mandatory: false },
     );
   });
 
@@ -79,22 +77,21 @@ describe("TrackDrawerScreen", () => {
       />,
     );
 
-    expect(screen).toHaveBeenCalledWith(
-      MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
-      undefined,
-      expect.objectContaining({
-        flow: "flowtest",
-        source: "sourcetest",
-        network_component_features: {
-          numberOfAccounts: true,
-          numberOfAccountsAndApy: false,
-          balance: false,
-        },
-      }),
-      true,
-      true,
-      false,
-      false,
+    expect(trackPage).toHaveBeenCalledWith(
+      {
+        category: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+        name: undefined,
+        props: expect.objectContaining({
+          flow: "flowtest",
+          source: "sourcetest",
+          network_component_features: {
+            numberOfAccounts: true,
+            numberOfAccountsAndApy: false,
+            balance: false,
+          },
+        }),
+      },
+      { updateRoutes: true, refreshSource: true, avoidDuplicates: false, mandatory: false },
     );
   });
 });

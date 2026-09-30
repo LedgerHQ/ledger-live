@@ -19,7 +19,8 @@
 import { normalizeProps } from "./internals/normalizeProps";
 import { trackEvent } from "./internals/trackEvent";
 import { isEnabled } from "./registry";
-import { currentRouteNameRef, getPreviousTrackingPage, previousRouteNameRef } from "./screenRefs";
+import { getPreviousTrackingPage } from "./screenRefs";
+import { updateTrackingPages } from "./internals/screenRefs.internals";
 import {
   buildFullScreenName,
   buildPageEventName,
@@ -39,28 +40,22 @@ export function trackPage(
 ): void | Promise<void> {
   const fullScreenName = buildFullScreenName(category, name);
   const eventName = buildPageEventName(fullScreenName);
+  const trackingEnabled = mandatory || isEnabled();
 
-  if (!mandatory && !isEnabled()) {
-    if (updateRoutes) {
-      previousRouteNameRef.current = currentRouteNameRef.current;
-      if (refreshSource) {
-        currentRouteNameRef.current = fullScreenName;
-      }
+  if (trackingEnabled) {
+    const shouldSkip = shouldSkipDuplicatePageEvent(eventName, avoidDuplicates);
+    if (shouldSkip) {
+      return;
     }
-    return;
+    setLastPageEventName(eventName);
   }
-
-  const shouldSkip = shouldSkipDuplicatePageEvent(eventName, avoidDuplicates);
-  if (shouldSkip) {
-    return;
-  }
-  setLastPageEventName(eventName);
 
   if (updateRoutes) {
-    previousRouteNameRef.current = currentRouteNameRef.current;
-    if (refreshSource) {
-      currentRouteNameRef.current = fullScreenName;
-    }
+    updateTrackingPages(fullScreenName, refreshSource);
+  }
+
+  if (!trackingEnabled) {
+    return;
   }
 
   const normalizedProps = normalizeProps(props);

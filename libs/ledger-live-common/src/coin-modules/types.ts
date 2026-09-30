@@ -24,6 +24,7 @@ import type {
   AccountRawAssignHooks,
   CoinFrameworkSigner,
 } from "../bridge/generic-coin-framework/types";
+import type { SponsoredCoinApi } from "../bridge/generic-coin-framework/sponsored";
 export type { CoinFrameworkSigner };
 
 export type MessageSignerModule = {
@@ -160,4 +161,6 @@ export type CoinModuleLoader<
    * none of, and `getCoinModuleApi` backfills them through `withDefaults`.
    */
   loadLocalApi?: () => Promise<(currencyId: string) => CoinModuleImpl<any, any> & BridgeApi>;
+  /** Kept off `loadLocalApi` so the main coin-module api stays the generic `CoinModuleImpl` contract. */
+  loadSponsoredApi?: () => Promise<(currencyId: string) => SponsoredCoinApi>;
 };

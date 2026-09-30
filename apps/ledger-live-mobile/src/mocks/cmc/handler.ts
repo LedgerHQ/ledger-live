@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { mockFearAndGreedLatest } from "@domain/api-market-sentiment/mock";
+import { mockFearAndGreedLatest } from "@domain/api-market-index-fear-and-greed/mock";
 
 const handler = () => {
   return HttpResponse.json(mockFearAndGreedLatest);

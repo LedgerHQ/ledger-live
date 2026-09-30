@@ -10,9 +10,6 @@ export const polygon = currency({
   scheme: "polygon",
   color: "#6d29de",
   family: "evm",
-  ethereumLikeInfo: {
-    chainId: 137,
-  },
   units: [
     {
       name: "POL",
@@ -48,6 +45,5 @@ export const polygon = currency({
     },
   ],
   keywords: ["matic", "polygon"],
-  explorerId: "matic",
   tokenTypes: ["erc20"],
 });

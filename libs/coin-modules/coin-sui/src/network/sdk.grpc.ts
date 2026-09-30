@@ -1,19 +1,14 @@
 import { log } from "@ledgerhq/logs";
-import type {
-  Checkpoint,
-  CoinBalance,
-  DelegatedStake,
-  SuiTransactionBlockResponse,
-} from "@mysten/sui/jsonRpc";
 import type { SuiGrpcClient, GrpcTypes } from "@mysten/sui/grpc";
 import { deriveDynamicFieldID, fromBase64, normalizeSuiAddress } from "@mysten/sui/utils";
 import { type SuiCoinConfig } from "../config";
 import { toShortStructTag } from "../utils";
 import { createSuiGrpcClient } from "./grpc/client";
-import { executionErrorMessage, grpcTxToJsonRpcResponse } from "./grpc/transactions";
+import { executionErrorMessage, grpcTxToSuiTransaction } from "./grpc/transactions";
 import { protoValueToJson } from "./grpc/struct";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import type { SuiValidator } from "../types";
+import type { DelegatedStake, SuiValidator } from "../types";
+import type { SuiCheckpoint, SuiCoinBalance, SuiTransactionResponse } from "./types";
 import {
   applyValidatorApy,
   assertSystemStateJson,
@@ -54,10 +49,9 @@ export async function withGrpcApi<T>(
  * Build-path view of a `SuiGrpcClient` with the SDK's gRPC resolve plugin switched off.
  *
  * `GrpcCoreClient.resolveTransactionPlugin` runs `SimulateTransaction` with `checks: ENABLED` on
- * every `Transaction.build()` and throws `SimulationError` on any MoveAbort. The other two arms
- * never do that: JSON-RPC's plugin only simulates to fill an unset gas budget and the builders set
- * one up front, and `makeSuiClientFromGraphQL` opts out explicitly. Leaving it on made gRPC reject
- * builds the others accept — including fee estimation for an amount the user has not entered yet,
+ * every `Transaction.build()` and throws `SimulationError` on any MoveAbort. The GraphQL arm never
+ * does that: `makeSuiClientFromGraphQL` opts out explicitly. Leaving it on made gRPC reject
+ * builds GraphQL accepts — including fee estimation for an amount the user has not entered yet,
  * where the throw pre-empts `getTransactionStatus` and hides the bridge's own minimum-stake errors
  * behind a raw MoveAbort.
  *
@@ -84,30 +78,18 @@ export const withoutBuildSimulation = (client: SuiGrpcClient): SuiGrpcClient => 
   });
 };
 
-/** Checkpoint fields the block/checkpoint mappers read, in JSON-RPC's stringly-typed shape. */
-export type GrpcCheckpointFields = Pick<
-  Checkpoint,
-  "digest" | "sequenceNumber" | "timestampMs" | "previousDigest"
->;
-
-/**
- * `GetCheckpoint` accepts a sequence number or a digest, so — unlike GraphQL — the gRPC arm
- * needs no JSON-RPC fallback for digest lookups.
- */
+/** `GetCheckpoint` accepts a sequence number or a digest — unlike GraphQL, which takes the former only. */
 const toCheckpointId = (id: string): GrpcTypes.GetCheckpointRequest["checkpointId"] =>
   /^\d+$/.test(id)
     ? { oneofKind: "sequenceNumber", sequenceNumber: BigInt(id) }
     : { oneofKind: "digest", digest: id };
 
-/** Read mask covering exactly the fields {@link GrpcCheckpointFields} exposes. */
+/** Read mask covering exactly the fields {@link SuiCheckpoint} exposes. */
 const CHECKPOINT_READ_MASK = {
   paths: ["sequence_number", "digest", "summary.timestamp", "summary.previous_digest"],
 };
 
-export const getCheckpointGrpc = async (
-  api: SuiGrpcClient,
-  id: string,
-): Promise<GrpcCheckpointFields> => {
+export const getCheckpointGrpc = async (api: SuiGrpcClient, id: string): Promise<SuiCheckpoint> => {
   const { checkpoint } = await api.ledgerService.getCheckpoint({
     checkpointId: toCheckpointId(id),
     readMask: CHECKPOINT_READ_MASK,
@@ -117,11 +99,8 @@ export const getCheckpointGrpc = async (
   return toCheckpointFields(checkpoint);
 };
 
-/**
- * Latest checkpoint in one round trip: an unset `checkpoint_id` returns the tip, so this
- * needs no equivalent of JSON-RPC's separate `getLatestCheckpointSequenceNumber` call.
- */
-export const getLastBlockGrpc = async (api: SuiGrpcClient): Promise<GrpcCheckpointFields> => {
+/** Latest checkpoint in one round trip: an unset `checkpoint_id` returns the tip. */
+export const getLastBlockGrpc = async (api: SuiGrpcClient): Promise<SuiCheckpoint> => {
   const { checkpoint } = await api.ledgerService.getCheckpoint({
     checkpointId: { oneofKind: undefined },
     readMask: CHECKPOINT_READ_MASK,
@@ -138,7 +117,7 @@ export const getLastBlockGrpc = async (api: SuiGrpcClient): Promise<GrpcCheckpoi
  *
  * Sequence number 0 is genesis, not a missing value, and `previousDigest` is absent there by design.
  */
-function toCheckpointFields(checkpoint: GrpcTypes.Checkpoint): GrpcCheckpointFields {
+function toCheckpointFields(checkpoint: GrpcTypes.Checkpoint): SuiCheckpoint {
   const seconds = checkpoint.summary?.timestamp?.seconds;
   const nanos = checkpoint.summary?.timestamp?.nanos ?? 0;
   const seq = (checkpoint.sequenceNumber ?? 0n).toString();
@@ -147,7 +126,7 @@ function toCheckpointFields(checkpoint: GrpcTypes.Checkpoint): GrpcCheckpointFie
   return {
     digest: checkpoint.digest,
     sequenceNumber: seq,
-    // JSON-RPC exposes epoch milliseconds as a string; protobuf splits it into seconds+nanos.
+    // Epoch milliseconds as a string; protobuf splits it into seconds+nanos.
     timestampMs: (seconds * 1000n + BigInt(Math.floor(nanos / 1e6))).toString(),
     ...(checkpoint.summary?.previousDigest !== undefined && {
       previousDigest: checkpoint.summary.previousDigest,
@@ -167,7 +146,7 @@ const BLOCK_TX_READ_MASK = [
 ];
 
 /**
- * Checkpoint plus its transactions, already projected into the legacy response shape.
+ * Checkpoint plus its transactions, already projected into {@link SuiTransactionResponse}.
  *
  * Transactions nested in a checkpoint may omit `timestamp`/`checkpoint` — they are implied by the
  * enclosing checkpoint — so those are backfilled from it.
@@ -175,7 +154,7 @@ const BLOCK_TX_READ_MASK = [
 export const getBlockGrpc = async (
   api: SuiGrpcClient,
   id: string,
-): Promise<{ info: GrpcCheckpointFields; transactions: SuiTransactionBlockResponse[] }> => {
+): Promise<{ info: SuiCheckpoint; transactions: SuiTransactionResponse[] }> => {
   const { checkpoint } = await api.ledgerService.getCheckpoint({
     checkpointId: toCheckpointId(id),
     readMask: { paths: [...CHECKPOINT_READ_MASK.paths, ...BLOCK_TX_READ_MASK] },
@@ -187,7 +166,7 @@ export const getBlockGrpc = async (
   return {
     info,
     transactions: (checkpoint.transactions ?? []).map(executed => {
-      const mapped = grpcTxToJsonRpcResponse(executed);
+      const mapped = grpcTxToSuiTransaction(executed);
       return {
         ...mapped,
         timestampMs: mapped.timestampMs ?? info.timestampMs,
@@ -445,12 +424,12 @@ const affectedAddressFilter = (address: string): GrpcTypes.TransactionFilter => 
 });
 
 /**
- * Transactions affecting an address, already projected into the legacy response shape.
+ * Transactions affecting an address, already projected into {@link SuiTransactionResponse}.
  *
- * `affectedAddress` covers sender, sponsor and recipient in one pass, so — unlike the JSON-RPC arm's
- * separate `FromAddress`/`ToAddress` queries — there is no IN/OUT merge or dedupe. `ListTransactions`
- * is server-streaming even though the query is finite, so frames are drained to completion; each
- * carries a resume watermark and the last one seen is the cursor for the next page.
+ * `affectedAddress` covers sender, sponsor and recipient in one pass, so there is no IN/OUT merge
+ * or dedupe. `ListTransactions` is server-streaming even though the query is finite, so frames are
+ * drained to completion; each carries a resume watermark and the last one seen is the cursor for
+ * the next page.
  *
  * `startCheckpoint` is inclusive and `endCheckpoint` exclusive, so a caller resuming past a known
  * checkpoint passes `seq + 1` when ascending but `seq` when descending. `cursorBound` is the
@@ -472,7 +451,7 @@ export const listTransactionsByAddressGrpc = async (
     cursorBound?: Uint8Array;
   },
 ): Promise<{
-  transactions: SuiTransactionBlockResponse[];
+  transactions: SuiTransactionResponse[];
   cursor?: Uint8Array;
   endReason?: number;
 }> => {
@@ -495,13 +474,13 @@ export const listTransactionsByAddressGrpc = async (
     ...(params.endCheckpoint !== undefined && { endCheckpoint: BigInt(params.endCheckpoint) }),
   });
 
-  const transactions: SuiTransactionBlockResponse[] = [];
+  const transactions: SuiTransactionResponse[] = [];
   let cursor: Uint8Array | undefined;
   let endReason: number | undefined;
   for await (const frame of call.responses) {
     if (frame.watermark?.cursor) cursor = frame.watermark.cursor;
     if (frame.end) endReason = frame.end.reason;
-    if (frame.transaction) transactions.push(grpcTxToJsonRpcResponse(frame.transaction));
+    if (frame.transaction) transactions.push(grpcTxToSuiTransaction(frame.transaction));
   }
 
   return { transactions, ...(cursor && { cursor }), ...(endReason !== undefined && { endReason }) };
@@ -555,7 +534,7 @@ const sameCursor = (a: Uint8Array | undefined, b: Uint8Array | undefined): boole
  * the caller stores the newest operation it received as the next resume point, so a descending walk
  * stopping at `limit` strands everything between the old cursor and the oldest transaction it
  * reached — permanently, since the next sync starts above it. Ascending leaves the unread remainder
- * newer than the new cursor. The JSON-RPC arm pages ascending from a cursor for the same reason.
+ * newer than the new cursor.
  */
 export const listHistoryByAddressGrpc = async (
   api: SuiGrpcClient,
@@ -566,8 +545,8 @@ export const listHistoryByAddressGrpc = async (
     order: "asc" | "desc";
     startCheckpoint?: number;
   },
-): Promise<SuiTransactionBlockResponse[]> => {
-  const collected = new Map<string, SuiTransactionBlockResponse>();
+): Promise<SuiTransactionResponse[]> => {
+  const collected = new Map<string, SuiTransactionResponse>();
   let cursorBound: Uint8Array | undefined;
 
   for (let page = 0; page < MAX_PAGES && collected.size < params.limit; page++) {
@@ -598,7 +577,7 @@ export const listHistoryByAddressGrpc = async (
  * `ExecutedTransaction` carries the checkpoint sequence but not its digest, which the operation
  * mapper needs for `blockHash`. Reusing the page's own affected-address filter restricts the stream
  * to the checkpoints holding this address's transactions, so the cost is one streamed call per page
- * rather than JSON-RPC's per-checkpoint fan-out.
+ * rather than one call per checkpoint.
  *
  * `limit` must be the transaction limit the page was requested with: every matching checkpoint in
  * the range holds at least one transaction from that page, so that count is a sufficient bound.
@@ -756,7 +735,7 @@ export const getDelegatedStakesGrpc = async (
   return groupStakedSuiByPool(items, state.epoch, poolToValidator, "grpc", rewards);
 };
 
-/** Minimal event view the staking extractor consumes — mirrors JSON-RPC's `{ type, parsedJson }`. */
+/** Minimal event view the staking extractor consumes. */
 type StakingEventLike = { type?: string; parsedJson?: unknown };
 
 /**
@@ -783,20 +762,19 @@ export const getStakingEventsByDigestGrpc = async (
 };
 
 /**
- * gRPC counterpart of `getAllBalancesCachedGraphQL`, producing the same `CoinBalance[]`.
+ * gRPC counterpart of `getAllBalancesCachedGraphQL`, producing the same `SuiCoinBalance[]`.
  *
  * `Balance.balance` is the SIP-58 total (address balance + coin objects) and
  * `Balance.address_balance` the address-balance share, matching what the GraphQL arm reads
- * from `totalBalance`/`addressBalance`. `coinObjectCount` and `lockedBalance` are JSON-RPC-only
- * and get the same neutral fillers — `DispatchedCoinBalance` narrows them away downstream.
+ * from `totalBalance`/`addressBalance`.
  */
 export const getAllBalancesGrpc = async (
   api: SuiGrpcClient,
   owner: string,
-): Promise<CoinBalance[]> => {
+): Promise<SuiCoinBalance[]> => {
   // gRPC rejects short addresses the same way GraphQL's `SuiAddress!` does.
   const ownerAddr = normalizeSuiAddress(owner);
-  const balances: CoinBalance[] = [];
+  const balances: SuiCoinBalance[] = [];
   let pageToken: Uint8Array | undefined;
 
   for (let page = 0; page < MAX_PAGES; page++) {
@@ -813,9 +791,7 @@ export const getAllBalancesGrpc = async (
       balances.push({
         // gRPC returns canonical 32-byte tags; consumers compare against `DEFAULT_COIN_TYPE`.
         coinType: toShortStructTag(balance.coinType),
-        coinObjectCount: 0,
         totalBalance: (balance.balance ?? 0n).toString(),
-        lockedBalance: {},
         fundsInAddressBalance: (balance.addressBalance ?? 0n).toString(),
       });
     }

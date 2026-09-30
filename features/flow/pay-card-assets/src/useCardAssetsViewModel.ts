@@ -2,7 +2,8 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useUpdateCardWalletPrioritiesMutation } from "@domain/api-card-management";
 import {
   toPayDebitOrderProperties,
-  usePayAnalyticsContext,
+  trackButtonClicked,
+  trackDebitOrderChanged,
 } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
@@ -26,9 +27,14 @@ const EMPTY_CURRENCIES = new Map();
 const NO_PRICE: CardAssetsProps["getCounterValue"] = () => null;
 const NO_COUNTERVALUE: CardAssetsProps["formatCountervalue"] = () => "";
 
-export function formatCardAssetCryptoAmount(balance: string | null, currency: string): string {
+export function formatCardAssetCryptoAmount(
+  balance: string | null,
+  currency: string,
+  discreet = false,
+): string {
   const ticker = currency.toUpperCase();
-  return balance === null ? ticker : `${balance} ${ticker}`;
+  if (balance === null) return ticker;
+  return `${discreet ? "***" : balance} ${ticker}`;
 }
 
 export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewModel {
@@ -42,18 +48,23 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onWithdraw,
     onShowHistory,
     onAddAsset,
+    discreet = false,
   } = props ?? {};
   const { t } = useTranslation();
-  const { trackButtonClicked, trackDebitOrderChanged } = usePayAnalyticsContext();
   const [dialogState, setDialogState] = useState<CardAssetDialogState>("closed");
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assetOrder, setAssetOrder] = useState<readonly string[]>([]);
-  const [reorderingAssetId, setReorderingAssetId] = useState<string | null>(null);
   const manageInitialOrder = useRef<readonly string[] | null>(null);
+  const [reorderingAssetIds, setReorderingAssetIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
+  // Only the most recently issued move's failure gets to roll the order back: an older request
+  // resolving after a newer one has already applied would otherwise stomp that newer change.
+  const latestMoveRequestId = useRef(0);
   const isSignedIn = useIsCardSignedIn();
   const [updateCardWalletPriorities] = useUpdateCardWalletPrioritiesMutation();
   const { transactions } = useCardTransactionsViewModel();
-  const { wallets, isLoading, isError } = useCardLinkedWallets({
+  const { wallets, isLoading, isError, refetch } = useCardLinkedWallets({
     currencies,
     skip: !isSignedIn,
   });
@@ -72,12 +83,12 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
           name: ledgerCurrency?.name ?? currency.toUpperCase(),
           ticker: ledgerCurrency?.ticker ?? currency.toUpperCase(),
           ledgerId: ledgerId ?? "",
-          cryptoAmount: formatCardAssetCryptoAmount(balance, currency),
+          cryptoAmount: formatCardAssetCryptoAmount(balance, currency, discreet),
           countervalue: countervalue === null ? null : formatCountervalue(countervalue),
           countervalueAmount: countervalue,
         };
       }),
-    [wallets, getCounterValue, formatCountervalue],
+    [wallets, getCounterValue, formatCountervalue, discreet],
   );
 
   const rows = useMemo<readonly CardAssetRow[]>(() => {
@@ -132,7 +143,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     manageInitialOrder.current = null;
     setDialogState("closed");
     setSelectedAssetId(null);
-  }, [dialogState, rows, trackDebitOrderChanged]);
+  }, [dialogState, rows]);
 
   const onTopUpPress = useCallback(() => {
     if (selectedAsset) onTopUp?.(selectedAsset);
@@ -161,7 +172,11 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     manageInitialOrder.current = rows.map(row => row.currency);
     trackButtonClicked({ button: "debit order", page: "Card details" });
     setDialogState("manage");
-  }, [rows, trackButtonClicked]);
+  }, [rows]);
+
+  const onRetryPress = useCallback(() => {
+    refetch();
+  }, [refetch]);
 
   const onAddAssetPress = useCallback(() => {
     onAddAsset?.();
@@ -169,14 +184,14 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
 
   const onMoveAsset = useCallback(
     async (id: string, toIndex: number) => {
-      if (reorderingAssetId !== null) return;
-
       const fromIndex = rows.findIndex(row => row.id === id);
       if (fromIndex < 0 || toIndex < 0 || toIndex >= rows.length || fromIndex === toIndex) return;
 
       const previousOrder = rows.map(row => row.id);
       const reorderedRows = reorderByIndex(rows, fromIndex, toIndex);
-      setReorderingAssetId(id);
+      const requestId = ++latestMoveRequestId.current;
+
+      setReorderingAssetIds(current => new Set(current).add(id));
       setAssetOrder(reorderedRows.map(row => row.id));
 
       try {
@@ -193,14 +208,20 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
           }),
         }).unwrap();
 
-        if (!result.success) setAssetOrder(previousOrder);
+        if (!result.success && latestMoveRequestId.current === requestId) {
+          setAssetOrder(previousOrder);
+        }
       } catch {
-        setAssetOrder(previousOrder);
+        if (latestMoveRequestId.current === requestId) setAssetOrder(previousOrder);
       } finally {
-        setReorderingAssetId(null);
+        setReorderingAssetIds(current => {
+          const next = new Set(current);
+          next.delete(id);
+          return next;
+        });
       }
     },
-    [reorderingAssetId, rows, updateCardWalletPriorities],
+    [rows, updateCardWalletPriorities],
   );
 
   return useMemo(
@@ -229,9 +250,11 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
+      onRetryPress,
       onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
       onMoveAsset,
-      reorderingAssetId,
+      reorderingAssetIds,
+      discreet,
     }),
     [
       props,
@@ -252,10 +275,12 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       onShowHistoryPress,
       onWithdrawContinue,
       onManagePress,
+      onRetryPress,
       onAddAsset,
       onAddAssetPress,
       onMoveAsset,
-      reorderingAssetId,
+      reorderingAssetIds,
+      discreet,
     ],
   );
 }

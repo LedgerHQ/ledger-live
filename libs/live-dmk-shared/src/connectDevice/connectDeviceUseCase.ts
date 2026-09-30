@@ -7,17 +7,19 @@ import { catchError } from "rxjs/operators";
 import { DefaultConnectDeviceStateMachine } from "./ConnectDeviceStateMachine";
 import {
   ConnectDeviceUIStateTypes,
-  type BaseConnectionError,
-  type BaseDiscoveryError,
   type ConnectDeviceUIState,
   type ConnectDeviceMapConnectionError,
   type ConnectDeviceMatchDiscoveredDevices,
-  type DeviceDiscoveryService,
-  type DeviceConnectionResult,
   type KnownDevice,
-  type UnknownDiscoveryError,
 } from "./types";
 import { filterKnownDevicesByAcceptedModels } from "./utils";
+import {
+  type BaseConnectionError,
+  type BaseDiscoveryError,
+  type DeviceConnectionResult,
+  type DeviceDiscoveryService,
+  type UnknownDiscoveryError,
+} from "../deviceConnectivity/types";
 
 const LOG_TYPE = "connectDeviceUseCase";
 

@@ -11,126 +11,112 @@ pnpm coin:tester:stacks start
 
 ## Scope
 
-This package tests the **legacy bridge only**, against a **local Clarinet devnet**, covering:
+This package tests `coin-stacks` against a **local Clarinet devnet**, through both bridge
+strategies (`src/scenarii.test.ts`):
 
-- Native STX send (fixed amount and send-max).
-- SIP-010 token send (fixed amount and send-max), against `contracts/sip-010-test-token.clar`, a
-  minimal SIP-010 contract deployed at devnet genesis (a fresh devnet has no fungible token
-  deployed at all, unlike VeChain's VTHO or NEAR's staking-pool WASM, which pre-exist on their
-  respective test networks).
+- **Send scenario**, run once with the legacy bridge and once with the generic-adapter
+  (`CoinModuleApi`) path:
+  - Native STX send (fixed amount and send-max).
+  - SIP-010 token send (fixed amount and send-max), against `contracts/sip-010-test-token.clar`, a
+    minimal SIP-010 contract deployed when the devnet boots (a fresh devnet has no fungible token
+    deployed at all, unlike VeChain's VTHO or NEAR's staking-pool WASM, which pre-exist on their
+    respective test networks).
+- **pox-5 staking scenario** (delegate/undelegate), generic-adapter only (the legacy bridge has no
+  staking code), against `contracts/signer-manager-stub.clar` as the signer manager.
 
-There is no `generic-adapter` coverage and no staking (delegate/undelegate) coverage. Both are
-absent for the same underlying reason, not two separate decisions: on this branch, `coin-stacks`
-(`libs/coin-modules/coin-stacks`) has no `generic-adapter`/`CoinModuleApi` wiring and no pox-5
-staking support at all — `supportedFeatures.blockchain_txs` is `["send"]`. (A separate,
-already-in-review branch adds an Alpaca/`CoinModuleApi` migration with staking support; this
-package was scoped and implemented against `develop`, independently of that branch, per the task
-that produced it.)
+All three runs share **one devnet**, started once in `scenarii.test.ts`'s `beforeAll`. Runs share
+the chain but **never an account**: each signs with its own sender (see "Accounts" below), so no
+run starts on another's history or drained balance. A full run takes about 2 minutes once the
+patched Clarinet binary is built.
 
-## Known limitations (discovered while implementing)
+## How the devnet runs
 
-Several real, upstream `clarinet` bugs were found and fixed via a pinned, patched build (see
-`docker/clarinet/`) — no manual local setup needed, `spawnDevnet()` (`src/devnet.ts`) builds and
-caches the patched binary automatically on first use (via Docker on Linux, extracting the built
-binary — no host Rust toolchain needed there; via a local `cargo +nightly` build elsewhere, e.g.
-macOS, since a container-built Linux binary can't run natively there). One further `clarinet` bug
-(sustained block mining sometimes stalling, see below) could not be source-patched the same way —
-its root cause inside `clarinet`'s own Rust orchestrator was not found despite substantial
-investigation — so it is **worked around** instead, from this package's own code
-(`scripts/bitcoin-miner.js`), not silently left broken. A CI-only devnet-boot failure (`bitcoind`
-crashing on a host/container UID mismatch, see below) was root-caused and fixed by adjusting the
-bind-mounted data directory's permissions — pending confirmation on the next CI run before calling
-it closed, consistent with two earlier timeout-based attempts that looked plausible but didn't
-actually fix it (and one same-day config-only attempt — disabling the bind mount entirely — that
-fixed the permission error but exposed a second, previously-masked bug: bitcoind's container CMD
-launches immediately on `docker start`, before clarinet's own post-start `mkdir` exec call runs, so
-without the bind mount's directory already existing at that point, bitcoind fails immediately with
-"data directory does not exist" instead).
+- **Patched Clarinet, built once and cached.** `spawnDevnet()` (`src/devnet.ts`) runs a patched
+  `clarinet` binary (see "Clarinet patches") built from `docker/clarinet/`: inside Docker on Linux
+  (extracted with `docker cp`, no host Rust toolchain needed), with a local `cargo` build elsewhere,
+  e.g. macOS, since a container-built Linux binary can't run there. The binary is cached in
+  `.clarinet-cache/<hash of docker/clarinet/**>/`, so changing the pinned commit, a patch or the
+  toolchain rebuilds it. CI caches the same directory (`.github/workflows/test-coin-tester.yml`),
+  keyed on the same inputs; a cache miss costs one ~13-minute build.
+- **Clarinet runs on the host, not in a container.** The sibling containers it spawns (bitcoind,
+  stacks-node, stacks-signer, stacks-blockchain-api, postgres) must reach its event listener and
+  Bitcoin RPC proxy at `host.docker.internal:<port>`, which is only reliable when `clarinet` runs on
+  the real host (inside a `--network host` container, Docker Desktop for Mac refused those
+  connections).
+- **Snapshot boot.** Clarinet embeds a chain-state snapshot that starts at burn height 163, past
+  epoch 3.0 (Nakamoto, 142) and epoch 4.0 (pox-5, 162), so neither the send nor the staking
+  scenario waits for an epoch transition. Clarinet extracts it to `~/.clarinet/cache/devnet/` on
+  first use; the bitcoin chain state is copied into bitcoind's data directory before bitcoind starts
+  (patch 5), the stacks chain state into the stacks-node container at boot. Clarinet then publishes
+  this package's contracts through its deployment plan.
+- **Clarinet mines the blocks.** The stacks-node reaches bitcoind through Clarinet's Bitcoin RPC
+  proxy; Clarinet mines the next block whenever it relays a miner's block-commit, and on its own
+  timer (`bitcoin_controller_block_time`) otherwise.
+- **Diagnostics.** Without `DEBUG`, Clarinet's output goes to a log file in the OS temp directory;
+  if the devnet fails to boot, its tail and every devnet container's exit state and logs are
+  printed. `DEBUG=1` streams Clarinet's output live instead.
 
-### Devnet infrastructure — real, fixed `clarinet` bugs
+Requirements: Docker; on macOS also `rustup` (the local build installs the pinned toolchain from
+`docker/clarinet/Dockerfile` itself).
 
-The published `ghcr.io/stx-labs/clarinet` image is `linux/amd64`-only and, under QEMU emulation on
-Apple Silicon, its own `bollard` Docker-API client fails on certain calls (`JsonSerdeError { err:
-Error("expected value", ...) }` — an empty/malformed response it can't parse). This is **not** a
-code bug in this package: it was root-caused by building `clarinet-cli` natively (`cargo build
---release`, arm64, from `stx-labs/clarinet`'s own source) and confirming `bitcoin-node` then boots
-and mines correctly.
+## Clarinet patches
 
-- **`bollard` (Clarinet's Docker-API client) is pinned to `0.17`, which mis-parses some Docker
-  Engine API responses as empty JSON** — this is what produced the `JsonSerdeError` above for the
-  `postgres` container too (not just an emulation artifact: it reproduced identically on the
-  native arm64 build, and being an HTTP JSON-parsing bug unrelated to CPU architecture is expected
-  to reproduce on amd64/CI too). Bumping to `bollard = "0.18"` in `stacks-network`'s `Cargo.toml`
-  (one version below `0.21`, which removes a generic parameter `stacks-network` relies on) fixes
-  the parsing and surfaces the *real* underlying error instead — which turned out to be a mundane
-  local port conflict (`postgres_port` now overridden to `27432` in `settings/Devnet.toml`, since
-  the default `5432` collides with other local Postgres instances on dev machines).
-- **The generated `Stacks.toml`'s `[burnchain].rpc_port` is a genuine upstream typo**: it's set
-  from `devnet_config.orchestrator_ingestion_port` (clarinet's own event-listener port) instead of
-  `devnet_config.bitcoin_node_rpc_port` (bitcoind's actual RPC port) — see
-  `orchestrator.rs`'s burnchain-config template. `stacks-node` then tries to reach bitcoind on the
-  wrong port and its burnchain sync never completes (`Bitcoin RPC failure: error listing utxos ...
-  Connection refused`, indefinitely). Fixed in the patch by using the correct field.
-- **Contract `epoch` pinned to `"3.0"`** instead of `"latest"` (`Clarinet.toml`) — `"latest"`
-  resolved to a deployment batch the devnet doesn't reliably reach within a short scenario run.
-- **`clarinet` gives up waiting on the `bitcoind` container after ~15s** (`MAX_ERRORS: u32 = 30`,
-  polled every 500ms in `orchestrator.rs`) and treats that as fatal, tearing the whole devnet
-  network down. Bumped to `600` (~5min) in the patch as a legitimate safety margin (a cold image
-  pull alone can exceed 15s) — kept even though it turned out not to be this bug's actual cause
-  (see below): `waitUntilReady` (`src/devnet.ts`) now also fails fast the moment the `clarinet`
-  process itself exits, so a longer Rust-side budget no longer costs extra wall-clock time when
-  the real problem is elsewhere.
-- **CI-only: `bitcoind` itself crashed on boot with `Permission Denied`, not a networking or
-  patience problem.** `bitcoin-node`'s container was created and started successfully (clarinet's
-  own log reached `"Configuring bitcoin-node"`), then vanished from `docker ps -a` within seconds —
-  clarinet's `HostConfig.auto_remove: true` deletes a container the instant it exits, before
-  `docker logs`/`docker inspect` can see why (fixed via `bitcoin-node-no-autoremove.patch`, kept
-  permanently — this package's own `killDevnet()` already cleans up every container on every
-  scenario exit regardless, so nothing is left lingering). With that patch plus a `DEBUG=1` dump of
-  `docker logs`/`docker inspect` *inside* `killDevnet()` itself (needed because
-  `scenarii.test.ts`'s own failure handler calls `killDevnet()` — and would otherwise force-remove
-  the same evidence — before the CI workflow's separate diagnostic step ever runs), the real error
-  surfaced: `` Error: filesystem error: cannot create directories: Permission denied
-  [/home/bitcoin/.bitcoin/regtest/wallets] ``. Root cause: `bind_containers_volumes` (`clarinet`'s
-  own `network_manifest.rs`, defaults to `true`, left at default) bind-mounts each container's data
-  directory from a host path that `clarinet` itself creates — owned by whatever user runs
-  `clarinet` (the CI runner's own account), not by the container's `user: "1000"`. bitcoind then
-  fails writing a subdirectory under it. Never reproduces locally because Docker Desktop for Mac's
-  bind-mount layer doesn't enforce the same host/container UID match a real Linux Docker host does.
-  Fixed via `bitcoin-node-datadir-permissions.patch` — `chmod 777` on the host directory right after
-  `clarinet` creates it, before the container ever starts. (An earlier same-day attempt disabled
-  the bind mount entirely instead of fixing its permissions — `bind_containers_volumes = false` —
-  which does remove the UID mismatch, but exposes a *second*, previously-masked bug: without the
-  mount pre-populating `/home/bitcoin/.bitcoin` as part of container start, bitcoind's own CMD
-  process — launched immediately on `docker start`, before clarinet's separate post-start `mkdir`
-  *exec* call can run — finds the directory missing and exits immediately with `Specified data
-  directory "/home/bitcoin/.bitcoin" does not exist`. `docker exec` requires an already-running
-  container, so that ordering isn't a bug to fix, it's a hard Docker API constraint — the bind
-  mount was accidentally the only thing making the directory exist in time. Chmod-ing the
-  bind-mounted directory instead keeps that existing synchronization and only fixes the
-  permission.) Two earlier theories were checked against clarinet's own source and **ruled out**
-  along the way: (a) the deprecated `clarinet integrate` command using a different/buggy code path
-  than `devnet start` — `cli.rs` shows `Integrate` is a thin wrapper calling the identical
-  `devnet_start()` function; (b) a race with the (skipped) snapshot-copy step — this package passes
-  `--from-genesis`, which `cli.rs` maps directly to `no_snapshot: true`, so
-  `copy_snapshot_to_container` never runs at all.
+Applied in this order on top of Clarinet v3.24.1 (`ARG CLARINET_COMMIT` in
+`docker/clarinet/Dockerfile`, which also carries the reasoning for each):
 
-Four of the fixes above are Rust source fixes, captured as patches
-(`docker/clarinet/bollard-fix.patch`, `docker/clarinet/bitcoin-node-patience.patch`,
-`docker/clarinet/bitcoin-node-no-autoremove.patch`,
-`docker/clarinet/bitcoin-node-datadir-permissions.patch`), applied on top of pinned commit
-`4220f34773a20960ce955a6b76590c97751e8a60` — see `docker/clarinet/Dockerfile` for the exact build.
-Epoch pinning is a `Clarinet.toml` config choice, not a source patch. Running
-`clarinet` itself was deliberately kept
-as a **native host process**, never inside a container: an earlier version of this fix ran
-`clarinet integrate` inside a Docker image, which works for the `bollard`/`rpc_port` fixes but hits
-a *different*, environment-specific problem — the sibling containers `clarinet` spawns need to
-reach its own event-listener at `host.docker.internal:<port>`, and that hop is only reliable when
-`clarinet` itself runs on the real host; running it inside a `--network host` container hit real
-limitations of Docker Desktop for Mac's host-networking support (verified: sibling containers got
-`ECONNREFUSED` reaching the orchestrator's own listener). Building the binary and then running it
-directly on the host sidesteps that — Docker is still used, but only the way `clarinet` itself
-already uses it (to spawn its sibling containers), not to run `clarinet` itself.
+1. **`bollard-fix.patch`**: Clarinet's Docker-API client, `bollard` 0.17, mis-parses some Docker
+   Engine API responses as empty JSON (`JsonSerdeError { err: Error("expected value", ...) }`) and
+   breaks the postgres container boot. Bumped to 0.18 (0.21 removes a generic parameter
+   `stacks-network` relies on), plus a retry for a postgres container that vanishes on start.
+2. **`bitcoin-node-patience.patch`**: Clarinet waits only ~15s (30 × 500ms) for the bitcoind
+   container before tearing the devnet down, too tight for a CI runner pulling the image cold.
+   Raised to ~5 minutes.
+3. **`bitcoin-node-no-autoremove.patch`**: the bitcoin-node container had `auto_remove: true`, so
+   a crash deleted it before `docker logs`/`docker inspect` could show why. `killDevnet()` removes
+   every devnet container anyway.
+4. **`bitcoin-node-datadir-permissions.patch`**: bitcoind's data directory is bind-mounted from a
+   host path Clarinet creates, owned by the user running it, while bitcoind runs as uid 1000. A
+   Linux host enforces that ownership (Docker Desktop doesn't), so bitcoind couldn't create its
+   directories. `chmod 777` right after Clarinet creates it.
+5. **`bitcoin-node-snapshot-host-copy.patch`**: Clarinet copied the bitcoin snapshot into the
+   bitcoind container with `docker cp` *after* starting it, which races bitcoind two ways. On Linux
+   it couldn't read the copied files (no owner uid 1000 can use) and exited; and when it had
+   already begun its own chain state, it served blocks the stacks-node's snapshot didn't expect
+   (`Non-contiguous header`, intermittent). The snapshot is now copied on the host into the
+   bind-mounted data directory before the container is created, and made world-readable and
+   writable, so bitcoind starts on it.
+
+**Deliberately not patched:** the generated `Stacks.toml`'s `[burnchain].rpc_port` points at
+Clarinet's ingestion port. That is Clarinet's Bitcoin RPC proxy, not a typo. An earlier version of
+this package redirected it straight to bitcoind, which stopped Clarinet from ever mining past the
+first block and required an external miner process.
+
+## Pinned versions
+
+- **Clarinet** v3.24.1, and through it the stacks-node, stacks-signer and bitcoind images
+  (`stacks-core:4.0.1-alpine`, `stacks-signer:4.0.1-alpine`, `lncm/bitcoind:v27.2`).
+- **stacks-blockchain-api** and **postgres**, by tag and digest in `settings/Devnet.toml`: Clarinet
+  defaults them to the floating `latest`/`alpine` tags, and `latest` moving to 9.3.0 on 2026-09-15
+  broke every run for a week with no change on our side.
+- **Rust**: base image by digest and a dated nightly in `docker/clarinet/Dockerfile`.
+- Contract epochs in `Clarinet.toml`: `sip-010-test-token` at `"3.0"`, `signer-manager-stub` at
+  `"4.0"` with `clarity_version = 6` (it implements a pox-5 trait).
+
+Bump any of these deliberately, alongside a green run.
+
+## Pitfalls
+
+- **Keep `Devnet.toml` compatible with the snapshot.** Clarinet only uses it when `epoch_*`,
+  `stacks_signers_keys` and `pox_stacking_orders` match its defaults (`DevnetDiffConfig`,
+  `clarinet-files/src/devnet_diff.rs`). Any difference silently falls back to a genesis boot, ~10
+  minutes slower: the missing default `stacker` stacking order is what kept this package off the
+  snapshot before.
+- **The deployer must not send anything before `signer-manager-stub` is deployed** (see
+  "Accounts").
+- **Test on Linux before trusting a devnet change.** Docker Desktop doesn't enforce ownership on
+  bind mounts, so permission bugs (patches 4 and 5) only show up on a Linux host such as CI.
+
+## Found along the way
 
 ### `coin-stacks` bugs (real, fixed in the legacy bridge, covered by unit tests)
 
@@ -157,56 +143,37 @@ already uses it (to spawn its sibling containers), not to run `clarinet` itself.
   flat, generous per-transaction-kind fees (`scenarii/stacks.ts`) since there's no estimate to
   measure against on a fresh chain. Covered in `bridge/prepareTransaction.test.ts`.
 
-### `clarinet`'s bitcoin-mining scheduler stalls — worked around, not source-patched
-
-With the `bollard`/`rpc_port` fixes above, the devnet reliably boots, syncs the burnchain, and
-mines the genesis Stacks block anchored in Bitcoin block #100 — but on several runs during
-verification, `bitcoin-node`'s periodic miner (`chains_coordinator.rs`'s `handle_bitcoin_mining`,
-driven by `bitcoin_controller_block_time = 3_000` in `settings/Devnet.toml`) mined exactly one
-further Bitcoin block (`#101`) and then never mined again: `burn_block_height` frozen at `101` for
-10+ minutes straight, no further `"mining blocks"` log line, no error.
-
-Investigation, in order:
-
-- **Not a container-networking issue**: the orchestrator's event-listener is bound to all
-  interfaces and independently verified reachable from a container via `host.docker.internal`.
-- **Not specific to the deprecated `clarinet integrate` command**: `clarinet devnet start` (the
-  current, non-deprecated command per Clarinet's own docs) reproduces the identical stall,
-  confirming both commands share the same underlying orchestrator code.
-- **Not bitcoind's fault**: manually issuing the exact same `generatetoaddress` RPC call bitcoind
-  itself exposes (bypassing `clarinet` entirely) mines new blocks immediately and reliably, every
-  time — proving the bitcoind side of the pipeline is healthy and the bug is in `clarinet`'s own
-  scheduler.
-- The Rust-level root cause inside `handle_bitcoin_mining`'s spawned thread was not found despite
-  tracing every `BitcoinMiningCommand::Pause`/`Start` call site and the `create_global_snapshot`
-  epoch-4.0 path (ruled out: gated behind `--create-new-snapshot`, which this package never
-  passes).
-
-**Worked around** in `scripts/bitcoin-miner.js`: a small, dependency-free script that calls
-bitcoind's `generatetoaddress` directly, every `bitcoin_controller_block_time`, replacing
-Clarinet's own broken scheduler. `src/devnet.ts`'s `startBitcoinMiningWorkaround` spawns it as a
-**separate OS process** — an in-process `setInterval` was tried first and was itself unreliable,
-because Jest's own CPU-bound work (signing, `--runInBand` test execution) delays or starves the
-shared event loop long enough to occasionally miss ticks for minutes, indistinguishable from the
-original bug from the test's point of view. A separate process has its own event loop, unaffected
-by Jest's load. Verified via multiple consecutive full scenario runs after this fix.
-
 ### Other
 
-- **`@stacks/network`/`@stacks/transactions` are pinned at `6.17.0`** (matching what `coin-stacks`
-  itself declares on `develop`), not `7.x` — `StacksDevnet` is the `StacksMocknet` alias in this
-  version, with the same default URL (`http://localhost:3999`, matching Clarinet's own default
-  `stacks_api_port`).
+- **`@stacks/transactions` comes from the pnpm catalog**, the same entry `coin-stacks` uses, so the
+  test signers and setup transactions can't drift to another major: `coin-stacks`'s pox-5 staking
+  transactions carry a post-condition type v6 can't deserialize. `@stacks/network`'s
+  `STACKS_DEVNET` defaults to `http://localhost:3999`, matching Clarinet's own `stacks_api_port`.
 
 ## Accounts
 
 `settings/Devnet.toml` funds several of Clarinet's own well-known, public, deterministic devnet
-accounts — not a secret specific to this package. The `deployer` account doubles as the scenario's
-funder: `contracts/sip-010-test-token.clar` mints its entire test-token supply to `tx-sender` at
-deploy time, i.e. to whichever account the deployment plan uses to publish it (the manifest's
-`deployer`, since the contract entry sets no override) — reusing it as the sender avoids a separate
-on-chain token-funding transaction before the scenario starts. `wallet_2` is the scenario's
-recipient. `wallet_1`/`wallet_3` and the `[[devnet.pox_stacking_orders]]` block are **not used by
-the scenario** — they exist only because Clarinet's bundled devnet snapshot is keyed to that exact
-default stacking configuration (see "Known limitations" above); removing them reintroduces an
-interactive confirmation prompt on `clarinet integrate`.
+accounts — not a secret specific to this package.
+
+| Account | Role |
+|---|---|
+| `deployer` | Publishes both contracts (the contract entries set no `deployer` override) and pays for the staking run's signer-manager setup. Never a scenario's sender. |
+| `wallet_4` | Sender, send scenario, legacy strategy. Gets 100 CTT minted at deploy |
+| `wallet_5` | Sender, send scenario, generic-adapter strategy. Gets 100 CTT minted at deploy |
+| `wallet_6` | Staker, pox-5 staking scenario (`validate-stake!` accepts any staker) |
+| `wallet_2` | Recipient of every send |
+
+`wallet_4`..`6` were chosen because they are **not** in `[[devnet.pox_stacking_orders]]`, so none
+of their STX is locked.
+
+**The deployer must not send any transaction before `signer-manager-stub` is deployed.** Clarinet
+signs its whole deployment plan up front with pre-assigned deployer nonces (`accounts_cached_nonces`
+in `clarinet-deployments/src/onchain/mod.rs`) and broadcasts the epoch-4.0 batch only once the
+chain gets there. A deployer transaction sent earlier takes that batch's nonce: the stub deploy is
+rejected, and Clarinet still marks it confirmed because the account's nonce moved past the
+expected one. That is why the test tokens are minted straight to `wallet_4`/`wallet_5` in
+`sip-010-test-token.clar` rather than transferred from the deployer during the test.
+
+`wallet_1`..`3` and the built-in `stacker` account are **not used by the scenarios**: they are
+there because `[[devnet.pox_stacking_orders]]` must match Clarinet's defaults for the snapshot to
+be used (see "Pitfalls").

@@ -16,6 +16,7 @@ import {
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
   acceptBlindSigningWarning as acceptBlindSigningWarningDevice,
   shareViewKey,
+  confirmContactAction as confirmContactActionDevice,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { setExchangeDependencies } from "@e2e/utils/speculosUtils";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
@@ -110,6 +111,11 @@ export default class SpeculosPage {
   @Step("Confirm view key sharing on device")
   async shareViewKey() {
     await shareViewKey();
+  }
+
+  @Step("Confirm contact action on Speculos")
+  async confirmContactAction() {
+    await confirmContactActionDevice();
   }
 
   async setExchangeDependencies(swapOrFromAccount: SwapType | Account, toAccount?: Account) {

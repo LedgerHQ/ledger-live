@@ -7,15 +7,14 @@ import type {
 } from "@features/platform-device-intent";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "~/renderer/analytics/segment";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { track, resetTrackingPages, setTrackingSource } from "@shared/analytics";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
-import { PAGE_DEVICE_ACTION } from "./utils/trackDeviceIntent";
 import { useDeviceIntentExecutorLWDViewModel } from "./useDeviceIntentExecutorLWDViewModel";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 
@@ -94,8 +93,12 @@ function executingIntentState(
 describe("useDeviceIntentExecutorLWDViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    currentRouteNameRef.current = "Connect Device - Connecting";
+    setTrackingSource("Connect Device - Connecting");
     mockedUseDeviceBlocked.mockReturnValue(false);
+  });
+
+  afterEach(() => {
+    resetTrackingPages();
   });
 
   describe("GIVEN the ViewModel mounts", () => {
@@ -401,20 +404,174 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       expect(onUserCancel).toHaveBeenCalledTimes(1);
     });
 
-    it("WHEN the user cancels from a shell error page THEN it fires deviceflow_failed and forwards to the original onUserCancel", () => {
-      currentRouteNameRef.current = PAGE_DEVICE_ACTION.Disconnected;
-      const onUserCancel = jest.fn();
-      const { result } = renderViewModel({ onUserCancel });
+    it("WHEN a child screen reported a failure before the user cancels THEN it fires deviceflow_failed with that failure", () => {
+      // GIVEN
+      const { result } = renderViewModel();
+      act(() => {
+        result.current.trackingContextValue.reportFailure({
+          failureType: "InvalidProvider",
+          countsAsFailure: true,
+          modelId: DeviceModelId.stax,
+          transport: "usb",
+        });
+      });
 
+      // WHEN
       act(() => {
         result.current.wrappedProps.onUserCancel();
       });
 
+      // THEN
       expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
         ...layerABaseProperties,
         sourceFlow: "swap",
+        failureType: "InvalidProvider",
+        modelId: DeviceModelId.stax,
+        transport: "usb",
       });
+    });
+
+    it("WHEN the user retries after a disconnection and cancels THEN it fires deviceflow_aborted without failure", () => {
+      // GIVEN
+      const { result } = renderViewModel();
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: makeConnectionResult().connectedDevice,
+        });
+      });
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({ type: "connectingDevice" });
+      });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+      });
+    });
+
+    it("WHEN a failure is left by a previous flow THEN the next flow does not report it", () => {
+      // GIVEN
+      const { result, rerenderWithProps } = renderViewModel();
+      act(() => {
+        result.current.trackingContextValue.reportFailure({
+          failureType: "DeviceNotOnboarded",
+          countsAsFailure: true,
+        });
+      });
+      rerenderWithProps({ enabled: false });
+      rerenderWithProps({ enabled: true });
+      mockedTrack.mockClear();
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+      });
+    });
+
+    it("WHEN the device disconnected before the user cancels THEN it fires deviceflow_failed with the disconnected device", () => {
+      // GIVEN
+      const onUserCancel = jest.fn();
+      const { result } = renderViewModel({ onUserCancel });
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: makeConnectionResult({ type: "USB" }).connectedDevice,
+        });
+      });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "deviceflow_failed",
+        expect.objectContaining({
+          sourceFlow: "swap",
+          failureType: "DeviceDisconnected",
+          transport: "usb",
+        }),
+      );
       expect(onUserCancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("WHEN the unmounting initializer reports an error after the disconnection THEN it still fires deviceflow_failed with the disconnection", () => {
+      // GIVEN
+      const { result } = renderViewModel();
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: makeConnectionResult({ type: "USB" }).connectedDevice,
+        });
+      });
+      act(() => {
+        result.current.trackingContextValue.reportFailure({
+          failureType: "ConnectAppError",
+          countsAsFailure: true,
+          subError: "DeviceDisconnectedWhileSendingError",
+        });
+      });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "deviceflow_failed",
+        expect.objectContaining({ failureType: "DeviceDisconnected", transport: "usb" }),
+      );
+      expect(mockedTrack).not.toHaveBeenCalledWith(
+        "deviceflow_failed",
+        expect.objectContaining({ subError: "DeviceDisconnectedWhileSendingError" }),
+      );
+    });
+
+    it("WHEN a screen reports a failure after a retry reconnects THEN it fires deviceflow_failed with that failure", () => {
+      // GIVEN
+      const { result } = renderViewModel();
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({
+          type: "deviceDisconnected",
+          device: makeConnectionResult().connectedDevice,
+        });
+      });
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged({ type: "connectingDevice" });
+      });
+      act(() => {
+        result.current.trackingContextValue.reportFailure({
+          failureType: "ConnectionError",
+          countsAsFailure: true,
+          subError: "Unknown",
+        });
+      });
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "deviceflow_failed",
+        expect.objectContaining({ failureType: "ConnectionError", subError: "Unknown" }),
+      );
     });
   });
 

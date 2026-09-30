@@ -8,7 +8,7 @@ import { TokenCurrency } from "@domain/entity-currency-token";
 import { Unit } from "@domain/entity-currency-unit";
 
 import { setCountervalueFirst } from "~/renderer/actions/settings";
-import { track } from "~/renderer/analytics/segment";
+import { setTrackingSource, track } from "@shared/analytics";
 import { BalanceTotal, BalanceDiff } from "~/renderer/components/BalanceInfos";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -18,7 +18,6 @@ import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 import Button from "~/renderer/components/ButtonV3";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
@@ -29,6 +28,7 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useStake } from "LLD/hooks/useStake";
+import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -145,13 +145,12 @@ export default function AssetBalanceSummaryHeader({
     });
     setTrackingSource("Page Asset");
     navigate("/swap", {
-      state: {
-        defaultAccountId: account.id,
-        defaultParentAccountId: parentAccount?.id,
+      state: buildSwapNavigationState({
         defaultCurrency: currency,
-        defaultAmountFrom: "0",
-        from: location.pathname,
-      },
+        fromPath: location.pathname,
+        account,
+        parentAccount: parentAccount?.type === "Account" ? parentAccount : undefined,
+      }),
     });
   }, [currency, swapDefaultTrack, navigate, location, account, parentAccount]);
 

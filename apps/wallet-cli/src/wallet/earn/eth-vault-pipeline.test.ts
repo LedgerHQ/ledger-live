@@ -1,4 +1,6 @@
 import { describe, expect, it } from "bun:test";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { walletCliConfig } from "../../config";
 import type { AccountDescriptor } from "../models";
 import type { DefiProduct, DefiTransactionData } from "./api.types";
 import {
@@ -12,6 +14,10 @@ import {
   resolveTerminalTxStatus,
 } from "./eth-vault-pipeline";
 import { normalizeDefiProduct } from "./normalize";
+
+// assertAccountMatchesProductChain reads chainId via getCurrencyConfiguration (LiveConfig); seed the
+// wallet-cli config so "ethereum"/"polygon" resolve deterministically when this file runs in isolation.
+LiveConfig.setConfig(walletCliConfig);
 
 const PRODUCT: DefiProduct = {
   id: "usdc-vault",

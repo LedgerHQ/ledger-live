@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { pairId } from "@domain/entity-market-countervalues";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
@@ -101,6 +101,21 @@ describe("usePayCardAssets", () => {
 
     // 1250 is the smallest unit, so USD reads 12.50 — the number is not a major-unit amount.
     expect(result.current.formatCountervalue(1250)).toContain("12.50");
+  });
+
+  it("hides formatted counter values in discreet mode", () => {
+    const { result } = renderHook(() => usePayCardAssets(), {
+      initialState: { settings: { discreetMode: true } },
+    });
+
+    expect(result.current.formatCountervalue(1250)).toContain("***");
+    expect(result.current.discreet).toBe(true);
+  });
+
+  it("formats asset transaction amounts with the host formatter", () => {
+    const { result } = renderHook(() => usePayCardAssets());
+
+    expect(result.current.formatters?.amount?.("-12.99", "EUR", "fiat")).toContain("€");
   });
 
   it("looks the card currencies up once someone is signed in", () => {

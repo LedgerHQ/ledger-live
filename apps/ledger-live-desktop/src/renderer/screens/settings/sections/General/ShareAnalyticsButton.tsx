@@ -9,7 +9,7 @@ import {
   setSharePersonalizedRecommendations,
 } from "~/renderer/actions/settings";
 import { updateIdentify } from "~/renderer/analytics/segment";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Switch from "~/renderer/components/Switch";
 
 const ShareAnalyticsButton = () => {

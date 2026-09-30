@@ -36,8 +36,13 @@ describe("toAccumulatorEvents", () => {
   });
 
   it.each([
-    ["the address is missing", { integerValue: 100n, operation: 1 }],
-    ["the value is missing", { address: ADDRESS, operation: 1 }],
+    ["the address is missing", { integerValue: 100n, operation: 1, accumulatorType: "0x2::sui" }],
+    ["the value is missing", { address: ADDRESS, operation: 1, accumulatorType: "0x2::sui" }],
+    ["the type is missing", { address: ADDRESS, integerValue: 100n, operation: 1 }],
+    [
+      "the type is empty",
+      { address: ADDRESS, integerValue: 100n, operation: 1, accumulatorType: "" },
+    ],
     ["there is no accumulator write", undefined],
   ])("drops the write when %s", (_label, write) => {
     expect(toAccumulatorEvents(effectsWith(write))).toEqual([]);

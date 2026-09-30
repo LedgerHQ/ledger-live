@@ -3,7 +3,8 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { render, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { screen, track } from "~/analytics";
+import { track } from "~/analytics";
+import { trackPage } from "@shared/analytics";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const/navigation";
@@ -97,19 +98,14 @@ const renderOperationsListWithParams = (
 describe("OperationsList", () => {
   beforeEach(() => {
     mockSetOptions.mockClear();
-    jest.mocked(screen).mockClear();
+    jest.mocked(trackPage).mockClear();
   });
 
   it("tracks the OperationsList screen on focus", () => {
     render(<MockNavigator />);
-    expect(screen).toHaveBeenCalledWith(
-      undefined,
-      "OperationsList",
-      { has_pending_operations: false },
-      true,
-      true,
-      false,
-      false,
+    expect(trackPage).toHaveBeenCalledWith(
+      { category: undefined, name: "OperationsList", props: { has_pending_operations: false } },
+      { updateRoutes: true, refreshSource: true, avoidDuplicates: false, mandatory: false },
     );
   });
 
@@ -129,7 +125,7 @@ describe("OperationsList", () => {
       },
     );
 
-    expect(screen).not.toHaveBeenCalled();
+    expect(trackPage).not.toHaveBeenCalled();
   });
 
   it("does not register the transaction history options menu when the dust filter feature flag is disabled", () => {
@@ -271,14 +267,76 @@ describe("OperationsList", () => {
       expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
     });
 
-    it("should show Card history when an asset scopes the route while the Pay tab is disabled", async () => {
-      const { getByTestId, queryByTestId } = renderOperationsListWithParams({
-        historyTab: "card",
-        asset: "usdc",
-      });
+    it("should show crypto history when the card param is false", () => {
+      const { getByTestId, queryByTestId } = renderOperationsListWithParams(
+        { historyTab: "card" },
+        {
+          overrideInitialState: withFlagOverrides(
+            { lwmPayTab: { enabled: true, params: { card: false } } },
+            stateWithAccountsAndOperations,
+          ),
+        },
+      );
+
+      expect(getByTestId("operations-list-section-list")).toBeVisible();
+      expect(queryByTestId("card-history-signed-out-state")).not.toBeOnTheScreen();
+      expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+    });
+
+    it("should show crypto history when an asset scopes the route while the Pay tab is disabled", () => {
+      const { getByTestId, queryByTestId } = renderOperationsListWithParams(
+        { historyTab: "card", asset: "usdc" },
+        { overrideInitialState: stateWithAccountsAndOperations },
+      );
+
+      expect(getByTestId("operations-list-section-list")).toBeVisible();
+      expect(queryByTestId("card-history-signed-out-state")).not.toBeOnTheScreen();
+      expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+    });
+
+    it("should show crypto history when an asset scopes the route and the card param is false", () => {
+      const { getByTestId, queryByTestId } = renderOperationsListWithParams(
+        { historyTab: "card", asset: "usdc" },
+        {
+          overrideInitialState: withFlagOverrides(
+            { lwmPayTab: { enabled: true, params: { card: false } } },
+            stateWithAccountsAndOperations,
+          ),
+        },
+      );
+
+      expect(getByTestId("operations-list-section-list")).toBeVisible();
+      expect(queryByTestId("card-history-signed-out-state")).not.toBeOnTheScreen();
+      expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+    });
+
+    it("should show crypto history when the card param is missing", () => {
+      const { getByTestId, queryByTestId } = renderOperationsListWithParams(
+        { historyTab: "card" },
+        {
+          overrideInitialState: withFlagOverrides(
+            { lwmPayTab: { enabled: true, params: { card: undefined } } },
+            stateWithAccountsAndOperations,
+          ),
+        },
+      );
+
+      expect(getByTestId("operations-list-section-list")).toBeVisible();
+      expect(queryByTestId("card-history-signed-out-state")).not.toBeOnTheScreen();
+      expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
+    });
+
+    it("should show Card history when an asset scopes the route and the card param is true", async () => {
+      const { getByTestId, queryByTestId } = renderOperationsListWithParams(
+        { historyTab: "card", asset: "usdc" },
+        {
+          overrideInitialState: withFlagOverrides({ lwmPayTab: { enabled: true } }),
+        },
+      );
 
       await waitFor(() => expect(getByTestId("card-history-signed-out-state")).toBeVisible());
       expect(queryByTestId("operations-list-section-list")).not.toBeOnTheScreen();
+      expect(queryByTestId("history-type-switcher")).not.toBeOnTheScreen();
     });
 
     it("should show crypto history when an account-scoped route carries a card param", () => {

@@ -37,6 +37,8 @@ describe("estimatedFees", () => {
       status: {
         type: "active",
       },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
       node: {
         url: "https://polkadot-rpc.publicnode.com",
       },

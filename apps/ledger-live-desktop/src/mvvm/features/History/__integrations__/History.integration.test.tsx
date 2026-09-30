@@ -6,11 +6,11 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
-import { track } from "~/renderer/analytics/segment";
-import { trackPage } from "@shared/analytics";
+import { track, trackPage } from "@shared/analytics";
 
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
   trackPage: jest.fn(),
 }));
 
@@ -379,6 +379,36 @@ describe("History integration", () => {
     expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
   });
 
+  it("should hide the crypto and card switcher when the card param is false", async () => {
+    render(<History />, {
+      initialState: {
+        accounts: [BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card: false } } }),
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("history-table-body")).toBeVisible();
+    });
+    expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
+  });
+
+  it("should hide the crypto and card switcher when the card param is missing", async () => {
+    render(<History />, {
+      initialState: {
+        accounts: [BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card: undefined } } }),
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("history-table-body")).toBeVisible();
+    });
+    expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
+  });
+
   it("should show the crypto and card switcher when the pay tab is enabled", async () => {
     renderHistoryWithPayTab();
 
@@ -391,7 +421,7 @@ describe("History integration", () => {
   it("should show the signed-out card history when the card tab is selected", async () => {
     renderHistoryWithPayTab("/history?tab=card");
 
-    expect(screen.getByTestId("history-card-scope")).toHaveTextContent("Card");
+    expect(screen.queryByTestId("history-card-scope")).not.toBeInTheDocument();
     expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
     expect(screen.getByText("Log in to see your card transactions")).toBeVisible();
     expect(screen.queryByTestId("history-table-body")).not.toBeInTheDocument();

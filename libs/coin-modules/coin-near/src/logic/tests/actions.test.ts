@@ -1,4 +1,5 @@
 import { buildActions } from "../actions";
+import { getStakingGas } from "../../logic";
 
 const AMOUNT = "1000000000000000000000000";
 
@@ -56,12 +57,13 @@ describe("buildActions", () => {
     expect(argsOf(action)).toEqual({ amount: AMOUNT });
   });
 
-  it("calls withdraw_all with extra gas when withdrawing everything", () => {
+  it("calls withdraw_all with the shared staking gas budget when withdrawing everything", () => {
     const [all] = buildActions({ mode: "withdraw", amount: AMOUNT, useAllAmount: true });
     const [partial] = buildActions({ mode: "withdraw", amount: AMOUNT });
 
     expect(functionCallOf(all).methodName).toBe("withdraw_all");
     expect(argsOf(all)).toEqual({});
-    expect(Number(functionCallOf(all).gas)).toBeGreaterThan(Number(functionCallOf(partial).gas));
+    expect(functionCallOf(all).gas.toString()).toBe(getStakingGas().toFixed());
+    expect(functionCallOf(partial).gas.toString()).toBe(getStakingGas().toFixed());
   });
 });

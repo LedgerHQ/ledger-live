@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import type { StakingMappedDelegation } from "@ledgerhq/live-common/families/evm/staking/types";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button, { Base } from "~/renderer/components/Button";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
@@ -194,11 +194,18 @@ export function StepValidatorsFooter({
   onClose,
   status,
   bridgePending,
+  transaction,
 }: Readonly<StepProps>) {
   invariant(account, "account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
-  const canNext = !bridgePending && !hasErrors;
+  const sourceDelegationAmount =
+    account.stakingResources.delegations.find(
+      delegation => delegation.validatorAddress === transaction?.valAddress,
+    )?.amount ?? BigNumber(0);
+  const amount = BigNumber(transaction?.amount ?? 0);
+  const hasValidAmount = amount.gt(0) && amount.lte(sourceDelegationAmount);
+  const canNext = !bridgePending && !hasErrors && hasValidAmount;
 
   return (
     <>

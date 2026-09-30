@@ -1,7 +1,9 @@
+import type { EvmCoinConfig } from "@ledgerhq/coin-evm/config";
 import { UpdateYourApp } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { lastValueFrom, toArray } from "rxjs";
 import type { CeloSigner } from "../../signer/signer";
+import { setCoinConfig } from "../../config";
 
 jest.mock("../../bridge/synchronisation", () => ({ getAccountShape: jest.fn(), sync: jest.fn() }));
 import { getAccountShape } from "../../bridge/synchronisation";
@@ -39,6 +41,10 @@ const scanOf = (signer: CeloSigner) => {
 };
 
 describe("celo scanAccounts resilience (LIVE-34433)", () => {
+  beforeAll(() => {
+    setCoinConfig(() => ({ info: { chainId: 42220, name: "Celo" } }) as unknown as EvmCoinConfig);
+  });
+
   beforeEach(() => {
     (getAccountShape as jest.Mock).mockImplementation(({ address }: { address: string }) =>
       Promise.resolve({

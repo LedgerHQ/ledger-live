@@ -16,29 +16,24 @@ describe("Broadcast", () => {
   });
 
   it("throws on unknown signer", async () => {
-    const keyPair = nearAPI.utils.KeyPair.fromRandom("ed25519");
+    const keyPair = nearAPI.KeyPair.fromRandom("ed25519");
     const publicKey = keyPair.getPublicKey();
     const implicitAccountId = Buffer.from(publicKey.data).toString("hex");
-    const provider = new nearAPI.providers.JsonRpcProvider({
+    const provider = new nearAPI.JsonRpcProvider({
       url: "https://near.coin.ledger.com/node",
     });
-    const { hash } = (await provider.block({ finality: "final" })).header;
-    const blockHashBytes = nearAPI.utils.serialize.base_decode(hash);
-    const unsigned = nearAPI.transactions.createTransaction(
+    const { hash } = (await provider.viewBlock({ finality: "final" })).header;
+    const blockHashBytes = nearAPI.baseDecode(hash);
+    const unsigned = nearAPI.createTransaction(
       implicitAccountId,
       publicKey,
       "near",
       1,
-      [nearAPI.transactions.transfer("10000000000000000000")],
+      [nearAPI.actions.transfer(10000000000000000000n)],
       blockHashBytes,
     );
-    const signer = await nearAPI.InMemorySigner.fromKeyPair("mainnet", implicitAccountId, keyPair);
-    const [, signedTransaction] = await nearAPI.transactions.signTransaction(
-      unsigned,
-      signer,
-      implicitAccountId,
-      "mainnet",
-    );
+    const signer = new nearAPI.KeyPairSigner(keyPair);
+    const { signedTransaction } = await signer.signTransaction(unsigned);
 
     // NOTE Unlerlying message is SignerDoesNotExist
     await expect(

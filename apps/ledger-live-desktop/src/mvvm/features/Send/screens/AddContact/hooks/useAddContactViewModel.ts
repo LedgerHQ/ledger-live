@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 type AddContactViewModel = Readonly<{
   onAddNewContact?: () => void;
@@ -14,7 +14,10 @@ export function useAddContactViewModel(): AddContactViewModel {
   const trackingProperties = useSendFlowTrackingProperties();
 
   useEffect(() => {
-    trackPage("Modal send - add contact options", null, trackingProperties);
+    trackPage({
+      category: "Modal send - add contact options",
+      props: trackingProperties,
+    });
   }, [trackingProperties]);
 
   const onAddNewContact = useCallback(() => {

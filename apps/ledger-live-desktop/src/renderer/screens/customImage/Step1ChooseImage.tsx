@@ -5,9 +5,9 @@ import ImportImage from "~/renderer/components/CustomImage/ImportImage";
 import { StepProps } from "./types";
 import StepContainer from "./StepContainer";
 import { Flex, IconsLegacy, InfiniteLoader, Link, Text } from "@ledgerhq/react-ui";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
-import { track } from "~/renderer/analytics/segment";
 import STAX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/stax.json";
 import FLEX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/flex.json";
 import APEX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/apex.json";
@@ -100,6 +100,7 @@ const StepChooseImage: React.FC<Props> = props => {
               mt={10}
               onClick={onClickRemoveCustomImage}
               Icon={IconsLegacy.TrashMedium}
+              data-testid="remove-custom-image-button"
             >
               {t("removeCurrentPicture.cta")}
             </Link>

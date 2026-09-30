@@ -3,13 +3,14 @@
  */
 import { renderHook } from "@testing-library/react";
 import { useDetailedAccountsCore } from "../useDetailedAccountsCore";
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { CounterValuesState, calculate } from "@domain/entity-market-countervalues";
 import { Currency } from "@domain/entity-currency";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
 // Mock the calculate function
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
   calculate: jest.fn(),
 }));
 
@@ -19,7 +20,6 @@ jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => ({
 }));
 
 // Import the mocked functions
-import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 const mockCalculate = calculate as jest.MockedFunction<typeof calculate>;
 const mockGetTagDerivationMode = getTagDerivationMode as jest.MockedFunction<

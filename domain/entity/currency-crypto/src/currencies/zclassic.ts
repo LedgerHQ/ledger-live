@@ -11,10 +11,6 @@ export const zclassic = currency({
   color: "#CF6031",
   family: "bitcoin",
   blockAvgTime: 150,
-  bitcoinLikeInfo: {
-    P2PKH: 7352,
-    P2SH: 7357,
-  },
   units: [
     {
       name: "zclassic",

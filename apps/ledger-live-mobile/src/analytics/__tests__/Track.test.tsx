@@ -1,32 +1,38 @@
 import React from "react";
 import { render, cleanup } from "@tests/test-renderer";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import Track from "../Track";
-
-jest.mock("../segment", () => ({
-  track: jest.fn(),
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
 
 const eventName = "Test Event";
 const testProps = { testProp: "test value" };
 const updatedProps = { testProp: "new test value" };
 const finalProps = { testProp: "another value" };
 
+const flushDeferredCallback = () => new Promise(resolve => setTimeout(resolve));
+
 describe("Track component", () => {
+  beforeAll(() => {
+    jest.useRealTimers();
+  });
+
+  afterAll(() => {
+    jest.useFakeTimers();
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  afterEach(async () => {
     cleanup();
+    await flushDeferredCallback();
+    jest.clearAllMocks();
   });
 
   it("should track event on mount when #onMount=true", () => {
     render(<Track event={eventName} onMount={true} {...testProps} />);
     expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith(eventName, testProps);
+    expect(track).toHaveBeenCalledWith(eventName, testProps, { mandatory: undefined });
   });
 
   it("should not track event on mount when #onMount=false", () => {
@@ -39,11 +45,12 @@ describe("Track component", () => {
     expect(track).not.toHaveBeenCalled();
   });
 
-  it("should track event on unmount when #onUnmount=true", () => {
+  it("should track event on unmount when #onUnmount=true", async () => {
     const { unmount } = render(<Track event={eventName} onUnmount={true} {...testProps} />);
     unmount();
+    await flushDeferredCallback();
     expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith(eventName, testProps);
+    expect(track).toHaveBeenCalledWith(eventName, testProps, { mandatory: undefined });
   });
 
   it("should not track event on unmount when #onUnmount=false", () => {
@@ -67,7 +74,7 @@ describe("Track component", () => {
     const { rerender } = render(<Track event={eventName} onUpdate={true} {...testProps} />);
     rerender(<Track event={eventName} onUpdate={true} {...updatedProps} />);
     expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith(eventName, updatedProps);
+    expect(track).toHaveBeenCalledWith(eventName, updatedProps, { mandatory: undefined });
   });
 
   it("should track with final props after multiple updates for #onUpdate=true", () => {
@@ -77,7 +84,7 @@ describe("Track component", () => {
 
     rerender(<Track event={eventName} onUpdate={true} {...finalProps} />);
     expect(track).toHaveBeenCalledTimes(2);
-    expect(track).toHaveBeenCalledWith(eventName, finalProps);
+    expect(track).toHaveBeenCalledWith(eventName, finalProps, { mandatory: undefined });
   });
 
   it("should not track when props change for #onUpdate=false", () => {
@@ -91,7 +98,7 @@ describe("Track component", () => {
       <Track event={eventName} onMount={true} onUpdate={true} onUnmount={true} {...testProps} />,
     );
     expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith(eventName, testProps);
+    expect(track).toHaveBeenCalledWith(eventName, testProps, { mandatory: undefined });
   });
 
   it("should not track when rerendering with same props with all options enabled", () => {
@@ -113,10 +120,10 @@ describe("Track component", () => {
       <Track event={eventName} onMount={true} onUpdate={true} onUnmount={true} {...updatedProps} />,
     );
     expect(track).toHaveBeenCalledTimes(2);
-    expect(track).toHaveBeenCalledWith(eventName, updatedProps);
+    expect(track).toHaveBeenCalledWith(eventName, updatedProps, { mandatory: undefined });
   });
 
-  it("should track on unmount with all options enabled", () => {
+  it("should track on unmount with all options enabled", async () => {
     const { unmount, rerender } = render(
       <Track event={eventName} onMount={true} onUpdate={true} onUnmount={true} {...testProps} />,
     );
@@ -127,7 +134,8 @@ describe("Track component", () => {
     expect(track).toHaveBeenCalledTimes(2);
 
     unmount();
+    await flushDeferredCallback();
     expect(track).toHaveBeenCalledTimes(3);
-    expect(track).toHaveBeenCalledWith(eventName, updatedProps);
+    expect(track).toHaveBeenCalledWith(eventName, updatedProps, { mandatory: undefined });
   });
 });

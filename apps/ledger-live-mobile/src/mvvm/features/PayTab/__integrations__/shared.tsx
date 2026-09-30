@@ -21,8 +21,7 @@ import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { NavigatorName, ScreenName } from "~/const";
@@ -167,6 +166,7 @@ type RenderPayTabOptions = Readonly<{
   contacts?: Contact[];
   contactsEnabled?: boolean;
   signedInCard?: boolean;
+  cardEnabled?: boolean;
 }>;
 
 function withUsdcHoldings(state: State): State {
@@ -252,6 +252,26 @@ export function holdDada() {
   return () => release();
 }
 
+const USDC_META_CURRENCY_ID = "urn:crypto:meta-currency:usd_coin";
+
+// MAD sends `additionalData`, the balance query does not: only MAD's stablecoin call gets USDC.
+export function mockStablecoinMadCatalog() {
+  const usdcOnly = {
+    ...mockData,
+    cryptoAssets: { [USDC_META_CURRENCY_ID]: mockData.cryptoAssets[USDC_META_CURRENCY_ID] },
+  };
+  server.use(
+    ...DADA_URLS.map(url =>
+      http.get(url, ({ request }) => {
+        const params = new URL(request.url).searchParams;
+        const isStablecoinMad =
+          params.get("categories") === "stablecoins" && params.has("additionalData");
+        return isStablecoinMad ? HttpResponse.json(usdcOnly) : dadaResponse(request);
+      }),
+    ),
+  );
+}
+
 export function mockFullAssetCatalog() {
   server.use(...DADA_URLS.map(url => http.get(url, () => HttpResponse.json(mockData))));
 }
@@ -265,6 +285,7 @@ function getPayTabRenderInput({
   contacts,
   contactsEnabled = false,
   signedInCard = false,
+  cardEnabled = true,
 }: RenderPayTabOptions = {}) {
   const content = (
     <>
@@ -293,6 +314,7 @@ function getPayTabRenderInput({
         params: { families: ["evm"], excludedCurrencyIds: [] },
       },
       ...(contactsEnabled ? { lwmContacts: { enabled: true, params: { newBadge: false } } } : {}),
+      lwmPayTab: { enabled: true, params: { card: cardEnabled } },
     },
     state => {
       const next: State = {
@@ -304,6 +326,7 @@ function getPayTabRenderInput({
                 hasCard: true,
                 pendingLoginType: null,
                 status: "signedIn" as const,
+                isSessionResolving: false,
               },
             }
           : {}),

@@ -12,8 +12,8 @@ import type { Dispatch } from "redux";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { track } from "~/renderer/analytics/segment";
+import { getTrackingRouteLiveAppSource } from "../Web3AppWebview/analytics";
+import { track } from "@shared/analytics";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
 import { WebviewProps } from "../Web3AppWebview/types";
@@ -98,12 +98,9 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             eventName,
             {
               ...properties,
-              flowInitiatedFrom:
-                currentRouteNameRef.current === "Platform Catalog"
-                  ? "Discover"
-                  : currentRouteNameRef.current,
+              flowInitiatedFrom: getTrackingRouteLiveAppSource(),
             },
-            mandatory,
+            { mandatory: !!mandatory },
           ),
       ),
     [],
@@ -195,7 +192,11 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                 ...exchangeParams,
                 exchangeType: ExchangeType[exchangeParams.exchangeType],
                 onResult: result => {
-                  onSuccess(result.nonce, result.device);
+                  onSuccess(result.nonce, result.device, {
+                    exchangeAppVersion: result.exchangeAppVersion,
+                    signingAppName: result.signingAppName,
+                    signingAppVersion: result.signingAppVersion,
+                  });
                 },
                 onCancel: cancelResult => {
                   onCancel(cancelResult.error, cancelResult.device);

@@ -15,6 +15,7 @@ export type ProposalRowViewModel = {
   proposal: ProcessedProposal;
   unit: Unit;
   timeRemaining: string;
+  isExpired: boolean;
   addressToShow: string;
   amountValue: BigNumber;
   handleAcceptClick: (e: React.MouseEvent) => void;
@@ -29,9 +30,12 @@ export function useProposalRowViewModel({
   onRowClick,
   onOpenModal,
 }: ProposalRowProps): ProposalRowViewModel {
-  const { isIncoming, isExpired, contractId, sender, receiver, amount } = proposal;
+  const { isIncoming, contractId, sender, receiver, amount } = proposal;
 
-  const timeRemaining = useTimeRemaining(proposal.expiresAtMicros, isExpired);
+  const { timeRemaining, isExpired } = useTimeRemaining(
+    proposal.expiresAtMicros,
+    proposal.isExpired,
+  );
 
   const addressToShow = isIncoming ? sender : receiver;
   const amountValue = isIncoming ? amount : amount.negated();
@@ -70,6 +74,7 @@ export function useProposalRowViewModel({
     proposal,
     unit,
     timeRemaining,
+    isExpired,
     addressToShow,
     amountValue,
     handleAcceptClick,

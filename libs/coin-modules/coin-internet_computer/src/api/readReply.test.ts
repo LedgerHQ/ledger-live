@@ -1,13 +1,14 @@
 import { Cbor, Certificate } from "@dfinity/agent";
-import { ICPStakeNotRefreshed } from "../errors";
+import { ICPCallRejected, ICPStakeNotRefreshed } from "../errors";
 import { IDL } from "@dfinity/candid";
 import { Principal } from "@dfinity/principal";
 import {
   claimOrRefreshNeuronFromAccount,
   decodeListNeuronsReply,
   decodeManageNeuronReply,
-  ensureTransferCallAccepted,
   readReplyFromCanister,
+  readTransferOutcome,
+  throwIfLedgerTransferRefused,
 } from "./api";
 import { getCanisterIdlFunc, governanceIdlFactory, ledgerIdlFactory } from "../network/candid";
 
@@ -108,6 +109,30 @@ describe("readReplyFromCanister", () => {
     expect(out).toBeNull();
   });
 
+  // A 202 is the node taking the call without a certificate to show for it yet. It used to be
+  // reported as a failed broadcast — for a call that, as often as not, went on to execute.
+  it("polls when the node took the call but had no certificate for it", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("replied", encStr("LATE")));
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValueOnce({ status: 202, arrayBuffer: async () => new ArrayBuffer(0) }) // /call
+      .mockResolvedValue({
+        status: 200,
+        arrayBuffer: async () => Cbor.encode({ certificate: new Uint8Array([2]) }), // read_state
+      });
+    (global as unknown as { fetch: unknown }).fetch = fetchMock;
+
+    const out = await readReplyFromCanister(
+      Buffer.from("00", "hex"),
+      Buffer.from("01", "hex"),
+      CANISTER,
+      REQ_ID_HEX,
+    );
+
+    expect(out && new TextDecoder().decode(out)).toBe("LATE");
+    expect(fetchMock.mock.calls[1][0]).toContain("read_state");
+  }, 10000);
+
   it("polls the read-state envelope until a terminal reply arrives", async () => {
     (Certificate.create as jest.Mock)
       .mockResolvedValueOnce(certWith("processing")) // sync cert: not yet terminal
@@ -124,6 +149,54 @@ describe("readReplyFromCanister", () => {
       REQ_ID_HEX,
     );
     expect(out && new TextDecoder().decode(out)).toBe("POLLED");
+  }, 10000);
+
+  // The node answers 200 for a call it turned away before replication, with the rejection in place
+  // of a certificate. Nothing ran; polling for a status such a call will never have only delays
+  // saying so, and then says "outcome unknown" instead.
+  it("reports a call refused before replication as rejected, without polling", async () => {
+    const fetchMock = respondingWith({
+      status: "non_replicated_rejection",
+      reject_code: 3,
+      reject_message: "boom",
+      error_code: "IC0406",
+    });
+
+    const attempt = readReplyFromCanister(
+      Buffer.from("00", "hex"),
+      Buffer.from("01", "hex"),
+      CANISTER,
+      REQ_ID_HEX,
+    );
+
+    await expect(attempt).rejects.toThrow(ICPCallRejected);
+    await expect(attempt).rejects.toMatchObject({ reason: "boom" });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  // A read the node refuses — expired along with the call whose expiry it carries, or rate-limited
+  // — says nothing about the call, so the poll goes on rather than reporting the call refused.
+  it("keeps polling when a read of the call's status is refused", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("replied", encStr("LATE")));
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValueOnce({ status: 202, arrayBuffer: async () => new ArrayBuffer(0) }) // /call
+      .mockResolvedValueOnce({ status: 429, text: async () => "rate limited" }) // read_state
+      .mockResolvedValue({
+        status: 200,
+        arrayBuffer: async () => Cbor.encode({ certificate: new Uint8Array([2]) }), // read_state
+      });
+    (global as unknown as { fetch: unknown }).fetch = fetchMock;
+
+    const out = await readReplyFromCanister(
+      Buffer.from("00", "hex"),
+      Buffer.from("01", "hex"),
+      CANISTER,
+      REQ_ID_HEX,
+    );
+
+    expect(out && new TextDecoder().decode(out)).toBe("LATE");
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   }, 10000);
 });
 
@@ -213,6 +286,18 @@ describe("claimOrRefreshNeuronFromAccount", () => {
     await expect(attempt).rejects.toMatchObject({ reason: "denied" });
   });
 
+  // A claim the network rejected leaves the same state as one governance refused: the transfer
+  // settled, the neuron is unclaimed. Reported as a rejected call it would read as "nothing ran" and
+  // be offered a retry — a second transfer.
+  it("reports a rejected claim call as a settled transfer left unclaimed", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("rejected"));
+    respondingWith({ status: "rejected", certificate: new Uint8Array([1]) });
+
+    const attempt = claimOrRefreshNeuronFromAccount(Principal.anonymous(), 5n);
+    await expect(attempt).rejects.toThrow(ICPStakeNotRefreshed);
+    await expect(attempt).rejects.toMatchObject({ reason: "boom" });
+  });
+
   it("returns undefined when the result is indeterminate (polling exhausted)", async () => {
     jest.useFakeTimers();
     try {
@@ -228,24 +313,87 @@ describe("claimOrRefreshNeuronFromAccount", () => {
   });
 });
 
-describe("ensureTransferCallAccepted", () => {
-  // A synchronous /call response certifying the transfer request has a terminal reply.
-  const syncReplied = () =>
-    new Uint8Array(Cbor.encode({ status: "replied", certificate: new Uint8Array([1]) }));
+// A synchronous /call response certifying the transfer request has a terminal status.
+const syncReplied = () =>
+  new Uint8Array(Cbor.encode({ status: "replied", certificate: new Uint8Array([1]) }));
 
+describe("readTransferOutcome", () => {
   afterEach(() => jest.clearAllMocks());
 
-  it("resolves when the certified ledger transfer reply is Ok", async () => {
+  it("returns the ledger's verdict from a certified reply", async () => {
     (Certificate.create as jest.Mock).mockResolvedValue(
       certWith("replied", encodeLedgerReply({ Ok: 42n })),
     );
-    await expect(ensureTransferCallAccepted(syncReplied(), REQ_ID_HEX)).resolves.toBeUndefined();
+    await expect(readTransferOutcome(syncReplied(), REQ_ID_HEX)).resolves.toEqual({ Ok: 42n });
   });
 
-  it("throws when the certified ledger transfer reply is an Err", async () => {
+  it("returns a refusal the ledger replied with, for the caller to report", async () => {
     (Certificate.create as jest.Mock).mockResolvedValue(
       certWith("replied", encodeLedgerReply({ Err: { TxTooOld: { allowed_window_nanos: 1n } } })),
     );
-    await expect(ensureTransferCallAccepted(syncReplied(), REQ_ID_HEX)).rejects.toThrow(/TxTooOld/);
+    await expect(readTransferOutcome(syncReplied(), REQ_ID_HEX)).resolves.toEqual({
+      Err: { TxTooOld: { allowed_window_nanos: 1n } },
+    });
+  });
+
+  // A certificate marking the call `rejected` says the transfer never ran. It used to surface as a
+  // reply that could not be found — a failure with no name, so no retry for a stake that never
+  // happened.
+  it("reports a certified rejection as a rejected call", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("rejected"));
+
+    const attempt = readTransferOutcome(syncReplied(), REQ_ID_HEX);
+
+    await expect(attempt).rejects.toThrow(ICPCallRejected);
+    await expect(attempt).rejects.toMatchObject({ reason: "boom" });
+  });
+
+  it("reports a call refused before replication as a rejected call", async () => {
+    const refused = new Uint8Array(
+      Cbor.encode({
+        status: "non_replicated_rejection",
+        reject_code: 3,
+        reject_message: "boom",
+        error_code: "IC0406",
+      }),
+    );
+
+    const attempt = readTransferOutcome(refused, REQ_ID_HEX);
+
+    await expect(attempt).rejects.toThrow(ICPCallRejected);
+    await expect(attempt).rejects.toMatchObject({ reason: "boom" });
+    expect(Certificate.create).not.toHaveBeenCalled();
+  });
+
+  // Not a verdict: the certificate says the call is still in flight, or its reply is gone, so
+  // nothing here can say what the ledger did. Left nameless for the caller to classify.
+  it("fails plainly when the certified status is not terminal", async () => {
+    (Certificate.create as jest.Mock).mockResolvedValue(certWith("processing"));
+
+    const attempt = readTransferOutcome(syncReplied(), REQ_ID_HEX);
+
+    await expect(attempt).rejects.toThrow(/Reply status not found/);
+    await expect(attempt).rejects.not.toBeInstanceOf(ICPCallRejected);
+  });
+
+  it("fails plainly when the certificate does not verify", async () => {
+    (Certificate.create as jest.Mock).mockRejectedValue(new Error("Invalid certificate"));
+
+    const attempt = readTransferOutcome(syncReplied(), REQ_ID_HEX);
+
+    await expect(attempt).rejects.toThrow(/Invalid certificate/);
+    await expect(attempt).rejects.not.toBeInstanceOf(ICPCallRejected);
+  });
+});
+
+describe("throwIfLedgerTransferRefused", () => {
+  it("throws the ledger's reason when it refused the transfer", () => {
+    expect(() =>
+      throwIfLedgerTransferRefused({ Err: { TxTooOld: { allowed_window_nanos: 1n } } }),
+    ).toThrow(/TxTooOld/);
+  });
+
+  it("does nothing when the transfer went through", () => {
+    expect(() => throwIfLedgerTransferRefused({ Ok: 42n })).not.toThrow();
   });
 });

@@ -1,8 +1,11 @@
 import React from "react";
-import { Text } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
 import { FeatureTourView } from "../FeatureTourView.native";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
   isVisible: true,
@@ -16,21 +19,19 @@ const defaultProps: React.ComponentProps<typeof FeatureTourView> = {
       description: "Use your balance around the world",
     },
   ],
-  onDismiss: jest.fn(),
+  onClose: jest.fn(),
+  onContinue: jest.fn(),
 };
 
 function renderView(props: Partial<React.ComponentProps<typeof FeatureTourView>> = {}) {
-  return render(
-    <PayAnalyticsProvider
-      adapter={{ track: jest.fn() }}
-      renderPage={page => <Text testID="pay-track-page">{page}</Text>}
-    >
-      <FeatureTourView {...defaultProps} {...props} />
-    </PayAnalyticsProvider>,
-  );
+  return render(<FeatureTourView {...defaultProps} {...props} />);
 }
 
 describe("FeatureTourView (Native)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -38,13 +39,13 @@ describe("FeatureTourView (Native)", () => {
   it("tracks the page while visible", () => {
     renderView();
 
-    expect(screen.getByTestId("pay-track-page")).toHaveTextContent("card feature intro");
+    expect(trackedPages()).toContainEqual({ page: "Feature Intro", name: "pay", flow: "pay" });
   });
 
   it("does not track the page while hidden", () => {
     renderView({ isVisible: false });
 
-    expect(screen.queryByTestId("pay-track-page")).toBeNull();
+    expect(trackedPages()).toHaveLength(0);
   });
 
   it("keeps the sheet mounted but hides its content while not visible", () => {
@@ -66,14 +67,14 @@ describe("FeatureTourView (Native)", () => {
   });
 
   it("dismisses once even if the CTA is pressed repeatedly", () => {
-    const onDismiss = jest.fn();
-    renderView({ onDismiss });
+    const onContinue = jest.fn();
+    renderView({ onContinue });
 
     const cta = screen.getByLabelText("Explore Pay");
     fireEvent.press(cta);
     fireEvent.press(cta);
 
-    expect(onDismiss).toHaveBeenCalledTimes(1);
+    expect(onContinue).toHaveBeenCalledTimes(1);
   });
 
   it("hides its content after being dismissed", () => {

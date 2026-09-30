@@ -54,7 +54,6 @@ return useBalanceData({
   formatCountervalue,
   onConfirmFilter,
   onResetFilter,
-  onTrackEvent,
 });
 ```
 

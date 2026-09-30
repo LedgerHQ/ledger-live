@@ -80,8 +80,8 @@ describe("ModularDrawer modules integration", () => {
   });
 
   it("should not display the apy indicator if the configuration is not provided", async () => {
-    const { queryByText, user } = render(<ModularDrawerSharedNavigator />);
-    await user.press(queryByText(WITHOUT_ACCOUNT_SELECTION));
+    const { getByText, queryByText, user } = render(<ModularDrawerSharedNavigator />);
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
     advanceTimers();
     expect(queryByText(/3.66% APY/i)).toBeNull();
   });

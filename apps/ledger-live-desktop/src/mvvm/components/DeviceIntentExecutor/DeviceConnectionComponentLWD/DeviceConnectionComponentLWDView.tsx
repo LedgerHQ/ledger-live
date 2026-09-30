@@ -52,7 +52,7 @@ export function DeviceConnectionComponentLWDView({
       return <ConnectedState />;
 
     case ConnectDeviceUIStateTypes.UnknownError:
-      return <UnknownErrorState />;
+      return <UnknownErrorState state={state} />;
 
     default:
       return assertNever(state);

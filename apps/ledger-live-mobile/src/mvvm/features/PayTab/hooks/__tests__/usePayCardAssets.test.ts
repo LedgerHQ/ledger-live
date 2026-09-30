@@ -1,6 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
-import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
@@ -152,6 +151,21 @@ describe("usePayCardAssets", () => {
 
     // 1250 is the smallest unit, so USD reads 12.50 — the number is not a major-unit amount.
     expect(result.current.assets.formatCountervalue(1250)).toContain("12.50");
+  });
+
+  it("hides formatted counter values in discreet mode", () => {
+    const { result } = renderHook(
+      () => ({ assets: usePayCardAssets(), tracked: useExtraSessionTrackingPair() }),
+      {
+        overrideInitialState: state => ({
+          ...withRates(state),
+          settings: { ...withRates(state).settings, discreetMode: true },
+        }),
+      },
+    );
+
+    expect(result.current.assets.formatCountervalue(1250)).toContain("***");
+    expect(result.current.assets.discreet).toBe(true);
   });
 
   it("looks the card currencies up once someone is signed in", () => {

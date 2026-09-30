@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
@@ -104,7 +104,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
@@ -118,6 +118,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

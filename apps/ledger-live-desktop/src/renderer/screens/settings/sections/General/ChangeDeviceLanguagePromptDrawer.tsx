@@ -5,7 +5,7 @@ import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLangua
 import { DEFAULT_LANGUAGE, Language, Languages } from "~/config/languages";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
 import { getDeviceModel } from "@ledgerhq/devices";

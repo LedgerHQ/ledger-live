@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import BoldToggle from "~/renderer/components/BoldToggle";
 import Box from "~/renderer/components/Box";
 import DropDownSelector, {

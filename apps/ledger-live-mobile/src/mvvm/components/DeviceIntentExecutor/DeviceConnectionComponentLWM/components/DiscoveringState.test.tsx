@@ -24,7 +24,7 @@ const mockedTrackScreen = jest.mocked(TrackScreen);
 
 type DiscoveringUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.Discovering }
+  { type: typeof ConnectDeviceUIStateTypes.Discovering }
 >;
 
 function makeKnownDevice(overrides: Partial<KnownDevice>): KnownDevice {

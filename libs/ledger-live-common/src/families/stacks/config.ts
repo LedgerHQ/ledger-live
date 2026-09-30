@@ -11,6 +11,8 @@ export const stacksConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Stacks",
+      unit: { name: "STX", code: "STX", magnitude: 6 },
     },
   },
 };

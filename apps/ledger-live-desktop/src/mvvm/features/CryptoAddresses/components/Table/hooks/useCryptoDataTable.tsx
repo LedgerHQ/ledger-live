@@ -9,7 +9,7 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 import { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index";
 import { computeBalanceSortCountervalueByAccountId } from "../../../utils/aggregateAccounts";

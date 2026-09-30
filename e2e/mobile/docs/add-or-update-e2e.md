@@ -23,6 +23,14 @@ The Contacts suite is the reference implementation: [`specs/contacts`](../specs/
 Register each page object in [`page/index.ts`](../page/index.ts) with `lazyInit` and a getter, so specs
 reach it as `app.<name>`.
 
+### Pay tab
+
+A spec that needs an injected Card session must live under `specs/paytab/`. On CI, `globalSetup` mints
+once before workers when the selected spec paths include that directory. Locally, `globalSetup` does
+not mint; authentication happens only when a selected Pay tab test reaches `launchApp`. `launchApp`
+injects the session when the spec path contains `/paytab/`. A Pay tab spec anywhere else launches
+signed out.
+
 ## Structure
 
 1. **Keep the spec thin.** It holds only TMS links and tags; the flow, the `OptionalFeatureMap` and the

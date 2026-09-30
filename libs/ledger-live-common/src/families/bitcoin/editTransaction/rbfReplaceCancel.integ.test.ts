@@ -145,7 +145,7 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      walletBtcCurrencyById("bitcoin"),
+      walletBtcCurrencyById("bitcoin", { explorerId: "btc" }),
     );
 
     walletAccount.xpub.explorer = mockExplorer as unknown as typeof walletAccount.xpub.explorer;
@@ -477,7 +477,7 @@ describe("RBF replace and cancel integration (multiple UTXOs)", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      walletBtcCurrencyById("bitcoin"),
+      walletBtcCurrencyById("bitcoin", { explorerId: "btc" }),
     );
 
     walletAccount.xpub.explorer = mockExplorer as unknown as typeof walletAccount.xpub.explorer;

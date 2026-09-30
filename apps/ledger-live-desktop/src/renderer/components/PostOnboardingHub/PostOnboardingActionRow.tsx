@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { PostOnboardingActionState, PostOnboardingAction, Account } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";

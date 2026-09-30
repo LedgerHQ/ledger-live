@@ -1,14 +1,25 @@
 import React, { memo, useMemo } from "react";
-import { Animated, ImageBackground, View } from "react-native";
+import { ImageBackground, View } from "react-native";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  type SharedValue,
+} from "react-native-reanimated";
 import { useTheme, useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import swapBackgroundDark from "~/images/liveApps/swap/MOBILE_SWAP_LW_V4_BG.webp";
 import earnBackgroundDark from "~/images/liveApps/earn/background-dark.webp";
 import cardBackgroundDark from "~/images/card/card-bg.webp";
+import portfolioBackgroundDark from "~/images/portfolio/v4-dark.webp";
 import wallet40BackgroundLight from "~/images/portfolio/v4-light.webp";
 
-const FADE_DISTANCE = 150;
+export { useScrollOffset } from "./useScrollOffset";
+
+// Matches the Wallet 4.0 tab header height.
+const FADE_DISTANCE = 48;
 
 const darkBackgrounds = {
+  portfolio: portfolioBackgroundDark,
   swap: swapBackgroundDark,
   earn: earnBackgroundDark,
   pay: cardBackgroundDark,
@@ -18,7 +29,7 @@ type Wallet40BackgroundType = keyof typeof darkBackgrounds;
 
 type Props = {
   type: Wallet40BackgroundType;
-  scrollY?: Animated.Value;
+  scrollY?: SharedValue<number>;
   fadeDistance?: number;
 };
 
@@ -42,16 +53,12 @@ function Wallet40BackgroundComponent({ type, scrollY, fadeDistance }: Props) {
     [],
   );
 
-  const opacity = useMemo(
-    () =>
-      scrollY
-        ? scrollY.interpolate({
-            inputRange: [0, fadeDistance ?? FADE_DISTANCE],
-            outputRange: [1, 0],
-            extrapolate: "clamp",
-          })
-        : 1,
-    [scrollY, fadeDistance],
+  const distance = fadeDistance ?? FADE_DISTANCE;
+  const fadeStyle = useAnimatedStyle(
+    () => ({
+      opacity: scrollY ? interpolate(scrollY.value, [0, distance], [1, 0], Extrapolation.CLAMP) : 1,
+    }),
+    [scrollY, distance],
   );
 
   const source = useMemo(() => {
@@ -63,7 +70,7 @@ function Wallet40BackgroundComponent({ type, scrollY, fadeDistance }: Props) {
 
   return (
     <View style={styles.container} pointerEvents="none">
-      <Animated.View style={{ opacity }}>
+      <Animated.View style={fadeStyle}>
         <ImageBackground source={source} style={styles.imageContainer} />
       </Animated.View>
     </View>

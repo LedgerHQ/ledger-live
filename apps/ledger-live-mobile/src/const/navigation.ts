@@ -120,7 +120,6 @@ export enum ScreenName {
   Card = "Card",
   PayTab = "PayTab",
   PayTabRequestReceive = "PayTabRequestReceive",
-  PayTabSelectContact = "PayTabSelectContact",
   PayTabPayContact = "PayTabPayContact",
   ExchangeBuy = "ExchangeBuy",
   ExchangeDeveloperMode = "ExchangeDeveloperMode",
@@ -363,9 +362,29 @@ export enum ScreenName {
 
   // internet_computer
   InternetComputerEditMemo = "InternetComputerEditMemo",
-  // ICP staking — entry screens reserved by LIVE-29097; the full flows land with LIVE-29098
+  // ICP staking. The device/validation names are load-bearing: ConnectDevice derives its sibling
+  // screens by string replacement (`route.name.replace("ConnectDevice", …)`), so each flow's four
+  // screens must share a prefix and differ only by that suffix.
   InternetComputerStakingStarted = "InternetComputerStakingStarted",
+  InternetComputerStakingAmount = "InternetComputerStakingAmount",
+  InternetComputerStakingSelectDevice = "InternetComputerStakingSelectDevice",
+  InternetComputerStakingConnectDevice = "InternetComputerStakingConnectDevice",
+  InternetComputerStakingValidationError = "InternetComputerStakingValidationError",
+  InternetComputerStakingValidationSuccess = "InternetComputerStakingValidationSuccess",
   InternetComputerNeuronList = "InternetComputerNeuronList",
+  InternetComputerNeuronDetails = "InternetComputerNeuronDetails",
+  InternetComputerNeuronIncreaseStake = "InternetComputerNeuronIncreaseStake",
+  InternetComputerNeuronSetDissolveDelay = "InternetComputerNeuronSetDissolveDelay",
+  InternetComputerNeuronStakeMaturity = "InternetComputerNeuronStakeMaturity",
+  InternetComputerNeuronSplit = "InternetComputerNeuronSplit",
+  InternetComputerNeuronAddHotKey = "InternetComputerNeuronAddHotKey",
+  InternetComputerNeuronFollowTopic = "InternetComputerNeuronFollowTopic",
+  InternetComputerNeuronFollowees = "InternetComputerNeuronFollowees",
+  InternetComputerNeuronRefreshVotingPower = "InternetComputerNeuronRefreshVotingPower",
+  InternetComputerNeuronSelectDevice = "InternetComputerNeuronSelectDevice",
+  InternetComputerNeuronConnectDevice = "InternetComputerNeuronConnectDevice",
+  InternetComputerNeuronValidationError = "InternetComputerNeuronValidationError",
+  InternetComputerNeuronValidationSuccess = "InternetComputerNeuronValidationSuccess",
 
   // ton
   TonEditComment = "TonEditComment",
@@ -458,6 +477,11 @@ export enum ScreenName {
   AleoClaimUnbondConnectDevice = "AleoClaimUnbondConnectDevice",
   AleoClaimUnbondValidationError = "AleoClaimUnbondValidationError",
   AleoClaimUnbondValidationSuccess = "AleoClaimUnbondValidationSuccess",
+  AleoUnbondAmount = "AleoUnbondAmount",
+  AleoUnbondSelectDevice = "AleoUnbondSelectDevice",
+  AleoUnbondConnectDevice = "AleoUnbondConnectDevice",
+  AleoUnbondValidationError = "AleoUnbondValidationError",
+  AleoUnbondValidationSuccess = "AleoUnbondValidationSuccess",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
@@ -805,6 +829,7 @@ export enum NavigatorName {
   // Aleo
   AleoBondPublicFlow = "AleoBondPublicFlow",
   AleoClaimUnbondFlow = "AleoClaimUnbondFlow",
+  AleoUnbondFlow = "AleoUnbondFlow",
   // SUI
   SuiDelegateFlow = "SuiDelegationFlow",
   SuiUndelegateFlow = "SuiUndelegateFlow",

@@ -3,11 +3,10 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ValidatorField from "../fields/ValidatorField";
-import LedgerByFigmentTCLink from "../components/LedgerByFigmentTCLink";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { Transaction } from "@ledgerhq/live-common/families/sui/types";
 
@@ -60,21 +59,18 @@ export function StepStakeFooter({
   const { errors } = status;
   const canNext = !bridgePending && !errors.validators && transaction?.recipient;
   return (
-    <>
-      {transaction && <LedgerByFigmentTCLink transaction={transaction} />}
-      <Box horizontal>
-        <Button mr={1} onClick={onClose}>
-          <Trans i18nKey="common.cancel" />
-        </Button>
-        <Button
-          id="stake-continue-button"
-          disabled={!canNext}
-          primary
-          onClick={() => transitionTo("amount")}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
-      </Box>
-    </>
+    <Box horizontal>
+      <Button mr={1} onClick={onClose}>
+        <Trans i18nKey="common.cancel" />
+      </Button>
+      <Button
+        id="stake-continue-button"
+        disabled={!canNext}
+        primary
+        onClick={() => transitionTo("amount")}
+      >
+        <Trans i18nKey="common.continue" />
+      </Button>
+    </Box>
   );
 }

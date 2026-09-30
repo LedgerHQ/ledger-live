@@ -4,6 +4,7 @@ import { UserId, initialIdentitiesState } from "@domain/entity-client-identity";
 import type { State } from "~/renderer/reducers";
 import logger from "~/renderer/logger";
 import { saveLogs } from "~/helpers/saveLogs";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -15,6 +16,7 @@ jest.mock("~/renderer/logger", () => ({
   default: {
     log: jest.fn(),
     critical: jest.fn(),
+    onReduxAction: jest.fn(),
   },
 }));
 
@@ -37,7 +39,7 @@ const mockLoggerLog = jest.mocked(logger.log);
 const mockSaveLogs = jest.mocked(saveLogs);
 
 const testUserId = UserId.fromString("test-user-for-export-logs");
-const testAccounts = [{ id: "account-1" }, { id: "account-2" }] as State["accounts"];
+const testAccounts = [genAccount("export-logs-1"), genAccount("export-logs-2")];
 
 const defaultInitialState: Partial<State> = {
   identities: {
@@ -82,7 +84,7 @@ describe("useExportLogs", () => {
     const metaCall = mockLoggerLog.mock.calls.find(call => call[0] === "exportLogsMeta");
     expect(metaCall).toBeDefined();
     const payload = metaCall![1] as Record<string, unknown>;
-    expect(payload.accountsIds).toEqual(["account-1", "account-2"]);
+    expect(payload.accountsIds).toEqual(testAccounts.map(account => account.id));
     expect(payload.env).toBeDefined();
     expect(typeof payload.env).toBe("object");
   });

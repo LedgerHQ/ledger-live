@@ -1,5 +1,5 @@
 import { selectContactAddressById } from "@domain/entity-contact";
-import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
+import type { ContactDeviceIntentsPort, ContactsConfigResolver } from "@features/platform-contacts";
 import { useMemo } from "react";
 import { useDispatch, useStore } from "react-redux";
 import {
@@ -13,6 +13,7 @@ type ContactsStateRoot = Parameters<typeof selectContactAddressById>[0];
 
 export function useContactsAddressDetailActionsPorts(
   deviceIntents: ContactDeviceIntentsPort,
+  getConfig: ContactsConfigResolver,
   signerValidation?: ContactSignerValidationPort,
 ): ContactAddressDetailActionsPorts {
   const dispatch = useDispatch();
@@ -28,9 +29,10 @@ export function useContactsAddressDetailActionsPorts(
         dispatch,
         getState: () => store.getState() as ContactsStateRoot,
         deviceIntents,
+        getConfig,
       }),
       signerValidation: resolvedSignerValidation,
     }),
-    [deviceIntents, dispatch, resolvedSignerValidation, store],
+    [deviceIntents, dispatch, getConfig, resolvedSignerValidation, store],
   );
 }

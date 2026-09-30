@@ -8,7 +8,7 @@ import React, { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate, useLocation } from "react-router";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/ButtonV3";
 import FormattedVal from "~/renderer/components/FormattedVal";

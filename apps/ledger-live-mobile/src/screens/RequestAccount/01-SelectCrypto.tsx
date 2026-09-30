@@ -16,7 +16,7 @@ import useEnv from "@features/platform-env";
 import VersionNumber from "react-native-version-number";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import { Flex, InfiniteLoader, SearchInput } from "@ledgerhq/native-ui";
-import { useGetCounterValueIdsSortedByMarketCapQuery } from "@ledgerhq/live-common/counterValues/state-manager/api";
+import { useGetCounterValueIdsSortedByMarketCapQuery } from "@domain/api-market-countervalues";
 
 type Navigation = StackNavigatorProps<
   RequestAccountNavigatorParamList,

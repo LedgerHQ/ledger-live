@@ -1,4 +1,4 @@
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { Q2_TOUR_SLIDES } from "../../Drawer/const";
 import { PAGE_TRACKING_Q2_TOUR } from "../const";
 import {
@@ -8,7 +8,8 @@ import {
   trackQ2TourCompleted,
 } from "../q2TourCarouselAnalytics";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
@@ -30,15 +31,15 @@ describe("q2TourCarouselAnalytics", () => {
     trackQ2TourInitialStep(getQ2TourAnalyticsContext(0, Q2_TOUR_SLIDES[0].titleKey));
 
     expect(trackPage).toHaveBeenCalledWith(
-      PAGE_TRACKING_Q2_TOUR,
-      undefined,
-      expect.objectContaining({
-        contentId: "q2-tour",
-        step: 1,
-        stepName: Q2_TOUR_SLIDES[0].titleKey,
-      }),
-      true,
-      false,
+      {
+        category: PAGE_TRACKING_Q2_TOUR,
+        props: expect.objectContaining({
+          contentId: "q2-tour",
+          step: 1,
+          stepName: Q2_TOUR_SLIDES[0].titleKey,
+        }),
+      },
+      { updateRoutes: true },
     );
   });
 

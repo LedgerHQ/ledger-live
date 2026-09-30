@@ -15,7 +15,8 @@ import {
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
-import { track, updateIdentify } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
+import { updateIdentify } from "~/renderer/analytics/segment";
 import { resolveAnalyticsOptInPolicyUrl, type AnalyticsOptInVariant } from "../const/policyUrls";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
@@ -118,7 +119,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
         variant,
         entryPoint,
       },
-      shouldWeTrack,
+      { mandatory: shouldWeTrack },
     );
   };
 

@@ -4,7 +4,7 @@ import upperFirst from "lodash/upperFirst";
 import { setLocale } from "~/renderer/actions/settings";
 import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import regionsByKey from "./regions.json";
 import { DEFAULT_LANGUAGE, OFAC_LOCALES } from "~/config/languages";
 

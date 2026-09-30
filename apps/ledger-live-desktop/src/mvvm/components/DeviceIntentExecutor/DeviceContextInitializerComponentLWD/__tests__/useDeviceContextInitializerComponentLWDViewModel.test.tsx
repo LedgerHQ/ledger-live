@@ -7,6 +7,7 @@ import { DeviceId } from "@domain/entity-client-identity";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import {
+  DeviceIntentTrackingProvider,
   DeviceInteractionRequiredType,
   FinalStateType,
   LoadingStateType,
@@ -24,6 +25,7 @@ jest.mock("@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyU
 }));
 
 const mockedEnsureAppReadyUseCase = jest.mocked(ensureAppReadyUseCase);
+const mockReportFailure = jest.fn();
 
 const extractedContext = {
   currentOsVersion: "2.0.0",
@@ -74,7 +76,13 @@ function renderViewModel({
 function TestWrapper({ children, store }: { children: React.ReactNode; store: ReduxStore }) {
   return (
     <Provider store={store}>
-      <MemoryRouter>{children}</MemoryRouter>
+      <MemoryRouter>
+        <DeviceIntentTrackingProvider
+          value={{ sourceFlow: "swap", reportFailure: mockReportFailure }}
+        >
+          {children}
+        </DeviceIntentTrackingProvider>
+      </MemoryRouter>
     </Provider>
   );
 }
@@ -217,5 +225,26 @@ describe("useDeviceContextInitializerComponentLWDViewModel", () => {
     });
     expect(state.settings.latestFirmware).toBeNull();
     expect(state.settings.devicesModelList).toContain(DeviceModelId.nanoX);
+  });
+
+  it("GIVEN the use case fails WHEN the error is displayed THEN it reports a connect app failure with the error tag", () => {
+    // GIVEN
+    const subject = setupObservable();
+    renderViewModel();
+
+    // WHEN
+    act(() => {
+      subject.error({ _tag: "SendApduTimeoutError" });
+    });
+
+    // THEN
+    expect(mockReportFailure).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        failureType: "ConnectAppError",
+        countsAsFailure: true,
+        subError: "SendApduTimeoutError",
+        modelId: DeviceModelId.nanoX,
+      }),
+    );
   });
 });

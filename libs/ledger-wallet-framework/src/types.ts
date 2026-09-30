@@ -8,8 +8,6 @@ export type CryptoCurrencyId = z.infer<typeof CryptoCurrencyIdSchema>;
 export const TokenCurrencyIdSchema = z.string().min(1).brand<"TokenCurrencyId">();
 export type TokenCurrencyId = z.infer<typeof TokenCurrencyIdSchema>;
 
-export type LedgerExplorerId = string;
-
 export interface Unit {
   name: string;
   code: string;
@@ -43,15 +41,8 @@ export interface CryptoCurrency {
   isTestnetFor?: string;
   blockAvgTime?: number;
   explorerViews: ExplorerView[];
-  ethereumLikeInfo?: { chainId: number };
-  bitcoinLikeInfo?: {
-    P2PKH: number;
-    P2SH: number;
-    XPUBVersion?: number;
-  };
   symbol?: string;
   keywords?: string[];
-  explorerId?: string;
   tokenTypes?: string[];
 }
 

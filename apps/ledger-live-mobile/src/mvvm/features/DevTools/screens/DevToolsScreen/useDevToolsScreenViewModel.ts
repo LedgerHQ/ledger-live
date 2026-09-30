@@ -16,10 +16,15 @@ import type { DevToolsConfig } from "@devtools/shell";
 import { openHostedUrlInSecureBrowser } from "@features/flow-pay-card-auth";
 import { useCurrenciesByIds } from "@features/platform-currencies";
 import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
+import { useSelector } from "~/context/hooks";
+import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
+import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
+import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
 type BaseNavigation = NativeStackNavigationProp<
@@ -48,6 +53,12 @@ export function useDevToolsScreenViewModel() {
       screen: ScreenName.DebugPayContactSuccess,
     });
   }, [navigation]);
+  const onNavigateToPaySuccessMe = useCallback(() => {
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.DebugPayContactSuccess,
+      params: { recipient: "me" },
+    });
+  }, [navigation]);
   const onNavigateToSendSuccess = useCallback(() => {
     navigation.navigate(NavigatorName.Settings, {
       screen: ScreenName.DebugSendSuccess,
@@ -74,6 +85,7 @@ export function useDevToolsScreenViewModel() {
       onNavigateToPortfolio,
       onNavigateToPayTab,
       onNavigateToPaySuccess,
+      onNavigateToPaySuccessMe,
       onNavigateToSendSuccess,
     }),
     [
@@ -81,10 +93,19 @@ export function useDevToolsScreenViewModel() {
       onNavigateToPortfolio,
       onNavigateToPayTab,
       onNavigateToPaySuccess,
+      onNavigateToPaySuccessMe,
       onNavigateToSendSuccess,
     ],
   );
   const envToolProps = useEnvDevToolProps();
+  const dmk = useDeviceManagementKit();
+  const knownDevices = useSelector(knownDevicesSelector);
+  const offerSync = useOfferSync();
+  const deviceOnboardingProps = useDeviceOnboarding({
+    dmk,
+    knownDevices,
+    offerSync,
+  });
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
   const { wire, wireState } = useDevToolsRelay();
@@ -94,8 +115,9 @@ export function useDevToolsScreenViewModel() {
       { id: "feature-flags", config: featureFlagsProps },
       { id: "env", config: envToolProps },
       { id: "pay-card", config: payCardToolProps },
+      { id: "device-onboarding", config: deviceOnboardingProps },
     ],
-    [featureFlagsProps, envToolProps, payCardToolProps],
+    [featureFlagsProps, envToolProps, payCardToolProps, deviceOnboardingProps],
   );
 
   const screenOptions: NativeStackNavigationOptions = useMemo(() => {

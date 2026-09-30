@@ -4,6 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact } from "@domain/entity-contact/schema.mock";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { useSendHeaderModel } from "../useSendHeaderModel";
 
 jest.mock("../../../FlowWizard/FlowWizardContext", () => ({
@@ -17,12 +18,16 @@ jest.mock("~/renderer/reducers/wallet", () => ({
   ...jest.requireActual("~/renderer/reducers/wallet"),
   useMaybeAccountName: jest.fn(),
 }));
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
 jest.mock("LLD/hooks/redux");
 jest.mock("@features/platform-contacts", () => ({
+  useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).useContactDisplayName,
   isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
   ).isEligibleAddressCurrency,
@@ -39,6 +44,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasMemoForRecipient: jest.fn(() => true),
     getBalanceTypeConfig: jest.fn(() => null),
+    getTrackingAttributes: jest.fn(() => ({})),
   },
 }));
 jest.mock("../../context/RecipientContactSelectionContext", () => ({
@@ -59,13 +65,14 @@ jest.mock("../../context/SendFlowTrackingContext", () => ({
     setInputMethod: jest.fn(),
     setRecipientResolution: jest.fn(),
     markContactSaved: jest.fn(),
+    trackMessage: jest.fn(),
   })),
 }));
 
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { RecipientScannerProvider } from "../../context/RecipientScannerContext";
 import { useSelector } from "LLD/hooks/redux";
@@ -100,6 +107,7 @@ const mockNavigation = (overrides?: {
 }) => {
   const goToStep = overrides?.goToStep ?? jest.fn();
   const goToPreviousStep = overrides?.goToPreviousStep ?? jest.fn();
+  const resetToStep = jest.fn();
   const canGoBack = overrides?.canGoBack ?? true;
   (useFlowWizard as jest.Mock).mockReturnValue({
     currentStep: SEND_FLOW_STEP.AMOUNT,
@@ -107,10 +115,11 @@ const mockNavigation = (overrides?: {
     navigation: {
       goToStep,
       goToPreviousStep,
+      resetToStep,
       canGoBack: () => canGoBack,
     },
   });
-  return { goToStep, goToPreviousStep };
+  return { goToStep, goToPreviousStep, resetToStep };
 };
 
 const mockActions = (overrides?: { updateTransaction?: jest.Mock }) => {
@@ -142,13 +151,15 @@ const mockData = (
 function renderHook(availableText = "", resetViewState = () => {}) {
   act(() => {
     root.render(
-      <RecipientScannerProvider>
-        <HookProbe
-          onResult={vm => (latestVM = vm)}
-          availableText={availableText}
-          resetViewState={resetViewState}
-        />
-      </RecipientScannerProvider>,
+      <ContactsI18nTestProvider>
+        <RecipientScannerProvider>
+          <HookProbe
+            onResult={vm => (latestVM = vm)}
+            availableText={availableText}
+            resetViewState={resetViewState}
+          />
+        </RecipientScannerProvider>
+      </ContactsI18nTestProvider>,
     );
   });
 }
@@ -427,6 +438,7 @@ describe("useSendHeaderModel", () => {
       expect(latestVM?.recipientContact).toEqual({
         id: "contact-benoit",
         name: "Benoit Jean",
+        isMe: false,
       });
       expect(latestVM?.addressInputValue).toBe("Benoit Jean");
     });
@@ -482,6 +494,29 @@ describe("useSendHeaderModel", () => {
 
       expect(latestVM?.addressInputValue).toBe("0x123456...12345678");
     });
+  });
+
+  it("opens recipient search from a Pay-launched amount step without closing", () => {
+    const { goToStep, goToPreviousStep, resetToStep } = mockNavigation({ canGoBack: false });
+    const { close, updateTransaction } = mockActions();
+    const resetViewState = jest.fn();
+
+    renderHook("", resetViewState);
+    act(() => latestVM?.handleRecipientInputClick());
+
+    const resetAmount = updateTransaction.mock.calls[0][0];
+    expect(
+      resetAmount({ amount: new BigNumber(5), useAllAmount: true, feesStrategy: "fast" }),
+    ).toEqual({
+      amount: new BigNumber(0),
+      useAllAmount: false,
+      feesStrategy: null,
+    });
+    expect(resetViewState).toHaveBeenCalled();
+    expect(resetToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
+    expect(goToStep).not.toHaveBeenCalled();
+    expect(goToPreviousStep).not.toHaveBeenCalled();
+    expect(close).not.toHaveBeenCalled();
   });
 
   describe("handleBack — floating steps (history-based)", () => {

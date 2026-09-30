@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerError } from "~/renderer/components/DeviceAction";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
@@ -63,36 +63,36 @@ export const useTrackReceiveFlow = ({
 
     if (error?.name === "UserRefusedOnDevice") {
       // user refused to open app
-      track("Open app denied", defaultPayload, isTrackingEnabled);
+      track("Open app denied", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "TransportRaceCondition") {
       // transport race condition
-      track("Transport race condition", defaultPayload, isTrackingEnabled);
+      track("Transport race condition", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "CantOpenDevice") {
       // device disconnected during receive flow
-      track("Connection failed", defaultPayload, isTrackingEnabled);
+      track("Connection failed", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "TransportError") {
       // transport error during receive flow
-      track("Transport error", defaultPayload, isTrackingEnabled);
+      track("Transport error", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during receive flow
-      track("Device locked", defaultPayload, isTrackingEnabled);
+      track("Device locked", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (verifyAddressError?.name === "UserRefusedAddress") {
       // user refused to confirm address
-      track("Address confirmation rejected", defaultPayload, isTrackingEnabled);
+      track("Address confirmation rejected", defaultPayload, { mandatory: isTrackingEnabled });
     }
     if (inWrongDeviceForAccount) {
       // device used is not associated with the account
-      track("Wrong device association", defaultPayload, isTrackingEnabled);
+      track("Wrong device association", defaultPayload, { mandatory: isTrackingEnabled });
     }
   }, [
     error,

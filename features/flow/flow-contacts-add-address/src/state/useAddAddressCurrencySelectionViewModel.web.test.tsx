@@ -23,12 +23,7 @@ const ETHEREUM_SELECTION = {
 
 function eligibleNetworkIdsOf(families: readonly string[]) {
   return listCryptoCurrencies()
-    .filter(
-      network =>
-        families.includes(network.family) &&
-        ((network.family === "evm" && network.ethereumLikeInfo !== undefined) ||
-          network.family === "tron"),
-    )
+    .filter(network => families.includes(network.family))
     .map(network => network.id);
 }
 
@@ -62,6 +57,12 @@ function renderViewModel(
       useAddAddressCurrencySelectionViewModel({
         platform: "desktop",
         currencySelection,
+        getConfig: () => ({
+          status: { type: "active" as const },
+          name: "Ethereum",
+          unit: { name: "ether", code: "ETH", magnitude: 18 },
+          chainId: 1,
+        }),
       }),
     { wrapper: makeWrapper(contactsFeature) },
   );
@@ -122,7 +123,9 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
 
     await act(async () => {
       await result.current.selectCurrency();
-      expect(await result.current.selectCurrency()).toEqual({ status: "cancelled" });
+      expect(await result.current.selectCurrency()).toEqual({
+        status: "cancelled",
+      });
     });
 
     expect(result.current.selectedCurrency).toEqual(ETHEREUM_SELECTION);
@@ -182,7 +185,9 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
     const { result } = renderViewModel({ selectCurrency });
 
     await act(async () => {
-      expect(await result.current.selectCurrency()).toEqual({ status: "cancelled" });
+      expect(await result.current.selectCurrency()).toEqual({
+        status: "cancelled",
+      });
       expect(await result.current.selectCurrency()).toEqual({
         status: "selected",
         selection: ETHEREUM_SELECTION,

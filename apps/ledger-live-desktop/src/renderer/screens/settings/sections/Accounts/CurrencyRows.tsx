@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { setCurrencySettings } from "~/renderer/actions/settings";
 import {
   currencySettingsDefaults,

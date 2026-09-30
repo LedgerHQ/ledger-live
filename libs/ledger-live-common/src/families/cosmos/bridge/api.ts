@@ -1,8 +1,11 @@
 import { getRedelegations } from "@ledgerhq/coin-cosmos/logic/staking/getRedelegations";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import { buildSignRawOperation } from "@ledgerhq/coin-cosmos/signRawOperation";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
+import { executeWithSigner } from "../../../bridge/setup";
+import { createSigner } from "../setup";
 
 export function getDeviceSignOptions(
   _transaction: Record<string, unknown>,
@@ -36,5 +39,6 @@ export default function cosmosBridge(_currency: CryptoCurrency): BridgeApi {
       redelegations: await getRedelegations(currency.id, address),
     }),
     getDeviceSignOptions,
+    signRawOperation: buildSignRawOperation(executeWithSigner(createSigner)),
   };
 }

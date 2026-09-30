@@ -11,7 +11,7 @@ import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { QueryKey } from "./type.hooks";
 import { useCloudSyncSDK } from "./useWatchWalletSync";
 import { walletSyncUpdate } from "@domain/entity-wallet-sync";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export function useDestroyTrustchain() {
   const dispatch = useDispatch();

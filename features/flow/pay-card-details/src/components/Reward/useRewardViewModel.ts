@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth/hooks";
-import { useCardRewardWallet } from "@features/flow-pay-card-wallets";
+import { useCardCashback } from "@features/flow-pay-card-wallets";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import type { RewardProps, RewardViewProps } from "./types";
 
@@ -12,42 +13,57 @@ export function useRewardViewModel({
   currencies = NO_CURRENCIES,
   getCounterValue,
   formatCountervalue,
+  onViewRewards,
 }: RewardProps): RewardViewProps | null {
   const { t } = useTranslation();
   const isSignedIn = useIsCardSignedIn();
-  const { rewardWallet, isLoading, isError } = useCardRewardWallet({
+  const { cashback, isLoading, isError } = useCardCashback({
     currencies,
     skip: !isSignedIn,
   });
 
-  return useMemo(() => {
-    if (!isSignedIn || isLoading || isError || !rewardWallet) return null;
+  const handleViewRewards = useCallback(
+    function handleViewRewards() {
+      if (!onViewRewards) return;
+      trackButtonClicked({ button: "view reward currencies", page: "Card details" });
+      onViewRewards();
+    },
+    [onViewRewards],
+  );
 
-    const { balance, currency, ledgerCurrency } = rewardWallet;
+  return useMemo(() => {
+    // An amount with no asset to name would read as a number of nothing, so the banner waits.
+    if (!isSignedIn || isLoading || isError || !cashback?.currency) return null;
+
+    const { amount: earned, currency, ratePercent, ledgerCurrency } = cashback;
+    const ticker = ledgerCurrency?.ticker ?? currency.toUpperCase();
 
     // The programme pays in a token, so the asset's own magnitude applies rather than a fiat two.
     const amount = formatters?.amount
-      ? formatters.amount(balance, currency, "crypto")
-      : `${balance} ${currency.toUpperCase()}`;
+      ? formatters.amount(earned, currency, "crypto")
+      : `${earned} ${ticker}`;
 
     // Any step can decline: a host that prices nothing, an asset no currency resolved for, or a
-    // balance no rate covers. The banner then shows the asset amount alone, never a wrong number.
+    // amount no rate covers. The banner then shows the asset amount alone, never a wrong number.
     const value =
-      getCounterValue && ledgerCurrency ? getCounterValue(ledgerCurrency, balance) : null;
+      getCounterValue && ledgerCurrency ? getCounterValue(ledgerCurrency, earned) : null;
 
     return {
       amount,
       countervalue: value === null || !formatCountervalue ? null : formatCountervalue(value),
-      subtitle: t("payTab.card.reward.title"),
+      subtitle: t("payTab.card.reward.title", { ratePercent, ticker }),
+      ...(onViewRewards ? { onPress: handleViewRewards } : {}),
     };
   }, [
     isSignedIn,
     isLoading,
     isError,
-    rewardWallet,
+    cashback,
     formatters,
     getCounterValue,
     formatCountervalue,
     t,
+    onViewRewards,
+    handleViewRewards,
   ]);
 }

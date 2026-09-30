@@ -3,8 +3,7 @@ import {
   getAccountCurrency,
   isAccountEmpty,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
-import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
+import { resolveTrackingPairs, type TrackingPair } from "@domain/entity-market-countervalues";
 import type { Currency } from "@domain/entity-currency";
 import type { Account } from "@ledgerhq/types-live";
 

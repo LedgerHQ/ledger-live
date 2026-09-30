@@ -17,7 +17,7 @@ export function AddToExistingContactScreen() {
       searchPlaceholder={viewModel.labels.searchPlaceholder}
       searchNoResults={viewModel.labels.searchNoResults}
       formatAddressCount={viewModel.labels.formatAddressCount}
-      meAvatarSrc={viewModel.meAvatarSrc}
+
       isOpeningAddressFlow={viewModel.isOpeningAddressFlow}
       onSearchInputChange={viewModel.onSearchInputChange}
       onSelectContact={viewModel.onSelectContact}

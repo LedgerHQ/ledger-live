@@ -5,7 +5,7 @@ import releaseNotes from "../../../../release-notes.json";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Markdown, { Notes } from "~/renderer/components/Markdown";

@@ -6,6 +6,7 @@ import * as segment from "../segment";
 import type { LoggableEvent } from "../segment";
 
 jest.unmock("../segment");
+jest.unmock("@shared/analytics");
 
 describe("segment before start()", () => {
   let logged: LoggableEvent[];

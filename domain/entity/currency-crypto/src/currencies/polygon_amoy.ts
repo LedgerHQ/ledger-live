@@ -11,9 +11,6 @@ export const polygon_amoy = currency({
   color: "#6d29de",
   family: "evm",
   isTestnetFor: "polygon",
-  ethereumLikeInfo: {
-    chainId: 80002,
-  },
   units: [
     {
       name: "POL",
@@ -48,5 +45,4 @@ export const polygon_amoy = currency({
       token: "https://amoy.polygonscan.com/token/$contractAddress?a=$address",
     },
   ],
-  explorerId: "matic_amoy",
 });

@@ -110,7 +110,12 @@ const DeviceInformationSummary = ({
             </Box>
             <Flex justifyContent="space-between" alignItems="center" mt={1}>
               <Flex flexDirection="row" alignItems="center">
-                <Text variant="h5Inter" fontSize={4} color="neutral.c70">
+                <Text
+                  variant="h5Inter"
+                  fontSize={4}
+                  color="neutral.c70"
+                  data-testid="device-os-version"
+                >
                   {
                     <Trans
                       i18nKey="manager.deviceStorage.OSVersion"
@@ -121,7 +126,13 @@ const DeviceInformationSummary = ({
                   }{" "}
                   {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
                 </Text>
-                <Flex ml={2} flexDirection="row" justifyItems="center" alignItems="center">
+                <Flex
+                  ml={2}
+                  flexDirection="row"
+                  justifyItems="center"
+                  alignItems="center"
+                  data-testid="device-genuine-badge"
+                >
                   <Certificate />
                   <Text variant="h5Inter" fontSize={4} color="neutral.c70" ml={1}>
                     <Trans i18nKey="manager.deviceStorage.genuine" />

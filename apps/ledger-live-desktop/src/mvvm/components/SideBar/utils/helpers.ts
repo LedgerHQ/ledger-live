@@ -15,6 +15,7 @@ export function pathnameToActive(
   pathname: string,
   referPath: string | undefined,
   shouldDisplayAssetSection = false,
+  search = "",
 ): SideBarActiveValue {
   if (referPath && pathname.startsWith(referPath)) return SIDEBAR_SPECIAL_VALUES.refer;
   if (pathname === "/") return "home";
@@ -22,7 +23,10 @@ export function pathnameToActive(
   if (pathname.startsWith("/account")) return "accounts";
   if (pathname.startsWith("/swap")) return "swap";
   if (pathname === "/earn") return "earn";
-  if (pathname.startsWith("/platform")) return "discover";
+  if (pathname.startsWith("/platform")) {
+    const returnTo = new URLSearchParams(search).get("returnTo");
+    return returnTo === SIDEBAR_VALUE_TO_PATH.paytab ? "paytab" : "discover";
+  }
   if (pathname.startsWith("/paytab")) return "paytab";
   if (pathname === "/card-new-wallet" || pathname.startsWith("/card")) return "card";
   return "";

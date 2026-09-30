@@ -39,14 +39,10 @@ export const ethereum_hoodi = currency({
   isTestnetFor: "ethereum",
   family: "evm",
   blockAvgTime: 15,
-  ethereumLikeInfo: {
-    chainId: 560048,
-  },
   explorerViews: [
     {
       tx: "https://hoodi.etherscan.io/tx/$hash",
       address: "https://hoodi.etherscan.io/address/$address",
     },
   ],
-  explorerId: "eth_hoodi",
 });

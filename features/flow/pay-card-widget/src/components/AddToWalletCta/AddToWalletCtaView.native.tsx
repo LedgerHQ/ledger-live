@@ -16,7 +16,7 @@ export function AddToWalletCtaView({
   return (
     <Button
       appearance={appearance}
-      size="lg"
+      size="md"
       isFull
       icon={ctaIcon}
       onPress={onPressCta}

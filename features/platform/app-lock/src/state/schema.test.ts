@@ -18,6 +18,7 @@ describe("AppLockStateSchema", () => {
       biometricsEnabled: false,
       isLocked: true,
       needsLongerPassword: false,
+      hasDecidedLaunchLock: true,
     };
 
     expect(AppLockStateSchema.parse(state)).toEqual(state);

@@ -1,4 +1,4 @@
-import type { AccountRaw, Account } from "@ledgerhq/types-live";
+import type { AccountRaw, Account, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type {
   HederaAccount,
@@ -57,4 +57,20 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   if (hederaAccountRaw.hederaResources) {
     hederaAccount.hederaResources = fromHederaResourcesRaw(hederaAccountRaw.hederaResources);
   }
+}
+
+export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
+  const { stakedAmount, ...rest } = extra as Record<string, unknown>;
+
+  return BigNumber.isBigNumber(stakedAmount)
+    ? { ...rest, stakedAmount: stakedAmount.toFixed() }
+    : (extra as OperationExtraRaw);
+}
+
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
+  const { stakedAmount, ...rest } = extraRaw as Record<string, unknown>;
+
+  return typeof stakedAmount === "string"
+    ? { ...rest, stakedAmount: new BigNumber(stakedAmount) }
+    : (extraRaw as OperationExtra);
 }

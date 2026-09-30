@@ -9,7 +9,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useGetSupportedFiatsQuery } from "@domain/api-currency-fiat";
 import Select from "~/renderer/components/Select";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 
 const CounterValueSelectComponent: React.FC = () => {
   useGetSupportedFiatsQuery();

@@ -1,5 +1,6 @@
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { t } from "~/renderer/i18n/init";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -7,7 +8,11 @@ import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send
 import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import { isEligibleAddressCurrency, useContactsFeature } from "@features/platform-contacts";
+import {
+  isEligibleAddressCurrency,
+  useContactsFeature,
+  useContactDisplayName,
+} from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "LLD/hooks/redux";
 import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
@@ -20,7 +25,7 @@ import {
 import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientScanner } from "../context/RecipientScannerContext";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
@@ -41,6 +46,7 @@ type UseSendHeaderModelResult = Readonly<{
   handleRecipientInputChange: (value: string) => void;
   handleRecipientPaste: () => void;
   handleQrCodeClick: () => void;
+  handleQrScannerError: (error: Error) => void;
   handleScanPicked: (code: string) => void;
   isScannerOpen: boolean;
   recipientContact: RecipientHeaderContact | undefined;
@@ -110,7 +116,7 @@ export function useSendHeaderModel({
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
-  const { recipientType, setInputMethod } = useSendFlowTracking();
+  const { recipientType, setInputMethod, trackMessage } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
   const {
     isEnabled: isContactsFeatureEnabled,
@@ -150,7 +156,10 @@ export function useSendHeaderModel({
   const hasFiredMemoPageViewRef = useRef(false);
   if (showMemoControls && !hasFiredMemoPageViewRef.current) {
     hasFiredMemoPageViewRef.current = true;
-    trackPage("Modal send - step memo", null, trackingProperties);
+    trackPage({
+      category: "Modal send - step memo",
+      props: trackingProperties,
+    });
   } else if (!showMemoControls) {
     hasFiredMemoPageViewRef.current = false;
   }
@@ -209,6 +218,19 @@ export function useSendHeaderModel({
     accountSummary,
   });
 
+  const resetAmountStep = useCallback(() => {
+    // Memo reset first: it writes a whole transaction derived from the one captured at
+    // render time, so running it after the amount reset would restore the old amount.
+    resetViewState();
+    // Reset amount-related fields so they don't persist when the screen remounts
+    transaction.updateTransaction(tx => ({
+      ...tx,
+      amount: new BigNumber(0),
+      useAllAmount: false,
+      feesStrategy: null,
+    }));
+  }, [resetViewState, transaction]);
+
   const handleBack = useCallback(() => {
     closeScanner();
 
@@ -230,16 +252,7 @@ export function useSendHeaderModel({
     // Per-step state cleanup that runs regardless of whether navigation uses backTarget
     // or goToPreviousStep, so floating steps and regular steps are treated uniformly
     if (currentStep === SEND_FLOW_STEP.AMOUNT) {
-      // Memo reset first: it writes a whole transaction derived from the one captured at
-      // render time, so running it after the amount reset would restore the old amount.
-      resetViewState();
-      // Reset amount-related fields so they don't persist when the screen remounts
-      transaction.updateTransaction(tx => ({
-        ...tx,
-        amount: new BigNumber(0),
-        useAllAmount: false,
-        feesStrategy: null,
-      }));
+      resetAmountStep();
     } else if (currentStep === SEND_FLOW_STEP.COIN_CONTROL) {
       // Reset UTXO exclusions so the selection doesn't bleed into the next visit
       transaction.updateTransaction(tx => {
@@ -270,7 +283,7 @@ export function useSendHeaderModel({
     isContactAddressFlowStep,
     isSelectingContactAddress,
     navigation,
-    resetViewState,
+    resetAmountStep,
     transaction,
     trackingProperties,
   ]);
@@ -304,12 +317,16 @@ export function useSendHeaderModel({
       state.recipient,
     ],
   );
+  const getDisplayName = useContactDisplayName();
+  const recipientLabel = recipientHeader.contact
+    ? getDisplayName(recipientHeader.contact)
+    : recipientHeader.recipientDisplayValue;
 
   const addressInputValue = useMemo(() => {
     if (isRecipientStep) return recipientSearch.value;
-    if (isAmountStep) return recipientHeader.label;
+    if (isAmountStep) return recipientLabel;
     return recipientSearch.value;
-  }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
+  }, [isRecipientStep, isAmountStep, recipientLabel, recipientSearch.value]);
 
   const handleRecipientInputClick = useCallback(() => {
     if (!isAmountStep) return;
@@ -319,8 +336,10 @@ export function useSendHeaderModel({
       recipientSearch.setValue(prefillValue);
     }
 
-    handleBack();
-  }, [handleBack, isAmountStep, recipientSearch, state.recipient]);
+    resetAmountStep();
+    // Reset instead of push so Amount ⇄ Recipient round trips never stack in the back history.
+    navigation.resetToStep(SEND_FLOW_STEP.RECIPIENT);
+  }, [isAmountStep, navigation, recipientSearch, resetAmountStep, state.recipient]);
 
   const showScanner = isScannerOpen && isRecipientStep;
 
@@ -338,6 +357,31 @@ export function useSendHeaderModel({
     }
     toggleScanner();
   }, [isScannerOpen, toggleScanner, trackingProperties]);
+
+  const handleQrScannerError = useCallback(
+    (error: Error) => {
+      trackMessage({
+        account: state.account.account,
+        parentAccount: state.account.parentAccount,
+        step: SEND_FLOW_STEP.RECIPIENT,
+        message: {
+          messageId: error.name,
+          messageType: "error",
+        },
+        metadata: {
+          recipientType,
+          recipientLength: recipientSearch.value.length,
+        },
+      });
+    },
+    [
+      recipientSearch.value.length,
+      recipientType,
+      state.account.account,
+      state.account.parentAccount,
+      trackMessage,
+    ],
+  );
 
   const pastedInputRef = useRef(false);
   const handleRecipientPaste = useCallback(() => {
@@ -385,12 +429,14 @@ export function useSendHeaderModel({
   const transactionError = state.transaction.status?.errors?.transaction;
   const transactionErrorName = transactionError?.name;
 
+  const config = resolveCurrencyConfig(state.account.currency?.id);
   const canSearchContacts =
     isContactsFeatureEnabled &&
     isEligibleAddressCurrency(
       eligibleAddressFamilies,
       state.account.currency ?? undefined,
       excludedCurrencyIds,
+      config,
     );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
@@ -408,6 +454,7 @@ export function useSendHeaderModel({
     handleRecipientInputChange,
     handleRecipientPaste,
     handleQrCodeClick,
+    handleQrScannerError,
     handleScanPicked,
     isScannerOpen: showScanner,
     recipientContact: recipientHeader.contact,

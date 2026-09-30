@@ -92,6 +92,7 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
       },
       chainId: 1116,
       name: "Core",
+      unit: { name: "CORE", code: "CORE", magnitude: 18 },
       node: {
         type: "external",
         uri: "http://127.0.0.1:8545",
@@ -149,7 +150,7 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(core.ethereumLikeInfo?.chainId || 1116);
+    await indexBlocks(1116);
   },
   afterAll: _account => {
     // TODO: uncomment when explorer is ready

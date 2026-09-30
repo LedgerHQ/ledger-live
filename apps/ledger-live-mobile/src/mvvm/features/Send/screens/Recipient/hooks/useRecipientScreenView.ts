@@ -1,9 +1,12 @@
 import {
   isEligibleAddressCurrency,
+  sortContactsByLastSentThenLastAdded,
+  summarizeOutgoingOperationsByContact,
   useContacts,
   useContactsFeature,
 } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
@@ -14,10 +17,12 @@ import type { Contact, ContactAddress } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Keyboard } from "react-native";
 import { screen, track } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
+import { useOutgoingContactOperations } from "LLM/features/Contacts/hooks/useOutgoingContactOperations";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendMemoReset } from "../../../context/SendMemoResetContext";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
@@ -57,6 +62,7 @@ export function useRecipientScreenView({
 }: UseRecipientScreenViewProps) {
   const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
+  const outgoingOperations = useOutgoingContactOperations();
   const {
     isEnabled: isContactsFeatureEnabled,
     eligibleAddressFamilies,
@@ -74,10 +80,12 @@ export function useRecipientScreenView({
     useState<PendingSkipMemoRecipient | null>(null);
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const config = resolveCurrencyConfig(currency.id);
   const hasAddressBook = isEligibleAddressCurrency(
     eligibleAddressFamilies,
     currency,
     excludedCurrencyIds,
+    config,
   );
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
@@ -93,8 +101,16 @@ export function useRecipientScreenView({
   });
 
   const contactsOnNetwork = useMemo(
-    () => filterContactsByNetwork(contacts, currency.id),
-    [contacts, currency.id],
+    () =>
+      filterContactsByNetwork(
+        sortContactsByLastSentThenLastAdded(
+          contacts,
+          summarizeOutgoingOperationsByContact(contacts, outgoingOperations),
+        ),
+        currency.id,
+        { includeMe: true },
+      ),
+    [contacts, currency.id, outgoingOperations],
   );
   const hasSearchValue = recipientSearch.value.length > 0;
   const contactSearchResult = useMemo(() => {
@@ -234,6 +250,9 @@ export function useRecipientScreenView({
           return;
         }
 
+        // The address input holds the keyboard, and the search results are tapped through
+        // `keyboardShouldPersistTaps`, so nothing retracts it before the sheet slides up under it.
+        Keyboard.dismiss();
         setPendingSkipMemoRecipient({ address, ensName });
         return;
       }

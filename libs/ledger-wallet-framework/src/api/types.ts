@@ -4,12 +4,14 @@ import type {
   BalanceOptions,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { GetAddressResult } from "../derivation";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import type {
   Account,
   AccountReadiness,
   Operation as LiveOperation,
   OperationType,
+  SignRawOperationFnSignature,
   StakingResources,
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
@@ -42,6 +44,18 @@ export type ChainSpecificRules = {
   getTransactionStatus: {
     throwIfPendingOperation?: boolean;
   };
+};
+
+export type AddressLookup = {
+  /**
+   * The addresses the device key `derived.publicKey` controls, in the order to offer them.
+   *
+   * `[]` ends the scan. If the wallet can create the account, return a placeholder instead: it
+   * comes back unused and is offered as the new account.
+   */
+  getAddresses: (derived: GetAddressResult) => Promise<string[]>;
+  /** Lets `receive()` verify the device offline. */
+  keyControlsAccount: (publicKey: string, account: Account) => boolean;
 };
 
 export type BridgeApi = {
@@ -84,6 +98,8 @@ export type BridgeApi = {
     transaction: Record<string, unknown>,
     account: Account,
   ) => Record<string, unknown> | undefined;
+  /** Replaces the generic raw signing (craft, sign, combine) with the family's own. */
+  signRawOperation?: SignRawOperationFnSignature<Account>;
   /**
    * Family-owned account fields with no generic equivalent — `stakingResources`, `stakingPositions`,
    * whatever the family names — passed through without the framework inspecting them, hence the index
@@ -116,6 +132,19 @@ export type BridgeApi = {
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
+  /**
+   * When true, `signOperation` forwards the last estimation's `FeeEstimation.parameters` (carried on
+   * `GenericTransaction.feeParameters`) into the `customFees.parameters` bag it hands
+   * `craftTransaction` — the way `getTransactionStatus` already does for `validateIntent`.
+   *
+   * Opt-in per family rather than always-on: that bag reaches `craftTransaction` on every send, so a
+   * family whose crafting reads a key its own estimation also emits would change behaviour with no
+   * type error. Needed where a chain field is a *ceiling* rather than a fee, which
+   * `FeeEstimation.value` cannot supply — `value` is the net fee, and pinning TRON's TRC-20
+   * `fee_limit` to it reverts OUT_OF_ENERGY once the sender's energy covers the transfer
+   * (LIVE-36865).
+   */
+  forwardsFeeParametersToCraft?: boolean;
   /**
    * Whether the chain surfaces staking data through `getBalance`
    */
@@ -157,4 +186,15 @@ export type BridgeApi = {
    * @returns The readiness of the account (ready flag + optional reason).
    */
   getAccountReadiness?: (currency: CryptoCurrency, address: string) => Promise<AccountReadiness>;
+  /**
+   * For chains whose address is handed out by the network, not derived from the path (ADR-055).
+   * When present, scan asks it for the addresses a device key controls, and `receive()` verifies the
+   * device through `keyControlsAccount`.
+   */
+  addressLookup?: AddressLookup;
+  /**
+   * Defaults to `true`. Set `false` when the account shape returns the whole operation list, or the
+   * merge puts back the operations the shape left out.
+   */
+  shouldMergeOps?: boolean;
 };

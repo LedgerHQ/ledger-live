@@ -17,7 +17,7 @@ import { UpdaterContext } from "~/renderer/components/Updater/UpdaterContext";
 import { VISIBLE_STATUS } from "./Updater/Banner";
 import StyleProvider from "~/renderer/styles/StyleProvider";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import getCleanVersion from "../screens/manager/FirmwareUpdate/getCleanVersion";
 import { getEnv } from "@shared/env";
 import { getDeviceIcon } from "LLD/utils/getDeviceIcon";

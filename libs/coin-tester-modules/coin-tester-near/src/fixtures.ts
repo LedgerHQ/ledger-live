@@ -8,8 +8,6 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { DEFAULT_ACCOUNT_ID } from "near-sandbox";
 
-export const NETWORK_ID = "sandbox";
-
 /** Every account the scenario touches is a subaccount of the genesis account. */
 export const SENDER_ID = `sender.${DEFAULT_ACCOUNT_ID}`;
 export const NAMED_RECIPIENT_ID = `recipient.${DEFAULT_ACCOUNT_ID}`;
@@ -36,6 +34,8 @@ export const EPOCHS_TO_UNLOCK_BLOCKS = 2500;
 
 export const coinConfig = (rpcUrl: string) => () => ({
   status: { type: "active" as const },
+  name: "NEAR",
+  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
   infra: {
     API_NEAR_PRIVATE_NODE: rpcUrl,
     API_NEAR_PUBLIC_NODE: rpcUrl,

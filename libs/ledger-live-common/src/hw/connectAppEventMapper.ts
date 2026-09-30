@@ -41,6 +41,7 @@ export class ConnectAppEventMapper {
   private openAppRequested: boolean = false;
   private permissionRequested: boolean = false;
   private lastSeenDeviceSent: boolean = false;
+  private lastEmittedInstalledAppVersions: { name: string; version: string }[] = [];
   private installPlan: InstallPlan | null = null;
   private deviceId: string | undefined = undefined;
   private eventSubject = new Subject<ConnectAppEvent>();
@@ -133,7 +134,40 @@ export class ConnectAppEventMapper {
     }
   }
 
+  private emitInstalledAppVersions(
+    deviceMetadata: ConnectAppDAIntermediateValue["deviceMetadata"],
+    installedApplications: readonly { versionName: string; version: string }[] = [],
+  ): void {
+    const appsByName = new Map(
+      (deviceMetadata?.applications ?? []).map(app => [
+        app.versionName,
+        { name: app.versionName, version: app.version },
+      ]),
+    );
+    installedApplications.forEach(app => {
+      appsByName.set(app.versionName, { name: app.versionName, version: app.version });
+    });
+    const apps = [...appsByName.values()];
+    if (
+      apps.length === 0 ||
+      (apps.length === this.lastEmittedInstalledAppVersions.length &&
+        apps.every(
+          (app, index) =>
+            app.name === this.lastEmittedInstalledAppVersions[index]?.name &&
+            app.version === this.lastEmittedInstalledAppVersions[index]?.version,
+        ))
+    ) {
+      return;
+    }
+    this.lastEmittedInstalledAppVersions = apps;
+    this.eventSubject.next({
+      type: "installed-app-versions",
+      apps,
+    });
+  }
+
   private handlePendingEvent(intermediateValue: ConnectAppDAIntermediateValue): void {
+    this.emitInstalledAppVersions(intermediateValue.deviceMetadata);
     switch (intermediateValue.requiredUserInteraction) {
       case UserInteractionRequired.ConfirmOpenApp:
         if (!this.openAppRequested) {
@@ -232,6 +266,10 @@ export class ConnectAppEventMapper {
   }
 
   private handleCompletedEvent(output: ConnectAppDAOutput, deviceState: DeviceSessionState): void {
+    this.emitInstalledAppVersions(
+      output.deviceMetadata,
+      output.installResult?.successfullyInstalled ?? [],
+    );
     if (deviceState.sessionStateType !== DeviceSessionStateType.Connected) {
       // Handle opened app
       const currentApp = deviceState.currentApp;

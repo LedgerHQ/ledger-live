@@ -4,6 +4,7 @@ import { genuineCheck } from "./actors/genuineCheck";
 import { readDeviceState } from "./actors/readDeviceState";
 import { seedPolling } from "./actors/seedPolling";
 import { toggleEarlyCheck } from "./actors/toggleEarlyCheck";
+import { unlockPolling } from "./actors/unlockPolling";
 import {
   contextActions,
   currentVerdict,
@@ -38,7 +39,14 @@ export const deviceOnboardingMachine = setup({
     input: {} as DeviceOnboardingInput,
     output: {} as DeviceOnboardingOutput,
   },
-  actors: { readDeviceState, genuineCheck, firmwareCheck, toggleEarlyCheck, seedPolling },
+  actors: {
+    readDeviceState,
+    genuineCheck,
+    firmwareCheck,
+    toggleEarlyCheck,
+    seedPolling,
+    unlockPolling,
+  },
   actions: contextActions,
   guards: {
     requiresLegacyFlow: ({ context }) =>
@@ -307,7 +315,13 @@ export const deviceOnboardingMachine = setup({
     syncOffer: { type: "final", output: { reason: "offerLedgerSync" } satisfies ExitOutput },
     done: { type: "final", output: { reason: "completed" } satisfies ExitOutput },
 
-    deviceLocked: { on: { UNLOCKED: "readingState" } },
+    deviceLocked: {
+      invoke: {
+        src: "unlockPolling",
+        input: ({ context }) => ({ dmk: context.dmk, sessionId: context.ports.currentSessionId() }),
+      },
+      on: { UNLOCKED: "readingState" },
+    },
     awaitingSession: {
       on: {
         SESSION_READY: {

@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import type {
   VerifyAddressNextStep,
   VerifyAddressProps,
@@ -15,37 +16,37 @@ export function useVerifyAddressViewModel({
   onVerify,
   onGotIt,
   onClose,
-  onTrackEvent,
 }: VerifyAddressProps): VerifyAddressViewModel {
   const { t } = useTranslation();
 
   const nextSteps = useMemo<readonly VerifyAddressNextStep[]>(
     () => [
-      { index: 1, label: t(`${KEY_PREFIX}.nextStepShare`) },
-      { index: 2, label: t(`${KEY_PREFIX}.nextStepMatch`) },
+      { index: 1, label: t(`${KEY_PREFIX}.nextStepKeepDisplayed`) },
+      { index: 2, label: t(`${KEY_PREFIX}.nextStepPaste`) },
+      { index: 3, label: t(`${KEY_PREFIX}.nextStepCheckMatch`) },
     ],
     [t],
   );
 
   const handleVerify = useCallback(() => {
-    onTrackEvent?.("button_clicked", {
+    trackButtonClicked({
       button: "verify",
       buttonLocation: TRACK_LOCATION,
       page,
       flow: "request",
     });
     onVerify();
-  }, [onVerify, onTrackEvent, page]);
+  }, [onVerify, page]);
 
   const handleGotIt = useCallback(() => {
-    onTrackEvent?.("button_clicked", {
+    trackButtonClicked({
       button: "got it",
       buttonLocation: TRACK_LOCATION,
       page,
       flow: "request",
     });
     onGotIt();
-  }, [onGotIt, onTrackEvent, page]);
+  }, [onGotIt, page]);
 
   return {
     isIntroOpen: phase === "intro",

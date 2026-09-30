@@ -5,7 +5,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { isEditDeviceNameSupported } from "@ledgerhq/live-common/device/use-cases/isEditDeviceNameSupported";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import styled from "styled-components";
@@ -78,7 +78,10 @@ const DeviceName: React.FC<Props> = ({
 
   return (
     <Flex alignItems="center">
-      <Flex onClick={editEnabled ? openDeviceRename : undefined}>
+      <Flex
+        onClick={editEnabled ? openDeviceRename : undefined}
+        data-testid="manager-device-rename-button"
+      >
         <Flex mb={2} alignItems="center">
           <Text variant="large" fontWeight="semiBold" mr={3}>
             {name || deviceInfo.version}

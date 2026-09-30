@@ -1,6 +1,15 @@
 export { DeviceManagementKitBLETransport } from "./transport/DeviceManagementKitBLETransport";
 export { DeviceManagementKitHIDTransport } from "./transport/DeviceManagementKitHIDTransport";
+export { activeDeviceSessionSubject as activeHidDeviceSessionSubject } from "./transport/DeviceManagementKitHIDTransport";
 export { DeviceManagementKitHTTPProxyTransport } from "./transport/DeviceManagementKitHTTPProxyTransport";
+export {
+  SPECULOS_LEGACY_DEVICE_ID_PREFIX,
+  buildSpeculosLegacyDeviceId,
+  isSpeculosLegacyDeviceId,
+  speculosTargetSubject,
+  type SpeculosTarget,
+} from "./transport/SpeculosDmkTransport";
+export { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 export {
   USB_COMPAT_DEVICE_ID_PREFIX,
   buildUsbCompatDeviceId,
@@ -11,11 +20,14 @@ export { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-n
 export {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
-  ConnectDeviceUIStateTypes,
+  ConnectivityUIStateTypes,
   ConnectionErrorTypes,
   DiscoveryErrorTypes,
   type MobileConnectionError as ConnectionError,
   type MobileDiscoveryError as DiscoveryError,
+} from "./deviceConnectivity/types";
+export {
+  ConnectDeviceUIStateTypes,
   type MobileConnectDeviceUIState as ConnectDeviceUIState,
 } from "./connectDevice/types";
 export type { DisplayedDevice } from "@ledgerhq/live-dmk-shared";

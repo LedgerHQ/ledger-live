@@ -17,9 +17,6 @@ export const avalanche_c_chain = currency({
       magnitude: 18,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 43114,
-  },
   explorerViews: [
     {
       tx: "https://cchain.explorer.avax.network/tx/$hash",
@@ -28,5 +25,4 @@ export const avalanche_c_chain = currency({
     },
   ],
   keywords: ["avax", "avalanche", "c-chain"],
-  explorerId: "avax",
 });

@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { useInViewContext } from "LLM/contexts/InViewContext";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 
 const CONTAINER_IMPRESSION_THRESHOLD = 0.8;
 
@@ -31,7 +31,7 @@ export default function LogContentCardWrapper({
 
       const isNowVisible = progressRatio >= CONTAINER_IMPRESSION_THRESHOLD;
       if (isNowVisible && !isContainerVisibleRef.current && location) {
-        const page = currentRouteNameRef.current ?? "";
+        const page = getCurrentTrackingPage();
         track("container_impression", { page, location });
       }
       isContainerVisibleRef.current = isNowVisible;

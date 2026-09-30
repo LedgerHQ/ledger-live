@@ -6,6 +6,7 @@ import { PasswordChangedSheet } from "../components/PasswordChangedSheet";
 import { ConfirmStep } from "./internals/ConfirmStep";
 import { EnterStep } from "./internals/EnterStep";
 import type { LongerPasswordViewProps } from "./types";
+import { TrackScreen } from "@shared/analytics-react";
 
 export function LongerPasswordView({
   step,
@@ -53,7 +54,14 @@ export function LongerPasswordView({
       </Box>
 
       {isEntering ? (
-        <EnterStep onValid={onEntered} keyboardHeight={keyboardHeight} bottomInset={bottomInset} />
+        <>
+          <TrackScreen category="Migrate Password" avoidDuplicates />
+          <EnterStep
+            onValid={onEntered}
+            keyboardHeight={keyboardHeight}
+            bottomInset={bottomInset}
+          />
+        </>
       ) : (
         <ConfirmStep
           onConfirmed={onConfirmed}

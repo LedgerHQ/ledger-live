@@ -1,5 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiTransport } from "../config";
+import { STAKE_DELEGATOR } from "../test/fixtures";
 import {
   getAllBalancesCached,
   getBlock,
@@ -31,11 +32,12 @@ const ACCOUNT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0
 const configFor = (transport: SuiTransport): SuiCoinConfig => ({
   status: { type: "active" },
   node: {
-    url: getEnv("API_SUI_NODE_PROXY"),
     graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
     grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
   },
   features: { transport },
+  name: "Sui",
+  unit: { name: "Sui", code: "SUI", magnitude: 9 },
 });
 
 const graphqlConfig = configFor("graphql");
@@ -103,7 +105,7 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
     });
 
     // GraphQL rejects digest lookups outright, which is why getBlockInfo/getBlock fall back to
-    // JSON-RPC for them. gRPC accepts either, so that fallback is not needed after cutover.
+    // gRPC for them.
     it("resolves a checkpoint by digest, which GraphQL cannot", async () => {
       const bySequence = await getCheckpoint(grpcConfig, SEQUENCE);
 
@@ -118,7 +120,7 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("getStakingExtraByDigest", () => {
-    // Same live transactions the JSON-RPC suite pins (sdk.integ.test.ts).
+    // Live DELEGATE / UNDELEGATE transactions.
     const DELEGATE_TX_DIGEST = "EkJbwk9R2pmJhxfAVpRqbfDYQN1yiNap1qMPVrKedwZf";
     const UNDELEGATE_TX_DIGEST = "4UtCqCH3oNEdaprZR9UjaMGg6HgLn3V3q3FEcvs5vieM";
 
@@ -148,14 +150,13 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
       const block = await withGrpcApi(grpcConfig, api => getBlockGrpc(api, SEQUENCE));
 
       expect(block.transactions).toHaveLength(8);
-      // Every kind resolves to a string — system transactions included. The adapter must not
-      // throw on them: `parseGrpcTransactionResponse` rejects non-programmable bodies, and every
-      // checkpoint contains at least one.
-      const kinds = block.transactions.map(
-        tx => (tx.transaction?.data?.transaction as { kind?: unknown })?.kind,
+      // System transactions map too. The adapter must not throw on them:
+      // `parseGrpcTransactionResponse` rejects non-programmable bodies, and every checkpoint
+      // contains at least one.
+      const systemNames = block.transactions.flatMap(({ transaction }) =>
+        transaction.data.transaction.kind === "System" ? [transaction.data.transaction.name] : [],
       );
-      expect(kinds.every(kind => typeof kind === "string")).toBe(true);
-      expect(kinds.filter(kind => kind === "ConsensusCommitPrologue")).toHaveLength(3);
+      expect(systemNames).toEqual(Array(3).fill("ConsensusCommitPrologue"));
       expect(block.transactions.filter(isSettlementTransaction)).toHaveLength(3);
     });
 
@@ -235,15 +236,12 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
   });
 
   describe("getDelegatedStakes", () => {
-    // Live delegator: the sender of the DELEGATE transaction the JSON-RPC suite pins.
-    const DELEGATOR = "0x13d73cab19d2cf14e39289b122ed93fb0f9edd00e4c829e0cefb1f0611c54a8f";
-
     // Stake ids and principals are immutable, so they must match exactly; estimatedReward moves
     // with the epoch's rates, so only its presence is asserted.
     it("reconstructs the same stakes as GraphQL", async () => {
-      const viaGraphql = await getDelegatedStakes(graphqlConfig, DELEGATOR);
+      const viaGraphql = await getDelegatedStakes(graphqlConfig, STAKE_DELEGATOR);
 
-      const viaGrpc = await getDelegatedStakes(grpcConfig, DELEGATOR);
+      const viaGrpc = await getDelegatedStakes(grpcConfig, STAKE_DELEGATOR);
 
       expect(viaGrpc.length).toBeGreaterThan(0);
       expect(viaGrpc.map(s => s.stakingPool).sort()).toEqual(
@@ -261,7 +259,7 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
     });
 
     it("populates estimatedReward for active stakes", async () => {
-      const stakes = await getDelegatedStakes(grpcConfig, DELEGATOR);
+      const stakes = await getDelegatedStakes(grpcConfig, STAKE_DELEGATOR);
 
       const active = stakes.flatMap(g => g.stakes).filter(s => s.status === "Active");
       expect(active.length).toBeGreaterThan(0);
@@ -328,27 +326,21 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
       expect(pages).toBeGreaterThan(1);
     });
 
-    // The user-visible symptom this migration exists to fix, reproduced on one address. `ACCOUNT` —
-    // the fixture the JSON-RPC suite has always used — last transacted around 2026-05-08, so its
-    // whole history has aged out of the 90-day GraphQL retention window. gRPC's archive index still
-    // has it, so an account that looks empty on GraphQL shows its operations again.
+    // The user-visible symptom this migration exists to fix, reproduced on one address. `ACCOUNT`
+    // last transacted around 2026-05-08, so its whole history has aged out of the 90-day GraphQL
+    // retention window. gRPC's archive index still has it, so an account that looks empty on
+    // GraphQL shows its operations again.
     it("recovers history that GraphQL has dropped", async () => {
-      const viaGraphql = await getOperations(
-        graphqlConfig,
-        "js:2:sui:x:",
-        ACCOUNT,
-        undefined,
-        "desc",
-      );
+      const viaGraphql = await getOperations(graphqlConfig, "js:2:sui:x:", ACCOUNT, undefined);
 
-      const viaGrpc = await getOperations(grpcConfig, "js:2:sui:x:", ACCOUNT, undefined, "desc");
+      const viaGrpc = await getOperations(grpcConfig, "js:2:sui:x:", ACCOUNT, undefined);
 
       expect(viaGraphql).toHaveLength(0);
       expect(viaGrpc.length).toBeGreaterThan(0);
     });
 
     it("builds well-formed operations attributed to the account", async () => {
-      const operations = await getOperations(grpcConfig, "js:2:sui:x:", ACCOUNT, undefined, "desc");
+      const operations = await getOperations(grpcConfig, "js:2:sui:x:", ACCOUNT, undefined);
 
       expect(operations.length).toBeGreaterThan(0);
       for (const operation of operations) {
@@ -359,7 +351,7 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
         // affected-address filter or the sender/recipient mapping has gone wrong.
         expect([...operation.senders, ...operation.recipients]).toContain(ACCOUNT);
       }
-      // Newest-first, matching the JSON-RPC and GraphQL arms.
+      // Newest-first, matching the GraphQL arm.
       const dates = operations.map(operation => operation.date.getTime());
       expect(dates).toEqual([...dates].sort((a, b) => b - a));
     });
@@ -383,7 +375,7 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
   // "recovers history that GraphQL has dropped" asserts GraphQL returns nothing for it.
   describe("listOperations block hashes", () => {
     it("carries the real checkpoint digest at both ends of the page", async () => {
-      const page = await getListOperations(grpcConfig, ACCOUNT, "desc", undefined, undefined);
+      const page = await getListOperations(grpcConfig, ACCOUNT, "desc", undefined);
       expect(page.items.length).toBeGreaterThan(0);
 
       for (const op of page.items) {

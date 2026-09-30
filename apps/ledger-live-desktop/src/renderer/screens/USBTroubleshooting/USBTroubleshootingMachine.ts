@@ -1,5 +1,5 @@
 import { AnyEventObject, assign, enqueueActions, setup } from "xstate";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 // Solutions
 import ChangeUSBCable from "./solutions/ChangeUSBCable";
 import DifferentPort from "./solutions/DifferentPort";

@@ -32,7 +32,10 @@ const mockNavigate = jest.fn();
 const mockSetTrackingSource = jest.fn();
 const mockSearchParamsRef = { current: new URLSearchParams() };
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
   setTrackingSource: (...args: unknown[]) => mockSetTrackingSource(...args),
 }));
 
@@ -684,7 +687,9 @@ describe("useCryptoAssetsViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      `/market/${encodeURIComponent(dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id))}`,
+      `/market/${encodeURIComponent(
+        dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id),
+      )}`,
     );
   });
 

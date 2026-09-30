@@ -18,7 +18,10 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   useTezosStakingInfo: jest.fn(),
 }));
 jest.mock("~/renderer/hooks/useAccountUnit");
-jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 jest.mock("~/renderer/components/ErrorBanner", () => ({
   __esModule: true,
   default: ({ error }: { error: Error }) => <div data-testid="error-banner">{error?.message}</div>,

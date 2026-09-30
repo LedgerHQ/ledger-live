@@ -79,6 +79,11 @@ export function useQueuedBottomSheet({
 
   const stateRef = useRef<BottomSheetState>("idle");
 
+  // A dismissal started for one presentation can land on the next one. Only an onDismiss arriving
+  // while one is still unacknowledged can be that stale dismissal; any other is the user closing
+  // the sheet through a path gorhom did not report, like a pan-down during the entrance animation.
+  const isDismissInFlightRef = useRef(false);
+
   // Bumped at the end of handleDismiss to re-trigger the open/close effect below. This defers
   // the "should we reopen?" decision to a React commit, ensuring any state update scheduled by
   // the consumer's onClose (from handleAnimate) has been applied before we read
@@ -100,6 +105,7 @@ export function useQueuedBottomSheet({
     if (stateRef.current !== "idle") {
       stateRef.current = "dismissing";
     }
+    isDismissInFlightRef.current = true;
     bottomSheetRef.current?.dismiss();
   }, [bottomSheetRef]);
 
@@ -123,6 +129,7 @@ export function useQueuedBottomSheet({
     if (stateRef.current !== "dismissing") {
       stateRef.current = "closing";
     }
+    isDismissInFlightRef.current = true;
     cleanupQueue();
 
     clearDismissFallback();
@@ -284,7 +291,9 @@ export function useQueuedBottomSheet({
     logBottomSheet("BottomSheet dismissed (onDismiss)");
 
     const state = stateRef.current;
-    const dismissedPresentationStillWanted = state === "open" && wantsToBeOpenRef.current;
+    const dismissedPresentationStillWanted =
+      state === "open" && wantsToBeOpenRef.current && isDismissInFlightRef.current;
+    isDismissInFlightRef.current = false;
 
     if (dismissedPresentationStillWanted) {
       logBottomSheet("Dismissed a presentation still being requested - presenting it again");
@@ -303,6 +312,7 @@ export function useQueuedBottomSheet({
       onCloseRef.current?.();
     }
 
+    isDismissInFlightRef.current = false;
     settleClosed();
     onModalHideRef.current?.();
 

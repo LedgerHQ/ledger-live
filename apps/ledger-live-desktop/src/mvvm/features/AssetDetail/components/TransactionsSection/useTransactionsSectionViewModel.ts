@@ -5,7 +5,7 @@ import type { DistributionItem } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { useHistoryTable } from "LLD/features/History/hooks/useHistoryTable";
 import { useHistoryOperationItemsForRootAccounts } from "LLD/features/History/hooks/useHistoryOperationItemsForRootAccounts";

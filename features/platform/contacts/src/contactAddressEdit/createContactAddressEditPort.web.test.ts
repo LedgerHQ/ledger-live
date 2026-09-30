@@ -11,6 +11,14 @@ import type { ContactDeviceIntentsPort } from "../contactDeviceIntentsPort";
 import { createMockContactDeviceIntentsPort } from "../contactDeviceIntentsPort.mock";
 import { createContactAddressEditPort } from "./createContactAddressEditPort";
 
+const EVM_CONFIG = {
+  status: { type: "active" as const },
+  name: "Ethereum",
+  unit: { name: "ether", code: "ETH", magnitude: 18 },
+  chainId: 1,
+};
+const getConfig = () => EVM_CONFIG;
+
 function makeStore(contacts: ReturnType<typeof contactsSlice.getInitialState>["contacts"]) {
   return configureStore({
     reducer: { contacts: contactsSlice.reducer },
@@ -32,7 +40,10 @@ describe("createContactAddressEditPort", () => {
     const port = createContactAddressEditPort({
       dispatch: store.dispatch,
       getState: store.getState,
-      deviceIntents: { editExternalAddress } as unknown as ContactDeviceIntentsPort,
+      deviceIntents: {
+        editExternalAddress,
+      } as unknown as ContactDeviceIntentsPort,
+      getConfig,
     });
 
     const updatedAddress = await port.updateAddress({
@@ -47,6 +58,7 @@ describe("createContactAddressEditPort", () => {
       address,
       updatedLabel: label,
       updatedAddress: updatedAddressValue,
+      config: EVM_CONFIG,
     });
     expect(updatedAddress).toEqual({
       ...address,
@@ -63,6 +75,7 @@ describe("createContactAddressEditPort", () => {
       dispatch: store.dispatch,
       getState: store.getState,
       deviceIntents: createMockContactDeviceIntentsPort(),
+      getConfig,
     });
 
     await expect(
