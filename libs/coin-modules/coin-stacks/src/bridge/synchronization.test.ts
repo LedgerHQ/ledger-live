@@ -14,7 +14,7 @@ import {
   fetchFullMempoolTxs,
   fetchFullTxs,
 } from "../network/api";
-import { TokenPrefix } from "../types";
+import { StakingPosition, TokenPrefix } from "../types";
 import {
   buildTokenAccounts,
   calculateSpendableBalance,
@@ -723,13 +723,47 @@ describe("getAccountShape", () => {
     );
   });
 
-  it("omits stakingPositions (rather than reporting an empty array) when the stake lookup fails, so jsHelpers' merge preserves the account's last-known position instead of clobbering it", async () => {
-    (getStakes as jest.Mock).mockRejectedValue(new Error("pox lookup failed"));
+  describe("when the stake lookup fails", () => {
+    const knownPosition: StakingPosition = {
+      uid: "SP_TEST_ADDRESS",
+      address: "SP_TEST_ADDRESS",
+      delegate: "SP1pool.native-pool-signer-manager",
+      state: "active",
+      actions: ["undelegate"],
+      asset: { type: "native" },
+      amount: new BigNumber(1_000_000),
+      details: { firstRewardCycle: 10, numCycles: 6, rewardAsset: "sbtc", amountRewarded: "0" },
+    };
+    const withLastKnown = (stakingPositions: StakingPosition[] | undefined) =>
+      ({ ...info, initialAccount: { stakingPositions } }) as Parameters<typeof getAccountShape>[0];
 
-    const result = await getAccountShape(info, { paginationConfig: {} });
+    beforeEach(() => {
+      (getStakes as jest.Mock).mockRejectedValue(new Error("pox lookup failed"));
+    });
 
-    expect("stakingPositions" in result).toBe(false);
-    expect(result.stakingPositions).toBeUndefined();
+    // The key must be present (even as `undefined`): jsHelpers' `{ ...initialAccount, ...shape }`
+    // merge would otherwise fall through to the stale last-known value.
+    it("reports a known-empty position as unknown rather than keeping `[]`, so Stake isn't re-exposed", async () => {
+      const result = await getAccountShape(withLastKnown([]), { paginationConfig: {} });
+
+      expect("stakingPositions" in result).toBe(true);
+      expect(result.stakingPositions).toBeUndefined();
+    });
+
+    it("reports unknown when no position was ever known", async () => {
+      const result = await getAccountShape(withLastKnown(undefined), { paginationConfig: {} });
+
+      expect("stakingPositions" in result).toBe(true);
+      expect(result.stakingPositions).toBeUndefined();
+    });
+
+    it("keeps a known position for display but strips its actions, so Unstake isn't offered on stale data", async () => {
+      const result = await getAccountShape(withLastKnown([knownPosition]), {
+        paginationConfig: {},
+      });
+
+      expect(result.stakingPositions).toEqual([{ ...knownPosition, actions: [] }]);
+    });
   });
 
   it("derives the address for mainnet when API_STACKS_NETWORK is unset", async () => {

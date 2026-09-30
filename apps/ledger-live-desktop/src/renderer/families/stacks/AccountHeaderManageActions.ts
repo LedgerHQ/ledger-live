@@ -45,10 +45,10 @@ const AccountHeaderManageActions: StacksFamily["accountHeaderManageActions"] = (
   // would duplicate that same uncertain assumption instead of just reading its outcome -- if the
   // heuristic or its mapping to `actions` ever changes, this follows it automatically.
   //
-  // `stakingPositions` is omitted (not `[]`) when the lookup itself failed -- see
-  // synchronization.ts's getAccountShape -- so `!stakingPosition` alone can't tell "no position"
-  // apart from "position unknown". Gate on the key's presence too, so a transient lookup failure
-  // hides Stake instead of wrongly re-exposing it.
+  // `stakingPositions` is `undefined` (not `[]`) when the lookup itself failed and no position was
+  // known -- see synchronization.ts's staleStakingPositions -- so `!stakingPosition` alone can't
+  // tell "no position" apart from "position unknown". Gate on the value being defined too, so a
+  // transient lookup failure hides Stake instead of wrongly re-exposing it.
   const canStake = account.stakingPositions !== undefined && !stakingPosition;
   // AccountHeaderActions only filters "Stake" through stakePrograms; Unstake needs the same gate
   // while Stacks still runs on the classic bridge, whose prepareTransaction never resolves an

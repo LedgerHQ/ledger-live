@@ -45,6 +45,22 @@ function toStakingPositionOnAccount(stake: Stake): StakingPosition {
 }
 
 /**
+ * What to keep when the stake lookup failed. The last-known value can't be kept as-is: a known `[]`
+ * would re-expose Stake (the user may have staked meanwhile, and pox-5 would then abort with
+ * ERR_ALREADY_STAKED), and a known position's `actions` would keep offering Unstake after the stake
+ * may have moved on. So a known position is kept for display with no actions, and anything else
+ * becomes `undefined` ("unknown"), which hides Stake. The key is set explicitly -- even to
+ * `undefined` -- because jsHelpers' `{ ...initialAccount, ...shape }` merge would otherwise fall
+ * through to the stale value.
+ */
+function staleStakingPositions(
+  lastKnown: StakingPosition[] | undefined,
+): StakingPosition[] | undefined {
+  if (!lastKnown?.length) return undefined;
+  return lastKnown.map(position => ({ ...position, actions: [] }));
+}
+
+/**
  * Calculates the spendable balance by subtracting pending transactions from the total balance
  */
 export function calculateSpendableBalance(
@@ -232,7 +248,7 @@ export const getAccountShape: GetAccountShape<StacksAccount> = async info => {
           // `stakingPositions: []` here would clobber a real, previously-known position on a
           // transient `/v2/pox` failure -- hiding it and wrongly re-exposing the Stake action even
           // though pox-5 would still reject a new stake with ERR_ALREADY_STAKED. `undefined` here
-          // (as opposed to `[]`) signals the caller to omit the key entirely instead.
+          // (as opposed to `[]`) signals the caller to fall back to `staleStakingPositions`.
           log("error", "stacks error fetching stakes", e);
           return undefined;
         }),
@@ -275,10 +291,10 @@ export const getAccountShape: GetAccountShape<StacksAccount> = async info => {
       ...tokenAccounts.flatMap(t => sip010OpToParentOp(t.operations, accountId)),
     ].sort((a, b) => b.date.getTime() - a.date.getTime()),
     blockHeight: blockHeight.chain_tip.block_height,
-    // Key omitted (not set to `[]`) when the lookup failed -- see the `.catch` above: jsHelpers'
-    // `{ ...initialAccount, ...shape }` merge must fall through to the account's last-known value
-    // instead of being handed an empty, authoritative-looking overwrite.
-    ...(stakes !== undefined ? { stakingPositions: stakes.map(toStakingPositionOnAccount) } : {}),
+    stakingPositions:
+      stakes !== undefined
+        ? stakes.map(toStakingPositionOnAccount)
+        : staleStakingPositions(initialAccount?.stakingPositions),
   };
 
   return result;
