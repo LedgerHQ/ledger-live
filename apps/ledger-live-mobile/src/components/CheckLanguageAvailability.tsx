@@ -54,7 +54,7 @@ export default function CheckLanguageAvailability() {
       <Track
         onMount
         event={`Discoverability - Prompt - ${defaultLanguage}`}
-        eventProperties={{ language: defaultLanguage }}
+        language={defaultLanguage}
       />
       <QueuedDrawer isRequestingToBeOpened onClose={onRequestClose}>
         <ModalBottomAction
