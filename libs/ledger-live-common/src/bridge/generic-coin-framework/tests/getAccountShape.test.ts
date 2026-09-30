@@ -4097,6 +4097,51 @@ describe("genericGetAccountShape", () => {
       expect(subAccount.creationDate).toBe(creationDate);
     });
 
+    test("builds parent sub-operations from the bounded token accounts, as a restored account does", async () => {
+      // The token has two rows, a newer token-only one (h10) and the token part of h9. Bounded at 1,
+      // its account keeps only h10, while the parent h9 is kept. A restored account recomputes h9's
+      // sub-operations from that stored, bounded account; the synced one must match it.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 1 });
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h9", 9)] });
+      const tokenRow = (hash: string, height: number) => ({
+        id: `tok-${hash}`,
+        accountId: "subNew",
+        hash,
+        blockHeight: height,
+        type: "IN",
+        date: new Date(height * 1000),
+        extra: {},
+        senders: [],
+        recipients: [],
+      });
+      buildSubAccountsMock.mockReturnValue([
+        {
+          id: "subNew",
+          token: { id: "tok1" },
+          operations: [tokenRow("h10", 10), tokenRow("h9", 9)],
+          pendingOperations: [],
+        },
+      ]);
+      const { mergeSubAccounts: realMergeSubAccounts } = jest.requireActual("../buildSubAccounts");
+      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+      const { inferSubOperations: realInferSubOperations } = jest.requireActual(
+        "@ledgerhq/ledger-wallet-framework/serialization",
+      );
+      inferSubOperationsMock.mockImplementation(realInferSubOperations);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const subAccounts = result.subAccounts as any[];
+      expect(subAccounts[0].operations.map((op: any) => op.hash)).toEqual(["h10"]);
+      const parent = result.operations?.find(op => op.hash === "h9");
+      expect(parent?.subOperations).toEqual(realInferSubOperations("h9", subAccounts));
+      expect(parent?.subOperations).toEqual([]);
+    });
+
     test("a first sync whose newest rows are all failed-incoming walks past them instead of retaining nothing", async () => {
       // Counted raw, this first page reaches the bound on its own and the walk stops there; the
       // filter then leaves nothing, the shape keeps `blockHeight: 0`, and every later sync reads as
