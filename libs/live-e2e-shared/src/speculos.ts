@@ -760,7 +760,7 @@ export async function fetchAllEvents(speculosApiPort: number): Promise<string[]>
 export const pressUntilTextFound = withDeviceController(
   ({ getButtonsController }) =>
     async (targetText: string, strictMatch: boolean = false): Promise<string[]> => {
-      const maxAttempts = 18;
+      const maxAttempts = 30;
       const speculosApiPort = getEnv("SPECULOS_API_PORT");
       const buttons = getButtonsController();
       const seenScreens = new Set<string>();
