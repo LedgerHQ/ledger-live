@@ -28,7 +28,14 @@ const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_US
 const FREEZE = "Freeze";
 const UNFREEZE = "Unfreeze";
 
-const TMS_LINKS = ["B2CQA-6325", "B2CQA-6326", "B2CQA-6327", "B2CQA-6328", "B2CQA-6329"];
+const TMS_LINKS = [
+  "B2CQA-6325",
+  "B2CQA-6326",
+  "B2CQA-6327",
+  "B2CQA-6328",
+  "B2CQA-6329",
+  "B2CQA-6331",
+];
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
 function payContactSeed(address: string): ContactSeed {
@@ -174,5 +181,12 @@ describe("Pay tab", () => {
     await app.payTab.expectCardNotFrozen();
     await app.payTab.expectFreezeTile(FREEZE);
     await app.payTab.closeCardDetails();
+
+    await app.mainNavigation.tapTopBarTransactionHistory();
+    await app.operation.expectCryptoHistoryTab();
+    await app.operation.expectCardHistoryTab();
+    await app.operation.openCardHistoryTab();
+    await app.operation.openFirstCardTransaction();
+    await app.operation.expectCardTransactionDetail();
   });
 });
