@@ -379,6 +379,36 @@ describe("History integration", () => {
     expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
   });
 
+  it("should hide the crypto and card switcher when the card param is false", async () => {
+    render(<History />, {
+      initialState: {
+        accounts: [BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card: false } } }),
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("history-table-body")).toBeVisible();
+    });
+    expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
+  });
+
+  it("should hide the crypto and card switcher when the card param is missing", async () => {
+    render(<History />, {
+      initialState: {
+        accounts: [BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card: undefined } } }),
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("history-table-body")).toBeVisible();
+    });
+    expect(screen.queryByTestId("history-type-switcher")).not.toBeInTheDocument();
+  });
+
   it("should show the crypto and card switcher when the pay tab is enabled", async () => {
     renderHistoryWithPayTab();
 
