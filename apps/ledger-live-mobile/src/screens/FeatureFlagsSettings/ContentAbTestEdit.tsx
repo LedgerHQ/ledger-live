@@ -59,8 +59,8 @@ const ContentAbTestEdit: React.FC<{
       setInputValue(undefined);
       setContentAbTestOverride(testName, payload);
       refreshMountedScreens();
-    } catch (caught) {
-      setError(String(caught));
+    } catch (error) {
+      setError(String(error));
     }
   }, [inputValueDefaulted, testName, t]);
 
