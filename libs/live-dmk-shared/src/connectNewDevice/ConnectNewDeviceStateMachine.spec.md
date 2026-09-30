@@ -18,20 +18,24 @@ stateDiagram-v2
 
   DiscoveryError --> Discovering: Ignore, skipping failed transport
   DiscoveryError --> RetryDiscovery: Retry, when retry is available
+  DiscoveryError --> Terminated: Close
 
   RetryDiscovery --> Discovering: retry succeeds
   RetryDiscovery --> Discovering: Ignore, skipping failed transport
   RetryDiscovery --> DiscoveryError: retry returns or throws an error
+  RetryDiscovery --> Terminated: Close, dropping the retry
 
   Connecting --> Connected: DMK connect succeeds
   Connecting --> ConnectionError: DMK connect fails
 
   ConnectionError --> Connecting: Retry, with the same device
   ConnectionError --> Discovering: Ignore, to select another device
+  ConnectionError --> Discovering: Close, same as ignore
 
   Connected --> Done: success delay elapsed
 
   Done --> [*]
+  Terminated --> [*]
 ```
 
 ## Notes
@@ -49,17 +53,23 @@ stateDiagram-v2
   `transportId` to `skipTransportIds`, then starts discovery again without that
   transport. A successful retry starts discovery again. A failed retry emits
   the returned error, or an unknown discovery error if the retry throws.
+- The discovery error state has a `close` action for when the user closes its
+  sheet. It moves to `Terminated`, also while a retry runs: the retry result is
+  then dropped.
 - `Connecting` stops discovery, then calls `dmk.connect` with the selected
   discovered device and the DMK session refresher disabled.
 - A connection failure is mapped with `mapConnectionError` (for example BLE
   pairing refused, or pairing removed on the device) and emitted with `retry`
   and `ignore`. Retry connects again to the same device. Ignore goes back to
   `Discovering`, with the skipped transports kept, so that the user can select
-  another device.
+  another device. Its `close` action does the same as ignore.
+- Only the error states handle `close`. A late `close` from a sheet that closes
+  after a retry or an ignore does nothing.
 - `Connected` is the visible success state. After the success delay
   (`DEFAULT_SUCCESS_DELAY`, 1.5 s), the machine moves to `Done`.
 - `Done` emits the `Done` UI state and calls `onConnected` one time with the
   DMK session, the connected device and the legacy compatibility fields.
-- `Done` is the only final state. To end the flow on an error, the caller stops
-  the machine.
+- `Terminated` emits the `Terminated` UI state and calls `onClose` one time.
+- `stop()` stops discovery and the timers, and calls neither `onConnected` nor
+  `onClose`.
 - Both delays can be injected with `deviceNotFoundDelay` and `successDelay`.
