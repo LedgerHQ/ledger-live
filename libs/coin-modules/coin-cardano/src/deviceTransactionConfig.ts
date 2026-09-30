@@ -12,6 +12,7 @@ import { CARDANO_MAX_SUPPLY } from "./constants";
 import {
   decodeTokenName,
   getAccountStakeCredential,
+  getBech32DRepId,
   getBech32PoolId,
   getBipPathString,
 } from "./logic";
@@ -147,7 +148,7 @@ async function getDeviceTransactionConfig({
         ? "Always abstain"
         : transaction.dRepNoConfidence
           ? "Always no confidence"
-          : transaction.dRepHex!, // either one will always be present
+          : getBech32DRepId(transaction.dRepHex!, account.currency.id), // either one will always be present
     });
   }
 

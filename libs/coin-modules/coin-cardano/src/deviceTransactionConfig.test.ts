@@ -54,7 +54,11 @@ describe("getDeviceTransactionConfig", () => {
       expect(result).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ type: "text", label: "Staking key" }),
-          expect.objectContaining({ type: "text", label: "DRep", value: "Always abstain" }),
+          expect.objectContaining({
+            type: "text",
+            label: "DRep",
+            value: "Always abstain",
+          }),
         ]),
       );
     });
@@ -74,18 +78,22 @@ describe("getDeviceTransactionConfig", () => {
       expect(result).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ type: "text", label: "Staking key" }),
-          expect.objectContaining({ type: "text", label: "DRep", value: "Always no confidence" }),
+          expect.objectContaining({
+            type: "text",
+            label: "DRep",
+            value: "Always no confidence",
+          }),
         ]),
       );
     });
 
-    it("should return fields for vote delegate transaction with dRepHex", async () => {
+    it("should return fields for vote delegate transaction with dRepHex as bech32", async () => {
       const result = await getDeviceTransactionConfig({
         account: mockAccount,
         parentAccount: null,
         transaction: {
           mode: "voteDelegate",
-          dRepHex: "drep123",
+          dRepHex: "22c8a0059bdc196a48589617c30ceca2b55c0a901975419088348bdcd2",
         } as any,
         status: {} as any,
       });
@@ -94,7 +102,11 @@ describe("getDeviceTransactionConfig", () => {
       expect(result).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ type: "text", label: "Staking key" }),
-          expect.objectContaining({ type: "text", label: "DRep", value: "drep123" }),
+          expect.objectContaining({
+            type: "text",
+            label: "DRep",
+            value: "drep1yty2qpvmmsvk5jzcjctuxr8v5264cz5sr965ryygxj9ae5seg7gah",
+          }),
         ]),
       );
     });
