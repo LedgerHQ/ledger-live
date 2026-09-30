@@ -138,10 +138,7 @@ export type SystemBridge = {
   getResourceUsage(): Electron.ResourceUsage | undefined;
 };
 
-/**
- * The one place a channel name is a parameter. Safe only because the preload validates
- * every channel against `@ledgerhq/coin-zcash`'s own closed `ZCASH_IPC` list.
- */
+/** The only channel parameter: the preload restricts it to coin-zcash's `ZCASH_IPC` list. */
 export type ZcashBridge = {
   invoke(channel: string, args: unknown): Promise<unknown>;
   subscribe(channel: string, callback: (payload: unknown) => void): Unsubscribe;

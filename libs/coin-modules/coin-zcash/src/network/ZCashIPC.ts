@@ -261,13 +261,7 @@ export function createZCashIPCClient(
 
 let cachedIpcRenderer: IpcRendererLike | null = null;
 
-/**
- * Supplies the IPC channel this module talks over.
- *
- * Injected rather than obtained with `require("electron")`, because a context-isolated
- * renderer has neither `require` nor the `electron` module — the host passes in whatever it
- * exposes across its preload bridge. Call once during startup.
- */
+/** Call once at startup: a context-isolated host has no `require("electron")`. */
 export function setZCashIpcRenderer(ipcRenderer: IpcRendererLike): void {
   cachedIpcRenderer = ipcRenderer;
 }

@@ -13,7 +13,6 @@ import {
   isRsdoctorEnabled,
 } from "./utils";
 
-// Supplies the `process.*` stand-ins the DefinePlugin entries below rewrite reads to.
 const rendererProcessShim = path.resolve(rootFolder, "src", "renderer", "bootstrap", "process.ts");
 
 export function createRendererConfig(
@@ -31,20 +30,16 @@ export function createRendererConfig(
     ...commonConfig,
     name: "renderer",
     mode,
-    // "es2022" pins output.environment: with no browserslist config a bare "web" target
-    // falls back to conservative codegen. Electron 43 ships Chromium 150.
+    // "es2022" pins output.environment; a bare "web" target emits conservative code.
     target: ["web", "es2022"],
     entry: {
-      // The shim must run before the application's first module, which reads process.env at
-      // module scope.
+      // The shim must run before any module reads process.env.
       renderer: [rendererProcessShim, path.resolve(rootFolder, "src", "renderer", "index.ts")],
     },
     output: {
       ...commonConfig.output,
       filename: "renderer.bundle.js",
-      // Without this the chunk-loading runtime emits `global[...]` and the first chunk load
-      // throws "ReferenceError: global is not defined". DefinePlugin cannot reach it: that
-      // is the bundler's own runtime, not source.
+      // Otherwise the chunk runtime emits `global[...]`, which the renderer does not have.
       globalObject: "globalThis",
       publicPath: isDev ? "/" : "./",
       assetModuleFilename: "assets/[name]-[hash][ext]",
@@ -81,12 +76,9 @@ export function createRendererConfig(
             ".lottie",
           ],
       mainFields: ["browser", "module", "main"],
-      // mainFields only covers the string form of `browser`; without this the object form
-      // ({"crypto": false}) is ignored and packages resolve their Node entry instead.
+      // The object form of `browser` ({"crypto": false}), which mainFields ignores.
       aliasFields: ["browser"],
-      // Listed one by one rather than via a blanket polyfill plugin, so each addition shows
-      // up as a bundle-size regression in review. `os` is absent on purpose — see
-      // src/system/index.ts.
+      // Explicit, so each polyfill shows up as a size cost in review. `os` is absent on purpose.
       fallback: {
         crypto: require.resolve("crypto-browserify"),
         stream: require.resolve("readable-stream"),
@@ -97,8 +89,7 @@ export function createRendererConfig(
         util: require.resolve("util/"),
         assert: require.resolve("assert/"),
         buffer: require.resolve("buffer/"),
-        // Unreachable: live-network gates its keep-alive agent on process.release, which is
-        // defined away below.
+        // Unreachable once process.release is defined away below.
         http: false,
         https: false,
         net: false,
@@ -127,9 +118,7 @@ export function createRendererConfig(
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),
-        // NB icon-sdk-js was aliased to its .node.min.js build for bundle size. That build
-        // pulls in net, tls, os, http, https, util and zlib, so it resolves to its browser
-        // entry again under a web target. Costs size; correctness wins.
+        // icon-sdk-js keeps its browser entry: the smaller Node build needs net, tls and http.
         // @stellar/stellar-sdk: browser field is dist/stellar-sdk.min.js (915KB), main is lib/index.js (smaller, tree-shakeable)
         "@stellar/stellar-sdk": path.resolve(
           rootFolder,
@@ -294,9 +283,7 @@ export function createRendererConfig(
             filename: "assets/[name]-[hash][ext]",
           },
         },
-        // Dependencies that call `process.cwd()`/`process.nextTick()` without
-        // feature-detecting first — see processShimLoader.cjs. processReadGuard.cjs fails
-        // the build when an unguarded read appears outside this list.
+        // Unguarded process.cwd()/nextTick() callers; processReadGuard fails on new ones.
         {
           test: /\.js$/,
           include:
@@ -310,23 +297,17 @@ export function createRendererConfig(
       new rspack.DefinePlugin({
         ...buildRendererEnv(mode),
         ...buildDotEnvDefine(DOTENV_FILE),
-        // Rewritten to globals assigned by src/renderer/bootstrap/process.ts. The more
-        // specific keys above (process.env.NODE_ENV, the dotenv entries) still win for those
-        // exact expressions; these catch everything else.
+        // Globals set by src/renderer/bootstrap/process.ts; the more specific keys above win.
         "process.env": "globalThis.__LLD_PROCESS_ENV__",
         "process.platform": "globalThis.__LLD_PROCESS_PLATFORM__",
         "process.mas": "globalThis.__LLD_PROCESS_MAS__",
         "process.windowsStore": "globalThis.__LLD_PROCESS_WINDOWS_STORE__",
         "process.type": JSON.stringify("renderer"),
-        // Undefined, not absent: libs/live-network gates a `require("https")` keep-alive
-        // agent on `process.release?.name === "node"`, and defining it away drops that
-        // branch from a browser-shaped bundle.
+        // Drops live-network's Node-only https keep-alive branch.
         "process.release": "undefined",
         "process.browser": "true",
         global: "globalThis",
       }),
-      // ProvidePlugin works for `Buffer` — a genuine free variable it sees while parsing —
-      // but not for the identifiers above, which DefinePlugin introduces afterwards.
       new rspack.ProvidePlugin({
         Buffer: ["buffer", "Buffer"],
       }),
@@ -339,9 +320,7 @@ export function createRendererConfig(
       }),
       // React Fast Refresh for development
       ...(useDevServer ? [new ReactRefreshRspackPlugin()] : []),
-      // Production only: scanning the emitted assets is slow and noisy against an unminified
-      // dev bundle, and it needs the source map (see `devtool` above). Dev is
-      // "eval-source-map", so this subsumes the isDev check.
+      // Needs a separate source map, so production only.
       ...(devtool === "source-map" ? [new ProcessReadGuard()] : []),
     ],
     optimization: {

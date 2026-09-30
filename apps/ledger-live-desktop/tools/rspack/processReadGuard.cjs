@@ -1,14 +1,8 @@
 const path = require("path");
 
 /**
- * Fails the production renderer build when code reads a global the renderer does not have:
- * `process.*`, or one of the bare Node globals in GLOBALS below.
- *
- * A sandboxed `web`-target renderer has neither, so such a read is a latent `ReferenceError`
- * that only surfaces when that code path runs — which is how `vfile`'s `process.cwd()`
- * reached production as a crash in the firmware-update release notes, and how `setImmediate`
- * reached it as a crash on the post-onboarding redirect, rather than as build failures.
- * Guarded reads (`typeof process`, `typeof setImmediate`) stay in the bundle.
+ * Fails the production renderer build on an unguarded `process.*` read or bare Node global:
+ * the sandboxed renderer has neither, so such a read throws only when its code path runs.
  */
 
 // A read counts as guarded when one of these appears within GUARD_WINDOW characters before it.
@@ -17,25 +11,18 @@ const GUARD_WINDOW = 140;
 
 const READ = /\bprocess\.([A-Za-z_$][A-Za-z0-9_$]*)/g;
 
-/**
- * Node globals that are free variables rather than properties of `process`, so READ above
- * cannot see them. `setImmediate` shipped this way: the post-onboarding redirect called it
- * directly, and the build stayed green until a user actually finished onboarding.
- */
+// Free variables, so READ cannot see them.
 const GLOBALS = ["setImmediate", "clearImmediate"];
 
 const GLOBAL_READS = GLOBALS.map(name => ({
   name,
-  // The lookbehind drops property access (`utils.setImmediate`) and longer identifiers,
-  // both of which read something else and cannot throw on their own.
+  // Skips property access (`utils.setImmediate`) and longer identifiers.
   read: new RegExp(String.raw`(?<![.$\w])${name}\b`, "g"),
-  // Tested against a window that *includes* the identifier, so `typeof setImmediate` counts
-  // as its own guard rather than being reported as a read.
+  // The window includes the identifier, so `typeof setImmediate` guards itself.
   guard: new RegExp(String.raw`typeof ${name}|(?:globalThis|window|self)\.${name}`),
 }));
 
-// Rewritten by DefinePlugin, so a surviving match is prose in a string literal or a module
-// the shim loader already bound — never a live reference.
+// Rewritten by DefinePlugin: a surviving match is never a live reference.
 const DEFINE_HANDLED = new Set([
   "env",
   "platform",
@@ -46,11 +33,7 @@ const DEFINE_HANDLED = new Set([
   "browser",
 ]);
 
-/**
- * Unguarded reads checked by hand and known not to throw, keyed by `package :: property`.
- * Anything not listed fails the build: shim the module in `rspack.renderer.ts`, or add it
- * here with the reason once you have confirmed it cannot throw.
- */
+// Unguarded reads verified not to throw, keyed by `package :: property`.
 const ALLOWED = new Map([
   ["@stellar/stellar-base :: binding", "probed inside try/catch"],
   ["@stellar/stellar-base :: chdir", "vendored process/browser, module-local"],
@@ -71,7 +54,6 @@ const ALLOWED = new Map([
   ["@open-draft/logger :: stdout", "dev-only, pulled in by MSW"],
   ["@open-draft/logger :: stderr", "dev-only, pulled in by MSW"],
 
-  // Bare Node globals (GLOBALS above). Each verified unreachable in a Chromium renderer.
   [
     "@lottiefiles/dotlottie-react :: setImmediate",
     "RAF fallback class, built only when `typeof requestAnimationFrame != function`",
@@ -88,11 +70,8 @@ const B64 = new Map(
   [..."ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"].map((c, i) => [c, i]),
 );
 
-/**
- * Minimal base64-VLQ reader for a source map's `mappings`. Only the source index is needed,
- * not the original line or name, so this stops short of a full implementation — and neither
- * `source-map` nor `@jridgewell/trace-mapping` is reachable from this package.
- */
+// Minimal base64-VLQ decoder: only the source index is needed, and no source-map library is
+// reachable from this package.
 function decodeMappings(mappings) {
   const perLine = [];
   let sourceIndex = 0;
@@ -139,14 +118,7 @@ function sourceAt(decoded, sources, line, column) {
   return found === null ? null : (sources[found] ?? null);
 }
 
-/**
- * `.../node_modules/@scope/name/...` or `.../node_modules/name/...` → `@scope/name`.
- *
- * First-party sources have no `node_modules` segment and keep their path instead, minus the
- * `webpack://<compilation>/` and `./` prefixes. Collapsing those to a package name reported
- * every one of them as the single origin `webpack:`, so the first such violation masked all
- * the rest — and first-party code is exactly where an unguarded Node global tends to live.
- */
+// Package name for a dependency; first-party sources keep their path so each is reported.
 function packageOf(source) {
   const parts = source.split(/[\\/]node_modules[\\/]/);
   const tail = parts[parts.length - 1];
@@ -171,7 +143,6 @@ function findUnguarded(code) {
   return hits;
 }
 
-/** Index of the last non-whitespace character before `from`, or -1. */
 function prevNonSpace(code, from) {
   let i = from - 1;
   while (i >= 0 && (code[i] === " " || code[i] === "\n" || code[i] === "\t")) i--;
@@ -185,9 +156,7 @@ function findUnguardedGlobals(code) {
     let match;
     while ((match = read.exec(code))) {
       const end = match.index + name.length;
-      // `{setImmediate: …}` and `, setImmediate: …` are property keys, not reads. A ternary
-      // (`cond ? setImmediate : other`) also ends in `:`, hence the check on the opener too —
-      // that one IS a read and must stay.
+      // Object keys are not reads; a ternary branch (`? setImmediate :`) is.
       const prev = code[prevNonSpace(code, match.index)];
       if ((prev === "," || prev === "{") && code[end] === ":") continue;
       if (guard.test(code.slice(Math.max(0, match.index - GUARD_WINDOW), end))) continue;
@@ -216,14 +185,10 @@ module.exports = class ProcessReadGuard {
         const hits = [...findUnguarded(code), ...findUnguardedGlobals(code)];
         if (hits.length === 0) continue;
 
-        // Only now is it worth paying for the source map.
         let raw;
         try {
           raw = JSON.parse(fs.readFileSync(`${file}.map`, "utf8"));
         } catch {
-          // ALLOWED is keyed by origin package, and only the map supplies it. Reporting the
-          // chunk name instead does not degrade gracefully: every allowlisted read stops
-          // matching and comes back as a violation, burying whether anything is really wrong.
           compilation.errors.push(
             new Error(
               `ProcessReadGuard needs a source map for ${name} and found none.\n\n` +
@@ -249,8 +214,6 @@ module.exports = class ProcessReadGuard {
           let line = lineStarts.findIndex(start => start > hit.index);
           line = line === -1 ? lineStarts.length : line;
           const source = sourceAt(decoded, sources, line, hit.index - lineStarts[line - 1]);
-          // A hit the map cannot place keeps the chunk name: origin unknown is itself worth
-          // reporting, unlike the wholesale fallback above.
           const origin = source ? packageOf(source) : name;
           const key = `${origin} :: ${hit.property}`;
           if (ALLOWED.has(key)) continue;

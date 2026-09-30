@@ -2,10 +2,6 @@ import { ipcRenderer, type IpcRendererEvent } from "electron";
 import { ZCASH_IPC } from "@ledgerhq/coin-zcash/network/ipc/contract";
 import type { Unsubscribe, ZcashBridge } from "~/bridge/contract";
 
-/**
- * Taken from the coin module's own contract so the two cannot drift. Without this check the
- * channel parameter would make these a general-purpose IPC passthrough.
- */
 const ALLOWED = new Set<string>(Object.values(ZCASH_IPC));
 
 function assertAllowed(channel: string) {

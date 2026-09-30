@@ -92,7 +92,6 @@ import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
 const rootNode = document.getElementById("react-root");
 
 async function init() {
-  // ZCash sync talks over IPC; give the coin module its channel before anything uses it.
   setupZCashIpc();
 
   // at this step. we know the app error handling will happen here. so we can unset the global onerror

@@ -3,20 +3,15 @@ import { zcash } from "~/renderer/bridge";
 
 type ZcashListener = (event: unknown, payload: unknown) => void;
 
-/**
- * `@ledgerhq/coin-zcash` removes its stream listener by identity, which the bridge cannot
- * support. Holding the disposer here keeps the library's contract working unchanged.
- */
+// coin-zcash removes listeners by identity, which the bridge cannot support.
 const disposers = new WeakMap<ZcashListener, () => void>();
 
-/** Installs the IPC channel ZCash shielded sync talks over. Called once during startup. */
 export function setupZCashIpc(): void {
   setZCashIpcRenderer({
     invoke: (channel: string, args: unknown) => zcash.invoke(channel, args),
 
     on: (channel: string, listener: ZcashListener) => {
-      // The library still expects Electron's (event, payload) signature; the preload has
-      // already stripped the event.
+      // coin-zcash expects Electron's (event, payload) signature.
       const unsubscribe = zcash.subscribe(channel, payload => listener(undefined, payload));
       disposers.set(listener, unsubscribe);
     },

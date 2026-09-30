@@ -20,8 +20,6 @@ jest.mock("@ledgerhq/logs", () => ({
   log: jest.fn(),
 }));
 
-// The host injects the channel it exposes over its preload bridge, so tests inject the same
-// way rather than mocking `electron`.
 const mockInjectedIpcRenderer = { invoke: jest.fn(), on: jest.fn(), removeListener: jest.fn() };
 
 // ── Constants ───────────────────────────────────────────────────────────
@@ -593,8 +591,7 @@ describe("createZCashIPCClient", () => {
       );
     });
 
-    // The channel is cached in module scope, so this needs a module registry the other cases
-    // have not already injected into.
+    // isolateModules: the channel is cached at module scope.
     it("throws when nothing was injected during startup", () => {
       jest.isolateModules(() => {
         const { createZCashClient: freshFactory } =
