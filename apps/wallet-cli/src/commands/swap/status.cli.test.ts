@@ -26,11 +26,14 @@ const answerForKnownSwaps = answerLikeSwapApi({
   [`${PROVIDER}:${OFF_CONTRACT_SWAP_ID}`]: "some-unmapped-status",
 });
 
-function statusRoute(answer: (requests: StatusRequest[]) => unknown = answerForKnownSwaps): Route {
+function statusRoute(
+  answer: (requests: StatusRequest[]) => Response = requests =>
+    Response.json(answerForKnownSwaps(requests)),
+): Route {
   return {
     method: "POST",
     match: /\/swap\/status/,
-    respond: body => answer(body as StatusRequest[]),
+    respond: async req => answer(await req.json()),
   };
 }
 
@@ -129,7 +132,7 @@ describe("swap status when the provider lookup fails", () => {
       const isProviderLookup = requests.length > 1;
       return isProviderLookup
         ? new Response("lookup unavailable", { status: 500 })
-        : answerForKnownSwaps(requests);
+        : Response.json(answerForKnownSwaps(requests));
     }),
   ]);
 

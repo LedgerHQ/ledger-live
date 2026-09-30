@@ -2,14 +2,12 @@ type RouteMatch = {
   method?: string;
   /** URL path pattern to match (string = substring, RegExp = test against pathname+search) */
   match: RegExp | string;
-  status?: number;
-  headers?: Record<string, string>;
 };
 
 export type Route = RouteMatch &
   (
-    | { response: unknown; respond?: never }
-    | { respond: (body: unknown) => unknown; response?: never }
+    | { response: unknown; status?: number; headers?: Record<string, string>; respond?: never }
+    | { respond: (req: Request) => Response | Promise<Response>; response?: never }
   );
 
 export class MockServer {
@@ -33,11 +31,8 @@ export class MockServer {
               : route.match.test(pathAndQuery);
 
           if (matches && (!route.method || route.method === req.method)) {
-            const responseBody = route.respond
-              ? await route.respond(await req.json().catch(() => undefined))
-              : route.response;
-            if (responseBody instanceof Response) return responseBody;
-            return Response.json(responseBody, {
+            if (route.respond) return route.respond(req);
+            return Response.json(route.response, {
               status: route.status ?? 200,
               headers: { "Content-Type": "application/json", ...(route.headers ?? {}) },
             });
