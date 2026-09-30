@@ -1,5 +1,13 @@
 # @features/flow-pay-card-assets
 
+## 0.3.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`cee85b4`](https://github.com/LedgerHQ/ledger-live/commit/cee85b47d7d1f414e23935e77c9ad22d98ddf994)]:
+  - @features/flow-pay-card-auth@0.9.0-next.1
+  - @features/flow-pay-card-transactions@0.4.0-next.2
+
 ## 0.3.0-next.1
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # live-mobile
 
+## 4.23.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`cee85b4`](https://github.com/LedgerHQ/ledger-live/commit/cee85b47d7d1f414e23935e77c9ad22d98ddf994)]:
+  - @features/platform-card@0.7.0-next.1
+  - @features/flow-pay-card-auth@0.9.0-next.1
+  - @devtools/bindings@0.10.0-next.1
+  - @features/flow-pay-card@0.6.0-next.2
+  - @features/flow-pay-card-assets@0.3.0-next.2
+  - @features/flow-pay-card-details@0.6.0-next.2
+  - @features/flow-pay-card-transactions@0.4.0-next.2
+
 ## 4.23.0-next.3
 
 ### Minor Changes
