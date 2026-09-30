@@ -1,5 +1,22 @@
 # live-mobile
 
+## 4.23.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`d5dfa07`](https://github.com/LedgerHQ/ledger-live/commit/d5dfa072c9a724609119c06622004d76a45414d9)]:
+  - @domain/entity-contact@0.11.0-next.1
+  - @features/flow-contacts@0.13.0-next.1
+  - @features/flow-contacts-add-address@0.6.1-next.1
+  - @features/flow-contacts-add-contact@0.7.1-next.1
+  - @features/flow-contacts-delete-contact@0.2.4-next.1
+  - @features/flow-contacts-edit-address@0.4.1-next.1
+  - @features/flow-contacts-edit-contact@0.6.1-next.1
+  - @features/flow-contacts-list@0.9.0-next.1
+  - @features/flow-pay-contact@0.5.0-next.1
+  - @features/platform-contacts@0.9.0-next.1
+  - @ledgerhq/live-wallet@1.1.5-next.1
+
 ## 4.23.0-next.0
 
 ### Minor Changes
