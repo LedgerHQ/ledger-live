@@ -141,4 +141,17 @@ describe("StakeFlowModal/StepConnectDevice", () => {
     });
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
+
+  it("renders the preparing spinner instead of a stale error while a retry re-prepares the transaction", () => {
+    act(() => {
+      render(
+        <StepConnectDevice
+          {...makeProps({ error: new Error("previous bridge error"), bridgePending: true })}
+        />,
+      );
+    });
+    expect(screen.getByText("Preparing transaction…")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /retry/i })).not.toBeInTheDocument();
+    expect(genericStepMock).not.toHaveBeenCalled();
+  });
 });

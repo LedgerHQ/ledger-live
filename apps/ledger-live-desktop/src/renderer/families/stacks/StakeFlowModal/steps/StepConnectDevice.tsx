@@ -22,7 +22,8 @@ export default function StepConnectDevice({
 }: Readonly<StepProps>) {
   // A rejected fetchPoxInfo() (Body's resolveStartBurnHt) surfaces here as `error` -- without this
   // branch startBurnHt stays undefined forever and the spinner below never yields to a retry option.
-  if (error) {
+  // Gated on !bridgePending so a retry's re-prepare shows the spinner, not the stale error it's replacing.
+  if (error && !bridgePending) {
     return (
       <Box flow={4} alignItems="center" justifyContent="center" py={50}>
         <TrackPage
