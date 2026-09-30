@@ -113,11 +113,14 @@ const decodedTrc20Payment = ({
   type = "TriggerSmartContract",
   contracts = 1,
   fee_limit,
+  // Tronify's own payments expire about a minute out; null leaves the field off.
+  expiration = Date.now() + 60_000,
   ...value
 }: {
   type?: string;
   contracts?: number;
   fee_limit?: number;
+  expiration?: number | null;
   owner_address?: string;
   contract_address?: string;
   data?: string;
@@ -142,6 +145,7 @@ const decodedTrc20Payment = ({
     raw_data: {
       contract: Array.from({ length: contracts }, () => contract),
       ...(fee_limit === undefined ? {} : { fee_limit }),
+      ...(expiration === null ? {} : { expiration }),
     },
   };
 };
@@ -460,6 +464,17 @@ describe("energyRent provider switch", () => {
         });
       });
 
+      it("accepts an expiration a few minutes out, inside the accepted window", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockResolvedValueOnce(
+          decodedTrc20Payment({ expiration: Date.now() + 6 * 60_000 }),
+        );
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, request),
+        ).resolves.toMatchObject({ orderId: "order-1" });
+      });
+
       it("accepts a sub-unit quote paid as the next whole base unit", async () => {
         mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("3.1245271"));
         mockedDecodeTransaction.mockResolvedValueOnce(
@@ -546,6 +561,11 @@ describe("energyRent provider switch", () => {
           "an amount above the approved order",
           decodedTrc20Payment({ data: transferData(1_000_001) }),
         ],
+        [
+          "an expiration a day out, long enough to be held past a retry",
+          decodedTrc20Payment({ expiration: Date.now() + 24 * 60 * 60_000 }),
+        ],
+        ["no expiration", decodedTrc20Payment({ expiration: null })],
       ])("rejects signed bytes carrying %s", async (_label, decoded) => {
         mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
         mockedDecodeTransaction.mockResolvedValueOnce(decoded);

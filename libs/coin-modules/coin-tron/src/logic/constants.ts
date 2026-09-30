@@ -39,6 +39,10 @@ export const ENERGY_RENT_POLL_TIMEOUT_MS = 120_000;
 // it. `network()` retries GETs only and Tronify's status call is a POST, so the tolerance lives here.
 export const ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS = 5;
 
+// Tronify builds payments that expire about a minute out. One valid for longer could be held and
+// broadcast after the poll gave up and a retry paid again; the margin absorbs a skewed local clock.
+export const ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS = ENERGY_RENT_POLL_TIMEOUT_MS + 5 * 60_000;
+
 /** What Tronify rent is paid in: coin-tron always sends `extraTrxNum`, which selects Tronify's USDT
  * payment ("Flow 2"). */
 export const TRONIFY_PAY_ASSET = {

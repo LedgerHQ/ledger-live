@@ -9,6 +9,7 @@ import {
   TronifyApiError,
 } from "../../types/errors";
 import {
+  ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS,
   ENERGY_RENT_POLL_INTERVAL_MS,
   ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS,
   ENERGY_RENT_POLL_TIMEOUT_MS,
@@ -136,10 +137,12 @@ async function assertSignableTransferMatchesRequest(
   };
   let contracts: DecodedContract[];
   let feeLimit: unknown;
+  let expiration: unknown;
   try {
     const decoded = await decodeTransaction(rawDataHex);
     contracts = (decoded.raw_data?.contract as DecodedContract[] | undefined) ?? [];
     feeLimit = decoded.raw_data?.fee_limit;
+    expiration = decoded.raw_data?.expiration;
   } catch {
     throw new TronifyApiError(
       "Could not decode the energy-rent payment transaction for verification",
@@ -177,9 +180,9 @@ async function assertSignableTransferMatchesRequest(
     );
   }
 
-  // The recipient inside `data` isn't validated (no trusted Tronify address to bind to); the on-chain
-  // energy gate (ADR-058 C4) is the backstop — a redirected payment delivers no energy, so TX-C never
-  // releases.
+  // The recipient inside `data` isn't validated (no trusted Tronify address to bind to), and the
+  // amount is capped only by the provider's own quote. The on-chain energy gate (ADR-058 C4) keeps
+  // TX-C from following a payment that delivered nothing; it does not bound what TX-A pays.
 
   // Binds the signed amount to the order; rounds up so a sub-unit quote isn't rejected.
   const approved = payAssetBaseUnits(order.payCoinAmt);
@@ -202,6 +205,13 @@ async function assertSignableTransferMatchesRequest(
   ) {
     throw new TronifyApiError(
       `Energy-rent payment carries fee_limit ${JSON.stringify(feeLimit)}, above the ${DEFAULT_TRC20_FEES_LIMIT} sun bound`,
+    );
+  }
+
+  const latestExpiration = Date.now() + ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS;
+  if (typeof expiration !== "number" || expiration > latestExpiration) {
+    throw new TronifyApiError(
+      `Energy-rent payment expires at ${JSON.stringify(expiration)}, after the latest accepted ${latestExpiration}`,
     );
   }
 }
