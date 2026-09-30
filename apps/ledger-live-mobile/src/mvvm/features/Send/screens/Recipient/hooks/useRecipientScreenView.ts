@@ -6,6 +6,7 @@ import {
   useContactsFeature,
 } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
@@ -79,10 +80,12 @@ export function useRecipientScreenView({
     useState<PendingSkipMemoRecipient | null>(null);
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const config = resolveCurrencyConfig(currency.id);
   const hasAddressBook = isEligibleAddressCurrency(
     eligibleAddressFamilies,
     currency,
     excludedCurrencyIds,
+    config,
   );
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 

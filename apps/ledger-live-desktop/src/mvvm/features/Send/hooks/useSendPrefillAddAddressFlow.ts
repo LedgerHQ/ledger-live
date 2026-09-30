@@ -12,6 +12,7 @@ import {
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { resolvePrefillAddAddressParams } from "@ledgerhq/live-common/flows/send/recipient/utils/resolvePrefillAddAddressParams";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
   useContactsIntentsOrchestrator,
   type ContactsDeviceIntentExecutorProps,
@@ -204,11 +205,14 @@ export function useSendPrefillAddAddressFlow({
     isSaving.current = true;
 
     try {
+      const config = resolveCurrencyConfig(displayContext.network.networkId);
+
       const signedAddress = await deviceIntents.registerExternalAddress({
         contact: selectedContact,
         currencyId: addressFlowState.selectedCurrencyId,
         label: addressFlowState.addressLabel.label,
         address: addressFlowState.addressEntry.resolvedAddress,
+        config,
       });
 
       if (saveRequestId.current !== requestId) {

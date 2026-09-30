@@ -1,4 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
@@ -58,10 +59,16 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     [state.account.currency, account],
   );
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const config = useMemo(() => resolveCurrencyConfig(currency?.id), [currency]);
   const trackingProperties = useMemo(() => {
     const contactsOnNetwork =
       isContactsFeatureEnabled &&
-      isEligibleAddressCurrency(eligibleAddressFamilies, currency ?? undefined, excludedCurrencyIds)
+      isEligibleAddressCurrency(
+        eligibleAddressFamilies,
+        currency ?? undefined,
+        excludedCurrencyIds,
+        config,
+      )
         ? filterContactsByNetwork(contacts, currency?.id ?? "")
         : [];
 
@@ -74,6 +81,7 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
     sendFlowTrackingProperties,
     contacts,
     currency,
+    config,
     eligibleAddressFamilies,
     excludedCurrencyIds,
     isContactsFeatureEnabled,

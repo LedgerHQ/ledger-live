@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress, type Contact } from "@domain/entity-contact";
 import { resolvePrefillAddAddressParams } from "@ledgerhq/live-common/flows/send/recipient/utils/resolvePrefillAddAddressParams";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
   buildContactsSaveAddressClickProperties,
   CONTACTS_EVENT_SOURCE,
@@ -161,11 +162,14 @@ export function useSendPrefillAddAddressFlow({
     isSaving.current = true;
 
     try {
+      const config = resolveCurrencyConfig(displayContext.network.networkId);
+
       const signedAddress = await deviceIntents.registerExternalAddress({
         contact: selectedContact,
         currencyId: addressFlowState.selectedCurrencyId,
         label: addressFlowState.addressLabel.label,
         address: addressFlowState.addressEntry.resolvedAddress,
+        config,
       });
 
       if (saveRequestId.current !== requestId) {

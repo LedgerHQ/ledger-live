@@ -8856,6 +8856,9 @@ importers:
         specifier: 'catalog:'
         version: 7.7.3
     devDependencies:
+      '@ledgerhq/coin-module-framework':
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.10.0(rxjs@7.8.2)
