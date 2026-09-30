@@ -1,4 +1,4 @@
-import { installContentAbTestCopyOverrides } from "@features/platform-feature-flags/content-ab-test-copy";
+import { installContentAbTestCopyOverrides } from "@features/platform-content-ab-tests";
 import { createInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 import { DEFAULT_LANGUAGE_LOCALE, locales } from "../languages";

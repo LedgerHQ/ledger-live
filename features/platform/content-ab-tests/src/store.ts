@@ -1,6 +1,7 @@
-import { parseContentAbTestCopy, type ContentAbTestCopy, type RemoteConfigValue } from "./firebase";
+import type { RemoteConfigValue } from "@features/platform-feature-flags/firebase";
+import { parseContentAbTestCopy } from "./internals/parse";
 
-export type { ContentAbTestCopy };
+export type ContentAbTestCopy = Readonly<Record<string, string>>;
 
 type Subscriber = (copy: ContentAbTestCopy) => void;
 

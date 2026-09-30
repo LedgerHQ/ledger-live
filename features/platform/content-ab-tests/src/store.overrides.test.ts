@@ -1,5 +1,5 @@
 import { createInstance } from "i18next";
-import { installContentAbTestCopyOverrides, setContentAbTestCopy } from "./contentAbTestCopy";
+import { installContentAbTestCopyOverrides, setContentAbTestCopy } from "./store";
 
 const namespace = "app";
 const englishBaseline = {
