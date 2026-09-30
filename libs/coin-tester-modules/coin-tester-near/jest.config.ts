@@ -1,6 +1,7 @@
 import type { Config } from "jest";
 
-const esmDeps = ["ky"];
+// near-api-js v7 depends on ESM-only @noble/@scure packages.
+const esmDeps = ["ky", "@noble", "@scure"];
 
 const config: Config = {
   testEnvironment: "node",

@@ -1,14 +1,12 @@
-import BN from "bn.js";
 import { Sandbox, DEFAULT_ACCOUNT_ID, DEFAULT_PRIVATE_KEY } from "near-sandbox";
-import { connect, keyStores, utils, type Account, type Near } from "near-api-js";
-import type { KeyPair } from "near-api-js/lib/utils/key_pair";
+import { Account, JsonRpcProvider, KeyPair, KeyPairSigner, type KeyPairString } from "near-api-js";
 import { createServer } from "node:net";
-import { NETWORK_ID } from "./fixtures";
 
 export type SandboxHandle = {
   rpcUrl: string;
-  near: Near;
-  keyStore: keyStores.KeyStore;
+  provider: JsonRpcProvider;
+  /** Registers `keyPair` as the account's signer when given, otherwise reuses the one it was created with. */
+  account(accountId: string, keyPair?: KeyPair): Account;
   /** Genesis account holding the whole supply; every test account is funded from it. */
   root: Account;
   /** Pass a key pair when the signer has to hold the same key as the on-chain account. */
@@ -30,8 +28,6 @@ async function freePort(): Promise<number> {
     });
   });
 }
-
-const toNearBn = (amount: bigint) => new BN(amount.toString());
 
 export async function startSandbox(): Promise<SandboxHandle> {
   // Genesis is left alone on purpose: shrinking `epoch_length` to speed the unstake lock up stops
@@ -78,32 +74,38 @@ export async function startSandbox(): Promise<SandboxHandle> {
     throw new Error(`coin-tester-near: ${accountId} never became final`);
   };
 
-  const keyStore = new keyStores.InMemoryKeyStore();
-  await keyStore.setKey(
-    NETWORK_ID,
-    DEFAULT_ACCOUNT_ID,
-    utils.KeyPair.fromString(DEFAULT_PRIVATE_KEY),
-  );
+  const provider = new JsonRpcProvider({ url: rpcUrl });
+  const keyPairs = new Map<string, KeyPair>();
 
-  const near = await connect({
-    networkId: NETWORK_ID,
-    nodeUrl: rpcUrl,
-    keyStore,
-  });
-  const root = await near.account(DEFAULT_ACCOUNT_ID);
+  const account = (accountId: string, keyPair?: KeyPair): Account => {
+    if (keyPair) {
+      keyPairs.set(accountId, keyPair);
+    }
+    const key = keyPairs.get(accountId);
+    return new Account(accountId, provider, key ? new KeyPairSigner(key) : undefined);
+  };
+
+  const root = account(
+    DEFAULT_ACCOUNT_ID,
+    KeyPair.fromString(DEFAULT_PRIVATE_KEY as KeyPairString),
+  );
 
   return {
     rpcUrl,
-    near,
-    keyStore,
+    provider,
+    account,
     root,
     rpc,
     async createFundedAccount(accountId, yocto, keyPair) {
-      const key = keyPair ?? utils.KeyPair.fromRandom("ed25519");
-      await keyStore.setKey(NETWORK_ID, accountId, key);
-      await root.createAccount(accountId, key.getPublicKey(), toNearBn(yocto));
+      const key = keyPair ?? KeyPair.fromRandom("ed25519");
+      const created = account(accountId, key);
+      await root.createAccount({
+        newAccountId: accountId,
+        publicKey: key.getPublicKey(),
+        nearToTransfer: yocto,
+      });
       await waitUntilFinal(accountId);
-      return near.account(accountId);
+      return created;
     },
     async fastForward(deltaHeight) {
       await rpc("sandbox_fast_forward", { delta_height: deltaHeight });
