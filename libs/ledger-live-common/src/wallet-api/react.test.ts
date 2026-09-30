@@ -483,7 +483,9 @@ describe("account.getMaxSpendable handler", () => {
 
     renderHook(() => useWalletAPIServer(createDefaultOptions()));
 
-    await expect(getHandler()({ accountId: "missing" })).rejects.toThrow("accountId missing unknown");
+    await expect(getHandler()({ accountId: "missing" })).rejects.toThrow(
+      "accountId missing unknown",
+    );
   });
 });
 
