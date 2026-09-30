@@ -145,5 +145,16 @@ describe("content A/B test debug overrides", () => {
       enabled: true,
       copy: { "banner.title": "Hi" },
     });
+    expect(
+      parseContentAbTestPayload({
+        enabled: true,
+        copy: { "banner.title": "Hi" },
+        trackingConfiguration: { experiment: "variant-a" },
+      }),
+    ).toEqual({
+      enabled: true,
+      copy: { "banner.title": "Hi" },
+      trackingConfiguration: { experiment: "variant-a" },
+    });
   });
 });

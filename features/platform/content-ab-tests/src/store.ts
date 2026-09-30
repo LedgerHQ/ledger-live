@@ -4,10 +4,7 @@ import { EnabledContentAbTestCopySchema } from "./internals/schema";
 
 export type ContentAbTestCopy = Readonly<Record<string, string>>;
 
-export type ContentAbTestTrackingConfiguration = {
-  ptxEventProperty: string;
-  ptxEventValue: string;
-};
+export type ContentAbTestTrackingConfiguration = Record<string, string>;
 
 export type ContentAbTestPayload = {
   enabled: boolean;
@@ -230,16 +227,12 @@ function parseCopyRecord(value: unknown): Record<string, string> | null {
 
 function trackingConfigurationFrom(value: unknown): ContentAbTestTrackingConfiguration | undefined {
   if (!isPlainObject(value)) return undefined;
-  const { ptxEventProperty, ptxEventValue } = value;
-  if (
-    typeof ptxEventProperty !== "string" ||
-    ptxEventProperty.length === 0 ||
-    typeof ptxEventValue !== "string" ||
-    ptxEventValue.length === 0
-  ) {
-    return undefined;
+  const trackingConfiguration: ContentAbTestTrackingConfiguration = {};
+  for (const [key, entry] of Object.entries(value)) {
+    if (typeof entry !== "string") return undefined;
+    trackingConfiguration[key] = entry;
   }
-  return { ptxEventProperty, ptxEventValue };
+  return Object.keys(trackingConfiguration).length > 0 ? trackingConfiguration : undefined;
 }
 
 function firebaseKeyToContentAbTestId(key: string): string | null {
@@ -269,11 +262,16 @@ function isSamePayload(
 ): boolean {
   if (current.enabled !== next?.enabled) return false;
   if (!isSameCopy(current.copy, next.copy)) return false;
-  return (
-    current.trackingConfiguration?.ptxEventProperty ===
-      next.trackingConfiguration?.ptxEventProperty &&
-    current.trackingConfiguration?.ptxEventValue === next.trackingConfiguration?.ptxEventValue
-  );
+  return isSameTrackingConfiguration(current.trackingConfiguration, next.trackingConfiguration);
+}
+
+function isSameTrackingConfiguration(
+  current: ContentAbTestTrackingConfiguration | undefined,
+  next: ContentAbTestTrackingConfiguration | undefined,
+): boolean {
+  if (!current && !next) return true;
+  if (!current || !next) return false;
+  return isSameCopy(current, next);
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
