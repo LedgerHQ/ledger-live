@@ -110,6 +110,12 @@ export default class NewSendFlowPage {
     await clearTextByElement(getElementById(this.recipientInputId));
   }
 
+  @Step("Send to the matched recipient")
+  async tapRecipientCardSend() {
+    await waitForElementById("send-recipient-card-send");
+    await tapById("send-recipient-card-send");
+  }
+
   @Step("Select contact {{{0}}} from the recipient search results")
   async selectContactFromSearchResults(contactId: string) {
     await waitForElementById(this.contactCompactRowId(contactId));
