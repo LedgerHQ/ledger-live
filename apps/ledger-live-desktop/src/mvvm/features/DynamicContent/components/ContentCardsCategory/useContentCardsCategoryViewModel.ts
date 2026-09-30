@@ -12,7 +12,7 @@ import {
   type ContentCardInteractionEvent,
   type ContentCardEventProperties,
 } from "@ledgerhq/live-common/braze/contentCardExtras";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import type { CategoryContentCard } from "~/types/dynamicContent";
 import { LocationContentCard } from "~/types/dynamicContent";

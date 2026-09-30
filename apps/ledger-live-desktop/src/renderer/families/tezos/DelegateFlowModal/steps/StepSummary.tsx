@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/live-common/families/tezos/react";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { openURL } from "~/renderer/linking";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import Box from "~/renderer/components/Box";

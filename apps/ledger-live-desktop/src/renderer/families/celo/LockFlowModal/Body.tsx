@@ -5,7 +5,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";

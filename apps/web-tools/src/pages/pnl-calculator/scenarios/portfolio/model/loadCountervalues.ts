@@ -1,7 +1,9 @@
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { initialState as countervaluesInitialState } from "@ledgerhq/live-countervalues/logic";
+import {
+  initialState as countervaluesInitialState,
+  type CounterValuesState,
+} from "@domain/entity-market-countervalues";
 import { log } from "@ledgerhq/logs";
 import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
 import { inferTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/trackingPairs";

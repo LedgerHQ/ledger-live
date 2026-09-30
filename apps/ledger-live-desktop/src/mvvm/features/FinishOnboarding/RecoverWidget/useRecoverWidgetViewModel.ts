@@ -4,7 +4,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useRecoverBannerState } from "~/renderer/hooks/useRecoverBannerState";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { shouldShowRecoverPortfolioWidget } from "./recoverPortfolioWidgetVisibility";
 
 const TRACK = {

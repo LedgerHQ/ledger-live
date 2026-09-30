@@ -24,7 +24,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector, flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import type { ModalData } from "~/renderer/modals/types";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";

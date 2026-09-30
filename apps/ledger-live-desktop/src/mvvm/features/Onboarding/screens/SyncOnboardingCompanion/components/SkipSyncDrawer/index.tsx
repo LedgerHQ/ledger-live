@@ -9,9 +9,9 @@ import {
   onboardingSyncSkipDrawerVisibilitySelector,
   setSkipDrawerVisibility,
 } from "~/renderer/reducers/onboarding";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
+import { track, trackPage } from "@shared/analytics";
 import { analyticsFlowName } from "../../utils/constants/analytics";
-import { track, trackPage } from "~/renderer/analytics/segment";
 
 interface SkipSyncDrawerProps {
   onSkip: () => void;
@@ -39,9 +39,12 @@ const SkipSyncDrawer: React.FC<SkipSyncDrawerProps> = ({
       flow: analyticsFlowName,
       seedConfiguration: seedConfiguration,
     });
-    trackPage(`Set up ${deviceName}: Step 4 Ledger Sync Reject`, null, {
-      seedConfiguration,
-      flow: analyticsFlowName,
+    trackPage({
+      category: `Set up ${deviceName}: Step 4 Ledger Sync Reject`,
+      props: {
+        seedConfiguration,
+        flow: analyticsFlowName,
+      },
     });
     closeDrawer();
     onSkip();

@@ -32,7 +32,12 @@ jest.mock("../../../account", () => ({
 
 // The hook resolves EVM config via getCurrencyConfiguration and passes it to getValidators.
 jest.mock("../../../config", () => ({
-  getCurrencyConfiguration: jest.fn(() => ({ status: { type: "active" } })),
+  getCurrencyConfiguration: jest.fn((currencyId: string) => {
+    const currency = jest
+      .requireActual("@domain/entity-currency-crypto")
+      .getCryptoCurrencyById(currencyId);
+    return { status: { type: "active" }, name: currency.name, unit: currency.units[0] };
+  }),
 }));
 
 const mockedGetValidators = jest.mocked(stakingIndex.getValidators);

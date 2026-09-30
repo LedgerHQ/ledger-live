@@ -6,8 +6,14 @@ import { BitcoinAccount, Transaction } from "@ledgerhq/live-common/families/bitc
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { FeeStrategy } from "@ledgerhq/types-live";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import SendAmountFields from "../SendAmountFields";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 // The bridge's updateTransaction merges the patch onto the transaction.
 // Mocking it also avoids the Suspense boundary that useAccountBridge (React `use`) requires.

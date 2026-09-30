@@ -12,7 +12,7 @@ import {
 import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
 import { useAmountScreenViewModel } from "../hooks/useAmountScreenViewModel";
 import { AmountScreenView } from "./AmountScreenView";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 
 type AmountScreenInnerProps = Readonly<{

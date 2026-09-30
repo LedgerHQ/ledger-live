@@ -3,15 +3,13 @@ import {
   calculate,
   filterSupportedTrackingPairs,
   importCountervalues,
-} from "@ledgerhq/live-countervalues/logic";
+  inferCurrencyAPIID,
+  type CounterValuesState,
+  type CounterValuesStateRaw,
+  type CountervaluesSettings,
+} from "@domain/entity-market-countervalues";
 import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
 import { log } from "@ledgerhq/logs";
-import { inferCurrencyAPIID } from "@ledgerhq/live-countervalues/helpers";
-import type {
-  CounterValuesState,
-  CounterValuesStateRaw,
-  CountervaluesSettings,
-} from "@ledgerhq/live-countervalues/types";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
 import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountLike } from "@ledgerhq/types-live";

@@ -1,7 +1,7 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
 import { getEnv } from "@shared/env";
-import { TICKER_TO_ID_AND_VALUE } from "@ledgerhq/live-countervalues/mock";
+import { TICKER_TO_ID_AND_VALUE } from "@domain/entity-market-countervalues/mock";
 import type { Currency } from "@domain/entity-currency";
 
 // sort currencies by ids provided

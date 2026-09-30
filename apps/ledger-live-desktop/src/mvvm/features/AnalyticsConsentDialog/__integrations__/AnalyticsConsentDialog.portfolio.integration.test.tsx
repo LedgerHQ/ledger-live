@@ -2,10 +2,16 @@ import React from "react";
 import { Route, Routes } from "react-router";
 import { render, screen, waitFor } from "tests/testSetup";
 import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-import { trackPage } from "@shared/analytics";
+import { trackPage, track } from "@shared/analytics";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { track, updateIdentify } from "~/renderer/analytics/segment";
+import { updateIdentify } from "~/renderer/analytics/segment";
 import { AnalyticsConsentDialog } from "../index";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  trackPage: jest.fn(),
+  track: jest.fn(),
+}));
 
 const analyticsOptInOverrides = {
   ...FEATURE_FLAGS_INITIAL_STATE.overrides,
@@ -104,7 +110,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -140,7 +146,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -209,7 +215,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -245,7 +251,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -316,7 +322,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -352,7 +358,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -421,7 +427,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -457,7 +463,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
             privacyPolicyVersion: "1.0",
           },
-          true,
+          { mandatory: true },
         );
 
         await waitFor(() => {
@@ -557,7 +563,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           page: ANALYTICS_CONSENT_DIALOG_PAGE,
           privacyPolicyVersion: "1.1",
         },
-        true,
+        { mandatory: true },
       );
 
       await waitFor(() => {

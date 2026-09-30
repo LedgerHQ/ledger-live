@@ -8,7 +8,6 @@ test.describe("Pay tab", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "portfolioWithManyStablecoins",
-    injectCardSession: true,
     featureFlags: {
       ...FF_LWD_PAY_TAB,
       ...FF_LWD_CONTACTS,

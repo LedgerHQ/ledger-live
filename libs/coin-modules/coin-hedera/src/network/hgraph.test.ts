@@ -17,6 +17,14 @@ const mockedResolveConfig = jest.mocked(resolveConfig);
 const getRequestData = (callIndex = 0) =>
   (mockedNetwork.mock.calls[callIndex][0] as { data: { query: string; variables: any } }).data;
 
+const getTimestampFilter = (callIndex = 0) =>
+  getRequestData(callIndex).variables.where.consensus_timestamp;
+
+const ERC20_TRANSFER_FILTER = {
+  transfer_type: { _in: ["transfer", "mint", "burn"] },
+  contract_type: { _eq: "ERC_20" },
+};
+
 describe("hgraphClient", () => {
   const mockConfig = getMockedConfig();
 
@@ -206,7 +214,11 @@ describe("hgraphClient", () => {
       const queryVariables = getRequestData(0).variables;
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
       expect(result).toEqual([mockTransfer]);
-      expect(queryVariables.accountId).toBe("1234");
+      expect(queryVariables.where).toMatchObject({
+        ...ERC20_TRANSFER_FILTER,
+        token_evm_address: { _in: ["0xabc123"] },
+        _or: [{ sender_account_id: { _eq: "1234" } }, { receiver_account_id: { _eq: "1234" } }],
+      });
       expect(queryVariables.limit).toBe(100);
     });
 
@@ -257,6 +269,43 @@ describe("hgraphClient", () => {
         "2000000000000000000",
         "3000000000000000000",
       ]);
+      expect(getTimestampFilter(0)).toEqual({});
+      [1, 2, 3].forEach(callIndex => {
+        expect(getRequestData(callIndex).query).toBe(getRequestData(0).query);
+        expect(getTimestampFilter(callIndex)).toEqual({
+          _gt: mockTransfers1.concat(mockTransfers2, mockTransfers3)[callIndex - 1]
+            .consensus_timestamp,
+        });
+      });
+    });
+
+    it("keeps the minTimestamp floor alongside the advanced cursor on every page", async () => {
+      mockedNetwork
+        .mockResolvedValueOnce(
+          getMockResponse({
+            data: {
+              erc_token_transfer: [
+                { consensus_timestamp: "1000000000000000000", transaction_hash: "0xhash1" },
+              ],
+            },
+          }),
+        )
+        .mockResolvedValueOnce(getMockResponse({ data: { erc_token_transfer: [] } }));
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        limit: 1,
+        fetchAllPages: true,
+        minTimestamp: "900000000.000000000",
+      });
+
+      expect(getTimestampFilter(0)).toEqual({ _gte: "900000000000000000" });
+      expect(getTimestampFilter(1)).toEqual({
+        _gt: "1000000000000000000",
+        _gte: "900000000000000000",
+      });
     });
 
     it("should paginate when fetchAllPages is false", async () => {
@@ -311,10 +360,7 @@ describe("hgraphClient", () => {
         fetchAllPages: true,
       });
 
-      const query = getRequestData(0).query;
-      const queryVariables = getRequestData(0).variables;
-      expect(query).toContain("consensus_timestamp: { _gt: $cursor }");
-      expect(queryVariables.cursor).toBe("1234567890123456789");
+      expect(getTimestampFilter()).toEqual({ _gt: "1234567890123456789" });
     });
 
     it("should use correct pagination direction for desc order", async () => {
@@ -332,8 +378,7 @@ describe("hgraphClient", () => {
         fetchAllPages: false,
       });
 
-      const query = getRequestData(0).query;
-      expect(query).toContain("order_by: { consensus_timestamp: desc }");
+      expect(getRequestData(0).variables.order).toBe("desc");
     });
 
     it("uses _gt pagination direction when fetchAllPages is false and order is asc with timestamp", async () => {
@@ -352,8 +397,7 @@ describe("hgraphClient", () => {
         fetchAllPages: false,
       });
 
-      const query = getRequestData(0).query;
-      expect(query).toContain("consensus_timestamp: { _gt: $cursor }");
+      expect(getTimestampFilter()).toEqual({ _gt: "1234000000000" });
     });
 
     it("uses _lt pagination direction when fetchAllPages is false and order is desc with timestamp", async () => {
@@ -372,8 +416,43 @@ describe("hgraphClient", () => {
         fetchAllPages: false,
       });
 
-      const query = getRequestData(0).query;
-      expect(query).toContain("consensus_timestamp: { _lt: $cursor }");
+      expect(getTimestampFilter()).toEqual({ _lt: "1234000000000" });
+    });
+
+    it("adds a '_gte' minTimestamp floor independent of timestamp/cursor's own direction", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          data: { erc_token_transfer: [] },
+        }),
+      );
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        minTimestamp: "1787236926.768102104",
+        fetchAllPages: false,
+      });
+
+      expect(getTimestampFilter()).toEqual({ _gte: "1787236926768102104" });
+    });
+
+    it("pads a whole-seconds minTimestamp to nanoseconds", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          data: { erc_token_transfer: [] },
+        }),
+      );
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        minTimestamp: "1789118690",
+        fetchAllPages: false,
+      });
+
+      expect(getTimestampFilter()).toEqual({ _gte: "1789118690000000000" });
     });
 
     it("throws with empty message when error object has no message", async () => {
@@ -457,11 +536,12 @@ describe("hgraphClient", () => {
         endTimestamp: "2000.000000000",
       });
 
-      const queryVariables = getRequestData(0).variables;
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockTransfers);
-      expect(queryVariables.startTimestamp).toBe("1000000000000");
-      expect(queryVariables.endTimestamp).toBe("2000000000000");
+      expect(getRequestData().variables.where).toEqual({
+        ...ERC20_TRANSFER_FILTER,
+        consensus_timestamp: { _gte: "1000000000000", _lt: "2000000000000" },
+      });
     });
 
     it("should normalize timestamps by removing dots", async () => {
@@ -477,9 +557,7 @@ describe("hgraphClient", () => {
         endTimestamp: "5678.901234567",
       });
 
-      const queryVariables = getRequestData(0).variables;
-      expect(queryVariables.startTimestamp).toBe("1234567890123");
-      expect(queryVariables.endTimestamp).toBe("5678901234567");
+      expect(getTimestampFilter()).toEqual({ _gte: "1234567890123", _lt: "5678901234567" });
     });
 
     it("should fetch all pages until no more results", async () => {
@@ -546,21 +624,8 @@ describe("hgraphClient", () => {
         limit: 1,
       });
 
-      const firstCall = mockedNetwork.mock.calls[0][0] as {
-        data: { query: string; variables: Record<string, unknown> };
-      };
-      const secondCall = mockedNetwork.mock.calls[1][0] as {
-        data: { query: string; variables: Record<string, unknown> };
-      };
-
-      // First call should use _gte with startTimestamp
-      expect(firstCall.data.query).toContain("_gte: $startTimestamp");
-      expect(firstCall.data.variables).not.toHaveProperty("cursor");
-      // Second call should use _gt with cursor
-      expect(secondCall.data.query).toContain("_gt: $cursor");
-      expect(secondCall.data.query).not.toContain("$startTimestamp");
-      expect(secondCall.data.variables.cursor).toBe("1100000000000000000");
-      expect(secondCall.data.variables).not.toHaveProperty("startTimestamp");
+      expect(getTimestampFilter(0)).toEqual({ _gte: "1000000000000", _lt: "2000000000000" });
+      expect(getTimestampFilter(1)).toEqual({ _gt: "1100000000000000000", _lt: "2000000000000" });
     });
 
     it("should support custom order parameter", async () => {
@@ -577,8 +642,7 @@ describe("hgraphClient", () => {
         order: "asc",
       });
 
-      const query = getRequestData(0).query;
-      expect(query).toContain("order_by: { consensus_timestamp: asc }");
+      expect(getRequestData(0).variables.order).toBe("asc");
     });
 
     it("should throw error when API returns errors", async () => {

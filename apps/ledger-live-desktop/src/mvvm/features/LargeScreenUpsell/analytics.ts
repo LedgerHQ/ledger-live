@@ -2,7 +2,7 @@ import type {
   LargeScreenUpsellDismissMethod,
   NanoDeviceModelId,
 } from "@features/flow-large-screen-upsell";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 export const LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME = "Modal - Upgrade";
 
@@ -36,16 +36,16 @@ export function trackLargeScreenUpsellModalViewed(
   sharedProps: LargeScreenUpsellSharedAnalyticsProps,
 ) {
   trackPage(
-    LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
-    undefined,
     {
-      name: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
-      sourceFlow: "app start",
-      modalFrequencyState: "every start",
-      ...sharedProps,
+      category: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
+      props: {
+        name: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
+        sourceFlow: "app start",
+        modalFrequencyState: "every start",
+        ...sharedProps,
+      },
     },
-    true,
-    false,
+    { updateRoutes: true },
   );
 }
 
