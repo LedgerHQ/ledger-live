@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.23.0-next.3
+
+### Minor Changes
+
+- [#22788](https://github.com/LedgerHQ/ledger-live/pull/22788) [`3699ef4`](https://github.com/LedgerHQ/ledger-live/commit/3699ef4a5d48c99dcf9892324ef1ed6bc7cccdbc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide the Pay tab card and its history when the pay-tab flag's card param is false
+
 ## 4.23.0-next.2
 
 ### Minor Changes
