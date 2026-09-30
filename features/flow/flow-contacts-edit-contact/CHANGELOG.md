@@ -1,5 +1,13 @@
 # @features/flow-contacts-edit-contact
 
+## 0.6.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`d5dfa07`](https://github.com/LedgerHQ/ledger-live/commit/d5dfa072c9a724609119c06622004d76a45414d9)]:
+  - @domain/entity-contact@0.11.0-next.1
+  - @features/platform-contacts@0.9.0-next.1
+
 ## 0.6.1-next.0
 
 ### Patch Changes

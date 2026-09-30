@@ -1,5 +1,13 @@
 # web-tools
 
+## 0.58.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`d5dfa07`](https://github.com/LedgerHQ/ledger-live/commit/d5dfa072c9a724609119c06622004d76a45414d9)]:
+  - @domain/entity-contact@0.11.0-next.1
+  - @ledgerhq/live-wallet@1.1.5-next.1
+
 ## 0.58.1-next.0
 
 ### Patch Changes

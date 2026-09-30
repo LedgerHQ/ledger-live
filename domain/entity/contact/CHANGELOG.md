@@ -1,5 +1,11 @@
 # @domain/entity-contact
 
+## 0.11.0-next.1
+
+### Minor Changes
+
+- [#22721](https://github.com/LedgerHQ/ledger-live/pull/22721) [`d5dfa07`](https://github.com/LedgerHQ/ledger-live/commit/d5dfa072c9a724609119c06622004d76a45414d9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Restrict contact names to 1-32 printable ASCII characters, as signers only support ASCII
+
 ## 0.10.1-next.0
 
 ### Patch Changes

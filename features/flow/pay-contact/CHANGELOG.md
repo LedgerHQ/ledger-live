@@ -1,5 +1,15 @@
 # @features/flow-pay-contact
 
+## 0.5.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`d5dfa07`](https://github.com/LedgerHQ/ledger-live/commit/d5dfa072c9a724609119c06622004d76a45414d9)]:
+  - @domain/entity-contact@0.11.0-next.1
+  - @features/flow-contacts@0.13.0-next.1
+  - @features/flow-contacts-add-contact@0.7.1-next.1
+  - @features/platform-contacts@0.9.0-next.1
+
 ## 0.5.0-next.0
 
 ### Minor Changes
