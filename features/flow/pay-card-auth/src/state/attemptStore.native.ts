@@ -22,7 +22,7 @@ const KEYCHAIN_USERNAME = "payCard";
  * arrive while the screen is locked, and no read may wait for a biometric prompt.
  */
 const writeOptions: SetOptions = {
-  accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK,
+  accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
   storage: STORAGE_TYPE.AES_GCM_NO_AUTH,
 };
 
