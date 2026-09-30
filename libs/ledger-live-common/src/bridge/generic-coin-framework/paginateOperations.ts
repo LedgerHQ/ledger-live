@@ -97,7 +97,7 @@ export async function paginateOperations<T>(
   let cursor: string | undefined;
   let pagesFetched = 0;
   let consecutiveEmptyPages = 0;
-  let pagesPastBound = 0;
+  const pagesPastBoundRef = { count: 0 };
 
   for (;;) {
     const { items: pageItems, next } = await fetchPage(cursor);
@@ -110,94 +110,127 @@ export async function paginateOperations<T>(
     // Checked before the bound: a module that stalls its cursor exactly on the page that reaches
     // `maxOperations` would otherwise pass for a clean bounded truncation, and the stall -- a
     // state this framework cannot legitimately be in -- would go unreported for that one page.
-    if (followed.has(next)) {
-      log("generic-coin-framework", "listOperations cursor cycled", {
-        cursor,
-        next,
-      });
-      // Thrown, not returned: `next` was served twice, so the walk is not at a real end of stream --
-      // what was collected is a fragment, not a history, and the caller's watermark would seal the
-      // gap below it on the next sync.
-      throw new PaginationIntegrityError(
-        `paginateOperations: cursor ${next} was served twice -- the ${items.length} operations collected so far are a fragment, not a complete history`,
-      );
-    }
+    assertCursorNotCycled(followed, cursor, next, items.length);
 
     if (maxOperations !== undefined && items.length >= maxOperations) {
-      // A page boundary can fall inside a block, and `Page<T>` promises nothing about the rows
-      // of one transaction staying together -- every operation in a block carries that block's
-      // date, so they interleave. Pages descend by height, so the *lowest block fetched* is the
-      // only one that can continue onto the page this stop will never fetch; everything above it
-      // is whole. That block is dropped: a missing block is a truncation from the tail,
-      // contiguous and harmless, while half a transaction is a hole the next watermark seals.
-      // Only a bound-triggered stop needs this -- a falsy `next` means there was no next page.
-      const kept = blockOf ? dropTrailingBlock(items, blockOf) : items;
-
-      if (kept.length > 0 || kept === items) {
-        log(
-          "generic-coin-framework",
-          "listOperations walk stopped: operation-history bound reached",
-          {
-            maxOperations,
-            collected: items.length,
-            kept: kept.length,
-            pagesPastBound,
-          },
-        );
-        return { items: kept, bounded: true };
-      }
-
-      // The cut emptied the list: everything collected is still one block, so the bound is smaller
-      // than that block. Returning nothing here is not a short history, it is no watermark at all --
-      // the shape stores `blockHeight: 0` when `operations` is empty, so the next sync reads as
-      // from-scratch, rewalks the same blocks and retains nothing again, forever. The bound gives
-      // way instead, the way `boundByTransaction` overshoots rather than splitting a transaction:
-      // walk on until a lower block appears and one whole block can be kept.
-      pagesPastBound++;
-      if (pagesPastBound >= PAGE_BUDGET) {
-        throw new PaginationIntegrityError(
-          `paginateOperations: ${pagesPastBound} pages past the bound of ${maxOperations} and the ${items.length} operations collected are all in block ${blockOf?.(items[0])} -- the module is not advancing through blocks`,
-        );
-      }
+      const stopped = tryBoundedStop(items, maxOperations, blockOf, pagesPastBoundRef);
+      if (stopped) return stopped;
     }
 
-    if (consecutiveEmptyPages >= EMPTY_PAGE_BUDGET) {
-      log(
-        "generic-coin-framework",
-        "listOperations walk stopped: empty-page budget reached (safety net, not an expected stop)",
-        {
-          consecutiveEmptyPages,
-          pagesFetched,
-          collected: items.length,
-        },
-      );
-      // Thrown for the same reason as the cursor-cycle guard above: a module advancing its cursor
-      // without producing anything has not reached a real end of stream, so what was collected is a
-      // fragment, not a history.
-      throw new PaginationIntegrityError(
-        `paginateOperations: ${consecutiveEmptyPages} consecutive empty pages -- the module keeps advancing its cursor without returning operations, so the ${items.length} operations collected so far are a fragment, not a complete history`,
-      );
-    }
+    // Thrown for the same reason as the cursor-cycle guard above: a module advancing its cursor
+    // without producing anything has not reached a real end of stream, so what was collected is a
+    // fragment, not a history.
+    assertNotStalled(consecutiveEmptyPages, pagesFetched, items.length);
 
-    if (maxOperations === undefined && pagesFetched >= PAGE_BUDGET) {
-      log(
-        "generic-coin-framework",
-        "listOperations walk stopped: page budget reached (safety net, not an expected stop)",
-        {
-          pagesFetched,
-          collected: items.length,
-        },
-      );
-      // Same reasoning again, for the unbounded caller: with no `maxOperations` to stop a module
-      // that pages forever *while producing operations*, a page count is the only net left.
-      throw new PaginationIntegrityError(
-        `paginateOperations: page budget (${PAGE_BUDGET}) reached after collecting ${items.length} operations -- the result is a fragment, not a complete history`,
-      );
-    }
+    // Same reasoning again, for the unbounded caller: with no `maxOperations` to stop a module
+    // that pages forever *while producing operations*, a page count is the only net left.
+    assertPageBudgetNotExceeded(maxOperations, pagesFetched, items.length);
 
     followed.add(next);
     cursor = next;
   }
+}
+
+/**
+ * `next` was served twice, so the walk is not at a real end of stream -- what was collected is a
+ * fragment, not a history, and the caller's watermark would seal the gap below it on the next
+ * sync. Thrown, not returned, for that reason.
+ */
+function assertCursorNotCycled(
+  followed: Set<string>,
+  cursor: string | undefined,
+  next: string,
+  collected: number,
+): void {
+  if (!followed.has(next)) return;
+
+  log("generic-coin-framework", "listOperations cursor cycled", { cursor, next });
+  throw new PaginationIntegrityError(
+    `paginateOperations: cursor ${next} was served twice -- the ${collected} operations collected so far are a fragment, not a complete history`,
+  );
+}
+
+/**
+ * The bound-triggered stop, extracted so its own nesting -- the block-cut, the give-way check,
+ * the runaway-block throw -- doesn't count against the walk's own complexity. Returns the result
+ * to return from the walk when the bound legitimately stops it, or `undefined` when the bound
+ * gives way and the walk should continue (see "walks past the bound" in the `dropTrailingBlock`
+ * doc below).
+ */
+function tryBoundedStop<T>(
+  items: T[],
+  maxOperations: number,
+  blockOf: ((item: T) => number | undefined) | undefined,
+  pagesPastBoundRef: { count: number },
+): PaginateOperationsResult<T> | undefined {
+  // A page boundary can fall inside a block, and `Page<T>` promises nothing about the rows of one
+  // transaction staying together -- every operation in a block carries that block's date, so they
+  // interleave. Pages descend by height, so the *lowest block fetched* is the only one that can
+  // continue onto the page this stop will never fetch; everything above it is whole. That block is
+  // dropped: a missing block is a truncation from the tail, contiguous and harmless, while half a
+  // transaction is a hole the next watermark seals. Only a bound-triggered stop needs this -- a
+  // falsy `next` means there was no next page.
+  const kept = blockOf ? dropTrailingBlock(items, blockOf) : items;
+
+  if (kept.length > 0 || kept === items) {
+    log("generic-coin-framework", "listOperations walk stopped: operation-history bound reached", {
+      maxOperations,
+      collected: items.length,
+      kept: kept.length,
+      pagesPastBound: pagesPastBoundRef.count,
+    });
+    return { items: kept, bounded: true };
+  }
+
+  // The cut emptied the list: everything collected is still one block, so the bound is smaller
+  // than that block. Returning nothing here is not a short history, it is no watermark at all --
+  // the shape stores `blockHeight: 0` when `operations` is empty, so the next sync reads as
+  // from-scratch, rewalks the same blocks and retains nothing again, forever. The bound gives
+  // way instead, the way `boundByTransaction` overshoots rather than splitting a transaction:
+  // walk on until a lower block appears and one whole block can be kept.
+  pagesPastBoundRef.count++;
+  if (pagesPastBoundRef.count >= PAGE_BUDGET) {
+    throw new PaginationIntegrityError(
+      `paginateOperations: ${pagesPastBoundRef.count} pages past the bound of ${maxOperations} and the ${items.length} operations collected are all in block ${blockOf?.(items[0])} -- the module is not advancing through blocks`,
+    );
+  }
+  return undefined;
+}
+
+/** A module advancing its cursor without producing anything has not reached a real end of stream. */
+function assertNotStalled(
+  consecutiveEmptyPages: number,
+  pagesFetched: number,
+  collected: number,
+): void {
+  if (consecutiveEmptyPages < EMPTY_PAGE_BUDGET) return;
+
+  log(
+    "generic-coin-framework",
+    "listOperations walk stopped: empty-page budget reached (safety net, not an expected stop)",
+    { consecutiveEmptyPages, pagesFetched, collected },
+  );
+  throw new PaginationIntegrityError(
+    `paginateOperations: ${consecutiveEmptyPages} consecutive empty pages -- the module keeps advancing its cursor without returning operations, so the ${collected} operations collected so far are a fragment, not a complete history`,
+  );
+}
+
+/** Only for the unbounded caller: with no `maxOperations` to stop a runaway module, a page count is the only net left. */
+function assertPageBudgetNotExceeded(
+  maxOperations: number | undefined,
+  pagesFetched: number,
+  collected: number,
+): void {
+  if (maxOperations !== undefined || pagesFetched < PAGE_BUDGET) return;
+
+  log(
+    "generic-coin-framework",
+    "listOperations walk stopped: page budget reached (safety net, not an expected stop)",
+    { pagesFetched, collected },
+  );
+  throw new PaginationIntegrityError(
+    `paginateOperations: page budget (${PAGE_BUDGET}) reached after collecting ${collected} operations -- the result is a fragment, not a complete history`,
+  );
 }
 
 /**
@@ -211,7 +244,8 @@ export async function paginateOperations<T>(
  * result, means the lowest block starts at the head: the bound is smaller than one block.
  */
 function dropTrailingBlock<T>(items: T[], blockOf: (item: T) => number | undefined): T[] {
-  const lastHeight = items.length ? blockOf(items[items.length - 1]) : undefined;
+  const lastItem = items.at(-1);
+  const lastHeight = lastItem === undefined ? undefined : blockOf(lastItem);
   if (lastHeight === undefined) return items;
 
   return items.slice(

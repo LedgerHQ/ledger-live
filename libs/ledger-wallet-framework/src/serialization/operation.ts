@@ -146,15 +146,13 @@ export const buildSubOperationIndex = (subAccounts: TokenAccount[]): SubOperatio
     }
   };
 
-  for (let i = 0; i < subAccounts.length; i++) {
-    const ta = subAccounts[i];
-
-    for (let j = 0; j < ta.operations.length; j++) {
-      insert(ta.operations[j]);
+  for (const ta of subAccounts) {
+    for (const op of ta.operations) {
+      insert(op);
     }
 
-    for (let j = 0; j < ta.pendingOperations.length; j++) {
-      insert(ta.pendingOperations[j]);
+    for (const op of ta.pendingOperations) {
+      insert(op);
     }
   }
 

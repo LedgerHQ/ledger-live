@@ -332,17 +332,23 @@ export interface FetchA4OperationsResult {
   bounded: boolean;
 }
 
+export interface FetchA4OperationsOptions {
+  liveAccountId: string;
+  address: string;
+  chain: string;
+  minHeight: number;
+  maxDcRoamRetries: number;
+  maxOperations?: number;
+  pageSize?: number;
+}
+
 export async function fetchA4Operations(
   client: A4Client,
   a4AccountId: string,
-  liveAccountId: string,
-  address: string,
-  chain: string,
-  minHeight: number,
-  maxDcRoamRetries: number,
-  maxOperations?: number,
-  pageSize?: number,
+  options: FetchA4OperationsOptions,
 ): Promise<FetchA4OperationsResult> {
+  const { liveAccountId, address, chain, minHeight, maxDcRoamRetries, maxOperations, pageSize } =
+    options;
   // `size` is what bounds one response, `maxOperations` what bounds the walk -- the same two
   // gates the delegate path has, and only the first protects against a single huge response
   // materialising before the walk gets a say. Omitted when unset, which is A4's own default.
