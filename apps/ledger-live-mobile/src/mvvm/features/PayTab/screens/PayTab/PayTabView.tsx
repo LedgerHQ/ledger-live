@@ -25,6 +25,7 @@ type PayTabViewProps = {
   readonly top: number;
   readonly bottom: number;
   readonly card: CardProps;
+  readonly showCard: boolean;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
@@ -40,6 +41,7 @@ export function PayTabView({
   top,
   bottom,
   card,
+  showCard,
   balance,
   actionTiles,
   contacts,
@@ -82,18 +84,20 @@ export function PayTabView({
             <TrackScreen category="Recipient address selection" refreshSource={false} />
           )}
           <ContactAddressPicker {...contactAddressPicker} />
-          <Card {...card} />
+          {showCard && <Card {...card} />}
           <FeatureTour />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
 
-          <Text
-            typography="body3"
-            lx={{ color: "muted", textAlign: "center", marginTop: "s16" }}
-            testID="pay-disclaimer"
-          >
-            {disclaimer}
-          </Text>
+          {showCard && (
+            <Text
+              typography="body3"
+              lx={{ color: "muted", textAlign: "center", marginTop: "s16" }}
+              testID="pay-disclaimer"
+            >
+              {disclaimer}
+            </Text>
+          )}
         </Box>
       </Animated.ScrollView>
     </Box>
