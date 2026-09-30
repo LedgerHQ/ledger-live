@@ -16,7 +16,7 @@ import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { QuickAction } from "../types";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";

@@ -2,7 +2,7 @@ import { Settings } from "@ledgerhq/lumen-ui-react/symbols";
 import { renderHook, act } from "tests/testSetup";
 import { useSettings } from "../useSettings";
 import { useNavigate, useLocation } from "react-router";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -10,7 +10,10 @@ jest.mock("react-router", () => ({
   useLocation: jest.fn(),
 }));
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
   setTrackingSource: jest.fn(),
 }));
 

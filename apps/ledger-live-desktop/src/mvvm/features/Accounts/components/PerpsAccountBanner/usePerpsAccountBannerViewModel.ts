@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { useFeature } from "@features/platform-feature-flags";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export function usePerpsAccountBannerViewModel(currency: CryptoCurrency) {
   const navigate = useNavigate();

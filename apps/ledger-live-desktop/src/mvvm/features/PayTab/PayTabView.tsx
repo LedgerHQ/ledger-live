@@ -6,7 +6,7 @@ import { DepositOptions } from "@features/flow-pay-deposit";
 import { BankTransferIntro } from "@features/flow-pay-bank-transfer";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-request";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import PayTabHeader from "./components/PayTabHeader";
 import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExecutorLWD";
 import type { PayTabViewModel } from "./usePayTabViewModel";

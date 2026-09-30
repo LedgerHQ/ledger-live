@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import { USBTroubleshootingIndexSelector } from "~/renderer/reducers/settings";
 import { setUSBTroubleshootingIndex } from "~/renderer/actions/settings";
-import { setTrackingSource } from "../analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 function useUSBTroubleshooting() {
   const lastLocation = useRef<string | null>(null);
   const dispatch = useDispatch();

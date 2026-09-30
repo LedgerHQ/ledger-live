@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow as Row } from "~/renderer/screens/settings/SettingsSection";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Switch from "~/renderer/components/Switch";
 
 export default function FilterTokenOperationsZeroAmount() {

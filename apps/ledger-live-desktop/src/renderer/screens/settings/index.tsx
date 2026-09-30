@@ -13,7 +13,7 @@ import SectionDeveloper from "./sections/Developer";
 import SectionAccounts from "./sections/Accounts";
 import SectionAbout from "./sections/About";
 import SectionHelp from "./sections/Help";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { developerModeSelector } from "~/renderer/reducers/settings";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";

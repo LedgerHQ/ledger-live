@@ -18,7 +18,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import AssetHeader from "./AssetHeader";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 export default function AssetPage() {
   const { "*": assetId } = useParams<{ "*": string }>();
