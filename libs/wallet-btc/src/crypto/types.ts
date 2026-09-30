@@ -17,15 +17,20 @@ export interface ICrypto {
 
 // Minimal currency descriptor injected by the consumer. Replaces
 // the legacy CryptoCurrency type and @ledgerhq/live-env (getEnv):
-// the caller resolves the explorer id and endpoint and passes them in, so
-// wallet-btc has no dependency on the Ledger currency registry or env.
+// the caller resolves the explorer id, endpoint and batch size and passes them in, so
+// wallet-btc has no dependency on the Ledger currency registry or configuration.
 export type WalletBtcCurrency = {
   /** Currency id, e.g. "bitcoin". */
   id: string;
   /** Ledger explorer id, e.g. "btc"; defaults to `id` when omitted. */
   explorerId?: string;
-  /** Resolved Ledger explorer base endpoint (caller-provided, e.g. from EXPLORER env). */
+  /** Resolved Ledger explorer base endpoint (caller-provided, e.g. from the coin config). */
   explorerEndpoint: string;
+  /**
+   * Transactions requested per explorer page (`batch_size`), for history sync and pendings.
+   * @default DEFAULT_EXPLORER_BATCH_SIZE (1000)
+   */
+  explorerBatchSize?: number;
 };
 
 export type Currency =

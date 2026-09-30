@@ -1,6 +1,6 @@
 jest.mock("@ledgerhq/live-network/network", () => ({ __esModule: true, default: jest.fn() }));
 import network from "@ledgerhq/live-network/network";
-import BitcoinLikeExplorer from "../explorer/index";
+import BitcoinLikeExplorer, { DEFAULT_EXPLORER_BATCH_SIZE } from "../explorer/index";
 import type { Address, TX } from "../storage/types";
 
 const mockedNetwork = network as unknown as jest.Mock;
@@ -105,6 +105,27 @@ describe("BitcoinLikeExplorer", () => {
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({ url: `${BASE}/address/${address.address}/txs/pending` }),
     );
+  });
+
+  it("pages pendings by the default batch size", async () => {
+    mockedNetwork.mockResolvedValue({ data: [] });
+    await explorer.getPendings(address);
+    expect(mockedNetwork.mock.calls[0][0].params.batch_size).toBe(DEFAULT_EXPLORER_BATCH_SIZE);
+  });
+
+  it("pages pendings by the batch size injected through the currency", async () => {
+    mockedNetwork.mockResolvedValue({ data: [] });
+    const batched = new BitcoinLikeExplorer({
+      cryptoCurrency: {
+        id: "bitcoin",
+        explorerId: "btc",
+        explorerEndpoint: "https://explorers.api.live.ledger.com",
+        explorerBatchSize: 250,
+      },
+    });
+    expect(batched.batchSize).toBe(250);
+    await batched.getPendings(address);
+    expect(mockedNetwork.mock.calls[0][0].params.batch_size).toBe(250);
   });
 
   it("fetches a single utxo tx", async () => {

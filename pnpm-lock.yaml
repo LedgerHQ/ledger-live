@@ -9849,9 +9849,6 @@ importers:
       '@ledgerhq/live-signer-zcash':
         specifier: workspace:^
         version: link:../../live-signer-zcash
-      '@ledgerhq/logs':
-        specifier: 'catalog:'
-        version: 6.19.0
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.0

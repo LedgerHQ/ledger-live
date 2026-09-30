@@ -6,6 +6,8 @@ import { DmkSignerZcash } from "@ledgerhq/live-signer-zcash";
 import type { ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
 import type { ChainAdapter } from "../types";
+import type { BitcoinCoinConfig } from "../../config";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { ZcashAccount, ZcashAccountRaw } from "./types";
 import { composeXpub } from "./xpub";
 import { resolveZcashFeePerByte } from "./transparent-fee-rate";
@@ -51,10 +53,15 @@ const zcashChainAdapter: ChainAdapter = {
    * zcashSafeFeePerByte); it is the starting point and the fallback of the
    * resolution.
    */
-  resolveFeePerByte(account: Account, transaction: Transaction) {
+  resolveFeePerByte(
+    config: BitcoinCoinConfig,
+    logger: Logger,
+    account: Account,
+    transaction: Transaction,
+  ) {
     const safeFeePerByte = transaction.feePerByte;
     if (!safeFeePerByte || safeFeePerByte.lte(0)) return undefined;
-    return resolveZcashFeePerByte(account, transaction, safeFeePerByte);
+    return resolveZcashFeePerByte(config, logger, account, transaction, safeFeePerByte);
   },
 
   // Persist the shielded state alongside the transparent bitcoinResources. The

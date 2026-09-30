@@ -1,3 +1,4 @@
+import { TEST_CONFIG, TEST_LOGGER } from "../fixtures/coinConfig";
 import { BigNumber } from "bignumber.js";
 import { bitcoinPickingStrategy } from "../../types";
 
@@ -73,10 +74,10 @@ beforeEach(() => {
 test("passes user fee 1 sat/vB through unchanged (relay=1)", async () => {
   const account = makeAccount();
   const tx = makeTx(1);
-  await buildTransaction(account, tx);
+  await buildTransaction(TEST_CONFIG, TEST_LOGGER, account, tx);
 
   const fee1 = estimateAccountMaxSpendable.mock.calls[0][1]; // number
-  const fee2 = buildAccountTx.mock.calls[0][0].feePerByte as number; // number
+  const fee2 = buildAccountTx.mock.calls[0][1].feePerByte as number; // number
   expect(fee1).toBe(1);
   expect(fee2).toBe(1);
 });
@@ -84,59 +85,59 @@ test("passes user fee 1 sat/vB through unchanged (relay=1)", async () => {
 test("passes user fee already above floor through unchanged (relay=1, user=3)", async () => {
   const account = makeAccount();
   const tx = makeTx(3);
-  await buildTransaction(account, tx);
+  await buildTransaction(TEST_CONFIG, TEST_LOGGER, account, tx);
 
   expect(estimateAccountMaxSpendable.mock.calls[0][1]).toBe(3);
-  expect(buildAccountTx.mock.calls[0][0].feePerByte).toBe(3);
+  expect(buildAccountTx.mock.calls[0][1].feePerByte).toBe(3);
 });
 
 test("passes fractional fee through unchanged (user=1.2, relay=1)", async () => {
   const account = makeAccount();
   const tx = makeTx(1.2);
-  await buildTransaction(account, tx);
+  await buildTransaction(TEST_CONFIG, TEST_LOGGER, account, tx);
 
-  expect(buildAccountTx.mock.calls[0][0].feePerByte).toBe(1.2);
+  expect(buildAccountTx.mock.calls[0][1].feePerByte).toBe(1.2);
 });
 
 test("ignores higher relay floor when not clamping (relay=2, user=1 → still 1)", async () => {
   setExplorer({ getNetwork: jest.fn().mockResolvedValue({ relay_fee: "0.00002000" }) }); // =2 sat/vB
   const account = makeAccount();
   const tx = makeTx(1);
-  await buildTransaction(account, tx);
+  await buildTransaction(TEST_CONFIG, TEST_LOGGER, account, tx);
 
-  expect(buildAccountTx.mock.calls[0][0].feePerByte).toBe(1);
+  expect(buildAccountTx.mock.calls[0][1].feePerByte).toBe(1);
 });
 
 test("ignores higher relay floor when not clamping (relay=2, user=1.2 → still 1.2)", async () => {
   setExplorer({ getNetwork: jest.fn().mockResolvedValue({ relay_fee: "0.00002000" }) }); // =2 sat/vB
   const account = makeAccount();
   const tx = makeTx(1.2);
-  await buildTransaction(account, tx);
+  await buildTransaction(TEST_CONFIG, TEST_LOGGER, account, tx);
 
-  expect(buildAccountTx.mock.calls[0][0].feePerByte).toBe(1.2);
+  expect(buildAccountTx.mock.calls[0][1].feePerByte).toBe(1.2);
 });
 
 test("no clamp on explorer error (user=1 → 1)", async () => {
   setExplorer({ getNetwork: jest.fn().mockRejectedValue(new Error("boom")) });
   const account = makeAccount();
   const tx = makeTx(1);
-  await buildTransaction(account, tx);
+  await buildTransaction(TEST_CONFIG, TEST_LOGGER, account, tx);
 
-  expect(buildAccountTx.mock.calls[0][0].feePerByte).toBe(1);
+  expect(buildAccountTx.mock.calls[0][1].feePerByte).toBe(1);
 });
 
 test("no clamp on tiny relay floor (user=1 stays 1)", async () => {
   setExplorer({ getNetwork: jest.fn().mockResolvedValue({ relay_fee: "0.00000050" }) }); // ~0.05 sat/vB
   const account = makeAccount();
   const tx = makeTx(1);
-  await buildTransaction(account, tx);
+  await buildTransaction(TEST_CONFIG, TEST_LOGGER, account, tx);
 
-  expect(buildAccountTx.mock.calls[0][0].feePerByte).toBe(1);
+  expect(buildAccountTx.mock.calls[0][1].feePerByte).toBe(1);
 });
 
 test("throws when feePerByte is missing", async () => {
   const account = makeAccount();
   await expect(
-    buildTransaction(account, { ...makeTx(1), feePerByte: null } as any),
+    buildTransaction(TEST_CONFIG, TEST_LOGGER, account, { ...makeTx(1), feePerByte: null } as any),
   ).rejects.toThrow(); // FeeNotLoaded
 });

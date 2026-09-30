@@ -7,8 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DustLimit, OpReturnDataSizeLimit, TaprootNotActivated, FeeTooLow } from "./errors";
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
-import type { Account, AccountBridge } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import type {
   BitcoinAccount,
   BitcoinInput,
@@ -24,8 +23,13 @@ import { Currency } from "@ledgerhq/wallet-btc/index";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { getChainAdapter } from "./chain-adapters/registry";
+import type { BitcoinCoinConfig } from "./config";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 export const MAX_BLOCK_HEIGHT_FOR_TAPROOT = 709632;
+
+// Warn when the fees exceed 1/FEE_TOO_HIGH_RATIO of the amount sent.
+const FEE_TOO_HIGH_RATIO = 10;
 
 type ErrorMap = Record<string, Error>;
 
@@ -81,6 +85,8 @@ function getRelayFeePerByte(account: Account, transaction: Transaction): BigNumb
 }
 
 async function computeFees(
+  config: BitcoinCoinConfig,
+  logger: Logger,
   account: Account,
   transaction: Transaction,
   errors: ErrorMap,
@@ -110,7 +116,7 @@ async function computeFees(
   }
 
   try {
-    const res = await calculateFees({ account, transaction });
+    const res = await calculateFees(config, logger, { account, transaction });
     return {
       txInputs: res.txInputs,
       txOutputs: res.txOutputs,
@@ -162,11 +168,12 @@ function checkDustLimit(
   }
 }
 
-export const getTransactionStatus: AccountBridge<
-  Transaction,
-  Account,
-  TransactionStatus
->["getTransactionStatus"] = async (account: Account, transaction: Transaction) => {
+export const getTransactionStatus = async (
+  config: BitcoinCoinConfig,
+  logger: Logger,
+  account: Account,
+  transaction: Transaction,
+): Promise<TransactionStatus> => {
   const adapter = getChainAdapter(account.currency.id);
   const custom = adapter.getTransactionStatus?.(account, transaction);
   if (custom) return custom;
@@ -179,25 +186,31 @@ export const getTransactionStatus: AccountBridge<
 
   await applyTaprootSafeguard(account, transaction, errors);
 
-  const { txInputs, txOutputs, estimatedFees } = await computeFees(account, transaction, errors);
+  const { txInputs, txOutputs, estimatedFees } = await computeFees(
+    config,
+    logger,
+    account,
+    transaction,
+    errors,
+  );
 
   const sumOfInputs = txInputs.reduce((sum, input) => sum.plus(input.value ?? 0), new BigNumber(0));
   const sumOfChanges = txOutputs
     .filter(o => o.isChange)
     .reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
 
-  log("bitcoin", `${txInputs.length} inputs, sum: ${sumOfInputs.toString()}`);
+  logger("bitcoin", `${txInputs.length} inputs, sum: ${sumOfInputs.toString()}`);
   const sanctionedAddresses = await collectSanctionedInputs(account, txInputs);
   if (sanctionedAddresses.length > 0) {
     errors.sender = new AddressesSanctionedError("AddressesSanctionedError", {
       addresses: sanctionedAddresses,
     });
   }
-  log("bitcoin", `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`);
+  logger("bitcoin", `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`);
 
   const totalSpent = sumOfInputs.minus(sumOfChanges);
   const amount = useAllAmount ? totalSpent.minus(estimatedFees) : transaction.amount;
-  log("bitcoin", `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`);
+  logger("bitcoin", `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`);
 
   // For RBF cancel transactions, we're sending the same amount as the original tx but to ourselves (change address)
   // The recipient is the change address, so the external amount is effectively cancelled
@@ -208,7 +221,7 @@ export const getTransactionStatus: AccountBridge<
     errors.amount = useAllAmount ? new NotEnoughBalance() : new AmountRequired();
   }
 
-  if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
+  if (amount.gt(0) && estimatedFees.times(FEE_TOO_HIGH_RATIO).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 

@@ -1,3 +1,4 @@
+import { TEST_LOGGER } from "../fixtures/coinConfig";
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom, skip, toArray } from "rxjs";
 import buildSignRawOperation from "../../signRawOperation";
@@ -128,7 +129,7 @@ describe("signRawOperation (PSBT path)", () => {
         });
       }),
     };
-    const signRawOperation = buildSignRawOperation(makeSignerContext(signer));
+    const signRawOperation = buildSignRawOperation(makeSignerContext(signer), TEST_LOGGER);
     const account = makeAccount();
 
     const events = await firstValueFrom(
@@ -225,7 +226,10 @@ describe("signRawOperation (PSBT path)", () => {
     };
 
     await firstValueFrom(
-      buildSignRawOperation(makeSignerContext(signer))({
+      buildSignRawOperation(
+        makeSignerContext(signer),
+        TEST_LOGGER,
+      )({
         account: makeAccount(),
         deviceId: "mock",
         transaction: PSBT_V2_B64,
@@ -247,7 +251,7 @@ describe("signRawOperation (PSBT path)", () => {
 
   test("invalid base64 PSBT errors early", async () => {
     const signer: MockSigner = { signPsbtBuffer: jest.fn() };
-    const signRawOperation = buildSignRawOperation(makeSignerContext(signer));
+    const signRawOperation = buildSignRawOperation(makeSignerContext(signer), TEST_LOGGER);
     const account = makeAccount();
 
     await expect(

@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import { getOriginalTxFeeContext } from "@ledgerhq/coin-bitcoin/rbfFees";
+import { getBoundWalletAccount } from "../coinConfig";
 
 const ZERO = new BigNumber(0);
 
@@ -15,8 +15,8 @@ export const getOriginalTxFeeRateSatVb = async (
   originalTxId: string,
 ): Promise<BigNumber | null> => {
   try {
-    const walletAccount = getWalletAccount(account);
-    const ctx = await getOriginalTxFeeContext(walletAccount, originalTxId);
+    const { config, walletAccount } = getBoundWalletAccount(account);
+    const ctx = await getOriginalTxFeeContext(config, walletAccount, originalTxId);
     return ctx ? ctx.oldFeeRateSatVb : null;
   } catch {
     return null;
@@ -39,8 +39,8 @@ export const getAdditionalFeeRequiredForRbf = async ({
 }): Promise<BigNumber> => {
   if (!transactionToUpdate.replaceTxId) return ZERO;
 
-  const walletAccount = getWalletAccount(mainAccount);
-  const ctx = await getOriginalTxFeeContext(walletAccount, transactionToUpdate.replaceTxId);
+  const { config, walletAccount } = getBoundWalletAccount(mainAccount);
+  const ctx = await getOriginalTxFeeContext(config, walletAccount, transactionToUpdate.replaceTxId);
   if (!ctx) return ZERO;
 
   const { vsize, oldFeeSat, oldFeeRateSatVb, incrementalFeeRateSatVb } = ctx;

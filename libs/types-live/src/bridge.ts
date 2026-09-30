@@ -310,6 +310,7 @@ export interface AccountBridgeExtensions<T extends TransactionCommon = Transacti
     transaction: T;
     transactionToUpdate: T;
     status: TransactionStatusCommon;
+    mainAccount: Account;
     editType?: TransactionEditType;
   }) => TransactionStatusCommon;
   getFormattedFeeFields?: (args: {
@@ -326,7 +327,11 @@ export interface AccountBridgeExtensions<T extends TransactionCommon = Transacti
     mainAccount: Account;
     transactionToUpdate: T;
   }) => Promise<boolean>;
-  isStrategyDisabled?: (args: { transaction: T; feeData: unknown }) => boolean;
+  isStrategyDisabled?: (args: {
+    transaction: T;
+    feeData: unknown;
+    mainAccount: Account;
+  }) => boolean;
   isTransactionConfirmed?: (args: { account: AccountLike; hash: string }) => Promise<boolean>;
   getWalletApiSpendableBalance?: (account: AccountLike) => BigNumber;
 }

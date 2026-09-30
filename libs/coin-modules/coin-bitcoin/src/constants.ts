@@ -24,3 +24,15 @@ export const getBitcoinEstimationRecipient = (currencyId: string): string => {
   if (!recipient) throw new Error(`No estimation recipient for ${currencyId}`);
   return recipient;
 };
+
+// ── Module defaults of the optional coin config fields (see config.ts) ──────
+//
+// The values wallet-btc consumes are defined there, next to their use, and re-exported here.
+
+export { DEFAULT_EXPLORER_BATCH_SIZE } from "@ledgerhq/wallet-btc/explorer/index";
+export { DEFAULT_REPLACED_OPERATION_EXPIRY_MS } from "@ledgerhq/wallet-btc/operations";
+export { DEFAULT_RBF_MIN_BUMP_RATIO } from "@ledgerhq/wallet-btc/utils";
+
+export const DEFAULT_STUCK_TRANSACTION_TIMEOUT_MS = 20 * 60 * 1000;
+export const DEFAULT_FEE_CALCULATION_CACHE_TTL_MS = 5 * 60 * 1000;
+export const DEFAULT_FEE_RATES_CACHE_TTL_MS = 5 * 60 * 1000;

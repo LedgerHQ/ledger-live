@@ -1,7 +1,7 @@
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { log } from "@ledgerhq/logs";
 import type { SignerContext } from "./signer";
 import { getChainAdapter } from "./chain-adapters/registry";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 export type GetFullViewingKeyOptions = {
   currency: CryptoCurrency;
@@ -18,7 +18,7 @@ export type GetFullViewingKeyFn = (
   options: GetFullViewingKeyOptions,
 ) => Promise<GetFullViewingKeyResult>;
 
-const resolver = (signerContext: SignerContext): GetFullViewingKeyFn => {
+const resolver = (signerContext: SignerContext, logger: Logger): GetFullViewingKeyFn => {
   return async (deviceId, { currency, path }) => {
     const adapter = getChainAdapter(currency.id);
     const custom = adapter.getFullViewingKey?.(deviceId, currency, path, signerContext);
@@ -27,7 +27,7 @@ const resolver = (signerContext: SignerContext): GetFullViewingKeyFn => {
     }
 
     const viewKey = await custom;
-    log("hw", `getFullViewingKey ${currency.id} path=${path}`);
+    logger("hw", `getFullViewingKey ${currency.id} path=${path}`);
     return {
       viewKey,
       path,
