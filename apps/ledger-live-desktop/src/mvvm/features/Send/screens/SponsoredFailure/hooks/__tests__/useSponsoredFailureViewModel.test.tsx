@@ -1,10 +1,25 @@
+import { BigNumber } from "bignumber.js";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import { renderHook } from "tests/testSetup";
+import {
+  TRON_USDT_FEE_ASSET,
+  createMockTronUsdtAccount,
+} from "../../../Recipient/__integrations__/__fixtures__/accounts";
+import { buildRentReservationOperation } from "../../../../utils/rentReservation";
 import { useSponsoredFailureViewModel } from "../useSponsoredFailureViewModel";
 
 const mockClose = jest.fn();
 const mockOperationRetry = jest.fn();
 const mockResetStatus = jest.fn();
+let mockSendingAccount: TokenAccount | null = null;
+let mockTransaction: { amount: BigNumber; useAllAmount: boolean } | null = null;
 jest.mock("../../../../context/SendFlowContext", () => ({
+  useSendFlowData: () => ({
+    state: {
+      account: { account: mockSendingAccount },
+      transaction: { transaction: mockTransaction },
+    },
+  }),
   useSendFlowActions: () => ({
     close: mockClose,
     operation: { onRetry: mockOperationRetry },
@@ -18,7 +33,9 @@ let mockSponsoredState: {
   failureKind: string | null;
   paymentTxId: string | null;
   failureError?: Error | null;
+  rentPayment?: { asset: typeof TRON_USDT_FEE_ASSET; amount: bigint } | null;
 };
+let mockFeeTokenAccount: TokenAccount | null = null;
 
 jest.mock("../../../../context/SponsoredSendContext", () => ({
   useSponsoredSend: () => ({
@@ -26,6 +43,7 @@ jest.mock("../../../../context/SponsoredSendContext", () => ({
     actions: { retry: mockRetry },
     providerName: "Provider",
     feeCurrencyTicker: "USDT",
+    feeTokenAccount: mockFeeTokenAccount,
   }),
 }));
 
@@ -33,6 +51,9 @@ describe("useSponsoredFailureViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSponsoredState = { phase: "FAILED", failureKind: "RENT_PAYMENT", paymentTxId: null };
+    mockSendingAccount = null;
+    mockTransaction = null;
+    mockFeeTokenAccount = null;
   });
 
   it("renders the RENT_PAYMENT message", () => {
@@ -97,6 +118,62 @@ describe("useSponsoredFailureViewModel", () => {
     const { result } = renderHook(() => useSponsoredFailureViewModel());
 
     expect(result.current.retryLabel).toBe("Pay again and retry");
+  });
+
+  describe("retrying a delivery failure", () => {
+    const RENT = 3_000n;
+
+    // Sending 5 000 of a 10 000 USDT balance: a second 3 000 rent fits, unless the first is still
+    // pending as a reservation.
+    function setUpDeliveryFailure(firstRentPending: boolean) {
+      const reservation = buildRentReservationOperation({
+        tokenAccountId: "mock_tron_usdt_account_id",
+        payerAddress: "TPayer",
+        paymentTxId: "txA",
+        rentAmount: RENT,
+        reservationSequence: "1.5",
+      });
+      const feeToken = createMockTronUsdtAccount({
+        balance: new BigNumber(10_000),
+        spendableBalance: new BigNumber(10_000),
+        pendingOperations: firstRentPending && reservation ? [reservation] : [],
+      });
+      mockSendingAccount = feeToken;
+      mockFeeTokenAccount = feeToken;
+      mockTransaction = { amount: new BigNumber(5_000), useAllAmount: false };
+      mockSponsoredState = {
+        phase: "FAILED",
+        failureKind: "DELIVERY_FAILED",
+        paymentTxId: "txA",
+        rentPayment: { asset: TRON_USDT_FEE_ASSET, amount: RENT },
+      };
+    }
+
+    it("blocks the retry when the pending first rent leaves too little for a second", () => {
+      setUpDeliveryFailure(true);
+      const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+      expect(result.current.retryDisabled).toBe(true);
+      expect(result.current.retryBlockedMessage).toBe(
+        "You don't have enough USDT to cover the amount and the Provider energy rental fee.",
+      );
+
+      result.current.onRetry();
+
+      expect(mockRetry).not.toHaveBeenCalled();
+    });
+
+    it("allows the retry when the balance covers the amount and a second rent", () => {
+      setUpDeliveryFailure(false);
+      const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+      expect(result.current.retryDisabled).toBe(false);
+      expect(result.current.retryBlockedMessage).toBeNull();
+
+      result.current.onRetry();
+
+      expect(mockRetry).toHaveBeenCalledTimes(1);
+    });
   });
 
   it.each(["RENT_PAYMENT", "CONTRACT_DATA", "TRANSFER"])(

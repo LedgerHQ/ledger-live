@@ -3,7 +3,9 @@ import { Button, DialogBody, DialogFooter } from "@ledgerhq/lumen-ui-react";
 
 type SponsoredFailureScreenViewProps = Readonly<{
   message: string | null;
+  retryBlockedMessage: string | null;
   retryLabel: string;
+  retryDisabled: boolean;
   cancelLabel: string;
   onRetry: () => void;
   onCancel: () => void;
@@ -11,7 +13,9 @@ type SponsoredFailureScreenViewProps = Readonly<{
 
 export function SponsoredFailureScreenView({
   message,
+  retryBlockedMessage,
   retryLabel,
+  retryDisabled,
   cancelLabel,
   onRetry,
   onCancel,
@@ -22,12 +26,21 @@ export function SponsoredFailureScreenView({
         {message ? (
           <p className="m-0 body-2 text-muted text-center wrap-break-word">{message}</p>
         ) : null}
+        {retryBlockedMessage ? (
+          <p
+            className="m-0 body-2 text-error text-center"
+            data-testid="send-sponsored-failure-retry-blocked"
+          >
+            {retryBlockedMessage}
+          </p>
+        ) : null}
       </DialogBody>
       <DialogFooter className="flex flex-col gap-12">
         <Button
           appearance="base"
           size="lg"
           isFull
+          disabled={retryDisabled}
           data-testid="send-sponsored-failure-retry"
           onClick={onRetry}
         >
