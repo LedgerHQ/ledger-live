@@ -742,26 +742,34 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operations: OperationCommon[];
       bounded: boolean;
     }> => {
+      // NFT and failed-incoming rows are dropped per page, before the walk counts them -- as the A4
+      // adapter does. Counted raw, a bounded prefix made only of such rows retained nothing: a first
+      // sync then kept `blockHeight: 0` and walked the same prefix again on every sync. An emptied
+      // page is followed like any other; a long run of them trips the empty-page budget.
+      const isUsable = (op: Operation) =>
+        !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed);
       const { items: coreOps, bounded } = await paginateOperations(
         cursor =>
-          coinModuleApi.listOperations(context, address, {
-            minHeight,
-            cursor,
-            order: "desc",
-            // Sent only to a family whose `limit` support is established, and independently of
-            // `maxOperations`. Those are two different gates. `limit` bounds what one page costs
-            // (crash safety) while `maxOperations` bounds what is retained (a product decision), so
-            // coupling them would put crash safety behind a product call -- measured on the address
-            // from the out-of-memory report, a page size of 100 holds the sync flat whatever the
-            // retention bound, and sending no `limit` puts the Ledger-explorer arm back on its
-            // exhaustive path and reproduces the crash.
-            //
-            // But support is a real gate: the contract requires a module to *raise* when sent a
-            // `limit` it does not support, so sending one blindly fails the sync of every such
-            // family. Omitting the key entirely, rather than passing `undefined`, keeps the option
-            // absent for them -- which is their behaviour today.
-            ...(pageSize !== undefined ? { limit: pageSize } : {}),
-          }),
+          coinModuleApi
+            .listOperations(context, address, {
+              minHeight,
+              cursor,
+              order: "desc",
+              // Sent only to a family whose `limit` support is established, and independently of
+              // `maxOperations`. Those are two different gates. `limit` bounds what one page costs
+              // (crash safety) while `maxOperations` bounds what is retained (a product decision), so
+              // coupling them would put crash safety behind a product call -- measured on the address
+              // from the out-of-memory report, a page size of 100 holds the sync flat whatever the
+              // retention bound, and sending no `limit` puts the Ledger-explorer arm back on its
+              // exhaustive path and reproduces the crash.
+              //
+              // But support is a real gate: the contract requires a module to *raise* when sent a
+              // `limit` it does not support, so sending one blindly fails the sync of every such
+              // family. Omitting the key entirely, rather than passing `undefined`, keeps the option
+              // absent for them -- which is their behaviour today.
+              ...(pageSize !== undefined ? { limit: pageSize } : {}),
+            })
+            .then(page => ({ ...page, items: page.items.filter(isUsable) })),
         maxOperations,
         op => op.tx.block?.height,
       );
@@ -769,12 +777,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       // ends up in the shape a restored one has — the family's `fromOperationExtraRaw` is the
       // single definition of it. Loaded per sync rather than per operation; the registry caches the import.
       const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
-      // Coin module returns NFT and failed-incoming ops; exclude them (A4 adapter handles this internally)
-      const operations = coreOps
-        .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
-        .map(op =>
-          adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
-        ) as OperationCommon[];
+      const operations = coreOps.map(op =>
+        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+      ) as OperationCommon[];
       return { operations, bounded };
     };
 
@@ -845,17 +850,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // alternative -- merging anyway -- would leave a hole strictly between the old watermark and
     // wherever this round's bound cut, which is worse than a short history: nothing revisits it,
     // because the *next* watermark derives from this round's newest operation, past the hole.
-    //
-    // Gated on `newOps.length` too: the delegate walk bounds *raw* core operations, before the
-    // NFT/failed-incoming filter just above runs, so a bounded prefix can filter down to nothing.
-    // Discarding old data on an empty result would carry no new operation to replace it with,
-    // wiping the stored history for no gain -- the shape then persists `blockHeight: 0`, which
-    // reads as from-scratch next time and repeats the same bounded, all-filtered walk forever.
-    // With nothing new, the round is better left a no-op: `mergeOps(oldOps, [])` keeps the old
-    // watermark unchanged, so the next sync simply retries the same interval instead of erasing
-    // what was already known. The A4 path never reaches this corner -- it filters per page,
-    // before pagination counts anything, so `bounded` there already reflects the adapted count.
-    const discardOld = syncFromScratch || (newOpsBounded && newOps.length > 0);
+    // A bounded round always carries at least one usable operation: both walks filter before the
+    // bound counts, and a bounded stop never returns an empty list.
+    const discardOld = syncFromScratch || newOpsBounded;
 
     const newAssetOperations = newOps.filter(
       operation =>
@@ -894,8 +891,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // particular is local-only, never re-derivable from chain data). Emptying `operations` alone
     // still starves `mergeOps` of the old rows that would otherwise straddle the un-walked
     // interval, while keeping every sub-account matched so that carry-over still runs. Gated on
-    // `discardOld`, the same condition as the parent merge below: a bounded round that filtered
-    // down to nothing keeps the parent history, so it has to keep the token histories too.
+    // `discardOld`, the same condition as the parent merge below, so both histories agree.
     const subAccounts = mergeSubAccounts(
       syncFromScratch
         ? []
@@ -914,17 +910,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       address,
     );
     // Try to refresh known pending and broadcasted operations (if not already updated)
-    // Useful for integrations without explorers. Skipped on a bounded round that retained nothing:
-    // that round keeps the old watermark so the next sync retries the same interval, and a refreshed
-    // operation merged into it would move the watermark past the part the walk never reached.
-    const boundedNoOpRound = newOpsBounded && newOps.length === 0;
-    const operationsToRefresh = boundedNoOpRound
-      ? []
-      : initialAccount?.pendingOperations.filter(
-          pendingOp =>
-            pendingOp.hash && // operation has been broadcasted
-            !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
-        );
+    // Useful for integrations without explorers
+    const operationsToRefresh = initialAccount?.pendingOperations.filter(
+      pendingOp =>
+        pendingOp.hash && // operation has been broadcasted
+        !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
+    );
     const confirmedOperations =
       bridgeApi.refreshOperations && operationsToRefresh?.length
         ? await bridgeApi.refreshOperations(operationsToRefresh)

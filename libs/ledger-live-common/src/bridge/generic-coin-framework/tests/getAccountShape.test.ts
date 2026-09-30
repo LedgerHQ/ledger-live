@@ -3811,85 +3811,29 @@ describe("genericGetAccountShape", () => {
       expect(subAccount.creationDate).toBe(creationDate);
     });
 
-    test("a bounded round that filters down to nothing (failed-incoming rows) does not discard old data or blank the watermark", async () => {
-      // The delegate walk bounds *raw* core operations, before the NFT/failed-incoming filter
-      // runs. Both raw rows here are failed-incoming, so `operations` is empty even though
-      // `bounded` is true -- discarding old data on that empty result would wipe the stored
-      // history for nothing to show, persist `blockHeight: 0`, and read as from-scratch next
-      // time, repeating the same all-filtered walk forever.
+    test("a first sync whose newest rows are all failed-incoming walks past them instead of retaining nothing", async () => {
+      // Counted raw, this first page reaches the bound on its own and the walk stops there; the
+      // filter then leaves nothing, the shape keeps `blockHeight: 0`, and every later sync reads as
+      // from-scratch and walks the same page again. Filtered before the count, the page is empty
+      // and the walk moves on to rows it can keep.
       resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 1 });
       const failed = (hash: string, height: number) => ({
         ...coreOp(hash, height),
         tx: { failed: true, block: { height } },
       });
-      listOperationsMock.mockResolvedValueOnce({
-        items: [failed("h10", 10), failed("h9", 9)],
-        next: "c1",
-      });
-      // A stored token history must survive for the same reason the parent one does.
-      const tokenOp = {
-        id: "tok-op",
-        accountId: "accId",
-        hash: "htok",
-        blockHeight: 2,
-        type: "IN",
-        date: new Date(2000),
-        extra: {},
-        senders: [],
-        recipients: [],
-      };
-      buildSubAccountsMock.mockReturnValue([
-        { id: "subNew", token: { id: "tok1" }, operations: [] },
-      ]);
-      const { mergeSubAccounts: realMergeSubAccounts } = jest.requireActual("../buildSubAccounts");
-      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
-      // A pending operation that would confirm at height 20, above the interval the walk never
-      // reached: merged in, it would move the next watermark past that interval.
-      refreshOperationsMock.mockResolvedValue([
-        { ...tokenOp, id: "pend-1", hash: "hpend", blockHeight: 20, date: new Date(20000) },
-      ]);
+      listOperationsMock
+        .mockResolvedValueOnce({ items: [failed("h10", 10), failed("h9", 9)], next: "c1" })
+        .mockResolvedValueOnce({ items: [coreOp("h8", 8), coreOp("h7", 7)], next: "c2" });
 
       const getShape = genericGetAccountShape(network, currency.id);
       const result = await getShape(
-        {
-          address: "addr1",
-          initialAccount: {
-            blockHeight: 3,
-            syncHash: "sync-hash",
-            operations: [
-              {
-                id: "old1",
-                accountId: "accId",
-                hash: "hold",
-                blockHeight: 3,
-                type: "IN",
-                date: new Date(3000),
-                extra: {},
-                senders: [],
-                recipients: [],
-              },
-            ],
-            pendingOperations: [{ id: "pend-1", hash: "hpend", accountId: "accId", type: "OUT" }],
-            subAccounts: [
-              { id: "subOld", token: { id: "tok1" }, operations: [tokenOp], pendingOperations: [] },
-            ],
-          },
-          currency,
-          derivationMode: "",
-        } as any,
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
         { paginationConfig: {} as any },
       );
 
-      // The second page (never reachable had the bound not stopped the walk on the first) is
-      // still never fetched -- the bound did stop the walk, it just retained nothing usable.
-      expect(listOperationsMock).toHaveBeenCalledTimes(1);
-      // The old operation survives: with nothing new to show for this round, it is a no-op retry,
-      // not a from-scratch reset.
-      expect(result.operations?.map(op => op.blockHeight)).toEqual([3]);
-      expect((result.subAccounts as any[])[0].operations.map((op: any) => op.id)).toEqual([
-        "tok-op",
-      ]);
-      expect(refreshOperationsMock).not.toHaveBeenCalled();
+      expect(listOperationsMock).toHaveBeenCalledTimes(2);
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([8]);
+      expect(result.blockHeight).not.toBe(0);
     });
   });
 
