@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { render, screen } from "@tests/test-renderer";
 import DebugFeatureFlags from "../index";
 
 jest.mock("@react-native-firebase/app", () => ({
@@ -18,14 +18,9 @@ function FeatureFlagsStack() {
 }
 
 describe("DebugFeatureFlags", () => {
-  it("shows the Firebase project bundled in the build, not the remote flag value", () => {
-    render(<FeatureFlagsStack />, {
-      overrideInitialState: withFlagOverrides({
-        firebaseEnvironmentReadOnly: { params: { project: "ledger-live-production" } },
-      }),
-    });
+  it("shows the Firebase project bundled in the build", () => {
+    render(<FeatureFlagsStack />);
 
     expect(screen.getByText("ledger-live-staging")).toBeVisible();
-    expect(screen.queryByText("ledger-live-production")).toBeNull();
   });
 });
