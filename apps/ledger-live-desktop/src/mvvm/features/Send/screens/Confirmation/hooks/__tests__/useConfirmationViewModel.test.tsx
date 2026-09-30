@@ -28,15 +28,19 @@ jest.mock("../../../../context/SendFlowTrackingContext", () => ({
     inputMethod: "manual",
     resultType: "unknown address",
     recipientType: "external address",
+    flowSessionId: "flow-session-id",
     savedContactDuringFlow: false,
     setInputMethod: jest.fn(),
     setRecipientResolution: jest.fn(),
     markContactSaved: jest.fn(),
+    endSession: jest.fn(),
+    trackMessage: jest.fn(),
   })),
 }));
 
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
+import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { track, trackPage } from "@shared/analytics";
 
 jest.mock("@shared/analytics", () => ({
@@ -150,6 +154,14 @@ describe("useConfirmationViewModel", () => {
 
     expect(latestVM?.status).toBe("ERROR");
     expect(latestVM?.transactionError).toBe(error);
+    expect(
+      (useSendFlowTracking as jest.Mock).mock.results.at(-1)?.value.trackMessage,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        step: "SIGNATURE",
+        message: { messageId: "error:signature", messageType: "error" },
+      }),
+    );
   });
 
   test("status is idle when not signed and user refused transactionError", () => {
@@ -417,12 +429,15 @@ describe("useConfirmationViewModel", () => {
       category: "Modal send - transaction sent",
       props: {
         flow: "send",
+        flow_session_id: "flow-session-id",
         recipientType: "external address",
         savedContactDuringFlow: false,
         blockchain: "",
         currency: "",
         currency_id: "",
         newSendFlow: true,
+        active_warnings: [],
+        active_warnings_count: 0,
       },
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
