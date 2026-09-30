@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Button } from "@ledgerhq/lumen-ui-react";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
@@ -25,6 +26,8 @@ export function SponsoredRentSignatureScreen() {
     onResult,
     signError,
     onRetrySign,
+    cancelLabel,
+    onCancel,
   } = useSponsoredRentSignatureViewModel();
   const { t } = useTranslation();
 
@@ -47,7 +50,20 @@ export function SponsoredRentSignatureScreen() {
     content = <StepProgress>{craftingLabel}</StepProgress>;
   } else if (signError) {
     // Unmounting DeviceAction here is what makes Retry start a fresh sign attempt.
-    content = renderError({ error: signError, t, onRetry: onRetrySign });
+    content = (
+      <>
+        {renderError({ error: signError, t, onRetry: onRetrySign })}
+        <Button
+          appearance="gray"
+          size="lg"
+          isFull
+          data-testid="send-sponsored-rent-signature-cancel"
+          onClick={onCancel}
+        >
+          {cancelLabel}
+        </Button>
+      </>
+    );
   } else if (request) {
     content = (
       <DeviceAction

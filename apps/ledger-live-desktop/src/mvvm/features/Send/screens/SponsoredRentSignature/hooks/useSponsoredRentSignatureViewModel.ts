@@ -9,7 +9,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useRawTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import logger from "~/renderer/logger";
-import { useSendFlowData } from "../../../context/SendFlowContext";
+import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { isContractDataDisabledError } from "../../../utils/contractDataError";
 
@@ -41,12 +41,15 @@ export type SponsoredRentSignatureViewModel = Readonly<{
   onResult: (result: SponsoredRentSignatureResult) => void;
   signError: Error | null;
   onRetrySign: () => void;
+  cancelLabel: string;
+  onCancel: () => void;
 }>;
 
 /** TX-A: raw-signs the rent payment for the provider to broadcast — never broadcast it here. */
 export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureViewModel {
   const { t } = useTranslation();
   const { state: sendFlowState } = useSendFlowData();
+  const { close } = useSendFlowActions();
   const { state, actions, providerName } = useSponsoredSend();
 
   const account = sendFlowState.account.account;
@@ -127,5 +130,7 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
     onResult,
     signError,
     onRetrySign,
+    cancelLabel: t("newSendFlow.sponsoredFailure.cancel"),
+    onCancel: close,
   };
 }

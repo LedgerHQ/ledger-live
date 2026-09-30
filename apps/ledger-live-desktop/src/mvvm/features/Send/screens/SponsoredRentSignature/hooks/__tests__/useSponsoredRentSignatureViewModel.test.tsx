@@ -9,10 +9,12 @@ import { TRON_USDT_FEE_ASSET } from "../../../Recipient/__integrations__/__fixtu
 
 const mockAccount = { id: "acc_tron", type: "Account", currency: { id: "tron" } };
 
+const mockClose = jest.fn();
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowData: () => ({
     state: { account: { account: mockAccount, parentAccount: null } },
   }),
+  useSendFlowActions: () => ({ close: mockClose }),
 }));
 
 const mockCraftRent = jest.fn(() => Promise.resolve());
@@ -163,6 +165,24 @@ describe("useSponsoredRentSignatureViewModel", () => {
     });
 
     expect(result.current.signError).toBeNull();
+  });
+
+  it("offers a Cancel next to Retry that closes the flow", () => {
+    mockSponsoredState.order = makeOrder();
+    const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
+
+    act(() => {
+      result.current.onResult({
+        transactionSignError: Object.assign(new Error("refused"), {
+          name: "TransactionRefusedOnDevice",
+        }),
+      });
+    });
+    result.current.onCancel();
+
+    expect(result.current.cancelLabel).toBe("Cancel");
+    expect(mockClose).toHaveBeenCalledTimes(1);
+    expect(mockActions.retry).not.toHaveBeenCalled();
   });
 
   it("does not report a refusal on the device to the logger", () => {

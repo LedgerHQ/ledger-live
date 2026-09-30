@@ -1063,6 +1063,7 @@ describe("Send Flow Integration", () => {
       });
 
       const retryButton = await screen.findByRole("button", { name: /retry/i });
+      expect(screen.getByTestId("send-sponsored-rent-signature-cancel")).toBeVisible();
       expect(mockSponsoredOrchestrationActions.startRentPayment).not.toHaveBeenCalled();
 
       setMockDeviceActionResult({
