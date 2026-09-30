@@ -2,13 +2,17 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
-import { listenToCardApi } from "@support/msw-features-flow-pay-card";
+import { CARD_STATUS, CARD_STATUS_URL, listenToCardApi } from "@support/msw-features-flow-pay-card";
 import { CARD_TRANSACTIONS_URL, cardApiWrapper } from "../__tests__/cardApiStore";
 import { CardTransactionHistory } from "./CardTransactionHistory.web";
 
 const server = listenToCardApi();
 
 describe("CardTransactionHistory", () => {
+  beforeEach(() => {
+    server.use(http.get(CARD_STATUS_URL, () => HttpResponse.json(CARD_STATUS)));
+  });
+
   it("uses the host date formatter for day headers", async () => {
     const formatDay = jest.fn(() => "Formatted day");
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(mockPayCardTransactions())));
