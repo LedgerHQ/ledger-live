@@ -74,6 +74,7 @@ export interface DeviceDiscoveryService<
 > {
   start(args?: DeviceDiscoveryStartArgs): void;
   stop(): void;
+  transportIds: Array<TransportIdentifier>;
   discoveredDevices: Observable<DiscoveredDevice[]>;
   errors: Observable<TDiscoveryError>;
 }
