@@ -120,7 +120,7 @@ export function OperationsListView({
           formatters={cardHistoryViewModel.formatters}
           formatDay={cardHistoryViewModel.formatDay}
           onGoToPay={cardHistoryViewModel.onGoToPay}
-          cardVisual={<CardArtwork />}
+          cardVisual={<CardArtwork isFaded />}
         />
       ) : (
         <SectionList
