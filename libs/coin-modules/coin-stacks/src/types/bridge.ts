@@ -1,6 +1,7 @@
 import type { Stake } from "@ledgerhq/coin-module-framework/api/index";
 import {
   Account,
+  AccountRaw,
   Operation,
   TransactionCommon,
   TransactionCommonRaw,
@@ -84,6 +85,20 @@ export type StakingPosition = Omit<Stake, "amount" | "amountDeposited" | "amount
 };
 
 export type StacksAccount = Account & { stakingPositions?: StakingPosition[] };
+
+/** JSON-safe `StakingPosition`: `BigNumber` amounts as decimal strings, dates as ISO strings. */
+export type StakingPositionRaw = Omit<
+  StakingPosition,
+  "amount" | "amountDeposited" | "amountRewarded" | "stateUpdatedAt" | "createdAt"
+> & {
+  amount: string;
+  amountDeposited?: string;
+  amountRewarded?: string;
+  stateUpdatedAt?: string;
+  createdAt?: string;
+};
+
+export type StacksAccountRaw = AccountRaw & { stakingPositions?: StakingPositionRaw[] };
 
 /** `Stake.details` as produced by `getStakes` from pox-5's `get-staker-info`. */
 export type StacksStakeDetails = {
