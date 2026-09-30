@@ -306,6 +306,7 @@ const Body = ({
   }, [editType]);
 
   const updatedStatus = bridge.getEditTransactionStatus({
+    mainAccount,
     editType,
     transaction,
     transactionToUpdate,

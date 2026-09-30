@@ -3,6 +3,10 @@ import { getAmountAndRecipient, getRbfContext } from "@ledgerhq/coin-bitcoin/rbf
 import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
 import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";
 
+jest.mock("../coinConfig", () => ({
+  getBoundWalletAccount: jest.fn(() => ({ config: {}, walletAccount: {} })),
+}));
+
 jest.mock("@ledgerhq/coin-bitcoin/rbfContext", () => ({
   getRbfContext: jest.fn(),
   getAmountAndRecipient: jest.fn(),

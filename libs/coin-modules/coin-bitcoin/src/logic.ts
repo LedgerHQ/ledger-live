@@ -16,13 +16,6 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 
-// correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
-const minFees: Partial<Record<string, number>> = {
-  bitcoin: 1000,
-  bitcoin_gold: 1000,
-  qtum: 4000,
-};
-export const getMinRelayFee = (currency: CryptoCurrency): number => minFees[currency.id] || 0;
 export const inferFeePerByte = (t: Transaction, networkInfo: NetworkInfo): BigNumber => {
   if (t.feesStrategy) {
     const speed = networkInfo.feeItems.items.find(item => t.feesStrategy === item.speed);

@@ -50,7 +50,6 @@
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-signer-zcash": "workspace:^",
-    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/psbtv2": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",

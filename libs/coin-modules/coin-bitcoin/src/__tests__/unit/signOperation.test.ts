@@ -1,3 +1,4 @@
+import { testContext } from "../fixtures/coinConfig";
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import buildSignOperation from "../../signOperation";
@@ -106,6 +107,7 @@ type BuildAndSignMock = {
   signAccountTx: jest.Mock<
     Promise<string>,
     [
+      unknown,
       {
         onDeviceSignatureRequested?: () => void;
         onDeviceSignatureGranted?: () => void;
@@ -142,7 +144,7 @@ describe("signOperation (bitcoin)", () => {
 
   test("emits device events and builds optimistic operation from fee data", async () => {
     const signerContext = makeSignerContext();
-    const signOperation = buildSignOperation(signerContext);
+    const signOperation = buildSignOperation(signerContext, testContext);
 
     // Minimal transaction shape for this test
     const transaction: Transaction = {
@@ -158,11 +160,14 @@ describe("signOperation (bitcoin)", () => {
 
     // signAccountTx should simulate device callbacks and return a tx hex
     signAccountTx.mockImplementation(
-      (params: {
-        onDeviceSignatureRequested?: () => void;
-        onDeviceSignatureGranted?: () => void;
-        onDeviceStreaming?: (arg: { progress: number; index: number; total: number }) => void;
-      }) => {
+      (
+        _logger: unknown,
+        params: {
+          onDeviceSignatureRequested?: () => void;
+          onDeviceSignatureGranted?: () => void;
+          onDeviceStreaming?: (arg: { progress: number; index: number; total: number }) => void;
+        },
+      ) => {
         const { onDeviceSignatureRequested, onDeviceSignatureGranted, onDeviceStreaming } = params;
         if (onDeviceSignatureRequested) {
           onDeviceSignatureRequested();
@@ -219,7 +224,7 @@ describe("signOperation (bitcoin)", () => {
     // Wallet helpers and additionals wiring
     expect(getWalletAccount).toHaveBeenCalledWith(account);
     expect(signAccountTx).toHaveBeenCalledTimes(1);
-    const [params] = signAccountTx.mock.calls[0];
+    const [, params] = signAccountTx.mock.calls[0];
     expect(params).toMatchObject({
       sigHashType: 1,
       segwit: true,

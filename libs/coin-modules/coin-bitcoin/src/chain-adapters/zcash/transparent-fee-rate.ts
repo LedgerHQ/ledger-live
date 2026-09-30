@@ -4,6 +4,8 @@ import { maxTxVBytesCeil } from "@ledgerhq/wallet-btc/utils";
 import type { ICrypto } from "@ledgerhq/wallet-btc/crypto/types";
 import { calculateFees } from "../../cache";
 import type { Transaction } from "../../types";
+import type { BitcoinCoinConfig } from "../../config";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { computeZip317Fee, ZIP317_MINIMUM_FEE } from "./coin-selection";
 
 /**
@@ -40,12 +42,14 @@ export function zcashSafeFeePerByte(crypto: ICrypto, derivationMode: string): Bi
 type FeeProbe = { charged: BigNumber; required: BigNumber };
 
 async function probeFee(
+  config: BitcoinCoinConfig,
+  logger: Logger,
   account: Account,
   transaction: Transaction,
   feePerByte: BigNumber,
 ): Promise<FeeProbe | undefined> {
   try {
-    const { fees, txInputs, txOutputs } = await calculateFees({
+    const { fees, txInputs, txOutputs } = await calculateFees(config, logger, {
       account,
       transaction: { ...transaction, feePerByte },
     });
@@ -81,11 +85,13 @@ async function probeFee(
  * rejected transaction.
  */
 export async function resolveZcashFeePerByte(
+  config: BitcoinCoinConfig,
+  logger: Logger,
   account: Account,
   transaction: Transaction,
   safeFeePerByte: BigNumber,
 ): Promise<BigNumber> {
-  const atSafeRate = await probeFee(account, transaction, safeFeePerByte);
+  const atSafeRate = await probeFee(config, logger, account, transaction, safeFeePerByte);
   if (!atSafeRate) return safeFeePerByte;
 
   const tightened = safeFeePerByte
@@ -95,7 +101,7 @@ export async function resolveZcashFeePerByte(
   // Nothing to gain when the safe rate is already at or below what this layout owes.
   if (tightened.gte(safeFeePerByte)) return safeFeePerByte;
 
-  const atTightenedRate = await probeFee(account, transaction, tightened);
+  const atTightenedRate = await probeFee(config, logger, account, transaction, tightened);
   if (!atTightenedRate || atTightenedRate.charged.lt(atTightenedRate.required)) {
     return safeFeePerByte;
   }

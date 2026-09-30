@@ -144,6 +144,7 @@ export default function SelectFeesStrategy({
       disabledStrategies?.includes(strategy) ||
       (!!transactionToUpdate &&
         bridge.isStrategyDisabled({
+          mainAccount,
           transaction: transactionToUpdate,
           feeData,
         }));
