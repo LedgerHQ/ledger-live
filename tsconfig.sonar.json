@@ -29,6 +29,13 @@
     "**/__mocks__",
     "**/__integration__",
     "**/__integrations__",
-    "libs/coin-tester*"
+    "libs/coin-tester*",
+    "features/flow/app-lock",
+    "shared/ui-queued-bottom-sheet",
+    "libs/ui/packages/native",
+    "**/*.native.ts",
+    "**/*.native.tsx",
+    "**/native.ts",
+    "**/native.tsx"
   ]
 }
