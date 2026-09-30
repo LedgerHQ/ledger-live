@@ -6,6 +6,8 @@ export type PayDepositOptionId = (typeof DEPOSIT_OPTION_IDS)[number];
 
 export default class PayTabPage {
   screenId = "paytab-screen";
+  scrollViewId = "paytab-scroll-view";
+  sheetCloseId = "bottom-sheet-header-close-button";
   fundedStateId = "pay-card-balance-funded-state";
   balanceAmountId = "pay-card-balance-amount";
   filterPillId = "pay-card-balance-filter-pill";
@@ -29,6 +31,12 @@ export default class PayTabPage {
   contactTileId = (index: number) => `pay-contacts-tile-${index}`;
   successStepId = "pay-success-step";
   successCloseId = "pay-success-close";
+  detailsButtonId = "card-details-button";
+  rewardId = "card-details-reward";
+  freezeTileId = "card-details-freeze-tile";
+  freezeContentId = "card-details-freeze-content";
+  freezeConfirmId = "freeze-confirm-action";
+  frozenVisualId = "card-visual-frozen";
 
   filterOptionId = (rowKey: string) => `pay-card-balance-filter-option-${rowKey}`;
   depositOptionId = (optionId: PayDepositOptionId) => `pay-card-deposit-option-${optionId}`;
@@ -168,5 +176,55 @@ export default class PayTabPage {
   async closePaySuccess() {
     await tapById(this.successCloseId);
     await waitForElementNotVisible(this.successStepId);
+  }
+
+  @Step("Open card details")
+  async openCardDetails() {
+    await revealForTap(this.detailsButtonId, { container: this.scrollViewId });
+    await tapById(this.detailsButtonId);
+    await waitForElementById(this.freezeTileId);
+  }
+
+  @Step("Close card details")
+  async closeCardDetails() {
+    await tapById(this.sheetCloseId);
+    await waitForElementNotVisible(this.freezeTileId);
+  }
+
+  @Step("Expect the cashback row")
+  async expectCashbackRow() {
+    await waitForElementById(this.rewardId, undefined, { checkVisibility: false });
+  }
+
+  @Step("Expect the freeze tile to read {{{0}}}")
+  async expectFreezeTile(label: string) {
+    await waitForElement(
+      getElementByIdWithDescendantTexts(this.freezeTileId, new RegExp(`^${label}$`)),
+    );
+  }
+
+  @Step("Open freeze confirmation")
+  async openFreezeConfirmation() {
+    await tapById(this.freezeTileId);
+    await waitForElementById(this.freezeConfirmId);
+  }
+
+  @Step("Confirm freeze or unfreeze")
+  async confirmFreeze() {
+    await tapById(this.freezeConfirmId);
+    await waitForElementNotVisible(this.freezeContentId);
+  }
+
+  @Step("Expect the frozen card")
+  async expectCardFrozen() {
+    await waitForElement(getElementById(this.frozenVisualId), undefined, {
+      checkVisibility: false,
+    });
+  }
+
+  @Step("Expect the card not to be frozen")
+  async expectCardNotFrozen() {
+    const hidden = await waitForElementNotVisible(this.frozenVisualId);
+    jestExpect(hidden).toBe(true);
   }
 }

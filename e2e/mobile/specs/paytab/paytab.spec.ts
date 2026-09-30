@@ -25,7 +25,10 @@ const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
 const CONTACT_NAME = generateContactName();
 const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
 
-const TMS_LINKS = ["B2CQA-6325", "B2CQA-6326", "B2CQA-6327", "B2CQA-6328"];
+const FREEZE = "Freeze";
+const UNFREEZE = "Unfreeze";
+
+const TMS_LINKS = ["B2CQA-6325", "B2CQA-6326", "B2CQA-6327", "B2CQA-6328", "B2CQA-6329"];
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
 function payContactSeed(address: string): ContactSeed {
@@ -149,5 +152,27 @@ describe("Pay tab", () => {
     await app.payTab.expectPaySuccess(CONTACT_NAME);
     await app.payTab.closePaySuccess();
     await app.payTab.expectScreenVisible();
+
+    await app.payTab.openCardDetails();
+    await app.payTab.expectCashbackRow();
+    await app.payTab.expectFreezeTile(FREEZE);
+    await app.payTab.openFreezeConfirmation();
+    await app.payTab.confirmFreeze();
+    await app.payTab.expectCardFrozen();
+    await app.payTab.expectFreezeTile(UNFREEZE);
+    await app.payTab.closeCardDetails();
+
+    await app.mainNavigation.tapWallet40Tab("home");
+    await app.mainNavigation.tapWallet40Tab("paytab");
+    await app.payTab.expectScreenVisible();
+    await app.payTab.openCardDetails();
+    await app.payTab.expectCardFrozen();
+    await app.payTab.expectFreezeTile(UNFREEZE);
+
+    await app.payTab.openFreezeConfirmation();
+    await app.payTab.confirmFreeze();
+    await app.payTab.expectCardNotFrozen();
+    await app.payTab.expectFreezeTile(FREEZE);
+    await app.payTab.closeCardDetails();
   });
 });

@@ -56,6 +56,7 @@ export function PayTabView({
     <Box lx={{ flex: 1 }} testID="paytab-screen">
       <Wallet40Background type="pay" scrollY={scrollY} />
       <Animated.ScrollView
+        testID="paytab-scroll-view"
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         onScroll={onScroll}
