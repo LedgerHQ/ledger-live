@@ -4129,6 +4129,11 @@ describe("genericGetAccountShape", () => {
       ]);
       const { mergeSubAccounts: realMergeSubAccounts } = jest.requireActual("../buildSubAccounts");
       mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+      // A pending operation that would confirm at height 20, above the interval the walk never
+      // reached: merged in, it would move the next watermark past that interval.
+      refreshOperationsMock.mockResolvedValue([
+        { ...tokenOp, id: "pend-1", hash: "hpend", blockHeight: 20, date: new Date(20000) },
+      ]);
 
       const getShape = genericGetAccountShape(network, currency.id);
       const result = await getShape(
@@ -4150,7 +4155,7 @@ describe("genericGetAccountShape", () => {
                 recipients: [],
               },
             ],
-            pendingOperations: [],
+            pendingOperations: [{ id: "pend-1", hash: "hpend", accountId: "accId", type: "OUT" }],
             subAccounts: [
               { id: "subOld", token: { id: "tok1" }, operations: [tokenOp], pendingOperations: [] },
             ],
@@ -4170,6 +4175,7 @@ describe("genericGetAccountShape", () => {
       expect((result.subAccounts as any[])[0].operations.map((op: any) => op.id)).toEqual([
         "tok-op",
       ]);
+      expect(refreshOperationsMock).not.toHaveBeenCalled();
     });
   });
 
