@@ -10,9 +10,6 @@ export const flare = currency({
   scheme: "flare",
   color: "#D95F6C",
   family: "evm",
-  ethereumLikeInfo: {
-    chainId: 14,
-  },
   units: [
     {
       name: "FLR",

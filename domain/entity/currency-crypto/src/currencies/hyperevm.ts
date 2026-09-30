@@ -37,9 +37,6 @@ export const hyperevm = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 999,
-  },
   explorerViews: [
     {
       tx: "https://www.hyperscan.com/tx/$hash",

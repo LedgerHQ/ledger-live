@@ -38,9 +38,6 @@ export const base_sepolia = currency({
     },
   ],
   isTestnetFor: "base",
-  ethereumLikeInfo: {
-    chainId: 84532,
-  },
   explorerViews: [
     {
       tx: "https://base-sepolia.blockscout.com/tx/$hash",

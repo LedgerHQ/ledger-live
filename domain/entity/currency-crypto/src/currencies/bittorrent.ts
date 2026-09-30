@@ -37,9 +37,6 @@ export const bittorrent = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 199,
-  },
   explorerViews: [
     {
       tx: "https://bttcscan.com/tx/$hash",

@@ -37,9 +37,6 @@ export const somnia = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 5031,
-  },
   explorerViews: [
     {
       tx: "https://explorer.somnia.network/tx/$hash",
