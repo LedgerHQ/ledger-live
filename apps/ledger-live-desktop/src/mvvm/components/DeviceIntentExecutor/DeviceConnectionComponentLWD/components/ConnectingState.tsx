@@ -10,7 +10,7 @@ import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 
 type ConnectingStateProps = {
-  state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.Connecting }>;
+  state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.Connecting }>;
 };
 
 export function ConnectingState({ state }: Readonly<ConnectingStateProps>): React.ReactNode {

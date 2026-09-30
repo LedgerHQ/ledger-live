@@ -12,7 +12,7 @@ import { DiscoveryErrorState } from "./DiscoveryErrorState";
 
 type DiscoveryErrorUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.DiscoveryError }
+  { type: typeof ConnectDeviceUIStateTypes.DiscoveryError }
 >;
 
 function renderState(state: Partial<DiscoveryErrorUIState> = {}) {

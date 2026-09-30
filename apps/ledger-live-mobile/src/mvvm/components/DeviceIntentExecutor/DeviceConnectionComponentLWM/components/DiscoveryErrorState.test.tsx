@@ -29,7 +29,7 @@ const mockedTrack = jest.mocked(track);
 
 type DiscoveryErrorUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.DiscoveryError }
+  { type: typeof ConnectDeviceUIStateTypes.DiscoveryError }
 >;
 type DiscoveryErrorType = DiscoveryError["type"];
 
