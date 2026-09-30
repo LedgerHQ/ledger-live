@@ -1,13 +1,17 @@
 import { renderHook } from "tests/testSetup";
 import { useTrackSyncFlow, UseTrackSyncFlow } from "./useTrackSyncFlow";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { CantOpenDevice, LockedDeviceError, TransportError } from "@ledgerhq/hw-transport/errors";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { UserRefusedAllowManager } from "@ledgerhq/live-common/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-jest.mock("../segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+}));
+
+jest.mock("../segment", () => ({
   setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
@@ -48,7 +52,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -67,7 +71,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -86,7 +90,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -103,7 +107,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -135,7 +139,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -152,7 +156,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -169,7 +173,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -186,7 +190,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -203,7 +207,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -220,7 +224,7 @@ describe("useTrackSyncFlow", () => {
         platform: "LLD",
         page: "Receive",
       }),
-      true,
+      { mandatory: true },
     );
   });
 });

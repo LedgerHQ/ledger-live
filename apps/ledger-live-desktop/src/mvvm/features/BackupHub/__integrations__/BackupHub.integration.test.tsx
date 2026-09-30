@@ -16,7 +16,7 @@ import { setRecoverState } from "~/renderer/reducers/recoverState";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { isModalOpened } from "~/renderer/reducers/modals";
 import { openURL } from "~/renderer/linking";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
 import { RECOVER_NOTIFICATION_DOT_TEST_ID } from "LLD/features/BackupHub/components/ShieldCheckNotificationIcon";
 import {
@@ -27,6 +27,12 @@ import {
   BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
   RECOVER_DEEPLINK_BASE,
 } from "LLD/features/BackupHub/constants";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 const PROTECT_ID = "protect-id";
 const RECOVER_HOME_PATH = "/recover/protect-id";
@@ -332,14 +338,14 @@ describe("BackupHub", () => {
       platform: "lwd",
     };
     expect(trackPage).toHaveBeenCalledWith(
-      BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
-      undefined,
       {
-        name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
-        ...upsellAnalyticsProps,
+        category: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+        props: {
+          name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+          ...upsellAnalyticsProps,
+        },
       },
-      true,
-      false,
+      { updateRoutes: true },
     );
 
     await user.click(screen.getByTestId("backup-hub-physical-row-recovery-key"));
@@ -381,14 +387,14 @@ describe("BackupHub", () => {
         platform: "lwd",
       };
       expect(trackPage).toHaveBeenCalledWith(
-        BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
-        undefined,
         {
-          name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
-          ...upsellAnalyticsProps,
+          category: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+          props: {
+            name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+            ...upsellAnalyticsProps,
+          },
         },
-        true,
-        false,
+        { updateRoutes: true },
       );
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: BACKUP_HUB_UPSELL_TRACKING_BUTTON,

@@ -1,9 +1,14 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { Welcome } from "LLD/features/Onboarding/screens/Welcome";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("LLD/features/Onboarding/screens/Welcome/hooks/useVideoCarousel", () => ({
   useVideoCarousel: () => ({
@@ -76,7 +81,7 @@ describe("AnalyticsOptInScreen on Welcome", () => {
         entryPoint: "Onboarding",
         flow: "consent onboarding",
       }),
-      true,
+      { mandatory: true },
     );
     expect(track).not.toHaveBeenCalledWith(
       "button_clicked",
@@ -135,7 +140,7 @@ describe("AnalyticsOptInScreen on Welcome", () => {
         button: "Close",
         page: "Analytics opt-in screen preferences",
       }),
-      true,
+      { mandatory: true },
     );
   });
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { Device } from "@ledgerhq/types-devices";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
@@ -71,42 +71,44 @@ export const useTrackSyncFlow = ({
       !error
     ) {
       // user accepted secure channel
-      track("Secure Channel approved", defaultPayload, isTrackingEnabled);
+      track("Secure Channel approved", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (inWrongDeviceForAccount) {
       // device used is not associated with the account
-      track("Wrong device association", defaultPayload, isTrackingEnabled);
+      track("Wrong device association", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "UserRefusedAllowManager") {
       // user refused secure channel
-      track("Secure Channel refused", defaultPayload, isTrackingEnabled);
+      track("Secure Channel refused", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "CantOpenDevice") {
       // device disconnected during ledger synch
-      track("Connection failed", defaultPayload, isTrackingEnabled);
+      track("Connection failed", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (error?.name === "TransportError") {
       // transport error during ledger synch
-      track("Transport error", defaultPayload, isTrackingEnabled);
+      track("Transport error", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during ledger synch
-      track("Device locked", defaultPayload, isTrackingEnabled);
+      track("Device locked", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     if (previousOpenAppRequested && error?.name === "UserRefusedOnDevice") {
       // user refused to open Ledger Sync app
-      track("User refused to open Ledger Sync app", defaultPayload, isTrackingEnabled);
+      track("User refused to open Ledger Sync app", defaultPayload, {
+        mandatory: isTrackingEnabled,
+      });
     }
 
     if (previousOpenAppRequested && isLedgerSyncAppOpen) {
       // user opened Ledger Sync app
-      track("User opened Ledger Sync app", defaultPayload, isTrackingEnabled);
+      track("User opened Ledger Sync app", defaultPayload, { mandatory: isTrackingEnabled });
     }
 
     previousAllowManagerRequested.current = allowManagerRequested;
