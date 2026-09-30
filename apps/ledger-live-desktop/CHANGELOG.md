@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 4.23.0-next.2
+
+### Minor Changes
+
+- [#22767](https://github.com/LedgerHQ/ledger-live/pull/22767) [`8947c0b`](https://github.com/LedgerHQ/ledger-live/commit/8947c0b97fa0d5abd017d880bfc3089a74d9cc77) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show a setup state on the History card tab when the signed-in holder has not claimed a card yet.
+
+### Patch Changes
+
+- Updated dependencies [[`8947c0b`](https://github.com/LedgerHQ/ledger-live/commit/8947c0b97fa0d5abd017d880bfc3089a74d9cc77)]:
+  - @features/flow-pay-card-transactions@0.4.0-next.1
+  - @features/flow-pay-card-details@0.6.0-next.1
+  - @features/flow-pay-card@0.6.0-next.1
+  - @features/flow-pay-card-assets@0.3.0-next.1
+
 ## 4.23.0-next.1
 
 ### Patch Changes
