@@ -1,14 +1,12 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { ScrollView, TextInput } from "react-native";
+import { ScrollView, StyleSheet, TextInput } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import {
   parseContentAbTestPayload,
   setContentAbTestOverride,
   type ContentAbTestPayload,
 } from "@features/platform-content-ab-tests";
-import { Text, Flex, Button, Switch } from "@ledgerhq/native-ui";
-import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
-import { useTheme } from "styled-components/native";
+import { Box, Button, Switch, Text } from "@ledgerhq/lumen-ui-rnative";
 import { refreshMountedScreens } from "./refreshMountedScreens";
 
 const EMPTY_PAYLOAD: ContentAbTestPayload = { enabled: false, copy: {} };
@@ -19,7 +17,6 @@ const ContentAbTestEdit: React.FC<{
   testName: string;
   testValue: ContentAbTestPayload | undefined;
 }> = ({ testName, testValue }) => {
-  const { colors } = useTheme();
   const { t } = useTranslation();
   const pureValue = testValue ?? EMPTY_PAYLOAD;
   const [error, setError] = useState<string | undefined>();
@@ -75,17 +72,10 @@ const ContentAbTestEdit: React.FC<{
   );
 
   return (
-    <Flex>
+    <Box lx={{ gap: "s12" }}>
       <TextInput
         testID="content-ab-test-payload"
-        style={{
-          borderWidth: 1,
-          borderColor: error ? colors.error.c60 : colors.primary.c80,
-          borderRadius: 8,
-          padding: 4,
-          backgroundColor: colors.neutral.c30,
-          color: colors.neutral.c100,
-        }}
+        style={[styles.editor, error ? styles.editorError : null]}
         value={inputValueDefaulted}
         onChangeText={handleInputChange}
         multiline
@@ -93,38 +83,49 @@ const ContentAbTestEdit: React.FC<{
         underlineColorAndroid="transparent"
       />
       {error ? (
-        <Flex mt={2}>
-          <Text color="error.c60">{error}</Text>
-        </Flex>
+        <Text typography="body2" lx={{ color: "error" }}>
+          {error}
+        </Text>
       ) : null}
-      <Flex flexDirection="row" mt={3} alignItems="center">
-        <InputRenderRightContainer>
-          <Switch
-            testID="content-ab-test-enabled"
-            checked={isChecked}
-            onChange={handleSwitchChange}
-          />
-        </InputRenderRightContainer>
-        <Button size="small" type="main" outline onPress={handleRestore}>
+      <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s12" }}>
+        <Switch
+          testID="content-ab-test-enabled"
+          checked={isChecked}
+          onCheckedChange={handleSwitchChange}
+        />
+        <Button appearance="gray" size="sm" onPress={handleRestore}>
           {t("settings.debug.featureFlagsRestore")}
         </Button>
         <Button
-          size="small"
-          type="main"
+          appearance="accent"
+          size="sm"
           disabled={inputValue === undefined}
           onPress={handleOverride}
-          ml="3"
         >
           {t("common.apply")}
         </Button>
-      </Flex>
-      <Flex mt={2} backgroundColor="neutral.c30" p={2}>
+      </Box>
+      <Box lx={{ padding: "s8", backgroundColor: "surface" }}>
         <ScrollView horizontal>
-          <Text selectable>{formatPayload(pureValue)}</Text>
+          <Text typography="body2" selectable>
+            {formatPayload(pureValue)}
+          </Text>
         </ScrollView>
-      </Flex>
-    </Flex>
+      </Box>
+    </Box>
   );
 };
+
+const styles = StyleSheet.create({
+  editor: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 8,
+    minHeight: 96,
+  },
+  editorError: {
+    borderColor: "red",
+  },
+});
 
 export default ContentAbTestEdit;

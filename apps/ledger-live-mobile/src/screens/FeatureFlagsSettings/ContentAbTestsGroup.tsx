@@ -7,8 +7,7 @@ import {
   setContentAbTestOverride,
   type ContentAbTests,
 } from "@features/platform-content-ab-tests";
-import { Divider, Flex, Link, Switch, Tag } from "@ledgerhq/native-ui";
-import { TagEnabled } from "./FeatureFlagDetails";
+import { Box, Divider, Link, Switch, Tag } from "@ledgerhq/lumen-ui-rnative";
 import ContentAbTestDetails, { CONTENT_AB_TESTS_GROUP } from "./ContentAbTestDetails";
 import { refreshMountedScreens } from "./refreshMountedScreens";
 
@@ -20,10 +19,10 @@ type Props = {
   isLast: boolean;
 };
 
-function groupStatusColor(allEnabled: boolean, someEnabled: boolean) {
-  if (allEnabled) return "success.c50";
-  if (someEnabled) return "warning.c50";
-  return "error.c50";
+function groupStatusAppearance(allEnabled: boolean, someEnabled: boolean) {
+  if (allEnabled) return "success" as const;
+  if (someEnabled) return "warning" as const;
+  return "error" as const;
 }
 
 const ContentAbTestsGroup: React.FC<Props> = ({
@@ -78,33 +77,30 @@ const ContentAbTestsGroup: React.FC<Props> = ({
   }, []);
 
   return (
-    <Flex mb={2}>
+    <Box lx={{ marginBottom: "s8" }}>
       <Pressable onPress={handlePress}>
-        <Flex flexDirection="row" alignItems="center" justifyContent="space-between">
-          <Flex flexDirection="row" alignItems="center">
-            <TagEnabled backgroundColor={groupStatusColor(allEnabled, someEnabled)}>
-              {CONTENT_AB_TESTS_GROUP}
-            </TagEnabled>
+        <Box lx={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}>
+            <Tag
+              label={CONTENT_AB_TESTS_GROUP}
+              size="sm"
+              appearance={groupStatusAppearance(allEnabled, someEnabled)}
+            />
+            {someOverridden ? <Tag label="overridden locally" size="sm" appearance="gray" /> : null}
+          </Box>
+          <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s12" }}>
             {someOverridden ? (
-              <Tag my={1} mr={2}>
-                overridden locally
-              </Tag>
-            ) : null}
-          </Flex>
-          <Flex flexDirection="row" alignItems="center">
-            {someOverridden ? (
-              <Link size="small" type="color" onPress={handleRestore}>
+              <Link appearance="accent" size="sm" onPress={handleRestore}>
                 {t("settings.debug.featureFlagsRestore")}
               </Link>
             ) : null}
-            <Flex mr={3} />
-            <Switch checked={allEnabled} onChange={handleSwitchChange} />
-          </Flex>
-        </Flex>
+            <Switch checked={allEnabled} onCheckedChange={handleSwitchChange} />
+          </Box>
+        </Box>
       </Pressable>
-      {focused ? <Flex pl={6}>{testsList}</Flex> : null}
+      {focused ? <Box lx={{ paddingLeft: "s24" }}>{testsList}</Box> : null}
       {!isLast && focused ? <Divider /> : null}
-    </Flex>
+    </Box>
   );
 };
 

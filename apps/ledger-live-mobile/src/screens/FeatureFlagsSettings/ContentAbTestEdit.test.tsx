@@ -25,36 +25,17 @@ jest.mock("~/context/Locale", () => ({
   }),
 }));
 
-jest.mock("styled-components/native", () => {
-  const actual = jest.requireActual("styled-components/native");
-  return new Proxy(actual, {
-    get(target, prop, receiver) {
-      if (prop === "useTheme") {
-        return () => ({
-          colors: {
-            error: { c60: "red" },
-            primary: { c80: "blue" },
-            neutral: { c30: "gray", c100: "black" },
-          },
-        });
-      }
-      return Reflect.get(target, prop, receiver);
-    },
-  });
-});
-
-jest.mock("@ledgerhq/native-ui", () => {
-  const React = require("react");
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   const { Pressable, Text, View } = require("react-native");
   return {
-    Text: ({ children }: { children: React.ReactNode }) => <Text>{children}</Text>,
-    Flex: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
+    Box: ({ children }: { children?: import("react").ReactNode }) => <View>{children}</View>,
+    Text: ({ children }: { children?: import("react").ReactNode }) => <Text>{children}</Text>,
     Button: ({
       children,
       onPress,
       disabled,
     }: {
-      children: React.ReactNode;
+      children: import("react").ReactNode;
       onPress?: () => void;
       disabled?: boolean;
     }) => (
@@ -64,24 +45,18 @@ jest.mock("@ledgerhq/native-ui", () => {
     ),
     Switch: ({
       checked,
-      onChange,
+      onCheckedChange,
       testID,
     }: {
       checked: boolean;
-      onChange: (enabled: boolean) => void;
+      onCheckedChange: (enabled: boolean) => void;
       testID?: string;
     }) => (
-      <View testID={testID} accessibilityState={{ checked }} onChange={() => onChange(!checked)} />
-    ),
-  };
-});
-
-jest.mock("@ledgerhq/native-ui/components/Form/Input/BaseInput/index", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-  return {
-    InputRenderRightContainer: ({ children }: { children: React.ReactNode }) => (
-      <View>{children}</View>
+      <View
+        testID={testID}
+        accessibilityState={{ checked }}
+        onCheckedChange={() => onCheckedChange(!checked)}
+      />
     ),
   };
 });
@@ -110,7 +85,7 @@ describe("ContentAbTestEdit", () => {
     renderEdit("upgradeBanner");
 
     act(() => {
-      fireEvent(screen.getByTestId("content-ab-test-enabled"), "onChange", false);
+      fireEvent(screen.getByTestId("content-ab-test-enabled"), "onCheckedChange");
     });
 
     expect(isContentAbTestOverridden("upgradeBanner")).toBe(true);

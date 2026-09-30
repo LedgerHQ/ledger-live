@@ -1,11 +1,10 @@
 import React, { useCallback } from "react";
-import { Pressable, View } from "react-native";
+import { Pressable } from "react-native";
 import {
   isContentAbTestOverridden,
   type ContentAbTestPayload,
 } from "@features/platform-content-ab-tests";
-import { Flex, Divider, Tag } from "@ledgerhq/native-ui";
-import { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
+import { Box, Divider, Tag } from "@ledgerhq/lumen-ui-rnative";
 import ContentAbTestEdit from "./ContentAbTestEdit";
 
 export const CONTENT_AB_TESTS_GROUP = "contentAbTests";
@@ -31,27 +30,27 @@ const ContentAbTestDetails: React.FC<Props> = ({
   );
 
   return (
-    <View>
+    <Box>
       <Pressable onPress={handlePress}>
-        <Flex flexDirection="row" alignItems="center" my={3} flexWrap="wrap">
-          {testValue?.enabled ? (
-            <TagEnabled>{testName}</TagEnabled>
-          ) : (
-            <TagDisabled>{testName}</TagDisabled>
-          )}
-          <Tag my={1} mr={2}>
-            feature_copy
-          </Tag>
+        <Box
+          lx={{
+            flexDirection: "row",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "s8",
+            marginVertical: "s12",
+          }}
+        >
+          <Tag label={testName} size="sm" appearance={testValue?.enabled ? "success" : "error"} />
+          <Tag label="feature_copy" size="sm" appearance="gray" />
           {isContentAbTestOverridden(testName) ? (
-            <Tag my={1} mr={2}>
-              overridden locally
-            </Tag>
+            <Tag label="overridden locally" size="sm" appearance="gray" />
           ) : null}
-        </Flex>
+        </Box>
       </Pressable>
       {focused ? <ContentAbTestEdit testName={testName} testValue={testValue} /> : null}
       {!isLast && focused ? <Divider /> : null}
-    </View>
+    </Box>
   );
 };
 

@@ -12,10 +12,6 @@ import { createFeatureFlagsMiddleware, featureFlagsReducer } from "@shared/featu
 import DebugFeatureFlags from "./index";
 import { i18n } from "~/context/Locale";
 
-jest.mock("@react-native-firebase/app", () => ({
-  getApp: () => ({ options: { projectId: "ledger-live-staging" } }),
-}));
-
 jest.mock("~/context/Locale", () => ({
   i18n: {
     language: "en",
@@ -37,6 +33,47 @@ jest.mock("~/context/Locale", () => ({
       })[key] ?? key,
   }),
 }));
+
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const { Pressable, Text, View } = require("react-native");
+  return {
+    Box: ({ children }: { children?: React.ReactNode }) => <View>{children}</View>,
+    Text: ({ children }: { children?: React.ReactNode }) => <Text>{children}</Text>,
+    Divider: () => <View />,
+    Tag: ({ label }: { label: string }) => <Text>{label}</Text>,
+    Link: ({ children, onPress }: { children: React.ReactNode; onPress?: () => void }) => (
+      <Pressable accessibilityRole="link" onPress={onPress}>
+        <Text>{children}</Text>
+      </Pressable>
+    ),
+    Button: ({
+      children,
+      onPress,
+      disabled,
+    }: {
+      children: React.ReactNode;
+      onPress?: () => void;
+      disabled?: boolean;
+    }) => (
+      <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}>
+        <Text>{children}</Text>
+      </Pressable>
+    ),
+    Switch: ({
+      checked,
+      onCheckedChange,
+    }: {
+      checked: boolean;
+      onCheckedChange: (enabled: boolean) => void;
+    }) => (
+      <View
+        accessibilityRole="switch"
+        accessibilityState={{ checked }}
+        onCheckedChange={() => onCheckedChange(!checked)}
+      />
+    ),
+  };
+});
 
 jest.mock("styled-components/native", () => {
   const actual = jest.requireActual("styled-components/native");
