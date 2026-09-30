@@ -334,7 +334,7 @@ describe("useUpdateBannerViewModel", () => {
       rerender({});
 
       const impressionCalls = mockedTrack.mock.calls.filter(
-        ([event]: [string]) => event === "banner_impression",
+        ([event]) => event === "banner_impression",
       );
       expect(impressionCalls).toHaveLength(1);
     });
