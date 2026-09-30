@@ -5,7 +5,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { Transaction } from "@ledgerhq/live-common/families/stacks/types";
 import { validateStacksAddress } from "@ledgerhq/live-common/families/stacks/react";
 import { STACKS_MAX_NUM_CYCLES } from "@ledgerhq/live-common/families/stacks/constants";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Input from "~/renderer/components/Input";

@@ -10,7 +10,10 @@ const genericStepMock = jest.fn((_props: Record<string, unknown>) => (
   <div data-testid="generic-step-connect-device" />
 ));
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 jest.mock("~/renderer/modals/Send/steps/GenericStepConnectDevice", () => ({
   __esModule: true,
   default: (props: Record<string, unknown>) => genericStepMock(props),

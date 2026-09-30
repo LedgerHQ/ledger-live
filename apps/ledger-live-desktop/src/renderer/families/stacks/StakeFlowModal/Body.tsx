@@ -8,7 +8,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import { StacksAccount, Transaction } from "@ledgerhq/live-common/families/stacks/types";
 import { fetchPoxInfo } from "@ledgerhq/live-common/families/stacks/react";
 import logger from "~/renderer/logger";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Stepper from "~/renderer/components/Stepper";
 import { useStacksFlowState } from "../useStacksFlowState";

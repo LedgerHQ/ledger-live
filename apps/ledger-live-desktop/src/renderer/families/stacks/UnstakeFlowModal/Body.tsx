@@ -7,7 +7,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { getStacksStakingPosition } from "@ledgerhq/live-common/families/stacks/react";
 import { StacksAccount, Transaction } from "@ledgerhq/live-common/families/stacks/types";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Stepper from "~/renderer/components/Stepper";
 import { useStacksFlowState } from "../useStacksFlowState";

@@ -7,9 +7,12 @@ import type { StacksAccount, Transaction } from "@ledgerhq/live-common/families/
 import type { Operation } from "@ledgerhq/types-live";
 import type { StepProps } from "../types";
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
-  __esModule: true,
-  default: () => null,
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   setTrackingSource: jest.fn(),
 }));
 const mockNavigate = jest.fn();
