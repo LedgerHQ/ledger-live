@@ -19,6 +19,7 @@ export default class PayTabPage {
   requestScreenId = "pay-request-receive";
   requestCloseId = "pay-request-receive-close";
   payTileId = "pay-contacts-pay-tile";
+  contactTileId = (index: number) => `pay-contacts-tile-${index}`;
   successStepId = "pay-success-step";
   successTitleId = "pay-success-title";
   successCloseId = "pay-success-close";
@@ -145,6 +146,12 @@ export default class PayTabPage {
     await tapById(this.payTileId);
   }
 
+  @Step("Select contact at index {{{0}}}")
+  async selectContact(index: number) {
+    await detoxExpect(getElementById(this.contactTileId(index))).toBeVisible();
+    await tapById(this.contactTileId(index));
+  }
+
   @Step("Expect the Pay success screen to read {{{0}}}")
   async expectYouPaid(title: string | RegExp) {
     await waitForElementById(this.successTitleId);
@@ -154,6 +161,11 @@ export default class PayTabPage {
     } else {
       jestExpect(actualTitle).toMatch(title);
     }
+  }
+
+  @Step("Expect the Pay success screen to mention {{{0}}}")
+  async expectPaySuccess(title: string) {
+    await this.expectYouPaid(title);
   }
 
   @Step("Close the Pay success screen")
