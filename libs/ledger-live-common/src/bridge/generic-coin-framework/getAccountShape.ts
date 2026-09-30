@@ -343,7 +343,7 @@ function parentOpsForTxWithOnlyInternalOperations(
  * ops attached, not emitted as additional top-level operations.
  */
 function buildParentOperations(
-  newSubAccounts: TokenAccount[],
+  subAccounts: TokenAccount[],
   newNonInternalOperations: OperationCommon[],
   newInternalOperations: OperationCommon[],
   accountId: string,
@@ -354,7 +354,7 @@ function buildParentOperations(
   // Built once for all transactions rather than once per hash — the group-once pattern above
   // already applies to the other side of this join (transactions grouped by hash); this applies it
   // to the sub-account side.
-  const subOperationIndex = buildSubOperationIndex(newSubAccounts);
+  const subOperationIndex = buildSubOperationIndex(subAccounts);
 
   const result: OperationCommon[] = [];
 
@@ -902,8 +902,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       maxOperations,
     );
 
+    // From the bounded sub-accounts, not `newSubAccounts`: a restored account recomputes each
+    // parent's sub-operations from the stored (bounded) ones, so the synced shape has to as well.
     const newOpsWithSubs = buildParentOperations(
-      newSubAccounts,
+      subAccounts,
       newNonInternalOperations,
       newInternalOperations,
       accountId,
