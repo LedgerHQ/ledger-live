@@ -33,6 +33,28 @@ export type FromFamiliyRaw = {
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"];
 };
 
+// Old account data that didn't have the field yet: an account is "used" iff it isn't empty.
+function resolveUsed(used: boolean | undefined, res: Account): boolean {
+  return typeof used === "undefined" ? !isAccountEmpty(res) : used;
+}
+
+// Isolated so the nested `forEach`/`if` doesn't add to `fromAccountRaw`'s own complexity --
+// it is a self-contained pass, unrelated to how the rest of the account is built.
+function applyAssignFromTokenAccountRaw(
+  fromRaw: FromFamiliyRaw | undefined,
+  res: Account,
+  subAccountsRaw: AccountRaw["subAccounts"],
+): void {
+  if (!fromRaw?.assignFromTokenAccountRaw || !res.subAccounts) return;
+
+  res.subAccounts.forEach((subAcc, index) => {
+    const subAccRaw = subAccountsRaw?.[index];
+    if (subAcc.type === "TokenAccount" && subAccRaw?.type === "TokenAccountRaw") {
+      fromRaw.assignFromTokenAccountRaw?.(subAccRaw, subAcc);
+    }
+  });
+}
+
 export async function fromAccountRaw(
   rawAccount: AccountRaw,
   fromRaw?: FromFamiliyRaw,
@@ -136,12 +158,7 @@ export async function fromAccountRaw(
   };
   res.balanceHistoryCache = generateHistoryFromOperations(res);
 
-  if (typeof used === "undefined") {
-    // old account data that didn't had the field yet
-    res.used = !isAccountEmpty(res);
-  } else {
-    res.used = used;
-  }
+  res.used = resolveUsed(used, res);
 
   if (xpub) {
     res.xpub = xpub;
@@ -167,14 +184,7 @@ export async function fromAccountRaw(
     fromRaw.assignFromAccountRaw(rawAccount, res);
   }
 
-  if (fromRaw?.assignFromTokenAccountRaw && res.subAccounts) {
-    res.subAccounts.forEach((subAcc, index) => {
-      const subAccRaw = subAccountsRaw?.[index];
-      if (subAcc.type === "TokenAccount" && subAccRaw?.type === "TokenAccountRaw") {
-        fromRaw.assignFromTokenAccountRaw?.(subAccRaw, subAcc);
-      }
-    });
-  }
+  applyAssignFromTokenAccountRaw(fromRaw, res, subAccountsRaw);
 
   return res;
 }

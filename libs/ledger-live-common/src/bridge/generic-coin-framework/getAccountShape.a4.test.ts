@@ -168,16 +168,16 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
     await call();
 
-    // Both bounds, named rather than counted: this assertion has already drifted twice, once when
-    // a parameter was inserted ahead of it and once when the page size was appended after it.
-    // Without them this path paginates unbounded and materialises a whole history before the
-    // store bound below it ever runs -- and A4 read is enabled for Ethereum, so the account that
-    // produced the out-of-memory report reaches it.
-    const [, , , , , , , walkBound, pageSize] = fetchA4OperationsMock.mock.calls[0];
-    expect(walkBound).toBe(DEFAULT_MAX_OPERATIONS);
+    // Named, not counted: the options object this now goes through (see `fetchA4Operations`) is
+    // exactly what makes this assertion drift-proof -- both fields keep the same name regardless
+    // of where else the signature changes. Without them this path paginates unbounded and
+    // materialises a whole history before the store bound below it ever runs -- and A4 read is
+    // enabled for Ethereum, so the account that produced the out-of-memory report reaches it.
+    const options = fetchA4OperationsMock.mock.calls[0][2];
+    expect(options.maxOperations).toBe(DEFAULT_MAX_OPERATIONS);
     // This suite drives the `mainnet` family, which has no shipped page size, so none is sent --
     // the same rule the delegate path follows.
-    expect(pageSize).toBeUndefined();
+    expect(options.pageSize).toBeUndefined();
   });
 
   it("sends the page size too for a family that has one", async () => {
@@ -190,8 +190,7 @@ describe("genericGetAccountShape - A4 read branch", () => {
       { paginationConfig: {} as any },
     );
 
-    const [, , , , , , , , pageSize] = fetchA4OperationsMock.mock.calls[0];
-    expect(pageSize).toBe(DEFAULT_PAGE_SIZE_BY_FAMILY.evm);
+    expect(fetchA4OperationsMock.mock.calls[0][2].pageSize).toBe(DEFAULT_PAGE_SIZE_BY_FAMILY.evm);
   });
 
   it("falls back to the coin-module delegate when fetchA4Operations throws with status 5xx", async () => {

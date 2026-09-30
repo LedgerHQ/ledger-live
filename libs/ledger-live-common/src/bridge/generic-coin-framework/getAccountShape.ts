@@ -825,20 +825,18 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         const a4Client = new A4Client(url, a4Network);
         const a4AccountId = deriveA4AccountId(address);
         // NFT and failed-incoming filtering is handled inside adaptA4OperationToLiveOperation (returns [])
-        const a4Result = await fetchA4Operations(
-          a4Client,
-          a4AccountId,
-          accountId,
+        const a4Result = await fetchA4Operations(a4Client, a4AccountId, {
+          liveAccountId: accountId,
           address,
-          a4Network,
+          chain: a4Network,
           minHeight,
-          a4ChainConfig.maxDcRoamRetries,
+          maxDcRoamRetries: a4ChainConfig.maxDcRoamRetries,
           // Both bounds the delegate gets: the walk bound, without which a large A4-backed
           // account materialises its whole history before the store bound runs, and the page
           // size, without which a single response can do the same on its own.
           maxOperations,
           pageSize,
-        );
+        });
         newOps = a4Result.operations as OperationCommon[];
         newOpsBounded = a4Result.bounded;
         logReadDecisionOnce(a4Network, "read_served_by_a4", "A4 is serving reads for this chain");
