@@ -13,12 +13,6 @@ import {
 } from "../lazyOnboardingTourController";
 import { useLazyOnboardingTourDrawerViewModel } from "../useLazyOnboardingTourDrawerViewModel";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
-}));
-
 const SHOP_LINK = "https://shop.ledger.com/?product=flex";
 
 function renderTourViewModel(enabled = true) {

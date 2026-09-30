@@ -17,19 +17,6 @@ import WebPlatformPlayer from "~/components/WebPlatformPlayer";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
 import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
-jest.mock("@shared/analytics", () => {
-  const track = jest.fn();
-  return {
-    ...jest.requireActual("@shared/analytics"),
-    track,
-  };
-});
-
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: () => null,
-}));
-
 jest.mock("~/analytics", () => ({ updateIdentify: jest.fn() }));
 
 // Mock WebView as View to avoid native setup in this dApp flow test.

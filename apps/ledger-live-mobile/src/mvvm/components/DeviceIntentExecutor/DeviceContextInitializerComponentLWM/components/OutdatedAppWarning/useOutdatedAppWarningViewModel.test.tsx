@@ -11,11 +11,6 @@ import { useOutdatedAppWarningViewModel } from "./useOutdatedAppWarningViewModel
 import type { InitializerDevice } from "../../types";
 import { DeviceIntentTrackingProvider } from "../../../utils/DeviceIntentTrackingContext";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 jest.mock("../../hooks/useInitializerActions");
 
 const mockedTrack = jest.mocked(track);

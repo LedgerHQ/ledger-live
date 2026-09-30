@@ -20,11 +20,6 @@ jest.mock("LLM/storage", () => ({
   },
 }));
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 jest.mock("./handleBackToLwEntryPoint", () => ({
   handleBackToLwEntryPoint: jest.fn(),
 }));

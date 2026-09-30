@@ -22,11 +22,6 @@ jest.mock("~/context/Locale", () => {
   };
 });
 
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: () => null,
-}));
-
 jest.mock("~/components/Alert", () => () => null);
 
 jest.mock("~/components/wrappedUi/Button", () => {

@@ -42,11 +42,6 @@ jest.mock("../../context/SendFlowTrackingContext");
 jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext");
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
-}));
 const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);

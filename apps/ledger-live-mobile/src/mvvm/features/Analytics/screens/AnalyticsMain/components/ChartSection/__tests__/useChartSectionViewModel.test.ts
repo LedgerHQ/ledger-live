@@ -8,11 +8,6 @@ jest.mock("~/hooks/portfolio", () => ({
   usePortfolioAllAccounts: jest.fn(),
 }));
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const mockUsePortfolioAllAccounts = jest.mocked(usePortfolioAllAccounts);
 const mockTrack = jest.mocked(track);
 

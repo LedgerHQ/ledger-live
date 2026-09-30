@@ -5,11 +5,6 @@ import type { State } from "~/reducers/types";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { useAssetCoinOptionsViewModel } from "../useAssetCoinOptionsViewModel";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const bitcoin = getCryptoCurrencyById("bitcoin");
 
 function renderViewModel({

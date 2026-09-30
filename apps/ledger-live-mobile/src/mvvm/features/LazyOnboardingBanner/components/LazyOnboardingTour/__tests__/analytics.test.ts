@@ -17,12 +17,6 @@ import {
 } from "../analytics";
 import { LAZY_ONBOARDING_TOUR_PAGE, LAZY_ONBOARDING_TOUR_SHOP_PAGE } from "../const";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  trackPage: jest.fn(),
-  track: jest.fn(),
-}));
-
 const sharedProps: LazyOnboardingTourSharedAnalyticsProps = {
   hasConnectedDevice: false,
   personalRecoOptIn: true,

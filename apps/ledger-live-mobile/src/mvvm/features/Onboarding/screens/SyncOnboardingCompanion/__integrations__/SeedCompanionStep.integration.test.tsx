@@ -6,11 +6,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen } from "@tests/test-renderer";
 import SeedCompanionStep from "../components/SeedCompanionStep";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const baseProps = {
   productName: "Ledger Stax",
   device: {

@@ -18,11 +18,6 @@ jest.mock("LLM/features/Send/context/SendFlowContext", () => ({
   }),
 }));
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 describe("useAddToExistingContactViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();

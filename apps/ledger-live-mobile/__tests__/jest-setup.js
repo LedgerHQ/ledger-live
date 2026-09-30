@@ -257,6 +257,14 @@ jest.mock("@shared/analytics", () => ({
   trackPage: jest.fn(),
 }));
 
+jest.mock("@shared/analytics-react", () => {
+  const actual = jest.requireActual("@shared/analytics-react");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(props => actual.TrackScreen(props)),
+  };
+});
+
 // Mock of Native Modules
 jest.mock("react-native-localize", () => mockLocalize);
 

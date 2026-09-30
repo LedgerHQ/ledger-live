@@ -12,11 +12,6 @@ import { useRecipientScreenViewModel } from "../useRecipientScreenViewModel";
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@react-navigation/native");
 jest.mock("../../../../context/SendFlowContext");
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  trackPage: jest.fn(),
-  track: jest.fn(),
-}));
 jest.mock("@features/platform-contacts", () => ({
   useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",

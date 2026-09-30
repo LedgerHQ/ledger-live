@@ -11,16 +11,6 @@ import { DeviceIntentTrackingProvider } from "../utils/DeviceIntentTrackingConte
 import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
 import { IntentError } from "./IntentError";
 
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: jest.fn(() => null),
-}));
-
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockedTrack = jest.mocked(track);
 

@@ -8,12 +8,6 @@ import {
   type HardwareCarouselSharedAnalyticsProps,
 } from "./analytics";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  trackPage: jest.fn(),
-  track: jest.fn(),
-}));
-
 const mockSharedProps: HardwareCarouselSharedAnalyticsProps = {
   deviceModel: "lnx",
   personalRecoOptIn: true,

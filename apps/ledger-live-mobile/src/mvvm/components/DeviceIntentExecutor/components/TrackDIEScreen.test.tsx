@@ -4,11 +4,6 @@ import { render } from "@tests/test-renderer";
 import { DeviceIntentTrackingProvider } from "../utils/DeviceIntentTrackingContext";
 import { TrackDIEScreen } from "./TrackDIEScreen";
 
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: jest.fn(() => null),
-}));
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
 describe("TrackDIEScreen", () => {

@@ -5,11 +5,6 @@ import { PnlDetailDrawer } from "../components/PnlDetailDrawer";
 import { PnlDetailItem } from "../components/PnlDetailDrawer/types";
 import { PNL_DETAIL_PAGE } from "../const";
 
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: jest.fn(() => null),
-}));
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
 const TITLE = "Profit & Loss";

@@ -7,10 +7,6 @@ import { useMarketScreenViewModel } from "../useMarketScreenViewModel";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useRoute: jest.fn(),

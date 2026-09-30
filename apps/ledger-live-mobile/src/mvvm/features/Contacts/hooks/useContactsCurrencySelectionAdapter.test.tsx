@@ -10,10 +10,6 @@ import { useContactsCurrencySelectionAdapter } from "./useContactsCurrencySelect
 jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: jest.fn(),
 }));
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
 
 const openDrawer = jest.fn();
 const closeDrawer = jest.fn();

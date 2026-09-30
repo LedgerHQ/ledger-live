@@ -79,10 +79,6 @@ jest.mock("~/components/KeyboardView", () => {
   const { View } = jest.requireActual("react-native");
   return ({ children }: { children: React.ReactNode }) => <View>{children}</View>;
 });
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: () => null,
-}));
 jest.mock("~/context/Locale", () => {
   const { Text } = jest.requireActual("react-native");
   return {

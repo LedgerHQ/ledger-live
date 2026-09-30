@@ -5,10 +5,6 @@ import { useSkipMemoConfirmationViewModel } from "../useSkipMemoConfirmationView
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkipMemo";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("../../../../hooks/useDoNotAskAgainSkipMemo");
 jest.mock("LLM/hooks/useLocalizedUrls", () => ({

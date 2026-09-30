@@ -7,11 +7,6 @@ import type { DisplayedDevice } from "@ledgerhq/live-dmk-mobile";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { DeviceListItem } from "./DeviceListItem";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const mockedTrack = jest.mocked(track);
 
 function makeKnownDevice(overrides: Partial<KnownDevice> = {}): KnownDevice {

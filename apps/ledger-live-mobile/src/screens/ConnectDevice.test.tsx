@@ -24,11 +24,6 @@ jest.mock("~/components/DeviceAction/rendering", () => ({
   renderLoading: () => null,
 }));
 
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: () => null,
-}));
-
 // Simulates the real DeviceAction component: once the device action reaches its
 // result state it calls `renderOnResult(payload)` on every render, including the
 // internal re-renders caused by subsequent device-action emissions.

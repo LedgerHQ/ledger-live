@@ -12,11 +12,6 @@ import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingCo
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DiscoveringState } from "./DiscoveringState";
 
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: jest.fn(() => null),
-}));
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
 type DiscoveringUIState = Extract<

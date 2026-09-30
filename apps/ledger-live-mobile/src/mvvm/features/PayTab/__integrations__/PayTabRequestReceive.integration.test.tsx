@@ -28,12 +28,6 @@ const VERIFY_INTRO = "Verify your address";
 const DIE_LABEL = "Ledger Secure Screen";
 const PAY_DEPOSIT = "Add stablecoin";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
-}));
-
 jest.mock("@features/flow-pay-card", () => ({
   Card: () => null,
 }));

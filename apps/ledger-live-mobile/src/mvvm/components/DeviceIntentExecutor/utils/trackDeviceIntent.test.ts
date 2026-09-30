@@ -26,11 +26,6 @@ import {
   trackDrawerCloseButtonClicked,
 } from "./trackDeviceIntent";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const mockedTrack = jest.mocked(track);
 const TEST_BLE_TRANSPORT: TransportIdentifier = "RN_BLE";
 const connectedDevice: ConnectedDevice = {

@@ -2,12 +2,6 @@ import { trackPage, track } from "@shared/analytics";
 import { getQ3TourStepName, PAGE_TRACKING_Q3_TOUR } from "../const";
 import { createQ3WalletV4TourAnalytics } from "../q3TourCarouselAnalytics";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
-}));
-
 describe("createQ3WalletV4TourAnalytics", () => {
   const analytics = createQ3WalletV4TourAnalytics(4, "q3_a");
 

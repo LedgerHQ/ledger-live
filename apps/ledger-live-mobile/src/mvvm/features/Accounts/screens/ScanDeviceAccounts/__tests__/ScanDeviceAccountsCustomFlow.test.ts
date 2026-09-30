@@ -23,11 +23,6 @@ jest.mock("LLM/features/Accounts/utils/customAddAccountFlow", () => ({
   })),
 }));
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const mockTrack = jest.mocked(track);
 
 const analyticsMetadata = {

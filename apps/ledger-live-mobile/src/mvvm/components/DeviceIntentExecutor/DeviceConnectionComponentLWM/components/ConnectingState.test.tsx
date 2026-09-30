@@ -8,11 +8,6 @@ import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingCo
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { ConnectingState } from "./ConnectingState";
 
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: jest.fn(() => null),
-}));
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
 function makeKnownDevice(overrides: Partial<KnownDevice> = {}): KnownDevice {

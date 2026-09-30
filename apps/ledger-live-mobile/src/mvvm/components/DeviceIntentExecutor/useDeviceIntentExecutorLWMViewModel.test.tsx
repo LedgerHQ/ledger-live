@@ -13,11 +13,6 @@ import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 jest.mock("~/hooks/useKeepScreenAwake", () => ({
   useKeepScreenAwake: jest.fn(),
 }));

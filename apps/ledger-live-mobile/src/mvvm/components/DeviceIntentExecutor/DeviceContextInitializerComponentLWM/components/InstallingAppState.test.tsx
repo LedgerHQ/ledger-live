@@ -7,11 +7,6 @@ import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { InstallingAppState } from "./InstallingAppState";
 import type { InitializerDevice } from "../types";
 
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: jest.fn(() => null),
-}));
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
 const device: InitializerDevice = {

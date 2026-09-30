@@ -2,24 +2,13 @@ import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { screen, render } from "@tests/test-renderer";
+import { TrackScreen } from "@shared/analytics-react";
 import NoAccountsAddedScreen from "../NoAccountsAddedScreen";
 import { aleoCurrency } from "../../__mocks__/currency.mock";
-
-let capturedCategory: string | undefined;
-let capturedName: string | undefined;
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useRoute: jest.fn(),
-}));
-
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: ({ category, name }: { category: string; name?: string }) => {
-    capturedCategory = category;
-    capturedName = name;
-    return null;
-  },
 }));
 
 jest.mock("LLM/components/CloseWithConfirmation", () => {
@@ -38,6 +27,7 @@ jest.mock("LLM/components/CloseWithConfirmation", () => {
   };
 });
 
+const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockUseRoute = jest.mocked(useRoute);
 
 const makeMockRoute = (overrides: { onCloseNavigation?: () => void } = {}) => ({
@@ -57,14 +47,13 @@ const renderScreen = (routeOverrides: { onCloseNavigation?: () => void } = {}) =
 describe("NoAccountsAddedScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    capturedCategory = undefined;
-    capturedName = undefined;
   });
 
   it("tracks the screen with the AleoAddAccountFlow category and 'No accounts added' name", () => {
     renderScreen();
-    expect(capturedCategory).toBe("AleoAddAccountFlow");
-    expect(capturedName).toBe("No accounts added");
+    const [props] = mockedTrackScreen.mock.calls[0] ?? [];
+    expect(props?.category).toBe("AleoAddAccountFlow");
+    expect(props?.name).toBe("No accounts added");
   });
 
   it("renders the title with the currency name interpolated", () => {

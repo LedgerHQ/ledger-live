@@ -27,12 +27,6 @@ import {
 } from "../utils/DeviceIntentTrackingContext";
 import { useDeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
-}));
-
 const mockedTrack = jest.mocked(track);
 const mockReportFailure = jest.fn();
 

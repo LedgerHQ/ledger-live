@@ -3,11 +3,6 @@ import { Linking } from "react-native";
 import { act, renderHook } from "@tests/test-renderer";
 import { useSeedCompanionStepViewModel } from "./useSeedCompanionStepViewModel";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 describe("useSeedCompanionStepViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();

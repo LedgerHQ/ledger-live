@@ -3,26 +3,15 @@ import { Linking } from "react-native";
 import { render, screen } from "@tests/test-renderer";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import {
   ThorSwapIncompatibility,
   SWAP_NANO_S_INCOMPATIBILITY_PAGE,
 } from "./ThorSwapIncompatibility";
 
-const mockTrack = jest.fn();
-const mockTrackScreen = jest.fn();
-
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: (...args: unknown[]) => mockTrack(...args),
-}));
-
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: (props: Record<string, unknown>) => {
-    mockTrackScreen(props);
-    return null;
-  },
-}));
+const mockedTrack = jest.mocked(track);
+const mockedTrackScreen = jest.mocked(TrackScreen);
 
 const nanoS: Device = {
   modelId: DeviceModelId.nanoS,
@@ -68,11 +57,12 @@ describe("ThorSwapIncompatibility - analytics", () => {
   it("tracks the page view on render", () => {
     setup();
 
-    expect(mockTrackScreen).toHaveBeenCalledWith(
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
       expect.objectContaining({
         category: SWAP_NANO_S_INCOMPATIBILITY_PAGE,
         ...expectedProperties,
       }),
+      undefined,
     );
   });
 
@@ -81,7 +71,7 @@ describe("ThorSwapIncompatibility - analytics", () => {
 
     await user.press(screen.getByText(EXPLORE_KEY));
 
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       button: "explore_compatible_devices",
       page: SWAP_NANO_S_INCOMPATIBILITY_PAGE,
       ...expectedProperties,
@@ -94,7 +84,7 @@ describe("ThorSwapIncompatibility - analytics", () => {
 
     await user.press(screen.getByText(SWAP_PROVIDER_KEY));
 
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
       button: "swap_with_another_provider",
       page: SWAP_NANO_S_INCOMPATIBILITY_PAGE,
       ...expectedProperties,

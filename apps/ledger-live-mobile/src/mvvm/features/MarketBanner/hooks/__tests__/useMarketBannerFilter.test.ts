@@ -3,11 +3,6 @@ import { act, renderHook } from "@tests/test-renderer";
 import type { MarketBannerRanking, State } from "~/reducers/types";
 import { useMarketBannerFilter } from "../useMarketBannerFilter";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const withStarred = (starredMarketCoins: string[]) => (state: State) => ({
   ...state,
   settings: { ...state.settings, starredMarketCoins },

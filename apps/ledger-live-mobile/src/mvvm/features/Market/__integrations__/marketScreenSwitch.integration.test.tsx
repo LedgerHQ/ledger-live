@@ -8,11 +8,6 @@ import MarketNavigator from "../Navigator";
 import MarketWalletTabNavigator from "../WalletTabNavigator";
 import { MARKET_SCREEN_TEST_IDS } from "../screens/MarketScreen/testIds";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  trackPage: jest.fn(),
-}));
-
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
 const NavigatorWrapper = () => (

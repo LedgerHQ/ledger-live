@@ -20,10 +20,6 @@ jest.mock("@datadog/mobile-react-navigation", () => ({
 jest.mock("@datadog/mobile-react-native", () => ({
   DdRum: { addViewLoadingTime: jest.fn() },
 }));
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
 jest.mock("~/rootnavigation", () => ({ navigationRef: { current: {} } }));
 jest.mock("~/datadog", () => ({ viewNamePredicate: jest.fn() }));
 

@@ -6,14 +6,6 @@ import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingCo
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { UnknownErrorState } from "./UnknownErrorState";
 
-jest.mock("@shared/analytics-react", () => {
-  const actual = jest.requireActual("@shared/analytics-react");
-  return {
-    ...actual,
-    TrackScreen: jest.fn(() => null),
-  };
-});
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
 function renderState(error: unknown = new Error("boom")) {

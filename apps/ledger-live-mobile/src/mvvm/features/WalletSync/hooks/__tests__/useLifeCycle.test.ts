@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@tests/test-renderer";
 import { useLifeCycle } from "../useLifeCycle";
 import {
@@ -12,7 +13,7 @@ const mockNavigationDispatch = jest.fn();
 const mockInvalidateJwt = jest.fn();
 const mockRefetch = jest.fn();
 const mockResetTrustchainStore = jest.fn();
-const mockTrack = jest.fn();
+const mockedTrack = jest.mocked(track);
 
 jest.mock("~/context/hooks", () => ({
   ...jest.requireActual("~/context/hooks"),
@@ -28,11 +29,6 @@ jest.mock("@react-navigation/native", () => ({
 jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
   ...jest.requireActual("@ledgerhq/ledger-key-ring-protocol/store"),
   resetTrustchainStore: () => mockResetTrustchainStore(),
-}));
-
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: (...args: unknown[]) => mockTrack(...args),
 }));
 
 jest.mock("../useTrustchainSdk", () => ({
@@ -58,7 +54,7 @@ describe("useLifeCycle", () => {
     result.current.handleError(new TrustchainEjected());
 
     expect(mockResetTrustchainStore).toHaveBeenCalled();
-    expect(mockTrack).toHaveBeenCalledWith("ledgersync_deactivated");
+    expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(mockNavigationDispatch).toHaveBeenCalled();
     expect(mockInvalidateJwt).toHaveBeenCalled();
   });
@@ -68,7 +64,7 @@ describe("useLifeCycle", () => {
     result.current.handleError(new TrustchainNotAllowed());
 
     expect(mockResetTrustchainStore).toHaveBeenCalled();
-    expect(mockTrack).toHaveBeenCalledWith("ledgersync_deactivated");
+    expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(mockNavigationDispatch).toHaveBeenCalled();
     expect(mockInvalidateJwt).toHaveBeenCalled();
   });
@@ -86,7 +82,7 @@ describe("useLifeCycle", () => {
     result.current.handleError(new Error(ErrorType.NO_TRUSTCHAIN));
 
     expect(mockResetTrustchainStore).toHaveBeenCalled();
-    expect(mockTrack).toHaveBeenCalledWith("ledgersync_deactivated");
+    expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(mockNavigationDispatch).toHaveBeenCalled();
     expect(mockInvalidateJwt).toHaveBeenCalled();
   });
@@ -96,7 +92,7 @@ describe("useLifeCycle", () => {
     result.current.handleError(new Error(ErrorType.NULL));
 
     expect(mockResetTrustchainStore).toHaveBeenCalled();
-    expect(mockTrack).toHaveBeenCalledWith("ledgersync_deactivated");
+    expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(mockInvalidateJwt).toHaveBeenCalled();
   });
 
@@ -105,7 +101,7 @@ describe("useLifeCycle", () => {
     result.current.handleError(new Error("some random error"));
 
     expect(mockResetTrustchainStore).not.toHaveBeenCalled();
-    expect(mockTrack).not.toHaveBeenCalledWith("ledgersync_deactivated");
+    expect(mockedTrack).not.toHaveBeenCalledWith("ledgersync_deactivated");
     expect(mockRefetch).not.toHaveBeenCalled();
   });
 });

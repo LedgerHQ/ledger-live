@@ -16,16 +16,6 @@ import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingCo
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { ConnectionErrorState } from "./ConnectionErrorState";
 
-jest.mock("@shared/analytics-react", () => ({
-  ...jest.requireActual("@shared/analytics-react"),
-  TrackScreen: jest.fn(() => null),
-}));
-
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockedTrack = jest.mocked(track);
 

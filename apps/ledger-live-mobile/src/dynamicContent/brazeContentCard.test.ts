@@ -16,11 +16,6 @@ jest.mock("@braze/react-native-sdk", () => ({
   },
 }));
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 const mockedTrack = jest.mocked(track);
 const mockedLogContentCardImpression = jest.mocked(Braze.logContentCardImpression);
 

@@ -49,11 +49,6 @@ jest.mock("LLM/features/Contacts/hooks/useOutgoingContactOperations", () => ({
 jest.mock("../../../../context/RecipientContactSelectionContext");
 jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../useContactsFeatureIntroductionViewModel");
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
-}));
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);

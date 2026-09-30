@@ -5,11 +5,6 @@ import {
   trackInactivityDecision,
 } from "../notificationsPromptAnalytics";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 describe("notificationsPromptAnalytics", () => {
   beforeEach(() => {
     jest.clearAllMocks();

@@ -2,11 +2,6 @@ import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { useMarketFilters } from "../useMarketFilters";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-}));
-
 describe("useMarketFilters", () => {
   beforeEach(() => {
     jest.clearAllMocks();
