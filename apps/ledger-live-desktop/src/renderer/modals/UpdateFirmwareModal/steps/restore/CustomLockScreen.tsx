@@ -9,7 +9,7 @@ import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/Cust
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSelector } from "LLD/hooks/redux";
 import { reconstructImage } from "~/renderer/components/CustomImage/TestImage";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 type Props = Partial<StepProps> & {
   onDone: () => void;
