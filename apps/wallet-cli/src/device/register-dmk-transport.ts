@@ -44,6 +44,8 @@ let singleton: Singleton | null = null;
 let persistentDmk: Promise<WalletCliDmk> | null = null;
 let pendingTransport: Promise<WalletCliDmkTransport> | null = null;
 let exitHooksRegistered = false;
+/** Set by the APDU proxy, which relays a USB Ledger even when `SPECULOS_*` is set. */
+let usbOnly = false;
 
 let _testTransport: WalletCliDmkTransport | null = null;
 
@@ -82,7 +84,9 @@ function terminateWalletCliFromSignal(code: number): void {
 
 function getOrCreatePersistentDmk(): Promise<WalletCliDmk> {
   return (persistentDmk ??= import("./dmk")
-    .then(({ createDeviceManagementKit }) => createDeviceManagementKit())
+    .then(({ createDeviceManagementKit }) =>
+      usbOnly ? createDeviceManagementKit(null) : createDeviceManagementKit(),
+    )
     .catch(error => {
       persistentDmk = null;
       throw error;
@@ -334,7 +338,9 @@ function registerWalletCliDmkProcessExitHooks(): void {
 
 let registered = false;
 
-export function registerWalletCliDmkTransport(): void {
+/** `usbOnly` ignores `SPECULOS_*` and always opens a USB Ledger; the latest call decides. */
+export function registerWalletCliDmkTransport(options: { usbOnly?: boolean } = {}): void {
+  usbOnly = options.usbOnly ?? false;
   if (registered) {
     return;
   }

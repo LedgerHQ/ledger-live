@@ -81,7 +81,7 @@ jobs:
 
       - name: Start Speculos with the Ethereum app
         run: |
-          app_dir="coin-apps/nanosp/${SPECULOS_FIRMWARE_VERSION}/Ethereum"
+          app_dir="coin-apps/nanos+/${SPECULOS_FIRMWARE_VERSION}/Ethereum"
           app=$(ls "$app_dir"/app_*.elf 2>/dev/null | sort -V | tail -n 1)
           if [ -z "$app" ]; then
             echo "::error::No Ethereum app found in $app_dir"

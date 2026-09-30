@@ -12,12 +12,13 @@ import {
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { of } from "rxjs";
 import { walletCliTransportFactory } from "./dmk-transport-factory";
+import type { SpeculosConfig } from "./speculos-config";
 
 const unusedUsbFactory: TransportFactory = () => {
   throw new Error("unused");
 };
 
-let createDeviceManagementKitImpl: () => Promise<{
+let createDeviceManagementKitImpl: (speculos?: SpeculosConfig | null) => Promise<{
   dmk: DeviceManagementKit;
   destroyTransport: () => Promise<void>;
 }>;
@@ -29,7 +30,8 @@ type Deferred<T = void> = {
 };
 
 mock.module("./dmk", () => ({
-  createDeviceManagementKit: () => createDeviceManagementKitImpl(),
+  createDeviceManagementKit: (...args: Parameters<typeof createDeviceManagementKitImpl>) =>
+    createDeviceManagementKitImpl(...args),
 }));
 
 const {
@@ -386,5 +388,24 @@ describe("registerWalletCliDmkTransport", () => {
     );
     await expect(disconnectTransport(WALLET_CLI_DMK_DEVICE_ID)).resolves.toBeUndefined();
     await expect(getWalletCliDeviceModelId()).resolves.toBeUndefined();
+  });
+
+  it("builds a USB-only kit for usbOnly callers and an env-driven one otherwise", async () => {
+    const createDeviceManagementKit = mock(async (_speculos?: SpeculosConfig | null) => {
+      return makeDmk().kit;
+    });
+    createDeviceManagementKitImpl = createDeviceManagementKit;
+
+    try {
+      registerWalletCliDmkTransport({ usbOnly: true });
+      await ensureWalletCliDmkTransport();
+      await disposeWalletCliDmkTransportFully();
+      registerWalletCliDmkTransport();
+      await ensureWalletCliDmkTransport();
+
+      expect(createDeviceManagementKit.mock.calls).toEqual([[null], []]);
+    } finally {
+      registerWalletCliDmkTransport();
+    }
   });
 });

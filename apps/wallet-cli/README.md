@@ -67,7 +67,8 @@ Most commands support `--output human` (default) or `--output json`.
 
 - **[Bun](https://bun.sh)** ≥ 1.1.0 (`engines` in `package.json`)
 - **pnpm** and this monorepo checked out; install dependencies per [repo commands](../../docs/repo-commands.md) (e.g. `mise install`, `pnpm i`)
-- A **Ledger** on USB, or [Speculos](#speculos), when using `account discover`, `send`, `swap execute`, `receive --verify`, `earn deposit`/`earn withdraw`, `genuine-check`, or `ring init`
+- A **Ledger** on USB, or [Speculos](#speculos), when using `account discover`, `send`, `swap execute`, `receive --verify`, `earn deposit`/`earn withdraw`, or `ring init`
+- A physical **Ledger** on USB for `genuine-check`
 - **Linux:** USB/HID build deps, for example:
 
   ```bash
@@ -127,7 +128,7 @@ SPECULOS_API_PORT=5000 SPECULOS_DEVICE=nanoSP wallet-cli account discover --netw
 
 - Speculos must already run the app the command needs; wallet-cli does not start it or press its buttons, so stick to flows without on-device approval, such as `account discover`.
 - An unreachable Speculos exits with code 3 (`disconnected`); `genuine-check` refuses to run, since an emulator has no attestation keys.
-- `pnpm apdu-proxy` relays a **USB** Ledger to Ledger Live through `DEVICE_PROXY_URL`; it is not the Speculos transport, and Ledger Live can use Speculos directly.
+- `pnpm apdu-proxy` relays a **USB** Ledger to Ledger Live through `DEVICE_PROXY_URL`, even when `SPECULOS_*` is set; it is not the Speculos transport, and Ledger Live can use Speculos directly.
 - `pnpm test:speculos` runs the smoke test against a local Speculos with the Ethereum app, as the [Speculos smoke workflow](../../.github/workflows/test-wallet-cli-speculos.yml) does in CI.
 
 ## Relation to `ledger-live` CLI
