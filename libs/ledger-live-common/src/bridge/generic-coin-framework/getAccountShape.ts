@@ -914,12 +914,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       address,
     );
     // Try to refresh known pending and broadcasted operations (if not already updated)
-    // Useful for integrations without explorers
-    const operationsToRefresh = initialAccount?.pendingOperations.filter(
-      pendingOp =>
-        pendingOp.hash && // operation has been broadcasted
-        !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
-    );
+    // Useful for integrations without explorers. Skipped on a bounded round that retained nothing:
+    // that round keeps the old watermark so the next sync retries the same interval, and a refreshed
+    // operation merged into it would move the watermark past the part the walk never reached.
+    const boundedNoOpRound = newOpsBounded && newOps.length === 0;
+    const operationsToRefresh = boundedNoOpRound
+      ? []
+      : initialAccount?.pendingOperations.filter(
+          pendingOp =>
+            pendingOp.hash && // operation has been broadcasted
+            !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
+        );
     const confirmedOperations =
       bridgeApi.refreshOperations && operationsToRefresh?.length
         ? await bridgeApi.refreshOperations(operationsToRefresh)
