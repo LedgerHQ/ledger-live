@@ -279,6 +279,14 @@ describe("PayTab integration", () => {
       expect(screen.getByTestId("card-login")).toBeVisible();
     });
 
+    it("should hide the card and its disclaimer when the pay tab card param is false", async () => {
+      renderPayTab({ cardEnabled: false });
+
+      expect(await screen.findByTestId("pay-card-balance-empty-state")).toBeVisible();
+      expect(screen.queryByTestId("card-login")).toBeNull();
+      expect(screen.queryByTestId("pay-disclaimer")).toBeNull();
+    });
+
     it("should open the balance filter bottom sheet from the hero pill and track the interaction", async () => {
       const { user } = renderPayTab({ holdsUsdc: true });
 

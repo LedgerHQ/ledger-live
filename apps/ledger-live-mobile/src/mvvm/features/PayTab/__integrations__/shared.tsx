@@ -166,6 +166,7 @@ type RenderPayTabOptions = Readonly<{
   contacts?: Contact[];
   contactsEnabled?: boolean;
   signedInCard?: boolean;
+  cardEnabled?: boolean;
 }>;
 
 function withUsdcHoldings(state: State): State {
@@ -284,6 +285,7 @@ function getPayTabRenderInput({
   contacts,
   contactsEnabled = false,
   signedInCard = false,
+  cardEnabled = true,
 }: RenderPayTabOptions = {}) {
   const content = (
     <>
@@ -312,6 +314,7 @@ function getPayTabRenderInput({
         params: { families: ["evm"], excludedCurrencyIds: [] },
       },
       ...(contactsEnabled ? { lwmContacts: { enabled: true, params: { newBadge: false } } } : {}),
+      lwmPayTab: { enabled: true, params: { card: cardEnabled } },
     },
     state => {
       const next: State = {

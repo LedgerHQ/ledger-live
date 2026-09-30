@@ -148,7 +148,9 @@ export function usePayTabViewModel() {
     [openHostedWith, openInSecureBrowser],
   );
 
-  const isLegacyTopUp = !!useFeature("lwmPayTab")?.params?.legacyTopUp;
+  const payTab = useFeature("lwmPayTab");
+  const isLegacyTopUp = !!payTab?.params?.legacyTopUp;
+  const showCard = payTab?.params?.card !== false;
 
   // The legacy live app has its own top-up flow and its own login. It opens as every other live
   // app does, in the Discover webview, and never in the secure browser. It takes no currency, so
@@ -273,6 +275,7 @@ export function usePayTabViewModel() {
     top: safeAreaTop + WALLET_TAB_HEADER_HEIGHT,
     bottom: bottom + insets.bottom,
     card,
+    showCard,
     balance,
     actionTiles,
     contacts,
