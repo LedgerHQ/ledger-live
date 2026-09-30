@@ -14,7 +14,7 @@ import { trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { openURL } from "~/renderer/linking";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
-import { useSponsoredSend } from "../../../context/SponsoredSendContext";
+import { STANDARD_FEE_OPTION_ID, useSponsoredSend } from "../../../context/SponsoredSendContext";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
@@ -141,9 +141,12 @@ export function useAmountScreen(): AmountScreenViewModel {
   );
 
   const onReview = useCallback(() => {
-    if (selectedFeeOptionId === sponsoredFeeOptionId && sponsoredAvailable) {
+    if (selectedFeeOptionId !== STANDARD_FEE_OPTION_ID) {
       // Wait rather than go to SIGNATURE: the tx is marked sponsored, so its native fee wouldn't be locked.
-      if (!sponsoredIntentReady) return;
+      // An unavailable pick is reverted to standard by the provider, which clears the mark.
+      const sponsoredReady =
+        selectedFeeOptionId === sponsoredFeeOptionId && sponsoredAvailable && sponsoredIntentReady;
+      if (!sponsoredReady) return;
       navigation.goToStep(SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE);
       return;
     }

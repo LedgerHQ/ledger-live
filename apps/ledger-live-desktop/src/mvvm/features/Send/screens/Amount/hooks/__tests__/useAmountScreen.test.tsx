@@ -34,6 +34,7 @@ let mockSponsoredSend: {
   intentReady: boolean;
 };
 jest.mock("../../../../context/SponsoredSendContext", () => ({
+  STANDARD_FEE_OPTION_ID: "standard",
   useSponsoredSend: () => mockSponsoredSend,
 }));
 
@@ -74,7 +75,8 @@ describe("useAmountScreen onReview routing", () => {
     expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE);
   });
 
-  it("falls back to SIGNATURE when the sponsored option is selected but unavailable", () => {
+  // The transaction is still marked sponsored until the provider reverts the pick to standard.
+  it("does not navigate while the selected sponsored option is unavailable", () => {
     mockSponsoredSend = {
       selectedFeeOptionId: SPONSORED_ID,
       sponsoredFeeOptionId: SPONSORED_ID,
@@ -87,7 +89,23 @@ describe("useAmountScreen onReview routing", () => {
       result.current.onReview();
     });
 
-    expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.SIGNATURE);
+    expect(mockGoToStep).not.toHaveBeenCalled();
+  });
+
+  it("does not navigate while a sponsored pick outlives its seam", () => {
+    mockSponsoredSend = {
+      selectedFeeOptionId: SPONSORED_ID,
+      sponsoredFeeOptionId: "",
+      available: false,
+      intentReady: false,
+    };
+
+    const { result } = renderHook(() => useAmountScreen());
+    act(() => {
+      result.current.onReview();
+    });
+
+    expect(mockGoToStep).not.toHaveBeenCalled();
   });
 
   it("does not navigate when the sponsored option is available but the intent is not yet rebuilt", () => {
