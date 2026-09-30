@@ -27,7 +27,13 @@ export function StatusMessage({
 
   return (
     <Box
-      lx={{ flex: 1, alignItems: "center", justifyContent: "center", gap: "s24" }}
+      lx={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: overlapSpot ? "flex-start" : "center",
+        gap: "s24",
+        paddingTop: overlapSpot ? "s32" : undefined,
+      }}
       testID={testId}
     >
       {spot}
