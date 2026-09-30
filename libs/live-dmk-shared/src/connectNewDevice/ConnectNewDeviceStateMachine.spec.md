@@ -26,7 +26,7 @@ stateDiagram-v2
   Connecting --> Connected: DMK connect succeeds
   Connecting --> ConnectionError: DMK connect fails
 
-  ConnectionError --> Connecting: Retry
+  ConnectionError --> Discovering: Retry
   ConnectionError --> Terminated: Ignore
 
   Connected --> Done: success delay elapsed
@@ -40,9 +40,9 @@ stateDiagram-v2
 - `Discovering` starts the discovery service and emits every discovered device
   with an `onSelect` callback. `scanningTransports` is the discovery service
   `transportIds` without the skipped transports.
-- Each entry into `Discovering` clears the previous devices, sets
-  `showDeviceNotFound` to `false` and starts the device not found delay
-  (`DEFAULT_DEVICE_NOT_FOUND_DELAY`, 5 s). When the delay elapses,
+- Each entry into `Discovering` clears the previous devices, the selection and
+  the errors, sets `showDeviceNotFound` to `false` and starts the device not
+  found delay (`DEFAULT_DEVICE_NOT_FOUND_DELAY`, 5 s). When the delay elapses,
   `Discovering` is emitted again with `showDeviceNotFound: true`. Leaving
   `Discovering` cancels the delay.
 - Discovery errors stop discovery. `retry` is only set when the error has a
@@ -54,7 +54,8 @@ stateDiagram-v2
   discovered device and the DMK session refresher disabled.
 - A connection failure is mapped with `mapConnectionError` (for example BLE
   pairing refused, or pairing removed on the device) and emitted with `retry`
-  and `ignore`. Retry connects again to the same device. Ignore moves to
+  and `ignore`. Retry goes back to `Discovering`, with the skipped transports
+  kept, so that the user selects the device again. Ignore moves to
   `Terminated`, which emits nothing.
 - `Connected` is the visible success state. After the success delay
   (`DEFAULT_SUCCESS_DELAY`, 1.5 s), the machine moves to `Done`.

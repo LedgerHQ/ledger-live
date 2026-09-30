@@ -83,6 +83,9 @@ const createConnectNewDeviceStateMachine = <
         selectedDevice: (_, params: { discoveredDevice: DiscoveredDevice }) =>
           params.discoveredDevice,
       }),
+      clearSelectedDevice: assign({
+        selectedDevice: () => null,
+      }),
       assignDiscoveryError: assign({
         discoveryError: (
           _,
@@ -101,6 +104,9 @@ const createConnectNewDeviceStateMachine = <
       assignConnectionError: assign({
         connectionError: ({ context }, params: { error: unknown }) =>
           context.mapConnectionError(params.error),
+      }),
+      clearConnectionError: assign({
+        connectionError: () => null,
       }),
       assignSessionId: assign({
         sessionId: (_, params: { sessionId: string }) => params.sessionId,
@@ -223,6 +229,8 @@ const createConnectNewDeviceStateMachine = <
       Discovering: {
         entry: [
           "clearDiscoveryError",
+          "clearConnectionError",
+          "clearSelectedDevice",
           "clearDiscoveredDevices",
           "hideDeviceNotFound",
           "startDiscovery",
@@ -336,7 +344,7 @@ const createConnectNewDeviceStateMachine = <
         entry: "emitConnectionError",
         on: {
           [ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionRetry]: {
-            target: "Connecting",
+            target: "Discovering",
           },
           [ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionIgnore]: {
             target: "Terminated",
@@ -410,11 +418,11 @@ export class DefaultConnectNewDeviceStateMachine<
   stop(): void {
     const snapshot = this.actor.getSnapshot();
 
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    this.subscriptions = [];
     if (snapshot.context.isDiscovering) {
       this.deviceDiscoveryService.stop();
     }
     this.actor.stop();
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
-    this.subscriptions = [];
   }
 }

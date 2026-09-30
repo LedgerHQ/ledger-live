@@ -107,7 +107,7 @@ const setupTest = ({
 
   const deviceDiscoveryService: DeviceDiscoveryService = {
     start: jest.fn(),
-    stop: jest.fn(),
+    stop: jest.fn(() => discoveredDevices.next([])),
     transportIds,
     discoveredDevices,
     errors,
@@ -608,18 +608,56 @@ describe("ConnectNewDeviceStateMachine", () => {
       },
     );
 
-    it("should connect again to the same device when the ConnectionError is retried", async () => {
+    it("should start discovery again with an empty list when the ConnectionError is retried", async () => {
+      const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
+
+      await connectToNanoX(setup);
+      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).retry();
+
+      expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(2);
+      expect(setup.deviceDiscoveryService.start).toHaveBeenLastCalledWith({
+        ignoreTransportIdentifiers: [],
+      });
+      expect(setup.lastState(ConnectNewDeviceUIStateTypes.Discovering)).toEqual({
+        type: ConnectNewDeviceUIStateTypes.Discovering,
+        devices: [],
+        scanningTransports: [bleTransport, usbTransport],
+        showDeviceNotFound: false,
+      });
+    });
+
+    it("should connect to the device selected after the ConnectionError is retried", async () => {
       const connect = jest.fn().mockRejectedValueOnce(connectionFailure).mockResolvedValue("s-2");
       const setup = setupTest({ connect });
 
       await connectToNanoX(setup);
       setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).retry();
-      expect(setup.lastState(ConnectNewDeviceUIStateTypes.Connecting).device).toEqual(nanoXDevice);
+      setup.discoverDevices([stax]);
+      setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
       await flushPromises();
 
       expect(connect).toHaveBeenCalledTimes(2);
-      expect(connect).toHaveBeenLastCalledWith(expect.objectContaining({ device: nanoX }));
+      expect(connect).toHaveBeenLastCalledWith(expect.objectContaining({ device: stax }));
       setup.lastState(ConnectNewDeviceUIStateTypes.Connected);
+    });
+
+    it("should keep skipping the ignored transports when the ConnectionError is retried", async () => {
+      const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
+
+      setup.machine.start();
+      setup.emitDiscoveryError(makeDiscoveryError({ transportId: usbTransport }));
+      setup.lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).ignore();
+      setup.discoverDevices([nanoX]);
+      setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
+      await flushPromises();
+      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).retry();
+
+      expect(setup.deviceDiscoveryService.start).toHaveBeenLastCalledWith({
+        ignoreTransportIdentifiers: [usbTransport],
+      });
+      expect(setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).scanningTransports).toEqual([
+        bleTransport,
+      ]);
     });
 
     it("should stop without restarting discovery or calling onConnected when the ConnectionError is ignored", async () => {
@@ -637,6 +675,16 @@ describe("ConnectNewDeviceStateMachine", () => {
   });
 
   describe("stop", () => {
+    it("should emit no state when the machine is stopped while discovering", () => {
+      const { machine, states } = setupTest();
+
+      machine.start();
+      const statesCountBeforeStop = states.length;
+      machine.stop();
+
+      expect(states).toHaveLength(statesCountBeforeStop);
+    });
+
     it("should stop discovery when the machine is stopped while discovering", () => {
       const { deviceDiscoveryService, machine } = setupTest();
 
