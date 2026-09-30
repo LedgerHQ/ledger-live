@@ -130,19 +130,25 @@ const updateTransaction: SolanaMockBridge["updateTransaction"] = (t, patch) => (
 
 // The generic path derives these in `prepareTransaction`; without them a token send would be
 // crafted as a native one.
-const prepareTransaction: SolanaMockBridge["prepareTransaction"] = async (account, transaction) => {
+function withTokenAsset(
+  account: Parameters<SolanaMockBridge["prepareTransaction"]>[0],
+  transaction: Transaction,
+): Transaction {
   if (!transaction.subAccountId) return transaction;
   const subAccount = account.subAccounts?.find(sub => sub.id === transaction.subAccountId);
-  if (!subAccount || subAccount.type !== "TokenAccount") return transaction;
+  if (subAccount?.type !== "TokenAccount") return transaction;
   const asset = getAssetFromToken(subAccount.token, account.freshAddress);
   if (!("assetReference" in asset)) return transaction;
   return { ...transaction, assetReference: asset.assetReference, assetOwner: asset.assetOwner };
-};
+}
 
-const estimateMaxSpendable: SolanaMockBridge["estimateMaxSpendable"] = async ({ account }) =>
-  account.balance;
+const prepareTransaction: SolanaMockBridge["prepareTransaction"] = (account, transaction) =>
+  Promise.resolve(withTokenAsset(account, transaction));
 
-const getTransactionStatus: SolanaMockBridge["getTransactionStatus"] = async (account, t) => {
+const estimateMaxSpendable: SolanaMockBridge["estimateMaxSpendable"] = ({ account }) =>
+  Promise.resolve(account.balance);
+
+const getTransactionStatus: SolanaMockBridge["getTransactionStatus"] = (account, t) => {
   const errors: { amount?: Error; recipient?: Error } = {};
   const estimatedFees = new BigNumber(0);
   const amount = t.useAllAmount ? account.balance : new BigNumber(t.amount);
@@ -153,7 +159,7 @@ const getTransactionStatus: SolanaMockBridge["getTransactionStatus"] = async (ac
   if (!t.recipient && !t.raw && needsRecipient) errors.recipient = new RecipientRequired("");
   if (totalSpent.gt(account.balance)) errors.amount = new NotEnoughBalance();
 
-  return { errors, warnings: {}, estimatedFees, amount, totalSpent };
+  return Promise.resolve({ errors, warnings: {}, estimatedFees, amount, totalSpent });
 };
 
 async function signWithMockedChain(

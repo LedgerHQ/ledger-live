@@ -223,12 +223,12 @@ export function extractBalance(balances: Balance[], type: string): Balance {
  * chain-specific reference string (VeChain's VTHO address, Stacks' SIP-010 composite key, etc.):
  * guard native assets and an absent/empty reference, then look up by that reference directly.
  */
-export async function defaultGetTokenFromAssetByAddress(
+export function defaultGetTokenFromAssetByAddress(
   currency: CryptoCurrency,
   asset: AssetInfo,
 ): Promise<TokenCurrency | undefined> {
   if (asset.type === "native" || !("assetReference" in asset) || !asset.assetReference) {
-    return undefined;
+    return Promise.resolve(undefined);
   }
   return getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id);
 }

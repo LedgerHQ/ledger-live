@@ -16,12 +16,12 @@ import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import type { SolanaTransactionIntentData } from "../types";
 import { getStakeCreationDeposit } from "../transactions";
 
-export async function getTokenFromAsset(
+export function getTokenFromAsset(
   currency: CryptoCurrency,
   asset: AssetInfo,
 ): Promise<TokenCurrency | undefined> {
   if (asset.type === "native" || !("assetReference" in asset) || !asset.assetReference) {
-    return undefined;
+    return Promise.resolve(undefined);
   }
   return getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id);
 }
@@ -159,14 +159,17 @@ export function getDeviceSignOptions(
         account.subAccounts?.find(sub => sub.token?.contractAddress === assetReference)?.token)
       : undefined;
 
+  let destination = {};
+  if (ataToOpen && assetReference) {
+    destination = { createATA: { address: ataToOpen, mintAddress: assetReference } };
+  } else if (recipientTokenAccount) {
+    destination = { tokenAddress: recipientTokenAccount };
+  }
+
   const options = {
     ...(templateId ? { templateId } : {}),
     ...(token ? { tokenInternalId: token.id } : {}),
-    ...(ataToOpen && assetReference
-      ? { createATA: { address: ataToOpen, mintAddress: assetReference } }
-      : recipientTokenAccount
-        ? { tokenAddress: recipientTokenAccount }
-        : {}),
+    ...destination,
     ...(userInputType ? { userInputType } : {}),
   };
 
@@ -176,7 +179,7 @@ export function getDeviceSignOptions(
 export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
   return {
     stakingSupported: true,
-    getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
+    getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
     buildIntentData,

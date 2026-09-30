@@ -47,6 +47,56 @@ describe("solana mock bridge", () => {
     expect(prepared.assetOwner).toBe(SENDER);
   });
 
+  it("leaves a transaction whose sub account is unknown untouched", async () => {
+    const transaction = {
+      family: "solana",
+      mode: "send",
+      amount: new BigNumber(1_000),
+      recipient: RECIPIENT,
+      subAccountId: "unknown",
+    } as Transaction;
+
+    expect(await mockBridge.accountBridge.prepareTransaction(account, transaction)).toBe(
+      transaction,
+    );
+  });
+
+  it("spends the whole balance at most", async () => {
+    expect(await mockBridge.accountBridge.estimateMaxSpendable({ account })).toEqual(
+      account.balance,
+    );
+  });
+
+  describe("getTransactionStatus", () => {
+    const status = (patch: Partial<Transaction>) =>
+      mockBridge.accountBridge.getTransactionStatus(account, {
+        family: "solana",
+        mode: "send",
+        amount: new BigNumber(1_000),
+        recipient: RECIPIENT,
+        ...patch,
+      } as Transaction);
+
+    it("accepts a funded send", async () => {
+      expect((await status({})).errors).toEqual({});
+    });
+
+    it("requires a recipient, except to open a token account or revoke a delegation", async () => {
+      expect((await status({ recipient: "" })).errors.recipient).toBeDefined();
+      expect((await status({ recipient: "", mode: "opt-in" })).errors).toEqual({});
+      expect((await status({ recipient: "", mode: "revoke" })).errors).toEqual({});
+    });
+
+    it("rejects more than the balance, and spends it all on send max", async () => {
+      expect((await status({ amount: new BigNumber(2_000_000_000) })).errors.amount).toBeDefined();
+      expect(await status({ useAllAmount: true })).toMatchObject({
+        errors: {},
+        amount: account.balance,
+        totalSpent: account.balance,
+      });
+    });
+  });
+
   it("signs a transaction the wallet API can deserialize", async () => {
     const transaction = {
       family: "solana",

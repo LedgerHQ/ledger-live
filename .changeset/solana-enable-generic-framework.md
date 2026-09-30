@@ -1,9 +1,12 @@
 ---
 "@ledgerhq/live-common": minor
+"@ledgerhq/coin-solana": minor
 "@ledgerhq/ledger-wallet-framework": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---
+
+`estimateFees` now returns the recipient token account, wallet address and input type of an SPL transfer alongside its fee, so the device screen names the destination; a recipient token account holding another token throws `SolanaTokenAccountHoldsAnotherToken`.
 
 `makeEmptyTokenAccount` now builds its id with `encodeTokenAccountId`, like the fourteen families that already do: the wallet-API placeholder previously used the contract address, so it matched no real sub-account id.
 

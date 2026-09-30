@@ -19,7 +19,121 @@ export type ExtraDeviceTransactionField = {
 
 type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
-async function getDeviceTransactionConfig({
+const addressIf = (label: string, address: string | undefined): DeviceTransactionField[] =>
+  address ? [{ type: "address", label, address }] : [];
+
+function transferFields(transaction: Transaction): DeviceTransactionField[] {
+  if (!isTokenTransferTransaction(transaction)) return [{ type: "amount", label: "Transfer" }];
+
+  const transferFee = getTransactionTransferFee(transaction);
+  return [
+    { type: "amount", label: "Transfer tokens" },
+    ...(transferFee && transferFee.feeBps > 0
+      ? ([{ type: "solana.token.transferFee", label: "Transfer fee" }] as const)
+      : []),
+    { type: "text", value: "Solana", label: "Network" },
+    { type: "fees", label: "Max network fees" },
+  ];
+}
+
+function tokenAccountFields(
+  transaction: Transaction,
+  owner: string,
+): DeviceTransactionField[] | undefined {
+  const tokenAccount = transaction.ownerTokenAccount;
+  switch (transaction.mode) {
+    case "opt-in":
+      return [
+        ...addressIf("Create token acct", tokenAccount),
+        ...addressIf("From mint", transaction.assetReference),
+        { type: "address", label: "Owned by", address: owner },
+        { type: "address", label: "Funded by", address: owner },
+        { type: "address", label: "Fee payer", address: owner },
+      ];
+    case "approve":
+      return [
+        ...addressIf("Approve token account", tokenAccount),
+        { type: "address", label: "Owned by", address: owner },
+        { type: "address", label: "Delegate to", address: transaction.recipient },
+        { type: "amount", label: "Amount" },
+      ];
+    case "revoke":
+      return [
+        ...addressIf("Revoke token account", tokenAccount),
+        { type: "address", label: "Owned by", address: owner },
+      ];
+    default:
+      return undefined;
+  }
+}
+
+function stakeFields(
+  mainAccount: Account,
+  transaction: Transaction,
+  owner: string,
+): DeviceTransactionField[] {
+  const stakeAccount = getTransactionStakeAccount(transaction);
+  const stakeAccountAddress =
+    typeof transaction.feeParameters?.stakeAccountAddress === "string"
+      ? transaction.feeParameters.stakeAccountAddress
+      : undefined;
+
+  switch (transaction.mode) {
+    case "stake":
+      return [
+        ...addressIf("Delegate from", stakeAccountAddress),
+        {
+          type: "text",
+          label: "Deposit",
+          value: formatCurrencyUnit(
+            mainAccount.currency.units[0],
+            getStakeCreationDeposit(transaction),
+            { disableRounding: true, showCode: true },
+          ),
+        },
+        { type: "address", label: "New authority", address: owner },
+        ...validatorFields(transaction, stakeAccount),
+      ];
+    case "undelegate":
+      return [
+        ...addressIf("Deactivate stake", stakeAccount),
+        ...addressIf("Vote account", getTransactionValidator(transaction)),
+      ];
+    case "unstake":
+      return [
+        { type: "amount", label: "Stake withdraw" },
+        ...validatorFields(transaction, stakeAccount),
+      ];
+    case "split": {
+      const { stakeAccountSeed } = transaction.familySpecificData ?? {};
+      return [
+        { type: "amount", label: "Split stake" },
+        ...addressIf("From", stakeAccount),
+        ...addressIf("To", stakeAccountAddress),
+        { type: "address", label: "Base", address: owner },
+        ...(stakeAccountSeed
+          ? ([{ type: "text", label: "Seed", value: stakeAccountSeed }] as const)
+          : []),
+        { type: "address", label: "Authorized by", address: owner },
+        { type: "address", label: "Fee payer", address: owner },
+      ];
+    }
+    default:
+      return validatorFields(transaction, stakeAccount);
+  }
+}
+
+function validatorFields(
+  transaction: Transaction,
+  stakeAccount: string | undefined,
+): DeviceTransactionField[] {
+  return [
+    ...addressIf(transaction.mode === "unstake" ? "From" : "Delegate from", stakeAccount),
+    ...addressIf("Vote account", getTransactionValidator(transaction)),
+  ];
+}
+
+function getFields({
   account,
   parentAccount,
   transaction,
@@ -27,136 +141,19 @@ async function getDeviceTransactionConfig({
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
-}): Promise<Array<DeviceTransactionField>> {
-  const fields: Array<DeviceTransactionField> = [];
+}): DeviceTransactionField[] {
+  if (transaction.raw) return [];
+  if (isTransferTransaction(transaction)) return transferFields(transaction);
 
-  if (transaction.raw) return fields;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const owner = mainAccount.freshAddress;
+  return tokenAccountFields(transaction, owner) ?? stakeFields(mainAccount, transaction, owner);
+}
 
-  if (isTransferTransaction(transaction)) {
-    if (!isTokenTransferTransaction(transaction)) {
-      fields.push({ type: "amount", label: "Transfer" });
-      return fields;
-    }
-
-    const transferFee = getTransactionTransferFee(transaction);
-    fields.push(
-      { type: "amount", label: "Transfer tokens" },
-      ...(transferFee && transferFee.feeBps > 0
-        ? ([{ type: "solana.token.transferFee", label: "Transfer fee" }] as const)
-        : []),
-      { type: "text", value: "Solana", label: "Network" },
-      { type: "fees", label: "Max network fees" },
-    );
-    return fields;
-  }
-
-  const owner = getMainAccount(account, parentAccount).freshAddress;
-  const tokenAccount = transaction.ownerTokenAccount;
-  const { stakeAccountSeed } = transaction.familySpecificData ?? {};
-  const stakeAccountAddress =
-    typeof transaction.feeParameters?.stakeAccountAddress === "string"
-      ? transaction.feeParameters.stakeAccountAddress
-      : undefined;
-
-  switch (transaction.mode) {
-    case "opt-in":
-      return [
-        ...(tokenAccount
-          ? ([{ type: "address", label: "Create token acct", address: tokenAccount }] as const)
-          : []),
-        ...(transaction.assetReference
-          ? ([
-              { type: "address", label: "From mint", address: transaction.assetReference },
-            ] as const)
-          : []),
-        { type: "address", label: "Owned by", address: owner },
-        { type: "address", label: "Funded by", address: owner },
-        { type: "address", label: "Fee payer", address: owner },
-      ];
-    case "approve":
-      return [
-        ...(tokenAccount
-          ? ([{ type: "address", label: "Approve token account", address: tokenAccount }] as const)
-          : []),
-        { type: "address", label: "Owned by", address: owner },
-        { type: "address", label: "Delegate to", address: transaction.recipient },
-        { type: "amount", label: "Amount" },
-      ];
-    case "revoke":
-      return [
-        ...(tokenAccount
-          ? ([{ type: "address", label: "Revoke token account", address: tokenAccount }] as const)
-          : []),
-        { type: "address", label: "Owned by", address: owner },
-      ];
-  }
-
-  const stakeAccount = getTransactionStakeAccount(transaction);
-  const voteAccount = getTransactionValidator(transaction);
-
-  switch (transaction.mode) {
-    case "stake":
-      fields.push(
-        ...(stakeAccountAddress
-          ? ([{ type: "address", label: "Delegate from", address: stakeAccountAddress }] as const)
-          : []),
-        {
-          type: "text",
-          label: "Deposit",
-          value: formatCurrencyUnit(
-            getMainAccount(account, parentAccount).currency.units[0],
-            getStakeCreationDeposit(transaction),
-            { disableRounding: true, showCode: true },
-          ),
-        },
-        {
-          type: "address",
-          label: "New authority",
-          address: owner,
-        },
-      );
-      break;
-    case "delegate":
-      break;
-    case "undelegate":
-      if (stakeAccount) {
-        fields.push({ type: "address", label: "Deactivate stake", address: stakeAccount });
-      }
-      break;
-    case "unstake":
-      fields.push({ type: "amount", label: "Stake withdraw" });
-      break;
-    case "split":
-      fields.push(
-        { type: "amount", label: "Split stake" },
-        ...(stakeAccount
-          ? ([{ type: "address", label: "From", address: stakeAccount }] as const)
-          : []),
-        ...(stakeAccountAddress
-          ? ([{ type: "address", label: "To", address: stakeAccountAddress }] as const)
-          : []),
-        { type: "address", label: "Base", address: owner },
-        ...(stakeAccountSeed
-          ? ([{ type: "text", label: "Seed", value: stakeAccountSeed }] as const)
-          : []),
-        { type: "address", label: "Authorized by", address: owner },
-        { type: "address", label: "Fee payer", address: owner },
-      );
-      return fields;
-  }
-
-  if (stakeAccount && transaction.mode !== "undelegate") {
-    fields.push({
-      type: "address",
-      label: transaction.mode === "unstake" ? "From" : "Delegate from",
-      address: stakeAccount,
-    });
-  }
-  if (voteAccount) {
-    fields.push({ type: "address", label: "Vote account", address: voteAccount });
-  }
-
-  return fields;
+function getDeviceTransactionConfig(
+  arg: Parameters<typeof getFields>[0],
+): Promise<Array<DeviceTransactionField>> {
+  return Promise.resolve(getFields(arg));
 }
 
 export default getDeviceTransactionConfig;

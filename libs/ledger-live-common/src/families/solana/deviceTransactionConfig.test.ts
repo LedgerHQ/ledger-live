@@ -151,4 +151,31 @@ describe("solana deviceTransactionConfig", () => {
       { type: "address", label: "From", address: "stake-acc" },
     ]);
   });
+
+  it("describes a token account opening", async () => {
+    expect(await run({ mode: "opt-in", ownerTokenAccount: "ata", assetReference: "mint" })).toEqual(
+      [
+        { type: "address", label: "Create token acct", address: "ata" },
+        { type: "address", label: "From mint", address: "mint" },
+        { type: "address", label: "Owned by", address: "owner-addr" },
+        { type: "address", label: "Funded by", address: "owner-addr" },
+        { type: "address", label: "Fee payer", address: "owner-addr" },
+      ],
+    );
+  });
+
+  it("describes a token approval", async () => {
+    expect(await run({ mode: "approve", ownerTokenAccount: "ata", recipient: "spender" })).toEqual([
+      { type: "address", label: "Approve token account", address: "ata" },
+      { type: "address", label: "Owned by", address: "owner-addr" },
+      { type: "address", label: "Delegate to", address: "spender" },
+      { type: "amount", label: "Amount" },
+    ]);
+  });
+
+  it("describes a revocation, without the token account when it is not known yet", async () => {
+    expect(await run({ mode: "revoke" })).toEqual([
+      { type: "address", label: "Owned by", address: "owner-addr" },
+    ]);
+  });
 });

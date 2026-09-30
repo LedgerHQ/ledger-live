@@ -15,6 +15,14 @@ import solanaBridge, {
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
+const mockGetTokenAccountShapes = jest.fn();
+jest.mock("@ledgerhq/coin-solana/logic/tokenAccountShapes", () => ({
+  getTokenAccountShapes: (...args: unknown[]) => mockGetTokenAccountShapes(...args),
+}));
+jest.mock("@ledgerhq/coin-solana/network/index", () => ({ getChainAPI: () => ({}) }));
+jest.mock("../../../config", () => ({ getCurrencyConfiguration: () => ({}) }));
+jest.mock("@ledgerhq/coin-solana/utils", () => ({ endpointByCurrencyId: () => "endpoint" }));
+
 const mockToken = {
   id: "solana/spl/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
   tokenType: "spl",
@@ -41,6 +49,10 @@ describe("solana bridge", () => {
       [{ mode: "delegate" }, "stake.delegate"],
       [{ mode: "undelegate" }, "stake.undelegate"],
       [{ mode: "unstake" }, "stake.withdraw"],
+      [{ mode: "opt-in" }, "token.createATA"],
+      [{ mode: "approve" }, "token.approve"],
+      [{ mode: "revoke" }, "token.revoke"],
+      [{ mode: "split" }, "stake.split"],
     ])("should map %o to %s", (transaction, expected) => {
       expect(computeIntentType(transaction)).toBe(expected);
     });
@@ -329,6 +341,22 @@ describe("solana bridge", () => {
 
     it("leaves every other transaction to the coin module", () => {
       expect(buildIntentData({ mode: "send", recipient: "addr" })).toEqual({ type: "none" });
+    });
+  });
+
+  describe("buildTokenAccountShapes", () => {
+    it("reads the token account shapes off the chain", async () => {
+      mockGetTokenAccountShapes.mockResolvedValue({ mint: { state: "frozen" } });
+
+      expect(await solanaBridge(solana).buildTokenAccountShapes?.("owner")).toEqual({
+        mint: { state: "frozen" },
+      });
+    });
+
+    it("reports no shape rather than failing the sync when the chain is unreachable", async () => {
+      mockGetTokenAccountShapes.mockRejectedValue(new Error("network"));
+
+      expect(await solanaBridge(solana).buildTokenAccountShapes?.("owner")).toEqual({});
     });
   });
 });

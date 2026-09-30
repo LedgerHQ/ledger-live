@@ -74,16 +74,10 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
       dest.transferFee = toTransferFeeFromUnknown(value);
       return;
     case "ownerTokenAccount":
-      dest.ownerTokenAccount = typeof value === "string" ? value : undefined;
-      return;
     case "recipientTokenAccount":
-      dest.recipientTokenAccount = typeof value === "string" ? value : undefined;
-      return;
     case "recipientWalletAddress":
-      dest.recipientWalletAddress = typeof value === "string" ? value : undefined;
-      return;
     case "userInputType":
-      dest.userInputType = typeof value === "string" ? value : undefined;
+      dest[field] = typeof value === "string" ? value : undefined;
       return;
     case "stakeAccountRent":
       dest.stakeAccountRent = isNumericLike(value) ? new BigNumber(value.toString()) : undefined;
