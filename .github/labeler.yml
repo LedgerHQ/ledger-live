@@ -60,7 +60,6 @@ shared-lib:
   - libs/hw-ledger-key-ring-protocol/**/*
   - libs/ledger-key-ring-protocol/**/*
   - libs/ledger-services/**/*
-  - libs/live-countervalues/**/*
   - libs/live-countervalues-react/**/*
   - libs/live-dmk-shared/**/*
   - libs/live-dmk-speculos/**/*

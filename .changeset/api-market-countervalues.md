@@ -1,7 +1,6 @@
 ---
 "@domain/api-market-countervalues": minor
 "@domain/entity-market-countervalues": minor
-"@ledgerhq/live-countervalues": minor
 "@ledgerhq/live-countervalues-react": minor
 "@ledgerhq/live-common": minor
 "ledger-live-desktop": minor
