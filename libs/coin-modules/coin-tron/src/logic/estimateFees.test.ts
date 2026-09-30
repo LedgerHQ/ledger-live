@@ -929,7 +929,7 @@ describe("estimateTronifyFees", () => {
     },
   );
 
-  it("should accept a coin-config rentalExtraTrx of 0 (no bandwidth top-up)", async () => {
+  it("should reject a coin-config rentalExtraTrx of 0, which Tronify prices in TRX", async () => {
     config = setTronifyConfig({
       url: "https://open.tronify.io",
       sourceFlag: "ledgerLive",
@@ -941,7 +941,7 @@ describe("estimateTronifyFees", () => {
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
       mockLogger,
       config,
-      expect.objectContaining({ extraTrx: 0 }),
+      expect.objectContaining({ extraTrx: 0.8 }),
     );
   });
 

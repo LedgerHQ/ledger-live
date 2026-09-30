@@ -416,15 +416,11 @@ const readRentalParam = (
   return fallback;
 };
 
-// extraTrxNum's wire contract is discontinuous — 0 or [0.8, 500] — which readRentalParam's single
-// `>= min` can't express; a 0.1 or 600 override would otherwise reach the API and fail the order.
+// extraTrxNum takes 0 or [0.8, 500], but 0 gets a TRX-priced quote that parseUsdtQuote rejects, so
+// only the non-zero range is usable; a 0, 0.1 or 600 override falls back to the default.
 const readExtraTrx = (logger: Logger, value: unknown): number => {
   if (value === undefined) return DEFAULT_TRONIFY_RENTAL_EXTRA_TRX;
-  if (
-    typeof value === "number" &&
-    Number.isFinite(value) &&
-    (value === 0 || (value >= 0.8 && value <= 500))
-  ) {
+  if (typeof value === "number" && Number.isFinite(value) && value >= 0.8 && value <= 500) {
     return value;
   }
   logger("tron/estimateFees", "ignoring invalid coin-config rentalExtraTrx, using default", {

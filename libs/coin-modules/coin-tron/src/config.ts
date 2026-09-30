@@ -16,7 +16,8 @@ export type TronifyProviderConfig = {
   rentalDurationSeconds?: number;
   /**
    * Bandwidth top-up in TRX bundled with each rental to cover the transaction's bandwidth cost.
-   * Optional — falls back to 0.8 when the remote coin-config omits it.
+   * Optional — falls back to 0.8 when the remote coin-config omits it or sets it outside
+   * [0.8, 500]; 0 is rejected because a rental without a top-up is priced in TRX, not USDT.
    */
   rentalExtraTrx?: number;
 };
