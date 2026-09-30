@@ -73,8 +73,9 @@ export default class ContactDetailPage {
 
   @Step("Enter address {{{0.addressInput}}} for {{0.networkName}}")
   async enterAddress(data: ContactAddressTestData) {
-    // POL sits below the drawer's top assets.
-    await app.modularDrawer.performSearchByTicker(data.ticker);
+    // POL sits below the drawer's top assets. The search field is a single line; once the
+    // sheet expands it sits under the header, and typing Enter there never lands.
+    await app.modularDrawer.performSearchByTicker(data.ticker, false);
     await app.modularDrawer.selectCurrencyByTicker(data.ticker);
     await app.modularDrawer.selectNetworkIfAsked(data.networkName);
     await waitForFullyVisibleById(this.addAddressInputId);
