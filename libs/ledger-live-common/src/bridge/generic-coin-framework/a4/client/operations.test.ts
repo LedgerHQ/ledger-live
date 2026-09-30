@@ -6,7 +6,7 @@ import {
   withDcRoamRetry,
 } from "./operations";
 import { A4HttpError } from "./errors";
-import { PaginationIntegrityError } from "../../paginateOperations";
+import { PaginationIntegrityError } from "../../../../errors";
 import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
 import { A4Client } from "./index";

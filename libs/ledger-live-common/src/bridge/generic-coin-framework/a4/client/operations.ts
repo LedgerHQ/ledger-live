@@ -6,7 +6,7 @@ import {
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { isOperationType, isStringArray, readFamilyExtra } from "../../utils";
-import { PaginationIntegrityError, paginateOperations } from "../../paginateOperations";
+import { paginateOperations } from "../../paginateOperations";
 import { toA4HttpError } from "./errors";
 import { logA4 } from "../log";
 import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
@@ -277,7 +277,7 @@ export async function withDcRoamRetry<T>(
     } catch (rawErr) {
       // Rethrown as-is: normalising it to an `A4HttpError` would erase the type the caller uses to
       // log a malformed A4 history apart from a transport failure. It is not a DC roam either.
-      if (rawErr instanceof PaginationIntegrityError) throw rawErr;
+      if (rawErr instanceof Error && rawErr.name === "PaginationIntegrityError") throw rawErr;
       const err = toA4HttpError(rawErr);
 
       if (err.status !== 412 || attempt >= maxRetries) {

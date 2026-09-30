@@ -188,7 +188,7 @@ export const DEFAULT_PAGE_SIZE_BY_FAMILY: Readonly<Record<string, number>> = Obj
 /**
  * Resolved when the remote config is unavailable, malformed, or hostile. It carries the safety
  * ceiling rather than no ceiling: a missing config must not reopen the out-of-memory crash the
- * ceiling exists to prevent. Only a remote payload that parses can lower or lift it.
+ * ceiling exists to prevent. Only a remote payload that parses can lower it; nothing raises it.
  */
 function fallbackFor(family: string): OperationHistoryBound {
   return {
@@ -212,7 +212,7 @@ let warnedConfigMissing = false;
  * stays expressible by setting the global. Every failure path -- LiveConfig unavailable, a
  * malformed payload, or a hostile per-currency value -- resolves to the shipped safety ceiling,
  * never to unbounded: a config that cannot be read must not reopen the out-of-memory crash the
- * ceiling exists to prevent. Only a payload that parses can lower or raise it.
+ * ceiling exists to prevent. Only a payload that parses can lower it; nothing raises it.
  */
 export function resolveOperationHistoryBound(
   currencyId: string,

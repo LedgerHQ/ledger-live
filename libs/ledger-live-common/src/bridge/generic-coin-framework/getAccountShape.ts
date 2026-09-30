@@ -30,7 +30,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { boundByTransaction } from "./boundByTransaction";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import { PaginationIntegrityError, paginateOperations } from "./paginateOperations";
+import { paginateOperations } from "./paginateOperations";
 import type {
   AssetInfo,
   Balance,
@@ -814,7 +814,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         // the coin module, so what gets persisted is a complete history from another source, not
         // a fragment. What it must not do is read as a network blip -- an A4 walk that stalls its
         // cursor is a defect in A4, and the log has to say so or nobody goes looking.
-        const integrity = e instanceof PaginationIntegrityError;
+        const integrity = e instanceof Error && e.name === "PaginationIntegrityError";
         const errorMessage = e instanceof Error ? e.message : String(e);
         logA4({
           level: "warn",
