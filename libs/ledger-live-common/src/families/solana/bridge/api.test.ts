@@ -3,7 +3,8 @@ import BigNumber from "bignumber.js";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import type { Account, CryptoAssetsStore } from "@ledgerhq/types-live";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import solanaBridge, {
   buildIntentData,
   computeIntentType,
@@ -311,6 +312,29 @@ describe("solana bridge", () => {
         tokenAddress: "recipient-ata",
         userInputType: "sol",
       });
+    });
+
+    it("names a token the account does not hold yet from the placeholder's encoded id", () => {
+      const withoutToken = { currency: solana, subAccounts: [] } as unknown as Account;
+
+      expect(
+        getDeviceSignOptions(
+          {
+            subAccountId: encodeTokenAccountId("parent", mockToken),
+            assetReference: mockToken.contractAddress,
+            recipientTokenAccount: "recipient-ata",
+          },
+          withoutToken,
+        ),
+      ).toEqual({ tokenInternalId: mockToken.id, tokenAddress: "recipient-ata" });
+    });
+
+    it("does not mistake the token account address of a legacy id for a token id", () => {
+      const withoutToken = { currency: solana, subAccounts: [] } as unknown as Account;
+
+      expect(
+        getDeviceSignOptions({ subAccountId: "parent+ataAddress" }, withoutToken),
+      ).toBeUndefined();
     });
 
     it("carries the template id of a partner-built transaction", () => {

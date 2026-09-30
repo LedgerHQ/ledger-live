@@ -1,5 +1,6 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { decodeTokenAccountIdSync } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import type {
   BridgeApi,
   OptimisticOperationDescriptor,
@@ -120,6 +121,24 @@ async function buildTokenAccountShapes(currency: CryptoCurrency, address: string
 }
 
 /**
+ * The mint is the fallback match: the wallet API signs against a placeholder sub-account, absent
+ * from the synced account when the token is not held yet. Its id still encodes the token id, which a
+ * legacy id, ending with the token account address, does not.
+ */
+function tokenIdOfSubAccount(
+  account: Account,
+  subAccountId: string,
+  assetReference: string | undefined,
+): string | undefined {
+  const token =
+    account.subAccounts?.find(sub => sub.id === subAccountId)?.token ??
+    account.subAccounts?.find(sub => sub.token?.contractAddress === assetReference)?.token;
+  if (token) return token.id;
+  const { tokenId } = decodeTokenAccountIdSync(subAccountId);
+  return tokenId.startsWith(`${account.currency.id}/`) ? tokenId : undefined;
+}
+
+/**
  * What the device needs to name a token recipient instead of showing its raw account. The legacy
  * signer additionally wants `deviceModelId`, which no signing context reaches this hook — see
  * LIVE-35692.
@@ -151,12 +170,10 @@ export function getDeviceSignOptions(
     mode === "opt-in" ? account.freshAddress : (recipientWalletAddress ?? undefined);
 
   // The CAL descriptor names the token being moved, which an account opening does not move yet;
-  // the legacy resolution omits it there too. The mint is the fallback match: the wallet API signs
-  // against a placeholder sub-account whose id carries the contract address, not the token id.
-  const token =
+  // the legacy resolution omits it there too.
+  const tokenInternalId =
     subAccountId && mode !== "opt-in"
-      ? (account.subAccounts?.find(sub => sub.id === subAccountId)?.token ??
-        account.subAccounts?.find(sub => sub.token?.contractAddress === assetReference)?.token)
+      ? tokenIdOfSubAccount(account, subAccountId, assetReference)
       : undefined;
 
   let destination = {};
@@ -168,7 +185,7 @@ export function getDeviceSignOptions(
 
   const options = {
     ...(templateId ? { templateId } : {}),
-    ...(token ? { tokenInternalId: token.id } : {}),
+    ...(tokenInternalId ? { tokenInternalId } : {}),
     ...destination,
     ...(userInputType ? { userInputType } : {}),
   };
