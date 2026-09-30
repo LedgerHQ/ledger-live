@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { DEFAULT_DEVICE_TIMEOUT_MS } from "../device/connect-ledger-app";
 import { OutputFormatSchema, parseAccountDescriptor } from "../wallet/models";
 import type { AccountDescriptor } from "../wallet/models";
-import { currencyIdFromNetwork, parseV1 } from "../shared/accountDescriptor";
+import { currencyIdFromNetwork, networkFromCurrencyId, parseV1 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { Session } from "../session/session-store";
 
@@ -77,7 +77,10 @@ export async function resolveAccountInput(input: string): Promise<string> {
 
 /** Resolve to a V0 AccountDescriptor. Accepts V1 string, V0 string, or session label. */
 export async function resolveAccountDescriptor(input: string): Promise<AccountDescriptor> {
-  return parseAccountDescriptor(await resolveAccountInput(input));
+  const descriptor = parseAccountDescriptor(await resolveAccountInput(input));
+  // The V1 branch is already checked by toV0; the legacy V0 branch is not.
+  currencyIdFromNetwork(networkFromCurrencyId(descriptor.currencyId)); // throws for an unknown or unsupported network
+  return descriptor;
 }
 
 /** Resolve to a V1 AccountDescriptorV1. Accepts V1 string or session label. */
