@@ -64,6 +64,7 @@ const ExpiresInDisplay: React.FC<ExpiresInDisplayProps> = ({ timeRemaining, isEx
 export function View({
   proposal,
   timeRemaining,
+  isExpired,
   addressToShow,
   amountValue,
   handleAcceptClick,
@@ -72,7 +73,7 @@ export function View({
   handleRowClick,
 }: ProposalRowViewModel) {
   const { t } = useTranslation();
-  const { isIncoming, isExpired, expiresAt } = proposal;
+  const { isIncoming, expiresAt } = proposal;
 
   return (
     <TableRow onClick={handleRowClick}>

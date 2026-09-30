@@ -4,7 +4,7 @@ import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import coinConfig from "../config";
-import { TopologyChangeError } from "../types/errors";
+import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors";
 import type {
   GetBalanceResponse,
   GetTransferPreApprovalResponse,
@@ -62,6 +62,10 @@ export const isPartyNotFound = (error: unknown): boolean => {
   return false;
 };
 
+// live-network keeps only the body `message` and drops the gateway's TRANSFER_OFFER_EXPIRED `type`.
+export const isTransferOfferExpired = (error: unknown): boolean =>
+  error instanceof Error && error.message.toLowerCase().includes("transfer offer has expired");
+
 export const isPartyAlreadyExists = (error: unknown): boolean => {
   if (error instanceof Error) {
     const errorMessage = error.message.toLowerCase().replace(/_/g, " ");
@@ -85,6 +89,9 @@ const gatewayNetwork = async <T, U = unknown>(
   } catch (error) {
     if (isPartyNotFound(error)) {
       throw new TopologyChangeError("Topology change detected. Re-onboarding required.");
+    }
+    if (isTransferOfferExpired(error)) {
+      throw new TransferOfferExpiredError("Transfer offer has expired.");
     }
     throw error;
   }
