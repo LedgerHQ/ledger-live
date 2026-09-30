@@ -30,6 +30,13 @@ const PENDING_SPONSORED_FEE: SponsoredFeeAmounts["sponsored"] = {
   originalValue: null,
 };
 
+function withoutKeys(
+  record: Record<string, Error>,
+  keys: readonly string[],
+): Record<string, Error> {
+  return Object.fromEntries(Object.entries(record).filter(([key]) => !keys.includes(key)));
+}
+
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
@@ -60,6 +67,7 @@ export function useAmountScreenViewModel({
     sponsoredFeeOptionId,
     providerName,
     waivesErrorKeys,
+    waivesWarningKeys,
     available,
     quote,
     intentReady,
@@ -73,21 +81,25 @@ export function useAmountScreenViewModel({
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const sponsoredCoversNativeFee = sponsoredSelected && available && !!quote;
-  const statusWithoutWaivedErrors = useMemo(() => {
-    if (!sponsoredCoversNativeFee || !waivesErrorKeys.some(key => status.errors?.[key])) {
+  const statusWithoutWaived = useMemo(() => {
+    const waivesAny =
+      waivesErrorKeys.some(key => status.errors?.[key]) ||
+      waivesWarningKeys.some(key => status.warnings?.[key]);
+    if (!sponsoredCoversNativeFee || !waivesAny) {
       return status;
     }
-    const errors = Object.fromEntries(
-      Object.entries(status.errors).filter(([key]) => !waivesErrorKeys.includes(key)),
-    );
-    return { ...status, errors };
-  }, [sponsoredCoversNativeFee, waivesErrorKeys, status]);
+    return {
+      ...status,
+      errors: withoutKeys(status.errors, waivesErrorKeys),
+      warnings: withoutKeys(status.warnings, waivesWarningKeys),
+    };
+  }, [sponsoredCoversNativeFee, waivesErrorKeys, waivesWarningKeys, status]);
 
   const amountReviewCore = useSendFlowAmountReviewCore({
     account,
     parentAccount,
     transaction,
-    status: statusWithoutWaivedErrors,
+    status: statusWithoutWaived,
     bridgePending,
     transactionActions,
     labels: {
@@ -176,7 +188,7 @@ export function useAmountScreenViewModel({
   });
 
   const { amountMessage, isAmountInputDisabled } = useAmountScreenMessage({
-    status: statusWithoutWaivedErrors,
+    status: statusWithoutWaived,
     hasRawAmount: amountReviewCore.hasRawAmount,
   });
 

@@ -8,6 +8,7 @@ const SEAM_MEMBERS: Record<keyof SponsoredCoinApi, true> = {
   feeOptionId: true,
   providerName: true,
   waivesErrorKeys: true,
+  waivesWarningKeys: true,
   reservationDedupKey: true,
   listFeeOptions: true,
   estimateSponsoredFeeQuote: true,

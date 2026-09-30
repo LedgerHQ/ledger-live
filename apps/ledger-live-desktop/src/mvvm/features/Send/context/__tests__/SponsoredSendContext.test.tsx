@@ -61,6 +61,7 @@ const mockSeam = {
   feeOptionId: "sponsored-fixture",
   providerName: "Provider",
   waivesErrorKeys: ["gasLimit"],
+  waivesWarningKeys: ["amount"],
   reservationDedupKey: jest.fn(),
 };
 const mockGetSponsoredCoinApi = jest.fn((..._args: unknown[]) =>
@@ -197,6 +198,7 @@ describe("SponsoredSendContext", () => {
     expect(result.current.sponsoredFeeOptionId).toBe("sponsored-fixture");
     expect(result.current.providerName).toBe("Provider");
     expect(result.current.waivesErrorKeys).toEqual(["gasLimit"]);
+    expect(result.current.waivesWarningKeys).toEqual(["amount"]);
     expect(mockUseSponsoredFee).toHaveBeenLastCalledWith(
       expect.objectContaining({ seam: mockSeam }),
     );

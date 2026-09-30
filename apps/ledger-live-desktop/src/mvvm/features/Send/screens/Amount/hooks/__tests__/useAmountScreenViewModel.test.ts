@@ -128,6 +128,7 @@ const SPONSORED_IDENTITY = {
   sponsoredFeeOptionId: SPONSORED_ID,
   providerName: "Provider",
   waivesErrorKeys: ["gasLimit"],
+  waivesWarningKeys: ["amount"],
   feeCurrencyTicker: "USDT",
   feeTokenAccount: COVERING_FEE_TOKEN_ACCOUNT,
 };
@@ -659,6 +660,55 @@ describe("useAmountScreenViewModel", () => {
       const { result } = renderViewModel(account, transaction, status);
 
       expect(result.current.amountMessage).toMatchObject({ type: "error", text: "NotEnoughGas" });
+    });
+
+    // coin-tron's status for an energy shortfall: the burn it can't pay, plus the warning.
+    function withEnergyShortfall(spendableBalance: BigNumber) {
+      const { account, transaction } = buildAffordableParams(spendableBalance);
+      const status = {
+        errors: { gasLimit: createNamedError("NotEnoughGas") },
+        warnings: { amount: createNamedError("TronNotEnoughEnergy") },
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(1),
+        totalSpent: new BigNumber(1),
+      } as unknown as TransactionStatus;
+      return { account, transaction, status };
+    }
+
+    it("hides the energy shortfall warning the sponsored fee covers", () => {
+      const { account, transaction, status } = withEnergyShortfall(new BigNumber(1_000_000));
+
+      mockedUseSponsoredSend.mockReturnValue({
+        ...SPONSORED_IDENTITY,
+        selectedFeeOptionId: SPONSORED_ID,
+        available: true,
+        intentReady: true,
+        quote: QUOTE,
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.amountMessage).toBeNull();
+    });
+
+    it("keeps the energy shortfall warning when the seam waives no warning keys", () => {
+      const { account, transaction, status } = withEnergyShortfall(new BigNumber(1_000_000));
+
+      mockedUseSponsoredSend.mockReturnValue({
+        ...SPONSORED_IDENTITY,
+        waivesWarningKeys: [],
+        selectedFeeOptionId: SPONSORED_ID,
+        available: true,
+        intentReady: true,
+        quote: QUOTE,
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.amountMessage).toMatchObject({
+        type: "warning",
+        text: "TronNotEnoughEnergy",
+      });
     });
 
     it("keeps Review disabled and loading until the sponsored quote arrives for a built intent", () => {

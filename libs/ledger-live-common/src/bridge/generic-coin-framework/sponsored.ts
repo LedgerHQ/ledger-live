@@ -44,6 +44,8 @@ export interface SponsoredCoinApi {
   readonly providerName: string;
   /** Status error keys the sponsored fee pays for; the Send flow drops them before gating Review. */
   readonly waivesErrorKeys: readonly string[];
+  /** Status warning keys the sponsored fee makes moot; the Send flow hides them. */
+  readonly waivesWarningKeys: readonly string[];
   /** Decimal-string sequence for the TX-A pending reservation: a local dedup key, not a nonce. */
   reservationDedupKey(paymentTxId: string): string;
   listFeeOptions(intent: unknown): Promise<FeeOptionMeta[]>;

@@ -44,6 +44,7 @@ function fakeSeam(overrides: Partial<SponsoredCoinApi>): SponsoredCoinApi {
     feeOptionId: "sponsored-fixture",
     providerName: "Provider",
     waivesErrorKeys: [],
+    waivesWarningKeys: [],
     reservationDedupKey: jest.fn().mockReturnValue("1.5"),
     listFeeOptions: jest.fn().mockResolvedValue([]),
     estimateSponsoredFeeQuote: jest.fn(),

@@ -307,5 +307,6 @@ test("createSponsoredSendApi exposes the energy-rent seam methods", () => {
     feeOptionId: TRONIFY_FEE_OPTION_ID,
     providerName: "Tronify",
     waivesErrorKeys: ["gasLimit"],
+    waivesWarningKeys: ["amount"],
   });
 });

@@ -52,6 +52,7 @@ type SponsoredSendContextValue = Readonly<{
   sponsoredFeeOptionId: string;
   providerName: string;
   waivesErrorKeys: readonly string[];
+  waivesWarningKeys: readonly string[];
   selectSponsored: () => void;
   selectStandard: () => void;
   available: boolean;
@@ -67,7 +68,7 @@ type SponsoredSendContextValue = Readonly<{
   sponsoredMaxAmount: BigNumber | null;
 }>;
 
-const NO_WAIVED_ERROR_KEYS: readonly string[] = [];
+const NO_WAIVED_KEYS: readonly string[] = [];
 
 const SponsoredSendContext = createContext<SponsoredSendContextValue | null>(null);
 
@@ -300,7 +301,8 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   }, [rentIntentKey, actions]);
 
   const providerName = seam?.providerName ?? "";
-  const waivesErrorKeys = seam?.waivesErrorKeys ?? NO_WAIVED_ERROR_KEYS;
+  const waivesErrorKeys = seam?.waivesErrorKeys ?? NO_WAIVED_KEYS;
+  const waivesWarningKeys = seam?.waivesWarningKeys ?? NO_WAIVED_KEYS;
 
   const value = useMemo(
     () => ({
@@ -310,6 +312,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       sponsoredFeeOptionId,
       providerName,
       waivesErrorKeys,
+      waivesWarningKeys,
       selectSponsored,
       selectStandard,
       available,
@@ -328,6 +331,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       sponsoredFeeOptionId,
       providerName,
       waivesErrorKeys,
+      waivesWarningKeys,
       selectSponsored,
       selectStandard,
       available,

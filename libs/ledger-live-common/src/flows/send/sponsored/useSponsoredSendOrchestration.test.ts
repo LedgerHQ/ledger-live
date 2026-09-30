@@ -35,6 +35,7 @@ const makeSeam = (overrides: Record<string, unknown> = {}) => ({
   feeOptionId: "sponsored-fixture",
   providerName: "Provider",
   waivesErrorKeys: [],
+  waivesWarningKeys: [],
   reservationDedupKey: jest.fn().mockReturnValue("1.5"),
   listFeeOptions: jest.fn(),
   estimateSponsoredFeeQuote: jest.fn(),
