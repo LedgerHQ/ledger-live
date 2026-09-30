@@ -8,7 +8,7 @@ import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getCardanoAccountFixture } from "./fixtures/accounts";
 import { getProtocolParamsFixture } from "./fixtures/protocolParams";
-import { getAccountStakeCredential } from "./logic";
+import { getAccountStakeCredential, getOperationType } from "./logic";
 import { CardanoAccount, PaymentCredential, Transaction } from "./types";
 
 jest.mock("./logic");
@@ -276,6 +276,33 @@ describe("buildOptimisticOperation", () => {
 
         expect(operation.type).toBe("VOTE");
         expect(operation.extra.vote).toBe("22testDRep");
+      });
+
+      it("should not identify a vote delegation for a foreign stake credential as VOTE", () => {
+        jest.mocked(getOperationType).mockReturnValue("FEES");
+        const mockUnsignedTx = createMockUnsignedTx({
+          certificates: [
+            {
+              type: TyphonTypes.CertificateType.VOTE_DELEGATION,
+              cert: {
+                stakeCredential: {
+                  type: TyphonTypes.HashType.ADDRESS,
+                  hash: {
+                    toString: (_encoding: string) => "foreignStakeCred",
+                  },
+                },
+                dRep: {
+                  type: TyphonTypes.DRepType.ABSTAIN,
+                },
+              },
+            },
+          ],
+        });
+
+        const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
+
+        expect(operation.type).toBe("FEES");
+        expect(operation.extra.vote).toBeUndefined();
       });
     });
   });

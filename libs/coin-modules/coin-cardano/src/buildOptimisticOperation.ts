@@ -170,28 +170,26 @@ export const buildOptimisticOperation = (
     }
   }
 
-  if (voteDelegationCertificates.length) {
-    const walletVoteDelegation = voteDelegationCertificates.find(
-      c =>
-        c.cert.stakeCredential.type === HashType.ADDRESS &&
-        c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
-    );
-    if (walletVoteDelegation) {
-      const isAbstain = walletVoteDelegation.cert.dRep.type === TyphonTypes.DRepType.ABSTAIN;
-      const isNoConfidence =
-        walletVoteDelegation.cert.dRep.type === TyphonTypes.DRepType.NO_CONFIDENCE;
+  const walletVoteDelegation = voteDelegationCertificates.find(
+    c =>
+      c.cert.stakeCredential.type === HashType.ADDRESS &&
+      c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
+  );
+  if (walletVoteDelegation) {
+    const isAbstain = walletVoteDelegation.cert.dRep.type === TyphonTypes.DRepType.ABSTAIN;
+    const isNoConfidence =
+      walletVoteDelegation.cert.dRep.type === TyphonTypes.DRepType.NO_CONFIDENCE;
 
-      const dRep = walletVoteDelegation.cert.dRep;
-      extra.vote = isAbstain
-        ? "ABSTAIN"
-        : isNoConfidence
-          ? "NO CONFIDENCE"
-          : dRep.type === TyphonTypes.DRepType.ADDRESS && dRep.key
-            ? `22${dRep.key.toString("hex")}`
-            : dRep.type === TyphonTypes.DRepType.SCRIPT && dRep.key
-              ? `23${dRep.key.toString("hex")}`
-              : undefined;
-    }
+    const dRep = walletVoteDelegation.cert.dRep;
+    extra.vote = isAbstain
+      ? "ABSTAIN"
+      : isNoConfidence
+        ? "NO CONFIDENCE"
+        : dRep.type === TyphonTypes.DRepType.ADDRESS && dRep.key
+          ? `22${dRep.key.toString("hex")}`
+          : dRep.type === TyphonTypes.DRepType.SCRIPT && dRep.key
+            ? `23${dRep.key.toString("hex")}`
+            : undefined;
   }
 
   if (txWithdrawals && txWithdrawals.length) {
@@ -221,7 +219,7 @@ export const buildOptimisticOperation = (
     txCertificates.some(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
   ) {
     opType = "UNDELEGATE";
-  } else if (txCertificates.some(c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION)) {
+  } else if (walletVoteDelegation) {
     opType = "VOTE";
   } else {
     opType = getOperationType({

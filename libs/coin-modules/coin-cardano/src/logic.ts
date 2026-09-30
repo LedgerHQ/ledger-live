@@ -12,7 +12,7 @@ import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddre
 import bech32 from "bech32";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
-import { APITransaction, HashType } from "./api/api-types";
+import { APITransaction, HashType, StakeDelegationCertificate } from "./api/api-types";
 import {
   CARDANO_COIN_TYPE,
   CARDANO_MAX_SUPPLY,
@@ -466,6 +466,18 @@ export function getRewardAddress(stakeKey: string, networkId: number): TyphonAdd
     type: TyphonTypes.HashType.ADDRESS,
     hash: Buffer.from(stakeKey, "hex"),
   });
+}
+
+// Finds a delegation certificate belonging to THIS account's stake key.
+// A transaction may carry certificates for several accounts, so matching on the
+// stake key is required before attributing the delegation (and its pool) to us.
+export function findOwnedStakeDelegation(
+  tx: APITransaction,
+  stakeKey: string,
+): StakeDelegationCertificate | undefined {
+  return tx.certificate.stakeDelegations?.find(
+    cert => cert.stakeCredential.type === HashType.ADDRESS && cert.stakeCredential.key === stakeKey,
+  );
 }
 
 export function findStakeRegistration(

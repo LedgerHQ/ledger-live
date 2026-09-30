@@ -98,7 +98,9 @@ describe("makeGetAccountShape", () => {
         ],
         blockHeight: 0,
       });
-      getDelegationInfoMock.mockResolvedValue({ rewards: new BigNumber(42) } as CardanoDelegation);
+      getDelegationInfoMock.mockResolvedValue({
+        rewards: new BigNumber(42),
+      } as CardanoDelegation);
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       expect(result.balance).toEqual(new BigNumber(42));
     });
@@ -109,7 +111,12 @@ describe("makeGetAccountShape", () => {
       getTransactionsMock.mockResolvedValue({
         transactions: [],
         externalCredentials: [
-          { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "" },
+          {
+            path: { index: 0 } as BipPath,
+            networkId: "id",
+            isUsed: false,
+            key: "",
+          },
         ],
         internalCredentials: [],
       } as any);
@@ -142,7 +149,12 @@ describe("makeGetAccountShape", () => {
           },
         ],
         externalCredentials: [
-          { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "key" },
+          {
+            path: { index: 0 } as BipPath,
+            networkId: "id",
+            isUsed: false,
+            key: "key",
+          },
         ],
         internalCredentials: [],
       } as any);
@@ -180,7 +192,12 @@ describe("makeGetAccountShape", () => {
           },
         ],
         externalCredentials: [
-          { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "key" },
+          {
+            path: { index: 0 } as BipPath,
+            networkId: "id",
+            isUsed: false,
+            key: "key",
+          },
         ],
         internalCredentials: [],
       } as any);
@@ -531,6 +548,72 @@ describe("mapTxToAccountOperation", () => {
 
         expect(op.type).not.toBe("VOTE");
         expect(op.extra.vote).toBeUndefined();
+      });
+
+      it("should map own vote delegation as VOTE when tx has a foreign stake delegation", async () => {
+        const op = mapTxToAccountOperation(
+          {
+            ...mockTxResult,
+            certificate: {
+              ...mockTxResult.certificate,
+              stakeDelegations: [
+                {
+                  index: 0,
+                  poolKeyHash: "pool",
+                  stakeCredential: {
+                    key: "9999",
+                    type: 0,
+                  },
+                },
+              ],
+              voteDelegations: [
+                {
+                  index: 1,
+                  stakeHex: stakeCredHex,
+                  dRepHex: "mockDrepHex",
+                },
+              ],
+            },
+          },
+          "accountId",
+          accountCredentialMap,
+          { key: stakeCredKey } as any,
+          [],
+          accountShapeInfo,
+          { stakeKeyDeposit: "1" } as any,
+        );
+
+        expect(op.type).toBe("VOTE");
+        expect(op.extra.vote).toBe("mockDrepHex");
+      });
+
+      it("should not map a foreign stake delegation as DELEGATE", async () => {
+        const op = mapTxToAccountOperation(
+          {
+            ...mockTxResult,
+            certificate: {
+              ...mockTxResult.certificate,
+              stakeDelegations: [
+                {
+                  index: 0,
+                  poolKeyHash: "pool",
+                  stakeCredential: {
+                    key: "9999",
+                    type: 0,
+                  },
+                },
+              ],
+            },
+          },
+          "accountId",
+          accountCredentialMap,
+          { key: stakeCredKey } as any,
+          [],
+          accountShapeInfo,
+          { stakeKeyDeposit: "1" } as any,
+        );
+
+        expect(op.type).not.toBe("DELEGATE");
       });
     });
   });

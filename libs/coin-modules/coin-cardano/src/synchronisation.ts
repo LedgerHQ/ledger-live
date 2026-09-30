@@ -20,6 +20,7 @@ import { buildSubAccounts } from "./buildSubAccounts";
 import {
   calculateMinAdaForTokens,
   computeAdaBalance,
+  findOwnedStakeDelegation,
   findStakeDeRegistration,
   findStakeRegistration,
   findVoteDelegation,
@@ -267,7 +268,7 @@ export function mapTxToAccountOperation(
   }
 
   let mainOperationType: OperationType;
-  if (tx.certificate.stakeDelegations.length) {
+  if (findOwnedStakeDelegation(tx, stakeCredential.key)) {
     mainOperationType = "DELEGATE";
   } else if (
     tx.certificate.stakeDeRegistrations.length ||
