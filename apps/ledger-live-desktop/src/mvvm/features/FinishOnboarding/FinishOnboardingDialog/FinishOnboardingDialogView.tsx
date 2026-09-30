@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import PostOnboardingAction from "./components/PostOnboardingAction";
 import { cn } from "LLD/utils/cn";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import type { FinishOnboardingDialogViewProps } from "./hooks/useFinishOnboardingDialogViewModel";
 
 const FinishOnboardingDialogView = ({

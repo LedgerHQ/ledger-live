@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Addresses } from "./enum/Addresses";
 
-// A space is the only separator ContactNamePattern accepts between name segments.
 const CONTACT_NAME_FORMAT_SAMPLE = "O Neil Zoe";
 
 /**

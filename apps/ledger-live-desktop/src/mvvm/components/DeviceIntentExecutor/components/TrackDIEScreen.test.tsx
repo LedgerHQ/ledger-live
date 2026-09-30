@@ -1,12 +1,12 @@
 import React from "react";
 import { render } from "tests/testSetup";
 import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { TrackDIEScreen } from "./TrackDIEScreen";
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
-  __esModule: true,
-  default: jest.fn(() => null),
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: jest.fn(() => null),
 }));
 
 const mockedTrackPage = jest.mocked(TrackPage);

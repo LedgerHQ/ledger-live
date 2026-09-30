@@ -13,7 +13,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { openModal } from "~/renderer/actions/modals";
 import Stepper from "~/renderer/components/Stepper";

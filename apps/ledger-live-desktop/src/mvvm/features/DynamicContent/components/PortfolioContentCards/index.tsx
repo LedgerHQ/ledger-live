@@ -9,7 +9,7 @@ import React, {
 import { useNavigate } from "react-router";
 
 import { Carousel } from "@ledgerhq/react-ui";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import type { PortfolioContentCard as PortfolioCardType } from "~/types/dynamicContent";
 import type { CarouselActions } from "../../types";

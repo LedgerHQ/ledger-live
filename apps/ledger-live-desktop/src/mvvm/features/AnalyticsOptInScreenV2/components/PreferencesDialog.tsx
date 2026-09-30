@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { AnalyticsConsentPreferencesView } from "LLD/features/AnalyticsConsentDialog/screens/AnalyticsConsentPreferencesView";
 import { ANALYTICS_OPT_IN_SCREEN_PAGES } from "LLD/features/AnalyticsOptInScreenV2/types";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 
 export type PreferencesDialogProps = Readonly<{
   isOpen: boolean;

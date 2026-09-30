@@ -8,7 +8,7 @@ import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import type { SendFlowOperationResult, SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 
@@ -64,13 +64,19 @@ export function useConfirmationViewModel() {
   useEffect(() => {
     switch (status) {
       case FLOW_STATUS.SUCCESS:
-        trackPage("Modal send - transaction sent", null, {
-          ...sendFlowTrackingProperties,
-          savedContactDuringFlow,
+        trackPage({
+          category: "Modal send - transaction sent",
+          props: {
+            ...sendFlowTrackingProperties,
+            savedContactDuringFlow,
+          },
         });
         break;
       case FLOW_STATUS.IDLE:
-        trackPage("Modal send - action rejected", null, sendFlowTrackingProperties);
+        trackPage({
+          category: "Modal send - action rejected",
+          props: sendFlowTrackingProperties,
+        });
         break;
     }
   }, [savedContactDuringFlow, status, sendFlowTrackingProperties]);
@@ -83,7 +89,10 @@ export function useConfirmationViewModel() {
         page: "step confirmation",
         ...sendFlowTrackingProperties,
       });
-      trackPage("Modal send - transaction details", null, sendFlowTrackingProperties);
+      trackPage({
+        category: "Modal send - transaction details",
+        props: sendFlowTrackingProperties,
+      });
       setDrawer(
         OperationDetails,
         {

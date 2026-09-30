@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from "@testing-library/react";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 import type {
   Account,
   AccountLike,

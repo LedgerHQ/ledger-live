@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useTrackExchangeFlow, UseTrackExchangeFlow } from "./useTrackExchangeFlow";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import {
   CantOpenDevice,
   LockedDeviceError,
@@ -10,8 +10,12 @@ import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { UserRefusedAllowManager } from "@ledgerhq/live-common/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-jest.mock("../segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+}));
+
+jest.mock("../segment", () => ({
   setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
@@ -50,7 +54,7 @@ describe("useTrackExchangeFlow", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.exchange,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -69,7 +73,7 @@ describe("useTrackExchangeFlow", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.exchange,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -88,7 +92,7 @@ describe("useTrackExchangeFlow", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.exchange,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -118,7 +122,7 @@ describe("useTrackExchangeFlow", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.exchange,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -134,7 +138,7 @@ describe("useTrackExchangeFlow", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -150,7 +154,7 @@ describe("useTrackExchangeFlow", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -166,7 +170,7 @@ describe("useTrackExchangeFlow", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -182,7 +186,7 @@ describe("useTrackExchangeFlow", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -198,7 +202,7 @@ describe("useTrackExchangeFlow", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 });

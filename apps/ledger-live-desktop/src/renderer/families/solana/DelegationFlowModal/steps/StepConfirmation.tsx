@@ -4,8 +4,8 @@ import { StakeCreateAccountTransaction } from "@ledgerhq/live-common/families/so
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { TrackPage } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";

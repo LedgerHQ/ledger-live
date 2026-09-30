@@ -37,7 +37,13 @@ jest.mock("../../../../context/SendFlowTrackingContext", () => ({
 
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 type VM = ReturnType<typeof useConfirmationViewModel>;
 let container: HTMLElement;
@@ -192,13 +198,16 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
-    expect(trackPage).toHaveBeenCalledWith("Modal send - action rejected", null, {
-      flow: "send",
-      recipientType: "external address",
-      blockchain: "",
-      currency: "",
-      currency_id: "",
-      newSendFlow: true,
+    expect(trackPage).toHaveBeenCalledWith({
+      category: "Modal send - action rejected",
+      props: {
+        flow: "send",
+        recipientType: "external address",
+        blockchain: "",
+        currency: "",
+        currency_id: "",
+        newSendFlow: true,
+      },
     });
 
     expect(latestVM?.status).toBe("IDLE");
@@ -240,13 +249,16 @@ describe("useConfirmationViewModel", () => {
       currency_id: "",
       newSendFlow: true,
     });
-    expect(trackPage).toHaveBeenCalledWith("Modal send - transaction details", null, {
-      flow: "send",
-      recipientType: "external address",
-      blockchain: "",
-      currency: "",
-      currency_id: "",
-      newSendFlow: true,
+    expect(trackPage).toHaveBeenCalledWith({
+      category: "Modal send - transaction details",
+      props: {
+        flow: "send",
+        recipientType: "external address",
+        blockchain: "",
+        currency: "",
+        currency_id: "",
+        newSendFlow: true,
+      },
     });
     expect(setDrawer).toHaveBeenCalledWith(
       OperationDetails,
@@ -401,14 +413,17 @@ describe("useConfirmationViewModel", () => {
     });
     latestVM?.onClose();
 
-    expect(trackPage).toHaveBeenCalledWith("Modal send - transaction sent", null, {
-      flow: "send",
-      recipientType: "external address",
-      savedContactDuringFlow: false,
-      blockchain: "",
-      currency: "",
-      currency_id: "",
-      newSendFlow: true,
+    expect(trackPage).toHaveBeenCalledWith({
+      category: "Modal send - transaction sent",
+      props: {
+        flow: "send",
+        recipientType: "external address",
+        savedContactDuringFlow: false,
+        blockchain: "",
+        currency: "",
+        currency_id: "",
+        newSendFlow: true,
+      },
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "close",

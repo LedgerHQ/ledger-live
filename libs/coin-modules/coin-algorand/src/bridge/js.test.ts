@@ -70,6 +70,8 @@ describe("bridge/js", () => {
   const mockSignerContext = {} as SignerContext<AlgorandSigner>;
   const mockCoinConfig = (): AlgorandCoinConfig => ({
     status: { type: "active" },
+    name: "Algorand",
+    unit: { name: "ALGO", code: "ALGO", magnitude: 6 },
     node: "",
     indexer: "",
   });

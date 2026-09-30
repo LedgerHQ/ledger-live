@@ -30,7 +30,10 @@ export function usePayTabDepositOptions(onCryptoAddress: () => void): UsePayTabD
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
   const { handleOpenSwap } = useOpenSwap({ sourceScreenName: DEPOSIT_PAGE });
-  const { handleOpenBuySell } = useOpenBuySell({ sourceScreenName: DEPOSIT_PAGE });
+  const { handleOpenBuySell } = useOpenBuySell({
+    sourceScreenName: DEPOSIT_PAGE,
+    returnToPreviousScreenOnClose: true,
+  });
 
   const onBankTransfer = useCallback(
     (handoff: BankTransferHandoff) => {

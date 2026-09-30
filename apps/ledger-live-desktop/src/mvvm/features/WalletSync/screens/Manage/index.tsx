@@ -9,7 +9,7 @@ import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
 import { useInstances } from "../ManageInstances/useInstances";
 import { useLifeCycle } from "../../hooks/walletSync.hooks";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
 import { useLedgerSyncInfo } from "../../hooks/useLedgerSyncInfo";
 import { AlertError } from "../../components/AlertError";

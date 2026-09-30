@@ -24,7 +24,7 @@ import { useRecipientContinuation } from "../../../context/RecipientContinuation
 import { useAddressValidation } from "./useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
@@ -143,13 +143,16 @@ export function useRecipientAddressModalViewModel({
     }
     trackedResolutionRef.current = trackingKey;
 
-    trackPage("Modal send - recipient result", null, {
-      ...sendFlowTrackingProperties,
-      queryType: recipientResolution.queryType,
-      resultType: recipientResolution.resultType,
-      inputMethod,
-      queryLength: recipientSearch.value.length,
-      addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
+    trackPage({
+      category: "Modal send - recipient result",
+      props: {
+        ...sendFlowTrackingProperties,
+        queryType: recipientResolution.queryType,
+        resultType: recipientResolution.resultType,
+        inputMethod,
+        queryLength: recipientSearch.value.length,
+        addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
+      },
     });
     setRecipientResolution(recipientResolution.resultType, recipientResolution.recipientType);
   }, [
@@ -259,10 +262,13 @@ export function useRecipientAddressModalViewModel({
       }
 
       selectContact(contact);
-      trackPage("Modal send - select contact address", null, {
-        ...sendFlowTrackingProperties,
-        addressCount: contact.addresses.length,
-        myContact: contact.isMe,
+      trackPage({
+        category: "Modal send - select contact address",
+        props: {
+          ...sendFlowTrackingProperties,
+          addressCount: contact.addresses.length,
+          myContact: contact.isMe,
+        },
       });
     },
     [
@@ -319,9 +325,12 @@ export function useRecipientAddressModalViewModel({
       network: mainAccount.currency.id,
       ...sendFlowTrackingProperties,
     });
-    trackPage("Modal send - network not supported", null, {
-      ...sendFlowTrackingProperties,
-      network: mainAccount.currency.id,
+    trackPage({
+      category: "Modal send - network not supported",
+      props: {
+        ...sendFlowTrackingProperties,
+        network: mainAccount.currency.id,
+      },
     });
   }, [mainAccount.currency.id, sendFlowTrackingProperties]);
 

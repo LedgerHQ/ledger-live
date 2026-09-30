@@ -8,8 +8,8 @@ import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { TrackPage } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 

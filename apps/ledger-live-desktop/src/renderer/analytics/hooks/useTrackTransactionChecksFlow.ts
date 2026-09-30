@@ -1,5 +1,5 @@
 import { Device } from "@ledgerhq/types-devices";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { CONNECTION_TYPES } from "./variables";
 import { useRef } from "react";
 import { DeviceInfo } from "@ledgerhq/types-live";
@@ -58,7 +58,7 @@ export const useTrackTransactionChecksFlow = ({
     track(
       "Transaction Check Opt-in Triggered",
       getDefaultPayload({ location, device, deviceInfo, appAndVersion }),
-      isTrackingEnabled,
+      { mandatory: isTrackingEnabled },
     );
   }
 
@@ -72,7 +72,7 @@ export const useTrackTransactionChecksFlow = ({
     track(
       transactionChecksOptIn ? "Transaction Check Opt-in" : "Transaction Check Opt-out",
       getDefaultPayload({ location, device, deviceInfo, appAndVersion }),
-      isTrackingEnabled,
+      { mandatory: isTrackingEnabled },
     );
   }
 };

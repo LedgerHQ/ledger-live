@@ -1,5 +1,5 @@
 import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import {
   RECOVER_TRIGGER_CTA_BUTTON,
   RECOVER_TRIGGER_DISMISS_BUTTON,
@@ -10,6 +10,12 @@ import {
   trackRecoverTriggerModalViewed,
   type RecoverTriggerSharedAnalyticsProps,
 } from "./analytics";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 const SHARED_PROPS: RecoverTriggerSharedAnalyticsProps = {
   deviceModel: "lns",
@@ -30,15 +36,15 @@ describe("Recover trigger analytics", () => {
     trackRecoverTriggerDeeplinkClicked(SHARED_PROPS);
 
     expect(trackPage).toHaveBeenCalledWith(
-      RECOVER_TRIGGER_PAGE_NAME,
-      undefined,
       {
-        name: RECOVER_TRIGGER_PAGE_NAME,
-        sourceFlow: "recover",
-        ...SHARED_PROPS,
+        category: RECOVER_TRIGGER_PAGE_NAME,
+        props: {
+          name: RECOVER_TRIGGER_PAGE_NAME,
+          sourceFlow: "recover",
+          ...SHARED_PROPS,
+        },
       },
-      true,
-      false,
+      { updateRoutes: true },
     );
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: RECOVER_TRIGGER_CTA_BUTTON,

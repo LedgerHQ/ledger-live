@@ -2,13 +2,13 @@ import React from "react";
 import { CountervaluesProvider, type CountervaluesBridge } from ".";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { render, waitFor } from "@testing-library/react";
-import { initialState } from "@ledgerhq/live-countervalues/logic";
+import {
+  initialState,
+  type CountervaluesSettings,
+  type CounterValuesState,
+  type TrackingPair,
+} from "@domain/entity-market-countervalues";
 import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
-import type {
-  CountervaluesSettings,
-  CounterValuesState,
-  TrackingPair,
-} from "@ledgerhq/live-countervalues/types";
 import type {
   Currency,
   FiatCurrency,

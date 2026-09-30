@@ -42,6 +42,8 @@ source and `shared/schema-primitives` is 50, against 48 here.
 The app lock's own state (`hasPassword`, `biometricsEnabled`, `isLocked`), its biometrics status
 unions and its errors live in
 [`@features/platform-app-lock`](../../features/platform/app-lock/README.md). Its screens live in
+the flow packages: the unlock journey in
+[`@features/flow-app-unlock`](../../features/flow/app-unlock/README.md), the others in
 [`@features/flow-app-lock`](../../features/flow/app-lock/README.md).
 
 ## What this protects

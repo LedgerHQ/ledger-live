@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingHub from ".";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 
 const PostOnboardingHubContent = () => {

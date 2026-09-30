@@ -35,17 +35,27 @@ async function checkAccountFromIsSynchronised(app: Application, swap: Swap) {
   await app.account.verifySendButtonVisibility();
 }
 
-export async function performSwapUntilQuoteSelectionStep(
-  app: Application,
-  swap: Swap,
-  minAmount: string,
-) {
+export async function performSwapUntilQuoteSelectionStep({
+  app,
+  swap,
+  minAmount,
+  checkLandingPage = false,
+}: {
+  app: Application;
+  swap: Swap;
+  minAmount: string;
+  checkLandingPage?: boolean;
+}) {
   if (swap.accountToDebit.currency === Currency.APT) {
     await checkAccountFromIsSynchronised(app, swap);
   }
   await app.swap.goAndWaitForSwapToBeReady(() =>
     app.mainNavigation.openTargetFromMainNavigation("swap"),
   );
+  if (checkLandingPage) {
+    await app.swap.softAssertTrendingAssetsPanel();
+    await app.swap.softAssertStablecoinsPanel();
+  }
   const isAssetFromSelected = await app.swap.checkIfFromAssetIsAlreadySelected(
     swap.accountToDebit.currency.ticker,
   );

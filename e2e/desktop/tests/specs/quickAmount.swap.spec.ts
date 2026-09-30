@@ -174,7 +174,11 @@ test.describe("Swap - quick amount buttons", () => {
       annotation: { type: "TMS", description: "B2CQA-5582" },
     },
     async ({ app }) => {
-      await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
+      await performSwapUntilQuoteSelectionStep({
+        app,
+        swap: new Swap(fromAccount, toAccount, ""),
+        minAmount: "",
+      });
 
       expect(await app.swap.isMaxToggleEnabled()).toBe(false);
       await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
@@ -218,7 +222,11 @@ test.describe("Swap - quick amount buttons", () => {
       annotation: { type: "TMS", description: "B2CQA-5582" },
     },
     async ({ app }) => {
-      await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
+      await performSwapUntilQuoteSelectionStep({
+        app,
+        swap: new Swap(fromAccount, toAccount, ""),
+        minAmount: "",
+      });
 
       expect(await app.swap.isMaxToggleEnabled()).toBe(false);
       await app.swap.checkMaxTooltip("You don't have enough balance including network fees");

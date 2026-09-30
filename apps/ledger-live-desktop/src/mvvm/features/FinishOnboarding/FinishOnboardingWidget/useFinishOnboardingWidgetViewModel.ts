@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog";
 import { useFinishOnboardingState } from "LLD/features/FinishOnboarding/hooks/useFinishOnboardingState";
 

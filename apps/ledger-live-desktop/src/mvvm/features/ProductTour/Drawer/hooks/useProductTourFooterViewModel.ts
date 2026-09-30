@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSlidesContext } from "LLD/components/Slides";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   PAGE_TRACKING_PRODUCT_TOUR,
   PRODUCT_TOUR_LAST_SLIDE_INDEX,

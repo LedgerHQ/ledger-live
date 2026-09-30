@@ -32,7 +32,6 @@ const ethereum: CryptoCurrency = {
   scheme: "ethereum",
   color: "#0ebdcd",
   family: "evm",
-  ethereumLikeInfo: { chainId: 1 },
   explorerViews: [],
   units: [{ name: "ether", code: "ETH", magnitude: 18 }],
 };
