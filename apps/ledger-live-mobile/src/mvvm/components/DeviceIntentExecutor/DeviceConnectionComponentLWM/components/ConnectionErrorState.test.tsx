@@ -30,7 +30,7 @@ const mockedTrack = jest.mocked(track);
 
 type ConnectionErrorUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.ConnectionError }
+  { type: typeof ConnectDeviceUIStateTypes.ConnectionError }
 >;
 type ConnectionErrorType = ConnectionErrorUIState["error"]["type"];
 

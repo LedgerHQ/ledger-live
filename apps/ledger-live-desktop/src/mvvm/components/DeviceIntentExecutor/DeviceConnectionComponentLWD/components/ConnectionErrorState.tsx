@@ -17,7 +17,7 @@ import {
 } from "../../utils/trackDeviceIntent";
 
 type ConnectionErrorStateProps = {
-  state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.ConnectionError }>;
+  state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.ConnectionError }>;
 };
 
 export function ConnectionErrorState({

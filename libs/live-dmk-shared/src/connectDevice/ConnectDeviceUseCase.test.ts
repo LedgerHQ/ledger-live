@@ -3,13 +3,8 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { EMPTY } from "rxjs";
 
 import { connectDeviceUseCase, type ConnectDeviceUseCaseInput } from "./connectDeviceUseCase";
-import {
-  BaseConnectionErrorTypes,
-  ConnectDeviceUIStateTypes,
-  type ConnectDeviceUIState,
-  type DeviceDiscoveryService,
-  type KnownDevice,
-} from "./types";
+import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState, type KnownDevice } from "./types";
+import { BaseConnectionErrorTypes, type DeviceDiscoveryService } from "../deviceConnectivity/types";
 
 // Test helpers
 const knownDevice: KnownDevice = {
