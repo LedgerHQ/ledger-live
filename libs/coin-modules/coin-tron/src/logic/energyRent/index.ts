@@ -208,10 +208,17 @@ async function assertSignableTransferMatchesRequest(
     );
   }
 
-  const latestExpiration = Date.now() + ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS;
-  if (typeof expiration !== "number" || expiration > latestExpiration) {
+  // An expired payment moves no funds, but the network rejects it only after the user has signed.
+  const now = Date.now();
+  const latestExpiration = now + ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS;
+  if (
+    typeof expiration !== "number" ||
+    !Number.isFinite(expiration) ||
+    expiration <= now ||
+    expiration > latestExpiration
+  ) {
     throw new TronifyApiError(
-      `Energy-rent payment expires at ${JSON.stringify(expiration)}, after the latest accepted ${latestExpiration}`,
+      `Energy-rent payment expires at ${JSON.stringify(expiration)}, outside the accepted (${now}, ${latestExpiration}] window`,
     );
   }
 }

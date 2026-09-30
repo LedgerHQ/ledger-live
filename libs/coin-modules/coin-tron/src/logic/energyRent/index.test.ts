@@ -489,6 +489,11 @@ describe("energyRent provider switch", () => {
       });
 
       it("accepts a real protobuf-encoded USDT payment", async () => {
+        const realDecode =
+          jest.requireActual<typeof import("../utils")>("../utils").decodeTransaction;
+        // The captured payment's own expiration is long past: judge it from just before then.
+        const { raw_data } = await realDecode(USDT_PAYMENT_RAW_DATA_HEX);
+        const now = jest.spyOn(Date, "now").mockReturnValue(Number(raw_data.expiration) - 30_000);
         mockedAddTronRentRecord.mockResolvedValueOnce({
           ...orderCosting("3.2"),
           transaction: {
@@ -498,17 +503,19 @@ describe("energyRent provider switch", () => {
             raw_data_hex: USDT_PAYMENT_RAW_DATA_HEX,
           },
         });
-        mockedDecodeTransaction.mockImplementationOnce(
-          jest.requireActual<typeof import("../utils")>("../utils").decodeTransaction,
-        );
+        mockedDecodeTransaction.mockImplementationOnce(realDecode);
 
-        await expect(
-          craftEnergyRentTransaction(mockLogger, config, {
-            ...request,
-            maxPayCoinAmt: "3.2",
-            maxPayCoinCode: "USDT",
-          }),
-        ).resolves.toMatchObject({ orderId: "order-1" });
+        try {
+          await expect(
+            craftEnergyRentTransaction(mockLogger, config, {
+              ...request,
+              maxPayCoinAmt: "3.2",
+              maxPayCoinCode: "USDT",
+            }),
+          ).resolves.toMatchObject({ orderId: "order-1" });
+        } finally {
+          now.mockRestore();
+        }
       });
 
       it.each([
@@ -566,6 +573,8 @@ describe("energyRent provider switch", () => {
           decodedTrc20Payment({ expiration: Date.now() + 24 * 60 * 60_000 }),
         ],
         ["no expiration", decodedTrc20Payment({ expiration: null })],
+        ["an expiration already past", decodedTrc20Payment({ expiration: Date.now() - 1_000 })],
+        ["a non-finite expiration", decodedTrc20Payment({ expiration: Number.NaN })],
       ])("rejects signed bytes carrying %s", async (_label, decoded) => {
         mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
         mockedDecodeTransaction.mockResolvedValueOnce(decoded);
