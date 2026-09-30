@@ -24,6 +24,7 @@
             "shareAnalytics": false,
             "sharePersonalizedRecommandations": false,
             "hasSeenAnalyticsOptInPrompt": true,
+            "hasDismissedContactsFeatureIntroduction": true,
             "sentryLogs": true,
             "lastUsedVersion": "99.99.99",
             "dismissedBanners": [],

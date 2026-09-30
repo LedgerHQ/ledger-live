@@ -18,6 +18,10 @@ export default class PayTabPage {
   bankTransferCloseId = "bottom-sheet-header-close-button";
   requestScreenId = "pay-request-receive";
   requestCloseId = "pay-request-receive-close";
+  payTileId = "pay-contacts-pay-tile";
+  successStepId = "pay-success-step";
+  successTitleId = "pay-success-title";
+  successCloseId = "pay-success-close";
 
   requestTitle = () => getElementById("pay-request-receive-title");
   requestAddress = () => getElementById("pay-request-receive-address");
@@ -133,6 +137,30 @@ export default class PayTabPage {
     await tapById(this.requestCloseId);
     if (!(await waitForElementNotVisible(this.requestScreenId))) {
       throw new Error(`${this.requestScreenId} stayed visible`);
+    }
+  }
+
+  @Step("Open a new payment")
+  async openNewPayment() {
+    await tapById(this.payTileId);
+  }
+
+  @Step("Expect the Pay success screen to read {{{0}}}")
+  async expectYouPaid(title: string | RegExp) {
+    await waitForElementById(this.successTitleId);
+    const actualTitle = await getTextOfElement(this.successTitleId);
+    if (typeof title === "string") {
+      jestExpect(actualTitle).toEqual(title);
+    } else {
+      jestExpect(actualTitle).toMatch(title);
+    }
+  }
+
+  @Step("Close the Pay success screen")
+  async closePaySuccess() {
+    await tapById(this.successCloseId);
+    if (!(await waitForElementNotVisible(this.successStepId))) {
+      throw new Error(`${this.successStepId} stayed visible`);
     }
   }
 }
