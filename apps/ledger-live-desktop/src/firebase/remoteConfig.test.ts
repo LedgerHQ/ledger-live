@@ -65,7 +65,7 @@ describe("fetchRemoteFlags", () => {
       counterValue: { enabled: true },
       lwdWallet40: { enabled: false, params: { mainNav: true } },
     });
-    const { getContentAbTestCopy } = await import("./contentAbTestCopy");
+    const { getContentAbTestCopy } = await import("@features/platform-content-ab-tests");
     expect(getContentAbTestCopy()).toEqual({
       "upgrade.banner.title": "Discover Ledger Flex",
     });

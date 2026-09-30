@@ -1,6 +1,15 @@
-import { getContentAbTestCopy, subscribeToContentAbTestCopy } from "~/firebase/contentAbTestCopy";
+import type { RemoteConfigValue } from "@features/platform-feature-flags/firebase";
+import { parseContentAbTestCopy } from "./internals/parse";
 
+export type ContentAbTestCopy = Readonly<Record<string, string>>;
+
+type Subscriber = (copy: ContentAbTestCopy) => void;
+
+const EMPTY_COPY: ContentAbTestCopy = Object.freeze({});
 const ENGLISH_LANGUAGE = "en";
+
+let copy: ContentAbTestCopy = EMPTY_COPY;
+const subscribers = new Set<Subscriber>();
 
 type TranslationEngine = {
   language: string;
@@ -14,6 +23,32 @@ type TranslationEngine = {
   ): void;
   on(event: "languageChanged", callback: (language: string) => void): void;
 };
+
+export function getContentAbTestCopy(): ContentAbTestCopy {
+  return copy;
+}
+
+export function subscribeToContentAbTestCopy(callback: Subscriber): () => void {
+  subscribers.add(callback);
+  return () => {
+    subscribers.delete(callback);
+  };
+}
+
+/**
+ * Reads the Engagement copy experiments out of the feature-flag Remote Config payload. Called
+ * with the `getAll()` result the flag fetch already produced, so copy costs no extra network
+ * round-trip and cannot delay boot on its own.
+ *
+ * A missing, disabled or malformed experiment leaves the English baseline as the runtime copy.
+ */
+export function setContentAbTestCopy(all: Record<string, RemoteConfigValue>): ContentAbTestCopy {
+  const next = parseContentAbTestCopy(all);
+  if (isSameCopy(copy, next)) return copy;
+  copy = next;
+  subscribers.forEach(callback => callback(copy));
+  return copy;
+}
 
 export function installContentAbTestCopyOverrides(
   i18nInstance: TranslationEngine,
@@ -52,6 +87,12 @@ export function installContentAbTestCopyOverrides(
   subscribeToContentAbTestCopy(() => {
     applyCopyOverrides(i18nInstance.resolvedLanguage ?? i18nInstance.language);
   });
+}
+
+function isSameCopy(current: ContentAbTestCopy, next: ContentAbTestCopy): boolean {
+  const currentKeys = Object.keys(current);
+  if (currentKeys.length !== Object.keys(next).length) return false;
+  return currentKeys.every(key => current[key] === next[key]);
 }
 
 function isEnglish(language: string): boolean {

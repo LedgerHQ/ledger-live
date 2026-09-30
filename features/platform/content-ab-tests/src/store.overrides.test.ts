@@ -1,6 +1,5 @@
 import { createInstance } from "i18next";
-import { setContentAbTestCopy } from "~/firebase/contentAbTestCopy";
-import { installContentAbTestCopyOverrides } from "./contentAbTestCopyOverrides";
+import { installContentAbTestCopyOverrides, setContentAbTestCopy } from "./store";
 
 const namespace = "app";
 const englishBaseline = {
@@ -42,7 +41,7 @@ describe("content A/B test copy overrides", () => {
     setContentAbTestCopy({});
   });
 
-  it("overrides t only in English and restores the app.json baseline", async () => {
+  it("overrides t only in English and restores the English baseline", async () => {
     const { instance } = await createI18n();
 
     setContentAbTestCopy(

@@ -1,8 +1,4 @@
-import {
-  getContentAbTestCopy,
-  setContentAbTestCopy,
-  subscribeToContentAbTestCopy,
-} from "./contentAbTestCopy";
+import { getContentAbTestCopy, setContentAbTestCopy, subscribeToContentAbTestCopy } from "./store";
 
 const value = (raw: string, source: "remote" | "default" | "static" = "remote") => ({
   asString: () => raw,
