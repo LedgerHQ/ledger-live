@@ -1,5 +1,8 @@
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { calculate, calculateMany } from "@ledgerhq/live-countervalues/logic";
+import {
+  type CounterValuesState,
+  calculate,
+  calculateMany,
+} from "@domain/entity-market-countervalues";
 import {
   flattenAccounts,
   getAccountCurrency,

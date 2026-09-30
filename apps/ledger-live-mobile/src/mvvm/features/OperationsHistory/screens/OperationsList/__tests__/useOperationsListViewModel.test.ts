@@ -3,7 +3,7 @@ import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken, maticEth } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 import type { Account } from "@ledgerhq/types-live";
 import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
@@ -17,8 +17,8 @@ jest.mock("~/screens/Analytics/Operations/useOperationsV1", () => ({
   useOperationsV1: (...args: unknown[]) => mockUseOperationsV1(...args),
 }));
 
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
   calculate: jest.fn(),
 }));
 
