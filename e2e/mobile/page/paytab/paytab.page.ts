@@ -26,6 +26,7 @@ export default class PayTabPage {
   requestVerifyHintId = "pay-request-receive-verify-hint";
   requestCloseId = "pay-request-receive-close";
   payTileId = "pay-contacts-pay-tile";
+  contactTileId = (index: number) => `pay-contacts-tile-${index}`;
   successStepId = "pay-success-step";
   successCloseId = "pay-success-close";
 
@@ -145,10 +146,22 @@ export default class PayTabPage {
     await tapById(this.payTileId);
   }
 
+  @Step("Select contact at index {{{0}}}")
+  async selectContact(index: number) {
+    await waitForElementById(this.contactTileId(index));
+    await tapById(this.contactTileId(index));
+  }
+
   @Step("Expect the Pay success screen")
   async expectYouPaid() {
     await waitForElementById(this.successCloseId);
     await waitForElementByText(/You paid .+/);
+  }
+
+  @Step("Expect the Pay success screen to mention {{{0}}}")
+  async expectPaySuccess(recipient: string) {
+    await waitForElementById(this.successCloseId);
+    await waitForElementByText(`You paid ${recipient}`);
   }
 
   @Step("Close the Pay success screen")
