@@ -1,10 +1,10 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { webHidIdentifier } from "@ledgerhq/device-transport-kit-web-hid";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 
 import { TransportDeviceDiscoverySource } from "./TransportDeviceDiscoverySource";
 
-export class WebHidDeviceDiscoverySource extends TransportDeviceDiscoverySource {
+export class SpeculosDeviceDiscoverySource extends TransportDeviceDiscoverySource {
   constructor(dmk: DeviceManagementKit) {
-    super(dmk, webHidIdentifier);
+    super(dmk, speculosIdentifier);
   }
 }

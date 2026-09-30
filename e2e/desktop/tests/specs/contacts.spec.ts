@@ -1,11 +1,16 @@
 import {
+  CONTACT_ADDRESS_DATASET,
+  CONTACTS_OS_VERSION_BY_MODEL,
   SEEDED_CONTACT_NAMES,
   createSeededContactGroups,
   generateContactName,
 } from "@ledgerhq/live-e2e-shared/contacts";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
+import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import {
   destroyTrustchain,
@@ -20,7 +25,13 @@ import type { PartialFeatures } from "@shared/feature-flags";
 
 const CONTACT_NAME = generateContactName();
 const RENAMED_CONTACT_NAME = generateContactName();
+const ADDRESS_CONTACT_NAME = generateContactName();
 const NO_ADDRESS_LABEL = "0 address";
+const ETHEREUM_ADDRESS_DATASET = CONTACT_ADDRESS_DATASET.filter(
+  row => row.networkId === "ethereum",
+);
+
+const addressCountLabel = (count: number) => `${count} ${count === 1 ? "address" : "addresses"}`;
 
 const CONTACTS_FEATURE_FLAGS: PartialFeatures = {
   lwdContacts: {
@@ -155,6 +166,88 @@ test.describe("Contacts - browse and search", () => {
       await app.contacts.clearSearch();
       await app.contacts.expectMeContactDisplayed();
       await app.contacts.expectSavedContactsInOrder(sortedContactNames);
+    },
+  );
+});
+
+const CONTACTS_DEVICE_TAGS = deviceTagsWithoutLNS().filter(tag => tag !== "@Stax");
+
+function describeContactsWithAddresses(title: string, body: () => void) {
+  if (!CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()]) return;
+
+  test.describe(title, body);
+}
+
+describeContactsWithAddresses("Contacts - with addresses", () => {
+  setupSeed();
+  test.afterAll(destroyTrustchain);
+
+  const trustchainCommands: LedgerSyncCliCommand[] = [
+    ...initializeEmptyTrustchain(),
+    LedgerSyncCliHelper.saveTrustchainToUserdata,
+  ];
+
+  test.use({
+    ...contactsTestOptions(),
+    featureFlags: {
+      ...CONTACTS_FEATURE_FLAGS,
+      ldmkTransport: { enabled: true },
+    },
+    speculosApp: AppInfos.ETHEREUM_CONTACTS,
+    cliCommands: [],
+    cliCommandsOnApp: [
+      trustchainCommands.map(cmd => ({ app: AppInfos.LS, cmd })),
+      { scope: "test" },
+    ],
+  });
+
+  test(
+    "Create and delete a contact with an address",
+    {
+      tag: CONTACTS_DEVICE_TAGS,
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-6239",
+      },
+    },
+    async ({ app }) => {
+      await app.mainNavigation.openTargetFromMainNavigation("home");
+      await app.myWallet.openContacts();
+      await app.contacts.expectScreenVisible();
+      await app.contacts.expectEmptyState();
+      await app.contacts.addContact(ADDRESS_CONTACT_NAME);
+
+      const contactId = await app.contacts.getSavedContactId(ADDRESS_CONTACT_NAME);
+      await app.contacts.openSavedContact(contactId);
+      await app.contacts.detail.expectName(ADDRESS_CONTACT_NAME);
+      await app.contacts.detail.expectNoAddresses();
+
+      for (const [index, data] of ETHEREUM_ADDRESS_DATASET.entries()) {
+        await app.contacts.detail.openAddAddress();
+        await app.modularDialog.selectAssetByTicker(Currency.ETH);
+        await app.modularDialog.selectNetwork(Currency.ETH);
+        await app.contacts.detail.enterAddress(data);
+        await app.speculos.confirmContactAction();
+        await app.contacts.detail.expectDeviceIntentFinished();
+        await app.contacts.detail.expectAddressSaved(data.savedValue, data.networkId);
+        await app.contacts.detail.expectAddressLabel(data.savedValue, data.addressLabel);
+        await app.contacts.detail.expectAddressCount(addressCountLabel(index + 1));
+      }
+
+      await app.contacts.detail.expectName(ADDRESS_CONTACT_NAME);
+
+      const addressToDelete = ETHEREUM_ADDRESS_DATASET[1];
+      await app.contacts.detail.deleteAddress(addressToDelete.savedValue);
+      await app.contacts.detail.expectAddressCount(addressCountLabel(1));
+      await app.contacts.detail.expectAddressSaved(
+        ETHEREUM_ADDRESS_DATASET[0].savedValue,
+        ETHEREUM_ADDRESS_DATASET[0].networkId,
+      );
+
+      await app.contacts.deleteContact(contactId);
+      await app.contacts.expectScreenVisible();
+      await app.contacts.expectSavedContactRemoved(contactId);
+      await app.contacts.expectEmptyState();
     },
   );
 });
