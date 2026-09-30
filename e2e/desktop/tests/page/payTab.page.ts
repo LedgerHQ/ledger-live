@@ -1,10 +1,50 @@
-import { expect, Locator } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 
+const DEPOSIT_OPTION_IDS = ["bankTransfer", "swap", "receive", "buy"] as const;
+
+export type PayDepositOptionId = (typeof DEPOSIT_OPTION_IDS)[number];
+
 export class PayTabPage extends AppPage {
+  private readonly screen: Locator = this.page.getByTestId("paytab-screen");
   private readonly fundedState: Locator = this.page.getByTestId("pay-card-balance-funded-state");
   private readonly moreButton: Locator = this.page.getByTestId("more-tile");
+  private readonly balanceAmount: Locator = this.page.getByTestId("pay-card-balance-amount");
+  private readonly filterPill: Locator = this.page.getByTestId("pay-card-balance-filter-pill");
+  private readonly filterPicker: Locator = this.page.getByTestId("pay-card-balance-filter-picker");
+  private readonly filterConfirm: Locator = this.page.getByTestId(
+    "pay-card-balance-filter-confirm",
+  );
+  private readonly depositTile: Locator = this.page.getByTestId("action-tile-deposit");
+  private readonly depositOptions: Locator = this.page.getByTestId("pay-card-deposit-options");
+  private readonly bankTransferIntro: Locator = this.page.getByTestId(
+    "pay-bank-transfer-intro-dialog",
+  );
+  private readonly closeButton: Locator = this.page.getByRole("button", { name: "Close" });
+  private readonly explorePay: Locator = this.page.getByRole("button", { name: "Explore Pay" });
+
+  private filterOption(rowKey: string) {
+    return this.page.getByTestId(`pay-card-balance-filter-option-${rowKey}`);
+  }
+
+  private depositOption(optionId: PayDepositOptionId) {
+    return this.page.getByTestId(`pay-card-deposit-option-${optionId}`);
+  }
+
+  @step("Expect the Pay tab screen")
+  async expectScreenVisible() {
+    await expect(this.screen).toBeVisible();
+  }
+
+  @step("Dismiss the Pay feature tour when it is shown")
+  async dismissFeatureTourIfVisible() {
+    await expect(this.screen).toBeVisible();
+    if (await this.explorePay.isVisible()) {
+      await this.explorePay.click();
+      await expect(this.explorePay).toBeHidden();
+    }
+  }
 
   @step("Expect the Pay tab to show a funded balance")
   async expectFundedBalance() {
@@ -14,5 +54,58 @@ export class PayTabPage extends AppPage {
   @step("Expect the Pay tab to show the more button")
   async expectMoreButton() {
     await expect(this.moreButton).toBeVisible();
+  }
+
+  @step("Expect the balance amount")
+  async expectBalanceAmount() {
+    await expect(this.balanceAmount).toBeVisible();
+    await expect(this.balanceAmount).toContainText(/\d/);
+  }
+
+  @step("Expect the filter pill to read $0")
+  async expectFilterPill(label: string) {
+    await expect(this.filterPill).toHaveText(label);
+  }
+
+  @step("Filter the balance on $0")
+  async filterBalance(rowKey: string) {
+    await this.filterPill.click();
+    await expect(this.filterPicker).toBeVisible();
+    await this.filterOption(rowKey).click();
+    await this.filterConfirm.click();
+  }
+
+  @step("Open deposit options")
+  async openDepositOptions() {
+    await this.depositTile.click();
+    await expect(this.depositOptions).toBeVisible();
+  }
+
+  @step("Expect the four deposit options")
+  async expectDepositOptions() {
+    for (const optionId of DEPOSIT_OPTION_IDS) {
+      await expect(this.depositOption(optionId)).toBeVisible();
+    }
+  }
+
+  @step("Select deposit option $0")
+  async selectDepositOption(optionId: PayDepositOptionId) {
+    await this.depositOption(optionId).click();
+  }
+
+  @step("Expect the bank transfer intro")
+  async expectBankTransferIntro() {
+    await expect(this.bankTransferIntro).toBeVisible();
+  }
+
+  @step("Close the bank transfer intro")
+  async closeBankTransferIntro() {
+    await this.bankTransferIntro.getByRole("button", { name: "Close" }).click();
+    await expect(this.bankTransferIntro).toBeHidden();
+  }
+
+  @step("Close the open dialog")
+  async closeDialog() {
+    await this.closeButton.first().click();
   }
 }
