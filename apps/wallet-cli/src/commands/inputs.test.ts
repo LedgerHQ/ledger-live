@@ -13,6 +13,7 @@ import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 const SHORT = `js:2:bitcoin:${XPUB}:native_segwit:0`;
 const BASE_DESCRIPTOR =
   "account:1:address:base:main:0x64466ae5d0565d3A2D9479A755E18d18aDaC8f46:m/44h/60h/0h/0/0";
+const BASE_V0_DESCRIPTOR = "js:2:base:0x64466ae5d0565d3A2D9479A755E18d18aDaC8f46::0";
 
 describe("resolveAccountArg", () => {
   it("prefers the --account flag over positional", () => {
@@ -83,6 +84,15 @@ describe("session-backed account resolution", () => {
     sessionCleanup = fixture.cleanup;
     process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
     await expect(resolve("base-1")).rejects.toThrow(
+      /Network "base:main" is not supported by wallet-cli/,
+    );
+  });
+
+  it("resolveAccountDescriptor rejects a legacy V0 saved account on an unsupported network", async () => {
+    const fixture = makeSessionDir([{ label: "base-1", descriptor: BASE_V0_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    await expect(resolveAccountDescriptor("base-1")).rejects.toThrow(
       /Network "base:main" is not supported by wallet-cli/,
     );
   });
