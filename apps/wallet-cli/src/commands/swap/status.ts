@@ -4,8 +4,11 @@ import { z } from "zod";
 import { walletCliDebug } from "../../shared/log";
 import { createCommandOutput } from "../../output";
 import { outputOption, resolveOutputFormat } from "../inputs";
-import { SwapNotFoundForProviderError } from "../../errors";
-import { isSwapKnownToProvider, mapSwapStatusLine } from "./status-shared";
+import {
+  isSwapKnownToProvider,
+  mapSwapStatusLine,
+  SwapNotFoundForProviderError,
+} from "./status-shared";
 import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
 import { swapFlowId, trackSwapStatusPolled } from "../../analytics/swap-analytics";
 
