@@ -58,7 +58,6 @@
         "ws",
         "@electron/fuses",
         "embla-carousel-autoplay",
-        "embla-carousel-react",
         "@ledgerhq/zcash-utils"
       ]
     },

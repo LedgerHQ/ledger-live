@@ -4,8 +4,6 @@ import type { EligibilityContext } from "@ledgerhq/live-common/braze/localEligib
 import type { ContentCardEligibilityEvaluation } from "LLD/features/DynamicContent/utils/filterEligibleContentCards";
 import { useBrazeProviderViewModel, type DebugBrazeContentCard } from "./useBrazeProviderViewModel";
 
-export type { DebugBrazeContentCard };
-
 type BrazeContextValue = {
   prepareForIdentityTransition: () => void;
   refreshContentCards: () => Promise<void>;

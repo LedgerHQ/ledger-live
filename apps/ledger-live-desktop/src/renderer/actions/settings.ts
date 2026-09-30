@@ -74,13 +74,6 @@ export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandat
 export const setAnalyticsConsentInfo = (info: Partial<AnalyticsConsentInfo>) =>
   saveAnalyticsConsentInfo(info);
 
-/**
- * @deprecated QA / developer tools only. Do not use in production flows.
- * Replaces `devicesModelList` so debug screens can simulate audience gates (e.g. pretend Nano seen).
- */
-export const DANGEROUSLY_setDevicesModelListForQa = (devicesModelList: DeviceModelId[]) =>
-  saveSettings({ devicesModelList });
-
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
     autoLockTimeout,
@@ -321,12 +314,6 @@ export const removeDismissedContentCards = (payload: { ids: string[] }) => ({
 
 export const clearDismissedContentCards = (payload: { now: Date }) => ({
   type: "CLEAR_DISMISSED_CONTENT_CARDS",
-  payload,
-});
-
-/** @deprecated Only used for legacy anonymous Braze identity when brazeOptOutIdentityCleanup is off. */
-export const setAnonymousBrazeId = (payload: string) => ({
-  type: "SET_ANONYMOUS_BRAZE_ID",
   payload,
 });
 

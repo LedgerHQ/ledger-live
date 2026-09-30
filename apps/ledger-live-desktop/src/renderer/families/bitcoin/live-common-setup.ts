@@ -61,5 +61,3 @@ runJob() // Simple ping-pong test
       console.warn("publicKeyTweakAdd workers init failed, using default impl:", error);
     },
   );
-
-export default {};

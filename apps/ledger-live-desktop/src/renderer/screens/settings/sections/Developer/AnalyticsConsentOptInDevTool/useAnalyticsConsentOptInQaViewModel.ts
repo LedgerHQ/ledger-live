@@ -373,4 +373,4 @@ export type AnalyticsConsentOptInQaViewModel = ReturnType<
   typeof useAnalyticsConsentOptInQaViewModel
 >;
 
-export type { QaExpectation, QaScenario } from "@features/flow-analytics-consent/debug";
+export type { QaScenario } from "@features/flow-analytics-consent/debug";

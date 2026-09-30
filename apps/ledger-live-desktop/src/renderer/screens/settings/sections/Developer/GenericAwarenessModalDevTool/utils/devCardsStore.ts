@@ -31,10 +31,3 @@ export const clearDevGenericAwarenessModalCards = (): void => {
   devCards = [];
   syncPersistence();
 };
-
-export const setDevGenericAwarenessModalCards = (
-  cards: GenericAwarenessModalContentCard[],
-): void => {
-  devCards = [...cards];
-  syncPersistence();
-};

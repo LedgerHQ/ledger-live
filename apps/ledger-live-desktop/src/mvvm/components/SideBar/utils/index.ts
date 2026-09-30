@@ -4,6 +4,5 @@ export {
   SIDEBAR_SPECIAL_VALUES,
   getAccountsSidebarPath,
 } from "./constants";
-export type { SideBarNavValue, SideBarSpecialValue } from "./constants";
 export type { SideBarActiveValue } from "./helpers";
 export { isSideBarNavValue, pathnameToActive } from "./helpers";

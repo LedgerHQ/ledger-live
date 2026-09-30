@@ -6,6 +6,3 @@ export function DeviceScreen() {
   const viewModel = useDeviceScreenViewModel();
   return <DeviceScreenView viewModel={viewModel} />;
 }
-
-export { useDeviceScreenViewModel } from "./useDeviceScreenViewModel";
-export type { DeviceScreenViewModel } from "./types";

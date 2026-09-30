@@ -3,6 +3,12 @@ import {
   LedgerRecoverSubscriptionStateInProgressEnum,
 } from "~/types/recoverSubscriptionState";
 
+const LEDGER_RECOVER_IN_PROGRESS_STATES = new Set<string>([
+  LedgerRecoverSubscriptionStateInProgressEnum.BACKUP_DEVICE_CONNECTION,
+  LedgerRecoverSubscriptionStateInProgressEnum.BACKUP_VERIFY_IDENTITY,
+  LedgerRecoverSubscriptionStateInProgressEnum.STARGATE_SUBSCRIBE,
+]);
+
 /**
  * Same predicate as mobile `checkCanShow` in
  * `apps/ledger-live-mobile/src/hooks/useAutoRedirectToPostOnboarding/useOpenPostOnboardingCallback.ts`:
@@ -15,7 +21,7 @@ export function hasStartedLedgerRecoverFlowForPostOnboarding(
     return false;
   }
   return (
-    state in LedgerRecoverSubscriptionStateInProgressEnum ||
+    LEDGER_RECOVER_IN_PROGRESS_STATES.has(state) ||
     state === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE
   );
 }

@@ -129,12 +129,6 @@ export const selectGenericAwarenessModalContentCardByCampaignId = createSelector
     getGenericAwarenessModalContentCard(contentCards, campaignId),
 );
 
-export const selectGenericAwarenessModalContentCardIdStatuses = createSelector(
-  selectGenericAwarenessModalStoredContentCards,
-  dismissedContentCardsSelector,
-  buildGenericAwarenessModalContentCardIdStatuses,
-);
-
 export const selectGamDismissedCampaignIds = createSelector(
   selectGenericAwarenessModalStoredContentCards,
   dismissedContentCardsSelector,

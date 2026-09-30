@@ -71,9 +71,4 @@ export function DialogFlow<Step extends string>({
   );
 }
 
-export type {
-  DialogFlowOptions,
-  DialogFlowProps,
-  DialogFlowScreen,
-  DialogFlowScreenRegistry,
-} from "./types";
+export type { DialogFlowProps, DialogFlowScreenRegistry } from "./types";

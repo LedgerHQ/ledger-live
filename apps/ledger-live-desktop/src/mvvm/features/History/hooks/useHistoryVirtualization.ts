@@ -1,5 +1,5 @@
 import { useRef, useMemo } from "react";
-import { useVirtualizer, Virtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import type { VirtualItem, HistoryTable, OperationRow } from "../types";
 
 const OPERATION_ROW_HEIGHT = 64;
@@ -68,9 +68,3 @@ export function useHistoryVirtualization(table: HistoryTable) {
     flatItems,
   };
 }
-
-export type HistoryVirtualization = {
-  parentRef: React.RefObject<HTMLDivElement | null>;
-  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
-  flatItems: VirtualItem[];
-};

@@ -850,8 +850,6 @@ export const latestFirmwareSelector = (state: State) => state.settings.latestFir
 export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
-export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
-export const featureFlagsButtonVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
 export const supportedCounterValuesSelector = createSelector(
   selectSupportedFiats,
   getsupportedCountervalues,

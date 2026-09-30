@@ -5,8 +5,6 @@ import { usePortfolioCarouselCards } from "../../hooks/usePortfolioCarouselCards
 import type { CarouselActions } from "../../types";
 import { MAX_DESKTOP_BRAZE_PLACEMENT_CARDS } from "../../utils/constants";
 
-export { MAX_DESKTOP_BRAZE_PLACEMENT_CARDS } from "../../utils/constants";
-
 export type BrazeCarouselEntry = {
   card: PortfolioContentCard;
   portfolioIndex: number;

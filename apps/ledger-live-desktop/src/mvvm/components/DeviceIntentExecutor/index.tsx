@@ -23,15 +23,9 @@ import DeviceContextInitializerComponentLWD, {
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorLWDViewModel } from "./useDeviceIntentExecutorLWDViewModel";
 
-export {
-  buildDeviceInitializationInput,
-  type BuildDeviceInitializationInputParams,
-} from "./DeviceContextInitializerComponentLWD/utils/buildDeviceInitializationInput";
+export { buildDeviceInitializationInput } from "./DeviceContextInitializerComponentLWD/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
-export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
-export { RetryableDeviceLocked } from "./components/DeviceGenericStates/RetryableDeviceLocked";
-export { UnlockDevice } from "./components/DeviceGenericStates/UnlockDevice";
-export type { DeviceIntentTrackingProperties, SourceFlow } from "@ledgerhq/live-dmk-shared";
+export type { SourceFlow } from "@ledgerhq/live-dmk-shared";
 
 type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecutorProps<
   JobState,

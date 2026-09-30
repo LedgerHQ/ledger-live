@@ -5,7 +5,6 @@ import { BigNumber } from "bignumber.js";
 import type {
   StakingAccount,
   StakingMappedDelegation,
-  StakingMappedRedelegation,
   StakingMappedUnbonding,
 } from "@ledgerhq/live-common/families/evm/staking/types";
 import {
@@ -395,66 +394,6 @@ export function UnbondingRow({
             )}
           </DropDown>
         ) : null}
-      </Column>
-    </Wrapper>
-  );
-}
-
-type RedelegationRowProps = Readonly<{
-  redelegation: StakingMappedRedelegation;
-  onExternalLink: (address: string) => void;
-}>;
-
-export function RedelegationRow({
-  redelegation: {
-    validatorSrcAddress,
-    validatorDstAddress,
-    formattedAmount,
-    validatorSrc,
-    validatorDst,
-  },
-  onExternalLink,
-}: RedelegationRowProps) {
-  const srcName = validatorSrc?.name ?? validatorSrcAddress;
-  const dstName = validatorDst?.name ?? validatorDstAddress;
-  const onSrcClick = useCallback(
-    () => onExternalLink(validatorSrcAddress),
-    [onExternalLink, validatorSrcAddress],
-  );
-  const onDstClick = useCallback(
-    () => onExternalLink(validatorDstAddress),
-    [onExternalLink, validatorDstAddress],
-  );
-  return (
-    <Wrapper>
-      <Column strong clickable onClick={onSrcClick}>
-        <Box mr={2}>
-          <EvmValidatorIcon
-            validator={
-              validatorSrc ?? {
-                validatorAddress: validatorSrcAddress,
-                name: validatorSrcAddress,
-              }
-            }
-          />
-        </Box>
-        <Ellipsis>{srcName}</Ellipsis>
-      </Column>
-      <Column strong clickable onClick={onDstClick}>
-        <Box mr={2}>
-          <EvmValidatorIcon
-            validator={
-              validatorDst ?? {
-                validatorAddress: validatorDstAddress,
-                name: validatorDstAddress,
-              }
-            }
-          />
-        </Box>
-        <Ellipsis>{dstName}</Ellipsis>
-      </Column>
-      <Column>
-        <Discreet>{formattedAmount}</Discreet>
       </Column>
     </Wrapper>
   );
