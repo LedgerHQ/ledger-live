@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { A4HttpError } from "./a4/client/errors";
 import { adaptA4OperationToLiveOperation } from "./a4/client/operations";
-import { PaginationIntegrityError } from "./paginateOperations";
+import { PaginationIntegrityError } from "../../errors";
 import { toA4Network } from "./a4/client/utils";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { genericGetAccountShape } from "./getAccountShape";
