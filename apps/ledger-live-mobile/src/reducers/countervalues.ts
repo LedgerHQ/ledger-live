@@ -1,5 +1,8 @@
-import { initialState } from "@ledgerhq/live-countervalues/logic";
-import { CountervaluesSettings, CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import {
+  initialState,
+  CountervaluesSettings,
+  CounterValuesState,
+} from "@domain/entity-market-countervalues";
 import { useSelector } from "~/context/hooks";
 import { Action, handleActions, ReducerMap } from "redux-actions";
 import {
