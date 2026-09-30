@@ -35,9 +35,18 @@ export class PayTabPage extends AppPage {
     "pay-bank-transfer-intro-dialog",
   );
   private readonly closeButton: Locator = this.page.getByRole("button", { name: "Close" });
+  private readonly contactAddressPicker: Locator = this.page.getByTestId(
+    "pay-contact-address-picker",
+  );
   private filterOption(rowKey: string) {
     return this.page.getByTestId(`pay-card-balance-filter-option-${rowKey}`);
   }
+
+  private contactTile = (contactId: string) =>
+    this.page.getByTestId(`pay-contacts-tile-${contactId}`);
+
+  private contactAddressRow = (addressId: string) =>
+    this.page.getByTestId(`pay-contact-address-row-${addressId}`);
 
   private depositOption(optionId: PayDepositOptionId) {
     return this.page.getByTestId(`pay-card-deposit-option-${optionId}`);
@@ -162,6 +171,24 @@ export class PayTabPage extends AppPage {
   async expectYouPaid() {
     await expect(this.successStep).toBeVisible();
     await expect(this.successStep).toContainText("You paid");
+  }
+
+  @step("Select contact $0")
+  async selectContact(contactId: string) {
+    await this.contactTile(contactId).click();
+  }
+
+  @step("Select contact address $0")
+  async selectContactAddress(addressId: string) {
+    await expect(this.contactAddressPicker).toBeVisible();
+    await this.contactAddressRow(addressId).click();
+  }
+
+  @step("Expect the Pay success screen to mention $0")
+  async expectPaySuccess(recipient: string) {
+    await expect(this.successStep).toBeVisible();
+    await expect(this.successStep).toContainText("You paid");
+    await expect(this.successStep).toContainText(recipient);
   }
 
   @step("Close the Pay success screen")

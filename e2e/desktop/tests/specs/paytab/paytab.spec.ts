@@ -173,4 +173,27 @@ test.describe("Pay tab", () => {
       await app.payTab.expectScreenVisible();
     },
   );
+
+  test(
+    "Pay a contact",
+    {
+      tag: [...DEVICE_TAGS],
+      annotation: { type: "TMS", description: "B2CQA-6328" },
+    },
+    async ({ app }) => {
+      await app.mainNavigation.openTargetFromMainNavigation("pay");
+      await app.payTab.expectScreenVisible();
+      await app.payTab.selectContact(CONTACT_ID);
+      await app.payTab.selectContactAddress(CONTACT_ADDRESS_ID);
+      await app.modularDialog.selectAccountByName(transaction.accountToDebit);
+      await app.newSendFlow.waitForDialog();
+      await app.newSendFlow.fillCryptoAmount(transaction.amount);
+      await app.newSendFlow.clickReview();
+      await app.newSendFlow.waitForSignature();
+      await app.speculos.signSendTransaction(transaction);
+      await app.payTab.expectPaySuccess(CONTACT_NAME);
+      await app.payTab.closePaySuccess();
+      await app.payTab.expectScreenVisible();
+    },
+  );
 });
