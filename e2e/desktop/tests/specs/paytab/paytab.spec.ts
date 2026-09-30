@@ -1,4 +1,5 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
@@ -12,9 +13,10 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const ALL_STABLECOINS = "All stablecoins";
 const FILTER_TICKER = "USDT";
+const REQUEST_TITLE = "Request Tether USD";
 const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
 
-const TMS_LINKS = ["B2CQA-6325"];
+const TMS_LINKS = ["B2CQA-6325", "B2CQA-6326"];
 
 test.describe("Pay tab", () => {
   test.use({
@@ -80,6 +82,22 @@ test.describe("Pay tab", () => {
         await app.modularDialog.validateAssetsDialogItems();
         await app.payTab.closeDialog();
         await app.payTab.expectScreenVisible();
+      });
+
+      await test.step("Request a stablecoin payment", async () => {
+        await app.mainNavigation.openTargetFromMainNavigation("pay");
+        await app.payTab.openRequest();
+        await app.modularDialog.selectAssetByTicker(Currency.ETH_USDT);
+        await app.modularDialog.selectNetwork(Currency.ETH_USDT);
+        await app.modularDialog.selectAccountByName(transaction.accountToDebit);
+        await app.payTab.expectRequestTitle(REQUEST_TITLE);
+        await app.payTab.expectRequestAddress();
+        await app.payTab.expectRequestQrCode();
+        await app.payTab.expectRequestSave();
+        await app.payTab.expectRequestCopy();
+        await app.payTab.expectRequestVerify();
+        await app.payTab.closeRequest();
+        await app.payTab.expectFundedBalance();
       });
     },
   );
