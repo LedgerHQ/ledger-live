@@ -1,4 +1,6 @@
+import type { Stake } from "@ledgerhq/coin-module-framework/api/index";
 import {
+  Account,
   Operation,
   TransactionCommon,
   TransactionCommonRaw,
@@ -65,4 +67,28 @@ export type StacksOperation = Operation<StacksOperationExtra>;
 
 export type StacksOperationExtra = {
   memo?: string | undefined;
+};
+
+/**
+ * On-Account shape for `stakingPositions`: framework `Stake` with `bigint` amounts converted to
+ * `BigNumber`, matching the convention used elsewhere on the Account (`balance`,
+ * `spendableBalance`) and matching exactly the shape the generic-coin-framework's own
+ * `getAccountShape.ts` (`toStakingPositionOnAccount`) will produce once this family is enrolled in
+ * `genericCoinFrameworkFamilies.json` -- this is a same-shape backport for the classic bridge that
+ * remains active until then, not a divergent implementation.
+ */
+export type StakingPosition = Omit<Stake, "amount" | "amountDeposited" | "amountRewarded"> & {
+  amount: BigNumber;
+  amountDeposited?: BigNumber;
+  amountRewarded?: BigNumber;
+};
+
+export type StacksAccount = Account & { stakingPositions?: StakingPosition[] };
+
+/** `Stake.details` as produced by `getStakes` from pox-5's `get-staker-info`. */
+export type StacksStakeDetails = {
+  firstRewardCycle: number;
+  numCycles: number;
+  rewardAsset: string;
+  amountRewarded: string;
 };

@@ -4,6 +4,7 @@ import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/stacks/types";
 import { validateStacksAddress } from "@ledgerhq/live-common/families/stacks/react";
+import { STACKS_MAX_NUM_CYCLES } from "@ledgerhq/live-common/families/stacks/constants";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -12,7 +13,6 @@ import Button from "~/renderer/components/Button";
 import { StepProps } from "../types";
 
 const MIN_NUM_CYCLES = 1;
-const MAX_NUM_CYCLES = 96;
 
 // Deliberately conservative: real Clarity contract names allow a few more characters than this,
 // but under-accepting here only makes the rare edge-case name require re-typing, while
@@ -30,7 +30,9 @@ const isPoolAddress = (valAddress: string | undefined): boolean => {
 };
 
 const isValidNumCycles = (numCycles: number | undefined): boolean =>
-  typeof numCycles === "number" && numCycles >= MIN_NUM_CYCLES && numCycles <= MAX_NUM_CYCLES;
+  typeof numCycles === "number" &&
+  numCycles >= MIN_NUM_CYCLES &&
+  numCycles <= STACKS_MAX_NUM_CYCLES;
 
 const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps) => {
   invariant(account, "account is required");

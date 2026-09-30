@@ -79,6 +79,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     formatCurrencyUnit(unit, value, { disableRounding: true, showCode: true, discreet });
 
   const stakingPosition = getStacksStakingPosition(account);
+  const unlockCycle = stakingPosition ? getStacksUnlockCycle(stakingPosition) : undefined;
 
   return (
     <Wrapper>
@@ -98,10 +99,9 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
       {stakingPosition ? (
         <>
           <StakingDetail i18nKey="stacks.account.staked" value={format(stakingPosition.amount)} />
-          <StakingDetail
-            i18nKey="stacks.account.unlockCycle"
-            value={getStacksUnlockCycle(stakingPosition)}
-          />
+          {unlockCycle === undefined ? null : (
+            <StakingDetail i18nKey="stacks.account.unlockCycle" value={unlockCycle} />
+          )}
         </>
       ) : null}
     </Wrapper>

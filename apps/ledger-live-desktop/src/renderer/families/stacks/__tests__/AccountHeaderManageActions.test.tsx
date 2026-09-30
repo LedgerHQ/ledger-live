@@ -3,11 +3,26 @@ import invariant from "invariant";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { StacksAccount, StakingPosition } from "@ledgerhq/live-common/families/stacks/types";
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 
 import AccountHeaderActions from "../AccountHeaderManageActions";
 
 const currency = getCryptoCurrencyById("stacks");
+
+const stakingOn = withFlagOverrides({
+  stakePrograms: { enabled: true, params: { list: ["stacks"], redirects: {} } },
+});
+
+const activePosition = {
+  uid: "SP1staker",
+  address: "SP1staker",
+  delegate: "SP1pool.native-pool-signer-manager",
+  state: "active",
+  asset: { type: "native" },
+  amount: 0,
+  actions: ["undelegate"],
+  details: { firstRewardCycle: 10, numCycles: 6, rewardAsset: "sbtc", amountRewarded: "0" },
+} as unknown as StakingPosition;
 
 const makeAccount = (stakingPositions?: StakingPosition[]): StacksAccount =>
   ({
@@ -59,19 +74,10 @@ describe("AccountHeaderManageActions (stacks)", () => {
   });
 
   it("returns exactly one action (Unstake, not Stake) when an active staking position exists; a second `stake` would abort on-chain with ERR_ALREADY_STAKED", () => {
-    const position = {
-      uid: "SP1staker",
-      address: "SP1staker",
-      delegate: "SP1pool.native-pool-signer-manager",
-      state: "active",
-      asset: { type: "native" },
-      amount: 0,
-      actions: ["undelegate"],
-      details: { firstRewardCycle: 10, numCycles: 6, rewardAsset: "sbtc", amountRewarded: "0" },
-    } as unknown as StakingPosition;
-    const account = makeAccount([position]);
-    const { result, store } = renderHook(() =>
-      hook({ account, parentAccount: null, source: "Account Page" }),
+    const account = makeAccount([activePosition]);
+    const { result, store } = renderHook(
+      () => hook({ account, parentAccount: null, source: "Account Page" }),
+      { initialState: stakingOn },
     );
 
     expect(result.current).toHaveLength(1);
@@ -88,6 +94,15 @@ describe("AccountHeaderManageActions (stacks)", () => {
         data: expect.objectContaining({ account }),
       }),
     );
+  });
+
+  it("hides Unstake when stacks is absent from stakePrograms: the classic bridge can't prepare an undelegate", () => {
+    const account = makeAccount([activePosition]);
+    const { result } = renderHook(() =>
+      hook({ account, parentAccount: null, source: "Account Page" }),
+    );
+
+    expect(result.current).toHaveLength(0);
   });
 
   it("returns zero actions when the staking position is 'deactivating' (its final reward cycle): Stake would abort on-chain, Unstake is redundant", () => {

@@ -18,7 +18,7 @@ import type { StacksTxData } from "../types";
 
 /** pox-5's `MAX_NUM_CYCLES` (`pox-5.clar:78`). Client-side check only -- the contract's own
  * `ERR_INVALID_NUM_CYCLES` guard is the ground truth, this just avoids a wasted-fee on-chain abort. */
-const MAX_NUM_CYCLES = 96;
+export const MAX_NUM_CYCLES = 96;
 
 function spendable(balances: Balance[], isToken: boolean, assetReference?: string): bigint {
   // Case-insensitive: same reasoning as `buildUnsignedTx.ts`'s `resolveAmount` -- `getBalance`'s

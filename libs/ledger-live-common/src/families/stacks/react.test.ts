@@ -18,12 +18,7 @@ const makePosition = (overrides: Partial<StakingPosition> = {}): StakingPosition
     asset: { type: "native" },
     amount: new BigNumber(1000),
     actions: ["undelegate"],
-    details: {
-      firstRewardCycle: 10,
-      numCycles: 6,
-      rewardAsset: "sbtc",
-      amountRewarded: "0",
-    },
+    details: { firstRewardCycle: 10, numCycles: 6, rewardAsset: "sbtc", amountRewarded: "0" },
     ...overrides,
   }) as unknown as StakingPosition;
 
@@ -46,6 +41,13 @@ describe("getStacksUnlockCycle", () => {
       details: { firstRewardCycle: 42, numCycles: 6, rewardAsset: "sbtc", amountRewarded: "0" },
     });
     expect(getStacksUnlockCycle(position)).toBe(48);
+  });
+
+  it("returns undefined when details lack the pox-5 cycle fields instead of computing NaN", () => {
+    expect(getStacksUnlockCycle(makePosition({ details: undefined }))).toBeUndefined();
+    expect(
+      getStacksUnlockCycle(makePosition({ details: { firstRewardCycle: "42", numCycles: 6 } })),
+    ).toBeUndefined();
   });
 });
 

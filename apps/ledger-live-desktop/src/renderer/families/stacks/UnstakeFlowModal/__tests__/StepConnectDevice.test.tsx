@@ -17,8 +17,8 @@ jest.mock("~/renderer/modals/Send/steps/GenericStepConnectDevice", () => ({
 }));
 jest.mock("~/renderer/components/ErrorDisplay", () => ({
   __esModule: true,
-  default: ({ onRetry }: { onRetry: () => void }) => (
-    <button data-testid="error-display-retry" onClick={onRetry}>
+  default: ({ error, onRetry }: { error: Error; onRetry: () => void }) => (
+    <button data-testid="error-display-retry" data-error={error.name} onClick={onRetry}>
       retry
     </button>
   ),
@@ -129,6 +129,32 @@ describe("UnstakeFlowModal/StepConnectDevice", () => {
     expect(genericStepMock).not.toHaveBeenCalled();
     await user.click(screen.getByTestId("error-display-retry"));
     expect(props.onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("surfaces the status error instead of an endless spinner when preparation settles with no fee and no thrown error", () => {
+    // Classic-bridge undelegate: prepareTransaction resolves without a fee (no recipient) and never
+    // throws, so only getTransactionStatus reports why.
+    const gas = new Error("fee not loaded");
+    gas.name = "FeeNotLoaded";
+    const recipient = new Error("recipient required");
+    recipient.name = "RecipientRequired";
+    act(() => {
+      render(
+        <StepConnectDevice
+          {...makeProps({
+            transaction: makeTx({ fee: undefined, fees: undefined }),
+            status: {
+              errors: { recipient, gas },
+              warnings: {},
+              amount: new BigNumber(0),
+            } as unknown as StepProps["status"],
+          })}
+        />,
+      );
+    });
+    expect(screen.queryByText("Preparing transaction…")).not.toBeInTheDocument();
+    expect(genericStepMock).not.toHaveBeenCalled();
+    expect(screen.getByTestId("error-display-retry")).toHaveAttribute("data-error", "FeeNotLoaded");
   });
 
   it("shows the preparing spinner, not the stale error, while a retry's re-prepare is pending", () => {

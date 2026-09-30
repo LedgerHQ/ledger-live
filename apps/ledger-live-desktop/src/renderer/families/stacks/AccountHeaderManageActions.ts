@@ -2,6 +2,7 @@ import { getStacksStakingPosition } from "@ledgerhq/live-common/families/stacks/
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
+import { useStake } from "LLD/hooks/useStake";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
@@ -15,6 +16,7 @@ const AccountHeaderManageActions: StacksFamily["accountHeaderManageActions"] = (
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const label = useGetStakeLabelLocaleBased();
+  const { getCanStakeUsingLedgerLive } = useStake();
 
   const onStakeClick = useCallback(() => {
     if (account.type !== "Account") return;
@@ -48,7 +50,12 @@ const AccountHeaderManageActions: StacksFamily["accountHeaderManageActions"] = (
   // apart from "position unknown". Gate on the key's presence too, so a transient lookup failure
   // hides Stake instead of wrongly re-exposing it.
   const canStake = account.stakingPositions !== undefined && !stakingPosition;
-  const canUnstake = !!stakingPosition?.actions?.includes("undelegate");
+  // AccountHeaderActions only filters "Stake" through stakePrograms; Unstake needs the same gate
+  // while Stacks still runs on the classic bridge, whose prepareTransaction never resolves an
+  // undelegate fee.
+  const canUnstake =
+    getCanStakeUsingLedgerLive(account.currency.id) &&
+    !!stakingPosition?.actions?.includes("undelegate");
 
   return [
     ...(canStake

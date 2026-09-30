@@ -14,6 +14,7 @@ import invariant from "invariant";
 import { getConfiguredStacksNetwork, validateAddress } from "../common-logic";
 import { getStakes } from "../logic/getStakes";
 import { TransactionResponse } from "../network";
+import type { StacksAccount, StakingPosition } from "../types";
 import {
   fetchAllTokenBalances,
   fetchBalances,
@@ -29,23 +30,7 @@ import {
   sip010OpToParentOp,
 } from "./utils/misc";
 
-/**
- * On-Account shape for `stakingPositions`: framework `Stake` with `bigint` amounts converted to
- * `BigNumber`, matching the convention used elsewhere on the Account (`balance`,
- * `spendableBalance`) and matching exactly the shape the generic-coin-framework's own
- * `getAccountShape.ts` (`toStakingPositionOnAccount`) will produce once this family is enrolled in
- * `genericCoinFrameworkFamilies.json` -- this is a same-shape backport for the classic bridge that
- * remains active until then, not a divergent implementation.
- */
-type StakingPositionOnAccount = Omit<Stake, "amount" | "amountDeposited" | "amountRewarded"> & {
-  amount: BigNumber;
-  amountDeposited?: BigNumber;
-  amountRewarded?: BigNumber;
-};
-
-type StacksAccount = Account & { stakingPositions?: StakingPositionOnAccount[] };
-
-function toStakingPositionOnAccount(stake: Stake): StakingPositionOnAccount {
+function toStakingPositionOnAccount(stake: Stake): StakingPosition {
   const { amount, amountDeposited, amountRewarded, ...rest } = stake;
   return {
     ...rest,

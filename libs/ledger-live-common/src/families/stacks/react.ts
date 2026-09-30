@@ -1,4 +1,4 @@
-import type { StacksAccount, StakingPosition } from "./types";
+import type { StacksAccount, StacksStakeDetails, StakingPosition } from "./types";
 
 // Re-exported so LLD can resolve pox info / validate an address through live-common rather than
 // depending directly on @ledgerhq/coin-stacks, which it does not declare as a dependency.
@@ -15,14 +15,15 @@ export function getStacksStakingPosition(account: StacksAccount): StakingPositio
   return account.stakingPositions?.[0];
 }
 
-type StacksStakeDetails = {
-  firstRewardCycle: number;
-  numCycles: number;
-  rewardAsset: string;
-  amountRewarded: string;
-};
+function isStacksStakeDetails(details: unknown): details is StacksStakeDetails {
+  if (typeof details !== "object" || details === null) return false;
+  const { firstRewardCycle, numCycles } = details as Record<string, unknown>;
+  return typeof firstRewardCycle === "number" && typeof numCycles === "number";
+}
 
-export function getStacksUnlockCycle(position: StakingPosition): number {
-  const details = position.details as StacksStakeDetails;
+/** `undefined` when `details` doesn't carry the pox-5 cycle fields `getStakes` writes. */
+export function getStacksUnlockCycle(position: StakingPosition): number | undefined {
+  const { details } = position;
+  if (!isStacksStakeDetails(details)) return undefined;
   return details.firstRewardCycle + details.numCycles;
 }

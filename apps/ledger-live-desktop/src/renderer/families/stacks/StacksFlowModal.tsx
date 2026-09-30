@@ -18,7 +18,7 @@ type Props<N extends StacksFlowModalName, S extends string> = {
 };
 
 // A stray backdrop click must not dismiss the flow once the device is involved.
-const LOCKED_STEPS: readonly string[] = ["connectDevice", "confirmation"];
+const LOCKED_STEPS: ReadonlySet<string> = new Set(["connectDevice", "confirmation"]);
 
 export default function StacksFlowModal<N extends StacksFlowModalName, S extends string>({
   name,
@@ -33,7 +33,7 @@ export default function StacksFlowModal<N extends StacksFlowModalName, S extends
       name={name}
       centered
       onHide={handleReset}
-      preventBackdropClick={LOCKED_STEPS.includes(stepId)}
+      preventBackdropClick={LOCKED_STEPS.has(stepId)}
       render={({ onClose, data }) => (
         <Body
           stepId={stepId}

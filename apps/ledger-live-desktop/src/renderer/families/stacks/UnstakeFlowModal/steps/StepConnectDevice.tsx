@@ -23,7 +23,16 @@ const StepConnectDevice = ({
   // A failed fee preparation leaves `fee` unset with bridgePending false -- without this branch the
   // spinner below would hide the error while useBridgeTransaction silently backs off. Gated on
   // !bridgePending so a retry's re-prepare shows the spinner, not the stale error it's replacing.
-  if (error && !bridgePending) {
+  //
+  // A preparation that settles without a fee and without throwing (the classic bridge's undelegate
+  // case) surfaces the status' own errors instead, so it never spins silently.
+  const hasFee = !!(transaction?.fee || transaction?.fees);
+  const preparationError =
+    error ??
+    (!bridgePending && !hasFee
+      ? (status.errors.gas ?? Object.values(status.errors)[0])
+      : undefined);
+  if (preparationError && !bridgePending) {
     return (
       <Box flow={4} alignItems="center" justifyContent="center" py={50}>
         <TrackPage
@@ -33,7 +42,7 @@ const StepConnectDevice = ({
           action="undelegate"
           currency="stx"
         />
-        <ErrorDisplay error={error} onRetry={onRetry} withExportLogs />
+        <ErrorDisplay error={preparationError} onRetry={onRetry} withExportLogs />
       </Box>
     );
   }
@@ -42,7 +51,7 @@ const StepConnectDevice = ({
   // signOperation.ts throws FeeNotLoaded when `fee` isn't set yet, and this step can mount before
   // the async fee estimate (bridgePending) resolves -- an already-connected device would otherwise
   // start signing immediately instead of waiting for preparation.
-  if (bridgePending || !(transaction?.fee || transaction?.fees)) {
+  if (bridgePending || !hasFee) {
     return (
       <Box flow={4} alignItems="center" justifyContent="center" py={50}>
         <TrackPage
