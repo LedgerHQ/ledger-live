@@ -7,10 +7,14 @@ import {
   hasContentAbTestOverrides,
   setContentAbTestCopy,
   setContentAbTestOverride,
-} from "@features/platform-feature-flags/content-ab-test-copy";
+} from "@features/platform-content-ab-tests";
 import { createFeatureFlagsMiddleware, featureFlagsReducer } from "@shared/feature-flags";
 import DebugFeatureFlags from "./index";
 import { i18n } from "~/context/Locale";
+
+jest.mock("@react-native-firebase/app", () => ({
+  getApp: () => ({ options: { projectId: "ledger-live-staging" } }),
+}));
 
 jest.mock("~/context/Locale", () => ({
   i18n: {
