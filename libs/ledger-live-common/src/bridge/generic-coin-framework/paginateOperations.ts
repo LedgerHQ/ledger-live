@@ -1,5 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import type { Page } from "@ledgerhq/coin-module-framework/api/types";
+import { PaginationIntegrityError } from "../../errors";
 
 // Termination net for a caller that passes no `maxOperations`, and only for that case. Counting
 // pages cannot serve a *bounded* caller: reaching a bound of N operations through pages of size P
@@ -71,16 +72,6 @@ export const EMPTY_PAGE_BUDGET = 1000;
  * finite without needing a ceiling on pages at all -- which is why it does not have one, and why
  * `PAGE_BUDGET` applies only when `maxOperations` is unset, the one case with no other net.
  */
-/**
- * Thrown when the walk cannot be trusted rather than when it cannot be served: a cursor served
- * twice, or a run of empty pages long enough to be a defect. Typed so a caller can tell it from a
- * transport failure -- the A4 path falls back to its delegate on the latter, and must not treat a
- * malformed history as a network blip.
- */
-export class PaginationIntegrityError extends Error {
-  override name = "PaginationIntegrityError";
-}
-
 export interface PaginateOperationsResult<T> {
   items: T[];
   // See the docstring above `paginateOperations`: true only for the bound-triggered stop.
