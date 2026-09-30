@@ -67,6 +67,61 @@ function SponsoredFeeValue({ fee }: Readonly<{ fee: SponsoredFeeDisplay }>) {
   );
 }
 
+type FeesValueRowProps = Readonly<{
+  label: string;
+  informationIcon: React.ReactNode;
+  value: string;
+  secondaryValue: string | null;
+  sponsoredNudge?: SponsoredFeeNudgeProps;
+  sponsoredFee?: SponsoredFeeDisplay | null;
+}>;
+
+function FeesValueRow({
+  label,
+  informationIcon,
+  value,
+  secondaryValue,
+  sponsoredNudge,
+  sponsoredFee,
+}: FeesValueRowProps) {
+  const feeValue = sponsoredFee ? (
+    <SponsoredFeeValue fee={sponsoredFee} />
+  ) : (
+    <span className="flex items-center gap-4">
+      <span className="body-3 text-base">{value}</span>
+      {secondaryValue ? <span className="body-3 text-muted">{secondaryValue}</span> : null}
+    </span>
+  );
+
+  return (
+    <div
+      className="flex w-full items-center justify-between mt-8 mb-12"
+      data-testid="send-network-fees-row"
+    >
+      <span className="flex items-center gap-8">
+        <span className="body-3">{label}</span>
+        {informationIcon}
+      </span>
+      {sponsoredNudge?.available ? (
+        <button
+          type="button"
+          onClick={sponsoredNudge.onOpen}
+          className="flex flex-col items-end gap-4 transition-colors hover:opacity-70 cursor-pointer"
+          data-testid="send-fee-payment-entry"
+        >
+          <SponsoredFeeNudge {...sponsoredNudge} />
+          <span className="flex items-center gap-4">
+            {feeValue}
+            <ChevronDown size={16} className="text-muted" />
+          </span>
+        </button>
+      ) : (
+        feeValue
+      )}
+    </div>
+  );
+}
+
 export function NetworkFeesMenu({
   display,
   feeSelector,
@@ -117,43 +172,15 @@ export function NetworkFeesMenu({
   // A sponsored fee is priced by its provider, so the strategy presets don't apply to it; while
   // one is offered, the fee value opens the fee payment step instead of the strategy menu.
   if (!canOpen || sponsoredFee || sponsoredNudge?.available) {
-    const feeValue = sponsoredFee ? (
-      <SponsoredFeeValue fee={sponsoredFee} />
-    ) : (
-      <span className="flex items-center gap-4">
-        <span className="body-3 text-base">{feesValue}</span>
-        {feesSecondaryValue ? (
-          <span className="body-3 text-muted">{feesSecondaryValue}</span>
-        ) : null}
-      </span>
-    );
-
     return (
-      <div
-        className="flex w-full items-center justify-between mt-8 mb-12"
-        data-testid="send-network-fees-row"
-      >
-        <span className="flex items-center gap-8">
-          <span className="body-3">{feesLabel}</span>
-          {informationIcon}
-        </span>
-        {sponsoredNudge?.available ? (
-          <button
-            type="button"
-            onClick={sponsoredNudge.onOpen}
-            className="flex flex-col items-end gap-4 transition-colors hover:opacity-70 cursor-pointer"
-            data-testid="send-fee-payment-entry"
-          >
-            <SponsoredFeeNudge {...sponsoredNudge} />
-            <span className="flex items-center gap-4">
-              {feeValue}
-              <ChevronDown size={16} className="text-muted" />
-            </span>
-          </button>
-        ) : (
-          feeValue
-        )}
-      </div>
+      <FeesValueRow
+        label={feesLabel}
+        informationIcon={informationIcon}
+        value={feesValue}
+        secondaryValue={feesSecondaryValue}
+        sponsoredNudge={sponsoredNudge}
+        sponsoredFee={sponsoredFee}
+      />
     );
   }
 

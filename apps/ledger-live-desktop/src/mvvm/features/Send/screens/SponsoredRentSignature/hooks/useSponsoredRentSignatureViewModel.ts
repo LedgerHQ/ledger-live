@@ -24,10 +24,10 @@ export type SponsoredRentSignatureResult =
   | Readonly<{ signedOperation: SignedOperation | undefined | null; device: Device }>
   | Readonly<{ transactionSignError: Error }>;
 
-const DEVICE_REFUSAL_ERROR_NAMES: readonly string[] = [
+const DEVICE_REFUSAL_ERROR_NAMES: ReadonlySet<string> = new Set([
   "TransactionRefusedOnDevice",
   "UserRefusedOnDevice",
-];
+]);
 
 export type SponsoredRentSignatureViewModel = Readonly<{
   isCrafting: boolean;
@@ -92,7 +92,7 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
         if (isContractDataDisabledError(error)) {
           actions.setContractDataFailure(error, signingPaymentTxId);
         } else {
-          if (!DEVICE_REFUSAL_ERROR_NAMES.includes(error.name)) {
+          if (!DEVICE_REFUSAL_ERROR_NAMES.has(error.name)) {
             logger.critical(error);
           }
           // DeviceAction offers a retry for connect errors only, never for a sign error.

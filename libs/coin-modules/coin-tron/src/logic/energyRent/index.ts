@@ -201,7 +201,7 @@ async function assertSignableTransferMatchesRequest(
     !(typeof feeLimit === "number" && feeLimit <= DEFAULT_TRC20_FEES_LIMIT)
   ) {
     throw new TronifyApiError(
-      `Energy-rent payment carries fee_limit ${String(feeLimit)}, above the ${DEFAULT_TRC20_FEES_LIMIT} sun bound`,
+      `Energy-rent payment carries fee_limit ${JSON.stringify(feeLimit)}, above the ${DEFAULT_TRC20_FEES_LIMIT} sun bound`,
     );
   }
 }

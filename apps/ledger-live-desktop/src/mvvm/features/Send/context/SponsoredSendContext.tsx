@@ -117,7 +117,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     // Clear first so Review can't craft against the previous transaction's intent during the rebuild.
     setIntent(null);
 
-    (async () => {
+    void (async () => {
       try {
         const result = await buildGenericTransactionIntent(
           mainAccount.currency.family,

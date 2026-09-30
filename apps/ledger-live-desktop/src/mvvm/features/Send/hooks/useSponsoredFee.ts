@@ -67,7 +67,7 @@ export function useSponsoredFee({
     setLoading(true);
     setQuote(null);
 
-    (async () => {
+    void (async () => {
       let options: Awaited<ReturnType<typeof seam.listFeeOptions>>;
       try {
         options = await seam.listFeeOptions(intent);
