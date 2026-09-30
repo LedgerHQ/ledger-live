@@ -8,7 +8,7 @@ const FILTER_TICKER = "USDT";
 const REQUEST_TITLE = "Request Tether USD";
 const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
 
-const TMS_LINKS = ["B2CQA-6325"];
+const TMS_LINKS = ["B2CQA-6325", "B2CQA-6326"];
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
 setTeamOwner(Team.WALLET_XP);
@@ -65,6 +65,17 @@ describe("Pay tab", () => {
     await app.payTab.selectDepositOption("receive");
     await app.modularDrawer.selectAssetAndAccount(transaction.accountToDebit);
     await app.payTab.expectRequestTitle(REQUEST_TITLE);
+    await app.payTab.closeRequest();
+    await app.payTab.expectFundedBalance();
+
+    await app.payTab.openRequest();
+    await app.modularDrawer.selectAssetAndAccount(transaction.accountToDebit);
+    await app.payTab.expectRequestTitle(REQUEST_TITLE);
+    await app.payTab.expectRequestAddress();
+    await app.payTab.expectRequestQrCode();
+    await app.payTab.expectRequestShare();
+    await app.payTab.expectRequestCopy();
+    await app.payTab.expectRequestVerify();
     await app.payTab.closeRequest();
     await app.payTab.expectFundedBalance();
   });
