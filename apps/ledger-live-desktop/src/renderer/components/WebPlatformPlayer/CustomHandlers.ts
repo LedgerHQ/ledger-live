@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { ipcRenderer } from "electron";
 import { useDispatch } from "LLD/hooks/redux";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { setLiveAppModal } from "~/renderer/reducers/liveAppModal";
 import { WebviewProps } from "../Web3AppWebview/types";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";

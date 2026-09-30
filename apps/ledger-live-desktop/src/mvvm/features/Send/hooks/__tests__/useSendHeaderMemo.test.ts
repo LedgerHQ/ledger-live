@@ -12,13 +12,16 @@ jest.mock("../../context/SendFlowContext", () => ({
 jest.mock("../../screens/Recipient/hooks/useRecipientMemo", () => ({
   useRecipientMemo: jest.fn(),
 }));
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasMemoForRecipient: jest.fn(() => true),
     getMemoDefaultOption: jest.fn(() => undefined),
+    getTrackingAttributes: jest.fn(() => ({})),
   },
 }));
 jest.mock("@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId", () => ({
@@ -27,7 +30,7 @@ jest.mock("@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId", () => (
 
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 const mockedUseFlowWizard = jest.mocked(useFlowWizard);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
@@ -53,6 +56,7 @@ function mockFlow({
         parentAccount: null,
         currency: { id: "ripple" },
       },
+      transaction: { transaction: null },
       recipient,
     } as never,
     uiConfig: { hasMemo: true, memoType: "text", memoOptions: [] } as never,

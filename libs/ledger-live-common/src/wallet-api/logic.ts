@@ -357,6 +357,8 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
 
 type AccountPublicKeyResolver = (account: Account) => string | null;
 
+const COMPRESSED_SECP256K1_HEX = /^0[23][0-9a-f]{64}$/i;
+
 const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResolver>> = {
   // xpub holds the account public key (generic-coin-framework), either hex (as returned by the
   // Ledger app) or already base58. Normalize it to base58; throw the dedicated error when it
@@ -366,7 +368,10 @@ const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResol
     if (publicKey) return publicKey;
     throw new AccountPublicKeyUnavailable();
   },
-  cosmos: account => (account as CosmosAccount).xpub || null,
+  cosmos: account =>
+    [(account as CosmosAccount).cosmosResources?.publicKey, account.xpub].find(
+      key => key !== undefined && COMPRESSED_SECP256K1_HEX.test(key),
+    ) ?? null,
 };
 
 export const accountGetPublicKeyLogic = async (

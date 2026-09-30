@@ -10,14 +10,13 @@ import {
   isRecord,
   isValidatorBondable,
   parseTotalSupply,
-  resolveConfig,
 } from "./utils";
 import type {
   AleoCommitteeMember,
   AleoCommitteeResponse,
   AleoValidatorMetadataResponse,
 } from "../types/api";
-import type { AleoValidator } from "../types";
+import type { AleoCoinConfig, AleoValidator } from "../types";
 
 const VALIDATORS_CACHE = minutes(ALEO_VALIDATORS_CACHE_MINUTES, 2);
 
@@ -53,16 +52,14 @@ function isValidValidatorMetadataResponse(value: unknown): value is AleoValidato
 }
 
 /**
- * The validator committee for `currencyId`'s configured network, ordered for a picker.
+ * The validator committee for `config`'s network, ordered for a picker.
  *
  * Only the committee is required. Names, total supply and unbonding state are best-effort,
  * so losing any of them degrades a field rather than failing the list the bond flow
  * depends on.
  */
 export const getValidators = makeLRUCache(
-  async (currencyId: string): Promise<AleoValidator[]> => {
-    const config = resolveConfig(currencyId);
-
+  async (config: AleoCoinConfig): Promise<AleoValidator[]> => {
     const [committee, metadata, totalSupply] = await Promise.all([
       apiClient.getCommittee(config),
       apiClient.getValidatorMetadata(config).catch(() => null),
@@ -129,6 +126,6 @@ export const getValidators = makeLRUCache(
         return right.stakeMicrocredits - left.stakeMicrocredits;
       });
   },
-  currencyId => currencyId,
+  config => `${config.apiUrls.node}:${config.networkType}`,
   VALIDATORS_CACHE,
 );

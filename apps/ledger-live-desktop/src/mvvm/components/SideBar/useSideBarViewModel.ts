@@ -11,8 +11,7 @@ import { sidebarCollapsedSelector, lastSeenDeviceSelector } from "~/renderer/red
 import { isNavigationLocked } from "~/renderer/reducers/application";
 import { openModal } from "~/renderer/actions/modals";
 import { setSidebarCollapsed } from "~/renderer/actions/settings";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { setTrackingSource, track } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
@@ -292,8 +291,14 @@ export function useSideBarViewModel(): SideBarViewModel {
         location.pathname,
         referralProgramConfig?.params?.path,
         shouldDisplayAssetSection,
+        location.search,
       ),
-    [location.pathname, referralProgramConfig?.params?.path, shouldDisplayAssetSection],
+    [
+      location.pathname,
+      referralProgramConfig?.params?.path,
+      shouldDisplayAssetSection,
+      location.search,
+    ],
   );
 
   const handleActiveChange = useCallback(

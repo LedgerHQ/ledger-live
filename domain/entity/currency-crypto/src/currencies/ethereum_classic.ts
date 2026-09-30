@@ -38,9 +38,6 @@ export const ethereum_classic = currency({
   ],
   family: "evm",
   blockAvgTime: 15,
-  ethereumLikeInfo: {
-    chainId: 61,
-  },
   explorerViews: [
     {
       tx: "https://blockscout.com/etc/mainnet/tx/$hash/internal-transactions",
@@ -48,5 +45,4 @@ export const ethereum_classic = currency({
     },
   ],
   keywords: ["etc", "ethereum classic"],
-  explorerId: "etc",
 });

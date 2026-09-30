@@ -31,6 +31,10 @@ class AppVisibilityModule(
         super.invalidate()
     }
 
+    override fun onStart(owner: LifecycleOwner) {
+        reactContext.emitDeviceEvent(FOREGROUND_EVENT)
+    }
+
     override fun onStop(owner: LifecycleOwner) {
         reactContext.emitDeviceEvent(BACKGROUND_EVENT)
     }
@@ -48,5 +52,6 @@ class AppVisibilityModule(
     companion object {
         const val NAME = "AppVisibilityModule"
         private const val BACKGROUND_EVENT = "appDidEnterBackground"
+        private const val FOREGROUND_EVENT = "appDidEnterForeground"
     }
 }

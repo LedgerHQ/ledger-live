@@ -9,7 +9,7 @@ type BalanceEmptyStateProps = Readonly<{
 export function BalanceEmptyState({ labels }: BalanceEmptyStateProps) {
   return (
     <Box
-      lx={{ alignItems: "center", justifyContent: "center", gap: "s16", paddingVertical: "s32" }}
+      lx={{ alignItems: "center", justifyContent: "center", gap: "s16" }}
       testID="pay-card-balance-empty-state"
     >
       <Text typography="heading1SemiBold" lx={{ color: "base", textAlign: "center" }}>

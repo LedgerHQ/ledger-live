@@ -40,6 +40,7 @@ import DebugTheme from "~/components/DebugTheme";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
 import EvmAddressBookSetup from "~/components/EvmAddressBookSetup";
+import TronAddressBookSetup from "~/components/TronAddressBookSetup";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
@@ -84,11 +85,10 @@ import { logStartupEvent } from "LLM/utils/logStartupTime";
 import {
   TrackingConsent,
   DatadogProvider,
-  AutoInstrumentationConfiguration,
   DdSdkReactNative,
   PropagatorType,
 } from "@datadog/mobile-react-native";
-import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import type { AutoInstrumentationConfiguration } from "@datadog/mobile-react-native";
 import {
   customActionEventMapper,
   customErrorEventMapper,
@@ -107,6 +107,7 @@ import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setu
 import { LinkingProviderWrapper } from "~/components/LinkingProviderWrapper";
 import { setPolkadotLdmkEnabled } from "@ledgerhq/live-common/families/polkadot/setup";
 import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
+import { setTronLdmkEnabled } from "@ledgerhq/live-common/families/tron/setup";
 import { resolveSuiTransport, setSuiTransport } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 import { useAutoFinishPostOnboarding } from "LLM/features/PostOnboarding/hooks/useAutoFinishPostOnboarding";
@@ -167,21 +168,26 @@ function App() {
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
   const ldmkPolkadotSignerFeatureFlag = useFeature("ldmkPolkadotSigner");
   const ldmkXrpSignerFeatureFlag = useFeature("ldmkXrpSigner");
+  const ldmkTronSignerFeatureFlag = useFeature("ldmkTronSigner");
   const suiTransportFeatureFlag = useFeature("suiTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
-      trackErrors: datadogFF?.params?.trackErrors ?? false,
-      trackInteractions: datadogFF?.params?.trackInteractions ?? false,
-      trackResources: datadogFF?.params?.trackResources ?? false,
-      errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
-      actionEventMapper: customActionEventMapper,
-      logEventMapper: customLogEventMapper,
-      firstPartyHosts: [
-        {
-          match: FIRST_PARTY_MAIN_HOST_DOMAIN,
-          propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
-        },
-      ],
+      rumConfiguration: {
+        trackErrors: datadogFF?.params?.trackErrors ?? false,
+        trackInteractions: datadogFF?.params?.trackInteractions ?? false,
+        trackResources: datadogFF?.params?.trackResources ?? false,
+        errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
+        actionEventMapper: customActionEventMapper,
+        firstPartyHosts: [
+          {
+            match: FIRST_PARTY_MAIN_HOST_DOMAIN,
+            propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
+          },
+        ],
+      },
+      logsConfiguration: {
+        logEventMapper: customLogEventMapper,
+      },
     }),
     [datadogFF?.params, automaticBugReportingEnabled],
   );
@@ -215,6 +221,12 @@ function App() {
       setXrpLdmkEnabled(ldmkXrpSignerFeatureFlag.enabled);
     }
   }, [ldmkXrpSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkTronSignerFeatureFlag?.enabled === "boolean") {
+      setTronLdmkEnabled(ldmkTronSignerFeatureFlag.enabled);
+    }
+  }, [ldmkTronSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiTransport(resolveSuiTransport(suiTransportFeatureFlag));
@@ -253,8 +265,7 @@ function App() {
     };
     initializeDatadogProvider(
       {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        ...(datadogFF?.params as PartialInitializationConfiguration),
+        ...datadogFF?.params,
         ...(Config.FORCE_DATADOG_SAMPLE_RATE_100 ? { sessionSamplingRate: 100 } : {}),
       },
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
@@ -393,6 +404,7 @@ export default class Root extends Component {
               <SetEnvsFromSettings />
               <SegmentSetup />
               <EvmAddressBookSetup />
+              <TronAddressBookSetup />
               <BrazeContentCardsProvider>
                 <HookNotifications />
                 <HookDevTools />

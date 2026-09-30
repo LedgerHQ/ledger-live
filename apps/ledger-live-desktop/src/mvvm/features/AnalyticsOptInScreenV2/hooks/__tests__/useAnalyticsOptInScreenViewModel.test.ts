@@ -1,10 +1,15 @@
 import { act, renderHook } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import type { AnalyticsOptInScreenHostProps } from "../../types";
 import { useAnalyticsOptInScreenViewModel } from "../useAnalyticsOptInScreenViewModel";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
@@ -66,7 +71,7 @@ describe("useAnalyticsOptInScreenViewModel", () => {
         flow: "consent onboarding",
         entryPoint: "Onboarding",
       }),
-      true,
+      { mandatory: true },
     );
     expect(track).not.toHaveBeenCalledWith(
       "button_clicked",
@@ -148,7 +153,7 @@ describe("useAnalyticsOptInScreenViewModel", () => {
       expect.objectContaining({
         button: "Previous",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -196,7 +201,7 @@ describe("useAnalyticsOptInScreenViewModel", () => {
       expect.objectContaining({
         button: "Learn more link",
       }),
-      true,
+      { mandatory: true },
     );
   });
 });

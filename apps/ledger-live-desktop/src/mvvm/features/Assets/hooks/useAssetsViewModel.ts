@@ -14,7 +14,7 @@ import {
 import { useAllCurrencyTrends } from "./useAllCurrencyTrends";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource, track } from "@shared/analytics";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
@@ -27,7 +27,6 @@ import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
 import { padItems } from "../utils/assetTableHelpers";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { track } from "~/renderer/analytics/segment";
 import {
   ASSETS_TRACKING_PAGE_NAME,
   CRYPTO_TRACKING_PAGE_NAME,

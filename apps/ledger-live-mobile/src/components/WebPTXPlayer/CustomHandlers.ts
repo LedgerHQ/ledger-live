@@ -14,8 +14,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { NavigatorName, ScreenName } from "~/const";
+import { getTrackingRouteLiveAppSource } from "../Web3AppWebview/analytics";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { WebviewProps } from "../Web3AppWebview/types";
@@ -187,10 +187,7 @@ export function useCustomExchangeHandlers({
       trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
         track(eventName, {
           ...properties,
-          flowInitiatedFrom:
-            currentRouteNameRef.current === "Platform Catalog"
-              ? "Discover"
-              : currentRouteNameRef.current,
+          flowInitiatedFrom: getTrackingRouteLiveAppSource(),
         }),
       ),
     [],

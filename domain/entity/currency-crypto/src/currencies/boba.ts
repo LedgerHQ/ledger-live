@@ -37,9 +37,6 @@ export const boba = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 288,
-  },
   explorerViews: [
     {
       tx: "https://bobascan.com/tx/$hash",

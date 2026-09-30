@@ -12,7 +12,7 @@ import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { UiHook, SetCurrentAccountHistDb } from "./react";
 import BigNumber from "bignumber.js";
-import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
+import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic-public";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
@@ -20,6 +20,7 @@ import { isLedgerButtonReferrer, reportLedgerButtonBroadcast } from "./utils/led
 import type { Transaction as EvmTransaction } from "../families/evm/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { withLiveAppContext } from "./blindSigningContext";
+import { contextLogger } from "../bridge/generic-coin-framework/api/context";
 
 type MessageId = number | string | null;
 
@@ -64,7 +65,7 @@ function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
       ethTX.value !== undefined
         ? new BigNumber(ethTX.value.replace("0x", ""), 16)
         : new BigNumber(0),
-    recipient: safeEncodeEIP55(ethTX.to),
+    recipient: safeEncodeEIP55(ethTX.to, contextLogger),
     gasPrice:
       ethTX.gasPrice !== undefined
         ? new BigNumber(ethTX.gasPrice.replace("0x", ""), 16)

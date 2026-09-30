@@ -34,7 +34,7 @@ describe("useNotificationIndicator", () => {
 
   it("onClick dispatches openInformationCenter and tracks button_clicked2", () => {
     const { result, store } = renderHook(() => useNotificationIndicator());
-    const { track } = jest.requireMock("~/renderer/analytics/segment");
+    const { track } = jest.requireMock("@shared/analytics");
 
     act(() => {
       result.current.onClick();

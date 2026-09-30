@@ -8,7 +8,9 @@ const config = {} as SuiCoinConfig;
 jest.mock("../network", () => ({
   __esModule: true,
   default: {
-    executeTransactionBlock: jest.fn().mockResolvedValue({ digest: "test-digest" }),
+    executeTransactionBlock: jest
+      .fn()
+      .mockResolvedValue({ digest: "test-digest", effects: { status: { status: "success" } } }),
   },
 }));
 
@@ -29,9 +31,6 @@ describe("broadcast", () => {
       expect(suiAPI.executeTransactionBlock).toHaveBeenCalledWith(config, {
         transactionBlock: "1234567890",
         signature: "abcdef",
-        options: {
-          showEffects: true,
-        },
       });
     });
 
@@ -54,38 +53,18 @@ describe("broadcast", () => {
     });
   });
 
-  describe("with ExecuteTransactionBlockParams input", () => {
-    it("should forward params with showEffects forced so execution status is always available", async () => {
-      const mockParams = {
-        transactionBlock: "test-block",
-        signature: "test-signature",
-        options: {
-          showInput: true,
-          showEffects: false,
-        },
-      };
+  describe("with params input", () => {
+    it("should forward params unchanged", async () => {
+      const mockParams = { transactionBlock: "test-block", signature: "test-signature" };
 
       const result = await broadcast(config, mockParams);
 
       expect(result).toBe("test-digest");
-      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledWith(config, {
-        transactionBlock: "test-block",
-        signature: "test-signature",
-        options: {
-          showInput: true,
-          showEffects: true,
-        },
-      });
+      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledWith(config, mockParams);
     });
 
     it("should throw when executeTransactionBlock returns no digest", async () => {
-      const mockParams = {
-        transactionBlock: "test-block",
-        signature: "test-signature",
-        options: {
-          showEffects: true,
-        },
-      };
+      const mockParams = { transactionBlock: "test-block", signature: "test-signature" };
 
       jest.mocked(suiAPI.executeTransactionBlock).mockResolvedValueOnce(
         // @ts-expect-error digest omitted on purpose (LIVE-27548 empty-response guard)
@@ -98,13 +77,7 @@ describe("broadcast", () => {
     });
 
     it("should throw when RPC returns digest but execution status is failure", async () => {
-      const mockParams = {
-        transactionBlock: "test-block",
-        signature: "test-signature",
-        options: {
-          showEffects: true,
-        },
-      };
+      const mockParams = { transactionBlock: "test-block", signature: "test-signature" };
 
       jest.mocked(suiAPI.executeTransactionBlock).mockResolvedValueOnce({
         digest: "4fwBGMM9Nfc8rbiGfcn7469cvrqetYgik6pLiVCYg4Ud",

@@ -3,6 +3,7 @@ import type { CardHistoryDayGroup } from "./groupCardHistoryItems";
 
 export type CardTransactionHistoryUiState =
   | { kind: "signedOut" }
+  | { kind: "unclaimed" }
   | { kind: "loading" }
   | { kind: "error" }
   | { kind: "empty" }
@@ -10,17 +11,29 @@ export type CardTransactionHistoryUiState =
 
 export function resolveCardTransactionHistoryUiState({
   isSignedIn,
+  isCardMissing,
+  isCardStatusLoading,
   isLoading,
   isError,
   groups,
 }: {
   isSignedIn: boolean;
+  isCardMissing: boolean;
+  isCardStatusLoading: boolean;
   isLoading: boolean;
   isError: boolean;
   groups: readonly CardHistoryDayGroup[];
 }): CardTransactionHistoryUiState {
   if (!isSignedIn) {
     return { kind: "signedOut" };
+  }
+
+  if (isCardMissing) {
+    return { kind: "unclaimed" };
+  }
+
+  if (isCardStatusLoading && isError) {
+    return { kind: "loading" };
   }
 
   const displayState = resolveCardTransactionsDisplayState({

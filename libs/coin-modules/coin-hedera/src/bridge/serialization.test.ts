@@ -15,7 +15,9 @@ import {
   assignFromAccountRaw,
   assignToAccountRaw,
   fromHederaResourcesRaw,
+  fromOperationExtraRaw,
   toHederaResourcesRaw,
+  toOperationExtraRaw,
 } from "./serialization";
 
 const mockedAccount = getMockedAccount();
@@ -111,5 +113,36 @@ describe("serialization", () => {
     assignFromAccountRaw(rawWithoutResources, accountTarget);
 
     expect(accountTarget.hederaResources).toBeUndefined();
+  });
+
+  it("toOperationExtraRaw should serialize stakedAmount and keep other extras", () => {
+    expect(
+      toOperationExtraRaw({
+        stakedAmount: new BigNumber("21083322293"),
+        targetStakingNodeId: 3,
+        previousStakingNodeId: null,
+      }),
+    ).toEqual({ stakedAmount: "21083322293", targetStakingNodeId: 3, previousStakingNodeId: null });
+  });
+
+  it("fromOperationExtraRaw should revive stakedAmount and keep other extras", () => {
+    const extra = fromOperationExtraRaw({
+      stakedAmount: "21083322293",
+      targetStakingNodeId: 3,
+      previousStakingNodeId: null,
+    });
+
+    expect(extra).toEqual({
+      stakedAmount: new BigNumber("21083322293"),
+      targetStakingNodeId: 3,
+      previousStakingNodeId: null,
+    });
+  });
+
+  it("operation extra hooks should pass extras without stakedAmount through unchanged", () => {
+    const extra = { consensusTimestamp: "1787236926.768102104", memo: "hello" };
+
+    expect(toOperationExtraRaw(extra)).toBe(extra);
+    expect(fromOperationExtraRaw(extra)).toBe(extra);
   });
 });

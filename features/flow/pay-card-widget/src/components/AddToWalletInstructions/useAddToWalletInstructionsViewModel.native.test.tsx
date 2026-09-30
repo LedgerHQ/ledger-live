@@ -6,29 +6,46 @@ import {
   type NativeEventSubscription,
   Platform,
 } from "react-native";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
 
 jest.mock("./openWalletApp", () => ({
   openGoogleWalletStore: jest.fn(),
   openWalletApp: jest.fn(),
 }));
 
-jest.mock("@domain/api-card-management", () => ({ useGetCardStatusQuery: jest.fn() }));
-
-import { useGetCardStatusQuery } from "@domain/api-card-management";
 import { CARD_ONBOARDING_ADD_TO_WALLET_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
+import {
+  payCardOnboardingWidgetSlice,
+  selectDigitalWalletProvisioningStartedAt,
+} from "../../state";
 import { openGoogleWalletStore, openWalletApp } from "./openWalletApp";
 import {
   type AddToWalletInstructionsViewProps,
   useAddToWalletInstructionsViewModel,
 } from "./useAddToWalletInstructionsViewModel";
 
-const refetchCardStatus = jest.fn();
 const removeAppStateListener = jest.fn();
 let appStateListener: ((state: AppStateStatus) => void) | undefined;
+let store: ReturnType<typeof makeStore>;
+
+function makeStore() {
+  return configureStore({
+    reducer: { payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer },
+  });
+}
+
+function provisioningStartedAt() {
+  return selectDigitalWalletProvisioningStartedAt(store.getState());
+}
 
 function renderViewModel(onDone = jest.fn()) {
   return renderHook(() => useAddToWalletInstructionsViewModel({ onDone }), {
-    wrapper: ({ children }) => <I18nWrapper>{children}</I18nWrapper>,
+    wrapper: ({ children }) => (
+      <Provider store={store}>
+        <I18nWrapper>{children}</I18nWrapper>
+      </Provider>
+    ),
   });
 }
 
@@ -43,15 +60,12 @@ function getScene<TScene extends AddToWalletInstructionsViewProps["scene"]>(
 describe("useAddToWalletInstructionsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    store = makeStore();
     appStateListener = undefined;
     jest.mocked(AppState.addEventListener).mockImplementation((_type, listener) => {
       appStateListener = listener;
       return { remove: removeAppStateListener } as NativeEventSubscription;
     });
-    jest.mocked(useGetCardStatusQuery).mockReturnValue({
-      refetch: refetchCardStatus,
-      data: undefined,
-    } as unknown as ReturnType<typeof useGetCardStatusQuery>);
     jest.mocked(openWalletApp).mockResolvedValue(true);
     jest.mocked(openGoogleWalletStore).mockResolvedValue(true);
     Platform.OS = "ios";
@@ -82,20 +96,20 @@ describe("useAddToWalletInstructionsViewModel", () => {
     expect(instructions.ctaLabel).toBe(CARD_ONBOARDING_ADD_TO_WALLET_COPY.android.cta);
   });
 
-  it("re-asks the provider after opening the wallet and when the app returns", async () => {
+  it("marks the wallet provisioning pending only once the holder is back from the wallet", async () => {
     const onDone = jest.fn();
     const { result } = renderViewModel(onDone);
 
     await act(getScene(result.current, "instructions").onPressCta);
 
-    expect(refetchCardStatus).toHaveBeenCalledTimes(1);
     expect(openWalletApp).toHaveBeenCalledTimes(1);
+    expect(provisioningStartedAt()).toBeNull();
     expect(onDone).not.toHaveBeenCalled();
 
     act(() => appStateListener?.("background"));
     act(() => appStateListener?.("active"));
 
-    expect(refetchCardStatus).toHaveBeenCalledTimes(2);
+    expect(provisioningStartedAt()).toEqual(expect.any(Number));
     expect(onDone).toHaveBeenCalledTimes(1);
   });
 
@@ -119,14 +133,14 @@ describe("useAddToWalletInstructionsViewModel", () => {
     expect(removeAppStateListener).toHaveBeenCalledTimes(1);
   });
 
-  it("does not re-fetch on an active event unless the app first left", async () => {
+  it("does not mark the provisioning pending on an active event unless the app first left", async () => {
     const onDone = jest.fn();
     const { result } = renderViewModel(onDone);
 
     await act(getScene(result.current, "instructions").onPressCta);
     act(() => appStateListener?.("active"));
 
-    expect(refetchCardStatus).toHaveBeenCalledTimes(1);
+    expect(provisioningStartedAt()).toBeNull();
     expect(onDone).not.toHaveBeenCalled();
   });
 
@@ -137,7 +151,8 @@ describe("useAddToWalletInstructionsViewModel", () => {
 
     await act(getScene(result.current, "instructions").onPressCta);
 
-    expect(refetchCardStatus).not.toHaveBeenCalled();
+    expect(AppState.addEventListener).not.toHaveBeenCalled();
+    expect(provisioningStartedAt()).toBeNull();
     expect(onDone).not.toHaveBeenCalled();
     expect(getScene(result.current, "error").title).toBe(
       CARD_ONBOARDING_ADD_TO_WALLET_COPY.ios.error.title,
@@ -155,7 +170,7 @@ describe("useAddToWalletInstructionsViewModel", () => {
     act(() => appStateListener?.("active"));
 
     expect(openWalletApp).toHaveBeenCalledTimes(2);
-    expect(refetchCardStatus).toHaveBeenCalledTimes(2);
+    expect(provisioningStartedAt()).toEqual(expect.any(Number));
     expect(onDone).toHaveBeenCalledTimes(1);
   });
 
@@ -169,7 +184,7 @@ describe("useAddToWalletInstructionsViewModel", () => {
     await act(getScene(result.current, "error").onPressAction);
 
     expect(openGoogleWalletStore).toHaveBeenCalledTimes(1);
-    expect(refetchCardStatus).not.toHaveBeenCalled();
+    expect(provisioningStartedAt()).toBeNull();
     expect(onDone).not.toHaveBeenCalled();
 
     act(getScene(result.current, "error").onBack);

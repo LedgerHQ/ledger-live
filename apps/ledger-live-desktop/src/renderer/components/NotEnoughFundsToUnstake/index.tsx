@@ -7,18 +7,22 @@ import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { Account } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useNavigate, useLocation } from "react-router";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import { openModal } from "~/renderer/actions/modals";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 
 const NotEnoughFundsToUnstake = ({
   account,
   onClose,
+  page = "UndelegateFlowModal",
 }: {
   account: Account;
   onClose: () => void;
+  /** Flow the banner is shown in, reported as the source page of its Buy/Swap/Deposit clicks. */
+  page?: string;
 }) => {
   const currency = account.currency;
   const { t } = useTranslation();
@@ -44,9 +48,9 @@ const NotEnoughFundsToUnstake = ({
     () => ({
       currency: currency.ticker,
       currencyName: currency.name,
-      page: "UndelegateFlowModal",
+      page,
     }),
-    [currency],
+    [currency, page],
   );
 
   const onPressBuy = useCallback(() => {
@@ -72,11 +76,11 @@ const NotEnoughFundsToUnstake = ({
       ...swapDefaultTrack,
     });
     navigate("/swap", {
-      state: {
+      state: buildSwapNavigationState({
         defaultCurrency: currency,
-        defaultAccountId: account.id,
-        from: location.pathname,
-      },
+        fromPath: location.pathname,
+        account,
+      }),
     });
     onClose();
   }, [

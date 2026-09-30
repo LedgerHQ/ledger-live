@@ -4,7 +4,7 @@ import type { Operation } from "@ledgerhq/types-live";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions } from "@ledgerhq/coin-evm/types";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import type { TransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import type {

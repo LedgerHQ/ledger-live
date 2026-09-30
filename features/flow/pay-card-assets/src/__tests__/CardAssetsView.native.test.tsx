@@ -1,10 +1,18 @@
 import React from "react";
 import { act, fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
+import { TooltipContent } from "@ledgerhq/lumen-ui-rnative";
 import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer.native";
 import { CardAssetsView } from "../CardAssetsView.native";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
+
+const NAV_BAR_INSET = 48;
+const CONTENT_BOTTOM_SPACING = 24;
+
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 48, left: 0, right: 0 }),
+}));
 
 const usdc = {
   id: "w-usdc",
@@ -29,8 +37,8 @@ const ready: CardAssetsViewModel = {
     topUp: "Top up",
     withdraw: "Withdraw",
     transactions: "Transactions",
-    withdrawTitle: "You'll be redirected to Baanx",
-    withdrawDescription: "Withdraw funds from your Baanx account to your Ledger wallet address.",
+    withdrawTitle: "You will be redirected to Monavate",
+    withdrawDescription: "Withdraw funds from your Monavate account to your Ledger wallet address.",
     continue: "Continue",
   },
   onAssetPress: jest.fn(),
@@ -41,6 +49,7 @@ const ready: CardAssetsViewModel = {
   onShowHistoryPress: jest.fn(),
   onWithdrawContinue: jest.fn(),
   onManagePress: jest.fn(),
+  onRetryPress: jest.fn(),
   onAddAssetPress: jest.fn(),
   onMoveAsset: jest.fn(),
   reorderingAssetIds: new Set(),
@@ -105,7 +114,7 @@ describe("CardAssetsView (native)", () => {
       wrapper: I18nWrapper,
     });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.error)).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.errorTitle)).toBeVisible();
     expect(screen.queryByText("125.40 USDC")).not.toBeOnTheScreen();
   });
 
@@ -114,7 +123,7 @@ describe("CardAssetsView (native)", () => {
       wrapper: I18nWrapper,
     });
 
-    expect(screen.getByText(CARD_ASSETS_COPY.empty)).toBeVisible();
+    expect(screen.getByText(CARD_ASSETS_COPY.emptyTitle)).toBeVisible();
   });
 
   it("should show a skeleton list while the wallets are still loading", () => {
@@ -124,8 +133,8 @@ describe("CardAssetsView (native)", () => {
 
     expect(screen.getByText(CARD_ASSETS_COPY.title)).toBeVisible();
     expect(screen.getByTestId("card-assets-loading-state")).toBeVisible();
-    expect(screen.queryByText(CARD_ASSETS_COPY.empty)).not.toBeOnTheScreen();
-    expect(screen.queryByText(CARD_ASSETS_COPY.error)).not.toBeOnTheScreen();
+    expect(screen.queryByText(CARD_ASSETS_COPY.emptyTitle)).not.toBeOnTheScreen();
+    expect(screen.queryByText(CARD_ASSETS_COPY.errorTitle)).not.toBeOnTheScreen();
   });
 
   it("should open the selected asset", async () => {
@@ -138,6 +147,14 @@ describe("CardAssetsView (native)", () => {
     await user.press(screen.getByText("USD Coin"));
 
     expect(onAssetPress).toHaveBeenCalledWith(usdc);
+  });
+
+  it("should keep the assets info clear of the navigation bar", () => {
+    render(<CardAssetsView {...ready} />, { wrapper: I18nWrapper });
+
+    expect(screen.UNSAFE_getByType(TooltipContent).props.content.props.style).toEqual({
+      paddingBottom: NAV_BAR_INSET + CONTENT_BOTTOM_SPACING,
+    });
   });
 
   it("should open asset management", async () => {
@@ -154,6 +171,22 @@ describe("CardAssetsView (native)", () => {
     await user.press(screen.getByText(CARD_ASSETS_COPY.manage));
 
     expect(onManagePress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should hide Manage until the asset list is ready", () => {
+    const { rerender } = render(<CardAssetsView {...ready} status="loading" rows={[]} />, {
+      wrapper: I18nWrapper,
+    });
+    expect(screen.queryByText(CARD_ASSETS_COPY.manage)).not.toBeOnTheScreen();
+
+    rerender(<CardAssetsView {...ready} status="error" />);
+    expect(screen.queryByText(CARD_ASSETS_COPY.manage)).not.toBeOnTheScreen();
+
+    rerender(<CardAssetsView {...ready} status="empty" rows={[]} />);
+    expect(screen.queryByText(CARD_ASSETS_COPY.manage)).not.toBeOnTheScreen();
+
+    rerender(<CardAssetsView {...ready} />);
+    expect(screen.getByText(CARD_ASSETS_COPY.manage)).toBeVisible();
   });
 
   it("should show managed assets and add another asset", async () => {
@@ -210,6 +243,20 @@ describe("CardAssetsView (native)", () => {
     });
 
     expect(onMoveAsset).toHaveBeenCalledWith("w-btc", 0);
+  });
+
+  it("should leave the drag gesture uncontested by keeping the list unscrollable", () => {
+    const bitcoin = { ...usdc, id: "w-btc", name: "Bitcoin", ticker: "BTC" };
+    render(
+      <CardAssetsManageDrawer
+        rows={[usdc, bitcoin]}
+        onMoveAsset={jest.fn()}
+        reorderingAssetIds={new Set()}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    expect(screen.UNSAFE_getByType(DraggableFlatList).props.scrollEnabled).toBe(false);
   });
 
   it("should move a wallet to where a drag was dropped", () => {

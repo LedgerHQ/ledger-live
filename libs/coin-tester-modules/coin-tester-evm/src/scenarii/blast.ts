@@ -94,6 +94,7 @@ export const scenarioBlast: Scenario<GenericTransaction, Account> = {
       },
       chainId: 81457,
       name: "Blast",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "http://127.0.0.1:8545",
@@ -137,7 +138,7 @@ export const scenarioBlast: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(blast.ethereumLikeInfo?.chainId || 81457);
+    await indexBlocks(81457);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());

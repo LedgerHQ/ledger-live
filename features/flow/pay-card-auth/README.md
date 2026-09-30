@@ -10,7 +10,7 @@ Cross-platform Pay Card authentication flow for Ledger Wallet.
 ```tsx
 import { CardLogin, useCardLogout, useIsCardSignedIn } from "@features/flow-pay-card-auth";
 
-<CardLogin oauthConfig={oauthConfig} callback={callback} onTrackEvent={track} />
+<CardLogin oauthConfig={oauthConfig} callback={callback} />
 ```
 
 `CardLogin` runs the whole login, and shows nothing once the card holder is signed in. Session
@@ -21,7 +21,9 @@ the same Redux flag both sides read.
 They agree through `payCardAuth.isSignedIn`, because two machines would each hydrate the session and
 neither would agree with the other. The login machine writes the flag on entering `ready`, `idle`
 and `error`. Logout writes it once the session is through, and the login machine takes a
-`SESSION_ENDED` event to put the login back on offer.
+`SESSION_ENDED` event to put the login back on offer. At boot, the mobile app calls
+`restoreCardAuthStatus`, because the machine only runs on the Pay tab. It sets the flag to signed in
+when a session token is on disk and the status is still `unknown`. It never sets it to signed out.
 
 `oauthConfig` carries the OAuth client id, the redirect URI and the app's deep link. All three are
 the app's to know. The redirect URI goes to the authorization initiation and to the token exchange,
@@ -109,9 +111,10 @@ because the view model resolves the key on both platforms.
 One press, one handler: `onLoginPress` reads the flag and either opens the sheet or sends `LOGIN`,
 and the sheet's own buttons send the same `LOGIN` afterwards.
 
-Hosts may pass `onTrackEvent`. The login block fires `button_clicked` for `Get card`, `Login`, the
-intro CTAs and close, and a `Page card login intro` event when the sheet opens. The app injects
-`track`, the same way FeatureTour and BankTransferIntro do.
+Tracking goes straight through `@features/platform-pay-analytics`, with no host injection. The login
+block fires `button_clicked` for `Get card`, `Login`, the intro CTAs and close, and a
+`Page Feature Intro card` event when the sheet opens — the same way FeatureTour and
+BankTransferIntro do.
 
 ## Card API
 
@@ -186,6 +189,7 @@ pay-card-auth/
     │   ├── loginIntroSelectors.ts          # Login intro selectors, and its persistence lens
     │   ├── loginIntroSlice.ts              # The persisted `payCardLoginIntro` flag
     │   ├── machine.ts                      # States, guards and transitions
+    │   ├── restoreCardAuthStatus.ts        # Signs in at boot from a stored session
     │   ├── selectors.ts                    # Auth selectors
     │   ├── slice.ts                        # Auth-only runtime state (`hasCard`, `isSignedIn`)
     │   ├── store.ts                        # Public state subpath

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Icon, Text } from "@ledgerhq/react-ui";
@@ -11,7 +12,7 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
-import { trackPage, track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -64,6 +65,11 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   }, [currency, currenciesAll]);
 
   const availableOnReceive = true;
+  const accounts = useSelector(flattenAccountsSelector);
+  const isAccountInStore = useMemo(
+    () => accounts.some(a => a.id === account.id),
+    [accounts, account.id],
+  );
 
   const modalName = "MODAL_NO_FUNDS_STAKE";
 
@@ -99,11 +105,11 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
       state: buildSwapNavigationState({
         defaultCurrency: currency,
         fromPath: location.pathname,
-        account,
+        account: isAccountInStore ? account : undefined,
         parentAccount: parentAccount ?? undefined,
       }),
     });
-  }, [currency, account, parentAccount, location, navigate, dispatch]);
+  }, [currency, account, isAccountInStore, parentAccount, location, navigate, dispatch]);
 
   const onReceive = useCallback(() => {
     track("button_clicked2", {
@@ -128,8 +134,12 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   }, [dispatch]);
 
   useEffect(() => {
-    trackPage("Stake", "Service_modal", {
-      source: location.pathname,
+    trackPage({
+      category: "Stake",
+      name: "Service_modal",
+      props: {
+        source: location.pathname,
+      },
     });
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);

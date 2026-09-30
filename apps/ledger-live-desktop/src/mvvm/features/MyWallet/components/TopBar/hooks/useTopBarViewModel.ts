@@ -1,7 +1,7 @@
 import { useSettings } from "LLD/components/TopBar/hooks/useSettings";
 import { useNotificationIndicator } from "LLD/components/TopBar/hooks/useNotificationIndicator";
 import type { TopBarAction } from "LLD/components/TopBar/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useContextMenuClose } from "../../ContextMenuContext";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 

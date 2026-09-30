@@ -1,7 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { useAccountsSyncStatus } from "../useAccountsSyncStatus";
 import type { AccountWithUpToDateCheck } from "../useAccountsSyncStatus";
-import * as segment from "~/renderer/analytics/segment";
+import * as segment from "@shared/analytics";
 
 const createAccountWithUpToDateCheck = (
   id: string,

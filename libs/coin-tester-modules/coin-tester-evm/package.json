@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.34.4",
+  "version": "1.35.0",
   "private": true,
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -66,7 +66,6 @@
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-signer-evm": "workspace:^",
-    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bip39": "^3.1.0",

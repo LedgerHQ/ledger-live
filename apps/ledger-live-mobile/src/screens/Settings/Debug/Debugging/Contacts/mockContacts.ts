@@ -31,7 +31,7 @@ const SAMPLE_CONTACT_NAMES = [
   "Victor",
   "Xanna",
   "Yara",
-  "\u042f\u043d\u0430",
+  "1inch",
 ] as const;
 
 function createSampleAddresses(contactId: string, count: number) {

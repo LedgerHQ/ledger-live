@@ -44,7 +44,6 @@ const mockEthereumCurrency: CryptoCurrency = {
   ],
   keywords: ["eth", "ethereum"],
   explorerViews: [],
-  explorerId: "eth",
 };
 
 describe("Card", () => {

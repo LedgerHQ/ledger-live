@@ -37,6 +37,19 @@ export function formatFundingSources(
     .join(" · ");
 }
 
+/** Several sources would not fit a row beside the merchant name and date, so they get a count. */
+export function formatFundingLabel(
+  fundingSources: readonly PayCardTransactionFundingSource[] | undefined,
+  translatePaidWithAssets: (count: number) => string,
+  formatAmount?: FormatCardTransactionAmount,
+): string | undefined {
+  if (!fundingSources?.length) return undefined;
+
+  return fundingSources.length > 1
+    ? translatePaidWithAssets(fundingSources.length)
+    : formatFundingSources(fundingSources, formatAmount);
+}
+
 export function formatCashback(
   cashback: PayCardTransactionCashback | undefined,
   formatAmount: FormatCardTransactionAmount = defaultFormatAmount,

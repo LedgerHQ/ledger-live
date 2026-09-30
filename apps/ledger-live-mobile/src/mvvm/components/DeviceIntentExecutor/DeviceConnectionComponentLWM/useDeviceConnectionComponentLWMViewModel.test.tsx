@@ -8,6 +8,7 @@ import type {
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
 import {
+  BaseConnectionErrorTypes,
   connectDevice,
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
@@ -36,6 +37,7 @@ jest.mock("~/analytics", () => {
 });
 
 const mockedTrack = jest.mocked(track);
+const mockReportFailure = jest.fn();
 
 const mockNavigate = jest.fn();
 
@@ -122,7 +124,9 @@ const layerABaseProperties = {
 
 function SourceFlowWrapper({ children }: { children?: React.ReactNode }) {
   return (
-    <DeviceIntentTrackingProvider value={{ sourceFlow }}>{children}</DeviceIntentTrackingProvider>
+    <DeviceIntentTrackingProvider value={{ sourceFlow, reportFailure: mockReportFailure }}>
+      {children}
+    </DeviceIntentTrackingProvider>
   );
 }
 
@@ -577,6 +581,51 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
           expect.objectContaining({ transport: "usb" }),
         );
       });
+    });
+  });
+
+  describe("failure reporting", () => {
+    const unknownConnectionErrorState: ConnectDeviceUIState = {
+      type: ConnectDeviceUIStateTypes.ConnectionError,
+      error: {
+        type: BaseConnectionErrorTypes.Unknown,
+        error: { _tag: "OpeningConnectionError" },
+      },
+      device: makeKnownDevice(),
+      retry: jest.fn(),
+      ignore: jest.fn(),
+    };
+
+    it("should report an unknown connection error as a failure when it is displayed", () => {
+      renderViewModel();
+
+      act(() => {
+        connectDeviceObserver?.next(unknownConnectionErrorState);
+      });
+
+      expect(mockReportFailure).toHaveBeenLastCalledWith({
+        failureType: "ConnectionError",
+        countsAsFailure: true,
+        subError: "OpeningConnectionError",
+        modelId: DeviceModelId.nanoX,
+        transport: "ble",
+      });
+    });
+
+    it("should clear the reported failure when the flow leaves the error state", () => {
+      renderViewModel();
+      act(() => {
+        connectDeviceObserver?.next(unknownConnectionErrorState);
+      });
+
+      act(() => {
+        connectDeviceObserver?.next({
+          type: ConnectDeviceUIStateTypes.Connecting,
+          device: makeKnownDevice(),
+        });
+      });
+
+      expect(mockReportFailure).toHaveBeenLastCalledWith(null);
     });
   });
 });

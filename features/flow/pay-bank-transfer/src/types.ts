@@ -1,5 +1,3 @@
-export type PayCardTrackEvent = (event: string, params: Record<string, unknown>) => void;
-
 export type BankTransferIntroRowIcon = "Bank" | "Coins" | "Chart5";
 
 export type BankTransferIntroRow = Readonly<{
@@ -14,7 +12,7 @@ export type BankTransferIntroHeroImage = number | { readonly uri: string };
 
 /**
  * Copy is resolved inside this package through `@shared/i18n`; the host only injects
- * analytics, open state, and partner handoff. Keys live under `payTab.bankTransferIntro.*`
+ * open state and partner handoff. Keys live under `payTab.bankTransferIntro.*`
  * in each app's default namespace.
  */
 export type BankTransferIntroProps = Readonly<{
@@ -24,7 +22,6 @@ export type BankTransferIntroProps = Readonly<{
   /** Host-owned partner handoff (Noah / Trading). This package never navigates. */
   onBankTransfer: (handoff: BankTransferHandoff) => void;
   onClose: () => void;
-  onTrackEvent?: PayCardTrackEvent;
 }>;
 
 export type BankTransferIntroViewModel = Readonly<{
@@ -36,7 +33,6 @@ export type BankTransferIntroViewModel = Readonly<{
   providedBy: string;
   heroImage?: BankTransferIntroHeroImage;
   rows: readonly BankTransferIntroRow[];
-  onShown: () => void;
   onCreateAccountPress: () => void;
   onLogInPress: () => void;
   onClosePress: () => void;

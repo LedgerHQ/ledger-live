@@ -6,7 +6,7 @@ import { DepositOptions } from "@features/flow-pay-deposit";
 import { BankTransferIntro } from "@features/flow-pay-bank-transfer";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-request";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import PayTabHeader from "./components/PayTabHeader";
 import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExecutorLWD";
 import type { PayTabViewModel } from "./usePayTabViewModel";
@@ -29,7 +29,7 @@ export function PayTabView({
   const [initialBalanceFilter] = useState(balance.filter);
 
   return (
-    <div className="flex flex-col pb-32">
+    <div className="flex flex-col pb-32" data-testid="paytab-screen">
       <TrackPage category="Pay" balance_filter={initialBalanceFilter} />
       {requestReceive.isOpen && requestReceive.address ? (
         <TrackPage
@@ -66,7 +66,6 @@ export function PayTabView({
           selection={deviceIntent.selection}
           onReady={deviceIntent.onReady}
           onExit={deviceIntent.onExit}
-          onTrackEvent={verifyAddress.onTrackEvent}
         />
       )}
       <FeatureTour />

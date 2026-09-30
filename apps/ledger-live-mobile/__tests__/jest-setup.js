@@ -6,7 +6,8 @@ import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currenc
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate, historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
+import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -34,6 +35,7 @@ setFrameworkCryptoAssetsStore({
 
 setAssetAggregationRateLookup({ calculate });
 setWalletAnalyticsRateLookup({ calculate });
+setWalletPnlRateLookup({ calculate, historyKey, currencyApiId: inferCurrencyAPIID });
 import "react-native-gesture-handler/jestSetup";
 import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
@@ -186,6 +188,15 @@ jest.mock("react-native-share", () => ({
   default: { open: jest.fn(() => Promise.resolve({ success: true })) },
 }));
 
+jest.mock(
+  "react-native-fit-image",
+  () => {
+    const { Image } = require("react-native");
+    return { __esModule: true, default: Image };
+  },
+  { virtual: true },
+);
+
 jest.mock("react-native-view-shot", () => ({
   captureRef: jest.fn(() => Promise.resolve("file://mock.png")),
 }));
@@ -322,6 +333,17 @@ jest.mock("react-native-worklets", () => require("react-native-worklets/lib/modu
 
 // Setup Reanimated testing environment
 require("react-native-reanimated").setUpTests();
+
+// useAnimatedScrollHandler needs the worklets Babel transform, which Jest (SWC) doesn't run.
+jest.mock("LLM/components/Wallet40Background/useScrollOffset", () => {
+  const { useSharedValue } = jest.requireActual("react-native-reanimated");
+  return {
+    useScrollOffset: scrollY => {
+      const ownScrollY = useSharedValue(0);
+      return { scrollY: scrollY ?? ownScrollY, onScroll: undefined };
+    },
+  };
+});
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),

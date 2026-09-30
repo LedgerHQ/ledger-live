@@ -8,14 +8,11 @@ import {
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
 import { render, screen, waitFor, act } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
-import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
-import { trackPage } from "@shared/analytics";
+import { track, trackPage } from "@shared/analytics";
 import type { State } from "~/reducers/types";
 import PayTabNavigator from "LLM/features/PayTab";
 import { PayTabRequestReceiveScreen } from "LLM/features/PayTab/screens/RequestReceive";
@@ -30,9 +27,10 @@ const VERIFY_INTRO = "Verify your address";
 const DIE_LABEL = "Ledger Secure Screen";
 const PAY_DEPOSIT = "Add stablecoin";
 
-jest.mock("~/analytics", () => ({
-  ...jest.requireActual("~/analytics"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 jest.mock("@features/flow-pay-card", () => ({
@@ -84,15 +82,13 @@ function renderRequestReceive(
   },
 ) {
   return render(
-    <PayAnalyticsProvider adapter={{ track }}>
-      <RequestStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
-        <RequestStack.Screen
-          name={ScreenName.PayTabRequestReceive}
-          component={PayTabRequestReceiveScreen}
-          initialParams={params}
-        />
-      </RequestStack.Navigator>
-    </PayAnalyticsProvider>,
+    <RequestStack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
+      <RequestStack.Screen
+        name={ScreenName.PayTabRequestReceive}
+        component={PayTabRequestReceiveScreen}
+        initialParams={params}
+      />
+    </RequestStack.Navigator>,
     { overrideInitialState: withUsdcHoldings },
   );
 }
@@ -137,7 +133,9 @@ function renderRequestReceiveFromPayTab(payRequestVerifyHint?: {
   );
 }
 
-async function startVerify(user: { press: (element: unknown) => Promise<unknown> }): Promise<void> {
+async function startVerify(user: {
+  press: (element: ReturnType<typeof screen.getByText>) => Promise<unknown>;
+}): Promise<void> {
   await user.press(await screen.findByRole("button", { name: VERIFY }));
   await user.press(await screen.findByRole("button", { name: VERIFY_ADDRESS }));
   expect(await screen.findByText(DIE_LABEL)).toBeVisible();

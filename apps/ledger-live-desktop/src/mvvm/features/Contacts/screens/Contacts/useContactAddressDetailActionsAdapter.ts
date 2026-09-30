@@ -1,5 +1,6 @@
 import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/entity-contact";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
   type ContactsDeleteAddressDialogProps,
   type ContactsEditSignerMismatchDialogProps,
@@ -17,6 +18,7 @@ import {
   useContactAddressEditAnalytics,
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
+  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
 import type {
   ContactAddressEditSavePayload,
@@ -28,6 +30,7 @@ import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
@@ -62,11 +65,10 @@ export function useContactAddressDetailActionsAdapter(
 ): ContactAddressDetailActionsDialogProps {
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
-  const ports = useContactsAddressDetailActionsPorts(deviceIntents);
+  const ports = useContactsAddressDetailActionsPorts(deviceIntents, resolveCurrencyConfig);
   const addressValidation = useContactsAddressValidationAdapter();
   const openSendFlow = useOpenSendFlow();
   const isSelectionActive = contactId !== undefined && addressId !== undefined;
-  const labels = useMemo(() => resolveContactAddressDetailActionsLabels({ t }), [t]);
   const trackQuickAction = useCallback(
     (button: Parameters<typeof trackContactAddressDetailQuickAction>[1]) => {
       trackContactAddressDetailQuickAction(analytics, button, asset, network);
@@ -112,7 +114,7 @@ export function useContactAddressDetailActionsAdapter(
     },
     [onCloseAddressDetail, openSendFlow, trackQuickAction],
   );
-  const { flow, renameViewModel } = useContactAddressDetailActionsFlowBindings({
+  const { flow, renameViewModel, currencyId } = useContactAddressDetailActionsFlowBindings({
     contactId: contactId ?? ContactIdSchema.parse("contact-me"),
     addressId: isSelectionActive ? addressId : undefined,
     ports,
@@ -122,6 +124,14 @@ export function useContactAddressDetailActionsAdapter(
     onCloseAddressDetail,
     onEditAddressSaved,
   });
+  const supportsDomain = resolveContactAddressSupportsDomain(
+    currencyId,
+    sendFeatures.supportsDomain,
+  );
+  const labels = useMemo(
+    () => resolveContactAddressDetailActionsLabels({ t, supportsDomain }),
+    [t, supportsDomain],
+  );
   const onEdit = useCallback(() => {
     trackQuickAction(CONTACTS_TRACKING_BUTTON.edit);
     flow.onEditPress();

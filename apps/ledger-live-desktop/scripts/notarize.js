@@ -5,10 +5,8 @@ import { join } from "node:path";
 import { notarize } from "@electron/notarize";
 import chalk from "chalk";
 import dotenv from "dotenv";
-import debug from "debug";
 
 dotenv.config();
-debug.enable("@electron/notarize");
 
 const info = str => {
   console.log(chalk.blue(str));

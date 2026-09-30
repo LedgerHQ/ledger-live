@@ -5,7 +5,7 @@ import {
   Platform,
   type AppStateStatus,
 } from "react-native";
-import { isAppInBackground, onAppBackground } from "./appVisibility";
+import { isAppInBackground, leaveAppFor, onAppBackground, onAppForeground } from "./appVisibility";
 
 let appStateListeners: ((state: AppStateStatus) => void)[] = [];
 
@@ -13,6 +13,7 @@ const changeAppState = (state: AppStateStatus) =>
   appStateListeners.forEach(listener => listener(state));
 
 const stopProcess = () => DeviceEventEmitter.emit("appDidEnterBackground");
+const startProcess = () => DeviceEventEmitter.emit("appDidEnterForeground");
 
 const onPlatform = (os: typeof Platform.OS) => Object.assign(Platform, { OS: os });
 
@@ -121,5 +122,105 @@ describe("the app leaving, on iOS", () => {
     changeAppState("background");
 
     expect(listener).not.toHaveBeenCalled();
+  });
+});
+
+describe("leaving the app for a task, on Android", () => {
+  beforeEach(() => onPlatform("android"));
+
+  it("holds off the lock until the app resumes, though the share settled first", async () => {
+    const listener = listen();
+
+    await leaveAppFor(async () => "shared");
+    changeAppState("background");
+    stopProcess();
+
+    expect(listener).not.toHaveBeenCalled();
+
+    changeAppState("active");
+    stopProcess();
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not read a stopped process as the app being away while the task is out", async () => {
+    jest.spyOn(NativeModules.AppVisibilityModule, "isInForeground").mockReturnValue(false);
+
+    await leaveAppFor(async () => "shared");
+    changeAppState("background");
+
+    expect(isAppInBackground()).toBe(false);
+
+    changeAppState("active");
+
+    expect(isAppInBackground()).toBe(true);
+  });
+
+  it("stops holding the lock off when the task fails before anything was shown", async () => {
+    const listener = listen();
+
+    await expect(
+      leaveAppFor(async () => {
+        throw new Error("not_available");
+      }),
+    ).rejects.toThrow("not_available");
+    stopProcess();
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it("gives the task's answer back", async () => {
+    await expect(leaveAppFor(async () => "shared")).resolves.toBe("shared");
+
+    changeAppState("background");
+    changeAppState("active");
+  });
+});
+
+describe("leaving the app for a task, on iOS", () => {
+  beforeEach(() => onPlatform("ios"));
+
+  it("holds nothing off, since a share sheet stays inside the app", async () => {
+    const listener = listen();
+
+    await expect(leaveAppFor(async () => "shared")).resolves.toBe("shared");
+    changeAppState("background");
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("the app coming back", () => {
+  const listenForReturn = () => {
+    const listener = jest.fn();
+    unsubscribers.push(onAppForeground(listener));
+    return listener;
+  };
+
+  it("is reported on Android when the process starts again", () => {
+    onPlatform("android");
+    const listener = listenForReturn();
+
+    startProcess();
+
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it("is not reported on Android when only the activity resumes", () => {
+    onPlatform("android");
+    const listener = listenForReturn();
+
+    changeAppState("active");
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it("is reported on iOS when the app is active again", () => {
+    onPlatform("ios");
+    const listener = listenForReturn();
+
+    changeAppState("active");
+
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 });

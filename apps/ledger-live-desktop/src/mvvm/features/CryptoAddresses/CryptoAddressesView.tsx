@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import PageHeader from "LLD/components/PageHeader";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { useTranslation } from "react-i18next";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";

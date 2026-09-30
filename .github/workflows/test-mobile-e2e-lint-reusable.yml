@@ -23,7 +23,8 @@ permissions:
 jobs:
   test-mobile-e2e-lint:
     name: "Mobile E2E Lint & Typecheck"
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-2cpu-aws-public
+    timeout-minutes: 4
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -44,6 +45,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-mobile-e2e-tests..." --frozen-lockfile --unsafe-perm

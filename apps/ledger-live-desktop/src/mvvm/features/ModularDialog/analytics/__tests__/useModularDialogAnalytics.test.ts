@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useModularDialogAnalytics } from "../useModularDialogAnalytics";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { EVENTS_NAME } from "../modularDialog.types";
 

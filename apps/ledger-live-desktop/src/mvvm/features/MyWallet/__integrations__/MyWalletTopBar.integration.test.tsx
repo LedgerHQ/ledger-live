@@ -1,13 +1,12 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { track } from "~/renderer/analytics/segment";
+import { resetTrackingPages, setTrackingSource, track } from "@shared/analytics";
 import { ContextMenu } from "../components/ContextMenu";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../constants";
 
 const mockNavigate = jest.fn();
+const SEEDED_TRACKING_PAGE = "Portfolio";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -21,13 +20,15 @@ jest.mock("react-router", () => ({
   })),
 }));
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
-  __esModule: true,
-  ...jest.requireActual<typeof import("~/renderer/analytics/TrackPage")>(
-    "~/renderer/analytics/TrackPage",
-  ),
-  setTrackingSource: jest.fn(),
-}));
+jest.mock("@shared/analytics", () => {
+  const actual = jest.requireActual<typeof import("@shared/analytics")>("@shared/analytics");
+  return {
+    ...actual,
+    track: jest.fn(),
+    trackPage: jest.fn(),
+    setTrackingSource: jest.fn((source?: string) => actual.setTrackingSource(source)),
+  };
+});
 
 jest.mock("~/renderer/store", () => ({
   getStoreValue: jest.fn(),
@@ -43,11 +44,11 @@ describe("MyWallet ContextMenu", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseNavigate.mockReturnValue(mockNavigate);
-    currentRouteNameRef.current = "/";
+    setTrackingSource(SEEDED_TRACKING_PAGE);
   });
 
   afterEach(() => {
-    currentRouteNameRef.current = null;
+    resetTrackingPages();
   });
 
   it("should render My Wallet trigger button", () => {
@@ -69,7 +70,7 @@ describe("MyWallet ContextMenu", () => {
 
     expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
       button: MY_WALLET_TRACKING_BUTTON.menu,
-      page: "/",
+      page: SEEDED_TRACKING_PAGE,
     });
   });
 

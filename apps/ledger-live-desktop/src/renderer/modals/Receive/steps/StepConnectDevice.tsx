@@ -4,7 +4,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { StepProps } from "../Body";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";

@@ -6,12 +6,6 @@
 // reached from outside the package. Consumers use `@domain/entity-currency-*`.
 
 /**
- * @deprecated Opaque Ledger-explorer endpoint id, kept only for backward compatibility.
- * Loosened from a fixed union to `string`; the explorer-id concept is being phased out.
- */
-type LedgerExplorerId = string;
-
-/**
  * @deprecated Temporary local copy. Kept only until the types that carry it move to
  * `@domain/entity-currency-*`. Use `@domain/entity-currency-unit` instead.
  */
@@ -77,16 +71,6 @@ type ExplorerView = {
   stakePool?: string;
 };
 
-type EthereumLikeInfo = {
-  chainId: number;
-};
-
-type BitcoinLikeInfo = {
-  P2PKH: number;
-  P2SH: number;
-  XPUBVersion?: number;
-};
-
 /**
  * @deprecated Temporary local copy. Kept only until the types that carry it move to
  * `@domain/entity-currency-*`. Use `@domain/entity-currency-crypto` instead.
@@ -112,15 +96,7 @@ export type CryptoCurrency = CurrencyCommon & {
   supportsNativeSegwit?: boolean;
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string;
-  // TODO later we could express union of types with mandatory bitcoinLikeInfo for "bitcoin" family...
-  bitcoinLikeInfo?: BitcoinLikeInfo;
-  ethereumLikeInfo?: EthereumLikeInfo;
   explorerViews: ExplorerView[];
-  /**
-   * Used to connect to the right endpoint url since it is different from currencyId and ticker.
-   * @deprecated Kept only for backward compatibility; the explorer-id concept is being phased out.
-   */
-  explorerId?: LedgerExplorerId;
   tokenTypes?: string[];
 };
 

@@ -16,10 +16,11 @@ import { ethers } from "ethers";
 import {
   fetchRedelegations,
   buildRedelegationsFromOps,
-} from "@ledgerhq/coin-evm/staking/redelegations";
-import { STAKING_CONTRACTS, isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking/index";
-import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
-import { getNextSequence } from "@ledgerhq/coin-evm/logic/index";
+  STAKING_CONTRACTS,
+  isSeiAccountUnassociated,
+} from "@ledgerhq/coin-evm/staking";
+import { getNodeApi } from "@ledgerhq/coin-evm/network";
+import { getNextSequence } from "@ledgerhq/coin-evm/logic";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { getCurrencyConfiguration } from "../../../config";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
@@ -98,12 +99,23 @@ async function enrichStakingResources(
 ): Promise<StakingResources> {
   // Fetch redelegations from the Cosmos REST API (may return empty for
   // EVM-precompile-originated redelegations on chains like Sei).
-  const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
-  const apiRedelegations = await fetchRedelegations(config, currency.id, address).catch(() => []);
+  const evmCtx = buildContext<EvmConfigInfo>(currency.id);
+  const config = await evmCtx.config();
+  const apiRedelegations = await fetchRedelegations(
+    config,
+    currency.id,
+    address,
+    evmCtx.logger,
+  ).catch(() => []);
 
   // Reconstruct active redelegations from the REDELEGATE operation history by
   // decoding the ABI-encoded calldata fetched directly from the RPC node.
-  const opsRedelegations = await buildRedelegationsFromOps(config, currency.id, operations);
+  const opsRedelegations = await buildRedelegationsFromOps(
+    config,
+    currency.id,
+    operations,
+    evmCtx.logger,
+  );
 
   // Merge both sources, deduplicating by (src, dst) validator pair.
   const key = (r: StakingRedelegation) => `${r.validatorSrcAddress}|${r.validatorDstAddress}`;
@@ -121,7 +133,9 @@ async function getOperationStatus(
   op: LiveOperation,
 ): Promise<LiveOperation | null> {
   try {
-    const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency.id);
+    const evmCtx = buildContext<EvmConfigInfo>(currency.id);
+    const config = await evmCtx.config();
+    const nodeApi = getNodeApi(config, currency.id, evmCtx.logger);
     const { blockHeight, blockHash, nonce, gasPrice, gasUsed, value } =
       await nodeApi.getTransaction(currency.id, op.hash);
 
@@ -182,7 +196,9 @@ export async function validateTransaction(
   currency: CryptoCurrency,
   { signature }: { signature: string },
 ): Promise<{ error: Error | undefined }> {
-  const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency.id);
+  const evmCtx = buildContext<EvmConfigInfo>(currency.id);
+  const config = await evmCtx.config();
+  const nodeApi = getNodeApi(config, currency.id, evmCtx.logger);
   const transaction = ethers.Transaction.from(signature);
 
   if (transaction.hash) {

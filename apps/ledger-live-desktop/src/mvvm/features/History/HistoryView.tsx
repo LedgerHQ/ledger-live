@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { HISTORY_TAB_CARD } from "./constants";
 import HistoryPageHeader from "./components/HistoryPageHeader";
 import { HistoryTypeSwitcher } from "./components/HistoryTypeSwitcher";
@@ -56,7 +56,6 @@ export function HistoryView({
         dustFilterThreshold={dustFilterThreshold}
         onToggleHideSmallValueTokenOperations={onToggleHideSmallValueTokenOperations}
         contact={isCardTab ? undefined : contact}
-        isCardHistory={isCardTab}
         cardAssetName={cardAssetName}
       />
       {showHistoryTypeSwitcher ? (

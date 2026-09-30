@@ -37,9 +37,6 @@ export const robinhood = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 4663,
-  },
   explorerViews: [
     {
       tx: "https://robinhoodchain.blockscout.com/tx/$hash",

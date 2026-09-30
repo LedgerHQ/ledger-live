@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 
-export const ONE_TRX = new BigNumber(1000000);
+export const SUN_PER_TRX = 1_000_000;
+export const ONE_TRX = new BigNumber(SUN_PER_TRX);
 export const STANDARD_FEES_NATIVE = new BigNumber(270000);
 export const ACTIVATION_FEES = ONE_TRX.multipliedBy(1.1); // ONE TRX fee + 0.1 TRX activation cost
 export const STANDARD_FEES_TRC_20 = ONE_TRX.multipliedBy(13.7409);
@@ -28,3 +29,11 @@ export const TRONIFY_FEE_OPTION_ID = "tronify" as const;
 export const TRX_UNIT = { name: "TRX", code: "TRX", magnitude: 6 };
 export const TRX_TICKER = "TRX";
 export const TRX_CURRENCY_NAME = "Tron";
+
+/** Energy-rent delivery poll cadence and hard timeout (ms). Tunable to Tronify's typical delivery time. */
+export const ENERGY_RENT_POLL_INTERVAL_MS = 3_000;
+export const ENERGY_RENT_POLL_TIMEOUT_MS = 120_000;
+
+// The rental is already paid for by the time we poll, so a transient Tronify error must not abandon
+// it. `network()` retries GETs only and Tronify's status call is a POST, so the tolerance lives here.
+export const ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS = 5;

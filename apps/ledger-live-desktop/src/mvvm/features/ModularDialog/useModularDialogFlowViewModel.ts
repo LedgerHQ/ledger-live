@@ -12,8 +12,7 @@ import {
   modularDialogUiUseCaseSelector,
   resetModularDialogState,
 } from "~/renderer/reducers/modularDialog";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { track } from "~/renderer/analytics/segment";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 import { getModularDialogStepHeading } from "./hooks/getModularDialogStepHeading";
 import { shouldAwaitAccountAutoSkip } from "./hooks/shouldAwaitAccountAutoSkip";
 import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
@@ -42,7 +41,7 @@ export function useModularDialogFlowViewModel({ onClose }: UseModularDialogFlowV
     track("button_clicked", {
       button: "Close",
       flow,
-      page: currentRouteNameRef.current,
+      page: getCurrentTrackingPage(),
     });
     onClose?.();
   }, [flow, onClose]);

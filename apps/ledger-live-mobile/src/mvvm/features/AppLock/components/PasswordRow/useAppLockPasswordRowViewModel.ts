@@ -2,7 +2,7 @@ import { selectHasPassword, selectIsHydrated } from "@features/platform-app-lock
 import { useKeepProtection, type KeepProtection } from "../../hooks/useKeepProtection";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback, useRef } from "react";
-import { track } from "~/analytics";
+import { track } from "@shared/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 
@@ -22,10 +22,9 @@ function useAppLockPasswordRowViewModel(): AppLockPasswordRowViewModel {
 
   const onValueChange = useCallback(
     async (enabled: boolean) => {
-      track("toggle_clicked", {
-        toggle: "Password Lock",
-        page: ScreenName.GeneralSettings,
-        enabled,
+      track("button_clicked", {
+        button: enabled ? "enable" : "disable",
+        type: "password",
       });
 
       if (isPendingRef.current) {
@@ -39,7 +38,14 @@ function useAppLockPasswordRowViewModel(): AppLockPasswordRowViewModel {
           return;
         }
 
-        navigate(enabled ? NavigatorName.PasswordAddFlow : NavigatorName.PasswordModifyFlow);
+        if (enabled) {
+          navigate(NavigatorName.PasswordAddFlow, {
+            screen: ScreenName.PasswordAdd,
+            params: { source: "settings" },
+          });
+        } else {
+          navigate(NavigatorName.PasswordModifyFlow);
+        }
       } finally {
         isPendingRef.current = false;
       }

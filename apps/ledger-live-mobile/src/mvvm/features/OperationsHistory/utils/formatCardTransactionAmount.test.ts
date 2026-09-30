@@ -12,7 +12,7 @@ describe("formatCardTransactionAmount", () => {
     ).toContain("€");
   });
 
-  it("formats crypto without rounding", () => {
+  it("rounds crypto amounts the way the rest of the product does", () => {
     expect(
       formatCardTransactionAmount({
         value: "-0.12345678",
@@ -20,7 +20,7 @@ describe("formatCardTransactionAmount", () => {
         kind: "crypto",
         locale: "en-US",
       }),
-    ).toBe("-0.12345678\u00a0BTC");
+    ).toBe("-0.123456\u00a0BTC");
   });
 
   it("keeps the sign on credits", () => {
@@ -32,5 +32,17 @@ describe("formatCardTransactionAmount", () => {
         locale: "en-US",
       }),
     ).toContain("+");
+  });
+
+  it("hides the amount in discreet mode", () => {
+    expect(
+      formatCardTransactionAmount({
+        value: "-12.99",
+        currency: "EUR",
+        kind: "fiat",
+        locale: "en-US",
+        discreet: true,
+      }),
+    ).toContain("***");
   });
 });

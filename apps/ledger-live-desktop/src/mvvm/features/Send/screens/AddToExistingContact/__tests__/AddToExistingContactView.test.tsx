@@ -20,7 +20,6 @@ describe("AddToExistingContactView", () => {
         searchPlaceholder="Search contact"
         searchNoResults="No contact found"
         formatAddressCount={count => `${count} address`}
-        meAvatarSrc="https://example.com/me.png"
         isOpeningAddressFlow={false}
         onSearchInputChange={jest.fn()}
         onSelectContact={jest.fn()}
@@ -43,7 +42,6 @@ describe("AddToExistingContactView", () => {
         searchPlaceholder="Search contact"
         searchNoResults="No contact found"
         formatAddressCount={count => `${count} address`}
-        meAvatarSrc="https://example.com/me.png"
         isOpeningAddressFlow={false}
         onSearchInputChange={jest.fn()}
         onSelectContact={onSelectContact}

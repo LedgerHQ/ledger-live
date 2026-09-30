@@ -1,5 +1,5 @@
 import type { GenericAwarenessModalPrompt } from "@ledgerhq/live-common/genericAwarenessModal";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { PAGE_TRACKING_AWARENESS_MODAL_PROMPT } from "./const";
 
 type PromptAnalyticsContext = {
@@ -29,11 +29,8 @@ const getPromptInteractionProperties = (context: PromptAnalyticsContext) => ({
 export const trackPromptPage = (prompt: GenericAwarenessModalPrompt): void => {
   const context = getPromptAnalyticsContext(prompt);
   trackPage(
-    PAGE_TRACKING_AWARENESS_MODAL_PROMPT,
-    undefined,
-    getPromptPageProperties(context),
-    true,
-    false,
+    { category: PAGE_TRACKING_AWARENESS_MODAL_PROMPT, props: getPromptPageProperties(context) },
+    { updateRoutes: true },
   );
 };
 

@@ -12,13 +12,9 @@ import {
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-react";
 import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
-import { PayTrackPage } from "@features/platform-pay-analytics";
+import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payTabTour.webp";
-import {
-  FEATURE_TOUR_FLOW,
-  FEATURE_TOUR_PAGE,
-  type FeatureTourViewModel,
-} from "./useFeatureTourViewModel";
+import { FEATURE_TOUR_FLOW, type FeatureTourViewModel } from "./useFeatureTourViewModel";
 
 type FeatureTourViewProps = FeatureTourViewModel;
 
@@ -60,7 +56,7 @@ export function FeatureTourView({
 
   return (
     <Dialog open onOpenChange={handleOpenChange}>
-      <PayTrackPage page={FEATURE_TOUR_PAGE} flow={FEATURE_TOUR_FLOW} />
+      <PayTrackPage page={FEATURE_INTRO_PAGE} name={FEATURE_TOUR_FLOW} flow={FEATURE_TOUR_FLOW} />
       <DialogContent className="min-h-[696px]">
         <DialogHeader density="compact" onClose={handleClose} />
         <DialogBody className="flex flex-1 flex-col">

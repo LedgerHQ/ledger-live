@@ -4,6 +4,7 @@ import {
   type DeactivatePasswordViewModel,
 } from "@features/flow-app-lock";
 import { useNavigation } from "@react-navigation/native";
+import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
 import { usePasswordDeactivation } from "../../hooks/usePasswordDeactivation";
 import type { PasswordModifyFlowNavigatorProps } from "../../types";
@@ -29,6 +30,11 @@ function useDeactivatePasswordScreenViewModel(): DeactivatePasswordScreenViewMod
         return "failed";
       }
 
+      track("encryption_updated", {
+        status: "deactivated",
+        type: "password",
+        source: "settings",
+      });
       // The parent, not this stack: goBack() here would land on the same step.
       navigation.getParent()?.goBack();
       return "deactivated";

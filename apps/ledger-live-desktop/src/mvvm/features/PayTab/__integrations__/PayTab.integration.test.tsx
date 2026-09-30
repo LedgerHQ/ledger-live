@@ -251,6 +251,23 @@ describe("PayTab integration", () => {
     expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
   });
 
+  it("should open the request card when Crypto address is selected", async () => {
+    mockFundedPayStablecoins();
+    const { user, store } = renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: fundedState,
+    });
+
+    await user.click(await screen.findByRole("button", { name: "Add stablecoin" }));
+    await user.click(await screen.findByTestId("pay-card-deposit-option-receive"));
+
+    expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
+    expect(openAssetAndAccount).toHaveBeenCalledWith(
+      expect.objectContaining({ categories: [AssetCategory.Stablecoins] }),
+    );
+    expect(store.getState().modularDialog.flow).toBe("request");
+    expect(store.getState().modals.MODAL_RECEIVE?.isOpened).toBeFalsy();
+  });
+
   it("should show the cash-to-stable intro when Bank transfer is selected", async () => {
     await openBankTransferIntro();
 
@@ -278,9 +295,9 @@ describe("PayTab integration", () => {
         page: "Pay",
       }),
     );
-    expect(mockedTrack).toHaveBeenCalledWith(
-      "Page cash to stable",
-      expect.objectContaining({ flow: "C2S" }),
+    expect(mockedTrackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "Feature Intro", name: "Cash to stable" }),
+      expect.anything(),
     );
   });
 
@@ -296,16 +313,16 @@ describe("PayTab integration", () => {
       "button_clicked",
       expect.objectContaining({
         button: "create an account",
-        flow: "C2S",
-        page: "cash to stable",
+        flow: "Cash to stable",
+        page: "Feature Intro Cash to stable",
       }),
     );
     expect(mockedTrack).not.toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
         button: "close",
-        flow: "C2S",
-        page: "cash to stable",
+        flow: "Cash to stable",
+        page: "Feature Intro Cash to stable",
       }),
     );
   });
@@ -322,8 +339,8 @@ describe("PayTab integration", () => {
       "button_clicked",
       expect.objectContaining({
         button: "log in to noah",
-        flow: "C2S",
-        page: "cash to stable",
+        flow: "Cash to stable",
+        page: "Feature Intro Cash to stable",
       }),
     );
   });

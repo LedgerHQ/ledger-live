@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-eth",
-  "version": "7.8.19",
+  "version": "7.9.0",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
     "Ledger",
@@ -63,6 +63,7 @@
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/constants": "^5.7.0",
     "@ethersproject/units": "^5.7.0",

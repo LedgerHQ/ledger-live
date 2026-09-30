@@ -9,6 +9,7 @@ import { track } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
   buildTransactionPatchFromURIScheme,
@@ -24,7 +25,11 @@ import {
 } from "@ledgerhq/live-common/flows/send/utils";
 import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
-import { isEligibleAddressCurrency, useContactsFeature } from "@features/platform-contacts";
+import {
+  isEligibleAddressCurrency,
+  useContactsFeature,
+  useContactDisplayName,
+} from "@features/platform-contacts";
 import { selectContacts } from "@domain/entity-contact";
 import { useSelector } from "~/context/hooks";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -163,16 +168,20 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
       state.account.currency?.id,
     ],
   );
+  const getDisplayName = useContactDisplayName();
+  const recipientLabel = recipientHeader.contact
+    ? getDisplayName(recipientHeader.contact)
+    : recipientHeader.recipientDisplayValue;
 
   const formattedAddress = useMemo(() => {
     if (isRecipientStep) {
       return formatAddress(recipientSearch.value, SEND_ADDRESS_FORMAT_OPTIONS);
     }
     if (isAmountStep) {
-      return recipientHeader.label;
+      return recipientLabel;
     }
     return "";
-  }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
+  }, [isRecipientStep, isAmountStep, recipientLabel, recipientSearch.value]);
 
   // The recipient step keeps a draft in the transaction while the user types: the memo input
   // writes the resolved address as soon as it validates, before anything is confirmed. Going back
@@ -216,7 +225,8 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
     if (canGoBack) {
       if (currentStep === SEND_FLOW_STEP.AMOUNT) {
-        leaveAmountStep();
+        // A contact was picked from the list: go back to the full list, not a search for it.
+        leaveAmountStep(recipientHeader.contact ? "" : undefined);
       } else if (isRecipientStep) {
         cancelRecipientEdit();
       }
@@ -234,6 +244,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     isSelectingContactAddress,
     leaveAmountStep,
     navigation,
+    recipientHeader.contact,
     trackingProperties,
   ]);
 
@@ -310,12 +321,14 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     [recipientSearch, setInputMethod],
   );
 
+  const config = resolveCurrencyConfig(state.account.currency?.id);
   const canSearchContacts =
     isContactsFeatureEnabled &&
     isEligibleAddressCurrency(
       eligibleAddressFamilies,
       state.account.currency ?? undefined,
       excludedCurrencyIds,
+      config,
     );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({

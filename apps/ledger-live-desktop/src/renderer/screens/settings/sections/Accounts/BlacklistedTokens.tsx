@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { showToken } from "~/renderer/actions/settings";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";

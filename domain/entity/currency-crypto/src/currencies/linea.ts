@@ -37,9 +37,6 @@ export const linea = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 59144,
-  },
   explorerViews: [
     {
       tx: "https://lineascan.build/tx/$hash",

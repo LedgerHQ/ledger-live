@@ -6,8 +6,10 @@
 App lock protection state — whether a password exists, whether biometrics is enabled, and whether
 the app is currently locked — plus the biometrics status unions and the errors the unlock path
 raises. It says _what state the lock is in_, never _how a digest is compared_ (that lives in
-[`@shared/password-verifier`](../../../shared/password-verifier/README.md)) and never _what the user sees_ (that lives
-in [`@features/flow-app-lock`](../../flow/app-lock/README.md)).
+[`@shared/password-verifier`](../../../shared/password-verifier/README.md)). The screens live in
+the flow packages — the unlock journey in [`@features/flow-app-unlock`](../../flow/app-unlock/README.md),
+the others in [`@features/flow-app-lock`](../../flow/app-lock/README.md) — and only the UI several of
+those journeys share lives here (see [Shared UI](#shared-ui-native-only)).
 
 ## Why platform and not domain/entity
 
@@ -48,6 +50,19 @@ encoded in the type system; the app's biometrics adapter returns them and the fl
 **Known gap to decide later:** with nothing stored in a biometric-gated keystore item, there is no
 way to detect that the user's biometric enrolment has changed. If that matters, it needs a canary
 item and a follow-up decision.
+
+## Shared UI (native only)
+
+Exported from `index.native.ts` only, so the default entry stays free of UI:
+
+- `PasswordField` — the one password input every password surface uses, so the label, the reveal
+  toggle and the error treatment cannot drift between them.
+- `PasswordDraftProvider` / `usePasswordDraft` — carries the chosen password from the step that
+  picks it to the step that confirms it in a ref, deliberately not in navigation state, which is
+  serialisable and gets persisted.
+
+Their tests run in the React Native project of `@support/jest-features-flow`
+(`*.native.test.tsx`); the rest of the package keeps its plain Node project (`*.test.ts`).
 
 The slice, selectors, React hooks and the unlock orchestration (which is what raises the errors) land
 with the tickets that consume them — biometrics/password logic, unlock flow, migration.

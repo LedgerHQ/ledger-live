@@ -3,7 +3,7 @@ import {
   useTrackManagerSectionEvents,
   UseTrackManagerSectionEvents,
 } from "./useTrackManagerSectionEvents";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import {
   UserRefusedAllowManager,
   UserRefusedDeviceNameChange,
@@ -11,8 +11,12 @@ import {
 } from "@ledgerhq/live-common/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-jest.mock("../segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+}));
+
+jest.mock("../segment", () => ({
   setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
@@ -53,7 +57,7 @@ describe("useTrackManagerSectionEvents", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -77,7 +81,7 @@ describe("useTrackManagerSectionEvents", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -96,7 +100,7 @@ describe("useTrackManagerSectionEvents", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -115,7 +119,7 @@ describe("useTrackManagerSectionEvents", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -134,7 +138,7 @@ describe("useTrackManagerSectionEvents", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
-      true,
+      { mandatory: true },
     );
   });
 });

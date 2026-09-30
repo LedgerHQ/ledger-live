@@ -3,7 +3,7 @@ jest.mock("./internals/trackEvent", () => ({
 }));
 
 import { setEnabledFn } from "./registry";
-import { currentRouteNameRef } from "./screenRefs";
+import { resetTrackingPages, setTrackingSource } from "./screenRefs";
 import { trackEvent } from "./internals/trackEvent";
 import { track } from "./track";
 
@@ -14,7 +14,7 @@ const register = () => {
 beforeEach(() => {
   jest.mocked(trackEvent).mockReset();
   setEnabledFn(() => true);
-  currentRouteNameRef.current = undefined;
+  resetTrackingPages();
 });
 
 describe("track", () => {
@@ -89,7 +89,7 @@ describe("track", () => {
 
   it("injects the current tracking page if it has been set", async () => {
     register();
-    currentRouteNameRef.current = "Page Market";
+    setTrackingSource("Page Market");
 
     await track("Analytics Event", { event: "props" });
 
@@ -103,7 +103,7 @@ describe("track", () => {
 
   it("allows caller to override page prop", async () => {
     register();
-    currentRouteNameRef.current = "Page from ref";
+    setTrackingSource("Page from ref");
 
     await track("Analytics Event", { page: "Page from event", event: "props" });
 

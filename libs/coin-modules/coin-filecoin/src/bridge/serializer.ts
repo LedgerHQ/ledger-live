@@ -48,8 +48,8 @@ export const toCBOR = async (account: Account, tx: Transaction): Promise<toCBORR
     gasPremium: gasPremium.toString(),
     method,
     nonce,
-    params,
-    version: version === 0 ? 0 : undefined,
+    ...(params !== undefined ? { params } : {}),
+    ...(version === 0 ? { version: 0 } : {}),
     value: finalAmount,
   });
 

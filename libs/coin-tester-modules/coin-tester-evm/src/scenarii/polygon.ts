@@ -96,6 +96,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
       },
       chainId: 137,
       name: "Polygon",
+      unit: { name: "POL", code: "POL", magnitude: 18 },
       node: {
         type: "external",
         uri: "http://127.0.0.1:8545",
@@ -141,7 +142,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(polygon.ethereumLikeInfo?.chainId || 137);
+    await indexBlocks(137);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());

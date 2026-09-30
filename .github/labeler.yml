@@ -60,7 +60,6 @@ shared-lib:
   - libs/hw-ledger-key-ring-protocol/**/*
   - libs/ledger-key-ring-protocol/**/*
   - libs/ledger-services/**/*
-  - libs/live-countervalues/**/*
   - libs/live-countervalues-react/**/*
   - libs/live-dmk-shared/**/*
   - libs/live-dmk-speculos/**/*
@@ -69,6 +68,7 @@ shared-lib:
   - libs/live-signer-canton/**/*
   - libs/live-signer-evm/**/*
   - libs/live-signer-solana/**/*
+  - libs/live-signer-tron/**/*
   - libs/live-signer-xrp/**/*
   - libs/live-wallet/**/*
   - libs/speculos-transport/**/*

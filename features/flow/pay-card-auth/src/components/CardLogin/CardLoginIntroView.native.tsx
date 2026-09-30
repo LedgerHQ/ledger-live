@@ -10,7 +10,9 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { CoinsAddPlus, CreditCard, LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payCardLoginIntro.webp";
+import { CARD_LOGIN_INTRO_FLOW } from "./analytics";
 import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
 const FILL_STYLE = { width: "100%", height: "100%" } as const;
@@ -41,6 +43,11 @@ export function CardLoginIntroView({
     >
       {isOpen ? (
         <>
+          <PayTrackPage
+            page={FEATURE_INTRO_PAGE}
+            name={CARD_LOGIN_INTRO_FLOW}
+            flow={CARD_LOGIN_INTRO_FLOW}
+          />
           <BottomSheetHeader density="compact" spacing />
           <BottomSheetScrollView
             testID="pay-card-login-intro-content"

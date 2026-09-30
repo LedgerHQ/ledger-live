@@ -38,6 +38,35 @@ export async function buildAccountShape(address: string): Promise<FamilyAccountS
   return { tronResources: await fetchTronResources(context.logger, config, accounts[0]) };
 }
 
+// A TRC10 transfer is crafted with the numeric asset id (encoded into the TransferAssetContract
+// `asset_name`), which CAL surfaces only inside `token.id` as `<currency>/trc10/<id>`; the token's
+// `contractAddress` holds the issuer address, not the asset id. These two helpers are the single
+// place that encodes that convention, keeping the send (asset→id) and sync (id→asset) directions in
+// lockstep.
+//
+// TODO(LIVE-37786): CAL identifiers carry no format guarantee, so parsing `token.id` couples us to
+// an undocumented convention. Migrate both directions to `token.tokenIdentifier` (ADR-052) once the
+// CAL exposes it for TRC10 tokens.
+const TRC10_ASSET_ID = /^\d+$/;
+
+function trc10AssetReference(token: TokenCurrency): string {
+  const [currencyId, standard, assetId, ...rest] = token.id.split("/");
+  if (
+    rest.length > 0 ||
+    currencyId !== token.parentCurrencyId ||
+    standard !== "trc10" ||
+    !assetId ||
+    !TRC10_ASSET_ID.test(assetId)
+  ) {
+    throw new Error(`Unexpected TRC10 token id, cannot derive asset id: ${token.id}`);
+  }
+  return assetId;
+}
+
+function trc10TokenId(currencyId: string, assetReference: string): string {
+  return `${currencyId}/trc10/${assetReference}`;
+}
+
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
   asset: AssetInfo,
@@ -46,18 +75,18 @@ export async function getTokenFromAsset(
     return undefined;
   }
   const store = getCryptoAssetsStore();
-  // TRC10 tokens are keyed by their numeric asset id (`<currency>/trc10/<id>`), TRC20 tokens by
-  // their contract address.
   if (asset.type === "trc10") {
-    return store.findTokenById(`${currency.id}/trc10/${asset.assetReference}`);
+    return store.findTokenById(trc10TokenId(currency.id, asset.assetReference));
   }
   return store.findTokenByAddressInCurrency(asset.assetReference, currency.id);
 }
 
 export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
+  const assetReference =
+    token.tokenType === "trc10" ? trc10AssetReference(token) : token.contractAddress;
   return {
     type: token.tokenType,
-    assetReference: token.contractAddress,
+    assetReference,
     assetOwner: owner,
     name: token.name,
     unit: token.units[0],

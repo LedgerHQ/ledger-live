@@ -34,13 +34,13 @@ import {
   type AddAddressInputSource,
 } from "@features/flow-contacts-add-address";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
-  createMeDisplayNameFormatter,
+  useContactDisplayName,
   resolveEligibleAddressCurrencyIds,
-  useContacts,
   useContactsFeature,
   useContactsMeContact,
-  type OtherContactAddress,
+  useOtherContactsAddresses,
 } from "@features/platform-contacts";
 import {
   useContactsIntentsOrchestrator,
@@ -56,7 +56,6 @@ import type { BaseNavigationComposite } from "~/components/RootNavigator/types/h
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
@@ -119,18 +118,16 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     onClose: onCloseAddressDetail,
   } = useContactAddressDetailDialog(populatedContactDetail);
   const contact = populatedContactDetail?.contact ?? emptyContact;
-  const allContacts = useContacts();
   const addressValidation = useContactsAddressValidationAdapter();
-  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
-    () =>
-      allContacts.flatMap(c =>
-        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
-      ),
-    [allContacts],
-  );
+  const allContactsAddresses = useOtherContactsAddresses();
   const eligibleNetworkIds = useMemo(
     () =>
-      resolveEligibleAddressCurrencyIds(eligibleAddressFamilies, undefined, excludedCurrencyIds),
+      resolveEligibleAddressCurrencyIds(
+        eligibleAddressFamilies,
+        undefined,
+        excludedCurrencyIds,
+        resolveCurrencyConfig,
+      ),
     [eligibleAddressFamilies, excludedCurrencyIds],
   );
   const {
@@ -157,11 +154,14 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
       isCompletingAddressConfirmation.current = true;
       try {
+        const config = resolveCurrencyConfig(flowState.selectedCurrencyId);
+
         const signedAddress = await deviceIntents.registerExternalAddress({
           contact,
           currencyId: flowState.selectedCurrencyId,
           label: flowState.addressLabel.label,
           address: flowState.addressEntry.resolvedAddress,
+          config,
         });
         const address = contactAddress({
           id: `address-${uuid()}`,
@@ -336,17 +336,11 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
       myAddresses: t("contacts.detail.myAddresses"),
-      formatMeDisplayName: createMeDisplayNameFormatter(t("contacts.me.myAddresses"), name =>
-        t("contacts.detail.meDisplayName", { name }),
-      ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
   );
-  const detailSharedState = useContactDetailSharedState(
-    route.params.contactId,
-    labels.formatMeDisplayName,
-  );
+  const detailSharedState = useContactDetailSharedState(route.params.contactId);
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogNativeLabels>(
     () => ({
       send: t("contacts.addressDetail.send"),
@@ -446,6 +440,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     }
   }, [navigation, shouldRedirect]);
 
+  const getDisplayName = useContactDisplayName();
+
   if (shouldRedirect) {
     return { status: "redirecting" };
   }
@@ -453,7 +449,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const pageProps: ContactDetailViewProps = {
     contact,
     labels,
-    meAvatarSrc: USER_AVATAR_URL,
     onAddAddress,
     ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
     onLedgerWalletAccountsPress,
@@ -483,7 +478,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     pageProps,
     addressDetailDialog: {
       isOpen,
-      contactName: contact.name,
+      contactName: getDisplayName(contact),
       row: selection?.row,
       network: selection?.network,
       labels: addressDetailDialogLabels,

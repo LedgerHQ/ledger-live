@@ -3,14 +3,18 @@ import {
   useTrackGenericDAppTransactionSend,
   UseTrackGenericDAppTransactionSend,
 } from "./useTrackGenericDAppTransactionSend";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { CantOpenDevice, LockedDeviceError } from "@ledgerhq/hw-transport/errors";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { UserRefusedAllowManager } from "@ledgerhq/live-common/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-jest.mock("../segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+}));
+
+jest.mock("../segment", () => ({
   setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
@@ -53,7 +57,7 @@ describe("useTrackGenericDAppTransactionSend", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -74,7 +78,7 @@ describe("useTrackGenericDAppTransactionSend", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -97,7 +101,7 @@ describe("useTrackGenericDAppTransactionSend", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -121,7 +125,7 @@ describe("useTrackGenericDAppTransactionSend", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -152,7 +156,7 @@ describe("useTrackGenericDAppTransactionSend", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -171,7 +175,7 @@ describe("useTrackGenericDAppTransactionSend", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -190,7 +194,7 @@ describe("useTrackGenericDAppTransactionSend", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -209,7 +213,7 @@ describe("useTrackGenericDAppTransactionSend", () => {
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
       }),
-      true,
+      { mandatory: true },
     );
   });
 });

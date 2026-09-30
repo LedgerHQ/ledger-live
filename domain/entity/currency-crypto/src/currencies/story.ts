@@ -37,9 +37,6 @@ export const story = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 1514,
-  },
   explorerViews: [
     {
       tx: "https://www.storyscan.io/tx/$hash",

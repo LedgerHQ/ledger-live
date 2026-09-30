@@ -2,10 +2,14 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import StakeBanner from "../StakeBanner";
 import { createMockMinaAccount, createDelegatingMinaAccount } from "./testUtils";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useFeature } from "@features/platform-feature-flags";
 
-jest.mock("~/renderer/analytics/segment");
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 jest.mock("@features/platform-feature-flags");
 const mockUseFeature = jest.mocked(useFeature);

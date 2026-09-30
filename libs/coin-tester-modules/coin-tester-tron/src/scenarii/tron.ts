@@ -445,12 +445,14 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
     await delegateBandwidth(funder, recipient.address, DELEGATED_SUN);
     [witnessAddress] = await listWitnessAddresses();
 
-    trc10Token = makeTrc10Token(trc10);
+    trc10Token = makeTrc10Token(trc10, funder.address);
     trc20Token = makeTrc20Token(trc20);
     registerTronTokensInMockStore(trc10Token, trc20Token);
 
     const localConfig = {
       status: { type: "active" as const },
+      name: "Tron",
+      unit: { name: "TRX", code: "TRX", magnitude: 6 },
       explorer: { url: TRON_LOCAL_RPC },
     };
     LiveConfig.setConfig({

@@ -26,7 +26,12 @@ const infra = {
   API_NEARBLOCKS_INDEXER: "https://near-indexer.coin.ledger.com",
 };
 
-const config = () => ({ status: { type: "active" as const }, infra });
+const config = () => ({
+  status: { type: "active" as const },
+  name: "NEAR",
+  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
+  infra,
+});
 
 const ACCOUNT = "nearkat.near";
 const NAMED_RECIPIENT = "recipient.near";
@@ -121,7 +126,7 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
     120_000,
   );
 
-  it("charges the higher gas for a withdraw-all on both paths", async () => {
+  it("charges the same gas for a withdraw-all and a partial withdraw on both paths", async () => {
     const intent = {
       ...sendIntent(POOL),
       intentType: "staking" as const,
@@ -139,7 +144,7 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
     const partial = await api.estimateFees(context, { ...intent, useAllAmount: false } as never);
 
     expect(fromApi.value).toBe(BigInt(fromBridge.toFixed(0)));
-    expect(fromApi.value).toBeGreaterThan(partial.value);
+    expect(fromApi.value).toBe(partial.value);
   }, 120_000);
 
   it("prices without preloaded data, which the bridge path cannot do", async () => {

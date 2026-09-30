@@ -3,9 +3,15 @@ import { render, screen } from "@testing-library/react-native";
 import { CardArtwork } from "./CardArtwork.native";
 
 describe("CardArtwork (native)", () => {
-  it("should show the Visa logo when the card artwork renders", () => {
+  it("should render the card face", () => {
     render(<CardArtwork />);
 
-    expect(screen.getByLabelText("Visa")).toBeVisible();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
+  });
+
+  it("should fade the card face into the page when faded", () => {
+    render(<CardArtwork isFaded />);
+
+    expect(screen.getByTestId("card-visual-fade")).toBeOnTheScreen();
   });
 });

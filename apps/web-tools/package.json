@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.57.0",
+  "version": "0.58.0",
   "private": true,
   "browser": {
     "dns": false,
@@ -29,6 +29,7 @@
     "@devtools/transport-panel": "workspace:*",
     "@devtools/wire": "workspace:*",
     "@domain/api-currency-token": "workspace:*",
+    "@domain/api-market-countervalues": "workspace:*",
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-contact": "workspace:^",
@@ -36,6 +37,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:^",
     "@domain/entity-currency-token": "workspace:^",
+    "@domain/entity-market-countervalues": "workspace:^",
     "@domain/entity-recent-addresses": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",
     "@features/platform-currencies": "workspace:*",
@@ -53,7 +55,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
-    "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "catalog:",

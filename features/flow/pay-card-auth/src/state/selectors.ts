@@ -1,6 +1,6 @@
 import type { PayCardAuthState, PayCardAuthStatus } from "./types";
 
-type PayCardAuthStateRoot = {
+export type PayCardAuthStateRoot = {
   payCardAuth: PayCardAuthState;
 };
 
@@ -24,6 +24,10 @@ export function selectPendingLoginType(
  */
 export function selectCardAuthStatus(state: PayCardAuthStateRoot): PayCardAuthStatus {
   return state.payCardAuth.status;
+}
+
+export function selectIsCardSessionResolving(state: PayCardAuthStateRoot): boolean {
+  return state.payCardAuth.isSessionResolving;
 }
 
 /** True while a Card session is live. `CardLogin` hides on it, and `More` shows on it. */

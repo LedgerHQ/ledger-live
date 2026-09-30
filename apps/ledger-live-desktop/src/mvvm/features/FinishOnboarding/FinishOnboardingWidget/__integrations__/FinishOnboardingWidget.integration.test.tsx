@@ -4,12 +4,17 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId, type PostOnboardingState } from "@ledgerhq/types-live";
 import { initialState as postOnboardingInitialState } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import FinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog";
 import FinishOnboardingWidget from "LLD/features/FinishOnboarding/FinishOnboardingWidget";
 import { ProductTourDialog, useProductTourDialogViewModel } from "LLD/features/ProductTour/Drawer";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const mockNavigate = jest.fn();
 

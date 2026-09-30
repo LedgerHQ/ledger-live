@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
-import { useFeature, useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
+import { getApp } from "@react-native-firebase/app";
+import { useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
 import {
   FEATURE_FLAGS_DEFAULTS,
   FeatureIdSchema,
@@ -116,10 +117,8 @@ export default function DebugFeatureFlags() {
     [filteredGroups, focusedGroupName],
   );
 
-  const config = useFeature("firebaseEnvironmentReadOnly");
-  const params = config?.params;
-  const project =
-    params !== null && typeof params === "object" && "project" in params ? params.project : "";
+  // From the bundled Firebase config: the remote flag value is set by hand and can be wrong.
+  const project = getApp().options.projectId;
 
   const additionalInfo = <Alert title={addFlagHint} type="hint" noIcon />;
   const keyboardBehavior = Platform.OS === "ios" ? "padding" : "height";

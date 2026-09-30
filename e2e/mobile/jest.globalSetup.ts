@@ -1,4 +1,8 @@
 import "@shared/env";
+import {
+  CARD_SESSION_BOOTSTRAP_ENV,
+  resolveCardSessionBootstrap,
+} from "@ledgerhq/baanx-test-client";
 import { globalSetup } from "detox/runners/jest";
 import { log } from "detox";
 import { session as detoxSession, config as detoxConfig } from "detox/internals";
@@ -11,12 +15,17 @@ import {
   getSpeculosModel,
 } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
+import { runIncludesPaytabSpec } from "@e2e/utils/paytab";
 import { ARTIFACTS_DIR, SPECULOS_TRACKING_FILE_PATTERN } from "@e2e/utils/speculosUtils";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import type { Config } from "@jest/types";
 import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
 
-export default async function setup(): Promise<void> {
+export default async function setup(
+  globalConfig: Config.GlobalConfig,
+  projectConfig: Config.ProjectConfig,
+): Promise<void> {
   const envFileName = process.env.ENV_FILE || ".env.mock";
   const envFile = path.join(__dirname, "../../apps/ledger-live-mobile", envFileName);
   try {
@@ -64,6 +73,14 @@ export default async function setup(): Promise<void> {
     log.info(
       `[globalSetup] Last retry detected (attempt ${testSessionIndex + 1}/${maxRetries + 1}), video recording enabled`,
     );
+  }
+
+  if (process.env.CI && runIncludesPaytabSpec(globalConfig, projectConfig)) {
+    // Create a card session before workers start to avoid rate limiting errors.
+    // CI passes explicit spec paths; local name filters resolve after globalSetup instead and authenticate lazily in launchApp.
+    log.warn("[globalSetup] Creating a card session for the run...");
+    process.env[CARD_SESSION_BOOTSTRAP_ENV] = await resolveCardSessionBootstrap();
+    log.warn("[globalSetup] Card session created.");
   }
 }
 

@@ -58,6 +58,12 @@ function startRegisterExternalAddress(
     currencyId: address.currencyId,
     label: address.label,
     address: address.address,
+    config: {
+      status: { type: "active" as const },
+      name: "Ethereum",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
+      chainId: 1,
+    },
   });
 
   return { address, contact, credentials: contact.deviceCredentials, promise };
@@ -194,7 +200,10 @@ describe("useContactsIntentsOrchestrator", () => {
     // WHEN
     act(() => {
       dieProps.intent.onResult?.(registerExternalAddressSuccessResult(request));
-      dieProps.intent.onResult?.({ type: "failure", error: new Error("late failure") });
+      dieProps.intent.onResult?.({
+        type: "failure",
+        error: new Error("late failure"),
+      });
       dieProps.intent.onJobComplete?.();
     });
 
@@ -306,7 +315,10 @@ describe("useContactsIntentsOrchestrator", () => {
     // WHEN
     act(() => {
       dieProps.onUserCancel();
-      dieProps.intent.onResult?.({ type: "failure", error: new Error("late failure") });
+      dieProps.intent.onResult?.({
+        type: "failure",
+        error: new Error("late failure"),
+      });
       dieProps.intent.onJobError?.(new Error("late job error"));
     });
 
@@ -354,7 +366,10 @@ describe("useContactsIntentsOrchestrator initializerConfig", () => {
   it("GIVEN an injected live-config floor lower than the Contacts floor WHEN an intent is active THEN it enforces the Contacts floor", async () => {
     // GIVEN
     const { result } = renderHook(() =>
-      useContactsIntentsOrchestrator({ intents, getLiveConfigMinVersion: () => "0.0.1" }),
+      useContactsIntentsOrchestrator({
+        intents,
+        getLiveConfigMinVersion: () => "0.0.1",
+      }),
     );
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {
@@ -375,7 +390,10 @@ describe("useContactsIntentsOrchestrator initializerConfig", () => {
   it("GIVEN an injected live-config floor higher than the Contacts floor WHEN an intent is active THEN it enforces the live-config floor", async () => {
     // GIVEN
     const { result } = renderHook(() =>
-      useContactsIntentsOrchestrator({ intents, getLiveConfigMinVersion: () => "999.0.0" }),
+      useContactsIntentsOrchestrator({
+        intents,
+        getLiveConfigMinVersion: () => "999.0.0",
+      }),
     );
     let request!: ReturnType<typeof startRegisterExternalAddress>;
     act(() => {

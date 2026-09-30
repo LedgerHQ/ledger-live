@@ -50,7 +50,7 @@ export function createRegisterExternalAddressOperation(
   IntentResult,
   PortResult
 > {
-  const context = resolveContactDeviceContext(input.currencyId);
+  const context = resolveContactDeviceContext(input.currencyId, input.config);
 
   return {
     intentDefinition,

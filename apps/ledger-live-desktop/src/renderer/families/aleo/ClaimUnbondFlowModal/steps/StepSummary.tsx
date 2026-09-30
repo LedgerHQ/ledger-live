@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getClaimableStakingBalance } from "@ledgerhq/live-common/families/aleo/utils";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

@@ -9,7 +9,10 @@ import { makeRawQuote } from "../fixtures/rawQuotes";
 import { getSwapQuotesDispatch, resetSwapQuotesStore } from "./store";
 import { setupStandaloneSwapQuotesStore } from "./store.standalone";
 
-const API_EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-1.0.0" };
+const API_EXTRA = {
+  getSwapApiBaseUrl: () => "https://swap.test",
+  ledgerClientVersion: "test-1.0.0",
+};
 
 describe("setupStandaloneSwapQuotesStore", () => {
   const server = setupServer();
@@ -31,8 +34,14 @@ describe("setupStandaloneSwapQuotesStore", () => {
     expect(getSwapQuotesDispatch()).toBe(store.dispatch);
   });
 
-  it("rejects a config whose values resolved to empty strings", () => {
-    expect(() => setupStandaloneSwapQuotesStore({ ...API_EXTRA, swapApiBaseUrl: "" })).toThrow();
+  it("rejects a config whose base url is not a getter function", () => {
+    expect(() =>
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      setupStandaloneSwapQuotesStore({
+        ...API_EXTRA,
+        getSwapApiBaseUrl: "https://swap.test",
+      } as never),
+    ).toThrow();
   });
 
   it("wires a working store the fetchQuotes endpoint can run against", async () => {

@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/postOnboarding/actions";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setHasRedirectedToPostOnboarding } from "~/renderer/actions/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   closeFinishPostOnboarding,
   selectIsFinishPostOnboardingOpen,

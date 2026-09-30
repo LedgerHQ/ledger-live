@@ -15,8 +15,6 @@ import {
   setExtraPropsFn,
   setMandatoryExtraPropsFn,
   setPropsFilter,
-  track as sharedTrack,
-  trackPage as sharedTrackPage,
 } from "@shared/analytics";
 import type { EventType } from "@shared/analytics";
 import { getDefaultAccountName } from "@domain/entity-account-name";
@@ -193,6 +191,7 @@ const getPtxAttributes = () => {
   const ptxSwapLiveAppOnAsset = analyticsFeatureFlagMethod("ptxSwapLiveAppOnAsset");
   const ptxBorrowLiveApp = analyticsFeatureFlagMethod("ptxBorrowLiveApp");
   const stableSavings = analyticsFeatureFlagMethod("stableSavings");
+  const ptxEarnCtaOnMobile = analyticsFeatureFlagMethod("ptxEarnCtaOnMobile");
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -235,6 +234,7 @@ const getPtxAttributes = () => {
     ptxSwapLiveAppOnAsset: ptxSwapLiveAppOnAsset?.enabled,
     borrowFeature: !!ptxBorrowLiveApp?.enabled,
     stableSavings: !!stableSavings?.enabled,
+    ptxEarnCtaOnMobile: !!ptxEarnCtaOnMobile?.enabled,
     stablecoinYield,
     bitcoinYield,
     ethDepositScreen,
@@ -299,6 +299,9 @@ const extraProperties = (store: ReduxStore) => {
     : { enabled: false };
   const ldmkPolkadotSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkPolkadotSigner")
+    : { enabled: false };
+  const ldmkTronSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkTronSigner")
     : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
@@ -403,6 +406,7 @@ const extraProperties = (store: ReduxStore) => {
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,
+    isLDMKTronSignerEnabled: ldmkTronSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
@@ -579,61 +583,3 @@ export const updateIdentify = async ({ force }: UpdateIdentifyOptions = { force:
 };
 /** Ensure PTX flag attributes are set as soon as feature flags load */
 runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), updateIdentify);
-
-export const track = (
-  eventName: string,
-  properties?: Record<string, unknown> | null,
-  mandatory?: boolean | null,
-) => {
-  sharedTrack(eventName, properties, { mandatory: !!mandatory });
-};
-
-/**
- * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
- * Extra logic to update the route names used in "screen" and "source"
- * properties of further events can be optionally enabled with the parameters
- * `updateRoutes` and `refreshSource`.
- */
-export const trackPage = (
-  /**
-   * First part of the event name string
-   */
-  category: string,
-  /**
-   * Second part of the event name string, will be concatenated to `category`
-   * after a whitespace if defined.
-   */
-  name?: string | null,
-  /**
-   * Event properties
-   */
-  properties?: Record<string, unknown> | null,
-  /**
-   * Should this function call update the previous & current route names.
-   * Previous and current route names are used to track:
-   * - the `screen` property in non-screen events (for instance `button_clicked` events)
-   * - the `source` property in further screen events
-   */
-  updateRoutes?: boolean,
-  /**
-   * Should this function call update the current route name.
-   * If true, it means that the full screen name (`category` + " " + `name`) will
-   * be used as a "source" property for further screen events.
-   * NB: the previous parameter `updateRoutes` must be true for this to have
-   * any effect.
-   */
-  refreshSource?: boolean,
-  /**
-   * When true, event will be sent even if standard analytics tracking is disabled.
-   */
-  mandatory?: boolean,
-) => {
-  sharedTrackPage(
-    { category, name, props: properties },
-    {
-      updateRoutes: !!updateRoutes,
-      refreshSource: !!refreshSource,
-      mandatory: !!mandatory,
-    },
-  );
-};

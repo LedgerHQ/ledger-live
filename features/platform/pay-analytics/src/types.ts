@@ -22,6 +22,7 @@ export interface PayAnalyticsHelper {
     flow?: string;
     asset?: string;
     currency?: string;
+    hint?: string;
   }): void;
   trackSuccessfulCardLogin(payload: { type: "signin" | "signup" }): void;
   trackCardClaimed(): void;

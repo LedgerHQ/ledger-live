@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-zcash",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "sideEffects": false,
   "description": "Ledger Zcash Coin Tester",
@@ -61,7 +61,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
-    "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/live-signer-zcash": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",

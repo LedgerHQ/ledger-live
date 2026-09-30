@@ -1,4 +1,5 @@
-import { getZainoEndpoint } from "../../constants";
+import type { ZcashContext } from "../../config";
+import { zainoEndpoint, type ZainoEndpoint } from "../../constants";
 import { getZCashClient } from "../engineClient";
 import type {
   BuildIronwoodTransactionResult,
@@ -25,10 +26,11 @@ export type IronwoodCraftPlan = CraftPlan & { ufvk: string };
  * points below differ only in which one they call.
  */
 async function resolveCraft(
+  endpoint: ZainoEndpoint,
   plan: CraftPlan,
 ): Promise<{ client: ZCashClient; args: Omit<BuildTransactionArgs, "requestId"> }> {
-  const { grpcUrl, network } = getZainoEndpoint();
-  const client = await getZCashClient({ grpcUrl, network });
+  const { grpcUrl, network } = endpoint;
+  const client = await getZCashClient(endpoint);
 
   return {
     client,
@@ -62,8 +64,13 @@ async function resolveCraft(
  * this covers every flow whose bundles the format can express: transparent-only
  * and Orchard. An Ironwood bundle needs a V6, hence `craftIronwoodTransaction`.
  */
-export async function craftTransaction(plan: CraftPlan): Promise<BuildTransactionResult> {
-  const { client, args } = await resolveCraft(plan);
+export async function craftTransaction(
+  context: ZcashContext,
+  currencyId: string,
+  plan: CraftPlan,
+): Promise<BuildTransactionResult> {
+  const { zaino } = await context.config(currencyId);
+  const { client, args } = await resolveCraft(zainoEndpoint(zaino.url), plan);
 
   if (!client.buildTransaction) {
     throw new Error("Shielded Zcash transactions are not supported in this environment");
@@ -81,9 +88,12 @@ export async function craftTransaction(plan: CraftPlan): Promise<BuildTransactio
  * Ironwood commitment tree), so Orchard notes must not be routed here.
  */
 export async function craftIronwoodTransaction(
+  context: ZcashContext,
+  currencyId: string,
   plan: IronwoodCraftPlan,
 ): Promise<BuildIronwoodTransactionResult> {
-  const { client, args } = await resolveCraft(plan);
+  const { zaino } = await context.config(currencyId);
+  const { client, args } = await resolveCraft(zainoEndpoint(zaino.url), plan);
 
   if (!client.buildIronwoodTransaction) {
     throw new Error("Zcash V6 (Ironwood) transactions are not supported in this environment");

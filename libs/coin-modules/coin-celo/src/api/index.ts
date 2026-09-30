@@ -1,4 +1,4 @@
-import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api/index";
+import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
   Balance,

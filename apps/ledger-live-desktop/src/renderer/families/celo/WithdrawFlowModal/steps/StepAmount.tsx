@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/celo/types";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
@@ -14,7 +14,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import * as S from "./StepAmount.styles";
 import { StepProps } from "../types";
-import { fromNow } from "~/renderer/hooks/useDateFormatter";
+import { dayAndHourFormat, fromNow, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 export const StepAmountFooter = ({
   transitionTo,
@@ -66,6 +66,7 @@ const StepAmount = ({
   );
 
   const unit = useAccountUnit(account);
+  const formatDate = useDateFormatter(dayAndHourFormat);
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const onChange = useCallback(
     (index: number) => {
@@ -96,7 +97,16 @@ const StepAmount = ({
           const disabled = withdrawalTime > new Date();
           return (
             <S.SelectResource disabled={disabled} key={index}>
-              <Text ff="Inter|SemiBold"></Text>
+              <Text ff="Inter|SemiBold">
+                <Trans
+                  i18nKey={
+                    disabled
+                      ? "celo.withdraw.steps.amount.unlocksOn"
+                      : "celo.withdraw.steps.amount.unlockedOn"
+                  }
+                  values={{ date: formatDate(withdrawalTime) }}
+                />
+              </Text>
               <Box horizontal alignItems="center">
                 {disabled && (
                   <S.TimerWrapper>

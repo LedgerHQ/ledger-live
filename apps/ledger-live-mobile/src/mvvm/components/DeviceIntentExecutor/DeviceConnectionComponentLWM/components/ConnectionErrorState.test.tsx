@@ -10,14 +10,10 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { TrackScreen, track } from "~/analytics";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { urls } from "~/utils/urls";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
-import {
-  PAGE_CONNECT_DEVICE,
-  setIsInTerminalConnectDeviceError,
-  trackDeviceflowCanceled,
-} from "../../utils/trackDeviceIntent";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { ConnectionErrorState } from "./ConnectionErrorState";
 
 jest.mock("~/analytics", () => {
@@ -34,7 +30,7 @@ const mockedTrack = jest.mocked(track);
 
 type ConnectionErrorUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.ConnectionError }
+  { type: typeof ConnectDeviceUIStateTypes.ConnectionError }
 >;
 type ConnectionErrorType = ConnectionErrorUIState["error"]["type"];
 
@@ -94,10 +90,11 @@ function renderState(errorType: ConnectionErrorType) {
 describe("ConnectionErrorState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setIsInTerminalConnectDeviceError(false);
-    currentRouteNameRef.current = PAGE_CONNECT_DEVICE.ConnectionError;
+    setTrackingSource(PAGE_CONNECT_DEVICE.ConnectionError);
     jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
+
+  afterEach(resetTrackingPages);
 
   it.each(errorCases)("should render the $type error title and CTA", ({ type, title, cta }) => {
     renderState(type);
@@ -172,34 +169,14 @@ describe("ConnectionErrorState", () => {
     );
   });
 
-  it("GIVEN an unknown connection error WHEN cancelling THEN it tracks deviceflow_failed", () => {
-    // GIVEN
-    renderState(BaseConnectionErrorTypes.Unknown);
-    mockedTrack.mockClear();
-
-    // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
-
-    // THEN
-    expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
-      sourceFlow: "my_ledger",
-      deviceUxV2: true,
-    });
-  });
-
-  it("GIVEN a previous terminal discovery error WHEN rendering a retryable connection error and cancelling THEN it tracks deviceflow_aborted", () => {
-    // GIVEN
-    setIsInTerminalConnectDeviceError(true);
+  it("GIVEN a specific connection error WHEN rendering THEN it tracks its type as subError", () => {
+    // GIVEN / WHEN
     renderState(ConnectionErrorTypes.BlePairingRefused);
-    mockedTrack.mockClear();
-
-    // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
 
     // THEN
-    expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
-      sourceFlow: "my_ledger",
-      deviceUxV2: true,
-    });
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
+      expect.objectContaining({ subError: "ble-pairing-refused" }),
+      undefined,
+    );
   });
 });

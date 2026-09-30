@@ -4,6 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact } from "@domain/entity-contact/schema.mock";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { useSendHeaderModel } from "../useSendHeaderModel";
 
 jest.mock("../../../FlowWizard/FlowWizardContext", () => ({
@@ -17,12 +18,16 @@ jest.mock("~/renderer/reducers/wallet", () => ({
   ...jest.requireActual("~/renderer/reducers/wallet"),
   useMaybeAccountName: jest.fn(),
 }));
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
 jest.mock("LLD/hooks/redux");
 jest.mock("@features/platform-contacts", () => ({
+  useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).useContactDisplayName,
   isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
   ).isEligibleAddressCurrency,
@@ -39,6 +44,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasMemoForRecipient: jest.fn(() => true),
     getBalanceTypeConfig: jest.fn(() => null),
+    getTrackingAttributes: jest.fn(() => ({})),
   },
 }));
 jest.mock("../../context/RecipientContactSelectionContext", () => ({
@@ -59,13 +65,14 @@ jest.mock("../../context/SendFlowTrackingContext", () => ({
     setInputMethod: jest.fn(),
     setRecipientResolution: jest.fn(),
     markContactSaved: jest.fn(),
+    trackMessage: jest.fn(),
   })),
 }));
 
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { RecipientScannerProvider } from "../../context/RecipientScannerContext";
 import { useSelector } from "LLD/hooks/redux";
@@ -144,13 +151,15 @@ const mockData = (
 function renderHook(availableText = "", resetViewState = () => {}) {
   act(() => {
     root.render(
-      <RecipientScannerProvider>
-        <HookProbe
-          onResult={vm => (latestVM = vm)}
-          availableText={availableText}
-          resetViewState={resetViewState}
-        />
-      </RecipientScannerProvider>,
+      <ContactsI18nTestProvider>
+        <RecipientScannerProvider>
+          <HookProbe
+            onResult={vm => (latestVM = vm)}
+            availableText={availableText}
+            resetViewState={resetViewState}
+          />
+        </RecipientScannerProvider>
+      </ContactsI18nTestProvider>,
     );
   });
 }
@@ -429,6 +438,7 @@ describe("useSendHeaderModel", () => {
       expect(latestVM?.recipientContact).toEqual({
         id: "contact-benoit",
         name: "Benoit Jean",
+        isMe: false,
       });
       expect(latestVM?.addressInputValue).toBe("Benoit Jean");
     });

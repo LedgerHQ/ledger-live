@@ -94,7 +94,7 @@ export function makeCosmosScenario(
   const coinType = currency.coinType;
 
   // Override coin-cosmos's default config: point sync + broadcast at the local
-  // node. Runtime shape is flat (CosmosCurrencyConfig + status); the declared
+  // node. Runtime shape is flat (CosmosCurrencyConfig + status/name/unit); the declared
   // CosmosCoinConfig type wraps everything in ConfigInfo, which is what LiveConfig
   // stores but NOT what `() => config` returns (chain.ts spreads coinConfig as
   // flat fields).
@@ -102,7 +102,13 @@ export function makeCosmosScenario(
     lcd: LOCAL_LCD,
     minGasPrice,
     status: { type: "active" as const },
-  } satisfies CosmosCurrencyConfig & { status: { type: "active" } };
+    name: currency.name,
+    unit,
+  } satisfies CosmosCurrencyConfig & {
+    status: { type: "active" };
+    name: string;
+    unit: typeof unit;
+  };
 
   const mockServer = setupServer();
   // Populated in setup() before getTransactions() runs. Closure-scoped per

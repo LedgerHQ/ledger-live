@@ -1,7 +1,7 @@
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { Platform } from "react-native";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { useSwapWebviewProps } from "../useSwapWebviewProps";
 import { useSwapCustomHandlers } from "../../customHandlers";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
@@ -23,10 +23,6 @@ jest.mock("~/components/WebPlatformPlayer/CustomHandlers", () => ({
   useDeeplinkCustomHandlers: jest.fn(() => ({ "custom.deeplink": jest.fn() })),
 }));
 
-jest.mock("~/analytics/screenRefs", () => ({
-  currentRouteNameRef: { current: "SwapTab" },
-}));
-
 const STUB_MANIFEST = {
   id: "swap-test",
   url: "https://swap.test",
@@ -40,10 +36,12 @@ describe("useSwapWebviewProps", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (currentRouteNameRef as { current: string | null }).current = "SwapTab";
+    setTrackingSource("SwapTab");
     mockedUseSwapCustomHandlers.mockReturnValue({ "custom.getFee": jest.fn() } as never);
     mockedUseDeeplinkCustomHandlers.mockReturnValue({ "custom.deeplink": jest.fn() } as never);
   });
+
+  afterEach(resetTrackingPages);
 
   it("should pass resetWebview to useSwapCustomHandlers", () => {
     renderHook(() =>
@@ -126,7 +124,7 @@ describe("useSwapWebviewProps", () => {
     expect(result.current.inputs.discreetMode).toBe("true");
   });
 
-  it("should include source from currentRouteNameRef in inputs", () => {
+  it("should include the current tracking page as source in inputs", () => {
     const { result } = renderHook(() =>
       useSwapWebviewProps({
         manifest: STUB_MANIFEST,
@@ -151,8 +149,8 @@ describe("useSwapWebviewProps", () => {
     expect(result.current).toHaveProperty("inputs");
   });
 
-  it("should use empty string as source when currentRouteNameRef is null", () => {
-    (currentRouteNameRef as { current: string | null }).current = null;
+  it("should use empty string as source when the current tracking page is unset", () => {
+    setTrackingSource();
     const { result } = renderHook(() =>
       useSwapWebviewProps({
         manifest: STUB_MANIFEST,

@@ -69,6 +69,7 @@ export const scenarioBase: Scenario<GenericTransaction, Account> = {
       },
       chainId: 8453,
       name: "Base",
+      unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
         uri: "http://127.0.0.1:8545",
@@ -105,7 +106,7 @@ export const scenarioBase: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: () => makeScenarioTransactions(),
   beforeSync: async () => {
-    await indexBlocks(base.ethereumLikeInfo?.chainId || 8453);
+    await indexBlocks(8453);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());

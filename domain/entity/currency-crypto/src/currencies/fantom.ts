@@ -37,9 +37,6 @@ export const fantom = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 250,
-  },
   explorerViews: [
     {
       tx: "https://web3.okx.com/explorer/fantom/tx/$hash",

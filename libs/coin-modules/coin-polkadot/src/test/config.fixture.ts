@@ -3,6 +3,8 @@ import type { PolkadotCoinConfig, PolkadotContext } from "../config";
 /** A resolved Polkadot config for tests. */
 export const polkadotMainnetConfigValue: PolkadotCoinConfig = {
   status: { type: "active" },
+  name: "Polkadot",
+  unit: { name: "DOT", code: "DOT", magnitude: 10 },
   node: { url: "https://polkadot.mock/node" },
   sidecar: { url: "https://polkadot.mock/sidecar" },
   indexer: { url: "https://polkadot.mock/indexer" },

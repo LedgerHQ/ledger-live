@@ -7,7 +7,7 @@ import type { Unit } from "@domain/entity-currency-unit";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
-import * as stakingIndex from "@ledgerhq/coin-evm/staking/index";
+import * as stakingIndex from "@ledgerhq/coin-evm/staking";
 import * as accountModule from "../../../account";
 import {
   useEvmStakingValidators,
@@ -18,8 +18,8 @@ import {
 } from "./react";
 import { GenericTransaction } from "bridge/generic-coin-framework/types";
 
-jest.mock("@ledgerhq/coin-evm/staking/index", () => {
-  const actual = jest.requireActual("@ledgerhq/coin-evm/staking/index");
+jest.mock("@ledgerhq/coin-evm/staking", () => {
+  const actual = jest.requireActual("@ledgerhq/coin-evm/staking");
   return {
     ...actual,
     getValidators: jest.fn(),
@@ -30,9 +30,14 @@ jest.mock("../../../account", () => ({
   getAccountCurrency: jest.fn(),
 }));
 
-// The hook resolves EVM config via getCurrencyConfiguration and passes it to getValidators.
+// The hook resolves EVM config via buildContext (backed by getCurrencyConfiguration) and passes it to getValidators.
 jest.mock("../../../config", () => ({
-  getCurrencyConfiguration: jest.fn(() => ({ status: { type: "active" } })),
+  getCurrencyConfiguration: jest.fn((currencyId: string) => {
+    const currency = jest
+      .requireActual("@domain/entity-currency-crypto")
+      .getCryptoCurrencyById(currencyId);
+    return { status: { type: "active" }, name: currency.name, unit: currency.units[0] };
+  }),
 }));
 
 const mockedGetValidators = jest.mocked(stakingIndex.getValidators);
@@ -59,7 +64,12 @@ describe("useEvmStakingValidators", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(mockedGetValidators).toHaveBeenCalledWith(expect.anything(), "sei_evm", undefined);
+    expect(mockedGetValidators).toHaveBeenCalledWith(
+      expect.anything(),
+      "sei_evm",
+      expect.any(Function),
+      undefined,
+    );
     expect(result.current.error).toBeNull();
     expect(result.current.validators.map(v => v.validatorAddress)).toEqual(["addr-c", "addr-a"]);
   });
@@ -74,8 +84,20 @@ describe("useEvmStakingValidators", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(mockedGetValidators).toHaveBeenCalledTimes(2);
-    expect(mockedGetValidators).toHaveBeenNthCalledWith(1, expect.anything(), "sei_evm", undefined);
-    expect(mockedGetValidators).toHaveBeenNthCalledWith(2, expect.anything(), "sei_evm", "1");
+    expect(mockedGetValidators).toHaveBeenNthCalledWith(
+      1,
+      expect.anything(),
+      "sei_evm",
+      expect.any(Function),
+      undefined,
+    );
+    expect(mockedGetValidators).toHaveBeenNthCalledWith(
+      2,
+      expect.anything(),
+      "sei_evm",
+      expect.any(Function),
+      "1",
+    );
     expect(result.current.validators.map(v => v.validatorAddress)).toEqual(["addr-c", "addr-a"]);
   });
 
