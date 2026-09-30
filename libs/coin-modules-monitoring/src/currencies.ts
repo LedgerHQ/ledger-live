@@ -208,7 +208,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     },
     tron: {
       accounts: {
-        pristine: { address: "TKttnV3NSMA8AqZKpnjFAUFsWsAGdgT5YG" },
+        pristine: { address: "TDcjxTKqWmStKaobhwkqtknqX1GC6vVtXV" },
         average: { address: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7" },
         big: { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH" },
       },
