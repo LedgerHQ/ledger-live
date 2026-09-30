@@ -178,6 +178,7 @@
       "TRANSFER_REJECTED": "Transfer rejected",
       "TRANSFER_WITHDRAWN": "Transfer withdrawn",
       "VOTE": "Voted",
+      "DELEGATE_VOTE": "Vote delegated",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
       "UNDELEGATE_RESOURCE": "Undelegated",

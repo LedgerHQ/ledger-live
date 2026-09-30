@@ -465,7 +465,7 @@ describe("mapTxToAccountOperation", () => {
           { stakeKeyDeposit: "1" } as any,
         );
 
-        expect(op.type).toBe("VOTE");
+        expect(op.type).toBe("DELEGATE_VOTE");
         expect(op.extra.vote).toBe("ABSTAIN");
       });
 
@@ -492,7 +492,7 @@ describe("mapTxToAccountOperation", () => {
           { stakeKeyDeposit: "1" } as any,
         );
 
-        expect(op.type).toBe("VOTE");
+        expect(op.type).toBe("DELEGATE_VOTE");
         expect(op.extra.vote).toBe("NO CONFIDENCE");
       });
 
@@ -519,11 +519,11 @@ describe("mapTxToAccountOperation", () => {
           { stakeKeyDeposit: "1" } as any,
         );
 
-        expect(op.type).toBe("VOTE");
+        expect(op.type).toBe("DELEGATE_VOTE");
         expect(op.extra.vote).toBe("mockDrepHex");
       });
 
-      it("should not map vote delegation of another stake key as VOTE", async () => {
+      it("should not map vote delegation of another stake key as DELEGATE_VOTE", async () => {
         const op = mapTxToAccountOperation(
           {
             ...mockTxResult,
@@ -546,7 +546,7 @@ describe("mapTxToAccountOperation", () => {
           { stakeKeyDeposit: "1" } as any,
         );
 
-        expect(op.type).not.toBe("VOTE");
+        expect(op.type).not.toBe("DELEGATE_VOTE");
         expect(op.extra.vote).toBeUndefined();
       });
 
@@ -583,7 +583,7 @@ describe("mapTxToAccountOperation", () => {
           { stakeKeyDeposit: "1" } as any,
         );
 
-        expect(op.type).toBe("VOTE");
+        expect(op.type).toBe("DELEGATE_VOTE");
         expect(op.extra.vote).toBe("mockDrepHex");
       });
 

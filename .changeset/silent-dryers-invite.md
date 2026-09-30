@@ -1,4 +1,6 @@
 ---
+"@ledgerhq/types-live": minor
+"@ledgerhq/ledger-wallet-framework": minor
 "@ledgerhq/coin-cardano": minor
 "@ledgerhq/live-common": minor
 "@domain/entity-currency-crypto": minor

@@ -219,7 +219,7 @@ describe("buildOptimisticOperation", () => {
 
         const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
-        expect(operation.type).toBe("VOTE");
+        expect(operation.type).toBe("DELEGATE_VOTE");
         expect(operation.extra.vote).toBe("ABSTAIN");
       });
 
@@ -245,7 +245,7 @@ describe("buildOptimisticOperation", () => {
 
         const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
-        expect(operation.type).toBe("VOTE");
+        expect(operation.type).toBe("DELEGATE_VOTE");
         expect(operation.extra.vote).toBe("NO CONFIDENCE");
       });
 
@@ -274,11 +274,11 @@ describe("buildOptimisticOperation", () => {
 
         const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
-        expect(operation.type).toBe("VOTE");
+        expect(operation.type).toBe("DELEGATE_VOTE");
         expect(operation.extra.vote).toBe("22testDRep");
       });
 
-      it("should not identify a vote delegation for a foreign stake credential as VOTE", () => {
+      it("should not identify a vote delegation for a foreign stake credential as DELEGATE_VOTE", () => {
         jest.mocked(getOperationType).mockReturnValue("FEES");
         const mockUnsignedTx = createMockUnsignedTx({
           certificates: [

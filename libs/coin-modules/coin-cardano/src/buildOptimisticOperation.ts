@@ -220,7 +220,7 @@ export const buildOptimisticOperation = (
   ) {
     opType = "UNDELEGATE";
   } else if (walletVoteDelegation) {
-    opType = "VOTE";
+    opType = "DELEGATE_VOTE";
   } else {
     opType = getOperationType({
       valueChange: operationValue,

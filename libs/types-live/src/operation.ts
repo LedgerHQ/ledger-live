@@ -77,7 +77,9 @@ export type OperationType =
   | "SHIELDED_TX_INTERNAL"
   // INTERNET COMPUTER
   | "STAKE_NEURON"
-  | "TOP_UP_NEURON";
+  | "TOP_UP_NEURON"
+  // CARDANO
+  | "DELEGATE_VOTE";
 
 export type OperationExtra = unknown;
 /**

@@ -276,7 +276,7 @@ export function mapTxToAccountOperation(
   ) {
     mainOperationType = "UNDELEGATE";
   } else if (vote) {
-    mainOperationType = "VOTE";
+    mainOperationType = "DELEGATE_VOTE";
   } else {
     mainOperationType = getOperationType({
       valueChange: operationValue,
