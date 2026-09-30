@@ -18,9 +18,17 @@ const SORT_LABEL: Record<CatalogSort, string> = {
   name_desc: "Name Z-A",
 };
 
+const BYTE_SIZE = /\d+(\.\d+)? (bytes|KB|MB)/;
+
 export class MyLedgerPage extends AppPage {
   private readonly storageCard = this.page.getByTestId("device-storage-card");
   private readonly deviceOptions = this.page.getByTestId("device-options-container");
+  private readonly osVersion = this.page.getByTestId("device-os-version");
+  private readonly genuineBadge = this.page.getByTestId("device-genuine-badge");
+  private readonly storageUsed = this.page.getByTestId("device-storage-used");
+  private readonly storageCapacity = this.page.getByTestId("device-storage-capacity");
+  private readonly storageAppsCount = this.page.getByTestId("device-storage-apps-count");
+  private readonly storageFree = this.page.getByTestId("device-storage-free");
 
   private readonly catalogTab = this.page.getByTestId("manager-app-catalog-tab");
   private readonly installedAppsTab = this.page.getByTestId("manager-installed-apps-tab");
@@ -68,6 +76,24 @@ export class MyLedgerPage extends AppPage {
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
     await expect(this.deviceOptions).toBeVisible();
+  }
+
+  /** The summary is read against the device under test, so it follows SPECULOS_DEVICE. */
+  @step("Expect the device summary to report $0")
+  async expectDeviceSummary(deviceName: string) {
+    await expect(this.storageCard).toContainText(deviceName);
+    await expect(this.osVersion).toContainText("OS version");
+    await expect(this.osVersion).toContainText(/\d+\.\d+/);
+    await expect(this.genuineBadge).toContainText("Ledger Genuine check");
+  }
+
+  /** Sizes are matched as a value and a unit, because the capacity differs per model. */
+  @step("Expect the device storage to report $0 installed apps")
+  async expectStorageSummary(appsCount: number) {
+    await expect(this.storageAppsCount).toHaveText(String(appsCount));
+    await expect(this.storageUsed).toHaveText(BYTE_SIZE);
+    await expect(this.storageCapacity).toHaveText(BYTE_SIZE);
+    await expect(this.storageFree).toContainText(BYTE_SIZE);
   }
 
   @step("Open the app catalog tab")
