@@ -1,8 +1,8 @@
 {
-  "name": "@features/platform-content-ab-tests",
-  "version": "0.1.0",
+  "name": "@features/platform-feature-flags-firebase",
+  "version": "0.0.0",
   "private": true,
-  "description": "English copy overrides from Remote Config content experiments",
+  "description": "Firebase Remote Config mapping for feature flags: key naming, defaults formatting and payload parsing",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -13,26 +13,24 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/content-ab-tests"
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/feature-flags-firebase"
   },
   "dependencies": {
-    "@features/platform-feature-flags-firebase": "workspace:^",
-    "zod": "catalog:"
+    "@shared/feature-flags": "workspace:^",
+    "lodash": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "i18next": "catalog:",
+    "@types/lodash": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

@@ -1103,6 +1103,9 @@ importers:
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags
+      '@features/platform-feature-flags-firebase':
+        specifier: workspace:^
+        version: link:../../features/platform/feature-flags-firebase
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../features/platform/pay-analytics
@@ -1963,6 +1966,9 @@ importers:
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags
+      '@features/platform-feature-flags-firebase':
+        specifier: workspace:^
+        version: link:../../features/platform/feature-flags-firebase
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../features/platform/pay-analytics
@@ -8940,9 +8946,9 @@ importers:
 
   features/platform/content-ab-tests:
     dependencies:
-      '@features/platform-feature-flags':
+      '@features/platform-feature-flags-firebase':
         specifier: workspace:^
-        version: link:../feature-flags
+        version: link:../feature-flags-firebase
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -9206,9 +9212,6 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
-      lodash:
-        specifier: 'catalog:'
-        version: 4.17.21
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -9234,9 +9237,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 'catalog:'
-        version: 4.17.21
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -9255,6 +9255,40 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/platform/feature-flags-firebase:
+    dependencies:
+      '@shared/feature-flags':
+        specifier: workspace:^
+        version: link:../../../shared/feature-flags
+      lodash:
+        specifier: 'catalog:'
+        version: 4.17.21
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/lodash':
+        specifier: 'catalog:'
+        version: 4.17.21
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13965,6 +13999,9 @@ importers:
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags
+      '@features/platform-feature-flags-firebase':
+        specifier: workspace:^
+        version: link:../../features/platform/feature-flags-firebase
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../asset-aggregation

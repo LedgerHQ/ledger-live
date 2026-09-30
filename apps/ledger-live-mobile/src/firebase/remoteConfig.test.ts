@@ -16,8 +16,8 @@ const mockGetRemoteConfig = jest.fn(() => ({
 jest.mock("@react-native-firebase/remote-config", () => ({
   getRemoteConfig: () => mockGetRemoteConfig(),
 }));
-jest.mock("@features/platform-feature-flags", () => ({
-  DEFAULT_FEATURES: { mockFeature: { enabled: false } },
+jest.mock("@features/platform-feature-flags-firebase", () => ({
+  ...jest.requireActual("@features/platform-feature-flags-firebase"),
   formatDefaultFeatures: () => ({ feature_mock_feature: JSON.stringify({ enabled: false }) }),
 }));
 
