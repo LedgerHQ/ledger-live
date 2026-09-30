@@ -58,9 +58,8 @@ const DAPP_ACTIONS: Record<string, EarnTransactionType> = {
   claim: "claimReward",
   claimrewards: "claimReward",
   getreward: "claimReward",
-  // Kiln dedicated: sweeps a validator's consensus-layer rewards. After a full exit the same
-  // call also returns the principal, which the selector cannot tell apart.
-  batchwithdrawclfee: "claimReward",
+  // Not Kiln's `batchWithdrawCLFee`: it sweeps rewards, but after a validator exit the same call
+  // returns the principal, and the selector cannot tell the two apart.
 };
 
 /**

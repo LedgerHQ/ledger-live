@@ -89,7 +89,6 @@ describe("the dApp selector vocabulary", () => {
     ["requestWithdrawalsWithPermit", "withdraw"],
     ["completeWithdrawal", "withdraw"],
     ["requestRedeem", "redeem"],
-    ["batchWithdrawCLFee", "claimReward"],
   ])("maps %s to %s", (fn, action) => {
     expect(deriveDappAction(fn)).toBe(action);
   });
@@ -113,7 +112,9 @@ describe("the dApp selector vocabulary", () => {
     });
   });
 
-  it.each(["swap", "unoswap", "safeTransferFrom", "approve", "0xdeadbeef"])(
+  // `batchWithdrawCLFee` is a reward sweep or, after an exit, the principal. Either guess is
+  // wrong for some calls, so it stays unknown and countable by its raw name.
+  it.each(["swap", "unoswap", "safeTransferFrom", "approve", "batchWithdrawCLFee", "0xdeadbeef"])(
     "claims nothing for %s",
     fn => {
       expect(deriveDappAction(fn)).toBeUndefined();
