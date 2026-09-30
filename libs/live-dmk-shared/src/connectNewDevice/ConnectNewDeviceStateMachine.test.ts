@@ -608,11 +608,26 @@ describe("ConnectNewDeviceStateMachine", () => {
       },
     );
 
-    it("should start discovery again with an empty list when the ConnectionError is retried", async () => {
-      const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
+    it("should connect again to the same device without restarting discovery when the ConnectionError is retried", async () => {
+      const connect = jest.fn().mockRejectedValueOnce(connectionFailure).mockResolvedValue("s-2");
+      const setup = setupTest({ connect });
 
       await connectToNanoX(setup);
       setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).retry();
+      expect(setup.lastState(ConnectNewDeviceUIStateTypes.Connecting).device).toEqual(nanoXDevice);
+      await flushPromises();
+
+      expect(connect).toHaveBeenCalledTimes(2);
+      expect(connect).toHaveBeenLastCalledWith(expect.objectContaining({ device: nanoX }));
+      expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
+      setup.lastState(ConnectNewDeviceUIStateTypes.Connected);
+    });
+
+    it("should start discovery again with an empty list when the ConnectionError is ignored", async () => {
+      const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
+
+      await connectToNanoX(setup);
+      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).ignore();
 
       expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(2);
       expect(setup.deviceDiscoveryService.start).toHaveBeenLastCalledWith({
@@ -626,12 +641,12 @@ describe("ConnectNewDeviceStateMachine", () => {
       });
     });
 
-    it("should connect to the device selected after the ConnectionError is retried", async () => {
+    it("should connect to another device selected after the ConnectionError is ignored", async () => {
       const connect = jest.fn().mockRejectedValueOnce(connectionFailure).mockResolvedValue("s-2");
       const setup = setupTest({ connect });
 
       await connectToNanoX(setup);
-      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).retry();
+      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).ignore();
       setup.discoverDevices([stax]);
       setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
       await flushPromises();
@@ -641,7 +656,7 @@ describe("ConnectNewDeviceStateMachine", () => {
       setup.lastState(ConnectNewDeviceUIStateTypes.Connected);
     });
 
-    it("should keep skipping the ignored transports when the ConnectionError is retried", async () => {
+    it("should keep skipping the ignored transports when the ConnectionError is ignored", async () => {
       const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
 
       setup.machine.start();
@@ -650,7 +665,7 @@ describe("ConnectNewDeviceStateMachine", () => {
       setup.discoverDevices([nanoX]);
       setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
       await flushPromises();
-      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).retry();
+      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).ignore();
 
       expect(setup.deviceDiscoveryService.start).toHaveBeenLastCalledWith({
         ignoreTransportIdentifiers: [usbTransport],
@@ -660,16 +675,13 @@ describe("ConnectNewDeviceStateMachine", () => {
       ]);
     });
 
-    it("should stop without restarting discovery or calling onConnected when the ConnectionError is ignored", async () => {
+    it("should not call onConnected when the ConnectionError is ignored", async () => {
       const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
 
       await connectToNanoX(setup);
       setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).ignore();
-      const statesCountAtIgnore = setup.states.length;
       jest.advanceTimersByTime(DEFAULT_DEVICE_NOT_FOUND_DELAY + DEFAULT_SUCCESS_DELAY);
 
-      expect(setup.states).toHaveLength(statesCountAtIgnore);
-      expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
       expect(setup.onConnected).not.toHaveBeenCalled();
     });
   });

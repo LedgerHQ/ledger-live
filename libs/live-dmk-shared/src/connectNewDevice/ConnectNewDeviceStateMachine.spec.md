@@ -26,13 +26,12 @@ stateDiagram-v2
   Connecting --> Connected: DMK connect succeeds
   Connecting --> ConnectionError: DMK connect fails
 
-  ConnectionError --> Discovering: Retry
-  ConnectionError --> Terminated: Ignore
+  ConnectionError --> Connecting: Retry, with the same device
+  ConnectionError --> Discovering: Ignore, to select another device
 
   Connected --> Done: success delay elapsed
 
   Done --> [*]
-  Terminated --> [*]
 ```
 
 ## Notes
@@ -54,11 +53,13 @@ stateDiagram-v2
   discovered device and the DMK session refresher disabled.
 - A connection failure is mapped with `mapConnectionError` (for example BLE
   pairing refused, or pairing removed on the device) and emitted with `retry`
-  and `ignore`. Retry goes back to `Discovering`, with the skipped transports
-  kept, so that the user selects the device again. Ignore moves to
-  `Terminated`, which emits nothing.
+  and `ignore`. Retry connects again to the same device. Ignore goes back to
+  `Discovering`, with the skipped transports kept, so that the user can select
+  another device.
 - `Connected` is the visible success state. After the success delay
   (`DEFAULT_SUCCESS_DELAY`, 1.5 s), the machine moves to `Done`.
 - `Done` emits the `Done` UI state and calls `onConnected` one time with the
   DMK session, the connected device and the legacy compatibility fields.
+- `Done` is the only final state. To end the flow on an error, the caller stops
+  the machine.
 - Both delays can be injected with `deviceNotFoundDelay` and `successDelay`.

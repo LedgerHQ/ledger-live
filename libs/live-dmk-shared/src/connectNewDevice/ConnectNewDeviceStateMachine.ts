@@ -344,10 +344,10 @@ const createConnectNewDeviceStateMachine = <
         entry: "emitConnectionError",
         on: {
           [ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionRetry]: {
-            target: "Discovering",
+            target: "Connecting",
           },
           [ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionIgnore]: {
-            target: "Terminated",
+            target: "Discovering",
           },
         },
       },
@@ -362,9 +362,6 @@ const createConnectNewDeviceStateMachine = <
       Done: {
         type: "final",
         entry: ["emitDone", "onConnected"],
-      },
-      Terminated: {
-        type: "final",
       },
     },
   });
