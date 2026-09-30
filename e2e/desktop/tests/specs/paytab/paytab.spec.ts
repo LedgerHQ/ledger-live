@@ -88,7 +88,6 @@ test.describe("Pay tab", () => {
     },
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("pay");
-      await app.payTab.dismissFeatureTourIfVisible();
       await app.payTab.expectScreenVisible();
       await app.payTab.expectFundedBalance();
       await app.payTab.expectBalanceAmount();
@@ -158,7 +157,6 @@ test.describe("Pay tab", () => {
       const address = transaction.accountToCredit.address;
       invariant(address, "Recipient address is not set");
       await app.mainNavigation.openTargetFromMainNavigation("pay");
-      await app.payTab.dismissFeatureTourIfVisible();
       await app.payTab.openNewPayment();
       await app.modularDialog.selectAssetByTicker(Currency.ETH_USDT);
       await app.modularDialog.selectNetwork(Currency.ETH_USDT);
