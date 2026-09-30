@@ -1,3 +1,10 @@
+import invariant from "invariant";
+import {
+  buildSeededContacts,
+  generateContactName,
+  type ContactSeed,
+} from "@ledgerhq/live-e2e-shared/contacts";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
@@ -5,6 +12,7 @@ import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/c
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { test } from "tests/fixtures/common";
 import {
+  FF_LWD_CONTACTS,
   FF_LWD_PAY_TAB,
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
@@ -14,9 +22,34 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 const ALL_STABLECOINS = "All stablecoins";
 const FILTER_TICKER = "USDT";
 const REQUEST_TITLE = "Request Tether USD";
+
+const CONTACT_ID = "e2e-pay-contact";
+const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
+const CONTACT_NAME = generateContactName();
 const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
 
-const TMS_LINKS = ["B2CQA-6325", "B2CQA-6326"];
+const TMS_LINKS = ["B2CQA-6325", "B2CQA-6326", "B2CQA-6327"];
+
+function payContactSeed(address: string): ContactSeed {
+  return {
+    id: CONTACT_ID,
+    name: CONTACT_NAME,
+    addresses: [
+      {
+        id: CONTACT_ADDRESS_ID,
+        currencyId: transaction.accountToCredit.currency.id,
+        label: "Main",
+        address,
+      },
+      {
+        id: "e2e-pay-contact-spare",
+        currencyId: transaction.accountToCredit.currency.id,
+        label: "Spare",
+        address: Addresses.EVM_SPARE,
+      },
+    ],
+  };
+}
 
 test.describe("Pay tab", () => {
   test.use({
@@ -31,6 +64,7 @@ test.describe("Pay tab", () => {
     },
     featureFlags: {
       ...FF_LWD_PAY_TAB,
+      ...FF_LWD_CONTACTS,
       ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
       newSendFlow: {
         enabled: true,
@@ -46,6 +80,13 @@ test.describe("Pay tab", () => {
       annotation: TMS_LINKS.map(description => ({ type: "TMS", description })),
     },
     async ({ app }) => {
+      const address = transaction.accountToCredit.address;
+      invariant(address, "Recipient address is not set");
+      await app.redux.dispatch({
+        type: "contacts/setContacts",
+        payload: buildSeededContacts([payContactSeed(address)]),
+      });
+
       await test.step("Balance, stablecoin filter and deposit options", async () => {
         await app.mainNavigation.openTargetFromMainNavigation("pay");
         await app.payTab.dismissFeatureTourIfVisible();
@@ -98,6 +139,25 @@ test.describe("Pay tab", () => {
         await app.payTab.expectRequestVerify();
         await app.payTab.closeRequest();
         await app.payTab.expectFundedBalance();
+      });
+
+      await test.step("New payment", async () => {
+        await app.mainNavigation.openTargetFromMainNavigation("pay");
+        await app.payTab.dismissFeatureTourIfVisible();
+        await app.payTab.openNewPayment();
+        await app.modularDialog.selectAssetByTicker(Currency.ETH_USDT);
+        await app.modularDialog.selectNetwork(Currency.ETH_USDT);
+        await app.modularDialog.selectAccountByName(transaction.accountToDebit);
+        await app.newSendFlow.waitForDialog();
+        await app.newSendFlow.typeAddress(address);
+        await app.newSendFlow.clickRecipientCardSend();
+        await app.newSendFlow.fillCryptoAmount(transaction.amount);
+        await app.newSendFlow.clickReview();
+        await app.newSendFlow.waitForSignature();
+        await app.speculos.signSendTransaction(transaction);
+        await app.payTab.expectYouPaid();
+        await app.payTab.closePaySuccess();
+        await app.payTab.expectScreenVisible();
       });
     },
   );
