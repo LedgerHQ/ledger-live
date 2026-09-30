@@ -5,6 +5,4 @@ export * from "./components/PasswordChangedSheet";
 export * from "./components/ProtectionEnabledSheet";
 export * from "./longerPassword";
 export * from "./protectionPrompt";
-export * from "./screens/SetupPassword";
-export * from "./screens/ConfirmPassword";
 export * from "./screens/DeactivatePassword";

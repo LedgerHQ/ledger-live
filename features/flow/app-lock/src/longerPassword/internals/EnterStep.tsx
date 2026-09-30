@@ -1,5 +1,5 @@
 import React from "react";
-import { SetupPasswordView, useSetupPasswordViewModel } from "../../screens/SetupPassword";
+import { SetupPasswordView, useSetupPasswordViewModel } from "@features/flow-app-password-setup";
 
 export function EnterStep({
   onValid,
