@@ -31,14 +31,20 @@ const baseTransaction = {
 describe("fromTransactionRaw", () => {
   it("carries memoType and memoValue over when present", () => {
     const result = fromTransactionRaw({ ...baseRaw, memoType: "text", memoValue: "test memo" });
-    expect(result.memoType).toBe("text");
-    expect(result.memoValue).toBe("test memo");
+    expect(result.memoType).toEqual("text");
+    expect(result.memoValue).toEqual("test memo");
   });
 
   it("omits memoType and memoValue when absent", () => {
-    const result = fromTransactionRaw(baseRaw);
+    const result = fromTransactionRaw({ ...baseRaw, memo: undefined });
     expect(result).not.toHaveProperty("memoType");
     expect(result).not.toHaveProperty("memoValue");
+  });
+
+  it("should put legacy memo into memoValue", () => {
+    const result = fromTransactionRaw(baseRaw);
+    expect(result.memoType).toEqual("text");
+    expect(result.memoValue).toEqual("test memo");
   });
 });
 

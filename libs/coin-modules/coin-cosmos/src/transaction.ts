@@ -49,6 +49,21 @@ with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
+
+  let memoValue: string | undefined = undefined;
+  if (tr.memoValue !== undefined && tr.memoValue !== null) {
+    memoValue = tr.memoValue;
+  } else if (tr.memo !== undefined && tr.memo !== null) {
+    memoValue = tr.memo;
+  }
+
+  let memoType: string | undefined = undefined;
+  if (tr.memoType !== undefined && tr.memoType !== null) {
+    memoType = tr.memoType;
+  } else if (memoValue !== undefined) {
+    memoType = "text";
+  }
+
   return {
     ...common,
     family: tr.family,
@@ -64,8 +79,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     validators: tr.validators
       ? tr.validators.map(v => ({ ...v, amount: new BigNumber(v.amount) }))
       : [],
-    ...(tr.memoType !== undefined ? { memoType: tr.memoType } : {}),
-    ...(tr.memoValue !== undefined ? { memoValue: tr.memoValue } : {}),
+    ...(memoType !== undefined ? { memoType } : {}),
+    ...(memoValue !== undefined ? { memoValue } : {}),
   };
 };
 
