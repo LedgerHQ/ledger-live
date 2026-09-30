@@ -45,6 +45,7 @@ const CARD_TRANSACTIONS_RESOURCES = {
   en: {
     translation: {
       payTab: {
+        disclaimer: "Provided by Monavate Onchain",
         cardTransactions: {
           categories: CATEGORY_LABELS,
           title: SECTION_TITLE,
@@ -64,6 +65,10 @@ const CARD_TRANSACTIONS_RESOURCES = {
             signedOut: {
               title: "Log in to see your card transactions",
               description: "Your card activity appears here once you’re logged in.",
+            },
+            unclaimed: {
+              title: "Crypto card",
+              description: "Go to pay to set up your card.",
             },
             empty: {
               title: "No card transactions yet",

@@ -10,6 +10,8 @@ import type { CardTransactionItem } from "../types";
 import type { HistorySection } from "./components/types";
 import type { CardTransactionHistoryViewProps } from "./types";
 
+const PROVIDER_DISCLAIMER_KEY = "payTab.disclaimer";
+
 function createPayCta(
   testId: string,
   onGoToPay?: () => void,
@@ -66,7 +68,7 @@ export function CardTransactionHistoryView({
         <StatusMessage
           spot={
             cardVisual ? (
-              <Box lx={{ width: "s320" }}>{cardVisual}</Box>
+              <Box lx={{ width: "full", paddingHorizontal: "s16" }}>{cardVisual}</Box>
             ) : (
               <Spot appearance="icon" icon={CreditCard} size={72} />
             )
@@ -75,6 +77,26 @@ export function CardTransactionHistoryView({
           descriptionKey="payTab.cardTransactions.history.signedOut.description"
           testId="card-history-signed-out-state"
           action={createPayCta("card-history-signed-out-state-cta", onGoToPay)}
+          disclaimerKey={PROVIDER_DISCLAIMER_KEY}
+          overlapSpot={Boolean(cardVisual)}
+        />
+      );
+    case "unclaimed":
+      return (
+        <StatusMessage
+          spot={
+            cardVisual ? (
+              <Box lx={{ width: "full", paddingHorizontal: "s16" }}>{cardVisual}</Box>
+            ) : (
+              <Spot appearance="icon" icon={CreditCard} size={72} />
+            )
+          }
+          titleKey="payTab.cardTransactions.history.unclaimed.title"
+          descriptionKey="payTab.cardTransactions.history.unclaimed.description"
+          testId="card-history-unclaimed-state"
+          action={createPayCta("card-history-unclaimed-state-cta", onGoToPay)}
+          disclaimerKey={PROVIDER_DISCLAIMER_KEY}
+          overlapSpot={Boolean(cardVisual)}
         />
       );
     case "loading":
