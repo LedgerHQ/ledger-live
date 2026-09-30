@@ -14,6 +14,8 @@ import {
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
 import { validateAddress as isValidStacksAddress } from "../common-logic";
+import { StacksStakeInPreparePhase } from "../errors";
+import { fetchPoxInfo } from "../network/pox";
 import type { StacksTxData } from "../types";
 
 /** pox-5's `MAX_NUM_CYCLES` (`pox-5.clar:78`). Client-side check only -- the contract's own
@@ -87,6 +89,26 @@ function validateStaking(
   return { amount: intent.amount, totalSpent: intent.amount + estimatedFees };
 }
 
+/** pox-5's `stake` opens with `verify-not-prepare-phase` (`pox-5.clar:1002`): signed during the
+ * prepare phase, it is mined as an abort that still charges the fee. `/v2/pox` counts the blocks
+ * left before the prepare phase, and that count drops to zero or below once it has started.
+ * Checking this also covers a `startBurnHt` resolved just before a cycle boundary, since the chain
+ * has to pass through the prepare phase to reach it. */
+async function validateNotInPreparePhase(
+  intent: StakingTransactionIntent<MemoNotSupported, StacksTxData>,
+  errors: Record<string, Error>,
+): Promise<void> {
+  // Only a delegate intent that is otherwise ready to craft is worth the network round trip.
+  if (intent.mode !== "delegate" || intent.data.startBurnHt === undefined || errors.data) return;
+
+  const { next_cycle } = await fetchPoxInfo();
+  if (next_cycle.blocks_until_prepare_phase <= 0) {
+    errors.data = new StacksStakeInPreparePhase(undefined, {
+      blocksUntilReopen: next_cycle.blocks_until_reward_phase,
+    });
+  }
+}
+
 function validateTransfer(
   intent: TransactionIntent<MemoNotSupported, StacksTxData>,
   balances: Balance[],
@@ -124,7 +146,8 @@ function validateTransfer(
 }
 
 /** Ports the legacy bridge's `getTransactionStatus` amount/balance/fee/recipient checks, plus
- * pox-5 staking-specific checks (client-side `num-cycles` bounds; no amount check for undelegate). */
+ * pox-5 staking-specific checks (client-side `num-cycles` bounds, no stake during the prepare
+ * phase; no amount check for undelegate). */
 export async function validateIntent(
   intent: TransactionIntent<MemoNotSupported, StacksTxData>,
   balances: Balance[],
@@ -134,15 +157,14 @@ export async function validateIntent(
   const warnings: Record<string, Error> = {};
   const estimatedFees = customFees?.value ?? 0n;
 
-  const { amount, totalSpent } =
-    intent.intentType === "staking"
-      ? validateStaking(
-          intent as StakingTransactionIntent<MemoNotSupported, StacksTxData>,
-          balances,
-          estimatedFees,
-          errors,
-        )
-      : validateTransfer(intent, balances, estimatedFees, errors);
+  if (intent.intentType !== "staking") {
+    const { amount, totalSpent } = validateTransfer(intent, balances, estimatedFees, errors);
+    return { errors, warnings, estimatedFees, amount, totalSpent };
+  }
+
+  const stakingIntent = intent as StakingTransactionIntent<MemoNotSupported, StacksTxData>;
+  const { amount, totalSpent } = validateStaking(stakingIntent, balances, estimatedFees, errors);
+  await validateNotInPreparePhase(stakingIntent, errors);
 
   return { errors, warnings, estimatedFees, amount, totalSpent };
 }

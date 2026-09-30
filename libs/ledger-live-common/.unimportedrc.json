@@ -166,6 +166,7 @@
     "src/families/solana/types.ts",
     "src/families/stacks/constants.ts",
     "src/families/stacks/deviceTransactionConfig.ts",
+    "src/families/stacks/errors.ts",
     "src/families/stacks/types.ts",
     "src/families/stellar/types.ts",
     "src/families/stellar/ui.ts",

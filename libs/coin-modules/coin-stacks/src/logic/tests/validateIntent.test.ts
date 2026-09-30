@@ -11,13 +11,25 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
+import { StacksStakeInPreparePhase } from "../../errors";
+import { fetchPoxInfo } from "../../network/pox";
 import type { StacksTxData } from "../../types";
 import { validateIntent } from "../validateIntent";
+
+jest.mock("../../network/pox");
 
 const SENDER = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
 const RECIPIENT = "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA";
 
 const nativeBalance = (value: bigint): Balance[] => [{ value, asset: { type: "native" } }];
+
+const mockNextCycle = (blocksUntilPreparePhase: number, blocksUntilRewardPhase: number) =>
+  (fetchPoxInfo as jest.Mock).mockResolvedValue({
+    next_cycle: {
+      blocks_until_prepare_phase: blocksUntilPreparePhase,
+      blocks_until_reward_phase: blocksUntilRewardPhase,
+    },
+  });
 
 function transferIntent(
   overrides: Partial<TransactionIntent<MemoNotSupported, StacksTxData>> = {},
@@ -183,6 +195,56 @@ describe("validateIntent", () => {
         { value: 200n },
       );
       expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    describe("prepare phase", () => {
+      const readyData = { type: "stacks-pox" as const, numCycles: 1, startBurnHt: 961566 };
+
+      afterEach(() => jest.resetAllMocks());
+
+      it("flags a delegate intent once the prepare phase has started (pox-5 would abort it)", async () => {
+        mockNextCycle(-40, 60);
+        const { errors } = await validateIntent(
+          stakingIntent({ data: readyData }),
+          nativeBalance(10000000n),
+        );
+        expect(errors.data).toBeInstanceOf(StacksStakeInPreparePhase);
+        expect(errors.data).toMatchObject({ blocksUntilReopen: 60 });
+      });
+
+      it("flags a delegate intent on the prepare phase's first block", async () => {
+        mockNextCycle(0, 100);
+        const { errors } = await validateIntent(
+          stakingIntent({ data: readyData }),
+          nativeBalance(10000000n),
+        );
+        expect(errors.data).toBeInstanceOf(StacksStakeInPreparePhase);
+      });
+
+      it("passes a delegate intent during the reward phase", async () => {
+        mockNextCycle(1, 101);
+        const { errors } = await validateIntent(
+          stakingIntent({ data: readyData }),
+          nativeBalance(10000000n),
+        );
+        expect(errors.data).toBeUndefined();
+      });
+
+      it("skips the lookup while the intent has another data error", async () => {
+        await validateIntent(
+          stakingIntent({ data: { ...readyData, numCycles: 97 } }),
+          nativeBalance(10000000n),
+        );
+        expect(fetchPoxInfo).not.toHaveBeenCalled();
+      });
+
+      it("skips the lookup for undelegate (pox-5 only gates stake)", async () => {
+        await validateIntent(
+          stakingIntent({ mode: "undelegate", data: readyData }),
+          nativeBalance(10000000n),
+        );
+        expect(fetchPoxInfo).not.toHaveBeenCalled();
+      });
     });
 
     it("does not check amount for undelegate (locked amount is fixed)", async () => {

@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
+import { StacksStakeInPreparePhase } from "@ledgerhq/live-common/families/stacks/errors";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
@@ -28,6 +29,11 @@ const StepAmount = ({
     <Box flow={4}>
       <CurrencyDownStatusAlert currencies={[account.currency]} />
       {error ? <ErrorBanner error={error} /> : null}
+      {/* Other `errors.data` values are transient (startBurnHt still resolving) and only gate
+          Continue; this one is the chain refusing stakes for now, so the user must see why. */}
+      {status.errors.data instanceof StacksStakeInPreparePhase ? (
+        <ErrorBanner error={status.errors.data} />
+      ) : null}
       <Fragment key={account.id}>
         <SpendableBanner account={account} transaction={transaction} />
         <AmountField

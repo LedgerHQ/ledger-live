@@ -8225,6 +8225,10 @@
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
+    "StacksStakeInPreparePhase": {
+      "title": "Staking is paused until the next reward cycle",
+      "description": "The Stacks network doesn't accept new stakes while it prepares the next reward cycle. Staking reopens in {{blocksUntilReopen}} Bitcoin blocks."
+    },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"
     },

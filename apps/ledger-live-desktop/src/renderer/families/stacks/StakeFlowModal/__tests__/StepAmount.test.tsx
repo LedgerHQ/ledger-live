@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { act, render, screen } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { StacksStakeInPreparePhase } from "@ledgerhq/live-common/families/stacks/errors";
 import type {
   StacksAccount,
   Transaction,
@@ -106,6 +107,26 @@ describe("StakeFlowModal/StepAmount", () => {
 
   it("does not render the error banner when there is no error", () => {
     const props = makeProps();
+    act(() => {
+      render(<StepAmount {...props} />);
+    });
+    expect(screen.queryByTestId("error-banner")).not.toBeInTheDocument();
+  });
+
+  it("explains a stake refused during the prepare phase", () => {
+    const props = makeProps({
+      status: makeStatus({
+        data: new StacksStakeInPreparePhase(undefined, { blocksUntilReopen: 60 }),
+      }),
+    });
+    act(() => {
+      render(<StepAmount {...props} />);
+    });
+    expect(screen.queryByTestId("error-banner")).toBeInTheDocument();
+  });
+
+  it("keeps a transient data error (startBurnHt still resolving) out of the banner", () => {
+    const props = makeProps({ status: makeStatus({ data: new Error("missing startBurnHt") }) });
     act(() => {
       render(<StepAmount {...props} />);
     });
