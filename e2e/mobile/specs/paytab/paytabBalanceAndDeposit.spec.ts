@@ -1,8 +1,6 @@
-import { runPayBalanceAndDepositTest } from "@e2e/specs/paytab/paytab";
+import { runPayBalanceAndDepositTest, runPayRequestTest } from "@e2e/specs/paytab/paytab";
 
-const testConfig = {
-  tmsLinks: ["B2CQA-6325"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-};
+const tags = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
-runPayBalanceAndDepositTest(testConfig.tmsLinks, testConfig.tags);
+runPayBalanceAndDepositTest(["B2CQA-6325"], tags);
+runPayRequestTest(["B2CQA-6326"], tags);

@@ -11,12 +11,18 @@ export default class PayTabPage {
   filterPillId = "pay-card-balance-filter-pill";
   filterConfirmId = "pay-card-balance-filter-confirm";
   depositTileId = "action-tile-deposit";
+  requestTileId = "action-tile-request";
   depositOptionsId = "pay-card-deposit-options";
   bankTransferContentId = "pay-bank-transfer-intro-content";
   bankTransferCreateAccountId = "pay-bank-transfer-intro-create-account";
   bankTransferCloseId = "bottom-sheet-header-close-button";
   requestScreenId = "pay-request-receive";
   requestTitleId = "pay-request-receive-title";
+  requestAddressId = "pay-request-receive-address";
+  requestQrId = "pay-request-receive-qr-code";
+  requestShareId = "pay-request-receive-share";
+  requestCopyId = "pay-request-receive-copy";
+  requestVerifyId = "pay-request-receive-verify";
   requestCloseId = "pay-request-receive-close";
 
   filterOptionId = (rowKey: string) => `pay-card-balance-filter-option-${rowKey}`;
@@ -84,10 +90,40 @@ export default class PayTabPage {
     }
   }
 
+  @Step("Open request")
+  async openRequest() {
+    await tapById(this.requestTileId);
+  }
+
   @Step("Expect the request screen titled {{{0}}}")
   async expectRequestTitle(title: string) {
     await detoxExpect(getElementById(this.requestTitleId)).toBeVisible();
     await detoxExpect(getElementById(this.requestTitleId)).toHaveText(title);
+  }
+
+  @Step("Expect the request address")
+  async expectRequestAddress() {
+    await detoxExpect(getElementById(this.requestAddressId)).toBeVisible();
+  }
+
+  @Step("Expect the request QR code")
+  async expectRequestQrCode() {
+    await detoxExpect(getElementById(this.requestQrId)).toExist();
+  }
+
+  @Step("Expect the request Share action")
+  async expectRequestShare() {
+    await detoxExpect(getElementById(this.requestShareId)).toBeVisible();
+  }
+
+  @Step("Expect the request Copy action")
+  async expectRequestCopy() {
+    await detoxExpect(getElementById(this.requestCopyId)).toBeVisible();
+  }
+
+  @Step("Expect the request Verify action")
+  async expectRequestVerify() {
+    await detoxExpect(getElementById(this.requestVerifyId)).toBeVisible();
   }
 
   @Step("Close the request screen")

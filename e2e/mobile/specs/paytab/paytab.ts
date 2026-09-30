@@ -69,3 +69,39 @@ export function runPayBalanceAndDepositTest(tmsLinks: string[], tags: string[]) 
     });
   });
 }
+
+export function runPayRequestTest(tmsLinks: string[], tags: string[]) {
+  describe("Pay tab request", () => {
+    beforeAll(async () => {
+      await app.init({
+        userdata: "wallet40-many-stablecoins",
+        speculosApp: transaction.accountToDebit.currency.speculosApp,
+        featureFlags: {
+          ...FF_PAY_TAB,
+          ...FF_CONTACTS_ENABLED,
+        },
+        cliCommands: [liveDataWithRecipientAddressCommand(transaction)],
+      });
+      await app.mainNavigation.waitForWallet40Ready();
+      await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
+    });
+
+    setTeamOwner(Team.WALLET_XP);
+    tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
+
+    it("Request a payment", async () => {
+      await app.mainNavigation.tapWallet40Tab("paytab");
+      await app.payTab.openRequest();
+      await app.modularDrawer.selectAssetAndAccount(transaction.accountToDebit);
+      await app.payTab.expectRequestTitle(REQUEST_TITLE);
+      await app.payTab.expectRequestAddress();
+      await app.payTab.expectRequestQrCode();
+      await app.payTab.expectRequestShare();
+      await app.payTab.expectRequestCopy();
+      await app.payTab.expectRequestVerify();
+      await app.payTab.closeRequest();
+      await app.payTab.expectFundedBalance();
+    });
+  });
+}
