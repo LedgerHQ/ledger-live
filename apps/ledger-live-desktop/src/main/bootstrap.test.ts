@@ -59,6 +59,12 @@ describe("bootstrap", () => {
     expect(await takeCardSession()).toBeNull();
   });
 
+  it.each(["0", "false"])("should keep the gate closed when PLAYWRIGHT_RUN is %p", async value => {
+    process.env.PLAYWRIGHT_RUN = value;
+
+    expect(await takeCardSession()).toBeNull();
+  });
+
   it("should hand the card session over in an E2E run", async () => {
     process.env.PLAYWRIGHT_RUN = "true";
 

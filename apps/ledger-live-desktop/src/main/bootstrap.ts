@@ -56,8 +56,13 @@ ipcMain.on(CHANNELS.storeClear, () => {
   getStore().clear();
 });
 
+const isPlaywrightRun = () => {
+  const value = process.env.PLAYWRIGHT_RUN;
+  return !!value && value !== "0" && value !== "false";
+};
+
 // Same gate as bootstrapCardSession in the renderer.
 ipcMain.handle(CHANNELS.cardSessionBootstrap, () => {
-  if (!__DEV__ && !process.env.PLAYWRIGHT_RUN) return null;
+  if (!__DEV__ && !isPlaywrightRun()) return null;
   return process.env[CARD_SESSION_BOOTSTRAP] || null;
 });

@@ -38,4 +38,13 @@ describe("renderer bridge", () => {
       expect(() => require(BRIDGE_MODULE)).toThrow(/version mismatch/);
     });
   });
+
+  it("throws on a stale bootstrap snapshot from main", () => {
+    globals.lld = validBridge({
+      bootstrap: { version: 2 } as unknown as LedgerBridge["bootstrap"],
+    });
+    jest.isolateModules(() => {
+      expect(() => require(BRIDGE_MODULE)).toThrow(/Main\/renderer version mismatch/);
+    });
+  });
 });

@@ -14,5 +14,11 @@ if (bridge.version !== 1) {
   );
 }
 
+if (bridge.bootstrap?.version !== 1) {
+  throw new Error(
+    `Main/renderer version mismatch: bootstrap is v${bridge.bootstrap?.version}, renderer expects v1. Rebuild the app.`,
+  );
+}
+
 export const bootstrap = bridge.bootstrap;
 export const cardSession = bridge.cardSession;
