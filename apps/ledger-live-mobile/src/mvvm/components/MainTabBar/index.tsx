@@ -12,11 +12,12 @@ export function MainTabBar({
   state,
   navigation,
   hideTabBar = false,
+  isPayTabEnabled,
 }: MainTabBarProps): React.JSX.Element {
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
   const { keyboardHeight } = useKeyboardVisible();
-  const viewModel = useMainTabBarViewModel({ state, navigation });
+  const viewModel = useMainTabBarViewModel({ state, navigation, isPayTabEnabled });
 
   const bgBase = theme.colors.bg.base;
 

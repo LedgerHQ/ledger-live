@@ -17,7 +17,6 @@ function Wallet40SwapTabHeader() {
 export function Wallet40TabNavigator({
   tabBar,
   screenOptions,
-  isPayTabEnabled,
 }: Readonly<Wallet40TabNavigatorProps>): React.JSX.Element {
   return (
     <Tab.Navigator tabBar={tabBar} screenOptions={screenOptions}>
@@ -34,15 +33,12 @@ export function Wallet40TabNavigator({
         })}
       />
       <Tab.Screen name={NavigatorName.Earn} component={EarnLiveAppNavigator} />
-      {isPayTabEnabled ? (
-        <Tab.Screen
-          name={NavigatorName.PayTab}
-          component={PayTabNavigator}
-          options={getPayTabScreenOptions}
-        />
-      ) : (
-        <Tab.Screen name={NavigatorName.CardTab} component={CardLandingNavigator} />
-      )}
+      <Tab.Screen name={NavigatorName.CardTab} component={CardLandingNavigator} />
+      <Tab.Screen
+        name={NavigatorName.PayTab}
+        component={PayTabNavigator}
+        options={getPayTabScreenOptions}
+      />
     </Tab.Navigator>
   );
 }
