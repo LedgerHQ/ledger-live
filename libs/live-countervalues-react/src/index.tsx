@@ -10,7 +10,12 @@ import {
 import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
 import { log } from "@ledgerhq/logs";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
-import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import React, {
   ReactElement,
@@ -275,7 +280,7 @@ export function useSendAmount({
   fiatCurrency,
   cryptoAmount,
 }: {
-  cryptoCurrency: Currency;
+  cryptoCurrency: CryptoCurrency | TokenCurrency;
   fiatCurrency: Currency;
   cryptoAmount: BigNumber;
 }): {
