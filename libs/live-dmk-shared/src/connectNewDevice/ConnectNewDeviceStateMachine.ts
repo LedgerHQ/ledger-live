@@ -1,6 +1,7 @@
 import { Subscription } from "rxjs";
 import { assign, createActor, fromPromise, setup } from "xstate";
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
+import { log } from "@ledgerhq/logs";
 import { DEFAULT_DEVICE_NOT_FOUND_DELAY, DEFAULT_SUCCESS_DELAY } from "./constants";
 import {
   ConnectNewDeviceStateMachineEventTypes,
@@ -21,6 +22,16 @@ import {
 type ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError extends BaseDiscoveryError> =
   | TDiscoveryError
   | UnknownDiscoveryError;
+
+const LOG_TYPE = "ConnectNewDeviceStateMachine";
+
+const disconnectUnclaimedSession = (dmk: DeviceManagementKit, sessionId: string): void => {
+  dmk.disconnect({ sessionId }).catch(error => {
+    log(LOG_TYPE, "failed to disconnect a session that was never handed to onConnected", {
+      error,
+    });
+  });
+};
 
 const createConnectNewDeviceStateMachine = <
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
@@ -44,16 +55,24 @@ const createConnectNewDeviceStateMachine = <
       connectDevice: fromPromise(
         async ({
           input,
+          signal,
         }: {
           input: {
             dmk: DeviceManagementKit;
             discoveredDevice: DiscoveredDevice;
           };
-        }): Promise<string> =>
-          input.dmk.connect({
+          signal: AbortSignal;
+        }): Promise<string> => {
+          const sessionId = await input.dmk.connect({
             device: input.discoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },
-          }),
+          });
+          const machineStoppedWhileConnecting = signal.aborted;
+          if (machineStoppedWhileConnecting) {
+            disconnectUnclaimedSession(input.dmk, sessionId);
+          }
+          return sessionId;
+        },
       ),
       retryDiscovery: fromPromise<true | BaseDiscoveryError, BaseDiscoveryError>(
         async ({ input }) => {
@@ -400,6 +419,8 @@ export class DefaultConnectNewDeviceStateMachine<
 > implements ConnectNewDeviceStateMachine {
   private readonly actor;
 
+  private readonly dmk: DeviceManagementKit;
+
   private readonly deviceDiscoveryService: DeviceDiscoveryService<
     ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError>
   >;
@@ -412,6 +433,7 @@ export class DefaultConnectNewDeviceStateMachine<
       TConnectionError
     >,
   ) {
+    this.dmk = input.dmk;
     this.deviceDiscoveryService = input.deviceDiscoveryService;
     this.actor = createActor(
       createConnectNewDeviceStateMachine<TDiscoveryError, TConnectionError>(),
@@ -444,5 +466,11 @@ export class DefaultConnectNewDeviceStateMachine<
       this.deviceDiscoveryService.stop();
     }
     this.actor.stop();
+
+    const { sessionId } = snapshot.context;
+    const stoppedDuringSuccessDelay = snapshot.matches("Connected");
+    if (stoppedDuringSuccessDelay && sessionId !== null) {
+      disconnectUnclaimedSession(this.dmk, sessionId);
+    }
   }
 }
