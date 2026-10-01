@@ -13,6 +13,7 @@ import {
 } from "./window-lifecycle";
 import db from "./db";
 import { createKeyAttemptThrottle } from "./db/keyAttemptThrottle";
+import { assertRendererNamespace } from "./db/rendererNamespaces";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
 import type { SettingsState } from "~/renderer/reducers/settings";
@@ -122,9 +123,11 @@ app.on("ready", async () => {
   setupZcashNativeHost();
 
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
+    assertRendererNamespace(ns);
     return db.getKey(ns, keyPath, defaultValue);
   });
   ipcMain.handle("setKey", (event, { ns, keyPath, value }) => {
+    assertRendererNamespace(ns);
     return db.setKey(ns, keyPath, value);
   });
   ipcMain.handle("hasEncryptionKey", () => {

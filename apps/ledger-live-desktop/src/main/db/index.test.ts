@@ -150,6 +150,29 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(typeof (await db.getKey("app", "wallet", undefined))).toBe("object");
   });
 
+  it("rolls back a wrong password so it neither passes the check nor re-encrypts the data", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true } }));
+    await db.setEncryptionKey("test-password");
+    const persisted = getWrittenData();
+
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+    await db.load("app");
+
+    await expect(db.setEncryptionKey("wrong-password")).rejects.toThrow();
+    expect(db.isEncryptionKeyCorrect("wrong-password")).toBe(false);
+    expect(db.hasEncryptionKey()).toBe(false);
+
+    await db.setKey("app", "settings", { loaded: true, touched: true });
+    readFileMock.mockResolvedValueOnce(appJson(getWrittenData()));
+    db.init(testDir);
+    await db.load("app");
+
+    await db.setEncryptionKey("test-password");
+    expect(await db.hasBeenDecrypted()).toBe(true);
+    expect(typeof (await db.getKey("app", "wallet", undefined))).toBe("object");
+  });
+
   it("uses in-memory values when encrypting paths that are already set", async () => {
     readFileMock.mockResolvedValueOnce(
       appJson({
