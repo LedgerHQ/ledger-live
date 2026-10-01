@@ -275,6 +275,8 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
         status: {
           type: "active",
         },
+        name: "Bitcoin",
+        unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
       },
     };
     setCoinConfig(() => ({ ...coinConfig }));

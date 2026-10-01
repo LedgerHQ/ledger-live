@@ -1,7 +1,8 @@
+import { track } from "@shared/analytics";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import subDays from "date-fns/subDays";
 import { NavigatorName, ScreenName } from "~/const";
-import { track, updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics";
 import {
   ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
   ANALYTICS_CONSENT_DRAWER_FLOW,
@@ -124,7 +125,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
           privacyPolicyVersion: "1.0",
         },
-        true,
+        { mandatory: true },
       );
       expect(updateIdentify).toHaveBeenCalled();
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
@@ -154,7 +155,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
           privacyPolicyVersion: "1.0",
         },
-        true,
+        { mandatory: true },
       );
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
@@ -245,7 +246,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
           privacyPolicyVersion: "1.0",
         },
-        true,
+        { mandatory: true },
       );
       expect(updateIdentify).toHaveBeenCalled();
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
@@ -279,7 +280,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
           privacyPolicyVersion: "1.0",
         },
-        true,
+        { mandatory: true },
       );
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
@@ -331,7 +332,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
           privacyPolicyVersion: "1.1",
         },
-        true,
+        { mandatory: true },
       );
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });

@@ -1,6 +1,4 @@
-import BN from "bn.js";
-import * as nearAPI from "near-api-js";
-import type { Action } from "near-api-js/lib/transaction";
+import { actions, type Action } from "near-api-js";
 import { getStakingGas } from "../logic";
 
 export type ActionsInput = {
@@ -13,36 +11,21 @@ export type ActionsInput = {
 // One action per supported mode. Staking goes through the pool contract (attached deposit when
 // staking, call argument otherwise); `_all` variants take no amount, so "use all" can't leave dust
 // behind if the balance moves between crafting and execution.
-const nearAmount = (amount: string) => new BN(amount);
-const stakingGas = () => nearAmount(getStakingGas().toFixed());
-
 export const buildActions = ({ mode, amount, useAllAmount }: ActionsInput): Action[] => {
+  const gas = BigInt(getStakingGas().toFixed());
+
   switch (mode) {
     case "stake":
-      return [
-        nearAPI.transactions.functionCall(
-          "deposit_and_stake",
-          {},
-          stakingGas(),
-          nearAmount(amount),
-        ),
-      ];
+      return [actions.functionCall("deposit_and_stake", {}, gas, BigInt(amount))];
     case "unstake":
       return useAllAmount
-        ? [nearAPI.transactions.functionCall("unstake_all", {}, stakingGas(), nearAmount("0"))]
-        : [nearAPI.transactions.functionCall("unstake", { amount }, stakingGas(), nearAmount("0"))];
+        ? [actions.functionCall("unstake_all", {}, gas, 0n)]
+        : [actions.functionCall("unstake", { amount }, gas, 0n)];
     case "withdraw":
       return useAllAmount
-        ? [nearAPI.transactions.functionCall("withdraw_all", {}, stakingGas(), nearAmount("0"))]
-        : [
-            nearAPI.transactions.functionCall(
-              "withdraw",
-              { amount },
-              stakingGas(),
-              nearAmount("0"),
-            ),
-          ];
+        ? [actions.functionCall("withdraw_all", {}, gas, 0n)]
+        : [actions.functionCall("withdraw", { amount }, gas, 0n)];
     default:
-      return [nearAPI.transactions.transfer(nearAmount(amount))];
+      return [actions.transfer(BigInt(amount))];
   }
 };

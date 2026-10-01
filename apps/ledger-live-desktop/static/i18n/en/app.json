@@ -1024,6 +1024,10 @@
           "title": "Log in to see your card transactions",
           "description": "Your card activity appears here once you’re logged in."
         },
+        "unclaimed": {
+          "title": "Crypto card",
+          "description": "Go to pay to set up your card."
+        },
         "empty": {
           "title": "No card transactions yet",
           "description": "Come back later to see your card transactions."
@@ -7275,6 +7279,10 @@
     "CosmosDelegateAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transactions fees"
     },
+    "CosmosMemoTooLong": {
+      "title": "Memo exceeds maximum length",
+      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
     "CurrencyNotSupported": {
       "title": "{{currencyName}} is not supported",
       "description": "This crypto asset is not yet supported. Please contact Ledger Support."
@@ -7633,6 +7641,10 @@
     "TransactionRefusedOnDevice": {
       "title": "Operation denied on device",
       "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "TransferOfferExpiredError": {
+      "title": "This offer has expired",
+      "description": "The transfer offer expired before it was accepted. Ask the sender to send a new one."
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",

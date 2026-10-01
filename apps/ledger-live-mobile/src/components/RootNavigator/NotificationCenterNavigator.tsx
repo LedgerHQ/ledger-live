@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useMemo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTranslation } from "~/context/Locale";
@@ -12,7 +13,6 @@ import NotificationCenter from "~/screens/NotificationCenter/Notifications";
 import { NavigatorName, ScreenName } from "~/const";
 import type { NotificationCenterNavigatorParamList } from "./types/NotificationCenterNavigator";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import { track } from "~/analytics";
 import FullNodeWarning from "~/icons/FullNodeWarning";
 import StatusCenter from "~/screens/NotificationCenter/Status";
 

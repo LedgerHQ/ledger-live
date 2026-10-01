@@ -15,6 +15,8 @@ describe("Broadcast", () => {
         grpcUrl: "https://sui.coin.ledger.com",
       },
       features: { transport: "grpc" },
+      name: "Sui",
+      unit: { name: "Sui", code: "SUI", magnitude: 9 },
     }));
   });
 

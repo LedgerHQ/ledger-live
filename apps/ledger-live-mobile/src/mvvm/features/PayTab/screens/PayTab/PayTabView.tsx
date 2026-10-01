@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
@@ -18,13 +19,13 @@ import {
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet40Background, useScrollOffset } from "LLM/components/Wallet40Background";
 import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";
-import { TrackScreen } from "~/analytics";
 import Animated from "react-native-reanimated";
 
 type PayTabViewProps = {
   readonly top: number;
   readonly bottom: number;
   readonly card: CardProps;
+  readonly showCard: boolean;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
@@ -40,6 +41,7 @@ export function PayTabView({
   top,
   bottom,
   card,
+  showCard,
   balance,
   actionTiles,
   contacts,
@@ -82,18 +84,20 @@ export function PayTabView({
             <TrackScreen category="Recipient address selection" refreshSource={false} />
           )}
           <ContactAddressPicker {...contactAddressPicker} />
-          <Card {...card} />
+          {showCard && <Card {...card} />}
           <FeatureTour />
           <DepositOptions {...depositOptions} />
           <BankTransferIntro {...bankTransferIntro} />
 
-          <Text
-            typography="body3"
-            lx={{ color: "muted", textAlign: "center", marginTop: "s16" }}
-            testID="pay-disclaimer"
-          >
-            {disclaimer}
-          </Text>
+          {showCard && (
+            <Text
+              typography="body3"
+              lx={{ color: "muted", textAlign: "center", marginTop: "s16" }}
+              testID="pay-disclaimer"
+            >
+              {disclaimer}
+            </Text>
+          )}
         </Box>
       </Animated.ScrollView>
     </Box>

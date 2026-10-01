@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
 import { NavigatorName } from "~/const";
 import * as stakeLabelHelpers from "~/helpers/getStakeLabelLocaleBased";
 import { scrollToTopEvent } from "../scrollToTopEvent";
 import { useMainTabBarViewModel } from "../useMainTabBarViewModel";
-import { track } from "~/analytics";
 
 jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
   ...jest.requireActual("~/helpers/getStakeLabelLocaleBased"),

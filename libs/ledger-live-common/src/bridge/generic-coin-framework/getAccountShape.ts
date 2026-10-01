@@ -1,5 +1,6 @@
 import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getDerivationScheme } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -31,6 +32,7 @@ import type {
   Account,
   AccountReadiness,
   StakingDelegation,
+  StakingDelegationStatus,
   StakingPositionDetails,
   StakingResources,
   StakingUnbonding,
@@ -80,6 +82,15 @@ function hasDeactivatingStake(balance: Balance): balance is Balance & {
 
 function delegatedAmountForStakingResources(b: Balance): bigint {
   return b.stake?.amount ?? 0n;
+}
+
+function deriveDelegationStatus(
+  stakeState: Stake["state"],
+  detailStatus: unknown,
+): StakingDelegationStatus {
+  if (stakeState === "activating") return "activating";
+  if (detailStatus === "unbonding" || detailStatus === "unbonded") return detailStatus;
+  return "bonded";
 }
 
 function stakingPositionDetails(stake: Stake): StakingPositionDetails {
@@ -591,12 +602,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         const validatorId = b.stake.details?.validatorId;
         const validatorName = b.stake.details?.validatorName;
         const sharesRaw = b.stake.details?.shares;
+        const detailStatus = b.stake.details?.status;
         return {
           ...stakingPositionDetails(b.stake),
           validatorAddress: b.stake.delegate ?? "",
           amount: new BigNumber(delegated.toString()),
           pendingRewards: new BigNumber(rewarded.toString()),
-          status: b.stake.state === "activating" ? "activating" : "bonded",
+          status: deriveDelegationStatus(b.stake.state, detailStatus),
           ...(typeof validatorId === "string" ? { validatorId } : {}),
           ...(typeof validatorName === "string" ? { validatorName } : {}),
           ...(typeof sharesRaw === "bigint" ? { shares: new BigNumber(sharesRaw.toString()) } : {}),
@@ -615,8 +627,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           completionDate: b.stake.stateUpdatedAt ?? new Date(),
           // `inactive` also covers an idle stake, so trust `actions` rather than the state.
           status:
-            b.stake.state === "withdrawable" ||
-            b.stake.actions?.some(action => action === "withdraw")
+            b.stake.state === "withdrawable" || b.stake.actions?.includes("withdraw")
               ? "withdrawable"
               : "deactivating",
           ...(typeof validatorId === "string" ? { validatorId } : {}),
@@ -785,6 +796,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       stakingShape = { stakingResources: enrichedStakingResources };
     }
 
+    // A shared xpub makes `sameAccountIdentity` merge the accounts.
+    const isXpubShared =
+      bridgeApi.addressLookup !== undefined &&
+      !getDerivationScheme({ derivationMode, currency }).includes("<account>");
+
     const res: Partial<Account> & {
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];
@@ -793,7 +809,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       id: accountId,
       // `||` (not `??`): a device getAddress may return an empty-string publicKey (e.g. when the
       // chain code is not requested); treat "" as absent and fall back rather than storing a blank xpub.
-      xpub: rest?.publicKey || initialAccount?.xpub || address,
+      xpub: isXpubShared ? undefined : rest?.publicKey || initialAccount?.xpub || address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),

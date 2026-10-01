@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { useSendFlowBusinessLogic as useCommonBusinessLogic } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowBusinessLogic";
+import { useSelector } from "LLD/hooks/redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useSendFlowTransaction } from "./useSendFlowTransaction";
 import { useSendFlowOperation } from "./useSendFlowOperation";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -29,8 +31,10 @@ export function useSendFlowBusinessLogic({
     parentAccount: Account | null;
   }) => useSendFlowTransaction({ ...params, initialRecipient });
 
+  const accounts = useSelector(accountsSelector);
   const businessLogic = useCommonBusinessLogic({
     initParams,
+    accounts,
     useOperationHook: useSendFlowOperation,
     useTransactionHook,
   });

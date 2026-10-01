@@ -6,6 +6,7 @@ import { InfoState } from "@shared/ui-info-state/native";
 import { QueuedBottomSheet, useBottomSheetBackgroundTone } from "@shared/ui-queued-bottom-sheet";
 import React from "react";
 import type { EnableProtectionSheetProps } from "./types";
+import { TrackScreen } from "@shared/analytics-react";
 
 // Inside the sheet, not above it: the tone context is created by QueuedBottomSheet around its
 // children, and the hook no-ops anywhere else, so asking from the parent asked nobody.
@@ -56,6 +57,11 @@ export function EnableProtectionSheet({
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         {isOpen ? (
           <>
+            <TrackScreen
+              category="LW encryption"
+              avoidDuplicates
+              type={isBiometrics ? "biometrics" : "password"}
+            />
             <InfoTone />
             <BottomSheetHeader density="compact" />
             <InfoState

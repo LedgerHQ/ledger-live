@@ -1,29 +1,39 @@
-export { DefaultDeviceDiscoveryService } from "./connectDevice/discoveryService/DefaultDeviceDiscoveryService";
+export { DefaultDeviceDiscoveryService } from "./deviceConnectivity/discoveryService/DefaultDeviceDiscoveryService";
 export {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
-  ConnectDeviceUIStateTypes,
-} from "./connectDevice/types";
+  ConnectivityUIStateTypes,
+} from "./deviceConnectivity/types";
 export type {
   BaseConnectionError,
   BaseDiscoveryError,
-  ConnectDeviceMapConnectionError,
-  ConnectDeviceMatchDiscoveredDevices,
-  ConnectDeviceUIState,
+  ConnectionErrorUIState,
+  Device,
   DeviceConnectionResult,
   DeviceDiscoveryService,
   DeviceDiscoveryStartArgs,
   DiscoveryErrorResolution,
-  DisplayedDevice,
-  KnownDevice,
-  MatchedDevice,
+  DiscoveryErrorUIState,
   UnknownConnectionError,
   UnknownDiscoveryError,
-} from "./connectDevice/types";
+  UnknownErrorUIState,
+} from "./deviceConnectivity/types";
 export type {
   DeviceDiscoverySource,
   DeviceDiscoverySourceEvent,
-} from "./connectDevice/discoveryService/sources/DeviceDiscoverySource";
+} from "./deviceConnectivity/discoveryService/sources/DeviceDiscoverySource";
+export * from "./deviceConnectivity/discoveryService/sources/listenToTransportDevices";
+export * from "./transport/SpeculosTransportSession";
+export { ConnectDeviceUIStateTypes } from "./connectDevice/types";
+export type {
+  ConnectDeviceMapConnectionError,
+  ConnectDeviceMatchDiscoveredDevices,
+  ConnectDeviceUIState,
+  ConnectDeviceUIStateType,
+  DisplayedDevice,
+  KnownDevice,
+  MatchedDevice,
+} from "./connectDevice/types";
 export {
   connectDeviceUseCase,
   type ConnectDeviceUseCaseInput,
@@ -39,6 +49,23 @@ export type {
   DeviceIntentTrackingProperties,
   SourceFlow,
 } from "./deviceIntentTracking/DeviceIntentTrackingContext";
+export {
+  DeviceFlowFailureType,
+  getConnectDeviceFailure,
+  getConnectDeviceSubError,
+  getDeviceDisconnectedFailure,
+  getDeviceFlowFailureProperties,
+  getDeviceflowCancelEventName,
+  getEnsureAppReadyFailure,
+  getErrorName,
+  getInvalidOperationFailure,
+} from "./deviceIntentTracking/deviceFlowFailure";
+export type {
+  DeviceFlowDevice,
+  DeviceFlowFailure,
+  DeviceFlowFailureProperties,
+  DeviceFlowTransport,
+} from "./deviceIntentTracking/deviceFlowFailure";
 export { OverrideDeviceIntentExecutorHeader } from "./deviceIntentHeader/OverrideDeviceIntentExecutorHeader";
 export { DeviceIntentExecutorHeaderContext } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
 export type { DeviceIntentExecutorHeaderContextValue } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";

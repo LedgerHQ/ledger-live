@@ -29,7 +29,7 @@ export type Result<T extends Transaction = Transaction> = {
   account: AccountLike | null | undefined;
   parentAccount: Account | null | undefined;
   setAccount: (arg0: AccountLike, arg1: Account | null | undefined) => Promise<void>;
-  updateAccount: (account: AccountLike) => void;
+  updateAccount: (account: AccountLike, parentAccount?: Account | null) => void;
   status: TransactionStatus;
   bridgeError: Error | null | undefined;
   bridgePending: boolean;
@@ -72,6 +72,7 @@ type Actions<T extends Transaction = Transaction> =
   | {
       type: "updateAccount";
       account: AccountLike;
+      parentAccount?: Account | null;
     };
 
 type Reducer<T extends Transaction = Transaction> = (
@@ -222,10 +223,15 @@ const reducer = <T extends Transaction = Transaction>(
     // Updates account data (e.g. after a coin-specific side-sync) without
     // resetting the in-progress transaction.  Guards on id equality so this
     // can never silently switch to a different account.
-    case "updateAccount":
+    case "updateAccount": {
       if (state.account?.id !== action.account.id) return state;
-      if (state.account === action.account) return state;
-      return { ...state, account: action.account };
+      const parentAccount =
+        action.parentAccount && action.parentAccount.id === state.parentAccount?.id
+          ? action.parentAccount
+          : state.parentAccount;
+      if (state.account === action.account && state.parentAccount === parentAccount) return state;
+      return { ...state, account: action.account, parentAccount };
+    }
 
     default:
       return state;
@@ -269,7 +275,8 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   );
 
   const updateAccount = useCallback(
-    (account: AccountLike) => dispatch({ type: "updateAccount", account }),
+    (account: AccountLike, parentAccount?: Account | null) =>
+      dispatch({ type: "updateAccount", account, parentAccount }),
     [dispatch],
   );
 

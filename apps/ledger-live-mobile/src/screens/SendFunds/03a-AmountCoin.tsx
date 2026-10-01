@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { BigNumber } from "bignumber.js";
 import React, { Fragment, useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Linking } from "react-native";
@@ -15,7 +16,6 @@ import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
 import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
 import { ScreenName } from "~/const";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";

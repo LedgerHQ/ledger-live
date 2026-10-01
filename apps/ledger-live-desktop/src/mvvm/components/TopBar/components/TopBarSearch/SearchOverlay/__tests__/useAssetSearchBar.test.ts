@@ -1,7 +1,6 @@
 import { ChangeEvent } from "react";
 import { renderHook, act } from "tests/testSetup";
-import { track } from "~/renderer/analytics/segment";
-import { resetTrackingPages, setTrackingSource } from "~/renderer/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource, track } from "@shared/analytics";
 import { useAssetSearchBar } from "../useAssetSearchBar";
 
 jest.mock("@ledgerhq/live-common/hooks/useDebounce", () => ({

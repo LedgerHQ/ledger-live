@@ -15,6 +15,13 @@ import {
 } from "@domain/entity-currency-crypto";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
+import {
+  calculate,
+  historyKey,
+  inferCurrencyAPIID,
+  type CounterValuesState,
+} from "@domain/entity-market-countervalues";
 
 // The domain registry is the runtime source of truth for currency data.
 setCurrenciesResolver({
@@ -41,4 +48,19 @@ export function setupCryptoAssetsStore(): void {
   setCryptoAssetsStore(buildCryptoAssetsStore({ dispatch: store.dispatch }));
 }
 
+/**
+ * Fill the countervalues interface that `@ledgerhq/wallet-pnl` declares. It treats the
+ * state as opaque, so the casts back to a concrete state belong here, at the
+ * composition root. The pnl-calculator pages throw without this.
+ */
+export function setupRateLookups(): void {
+  setWalletPnlRateLookup({
+    calculate: (snapshot, query) => calculate(snapshot as CounterValuesState, query),
+    historyKey: (snapshot, from, to, lastOpDate) =>
+      historyKey(snapshot as CounterValuesState, from, to, lastOpDate),
+    currencyApiId: inferCurrencyAPIID,
+  });
+}
+
 setupCryptoAssetsStore();
+setupRateLookups();

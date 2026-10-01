@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { useTopBarViewModel } from "LLM/components/TopBar/useTopBarViewModel";
 
 export function useSwapTopBarHeaderViewModel() {

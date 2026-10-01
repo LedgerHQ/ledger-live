@@ -8,7 +8,7 @@ import {
   bootOptions,
   recovery,
 } from "@ledgerhq/live-common/deviceWordings";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";

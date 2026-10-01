@@ -6,7 +6,7 @@ import { useAssetsData, useInterestRatesByCurrencies } from "@features/platform-
 import { getInterestRateForAsset } from "@ledgerhq/live-common/modularDrawer/utils/getInterestRateForAsset";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useDispatch } from "LLD/hooks/redux";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { closeSwapTransactionStatusDialog } from "../swapTransactionStatusDialog";
 
 const TRANSLATION_PREFIX = "swap2.modals.transactionStatus.earnBanner";
@@ -69,14 +69,17 @@ export function useEarnBannerViewModel({
 
   useEffect(() => {
     if (!isVisible) return;
-    trackPage("swap earn promoter", null, {
-      page: PAGE,
-      flow: FLOW,
-      sourceCurrency: sendCurrency?.ticker,
-      targetCurrency: receiveCurrency?.ticker,
-      targetCurrencyID: receiveCurrency?.id,
-      provider,
-      promotedToken,
+    trackPage({
+      category: "swap earn promoter",
+      props: {
+        page: PAGE,
+        flow: FLOW,
+        sourceCurrency: sendCurrency?.ticker,
+        targetCurrency: receiveCurrency?.ticker,
+        targetCurrencyID: receiveCurrency?.id,
+        provider,
+        promotedToken,
+      },
     });
   }, [
     isVisible,

@@ -1,7 +1,7 @@
+import { resetTrackingPages, setTrackingSource } from "@shared/analytics";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { Platform } from "react-native";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { useSwapWebviewProps } from "../useSwapWebviewProps";
 import { useSwapCustomHandlers } from "../../customHandlers";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";

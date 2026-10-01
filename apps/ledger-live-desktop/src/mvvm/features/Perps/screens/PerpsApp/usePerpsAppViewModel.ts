@@ -9,7 +9,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/renderer/components/Web3AppWebview/types";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage } from "@shared/analytics";
 import useTheme from "~/renderer/hooks/useTheme";
 import {
   counterValueCurrencySelector,

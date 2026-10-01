@@ -11,8 +11,7 @@ import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras"
 import { Box } from "@ledgerhq/react-ui";
 import { updateAnonymousUserNotifications } from "~/renderer/actions/settings";
 import { OFFLINE_SEEN_DELAY } from "../utils/constants";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
-import { track } from "~/renderer/analytics/segment";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 import { sanitizeExtras } from "~/renderer/hooks/useBraze";
 
 interface LogContentCardWrapperProps {

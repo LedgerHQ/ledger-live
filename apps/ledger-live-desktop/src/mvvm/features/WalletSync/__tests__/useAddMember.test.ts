@@ -200,8 +200,12 @@ jest.mock("~/renderer/actions/walletSync", () => ({
   setFlow: (flow: unknown) => Mocks.setFlow(flow),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: (event: string, props?: Record<string, unknown>) => Mocks.track(event, props),
+}));
+
+jest.mock("~/renderer/analytics/segment", () => ({
   setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 

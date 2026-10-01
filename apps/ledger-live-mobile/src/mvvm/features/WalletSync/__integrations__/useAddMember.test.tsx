@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Text } from "react-native";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
@@ -5,7 +6,6 @@ import { useAddMember } from "../hooks/useAddMember";
 import { SceneKind } from "../hooks/useFollowInstructionDrawer";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { track } from "~/analytics";
 import { AnalyticsEvents } from "../Analytics/enums";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 import { DeviceModelId } from "@ledgerhq/types-devices";

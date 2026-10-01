@@ -2,13 +2,10 @@ import React from "react";
 import { render, screen as rtlScreen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { trackPage } from "@shared/analytics";
 import { SigningBody } from "./SigningBody";
 
-const trackScreen = jest.fn();
-
-jest.mock("~/analytics", () => ({
-  screen: (...args: unknown[]) => trackScreen(...args),
-}));
+const mockedTrackPage = jest.mocked(trackPage);
 
 const device: Device = {
   deviceId: "device-1",
@@ -49,7 +46,7 @@ function renderSigningBody(status: Record<string, unknown>) {
 
 describe("SigningBody", () => {
   beforeEach(() => {
-    trackScreen.mockClear();
+    mockedTrackPage.mockClear();
   });
 
   it("renders without the send-flow providers in the tree", () => {
@@ -63,9 +60,12 @@ describe("SigningBody", () => {
       transactionSignError: { name: "UserRefusedOnDevice" },
     });
 
-    expect(trackScreen).toHaveBeenCalledWith("Modal send - action rejected", undefined, {
-      ...trackingProperties,
-      recipientType: "contact",
+    expect(mockedTrackPage).toHaveBeenCalledWith({
+      category: "Modal send - action rejected",
+      props: {
+        ...trackingProperties,
+        recipientType: "contact",
+      },
     });
   });
 });

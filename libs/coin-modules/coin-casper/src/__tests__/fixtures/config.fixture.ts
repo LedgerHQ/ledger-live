@@ -2,6 +2,8 @@ import type { CasperCoinConfig, CasperConfig, CasperContext } from "../../types"
 
 export const casperMainnetConfig: CasperCoinConfig = () => ({
   status: { type: "active" },
+  name: "Casper",
+  unit: { name: "CSPR", code: "CSPR", magnitude: 9 },
   infra: {
     API_CASPER_NODE_ENDPOINT: "https://casper.coin.ledger.com/node/",
     API_CASPER_INDEXER: "https://casper.coin.ledger.com/indexer/",

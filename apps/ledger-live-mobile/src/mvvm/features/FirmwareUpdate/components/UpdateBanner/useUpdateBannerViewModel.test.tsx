@@ -1,4 +1,5 @@
 import ReactNative from "react-native";
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 import { State } from "~/reducers/types";
@@ -15,11 +16,7 @@ jest.mock("@react-navigation/native", () => ({
   useFocusEffect: (...args: unknown[]) => mockUseFocusEffect(...args),
 }));
 
-// Mock analytics
-const mockTrack = jest.fn();
-jest.mock("~/analytics", () => ({
-  track: (...args: unknown[]) => mockTrack(...args),
-}));
+const mockedTrack = jest.mocked(track);
 
 // Mock useLatestFirmware
 jest.mock("@ledgerhq/live-common/device/hooks/useLatestFirmware", () => ({
@@ -284,7 +281,7 @@ describe("useUpdateBannerViewModel", () => {
         }),
       );
 
-      expect(mockTrack).toHaveBeenCalledWith("banner_impression", {
+      expect(mockedTrack).toHaveBeenCalledWith("banner_impression", {
         banner: "OS update",
         page: "portfolio",
       });
@@ -302,7 +299,7 @@ describe("useUpdateBannerViewModel", () => {
         }),
       );
 
-      expect(mockTrack).toHaveBeenCalledWith("banner_impression", {
+      expect(mockedTrack).toHaveBeenCalledWith("banner_impression", {
         banner: "OS update",
         page: "my ledger",
       });
@@ -320,7 +317,7 @@ describe("useUpdateBannerViewModel", () => {
         }),
       );
 
-      expect(mockTrack).not.toHaveBeenCalledWith("banner_impression", expect.anything());
+      expect(mockedTrack).not.toHaveBeenCalledWith("banner_impression", expect.anything());
     });
 
     it("should track impression only once even if re-rendered", () => {
@@ -336,8 +333,8 @@ describe("useUpdateBannerViewModel", () => {
 
       rerender({});
 
-      const impressionCalls = mockTrack.mock.calls.filter(
-        ([event]: [string]) => event === "banner_impression",
+      const impressionCalls = mockedTrack.mock.calls.filter(
+        ([event]) => event === "banner_impression",
       );
       expect(impressionCalls).toHaveLength(1);
     });
@@ -356,7 +353,7 @@ describe("useUpdateBannerViewModel", () => {
 
       act(() => result.current.onClickUpdate());
 
-      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
         page: "portfolio",
         banner: "OS update",
         button: "click(update)",
@@ -378,7 +375,7 @@ describe("useUpdateBannerViewModel", () => {
 
       act(() => result.current.onClickUpdate());
 
-      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
         page: "my ledger",
         banner: "OS update",
         button: "click(update)",

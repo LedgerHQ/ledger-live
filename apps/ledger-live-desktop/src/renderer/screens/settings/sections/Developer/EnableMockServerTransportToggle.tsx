@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { getEnv } from "@shared/env";
 import { Switch } from "@ledgerhq/lumen-ui-react";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import { MOCK_SERVER_TRANSPORT_STORAGE_KEY } from "~/renderer/mockServerTransport";
 

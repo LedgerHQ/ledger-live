@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { ICP_FEES } from "@ledgerhq/live-common/families/internet_computer/consts";
 import {
   maxAllowedSplitAmount,
@@ -6,7 +7,6 @@ import {
 import { Flex, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
-import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import KeyboardView from "~/components/KeyboardView";
 import SafeAreaView from "~/components/SafeAreaView";

@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { Linking } from "react-native";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import {

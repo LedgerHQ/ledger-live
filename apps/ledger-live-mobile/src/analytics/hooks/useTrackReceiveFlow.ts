@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { useEffect, useRef } from "react";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
-import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerError } from "~/types/error";
 

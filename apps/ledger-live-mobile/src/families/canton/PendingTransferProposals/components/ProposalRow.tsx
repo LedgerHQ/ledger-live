@@ -22,6 +22,7 @@ export function View({
   proposal,
   account,
   timeRemaining,
+  isExpired,
   formattedTime,
   addressToShow,
   amountValue,
@@ -30,7 +31,7 @@ export function View({
   handleWithdrawPress,
 }: ViewProps) {
   const { t } = useTranslation();
-  const { isIncoming, isExpired, contractId } = proposal;
+  const { isIncoming, contractId } = proposal;
 
   const getIcon = () => {
     if (isExpired) {

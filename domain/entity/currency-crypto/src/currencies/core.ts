@@ -37,9 +37,6 @@ export const core = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 1116,
-  },
   explorerViews: [
     {
       tx: "https://scan.coredao.org/tx/$hash",

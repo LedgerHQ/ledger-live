@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef } from "react";
-import { trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
+import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useSendFlowSignatureCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
+import type { SignatureDeviceActionResult } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
 import {
   SEND_FLOW_COMPLETION,
   SEND_FLOW_SOURCE,
@@ -19,14 +21,38 @@ import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowCo
 import { selectIsBuyDeviceOpen } from "LLD/features/BuyDevice/buyDeviceDialog";
 import { hasOnboardedDeviceSelector, mevProtectionSelector } from "~/renderer/reducers/settings";
 import { broadcastLogger } from "~/datadog/logs";
+import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { getActiveWarningIds } from "../../../utils/messageTracking";
 
 export function useSignatureViewModel() {
   const { navigation } = useFlowWizard();
   const { operation, status, close } = useSendFlowActions();
   const { state, source } = useSendFlowData();
   const reduxDispatch = useDispatch();
+  const { endSession, flowSessionId, trackMessage } = useSendFlowTracking();
 
   const wasBuyDeviceOpenRef = useRef(false);
+  const hasTrackedDeviceConfirmationRef = useRef(false);
+  const confirmationDepsRef = useRef({
+    account: state.account.account,
+    parentAccount: state.account.parentAccount,
+    transaction: state.transaction.transaction,
+    txStatus: state.transaction.status,
+  });
+  if (
+    confirmationDepsRef.current.account !== state.account.account ||
+    confirmationDepsRef.current.parentAccount !== state.account.parentAccount ||
+    confirmationDepsRef.current.transaction !== state.transaction.transaction ||
+    confirmationDepsRef.current.txStatus !== state.transaction.status
+  ) {
+    hasTrackedDeviceConfirmationRef.current = false;
+    confirmationDepsRef.current = {
+      account: state.account.account,
+      parentAccount: state.account.parentAccount,
+      transaction: state.transaction.transaction,
+      txStatus: state.transaction.status,
+    };
+  }
 
   const isBuyDeviceOpen = useSelector(selectIsBuyDeviceOpen);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
@@ -51,7 +77,10 @@ export function useSignatureViewModel() {
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const onDeviceConfirmationShown = useCallback(() => {
-    trackPage("Modal send - step device review", null, sendFlowTrackingProperties);
+    trackPage({
+      category: "Modal send - step device review",
+      props: sendFlowTrackingProperties,
+    });
   }, [sendFlowTrackingProperties]);
 
   const action = useTransactionAction();
@@ -63,7 +92,11 @@ export function useSignatureViewModel() {
     transaction,
     broadcastConfig: {
       mevProtected,
-      source: { type: "coin-module", name: "ledger-live-desktop", flags: { newSendFlow: true } },
+      source: {
+        type: "coin-module",
+        name: "ledger-live-desktop",
+        flags: { newSendFlow: true },
+      },
     },
     logger: broadcastLogger,
   });
@@ -78,15 +111,20 @@ export function useSignatureViewModel() {
   const onFinish = useCallback(
     (completion: SendFlowCompletion) => {
       if (completion === SEND_FLOW_COMPLETION.SUCCESS && source === SEND_FLOW_SOURCE.PAY) {
+        endSession();
         navigation.goToStep(SEND_FLOW_STEP.PAY_SUCCESS);
         return;
       }
       navigation.goToNextStep();
     },
-    [navigation, source],
+    [endSession, navigation, source],
   );
 
-  const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({
+  const {
+    request,
+    finishWithError: finishWithCoreError,
+    onDeviceActionResult: onCoreDeviceActionResult,
+  } = useSendFlowSignatureCore({
     account,
     parentAccount,
     transaction,
@@ -100,6 +138,40 @@ export function useSignatureViewModel() {
     recipientEnsName: state.recipient?.ensName,
   });
 
+  const onDeviceActionResult = useCallback(
+    (result: SignatureDeviceActionResult) => {
+      if (
+        "signedOperation" in result &&
+        result.signedOperation &&
+        !hasTrackedDeviceConfirmationRef.current
+      ) {
+        hasTrackedDeviceConfirmationRef.current = true;
+        const activeWarnings = getActiveWarningIds(txStatus);
+        track("button_clicked", {
+          button: "confirm on device",
+          page: "step signature",
+          flow_session_id: flowSessionId,
+          ...getActiveWarningsTrackingProperties(activeWarnings),
+          ...sendFlowTrackingProperties,
+        });
+      }
+      onCoreDeviceActionResult(result);
+    },
+    [flowSessionId, onCoreDeviceActionResult, sendFlowTrackingProperties, txStatus],
+  );
+
+  const onLockedDeviceShown = useCallback(() => {
+    trackMessage({
+      account,
+      parentAccount,
+      step: SEND_FLOW_STEP.SIGNATURE,
+      message: {
+        messageId: "LockedDeviceError",
+        messageType: "error",
+      },
+    });
+  }, [account, parentAccount, trackMessage]);
+
   return {
     account,
     parentAccount,
@@ -107,7 +179,8 @@ export function useSignatureViewModel() {
     action,
     request,
     onDeviceActionResult,
-    finishWithError,
+    finishWithError: finishWithCoreError,
+    onLockedDeviceShown,
     onDeviceConfirmationShown,
   };
 }

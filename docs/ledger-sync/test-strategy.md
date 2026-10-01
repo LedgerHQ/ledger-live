@@ -23,16 +23,16 @@ fully deterministically by **mocking everything external**: HTTP via `msw`, devi
 The trick: a scenario is recorded **once** end-to-end against a real Speculos device + staging
 API, then **replayed** deterministically forever after.
 
-- Record missing snapshots: the lib's `e2e` script
-  ([`scripts/e2e.ts`](../../libs/ledger-key-ring-protocol/scripts/e2e.ts)). To regenerate one,
+- Record missing snapshots: the lib's `e2e` script (now in ts-libs)
+  ([`scripts/e2e.ts`](https://github.com/LedgerHQ/ts-libs/blob/develop/libs/ledger-key-ring-protocol/scripts/e2e.ts)). To regenerate one,
   delete its JSON and re-run.
-- Snapshots live in [`mocks/scenarios/*.json`](../../libs/ledger-key-ring-protocol/mocks/scenarios)
+- Snapshots live in [`mocks/scenarios/*.json`](https://github.com/LedgerHQ/ts-libs/tree/develop/libs/ledger-key-ring-protocol/mocks/scenarios)
   (recorded `apdus`, `http.transactions`, and `crypto` randomness).
 - Replayed by `src/__tests__/integration/sdk.test.ts` (against the real SDK) and the mock SDK.
 
 A scenario is a single **isomorphic** TypeScript file — the *same* function is used to record and
 to replay, so an assertion failure is caught in either mode. They live in
-[`tests/scenarios/`](../../libs/ledger-key-ring-protocol/tests/scenarios) (start from
+[`tests/scenarios/`](https://github.com/LedgerHQ/ts-libs/tree/develop/libs/ledger-key-ring-protocol/tests/scenarios) (start from
 `_template.ts`). Example:
 
 ```ts

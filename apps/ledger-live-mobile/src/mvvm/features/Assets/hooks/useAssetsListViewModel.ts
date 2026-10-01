@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import useEnv from "@features/platform-env";
 import { useFocusEffect } from "@react-navigation/native";
@@ -9,7 +10,6 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
-import { track } from "~/analytics";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 export interface Props {

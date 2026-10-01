@@ -109,6 +109,7 @@ export type SendFlowTransactionActions = Readonly<{
   updateTransaction: (updater: (tx: Transaction) => Transaction) => void;
   setRecipient: (recipient: RecipientData) => void;
   setAccount: (account: AccountLike, parentAccount?: Account | null) => void;
+  updateAccount: (account: AccountLike, parentAccount?: Account | null) => void;
 }>;
 
 export type SendFlowOperationActions = Readonly<{

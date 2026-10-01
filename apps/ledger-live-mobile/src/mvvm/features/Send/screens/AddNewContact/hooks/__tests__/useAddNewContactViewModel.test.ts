@@ -41,11 +41,6 @@ jest.mock("LLM/features/Send/context/SendFlowTrackingContext", () => ({
   }),
 }));
 
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
-  screen: jest.fn(),
-}));
-
 jest.mock("~/context/hooks", () => ({
   ...jest.requireActual("~/context/hooks"),
   useDispatch: () => dispatch,

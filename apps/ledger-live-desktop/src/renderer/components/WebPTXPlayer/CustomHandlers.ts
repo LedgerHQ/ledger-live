@@ -13,7 +13,7 @@ import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
 import { getTrackingRouteLiveAppSource } from "../Web3AppWebview/analytics";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
 import { WebviewProps } from "../Web3AppWebview/types";
@@ -100,7 +100,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
               ...properties,
               flowInitiatedFrom: getTrackingRouteLiveAppSource(),
             },
-            mandatory,
+            { mandatory: !!mandatory },
           ),
       ),
     [],

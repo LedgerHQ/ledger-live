@@ -1,8 +1,8 @@
+import { Track } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import useEnv from "@features/platform-env";
 import { setEnv } from "@shared/env";
 import SettingsRow from "~/components/SettingsRow";
-import Track from "~/analytics/Track";
 import Switch from "~/components/Switch";
 
 const AnalyticsConsoleRow = () => {

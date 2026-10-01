@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setCrashReporting } from "~/renderer/actions/settings";
 import { crashReportingSelector } from "~/renderer/reducers/settings";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Switch from "~/renderer/components/Switch";
 const ReportBugsButton = () => {
   const dispatch = useDispatch();

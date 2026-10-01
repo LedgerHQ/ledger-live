@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Image } from "react-native";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -9,7 +10,6 @@ import {
   ShieldCheck,
 } from "@ledgerhq/native-ui/assets/icons";
 import { ShadowedView } from "react-native-fast-shadow";
-import { TrackScreen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import Animation from "~/components/Animation";
 import CHARON from "~/animations/device/charon/charon.json";

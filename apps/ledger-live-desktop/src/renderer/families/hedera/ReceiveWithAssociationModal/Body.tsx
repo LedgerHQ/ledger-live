@@ -14,7 +14,7 @@ import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/heder
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { closeModal } from "~/renderer/actions/modals";

@@ -24,7 +24,11 @@ jest.mock("./bakers", () => ({
 // baker loader; stub it so the hook doesn't hit an unseeded LiveConfig.
 jest.mock("../../config", () => ({
   ...jest.requireActual("../../config"),
-  getCurrencyConfiguration: jest.fn(() => ({ status: { type: "active" } })),
+  getCurrencyConfiguration: jest.fn(() => ({
+    status: { type: "active" },
+    name: "Tezos",
+    unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
+  })),
 }));
 
 import { bakers } from "@ledgerhq/coin-tezos/network";

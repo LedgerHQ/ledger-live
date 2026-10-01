@@ -23,7 +23,8 @@ export const aleoApi = createApi({
     getValidators: build.query<AleoValidator[], string>({
       queryFn: async currencyId => {
         try {
-          return { data: await getValidators(currencyId) };
+          const config = getCurrencyConfiguration<AleoCoinConfig>(currencyId);
+          return { data: await getValidators(config) };
         } catch (error) {
           return { error: error instanceof Error ? error : new Error(String(error)) };
         }

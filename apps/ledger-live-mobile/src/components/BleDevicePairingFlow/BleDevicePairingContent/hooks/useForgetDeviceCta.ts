@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { Linking } from "react-native";
-import { track } from "~/analytics";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 

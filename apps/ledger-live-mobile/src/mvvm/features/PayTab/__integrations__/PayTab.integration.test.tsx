@@ -29,11 +29,6 @@ import {
   usdc,
 } from "./shared";
 
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
-}));
 jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus", () => ({
   useContactsLedgerSyncStatus: () => "ready",
 }));
@@ -277,6 +272,14 @@ describe("PayTab integration", () => {
 
       expect(await screen.findByTestId("pay-card-balance-empty-state")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
+    });
+
+    it("should hide the card and its disclaimer when the pay tab card param is false", async () => {
+      renderPayTab({ cardEnabled: false });
+
+      expect(await screen.findByTestId("pay-card-balance-empty-state")).toBeVisible();
+      expect(screen.queryByTestId("card-login")).toBeNull();
+      expect(screen.queryByTestId("pay-disclaimer")).toBeNull();
     });
 
     it("should open the balance filter bottom sheet from the hero pill and track the interaction", async () => {

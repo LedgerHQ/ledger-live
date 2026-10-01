@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { Linking } from "react-native";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { act, renderHook } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import useAddressTypeTooltipViewModel from "./useAddressTypeTooltipViewModel";
 

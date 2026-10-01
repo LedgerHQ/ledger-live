@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button, { Base } from "~/renderer/components/Button";
 import RedelegationSelectorField from "../fields/RedelegationSelectorField";

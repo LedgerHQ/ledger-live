@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
@@ -12,7 +13,6 @@ import { buildPnlDetail } from "LLM/features/Pnl/builders/buildPnlDetail";
 import { PNL_BUTTON, PNL_DETAIL_PAGE } from "LLM/features/Pnl/const";
 import { useShouldDisplayAnalyticsPnl } from "LLM/features/Analytics/hooks/useShouldDisplayAnalyticsPnl";
 import type { PnlSectionViewModel } from "./types";
-import { track } from "~/analytics";
 import { ANALYTICS_PAGE } from "../../../../const";
 
 const ZERO = new BigNumber(0);

@@ -1,4 +1,4 @@
-import { SetupPasswordView } from "@features/flow-app-lock";
+import { SetupPasswordView } from "@features/flow-app-password-setup";
 import React from "react";
 import { useKeyboardInset } from "../../hooks/useKeyboardInset";
 import useSetupPasswordScreenViewModel from "./useSetupPasswordScreenViewModel";

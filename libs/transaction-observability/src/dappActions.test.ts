@@ -19,11 +19,13 @@ const LIDO_SUBMIT = "0xa1903eab"; // keccak256("submit(address)")
 const WETH_DEPOSIT = "0xd0e30db0"; // keccak256("deposit()") — wrapping ETH, not staking
 const STAKE_NO_ARGS = "0x3a4b66f1"; // keccak256("stake()")
 const UNMAPPED = "0xdeadbeef";
+const REQUEST_EXIT = "0x721c6513"; // requestExit, observed on a Coinbase exit
 
 // Observed in a real Lido stake on desktop: `submit(address)` is called on stETH itself, so
 // the deposit target and the receipt token are one address.
 const LIDO_STETH = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 const KILN_PSETH = "0x5DB5235b5C7e247488784986e58019fFFd98FdA4";
+const COINBASE_LCETH = "0xc4dcb059dd98b45b090da8982234c61d0b9e84f9";
 // Stader publishes this as the only contract its app should touch. A pool manager, not a
 // token: CAL returns nothing for it, while ETHx lives at a different address.
 const STADER_POOL = "0xcf5ea1b38380f6af39068375516daf40ed70d299";
@@ -78,11 +80,41 @@ describe("the dApp selector vocabulary", () => {
     ["requestWithdrawals", "withdraw"],
     ["redeem", "redeem"],
     ["claimRewards", "claimReward"],
+    // Observed as `transaction_type: unknown` on real completed stakes (LIVE-38202).
+    ["enterExitQueue", "withdraw"],
+    ["claimExitedAssets", "withdraw"],
+    ["requestExit", "withdraw"],
+    ["multiClaim", "withdraw"],
+    ["requestValidatorsExit", "withdraw"],
+    ["requestWithdrawalsWithPermit", "withdraw"],
+    ["completeWithdrawal", "withdraw"],
+    ["requestRedeem", "redeem"],
   ])("maps %s to %s", (fn, action) => {
     expect(deriveDappAction(fn)).toBe(action);
   });
 
-  it.each(["swap", "unoswap", "safeTransferFrom", "approve", "0xdeadbeef"])(
+  // The names above only help if the selector list resolves real call data to them.
+  it("resolves a real exit selector to its name and action", () => {
+    const common = signEvent({
+      manifestId: "coinbase-staking",
+      transaction: {
+        family: "evm",
+        mode: "send",
+        recipient: COINBASE_LCETH,
+        data: callData(REQUEST_EXIT),
+      },
+    });
+
+    expect(common).toMatchObject({
+      earnTransactionType: "withdraw",
+      rawTransactionType: "requestExit",
+      outputCurrency: "lcETH",
+    });
+  });
+
+  // `batchWithdrawCLFee` is a reward sweep or, after an exit, the principal. Either guess is
+  // wrong for some calls, so it stays unknown and countable by its raw name.
+  it.each(["swap", "unoswap", "safeTransferFrom", "approve", "batchWithdrawCLFee", "0xdeadbeef"])(
     "claims nothing for %s",
     fn => {
       expect(deriveDappAction(fn)).toBeUndefined();

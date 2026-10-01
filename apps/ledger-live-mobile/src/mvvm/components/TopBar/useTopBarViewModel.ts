@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import { track } from "~/analytics";
 import { setOriginFlow } from "~/analytics/originFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useSelector } from "~/context/hooks";

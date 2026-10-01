@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { TrackScreen } from "~/analytics";
 import { AutoRepair } from "~/components/DeviceAction/rendering";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Flex } from "@ledgerhq/native-ui";

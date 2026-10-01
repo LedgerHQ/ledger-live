@@ -230,7 +230,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason }
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
-        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
         const provider = await app.swap.selectExchangeWithoutKyc(swap);
         swap.setProvider(provider);
         await ensureTokenApproval(fromAccount, provider, minAmount);

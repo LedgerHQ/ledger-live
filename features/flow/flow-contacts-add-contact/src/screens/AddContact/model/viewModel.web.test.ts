@@ -25,8 +25,8 @@ describe("createAddContactViewModel", () => {
   });
 
   it("exposes the stable invalid name error for an invalid draft name", () => {
-    expect(createAddContactViewModel("Olive@2")).toEqual({
-      draftName: "Olive@2",
+    expect(createAddContactViewModel("Olive 💎")).toEqual({
+      draftName: "Olive 💎",
       avatarInitial: "O",
       invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
       isSaveEnabled: false,

@@ -2,7 +2,7 @@
   "name": "@features/flow-app-lock",
   "version": "0.5.0",
   "private": true,
-  "description": "App lock flow for Ledger Wallet Mobile: unlock, password setup, migration (scaffold)",
+  "description": "App lock flow for Ledger Wallet Mobile: longer password migration and the protection prompt",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -23,8 +23,10 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/app-lock"
   },
   "dependencies": {
+    "@features/flow-app-password-setup": "workspace:*",
     "@features/platform-app-lock": "workspace:*",
     "@shared/analytics": "workspace:*",
+    "@shared/analytics-react": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"

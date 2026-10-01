@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import { isConfirmedOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Text } from "@ledgerhq/native-ui";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -18,7 +20,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Trans, useTranslation } from "~/context/Locale";
 import { Linking, Platform, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen, track } from "~/analytics";
 import Alert from "~/components/Alert";
 import Button from "~/components/Button";
 import CancelButton from "~/components/CancelButton";

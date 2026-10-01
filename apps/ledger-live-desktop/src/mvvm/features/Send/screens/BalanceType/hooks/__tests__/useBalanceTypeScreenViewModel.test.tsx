@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/types";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { useBalanceTypeScreenViewModel } from "../useBalanceTypeScreenViewModel";
 
 // Navigation mock
@@ -66,7 +66,8 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCalculateCountervalueCallback: jest.fn(() => (_from: unknown, value: unknown) => value),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   trackPage: jest.fn(),
 }));
 
@@ -293,8 +294,9 @@ describe("useBalanceTypeScreenViewModel", () => {
       renderViewModel();
 
       expect(mockedTrackPage).toHaveBeenCalledTimes(1);
-      expect(mockedTrackPage).toHaveBeenCalledWith("Modal send - step balance type", null, {
-        flow: "send",
+      expect(mockedTrackPage).toHaveBeenCalledWith({
+        category: "Modal send - step balance type",
+        props: { flow: "send" },
       });
     });
 

@@ -192,36 +192,36 @@ describe("createApi", () => {
       expect(rawTx.transactionMemo).toBe("token association");
     });
 
-    it.each([HEDERA_TRANSACTION_MODES.Delegate, HEDERA_TRANSACTION_MODES.Undelegate])(
-      "returns serialized %s transaction",
-      async type => {
-        const { transaction: hex } = await api.craftTransaction(context, {
-          intentType: "transaction",
-          asset: {
-            type: "native",
-          },
-          type,
-          amount: BigInt(0),
-          sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
-          senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
-          recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
-          memo: {
-            kind: "text",
-            type: "string",
-            value: type,
-          },
-        });
+    it.each([
+      [HEDERA_TRANSACTION_MODES.Delegate, "Stake"],
+      [HEDERA_TRANSACTION_MODES.Undelegate, "Unstake"],
+    ])("returns serialized %s transaction with the %s memo", async (type, expectedMemo) => {
+      const { transaction: hex } = await api.craftTransaction(context, {
+        intentType: "transaction",
+        asset: {
+          type: "native",
+        },
+        type,
+        amount: BigInt(0),
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: type,
+        },
+      });
 
-        const rawTx = AccountUpdateTransaction.fromBytes(Buffer.from(hex, "hex"));
+      const rawTx = AccountUpdateTransaction.fromBytes(Buffer.from(hex, "hex"));
 
-        expect(rawTx).toBeInstanceOf(AccountUpdateTransaction);
-        invariant(rawTx instanceof AccountUpdateTransaction, "AccountUpdateTransaction type guard");
-        expect(rawTx.accountId).toEqual(
-          AccountId.fromString(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId),
-        );
-        expect(rawTx.transactionMemo).toBe(type);
-      },
-    );
+      expect(rawTx).toBeInstanceOf(AccountUpdateTransaction);
+      invariant(rawTx instanceof AccountUpdateTransaction, "AccountUpdateTransaction type guard");
+      expect(rawTx.accountId).toEqual(
+        AccountId.fromString(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId),
+      );
+      expect(rawTx.transactionMemo).toBe(expectedMemo);
+    });
 
     it("applies customFees properly", async () => {
       const customFees: FeeEstimation = {
@@ -942,19 +942,58 @@ describe("createApi", () => {
       expect(hasFeesOperationForSendToken).toBe(false);
       expect(hasTokenAssociateOperations).toBe(true);
       expect(operationWithMemo?.details).toMatchObject({
-        pagingToken: expect.any(String),
-        consensusTimestamp: expect.any(String),
         ledgerOpType: expect.any(String),
         memo: expect.any(String),
+        familyExtra: {
+          pagingToken: expect.any(String),
+          consensusTimestamp: expect.any(String),
+          transactionId: expect.any(String),
+        },
       });
       expect(firstTokenAssociateOperations?.details).toMatchObject({
-        pagingToken: expect.any(String),
-        consensusTimestamp: expect.any(String),
         ledgerOpType: expect.any(String),
-        associatedTokenId: expect.any(String),
+        familyExtra: {
+          associatedTokenId: expect.any(String),
+          pagingToken: expect.any(String),
+          consensusTimestamp: expect.any(String),
+          transactionId: expect.any(String),
+        },
       });
+      expect(operationWithMemo?.details).not.toHaveProperty("pagingToken");
+      expect(operationWithMemo?.details).not.toHaveProperty("consensusTimestamp");
       // every transfer operation should have a fees payer
       expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
+    });
+
+    it("serves a second sync from the stored height, neither losing nor duplicating operations", async () => {
+      const accountId = MAINNET_TEST_ACCOUNTS.withTokens.accountId;
+      const { items: firstSync } = await api.listOperations(context, accountId, {
+        minHeight: 0,
+        order: "desc",
+      });
+      const lastFinalizedBlock = await api.lastBlock(context);
+      // Resuming from mid-page, not from the newest op, so the second sync has known ops to return.
+      const minHeight = firstSync[Math.floor(firstSync.length / 2)].tx.block.height + 1;
+      const newestKnownHeight = firstSync[0].tx.block.height;
+
+      const { items: secondSync } = await api.listOperations(context, accountId, {
+        minHeight,
+        order: "desc",
+      });
+
+      const expectedIds = firstSync
+        .filter(op => op.tx.block.height >= minHeight)
+        .map(op => op.id)
+        .sort();
+      // Operations newer than the first sync may have landed in the meantime.
+      const knownRangeIds = secondSync
+        .filter(op => op.tx.block.height <= newestKnownHeight)
+        .map(op => op.id)
+        .sort();
+      expect(firstSync.every(op => op.tx.block.height <= lastFinalizedBlock.height)).toBe(true);
+      expect(secondSync.every(op => op.tx.block.height >= minHeight)).toBe(true);
+      expect(expectedIds.length).toBeGreaterThan(0);
+      expect(knownRangeIds).toEqual(expectedIds);
     });
 
     it("returns IN/OUT operations for mint and burn of amUSDC", async () => {
@@ -1016,23 +1055,23 @@ describe("createApi", () => {
       expect(delegateOp?.value).toBe(BigInt(0));
       expect(delegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(delegateOp?.details).toMatchObject({
-        previousStakingNodeId: null,
-        targetStakingNodeId: expect.any(Number),
         stakedAmount: expect.any(BigInt),
+        familyExtra: { previousStakingNodeId: null, targetStakingNodeId: expect.any(Number) },
       });
       expect(undelegateOp?.value).toBe(BigInt(0));
       expect(undelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(undelegateOp?.details).toMatchObject({
-        previousStakingNodeId: expect.any(Number),
-        targetStakingNodeId: null,
         stakedAmount: expect.any(BigInt),
+        familyExtra: { previousStakingNodeId: expect.any(Number), targetStakingNodeId: null },
       });
       expect(redelegateOp?.value).toBe(BigInt(0));
       expect(redelegateOp?.tx.fees).toBeGreaterThan(BigInt(0));
       expect(redelegateOp?.details).toMatchObject({
-        previousStakingNodeId: expect.any(Number),
-        targetStakingNodeId: expect.any(Number),
         stakedAmount: expect.any(BigInt),
+        familyExtra: {
+          previousStakingNodeId: expect.any(Number),
+          targetStakingNodeId: expect.any(Number),
+        },
       });
       expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
       expect(rewardOp?.tx.fees).toBe(BigInt(0));

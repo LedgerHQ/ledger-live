@@ -10,7 +10,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { useStake } from "LLD/hooks/useStake";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { openModal } from "~/renderer/actions/modals";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";

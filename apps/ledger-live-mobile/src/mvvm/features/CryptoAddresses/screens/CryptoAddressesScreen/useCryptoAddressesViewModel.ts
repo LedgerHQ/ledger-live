@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
 import { accountsSelector, isUpToDateSelector } from "~/reducers/accounts";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import {
   BaseNavigationComposite,
@@ -14,7 +14,7 @@ import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/Acc
 import { Account } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useTranslation } from "~/context/Locale";
 import BigNumber from "bignumber.js";

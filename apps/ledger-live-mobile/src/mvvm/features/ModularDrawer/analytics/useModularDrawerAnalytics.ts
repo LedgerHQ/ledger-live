@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
-import { track } from "~/analytics/segment";
 import {
   MODULAR_DRAWER_PAGE_NAME,
   ModularDrawerEventName,

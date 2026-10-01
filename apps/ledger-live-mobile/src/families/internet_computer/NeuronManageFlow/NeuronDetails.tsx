@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import {
   ICP_FEES,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
@@ -33,7 +34,6 @@ import type { ICPAccount } from "@ledgerhq/live-common/families/internet_compute
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

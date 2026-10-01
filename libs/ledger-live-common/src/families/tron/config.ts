@@ -12,6 +12,8 @@ export const tronConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Tron",
+      unit: { name: "TRX", code: "TRX", magnitude: 6 },
       explorer: {
         url: getEnv("API_TRONGRID_PROXY"),
       },

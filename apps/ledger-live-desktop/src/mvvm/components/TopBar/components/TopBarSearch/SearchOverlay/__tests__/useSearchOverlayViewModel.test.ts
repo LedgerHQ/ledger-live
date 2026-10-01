@@ -1,8 +1,7 @@
 import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import { track } from "~/renderer/analytics/segment";
-import { resetTrackingPages, setTrackingSource } from "~/renderer/analytics/screenRefs";
+import { resetTrackingPages, setTrackingSource, track } from "@shared/analytics";
 import { useSearchOverlayViewModel } from "../useSearchOverlayViewModel";
 import { useAssetSearchBar } from "../useAssetSearchBar";
 import { SearchMode, SearchResults, SearchSuggestions } from "../types";
