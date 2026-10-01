@@ -30,15 +30,15 @@ if (parsed) {
  * Determines which .env file to use based on environment.
  * NIGHTLY is checked first so a stray TESTING or STAGING cannot change how nightlies are built.
  */
-export const DOTENV_FILE = process.env.NIGHTLY
-  ? ".env.staging"
-  : process.env.TESTING
-    ? ".env.testing"
-    : process.env.STAGING
-      ? ".env.staging"
-      : process.env.NODE_ENV === "production"
-        ? ".env.production"
-        : ".env";
+function getDotEnvFile(): string {
+  if (process.env.NIGHTLY) return ".env.staging";
+  if (process.env.TESTING) return ".env.testing";
+  if (process.env.STAGING) return ".env.staging";
+  if (process.env.NODE_ENV === "production") return ".env.production";
+  return ".env";
+}
+
+export const DOTENV_FILE = getDotEnvFile();
 
 // Nightlies use staging services with the production Firebase project, like mobile nightlies.
 const FIREBASE_OVERRIDE_FILE = process.env.NIGHTLY ? ".env.production" : null;
