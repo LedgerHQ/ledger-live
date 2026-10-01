@@ -35,6 +35,7 @@ import {
   getSwapStepFromError,
 } from "@ledgerhq/live-common/exchange/error";
 import { WalletCliDeviceError } from "../../device/wallet-cli-device-error";
+import { toSwapBackendError } from "./swap-backend-error";
 import {
   trackSwapCompleted,
   trackSwapRejected,
@@ -343,6 +344,8 @@ export async function runFullSwapPipeline(
         amount,
         amountInAtomicUnit,
         ...(quoteId != null && quoteId !== "" ? { quoteId } : {}),
+      }).catch(error => {
+        throw toSwapBackendError(error) ?? error;
       });
       out.swapExecuteProgress(
         `[2/5] Swap API returned swapId=${payload.swapId ?? "(none)"}, payin address received.`,
