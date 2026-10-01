@@ -40,6 +40,52 @@ describe("IPCTransport", () => {
     });
   });
 
+  describe("exchange", () => {
+    const transport = () => new IPCTransport("http-proxy", REQUEST_ID);
+
+    it("should send the APDU as hex with its timeout and return the response as a Buffer", async () => {
+      mockTransport.exchange.mockResolvedValue({
+        type: "exchange-response",
+        requestId: REQUEST_ID,
+        data: "9000",
+      });
+
+      const response = await transport().exchange(Buffer.from([0xe0, 0x01, 0x00, 0x00]), {
+        abortTimeoutMs: 5000,
+      });
+
+      expect(mockTransport.exchange).toHaveBeenCalledWith(REQUEST_ID, "e0010000", 5000);
+      expect(Buffer.isBuffer(response)).toBe(true);
+      expect(response.toString("hex")).toBe("9000");
+    });
+
+    it("should map an exchange-error result to a TransportError with its id", async () => {
+      mockTransport.exchange.mockResolvedValue({
+        type: "exchange-error",
+        requestId: REQUEST_ID,
+        error: { message: "device locked", id: "DeviceLocked" },
+      });
+
+      const error = await transport()
+        .exchange(Buffer.from("e001", "hex"))
+        .catch((e: unknown) => e);
+
+      expect(error).toBeInstanceOf(TransportError);
+      expect(error).toMatchObject({ message: "device locked", id: "DeviceLocked" });
+    });
+
+    it("should wrap a rejected bridge call in a TransportExchangeError", async () => {
+      mockTransport.exchange.mockRejectedValue(new Error("ipc down"));
+
+      const error = await transport()
+        .exchange(Buffer.from("e001", "hex"))
+        .catch((e: unknown) => e);
+
+      expect(error).toBeInstanceOf(TransportError);
+      expect(error).toMatchObject({ message: "ipc down", id: "TransportExchangeError" });
+    });
+  });
+
   describe("listen", () => {
     it("should listen with a uuid requestId and emit an add descriptor on success", async () => {
       const observer = { next: jest.fn(), error: jest.fn(), complete: jest.fn() };
