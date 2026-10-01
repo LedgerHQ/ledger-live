@@ -3,36 +3,16 @@ import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/stacks/types";
-import { validateStacksAddress } from "@ledgerhq/live-common/families/stacks/react";
-import { STACKS_MAX_NUM_CYCLES } from "@ledgerhq/live-common/families/stacks/constants";
+import {
+  isStacksPoolAddress,
+  isValidStacksNumCycles,
+} from "@ledgerhq/live-common/families/stacks/react";
 import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Input from "~/renderer/components/Input";
 import Button from "~/renderer/components/Button";
 import { StepProps } from "../types";
-
-const MIN_NUM_CYCLES = 1;
-
-// Deliberately conservative: real Clarity contract names allow a few more characters than this,
-// but under-accepting here only makes the rare edge-case name require re-typing, while
-// over-accepting is what let a shape like "foo." or "SP1not-an-address.x" reach `contractPrincipalCV`
-// and fail only during preparation/signing instead of being rejected in this form.
-const CONTRACT_NAME_RE = /^[a-zA-Z][a-zA-Z0-9-]{0,127}$/;
-
-const isPoolAddress = (valAddress: string | undefined): boolean => {
-  if (!valAddress) return false;
-  const dotIndex = valAddress.indexOf(".");
-  if (dotIndex === -1) return false;
-  const address = valAddress.slice(0, dotIndex);
-  const contractName = valAddress.slice(dotIndex + 1);
-  return validateStacksAddress(address).isValid && CONTRACT_NAME_RE.test(contractName);
-};
-
-const isValidNumCycles = (numCycles: number | undefined): boolean =>
-  typeof numCycles === "number" &&
-  numCycles >= MIN_NUM_CYCLES &&
-  numCycles <= STACKS_MAX_NUM_CYCLES;
 
 const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps) => {
   invariant(account, "account is required");
@@ -113,8 +93,8 @@ const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps)
 export const StepValidatorFooter = ({ transaction, bridgePending, transitionTo }: StepProps) => {
   const canNext =
     !bridgePending &&
-    isPoolAddress(transaction?.valAddress) &&
-    isValidNumCycles(transaction?.familySpecificData?.numCycles);
+    isStacksPoolAddress(transaction?.valAddress) &&
+    isValidStacksNumCycles(transaction?.familySpecificData?.numCycles);
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2} grow>
       <Button

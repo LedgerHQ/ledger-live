@@ -1,5 +1,12 @@
 import BigNumber from "bignumber.js";
-import { getStacksStakingPosition, getStacksUnlockCycle, validateStacksAddress } from "./react";
+import {
+  getStacksStakingPosition,
+  getStacksUnlockCycle,
+  isStacksPoolAddress,
+  isValidStacksNumCycles,
+  validateStacksAddress,
+} from "./react";
+import { MAX_NUM_CYCLES, MIN_NUM_CYCLES } from "@ledgerhq/coin-stacks/common-logic/staking";
 import type { StacksAccount, StakingPosition } from "./types";
 
 const makeAccount = (positions?: StakingPosition[]): StacksAccount =>
@@ -57,5 +64,15 @@ describe("validateStacksAddress", () => {
     // buildUnsignedTx.test.ts fixtures).
     expect(validateStacksAddress("SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA").isValid).toBe(true);
     expect(validateStacksAddress("not-an-address").isValid).toBe(false);
+  });
+});
+
+describe("staking bound re-exports", () => {
+  it("re-exports coin-stacks's pox-5 pool and cycle checks", () => {
+    expect(
+      isStacksPoolAddress("SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA.native-pool-signer-manager"),
+    ).toBe(true);
+    expect(isValidStacksNumCycles(MIN_NUM_CYCLES)).toBe(true);
+    expect(isValidStacksNumCycles(MAX_NUM_CYCLES + 1)).toBe(false);
   });
 });

@@ -27,3 +27,11 @@ export function getStacksUnlockCycle(position: StakingPosition): number | undefi
   if (!isStacksStakeDetails(details)) return undefined;
   return details.firstRewardCycle + details.numCycles;
 }
+
+// Re-exported for the same reason as `fetchPoxInfo` above: pox-5's staking checks live in the coin
+// module, and LLD (which doesn't depend on coin-stacks) reaches them through live-common. LLM
+// imports them from coin-stacks directly.
+export {
+  isPoolAddress as isStacksPoolAddress,
+  isValidNumCycles as isValidStacksNumCycles,
+} from "@ledgerhq/coin-stacks/common-logic/staking";

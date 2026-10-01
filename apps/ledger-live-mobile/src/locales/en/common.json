@@ -1458,6 +1458,10 @@
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
+    "StacksStakeInPreparePhase": {
+      "title": "Staking is paused until the next reward cycle",
+      "description": "The Stacks network doesn't accept new stakes while it prepares the next reward cycle. Staking reopens in {{blocksUntilReopen}} Bitcoin blocks."
+    },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"
     },
@@ -8510,6 +8514,73 @@
             }
           }
         }
+      }
+    }
+  },
+  "stacks": {
+    "stake": {
+      "stepperHeader": {
+        "pool": "Pool",
+        "amount": "Amount",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "pool": {
+        "description": "Enter the address of the pool you want to delegate your STX to, and how many reward cycles to lock them for.",
+        "poolAddressLabel": "Pool address",
+        "poolAddressError": "Enter a pool contract address, such as SP….pool-name",
+        "numCyclesLabel": "Number of cycles",
+        "numCyclesError": "Enter a number of cycles between {{min}} and {{max}}"
+      },
+      "amount": {
+        "disclaimer": "Your STX will be locked until the staking pool releases them.",
+        "pool": "Pool",
+        "numCycles": "Number of cycles",
+        "available": "Available"
+      },
+      "validation": {
+        "success": {
+          "title": "You have successfully staked your assets",
+          "description": "Your account balance will be updated when the blockchain confirms the transaction."
+        }
+      }
+    },
+    "unstake": {
+      "title": "Unstake",
+      "stepperHeader": {
+        "summary": "Unstake",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "summary": {
+        "info": "Unstaking shortens your lock period. Your STX are released once that shortened period ends, not immediately.",
+        "pool": "Pool",
+        "noPosition": "This account has no active staking position to unstake."
+      },
+      "validation": {
+        "success": {
+          "title": "Unstake submitted",
+          "description": "Your STX undelegation was broadcasted successfully."
+        }
+      }
+    },
+    "account": {
+      "staked": "Staked",
+      "unlockCycle": "Unlock cycle"
+    },
+    "info": {
+      "available": {
+        "title": "Available",
+        "description": "Amount of STX you can spend or stake."
+      },
+      "staked": {
+        "title": "Staked",
+        "description": "Amount of STX delegated to your staking pool and locked by pox-5."
+      },
+      "unlockCycle": {
+        "title": "Unlock cycle",
+        "description": "Reward cycle at which your staked STX are released."
       }
     }
   },
