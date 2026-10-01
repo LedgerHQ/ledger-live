@@ -1,0 +1,49 @@
+{
+  "extends": "./tsconfig.sonar.json",
+  "compilerOptions": {
+    "moduleSuffixes": [".native", ""],
+    "customConditions": ["react-native", "@ledgerhq/source"]
+  },
+  "include": [
+    "features/flow/app-lock",
+    "shared/ui-queued-bottom-sheet",
+    "libs/ui/packages/native",
+    "libs/**/*.native.ts",
+    "libs/**/*.native.tsx",
+    "libs/**/native.ts",
+    "libs/**/native.tsx",
+    "features/**/*.native.ts",
+    "features/**/*.native.tsx",
+    "features/**/native.ts",
+    "features/**/native.tsx",
+    "shared/**/*.native.ts",
+    "shared/**/*.native.tsx",
+    "shared/**/native.ts",
+    "shared/**/native.tsx",
+    "domain/**/*.native.ts",
+    "domain/**/*.native.tsx",
+    "domain/**/native.ts",
+    "domain/**/native.tsx",
+    "devtools/**/*.native.ts",
+    "devtools/**/*.native.tsx",
+    "devtools/**/native.ts",
+    "devtools/**/native.tsx"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/lib",
+    "**/lib-es",
+    "**/dist",
+    "**/build",
+    "**/coverage",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__",
+    "**/__mocks__",
+    "**/__integration__",
+    "**/__integrations__",
+    "libs/coin-tester*"
+  ]
+}
