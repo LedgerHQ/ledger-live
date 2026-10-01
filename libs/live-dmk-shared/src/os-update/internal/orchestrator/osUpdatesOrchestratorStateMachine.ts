@@ -1,9 +1,13 @@
 import { assign, enqueueActions, setup } from "xstate";
 import { OsUpdatesSteps } from "../../api/model/OsUpdatesSteps";
+import { applyUpdatesStateMachine } from "../apply-updates/ApplyUpdatesStateMachine";
+import type { ApplyUpdatesStateMachineInput } from "../apply-updates/types";
 import { createBackupStateMachine } from "../create-backup/CreateBackupStateMachine";
 import type { CreateBackupStateMachineInput } from "../create-backup/types";
 import { preChecksStateMachine } from "../pre-checks/PreChecksStateMachine";
 import { PreChecksNextAction, type PreChecksStateMachineInput } from "../pre-checks/types";
+import { restoreBackupStateMachine } from "../restore-backup/RestoreBackupStateMachine";
+import type { RestoreBackupStateMachineInput } from "../restore-backup/types";
 import {
   OsUpdatesOrchestratorStateMachineContext,
   OsUpdatesOrchestratorStateMachineEventType,
@@ -25,6 +29,8 @@ export const osUpdatesOrchestratorStateMachine = setup({
   actors: {
     preChecks: preChecksStateMachine,
     createBackup: createBackupStateMachine,
+    applyUpdates: applyUpdatesStateMachine,
+    restoreBackup: restoreBackupStateMachine,
   },
   actions: {
     enterStep: assign({
@@ -34,6 +40,8 @@ export const osUpdatesOrchestratorStateMachine = setup({
     stopChildren: enqueueActions(({ enqueue }) => {
       enqueue.stopChild("preChecks");
       enqueue.stopChild("createBackup");
+      enqueue.stopChild("applyUpdates");
+      enqueue.stopChild("restoreBackup");
     }),
     callOnStop: ({ context }) => {
       context.onStop();
@@ -90,6 +98,14 @@ export const osUpdatesOrchestratorStateMachine = setup({
             target: "CreateBackup",
           },
           {
+            guard: ({ event }) => event.output === PreChecksNextAction.PerformOsUpdates,
+            target: "ApplyUpdates",
+          },
+          {
+            guard: ({ event }) => event.output === PreChecksNextAction.RestoreBackup,
+            target: "RestoreBackup",
+          },
+          {
             target: "Done",
           },
         ],
@@ -104,6 +120,47 @@ export const osUpdatesOrchestratorStateMachine = setup({
         id: "createBackup",
         src: "createBackup",
         input: ({ context, self }): CreateBackupStateMachineInput => ({
+          dmk: context.dmk,
+          connectedDevice: context.connectedDevice,
+          storage: context.storage,
+          unlockTimeout: context.unlockTimeout,
+          parentRef: self,
+        }),
+        onDone: {
+          target: "ApplyUpdates",
+        },
+        onError: {
+          target: "Failed",
+        },
+      },
+    },
+    ApplyUpdates: {
+      entry: { type: "enterStep", params: OsUpdatesSteps.APPLY_UPDATES },
+      invoke: {
+        id: "applyUpdates",
+        src: "applyUpdates",
+        input: ({ context, self }): ApplyUpdatesStateMachineInput => ({
+          dmk: context.dmk,
+          connectedDevice: context.connectedDevice,
+          osUpdates: context.osUpdates,
+          storage: context.storage,
+          unlockTimeout: context.unlockTimeout,
+          parentRef: self,
+        }),
+        onDone: {
+          target: "Done",
+        },
+        onError: {
+          target: "Failed",
+        },
+      },
+    },
+    RestoreBackup: {
+      entry: { type: "enterStep", params: OsUpdatesSteps.RESTORE_BACKUP },
+      invoke: {
+        id: "restoreBackup",
+        src: "restoreBackup",
+        input: ({ context, self }): RestoreBackupStateMachineInput => ({
           dmk: context.dmk,
           connectedDevice: context.connectedDevice,
           storage: context.storage,
