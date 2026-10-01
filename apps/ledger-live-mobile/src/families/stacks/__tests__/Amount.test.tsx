@@ -117,17 +117,38 @@ describe("Stacks staking Amount", () => {
     mockFetchPoxInfo.mockRejectedValueOnce(new Error("pox down"));
     renderScreen();
 
-    await waitFor(() => expect(screen.getByTestId("stacks-stake-pox-retry")).toBeVisible());
+    await waitFor(() => expect(screen.getByTestId("stacks-stake-amount-retry")).toBeVisible());
     fireEvent.changeText(screen.getByTestId("stacks-stake-amount-input"), "1000000");
     expect(continueButton()).toBeDisabled();
 
     mockFetchPoxInfo.mockResolvedValueOnce({ current_burnchain_block_height: 7 } as Awaited<
       ReturnType<typeof fetchPoxInfo>
     >);
-    fireEvent.press(screen.getByTestId("stacks-stake-pox-retry"));
+    fireEvent.press(screen.getByTestId("stacks-stake-amount-retry"));
 
-    await waitFor(() => expect(screen.queryByTestId("stacks-stake-pox-error")).toBeNull());
+    await waitFor(() => expect(screen.queryByTestId("stacks-stake-amount-error")).toBeNull());
     expect(continueButton()).toBeEnabled();
+  });
+
+  // useBridgeTransaction never settles a failed preparation: bridgeError comes with bridgePending.
+  it("offers Retry when the bridge's own preparation fails (e.g. validateIntent's /v2/pox call)", async () => {
+    mockFetchPoxInfo.mockResolvedValue({ current_burnchain_block_height: 1 } as Awaited<
+      ReturnType<typeof fetchPoxInfo>
+    >);
+    bridgeState.bridgeError = new Error("bridge pox request failed");
+    bridgeState.bridgePending = true;
+    renderScreen();
+
+    await waitFor(() => expect(mockFetchPoxInfo).toHaveBeenCalledTimes(1));
+    // Shown once, in the alert with its Retry, not again in the footer.
+    expect(screen.getAllByText("bridge pox request failed")).toHaveLength(1);
+    expect(screen.getByTestId("stacks-stake-amount-retry")).toBeEnabled();
+
+    fireEvent.press(screen.getByTestId("stacks-stake-amount-retry"));
+
+    await waitFor(() => expect(mockFetchPoxInfo).toHaveBeenCalledTimes(2));
+    expect(screen.getByTestId("stacks-stake-amount-retry")).toBeDisabled();
+    expect(continueButton()).toBeDisabled();
   });
 
   it("keeps Continue disabled while the bridge reports an error", async () => {

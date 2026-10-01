@@ -24,6 +24,7 @@ import { getFirstStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { stacksFlowStyles as styles } from "../shared/styles";
 import ContinueFooter from "../shared/ContinueFooter";
+import { useRetry } from "../shared/useRetry";
 import type { StacksStakingFlowParamList } from "./types";
 import { useStartBurnHtRefresh } from "./useStartBurnHtRefresh";
 
@@ -72,6 +73,11 @@ export default function Amount({ navigation, route }: Props) {
     isFocused,
     onStartBurnHtResolved,
   );
+  // On the generic bridge, validateIntent makes its own /v2/pox request, and a failure there
+  // surfaces as `bridgeError` (which the bridge keeps pending while it retries on its own), not as
+  // `poxError`. Refreshing the height hands the bridge a new transaction, so one Retry covers both.
+  const preparationError = poxError || bridgeError;
+  const { retrying, retry } = useRetry(preparationError, resolveStartBurnHt);
 
   const onChange = useCallback(
     (amount: BigNumber) => {
@@ -130,18 +136,20 @@ export default function Amount({ navigation, route }: Props) {
             <Trans i18nKey="stacks.stake.amount.disclaimer" />
           </Alert>
         </View>
-        {poxError ? (
-          <View style={styles.alert} testID="stacks-stake-pox-error">
+        {preparationError ? (
+          <View style={styles.alert} testID="stacks-stake-amount-error">
             <Alert type="error">
-              <TranslatedError error={poxError} />
+              <TranslatedError error={preparationError} />
             </Alert>
             <Button
               mt={4}
               outline
               type="main"
               size="large"
-              onPress={resolveStartBurnHt}
-              testID="stacks-stake-pox-retry"
+              onPress={retry}
+              pending={retrying}
+              disabled={retrying}
+              testID="stacks-stake-amount-retry"
             >
               {t("common.retry")}
             </Button>
@@ -208,7 +216,8 @@ export default function Amount({ navigation, route }: Props) {
         </View>
       </ScrollView>
       <ContinueFooter
-        bridgeError={bridgeError}
+        // Already shown, with its Retry, in the alert above.
+        bridgeError={null}
         onContinue={onContinue}
         disabled={continueDisabled}
         pending={bridgePending || (!startBurnHtResolved && !poxError)}
