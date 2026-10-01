@@ -93,7 +93,7 @@ describe("getDeviceTransactionConfig", () => {
         parentAccount: null,
         transaction: {
           mode: "voteDelegate",
-          dRepHex: "22c8a0059bdc196a48589617c30ceca2b55c0a901975419088348bdcd2",
+          dRepHex: "2226e524c97bc207362ddcffcba62c6bf5f1ef6c307663e2f2e06a6887",
         } as any,
         status: {} as any,
       });
@@ -105,7 +105,7 @@ describe("getDeviceTransactionConfig", () => {
           expect.objectContaining({
             type: "text",
             label: "DRep",
-            value: "drep1yty2qpvmmsvk5jzcjctuxr8v5264cz5sr965ryygxj9ae5seg7gah",
+            value: "drep1ymjjfjtmcgrnvtwull96vtrt7hc77mpswe379uhqdf5gwr3mmat",
           }),
         ]),
       );

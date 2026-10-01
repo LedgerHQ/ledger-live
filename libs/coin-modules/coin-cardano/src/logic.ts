@@ -411,11 +411,15 @@ export function getBech32PoolId(poolId: string, networkName: string): string {
   return encoded;
 }
 
-export function getBech32DRepId(dRepId: string, networkName: string): string {
+/**
+ * Encodes a DRep id as bech32 using the 28-byte credential hash.
+ * A leading header byte (29-byte input) is dropped so the result matches the Ledger device.
+ */
+export function getBech32DRepId(dRepHex: string, networkName: string): string {
   const networkParams = getNetworkParameters(networkName);
-  const words = bech32.toWords(Buffer.from(dRepId, "hex"));
-  const encoded = bech32.encode(networkParams.dRepIdPrefix, words, 1000);
-  return encoded;
+  const hash = dRepHex.length === 58 ? dRepHex.slice(2) : dRepHex;
+  const words = bech32.toWords(Buffer.from(hash, "hex"));
+  return bech32.encode(networkParams.dRepIdPrefix, words, 1000);
 }
 
 export function isValidNumString(value: unknown): boolean {
