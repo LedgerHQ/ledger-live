@@ -126,7 +126,7 @@ export function AddToExistingContactView({
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-16 px-24 pb-24",
+        "flex min-h-0 flex-1 flex-col gap-16 overflow-hidden px-24 pb-24",
         isOpeningAddressFlow && "pointer-events-none",
       )}
       data-testid="send-add-to-existing-contact-step"
