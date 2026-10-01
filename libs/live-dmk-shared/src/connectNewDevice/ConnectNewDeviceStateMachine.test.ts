@@ -95,6 +95,7 @@ const setupTest = ({
   const dmk = {
     connect,
     getConnectedDevice: jest.fn(() => connectedDevice),
+    disconnect: jest.fn().mockResolvedValue(undefined),
   } as unknown as DeviceManagementKit;
   const onConnected = jest.fn();
   const onClose = jest.fn();
@@ -825,6 +826,80 @@ describe("ConnectNewDeviceStateMachine", () => {
   });
 
   describe("stop", () => {
+    const connectAfterStop = () => {
+      let resolveConnect: (sessionId: string) => void = () => {};
+      const connect = jest.fn(
+        () =>
+          new Promise<string>(resolve => {
+            resolveConnect = resolve;
+          }),
+      );
+      return { connect, resolveConnect: (sessionId: string) => resolveConnect(sessionId) };
+    };
+
+    it("should disconnect the session when the connection succeeds after the machine is stopped", async () => {
+      const { connect, resolveConnect } = connectAfterStop();
+      const setup = setupTest({ connect });
+
+      await connectToNanoX(setup);
+      setup.machine.stop();
+      resolveConnect("late-session-id");
+      await flushPromises();
+
+      expect(setup.dmk.disconnect).toHaveBeenCalledWith({ sessionId: "late-session-id" });
+    });
+
+    it("should not call onConnected when the connection succeeds after the machine is stopped", async () => {
+      const { connect, resolveConnect } = connectAfterStop();
+      const setup = setupTest({ connect });
+
+      await connectToNanoX(setup);
+      setup.machine.stop();
+      resolveConnect("late-session-id");
+      await flushPromises();
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+
+      expect(setup.onConnected).not.toHaveBeenCalled();
+    });
+
+    it("should disconnect the session when the machine is stopped during the success delay", async () => {
+      const setup = setupTest();
+
+      await connectToNanoX(setup);
+      setup.machine.stop();
+
+      expect(setup.dmk.disconnect).toHaveBeenCalledWith({ sessionId: "session-id" });
+    });
+
+    it("should not disconnect the session when the machine is stopped after Done", async () => {
+      const setup = setupTest();
+
+      await connectToNanoX(setup);
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+      setup.machine.stop();
+
+      expect(setup.dmk.disconnect).not.toHaveBeenCalled();
+    });
+
+    it("should not disconnect anything when the machine is stopped while discovering", () => {
+      const { dmk, machine } = setupTest();
+
+      machine.start();
+      machine.stop();
+
+      expect(dmk.disconnect).not.toHaveBeenCalled();
+    });
+
+    it("should not throw when disconnecting the unclaimed session fails", async () => {
+      const setup = setupTest();
+      jest.mocked(setup.dmk.disconnect).mockRejectedValue(new Error("disconnect failed"));
+
+      await connectToNanoX(setup);
+
+      expect(() => setup.machine.stop()).not.toThrow();
+      await flushPromises();
+    });
+
     it("should not call onClose when the machine is stopped", () => {
       const { emitDiscoveryError, machine, onClose } = setupTest();
 

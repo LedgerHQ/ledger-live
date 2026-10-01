@@ -71,5 +71,7 @@ stateDiagram-v2
   DMK session, the connected device and the legacy compatibility fields.
 - `Terminated` emits the `Terminated` UI state and calls `onClose` one time.
 - `stop()` stops discovery and the timers, and calls neither `onConnected` nor
-  `onClose`.
+  `onClose`. If a connection succeeds after `stop()`, or if `stop()` runs during
+  the success delay, the machine disconnects that session, because no caller
+  received it.
 - Both delays can be injected with `deviceNotFoundDelay` and `successDelay`.
