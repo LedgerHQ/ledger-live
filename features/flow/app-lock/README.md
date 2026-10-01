@@ -10,14 +10,13 @@ container → ViewModel → View triplet, the container living in the app.
 
 What it holds today, from [LIVE-35961](https://ledgerhq.atlassian.net/browse/LIVE-35961):
 
-- `longerPassword` — the mandatory change of a password shorter than the minimum, built on the
-  password setup steps.
 - `protectionPrompt` and the sheets around the protection journeys.
 
 The unlock journey lives in [`@features/flow-app-unlock`](../app-unlock/README.md), the password
-setup steps in [`@features/flow-app-password-setup`](../app-password-setup/README.md) and the
-password removal in [`@features/flow-app-password-removal`](../app-password-removal/README.md); the
-rest of this package moves to one package per journey in the tasks of
+setup steps in [`@features/flow-app-password-setup`](../app-password-setup/README.md), the
+password removal in [`@features/flow-app-password-removal`](../app-password-removal/README.md) and
+the longer-password migration in [`@features/flow-app-longer-password`](../app-longer-password/README.md);
+the rest of this package moves to one package per journey in the tasks of
 [LIVE-35505](https://ledgerhq.atlassian.net/browse/LIVE-35505).
 
 `PasswordField` and the password draft come from
@@ -51,7 +50,6 @@ Today:
 ```text
 src/
 ├── components/                 # the protection sheets
-├── longerPassword/
 ├── protectionPrompt/
 └── index.ts                    # Public API
 ```
