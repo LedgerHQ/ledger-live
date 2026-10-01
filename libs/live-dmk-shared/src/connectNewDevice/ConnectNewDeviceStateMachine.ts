@@ -459,16 +459,17 @@ export class DefaultConnectNewDeviceStateMachine<
 
   stop(): void {
     const snapshot = this.actor.getSnapshot();
+    const isRunning = snapshot.status === "active";
 
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
     this.subscriptions = [];
-    if (snapshot.context.isDiscovering) {
+    if (isRunning && snapshot.context.isDiscovering) {
       this.deviceDiscoveryService.stop();
     }
     this.actor.stop();
 
     const { sessionId } = snapshot.context;
-    const stoppedDuringSuccessDelay = snapshot.matches("Connected");
+    const stoppedDuringSuccessDelay = isRunning && snapshot.matches("Connected");
     if (stoppedDuringSuccessDelay && sessionId !== null) {
       disconnectUnclaimedSession(this.dmk, sessionId);
     }
