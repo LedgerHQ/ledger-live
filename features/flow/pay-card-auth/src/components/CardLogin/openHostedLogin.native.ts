@@ -1,8 +1,25 @@
 import { openAuthSessionAsync, type AuthSessionOpenOptions } from "expo-web-browser";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import type { HostedLoginResult } from "../../state/types";
 
 const keepBrowserAliveOnAppSwitch: AuthSessionOpenOptions = { createTask: false };
+
+const CHROME_PACKAGE = "com.android.chrome";
+
+async function openAuthSessionWithChromeFallback(hostedUrl: string, deepLink?: string) {
+  try {
+    return await openAuthSessionAsync(hostedUrl, deepLink, keepBrowserAliveOnAppSwitch);
+  } catch (defaultBrowserError) {
+    if (Platform.OS !== "android") {
+      throw defaultBrowserError;
+    }
+
+    return openAuthSessionAsync(hostedUrl, deepLink, {
+      ...keepBrowserAliveOnAppSwitch,
+      browserPackage: CHROME_PACKAGE,
+    });
+  }
+}
 
 const ACTIVE_WAIT_MS = 5_000;
 
@@ -46,7 +63,7 @@ export async function openHostedUrlInSecureBrowser(
 ): Promise<HostedLoginResult> {
   await whenAppIsActive();
 
-  const result = await openAuthSessionAsync(hostedUrl, deepLink, keepBrowserAliveOnAppSwitch);
+  const result = await openAuthSessionWithChromeFallback(hostedUrl, deepLink);
 
   return result.type === "success" ? { type: "success", url: result.url } : { type: "dismissed" };
 }
