@@ -1,197 +1,28 @@
 import React from "react";
-import { configureStore } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
-import { act, fireEvent, render, screen } from "@testing-library/react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { render, screen } from "@tests/test-renderer";
 import {
   clearContentAbTestOverrides,
   hasContentAbTestOverrides,
   setContentAbTestCopy,
   setContentAbTestOverride,
 } from "@features/platform-content-ab-tests";
-import { createFeatureFlagsMiddleware, featureFlagsReducer } from "@shared/feature-flags";
-import DebugFeatureFlags from "./index";
 import { i18n } from "~/context/Locale";
+import DebugFeatureFlags from "./index";
 
-jest.mock("~/context/Locale", () => ({
-  i18n: {
-    language: "en",
-    resolvedLanguage: "en",
-    emit: jest.fn(),
-  },
-  useTranslation: () => ({
-    t: (key: string) =>
-      ({
-        "settings.debug.featureFlagsTitle": "Feature flags",
-        "settings.debug.firebaseProject": "Firebase project",
-        "settings.debug.showBannerDesc": "Show banner",
-        "settings.debug.featureFlagsTabAll": "All",
-        "settings.debug.featureFlagsTabGroups": "Groups",
-        "settings.debug.featureFlagsRestoreAll": "Restore all flag values",
-        "settings.debug.featureFlagsRestore": "Restore",
-        "common.apply": "Apply",
-        "settings.debug.contentAbTests.invalidPayload": "Invalid payload",
-      })[key] ?? key,
-  }),
+jest.mock("@react-native-firebase/app", () => ({
+  getApp: () => ({ options: { projectId: "ledger-live-staging" } }),
 }));
 
-jest.mock("@ledgerhq/lumen-ui-rnative", () => {
-  const { Pressable, Text, View } = require("react-native");
-  return {
-    Box: ({ children }: { children?: React.ReactNode }) => <View>{children}</View>,
-    Text: ({ children }: { children?: React.ReactNode }) => <Text>{children}</Text>,
-    Divider: () => <View />,
-    Tag: ({ label }: { label: string }) => <Text>{label}</Text>,
-    Link: ({ children, onPress }: { children: React.ReactNode; onPress?: () => void }) => (
-      <Pressable accessibilityRole="link" onPress={onPress}>
-        <Text>{children}</Text>
-      </Pressable>
-    ),
-    Button: ({
-      children,
-      onPress,
-      disabled,
-    }: {
-      children: React.ReactNode;
-      onPress?: () => void;
-      disabled?: boolean;
-    }) => (
-      <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}>
-        <Text>{children}</Text>
-      </Pressable>
-    ),
-    Switch: ({
-      checked,
-      onCheckedChange,
-    }: {
-      checked: boolean;
-      onCheckedChange: (enabled: boolean) => void;
-    }) => (
-      <View
-        accessibilityRole="switch"
-        accessibilityState={{ checked }}
-        onCheckedChange={() => onCheckedChange(!checked)}
-      />
-    ),
-  };
-});
+const Stack = createNativeStackNavigator();
 
-jest.mock("styled-components/native", () => {
-  const actual = jest.requireActual("styled-components/native");
-  return new Proxy(actual, {
-    get(target, prop, receiver) {
-      if (prop === "useTheme") {
-        return () => ({
-          colors: {
-            error: { c60: "red" },
-            primary: { c80: "blue" },
-            neutral: { c30: "gray", c100: "black" },
-          },
-        });
-      }
-      return Reflect.get(target, prop, receiver);
-    },
-  });
-});
-
-jest.mock("@ledgerhq/native-ui", () => {
-  const React = require("react");
-  const { Pressable, Text, TextInput, View } = require("react-native");
-  return {
-    Text: ({ children }: { children: React.ReactNode }) => <Text>{children}</Text>,
-    Flex: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
-    Divider: () => <View />,
-    Tag: ({ children }: { children: React.ReactNode }) => <Text>{children}</Text>,
-    Link: ({ children, onPress }: { children: React.ReactNode; onPress?: () => void }) => (
-      <Pressable accessibilityRole="link" onPress={onPress}>
-        <Text>{children}</Text>
-      </Pressable>
-    ),
-    Button: ({
-      children,
-      onPress,
-      disabled,
-    }: {
-      children: React.ReactNode;
-      onPress?: () => void;
-      disabled?: boolean;
-    }) => (
-      <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}>
-        <Text>{children}</Text>
-      </Pressable>
-    ),
-    Switch: ({ checked, onChange }: { checked: boolean; onChange: (enabled: boolean) => void }) => (
-      <View
-        accessibilityRole="switch"
-        accessibilityState={{ checked }}
-        onChange={() => onChange(!checked)}
-      />
-    ),
-    ChipTabs: ({
-      labels,
-      onChange,
-    }: {
-      labels: string[];
-      activeIndex: number;
-      onChange: (index: number) => void;
-    }) => (
-      <View>
-        {labels.map((label, index) => (
-          <Pressable key={label} accessibilityRole="tab" onPress={() => onChange(index)}>
-            <Text>{label}</Text>
-          </Pressable>
-        ))}
-      </View>
-    ),
-    SearchInput: ({
-      value,
-      onChange,
-      placeholder,
-    }: {
-      value: string;
-      onChange: (value: string) => void;
-      placeholder?: string;
-    }) => <TextInput value={value} placeholder={placeholder} onChangeText={onChange} />,
-  };
-});
-
-jest.mock("@ledgerhq/native-ui/components/Form/Input/BaseInput/index", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-  return {
-    InputRenderRightContainer: ({ children }: { children: React.ReactNode }) => (
-      <View>{children}</View>
-    ),
-  };
-});
-
-jest.mock("~/components/Alert", () => {
-  const React = require("react");
-  const { Text } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ children, title }: { children?: React.ReactNode; title?: string }) => (
-      <Text>{title ?? children}</Text>
-    ),
-  };
-});
-
-jest.mock("~/components/KeyboardView", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
-  };
-});
-
-jest.mock("~/components/NavigationScrollView", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
-  };
-});
+function FeatureFlagsStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="DebugFeatureFlags" component={DebugFeatureFlags} />
+    </Stack.Navigator>
+  );
+}
 
 const enabled = { enabled: true, copy: { "banner.title": "Remote title" } };
 
@@ -204,22 +35,11 @@ function experiment(id: string, payload: object) {
   };
 }
 
-function renderScreen() {
-  const store = configureStore({
-    reducer: { featureFlags: featureFlagsReducer },
-    middleware: getDefaultMiddleware =>
-      getDefaultMiddleware().concat(createFeatureFlagsMiddleware({ resolutionConfig: {} })),
-  });
-  return render(
-    <Provider store={store}>
-      <DebugFeatureFlags />
-    </Provider>,
-  );
-}
-
 describe("DebugFeatureFlags content A/B tests", () => {
+  let emitSpy: jest.SpyInstance;
+
   beforeEach(() => {
-    jest.mocked(i18n.emit).mockClear();
+    emitSpy = jest.spyOn(i18n, "emit");
     clearContentAbTestOverrides();
     setContentAbTestCopy({
       ...experiment("upgrade_banner", enabled),
@@ -227,44 +47,46 @@ describe("DebugFeatureFlags content A/B tests", () => {
     });
   });
 
-  it("should list experiments and filter them by name", () => {
-    renderScreen();
+  afterEach(() => {
+    emitSpy.mockRestore();
+  });
+
+  it("should list experiments and filter them by name", async () => {
+    const { user } = render(<FeatureFlagsStack />);
 
     expect(screen.getByText("upgradeBanner")).toBeVisible();
     expect(screen.getByText("zetaBanner")).toBeVisible();
     expect(screen.getByRole("button", { name: "Restore all flag values" })).toBeDisabled();
 
-    fireEvent.changeText(screen.getByPlaceholderText("Search flag"), "upgrade");
+    await user.type(screen.getByPlaceholderText("Search flag"), "upgrade");
 
     expect(screen.getByText("upgradeBanner")).toBeVisible();
     expect(screen.queryByText("zetaBanner")).toBeNull();
   });
 
-  it("should keep the group visible when the search matches its name", () => {
-    renderScreen();
+  it("should keep the group visible when the search matches its name", async () => {
+    const { user } = render(<FeatureFlagsStack />);
 
-    fireEvent.changeText(screen.getByPlaceholderText("Search flag"), "content ab");
-    fireEvent.press(screen.getByRole("tab", { name: "Groups" }));
+    await user.type(screen.getByPlaceholderText("Search flag"), "content ab");
+    await user.press(screen.getByText("Groups"));
 
     expect(screen.getByText("contentAbTests")).toBeVisible();
     expect(screen.queryByText("upgradeBanner")).toBeNull();
   });
 
-  it("should restore content overrides together with feature flags", () => {
+  it("should restore content overrides together with feature flags", async () => {
     setContentAbTestOverride("upgradeBanner", {
       ...enabled,
       copy: { "banner.title": "Local" },
     });
-    renderScreen();
+    const { user } = render(<FeatureFlagsStack />);
 
     const restoreAll = screen.getByRole("button", { name: "Restore all flag values" });
-    expect(restoreAll).not.toBeDisabled();
+    expect(restoreAll).toBeEnabled();
 
-    act(() => {
-      fireEvent.press(restoreAll);
-    });
+    await user.press(restoreAll);
 
     expect(hasContentAbTestOverrides()).toBe(false);
-    expect(i18n.emit).toHaveBeenCalledWith("languageChanged", "en");
+    expect(emitSpy).toHaveBeenCalledWith("languageChanged", expect.any(String));
   });
 });
