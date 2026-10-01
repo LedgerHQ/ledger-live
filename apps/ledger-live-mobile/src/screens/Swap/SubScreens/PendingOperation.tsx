@@ -1,10 +1,11 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { CommonActions, useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { track, TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";

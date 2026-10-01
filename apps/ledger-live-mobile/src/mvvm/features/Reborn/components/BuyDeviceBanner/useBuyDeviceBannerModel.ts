@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -10,7 +11,6 @@ import { ImageSourcePropType, ImageStyle, StyleProp } from "react-native";
 import { NavigatorName, ScreenName } from "~/const";
 import { setOriginFlow } from "~/analytics/originFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { track } from "~/analytics";
 import { WrappedButtonProps } from "~/components/wrappedUi/Button";
 import { Props as ThemeProps } from "~/components/theme/ForceTheme";
 import { useRebornFlow } from "../../hooks/useRebornFlow";

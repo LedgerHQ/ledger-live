@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { track } from "~/analytics";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 import { usePostOnboardingActionHandlers } from "~/logic/postOnboarding/usePostOnboardingActionHandlers";

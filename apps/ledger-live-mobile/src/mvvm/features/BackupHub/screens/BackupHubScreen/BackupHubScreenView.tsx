@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Subheader, SubheaderRow, SubheaderTitle, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import { LedgerRecoverRow } from "../../components/LedgerRecoverRow";
 import { PhysicalBackupRow } from "../../components/PhysicalBackupRow";
 import { CompareBackupMethodsFooter } from "../../components/CompareBackupMethodsFooter";

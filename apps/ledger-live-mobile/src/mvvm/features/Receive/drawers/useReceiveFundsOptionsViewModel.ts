@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useReceiveOptionsDrawerController } from "../useReceiveOptionsDrawerController";

@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Flex } from "@ledgerhq/native-ui";
-import TrackScreen from "~/analytics/TrackScreen";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";

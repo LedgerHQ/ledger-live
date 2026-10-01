@@ -1,4 +1,4 @@
-import { screen, track } from "~/analytics";
+import { trackPage, track } from "@shared/analytics";
 
 export const HARDWARE_CAROUSEL_PAGE = "carousel hardware";
 
@@ -16,9 +16,12 @@ export type HardwareCarouselDevice = "ledger gen5" | "ledger flex" | "ledger sta
 export function trackHardwareCarouselShown(
   sharedProps: HardwareCarouselSharedAnalyticsProps,
 ): void {
-  screen(HARDWARE_CAROUSEL_PAGE, undefined, {
-    name: HARDWARE_CAROUSEL_PAGE,
-    ...sharedProps,
+  trackPage({
+    category: HARDWARE_CAROUSEL_PAGE,
+    props: {
+      name: HARDWARE_CAROUSEL_PAGE,
+      ...sharedProps,
+    },
   });
 }
 

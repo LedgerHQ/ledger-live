@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { useQuickActionsCtasViewModel } from "../useQuickActionsCtasViewModel";
 import { QUICK_ACTIONS_TEST_IDS } from "../../../testIds";
 

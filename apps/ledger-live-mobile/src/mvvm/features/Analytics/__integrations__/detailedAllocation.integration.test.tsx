@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import DetailedAllocation from "../screens/DetailedAllocation";
@@ -24,7 +25,6 @@ const createMockEthAccountWithUSDC = (): Account => {
   };
 };
 
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 
 const mockNavigate = jest.fn();

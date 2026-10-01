@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
@@ -9,7 +10,6 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import ProgressBar from "~/components/ProgressBar";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { track } from "~/analytics";
 import { DETAILED_ALLOCATION_PAGE } from "../../../const";
 import type { DistributionItem } from "../../../types/distribution";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";

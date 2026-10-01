@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Platform } from "react-native";
 import { Box, Text, Button } from "@ledgerhq/lumen-ui-rnative";
 import { CheckmarkCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import VersionNumber from "react-native-version-number";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import type { AppInstallConfig } from "../../constants/appInstallMap";
 
 type Props = Readonly<{

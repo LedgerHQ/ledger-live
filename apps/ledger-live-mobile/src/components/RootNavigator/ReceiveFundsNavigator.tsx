@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -13,7 +14,6 @@ import ReceiveVerifyAddress from "~/screens/ReceiveFunds/03b-VerifyAddress";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
-import { track } from "~/analytics";
 import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { Flex } from "@ledgerhq/native-ui";

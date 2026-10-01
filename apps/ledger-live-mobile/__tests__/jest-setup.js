@@ -251,9 +251,7 @@ jest.mock("react-native-vision-camera", () => {
 });
 
 jest.mock("~/analytics/segment", () => ({
-  track: jest.fn(),
   setAnalyticsFeatureFlagMethod: jest.fn(),
-  screen: jest.fn(),
   usePageNameFromRoute: jest.fn(() => "portfolio_navigator"),
 }));
 
@@ -262,6 +260,14 @@ jest.mock("@shared/analytics", () => ({
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
+
+jest.mock("@shared/analytics-react", () => {
+  const actual = jest.requireActual("@shared/analytics-react");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(props => actual.TrackScreen(props)),
+  };
+});
 
 // Mock of Native Modules
 jest.mock("react-native-localize", () => mockLocalize);
@@ -352,7 +358,6 @@ jest.mock("LLM/components/Wallet40Background/useScrollOffset", () => {
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
-  track: jest.fn(),
   updateIdentify: jest.fn(),
 }));
 

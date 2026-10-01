@@ -1,5 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
-import { TrackScreen } from "~/analytics";
 import AppVersionRow from "./AppVersionRow";
 import PrivacyPolicyRow from "./PrivacyPolicyRow";
 import TermsConditionsRow from "./TermsConditionsRow";

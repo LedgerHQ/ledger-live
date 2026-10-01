@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Linking, Text } from "react-native";
 import { fireEvent, render, screen } from "@tests/test-renderer";
@@ -67,13 +68,13 @@ describe("SetPreferences", () => {
     expect(store.getState().settings.analyticsEnabled).toBe(true);
     expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(true);
     expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-    expect(analytics.track).toHaveBeenCalledWith(
+    expect(track).toHaveBeenCalledWith(
       "button_clicked",
       {
         button: "Confirm",
         flow: "consent existing users",
       },
-      true,
+      { mandatory: true },
     );
     expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
   });
@@ -86,13 +87,13 @@ describe("SetPreferences", () => {
     expect(store.getState().settings.analyticsEnabled).toBe(false);
     expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
     expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-    expect(analytics.track).toHaveBeenCalledWith(
+    expect(track).toHaveBeenCalledWith(
       "button_clicked",
       {
         button: "Confirm",
         flow: "consent existing users",
       },
-      true,
+      { mandatory: true },
     );
     expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
   });
@@ -106,13 +107,13 @@ describe("SetPreferences", () => {
 
     expect(store.getState().settings.analyticsEnabled).toBe(true);
     expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
-    expect(analytics.track).toHaveBeenCalledWith(
+    expect(track).toHaveBeenCalledWith(
       "button_clicked",
       {
         button: "Confirm",
         flow: "consent existing users",
       },
-      true,
+      { mandatory: true },
     );
     expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
   });
@@ -124,13 +125,13 @@ describe("SetPreferences", () => {
     await user.press(screen.getByText("Privacy policy"));
 
     expect(openURLSpy).toHaveBeenCalledWith(expect.stringContaining("privacy-policy"));
-    expect(analytics.track).toHaveBeenCalledWith(
+    expect(track).toHaveBeenCalledWith(
       "button_clicked",
       {
         button: "Privacy policy",
         flow: "consent existing users",
       },
-      true,
+      { mandatory: true },
     );
 
     openURLSpy.mockRestore();

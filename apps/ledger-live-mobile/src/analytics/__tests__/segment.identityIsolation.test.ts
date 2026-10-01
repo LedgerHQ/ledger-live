@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { waitFor } from "@testing-library/react-native";
 import { EventType, type SegmentEvent } from "@segment/analytics-react-native";
 import { UserId } from "@domain/entity-client-identity";
@@ -102,7 +103,7 @@ describe("segment identity isolation (LIVE-34720)", () => {
       await segment.start(store);
       mockTrack.mockClear();
 
-      segment.track("ConsentToggle", {}, true);
+      track("ConsentToggle", {}, { mandatory: true });
 
       await waitFor(() => expect(mockTrack).toHaveBeenCalled());
       const [, properties] = mockTrack.mock.calls.at(-1)!;

@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { ErrorComponent } from "../../components/Error/Simple";
 import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import { track } from "~/analytics";
 
 interface Props {
   tryAgain: () => void;

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useState, useCallback, useEffect } from "react";
@@ -12,7 +13,6 @@ import invariant from "invariant";
 import MemoTagSummary from "LLM/features/MemoTag/components/MemoTagSummary";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
 import Button from "~/components/Button";
 import LText from "~/components/LText";

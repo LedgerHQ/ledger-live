@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Icons, InfiniteLoader } from "@ledgerhq/native-ui";
 import React, { useEffect } from "react";
-import { TrackScreen } from "~/analytics";
 import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
 import GenericErrorView from "~/components/GenericErrorView";
 import { ConnectYourDevice } from "../DeviceAction/rendering";

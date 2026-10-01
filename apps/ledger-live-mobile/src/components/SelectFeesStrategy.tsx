@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useState, useCallback } from "react";
 import {
   View,
@@ -29,7 +30,6 @@ import TachometerSlow from "~/icons/TachometerSlow";
 import TachometerMedium from "~/icons/TachometerMedium";
 import TachometerFast from "~/icons/TachometerFast";
 import NetworkFeeInfo from "./NetworkFeeInfo";
-import { track } from "~/analytics";
 import { sharedSwapTracking } from "~/screens/Swap/utils";
 import Alert from "./Alert";
 import TranslatedError from "./TranslatedError";

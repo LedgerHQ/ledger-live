@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Trans } from "~/context/Locale";
 import { StyleSheet } from "react-native";
@@ -10,7 +11,6 @@ import {
   isTokenAssociationRequired,
 } from "@ledgerhq/live-common/families/hedera/utils";
 import { TokenCurrency } from "@domain/entity-currency-token";
-import { track } from "~/analytics";
 import Alert from "~/components/Alert";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";

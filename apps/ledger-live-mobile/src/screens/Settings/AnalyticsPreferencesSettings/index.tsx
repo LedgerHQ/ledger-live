@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,7 +18,7 @@ import {
   setPersonalizedRecommendations,
 } from "~/actions/settings";
 import { ScreenName } from "~/const";
-import { TrackScreen, track, updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics";
 import { useAnalyticsConsentDecision } from "@features/flow-analytics-consent";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
@@ -60,7 +62,7 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
         appPerformance: appPerformanceEnabled,
         personalizedExperience: personalizedEnabled,
       },
-      true,
+      { mandatory: true },
     );
     dispatch(setAnalytics(appPerformanceEnabled));
     dispatch(setPersonalizedRecommendations(personalizedEnabled));

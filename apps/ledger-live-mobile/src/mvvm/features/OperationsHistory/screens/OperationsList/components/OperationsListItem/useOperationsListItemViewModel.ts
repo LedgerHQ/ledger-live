@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
@@ -5,7 +6,6 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { isOperationUnread } from "LLM/features/OperationsHistory/utils/unreadOperations";

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useState, useCallback } from "react";
 import { FlatList, FlatListProps, LayoutChangeEvent } from "react-native";
 import Animated, {
@@ -30,7 +31,6 @@ import BuyDeviceBanner, {
 import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
 import { renderItem } from "LLM/utils/renderItem";
 import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
-import { TrackScreen } from "~/analytics";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { ScreenName } from "~/const";

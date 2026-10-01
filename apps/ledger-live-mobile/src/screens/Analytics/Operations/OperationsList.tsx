@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
 import uniqBy from "lodash/uniqBy";
@@ -14,7 +15,6 @@ import OperationRow from "~/components/OperationRow";
 import SectionHeader from "~/components/SectionHeader";
 import LoadingFooter from "~/components/LoadingFooter";
 import Button from "~/components/Button";
-import { TrackScreen } from "~/analytics";
 import EmptyStatePortfolio from "~/screens/Portfolio/EmptyStatePortfolio";
 import NoOpStatePortfolio from "~/screens/Portfolio/NoOpStatePortfolio";
 import { ListProps } from "./types";

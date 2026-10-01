@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useState } from "react";
 import { useTranslation, Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
@@ -10,7 +11,6 @@ import { useSearchValidators } from "@ledgerhq/live-common/families/multiversx/r
 
 import type { onSelectType, PickValidatorPropsType } from "./types";
 
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 
 import Item from "./components/Item";

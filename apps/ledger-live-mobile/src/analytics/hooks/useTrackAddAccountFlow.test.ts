@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@testing-library/react-native";
 import { useTrackAddAccountFlow, UseTrackAddAccountFlow } from "./useTrackAddAccountFlow";
-import { track } from "../segment";
 import {
   CantOpenDevice,
   LockedDeviceError,

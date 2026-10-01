@@ -1,3 +1,4 @@
+import { Track } from "@shared/analytics-react";
 import React, { useState, useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { Trans, useTranslation, useLanguageAvailableChecked } from "~/context/Locale";
@@ -9,7 +10,7 @@ import ModalBottomAction from "./ModalBottomAction";
 import { languageIsSetByUserSelector } from "~/reducers/settings";
 import { setLanguage } from "~/actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
-import { Track, updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics";
 import Button from "./wrappedUi/Button";
 import { useSettings } from "~/hooks";
 

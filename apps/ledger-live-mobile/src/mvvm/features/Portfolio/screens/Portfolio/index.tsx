@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
@@ -14,7 +15,6 @@ import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
-import TrackScreen from "~/analytics/TrackScreen";
 import {
   PROGRESS_VIEW_OFFSET_LEGACY_ANDROID,
   PROGRESS_VIEW_OFFSET_LEGACY_IOS,

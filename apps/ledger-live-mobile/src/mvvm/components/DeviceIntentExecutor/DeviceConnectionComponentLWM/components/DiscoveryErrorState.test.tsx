@@ -1,3 +1,5 @@
+import { track, resetTrackingPages, setTrackingSource } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import {
@@ -9,20 +11,9 @@ import {
   type DiscoveryError,
 } from "@ledgerhq/live-dmk-mobile";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
-import { TrackScreen, track } from "~/analytics";
-import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DiscoveryErrorState } from "./DiscoveryErrorState";
-
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    TrackScreen: jest.fn(() => null),
-    track: jest.fn(),
-  };
-});
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockedTrack = jest.mocked(track);

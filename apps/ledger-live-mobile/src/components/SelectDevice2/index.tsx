@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import { useTranslation } from "~/context/Locale";
@@ -9,7 +11,6 @@ import { Text, Flex, IconsLegacy, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getEnv } from "@shared/env";
-import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";

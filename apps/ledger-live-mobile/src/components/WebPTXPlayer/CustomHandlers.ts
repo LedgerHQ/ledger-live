@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   CompleteExchangeUiRequest,
@@ -13,7 +14,6 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { getTrackingRouteLiveAppSource } from "../Web3AppWebview/analytics";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";

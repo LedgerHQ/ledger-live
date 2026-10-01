@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { concat, from, Subscription } from "rxjs";
@@ -23,7 +24,6 @@ import { useMaybeAccountName, setAccountName } from "~/reducers/wallet";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
-import { track } from "~/analytics";
 
 const isNoAssociatedAccountsFamily = (
   family: string,

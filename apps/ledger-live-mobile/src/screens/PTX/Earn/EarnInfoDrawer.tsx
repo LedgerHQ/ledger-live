@@ -1,3 +1,4 @@
+import { Track } from "@shared/analytics-react";
 import { Button, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "~/context/Locale";
@@ -5,7 +6,6 @@ import { Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { makeSetEarnInfoModalAction } from "~/actions/earn";
-import { Track } from "~/analytics";
 import Circle from "~/components/Circle";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { earnInfoModalSelector } from "~/reducers/earn";
