@@ -328,6 +328,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.28.5",
+    "@babel/plugin-syntax-typescript": "7.27.1",
     "@babel/plugin-transform-arrow-functions": "7.27.1",
     "@babel/plugin-transform-class-properties": "7.27.1",
     "@babel/plugin-transform-class-static-block": "7.28.3",
@@ -391,6 +392,7 @@
     "@types/styled-system": "5.1.22",
     "@types/uuid": "8.3.4",
     "babel-jest": "catalog:",
+    "babel-loader": "9.2.1",
     "babel-plugin-transform-inline-environment-variables": "0.4.4",
     "detox": "catalog:",
     "oxfmt": "catalog:",
