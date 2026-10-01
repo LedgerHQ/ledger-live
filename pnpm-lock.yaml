@@ -67,8 +67,8 @@ catalogs:
       specifier: 13.0.0
       version: 13.0.0
     '@ledgerhq/coin-xrp':
-      specifier: 12.0.0
-      version: 12.0.0
+      specifier: 12.0.1
+      version: 12.0.1
     '@ledgerhq/crypto-icons':
       specifier: 2.0.6
       version: 2.0.6
@@ -14069,7 +14069,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 12.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))
+        version: 12.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -23028,8 +23028,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-xrp@12.0.0':
-    resolution: {integrity: sha512-ENrolerSZO+nCIqJPVpFgYGa0WBIBDE1UpBK99tcakoVA92zJqSMsEKj9FIpwBdia04Q4mc6+d1yOi1xWFU+Zg==}
+  '@ledgerhq/coin-xrp@12.0.1':
+    resolution: {integrity: sha512-7chs5ATn08Szlh0lzHmsfh4lLFUVTcrxUxqwkV4U8SFUbTY20iOOunHGhFDpUsquKAb9nxCr8QoXV3ZmsRQ3Vw==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -23753,7 +23753,6 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -45084,7 +45083,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@12.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))':
+  '@ledgerhq/coin-xrp@12.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.0
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
