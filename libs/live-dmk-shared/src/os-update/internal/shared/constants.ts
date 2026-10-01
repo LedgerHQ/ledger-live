@@ -12,3 +12,5 @@ export const SESSION_TEARDOWN_TIMEOUT_MS = 10_000;
  * they can stay pending forever. A device that answers never takes this long.
  */
 export const DEVICE_CALL_TIMEOUT_MS = 10_000;
+/** Bounds one discovery pass looking for a device that came back under a new address or uid. */
+export const DISCOVERY_TIMEOUT_MS = 10_000;

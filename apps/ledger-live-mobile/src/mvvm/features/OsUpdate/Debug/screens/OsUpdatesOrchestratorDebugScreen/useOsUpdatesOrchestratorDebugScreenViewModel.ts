@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   DeviceStatus,
+  GetOsVersionCommand,
+  isSuccessCommandResult,
   type ConnectedDevice,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
@@ -12,8 +14,13 @@ import {
   type OsUpdatesOrchestratorUseCaseInput,
   type OsUpdatesProgress,
 } from "@ledgerhq/live-dmk-shared";
-import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import {
+  useBleDevicesScanning,
+  useDeviceManagementKit,
+  useHidDevicesDiscovery,
+} from "@ledgerhq/live-dmk-mobile";
 import type {
+  DebugDiscoveredDevice,
   OrchestratorRunPhase,
   OsUpdatesOrchestratorDebugScreenViewModel,
   ProgressHistoryEntry,
@@ -24,6 +31,9 @@ type OsUpdates = OsUpdatesOrchestratorUseCaseInput["osUpdates"];
 
 /** Under the 24h threshold: create backup reuses it without asking. */
 const VALID_BACKUP_AGE_MS = 60 * 60 * 1000;
+
+const SECONDS_IN_MINUTE = 60;
+
 /** Past the 24h threshold: create backup asks whether to reuse it or make a new one. */
 const EXPIRED_BACKUP_AGE_MS = 25 * 60 * 60 * 1000;
 
@@ -37,8 +47,10 @@ function dummyBackup(ageMs: number): Backup {
 }
 
 function formatAge(createdAt: Date): string {
-  const hours = (Date.now() - createdAt.getTime()) / (60 * 60 * 1000);
-  return hours < 1 ? `${Math.round(hours * 60)} min old` : `${Math.round(hours)}h old`;
+  const hours = (Date.now() - createdAt.getTime()) / VALID_BACKUP_AGE_MS;
+  return hours < 1
+    ? `${Math.round(hours * SECONDS_IN_MINUTE)} min old`
+    : `${Math.round(hours)}h old`;
 }
 
 function getFirstConnectedDevice(dmk: DeviceManagementKit | null): ConnectedDevice | null {
@@ -68,6 +80,9 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     getFirstConnectedDevice(dmk),
   );
   const [deviceStatus, setDeviceStatus] = useState<DeviceStatus | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [connectingDeviceId, setConnectingDeviceId] = useState<string | null>(null);
+  const [connectError, setConnectError] = useState<string | null>(null);
   const [backups, setBackups] = useState<Record<string, Backup>>({});
   const [isSeedBackupSheetOpen, setSeedBackupSheetOpen] = useState(false);
   const [phase, setPhase] = useState<OrchestratorRunPhase>("idle");
@@ -85,9 +100,18 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
 
   const storage = useMemo<DeviceBackupStorage>(
     () => ({
-      getBackup: async deviceId => backupsRef.current[deviceId],
-      saveBackup: async (deviceId, backup) => {
-        setBackups(current => ({ ...current, [deviceId]: backup }));
+      getBackup: deviceModelId => Promise.resolve(backupsRef.current[deviceModelId]),
+      saveBackup: (deviceModelId, backup) => {
+        setBackups(current => ({ ...current, [deviceModelId]: backup }));
+        return Promise.resolve();
+      },
+      removeBackup: deviceModelId => {
+        setBackups(current => {
+          const next = { ...current };
+          delete next[deviceModelId];
+          return next;
+        });
+        return Promise.resolve();
       },
     }),
     [],
@@ -136,6 +160,72 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     };
   }, [connectedDevice, dmk]);
 
+  const { scannedDevices, scanningBleError } = useBleDevicesScanning(isScanning);
+  const { hidDevices } = useHidDevicesDiscovery(isScanning);
+
+  const discovered = useMemo(
+    () => [...hidDevices, ...scannedDevices],
+    [hidDevices, scannedDevices],
+  );
+
+  const discoveredDevices = useMemo<DebugDiscoveredDevice[]>(
+    () =>
+      discovered.map(({ deviceId, deviceName, discoveredDevice }) => ({
+        id: deviceId,
+        name: deviceName || discoveredDevice.deviceModel.name,
+        transport: discoveredDevice.transport,
+      })),
+    [discovered],
+  );
+
+  const onToggleScan = useCallback(() => {
+    setConnectError(null);
+    setIsScanning(current => !current);
+  }, []);
+
+  const onConnectDevice = useCallback(
+    (deviceId: string) => {
+      const match = discovered.find(device => device.deviceId === deviceId);
+      if (!dmk || !match) {
+        return;
+      }
+      setConnectingDeviceId(deviceId);
+      setConnectError(null);
+      dmk
+        // Same options as every reconnection the OS update performs: a session refresher polling
+        // the device would send commands in the middle of an install.
+        .connect({
+          device: match.discoveredDevice,
+          sessionRefresherOptions: { isRefresherDisabled: true },
+        })
+        .then(sessionId => {
+          setConnectedDevice(dmk.getConnectedDevice({ sessionId }));
+          setIsScanning(false);
+        })
+        .catch(error => {
+          setConnectError(formatUnknown(error));
+        })
+        .finally(() => {
+          setConnectingDeviceId(null);
+        });
+    },
+    [discovered, dmk],
+  );
+
+  const onDisconnect = useCallback(() => {
+    if (!dmk || !connectedDevice) {
+      return;
+    }
+    const { sessionId } = connectedDevice;
+    setConnectError(null);
+    dmk
+      .disconnect({ sessionId })
+      .catch(() => undefined)
+      .finally(() => {
+        setConnectedDevice(getFirstConnectedDevice(dmk));
+      });
+  }, [connectedDevice, dmk]);
+
   const stopRun = useCallback(() => {
     resolveGenerationRef.current += 1;
     orchestratorUnsubscribeRef.current?.();
@@ -172,7 +262,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
       }
       setBackups(current => ({
         ...current,
-        [connectedDevice.id]: dummyBackup(ageMs),
+        [connectedDevice.modelId]: dummyBackup(ageMs),
       }));
     },
     [connectedDevice],
@@ -192,7 +282,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     }
     setBackups(current => {
       const next = { ...current };
-      delete next[connectedDevice.id];
+      delete next[connectedDevice.modelId];
       return next;
     });
   }, [connectedDevice]);
@@ -242,25 +332,41 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     setErrorMessage(null);
     historyIdRef.current = 0;
 
-    void new ResolveOsUpdatePathUseCase()
-      .execute({
-        dmk,
-        sessionId: device.sessionId,
-        unlockTimeout: 0,
-      })
-      .then(resolvedOsUpdates => {
+    void (async () => {
+      try {
+        const result = await dmk.sendCommand({
+          sessionId: device.sessionId,
+          command: new GetOsVersionCommand(),
+        });
         if (generation !== resolveGenerationRef.current) {
           return;
         }
-        startOrchestrator(device, resolvedOsUpdates);
-      })
-      .catch(error => {
+
+        if (!isSuccessCommandResult(result)) {
+          throw result.error;
+        }
+
+        if (result.data.isBootloader || result.data.isOsu) {
+          startOrchestrator(device, []);
+          return;
+        }
+
+        const resolvedOsUpdates = await new ResolveOsUpdatePathUseCase().execute({
+          dmk,
+          sessionId: device.sessionId,
+          unlockTimeout: 0,
+        });
+        if (generation === resolveGenerationRef.current) {
+          startOrchestrator(device, resolvedOsUpdates);
+        }
+      } catch (error) {
         if (generation !== resolveGenerationRef.current) {
           return;
         }
         setPhase("error");
         setErrorMessage(formatUnknown(error));
-      });
+      }
+    })();
   }, [dmk, startOrchestrator, stopRun]);
 
   const onStop = useCallback(() => {
@@ -269,14 +375,21 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
   }, [stopRun]);
 
   const isBusy = phase === "resolving" || phase === "running";
+  const connectionErrorMessage =
+    connectError ?? (scanningBleError ? formatUnknown(scanningBleError) : null);
   const deviceId = connectedDevice?.id ?? null;
-  const backup = deviceId !== null ? backups[deviceId] : undefined;
+  const backup = connectedDevice !== null ? backups[connectedDevice.modelId] : undefined;
 
   return {
     dmkReady: Boolean(dmk),
     deviceId,
     sessionId: connectedDevice?.sessionId ?? null,
     deviceStatus,
+    isScanning,
+    discoveredDevices,
+    connectingDeviceId,
+    canDisconnect: Boolean(dmk && connectedDevice),
+    connectionErrorMessage,
     hasBackup: backup !== undefined,
     backupAge: backup ? formatAge(backup.createdAt) : null,
     isSeedBackupSheetOpen,
@@ -287,6 +400,9 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     progress,
     history,
     errorMessage,
+    onToggleScan,
+    onConnectDevice,
+    onDisconnect,
     onSeedBackup,
     onCloseSeedBackupSheet,
     onSeedValidBackup,

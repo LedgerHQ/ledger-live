@@ -127,8 +127,8 @@ catalogs:
       specifier: 1.2.4
       version: 1.2.4
     '@ledgerhq/dmk-ledger-wallet':
-      specifier: 0.6.0
-      version: 0.6.0
+      specifier: 0.0.0-develop-20261001135016
+      version: 0.0.0-develop-20261001135016
     '@ledgerhq/domain-service':
       specifier: 1.9.1
       version: 1.9.1
@@ -16223,7 +16223,7 @@ importers:
         version: 2.6.0(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/dmk-ledger-wallet':
         specifier: 'catalog:'
-        version: 0.6.0(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
+        version: 0.0.0-develop-20261001135016(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -23269,10 +23269,10 @@ packages:
   '@ledgerhq/devices@8.18.0':
     resolution: {integrity: sha512-90qS23wtqdviis+8pDWRbgyp4jE4YLK24CyAmH79rLySaPbgEJX5mZzbEKlDQ6cXvSA/51Z2/PtzmlAi26rzug==}
 
-  '@ledgerhq/dmk-ledger-wallet@0.6.0':
-    resolution: {integrity: sha512-RdhmvlzzKBMqkrlbHc2zJVDyY3DZz7urFdmOqTivbcW0HHfG2JCKy2wBv0DSXgLO0Il05Sb+NTF2pr5zRa0YPA==}
+  '@ledgerhq/dmk-ledger-wallet@0.0.0-develop-20261001135016':
+    resolution: {integrity: sha512-77kUf0FRLRZX7JiPid1ovo95beIOibxQpHQe9GB4lSyrMMK4Nf/eSyu+xrR58iiJM8I3laYRQT0lYeMFmbmG/A==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.9.1
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20261001135016
 
   '@ledgerhq/domain-service@1.9.1':
     resolution: {integrity: sha512-YaoZpBuHSiOKkuRwedjHpTYSWUcMjoIsIdfO1DQ5jEZ9piAM+cpZzTHVK15PT2tAzTy4GyaJi2WjjAnp8H8k5A==}
@@ -23399,6 +23399,11 @@ packages:
 
   '@ledgerhq/psbtv2@0.6.0':
     resolution: {integrity: sha512-kIU6lPK66GHmowswsVEhlAWbUoJIeBpVi70GQYggDVKZWvV8Zc65tQbSO7cS+n/3D4hUVK0Mlr9wTvGjRiCr2g==}
+
+  '@ledgerhq/signer-utils@0.0.0-develop-20261001135016':
+    resolution: {integrity: sha512-U1rNW7+em6B3G4tzsCOylfu1lx0uS3jw2Z6Um4LxcXGSHSyHbaINsUgRdsWigqCa5sNMVqgcuGEOn2Ru1nLrpQ==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20261001135016
 
   '@ledgerhq/signer-utils@0.0.0-hyperliquid-unified-20260728150448':
     resolution: {integrity: sha512-TqKmLH2kHeJn8ZgrLjjz3fhV4q8FeUnTkJ3VPLk5TUxdEy4pDHGzlIET4pe+GwdYEunFpXDGaifJlI7xR0Vjrg==}
@@ -45402,10 +45407,10 @@ snapshots:
     dependencies:
       semver: 7.7.3
 
-  '@ledgerhq/dmk-ledger-wallet@0.6.0(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))':
+  '@ledgerhq/dmk-ledger-wallet@0.0.0-develop-20261001135016(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
+      '@ledgerhq/signer-utils': 0.0.0-develop-20261001135016(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
       pako: 2.1.0
       purify-ts: 2.1.0
       rxjs: 7.8.2
@@ -45803,6 +45808,11 @@ snapshots:
     dependencies:
       bitcoinjs-lib: 6.1.7
       varuint-bitcoin: 1.1.2
+
+  '@ledgerhq/signer-utils@0.0.0-develop-20261001135016(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
+      semver: 7.7.2
 
   '@ledgerhq/signer-utils@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))':
     dependencies:
