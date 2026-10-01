@@ -2,6 +2,9 @@
   "name": "@ledgerhq/web-tools",
   "version": "0.58.0",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "browser": {
     "dns": false,
     "fs": false,
