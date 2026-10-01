@@ -3228,6 +3228,40 @@ describe("genericGetAccountShape", () => {
         ],
       });
     });
+
+    test("builds the parent operations from the operations the family adapted", async () => {
+      setupSpecTest();
+      const adaptOperationsMock = jest.fn((_address: string, operations: any[]) => [
+        ...operations,
+        { ...operations[0], id: "fees", type: "FEES", value: new BigNumber(1) },
+      ]);
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        adaptOperations: adaptOperationsMock,
+      }));
+      listOperationsMock.mockResolvedValue({
+        items: [
+          toCoreOp({
+            type: "REWARD",
+            senders: ["rewardAccount"],
+            recipients: ["address1"],
+            value: 5,
+            fee: 0,
+            feesPayer: "address1",
+          }),
+        ],
+        next: undefined,
+      });
+      mockNoSubAccounts();
+      mockNoInferSubOps();
+
+      const result = await runGetShape("address1");
+
+      expect(adaptOperationsMock).toHaveBeenCalledWith("address1", [
+        expect.objectContaining({ type: "REWARD" }),
+      ]);
+      expect(result.operations?.map(op => op.type)).toEqual(["REWARD", "FEES"]);
+    });
   });
 
   describe("family token account shapes", () => {

@@ -1418,68 +1418,6 @@ describe("listOperationsV2", () => {
     expect(result.tokenOperations[0].type).toBe("OUT");
   });
 
-  it("should keep FEES operation when the token transfer also triggers a staking reward and skipFeesForTokenOperations is true", async () => {
-    const mockTokenHTS = getMockedHTSTokenCurrency();
-    const mockRewardAmount = 1000000;
-    const mockTransaction = getMockedMirrorTransaction({
-      consensus_timestamp: "1625097600.000000000",
-      transaction_hash: "hash1",
-      charged_tx_fee: 500000,
-      result: "SUCCESS",
-      token_transfers: [
-        {
-          token_id: mockTokenHTS.contractAddress,
-          account: mockMirrorAccount.account,
-          amount: -1000,
-        },
-        { token_id: mockTokenHTS.contractAddress, account: "0.0.67890", amount: 1000 },
-      ],
-      staking_reward_transfers: [{ account: mockMirrorAccount.account, amount: mockRewardAmount }],
-      transfers: [{ account: mockMirrorAccount.account, amount: mockRewardAmount - 500000 }],
-      name: "CRYPTOTRANSFER",
-    });
-
-    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
-      transactions: [mockTransaction],
-      nextCursor: null,
-    });
-
-    setCryptoAssetsStore({
-      findTokenById: async () => undefined,
-      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
-      getTokensSyncHash: async () => "",
-    });
-
-    const result = await listOperations(mockConfig, {
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: true,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
-
-    expect(result.coinOperations).toEqual([
-      expect.objectContaining({
-        type: "REWARD",
-        value: new BigNumber(mockRewardAmount),
-        fee: new BigNumber(0),
-      }),
-      expect.objectContaining({
-        type: "FEES",
-        hash: mockTransaction.transaction_hash,
-        value: new BigNumber(mockTransaction.charged_tx_fee),
-        fee: new BigNumber(mockTransaction.charged_tx_fee),
-      }),
-    ]);
-    expect(result.tokenOperations).toEqual([expect.objectContaining({ type: "OUT" })]);
-  });
-
   it("should use encoded hash when useEncodedHash is true", async () => {
     const mockTransaction = getMockedMirrorTransaction({
       consensus_timestamp: "1625097600.000000000",

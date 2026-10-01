@@ -131,6 +131,7 @@ export type BridgeApi = {
     address: string,
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
+  adaptOperations?: (address: string, operations: LiveOperation[]) => LiveOperation[];
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**
    * When true, `signOperation` forwards the last estimation's `FeeEstimation.parameters` (carried on
