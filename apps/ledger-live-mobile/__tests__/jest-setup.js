@@ -146,6 +146,11 @@ jest.mock("expo-haptics", () => ({
 
 jest.mock("react-native-launch-arguments", () => ({}));
 
+// Dev-only tooling: its runtime loads ESM-only deps (nanoid) and opens a bridge client
+jest.mock("@rozenite/redux-devtools-plugin", () => ({
+  rozeniteDevToolsEnhancer: () => next => next,
+}));
+
 NativeModules.AppVisibilityModule = {
   isInForeground: () => true,
   addListener: () => {},
