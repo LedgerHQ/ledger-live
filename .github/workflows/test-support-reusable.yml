@@ -3,6 +3,11 @@ name: "[Support] - Test - Called"
 on:
   workflow_call:
     inputs:
+      runner:
+        description: "Runner label for the job."
+        type: string
+        required: false
+        default: ledger-live-linux-8CPU-32RAM
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -33,6 +38,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      runner:
+        description: "Runner label for the job."
+        type: string
+        required: false
+        default: ledger-live-linux-8CPU-32RAM
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -62,6 +72,7 @@ jobs:
       NX_KEY: ${{ secrets.NX_KEY }}
     with:
       skip-nx-cache: ${{ inputs.skip-nx-cache }}
+      runner: ${{ inputs.runner }}
       scope: support
       ref: ${{ inputs.ref || github.sha }}
       skip-coverage: ${{ inputs.skip-coverage || false }}
