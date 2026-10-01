@@ -57,8 +57,6 @@ shared-lib:
   - libs/ethereum-provider/**/*
   - libs/exchange-module/**/*
   - libs/feature-flag-module/**/*
-  - libs/hw-ledger-key-ring-protocol/**/*
-  - libs/ledger-key-ring-protocol/**/*
   - libs/ledger-services/**/*
   - libs/live-countervalues-react/**/*
   - libs/live-dmk-shared/**/*
