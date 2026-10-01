@@ -1,7 +1,8 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { PolkadotAccount, Transaction } from "../types";
-import estimateMaxSpendable from "./estimateMaxSpendable";
+import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
 
 // Module-level mocks
 const mockGetMainAccount = jest.fn();
@@ -28,14 +29,14 @@ describe("estimateMaxSpendable", () => {
   });
 
   it("should return the maximum spendable for a transaction", async () => {
-    mockGetMainAccount.mockReturnValue({} as PolkadotAccount);
+    mockGetMainAccount.mockReturnValue({ currency: { id: "polkadot" } } as PolkadotAccount);
     mockGetEstimatedFees.mockResolvedValueOnce(new BigNumber(1));
 
     const computedAmount = new BigNumber(2);
     mockCalculateAmount.mockReturnValueOnce(computedAmount);
 
     const transaction = {} as Transaction;
-    const maximumSpendable = await estimateMaxSpendable({
+    const maximumSpendable = await buildEstimateMaxSpendable(createMockPolkadotContext())({
       account: {} as AccountLike,
       parentAccount: null,
       transaction,

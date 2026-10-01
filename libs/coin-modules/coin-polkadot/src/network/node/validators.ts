@@ -1,4 +1,3 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { ApiPromise } from "@polkadot/api";
 import { EraIndex } from "@polkadot/types/interfaces";
 import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";
@@ -8,6 +7,7 @@ import {
   SidecarValidatorsParamStatus,
   IValidator,
 } from "../types";
+import { type PolkadotCoinConfig } from "../../config";
 import getApiPromise from "./apiPromise";
 
 /**
@@ -22,11 +22,11 @@ import getApiPromise from "./apiPromise";
  * @returns {SidecarValidators}
  */
 export const fetchValidators = async (
+  config: PolkadotCoinConfig,
   status: SidecarValidatorsParamStatus = "all",
   addresses?: SidecarValidatorsParamAddresses,
-  currency?: CryptoCurrency,
 ): Promise<SidecarValidators> => {
-  const api = await getApiPromise(currency);
+  const api = await getApiPromise(config);
 
   const [activeOpt, allStashes, elected] = await Promise.all([
     // staking can be undefined if the currency is not supported

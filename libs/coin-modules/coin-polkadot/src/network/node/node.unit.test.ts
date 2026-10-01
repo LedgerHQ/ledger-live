@@ -1,3 +1,4 @@
+import { polkadotMainnetConfigValue } from "../../test/config.fixture";
 import getApiPromise from "./apiPromise";
 import { fetchNominations } from "./nominations";
 
@@ -46,7 +47,7 @@ describe("fetchNominations", () => {
     });
     api.query.staking.nominators.at.mockResolvedValue({ isNone: true });
 
-    const result = await fetchNominations(mockAddress);
+    const result = await fetchNominations(polkadotMainnetConfigValue, mockAddress);
 
     expect(result).toEqual({
       submittedIn: null,
@@ -77,7 +78,7 @@ describe("fetchNominations", () => {
     api.query.staking.erasStakersOverview.multi.mockResolvedValue(mockExposure);
     api.query.staking.erasStakersPaged.mockResolvedValue(mockNominators);
 
-    const result = await fetchNominations(mockAddress);
+    const result = await fetchNominations(polkadotMainnetConfigValue, mockAddress);
 
     expect(result).toEqual({
       submittedIn: "submittedIn",
@@ -102,7 +103,7 @@ describe("fetchNominations", () => {
     api.derive.staking.stashes.mockResolvedValue(mockStashes);
     api.query.staking.erasStakersOverview.multi.mockResolvedValue([{ isNone: true }]);
 
-    const result = await fetchNominations(mockAddress);
+    const result = await fetchNominations(polkadotMainnetConfigValue, mockAddress);
 
     expect(result).toEqual({
       submittedIn: "submittedIn",

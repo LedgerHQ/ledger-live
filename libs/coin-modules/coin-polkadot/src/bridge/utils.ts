@@ -1,5 +1,7 @@
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import type { PolkadotCoinConfig } from "../config";
+import { DEFAULT_FEES_SAFETY_BUFFER } from "../constants";
 import type { PolkadotAccount, PolkadotStakingProgress, Transaction } from "../types";
 
 export const EXISTENTIAL_DEPOSIT = new BigNumber(10_000_000_000);
@@ -8,7 +10,11 @@ export const MAX_NOMINATIONS = 16;
 export const MAX_UNLOCKINGS = 32;
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision, no-loss-of-precision
 export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;
-export const FEES_SAFETY_BUFFER = new BigNumber(1000000000); // Arbitrary buffer for paying fees of next transactions
+
+export const getFeesSafetyBuffer = (config: PolkadotCoinConfig): BigNumber => {
+  // Arbitrary buffer for paying fees of next transactions
+  return new BigNumber(config.fees?.safetyBuffer ?? DEFAULT_FEES_SAFETY_BUFFER);
+};
 
 /**
  * Returns true if account is a stash.
@@ -177,8 +183,12 @@ export const getNonce = (a: PolkadotAccount): number => {
  * @param {*} a
  * @param {*} t
  */
-const calculateMaxBond = (a: PolkadotAccount, t: Transaction): BigNumber => {
-  const amount = a.spendableBalance.minus(t.fees || 0).minus(FEES_SAFETY_BUFFER);
+const calculateMaxBond = (
+  config: PolkadotCoinConfig,
+  a: PolkadotAccount,
+  t: Transaction,
+): BigNumber => {
+  const amount = a.spendableBalance.minus(t.fees || 0).minus(getFeesSafetyBuffer(config));
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
 
@@ -220,9 +230,11 @@ const calculateMaxSend = (a: Account, t: Transaction): BigNumber => {
  * @param {*} param
  */
 export const calculateAmount = ({
+  config,
   account,
   transaction,
 }: {
+  config: PolkadotCoinConfig;
   account: PolkadotAccount;
   transaction: Transaction;
 }): BigNumber => {
@@ -235,7 +247,7 @@ export const calculateAmount = ({
         break;
 
       case "bond":
-        amount = calculateMaxBond(account, transaction);
+        amount = calculateMaxBond(config, account, transaction);
         break;
 
       case "unbond":
