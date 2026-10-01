@@ -82,6 +82,8 @@ export default function SelectPool({ navigation, route }: Props) {
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="SP…native-pool-signer-manager"
+              // The visible label is a separate Text, which screen readers don't tie to the input.
+              accessibilityLabel={t("stacks.stake.pool.poolAddressLabel")}
               error={showPoolError ? t("stacks.stake.pool.poolAddressError") : undefined}
               testID="stacks-stake-pool-address-input"
             />
@@ -94,6 +96,7 @@ export default function SelectPool({ navigation, route }: Props) {
               value={numCyclesInput}
               onChange={setNumCyclesInput}
               keyboardType="number-pad"
+              accessibilityLabel={t("stacks.stake.pool.numCyclesLabel")}
               placeholder={String(MIN_NUM_CYCLES)}
               error={
                 showNumCyclesError

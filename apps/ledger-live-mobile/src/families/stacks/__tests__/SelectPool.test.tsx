@@ -25,6 +25,17 @@ const continueButton = () => screen.getByTestId("stacks-stake-pool-continue");
 describe("Stacks staking SelectPool", () => {
   beforeEach(() => navigate.mockReset());
 
+  it("names both inputs for screen readers", () => {
+    renderScreen();
+
+    expect(screen.getByLabelText("Pool address")).toBe(
+      screen.getByTestId("stacks-stake-pool-address-input"),
+    );
+    expect(screen.getByLabelText("Number of cycles")).toBe(
+      screen.getByTestId("stacks-stake-num-cycles-input"),
+    );
+  });
+
   it("keeps Continue disabled until a valid pool address is entered", () => {
     renderScreen();
     expect(continueButton()).toBeDisabled();
