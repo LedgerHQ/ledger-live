@@ -86,8 +86,6 @@ export default defineCommand({
     }
 
     const network = parseNetworkArg(networkArg);
-    const currencyId = currencyIdFromNetwork(network);
-    const managerAppName = getManagerAppNameForCurrencyId(currencyId);
     const networkStr = `${network.name}:${network.env}`;
     walletCliDebug(`account discover: network=${networkStr}, output=${output}`);
 
@@ -97,6 +95,10 @@ export default defineCommand({
     });
 
     await out.run(async () => {
+      // Resolve inside out.run so an unknown/unsupported network is reported through the command
+      // envelope, before any device interaction.
+      const currencyId = currencyIdFromNetwork(network);
+      const managerAppName = getManagerAppNameForCurrencyId(currencyId);
       out.spin(`Connect device and open ${colors.bold(managerAppName)} app…`);
       await withCurrencyDeviceSession(
         currencyId,
