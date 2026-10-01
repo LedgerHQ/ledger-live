@@ -1,8 +1,8 @@
 diff --git a/lib/index.js b/lib/index.js
-index eaaea6c359631b56d31b1de8e701847bdee3c87d..313b10c08e65f313cd49512b3a78466ec7c1d2f4 100644
+index e104b4fee8cf50921cf87152c014e4a2bba668dc..a8fff56f61a8f19f39691a0f8d03b498391b2aed 100644
 --- a/lib/index.js
 +++ b/lib/index.js
-@@ -13,7 +13,6 @@ function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e;
+@@ -12,7 +12,6 @@ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r
  (() => {
    var $util = $protobuf.util;
    if ($util.Long == null) {
