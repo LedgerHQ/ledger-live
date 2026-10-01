@@ -564,6 +564,16 @@ libs/live-e2e-shared/                                                       @led
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
+# UI tests — send flow & modals are coin-integration's
+e2e/mobile/specs/send/                                       @ledgerhq/coin-integration
+e2e/desktop/tests/specs/send.*.spec.ts                       @ledgerhq/coin-integration
+e2e/desktop/tests/specs/newSendFlow*.spec.ts                 @ledgerhq/coin-integration
+e2e/desktop/tests/page/modal/send.modal.ts                   @ledgerhq/coin-integration
+e2e/desktop/tests/page/modal/new.send.modal.ts               @ledgerhq/coin-integration
+e2e/desktop/tests/page/modal/receive.modal.ts                @ledgerhq/coin-integration
+apps/ledger-live-desktop/tests/specs/send.spec.ts            @ledgerhq/coin-integration
+apps/ledger-live-desktop/tests/specs/send/                   @ledgerhq/coin-integration
+
 # Team-split convention: ownership of team-* folders (order: last match wins)
 # codeowners-check: allow-override
 **/team-qaa/                      @ledgerhq/qaa
