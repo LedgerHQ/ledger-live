@@ -1,0 +1,5 @@
+---
+"ledger-live-desktop": patch
+---
+
+Move the desktop renderer's application database and device transport (Speculos, HTTP proxy) access onto the preload bridge (`window.lld.db`, `window.lld.transport`), with one named method per operation. Password attempts against the account database are now throttled in the main process after five consecutive failures.
