@@ -857,6 +857,7 @@
     "exploreCryptoCardsDescription" : "お客様にぴったりの暗号資産カードを見つけましょう"
   },
   "payTab" : {
+    "disclaimer" : "Monavate Onchain提供",
     "featureTour" : {
       "title" : "すべての支払いを一箇所で管理",
       "description" : "あらたに「支払い」タブが登場。日常のお金を使う様々な場面で、暗号資産を利用できるようになります。",
@@ -901,6 +902,7 @@
     "card" : {
       "title" : "暗号資産カード",
       "topUp" : "チャージ",
+      "chooseCardType" : "カードの種類を選択してください",
       "balanceLabel" : "残高",
       "freeze" : "凍結",
       "unfreeze" : "凍結解除",
@@ -922,14 +924,23 @@
       },
       "assets" : {
         "title" : "資産",
-        "empty" : "まだ資産はありません",
-        "error" : "資産を読み込めませんでした。",
+        "empty" : {
+          "title" : "まだ資産はありません",
+          "description" : "カードの利用を開始するには、資産を追加してください。",
+          "cta" : "資産を追加"
+        },
+        "error" : {
+          "title" : "資産を読み込めませんでした。",
+          "description" : "何か問題が発生しました。",
+          "cta" : "再試行"
+        },
         "info" : "これらの資産がカードの資金となります。引き落しの順を設定するか、追加します。",
         "manage" : "管理",
         "manageDialog" : {
           "title" : "資産管理",
           "description" : "ドラッグして、資金源の優先順位を設定します。 いずれかの資産の残高が少なくなると、次の資産が自動的に使用されます。",
-          "addAssetCaption" : "資産を追加するため、Baanxのページにリダイレクトされます。",
+          "reorder" : "{{asset}}の順序を並べ替えます。スペースキーまたはEnterキーを押して選択し、矢印キーで移動、Escapeキーでキャンセルします。",
+          "addAssetCaption" : "資産を追加するため、Monavateにリダイレクトされます。",
           "addAsset" : "資産を追加"
         },
         "details" : {
@@ -938,8 +949,8 @@
           "transactions" : "トランザクション"
         },
         "withdraw" : {
-          "title" : "Baanxにリダイレクトされます。",
-          "description" : "BaanxアカウントからLedgerウォレットのアドレスに資金を出金します。",
+          "title" : "Monavateにリダイレクトされます。",
+          "description" : "MonavateアカウントからLedgerウォレットのアドレスに資金を出金します。",
           "continue" : "続行"
         },
         "history" : {
@@ -950,7 +961,7 @@
         }
       },
       "reward" : {
-        "title" : "キャッシュバック合計"
+        "title" : "キャッシュバック合計・ {{ticker}}で{{ratePercent}}％"
       },
       "numbers" : {
         "reveal" : "表示",
@@ -982,7 +993,9 @@
         "status" : "ステータス",
         "card" : "カード",
         "cardInfo" : "この決済に使用されたカードの下4桁。",
-        "fundingSource" : "資金源",
+        "fundingSource_one" : "資金源",
+        "fundingSource_other" : "資金源",
+        "cashback" : "キャッシュバック",
         "transactionId" : "トランザクションID",
         "copyTransactionId" : "トランザクションIDをコピー",
         "today" : "今日 {{time}}",
@@ -1010,6 +1023,10 @@
         "signedOut" : {
           "title" : "カードのトランザクションを確認するにはログインしてください",
           "description" : "ログインすると、ここにカードのアクティビティが表示されます。"
+        },
+        "unclaimed" : {
+          "title" : "暗号資産カード",
+          "description" : "「支払い」に進み、カードを設定してください。"
         },
         "empty" : {
           "title" : "まだカードのトランザクションがありません",
@@ -1076,10 +1093,11 @@
       },
       "addressPicker" : {
         "title" : "{{name}}のアドレスを選択",
+        "meTitle" : "アドレスを選択",
         "addAddress" : "アドレスを追加"
       },
       "paySuccess" : {
-        "title" : "({{recipient}}) を支払いました",
+        "title" : "{{recipient}}を支払いました",
         "amount" : "数量",
         "estimatedTime" : "推定時間",
         "from" : "送付元",
@@ -1148,12 +1166,32 @@
         "action" : "ログイン"
       },
       "errors" : {
-        "pkce_failed" : "ログインを開始できませんでした。もう一度お試しください。",
-        "browser_open_failed" : "ログインページを開くことができませんでした。もう一度お試しください。",
-        "missing_attempt" : "このログインは無効になりました。再度ログインしてください。",
-        "exchange_failed" : "ログインを完了できませんでした。もう一度お試しください。",
-        "persist_failed" : "セッションを保存できませんでした。もう一度お試しください。",
-        "fetch_user_failed" : "お使いのカードを読み込めませんでした。もう一度お試しください。"
+        "pkce_failed" : {
+          "title" : "ログインを開始できませんでした。",
+          "description" : "もう一度お試しください。"
+        },
+        "browser_open_failed" : {
+          "title" : "ログインページを開くことができませんでした。",
+          "description" : "もう一度お試しください。"
+        },
+        "missing_attempt" : {
+          "title" : "このログインは無効になりました。",
+          "description" : "再度ログインしてください。"
+        },
+        "exchange_failed" : {
+          "title" : "ログインを完了できませんでした。",
+          "description" : "もう一度お試しください。"
+        },
+        "persist_failed" : {
+          "title" : "セッションを保存できませんでした。",
+          "description" : "もう一度お試しください。"
+        },
+        "fetch_user_failed" : {
+          "title" : "カードを読み込めませんでした。",
+          "description" : "もう一度お試しください。"
+        },
+        "retryLogin" : "再試行",
+        "retryUser" : "再試行"
       }
     },
     "cardLoginIntro" : {
@@ -1202,8 +1240,9 @@
         "verifyCta" : "アドレスの認証",
         "successTitle" : "デバイスのセキュアスクリーンに表示されているアドレス",
         "nextStepsLabel" : "次のステップ",
-        "nextStepShare" : "ご希望のアプリでアドレスを共有してください",
-        "nextStepMatch" : "共有アドレスが、Ledgerデバイスのアドレスと一致していることを確認してください。",
+        "nextStepKeepDisplayed" : "Ledgerデバイスにアドレスを表示したままにしてください。まだ確認しないでください。",
+        "nextStepPaste" : "「了解」をクリックし、共有先のアプリにアドレスを貼り付けてください。",
+        "nextStepCheckMatch" : "送信する前に、Ledgerデバイスに表示されているアドレスと一致していることを確認してください。",
         "gotItCta" : "了解",
         "device" : {
           "cancelledTitle" : "アドレスの検証がキャンセルされました",
@@ -3612,7 +3651,9 @@
       "title" : "資産を引き出す",
       "steps" : {
         "amount" : {
-          "title" : "出金"
+          "title" : "出金",
+          "unlockedOn" : "{{date}}にロック解除済み",
+          "unlocksOn" : "{{date}}にロック解除"
         },
         "connectDevice" : {
           "title" : "デバイス"
@@ -5030,8 +5071,7 @@
           },
           "validator" : {
             "title" : "バリデーター",
-            "ledgerByBitwiseTC" : "Ledger by Bitwise利用規約",
-            "ledgerByFigmentTC" : "Ledger by Figment利用規約"
+            "ledgerByBitwiseTC" : "Ledger by Bitwise利用規約"
           },
           "connectDevice" : {
             "title" : "デバイス"
@@ -6745,6 +6785,9 @@
       "transfer_token_private" : "プライベートの受取人",
       "convert_token_public_to_private" : "プライベートの受取人",
       "convert_token_private_to_public" : "公開受取人",
+      "bond_public" : "バリデーター",
+      "unbond_public" : "送付先",
+      "claim_unbond_public" : "送付先",
       "delegate" : "バリデーター",
       "redelegate" : "バリデーター",
       "undelegate" : "バリデーター",
@@ -8557,6 +8600,30 @@
       "title" : "このトピックはフォローできません",
       "description" : "Internet Computerがこのトピックを廃止したか、またはLedger Internet Computerアプリがこれに対するフォローの署名にまだ対応していません。別のトピックを選択してください。"
     },
+    "ICPTooManyFollowees" : {
+      "title" : "フォロー対象の上限に達しました",
+      "description" : "トピックがフォローできるニューロンは最大{{max}}個です。リスト内のニューロンが{{max}}個以下になるまで削除してください。"
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "無効なニューロンID",
+      "description" : "{{id}}は有効なニューロンIDではありません。リストから削除してください。"
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "ニューロンが重複してリストされています",
+      "description" : "ニューロン{{id}}が複数回リストされています。重複を削除してください。"
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "ニューロンは自分自身をフォローすることはできません。",
+      "description" : "{{id}}はこのニューロン自体のIDです。リストから削除してください。"
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "このニューロンの解放を開始できません",
+      "description" : "ロックされたニューロンのみディゾルブを開始できます。ニューロンを同期して、現在の状態を確認してください。"
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "このニューロンの溶解を停止できません",
+      "description" : "解放中のニューロンのみ解放を停止できます。このニューロンはすでに完了している可能性があります。ニューロンを同期して、現在の状態を確認してください。"
+    },
     "ICPDisburseNotAllowed" : {
       "title" : "このニューロンはディスバースできません",
       "description" : "ニューロンは、完全にディゾルブされ、そのステーキングがネットワーク手数料を超えている場合に払い出すことができます。ニューロンを同期して、現在の状態を確認してください。"
@@ -8600,6 +8667,10 @@
     "ICPCallRejected" : {
       "title" : "リクエストは承認されませんでした",
       "description" : "Internet Computerは実行される前にリクエストを拒否したため、何も変更されませんでした。もう一度お試しください。{{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "リクエストは送信されませんでした",
+      "description" : "Internet Computerはリクエストを受け付けなかったため、何も送信されず、何も変更されませんでした。もう一度お試しください。{{reason}}"
     },
     "ICPInvalidPercentage" : {
       "title" : "パーセンテージが範囲外です",
@@ -10121,7 +10192,6 @@
   },
   "history" : {
     "title" : "取引履歴",
-    "cardScope" : "カード",
     "cardAssetScope" : "カード・{{assetName}}",
     "pending" : "保留中のトランザクション",
     "pending_other" : "保留中のトランザクション",
@@ -10258,6 +10328,7 @@
     "addAddressEntry" : {
       "title" : "アドレスを入力",
       "addressPlaceholder" : "アドレスまたはENS",
+      "addressPlaceholderNoENS" : "アドレス",
       "confirmAddress" : "確認を続ける",
       "validatingAddress" : "アドレスを検証中",
       "validAddress" : "有効なアドレス",
