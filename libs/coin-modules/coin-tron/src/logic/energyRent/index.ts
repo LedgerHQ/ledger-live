@@ -10,6 +10,7 @@ import {
 } from "../../types/errors";
 import {
   ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS,
+  ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT,
   ENERGY_RENT_POLL_INTERVAL_MS,
   ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS,
   ENERGY_RENT_POLL_TIMEOUT_MS,
@@ -18,7 +19,7 @@ import {
 } from "../constants";
 import { getTronifyConfig } from "../../network/tronify";
 import { decode58Check } from "../../network/format";
-import { DEFAULT_TRC20_FEES_LIMIT, getTronAccountNetwork } from "../../network";
+import { getTronAccountNetwork } from "../../network";
 import { abiDecodeTrc20Transfer, type Trc20TransferData } from "../../network/utils";
 import { decodeTransaction } from "../utils";
 import { tronifyProvider } from "./tronify";
@@ -197,14 +198,13 @@ async function assertSignableTransferMatchesRequest(
     );
   }
 
-  // fee_limit caps what the TVM may burn from the payer: TX-A may not carry a higher cap than
-  // coin-tron gives its own USDT transfers.
+  // fee_limit caps what the TVM may burn from the payer.
   if (
     feeLimit !== undefined &&
-    !(typeof feeLimit === "number" && feeLimit <= DEFAULT_TRC20_FEES_LIMIT)
+    !(typeof feeLimit === "number" && feeLimit <= ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT)
   ) {
     throw new TronifyApiError(
-      `Energy-rent payment carries fee_limit ${JSON.stringify(feeLimit)}, above the ${DEFAULT_TRC20_FEES_LIMIT} sun bound`,
+      `Energy-rent payment carries fee_limit ${JSON.stringify(feeLimit)}, above the ${ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT} sun bound`,
     );
   }
 

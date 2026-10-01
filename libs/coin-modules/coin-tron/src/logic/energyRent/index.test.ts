@@ -451,10 +451,10 @@ describe("energyRent provider switch", () => {
         },
       );
 
-      it("accepts a fee_limit equal to the default TRC-20 bound", async () => {
+      it("accepts the 100 TRX fee_limit Tronify builds its payments with", async () => {
         mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
         mockedDecodeTransaction.mockResolvedValueOnce(
-          decodedTrc20Payment({ fee_limit: 50_000_000 }),
+          decodedTrc20Payment({ fee_limit: 100_000_000 }),
         );
 
         await expect(
@@ -560,10 +560,7 @@ describe("energyRent provider switch", () => {
           }),
         ],
         ["no call data", decodedTrc20Payment({ data: "" })],
-        [
-          "a fee_limit above the default TRC-20 bound",
-          decodedTrc20Payment({ fee_limit: 50_000_001 }),
-        ],
+        ["a fee_limit above the 100 TRX bound", decodedTrc20Payment({ fee_limit: 100_000_001 })],
         [
           "an amount above the approved order",
           decodedTrc20Payment({ data: transferData(1_000_001) }),

@@ -43,6 +43,10 @@ export const ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS = 5;
 // broadcast after the poll gave up and a retry paid again; the margin absorbs a skewed local clock.
 export const ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS = ENERGY_RENT_POLL_TIMEOUT_MS + 5 * 60_000;
 
+// Tronify builds its payments with fee_limit 100 TRX, above the 50 TRX coin-tron gives its own
+// TRC-20 transfers, so the payment needs its own bound.
+export const ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT = 100_000_000;
+
 /** What Tronify rent is paid in: coin-tron always sends `extraTrxNum`, which selects Tronify's USDT
  * payment ("Flow 2"). */
 export const TRONIFY_PAY_ASSET = {
