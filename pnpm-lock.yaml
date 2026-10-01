@@ -911,6 +911,9 @@ importers:
       '@devtools/bindings':
         specifier: workspace:*
         version: link:../../devtools/bindings
+      '@devtools/device-onboarding':
+        specifier: workspace:*
+        version: link:../../devtools/device-onboarding
       '@devtools/shell':
         specifier: workspace:^
         version: link:../../devtools/shell
@@ -1172,6 +1175,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+      '@ledgerhq/device-onboarding':
+        specifier: workspace:^
+        version: link:../../libs/device-onboarding
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.1(@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@ledgerhq/device-management-kit@1.10.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)

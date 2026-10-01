@@ -37,6 +37,10 @@ jest.mock("@devtools/bindings", () => ({
   useCloudSyncDevToolProps: () => ({ marker: "cloud-sync-props" }),
 }));
 
+jest.mock("../../DeviceOnboarding/hooks/useDeviceOnboarding", () => ({
+  useDeviceOnboarding: () => ({ marker: "device-onboarding-props" }),
+}));
+
 jest.mock("@devtools/wire", () => {
   const wireState = { hubUrl: "ws://127.0.0.1:9090", role: "host" };
   return {
@@ -68,6 +72,7 @@ describe("DevToolsScreen", () => {
           { id: "pay-card", config: { marker: "pay-card-props" } },
           { id: "trustchain", config: { marker: "trustchain-props" } },
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
+          { id: "device-onboarding", config: { marker: "device-onboarding-props" } },
         ],
       }),
     );
