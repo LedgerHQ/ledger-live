@@ -1,6 +1,7 @@
 import os from "os";
 import { app, ipcMain } from "electron";
 import Store from "electron-store";
+import { getEnv } from "@shared/env";
 import { CHANNELS, type Bootstrap } from "~/bridge/contract";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
 
@@ -14,10 +15,15 @@ function getStore(): Store {
   return store;
 }
 
+const CARD_SESSION_BOOTSTRAP = "CARD_SESSION_BOOTSTRAP";
+
 export function buildBootstrap(): Bootstrap {
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => key.toUpperCase() !== CARD_SESSION_BOOTSTRAP),
+  );
   return {
     version: 1,
-    env: { ...process.env },
+    env,
     os: {
       type: os.type(),
       release: os.release(),
@@ -49,4 +55,10 @@ ipcMain.on(CHANNELS.storeSet, (_event, key: string, value: unknown) => {
 
 ipcMain.on(CHANNELS.storeClear, () => {
   getStore().clear();
+});
+
+// Same gate as bootstrapCardSession in the renderer.
+ipcMain.handle(CHANNELS.cardSessionBootstrap, () => {
+  if (!__DEV__ && !getEnv("PLAYWRIGHT_RUN")) return null;
+  return process.env[CARD_SESSION_BOOTSTRAP] || null;
 });

@@ -1,5 +1,10 @@
 import { ipcRenderer } from "electron";
-import { CHANNELS, type Bootstrap, type LedgerBridge } from "~/bridge/contract";
+import {
+  CHANNELS,
+  type Bootstrap,
+  type CardSessionBridge,
+  type LedgerBridge,
+} from "~/bridge/contract";
 import { expose } from "./expose";
 
 const deepFreeze = <T>(value: T): T => {
@@ -13,10 +18,20 @@ const deepFreeze = <T>(value: T): T => {
 export function installBridge(): void {
   const bootstrap = ipcRenderer.sendSync(CHANNELS.bootstrap) as Bootstrap;
 
+  let cardSessionTaken = false;
+  const cardSession: CardSessionBridge = {
+    takeBootstrap: () => {
+      if (cardSessionTaken) return Promise.resolve(null);
+      cardSessionTaken = true;
+      return ipcRenderer.invoke(CHANNELS.cardSessionBootstrap);
+    },
+  };
+
   const bridge: LedgerBridge = {
     version: 1,
     // Consumers that mutate it (the `process.env` shim) take a copy.
     bootstrap: deepFreeze(bootstrap),
+    cardSession,
   };
 
   // Not `ledger`: the E2E suites already use `window.ledger`.

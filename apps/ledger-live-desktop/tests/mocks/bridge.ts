@@ -1,4 +1,4 @@
-import type { Bootstrap } from "~/bridge/contract";
+import type { Bootstrap, CardSessionBridge } from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
   version: 1,
@@ -17,4 +17,9 @@ export const bootstrap: Bootstrap = {
   distributionChannel: "direct",
   locale: { app: "en-US", system: "en-US" },
   store: {},
+};
+
+// Reads the live env so tests can set CARD_SESSION_BOOTSTRAP per case.
+export const cardSession: CardSessionBridge = {
+  takeBootstrap: async () => process.env.CARD_SESSION_BOOTSTRAP || null,
 };

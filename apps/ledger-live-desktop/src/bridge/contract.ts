@@ -11,14 +11,7 @@ export type Serializable =
 export type Bootstrap = {
   /** Bump on every shape change. */
   version: 1;
-  /**
-   * The main process's full `process.env`.
-   *
-   * Deliberately unfiltered: several consumers read keys that are not `@ledgerhq/live-env`
-   * names (HIDE_DEBUG_MOCK, LEDGER_MIN_HEIGHT, the NO_DEBUG_* family, DEFAULT_*_MANIFEST_ID),
-   * and the E2E suites pass arbitrary variables through `electron.launch({ env })`.
-   * Allow-listing here would silently disable them.
-   */
+  /** Unfiltered (E2E and debug flags read arbitrary keys), minus `CARD_SESSION_BOOTSTRAP`. */
   env: Record<string, string | undefined>;
   os: {
     type: string;
@@ -39,9 +32,15 @@ export type Bootstrap = {
   store: Record<string, unknown>;
 };
 
+/** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
+export type CardSessionBridge = {
+  takeBootstrap(): Promise<string | null>;
+};
+
 export type LedgerBridge = {
   version: 1;
   bootstrap: Bootstrap;
+  cardSession: CardSessionBridge;
 };
 
 // Every channel is listed here: never add a generic invoke passthrough.
@@ -49,4 +48,5 @@ export const CHANNELS = {
   bootstrap: "bootstrap",
   storeSet: "lld-store:set",
   storeClear: "lld-store:clear",
+  cardSessionBootstrap: "card-session:bootstrap",
 } as const;
