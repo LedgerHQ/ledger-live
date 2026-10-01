@@ -8,7 +8,7 @@ description: Read when adding or changing product analytics events. Import track
 The API is [`@shared/analytics`](../../../shared/analytics/README.md). React adapters are [`@shared/analytics-react`](../../../shared/analytics-react/README.md).
 
 - Import `track` and `trackPage` from `@shared/analytics` and `Track`, `TrackPage`, and `TrackScreen` from `@shared/analytics-react`.
-- Do not add imports through app barrels (`~/analytics`, `~/renderer/analytics/segment`, `Track.ts`, `TrackPage.ts`). Those shims will be replaced with [LIVE-35992](https://ledgerhq.atlassian.net/browse/LIVE-35992).
+- Do not re-export `track`, `trackPage`, `Track`, `TrackPage` or `TrackScreen` from app modules (`~/analytics`, `~/renderer/analytics/segment`). App `segment.ts` files only wire the host.
 - Register the Segment client, consent, `identify`, extra props, and props filters in app (currently `/apps/**/segment.ts`).
 - Flow packages may keep an injected `track` helper so tests can pass a fake. They must not import an app barrel.
 - In tests, mock `@shared/analytics` (and `@shared/analytics-react` when the component is under test).

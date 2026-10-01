@@ -94,8 +94,8 @@ That is deliberate rather than an oversight, because there is no single gate to 
 Those are **different user choices**. Someone can accept crash reporting and decline analytics,
 or the reverse, so a Datadog sink must not assume the Segment sink's gate.
 
-The Segment observer forwards through its host's `track`, whose first statement is the
-analytics-consent check. The separate Earn lifecycle observer posts a count-only payload directly
+The Segment observer forwards through `track` from `@shared/analytics`, which checks analytics
+consent before sending. The separate Earn lifecycle observer posts a count-only payload directly
 to `/v1/tx/lifecycle`; it never forwards raw errors, signatures, addresses, amounts, account ids,
 or user/device/session identifiers. Its independent rollout switch is
 `earnTxLifecycleMonitoring`.
@@ -122,9 +122,9 @@ readers and returns the store listener that drops pending attempts when the kill
 `registerTxLifecycleObserver` installs the observer, and `startDappLifecycleMonitoring` is the
 body of each host's dApp effect.
 
-One thing to know if you ever reach for it: the hosts' `track(event, properties, mandatory)`
-takes a third argument that bypasses the consent check and swaps in a reduced property set. It
-exists for recording the consent change itself and is not a general-purpose escape hatch —
+One thing to know if you ever reach for it: `track(event, props, { mandatory: true })` from
+`@shared/analytics` bypasses the consent check and swaps in the reduced property set from
+`setMandatoryExtraPropsFn`. It exists for recording the consent change itself and is not a general-purpose escape hatch —
 using it for funnel data is a privacy decision, not an engineering one.
 
 ## Adding a family
