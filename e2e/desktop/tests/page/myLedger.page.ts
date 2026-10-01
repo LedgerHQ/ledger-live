@@ -98,6 +98,8 @@ export class MyLedgerPage extends AppPage {
   @step("Expect the device to be named $0")
   async expectDeviceName(name: string) {
     await expect(this.storageCard).toContainText(name);
+  }
+
   /** The summary is read against the device under test, so it follows SPECULOS_DEVICE. */
   @step("Expect the device summary to report $0")
   async expectDeviceSummary(deviceName: string) {
