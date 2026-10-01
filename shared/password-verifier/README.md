@@ -1,7 +1,7 @@
 # @shared/password-verifier
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Created in [LIVE-35917](https://ledgerhq.atlassian.net/browse/LIVE-35917) as part of the User App Authentication epic.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Store a password so it can be checked later without keeping the password itself: the **verifier
 record** and the **constant-time comparison** that checks it.
@@ -42,9 +42,9 @@ source and `shared/schema-primitives` is 50, against 48 here.
 The app lock's own state (`hasPassword`, `biometricsEnabled`, `isLocked`), its biometrics status
 unions and its errors live in
 [`@features/platform-app-lock`](../../features/platform/app-lock/README.md). Its screens live in
-the flow packages: the unlock journey in
-[`@features/flow-app-unlock`](../../features/flow/app-unlock/README.md), the others in
-[`@features/flow-app-lock`](../../features/flow/app-lock/README.md).
+the flow packages, one per journey: unlock, password setup, password removal, longer password and
+the protection prompt (`features/flow/app-*`), starting with
+[`@features/flow-app-unlock`](../../features/flow/app-unlock/README.md).
 
 ## What this protects
 
@@ -79,8 +79,8 @@ The caller derives `digest` with the platform's scrypt and generates `salt` with
 stored verifier. The `scrypt` parameters travel with the verifier, so an existing one still opens
 after the defaults are raised — hard-coding them would lock out every user the day the cost changes.
 
-`version` is a **policy** version, not an algorithm version: the migration off short passwords needs
-to know which rules a verifier was created under.
+`version` identifies the record format. Whether the password behind a verifier is too short is not
+encoded here: `@features/platform-app-lock` stores that mark beside it.
 
 `matchesPasswordVerifier` folds every byte into one accumulator and never returns early on a
 mismatch. Replacing it with `===` (which compares references on a `Uint8Array` and is always false),
@@ -89,11 +89,11 @@ brute force into a byte-by-byte one. The length check is safe to short-circuit: 
 sits in plaintext next to the verifier, so the length is not secret — Node's `timingSafeEqual`
 likewise refuses unequal lengths outright.
 
-## Left to the implementing ticket
+## Parameters
 
-No default `ScryptParams` is exported on purpose. Choosing scrypt's `N` (`cost`), `r` (`blockSize`)
-and `p` (`parallelization`) is a real decision that needs measuring on low-end Android — shipping a
-default here would invite adopting it unmeasured.
+No default `ScryptParams` is exported on purpose: the caller picks them. The app lock uses `N=16384`,
+`r=8`, `p=1` and a 32-byte digest (`@features/platform-app-lock`), not yet measured on low-end
+Android. Since the parameters travel with each verifier, raising them later locks no one out.
 
 ## Validation
 

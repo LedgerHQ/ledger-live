@@ -1,4 +1,4 @@
-import type { ProtectionPromptViewModel } from "../../protectionPrompt";
+import type { ProtectionPromptViewModel } from "../../steps/ProtectionPrompt";
 
 export type EnableProtectionSheetProps = ProtectionPromptViewModel &
   Readonly<{
