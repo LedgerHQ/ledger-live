@@ -5,18 +5,264 @@
         "title" : "ICP Stake Edin",
         "description" : "ICP stake edip yönetişimine katılarak ödüller kazanın.",
         "cta" : "ICP Stake Et"
+      },
+      "confirmFollowing" : {
+        "description" : "Nöronlarınızdan biri oylama gücü kaybediyor. Geri yüklemek için takip ayarlarını onaylayın.",
+        "cta" : "Takibi onayla"
+      },
+      "syncNeurons" : {
+        "description" : "Nöron verileriniz güncel değil. Yenilemek için cihazınızı bağlayın.",
+        "cta" : "Nöronları yenileyin"
+      },
+      "lockNeurons" : {
+        "description" : "Bir nöronun oy kullanabilmesi ve ödül kazanabilmesi için daha uzun bir çözülme süresine ihtiyacı vardır.",
+        "cta" : "Nöronları yönet"
+      },
+      "addFollowees" : {
+        "description" : "Nöronunuzun oy kullanması ve ödül kazanması için yönetişim konularında diğer nöronları takip edin.",
+        "cta" : "Nöronları yönet"
       }
     },
     "headerManageActions" : {
       "manageNeurons" : {
-        "title" : "Nöronları Yönetin"
+        "title" : "Nöronlar"
       }
     },
     "summaryFooter" : {
+      "availableBalanceTooltip" : "Şu anda harcayabileceğiniz veya stake edebileceğiniz ICP. Halihazırda nöronlarda kilitlenmiş olan ICP'yi içermez.",
       "stakedBalance" : "Stake Bakiyesi",
       "stakedBalanceTooltip" : "Şu anda nöronlara stake edilen toplam ICP token'ı miktarı. Stake edilen ICP’ler oylama ödülleri kazanabilir ve yönetişim için kullanılabilir.",
       "totalMaturity" : "Toplam Birikmiş Ödül Miktarı",
       "totalMaturityTooltip" : "Staking vadesi ve likidite vadesi kapsamındakiler de dâhil olmak üzere staking kapsamında biriken toplam ödül tutarı. Bu ödüller tekrar stake edilebilir veya likit ICP olarak alınabilir."
+    },
+    "duration" : {
+      "years_one" : "{{count}} yıl",
+      "years_other" : "{{count}} yıl",
+      "months_one" : "{{count}} ay",
+      "months_other" : "{{count}} ay",
+      "days_one" : "{{count}} gün",
+      "days_other" : "{{count}} gün",
+      "hours_one" : "{{count}} saat",
+      "hours_other" : "{{count}} saat",
+      "minutes_one" : "{{count}} dakika",
+      "minutes_other" : "{{count}} dakika",
+      "lessThanAMinute" : "Bir dakikadan az"
+    },
+    "neuronState" : {
+      "Locked" : "Kilitlendi",
+      "Dissolving" : "Çözülüyor",
+      "Dissolved" : "Çözüldü",
+      "Spawning" : "Oluşturuluyor",
+      "Unknown" : "Bilinmiyor"
+    },
+    "common" : {
+      "neuronId" : "Nöron Kimliği",
+      "stake" : "Stake et",
+      "maturity" : "Vade Ödülü",
+      "dissolveDelay" : "Çözme süresi",
+      "state" : "Durum",
+      "action" : "Eylem",
+      "none" : "Yok",
+      "disburse" : "Dağıt",
+      "startDissolving" : "Çözmeye saşla",
+      "stopDissolving" : "Çözmeyi durdur",
+      "enabled" : "Etkin",
+      "disabled" : "Devre dışı",
+      "enable" : "Etkinleştir",
+      "disable" : "Devre dışı bırak"
+    },
+    "stakingFlow" : {
+      "started" : {
+        "title" : "ICP Stake Edin",
+        "description" : "ICP stake etme işlemi bir nöron oluşturur. Bu, yönetişimde oy kullanan ve ödül kazandıran kilitli bir pozisyondur.",
+        "steps" : {
+          "0" : "ICP'niz, siz onu çözene kadar nöronda kilitli kalır.",
+          "1" : "Daha uzun bir çözülme süresi; daha fazla oylama gücü ve daha fazla ödül kazandırır.",
+          "2" : "Nöron başkalarını takip ederek oy kullanır, böylece manuel olarak oy kullanmanıza gerek kalmadan ödül kazandırır."
+        },
+        "cta" : "ICP Stake Et"
+      },
+      "amount" : {
+        "minimum" : "Minimum stake tutarı"
+      },
+      "success" : {
+        "title" : "Nöron oluşturuldu",
+        "description" : "Nöronları Yönet sayfasını açın ve görüntülemek için yenileyin: nöron verileri yalnızca cihazınız aracılığıyla çekilmektedir."
+      }
+    },
+    "manageNeuronFlow" : {
+      "title" : "Nöronları yönetin",
+      "confirmation" : {
+        "backToNeurons" : "Nöronlara geri dön",
+        "success" : {
+          "title" : "Tamam",
+          "default" : "Nöronunuz güncellendi.",
+          "list_neurons" : "Nöronlarınız güncel.",
+          "start_dissolving" : "Nöronunuz çözülmeye başladı.",
+          "stop_dissolving" : "Nöronunuz çözülmeyi durdurdu.",
+          "disburse" : "Nöronunuzun stake tutarı hesabınıza aktarıldı.",
+          "set_dissolve_delay" : "Nöronunuzun çözülme süresi belirlendi.",
+          "increase_dissolve_delay" : "Nöronunuzun çözülme süresi artırıldı.",
+          "add_hot_key" : "Sıcak anahtar, nöronunuza eklendi.",
+          "remove_hot_key" : "Sıcak anahtar, nöronunuzdan kaldırıldı.",
+          "follow" : "Nöronunuzun takip ayarları güncellendi.",
+          "refresh_voting_power" : "Nöronunuzun oylama gücü yenilendi.",
+          "stake_maturity" : "Nöronunuzun vade ödülü stake edildi.",
+          "auto_stake_maturity" : "Otomatik vade ödülü stake etme güncellendi.",
+          "spawn_neuron" : "Vade ödülünüzden yeni bir nöron oluşuyor.",
+          "split_neuron" : "Nöronunuz bölündü.",
+          "increase_stake" : "Nöronunuzun stake miktarı artırıldı."
+        }
+      },
+      "listNeuron" : {
+        "title" : "Nöronlar",
+        "empty" : "Henüz hiçbir nöronunuz yok. Bir tane oluşturmak için ICP stake edin.",
+        "lastSynced" : "Son senkronizasyon:",
+        "never" : "Asla",
+        "decayingTitle" : "Nöronlarınızdan biri oy gücü kaybediyor.",
+        "decayingDescription" : "Takibinin doğrulanması, bunu altı ay daha geri yükler.",
+        "sync" : "Nöronları yenileyin"
+      },
+      "manage" : {
+        "title" : "Yönetin",
+        "neuron" : "Nöron",
+        "hotKeyOnly" : "Bu nöronda bir sıcak anahtar bulunduruyorsunuz. Oy kullanabilir ve takip ayarlarını belirleyebilirsiniz ancak stake'ini taşıyamazsınız.",
+        "missingNeuron" : "Bu nöron artık senkronize edilmiş anlık görüntünüzde yer almamaktadır. Başka bir seçim yapmak için nöronlarınıza geri dönün ve senkronizasyon işlemini gerçekleştirin.",
+        "votingPower" : {
+          "title" : "Oylama gücü",
+          "tooltip" : "Oylama gücü, nöronunuzun yönetişimde ne kadar ağırlığa sahip olduğunu ve ne kadar ödül kazandığını belirler.",
+          "staked" : "Stake edildi",
+          "increaseStake" : "Stake'i artır",
+          "state" : "Durum",
+          "bonusValue" : "+%{{percent}}",
+          "ageBonus" : "Dönem bonusu",
+          "ageBonusTooltip" : "Bir nöron yaşlandıkça +%25'e kadar oylama gücü kazanır ve dört yılın sonunda maksimum güce ulaşır.",
+          "dissolveDelayBonus" : "Çözülme süresi bonusu: +%{{percent}}",
+          "dissolveDelayBonusTooltip" : "Daha uzun bir çözülme süresi +%200'e kadar oylama gücü kazandırır ve iki yılın sonunda maksimum seviyeye ulaşır.",
+          "noDissolveDelay" : "Çözülme süresi yok",
+          "setDissolveDelay" : "Çözme süresini belirleyin",
+          "increaseDissolveDelay" : "Çözülme süresini artırın",
+          "decayStartsIn" : "Oylama gücü {{duration}} içinde azalmaya başlayacak",
+          "decaying" : "Oylama gücü azalıyor – {{duration}} içinde sıfıra ulaşacak",
+          "expired" : "Oylama gücü kaybedildi: takipler temizlendi",
+          "confirmFollowing" : "Takibi onaylayın",
+          "confirmFollowingTooltip" : "Takip etme durumunuzu en az altı ayda bir onaylayın, aksi takdirde nöronunuz oylama gücünü kademeli olarak kaybeder."
+        },
+        "maturity" : {
+          "title" : "Vade Ödülü",
+          "tooltip" : "Vade ödülü, bir nöronun biriktirdiği ödüldür. Onu tekrar nörona stake edin veya yeni bir nöron oluşturun.",
+          "available" : "Kullanılabilir vade ödülü",
+          "staked" : "Stake edilmiş vade ödülü",
+          "stakedTooltip" : "Vade ödülü zaten nörona stake edilmiş. Bu tutar, oylama gücüne dahil edilir ve artık yeni bir nöronda kullanılamaz.",
+          "stake" : "Vade ödüllerini stake edin",
+          "spawn" : "Nöron oluşturun",
+          "autoStake" : "Otomatik vade ödülü stake etme",
+          "autoStakeTooltip" : "Etkinleştirildiğinde, vade ödülü biriktikçe nörona geri stake edilir."
+        },
+        "following" : {
+          "title" : "Takip",
+          "tooltip" : "Başka nöronları takip eden bir nöron, onlarla aynı yönde oy kullanır; manuel olarak oy kullanmaya gerek kalmadan ödül kazanmasını sağlayan sistem budur.",
+          "count_one" : "{{count}} konu",
+          "count_other" : "{{count}} konu",
+          "edit" : "Bir yönetişim konusunda nöronları takip et",
+          "follow" : "Takipleri düzenle"
+        },
+        "hotKeys" : {
+          "title" : "Sıcak anahtarlar",
+          "tooltip" : "Bir sıcak anahtar sizin adınıza oy kullanabilir ve takipleri belirleyebilir, ancak bir nöronun stake'ini asla taşıyamaz.",
+          "add" : "Başka bir principal'a sıcak anahtar erişimi yetkisi verin",
+          "addAction" : "Sıcak anahtar ekle",
+          "remove" : "Kaldır"
+        },
+        "advanced" : {
+          "title" : "Gelişmiş",
+          "split" : "Bu nöronu ikiye böl",
+          "splitTooltip" : "Hem orijinal hem de yeni nöron, en az 1 ICP olan minimum stake miktarını korumalıdır.",
+          "splitAction" : "Nöronu böl"
+        }
+      },
+      "increaseStake" : {
+        "title" : "Stake'i artırın",
+        "description" : "Bu nörona ICP ekleyin. Transfer nöronun kendi hesabına gönderilir, bu nedenle seçilecek bir alıcı yoktur."
+      },
+      "setDissolveDelay" : {
+        "title" : "Çözme süresi",
+        "setDescription" : "Nöronun ne kadar sürede çözüleceğini seçin. {{min}} ila {{max}} gün arasında.",
+        "increaseDescription" : "Nöronun çözülme süresine ekleme yapın. Toplam {{max}} güne ulaşacak şekilde en fazla {{remaining}} gün daha ekleyebilirsiniz ve bu süre asla kısaltılamaz.",
+        "days" : "Gün",
+        "resulting" : "Yeni çözülme süresi: {{duration}}",
+        "belowVotingThreshold" : "Nöron, {{days}} günün altında oy kullanamaz ve ödül kazanamaz."
+      },
+      "stakeMaturity" : {
+        "title" : "Vade ödüllerini stake edin",
+        "description" : "Bu nöronun vade ödülünün bir kısmını tekrar kendisine stake ederek oy gücünü artırın.",
+        "percentage" : "Stake edilecek yüzde",
+        "selected" : "Stake edilecek tutar:"
+      },
+      "splitNeuron" : {
+        "title" : "Nöronu bölün",
+        "description" : "Bu nöronun stake'inin bir kısmını yeni bir nörona taşıyın. Yeni nöron, çözülme süresi veya süre bonusu olmadan başlar.",
+        "amount" : "Ayrılacak tutar",
+        "range" : "İzin verilen aralık:"
+      },
+      "addHotKey" : {
+        "title" : "Sıcak anahtar ekleyin",
+        "description" : "Başka bir principal'a bu nöronda oy kullanma ve takip ayarlarını belirleme izni verin. Stake'i hiçbir zaman taşıyamaz.",
+        "principal" : "Principal kimliği",
+        "ownPrincipal" : "Bu hesabın principal'ı",
+        "ownPrincipalHint" : "Farklı bir principal girin; bu genellikle NNS dapp üzerinde oturum açarken kullandığınız adrestir. Bu hesap zaten nöronu kontrol etmektedir, dolayısıyla kendi principal değerini eklemek herhangi bir yetki sağlamaz."
+      },
+      "followTopic" : {
+        "title" : "Konu",
+        "description" : "Takip durumunu değiştirmek istediğiniz yönetişim konusunu seçin.",
+        "followeeCount_one" : "{{count}} takip edilen",
+        "followeeCount_other" : "{{count}} takip edilen"
+      },
+      "selectFollowees" : {
+        "title" : "Takip edilenler",
+        "description" : "Nöronunuz, {{topic}} konusunda tıpkı bu nöronlar gibi oy kullanacaktır.",
+        "neuronId" : "Takip edilecek Nöron Kimliği",
+        "add" : "Ekle",
+        "remove" : "Kaldır",
+        "empty" : "Henüz takip edilen yok. Nöronunuz bu konuda oy kullanmayacak.",
+        "clearsFollowing" : "İşleme devam etmek sisteme boş bir liste gönderir ve bu nöronun {{topic}} konusunda herhangi birini takip etmesini durdurur. Şu anda takip edilenler: {{count}}.",
+        "notANeuronId" : "Bir nöron kimliği yalnızca rakamlardan oluşur.",
+        "outOfRange" : "Bu, geçerli bir nöron kimliği değildir.",
+        "duplicate" : "Bu nöron bu konuda zaten takip ediliyor.",
+        "self" : "Bir nöron kendisini takip edemez.",
+        "unadded" : "Bu nöron kimliğini dahil etmek için Ekle ögesine dokunun veya alanı temizleyin.",
+        "atCapacity" : "Bir konu en fazla {{max}} nöronu takip edebilir. Yeni bir tane eklemek için birini kaldırın."
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "Tüm diğer konular",
+      "NeuronManagement" : "Nöron yönetimi",
+      "ExchangeRate" : "Takas kuru",
+      "NetworkEconomics" : "Ağ ekonomisi",
+      "Governance" : "Yönetişim",
+      "NodeAdmin" : "Node yöneticisi",
+      "ParticipantManagement" : "Katılımcı yönetimi",
+      "SubnetManagement" : "Alt ağ yönetimi",
+      "NetworkCanisterManagement" : "Uygulama canister yönetimi",
+      "Kyc" : "KYC",
+      "NodeProviderRewards" : "Node sağlayıcısı ödülleri",
+      "SnsDecentralizationSale" : "SNS merkeziyetsizlik satışı",
+      "IcOsVersionDeployment" : "IC OS sürüm dağıtımı",
+      "IcOsVersionElection" : "IC OS sürüm seçimi",
+      "SnsAndCommunityFund" : "SNS ve Topluluk Fonu",
+      "ApiBoundaryNodeManagement" : "API sınır node'u yönetimi",
+      "SubnetRental" : "Alt ağ kiralama",
+      "ProtocolCanisterManagement" : "Protokol canister yönetimi",
+      "ServiceNervousSystemManagement" : "Service Nervous System yönetimi"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Takibi onaylayın",
+      "description" : "Takip ayarlarınızı doğruladığınızda, nöronunuzun oy gücü önümüzdeki altı ay boyunca geçerli olacak şekilde eski hâline döner.",
+      "timeUntilLoss" : "Oylama gücünün kaybedileceği süre",
+      "losing" : "{{duration}} — şu anda güç kaybediyor",
+      "expired" : "Zaten kaybedildi",
+      "confirm" : "Onayla",
+      "empty" : "Şu anda nöronlarınızın hiçbirinde onay geri sayımı aktif değil."
     }
   },
   "buyCurrency" : {
@@ -1476,6 +1722,136 @@
     "CurrencyRegionRestrictedError" : {
       "title" : "{{currencyName}} bölgenizde kullanılamıyor",
       "description" : "{{currencyName}} erişimi bölgenizde kısıtlanmıştır."
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "Tutar çok düşük",
+      "description" : "Bir nöron en az 1 ICP barındırmalıdır, bu nedenle işlem tutarı bu miktarı ve ağ ücretini karşılamalıdır."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Çözülme süresi çok kısa",
+      "description_one" : "Internet Computer, en az {{minDays}} günlük bir çözülme süresi gerektirir.",
+      "description_other" : "Internet Computer, en az {{minDays}} günlük bir çözülme süresi gerektirir."
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "Geçersiz gün sayısı",
+      "description" : "Sıfırdan büyük bir tam sayı ile gün sayısı girin."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Çözülme süresi çok uzun",
+      "description_one" : "Internet Computer, bir nöronun çözülme süresini en fazla {{maxDays}} gün ile sınırlandırır.",
+      "description_other" : "Internet Computer, bir nöronun çözülme süresini en fazla {{maxDays}} gün ile sınırlandırır."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "Çözülme süresi kısaltılamaz",
+      "description" : "Bir nöronun çözülme süresi yalnızca artırılabilir. Süreyi kısaltmak için nöronu çözmeye başlayın."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "Nöron bulunamadı",
+      "description" : "Bu nöron, son senkronize edilen durumunuzda bulunmuyor. Nöronlarınızı senkronize edin ve tekrar deneyin."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Geçersiz principal",
+      "description" : "Bir sıcak anahtar, geçerli bir Internet Computer principal'ı olmalıdır."
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "Sıcak anahtar zaten eklendi",
+      "description" : "Bu principal, bu nöronda zaten bir sıcak anahtardır."
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "Bu principal zaten nöronu kontrol ediyor.",
+      "description" : "Farklı bir principal girin. Bir sıcak anahtar yalnızca oy kullanabilir ve takip ayarlarını belirleyebilir; denetleyici bu işlemleri zaten yapabiliyor."
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "Tutar, bu nöronun bölünebileceği aralığın dışında",
+      "description" : "Hem orijinal nöronun hem de yeni nöronun en az 1 ICP'yi stake edilmiş hâlde tutması ve taşınan miktar üzerinden alınan ağ ücretini karşılaması gerekir."
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "Bu nörondan yeni nöron oluşturulamıyor",
+      "description" : "Halihazırda oluşturma işlemi gerçekleştiren bir nöron yeniden oluşturulamaz ve oluşturulan vade ödülü, ağın vade ödülü ayarlamasından sonra geride en az 1 ICP bırakmalıdır. Nöronlarınızın güncel durumunu görmek için onları senkronize edin."
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "Bu nöronun vade ödülü stake edilemez",
+      "description" : "Nöronunuz oluşturulma aşamasındayken, kilit tamamen çözüldüğünde veya hesabınızda hiç vade ödülü payı kalmadığında yeniden stake işlemi yapamazsınız. Nöronlarınızın en güncel durumunu görüntülemek için nöronlarınızı senkronize edin."
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "Bu konu takip edilemiyor",
+      "description" : "Internet Computer bu konuyu kullanımdan kaldırdı veya Ledger Internet Computer uygulaması bu konu için takip işlemini henüz imzalayamıyor. Başka bir konu seçin."
+    },
+    "ICPTooManyFollowees" : {
+      "title" : "Takip edilen limitine ulaşıldı",
+      "description" : "Bir konu en fazla {{max}} nöronu takip edebilir. Listede {{max}} veya daha az nöron kalana kadar nöronları kaldırın."
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "Geçersiz nöron kimliği",
+      "description" : "{{id}} geçerli bir nöron kimliği değildir. Listeden kaldırın."
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "Nöron iki kez listelendi",
+      "description" : "Nöron {{id}} birden fazla kez listelenmiş. Kopyayı kaldırın."
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "Bir nöron kendisini takip edemez.",
+      "description" : "{{id}}, bu nöronun kendi kimliğidir. Listeden kaldırın."
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "Bu nöronu çözme işlemi başlatılamıyor",
+      "description" : "Yalnızca kilitli bir nöron çözünmeye başlanabilir. Güncel durumlarını görmek için nöronlarınızı senkronize edin."
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "Bu nöronun çözünmesi durdurulamıyor",
+      "description" : "Yalnızca çözünmekte olan bir nöronda çözünme durdurulabilir ve bu nöronun çözünmesi çoktan tamamlanmış olabilir. Güncel durumlarını görmek için nöronlarınızı senkronize edin."
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "Bu nöron dağıtılamaz",
+      "description" : "Nöronunuzun kilidi tamamen çözüldüğünde ve stake edilen miktarınız ağ işlem ücretini aştığında varlıklarınızı hesabınıza çekebilirsiniz. Nöronlarınızın en güncel durumunu görüntülemek için uygulamanızı senkronize edin."
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "Sıcak anahtar sınırına ulaşıldı",
+      "description" : "Bir nöron en fazla {{max}} sıcak anahtar barındırabilir. Yeni bir tane eklemek için birini kaldırın."
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "Yükleme miktarı çok düşük",
+      "description" : "Bakiye ekleme işleminden sonra bir nöronun bakiyesi 1 ICP seviyesine ulaşmalıdır. Son senkronizasyon itibarıyla bu nöronun en az {{missing}} ICP tutarına daha ihtiyacı vardır. Daha küçük miktardaki bir transfer nöronun hesabına yerleşir ancak daha sonraki bir bakiye ekleme işlemi minimum seviyeye ulaşana kadar hesaba katılmaz."
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "Stake transfer edildi, nöron güncellenmedi",
+      "description" : "ICP transferiniz nöron hesabınıza ulaştı fakat Internet Computer yönetişim sistemi bu transferi baz alarak nöronunuzu güncellemeyi reddetti. {{reason}} Endişelenmenize gerek yok: gönderdiğiniz tutar nöron hesabınızda güvenle durur ve toplam bakiyeyi en az 1 ICP seviyesine ulaştıracak bir sonraki fon ekleme işleminize otomatik olarak dahil edilir. Ledger Wallet bu güncel bakiyeyi henüz tespit edemediğinden, tutar alanı son senkronizasyonda görünen eksik tutarın tamamını sizden istemeye devam edecektir."
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "Bu nörona bakiye yüklenemez",
+      "description" : "Bir nörona bakiye yüklemek, onu oluşturan işlemin memosunu gerektirir ve bu memo, bu hesabın geçmişinde bulunmuyor. Nörona, onu oluşturan hesaptan bakiye yükleyin."
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "Sonuç bilinmiyor",
+      "description" : "Internet Computer talebi kabul etti ancak bir sonuç döndürmedi; bu nedenle işlem gerçekleşmiş veya gerçekleşmemiş olabilir. Tekrar denemeden önce durumu kontrol etmek için nöronlarınızı senkronize edin."
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "Yüzde aralık dışında",
+      "description" : "1 ile 100 arasında bir tam sayı girin."
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "Nöronlar yenilenmedi",
+      "description" : "Internet Computer ağı nöron bilgilerinizi yükleyemediği için bir değişiklik yapılmadı. Lütfen tekrar deneyin."
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "Ağ bu işlemi reddetti",
+      "description" : "Internet Computer yönetişimi talebi reddetti, bu nedenle nöron değişmedi. Güncel durumlarını görmek için nöronlarınızı senkronize edin. {{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "Talep kabul edilmedi",
+      "description" : "Internet Computer, talebi çalıştırılmadan önce reddetti, bu yüzden hiçbir şey değişmedi. Lütfen tekrar deneyin. {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "Talep gönderilmedi",
+      "description" : "Internet Computer talebi almadı, bu yüzden hiçbir şey gönderilmedi ve hiçbir şey değişmedi. Lütfen tekrar deneyin. {{reason}}"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Bu, ICP varlıklarınızı yeni bir nöronda kilitler.",
+      "description" : "Nöron, oy kullanmak veya ödül kazanmak için çok kısa olan en düşük çözülme süresiyle başlatılır. Bu süreyi Nöronları Yönet menüsünden artırın ve stake edilen tutarın yeniden harcanabilir hâle gelmesi için bu sürenin dolmasını beklemeniz gerektiğini göz önünde bulundurun."
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Bu işlem, kilitli bir stake tutarına ekleme yapar.",
+      "description" : "İlgili tutar, nöronun mevcut stake miktarına katılır ve onun çözülme süresine tabi olur; dolayısıyla nöron tamamen çözülene kadar harcanabilir duruma gelmez."
     }
   },
   "crash" : {
@@ -1647,6 +2023,23 @@
       "saveFailed" : "Parolanızı kaydedemedik. Lütfen tekrar deneyin.",
       "cta" : "Onayla"
     },
+    "longerPassword" : {
+      "prompt" : {
+        "title" : "Parolanızı değiştirin",
+        "description" : "Daha iyi bir güvenlik için en az 6 karakterli bir parola girin.",
+        "cta" : "Parola değiştir"
+      },
+      "enter" : {
+        "title" : "Yeni parolayı girin"
+      },
+      "confirm" : {
+        "title" : "Yeni parolayı onaylayın"
+      },
+      "changed" : {
+        "title" : "Parola değiştirildi",
+        "cta" : "Anladım"
+      }
+    },
     "unlock" : {
       "wrongPassword" : "Yanlış parola",
       "forgotPassword" : "Parolanızı mı unuttunuz?",
@@ -1682,6 +2075,17 @@
       },
       "description" : "Artık bir kart almak için kaydolabilirsiniz",
       "cta" : "Devam"
+    },
+    "keepProtection" : {
+      "password" : {
+        "title" : "Parolanızı devre dışı bırakamazsınız",
+        "description" : "Ledger Wallet erişiminizi korumak için bir parolaya veya biyometrik veriye ihtiyacınız var."
+      },
+      "biometrics" : {
+        "title" : "{{biometricsType}} girişini devre dışı bırakamazsınız",
+        "description" : "Ledger Wallet erişiminizi korumak için {{biometricsType}} veya bir parolaya ihtiyacınız var."
+      },
+      "cta" : "Anladım"
     },
     "biometrics" : {
       "title" : "{{biometricsType}}",
@@ -10384,6 +10788,7 @@
     "paytab" : "Ödeme yap"
   },
   "payTab" : {
+    "disclaimer" : "Hizmet sunan: Monavate Onchain",
     "featureTour" : {
       "title" : "Tüm ödemeleriniz tek bir yerde",
       "description" : "Kriptonuzu günlük para kullanımına hazır hâle getiren yeni Ödeme Yap sekmenizle tanışın.",
@@ -10429,14 +10834,23 @@
       "balanceLabel" : "Bakiye",
       "assets" : {
         "title" : "Varlıklar",
-        "empty" : "Henüz varlık yok",
-        "error" : "Varlıklar yüklenemedi",
+        "empty" : {
+          "title" : "Henüz varlık yok",
+          "description" : "Kartınızı kullanmaya başlamak için bir varlık ekleyin.",
+          "cta" : "Varlık ekle"
+        },
+        "error" : {
+          "title" : "Varlıklar yüklenemedi",
+          "description" : "Bir hata oluştu.",
+          "cta" : "Tekrar dene"
+        },
         "info" : "Kartınız, harcamalarınızda bu varlıkları kullanır. Sırasıyla hangi varlıkların harcanacağını belirleyin veya daha fazla varlık ekleyin.",
         "manage" : "Yönet",
         "manageDialog" : {
           "title" : "Varlıkları yönetin",
           "description" : "Varlıklarınız harcama sırasına göre listelenir. Bir varlığın bakiyesi yetersiz kalırsa otomatik olarak sıradaki varlık kullanılır.",
-          "addAssetCaption" : "Varlık eklemek için Baanx'in sayfasına yönlendirileceksiniz.",
+          "reorder" : "{{asset}} varlığının sırasını değiştirin. Yukarı veya aşağı taşımak için basılı tutup sürükleyin ya da erişilebilirlik eylemlerini kullanın.",
+          "addAssetCaption" : "Varlık eklemek için Monavate'e yönlendirileceksiniz.",
           "addAsset" : "Varlık ekle"
         },
         "details" : {
@@ -10445,13 +10859,14 @@
           "transactions" : "İşlemler"
         },
         "withdraw" : {
-          "title" : "Baanx'e yönlendirileceksiniz",
-          "description" : "Baanx hesabınızdan Ledger cüzdan adresinize bakiye çekin.",
+          "title" : "Monavate'e yönlendirileceksiniz",
+          "description" : "Monavate hesabınızdan Ledger cüzdan adresinize bakiye çekin.",
           "continue" : "Devam"
         }
       },
       "title" : "Kripto kartı",
       "topUp" : "Bakiye yükle",
+      "chooseCardType" : "Kart türü seçin",
       "details" : "Ayrıntılar",
       "addToWallet" : "{{wallet}} Pay'e Ekle",
       "freeze" : "Dondur",
@@ -10479,7 +10894,7 @@
         "imageAlt" : "Kart numaraları"
       },
       "reward" : {
-        "title" : "Toplam para iadesi"
+        "title" : "Toplam para iadesi · {{ticker}} cinsinden %{{ratePercent}}"
       }
     },
     "cardTransactions" : {
@@ -10499,7 +10914,9 @@
         "status" : "Durum",
         "card" : "Kart",
         "cardInfo" : "Bu ödeme için kullanılan kartın son dört hanesi.",
-        "fundingSource" : "Fonlama kaynağı",
+        "fundingSource_one" : "Fonlama kaynağı",
+        "fundingSource_other" : "Fonlama kaynağı",
+        "cashback" : "Para iadesi",
         "transactionId" : "İşlem Kimliği (TxID)",
         "copyTransactionId" : "İşlem kimliğini kopyala",
         "today" : "Bugün {{time}}",
@@ -10527,6 +10944,10 @@
           "title" : "Kart işlemlerinizi görmek için giriş yapın",
           "description" : "Giriş yaptığınızda kart hareketleriniz burada görünür."
         },
+        "unclaimed" : {
+          "title" : "Kripto kartı",
+          "description" : "Kartınızı kurmak için Ödeme Yap sekmesine gidin."
+        },
         "empty" : {
           "title" : "Henüz kart işlemi yok",
           "description" : "Kart işlemlerinizi görmek için daha sonra geri dönün."
@@ -10536,9 +10957,6 @@
           "description" : "Bağlantınızı kontrol edin ve tekrar deneyin."
         }
       }
-    },
-    "selectContact" : {
-      "placeholder" : "Kişi girin"
     },
     "actions" : {
       "deposit" : "Stabil coin ekle",
@@ -10564,8 +10982,9 @@
         "verifyCta" : "Adresi doğrula",
         "successTitle" : "Adres, cihazınızın Güvenli Ekranında görüntüleniyor",
         "nextStepsLabel" : "Sonraki adımlar",
-        "nextStepShare" : "Adresinizi dilediğiniz uygulama üzerinden paylaşın.",
-        "nextStepMatch" : "Paylaşılan adresin Ledger cihazınızdaki adresle eşleştiğinden emin olun.",
+        "nextStepKeepDisplayed" : "Adresinizi Ledger cihazınızın ekranında açık tutun. Henüz onay vermeyin.",
+        "nextStepPaste" : "\"Anladım\" seçeneğine dokunun ve adresinizi paylaşmak istediğiniz uygulamaya yapıştırın.",
+        "nextStepCheckMatch" : "Göndermeden önce, adresin Ledger cihazınızdaki adresle eşleştiğini kontrol edin.",
         "gotItCta" : "Anladım",
         "device" : {
           "cancelledTitle" : "Adres doğrulaması iptal edildi",
@@ -10622,7 +11041,7 @@
       }
     },
     "cardLogin" : {
-      "title" : "Kripto Kartı",
+      "title" : "Kripto kartı",
       "beforeIntro" : {
         "title" : "Kripto kartınızı alın",
         "description" : "Her harcamanızda %1 para iadesi alın",
@@ -10634,12 +11053,32 @@
         "action" : "Oturum aç"
       },
       "errors" : {
-        "pkce_failed" : "Oturum açma işlemi başlatılamadı. Lütfen tekrar deneyin.",
-        "browser_open_failed" : "Oturum açma sayfası açılamadı. Lütfen tekrar deneyin.",
-        "missing_attempt" : "Bu giriş bilgileri artık geçerli değil. Lütfen tekrar oturum açın.",
-        "exchange_failed" : "Oturum açma işlemi tamamlanamadı. Lütfen tekrar deneyin.",
-        "persist_failed" : "Oturumunuz kaydedilemedi. Lütfen tekrar deneyin.",
-        "fetch_user_failed" : "Kartınız yüklenemedi. Lütfen tekrar deneyin."
+        "pkce_failed" : {
+          "title" : "Oturum açma işlemi başlatılamadı",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "browser_open_failed" : {
+          "title" : "Oturum açma sayfası açılamadı",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "missing_attempt" : {
+          "title" : "Bu giriş bilgileri artık geçerli değil",
+          "description" : "Lütfen tekrar oturum açın."
+        },
+        "exchange_failed" : {
+          "title" : "Oturum açma işlemi tamamlanamadı",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "persist_failed" : {
+          "title" : "Oturumunuz kaydedilemedi",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "fetch_user_failed" : {
+          "title" : "Kartınız yüklenemedi",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "retryLogin" : "Tekrar deneyin",
+        "retryUser" : "Tekrar dene"
       }
     },
     "cardLoginIntro" : {
@@ -10673,6 +11112,7 @@
       "seeAllTitle" : "Kişiye ödeme yapın",
       "addressPicker" : {
         "title" : "{{name}} için adres seçin",
+        "meTitle" : "Adresimi seç",
         "addAddress" : "Adres ekle"
       },
       "paySuccess" : {
@@ -10979,11 +11419,30 @@
     "manage" : {
       "bond" : "Bağla",
       "claim" : "Ödülleri topla",
+      "unbond" : "Çöz",
       "status" : "Durum",
       "estimatedRate" : "Tahmini ödül oranı",
       "unbondPendingInfo" : "Bir stake durdurma talebi onaylanmayı bekliyor. Aleo aynı anda yalnızca bir bağ çözme pozisyonunu takip eder; bu nedenle, bu işlem gerçekleşene kadar bağ çözme ve talep etme işlemleri kullanılamaz.",
       "claimPendingInfo" : "Bir talep onay bekliyor. Aleo aynı anda yalnızca bir bağ çözme pozisyonunu takip eder; bu nedenle, bu işlem gerçekleşene kadar bağ çözme ve talep etme işlemleri kullanılamaz.",
       "unlockBlock" : "Kilidin açılacağı blok"
+    },
+    "unbond" : {
+      "stepperHeader" : {
+        "amount" : "Stake durdurmayı onayla",
+        "selectDevice" : "Cihaz Seçin",
+        "connectDevice" : "Cihazı Bağlayın"
+      },
+      "amount" : {
+        "bondedAmount" : "Stake'i durdurulacak miktar",
+        "belowMinimum" : "Bu tutar, yaklaşık 360 blok (~1 saat) boyunca dondurulacaktır. Eğer çözme işlemi geride <minimum/> miktarından daha az bağlı varlık bırakacaksa, minimum stake şartı artık sağlanamayacağı için bunun yerine bağlı bakiyenizin tamamı çözülme işlemine tabi tutulur.",
+        "max" : "Maks."
+      },
+      "validation" : {
+        "success" : {
+          "title" : "Stake durdurma işlemi gönderildi",
+          "description" : "Bağlama işleminiz Aleo ağında gerçekleştiriliyor."
+        }
+      }
     },
     "send" : {
       "balanceSelection" : {
@@ -11068,6 +11527,13 @@
         "private" : "Gizli"
       }
     },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "Doğrulayıcı",
+        "bondedAmount" : "Stake edilmiş tutar",
+        "unbondedAmount" : "Stake’i durdurulan tutar"
+      }
+    },
     "shared" : {
       "sponsoredByProvable" : "Provable sponsorluğunda"
     }
@@ -11123,6 +11589,7 @@
     "addAddressEntry" : {
       "title" : "Adresi girin",
       "addressPlaceholder" : "Adres veya ENS",
+      "addressPlaceholderNoENS" : "Adres",
       "confirmAddress" : "Adresi onayla",
       "validatingAddress" : "Adres doğrulanıyor",
       "validAddress" : "Geçerli adres",
