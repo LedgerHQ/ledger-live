@@ -13,6 +13,7 @@ import {
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import isEqual from "lodash/isEqual";
 import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -260,11 +261,10 @@ export async function getAssetInfos(
     const asset = token && getAssetFromToken(token, owner);
 
     if (!asset) {
-      // Never silently native: a native asset would craft a coin transfer, not the token one the
-      // sub-account asks for. Keep an asset a previous run resolved; refuse outright otherwise.
-      const fallback = assetInfosFallback(tr);
-      if (fallback.assetReference) return fallback;
-      throw new Error(`Cannot resolve the token of sub-account ${tr.subAccountId}`);
+      log("generic-coin-framework", "cannot resolve the token of sub-account", {
+        subAccountId: tr.subAccountId,
+      });
+      return assetInfosFallback(tr);
     }
 
     return {

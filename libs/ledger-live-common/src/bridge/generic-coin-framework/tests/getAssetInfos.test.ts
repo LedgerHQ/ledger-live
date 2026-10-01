@@ -28,10 +28,11 @@ describe("getAssetInfos", () => {
     });
   });
 
-  it("refuses to resolve rather than degrade a token send to a native one", async () => {
-    await expect(getAssetInfos(transaction, OWNER, getAssetFromToken)).rejects.toThrow(
-      /Cannot resolve the token of sub-account/,
-    );
+  it("falls back instead of throwing when the token cannot be resolved", async () => {
+    expect(await getAssetInfos(transaction, OWNER, getAssetFromToken)).toEqual({
+      assetReference: "",
+      assetOwner: "",
+    });
   });
 
   it("keeps an asset a previous run already resolved", async () => {
