@@ -34,9 +34,10 @@ jest.mock("@ledgerhq/live-common/families/stacks/react", () => ({
   fetchPoxInfo: jest.fn(),
 }));
 
+let mockIsFocused = true;
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useIsFocused: () => true,
+  useIsFocused: () => mockIsFocused,
 }));
 
 // The shared screen forwards its route params to ConnectDevice; render them to observe that.
@@ -92,6 +93,7 @@ function Harness() {
 
 describe("Stacks staking SelectDevice", () => {
   beforeEach(() => {
+    mockIsFocused = true;
     resetBridgeState();
     setParamsSpy.mockReset();
     mockFetchPoxInfo.mockReset();
@@ -118,6 +120,32 @@ describe("Stacks staking SelectDevice", () => {
       }),
       status: expect.objectContaining({ errors: {} }),
     });
+  });
+
+  it("revalidates again before exposing device selection when coming back from ConnectDevice", async () => {
+    mockFetchPoxInfo.mockResolvedValueOnce(poxInfo(900_456));
+    const { rerender } = render(<Harness />);
+    await waitFor(() =>
+      expect(screen.getByTestId("shared-select-device")).toHaveTextContent("900456"),
+    );
+
+    // ConnectDevice covers the screen, then the user comes back.
+    mockIsFocused = false;
+    rerender(<Harness />);
+    let resolvePox!: (value: Awaited<ReturnType<typeof fetchPoxInfo>>) => void;
+    mockFetchPoxInfo.mockReturnValueOnce(new Promise(resolve => (resolvePox = resolve)));
+    mockIsFocused = true;
+    rerender(<Harness />);
+
+    // The pair validated before leaving must not be auto-selected again.
+    expect(screen.getByTestId("stacks-stake-select-device-preparing")).toBeVisible();
+    expect(screen.queryByTestId("shared-select-device")).toBeNull();
+
+    resolvePox(poxInfo(900_999));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("shared-select-device")).toHaveTextContent("900999"),
+    );
   });
 
   it("blocks device selection when the revalidated status has an error", async () => {

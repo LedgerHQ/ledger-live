@@ -24,6 +24,10 @@ import { StacksStakeInPreparePhase } from "../errors";
 import { fetchPoxInfo } from "../network/pox";
 import type { StacksTxData } from "../types";
 
+// Kept for consumers of this module's public subpath, which exported it before the staking bounds
+// moved to `common-logic/staking`.
+export { MAX_NUM_CYCLES } from "../common-logic";
+
 function spendable(balances: Balance[], isToken: boolean, assetReference?: string): bigint {
   // Case-insensitive: same reasoning as `buildUnsignedTx.ts`'s `resolveAmount` -- `getBalance`'s
   // SIP-010 entries are always lowercased (`fetchAllTokenBalances`'s own normalization,

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -13,6 +13,13 @@ import Text from "~/renderer/components/Text";
 import Input from "~/renderer/components/Input";
 import Button from "~/renderer/components/Button";
 import { StepProps } from "../types";
+
+// Whole input or nothing: stripping characters would turn "1.5" into 15, a different lock period
+// than the one typed. Anything else leaves numCycles unset, which keeps Continue disabled.
+const parseNumCycles = (raw: string): number | undefined => {
+  const trimmed = raw.trim();
+  return /^\d+$/.test(trimmed) ? Number(trimmed) : undefined;
+};
 
 const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps) => {
   invariant(account, "account is required");
@@ -36,11 +43,16 @@ const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps)
     [bridge, onChangeTransaction, transaction],
   );
 
+  // The typed text is kept as-is, so an invalid entry stays visible instead of being rewritten.
+  const [numCyclesInput, setNumCyclesInput] = useState(
+    transaction?.familySpecificData?.numCycles?.toString() ?? "",
+  );
+
   const onChangeNumCycles = useCallback(
     (raw: string) => {
+      setNumCyclesInput(raw);
       if (!transaction) return;
-      const digits = raw.replace(/\D/g, "");
-      const numCycles = digits ? Number(digits) : undefined;
+      const numCycles = parseNumCycles(raw);
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           familySpecificData: { ...transaction.familySpecificData, numCycles },
@@ -80,7 +92,7 @@ const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps)
           <Trans i18nKey="stacks.stake.flow.steps.validator.numCyclesLabel" />
         </Text>
         <Input
-          value={transaction?.familySpecificData?.numCycles?.toString() ?? ""}
+          value={numCyclesInput}
           onChange={onChangeNumCycles}
           placeholder="1"
           data-testid="stacks-stake-num-cycles-input"

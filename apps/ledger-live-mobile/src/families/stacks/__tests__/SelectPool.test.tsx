@@ -51,6 +51,19 @@ describe("Stacks staking SelectPool", () => {
     expect(continueButton()).toBeEnabled();
   });
 
+  it.each(["1.5", "-1", "6 cycles"])(
+    "rejects %s instead of silently turning it into another number of cycles",
+    raw => {
+      renderScreen({ valAddress: POOL_ADDRESS });
+
+      fireEvent.changeText(screen.getByTestId("stacks-stake-num-cycles-input"), raw);
+
+      expect(screen.getByTestId("stacks-stake-num-cycles-input")).toHaveProp("value", raw);
+      expect(continueButton()).toBeDisabled();
+      expect(screen.getByText("Enter a number of cycles between 1 and 96")).toBeVisible();
+    },
+  );
+
   it("forwards the pool and cycles to the amount step", () => {
     renderScreen();
 

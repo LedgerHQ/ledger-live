@@ -90,6 +90,19 @@ export default function StakingSelectDevice(props: Props) {
   }, [isValidated, navigation, paramsInSync, status, transaction]);
 
   // Adjusted during render (not in an effect): `paramsInSync` already reads the live route params.
+  // Back from ConnectDevice, the params still hold the pair validated before leaving, possibly long
+  // ago, and the shared selector could auto-select a device on it right away: so the list waits for
+  // a fresh refresh and revalidation again. Reset on regaining focus rather than on blur, so the
+  // outgoing screen doesn't swap to the loader mid-transition.
+  const [wasFocused, setWasFocused] = useState(isFocused);
+  if (isFocused !== wasFocused) {
+    setWasFocused(isFocused);
+    if (isFocused) {
+      setRefreshed(false);
+      setHasValidatedPair(false);
+    }
+  }
+
   let nextHasValidatedPair = hasValidatedPair;
   if (error) nextHasValidatedPair = false;
   else if (isValidated && paramsInSync) nextHasValidatedPair = true;

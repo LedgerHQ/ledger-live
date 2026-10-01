@@ -20,20 +20,23 @@ type Props = BaseComposite<
   StackNavigatorProps<StacksStakingFlowParamList, ScreenName.StacksStakingPool>
 >;
 
+// Whole input or nothing: stripping characters would turn "1.5" into 15 or "-1" into 1, a different
+// lock period than the one typed. Anything else is left for isValidNumCycles to reject.
 const parseNumCycles = (raw: string): number | undefined => {
-  const digits = raw.replace(/\D/g, "");
-  return digits ? Number(digits) : undefined;
+  const trimmed = raw.trim();
+  return /^\d+$/.test(trimmed) ? Number(trimmed) : undefined;
 };
 
 export default function SelectPool({ navigation, route }: Props) {
   const { t } = useTranslation();
   const [valAddress, setValAddress] = useState(route.params.valAddress ?? "");
-  const [numCycles, setNumCycles] = useState<number | undefined>(
-    route.params.numCycles ?? MIN_NUM_CYCLES,
+  // The typed text is kept as-is, so an invalid entry stays visible next to its error.
+  const [numCyclesInput, setNumCyclesInput] = useState(
+    String(route.params.numCycles ?? MIN_NUM_CYCLES),
   );
+  const numCycles = parseNumCycles(numCyclesInput);
 
   const onChangeValAddress = useCallback((value: string) => setValAddress(value.trim()), []);
-  const onChangeNumCycles = useCallback((value: string) => setNumCycles(parseNumCycles(value)), []);
 
   const isPoolValid = isPoolAddress(valAddress);
   const isNumCyclesValid = isValidNumCycles(numCycles);
@@ -88,8 +91,8 @@ export default function SelectPool({ navigation, route }: Props) {
               <Trans i18nKey="stacks.stake.pool.numCyclesLabel" />
             </Text>
             <BaseInput
-              value={numCycles?.toString() ?? ""}
-              onChange={onChangeNumCycles}
+              value={numCyclesInput}
+              onChange={setNumCyclesInput}
               keyboardType="number-pad"
               placeholder={String(MIN_NUM_CYCLES)}
               error={

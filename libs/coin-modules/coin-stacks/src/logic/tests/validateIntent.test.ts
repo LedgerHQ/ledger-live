@@ -14,7 +14,8 @@ import {
 import { StacksStakeInPreparePhase } from "../../errors";
 import { fetchPoxInfo } from "../../network/pox";
 import type { StacksTxData } from "../../types";
-import { validateIntent } from "../validateIntent";
+import { MAX_NUM_CYCLES as LEGACY_MAX_NUM_CYCLES, validateIntent } from "../validateIntent";
+import { MAX_NUM_CYCLES } from "../../common-logic/staking";
 
 jest.mock("../../network/pox");
 
@@ -47,6 +48,10 @@ function transferIntent(
 }
 
 describe("validateIntent", () => {
+  it("keeps exporting pox-5's MAX_NUM_CYCLES from its public subpath", () => {
+    expect(LEGACY_MAX_NUM_CYCLES).toBe(MAX_NUM_CYCLES);
+  });
+
   it("flags a missing recipient", async () => {
     const { errors } = await validateIntent(
       transferIntent({ recipient: "" }),
