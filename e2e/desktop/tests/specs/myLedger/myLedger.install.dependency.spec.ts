@@ -26,7 +26,7 @@ test.describe("My Ledger — install an app with a dependency", () => {
 
       await app.myLedger.openCatalogTab();
       await app.myLedger.searchCatalog(AppInfos.ETHEREUM_CLASSIC.name);
-      await app.myLedger.installAppWithDependency(AppInfos.ETHEREUM_CLASSIC);
+      await app.myLedger.installAppWithDependency(AppInfos.ETHEREUM_CLASSIC, AppInfos.ETHEREUM);
 
       await app.myLedger.openInstalledAppsTab();
       await app.myLedger.expectAppInstalled(AppInfos.ETHEREUM_CLASSIC);
