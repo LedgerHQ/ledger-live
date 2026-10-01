@@ -1,5 +1,4 @@
 import { ipcMain } from "electron";
-import { getEnvDefault, setEnv } from "@shared/env";
 import { CHANNELS } from "~/bridge/contract";
 import { buildBootstrap } from "./bootstrap";
 
@@ -31,9 +30,12 @@ describe("bootstrap", () => {
     process.env.CARD_SESSION_BOOTSTRAP = '{"accessToken":"secret"}';
   });
 
+  const playwrightRun = process.env.PLAYWRIGHT_RUN;
+
   afterEach(() => {
     delete process.env.CARD_SESSION_BOOTSTRAP;
-    setEnv("PLAYWRIGHT_RUN", getEnvDefault("PLAYWRIGHT_RUN"));
+    if (playwrightRun === undefined) delete process.env.PLAYWRIGHT_RUN;
+    else process.env.PLAYWRIGHT_RUN = playwrightRun;
   });
 
   it("should keep CARD_SESSION_BOOTSTRAP out of the snapshot env", () => {
@@ -52,13 +54,13 @@ describe("bootstrap", () => {
   });
 
   it("should not hand the card session over when the dev/E2E gate is closed", async () => {
-    setEnv("PLAYWRIGHT_RUN", false);
+    delete process.env.PLAYWRIGHT_RUN;
 
     expect(await takeCardSession()).toBeNull();
   });
 
   it("should hand the card session over in an E2E run", async () => {
-    setEnv("PLAYWRIGHT_RUN", true);
+    process.env.PLAYWRIGHT_RUN = "true";
 
     expect(await takeCardSession()).toBe('{"accessToken":"secret"}');
   });

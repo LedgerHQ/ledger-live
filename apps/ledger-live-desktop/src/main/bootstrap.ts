@@ -1,7 +1,6 @@
 import os from "os";
 import { app, ipcMain } from "electron";
 import Store from "electron-store";
-import { getEnv } from "@shared/env";
 import { CHANNELS, type Bootstrap } from "~/bridge/contract";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
 
@@ -59,6 +58,6 @@ ipcMain.on(CHANNELS.storeClear, () => {
 
 // Same gate as bootstrapCardSession in the renderer.
 ipcMain.handle(CHANNELS.cardSessionBootstrap, () => {
-  if (!__DEV__ && !getEnv("PLAYWRIGHT_RUN")) return null;
+  if (!__DEV__ && !process.env.PLAYWRIGHT_RUN) return null;
   return process.env[CARD_SESSION_BOOTSTRAP] || null;
 });
