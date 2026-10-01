@@ -5,18 +5,264 @@
         "title" : "ICP 스테이킹",
         "description" : "ICP를 스테이킹하고 거버넌스에 참여해 보상을 받으세요.",
         "cta" : "ICP 스테이킹"
+      },
+      "confirmFollowing" : {
+        "description" : "보유 중인 뉴런 하나의 투표권(Voting power)이 감소하고 있습니다. 투표권을 복구하려면 팔로잉 상태를 확인해 주세요.",
+        "cta" : "팔로잉 확인"
+      },
+      "syncNeurons" : {
+        "description" : "뉴런 데이터가 최신 상태가 아닙니다. 장치를 연결하여 새로고침하세요.",
+        "cta" : "뉴런 새로고침"
+      },
+      "lockNeurons" : {
+        "description" : "투표에 참여하여 보상을 얻으려면 뉴런의 해제 대기 기간을 더 늘려야 합니다.",
+        "cta" : "뉴런 관리"
+      },
+      "addFollowees" : {
+        "description" : "거버넌스 안건에 대해 다른 뉴런을 팔로우하여 자동 투표에 참여하고 보상을 획득하세요.",
+        "cta" : "뉴런 관리"
       }
     },
     "headerManageActions" : {
       "manageNeurons" : {
-        "title" : "뉴런 관리"
+        "title" : "뉴런"
       }
     },
     "summaryFooter" : {
+      "availableBalanceTooltip" : "지금 바로 사용하거나 스테이킹할 수 있는 ICP입니다. 뉴런에 이미 락업된 ICP는 포함되지 않습니다.",
       "stakedBalance" : "스테이킹 수량",
       "stakedBalanceTooltip" : "현재 뉴런에 스테이킹된 ICP 토큰의 총 수량입니다. 스테이킹된 ICP는 투표 보상을 받으며, 거버넌스에 사용될 수 있습니다.",
       "totalMaturity" : "총 누적 보상",
       "totalMaturityTooltip" : "스테이킹으로 누적된 총 보상에는 스테이킹된 보상과 유동 누적 보상이 모두 포함됩니다. 이렇게 누적된 보상은 리스테이킹하거나 Liquid ICP로 전환할 수 있습니다."
+    },
+    "duration" : {
+      "years_one" : "{{count}}년",
+      "years_other" : "{{count}}년",
+      "months_one" : "{{count}}개월",
+      "months_other" : "{{count}}개월",
+      "days_one" : "{{count}}일",
+      "days_other" : "{{count}}일",
+      "hours_one" : "{{count}}시간",
+      "hours_other" : "{{count}}시간",
+      "minutes_one" : "{{count}}분",
+      "minutes_other" : "{{count}}분",
+      "lessThanAMinute" : "1분 미만"
+    },
+    "neuronState" : {
+      "Locked" : "잠금",
+      "Dissolving" : "해제 중",
+      "Dissolved" : "해제 완료",
+      "Spawning" : "생성 중",
+      "Unknown" : "알 수 없음"
+    },
+    "common" : {
+      "neuronId" : "뉴런 ID",
+      "stake" : "스테이킹",
+      "maturity" : "누적 보상",
+      "dissolveDelay" : "해제 대기 기간",
+      "state" : "상태",
+      "action" : "작업 선택",
+      "none" : "없음",
+      "disburse" : "인출",
+      "startDissolving" : "해제 시작",
+      "stopDissolving" : "해제 중지",
+      "enabled" : "활성화됨",
+      "disabled" : "비활성화됨",
+      "enable" : "활성화",
+      "disable" : "비활성화"
+    },
+    "stakingFlow" : {
+      "started" : {
+        "title" : "ICP 스테이킹",
+        "description" : "ICP를 스테이킹하면 뉴런이 생성됩니다. 뉴런은 거버넌스 투표에 참여하고 보상을 받을 수 있는 락업 포지션을 의미합니다.",
+        "steps" : {
+          "0" : "ICP는 직접 해제하기 전까지 뉴런에 락업 상태로 유지됩니다.",
+          "1" : "해제 대기 기간(Dissolve delay)이 길수록 더 강한 투표권과 더 많은 보상을 얻을 수 있습니다.",
+          "2" : "뉴런이 다른 뉴런을 팔로우하여 자동으로 투표하므로, 직접 투표하지 않아도 보상을 받게 됩니다."
+        },
+        "cta" : "ICP 스테이킹"
+      },
+      "amount" : {
+        "minimum" : "최소 스테이킹 수량"
+      },
+      "success" : {
+        "title" : "뉴런 생성 완료",
+        "description" : "'뉴런 관리'를 열고 새로고침하여 확인해 보세요. 뉴런 데이터는 사용자의 장치를 통해서만 불러옵니다."
+      }
+    },
+    "manageNeuronFlow" : {
+      "title" : "뉴런 관리",
+      "confirmation" : {
+        "backToNeurons" : "뉴런으로 돌아가기",
+        "success" : {
+          "title" : "완료",
+          "default" : "뉴런이 업데이트되었습니다.",
+          "list_neurons" : "뉴런이 최신 상태입니다.",
+          "start_dissolving" : "뉴런의 잠금 해제가 시작되었습니다.",
+          "stop_dissolving" : "뉴런의 잠금 해제가 중단되었습니다.",
+          "disburse" : "뉴런의 스테이킹 자산이 계정으로 반환되었습니다.",
+          "set_dissolve_delay" : "뉴런 해제 대기 기간이 설정되었습니다.",
+          "increase_dissolve_delay" : "뉴런 해제 대기 기간이 연장되었습니다.",
+          "add_hot_key" : "뉴런에 핫키가 추가되었습니다.",
+          "remove_hot_key" : "뉴런에서 핫키가 제거되었습니다.",
+          "follow" : "뉴런 팔로잉 상태가 업데이트되었습니다.",
+          "refresh_voting_power" : "뉴런의 투표권이 업데이트되었습니다.",
+          "stake_maturity" : "뉴런 누적 보상이 스테이킹되었습니다.",
+          "auto_stake_maturity" : "자동 누적 보상 스테이킹 설정이 업데이트되었습니다.",
+          "spawn_neuron" : "누적 보상으로 새로운 뉴런이 생성하고 있습니다.",
+          "split_neuron" : "뉴런이 분할되었습니다.",
+          "increase_stake" : "뉴런의 스테이킹 수량이 증가했습니다."
+        }
+      },
+      "listNeuron" : {
+        "title" : "뉴런",
+        "empty" : "아직 보유 중인 뉴런이 없습니다. ICP를 스테이킹하여 뉴런을 생성하세요.",
+        "lastSynced" : "마지막 동기화:",
+        "never" : "기록 없음",
+        "decayingTitle" : "보유한 뉴런 중 하나의 투표권이 줄어들고 있습니다.",
+        "decayingDescription" : "팔로우 설정을 다시 확인하면 6개월 동안 투표권이 유지됩니다.",
+        "sync" : "뉴런 새로고침"
+      },
+      "manage" : {
+        "title" : "관리",
+        "neuron" : "뉴런",
+        "hotKeyOnly" : "이 뉴런의 핫키를 보유하고 있습니다. 투표 및 팔로우 설정은 가능하지만, 스테이킹된 자산을 이동할 수는 없습니다.",
+        "missingNeuron" : "이 뉴런은 현재 동기화된 정보에 존재하지 않습니다. 뉴런 목록으로 돌아가 동기화를 진행한 후 다시 선택하세요.",
+        "votingPower" : {
+          "title" : "투표권",
+          "tooltip" : "투표권은 거버넌스에서 뉴런이 갖는 의결권의 비중과 획득하는 보상 수량을 결정합니다.",
+          "staked" : "스테이킹 완료",
+          "increaseStake" : "스테이킹 증액",
+          "state" : "상태",
+          "bonusValue" : "+{{percent}}%",
+          "ageBonus" : "장기 보유 보너스(Age Bonus)",
+          "ageBonusTooltip" : "뉴런은 경과 시간(연령)에 따라 투표권이 최대 +25%까지 증가하며, 4년이 지나면 최대치에 도달합니다.",
+          "dissolveDelayBonus" : "해제 대기 보너스: +{{percent}}%",
+          "dissolveDelayBonusTooltip" : "해제 대기 기간이 길수록 투표권이 최대 +200%까지 증가하며, 2년 설정 시 최대치에 도달합니다.",
+          "noDissolveDelay" : "해제 대기 기간 없음",
+          "setDissolveDelay" : "해제 대기 기간 설정",
+          "increaseDissolveDelay" : "해제 대기 기간 늘리기",
+          "decayStartsIn" : "{{duration}} 후 투표권 감소가 시작됩니다",
+          "decaying" : "투표권 감소 중 — {{duration}}후 0에 도달합니다",
+          "expired" : "투표권 상실 — 팔로잉 설정이 초기화되었습니다",
+          "confirmFollowing" : "팔로잉 확인",
+          "confirmFollowingTooltip" : "최소 6개월마다 팔로잉 상태를 확인해야 합니다. 그렇지 않으면 뉴런의 투표권이 점차 감소합니다."
+        },
+        "maturity" : {
+          "title" : "누적 보상",
+          "tooltip" : "누적 보상(Maturity)은 뉴런에 적립되는 보상입니다. 기존 뉴런에 다시 스테이킹하거나 새 뉴런으로 생성(Spawn)할 수 있습니다.",
+          "available" : "이용 가능한 누적 보상",
+          "staked" : "스테이킹된 누적 보상",
+          "stakedTooltip" : "누적 보상이 이미 뉴런에 스테이킹되었습니다. 해당 보상은 투표권에 반영되며, 더 이상 새 뉴런으로 생성할 수 없습니다.",
+          "stake" : "누적 보상 스테이킹",
+          "spawn" : "새 뉴런 생성",
+          "autoStake" : "누적 보상 자동 스테이킹",
+          "autoStakeTooltip" : "활성화하면 보상이 적립되는 대로 기존 뉴런에 자동으로 다시 스테이킹됩니다."
+        },
+        "following" : {
+          "title" : "팔로잉",
+          "tooltip" : "다른 뉴런을 팔로우하면 해당 뉴런의 투표를 그대로 따라가므로, 직접 투표하지 않고도 보상을 얻을 수 있습니다.",
+          "count_one" : "{{count}}개 주제",
+          "count_other" : "{{count}}개 주제",
+          "edit" : "거버넌스 주제별 뉴런 팔로우",
+          "follow" : "팔로잉 편집"
+        },
+        "hotKeys" : {
+          "title" : "핫키",
+          "tooltip" : "핫키는 본인을 대신해 투표하고 팔로잉을 설정할 수 있지만, 뉴런의 스테이킹 자산을 이동할 수는 없습니다.",
+          "add" : "다른 프린시펄에 핫키 권한 부여",
+          "addAction" : "핫키 추가",
+          "remove" : "제거"
+        },
+        "advanced" : {
+          "title" : "고급 설정",
+          "split" : "이 뉴런을 둘로 분할",
+          "splitTooltip" : "기존 뉴런과 새 뉴런 모두 최소 1 ICP의 스테이킹 수량을 유지해야 합니다.",
+          "splitAction" : "뉴런 분할"
+        }
+      },
+      "increaseStake" : {
+        "title" : "스테이킹 증액",
+        "description" : "이 뉴런에 ICP를 추가합니다. 전송은 뉴런 자체 계정으로 바로 이동하므로 수신인을 따로 선택할 필요가 없습니다."
+      },
+      "setDissolveDelay" : {
+        "title" : "해제 대기 기간",
+        "setDescription" : "뉴런이 해제되는 데 걸리는 기간을 선택해 주세요. {{min}}에서 {{max}}일 사이로 설정할 수 있습니다.",
+        "increaseDescription" : "뉴런의 해제 대기 기간에 추가합니다. 최대 {{remaining}} 일을 더 추가하여 총 {{max}}일로 설정할 수 있습니다. 한 번 연장한 기간은 다시 단축할 수 없습니다.",
+        "days" : "일",
+        "resulting" : "새 해제 대기 기간: {{duration}}",
+        "belowVotingThreshold" : "{{days}}일 미만인 뉴런은 투표에 참여할 수 없으며 보상도 지급되지 않습니다."
+      },
+      "stakeMaturity" : {
+        "title" : "누적 보상 스테이킹",
+        "description" : "이 뉴런의 누적 보상(Maturity) 일부를 다시 스테이킹하여 투표권을 늘립니다.",
+        "percentage" : "스테이킹할 비율",
+        "selected" : "스테이킹할 수량:"
+      },
+      "splitNeuron" : {
+        "title" : "뉴런 분할",
+        "description" : "이 뉴런의 스테이킹 수량 일부를 새 뉴런으로 이동합니다. 새 뉴런은 해제 대기 기간이나 에이징 보너스가 없는 상태로 시작됩니다.",
+        "amount" : "분할할 수량",
+        "range" : "허용 범위:"
+      },
+      "addHotKey" : {
+        "title" : "핫키 추가",
+        "description" : "다른 프린시펄에 이 뉴런에 대한 투표 및 팔로우 설정 권한을 부여합니다. 스테이킹한 자산은 이동이 불가능합니다.",
+        "principal" : "프린시펄 ID",
+        "ownPrincipal" : "이 계정의 프린시펄",
+        "ownPrincipalHint" : "다른 프린시펄을 입력하세요. 보통 NNS 앱 로그인 시 사용하는 프린시펄입니다. 이 계정은 이미 해당 뉴런을 제어하고 있으므로, 동일한 프린시펄을 등록해도 추가 권한이 부여되지 않습니다."
+      },
+      "followTopic" : {
+        "title" : "주제",
+        "description" : "팔로우 설정을 변경할 거버넌스 주제를 선택하세요.",
+        "followeeCount_one" : "{{count}} 팔로잉",
+        "followeeCount_other" : "{{count}} 팔로잉"
+      },
+      "selectFollowees" : {
+        "title" : "팔로잉",
+        "description" : "{{topic}} 주제에 대해 선택한 뉴런들과 동일하게 투표 진행",
+        "neuronId" : "팔로우할 뉴런 ID",
+        "add" : "추가",
+        "remove" : "제거",
+        "empty" : "아직 팔로우 중인 뉴런이 없습니다. 이 주제에 대해 내 뉴런이 투표를 진행하지 않습니다.",
+        "clearsFollowing" : "계속 진행하면 목록이 비워지며, 이 뉴런은 {{topic}}에 대해 더 이상 다른 대상을 팔로우하지 않습니다. 현재 팔로잉: {{count}}",
+        "notANeuronId" : "뉴런 ID는 숫자만 입력 가능합니다.",
+        "outOfRange" : "올바른 뉴런 ID가 아닙니다.",
+        "duplicate" : "해당 주제에 대해 이미 팔로우 중인 뉴런입니다.",
+        "self" : "뉴런은 자기 자신을 팔로우할 수 없습니다.",
+        "unadded" : "이 뉴런 ID를 입력하려면 '추가'를 탭하고, 그렇지 않으면 입력창을 비워두세요.",
+        "atCapacity" : "하나의 주제에서는 최대 {{max}} 개의 뉴런을 팔로우할 수 있습니다. 다른 항목을 추가하려면 하나를 제거하세요."
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "기타 모든 토픽",
+      "NeuronManagement" : "뉴런 관리",
+      "ExchangeRate" : "환율",
+      "NetworkEconomics" : "네트워크 경제",
+      "Governance" : "거버넌스",
+      "NodeAdmin" : "노드 관리자",
+      "ParticipantManagement" : "참여자 관리",
+      "SubnetManagement" : "서브넷 관리",
+      "NetworkCanisterManagement" : "애플리케이션 캐니스터 관리",
+      "Kyc" : "KYC 인증",
+      "NodeProviderRewards" : "노드 제공자 보상",
+      "SnsDecentralizationSale" : "SNS 탈중앙화 세일",
+      "IcOsVersionDeployment" : "IC OS 버전 배포",
+      "IcOsVersionElection" : "IC OS 버전 선출",
+      "SnsAndCommunityFund" : "SNS & 커뮤니티 펀드",
+      "ApiBoundaryNodeManagement" : "API 바운더리 노드 관리",
+      "SubnetRental" : "서브넷 대여",
+      "ProtocolCanisterManagement" : "프로토콜 캐니스터 관리",
+      "ServiceNervousSystemManagement" : "서비스 신경계 관리"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "팔로잉 확인",
+      "description" : "팔로잉 상태를 확인하면 뉴런의 투표권이 향후 6개월간 다시 유지됩니다.",
+      "timeUntilLoss" : "투표 권한 상실까지 남은 시간",
+      "losing" : "{{duration}} — 현재 투표권 감소 중",
+      "expired" : "이미 상실됨",
+      "confirm" : "확인",
+      "empty" : "현재 팔로잉 확인 대기 중인 뉴런이 없습니다."
     }
   },
   "buyCurrency" : {
@@ -1476,6 +1722,136 @@
     "CurrencyRegionRestrictedError" : {
       "title" : "귀하의 지역에서는 {{currencyName}} 사용이 지원되지 않습니다",
       "description" : "귀하의 지역에서는 {{currencyName}} 액세스가 제한됩니다."
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "수량이 너무 적습니다",
+      "description" : "뉴런에는 최소 1 ICP가 포함되어야 하므로, 네트워크 수수료까지 고려한 수량을 입력해야 합니다."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "해제 대기 기간이 너무 짧습니다",
+      "description_one" : "Internet Computer는 최소 {{minDays}}일의 해제 대기 기간이 필요합니다.",
+      "description_other" : "Internet Computer는 최소 {{minDays}}일의 해제 대기 기간이 필요합니다."
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "유효하지 않은 입력값",
+      "description" : "0보다 큰 정수(일 단위)를 입력해 주세요."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "해제 대기 기간이 너무 깁니다",
+      "description_one" : "Internet Computer는 뉴런의 해제 대기 기간을 최대 {{maxDays}}일로 제한합니다.",
+      "description_other" : "Internet Computer는 뉴런의 해제 대기 기간을 최대 {{maxDays}}일로 제한합니다."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "해제 대기 기간은 단축할 수 없습니다",
+      "description" : "뉴런의 해제 대기 기간은 늘릴 수만 있습니다. 단축하려면 대신 뉴런 해제를 시작해 주세요."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "뉴런을 찾을 수 없습니다",
+      "description" : "최근 동기화된 스냅샷에 이 뉴런이 없습니다. 뉴런을 동기화한 후 다시 시도해 주세요."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "유효하지 않은 프린시펄(principal)",
+      "description" : "핫키는 유효한 Internet Computer 프린시펄이어야 합니다."
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "이미 추가된 핫키입니다",
+      "description" : "이 프린시펄은 이미 해당 뉴런의 핫키로 등록되어 있습니다."
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "이 프린시펄은 이미 뉴런을 관리하고 있습니다.",
+      "description" : "다른 프린시펄을 입력하세요. 핫키는 투표 및 팔로우 설정만 가능하며, 해당 기능은 이미 컨트롤러 권한으로 수행할 수 있습니다."
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "해당 뉴런이 분할할 수 있는 수량 범위를 벗어났습니다.",
+      "description" : "기존 뉴런과 새 뉴런 모두 최소 1 ICP를 스테이킹 상태로 유지해야 하며, 이동되는 수량에 대한 네트워크 수수료가 추가로 필요합니다."
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "이 뉴런에서는 생성할 수 없습니다.",
+      "description" : "이미 생성 중인 뉴런에서는 다시 생성할 수 없으며, 생성된 누적 보상은 네트워크의 누적 보상 조정 후 최소 1 ICP를 남겨두어야 합니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "이 뉴런의 누적 보상을 예치할 수 없습니다.",
+      "description" : "뉴런이 생성 중이거나 완전히 해제된 경우, 또는 누적 보상이 전혀 없는 경우에는 이를 예치할 수 없습니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "이 주제는 팔로우할 수 없습니다",
+      "description" : "Internet Computer에서 이 주제를 폐기했거나, Ledger Internet Computer 앱이 아직 해당 주제에 대한 팔로우 서명을 지원하지 않습니다. 다른 주제를 선택하세요."
+    },
+    "ICPTooManyFollowees" : {
+      "title" : "팔로우 대상 한도에 도달했습니다",
+      "description" : "하나의 주제에서는 최대 {{max}} 개의 뉴런을 팔로우할 수 있습니다. 목록에 {{max}}개 이하의 뉴런이 남도록 뉴런을 삭제하세요."
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "잘못된 뉴런 ID",
+      "description" : "{{id}}은(는) 올바른 뉴런 ID가 아닙니다. 목록에서 삭제하세요."
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "뉴런이 중복되어 있습니다",
+      "description" : "뉴런 {{id}}이(가) 목록에 두 번 이상 포함되어 있습니다. 중복된 뉴런을 삭제하세요."
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "뉴런은 자기 자신을 팔로우할 수 없습니다.",
+      "description" : "{{id}}은(는) 이 뉴런의 ID입니다. 목록에서 삭제하세요."
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "이 뉴런의 디졸브를 시작할 수 없습니다",
+      "description" : "잠긴 뉴런만 디졸브를 시작할 수 있습니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "이 뉴런의 디졸브를 중지할 수 없습니다",
+      "description" : "디졸브 중인 뉴런만 디졸브를 중지할 수 있으며, 이 뉴런은 이미 디졸브가 완료되었을 수 있습니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "이 뉴런의 예치금을 회수할 수 없습니다.",
+      "description" : "뉴런이 완전히 잠금 해제되고 예치금이 네트워크 수수료보다 많은 경우에만 출금할 수 있습니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "핫키 등록 한도 초과",
+      "description" : "뉴런은 최대 {{max}}개의 핫키를 보유할 수 있습니다. 새로운 핫키를 추가하려면 기존 핫키를 하나 제거하세요."
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "추가 예치 금액 부족",
+      "description" : "추가 예치 후 뉴런 수량은 최소 1 ICP 이상이어야 합니다. 마지막 동기화 기준, 이 뉴런에는 최소 {{missing}} ICP가 더 필요합니다. 최소 기준에 미달하는 금액을 전송해도 뉴런 계정에는 입금되지만, 추후 추가 예치를 통해 최소 잔액 조건을 충족할 때까지는 예치금으로 반영되지 않습니다."
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "예치금은 전송되었으나 뉴런이 업데이트되지 않았습니다",
+      "description" : "ICP가 뉴런 계정으로 전송되었으나, Internet Computer 거버넌스에서 이를 반영한 뉴런 업데이트를 거부했습니다. {{reason}} 보낸 자산은 안전합니다. 해당 금액은 뉴런 계정에 그대로 보관되며, 총잔액을 1 ICP 이상으로 채우는 다음 추가 예치 시 합산되어 반영됩니다. Ledger Wallet에서는 아직 해당 입금 내역을 확인할 수 없으므로, 금액 입력란에는 최근 동기화 기준으로 확인된 전체 부족분이 계속 표시됩니다."
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "이 뉴런에는 자산을 추가할 수 없습니다.",
+      "description" : "뉴런에 자산을 추가하려면 해당 뉴런을 생성한 트랜잭션의 메모가 필요하지만, 현재 계정 내역에는 해당 메모가 없습니다. 뉴런을 생성했던 계정에서 자산을 추가해 주세요."
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "처리 결과 알 수 없음",
+      "description" : "Internet Computer가 요청을 접수했으나 결과를 반환하지 않아, 정상 반영 여부를 확인할 수 없습니다. 다시 시도하기 전에 뉴런을 동기화하여 상태를 확인해 주세요."
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "범위 초과",
+      "description" : "1에서 100 사이의 정수를 입력해 주세요."
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "뉴런 정보를 새로 불러오지 못했습니다",
+      "description" : "Internet Computer 네트워크에서 뉴런 정보를 가져오지 못해 변경 사항이 적용되지 않았습니다. 다시 시도해 주세요."
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "네트워크에서 해당 요청을 거부했습니다",
+      "description" : "Internet Computer 거버넌스에서 요청을 거부하여 뉴런 상태가 유지되었습니다. 뉴런을 동기화하여 현재 상태를 확인하세요. {{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "요청이 처리되지 않았습니다",
+      "description" : "Internet Computer 네트워크가 실행 전에 요청을 거부하여 변경 사항이 없습니다. 다시 시도해 주세요. {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "요청이 전송되지 않았습니다",
+      "description" : "Internet Computer 네트워크가 요청을 수락하지 않아 아무것도 전송되지 않았으며 변경 사항도 없습니다. 다시 시도해 주세요. {{reason}}"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "새로운 뉴런에 ICP를 락업합니다",
+      "description" : "뉴런의 기본 락업 해제 기간이 너무 짧아 투표 참여나 보상 수령이 불가능합니다. 'Manage Neurons(뉴런 관리)'에서 락업 해제 기간을 늘려주세요. 스테이킹된 자산은 해당 해제 기간이 지나야만 다시 출금하거나 사용할 수 있습니다."
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "기존 락업된 스테이킹 물량에 추가합니다",
+      "description" : "이 수량은 뉴런의 기존 스테이킹 자산에 합산되며 동일한 락업 해제 기간이 적용됩니다. 따라서 락업 해제가 완료될 때까지는 사용할 수 없습니다."
     }
   },
   "crash" : {
@@ -1647,6 +2023,23 @@
       "saveFailed" : "패스워드를 저장하지 못했습니다. 다시 시도해 주세요.",
       "cta" : "확인"
     },
+    "longerPassword" : {
+      "prompt" : {
+        "title" : "암호 변경",
+        "description" : "보안 강화를 위해 최소 6자 이상의 패스워드를 입력하세요.",
+        "cta" : "암호 변경"
+      },
+      "enter" : {
+        "title" : "새 패스워드를 입력하세요"
+      },
+      "confirm" : {
+        "title" : "새 패스워드 확인"
+      },
+      "changed" : {
+        "title" : "패스워드가 변경되었습니다",
+        "cta" : "확인"
+      }
+    },
     "unlock" : {
       "wrongPassword" : "잘못된 패스워드",
       "forgotPassword" : "패스워드를 잊으셨나요?",
@@ -1682,6 +2075,17 @@
       },
       "description" : "이제 카드를 신청하실 수 있습니다",
       "cta" : "계속"
+    },
+    "keepProtection" : {
+      "password" : {
+        "title" : "패스워드를 끌 수 없습니다",
+        "description" : "Ledger Wallet에 안전하게 액세스하려면 패스워드 또는 생체 인증이 필요합니다."
+      },
+      "biometrics" : {
+        "title" : "{{biometricsType}}을(를) 끌 수 없습니다",
+        "description" : "Ledger Wallet에 안전하게 액세스하려면 {{biometricsType}} 또는 패스워드가 필요합니다."
+      },
+      "cta" : "확인"
     },
     "biometrics" : {
       "title" : "{{biometricsType}}",
@@ -10384,6 +10788,7 @@
     "paytab" : "결제"
   },
   "payTab" : {
+    "disclaimer" : "Monavate Onchain 제공",
     "featureTour" : {
       "title" : "모든 결제를 한 곳에서",
       "description" : "새로운 결제 탭에서 크립토를 일상 속 결제에 바로 사용해 보세요.",
@@ -10429,14 +10834,23 @@
       "balanceLabel" : "잔액",
       "assets" : {
         "title" : "자산",
-        "empty" : "아직 자산이 없습니다",
-        "error" : "자산을 로드할 수 없습니다",
+        "empty" : {
+          "title" : "아직 자산이 없습니다",
+          "description" : "자산을 추가하고 카드 사용을 시작하세요.",
+          "cta" : "자산 추가"
+        },
+        "error" : {
+          "title" : "자산을 로드할 수 없습니다",
+          "description" : "문제가 발생했습니다.",
+          "cta" : "다시 시도"
+        },
         "info" : "이 자산은 카드 결제에 사용됩니다. 결제 순서를 설정하거나 더 추가하세요.",
         "manage" : "관리",
         "manageDialog" : {
           "title" : "자산 관리",
           "description" : "보유하신 자산은 자금 조달 순서대로 나열됩니다. 한 자산의 잔액이 부족해지면 다음 자산이 자동으로 사용됩니다.",
-          "addAssetCaption" : "자산을 추가하기 위해 Baanx 페이지로 리디렉션됩니다.",
+          "reorder" : "{{asset}}의 순서를 변경해 주세요. 길게 누른 채 드래그하거나, 접근성 기능을 사용해 위아래로 이동해 주세요.",
+          "addAssetCaption" : "자산을 추가하기 위해 Monavate로 리디렉션됩니다.",
           "addAsset" : "자산 추가"
         },
         "details" : {
@@ -10445,13 +10859,14 @@
           "transactions" : "트랜잭션"
         },
         "withdraw" : {
-          "title" : "Baanx로 리디렉션됩니다.",
-          "description" : "Baanx 계정에서 사용 중인 Ledger 지갑 주소로 자산을 출금하세요.",
+          "title" : "Monavate로 리디렉션됩니다",
+          "description" : "Monavate 계정에서 사용 중인 Ledger 지갑 주소로 자산을 출금하세요.",
           "continue" : "계속"
         }
       },
       "title" : "크립토 카드",
       "topUp" : "충전",
+      "chooseCardType" : "카드 종류 선택",
       "details" : "상세 정보",
       "addToWallet" : "{{wallet}} Pay에 추가",
       "freeze" : "동결",
@@ -10479,7 +10894,7 @@
         "imageAlt" : "카드 번호"
       },
       "reward" : {
-        "title" : "총 캐시백"
+        "title" : "총 캐시백: {{ratePercent}}% {{ticker}}(으)로 지급"
       }
     },
     "cardTransactions" : {
@@ -10499,7 +10914,9 @@
         "status" : "상태",
         "card" : "카드",
         "cardInfo" : "이 결제에 사용된 카드의 마지막 4자리 숫자.",
-        "fundingSource" : "자금 출처",
+        "fundingSource_one" : "자금 출처",
+        "fundingSource_other" : "사용 자산",
+        "cashback" : "캐시백",
         "transactionId" : "트랜잭션 ID",
         "copyTransactionId" : "트랜잭션 ID 복사",
         "today" : "오늘 {{time}}",
@@ -10527,6 +10944,10 @@
           "title" : "로그인하여 카드 결제 내역을 확인하세요.",
           "description" : "로그인하면 이곳에 카드 사용 내역이 표시됩니다."
         },
+        "unclaimed" : {
+          "title" : "Crypto card",
+          "description" : "Go to pay to set up your card."
+        },
         "empty" : {
           "title" : "아직 카드 결제 내역이 없습니다.",
           "description" : "결제 내역이 생기면 이곳에 표시됩니다."
@@ -10536,9 +10957,6 @@
           "description" : "네트워크 연결 상태를 확인하고 다시 시도하세요."
         }
       }
-    },
-    "selectContact" : {
-      "placeholder" : "주소 또는 이름 입력"
     },
     "actions" : {
       "deposit" : "스테이블코인 추가",
@@ -10564,8 +10982,9 @@
         "verifyCta" : "주소 확인",
         "successTitle" : "장치의 보안 스크린에 표시된 주소",
         "nextStepsLabel" : "다음 단계",
-        "nextStepShare" : "원하는 앱으로 주소를 공유하세요.",
-        "nextStepMatch" : "공유된 주소가 사용 중인 Ledger 장치의 주소와 일치하는지 확인하세요.",
+        "nextStepKeepDisplayed" : "Ledger 장치에 주소가 계속 표시되도록 하세요. 아직 주소를 확정하지 마세요.",
+        "nextStepPaste" : "“Got it”을 클릭한 다음, 공유하려는 앱에 주소를 붙여넣으세요.",
+        "nextStepCheckMatch" : "보내기 전에 해당 주소가 Ledger 장치에 표시된 주소와 일치하는지 확인하세요.",
         "gotItCta" : "확인",
         "device" : {
           "cancelledTitle" : "주소 확인 취소됨",
@@ -10634,12 +11053,32 @@
         "action" : "로그인"
       },
       "errors" : {
-        "pkce_failed" : "로그인을 시작할 수 없습니다. 다시 시도하세요.",
-        "browser_open_failed" : "로그인 페이지를 열 수 없습니다. 다시 시도하세요.",
-        "missing_attempt" : "이 로그인은 더 이상 유효하지 않습니다. 다시 로그인해 주세요.",
-        "exchange_failed" : "로그인을 완료할 수 없습니다. 다시 시도하세요.",
-        "persist_failed" : "세션을 저장하지 못했습니다. 다시 시도하세요.",
-        "fetch_user_failed" : "카드를 불러올 수 없습니다. 다시 시도하세요."
+        "pkce_failed" : {
+          "title" : "로그인을 시작할 수 없습니다",
+          "description" : "다시 시도하세요."
+        },
+        "browser_open_failed" : {
+          "title" : "로그인 페이지를 열 수 없습니다",
+          "description" : "다시 시도하세요."
+        },
+        "missing_attempt" : {
+          "title" : "로그인이 더 이상 유효하지 않습니다",
+          "description" : "다시 로그인해 주세요."
+        },
+        "exchange_failed" : {
+          "title" : "로그인을 완료할 수 없습니다",
+          "description" : "다시 시도하세요."
+        },
+        "persist_failed" : {
+          "title" : "세션을 저장하지 못했습니다",
+          "description" : "다시 시도하세요."
+        },
+        "fetch_user_failed" : {
+          "title" : "카드를 불러올 수 없습니다",
+          "description" : "다시 시도하세요."
+        },
+        "retryLogin" : "다시 시도하세요",
+        "retryUser" : "다시 시도"
       }
     },
     "cardLoginIntro" : {
@@ -10673,10 +11112,11 @@
       "seeAllTitle" : "저장된 주소로 보내기",
       "addressPicker" : {
         "title" : "{{name}} 주소 선택",
+        "meTitle" : "내 주소 선택",
         "addAddress" : "주소 추가"
       },
       "paySuccess" : {
-        "title" : "지불 완료({{recipient}})",
+        "title" : "{{recipient}}에게 지불 완료",
         "amount" : "금액",
         "estimatedTime" : "예상 시간",
         "from" : "사용 자산",
@@ -10979,11 +11419,30 @@
     "manage" : {
       "bond" : "본딩",
       "claim" : "수령",
+      "unbond" : "본딩 해제",
       "status" : "상태",
       "estimatedRate" : "예상 보상률",
       "unbondPendingInfo" : "언스테이킹 승인 대기 중. Aleo 네트워크는 한 번에 하나의 작업만 처리할 수 있어, 현재 진행 중인 작업이 완료될 때까지 추가 언본딩이나 수령 절차가 제한됩니다.",
       "claimPendingInfo" : "수령 승인 대기 중. Aleo 네트워크는 한 번에 하나의 작업만 처리할 수 있어, 현재 진행 중인 작업이 완료될 때까지 추가 언본딩이나 수령 절차가 제한됩니다.",
       "unlockBlock" : "블록에서 잠금 해제"
+    },
+    "unbond" : {
+      "stepperHeader" : {
+        "amount" : "언스테이킹 확인",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결"
+      },
+      "amount" : {
+        "bondedAmount" : "언스테이킹할 금액",
+        "belowMinimum" : "이 금액은 약 360블록(약 1시간) 동안 사용할 수 없습니다. 언본딩 후 남은 본딩 금액이 <minimum/> 미만일 경우, 최소 스테이킹 조건을 충족하지 못하게 되므로 본딩된 잔액 전체가 언본딩됩니다.",
+        "max" : "최대"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "언스테이킹 요청 완료",
+          "description" : "Aleo 네트워크에서 언본딩 트랜잭션을 처리 중입니다."
+        }
+      }
     },
     "send" : {
       "balanceSelection" : {
@@ -11068,6 +11527,13 @@
         "private" : "비공개"
       }
     },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "검증인",
+        "bondedAmount" : "스테이킹 수량",
+        "unbondedAmount" : "스테이킹 해제 수량"
+      }
+    },
     "shared" : {
       "sponsoredByProvable" : "Provable 후원"
     }
@@ -11123,6 +11589,7 @@
     "addAddressEntry" : {
       "title" : "주소 입력",
       "addressPlaceholder" : "주소 또는 ENS",
+      "addressPlaceholderNoENS" : "주소",
       "confirmAddress" : "주소 확인",
       "validatingAddress" : "주소 확인 중",
       "validAddress" : "유효한 주소",
