@@ -286,7 +286,7 @@ export class DeviceManagementKitBLETransport extends Transport {
           const id = dmkToLedgerDeviceIdMap[device.deviceModel.model];
           observer.next({
             type: "add",
-            descriptor: "",
+            descriptor: device.id,
             device: device,
             deviceModel: getDeviceModel(id),
           });

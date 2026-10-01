@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
@@ -128,6 +128,19 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     deviceName: device.deviceName ?? null,
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
+
+  // Keep check state bound to device identity. See DONJON-1409.
+  const previousDeviceIdRef = useRef(device.deviceId);
+  useEffect(() => {
+    if (previousDeviceIdRef.current === device.deviceId) return;
+    previousDeviceIdRef.current = device.deviceId;
+
+    log("EarlySecurityCheck", "Device identity changed, resetting checks");
+    resetGenuineCheckState();
+    setCurrentStep("idle");
+    setGenuineCheckStatus("unchecked");
+    setFirmwareUpdateCheckStatus("unchecked");
+  }, [device.deviceId, resetGenuineCheckState]);
 
   const ignoredOSUpdatesConfig = useFeature("onboardingIgnoredOsUpdates")?.params;
   const ignoredOSUpdatesForDeviceModelAndPlatform = useMemo(() => {

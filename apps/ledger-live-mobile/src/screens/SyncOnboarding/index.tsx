@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
 import { log } from "@ledgerhq/logs";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -46,6 +47,12 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     null | "enter" | "exit"
   >(null);
 
+  // Decouples the device used for rendering from `route.params.device`, so that a device
+  // identity change is only reflected once the reset effect below has cleared the stale
+  // check state. See DONJON-1409.
+  const [lastSeenDevice, setLastSeenDevice] = useState<Device>(device);
+  const previousDeviceIdRef = useRef<string>(device.deviceId);
+
   const [isDesyncDrawerOpen, setIsDesyncDrawerOpen] = useState<boolean>(false);
   const [isAutoRepairOpen, setIsAutoRepairOpen] = useState<boolean>(false);
   const [isESCMandatoryDrawerOpen, setIsESCMandatoryDrawerOpen] = useState<boolean>(false);
@@ -69,7 +76,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   const isFocused = useIsFocused();
 
-  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+  const productName = getDeviceModel(lastSeenDevice.modelId).productName || lastSeenDevice.modelId;
 
   // Depending on the current step, the close button triggers different paths
   const onCloseButtonPress = useCallback(() => {
@@ -135,14 +142,14 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     resetStates: resetPollingStates,
     lockedDevice,
   } = useOnboardingStatePolling({
-    device,
+    device: lastSeenDevice,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn || !isFocused,
   });
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
-    deviceId: device.deviceId,
-    deviceName: device.deviceName ?? null,
+    deviceId: lastSeenDevice.deviceId,
+    deviceName: lastSeenDevice.deviceName ?? null,
     toggleType: toggleOnboardingEarlyCheckType,
   });
 
@@ -180,6 +187,26 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     },
     [resetPollingStates],
   );
+
+  useEffect(() => {
+    const previousDeviceId = previousDeviceIdRef.current;
+    const deviceChanged = previousDeviceId !== device.deviceId;
+    previousDeviceIdRef.current = device.deviceId;
+
+    setLastSeenDevice(device);
+
+    if (deviceChanged) {
+      // Device identity changed since the last render. See DONJON-1409.
+      log("SyncOnboardingIndex", "Device identity changed, resetting onboarding state");
+      setIsPollingOn(true);
+      setCurrentStep("loading");
+      resetPollingStates();
+      setIsAlreadyGenuine(false);
+      setIsPreviousUpdateCancelled(false);
+      setDeviceDetectedOnboarded(false);
+      setToggleOnboardingEarlyCheckType(null);
+    }
+  }, [device, resetPollingStates]);
 
   // Called when the user taps on the "cancel" button in the mandatory drawer
   const onCancelEarlySecurityCheck = useCallback(() => {
@@ -330,9 +357,10 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   if (currentStep === "early-security-check") {
     stepContent = (
       <EarlySecurityCheck
+        key={lastSeenDevice.deviceId}
         navigation={navigation}
         route={route}
-        device={device}
+        device={lastSeenDevice}
         isAlreadyGenuine={isAlreadyGenuine}
         isPreviousUpdateCancelled={isPreviousUpdateCancelled}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
@@ -343,8 +371,9 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   } else if (currentStep === "companion") {
     stepContent = (
       <TwoStepSyncOnboardingCompanion
+        key={lastSeenDevice.deviceId}
         navigation={navigation}
-        device={device}
+        device={lastSeenDevice}
         notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
         onLostDevice={onLostDevice}
         onShouldHeaderBeOverlaid={setIsHeaderOverlayOpen}
@@ -359,9 +388,13 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         isOpen={isDesyncDrawerOpen && isFocused}
         onClose={handleDesyncClose}
         onRetry={handleDesyncRetry}
-        device={device}
+        device={lastSeenDevice}
       />
-      <AutoRepairDrawer isOpen={isAutoRepairOpen} onDone={handleAutoRepairClose} device={device} />
+      <AutoRepairDrawer
+        isOpen={isAutoRepairOpen}
+        onDone={handleAutoRepairClose}
+        device={lastSeenDevice}
+      />
       <EarlySecurityCheckMandatoryDrawer
         productName={productName}
         isOpen={isESCMandatoryDrawerOpen}
@@ -379,7 +412,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
             onCloseButtonPress();
           }
         }}
-        device={device}
+        device={lastSeenDevice}
       />
       {stepContent}
     </>
