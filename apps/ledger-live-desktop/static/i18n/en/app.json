@@ -1073,6 +1073,7 @@
     },
     "contacts": {
       "title": "Pay contact",
+      "me": "Me",
       "empty": {
         "info": "You don’t have contact yet",
         "addContact": "Add contact"
