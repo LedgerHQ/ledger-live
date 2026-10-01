@@ -91,8 +91,9 @@ describe("Stacks unstaking Summary", () => {
 
     fireEvent.press(retry);
 
-    // In flight until that error clears or is replaced.
+    // In flight until that error clears or is replaced, without the failure it's retrying.
     expect(screen.getByTestId("stacks-unstake-retry")).toBeDisabled();
+    expect(screen.queryByText("preparation failed")).toBeNull();
   });
 
   it("explains there is nothing to unstake without a position", () => {

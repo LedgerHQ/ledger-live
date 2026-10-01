@@ -198,7 +198,9 @@ export default function Summary({ navigation, route }: Props) {
         ) : null}
       </ScrollView>
       <ContinueFooter
-        bridgeError={bridgeError}
+        // The bridge keeps the failed attempt's error until the retry settles; once the user has
+        // retried it, it's no longer news.
+        bridgeError={retrying ? null : bridgeError}
         onContinue={onContinue}
         disabled={continueDisabled}
         pending={bridgePending}
