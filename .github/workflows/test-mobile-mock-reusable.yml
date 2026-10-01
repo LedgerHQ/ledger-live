@@ -400,6 +400,11 @@ jobs:
         with:
           packages: "platform-tools"
 
+      - name: Install scrcpy
+        timeout-minutes: 10
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/install-scrcpy@develop
+
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -623,6 +628,7 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           REMOTE_SPECULOS: "true"
+          ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           INPUT_E2E: "true"
           INPUTS_TEST_FILTER: "@smoke"
 

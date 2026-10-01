@@ -889,24 +889,10 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Install scrcpy dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
-        with:
-          packages: ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
-
-      - name: Install scrcpy 3.x
+      - name: Install scrcpy
         timeout-minutes: 10
-        run: |
-          # Download scrcpy 3.3.4 from GitHub releases (apt/snap versions are obsolete)
-          # See: https://github.com/Genymobile/scrcpy/blob/master/doc/linux.md
-          SCRCPY_VERSION="3.3.4"
-          curl -L "https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VERSION}/scrcpy-linux-x86_64-v${SCRCPY_VERSION}.tar.gz" -o /tmp/scrcpy.tar.gz
-          tar -xzf /tmp/scrcpy.tar.gz -C /tmp
-          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy /usr/local/bin/
-          sudo cp /tmp/scrcpy-linux-x86_64-v${SCRCPY_VERSION}/scrcpy-server /usr/local/bin/
-
-          scrcpy --version
-          ls -la /usr/local/bin/scrcpy*
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/install-scrcpy@develop
 
       - name: Set shard test files from pre-computed matrix
         run: |
