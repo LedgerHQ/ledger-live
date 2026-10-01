@@ -124,7 +124,7 @@ export function setupTransportHandlers() {
   });
 
   // Handle transport listen (simplified for HTTP transports)
-  ipcMain.handle(CHANNELS.transportListen, async (event, { requestId }) => {
+  ipcMain.handle(CHANNELS.transportListen, (event, { requestId }) => {
     try {
       log(LOG_TYPE, "transport listen", { requestId });
 
@@ -150,7 +150,7 @@ export function setupTransportHandlers() {
   });
 
   // Handle transport listen unsubscribe
-  ipcMain.handle(CHANNELS.transportListenUnsubscribe, async (event, { requestId }) => {
+  ipcMain.handle(CHANNELS.transportListenUnsubscribe, (event, { requestId }) => {
     try {
       log(LOG_TYPE, "transport listen unsubscribe", { requestId });
       // Nothing to do for HTTP transports
