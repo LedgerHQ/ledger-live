@@ -24,6 +24,7 @@ Pay special attention to:
 - `.agents/skills/console-log/SKILL.md` — Console logging levels: `console.error` is forwarded to monitoring tools as an error event; flag any new `console.error` that isn't an illegal/unexpected state
 - `.agents/skills/configuration/SKILL.md` — Where a configuration value belongs; flag any new `@shared/env` / `@ledgerhq/live-env` definition or call site (`getEnv`, `getEnvDefault`, `useEnv`, `setEnv`, `setEnvUnsafe`, `injectDefinitions`), including in tests, and any real secret added to an app `.env` file
 - `.agents/skills/dependency-patches/SKILL.md` — Dependency patch policy; review changes to `patches/*.patch` and `pnpm.patchedDependencies` against its upstream, tracking, and removal requirements
+- `.agents/skills/i18n-keys/SKILL.md` — Wording keys in `features/`, `domain/`, `shared/` must be statically verifiable; flag `string`-typed key props/tables/helpers, keys missing from the Desktop or Mobile English catalog, and any raise of `unverifiable-baseline.json`
 
 ## Review Scope
 
