@@ -45,6 +45,24 @@ describe("saveRequestReceive", () => {
     expect(mockedLoggerError).not.toHaveBeenCalled();
   });
 
+  it("should log when main could not write the PNG", async () => {
+    mockedSavePng.mockResolvedValueOnce("failed");
+
+    await saveRequestReceive("USDC", "Save request card");
+
+    expect(mockedLoggerError).toHaveBeenCalledWith(
+      new Error("Could not write the Pay request card PNG"),
+    );
+  });
+
+  it("should not log when the user cancels the dialog", async () => {
+    mockedSavePng.mockResolvedValueOnce("canceled");
+
+    await saveRequestReceive("USDC", "Save request card");
+
+    expect(mockedLoggerError).not.toHaveBeenCalled();
+  });
+
   it("should do nothing when the card node is missing", async () => {
     document.body.innerHTML = "";
 

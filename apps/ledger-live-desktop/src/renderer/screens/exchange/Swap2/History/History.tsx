@@ -42,6 +42,8 @@ const exportOperations = async (request: SaveRequest, csv: string, callback?: ()
     const res = await files.exportOperations(request, csv);
     if (res === "saved" && callback) {
       callback();
+    } else if (res === "failed") {
+      console.warn("Could not write the swap history CSV");
     }
   } catch {
     // ignore

@@ -67,6 +67,30 @@ describe("saveLogs", () => {
     expect(serializedLogs).toContain("[Circular]");
   });
 
+  it("should warn when main could not write the file", async () => {
+    (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue({ log: "test" });
+    jest.mocked(files.saveLogs).mockResolvedValue("failed");
+    const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+    await saveLogs(fakeRequest);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      "Failed to save logs: the file could not be written",
+    );
+    consoleWarnSpy.mockRestore();
+  });
+
+  it("should not warn when the user cancels the dialog", async () => {
+    (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue({ log: "test" });
+    jest.mocked(files.saveLogs).mockResolvedValue("canceled");
+    const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+    await saveLogs(fakeRequest);
+
+    expect(consoleWarnSpy).not.toHaveBeenCalled();
+    consoleWarnSpy.mockRestore();
+  });
+
   it("should log an error if the bridge call rejects", async () => {
     // given
     const error = new Error("IPC error");

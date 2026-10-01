@@ -43,7 +43,9 @@ export const saveLogs = async (request: SaveRequest) => {
       2,
     );
 
-    await files.saveLogs(request, memoryLogsStr);
+    if ((await files.saveLogs(request, memoryLogsStr)) === "failed") {
+      console.warn("Failed to save logs: the file could not be written");
+    }
   } catch (error) {
     console.warn("Failed to save logs:", error);
   }
