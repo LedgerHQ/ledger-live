@@ -18,7 +18,10 @@ this package owns the join and the ordering.
 
 - `combineCardLinkedWallets` — pure. Takes both lists and a map of Ledger id to currency, and
   returns the linked wallets in charging order, each carrying the currency its asset resolved to.
-- `useCardLinkedWallets` — runs both reads in parallel and memoizes the join.
+- `useCardLinkedWallets` — runs both reads in parallel and memoizes the join. Each mount fetches
+  both again, so a Pay screen that mounts after a Baanx page shows the wallets the user just linked.
+  A screen that stays mounted while a Baanx page is open invalidates the `CardLinkedWallets` and
+  `InternalWallets` tags when the page closes.
 
 ## Cashback
 
