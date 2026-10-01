@@ -50,6 +50,10 @@ export {
   DefaultConnectNewDeviceStateMachine,
   type ConnectNewDeviceStateMachine,
 } from "./connectNewDevice/ConnectNewDeviceStateMachine";
+export {
+  connectNewDeviceUseCase,
+  type ConnectNewDeviceUseCaseInput,
+} from "./connectNewDevice/connectNewDeviceUseCase";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
 export {
