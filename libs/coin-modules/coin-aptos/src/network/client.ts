@@ -12,6 +12,7 @@ import {
   type RawTransaction,
   type SimpleTransaction,
   type TransactionResponse,
+  TransactionResponseType,
   type UserTransactionResponse,
   type Block,
   type AptosSettings,
@@ -360,11 +361,18 @@ export class AptosAPI {
       const tx: TransactionResponse = await this.aptosClient.getTransactionByVersion({
         ledgerVersion: version,
       });
+      if (tx.type !== TransactionResponseType.User) {
+        log("info", "richItemByVersion: skipping non-user transaction", {
+          version,
+          type: tx.type,
+        });
+        return null;
+      }
       const block = await this.getBlock(version);
       return {
         ...tx,
         block,
-      } as AptosTransaction;
+      };
     } catch (error) {
       log("error", "richItemByVersion", {
         error,

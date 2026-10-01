@@ -258,7 +258,26 @@ describe("Aptos sync logic", () => {
       });
     });
 
-    it("should skip transactions without functions in payload", async () => {
+    it("should skip transactions without an entry-function payload", async () => {
+      const address = "0x11";
+      const id = "test_id";
+      const txs: AptosTransaction[] = [
+        {
+          hash: "0x123",
+          gas_used: "0",
+          success: true,
+          type: "block_metadata_transaction",
+          events: [],
+          changes: [],
+          block: { hash: "0xabc", height: 1 },
+          timestamp: "1000000",
+        } as unknown as AptosTransaction,
+      ];
+
+      await expect(txsToOps({ address }, id, txs)).resolves.toEqual([[], [], []]);
+    });
+
+    it("should skip transactions without functions in an entry-function payload", async () => {
       const address = "0x11";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -268,7 +287,7 @@ describe("Aptos sync logic", () => {
           gas_used: "200",
           gas_unit_price: "100",
           success: true,
-          payload: {} as EntryFunctionPayloadResponse,
+          payload: { type: "entry_function_payload" } as EntryFunctionPayloadResponse,
           events: [],
           changes: [],
           block: { hash: "0xabc", height: 1 },
@@ -280,6 +299,77 @@ describe("Aptos sync logic", () => {
       const [result] = await txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(0);
+    });
+
+    describe("multisig transfer of APT from 0x21, signed by owner 0x31, to 0x12", () => {
+      const multisigTx = {
+        type: "user_transaction",
+        hash: "0x456",
+        sender: "0x31",
+        gas_used: "200",
+        gas_unit_price: "100",
+        success: true,
+        payload: {
+          type: "multisig_payload",
+          multisig_address: "0x21",
+          transaction_payload: {
+            type: "entry_function_payload",
+            function: "0x1::coin::transfer",
+            type_arguments: [],
+            arguments: ["0x12", "100"],
+          },
+        },
+        events: [
+          {
+            type: "0x1::coin::WithdrawEvent",
+            guid: { account_address: "0x21", creation_number: "1" },
+            data: { amount: "100" },
+          },
+          {
+            type: "0x1::coin::DepositEvent",
+            guid: { account_address: "0x12", creation_number: "2" },
+            data: { amount: "100" },
+          },
+        ],
+        changes: [
+          {
+            type: "write_resource",
+            data: {
+              type: APTOS_COIN_CHANGE,
+              data: {
+                withdraw_events: { guid: { id: { addr: "0x21", creation_num: "1" } } },
+                deposit_events: { guid: { id: { addr: "0x12", creation_num: "2" } } },
+              },
+            },
+          },
+        ],
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+      } as unknown as AptosTransaction;
+
+      it("is an outgoing operation of the multisig account", async () => {
+        const [result] = await txsToOps({ address: "0x21" }, "test_id", [multisigTx]);
+
+        expect(result).toHaveLength(1);
+        expect(result[0]).toMatchObject({
+          type: OP_TYPE.OUT,
+          value: new BigNumber(100),
+          senders: ["0x21"],
+          recipients: ["0x0000000000000000000000000000000000000000000000000000000000000012"],
+        });
+      });
+
+      it("is an incoming operation of the recipient, sent by the multisig account", async () => {
+        const [result] = await txsToOps({ address: "0x12" }, "test_id", [multisigTx]);
+
+        expect(result).toHaveLength(1);
+        expect(result[0]).toMatchObject({
+          type: OP_TYPE.IN,
+          value: new BigNumber(100),
+          senders: ["0x21"],
+        });
+      });
     });
 
     it("should skip transactions that result in no Aptos change", async () => {
