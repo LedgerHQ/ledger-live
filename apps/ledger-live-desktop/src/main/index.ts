@@ -12,6 +12,7 @@ import {
   loadWindow,
 } from "./window-lifecycle";
 import db from "./db";
+import { createKeyAttemptThrottle } from "./db/keyAttemptThrottle";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
 import type { SettingsState } from "~/renderer/reducers/settings";
@@ -129,14 +130,21 @@ app.on("ready", async () => {
   ipcMain.handle("hasEncryptionKey", () => {
     return db.hasEncryptionKey();
   });
+  const throttleKeyAttempt = createKeyAttemptThrottle();
   ipcMain.handle("setEncryptionKey", (event, { encryptionKey }) => {
-    return db.setEncryptionKey(encryptionKey);
+    return throttleKeyAttempt(
+      () => db.setEncryptionKey(encryptionKey),
+      () => true,
+    );
   });
   ipcMain.handle("removeEncryptionKey", () => {
     return db.removeEncryptionKey();
   });
   ipcMain.handle("isEncryptionKeyCorrect", (event, { encryptionKey }) => {
-    return db.isEncryptionKeyCorrect(encryptionKey);
+    return throttleKeyAttempt(
+      () => db.isEncryptionKeyCorrect(encryptionKey),
+      correct => correct,
+    );
   });
   ipcMain.handle("hasBeenDecrypted", () => {
     return db.hasBeenDecrypted();
