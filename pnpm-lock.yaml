@@ -55,8 +55,8 @@ catalogs:
       specifier: 9.0.1
       version: 9.0.1
     '@ledgerhq/coin-hypercore':
-      specifier: 4.0.0
-      version: 4.0.0
+      specifier: 4.0.1
+      version: 4.0.1
     '@ledgerhq/coin-module-framework':
       specifier: 10.0.0
       version: 10.0.0
@@ -14134,7 +14134,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 4.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))
+        version: 4.0.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -23210,8 +23210,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-hypercore@4.0.0':
-    resolution: {integrity: sha512-FfEfDPG6z44qx0R9LaWJJUMKg4fb2ePDrcBnIYspxuLRXzGyi2CXdSdeOcKzc8r4JvishtNiPmPXwq0S46Eu7g==}
+  '@ledgerhq/coin-hypercore@4.0.1':
+    resolution: {integrity: sha512-h8owrE5PVsVl50oYVr0AtRpZu4Fd6ZveaE+DWG4fzBVOQK2n9BgOfZPJCTY5kLkpFKzRKXJaetRyNtdBwg+zDQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -23955,6 +23955,7 @@ packages:
     resolution: {integrity: sha512-KRbkSthClEwkbpt/LLJmBJhIOvOsyrp9OICisF9p3mOODjaxAuYmyOgrVreg09BT2F4hXN3JXpvt9eIZpTCRsw==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.8':
     resolution: {integrity: sha512-pdPMWko1yZI5ZNI6/t2Y5rQPGgV/ah5DW+mlHo2aFKav4lnxvgisEh9e4HtOsYBfK/9PyYZ5u3M9hLSaMiJ75w==}
@@ -46075,7 +46076,7 @@ snapshots:
       - react-native
       - utf-8-validate
 
-  '@ledgerhq/coin-hypercore@4.0.0(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
+  '@ledgerhq/coin-hypercore@4.0.1(@ledgerhq/live-network@3.1.0(axios@1.13.5))':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.0
       '@ledgerhq/live-network': 3.1.0(axios@1.13.5)
