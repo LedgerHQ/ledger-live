@@ -67,7 +67,14 @@ ipcMain.on(CHANNELS.openExternal, (_event, url: string) => openURL(url));
 // Not navigator.clipboard: the permission handler grants the renderer only `hid`.
 ipcMain.on(CHANNELS.clipboardWriteText, (_event, text: string) => clipboard.writeText(text));
 
-ipcMain.handle(CHANNELS.clipboardReadText, () => clipboard.readText());
+// `null` when the clipboard cannot be read, which callers must not mistake for an empty one.
+ipcMain.handle(CHANNELS.clipboardReadText, () => {
+  try {
+    return clipboard.readText();
+  } catch {
+    return null;
+  }
+});
 
 ipcMain.handle(
   CHANNELS.exportOperations,
