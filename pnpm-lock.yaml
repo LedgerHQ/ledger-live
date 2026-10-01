@@ -2612,9 +2612,6 @@ importers:
       '@react-native/dev-middleware':
         specifier: 'catalog:'
         version: 0.81.6
-      '@rozenite/mmkv-plugin':
-        specifier: 2.1.0
-        version: 2.1.0(react-native-mmkv@4.3.2(react-native-nitro-modules@0.35.9(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@rozenite/network-activity-plugin':
         specifier: 2.4.0
         version: 2.4.0(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native-sse@1.2.1)(react@19.1.4)
@@ -2627,6 +2624,9 @@ importers:
       '@rozenite/repack':
         specifier: 2.4.0
         version: 2.4.0(@callstack/repack@5.2.5(patch_hash=8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60)(@babel/core@7.28.5)(@rspack/core@2.1.10(@swc/helpers@0.5.23))(@swc/core@1.15.11(@swc/helpers@0.5.23))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(tslib@2.6.2))(@types/react@19.0.14)(date-fns@2.30.0)
+      '@rozenite/storage-plugin':
+        specifier: 2.4.0
+        version: 2.4.0(ccb21a71ee444b1d3c4d424b1c06f198)
       '@rsdoctor/rspack-plugin':
         specifier: 'catalog:'
         version: 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
@@ -25518,21 +25518,11 @@ packages:
       react: 19.1.4
       react-native: '>=0.50.4'
 
-  '@rozenite/agent-bridge@2.1.0':
-    resolution: {integrity: sha512-SbiweOTeamWohkbp5mW5GBDCvm4SzUP7Iv575qe9hyjRq1EsqpZpaJzKO1GCDjtdF7tTuGgTI8baAHGW9D5Q8A==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      react: 19.1.4
-
   '@rozenite/agent-bridge@2.4.0':
     resolution: {integrity: sha512-Nd0JKRElsf77x4nebt1KzgFxanNKjRZhk4o1wjuL+O1LYlSfOtT03YhYccC/Dc1usAiizP8TAXwwXINO/isvwA==}
     engines: {node: '>=20'}
     peerDependencies:
       react: 19.1.4
-
-  '@rozenite/agent-shared@2.1.0':
-    resolution: {integrity: sha512-AbmMDQr72Z3m792NZhaV2729x/93LBusHpo2Sf6ZZFCVTz6+4dIJMA3+9PMHhE2FxZASmuyCJrD/2CgRgCIujw==}
-    engines: {node: '>=20'}
 
   '@rozenite/agent-shared@2.4.0':
     resolution: {integrity: sha512-92DOd7o1J7xYnSGVngrARiuLt68Swk35rPZJX9c/FHgwC8zl9WkOpg6Dh9REYgYoGrYJUo2rDY+per/GsKGIRA==}
@@ -25545,13 +25535,6 @@ packages:
   '@rozenite/middleware@2.4.0':
     resolution: {integrity: sha512-R9yDkaErHQqejZwcTb+eA6n7tb22dr7JxS3BluP+bU49laTOF0kRxv1L4gJg5pTOrjPjp9uwPThj7A7z3YVWzg==}
     engines: {node: '>=20.19.0'}
-
-  '@rozenite/mmkv-plugin@2.1.0':
-    resolution: {integrity: sha512-6DYQsS+URbhxLJiYumb3cK4TrH8w1TpyLBBaCdiHQ4T9QtriT08ssSUU9/6CowCmminYcHPM5uV9ZHbiArl+zg==}
-    peerDependencies:
-      react: 19.1.4
-      react-native: '*'
-      react-native-mmkv: '*'
 
   '@rozenite/network-activity-plugin@2.4.0':
     resolution: {integrity: sha512-FWB/Q03nSNcaeBAV8sYvSV4h9XnJrBRaIsBwm3lGylaCLf1mrQvLmkFai8Z+fslXiJNAr3waTTNqwy8BXf4pkA==}
@@ -25566,12 +25549,6 @@ packages:
         optional: true
       react-native-sse:
         optional: true
-
-  '@rozenite/plugin-bridge@2.1.0':
-    resolution: {integrity: sha512-fxGi+8RN5eoIviokhwJRKeSuAdhOfhcyz5BDMQZ2w5ou/GOAYvVYgjG43zBKJIC5FCclX+Lj9HkhiWVQZPqRVg==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      react: 19.1.4
 
   '@rozenite/plugin-bridge@2.4.0':
     resolution: {integrity: sha512-mnwOklFHWG/g3gtGa+xpgqJoIbBe1OmkFQJCufg79OOz4Gyi1jMIN/XCHH3OTu7goey3M7N/HPACPXCla/v52Q==}
@@ -25607,6 +25584,22 @@ packages:
       vitest: ^4.0.18
     peerDependenciesMeta:
       vitest:
+        optional: true
+
+  '@rozenite/storage-plugin@2.4.0':
+    resolution: {integrity: sha512-WHy3gB8bTQT7+Fmn1Od3pLk0u1uV4JANN8pd3Mq21pKLDT3Hifimj0VlbGT77GkSUmbYwwYn9rdNi3wNMAG0dw==}
+    peerDependencies:
+      '@react-native-async-storage/async-storage': '*'
+      expo-secure-store: '*'
+      react: 19.1.4
+      react-native: '*'
+      react-native-mmkv: '*'
+    peerDependenciesMeta:
+      '@react-native-async-storage/async-storage':
+        optional: true
+      expo-secure-store:
+        optional: true
+      react-native-mmkv:
         optional: true
 
   '@rozenite/tools@2.4.0':
@@ -49070,22 +49063,11 @@ snapshots:
       - '@react-native/assets-registry'
       - expo-font
 
-  '@rozenite/agent-bridge@2.1.0(react@19.1.4)':
-    dependencies:
-      '@rozenite/agent-shared': 2.1.0
-      '@rozenite/plugin-bridge': 2.1.0(react@19.1.4)
-      react: 19.1.4
-      tslib: 2.6.2
-
   '@rozenite/agent-bridge@2.4.0(react@19.1.4)':
     dependencies:
       '@rozenite/agent-shared': 2.4.0
       '@rozenite/plugin-bridge': 2.4.0(react@19.1.4)
       react: 19.1.4
-      tslib: 2.6.2
-
-  '@rozenite/agent-shared@2.1.0':
-    dependencies:
       tslib: 2.6.2
 
   '@rozenite/agent-shared@2.4.0':
@@ -49128,16 +49110,6 @@ snapshots:
       - utf-8-validate
       - vitest
 
-  '@rozenite/mmkv-plugin@2.1.0(react-native-mmkv@4.3.2(react-native-nitro-modules@0.35.9(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      '@rozenite/agent-bridge': 2.1.0(react@19.1.4)
-      '@rozenite/agent-shared': 2.1.0
-      '@rozenite/plugin-bridge': 2.1.0(react@19.1.4)
-      nanoevents: 9.1.0
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
-      react-native-mmkv: 4.3.2(react-native-nitro-modules@0.35.9(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-
   '@rozenite/network-activity-plugin@2.4.0(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native-sse@1.2.1)(react@19.1.4)':
     dependencies:
       '@rozenite/agent-bridge': 2.4.0(react@19.1.4)
@@ -49150,11 +49122,6 @@ snapshots:
       react-native-sse: 1.2.1
     transitivePeerDependencies:
       - react
-
-  '@rozenite/plugin-bridge@2.1.0(react@19.1.4)':
-    dependencies:
-      react: 19.1.4
-      tslib: 2.6.2
 
   '@rozenite/plugin-bridge@2.4.0(react@19.1.4)':
     dependencies:
@@ -49223,6 +49190,23 @@ snapshots:
       - '@date-fns/tz'
       - '@types/react'
       - date-fns
+
+  '@rozenite/storage-plugin@2.4.0(ccb21a71ee444b1d3c4d424b1c06f198)':
+    dependencies:
+      '@rozenite/agent-bridge': 2.4.0(react@19.1.4)
+      '@rozenite/agent-shared': 2.4.0
+      '@rozenite/plugin-bridge': 2.4.0(react@19.1.4)
+      '@rozenite/ui': 2.4.0(@types/react@19.0.14)(date-fns@2.30.0)(react@19.1.4)
+      react: 19.1.4
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+    optionalDependencies:
+      '@react-native-async-storage/async-storage': 2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))
+      react-native-mmkv: 4.3.2(react-native-nitro-modules@0.35.9(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+    transitivePeerDependencies:
+      - '@date-fns/tz'
+      - '@types/react'
+      - date-fns
+      - react-dom
 
   '@rozenite/tools@2.4.0': {}
 
