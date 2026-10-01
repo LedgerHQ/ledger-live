@@ -191,6 +191,9 @@ function isHermesNonCompatibleDependency(resourcePath) {
   return hermesNonCompatibleDependencies.some(pkgName => normalizedPath.includes(pkgName));
 }
 
+// Rozenite's network plugin reassigns this module's `fetch` export, which rspack exposes as a read-only getter when it stays ESM
+const expoFetchModule = /[\\/]expo[\\/]src[\\/]winter[\\/]fetch[\\/]fetch\.ts$/;
+
 export default withRozeniteUrlFix(
   withRozenite(
     Repack.defineRspackConfig(env => {
@@ -272,10 +275,23 @@ export default withRozeniteUrlFix(
               },
               resolve: { fullySpecified: false },
             },
+            {
+              test: expoFetchModule,
+              type: "javascript/auto",
+              use: {
+                loader: "babel-loader",
+                options: {
+                  configFile: path.resolve(__dirname, "./babel.config.js"),
+                  babelrc: false,
+                  caller: { supportsStaticESM: false },
+                },
+              },
+              resolve: { fullySpecified: false },
+            },
             // Default rule for all other files (exclude Polkadot packages)
             {
               test: /\.[cm]?[jt]sx?$/,
-              exclude: isHermesNonCompatibleDependency,
+              exclude: [isHermesNonCompatibleDependency, expoFetchModule],
               type: "javascript/auto",
               use: {
                 loader: "@callstack/repack/babel-swc-loader",
