@@ -5,7 +5,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import useRatings from "~/logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`

@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useSelector } from "~/context/hooks";
-import { getIsTracking } from "~/analytics";
+import { getIsTracking } from "~/analytics/segment";
 import { State } from "~/reducers/types";
 
 const trackingSelector = (state: State) => getIsTracking(state);

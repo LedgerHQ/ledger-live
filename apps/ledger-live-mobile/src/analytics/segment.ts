@@ -714,8 +714,6 @@ const wrapSegmentClientFlush = (client: SegmentClient) => {
   };
 };
 
-type EventType = (string & {}) | "button_clicked" | "error_message";
-
 export function getIsTracking(
   state: State | null | undefined,
   mandatory?: boolean | null | undefined,
@@ -736,17 +734,6 @@ export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   const routeName = getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
   return snakeCase(routeName);
 };
-export const trackWithRoute = (
-  event: EventType,
-  route: RouteProp<ParamListBase>,
-  properties?: Record<string, unknown> | null,
-  mandatory?: boolean | null,
-) => {
-  const page = getPageNameFromRoute(route);
-  const newProperties = properties ? { page, ...properties } : { page };
-  sharedTrack(event, newProperties, { mandatory: !!mandatory });
-};
-
 export const usePageNameFromRoute = () => {
   const route = useRoute();
   return getPageNameFromRoute(route);

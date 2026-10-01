@@ -7,7 +7,7 @@ import { render, screen, waitFor } from "@tests/test-renderer";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { resolveAnalyticsOptInParams } from "@features/flow-analytics-consent";
-import * as analytics from "~/analytics";
+import * as analytics from "~/analytics/segment";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AnalyticsPreferencesSettings from "../index";

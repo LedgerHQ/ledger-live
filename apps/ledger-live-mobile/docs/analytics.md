@@ -9,7 +9,7 @@ import { track, trackPage } from "@shared/analytics";
 import { Track, TrackScreen } from "@shared/analytics-react";
 ```
 
-`~/analytics` wires the React Native Segment client, consent, and identify. It does not re-export `track`, `trackPage`, `Track`, or `TrackScreen`.
+`~/analytics/segment` wires the React Native Segment client, consent, and identify. It does not re-export `track`, `trackPage`, `Track`, or `TrackScreen`.
 
 `AnalyticsContext` ([`src/analytics/AnalyticsContext.tsx`](../src/analytics/AnalyticsContext.tsx)) holds the current `source` and `screen` for the app. Read them with `useContext(AnalyticsContext)`.
 

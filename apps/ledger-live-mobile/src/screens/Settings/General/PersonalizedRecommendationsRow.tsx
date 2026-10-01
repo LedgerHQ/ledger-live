@@ -7,7 +7,7 @@ import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setPersonalizedRecommendations } from "~/actions/settings";
 import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 
 const PersonalizedRecommendationsRow = () => {
   const { t } = useTranslation();

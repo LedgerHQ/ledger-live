@@ -15,7 +15,7 @@ import {
   setPersonalizedRecommendations,
 } from "~/actions/settings";
 import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import { NavigatorName, ScreenName } from "~/const";
 import {
   RootNavigationComposite,

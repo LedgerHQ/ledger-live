@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { AuthorizationStatus, getMessaging } from "@react-native-firebase/messaging";
 import { notificationsPermissionStatusSelector } from "~/reducers/notifications";
 import { setNotificationPermissionStatus } from "~/actions/notifications";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 
 export const useNotificationsPermission = () => {
   const permissionStatus = useSelector(notificationsPermissionStatusSelector);

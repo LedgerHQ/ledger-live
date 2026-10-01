@@ -20,7 +20,7 @@ import { setLanguage, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import ChangeDeviceLanguageAction from "~/components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "~/components/ChangeDeviceLanguagePrompt";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";

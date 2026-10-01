@@ -6,7 +6,7 @@ import { usePasswordDraft } from "@features/platform-app-lock";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import { usePasswordSetup } from "../../hooks/usePasswordSetup";
 import type { PasswordAddFlowNavigatorProps } from "../../types";
 

@@ -5,7 +5,7 @@ import { render, screen } from "@tests/test-renderer";
 import { type NavigatorScreenParams } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
-import * as analytics from "~/analytics";
+import * as analytics from "~/analytics/segment";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {

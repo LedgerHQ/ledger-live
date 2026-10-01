@@ -10,7 +10,7 @@ import ModalBottomAction from "./ModalBottomAction";
 import { languageIsSetByUserSelector } from "~/reducers/settings";
 import { setLanguage } from "~/actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import Button from "./wrappedUi/Button";
 import { useSettings } from "~/hooks";
 

@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { track } from "@shared/analytics";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import React from "react";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import type { PasswordAddFlowParamList } from "~/components/RootNavigator/types/PasswordAddFlowNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { AppLockPasswordAddNavigator } from "../Navigator";

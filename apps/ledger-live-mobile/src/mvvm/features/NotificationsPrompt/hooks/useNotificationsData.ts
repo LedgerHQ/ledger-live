@@ -14,7 +14,7 @@ import { NotificationsSettings } from "~/reducers/types";
 import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
 import { buildOptOutUserData } from "../utils/buildOptOutUserData";
 import { type DataOfUser, type NotificationPromptTarget } from "../types";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import { updateUserPreferences } from "~/notifications/braze";
 import { useFeature } from "@features/platform-feature-flags";
 

@@ -6,7 +6,7 @@ import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setAnalytics } from "~/actions/settings";
 import { analyticsEnabledSelector } from "~/reducers/settings";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 
 const AnalyticsRow = () => {
   const { t } = useTranslation();

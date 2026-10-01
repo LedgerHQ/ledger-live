@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import subDays from "date-fns/subDays";
 import { NavigatorName, ScreenName } from "~/const";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import {
   ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
   ANALYTICS_CONSENT_DRAWER_FLOW,

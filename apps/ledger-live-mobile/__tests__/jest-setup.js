@@ -253,6 +253,7 @@ jest.mock("react-native-vision-camera", () => {
 jest.mock("~/analytics/segment", () => ({
   setAnalyticsFeatureFlagMethod: jest.fn(),
   usePageNameFromRoute: jest.fn(() => "portfolio_navigator"),
+  updateIdentify: jest.fn(),
 }));
 
 jest.mock("@shared/analytics", () => ({
@@ -355,11 +356,6 @@ jest.mock("LLM/components/Wallet40Background/useScrollOffset", () => {
     },
   };
 });
-
-jest.mock("~/analytics", () => ({
-  ...jest.requireActual("~/analytics"),
-  updateIdentify: jest.fn(),
-}));
 
 jest.mock("@react-native-firebase/messaging", () => ({
   AuthorizationStatus: {

@@ -18,7 +18,7 @@ import {
   setPersonalizedRecommendations,
 } from "~/actions/settings";
 import { ScreenName } from "~/const";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import { useAnalyticsConsentDecision } from "@features/flow-analytics-consent";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";

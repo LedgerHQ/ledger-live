@@ -7,7 +7,7 @@ import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { setOnboardingHasDevice } from "~/actions/settings";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";

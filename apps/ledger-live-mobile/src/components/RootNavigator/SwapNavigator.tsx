@@ -6,7 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import SwapHistory from "~/screens/Swap/History";
 
 import { useTheme } from "styled-components/native";
-import { usePageNameFromRoute } from "~/analytics";
+import { usePageNameFromRoute } from "~/analytics/segment";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";

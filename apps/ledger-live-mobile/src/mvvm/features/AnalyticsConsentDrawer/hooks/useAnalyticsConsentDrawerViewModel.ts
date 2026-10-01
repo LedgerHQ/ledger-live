@@ -15,7 +15,7 @@ import {
   setPersonalizedRecommendations,
 } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
-import { updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics/segment";
 import {
   resolveAnalyticsConsentPhase,
   useAnalyticsConsentDecision,

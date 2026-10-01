@@ -9,7 +9,7 @@ import type {
   SignTransactionIntent,
   SignTransactionIntentJobState,
 } from "@ledgerhq/live-common/intents/signTransactionIntent";
-import { usePageNameFromRoute } from "~/analytics";
+import { usePageNameFromRoute } from "~/analytics/segment";
 import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 
 const deviceConnectionParams = { acceptedDeviceModelIds: [] };

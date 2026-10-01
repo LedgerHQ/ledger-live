@@ -64,7 +64,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFundsReceived";
-import { updateIdentify } from "./analytics";
+import { updateIdentify } from "./analytics/segment";
 import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";

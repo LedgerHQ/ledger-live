@@ -6,7 +6,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useCallback } from "react";
-import { usePageNameFromRoute } from "~/analytics";
+import { usePageNameFromRoute } from "~/analytics/segment";
 import { NavigatorName, ScreenName } from "~/const";
 import { EvmStakingDrawerProvider } from "./EvmStakingDrawerProvider";
 import { ListProvider } from "./types";

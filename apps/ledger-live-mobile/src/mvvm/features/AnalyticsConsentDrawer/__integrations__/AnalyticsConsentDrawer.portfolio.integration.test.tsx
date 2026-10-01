@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
-import * as analytics from "~/analytics";
+import * as analytics from "~/analytics/segment";
 import { trackPage, track } from "@shared/analytics";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";

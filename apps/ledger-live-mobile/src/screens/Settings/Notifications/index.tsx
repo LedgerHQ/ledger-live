@@ -8,7 +8,7 @@ import { capitalize } from "lodash/fp";
 import { Box, Switch, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "~/components/SettingsRow";
-import { trackWithRoute, updateIdentify } from "~/analytics";
+import { updateIdentify, usePageNameFromRoute } from "~/analytics/segment";
 import { notificationsSelector, trackingEnabledSelector } from "~/reducers/settings";
 import { setNotifications } from "~/actions/settings";
 import type { State } from "~/reducers/types";
@@ -17,7 +17,6 @@ import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission
 import { updateUserPreferences } from "~/notifications/braze";
 import { useFeature } from "@features/platform-feature-flags";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { useRoute } from "@react-navigation/core";
 
 const notificationsMapping: Record<keyof State["settings"]["notifications"], string> = {
   areNotificationsAllowed: "allowed",
@@ -127,14 +126,15 @@ function NotificationsSettings() {
   }, [featureBrazePushNotifications?.params?.notificationsCategories]);
 
   const featureTransactionsAlerts = useFeature("transactionsAlerts");
-  const route = useRoute();
+  const page = usePageNameFromRoute();
 
   const allowPushNotifications = useCallback(() => {
-    trackWithRoute("button_clicked", route, {
+    track("button_clicked", {
+      page,
       button: "Go to system settings",
     });
     requestPushNotificationsPermission();
-  }, [requestPushNotificationsPermission, route]);
+  }, [requestPushNotificationsPermission, page]);
 
   const isOsPermissionAuthorized = permissionStatus === AuthorizationStatus.AUTHORIZED;
 

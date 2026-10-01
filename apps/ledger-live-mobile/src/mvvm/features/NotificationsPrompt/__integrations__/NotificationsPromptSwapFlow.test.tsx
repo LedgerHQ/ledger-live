@@ -23,7 +23,7 @@ import { closeSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStat
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
 import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
-jest.mock("~/analytics", () => ({ updateIdentify: jest.fn() }));
+jest.mock("~/analytics/segment", () => ({ updateIdentify: jest.fn() }));
 
 // Exception: this test only needs native beforeRemove behavior; real SwapLiveAppWallet40
 // would boot the webview and require unrelated manifest/webview setup.
