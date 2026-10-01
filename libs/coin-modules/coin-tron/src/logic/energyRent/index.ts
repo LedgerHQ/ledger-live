@@ -182,12 +182,13 @@ async function assertSignableTransferMatchesRequest(
   }
 
   // The recipient inside `data` isn't validated (no trusted Tronify address to bind to), and the
-  // amount is capped only by the provider's own quote. The on-chain energy gate (ADR-058 C4) keeps
+  // amount is pinned only to the provider's own quote. The on-chain energy gate (ADR-058 C4) keeps
   // TX-C from following a payment that delivered nothing; it does not bound what TX-A pays.
 
-  // Binds the signed amount to the order; rounds up so a sub-unit quote isn't rejected.
+  // Binds the signed amount to the order, which is what the UI shows and reserves. A sub-unit quote
+  // may be paid rounded either way.
   const approved = payAssetBaseUnits(order.payCoinAmt);
-  if (!approved.isFinite()) {
+  if (!approved.isFinite() || !approved.isGreaterThan(0)) {
     throw new TronifyApiError(
       `Cannot verify energy-rent payment amount: approved "${order.payCoinAmt}"`,
     );
@@ -195,6 +196,14 @@ async function assertSignableTransferMatchesRequest(
   if (transfer.amount.isGreaterThan(approved)) {
     throw new TronifyApiError(
       `Energy-rent payment moves ${transfer.amount.toFixed()} USDT base units, above the approved ${approved.toFixed()}`,
+    );
+  }
+  const approvedFloor = new BigNumber(order.payCoinAmt)
+    .shiftedBy(TRONIFY_PAY_ASSET.unit.magnitude)
+    .integerValue(BigNumber.ROUND_FLOOR);
+  if (!transfer.amount.isGreaterThan(0) || transfer.amount.isLessThan(approvedFloor)) {
+    throw new TronifyApiError(
+      `Energy-rent payment moves ${transfer.amount.toFixed()} USDT base units, below the approved ${approvedFloor.toFixed()}`,
     );
   }
 

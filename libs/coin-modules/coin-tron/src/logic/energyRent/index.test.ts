@@ -108,6 +108,8 @@ const TRON_ADDRESS_WORD = "0".repeat(22) + RECIPIENT_HEX;
 const EVM_ADDRESS_WORD = "0".repeat(24) + RECIPIENT_HEX.slice(2);
 const transferData = (amount: number, addressWord = TRON_ADDRESS_WORD) =>
   "a9059cbb" + addressWord + amount.toString(16).padStart(64, "0");
+// What the default `orderCosting("1.0")` order charges, in USDT base units.
+const ONE_USDT = 1_000_000;
 
 const decodedTrc20Payment = ({
   type = "TriggerSmartContract",
@@ -134,7 +136,7 @@ const decodedTrc20Payment = ({
       value: {
         owner_address: decode58Check(request.payerAddress),
         contract_address: USDT_CONTRACT_HEX,
-        data: transferData(100),
+        data: transferData(ONE_USDT),
         ...value,
       },
     },
@@ -312,6 +314,9 @@ describe("energyRent provider switch", () => {
         purchaseBandwidthFee: "0",
         activeAccountFee: "0",
       });
+      mockedDecodeTransaction.mockResolvedValueOnce(
+        decodedTrc20Payment({ data: transferData(3_120_000) }),
+      );
 
       const order = await craftEnergyRentTransaction(mockLogger, config, request);
 
@@ -341,6 +346,9 @@ describe("energyRent provider switch", () => {
 
     it("accepts an order at or under the approved ceiling", async () => {
       mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("12.50"));
+      mockedDecodeTransaction.mockResolvedValueOnce(
+        decodedTrc20Payment({ data: transferData(12_500_000) }),
+      );
 
       const order = await craftEnergyRentTransaction(mockLogger, config, {
         ...request,
@@ -475,10 +483,13 @@ describe("energyRent provider switch", () => {
         ).resolves.toMatchObject({ orderId: "order-1" });
       });
 
-      it("accepts a sub-unit quote paid as the next whole base unit", async () => {
+      it.each([
+        ["the next whole base unit", 3_124_528],
+        ["the whole base unit below", 3_124_527],
+      ])("accepts a sub-unit quote paid as %s", async (_label, paid) => {
         mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("3.1245271"));
         mockedDecodeTransaction.mockResolvedValueOnce(
-          decodedTrc20Payment({ data: transferData(3_124_528) }),
+          decodedTrc20Payment({ data: transferData(paid) }),
         );
 
         await expect(
@@ -486,6 +497,28 @@ describe("energyRent provider switch", () => {
         ).resolves.toMatchObject({
           orderId: "order-1",
         });
+      });
+
+      it("rejects a sub-unit quote paid two base units short", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("3.1245271"));
+        mockedDecodeTransaction.mockResolvedValueOnce(
+          decodedTrc20Payment({ data: transferData(3_124_526) }),
+        );
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, request),
+        ).rejects.toBeInstanceOf(TronifyApiError);
+      });
+
+      it("rejects an order that charges nothing, even when the payment matches it", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("0"));
+        mockedDecodeTransaction.mockResolvedValueOnce(
+          decodedTrc20Payment({ data: transferData(0) }),
+        );
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, request),
+        ).rejects.toBeInstanceOf(TronifyApiError);
       });
 
       it("accepts a real protobuf-encoded USDT payment", async () => {
@@ -536,16 +569,16 @@ describe("energyRent provider switch", () => {
         ["a TRC-10 token_id", decodedTrc20Payment({ token_id: 1_002_000 })],
         [
           "an approve() selector",
-          decodedTrc20Payment({ data: "095ea7b3" + transferData(100).slice(8) }),
+          decodedTrc20Payment({ data: "095ea7b3" + transferData(ONE_USDT).slice(8) }),
         ],
         [
           "trailing bytes after the amount word",
-          decodedTrc20Payment({ data: transferData(100) + "00" }),
+          decodedTrc20Payment({ data: transferData(ONE_USDT) + "00" }),
         ],
         [
           "non-zero address padding",
           decodedTrc20Payment({
-            data: "a9059cbb" + "01" + TRON_ADDRESS_WORD.slice(2) + transferData(100).slice(72),
+            data: "a9059cbb" + "01" + TRON_ADDRESS_WORD.slice(2) + transferData(ONE_USDT).slice(72),
           }),
         ],
         [
@@ -556,15 +589,20 @@ describe("energyRent provider switch", () => {
               "0".repeat(22) +
               "42" +
               RECIPIENT_HEX.slice(2) +
-              transferData(100).slice(72),
+              transferData(ONE_USDT).slice(72),
           }),
         ],
         ["no call data", decodedTrc20Payment({ data: "" })],
         ["a fee_limit above the 100 TRX bound", decodedTrc20Payment({ fee_limit: 100_000_001 })],
         [
           "an amount above the approved order",
-          decodedTrc20Payment({ data: transferData(1_000_001) }),
+          decodedTrc20Payment({ data: transferData(ONE_USDT + 1) }),
         ],
+        [
+          "an amount below the approved order",
+          decodedTrc20Payment({ data: transferData(ONE_USDT - 1) }),
+        ],
+        ["a zero amount", decodedTrc20Payment({ data: transferData(0) })],
         [
           "an expiration a day out, long enough to be held past a retry",
           decodedTrc20Payment({ expiration: Date.now() + 24 * 60 * 60_000 }),
