@@ -68,6 +68,15 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
+      - name: Install other platforms' optional deps (wallet-cli cross-compilation)
+        run: |
+          cat >> pnpm-workspace.yaml <<'YAML'
+
+          supportedArchitectures:
+            os: [current, darwin, linux, win32]
+            cpu: [current, x64, arm64]
+          YAML
+
       - name: Install dependencies
         run: pnpm i --frozen-lockfile --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
 

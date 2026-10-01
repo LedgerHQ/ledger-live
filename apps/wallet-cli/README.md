@@ -101,6 +101,8 @@ pnpm start -- <command> [args]
 - In `apps/wallet-cli`: `pnpm build` (Bunli native bundle → `dist/`)
 - From repo root: `pnpm build:wallet-cli`
 
+`pnpm build` compiles all release targets, so it needs the OpenTUI runtime packages of every platform. CI adds `supportedArchitectures` to `pnpm-workspace.yaml` before installing; locally, build for your own platform only with `pnpm exec bunli build --targets native`.
+
 ## Tests
 
 `pnpm test` in `apps/wallet-cli`. Tests sit next to the code they validate; the naming convention and the shared helpers are described in [`src/testing/README.md`](src/testing/README.md).

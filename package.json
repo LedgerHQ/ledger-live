@@ -231,19 +231,6 @@
     "zx": "8.8.5"
   },
   "pnpm": {
-    "supportedArchitectures": {
-      "os": [
-        "current",
-        "darwin",
-        "linux",
-        "win32"
-      ],
-      "cpu": [
-        "current",
-        "x64",
-        "arm64"
-      ]
-    },
     "overrides": {
       "react": "catalog:",
       "react-dom": "catalog:",
