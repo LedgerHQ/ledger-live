@@ -9,7 +9,6 @@ import { useRecipientScreenContentViewModel } from "../useRecipientScreenContent
 import { useSettleRecipientInputFocus } from "../useSettleRecipientInputFocus";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
-jest.mock("~/analytics");
 jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../../../../components/Memo/hooks/useMemoViewModel");
 jest.mock("../useRecipientScreenView");

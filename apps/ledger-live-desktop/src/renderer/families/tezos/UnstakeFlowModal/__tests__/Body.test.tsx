@@ -33,7 +33,6 @@ jest.mock("~/renderer/logger", () => {
     networkError: jest.fn(),
     networkDown: jest.fn(),
     analyticsStart: jest.fn(),
-    analyticsStop: jest.fn(),
     analyticsTrack: jest.fn(),
     debug: jest.fn(),
     info: jest.fn(),
