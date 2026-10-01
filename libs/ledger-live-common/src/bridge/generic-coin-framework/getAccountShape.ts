@@ -711,6 +711,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       newOps = await delegateNewOps();
     }
 
+    if (bridgeApi.adaptOperations) {
+      newOps = bridgeApi.adaptOperations(address, newOps) as OperationCommon[];
+    }
+
     const newAssetOperations = newOps.filter(
       operation =>
         operation?.extra?.assetReference &&
