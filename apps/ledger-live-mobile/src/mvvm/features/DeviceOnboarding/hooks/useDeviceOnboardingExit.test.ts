@@ -18,11 +18,19 @@ import { OnboardingType } from "~/reducers/types";
 const mockDispatch = jest.fn();
 const mockNavigationDispatch = jest.fn();
 const mockReset = jest.fn();
-const mockRootNavigation = {
+type ParentNavigation = {
+  reset: jest.Mock;
+  getParent: () => ParentNavigation | undefined;
+};
+
+const mockRootNavigation: ParentNavigation = {
   reset: mockReset,
   getParent: () => undefined,
 };
-const mockNavigation = {
+const mockNavigation: {
+  dispatch: jest.Mock;
+  getParent: () => ParentNavigation;
+} = {
   dispatch: mockNavigationDispatch,
   getParent: () => mockRootNavigation,
 };
@@ -300,13 +308,14 @@ describe("useDeviceOnboardingExit", () => {
       sessionId: "session-id",
       device: { id: "device-id", modelId: DMKDeviceModelId.STAX },
     } as DeviceOnboardingOutput;
-    const { rerender } = renderHook(
-      (props: { device: Device }) => useDeviceOnboardingExit({ device: props.device, output }),
-      { initialProps: { device } },
+    const props = { device, output };
+    const { rerender } = renderHook(() =>
+      useDeviceOnboardingExit({ device: props.device, output: props.output }),
     );
 
     await waitFor(() => expect(mockReset).toHaveBeenCalledTimes(1));
-    rerender({ device: { ...device, deviceName: "Ledger Flex" } });
+    props.device = { ...device, deviceName: "Ledger Flex" };
+    rerender(undefined);
     expect(mockReset).toHaveBeenCalledTimes(1);
   });
 });
@@ -321,9 +330,16 @@ function renderExit(reason: DeviceOnboardingOutput["reason"], connectedDevice: D
     },
   } as DeviceOnboardingOutput;
 
-  return renderHook(
-    (props: { device: Device; output: DeviceOnboardingOutput }) =>
-      useDeviceOnboardingExit({ device: props.device, output: props.output }),
-    { initialProps: { device: connectedDevice, output } },
+  const props = { device: connectedDevice, output };
+  const rendered = renderHook(() =>
+    useDeviceOnboardingExit({ device: props.device, output: props.output }),
   );
+
+  return {
+    ...rendered,
+    rerender: (next: { device: Device }) => {
+      props.device = next.device;
+      rendered.rerender(undefined);
+    },
+  };
 }

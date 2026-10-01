@@ -27,7 +27,7 @@ export function useFirmwareUpdateHandover({
   send,
 }: UseFirmwareUpdateHandoverInput) {
   const navigation = useNavigation<BaseNavigation>();
-  const baseNavigation = navigation.getParent(BASE_NAVIGATOR_ID) ?? navigation;
+  const baseNavigation = navigation.getParent<BaseNavigation>(BASE_NAVIGATOR_ID) ?? navigation;
   const delegated = machineState === delegatedState;
   const pushedRef = useRef(false);
   const awaitingReturnRef = useRef(false);

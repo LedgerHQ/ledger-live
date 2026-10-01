@@ -1,3 +1,4 @@
+import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
@@ -10,7 +11,7 @@ const mockGoBack = jest.fn();
 const mockCurrentPush = jest.fn();
 let mockFocusCallback: (() => void) | null = null;
 
-const mockGetParent = jest.fn(() => ({
+const mockGetParent = jest.fn((_id?: string) => ({
   push: mockPush,
   goBack: mockGoBack,
 }));
@@ -171,16 +172,23 @@ describe("useFirmwareUpdateHandover", () => {
 
 const delegated = "checks.firmwareUpdateDelegated";
 
-function renderDelegated(send: (event: { type: "FIRMWARE_UPDATE_FLOW_CLOSED" }) => void) {
-  return renderHook(
-    (props: { machineState: string }) =>
-      useFirmwareUpdateHandover({
-        device,
-        machineState: props.machineState,
-        send,
-      }),
-    { initialProps: { machineState: delegated } },
+function renderDelegated(send: (event: OnboardingEvent) => void) {
+  const props = { machineState: delegated };
+  const rendered = renderHook(() =>
+    useFirmwareUpdateHandover({
+      device,
+      machineState: props.machineState,
+      send,
+    }),
   );
+
+  return {
+    ...rendered,
+    rerender: ({ machineState }: { machineState: string }) => {
+      props.machineState = machineState;
+      rendered.rerender(undefined);
+    },
+  };
 }
 
 function reportFirmware(

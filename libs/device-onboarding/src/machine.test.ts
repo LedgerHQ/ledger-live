@@ -873,21 +873,18 @@ describe("global handlers", () => {
     expectChecksPassed(actor);
   });
 
-  it.each([
-    "checksIdle",
-    "genuineFailed",
-    "firmwareUpdateOffered",
-    "waiting",
-    "deviceLocked",
-  ])("leaves the flow on the onboarding cross from %s", async state => {
-    const { actor } = await start(scriptReaching(state));
+  it.each(["checksIdle", "genuineFailed", "firmwareUpdateOffered", "waiting", "deviceLocked"])(
+    "leaves the flow on the onboarding cross from %s",
+    async state => {
+      const { actor } = await start(scriptReaching(state));
 
-    await reach(actor, state);
-    actor.send({ type: "QUIT" });
-    await settle();
+      await reach(actor, state);
+      actor.send({ type: "QUIT" });
+      await settle();
 
-    expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
-  });
+      expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
+    },
+  );
 
   it("hands the device over rather than ending it", async () => {
     const { actor } = await start({ osVersion: [os(unseeded)], ...passingChecks });
