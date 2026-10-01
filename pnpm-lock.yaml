@@ -2486,6 +2486,9 @@ importers:
       '@babel/core':
         specifier: 7.28.5
         version: 7.28.5
+      '@babel/plugin-syntax-typescript':
+        specifier: 7.27.1
+        version: 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-arrow-functions':
         specifier: 7.27.1
         version: 7.27.1(@babel/core@7.28.5)
@@ -2675,6 +2678,9 @@ importers:
       babel-jest:
         specifier: 'catalog:'
         version: 30.5.0(@babel/core@7.28.5)
+      babel-loader:
+        specifier: 9.2.1
+        version: 9.2.1(@babel/core@7.28.5)
       babel-plugin-transform-inline-environment-variables:
         specifier: 0.4.4
         version: 0.4.4
