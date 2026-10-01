@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useLayoutEffect } from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -9,7 +10,6 @@ import styled, { useTheme } from "styled-components/native";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
-import { TrackScreen } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";

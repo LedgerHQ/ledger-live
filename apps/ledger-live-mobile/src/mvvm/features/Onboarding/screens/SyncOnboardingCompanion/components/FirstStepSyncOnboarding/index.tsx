@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated from "react-native-reanimated";
 import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
 import { FirstStepCompanionStepKey } from "../../types";
 import CollapsibleStep from "../CollapsibleStep";
 import { useFirstStepSyncOnboardingViewModel } from "./useFirstStepSyncOnboardingViewModel";

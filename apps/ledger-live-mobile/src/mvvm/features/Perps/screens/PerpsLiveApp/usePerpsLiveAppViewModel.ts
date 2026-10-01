@@ -1,3 +1,4 @@
+import { getCurrentTrackingPage } from "@shared/analytics";
 import { useCallback, useMemo, useRef, useState, type RefObject } from "react";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
@@ -24,7 +25,6 @@ import {
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 import { usePerpsLiveConfig } from "LLM/features/Perps/hooks/usePerpsLiveConfig";
 
 export type PerpsWebviewInputs = {

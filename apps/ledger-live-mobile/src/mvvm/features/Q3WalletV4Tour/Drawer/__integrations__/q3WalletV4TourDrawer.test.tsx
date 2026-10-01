@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { Button } from "react-native";
 import { fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { useQ3WalletV4TourDrawerViewModel } from "../hooks/useQ3WalletV4TourDrawerViewModel";
 import { Q3WalletV4TourDrawer } from "../index";
 

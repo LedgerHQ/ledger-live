@@ -22,8 +22,6 @@ jest.mock("~/context/Locale", () => {
   };
 });
 
-jest.mock("~/analytics", () => ({ TrackScreen: () => null }));
-
 jest.mock("~/components/Alert", () => () => null);
 
 jest.mock("~/components/wrappedUi/Button", () => {

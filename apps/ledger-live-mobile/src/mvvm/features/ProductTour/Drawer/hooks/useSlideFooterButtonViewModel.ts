@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useSlidesContext } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import {
   PAGE_TRACKING_PRODUCT_TOUR,
   PRODUCT_TOUR_SLIDES,

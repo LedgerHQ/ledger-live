@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
@@ -13,7 +14,6 @@ import type { SendFlowNavigationProp } from "../../../types";
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
-import { screen, track } from "~/analytics";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 
 type AmountScreenViewModelBase = Readonly<{
@@ -62,7 +62,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   );
 
   useEffect(() => {
-    void screen("Modal send - step amount", undefined, trackingProperties);
+    void trackPage({ category: "Modal send - step amount", props: trackingProperties });
   }, [trackingProperties]);
   const { displayMode: inputMode } = useSendAmountDisplayMode();
 

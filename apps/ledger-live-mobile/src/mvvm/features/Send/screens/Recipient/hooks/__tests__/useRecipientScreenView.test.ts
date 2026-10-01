@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { Keyboard } from "react-native";
 import { useRecipientScreenView } from "../useRecipientScreenView";
@@ -19,7 +20,6 @@ import { createMockAccount, createMockCurrency } from "./accounts";
 import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
 import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { useContactsFeatureIntroductionViewModel } from "../useContactsFeatureIntroductionViewModel";
-import { screen as trackScreen, track } from "~/analytics";
 import { useDoNotAskAgainSkipMemo } from "../../../../hooks/useDoNotAskAgainSkipMemo";
 import { useSendMemoReset } from "../../../../context/SendMemoResetContext";
 
@@ -49,10 +49,6 @@ jest.mock("LLM/features/Contacts/hooks/useOutgoingContactOperations", () => ({
 jest.mock("../../../../context/RecipientContactSelectionContext");
 jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../useContactsFeatureIntroductionViewModel");
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
-  screen: jest.fn(),
-}));
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
@@ -66,7 +62,7 @@ const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
 const mockedUseContactsFeatureIntroductionViewModel = jest.mocked(
   useContactsFeatureIntroductionViewModel,
 );
-const mockedTrackScreen = jest.mocked(trackScreen);
+const mockedTrackScreen = jest.mocked(trackPage);
 const mockedTrack = jest.mocked(track);
 const setRecipientResolution = jest.fn();
 const resetRecipientResolution = jest.fn();
@@ -232,19 +228,18 @@ describe("useRecipientScreenView", () => {
       }),
     );
 
-    expect(mockedTrackScreen).toHaveBeenCalledWith(
-      "Modal send - recipient result",
-      undefined,
-      expect.objectContaining({
+    expect(mockedTrackScreen).toHaveBeenCalledWith({
+      category: "Modal send - recipient result",
+      props: expect.objectContaining({
         queryType: "address",
         resultType: "unknown address",
         inputMethod: "manual",
         queryLength: 5,
         addressAlreadyUsed: false,
       }),
-    );
+    });
     expect(setRecipientResolution).toHaveBeenCalledWith("unknown address", "external address");
-    expect(mockedTrackScreen.mock.calls[0]?.[2]).not.toHaveProperty("query");
+    expect(mockedTrackScreen.mock.calls[0]?.[0]?.props).not.toHaveProperty("query");
   });
 
   it("clears the tracked recipient resolution when the search input becomes empty", () => {
@@ -531,11 +526,10 @@ describe("useRecipientScreenView", () => {
         addressCount: 2,
       }),
     );
-    expect(mockedTrackScreen).toHaveBeenCalledWith(
-      "Modal send - select contact address",
-      undefined,
-      expect.objectContaining({ addressCount: 2 }),
-    );
+    expect(mockedTrackScreen).toHaveBeenCalledWith({
+      category: "Modal send - select contact address",
+      props: expect.objectContaining({ addressCount: 2 }),
+    });
     expect(result.current.contactAddressPicker.contact).toBe(contact);
     expect(onAddressSelected).not.toHaveBeenCalled();
   });

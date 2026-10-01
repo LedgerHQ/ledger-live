@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { rejectWithError } from "LLM/utils/rejectWithError";
 import type { Storage, StorageInitializer, StorageState } from "./types";
 import asyncStorageWrapper from "./asyncStorageWrapper";
@@ -10,7 +11,6 @@ import {
   ROLLBACK_STATUS,
   ROLLBACK_STATUS_KEY,
 } from "./utils/migrations/constants";
-import { track } from "~/analytics";
 import type { Features } from "@shared/feature-flags";
 import { trackStorageOperation } from "./utils/performance";
 

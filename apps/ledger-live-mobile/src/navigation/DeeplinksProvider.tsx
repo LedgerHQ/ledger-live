@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useMemo, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { Linking, View, StyleSheet } from "react-native";
@@ -21,7 +22,6 @@ import { PAY_TAB_DEEP_LINK_PATH } from "./deeplinks/payTabDeepLink";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
 import { lightTheme, darkTheme, Theme } from "../colors";
-import { track } from "~/analytics";
 import {
   makeSetEarnInfoModalAction,
   makeSetEarnMenuModalAction,

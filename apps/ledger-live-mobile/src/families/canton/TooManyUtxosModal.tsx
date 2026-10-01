@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "~/context/Locale";
@@ -11,7 +12,6 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import LText from "~/components/LText";
 import Button from "~/components/Button";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
-import TrackScreen from "~/analytics/TrackScreen";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { ScreenName, NavigatorName } from "~/const";

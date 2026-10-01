@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@testing-library/react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "~/analytics";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { usePostOnboardingHubStepperDisplay } from "../usePostOnboardingHubStepperDisplay";
 import { usePostOnboardingCompletionTracking } from "../usePostOnboardingCompletionTracking";

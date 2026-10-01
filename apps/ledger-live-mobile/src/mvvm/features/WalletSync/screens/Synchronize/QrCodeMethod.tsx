@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useEffect, useRef } from "react";
 import { DrawerTabSelector, Flex } from "@ledgerhq/native-ui";
 import QrCode from "LLM/features/WalletSync/components/Synchronize/QrCode";
@@ -9,7 +10,6 @@ import {
   AnalyticsPage,
   AnalyticsButton,
 } from "../../hooks/useLedgerSyncAnalytics";
-import { TrackScreen } from "~/analytics";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 
 interface Props {

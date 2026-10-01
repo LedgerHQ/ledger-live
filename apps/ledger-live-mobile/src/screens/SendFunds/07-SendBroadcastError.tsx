@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { CompositeScreenProps } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
@@ -9,7 +11,6 @@ import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../const/navigation";
 import Collapsible from "LLM/components/Collapsible";
 import CopyButton from "LLM/components/CopyButton";
-import { track, TrackScreen } from "~/analytics";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

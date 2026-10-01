@@ -1,9 +1,9 @@
+import { Track } from "@shared/analytics-react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { makeSetEarnProtocolInfoModalAction } from "~/actions/earn";
-import { Track } from "~/analytics";
 import { rgba } from "~/colors";
 import Circle from "~/components/Circle";
 import QueuedDrawer from "~/components/QueuedDrawer";

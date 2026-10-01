@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useRef, useState } from "react";
 import { Box, Flex, IconsLegacy, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
@@ -15,7 +16,6 @@ import BottomContainer from "~/components/CustomImage/BottomButtonsContainer";
 import Touchable from "~/components/Touchable";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
-import { TrackScreen } from "~/analytics";
 import { LayoutChangeEvent } from "react-native";
 
 type NavigationProps = BaseComposite<

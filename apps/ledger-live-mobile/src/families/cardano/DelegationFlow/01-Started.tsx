@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "~/context/Locale";
@@ -12,7 +13,6 @@ import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import { urls } from "~/utils/urls";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import SafeAreaView from "~/components/SafeAreaView";
 import { CardanoDelegationFlowParamList } from "./types";

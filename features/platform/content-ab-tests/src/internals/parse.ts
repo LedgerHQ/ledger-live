@@ -1,4 +1,4 @@
-import type { RemoteConfigValue } from "@features/platform-feature-flags/firebase";
+import type { RemoteConfigValue } from "@features/platform-feature-flags-firebase";
 import { EnabledContentAbTestCopySchema } from "./schema";
 
 const FIREBASE_COPY_PREFIX = "feature_copy_";

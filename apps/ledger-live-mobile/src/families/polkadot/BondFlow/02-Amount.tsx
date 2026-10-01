@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { BigNumber } from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -22,7 +23,6 @@ import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { urls } from "~/utils/urls";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Button from "~/components/Button";

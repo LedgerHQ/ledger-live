@@ -12,7 +12,7 @@ import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/c
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { test } from "tests/fixtures/common";
 import {
-  FF_LWD_CONTACTS,
+  FF_LWD_CONTACTS_ENABLED,
   FF_LWD_PAY_TAB,
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
@@ -22,6 +22,8 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 const ALL_STABLECOINS = "All stablecoins";
 const FILTER_TICKER = "USDT";
 const REQUEST_TITLE = "Request Tether USD";
+const FREEZE = "Freeze";
+const UNFREEZE = "Unfreeze";
 
 const CONTACT_ID = "e2e-pay-contact";
 const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
@@ -62,7 +64,7 @@ test.describe("Pay tab", () => {
     },
     featureFlags: {
       ...FF_LWD_PAY_TAB,
-      ...FF_LWD_CONTACTS,
+      ...FF_LWD_CONTACTS_ENABLED,
       ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
       newSendFlow: {
         enabled: true,
@@ -194,6 +196,36 @@ test.describe("Pay tab", () => {
       await app.payTab.expectPaySuccess(CONTACT_NAME);
       await app.payTab.closePaySuccess();
       await app.payTab.expectScreenVisible();
+    },
+  );
+
+  test(
+    "Freeze and unfreeze the card",
+    {
+      tag: [...DEVICE_TAGS],
+      annotation: { type: "TMS", description: "B2CQA-6329" },
+    },
+    async ({ app }) => {
+      await app.mainNavigation.openTargetFromMainNavigation("pay");
+      await app.payTab.expectScreenVisible();
+      await app.payTab.expectCardPanel();
+      await app.payTab.expectCashbackRow();
+      await app.payTab.expectFreezeTile(FREEZE);
+      await app.payTab.openFreezeConfirmation();
+      await app.payTab.confirmFreeze();
+      await app.payTab.expectCardFrozen();
+      await app.payTab.expectFreezeTile(UNFREEZE);
+
+      await app.mainNavigation.openTargetFromMainNavigation("home");
+      await app.mainNavigation.openTargetFromMainNavigation("pay");
+      await app.payTab.expectScreenVisible();
+      await app.payTab.expectCardFrozen();
+      await app.payTab.expectFreezeTile(UNFREEZE);
+
+      await app.payTab.openFreezeConfirmation();
+      await app.payTab.confirmFreeze();
+      await app.payTab.expectCardNotFrozen();
+      await app.payTab.expectFreezeTile(FREEZE);
     },
   );
 });

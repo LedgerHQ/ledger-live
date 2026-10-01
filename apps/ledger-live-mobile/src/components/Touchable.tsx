@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import React, { Component } from "react";
 import { GestureResponderEvent, Pressable, PressableProps } from "react-native";
-import { track } from "~/analytics";
 
 const defaultHitSlop = {
   // default & can be overridden by rest

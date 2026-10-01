@@ -54,7 +54,7 @@ export function useAmountInput({
   }, [transaction.amount, transaction.useAllAmount, status.amount]);
 
   const { fiatAmount, calculateCryptoAmount } = useSendAmount({
-    account,
+    cryptoCurrency: accountCurrency,
     fiatCurrency: counterValueCurrency,
     cryptoAmount,
   });

@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import BaseStepperView, { QuizzFinal, Metadata } from "./steps/setupDevice/scenes";
-import { TrackScreen } from "~/analytics";
 import quizProSuccessLight from "~/images/illustration/Light/_065.webp";
 import quizProFailLight from "~/images/illustration/Light/_063.webp";
 import quizProSuccessDark from "~/images/illustration/Dark/_065.webp";

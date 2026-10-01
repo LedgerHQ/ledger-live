@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-import * as segment from "./segment";
+import * as analytics from "@shared/analytics";
 import {
   trackRingInitStarted,
   trackRingInitCompleted,
@@ -11,12 +11,12 @@ import {
   trackRingDestroyCancelled,
 } from "./ring-analytics";
 
-// Spy on the real `track` export rather than mock.module("./segment"): mock.module is
-// global and persists across test files, so mocking the segment module here would replace the real
+// Spy on the real `track` export rather than the mocked analytics module: mock.module is
+// global and persists across test files, so mocking the analytics module here would replace the real
 // `track` used by segment.test.ts. A spyOn is restored in afterEach and stays local to this file.
 type TrackCall = [event: string, properties?: Record<string, unknown> | null];
 
-let trackSpy: ReturnType<typeof spyOn<typeof segment, "track">>;
+let trackSpy: ReturnType<typeof spyOn<typeof analytics, "track">>;
 const calls = (): TrackCall[] => trackSpy.mock.calls as TrackCall[];
 
 // Values that must never leak into any ring analytics payload.
@@ -39,7 +39,7 @@ function assertNoPii(properties: Record<string, unknown> | null | undefined): vo
 
 describe("ring analytics", () => {
   beforeEach(() => {
-    trackSpy = spyOn(segment, "track").mockImplementation(() => {});
+    trackSpy = spyOn(analytics, "track").mockImplementation(() => Promise.resolve());
   });
 
   afterEach(() => {

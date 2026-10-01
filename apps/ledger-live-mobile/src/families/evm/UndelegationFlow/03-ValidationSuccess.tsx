@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
 import { Trans } from "~/context/Locale";

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { Image } from "react-native";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { isEqual } from "lodash/fp";
@@ -54,7 +55,6 @@ import {
   UpdateStep,
   useUpdateFirmwareAndRestoreSettings,
 } from "./useUpdateFirmwareAndRestoreSettings";
-import { TrackScreen } from "~/analytics";
 import ImageHexProcessor from "~/components/CustomImage/dithering/ImageFromDeviceProcessor";
 import {
   getScreenDataDimensions,

@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useMemo, type ReactNode } from "react";
 import { Linking } from "react-native";
 import { useSelector } from "~/context/hooks";
@@ -7,7 +8,6 @@ import {
   DEFAULT_LANGUAGE,
   type LinkingConfig,
 } from "@shared/linking";
-import { track } from "~/analytics/segment";
 import { languageSelector } from "~/reducers/settings";
 
 export function LinkingProviderWrapper({

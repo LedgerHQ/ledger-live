@@ -21,7 +21,7 @@
     "unimported": "pnpm knip --directory ../../.. -W features/platform/content-ab-tests"
   },
   "dependencies": {
-    "@features/platform-feature-flags": "workspace:^",
+    "@features/platform-feature-flags-firebase": "workspace:^",
     "zod": "catalog:"
   },
   "devDependencies": {

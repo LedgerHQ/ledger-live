@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
 import { TileButtonProps } from "@ledgerhq/lumen-ui-rnative";
@@ -15,7 +16,6 @@ import { useTranslation } from "~/context/Locale";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
-import { track } from "~/analytics";
 import { useRecoverEntry } from "LLM/hooks/useRecoverEntry";
 import useRecoverBannerState from "LLM/features/Portfolio/hooks/useRecoverBannerState";
 import { ShieldCheckNotificationIcon } from "LLM/features/BackupHub/components/ShieldCheckNotificationIcon";

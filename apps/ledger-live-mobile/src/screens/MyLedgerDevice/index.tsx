@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { firstValueFrom, from } from "rxjs";
@@ -9,7 +10,6 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
-import { TrackScreen } from "~/analytics";
 import QuitManagerModal from "./Modals/QuitManagerModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
 import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";

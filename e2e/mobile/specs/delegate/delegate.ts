@@ -13,7 +13,11 @@ import {
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { BroadcastFlow } from "@e2e/helpers/broadcastRotation";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "@e2e/models/stake";
-import { FF_BABYLON_STAKING_ENABLED, FF_MINA_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
+import {
+  FF_BABYLON_STAKING_ENABLED,
+  FF_MINA_STAKING_ENABLED,
+  FF_TEZOS_STAKING_ENABLED,
+} from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { getCurrencyManagerApp } from "@e2e/models/currencies";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
@@ -362,12 +366,11 @@ export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], t
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Delegate", () => {
     beforeAll(async () => {
-      await beforeAllFunction(delegation);
+      await beforeAllFunction(delegation, FF_TEZOS_STAKING_ENABLED);
     });
 
     it(`[${delegation.account.currency.testLabel}] - Delegate`, async () => {
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
-      const currencyId = delegation.account.currency.id;
 
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
@@ -377,14 +380,13 @@ export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], t
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();
 
-      await app.stake.dismissDelegationStart(currencyId);
-      await app.stake.summaryContinue(currencyId);
+      await app.tezosStake.startEarning();
+      await app.tezosStake.continueFromDelegationSummary();
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode);
       await app.speculos.signDelegationTransaction(delegation);
 
-      await app.common.successViewDetails();
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+      await app.tezosStake.verifyDelegationSuccess();
     });
   });
 }

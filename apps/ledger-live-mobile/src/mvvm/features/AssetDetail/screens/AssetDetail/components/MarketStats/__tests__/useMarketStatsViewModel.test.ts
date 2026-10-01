@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@tests/test-renderer";
 import { useMarketStatsViewModel } from "../useMarketStatsViewModel";
-import { track } from "~/analytics";
 import { useAssetMarketData } from "../../../hooks/useAssetMarketData";
 import { mockBtcCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
