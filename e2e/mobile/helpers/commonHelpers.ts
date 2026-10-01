@@ -68,6 +68,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*speculos.*ldg-tech.com.*",
     ".*optimism.*",
     ".*speculos.ledgerlabs.net.*",
+    ".*fullnodes.api.live.ledger.com.*",
   ];
 
   return `\\("${patterns.join('","')}"\\)`;
@@ -155,12 +156,15 @@ export async function captureNativeViewHierarchy(
   label = "Native View Hierarchy at failure",
 ): Promise<void> {
   try {
+    await device.disableSynchronization();
     const xml = await device.generateViewHierarchyXml();
     if (xml) {
       await allure.attachment(label, xml, "text/xml");
     }
   } catch (error) {
     log.warn(`Could not capture native view hierarchy: ${sanitizeError(error)}`);
+  } finally {
+    await device.enableSynchronization();
   }
 }
 

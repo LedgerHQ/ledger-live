@@ -201,8 +201,10 @@ export default class PortfolioPage {
       await tapById("crypto-addresses-button");
       await waitForElementById(this.cryptoAddressesListId);
       if (currencyId) {
-        await scrollToId(this.cryptoAddressItemId(currencyId), this.cryptoAddressesListId);
-        await tapById(this.cryptoAddressItemId(currencyId));
+        await app.common.withSynchronizationDisabledForDOT(currencyId, async () => {
+          await scrollToId(this.cryptoAddressItemId(currencyId), this.cryptoAddressesListId);
+          await tapById(this.cryptoAddressItemId(currencyId));
+        });
       }
     } else {
       await revealForTap(this.assetItemId(currencyName), { container: this.accountsListView });

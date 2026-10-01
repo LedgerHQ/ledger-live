@@ -155,7 +155,6 @@ export function runAddSubAccountTest(testConfig: {
     it(`[${asset.currency.testLabel}] - Add sub-account without parent`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-      await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
       if (networks) {
         await app.modularDrawer.validateNetworksScreen(networks);

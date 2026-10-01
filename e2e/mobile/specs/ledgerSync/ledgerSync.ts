@@ -125,7 +125,6 @@ export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) 
 
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedgerIfAsked();
-      await app.modularDrawer.performSearchByTicker(Currency.ETH.ticker);
       await app.modularDrawer.selectCurrencyByTicker(Currency.ETH.ticker);
       await app.modularDrawer.selectNetworkIfAsked(Currency.ETH.name);
 
