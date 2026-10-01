@@ -900,6 +900,26 @@ describe("ConnectNewDeviceStateMachine", () => {
       await flushPromises();
     });
 
+    it("should disconnect the unclaimed session once when the machine is stopped twice during the success delay", async () => {
+      const setup = setupTest();
+
+      await connectToNanoX(setup);
+      setup.machine.stop();
+      setup.machine.stop();
+
+      expect(setup.dmk.disconnect).toHaveBeenCalledTimes(1);
+    });
+
+    it("should stop discovery once when the machine is stopped twice while discovering", () => {
+      const { deviceDiscoveryService, machine } = setupTest();
+
+      machine.start();
+      machine.stop();
+      machine.stop();
+
+      expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
+    });
+
     it("should not call onClose when the machine is stopped", () => {
       const { emitDiscoveryError, machine, onClose } = setupTest();
 
