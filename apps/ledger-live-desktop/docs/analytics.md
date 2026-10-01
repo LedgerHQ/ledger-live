@@ -4,8 +4,6 @@
 
 Desktop uses the shared packages for analytics: [`@shared/analytics`](../../../shared/analytics/README.md) and [`@shared/analytics-react`](../../../shared/analytics-react/README.md).
 
-`~/renderer/analytics/segment`, `Track`, and `TrackPage` imports are compatibility shims. New code should import the packages directly. [LIVE-35992](https://ledgerhq.atlassian.net/browse/LIVE-35992) removes the barrels.
-
 ## Setup
 
 [`src/renderer/analytics/segment.ts`](../src/renderer/analytics/segment.ts) wires in the Segment web client:
