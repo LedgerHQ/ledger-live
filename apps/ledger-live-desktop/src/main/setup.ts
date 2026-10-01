@@ -42,15 +42,20 @@ ipcMain.handle(
       return "failed";
     }
 
-    await fs.writeFile(
-      target,
-      mergeAllLogsJSON(
-        rendererLogsChronological,
-        internalLogsChronological,
-        getEnv("EXPORT_MAX_LOGS"),
-      ),
-    );
-    return "saved";
+    try {
+      await fs.writeFile(
+        target,
+        mergeAllLogsJSON(
+          rendererLogsChronological,
+          internalLogsChronological,
+          getEnv("EXPORT_MAX_LOGS"),
+        ),
+      );
+      return "saved";
+    } catch (e) {
+      console.warn("Could not write the exported logs", e);
+      return "failed";
+    }
   },
 );
 
