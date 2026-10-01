@@ -69,7 +69,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install other platforms' optional deps (wallet-cli cross-compilation)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/pnpm-cross-platform-optional-deps@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/pnpm-cross-platform-optional-deps@chore/ci-wallet-cli-cross-platform-composite
 
       - name: Install dependencies
         run: pnpm i --frozen-lockfile --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"

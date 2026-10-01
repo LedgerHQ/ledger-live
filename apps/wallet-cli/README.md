@@ -165,3 +165,5 @@ By default `doctor` scans the agent skill directories under the current working 
 `--fix` self-heals conservatively: it reinstalls `outdated` and `missing` skills, but leaves `modified-locally` skills untouched unless you also pass `--force` (`skill doctor --fix --force`), which overwrites local edits.
 
 The embedded content is generated from the canonical `.agents/skills/` directory (`.claude/skills` is just a symlink to it) into `src/skills/manifest.gen.ts` by `pnpm generate:skills`. That file is **generated, not committed** (gitignored like `.bunli/commands.gen.ts`) and is regenerated automatically before `typecheck`, `test`, and `build` via the `pretypecheck` / `pretest` / `prebuild` npm hooks. `pnpm check:skills` validates that generation succeeds (every shipped skill is found in the sources).
+
+<!-- ci trigger: testing PR only, do not merge -->
