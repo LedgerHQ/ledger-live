@@ -1,22 +1,22 @@
 import React from "react";
-import { configureStore } from "@reduxjs/toolkit";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import {
   trackButtonClicked,
   trackedPages,
 } from "@features/platform-pay-analytics/testing/module-mock";
-import { markPayCardFeatureTourSeen, payCardFeatureTourSlice } from "../../../state";
+import { markPayCardFeatureTourSeen } from "../../../state";
 import { Provider } from "react-redux";
 import { FeatureTour } from "../FeatureTour";
+import { PAY_TAB_FEATURE_FLAG } from "../payTabFeatureFlag.web";
 import { I18nTestProvider } from "@shared/i18n/testing";
-import { FEATURE_TOUR_RESOURCES } from "./fixtures";
+import { FEATURE_TOUR_RESOURCES, makeFeatureTourStore } from "./fixtures";
 
 jest.mock("@features/platform-pay-analytics", () =>
   jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
 );
 
-function makeStore() {
-  return configureStore({ reducer: { payCardFeatureTour: payCardFeatureTourSlice.reducer } });
+function makeStore(card = true) {
+  return makeFeatureTourStore(PAY_TAB_FEATURE_FLAG, card);
 }
 
 function renderTour(store = makeStore()) {
@@ -46,6 +46,14 @@ describe("FeatureTour (Web)", () => {
 
     expect(screen.getByText("Shop worldwide with crypto card")).toBeVisible();
     expect(screen.getByText("Explore Pay")).toBeVisible();
+  });
+
+  it("hides the card row when the pay feature flag card param is off", () => {
+    renderTour(makeStore(false));
+
+    expect(screen.queryByText("Shop worldwide with crypto card")).toBeNull();
+    expect(screen.getByText("Pay your contacts")).toBeVisible();
+    expect(screen.getByText("Request payments")).toBeVisible();
   });
 
   it("tracks the page when shown", () => {
