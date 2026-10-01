@@ -3,6 +3,7 @@ import {
   rnBleTransportIdentifier,
 } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
+import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import type { ConnectedDevice, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import {
@@ -36,7 +37,8 @@ export const filterMatchedDevices = (
 
         const matchesByModelOnly =
           knownDevice.transport === rnHidTransportIdentifier ||
-          knownDevice.transport === speculosIdentifier;
+          knownDevice.transport === speculosIdentifier ||
+          knownDevice.transport === mockserverIdentifier;
 
         if (matchesByModelOnly) {
           return dmkToLedgerDeviceIdMap[device.deviceModel.model] === knownDevice.deviceModelId;
