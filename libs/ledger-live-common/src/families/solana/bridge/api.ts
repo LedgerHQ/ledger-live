@@ -1,6 +1,7 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { decodeTokenAccountIdSync } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { log } from "@ledgerhq/logs";
 import type {
   BridgeApi,
   OptimisticOperationDescriptor,
@@ -115,7 +116,9 @@ async function buildTokenAccountShapes(currency: CryptoCurrency, address: string
     const config = getCurrencyConfiguration<SolanaCoinConfig>(currency.id);
     const api = getChainAPI({ endpoint: endpointByCurrencyId(config, currency.id) });
     return await getTokenAccountShapes(api, address);
-  } catch {
+  } catch (error) {
+    // Recoverable: the sync goes on without the frozen state and Token-2022 extensions.
+    log(currency.id, "token account shapes unavailable", { error: String(error) });
     return {};
   }
 }

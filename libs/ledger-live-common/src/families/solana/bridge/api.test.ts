@@ -5,6 +5,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, CryptoAssetsStore } from "@ledgerhq/types-live";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { log } from "@ledgerhq/logs";
 import solanaBridge, {
   buildIntentData,
   computeIntentType,
@@ -15,6 +16,7 @@ import solanaBridge, {
 } from "./api";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
+jest.mock("@ledgerhq/logs");
 
 const mockGetTokenAccountShapes = jest.fn();
 jest.mock("@ledgerhq/coin-solana/logic/tokenAccountShapes", () => ({
@@ -381,6 +383,9 @@ describe("solana bridge", () => {
       mockGetTokenAccountShapes.mockRejectedValue(new Error("network"));
 
       expect(await solanaBridge(solana).buildTokenAccountShapes?.("owner")).toEqual({});
+      expect(log).toHaveBeenCalledWith("solana", "token account shapes unavailable", {
+        error: "Error: network",
+      });
     });
   });
 });
