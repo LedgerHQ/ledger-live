@@ -2,6 +2,7 @@ import {
   DeviceModelId as DMKDeviceModelId,
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { webHidIdentifier as webHidTransportIdentifier } from "@ledgerhq/device-transport-kit-web-hid";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -73,6 +74,32 @@ describe("desktop connectDevice utils", () => {
 
       // WHEN / THEN
       expect(filterMatchedDevices([discoveredDevice], [knownDeviceB])).toEqual([]);
+    });
+
+    it("GIVEN a Speculos device and a WebHID known device of the same model, WHEN filtering, THEN it should not match", () => {
+      const knownDevice: KnownDevice = {
+        transport: speculosIdentifier,
+        deviceModelId: DeviceModelId.nanoX,
+        id: "",
+        name: null,
+      };
+      const discoveredDevice = makeDiscoveredDevice({ transport: webHidTransportIdentifier });
+
+      expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([]);
+    });
+
+    it("GIVEN a Speculos known device with the same model, WHEN filtering, THEN it should match", () => {
+      const knownDevice: KnownDevice = {
+        transport: speculosIdentifier,
+        deviceModelId: DeviceModelId.nanoX,
+        id: "",
+        name: null,
+      };
+      const discoveredDevice = makeDiscoveredDevice({ transport: speculosIdentifier });
+
+      expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([
+        { knownDevice, discoveredDevice },
+      ]);
     });
 
     it("GIVEN a discovered device from another transport, WHEN filtering, THEN it should not match", () => {

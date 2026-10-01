@@ -930,8 +930,27 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   }
 });
 
+async function waitUntilScreenLeavesIdle(maxAttempts = 60): Promise<void> {
+  const port = getEnv("SPECULOS_API_PORT");
+
+  const poll = async (attempt: number): Promise<void> => {
+    const texts = await fetchCurrentScreenTexts(port);
+    if (!texts.toLowerCase().includes("is ready")) return;
+    if (attempt + 1 >= maxAttempts) {
+      throw new Error(
+        `Device stayed on "${texts}" after ${maxAttempts} attempts. The contact review never started.`,
+      );
+    }
+    await sleep(SCREEN_POLL_INTERVAL_MS);
+    await poll(attempt + 1);
+  };
+
+  await poll(0);
+}
+
 export const confirmContactAction = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
+  await waitUntilScreenLeavesIdle();
   await pressUntilTextFound(DeviceLabels.CONFIRM);
 
   if (isTouchDevice()) {
