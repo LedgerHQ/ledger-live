@@ -116,7 +116,7 @@ export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   return flags;
 }
 
-// One `getAll()` payload, two readers: the flag decoder and the Engagement copy experiments,
+// One `getAll()` payload, two readers: the flag decoder and the copy experiments,
 // which are `feature_copy_*` keys in the same Remote Config template.
 function hydrateRemoteConfigValues(all: ReturnType<typeof rc.getAll>): PartialFeatures {
   setContentAbTestCopy(all);
