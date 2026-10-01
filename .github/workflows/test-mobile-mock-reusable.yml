@@ -178,8 +178,8 @@ jobs:
           if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
-          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml') }}-detox-native-android-3" >> $GITHUB_OUTPUT
+          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT

@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { DEFAULT_TIMEOUT } from "@e2e/helpers/elementHelpers";
 
 const accountScrollViewId = "account-screen-scrollView";
 
@@ -45,6 +46,7 @@ export default class TezosStakePage {
 
   @Step("Start earning from the earning-choice chooser")
   async startEarning() {
+    await waitForElementById(this.earnRewardsStartButtonId);
     await tapById(this.earnRewardsStartButtonId);
   }
 
@@ -57,6 +59,13 @@ export default class TezosStakePage {
   async continueFromDelegationSummary() {
     await waitForElementById(enabled(this.delegationSummaryContinueId));
     await tapById(enabled(this.delegationSummaryContinueId));
+  }
+
+  @Step("Verify the delegation success screen is shown")
+  async verifyDelegationSuccess() {
+    await waitForElementById(enabled(this.delegationSuccessStakeId), DEFAULT_TIMEOUT, {
+      errorElementId: app.common.errorPage.genericErrorModalId,
+    });
   }
 
   @Step("Continue to staking from the delegation success screen")

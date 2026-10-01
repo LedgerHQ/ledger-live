@@ -81,8 +81,8 @@ export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: 
     it(`[${account.currency.testLabel}] - Earn v2 ice cold start page displays correctly`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.verifyIceColdStartPage();
-      await app.earnV2Dashboard.clickIceColdStartEarnCTA();
-      await app.earnV2Dashboard.verifyModularAssetDrawerVisible();
+      await app.earnV2Dashboard.clickSimulateInvestmentCta();
+      await app.earnV2Dashboard.verifyEarnSimulatorVisible();
     });
   });
 }
@@ -317,11 +317,15 @@ export function runInlineAddAccountTest(account: Account, tmsLinks: string[], ta
     it(`[${account.currency.testLabel}] - Earn v2 inline add account`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.verifyIceColdStartPage();
-      await app.earnV2Dashboard.clickIceColdStartEarnCTA();
+      await app.earnV2Dashboard.clickSimulateInvestmentCta();
+      await app.earnV2Dashboard.verifyEarnSimulatorVisible();
+      await app.earnV2Dashboard.clickEarnSimulatorCta();
+      await app.earnV2Dashboard.clickAccountSelectorInput();
       await app.earnV2Dashboard.verifyModularAssetDrawerVisible();
 
       await app.modularDrawer.performSearchByTicker(account.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+      await app.modularDrawer.selectNetworkIfAsked(account.currency.name);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
       await app.addAccount.addAccountAtIndex(`${account.currency.name} 1`, account.currency.id, 0);
 
