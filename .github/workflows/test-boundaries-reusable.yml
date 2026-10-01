@@ -71,3 +71,9 @@ jobs:
 
       - name: Enforce package structure
         run: pnpm exec nx run-many -t lint:structure
+
+      - name: Test the i18n key check
+        run: pnpm exec nx run enforce-i18n-keys:test
+
+      - name: Check i18n keys exist in the Desktop and Mobile catalogs
+        run: pnpm exec nx run enforce-i18n-keys:lint:i18n-keys
