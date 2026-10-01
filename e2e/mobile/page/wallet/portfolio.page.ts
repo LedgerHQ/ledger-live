@@ -317,8 +317,7 @@ export default class PortfolioPage {
   }
 
   @Step("Expect market banner to be visible")
-  async expectMarketBannerVisible(direction: "up" | "down" = "down") {
-    await scrollToId(this.marketBannerTitle, this.accountsListView, undefined, direction);
+  async expectMarketBannerVisible() {
     await detoxExpect(getElementById(this.marketBannerList)).toBeVisible();
   }
 
