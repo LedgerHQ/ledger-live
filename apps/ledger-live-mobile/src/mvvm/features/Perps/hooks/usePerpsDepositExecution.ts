@@ -29,6 +29,7 @@ import {
 import type { Status } from "~/components/DeviceAction";
 import { broadcastLogger } from "~/datadog";
 import { track } from "~/analytics";
+import { isNotEnoughBalance } from "../utils/isNotEnoughBalance";
 import { isUserRefusal } from "../utils/isUserRefusal";
 
 type StartResult = StartExchangeResult;
@@ -69,6 +70,7 @@ export type PerpsDepositOutcome = Readonly<{
 export type PerpsDepositExecutionCallbacks = Readonly<{
   onDone: (outcome: PerpsDepositOutcome) => void;
   onRefused: () => void;
+  onNotEnoughBalance: () => void;
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
@@ -86,7 +88,7 @@ const tracking = trackingWrapper((eventName, properties, mandatory) =>
  */
 export function usePerpsDepositExecution(
   params: PerpsDepositReviewParams,
-  { onDone, onRefused }: PerpsDepositExecutionCallbacks,
+  { onDone, onRefused, onNotEnoughBalance }: PerpsDepositExecutionCallbacks,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
 
@@ -298,8 +300,12 @@ export function usePerpsDepositExecution(
   ]);
 
   const retry = useCallback(() => {
+    if (deviceStep.kind === "error" && isNotEnoughBalance(deviceStep.error)) {
+      onNotEnoughBalance();
+      return;
+    }
     void executeDeposit();
-  }, [executeDeposit]);
+  }, [deviceStep, executeDeposit, onNotEnoughBalance]);
 
   return {
     deviceStep,

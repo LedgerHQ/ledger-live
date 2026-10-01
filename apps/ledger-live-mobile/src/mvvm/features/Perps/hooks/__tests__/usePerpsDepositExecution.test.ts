@@ -1,3 +1,5 @@
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -30,8 +32,14 @@ jest.mock("@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams
 }));
 
 const ethereum = getCryptoCurrencyById("ethereum");
-const depositAccount = genAccount("funding-1", { currency: ethereum, operationsSize: 0 });
-const receiverAccount = genAccount("receiver-1", { currency: ethereum, operationsSize: 0 });
+const depositAccount = genAccount("funding-1", {
+  currency: ethereum,
+  operationsSize: 0,
+});
+const receiverAccount = genAccount("receiver-1", {
+  currency: ethereum,
+  operationsSize: 0,
+});
 
 const params = {
   depositAccount,
@@ -65,8 +73,11 @@ function answerDeviceStep(deviceStep: PerpsDepositDeviceStep, result: unknown) {
 function renderExecution() {
   const onDone = jest.fn();
   const onRefused = jest.fn();
-  const { result } = renderHook(() => usePerpsDepositExecution(params, { onDone, onRefused }));
-  return { result, onDone, onRefused };
+  const onNotEnoughBalance = jest.fn();
+  const { result } = renderHook(() =>
+    usePerpsDepositExecution(params, { onDone, onRefused, onNotEnoughBalance }),
+  );
+  return { result, onDone, onRefused, onNotEnoughBalance };
 }
 
 /** Runs the deposit up to the coin-app signature and answers it with `signResult`. */
@@ -87,7 +98,10 @@ async function signWith(signResult: unknown) {
   });
 
   await answerDeviceStep(execution.result.current.deviceStep, {
-    completeExchangeResult: { family: "ethereum", amount: new BigNumber("20000000000000000") },
+    completeExchangeResult: {
+      family: "ethereum",
+      amount: new BigNumber("20000000000000000"),
+    },
   });
   await answerDeviceStep(execution.result.current.deviceStep, signResult);
 
@@ -101,7 +115,10 @@ describe("usePerpsDepositExecution", () => {
   });
 
   it("quotes the deposit as a swap against the perps provider, at the price the review showed", async () => {
-    mockExecuteSwap.mockResolvedValue({ operationHash: operation.hash, swapId: "swap-1" });
+    mockExecuteSwap.mockResolvedValue({
+      operationHash: operation.hash,
+      swapId: "swap-1",
+    });
     const { result } = renderExecution();
 
     await act(async () => {
@@ -122,20 +139,33 @@ describe("usePerpsDepositExecution", () => {
   });
 
   it("hands over the token accounts, which fund most deposits", async () => {
-    const parent = genAccount("funding-parent", { currency: ethereum, operationsSize: 0 });
+    const parent = genAccount("funding-parent", {
+      currency: ethereum,
+      operationsSize: 0,
+    });
     const tokenAccount = genTokenAccount(0, parent, usdcToken);
-    mockExecuteSwap.mockResolvedValue({ operationHash: operation.hash, swapId: "swap-1" });
+    mockExecuteSwap.mockResolvedValue({
+      operationHash: operation.hash,
+      swapId: "swap-1",
+    });
 
     const { result } = renderHook(
       () =>
         usePerpsDepositExecution(
           { ...params, depositAccount: tokenAccount },
-          { onDone: jest.fn(), onRefused: jest.fn() },
+          {
+            onDone: jest.fn(),
+            onRefused: jest.fn(),
+            onNotEnoughBalance: jest.fn(),
+          },
         ),
       {
         overrideInitialState: state => ({
           ...state,
-          accounts: { ...state.accounts, active: [{ ...parent, subAccounts: [tokenAccount] }] },
+          accounts: {
+            ...state.accounts,
+            active: [{ ...parent, subAccounts: [tokenAccount] }],
+          },
         }),
       },
     );
@@ -158,7 +188,11 @@ describe("usePerpsDepositExecution", () => {
     mockExecuteSwap.mockImplementation(async deps => {
       const nonce = await new Promise<string>((resolve, reject) =>
         deps.uiHooks["custom.exchange.start"]({
-          exchangeParams: { exchangeType: "SWAP", provider: "swapkit_hyperliquid", exchange: {} },
+          exchangeParams: {
+            exchangeType: "SWAP",
+            provider: "swapkit_hyperliquid",
+            exchange: {},
+          },
           onSuccess: (...args: unknown[]) => {
             onStartSuccess(...args);
             resolve(args[0] as string);
@@ -196,14 +230,22 @@ describe("usePerpsDepositExecution", () => {
     // Exchange app's payload check.
     expect(result.current.deviceStep).toMatchObject({ stepId: "confirm" });
     await answerDeviceStep(result.current.deviceStep, {
-      completeExchangeResult: { family: "ethereum", amount: new BigNumber("20000000000000000") },
+      completeExchangeResult: {
+        family: "ethereum",
+        amount: new BigNumber("20000000000000000"),
+      },
     });
 
     expect(result.current.deviceStep).toMatchObject({ stepId: "sign" });
-    await answerDeviceStep(result.current.deviceStep, { signedOperation: { operation } });
+    await answerDeviceStep(result.current.deviceStep, {
+      signedOperation: { operation },
+    });
 
     expect(mockBroadcast).toHaveBeenCalledWith({ operation });
-    expect(onSwapSuccess).toHaveBeenCalledWith({ operationHash: "0xhash", swapId: "swap-1" });
+    expect(onSwapSuccess).toHaveBeenCalledWith({
+      operationHash: "0xhash",
+      swapId: "swap-1",
+    });
     // Handed on so the receipt can offer to track the swap that funds the deposit.
     expect(onDone).toHaveBeenCalledWith({ swapId: "swap-1" });
   });
@@ -234,7 +276,9 @@ describe("usePerpsDepositExecution", () => {
   it.each([
     [
       "the coin app prompt",
-      Object.assign(new Error("refused"), { name: "TransactionRefusedOnDevice" }),
+      Object.assign(new Error("refused"), {
+        name: "TransactionRefusedOnDevice",
+      }),
     ],
     [
       "a signer naming it itself",
@@ -248,12 +292,43 @@ describe("usePerpsDepositExecution", () => {
       }),
     ],
   ])("reports a decline reported by %s rather than an error", async (_case, error) => {
-    const { result, onDone, onRefused } = await signWith({ transactionSignError: error });
+    const { result, onDone, onRefused } = await signWith({
+      transactionSignError: error,
+    });
 
     // Declining is a decision: the caller sends the holder back to the summary,
     // so no error screen is raised here.
     expect(onRefused).toHaveBeenCalled();
     expect(result.current.deviceStep).toEqual({ kind: "processing" });
     expect(onDone).not.toHaveBeenCalled();
+  });
+  it("sends the holder back to the form on retry after a shortfall, rather than re-running", async () => {
+    // The Exchange app wraps the bridge's NotEnoughBalance, keeping only its name as the message.
+    const shortfall = new CompleteExchangeError("INIT", "amount", new NotEnoughBalance().message);
+    const { result, onNotEnoughBalance } = await signWith({
+      transactionSignError: shortfall,
+    });
+    expect(result.current.deviceStep).toEqual({
+      kind: "error",
+      error: shortfall,
+    });
+    mockExecuteSwap.mockClear();
+
+    act(() => result.current.retry());
+
+    expect(onNotEnoughBalance).toHaveBeenCalledTimes(1);
+    expect(mockExecuteSwap).not.toHaveBeenCalled();
+  });
+
+  it("re-runs the deposit on retry after any other failure", async () => {
+    const { result, onNotEnoughBalance } = await signWith({
+      transactionSignError: new Error("signature failed"),
+    });
+    mockExecuteSwap.mockClear();
+
+    await act(async () => result.current.retry());
+
+    expect(onNotEnoughBalance).not.toHaveBeenCalled();
+    expect(mockExecuteSwap).toHaveBeenCalledTimes(1);
   });
 });

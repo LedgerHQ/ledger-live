@@ -29,6 +29,7 @@ import type { States } from "~/renderer/components/DeviceAction";
 import { openPerpsTransactionSigned } from "LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog";
 import { broadcastLogger } from "~/datadog/logs";
 import { track } from "@shared/analytics";
+import { isNotEnoughBalance } from "../utils/isNotEnoughBalance";
 import { isUserRefusal } from "../utils/isUserRefusal";
 
 type StartResult = StartExchangeResult;
@@ -63,6 +64,7 @@ export type PerpsDepositExecution = Readonly<{
 export type PerpsDepositExecutionCallbacks = Readonly<{
   onDone: () => void;
   onRefused: () => void;
+  onNotEnoughBalance: () => void;
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
@@ -79,7 +81,7 @@ const tracking = trackingWrapper((eventName, properties, mandatory) =>
  */
 export function usePerpsDepositExecution(
   params: PerpsDepositReviewParams,
-  { onDone, onRefused }: PerpsDepositExecutionCallbacks,
+  { onDone, onRefused, onNotEnoughBalance }: PerpsDepositExecutionCallbacks,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
 
@@ -297,8 +299,12 @@ export function usePerpsDepositExecution(
   ]);
 
   const retry = useCallback(() => {
+    if (deviceStep.kind === "error" && isNotEnoughBalance(deviceStep.error)) {
+      onNotEnoughBalance();
+      return;
+    }
     void executeDeposit();
-  }, [executeDeposit]);
+  }, [deviceStep, executeDeposit, onNotEnoughBalance]);
 
   return {
     deviceStep,

@@ -73,6 +73,8 @@ export type PerpsDepositViewModel = Readonly<{
   handOverToDevice: () => void;
   /** The device declined, which is not a failure: the summary takes over again. */
   returnToReview: () => void;
+  /** The funding account fell short, so the form takes over again to change the amount. */
+  returnToForm: () => void;
   /** Signed and broadcast, so the form gives way to the receipt. */
   endSigning: (outcome: PerpsDepositOutcome) => void;
 }>;
@@ -297,6 +299,8 @@ export function usePerpsDepositViewModel({
     setIsReviewOpen(true);
   }, []);
 
+  const returnToForm = useCallback(() => setIsSignOpen(false), []);
+
   const endSigning = useCallback(
     ({ swapId }: PerpsDepositOutcome) => {
       setIsSignOpen(false);
@@ -341,6 +345,7 @@ export function usePerpsDepositViewModel({
     selectSigningDevice: setSigningDevice,
     handOverToDevice,
     returnToReview,
+    returnToForm,
     endSigning,
   };
 }
