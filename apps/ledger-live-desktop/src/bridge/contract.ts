@@ -195,4 +195,9 @@ export const CHANNELS = {
   clipboardWriteText: "clipboard:write-text",
   clipboardReadText: "clipboard:read-text",
   cardSessionBootstrap: "card-session:bootstrap",
+  // Sent by the preload itself, outside the bridge.
+  reloadRenderer: "reloadRenderer",
+  webviewDomReady: "webview-dom-ready",
+  setBackgroundColor: "set-background-color",
+  readyToShow: "ready-to-show",
 } as const;

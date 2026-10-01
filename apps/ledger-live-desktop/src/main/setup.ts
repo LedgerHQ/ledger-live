@@ -9,13 +9,13 @@ import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
 import { openURL } from "./openURL";
-import type { SaveOutcome, SaveRequest } from "~/bridge/contract";
+import { CHANNELS, type SaveOutcome, type SaveRequest } from "~/bridge/contract";
 
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
 }
 
-ipcMain.on("updater", (e, type) => {
+ipcMain.on(CHANNELS.updater, (e, type) => {
   updater(type);
 });
 
@@ -27,7 +27,7 @@ async function resolveSaveTarget({ options, e2ePath }: SaveRequest): Promise<str
 }
 
 ipcMain.handle(
-  "save-logs",
+  CHANNELS.saveLogs,
   async (_event, request: SaveRequest, rendererLogsStr: string): Promise<SaveOutcome> => {
     const target = await resolveSaveTarget(request);
     if (!target) return "canceled";
@@ -54,18 +54,18 @@ ipcMain.handle(
   },
 );
 
-ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
+ipcMain.handle(CHANNELS.openUserDataDirectory, () => shell.openPath(app.getPath("userData")));
 
 // openURL validates the scheme; do not swap it for shell.openExternal.
-ipcMain.on("shell:open-external", (_event, url: string) => openURL(url));
+ipcMain.on(CHANNELS.openExternal, (_event, url: string) => openURL(url));
 
 // Not navigator.clipboard: the permission handler grants the renderer only `hid`.
-ipcMain.on("clipboard:write-text", (_event, text: string) => clipboard.writeText(text));
+ipcMain.on(CHANNELS.clipboardWriteText, (_event, text: string) => clipboard.writeText(text));
 
-ipcMain.handle("clipboard:read-text", () => clipboard.readText());
+ipcMain.handle(CHANNELS.clipboardReadText, () => clipboard.readText());
 
 ipcMain.handle(
-  "export-operations",
+  CHANNELS.exportOperations,
   async (_event, request: SaveRequest, csv: string): Promise<SaveOutcome> => {
     if (!csv) return "failed";
     try {
@@ -80,7 +80,7 @@ ipcMain.handle(
 );
 
 ipcMain.handle(
-  "save-png",
+  CHANNELS.savePng,
   async (_event, options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome> => {
     if (!base64) return "failed";
     try {
@@ -94,11 +94,11 @@ ipcMain.handle(
   },
 );
 
-ipcMain.handle("activate-keep-screen-awake", () => {
+ipcMain.handle(CHANNELS.keepScreenAwake, () => {
   return powerSaveBlocker.start("prevent-display-sleep");
 });
 
-ipcMain.handle("deactivate-keep-screen-awake", (_ev, id?: number) => {
+ipcMain.handle(CHANNELS.releaseScreenAwake, (_ev, id?: number) => {
   if (id !== undefined && !Number.isNaN(id)) {
     powerSaveBlocker.stop(id as number);
   }

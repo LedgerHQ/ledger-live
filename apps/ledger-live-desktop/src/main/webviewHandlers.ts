@@ -6,6 +6,7 @@ import {
   createLiveAppSchemeChecker,
   mergeCspHeaders,
 } from "./webviewHandlers.helpers";
+import { CHANNELS } from "~/bridge/contract";
 
 type WebviewHandlersGlobal = typeof globalThis & {
   __ledgerLiveWebviewHandlersSetup__?: boolean;
@@ -119,7 +120,7 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
   // window-open handler and the scheme guard are registered earlier via
   // `web-contents-created` so they are in place BEFORE the guest's first
   // script runs.
-  ipcMain.on("webview-dom-ready", (_, id: number, domains?: string[]) => {
+  ipcMain.on(CHANNELS.webviewDomReady, (_, id: number, domains?: string[]) => {
     const wc = webContents.fromId(id);
 
     if (wc?.getType() !== "webview") return;
