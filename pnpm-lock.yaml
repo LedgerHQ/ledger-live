@@ -8520,6 +8520,9 @@ importers:
 
   features/flow/pay-feature-tour:
     dependencies:
+      '@features/platform-feature-flags':
+        specifier: workspace:^
+        version: link:../../platform/feature-flags
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../platform/pay-analytics
@@ -8542,6 +8545,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.63(@ledgerhq/lumen-design-core@0.1.30)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native-safe-area-context@5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/feature-flags':
+        specifier: workspace:^
+        version: link:../../../shared/feature-flags
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow
