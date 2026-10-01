@@ -1,8 +1,8 @@
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import React from "react";
-import { ChangePasswordSheet } from "../components/ChangePasswordSheet";
-import { PasswordChangedSheet } from "../components/PasswordChangedSheet";
+import { ChangePasswordSheet } from "../../components/ChangePasswordSheet";
+import { PasswordChangedSheet } from "../../components/PasswordChangedSheet";
 import { ConfirmStep } from "./internals/ConfirmStep";
 import { EnterStep } from "./internals/EnterStep";
 import type { LongerPasswordViewProps } from "./types";

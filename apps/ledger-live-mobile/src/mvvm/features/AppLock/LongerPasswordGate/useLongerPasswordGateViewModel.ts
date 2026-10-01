@@ -1,4 +1,7 @@
-import { useLongerPasswordViewModel, type LongerPasswordViewModel } from "@features/flow-app-lock";
+import {
+  useLongerPasswordViewModel,
+  type LongerPasswordViewModel,
+} from "@features/flow-app-longer-password";
 import {
   selectHasPassword,
   selectIsLocked,
