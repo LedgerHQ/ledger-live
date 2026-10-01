@@ -161,6 +161,9 @@ export const getMergedFeatureFlags = ({
     releaseTour: { enabled: false },
     brazePushNotifications: { enabled: false },
     ratingsPrompt: { enabled: false },
+    llmWalletApiDeviceIntentSign: {
+      enabled: false, // Note: Prevent usage of DIE, which is not Speculos ready yet.
+    },
     llmModularDrawer: {
       enabled: true,
       params: {
