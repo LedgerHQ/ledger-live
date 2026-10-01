@@ -2,12 +2,14 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "name": "enforce-i18n-keys",
   "projectType": "library",
+  "implicitDependencies": ["ledger-live-desktop", "live-mobile"],
   "targets": {
     "lint:i18n-keys": {
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": [
         "{workspaceRoot}/tools/nx-plugins/enforce-i18n-keys/validate.js",
+        "{workspaceRoot}/tools/nx-plugins/enforce-i18n-keys/unverifiable-baseline.json",
         "{workspaceRoot}/apps/ledger-live-desktop/static/i18n/en/app.json",
         "{workspaceRoot}/apps/ledger-live-mobile/src/locales/en/common.json",
         "{workspaceRoot}/apps/*/package.json",
