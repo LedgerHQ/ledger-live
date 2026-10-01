@@ -1,4 +1,3 @@
-export * from "./firebaseEnvironmentReadOnly";
 export * from "./lldDatadog";
 export * from "./lldLedgerSyncEntryPoints";
 export * from "./lldWalletSync";

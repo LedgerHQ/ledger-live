@@ -198,7 +198,6 @@ export type Features = CurrencyFeatures & {
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingModalWithFilters: DefaultFeature;
   ethStakingProviders: Feature_EthStakingProviders;
-  firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
   recoverUpsellPostOnboarding: Feature_RecoverUpsellPostOnboarding;
@@ -607,12 +606,6 @@ export type Feature_EvmNativeStaking = Feature<{
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["editBitcoinTx"]` from `@shared/feature-flags` instead. */
 export type Feature_EditBitcoinTx = Feature<{
   supportedCurrencyIds: string[];
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["firebaseEnvironmentReadOnly"]` from `@shared/feature-flags` instead. */
-export type Feature_FirebaseEnvironmentReadOnly = Feature<{
-  comment: string;
-  project: string;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ldmkTransport"]` from `@shared/feature-flags` instead. */
