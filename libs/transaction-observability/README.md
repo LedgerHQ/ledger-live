@@ -124,7 +124,8 @@ body of each host's dApp effect.
 
 One thing to know if you ever reach for it: `track(event, props, { mandatory: true })` from
 `@shared/analytics` bypasses the consent check and uses the reduced extra properties registered with
-`setMandatoryExtraPropsFn` instead of the standard host extras; the caller-supplied `props` are still sent. It exists for recording the consent change itself and is not a general-purpose escape hatch —
+`setMandatoryExtraPropsFn` instead of the standard host extras; caller-supplied `props` are still
+passed through `setPropsFilter`. It exists for recording the consent change itself and is not a general-purpose escape hatch —
 using it for funnel data is a privacy decision, not an engineering one.
 
 ## Adding a family
