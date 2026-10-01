@@ -436,6 +436,21 @@ async function processTransactionItem(
   return { newCoinOperations, newTokenOperations };
 }
 
+function removeFeesCoveredByTokenOperations({
+  newCoinOperations,
+  newTokenOperations,
+}: {
+  newCoinOperations: Operation<HederaOperationExtra>[];
+  newTokenOperations: Operation<HederaOperationExtra>[];
+}): Operation<HederaOperationExtra>[] {
+  const hasOtherCoinOperation = newCoinOperations.some(
+    op => op.type !== "FEES" && op.type !== "NONE",
+  );
+  if (newTokenOperations.length === 0 || hasOtherCoinOperation) return newCoinOperations;
+
+  return newCoinOperations.filter(op => op.type !== "FEES");
+}
+
 export async function listOperationsV2(
   config: HederaCoinConfig,
   {
@@ -537,7 +552,11 @@ export async function listOperationsV2(
       useSyntheticBlocks,
     });
 
-    coinOperations.push(...result.newCoinOperations);
+    coinOperations.push(
+      ...(skipFeesForTokenOperations
+        ? removeFeesCoveredByTokenOperations(result)
+        : result.newCoinOperations),
+    );
     tokenOperations.push(...result.newTokenOperations);
   }
 
@@ -549,9 +568,7 @@ export async function listOperationsV2(
 
   return {
     tokenOperations: removeNone(tokenOperations),
-    coinOperations: skipFeesForTokenOperations
-      ? removeNone(coinOperations).filter(op => op.type !== "FEES")
-      : removeNone(coinOperations),
+    coinOperations: removeNone(coinOperations),
     nextCursor: mergeResult.nextCursor,
   };
 }

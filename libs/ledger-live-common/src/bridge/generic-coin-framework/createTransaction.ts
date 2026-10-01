@@ -150,6 +150,7 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         assetOwner: "",
       };
     case "casper":
+    case "hedera":
       // Same no-sequence pattern as near/vechain/cardano above; ttl is Casper's replay protection.
       return {
         ...sendDefaults(currency.family),
