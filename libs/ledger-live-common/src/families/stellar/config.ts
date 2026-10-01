@@ -1,3 +1,4 @@
+import type { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
 
@@ -17,6 +18,6 @@ export const stellarConfig: Record<string, ConfigInfo> = {
       },
       useStaticFees: getEnv("API_STELLAR_HORIZON_STATIC_FEE"),
       enableNetworkLogs: getEnv("ENABLE_NETWORK_LOGS"),
-    },
+    } satisfies StellarCoinConfig,
   },
 };
