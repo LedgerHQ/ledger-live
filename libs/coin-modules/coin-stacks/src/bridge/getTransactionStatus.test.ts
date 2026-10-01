@@ -1,3 +1,4 @@
+import { RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { StacksMemoTooLong } from "../errors";
@@ -22,7 +23,7 @@ describe("getTransactionStatus", () => {
     const account = { currency: { name: "" } } as Account;
     const transaction = { amount: BigNumber(1), memo: "random memo for unit test" } as Transaction;
     const status = await getTransactionStatus(account, transaction);
-    expect(status.errors.transaction).not.toBeDefined();
+    expect(status.errors.transaction).toBeUndefined();
 
     expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
   });
@@ -37,4 +38,27 @@ describe("getTransactionStatus", () => {
 
     expect(spiedValidateMemo).toHaveBeenCalledWith(transaction.memo);
   });
+
+  it.each(["delegate", "undelegate", undefined] as const)(
+    // The classic bridge's signOperation/createTransaction only ever build a plain transfer, with
+    // no pox-5 contract-call support -- recipient validation must stay unconditional (mode included)
+    // so a staking-shaped transaction can't fall through and be signed as an ordinary STX transfer.
+    "should require recipient regardless of mode (%s)",
+    async mode => {
+      const account = {
+        currency: { name: "" },
+        spendableBalance: BigNumber(1000000),
+      } as Account;
+      const transaction = {
+        mode,
+        recipient: "",
+        amount: BigNumber(100),
+        fee: BigNumber(10),
+      } as Transaction;
+
+      const status = await getTransactionStatus(account, transaction);
+
+      expect(status.errors.recipient).toBeInstanceOf(RecipientRequired);
+    },
+  );
 });

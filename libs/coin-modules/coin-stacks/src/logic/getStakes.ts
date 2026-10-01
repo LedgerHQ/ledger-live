@@ -1,5 +1,6 @@
 import type { Cursor, Page, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/index";
 import { fetchEarnedStakerRewards, fetchPoxInfo, fetchStakerInfo } from "../network/pox";
+import type { StacksStakeDetails } from "../types";
 
 const NATIVE_ASSET = { type: "native" as const };
 
@@ -48,7 +49,7 @@ export async function getStakes(address: string, _cursor?: Cursor): Promise<Page
       // sBTC-denominated, distinct from the native-STX `asset`/`amount` above.
       rewardAsset: "sbtc",
       amountRewarded: earnedRewards.toString(),
-    },
+    } satisfies StacksStakeDetails,
   };
 
   return { items: [stake] };
