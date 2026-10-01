@@ -123,8 +123,8 @@ readers and returns the store listener that drops pending attempts when the kill
 body of each host's dApp effect.
 
 One thing to know if you ever reach for it: `track(event, props, { mandatory: true })` from
-`@shared/analytics` bypasses the consent check and swaps in the reduced property set from
-`setMandatoryExtraPropsFn`. It exists for recording the consent change itself and is not a general-purpose escape hatch —
+`@shared/analytics` bypasses the consent check and uses the reduced extra properties registered with
+`setMandatoryExtraPropsFn` instead of the standard host extras; the caller-supplied `props` are still sent. It exists for recording the consent change itself and is not a general-purpose escape hatch —
 using it for funnel data is a privacy decision, not an engineering one.
 
 ## Adding a family

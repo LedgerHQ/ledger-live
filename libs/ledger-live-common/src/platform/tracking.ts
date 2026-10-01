@@ -1,8 +1,8 @@
 import type { LiveAppManifest } from "./types";
 
 /**
- * Positional-`mandatory` variant of `track` from `@shared/analytics`, which takes
- * `track(event, props, { mandatory })`. Hosts adapt between the two.
+ * Legacy callback shape with a positional `mandatory` argument; `track` from
+ * `@shared/analytics` accepts the equivalent value as `{ mandatory }`.
  */
 type TrackPlatform = (
   event: string,
