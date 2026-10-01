@@ -72,8 +72,8 @@ catalog:
   "@ledgerhq/domain-service": 1.9.1
   "@ledgerhq/evm-tools": 1.15.1
   "@ledgerhq/lumen-design-core": 0.1.30
-  "@ledgerhq/lumen-ui-react": 0.1.60
-  "@ledgerhq/lumen-ui-rnative": 0.1.63
+  "@ledgerhq/lumen-ui-react": 0.1.61
+  "@ledgerhq/lumen-ui-rnative": 0.1.64
   "@ledgerhq/lumen-utils-shared": 0.1.14
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.16.0
