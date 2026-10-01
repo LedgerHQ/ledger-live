@@ -5,18 +5,264 @@
         "title" : "Poner en participación ICP",
         "description" : "Pon ICP en participación y obtén recompensas por colaborar en su gobernanza.",
         "cta" : "Poner en participación ICP"
+      },
+      "confirmFollowing" : {
+        "description" : "Una de tus neuronas está perdiendo poder para votar. Confirma su seguimiento para restaurarla.",
+        "cta" : "Confirmar seguimiento"
+      },
+      "syncNeurons" : {
+        "description" : "Los datos de tu neurona están desactualizados. Conecta tu dispositivo para actualizarlo.",
+        "cta" : "Actualizar neuronas"
+      },
+      "lockNeurons" : {
+        "description" : "Una neurona necesita un retardo de disolución más largo antes de poder votar y obtener recompensas.",
+        "cta" : "Gestionar neuronas"
+      },
+      "addFollowees" : {
+        "description" : "Sigue a otras neuronas en temas de gobernanza para que tu neurona vote y gane recompensas.",
+        "cta" : "Gestionar neuronas"
       }
     },
     "headerManageActions" : {
       "manageNeurons" : {
-        "title" : "Gestionar neuronas"
+        "title" : "Neuronas"
       }
     },
     "summaryFooter" : {
+      "availableBalanceTooltip" : "ICP que puedes gastar o poner en participación ahora mismo. No incluye los ICP ya bloqueados en neuronas.",
       "stakedBalance" : "Saldo en participación",
       "stakedBalanceTooltip" : "La cantidad total de tokens ICP puestos en participación en neuronas actualmente. Los ICP puestos en participación reportan recompensas de voto y se pueden usar para la gobernanza.",
       "totalMaturity" : "Madurez total",
       "totalMaturityTooltip" : "El total de recompensas acumuladas por la puesta en participación, incluidas las de madurez líquida y puesta en participación. Estas recompensas se pueden volver a poner en participación o reclamarse como ICP líquido."
+    },
+    "duration" : {
+      "years_one" : "{{count}} año",
+      "years_other" : "{{count}} años",
+      "months_one" : "{{count}} mes",
+      "months_other" : "{{count}} meses",
+      "days_one" : "{{count}} día",
+      "days_other" : "{{count}} días",
+      "hours_one" : "{{count}} hora",
+      "hours_other" : "{{count}} horas",
+      "minutes_one" : "{{count}} minuto",
+      "minutes_other" : "{{count}} minutos",
+      "lessThanAMinute" : "Menos de un minuto"
+    },
+    "neuronState" : {
+      "Locked" : "Bloqueada",
+      "Dissolving" : "Disolviendo",
+      "Dissolved" : "Disuelta",
+      "Spawning" : "Generando",
+      "Unknown" : "Desconocido"
+    },
+    "common" : {
+      "neuronId" : "ID de la neurona",
+      "stake" : "Poner en participación",
+      "maturity" : "Madurez",
+      "dissolveDelay" : "Retardo de disolución",
+      "state" : "Estado",
+      "action" : "Acción",
+      "none" : "Ninguno",
+      "disburse" : "Desembolsar",
+      "startDissolving" : "Iniciar disolución",
+      "stopDissolving" : "Detener disolución",
+      "enabled" : "Habilitado",
+      "disabled" : "Desactivado",
+      "enable" : "Habilitar",
+      "disable" : "Desactivar"
+    },
+    "stakingFlow" : {
+      "started" : {
+        "title" : "Poner en participación ICP",
+        "description" : "La puesta en participación de ICP crea una neurona: Una posición bloqueada que vota en la gobernanza y obtiene recompensas.",
+        "steps" : {
+          "0" : "Tus ICP están bloqueados en la neurona hasta que la disuelvas.",
+          "1" : "Un retardo de disolución más largo otorga más poder de voto y más recompensas.",
+          "2" : "La neurona vota al seguir a otras, por lo que obtiene recompensas sin tener que votar manualmente."
+        },
+        "cta" : "Poner en participación ICP"
+      },
+      "amount" : {
+        "minimum" : "Puesta en participación mínima"
+      },
+      "success" : {
+        "title" : "Neurona creada",
+        "description" : "Abre Gestionar neuronas y actualiza para verla. Los datos de la neurona solo se recuperan con el dispositivo."
+      }
+    },
+    "manageNeuronFlow" : {
+      "title" : "Gestionar neuronas",
+      "confirmation" : {
+        "backToNeurons" : "Volver a las neuronas",
+        "success" : {
+          "title" : "Listo",
+          "default" : "Tu neurona se ha actualizado.",
+          "list_neurons" : "Tus neuronas están actualizadas.",
+          "start_dissolving" : "Tu neurona ha comenzado a disolverse.",
+          "stop_dissolving" : "Tu neurona ha dejado de disolverse.",
+          "disburse" : "La participación de tu neurona se ha desembolsado en su cuenta.",
+          "set_dissolve_delay" : "Se ha establecido el retardo de disolución de tu neurona.",
+          "increase_dissolve_delay" : "Se ha aumentado el retardo de disolución de tu neurona.",
+          "add_hot_key" : "La clave de acceso rápido se ha añadido a tu neurona.",
+          "remove_hot_key" : "La clave de acceso rápido se ha eliminado de tu neurona.",
+          "follow" : "Se ha actualizado el seguimiento de tu neurona.",
+          "refresh_voting_power" : "El poder de voto de tu neurona se ha actualizado.",
+          "stake_maturity" : "La madurez de tu neurona se ha puesto en participación.",
+          "auto_stake_maturity" : "Se ha actualizado la puesta en participación automática de madurez.",
+          "spawn_neuron" : "Se está generando una nueva neurona a partir de tu madurez.",
+          "split_neuron" : "Tu neurona se ha dividido.",
+          "increase_stake" : "La participación de tu neurona ha aumentado."
+        }
+      },
+      "listNeuron" : {
+        "title" : "Neuronas",
+        "empty" : "Aún no tienes neuronas. Participa con ICP para crear una.",
+        "lastSynced" : "Última sincronización:",
+        "never" : "Nunca",
+        "decayingTitle" : "Una de tus neuronas está perdiendo poder para votar.",
+        "decayingDescription" : "Confirmar su seguimiento lo restaura durante otros seis meses.",
+        "sync" : "Actualizar neuronas"
+      },
+      "manage" : {
+        "title" : "Administrar",
+        "neuron" : "Neurona",
+        "hotKeyOnly" : "Tienes una clave activa en esta neurona. Puedes votar y configurar el seguimiento, pero no mover tu participación.",
+        "missingNeuron" : "Esta neurona ya no está en tu instantánea sincronizada. Vuelve a tus neuronas y sincroniza para elegir otra.",
+        "votingPower" : {
+          "title" : "Poder de voto",
+          "tooltip" : "El poder de voto decide cuánto peso tiene tu neurona en la gobernanza y cuántas recompensas obtiene.",
+          "staked" : "En participación",
+          "increaseStake" : "Aumentar participación",
+          "state" : "Estado",
+          "bonusValue" : "+{{percent}}%",
+          "ageBonus" : "Bonificación por antigüedad",
+          "ageBonusTooltip" : "Una neurona obtiene hasta un +25% de poder de voto a medida que envejece, y alcanza el máximo después de cuatro años.",
+          "dissolveDelayBonus" : "Bonificación por retardo de disolución: +{{percent}}%",
+          "dissolveDelayBonusTooltip" : "Un retardo de disolución más largo otorga hasta un +200% de poder de voto, alcanzando el máximo a los dos años.",
+          "noDissolveDelay" : "Sin retardo de disolución",
+          "setDissolveDelay" : "Definir retardo de disolución",
+          "increaseDissolveDelay" : "Aumentar el retardo de disolución",
+          "decayStartsIn" : "El poder de voto comienza a disminuir en {{duration}}",
+          "decaying" : "El poder de voto está disminuyendo — llegará a cero en {{duration}}",
+          "expired" : "Poder de voto perdido — se ha eliminado el seguimiento",
+          "confirmFollowing" : "Confirmar seguimiento",
+          "confirmFollowingTooltip" : "Confirma tu seguimiento al menos cada seis meses o tu neurona perderá gradualmente su poder de voto."
+        },
+        "maturity" : {
+          "title" : "Madurez",
+          "tooltip" : "La madurez es la recompensa que acumula una neurona. Vuelve a ponerla en participación en la neurona o genérala en una nueva.",
+          "available" : "Madurez disponible",
+          "staked" : "Madurez puesta en participación",
+          "stakedTooltip" : "Madurez ya puesta en participación en la neurona. Cuenta para el poder de voto y ya no puede usarse para generar una nueva neurona.",
+          "stake" : "Puesta en participación de madurez",
+          "spawn" : "Generar neurona",
+          "autoStake" : "Puesta en participación automática de la madurez",
+          "autoStakeTooltip" : "Cuando está habilitada, la madurez se vuelve a poner en participación en la neurona a medida que se acumula."
+        },
+        "following" : {
+          "title" : "Siguiendo",
+          "tooltip" : "Una neurona que sigue a otras vota como lo hacen esas otras, que es la forma en que obtiene recompensas sin votar manualmente.",
+          "count_one" : "{{count}} tema",
+          "count_other" : "{{count}} temas",
+          "edit" : "Seguir neuronas en un tema de gobernanza",
+          "follow" : "Editar seguimiento"
+        },
+        "hotKeys" : {
+          "title" : "Hot keys",
+          "tooltip" : "Una hot key puede votar y configurar el seguimiento en su nombre, pero nunca puede mover la participación de la neurona.",
+          "add" : "Conceder acceso de hot key a otro principal",
+          "addAction" : "Agregar hot key",
+          "remove" : "Eliminar"
+        },
+        "advanced" : {
+          "title" : "Avanzado",
+          "split" : "Dividir esta neurona en dos",
+          "splitTooltip" : "Tanto la neurona original como la nueva deben mantener al menos el mínimo para participar de 1 ICP.",
+          "splitAction" : "Dividir neurona"
+        }
+      },
+      "increaseStake" : {
+        "title" : "Aumentar participación",
+        "description" : "Añade ICP a esta neurona. La transferencia se realiza a la propia cuenta de la neurona, por lo que no hay que elegir ningún receptor."
+      },
+      "setDissolveDelay" : {
+        "title" : "Retardo de disolución",
+        "setDescription" : "Elige cuánto tiempo tarda la neurona en disolverse. Entre {{min}} y {{max}} días.",
+        "increaseDescription" : "Aumenta el retardo de disolución de la neurona. Puedes añadir hasta {{remaining}} días más, para un total de {{max}}, y nunca se podrá reducir.",
+        "days" : "Días",
+        "resulting" : "Nuevo retardo de disolución: {{duration}}",
+        "belowVotingThreshold" : "Por debajo de {{days}} días, la neurona no puede votar y no recibe ninguna recompensa."
+      },
+      "stakeMaturity" : {
+        "title" : "Puesta en participación de madurez",
+        "description" : "Pon en participación una parte de la madurez de esta neurona para aumentar su poder de voto.",
+        "percentage" : "Porcentaje para participar",
+        "selected" : "Importe a poner en participación"
+      },
+      "splitNeuron" : {
+        "title" : "Dividir neurona",
+        "description" : "Mueve parte de la participación de esta neurona a una nueva neurona. La nueva neurona comienza sin retraso de disolución ni bono por antigüedad.",
+        "amount" : "Cantidad a dividir",
+        "range" : "Rango permitido:"
+      },
+      "addHotKey" : {
+        "title" : "Agregar hot key",
+        "description" : "Concede a otro principal permiso para votar y configurar el seguimiento en esta neurona. Nunca puede mover la participación.",
+        "principal" : "ID de Principal",
+        "ownPrincipal" : "El principal de esta cuenta",
+        "ownPrincipalHint" : "Escribe un principal diferente — normalmente con el que inicias sesión en la dApp de NNS. Esta cuenta ya controla la neurona, por lo que añadir su propio principal no otorga nada."
+      },
+      "followTopic" : {
+        "title" : "Tema",
+        "description" : "Elige el tema de gobernanza cuyo seguimiento deseas cambiar.",
+        "followeeCount_one" : "{{count}} seguido",
+        "followeeCount_other" : "{{count}} seguidos"
+      },
+      "selectFollowees" : {
+        "title" : "Seguidos",
+        "description" : "Tu neurona votará sobre {{topic}} exactamente como estas neuronas.",
+        "neuronId" : "ID de la neurona a seguir",
+        "add" : "Agregar",
+        "remove" : "Eliminar",
+        "empty" : "Aún no hay neuronas seguidas. Tu neurona no votará sobre este tema.",
+        "clearsFollowing" : "Si continúas, se enviará una lista vacía, lo que hará que esta neurona deje de seguir a alguien en {{topic}}. Actualmente sigue a {{count}}.",
+        "notANeuronId" : "Un ID de neurona solo contiene dígitos.",
+        "outOfRange" : "Este no es un ID de neurona válido.",
+        "duplicate" : "Esta neurona ya es una neurona seguida en este tema.",
+        "self" : "Una neurona no puede seguirse a sí misma.",
+        "unadded" : "Pulsa Añadir para incluir este ID de neurona o borra el campo.",
+        "atCapacity" : "Un tema puede seguir como máximo a {{max}} neuronas. Elimina una para añadir otra."
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "Todos los demás temas",
+      "NeuronManagement" : "Gestión de neuronas",
+      "ExchangeRate" : "Tasa de cambio",
+      "NetworkEconomics" : "Economía de red",
+      "Governance" : "Gobernanza",
+      "NodeAdmin" : "Administración de nodos",
+      "ParticipantManagement" : "Gestión de participantes",
+      "SubnetManagement" : "Gestión de subredes",
+      "NetworkCanisterManagement" : "Gestión de canisters de la aplicación",
+      "Kyc" : "KYC",
+      "NodeProviderRewards" : "Recompensas para proveedores de nodos",
+      "SnsDecentralizationSale" : "Venta de descentralización de SNS",
+      "IcOsVersionDeployment" : "Implementación de versiones del SO de IC",
+      "IcOsVersionElection" : "Elección de versión del SO de IC",
+      "SnsAndCommunityFund" : "Fondo de la comunidad y SNS",
+      "ApiBoundaryNodeManagement" : "Gestión de nodos perimetrales de la API",
+      "SubnetRental" : "Alquiler de subredes",
+      "ProtocolCanisterManagement" : "Gestión de canisters del protocolo",
+      "ServiceNervousSystemManagement" : "Gestión de sistema nervioso de servicio"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Confirmar seguimiento",
+      "description" : "Confirmar tu seguimiento restaura el poder de voto de una neurona durante otros seis meses.",
+      "timeUntilLoss" : "Poder de voto perdido en",
+      "losing" : "{{duration}} — perdiendo energía ahora",
+      "expired" : "Ya perdido",
+      "confirm" : "Confirmar",
+      "empty" : "Ninguna de tus neuronas está en un temporizador de confirmaciones en este momento."
     }
   },
   "buyCurrency" : {
@@ -1476,6 +1722,136 @@
     "CurrencyRegionRestrictedError" : {
       "title" : "{{currencyName}} no está disponible en tu región",
       "description" : "El acceso a {{currencyName}} está restringido en tu región."
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "Cantidad demasiado pequeña",
+      "description" : "Una neurona debe tener al menos 1 ICP, por lo que la cantidad tiene que cubrir ese valor más la tarifa de red."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Retardo de disolución demasiado corto",
+      "description_one" : "Internet Computer requiere un retardo de disolución de al menos {{minDays}} día.",
+      "description_other" : "Internet Computer requiere un retardo de disolución de al menos {{minDays}} días."
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "Número de días no válido",
+      "description" : "Introduce un número de días mayor que cero."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Retardo de disolución demasiado largo",
+      "description_one" : "Internet Computer limita el retardo de disolución de una neurona a {{maxDays}} día.",
+      "description_other" : "Internet Computer limita el retardo de disolución de una neurona a {{maxDays}} días."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "No se puede acortar el retardo de disolución",
+      "description" : "El retardo de disolución de una neurona solo se puede aumentar. Para acortarlo, comienza a disolver la neurona."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "No se encontró la neurona",
+      "description" : "Esta neurona no aparece en tu última instantánea sincronizada. Sincroniza tus neuronas e inténtalo de nuevo."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Principal no válido",
+      "description" : "Una clave activa debe ser un principal de Internet Computer válido."
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "Hotkey ya añadida",
+      "description" : "Este principal ya es una clave activa en esta neurona."
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "Este principal ya controla la neurona",
+      "description" : "Introduce un principal diferente. Una clave activa solo puede votar y configurar el seguimiento, algo que el controlador ya puede hacer."
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "Cantidad fuera del rango en el que esta neurona puede dividirse",
+      "description" : "Tanto la neurona original como la nueva deben mantener al menos 1 ICP puesto en participación, más la tarifa de red sobre la cantidad transferida."
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "No se puede generar desde esta neurona",
+      "description" : "Una neurona que ya está generando no puede volver a generar y la madurez generada debe dejar al menos 1 ICP después del ajuste de madurez de la red. Sincroniza tus neuronas para ver su estado actual."
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "No se puede poner en participación la madurez de esta neurona",
+      "description" : "La madurez no se puede poner en participación mientras la neurona se esté generando, una vez que se haya disuelto por completo o cuando la neurona no tenga ninguna. Sincroniza tus neuronas para ver su estado actual."
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "No se puede seguir este tema",
+      "description" : "Internet Computer ha retirado este tema o la app de Internet Computer de Ledger aún no puede firmar el seguimiento de éste. Elige otro tema."
+    },
+    "ICPTooManyFollowees" : {
+      "title" : "Límite de usuarios seguidos alcanzado",
+      "description" : "Un tema puede seguir como máximo a {{max}} neuronas. Elimina neuronas hasta que la lista contenga {{max}} o menos."
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "ID de neurona no válido",
+      "description" : "{{id}} no es un ID de neurona válido. Elimínalo de la lista."
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "La neurona aparece dos veces",
+      "description" : "La neurona {{id}} aparece en la lista más de una vez. Elimina el duplicado."
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "Una neurona no puede seguirse a sí misma.",
+      "description" : "{{id}} es el ID propio de esta neurona. Elimínalo de la lista."
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "No se puede comenzar a disolver esta neurona",
+      "description" : "Solo una neurona bloqueada puede comenzar a disolverse. Sincroniza tus neuronas para ver su estado actual."
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "No se puede dejar de disolver esta neurona",
+      "description" : "Solo una neurona en disolución puede detener la disolución, y es posible que esta ya haya finalizado. Sincroniza tus neuronas para ver su estado actual."
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "No se puede desembolsar esta neurona",
+      "description" : "Una neurona se puede desembolsar una vez que se haya disuelto por completo y su participación sea superior a la tarifa de red. Sincroniza tus neuronas para ver su estado actual."
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "Límite de claves activas alcanzado",
+      "description" : "Una neurona puede tener como máximo {{max}} hot keys. Elimina una para añadir otra."
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "Recarga demasiado pequeña",
+      "description" : "El saldo de una neurona debe alcanzar 1 ICP después de una recarga. Según la última sincronización, esta neurona necesita al menos {{missing}} ICP más. Una transferencia menor se liquida en la cuenta de la neurona, pero no se contabiliza hasta que una recarga posterior alcance el mínimo."
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "Puesta en participación transferida, neurona no actualizada",
+      "description" : "El ICP se transfirió a la cuenta de la neurona, pero la gobernanza de Internet Computer se negó a actualizar la neurona desde esta. {{reason}} No se pierde nada: El monto permanece en la cuenta de la neurona y se acumula para la próxima recarga que eleve el saldo a un mínimo de 1 ICP. Ledger Wallet todavía no puede verlo allí, por lo que el campo de cantidad sigue solicitando la diferencia total que muestra la última sincronización."
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "No se puede recargar esta neurona",
+      "description" : "Para recargar una neurona se necesita el memo de la transacción que la creó, y éste no se encuentra en el historial de esta cuenta. Recárgala desde la cuenta que creó la neurona."
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "Resultado desconocido",
+      "description" : "Internet Computer aceptó la solicitud pero no devolvió ningún resultado, por lo que puede haber tenido efecto o no. Sincroniza tus neuronas para verificar antes de volver a intentarlo."
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "Porcentaje fuera de rango",
+      "description" : "Introduce un número entero entre 1 y 100."
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "Neuronas no actualizadas",
+      "description" : "Internet Computer no devolvió tus neuronas, por lo que no han cambiado. Inténtalo de nuevo."
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "La red rechazó esta operación",
+      "description" : "La gobernanza de Internet Computer rechazó la solicitud, por lo que la neurona no ha cambiado. Sincroniza tus neuronas para ver su estado actual. {{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "Solicitud no aceptada",
+      "description" : "Internet Computer rechazó la solicitud antes de que se ejecutara, por lo que nada ha cambiado. Inténtalo de nuevo. {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "Solicitud no enviada",
+      "description" : "Internet Computer no aceptó la solicitud, por lo que no se envió nada y nada ha cambiado. Inténtalo de nuevo. {{reason}}"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Esto bloquea tus ICP en una nueva neurona",
+      "description" : "La neurona comienza con el retardo de disolución más corto, que es demasiado breve para votar u obtener una recompensa. Auméntalo desde Gestionar Neuronas y ten en cuenta que tendrás que esperar a que transcurra el plazo del retardo antes de que la participación se pueda volver a gastar."
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Esto se añade a una participación bloqueada",
+      "description" : "La cantidad se suma a la participación existente de la neurona y sigue su retardo de disolución, por lo que no se puede gastar hasta que la neurona se disuelva."
     }
   },
   "crash" : {
@@ -1647,6 +2023,23 @@
       "saveFailed" : "No hemos podido guardar tu contraseña. Inténtalo de nuevo.",
       "cta" : "Confirmar"
     },
+    "longerPassword" : {
+      "prompt" : {
+        "title" : "Cambia tu contraseña",
+        "description" : "Para una mayor seguridad, elige una contraseña de al menos 6 caracteres.",
+        "cta" : "Cambiar contraseña"
+      },
+      "enter" : {
+        "title" : "Escribe la nueva contraseña"
+      },
+      "confirm" : {
+        "title" : "Confirma nueva contraseña"
+      },
+      "changed" : {
+        "title" : "Contraseña cambiada",
+        "cta" : "Entendido"
+      }
+    },
     "unlock" : {
       "wrongPassword" : "Contraseña incorrecta",
       "forgotPassword" : "¿Has olvidado tu contraseña?",
@@ -1682,6 +2075,17 @@
       },
       "description" : "Ahora puedes registrarte para obtener una tarjeta",
       "cta" : "Continuar"
+    },
+    "keepProtection" : {
+      "password" : {
+        "title" : "No es posible desactivar la contraseña",
+        "description" : "Necesitas una contraseña o biometría para proteger tu acceso a Ledger Wallet."
+      },
+      "biometrics" : {
+        "title" : "No es posible desactivar {{biometricsType}}",
+        "description" : "Necesitas {{biometricsType}} o una contraseña para proteger tu acceso a Ledger Wallet."
+      },
+      "cta" : "Entendido"
     },
     "biometrics" : {
       "title" : "{{biometricsType}}",
@@ -2017,7 +2421,7 @@
     },
     "contact" : {
       "title" : "Despídete de las direcciones largas",
-      "subTitle" : "Presentamos Contactos Guarda las direcciones de wallet con nombres. Fáciles de encontrar, fáciles de enviar."
+      "subTitle" : "Presentamos Contactos.Guarda las direcciones de wallet con nombres. Fáciles de encontrar, fáciles de enviar."
     },
     "contactNoPay" : {
       "title" : "Presentamos Contactos",
@@ -10384,6 +10788,7 @@
     "paytab" : "Pay"
   },
   "payTab" : {
+    "disclaimer" : "Ofrecido por Monavate OnChain",
     "featureTour" : {
       "title" : "Todos tus pagos, en un mismo lugar",
       "description" : "Descubre la nueva pestaña Pay, que prepara tus cripto para el uso cotidiano de dinero.",
@@ -10429,14 +10834,23 @@
       "balanceLabel" : "Saldo",
       "assets" : {
         "title" : "Activos",
-        "empty" : "Aún no hay activos",
-        "error" : "No se pudieron cargar los activos",
+        "empty" : {
+          "title" : "Aún no hay activos",
+          "description" : "Añade un activo para empezar a usar la tarjeta.",
+          "cta" : "Añadir activo"
+        },
+        "error" : {
+          "title" : "No fue posible cargar los activos",
+          "description" : "Se ha producido un error.",
+          "cta" : "Reintentar"
+        },
         "info" : "Estos activos aportan fondos a la tarjeta. Establece el orden de cobro o añade más.",
         "manage" : "Administrar",
         "manageDialog" : {
           "title" : "Administrar activos",
           "description" : "Tus activos se enumeran por orden de fondos. Si un activo se está agotando, el siguiente se utiliza automáticamente.",
-          "addAssetCaption" : "Se te redirigirá a la página de Baanx para añadir activos.",
+          "reorder" : "Reordena {{asset}}. Mantén pulsado y arrastra, o bien usa las acciones de accesibilidad para mover hacia arriba y hacia abajo.",
+          "addAssetCaption" : "Se te redirigirá a Monavate para añadir un activo.",
           "addAsset" : "Añadir activo"
         },
         "details" : {
@@ -10445,13 +10859,14 @@
           "transactions" : "Transacciones"
         },
         "withdraw" : {
-          "title" : "Se te redirigirá a Baanx",
-          "description" : "Retira fondos de tu cuenta de Baanx a la dirección de tu wallet Ledger.",
+          "title" : "Se te redirigirá a Monavate",
+          "description" : "Retira fondos de tu cuenta de Monavate a la dirección de tu wallet Ledger.",
           "continue" : "Continuar"
         }
       },
       "title" : "Tarjeta cripto",
       "topUp" : "Recargar",
+      "chooseCardType" : "Elige el tipo de tarjeta",
       "details" : "Detalles",
       "addToWallet" : "Añadir a {{wallet}} Pay",
       "freeze" : "Inmovilizar",
@@ -10479,7 +10894,7 @@
         "imageAlt" : "Números de tarjeta"
       },
       "reward" : {
-        "title" : "Total de devoluciones"
+        "title" : "Total de devoluciones · {{ratePercent}}% en {{ticker}}"
       }
     },
     "cardTransactions" : {
@@ -10499,7 +10914,9 @@
         "status" : "Estado",
         "card" : "Tarjeta",
         "cardInfo" : "Los últimos cuatro dígitos de la tarjeta utilizada para este pago.",
-        "fundingSource" : "Origen de los fondos",
+        "fundingSource_one" : "Origen de los fondos",
+        "fundingSource_other" : "Orígenes de los fondos",
+        "cashback" : "Devolución en efectivo",
         "transactionId" : "ID de la transacción",
         "copyTransactionId" : "Copiar ID de la transacción",
         "today" : "Hoy {{time}}",
@@ -10527,6 +10944,10 @@
           "title" : "Inicia sesión para ver las transacciones de la tarjeta",
           "description" : "La actividad de la tarjeta aparecerá aquí una vez que inicies sesión."
         },
+        "unclaimed" : {
+          "title" : "Tarjeta cripto",
+          "description" : "Ve a Pay para configurar la tarjeta."
+        },
         "empty" : {
           "title" : "Aún no hay transacciones con tarjeta",
           "description" : "Vuelve más tarde para ver las transacciones con tarjeta."
@@ -10536,9 +10957,6 @@
           "description" : "Comprueba la conexión e inténtalo de nuevo."
         }
       }
-    },
-    "selectContact" : {
-      "placeholder" : "Introduce un contacto"
     },
     "actions" : {
       "deposit" : "Añadir moneda estable",
@@ -10564,8 +10982,9 @@
         "verifyCta" : "Verifica la dirección",
         "successTitle" : "Dirección mostrada en la pantalla segura del dispositivo",
         "nextStepsLabel" : "Siguientes pasos",
-        "nextStepShare" : "Comparte tu dirección a través de la app que desees",
-        "nextStepMatch" : "Asegúrate de que la dirección compartida coincida con la de tu dispositivo Ledger.",
+        "nextStepKeepDisplayed" : "Mantén visible la dirección en tu dispositivo Ledger. No la confirmes todavía.",
+        "nextStepPaste" : "Toca en \"Entendido\" y, a continuación, pega la dirección en la app con la que la estés compartiendo.",
+        "nextStepCheckMatch" : "Antes de enviar, comprueba que coincida con la de tu dispositivo Ledger.",
         "gotItCta" : "Entendido",
         "device" : {
           "cancelledTitle" : "Se ha cancelado la verificación de la dirección",
@@ -10634,12 +11053,32 @@
         "action" : "Inicio de sesión"
       },
       "errors" : {
-        "pkce_failed" : "No fue posible realizar el inicio de sesión. Inténtalo de nuevo.",
-        "browser_open_failed" : "No fue posible abrir la página de inicio de sesión. Inténtalo de nuevo.",
-        "missing_attempt" : "Este inicio de sesión ya no es válido. Vuelve a iniciar sesión.",
-        "exchange_failed" : "No fue posible completar el inicio de sesión. Inténtalo de nuevo.",
-        "persist_failed" : "No fue posible guardar la sesión. Inténtalo de nuevo.",
-        "fetch_user_failed" : "No fue posible cargar tu tarjeta. Inténtalo de nuevo."
+        "pkce_failed" : {
+          "title" : "No fue posible realizar el inicio de sesión.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "browser_open_failed" : {
+          "title" : "No fue posible abrir la página de inicio de sesión.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "missing_attempt" : {
+          "title" : "Este inicio de sesión ya no es válido.",
+          "description" : "Vuelve a iniciar sesión."
+        },
+        "exchange_failed" : {
+          "title" : "No fue posible completar el inicio de sesión.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "persist_failed" : {
+          "title" : "No fue posible guardar la sesión.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "fetch_user_failed" : {
+          "title" : "No fue posible cargar tu tarjeta.",
+          "description" : "Inténtalo de nuevo."
+        },
+        "retryLogin" : "Intentar de nuevo",
+        "retryUser" : "Reintentar"
       }
     },
     "cardLoginIntro" : {
@@ -10673,10 +11112,11 @@
       "seeAllTitle" : "Pagar a un contacto",
       "addressPicker" : {
         "title" : "Seleccionar la dirección de {{name}}",
+        "meTitle" : "Seleccionar mi dirección",
         "addAddress" : "Agregar dirección"
       },
       "paySuccess" : {
-        "title" : "Has pagado ({{recipient}})",
+        "title" : "Has pagado {{recipient}}",
         "amount" : "Importe",
         "estimatedTime" : "Tiempo est.",
         "from" : "De",
@@ -10979,11 +11419,30 @@
     "manage" : {
       "bond" : "Vincular",
       "claim" : "Reclamar",
+      "unbond" : "Desvincular",
       "status" : "Estado",
       "estimatedRate" : "Tasa de recompensas est.",
       "unbondPendingInfo" : "Una operación de quita de participación está esperando a ser confirmada. Aleo realiza un seguimiento de una sola posición de desvinculación a la vez, por lo que la desvinculación y la reclamación no estarán disponibles hasta que se haya procesado.",
       "claimPendingInfo" : "Una reclamación está esperando a ser confirmada. Aleo realiza un seguimiento de una sola posición de desvinculación a la vez, por lo que la desvinculación y la reclamación no estarán disponibles hasta que se haya procesado.",
       "unlockBlock" : "Se desbloquea en el bloque"
+    },
+    "unbond" : {
+      "stepperHeader" : {
+        "amount" : "Confirmar la quita de participación",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo"
+      },
+      "amount" : {
+        "bondedAmount" : "Importe de la cancelación de la puesta en participación",
+        "belowMinimum" : "Esta cantidad quedará congelada durante unos 360 bloques (~1 hora). Si la desvinculación dejara menos de <minimum/> vinculado, se desvinculará todo el saldo vinculado en su lugar, ya que ya no se cumpliría con el mínimo para participar.",
+        "max" : "Máx."
+      },
+      "validation" : {
+        "success" : {
+          "title" : "Quita de participación enviada",
+          "description" : "Tu transacción de vinculación se está procesando en la red Aleo."
+        }
+      }
     },
     "send" : {
       "balanceSelection" : {
@@ -11068,6 +11527,13 @@
         "private" : "Privada"
       }
     },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "Validador",
+        "bondedAmount" : "Cantidad en participación",
+        "unbondedAmount" : "Cantidad quitada de participación"
+      }
+    },
     "shared" : {
       "sponsoredByProvable" : "Patrocinado por Provable"
     }
@@ -11123,6 +11589,7 @@
     "addAddressEntry" : {
       "title" : "Ingresar dirección",
       "addressPlaceholder" : "Dirección o ENS",
+      "addressPlaceholderNoENS" : "Dirección",
       "confirmAddress" : "Confirmar dirección",
       "validatingAddress" : "Validando la dirección",
       "validAddress" : "Dirección válida",

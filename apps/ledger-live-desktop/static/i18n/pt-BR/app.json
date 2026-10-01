@@ -857,6 +857,7 @@
     "exploreCryptoCardsDescription" : "Explore nossos cartões cripto e encontre o que melhor se adapta às suas necessidades"
   },
   "payTab" : {
+    "disclaimer" : "Oferecido por Monavate Onchain",
     "featureTour" : {
       "title" : "Todos os seus pagamentos em um só lugar",
       "description" : "Conheça a sua nova aba Pagar, que prepara sua cripto para você usar como dinheiro no dia a dia.",
@@ -901,6 +902,7 @@
     "card" : {
       "title" : "Cartão cripto",
       "topUp" : "Recarregar",
+      "chooseCardType" : "Escolha o tipo de cartão",
       "balanceLabel" : "Saldo",
       "freeze" : "Congelar",
       "unfreeze" : "Descongelar",
@@ -922,14 +924,23 @@
       },
       "assets" : {
         "title" : "Ativos",
-        "empty" : "Nenhum ativo ainda",
-        "error" : "Não foi possível carregar os ativos",
+        "empty" : {
+          "title" : "Nenhum ativo ainda",
+          "description" : "Adicione um ativo para começar a usar seu cartão.",
+          "cta" : "Adicionar Ativo"
+        },
+        "error" : {
+          "title" : "Não foi possível carregar os ativos",
+          "description" : "Algo deu errado.",
+          "cta" : "Tentar Novamente"
+        },
         "info" : "Estes ativos fornecem fundos para o seu cartão. Defina a ordem em que eles são cobrados ou adicione mais.",
         "manage" : "Gerenciar",
         "manageDialog" : {
           "title" : "Gerenciar Ativos",
           "description" : "Arraste para organizar a ordem de financiamento. Se um ativo estiver com saldo baixo, o próximo será usado automaticamente.",
-          "addAssetCaption" : "Você será redirecionado à página da Baanx para adicionar ativos.",
+          "reorder" : "Reordene {{asset}}. Pressione Espaço ou Enter para pegar, as teclas de seta para mover e Escape para cancelar.",
+          "addAssetCaption" : "Você será redirecionado para a Monavate para adicionar ativos.",
           "addAsset" : "Adicionar Ativo"
         },
         "details" : {
@@ -938,8 +949,8 @@
           "transactions" : "Transações"
         },
         "withdraw" : {
-          "title" : "Você será redirecionado para a Baanx",
-          "description" : "Sacar fundos da sua conta Baanx para o endereço da sua carteira Ledger.",
+          "title" : "Você será redirecionado para a Monavate",
+          "description" : "Saque fundos da sua conta Baanx para o endereço da sua carteira Ledger.",
           "continue" : "Continuar"
         },
         "history" : {
@@ -950,7 +961,7 @@
         }
       },
       "reward" : {
-        "title" : "Cashback total"
+        "title" : "Total de cashback · {{ratePercent}}% em {{ticker}}"
       },
       "numbers" : {
         "reveal" : "Ver",
@@ -982,7 +993,9 @@
         "status" : "Status",
         "card" : "Cartão",
         "cardInfo" : "Os últimos quatro dígitos do cartão usado para este pagamento.",
-        "fundingSource" : "Fonte de recursos",
+        "fundingSource_one" : "Fonte de financiamento",
+        "fundingSource_other" : "Fonte de financiamento",
+        "cashback" : "Cashback",
         "transactionId" : "ID da transação",
         "copyTransactionId" : "Copiar ID da transação",
         "today" : "Hoje {{time}}",
@@ -1010,6 +1023,10 @@
         "signedOut" : {
           "title" : "Faça login para ver as transações do seu cartão",
           "description" : "A atividade do seu cartão aparecerá aqui assim que você fizer login."
+        },
+        "unclaimed" : {
+          "title" : "Cartão cripto",
+          "description" : "Vá à aba pagamento para configurar seu cartão."
         },
         "empty" : {
           "title" : "Nenhuma transação com cartão ainda",
@@ -1076,10 +1093,11 @@
       },
       "addressPicker" : {
         "title" : "Selecione o endereço de {{name}}",
+        "meTitle" : "Selecionar meu endereço",
         "addAddress" : "Adicionar endereço"
       },
       "paySuccess" : {
-        "title" : "Você pagou ({{recipient}})",
+        "title" : "Você pagou {{recipient}}",
         "amount" : "Quantia",
         "estimatedTime" : "Tempo est.",
         "from" : "De",
@@ -1148,12 +1166,32 @@
         "action" : "Entrar"
       },
       "errors" : {
-        "pkce_failed" : "Não foi possível iniciar o login. Tente novamente.",
-        "browser_open_failed" : "Não foi possível abrir a página de login. Tente novamente.",
-        "missing_attempt" : "Este login não é mais válido. Por favor, faça login novamente.",
-        "exchange_failed" : "Não foi possível concluir o login. Tente novamente.",
-        "persist_failed" : "Não foi possível salvar sua sessão. Tente novamente.",
-        "fetch_user_failed" : "Seu cartão não pôde ser carregado. Tente novamente."
+        "pkce_failed" : {
+          "title" : "Não foi possível iniciar o login.",
+          "description" : "Tente novamente."
+        },
+        "browser_open_failed" : {
+          "title" : "Não foi possível abrir a página de login.",
+          "description" : "Tente novamente."
+        },
+        "missing_attempt" : {
+          "title" : "Este login não é mais válido.",
+          "description" : "Faça login novamente."
+        },
+        "exchange_failed" : {
+          "title" : "Não foi possível concluir o login.",
+          "description" : "Tente novamente."
+        },
+        "persist_failed" : {
+          "title" : "Não foi possível salvar sua sessão.",
+          "description" : "Tente novamente."
+        },
+        "fetch_user_failed" : {
+          "title" : "Seu cartão não pôde ser carregado.",
+          "description" : "Tente novamente."
+        },
+        "retryLogin" : "Tente novamente",
+        "retryUser" : "Tentar novamente"
       }
     },
     "cardLoginIntro" : {
@@ -1202,8 +1240,9 @@
         "verifyCta" : "Verificar Endereço",
         "successTitle" : "Endereço exibido na tela segura do dispositivo",
         "nextStepsLabel" : "Próximos passos",
-        "nextStepShare" : "Compartilhe o seu endereço pelo aplicativo desejado",
-        "nextStepMatch" : "Certifique-se de que o endereço compartilhado corresponda ao do seu dispositivo Ledger.",
+        "nextStepKeepDisplayed" : "Mantenha seu endereço exibido no seu dispositivo Ledger. Não confirme ainda.",
+        "nextStepPaste" : "Clique em “Entendi”, depois cole seu endereço no aplicativo com o qual está compartilhando.",
+        "nextStepCheckMatch" : "Antes de enviar, verifique se ele corresponde ao do seu dispositivo Ledger.",
         "gotItCta" : "Entendi",
         "device" : {
           "cancelledTitle" : "Verificação de endereço cancelada",
@@ -3612,7 +3651,9 @@
       "title" : "Sacar Ativos",
       "steps" : {
         "amount" : {
-          "title" : "Sacar"
+          "title" : "Sacar",
+          "unlockedOn" : "Desbloqueado em {{date}}",
+          "unlocksOn" : "Desbloqueia em {{date}}"
         },
         "connectDevice" : {
           "title" : "Dispositivo"
@@ -5030,8 +5071,7 @@
           },
           "validator" : {
             "title" : "Validadores",
-            "ledgerByBitwiseTC" : "Termos e condições Ledger by Bitwise",
-            "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
+            "ledgerByBitwiseTC" : "Termos e condições Ledger by Bitwise"
           },
           "connectDevice" : {
             "title" : "Dispositivo"
@@ -6745,6 +6785,9 @@
       "transfer_token_private" : "destinatário privado",
       "convert_token_public_to_private" : "destinatário privado",
       "convert_token_private_to_public" : "destinatário público",
+      "bond_public" : "validador",
+      "unbond_public" : "destinatário",
+      "claim_unbond_public" : "destinatário",
       "delegate" : "validador",
       "redelegate" : "validador",
       "undelegate" : "validador",
@@ -8557,6 +8600,30 @@
       "title" : "Este tópico não pode ser seguido",
       "description" : "O Internet Computer descontinuou este tópico ou o aplicativo Ledger Internet Computer ainda não pode assinar o seguimento dele. Escolha outro tópico."
     },
+    "ICPTooManyFollowees" : {
+      "title" : "Limite de seguidos atingido",
+      "description" : "Um tópico pode seguir no máximo {{max}} neurons. Remova neurons até que a lista contenha {{max}} ou menos."
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "ID de neuron inválido",
+      "description" : "{{id}} não é um ID de neuron válido. Remova-o da lista."
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "Neuron listado duas vezes",
+      "description" : "O neuron {{id}} está listado mais de uma vez. Remova o duplo."
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "Um neuron não pode seguir a si mesmo.",
+      "description" : "{{id}} é o ID deste neuron. Remova-o da lista."
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "Não é possível iniciar a dissolução deste neuron",
+      "description" : "Apenas um neuron bloqueado pode começar a ser dissolvido. Sincronize seus neurons para ver o estado atual deles."
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "Não é possível interromper a dissolução deste neuron",
+      "description" : "Apenas um neuron em dissolução pode parar de se dissolver, o que já pode ter terminado. Sincronize seus neurons para ver o estado atual deles."
+    },
     "ICPDisburseNotAllowed" : {
       "title" : "Não é possível resgatar este neuron",
       "description" : "Um neuron pode ser desembolsado assim que estiver totalmente dissolvido e o seu valor aplicado for maior do que a taxa de rede. Sincronize seus neurons para ver o estado atual deles."
@@ -8600,6 +8667,10 @@
     "ICPCallRejected" : {
       "title" : "Solicitação não aceita",
       "description" : "O Internet Computer rejeitou a solicitação antes de ser executada, portanto nada mudou. Tente Novamente. {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "Solicitação não enviada",
+      "description" : "O Internet Computer não aceitou a solicitação, portanto nada foi enviado e nada mudou. Tente Novamente. {{reason}}"
     },
     "ICPInvalidPercentage" : {
       "title" : "Porcentagem fora do intervalo",
@@ -10121,7 +10192,6 @@
   },
   "history" : {
     "title" : "Histórico de transações",
-    "cardScope" : "Cartão",
     "cardAssetScope" : "Cartão · {{assetName}}",
     "pending" : "Transação pendente",
     "pending_other" : "Transações pendentes",
@@ -10258,6 +10328,7 @@
     "addAddressEntry" : {
       "title" : "Digite o endereço",
       "addressPlaceholder" : "Endereço ou ENS",
+      "addressPlaceholderNoENS" : "Endereço",
       "confirmAddress" : "Continuar a revisão",
       "validatingAddress" : "Validando endereço",
       "validAddress" : "Endereço válido",
