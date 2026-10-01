@@ -280,6 +280,7 @@
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
+    "@features/platform-feature-flags-firebase": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",

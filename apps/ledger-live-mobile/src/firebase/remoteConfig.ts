@@ -1,9 +1,11 @@
 import { getRemoteConfig } from "@react-native-firebase/remote-config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
-import { formatDefaultFeatures } from "@features/platform-feature-flags";
+import {
+  formatDefaultFeatures,
+  parseFirebaseFeatures,
+} from "@features/platform-feature-flags-firebase";
 import { setContentAbTestCopy } from "@features/platform-content-ab-tests";
-import { parseFirebaseFeatures } from "@features/platform-feature-flags/firebase";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";
 

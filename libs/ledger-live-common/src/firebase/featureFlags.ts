@@ -1,7 +1,7 @@
 import semver from "semver";
 import { getEnv } from "@shared/env";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { formatToFirebaseFeatureId } from "@features/platform-feature-flags";
+import { formatToFirebaseFeatureId } from "@features/platform-feature-flags-firebase";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";
 
 type GetFeature = <T extends FeatureId>(param: {

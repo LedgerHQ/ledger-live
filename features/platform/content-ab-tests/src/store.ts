@@ -1,4 +1,4 @@
-import type { RemoteConfigValue } from "@features/platform-feature-flags/firebase";
+import type { RemoteConfigValue } from "@features/platform-feature-flags-firebase";
 import { parseContentAbTestCopy } from "./internals/parse";
 import { EnabledContentAbTestCopySchema } from "./internals/schema";
 
