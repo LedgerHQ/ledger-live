@@ -314,7 +314,6 @@
       "electron",
       "esbuild",
       "keccak",
-      "msw",
       "nx",
       "protobufjs",
       "sqlite3",

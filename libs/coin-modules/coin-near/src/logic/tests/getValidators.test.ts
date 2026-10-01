@@ -8,7 +8,7 @@ import { getValidators } from "../getValidators";
 describe("getValidators (MSW)", () => {
   beforeAll(() => {
     setMockCoinConfig();
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   beforeEach(() => fetchValidators.reset());

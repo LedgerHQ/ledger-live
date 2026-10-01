@@ -34,7 +34,7 @@ const mockPool = (views: Record<string, unknown>): void => {
 describe("getStakes (MSW)", () => {
   beforeAll(() => {
     setMockCoinConfig();
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   afterEach(() => mockServer.resetHandlers());

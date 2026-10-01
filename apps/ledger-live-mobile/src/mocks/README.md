@@ -56,8 +56,8 @@ reaches the real provider. Only the answer buttons and the renewal counter need 
 
 > [!IMPORTANT]
 >
-> **A handler runs twice for every request it passes through.** `msw/native` installs two
-> interceptors, one on `fetch` and one on `XMLHttpRequest`, and React Native's `fetch` is
+> **A handler runs twice for every request it passes through.** `src/mocks/server.ts` installs
+> two interceptors, one on `fetch` and one on `XMLHttpRequest`, and React Native's `fetch` is
 > `whatwg-fetch`, which is built on `XMLHttpRequest`. So a pass-through is performed with the real
 > `fetch`, that `fetch` opens an `XMLHttpRequest`, and the second interceptor hands the same request
 > back to the handler. A request the handler answers arrives once.

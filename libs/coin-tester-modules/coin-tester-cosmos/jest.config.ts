@@ -1,4 +1,5 @@
 import type { Config } from "jest";
+import { mswEsmPnpmDirs, mswTransform } from "@support/jest-msw";
 
 // Shaped like the sibling coin-testers (e.g. coin-tester-cardano). The
 // load-bearing option is the `@ledgerhq/source` export condition: it resolves
@@ -13,12 +14,13 @@ const config: Config = {
     customExportConditions: ["@ledgerhq/source", "node", "require", "default"],
   },
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": ["@swc/jest", { jsc: { target: "esnext" } }],
   },
   // @ledgerhq packages resolve to their TS source (via the condition above), so
   // swc must transform them even inside node_modules; everything else there
   // stays ignored.
-  transformIgnorePatterns: ["/node_modules/.pnpm/(?!@ledgerhq\\+)"],
+  transformIgnorePatterns: [`/node_modules/.pnpm/(?!(@ledgerhq\\+|${mswEsmPnpmDirs.join("|")}))`],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   // @ledgerhq sources use ESM ".js" specifiers on ".ts" files; strip the
   // extension so jest resolves the TypeScript source.

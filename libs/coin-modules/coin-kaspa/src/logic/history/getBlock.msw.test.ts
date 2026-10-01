@@ -12,7 +12,7 @@ import { getBlock } from "./getBlock";
 const BLOCKS_URL = `${TEST_KASPA_ENDPOINT}/blocks-from-bluescore`;
 const ADDR = "kaspa:qpy827u4r43hp36nu2w78dphwgzjr3e9xdwwvm7k7dalyhpfkr84qucn4ecud";
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

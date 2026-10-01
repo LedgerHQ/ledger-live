@@ -1,4 +1,5 @@
 const path = require("path");
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
 
 const swcTransform = {
   "^.+\\.(t|j)sx?$": [
@@ -19,7 +20,11 @@ const webMocks = {
 // real values the views pass around, so SWC has to compile them instead of a stub standing in —
 // unlike the component barrels above, which only need to render a DOM node. Entries match the
 // pnpm store directory names.
-const transformAllowlist = ["@ledgerhq\\+lumen-utils-shared", "@ledgerhq\\+lumen-design-core"];
+const transformAllowlist = [
+  "@ledgerhq\\+lumen-utils-shared",
+  "@ledgerhq\\+lumen-design-core",
+  ...mswEsmPnpmDirs,
+];
 
 const nativeMocks = {
   // Stub react-native itself (Flow-typed ESM) so native tests run in a plain node env.
@@ -57,7 +62,7 @@ function createFlowJestConfig(overrides = {}) {
   ];
   const base = {
     testPathIgnorePatterns,
-    transform: swcTransform,
+    transform: { ...mswTransform, ...swcTransform },
     transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformAllowlist.join("|")}))`],
     coverageReporters,
   };

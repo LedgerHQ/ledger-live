@@ -1,3 +1,5 @@
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
+
 // near-api-js v7 depends on ESM-only @noble/@scure packages, which have to be transpiled for Jest.
 const esmPackages = ["@noble", "@scure"];
 
@@ -10,6 +12,7 @@ module.exports = {
   testTimeout: 60_000,
   forceExit: true,
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {
@@ -19,5 +22,7 @@ module.exports = {
       },
     ],
   },
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
+  transformIgnorePatterns: [
+    `node_modules/.pnpm/(?!(${[...esmPackages, ...mswEsmPnpmDirs].join("|")}))`,
+  ],
 };

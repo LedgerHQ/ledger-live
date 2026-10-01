@@ -45,6 +45,7 @@
     "msw": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-msw": "workspace:*"
   }
 }

@@ -357,6 +357,7 @@
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/test-utils": "workspace:^",
+    "@mswjs/interceptors": "0.45.6",
     "@react-native-community/cli": "catalog:",
     "@react-native-community/cli-platform-android": "catalog:",
     "@react-native-community/cli-platform-ios": "catalog:",
@@ -417,6 +418,7 @@
     "ts-node": "10.9.2",
     "tslib": "2.6.2",
     "web-streams-polyfill": "4.2.0",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "@support/jest-msw": "workspace:*"
   }
 }

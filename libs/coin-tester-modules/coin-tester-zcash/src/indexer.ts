@@ -2,16 +2,17 @@
  * Bridges the wallet's Ledger-explorer (`blockchain/v4/<explorerId>`) HTTP
  * calls to the local `zebra` node's own JSON-RPC, mirroring
  * `coin-tester-evm`'s MSW-bridges-to-local-node pattern (`indexer.ts:1006-1012`'s
- * `onUnhandledRequest` guard) rather than running a separate explorer service:
+ * `onUnhandledFrame` guard) rather than running a separate explorer service:
  * zebra already indexes addresses natively (see `helpers.ts`).
  *
  * The coin config's `explorer.url` points at `EXPLORER_ORIGIN` (see `scenarii/zcash.ts`)
  * so every request this package answers is guaranteed local; the
- * `onUnhandledRequest` guard registered by `startIndexer` still throws on any
+ * `onUnhandledFrame` guard registered by `startIndexer` still throws on any
  * request to a non-localhost host, as a second line of defense.
  */
-import { setupServer, type SetupServerApi } from "msw/node";
+import { setupServer, type SetupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
+import { HttpNetworkFrame } from "msw/experimental";
 import type { TX, Input, Output } from "@ledgerhq/wallet-btc/index";
 import {
   getAddressTxIds,
@@ -146,12 +147,14 @@ function buildHandlers() {
   ];
 }
 
-let server: SetupServerApi | undefined;
+let server: SetupServer | undefined;
 
 export function startIndexer(): void {
   server = setupServer(...buildHandlers());
   server.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       const hostname = new URL(request.url).hostname;
       if (["127.0.0.1", "localhost"].includes(hostname)) return;
       throw new Error(`Unhandled request: ${request.method} ${request.url}`);

@@ -49,7 +49,7 @@ const server = setupServer(
 
 describe("useTrustchainSdk", () => {
   beforeAll(() => {
-    server.listen({ onUnhandledRequest: "error" });
+    server.listen({ onUnhandledFrame: "error" });
   });
 
   beforeEach(async () => {

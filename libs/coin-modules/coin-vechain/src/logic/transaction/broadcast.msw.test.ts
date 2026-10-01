@@ -11,7 +11,7 @@ const context = createMockVechainContext({
   node: { url: TEST_VECHAIN_ENDPOINT },
 });
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

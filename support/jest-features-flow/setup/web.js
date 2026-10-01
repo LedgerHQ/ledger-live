@@ -12,11 +12,12 @@ global.TextDecoder ??= TextDecoder;
 // Same primitives the apps polyfill (see apps/ledger-live-desktop/jest.polyfills.js).
 // The streams have to land on the global before undici loads: it reads them at module eval.
 // These have to land before undici loads: it reads them at module eval.
-const { ReadableStream, TransformStream } = require("node:stream/web");
+const { ReadableStream, TransformStream, WritableStream } = require("node:stream/web");
 const { BroadcastChannel, MessageChannel, MessagePort } = require("node:worker_threads");
 
 global.ReadableStream ??= ReadableStream;
 global.TransformStream ??= TransformStream;
+global.WritableStream ??= WritableStream;
 global.BroadcastChannel ??= BroadcastChannel;
 global.MessageChannel ??= MessageChannel;
 global.MessagePort ??= MessagePort;

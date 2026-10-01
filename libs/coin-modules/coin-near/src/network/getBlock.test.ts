@@ -21,7 +21,7 @@ const mockBlock = (capture?: (params: Record<string, unknown>) => void) =>
 describe("getBlock", () => {
   beforeAll(() => {
     setMockCoinConfig();
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   afterEach(() => mockServer.resetHandlers());

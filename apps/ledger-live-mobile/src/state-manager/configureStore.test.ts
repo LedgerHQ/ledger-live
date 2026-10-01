@@ -89,7 +89,7 @@ describe("mobile store", () => {
     );
 
     beforeAll(() => {
-      server.listen({ onUnhandledRequest: "error" });
+      server.listen({ onUnhandledFrame: "error" });
     });
 
     beforeEach(() => {

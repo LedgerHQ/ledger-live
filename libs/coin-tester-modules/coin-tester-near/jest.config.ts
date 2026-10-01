@@ -1,4 +1,5 @@
 import type { Config } from "jest";
+import { mswEsmPnpmDirs, mswTransform } from "@support/jest-msw";
 
 // near-api-js v7 depends on ESM-only @noble/@scure packages.
 const esmDeps = ["ky", "@noble", "@scure"];
@@ -7,6 +8,7 @@ const config: Config = {
   testEnvironment: "node",
   setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {
@@ -26,7 +28,9 @@ const config: Config = {
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmDeps.join("|")}))`],
+  transformIgnorePatterns: [
+    `node_modules/.pnpm/(?!(${[...esmDeps, ...mswEsmPnpmDirs].join("|")}))`,
+  ],
   reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
 };
 

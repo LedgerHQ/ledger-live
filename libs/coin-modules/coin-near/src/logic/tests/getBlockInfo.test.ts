@@ -9,7 +9,7 @@ const HEADER = { height: 140_000_000, hash: "BlockHash1", timestamp: 1_750_000_0
 describe("getBlockInfo (MSW)", () => {
   beforeAll(() => {
     setMockCoinConfig();
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   afterEach(() => mockServer.resetHandlers());

@@ -1,0 +1,8 @@
+{
+  "name": "@support/jest-msw",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -76,6 +76,7 @@
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@support/jest-msw": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

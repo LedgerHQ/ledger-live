@@ -14,7 +14,7 @@ jest.mock("./node", () => ({
   fetchNominations: jest.fn(),
 }));
 
-beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => mockServer.listen({ onUnhandledFrame: "error" }));
 afterEach(() => mockServer.resetHandlers());
 afterAll(() => mockServer.close());
 const currency = getCryptoCurrencyById("assethub_polkadot");
@@ -40,8 +40,6 @@ describe("getAccount", () => {
       },
       hasBeenMigrated: true,
     }));
-
-    mockServer.listen({ onUnhandledRequest: "error" });
   });
 
   beforeEach(() => {
@@ -252,8 +250,6 @@ describe("getBalances", () => {
         url: "",
       },
     }));
-
-    mockServer.listen({ onUnhandledRequest: "error" });
   });
 
   it("should have no spendable balance nor locked balance when API does not return them", async () => {
@@ -301,8 +297,6 @@ describe("getRegistry", () => {
         url: SIDECAR_BASE_URL_TEST,
       },
     }));
-
-    mockServer.listen({ onUnhandledRequest: "error" });
   });
 
   it("works", async () => {

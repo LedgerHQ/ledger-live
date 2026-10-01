@@ -3,7 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import type { SetupServerApi } from "msw/node";
+import type { SetupServer } from "msw/node";
 import {
   EPOCHS_TO_UNLOCK_BLOCKS,
   IMPLICIT_RECIPIENT_ID,
@@ -23,7 +23,7 @@ import { buildSigners, randomKeyPair } from "../signer";
 import { deployStakingPool, pingPool } from "../stakingPool";
 
 let sandbox: SandboxHandle | undefined;
-let indexer: SetupServerApi | undefined;
+let indexer: SetupServer | undefined;
 
 /** Index of the next transaction, so the unstake lock can be skipped before the withdrawal. */
 let step = 0;

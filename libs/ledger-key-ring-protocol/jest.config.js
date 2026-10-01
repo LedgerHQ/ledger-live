@@ -1,6 +1,10 @@
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
+
 module.exports = {
   setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${mswEsmPnpmDirs.join("|")}))`],
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {

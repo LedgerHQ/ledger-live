@@ -1,6 +1,10 @@
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
+
 const sharedConfig = {
   testEnvironment: "node",
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${mswEsmPnpmDirs.join("|")}))`],
   transform: {
+    ...mswTransform,
     "^.+\\.(ts|tsx)$": [
       "@swc/jest",
       {

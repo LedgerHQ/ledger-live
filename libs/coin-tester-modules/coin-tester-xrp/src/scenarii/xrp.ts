@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -133,7 +134,9 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
 
   beforeAll: account => {
     mockServer.listen({
-      onUnhandledRequest: request => {
+      onUnhandledFrame: ({ frame }) => {
+        if (!(frame instanceof HttpNetworkFrame)) return;
+        const { request } = frame.data;
         const hostname = new URL(request.url).hostname;
         if (["127.0.0.1", "localhost"].includes(hostname)) return;
         throw new Error(`Unhandled request: ${request.method} ${request.url}`);

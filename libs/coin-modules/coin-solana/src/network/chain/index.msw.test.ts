@@ -120,7 +120,7 @@ describe("index", () => {
     describe("getSignaturesForAddressBatch", () => {
       const mockServer = setupServer();
 
-      beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+      beforeAll(() => mockServer.listen({ onUnhandledFrame: "error" }));
       afterEach(() => mockServer.resetHandlers());
       afterAll(() => mockServer.close());
 
@@ -142,7 +142,7 @@ describe("index", () => {
       const authAddr = "AuthorityAddress111111111111111111111111111";
       const filters = [{ memcmp: { offset: 44, bytes: authAddr } }];
 
-      beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+      beforeAll(() => mockServer.listen({ onUnhandledFrame: "error" }));
       afterEach(() => mockServer.resetHandlers());
       afterAll(() => mockServer.close());
 

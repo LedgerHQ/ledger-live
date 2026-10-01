@@ -10,6 +10,7 @@ import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhon
 import { Buffer } from "buffer";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 import { MOCK_API } from "./fixtures";
 import { EPOCH_PARAMS, POOL_DETAIL, POOL_LIST_PAGE } from "./fixtures/ledgerPools";
 import { YACI_STORE_API } from "./yaci";
@@ -157,7 +158,9 @@ export function initYaciIndexer(): () => void {
   // Let the adapter's own fetches to the Yaci devnet (8080) and admin API (10000) through; anything
   // else unhandled is a real gap we want to see, not silently pass.
   server.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       const { hostname, port } = new URL(request.url);
       if (hostname === "localhost" && (port === "8080" || port === "10000")) return;
       throw new Error(`Unhandled request: ${request.method} ${request.url}`);

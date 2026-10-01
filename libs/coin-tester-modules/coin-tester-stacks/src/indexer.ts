@@ -1,4 +1,5 @@
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 
 /**
  * Clarinet's devnet bundles a real `stacks-blockchain-api` instance (+ Postgres) by default —
@@ -12,7 +13,9 @@ import { setupServer } from "msw/node";
 export function initMSW(): () => void {
   const server = setupServer();
   server.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       const hostname = new URL(request.url).hostname;
       if (["127.0.0.1", "localhost"].includes(hostname)) return;
       throw new Error(`Unhandled MSW request: ${request.method} ${request.url}`);

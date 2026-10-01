@@ -1,4 +1,5 @@
 import type { Config } from "jest";
+import { mswEsmPnpmDirs, mswTransform } from "@support/jest-msw";
 
 const config: Config = {
   testEnvironment: "node",
@@ -11,9 +12,10 @@ const config: Config = {
     customExportConditions: ["@ledgerhq/source", "node", "require", "default"],
   },
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": ["@swc/jest", { jsc: { target: "esnext" } }],
   },
-  transformIgnorePatterns: ["/node_modules/.pnpm/(?!@ledgerhq\\+)"],
+  transformIgnorePatterns: [`/node_modules/.pnpm/(?!(@ledgerhq\\+|${mswEsmPnpmDirs.join("|")}))`],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
   moduleNameMapper: {

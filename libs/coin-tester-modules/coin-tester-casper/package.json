@@ -73,6 +73,7 @@
   "devDependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@support/jest-msw": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

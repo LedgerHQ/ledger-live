@@ -1,5 +1,6 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 import type { InfoGetTransactionResult } from "casper-js-sdk";
 import { getCasperNodeRpcClient } from "@ledgerhq/coin-casper/network/api";
 import type {
@@ -133,7 +134,9 @@ export function startIndexer(): () => void {
   );
 
   server.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       const { hostname } = new URL(request.url);
       if (ALLOWED_HOSTNAMES.has(hostname)) return;
       throw new Error(`Unhandled request: ${request.method} ${request.url}`);

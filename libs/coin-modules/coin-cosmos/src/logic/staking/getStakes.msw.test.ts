@@ -12,7 +12,7 @@ const VALIDATOR = (addr: string) =>
 const REWARDS = `${TEST_COSMOS_ENDPOINT}/cosmos/distribution/v1beta1/delegators/${ADDR}/rewards`;
 const UNBONDINGS = `${TEST_COSMOS_ENDPOINT}/cosmos/staking/v1beta1/delegators/${ADDR}/unbonding_delegations`;
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -82,7 +82,7 @@ describe("getStakes via MSW", () => {
     server.use(
       http.get(DELEGATIONS, () => HttpResponse.json({ delegation_responses: [] })),
       // getDelegations only calls the per-validator endpoint inside the delegation loop, so with
-      // zero delegations it's never hit; not stubbing it (with onUnhandledRequest:"error") proves that.
+      // zero delegations it's never hit; not stubbing it (with onUnhandledFrame:"error") proves that.
       http.get(REWARDS, () => HttpResponse.json({ rewards: [] })),
       http.get(UNBONDINGS, () => HttpResponse.json({ unbonding_responses: [] })),
     );
@@ -99,7 +99,7 @@ describe("getStakes via MSW", () => {
     server.use(
       http.get(DELEGATIONS, () => new HttpResponse(null, { status: 500 })),
       // Stubbed so the concurrent getUnbondings() call (fired by the same Promise.all) doesn't
-      // trip onUnhandledRequest:"error" before the delegations rejection is observed.
+      // trip onUnhandledFrame:"error" before the delegations rejection is observed.
       http.get(UNBONDINGS, () => HttpResponse.json({ unbonding_responses: [] })),
     );
 

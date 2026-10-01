@@ -22,7 +22,7 @@ describe("getTransactionStatus", () => {
       },
     }));
 
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   afterAll(() => {

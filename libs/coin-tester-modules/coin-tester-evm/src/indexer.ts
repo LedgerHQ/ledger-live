@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
-import { SetupServerApi, setupServer } from "msw/node";
+import { type SetupServer, setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
+import { HttpNetworkFrame } from "msw/experimental";
 import { AbiCoder, ethers } from "ethers";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic-public";
@@ -762,7 +763,7 @@ const getEtherscanOpsMap = (action: string) => {
   }
 };
 
-let server: SetupServerApi;
+let server: SetupServer;
 export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
   const handlers = [
     http.get("https://global.api.prd.ledger.com/cal/v1/currencies", ({ request }) => {
@@ -1005,7 +1006,9 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
 
   server = setupServer(...handlers);
   server.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       const hostname = new URL(request.url).hostname;
       if (["127.0.0.1", "localhost"].includes(hostname)) return;
       throw new Error(`Unhandled request: ${request.method} ${request.url}`);

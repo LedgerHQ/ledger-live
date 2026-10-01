@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 import { TEZOS_RPC } from "./flextesa";
 import { ALICE_BAKER_ADDRESS, TZKT_MOCK_URL } from "./fixtures";
 
@@ -409,7 +410,9 @@ export function initMswHandlers(): () => void {
   );
 
   server.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       const hostname = new URL(request.url).hostname;
       // Allow requests to the local Tezos node to pass through
       if (["127.0.0.1", "localhost"].includes(hostname)) return;

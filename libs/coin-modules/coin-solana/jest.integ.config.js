@@ -1,3 +1,5 @@
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
+
 const transformIncludePatterns = ["ky", "superstruct"];
 
 /** @type {import('jest').Config} */
@@ -10,6 +12,7 @@ module.exports = {
   forceExit: true,
   passWithNoTests: true,
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {
@@ -27,5 +30,7 @@ module.exports = {
       },
     ],
   },
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
+  transformIgnorePatterns: [
+    `node_modules/.pnpm/(?!(${[...transformIncludePatterns, ...mswEsmPnpmDirs].join("|")}))`,
+  ],
 };

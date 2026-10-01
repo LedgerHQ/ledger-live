@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
@@ -105,7 +106,9 @@ export function makeAccount(address: string): Account {
 export function initMSW(): () => void {
   const server = setupServer();
   server.listen({
-    onUnhandledRequest: req => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request: req } = frame.data;
       const hostname = new URL(req.url).hostname;
       if (["127.0.0.1", "localhost"].includes(hostname)) return;
       throw new Error(`Unhandled MSW request: ${req.method} ${req.url}`);

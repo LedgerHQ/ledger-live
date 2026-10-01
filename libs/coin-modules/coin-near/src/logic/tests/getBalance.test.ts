@@ -41,7 +41,7 @@ const mockAccount = (amount: string): void => {
 describe("getBalance (MSW)", () => {
   beforeAll(() => {
     setMockCoinConfig();
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   beforeEach(() => getActionCosts.reset());

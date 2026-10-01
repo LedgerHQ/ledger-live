@@ -75,6 +75,7 @@
     "@swc/core": "catalog:",
     "typescript": "catalog:",
     "oxlint": "catalog:",
-    "oxfmt": "catalog:"
+    "oxfmt": "catalog:",
+    "@support/jest-msw": "workspace:*"
   }
 }

@@ -31,5 +31,8 @@
   "devDependencies": {
     "@types/react": "catalog:",
     "react": "catalog:"
+  },
+  "dependencies": {
+    "@support/jest-msw": "workspace:*"
   }
 }

@@ -6,6 +6,7 @@ import {
 import BigNumber from "bignumber.js";
 import { HttpResponse, bypass, http } from "msw";
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 import type { KaspaAccount } from "@ledgerhq/coin-kaspa/types/bridge";
 import { toMainnetAddress } from "./addressUtils";
 
@@ -114,7 +115,9 @@ export function initMSW(): () => void {
   );
 
   mockServer.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       const { hostname } = new URL(request.url);
       if (hostname === "127.0.0.1" || hostname === "localhost") return;
       throw new Error(`Unhandled external request: ${request.method} ${request.url}`);

@@ -29,7 +29,7 @@ const ACCOUNT_RESPONSE = {
 };
 const NODE_INFO_RESPONSE = { default_node_info: { network: "cosmoshub-4" } };
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -59,7 +59,7 @@ describe("craftTransaction via MSW", () => {
 
   it("skips fee estimation (no simulate call) when customFees is provided", async () => {
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
-    // No SIMULATE handler registered: onUnhandledRequest:"error" would fail this test if
+    // No SIMULATE handler registered: onUnhandledFrame:"error" would fail this test if
     // craftTransaction still called estimateFees/simulate despite customFees being supplied.
     server.use(
       http.get(ACCOUNTS, () => HttpResponse.json(ACCOUNT_RESPONSE)),

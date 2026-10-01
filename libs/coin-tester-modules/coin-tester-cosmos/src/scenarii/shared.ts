@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 import { Account, StakingResources } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
@@ -294,7 +295,9 @@ export function makeCosmosScenario(
 
     beforeAll: async account => {
       mockServer.listen({
-        onUnhandledRequest: request => {
+        onUnhandledFrame: ({ frame }) => {
+          if (!(frame instanceof HttpNetworkFrame)) return;
+          const { request } = frame.data;
           const hostname = new URL(request.url).hostname;
           if (["127.0.0.1", "localhost"].includes(hostname)) return;
           throw new Error(`Unhandled request: ${request.method} ${request.url}`);

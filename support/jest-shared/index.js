@@ -1,4 +1,5 @@
 const path = require("path");
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
 
 const swcTransform = {
   "^.+\\.(t|j)sx?$": [
@@ -38,7 +39,8 @@ function createSharedJestConfig(overrides = {}) {
     roots: ["<rootDir>/src"],
     testMatch: ["**/*.test.ts"],
     testPathIgnorePatterns: ["lib/", "lib-es/", "node_modules/"],
-    transform: swcTransform,
+    transform: { ...mswTransform, ...swcTransform },
+    transformIgnorePatterns: [`node_modules/.pnpm/(?!(${mswEsmPnpmDirs.join("|")}))`],
     coverageDirectory: "./coverage/",
     coverageReporters,
     reporters,

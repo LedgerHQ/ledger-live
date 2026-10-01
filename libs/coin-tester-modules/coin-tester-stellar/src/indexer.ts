@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 
 /**
  * Stellar's coin module talks to Horizon over HTTP directly via the
@@ -9,7 +10,7 @@ import { setupServer } from "msw/node";
  * intercept external Ledger services that would otherwise be contacted
  * during a sync (crypto-assets metadata, NFT challenges, etc.).
  *
- * The custom `onUnhandledRequest` handler below ensures every non-local network call is either
+ * The custom `onUnhandledFrame` handler below ensures every non-local network call is either
  * stubbed here or fails the test loudly — no silent hits on a real backend.
  */
 export function initMswHandlers(): () => void {
@@ -21,7 +22,9 @@ export function initMswHandlers(): () => void {
   );
 
   server.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       const hostname = new URL(request.url).hostname;
       // Allow requests to the local Stellar Quickstart container.
       if (["127.0.0.1", "localhost"].includes(hostname)) return;

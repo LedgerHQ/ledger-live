@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransformStream } from "web-streams-polyfill";
+import { TransformStream, WritableStream } from "web-streams-polyfill";
 
-// This polyfill is required by msw/native
+// These polyfills are required by MSW on React Native
 // https://github.com/mswjs/msw/issues/2367
 
 const globalAny = global as any;
 
 if (typeof globalAny.TransformStream === "undefined") {
   globalAny.TransformStream = TransformStream;
+}
+
+if (typeof globalAny.WritableStream === "undefined") {
+  globalAny.WritableStream = WritableStream;
 }
 
 if (typeof globalAny.Document === "undefined") {

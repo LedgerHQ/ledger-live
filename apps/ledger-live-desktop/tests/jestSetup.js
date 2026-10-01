@@ -77,7 +77,7 @@ global.ResizeObserver = ResizeObserver;
 
 beforeAll(() =>
   server.listen({
-    onUnhandledRequest: "bypass",
+    onUnhandledFrame: "bypass",
   }),
 );
 afterEach(() => {

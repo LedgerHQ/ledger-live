@@ -8,7 +8,7 @@ import {
 import { server, rosettaHandlers } from "../test/helpers/msw-rosetta.mock";
 import { mapRosettaTxnToOperation } from "./synchronisation";
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

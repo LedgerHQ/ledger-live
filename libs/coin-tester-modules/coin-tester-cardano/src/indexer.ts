@@ -15,6 +15,7 @@ import {
 import { Buffer } from "buffer";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 import { MOCK_API } from "./fixtures";
 
 const PAGE_LIMIT = 100;
@@ -245,7 +246,9 @@ export function initMSW(): () => void {
   );
 
   server.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       throw new Error(`Unhandled request: ${request.method} ${request.url}`);
     },
   });

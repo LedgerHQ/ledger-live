@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { mswEsmPnpmDirs, mswTransform } from "@support/jest-msw";
 const require = createRequire(import.meta.url);
 
 const testPathIgnorePatterns = [
@@ -112,6 +113,7 @@ const defaultConfig = {
   testRegex,
   coverageReporters: ["json", ["lcov", { projectRoot: "../../" }], "json-summary", "text"],
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": ["@swc/jest", swcOptions],
     [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.(js|jsx|mjs)$`]: [
       "@swc/jest",
@@ -121,7 +123,9 @@ const defaultConfig = {
   // Only the ESM deps above are transformed. The previous pattern was
   // `/node_modules/(?!|@babel/runtime/helpers/esm/)`, whose empty first alternative makes the
   // negative lookahead always fail, so nothing was ignored and swc transformed all of node_modules.
-  transformIgnorePatterns: [`node_modules[\\\\|/]\\.pnpm[\\\\|/](?!(${esmDeps.join("|")}))`],
+  transformIgnorePatterns: [
+    `node_modules[\\\\|/]\\.pnpm[\\\\|/](?!(${[...esmDeps, ...mswEsmPnpmDirs].join("|")}))`,
+  ],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   moduleNameMapper: {
     "^buffer$": "<rootDir>/jest.buffer-shim.js",

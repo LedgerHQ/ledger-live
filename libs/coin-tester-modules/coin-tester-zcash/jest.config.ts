@@ -1,4 +1,5 @@
 import type { Config } from "jest";
+import { mswEsmPnpmDirs, mswTransform } from "@support/jest-msw";
 
 // Resolve workspace @ledgerhq/* packages -- notably @ledgerhq/coin-zcash itself,
 // whose network/ZCash test seam (see zcashClientTestSeam.ts) targets its
@@ -11,6 +12,7 @@ const sharedConfig = {
     customExportConditions: ["@ledgerhq/source", "node", "require", "default"],
   },
   transform: {
+    ...mswTransform,
     "^.+\\.tsx?$": [
       "@swc/jest",
       {
@@ -20,7 +22,7 @@ const sharedConfig = {
       },
     ],
   },
-  transformIgnorePatterns: ["/node_modules/.pnpm/(?!@ledgerhq\\+)"],
+  transformIgnorePatterns: [`/node_modules/.pnpm/(?!(@ledgerhq\\+|${mswEsmPnpmDirs.join("|")}))`],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"] as string[],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",

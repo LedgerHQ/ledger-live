@@ -28,7 +28,7 @@ export function mockCardProvider(): CardProvider {
   const server = setupServer();
   const sentRequests: SentRequest[] = [];
 
-  beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+  beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 
   afterEach(() => {
     server.resetHandlers();

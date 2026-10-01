@@ -31,7 +31,7 @@ const mockProtocolConfig = (result: unknown, onCall?: () => void) =>
 describe("getActionCosts", () => {
   beforeAll(() => {
     setMockCoinConfig();
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   beforeEach(() => getActionCosts.reset());

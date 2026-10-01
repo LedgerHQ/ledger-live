@@ -1,4 +1,5 @@
 import type { Config } from "jest";
+import { mswEsmPnpmDirs, mswTransform } from "@support/jest-msw";
 
 // Split into two projects so unit-only files don't require the Yaci devnet: the `devnet` project owns the
 // devnet-backed suites (globalSetup boots the devnet once for them), while `unit` (pure logic /
@@ -12,9 +13,10 @@ const base = {
     customExportConditions: ["@ledgerhq/source", "node", "require", "default"],
   },
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": ["@swc/jest", { jsc: { target: "esnext" } }],
   },
-  transformIgnorePatterns: ["/node_modules/.pnpm/(?!@ledgerhq\\+)"],
+  transformIgnorePatterns: [`/node_modules/.pnpm/(?!(@ledgerhq\\+|${mswEsmPnpmDirs.join("|")}))`],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",

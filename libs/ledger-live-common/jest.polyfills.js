@@ -10,7 +10,7 @@ Object.defineProperty(global, "Buffer", {
 });
 
 const { TextDecoder, TextEncoder } = require("node:util");
-const { ReadableStream, TransformStream } = require("node:stream/web");
+const { ReadableStream, TransformStream, WritableStream } = require("node:stream/web");
 const { MessageChannel, MessagePort } = require("node:worker_threads");
 
 // writable + configurable so they can override read-only globals (e.g. jsdom Window)
@@ -19,6 +19,7 @@ Object.defineProperties(global, {
   TextEncoder: { value: TextEncoder, writable: true, configurable: true },
   ReadableStream: { value: ReadableStream },
   TransformStream: { value: TransformStream },
+  WritableStream: { value: WritableStream },
   MessageChannel: { value: MessageChannel },
   MessagePort: { value: MessagePort },
   BroadcastChannel: {

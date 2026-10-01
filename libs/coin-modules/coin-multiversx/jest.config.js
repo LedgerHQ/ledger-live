@@ -1,3 +1,5 @@
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
+
 const swcJest = require.resolve("@swc/jest");
 
 module.exports = {
@@ -13,7 +15,9 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts", ".integ.test.ts"],
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${mswEsmPnpmDirs.join("|")}))`],
   transform: {
+    ...mswTransform,
     "^.+\\.(ts|tsx)$": [
       swcJest,
       {
@@ -31,7 +35,7 @@ module.exports = {
   ],
   // @ledgerhq/disable-network-setup (nock) is intentionally not enabled — like coin-tezos,
   // because nock@14 + msw/node conflict for axios-based clients (@ledgerhq/live-network).
-  // Network guard: unit tests mock the client; msw tests use onUnhandledRequest: "error".
+  // Network guard: unit tests mock the client; msw tests use onUnhandledFrame: "error".
   // setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
   setupFilesAfterEnv: [
     "@ledgerhq/wallet-framework-test-setup",

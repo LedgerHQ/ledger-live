@@ -100,7 +100,7 @@ describe("node api (indexer-backed calls)", () => {
       },
     }));
 
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   beforeEach(() => {

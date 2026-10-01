@@ -6,7 +6,7 @@ import { getValidators } from "./getValidators";
 // before comparing against the handler path, so the handler is registered without it.
 const VALIDATORS = `${TEST_COSMOS_ENDPOINT}/cosmos/staking/v1beta1/validators`;
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

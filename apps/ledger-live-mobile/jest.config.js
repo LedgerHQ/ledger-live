@@ -1,4 +1,5 @@
 const { compilerOptions } = require("./tsconfig");
+const { mswEsmPackages, mswTransform } = require("@support/jest-msw");
 
 // Helper function to convert TypeScript paths to Jest moduleNameMapper
 // This replaces pathsToModuleNameMapper from ts-jest which is not available in @swc/jest
@@ -75,6 +76,7 @@ module.exports = {
   ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
+    ...mswTransform,
     "^.+\\.(t)sx?$": [
       "@swc/jest",
       {
@@ -98,7 +100,7 @@ module.exports = {
     ],
   },
   transformIgnorePatterns: [
-    `node_modules/(?!(.pnpm|${transformIncludePatterns.join("|")})/)`,
+    `node_modules/(?!(.pnpm|${[...transformIncludePatterns, ...mswEsmPackages].join("|")})/)`,
     "\\.pnp\\.[^\\/]+$",
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],

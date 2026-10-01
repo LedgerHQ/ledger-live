@@ -24,6 +24,7 @@
     "react": ">=19.0.0"
   },
   "dependencies": {
+    "@support/jest-msw": "workspace:*",
     "undici": "catalog:"
   },
   "devDependencies": {

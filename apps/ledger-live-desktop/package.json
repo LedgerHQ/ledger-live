@@ -286,6 +286,7 @@
     "@rspack/core": "catalog:",
     "@rspack/dev-server": "catalog:",
     "@rspack/plugin-react-refresh": "catalog:",
+    "@support/jest-msw": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@tailwindcss/postcss": "4.1.18",

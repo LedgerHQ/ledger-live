@@ -5,7 +5,7 @@ const TEST_BLOCKHASH = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 
 const api = createTestChainApi();
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -46,7 +46,7 @@ describe("lastBlock (MSW integration)", () => {
     );
 
     const fixedNow = new Date("2024-01-01T00:00:00.000Z");
-    jest.useFakeTimers().setSystemTime(fixedNow);
+    jest.useFakeTimers({ doNotFake: ["nextTick"] }).setSystemTime(fixedNow);
 
     try {
       const result = await lastBlock(api);

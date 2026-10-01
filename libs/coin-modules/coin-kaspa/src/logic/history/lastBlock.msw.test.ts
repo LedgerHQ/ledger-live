@@ -6,7 +6,7 @@ const BLUE_SCORE_URL = `${TEST_KASPA_ENDPOINT}/info/virtual-chain-blue-score`;
 const BLOCKDAG_URL = `${TEST_KASPA_ENDPOINT}/info/blockdag`;
 const PRUNING_HASH = "3914b495474186cbf116561e935a11a1991e42b26e7fbbc4658a0c50cb5d2fa6";
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

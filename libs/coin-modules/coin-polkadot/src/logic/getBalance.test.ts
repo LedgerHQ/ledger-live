@@ -13,7 +13,7 @@ describe("getBalance", () => {
       }) as unknown as PolkadotCoinConfig,
   );
   it("gets the balance of a Polkadot account", async () => {
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
     mockServer.use(
       http.get(
         "http://polkadot.explorer.com/accounts/1a1LcBX6hGPKg5aQ6DXZpAHCCzWjckhea4sz3P1PvL3oc4F/balance-info",

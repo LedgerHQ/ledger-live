@@ -7,7 +7,7 @@ const ADDRESS = "kaspa:qz24c4tse54c2f9v02ap2l3957uw5kq3rdg960gvw50wtvvy0nxax5jt8
 // string doesn't affect MSW path matching.
 const TX_URL = `${TEST_KASPA_ENDPOINT}/addresses/:address/full-transactions-page`;
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

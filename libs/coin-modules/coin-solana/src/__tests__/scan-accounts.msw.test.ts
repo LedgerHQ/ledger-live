@@ -36,7 +36,7 @@ describe("Scan account", () => {
   });
 
   it("downloads transactions of the given token accounts", async () => {
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
     mockServer.use(
       http.post<never, Array<{ jsonrpc: string; method: string; params: unknown[]; id: string }>>(
         "https://solana.coin.ledger.com",

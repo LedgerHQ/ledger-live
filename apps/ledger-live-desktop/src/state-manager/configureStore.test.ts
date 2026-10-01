@@ -64,7 +64,7 @@ describe("customCreateStore", () => {
       setEnv("LEDGER_AUTH_CLIENT_ID", AUTH_CONFIG.clientId);
       setEnv("LEDGER_AUTH_KEYCLOAK_REALM", AUTH_CONFIG.keycloakRealm);
 
-      server.listen({ onUnhandledRequest: "error" });
+      server.listen({ onUnhandledFrame: "error" });
     });
 
     beforeEach(() => {

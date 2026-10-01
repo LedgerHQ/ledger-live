@@ -168,7 +168,7 @@ export async function recordTestTrustchainSdk(
   };
 
   // Run the scenario with speculos simulator and with all networking recorded.
-  server.listen({ onUnhandledRequest: "bypass" });
+  server.listen({ onUnhandledFrame: "bypass" });
   try {
     await scenario(device.id, options);
   } finally {

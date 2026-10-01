@@ -74,6 +74,7 @@
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@support/jest-msw": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/bs58": "catalog:",

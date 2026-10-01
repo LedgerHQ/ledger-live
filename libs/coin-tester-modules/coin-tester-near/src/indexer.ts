@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
-import { setupServer, type SetupServerApi } from "msw/node";
+import { setupServer, type SetupServer } from "msw/node";
+import { HttpNetworkFrame } from "msw/experimental";
 import type { NearTransaction } from "@ledgerhq/coin-near/network/sdk.types";
 import { INDEXER_URL, POOL_ID } from "./fixtures";
 
@@ -130,7 +131,7 @@ async function historyFor(rpc: RpcCall, address: string, limit: number) {
   return transactions;
 }
 
-export function startIndexer(rpc: RpcCall): SetupServerApi {
+export function startIndexer(rpc: RpcCall): SetupServer {
   const server = setupServer(
     http.get(`${INDEXER_URL}/v3/accounts/:address/txns`, async ({ params, request }) => {
       const limit = Number(new URL(request.url).searchParams.get("limit") ?? 25);
@@ -193,7 +194,9 @@ export function startIndexer(rpc: RpcCall): SetupServerApi {
   );
 
   server.listen({
-    onUnhandledRequest: request => {
+    onUnhandledFrame: ({ frame }) => {
+      if (!(frame instanceof HttpNetworkFrame)) return;
+      const { request } = frame.data;
       const hostname = new URL(request.url).hostname;
       // Allow requests to the local sandbox node to pass through to the real node.
       if (["127.0.0.1", "localhost"].includes(hostname)) return;

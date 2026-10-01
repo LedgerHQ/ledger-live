@@ -10,7 +10,7 @@ import { createTestChainApi, rpcHandler, server } from "./helpers/msw-rpc.mock";
 
 const api = createTestChainApi();
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

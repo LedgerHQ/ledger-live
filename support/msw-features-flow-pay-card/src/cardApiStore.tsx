@@ -60,7 +60,7 @@ export function cardApiWrapper({ signedIn = false }: { signedIn?: boolean } = {}
 export function listenToCardApi(handlers: Parameters<typeof setupServer> = []) {
   const server = setupServer(...handlers);
 
-  beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+  beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 

@@ -115,7 +115,7 @@ beforeAll(() => {
     unit: { name: "VET", code: "VET", magnitude: 18 },
     node: { url: BASE_URL },
   }));
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledFrame: "error" });
 });
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());

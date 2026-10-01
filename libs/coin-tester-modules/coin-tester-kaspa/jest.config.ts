@@ -1,4 +1,5 @@
 import type { Config } from "jest";
+import { mswEsmPnpmDirs, mswTransform } from "@support/jest-msw";
 
 // Shared options reused by all projects.
 // `setupFiles` runs before coin-kaspa's config.ts captures API_KASPA_ENDPOINT at module-eval
@@ -12,9 +13,10 @@ const sharedConfig = {
     customExportConditions: ["@ledgerhq/source", "node", "require", "default"],
   },
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": ["@swc/jest", { jsc: { target: "esnext" } }],
   },
-  transformIgnorePatterns: ["/node_modules/.pnpm/(?!@ledgerhq\\+)"],
+  transformIgnorePatterns: [`/node_modules/.pnpm/(?!(@ledgerhq\\+|${mswEsmPnpmDirs.join("|")}))`],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"] as string[],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",

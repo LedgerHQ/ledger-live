@@ -50,7 +50,7 @@ describe("getOperations", () => {
       },
     }));
 
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   afterEach(() => {

@@ -5,7 +5,7 @@ import { getNextSequence } from "./getNextSequence";
 const ADDR = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
 const ACCOUNT = `${TEST_COSMOS_ENDPOINT}/cosmos/auth/v1beta1/accounts/${ADDR}`;
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

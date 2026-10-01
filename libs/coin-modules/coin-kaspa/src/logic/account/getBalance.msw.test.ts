@@ -5,7 +5,7 @@ import { getBalance } from "./getBalance";
 const BALANCES_URL = `${TEST_KASPA_ENDPOINT}/addresses/balances`;
 const ADDR = "kaspa:qz24c4tse54c2f9v02ap2l3957uw5kq3rdg960gvw50wtvvy0nxax5jt8zckp";
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

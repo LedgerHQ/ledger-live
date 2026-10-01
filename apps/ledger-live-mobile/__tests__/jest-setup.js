@@ -61,7 +61,7 @@ jest.runAllTimers();
 
 beforeAll(() =>
   server.listen({
-    onUnhandledRequest: "bypass",
+    onUnhandledFrame: "bypass",
   }),
 );
 afterEach(() => {

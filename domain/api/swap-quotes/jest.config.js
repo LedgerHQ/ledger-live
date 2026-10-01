@@ -1,8 +1,12 @@
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
+
 module.exports = {
   testEnvironment: "node",
   roots: ["<rootDir>/src"],
   testMatch: ["**/*.test.ts"],
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${mswEsmPnpmDirs.join("|")}))`],
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {

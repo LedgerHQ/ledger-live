@@ -1,4 +1,5 @@
 import type { Config } from "jest";
+import { mswEsmPnpmDirs, mswTransform } from "@support/jest-msw";
 
 const base = {
   testEnvironment: "node",
@@ -9,6 +10,7 @@ const base = {
     customExportConditions: ["@ledgerhq/source", "node", "require", "default"],
   },
   transform: {
+    ...mswTransform,
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {
@@ -20,7 +22,7 @@ const base = {
   },
   // The counterpart to customExportConditions: those packages then resolve to
   // untranspiled .ts under node_modules/.pnpm, which jest ignores by default.
-  transformIgnorePatterns: ["/node_modules/.pnpm/(?!@ledgerhq\\+)"],
+  transformIgnorePatterns: [`/node_modules/.pnpm/(?!(@ledgerhq\\+|${mswEsmPnpmDirs.join("|")}))`],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },

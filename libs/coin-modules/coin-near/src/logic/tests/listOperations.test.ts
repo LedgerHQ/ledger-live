@@ -22,7 +22,7 @@ const transaction = (overrides: Partial<NearTransaction> = {}): NearTransaction 
 describe("listOperations (MSW)", () => {
   beforeAll(() => {
     setMockCoinConfig();
-    mockServer.listen({ onUnhandledRequest: "error" });
+    mockServer.listen({ onUnhandledFrame: "error" });
   });
 
   afterEach(() => mockServer.resetHandlers());
@@ -109,7 +109,7 @@ describe("listOperations (MSW)", () => {
   });
 
   it("rejects ascending order without issuing a request", async () => {
-    // No handler registered: a request would fail the suite via onUnhandledRequest.
+    // No handler registered: a request would fail the suite via onUnhandledFrame.
     await expect(
       listOperations(mockNearContext, ADDRESS, { order: "asc", minHeight: 0 }),
     ).rejects.toThrow("ascending order is not supported");

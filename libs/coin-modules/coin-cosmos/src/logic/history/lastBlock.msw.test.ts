@@ -4,7 +4,7 @@ import { lastBlock } from "./lastBlock";
 
 const LATEST_BLOCK = `${TEST_COSMOS_ENDPOINT}/cosmos/base/tendermint/v1beta1/blocks/latest`;
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

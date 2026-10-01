@@ -60,7 +60,7 @@ describe("scanAccounts", () => {
       getTokensSyncHash: async () => "",
     });
 
-    setupServer().listen({ onUnhandledRequest: "error" });
+    setupServer().listen({ onUnhandledFrame: "error" });
   });
 
   beforeEach(() => {

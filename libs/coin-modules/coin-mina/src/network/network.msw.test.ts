@@ -8,7 +8,7 @@ import {
 } from "../test/helpers/msw-fixtures";
 import { server, rosettaHandlers } from "../test/helpers/msw-rosetta.mock";
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

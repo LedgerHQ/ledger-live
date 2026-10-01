@@ -7,7 +7,7 @@ const TXS = `${TEST_COSMOS_ENDPOINT}/cosmos/tx/v1beta1/txs`;
 // LCD response, not the payload's validity, drives every assertion below.
 const TX_HEX = "deadbeef";
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

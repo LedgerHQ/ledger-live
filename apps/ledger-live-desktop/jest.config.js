@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { compilerOptions } = require("./tsconfig");
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
 
 // Helper function to convert TypeScript paths to Jest moduleNameMapper
 // This replaces pathsToModuleNameMapper from ts-jest which is not available in @swc/jest
@@ -110,6 +111,7 @@ const commonConfig = {
   moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
   transform: {
+    ...mswTransform,
     "^.+\\.m?(t|j)sx?$": [
       "@swc/jest",
       {
@@ -128,7 +130,9 @@ const commonConfig = {
   testEnvironmentOptions: {
     customExportConditions: [""],
   },
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
+  transformIgnorePatterns: [
+    `node_modules/.pnpm/(?!(${[...transformIncludePatterns, ...mswEsmPnpmDirs].join("|")}))`,
+  ],
 };
 
 module.exports = {

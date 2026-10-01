@@ -1,3 +1,5 @@
+const { mswEsmPnpmDirs, mswTransform } = require("@support/jest-msw");
+
 module.exports = {
   passWithNoTests: true,
   collectCoverageFrom: [
@@ -8,7 +10,9 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${mswEsmPnpmDirs.join("|")}))`],
   transform: {
+    ...mswTransform,
     "^.+\\.(ts|tsx)$": [
       "@swc/jest",
       {

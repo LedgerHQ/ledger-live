@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
 const { TextDecoder, TextEncoder } = require("node:util");
-const { ReadableStream, TransformStream } = require("node:stream/web");
+const { ReadableStream, TransformStream, WritableStream } = require("node:stream/web");
 const { MessageChannel, MessagePort } = require("node:worker_threads");
 
 const { setTimeout, clearTimeout, setInterval, clearInterval } = globalThis;
@@ -32,6 +32,7 @@ Object.defineProperties(globalThis, {
   TextEncoder: { value: TextEncoder },
   ReadableStream: { value: ReadableStream },
   TransformStream: { value: TransformStream },
+  WritableStream: { value: WritableStream },
   setTimeout: { value: (...args) => wrapTimer(setTimeout(...args)) },
   clearTimeout: { value: timer => clearTimeout(unwrapTimer(timer)) },
   setInterval: { value: (...args) => wrapTimer(setInterval(...args)) },

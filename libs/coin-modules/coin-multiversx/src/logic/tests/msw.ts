@@ -12,7 +12,7 @@ export const server = setupServer();
 
 /** Wire the MSW server lifecycle into a describe block. */
 export function useMswServer(): void {
-  beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+  beforeAll(() => server.listen({ onUnhandledFrame: "error" }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 }

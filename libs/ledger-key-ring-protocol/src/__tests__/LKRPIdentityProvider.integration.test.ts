@@ -49,7 +49,7 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
   );
 
   beforeAll(() => {
-    server.listen({ onUnhandledRequest: "error" });
+    server.listen({ onUnhandledFrame: "error" });
   });
 
   afterAll(() => {

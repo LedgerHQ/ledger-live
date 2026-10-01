@@ -1,0 +1,32 @@
+{
+  "name": "@support/jest-msw",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Jest transform that compiles the ESM-only msw packages to CommonJS",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "format": "oxfmt index.js index.d.ts",
+    "format:check": "oxfmt index.js index.d.ts --check",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:"
+  },
+  "devDependencies": {
+    "jest": "catalog:"
+  }
+}

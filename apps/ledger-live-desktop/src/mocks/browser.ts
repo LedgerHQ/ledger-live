@@ -34,6 +34,6 @@ const mswWorker = setupWorker(...handlers);
 
 export const startWorker = () => {
   mswWorker.start({
-    onUnhandledRequest: "bypass",
+    onUnhandledFrame: "bypass",
   });
 };
