@@ -43,6 +43,19 @@ export type TxLifecyclePayload = TxLifecyclePayloadBase &
   );
 
 const APP_OWNED_MANIFEST_IDS = new Set(["earn", "earn-stg", "earn-prd-eks"]);
+
+// Not typed through @types/node: the build has no Node types.
+declare const process: { env: Record<string, string | undefined> };
+
+// A plain `process.env` read, which each host bundler maps onto its env. `globalThis.process` is
+// not: the desktop renderer has no global `process` and keeps its env elsewhere.
+function readClientVersion(): string | undefined {
+  try {
+    return process.env.LEDGER_CLIENT_VERSION;
+  } catch {
+    return undefined;
+  }
+}
 const CURRENCY_FAMILIES = new Set<TxLifecyclePayload["currency_family"]>([
   "solana",
   "cosmos",
@@ -281,8 +294,7 @@ export function startDappTxLifecycle(
 
   // Every host sets this alongside the `LEDGER_CLIENT_VERSION` env read the sign events carry, so
   // the placeholder intent reports the same string as the terminal that closes it.
-  const appVersion = (globalThis as { process?: { env?: { LEDGER_CLIENT_VERSION?: string } } })
-    .process?.env?.LEDGER_CLIENT_VERSION;
+  const appVersion = readClientVersion();
   sendTxLifecycle(
     {
       schema_version: 1,

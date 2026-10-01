@@ -6,10 +6,12 @@ const path = require("path");
  */
 
 // A read counts as guarded when one of these appears within GUARD_WINDOW characters before it.
-const GUARD = /typeof process|globalThis\.process|\.g\.process|process\?\./;
+const GUARD = /typeof process|globalThis\.process|\.g\.process/;
 const GUARD_WINDOW = 140;
 
-const READ = /\bprocess\.([A-Za-z_$][A-Za-z0-9_$]*)/g;
+// `process?.x` counts too: optional chaining does not save an undeclared `process` from a
+// ReferenceError.
+const READ = /\bprocess(\?)?\.([A-Za-z_$][A-Za-z0-9_$]*)/g;
 
 // Free variables, so READ cannot see them.
 const GLOBALS = ["setImmediate", "clearImmediate"];
@@ -99,8 +101,8 @@ function decodeMappings(mappings) {
       }
       if (values.length === 0) continue;
       generatedColumn += values[0];
-      if (values.length >= 4) sourceIndex += values[1];
-      segments.push([generatedColumn, sourceIndex]);
+      // A one-field segment is unmapped: it must not inherit the previous segment's source.
+      segments.push([generatedColumn, values.length >= 4 ? (sourceIndex += values[1]) : null]);
     }
     perLine.push(segments);
   }
@@ -135,10 +137,13 @@ function findUnguarded(code) {
   let match;
   READ.lastIndex = 0;
   while ((match = READ.exec(code))) {
-    if (DEFINE_HANDLED.has(match[1])) continue;
+    const [, optional, property] = match;
+    // `globalThis.process?.x` is a member access on an object, so it cannot throw.
+    if (optional && code[match.index - 1] === ".") continue;
+    if (DEFINE_HANDLED.has(property)) continue;
     const before = code.slice(Math.max(0, match.index - GUARD_WINDOW), match.index);
     if (GUARD.test(before)) continue;
-    hits.push({ index: match.index, property: match[1] });
+    hits.push({ index: match.index, property });
   }
   return hits;
 }
