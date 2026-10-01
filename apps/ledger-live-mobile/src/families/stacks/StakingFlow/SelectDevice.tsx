@@ -17,6 +17,7 @@ import { ScreenName } from "~/const";
 import { getFirstStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { stacksFlowStyles as styles } from "../shared/styles";
+import { useRetry } from "../shared/useRetry";
 import type { StacksStakingFlowParamList } from "./types";
 import { useStartBurnHtRefresh } from "./useStartBurnHtRefresh";
 
@@ -63,12 +64,19 @@ export default function StakingSelectDevice(props: Props) {
     [bridge, updateTransaction],
   );
 
-  const { poxError, retry } = useStartBurnHtRefresh(isFocused, onStartBurnHtResolved);
+  const { poxError, retry: refreshStartBurnHt } = useStartBurnHtRefresh(
+    isFocused,
+    onStartBurnHtResolved,
+  );
 
   const statusError = bridgePending ? null : getFirstStatusError(status, "errors");
   const isValidated = refreshed && !bridgePending && !bridgeError && !statusError;
 
+  // `bridgeError` is a settled failure even though `bridgePending` stays true with it (the bridge
+  // retries a failed preparation on its own), so it isn't gated on `bridgePending`.
   const error = poxError || bridgeError || statusError;
+  // Refreshing the height also hands the bridge a new transaction, so it retries every error kind.
+  const { retrying, retry } = useRetry(error, refreshStartBurnHt);
 
   // The list stays mounted through later refreshes once shown: until the next pair is revalidated,
   // the params keep the previous validated one, so a tap meanwhile still signs a consistent pair.
@@ -87,7 +95,7 @@ export default function StakingSelectDevice(props: Props) {
   else if (isValidated && paramsInSync) nextHasValidatedPair = true;
   if (nextHasValidatedPair !== hasValidatedPair) setHasValidatedPair(nextHasValidatedPair);
 
-  if (error && !bridgePending) {
+  if (error) {
     return (
       <SafeAreaView style={styles.root} edges={["bottom"]}>
         <View style={styles.content} testID="stacks-stake-select-device-error">
@@ -100,6 +108,8 @@ export default function StakingSelectDevice(props: Props) {
             type="main"
             size="large"
             onPress={retry}
+            pending={retrying}
+            disabled={retrying}
             testID="stacks-stake-select-device-retry"
           >
             {t("common.retry")}

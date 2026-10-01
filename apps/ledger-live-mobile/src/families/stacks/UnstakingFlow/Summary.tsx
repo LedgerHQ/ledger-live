@@ -25,6 +25,7 @@ import { getFirstStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { stacksFlowStyles as styles } from "../shared/styles";
 import ContinueFooter from "../shared/ContinueFooter";
+import { useRetry } from "../shared/useRetry";
 import type { StacksUnstakingFlowParamList } from "./types";
 
 type Props = BaseComposite<
@@ -62,6 +63,11 @@ export default function Summary({ navigation, route }: Props) {
   const retryPreparation = useCallback(() => {
     updateTransaction(prev => ({ ...prev }));
   }, [updateTransaction]);
+  // A settled preparation with no fee is reported through status.errors, not bridgeError (the
+  // classic bridge's case), so both are retryable. `bridgeError` isn't gated on `bridgePending`:
+  // the bridge keeps it pending for as long as it retries a failed preparation on its own.
+  const statusError = bridgePending ? null : getFirstStatusError(status, "errors");
+  const { retrying, retry } = useRetry(bridgeError || statusError, retryPreparation);
 
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.StacksUnstakingSelectDevice, {
@@ -88,7 +94,6 @@ export default function Summary({ navigation, route }: Props) {
   }
 
   const feeResolved = !!(transaction.fee || transaction.fees);
-  const error = bridgePending ? null : getFirstStatusError(status, "errors");
   const continueDisabled =
     bridgePending || !!bridgeError || !feeResolved || Object.keys(status.errors).length > 0;
 
@@ -107,10 +112,10 @@ export default function Summary({ navigation, route }: Props) {
             <Trans i18nKey="stacks.unstake.summary.info" />
           </Alert>
         </View>
-        {error ? (
+        {statusError ? (
           <View style={styles.alert}>
             <Alert type="error">
-              <TranslatedError error={error} />
+              <TranslatedError error={statusError} />
             </Alert>
           </View>
         ) : null}
@@ -178,14 +183,14 @@ export default function Summary({ navigation, route }: Props) {
             </Text>
           </View>
         </View>
-        {/* A settled preparation with no fee is reported through status.errors, not bridgeError
-            (the classic bridge's case), so both are retryable. */}
-        {!bridgePending && (bridgeError || error) ? (
+        {bridgeError || statusError ? (
           <Button
             outline
             type="main"
             size="large"
-            onPress={retryPreparation}
+            onPress={retry}
+            pending={retrying}
+            disabled={retrying}
             testID="stacks-unstake-retry"
           >
             {t("common.retry")}

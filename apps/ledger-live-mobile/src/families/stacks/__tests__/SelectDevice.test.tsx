@@ -134,6 +134,24 @@ describe("Stacks staking SelectDevice", () => {
     expect(setParamsSpy).not.toHaveBeenCalled();
   });
 
+  // useBridgeTransaction never settles a failed preparation: bridgeError comes with bridgePending.
+  it("offers Retry for a failed preparation even though the bridge stays pending", async () => {
+    mockFetchPoxInfo.mockResolvedValue(poxInfo(900_456));
+    bridgeState.bridgeError = new Error("preparation failed");
+    bridgeState.bridgePending = true;
+    render(<Harness />);
+
+    expect(screen.getByTestId("stacks-stake-select-device-error")).toBeVisible();
+    expect(screen.queryByTestId("shared-select-device")).toBeNull();
+    await waitFor(() => expect(mockFetchPoxInfo).toHaveBeenCalledTimes(1));
+
+    fireEvent.press(screen.getByTestId("stacks-stake-select-device-retry"));
+
+    await waitFor(() => expect(mockFetchPoxInfo).toHaveBeenCalledTimes(2));
+    expect(screen.getByTestId("stacks-stake-select-device-retry")).toBeDisabled();
+    expect(setParamsSpy).not.toHaveBeenCalled();
+  });
+
   it("replaces the device list with a retry when the height can't be refreshed", async () => {
     mockFetchPoxInfo.mockRejectedValueOnce(new Error("pox unavailable"));
     render(<Harness />);

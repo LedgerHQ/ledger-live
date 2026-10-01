@@ -24,8 +24,9 @@ export default function ContinueFooter({
 
   return (
     <View style={styles.footer}>
-      {/* useBridgeTransaction keeps a failed attempt's error until the retry settles. */}
-      {bridgeError && !pending && (
+      {/* Not gated on `pending`: useBridgeTransaction keeps `bridgePending` true for as long as a
+          failed preparation is being retried, so the error and the spinner show together. */}
+      {bridgeError && (
         <Text variant="small" color="error.c60" textAlign="center" mb={3}>
           <TranslatedError error={bridgeError} />
         </Text>

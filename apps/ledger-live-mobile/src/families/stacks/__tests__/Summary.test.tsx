@@ -78,14 +78,21 @@ describe("Stacks unstaking Summary", () => {
     expect(screen.getByTestId("stacks-unstake-summary-continue")).toBeDisabled();
   });
 
-  it("hides the previous attempt's error and Retry while a retry is pending", () => {
+  // useBridgeTransaction never settles a failed preparation: bridgeError comes with bridgePending.
+  it("shows a failed preparation with Retry while the bridge keeps retrying it", () => {
     mockAccount = makeStacksAccount({}, [makeStakingPosition()]);
-    bridgeState.bridgeError = new Error("previous attempt failed");
+    bridgeState.bridgeError = new Error("preparation failed");
     bridgeState.bridgePending = true;
     renderScreen();
 
-    expect(screen.queryByTestId("stacks-unstake-retry")).toBeNull();
-    expect(screen.queryByText("previous attempt failed")).toBeNull();
+    expect(screen.getByText("preparation failed")).toBeVisible();
+    const retry = screen.getByTestId("stacks-unstake-retry");
+    expect(retry).toBeEnabled();
+
+    fireEvent.press(retry);
+
+    // In flight until that error clears or is replaced.
+    expect(screen.getByTestId("stacks-unstake-retry")).toBeDisabled();
   });
 
   it("explains there is nothing to unstake without a position", () => {
