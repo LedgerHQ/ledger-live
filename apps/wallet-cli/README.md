@@ -67,7 +67,8 @@ Most commands support `--output human` (default) or `--output json`.
 
 - **[Bun](https://bun.sh)** ≥ 1.1.0 (`engines` in `package.json`)
 - **pnpm** and this monorepo checked out; install dependencies per [repo commands](../../docs/repo-commands.md) (e.g. `mise install`, `pnpm i`)
-- A **Ledger** on USB when using `account discover`, `send`, `swap execute`, `receive --verify`, `earn deposit`/`earn withdraw`, `genuine-check`, or `ring init`
+- A **Ledger** on USB, or [Speculos](#speculos), when using `account discover`, `send`, `swap execute`, `receive --verify`, `earn deposit`/`earn withdraw`, or `ring init`
+- A physical **Ledger** on USB for `genuine-check`
 - **Linux:** USB/HID build deps, for example:
 
   ```bash
@@ -110,6 +111,25 @@ pnpm start -- <command> [args]
 ## Environment
 
 If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`env-setup.ts`).
+
+### Speculos
+
+Device commands talk to the first USB Ledger. Setting `SPECULOS_API_PORT` or `SPECULOS_ADDRESS` switches them to a [Speculos](https://github.com/LedgerHQ/speculos) emulator instead, for development, CI and agents without hardware:
+
+| Variable            | Default            | Meaning                                                                                      |
+| ------------------- | ------------------ | -------------------------------------------------------------------------------------------- |
+| `SPECULOS_API_PORT` | `5000`             | Speculos REST API port                                                                       |
+| `SPECULOS_ADDRESS`  | `http://127.0.0.1` | Speculos host; a port in the address wins over `SPECULOS_API_PORT`                           |
+| `SPECULOS_DEVICE`   | `stax`             | Emulated model: `nanoS`, `nanoSP`, `nanoX`, `stax`, `flex` or `nanoGen5`; match `--model`    |
+
+```bash
+SPECULOS_API_PORT=5000 SPECULOS_DEVICE=nanoSP wallet-cli account discover --network ethereum --output json
+```
+
+- Speculos must already run the app the command needs; wallet-cli does not start it or press its buttons, so stick to flows without on-device approval, such as `account discover`.
+- An unreachable Speculos exits with code 3 (`disconnected`); `genuine-check` refuses to run, since an emulator has no attestation keys.
+- `pnpm apdu-proxy` relays a **USB** Ledger to Ledger Live through `DEVICE_PROXY_URL`, even when `SPECULOS_*` is set; it is not the Speculos transport, and Ledger Live can use Speculos directly.
+- `pnpm test:speculos` runs the smoke test against a local Speculos with the Ethereum app, as the [Speculos smoke workflow](../../.github/workflows/test-wallet-cli-speculos.yml) does in CI.
 
 ## Relation to `ledger-live` CLI
 

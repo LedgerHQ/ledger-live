@@ -3,6 +3,7 @@ import {
   DeviceModelId as DmkDeviceModelId,
   DeviceStatus,
   type DeviceManagementKit,
+  type TransportFactory,
 } from "@ledgerhq/device-management-kit";
 import {
   disconnect as disconnectTransport,
@@ -10,8 +11,14 @@ import {
 } from "@ledgerhq/live-common/hw/index";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { of } from "rxjs";
+import { walletCliTransportFactory } from "./dmk-transport-factory";
+import type { SpeculosConfig } from "./speculos-config";
 
-let createDeviceManagementKitImpl: () => Promise<{
+const unusedUsbFactory: TransportFactory = () => {
+  throw new Error("unused");
+};
+
+let createDeviceManagementKitImpl: (speculos?: SpeculosConfig | null) => Promise<{
   dmk: DeviceManagementKit;
   destroyTransport: () => Promise<void>;
 }>;
@@ -23,7 +30,8 @@ type Deferred<T = void> = {
 };
 
 mock.module("./dmk", () => ({
-  createDeviceManagementKit: () => createDeviceManagementKitImpl(),
+  createDeviceManagementKit: (...args: Parameters<typeof createDeviceManagementKitImpl>) =>
+    createDeviceManagementKitImpl(...args),
 }));
 
 const {
@@ -204,6 +212,30 @@ describe("ensureWalletCliDmkTransport", () => {
     expect(createDeviceManagementKit).toHaveBeenCalledTimes(2);
   });
 
+  it("names the Speculos URL when connecting to the emulator fails", async () => {
+    const connectError = new Error("Unable to connect. Is the computer able to access the url?");
+    const fake = makeDmk({
+      connect: async () => {
+        throw connectError;
+      },
+    });
+    createDeviceManagementKitImpl = async () => fake.kit;
+    walletCliTransportFactory(unusedUsbFactory, {
+      url: "http://127.0.0.1:40000",
+      deviceModelId: DmkDeviceModelId.NANO_SP,
+    });
+
+    try {
+      await expect(ensureWalletCliDmkTransport()).rejects.toMatchObject({
+        name: "SpeculosUnreachableError",
+        url: "http://127.0.0.1:40000",
+        cause: connectError,
+      });
+    } finally {
+      walletCliTransportFactory(unusedUsbFactory, null);
+    }
+  });
+
   it("asks the user to retry when the initial session is busy", async () => {
     let sessionState: unknown = { deviceStatus: DeviceStatus.BUSY };
     const disconnect = mock(async () => {});
@@ -356,5 +388,24 @@ describe("registerWalletCliDmkTransport", () => {
     );
     await expect(disconnectTransport(WALLET_CLI_DMK_DEVICE_ID)).resolves.toBeUndefined();
     await expect(getWalletCliDeviceModelId()).resolves.toBeUndefined();
+  });
+
+  it("builds a USB-only kit for usbOnly callers and an env-driven one otherwise", async () => {
+    const createDeviceManagementKit = mock(async (_speculos?: SpeculosConfig | null) => {
+      return makeDmk().kit;
+    });
+    createDeviceManagementKitImpl = createDeviceManagementKit;
+
+    try {
+      registerWalletCliDmkTransport({ usbOnly: true });
+      await ensureWalletCliDmkTransport();
+      await disposeWalletCliDmkTransportFully();
+      registerWalletCliDmkTransport();
+      await ensureWalletCliDmkTransport();
+
+      expect(createDeviceManagementKit.mock.calls).toEqual([[null], []]);
+    } finally {
+      registerWalletCliDmkTransport();
+    }
   });
 });

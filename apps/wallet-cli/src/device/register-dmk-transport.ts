@@ -5,6 +5,8 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { firstValueFrom } from "rxjs";
 import { filter, timeout } from "rxjs/operators";
 import { WalletCliDmkTransport } from "./wallet-cli-dmk-transport";
+import { getActiveSpeculosUrl } from "./dmk-transport-factory";
+import { SpeculosUnreachableError } from "./speculos-config";
 import type { WalletCliDmk } from "./dmk";
 import {
   hasWalletCliDeviceInterruptScope,
@@ -42,6 +44,8 @@ let singleton: Singleton | null = null;
 let persistentDmk: Promise<WalletCliDmk> | null = null;
 let pendingTransport: Promise<WalletCliDmkTransport> | null = null;
 let exitHooksRegistered = false;
+/** Set by the APDU proxy, which relays a USB Ledger even when `SPECULOS_*` is set. */
+let usbOnly = false;
 
 let _testTransport: WalletCliDmkTransport | null = null;
 
@@ -80,7 +84,9 @@ function terminateWalletCliFromSignal(code: number): void {
 
 function getOrCreatePersistentDmk(): Promise<WalletCliDmk> {
   return (persistentDmk ??= import("./dmk")
-    .then(({ createDeviceManagementKit }) => createDeviceManagementKit())
+    .then(({ createDeviceManagementKit }) =>
+      usbOnly ? createDeviceManagementKit(null) : createDeviceManagementKit(),
+    )
     .catch(error => {
       persistentDmk = null;
       throw error;
@@ -179,10 +185,16 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
   if (!device) {
     throw new Error(NO_LEDGER_DEVICE_FOUND_MESSAGE);
   }
-  const sessionId = await dmk.connect({
-    device,
-    sessionRefresherOptions: { isRefresherDisabled: true },
-  });
+  const sessionId = await dmk
+    .connect({
+      device,
+      sessionRefresherOptions: { isRefresherDisabled: true },
+    })
+    .catch(error => {
+      // The Speculos transport always discovers its device, so a dead emulator only shows here.
+      const speculosUrl = getActiveSpeculosUrl();
+      throw speculosUrl ? new SpeculosUnreachableError(speculosUrl, error) : error;
+    });
 
   const sessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
     () => null,
@@ -326,7 +338,9 @@ function registerWalletCliDmkProcessExitHooks(): void {
 
 let registered = false;
 
-export function registerWalletCliDmkTransport(): void {
+/** `usbOnly` ignores `SPECULOS_*` and always opens a USB Ledger; the latest call decides. */
+export function registerWalletCliDmkTransport(options: { usbOnly?: boolean } = {}): void {
+  usbOnly = options.usbOnly ?? false;
   if (registered) {
     return;
   }
