@@ -107,7 +107,7 @@ jobs:
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects="tag:scope:$SCOPE" --parallel=4 -- --maxWorkers=2
+          pnpm exec nx run-many -t coverage --projects="tag:scope:$SCOPE" --parallel=3 -- --maxWorkers=2
         shell: bash
 
       - name: Process coverage files
@@ -136,7 +136,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-codechecks@develop
         with:
           projects: "tag:scope:${{ inputs.scope }}"
-          parallel: "4"
+          parallel: "3"
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() && !inputs.skip-coverage }}
