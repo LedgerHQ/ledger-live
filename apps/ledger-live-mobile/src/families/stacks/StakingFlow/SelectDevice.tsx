@@ -1,13 +1,20 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
+import invariant from "invariant";
 import { useIsFocused } from "@react-navigation/native";
-import { Button } from "@ledgerhq/native-ui";
+import { Button, InfiniteLoader } from "@ledgerhq/native-ui";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { isStacksAccount } from "@ledgerhq/live-common/families/stacks/types";
+import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import SafeAreaView from "~/components/SafeAreaView";
 import Alert from "~/components/Alert";
 import TranslatedError from "~/components/TranslatedError";
 import SelectDeviceScreen from "~/screens/SelectDevice";
 import { useTranslation } from "~/context/Locale";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { ScreenName } from "~/const";
+import { getFirstStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { stacksFlowStyles as styles } from "../shared/styles";
 import type { StacksStakingFlowParamList } from "./types";
@@ -18,44 +25,74 @@ type Props = BaseComposite<
 >;
 
 /**
- * The shared SelectDevice screen forwards its own route params to ConnectDevice, so refreshing
- * `startBurnHt` in those params keeps the height fresh until a device is picked. ConnectDevice
- * then signs that snapshot, the same point at which LLD's StakeFlowModal stops refreshing.
+ * The shared SelectDevice screen forwards its own route params to ConnectDevice, which signs them
+ * as-is. So `startBurnHt` is refreshed here until a device is picked (the point at which LLD's
+ * StakeFlowModal stops refreshing), and each refreshed transaction goes back through the bridge:
+ * only a transaction/status pair that was revalidated together reaches the params, so a change on
+ * chain while the user waits here (the pox-5 prepare phase opening) blocks device selection
+ * instead of reaching ConnectDevice behind a stale, error-free status.
  */
 export default function StakingSelectDevice(props: Props) {
   const { navigation, route } = props;
   const { t } = useTranslation();
   const isFocused = useIsFocused();
+  const { account, parentAccount } = useAccountScreen(route);
 
-  const transactionRef = useRef(route.params.transaction);
-  useEffect(() => {
-    transactionRef.current = route.params.transaction;
-  }, [route.params.transaction]);
+  invariant(
+    account && account.type === "Account" && isStacksAccount(account),
+    "stacks account required",
+  );
 
+  const bridge = useAccountBridge<StacksTransaction>(account, parentAccount);
+
+  const { transaction, updateTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(bridge, () => ({ account, transaction: route.params.transaction }));
+
+  // Set once the first refresh on this screen lands: until then, the params still carry Amount's
+  // snapshot, which device auto-selection must not be allowed to sign.
+  const [refreshed, setRefreshed] = useState(false);
   const onStartBurnHtResolved = useCallback(
     (startBurnHt: number) => {
-      const transaction = transactionRef.current;
-      if (!transaction) return;
-      navigation.setParams({
-        transaction: {
-          ...transaction,
-          familySpecificData: { ...transaction.familySpecificData, startBurnHt },
-        },
-      });
+      setRefreshed(true);
+      updateTransaction(prev =>
+        bridge.updateTransaction(prev, {
+          familySpecificData: { ...prev.familySpecificData, startBurnHt },
+        }),
+      );
     },
-    [navigation],
+    [bridge, updateTransaction],
   );
 
   const { poxError, retry } = useStartBurnHtRefresh(isFocused, onStartBurnHtResolved);
 
-  // Unlike Amount, there's no Continue to disable here: device auto-selection would carry on with a
-  // height that can no longer be refreshed, so the device list is replaced until the retry succeeds.
-  if (poxError) {
+  const statusError = bridgePending ? null : getFirstStatusError(status, "errors");
+  const isValidated = refreshed && !bridgePending && !bridgeError && !statusError;
+
+  const error = poxError || bridgeError || statusError;
+
+  // The list stays mounted through later refreshes once shown: until the next pair is revalidated,
+  // the params keep the previous validated one, so a tap meanwhile still signs a consistent pair.
+  // An error drops that pair, so the list only comes back after a retry has revalidated.
+  const [hasValidatedPair, setHasValidatedPair] = useState(false);
+  const paramsInSync = route.params.transaction === transaction && route.params.status === status;
+
+  useEffect(() => {
+    if (!isValidated || !transaction || paramsInSync) return;
+    navigation.setParams({ transaction, status });
+  }, [isValidated, navigation, paramsInSync, status, transaction]);
+
+  // Adjusted during render (not in an effect): `paramsInSync` already reads the live route params.
+  let nextHasValidatedPair = hasValidatedPair;
+  if (error) nextHasValidatedPair = false;
+  else if (isValidated && paramsInSync) nextHasValidatedPair = true;
+  if (nextHasValidatedPair !== hasValidatedPair) setHasValidatedPair(nextHasValidatedPair);
+
+  if (error && !bridgePending) {
     return (
       <SafeAreaView style={styles.root} edges={["bottom"]}>
-        <View style={styles.content} testID="stacks-stake-select-device-pox-error">
+        <View style={styles.content} testID="stacks-stake-select-device-error">
           <Alert type="error">
-            <TranslatedError error={poxError} />
+            <TranslatedError error={error} />
           </Alert>
           <Button
             mt={4}
@@ -63,10 +100,20 @@ export default function StakingSelectDevice(props: Props) {
             type="main"
             size="large"
             onPress={retry}
-            testID="stacks-stake-select-device-pox-retry"
+            testID="stacks-stake-select-device-retry"
           >
             {t("common.retry")}
           </Button>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!hasValidatedPair) {
+    return (
+      <SafeAreaView style={styles.root} edges={["bottom"]}>
+        <View style={styles.content} testID="stacks-stake-select-device-preparing">
+          <InfiniteLoader />
         </View>
       </SafeAreaView>
     );

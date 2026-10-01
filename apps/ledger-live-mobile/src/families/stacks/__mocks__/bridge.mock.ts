@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stacks/types";
 
@@ -55,10 +55,15 @@ export function useFakeBridgeTransaction(
     (updater: (tx: Transaction) => Transaction) => setTransaction(prev => updater(prev)),
     [],
   );
-  const status: TransactionStatus = {
-    ...bridgeState.status,
-    amount: bridgeState.status.amount.gt(0) ? bridgeState.status.amount : transaction.amount,
-  };
+  // Stable per transaction, like the real hook's status state (screens compare it by reference).
+  const baseStatus = bridgeState.status;
+  const status: TransactionStatus = useMemo(
+    () => ({
+      ...baseStatus,
+      amount: baseStatus.amount.gt(0) ? baseStatus.amount : transaction.amount,
+    }),
+    [baseStatus, transaction],
+  );
   return {
     transaction,
     setTransaction,

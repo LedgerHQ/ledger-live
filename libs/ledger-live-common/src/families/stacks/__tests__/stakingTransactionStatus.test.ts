@@ -2,8 +2,20 @@ import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getTransactionStatus as classicGetTransactionStatus } from "@ledgerhq/coin-stacks/bridge/getTransactionStatus";
+import { fetchPoxInfo } from "@ledgerhq/coin-stacks/network/pox";
 import { genericGetTransactionStatus } from "../../../bridge/generic-coin-framework/getTransactionStatus";
 import type { StacksAccount, Transaction } from "../types";
+
+// validateIntent reads /v2/pox for the prepare-phase check; keep these cases off the network.
+jest.mock("@ledgerhq/coin-stacks/network/pox");
+
+const mockNextCycle = (blocksUntilPreparePhase: number, blocksUntilRewardPhase: number) =>
+  jest.mocked(fetchPoxInfo).mockResolvedValue({
+    next_cycle: {
+      blocks_until_prepare_phase: blocksUntilPreparePhase,
+      blocks_until_reward_phase: blocksUntilRewardPhase,
+    },
+  } as Awaited<ReturnType<typeof fetchPoxInfo>>);
 
 const POOL_ADDRESS = "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA.native-pool-signer-manager";
 const FEE = new BigNumber(180);
@@ -40,6 +52,11 @@ const undelegateTransaction: Transaction = {
 const genericStatus = genericGetTransactionStatus("stacks", "local");
 
 describe("Stacks staking transactions on the generic bridge", () => {
+  beforeEach(() => {
+    // Reward phase: 300 blocks until the next prepare phase.
+    mockNextCycle(300, 400);
+  });
+
   it("validates a complete delegate transaction without errors", async () => {
     const status = await genericStatus(account, delegateTransaction);
 
@@ -62,6 +79,14 @@ describe("Stacks staking transactions on the generic bridge", () => {
     });
 
     expect(status.errors.data).toBeDefined();
+  });
+
+  it("rejects a delegate transaction during the pox-5 prepare phase", async () => {
+    mockNextCycle(0, 42);
+
+    const status = await genericStatus(account, delegateTransaction);
+
+    expect(status.errors.data?.name).toBe("StacksStakeInPreparePhase");
   });
 
   it("rejects a delegate amount above the spendable balance minus fees", async () => {

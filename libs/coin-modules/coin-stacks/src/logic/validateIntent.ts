@@ -15,6 +15,8 @@ import {
 } from "@ledgerhq/coin-module-framework/errors";
 import {
   validateAddress as isValidStacksAddress,
+  isPoolAddress,
+  isValidNumCycles,
   MAX_NUM_CYCLES,
   MIN_NUM_CYCLES,
 } from "../common-logic";
@@ -60,9 +62,10 @@ function validateStaking(
     return { amount: 0n, totalSpent: estimatedFees };
   }
 
-  // buildUnsignedTx's delegate branch requires both, splitting valAddress on "." -- flag their
-  // absence/shape here too, so a caller doesn't get a false "valid" result that throws at craft time.
-  if (!intent.valAddress.includes(".")) {
+  // buildUnsignedTx's delegate branch requires both, splitting valAddress on "." and passing the
+  // parts to `contractPrincipalCV` -- flag their absence/shape here with the same check the staking
+  // forms use, so a caller doesn't get a false "valid" result that throws at craft time.
+  if (!isPoolAddress(intent.valAddress)) {
     errors.valAddress = new Error(
       "valAddress must be a contract principal (address.contract-name)",
     );
@@ -71,10 +74,12 @@ function validateStaking(
   const { numCycles, startBurnHt } = intent.data;
   if (numCycles === undefined || startBurnHt === undefined) {
     errors.data = new Error("numCycles and startBurnHt are required for a delegate intent");
-  } else if (numCycles < MIN_NUM_CYCLES || numCycles > MAX_NUM_CYCLES) {
+  } else if (!isValidNumCycles(numCycles)) {
     // Client-side only: pox-5's own ERR_INVALID_NUM_CYCLES is the ground truth; this just avoids
     // paying a fee for an on-chain abort.
-    errors.data = new Error(`numCycles must be between ${MIN_NUM_CYCLES} and ${MAX_NUM_CYCLES}`);
+    errors.data = new Error(
+      `numCycles must be an integer between ${MIN_NUM_CYCLES} and ${MAX_NUM_CYCLES}`,
+    );
   }
 
   // The fee is paid from the unlocked balance, separately from the amount being locked -- so the
