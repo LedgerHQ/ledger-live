@@ -4,10 +4,13 @@ import { validateAddress } from "./addresses";
 export const MIN_NUM_CYCLES = 1;
 export const MAX_NUM_CYCLES = 96;
 
-// Clarity's contract-name rule (stacks-core `clarity-types/src/representations.rs`,
-// `CONTRACT_NAME_REGEX_STRING`): a letter, then up to 127 letters, digits, `-` or `_`. It can't be
-// stricter: a contract name is fixed at deploy time, so a rejected legitimate pool is unusable.
-const CONTRACT_NAME_RE = /^[a-zA-Z][a-zA-Z0-9_-]{0,127}$/;
+// Clarity's contract-name rule (stacks-core `clarity-types/src/representations.rs`): a letter, then
+// letters, digits, `-` or `_` (`CONTRACT_NAME_REGEX_STRING`), at most `CONTRACT_MAX_NAME_LENGTH`
+// (40) bytes -- the bound the `ContractName` wire codec enforces, so no contract deployed today, a
+// pox-5 pool included, has a longer name. The regex's own 128 only keeps legacy principals
+// parseable. It can't be stricter: a contract name is fixed at deploy time, so a rejected
+// legitimate pool would be unusable.
+const CONTRACT_NAME_RE = /^[a-zA-Z][a-zA-Z0-9_-]{0,39}$/;
 
 /** A pool is a pox-5 signer-manager contract principal: `<c32 address>.<contract name>`. */
 export function isPoolAddress(valAddress: string | undefined): boolean {
