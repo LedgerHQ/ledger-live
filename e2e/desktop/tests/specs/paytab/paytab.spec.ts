@@ -12,7 +12,7 @@ import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/c
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { test } from "tests/fixtures/common";
 import {
-  FF_LWD_CONTACTS,
+  FF_LWD_CONTACTS_ENABLED,
   FF_LWD_PAY_TAB,
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } from "tests/utils/featureFlagUtils";
@@ -62,7 +62,7 @@ test.describe("Pay tab", () => {
     },
     featureFlags: {
       ...FF_LWD_PAY_TAB,
-      ...FF_LWD_CONTACTS,
+      ...FF_LWD_CONTACTS_ENABLED,
       ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
       newSendFlow: {
         enabled: true,
