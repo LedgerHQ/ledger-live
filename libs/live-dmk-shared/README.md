@@ -29,8 +29,9 @@ Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integr
 - `connectDevice/` — the connect device state machine and use case:
   - `ConnectDeviceUIState` / `ConnectDeviceUIStateTypes` — its UI states, including the shared error states
   - `MatchedDevice`, `KnownDevice` (alias of `Device`) — data types for known devices
-- `connectNewDevice/` — the state machine that connects a device the user has not connected before:
+- `connectNewDevice/` — the state machine and use case that connect a device the user has not connected before:
   - `DefaultConnectNewDeviceStateMachine` — discovers devices, connects to the selected one, and owns the device not found and success delays
+  - `connectNewDeviceUseCase` — exposes the state machine as an `Observable` of UI states, started on subscribe and stopped on unsubscribe
   - `ConnectNewDeviceUIState` / `ConnectNewDeviceUIStateTypes` — its UI states, including the shared error states
   - `SelectableDevice` — a discovered device with its `onSelect` callback
 - `LedgerLiveLogger`, `LiveBlindSigningReporter`, `UserHashService` — shared services
