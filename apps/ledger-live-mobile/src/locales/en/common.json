@@ -8531,7 +8531,7 @@
         "poolAddressLabel": "Pool address",
         "poolAddressError": "Enter a pool contract address, such as SP….pool-name",
         "numCyclesLabel": "Number of cycles",
-        "numCyclesError": "Enter a number of cycles between {{min}} and {{max}}"
+        "numCyclesError": "Enter a whole number of cycles between {{min}} and {{max}}"
       },
       "amount": {
         "disclaimer": "Your STX will be locked until the staking pool releases them.",
@@ -8561,7 +8561,7 @@
       "validation": {
         "success": {
           "title": "Unstake submitted",
-          "description": "Your STX undelegation was broadcasted successfully."
+          "description": "Your STX undelegation was broadcast successfully."
         }
       }
     },

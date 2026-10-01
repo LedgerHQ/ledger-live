@@ -42,7 +42,7 @@ describe("Stacks staking SelectPool", () => {
 
     fireEvent.changeText(screen.getByTestId("stacks-stake-num-cycles-input"), "97");
     expect(continueButton()).toBeDisabled();
-    expect(screen.getByText("Enter a number of cycles between 1 and 96")).toBeVisible();
+    expect(screen.getByText("Enter a whole number of cycles between 1 and 96")).toBeVisible();
 
     fireEvent.changeText(screen.getByTestId("stacks-stake-num-cycles-input"), "");
     expect(continueButton()).toBeDisabled();
@@ -60,7 +60,7 @@ describe("Stacks staking SelectPool", () => {
 
       expect(screen.getByTestId("stacks-stake-num-cycles-input")).toHaveProp("value", raw);
       expect(continueButton()).toBeDisabled();
-      expect(screen.getByText("Enter a number of cycles between 1 and 96")).toBeVisible();
+      expect(screen.getByText("Enter a whole number of cycles between 1 and 96")).toBeVisible();
     },
   );
 

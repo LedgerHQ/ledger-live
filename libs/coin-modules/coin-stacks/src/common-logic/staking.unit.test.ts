@@ -4,9 +4,12 @@ import { isPoolAddress, isValidNumCycles, MAX_NUM_CYCLES, MIN_NUM_CYCLES } from 
 const ADDRESS = "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA";
 
 describe("isPoolAddress", () => {
-  it("accepts a valid address followed by a contract name", () => {
-    expect(isPoolAddress(`${ADDRESS}.native-pool-signer-manager`)).toBe(true);
-  });
+  it.each(["native-pool-signer-manager", "pool_signer_v2", "P"])(
+    "accepts a valid address followed by the contract name %s",
+    name => {
+      expect(isPoolAddress(`${ADDRESS}.${name}`)).toBe(true);
+    },
+  );
 
   it.each([
     ["undefined", undefined],
@@ -16,6 +19,8 @@ describe("isPoolAddress", () => {
     ["a contract name starting with a digit", `${ADDRESS}.1pool`],
     ["a contract name with a dot", `${ADDRESS}.pool.x`],
     ["an invalid address", "SP1not-an-address.pool"],
+    ["a contract name starting with an underscore", `${ADDRESS}._pool`],
+    ["a contract name over 128 characters", `${ADDRESS}.p${"o".repeat(128)}`],
   ])("rejects %s", (_, value) => {
     expect(isPoolAddress(value)).toBe(false);
   });
