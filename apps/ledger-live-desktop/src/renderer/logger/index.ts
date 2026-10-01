@@ -69,13 +69,17 @@ const logger = {
       return;
     }
 
-    const [first, ...rest] = meta;
+    const error = meta.find((value): value is Error => value instanceof Error);
+    const nonErrorMeta = meta.filter(value => value !== error);
+    const [first, ...rest] = nonErrorMeta;
     const hasMeta = isPlainObject(first);
-    const extra = hasMeta ? rest : meta;
+    const extra = hasMeta ? rest : nonErrorMeta;
+    const text = typeof message === "string" ? message : JSON.stringify(message);
     emit({
       level: levelOrEntry,
-      message: typeof message === "string" ? message : JSON.stringify(message),
+      message: error ? `${text} ${error.message}` : text,
       ...(hasMeta ? first : {}),
+      ...(error && { stack: error.stack }),
       ...(extra.length ? { extra } : {}),
     });
   },

@@ -100,6 +100,26 @@ describe("renderer logger", () => {
       expect(entry.stack).toContain("Error: boom");
     });
 
+    it("should keep an Error's message and stack when it follows a context message", () => {
+      logger.warn("Failed to load", new Error("boom"));
+      const entry = memoryLogger.getMemoryLogs()[0];
+      expect(entry).toMatchObject({ level: "warn", message: "Failed to load boom" });
+      expect(entry.stack).toContain("Error: boom");
+    });
+
+    it("should keep an Error's message and stack when it follows context metadata", () => {
+      logger.error("debouncedSetKey failed", { ns: "app", keyPath: "accounts" }, new Error("boom"));
+      const entry = memoryLogger.getMemoryLogs()[0];
+      expect(entry).toMatchObject({
+        level: "error",
+        message: "debouncedSetKey failed boom",
+        ns: "app",
+        keyPath: "accounts",
+      });
+      expect(entry.stack).toContain("Error: boom");
+      expect(entry).not.toHaveProperty("extra");
+    });
+
     it("should return memory logs newest-first", () => {
       logger.debug("first");
       logger.debug("second");
