@@ -3,6 +3,11 @@ name: "[Domain] - Test - Called"
 on:
   workflow_call:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       skip-coverage:
         description: "Skip coverage and run codechecks only. Set at the merge gate, where no product code executes."
         type: boolean
@@ -28,6 +33,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       ref:
         description: |
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
@@ -51,6 +61,7 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
     with:
+      skip-nx-cache: ${{ inputs.skip-nx-cache }}
       scope: domain
       extra-targets: check-export-rules
       ref: ${{ inputs.ref || github.sha }}

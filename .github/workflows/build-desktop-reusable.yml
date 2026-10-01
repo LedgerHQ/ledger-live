@@ -3,6 +3,11 @@ name: "[Desktop] - Build - Called"
 on:
   workflow_call:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       linux-only:
         description: "Build Linux only, skipping the Windows and macOS matrix entries."
         type: boolean
@@ -36,6 +41,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       ref:
         description: |
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
@@ -95,6 +105,7 @@ jobs:
         id: setup-caches
         with:
           use-mise: true
+          skip-nx-cache: ${{ inputs.skip-nx-cache }}
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}

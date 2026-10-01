@@ -3,6 +3,11 @@ name: "[Mobile] - Test Build Android - Called"
 on:
   workflow_call:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       disable-nx-cache:
         description: Skip Nx cache for nx-step runs
         required: false
@@ -65,6 +70,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       ref:
         description: |
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
@@ -129,6 +139,7 @@ jobs:
         id: setup-caches
         with:
           use-mise: true
+          skip-nx-cache: ${{ inputs.skip-nx-cache }}
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pnpm-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -227,6 +238,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
+          skip-nx-cache: ${{ inputs.skip-nx-cache }}
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
           skip-pnpm-cache: "false"

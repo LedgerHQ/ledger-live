@@ -3,6 +3,11 @@ name: "[Mobile] - Test Build iOS - Called"
 on:
   workflow_call:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       macos-specificity-runner-label:
         description: The specificity runner label to run the tests on (e.g. performance-pool, performance-pool or runner)
         required: false
@@ -72,6 +77,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       ref:
         description: |
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
@@ -153,6 +163,7 @@ jobs:
           skip-pod-cache: "true"
           skip-pnpm-cache: "false"
           use-mise: "true"
+          skip-nx-cache: ${{ inputs.skip-nx-cache }}
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -234,6 +245,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
+          skip-nx-cache: ${{ inputs.skip-nx-cache }}
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
           skip-pnpm-cache: "false"

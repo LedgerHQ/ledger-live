@@ -3,6 +3,11 @@ name: "[Scope] - Test - Called"
 on:
   workflow_call:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       scope:
         description: "Scope to test. Must match both the directory name and the scope:<name> Nx tag (e.g. features)."
         type: string
@@ -71,6 +76,7 @@ jobs:
         id: setup-caches
         with:
           use-mise: true
+          skip-nx-cache: ${{ inputs.skip-nx-cache }}
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
