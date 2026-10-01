@@ -58,8 +58,6 @@ apps/ledger-live-mobile/ios/                             @ledgerhq/platform
 # Platform — libs
 libs/**/logs/                                            @ledgerhq/platform
 libs/**/types-live/                                      @ledgerhq/platform
-libs/ledger-key-ring-protocol/                           @ledgerhq/platform
-libs/hw-ledger-key-ring-protocol/                        @ledgerhq/platform
 libs/disable-network-setup/                              @ledgerhq/platform
 libs/feature-flag-module/                                @ledgerhq/platform
 libs/oxc-live-libs/                                      @ledgerhq/platform
