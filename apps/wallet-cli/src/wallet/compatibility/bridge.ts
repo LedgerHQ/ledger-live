@@ -19,7 +19,7 @@ import type {
 import { BigNumber } from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
-import type { EarnSolanaStake } from "../earn/types";
+import type { EarnSolanaStake, SolanaStakeLimits } from "../earn/types";
 import type { TransactionIntent } from "../intents";
 import { parseAmountWithTicker } from "../intents/parse-amount";
 
@@ -66,6 +66,23 @@ export function buildSolanaTransactionModel(
           }
         : { kind: "transfer", uiState: { memo: intent.memo } };
   }
+}
+
+export function toSolanaStakeLimits(values: {
+  minimumDelegation: BigNumber;
+  rent: BigNumber;
+  spendableBalance: BigNumber;
+  maxStakeable: BigNumber;
+}): SolanaStakeLimits {
+  const { minimumDelegation, rent, spendableBalance, maxStakeable } = values;
+  const feeReserve = BigNumber.max(spendableBalance.minus(rent).minus(maxStakeable), 0);
+  return {
+    minimumDelegation: BigNumberStrSchema.parse(minimumDelegation.toFixed()),
+    rent: BigNumberStrSchema.parse(rent.toFixed()),
+    spendableBalance: BigNumberStrSchema.parse(spendableBalance.toFixed()),
+    maxStakeable: BigNumberStrSchema.parse(maxStakeable.toFixed()),
+    feeReserve: BigNumberStrSchema.parse(feeReserve.toFixed()),
+  };
 }
 
 // coin-evm's prepareTransaction stores the (unbuffered) gas estimate in `tx.gasLimit`; the limit
@@ -202,6 +219,44 @@ export class BridgeAdapter {
           withdrawable: BigNumberStrSchema.parse(stake.withdrawableAmount?.toFixed() ?? "0"),
         },
       ];
+    });
+  }
+
+  /** Uses coin-solana's estimateMaxSpendable so the limits match what prepareTransaction enforces. */
+  async getSolanaStakeLimits(descriptor: AccountDescriptor): Promise<SolanaStakeLimits> {
+    // Lazy: pulls in @solana/web3.js, which no other bridge method needs.
+    const [
+      { default: solanaCoinConfig },
+      { getChainAPI: getSolanaChainAPI },
+      { getStakeAccountMinimumBalanceForRentExemption },
+      { endpointByCurrencyId },
+    ] = await Promise.all([
+      import("@ledgerhq/coin-solana/config"),
+      import("@ledgerhq/coin-solana/network/index"),
+      import("@ledgerhq/coin-solana/network/chain/web3"),
+      import("@ledgerhq/coin-solana/utils"),
+    ]);
+    const account = await this.sync(descriptor);
+    const bridge = await getAccountBridge(account);
+    const currencyId = account.currency.id;
+    const api = getSolanaChainAPI({
+      endpoint: endpointByCurrencyId(solanaCoinConfig.getCoinConfig(currencyId), currencyId),
+    });
+    const model: SolanaTransactionModel = {
+      kind: "stake.createAccount",
+      uiState: { delegate: { voteAccAddress: "" } },
+    };
+    const tx = bridge.updateTransaction(bridge.createTransaction(account), { model });
+    const [minimumDelegation, rent, maxStakeable] = await Promise.all([
+      api.getStakeMinimumDelegation(),
+      getStakeAccountMinimumBalanceForRentExemption(api),
+      bridge.estimateMaxSpendable({ account, transaction: tx }),
+    ]);
+    return toSolanaStakeLimits({
+      minimumDelegation: new BigNumber(minimumDelegation),
+      rent: new BigNumber(rent),
+      spendableBalance: account.spendableBalance,
+      maxStakeable,
     });
   }
 
