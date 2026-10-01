@@ -62,7 +62,7 @@ permissions:
 jobs:
   test-support:
     name: "Support Test"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-scope-reusable.yml@ci/cache-LIVE-38508-add-cold-run-switch
+    uses: LedgerHQ/ledger-live/.github/workflows/test-scope-reusable.yml@ci/runners-LIVE-38510-migrate-scope-jobs
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
