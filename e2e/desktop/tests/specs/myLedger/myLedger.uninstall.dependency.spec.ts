@@ -38,7 +38,7 @@ test.describe("My Ledger — uninstall an app with dependents", () => {
         AppInfos.BITCOIN.name,
       ]);
 
-      await app.myLedger.uninstallAppWithDependents(AppInfos.ETHEREUM);
+      await app.myLedger.uninstallAppWithDependents(AppInfos.ETHEREUM, [AppInfos.ETHEREUM_CLASSIC]);
 
       await app.myLedger.expectAppInstalled(AppInfos.BITCOIN);
 

@@ -45,6 +45,8 @@ export class MyLedgerPage extends AppPage {
 
   private readonly uninstallAllButton = this.page.getByTestId("manager-uninstall-all-apps-button");
   private readonly confirmModalButton = this.page.getByTestId("modal-confirm-button");
+  private readonly cancelModalButton = this.page.getByTestId("modal-cancel-button");
+  private readonly modal = this.page.getByTestId("modal-container");
   private readonly updateAllButton = this.page.getByTestId("manager-update-all-apps-button");
   private readonly updateAllProgressBar = this.page.getByTestId("manager-update-all-progress-bar");
 
@@ -157,9 +159,26 @@ export class MyLedgerPage extends AppPage {
 
   /** Uninstalling a parent app opens the same ConfirmModal, listing the apps that go with it. */
   @step("Uninstall $0 together with the apps that depend on it")
-  async uninstallAppWithDependents(app: AppInfos) {
+  async uninstallAppWithDependents(app: AppInfos, dependents: AppInfos[]) {
     await this.uninstallButton(app).click();
+    await this.expectDependentsUninstallModal(app, dependents);
     await this.confirmModalButton.click();
+  }
+
+  /** The list of apps to uninstall only mounts once "Show apps to uninstall" is opened. */
+  @step("Expect the modal to ask to uninstall the apps that depend on $0")
+  async expectDependentsUninstallModal(app: AppInfos, dependents: AppInfos[]) {
+    await expect(this.modal).toContainText(`Uninstall ${app.name} and its related apps?`);
+    await expect(this.modal).toContainText(
+      `Some of your installed apps are linked to ${app.name} app. They will be uninstalled as well.`,
+    );
+    await expect(this.confirmModalButton).toHaveText(`Uninstall ${app.name} and other apps`);
+    await expect(this.cancelModalButton).toHaveText("Cancel");
+
+    await this.modal.getByText("Show apps to uninstall").click();
+    for (const listed of [app, ...dependents]) {
+      await expect(this.modal.getByText(listed.name, { exact: true })).toBeVisible();
+    }
   }
 
   @step("Expect no app to be installed")
