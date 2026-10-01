@@ -13,15 +13,16 @@ import {
 import type { FeatureId } from "@shared/feature-flags";
 
 import {
-  Text,
-  Flex,
-  SearchInput,
-  Divider,
-  Tag,
-  ChipTabs,
+  Box,
   Button,
+  Divider,
+  SearchInput,
+  SegmentedControl,
+  SegmentedControlButton,
   Switch,
-} from "@ledgerhq/native-ui";
+  Tag,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
 import includes from "lodash/includes";
 import lowerCase from "lodash/lowerCase";
 import trim from "lodash/trim";
@@ -56,7 +57,7 @@ export default function DebugFeatureFlags() {
   const [searchInput, setSearchInput] = useState<string>("");
   const contentAbTests = useContentAbTests();
   const searchInputTrimmed = trim(searchInput);
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState<"all" | "groups">("all");
   const dispatch = useDispatch();
 
   const featureFlags = useMemo(() => {
@@ -203,46 +204,60 @@ export default function DebugFeatureFlags() {
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
       <KeyboardView behavior={keyboardBehavior}>
         <NavigationScrollView keyboardShouldPersistTaps="handled">
-          <Flex px={16}>
+          <Box lx={{ paddingHorizontal: "s16" }}>
             <Alert type="primary" noIcon>
               {t("settings.debug.featureFlagsTitle")}
             </Alert>
-            <Flex flexDirection="row" mt={4}>
-              <Text>Legend: </Text>
+            <Box lx={{ flexDirection: "row", alignItems: "center", marginTop: "s4" }}>
+              <Text typography="body2">Legend: </Text>
               <TagEnabled mx={2}>enabled flag</TagEnabled>
               <TagDisabled mx={2}>disabled flag</TagDisabled>
-            </Flex>
-            <Text my={3}>{t("settings.debug.firebaseProject")}</Text>
-            <Tag uppercase={false} type="color" alignSelf={"flex-start"}>
-              {project}
-            </Tag>
-            <Flex flexDirection="row" justifyContent="space-between">
-              <Text flexShrink={1} mt={3}>
+            </Box>
+            <Text typography="body2" lx={{ marginVertical: "s12" }}>
+              {t("settings.debug.firebaseProject")}
+            </Text>
+            <Tag label={project} appearance="accent" lx={{ alignSelf: "flex-start" }} />
+            <Box
+              lx={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "s12",
+                marginTop: "s12",
+              }}
+            >
+              <Text typography="body2" lx={{ flexShrink: 1 }}>
                 {t("settings.debug.showBannerDesc")}
               </Text>
-              <Switch checked={featureFlagsBannerVisible} onChange={setFeatureFlagBannerVisible} />
-            </Flex>
-            <Divider />
-            <ChipTabs
-              labels={[
-                t("settings.debug.featureFlagsTabAll"),
-                t("settings.debug.featureFlagsTabGroups"),
-              ]}
-              activeIndex={activeTab}
-              onChange={setActiveTab}
-            />
-            <Flex mt={3} />
+              <Switch
+                checked={featureFlagsBannerVisible}
+                onCheckedChange={setFeatureFlagBannerVisible}
+              />
+            </Box>
+            <Divider lx={{ marginVertical: "s12" }} />
+            <SegmentedControl
+              selectedValue={activeTab}
+              onSelectedChange={setActiveTab}
+              accessibilityLabel={t("settings.debug.featureFlagsTitle")}
+            >
+              <SegmentedControlButton value="all">
+                {t("settings.debug.featureFlagsTabAll")}
+              </SegmentedControlButton>
+              <SegmentedControlButton value="groups">
+                {t("settings.debug.featureFlagsTabGroups")}
+              </SegmentedControlButton>
+            </SegmentedControl>
             <SearchInput
               value={searchInput}
               placeholder="Search flag"
-              onChange={handleSearch}
+              onChangeText={handleSearch}
               autoCapitalize="none"
+              lx={{ marginTop: "s12" }}
             />
             <Button
-              mt={3}
-              size="small"
-              type="main"
-              outline
+              appearance="gray"
+              size="sm"
+              lx={{ marginTop: "s12" }}
               onPress={() => {
                 dispatch(setAllOverrides({}));
                 clearContentAbTestOverrides();
@@ -252,12 +267,12 @@ export default function DebugFeatureFlags() {
             >
               {t("settings.debug.featureFlagsRestoreAll")}
             </Button>
-            <Divider />
-            {activeTab === 0 ? (
+            <Divider lx={{ marginVertical: "s12" }} />
+            {activeTab === "all" ? (
               <>
                 {filteredFlags.length === 0 && filteredContentAbTests.length === 0 ? (
                   <>
-                    <Text>{`No flag matching "${searchInput}"`}</Text>
+                    <Text typography="body2">{`No flag matching "${searchInput}"`}</Text>
                     {additionalInfo}
                   </>
                 ) : null}
@@ -266,7 +281,7 @@ export default function DebugFeatureFlags() {
             ) : (
               <>{groupsList}</>
             )}
-          </Flex>
+          </Box>
         </NavigationScrollView>
       </KeyboardView>
     </SafeAreaView>
