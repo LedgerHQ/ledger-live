@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
-import { fetchAccountData } from "@domain/api-account-data-source";
+import { fetchAccountData, fetchAccountDataBatch } from "@domain/api-account-data-source";
 import type { AccountRef } from "@domain/entity-account";
 import {
   accountBalanceBinding,
@@ -81,7 +81,12 @@ export function useAccountBalancesToolProps(
   );
 
   const onReadAll = useCallback(() => {
-    for (const { ref } of inputs) void dispatch(fetchAccountData(accountBalanceBinding, ref));
+    void dispatch(
+      fetchAccountDataBatch(
+        accountBalanceBinding,
+        inputs.map(({ ref }) => ref),
+      ),
+    );
   }, [dispatch, inputs]);
 
   return { accounts, onRead, onReadAll, ready: true };

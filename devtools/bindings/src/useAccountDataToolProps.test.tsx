@@ -58,6 +58,16 @@ describe("account data tool props", () => {
     expect(result.current.accounts[0]?.status.sourceId).toBe("fake");
   });
 
+  it("reads every listed balance in one batch on read all", async () => {
+    const { wrapper, balance } = setup();
+    const { result } = renderHook(() => useAccountBalancesToolProps(inputs), { wrapper });
+
+    act(() => result.current.onReadAll());
+
+    await waitFor(() => expect(result.current.accounts[0]?.status.sourceId).toBe("fake"));
+    expect(balance).toHaveBeenCalledTimes(1);
+  });
+
   it("reads a first page of operations, then the next one", async () => {
     const { wrapper, operations } = setup();
     const { result } = renderHook(() => useAccountOperationsToolProps(inputs), { wrapper });
