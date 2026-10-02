@@ -136,6 +136,8 @@ export interface SwapRoute {
   toCurrency?: string;
   fromCurrency?: string;
   toAccountId?: string;
+  history?: boolean;
+  swapId?: string;
 }
 
 export interface BridgeRoute {
