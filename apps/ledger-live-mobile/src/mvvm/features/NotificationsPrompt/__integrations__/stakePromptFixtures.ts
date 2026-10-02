@@ -1,6 +1,5 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { NavigatorName, ScreenName } from "~/const";
 
 export type AccountKey =
@@ -341,7 +340,7 @@ export const stakePromptCases: StakePromptCase[] = [
     errorScreenName: ScreenName.HederaClaimRewardsValidationError,
     accountKey: "hedera",
     operationType: "REWARD",
-    transaction: { family: "hedera", mode: HEDERA_TRANSACTION_MODES.ClaimRewards },
+    transaction: { family: "hedera", mode: "claimReward" },
     params: { source: stakePromptSource },
   },
   {
@@ -353,11 +352,7 @@ export const stakePromptCases: StakePromptCase[] = [
     errorScreenName: ScreenName.HederaDelegationValidationError,
     accountKey: "hedera",
     operationType: "DELEGATE",
-    transaction: {
-      family: "hedera",
-      mode: HEDERA_TRANSACTION_MODES.Delegate,
-      properties: { stakingNodeId: 1 },
-    },
+    transaction: { family: "hedera", mode: "delegate", valId: "1" },
     params: { source: stakePromptSource },
   },
   {
@@ -369,11 +364,7 @@ export const stakePromptCases: StakePromptCase[] = [
     errorScreenName: ScreenName.HederaRedelegationValidationError,
     accountKey: "hedera",
     operationType: "REDELEGATE",
-    transaction: {
-      family: "hedera",
-      mode: HEDERA_TRANSACTION_MODES.Redelegate,
-      properties: { stakingNodeId: 2 },
-    },
+    transaction: { family: "hedera", mode: "redelegate", valId: "2" },
     params: { source: stakePromptSource },
   },
   {
@@ -385,11 +376,7 @@ export const stakePromptCases: StakePromptCase[] = [
     errorScreenName: ScreenName.HederaUndelegationValidationError,
     accountKey: "hedera",
     operationType: "UNDELEGATE",
-    transaction: {
-      family: "hedera",
-      mode: HEDERA_TRANSACTION_MODES.Undelegate,
-      properties: { stakingNodeId: 1 },
-    },
+    transaction: { family: "hedera", mode: "undelegate" },
     params: { source: stakePromptSource },
   },
   {
