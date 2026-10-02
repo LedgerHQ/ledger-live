@@ -30,6 +30,7 @@ import { openPerpsTransactionSigned } from "LLD/features/Perps/screens/PerpsTran
 import { broadcastLogger } from "~/datadog/logs";
 import { track } from "@shared/analytics";
 import { isUserRefusal } from "../utils/isUserRefusal";
+import { getDepositRequestId, settleDepositRequest } from "../utils/perpsDepositRequest";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;
@@ -210,6 +211,7 @@ export function usePerpsDepositExecution(
   );
 
   const executeDeposit = useCallback(async () => {
+    const requestId = getDepositRequestId();
     try {
       // Reset to the loading state on every run (including retry after an error).
       setDeviceStep(PROCESSING_STEP);
@@ -269,6 +271,7 @@ export function usePerpsDepositExecution(
 
       if (!signed) return;
 
+      settleDepositRequest(requestId, { swapId: signed.swapId, amountTo });
       openPerpsTransactionSigned({
         receiveCurrencyTicker: receiveCurrency.ticker,
         swapId: signed.swapId,
@@ -285,6 +288,7 @@ export function usePerpsDepositExecution(
   }, [
     accounts,
     amountSent,
+    amountTo,
     confirmSignAndBroadcast,
     depositAccount,
     getFeature,
