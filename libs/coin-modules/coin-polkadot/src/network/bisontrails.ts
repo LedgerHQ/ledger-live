@@ -1,13 +1,14 @@
 import querystring from "querystring";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network/network";
-import { log } from "@ledgerhq/logs";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { OperationType } from "@ledgerhq/types-live";
 import { encodeAddress } from "@polkadot/util-crypto";
 import { BigNumber } from "bignumber.js";
 import { isValidAddress } from "../common";
 import { type PolkadotCoinConfig } from "../config";
+import { DEFAULT_MAX_TX_QUERY } from "../constants";
 import type {
   ExplorerExtrinsic,
   PalletMethod,
@@ -16,7 +17,9 @@ import type {
   PolkadotOperationExtra,
 } from "../types";
 
-const LIMIT = 200;
+const getMaxTxQuery = (config: PolkadotCoinConfig): number => {
+  return config.indexer.maxTxQuery ?? DEFAULT_MAX_TX_QUERY;
+};
 
 /**
  * Return the url of the indexer
@@ -40,7 +43,7 @@ const getAccountOperationUrl = (
   addr: string,
   offset: number,
   startAt: number,
-  limit: number = LIMIT,
+  limit: number,
 ): string =>
   `${getBaseApiUrl(config)}/accounts/${addr}/operations?${querystring.stringify({
     limit,
@@ -66,6 +69,7 @@ const getWithdrawUnbondedAmount = (extrinsic: any) => {
  * @returns {string} - OperationType
  */
 const getOperationType = (
+  logger: Logger,
   pallet: string,
   palletMethod: PalletMethodName | unknown,
 ): OperationType => {
@@ -100,7 +104,7 @@ const getOperationType = (
       return "FEES";
 
     default:
-      log("polkadot/api", `Unknown operation type ${pallet}.${palletMethod} - fallback to FEES`);
+      logger("polkadot/api", `Unknown operation type ${pallet}.${palletMethod} - fallback to FEES`);
       return "FEES";
   }
 };
@@ -197,11 +201,12 @@ const getValue = (extrinsic: any, type: OperationType): BigNumber => {
  * @returns {PolkadotOperation | null}
  */
 const extrinsicToOperation = (
+  logger: Logger,
   addr: string,
   accountId: string,
   extrinsic: ExplorerExtrinsic,
 ): PolkadotOperation | null => {
-  let type = getOperationType(extrinsic.section, extrinsic.method);
+  let type = getOperationType(logger, extrinsic.section, extrinsic.method);
 
   if (
     (type === "OUT" && extrinsic.affectedAddress1 === addr && extrinsic.signer !== addr) ||
@@ -299,11 +304,12 @@ const slashToOperation = (accountId: string, slash: any): PolkadotOperation => {
  * @param {PolkadotOperation[]} prevOperations
  */
 const fetchOperationList = async (
+  logger: Logger,
   config: PolkadotCoinConfig,
   accountId: string,
   addr: string,
   startAt: number,
-  limit = LIMIT,
+  limit = getMaxTxQuery(config),
   offset = 0,
   prevOperations: PolkadotOperation[] = [],
 ): Promise<PolkadotOperation[]> => {
@@ -311,24 +317,30 @@ const fetchOperationList = async (
     method: "GET",
     url: getAccountOperationUrl(config, addr, offset, startAt, limit),
   });
+  const maxTxQuery = getMaxTxQuery(config);
   const operations = data.extrinsics.map((extrinsic: any) =>
-    extrinsicToOperation(addr, accountId, extrinsic),
+    extrinsicToOperation(logger, addr, accountId, extrinsic),
   );
   const rewards = data.rewards.map((reward: any) => rewardToOperation(accountId, reward));
   const slashes = data.slashes.map((slash: any) => slashToOperation(accountId, slash));
   const mergedOp = [...prevOperations, ...operations, ...rewards, ...slashes];
 
-  if (operations.length < LIMIT && rewards.length < LIMIT && slashes.length < LIMIT) {
+  if (
+    operations.length < maxTxQuery &&
+    rewards.length < maxTxQuery &&
+    slashes.length < maxTxQuery
+  ) {
     return mergedOp.filter(Boolean).sort((a, b) => b.date - a.date);
   }
 
   return await fetchOperationList(
+    logger,
     config,
     accountId,
     addr,
     startAt,
     limit,
-    offset + LIMIT,
+    offset + maxTxQuery,
     mergedOp,
   );
 };
@@ -343,17 +355,18 @@ const fetchOperationList = async (
  * @return {PolkadotOperation[]}
  */
 export const getOperations = async (
+  logger: Logger,
   config: PolkadotCoinConfig,
   accountId: string,
   addr: string,
   currency?: CryptoCurrency,
   startAt = 0,
-  limit = LIMIT,
+  limit = getMaxTxQuery(config),
 ) => {
   if (currency && ["westend", "assethub_westend"].includes(currency.id)) {
     const encodeAddr = encodeAddress(addr, 42);
-    return await fetchOperationList(config, accountId, encodeAddr, startAt, limit, 0, []);
+    return await fetchOperationList(logger, config, accountId, encodeAddr, startAt, limit, 0, []);
   } else {
-    return await fetchOperationList(config, accountId, addr, startAt, limit, 0, []);
+    return await fetchOperationList(logger, config, accountId, addr, startAt, limit, 0, []);
   }
 };

@@ -1,21 +1,21 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
 import { PolkadotOperation } from "../types";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
-import getAccountShape from "./synchronization";
-
-jest.mock("../config", () => ({
-  getCoinConfig: jest.fn(),
-}));
+import { makeGetAccountShape } from "./synchronization";
 
 const mockGetAccount = jest.fn();
 const mockGetOperations = jest.fn();
+const mockNetworkLogger = jest.fn();
 jest.mock("../network", () => ({
-  getAccount: (_config: unknown, address: string, currency?: CryptoCurrency) =>
-    mockGetAccount(address, currency),
+  getAccount: (logger: unknown, _config: unknown, address: string, currency?: CryptoCurrency) => {
+    mockNetworkLogger(logger);
+    return mockGetAccount(address, currency);
+  },
   getOperations: (
+    _logger: unknown,
     _config: unknown,
     accountId: string,
     addr: string,
@@ -28,9 +28,13 @@ jest.mock("../network", () => ({
 const CURRENCY = getCryptoCurrencyById("polkadot");
 const EXPECTED_CURRENCY = getCryptoCurrencyById("assethub_polkadot");
 
-const mockGetCoinConfig = coinConfig.getCoinConfig as jest.MockedFunction<
-  typeof coinConfig.getCoinConfig
->;
+const mockGetCoinConfig = jest.fn();
+const logger = jest.fn();
+const getAccountShape = makeGetAccountShape({
+  ...createMockPolkadotContext(),
+  config: mockGetCoinConfig,
+  logger,
+});
 
 describe("getAccountShape", () => {
   beforeEach(() => {
@@ -322,6 +326,26 @@ describe("getAccountShape", () => {
     );
 
     expect(shape.currency).toEqual(EXPECTED_CURRENCY);
+  });
+
+  it("passes the context logger to the network layer", async () => {
+    mockGetAccount.mockResolvedValue(createAccountInfo());
+    mockGetOperations.mockResolvedValue([]);
+    mockNetworkLogger.mockClear();
+
+    await getAccountShape(
+      {
+        index: -1,
+        derivationPath: "not used",
+        currency: CURRENCY,
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount: undefined,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
+
+    expect(mockNetworkLogger).toHaveBeenCalledWith(logger);
   });
 
   it("returns correct currency in account shape without migration", async () => {

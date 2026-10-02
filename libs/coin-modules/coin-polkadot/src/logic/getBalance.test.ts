@@ -1,17 +1,15 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import coinConfig, { PolkadotCoinConfig } from "../config";
+import type { PolkadotCoinConfig } from "../config";
+import { polkadotMainnetConfigValue } from "../test/config.fixture";
 import { getBalance } from "./getBalance";
 
 describe("getBalance", () => {
   const mockServer = setupServer();
-  coinConfig.setCoinConfig(
-    () =>
-      ({
-        status: { type: "active" },
-        sidecar: { url: "http://polkadot.explorer.com" },
-      }) as unknown as PolkadotCoinConfig,
-  );
+  const config: PolkadotCoinConfig = {
+    ...polkadotMainnetConfigValue,
+    sidecar: { url: "http://polkadot.explorer.com" },
+  };
   it("gets the balance of a Polkadot account", async () => {
     mockServer.listen({ onUnhandledRequest: "error" });
     mockServer.use(
@@ -21,11 +19,8 @@ describe("getBalance", () => {
       ),
     );
 
-    expect(
-      await getBalance(
-        coinConfig.getCoinConfig("polkadot"),
-        "1a1LcBX6hGPKg5aQ6DXZpAHCCzWjckhea4sz3P1PvL3oc4F",
-      ),
-    ).toEqual([{ value: BigInt(100), asset: { type: "native" } }]);
+    expect(await getBalance(config, "1a1LcBX6hGPKg5aQ6DXZpAHCCzWjckhea4sz3P1PvL3oc4F")).toEqual([
+      { value: BigInt(100), asset: { type: "native" } },
+    ]);
   });
 });

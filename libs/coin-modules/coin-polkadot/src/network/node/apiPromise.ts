@@ -1,37 +1,66 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { ApiPromise, HttpProvider, WsProvider } from "@polkadot/api";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
-import polkadotCoinConfig, { type PolkadotCoinConfig } from "../../config";
+import { type PolkadotCoinConfig } from "../../config";
 
-let coinConfig: PolkadotCoinConfig | undefined;
-let api: ApiPromise | undefined;
+const MAX_CONNECTIONS = 8;
 
-export default async function (currency?: CryptoCurrency) {
-  const config = polkadotCoinConfig.getCoinConfig(currency?.id);
-  // Need to constantly check if a new config is setted
-  if (!api || coinConfig !== config) {
-    coinConfig = config;
-    const headers = coinConfig.node.credentials
-      ? { Authorization: "Basic " + coinConfig.node.credentials }
-      : undefined;
+type Connection = { credentials: string; api: Promise<ApiPromise> };
 
-    const nodeURL = coinConfig.node.url;
+const connections = new Map<string, Connection>();
 
-    let provider: HttpProvider | WsProvider;
+const connect = async (config: PolkadotCoinConfig): Promise<ApiPromise> => {
+  const headers = config.node.credentials
+    ? { Authorization: "Basic " + config.node.credentials }
+    : undefined;
 
-    if (nodeURL.startsWith("ws://") || nodeURL.startsWith("wss://")) {
-      provider = new WsProvider(nodeURL);
-    } else if (nodeURL.startsWith("http://") || nodeURL.startsWith("https://")) {
-      provider = new HttpProvider(nodeURL, headers);
-    } else {
-      throw new Error("[Polkadot] Invalid node URL");
-    }
+  const nodeURL = config.node.url;
 
-    api = await ApiPromise.create({
-      provider: provider as ProviderInterface,
-      noInitWarn: true, //to avoid undesired warning (ex: "API/INIT: polkadot/1002000: Not decorating unknown runtime apis")
-    });
+  let provider: HttpProvider | WsProvider;
+
+  if (nodeURL.startsWith("ws://") || nodeURL.startsWith("wss://")) {
+    provider = new WsProvider(nodeURL);
+  } else if (nodeURL.startsWith("http://") || nodeURL.startsWith("https://")) {
+    provider = new HttpProvider(nodeURL, headers);
+  } else {
+    throw new Error("[Polkadot] Invalid node URL");
   }
 
-  return api;
+  return ApiPromise.create({
+    provider: provider as ProviderInterface,
+    noInitWarn: true, //to avoid undesired warning (ex: "API/INIT: polkadot/1002000: Not decorating unknown runtime apis")
+  });
+};
+
+const disconnect = (connection: Connection): void => {
+  connection.api.then(api => api.disconnect()).catch(() => undefined);
+};
+
+export default async function (config: PolkadotCoinConfig): Promise<ApiPromise> {
+  const url = config.node.url;
+  const credentials = config.node.credentials ?? "";
+  const existing = connections.get(url);
+  if (existing?.credentials === credentials) {
+    connections.delete(url);
+    connections.set(url, existing);
+    return existing.api;
+  }
+  if (existing) {
+    connections.delete(url);
+    disconnect(existing);
+  }
+  const connection: Connection = { credentials, api: connect(config) };
+  connections.set(url, connection);
+  connection.api.catch(() => {
+    if (connections.get(url) === connection) {
+      connections.delete(url);
+    }
+  });
+  for (const [oldestUrl, oldest] of connections) {
+    if (connections.size <= MAX_CONNECTIONS) {
+      break;
+    }
+    connections.delete(oldestUrl);
+    disconnect(oldest);
+  }
+  return connection.api;
 }
