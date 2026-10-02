@@ -10,6 +10,19 @@ permissions:
   contents: read
 
 jobs:
+
+  stack-data:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          STACK_NUMBER: ${{ github.event.pull_request.stack.number }}
+          STACK_SIZE: ${{ github.event.pull_request.stack.size }}
+          STACK_POSITION: ${{ github.event.pull_request.stack.position }}
+          BASE_REF: ${{ github.event.pull_request.stack.base.ref }}
+          BASE_SHA: ${{ github.event.pull_request.stack.base.sha }}
+        run:
+          echo "extracting stack information"
+
   determine-affected:
     name: "Affected"
     permissions:
