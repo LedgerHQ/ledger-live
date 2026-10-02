@@ -5,6 +5,7 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { log } from "@ledgerhq/logs";
 import { getTransactions, MAX_PAGE_LIMIT } from "../../network";
 import type { ApiResponseTransaction } from "../../types";
 import { KaspaTransfer, parseKaspaTransfer } from "./scanOperations";
@@ -160,6 +161,18 @@ export async function listOperations(
     if (items.length > 0) {
       return { items, next: anchor === undefined ? nextPageBefore : `${nextPageBefore}:${anchor}` };
     }
-    before = Number.parseInt(nextPageBefore, 10);
+    // The indexer's cursor is the oldest block time on the page and the next page is strictly older,
+    // so the cursor must strictly decrease. paginateOperations' cycle guard only sees cursors between
+    // calls, not inside this loop, so stop here rather than re-read if a cursor ever repeats, grows or
+    // is malformed.
+    const nextBefore = Number.parseInt(nextPageBefore, 10);
+    if (!(nextBefore < (before ?? Number.POSITIVE_INFINITY))) {
+      log("coin-kaspa", "listOperations: indexer cursor did not move back, stopping", {
+        before,
+        nextPageBefore,
+      });
+      return { items, next: undefined };
+    }
+    before = nextBefore;
   }
 }

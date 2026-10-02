@@ -417,6 +417,30 @@ describe("listOperations", () => {
       });
     });
 
+    it.each([
+      { name: "repeats", cursor: "2000" },
+      { name: "grows", cursor: "9000" },
+      { name: "is malformed", cursor: "abc" },
+    ])("stops instead of re-reading when the indexer cursor $name", async ({ cursor }) => {
+      // Inside the lookback window with nothing new, so listOperations reads on by itself.
+      mockGetTransactions
+        .mockResolvedValueOnce({
+          transactions: [tx(99), tx(98)],
+          nextPageBefore: "2000",
+          nextPageAfter: null,
+        })
+        .mockResolvedValueOnce({
+          transactions: [tx(97.5)],
+          nextPageBefore: cursor,
+          nextPageAfter: null,
+        });
+
+      const result = await listOperations(ADDRESS, baseOptions({ minHeight: 100 }));
+
+      expect(result).toEqual({ items: [], next: undefined });
+      expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+    });
+
     it("keeps the anchor from the cursor across calls", async () => {
       // A previous call saw an already-synced tx at 30 h; this page only reaches 29 h: still inside.
       mockGetTransactions.mockResolvedValueOnce({
