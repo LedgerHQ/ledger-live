@@ -10789,6 +10789,8 @@
   },
   "payTab" : {
     "disclaimer" : "由 Monavate Onchain 提供",
+    "cardDisclaimer" : "正在寻找您的加密货币卡？",
+    "cardDisclaimerLink" : "前往 CL 卡",
     "featureTour" : {
       "title" : "一站式管理您的所有付款",
       "description" : "为您带来全新的\"支付\"选项卡，让您的加密货币随时准备好应对日常用钱时刻。",
@@ -11083,9 +11085,9 @@
     },
     "cardLoginIntro" : {
       "title" : "消费加密货币，赚取返现",
-      "providedBy" : "卡由 Baanx 提供",
+      "providedBy" : "卡由 Monavate 提供",
       "createAccount" : "创建账户",
-      "logIn" : "登录 Baanx",
+      "logIn" : "登录 Monavate",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -11110,6 +11112,7 @@
       "title" : "付款",
       "pay" : "新",
       "seeAllTitle" : "向联系人付款",
+      "me" : "我",
       "addressPicker" : {
         "title" : "选择 {{name}} 的地址",
         "meTitle" : "选择我的地址",

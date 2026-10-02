@@ -10789,6 +10789,8 @@
   },
   "payTab" : {
     "disclaimer" : "ให้บริการโดย Monavate OnChain",
+    "cardDisclaimer" : "มองหาบัตรคริปโตของคุณอยู่ใช่ไหม?",
+    "cardDisclaimerLink" : "ไปที่ CL Card",
     "featureTour" : {
       "title" : "การชำระเงินทั้งหมดของคุณในที่เดียว",
       "description" : "พบกับแท็บ 'จ่ายเงิน' ใหม่ ให้คุณใช้จ่ายคริปโตได้ง่าย ๆ ในชีวิตประจำวัน",
@@ -11083,9 +11085,9 @@
     },
     "cardLoginIntro" : {
       "title" : "ใช้จ่ายด้วยคริปโต แล้วรับเครดิตเงินคืน",
-      "providedBy" : "บัตรให้บริการโดย Baanx",
+      "providedBy" : "บัตรให้บริการโดย Monavate",
       "createAccount" : "สร้างบัญชี",
-      "logIn" : "เข้าสู่ระบบ Baanx",
+      "logIn" : "เข้าสู่ระบบ Monavate",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -11110,6 +11112,7 @@
       "title" : "จ่าย",
       "pay" : "ใหม่",
       "seeAllTitle" : "จ่ายไปยัง",
+      "me" : "ที่อยู่ของฉัน",
       "addressPicker" : {
         "title" : "เลือกที่อยู่คริปโตของ {{name}}",
         "meTitle" : "เลือกที่อยู่คริปโตของฉัน",
