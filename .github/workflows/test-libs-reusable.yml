@@ -3,6 +3,11 @@ name: "[Libraries] - Test - Called"
 on:
   workflow_call:
     inputs:
+      parallel:
+        description: "Nx --parallel for the coverage and test runs. Lower it on smaller runners."
+        type: number
+        required: false
+        default: 6
       runner:
         description: "Runner label for the job under test."
         type: string
@@ -44,6 +49,11 @@ on:
 
   workflow_dispatch:
     inputs:
+      parallel:
+        description: "Nx --parallel for the coverage and test runs. Lower it on smaller runners."
+        type: number
+        required: false
+        default: 6
       runner:
         description: "Runner label for the job under test."
         type: string
@@ -113,16 +123,20 @@ jobs:
         run: pnpm i --frozen-lockfile --filter="{./libs/**}..."
 
       - name: Run coverage on appropriate libraries
+        env:
+          PARALLEL: ${{ inputs.parallel }}
         run: |
 
           mkdir -p ${{ github.workspace }}/coverage
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=6 -- --maxWorkers=2
+          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel="$PARALLEL" -- --maxWorkers=2
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
+        env:
+          PARALLEL: ${{ inputs.parallel }}
         run: |
 
           echo "::group::Processing coverage files"
@@ -157,10 +171,10 @@ jobs:
 
           if [ ${#nx_test_args[@]} -eq 0 ]; then
             echo "Running tests for libs without coverage (all non-ui libs)"
-            pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=6
+            pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel="$PARALLEL"
           else
-            echo "Running tests for libs without coverage: pnpm exec nx run-many -t test --parallel=6 ${nx_test_args[*]}"
-            pnpm exec nx run-many -t test --parallel=6 "${nx_test_args[@]}"
+            echo "Running tests for libs without coverage: pnpm exec nx run-many -t test --parallel=$PARALLEL ${nx_test_args[*]}"
+            pnpm exec nx run-many -t test --parallel="$PARALLEL" "${nx_test_args[@]}"
           fi
         shell: bash
 

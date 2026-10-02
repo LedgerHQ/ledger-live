@@ -3,6 +3,11 @@ name: "[Desktop] - Build - Called"
 on:
   workflow_call:
     inputs:
+      nx-parallel:
+        description: "Nx parallelism for the build (0 keeps the Nx default). Lower it on smaller runners."
+        type: number
+        required: false
+        default: 0
       runner:
         description: "Runner label for the job under test."
         type: string
@@ -46,6 +51,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      nx-parallel:
+        description: "Nx parallelism for the build (0 keeps the Nx default). Lower it on smaller runners."
+        type: number
+        required: false
+        default: 0
       runner:
         description: "Runner label for the job under test."
         type: string
@@ -134,6 +144,14 @@ jobs:
         if: ${{ matrix.config.name == 'Linux' }}
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Set Nx parallelism
+        if: ${{ inputs.nx-parallel != 0 }}
+        env:
+          NX_PARALLELISM: ${{ inputs.nx-parallel }}
+        shell: bash
+        run: |
+          node -e 'const fs=require("fs");const p="nx.cache-config.json";const j=JSON.parse(fs.readFileSync(p,"utf8"));j.parallel=Number(process.env.NX_PARALLELISM);fs.writeFileSync(p,JSON.stringify(j,null,2)+"\n");console.log("Nx parallel set to",j.parallel)'
 
       - name: Build desktop
         id: build-desktop
