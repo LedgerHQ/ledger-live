@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { addAccountResumed, addAccountToResumeSelector } from "~/renderer/reducers/onboarding";
@@ -11,10 +12,14 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 /**
  * Resumes the Add Account flow interrupted by device onboarding, once back on the screen it
- * started from: reopens Add Account on the same asset. Mounted app-wide.
+ * started from. Mounted app-wide, it reopens Add Account on the same asset. A screen that started
+ * it from its own flow passes `resume`: its effect runs first, as a child, and claims the resume.
  */
-export const useResumeAddAccountAfterOnboarding = (): void => {
+export const useResumeAddAccountAfterOnboarding = (
+  resume?: (currency: CryptoOrTokenCurrency) => void,
+): void => {
   const dispatch = useDispatch();
+  const store = useStore();
   const { pathname } = useLocation();
   const toResume = useSelector(addAccountToResumeSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
@@ -27,15 +32,18 @@ export const useResumeAddAccountAfterOnboarding = (): void => {
   useEffect(() => {
     if (!toResume || pathname !== toResume.returnTo) return;
     if (!hasOnboardedDevice || shouldRedirectToRecoverUpsell) return;
+    if (addAccountToResumeSelector(store.getState()) !== toResume) return; // already claimed
     dispatch(addAccountResumed());
     setOriginFlow(HOOKS_TRACKING_LOCATIONS.addAccountModal);
-    openAddAccountFlow(toResume.currency);
+    (resume ?? openAddAccountFlow)(toResume.currency);
   }, [
     dispatch,
     hasOnboardedDevice,
     openAddAccountFlow,
     pathname,
+    resume,
     shouldRedirectToRecoverUpsell,
+    store,
     toResume,
   ]);
 };
