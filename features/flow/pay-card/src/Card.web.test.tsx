@@ -7,8 +7,6 @@ import { CARD_DISCLAIMER, CARD_TITLE } from "./__tests__/i18nWrapper";
 import { cardTestWrapper, createCardTestStore } from "./__tests__/cardTestStore";
 
 let mockStatus: PayCardAuthStatus = "unknown";
-let receivedWidgetChooseCardType: (() => void) | undefined;
-
 type OnboardingStatus = {
   data: { steps: { id: string; isDone: boolean }[]; completedCount: number };
   isLoading: boolean;
@@ -95,10 +93,7 @@ jest.mock("@features/flow-pay-card-details", () => ({
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
-  CardOnboardingWidget: ({ onChooseCardType }: { onChooseCardType?: () => void }) => {
-    receivedWidgetChooseCardType = onChooseCardType;
-    return <div data-testid="card-onboarding-widget" />;
-  },
+  CardOnboardingWidget: () => <div data-testid="card-onboarding-widget" />,
 }));
 
 jest.mock("@features/flow-pay-card-widget/onboarding-status", () => ({
@@ -159,7 +154,6 @@ describe("Card (web)", () => {
   beforeEach(() => {
     mockStatus = "unknown";
     mockOnboardingStatus = accountOnboarding;
-    receivedWidgetChooseCardType = undefined;
     receivedDetailsFormatters = undefined;
     receivedCardState = undefined;
     receivedTransactionFormatters = undefined;
@@ -232,10 +226,10 @@ describe("Card (web)", () => {
       mockStatus = "signedIn";
     });
 
-    it("shows the widget and the card details, with no login or bare artwork", () => {
+    it("shows the card details without the onboarding widget, and no login or bare artwork", () => {
       renderCard(<Card login={{ oauthConfig }} />);
 
-      expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
+      expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.getByTestId("card-details")).toBeVisible();
       expect(screen.getByTestId("card-transactions")).toBeVisible();
       expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
@@ -402,8 +396,6 @@ describe("Card (web)", () => {
       expect(screen.queryByTestId("card-assets")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
       expect(onChooseCardType).toHaveBeenCalledTimes(1);
-      receivedWidgetChooseCardType?.();
-      expect(onChooseCardType).toHaveBeenCalledTimes(2);
     });
 
     it("should keep top up and funding sections while the card status read is still in flight", () => {
