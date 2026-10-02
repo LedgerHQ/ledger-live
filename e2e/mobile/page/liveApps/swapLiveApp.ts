@@ -3,6 +3,7 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "@e2e/utils/retry";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import {
   COUNTDOWN_STABLE_TIMEOUT,
@@ -12,7 +13,7 @@ import {
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
-const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+const APPROVAL_PROCESSING_TIMEOUT = TIMEOUT.xxxxlarge;
 
 // Provider UI names (e.g. "Swaps.xyz", "LI.FI") can contain regex metacharacters. Escape them
 // before embedding in a RegExp so they match literally instead of altering the pattern.
@@ -236,7 +237,7 @@ export default class SwapLiveAppPage {
         return names;
       },
       PROVIDER_LIST_SETTLE_TIMEOUT,
-      1000,
+      INTERVAL.medium,
     );
 
     return providerList;
@@ -531,7 +532,7 @@ export default class SwapLiveAppPage {
         this.incompatibilityBannerPartnerSelector(provider),
       );
       jestExpect(bannerText.join(" ")).toMatch(this.lnsUnsupportedBannerPattern);
-    }, 20000);
+    }, TIMEOUT.large);
   }
 
   @Step("Select specific provider {{{0}}}")

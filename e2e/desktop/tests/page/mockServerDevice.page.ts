@@ -16,4 +16,9 @@ export class MockServerDevicePage extends MockServerSessionHandle {
       .poll(async () => sorted(await this.installedApps()), { timeout })
       .toEqual(sorted(appNames));
   }
+
+  @step("Expect the device to report the name $0")
+  async expectDeviceName(name: string, timeout = 10_000) {
+    await expect.poll(() => this.deviceName(), { timeout }).toBe(name);
+  }
 }

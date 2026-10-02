@@ -305,7 +305,7 @@ export function runInlineAddAccountTest(account: Account, tmsLinks: string[], ta
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
-        userdata: "skip-onboarding",
+        userdata: "swap-deeplinks",
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
       });
@@ -316,19 +316,14 @@ export function runInlineAddAccountTest(account: Account, tmsLinks: string[], ta
     tags.forEach(tag => $Tag(tag));
     it(`[${account.currency.testLabel}] - Earn v2 inline add account`, async () => {
       await navigateToEarn();
-      await app.earnV2Dashboard.verifyIceColdStartPage();
-      await app.earnV2Dashboard.clickSimulateInvestmentCta();
-      await app.earnV2Dashboard.verifyEarnSimulatorVisible();
-      await app.earnV2Dashboard.clickEarnSimulatorCta();
-      await app.earnV2Dashboard.clickAccountSelectorInput();
-      await app.earnV2Dashboard.verifyModularAssetDrawerVisible();
-
-      await app.modularDrawer.performSearchByTicker(account.currency.ticker);
-      await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
-      await app.modularDrawer.selectNetworkIfAsked(account.currency.name);
+      await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
+      await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
-      await app.addAccount.addAccountAtIndex(`${account.currency.name} 1`, account.currency.id, 0);
-
+      await app.addAccount.addAccountAtIndex(
+        `${account.currency.name} ${account.index + 1}`,
+        account.currency.id,
+        0,
+      );
       await app.earnV2Dashboard.verifyEarnFlowStarted(account.currency.ticker);
     });
   });

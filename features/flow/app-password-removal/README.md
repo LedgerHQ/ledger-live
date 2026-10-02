@@ -1,7 +1,7 @@
 # @features/flow-app-password-removal
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Split out of `@features/flow-app-lock` in [LIVE-38258](https://ledgerhq.atlassian.net/browse/LIVE-38258); API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 The app password removal journey for Ledger Wallet Mobile: proving the password before it is
 removed, and refusing to remove the last protection while a card is active. The containers live in

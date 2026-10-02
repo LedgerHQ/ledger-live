@@ -9,7 +9,10 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo } from "react";
 import { openPerpsSign } from "../screens/PerpsSign/PerpsSignDialog";
 import { openPerpsDeposit } from "../screens/PerpsDeposit/PerpsDepositDialog";
-import { beginDepositRequest, cancelDepositRequest } from "../utils/perpsDepositRequest";
+import {
+  beginDepositRequest,
+  cancelDepositRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiSigningExecute = useCallback(

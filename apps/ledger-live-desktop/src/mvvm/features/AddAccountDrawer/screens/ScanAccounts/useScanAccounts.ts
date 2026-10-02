@@ -275,7 +275,7 @@ export function useScanAccounts({
 
     // TODO: by moving this logic to handleConfirm, we can remove the trigger state and calculate it via memoization to avoid this useEffect
     if (!scanning && !hasImportedAccounts) {
-      if (alreadyEmptyAccount && !importableAccounts.length) {
+      if (alreadyEmptyAccount && !importableAccounts.length && !creatableAccounts.length) {
         navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
       } else if (
         !importableAccounts.length &&

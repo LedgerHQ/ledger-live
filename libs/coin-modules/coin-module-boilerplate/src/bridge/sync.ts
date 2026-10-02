@@ -3,7 +3,7 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bri
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import { type BoilerplateContext, DEFAULT_MAX_TX_QUERY, DEFAULT_MIN_RESERVE } from "../config";
 import { getTransactions } from "../network/indexer";
 import { getAccountInfo, getBlockHeight } from "../network/node";
 
@@ -61,46 +61,49 @@ const filterOperations = (
     .filter((op): op is Operation => Boolean(op));
 };
 
-export const getAccountShape: GetAccountShape = async info => {
-  const { address, initialAccount, currency, derivationMode } = info;
+export const makeGetAccountShape =
+  (context: BoilerplateContext): GetAccountShape =>
+  async info => {
+    const config = await context.config();
+    const { address, initialAccount, currency, derivationMode } = info;
 
-  const accountId = encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: address,
-    derivationMode,
-  });
+    const accountId = encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: currency.id,
+      xpubOrAddress: address,
+      derivationMode,
+    });
 
-  // blockheight retrieval
-  const blockHeight = await getBlockHeight();
+    // blockheight retrieval
+    const blockHeight = await getBlockHeight(config);
 
-  // Account info retrieval + spendable balance calculation
-  const accountInfo = await getAccountInfo(coinConfig.getCoinConfig(), address);
-  const balance = new BigNumber(accountInfo.account_data.Balance);
-  const reserveMin = coinConfig.getCoinConfig().minReserve;
-  const spendableBalance = new BigNumber(accountInfo.account_data.Balance).minus(reserveMin);
+    // Account info retrieval + spendable balance calculation
+    const accountInfo = await getAccountInfo(config, address);
+    const balance = new BigNumber(accountInfo.account_data.Balance);
+    const reserveMin = config.minReserve ?? DEFAULT_MIN_RESERVE;
+    const spendableBalance = new BigNumber(accountInfo.account_data.Balance).minus(reserveMin);
 
-  // Tx history fetching
-  const oldOperations = initialAccount?.operations || [];
-  const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const newTransactions = await getTransactions(address, {
-    minHeight: startAt,
-    limit: 100,
-  });
-  const newOperations = filterOperations(newTransactions, accountId, address);
-  const operations = mergeOps(oldOperations, newOperations as Operation[]);
+    // Tx history fetching
+    const oldOperations = initialAccount?.operations || [];
+    const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
+    const newTransactions = await getTransactions(config, address, {
+      minHeight: startAt,
+      limit: config.indexer.maxTxQuery ?? DEFAULT_MAX_TX_QUERY,
+    });
+    const newOperations = filterOperations(newTransactions, accountId, address);
+    const operations = mergeOps(oldOperations, newOperations as Operation[]);
 
-  // We return the new account shape
-  const shape = {
-    id: accountId,
-    xpub: address,
-    blockHeight,
-    balance,
-    spendableBalance,
-    operations,
-    operationsCount: operations.length,
+    // We return the new account shape
+    const shape = {
+      id: accountId,
+      xpub: address,
+      blockHeight,
+      balance,
+      spendableBalance,
+      operations,
+      operationsCount: operations.length,
+    };
+
+    return shape;
   };
-
-  return shape;
-};

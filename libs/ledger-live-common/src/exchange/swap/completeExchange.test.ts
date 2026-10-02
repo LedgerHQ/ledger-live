@@ -12,6 +12,7 @@ import {
   enrichSwapSignatureVerificationError,
   getBufferedDexGasLimit,
   shouldForceZeroAmountForDexSwap,
+  shouldSendArcAsAliasTransfer,
 } from "./completeExchange";
 
 describe("getBufferedDexGasLimit", () => {
@@ -46,6 +47,26 @@ describe("shouldForceZeroAmountForDexSwap", () => {
     ["non-Arc native coin without sub-account", {}, false],
   ])("%s", (_case, params, expected) => {
     expect(shouldForceZeroAmountForDexSwap({ ...base, ...params })).toBe(expected);
+  });
+});
+
+describe("shouldSendArcAsAliasTransfer", () => {
+  const base = {
+    isDex: false,
+    family: "evm",
+    hasSubAccountId: false,
+    fromCurrencyId: "arc",
+  };
+
+  it.each([
+    ["non-DEX swap from arc", {}, true],
+    ["non-DEX swap from an arc token sub-account", { hasSubAccountId: true }, false],
+    ["non-DEX swap from arc_testnet", { fromCurrencyId: "arc_testnet" }, true],
+    ["DEX swap from arc", { isDex: true }, false],
+    ["family is not evm", { family: "bitcoin" }, false],
+    ["non-Arc currency", { fromCurrencyId: "ethereum" }, false],
+  ])("%s", (_case, params, expected) => {
+    expect(shouldSendArcAsAliasTransfer({ ...base, ...params })).toEqual(expected);
   });
 });
 

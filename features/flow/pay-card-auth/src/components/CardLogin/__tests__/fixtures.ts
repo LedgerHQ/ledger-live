@@ -43,9 +43,9 @@ export const CARD_LOGIN_INTRO_RESOURCES = {
         },
         cardLoginIntro: {
           title: "Spend crypto, earn cashback",
-          providedBy: "Card provided by Baanx",
+          providedBy: "Card provided by Monavate",
           createAccount: "Create an account",
-          logIn: "Log in to Baanx",
+          logIn: "Log in to Monavate",
           wallets: {
             applePay: "Apple Pay",
             googlePay: "Google Pay",

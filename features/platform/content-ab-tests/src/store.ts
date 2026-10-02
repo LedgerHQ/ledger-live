@@ -1,32 +1,38 @@
 import type { RemoteConfigValue } from "@features/platform-feature-flags-firebase";
-import { parseContentAbTestCopy } from "./internals/parse";
-import { EnabledContentAbTestCopySchema } from "./internals/schema";
+import {
+  enabledContentAbTestCopy,
+  enabledContentAbTestTracking,
+  parseContentAbTestPayload,
+  parseContentAbTests,
+  type ContentAbTestCopy,
+  type ContentAbTestPayload,
+  type ContentAbTests,
+  type ContentAbTestTracking,
+} from "./internals/parse";
 
-export type ContentAbTestCopy = Readonly<Record<string, string>>;
+export { parseContentAbTestPayload };
+export type {
+  ContentAbTestCopy,
+  ContentAbTestPayload,
+  ContentAbTests,
+  ContentAbTestTracking,
+} from "./internals/parse";
 
 export type ContentAbTestTrackingConfiguration = Record<string, string>;
-
-export type ContentAbTestPayload = {
-  enabled: boolean;
-  copy: Record<string, string>;
-  trackingConfiguration?: ContentAbTestTrackingConfiguration;
-};
-
-export type ContentAbTests = Readonly<Record<string, ContentAbTestPayload>>;
 
 type CopySubscriber = (copy: ContentAbTestCopy) => void;
 type ExperimentsSubscriber = (experiments: ContentAbTests) => void;
 
-const FIREBASE_COPY_PREFIX = "feature_copy_";
 const EMPTY_COPY: ContentAbTestCopy = Object.freeze({});
 const EMPTY_EXPERIMENTS: ContentAbTests = Object.freeze({});
+const EMPTY_TRACKING: ContentAbTestTracking = Object.freeze({});
 const ENGLISH_LANGUAGE = "en";
 
-let remote: Record<string, ContentAbTestPayload> = {};
-let remoteCopy: ContentAbTestCopy = EMPTY_COPY;
+let remote: ContentAbTests = EMPTY_EXPERIMENTS;
 let overrides: Record<string, ContentAbTestPayload> = {};
 let experiments: ContentAbTests = EMPTY_EXPERIMENTS;
 let copy: ContentAbTestCopy = EMPTY_COPY;
+let tracking: ContentAbTestTracking | undefined;
 const copySubscribers = new Set<CopySubscriber>();
 const experimentSubscribers = new Set<ExperimentsSubscriber>();
 
@@ -47,8 +53,20 @@ export function getContentAbTestCopy(): ContentAbTestCopy {
   return copy;
 }
 
+/** Every valid experiment, enabled or not, with local debug overrides applied. */
 export function getContentAbTests(): ContentAbTests {
   return experiments;
+}
+
+/**
+ * The `trackingConfiguration` of each enabled experiment, sent as `ab_tests`. `{}` when the
+ * language is not English, or when no enabled experiment has tracking pairs, so callers can send
+ * that value and the next identify replaces a stale user trait. Copy is English-only, so a
+ * non-English session must not be counted in the experiment.
+ */
+export function getContentAbTestTracking(language: string): ContentAbTestTracking {
+  if (!isEnglish(language) || !tracking) return EMPTY_TRACKING;
+  return tracking;
 }
 
 export function subscribeToContentAbTestCopy(callback: CopySubscriber): () => void {
@@ -69,12 +87,12 @@ export function subscribeToContentAbTests(callback: ExperimentsSubscriber): () =
  * Stores copy experiments from the feature-flag Remote Config payload. Called with the `getAll()`
  * result the flag fetch already produced, so copy costs no extra network round-trip.
  *
- * Applied copy comes from the shared parser. Local debug overrides survive a later poll of the
- * same template and replace that copy while they are set.
+ * Only enabled experiments apply copy and reach `getContentAbTestTracking`. A malformed payload,
+ * including a non-string tracking value, is dropped entirely. Local debug overrides survive a
+ * later poll and replace the remote payload while they are set.
  */
 export function setContentAbTestCopy(all: Record<string, RemoteConfigValue>): ContentAbTestCopy {
   remote = parseContentAbTests(all);
-  remoteCopy = parseContentAbTestCopy(all);
   return publish();
 }
 
@@ -105,20 +123,6 @@ export function isContentAbTestOverridden(id: string): boolean {
 
 export function hasContentAbTestOverrides(): boolean {
   return Object.keys(overrides).length > 0;
-}
-
-export function parseContentAbTestPayload(value: unknown): ContentAbTestPayload | null {
-  if (!isPlainObject(value) || typeof value.enabled !== "boolean") return null;
-
-  const copyRecord = value.enabled ? enabledCopy(value) : parseCopyRecord(value.copy);
-  if (!copyRecord) return null;
-
-  const trackingConfiguration = trackingConfigurationFrom(value.trackingConfiguration);
-  return {
-    enabled: value.enabled,
-    copy: copyRecord,
-    ...(trackingConfiguration ? { trackingConfiguration } : {}),
-  };
 }
 
 export function installContentAbTestCopyOverrides(
@@ -160,40 +164,14 @@ export function installContentAbTestCopyOverrides(
   });
 }
 
-function parseContentAbTests(
-  all: Record<string, RemoteConfigValue>,
-): Record<string, ContentAbTestPayload> {
-  const parsed: Record<string, ContentAbTestPayload> = {};
-  for (const [key, value] of Object.entries(all)) {
-    if (value.getSource() !== "remote") continue;
-    const id = firebaseKeyToContentAbTestId(key);
-    if (!id) continue;
-
-    let raw: unknown;
-    try {
-      raw = JSON.parse(value.asString());
-    } catch {
-      continue;
-    }
-    const payload = parseContentAbTestPayload(raw);
-    if (payload) parsed[id] = payload;
-  }
-  return parsed;
-}
-
-function enabledCopy(value: Record<string, unknown>): Record<string, string> | null {
-  const experiment = EnabledContentAbTestCopySchema.safeParse(value);
-  return experiment.success ? experiment.data.copy : null;
-}
-
 function publish(): ContentAbTestCopy {
-  const nextExperiments = Object.freeze({ ...remote, ...overrides });
-  const nextCopy =
-    Object.keys(overrides).length === 0 ? remoteCopy : buildContentAbTestCopy(nextExperiments);
+  const nextExperiments: ContentAbTests = Object.freeze({ ...remote, ...overrides });
+  const nextCopy = enabledContentAbTestCopy(nextExperiments);
+  const nextTracking = enabledContentAbTestTracking(nextExperiments);
+  tracking = Object.keys(nextTracking).length > 0 ? nextTracking : undefined;
+
   const experimentsChanged = !isSameExperiments(experiments, nextExperiments);
   const copyChanged = !isSameCopy(copy, nextCopy);
-
-  if (!experimentsChanged && !copyChanged) return copy;
 
   if (experimentsChanged) {
     experiments = nextExperiments;
@@ -204,44 +182,6 @@ function publish(): ContentAbTestCopy {
     copySubscribers.forEach(callback => callback(copy));
   }
   return copy;
-}
-
-function buildContentAbTestCopy(payloads: ContentAbTests): ContentAbTestCopy {
-  const parsed: Record<string, string> = {};
-  for (const payload of Object.values(payloads)) {
-    if (!payload.enabled) continue;
-    Object.assign(parsed, payload.copy);
-  }
-  return Object.keys(parsed).length === 0 ? EMPTY_COPY : Object.freeze(parsed);
-}
-
-function parseCopyRecord(value: unknown): Record<string, string> | null {
-  if (!isPlainObject(value)) return null;
-  const copyRecord: Record<string, string> = {};
-  for (const [key, entry] of Object.entries(value)) {
-    if (typeof entry !== "string") return null;
-    copyRecord[key] = entry;
-  }
-  return copyRecord;
-}
-
-function trackingConfigurationFrom(value: unknown): ContentAbTestTrackingConfiguration | undefined {
-  if (!isPlainObject(value)) return undefined;
-  const trackingConfiguration: ContentAbTestTrackingConfiguration = {};
-  for (const [key, entry] of Object.entries(value)) {
-    if (typeof entry !== "string") return undefined;
-    trackingConfiguration[key] = entry;
-  }
-  return Object.keys(trackingConfiguration).length > 0 ? trackingConfiguration : undefined;
-}
-
-function firebaseKeyToContentAbTestId(key: string): string | null {
-  const lower = key.toLowerCase();
-  if (!lower.startsWith(FIREBASE_COPY_PREFIX)) return null;
-  const id = lower
-    .slice(FIREBASE_COPY_PREFIX.length)
-    .replace(/_([a-z0-9])/g, (_, char: string) => char.toUpperCase());
-  return id.length > 0 ? id : null;
 }
 
 function isSameCopy(current: ContentAbTestCopy, next: ContentAbTestCopy): boolean {
@@ -266,16 +206,12 @@ function isSamePayload(
 }
 
 function isSameTrackingConfiguration(
-  current: ContentAbTestTrackingConfiguration | undefined,
-  next: ContentAbTestTrackingConfiguration | undefined,
+  current: ContentAbTestTrackingConfiguration | null | undefined,
+  next: ContentAbTestTrackingConfiguration | null | undefined,
 ): boolean {
   if (!current && !next) return true;
   if (!current || !next) return false;
   return isSameCopy(current, next);
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function isEnglish(language: string): boolean {

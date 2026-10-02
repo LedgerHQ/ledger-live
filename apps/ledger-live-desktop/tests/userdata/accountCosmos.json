@@ -2588,7 +2588,7 @@
             }
           },
           "xpub": "cosmos165aw0xfflugx0xryd87vmszdtemp67uj0uk8fq",
-          "cosmosResources": {
+          "stakingResources": {
             "delegations": [],
             "redelegations": [
               {
@@ -3371,7 +3371,7 @@
             }
           },
           "xpub": "cosmos1k2fu53hrmfherpd3nu2sa473gcqnx0jgzqsxez",
-          "cosmosResources": {
+          "stakingResources": {
             "delegations": [
               {
                 "amount": "56000",
@@ -3747,7 +3747,7 @@
             }
           },
           "xpub": "cosmos14asmp27xhz2wcva3tvs54dv664zrfcu4ukzsaj",
-          "cosmosResources": {
+          "stakingResources": {
             "delegations": [],
             "redelegations": [],
             "unbondings": [
@@ -3868,7 +3868,7 @@
             }
           },
           "xpub": "cosmos1e4jaxdqn726ghcja6ud48l8pe4wz2vqnj5wtpk",
-          "cosmosResources": {
+          "stakingResources": {
             "delegations": [],
             "redelegations": [],
             "unbondings": [],

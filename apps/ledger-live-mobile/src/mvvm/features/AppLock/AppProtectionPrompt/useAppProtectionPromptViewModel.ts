@@ -2,7 +2,7 @@ import {
   useProtectionPromptViewModel,
   type EnableProtectionSheetProps,
   type ProtectionEnabledSheetProps,
-} from "@features/flow-app-lock";
+} from "@features/flow-app-protection-prompt";
 import {
   getBiometricsAvailability,
   selectIsAppLockConfigured,

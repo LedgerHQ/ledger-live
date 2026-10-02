@@ -1,3 +1,4 @@
+import { withdrawTransaction } from "@ledgerhq/live-common/families/solana/transactions";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { requireStakePositionId } from "@ledgerhq/live-common/families/solana/logic";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -99,13 +100,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       "solana: can withdraw only if there is something to withdraw",
     );
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
-      amount: stake.withdrawableAmount ?? new BigNumber(0),
-      model: {
-        kind: "stake.withdraw",
-        uiState: {
-          stakeAccAddr: requireStakePositionId(stake),
-        },
-      },
+      ...withdrawTransaction(
+        requireStakePositionId(stake),
+        stake.withdrawableAmount ?? new BigNumber(0),
+      ),
     });
     return {
       account,

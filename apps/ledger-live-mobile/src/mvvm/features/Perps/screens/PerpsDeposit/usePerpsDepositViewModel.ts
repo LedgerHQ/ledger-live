@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
@@ -29,6 +29,7 @@ import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
 import type { PerpsDepositOutcome } from "../../hooks/usePerpsDepositExecution";
+import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyAmountKey, toAmountText } from "./utils/amountKeys";
@@ -73,6 +74,8 @@ export type PerpsDepositViewModel = Readonly<{
   handOverToDevice: () => void;
   /** The device declined, which is not a failure: the summary takes over again. */
   returnToReview: () => void;
+  /** The funding account fell short, so the form takes over again to change the amount. */
+  returnToForm: () => void;
   /** Signed and broadcast, so the form gives way to the receipt. */
   endSigning: (outcome: PerpsDepositOutcome) => void;
 }>;
@@ -96,6 +99,9 @@ export function usePerpsDepositViewModel({
   const [isSignOpen, setIsSignOpen] = useState(false);
   const [signingDevice, setSigningDevice] = useState<Device | null | undefined>();
   const [reviewParams, setReviewParams] = useState<PerpsReviewParams | null>(null);
+
+  // Leaving the screen before the deposit settles abandons it; after it settles this is a no-op.
+  useEffect(() => cancelDepositRequest, []);
 
   /** The USDC funding account with the highest spendable balance, used as the default. */
   const defaultDepositAccount = useMemo(
@@ -297,6 +303,8 @@ export function usePerpsDepositViewModel({
     setIsReviewOpen(true);
   }, []);
 
+  const returnToForm = useCallback(() => setIsSignOpen(false), []);
+
   const endSigning = useCallback(
     ({ swapId }: PerpsDepositOutcome) => {
       setIsSignOpen(false);
@@ -341,6 +349,7 @@ export function usePerpsDepositViewModel({
     selectSigningDevice: setSigningDevice,
     handOverToDevice,
     returnToReview,
+    returnToForm,
     endSigning,
   };
 }

@@ -2,6 +2,7 @@ import {
   clearContentAbTestOverrides,
   getContentAbTestCopy,
   getContentAbTests,
+  getContentAbTestTracking,
   isContentAbTestOverridden,
   parseContentAbTestPayload,
   setContentAbTestCopy,
@@ -69,6 +70,94 @@ describe("setContentAbTestCopy", () => {
     });
 
     expect(setContentAbTestCopy({})).toEqual({});
+    expect(getContentAbTestTracking("en")).toEqual({});
+  });
+});
+
+describe("getContentAbTestTracking", () => {
+  it("is undefined when no experiment is served", () => {
+    expect(getContentAbTestTracking("en")).toEqual({});
+  });
+
+  it("keeps the copy when trackingConfiguration is null and skips non-English sessions", () => {
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+        trackingConfiguration: { ab_upgrade: "variant_b" },
+      }),
+    });
+
+    expect(getContentAbTestTracking("en-US")).toEqual({
+      upgradeBanner: { ab_upgrade: "variant_b" },
+    });
+    expect(getContentAbTestTracking("fr")).toEqual({});
+    expect(getContentAbTestCopy()).toEqual({
+      "upgrade.banner.title": "Discover Ledger Flex",
+    });
+
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+        trackingConfiguration: null,
+      }),
+    });
+
+    expect(getContentAbTestTracking("en")).toEqual({});
+    expect(getContentAbTestCopy()).toEqual({
+      "upgrade.banner.title": "Discover Ledger Flex",
+    });
+  });
+
+  it("returns the tracking pairs of enabled experiments, keyed by id", () => {
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+        trackingConfiguration: { ab_upgrade: "variant_b", cohort: "q3" },
+      }),
+      feature_copy_swap_cta: experiment({
+        enabled: true,
+        copy: { "swap.cta": "Swap now" },
+        trackingConfiguration: { cohort: "control" },
+      }),
+    });
+
+    expect(getContentAbTestTracking("en")).toEqual({
+      upgradeBanner: { ab_upgrade: "variant_b", cohort: "q3" },
+      swapCta: { cohort: "control" },
+    });
+  });
+
+  it("is undefined when only disabled or untracked experiments are served", () => {
+    setContentAbTestCopy({
+      feature_copy_hidden: experiment({
+        enabled: false,
+        copy: { "upgrade.banner.title": "Hidden" },
+        trackingConfiguration: { ab_hidden: "variant_b" },
+      }),
+      feature_copy_untracked: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Untracked" },
+      }),
+    });
+
+    expect(getContentAbTestTracking("en")).toEqual({});
+    expect(getContentAbTestCopy()).toEqual({ "upgrade.banner.title": "Untracked" });
+  });
+
+  it("drops an experiment whose tracking values are not strings, copy included", () => {
+    setContentAbTestCopy({
+      feature_copy_bad_tracking: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Should stay out" },
+        trackingConfiguration: { variant: 2 },
+      }),
+    });
+
+    expect(getContentAbTestTracking("en")).toEqual({});
+    expect(getContentAbTestCopy()).toEqual({});
   });
 });
 
@@ -128,7 +217,27 @@ describe("content A/B test debug overrides", () => {
     expect(isContentAbTestOverridden("upgradeBanner")).toBe(true);
   });
 
-  it("drops a malformed trackingConfiguration and still applies the copy", () => {
+  it("reports the tracking of an overridden experiment", () => {
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Remote" },
+        trackingConfiguration: { variant: "a" },
+      }),
+    });
+
+    setContentAbTestOverride("upgradeBanner", {
+      enabled: true,
+      copy: { "upgrade.banner.title": "Mocked" },
+      trackingConfiguration: { variant: "b" },
+    });
+    expect(getContentAbTestTracking("en")).toEqual({ upgradeBanner: { variant: "b" } });
+
+    setContentAbTestOverride("upgradeBanner", { enabled: false, copy: {} });
+    expect(getContentAbTestTracking("en")).toEqual({});
+  });
+
+  it("omits an empty trackingConfiguration and still applies the copy", () => {
     setContentAbTestCopy({
       feature_copy_upgrade_banner: experiment({
         enabled: true,

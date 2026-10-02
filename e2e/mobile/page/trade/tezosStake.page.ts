@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { DEFAULT_TIMEOUT } from "@e2e/helpers/elementHelpers";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 const accountScrollViewId = "account-screen-scrollView";
 
@@ -63,7 +63,7 @@ export default class TezosStakePage {
 
   @Step("Verify the delegation success screen is shown")
   async verifyDelegationSuccess() {
-    await waitForElementById(enabled(this.delegationSuccessStakeId), DEFAULT_TIMEOUT, {
+    await waitForElementById(enabled(this.delegationSuccessStakeId), TIMEOUT.xxlarge, {
       errorElementId: app.common.errorPage.genericErrorModalId,
     });
   }

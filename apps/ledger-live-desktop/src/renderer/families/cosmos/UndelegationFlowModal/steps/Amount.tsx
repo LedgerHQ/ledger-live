@@ -4,12 +4,7 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps } from "../types";
-import {
-  CosmosDelegationInfo,
-  CosmosMappedDelegation,
-  getCosmosResources,
-  Transaction,
-} from "@ledgerhq/live-common/families/cosmos/types";
+import { CosmosMappedDelegation, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -20,6 +15,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { resolveTransactionValidators } from "@ledgerhq/coin-cosmos/buildTransaction";
 
 export default function StepAmount({
   account,
@@ -29,51 +25,29 @@ export default function StepAmount({
   error,
   onClose,
 }: StepProps) {
-  invariant(account && transaction && transaction.validators, "account and transaction required");
+  invariant(account && transaction, "account and transaction required");
   const bridge = useAccountBridge<Transaction>(account);
-  const updateValidator = useCallback(
-    (validatorFields: Partial<CosmosDelegationInfo>) => {
-      onUpdateTransaction(tx =>
-        bridge.updateTransaction(tx, {
-          ...tx,
-          validators:
-            tx.validators && tx.validators.length > 0
-              ? [
-                  {
-                    ...tx.validators[0],
-                    ...validatorFields,
-                  },
-                ]
-              : [validatorFields as CosmosDelegationInfo],
-        }),
-      );
-    },
-    [onUpdateTransaction, bridge],
-  );
   const onChangeValidator = useCallback(
     (delegation?: CosmosMappedDelegation | null) => {
       if (!delegation) return;
       const { validatorAddress, amount } = delegation;
-      updateValidator({
-        address: validatorAddress,
-        amount,
-      });
+      onUpdateTransaction(tx =>
+        bridge.updateTransaction(tx, { valAddress: validatorAddress, amount }),
+      );
     },
-    [updateValidator],
+    [onUpdateTransaction, bridge],
   );
   const onChangeAmount = useCallback(
     (amount: BigNumber) => {
-      updateValidator({
-        amount,
-      });
+      onUpdateTransaction(tx => bridge.updateTransaction(tx, { amount }));
     },
-    [updateValidator],
+    [onUpdateTransaction, bridge],
   );
   const validator = useMemo(
-    () => transaction.validators && transaction.validators[0],
-    [transaction],
+    () => ({ address: transaction.valAddress ?? "", amount: transaction.amount }),
+    [transaction.valAddress, transaction.amount],
   );
-  const amount = useMemo(() => (validator ? validator.amount : BigNumber(0)), [validator]);
+  const amount = transaction.amount;
   const crypto = cryptoFactory(account.currency.id);
   const notEnoughFundsError = status.errors?.amount?.name === "NotEnoughBalance";
 
@@ -133,11 +107,11 @@ export function StepAmountFooter({
   transaction,
 }: StepProps) {
   const { t } = useTranslation();
-  invariant(account, "account required");
+  invariant(account && transaction, "account and transaction required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
-  const requestedDelegation = transaction?.validators?.[0];
-  const currentDelegation = getCosmosResources(account)?.delegations.find(
+  const requestedDelegation = resolveTransactionValidators(transaction)[0];
+  const currentDelegation = account.stakingResources.delegations.find(
     delegation => delegation.validatorAddress === requestedDelegation?.address,
   );
   const hasValidAmount =

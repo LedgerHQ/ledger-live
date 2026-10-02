@@ -108,7 +108,7 @@
     "stylis": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:",
-    "utf-8-validate": "^6.0.6",
+    "utf-8-validate": "^5.0.10",
     "uuid": "^9.0.0",
     "zod": "catalog:"
   },

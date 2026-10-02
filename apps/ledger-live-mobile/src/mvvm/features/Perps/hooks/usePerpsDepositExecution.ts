@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { isNotEnoughBalance } from "@ledgerhq/live-common/exchange/isNotEnoughBalance";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import type { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { executeSwap } from "@ledgerhq/live-common/wallet-api/Exchange/executeSwap";
@@ -30,6 +31,10 @@ import {
 import type { Status } from "~/components/DeviceAction";
 import { broadcastLogger } from "~/datadog";
 import { isUserRefusal } from "../utils/isUserRefusal";
+import {
+  getDepositRequestId,
+  settleDepositRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;
@@ -69,6 +74,7 @@ export type PerpsDepositOutcome = Readonly<{
 export type PerpsDepositExecutionCallbacks = Readonly<{
   onDone: (outcome: PerpsDepositOutcome) => void;
   onRefused: () => void;
+  onNotEnoughBalance: () => void;
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
@@ -86,7 +92,7 @@ const tracking = trackingWrapper((eventName, properties, mandatory) =>
  */
 export function usePerpsDepositExecution(
   params: PerpsDepositReviewParams,
-  { onDone, onRefused }: PerpsDepositExecutionCallbacks,
+  { onDone, onRefused, onNotEnoughBalance }: PerpsDepositExecutionCallbacks,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
 
@@ -218,6 +224,7 @@ export function usePerpsDepositExecution(
   );
 
   const executeDeposit = useCallback(async () => {
+    const requestId = getDepositRequestId();
     try {
       // Reset to the loading state on every run (including retry after an error).
       setDeviceStep(PROCESSING_STEP);
@@ -275,6 +282,7 @@ export function usePerpsDepositExecution(
 
       if (!signed) return;
 
+      settleDepositRequest(requestId, { swapId: signed.swapId, amountTo });
       onDone({ swapId: signed.swapId });
     } catch (e) {
       if (isUserRefusal(e)) {
@@ -286,6 +294,7 @@ export function usePerpsDepositExecution(
   }, [
     accounts,
     amountSent,
+    amountTo,
     confirmSignAndBroadcast,
     depositAccount,
     getFeature,
@@ -298,8 +307,12 @@ export function usePerpsDepositExecution(
   ]);
 
   const retry = useCallback(() => {
+    if (deviceStep.kind === "error" && isNotEnoughBalance(deviceStep.error)) {
+      onNotEnoughBalance();
+      return;
+    }
     void executeDeposit();
-  }, [executeDeposit]);
+  }, [deviceStep, executeDeposit, onNotEnoughBalance]);
 
   return {
     deviceStep,

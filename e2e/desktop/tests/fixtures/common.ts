@@ -1,6 +1,7 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "fs/promises";
+import cloneDeep from "lodash/cloneDeep";
 import merge from "lodash/merge";
 import * as path from "path";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -133,7 +134,8 @@ export const test = base.extend<TestFixtures>({
       ? await readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
       : {};
 
-    const userData = merge({ data: { settings } }, fileUserData);
+    const perTestSettings = cloneDeep(settings);
+    const userData = merge({ data: { settings: perTestSettings } }, fileUserData);
     if (localManifestOverride?.length) {
       userData.data = userData.data || {};
       userData.data.discover = userData.data.discover || {};

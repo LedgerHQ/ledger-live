@@ -1,6 +1,5 @@
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import {
-  CosmosDelegation,
   CosmosValidatorItem,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cosmos/types";
@@ -22,7 +21,6 @@ type Props = {
   t: TFunction;
   account: Account;
   status: TransactionStatus;
-  delegations: CosmosDelegation[];
   onChangeValidator: (a: { address: string }) => void;
   chosenVoteAccAddr: string;
 };
