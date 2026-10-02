@@ -19,6 +19,7 @@ import {
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
+import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
 
 const APPLICATION_ID = 16;
 
@@ -80,6 +81,7 @@ export function useDevToolsScreenViewModel() {
     prodToggle.cloudSyncApiBaseUrl,
     prodToggle.trustchainApiBaseUrl,
   );
+  const deviceOnboardingProps = useDeviceOnboarding();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -88,6 +90,7 @@ export function useDevToolsScreenViewModel() {
       { id: "pay-card", config: payCardToolProps },
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
+      { id: "device-onboarding", config: deviceOnboardingProps },
     ],
     [
       featureFlagsToolProps,
@@ -95,6 +98,7 @@ export function useDevToolsScreenViewModel() {
       payCardToolProps,
       trustchainToolProps,
       cloudSyncToolProps,
+      deviceOnboardingProps,
     ],
   );
 
