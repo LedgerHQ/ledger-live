@@ -86,8 +86,8 @@ export function SendFlowOrchestrator({
         <RecipientContactSelectionProvider>
           <RecipientInputFocusProvider>
             <SendMemoResetProvider>
-              <SponsoredSendProvider>
-                <SendSignatureProvider>
+              <SendSignatureProvider>
+                <SponsoredSendProvider>
                   <SendFlowNavigator
                     stepRegistry={stepRegistry}
                     flowConfig={configuredFlowConfig}
@@ -96,8 +96,8 @@ export function SendFlowOrchestrator({
                   <SignatureOverlayHost />
                   <SponsoredFlowHost />
                   {children}
-                </SendSignatureProvider>
-              </SponsoredSendProvider>
+                </SponsoredSendProvider>
+              </SendSignatureProvider>
             </SendMemoResetProvider>
           </RecipientInputFocusProvider>
         </RecipientContactSelectionProvider>

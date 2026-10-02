@@ -4,195 +4,195 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from "react";
-import type { AccountLike } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import { useFeature } from "@features/platform-feature-flags";
-import { useSponsoredSendOrchestration } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
-import type { SponsoredState } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { buildGenericTransactionIntent } from "@ledgerhq/live-common/bridge/generic-coin-framework/buildIntent";
-import { getSponsoredCoinApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useSelector } from "~/context/hooks";
-import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
-import { useSendFlowData } from "./SendFlowContext";
-import { useSponsoredFee, type SponsoredFeeQuote } from "../hooks/useSponsoredFee";
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { isSponsoredFeeUnaffordable } from "@ledgerhq/live-common/flows/send/sponsored/feeAsset";
+import {
+  SPONSORED_PHASE,
+  type SponsoredPhase,
+  type SponsoredState,
+} from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { useSponsoredFeeQuote } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote";
+import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
+import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useSendFlowActions, useSendFlowData } from "./SendFlowContext";
+import { useSendSignature } from "./SendSignatureContext";
 
-const SEAM_KIND = "local";
-
-export type SponsoredFeeOptionId = "standard" | "tronify";
-
-export type SponsoredSendActions = ReturnType<typeof useSponsoredSendOrchestration>["actions"];
+export const STANDARD_FEE_OPTION_ID = "standard";
 
 type SponsoredSendContextValue = Readonly<{
   state: SponsoredState;
   actions: SponsoredSendActions;
-  selectedFeeOptionId: SponsoredFeeOptionId;
-  selectTronify: () => void;
-  selectStandard: () => void;
-  available: boolean;
-  quote: SponsoredFeeQuote | null;
-  savingsFiatFormatted: string | null;
+  mainAccount: Account | null;
+  selectedFeeOptionId: string;
+  sponsoredFeeOptionId: string;
+  providerName: string;
+  waivesErrorKeys: readonly string[];
+  waivesWarningKeys: readonly string[];
+  /** The sponsored pick pays the native fee, so the status entries it waives don't apply. */
+  waivesNativeFee: boolean;
+  /** False while Review has to wait for the sponsored pick's intent and quote. */
+  reviewReady: boolean;
   feeCurrencyTicker: string;
-  feeLoading: boolean;
 }>;
 
-const NO_ACCOUNT_PLACEHOLDER = {
-  type: "Account",
-  currency: {
-    id: "__no_account_selected__",
-    ticker: "",
-    units: [{ name: "", code: "", magnitude: 0 }],
-  },
-} as unknown as AccountLike;
+const NO_WAIVED_KEYS: readonly string[] = [];
+
+/**
+ * Mobile has no fee picker until LIVE-33403, so the sponsored fee is picked whenever it can pay
+ * for the send. Null keeps the current pick: from Review on, and while the quote reloads.
+ */
+export function pickAutoFeeOption({
+  phase,
+  signing,
+  sponsoredFeeOptionId,
+  available,
+  quoted,
+  useAllAmount,
+  unaffordable,
+}: Readonly<{
+  phase: SponsoredPhase;
+  signing: boolean;
+  sponsoredFeeOptionId: string;
+  available: boolean;
+  quoted: boolean;
+  useAllAmount: boolean;
+  unaffordable: boolean;
+}>): string | null {
+  if (signing || phase !== SPONSORED_PHASE.IDLE) return null;
+  if (!sponsoredFeeOptionId || !available) return STANDARD_FEE_OPTION_ID;
+  if (!quoted) return null;
+  // Crafting refuses a Max send.
+  if (useAllAmount || unaffordable) return STANDARD_FEE_OPTION_ID;
+  return sponsoredFeeOptionId;
+}
 
 const SponsoredSendContext = createContext<SponsoredSendContextValue | null>(null);
 
 export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNode }>) {
   const { state } = useSendFlowData();
+  const { transaction: transactionActions } = useSendFlowActions();
+  const { isSigning } = useSendSignature();
   const account = state.account.account;
   const parentAccount = state.account.parentAccount;
   const transaction = state.transaction.transaction;
   const flagEnabled = useFeature("gasSponsorship")?.enabled === true;
 
-  const mainAccount = useMemo(
-    () => (account ? getMainAccount(account, parentAccount ?? undefined) : null),
-    [account, parentAccount],
+  const reduxDispatch = useDispatch();
+  const reservePendingOperation = useCallback(
+    (mainAccountId: string, op: Operation) => {
+      reduxDispatch(
+        updateAccountWithUpdater({
+          accountId: mainAccountId,
+          updater: (acc: Account) => addPendingOperation(acc, op),
+        }),
+      );
+    },
+    [reduxDispatch],
   );
-
-  const [intent, setIntent] = useState<unknown>(null);
-
-  useEffect(() => {
-    let ignore = false;
-
-    if (!flagEnabled || !mainAccount || !transaction) {
-      setIntent(null);
-      return;
-    }
-
-    // Identity-gate the intent: clear it up front on any transaction change so the previous intent
-    // never survives into the async rebuild window. Otherwise a quick edit + Review could enter
-    // sponsored signing (craftRent closes over `intent`) against the prior transaction's intent.
-    setIntent(null);
-
-    (async () => {
-      try {
-        const network = mainAccount.currency.id;
-        const seam = await getSponsoredCoinApi(network, SEAM_KIND);
-        if (ignore) return;
-        if (!seam) {
-          setIntent(null);
-          return;
-        }
-        const result = await buildGenericTransactionIntent(
-          network,
-          SEAM_KIND,
-          mainAccount,
-          transaction as unknown as GenericTransaction,
-        );
-        if (!ignore) setIntent(result);
-      } catch {
-        if (!ignore) setIntent(null);
-      }
-    })();
-
-    return () => {
-      ignore = true;
-    };
-  }, [flagEnabled, mainAccount, transaction]);
-
-  const network = mainAccount?.currency.id ?? "";
-  const { state: sponsoredState, actions } = useSponsoredSendOrchestration({
-    network,
-    kind: SEAM_KIND,
-    intent,
-  });
-
-  const [selectedFeeOptionId, setSelectedFeeOptionId] = useState<SponsoredFeeOptionId>("standard");
-
-  const selectTronify = useCallback(() => setSelectedFeeOptionId("tronify"), []);
-  const selectStandard = useCallback(() => setSelectedFeeOptionId("standard"), []);
 
   const {
-    available,
-    quote,
-    savingsFiat,
-    feeCurrencyTicker,
-    loading: feeLoading,
-  } = useSponsoredFee({
-    account: account ?? NO_ACCOUNT_PLACEHOLDER,
-    parentAccount: parentAccount ?? undefined,
+    mainAccount,
+    seam,
     intent,
+    intentFailed,
+    state: sponsoredState,
+    actions,
+  } = useSponsoredSendSession({
+    enabled: flagEnabled,
+    account,
+    parentAccount,
+    transaction,
+    reservePendingOperation,
   });
 
-  // Mobile has no fee-picker UI: auto-activate Tronify when the seam says it's available,
-  // revert to standard when it becomes unavailable (e.g. account/currency not supported).
-  useEffect(() => {
-    setSelectedFeeOptionId(available ? "tronify" : "standard");
-  }, [available]);
-
-  // Reset the orchestration when the send identity changes. Clearing `intent` alone leaves the
-  // reducer's order/phase alive, so returning to Review would let the rent screen skip craftRent and
-  // sign/pay the previous intent's payment tx. reset is read through a ref so the effect need not
-  // depend on `actions` (rebuilt whenever an order is crafted, which would reset mid-flow).
-  const rentIntentKey = [
-    account?.id,
-    parentAccount?.id,
-    transaction?.recipient,
-    transaction?.amount?.toString(),
-    transaction?.useAllAmount,
-    transaction?.subAccountId,
-  ].join("|");
-  const resetRef = useRef(actions.reset);
-  resetRef.current = actions.reset;
-  useEffect(() => {
-    resetRef.current();
-  }, [rentIntentKey]);
-
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const locale = useSelector(localeSelector);
-  const savingsFiatFormatted = useMemo(
+  const { available, quote, feeCurrencyTicker, feeTokenAccount } = useSponsoredFeeQuote({
+    mainAccount,
+    seam,
+    intent,
+    intentFailed,
+    counterValueCurrency,
+  });
+
+  const sponsoredFeeOptionId = seam?.feeOptionId ?? "";
+  const [selectedFeeOptionId, setSelectedFeeOptionId] = useState(STANDARD_FEE_OPTION_ID);
+
+  const unaffordable = useMemo(
     () =>
-      // estimateTronifyFees clamps savings to 0 when Tronify costs at least as much as the standard
-      // fee; BigNumber(0) is still truthy, so gate on a positive value to avoid "Save $0.00" copy.
-      savingsFiat && savingsFiat.gt(0)
-        ? formatCurrencyUnit(counterValueCurrency.units[0], savingsFiat, {
-            showCode: true,
-            disableRounding: true,
-            locale,
-          })
-        : null,
-    [savingsFiat, counterValueCurrency, locale],
+      !!quote &&
+      !!account &&
+      !!transaction &&
+      isSponsoredFeeUnaffordable({ account, transaction, feeTokenAccount, rentValue: quote.value }),
+    [quote, account, transaction, feeTokenAccount],
   );
+  const autoFeeOptionId = pickAutoFeeOption({
+    phase: sponsoredState.phase,
+    signing: isSigning,
+    sponsoredFeeOptionId,
+    available,
+    quoted: !!quote,
+    useAllAmount: transaction?.useAllAmount === true,
+    unaffordable,
+  });
+
+  // `sponsored` makes getPendingNativeSpent skip the native fee on the optimistic op; crafting ignores it.
+  useEffect(() => {
+    if (autoFeeOptionId === null || autoFeeOptionId === selectedFeeOptionId) return;
+    setSelectedFeeOptionId(autoFeeOptionId);
+    const sponsored = autoFeeOptionId !== STANDARD_FEE_OPTION_ID;
+    transactionActions.updateTransaction(tx => ({ ...tx, sponsored }) as typeof tx);
+  }, [autoFeeOptionId, selectedFeeOptionId, transactionActions]);
+
+  // Once the transfer's overlay closes on DONE, the next Review is a new sponsored send.
+  const phase = sponsoredState.phase;
+  useEffect(() => {
+    if (phase === SPONSORED_PHASE.DONE && !isSigning) actions.reset();
+  }, [phase, isSigning, actions]);
+
+  const sponsoredSelected = !!sponsoredFeeOptionId && selectedFeeOptionId === sponsoredFeeOptionId;
+  // Past IDLE, TX-A is under way or paid and Review only reopens TX-C: the live quote is moot.
+  const committed = phase !== SPONSORED_PHASE.IDLE;
+  const reviewReady = !sponsoredSelected || committed || (available && intent !== null && !!quote);
+  const waivesNativeFee = sponsoredSelected && (committed || available);
+
+  const providerName = seam?.providerName ?? "";
+  const waivesErrorKeys = seam?.waivesErrorKeys ?? NO_WAIVED_KEYS;
+  const waivesWarningKeys = seam?.waivesWarningKeys ?? NO_WAIVED_KEYS;
 
   const value = useMemo(
     () => ({
       state: sponsoredState,
       actions,
+      mainAccount,
       selectedFeeOptionId,
-      selectTronify,
-      selectStandard,
-      available,
-      quote,
-      savingsFiatFormatted,
+      sponsoredFeeOptionId,
+      providerName,
+      waivesErrorKeys,
+      waivesWarningKeys,
+      waivesNativeFee,
+      reviewReady,
       feeCurrencyTicker,
-      feeLoading,
     }),
     [
       sponsoredState,
       actions,
+      mainAccount,
       selectedFeeOptionId,
-      selectTronify,
-      selectStandard,
-      available,
-      quote,
-      savingsFiatFormatted,
+      sponsoredFeeOptionId,
+      providerName,
+      waivesErrorKeys,
+      waivesWarningKeys,
+      waivesNativeFee,
+      reviewReady,
       feeCurrencyTicker,
-      feeLoading,
     ],
   );
 
@@ -205,4 +205,10 @@ export function useSponsoredSend(): SponsoredSendContextValue {
     throw new Error("useSponsoredSend must be used within a SponsoredSendProvider");
   }
   return context;
+}
+
+/** True while the sponsored fee is the pick, so Review runs TX-A before the transfer. */
+export function useIsSponsoredSelected(): boolean {
+  const { selectedFeeOptionId, sponsoredFeeOptionId } = useSponsoredSend();
+  return !!sponsoredFeeOptionId && selectedFeeOptionId === sponsoredFeeOptionId;
 }

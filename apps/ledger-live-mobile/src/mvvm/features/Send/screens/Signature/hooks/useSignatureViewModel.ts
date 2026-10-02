@@ -15,6 +15,8 @@ import {
 } from "LLM/components/DeviceIntentExecutor";
 import { broadcastLogger } from "~/datadog";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { isContractDataDisabledError } from "@ledgerhq/live-common/flows/send/sponsored/failure";
+import { reportSponsoredTransferOutcome } from "@ledgerhq/live-common/flows/send/sponsored/transferOutcome";
 import {
   SEND_FLOW_COMPLETION,
   type SendFlowCompletion,
@@ -72,24 +74,28 @@ export function useSignatureViewModel() {
     [reduxDispatch],
   );
 
+  const isSponsoredTransfer = sponsoredState.phase === SPONSORED_PHASE.TRANSFER;
+  // Pinned at mount, so an outcome reported after a re-craft is dropped as stale.
+  const [signedPaymentTxId] = useState(sponsoredState.paymentTxId);
+
   const goToConfirmation = useCallback(
     (completion: SendFlowCompletion, error?: Error) => {
-      // In a sponsored TRANSFER, a TX-C broadcast failure must drive the orchestration to its
-      // dedicated transfer-failure screen (Retry resumes at TRANSFER — energy is already delivered,
-      // so no re-rental), not silently navigate to Confirmation as if the send had succeeded.
-      if (
-        completion === SEND_FLOW_COMPLETION.FAILURE &&
-        sponsoredState.phase === SPONSORED_PHASE.TRANSFER
-      ) {
-        sponsoredActions.onTransferError(error ?? new Error("Sponsored transfer failed"));
-        return;
+      if (isSponsoredTransfer) {
+        reportSponsoredTransferOutcome({
+          actions: sponsoredActions,
+          signedPaymentTxId,
+          completion,
+          error,
+        });
+        // A failure stays in the overlay: SponsoredFlowHost shows it, and Retry resumes at TRANSFER.
+        if (completion !== SEND_FLOW_COMPLETION.SUCCESS) return;
       }
       // Dismisses the overlay and runs the onComplete callback registered by the triggering screen
       // (Amount or CoinControl). That callback holds the navigation reference to navigate to
       // Confirmation from within the FlowStackNavigator's React subtree.
       finishSigning();
     },
-    [finishSigning, sponsoredState.phase, sponsoredActions],
+    [finishSigning, isSponsoredTransfer, sponsoredActions, signedPaymentTxId],
   );
 
   const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({
@@ -174,28 +180,24 @@ export function useSignatureViewModel() {
   // IntentError screen (Retry / Close). We deliberately do not navigate away here so
   // the user stays on the sheet, as opposed to the success path which broadcasts and
   // moves to the confirmation screen.
-  // Exception: 0x6a80 (Contract Data disabled) during the Tronify TRANSFER phase must
-  // route into the orchestration so the user gets the dedicated recovery screen.
+  // Exception: Contract Data disabled during a sponsored TRANSFER routes into the orchestration,
+  // so the user gets the dedicated recovery screen.
+  const handedToSponsoredFlowRef = useRef(false);
   const onIntentJobError = useCallback(
     (error: unknown) => {
-      if (
-        sponsoredState.phase === SPONSORED_PHASE.TRANSFER &&
-        (error as { name?: string })?.name === "TransportStatusError" &&
-        (error as { statusCode?: number })?.statusCode === 0x6a80
-      ) {
-        sponsoredActions.setContractDataFailure(
-          error as Error,
-          sponsoredState.paymentTxId ?? undefined,
-        );
+      if (isSponsoredTransfer && isContractDataDisabledError(error)) {
+        handedToSponsoredFlowRef.current = true;
+        sponsoredActions.setContractDataFailure(error, signedPaymentTxId);
       }
     },
-    [sponsoredState.phase, sponsoredState.paymentTxId, sponsoredActions],
+    [isSponsoredTransfer, sponsoredActions, signedPaymentTxId],
   );
 
   // Explicit dismiss of the sheet (close button / backdrop) closes the overlay and leaves the user
-  // on the underlying review screen.
+  // on the underlying review screen. The sheet also calls this when it unmounts, so it must not
+  // stop signing once the failure screen took over: its Retry reopens TX-C.
   const onUserCancel = useCallback(() => {
-    if (isSigningCompletedRef.current) {
+    if (isSigningCompletedRef.current || handedToSponsoredFlowRef.current) {
       return;
     }
     stopSigning();

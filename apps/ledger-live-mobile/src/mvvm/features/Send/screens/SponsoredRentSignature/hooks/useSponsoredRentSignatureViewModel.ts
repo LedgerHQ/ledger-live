@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { log } from "@ledgerhq/logs";
 import { createIntent } from "@features/platform-device-intent";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
-import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import type { EnergyRentOrder } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import { isContractDataDisabledError } from "@ledgerhq/live-common/flows/send/sponsored/failure";
+import { useSponsoredRentPayment } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredRentPayment";
 import type {
   SignRawTransactionIntent,
   SignRawTransactionIntentInput,
@@ -12,135 +15,172 @@ import {
   buildDeviceInitializationInput,
   type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
+import { useSelector } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
+import { localeSelector } from "~/reducers/settings";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
-import { signRawTronTransactionIntentLWMDefinition } from "../intents/signRawTronTransactionIntent/intentLWMDefinition";
+import type { RentSignatureExtraProps } from "../intents/signRawTransactionIntent/componentLWM";
+import { signRawTransactionIntentLWMDefinition } from "../intents/signRawTransactionIntent/intentLWMDefinition";
 
-function isContractDataDisabledError(error: unknown): boolean {
-  return (
-    (error as { name?: string })?.name === "TransportStatusError" &&
-    (error as { statusCode?: number })?.statusCode === 0x6a80
-  );
-}
+const LOG_TYPE = "sponsored-send";
+
+export type RentSignIntent = SignRawTransactionIntent<RentSignatureExtraProps>;
+
+export type SponsoredRentSignatureStep =
+  | Readonly<{ type: "loading" }>
+  | Readonly<{ type: "error"; error: Error }>
+  | Readonly<{
+      type: "signing";
+      deviceInitializationInput: InitializationInput;
+      signIntent: RentSignIntent;
+    }>;
 
 export type SponsoredRentSignatureViewModel = Readonly<{
-  isCrafting: boolean;
+  step: SponsoredRentSignatureStep;
+  craftingLabel: string;
   feeAmountLabel: string | null;
-  deviceInitializationInput: InitializationInput | null;
-  signIntent: SignRawTransactionIntent | null;
+  cancelLabel: string;
+  intentExtraProps: RentSignatureExtraProps;
   onIntentJobStateChanged: (jobState: SignRawTransactionIntentJobState) => void;
   onIntentJobError: (error: unknown) => void;
   onUserCancel: () => void;
 }>;
 
+type DeviceInitialization = Readonly<
+  { order: EnergyRentOrder; input: InitializationInput } | { order: EnergyRentOrder; error: Error }
+>;
+
+function normalizeError(error: unknown): Error {
+  return error instanceof Error ? error : new Error(String(error));
+}
+
+/** TX-A: raw-signs the rent payment for the provider to broadcast — never broadcast it here. */
 export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureViewModel {
+  const { t } = useTranslation();
   const { state: sendFlowState } = useSendFlowData();
   const { stopSigning } = useSendSignature();
-  const { state, actions, selectStandard } = useSponsoredSend();
+  const { state, actions, providerName } = useSponsoredSend();
+  const locale = useSelector(localeSelector);
+  const { isCrafting, feeAmountLabel, submitSignature } = useSponsoredRentPayment({
+    state,
+    actions,
+    locale,
+  });
 
   const account = sendFlowState.account.account;
   const parentAccount = sendFlowState.account.parentAccount;
-  const order = state.order;
+  const { order, toSign } = state;
 
-  // Re-craft on retry: RENT_PAYMENT/DELIVERY_FAILED failures reset order to null while keeping
-  // phase RENT_SIGNING. The initial craft is triggered by Amount's onReview (Tronify path).
-  const craftInFlightRef = useRef(false);
+  // Built once per order: a new input while signing makes the executor drop the operation, and the
+  // flow follows the synced account, so every account refresh would otherwise rebuild it.
+  const [deviceInitialization, setDeviceInitialization] = useState<DeviceInitialization | null>(
+    null,
+  );
+  const initializedOrder = deviceInitialization?.order ?? null;
   useEffect(() => {
-    const needsCraft = state.phase === SPONSORED_PHASE.RENT_SIGNING;
-    if (!needsCraft || order || craftInFlightRef.current) return;
-    craftInFlightRef.current = true;
-    actions.craftRent().finally(() => {
-      craftInFlightRef.current = false;
-    });
-  }, [state.phase, order, actions]);
-
-  // Reset per fresh order so a retried cycle can submit again.
-  const hasSubmittedRef = useRef(false);
-  useEffect(() => {
-    hasSubmittedRef.current = false;
-  }, [order]);
-
-  const [deviceInitializationInput, setDeviceInitializationInput] =
-    useState<InitializationInput | null>(null);
-
-  useEffect(() => {
-    if (!account || !order) {
-      setDeviceInitializationInput(null);
-      return;
-    }
+    if (!account || !order || initializedOrder === order) return;
 
     let cancelled = false;
-    const mainAccount = getMainAccount(account, parentAccount ?? undefined);
-
     buildDeviceInitializationInput({
-      appRequest: { account: mainAccount },
+      appRequest: { account: getMainAccount(account, parentAccount ?? undefined) },
       flow: FlowName.send,
     })
       .then(input => {
-        if (!cancelled) setDeviceInitializationInput(input);
+        if (!cancelled) setDeviceInitialization({ order, input });
       })
-      .catch(() => {
-        if (!cancelled) setDeviceInitializationInput(null);
+      .catch((error: unknown) => {
+        log(LOG_TYPE, "TX-A device setup failed", { error });
+        if (!cancelled) setDeviceInitialization({ order, error: normalizeError(error) });
       });
 
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, order]);
+  }, [account, parentAccount, order, initializedOrder]);
 
-  const signIntent = useMemo<SignRawTransactionIntent | null>(() => {
-    // `toSign` is the family-derived signable hex (coin-tron's raw_data_hex), put on state at
-    // CRAFT_SUCCESS so the platform never has to reach into the opaque `order.transaction`.
-    if (!account || !state.toSign) return null;
+  // Pinned to its bytes for the same reason.
+  const [signIntent, setSignIntent] = useState<RentSignIntent | null>(null);
+  useEffect(() => {
+    if (!account || !toSign) {
+      setSignIntent(null);
+      return;
+    }
     const input: SignRawTransactionIntentInput = {
       account,
       parentAccount: parentAccount ?? null,
-      transaction: state.toSign,
+      transaction: toSign,
     };
-    return createIntent(signRawTronTransactionIntentLWMDefinition, input);
-  }, [account, parentAccount, state.toSign]);
+    setSignIntent(previous =>
+      previous?.input.transaction === toSign
+        ? previous
+        : createIntent(signRawTransactionIntentLWMDefinition, input),
+    );
+  }, [account, parentAccount, toSign]);
 
+  // Set once TX-A belongs to the orchestration: the sheet calls onUserCancel when it unmounts,
+  // and resetting then would drop a paid rent.
+  const handedOffRef = useRef(false);
   const onIntentJobStateChanged = useCallback(
     (jobState: SignRawTransactionIntentJobState) => {
       if (jobState.type !== "signed") return;
-      if (!order || hasSubmittedRef.current) return;
-      hasSubmittedRef.current = true;
-
-      // The generic raw-sign path returns the device's combined signature; the orchestration hands it
-      // to the family seam (buildSignedEnergyRentTransaction) to rebuild TX-A, so pass it through as-is.
-      // Pass the paymentTxId we signed against so a signature from a since-recrafted order is rejected
-      // instead of broadcast against the new one.
-      actions.startRentPayment(jobState.signedOperation.signature, state.paymentTxId ?? undefined);
+      handedOffRef.current = true;
+      submitSignature(jobState.signedOperation.signature);
     },
-    [order, actions, state.paymentTxId],
+    [submitSignature],
   );
 
+  // Other errors stay on the executor's own error screen, which offers a retry.
+  const signingPaymentTxId = state.paymentTxId;
   const onIntentJobError = useCallback(
     (error: unknown) => {
       if (isContractDataDisabledError(error)) {
-        // Same staleness guard as the submit path: tie the refusal to the paymentTxId in flight.
-        actions.setContractDataFailure(error as Error, state.paymentTxId ?? undefined);
+        handedOffRef.current = true;
+        actions.setContractDataFailure(error, signingPaymentTxId);
+        return;
       }
-      // Any other error (wrong app, locked device) is handled by the executor's built-in
-      // IntentErrorComponent — this screen does not need to navigate away.
+      log(LOG_TYPE, "TX-A signing failed", { error });
     },
-    [actions, state.paymentTxId],
+    [actions, signingPaymentTxId],
   );
 
   const onUserCancel = useCallback(() => {
+    if (handedOffRef.current) return;
     stopSigning();
-    selectStandard();
     actions.reset();
-  }, [actions, selectStandard, stopSigning]);
+  }, [actions, stopSigning]);
 
-  const feeAmountLabel = order ? `${order.payCoinAmt} ${order.payCoinCode}` : null;
+  const intentExtraProps = useMemo<RentSignatureExtraProps>(
+    () => ({
+      strategyLabel: t("send.newSendFlow.sponsoredRentSignature.strategy", {
+        provider: providerName,
+      }),
+      feeLabel: feeAmountLabel
+        ? t("send.newSendFlow.sponsoredRentSignature.fee", { amount: feeAmountLabel })
+        : null,
+    }),
+    [t, providerName, feeAmountLabel],
+  );
+
+  const currentInitialization = deviceInitialization?.order === order ? deviceInitialization : null;
+  let step: SponsoredRentSignatureStep = { type: "loading" };
+  if (currentInitialization && "error" in currentInitialization) {
+    step = { type: "error", error: currentInitialization.error };
+  } else if (!isCrafting && currentInitialization && signIntent) {
+    step = {
+      type: "signing",
+      deviceInitializationInput: currentInitialization.input,
+      signIntent,
+    };
+  }
 
   return {
-    isCrafting: !order,
+    step,
+    craftingLabel: t("send.newSendFlow.sponsoredRentSignature.crafting"),
     feeAmountLabel,
-    deviceInitializationInput,
-    signIntent,
+    cancelLabel: t("send.newSendFlow.sponsoredFailure.cancel"),
+    intentExtraProps,
     onIntentJobStateChanged,
     onIntentJobError,
     onUserCancel,

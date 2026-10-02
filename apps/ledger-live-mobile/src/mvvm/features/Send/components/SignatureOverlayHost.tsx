@@ -6,13 +6,10 @@ import {
 } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { SignatureScreen } from "../screens/Signature";
 import { useSendSignature } from "../context/SendSignatureContext";
-import { useSponsoredSend } from "../context/SponsoredSendContext";
+import { useIsSponsoredSelected, useSponsoredSend } from "../context/SponsoredSendContext";
 
-// When the Tronify fee option is active, these phases own the device interaction exclusively.
-// IDLE is included because craftRent is async — startSigning fires before CRAFT_SUCCESS lands,
-// so the TX-C overlay must be suppressed during the crafting window too.
-const TRONIFY_SUPPRESS_PHASES = new Set<SponsoredPhase>([
-  SPONSORED_PHASE.IDLE,
+// Only the sponsored path leaves IDLE, so these phases hide TX-C even if the pick has since changed.
+const SPONSORED_SCREEN_PHASES = new Set<SponsoredPhase>([
   SPONSORED_PHASE.RENT_SIGNING,
   SPONSORED_PHASE.POLLING,
   SPONSORED_PHASE.FAILED,
@@ -20,10 +17,14 @@ const TRONIFY_SUPPRESS_PHASES = new Set<SponsoredPhase>([
 
 export function SignatureOverlayHost() {
   const { isSigning } = useSendSignature();
-  const { state, selectedFeeOptionId } = useSponsoredSend();
+  const { state } = useSponsoredSend();
+  const sponsoredSelected = useIsSponsoredSelected();
 
+  // At IDLE the sponsored pick crafts TX-A after Review, so TX-C stays hidden during the craft too.
   const isSuppressed =
-    selectedFeeOptionId === "tronify" && TRONIFY_SUPPRESS_PHASES.has(state.phase);
+    state.phase === SPONSORED_PHASE.IDLE
+      ? sponsoredSelected
+      : SPONSORED_SCREEN_PHASES.has(state.phase);
 
   if (!isSigning || isSuppressed) {
     return null;

@@ -46,7 +46,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { startSigning } = useSendSignature();
   const { recipientType } = useSendFlowTracking();
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
-  const { selectedFeeOptionId, actions: sponsoredActions } = useSponsoredSend();
+  const { reviewReady: sponsoredReviewReady } = useSponsoredSend();
 
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
@@ -69,28 +69,16 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { displayMode: inputMode } = useSendAmountDisplayMode();
 
   const onReview = useCallback(() => {
+    // Wait: the rent screen would craft TX-A without an intent, or for a pick about to revert.
+    if (!sponsoredReviewReady) return;
     track("button_clicked", {
       ...trackingProperties,
       button: "review",
       page: "step amount",
       input_mode: inputMode,
     });
-    // Tronify path: craft TX A energy-rent order (transitions phase → RENT_SIGNING once ready) before
-    // signing, so SponsoredFlowHost/SignatureOverlayHost are ready when energy delivers. startSigning
-    // runs in both paths.
-    if (selectedFeeOptionId === "tronify") {
-      sponsoredActions.craftRent();
-    }
     startSigning(() => navigation.navigate(getSendSuccessScreenName(source)));
-  }, [
-    startSigning,
-    navigation,
-    trackingProperties,
-    inputMode,
-    source,
-    selectedFeeOptionId,
-    sponsoredActions,
-  ]);
+  }, [startSigning, navigation, trackingProperties, inputMode, source, sponsoredReviewReady]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.navigate(ScreenName.SendFlowCoinControl);

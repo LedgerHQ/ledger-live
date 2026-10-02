@@ -189,11 +189,9 @@ function reducer(state: SponsoredState, action: Action): SponsoredState {
             failureError: null,
           };
         case SPONSORED_FAILURE_KIND.CONTRACT_DATA:
-          // A new order reference re-arms app submit guards keyed on [order].
           return {
             ...state,
             phase: state.contractDataResumePhase,
-            order: state.order ? { ...state.order } : null,
             failureKind: null,
             failureError: null,
           };
