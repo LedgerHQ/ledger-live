@@ -7,5 +7,6 @@
   "tron": true,
   "casper": true,
   "solana": true,
-  "hedera": true
+  "hedera": true,
+  "near": true
 }
