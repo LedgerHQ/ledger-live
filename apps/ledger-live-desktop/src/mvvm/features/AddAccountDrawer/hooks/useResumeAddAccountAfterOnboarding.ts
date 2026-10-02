@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
@@ -9,36 +10,32 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 /**
- * Resumes the Add Account flow that was interrupted to send the user through device onboarding.
+ * Resumes the Add Account flow interrupted by device onboarding, once back on the screen it
+ * started from: reopens Add Account on the same asset. Mounted app-wide.
  */
 export const useResumeAddAccountAfterOnboarding = (): void => {
   const dispatch = useDispatch();
-  const shouldResumeAddAccount = useSelector(addAccountToResumeSelector) !== null;
+  const { pathname } = useLocation();
+  const toResume = useSelector(addAccountToResumeSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
-  const { shouldRedirectToRecoverUpsell, shouldRedirectToPostOnboarding } = useShouldRedirect();
-  const { openAssetFlow } = useOpenAssetFlow(
+  const { shouldRedirectToRecoverUpsell } = useShouldRedirect();
+  const { openAddAccountFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
-    "portfolio_add_account",
+    "resume_add_account",
   );
 
   useEffect(() => {
-    if (
-      !shouldResumeAddAccount ||
-      !hasOnboardedDevice ||
-      shouldRedirectToRecoverUpsell ||
-      shouldRedirectToPostOnboarding
-    ) {
-      return;
-    }
+    if (!toResume || pathname !== toResume.returnTo) return;
+    if (!hasOnboardedDevice || shouldRedirectToRecoverUpsell) return;
     dispatch(addAccountResumed());
     setOriginFlow(HOOKS_TRACKING_LOCATIONS.addAccountModal);
-    openAssetFlow();
+    openAddAccountFlow(toResume.currency);
   }, [
     dispatch,
     hasOnboardedDevice,
-    openAssetFlow,
-    shouldRedirectToPostOnboarding,
+    openAddAccountFlow,
+    pathname,
     shouldRedirectToRecoverUpsell,
-    shouldResumeAddAccount,
+    toResume,
   ]);
 };

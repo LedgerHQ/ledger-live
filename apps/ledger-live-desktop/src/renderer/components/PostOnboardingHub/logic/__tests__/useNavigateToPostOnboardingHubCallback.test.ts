@@ -8,6 +8,7 @@ import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useNavigateToPostOnboardingHubCallback } from "../useNavigateToPostOnboardingHubCallback";
+import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 
 const mockNavigate = jest.fn();
 
@@ -163,6 +164,44 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/", { replace: true });
     expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(true);
     expect(mockNavigate).not.toHaveBeenCalledWith(RECOVER_LANDING_PATH, expect.anything());
+  });
+
+  describe("when an Add Account flow waits to resume after onboarding", () => {
+    const resumeAddAccount = {
+      addAccountResume: { returnTo: "/paytab", currency: usdcToken, awaitingOnboarding: true },
+    };
+
+    it("should still show the recover landing but not open finish dialog", () => {
+      const { result, store } = renderNavigateHook({
+        ...featureFlagsWithRecover(),
+        postOnboarding: postOnboardingState(),
+        settings: { hasBeenRedirectedToPostOnboarding: false, hasBeenUpsoldRecover: false },
+        onboarding: resumeAddAccount,
+      });
+
+      act(() => {
+        result.current();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith(RECOVER_LANDING_PATH, { replace: true });
+      expect(store.getState().dialogs.FINISH_POST_ONBOARDING).not.toBe(true);
+    });
+
+    it("should go back where the flow started instead of opening finish dialog", () => {
+      const { result, store } = renderNavigateHook({
+        ...featureFlagsWithRecover(),
+        postOnboarding: postOnboardingState(),
+        settings: { hasBeenRedirectedToPostOnboarding: false, hasBeenUpsoldRecover: true },
+        onboarding: resumeAddAccount,
+      });
+
+      act(() => {
+        result.current();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith("/paytab", { replace: true });
+      expect(store.getState().dialogs.FINISH_POST_ONBOARDING).not.toBe(true);
+    });
   });
 
   it("should navigate to post-onboarding hub when finish widget is disabled", () => {

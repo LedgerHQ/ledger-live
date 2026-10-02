@@ -51,12 +51,16 @@ import { Flex } from "@ledgerhq/react-ui";
 import { Spinner } from "@ledgerhq/lumen-ui-react";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { useTrackFundsReceived } from "LLD/features/Analytics/hooks/useTrackFundsReceived";
-import { accountsSelector } from "./reducers/accounts";
+import { accountsSelector, flattenAccountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { hasCompletedOnboardingSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
-import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import {
+  useAutoDismissPostOnboardingEntryPoint,
+  usePostOnboardingPortfolioWidgetVisibility,
+} from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import useEnv from "@features/platform-env";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
+import { useResumeAddAccountAfterOnboarding } from "LLD/features/AddAccountDrawer/hooks/useResumeAddAccountAfterOnboarding";
 import { useSuppressQ2TourForNewUsers } from "LLD/features/Q2Tour/hooks/useSuppressQ2TourForNewUsers";
 import { useSuppressQ3TourForNewUsers } from "LLD/features/Q3Tour/hooks/useSuppressQ3TourForNewUsers";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
@@ -302,6 +306,8 @@ export const MainAppLayout = () => {
   const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
     useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
+  // Resume, on any screen, the Add Account flow interrupted to send the user through onboarding.
+  useResumeAddAccountAfterOnboarding();
 
   const backgroundImage = getPageBackground(pathname, theme);
 
@@ -393,6 +399,9 @@ export default function Default() {
   useFetchCurrencyFrom();
   useRecoverRestoreOnboarding();
   useAutoDismissPostOnboardingEntryPoint();
+  // Decide the portfolio widget eligibility when post-onboarding starts, not on the first Portfolio
+  // render: a flow resumed elsewhere after onboarding may add funds before the Portfolio shows.
+  usePostOnboardingPortfolioWidgetVisibility(flattenAccountsSelector);
   useEnforceSupportedLanguage();
   useSuppressQ2TourForNewUsers();
   useSuppressQ3TourForNewUsers();
