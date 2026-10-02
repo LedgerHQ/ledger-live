@@ -66,7 +66,7 @@ export function useHistoryViewModel(): HistoryViewModel {
   const [searchParams, setSearchParams] = useSearchParams();
   const payTab = useFeature("lwdPayTab");
   const isPayTabEnabled = !!payTab?.enabled;
-  const showCardHistory = isPayTabEnabled && payTab?.params?.card === true;
+  const showCardHistory = isPayTabEnabled && payTab?.params?.card_native === true;
   const hasCryptoHistoryFilter = searchParams.has("accountIds") || searchParams.has("contactId");
   const hasCardAssetFilter =
     searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD &&

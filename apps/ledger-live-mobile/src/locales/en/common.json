@@ -10795,6 +10795,8 @@
   },
   "payTab": {
     "disclaimer": "Provided by Monavate Onchain",
+    "cardDisclaimer": "Looking for your crypto card?",
+    "cardDisclaimerLink": "Go to CL Card",
     "featureTour": {
       "title": "All your payments, in one place",
       "description": "Meet your new Pay tab, making your crypto ready for everyday money moments.",
