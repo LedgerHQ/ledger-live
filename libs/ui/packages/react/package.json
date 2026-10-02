@@ -156,7 +156,8 @@
     "stylelint-config-recommended": "^13.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.10.0",
-    "tiny-glob": "^0.2.9"
+    "tiny-glob": "^0.2.9",
+    "typescript": "catalog:"
   },
   "dependenciesMeta": {
     "@ledgerhq/icons-ui": {

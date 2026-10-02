@@ -93,7 +93,8 @@
     "jest-file-snapshot": "catalog:",
     "object-hash": "^2.2.0",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
