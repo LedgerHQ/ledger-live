@@ -23,6 +23,7 @@ import path from "path";
 
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { getCapturedStderr } from "@e2e/utils/loggingUtils";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 const SPECULOS_STDOUT_MARKER = "--- Speculos stdout ---";
 const SPECULOS_STDERR_MARKER = "--- Speculos stderr ---";
@@ -163,7 +164,7 @@ export async function launchSpeculos(appName: string) {
 async function findPortByDeviceId(
   deviceId: string,
   maxAttempts = 3,
-  delay = 1000,
+  delay = INTERVAL.medium,
 ): Promise<number | undefined> {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     log.info(
@@ -282,8 +283,8 @@ export async function takeSpeculosScreenshot() {
     if (isSpeculosRemote()) {
       try {
         await waitForSpeculosReady(deviceId, {
-          interval: 5_000,
-          timeout: 30_000,
+          interval: INTERVAL.slow,
+          timeout: TIMEOUT.xlarge,
         });
       } catch {
         log.warn("E2E", `Skipping screenshot: Speculos with ${deviceId} unreachable.`);
@@ -324,11 +325,14 @@ function getKnownSpeculosAddress(speculosPort: number): string {
     : `${withoutTrailingSlash}:${speculosPort}`;
 }
 
+/** How long the app may take to report an env value the test just pushed over the bridge. */
+const BRIDGE_ENV_SYNC_TIMEOUT = 15_000;
+
 async function waitForBridgeEnv(
   key: string,
   expectedValue: string,
-  timeout = 15_000,
-  interval = 500,
+  timeout = BRIDGE_ENV_SYNC_TIMEOUT,
+  interval = INTERVAL.short,
 ): Promise<void> {
   try {
     await retryUntilTimeout(

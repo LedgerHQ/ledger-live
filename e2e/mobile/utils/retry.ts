@@ -1,7 +1,9 @@
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
+
 export async function retryUntilTimeout<T>(
   fn: (signal: AbortSignal) => Promise<T>,
-  timeout = 60_000,
-  interval = 500,
+  timeout = TIMEOUT.xxlarge,
+  interval = INTERVAL.short,
   options: { cancellable?: boolean } = {},
 ): Promise<T> {
   const cancellable = options.cancellable ?? false;

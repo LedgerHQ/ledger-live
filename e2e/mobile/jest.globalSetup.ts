@@ -8,6 +8,7 @@ import { log } from "detox";
 import { session as detoxSession, config as detoxConfig } from "detox/internals";
 import * as fs from "fs/promises";
 import * as path from "path";
+import { INTERVAL } from "@e2e/utils/timeouts";
 import { exec } from "child_process";
 import { releaseSpeculosDeviceCI } from "@ledgerhq/live-e2e-shared/speculosCI";
 import {
@@ -140,7 +141,7 @@ function setupSpeculosCleanupHandlers() {
       log.error(`Cleanup failed (${signal}):`, sanitizeError(error));
     }
 
-    setTimeout(() => process.exit(0), 100);
+    setTimeout(() => process.exit(0), INTERVAL.instant);
   };
 
   const signals: NodeJS.Signals[] = ["SIGINT", "SIGTERM", "SIGHUP", "SIGQUIT"];

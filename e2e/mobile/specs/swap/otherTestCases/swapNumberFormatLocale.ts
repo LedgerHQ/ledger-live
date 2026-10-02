@@ -6,6 +6,7 @@ import { swapSetup } from "@e2e/bridge/server";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { performSwapUntilQuoteSelectionStep } from "@e2e/utils/swapUtils";
 import { expectFormattedAmount } from "@e2e/utils/amountUtils";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 import {
   getExpectedSeparators,
   buildFormattedAmountPattern,
@@ -86,7 +87,7 @@ export function runSwapNumberFormatLocaleTest(tmsLinks: string[], tags: string[]
         // guessed one, and the wait is locale-aware instead of the English-only
         // `floatNumberRegex` the skipped step would have used.
         await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, PLACEHOLDER_AMOUNT, false);
-        await app.swapLiveApp.clickSwapMax(formattedAmountPattern, 20000);
+        await app.swapLiveApp.clickSwapMax(formattedAmountPattern, TIMEOUT.large);
         await app.swapLiveApp.tapGetQuotesButton();
         await app.swapLiveApp.waitForQuotes();
 
