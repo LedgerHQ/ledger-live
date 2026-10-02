@@ -528,6 +528,42 @@ describe("PayTab integration", () => {
     });
   });
 
+  it("should show the CL Card disclaimer and open the CL Card webview when card_disclaimer is on", async () => {
+    const { user } = render(<PayTab />, {
+      initialRoute: "/paytab",
+      initialState: {
+        ...onboardedState,
+        ...tourSeenState,
+        accounts: [BTC_ACCOUNT],
+        ...withFlagOverrides({
+          lwdPayTab: { enabled: true, params: { card_native: false, card_disclaimer: true } },
+        }),
+      },
+    });
+
+    expect(await screen.findByText("Looking for your crypto card?")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Go to CL Card" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith("/card/cl-card", { state: { fromPayTab: true } });
+  });
+
+  it("should not show the CL Card disclaimer when the native card is on", async () => {
+    render(<PayTab />, {
+      initialRoute: "/paytab",
+      initialState: {
+        ...onboardedState,
+        ...tourSeenState,
+        accounts: [BTC_ACCOUNT],
+        ...withFlagOverrides({
+          lwdPayTab: { enabled: true, params: { card_native: true, card_disclaimer: true } },
+        }),
+      },
+    });
+
+    expect(await screen.findByText(EMPTY_TITLE)).toBeVisible();
+    expect(screen.queryByTestId("pay-card-disclaimer")).not.toBeInTheDocument();
+  });
+
   it("should not render the contacts section when lwdContacts is disabled", async () => {
     const account = createEthAccountWithContactTransfers();
     render(<PayTab />, {
