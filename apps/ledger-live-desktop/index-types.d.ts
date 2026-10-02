@@ -14,6 +14,10 @@ declare const __static: string;
 declare const __DEV__: boolean;
 declare const __UPDATE_CHECK_PUBKEY__: string | null;
 declare const __BUILD_ENVS__: Record<string, string>;
+declare const __FIREBASE_ENV_CONFIGS__: Record<
+  string,
+  import("firebase/app").FirebaseOptions | null
+> | null;
 
 declare module "*.css";
 

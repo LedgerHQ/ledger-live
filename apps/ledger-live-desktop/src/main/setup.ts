@@ -1,6 +1,6 @@
 import { getEnv, setEnvUnsafe } from "@shared/env";
 import "./env";
-import "~/live-common-setup-base";
+import "./live-common-setup-main";
 import { app, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import fs from "fs/promises";
@@ -8,12 +8,6 @@ import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
 
-/**
- * Sets env variables for the main process.
- *
- * The renderer process will also set some env variables via the `setEnv` IPC channel
- * but we might need some envs before the renderer process is spawned.
- */
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
 }

@@ -133,6 +133,27 @@ export function buildMainEnv(
   return env;
 }
 
+const FIREBASE_ENVS = ["production", "staging", "testing", "development"];
+
+function firebaseConfigsByEnv() {
+  return Object.fromEntries(
+    FIREBASE_ENVS.map(env => {
+      const vars = readDotEnv(`.env.${env}`);
+      const config = vars.FIREBASE_API_KEY
+        ? {
+            apiKey: vars.FIREBASE_API_KEY,
+            authDomain: vars.FIREBASE_AUTH_DOMAIN,
+            projectId: vars.FIREBASE_PROJECT_ID,
+            storageBucket: vars.FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: vars.FIREBASE_MESSAGING_SENDER_ID,
+            appId: vars.FIREBASE_APP_ID,
+          }
+        : null;
+      return [env, config];
+    }),
+  );
+}
+
 /**
  * Build environment defines for renderer process
  */
@@ -148,6 +169,9 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
     __BUILD_ENVS__: buildEnvsDefine(),
+    __FIREBASE_ENV_CONFIGS__: JSON.stringify(
+      mode === "development" ? firebaseConfigsByEnv() : null,
+    ),
     "process.env.NODE_ENV": JSON.stringify(mode),
   };
 }

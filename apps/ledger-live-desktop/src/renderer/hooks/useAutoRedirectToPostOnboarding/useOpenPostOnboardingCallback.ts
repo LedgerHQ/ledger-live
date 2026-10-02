@@ -39,13 +39,14 @@ export function useOpenPostOnboardingCallback() {
         isRecoverDisplayed(recoverServices, deviceModelId) &&
         !!upsellPath &&
         hasRecoverInProgressState(protectId);
-      setImmediate(() => {
+      // A macrotask, so the redirect lands after the caller's render commits.
+      setTimeout(() => {
         handleStartPostOnboarding({
           deviceModelId,
           fallbackIfNoAction: fallbackRedirection,
           canShowRecover,
         });
-      });
+      }, 0);
     },
     [handleStartPostOnboarding, protectId, recoverServices, upsellPath],
   );

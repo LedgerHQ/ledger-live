@@ -1,4 +1,4 @@
-import os from "os";
+import { osRelease, osType } from "~/system";
 import semverSatisfies from "semver/functions/satisfies";
 import { getEnv } from "@shared/env";
 
@@ -57,8 +57,8 @@ export function getOperatingSystemSupportStatus(): SupportStatus {
     type = splits[0];
     release = splits[1];
   } else {
-    type = os.type();
-    release = os.release();
+    type = osType();
+    release = osRelease();
   }
   return supportStatusForOS(type, release);
 }
