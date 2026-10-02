@@ -7,7 +7,6 @@ import {
   CardPrimaryActionButton,
 } from "@features/flow-pay-card-details";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
-import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import { CardAssets } from "@features/flow-pay-card-assets";
 import type { CardViewProps } from "./Card.types";
 
@@ -20,8 +19,6 @@ export function CardView({
   assets,
   formatters,
   onShowMore,
-  onTopUp,
-  onChooseCardType,
   primaryAction,
   cardState,
   onViewRewards,
@@ -35,7 +32,6 @@ export function CardView({
       <p className="heading-5-semi-bold text-base">{title}</p>
       {isSignedIn ? (
         <>
-          <CardOnboardingWidget onTopUp={onTopUp} onChooseCardType={onChooseCardType} />
           <CardDetails
             cardVisual={cardVisual}
             assets={assets}

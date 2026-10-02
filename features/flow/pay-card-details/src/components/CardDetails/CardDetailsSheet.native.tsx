@@ -5,7 +5,6 @@ import {
   BottomSheetView,
   Box,
 } from "@ledgerhq/lumen-ui-rnative";
-import { AddToWalletCta } from "@features/flow-pay-card-widget/native";
 import {
   QueuedBottomSheet,
   useBottomSheetBottomInset,
@@ -75,14 +74,7 @@ export function CardDetailsSheet({
       hasBackButton={canGoBack}
       onBack={canGoBack ? onBack : undefined}
       {...sizingProps}
-      footer={
-        isOpen && isOverview ? (
-          <>
-            <AddToWalletCta onPress={scene.overview.onAddToWalletPress} />
-            {onTopUp ? <CardTopUpButton onTopUp={onTopUp} /> : null}
-          </>
-        ) : null
-      }
+      footer={isOpen && isOverview && onTopUp ? <CardTopUpButton onTopUp={onTopUp} /> : null}
       testID="card-details-sheet"
     >
       {isOpen ? (

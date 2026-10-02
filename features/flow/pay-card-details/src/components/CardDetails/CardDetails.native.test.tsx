@@ -13,7 +13,7 @@ import {
   revealCardDetailsHandler,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
-import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
+import { CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardDetails } from "./CardDetails";
 import type { CardDetailsProps, CardVisualProps } from "../../types";
 
@@ -210,14 +210,12 @@ describe("CardDetails (native)", () => {
     });
   });
 
-  it("should open add-to-wallet instructions from the details footer", async () => {
+  it("should hide the add-to-wallet button in the details footer", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
-    await user.press(await screen.findByTestId("pay-card-add-to-wallet-cta-entry"));
 
-    expect(await screen.findByTestId("card-details-add-to-wallet-content")).toBeVisible();
-    expect(screen.getByText(ADD_TO_WALLET_COPY.title)).toBeVisible();
+    expect(screen.queryByTestId("pay-card-add-to-wallet-cta-entry")).toBeNull();
   });
 
   it("should render funding assets in the overview when assets are provided", async () => {

@@ -103,8 +103,6 @@ function renderSheet(overrides: SheetOverrides = {}) {
     onBack,
     pressDismiss: () => user.press(screen.getByTestId("card-details-sheet-dismiss")),
     pressBack: () => user.press(screen.getByTestId("card-details-sheet-back")),
-    pressAddToWallet: async () =>
-      user.press(await screen.findByTestId("pay-card-add-to-wallet-cta-entry")),
     pressOpenWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta")),
     goTo: (next: SheetOverrides) => view.rerender(sheet(next)),
   };
@@ -145,10 +143,10 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.getByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
-  it("should float the add-to-wallet CTA over the overview", async () => {
+  it("should hide the add-to-wallet CTA on the overview", () => {
     renderSheet();
 
-    expect(await screen.findByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
+    expect(screen.queryByTestId("pay-card-add-to-wallet-cta-entry")).toBeNull();
   });
 
   it("should show the disclaimer after transactions on the overview", () => {
@@ -168,15 +166,6 @@ describe("CardDetailsSheet (native)", () => {
     renderSheet({ route: { name: "transaction", transaction } });
 
     expect(screen.queryByTestId("pay-card-add-to-wallet-cta-entry")).toBeNull();
-  });
-
-  it("should send the add-to-wallet CTA to its own scene rather than stacking a sheet", async () => {
-    const { pressAddToWallet } = renderSheet();
-
-    await pressAddToWallet();
-
-    expect(onAddToWalletPress).toHaveBeenCalledTimes(1);
-    expect(screen.queryByTestId("pay-card-add-to-wallet-sheet-content")).toBeNull();
   });
 
   it("should show the add-to-wallet instructions with a way back to the overview", async () => {

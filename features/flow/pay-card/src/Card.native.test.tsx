@@ -12,7 +12,6 @@ let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 let receivedDetailsChooseCardType: (() => void) | undefined;
 let receivedDetailsOnTopUp: (() => void) | undefined;
 let receivedDetailsCardState: string | undefined;
-let receivedWidgetChooseCardType: (() => void) | undefined;
 
 type OnboardingStatus = {
   data: { steps: { id: string; isDone: boolean }[]; completedCount: number };
@@ -93,10 +92,7 @@ jest.mock("@features/flow-pay-card-details", () => ({
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
-  CardOnboardingWidget: ({ onChooseCardType }: { onChooseCardType?: () => void }) => {
-    receivedWidgetChooseCardType = onChooseCardType;
-    return <View testID="card-onboarding-widget" />;
-  },
+  CardOnboardingWidget: () => <View testID="card-onboarding-widget" />,
 }));
 
 jest.mock("@features/flow-pay-card-widget/onboarding-status", () => ({
@@ -153,7 +149,6 @@ describe("Card (native)", () => {
     receivedDetailsChooseCardType = undefined;
     receivedDetailsOnTopUp = undefined;
     receivedDetailsCardState = undefined;
-    receivedWidgetChooseCardType = undefined;
   });
 
   describe("while resolving the session", () => {
@@ -200,12 +195,12 @@ describe("Card (native)", () => {
       mockUseCardAuthStatus.mockReturnValue("signedIn");
     });
 
-    it("shows the widget and the card details, with no login or bare artwork", () => {
+    it("shows the card details without the onboarding widget or Apple Pay button", () => {
       renderCard(<Card login={{ oauthConfig }} />);
 
-      expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
+      expect(screen.queryByTestId("card-onboarding-widget")).toBeNull();
       expect(screen.getByTestId("card-details")).toBeVisible();
-      expect(screen.getByTestId("card-add-to-wallet-cta")).toBeVisible();
+      expect(screen.queryByTestId("card-add-to-wallet-cta")).toBeNull();
       expect(screen.queryByTestId("card-login")).toBeNull();
       expect(screen.queryByTestId("card-artwork")).toBeNull();
       expect(screen.queryByTestId("pay-card-disclaimer")).toBeNull();
@@ -267,7 +262,6 @@ describe("Card (native)", () => {
 
       expect(receivedDetailsCardState).toBe("choosingCardType");
       expect(receivedDetailsOnTopUp).toBe(onTopUp);
-      expect(receivedWidgetChooseCardType).toBe(receivedDetailsChooseCardType);
       expect(screen.queryByTestId("card-add-to-wallet-cta")).toBeNull();
     });
 
@@ -310,8 +304,7 @@ describe("Card (native)", () => {
       );
 
       expect(receivedDetailsCardState).toBe("ready");
-      receivedWidgetChooseCardType?.();
-      expect(onChooseCardType).toHaveBeenCalledTimes(1);
+      expect(onChooseCardType).not.toHaveBeenCalled();
     });
 
     it("hands the settings actions to the details block", () => {
