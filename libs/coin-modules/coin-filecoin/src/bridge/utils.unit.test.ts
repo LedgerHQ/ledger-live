@@ -1,4 +1,11 @@
-import { isValidBase64, isValidHex, methodToString } from "./utils";
+import type { Operation } from "@ledgerhq/types-live";
+import {
+  getTransactionExplorer,
+  isValidBase64,
+  isValidHex,
+  messageCidToEthHash,
+  methodToString,
+} from "./utils";
 
 test("methodToString", () => {
   const str1 = methodToString(0);
@@ -24,4 +31,45 @@ test("isValidBase64", () => {
     ),
   ).toBe(true);
   expect(isValidBase64("asdasd````")).toBe(false);
+});
+
+describe("messageCidToEthHash", () => {
+  const cid = "bafy2bzacecsnwpizr2wvzm3jcgzfwyaprhdvvnsc33xdmx37gpm6zuaorkuce";
+  const ethHash = "0xa4db3d198ead5cb36911b25b600f89c75ab642deee365f7f33d9ecd00e8aa822";
+
+  test("maps a message CID to its Ethereum transaction hash", () => {
+    expect(messageCidToEthHash(cid)).toBe(ethHash);
+  });
+
+  test("keeps an Ethereum transaction hash unchanged", () => {
+    expect(messageCidToEthHash(ethHash)).toBe(ethHash);
+  });
+
+  test("keeps a malformed CID unchanged", () => {
+    expect(
+      messageCidToEthHash("bafy2bzacec!nwpizr2wvzm3jcgzfwyaprhdvvnsc33xdmx37gpm6zuaorkuce"),
+    ).toBe("bafy2bzacec!nwpizr2wvzm3jcgzfwyaprhdvvnsc33xdmx37gpm6zuaorkuce");
+    expect(
+      messageCidToEthHash("bafy2bzacecsnwpizr2wvzm3jcgzfwyaprhdvvnsc33xdmx37gpm6zuaorku"),
+    ).toBe("bafy2bzacecsnwpizr2wvzm3jcgzfwyaprhdvvnsc33xdmx37gpm6zuaorku");
+    expect(messageCidToEthHash("")).toBe("");
+  });
+});
+
+describe("getTransactionExplorer", () => {
+  const explorerView = { tx: "https://filecoin.blockscout.com/tx/$hash" };
+  const operation = {
+    hash: "bafy2bzacecsnwpizr2wvzm3jcgzfwyaprhdvvnsc33xdmx37gpm6zuaorkuce",
+  } as Operation;
+
+  test("builds the explorer link from the Ethereum transaction hash", () => {
+    expect(getTransactionExplorer(explorerView, operation)).toBe(
+      "https://filecoin.blockscout.com/tx/0xa4db3d198ead5cb36911b25b600f89c75ab642deee365f7f33d9ecd00e8aa822",
+    );
+  });
+
+  test("returns undefined without a transaction explorer", () => {
+    expect(getTransactionExplorer(undefined, operation)).toBeUndefined();
+    expect(getTransactionExplorer({}, operation)).toBeUndefined();
+  });
 });
