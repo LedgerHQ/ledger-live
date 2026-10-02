@@ -338,6 +338,33 @@ describe("usePayCardToolProps", () => {
     });
   });
 
+  it("turns the other card faces off when one is turned on", () => {
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      result.current.flags.setCardNativeParam(true);
+    });
+    act(() => {
+      result.current.flags.setCardDisclaimerParam(true);
+    });
+
+    expect(store.getState().featureFlags.overrides.lwdPayTab?.params).toMatchObject({
+      card_native: false,
+      card_live_app: false,
+      card_disclaimer: true,
+    });
+
+    act(() => {
+      result.current.flags.setCardLiveAppParam(true);
+    });
+
+    expect(store.getState().featureFlags.overrides.lwdPayTab?.params).toMatchObject({
+      card_native: false,
+      card_live_app: true,
+      card_disclaimer: false,
+    });
+  });
+
   it("setPtxCardEnabled overrides ptxCard", () => {
     const { result } = renderHook(() => usePayCardToolProps(), {
       wrapper: withStore(store),
