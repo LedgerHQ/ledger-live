@@ -1198,9 +1198,6 @@ importers:
       '@ledgerhq/live-config':
         specifier: 'catalog:'
         version: 3.9.0
-      '@ledgerhq/live-countervalues-react':
-        specifier: workspace:^
-        version: link:../../libs/live-countervalues-react
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
         version: 0.16.0
