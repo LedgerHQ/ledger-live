@@ -1,4 +1,10 @@
-import { isPoolAddress, isValidNumCycles, MAX_NUM_CYCLES, MIN_NUM_CYCLES } from "./staking";
+import {
+  isPoolAddress,
+  isValidNumCycles,
+  MAX_NUM_CYCLES,
+  MIN_NUM_CYCLES,
+  parseNumCycles,
+} from "./staking";
 
 // Real, checksum-valid mainnet address (also used, unmocked, by buildUnsignedTx.test.ts fixtures).
 const ADDRESS = "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA";
@@ -33,5 +39,19 @@ describe("isValidNumCycles", () => {
 
   it.each([undefined, 0, MAX_NUM_CYCLES + 1, 1.5, NaN])("rejects %s", value => {
     expect(isValidNumCycles(value)).toBe(false);
+  });
+});
+
+describe("parseNumCycles", () => {
+  it.each([
+    ["1", 1],
+    [" 12 ", 12],
+    ["96", 96],
+  ])("parses %j as %s", (raw, expected) => {
+    expect(parseNumCycles(raw)).toBe(expected);
+  });
+
+  it.each(["", "  ", "1.5", "-1", "1e2", "12a", "+3"])("leaves %j unparsed", raw => {
+    expect(parseNumCycles(raw)).toBeUndefined();
   });
 });

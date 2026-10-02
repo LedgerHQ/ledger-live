@@ -4,22 +4,16 @@ import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/stacks/types";
 import {
-  isStacksPoolAddress,
-  isValidStacksNumCycles,
-} from "@ledgerhq/live-common/families/stacks/react";
+  isPoolAddress,
+  isValidNumCycles,
+  parseNumCycles,
+} from "@ledgerhq/coin-stacks/common-logic/staking";
 import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Input from "~/renderer/components/Input";
 import Button from "~/renderer/components/Button";
 import { StepProps } from "../types";
-
-// Whole input or nothing: stripping characters would turn "1.5" into 15, a different lock period
-// than the one typed. Anything else leaves numCycles unset, which keeps Continue disabled.
-const parseNumCycles = (raw: string): number | undefined => {
-  const trimmed = raw.trim();
-  return /^\d+$/.test(trimmed) ? Number(trimmed) : undefined;
-};
 
 const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps) => {
   invariant(account, "account is required");
@@ -105,8 +99,8 @@ const StepValidator = ({ account, transaction, onChangeTransaction }: StepProps)
 export const StepValidatorFooter = ({ transaction, bridgePending, transitionTo }: StepProps) => {
   const canNext =
     !bridgePending &&
-    isStacksPoolAddress(transaction?.valAddress) &&
-    isValidStacksNumCycles(transaction?.familySpecificData?.numCycles);
+    isPoolAddress(transaction?.valAddress) &&
+    isValidNumCycles(transaction?.familySpecificData?.numCycles);
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2} grow>
       <Button

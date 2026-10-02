@@ -6,6 +6,7 @@ import {
   isValidNumCycles,
   MAX_NUM_CYCLES,
   MIN_NUM_CYCLES,
+  parseNumCycles,
 } from "@ledgerhq/coin-stacks/common-logic/staking";
 import SafeAreaView from "~/components/SafeAreaView";
 import KeyboardView from "~/components/KeyboardView";
@@ -19,13 +20,6 @@ import type { StacksStakingFlowParamList } from "./types";
 type Props = BaseComposite<
   StackNavigatorProps<StacksStakingFlowParamList, ScreenName.StacksStakingPool>
 >;
-
-// Whole input or nothing: stripping characters would turn "1.5" into 15 or "-1" into 1, a different
-// lock period than the one typed. Anything else is left for isValidNumCycles to reject.
-const parseNumCycles = (raw: string): number | undefined => {
-  const trimmed = raw.trim();
-  return /^\d+$/.test(trimmed) ? Number(trimmed) : undefined;
-};
 
 export default function SelectPool({ navigation, route }: Props) {
   const { t } = useTranslation();

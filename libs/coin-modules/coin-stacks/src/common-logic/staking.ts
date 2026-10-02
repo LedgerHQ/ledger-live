@@ -30,3 +30,11 @@ export function isValidNumCycles(numCycles: number | undefined): boolean {
     numCycles <= MAX_NUM_CYCLES
   );
 }
+
+/** Parses a typed `numCycles`, whole input or nothing: stripping characters would turn "1.5" into
+ * 15 or "-1" into 1, a different lock period than the one typed. Anything else is `undefined`,
+ * which `isValidNumCycles` rejects. */
+export function parseNumCycles(raw: string): number | undefined {
+  const trimmed = raw.trim();
+  return /^\d+$/.test(trimmed) ? Number(trimmed) : undefined;
+}

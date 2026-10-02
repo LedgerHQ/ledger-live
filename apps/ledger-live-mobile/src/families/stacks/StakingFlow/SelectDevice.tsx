@@ -139,9 +139,9 @@ export default function StakingSelectDevice(props: Props) {
     );
   }
 
-  return (
-    <SelectDeviceScreen
-      {...(props as unknown as React.ComponentProps<typeof SelectDeviceScreen>)}
-    />
-  );
+  // The shared screen is typed for no navigator in particular (`{ [key: string]: object }`) and
+  // forwards whatever params it receives to the matching ConnectDevice route. Mounted as a navigator
+  // `component` (as the Unstake flow does), that loose type is never compared with the route's;
+  // rendered from this typed wrapper, it is, so the props are narrowed to it.
+  return <SelectDeviceScreen {...(props as React.ComponentProps<typeof SelectDeviceScreen>)} />;
 }
