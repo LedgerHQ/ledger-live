@@ -38,7 +38,7 @@ import {
   mapIntentToSDKOperation,
 } from "../logic/utils";
 import { apiClient } from "../network/api";
-import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
+import { getERC20BalancesForAccountV2 } from "../network/utils";
 import type {
   EstimateFeesParams,
   HederaMemo,
@@ -130,21 +130,21 @@ export function createApi(currencyId: string) {
       { cursor, limit, order, minHeight }: ListOperationsOptions,
     ) => {
       const coinConfig = await context.config();
-      const evmAddress = await toEVMAddress({
-        configOrCurrencyId: coinConfig,
-        accountId: address,
-      });
-      invariant(evmAddress, `hedera: evm address is missing for ${address}`);
+      const account = await apiClient
+        .getAccount({ configOrCurrencyId: coinConfig, address })
+        .catch(() => null);
+      invariant(account?.evm_address, `hedera: evm address is missing for ${address}`);
       const [mirrorTokens, erc20TokenBalances, lastFinalizedBlock] = await Promise.all([
         apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
         getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
         lastBlockV2({ configOrCurrencyId: coinConfig }),
       ]);
 
+      // without a floor, the mirror node keeps returning empty 60-day windows back to genesis
       const minTimestamp =
         minHeight > 0
           ? (getDateRangeFromBlockHeight(minHeight).start.getTime() / 1000).toString()
-          : undefined;
+          : account.created_timestamp;
       const isAscending = order === "asc";
       const finalizedUntil = getDateRangeFromBlockHeight(lastFinalizedBlock.height).end;
       const pageCursor =
@@ -152,7 +152,7 @@ export function createApi(currencyId: string) {
       const latestAccountOperations = await logicListOperationsV2(coinConfig, {
         currencyId,
         address,
-        evmAddress,
+        evmAddress: account.evm_address,
         mirrorTokens,
         ...(typeof pageCursor === "string" && { cursor: pageCursor }),
         ...(typeof limit === "number" && { limit }),

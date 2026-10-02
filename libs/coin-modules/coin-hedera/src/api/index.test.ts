@@ -10,6 +10,7 @@ import { apiClient } from "../network/api";
 import * as networkUtils from "../network/utils";
 import { getMockedContext } from "../test/fixtures/config.fixture";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedMirrorAccount } from "../test/fixtures/mirror.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { HederaMemo } from "../types";
 import { createApi } from "./index";
@@ -23,7 +24,7 @@ const mockExtractInitiator = jest.mocked(logicUtils.extractInitiator);
 const mockGetOperationValue = jest.mocked(logicUtils.getOperationValue);
 const mockGetDateRangeFromBlockHeight = jest.mocked(logicUtils.getDateRangeFromBlockHeight);
 const mockMapIntentToSDKOperation = jest.mocked(mapIntentToSDKOperation);
-const mockToEVMAddress = jest.mocked(networkUtils.toEVMAddress);
+const mockGetAccount = jest.mocked(apiClient.getAccount);
 const mockGetAccountTokens = jest.mocked(apiClient.getAccountTokens);
 const mockGetERC20BalancesForAccountV2 = jest.mocked(networkUtils.getERC20BalancesForAccountV2);
 const mockBroadcast = jest.mocked(logic.broadcast);
@@ -341,7 +342,7 @@ describe("createApi", () => {
     beforeEach(() => {
       mockExtractInitiator.mockReturnValue(mockFeesPayer);
       mockGetOperationValue.mockReturnValue(100n);
-      mockToEVMAddress.mockResolvedValue("0xabc");
+      mockGetAccount.mockResolvedValue(getMockedMirrorAccount({ evm_address: "0xabc" }));
       mockGetAccountTokens.mockResolvedValue([]);
       mockGetERC20BalancesForAccountV2.mockResolvedValue([]);
       mockGetDateRangeFromBlockHeight.mockReturnValue({
@@ -430,6 +431,24 @@ describe("createApi", () => {
       expect(mockListOperationsV2).toHaveBeenCalledWith(
         expect.anything(),
         expect.not.objectContaining({ minTimestamp: expect.anything() }),
+      );
+    });
+
+    it("floors a from-scratch sync at the account creation, so the walk stops there instead of at genesis", async () => {
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [mockOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+      mockGetAccount.mockResolvedValue(
+        getMockedMirrorAccount({ evm_address: "0xabc", created_timestamp: "1746530643.152589907" }),
+      );
+
+      await api.listOperations(mockContext, mockAddress, mockOptions);
+
+      expect(mockListOperationsV2).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ minTimestamp: "1746530643.152589907" }),
       );
     });
 
@@ -718,7 +737,7 @@ describe("createApi", () => {
     });
 
     it("should throw when evm address is missing", async () => {
-      mockToEVMAddress.mockResolvedValue(null);
+      mockGetAccount.mockRejectedValue(new Error("not found"));
 
       await expect(api.listOperations(mockContext, mockAddress, mockOptions)).rejects.toThrow(
         "hedera: evm address is missing",

@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
 import { encodeFunctionData, erc20Abi } from "viem";
@@ -262,61 +263,81 @@ async function getNetworkFees({
   return res.data;
 }
 
-async function getContractCallResult({
-  configOrCurrencyId,
-  transactionHash,
-}: {
-  configOrCurrencyId: HederaCoinConfig | string;
-  transactionHash: string;
-}): Promise<HederaMirrorContractCallResult> {
-  const config = resolveConfig(configOrCurrencyId);
-  const res = await network<HederaMirrorContractCallResult>({
-    method: "GET",
-    url: `${config.apiUrls.mirrorNode}/api/v1/contracts/results/${transactionHash}`,
-  });
+const getContractCallResult = makeLRUCache(
+  async ({
+    configOrCurrencyId,
+    transactionHash,
+  }: {
+    configOrCurrencyId: HederaCoinConfig | string;
+    transactionHash: string;
+  }): Promise<HederaMirrorContractCallResult> => {
+    const config = resolveConfig(configOrCurrencyId);
+    const res = await network<HederaMirrorContractCallResult>({
+      method: "GET",
+      url: `${config.apiUrls.mirrorNode}/api/v1/contracts/results/${transactionHash}`,
+    });
 
-  return res.data;
-}
+    return res.data;
+  },
+  ({ configOrCurrencyId, transactionHash }) => {
+    if (typeof configOrCurrencyId === "string") {
+      return `${configOrCurrencyId}-${transactionHash}`;
+    }
 
-async function findTransactionByContractCallV2({
-  configOrCurrencyId,
-  timestamp,
-  payerAddress,
-}: {
-  configOrCurrencyId: HederaCoinConfig | string;
-  timestamp: string;
-  payerAddress: string;
-}): Promise<HederaMirrorTransaction | null> {
-  const config = resolveConfig(configOrCurrencyId);
+    return `${configOrCurrencyId.networkType}-${transactionHash}`;
+  },
+  minutes(5, 500),
+);
 
-  // Hgraph API returns timestamp as number and nanoseconds precision is lost during parsing
-  // instead of using `timestamp=eq:${timestamp}`, we need to fetch transactions in a small range
-  // +-10 microseconds is used to bypass hgraph precision issue
-  const timestampAsNumber = new BigNumber(timestamp).multipliedBy(10 ** 9);
-  const timestampDiffNs = new BigNumber(10_000);
-  const from = new BigNumber(timestampAsNumber).minus(timestampDiffNs).dividedBy(10 ** 9);
-  const to = new BigNumber(timestampAsNumber).plus(timestampDiffNs).dividedBy(10 ** 9);
+const findTransactionByContractCallV2 = makeLRUCache(
+  async ({
+    configOrCurrencyId,
+    timestamp,
+    payerAddress,
+  }: {
+    configOrCurrencyId: HederaCoinConfig | string;
+    timestamp: string;
+    payerAddress: string;
+  }): Promise<HederaMirrorTransaction | null> => {
+    const config = resolveConfig(configOrCurrencyId);
 
-  const params = new URLSearchParams({ limit: "100", order: "desc" });
-  params.append("timestamp", `gte:${from.toFixed(9)}`);
-  params.append("timestamp", `lte:${to.toFixed(9)}`);
+    // Hgraph API returns timestamp as number and nanoseconds precision is lost during parsing
+    // instead of using `timestamp=eq:${timestamp}`, we need to fetch transactions in a small range
+    // +-10 microseconds is used to bypass hgraph precision issue
+    const timestampAsNumber = new BigNumber(timestamp).multipliedBy(10 ** 9);
+    const timestampDiffNs = new BigNumber(10_000);
+    const from = new BigNumber(timestampAsNumber).minus(timestampDiffNs).dividedBy(10 ** 9);
+    const to = new BigNumber(timestampAsNumber).plus(timestampDiffNs).dividedBy(10 ** 9);
 
-  const res = await network<HederaMirrorTransactionsResponse>({
-    method: "GET",
-    url: `${config.apiUrls.mirrorNode}/api/v1/transactions?${params.toString()}`,
-  });
+    const params = new URLSearchParams({ limit: "100", order: "desc" });
+    params.append("timestamp", `gte:${from.toFixed(9)}`);
+    params.append("timestamp", `lte:${to.toFixed(9)}`);
 
-  // try to find main CONTRACT_CALL transaction related to the given address
-  const relatedTx = res.data.transactions.find(tx => {
-    return (
-      tx.name === HEDERA_TRANSACTION_NAMES.ContractCall &&
-      tx.transaction_id.startsWith(payerAddress) &&
-      tx.parent_consensus_timestamp === null
-    );
-  });
+    const res = await network<HederaMirrorTransactionsResponse>({
+      method: "GET",
+      url: `${config.apiUrls.mirrorNode}/api/v1/transactions?${params.toString()}`,
+    });
 
-  return relatedTx ?? null;
-}
+    // try to find main CONTRACT_CALL transaction related to the given address
+    const relatedTx = res.data.transactions.find(tx => {
+      return (
+        tx.name === HEDERA_TRANSACTION_NAMES.ContractCall &&
+        tx.transaction_id.startsWith(payerAddress) &&
+        tx.parent_consensus_timestamp === null
+      );
+    });
+
+    return relatedTx ?? null;
+  },
+  ({ configOrCurrencyId, timestamp, payerAddress }) => {
+    if (typeof configOrCurrencyId === "string") {
+      return `${configOrCurrencyId}-${payerAddress}-${timestamp}`;
+    }
+
+    return `${configOrCurrencyId.networkType}-${payerAddress}-${timestamp}`;
+  },
+  minutes(5, 500),
+);
 
 async function estimateContractCallGas({
   configOrCurrencyId,

@@ -26,6 +26,8 @@ describe("apiClient", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
+    apiClient.getContractCallResult.reset();
+    apiClient.findTransactionByContractCallV2.reset();
 
     mockedResolveConfig.mockReturnValue(mockConfig);
   });
@@ -428,6 +430,17 @@ describe("apiClient", () => {
 
       expect(result).toEqual(mockedResults);
       expect(requestUrl).toContain("/api/v1/contracts/results");
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("fetches a transaction hash only once", async () => {
+      mockedNetwork.mockResolvedValue(getMockResponse({ gas_used: 150 }));
+      const params = { configOrCurrencyId: mockConfig, transactionHash: "0xabc" };
+
+      await apiClient.getContractCallResult(params);
+      const result = await apiClient.getContractCallResult(params);
+
+      expect(result).toEqual({ gas_used: 150 });
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
   });

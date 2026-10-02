@@ -48,6 +48,9 @@ jest.mock("./rpc", () => ({
   rpcClient: require("../test/fixtures/rpc.fixture").getMockedRpcClient(),
 }));
 
+const mockGetContractCallResult = jest.mocked(apiClient.getContractCallResult);
+const mockFindTransactionByContractCallV2 = jest.mocked(apiClient.findTransactionByContractCallV2);
+
 describe("network utils", () => {
   const defaultConfig = getMockedConfig();
   const mockCurrency = getMockedCurrency();
@@ -367,10 +370,8 @@ describe("network utils", () => {
     });
 
     beforeEach(() => {
-      (apiClient.getContractCallResult as jest.Mock).mockResolvedValue(mockContractCallResult);
-      (apiClient.findTransactionByContractCallV2 as jest.Mock).mockResolvedValue(
-        mockMirrorTransaction,
-      );
+      mockGetContractCallResult.mockResolvedValue(mockContractCallResult);
+      mockFindTransactionByContractCallV2.mockResolvedValue(mockMirrorTransaction);
     });
 
     it("should enrich supported ERC20 transfers with contract call result and mirror transaction", async () => {
@@ -416,7 +417,7 @@ describe("network utils", () => {
     });
 
     it("should skip transfers where mirror transaction is not found", async () => {
-      (apiClient.findTransactionByContractCallV2 as jest.Mock).mockResolvedValue(null);
+      mockFindTransactionByContractCallV2.mockResolvedValue(null);
 
       const result = await enrichERC20Transfers({
         configOrCurrencyId: mockCurrency.id,
@@ -429,9 +430,7 @@ describe("network utils", () => {
     it("should handle multiple transfers", async () => {
       const transfers = [mockERC20Transfer, { ...mockERC20Transfer, transaction_hash: "hash456" }];
 
-      (apiClient.findTransactionByContractCallV2 as jest.Mock).mockResolvedValue(
-        mockMirrorTransaction,
-      );
+      mockFindTransactionByContractCallV2.mockResolvedValue(mockMirrorTransaction);
 
       const result = await enrichERC20Transfers({
         configOrCurrencyId: mockCurrency.id,
