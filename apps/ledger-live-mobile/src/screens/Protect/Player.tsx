@@ -90,6 +90,10 @@ export function RecoverPlayer({ navigation, route }: Props) {
     }
   }, [device, fromOnboarding, navigation, onboardingState]);
 
+  useEffect(() => {
+    if (!manifest) navigation.setOptions({ headerShown: true });
+  }, [manifest, navigation]);
+
   return manifest ? (
     <>
       <TrackScreen category="Platform" name="App" />
