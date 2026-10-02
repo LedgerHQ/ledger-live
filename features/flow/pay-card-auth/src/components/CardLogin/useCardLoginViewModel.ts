@@ -35,6 +35,13 @@ const INTRO_ROWS: readonly { icon: CardLoginIntroRowIcon; key: string }[] = [
   { icon: "LedgerLogo", key: "topUp" },
 ];
 
+const PRESSABLE_LOGIN_STATES: ReadonlySet<CardLoginStateValue> = new Set([
+  "idle",
+  "authError",
+  "userFetchError",
+  "awaitingCallback",
+]);
+
 const SESSION_RESOLVING_STATES: ReadonlySet<CardLoginStateValue> = new Set([
   "hydrating",
   "clearingAttempt",
@@ -59,6 +66,11 @@ const TRACK_BUTTON = {
   close: "close",
 } as const;
 
+function isLoginInProgress(value: CardLoginStateValue, keepLoginPage: boolean): boolean {
+  if (PRESSABLE_LOGIN_STATES.has(value)) return false;
+  return !(keepLoginPage && value === "ready");
+}
+
 /**
  * Turns one machine snapshot into the view props. It is a pure function so the mapping can be read,
  * and tested, without a React tree.
@@ -70,21 +82,17 @@ export function mapSnapshotToViewModel(
   onLoginPress: () => void,
   onAlreadyHaveCardPress: () => void,
   intro: CardLoginIntroViewProps,
+  keepLoginPage = false,
 ): CardLoginViewModel {
   // Nothing to offer: `ready` means the holder is signed in already, and `More` holds the screen.
-  if (value === "ready") {
+  if (value === "ready" && !keepLoginPage) {
     return null;
   }
 
   return {
     ...copy,
     isResolving: SESSION_RESOLVING_STATES.has(value),
-    // `awaitingCallback` waits for a redirect that may never arrive, so the login stays pressable.
-    isLoading:
-      value !== "idle" &&
-      value !== "authError" &&
-      value !== "userFetchError" &&
-      value !== "awaitingCallback",
+    isLoading: isLoginInProgress(value, keepLoginPage),
     error,
     onLoginPress,
     onAlreadyHaveCardPress,
@@ -99,6 +107,9 @@ export function useCardLoginViewModel({
   oauthConfig,
   callback,
   requestProtection,
+  keepLoginPage,
+  onCreateAccount,
+  onLogIn,
 }: CardLoginViewModelParams): CardLoginViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch<CardLoginDispatch>();
@@ -161,6 +172,11 @@ export function useCardLoginViewModel({
   );
 
   const startLogin = useCallback(() => {
+    if (onLogIn) {
+      onLogIn();
+      return;
+    }
+
     setHasSignupFailed(false);
     dispatch(setPendingLoginType("signin"));
 
@@ -169,9 +185,14 @@ export function useCardLoginViewModel({
         send({ type: "LOGIN" });
       }
     })();
-  }, [dispatch, send, whenProtected]);
+  }, [dispatch, onLogIn, send, whenProtected]);
 
   const openSignup = useCallback(() => {
+    if (onCreateAccount) {
+      onCreateAccount();
+      return;
+    }
+
     setHasSignupFailed(false);
 
     void (async () => {
@@ -191,7 +212,7 @@ export function useCardLoginViewModel({
         setHasSignupFailed(true);
       }
     })();
-  }, [dispatch, openHostedPage, openHostedLogin, oauthConfig, whenProtected]);
+  }, [dispatch, onCreateAccount, openHostedPage, openHostedLogin, oauthConfig, whenProtected]);
 
   const trackCta = useCallback((button: (typeof TRACK_BUTTON)[keyof typeof TRACK_BUTTON]) => {
     trackButtonClicked({
@@ -339,5 +360,6 @@ export function useCardLoginViewModel({
     onLoginPress,
     onAlreadyHaveCardPress,
     intro,
+    keepLoginPage,
   );
 }

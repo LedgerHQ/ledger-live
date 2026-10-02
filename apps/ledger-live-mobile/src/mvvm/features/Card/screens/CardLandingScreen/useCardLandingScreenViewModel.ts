@@ -1,4 +1,3 @@
-import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import { CreditCard, Screens } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -6,9 +5,8 @@ import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import { useTranslation } from "~/context/Locale";
 import type { CardLandingCta } from "../../types";
 import { CARD_LANDING_TEST_IDS } from "../../testIds";
-import { PAGE_NAME, CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
-import { NavigatorName, ScreenName } from "~/const";
-import { useNavigation } from "@react-navigation/core";
+import { PAGE_NAME } from "../../constants";
+import { useCardLandingActions } from "../../hooks/useCardLandingActions";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { ImageSourcePropType } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -29,48 +27,17 @@ export interface CardLandingScreenViewModelResult {
   readonly backgroundImageSource: ImageSourcePropType;
 }
 
-const TRACKING_BUTTON_EVENT = "button_clicked";
-
 export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResult => {
   const { t } = useTranslation();
   const { theme: lumenTheme } = useLumenTheme();
   const { isDarkMode } = useWallet40Theme();
   const [imageLoaded, setImageLoaded] = useState(false);
-  const navigation = useNavigation();
+  const { goToExploreCards, goToIHaveACard } = useCardLandingActions();
   const { bottomBarHeight } = useNavigationBarHeights();
   const { top: safeAreaTop } = useSafeAreaInsets();
   const hasExperimentalHeader = useExperimental();
 
   const onImageLoaded = useCallback(() => setImageLoaded(true), []);
-
-  const handleExploreCardsPress = useCallback(() => {
-    track(TRACKING_BUTTON_EVENT, {
-      button: "explore cards",
-      page: PAGE_NAME,
-    });
-    navigation.navigate(NavigatorName.Card, {
-      screen: ScreenName.Card,
-      params: {
-        platform: CARD_APP_ID,
-        name: "Card Program",
-        path: "/providers-list",
-      },
-    });
-  }, [navigation]);
-
-  const handleIHaveACardPress = useCallback(() => {
-    track(TRACKING_BUTTON_EVENT, {
-      button: "I have a card",
-      page: PAGE_NAME,
-    });
-    navigation.navigate(NavigatorName.Card, {
-      screen: ScreenName.Card,
-      params: {
-        platform: CL_CARD_APP_ID,
-        name: "CL Card Powered by Ledger",
-      },
-    });
-  }, [navigation]);
 
   const ctas: readonly CardLandingCta[] = useMemo(
     () => [
@@ -78,18 +45,18 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
         id: "explore_cards",
         label: t("cardLanding.ctas.exploreCards"),
         icon: Screens,
-        onPress: handleExploreCardsPress,
+        onPress: goToExploreCards,
         testID: CARD_LANDING_TEST_IDS.ctas.exploreCards,
       },
       {
         id: "i_have_a_card",
         label: t("cardLanding.ctas.iHaveACard"),
         icon: CreditCard,
-        onPress: handleIHaveACardPress,
+        onPress: goToIHaveACard,
         testID: CARD_LANDING_TEST_IDS.ctas.iHaveACard,
       },
     ],
-    [t, handleExploreCardsPress, handleIHaveACardPress],
+    [t, goToExploreCards, goToIHaveACard],
   );
 
   const backgroundImageSource = useMemo(() => {

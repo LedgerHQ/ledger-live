@@ -95,6 +95,20 @@ describe("mapSnapshotToViewModel", () => {
     ).toBeNull();
   });
 
+  it("keeps the login page in ready when the host still wants it", () => {
+    expect(
+      mapSnapshotToViewModel("ready", null, copy, onLoginPress, onAlreadyHaveCardPress, intro, true)
+        ?.loginLabel,
+    ).toBe(copy.loginLabel);
+  });
+
+  it("leaves the login pressable in ready when the host still wants the page", () => {
+    expect(
+      mapSnapshotToViewModel("ready", null, copy, onLoginPress, onAlreadyHaveCardPress, intro, true)
+        ?.isLoading,
+    ).toBe(false);
+  });
+
   it.each([
     "hydrating",
     "clearingAttempt",
@@ -425,6 +439,33 @@ describe("useCardLoginViewModel intro", () => {
 
     await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
     expect(result.current?.intro.isOpen).toBe(false);
+  });
+
+  it("sends create account and login to the host when the host owns them", async () => {
+    const onCreateAccount = jest.fn();
+    const onLogIn = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+          onCreateAccount,
+          onLogIn,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() => expect(result.current?.isLoading).toBe(false));
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+    expect(onCreateAccount).toHaveBeenCalledTimes(1);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+    expect(onLogIn).toHaveBeenCalledTimes(1);
+    expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
   });
 
   it("opens the provider's signup page from the create account action", async () => {

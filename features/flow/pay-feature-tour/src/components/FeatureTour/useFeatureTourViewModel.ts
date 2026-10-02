@@ -32,7 +32,7 @@ export function useFeatureTourViewModel(): FeatureTourViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasSeenFeatureTour = useSelector(selectPayCardHasSeenFeatureTour);
-  const showCardRow = useFeature(PAY_TAB_FEATURE_FLAG)?.params?.card !== false;
+  const showCardRow = useFeature(PAY_TAB_FEATURE_FLAG)?.params?.card_native === true;
 
   const dismiss = useCallback(
     (button: "close" | "continue") => {

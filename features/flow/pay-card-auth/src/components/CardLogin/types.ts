@@ -24,6 +24,9 @@ export type CardLoginProps = {
   readonly openHostedLogin?: OpenHostedLogin;
   readonly openHostedPage?: OpenCardHostedPage;
   readonly requestProtection?: RequestAppProtection;
+  readonly keepLoginPage?: boolean;
+  readonly onCreateAccount?: () => void;
+  readonly onLogIn?: () => void;
 };
 
 export type MobileWallet = "applePay" | "googlePay" | "both";

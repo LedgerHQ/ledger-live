@@ -53,7 +53,7 @@ const CARD_ASSET: CardAssetRow = {
 };
 
 function PayTabViewModelProbe() {
-  const { card } = usePayTabViewModel();
+  const viewModel = usePayTabViewModel();
   const {
     login,
     onTopUp,
@@ -62,7 +62,7 @@ function PayTabViewModelProbe() {
     assets: cardAssets,
     cardSettingsActions,
     formatters,
-  } = card;
+  } = viewModel.card;
   const { oauthConfig, callback } = login;
   const formatted = formatters?.countervalue?.(1250);
 
@@ -94,6 +94,17 @@ function PayTabViewModelProbe() {
       <Pressable testID="press-access-baanx" onPress={cardSettingsActions?.onAccessBaanx} />
       <Pressable testID="press-add-asset" onPress={cardAssets?.onAddAsset} />
       <Text testID="login-open-hosted-page">{String(login.openHostedPage)}</Text>
+      <Text testID="keep-login-page">{String(login.keepLoginPage === true)}</Text>
+      <Pressable testID="create-account" onPress={login.onCreateAccount} />
+      <Pressable testID="log-in" onPress={login.onLogIn} />
+      <Text testID="card-status">{viewModel.cardState.status}</Text>
+      {viewModel.cardState.status === "disclaimer" && (
+        <>
+          <Text testID="card-disclaimer">{viewModel.cardState.text}</Text>
+          <Text testID="card-disclaimer-link">{viewModel.cardState.link}</Text>
+          <Pressable testID="card-disclaimer-press" onPress={viewModel.cardState.onPress} />
+        </>
+      )}
     </>
   );
 }
@@ -114,6 +125,20 @@ function BaseNavigatorProbe({
   );
 }
 
+function CardNavigatorProbe({
+  route,
+}: {
+  route: { params?: { screen?: string; params?: { platform?: string; path?: string } } };
+}) {
+  return (
+    <>
+      <Text testID="card-nav-screen">{String(route.params?.screen)}</Text>
+      <Text testID="card-nav-platform">{String(route.params?.params?.platform)}</Text>
+      <Text testID="card-nav-path">{String(route.params?.params?.path)}</Text>
+    </>
+  );
+}
+
 function renderViewModel(
   params?: PayTabNavigatorParamList[typeof ScreenName.PayTab],
   options?: Parameters<typeof render>[1],
@@ -126,6 +151,7 @@ function renderViewModel(
         initialParams={params}
       />
       <Stack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
+      <Stack.Screen name={NavigatorName.Card} component={CardNavigatorProbe} />
     </Stack.Navigator>,
     options,
   );
@@ -415,5 +441,59 @@ describe("usePayTabViewModel", () => {
     );
 
     warn.mockRestore();
+  });
+
+  it("should open the CL Card live app from the card disclaimer", async () => {
+    const { user } = renderViewModel(undefined, {
+      overrideInitialState: withFlagOverrides({
+        lwmPayTab: { enabled: true, params: { card_disclaimer: true } },
+      }),
+    });
+
+    expect(screen.getByTestId("card-status")).toHaveTextContent("disclaimer");
+    expect(screen.getByTestId("card-disclaimer")).toHaveTextContent(
+      "Looking for your crypto card?",
+    );
+    expect(screen.getByTestId("card-disclaimer-link")).toHaveTextContent("Go to CL Card");
+
+    await user.press(screen.getByTestId("card-disclaimer-press"));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("card-nav-platform")).toHaveTextContent("cl-card"),
+    );
+    expect(screen.getByTestId("card-nav-screen")).toHaveTextContent(ScreenName.Card);
+  });
+
+  it("should open the card live app from create account and Baanx from login", async () => {
+    const { user } = renderViewModel(undefined, {
+      overrideInitialState: withFlagOverrides({
+        lwmPayTab: { enabled: true, params: { card_live_app: true } },
+      }),
+    });
+
+    expect(screen.getByTestId("card-status")).toHaveTextContent("liveApp");
+    expect(screen.getByTestId("keep-login-page")).toHaveTextContent("true");
+
+    await user.press(screen.getByTestId("create-account"));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("card-nav-platform")).toHaveTextContent("card-program"),
+    );
+    expect(screen.getByTestId("card-nav-path")).toHaveTextContent("/providers-list");
+  });
+
+  it("should open the Baanx live app from the login action", async () => {
+    const { user } = renderViewModel(undefined, {
+      overrideInitialState: withFlagOverrides({
+        lwmPayTab: { enabled: true, params: { card_live_app: true } },
+      }),
+    });
+
+    await user.press(screen.getByTestId("log-in"));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("card-nav-platform")).toHaveTextContent("cl-card"),
+    );
+    expect(screen.getByTestId("card-nav-path")).not.toHaveTextContent("/providers-list");
   });
 });
