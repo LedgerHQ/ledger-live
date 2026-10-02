@@ -10789,6 +10789,8 @@
   },
   "payTab" : {
     "disclaimer" : "Hizmet sunan: Monavate Onchain",
+    "cardDisclaimer" : "Kripto kartınızı mı arıyorsunuz?",
+    "cardDisclaimerLink" : "CL Kart'a git",
     "featureTour" : {
       "title" : "Tüm ödemeleriniz tek bir yerde",
       "description" : "Kriptonuzu günlük para kullanımına hazır hâle getiren yeni Ödeme Yap sekmenizle tanışın.",
@@ -11083,9 +11085,9 @@
     },
     "cardLoginIntro" : {
       "title" : "Kripto harcayın, para iadesi alın",
-      "providedBy" : "Kart bir Baanx hizmetidir",
+      "providedBy" : "Kart bir Monavate hizmetidir",
       "createAccount" : "Bir hesap oluştur",
-      "logIn" : "Baanx'e giriş yap",
+      "logIn" : "Monavate'e giriş yap",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -11110,6 +11112,7 @@
       "title" : "Ödeme yapın",
       "pay" : "Yeni",
       "seeAllTitle" : "Kişiye ödeme yapın",
+      "me" : "Ben",
       "addressPicker" : {
         "title" : "{{name}} için adres seçin",
         "meTitle" : "Adresimi seç",
