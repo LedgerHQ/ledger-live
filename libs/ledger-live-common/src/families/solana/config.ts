@@ -14,7 +14,7 @@ export const solanaConfig: CurrencyLiveConfigDefinition = {
       },
       name: "Solana",
       unit: { name: "SOL", code: "SOL", magnitude: 9 },
-      token2022Enabled: false,
+      token2022Enabled: true,
       legacyOCMSMaxVersion: "1.8.0",
       validatorsUrl: "https://validators-solana.coin.ledger.com/api/v1/validators/mainnet.json",
     } satisfies SolanaCoinConfig,
