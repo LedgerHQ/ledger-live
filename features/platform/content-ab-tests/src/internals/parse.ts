@@ -11,8 +11,9 @@ export type ContentAbTestTracking = Readonly<Record<string, Readonly<Record<stri
 
 /**
  * Validates one experiment payload, from Remote Config or from the debug editor. Keys placed
- * beside `enabled`, `copy` and `trackingConfiguration` are dropped, and an empty
- * `trackingConfiguration` is omitted. A non-string tracking value makes the payload invalid.
+ * beside `enabled`, `copy` and `trackingConfiguration` are dropped. An empty or null
+ * `trackingConfiguration` is omitted and the copy is kept. A non-string tracking value makes the
+ * payload invalid.
  */
 export function parseContentAbTestPayload(value: unknown): ContentAbTestPayload | null {
   const experiment = ContentAbTestPayloadSchema.safeParse(value);

@@ -25,6 +25,7 @@ type ExperimentsSubscriber = (experiments: ContentAbTests) => void;
 
 const EMPTY_COPY: ContentAbTestCopy = Object.freeze({});
 const EMPTY_EXPERIMENTS: ContentAbTests = Object.freeze({});
+const EMPTY_TRACKING: ContentAbTestTracking = Object.freeze({});
 const ENGLISH_LANGUAGE = "en";
 
 let remote: ContentAbTests = EMPTY_EXPERIMENTS;
@@ -58,10 +59,13 @@ export function getContentAbTests(): ContentAbTests {
 }
 
 /**
- * The `trackingConfiguration` of each enabled experiment, sent as `ab_tests`. `undefined` when no
- * enabled experiment has tracking pairs, so events carry no empty attribute.
+ * The `trackingConfiguration` of each enabled experiment, sent as `ab_tests`. `{}` when the
+ * language is not English, or when no enabled experiment has tracking pairs, so callers can send
+ * that value and the next identify replaces a stale user trait. Copy is English-only, so a
+ * non-English session must not be counted in the experiment.
  */
-export function getContentAbTestTracking(): ContentAbTestTracking | undefined {
+export function getContentAbTestTracking(language: string): ContentAbTestTracking {
+  if (!isEnglish(language) || !tracking) return EMPTY_TRACKING;
   return tracking;
 }
 

@@ -13,7 +13,7 @@ It does not decide whether a feature flag is on. That stays in `@features/platfo
 | --- | --- |
 | `setContentAbTestCopy(all)` | Stores experiments from one `getAll()` payload. An identical poll does not republish. |
 | `getContentAbTestCopy()` / `subscribeToContentAbTestCopy` | The English copy currently applied: the `copy` of enabled experiments. |
-| `getContentAbTestTracking()` | The `trackingConfiguration` of each enabled experiment, keyed by in-app id (`feature_copy_upgrade_banner` becomes `upgradeBanner`). `undefined` when there is none. Apps send it as the `ab_tests` analytics attribute and omit the attribute when it is `undefined`. |
+| `getContentAbTestTracking(language)` | The `trackingConfiguration` of each enabled experiment, keyed by in-app id (`feature_copy_upgrade_banner` becomes `upgradeBanner`). `{}` when `language` is not English (`en` or `en-*`), or when no enabled experiment has tracking pairs. Apps send that value as `ab_tests`, so the next identify replaces a stale user trait. |
 | `getContentAbTests()` / `subscribeToContentAbTests` | Every valid experiment, enabled or not, with debug overrides applied. Used by the feature flags debug screens. |
 | `setContentAbTestOverride` / `clearContentAbTestOverrides` | Local debug overrides. They replace the remote payload, so they change the applied copy and `ab_tests` too, and survive later polls. |
 | `parseContentAbTestPayload(value)` | Validates one payload with the same rules as Remote Config values. Returns `null` when invalid. |
@@ -29,7 +29,7 @@ It does not decide whether a feature flag is on. That stays in `@features/platfo
 }
 ```
 
-For `feature_copy_upgrade_banner`, events carry `ab_tests: { upgradeBanner: { ab_upgrade: "variant_b", cohort: "q3" } }`. `trackingConfiguration` is optional and takes any keys, with string values only. A non-string value makes the whole experiment invalid, so its copy is not applied either.
+For `feature_copy_upgrade_banner` in English, events carry `ab_tests: { upgradeBanner: { ab_upgrade: "variant_b", cohort: "q3" } }`. Any other language, a disabled experiment, or an experiment without tracking pairs sends `ab_tests: {}`. `trackingConfiguration` is optional and takes any keys, with string values only. `null` is treated as missing and the copy still applies. A non-string value inside it makes the whole experiment invalid, so its copy is not applied either.
 
 ## When a new value takes effect
 

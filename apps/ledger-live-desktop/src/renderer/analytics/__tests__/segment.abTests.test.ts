@@ -37,11 +37,12 @@ const remoteValue = (raw: string) => ({
   getSource: () => "remote" as const,
 });
 
-const createStoreWithAnalytics = () =>
+const createStoreWithAnalytics = (language = "en") =>
   createStore({
     state: {
       settings: {
         ...SETTINGS_INITIAL_STATE,
+        language,
         shareAnalytics: true,
         sharePersonalizedRecommandations: false,
       },
@@ -49,8 +50,8 @@ const createStoreWithAnalytics = () =>
     fetchRemoteFlags: null,
   });
 
-const sendIdentifyTrackAndPage = async () => {
-  await startAnalytics(createStoreWithAnalytics());
+const sendIdentifyTrackAndPage = async (language = "en") => {
+  await startAnalytics(createStoreWithAnalytics(language));
   const identifyTraits = mockIdentify.mock.calls.at(-1)![1];
 
   await track("TestEvent", {});
@@ -65,17 +66,14 @@ const sendIdentifyTrackAndPage = async () => {
 const withAbTests = (abTests: unknown) =>
   Array.from({ length: 3 }, () => expect.objectContaining({ ab_tests: abTests }));
 
-const withoutAbTests = () =>
-  Array.from({ length: 3 }, () => expect.not.objectContaining({ ab_tests: expect.anything() }));
-
 describe("segment ab_tests", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setContentAbTestCopy({});
   });
 
-  it("leaves ab_tests out when no experiment is served", async () => {
-    expect(await sendIdentifyTrackAndPage()).toEqual(withoutAbTests());
+  it("sends an empty ab_tests object when no experiment is served", async () => {
+    expect(await sendIdentifyTrackAndPage()).toEqual(withAbTests({}));
   });
 
   it("sends the tracking pairs of each enabled experiment", async () => {
@@ -94,7 +92,7 @@ describe("segment ab_tests", () => {
     );
   });
 
-  it("leaves ab_tests out when experiments are disabled or malformed", async () => {
+  it("sends an empty ab_tests object when experiments are disabled or malformed", async () => {
     setContentAbTestCopy({
       feature_copy_broken: remoteValue("not json"),
       feature_copy_disabled: remoteValue(
@@ -106,6 +104,20 @@ describe("segment ab_tests", () => {
       ),
     });
 
-    expect(await sendIdentifyTrackAndPage()).toEqual(withoutAbTests());
+    expect(await sendIdentifyTrackAndPage()).toEqual(withAbTests({}));
+  });
+
+  it("does not attribute an English copy experiment in another language", async () => {
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: remoteValue(
+        JSON.stringify({
+          enabled: true,
+          copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+          trackingConfiguration: { ab_upgrade: "variant_b" },
+        }),
+      ),
+    });
+
+    expect(await sendIdentifyTrackAndPage("fr")).toEqual(withAbTests({}));
   });
 });

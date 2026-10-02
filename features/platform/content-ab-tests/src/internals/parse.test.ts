@@ -43,6 +43,23 @@ describe("parseContentAbTests", () => {
     });
   });
 
+  it("treats a null tracking configuration as missing without dropping the copy", () => {
+    expect(
+      parseContentAbTests({
+        feature_copy_upgrade_banner: experiment({
+          enabled: true,
+          copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+          trackingConfiguration: null,
+        }),
+      }),
+    ).toEqual({
+      upgradeBanner: {
+        enabled: true,
+        copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+      },
+    });
+  });
+
   it("drops keys defined outside enabled, copy and trackingConfiguration", () => {
     expect(
       parseContentAbTests({

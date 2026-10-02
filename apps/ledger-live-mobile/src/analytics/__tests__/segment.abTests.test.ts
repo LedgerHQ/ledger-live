@@ -4,15 +4,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setContentAbTestCopy } from "@features/platform-content-ab-tests";
 import reducers from "~/reducers";
 import type { AppStore } from "~/reducers";
-import { setAnalytics, setAnalyticsConsentInfo } from "~/actions/settings";
+import { setAnalytics, setAnalyticsConsentInfo, setLanguage } from "~/actions/settings";
 import * as segment from "../segment";
 
 jest.unmock("../segment");
 jest.unmock("@shared/analytics");
 
-const { _trackMock: mockTrack } = require("@segment/analytics-react-native") as {
-  _trackMock: jest.Mock;
-};
+const { _identifyMock: mockIdentify, _trackMock: mockTrack } =
+  require("@segment/analytics-react-native") as {
+    _identifyMock: jest.Mock;
+    _trackMock: jest.Mock;
+  };
 
 const remoteValue = (raw: string) => ({
   asString: () => raw,
@@ -49,16 +51,20 @@ describe("segment ab_tests", () => {
 
   const trackTestEvent = async () => {
     await segment.start(store);
+    const identifyTraits = mockIdentify.mock.calls.at(-1)[1];
     mockTrack.mockClear();
 
     track("TestEvent", {});
 
     await waitFor(() => expect(mockTrack).toHaveBeenCalledWith("TestEvent", expect.anything()));
-    return mockTrack.mock.calls.at(-1)[1];
+    return { identifyTraits, eventProperties: mockTrack.mock.calls.at(-1)[1] };
   };
 
-  it("leaves ab_tests out when no experiment is served", async () => {
-    expect(await trackTestEvent()).not.toHaveProperty("ab_tests");
+  it("sends an empty ab_tests object when no experiment is served", async () => {
+    const { identifyTraits, eventProperties } = await trackTestEvent();
+
+    expect(identifyTraits).toHaveProperty("ab_tests", {});
+    expect(eventProperties).toHaveProperty("ab_tests", {});
   });
 
   it("sends the tracking pairs of each enabled experiment", async () => {
@@ -72,14 +78,20 @@ describe("segment ab_tests", () => {
       ),
     });
 
-    expect(await trackTestEvent()).toEqual(
+    const { identifyTraits, eventProperties } = await trackTestEvent();
+    const expectedAbTests = {
+      upgradeBanner: { ab_upgrade: "variant_b", cohort: "q3" },
+    };
+
+    expect(identifyTraits).toEqual(
       expect.objectContaining({
-        ab_tests: { upgradeBanner: { ab_upgrade: "variant_b", cohort: "q3" } },
+        ab_tests: expectedAbTests,
       }),
     );
+    expect(eventProperties).toEqual(expect.objectContaining({ ab_tests: expectedAbTests }));
   });
 
-  it("leaves ab_tests out when experiments are disabled or malformed", async () => {
+  it("sends an empty ab_tests object when experiments are disabled or malformed", async () => {
     setContentAbTestCopy({
       feature_copy_broken: remoteValue("not json"),
       feature_copy_disabled: remoteValue(
@@ -91,6 +103,27 @@ describe("segment ab_tests", () => {
       ),
     });
 
-    expect(await trackTestEvent()).not.toHaveProperty("ab_tests");
+    const { identifyTraits, eventProperties } = await trackTestEvent();
+
+    expect(identifyTraits).toHaveProperty("ab_tests", {});
+    expect(eventProperties).toHaveProperty("ab_tests", {});
+  });
+
+  it("does not attribute an English copy experiment in another language", async () => {
+    store.dispatch(setLanguage("fr"));
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: remoteValue(
+        JSON.stringify({
+          enabled: true,
+          copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+          trackingConfiguration: { ab_upgrade: "variant_b" },
+        }),
+      ),
+    });
+
+    const { identifyTraits, eventProperties } = await trackTestEvent();
+
+    expect(identifyTraits).toHaveProperty("ab_tests", {});
+    expect(eventProperties).toHaveProperty("ab_tests", {});
   });
 });

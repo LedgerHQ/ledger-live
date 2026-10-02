@@ -252,8 +252,8 @@ const getMandatoryProperties = (store: ReduxStore) => {
   const devModeEnabled = developerModeSelector(state);
   const readOnlyMode = !hasOnboardedDeviceSelector(state);
   const analyticsInfo = analyticsConsentInfoSelector(state);
-  const abTests = getContentAbTestTracking();
-
+  const language = languageSelector(state);
+  const abTests = getContentAbTestTracking(language);
   return {
     devModeEnabled,
     optInAnalytics: analyticsEnabled,
@@ -261,7 +261,7 @@ const getMandatoryProperties = (store: ReduxStore) => {
     hasSeenAnalyticsOptInPrompt,
     readOnlyMode,
     analyticsInfo,
-    ...(abTests && { ab_tests: abTests }),
+    ab_tests: abTests,
   };
 };
 

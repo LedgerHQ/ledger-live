@@ -257,8 +257,8 @@ const getMandatoryProperties = (store: AppStore) => {
   const analyticsInfo = analyticsConsentInfoSelector(state);
   const analyticsConsentOnboardingAttributes = getAnalyticsConsentOnboardingAttributes();
   const notificationsOptInAttributes = getNotificationsOptInAttributes();
-  const abTests = getContentAbTestTracking();
-
+  const language = languageSelector(state);
+  const abTests = getContentAbTestTracking(language);
   return {
     ...(userIdStr ? { userId: userIdStr, braze_external_id: userIdStr } : {}),
     devModeEnabled,
@@ -267,7 +267,7 @@ const getMandatoryProperties = (store: AppStore) => {
     hasSeenAnalyticsOptInPrompt,
     readOnlyMode,
     analyticsInfo,
-    ...(abTests && { ab_tests: abTests }),
+    ab_tests: abTests,
     ...analyticsConsentOnboardingAttributes,
     ...notificationsOptInAttributes,
   };

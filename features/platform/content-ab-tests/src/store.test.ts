@@ -70,13 +70,44 @@ describe("setContentAbTestCopy", () => {
     });
 
     expect(setContentAbTestCopy({})).toEqual({});
-    expect(getContentAbTestTracking()).toBeUndefined();
+    expect(getContentAbTestTracking("en")).toEqual({});
   });
 });
 
 describe("getContentAbTestTracking", () => {
   it("is undefined when no experiment is served", () => {
-    expect(getContentAbTestTracking()).toBeUndefined();
+    expect(getContentAbTestTracking("en")).toEqual({});
+  });
+
+  it("keeps the copy when trackingConfiguration is null and skips non-English sessions", () => {
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+        trackingConfiguration: { ab_upgrade: "variant_b" },
+      }),
+    });
+
+    expect(getContentAbTestTracking("en-US")).toEqual({
+      upgradeBanner: { ab_upgrade: "variant_b" },
+    });
+    expect(getContentAbTestTracking("fr")).toEqual({});
+    expect(getContentAbTestCopy()).toEqual({
+      "upgrade.banner.title": "Discover Ledger Flex",
+    });
+
+    setContentAbTestCopy({
+      feature_copy_upgrade_banner: experiment({
+        enabled: true,
+        copy: { "upgrade.banner.title": "Discover Ledger Flex" },
+        trackingConfiguration: null,
+      }),
+    });
+
+    expect(getContentAbTestTracking("en")).toEqual({});
+    expect(getContentAbTestCopy()).toEqual({
+      "upgrade.banner.title": "Discover Ledger Flex",
+    });
   });
 
   it("returns the tracking pairs of enabled experiments, keyed by id", () => {
@@ -93,7 +124,7 @@ describe("getContentAbTestTracking", () => {
       }),
     });
 
-    expect(getContentAbTestTracking()).toEqual({
+    expect(getContentAbTestTracking("en")).toEqual({
       upgradeBanner: { ab_upgrade: "variant_b", cohort: "q3" },
       swapCta: { cohort: "control" },
     });
@@ -112,7 +143,7 @@ describe("getContentAbTestTracking", () => {
       }),
     });
 
-    expect(getContentAbTestTracking()).toBeUndefined();
+    expect(getContentAbTestTracking("en")).toEqual({});
     expect(getContentAbTestCopy()).toEqual({ "upgrade.banner.title": "Untracked" });
   });
 
@@ -125,7 +156,7 @@ describe("getContentAbTestTracking", () => {
       }),
     });
 
-    expect(getContentAbTestTracking()).toBeUndefined();
+    expect(getContentAbTestTracking("en")).toEqual({});
     expect(getContentAbTestCopy()).toEqual({});
   });
 });
@@ -200,10 +231,10 @@ describe("content A/B test debug overrides", () => {
       copy: { "upgrade.banner.title": "Mocked" },
       trackingConfiguration: { variant: "b" },
     });
-    expect(getContentAbTestTracking()).toEqual({ upgradeBanner: { variant: "b" } });
+    expect(getContentAbTestTracking("en")).toEqual({ upgradeBanner: { variant: "b" } });
 
     setContentAbTestOverride("upgradeBanner", { enabled: false, copy: {} });
-    expect(getContentAbTestTracking()).toBeUndefined();
+    expect(getContentAbTestTracking("en")).toEqual({});
   });
 
   it("omits an empty trackingConfiguration and still applies the copy", () => {

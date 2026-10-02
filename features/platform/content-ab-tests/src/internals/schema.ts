@@ -4,5 +4,5 @@ import { z } from "zod";
 export const ContentAbTestPayloadSchema = z.object({
   enabled: z.boolean(),
   copy: z.record(z.string(), z.string()),
-  trackingConfiguration: z.record(z.string(), z.string()).optional(),
+  trackingConfiguration: z.record(z.string(), z.string()).nullish(),
 });
