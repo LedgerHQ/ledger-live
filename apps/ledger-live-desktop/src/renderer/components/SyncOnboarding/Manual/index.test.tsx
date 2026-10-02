@@ -9,6 +9,7 @@ import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/h
 import { addDevice } from "~/renderer/actions/devices";
 import SyncOnboardingScreen from ".";
 import SyncOnboardingCompanion from "LLD/features/Onboarding/screens/SyncOnboardingCompanion";
+import InstallSetOfApps from "~/renderer/components/OnboardingAppInstall/InstallSetOfApps";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 
 jest.mock("@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling", () => ({
@@ -29,6 +30,11 @@ jest.mock("LLD/features/Onboarding/screens/SyncOnboardingCompanion", () => ({
   default: jest.fn(() => null),
 }));
 
+jest.mock("~/renderer/components/OnboardingAppInstall/InstallSetOfApps", () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
+
 jest.mock("./EarlySecurityChecks/useChangeLanguagePrompt", () => ({
   useChangeLanguagePrompt: jest.fn(),
 }));
@@ -41,6 +47,7 @@ const mockedUseOnboardingStatePolling = jest.mocked(useOnboardingStatePolling);
 const mockedUseToggleOnboardingEarlyCheck = jest.mocked(useToggleOnboardingEarlyCheck);
 const mockedEarlySecurityChecks = jest.mocked(EarlySecurityChecks);
 const mockedSyncOnboardingCompanion = jest.mocked(SyncOnboardingCompanion);
+const mockedInstallSetOfApps = jest.mocked(InstallSetOfApps);
 
 const deviceA: Device = {
   deviceId: "device-a",
@@ -173,5 +180,19 @@ describe("SyncOnboardingScreen (Manual)", () => {
 
     expect(companionDeviceIds()).not.toContain("device-b");
     expect(lastRenderedDeviceProp()?.deviceId).toBe("device-b");
+  });
+
+  it("only restores apps after a firmware update on a verified device", () => {
+    renderScreen(deviceA);
+
+    act(() => {
+      lastEarlySecurityChecksProps().onFirmwareUpdateClose(["Bitcoin"]);
+    });
+    expect(mockedInstallSetOfApps).not.toHaveBeenCalled();
+
+    act(() => {
+      lastEarlySecurityChecksProps().onGenuineCheckPassed("device-a");
+    });
+    expect(mockedInstallSetOfApps.mock.lastCall?.[0].device.deviceId).toBe("device-a");
   });
 });
