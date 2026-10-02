@@ -37,6 +37,8 @@ const testPathIgnorePatterns = [
 
 const moduleNameMapper = {
   ".*\\.lottie$": "<rootDir>/fileMock.js",
+  // Must precede the "~/*" rules: moduleNameMapper applies in insertion order.
+  "^~/renderer/bridge$": "<rootDir>/tests/mocks/bridge.ts",
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
   "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
