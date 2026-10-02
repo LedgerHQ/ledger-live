@@ -79,16 +79,16 @@ describe("fetchWithRetry", () => {
   it('leaves a 500 to the caller in "rate-limit" mode', async () => {
     global.fetch = jest.fn().mockResolvedValue(reply(500));
 
-    const response = await fetchWithRetry(TEST_URL);
+    const response = await fetchWithRetry(TEST_URL, undefined, "rate-limit");
 
     expect(response.status).toBe(500);
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('retries a 500 in "transient" mode', async () => {
+  it('retries a 5xx by default ("transient", for reads)', async () => {
     global.fetch = jest.fn().mockResolvedValueOnce(reply(503)).mockResolvedValueOnce(reply(200));
 
-    const promise = fetchWithRetry(TEST_URL, undefined, "transient");
+    const promise = fetchWithRetry(TEST_URL);
     await jest.advanceTimersByTimeAsync(1_000);
 
     expect((await promise).status).toBe(200);
@@ -98,7 +98,7 @@ describe("fetchWithRetry", () => {
   it('rethrows a network error at once in "rate-limit" mode', async () => {
     global.fetch = jest.fn().mockRejectedValue(new TypeError("fetch failed"));
 
-    await expect(fetchWithRetry(TEST_URL)).rejects.toThrow("fetch failed");
+    await expect(fetchWithRetry(TEST_URL, undefined, "rate-limit")).rejects.toThrow("fetch failed");
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 

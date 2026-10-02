@@ -29,12 +29,19 @@ describe("getBlockDagInfo", () => {
   });
 });
 it("Should throw an error when fetch returns a 500 response", async () => {
-  global.fetch = jest.fn().mockResolvedValueOnce({
+  // A 5xx is retried first (fetchWithRetry); the error surfaces once every attempt has failed.
+  jest.useFakeTimers();
+  global.fetch = jest.fn().mockResolvedValue({
     ok: false,
     status: 500,
   });
 
-  await expect(getBlockDagInfo()).rejects.toThrow(
+  const outcome = getBlockDagInfo().catch((error: Error) => error);
+  await jest.advanceTimersByTimeAsync(15_000);
+
+  expect(((await outcome) as Error).message).toBe(
     "Failed to fetch BlockDAG info. Error: Error: Status: 500",
   );
+  expect(global.fetch).toHaveBeenCalledTimes(5);
+  jest.useRealTimers();
 });

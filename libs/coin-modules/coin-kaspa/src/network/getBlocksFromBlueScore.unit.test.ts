@@ -41,12 +41,37 @@ describe("getBlocksFromBlueScore", () => {
     );
   });
 
-  it("throws with the status code on a non-ok response", async () => {
-    global.fetch = jest.fn().mockResolvedValueOnce({ ok: false, status: 500 });
+  it("throws with the status code once a 5xx has been retried", async () => {
+    jest.useFakeTimers();
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500 });
+
+    const outcome = getBlocksFromBlueScore(480818084).catch((error: Error) => error);
+    await jest.advanceTimersByTimeAsync(15_000);
+
+    expect(((await outcome) as Error).message).toBe("kaspa: getBlocksFromBlueScore: status 500");
+    expect(global.fetch).toHaveBeenCalledTimes(5);
+    jest.useRealTimers();
+  });
+
+  it.each([-1, 1.5, Number.NaN])(
+    "rejects an invalid blueScore (%s) without a request",
+    async score => {
+      global.fetch = jest.fn();
+
+      await expect(getBlocksFromBlueScore(score)).rejects.toThrow(
+        `kaspa: getBlocksFromBlueScore: invalid blueScore ${score}`,
+      );
+      expect(global.fetch).not.toHaveBeenCalled();
+    },
+  );
+
+  it("throws at once on a non-retried status", async () => {
+    global.fetch = jest.fn().mockResolvedValueOnce({ ok: false, status: 404 });
 
     await expect(getBlocksFromBlueScore(480818084)).rejects.toThrow(
-      "kaspa: getBlocksFromBlueScore: status 500",
+      "kaspa: getBlocksFromBlueScore: status 404",
     );
+    expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
   it("waits out a 429 (rate limit) and returns the blocks once the indexer answers", async () => {

@@ -7,13 +7,20 @@ describe("getFees", () => {
   });
 
   it("Error response", async () => {
-    global.fetch = jest.fn().mockResolvedValueOnce({
+    // A 5xx is retried first (fetchWithRetry); the error surfaces once every attempt has failed.
+    jest.useFakeTimers();
+    global.fetch = jest.fn().mockResolvedValue({
       ok: false,
       status: 500,
       statusText: "Internal Server Error",
     });
 
-    await expect(getFeeEstimate()).rejects.toThrow("Network response was not ok");
+    const outcome = getFeeEstimate().catch((error: Error) => error);
+    await jest.advanceTimersByTimeAsync(15_000);
+
+    expect(((await outcome) as Error).message).toContain("Network response was not ok");
+    expect(global.fetch).toHaveBeenCalledTimes(5);
+    jest.useRealTimers();
   });
 
   it("Check if getFees gives correct output", async () => {

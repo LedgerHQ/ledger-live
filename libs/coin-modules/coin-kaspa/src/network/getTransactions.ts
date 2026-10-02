@@ -44,12 +44,7 @@ export const getTransactions = async (
     url.searchParams.set("after", String(after));
   }
 
-  // "transient": besides 429, retry 5xx and network-level errors, not other 4xx.
-  const response = await fetchWithRetry(
-    url,
-    { headers: { Accept: "application/json" } },
-    "transient",
-  );
+  const response = await fetchWithRetry(url, { headers: { Accept: "application/json" } });
 
   if (!response.ok) {
     throw Object.assign(new Error("Network response was not ok."), {

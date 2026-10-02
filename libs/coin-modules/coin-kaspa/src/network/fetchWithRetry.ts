@@ -1,15 +1,18 @@
-// Retry policy shared by the indexer reads. The Kaspa endpoint throttles bursts with HTTP 429 and,
-// as observed, sends no Retry-After, so the default wait is an exponential backoff long enough to
-// outlast a throttle window (1 s, 2 s, 4 s, 8 s → up to ~15 s over 5 attempts). A Retry-After, if
-// the endpoint ever sends one, takes precedence (capped).
+// Retry policy shared by every Kaspa REST call. The upstream provider throttles bursts with HTTP 429
+// (sending no Retry-After) and its gateway intermittently answers 504, so the default wait is an
+// exponential backoff long enough to outlast a throttle window (1 s, 2 s, 4 s, 8 s → up to ~15 s over
+// 5 attempts). A Retry-After, if the endpoint ever sends one, takes precedence (capped).
 const MAX_ATTEMPTS = 5;
 const BASE_DELAY_MS = 1_000;
 const MAX_DELAY_MS = 10_000;
 const MAX_RETRY_AFTER_MS = 30_000;
 
 /**
- * - "rate-limit": retry only HTTP 429 — safe for any read, leaves other failures to the caller.
- * - "transient": also retry 5xx and network-level errors (fetch rejects those with a TypeError).
+ * - "transient" (default, for reads): retry 429, 5xx and network-level errors (fetch rejects those
+ *   with a TypeError). A read has no side effect, so repeating it is always safe.
+ * - "rate-limit" (for writes, e.g. broadcasting): retry only 429, which is refused before the request
+ *   is handled. After a 5xx or a network error the write may already have happened, so it is left to
+ *   the caller.
  */
 export type RetryOn = "rate-limit" | "transient";
 
@@ -36,7 +39,7 @@ export function parseRetryAfter(
 export async function fetchWithRetry(
   input: string | URL,
   init?: RequestInit,
-  retryOn: RetryOn = "rate-limit",
+  retryOn: RetryOn = "transient",
 ): Promise<Response> {
   for (let attempt = 1; ; attempt++) {
     const lastAttempt = attempt >= MAX_ATTEMPTS;
