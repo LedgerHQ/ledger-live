@@ -103,7 +103,6 @@ export type OnboardingEvent =
   | { type: "FIRMWARE_UPDATE_AVAILABLE"; update: AvailableFirmwareUpdate }
   | { type: "FIRMWARE_CHECK_FAILED" }
   | { type: "FIRMWARE_UPDATE_FLOW_CLOSED" }
-  | { type: "START" }
   | { type: "RETRY" }
   | { type: "SKIP" }
   | { type: "CLOSE" }
@@ -146,6 +145,7 @@ export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availab
 export type DeviceOnboardingContext = DeviceOnboardingInput & {
   lastDeviceState: DeviceOnboardingState | null;
   firmwareVersion: string | null;
+  hasStarted: boolean;
   isOnboarded: boolean;
   onboardedOnEntry: boolean | null;
   genuineVerdict: GenuineVerdict | null;

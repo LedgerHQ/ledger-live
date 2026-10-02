@@ -28,7 +28,7 @@ import {
   isCustomLockScreenSupported,
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { Observable } from "rxjs";
@@ -241,7 +241,10 @@ export const FirmwareUpdate = ({
     [staxImageSource],
   );
 
+  const allowLeaveRef = useRef(false);
+
   const quitUpdate = useCallback(async () => {
+    allowLeaveRef.current = true;
     if (!batteryRequestCompleted) cancelBatteryCheck();
 
     setKeepScreenAwake(false);
@@ -468,6 +471,7 @@ export const FirmwareUpdate = ({
   useEffect(() => {
     const options = isBeforeOnboarding
       ? {
+          gestureEnabled: isAllowedToClose,
           headerLeft: () => (
             <NavigationHeaderBackButton
               onPress={() => {
@@ -479,6 +483,9 @@ export const FirmwareUpdate = ({
               }}
             />
           ),
+          // The base screen options keep a close button whose default is popToTop, which skips
+          // the warning the back button shows while a flash is in progress.
+          headerRight: () => null,
         }
       : {
           headerRight: () => (
@@ -496,6 +503,15 @@ export const FirmwareUpdate = ({
         };
     navigation.setOptions(options);
   }, [navigation, quitUpdate, isAllowedToClose, isBeforeOnboarding]);
+
+  useEffect(() => {
+    if (!isBeforeOnboarding) return;
+    return navigation.addListener("beforeRemove", event => {
+      if (isAllowedToClose || allowLeaveRef.current) return;
+      event.preventDefault();
+      setIsCloseWarningOpen(true);
+    });
+  }, [navigation, isBeforeOnboarding, isAllowedToClose]);
 
   const steps: Item[] = useMemo(() => {
     const newSteps: UpdateSteps = {
