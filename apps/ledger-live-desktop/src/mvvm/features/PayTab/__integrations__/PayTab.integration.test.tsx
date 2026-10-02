@@ -528,7 +528,7 @@ describe("PayTab integration", () => {
     });
   });
 
-  it("should show the CL Card disclaimer and open the CL Card webview when card_disclaimer is on", async () => {
+  it("should show the CL Card disclaimer and open and track the CL Card webview when card_disclaimer is on", async () => {
     const { user } = render(<PayTab />, {
       initialRoute: "/paytab",
       initialState: {
@@ -545,6 +545,10 @@ describe("PayTab integration", () => {
     await user.click(screen.getByRole("button", { name: "Go to CL Card" }));
 
     expect(mockNavigate).toHaveBeenCalledWith("/card/cl-card", { state: { fromPayTab: true } });
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "go to cl card",
+      page: "Pay",
+    });
   });
 
   it("should not show the CL Card disclaimer when the native card is on", async () => {
