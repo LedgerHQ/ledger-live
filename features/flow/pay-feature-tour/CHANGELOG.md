@@ -1,5 +1,11 @@
 # @features/flow-pay-feature-tour
 
+## 0.7.0-next.1
+
+### Minor Changes
+
+- [#22834](https://github.com/LedgerHQ/ledger-live/pull/22834) [`739334b`](https://github.com/LedgerHQ/ledger-live/commit/739334b0d854a3b11d9a2b6ba47ce022dc0797d9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide the Pay feature tour card row when the pay-tab flag's card param is off
+
 ## 0.7.0-next.0
 
 ### Minor Changes

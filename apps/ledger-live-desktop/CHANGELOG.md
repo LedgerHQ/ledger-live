@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 4.23.0-next.7
+
+### Patch Changes
+
+- Updated dependencies [[`739334b`](https://github.com/LedgerHQ/ledger-live/commit/739334b0d854a3b11d9a2b6ba47ce022dc0797d9)]:
+  - @features/flow-pay-feature-tour@0.7.0-next.1
+  - @devtools/bindings@0.10.0-next.2
+
 ## 4.23.0-next.6
 
 ### Minor Changes
