@@ -129,6 +129,9 @@ function describeError(error: unknown): string {
   return typeof error === "string" ? error : JSON.stringify(error, null, 2);
 }
 
+const NO_CARD_FACE = { card_native: false, card_live_app: false, card_disclaimer: false };
+type CardFace = keyof typeof NO_CARD_FACE;
+
 export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): PayCardToolProps {
   const platform = options.platform ?? "web";
   const dispatch = useDispatch();
@@ -197,17 +200,23 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     ],
   );
 
-  const setCardNativeParam = useCallback(
-    (card_native: boolean) => setPayTabParam({ card_native }),
+  // Only one card face can be on: turning one on turns the others off.
+  const setCardFace = useCallback(
+    (face: CardFace, on: boolean) =>
+      setPayTabParam(on ? { ...NO_CARD_FACE, [face]: true } : { [face]: false }),
     [setPayTabParam],
+  );
+  const setCardNativeParam = useCallback(
+    (on: boolean) => setCardFace("card_native", on),
+    [setCardFace],
   );
   const setCardLiveAppParam = useCallback(
-    (card_live_app: boolean) => setPayTabParam({ card_live_app }),
-    [setPayTabParam],
+    (on: boolean) => setCardFace("card_live_app", on),
+    [setCardFace],
   );
   const setCardDisclaimerParam = useCallback(
-    (card_disclaimer: boolean) => setPayTabParam({ card_disclaimer }),
-    [setPayTabParam],
+    (on: boolean) => setCardFace("card_disclaimer", on),
+    [setCardFace],
   );
   const setLegacyTopUpParam = useCallback(
     (legacyTopUp: boolean) => setPayTabParam({ legacyTopUp }),
