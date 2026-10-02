@@ -37,10 +37,7 @@ export default function Summary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
 
-  invariant(
-    account && account.type === "Account" && isStacksAccount(account),
-    "stacks account required",
-  );
+  invariant(account?.type === "Account" && isStacksAccount(account), "stacks account required");
 
   const unit = useAccountUnit(account);
   const position = getStacksStakingPosition(account);

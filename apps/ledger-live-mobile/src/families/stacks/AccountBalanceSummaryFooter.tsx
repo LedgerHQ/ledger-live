@@ -64,7 +64,7 @@ export default function AccountBalanceSummaryFooter({
 }: {
   readonly account?: AccountLike;
 }) {
-  if (!account || account.type !== "Account" || !isStacksAccount(account)) return null;
+  if (account?.type !== "Account" || !isStacksAccount(account)) return null;
   const position = getStacksStakingPosition(account);
   if (!position) return null;
   return <StacksStakingSummary account={account} position={position} />;

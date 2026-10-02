@@ -38,10 +38,7 @@ export default function Amount({ navigation, route }: Props) {
   const isFocused = useIsFocused();
   const { account, parentAccount } = useAccountScreen(route);
 
-  invariant(
-    account && account.type === "Account" && isStacksAccount(account),
-    "stacks account required",
-  );
+  invariant(account?.type === "Account" && isStacksAccount(account), "stacks account required");
 
   const unit = useAccountUnit(account);
   const { valAddress, numCycles } = route.params;
