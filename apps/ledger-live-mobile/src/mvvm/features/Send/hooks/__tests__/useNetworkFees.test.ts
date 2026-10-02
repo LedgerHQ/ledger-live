@@ -19,7 +19,8 @@ jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: mockT }),
   useLocale: () => ({ locale: "en" }),
 }));
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: jest.fn(() => jest.fn()),
 }));
 jest.mock("@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore");

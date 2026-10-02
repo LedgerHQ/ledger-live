@@ -13,8 +13,8 @@ jest.mock("LLM/features/ModularDrawer", () => ({
 
 // Countervalues are priced 1:1 with the account balance so the form ceiling is
 // predictable: a balance of 10_000 (2 decimals for USD) means a $100 maximum.
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
   useCountervaluesState: () => ({}),
 }));

@@ -4,7 +4,7 @@ import { Text } from "@ledgerhq/lumen-ui-rnative";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { useCalculate } from "@features/platform-market-countervalues";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { BalanceUI } from "@ledgerhq/live-common/modularDrawer/utils/type";

@@ -6,12 +6,13 @@ import NetInfo, {
   type NetInfoState,
   type NetInfoUnknownState,
 } from "@react-native-community/netinfo";
-import { type Polling, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { type Polling, useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { act, renderHook } from "@testing-library/react-native";
 import { AppState, type AppStateStatus } from "react-native";
 import { useCountervaluesPollingLifecycle } from "../useCountervaluesPollingLifecycle";
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCountervaluesPolling: jest.fn(),
 }));
 

@@ -13,8 +13,8 @@ jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: () => ({ openDrawer: mockOpenDrawer }),
 }));
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
   useCountervaluesState: () => ({}),
 }));

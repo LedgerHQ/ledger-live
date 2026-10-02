@@ -18,7 +18,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import { orderAccountsByFiatValue } from "@ledgerhq/live-common/portfolio/portfolio";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { blacklistedTokenIdsSelector, counterValueCurrencySelector } from "~/reducers/settings";
 import { TrackingEvent } from "../enums";
 

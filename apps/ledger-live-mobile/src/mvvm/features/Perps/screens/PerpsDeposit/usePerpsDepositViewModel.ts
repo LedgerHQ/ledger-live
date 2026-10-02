@@ -7,7 +7,7 @@ import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/P
 import {
   useCalculateCountervalueCallback,
   useCountervaluesState,
-} from "@ledgerhq/live-countervalues-react";
+} from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { TokenAccount } from "@ledgerhq/types-live";

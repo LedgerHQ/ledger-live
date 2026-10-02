@@ -1,7 +1,7 @@
 import { useMemo, useRef } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { formatPrice } from "@ledgerhq/live-currency-format";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import {
   getCurrencyPortfolio,
