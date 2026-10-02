@@ -70,6 +70,7 @@ devtools/relay/                                          @ledgerhq/platform
 tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
+support/fmt/                                             @ledgerhq/platform
 support/jest-devtools/                                   @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
 support/jest-shared/                                     @ledgerhq/platform
@@ -577,7 +578,7 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 # Platform — monorepo / toolchain (before cross-team opt-out so opt-out patterns win on overlapping paths)
 # codeowners-check: allow-override
 **/.oxlintrc.*                                        @ledgerhq/platform
-**/.oxfmtrc.*                                         @ledgerhq/platform
+**/oxfmt.config.*                                     @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
 **/tsconfig*                                          @ledgerhq/platform
 **/jest.config*                                       @ledgerhq/platform
