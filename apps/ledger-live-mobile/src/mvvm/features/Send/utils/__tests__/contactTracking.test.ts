@@ -32,6 +32,7 @@ describe("getRecipientResolution", () => {
         matchedContact: {
           contactId: "contact-1",
           contactName: "Alice",
+          isMe: false,
           addressId: "address-1",
           addressLabel: "Main",
           address: "0x123",
@@ -63,6 +64,7 @@ describe("getRecipientResolution", () => {
         matchedContact: {
           contactId: "contact-1",
           contactName: "Alice",
+          isMe: false,
           addressId: "address-1",
           addressLabel: "Main",
           address: "0x123",
@@ -105,6 +107,7 @@ describe("getRecipientResolution", () => {
         matchedContact: {
           contactId: "contact-1",
           contactName: "alice.eth",
+          isMe: false,
           addressId: "address-1",
           addressLabel: "Main",
           address: "0x123",
@@ -131,6 +134,7 @@ describe("getRecipientResolution", () => {
           matchedContact: {
             contactId: "contact-1",
             contactName: "Alice",
+            isMe: false,
             addressId: "address-1",
             addressLabel: "Main",
             address: "0x123",
@@ -166,8 +170,8 @@ describe("getRecipientResolution", () => {
 
   it("classifies unresolved input with the canonical contact-name rules", () => {
     expect(getRecipientResolution("Alice", createResult()).queryType).toBe("contact name");
-    expect(getRecipientResolution("1Password", createResult()).queryType).toBe("unrecognised");
-    expect(getRecipientResolution("@Olive", createResult()).queryType).toBe("unrecognised");
+    expect(getRecipientResolution("1Password", createResult()).queryType).toBe("contact name");
+    expect(getRecipientResolution("Élodie", createResult()).queryType).toBe("unrecognised");
   });
 });
 

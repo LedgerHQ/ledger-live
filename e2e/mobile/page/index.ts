@@ -3,6 +3,7 @@ import AssetAccountsPage from "@e2e/page/accounts/assetAccounts.page";
 import AccountPage from "@e2e/page/accounts/account.page";
 import AccountsPage from "@e2e/page/accounts/accounts.page";
 import AddAccountDrawer from "@e2e/page/accounts/addAccount.drawer";
+import AppLockPage from "@e2e/page/appLock.page";
 import CommonPage from "@e2e/page/common.page";
 import CustomLockscreenPage from "@e2e/page/stax/customLockscreen.page";
 import DeviceValidationPage from "@e2e/page/trade/deviceValidation.page";
@@ -42,6 +43,7 @@ import ModularDrawer from "@e2e/page/drawer/modular.drawer";
 import SwapTransactionStatusDrawer from "@e2e/page/drawer/swapTransactionStatus.drawer";
 import UndelegatePage from "@e2e/page/trade/undelegate.page";
 import Wallet40DrawersPage from "@e2e/page/drawer/wallet40Drawers.drawer";
+import PayTabPage from "@e2e/page/paytab/paytab.page";
 
 import path from "path";
 import fs from "fs";
@@ -79,6 +81,7 @@ export class Application {
   private postOnboardingHubPageInstance = lazyInit(PostOnboardingHubPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
+  private appLockPageInstance = lazyInit(AppLockPage);
   private portfolioPageInstance = lazyInit(PortfolioPage);
   private readonly assetDetailPageInstance = lazyInit(AssetDetailPage);
   private receivePageInstance = lazyInit(ReceivePage);
@@ -106,6 +109,7 @@ export class Application {
   private readonly wallet40DrawersPageInstance = lazyInit(Wallet40DrawersPage);
   private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
   private undelegatePageInstance = lazyInit(UndelegatePage);
+  private readonly payTabPageInstance = lazyInit(PayTabPage);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
@@ -181,6 +185,10 @@ export class Application {
 
   public get passwordEntry() {
     return this.passwordEntryPageInstance();
+  }
+
+  public get appLock() {
+    return this.appLockPageInstance();
   }
 
   public get portfolio() {
@@ -289,5 +297,9 @@ export class Application {
 
   public get undelegate() {
     return this.undelegatePageInstance();
+  }
+
+  public get payTab() {
+    return this.payTabPageInstance();
   }
 }

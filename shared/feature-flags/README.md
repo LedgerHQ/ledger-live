@@ -110,3 +110,16 @@ When a flag is resolved, the following priority chain applies (highest first):
 4. **Default** — from the flag's Zod schema default
 
 After resolution, **version filtering** (`desktop_version` / `mobile_version`) and **language filtering** (`languages_whitelisted` / `languages_blacklisted`) are applied.
+
+## Boot readiness
+
+Until a read settles, `resolved` holds the compiled defaults, so most flags read as disabled. Two signals tell you when that is over:
+
+| Selector | Becomes `true` when | Waits on the network |
+| --- | --- | --- |
+| `selectCachedFlagsSettled` | the `readCachedFlags` read settles (primed, empty or unreadable) | No |
+| `selectRemoteFlagsReady` | the first `fetchRemoteFlags` call settles (resolved or rejected) | Yes |
+
+Both are transient and never persisted. Gate a boot on `selectCachedFlagsSettled` when it must not render on the defaults but must not wait on the network either.
+
+Never persist state or trigger an irreversible side effect from a flag value, least of all from a disabled one: a flag can still read its default on a first launch or with an unreadable cache, and it can change mid-session.

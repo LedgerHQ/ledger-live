@@ -12,10 +12,13 @@ type GetRecipientHeaderPresentationArgs = Readonly<{
 export type RecipientHeaderContact = Readonly<{
   id: string;
   name: string;
+  isMe: boolean;
 }>;
 
 export type RecipientHeaderPresentation = Readonly<{
-  label: string;
+  /** Address, domain or account the user entered; never a contact name. */
+  recipientDisplayValue: string;
+  /** Matched contact with its raw name: render it through the contacts display name rule. */
   contact: RecipientHeaderContact | undefined;
 }>;
 
@@ -33,15 +36,18 @@ export function getRecipientHeaderPresentation({
         })
       : undefined;
 
+  const recipientDisplayValue = getRecipientDisplayValue(recipient);
+
   if (!matchedContact) {
-    return { label: getRecipientDisplayValue(recipient), contact: undefined };
+    return { recipientDisplayValue, contact: undefined };
   }
 
   return {
-    label: matchedContact.contactName,
+    recipientDisplayValue,
     contact: {
       id: matchedContact.contactId,
       name: matchedContact.contactName,
+      isMe: matchedContact.isMe,
     },
   };
 }

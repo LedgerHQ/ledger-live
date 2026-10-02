@@ -1,5 +1,6 @@
-// Hex-digit width of the length prefix `combine` prepends. Shared by every reader of that prefix —
-// `recoverDeviceSignature` here and broadcast's `extractTxAndSignature` — so the width never drifts.
+import { InvalidRawDataHex } from "../types/errors";
+
+// Shared with recoverDeviceSignature and broadcast's extractTxAndSignature so the width never drifts.
 export const TX_LEN_PREFIX_HEX_WIDTH = 4;
 
 /**
@@ -10,22 +11,29 @@ export function combine(tx: string, signature: string[]): string {
   if (signature.length !== 1) {
     throw new Error(`Tron combine expects exactly one signature, got ${signature.length}`);
   }
-  // The prefix is TX_LEN_PREFIX_HEX_WIDTH hex digits, so tx.length must fit — otherwise it overflows
-  // the fixed width and recoverDeviceSignature slices at the wrong offset. TRON raw_data_hex is only
-  // hundreds of chars, so this never fires; it guards against a future caller feeding a larger payload.
+  // tx.length must fit the fixed-width prefix, or recoverDeviceSignature slices at the wrong offset.
   const maxTxLength = 16 ** TX_LEN_PREFIX_HEX_WIDTH - 1;
   if (tx.length > maxTxLength) {
-    throw new Error(`Tron combine tx too long to length-prefix: ${tx.length} hex chars`);
+    throw new InvalidRawDataHex(
+      `Tron combine tx too long to length-prefix: ${tx.length} hex chars`,
+    );
   }
 
   return `${tx.length.toString(16).padStart(TX_LEN_PREFIX_HEX_WIDTH, "0")}${tx}${signature[0]}`;
 }
 
-/**
- * Inverse of {@link combine}: recover the raw device signature from the combined string the generic
- * raw-sign device path returns. `combine` prepends the length prefix and echoes the signed `tx` (an
- * energy-rent order's `raw_data_hex`), so the signature is everything after both.
- */
+/** Inverse of {@link combine}: strips the length prefix and echoed tx to recover the raw signature. */
 export function recoverDeviceSignature(rawDataHex: string, combinedSignature: string): string {
-  return combinedSignature.slice(TX_LEN_PREFIX_HEX_WIDTH + rawDataHex.length);
+  const txLength = Number.parseInt(combinedSignature.slice(0, TX_LEN_PREFIX_HEX_WIDTH), 16);
+  const txEnd = TX_LEN_PREFIX_HEX_WIDTH + rawDataHex.length;
+  const signature = combinedSignature.slice(txEnd);
+  // A signature over other bytes must not be attached to this transaction.
+  if (
+    txLength !== rawDataHex.length ||
+    combinedSignature.slice(TX_LEN_PREFIX_HEX_WIDTH, txEnd) !== rawDataHex ||
+    signature.length === 0
+  ) {
+    throw new InvalidRawDataHex("Combined signature does not match the transaction to sign");
+  }
+  return signature;
 }

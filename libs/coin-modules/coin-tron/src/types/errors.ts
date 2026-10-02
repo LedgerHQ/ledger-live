@@ -177,8 +177,7 @@ export class EnergyRentProviderNotConfigured extends Error {
   }
 }
 
-/** Energy delivery was not observed on-chain before the rental poll timed out. Carries the rental
- * payment txid for the support/refund message. */
+/** Carries `paymentTxId` for the support/refund message. */
 export class EnergyDelegationTimeoutError extends Error {
   override name = "EnergyDelegationTimeoutError";
   paymentTxId?: string;
@@ -188,12 +187,35 @@ export class EnergyDelegationTimeoutError extends Error {
   }
 }
 
-/** The delivery poll was cancelled by its caller (the Send flow was reset or unmounted). Distinct from
- * the timeout so the caller drops the cycle without an on-chain reconciliation it will discard anyway. */
 export class EnergyDeliveryAbortedError extends Error {
   override name = "EnergyDeliveryAbortedError";
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "EnergyDeliveryAbortedError");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class EnergyRentUnsupportedIntent extends Error {
+  override name = "EnergyRentUnsupportedIntent";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyRentUnsupportedIntent");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/** The USDT balance cannot cover the transfer plus the energy rent; raised before any order exists. */
+export class EnergyRentInsufficientBalance extends Error {
+  override name = "EnergyRentInsufficientBalance";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyRentInsufficientBalance");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class InvalidRawDataHex extends Error {
+  override name = "InvalidRawDataHex";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidRawDataHex");
     if (fields) Object.assign(this, fields);
   }
 }

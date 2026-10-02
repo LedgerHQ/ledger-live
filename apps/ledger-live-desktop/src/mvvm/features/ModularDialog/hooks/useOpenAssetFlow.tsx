@@ -6,7 +6,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams } from "@ledgerhq/live-common/modularDrawer/types/visibility";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData, ModalData } from "~/renderer/modals/types";
 import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
@@ -58,7 +58,7 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
     setDrawer();
     trackModularDialogEvent("button_clicked", {
       button: "Close",
-      page: currentRouteNameRef.current ?? "Unknown",
+      page: getCurrentTrackingPage({ fallback: "Unknown" }),
     });
   }, [trackModularDialogEvent]);
 
@@ -75,7 +75,7 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
         setDrawer();
         trackModularDialogEvent("button_clicked", {
           button: "Close",
-          page: currentRouteNameRef.current ?? "Unknown",
+          page: getCurrentTrackingPage({ fallback: "Unknown" }),
         });
       };
 

@@ -12,7 +12,11 @@ jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
   useLocalizedUrl: () => "https://support.ledger.com/memo",
 }));
 jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
-jest.mock("~/renderer/analytics/segment", () => ({ track: jest.fn() }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 const mockedUseSendFlowActions = jest.mocked(useSendFlowActions);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
@@ -31,6 +35,7 @@ describe("useSkipMemoConfirmationViewModel", () => {
     mockedUseSendFlowData.mockReturnValue({
       state: {
         account: { account: null, parentAccount: null, currency: null },
+        transaction: { transaction: null },
         recipient: { address: "recipient" },
       },
     } as never);

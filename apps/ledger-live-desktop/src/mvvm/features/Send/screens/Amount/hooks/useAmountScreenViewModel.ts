@@ -17,8 +17,25 @@ import { useQuickActions } from "./useQuickActions";
 import { useInitialTransactionPreparation } from "../../../hooks/useInitialTransactionPreparation";
 import { useAmountScreenMessage } from "./useAmountScreenMessage";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
+import { isSponsoredFeeUnaffordable } from "../../../utils/sponsoredFeeAsset";
+import { FEE_PLACEHOLDER } from "LLD/features/Send/constants";
+import type { SponsoredFeeAmounts } from "LLD/features/Send/types";
+
+const PENDING_SPONSORED_FEE: SponsoredFeeAmounts["sponsored"] = {
+  value: FEE_PLACEHOLDER,
+  secondaryValue: null,
+  originalValue: null,
+};
+
+function withoutKeys(
+  record: Record<string, Error>,
+  keys: readonly string[],
+): Record<string, Error> {
+  return Object.fromEntries(Object.entries(record).filter(([key]) => !keys.includes(key)));
+}
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -45,14 +62,44 @@ export function useAmountScreenViewModel({
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
   const { navigation } = useFlowWizard();
+  const {
+    selectedFeeOptionId,
+    sponsoredFeeOptionId,
+    providerName,
+    waivesErrorKeys,
+    waivesWarningKeys,
+    available,
+    quote,
+    intentReady,
+    sponsoredFeeAmounts,
+    savingsFiatFormatted,
+    feeCurrencyTicker,
+    feeTokenAccount,
+  } = useSponsoredSend();
+  const sponsoredSelected = selectedFeeOptionId === sponsoredFeeOptionId;
 
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+
+  const sponsoredCoversNativeFee = sponsoredSelected && available && !!quote;
+  const statusWithoutWaived = useMemo(() => {
+    const waivesAny =
+      waivesErrorKeys.some(key => status.errors?.[key]) ||
+      waivesWarningKeys.some(key => status.warnings?.[key]);
+    if (!sponsoredCoversNativeFee || !waivesAny) {
+      return status;
+    }
+    return {
+      ...status,
+      errors: withoutKeys(status.errors, waivesErrorKeys),
+      warnings: withoutKeys(status.warnings, waivesWarningKeys),
+    };
+  }, [sponsoredCoversNativeFee, waivesErrorKeys, waivesWarningKeys, status]);
 
   const amountReviewCore = useSendFlowAmountReviewCore({
     account,
     parentAccount,
     transaction,
-    status,
+    status: statusWithoutWaived,
     bridgePending,
     transactionActions,
     labels: {
@@ -71,6 +118,16 @@ export function useAmountScreenViewModel({
     amountComputationPending,
     shouldPrepare,
   } = amountReviewCore;
+
+  const sponsoredFeeUnaffordable = useMemo(() => {
+    if (!sponsoredSelected || !available || !quote) return false;
+    return isSponsoredFeeUnaffordable({
+      account,
+      transaction,
+      feeTokenAccount,
+      rentValue: quote.value,
+    });
+  }, [sponsoredSelected, available, quote, account, transaction, feeTokenAccount]);
 
   const amountInput = useAmountInput({
     account,
@@ -131,7 +188,7 @@ export function useAmountScreenViewModel({
   });
 
   const { amountMessage, isAmountInputDisabled } = useAmountScreenMessage({
-    status,
+    status: statusWithoutWaived,
     hasRawAmount: amountReviewCore.hasRawAmount,
   });
 
@@ -143,6 +200,66 @@ export function useAmountScreenViewModel({
     });
     navigation.goToStep(SEND_FLOW_STEP.CUSTOM_FEES);
   }, [navigation, sendFlowTrackingProperties]);
+
+  const onOpenFeePayment = useCallback(() => {
+    navigation.goToStep(SEND_FLOW_STEP.FEE_PAYMENT);
+  }, [navigation]);
+  const sponsoredNudge = useMemo(() => {
+    let label: string | null;
+    if (sponsoredSelected) {
+      label = savingsFiatFormatted
+        ? t("newSendFlow.feePayment.saved", { provider: providerName })
+        : null;
+    } else if (savingsFiatFormatted) {
+      label = t("newSendFlow.feePayment.nudge", {
+        amount: savingsFiatFormatted,
+        provider: providerName,
+      });
+    } else {
+      // Offered even without a saving: paying in the fee asset can be what makes the send possible.
+      label = t("newSendFlow.feePayment.payIn", { feeCurrency: feeCurrencyTicker });
+    }
+    return {
+      available,
+      selected: sponsoredSelected,
+      label,
+      onOpen: onOpenFeePayment,
+    };
+  }, [
+    available,
+    sponsoredSelected,
+    providerName,
+    feeCurrencyTicker,
+    savingsFiatFormatted,
+    onOpenFeePayment,
+    t,
+  ]);
+
+  // While the quote reloads, falling back to the standard estimate would misstate the chosen fee.
+  const sponsoredFee = useMemo(
+    () =>
+      sponsoredSelected && available
+        ? {
+            ...(sponsoredFeeAmounts?.sponsored ?? PENDING_SPONSORED_FEE),
+            feeAsset: feeTokenAccount
+              ? { ledgerId: feeTokenAccount.token.id, ticker: feeTokenAccount.token.ticker }
+              : null,
+            description: t("newSendFlow.feePayment.disclaimer", {
+              feeCurrency: feeCurrencyTicker,
+              provider: providerName,
+            }),
+          }
+        : null,
+    [
+      sponsoredSelected,
+      available,
+      sponsoredFeeAmounts,
+      feeTokenAccount,
+      feeCurrencyTicker,
+      providerName,
+      t,
+    ],
+  );
 
   const networkFees = useNetworkFees({
     account,
@@ -195,6 +312,9 @@ export function useAmountScreenViewModel({
     [quickActions, sendFlowTrackingProperties],
   );
 
+  // No quote while the option stays available means one is loading: every failure withdraws it.
+  const sponsoredReviewNotReady = sponsoredSelected && available && (!intentReady || !quote);
+
   return {
     amountValue: amountInput.amountValue,
     amountInputMaxDecimalLength: amountInput.amountInputMaxDecimalLength,
@@ -211,12 +331,20 @@ export function useAmountScreenViewModel({
     amountMessage,
     reviewLabel,
     reviewShowIcon,
-    reviewDisabled,
-    reviewLoading: amountComputationPending,
+    reviewDisabled: reviewDisabled || sponsoredFeeUnaffordable || sponsoredReviewNotReady,
+    sponsoredFeeError: sponsoredFeeUnaffordable
+      ? t("newSendFlow.feePayment.insufficientFunds", {
+          feeCurrency: feeCurrencyTicker,
+          provider: providerName,
+        })
+      : null,
+    reviewLoading: amountComputationPending || sponsoredReviewNotReady,
     ...networkFees,
     feeSelector: {
       ...networkFees.feeSelector,
       options: trackedFeeSelectorOptions,
     },
+    sponsoredNudge,
+    sponsoredFee,
   };
 }

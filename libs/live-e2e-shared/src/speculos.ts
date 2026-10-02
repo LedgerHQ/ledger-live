@@ -48,6 +48,7 @@ import {
   getSpeculosModel,
   isTouchDevice,
 } from "./speculosAppVersion";
+import { CONTACTS_ETHEREUM_APP_VERSION, CONTACTS_OS_VERSION_BY_MODEL } from "./contacts";
 import {
   pressAndRelease,
   longPressAndRelease,
@@ -81,6 +82,8 @@ export type Spec = {
     model: DeviceModelId;
     appName: string;
     appVersion?: string;
+    /** Pins the OS the app binary is looked up under, instead of the catalog's latest. */
+    firmware?: string;
   };
   dependencies?: Dependency[];
   onSpeculosDeviceCreated?: (device: Device) => Promise<void>;
@@ -159,6 +162,16 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Ethereum",
+    },
+    dependencies: [],
+  },
+  // No currency, so resolution uses the pinned binary instead of the catalog Ethereum app.
+  Ethereum_Contacts: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+      appVersion: CONTACTS_ETHEREUM_APP_VERSION,
+      firmware: CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()],
     },
     dependencies: [],
   },
@@ -322,6 +335,14 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Babylon: {
+    currency: getCryptoCurrencyById("babylon"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Cosmos",
+    },
+    dependencies: [],
+  },
   Celo: {
     currency: getCryptoCurrencyById("celo"),
     appQuery: {
@@ -474,7 +495,7 @@ export async function startSpeculos(
 
   const { appQuery, onSpeculosDeviceCreated } = spec;
   const { model } = appQuery;
-  const firmware = await getDeviceFirmwareVersion(model);
+  const firmware = appQuery.firmware ?? (await getDeviceFirmwareVersion(model));
 
   const catalogVersions = await getNanoAppCatalogVersionMap(getEnv("E2E_NANO_APP_VERSION_PATH"));
 
@@ -630,16 +651,25 @@ export async function waitFor(
 }
 
 /**
+ * Text of an app's idle screen. Button devices read "<app> app is ready"; touch devices show the
+ * app name over "This app enables signing transactions on the <app> network".
+ */
+function appReadyLabel(appName: string): string {
+  return isTouchDevice()
+    ? `This app enables signing transactions on the ${appName} network`
+    : `${appName} app is ready`;
+}
+
+/**
  * Waits for the device to return to its app-ready screen after a status page
  * that answers a command and then draws its own screen -- during that
  * window, the app's own APDU loop can drop an incoming command instead of
  * queuing it (LIVE-37178). The default maxAttempts (9 x the 500ms poll
  * interval = 4.5s) is an upper bound on that screen's own duration, not a
- * guess about CI load. "${name} app is ready" matches how these screens
- * render today (confirmed on Zcash and Exchange, see EXCHANGE_APP_IS_READY).
+ * guess about CI load.
  */
 export async function waitForAppReady(speculosApp: AppInfos, maxAttempts = 9): Promise<string> {
-  return waitFor(`${speculosApp.name} app is ready`, maxAttempts);
+  return waitFor(appReadyLabel(speculosApp.name), maxAttempts);
 }
 
 const SWAP_INIT_STALL_HINT =
@@ -896,6 +926,17 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   } else {
     await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
     await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+    await buttons.both();
+  }
+});
+
+export const confirmContactAction = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  await pressUntilTextFound(DeviceLabels.CONFIRM);
+
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.CONFIRM);
+  } else {
     await buttons.both();
   }
 });
@@ -1171,6 +1212,7 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       await delegateCosmos(delegatingAccount);
       break;
     case Account.OSMO_1.currency.name:
+    case Account.BABY_1.currency.name:
       await delegateOsmosis(delegatingAccount);
       break;
     case Account.MULTIVERS_X_1.currency.name:

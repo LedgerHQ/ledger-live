@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { closeBuyDevice, selectIsBuyDeviceOpen } from "./buyDeviceDialog";
 import { useCallback, useEffect } from "react";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { setShouldResumeAddAccountAfterOnboarding } from "~/renderer/reducers/onboarding";
 import { getOriginFlow } from "~/renderer/analytics/originFlow";

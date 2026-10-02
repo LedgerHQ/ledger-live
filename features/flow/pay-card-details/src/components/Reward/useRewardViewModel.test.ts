@@ -4,10 +4,15 @@ import { useGetCardCashbackQuery } from "@domain/api-card-management";
 import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
 import { CARD_CASHBACK_URL, listenToCardApi } from "@support/msw-features-flow-pay-card";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
 import { cardApiWrapper } from "../../__tests__/cardApiStore";
 import { REWARD_SUBTITLE } from "../../__tests__/i18nWrapper";
 import { useRewardViewModel } from "./useRewardViewModel";
 import type { RewardProps } from "./types";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 /** The Ledger id the Baanx catalog maps `BTC` to. */
 const BTC_LEDGER_ID = "bitcoin";
@@ -39,20 +44,15 @@ function answerWith(body: JsonBodyType, status = 200) {
   return requests;
 }
 
-function renderViewModel({
-  signedIn = true,
-  track = jest.fn(),
-  ...props
-}: { signedIn?: boolean; track?: jest.Mock } & RewardProps = {}) {
-  return {
-    ...renderHook(() => useRewardViewModel(props), {
-      wrapper: cardApiWrapper({ signedIn, track }),
-    }),
-    track,
-  };
+function renderViewModel({ signedIn = true, ...props }: { signedIn?: boolean } & RewardProps = {}) {
+  return renderHook(() => useRewardViewModel(props), { wrapper: cardApiWrapper({ signedIn }) });
 }
 
 describe("useRewardViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("shows nothing while the cashback is loading", () => {
     answerWith(mockPayCardCashback());
 
@@ -180,14 +180,14 @@ describe("useRewardViewModel", () => {
     answerWith(mockPayCardCashback());
     const onViewRewards = jest.fn();
 
-    const { result, track } = renderViewModel({ onViewRewards });
+    const { result } = renderViewModel({ onViewRewards });
 
     await waitFor(() => expect(result.current).not.toBeNull());
     act(() => {
       result.current?.onPress?.();
     });
 
-    expect(track).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "view reward currencies",
       page: "Card details",
     });

@@ -161,9 +161,6 @@ export type CoinModuleLoader<
    * none of, and `getCoinModuleApi` backfills them through `withDefaults`.
    */
   loadLocalApi?: () => Promise<(currencyId: string) => CoinModuleImpl<any, any> & BridgeApi>;
-  /**
-   * The sponsored-send seam (TRON Tronify energy rental), kept off `loadLocalApi` so the main
-   * coin-module api stays the generic `CoinModuleImpl` contract; resolved through `getSponsoredCoinApi`.
-   */
+  /** Kept off `loadLocalApi` so the main coin-module api stays the generic `CoinModuleImpl` contract. */
   loadSponsoredApi?: () => Promise<(currencyId: string) => SponsoredCoinApi>;
 };

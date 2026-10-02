@@ -16,17 +16,13 @@ describe("useDepositOptionsAdapter", () => {
     expect(result.current.depositOptions.isOpen).toBe(false);
   });
 
-  it("passes page, onSelect and onTrackEvent through into depositOptions", () => {
+  it("passes page and onSelect through into depositOptions", () => {
     const onSelect = jest.fn();
-    const onTrackEvent = jest.fn();
 
-    const { result } = renderHook(() =>
-      useDepositOptionsAdapter({ page: "Pay", onSelect, onTrackEvent }),
-    );
+    const { result } = renderHook(() => useDepositOptionsAdapter({ page: "Pay", onSelect }));
 
     const { depositOptions } = result.current;
     expect(depositOptions.page).toBe("Pay");
     expect(depositOptions.onSelect).toBe(onSelect);
-    expect(depositOptions.onTrackEvent).toBe(onTrackEvent);
   });
 });

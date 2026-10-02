@@ -4,7 +4,7 @@ import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-common/portfolio/portfolio";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 import type { CurrencyPortfolio } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {

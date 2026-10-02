@@ -24,12 +24,20 @@ import { useRecipientContinuation } from "../../../context/RecipientContinuation
 import { useAddressValidation } from "./useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { useDoNotAskAgainSkipMemo } from "../../../hooks/useDoNotAskAgainSkipMemo";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
+import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
 import { useRecipientContactSelection } from "../../../context/RecipientContactSelectionContext";
 import { useContactsFeatureIntroductionViewModel } from "./useContactsFeatureIntroductionViewModel";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { getRecipientResolution } from "../../../utils/contactTracking";
+import { useSendFlowMessageTracking } from "../../../hooks/useSendFlowMessageTracking";
+import {
+  getAddressValidationMessageId,
+  getMessageIds,
+  getStableMessageId,
+  getSuppressedMessageIds,
+} from "../../../utils/messageTracking";
 
 type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
@@ -62,7 +70,7 @@ export function useRecipientAddressModalViewModel({
     excludedCurrencyIds,
   } = useContactsFeature("desktop");
   const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
-  const { inputMethod, setRecipientResolution } = useSendFlowTracking();
+  const { flowSessionId, inputMethod, setRecipientResolution } = useSendFlowTracking();
   const { navigation } = useFlowWizard<SendFlowStep>();
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -85,7 +93,7 @@ export function useRecipientAddressModalViewModel({
   });
 
   const contactsOnNetwork = useMemo(
-    () => filterContactsByNetwork(contacts, currency.id),
+    () => filterContactsByNetwork(contacts, currency.id, { includeMe: true }),
     [contacts, currency.id],
   );
 
@@ -122,6 +130,10 @@ export function useRecipientAddressModalViewModel({
     () => getRecipientResolution(recipientSearch.value, result, showContactSearchResult),
     [recipientSearch.value, result, showContactSearchResult],
   );
+  const activeWarningsTrackingProperties = useMemo(
+    () => getActiveWarningsTrackingProperties(getMessageIds(result.bridgeWarnings, "warning")),
+    [result.bridgeWarnings],
+  );
   const trackedResolutionRef = useRef("");
   useEffect(() => {
     const hasSettledResult =
@@ -143,13 +155,16 @@ export function useRecipientAddressModalViewModel({
     }
     trackedResolutionRef.current = trackingKey;
 
-    trackPage("Modal send - recipient result", null, {
-      ...sendFlowTrackingProperties,
-      queryType: recipientResolution.queryType,
-      resultType: recipientResolution.resultType,
-      inputMethod,
-      queryLength: recipientSearch.value.length,
-      addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
+    trackPage({
+      category: "Modal send - recipient result",
+      props: {
+        ...sendFlowTrackingProperties,
+        queryType: recipientResolution.queryType,
+        resultType: recipientResolution.resultType,
+        inputMethod,
+        queryLength: recipientSearch.value.length,
+        addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
+      },
     });
     setRecipientResolution(recipientResolution.resultType, recipientResolution.recipientType);
   }, [
@@ -231,12 +246,21 @@ export function useRecipientAddressModalViewModel({
         page: "step recipient",
         resultType: recipientResolution.resultType,
         recipientType: recipientResolution.recipientType,
+        flow_session_id: flowSessionId,
+        ...activeWarningsTrackingProperties,
         ...sendFlowTrackingProperties,
       });
       setRecipientResolution(recipientResolution.resultType, recipientResolution.recipientType);
       continueWithAddress(address, ensName);
     },
-    [continueWithAddress, recipientResolution, sendFlowTrackingProperties, setRecipientResolution],
+    [
+      activeWarningsTrackingProperties,
+      continueWithAddress,
+      flowSessionId,
+      recipientResolution,
+      sendFlowTrackingProperties,
+      setRecipientResolution,
+    ],
   );
 
   const handleContactSelect = useCallback(
@@ -246,6 +270,8 @@ export function useRecipientAddressModalViewModel({
         page: "step recipient",
         myContact: contact.isMe,
         addressCount: contact.addresses.length,
+        flow_session_id: flowSessionId,
+        ...activeWarningsTrackingProperties,
         ...sendFlowTrackingProperties,
       });
       const address = pickContactAddressForCurrency(contact.addresses, currency.id);
@@ -259,15 +285,20 @@ export function useRecipientAddressModalViewModel({
       }
 
       selectContact(contact);
-      trackPage("Modal send - select contact address", null, {
-        ...sendFlowTrackingProperties,
-        addressCount: contact.addresses.length,
-        myContact: contact.isMe,
+      trackPage({
+        category: "Modal send - select contact address",
+        props: {
+          ...sendFlowTrackingProperties,
+          addressCount: contact.addresses.length,
+          myContact: contact.isMe,
+        },
       });
     },
     [
       continueWithAddress,
+      activeWarningsTrackingProperties,
       currency.id,
+      flowSessionId,
       selectContact,
       sendFlowTrackingProperties,
       setRecipientResolution,
@@ -282,6 +313,8 @@ export function useRecipientAddressModalViewModel({
         network: mainAccount.currency.id,
         asset: address.currencyId,
         addressRank,
+        flow_session_id: flowSessionId,
+        ...getActiveWarningsTrackingProperties([]),
         ...sendFlowTrackingProperties,
       });
       clearSelectedContact();
@@ -294,6 +327,7 @@ export function useRecipientAddressModalViewModel({
     [
       clearSelectedContact,
       continueWithAddress,
+      flowSessionId,
       mainAccount.currency.id,
       selectedContact?.isMe,
       selectedContact?.id,
@@ -319,9 +353,12 @@ export function useRecipientAddressModalViewModel({
       network: mainAccount.currency.id,
       ...sendFlowTrackingProperties,
     });
-    trackPage("Modal send - network not supported", null, {
-      ...sendFlowTrackingProperties,
-      network: mainAccount.currency.id,
+    trackPage({
+      category: "Modal send - network not supported",
+      props: {
+        ...sendFlowTrackingProperties,
+        network: mainAccount.currency.id,
+      },
     });
   }, [mainAccount.currency.id, sendFlowTrackingProperties]);
 
@@ -338,6 +375,106 @@ export function useRecipientAddressModalViewModel({
 
   const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
   const whenRegularSearchVisible = (flag: boolean) => !shouldHideRegularSearchState && flag;
+  const messageTrackingRequest = useMemo(() => {
+    const status = state.transaction.status;
+    const transactionError = hasMemoValidationError ? status.errors.transaction : undefined;
+    const addressValidationMessageId = getAddressValidationMessageId(
+      searchState.addressValidationErrorType,
+    );
+
+    const candidates = [
+      transactionError
+        ? {
+            messageId: getStableMessageId(transactionError, "error:transaction"),
+            messageType: "error" as const,
+          }
+        : null,
+      !shouldHideRegularSearchState &&
+      searchState.showAddressValidationError &&
+      addressValidationMessageId
+        ? {
+            messageId: addressValidationMessageId,
+            messageType: "error" as const,
+          }
+        : null,
+      !shouldHideRegularSearchState &&
+      searchState.showBridgeSenderError &&
+      searchState.bridgeSenderError
+        ? {
+            messageId: getStableMessageId(searchState.bridgeSenderError, "error:sender"),
+            messageType: "error" as const,
+          }
+        : null,
+      !shouldHideRegularSearchState && searchState.showSanctionedBanner
+        ? { messageId: "sanctioned", messageType: "error" as const }
+        : null,
+      !shouldHideRegularSearchState &&
+      searchState.showBridgeRecipientError &&
+      searchState.bridgeRecipientError
+        ? {
+            messageId: getStableMessageId(searchState.bridgeRecipientError, "error:recipient"),
+            messageType: "error" as const,
+          }
+        : null,
+      !shouldHideRegularSearchState &&
+      searchState.showBridgeRecipientWarning &&
+      searchState.bridgeRecipientWarning
+        ? {
+            messageId: getStableMessageId(searchState.bridgeRecipientWarning, "warning:recipient"),
+            messageType: "warning" as const,
+          }
+        : null,
+    ].filter(candidate => candidate !== null);
+
+    const primary = candidates[0];
+    if (!primary) return null;
+
+    return {
+      account,
+      parentAccount,
+      step: SEND_FLOW_STEP.RECIPIENT,
+      message: {
+        ...primary,
+        suppressedErrors: getSuppressedMessageIds(
+          status,
+          primary.messageId,
+          candidates.slice(1).map(candidate => candidate.messageId),
+        ),
+      },
+      metadata: {
+        recipientType: recipientResolution.recipientType,
+        recipientLength: recipientSearch.value.length,
+        memoLength: state.recipient?.memo?.value.length ?? 0,
+        memoType: state.recipient?.memo?.type ?? null,
+      },
+    };
+  }, [
+    account,
+    hasMemoValidationError,
+    parentAccount,
+    recipientResolution.recipientType,
+    recipientSearch.value.length,
+    searchState.addressValidationErrorType,
+    searchState.bridgeRecipientError,
+    searchState.bridgeRecipientWarning,
+    searchState.bridgeSenderError,
+    searchState.showAddressValidationError,
+    searchState.showBridgeRecipientError,
+    searchState.showBridgeRecipientWarning,
+    searchState.showBridgeSenderError,
+    searchState.showSanctionedBanner,
+    shouldHideRegularSearchState,
+    state.recipient?.memo?.type,
+    state.recipient?.memo?.value.length,
+    state.transaction.status,
+  ]);
+  useSendFlowMessageTracking({
+    step: SEND_FLOW_STEP.RECIPIENT,
+    request: messageTrackingRequest,
+    isTransient: isLoading,
+    immediate: messageTrackingRequest?.message.messageId === "sanctioned",
+  });
+
   const addressMatchedSectionViewModel = useAddressMatchedSectionViewModel({
     searchResult: result,
     searchValue: recipientSearch.value,

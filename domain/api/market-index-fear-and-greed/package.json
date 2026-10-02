@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-market-index-fear-and-greed",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "private": true,
   "description": "Domain API client for the CoinMarketCap Crypto Fear & Greed index: RTK Query endpoint typed on @domain/entity-market-index-fear-and-greed",
   "main": "src/index.ts",
@@ -29,6 +29,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

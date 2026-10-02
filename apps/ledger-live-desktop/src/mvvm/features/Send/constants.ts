@@ -1,6 +1,8 @@
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig, SendFlowConfig } from "./types";
 
+export const FEE_PLACEHOLDER = "--";
+
 export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.BALANCE_TYPE,
   SEND_FLOW_STEP.RECIPIENT,
@@ -11,6 +13,10 @@ export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.ADD_TO_EXISTING_CONTACT,
   SEND_FLOW_STEP.CUSTOM_FEES,
   SEND_FLOW_STEP.COIN_CONTROL,
+  SEND_FLOW_STEP.FEE_PAYMENT,
+  SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE,
+  SEND_FLOW_STEP.SPONSORED_POLLING,
+  SEND_FLOW_STEP.SPONSORED_FAILURE,
   SEND_FLOW_STEP.SIGNATURE,
   SEND_FLOW_STEP.CONFIRMATION,
   SEND_FLOW_STEP.SKIP_MEMO_CONFIRMATION,
@@ -89,6 +95,37 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     titleKey: "newSendFlow.customFees.title",
     showAvailable: false,
   },
+  [SEND_FLOW_STEP.FEE_PAYMENT]: {
+    id: SEND_FLOW_STEP.FEE_PAYMENT,
+    canGoBack: true,
+    floating: true,
+    titleKey: "newSendFlow.feePayment.title",
+    showAvailable: false,
+    height: "fit",
+  },
+  [SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE]: {
+    id: SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE,
+    canGoBack: false,
+    floating: true,
+    titleKey: "newSendFlow.sponsoredRentSignature.title",
+    showAvailable: false,
+    height: "fit",
+  },
+  [SEND_FLOW_STEP.SPONSORED_POLLING]: {
+    id: SEND_FLOW_STEP.SPONSORED_POLLING,
+    canGoBack: false,
+    floating: true,
+    showTitle: false,
+    height: "fit",
+  },
+  [SEND_FLOW_STEP.SPONSORED_FAILURE]: {
+    id: SEND_FLOW_STEP.SPONSORED_FAILURE,
+    canGoBack: false,
+    floating: true,
+    titleKey: "newSendFlow.sponsoredFailure.title",
+    showAvailable: false,
+    height: "fit",
+  },
   [SEND_FLOW_STEP.COIN_CONTROL]: {
     id: SEND_FLOW_STEP.COIN_CONTROL,
     canGoBack: true,
@@ -113,6 +150,16 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     showTitle: false,
     height: "fit",
   },
+};
+
+/** SIGNATURE's header while it signs a sponsored send's transfer, the second of its two signatures. */
+export const SPONSORED_TRANSFER_SIGNATURE_HEADER: Pick<
+  SendStepConfig,
+  "showTitle" | "titleKey" | "showAvailable"
+> = {
+  showTitle: true,
+  titleKey: "newSendFlow.sponsoredTransferSignature.title",
+  showAvailable: false,
 };
 
 export const SEND_FLOW_CONFIG: SendFlowConfig = {

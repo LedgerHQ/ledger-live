@@ -60,6 +60,7 @@ const baseModel = {
   handleRecipientInputChange: jest.fn(),
   handleRecipientPaste: jest.fn(),
   handleQrCodeClick: jest.fn(),
+  handleQrScannerError: jest.fn(),
   handleScanPicked: jest.fn(),
   isScannerOpen: false,
   recipientContact: undefined,
@@ -99,7 +100,7 @@ describe("SendHeader", () => {
     mockedUseSendHeaderModel.mockReturnValue({
       ...baseModel,
       addressInputValue: "Benoit Jean",
-      recipientContact: { id: "contact-benoit", name: "Benoit Jean" },
+      recipientContact: { id: "contact-benoit", name: "Benoit Jean", isMe: false },
     });
 
     render(<SendHeader />);
@@ -118,7 +119,7 @@ describe("SendHeader", () => {
   });
 
   it.each([
-    ["a contact", { id: "contact-benoit", name: "Benoit Jean" }],
+    ["a contact", { id: "contact-benoit", name: "Benoit Jean", isMe: false }],
     ["a plain address", undefined],
   ])("goes back to the recipient step when clicking the header showing %s", (_, contact) => {
     const handleRecipientInputClick = jest.fn();

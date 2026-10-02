@@ -6,7 +6,10 @@ import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/la
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
 import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
-import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
+import {
+  restoreCardAuthStatus,
+  restorePayCardLoginIntro,
+} from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
@@ -39,6 +42,7 @@ import {
   getUser,
 } from "../db";
 import { importSettings } from "~/actions/settings";
+import { bootstrapCardSession } from "LLM/utils/bootstrapCardSession";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importBle } from "~/actions/ble";
 import { importKnownDevices } from "~/reducers/knownDevices";
@@ -58,6 +62,7 @@ import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
+import { whenCachedFlagsSettled } from "./whenCachedFlagsSettled";
 
 interface Props {
   onInitFinished: () => void;
@@ -94,6 +99,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
   const init = useCallback(async () => {
     try {
+      // Everything rendered once `ready` flips, including the providers above `WaitForAppReady`,
+      // must resolve flags from the Firebase cache rather than from the compiled defaults.
+      const cachedFlagsSettled = whenCachedFlagsSettled(store);
       const readStorageStart = Date.now();
       mmkvStorageWrapper.monitor(true);
       const [
@@ -144,6 +152,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
           mmkvRead: mmkvStorageWrapper.flushAccessedKeys(false),
         });
       });
+
+      await cachedFlagsSettled;
+      logStartupEvent("Feature flags cache settled");
 
       store.dispatch(importBle(bleData));
       if (persistedKnownDevices) {
@@ -276,6 +287,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
           });
         }
       }
+
+      await bootstrapCardSession(store.dispatch);
+      await restoreCardAuthStatus(store.dispatch, store.getState);
 
       setInitialCountervalues(initialCountervalues);
       setReady(true);

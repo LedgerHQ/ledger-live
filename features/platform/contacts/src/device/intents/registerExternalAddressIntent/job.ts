@@ -25,7 +25,7 @@ import {
 import {
   mapBytesToGroupHandle,
   mapBytesToProof,
-  mapChainIdToBigInt,
+  mapChainIdForFamily,
   mapGroupHandleToBytes,
   mapIdentifierToBytes,
   mapProofToBytes,
@@ -162,12 +162,12 @@ export const registerExternalAddressIntentJob: Job<
       deviceActionInput = {
         contactName: input.contactName,
         scope: input.scope,
-        identifier: mapIdentifierToBytes(input.address),
+        identifier: mapIdentifierToBytes(input.address, input.blockchainFamily),
         // The kit's family table is keyed by the lowercased coin-app name
         // (e.g. "ethereum"), distinct from Ledger Wallet's own family
         // grouping (e.g. "evm") carried in `input.blockchainFamily`.
         blockchainFamily: deviceExtractedContext.currentAppName.toLowerCase(),
-        chainId: mapChainIdToBigInt(input.chainId),
+        chainId: mapChainIdForFamily(input.chainId, input.blockchainFamily),
         existingContactGroup: mapExistingContactGroupToBytes(input.existingContactGroup),
         skipOpenApp: true,
       };

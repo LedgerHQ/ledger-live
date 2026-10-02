@@ -4,7 +4,7 @@ import { TransactionStatusCommon } from "@ledgerhq/types-live";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/coin-evm/errors";
 import type { Transaction as EvmTransaction, TransactionStatus } from "../types";
-import type { EditType } from "@ledgerhq/coin-evm/types/index";
+import type { EditType } from "@ledgerhq/coin-evm/types";
 
 type ValidatedTransactionFields =
   | "recipient"

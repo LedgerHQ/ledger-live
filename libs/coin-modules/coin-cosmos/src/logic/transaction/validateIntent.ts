@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/index";
 import {
   AmountRequired,
+  FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -19,6 +20,7 @@ import cryptoFactory from "../../chain/chain";
 import { type CosmosCoinConfig } from "../../config";
 import {
   ClaimRewardsFeesWarning,
+  CosmosDelegateAllFundsWarning,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "../../errors";
@@ -43,12 +45,20 @@ export async function validateIntent(
   customFees?: FeeEstimation,
   config?: CosmosCoinConfig,
 ): Promise<TransactionValidation> {
+  // The framework hands over `transaction.fees ?? 0`, so an unprepared transaction is
+  // indistinguishable from a zero fee by value alone. A zero fee is only a real estimate on a chain
+  // that allows a zero gas price (e.g. gonka); anywhere else it means estimation has not run yet.
+  const feesLoaded =
+    customFees !== undefined &&
+    (customFees.value > 0n || cryptoFactory(currencyId, config).minGasPrice === 0);
+
   if (intent.intentType === "staking") {
     return validateStakingIntent(
       currencyId,
       intent as StakingTransactionIntent,
       balances,
       customFees?.value ?? 0n,
+      feesLoaded,
       config,
     );
   }
@@ -56,6 +66,10 @@ export async function validateIntent(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const estimatedFees = customFees?.value ?? 0n;
+
+  if (!feesLoaded) {
+    errors.fees = new FeeNotLoaded();
+  }
 
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired("");
@@ -96,6 +110,7 @@ function validateStakingIntent(
   intent: StakingTransactionIntent,
   balances: Balance[],
   estimatedFees: bigint,
+  feesLoaded: boolean,
   config?: CosmosCoinConfig,
 ): TransactionValidation {
   const errors: Record<string, Error> = {};
@@ -111,6 +126,8 @@ function validateStakingIntent(
   if (intent.mode === "redelegate") {
     if (!intent.dstValAddress) {
       errors.dstValAddress = new RedelegateDstValAddressRequired();
+    } else if (intent.dstValAddress === intent.valAddress) {
+      errors.dstValAddress = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else if (!intent.dstValAddress.startsWith(validatorPrefix)) {
       errors.dstValAddress = new InvalidAddress();
     }
@@ -128,6 +145,14 @@ function validateStakingIntent(
     errors.amount = new AmountRequired();
   } else if (totalSpent > available) {
     errors.amount = new NotEnoughBalance();
+  }
+
+  if (!feesLoaded) {
+    errors.fees = new FeeNotLoaded();
+  }
+
+  if (intent.mode === "delegate" && intent.useAllAmount && !errors.amount) {
+    warnings.amount = new CosmosDelegateAllFundsWarning();
   }
 
   // The fee eats the reward: the bridge compares against pendingRewards, which the Alpaca inputs

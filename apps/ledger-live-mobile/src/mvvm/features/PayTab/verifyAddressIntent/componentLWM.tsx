@@ -38,15 +38,16 @@ const DEVICE_SCREEN = {
 function NextStepsScreen({ onGotIt }: Readonly<{ onGotIt: () => void }>) {
   const { t } = useTranslation();
   const steps = [
-    { index: 1 as const, label: t("payTab.request.verifyAddress.nextStepShare") },
-    { index: 2 as const, label: t("payTab.request.verifyAddress.nextStepMatch") },
+    { index: 1 as const, label: t("payTab.request.verifyAddress.nextStepKeepDisplayed") },
+    { index: 2 as const, label: t("payTab.request.verifyAddress.nextStepPaste") },
+    { index: 3 as const, label: t("payTab.request.verifyAddress.nextStepCheckMatch") },
   ];
 
   return (
     <InfoState
       preset="spot"
       size="hug"
-      spotProps={{ icon: ShieldLock }}
+      spotProps={{ icon: ShieldLock, size: 56 }}
       title={t("payTab.request.verifyAddress.successTitle")}
       content={
         <Box lx={{ backgroundColor: "muted", borderRadius: "lg", gap: "s20", padding: "s20" }}>

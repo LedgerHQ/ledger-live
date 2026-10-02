@@ -1,5 +1,9 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import type {
+  AssetInfo,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import {
@@ -14,11 +18,18 @@ import type { AccountTronAPI, ChainParameters } from "../network/types";
 import { abiEncodeTrc20Transfer } from "../network/utils";
 import type { NetworkInfo, TronMemo, TronTxData } from "../types";
 import {
+  EnergyRentInsufficientBalance,
+  EnergyRentUnsupportedIntent,
+  TronifyApiError,
+} from "../types/errors";
+import {
   ACTIVATION_FEES,
   MEMO_FEE_PESSIMISTIC,
-  ONE_TRX,
   STANDARD_FEES_NATIVE,
   STANDARD_FEES_TRC_20,
+  TRONIFY_PAY_ASSET,
+  payAssetBaseUnits,
+  tronifyPayAsset,
 } from "./constants";
 import { getBalance } from "./getBalance";
 import { findBalance } from "./utils";
@@ -129,10 +140,12 @@ export const estimateEnergy = async (
     functionSelector: "transfer(address,uint256)",
     parameter: abiEncodeTrc20Transfer(decode58Check(intent.recipient), simulatedAmount),
   });
-  // A reverted simulation reports an unreliable energy_used — surface it.
-  if (response.result?.result === false) {
+  // A reverted simulation reports an unreliable energy_used — surface it. java-tron keeps
+  // `result.result` true on a REVERT and flags it only on the returned transaction.
+  const reverted = response.transaction?.ret?.[0]?.ret === "FAILED";
+  if (response.result?.result === false || reverted) {
     throw new Error(
-      `triggerConstantContract failed: ${response.result.code ?? "unknown"} ${response.result.message ?? ""}`.trim(),
+      `triggerConstantContract failed: ${response.result?.code ?? "unknown"} ${response.result?.message ?? ""}`.trim(),
     );
   }
   // A successful simulation that omits energy_used (or returns a non-numeric value) is uncertainty,
@@ -403,16 +416,11 @@ const readRentalParam = (
   return fallback;
 };
 
-// extraTrxNum's wire contract is discontinuous — 0 (no top-up) or a value in [0.8, 500] — which
-// readRentalParam's single `>= min` can't express, so an override of 0.1 or 600 would reach the API
-// and fail the order. Validate the exact range; fall back to the default (logged) on a misconfig.
+// extraTrxNum takes 0 or [0.8, 500], but 0 gets a TRX-priced quote that parseUsdtQuote rejects, so
+// only the non-zero range is usable; a 0, 0.1 or 600 override falls back to the default.
 const readExtraTrx = (logger: Logger, value: unknown): number => {
   if (value === undefined) return DEFAULT_TRONIFY_RENTAL_EXTRA_TRX;
-  if (
-    typeof value === "number" &&
-    Number.isFinite(value) &&
-    (value === 0 || (value >= 0.8 && value <= 500))
-  ) {
+  if (typeof value === "number" && Number.isFinite(value) && value >= 0.8 && value <= 500) {
     return value;
   }
   logger("tron/estimateFees", "ignoring invalid coin-config rentalExtraTrx, using default", {
@@ -421,29 +429,25 @@ const readExtraTrx = (logger: Logger, value: unknown): number => {
   return DEFAULT_TRONIFY_RENTAL_EXTRA_TRX;
 };
 
-/**
- * Estimate fees for the Tronify energy-rent option.
- *
- * Calls the Tronify quote API and returns a priced FeeEstimation alongside the standard burn cost
- * for comparison. Only applicable to TRC-20 transfers (the only intent type Tronify covers).
- *
- * Throws on any error — including Tronify API failures — as the caller must handle unavailability
- * explicitly (no silent fallback, per ADR-050 Option 3 AC).
- */
-export async function estimateTronifyFees(
+// Shared by the framework estimate and the seam quote. Throws on any error — including Tronify API
+// failures — as the caller must handle unavailability explicitly (no silent fallback, per ADR-050
+// Option 3 AC).
+async function quoteTronifyRent(
   logger: Logger,
   config: TronCoinConfig,
   intent: TronIntent,
-): Promise<FeeEstimation> {
+): Promise<{ value: bigint; originalValue: bigint; breakdown: TronResourceBreakdown }> {
   if (intent.type !== "send" || intent.asset.type !== "trc20" || !intent.asset.assetReference) {
-    throw new Error("Tronify fee option is only available for TRC-20 send intents");
+    throw new EnergyRentUnsupportedIntent(
+      "Tronify fee option is only available for TRC-20 send intents",
+    );
   }
 
   // prepareTransaction re-estimates on every change, so this can run before a recipient is entered.
   // Guard explicitly: estimateEnergy would otherwise reach decode58Check("") and throw an opaque
   // bs58check error instead of a clear one (no silent fallback, per ADR-050 Option 3).
   if (!intent.recipient) {
-    throw new Error("Tronify fee estimation requires a recipient");
+    throw new EnergyRentUnsupportedIntent("Tronify fee estimation requires a recipient");
   }
 
   // Single energy simulation; result feeds both the standard burn calc and the Tronify quote.
@@ -475,28 +479,7 @@ export async function estimateTronifyFees(
     }),
   ]);
 
-  // Only TRX-denominated quotes are supported here. USDT-denominated rent (Flow 2) carries amounts
-  // in a different unit than the standard fee and requires separate handling. payCoinCode is an
-  // unvalidated API field (typed string, but a missing/non-string value would make toUpperCase()
-  // throw an opaque TypeError) — guard it so a bad response yields the clear error below.
-  const payCoinCode = quote.payCoinCode;
-  if (typeof payCoinCode !== "string" || payCoinCode.toUpperCase() !== "TRX") {
-    throw new Error(
-      `Tronify returned unsupported payCoinCode: ${String(payCoinCode)}; only TRX is supported`,
-    );
-  }
-
-  // payCoinAmt is an unvalidated API string: a non-numeric/NaN/Infinity value would otherwise reach
-  // BigInt() as "NaN"/"Infinity" and throw an opaque SyntaxError. Fail with a clear error instead
-  // (no silent fallback, per ADR-050 Option 3).
-  const payCoinAmt = new BigNumber(quote.payCoinAmt);
-  if (!payCoinAmt.isFinite() || payCoinAmt.isNegative()) {
-    throw new Error(`Tronify returned an invalid payCoinAmt: ${quote.payCoinAmt}`);
-  }
-
-  const value = BigInt(
-    payCoinAmt.multipliedBy(ONE_TRX).integerValue(BigNumber.ROUND_CEIL).toFixed(),
-  );
+  const { payCoinAmt } = parseUsdtQuote(quote);
 
   // Populate a breakdown so validateIntent/resolveFeeContext doesn't fire an extra estimateFees
   // RPC on every keystroke for the Tronify path (resolveFeeContext gates re-estimation on whether
@@ -509,57 +492,54 @@ export async function estimateTronifyFees(
     energyEstimated: true,
     // Rented energy should cover the burn, but the ceiling still has to survive a rental that lands
     // short or late, so it is sized from the simulation rather than left at the flat default.
-    feeLimit: isTrc20Send(intent)
-      ? trc20FeeLimit(new BigNumber(energyNeeded).multipliedBy(chainParams.energyFee))
-      : undefined,
+    feeLimit: trc20FeeLimit(new BigNumber(energyNeeded).multipliedBy(chainParams.energyFee)),
   };
 
-  return {
-    value,
-    originalValue,
-    // Clamp to 0n: Tronify may be more expensive than burning during low-energy-price periods.
-    savings: originalValue > value ? originalValue - value : 0n,
-    parameters: { ...breakdown },
-  };
+  return { value: BigInt(payAssetBaseUnits(payCoinAmt).toFixed()), originalValue, breakdown };
 }
 
 /**
- * Context-free Tronify fee quote for the app-side savings display: the Tronify rental cost
- * (`value`), the standard TRX burn it replaces (`originalValue`), and the delta (`savings`) — all
- * TRX-denominated. So an app can quote the savings nudge without constructing a framework `Context`
- * (the seam the desktop/mobile `useSponsoredFee` hook consumes). Propagates `estimateTronifyFees`'
- * throw on unavailability — the caller has already gated on `listFeeOptions` and renders "no
- * savings" if this rejects.
+ * Estimate fees for the Tronify energy-rent option (TRC-20 transfers only).
+ *
+ * `value` is the rent in USDT base units — the option's `feeAsset` — and `originalValue` the
+ * standard burn in sun. The two are in different units, so there is no `savings`.
  */
+export async function estimateTronifyFees(
+  logger: Logger,
+  config: TronCoinConfig,
+  intent: TronIntent,
+): Promise<FeeEstimation> {
+  const { value, originalValue, breakdown } = await quoteTronifyRent(logger, config, intent);
+  return { value, originalValue, parameters: { ...breakdown } };
+}
+
+/** Context-free Tronify quote for an app that has no framework `Context` to build. Propagates
+ * `estimateTronifyFees`' throw on unavailability. */
 export async function estimateSponsoredFeeQuote(
   logger: Logger,
   config: TronCoinConfig,
   intent: TronIntent,
-): Promise<{ value: bigint; originalValue: bigint; savings: bigint }> {
-  const { value, originalValue, savings } = await estimateTronifyFees(logger, config, intent);
-  // originalValue/savings are optional on the framework's FeeEstimation; Tronify always sets both,
-  // so the `??` narrows the type to non-optional — not a runtime fallback. Don't drop it (build needs it).
-  return { value, originalValue: originalValue ?? value, savings: savings ?? 0n };
+): Promise<{ feeAsset: AssetInfo; value: bigint; originalValue: bigint }> {
+  const { value, originalValue } = await quoteTronifyRent(logger, config, intent);
+  return { feeAsset: tronifyPayAsset(), value, originalValue };
 }
 
-/**
- * Build the energy-rent request for a TRC-20 send, so the app can hand it straight to
- * `craftEnergyRentTransaction` without computing energy or reading coin-config itself. The energy
- * is simulated on-chain, the energy is delegated to the sender (they call the contract), and the
- * rental window / extra-TRX come from remote coin-config with defaults. Mirrors the request
- * `estimateTronifyFees` prices internally. Throws on a non-TRC-20 or recipient-less intent — the
- * caller has already gated on `listFeeOptions`.
- */
+/** Builds the energy-rent request so the app can hand it straight to `craftEnergyRentTransaction`
+ * without computing energy or reading coin-config itself. */
 export async function buildEnergyRentRequest(
   logger: Logger,
   config: TronCoinConfig,
   intent: TronIntent,
 ): Promise<EnergyRentRequest> {
-  if (intent.type !== "send" || intent.asset.type !== "trc20") {
-    throw new Error("Energy rent is only available for TRC-20 send intents");
+  if (intent.type !== "send" || intent.asset.type !== "trc20" || !intent.asset.assetReference) {
+    throw new EnergyRentUnsupportedIntent("Energy rent is only available for TRC-20 send intents");
   }
   if (!intent.recipient) {
-    throw new Error("Energy rent requires a recipient");
+    throw new EnergyRentUnsupportedIntent("Energy rent requires a recipient");
+  }
+  // The affordability check below needs the exact amount, so the app resolves a max send first.
+  if (intent.useAllAmount) {
+    throw new EnergyRentUnsupportedIntent("Energy rent requires a resolved amount, not a max send");
   }
   const tronifyConfig = config.energyRent?.tronify;
   const durationSeconds = readRentalParam(
@@ -579,25 +559,51 @@ export async function buildEnergyRentRequest(
     extraTrx,
   };
 
-  // Bind the order craftEnergyRentTransaction will place to the price quoted for these exact
-  // params; both calls share this one request (and so toOrderParams), leaving price as the only
-  // thing that can differ. A quote failure propagates: crafting without a ceiling is the unbounded
-  // case the ceiling guards against, and the very next step calls the same backend anyway.
+  // A quote failure propagates: crafting without a ceiling is the unbounded case the ceiling guards against.
   const quote = await getEnergyRentQuote(logger, config, request);
-  // Only TRX-denominated rent is supported (Flow 1); reject a non-TRX quote before it reaches the
-  // ceiling and signing. Normalize the code so the ceiling compare (assertOrderWithinApprovedCost) is exact.
-  const payCoinCode = quote.payCoinCode;
-  if (typeof payCoinCode !== "string" || payCoinCode.toUpperCase() !== "TRX") {
-    throw new Error(
-      `Tronify returned unsupported payCoinCode: ${String(payCoinCode)}; only TRX is supported`,
+  // Validate before this becomes the signing ceiling: assertOrderWithinApprovedCost skips its check
+  // when maxPayCoinAmt is undefined.
+  const { payCoinCode, payCoinAmt } = parseUsdtQuote(quote);
+
+  // Checked on-chain before any order exists: a balance short of amount + rent would pay for energy
+  // the transfer can never use.
+  const rent = BigInt(payAssetBaseUnits(payCoinAmt).toFixed());
+  const sending =
+    intent.asset.assetReference === TRONIFY_PAY_ASSET.assetReference ? intent.amount : 0n;
+  const balance = await tokenBalance(
+    logger,
+    config,
+    intent.sender,
+    TRONIFY_PAY_ASSET.assetReference,
+  );
+  if (balance.isLessThan((rent + sending).toString())) {
+    throw new EnergyRentInsufficientBalance(
+      "USDT balance does not cover the transfer amount plus the energy rent",
     );
   }
-  // maxPayCoinAmt is the signing ceiling and assertOrderWithinApprovedCost skips its check when the
-  // value is undefined, so a payCoinAmt that arrives unvalidated from the provider is rejected here
-  // rather than reaching the device as an unbounded order.
-  const maxPayCoinAmt = new BigNumber(quote.payCoinAmt);
-  if (!maxPayCoinAmt.isFinite() || maxPayCoinAmt.isNegative()) {
-    throw new Error(`Tronify returned an invalid payCoinAmt: ${String(quote.payCoinAmt)}`);
+  return { ...request, maxPayCoinAmt: payCoinAmt.toFixed(), maxPayCoinCode: payCoinCode };
+}
+
+// Only USDT-denominated rent is supported (see TRONIFY_PAY_ASSET); fails clearly rather than
+// opaquely downstream (ADR-050 Option 3).
+function parseUsdtQuote(quote: { payCoinCode?: unknown; payCoinAmt?: unknown }): {
+  payCoinCode: typeof TRONIFY_PAY_ASSET.unit.code;
+  payCoinAmt: BigNumber;
+} {
+  const { payCoinCode } = quote;
+  if (
+    typeof payCoinCode !== "string" ||
+    payCoinCode.toUpperCase() !== TRONIFY_PAY_ASSET.unit.code
+  ) {
+    throw new TronifyApiError(
+      `Tronify returned unsupported payCoinCode: ${String(payCoinCode)}; only USDT is supported`,
+    );
   }
-  return { ...request, maxPayCoinAmt: quote.payCoinAmt, maxPayCoinCode: payCoinCode.toUpperCase() };
+  const payCoinAmt = new BigNumber(String(quote.payCoinAmt));
+  if (!payCoinAmt.isFinite() || !payCoinAmt.isGreaterThan(0)) {
+    throw new TronifyApiError(
+      `Tronify returned an invalid payCoinAmt: ${String(quote.payCoinAmt)}`,
+    );
+  }
+  return { payCoinCode: TRONIFY_PAY_ASSET.unit.code, payCoinAmt };
 }

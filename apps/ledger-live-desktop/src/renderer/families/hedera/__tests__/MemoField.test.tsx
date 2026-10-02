@@ -17,7 +17,11 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   }),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({ track: jest.fn() }));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 const makeStatus = (overrides: Partial<TransactionStatus> = {}): TransactionStatus => ({
   errors: {},

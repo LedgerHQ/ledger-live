@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@features/platform-feature-flags";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";

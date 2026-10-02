@@ -17,6 +17,8 @@ const SOURCE_FLAG = "ledgerLive";
 const buildConfig = (tronify?: { url: string; sourceFlag: string }): TronCoinConfig =>
   ({
     status: { type: "active" },
+    name: "Tron",
+    unit: { name: "TRX", code: "TRX", magnitude: 6 },
     explorer: { url: "https://tron.coin.ledger.com" },
     energyRent: tronify ? { provider: "tronify", tronify } : undefined,
   }) as unknown as TronCoinConfig;
@@ -64,8 +66,6 @@ describe("tronify network client", () => {
     );
   });
 
-  // Remote coin-config is untyped JSON, so url/sourceFlag may arrive as non-strings or blank; the guard
-  // must reject them before it opens raw-signing.
   it.each([
     { url: "", sourceFlag: SOURCE_FLAG },
     { url: "   ", sourceFlag: SOURCE_FLAG },

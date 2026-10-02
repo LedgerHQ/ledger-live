@@ -5,6 +5,8 @@ import { createApi } from "./index";
 const context: StacksContext = {
   config: async () => ({
     status: { type: "active" as const },
+    name: "Stacks",
+    unit: { name: "STX", code: "STX", magnitude: 6 },
     config_currency_stacks: {
       type: "object" as const,
       default: { status: { type: "active" as const } },

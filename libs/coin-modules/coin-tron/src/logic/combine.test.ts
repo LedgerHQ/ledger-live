@@ -23,7 +23,6 @@ describe("combine", () => {
 
   it("throws when the tx is too long to fit the length prefix", () => {
     const signature = "0B7E480C202D77F02E84C4E86A4CEF2D44623E670F455558C6FA8F09F5715E66";
-    // 0x10000 hex chars — one past what the 4-digit prefix can encode; would otherwise mis-slice on recovery.
     const oversizedTx = "0".repeat(0x10000);
 
     expect(() => combine(oversizedTx, [signature])).toThrow(/too long to length-prefix/);
@@ -37,6 +36,16 @@ describe("recoverDeviceSignature", () => {
     const signature = "0B7E480C202D77F02E84C4E86A4CEF2D44623E670F455558C6FA8F09F5715E66";
 
     expect(recoverDeviceSignature(rawTx, combine(rawTx, [signature]))).toEqual(signature);
+  });
+
+  it.each([
+    ["signed for other bytes", combine("0a02beef", ["aa"]), "0a02dead"],
+    ["length prefix mismatch", `0005${"0a02beef"}aa`, "0a02beef"],
+    ["no signature after the tx", combine("0a02beef", [""]), "0a02beef"],
+  ])("throws InvalidRawDataHex when %s", (_, combined, rawTx) => {
+    expect(() => recoverDeviceSignature(rawTx, combined)).toThrow(
+      expect.objectContaining({ name: "InvalidRawDataHex" }),
+    );
   });
 });
 

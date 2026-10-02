@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { HEDERA_MAX_MEMO_SIZE } from "@ledgerhq/live-common/families/hedera/constants";
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { SendAmountProps } from "./types";
 import Text from "~/renderer/components/Text";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";

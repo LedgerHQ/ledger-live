@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 import { useAssetPnL, usePortfolioPnL } from "../hooks";
 import { computeAssetPnL } from "../assetPnL";
 import { computePortfolioPnL } from "../portfolioPnL";

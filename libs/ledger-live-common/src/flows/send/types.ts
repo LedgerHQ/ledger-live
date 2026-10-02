@@ -17,6 +17,10 @@ export const SEND_FLOW_STEP = {
   SIGNATURE: "SIGNATURE",
   CONFIRMATION: "CONFIRMATION",
   PAY_SUCCESS: "PAY_SUCCESS",
+  FEE_PAYMENT: "FEE_PAYMENT",
+  SPONSORED_RENT_SIGNATURE: "SPONSORED_RENT_SIGNATURE",
+  SPONSORED_POLLING: "SPONSORED_POLLING",
+  SPONSORED_FAILURE: "SPONSORED_FAILURE",
 } as const;
 
 export type SendFlowStep = (typeof SEND_FLOW_STEP)[keyof typeof SEND_FLOW_STEP];
@@ -109,6 +113,7 @@ export type SendFlowTransactionActions = Readonly<{
   updateTransaction: (updater: (tx: Transaction) => Transaction) => void;
   setRecipient: (recipient: RecipientData) => void;
   setAccount: (account: AccountLike, parentAccount?: Account | null) => void;
+  updateAccount: (account: AccountLike, parentAccount?: Account | null) => void;
 }>;
 
 export type SendFlowOperationActions = Readonly<{

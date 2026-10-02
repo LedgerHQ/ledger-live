@@ -4,7 +4,7 @@ import {
   privateKeyToPublic,
   publicKeyToHex,
   TransactionSigner,
-} from "@stacks/transactions-v7";
+} from "@stacks/transactions";
 
 // Only the field this signer reads — `SingleSigSpendingCondition` isn't re-exported from the
 // package root, and the coin-tester otherwise has no reason to deep-import `dist/authorization`.
@@ -17,13 +17,10 @@ type SingleSigSpendingCondition = { signature?: { data: string } };
  * `transactionToHex(tx)`) and must return the hex-encoded signature `combine` consumes
  * (`coin-stacks/logic/transaction/combine.ts`'s `signature` param).
  *
- * Deliberately targets `@stacks/transactions@7.6.0` (aliased as `@stacks/transactions-v7` in
- * `package.json`, distinct from this package's own pinned v6), unlike `signer.ts`'s legacy
- * signer: `coin-stacks`'s pox-5 staking transactions carry a post-condition type (`ustxToLock`)
- * that v6's `deserializeTransaction` doesn't recognize at all (`DeserializationError: Could not
- * read 3 as PostConditionType`, verified empirically) -- v6 and v7 only interoperate for the
- * plain STX/SIP-010 transfer shapes `signer.ts` actually signs, not for every wire-format feature
- * `coin-stacks` can produce.
+ * Uses the same `@stacks/transactions` v7 as `coin-stacks` (both from the pnpm catalog): its pox-5
+ * staking transactions carry a post-condition type (`ustxToLock`) that v6's
+ * `deserializeTransaction` does not recognize (`DeserializationError: Could not read 3 as
+ * PostConditionType`), so this signer must not drift to an older major.
  */
 export type GenericStacksSigner = {
   getAddress: (path: string) => Promise<{ address: string; publicKey: string }>;

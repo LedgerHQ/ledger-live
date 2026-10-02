@@ -11,6 +11,7 @@ export function CardVisualView({
   balanceLabel,
   isLoading = false,
   isFrozen,
+  discreet,
 }: CardVisualViewProps) {
   return (
     <div className="dark relative w-full" data-testid="card-visual">
@@ -22,6 +23,7 @@ export function CardVisualView({
             value={balance}
             formatter={formatCountervalue}
             loading={isLoading}
+            hidden={discreet}
             size="sm"
             data-testid="card-visual-amount"
           />

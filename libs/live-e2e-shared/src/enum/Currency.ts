@@ -192,6 +192,9 @@ export class Currency {
   static readonly OSMO = new Currency("Osmosis", "OSMO", "osmo", AppInfos.OSMOSIS, [
     Network.OSMOSIS,
   ]);
+  static readonly BABY = new Currency("Babylon", "BABY", "babylon", AppInfos.BABYLON, [
+    Network.BABYLON,
+  ]);
   static readonly MULTIVERS_X = new Currency("MultiversX", "EGLD", "elrond", AppInfos.MULTIVERS_X, [
     Network.MULTIVERS_X,
   ]);

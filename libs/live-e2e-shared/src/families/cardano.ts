@@ -48,6 +48,7 @@ export const sendCardanoButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
     async (tx: Transaction) => {
       const buttons = getButtonsController();
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
       const events = await pressUntilTextFound(DeviceLabels.AMOUNT);
       validateTransactionData(tx, events);
       await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
@@ -102,6 +103,7 @@ export const delegateCardanoButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
       const buttons = getButtonsController();
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION);
       await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
       await buttons.both();
     },

@@ -44,6 +44,8 @@ export SPECULOS_DEVICE=nanoSP       # Options: nanoSP | nanoX | nanoS | stax | f
 
 Consider adding these exports to your profile so they persist.
 
+Pay tab specs under `tests/specs/paytab/` also need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET`. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
+
 ### 3. Build
 
 Before running tests, build the app and dependencies:

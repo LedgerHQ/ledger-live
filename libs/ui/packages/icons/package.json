@@ -51,6 +51,7 @@
   "peerDependencies": {
     "@types/react": "*",
     "react": "*",
+    "react-native": ">=0.64.0",
     "styled-components": "*",
     "styled-system": "*",
     "react-native-svg": ">=12.1.1"
@@ -58,18 +59,23 @@
   "peerDependenciesMeta": {
     "@types/react": {
       "optional": true
+    },
+    "react-native": {
+      "optional": true
     }
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
-    "@svgr/core": "^5.5.0",
-    "@svgr/plugin-svgo": "^5.5.0",
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
+    "@svgr/plugin-svgo": "^8.1.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/styled-system": "^5.1.13",
     "camelcase": "^6.2.1",
     "glob": "^7.2.0",
     "react": "catalog:",
+    "react-native": "catalog:",
     "react-native-svg": "catalog:",
     "rimraf": "^4.4.1",
     "styled-components": "catalog:",

@@ -3,14 +3,12 @@ import type {
   BankTransferHandoff,
   BankTransferIntroProps,
   BankTransferIntroViewModel,
-  PayCardTrackEvent,
 } from "../../types";
 import { useBankTransferIntroViewModel } from "./useBankTransferIntroViewModel";
 
 export type UseBankTransferIntroAdapterParams = Readonly<{
   heroImage?: BankTransferIntroProps["heroImage"];
   onBankTransfer: (handoff: BankTransferHandoff) => void;
-  onTrackEvent?: PayCardTrackEvent;
 }>;
 
 export type UseBankTransferIntroAdapter = Readonly<{
@@ -22,20 +20,13 @@ export type UseBankTransferIntroAdapter = Readonly<{
 export function useBankTransferIntroAdapter({
   heroImage,
   onBankTransfer,
-  onTrackEvent,
 }: UseBankTransferIntroAdapterParams): UseBankTransferIntroAdapter {
   const [isOpen, setIsOpen] = useState(false);
 
   const open = useCallback(() => setIsOpen(true), []);
   const onClose = useCallback(() => setIsOpen(false), []);
 
-  const bankTransferIntro: BankTransferIntroProps = {
-    isOpen,
-    heroImage,
-    onBankTransfer,
-    onClose,
-    onTrackEvent,
-  };
+  const bankTransferIntro: BankTransferIntroProps = { isOpen, heroImage, onBankTransfer, onClose };
 
   const viewModel = useBankTransferIntroViewModel(bankTransferIntro);
 

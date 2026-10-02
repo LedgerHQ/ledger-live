@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth/hooks";
 import { useCardCashback } from "@features/flow-pay-card-wallets";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { useTranslation } from "@shared/i18n";
 import type { RewardProps, RewardViewProps } from "./types";
 
@@ -16,7 +16,6 @@ export function useRewardViewModel({
   onViewRewards,
 }: RewardProps): RewardViewProps | null {
   const { t } = useTranslation();
-  const { trackButtonClicked } = usePayAnalyticsContext();
   const isSignedIn = useIsCardSignedIn();
   const { cashback, isLoading, isError } = useCardCashback({
     currencies,
@@ -29,7 +28,7 @@ export function useRewardViewModel({
       trackButtonClicked({ button: "view reward currencies", page: "Card details" });
       onViewRewards();
     },
-    [onViewRewards, trackButtonClicked],
+    [onViewRewards],
   );
 
   return useMemo(() => {

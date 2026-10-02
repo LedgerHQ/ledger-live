@@ -115,7 +115,11 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
     LiveConfig.setConfig({
       config_currency_kaspa: {
         type: "object",
-        default: { status: { type: "active" } },
+        default: {
+          status: { type: "active" },
+          name: "KASPA",
+          unit: { name: "KAS", code: "KAS", magnitude: 8 },
+        },
       },
     });
 

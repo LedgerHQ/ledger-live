@@ -439,6 +439,13 @@ export type SendDescriptor = {
    * transparent vs shielded); omitted by every coin with a single balance.
    */
   balanceType?: BalanceTypeConfig;
+  /**
+   * Family-agnostic key/value attributes appended to every send-flow page event,
+   * once computable from the transaction (e.g. Zcash's source-pool privacy).
+   * Declared per coin; the generic tracking layer never inspects the transaction
+   * itself, so it stays family-agnostic. Sync, so it can run in a `useMemo`.
+   */
+  getTrackingAttributes?: (transaction: unknown) => Record<string, string>;
 };
 
 /**

@@ -1,5 +1,5 @@
 import { reduce, firstValueFrom } from "rxjs";
-import { Strategy } from "@ledgerhq/coin-evm/types/index";
+import { Strategy } from "@ledgerhq/coin-evm/types";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";

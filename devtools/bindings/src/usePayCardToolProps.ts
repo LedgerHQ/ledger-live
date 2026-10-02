@@ -11,6 +11,7 @@ import {
   emptyPayCardTransactionsMock,
   fillPayCardTransactionsMock,
   readPayCardTransactionsMock,
+  receiveMultiAssetPayCardTransactionMock,
   receivePayCardTransactionMock,
   type PayCardMockTransactionAsset,
 } from "@domain/api-card-management/mock/card-transactions";
@@ -407,6 +408,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     empty: () => updateTransactions(emptyPayCardTransactionsMock),
     receive: (asset: PayCardMockTransactionAsset) =>
       updateTransactions(() => receivePayCardTransactionMock(asset)),
+    receiveMultiAsset: () => updateTransactions(receiveMultiAssetPayCardTransactionMock),
     clear: () => updateTransactions(clearPayCardTransactionsMock),
   };
 

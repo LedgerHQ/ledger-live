@@ -1,8 +1,7 @@
-import { unlockApp } from "@features/platform-app-lock";
+import { promptBiometrics, unlockApp } from "@features/platform-app-lock";
 import { useCallback } from "react";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { promptBiometrics } from "../adapters/promptBiometrics";
 
 export type BiometricUnlock = Readonly<{
   runBiometricUnlock: () => Promise<boolean>;

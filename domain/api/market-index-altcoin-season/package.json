@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-market-index-altcoin-season",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "private": true,
   "description": "Domain API client for the CMC Altcoin Season Index: RTK Query endpoint typed on @domain/entity-market-index-altcoin-season",
   "main": "src/index.ts",
@@ -28,6 +28,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

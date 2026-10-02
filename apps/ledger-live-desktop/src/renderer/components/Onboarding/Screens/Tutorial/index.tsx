@@ -14,7 +14,7 @@ import {
   setHasBeenUpsoldRecover,
   setLastOnboardedDevice,
 } from "~/renderer/actions/settings";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { HideRecoverySeed } from "~/renderer/components/Onboarding/Help/HideRecoverySeed";
 import { PinHelp } from "~/renderer/components/Onboarding/Help/PinHelp";
 import { RecoverySeed } from "~/renderer/components/Onboarding/Help/RecoverySeed";
@@ -651,7 +651,10 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
         },
         nextSecondary: () => {
           track("button_clicked", { button: "Maybe later", ...trackProperties });
-          trackPage("Set up device: Ledger Sync Reject", null, { ...trackProperties });
+          trackPage({
+            category: "Set up device: Ledger Sync Reject",
+            props: { ...trackProperties },
+          });
           navigate(`${path}/${ScreenId.secureYourCrypto}`);
         },
         previous: () => navigate(`${path}/${ScreenId.genuineCheck}`),
@@ -887,7 +890,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
 
   useEffect(() => {
     if (isLedgerSyncActive && currentStep === ScreenId.enableSync && !syncDrawerOpen) {
-      trackPage("Set up device: Step 4 Ledger Sync Success", null, trackProperties);
+      trackPage({ category: "Set up device: Step 4 Ledger Sync Success", props: trackProperties });
       navigate(`${path}/${ScreenId.secureYourCrypto}`);
     }
   }, [isLedgerSyncActive, navigate, path, currentStep, syncDrawerOpen, trackProperties]);

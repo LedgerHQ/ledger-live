@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { render as renderWithoutI18n, screen, userEvent } from "@testing-library/react-native";
+import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import {
   mockContact,
   mockContactAddress,
@@ -13,6 +14,9 @@ const labels = {
   emptyAddress: "No saved addresses",
   formatAddressCount: (count: number) => `${count} saved addresses`,
 };
+
+const render = (ui: React.ReactElement) =>
+  renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
 
 function createContacts(): readonly Contact[] {
   return [
@@ -51,6 +55,23 @@ describe("ContactsCompactList", () => {
       "contacts-compact-row-contact-one",
       "contacts-compact-row-contact-many",
     ]);
+  });
+
+  it("should suffix the me contact name with the me label", () => {
+    render(
+      <ContactsCompactList
+        contacts={[
+          mockContact({ id: "contact-me", name: "Alice", isMe: true }),
+          mockContact({ id: "contact-bob", name: "Bob" }),
+        ]}
+        labels={labels}
+        onContactSelect={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Alice (Me)")).toBeVisible();
+    expect(screen.getByTestId("contacts-avatar-contact-me").props.alt).toBe("Alice (Me)");
+    expect(screen.getByText("Bob")).toBeVisible();
   });
 
   it("should render only the first supplied contacts when maxContacts is set", () => {

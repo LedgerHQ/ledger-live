@@ -2,7 +2,7 @@ import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { Features } from "@shared/feature-flags";
 import type { Currency } from "@domain/entity-currency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 import { getEnv } from "@shared/env";
 import {
   flattenAccounts,

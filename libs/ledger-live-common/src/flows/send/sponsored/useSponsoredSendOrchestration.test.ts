@@ -3,7 +3,10 @@
  */
 import { act, renderHook } from "@testing-library/react";
 import { getSponsoredCoinApi } from "../../../bridge/generic-coin-framework/sponsored";
-import type { EnergyRentRequest } from "../../../bridge/generic-coin-framework/sponsored";
+import type {
+  EnergyRentRequest,
+  RentPayment,
+} from "../../../bridge/generic-coin-framework/sponsored";
 import { SPONSORED_FAILURE_KIND, SPONSORED_PHASE } from "./types";
 import { useSponsoredSendOrchestration } from "./useSponsoredSendOrchestration";
 
@@ -20,15 +23,28 @@ const rentRequest: EnergyRentRequest = {
   durationSeconds: 3_600,
 };
 
+const USDT_ASSET = {
+  type: "trc20",
+  assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+  name: "Tether USD",
+  unit: { name: "USDT", code: "USDT", magnitude: 6 },
+};
+const RENT_PAYMENT: RentPayment = { asset: USDT_ASSET, amount: 3_200_000n };
+
 const makeSeam = (overrides: Record<string, unknown> = {}) => ({
+  feeOptionId: "sponsored-fixture",
+  providerName: "Provider",
+  waivesErrorKeys: [],
+  waivesWarningKeys: [],
+  reservationDedupKey: jest.fn().mockReturnValue("1.5"),
   listFeeOptions: jest.fn(),
   estimateSponsoredFeeQuote: jest.fn(),
   buildEnergyRentRequest: jest.fn().mockResolvedValue(rentRequest),
   craftEnergyRentTransaction: jest.fn().mockResolvedValue({
     orderId: "o1",
     transaction: {},
-    payCoinCode: "TRX",
-    payCoinAmt: "5.0",
+    payCoinCode: "USDT",
+    payCoinAmt: "3.2",
   }),
   submitEnergyRentPayment: jest.fn().mockResolvedValue(undefined),
   awaitEnergyDelivery: jest.fn().mockResolvedValue(undefined),
@@ -38,7 +54,7 @@ const makeSeam = (overrides: Record<string, unknown> = {}) => ({
     .fn()
     .mockReturnValue({ toSign: "0adeadbeef", paymentTxId: "txA" }),
   buildSignedEnergyRentTransaction: jest.fn().mockReturnValue({ signed: true }),
-  nativeRentAmount: jest.fn().mockReturnValue(5_000_000n),
+  rentPayment: jest.fn().mockReturnValue(RENT_PAYMENT),
   ...overrides,
 });
 
@@ -75,8 +91,8 @@ test("a crafted order without a signable transaction fails as RENT_PAYMENT, not 
     craftEnergyRentTransaction: jest.fn().mockResolvedValue({
       orderId: "o1",
       transaction: null,
-      payCoinCode: "TRX",
-      payCoinAmt: "5.0",
+      payCoinCode: "USDT",
+      payCoinAmt: "3.2",
     }),
   });
   mockGetSponsoredCoinApi.mockResolvedValue(seam);
@@ -90,6 +106,27 @@ test("a crafted order without a signable transaction fails as RENT_PAYMENT, not 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
   expect(result.current.state.order).toBeNull();
+});
+
+test("a rentPayment that throws fails the craft as RENT_PAYMENT and keeps the order out of state", async () => {
+  const seam = makeSeam({
+    rentPayment: jest.fn(() => {
+      throw new Error("Cannot reserve an energy-rent payment of 3.2 TRX");
+    }),
+  });
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+
+  expect(seam.rentPayment).toHaveBeenCalledTimes(1);
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
+  expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
+  expect(result.current.state.order).toBeNull();
+  expect(result.current.state.rentPayment).toBeNull();
 });
 
 test("buildEnergyRentRequest failure sets phase FAILED / failureKind RENT_PAYMENT", async () => {
@@ -112,7 +149,6 @@ test("buildEnergyRentRequest failure sets phase FAILED / failureKind RENT_PAYMEN
 test("submit failure the provider confirms unpaid -> RENT_PAYMENT (safe to re-craft)", async () => {
   const seam = makeSeam({
     submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
-    // Reconciliation after the ambiguous submit error confirms the order never got paid.
     getEnergyRentStatus: jest.fn().mockResolvedValue("failed"),
   });
   mockGetSponsoredCoinApi.mockResolvedValue(seam);
@@ -125,7 +161,7 @@ test("submit failure the provider confirms unpaid -> RENT_PAYMENT (safe to re-cr
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.getEnergyRentStatus).toHaveBeenCalledWith({ orderId: "o1", payerAddress: "TPayer" });
@@ -144,11 +180,8 @@ test("reset while seam resolution is pending skips the irreversible payment subm
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
-  // reset() runs synchronously after startRentPayment has entered `await getSeam()`, bumping the
-  // generation before the post-await guard. The device already signed TX-A, but the flow was
-  // abandoned, so the stale payment must never reach submitEnergyRentPayment.
   await act(async () => {
-    const pending = result.current.actions.startRentPayment("sig");
+    const pending = result.current.actions.startRentPayment("sig", "txA");
     result.current.actions.reset();
     await pending;
   });
@@ -168,10 +201,8 @@ test("closing the dialog (unmount) while seam resolution is pending skips the pa
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
-  // unmount() runs the hook's cleanup, bumping the generation, after startRentPayment has entered
-  // `await getSeam()` but before its post-await guard.
   await act(async () => {
-    const pending = result.current.actions.startRentPayment("sig");
+    const pending = result.current.actions.startRentPayment("sig", "txA");
     unmount();
     await pending;
   });
@@ -186,8 +217,6 @@ test("closing the dialog (unmount) during polling aborts the delivery poll", asy
     pollStarted = resolve;
   });
   const seam = makeSeam({
-    // Simulate an in-flight poll: capture the abort signal and never resolve, so only the unmount can
-    // end it.
     awaitEnergyDelivery: jest.fn((_ref, _target, opts) => {
       capturedSignal = opts?.signal;
       pollStarted();
@@ -203,7 +232,7 @@ test("closing the dialog (unmount) during polling aborts the delivery poll", asy
   });
 
   await act(async () => {
-    void result.current.actions.startRentPayment("sig");
+    void result.current.actions.startRentPayment("sig", "txA");
     await started;
   });
 
@@ -230,7 +259,7 @@ test.each([["paid"], ["pending"], ["unknown"]])(
       await result.current.actions.craftRent();
     });
     await act(async () => {
-      await result.current.actions.startRentPayment("sig");
+      await result.current.actions.startRentPayment("sig", "txA");
     });
 
     expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -241,8 +270,6 @@ test.each([["paid"], ["pending"], ["unknown"]])(
 test("submit failure the provider reports delivered AND the chain confirms -> proceeds to TRANSFER", async () => {
   const seam = makeSeam({
     submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
-    // The broadcast rejected but the provider reports delivered — released only once the on-chain
-    // read corroborates it (AC2): advisory status alone never reaches TRANSFER.
     getEnergyRentStatus: jest.fn().mockResolvedValue("delivered"),
     isEnergyDelivered: jest.fn().mockResolvedValue(true),
   });
@@ -254,7 +281,7 @@ test("submit failure the provider reports delivered AND the chain confirms -> pr
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.isEnergyDelivered).toHaveBeenCalledWith({
@@ -262,15 +289,12 @@ test("submit failure the provider reports delivered AND the chain confirms -> pr
     energyNeeded: 1_000n,
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
-  // This path skips POLLING_START, so the payment id must ride DELIVERY_SUCCESS onto state — the
-  // native-TRX rent reservation keys off it and would otherwise never lock this paid rental.
   expect(result.current.state.paymentTxId).toBe("txA");
 });
 
 test("submit failure the provider reports delivered but the chain does NOT confirm -> DELIVERY_FAILED, not TRANSFER", async () => {
   const seam = makeSeam({
     submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
-    // The provider's advisory "delivered" must never release TX-C without an on-chain confirmation.
     getEnergyRentStatus: jest.fn().mockResolvedValue("delivered"),
     isEnergyDelivered: jest.fn().mockResolvedValue(false),
   });
@@ -282,7 +306,7 @@ test("submit failure the provider reports delivered but the chain does NOT confi
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -293,8 +317,6 @@ test("submit failure the provider reports delivered but the chain does NOT confi
 test("submit failure, provider still reports paid but the chain confirms -> proceeds to TRANSFER", async () => {
   const seam = makeSeam({
     submitEnergyRentPayment: jest.fn().mockRejectedValue(new Error("submit boom")),
-    // The provider's order list lags (pages only recent orders), so it can report paid after the
-    // delegation landed: the authoritative on-chain read must still release TX-C, not route to support.
     getEnergyRentStatus: jest.fn().mockResolvedValue("paid"),
     isEnergyDelivered: jest.fn().mockResolvedValue(true),
   });
@@ -306,7 +328,7 @@ test("submit failure, provider still reports paid but the chain confirms -> proc
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.isEnergyDelivered).toHaveBeenCalledWith({
@@ -330,7 +352,7 @@ test("submit-path DELIVERY_FAILED carries the caller's paymentTxId for the suppo
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
@@ -350,7 +372,7 @@ test("submit failure whose reconciliation also fails -> DELIVERY_FAILED (avoid d
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -364,8 +386,6 @@ test("delivery timeout the chain then confirms delivered -> proceeds to TRANSFER
   });
   const seam = makeSeam({
     awaitEnergyDelivery: jest.fn().mockRejectedValue(timeoutError),
-    // The rented energy landed just after our client deadline — salvaged by a final on-chain read,
-    // never by the provider's advisory status (AC2).
     isEnergyDelivered: jest.fn().mockResolvedValue(true),
   });
   mockGetSponsoredCoinApi.mockResolvedValue(seam);
@@ -376,7 +396,7 @@ test("delivery timeout the chain then confirms delivered -> proceeds to TRANSFER
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.isEnergyDelivered).toHaveBeenCalledWith({
@@ -394,7 +414,6 @@ test("delivery timeout the chain does NOT confirm -> DELIVERY_FAILED (provider s
   });
   const seam = makeSeam({
     awaitEnergyDelivery: jest.fn().mockRejectedValue(timeoutError),
-    // Provider would say delivered, but only the on-chain read gates TX-C — and it is still unmet.
     getEnergyRentStatus: jest.fn().mockResolvedValue("delivered"),
     isEnergyDelivered: jest.fn().mockResolvedValue(false),
   });
@@ -406,7 +425,7 @@ test("delivery timeout the chain does NOT confirm -> DELIVERY_FAILED (provider s
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -427,12 +446,14 @@ test("happy path: craft -> RENT_SIGNING, startRentPayment -> TRANSFER", async ()
   expect(result.current.state.order).toEqual({
     orderId: "o1",
     transaction: {},
-    payCoinCode: "TRX",
-    payCoinAmt: "5.0",
+    payCoinCode: "USDT",
+    payCoinAmt: "3.2",
   });
+  expect(result.current.state.rentPayment).toEqual(RENT_PAYMENT);
+  expect(seam.rentPayment).toHaveBeenCalledWith(result.current.state.order);
 
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledWith({
@@ -457,17 +478,14 @@ test("a stale signature callback after the flow advanced past RENT_SIGNING does 
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
-  // The flow has advanced to TRANSFER with the order still on state. The in-flight guard has cleared,
-  // so a duplicate/stale signature callback would submit the same rent again — the phase guard blocks
-  // the re-submit (double-charge protection).
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
 
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
@@ -485,27 +503,21 @@ test("a RETAINED startRentPayment closure re-fired after the flow advanced does 
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
-  // Capture the callback instance from the RENT_SIGNING render, as a device-signing effect that
-  // subscribed once would hold it. Its first call advances the flow to TRANSFER; re-firing the SAME
-  // stale closure (a duplicate signature emission) must still be blocked, because the guard reads the
-  // live phase through stateRef rather than the RENT_SIGNING snapshot this closure captured.
   const staleStart = result.current.actions.startRentPayment;
   await act(async () => {
-    await staleStart("sig");
+    await staleStart("sig", "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
 
   await act(async () => {
-    await staleStart("sig");
+    await staleStart("sig", "txA");
   });
   expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 });
 
 test("a signature for a reset-and-recrafted cycle's prior order is dropped, not signed against the new order", async () => {
-  // reset() + re-craft yields a new order (paymentTxId txB) under a fresh RENT_SIGNING cycle. A delayed
-  // signature the device produced for the previous order (txA) must not be combined with the new order.
   const seam = makeSeam({
     getEnergyRentSignaturePayload: jest
       .fn()
@@ -529,8 +541,6 @@ test("a signature for a reset-and-recrafted cycle's prior order is dropped, not 
   });
   expect(result.current.state.paymentTxId).toBe("txB");
 
-  // The stale txA signature arrives while the txB cycle is current: same RENT_SIGNING phase, but the
-  // paymentTxId it was signed against no longer matches — the call is dropped.
   await act(async () => {
     await result.current.actions.startRentPayment("staleSigA", "txA");
   });
@@ -560,7 +570,7 @@ test("awaitEnergyDelivery timeout -> FAILED / DELIVERY_FAILED, carries paymentTx
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -581,12 +591,10 @@ test("awaitEnergyDelivery generic order failure -> FAILED / DELIVERY_FAILED (pay
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
-  // TX A succeeded before delivery failed, so this shares the delivery-not-received kind (funds
-  // moved, contact support) — not RENT_PAYMENT, whose "funds were not moved" copy would be wrong.
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
 });
 
@@ -600,12 +608,12 @@ test("onTransferError sets phase FAILED / failureKind TRANSFER", async () => {
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 
   act(() => {
-    result.current.actions.onTransferError(new Error("transfer boom"));
+    result.current.actions.onTransferError(new Error("transfer boom"), "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -626,7 +634,7 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
     await timeoutHook.result.current.actions.craftRent();
   });
   await act(async () => {
-    await timeoutHook.result.current.actions.startRentPayment("sig");
+    await timeoutHook.result.current.actions.startRentPayment("sig", "txA");
   });
   expect(timeoutHook.result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
 
@@ -635,6 +643,7 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
   });
   expect(timeoutHook.result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
   expect(timeoutHook.result.current.state.order).toBeNull();
+  expect(timeoutHook.result.current.state.rentPayment).toBeNull();
 
   // --- separate hook instance for the TRANSFER-failure retry ---
   const seamTransfer = makeSeam();
@@ -645,12 +654,12 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
     await transferHook.result.current.actions.craftRent();
   });
   await act(async () => {
-    await transferHook.result.current.actions.startRentPayment("sig");
+    await transferHook.result.current.actions.startRentPayment("sig", "txA");
   });
   expect(transferHook.result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 
   act(() => {
-    transferHook.result.current.actions.onTransferError(new Error("transfer boom"));
+    transferHook.result.current.actions.onTransferError(new Error("transfer boom"), "txA");
   });
   expect(transferHook.result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.TRANSFER);
 
@@ -659,12 +668,10 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
   });
   expect(transferHook.result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
   expect(transferHook.result.current.state.order).not.toBeNull();
+  expect(transferHook.result.current.state.rentPayment).toEqual(RENT_PAYMENT);
 });
 
 test("contract-data refusal resumes at the phase it failed on, keeping the paid order", async () => {
-  // Refused while signing the rent tx (RENT_SIGNING): the reducer records that phase, so retry
-  // resumes there — and the order is untouched (a device refusal moved no funds), so the screen
-  // re-signs the same order rather than re-crafting.
   const rentSeam = makeSeam();
   mockGetSponsoredCoinApi.mockResolvedValue(rentSeam);
 
@@ -675,7 +682,7 @@ test("contract-data refusal resumes at the phase it failed on, keeping the paid 
   expect(rentHook.result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
   act(() => {
-    rentHook.result.current.actions.setContractDataFailure(new Error("0x6a80"));
+    rentHook.result.current.actions.setContractDataFailure(new Error("0x6a80"), "txA");
   });
   expect(rentHook.result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.CONTRACT_DATA);
 
@@ -685,8 +692,6 @@ test("contract-data refusal resumes at the phase it failed on, keeping the paid 
   expect(rentHook.result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
   expect(rentHook.result.current.state.order).not.toBeNull();
 
-  // Refused while signing the transfer (TRANSFER): the delegation already succeeded, so retry
-  // resumes at TRANSFER on the same rental.
   const transferSeam = makeSeam();
   mockGetSponsoredCoinApi.mockResolvedValue(transferSeam);
 
@@ -695,12 +700,12 @@ test("contract-data refusal resumes at the phase it failed on, keeping the paid 
     await transferHook.result.current.actions.craftRent();
   });
   await act(async () => {
-    await transferHook.result.current.actions.startRentPayment("sig");
+    await transferHook.result.current.actions.startRentPayment("sig", "txA");
   });
   expect(transferHook.result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 
   act(() => {
-    transferHook.result.current.actions.setContractDataFailure(new Error("0x6a80"));
+    transferHook.result.current.actions.setContractDataFailure(new Error("0x6a80"), "txA");
   });
   expect(transferHook.result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.CONTRACT_DATA);
 
@@ -721,12 +726,12 @@ test("onTransferSuccess sets phase DONE", async () => {
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 
   act(() => {
-    result.current.actions.onTransferSuccess();
+    result.current.actions.onTransferSuccess("txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.DONE);
@@ -739,20 +744,18 @@ test("a stale transfer callback outside the TRANSFER phase is ignored (does not 
 
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
-  // The flow is at RENT_SIGNING (e.g. a reset-and-reused send). A delayed TX-C callback from the prior
-  // flow must not drive this one to DONE/FAILED — the transfer reducer cases are gated on TRANSFER.
   await act(async () => {
     await result.current.actions.craftRent();
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
   act(() => {
-    result.current.actions.onTransferSuccess();
+    result.current.actions.onTransferSuccess("txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
   act(() => {
-    result.current.actions.onTransferError(new Error("stale tx-C failure"));
+    result.current.actions.onTransferError(new Error("stale tx-C failure"), "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 });
@@ -767,35 +770,30 @@ test("a stale contract-data refusal outside a signing phase is ignored (does not
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
   act(() => {
-    result.current.actions.onTransferSuccess();
+    result.current.actions.onTransferSuccess("txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.DONE);
 
-  // A delayed contract-data refusal from a prior signing step must not drag DONE back to FAILED — it
-  // is only valid while signing (RENT_SIGNING/TRANSFER).
   act(() => {
-    result.current.actions.setContractDataFailure(new Error("0x6a80"));
+    result.current.actions.setContractDataFailure(new Error("0x6a80"), "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.DONE);
   expect(result.current.state.failureKind).toBeNull();
 
-  // Same at IDLE (a fresh reused flow before crafting): the refusal must not move it to FAILED.
   act(() => {
     result.current.actions.reset();
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.IDLE);
   act(() => {
-    result.current.actions.setContractDataFailure(new Error("0x6a80"));
+    result.current.actions.setContractDataFailure(new Error("0x6a80"), "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.IDLE);
 });
 
 test("a contract-data refusal for a reset-and-recrafted cycle's prior order is ignored, not applied to the new order", async () => {
-  // reset() + re-craft returns a new order (txB) to RENT_SIGNING. A delayed refusal the device raised for
-  // the previous order (txA) lands in the same phase but must not fail the current order.
   const seam = makeSeam({
     getEnergyRentSignaturePayload: jest
       .fn()
@@ -817,19 +815,76 @@ test("a contract-data refusal for a reset-and-recrafted cycle's prior order is i
   });
   expect(result.current.state.paymentTxId).toBe("txB");
 
-  // The stale txA refusal: same RENT_SIGNING phase, but its token no longer matches — ignored.
   act(() => {
     result.current.actions.setContractDataFailure(new Error("0x6a80"), "txA");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
   expect(result.current.state.failureKind).toBeNull();
 
-  // A refusal for the current order (txB) fails it as expected.
   act(() => {
     result.current.actions.setContractDataFailure(new Error("0x6a80"), "txB");
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.CONTRACT_DATA);
+});
+
+test("a transfer outcome for a reset cycle's prior order is ignored once a new cycle reaches TRANSFER", async () => {
+  const seam = makeSeam({
+    getEnergyRentSignaturePayload: jest
+      .fn()
+      .mockReturnValueOnce({ toSign: "0aA", paymentTxId: "txA" })
+      .mockReturnValueOnce({ toSign: "0aB", paymentTxId: "txB" }),
+  });
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+  act(() => {
+    result.current.actions.reset();
+  });
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+  await act(async () => {
+    await result.current.actions.startRentPayment("sigB", "txB");
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
+
+  act(() => {
+    result.current.actions.onTransferError(new Error("stale tx-C failure"), "txA");
+  });
+  act(() => {
+    result.current.actions.onTransferSuccess("txA");
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
+  expect(result.current.state.failureKind).toBeNull();
+
+  act(() => {
+    result.current.actions.onTransferSuccess("txB");
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.DONE);
+});
+
+test("a callback bound to no payment id (null) never matches the current cycle", async () => {
+  mockGetSponsoredCoinApi.mockResolvedValue(makeSeam());
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+  await act(async () => {
+    await result.current.actions.startRentPayment("sig", "txA");
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
+
+  act(() => {
+    result.current.actions.onTransferSuccess(null);
+  });
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
 });
 
 test("awaitEnergyDelivery gets the craft-derived paymentTxId; a timeout's own id lands on state", async () => {
@@ -848,7 +903,7 @@ test("awaitEnergyDelivery gets the craft-derived paymentTxId; a timeout's own id
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.paymentTxId).toBe("real-tx-A");
@@ -876,7 +931,7 @@ test("a retried craft clears the prior cycle's paymentTxId", async () => {
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
   expect(result.current.state.paymentTxId).toBe("stale-tx");
 
@@ -886,7 +941,6 @@ test("a retried craft clears the prior cycle's paymentTxId", async () => {
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
   expect(result.current.state.paymentTxId).toBeNull();
 
-  // A fresh craft after retry carries its own id, not the prior cycle's stale one.
   await act(async () => {
     await result.current.actions.craftRent();
   });
@@ -894,8 +948,6 @@ test("a retried craft clears the prior cycle's paymentTxId", async () => {
 });
 
 test("a getSeam rejection in craftRent lands in FAILED / RENT_PAYMENT, not an unhandled rejection", async () => {
-  // getSponsoredCoinApi itself rejecting (vs. resolving null) must be caught, not escape the awaited
-  // getSeam() — craftRent resolves the seam first, so this is the reachable seam-reject site.
   mockGetSponsoredCoinApi.mockRejectedValue(new Error("resolver down"));
 
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
@@ -908,7 +960,6 @@ test("a getSeam rejection in craftRent lands in FAILED / RENT_PAYMENT, not an un
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
 });
 
-// Staying IDLE would strand the rent-signature screen with no cancel and no back.
 test("seam null -> craftRent fails the flow instead of silently no-op'ing", async () => {
   mockGetSponsoredCoinApi.mockResolvedValue(null);
 
@@ -920,6 +971,7 @@ test("seam null -> craftRent fails the flow instead of silently no-op'ing", asyn
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
+  expect(result.current.state.failureError?.name).toBe("SponsoredSendUnavailableError");
   expect(result.current.state.order).toBeNull();
 });
 
@@ -933,8 +985,6 @@ function deferred<T>() {
   return { promise, resolve, reject };
 }
 
-// The context calls reset() whenever the send identity (recipient/amount/…) changes. An async craft
-// or delivery that started for the previous identity must not commit its result into the fresh state.
 test("a craft that resolves after reset() is dropped, not committed as a stale order", async () => {
   const craftGate = deferred<void>();
   const craftCalled = deferred<void>();
@@ -944,8 +994,8 @@ test("a craft that resolves after reset() is dropped, not committed as a stale o
       return craftGate.promise.then(() => ({
         orderId: "stale",
         transaction: {},
-        payCoinCode: "TRX",
-        payCoinAmt: "5.0",
+        payCoinCode: "USDT",
+        payCoinAmt: "3.2",
       }));
     }),
   });
@@ -956,11 +1006,9 @@ test("a craft that resolves after reset() is dropped, not committed as a stale o
   let craftPromise!: Promise<void>;
   await act(async () => {
     craftPromise = result.current.actions.craftRent();
-    // Park past getSeam + buildEnergyRentRequest, at the pending craftEnergyRentTransaction.
     await craftCalled.promise;
   });
 
-  // Send identity changed mid-craft.
   act(() => {
     result.current.actions.reset();
   });
@@ -972,6 +1020,50 @@ test("a craft that resolves after reset() is dropped, not committed as a stale o
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.IDLE);
   expect(result.current.state.order).toBeNull();
+});
+
+const order = (id: string) => ({
+  orderId: `o${id}`,
+  transaction: { id },
+  payCoinCode: "USDT",
+  payCoinAmt: "3.2",
+});
+
+test("overlapping craftRent calls: an older order resolving last doesn't replace the newer one", async () => {
+  const olderGate = deferred<void>();
+  const olderCalled = deferred<void>();
+  const seam = makeSeam({
+    craftEnergyRentTransaction: jest
+      .fn()
+      .mockImplementationOnce(() => {
+        olderCalled.resolve();
+        return olderGate.promise.then(() => order("A"));
+      })
+      .mockResolvedValueOnce(order("B")),
+    getEnergyRentSignaturePayload: jest.fn((tx: { id: string }) => ({
+      toSign: `0a${tx.id}`,
+      paymentTxId: `tx${tx.id}`,
+    })),
+  });
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  let olderCraft!: Promise<void>;
+  await act(async () => {
+    olderCraft = result.current.actions.craftRent();
+    await olderCalled.promise;
+  });
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+  await act(async () => {
+    olderGate.resolve();
+    await olderCraft;
+  });
+
+  expect(result.current.state.order?.orderId).toBe("oB");
+  expect(result.current.state.paymentTxId).toBe("txB");
 });
 
 test("a delivery that resolves after reset() is dropped, not committed as DELIVERY_SUCCESS", async () => {
@@ -994,7 +1086,7 @@ test("a delivery that resolves after reset() is dropped, not committed as DELIVE
 
   let payPromise!: Promise<void>;
   await act(async () => {
-    payPromise = result.current.actions.startRentPayment("sig");
+    payPromise = result.current.actions.startRentPayment("sig", "txA");
     await deliverCalled.promise;
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.POLLING);
@@ -1014,7 +1106,7 @@ test("a delivery that resolves after reset() is dropped, not committed as DELIVE
 const broadcastInfo = {
   paymentTxId: "txA",
   payerAddress: "TPayer",
-  reservedNativeAmount: 5_000_000n,
+  rentPayment: RENT_PAYMENT,
 };
 
 test("onRentPaymentBroadcast fires on the happy submit path with the payer and amount", async () => {
@@ -1030,7 +1122,7 @@ test("onRentPaymentBroadcast fires on the happy submit path with the payer and a
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(onRentPaymentBroadcast).toHaveBeenCalledTimes(1);
@@ -1054,7 +1146,7 @@ test.each([["paid"], ["pending"], ["unknown"]])(
       await result.current.actions.craftRent();
     });
     await act(async () => {
-      await result.current.actions.startRentPayment("sig");
+      await result.current.actions.startRentPayment("sig", "txA");
     });
 
     expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.DELIVERY_FAILED);
@@ -1078,7 +1170,7 @@ test("onRentPaymentBroadcast fires when a submit reject reconciles to delivered"
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
@@ -1100,7 +1192,7 @@ test("onRentPaymentBroadcast does NOT fire when the provider confirms the paymen
     await result.current.actions.craftRent();
   });
   await act(async () => {
-    await result.current.actions.startRentPayment("sig");
+    await result.current.actions.startRentPayment("sig", "txA");
   });
 
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
@@ -1128,11 +1220,10 @@ test("onRentPaymentBroadcast still fires when reset() abandons the flow mid-subm
 
   let payPromise!: Promise<void>;
   await act(async () => {
-    payPromise = result.current.actions.startRentPayment("sig");
+    payPromise = result.current.actions.startRentPayment("sig", "txA");
     await submitCalled.promise;
   });
 
-  // The dialog closes / send identity changes while the irreversible submit is in flight.
   act(() => {
     result.current.actions.reset();
   });
@@ -1142,8 +1233,6 @@ test("onRentPaymentBroadcast still fires when reset() abandons the flow mid-subm
     await payPromise;
   });
 
-  // The flow reset to IDLE, but TX-A was charged — the reservation must still fire off the pre-reset
-  // payer captured by the in-flight action.
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.IDLE);
   expect(onRentPaymentBroadcast).toHaveBeenCalledWith(broadcastInfo);
 });

@@ -1,4 +1,4 @@
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { CounterValuesState } from "@domain/entity-market-countervalues";
 import { Unit } from "@domain/entity-currency-unit";
 import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";

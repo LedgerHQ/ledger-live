@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-contacts",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "Contacts domain selectors for flow packages",
   "main": "src/index.ts",
@@ -16,6 +16,7 @@
     "./device": "./src/device/index.ts",
     "./device/intents": "./src/device/intents/index.ts",
     "./test": "./src/contactDeviceIntentsPort.mock.ts",
+    "./testing": "./src/testing/ContactsI18nTestProvider.tsx",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -33,13 +34,18 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
+    "@shared/env": "workspace:*",
+    "@shared/i18n": "workspace:*",
     "@shared/feature-flags": "workspace:^",
     "@shared/ui-queued-bottom-sheet": "workspace:^",
     "@features/platform-device-intent": "workspace:*",
     "@ledgerhq/device-contacts-kit": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
+    "@ledgerhq/device-signer-kit-tron": "catalog:",
     "rxjs": "catalog:",
-    "semver": "catalog:"
+    "semver": "catalog:",
+    "@noble/hashes": "catalog:",
+    "bs58": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -83,6 +89,7 @@
     "react-native": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@types/bs58": "catalog:"
   }
 }

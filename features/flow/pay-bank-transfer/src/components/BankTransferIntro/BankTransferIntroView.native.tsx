@@ -14,6 +14,8 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
+import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analytics";
+import { BANK_TRANSFER_INTRO_FLOW } from "./useBankTransferIntroViewModel";
 import type { BankTransferIntroViewProps } from "../../types";
 
 export function BankTransferIntroView({
@@ -25,20 +27,16 @@ export function BankTransferIntroView({
   providedBy,
   heroImage,
   rows,
-  onShown,
   onCreateAccountPress,
   onLogInPress,
   onClosePress,
   onDismiss,
 }: BankTransferIntroViewProps) {
   const acted = useRef(false);
-  const onShownRef = useRef(onShown);
-  onShownRef.current = onShown;
 
   useEffect(() => {
     if (isOpen) {
       acted.current = false;
-      onShownRef.current();
     }
   }, [isOpen]);
 
@@ -76,6 +74,11 @@ export function BankTransferIntroView({
     >
       {isOpen ? (
         <BankTransferIntroContent>
+          <PayTrackPage
+            page={FEATURE_INTRO_PAGE}
+            name={BANK_TRANSFER_INTRO_FLOW}
+            flow={BANK_TRANSFER_INTRO_FLOW}
+          />
           <BottomSheetHeader density="expanded" />
           <Box lx={{ gap: "s16" }}>
             {heroImage ? (

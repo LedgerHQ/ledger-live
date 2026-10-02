@@ -54,8 +54,8 @@ describe("wallet-cli analytics privacy", () => {
     expect(identifyCalls[0].context?.ip).toBe(STATIC_IP);
   });
 
-  it("tracks events with the stable userId and a static IP", () => {
-    track("some-event");
+  it("tracks events with the stable userId and a static IP", async () => {
+    await track("some-event");
 
     expect(trackCalls).toHaveLength(1);
     expect(trackCalls[0]).toMatchObject({
@@ -65,8 +65,8 @@ describe("wallet-cli analytics privacy", () => {
     });
   });
 
-  it("does not let caller-supplied properties override the userId or static IP", () => {
-    track("some-event", {
+  it("does not let caller-supplied properties override the userId or static IP", async () => {
+    await track("some-event", {
       userId: "attacker-supplied-id",
       ip: "203.0.113.42",
       context: { ip: "203.0.113.42" },

@@ -29,6 +29,7 @@
     }
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "react": "catalog:"
   }
 }

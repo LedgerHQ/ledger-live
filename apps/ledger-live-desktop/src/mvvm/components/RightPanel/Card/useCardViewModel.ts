@@ -16,7 +16,7 @@ import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { useSelector } from "LLD/hooks/redux";
-import { localeSelector } from "~/renderer/reducers/settings";
+import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { useCountervalueFormatter } from "LLD/hooks/useCountervalueFormatter";
 import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
@@ -25,7 +25,6 @@ import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
 import { usePayCardAssets } from "./usePayCardAssets";
-import { useWipeHostedSession } from "./useWipeHostedSession";
 import type { CardViewModel } from "./types";
 
 /** The shape `payTabHandler` navigates with once the Card login redirect carried a code. */
@@ -66,13 +65,15 @@ export function useCardViewModel(): CardViewModel {
   const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
   const formatCountervalue = useCountervalueFormatter();
 
   const formatTransactionAmount = useCallback<
     NonNullable<CardViewModel["formatters"]["transactionAmount"]>
   >(
-    (value, currency, kind) => formatCardTransactionAmount({ value, currency, kind, locale }),
-    [locale],
+    (value, currency, kind) =>
+      formatCardTransactionAmount({ value, currency, kind, locale, discreet }),
+    [locale, discreet],
   );
   const formatTransactionDate = useDateFormatter(CARD_TRANSACTION_DATE_FORMAT);
 
@@ -173,8 +174,6 @@ export function useCardViewModel(): CardViewModel {
     [openHosted],
   );
 
-  useWipeHostedSession();
-
   const login: CardViewModel["login"] = useMemo(
     () => ({ oauthConfig, callback, openHostedLogin, openHostedPage }),
     [oauthConfig, callback, openHostedLogin, openHostedPage],
@@ -242,5 +241,6 @@ export function useCardViewModel(): CardViewModel {
     onChooseCardType,
     onViewRewards,
     cardSettingsActions,
+    discreet,
   };
 }

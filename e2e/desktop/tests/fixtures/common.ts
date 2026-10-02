@@ -8,6 +8,7 @@ import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
+import { PAYTAB_SPECS_DIR } from "tests/reporters/cardSessionReporter";
 import { launchApp } from "tests/utils/electronUtils";
 import {
   captureArtifacts,
@@ -28,6 +29,10 @@ import { attachNetworkLogging } from "tests/utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
+import {
+  CARD_SESSION_BOOTSTRAP_ENV,
+  resolveCardSessionBootstrap,
+} from "@ledgerhq/baanx-test-client";
 
 export type CliCommand = ((
   userdataPath?: string,
@@ -251,6 +256,15 @@ export const test = base.extend<TestFixtures>({
       },
       env,
     );
+    delete env[CARD_SESSION_BOOTSTRAP_ENV];
+
+    if (testInfo.file.replaceAll("\\", "/").includes(`/${PAYTAB_SPECS_DIR}/`)) {
+      const { BAANX_TEST_API_URL, BAANX_TEST_CLIENT_KEY } = process.env;
+      env["CARD_BAANX_API_URL"] = BAANX_TEST_API_URL || "https://dev.api.baanx.com";
+      env["CARD_BAANX_CLIENT_KEY"] =
+        BAANX_TEST_CLIENT_KEY || "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6";
+      env[CARD_SESSION_BOOTSTRAP_ENV] = await resolveCardSessionBootstrap();
+    }
 
     // launch app
     const windowSize = { width: 1024, height: 768 };

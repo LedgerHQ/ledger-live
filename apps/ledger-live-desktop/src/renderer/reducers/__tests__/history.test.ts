@@ -1,7 +1,9 @@
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { initialState as countervaluesInitialState } from "@ledgerhq/live-countervalues/logic";
-import type { CountervaluesSettings } from "@ledgerhq/live-countervalues/types";
+import {
+  initialState as countervaluesInitialState,
+  type CountervaluesSettings,
+} from "@domain/entity-market-countervalues";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import {

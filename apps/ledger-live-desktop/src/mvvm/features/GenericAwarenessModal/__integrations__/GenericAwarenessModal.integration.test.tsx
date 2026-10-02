@@ -1,6 +1,6 @@
 import React from "react";
 import { act, render, screen, waitFor } from "tests/testSetup";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import GenericAwarenessModal from "..";
 import {
@@ -26,6 +26,12 @@ import {
   closeGenericAwarenessModalDialog,
   openGenericAwarenessModalDialog,
 } from "../genericAwarenessModalDialog";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
@@ -70,11 +76,11 @@ describe("GenericAwarenessModal Integration", () => {
         expect(screen.getByText("Connect a Ledger device")).toBeVisible();
       });
       expect(trackPage).toHaveBeenCalledWith(
-        PAGE_TRACKING_AWARENESS_MODAL_FEATURE_INTRO,
-        undefined,
-        expect.objectContaining({ contentId: APP_START_CAMPAIGN_ID }),
-        true,
-        false,
+        {
+          category: PAGE_TRACKING_AWARENESS_MODAL_FEATURE_INTRO,
+          props: expect.objectContaining({ contentId: APP_START_CAMPAIGN_ID }),
+        },
+        { updateRoutes: true },
       );
 
       await user.click(screen.getByRole("button", { name: "Got it" }));
@@ -177,11 +183,11 @@ describe("GenericAwarenessModal Integration", () => {
         PROMPT_CAMPAIGN_ID,
       );
       expect(trackPage).toHaveBeenCalledWith(
-        PAGE_TRACKING_AWARENESS_MODAL_PROMPT,
-        undefined,
-        expect.objectContaining({ contentId: PROMPT_CAMPAIGN_ID }),
-        true,
-        false,
+        {
+          category: PAGE_TRACKING_AWARENESS_MODAL_PROMPT,
+          props: expect.objectContaining({ contentId: PROMPT_CAMPAIGN_ID }),
+        },
+        { updateRoutes: true },
       );
     });
 
@@ -267,15 +273,15 @@ describe("GenericAwarenessModal Integration", () => {
       expect(screen.getByTestId("generic-awareness-modal-continue-button")).toBeVisible();
       expect(screen.queryByText("Connect a Ledger device")).not.toBeInTheDocument();
       expect(trackPage).toHaveBeenCalledWith(
-        PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL,
-        undefined,
-        expect.objectContaining({
-          contentId: CAROUSEL_CAMPAIGN_ID,
-          step: 1,
-          stepName: "Ledger Flex",
-        }),
-        true,
-        false,
+        {
+          category: PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL,
+          props: expect.objectContaining({
+            contentId: CAROUSEL_CAMPAIGN_ID,
+            step: 1,
+            stepName: "Ledger Flex",
+          }),
+        },
+        { updateRoutes: true },
       );
     });
 
@@ -319,15 +325,15 @@ describe("GenericAwarenessModal Integration", () => {
         }),
       );
       expect(trackPage).toHaveBeenCalledWith(
-        PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL,
-        undefined,
-        expect.objectContaining({
-          contentId: CAROUSEL_CAMPAIGN_ID,
-          step: 2,
-          stepName: "Ledger Wallet clarity",
-        }),
-        true,
-        false,
+        {
+          category: PAGE_TRACKING_AWARENESS_MODAL_CAROUSEL,
+          props: expect.objectContaining({
+            contentId: CAROUSEL_CAMPAIGN_ID,
+            step: 2,
+            stepName: "Ledger Wallet clarity",
+          }),
+        },
+        { updateRoutes: true },
       );
       await waitFor(() => {
         expect(screen.getByText("Ledger Wallet clarity")).toBeVisible();

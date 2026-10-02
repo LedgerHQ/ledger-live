@@ -23,6 +23,7 @@ Pay special attention to:
 - `.agents/skills/knip-migration/SKILL.md` — Dead-code detection is moving to `knip`, which needs explicit (non-`./*`) `package.json#exports`; new packages must use explicit exports + knip, not `.unimportedrc.json`
 - `.agents/skills/console-log/SKILL.md` — Console logging levels: `console.error` is forwarded to monitoring tools as an error event; flag any new `console.error` that isn't an illegal/unexpected state
 - `.agents/skills/configuration/SKILL.md` — Where a configuration value belongs; flag any new `@shared/env` / `@ledgerhq/live-env` definition or call site (`getEnv`, `getEnvDefault`, `useEnv`, `setEnv`, `setEnvUnsafe`, `injectDefinitions`), including in tests, and any real secret added to an app `.env` file
+- `.agents/skills/dependency-patches/SKILL.md` — Dependency patch policy; review changes to `patches/*.patch` and `pnpm.patchedDependencies` against its upstream, tracking, and removal requirements
 
 ## Review Scope
 

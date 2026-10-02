@@ -1,17 +1,15 @@
+import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
+import { TronifyApiError } from "../../types/errors";
 import { recoverDeviceSignature } from "../combine";
-import { SUN_PER_TRX } from "../constants";
+import { TRONIFY_PAY_ASSET, payAssetBaseUnits, tronifyPayAsset } from "../constants";
 import type {
   EnergyRentOrder,
   EnergyRentSignedTransaction,
   EnergyRentUnsignedTransaction,
 } from "./types";
 
-/**
- * The device-signable payload for an energy-rent order's unsigned payment tx: the hex the device signs
- * (`raw_data_hex`) and TX-A's id (`txID`, stable across signing). Lets the generic sponsored flow drive
- * the signature and native reservation without knowing coin-tron's Tronify wire shape.
- */
+/** Lets the generic sponsored flow drive signing without knowing coin-tron's Tronify wire shape. */
 export function getEnergyRentSignaturePayload(transaction: EnergyRentUnsignedTransaction): {
   toSign: string;
   paymentTxId: string;
@@ -19,10 +17,8 @@ export function getEnergyRentSignaturePayload(transaction: EnergyRentUnsignedTra
   return { toSign: transaction.raw_data_hex, paymentTxId: transaction.txID };
 }
 
-/**
- * Rebuild the Tronify-signed payment payload from the device's combined signature — the inverse-of-
- * `combine` reconstruction the generic flow can't do because the wire shape is coin-tron's.
- */
+/** Inverse of `combine`: rebuilds the Tronify-signed payload the generic flow can't, since the wire
+ * shape is coin-tron's. */
 export function buildSignedEnergyRentTransaction(
   transaction: EnergyRentUnsignedTransaction,
   combinedSignature: string,
@@ -33,15 +29,27 @@ export function buildSignedEnergyRentTransaction(
   };
 }
 
-/**
- * Native amount (in sun) the rent payment debits, for the platform to lock against the payer's balance
- * until TX-A syncs. TX-A is always a native-TRX debit, so `payCoinAmt` (TRX) converts by SUN_PER_TRX;
- * the generic reservation layer stays unit-agnostic and receives smallest-unit sun. Rounds up: TRX is
- * 6-dp so the conversion is normally exact, but a provider quote with sub-sun precision must never
- * under-reserve the lock.
- */
-export function nativeRentAmount(order: EnergyRentOrder): bigint {
-  return BigInt(
-    new BigNumber(order.payCoinAmt).times(SUN_PER_TRX).toFixed(0, BigNumber.ROUND_CEIL),
-  );
+/** Local dedup key for the pending TX-A reservation; TRON has no nonce. Non-integer so the generic
+ * next-nonce calc never adopts it, and > 0 so it never collides with the sequence-0 ops. */
+export function reservationDedupKey(paymentTxId: string): string {
+  const hex = [...paymentTxId]
+    .map(ch => (ch.codePointAt(0) ?? 0).toString(16).padStart(4, "0"))
+    .join("");
+  return new BigNumber(hex, 16).plus(0.5).toFixed();
+}
+
+/** What the platform should lock against the payer's USDT until TX-A syncs: the order's rent in USDT
+ * base units, rounded up so a sub-unit quote never under-reserves the lock. */
+export function rentPayment(order: EnergyRentOrder): { asset: AssetInfo; amount: bigint } {
+  const amount = payAssetBaseUnits(order.payCoinAmt);
+  if (
+    String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code ||
+    !amount.isFinite() ||
+    !amount.isGreaterThan(0)
+  ) {
+    throw new TronifyApiError(
+      `Cannot reserve an energy-rent payment of ${order.payCoinAmt} ${String(order.payCoinCode)}`,
+    );
+  }
+  return { asset: tronifyPayAsset(), amount: BigInt(amount.toFixed()) };
 }

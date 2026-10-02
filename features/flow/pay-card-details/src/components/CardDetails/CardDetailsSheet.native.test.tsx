@@ -103,7 +103,8 @@ function renderSheet(overrides: SheetOverrides = {}) {
     onBack,
     pressDismiss: () => user.press(screen.getByTestId("card-details-sheet-dismiss")),
     pressBack: () => user.press(screen.getByTestId("card-details-sheet-back")),
-    pressAddToWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta-entry")),
+    pressAddToWallet: async () =>
+      user.press(await screen.findByTestId("pay-card-add-to-wallet-cta-entry")),
     pressOpenWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta")),
     goTo: (next: SheetOverrides) => view.rerender(sheet(next)),
   };
@@ -136,18 +137,18 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.getByTestId("card-details-sheet").props.accessibilityState.expanded).toBe(true);
   });
 
-  it("should show freeze and more when the sheet is open", () => {
+  it("should show the card face, freeze and more when the sheet is open", () => {
     renderSheet();
 
-    expect(screen.getByLabelText("Visa")).toBeVisible();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(screen.getByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
-  it("should float the add-to-wallet CTA over the overview", () => {
+  it("should float the add-to-wallet CTA over the overview", async () => {
     renderSheet();
 
-    expect(screen.getByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
+    expect(await screen.findByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
   });
 
   it("should show the disclaimer after transactions on the overview", () => {
@@ -228,6 +229,20 @@ describe("CardDetailsSheet (native)", () => {
 
     expect(screen.getByTestId("card-details-transaction-content")).toBeVisible();
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
+  });
+
+  it("should give transaction details nothing to scroll, so its header stays put", () => {
+    renderSheet({ route: { name: "transaction", transaction } });
+
+    expect(screen.getByTestId("card-details-sheet-static-content")).toBeVisible();
+    expect(screen.queryByTestId("card-details-sheet-content")).toBeNull();
+  });
+
+  it("should keep the overview scrollable, since it opens at full height", () => {
+    renderSheet();
+
+    expect(screen.getByTestId("card-details-sheet-content")).toBeVisible();
+    expect(screen.queryByTestId("card-details-sheet-static-content")).toBeNull();
   });
 
   it("should offer a way back to the overview from transaction details", async () => {

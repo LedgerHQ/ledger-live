@@ -11,9 +11,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import type { PayTabNavigatorParamList } from "../../types";
 import { usePayTabViewModel } from "./usePayTabViewModel";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
-
-const payAnalyticsAdapter = { track: () => undefined };
 
 // ledger-live-mobile does not depend on expo-web-browser directly — only
 // @features/flow-pay-card-auth does, and importing it here would fail typecheck since the app has
@@ -79,6 +76,9 @@ function PayTabViewModelProbe() {
       <Text testID="oauth-callback">{JSON.stringify(callback)}</Text>
       <Text testID="countervalue-integer">{formatted?.integerPart}</Text>
       <Text testID="countervalue-decimal">{formatted?.decimalPart}</Text>
+      <Text testID="transaction-amount">
+        {formatters?.transactionAmount?.("-0.104873912345678901", "eth", "crypto")}
+      </Text>
       <Pressable testID="top-up" onPress={onTopUp} />
       <Pressable testID="choose-card-type" onPress={onChooseCardType} />
       <Pressable testID="view-rewards" onPress={onViewRewards} />
@@ -119,16 +119,14 @@ function renderViewModel(
   options?: Parameters<typeof render>[1],
 ) {
   return render(
-    <PayAnalyticsProvider adapter={payAnalyticsAdapter}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name={ScreenName.PayTab}
-          component={PayTabViewModelProbe}
-          initialParams={params}
-        />
-        <Stack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
-      </Stack.Navigator>
-    </PayAnalyticsProvider>,
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name={ScreenName.PayTab}
+        component={PayTabViewModelProbe}
+        initialParams={params}
+      />
+      <Stack.Screen name={NavigatorName.Base} component={BaseNavigatorProbe} />
+    </Stack.Navigator>,
     options,
   );
 }
@@ -180,6 +178,12 @@ describe("usePayTabViewModel", () => {
     expect(screen.getByTestId("oauth-deeplink")).toHaveTextContent(PAY_TAB_DEEP_LINK);
     expect(screen.getByTestId("countervalue-integer")).toHaveTextContent("12");
     expect(screen.getByTestId("countervalue-decimal")).toHaveTextContent("50");
+  });
+
+  it("should format transaction amounts with the decimals the rest of the product shows", () => {
+    renderViewModel();
+
+    expect(screen.getByTestId("transaction-amount")).toHaveTextContent("-0.104873\u00a0ETH");
   });
 
   it("should follow a change of the Card env vars", () => {
@@ -275,14 +279,25 @@ describe("usePayTabViewModel", () => {
     expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
-  it("should open the withdrawal page of the hosted UI for the asset", async () => {
+  it("should open the withdrawal page of the hosted UI on the Baanx manifest", async () => {
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
     const { user } = renderViewModel();
 
     await user.press(screen.getByTestId("asset-withdraw"));
 
-    await expectSecureBrowser("https://hosted.test/withdrawal?app_id=LEDGERUS&currency=btc");
+    await expectHostedPage("https://ledger.baanxapi.test/withdrawal?app_id=LEDGERUS&currency=btc");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
+  });
+
+  it("should open the legacy card live app on withdraw when the legacyTopUp param is on", async () => {
+    const { user } = renderViewModelWithLegacyTopUp();
+
+    await user.press(screen.getByTestId("asset-withdraw"));
+
+    await waitFor(() => expect(screen.getByTestId("base-platform")).toHaveTextContent("cl-card"));
+    expect(screen.getByTestId("base-goto")).toHaveTextContent("undefined");
+    expect(mockedOpenSecureBrowser).not.toHaveBeenCalled();
   });
 
   it("should name the US app on the top up page for a US card holder", async () => {

@@ -19,11 +19,12 @@ import {
 import {
   buildContactsSaveAddressClickProperties,
   CONTACTS_EVENT_SOURCE,
+  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
 import {
   buildContactsGlobalProperties,
   useContacts,
-  type OtherContactAddress,
+  useOtherContactsAddresses,
 } from "@features/platform-contacts";
 import {
   isPrefillAddAddressFlowOpen,
@@ -34,6 +35,7 @@ import {
   type PrefillAddAddressFlowVisibleState,
 } from "@features/flow-contacts-add-address";
 import { useContactsAddressValidationAdapter } from "LLD/features/Contacts/hooks/useContactsAddressValidationAdapter";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { contactsIntentLWDDefinitions } from "LLD/features/Contacts/deviceIntents/contactsIntentPlatformDefinitions";
 import { useDispatch } from "LLD/hooks/redux";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -45,7 +47,7 @@ import {
 } from "../context/AddNewContactHeaderContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "./useSendFlowTrackingProperties";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 
 export type SendPrefillAddAddressPhase = Readonly<{
   state: PrefillAddAddressFlowVisibleState;
@@ -94,13 +96,7 @@ export function useSendPrefillAddAddressFlow({
     intents: contactsIntentLWDDefinitions,
     getLiveConfigMinVersion: getMinVersion,
   });
-  const allContactsAddresses = useMemo<readonly OtherContactAddress[]>(
-    () =>
-      contacts.flatMap(c =>
-        c.addresses.map(a => ({ contactId: c.id, contactName: c.name, address: a.address })),
-      ),
-    [contacts],
-  );
+  const allContactsAddresses = useOtherContactsAddresses();
   const {
     state: addressFlowState,
     startWithPrefilled,
@@ -144,10 +140,13 @@ export function useSendPrefillAddAddressFlow({
     }
     trackedAddressPhaseRef.current = phaseKey;
 
-    trackPage("Modal send - name address", null, {
-      ...trackingProperties,
-      network: addressFlowState.displayContext.network.networkId,
-      asset: addressFlowState.selectedCurrencyId,
+    trackPage({
+      category: "Modal send - name address",
+      props: {
+        ...trackingProperties,
+        network: addressFlowState.displayContext.network.networkId,
+        asset: addressFlowState.selectedCurrencyId,
+      },
     });
   }, [addressFlowState, isAddressPhase, trackingProperties]);
 
@@ -244,10 +243,13 @@ export function useSendPrefillAddAddressFlow({
       close();
       navigation.resetToStep(SEND_FLOW_STEP.RECIPIENT);
     } catch {
-      trackPage("Modal send - address signing rejected", null, {
-        ...trackingProperties,
-        network: displayContext.network.networkId,
-        asset: addressFlowState.selectedCurrencyId,
+      trackPage({
+        category: "Modal send - address signing rejected",
+        props: {
+          ...trackingProperties,
+          network: displayContext.network.networkId,
+          asset: addressFlowState.selectedCurrencyId,
+        },
       });
       return;
     } finally {
@@ -299,10 +301,18 @@ export function useSendPrefillAddAddressFlow({
     [navigation, recipientSearch.value, startWithPrefilled, state.account.currency],
   );
 
+  const supportsDomain = resolveContactAddressSupportsDomain(
+    "selectedCurrencyId" in addressFlowState ? addressFlowState.selectedCurrencyId : undefined,
+    sendFeatures.supportsDomain,
+  );
   const entryLabels = useMemo<AddAddressEntryLabels>(
     () => ({
       title: t("contacts.addAddressEntry.title"),
-      addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+      addressPlaceholder: t(
+        supportsDomain
+          ? "contacts.addAddressEntry.addressPlaceholder"
+          : "contacts.addAddressEntry.addressPlaceholderNoENS",
+      ),
       confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
       validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
       validAddress: t("contacts.addAddressEntry.validAddress"),
@@ -315,7 +325,7 @@ export function useSendPrefillAddAddressFlow({
       duplicateAddress: (contactName: string) =>
         t("contacts.addAddressEntry.duplicateAddress", { contactName }),
     }),
-    [t],
+    [supportsDomain, t],
   );
   const nameLabels = useMemo<ContactsAddAddressNameLabels>(
     () => ({
@@ -380,10 +390,13 @@ export function useSendPrefillAddAddressFlow({
               inputMethod,
             }),
           );
-          trackPage("Modal send - address signing device", null, {
-            ...trackingProperties,
-            network: addressFlowState.displayContext.network.networkId,
-            asset: addressFlowState.selectedCurrencyId,
+          trackPage({
+            category: "Modal send - address signing device",
+            props: {
+              ...trackingProperties,
+              network: addressFlowState.displayContext.network.networkId,
+              asset: addressFlowState.selectedCurrencyId,
+            },
           });
           void saveFromReview();
         },

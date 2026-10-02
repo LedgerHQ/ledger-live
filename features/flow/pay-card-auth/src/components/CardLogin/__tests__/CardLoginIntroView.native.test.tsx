@@ -1,7 +1,12 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
+import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
 import { CardLoginIntroView } from "../CardLoginIntroView.native";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: ({
@@ -73,6 +78,13 @@ describe("CardLoginIntroView (Native)", () => {
     expect(screen.getByTestId("pay-card-login-intro-sheet")).toBeTruthy();
     expect(screen.queryByTestId("pay-card-login-intro-content")).toBeNull();
     expect(screen.queryByText("Spend crypto, earn cashback")).toBeNull();
+    expect(trackedPages()).toHaveLength(0);
+  });
+
+  it("tracks the card feature intro page once open", () => {
+    renderIntro();
+
+    expect(trackedPages()).toContainEqual({ page: "Feature Intro", name: "card", flow: "card" });
   });
 
   it("opens the sheet at full height", () => {

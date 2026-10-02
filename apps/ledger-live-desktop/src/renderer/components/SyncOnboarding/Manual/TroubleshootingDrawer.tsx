@@ -6,9 +6,9 @@ import { useTheme } from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { track } from "~/renderer/analytics/segment";
+import { TrackPage } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import { analyticsFlowName } from "./shared";
-import TrackPage from "~/renderer/analytics/TrackPage";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 export type Props = {

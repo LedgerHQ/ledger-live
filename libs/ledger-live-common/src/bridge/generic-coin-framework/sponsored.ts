@@ -1,17 +1,6 @@
 import { findCryptoCurrencyByNetwork } from "./utils";
 import { loadSponsoredApiForFamily } from "../../coin-modules/registry";
-import type { FeeOptionMeta } from "@ledgerhq/coin-module-framework/api/index";
-
-/**
- * Repo-local seam for sponsored sends (TRON Tronify energy rental). The coin-module contract lives
- * in the external @ledgerhq/coin-module-framework package, so these methods can't be declared on it
- * from here; a family exposes them through its own factory (coin-tron's createSponsoredSendApi),
- * registered as the registry's `loadSponsoredApi` and reached through this accessor — the family's
- * main coin-module api stays exactly the generic contract. Types are declared structurally (the
- * family's factory return satisfies them) so the generic bridge takes no dependency on a specific
- * family. When the framework contract gains these methods, replace this interface with the contract
- * type — a lift-and-move.
- */
+import type { AssetInfo, FeeOptionMeta } from "@ledgerhq/coin-module-framework/api/index";
 
 export type EnergyRentStatus = "pending" | "paid" | "delivered" | "failed" | "unknown";
 
@@ -21,15 +10,13 @@ export type EnergyRentRequest = {
   energy: bigint;
   durationSeconds: number;
   extraTrx?: number;
-  // The approved cost ceiling the family enforces at craft time (assertOrderWithinApprovedCost);
-  // tracked across the seam so a reconstructed request can't silently drop it and re-open unbounded ordering.
+  // Cost ceiling from assertOrderWithinApprovedCost; drop it and ordering is unbounded.
   maxPayCoinAmt?: string;
   maxPayCoinCode?: string;
 };
 
 export type EnergyRentOrder = {
   orderId: string;
-  /** Unsigned payment tx to sign (opaque at the seam). */
   transaction: unknown;
   payCoinCode: string;
   payCoinAmt: string;
@@ -37,11 +24,30 @@ export type EnergyRentOrder = {
 
 export type EnergyRentOrderRef = { orderId: string; payerAddress: string };
 
-/** TRX-denominated savings quote for the fee nudge: the sponsored cost, the standard burn it
- * replaces, and the (clamped) delta. */
-export type SponsoredFeeQuote = { value: bigint; originalValue: bigint; savings: bigint };
+/** The asset a sponsored fee is paid in; re-exported so apps don't import the framework for it. */
+export type SponsoredFeeAsset = AssetInfo;
 
+/** `value` is in `feeAsset` base units; `originalValue` is the standard fee it replaces, in the
+ * network's native base units. No delta: the two can be in different units. */
+export type SponsoredFeeQuote = {
+  feeAsset: SponsoredFeeAsset;
+  value: bigint;
+  originalValue: bigint;
+};
+
+/** The rent payment the app locks against the payer until it syncs. */
+export type RentPayment = { asset: SponsoredFeeAsset; amount: bigint };
+
+/** Models TRON energy rental only; not validated against a second mechanism. */
 export interface SponsoredCoinApi {
+  readonly feeOptionId: string;
+  readonly providerName: string;
+  /** Status error keys the sponsored fee pays for; the Send flow drops them before gating Review. */
+  readonly waivesErrorKeys: readonly string[];
+  /** Status warning keys the sponsored fee makes moot; the Send flow hides them. */
+  readonly waivesWarningKeys: readonly string[];
+  /** Decimal-string sequence for the TX-A pending reservation: a local dedup key, not a nonce. */
+  reservationDedupKey(paymentTxId: string): string;
   listFeeOptions(intent: unknown): Promise<FeeOptionMeta[]>;
   estimateSponsoredFeeQuote(intent: unknown): Promise<SponsoredFeeQuote>;
   buildEnergyRentRequest(intent: unknown): Promise<EnergyRentRequest>;
@@ -50,34 +56,19 @@ export interface SponsoredCoinApi {
   getEnergyRentStatus(ref: EnergyRentOrderRef): Promise<EnergyRentStatus>;
   awaitEnergyDelivery(
     ref: EnergyRentOrderRef,
-    // The on-chain delivery gate: the family polls `receiverAddress`'s live resource state until it
-    // holds `energyNeeded`, rather than trusting the provider's order status (ADR-058 C4).
+    // On-chain delivery gate: polls the live resource state rather than trusting order status (ADR-058 C4).
     target: { receiverAddress: string; energyNeeded: bigint },
-    // `signal` lets the caller stop the poll when the Send flow is reset/unmounted, so it doesn't keep
-    // hitting the network until the timeout for a result that will be discarded.
     opts?: { intervalMs?: number; timeoutMs?: number; paymentTxId?: string; signal?: AbortSignal },
   ): Promise<void>;
-  // One-shot form of the on-chain gate for the reconcile paths (submit-reject / poll-timeout): true
-  // only when `receiverAddress` already holds `energyNeeded` on-chain, so the provider's advisory
-  // "delivered" is never trusted to release TX-C on its own (ADR-058 C4).
+  // One-shot on-chain check for reconcile paths; the provider's "delivered" is never trusted alone (ADR-058 C4).
   isEnergyDelivered(target: { receiverAddress: string; energyNeeded: bigint }): Promise<boolean>;
-  // Family-owned wire transforms so the generic Send flow never handles the opaque `transaction`:
-  // the hex + payment id the device must sign, the signed-payload rebuild from the device's combined
-  // signature, and the native smallest-unit amount to reserve while TX-A is unconfirmed.
+  // Family-owned so the generic Send flow never handles the opaque `transaction` directly.
   getEnergyRentSignaturePayload(transaction: unknown): { toSign: string; paymentTxId: string };
   buildSignedEnergyRentTransaction(transaction: unknown, deviceSignature: string): unknown;
-  nativeRentAmount(order: EnergyRentOrder): bigint;
+  rentPayment(order: EnergyRentOrder): RentPayment;
 }
 
-/**
- * Resolve the sponsored-send seam for a currency, or null when the family doesn't implement it
- * (every non-TRON module) — it has no `loadSponsoredApi` registered, so the registry resolves to
- * undefined. Sponsored sends exist only through a family's local coin-module, so only `kind ===
- * "local"` can yield one; any other kind returns null.
- *
- * `network`/`kind` mirror getCoinModuleApi's own params (network id, plus "local" | the
- * network-coin-service kind). Pass the chain/network id, not a token's own currency id.
- */
+/** Null unless `kind` is "local" and the family registers a sponsored seam. Pass the network id, not a token's currency id. */
 export async function getSponsoredCoinApi(
   network: string,
   kind: string,

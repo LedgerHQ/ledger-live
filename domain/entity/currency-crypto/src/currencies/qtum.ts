@@ -12,11 +12,6 @@ export const qtum = currency({
   color: "#2e9ad0",
   family: "bitcoin",
   blockAvgTime: 120,
-  bitcoinLikeInfo: {
-    P2PKH: 58,
-    P2SH: 50,
-    XPUBVersion: 76067358,
-  },
   units: [
     {
       name: "qtum",
@@ -35,5 +30,4 @@ export const qtum = currency({
       address: "https://explorer.qtum.org/address/$address",
     },
   ],
-  explorerId: "qtum",
 });

@@ -30,12 +30,19 @@ import type { CardSettingsActions } from "@features/flow-pay-card-details";
 import { NavigatorName, ScreenName } from "~/const";
 import { CL_CARD_APP_ID } from "LLM/features/Card";
 import type { CardProps } from "@features/flow-pay-card";
+import type { FormatCardTransactionAmount } from "@features/flow-pay-card-transactions";
+import { useLocale } from "~/context/Locale";
+import { formatCardTransactionAmount } from "LLM/features/OperationsHistory/utils/formatCardTransactionAmount";
 import { useCardHostedPageOpener } from "../../hooks/useCardHostedPageOpener";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
-import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
+import {
+  useAdjustedSafeAreaInsets,
+  useNavigationBarHeights,
+} from "LLM/hooks/useNavigationBarHeights";
+import { WALLET_TAB_HEADER_HEIGHT } from "~/components/WalletTab/WalletTabNavigatorScrollManager";
 import { useAppProtectionPrompt } from "LLM/features/AppLock/AppProtectionPrompt";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
@@ -43,21 +50,20 @@ import { usePayTabContacts } from "LLM/features/PayTab/hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
-  const analytics = usePayAnalyticsContext();
   const { t } = useTranslation();
-  const { top, bottom } = useNavigationBarHeights();
+  const { bottom } = useNavigationBarHeights();
+  const { top: safeAreaTop } = useAdjustedSafeAreaInsets();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
-  const balance = usePayCardBalance(analytics.trackEvent);
-  const deposit = usePayTabDepositOptions(balance.onTrackEvent);
+  const balance = usePayCardBalance();
   const request = usePayTabRequestReceive();
-  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
+  const deposit = usePayTabDepositOptions(request.open);
+  const actionTiles = usePayTabActionTiles(deposit.open, request.open);
   const payment = usePayTabNewPayment();
   const contacts = usePayTabContacts(payment.open);
   const { isEnabled: isContactsEnabled } = useContactsFeature("mobile");
@@ -83,6 +89,10 @@ export function usePayTabViewModel() {
   );
 
   const { requestProtection } = useAppProtectionPrompt();
+  const requestCardProtection = useCallback(
+    () => requestProtection({ source: "card" }),
+    [requestProtection],
+  );
 
   // The OAuth redirect, when the deep link brought one. PKCE ties the code to the verifier on disk,
   // so nothing else has to be echoed back, but the app id names the provider tenant to route on.
@@ -107,8 +117,8 @@ export function usePayTabViewModel() {
   const openInDiscover = useCardHostedPageOpener();
 
   const login: CardProps["login"] = useMemo(
-    () => ({ oauthConfig, callback, requestProtection }),
-    [oauthConfig, callback, requestProtection],
+    () => ({ oauthConfig, callback, requestProtection: requestCardProtection }),
+    [oauthConfig, callback, requestCardProtection],
   );
 
   const onShowMore = useCallback(() => {
@@ -143,8 +153,8 @@ export function usePayTabViewModel() {
   // The legacy live app has its own top-up flow and its own login. It opens as every other live
   // app does, in the Discover webview, and never in the secure browser. It takes no currency, so
   // the fallback opens it at its root from every top-up entry point.
-  const openTopUp = useCallback(
-    async (currency?: string) => {
+  const openInDiscoverOrLegacyApp = useCallback(
+    async (buildPath: CardAssetPathBuilder, currency?: string) => {
       if (isLegacyTopUp) {
         navigation.navigate(NavigatorName.Base, {
           screen: ScreenName.PlatformApp,
@@ -155,7 +165,7 @@ export function usePayTabViewModel() {
 
       await openHostedWith(
         openInDiscover,
-        buildTopUpPath,
+        buildPath,
         "the hosted asset page did not open",
         currency,
       );
@@ -163,7 +173,10 @@ export function usePayTabViewModel() {
     [isLegacyTopUp, navigation, openHostedWith, openInDiscover],
   );
 
-  const onTopUp = useCallback(() => openTopUp(), [openTopUp]);
+  const onTopUp = useCallback(
+    () => openInDiscoverOrLegacyApp(buildTopUpPath),
+    [openInDiscoverOrLegacyApp],
+  );
 
   const onChooseCardType = useCallback(
     () => openHosted(buildOrderCardPath, "order card page did not open"),
@@ -209,40 +222,55 @@ export function usePayTabViewModel() {
     () => ({
       ...payCardAssets,
       onShowHistory: onShowAssetHistory,
-      onTopUp: asset => void openTopUp(asset.currency),
-      onWithdraw: asset =>
-        void openHosted(buildWithdrawalPath, "the hosted asset page did not open", asset.currency),
+      onTopUp: asset => void openInDiscoverOrLegacyApp(buildTopUpPath, asset.currency),
+      onWithdraw: asset => void openInDiscoverOrLegacyApp(buildWithdrawalPath, asset.currency),
       onAddAsset,
     }),
-    [payCardAssets, onShowAssetHistory, openHosted, openTopUp, onAddAsset],
+    [payCardAssets, onShowAssetHistory, openInDiscoverOrLegacyApp, onAddAsset],
   );
 
   const formatCountervalue = useCountervalueFormatter();
+  const { locale } = useLocale();
+  const formatTransactionAmount = useCallback<FormatCardTransactionAmount>(
+    (value, currency, kind) =>
+      formatCardTransactionAmount({
+        value,
+        currency,
+        kind,
+        locale,
+        discreet: payCardAssets.discreet,
+      }),
+    [locale, payCardAssets.discreet],
+  );
   const card: CardProps = useMemo(
     () => ({
       login,
       assets: cardAssets,
-      formatters: { countervalue: formatCountervalue },
+      formatters: { countervalue: formatCountervalue, transactionAmount: formatTransactionAmount },
       onTopUp,
       onChooseCardType,
       onViewRewards,
       onShowMore,
       cardSettingsActions,
+      discreet: payCardAssets.discreet,
     }),
     [
       login,
       cardAssets,
       formatCountervalue,
+      formatTransactionAmount,
       onTopUp,
       onChooseCardType,
       onViewRewards,
       onShowMore,
       cardSettingsActions,
+      payCardAssets.discreet,
     ],
   );
 
   return {
-    top,
+    // Same offset as the Home header so the hero sections line up.
+    top: safeAreaTop + WALLET_TAB_HEADER_HEIGHT,
     bottom: bottom + insets.bottom,
     card,
     balance,

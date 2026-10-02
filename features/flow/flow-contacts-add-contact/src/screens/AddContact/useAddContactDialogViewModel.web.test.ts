@@ -74,7 +74,7 @@ describe("useAddContactDialogViewModel", () => {
 
     act(() => {
       result.current.onOpen();
-      result.current.onDraftNameChange("Ada@1");
+      result.current.onDraftNameChange("Ada 💎");
     });
 
     await act(async () => {
@@ -111,13 +111,13 @@ describe("useAddContactDialogViewModel", () => {
 
     act(() => {
       result.current.onOpen();
-      result.current.onDraftNameChange("Ada@1");
+      result.current.onDraftNameChange("Ada 💎");
     });
 
     expect(callbacks.onInvalidNameErrorDisplayed).toHaveBeenCalledTimes(1);
 
     act(() => {
-      result.current.onDraftNameChange("Ada@1!");
+      result.current.onDraftNameChange("Ada 💎!");
     });
 
     expect(callbacks.onInvalidNameErrorDisplayed).toHaveBeenCalledTimes(1);

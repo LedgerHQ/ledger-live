@@ -1,31 +1,20 @@
-### Analytics
+# Analytics (mobile)
 
-We use a lightweight opt-out analytics layer composed of different api and sdk.
+## Shared analytics
 
-These tools are targetted towards internal contributors only or with
+Mobile uses the shared packages for analytics: [`@shared/analytics`](../../../shared/analytics/README.md) and [`@shared/analytics-react`](../../../shared/analytics-react/README.md).
 
-- **_Segment integration_** 🠒 General use analytics
+`~/analytics` imports are historical compatibility shims and will be removed with [LIVE-35992](https://ledgerhq.atlassian.net/browse/LIVE-35992). New code should call the shared packages directly.
 
-in order to track events we use segment API with specific react API
+## Setup
 
-```js
-import { Track, TrackScreen } from "../analytics";
-import Button from "./Button";
+[`src/analytics/segment.ts`](../src/analytics/segment.ts) wires in the React Native Segment client:
 
-...
-<Track
-  onMount
-  event={`Event - ${data}`}
-  eventProperties={{ myData: data }}
-/>
-<TrackScreen category="ScreenCategory" name="FirstScreen" />
-<Button onPress={callback} event="ButtonPress" eventProperties={{ myData: data }} />
-...
+- `start(store)` creates the client and registers it (`setAnalytics`, `setEnabledFn`, extra props)
+- `updateIdentify` sends Segment identify traits, including after consent changes
 
-```
+## Debug
 
-`Track` helps track events that can be linked to a component lifecycle.
+The [`AnalyticsConsole`](../src/components/AnalyticsConsole/index.tsx) can be switched on via `ANALYTICS_CONSOLE` (see [Environment variables](../README.md#environment-variables)). It can also be toggled via settings in the app:
 
-`TracScreen` tracks mount events on a page with a formatted category (section of the app) and screen name.
-
-`Button` helps track click/press events with event and eventProperties props.
+Settings → Debug → Configuration

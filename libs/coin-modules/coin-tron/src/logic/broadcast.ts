@@ -26,9 +26,7 @@ export async function broadcast(
 
 const isHex = (value: string): boolean => value.length % 2 === 0 && /^[0-9a-f]+$/i.test(value);
 
-// Parses the `combine` output: a TX_LEN_PREFIX_HEX_WIDTH-char length prefix, the raw_data hex, then
-// the signature hex. Reject malformed input up front so a bad payload fails deterministically instead
-// of being silently truncated by Buffer.from(hex) and broadcast as garbage.
+// Reject malformed input up front, or Buffer.from(hex) silently truncates it and broadcasts garbage.
 function extractTxAndSignature(transaction: string): { rawTx: string; signature: string } {
   const txLength = Number.parseInt(transaction.slice(0, TX_LEN_PREFIX_HEX_WIDTH), 16);
   const rawTx = transaction.slice(TX_LEN_PREFIX_HEX_WIDTH, txLength + TX_LEN_PREFIX_HEX_WIDTH);

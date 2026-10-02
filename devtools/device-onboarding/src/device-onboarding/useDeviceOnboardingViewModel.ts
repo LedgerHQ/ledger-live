@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
 import {
   watchedContextFields,
@@ -6,9 +7,9 @@ import {
   type DeviceOnboardingToolProps,
 } from "../types";
 
-/** The host keeps the whole run; past this the panel is scrolled rather than read. */
 const displayedEventCount = 40;
 const displayedDetailLength = 80;
+const displayedStateCount = 24;
 
 const statusLabels: Record<DeviceOnboardingStatus, string> = {
   idle: "Not started",
@@ -35,9 +36,57 @@ export interface SendableRow {
   readonly event: OnboardingEvent;
 }
 
+export type StateKind =
+  | "progress"
+  | "genuine"
+  | "firmware"
+  | "setup"
+  | "locked"
+  | "session"
+  | "failed"
+  | "succeeded"
+  | "quit";
+
+export interface StateStep {
+  readonly key: string;
+  readonly label: string;
+  readonly kind: StateKind;
+  readonly isCurrent: boolean;
+}
+
+const failedStates = new Set([
+  "checks.genuineFailed",
+  "checks.firmwareCheckFailed",
+  "checks.notGenuineSupport",
+  "legacyFallback",
+  "bootloaderRecovery",
+]);
+const succeededStates = new Set([
+  "checks.checksDone",
+  "checks.checksSucceeded",
+  "onboardedExit",
+  "syncOffer",
+  "done",
+]);
+const quitStates = new Set(["quitting", "leavingOnQuit", "exitOnboarding"]);
+const firmwarePattern = /firmware/i;
+const genuinePattern = /genuine|earlycheck/i;
+
+export function stateKind(state: string): StateKind {
+  if (failedStates.has(state)) return "failed";
+  if (succeededStates.has(state)) return "succeeded";
+  if (quitStates.has(state)) return "quit";
+  if (state === "deviceLocked") return "locked";
+  if (state === "awaitingSession") return "session";
+  if (state.startsWith("deviceSetup.")) return "setup";
+  if (firmwarePattern.test(state)) return "firmware";
+  if (genuinePattern.test(state)) return "genuine";
+  return "progress";
+}
+
 export interface DeviceOnboardingViewModel {
   readonly statusLabel: string;
-  readonly stateLabel: string;
+  readonly stateSteps: readonly StateStep[];
   readonly deviceLabel: string | null;
   readonly isRunning: boolean;
   readonly contextRows: readonly DisplayRow[];
@@ -58,7 +107,6 @@ export function formatValue(value: string | number | boolean | null | undefined)
     return "—";
   }
 
-  // `String()` prints an Error's message, and throws on an object without a prototype.
   const hostDefeatedTheType = value !== null && typeof value === "object";
   if (hostDefeatedTheType) {
     return "—";
@@ -104,6 +152,27 @@ export function useDeviceOnboardingViewModel(
 ): DeviceOnboardingViewModel {
   const { status, device, state, context, events, exit, sendableEvents, error } = props;
 
+  const [visitedStates, setVisitedStates] = useState<readonly string[]>([]);
+
+  useEffect(() => {
+    setVisitedStates(current => {
+      if (!state) {
+        return current.length === 0 ? current : [];
+      }
+      if (current.at(-1) === state) {
+        return current;
+      }
+      return [...current, state].slice(-displayedStateCount);
+    });
+  }, [state]);
+
+  const stateSteps: StateStep[] = visitedStates.map((label, index) => ({
+    key: `${index}-${label}`,
+    label,
+    kind: stateKind(label),
+    isCurrent: index === visitedStates.length - 1,
+  }));
+
   const contextRows: DisplayRow[] =
     context === null
       ? []
@@ -111,7 +180,6 @@ export function useDeviceOnboardingViewModel(
           .filter(field => context[field] !== undefined)
           .map(field => ({ label: field, value: formatValue(context[field]) }));
 
-  // Several transitions land in the same millisecond, so the append order breaks the ties.
   const eventRows: EventRow[] = events
     .map((event, index) => ({ event, index }))
     .sort(
@@ -140,16 +208,17 @@ export function useDeviceOnboardingViewModel(
     event: entry.event,
   }));
 
-  const deviceLabel =
-    device === null
-      ? null
-      : `${device.name} · ${device.modelId} · ${device.wired ? "USB" : "BLE"} · ${device.sessionId}`;
+  let deviceLabel = null;
+  if (device !== null) {
+    const transport = device.wired ? "USB" : "BLE";
+    deviceLabel = `${device.name} · ${device.modelId} · ${transport} · ${device.sessionId}`;
+  }
 
   const transportWentAwayMidRun = status === "running" && device === null;
 
   return {
     statusLabel: statusLabels[status],
-    stateLabel: state || "—",
+    stateSteps,
     deviceLabel,
     isRunning: status === "running",
     contextRows,

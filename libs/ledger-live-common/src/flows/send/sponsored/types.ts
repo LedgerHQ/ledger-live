@@ -1,4 +1,7 @@
-import type { EnergyRentOrder } from "../../../bridge/generic-coin-framework/sponsored";
+import type {
+  EnergyRentOrder,
+  RentPayment,
+} from "../../../bridge/generic-coin-framework/sponsored";
 
 export const SPONSORED_PHASE = {
   IDLE: "IDLE",
@@ -12,8 +15,7 @@ export type SponsoredPhase = (typeof SPONSORED_PHASE)[keyof typeof SPONSORED_PHA
 
 export const SPONSORED_FAILURE_KIND = {
   RENT_PAYMENT: "RENT_PAYMENT",
-  // TX A paid but the rented energy never arrived — a poll timeout OR an explicit provider failure.
-  // Both are the same user situation (funds moved, contact support, retry re-crafts).
+  // Poll timeout or provider failure — same outcome: funds moved, retry re-crafts.
   DELIVERY_FAILED: "DELIVERY_FAILED",
   CONTRACT_DATA: "CONTRACT_DATA",
   TRANSFER: "TRANSFER",
@@ -24,26 +26,16 @@ export type SponsoredFailureKind =
 export type SponsoredState = Readonly<{
   phase: SponsoredPhase;
   order: EnergyRentOrder | null;
-  // The device-signable hex for TX-A and the native (smallest-unit) amount its payment debits, both
-  // derived from the crafted order by the family seam at CRAFT_SUCCESS so the platform layer never
-  // touches the opaque wire tx. Cleared with the order (retry that re-crafts) and re-set by the next
-  // CRAFT_SUCCESS.
+  // Coupled to order: cleared on retry-recraft, re-set at CRAFT_SUCCESS.
   toSign: string | null;
-  reservedNativeAmount: bigint | null;
-  // The rent order's payer, captured from the built request at CRAFT_SUCCESS. The delivery poll and
-  // the submit-failure reconciliation address the order by it; it belongs to the order, so it is
-  // cleared whenever the order is (retry that re-crafts) and re-set by the next CRAFT_SUCCESS.
+  rentPayment: RentPayment | null;
   payerAddress: string | null;
-  // The delegation receiver and the transfer's full energy requirement, captured from the built
-  // request at CRAFT_SUCCESS. The delivery poll gates TX-C on `receiverAddress`'s on-chain energy
-  // reaching `energyNeeded`; both belong to the order, so they are cleared and re-set with it.
+  // Delivery poll gates TX-C on receiverAddress's on-chain energy reaching energyNeeded.
   receiverAddress: string | null;
   energyNeeded: bigint | null;
   paymentTxId: string | null;
   failureKind: SponsoredFailureKind | null;
   failureError: Error | null;
-  // Where a CONTRACT_DATA device refusal occurred (rent-signing vs. the post-delivery transfer), so
-  // RETRY resumes at the right step. Recorded by the reducer from the live phase at the moment of
-  // failure — CONTRACT_DATA_FAILURE only ever dispatches from RENT_SIGNING or TRANSFER.
+  // CONTRACT_DATA_FAILURE only dispatches from RENT_SIGNING/TRANSFER; RETRY resumes here.
   contractDataResumePhase: typeof SPONSORED_PHASE.RENT_SIGNING | typeof SPONSORED_PHASE.TRANSFER;
 }>;

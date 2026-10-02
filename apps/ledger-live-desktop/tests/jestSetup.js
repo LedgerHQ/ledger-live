@@ -5,7 +5,8 @@ import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currenc
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate, historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
+import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -18,9 +19,7 @@ import {
 // creation; the app sets it at boot, so tests must provide one too.
 setEnv("LEDGER_CLIENT_VERSION", "jest");
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import { setCoinConfig } from "@ledgerhq/coin-evm/config";
 LiveConfig.setConfig(liveConfig);
-setCoinConfig(() => ({ info: {} }));
 setCurrenciesResolver({
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -36,6 +35,7 @@ setFrameworkCryptoAssetsStore({
 
 setAssetAggregationRateLookup({ calculate });
 setWalletAnalyticsRateLookup({ calculate });
+setWalletPnlRateLookup({ calculate, historyKey, currencyApiId: inferCurrencyAPIID });
 import "@jest/globals";
 import "@testing-library/jest-dom";
 import { configure } from "@testing-library/react";

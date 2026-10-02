@@ -45,6 +45,7 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

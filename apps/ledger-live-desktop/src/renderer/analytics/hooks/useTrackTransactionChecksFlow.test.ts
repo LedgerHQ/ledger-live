@@ -3,13 +3,17 @@ import {
   useTrackTransactionChecksFlow,
   UseTrackTransactionChecksFlow,
 } from "./useTrackTransactionChecksFlow";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import { CONNECTION_TYPES } from "./variables";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 
-jest.mock("../segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+}));
+
+jest.mock("../segment", () => ({
   setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
@@ -81,7 +85,7 @@ describe("useTrackTransactionChecksFlow", () => {
         deviceInfoProviderName: "Ledger",
         deviceInfoLanguageId: 1,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -119,7 +123,7 @@ describe("useTrackTransactionChecksFlow", () => {
       expect.objectContaining({
         page: "unknown",
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -139,7 +143,7 @@ describe("useTrackTransactionChecksFlow", () => {
       expect.objectContaining({
         connectionType: CONNECTION_TYPES.BLE,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -187,7 +191,7 @@ describe("useTrackTransactionChecksFlow", () => {
         deviceInfoProviderName: undefined,
         deviceInfoLanguageId: undefined,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -209,7 +213,9 @@ describe("useTrackTransactionChecksFlow", () => {
       transactionChecksOptInTriggered: true,
     });
 
-    expect(track).toHaveBeenCalledWith("Transaction Check Opt-in", expect.any(Object), true);
+    expect(track).toHaveBeenCalledWith("Transaction Check Opt-in", expect.any(Object), {
+      mandatory: true,
+    });
   });
 
   it("should track 'Transaction Check Opt-out' when transactionChecksOptIn changes from null to false", () => {
@@ -230,6 +236,8 @@ describe("useTrackTransactionChecksFlow", () => {
       transactionChecksOptInTriggered: true,
     });
 
-    expect(track).toHaveBeenCalledWith("Transaction Check Opt-out", expect.any(Object), true);
+    expect(track).toHaveBeenCalledWith("Transaction Check Opt-out", expect.any(Object), {
+      mandatory: true,
+    });
   });
 });

@@ -36,6 +36,7 @@ import {
   validateIntent,
 } from "../logic";
 import { TRONIFY_FEE_OPTION_ID } from "../logic/constants";
+import { TRONIFY_PROVIDER } from "../logic/energyProviders";
 import {
   awaitEnergyDelivery,
   broadcastEnergyRentTransaction,
@@ -45,7 +46,8 @@ import {
   getEnergyRentSignaturePayload,
   getEnergyRentStatus,
   isEnergyDeliveredOnChain,
-  nativeRentAmount,
+  rentPayment,
+  reservationDedupKey,
 } from "../logic/energyRent";
 import type {
   EnergyRentOrder,
@@ -69,9 +71,8 @@ export { TRONIFY_FEE_OPTION_ID };
 //   - `call`                — Tron contract reads (triggerconstantcontract) are not supported yet.
 //   - `getRewards`          — withdrawals already appear in `listOperations`.
 //   - `register`            — no enrollment step.
-// `craftRawTransaction` IS implemented (below): the ordinary send path builds its own transactions
-// from an intent, but the Tronify gas-sponsorship flow (LIVE-32780) must sign a payment transaction
-// built by Tronify's backend, so this pass-through lets that pre-built raw tx ride the raw-sign path.
+// `craftRawTransaction` IS implemented (below) — the Tronify sponsorship flow (LIVE-32780) signs a
+// pre-built payment tx and needs this pass-through; the ordinary send path never calls it directly.
 // The consumer resolver applies `withDefaults`, which answers "not supported" for each of them.
 export function createApi() {
   const base = {
@@ -80,16 +81,8 @@ export function createApi() {
       return broadcast(context.logger, config, tx);
     },
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
-    // The Tronify sponsored flow (LIVE-32780) signs a pre-built payment tx; the generic raw-sign
-    // path hands us its raw_data_hex here and re-crafting would be wrong, so we return it verbatim.
-    //
-    // Gated on a configured AND SUPPORTED energy-rent provider: that flow is the only legitimate
-    // source of externally-built Tron bytes, and an ungated pass-through would let any
-    // `genericSignRawOperation` caller get arbitrary bytes signed with the account key. getEnergyProvider
-    // throws EnergyRentProviderNotConfigured for a missing OR unknown provider — remote config is
-    // unvalidated and could name an unsupported one, which must not leave raw-signing open. Checked per
-    // call rather than at construction (which would let the method be omitted, so `supports()` read
-    // false) because `context.config()` resolves lazily and can throw when the config isn't ready yet.
+    // Returns Tronify's pre-built payment tx verbatim (re-crafting would sign different bytes). Gated
+    // on a configured+supported provider — ungated, any raw-sign caller could get arbitrary bytes signed.
     craftRawTransaction: async (context, transaction, _sender, _publicKey, _sequence) => {
       getEnergyProvider(await context.config());
       return craftRawTransaction(transaction);
@@ -169,23 +162,22 @@ export function createApi() {
   return base;
 }
 
-/**
- * Energy-rent seam (Tronify sponsored send) — kept OFF {@link createApi} so that factory stays
- * exactly the generic `CoinModuleImpl` contract. Not part of `CoinModuleApi`, so it lives in its own
- * factory, resolved through the registry's `loadSponsoredApi` and `getSponsoredCoinApi`.
- *
- * `listFeeOptions` is repeated here (it is also the generic-contract method in `createApi`) so the
- * seam is self-contained for the app's sponsored fee picker; both delegate to the same logic layer.
- */
+/** Energy-rent seam (Tronify sponsored send), kept off {@link createApi} since it isn't part of the
+ * generic `CoinModuleImpl`/`CoinModuleApi` contract; resolved via the registry's sponsored-API loaders. */
 export function createSponsoredSendApi(context: TronContext) {
   return {
+    feeOptionId: TRONIFY_FEE_OPTION_ID,
+    providerName: TRONIFY_PROVIDER.name,
+    // The rented energy covers the fee, so validateIntent's NotEnoughGas must not block the send.
+    waivesErrorKeys: ["gasLimit"] as const,
+    // ...and TronNotEnoughEnergy's burn warning describes the shortfall the rental fills.
+    waivesWarningKeys: ["amount"] as const,
+    reservationDedupKey,
     listFeeOptions: (intent: TransactionIntent<TronMemo, TronTxData>) =>
       listFeeOptionsLogic(context, intent),
-    // Savings quote for the app-side fee nudge; called with logger+config directly, not a framework Context.
+    // Called with logger+config directly, not a framework Context.
     estimateSponsoredFeeQuote: async (intent: TransactionIntent<TronMemo, TronTxData>) =>
       estimateSponsoredFeeQuote(context.logger, await context.config(), intent),
-    // Builder so the app hands a ready EnergyRentRequest to craftEnergyRentTransaction without estimating
-    // energy or reading coin-config itself.
     buildEnergyRentRequest: async (intent: TransactionIntent<TronMemo, TronTxData>) =>
       buildEnergyRentRequest(context.logger, await context.config(), intent),
     craftEnergyRentTransaction: async (request: EnergyRentRequest) =>
@@ -206,20 +198,17 @@ export function createSponsoredSendApi(context: TronContext) {
         signal?: AbortSignal;
       },
     ) => awaitEnergyDelivery(context.logger, await context.config(), ref, target, opts),
-    // One-shot on-chain confirmation for the orchestration's reconcile paths: the provider's advisory
-    // "delivered" must be corroborated on-chain before TX-C is released (ADR-058 C4).
+    // The provider's advisory "delivered" must be corroborated on-chain before TX-C releases (ADR-058 C4).
     isEnergyDelivered: async (target: { receiverAddress: string; energyNeeded: bigint }) =>
       isEnergyDeliveredOnChain(context.logger, await context.config(), target),
-    // Wire transforms kept behind the seam so the generic Send flow never handles coin-tron's Tronify
-    // payload: the hex + payment id to sign, the signed-payload rebuild from the device signature, and
-    // the native (sun) amount to reserve.
+    // Wire transforms kept behind the seam so the generic Send flow never handles coin-tron's Tronify payload.
     getEnergyRentSignaturePayload: (transaction: EnergyRentUnsignedTransaction) =>
       getEnergyRentSignaturePayload(transaction),
     buildSignedEnergyRentTransaction: (
       transaction: EnergyRentUnsignedTransaction,
       deviceSignature: string,
     ) => buildSignedEnergyRentTransaction(transaction, deviceSignature),
-    nativeRentAmount: (order: EnergyRentOrder) => nativeRentAmount(order),
+    rentPayment: (order: EnergyRentOrder) => rentPayment(order),
   };
 }
 

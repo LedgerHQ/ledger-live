@@ -4,7 +4,7 @@ import {
   privateKeyToPublic,
   publicKeyToHex,
   TransactionSigner,
-} from "@stacks/transactions-v7";
+} from "@stacks/transactions";
 import type { StacksSigner } from "@ledgerhq/coin-stacks/types/signer";
 
 // Only the field this signer reads — `SingleSigSpendingCondition` isn't re-exported from the
@@ -23,12 +23,12 @@ const OK_RETURN_CODE = 0x9000;
  * Builds an in-memory legacy `StacksSigner` (`showAddressAndPubKey`/`getAddressAndPubKey`/`sign`)
  * from a raw secp256k1 private key — one of Clarinet's own well-known devnet dev accounts (see
  * `settings/Devnet.toml`), no device/Speculos involved. `coin-stacks` (both its legacy bridge and
- * the generic-adapter path) is on `@stacks/transactions@^7.6.0`, so this signer targets the same
- * v7 API `genericSigner.ts` does rather than a separately-pinned older major.
+ * the generic-adapter path) and this package take `@stacks/transactions` from the same pnpm catalog
+ * entry, so this signer uses the same v7 API as `coin-stacks` and `genericSigner.ts`.
  *
  * Addresses are derived with the `"testnet"` network name: Clarinet's devnet uses the same address
- * version as testnet (`StacksDevnet`/`StacksMocknet extends StacksNetwork` both set
- * `version = TransactionVersion.Testnet`, verified in the installed `@stacks/network@7.x`).
+ * version as testnet (`@stacks/network`'s `STACKS_DEVNET` spreads `STACKS_TESTNET`, including its
+ * `TransactionVersion.Testnet` and address versions).
  *
  * `sign` reuses `@stacks/transactions`'s own `TransactionSigner` on the exact serialized unsigned
  * transaction bytes `coin-stacks` hands the signer, rather than reimplementing the Stacks

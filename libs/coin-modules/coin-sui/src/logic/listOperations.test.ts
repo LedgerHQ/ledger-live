@@ -1,5 +1,5 @@
 import { type Operation as Op, type Page } from "@ledgerhq/coin-module-framework/api/types";
-import { getListOperations, withApi } from "../network/sdk";
+import { getListOperations } from "../network/sdk";
 import type { SuiCoinConfig } from "../config";
 import { listOperations } from "./listOperations";
 
@@ -59,7 +59,7 @@ const mockGetListOperations = jest.mocked(getListOperations);
 mockGetListOperations.mockResolvedValue(mockOperations);
 
 describe("List Operations", () => {
-  const mockAddress = "0x1234567890abcdef";
+  const mockAddress = `0x${"a".repeat(64)}`;
   const mockOrder = "asc" as const;
 
   beforeEach(() => {
@@ -74,13 +74,7 @@ describe("List Operations", () => {
 
     expect(operations).toEqual(mockOperations.items);
     expect(next).toBe(mockOperations.next);
-    expect(mockGetListOperations).toHaveBeenCalledWith(
-      config,
-      mockAddress,
-      "asc",
-      withApi,
-      undefined,
-    );
+    expect(mockGetListOperations).toHaveBeenCalledWith(config, mockAddress, "asc", undefined);
   });
 
   it("should return empty array and undefined when no operations", async () => {
@@ -104,13 +98,17 @@ describe("List Operations", () => {
     });
 
     expect(operations).toEqual(mockOperations.items);
-    expect(mockGetListOperations).toHaveBeenCalledWith(
-      config,
-      mockAddress,
-      "asc",
-      withApi,
-      mockCursor,
-    );
+    expect(mockGetListOperations).toHaveBeenCalledWith(config, mockAddress, "asc", mockCursor);
+  });
+
+  it.each([
+    ["too short", "0xABCDEF0000000000000000000000000000000001"],
+    ["not hex", `0x${"z".repeat(64)}`],
+  ])("rejects an address that is %s without querying", async (_label, address) => {
+    await expect(
+      listOperations(config, address, { order: mockOrder, minHeight: 0 }),
+    ).rejects.toThrow(`sui: invalid address ${address}`);
+    expect(mockGetListOperations).not.toHaveBeenCalled();
   });
 
   it("should return operations sorted by date in ascending order", async () => {

@@ -34,6 +34,19 @@ describe("CardDetails (web)", () => {
     expect(await screen.findByRole("button", { name: MORE_COPY.tile })).toBeVisible();
   });
 
+  it("should hide the action tiles and the reward while no card is chosen yet", () => {
+    renderWeb(
+      <Wrapper>
+        <CardDetails cardState="choosingCardType" />
+      </Wrapper>,
+    );
+
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
+    expect(screen.queryByRole("button", { name: CARD_COPY.freeze })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: MORE_COPY.tile })).not.toBeInTheDocument();
+    expect(screen.queryByTestId("card-details-reward")).not.toBeInTheDocument();
+  });
+
   it("should flip the card face to the numbers image once the user views them", async () => {
     renderWeb(
       <Wrapper>

@@ -10,16 +10,14 @@ container → ViewModel → View triplet, the container living in the app.
 
 What it holds today, from [LIVE-35961](https://ledgerhq.atlassian.net/browse/LIVE-35961):
 
-- `components/PasswordField` — the one password input every password surface uses, so the label,
-  the reveal toggle and the error treatment cannot drift between them.
 - `screens/SetupPassword` and `screens/ConfirmPassword` — the two steps of adding a password.
-- `state/passwordDraft` — carries the chosen password from the first step to the second in a ref,
-  deliberately not in navigation state, which is serialisable and gets persisted.
 
-**Unlock**, **DeactivatePassword** and the migration views arrive with their own tickets.
+The unlock journey lives in [`@features/flow-app-unlock`](../app-unlock/README.md); the rest of
+this package moves to one package per journey in the tasks of [LIVE-35505](https://ledgerhq.atlassian.net/browse/LIVE-35505).
 
-Protection state, the biometrics status unions and the errors come from
-[`@features/platform-app-lock`](../../platform/app-lock/README.md); the password verifier and its
+`PasswordField` and the password draft come from
+[`@features/platform-app-lock`](../../platform/app-lock/README.md), along with the protection
+state, the biometrics status unions and the errors; the password verifier and its
 constant-time comparison come from [`@shared/password-verifier`](../../../shared/password-verifier/README.md).
 
 ## Native only
@@ -47,10 +45,8 @@ Today:
 
 ```text
 src/
-├── components/PasswordField/   # shared by every password screen
 ├── screens/ConfirmPassword/
 ├── screens/SetupPassword/
-├── state/passwordDraft.tsx
 └── index.ts                    # Public API
 ```
 
@@ -60,7 +56,7 @@ Target, as the remaining tickets land:
 src/
 ├── components/                 # shared by several views
 ├── hooks/
-├── screens/<Name>/             # Unlock, SetupPassword, Confirm, Migration
+├── screens/<Name>/             # SetupPassword, Confirm, Migration
 │   ├── components/             # used only by this view
 │   ├── viewModel.ts
 │   ├── view.tsx

@@ -17,6 +17,7 @@ import {
 import {
   combine,
   craftTransaction,
+  getAccountInfo,
   getBalance,
   getBlockInfo,
   getBlockV2,
@@ -32,6 +33,7 @@ import {
 import {
   extractInitiator,
   getBlockHash,
+  getDateRangeFromBlockHeight,
   getOperationValue,
   mapIntentToSDKOperation,
 } from "../logic/utils";
@@ -101,7 +103,12 @@ export function createApi(currencyId: string) {
 
       return {
         value: BigInt(estimatedFee.tinybars.toString()),
+        ...(estimatedFee.gas && { parameters: { gasLimit: BigInt(estimatedFee.gas.toString()) } }),
       };
+    },
+    getAccountInfo: async (context: HederaContext, address: string) => {
+      const coinConfig = await context.config();
+      return getAccountInfo(coinConfig, address);
     },
     getBalance: (context: HederaContext, address: string, options?: BalanceOptions) =>
       rejectBalanceOptions(async () => {
@@ -122,27 +129,35 @@ export function createApi(currencyId: string) {
       address: string,
       { cursor, limit, order, minHeight }: ListOperationsOptions,
     ) => {
-      invariant(minHeight === 0, "minHeight is not supported");
-
       const coinConfig = await context.config();
       const evmAddress = await toEVMAddress({
         configOrCurrencyId: coinConfig,
         accountId: address,
       });
       invariant(evmAddress, `hedera: evm address is missing for ${address}`);
-      const [mirrorTokens, erc20TokenBalances] = await Promise.all([
+      const [mirrorTokens, erc20TokenBalances, lastFinalizedBlock] = await Promise.all([
         apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
         getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
+        lastBlockV2({ configOrCurrencyId: coinConfig }),
       ]);
 
+      const minTimestamp =
+        minHeight > 0
+          ? (getDateRangeFromBlockHeight(minHeight).start.getTime() / 1000).toString()
+          : undefined;
+      const isAscending = order === "asc";
+      const finalizedUntil = getDateRangeFromBlockHeight(lastFinalizedBlock.height).end;
+      const pageCursor =
+        cursor ?? (isAscending ? undefined : (finalizedUntil.getTime() / 1000).toFixed(9));
       const latestAccountOperations = await logicListOperationsV2(coinConfig, {
         currencyId,
         address,
         evmAddress,
         mirrorTokens,
-        ...(typeof cursor === "string" && { cursor }),
+        ...(typeof pageCursor === "string" && { cursor: pageCursor }),
         ...(typeof limit === "number" && { limit }),
         ...(typeof order === "string" && { order }),
+        ...(minTimestamp && { minTimestamp }),
         tokenEvmAddresses: erc20TokenBalances.map(t => t.contractAddress.toLowerCase()),
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
@@ -194,6 +209,12 @@ export function createApi(currencyId: string) {
             ? liveOp.hash.replace(STAKING_REWARD_HASH_SUFFIX, "")
             : liveOp.hash;
 
+        const { memo, stakedAmount, ...otherExtra } = liveOp.extra;
+        const familyExtra = {
+          ...otherExtra,
+          ...(stakedAmount && { stakedAmount: stakedAmount.toFixed(0) }),
+        };
+
         return {
           id: liveOp.id,
           type: liveOp.type,
@@ -202,12 +223,11 @@ export function createApi(currencyId: string) {
           value: getOperationValue({ asset, operation: liveOp }),
           asset,
           details: {
-            ...liveOp.extra,
+            ...(memo && { memo }),
             ledgerOpType: liveOp.type,
             ...(asset.type !== "native" && { assetAmount: liveOp.value.toFixed(0) }),
-            ...(liveOp.extra.stakedAmount && {
-              stakedAmount: BigInt(liveOp.extra.stakedAmount.toFixed(0)),
-            }),
+            ...(stakedAmount && { stakedAmount: BigInt(stakedAmount.toFixed(0)) }),
+            ...(Object.keys(familyExtra).length > 0 && { familyExtra }),
           },
           tx: {
             hash,
@@ -224,9 +244,17 @@ export function createApi(currencyId: string) {
         } satisfies Operation;
       });
 
+      const finalizedOperations = coinFrameworkOperations.filter(
+        op => op.tx.block.height <= lastFinalizedBlock.height,
+      );
+      const reachedUnfinalizedBlocks = finalizedOperations.length < coinFrameworkOperations.length;
+
       return {
-        items: coinFrameworkOperations,
-        next: latestAccountOperations.nextCursor || undefined,
+        items: finalizedOperations,
+        next:
+          isAscending && reachedUnfinalizedBlocks
+            ? undefined
+            : latestAccountOperations.nextCursor || undefined,
       };
     },
     getValidators: async (context: HederaContext, options?) => {

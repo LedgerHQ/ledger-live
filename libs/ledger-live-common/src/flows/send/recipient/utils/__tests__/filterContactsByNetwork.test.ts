@@ -60,4 +60,26 @@ describe("filterContactsByNetwork", () => {
 
     expect(filterContactsByNetwork(contacts, "ethereum")).toEqual([]);
   });
+
+  it("keeps the personal contact's matching addresses when asked", () => {
+    const contacts = [
+      {
+        id: "contact-me",
+        isMe: true,
+        addresses: [ethereumAddress, solanaAddress],
+      },
+    ];
+
+    expect(filterContactsByNetwork(contacts, "ethereum", { includeMe: true })).toEqual([
+      { id: "contact-me", isMe: true, addresses: [ethereumAddress] },
+    ]);
+  });
+
+  it("keeps the personal contact without a matching address when asked", () => {
+    const contacts = [{ id: "contact-me", isMe: true, addresses: [solanaAddress] }];
+
+    expect(filterContactsByNetwork(contacts, "ethereum", { includeMe: true })).toEqual([
+      { id: "contact-me", isMe: true, addresses: [] },
+    ]);
+  });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-near",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "private": true,
   "description": "Ledger NEAR Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -61,9 +61,10 @@
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9",
+    "bn.js": "5.2.5",
     "msw": "catalog:",
     "near-api-js": "^3.0.2",
     "near-sandbox": "^0.3.2"
@@ -72,6 +73,7 @@
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@types/bn.js": "5.2.0",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",

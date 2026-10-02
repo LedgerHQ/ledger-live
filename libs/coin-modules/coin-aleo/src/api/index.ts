@@ -7,8 +7,11 @@ import type {
   CraftedTransaction,
   FeeEstimation,
   MemoNotSupported,
+  Page,
+  Stake,
   TransactionIntent,
   BalanceOptions,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
@@ -20,6 +23,8 @@ import {
   estimateFees,
   getAccountInfo,
   getBalance,
+  getStakes,
+  getValidators,
   lastBlock,
   register,
   validateAddress,
@@ -59,8 +64,8 @@ function requireViewKey(context: AleoContext, action: string): string {
 // survives and a caller sees exactly which methods exist.
 //
 // Omitted rather than stubbed: `call`, `craftRawTransaction`, `getBlock`, `getBlockInfo`,
-// `getStakes`, `getRewards`, `getValidators`, `validateIntent` and `getNextSequence`. The consumer
-// resolver applies `withDefaults`, which answers "not supported" for each.
+// `getRewards`, `validateIntent` and `getNextSequence`. The consumer resolver applies
+// `withDefaults`, which answers "not supported" for each.
 //
 // `getAccountInfo`, `register` and `validateAddress` stay: they are real implementations —
 // enrollment into the Provable record scanner and the scan status it reports are central to Aleo's
@@ -169,6 +174,26 @@ export function createApi(currencyId: string) {
       options?: BalanceOptions,
     ): Promise<Balance[]> => {
       return rejectBalanceOptions(() => getBalance(context, address), options);
+    },
+    getStakes: async (context: AleoContext, address: string, _options?): Promise<Page<Stake>> => {
+      const config = await context.config();
+      return getStakes(config, address);
+    },
+    getValidators: async (context: AleoContext, _options?): Promise<Page<Validator>> => {
+      const config = await context.config();
+      const validators = await getValidators(config);
+      return {
+        items: validators.map(validator => ({
+          id: validator.address,
+          address: validator.address,
+          name: validator.name ?? validator.address,
+          balance: BigInt(validator.stakeMicrocredits),
+          commissionRate: String(validator.commissionPercent),
+          ...(validator.estimatedYearlyRewardsRate !== undefined && {
+            apy: validator.estimatedYearlyRewardsRate,
+          }),
+        })),
+      };
     },
     lastBlock: async (context: AleoContext): Promise<BlockInfo> => {
       const config = await context.config();

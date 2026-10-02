@@ -29,7 +29,7 @@ export function PayTabView({
   const [initialBalanceFilter] = useState(balance.filter);
 
   return (
-    <div className="flex flex-col pb-32">
+    <div className="flex flex-col pb-32" data-testid="paytab-screen">
       <TrackPage category="Pay" balance_filter={initialBalanceFilter} />
       {requestReceive.isOpen && requestReceive.address ? (
         <TrackPage
@@ -66,7 +66,6 @@ export function PayTabView({
           selection={deviceIntent.selection}
           onReady={deviceIntent.onReady}
           onExit={deviceIntent.onExit}
-          onTrackEvent={verifyAddress.onTrackEvent}
         />
       )}
       <FeatureTour />

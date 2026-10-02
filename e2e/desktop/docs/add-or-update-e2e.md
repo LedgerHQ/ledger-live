@@ -177,6 +177,13 @@ test.use({
 - **Speculos:** `Account.currency.speculosApp`
 - **CLI commands:** `liveDataCommand`, `liveDataWithAddressCommand`, `liveDataWithRecipientAddressCommand`
 
+### Pay tab
+
+A spec that needs an injected Card session must live under `specs/paytab/`. The card-session reporter
+mints once before workers when a selected spec path contains `/paytab/`. `--grep` is already applied,
+so a smoke run that does not select that spec does not log in. The fixture injects the session when
+the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
+
 ---
 
 ## Commands

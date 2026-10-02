@@ -1,12 +1,11 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { computeAssetPnL } from "../../assetPnL";
 import type { AssetPnL, ComputePnLOptions } from "../../types";
 
 export function expectAssetPnL(
   account: AccountLike,
-  countervalues: CounterValuesState,
+  countervalues: unknown,
   fiat: Currency,
   options?: ComputePnLOptions,
 ): AssetPnL {

@@ -3,6 +3,7 @@ import { useTranslation } from "@shared/i18n";
 import { copyToClipboard } from "./copyToClipboard";
 import {
   formatCashback,
+  formatFundingLabel,
   formatFundingSources,
   formatMaskedPanLast4,
   formatMerchantName,
@@ -50,12 +51,23 @@ export function useCardTransactionDetailViewModel({
     });
   }
 
-  const fundingSource = formatFundingSources(transaction.fundingSources, formatters?.amount);
-  if (fundingSource) {
+  const fundingSources = transaction.fundingSources;
+  const fundingLabel = formatFundingLabel(
+    fundingSources,
+    count => t("payTab.cardTransactions.history.paidWithAssets", { count }),
+    formatters?.amount,
+  );
+  if (fundingLabel) {
+    const count = fundingSources?.length ?? 0;
+    // The row has no room for every asset, so the breakdown moves under the info icon.
+    const breakdown =
+      count > 1 ? formatFundingSources(fundingSources, formatters?.amount) : undefined;
+
     rows.push({
       id: "fundingSource",
-      label: t("payTab.cardTransactions.detail.fundingSource"),
-      value: fundingSource,
+      label: t("payTab.cardTransactions.detail.fundingSource", { count }),
+      value: fundingLabel,
+      ...(breakdown ? { infoLabel: breakdown } : {}),
     });
   }
 

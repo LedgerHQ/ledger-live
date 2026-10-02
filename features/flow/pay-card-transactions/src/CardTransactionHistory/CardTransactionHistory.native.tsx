@@ -1,17 +1,14 @@
 import React from "react";
-import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { CardTransactionDetail } from "../CardTransactions/components/Detail";
-import { useTrackedCardTransactionDetailDialog } from "../CardTransactions/useCardTransactionDetailDialog";
+import { useCardTransactionDetailDialog } from "../CardTransactions/useCardTransactionDetailDialog";
 import { CardTransactionHistoryView } from "./CardTransactionHistoryView";
 import { useCardTransactionHistoryViewModel } from "./useCardTransactionHistoryViewModel";
 import type { CardTransactionHistoryProps } from "./types";
 
 export function CardTransactionHistory(props: CardTransactionHistoryProps) {
-  const detail = useTrackedCardTransactionDetailDialog({
-    onTrackEvent: props.onTrackEvent,
-    page: "History",
-  });
+  const detail = useCardTransactionDetailDialog({ page: "History" });
   const viewModel = useCardTransactionHistoryViewModel({
     ...props,
     onRowClick: detail.onTransactionPress,
@@ -40,13 +37,8 @@ export function CardTransactionHistory(props: CardTransactionHistoryProps) {
     </>
   );
 }
-
 function CardTransactionDetailSheetContent({ children }: Readonly<{ children: React.ReactNode }>) {
   const bottomInset = useBottomSheetBottomInset();
 
-  return (
-    <BottomSheetScrollView>
-      <Box style={{ paddingBottom: bottomInset + 24 }}>{children}</Box>
-    </BottomSheetScrollView>
-  );
+  return <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>{children}</BottomSheetView>;
 }

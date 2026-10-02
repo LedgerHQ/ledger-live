@@ -531,44 +531,101 @@ describe("useQueuedBottomSheet", () => {
 
   // Otherwise a consumer that renders its content only while it asks for the sheet is left with an
   // empty one on screen, with no close button to get out of.
-  it("presents a sheet again when a dismissal it never asked for lands on it", () => {
-    const onClose = jest.fn();
-    const { signalOpen } = setupBottomSheetStateCapture();
+  it("presents a sheet again when the dismissal of its previous presentation lands on it", () => {
+    jest.useFakeTimers();
+    try {
+      const onClose = jest.fn();
+      const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
-    const { result } = renderHook(() =>
-      useQueuedBottomSheet({ isRequestingToBeOpened: true, onClose }),
-    );
+      const { result } = renderHook(() =>
+        useQueuedBottomSheet({ isRequestingToBeOpened: true, onClose }),
+      );
 
-    signalOpen();
+      signalOpen();
+      signalClose();
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      signalOpen();
+      expect(mockPresent).toHaveBeenCalledTimes(2);
+      onClose.mockClear();
+      mockRemoveBottomSheetFromQueue.mockClear();
 
-    act(() => {
-      result.current.handleDismiss();
-    });
+      act(() => {
+        result.current.handleDismiss();
+      });
 
-    expect(onClose).not.toHaveBeenCalled();
-    expect(mockPresent).toHaveBeenCalledTimes(2);
-    expect(mockRemoveBottomSheetFromQueue).not.toHaveBeenCalled();
+      expect(onClose).not.toHaveBeenCalled();
+      expect(mockPresent).toHaveBeenCalledTimes(3);
+      expect(mockRemoveBottomSheetFromQueue).not.toHaveBeenCalled();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("gives up on a presentation it has already put back on screen once", () => {
+    jest.useFakeTimers();
+    try {
+      const onClose = jest.fn();
+      const { signalOpen, signalClose } = setupBottomSheetStateCapture();
+
+      const { result } = renderHook(() =>
+        useQueuedBottomSheet({ isRequestingToBeOpened: true, onClose }),
+      );
+
+      signalOpen();
+      signalClose();
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      signalOpen();
+      onClose.mockClear();
+      mockRemoveBottomSheetFromQueue.mockClear();
+
+      act(() => {
+        result.current.handleDismiss();
+      });
+      act(() => {
+        result.current.handleDismiss();
+      });
+
+      expect(mockPresent).toHaveBeenCalledTimes(3);
+      expect(onClose).toHaveBeenCalledTimes(1);
+      expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  // gorhom only reports an animation whose target differs from the index it last settled on, so a
+  // pan-down that interrupts the entrance (-1 → -1) never reaches handleAnimate.
+  it("closes for good when swiped down before its entrance animation has finished", () => {
     const onClose = jest.fn();
     const { signalOpen } = setupBottomSheetStateCapture();
 
-    const { result } = renderHook(() =>
-      useQueuedBottomSheet({ isRequestingToBeOpened: true, onClose }),
-    );
+    const { result } = renderHook(() => {
+      const [isOpen, setIsOpen] = useState(true);
+      return useQueuedBottomSheet({
+        isRequestingToBeOpened: isOpen,
+        onClose: () => {
+          onClose();
+          setIsOpen(false);
+        },
+      });
+    });
 
     signalOpen();
+    act(() => {
+      result.current.handleAnimate(-1, 0);
+    });
 
     act(() => {
       result.current.handleDismiss();
     });
-    act(() => {
-      result.current.handleDismiss();
-    });
 
-    expect(mockPresent).toHaveBeenCalledTimes(2);
     expect(onClose).toHaveBeenCalledTimes(1);
+    expect(mockPresent).toHaveBeenCalledTimes(1);
+    expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
     expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
   });
 

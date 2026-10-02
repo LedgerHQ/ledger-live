@@ -4,7 +4,7 @@ import { Flex } from "@ledgerhq/react-ui";
 import { AccountLike, EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ProviderItem } from "./component/ProviderItem";
 import { getTrackProperties } from "./utils/getTrackProperties";
 import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";

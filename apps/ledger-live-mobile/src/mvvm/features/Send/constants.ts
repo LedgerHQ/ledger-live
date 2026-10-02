@@ -139,6 +139,35 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
+  // Desktop-only sponsored-send steps: no mobile screen yet, present for the exhaustive Record.
+  [SEND_FLOW_STEP.FEE_PAYMENT]: {
+    id: SEND_FLOW_STEP.FEE_PAYMENT,
+    canGoBack: true,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
+  [SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE]: {
+    id: SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE,
+    canGoBack: false,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
+  [SEND_FLOW_STEP.SPONSORED_POLLING]: {
+    id: SEND_FLOW_STEP.SPONSORED_POLLING,
+    canGoBack: false,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
+  [SEND_FLOW_STEP.SPONSORED_FAILURE]: {
+    id: SEND_FLOW_STEP.SPONSORED_FAILURE,
+    canGoBack: false,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
 };
 
 export const SEND_FLOW_CONFIG: SendFlowConfig = {

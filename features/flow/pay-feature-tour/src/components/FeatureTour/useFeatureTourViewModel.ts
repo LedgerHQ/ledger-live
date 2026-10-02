@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "@shared/i18n";
-import { usePayAnalyticsContext } from "@features/platform-pay-analytics";
+import { featureIntroPageName, trackButtonClicked } from "@features/platform-pay-analytics";
 import { markPayCardFeatureTourSeen, selectPayCardHasSeenFeatureTour } from "../../state";
 import type { FeatureTourRow, FeatureTourRowIcon } from "./types";
 
@@ -15,8 +15,8 @@ export type FeatureTourViewModel = Readonly<{
   onContinue: () => void;
 }>;
 
-export const FEATURE_TOUR_PAGE = "Feature Intro";
 export const FEATURE_TOUR_FLOW = "pay";
+export const FEATURE_TOUR_PAGE = featureIntroPageName(FEATURE_TOUR_FLOW);
 
 const KEY_PREFIX = "payTab.featureTour";
 
@@ -29,7 +29,6 @@ const ROWS: readonly { icon: FeatureTourRowIcon; key: string }[] = [
 export function useFeatureTourViewModel(): FeatureTourViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { trackButtonClicked } = usePayAnalyticsContext();
   const hasSeenFeatureTour = useSelector(selectPayCardHasSeenFeatureTour);
 
   const dismiss = useCallback(
@@ -41,7 +40,7 @@ export function useFeatureTourViewModel(): FeatureTourViewModel {
         page: FEATURE_TOUR_PAGE,
       });
     },
-    [dispatch, trackButtonClicked],
+    [dispatch],
   );
   const onClose = useCallback(() => dismiss("close"), [dismiss]);
   const onContinue = useCallback(() => dismiss("continue"), [dismiss]);

@@ -230,6 +230,11 @@ export const referenceTransferPublicTx = {
   fee: 2725,
 };
 
+// Bond tx: at12c59u57ehxv6utj0pl66d6a58ca8ml9uptttreqzx2jwv7d04q9qwjue6y
+export const testnetBondedMicrocredits = 10_010_000_000n;
+export const testnetBondedValidator =
+  "aleo1vfukg8ky2mhfprw63s0k0hl4vvd8573s6fkn8cv9y0ca6q27eq8qwdnxls";
+
 // Rejected self-transfer (sender === recipient === testnetAddress on credits.aleo, so it
 // classifies as type "IN" — this account's only 2 Rejected txs are both self-transfers).
 export const referenceFailedTransferPublicTx = {

@@ -3,6 +3,5 @@ import type { CardTransactionFormatters } from "@features/flow-pay-card-transact
 export type CardHistoryViewModel = Readonly<{
   formatters: CardTransactionFormatters;
   formatDay: (date: Date) => string;
-  onTrackEvent: (event: string, params: Record<string, unknown>) => void;
   onGoToPay: () => void;
 }>;

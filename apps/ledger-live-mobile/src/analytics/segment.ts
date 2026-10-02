@@ -38,6 +38,7 @@ import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBui
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import { selectContacts } from "@domain/entity-contact";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
+import { getAppLockAttributes } from "./getAppLockAttributes";
 import { getPayAttributes } from "./getPayAttributes";
 import {
   analyticsEnabledSelector,
@@ -147,6 +148,7 @@ const getFeatureFlagProperties = () => {
     const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
     const ptxBorrowLiveAppFlag = analyticsFeatureFlagMethod("ptxBorrowLiveApp");
     const stableSavingsFlag = analyticsFeatureFlagMethod("stableSavings");
+    const ptxEarnCtaOnMobileFlag = analyticsFeatureFlagMethod("ptxEarnCtaOnMobile");
     const lwmAnalyticsConsentOnboardingFlag = analyticsFeatureFlagMethod(
       "lwmAnalyticsConsentOnboarding",
     );
@@ -165,6 +167,7 @@ const getFeatureFlagProperties = () => {
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
     const borrowFeature = Boolean(ptxBorrowLiveAppFlag?.enabled);
     const stableSavings = Boolean(stableSavingsFlag?.enabled);
+    const ptxEarnCtaOnMobile = Boolean(ptxEarnCtaOnMobileFlag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
 
@@ -202,6 +205,7 @@ const getFeatureFlagProperties = () => {
       ptxSwapLiveAppKycWarningEnabled,
       borrowFeature,
       stableSavings,
+      ptxEarnCtaOnMobile,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
     });
@@ -346,6 +350,9 @@ const getLdmkAndSyncFlags = () => ({
   ldmkPolkadotSigner: analyticsFeatureFlagMethod?.("ldmkPolkadotSigner") ?? {
     enabled: false,
   },
+  ldmkTronSigner: analyticsFeatureFlagMethod?.("ldmkTronSigner") ?? {
+    enabled: false,
+  },
 });
 
 const getAccountsWithFunds = (accounts: ReturnType<typeof accountsSelector>) =>
@@ -402,8 +409,14 @@ const extraProperties = async (store: AppStore) => {
   });
   const contactsFeature = analyticsFeatureFlagMethod?.("lwmContacts") ?? { enabled: false };
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
-  const { ldmkTransport, ldmkConnectApp, ldmkSolanaSigner, ldmkCosmosSigner, ldmkPolkadotSigner } =
-    getLdmkAndSyncFlags();
+  const {
+    ldmkTransport,
+    ldmkConnectApp,
+    ldmkSolanaSigner,
+    ldmkCosmosSigner,
+    ldmkPolkadotSigner,
+    ldmkTronSigner,
+  } = getLdmkAndSyncFlags();
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -496,6 +509,10 @@ const extraProperties = async (store: AppStore) => {
     analyticsFeatureFlagMethod?.("lwmPayTab")?.enabled ?? false,
     accounts ?? [],
   );
+  const appLockAttributes = getAppLockAttributes(
+    state,
+    analyticsFeatureFlagMethod?.("lwmPasswordRevamp")?.enabled ?? false,
+  );
 
   return {
     ...mandatoryProperties,
@@ -543,6 +560,7 @@ const extraProperties = async (store: AppStore) => {
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,
+    isLDMKTronSignerEnabled: ldmkTronSigner?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,
@@ -550,6 +568,7 @@ const extraProperties = async (store: AppStore) => {
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
     ...payAttributes,
+    ...appLockAttributes,
     quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,

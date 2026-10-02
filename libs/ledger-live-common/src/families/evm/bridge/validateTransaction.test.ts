@@ -1,15 +1,15 @@
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { ethers } from "ethers";
-import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
-import { getNextSequence } from "@ledgerhq/coin-evm/logic/index";
+import { getNodeApi } from "@ledgerhq/coin-evm/network";
+import { getNextSequence } from "@ledgerhq/coin-evm/logic";
 import { validateTransaction } from "./api";
 
-jest.mock("@ledgerhq/coin-evm/network/node/index", () => ({
+jest.mock("@ledgerhq/coin-evm/network", () => ({
   getNodeApi: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-evm/logic/index", () => ({
+jest.mock("@ledgerhq/coin-evm/logic", () => ({
   getNextSequence: jest.fn(),
 }));
 

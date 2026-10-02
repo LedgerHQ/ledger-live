@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-vechain",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "private": true,
   "description": "Ledger VeChain Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -61,7 +61,7 @@
     "@ledgerhq/coin-vechain": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@vechain/sdk-core": "2.0.0",
     "bignumber.js": "^9",
