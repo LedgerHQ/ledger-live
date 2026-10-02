@@ -89,15 +89,11 @@ function OperationDetailsPostAlert({ account, operation }: Readonly<OperationDet
       a => a.token.contractAddress === token.contractAddress,
     );
 
-    if (!subAccount) return;
-
     navigation.navigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveConfirmation,
-      params: {
-        currency: subAccount.token,
-        accountId: subAccount.id,
-        parentId: subAccount.parentId,
-      },
+      params: subAccount
+        ? { currency: subAccount.token, accountId: subAccount.id, parentId: subAccount.parentId }
+        : { currency: token, accountId: account.id },
     });
   };
 
