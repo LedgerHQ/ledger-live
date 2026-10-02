@@ -84,7 +84,7 @@ export class MyLedgerPage extends AppPage {
   @step("Wait for My Ledger to finish connecting")
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
-    await expect(this.deviceOptions).toBeVisible();
+    await expect(this.deviceOptions).toBeAttached();
   }
 
   /** The submit button becomes the close button once the rename lands, so both are needed. */
