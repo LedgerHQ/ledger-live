@@ -318,7 +318,7 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.Recover}
           component={RecoverPlayer}
-          options={{ headerStyle: styles.headerNoShadow }}
+          options={{ headerShown: false, headerStyle: styles.headerNoShadow }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
