@@ -29,12 +29,14 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-feature-tour"
   },
   "dependencies": {
+    "@features/platform-feature-flags": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
+    "@shared/feature-flags": "workspace:^",
     "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
