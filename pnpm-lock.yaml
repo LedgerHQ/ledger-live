@@ -2795,6 +2795,9 @@ importers:
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
+      '@domain/api-swap-quotes':
+        specifier: workspace:^
+        version: link:../../domain/api/swap-quotes
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../domain/entity/currency
@@ -2816,6 +2819,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../../features/platform/device-intent
+      '@ledgerhq/auth':
+        specifier: 'catalog:'
+        version: 0.1.0
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
@@ -2888,12 +2894,21 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@segment/analytics-node':
         specifier: 3.1.0
         version: 3.1.0
       '@shared/analytics':
         specifier: workspace:*
         version: link:../../shared/analytics
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../shared/api-services
+      '@shared/auth':
+        specifier: workspace:^
+        version: link:../../shared/auth
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -2927,6 +2942,9 @@ importers:
       debug:
         specifier: 4.4.3
         version: 4.4.3(supports-color@7.2.0)
+      fetch-cookie:
+        specifier: 3.2.0
+        version: 3.2.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -2939,6 +2957,9 @@ importers:
       react:
         specifier: 19.1.4
         version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -5001,9 +5022,6 @@ importers:
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../../shared/api-services
-      '@shared/auth':
-        specifier: workspace:^
-        version: link:../../../shared/auth
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -31600,6 +31618,9 @@ packages:
     resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
     engines: {node: ^12.20 || >= 14.13}
 
+  fetch-cookie@3.2.0:
+    resolution: {integrity: sha512-n61pQIxP25C6DRhcJxn7BDzgHP/+S56Urowb5WFxtcRMpU6drqXD90xjyAsVQYsNSNNVbaCcYY1DuHsdkZLuiA==}
+
   figures@1.7.0:
     resolution: {integrity: sha512-UxKlfCRuCBxSXU4C6t9scbDyWZ4VlaFFdojKtzJuSkuOBQ5CNFum+zZXFwHjo+CxBC1t6zlYPgHIgFjL8ggoEQ==}
     engines: {node: '>=0.10.0'}
@@ -37644,6 +37665,10 @@ packages:
 
   tough-cookie@5.1.2:
     resolution: {integrity: sha512-FVDYdxtnj0G6Qm/DhNPSb8Ju59ULcup3tuJxkFb5K8Bv2pUXILbf0xZWU8PX8Ov19OXljbUyveOFwRMwkXzO+A==}
+    engines: {node: '>=16'}
+
+  tough-cookie@6.0.2:
+    resolution: {integrity: sha512-exgYmnmL/sJpR3upZfXG5PoatXQii55xAiXGXzY+sROLZ/Y+SLcp9PgJNI9Vz37HpQ74WvDcLT8eqm+kV3FzrA==}
     engines: {node: '>=16'}
 
   tr46@0.0.3:
@@ -56479,6 +56504,11 @@ snapshots:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.3.3
 
+  fetch-cookie@3.2.0:
+    dependencies:
+      set-cookie-parser: 2.7.2
+      tough-cookie: 6.0.2
+
   figures@1.7.0:
     dependencies:
       escape-string-regexp: 1.0.5
@@ -64609,6 +64639,10 @@ snapshots:
   tough-cookie@5.1.2:
     dependencies:
       tldts: 6.1.75
+
+  tough-cookie@6.0.2:
+    dependencies:
+      tldts: 7.0.19
 
   tr46@0.0.3: {}
 

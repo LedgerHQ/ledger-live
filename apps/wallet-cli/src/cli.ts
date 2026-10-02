@@ -15,6 +15,7 @@ import bunliConfig from "../bunli.config";
 import { disposeAnalytics, startAnalytics } from "./analytics/segment";
 import { withCommandLifecycleAnalytics } from "./analytics/lifecycle-analytics";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
+import { setupWalletCliStore } from "./state-manager/configureStore";
 import AccountGroup from "./commands/account/index";
 import AssetsGroup from "./commands/assets/index";
 import SessionGroup from "./commands/session/index";
@@ -38,6 +39,7 @@ emitTestingBuildBannerIfNeeded();
  * is caught here so the caller gets a clean numeric code back.
  */
 export async function runMain(argv: string[] = process.argv.slice(2)): Promise<number> {
+  setupWalletCliStore();
   const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
   cli.command(AccountGroup);
   cli.command(AssetsGroup);
