@@ -858,6 +858,8 @@
   },
   "payTab" : {
     "disclaimer" : "Monavate Onchain 제공",
+    "cardDisclaimer" : "암호화폐 카드를 찾고 계신가요?",
+    "cardDisclaimerLink" : "CL 카드로 이동하기",
     "featureTour" : {
       "title" : "모든 결제를 한 곳에서",
       "description" : "새로운 결제 탭에서 크립토를 일상 속 결제에 바로 사용해 보세요.",
@@ -1025,8 +1027,8 @@
           "description" : "로그인하면 이곳에 카드 사용 내역이 표시됩니다."
         },
         "unclaimed" : {
-          "title" : "Crypto card",
-          "description" : "Go to pay to set up your card."
+          "title" : "크립토 카드",
+          "description" : "결제 화면으로 이동해 카드를 설정하세요."
         },
         "empty" : {
           "title" : "아직 카드 결제 내역이 없습니다.",
@@ -1073,6 +1075,7 @@
     },
     "contacts" : {
       "title" : "저장된 주소로 보내기",
+      "me" : "나",
       "empty" : {
         "info" : "아직 저장된 주소가 없습니다",
         "addContact" : "주소록 추가"
@@ -1196,9 +1199,9 @@
     },
     "cardLoginIntro" : {
       "title" : "암호화폐로 결제하면 캐시백이 혜택이",
-      "providedBy" : "Baanx 제공 서비스",
+      "providedBy" : "Monavate 제공 서비스",
       "createAccount" : "계정 생성하기",
-      "logIn" : "Baanx 로그인",
+      "logIn" : "Monavate 로그인",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
