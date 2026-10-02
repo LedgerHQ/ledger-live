@@ -858,6 +858,8 @@
   },
   "payTab" : {
     "disclaimer" : "Bereitgestellt von Monavate Onchain",
+    "cardDisclaimer" : "Suchst du deine Krypto-Karte?",
+    "cardDisclaimerLink" : "Gehe zur CL-Karte",
     "featureTour" : {
       "title" : "Alle deine Zahlungen an einem Ort",
       "description" : "Lerne deinen neuen Pay-Tab kennen, der deine Kryptos bereit für alltägliche Geldfragen macht.",
@@ -1073,6 +1075,7 @@
     },
     "contacts" : {
       "title" : "Kontakt bezahlen",
+      "me" : "Ich",
       "empty" : {
         "info" : "Du hast noch keine Kontakte",
         "addContact" : "Kontakt hinzufügen"
@@ -1196,9 +1199,9 @@
     },
     "cardLoginIntro" : {
       "title" : "Mit Krypto zahlen, Cashback sichern",
-      "providedBy" : "Karte bereitgestellt von Baanx",
+      "providedBy" : "Karte bereitgestellt von Monavate",
       "createAccount" : "Konto erstellen",
-      "logIn" : "Bei Baanx einloggen",
+      "logIn" : "Bei Monavate einloggen",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
