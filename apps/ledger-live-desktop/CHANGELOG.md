@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 4.23.0-next.6
+
+### Minor Changes
+
+- [#22840](https://github.com/LedgerHQ/ledger-live/pull/22840) [`e4c24f3`](https://github.com/LedgerHQ/ledger-live/commit/e4c24f3ebd7fe5838a6639e70b10b12863088e10) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Name the default Me contact "Me" in the Pay tab contacts list instead of "My addresses (Me)"
+
+### Patch Changes
+
+- Updated dependencies [[`e4c24f3`](https://github.com/LedgerHQ/ledger-live/commit/e4c24f3ebd7fe5838a6639e70b10b12863088e10)]:
+  - @features/flow-pay-contact@0.5.0-next.3
+
 ## 4.23.0-next.5
 
 ### Patch Changes
