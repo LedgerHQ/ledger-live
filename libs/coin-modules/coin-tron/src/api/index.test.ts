@@ -301,5 +301,12 @@ test("createSponsoredSendApi exposes the energy-rent seam methods", () => {
   expect(typeof seam.buildEnergyRentRequest).toBe("function");
   expect(typeof seam.getEnergyRentSignaturePayload).toBe("function");
   expect(typeof seam.buildSignedEnergyRentTransaction).toBe("function");
-  expect(typeof seam.nativeRentAmount).toBe("function");
+  expect(typeof seam.rentPayment).toBe("function");
+  expect(typeof seam.reservationDedupKey).toBe("function");
+  expect(seam).toMatchObject({
+    feeOptionId: TRONIFY_FEE_OPTION_ID,
+    providerName: "Tronify",
+    waivesErrorKeys: ["gasLimit"],
+    waivesWarningKeys: ["amount"],
+  });
 });

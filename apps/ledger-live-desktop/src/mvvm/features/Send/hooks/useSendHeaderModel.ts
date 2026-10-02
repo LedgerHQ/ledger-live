@@ -1,4 +1,5 @@
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { t } from "~/renderer/i18n/init";
@@ -31,7 +32,9 @@ import { useRecipientScanner } from "../context/RecipientScannerContext";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 import { useAddNewContactHeaderState } from "../context/AddNewContactHeaderContext";
 import { useSendFlowTracking } from "../context/SendFlowTrackingContext";
+import { useSponsoredSend } from "../context/SponsoredSendContext";
 import { getSendFlowTrackingPage } from "../utils/contactTracking";
+import { SPONSORED_TRANSFER_SIGNATURE_HEADER } from "../constants";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -118,6 +121,7 @@ export function useSendHeaderModel({
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { recipientType, setInputMethod, trackMessage } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
+  const { state: sponsoredState } = useSponsoredSend();
   const {
     isEnabled: isContactsFeatureEnabled,
     eligibleAddressFamilies,
@@ -131,7 +135,10 @@ export function useSendHeaderModel({
   const accountName = useMaybeAccountName(state.account.account ?? undefined);
 
   const { navigation, currentStep } = wizard;
-  const currentStepConfig = wizard.currentStepConfig;
+  const currentStepConfig =
+    currentStep === SEND_FLOW_STEP.SIGNATURE && sponsoredState.phase === SPONSORED_PHASE.TRANSFER
+      ? { ...wizard.currentStepConfig, ...SPONSORED_TRANSFER_SIGNATURE_HEADER }
+      : wizard.currentStepConfig;
   const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
   const isContactAddressFlowStep =

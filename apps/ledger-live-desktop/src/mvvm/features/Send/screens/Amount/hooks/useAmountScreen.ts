@@ -14,6 +14,7 @@ import { trackPage } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { openURL } from "~/renderer/linking";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { STANDARD_FEE_OPTION_ID, useSponsoredSend } from "../../../context/SponsoredSendContext";
 
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
@@ -47,6 +48,12 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const {
+    selectedFeeOptionId,
+    sponsoredFeeOptionId,
+    available: sponsoredAvailable,
+    intentReady: sponsoredIntentReady,
+  } = useSponsoredSend();
 
   const trackingProperties = useMemo(
     () => ({
@@ -134,8 +141,23 @@ export function useAmountScreen(): AmountScreenViewModel {
   );
 
   const onReview = useCallback(() => {
+    if (selectedFeeOptionId !== STANDARD_FEE_OPTION_ID) {
+      // Wait rather than go to SIGNATURE: the tx is marked sponsored, so its native fee wouldn't be locked.
+      // An unavailable pick is reverted to standard by the provider, which clears the mark.
+      const sponsoredReady =
+        selectedFeeOptionId === sponsoredFeeOptionId && sponsoredAvailable && sponsoredIntentReady;
+      if (!sponsoredReady) return;
+      navigation.goToStep(SEND_FLOW_STEP.SPONSORED_RENT_SIGNATURE);
+      return;
+    }
     navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);
-  }, [navigation]);
+  }, [
+    navigation,
+    selectedFeeOptionId,
+    sponsoredFeeOptionId,
+    sponsoredAvailable,
+    sponsoredIntentReady,
+  ]);
 
   const onSelectCoinControl = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.COIN_CONTROL);

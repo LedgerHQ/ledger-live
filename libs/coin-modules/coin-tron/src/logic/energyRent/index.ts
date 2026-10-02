@@ -9,14 +9,18 @@ import {
   TronifyApiError,
 } from "../../types/errors";
 import {
+  ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS,
+  ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT,
   ENERGY_RENT_POLL_INTERVAL_MS,
   ENERGY_RENT_POLL_MAX_CONSECUTIVE_ERRORS,
   ENERGY_RENT_POLL_TIMEOUT_MS,
-  SUN_PER_TRX,
+  TRONIFY_PAY_ASSET,
+  payAssetBaseUnits,
 } from "../constants";
 import { getTronifyConfig } from "../../network/tronify";
 import { decode58Check } from "../../network/format";
 import { getTronAccountNetwork } from "../../network";
+import { abiDecodeTrc20Transfer, type Trc20TransferData } from "../../network/utils";
 import { decodeTransaction } from "../utils";
 import { tronifyProvider } from "./tronify";
 import type {
@@ -90,12 +94,28 @@ function assertOrderWithinApprovedCost(request: EnergyRentRequest, order: Energy
   }
 }
 
+// abiDecodeTrc20Transfer tolerates trailing bytes and any address padding; the payment we sign must
+// be exactly transfer(address,uint256), its address word in the TRON (41) or EVM (00) form.
+const TRC20_TRANSFER_CALL = /^a9059cbb0{22}(00|41)[0-9a-f]{104}$/i;
+
+function decodeStrictTrc20Transfer(data: unknown): Trc20TransferData | null {
+  if (typeof data !== "string" || !TRC20_TRANSFER_CALL.test(data)) return null;
+  return abiDecodeTrc20Transfer(data);
+}
+
 // Verifies the signed bytes themselves (not just provider-declared payCoinAmt/payCoinCode) match the
-// approved TRX transfer — otherwise the device could sign a payment other than what was approved.
+// approved USDT transfer — otherwise the device could sign a payment other than what was approved.
 async function assertSignableTransferMatchesRequest(
   request: EnergyRentRequest,
   order: EnergyRentOrder,
 ): Promise<void> {
+  // Repeated here because assertOrderWithinApprovedCost skips its coin check without a ceiling.
+  if (String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code) {
+    throw new TronifyApiError(
+      `Energy-rent order is priced in ${String(order.payCoinCode)}; only ${TRONIFY_PAY_ASSET.unit.code} payments can be verified`,
+    );
+  }
+
   const rawDataHex = order.transaction?.raw_data_hex;
   if (typeof rawDataHex !== "string" || rawDataHex.length === 0) {
     throw new TronifyApiError(
@@ -105,52 +125,109 @@ async function assertSignableTransferMatchesRequest(
 
   type DecodedContract = {
     type?: string;
-    parameter?: { value?: { owner_address?: string; amount?: string | number } };
+    parameter?: {
+      value?: {
+        owner_address?: string;
+        contract_address?: string;
+        data?: string;
+        call_value?: number;
+        call_token_value?: number;
+        token_id?: number;
+      };
+    };
   };
   let contracts: DecodedContract[];
+  let feeLimit: unknown;
+  let expiration: unknown;
   try {
     const decoded = await decodeTransaction(rawDataHex);
     contracts = (decoded.raw_data?.contract as DecodedContract[] | undefined) ?? [];
+    feeLimit = decoded.raw_data?.fee_limit;
+    expiration = decoded.raw_data?.expiration;
   } catch {
     throw new TronifyApiError(
       "Could not decode the energy-rent payment transaction for verification",
     );
   }
 
-  if (contracts.length !== 1 || contracts[0]?.type !== "TransferContract") {
+  if (contracts.length !== 1 || contracts[0]?.type !== "TriggerSmartContract") {
     const shape =
       contracts.length === 1 ? String(contracts[0]?.type) : `${contracts.length} contract(s)`;
     throw new TronifyApiError(
-      `Energy-rent payment must be a single native TRX transfer, but the signed bytes carry ${shape}`,
+      `Energy-rent payment must be a single USDT transfer, but the signed bytes carry ${shape}`,
     );
   }
 
   const value = contracts[0].parameter?.value ?? {};
   // decode58Check and the decoder both yield lower-case 0x41-prefixed hex, so compare directly.
   const signedOwner = (value.owner_address ?? "").toLowerCase();
-  const approvedOwner = decode58Check(request.payerAddress).toLowerCase();
-  if (signedOwner !== approvedOwner) {
+  if (signedOwner !== decode58Check(request.payerAddress).toLowerCase()) {
     throw new TronifyApiError(
       "Energy-rent payment is signed from a different owner than the approved payer",
     );
   }
+  const calledContract = (value.contract_address ?? "").toLowerCase();
+  if (calledContract !== decode58Check(TRONIFY_PAY_ASSET.assetReference).toLowerCase()) {
+    throw new TronifyApiError("Energy-rent payment calls a contract other than USDT");
+  }
+  if (value.call_value || value.call_token_value || value.token_id) {
+    throw new TronifyApiError("Energy-rent payment attaches TRX or TRC-10 value to the USDT call");
+  }
 
-  // `to_address` isn't validated (no trusted destination to bind to); the on-chain energy gate
-  // (ADR-058 C4) is the backstop — a redirected payment delivers no energy, so TX-C never releases.
-
-  // Binds the signed sun amount to the approved ceiling; rounds up so a sub-sun quote isn't rejected.
-  const signedSun = new BigNumber(value.amount ?? "");
-  const approvedSun = new BigNumber(order.payCoinAmt)
-    .multipliedBy(SUN_PER_TRX)
-    .integerValue(BigNumber.ROUND_CEIL);
-  if (!signedSun.isFinite() || signedSun.isNegative() || !approvedSun.isFinite()) {
+  const transfer = decodeStrictTrc20Transfer(value.data);
+  if (!transfer) {
     throw new TronifyApiError(
-      `Cannot verify energy-rent payment amount: signed "${String(value.amount)}", approved "${order.payCoinAmt}"`,
+      "Energy-rent payment data is not a USDT transfer(address,uint256) call",
     );
   }
-  if (signedSun.isGreaterThan(approvedSun)) {
+
+  // The recipient inside `data` isn't validated (no trusted Tronify address to bind to), and the
+  // amount is pinned only to the provider's own quote. The on-chain energy gate (ADR-058 C4) keeps
+  // TX-C from following a payment that delivered nothing; it does not bound what TX-A pays.
+
+  // Binds the signed amount to the order, which is what the UI shows and reserves. A sub-unit quote
+  // may be paid rounded either way.
+  const approved = payAssetBaseUnits(order.payCoinAmt);
+  if (!approved.isFinite() || !approved.isGreaterThan(0)) {
     throw new TronifyApiError(
-      `Energy-rent payment moves ${signedSun.toFixed()} sun, above the approved ${approvedSun.toFixed()} sun`,
+      `Cannot verify energy-rent payment amount: approved "${order.payCoinAmt}"`,
+    );
+  }
+  if (transfer.amount.isGreaterThan(approved)) {
+    throw new TronifyApiError(
+      `Energy-rent payment moves ${transfer.amount.toFixed()} USDT base units, above the approved ${approved.toFixed()}`,
+    );
+  }
+  const approvedFloor = new BigNumber(order.payCoinAmt)
+    .shiftedBy(TRONIFY_PAY_ASSET.unit.magnitude)
+    .integerValue(BigNumber.ROUND_FLOOR);
+  if (!transfer.amount.isGreaterThan(0) || transfer.amount.isLessThan(approvedFloor)) {
+    throw new TronifyApiError(
+      `Energy-rent payment moves ${transfer.amount.toFixed()} USDT base units, below the approved ${approvedFloor.toFixed()}`,
+    );
+  }
+
+  // fee_limit caps what the TVM may burn from the payer.
+  if (
+    feeLimit !== undefined &&
+    !(typeof feeLimit === "number" && feeLimit <= ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT)
+  ) {
+    throw new TronifyApiError(
+      `Energy-rent payment carries fee_limit ${JSON.stringify(feeLimit)}, above the ${ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT} sun bound`,
+    );
+  }
+
+  // An expired payment moves no funds, but the network rejects it only after the user has signed.
+  const now = Date.now();
+  const latestExpiration = now + ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS;
+  if (
+    typeof expiration !== "number" ||
+    !Number.isFinite(expiration) ||
+    expiration <= now ||
+    expiration > latestExpiration
+  ) {
+    throw new TronifyApiError(
+      `Energy-rent payment expires at ${JSON.stringify(expiration)}, outside the accepted (${now}, ${latestExpiration}] window`,
     );
   }
 }

@@ -148,6 +148,9 @@ function convertTransferAssetContractFromRaw(contract: any): Trc10TransferValue 
 type Trc20TransferValue = TransferValue & {
   data: string;
   contract_address: string;
+  call_value?: number;
+  call_token_value?: number;
+  token_id?: number;
 };
 function convertTriggerSmartContractFromRaw(contract: any): Trc20TransferValue {
   const { TriggerSmartContract } = (globalThis as unknown as any).TronWebProto;
@@ -161,6 +164,12 @@ function convertTriggerSmartContractFromRaw(contract: any): Trc20TransferValue {
     data: convertBufferToHex(transferContract.getData()),
     owner_address: convertBufferToHex(transferContract.getOwnerAddress()),
     contract_address: convertBufferToHex(transferContract.getContractAddress()),
+    // Omitted when zero, like fee_limit; a payment verifier must still see value riding on the call.
+    ...(transferContract.getCallValue() ? { call_value: transferContract.getCallValue() } : {}),
+    ...(transferContract.getCallTokenValue()
+      ? { call_token_value: transferContract.getCallTokenValue() }
+      : {}),
+    ...(transferContract.getTokenId() ? { token_id: transferContract.getTokenId() } : {}),
   };
 }
 

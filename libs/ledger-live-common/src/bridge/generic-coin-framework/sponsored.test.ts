@@ -19,7 +19,7 @@ const seamApi = {
   isEnergyDelivered: jest.fn(),
   getEnergyRentSignaturePayload: jest.fn(),
   buildSignedEnergyRentTransaction: jest.fn(),
-  nativeRentAmount: jest.fn(),
+  rentPayment: jest.fn(),
 };
 
 describe("getSponsoredCoinApi", () => {

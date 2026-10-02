@@ -3,7 +3,10 @@
  */
 import { act, renderHook } from "@testing-library/react";
 import { getSponsoredCoinApi } from "../../../bridge/generic-coin-framework/sponsored";
-import type { EnergyRentRequest } from "../../../bridge/generic-coin-framework/sponsored";
+import type {
+  EnergyRentRequest,
+  RentPayment,
+} from "../../../bridge/generic-coin-framework/sponsored";
 import { SPONSORED_FAILURE_KIND, SPONSORED_PHASE } from "./types";
 import { useSponsoredSendOrchestration } from "./useSponsoredSendOrchestration";
 
@@ -20,15 +23,28 @@ const rentRequest: EnergyRentRequest = {
   durationSeconds: 3_600,
 };
 
+const USDT_ASSET = {
+  type: "trc20",
+  assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+  name: "Tether USD",
+  unit: { name: "USDT", code: "USDT", magnitude: 6 },
+};
+const RENT_PAYMENT: RentPayment = { asset: USDT_ASSET, amount: 3_200_000n };
+
 const makeSeam = (overrides: Record<string, unknown> = {}) => ({
+  feeOptionId: "sponsored-fixture",
+  providerName: "Provider",
+  waivesErrorKeys: [],
+  waivesWarningKeys: [],
+  reservationDedupKey: jest.fn().mockReturnValue("1.5"),
   listFeeOptions: jest.fn(),
   estimateSponsoredFeeQuote: jest.fn(),
   buildEnergyRentRequest: jest.fn().mockResolvedValue(rentRequest),
   craftEnergyRentTransaction: jest.fn().mockResolvedValue({
     orderId: "o1",
     transaction: {},
-    payCoinCode: "TRX",
-    payCoinAmt: "5.0",
+    payCoinCode: "USDT",
+    payCoinAmt: "3.2",
   }),
   submitEnergyRentPayment: jest.fn().mockResolvedValue(undefined),
   awaitEnergyDelivery: jest.fn().mockResolvedValue(undefined),
@@ -38,7 +54,7 @@ const makeSeam = (overrides: Record<string, unknown> = {}) => ({
     .fn()
     .mockReturnValue({ toSign: "0adeadbeef", paymentTxId: "txA" }),
   buildSignedEnergyRentTransaction: jest.fn().mockReturnValue({ signed: true }),
-  nativeRentAmount: jest.fn().mockReturnValue(5_000_000n),
+  rentPayment: jest.fn().mockReturnValue(RENT_PAYMENT),
   ...overrides,
 });
 
@@ -75,8 +91,8 @@ test("a crafted order without a signable transaction fails as RENT_PAYMENT, not 
     craftEnergyRentTransaction: jest.fn().mockResolvedValue({
       orderId: "o1",
       transaction: null,
-      payCoinCode: "TRX",
-      payCoinAmt: "5.0",
+      payCoinCode: "USDT",
+      payCoinAmt: "3.2",
     }),
   });
   mockGetSponsoredCoinApi.mockResolvedValue(seam);
@@ -90,6 +106,27 @@ test("a crafted order without a signable transaction fails as RENT_PAYMENT, not 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
   expect(result.current.state.order).toBeNull();
+});
+
+test("a rentPayment that throws fails the craft as RENT_PAYMENT and keeps the order out of state", async () => {
+  const seam = makeSeam({
+    rentPayment: jest.fn(() => {
+      throw new Error("Cannot reserve an energy-rent payment of 3.2 TRX");
+    }),
+  });
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent();
+  });
+
+  expect(seam.rentPayment).toHaveBeenCalledTimes(1);
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
+  expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
+  expect(result.current.state.order).toBeNull();
+  expect(result.current.state.rentPayment).toBeNull();
 });
 
 test("buildEnergyRentRequest failure sets phase FAILED / failureKind RENT_PAYMENT", async () => {
@@ -409,9 +446,11 @@ test("happy path: craft -> RENT_SIGNING, startRentPayment -> TRANSFER", async ()
   expect(result.current.state.order).toEqual({
     orderId: "o1",
     transaction: {},
-    payCoinCode: "TRX",
-    payCoinAmt: "5.0",
+    payCoinCode: "USDT",
+    payCoinAmt: "3.2",
   });
+  expect(result.current.state.rentPayment).toEqual(RENT_PAYMENT);
+  expect(seam.rentPayment).toHaveBeenCalledWith(result.current.state.order);
 
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -604,6 +643,7 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
   });
   expect(timeoutHook.result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
   expect(timeoutHook.result.current.state.order).toBeNull();
+  expect(timeoutHook.result.current.state.rentPayment).toBeNull();
 
   // --- separate hook instance for the TRANSFER-failure retry ---
   const seamTransfer = makeSeam();
@@ -628,6 +668,7 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
   });
   expect(transferHook.result.current.state.phase).toBe(SPONSORED_PHASE.TRANSFER);
   expect(transferHook.result.current.state.order).not.toBeNull();
+  expect(transferHook.result.current.state.rentPayment).toEqual(RENT_PAYMENT);
 });
 
 test("contract-data refusal resumes at the phase it failed on, keeping the paid order", async () => {
@@ -953,8 +994,8 @@ test("a craft that resolves after reset() is dropped, not committed as a stale o
       return craftGate.promise.then(() => ({
         orderId: "stale",
         transaction: {},
-        payCoinCode: "TRX",
-        payCoinAmt: "5.0",
+        payCoinCode: "USDT",
+        payCoinAmt: "3.2",
       }));
     }),
   });
@@ -984,8 +1025,8 @@ test("a craft that resolves after reset() is dropped, not committed as a stale o
 const order = (id: string) => ({
   orderId: `o${id}`,
   transaction: { id },
-  payCoinCode: "TRX",
-  payCoinAmt: "5.0",
+  payCoinCode: "USDT",
+  payCoinAmt: "3.2",
 });
 
 test("overlapping craftRent calls: an older order resolving last doesn't replace the newer one", async () => {
@@ -1065,7 +1106,7 @@ test("a delivery that resolves after reset() is dropped, not committed as DELIVE
 const broadcastInfo = {
   paymentTxId: "txA",
   payerAddress: "TPayer",
-  reservedNativeAmount: 5_000_000n,
+  rentPayment: RENT_PAYMENT,
 };
 
 test("onRentPaymentBroadcast fires on the happy submit path with the payer and amount", async () => {

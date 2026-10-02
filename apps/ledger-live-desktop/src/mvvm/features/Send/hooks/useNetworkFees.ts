@@ -22,6 +22,7 @@ import {
   feeStrategySublabel,
 } from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
+import { FEE_PLACEHOLDER } from "../constants";
 import type { FeeSelectorOption } from "../screens/Amount/types";
 
 type UseNetworkFeesParams = Readonly<{
@@ -117,7 +118,7 @@ export function useNetworkFees({
   return useMemo(
     () => ({
       feesRowLabel: t("fees.networkFees"),
-      feesRowValue: core.feesRowValue === "-" ? "--" : core.feesRowValue,
+      feesRowValue: core.feesRowValue === "-" ? FEE_PLACEHOLDER : core.feesRowValue,
       feesRowSecondaryValue: core.feesRowSecondaryValue,
       feesRowStrategyLabel: t(`fees.${feeSelectorLabelKeySuffix(core.selectedFeeStrategyId)}`, {
         defaultValue: core.selectedFeeStrategyId.toUpperCase(),

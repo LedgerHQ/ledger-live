@@ -2989,6 +2989,43 @@
       "feesAmount": "Fees amount ({{unit}})",
       "payFeesIn": "Pay fees in"
     },
+    "feePayment": {
+      "title": "Select fee payment",
+      "regular": "Regular transfer",
+      "sponsored": "Pay with {{provider}}",
+      "payIn": "Pay network fee in {{feeCurrency}}",
+      "paidIn": "Paid in {{currency}}",
+      "nudge": "You could save {{amount}} with {{provider}}",
+      "saved": "Saved with {{provider}}",
+      "confirm": "Confirm",
+      "disclaimer": "With {{provider}}, a third-party energy provider, fees are paid in {{feeCurrency}}.",
+      "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
+    },
+    "sponsoredRentSignature": {
+      "title": "Step 1 of 2",
+      "strategy": "Energy rental - {{provider}}",
+      "crafting": "Preparing energy rental…",
+      "submitting": "Submitting energy rental payment…",
+      "feeLabel": "Rental fee"
+    },
+    "sponsoredTransferSignature": {
+      "title": "Step 2 of 2"
+    },
+    "sponsoredPolling": {
+      "title": "Waiting for energy delivery",
+      "waiting": "{{provider}} is delivering the rented energy. This can take a moment.",
+      "elapsed": "Elapsed: {{time}}"
+    },
+    "sponsoredFailure": {
+      "title": "Something went wrong",
+      "rentPayment": "Fee payment failed — your funds were not moved.",
+      "deliveryFailed": "Energy was not delivered. Your rental fee payment was sent — contact {{provider}} support for a refund{{txidSuffix}}.",
+      "contractData": "Contract data is disabled on your TRON app. Enable TRON app → Settings → Contract data, then retry.",
+      "transfer": "Your transfer failed, but the rented energy is still valid — you can retry the transfer.",
+      "retry": "Retry",
+      "retryPaying": "Pay again and retry",
+      "cancel": "Cancel"
+    },
     "coinControl": {
       "title": "Coin control",
       "strategy": "Strategy",
