@@ -3,6 +3,11 @@ name: "[Mobile] - Test Build iOS - Called"
 on:
   workflow_call:
     inputs:
+      runner:
+        description: "Runner label for the JS bundle build job."
+        type: string
+        required: false
+        default: ledger-live-linux-8CPU-32RAM
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -77,6 +82,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      runner:
+        description: "Runner label for the JS bundle build job."
+        type: string
+        required: false
+        default: ledger-live-linux-8CPU-32RAM
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -223,7 +233,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: ${{ inputs.runner }}
     outputs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
