@@ -1,0 +1,27 @@
+{
+  "name": "@support/lint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The repository's oxlint presets, one per layer that differs, and its custom rules",
+  "exports": {
+    "./base": "./base.mts",
+    "./devtools": "./devtools.mts",
+    "./features-flow": "./features-flow.mts",
+    "./libs": "./libs.mts",
+    "./libs-coin-tester": "./libs-coin-tester.mts",
+    "./support": "./support.mts",
+    "./tools": "./tools.mts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt *.mts src",
+    "format:check": "oxfmt *.mts src --check",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

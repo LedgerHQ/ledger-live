@@ -45,7 +45,7 @@
     "@swc/core": "catalog:"
   },
   "scripts": {
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",

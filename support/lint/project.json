@@ -1,5 +1,5 @@
 {
-  "name": "@support/lint-rules",
+  "name": "@support/lint",
   "targets": {
     "build": {
       "executor": "nx:noop"

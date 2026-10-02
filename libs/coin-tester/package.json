@@ -10,8 +10,8 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint src",
-    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "lint": "oxlint src -A no-console",
+    "lint:fix": "oxfmt src && oxlint src -A no-console --fix --quiet",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   },
