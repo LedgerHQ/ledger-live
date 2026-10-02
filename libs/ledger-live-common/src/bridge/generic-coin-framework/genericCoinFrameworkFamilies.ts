@@ -16,7 +16,6 @@ const GENERIC_BRIDGE_FLAGS: Record<string, string> = {
   // (raw pubkey → tagged address). sameAccountIdentity's freshAddress fallback handles
   // re-scans, but id-keyed settings (account name, etc.) reset on the first rescan.
   casper: "config_casper_generic_bridge",
-  hedera: "config_hedera_generic_bridge",
 };
 
 export function isGenericBridgeFlagEnabled(family: string) {
