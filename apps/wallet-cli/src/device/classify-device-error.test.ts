@@ -1,5 +1,9 @@
-import { describe, expect, it } from "bun:test";
-import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import {
+  NoAccessibleDeviceError,
+  OpeningConnectionError,
+  SendApduTimeoutError,
+} from "@ledgerhq/device-management-kit";
 import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -9,6 +13,14 @@ import { ManagerDeviceLockedError } from "@ledgerhq/live-common/errors";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { EmptyError } from "rxjs";
 import { classifyDeviceError } from "./classify-device-error";
+import { DeviceConnectionFailedError, DeviceDiscoveryFailedError } from "./register-dmk-transport";
+import {
+  recordLedgerVendorSeen,
+  recordScanCompleted,
+  recordUsbAccessFailure,
+  recordUsbAccessSuccess,
+  resetUsbAccessDiagnostics,
+} from "./usb-access-diagnostics";
 
 describe("classifyDeviceError", () => {
   it("rxjs EmptyError → disconnected", () => {
@@ -114,5 +126,195 @@ describe("classifyDeviceError", () => {
     const state = classifyDeviceError(err);
     expect(state.code).toBe("unknown");
     if (state.code === "unknown") expect(state.cause).toBe(err);
+  });
+});
+
+/** The real class, not a hand-made shape, so a rename cannot silently stop matching. */
+const discoveryFailure = (cause?: unknown) => new DeviceDiscoveryFailedError(cause);
+
+describe("DeviceConnectionFailedError", () => {
+  it("keeps the message an ordinary Error cause carries", () => {
+    expect(new DeviceConnectionFailedError(new Error("LIBUSB_ERROR_ACCESS")).message).toBe(
+      "LIBUSB_ERROR_ACCESS",
+    );
+  });
+
+  it("keeps the message a DMK cause carries on originalError, having none of its own", () => {
+    const dmkCause = new OpeningConnectionError(new Error("LIBUSB_ERROR_ACCESS"));
+    expect(new DeviceConnectionFailedError(dmkCause).message).toBe("LIBUSB_ERROR_ACCESS");
+  });
+
+  it("falls back to its own wording when the cause says nothing", () => {
+    expect(new DeviceConnectionFailedError().message).toBe(
+      "Could not open a session with the Ledger.",
+    );
+  });
+});
+
+describe("USB failure attribution (LIVE-31394)", () => {
+  beforeEach(() => {
+    resetUsbAccessDiagnostics();
+  });
+
+  afterEach(() => {
+    resetUsbAccessDiagnostics();
+  });
+
+  it("a scan that saw no Ledger → disconnected, carrying the attribution", () => {
+    recordScanCompleted();
+    expect(classifyDeviceError(discoveryFailure())).toEqual({
+      code: "disconnected",
+      likelyCause: "device_not_present",
+    });
+  });
+
+  it("device seen on the bus but refused by the OS → sandbox_blocking_usb", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    recordUsbAccessFailure(new Error("LIBUSB_ERROR_ACCESS"));
+    expect(classifyDeviceError(discoveryFailure())).toEqual({
+      code: "timeout",
+      likelyCause: "sandbox_blocking_usb",
+    });
+  });
+
+  it("device seen but unopenable (the bubblewrap/minimal-/dev case) → sandbox_blocking_usb", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    recordUsbAccessFailure(new Error("initialize error: Error: LIBUSB_ERROR_NO_DEVICE"));
+    expect(classifyDeviceError(discoveryFailure())).toEqual({
+      code: "timeout",
+      likelyCause: "sandbox_blocking_usb",
+    });
+  });
+
+  it("permission refused before any device was enumerated → still sandbox_blocking_usb", () => {
+    recordScanCompleted();
+    recordUsbAccessFailure(Object.assign(new Error("denied"), { code: "EACCES" }));
+    expect(classifyDeviceError(discoveryFailure())).toEqual({
+      code: "timeout",
+      likelyCause: "sandbox_blocking_usb",
+    });
+  });
+
+  it("a busy device is never blamed on a sandbox", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    recordUsbAccessFailure(new Error("LIBUSB_ERROR_BUSY"));
+    expect(classifyDeviceError(discoveryFailure())).toEqual({ code: "timeout" });
+  });
+
+  it("leaves a mid-session OpeningConnectionError out of USB attribution", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    recordUsbAccessFailure(new Error("LIBUSB_ERROR_ACCESS"));
+    const midSession = new OpeningConnectionError("Device not connected");
+    expect(classifyDeviceError(midSession)).toEqual({ code: "unknown", cause: midSession });
+  });
+
+  it("attributes a failure to open the session, which is unambiguous", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    recordUsbAccessFailure(new Error("LIBUSB_ERROR_ACCESS"));
+    expect(classifyDeviceError(new DeviceConnectionFailedError(new Error("nope")))).toEqual({
+      code: "timeout",
+      likelyCause: "sandbox_blocking_usb",
+    });
+  });
+
+  it("recognises a real DMK NoAccessibleDeviceError instance", () => {
+    recordScanCompleted();
+    expect(classifyDeviceError(new NoAccessibleDeviceError("none"))).toEqual({
+      code: "disconnected",
+      likelyCause: "device_not_present",
+    });
+  });
+
+  it("reads the libusb code a DMK wrapper carries on originalError, not cause", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    const dmkWrapped = new NoAccessibleDeviceError(new Error("LIBUSB_ERROR_ACCESS"));
+    expect(classifyDeviceError(dmkWrapped)).toEqual({
+      code: "timeout",
+      likelyCause: "sandbox_blocking_usb",
+    });
+  });
+
+  it("device reachable but the app never opened → app_not_open", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    expect(classifyDeviceError(new SendApduTimeoutError("t"), { expectedApp: "Ethereum" })).toEqual(
+      { code: "timeout", likelyCause: "app_not_open" },
+    );
+  });
+
+  it("claims nothing when no scan ever ran (mocked transport, mid-session timeout)", () => {
+    expect(classifyDeviceError(new SendApduTimeoutError("t"), { expectedApp: "Ethereum" })).toEqual(
+      { code: "timeout" },
+    );
+  });
+
+  it("a re-enumeration failure cleared by a later success does not poison attribution", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    recordUsbAccessFailure(new Error("Error: LIBUSB_ERROR_NO_DEVICE"));
+    recordUsbAccessSuccess();
+
+    expect(classifyDeviceError(new SendApduTimeoutError("t"), { expectedApp: "Ethereum" })).toEqual(
+      { code: "timeout", likelyCause: "app_not_open" },
+    );
+  });
+
+  it("claims nothing when enumeration itself never completed", () => {
+    recordUsbAccessFailure(new Error("libusb init failed"));
+    expect(classifyDeviceError(discoveryFailure())).toEqual({ code: "timeout" });
+  });
+
+  it("classifies the wrapped cause when the transport recorded nothing itself", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    expect(classifyDeviceError(discoveryFailure(new Error("LIBUSB_ERROR_ACCESS")))).toEqual({
+      code: "timeout",
+      likelyCause: "sandbox_blocking_usb",
+    });
+  });
+
+  it("never blames the app for a timeout while signing, though expectedApp is still set", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    expect(
+      classifyDeviceError(new SendApduTimeoutError("t"), {
+        expectedApp: "Ethereum",
+        rejectedContext: "sign",
+      }),
+    ).toEqual({ code: "timeout" });
+  });
+
+  it("never blames the app for a timeout while verifying an address", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    expect(
+      classifyDeviceError(new SendApduTimeoutError("t"), {
+        expectedApp: "Ethereum",
+        rejectedContext: "verify_address",
+      }),
+    ).toEqual({ code: "timeout" });
+  });
+
+  it("still blames the app when the app-open step is what we are waiting on", () => {
+    recordScanCompleted();
+    recordLedgerVendorSeen();
+    expect(
+      classifyDeviceError(new SendApduTimeoutError("t"), {
+        expectedApp: "Ledger dashboard",
+        rejectedContext: "open_app",
+      }),
+    ).toEqual({ code: "timeout", likelyCause: "app_not_open" });
+  });
+
+  it("leaves unrelated errors on the unknown fallthrough", () => {
+    recordScanCompleted();
+    const other = new Error("something else");
+    expect(classifyDeviceError(other)).toEqual({ code: "unknown", cause: other });
   });
 });
