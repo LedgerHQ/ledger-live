@@ -1,5 +1,11 @@
 # @features/flow-pay-card-auth
 
+## 0.9.0-next.3
+
+### Minor Changes
+
+- [#22918](https://github.com/LedgerHQ/ledger-live/pull/22918) [`5ff6348`](https://github.com/LedgerHQ/ledger-live/commit/5ff6348d1505e805bdbbff64685b0b97bc2a8981) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Restore the bottom padding of the desktop Card intro dialog
+
 ## 0.9.0-next.2
 
 ### Minor Changes
