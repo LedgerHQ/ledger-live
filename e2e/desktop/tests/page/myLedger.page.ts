@@ -23,6 +23,12 @@ const BYTE_SIZE = /\d+(\.\d+)? (bytes|KB|MB)/;
 export class MyLedgerPage extends AppPage {
   private readonly storageCard = this.page.getByTestId("device-storage-card");
   private readonly deviceOptions = this.page.getByTestId("device-options-container");
+  private readonly renameButton = this.page.getByTestId("manager-device-rename-button");
+  private readonly renameDrawer = this.page.getByTestId("device-rename-container");
+  private readonly renameInput = this.page.getByTestId("current-device-name-input");
+  private readonly submitRenameButton = this.page.getByTestId("submit-device-rename-button");
+  private readonly renameSuccess = this.page.getByTestId("device-renamed");
+  private readonly closeRenameButton = this.page.getByTestId("close-device-rename-button");
   private readonly osVersion = this.page.getByTestId("device-os-version");
   private readonly genuineBadge = this.page.getByTestId("device-genuine-badge");
   private readonly storageUsed = this.page.getByTestId("device-storage-used");
@@ -79,6 +85,22 @@ export class MyLedgerPage extends AppPage {
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
     await expect(this.deviceOptions).toBeVisible();
+  }
+
+  /** The submit button becomes the close button once the rename lands, so both are needed. */
+  @step("Rename the device to $0")
+  async renameDevice(name: string) {
+    await this.renameButton.click();
+    await expect(this.renameDrawer).toBeVisible();
+    await this.renameInput.fill(name);
+    await this.submitRenameButton.click();
+    await expect(this.renameSuccess).toBeVisible();
+    await this.closeRenameButton.click();
+  }
+
+  @step("Expect the device to be named $0")
+  async expectDeviceName(name: string) {
+    await expect(this.storageCard).toContainText(name);
   }
 
   /** The summary is read against the device under test, so it follows SPECULOS_DEVICE. */

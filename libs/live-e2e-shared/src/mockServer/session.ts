@@ -60,6 +60,12 @@ export class MockServerSessionHandle {
     return apps.map(({ name }) => name);
   }
 
+  /** Name the device reports, which a rename from the app writes over the wire. */
+  async deviceName(): Promise<string> {
+    const { name } = await this.firstDevice();
+    return name;
+  }
+
   /**
    * Freezes the device on an onboarding step by pinning GET_VERSION. Only the flag bytes
    * are rewritten — the rest of the reply is whatever the device actually returned, so
