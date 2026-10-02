@@ -558,6 +558,13 @@ export enum ScreenName {
   CardanoUndelegationConnectDevice = "CardanoUndelegationConnectDevice",
   CardanoUndelegationValidationError = "CardanoUndelegationValidationError",
   CardanoUndelegationValidationSuccess = "CardanoUndelegationValidationSuccess",
+  CardanoVoteDelegationStarted = "CardanoVoteDelegationStarted",
+  CardanoVoteDelegationSummary = "CardanoVoteDelegationSummary",
+  CardanoVoteDelegationSelectDRep = "CardanoVoteDelegationSelectDRep",
+  CardanoVoteDelegationSelectDevice = "CardanoVoteDelegationSelectDevice",
+  CardanoVoteDelegationConnectDevice = "CardanoVoteDelegationConnectDevice",
+  CardanoVoteDelegationValidationError = "CardanoVoteDelegationValidationError",
+  CardanoVoteDelegationValidationSuccess = "CardanoVoteDelegationValidationSuccess",
 
   // stacks
   StacksEditMemo = "StacksEditMemo",
@@ -815,6 +822,7 @@ export enum NavigatorName {
   // Cardano
   CardanoDelegationFlow = "CardanoDelegationFlow",
   CardanoUndelegationFlow = "CardanoUndelegationFlow",
+  CardanoVoteDelegationFlow = "CardanoVoteDelegationFlow",
   // NEAR
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",

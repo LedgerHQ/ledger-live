@@ -12,6 +12,7 @@ import { CARDANO_MAX_SUPPLY } from "./constants";
 import {
   decodeTokenName,
   getAccountStakeCredential,
+  getBech32DRepId,
   getBech32PoolId,
   getBipPathString,
 } from "./logic";
@@ -128,6 +129,26 @@ async function getDeviceTransactionConfig({
         chain: stakeCredential.path.chain,
         index: stakeCredential.path.index,
       }),
+    });
+  } else if (mode === "voteDelegate" && account.type === "Account") {
+    const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+    fields.push({
+      type: "text",
+      label: "Staking key",
+      value: getBipPathString({
+        account: stakeCredential.path.account,
+        chain: stakeCredential.path.chain,
+        index: stakeCredential.path.index,
+      }),
+    });
+    fields.push({
+      type: "text",
+      label: "DRep",
+      value: transaction.dRepAbstain
+        ? "Always abstain"
+        : transaction.dRepNoConfidence
+          ? "Always no confidence"
+          : getBech32DRepId(transaction.dRepHex!, account.currency.id), // either one will always be present
     });
   }
 

@@ -522,6 +522,7 @@ const OPERATION_TYPES: ReadonlySet<string> = new Set<OperationType>([
   "SHIELDED_TX_INTERNAL",
   "STAKE_NEURON",
   "TOP_UP_NEURON",
+  "DELEGATE_VOTE",
 ]);
 
 export function isOperationType(value: string): value is OperationType {

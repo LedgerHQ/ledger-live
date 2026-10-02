@@ -22,6 +22,7 @@ const iconsComponent = {
   WITHDRAW_EXPIRE_UNFREEZE: IconsLegacy.CoinsMedium,
   LEGACY_UNFREEZE: IconsLegacy.UnfreezeMedium,
   VOTE: IconsLegacy.VoteMedium,
+  DELEGATE_VOTE: IconsLegacy.VoteMedium,
   REWARD: IconsLegacy.StarMedium,
   FEES: IconsLegacy.FeesMedium,
   OPT_IN: IconsLegacy.PlusMedium,

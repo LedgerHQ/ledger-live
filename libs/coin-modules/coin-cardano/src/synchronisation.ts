@@ -20,8 +20,10 @@ import { buildSubAccounts } from "./buildSubAccounts";
 import {
   calculateMinAdaForTokens,
   computeAdaBalance,
+  findOwnedStakeDelegation,
   findStakeDeRegistration,
   findStakeRegistration,
+  findVoteDelegation,
   findWithdrawal,
   getAccountChange,
   getAccountStakeCredential,
@@ -260,14 +262,21 @@ export function mapTxToAccountOperation(
     });
   }
 
+  const vote = findVoteDelegation(tx, stakeCredential.key, networkParams.networkId);
+  if (vote) {
+    extra.vote = vote;
+  }
+
   let mainOperationType: OperationType;
-  if (tx.certificate.stakeDelegations.length) {
+  if (findOwnedStakeDelegation(tx, stakeCredential.key)) {
     mainOperationType = "DELEGATE";
   } else if (
     tx.certificate.stakeDeRegistrations.length ||
     tx.certificate.stakeDeRegsConway?.length
   ) {
     mainOperationType = "UNDELEGATE";
+  } else if (vote) {
+    mainOperationType = "DELEGATE_VOTE";
   } else {
     mainOperationType = getOperationType({
       valueChange: operationValue,

@@ -35,6 +35,19 @@ const getMainActions = ({
     },
   ];
 
+  const voteNavigationParams: NavigationParamsType = [
+    NavigatorName.CardanoVoteDelegationFlow,
+    {
+      screen: ScreenName.CardanoVoteDelegationStarted,
+      params: {
+        accountId: account.id,
+        parentId: parentAccount ? parentAccount.id : undefined,
+        source: parentRoute,
+        skipStartedStep: false,
+      },
+    },
+  ];
+
   return [
     {
       id: "stake",
@@ -44,6 +57,18 @@ const getMainActions = ({
       event: "button_clicked",
       eventProperties: {
         button: "stake",
+        currency: "ADA",
+        page: "Account Page",
+      },
+    },
+    {
+      id: "vote",
+      navigationParams: voteNavigationParams,
+      label: <Trans i18nKey="cardano.voteDelegation.button" />,
+      Icon: IconsLegacy.VoteMedium,
+      event: "button_clicked",
+      eventProperties: {
+        button: "vote",
         currency: "ADA",
         page: "Account Page",
       },

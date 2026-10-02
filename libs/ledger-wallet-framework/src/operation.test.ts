@@ -4,6 +4,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genOperation, genTokenAccount } from "./mocks/account";
 import {
+  getOperationAmountNumber,
   isAddressPoisoningOperation,
   isOldestPendingOperation,
   isOldestBitcoinPendingOperation,
@@ -18,6 +19,32 @@ const usdc = { parentCurrencyId: "ethereum" } as TokenCurrency;
 const fakeToken = { parentCurrencyId: "bitcoin" } as TokenCurrency;
 
 describe("Operation.ts", () => {
+  describe("getOperationAmountNumber", () => {
+    // Cardano DRep vote delegation can carry a stake key registration deposit, so the amount
+    // must be the full value spent (deposit + fee), not just the fee like VOTE (Tron/Celo).
+    it("should return the negated value for DELEGATE_VOTE", () => {
+      // oxlint-disable-next-line typescript/consistent-type-assertions
+      const op = {
+        type: "DELEGATE_VOTE",
+        value: new BigNumber(2_170_000),
+        fee: new BigNumber(170_000),
+      } as Operation;
+
+      expect(getOperationAmountNumber(op).toNumber()).toBe(-2_170_000);
+    });
+
+    it("should return the negated fee for VOTE", () => {
+      // oxlint-disable-next-line typescript/consistent-type-assertions
+      const op = {
+        type: "VOTE",
+        value: new BigNumber(10),
+        fee: new BigNumber(3),
+      } as Operation;
+
+      expect(getOperationAmountNumber(op).toNumber()).toBe(-3);
+    });
+  });
+
   describe("isPoisoningAddressOperation", () => {
     it("should detect a token operation with 0 amount with the correct currency", () => {
       const account = genAccount("myAccount", { currency: ethereum });

@@ -10,7 +10,7 @@ import { OperationType } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
-import { APITransaction, HashType, StakeDelegationCertificate } from "../api/api-types";
+import { APITransaction } from "../api/api-types";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import {
@@ -20,6 +20,7 @@ import {
   decodeTokenName,
   getBech32PoolId,
   findStakeRegistration,
+  findOwnedStakeDelegation,
   findStakeDeRegistration,
   findWithdrawal,
   getOperationType,
@@ -118,18 +119,6 @@ function computeValue(tx: APITransaction, paymentKey: string): bigint {
   }
 
   return totalReceived - totalSpent;
-}
-
-// Finds a delegation certificate belonging to THIS account's stake key.
-// A transaction may carry certificates for several accounts, so matching on the
-// stake key is required before attributing the delegation (and its pool) to us.
-function findOwnedStakeDelegation(
-  tx: APITransaction,
-  stakeKey: string,
-): StakeDelegationCertificate | undefined {
-  return tx.certificate.stakeDelegations?.find(
-    cert => cert.stakeCredential.type === HashType.ADDRESS && cert.stakeCredential.key === stakeKey,
-  );
 }
 
 // Staking types (DELEGATE/UNDELEGATE) are only assigned when the certificate
