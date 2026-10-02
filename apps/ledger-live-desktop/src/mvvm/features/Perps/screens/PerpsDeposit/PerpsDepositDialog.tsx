@@ -3,7 +3,7 @@ import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import type { PerpsDepositData } from "./usePerpsDepositViewModel";
 import { usePerpsDepositViewModel } from "./usePerpsDepositViewModel";
 import { PerpsDepositView } from "./PerpsDepositView";
-import { cancelDepositRequest } from "../../utils/perpsDepositRequest";
+import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 let _opener: ((data: PerpsDepositData) => void) | null = null;
 

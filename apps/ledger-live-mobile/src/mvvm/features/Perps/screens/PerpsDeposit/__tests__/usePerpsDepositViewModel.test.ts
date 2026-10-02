@@ -10,7 +10,10 @@ import { ScreenName } from "~/const";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID } from "../../../constants/depositFunding";
 import { usePerpsDepositViewModel } from "../usePerpsDepositViewModel";
-import { beginDepositRequest, cancelDepositRequest } from "../../../utils/perpsDepositRequest";
+import {
+  beginDepositRequest,
+  cancelDepositRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 const mockOpenDrawer = jest.fn();
 jest.mock("LLM/features/ModularDrawer", () => ({

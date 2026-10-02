@@ -5,7 +5,7 @@ import {
   type PerpsDepositSignData,
 } from "./usePerpsDepositSignViewModel";
 import { PerpsDepositSignView } from "./PerpsDepositSignView";
-import { cancelDepositRequest } from "../../utils/perpsDepositRequest";
+import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 let _opener: ((data: PerpsDepositSignData) => void) | null = null;
 

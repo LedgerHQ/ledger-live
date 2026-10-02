@@ -30,7 +30,10 @@ import {
 import type { Status } from "~/components/DeviceAction";
 import { broadcastLogger } from "~/datadog";
 import { isUserRefusal } from "../utils/isUserRefusal";
-import { getDepositRequestId, settleDepositRequest } from "../utils/perpsDepositRequest";
+import {
+  getDepositRequestId,
+  settleDepositRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;

@@ -29,7 +29,7 @@ import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
 import type { PerpsDepositOutcome } from "../../hooks/usePerpsDepositExecution";
-import { cancelDepositRequest } from "../../utils/perpsDepositRequest";
+import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyAmountKey, toAmountText } from "./utils/amountKeys";

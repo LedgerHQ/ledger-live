@@ -30,7 +30,10 @@ import { openPerpsTransactionSigned } from "LLD/features/Perps/screens/PerpsTran
 import { broadcastLogger } from "~/datadog/logs";
 import { track } from "@shared/analytics";
 import { isUserRefusal } from "../utils/isUserRefusal";
-import { getDepositRequestId, settleDepositRequest } from "../utils/perpsDepositRequest";
+import {
+  getDepositRequestId,
+  settleDepositRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;
