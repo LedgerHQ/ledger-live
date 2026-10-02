@@ -1,5 +1,4 @@
-import { spawn, spawnSync, type ChildProcess } from "node:child_process";
-import { exec } from "node:child_process";
+import { spawn, spawnSync, type ChildProcess, exec } from "node:child_process";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";

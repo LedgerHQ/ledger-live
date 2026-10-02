@@ -1,10 +1,10 @@
 import {
+  ContactAddressIdSchema,
   selectContactAddressById,
   selectContactById,
   type ContactAddressId,
   type ContactId,
 } from "@domain/entity-contact";
-import { ContactAddressIdSchema } from "@domain/entity-contact";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import {
