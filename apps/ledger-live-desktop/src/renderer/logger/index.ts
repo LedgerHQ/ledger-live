@@ -71,11 +71,12 @@ const logger = {
 
     const [first, ...rest] = meta;
     const hasMeta = isPlainObject(first);
+    const extra = hasMeta ? rest : meta;
     emit({
       level: levelOrEntry,
       message: typeof message === "string" ? message : JSON.stringify(message),
       ...(hasMeta ? first : {}),
-      ...(hasMeta ? (rest.length ? { extra: rest } : {}) : meta.length ? { extra: meta } : {}),
+      ...(extra.length ? { extra } : {}),
     });
   },
 };
