@@ -206,8 +206,8 @@ function isSamePayload(
 }
 
 function isSameTrackingConfiguration(
-  current: ContentAbTestTrackingConfiguration | undefined,
-  next: ContentAbTestTrackingConfiguration | undefined,
+  current: ContentAbTestTrackingConfiguration | null | undefined,
+  next: ContentAbTestTrackingConfiguration | null | undefined,
 ): boolean {
   if (!current && !next) return true;
   if (!current || !next) return false;
