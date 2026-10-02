@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -21,49 +21,54 @@ export function useFirmwareUpdateHandover({
   send,
 }: UseFirmwareUpdateHandoverInput) {
   const delegated = machineState === delegatedState;
-  const openedRef = useRef(false);
   const closedRef = useRef(false);
+  const freshResultRef = useRef(false);
+  const [drawerOpened, setDrawerOpened] = useState(false);
+  const [trackedDelegated, setTrackedDelegated] = useState(delegated);
+  if (delegated !== trackedDelegated) {
+    setTrackedDelegated(delegated);
+    setDrawerOpened(false);
+  }
 
   const {
     state: { deviceInfo, firmwareUpdateContext, status },
   } = useGetLatestAvailableFirmware({
     deviceId: device?.deviceId ?? "",
     deviceName: device?.deviceName ?? null,
-    isHookEnabled: delegated && device !== null,
+    isHookEnabled: delegated && device !== null && !drawerOpened,
   });
 
   const closeOnce = useCallback(() => {
     if (closedRef.current) return;
     closedRef.current = true;
-    openedRef.current = false;
     setDrawer();
     send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
   }, [send]);
 
   useEffect(() => {
     if (!delegated) {
-      openedRef.current = false;
       closedRef.current = false;
+      freshResultRef.current = false;
       return;
     }
 
-    if (!device || status === "idle" || status === "ongoing") return;
+    if (status === "idle" || status === "ongoing") {
+      freshResultRef.current = true;
+      return;
+    }
+
+    if (!freshResultRef.current || !device || drawerOpened) return;
 
     if (status === "error" || status === "no-available-firmware") {
       closeOnce();
       return;
     }
 
-    if (
-      status !== "available-firmware" ||
-      !deviceInfo ||
-      !firmwareUpdateContext ||
-      openedRef.current
-    ) {
+    if (status !== "available-firmware" || !deviceInfo || !firmwareUpdateContext) {
       return;
     }
 
-    openedRef.current = true;
+    setDrawerOpened(true);
     setDrawer(
       UpdateFirmwareModal,
       {
@@ -89,5 +94,5 @@ export function useFirmwareUpdateHandover({
         onRequestClose: undefined,
       },
     );
-  }, [closeOnce, delegated, device, deviceInfo, firmwareUpdateContext, status]);
+  }, [closeOnce, delegated, device, deviceInfo, drawerOpened, firmwareUpdateContext, status]);
 }

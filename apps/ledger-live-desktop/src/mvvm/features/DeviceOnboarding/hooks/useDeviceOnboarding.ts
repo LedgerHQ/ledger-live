@@ -234,16 +234,25 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
 
       if (!transportLostRef.current) return;
       transportLostRef.current = false;
+      const generation = adoptGeneration.current;
+      const actorAtLoss = actor;
       void (async () => {
         try {
           const opened = await portsRef.current?.openSession();
+          const stale =
+            generation !== adoptGeneration.current ||
+            actorRef.current !== actorAtLoss ||
+            transportLostRef.current;
+          if (stale) return;
           if (opened) rememberDevice(opened);
           sessionReadyRef.current = true;
           if (actorRef.current?.getSnapshot().can({ type: "SESSION_READY" })) {
             sendToActor({ type: "SESSION_READY" });
           }
         } catch {
-          transportLostRef.current = true;
+          if (generation === adoptGeneration.current && actorRef.current === actorAtLoss) {
+            transportLostRef.current = true;
+          }
         }
       })();
     });
