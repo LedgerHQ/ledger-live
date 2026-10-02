@@ -120,12 +120,14 @@ describe("stateValueToString", () => {
 });
 
 describe("toolEvent", () => {
+  let now: jest.SpiedFunction<typeof Date.now>;
+
   beforeEach(() => {
-    jest.spyOn(Date, "now").mockReturnValue(100);
+    now = jest.spyOn(Date, "now").mockReturnValue(100);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    now.mockRestore();
   });
 
   it("should attach the onboarding step when the step changes", () => {
