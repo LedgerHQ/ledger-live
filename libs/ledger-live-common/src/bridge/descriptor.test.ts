@@ -564,7 +564,7 @@ describe("sendFeatures", () => {
 
   describe("applyMemoToTransaction", () => {
     describe("fallback behavior", () => {
-      it.each(["algorand", "cosmos", "hedera", "stacks", "internet_computer", "mina"])(
+      it.each(["algorand", "cosmos", "stacks", "internet_computer", "mina"])(
         "should use default memo field for %s",
         family => {
           const result = applyMemoToTransaction(family, "test memo");
@@ -640,6 +640,20 @@ describe("sendFeatures", () => {
       it("should apply transferId for casper", () => {
         const result = applyMemoToTransaction("casper", "12345");
         expect(result).toEqual({ transferId: "12345", memoType: "transferId", memoValue: "12345" });
+      });
+
+      it("should apply the generic memo fields for hedera", () => {
+        expect(applyMemoToTransaction("hedera", "hedera memo")).toEqual({
+          memoType: "string",
+          memoValue: "hedera memo",
+        });
+      });
+
+      it("should clear the generic memo value for hedera", () => {
+        expect(applyMemoToTransaction("hedera", "")).toEqual({
+          memoType: "string",
+          memoValue: undefined,
+        });
       });
 
       it("should apply numeric tag for xrp", () => {

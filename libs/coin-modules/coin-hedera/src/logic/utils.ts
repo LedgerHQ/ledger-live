@@ -179,16 +179,26 @@ export function base64ToUrlSafeBase64(data: string): string {
   return data.replace(/\//g, "_").replace(/\+/g, "-");
 }
 
+const SHA384_BYTE_LENGTH = 48;
+
+const toHexTransactionHash = (base64Hash: string): string | undefined => {
+  const bytes = Buffer.from(base64Hash, "base64");
+  return bytes.length === SHA384_BYTE_LENGTH ? bytes.toString("hex") : undefined;
+};
+
 export const getTransactionExplorer = (
   explorerView: ExplorerView | null | undefined,
   operation: LiveOperation,
 ): string | undefined => {
   const extra = isValidExtra(operation.extra) ? operation.extra : null;
+  const hash =
+    extra?.consensusTimestamp ?? extra?.transactionId ?? toHexTransactionHash(operation.hash);
 
-  return explorerView?.tx?.replace(
-    "$hash",
-    extra?.consensusTimestamp ?? extra?.transactionId ?? "0",
-  );
+  if (typeof hash !== "string") {
+    return undefined;
+  }
+
+  return explorerView?.tx?.replace("$hash", hash);
 };
 
 export const isTokenAssociateTransaction = (

@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { FeatureId } from "@shared/feature-flags";
-import { solanaTransaction, TransactionWithCustomFee } from "./transactionStrategies";
+import {
+  hederaTransaction,
+  solanaTransaction,
+  TransactionWithCustomFee,
+} from "./transactionStrategies";
 import BigNumber from "bignumber.js";
 import type { GetFeatureFn } from "../../wallet-api/FeatureFlags/resolver";
 
@@ -55,6 +59,27 @@ describe("transactionStrategies", () => {
         amount: transaction.amount,
         recipient: transaction.recipient,
         model: { kind: "transfer", uiState: {} },
+      });
+    });
+  });
+
+  describe("hederaTransaction", () => {
+    it("should carry the payin memo in the generic memo fields", () => {
+      const transaction: TransactionWithCustomFee = {
+        family: "hedera",
+        amount: BigNumber(1),
+        recipient: "0.0.1234",
+        customFeeConfig: {},
+        payinExtraId: "payin-42",
+      };
+
+      expect(hederaTransaction(transaction)).toEqual({
+        family: "hedera",
+        mode: "send",
+        amount: transaction.amount,
+        recipient: transaction.recipient,
+        memoType: "string",
+        memoValue: "payin-42",
       });
     });
   });
