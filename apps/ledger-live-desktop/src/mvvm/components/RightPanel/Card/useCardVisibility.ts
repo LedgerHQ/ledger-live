@@ -1,7 +1,7 @@
-import { useFeature } from "@features/platform-feature-flags";
+import { usePayCardFace } from "./usePayCardFace";
 
 export const useCardVisibility = (): boolean => {
-  const lwdPayTab = useFeature("lwdPayTab");
+  const face = usePayCardFace();
 
-  return !!lwdPayTab?.enabled && lwdPayTab.params?.card_native === true;
+  return face === "native" || face === "liveApp";
 };
