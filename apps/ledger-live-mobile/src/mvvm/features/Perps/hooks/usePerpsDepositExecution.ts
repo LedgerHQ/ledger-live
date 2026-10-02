@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { isNotEnoughBalance } from "@ledgerhq/live-common/exchange/isNotEnoughBalance";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import type { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { executeSwap } from "@ledgerhq/live-common/wallet-api/Exchange/executeSwap";
@@ -69,6 +70,7 @@ export type PerpsDepositOutcome = Readonly<{
 export type PerpsDepositExecutionCallbacks = Readonly<{
   onDone: (outcome: PerpsDepositOutcome) => void;
   onRefused: () => void;
+  onNotEnoughBalance: () => void;
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
@@ -86,7 +88,7 @@ const tracking = trackingWrapper((eventName, properties, mandatory) =>
  */
 export function usePerpsDepositExecution(
   params: PerpsDepositReviewParams,
-  { onDone, onRefused }: PerpsDepositExecutionCallbacks,
+  { onDone, onRefused, onNotEnoughBalance }: PerpsDepositExecutionCallbacks,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
 
@@ -298,8 +300,12 @@ export function usePerpsDepositExecution(
   ]);
 
   const retry = useCallback(() => {
+    if (deviceStep.kind === "error" && isNotEnoughBalance(deviceStep.error)) {
+      onNotEnoughBalance();
+      return;
+    }
     void executeDeposit();
-  }, [executeDeposit]);
+  }, [deviceStep, executeDeposit, onNotEnoughBalance]);
 
   return {
     deviceStep,

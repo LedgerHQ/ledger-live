@@ -36,6 +36,7 @@ const device = {
 function renderSignViewModel(initialDevice?: Device) {
   const onDone = jest.fn();
   const onRefused = jest.fn();
+  const onNotEnoughBalance = jest.fn();
   let selectedDevice = initialDevice;
 
   const buildProps = () =>
@@ -51,6 +52,7 @@ function renderSignViewModel(initialDevice?: Device) {
       },
       onDone,
       onRefused,
+      onNotEnoughBalance,
     }) as unknown as PerpsDepositSignProps;
 
   const { result, rerender } = renderHook(() => usePerpsDepositSignViewModel(buildProps()));
@@ -62,7 +64,7 @@ function renderSignViewModel(initialDevice?: Device) {
     });
   };
 
-  return { result, pickDevice, onDone, onRefused };
+  return { result, pickDevice, onDone, onRefused, onNotEnoughBalance };
 }
 
 describe("usePerpsDepositSignViewModel", () => {
@@ -129,6 +131,14 @@ describe("usePerpsDepositSignViewModel", () => {
     act(() => capturedCallbacks?.onDone({ swapId: "swap-1" }));
 
     expect(onDone).toHaveBeenCalledWith({ swapId: "swap-1" });
+    expect(onRefused).not.toHaveBeenCalled();
+  });
+  it("hands a shortfall back to the deposit screen, which reopens the form", () => {
+    const { onNotEnoughBalance, onRefused } = renderSignViewModel(device);
+
+    act(() => capturedCallbacks?.onNotEnoughBalance());
+
+    expect(onNotEnoughBalance).toHaveBeenCalled();
     expect(onRefused).not.toHaveBeenCalled();
   });
 });

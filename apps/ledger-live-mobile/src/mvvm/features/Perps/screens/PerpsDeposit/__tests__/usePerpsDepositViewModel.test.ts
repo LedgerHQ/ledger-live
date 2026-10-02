@@ -484,6 +484,18 @@ describe("usePerpsDepositViewModel", () => {
       expect(result.current.reviewParams).toEqual(reviewed);
     });
 
+    it("returns to the form after a shortfall, keeping the review closed and the draft", () => {
+      const { result } = renderReviewedDeposit();
+      const reviewed = result.current.reviewParams;
+
+      act(() => result.current.handOverToDevice());
+      act(() => result.current.returnToForm());
+
+      expect(result.current.isSignOpen).toBe(false);
+      expect(result.current.isReviewOpen).toBe(false);
+      expect(result.current.reviewParams).toEqual(reviewed);
+    });
+
     it("keeps the device after a decline, so handing over again skips the device list", () => {
       const { result } = renderReviewedDeposit();
 

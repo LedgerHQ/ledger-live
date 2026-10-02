@@ -1,3 +1,5 @@
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -65,8 +67,11 @@ function answerDeviceStep(deviceStep: PerpsDepositDeviceStep, result: unknown) {
 function renderExecution() {
   const onDone = jest.fn();
   const onRefused = jest.fn();
-  const { result } = renderHook(() => usePerpsDepositExecution(params, { onDone, onRefused }));
-  return { result, onDone, onRefused };
+  const onNotEnoughBalance = jest.fn();
+  const { result } = renderHook(() =>
+    usePerpsDepositExecution(params, { onDone, onRefused, onNotEnoughBalance }),
+  );
+  return { result, onDone, onRefused, onNotEnoughBalance };
 }
 
 /** Runs the deposit up to the coin-app signature and answers it with `signResult`. */
@@ -130,7 +135,7 @@ describe("usePerpsDepositExecution", () => {
       () =>
         usePerpsDepositExecution(
           { ...params, depositAccount: tokenAccount },
-          { onDone: jest.fn(), onRefused: jest.fn() },
+          { onDone: jest.fn(), onRefused: jest.fn(), onNotEnoughBalance: jest.fn() },
         ),
       {
         overrideInitialState: state => ({
@@ -255,5 +260,41 @@ describe("usePerpsDepositExecution", () => {
     expect(onRefused).toHaveBeenCalled();
     expect(result.current.deviceStep).toEqual({ kind: "processing" });
     expect(onDone).not.toHaveBeenCalled();
+  });
+  it.each([
+    // The Exchange app's validation keeps the bridge error's name only as its default message.
+    [
+      "validated by the Exchange app",
+      new CompleteExchangeError("INIT", "amount", new NotEnoughBalance().message),
+    ],
+    // executeSwap moves the name to the title, leaving any custom text in the message.
+    [
+      "wrapped by executeSwap",
+      new CompleteExchangeError("INIT", "NotEnoughBalance", "Insufficient balance"),
+    ],
+  ])(
+    "sends the holder back to the form on retry after a shortfall %s",
+    async (_case, shortfall) => {
+      const { result, onNotEnoughBalance } = await signWith({ transactionSignError: shortfall });
+      expect(result.current.deviceStep).toEqual({ kind: "error", error: shortfall });
+      mockExecuteSwap.mockClear();
+
+      act(() => result.current.retry());
+
+      expect(onNotEnoughBalance).toHaveBeenCalledTimes(1);
+      expect(mockExecuteSwap).not.toHaveBeenCalled();
+    },
+  );
+
+  it("re-runs the deposit on retry after any other failure", async () => {
+    const { result, onNotEnoughBalance } = await signWith({
+      transactionSignError: new Error("signature failed"),
+    });
+    mockExecuteSwap.mockClear();
+
+    await act(async () => result.current.retry());
+
+    expect(onNotEnoughBalance).not.toHaveBeenCalled();
+    expect(mockExecuteSwap).toHaveBeenCalledTimes(1);
   });
 });
