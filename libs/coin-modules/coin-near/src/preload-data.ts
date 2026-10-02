@@ -1,6 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import { Subject } from "rxjs";
-import { FALLBACK_GAS_PRICE, FALLBACK_STORAGE_AMOUNT_PER_BYTE } from "./constants";
+import {
+  FALLBACK_GAS_PRICE,
+  FALLBACK_MIN_GAS_PURCHASE_PRICE,
+  FALLBACK_STORAGE_AMOUNT_PER_BYTE,
+} from "./constants";
 import type { NearPreloadedData } from "./types";
 
 let currentPreloadedData: NearPreloadedData = {
@@ -14,7 +18,7 @@ let currentPreloadedData: NearPreloadedData = {
   addKeyCostExecution: new BigNumber(0),
   receiptCreationSend: new BigNumber(0),
   receiptCreationExecution: new BigNumber(0),
-  minGasPurchasePrice: new BigNumber(0),
+  minGasPurchasePrice: new BigNumber(FALLBACK_MIN_GAS_PURCHASE_PRICE),
   accountCreationCharge: new BigNumber(0),
   validators: [],
 };
