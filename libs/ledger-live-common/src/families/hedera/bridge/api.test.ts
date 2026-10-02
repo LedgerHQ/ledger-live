@@ -379,7 +379,7 @@ describe("hedera bridge", () => {
           id: `${accountId}-tx1-FEES`,
           type: "FEES",
           value: new BigNumber(629386),
-          recipients: [tokenContract],
+          recipients: ["0.0.5678"],
           extra: {
             feePayer: address,
             transactionId: "0.0.1234-1751912919-510086871",
@@ -407,9 +407,35 @@ describe("hedera bridge", () => {
       expect(adaptOperations(address, operations)).toEqual(operations);
     });
 
-    it("adds nothing for a token-only transaction, whose FEES parent the bridge builds", () => {
+    it("adds a native FEES operation sent to the token recipient for a token-only transaction", () => {
+      const tokenTransfer = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 629386,
+        feePayer: address,
+        token: true,
+      });
+
+      expect(adaptOperations(address, [tokenTransfer])).toEqual([
+        tokenTransfer,
+        {
+          ...tokenTransfer,
+          id: `${accountId}-tx1-FEES`,
+          type: "FEES",
+          value: new BigNumber(629386),
+          recipients: ["0.0.5678"],
+          extra: {
+            feePayer: address,
+            transactionId: "0.0.1234-1751912919-510086871",
+            ledgerOpType: "FEES",
+          },
+        },
+      ]);
+    });
+
+    it("adds nothing for a token-only transaction another account paid for", () => {
       const operations = [
-        operation({ type: "OUT", hash: "tx1", fee: 629386, feePayer: address, token: true }),
+        operation({ type: "IN", hash: "tx1", fee: 629386, feePayer: "0.0.5678", token: true }),
       ];
 
       expect(adaptOperations(address, operations)).toEqual(operations);

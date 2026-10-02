@@ -166,19 +166,17 @@ function feesOperationForTokenTransfer(
 ): Operation | undefined {
   const tokenOperation = transactionOperations.find(isTokenOperation);
   const nativeOperations = transactionOperations.filter(op => !isTokenOperation(op));
-  if (!tokenOperation || nativeOperations.length === 0) return undefined;
+  if (!tokenOperation) return undefined;
   if (nativeOperations.some(op => !op.fee.isZero())) return undefined;
 
   const tokenExtra = getOperationExtra(tokenOperation);
   if (tokenExtra.feePayer !== address || tokenOperation.fee.isZero()) return undefined;
 
-  const { assetReference } = tokenExtra;
   return {
     ...tokenOperation,
     id: encodeOperationId(tokenOperation.accountId, tokenOperation.hash, "FEES"),
     type: "FEES",
     value: tokenOperation.fee,
-    recipients: typeof assetReference === "string" ? [assetReference] : tokenOperation.recipients,
     extra: {
       ...omit(tokenExtra, [
         "assetReference",
