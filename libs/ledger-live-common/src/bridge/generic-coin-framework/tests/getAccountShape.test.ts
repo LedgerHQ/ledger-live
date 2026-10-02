@@ -3990,6 +3990,21 @@ describe("genericGetAccountShape", () => {
       // contiguous (two entries, newest-first) while hiding a real gap: heights 4-9 were never
       // walked, because the second page (which might hold them) was never fetched.
       resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 2 });
+      // A pending operation that would confirm at height 2, below this round's cut: kept, it would
+      // sit under a gap between it and height 10 that no later sync revisits.
+      refreshOperationsMock.mockResolvedValue([
+        {
+          id: "pend-1",
+          accountId: "accId",
+          hash: "hpend",
+          blockHeight: 2,
+          type: "OUT",
+          date: new Date(2000),
+          extra: {},
+          senders: [],
+          recipients: [],
+        },
+      ]);
       listOperationsMock.mockResolvedValueOnce({
         items: [coreOp("h10", 10), coreOp("h9", 9)],
         next: "c1",
@@ -4017,7 +4032,7 @@ describe("genericGetAccountShape", () => {
                 recipients: [],
               },
             ],
-            pendingOperations: [],
+            pendingOperations: [{ id: "pend-1", hash: "hpend", accountId: "accId", type: "OUT" }],
             subAccounts: oldSubAccounts,
           },
           currency,
@@ -4032,6 +4047,7 @@ describe("genericGetAccountShape", () => {
       // The old operation at height 3 is gone: kept, it would sit right below height 10 with no
       // visible sign that heights 4-9 were skipped rather than empty.
       expect(result.operations?.map(op => op.blockHeight)).toEqual([10]);
+      expect(refreshOperationsMock).not.toHaveBeenCalled();
       // Same treatment for the sub-account's operations -- zeroed, not the sub-account itself
       // dropped, so `mergeSubAccounts` still matches it against `newSubAccounts` and carries over
       // what an empty `oldSubAccounts` array would otherwise skip (see the dedicated test below).

@@ -948,12 +948,16 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       address,
     );
     // Try to refresh known pending and broadcasted operations (if not already updated)
-    // Useful for integrations without explorers
-    const operationsToRefresh = initialAccount?.pendingOperations.filter(
-      pendingOp =>
-        pendingOp.hash && // operation has been broadcasted
-        !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
-    );
+    // Useful for integrations without explorers. Not on a bounded round: it starts from an empty
+    // history, and a confirmation older than the walk's cut would sit below a gap nothing revisits.
+    // Those stay pending until a round that reaches them.
+    const operationsToRefresh = newOpsBounded
+      ? []
+      : initialAccount?.pendingOperations.filter(
+          pendingOp =>
+            pendingOp.hash && // operation has been broadcasted
+            !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
+        );
     const confirmedOperations =
       bridgeApi.refreshOperations && operationsToRefresh?.length
         ? await bridgeApi.refreshOperations(operationsToRefresh)
