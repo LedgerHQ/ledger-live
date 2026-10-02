@@ -7,9 +7,10 @@ import {
   TableRow,
 } from "@ledgerhq/lumen-ui-react";
 import { Telegram } from "@ledgerhq/lumen-ui-react/symbols";
-import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
+import { ContactAvatar } from "@features/platform-contacts";
 import { ContactMoreMenu } from "../ContactMoreMenu/ContactMoreMenu.web";
 import { ContactName } from "./ContactName.web";
+import { usePayContactDisplayName } from "./usePayContactDisplayName";
 import type { Contact } from "@domain/entity-contact";
 import type { ContactsTableLabels } from "../../types";
 
@@ -32,7 +33,7 @@ export function ContactTile({
   onViewContact,
   onViewTransactions,
 }: ContactTileProps) {
-  const getDisplayName = useContactDisplayName();
+  const getDisplayName = usePayContactDisplayName();
 
   return (
     <TableRow

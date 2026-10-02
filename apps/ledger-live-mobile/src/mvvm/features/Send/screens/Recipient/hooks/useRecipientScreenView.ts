@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import {
   isEligibleAddressCurrency,
   sortContactsByLastSentThenLastAdded,
@@ -6,6 +7,7 @@ import {
   useContactsFeature,
 } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
@@ -17,7 +19,6 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Keyboard } from "react-native";
-import { screen, track } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import type { ContactAddressPickerProps } from "@features/flow-pay-contact";
 import { useContactAddressPicker } from "LLM/features/Contacts/hooks/useContactAddressPicker";
@@ -79,10 +80,12 @@ export function useRecipientScreenView({
     useState<PendingSkipMemoRecipient | null>(null);
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const config = resolveCurrencyConfig(currency.id);
   const hasAddressBook = isEligibleAddressCurrency(
     eligibleAddressFamilies,
     currency,
     excludedCurrencyIds,
+    config,
   );
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
@@ -173,13 +176,16 @@ export function useRecipientScreenView({
     }
     trackedResolutionRef.current = trackingKey;
 
-    void screen("Modal send - recipient result", undefined, {
-      ...sendFlowTrackingProperties,
-      queryType: recipientResolution.queryType,
-      resultType: recipientResolution.resultType,
-      inputMethod,
-      queryLength: recipientSearch.value.length,
-      addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
+    void trackPage({
+      category: "Modal send - recipient result",
+      props: {
+        ...sendFlowTrackingProperties,
+        queryType: recipientResolution.queryType,
+        resultType: recipientResolution.resultType,
+        inputMethod,
+        queryLength: recipientSearch.value.length,
+        addressAlreadyUsed: recipientResolution.addressAlreadyUsed,
+      },
     });
     setRecipientResolution(recipientResolution.resultType, recipientResolution.recipientType);
   }, [
@@ -317,10 +323,13 @@ export function useRecipientScreenView({
         ...sendFlowTrackingProperties,
       });
       openPicker(contact);
-      void screen("Modal send - select contact address", undefined, {
-        ...sendFlowTrackingProperties,
-        addressCount: contact.addresses.length,
-        myContact: contact.isMe,
+      void trackPage({
+        category: "Modal send - select contact address",
+        props: {
+          ...sendFlowTrackingProperties,
+          addressCount: contact.addresses.length,
+          myContact: contact.isMe,
+        },
       });
     },
     [openPicker, sendFlowTrackingProperties],
@@ -333,9 +342,12 @@ export function useRecipientScreenView({
       network: mainAccount.currency.id,
       ...sendFlowTrackingProperties,
     });
-    void screen("Modal send - network not supported", undefined, {
-      ...sendFlowTrackingProperties,
-      network: mainAccount.currency.id,
+    void trackPage({
+      category: "Modal send - network not supported",
+      props: {
+        ...sendFlowTrackingProperties,
+        network: mainAccount.currency.id,
+      },
     });
   }, [mainAccount.currency.id, sendFlowTrackingProperties]);
 

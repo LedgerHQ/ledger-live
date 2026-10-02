@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useState } from "react";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
 import { useGetDeviceInfo } from "@ledgerhq/live-common/deviceSDK/hooks/useGetDeviceInfo";
@@ -5,7 +6,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
-import { track } from "~/analytics";
 import { useLocale } from "~/context/Locale";
 import { localeIdToDeviceLanguage } from "../../languages";
 import { Language, idsToLanguage } from "@ledgerhq/types-live";

@@ -5,6 +5,40 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { createTransaction } from "./createTransaction";
 
 describe("createTransaction", () => {
+  it("seeds useAllAmount for solana, so the legacy send flows render the Max switch", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("solana"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "solana",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+    });
+  });
+
+  // The legacy send flows only render the "Max" switch when `useAllAmount` is a boolean, so a family
+  // seeding a transaction without it silently loses send-max. XRP never offered it; hypercore has no
+  // send flow.
+  it.each(["ethereum", "stellar", "tezos", "tron", "casper", "solana"])(
+    "seeds useAllAmount for %s, so the legacy send flows render the Max switch",
+    currencyId => {
+      LiveConfig.setConfig({
+        config_currency_ethereum: { type: "object", default: { chainId: 1 } },
+      } as never);
+      const account = {
+        type: "Account",
+        currency: getCryptoCurrencyById(currencyId),
+      } as unknown as Account;
+
+      expect(createTransaction(account).useAllAmount).toBe(false);
+    },
+  );
+
   it("returns the EVM default transaction with the configured chain id", () => {
     LiveConfig.setConfig({
       config_currency_ethereum: { type: "object", default: { chainId: 1 } },

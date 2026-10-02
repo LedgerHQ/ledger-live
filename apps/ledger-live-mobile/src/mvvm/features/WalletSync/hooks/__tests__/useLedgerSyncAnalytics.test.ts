@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@tests/test-renderer";
 import { CONTACTS_FLOW } from "@features/flow-contacts";
 import { INITIAL_STATE as WALLET_SYNC_INITIAL_STATE } from "~/reducers/walletSync";
@@ -9,11 +10,7 @@ import {
   useWalletSyncTrackingFlow,
 } from "../useLedgerSyncAnalytics";
 
-const mockedTrack = jest.fn();
-
-jest.mock("~/analytics", () => ({
-  track: (...args: unknown[]) => mockedTrack(...args),
-}));
+const mockedTrack = jest.mocked(track);
 
 function renderTrackingFlow(returnsToEntryScreen: boolean) {
   return renderHook(() => useWalletSyncTrackingFlow(), {

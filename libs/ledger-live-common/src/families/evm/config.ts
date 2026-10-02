@@ -1295,7 +1295,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       name: "ZKsync",
       unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://zksync.coin.ledger.com" },
-      explorer: { type: "blockscout", uri: "https://zksync.blockscout.com/api" },
+      explorer: { type: "blockscout", uri: "https://proxyblockscout.api.live.ledger.com/324/api" },
     },
   },
   config_currency_zksync_sepolia: {
@@ -1429,7 +1429,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
       explorer: {
         type: "blockscout",
-        uri: "https://unichain.blockscout.com/api",
+        uri: "https://proxyblockscout.api.live.ledger.com/130/api",
       },
     },
   },

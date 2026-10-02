@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { discreetModeSelector } from "~/reducers/settings";
 import { setDiscreetMode } from "~/actions/settings";
-import { track } from "~/analytics";
 
 interface UseToggleDiscreetModeResult {
   readonly discreetMode: boolean;

@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { Device } from "@ledgerhq/types-devices";
-import { track } from "../segment";
 import { CONNECTION_TYPES } from "./variables";
 import { useRef } from "react";
 import { DeviceInfo } from "@ledgerhq/types-live";

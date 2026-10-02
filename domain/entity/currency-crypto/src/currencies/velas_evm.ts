@@ -37,9 +37,6 @@ export const velas_evm = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 106,
-  },
   explorerViews: [
     {
       tx: "https://evmexplorer.velas.com/tx/$hash",

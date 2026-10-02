@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
@@ -20,7 +21,6 @@ import { languageSelector, readOnlyModeEnabledSelector } from "~/reducers/settin
 import { accountsCountSelector, useAreAccountsEmpty } from "~/reducers/accounts";
 import { useFeature } from "@features/platform-feature-flags";
 import { resolveRemoteCopy } from "@ledgerhq/live-common/analytics/remoteABTesting/resolveRemoteCopy";
-import { track } from "~/analytics";
 import { useTransferDrawerController } from "../../hooks/useTransferDrawerController";
 import { QuickActionCta, UserQuickActionsState } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";

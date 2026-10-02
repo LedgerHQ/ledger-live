@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -17,7 +18,6 @@ import {
   setHasCompletedInitialSync,
   setLastUserSyncClickTimestamp,
 } from "~/reducers/portfolioRefresh";
-import { track } from "~/analytics";
 import { useSyncSources } from "./useSyncSources";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 

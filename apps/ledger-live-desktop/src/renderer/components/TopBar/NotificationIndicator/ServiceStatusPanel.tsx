@@ -12,7 +12,7 @@ import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { urls } from "~/config/urls";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { ErrorWithAnchorContent } from "~/renderer/components/TranslatedError/ErrorWithAnchor";
 
 const IncidentContainer = styled(Box)`

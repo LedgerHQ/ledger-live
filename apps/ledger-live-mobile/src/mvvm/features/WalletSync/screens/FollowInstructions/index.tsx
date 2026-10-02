@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
-import { TrackScreen } from "~/analytics";
 import {
   RootNavigationComposite,
   StackNavigatorNavigation,

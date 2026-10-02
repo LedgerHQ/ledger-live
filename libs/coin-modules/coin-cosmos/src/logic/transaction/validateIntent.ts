@@ -21,13 +21,28 @@ import { type CosmosCoinConfig } from "../../config";
 import {
   ClaimRewardsFeesWarning,
   CosmosDelegateAllFundsWarning,
+  CosmosMemoTooLong,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "../../errors";
+import { COSMOS_MAX_MEMO_LENGTH } from "../../logic";
 import { validateAddress } from "../validateAddress";
 
 function clampPositive(value: bigint): bigint {
   return value > 0n ? value : 0n;
+}
+
+function validateMemoLength(intent: TransactionIntent<StringMemo | MemoNotSupported>) {
+  const memo = "memo" in intent ? intent.memo : undefined;
+  if (memo?.type !== "string") return undefined;
+
+  const memoLength = Buffer.byteLength(memo.value, "utf-8");
+  if (memoLength <= COSMOS_MAX_MEMO_LENGTH) return undefined;
+
+  return new CosmosMemoTooLong("", {
+    memoLength: memoLength.toString(),
+    maxLength: COSMOS_MAX_MEMO_LENGTH.toString(),
+  });
 }
 
 /**
@@ -52,8 +67,10 @@ export async function validateIntent(
     customFees !== undefined &&
     (customFees.value > 0n || cryptoFactory(currencyId, config).minGasPrice === 0);
 
+  const memoError = validateMemoLength(intent);
+
   if (intent.intentType === "staking") {
-    return validateStakingIntent(
+    const result = validateStakingIntent(
       currencyId,
       intent as StakingTransactionIntent,
       balances,
@@ -61,6 +78,8 @@ export async function validateIntent(
       feesLoaded,
       config,
     );
+    if (memoError) result.errors.transaction = memoError;
+    return result;
   }
 
   const errors: Record<string, Error> = {};
@@ -77,6 +96,10 @@ export async function validateIntent(
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!(await validateAddress(intent.recipient, { currencyId }))) {
     errors.recipient = new InvalidAddress();
+  }
+
+  if (memoError) {
+    errors.transaction = memoError;
   }
 
   const native = balances.find(b => b.asset.type === "native");

@@ -37,9 +37,6 @@ export const lukso = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 42,
-  },
   explorerViews: [
     {
       tx: "https://explorer.execution.mainnet.lukso.network/tx/$hash",

@@ -1,10 +1,6 @@
+import { track } from "@shared/analytics";
 import { renderHook, act } from "@testing-library/react-native";
-import { track } from "~/analytics";
 import { useAddAccountCta } from "../useAddAccountCta";
-
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
-}));
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),

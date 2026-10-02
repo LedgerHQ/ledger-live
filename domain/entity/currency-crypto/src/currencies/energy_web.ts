@@ -37,9 +37,6 @@ export const energy_web = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 246,
-  },
   explorerViews: [
     {
       tx: "https://explorer.energyweb.org/tx/$hash",

@@ -128,7 +128,8 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "timemachine": "^0.3.2"
+    "timemachine": "^0.3.2",
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

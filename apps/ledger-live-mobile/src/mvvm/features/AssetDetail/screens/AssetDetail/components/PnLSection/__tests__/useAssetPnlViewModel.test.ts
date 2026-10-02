@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import type { Account, DistributionItem } from "@ledgerhq/types-live";
 import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import {
   PNL_BUTTON,
   PNL_DETAIL_PAGE,

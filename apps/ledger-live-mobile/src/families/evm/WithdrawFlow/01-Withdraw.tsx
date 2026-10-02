@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
@@ -12,7 +13,6 @@ import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { Trans } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

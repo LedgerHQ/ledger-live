@@ -22,7 +22,10 @@ jest.mock("~/renderer/actions/walletSync");
 const mockOpenModal = jest.mocked(openModal);
 const mockCloseAllModal = jest.mocked(closeAllModal);
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
   setTrackingSource: jest.fn(),
 }));
 

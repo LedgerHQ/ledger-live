@@ -24,6 +24,7 @@ import { sha256 } from "../../crypto";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
+import { buildArcAliasTransfer } from "../../families/evm/exchange";
 import { handleHederaTrustedFlow } from "../../families/hedera/exchange";
 import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
@@ -72,6 +73,20 @@ export function shouldForceZeroAmountForDexSwap({
 }): boolean {
   if (!isDex || family !== "evm") return false;
   return hasSubAccountId || ARC_CURRENCY_IDS.has(fromCurrencyId);
+}
+
+export function shouldSendArcAsAliasTransfer({
+  isDex,
+  family,
+  hasSubAccountId,
+  fromCurrencyId,
+}: {
+  isDex: boolean;
+  family: string;
+  hasSubAccountId: boolean;
+  fromCurrencyId: string;
+}): boolean {
+  return !isDex && family === "evm" && !hasSubAccountId && ARC_CURRENCY_IDS.has(fromCurrencyId);
 }
 
 const EVM_NOT_ENOUGH_GAS_DIAGNOSTIC_KEYS = [
@@ -439,6 +454,24 @@ const completeExchange = (
             ...transaction,
             subAccountId: undefined,
             amount: BigNumber(0),
+          };
+          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+        } else if (
+          shouldSendArcAsAliasTransfer({
+            isDex,
+            family: transaction.family,
+            hasSubAccountId: Boolean(transaction.subAccountId),
+            fromCurrencyId: mainRefundCurrency.id,
+          })
+        ) {
+          const transactionFixed = {
+            ...transaction,
+            subAccountId: undefined,
+            ...buildArcAliasTransfer({
+              currencyId: mainRefundCurrency.id,
+              recipient: transaction.recipient,
+              amount: transaction.amount,
+            }),
           };
           transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
         } else {

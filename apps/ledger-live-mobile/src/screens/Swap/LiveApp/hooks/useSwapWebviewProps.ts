@@ -1,3 +1,4 @@
+import { getCurrentTrackingPage } from "@shared/analytics";
 import { useMemo } from "react";
 import { Platform } from "react-native";
 import useEnv from "@features/platform-env";
@@ -21,7 +22,6 @@ import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useDeviceIntentSignAssignment } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useSwapCustomHandlers } from "../customHandlers";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
-import { getCurrentTrackingPage } from "~/analytics/screenRefs";
 import { useTranslateToSwapAccount } from "./useTranslateToSwapAccount";
 import { DefaultAccountSwapParamList } from "../../types";
 

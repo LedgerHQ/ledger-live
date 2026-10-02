@@ -18,6 +18,7 @@
     "postinstall": "pnpm run nx:write-cache-config",
     "lint:boundaries": "nx run enforce-boundaries:lint:boundaries",
     "lint:structure": "nx run-many -t lint:structure",
+    "lint:i18n-keys": "nx run enforce-i18n-keys:lint:i18n-keys",
     "bump": "changeset version",
     "clean": "git clean -fdX && node tools/nx/write-nx-cache-config.mjs --force",
     "changelog": "changeset add",
@@ -54,7 +55,6 @@
     "watch:es:ljs": "nx run-many -t watch:es -p \"@ledgerhq/hw-*,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
     "watch:common": "nx run-many -t watch -p @ledgerhq/live-common",
     "watch:es:common": "nx run-many -t watch:es -p @ledgerhq/live-common",
-    "watch:countervalues": "nx run-many -t watch -p @ledgerhq/live-countervalues",
     "dev:cli": "nx run-many -t watch -p @ledgerhq/live-cli",
     "dev:lld": "nx run ledger-live-desktop:start",
     "dev:lld:msw": "nx run ledger-live-desktop:start:msw",
@@ -157,9 +157,6 @@
     "types-devices": "pnpm --filter types-devices",
     "types-live": "pnpm --filter types-live",
     "hw-transport-http": "pnpm --filter hw-transport-http",
-    "lkrp": "pnpm --filter ledger-key-ring-protocol",
-    "hw-lkrp": "pnpm --filter hw-ledger-key-ring-protocol",
-    "countervalues": "pnpm --filter live-countervalues",
     "countervalues-react": "pnpm --filter live-countervalues-react",
     "live-dmk-shared": "pnpm --filter live-dmk-shared",
     "live-dmk-mobile": "pnpm --filter live-dmk-mobile",
@@ -233,19 +230,6 @@
     "zx": "8.8.5"
   },
   "pnpm": {
-    "supportedArchitectures": {
-      "os": [
-        "current",
-        "darwin",
-        "linux",
-        "win32"
-      ],
-      "cpu": [
-        "current",
-        "x64",
-        "arm64"
-      ]
-    },
     "overrides": {
       "react": "catalog:",
       "react-dom": "catalog:",

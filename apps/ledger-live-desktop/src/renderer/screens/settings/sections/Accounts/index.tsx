@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { SettingsSectionRow as Row, SettingsSectionBody as Body } from "../../SettingsSection";
 import HideEmptyTokenAccountsToggle from "./HideEmptyTokenAccountsToggle";
 import FilterTokenOperationsZeroAmount from "./FilterTokenOperationsZeroAmount";

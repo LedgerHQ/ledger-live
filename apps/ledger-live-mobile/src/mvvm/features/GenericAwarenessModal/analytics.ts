@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalCarousel,
@@ -5,7 +6,6 @@ import {
   type GenericAwarenessModalFeatureIntro,
   type GenericAwarenessModalPrompt,
 } from "@ledgerhq/live-common/genericAwarenessModal";
-import { screen, track } from "~/analytics";
 
 export const GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE = "Awareness Modal Feature Intro";
 export const GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE = "Awareness Modal Carousel";
@@ -42,16 +42,22 @@ const getCarouselStepProperties = (
 export const trackGenericAwarenessModalFeatureIntroViewed = (
   featureIntro: GenericAwarenessModalFeatureIntro,
 ) => {
-  screen(GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE, undefined, {
-    name: GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE,
-    contentId: featureIntro.id,
+  trackPage({
+    category: GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE,
+    props: {
+      name: GENERIC_AWARENESS_MODAL_FEATURE_INTRO_PAGE,
+      contentId: featureIntro.id,
+    },
   });
 };
 
 export const trackGenericAwarenessModalPromptViewed = (prompt: GenericAwarenessModalPrompt) => {
-  screen(GENERIC_AWARENESS_MODAL_PROMPT_PAGE, undefined, {
-    name: GENERIC_AWARENESS_MODAL_PROMPT_PAGE,
-    contentId: prompt.id,
+  trackPage({
+    category: GENERIC_AWARENESS_MODAL_PROMPT_PAGE,
+    props: {
+      name: GENERIC_AWARENESS_MODAL_PROMPT_PAGE,
+      contentId: prompt.id,
+    },
   });
 };
 
@@ -59,10 +65,13 @@ export const trackGenericAwarenessModalCarouselStepViewed = (
   carousel: GenericAwarenessModalCarousel,
   slideIndex: number,
 ) => {
-  screen(GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE, undefined, {
-    name: GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE,
-    contentId: carousel.id,
-    ...getCarouselStepProperties(carousel, slideIndex),
+  trackPage({
+    category: GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE,
+    props: {
+      name: GENERIC_AWARENESS_MODAL_CAROUSEL_PAGE,
+      contentId: carousel.id,
+      ...getCarouselStepProperties(carousel, slideIndex),
+    },
   });
 };
 

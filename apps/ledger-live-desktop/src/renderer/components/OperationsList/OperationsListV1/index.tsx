@@ -16,7 +16,7 @@ import { openModal } from "~/renderer/actions/modals";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { createStructuredSelector } from "reselect";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import SectionTitle from "../SectionTitle";

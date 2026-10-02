@@ -22,11 +22,11 @@ export function combine(tx: string, signature: string[], _pubkey?: string): stri
     throw new Error(`NEAR combine expects exactly one signature, got ${signature.length}`);
   }
 
-  const transaction = nearAPI.transactions.Transaction.decode(Buffer.from(tx, "base64"));
+  const transaction = nearAPI.Transaction.decode(Buffer.from(tx, "base64"));
 
-  const signedTransaction = new nearAPI.transactions.SignedTransaction({
+  const signedTransaction = new nearAPI.SignedTransaction({
     transaction,
-    signature: new nearAPI.transactions.Signature({
+    signature: new nearAPI.Signature({
       keyType: transaction.publicKey.keyType,
       data: decodeSignature(signature[0]),
     }),

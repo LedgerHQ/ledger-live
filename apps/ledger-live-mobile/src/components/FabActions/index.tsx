@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { ComponentType, ReactElement, ReactNode, useCallback, useState } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -9,7 +10,6 @@ import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import InfoModal from "../InfoModal";
-import { track } from "~/analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
 import { setOriginFlow } from "~/analytics/originFlow";
 import { NavigatorName } from "~/const";

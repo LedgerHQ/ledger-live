@@ -1,7 +1,7 @@
 # @domain/entity-market-countervalues
 
 > [!CAUTION]
-> **Status: UNSTABLE** — Being migrated out of `@ledgerhq/live-countervalues`; API may change.
+> **Status: UNSTABLE** — API may change.
 
 Domain entity for **countervalues**: the rate state the apps hold, and the pure logic over it.
 

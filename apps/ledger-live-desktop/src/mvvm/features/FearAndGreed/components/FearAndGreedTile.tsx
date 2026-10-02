@@ -8,7 +8,7 @@ import { Tile, TileContent, TileTitle } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { FearAndGreedIndicator } from "./FearAndGreedIndicator";
 import { FearAndGreedDialog } from "./FearAndGreedDialog";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 const COLOR_CLASS_MAP: Record<string, string> = {
   error: "text-error",

@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { EnvName, getEnvDefault } from "@shared/env";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Switch from "~/renderer/components/Switch";
 import Input from "~/renderer/components/Input";
 import Box from "~/renderer/components/Box";

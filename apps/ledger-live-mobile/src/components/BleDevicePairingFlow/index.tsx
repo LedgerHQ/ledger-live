@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "~/context/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -7,7 +8,6 @@ import RequiresBLE from "../RequiresBLE";
 import { addKnownBleDevice } from "~/actions/ble";
 import { addKnownDevice, mapDeviceToKnownDevice } from "~/reducers/knownDevices";
 import type { BleDevicesScanningProps } from "./BleDevicesScanning";
-import { track } from "~/analytics";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";

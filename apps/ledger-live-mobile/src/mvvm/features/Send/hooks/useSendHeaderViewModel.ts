@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -5,10 +6,10 @@ import { useTranslation } from "~/context/Locale";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
-import { track } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
   buildTransactionPatchFromURIScheme,
@@ -320,12 +321,14 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     [recipientSearch, setInputMethod],
   );
 
+  const config = resolveCurrencyConfig(state.account.currency?.id);
   const canSearchContacts =
     isContactsFeatureEnabled &&
     isEligibleAddressCurrency(
       eligibleAddressFamilies,
       state.account.currency ?? undefined,
       excludedCurrencyIds,
+      config,
     );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({

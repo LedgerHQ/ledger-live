@@ -1,4 +1,4 @@
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@domain/entity-market-countervalues";
 import { createAction } from "redux-actions";
 import { CountervaluesActionTypes } from "./types";
 

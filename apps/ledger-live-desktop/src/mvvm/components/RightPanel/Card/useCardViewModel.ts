@@ -22,8 +22,10 @@ import logger from "~/renderer/logger";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { HISTORY_TAB_CARD, HISTORY_TAB_SEARCH_PARAM } from "LLD/features/History/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
+import { CL_CARD_APP_ID } from "LLD/features/Card/constants";
 import { formatCardTransactionAmount } from "./formatCardTransactionAmount";
 import { useCardHostedPageOpeners } from "./useCardHostedPageOpeners";
+import { usePayCardFace } from "./usePayCardFace";
 import { usePayCardAssets } from "./usePayCardAssets";
 import type { CardViewModel } from "./types";
 
@@ -129,6 +131,7 @@ export function useCardViewModel(): CardViewModel {
 
   const { openHostedLogin, openHostedPage, openLegacyCardApp } = useCardHostedPageOpeners();
   const isLegacyTopUp = !!useFeature("lwdPayTab")?.params?.legacyTopUp;
+  const isLiveAppCard = usePayCardFace() === "liveApp";
 
   const openHosted = useCallback(
     (buildPath: CardAssetPathBuilder, failedToOpen: string, currency?: string) =>
@@ -174,9 +177,33 @@ export function useCardViewModel(): CardViewModel {
     [openHosted],
   );
 
+  // The live app face hands sign up and log in to the Card live apps, and keeps the login page.
+  const onCreateAccount = useCallback(
+    () => navigate("/card/card-program?path=%2Fproviders-list", { state: { fromPayTab: true } }),
+    [navigate],
+  );
+  const onLogIn = useCallback(
+    () => navigate(`/card/${CL_CARD_APP_ID}`, { state: { fromPayTab: true } }),
+    [navigate],
+  );
+
   const login: CardViewModel["login"] = useMemo(
-    () => ({ oauthConfig, callback, openHostedLogin, openHostedPage }),
-    [oauthConfig, callback, openHostedLogin, openHostedPage],
+    () => ({
+      oauthConfig,
+      callback,
+      openHostedLogin,
+      openHostedPage,
+      ...(isLiveAppCard && { keepLoginPage: true, onCreateAccount, onLogIn }),
+    }),
+    [
+      oauthConfig,
+      callback,
+      openHostedLogin,
+      openHostedPage,
+      isLiveAppCard,
+      onCreateAccount,
+      onLogIn,
+    ],
   );
 
   const onShowMore = useCallback(() => {

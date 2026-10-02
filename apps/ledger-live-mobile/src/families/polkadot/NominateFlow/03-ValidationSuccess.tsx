@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "~/context/Locale";
@@ -5,7 +7,6 @@ import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { usePolkadotValidators } from "@ledgerhq/live-common/families/polkadot/react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { TrackScreen, track } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";

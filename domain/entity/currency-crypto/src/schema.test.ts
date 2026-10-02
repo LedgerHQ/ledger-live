@@ -1,9 +1,4 @@
-import {
-  ExplorerViewSchema,
-  EthereumLikeInfoSchema,
-  CryptoCurrencyIdSchema,
-  CryptoCurrencySchema,
-} from "./schema";
+import { ExplorerViewSchema, CryptoCurrencyIdSchema, CryptoCurrencySchema } from "./schema";
 import { mockCryptoCurrency } from "./schema.mock";
 
 describe("CryptoCurrencyIdSchema", () => {
@@ -26,12 +21,6 @@ describe("ExplorerViewSchema", () => {
       address: "https://example.com/address/$address",
     };
     expect(ExplorerViewSchema.parse(view)).toEqual(view);
-  });
-});
-
-describe("EthereumLikeInfoSchema", () => {
-  it("accepts valid chainId", () => {
-    expect(EthereumLikeInfoSchema.parse({ chainId: 1 })).toEqual({ chainId: 1 });
   });
 });
 

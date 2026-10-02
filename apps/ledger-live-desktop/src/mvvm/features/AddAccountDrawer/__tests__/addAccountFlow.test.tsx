@@ -2,7 +2,7 @@ import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React from "react";
 import { act, render, screen, userEvent, waitFor } from "tests/testSetup";
-import { trackPage } from "@shared/analytics";
+import { track, trackPage } from "@shared/analytics";
 import {
   selectCurrencyRegionRestrictedDialogParams,
   selectIsCurrencyRegionRestrictedDialogOpen,
@@ -10,7 +10,6 @@ import {
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { CurrencyRegionRestrictedError } from "@ledgerhq/live-common/errors";
 import { openModal } from "~/renderer/actions/modals";
-import { track } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
@@ -174,9 +173,10 @@ jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
@@ -190,7 +190,9 @@ const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
     },
   };
 
-  return render(<ModularDrawerAddAccountFlowManager currency={currency} />, { initialState });
+  return render(<ModularDrawerAddAccountFlowManager currency={currency} />, {
+    initialState,
+  });
 };
 
 function expectTrackPage(

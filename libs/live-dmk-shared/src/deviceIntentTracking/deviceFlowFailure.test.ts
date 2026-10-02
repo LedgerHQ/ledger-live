@@ -1,10 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
-  BaseConnectionErrorTypes,
-  BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
-  type BaseConnectionError,
-  type BaseDiscoveryError,
   type ConnectDeviceUIState,
   type KnownDevice,
 } from "../connectDevice/types";
@@ -28,6 +24,12 @@ import {
   getInvalidOperationFailure,
   type DeviceFlowDevice,
 } from "./deviceFlowFailure";
+import {
+  type BaseConnectionError,
+  BaseConnectionErrorTypes,
+  type BaseDiscoveryError,
+  BaseDiscoveryErrorTypes,
+} from "../deviceConnectivity/types";
 
 type SharedConnectDeviceUIState = ConnectDeviceUIState<BaseDiscoveryError, BaseConnectionError>;
 

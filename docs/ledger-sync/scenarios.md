@@ -9,7 +9,7 @@ so they stay **linked** (📹) to their Confluence page — the behaviour and it
 > - **📹** links the original demo recording on Confluence (legacy; to be refreshed).
 > - **Verified by** links a behaviour to a deterministic
 >   [LKRP scenario](./test-strategy.md#deterministic-scenario-tests-lkrp)
->   (`libs/ledger-key-ring-protocol/tests/scenarios`) or a
+>   (`ts-libs/libs/ledger-key-ring-protocol/tests/scenarios`) or a
 >   [CloudSyncDataManager test](./test-strategy.md#cloudsyncdatamanager-unit-tests).
 >   App-level behaviours are validated manually / in app E2E (**QA**).
 

@@ -133,14 +133,12 @@ global.IntersectionObserver = class IntersectionObserver {
 
 jest.mock("src/renderer/analytics/segment", () => ({
   setAnalyticsFeatureFlagMethod: jest.fn(),
-  start: jest.fn(),
-  track: jest.fn(),
-  trackPage: jest.fn(),
   updateIdentify: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
   trackPage: jest.fn(),
 }));
 

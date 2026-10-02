@@ -52,7 +52,9 @@
         "sharedEnv",
         {
           "env": "RUNNER_OS"
-        }
+        },
+        "{workspaceRoot}/e2e/mobile/detox.config.js",
+        "{workspaceRoot}/e2e/mobile/scripts/**"
       ]
     },
     "build": {

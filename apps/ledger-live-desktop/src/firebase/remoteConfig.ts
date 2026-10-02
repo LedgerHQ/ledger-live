@@ -11,9 +11,11 @@ import isMatch from "lodash/isMatch";
 import * as fs from "fs";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
-import { formatDefaultFeatures } from "@features/platform-feature-flags";
-import { parseFirebaseFeatures } from "@features/platform-feature-flags/firebase";
-import { setContentAbTestCopy } from "./contentAbTestCopy";
+import {
+  formatDefaultFeatures,
+  parseFirebaseFeatures,
+} from "@features/platform-feature-flags-firebase";
+import { setContentAbTestCopy } from "@features/platform-content-ab-tests";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { getFirebaseConfig } from "~/firebase-setup";
@@ -109,7 +111,7 @@ export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   return flags;
 }
 
-// One `getAll()` payload, two readers: the flag decoder and the Engagement copy experiments,
+// One `getAll()` payload, two readers: the flag decoder and the copy experiments,
 // which are `feature_copy_*` keys in the same Remote Config template.
 function hydrateRemoteConfigValues(all: ReturnType<typeof getAll>): PartialFeatures {
   setContentAbTestCopy(all);

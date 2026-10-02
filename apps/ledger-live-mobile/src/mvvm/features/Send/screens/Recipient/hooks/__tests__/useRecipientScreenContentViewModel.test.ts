@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@testing-library/react-native";
-import { track } from "~/analytics";
 import { useMemoViewModel } from "../../../../components/Memo/hooks/useMemoViewModel";
 import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionViewModel";

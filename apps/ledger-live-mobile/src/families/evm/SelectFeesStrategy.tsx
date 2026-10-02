@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { getEstimatedFees } from "@ledgerhq/live-common/families/evm/utils";
 import { getTypedTransaction } from "@ledgerhq/live-common/families/evm/transaction";
 import type { FeeData, GasOptions, Strategy } from "@ledgerhq/coin-evm/types";
@@ -18,7 +19,6 @@ import {
   TouchableOpacityProps,
   View,
 } from "react-native";
-import { track } from "~/analytics";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import LText from "~/components/LText";

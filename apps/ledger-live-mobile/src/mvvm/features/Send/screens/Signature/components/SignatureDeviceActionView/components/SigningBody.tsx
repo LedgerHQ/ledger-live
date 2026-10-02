@@ -1,6 +1,6 @@
+import { trackPage } from "@shared/analytics";
 import React, { useEffect } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { screen } from "~/analytics";
 import type { getSendFlowTrackingProperties } from "LLM/features/Send/utils/tracking";
 import type { RecipientType } from "../../../../../utils/contactTracking";
 import { SimplifiedTransactionConfirm } from "../../SimplifiedTransactionConfirm";
@@ -51,9 +51,12 @@ export function SigningBody({
     if (!isUserRefused) {
       return;
     }
-    void screen("Modal send - action rejected", undefined, {
-      ...trackingProperties,
-      recipientType,
+    void trackPage({
+      category: "Modal send - action rejected",
+      props: {
+        ...trackingProperties,
+        recipientType,
+      },
     });
   }, [isUserRefused, recipientType, trackingProperties]);
 

@@ -1,10 +1,11 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { track, TrackScreen } from "~/analytics";
 import SelectDevice, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
 

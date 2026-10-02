@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { Linking } from "react-native";
@@ -17,7 +18,6 @@ import {
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-mobile";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import type { DeviceLike, State } from "~/reducers/types";
 import { urls } from "~/utils/urls";
@@ -26,15 +26,6 @@ import {
   type SourceFlow,
 } from "../utils/DeviceIntentTrackingContext";
 import { useDeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
-
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    track: jest.fn(),
-    screen: jest.fn(),
-  };
-});
 
 const mockedTrack = jest.mocked(track);
 const mockReportFailure = jest.fn();

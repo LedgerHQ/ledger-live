@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import {
@@ -17,7 +18,6 @@ import type {
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import FormatDate from "~/components/DateFormat/FormatDate";

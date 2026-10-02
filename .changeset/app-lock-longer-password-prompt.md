@@ -1,6 +1,5 @@
 ---
 "@features/platform-app-lock": minor
-"@features/flow-app-lock": minor
 "live-mobile": minor
 ---
 

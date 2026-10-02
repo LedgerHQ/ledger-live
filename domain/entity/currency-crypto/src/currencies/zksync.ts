@@ -37,9 +37,6 @@ export const zksync = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 324,
-  },
   explorerViews: [
     {
       tx: "https://zksync.blockscout.com/tx/$hash",

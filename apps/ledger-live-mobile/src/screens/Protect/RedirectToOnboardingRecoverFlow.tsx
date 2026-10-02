@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Linking } from "react-native";
 import { Trans } from "~/context/Locale";
@@ -17,7 +18,6 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { first } from "rxjs/operators";
 import { from } from "rxjs";
-import { TrackScreen } from "~/analytics";
 import { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";

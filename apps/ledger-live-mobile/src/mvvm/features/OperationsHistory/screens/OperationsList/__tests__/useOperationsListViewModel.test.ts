@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { act } from "@testing-library/react-native";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -5,7 +6,6 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken, maticEth } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { calculate } from "@domain/entity-market-countervalues";
 import type { Account } from "@ledgerhq/types-live";
-import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import { useOperationsListViewModel } from "../useOperationsListViewModel";
 

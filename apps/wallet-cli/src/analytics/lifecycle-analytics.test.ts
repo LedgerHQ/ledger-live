@@ -1,14 +1,15 @@
 import { afterAll, beforeEach, describe, expect, it, spyOn } from "bun:test";
+import * as analytics from "@shared/analytics";
 import { CliProcessExitError } from "../cli-process-exit-error";
-import * as segment from "./segment";
 import { withCommandLifecycleAnalytics } from "./lifecycle-analytics";
 
 type TrackCall = { event: string; properties?: Record<string, unknown> | null };
 
 const trackCalls: TrackCall[] = [];
 
-const trackSpy = spyOn(segment, "track").mockImplementation((event, properties) => {
-  trackCalls.push({ event, properties });
+const trackSpy = spyOn(analytics, "track").mockImplementation((event, properties) => {
+  trackCalls.push({ event, properties: properties as TrackCall["properties"] });
+  return Promise.resolve();
 });
 
 afterAll(() => {

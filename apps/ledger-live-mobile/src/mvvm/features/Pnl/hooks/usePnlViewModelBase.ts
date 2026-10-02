@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
@@ -17,7 +18,6 @@ import {
   AVERAGE_PRICE_BUTTON,
   AVERAGE_PRICE_TYPE,
 } from "../const";
-import { track } from "~/analytics";
 
 const ZERO = new BigNumber(0);
 

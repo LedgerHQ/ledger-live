@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import type { ConnectedDevice, TransportIdentifier } from "@ledgerhq/device-management-kit";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import type { ExecutorState } from "@features/platform-device-intent";
@@ -11,7 +12,6 @@ import {
   type DeviceFlowFailure,
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
-import { track } from "~/analytics";
 import type { DeviceIntentTrackingProperties, SourceFlow } from "./DeviceIntentTrackingContext";
 
 export const PAGE_CONNECT_DEVICE = {

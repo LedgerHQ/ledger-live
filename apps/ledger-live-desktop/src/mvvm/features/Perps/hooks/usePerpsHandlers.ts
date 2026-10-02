@@ -6,9 +6,10 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { openPerpsSign } from "../screens/PerpsSign/PerpsSignDialog";
 import { openPerpsDeposit } from "../screens/PerpsDeposit/PerpsDepositDialog";
+import { beginDepositRequest, cancelDepositRequest } from "../utils/perpsDepositRequest";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiSigningExecute = useCallback(
@@ -37,8 +38,12 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
   );
 
   const uiDepositExecute = useCallback((params: PerpsDepositUiParams) => {
+    const request = beginDepositRequest();
     openPerpsDeposit(params);
+    return request;
   }, []);
+
+  useEffect(() => cancelDepositRequest, []);
 
   return useMemo<WalletAPICustomHandlers>(() => {
     return perpsHandlers({

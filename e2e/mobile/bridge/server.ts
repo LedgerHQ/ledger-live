@@ -12,8 +12,10 @@ import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { v4 as uuid } from "uuid";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
-const RESPONSE_TIMEOUT = 10000;
+/** Round-trip to the app over the bridge. Exported so a caller can bound a bridge call from outside. */
+export const BRIDGE_RESPONSE_TIMEOUT = TIMEOUT.medium;
 
 export async function findFreePort(): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -167,19 +169,11 @@ export async function swapSetup() {
 }
 
 export async function waitSwapReady() {
-  return fetchData(
-    { type: "waitSwapReady", id: uniqueId() },
-    RESPONSE_TIMEOUT * 3,
-    "waitSwapReady",
-  );
+  return fetchData({ type: "waitSwapReady", id: uniqueId() }, TIMEOUT.xlarge, "waitSwapReady");
 }
 
 export async function waitEarnReady() {
-  return fetchData(
-    { type: "waitEarnReady", id: uniqueId() },
-    RESPONSE_TIMEOUT * 3,
-    "waitEarnReady",
-  );
+  return fetchData({ type: "waitEarnReady", id: uniqueId() }, TIMEOUT.xlarge, "waitEarnReady");
 }
 
 export async function getLogs() {
@@ -201,7 +195,7 @@ export async function getPtxHandoff() {
 
 async function fetchData(
   message: MessageData,
-  timeout = RESPONSE_TIMEOUT,
+  timeout = BRIDGE_RESPONSE_TIMEOUT,
   correlationKey: string = message.id,
 ): Promise<string> {
   return new Promise<string>(resolve => {

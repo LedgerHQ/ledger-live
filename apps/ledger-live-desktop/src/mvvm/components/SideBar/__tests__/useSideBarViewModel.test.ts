@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useSideBarViewModel } from "../useSideBarViewModel";
 import { SIDEBAR_VALUE_TO_PATH, SIDEBAR_VALUE_TO_TRACK_ENTRY } from "../utils/constants";
 import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
-import * as segment from "~/renderer/analytics/segment";
+import * as segment from "@shared/analytics";
 import type { SideBarViewModel } from "../types";
 import { defaultInitialState, withFeatureFlags } from "./testUtils";
 import { isSideBarNavValue } from "../utils";

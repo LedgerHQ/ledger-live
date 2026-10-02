@@ -4,13 +4,17 @@ import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import CommonPage from "@e2e/page/common.page";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { checkForErrorModals } from "@e2e/helpers/errorHelpers";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 // Short enough that retryUntilTimeout's own budget still allows a re-tap; the default 60s would
 // consume the whole budget in a single attempt.
-const CONTINUE_DISMISS_TIMEOUT = 5_000;
+const CONTINUE_DISMISS_TIMEOUT = TIMEOUT.small;
 
 // Long enough to outlast the drawer animation, short enough to not stall the variant that skips it.
-const IMPORT_PROMPT_TIMEOUT = 5_000;
+const IMPORT_PROMPT_TIMEOUT = TIMEOUT.small;
+
+// Full discovery on a fresh currency, dominated by the derivation scan.
+const ACCOUNT_DISCOVERY_TIMEOUT = 240_000;
 
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
@@ -45,20 +49,19 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
-    const DISCOVERY_TIMEOUT = 240_000;
     const startTime = Date.now();
 
     // disable sync to avoid Detox hanging during busy account discovery and UI animations
     await device.disableSynchronization();
     try {
-      while (Date.now() - startTime < DISCOVERY_TIMEOUT) {
-        if (await IsIdVisible(this.continueButtonId, 10_000)) {
+      while (Date.now() - startTime < ACCOUNT_DISCOVERY_TIMEOUT) {
+        if (await IsIdVisible(this.continueButtonId, TIMEOUT.medium)) {
           return;
         }
-        await checkForErrorModals(1_000, "Account discovery failed");
+        await checkForErrorModals(TIMEOUT.xxsmall, "Account discovery failed");
       }
       throw new Error(
-        `Account discovery timed out after ${DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
+        `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
       );
     } finally {
       await device.enableSynchronization();

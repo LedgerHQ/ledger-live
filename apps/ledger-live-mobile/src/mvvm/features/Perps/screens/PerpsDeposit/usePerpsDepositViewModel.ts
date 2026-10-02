@@ -8,7 +8,7 @@ import {
   useCalculateCountervalueCallback,
   useCountervaluesState,
 } from "@ledgerhq/live-countervalues-react";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";

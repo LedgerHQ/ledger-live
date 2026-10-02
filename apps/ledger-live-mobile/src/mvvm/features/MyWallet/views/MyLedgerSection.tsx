@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
@@ -9,7 +10,6 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
-import { track } from "~/analytics";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../constants";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";

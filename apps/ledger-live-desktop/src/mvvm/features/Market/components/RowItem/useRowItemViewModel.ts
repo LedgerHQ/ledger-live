@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
