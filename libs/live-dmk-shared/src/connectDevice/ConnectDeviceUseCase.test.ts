@@ -26,6 +26,7 @@ const setupTest = ({
   const deviceDiscoveryService: DeviceDiscoveryService = {
     start: jest.fn(),
     stop: jest.fn(),
+    transportIds: [],
     discoveredDevices: EMPTY,
     errors: EMPTY,
   };

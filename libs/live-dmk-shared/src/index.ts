@@ -38,6 +38,18 @@ export {
   connectDeviceUseCase,
   type ConnectDeviceUseCaseInput,
 } from "./connectDevice/connectDeviceUseCase";
+export { ConnectNewDeviceUIStateTypes } from "./connectNewDevice/types";
+export type {
+  ConnectNewDeviceMapConnectionError,
+  ConnectNewDeviceStateMachineInput,
+  ConnectNewDeviceUIState,
+  ConnectNewDeviceUIStateType,
+  SelectableDevice,
+} from "./connectNewDevice/types";
+export {
+  DefaultConnectNewDeviceStateMachine,
+  type ConnectNewDeviceStateMachine,
+} from "./connectNewDevice/ConnectNewDeviceStateMachine";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
 export {
