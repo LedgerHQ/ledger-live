@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: "node",
   testRegex: ".integration.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
+  setupFilesAfterEnv: ["<rootDir>/../wallet-framework-test-setup/src/index.js"],
   testTimeout: 90_000,
   forceExit: true,
   transform: {

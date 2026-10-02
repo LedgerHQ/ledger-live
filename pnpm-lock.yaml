@@ -14860,9 +14860,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
-      '@ledgerhq/wallet-framework-test-setup':
-        specifier: workspace:^
-        version: link:../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
