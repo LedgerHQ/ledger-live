@@ -1,5 +1,13 @@
 # @devtools/registry
 
+## 0.5.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`3b5a959`](https://github.com/LedgerHQ/ledger-live/commit/3b5a959ffd24bc06a91bb608924c0575d62eb753), [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21)]:
+  - @devtools/pay-card@0.8.0-next.1
+  - @devtools/feature-flags@0.10.1-next.1
+
 ## 0.5.1-next.0
 
 ### Patch Changes

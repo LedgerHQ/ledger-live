@@ -1,5 +1,17 @@
 # @features/flow-contacts
 
+## 0.13.0-next.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.9.0-next.2
+  - @features/flow-contacts-add-contact@0.7.1-next.2
+  - @features/flow-contacts-delete-contact@0.2.4-next.2
+  - @features/flow-contacts-edit-address@0.4.1-next.2
+  - @features/flow-contacts-edit-contact@0.6.1-next.2
+  - @features/flow-contacts-list@0.9.0-next.2
+
 ## 0.13.0-next.2
 
 ### Patch Changes

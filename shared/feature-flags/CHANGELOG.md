@@ -1,5 +1,11 @@
 # @shared/feature-flags
 
+## 0.25.0-next.1
+
+### Minor Changes
+
+- [#22889](https://github.com/LedgerHQ/ledger-live/pull/22889) [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
 ## 0.25.0-next.0
 
 ### Minor Changes

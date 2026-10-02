@@ -1,5 +1,17 @@
 # web-tools
 
+## 0.58.1-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`3b5a959`](https://github.com/LedgerHQ/ledger-live/commit/3b5a959ffd24bc06a91bb608924c0575d62eb753), [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21)]:
+  - @devtools/bindings@0.10.0-next.3
+  - @shared/feature-flags@0.25.0-next.1
+  - @features/platform-currencies@0.9.1-next.1
+  - @features/platform-feature-flags@0.8.1-next.1
+  - @ledgerhq/live-common@38.2.0-next.1
+  - @devtools/shell@0.10.1-next.1
+
 ## 0.58.1-next.3
 
 ### Patch Changes

@@ -1,5 +1,41 @@
 # live-mobile
 
+## 4.23.0-next.8
+
+### Minor Changes
+
+- [#22908](https://github.com/LedgerHQ/ledger-live/pull/22908) [`23ee31c`](https://github.com/LedgerHQ/ledger-live/commit/23ee31c0ebf892ea7924e18dc43ad947e7810782) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Pay card login: name Monavate instead of Baanx in "Log in to" and "Card provided by".
+
+- [#22889](https://github.com/LedgerHQ/ledger-live/pull/22889) [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
+### Patch Changes
+
+- Updated dependencies [[`56640ba`](https://github.com/LedgerHQ/ledger-live/commit/56640ba2c03cec8555f7452da785c8dd949ec010), [`56640ba`](https://github.com/LedgerHQ/ledger-live/commit/56640ba2c03cec8555f7452da785c8dd949ec010), [`3b5a959`](https://github.com/LedgerHQ/ledger-live/commit/3b5a959ffd24bc06a91bb608924c0575d62eb753), [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21)]:
+  - @features/flow-pay-balance@0.6.0-next.1
+  - @features/flow-pay-card-auth@0.9.0-next.2
+  - @devtools/bindings@0.10.0-next.3
+  - @features/flow-pay-card@0.6.0-next.3
+  - @features/flow-pay-feature-tour@0.7.0-next.2
+  - @shared/feature-flags@0.25.0-next.1
+  - @features/flow-pay-card-assets@0.3.0-next.3
+  - @features/flow-pay-card-details@0.6.0-next.3
+  - @features/flow-pay-card-transactions@0.4.0-next.3
+  - @features/flow-contacts-add-address@0.6.1-next.2
+  - @features/flow-large-screen-upsell@2.2.1-next.1
+  - @features/platform-contacts@0.9.0-next.2
+  - @features/platform-currencies@0.9.1-next.1
+  - @features/platform-feature-flags@0.8.1-next.1
+  - @devtools/shell@0.10.1-next.1
+  - @features/flow-contacts@0.13.0-next.3
+  - @features/flow-contacts-add-contact@0.7.1-next.2
+  - @features/flow-contacts-delete-contact@0.2.4-next.2
+  - @features/flow-contacts-edit-address@0.4.1-next.2
+  - @features/flow-contacts-edit-contact@0.6.1-next.2
+  - @features/flow-contacts-list@0.9.0-next.2
+  - @features/flow-pay-contact@0.5.0-next.4
+  - @features/flow-analytics-consent@0.2.8-next.1
+  - @ledgerhq/live-send@0.1.2-next.1
+
 ## 4.23.0-next.7
 
 ### Patch Changes

@@ -1,12 +1,12 @@
 ---
-"live-mobile": patch
-"ledger-live-desktop": patch
-"@features/flow-pay-card": patch
-"@features/flow-pay-card-auth": patch
-"@features/flow-pay-feature-tour": patch
-"@shared/feature-flags": patch
-"@devtools/pay-card": patch
-"@devtools/bindings": patch
+"live-mobile": minor
+"ledger-live-desktop": minor
+"@features/flow-pay-card": minor
+"@features/flow-pay-card-auth": minor
+"@features/flow-pay-feature-tour": minor
+"@shared/feature-flags": minor
+"@devtools/pay-card": minor
+"@devtools/bindings": minor
 ---
 
 Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
