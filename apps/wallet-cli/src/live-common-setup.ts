@@ -89,14 +89,19 @@ const walletCliLoaders: CoinModuleLoader[] = [
         setup.setSolanaLdmkEnabled(true);
         return setup;
       }),
-    loadTransaction: () => import("@ledgerhq/coin-solana/transaction").then(m => m.default),
+    loadTransaction: () =>
+      import("@ledgerhq/live-common/families/solana/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-solana/deviceTransactionConfig").then(m => m.default),
+      import("@ledgerhq/live-common/families/solana/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () =>
       import("@ledgerhq/live-common/families/solana/walletApiAdapter").then(m => m.default),
     loadSigner: () => import("@ledgerhq/live-common/families/solana/signer").then(m => m.default),
     loadBridgeApi: () =>
       import("@ledgerhq/live-common/families/solana/bridge/api").then(m => m.default),
+    loadBridgeExtensions: () =>
+      import("@ledgerhq/live-common/families/solana/bridgeExtensions").then(m => m.default),
+    loadAccountRawAssign: () =>
+      import("@ledgerhq/live-common/families/solana/accountRawAssign").then(m => m.default),
     loadLocalApi: () =>
       import("@ledgerhq/live-common/families/solana/coinModuleApi").then(
         m => m.createLocalSolanaApi,

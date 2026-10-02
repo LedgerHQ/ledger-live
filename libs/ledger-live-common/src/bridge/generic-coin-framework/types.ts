@@ -115,6 +115,9 @@ export type GenericTransaction = TransactionCommon & {
   transferFee?: TransferFee;
   stakeAccountRent?: BigNumber;
   ownerTokenAccount?: string;
+  recipientTokenAccount?: string;
+  recipientWalletAddress?: string;
+  userInputType?: string;
   sponsored?: boolean;
   valAddress?: string;
   valId?: string;
