@@ -3,7 +3,7 @@ import { act, render, screen, userEvent, waitFor } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import ReceiveWithAssociationModal from "../index";
 import { HEDERA_ACCOUNT_1 } from "../../__mocks__/account.mock";
-import { subjectRefs } from "../../__mocks__/bridge.mock";
+import { prepareTransactionSpy, subjectRefs } from "../../__mocks__/bridge.mock";
 import { mockSignedOperation } from "../../__mocks__/signedOperation.mock";
 import {
   createModalsContainer,
@@ -155,5 +155,21 @@ describe("Hedera ReceiveWithAssociationModal (integration)", () => {
     await waitFor(() => expect(screen.getByText("Transaction sent")).toBeVisible(), {
       timeout: 5000,
     });
+  });
+
+  it("emits a tokenAssociate transaction without the legacy properties bag", async () => {
+    setupModal({ receiveTokenMode: true, token: mockHtsToken });
+
+    await waitFor(() =>
+      expect(prepareTransactionSpy).toHaveBeenLastCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          mode: "tokenAssociate",
+          assetReference: mockHtsToken.contractAddress,
+          assetOwner: HEDERA_ACCOUNT_1.freshAddress,
+        }),
+      ),
+    );
+    expect(prepareTransactionSpy.mock.calls.at(-1)?.[1]).not.toHaveProperty("properties");
   });
 });
