@@ -124,6 +124,7 @@ const createTransaction = (): Transaction => ({
   mode: "send",
   amount: new BigNumber(0),
   recipient: "",
+  useAllAmount: false,
 });
 
 const updateTransaction: SolanaMockBridge["updateTransaction"] = (t, patch) => ({ ...t, ...patch });
