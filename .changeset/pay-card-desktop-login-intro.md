@@ -2,4 +2,4 @@
 "@features/flow-pay-card-auth": patch
 ---
 
-Remove the login button from the desktop Card intro and restore its bottom padding
+Restore the bottom padding of the desktop Card intro dialog
