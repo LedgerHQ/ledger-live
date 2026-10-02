@@ -1,8 +1,8 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
-import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { mockserverIdentifier, webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { getSpeculosModel } from "./devices";
@@ -50,6 +50,25 @@ function mapToWebHidKnownDevice(
   };
 }
 
+const MOCK_SERVER_DEVICE_MODELS: Record<string, DeviceModelId> = {
+  nanoS: DeviceModelId.nanoS,
+  nanoX: DeviceModelId.nanoX,
+  nanoSP: DeviceModelId.nanoSP,
+  flex: DeviceModelId.europa,
+  europa: DeviceModelId.europa,
+  apexp: DeviceModelId.apex,
+  stax: DeviceModelId.stax,
+};
+
+export function mockServerKnownDevice(deviceType: string | undefined): KnownDevice {
+  return {
+    transport: mockserverIdentifier,
+    deviceModelId: MOCK_SERVER_DEVICE_MODELS[deviceType ?? ""] ?? DeviceModelId.stax,
+    id: "",
+    name: null,
+  };
+}
+
 function mapSpeculosKnownDevice(): KnownDevice | null {
   if (!process.env.SPECULOS_API_PORT) return null;
 
@@ -65,15 +84,19 @@ function mapConnectedDevice(deviceModelId: DeviceModelId, name: string | null = 
   return mapSpeculosKnownDevice() ?? mapToWebHidKnownDevice(deviceModelId, name);
 }
 
+function mapTransportKnownDevice(): KnownDevice | null {
+  return mapSpeculosKnownDevice();
+}
+
 export function mapLastSeenDeviceToKnownDevice(
   device: DeviceModelInfo | null | undefined,
 ): KnownDevice | null {
-  if (!device) return mapSpeculosKnownDevice();
+  if (!device) return mapTransportKnownDevice();
   return mapConnectedDevice(device.modelId);
 }
 
 export function mapDeviceToKnownDevice(device: Device | null | undefined): KnownDevice | null {
-  if (!device) return mapSpeculosKnownDevice();
+  if (!device) return mapTransportKnownDevice();
   return mapConnectedDevice(device.modelId, device.deviceName ?? null);
 }
 
@@ -128,6 +151,9 @@ const knownDevicesSlice = createSlice({
   initialState: INITIAL_STATE,
   reducers: {
     importKnownDevices: (_state, action: PayloadAction<KnownDevicesState>) => action.payload,
+    seedMockServerKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
+      state.knownDevices = [action.payload];
+    },
   },
   extraReducers: builder => {
     builder
@@ -135,9 +161,9 @@ const knownDevicesSlice = createSlice({
         (action): action is PayloadAction<Partial<SettingsState>> =>
           action.type === "FETCH_SETTINGS",
         (state, action) => {
-          const speculosDevice = mapSpeculosKnownDevice();
-          if (speculosDevice) {
-            state.knownDevices = [speculosDevice];
+          const transportDevice = mapTransportKnownDevice();
+          if (transportDevice) {
+            state.knownDevices = [transportDevice];
             return;
           }
 
@@ -176,7 +202,7 @@ const knownDevicesSlice = createSlice({
   },
 });
 
-export const { importKnownDevices } = knownDevicesSlice.actions;
+export const { importKnownDevices, seedMockServerKnownDevice } = knownDevicesSlice.actions;
 
 export const knownDevicesSelector = (state: State): KnownDevice[] =>
   state.knownDevices.knownDevices;

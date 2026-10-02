@@ -18,6 +18,7 @@ import {
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { addNewDeviceModel } from "~/renderer/actions/settings";
+import { isMockServerTransportEnabled } from "~/renderer/mockServerTransport";
 import { knownDevicesSelector } from "~/renderer/reducers/knownDevices";
 import {
   getTrackingTransport,
@@ -119,6 +120,7 @@ export function useDeviceConnectionComponentLWDViewModel({
       ),
       dmk,
       onConnected: wrappedOnConnected,
+      mockServerTransportEnabled: isMockServerTransportEnabled(),
     }).subscribe({ next: handleState });
 
     return () => {

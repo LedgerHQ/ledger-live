@@ -6,7 +6,9 @@ import {
   getMockScriptRunnerBaseUrl,
   getMockServerTransportUrl,
 } from "@ledgerhq/live-dmk-desktop";
+import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { setEnvOnAllThreads } from "~/helpers/env";
+import { mockServerKnownDevice } from "~/renderer/reducers/knownDevices";
 
 const REQUEST_TIMEOUT_MS = 4000;
 
@@ -21,6 +23,26 @@ const MOCK_SCRIPT_RUNNER_PATH = "/secure-channel/";
  */
 export const MOCK_SERVER_TRANSPORT_STORAGE_KEY = "MOCK_SERVER_TRANSPORT";
 
+let mockServerTransportEnabled = false;
+
+export function isMockServerTransportEnabled(): boolean {
+  return mockServerTransportEnabled;
+}
+
+function sessionDeviceType(): string | undefined {
+  const session = getEnv("MOCK_SERVER_SESSION");
+  if (typeof session !== "object" || session === null || Array.isArray(session)) return undefined;
+
+  const { devices } = session;
+  if (!Array.isArray(devices)) return undefined;
+
+  const device = devices[0];
+  if (typeof device !== "object" || device === null || Array.isArray(device)) return undefined;
+
+  const { device_type: deviceType } = device;
+  return typeof deviceType === "string" ? deviceType : undefined;
+}
+
 /**
  * When the DMK mock server transport is enabled, create a single mock server
  * session and seed a device into it, then keep the session token in memory. The
@@ -28,7 +50,7 @@ export const MOCK_SERVER_TRANSPORT_STORAGE_KEY = "MOCK_SERVER_TRANSPORT";
  * discovers the seeded device instead of starting from an empty session. Must
  * run before the DMK is built.
  */
-export async function bootstrapMockServerTransport(): Promise<void> {
+export async function bootstrapMockServerTransport(): Promise<KnownDevice | null> {
   // Push the flag onto all threads before anything reads it (bootstrap below,
   // the DMK build, and socket/index.ts on the internal thread). Sync both true
   // and false: the internal thread is not reloaded by reloadRenderer, so a
@@ -43,6 +65,7 @@ export async function bootstrapMockServerTransport(): Promise<void> {
   const enabled = enabledAtLaunch
     ? getEnv("MOCK_SERVER_TRANSPORT")
     : window.localStorage.getItem(MOCK_SERVER_TRANSPORT_STORAGE_KEY) === "1";
+  mockServerTransportEnabled = enabled;
   setEnvOnAllThreads("MOCK_SERVER_TRANSPORT", enabled);
 
   const existingToken = getMockServerSessionToken();
@@ -55,11 +78,11 @@ export async function bootstrapMockServerTransport(): Promise<void> {
     if (getEnv("BASE_SOCKET_URL").includes(MOCK_SCRIPT_RUNNER_PATH)) {
       setEnvOnAllThreads("BASE_SOCKET_URL", getEnvDefault("BASE_SOCKET_URL"));
     }
-    return;
+    return null;
   }
-  if (existingToken) {
-    return;
-  }
+
+  const knownDevice = mockServerKnownDevice(sessionDeviceType());
+  if (existingToken) return knownDevice;
 
   const baseUrl = getMockServerTransportUrl();
   try {
@@ -109,4 +132,6 @@ export async function bootstrapMockServerTransport(): Promise<void> {
   } catch (error) {
     console.warn("Failed to bootstrap mock server transport", error);
   }
+
+  return knownDevice;
 }

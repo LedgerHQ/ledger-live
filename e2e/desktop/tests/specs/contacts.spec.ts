@@ -201,6 +201,8 @@ describeContactsWithAddresses("Contacts - with addresses", () => {
     ],
   });
 
+  // On-device rename leaves the Ethereum app for the dashboard, which ends this session.
+  // That path is contacts.rename.spec.ts, on the mock server.
   test(
     "Create and delete a contact with an address",
     {
