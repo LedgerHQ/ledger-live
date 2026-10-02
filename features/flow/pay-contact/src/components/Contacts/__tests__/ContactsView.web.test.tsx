@@ -1,6 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { DEFAULT_ME_CONTACT_NAME } from "@domain/entity-contact";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { ContactsView } from "../ContactsView.web";
 import { makeContactsViewProps, renderWithContacts } from "./shared";
@@ -44,6 +45,21 @@ describe("ContactsView (Web)", () => {
     expect(screen.getByText("Ada")).toBeVisible();
     expect(screen.getByText("Bob")).toBeVisible();
     expect(screen.getAllByTestId(/^pay-contacts-tile-/)).toHaveLength(2);
+  });
+
+  it("should name the default Me contact Me", () => {
+    const contact = mockContact({ id: "contact-me", name: DEFAULT_ME_CONTACT_NAME, isMe: true });
+    renderView({ isEmpty: false, rows: [{ contact, transactionCount: 0 }] });
+
+    expect(screen.getByText("Me")).toBeVisible();
+    expect(screen.queryByText("My addresses (Me)")).not.toBeInTheDocument();
+  });
+
+  it("should keep the renamed Me contact suffixed with (Me)", () => {
+    const contact = mockContact({ id: "contact-me", name: "Ada", isMe: true });
+    renderView({ isEmpty: false, rows: [{ contact, transactionCount: 0 }] });
+
+    expect(screen.getByText("Ada (Me)")).toBeVisible();
   });
 
   it("should render the closed add-contact dialog without showing it", () => {

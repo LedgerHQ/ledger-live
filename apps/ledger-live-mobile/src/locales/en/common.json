@@ -11127,6 +11127,7 @@
       "title": "Pay",
       "pay": "New",
       "seeAllTitle": "Pay contact",
+      "me": "Me",
       "addressPicker": {
         "title": "Select {{name}}'s address",
         "meTitle": "Select my address",
