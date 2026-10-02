@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import type { RequestReceiveProps } from "@features/flow-pay-request";
@@ -11,6 +12,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
 import { useOpenAssetAndAccount } from "../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useResumeAddAccountAfterOnboarding } from "../../AddAccountDrawer/hooks/useResumeAddAccountAfterOnboarding";
 import { deriveRequestReceiveData } from "./deriveRequestReceiveData";
 import { useSaveRequestReceive } from "./useSaveRequestReceive";
 import type { PayVerifySelection } from "./usePayTabVerifyAddress";
@@ -39,17 +41,26 @@ export function usePayTabRequestReceive(
   const copyToClipboard = useCopyToClipboard();
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
-  const open = useCallback(() => {
-    dispatch(setFlowValue("request"));
-    dispatch(setSourceValue("pay"));
-    openAssetAndAccount({
-      categories: REQUEST_CATEGORIES,
-      onSuccess: (account, parentAccount) => {
-        setSelection({ account, parentAccount });
-        setIsOpen(true);
-      },
-    });
-  }, [dispatch, openAssetAndAccount]);
+  const openRequest = useCallback(
+    (currency?: CryptoOrTokenCurrency) => {
+      dispatch(setFlowValue("request"));
+      dispatch(setSourceValue("pay"));
+      openAssetAndAccount({
+        categories: REQUEST_CATEGORIES,
+        currencies: currency && [currency.id],
+        areCurrenciesFiltered: currency !== undefined,
+        onSuccess: (account, parentAccount) => {
+          setSelection({ account, parentAccount });
+          setIsOpen(true);
+        },
+      });
+    },
+    [dispatch, openAssetAndAccount],
+  );
+  const open = useCallback(() => openRequest(), [openRequest]);
+
+  // Back from device onboarding: reopen the request on the asset the user had picked.
+  useResumeAddAccountAfterOnboarding(openRequest);
 
   const onClose = useCallback(() => setIsOpen(false), []);
 

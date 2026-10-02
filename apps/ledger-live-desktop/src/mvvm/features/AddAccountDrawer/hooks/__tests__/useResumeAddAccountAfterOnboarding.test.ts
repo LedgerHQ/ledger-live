@@ -44,6 +44,20 @@ describe("useResumeAddAccountAfterOnboarding", () => {
     expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(bitcoin);
   });
 
+  it("lets a screen resume with its own flow, before the app-wide one", () => {
+    const resumeOnScreen = jest.fn();
+    renderHook(
+      () => {
+        useResumeAddAccountAfterOnboarding(resumeOnScreen);
+        useResumeAddAccountAfterOnboarding();
+      },
+      { initialState: { settings: AFTER_ONBOARDING_STATE, onboarding: awaiting() } },
+    );
+
+    expect(resumeOnScreen).toHaveBeenCalledWith(usdcToken);
+    expect(mockOpenAddAccountFlow).not.toHaveBeenCalled();
+  });
+
   it("waits while the user is not on the screen the flow started from", () => {
     const { store } = renderHook(() => useResumeAddAccountAfterOnboarding(), {
       initialRoute: "/accounts",
