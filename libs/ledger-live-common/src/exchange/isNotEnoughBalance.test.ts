@@ -3,8 +3,8 @@ import {
   NotEnoughBalanceInParentAccount,
   NotEnoughSpendableBalance,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
-import { isNotEnoughBalance } from "../isNotEnoughBalance";
+import { CompleteExchangeError } from "./error";
+import { isNotEnoughBalance } from "./isNotEnoughBalance";
 
 describe("isNotEnoughBalance", () => {
   it.each([

@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { isNotEnoughBalance } from "@ledgerhq/live-common/exchange/isNotEnoughBalance";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import type { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
@@ -29,7 +30,6 @@ import type { States } from "~/renderer/components/DeviceAction";
 import { openPerpsTransactionSigned } from "LLD/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedDialog";
 import { broadcastLogger } from "~/datadog/logs";
 import { track } from "@shared/analytics";
-import { isNotEnoughBalance } from "../utils/isNotEnoughBalance";
 import { isUserRefusal } from "../utils/isUserRefusal";
 
 type StartResult = StartExchangeResult;
