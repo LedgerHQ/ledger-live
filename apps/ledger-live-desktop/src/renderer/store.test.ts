@@ -1,9 +1,9 @@
-import { ipcRenderer } from "electron";
-import { CHANNELS } from "~/bridge/contract";
+import { store as storeBridge } from "~/renderer/bridge";
 import { getStoreValue, resetStore, setStoreValue } from "./store";
 
 jest.mock("~/renderer/bridge", () => ({
   bootstrap: { store: { "my-app-theme": { mode: "dark" }, "protect-STATE": "" } },
+  store: { set: jest.fn(), clear: jest.fn() },
 }));
 
 describe("renderer store", () => {
@@ -15,7 +15,7 @@ describe("renderer store", () => {
     setStoreValue("layout.size", "large", "my-app");
 
     expect(getStoreValue("layout.size", "my-app")).toBe("large");
-    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.storeSet, "my-app-layout.size", "large");
+    expect(storeBridge.set).toHaveBeenCalledWith("my-app-layout.size", "large");
   });
 
   it("should return undefined for an empty value", () => {
@@ -26,6 +26,6 @@ describe("renderer store", () => {
     resetStore();
 
     expect(getStoreValue("theme.mode", "my-app")).toBeUndefined();
-    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.storeClear);
+    expect(storeBridge.clear).toHaveBeenCalled();
   });
 });

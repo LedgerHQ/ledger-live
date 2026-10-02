@@ -23,4 +23,11 @@ if (bridge.bootstrap?.version !== 1) {
 export const bootstrap = bridge.bootstrap;
 export const db = bridge.db;
 export const transport = bridge.transport;
+export const updater = bridge.updater;
+export const deeplink = bridge.deeplink;
+export const app = bridge.app;
+export const dialogs = bridge.dialogs;
+export const files = bridge.files;
+export const power = bridge.power;
+export const store = bridge.store;
 export const cardSession = bridge.cardSession;
