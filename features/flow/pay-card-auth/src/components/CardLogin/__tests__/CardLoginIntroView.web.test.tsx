@@ -10,7 +10,7 @@ jest.mock("@features/platform-pay-analytics", () =>
 const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
   isOpen: true,
   title: "Spend crypto, earn cashback",
-  providedBy: "Card provided by Baanx",
+  providedBy: "Card provided by Monavate",
   rows: [
     {
       icon: "CoinsAddPlus",
@@ -30,7 +30,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
   ],
   actions: [
     { id: "createAccount", label: "Create an account", appearance: "base" },
-    { id: "logIn", label: "Log in to Baanx", appearance: "gray" },
+    { id: "logIn", label: "Log in to Monavate", appearance: "gray" },
   ],
   onActionPress: jest.fn(),
   onClose: jest.fn(),
@@ -76,7 +76,7 @@ describe("CardLoginIntroView (Web)", () => {
     expect(screen.getByText("Securely top up via Ledger Wallet")).toBeVisible();
     expect(screen.getByText("Every transfer approved with your Ledger signer.")).toBeVisible();
     expect(screen.getByTestId("pay-card-login-intro-provided-by")).toHaveTextContent(
-      "Card provided by Baanx",
+      "Card provided by Monavate",
     );
   });
 
@@ -110,7 +110,9 @@ describe("CardLoginIntroView (Web)", () => {
     expect(screen.getByTestId("pay-card-login-intro-createAccount")).toHaveTextContent(
       "Create an account",
     );
-    expect(screen.getByTestId("pay-card-login-intro-logIn")).toHaveTextContent("Log in to Baanx");
+    expect(screen.getByTestId("pay-card-login-intro-logIn")).toHaveTextContent(
+      "Log in to Monavate",
+    );
   });
 
   it.each(["createAccount", "logIn"] as const)("reports the %s click", id => {
