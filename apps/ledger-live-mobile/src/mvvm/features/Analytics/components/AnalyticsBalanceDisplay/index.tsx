@@ -1,5 +1,8 @@
 import React from "react";
-import { AmountDisplay, Skeleton } from "@ledgerhq/lumen-ui-rnative";
+import { View } from "react-native";
+import { Skeleton } from "@ledgerhq/lumen-ui-rnative";
+import { AmountDisplay as OriginalAmountDisplay } from "@ledgerhq/lumen-ui-rnative";
+import { AmountDisplay } from "LLM/components/AmountDisplay";
 import { useAnalyticsBalanceDisplayViewModel } from "./useAnalyticsBalanceDisplayViewModel";
 
 type Props = {
@@ -26,6 +29,16 @@ export function AnalyticsBalanceDisplay({ hoveredValue, animate = true }: Readon
   }
 
   return (
+    <View style={{ flexDirection: "column", alignItems: "center", gap: 8 }}>
+      <OriginalAmountDisplay
+        value={value}
+        formatter={formatter}
+        hidden={discreet}
+        loading={!isHovering && isLoading}
+        size="md"
+        animate={animate}
+        testID="analytics-balance-amount"
+      />
     <AmountDisplay
       value={value}
       formatter={formatter}
@@ -35,5 +48,6 @@ export function AnalyticsBalanceDisplay({ hoveredValue, animate = true }: Readon
       animate={animate}
       testID="analytics-balance-amount"
     />
+    </View>
   );
 }

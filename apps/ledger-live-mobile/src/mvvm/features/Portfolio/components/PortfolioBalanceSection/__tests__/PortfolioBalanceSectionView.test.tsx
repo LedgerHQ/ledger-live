@@ -5,13 +5,11 @@ import { PortfolioBalanceSectionView } from "../PortfolioBalanceSectionView";
 import { PortfolioBalanceSectionViewProps } from "../types";
 
 let mockAmountDisplaySize: "sm" | "md" | undefined;
-jest.mock("@ledgerhq/lumen-ui-rnative", () => {
-  const actual = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+jest.mock("LLM/components/AmountDisplay", () => {
   const ReactActual = jest.requireActual("react");
   const { Text } = jest.requireActual("react-native");
 
   return {
-    ...actual,
     AmountDisplay: ({ size, testID }: { size?: "sm" | "md"; testID?: string }) => {
       mockAmountDisplaySize = size;
       return ReactActual.createElement(Text, { testID }, "amount");

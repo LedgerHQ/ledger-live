@@ -1,13 +1,16 @@
 import React, { useCallback } from "react";
-import { AmountDisplay, Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
-import { DiscreetModeIcon } from "./DiscreetModeIcon";
+import { View } from "react-native";
+import { Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { AmountDisplaySize, FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
+import { AmountDisplay as OriginalAmountDisplay } from "@ledgerhq/lumen-ui-rnative";
+import { AmountDisplay } from "LLM/components/AmountDisplay";
 import { useSelector } from "~/context/hooks";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { discreetModeSelector } from "~/reducers/settings";
+import { DiscreetModeIcon } from "./DiscreetModeIcon";
 import { PortfolioBalanceSectionViewProps } from "./types";
 import { AnalyticPill } from "./AnalyticPill";
 
@@ -85,6 +88,15 @@ export const PortfolioBalanceSectionView = ({
         <Pressable onPress={onToggleDiscreetMode} testID="portfolio-balance-toggle">
           <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14" }}>
             {isBalanceAvailable ? (
+              <View style={{ flexDirection: "column", alignItems: "center", gap: 8 }}>
+                <OriginalAmountDisplay
+                  value={balance}
+                  formatter={formatter}
+                  size={getAmountDisplaySize(balance)}
+                  hidden={discreet}
+                  loading={isLoading}
+                  testID="portfolio-balance-amount"
+                />
               <AmountDisplay
                 key={unit.code}
                 value={balance}
@@ -94,6 +106,7 @@ export const PortfolioBalanceSectionView = ({
                 loading={isLoading}
                 testID="portfolio-balance-amount"
               />
+              </View>
             ) : (
               <Skeleton
                 testID="portfolio-placeholder-balance"
