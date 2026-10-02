@@ -6,7 +6,7 @@ import {
   useGetAssetChartDataQuery,
 } from "@ledgerhq/live-common/market/state-manager/marketApi";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useSupportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import {
   mockBtcCryptoCurrency,
@@ -25,7 +25,8 @@ jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   useGetCurrencyDataQuery: jest.fn(),
   useGetAssetChartDataQuery: jest.fn(),
 }));
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: jest.fn(() => ({ status: "ready", rate: 1 })),
 }));
 jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider", () => ({

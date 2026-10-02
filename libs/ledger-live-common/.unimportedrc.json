@@ -959,7 +959,6 @@
     "@ledgerhq/hw-app-vet",
     "@ledgerhq/hw-app-xrp",
     "@ledgerhq/hw-transport-mocker",
-    "@ledgerhq/live-countervalues-react",
     "@ledgerhq/live-signer-aleo",
     "@ledgerhq/live-signer-canton",
     "@ledgerhq/live-signer-celo",
