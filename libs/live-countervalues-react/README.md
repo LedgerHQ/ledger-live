@@ -2,8 +2,9 @@
 
 > [!WARNING]
 > **Status: DEPRECATED** — This package is now private and will not receive further npm releases.
-> It is being replaced by `@domain/` packages.
-> In-repo consumers continue to work; all new code should target the domain packages once available.
+> It is being replaced by `@features/platform-market-countervalues`, whose React context it already
+> uses, so either package's provider serves both packages' hooks. New code should import the platform
+> package.
 
 `@ledgerhq/live-countervalues-react` is the React layer over `@domain/entity-market-countervalues`. It provides a context provider and hooks so that components can subscribe to fiat countervalue data without managing rate-fetching or caching themselves.
 
