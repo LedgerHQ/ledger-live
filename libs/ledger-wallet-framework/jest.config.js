@@ -16,11 +16,8 @@ module.exports = {
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
     "@ledgerhq/test-quarantine/jest",
   ],
-  // wallet-framework-test-setup wires domain data into the framework's ports at test time.
-  // Loaded by relative path (not as a package dep) so the public framework carries no
-  // package.json edge back to it — that edge is what nx flags as a cyclic dependency.
   setupFilesAfterEnv: [
-    "<rootDir>/../wallet-framework-test-setup/src/index.js",
+    "<rootDir>/jest-setup.js",
     "<rootDir>/src/setup.ts",
     "@ledgerhq/test-quarantine/jest-retries",
   ],
