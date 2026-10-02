@@ -261,15 +261,16 @@ export function createZCashIPCClient(
 
 let cachedIpcRenderer: IpcRendererLike | null = null;
 
+/** Call once at startup: a context-isolated host has no `require("electron")`. */
+export function setZCashIpcRenderer(ipcRenderer: IpcRendererLike): void {
+  cachedIpcRenderer = ipcRenderer;
+}
+
 function getIpcRenderer(): IpcRendererLike {
   if (cachedIpcRenderer) return cachedIpcRenderer;
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const electron = require("electron") as { ipcRenderer?: IpcRendererLike };
-  if (!electron?.ipcRenderer) {
-    throw new Error("ZCashIPC: electron.ipcRenderer not available in this context");
-  }
-  cachedIpcRenderer = electron.ipcRenderer;
-  return cachedIpcRenderer;
+  throw new Error(
+    "ZCashIPC: no IPC channel configured — call setZCashIpcRenderer() during startup",
+  );
 }
 
 /**

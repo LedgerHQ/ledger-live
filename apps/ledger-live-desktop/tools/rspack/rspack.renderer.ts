@@ -1,6 +1,8 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { ReactRefreshRspackPlugin } from "@rspack/plugin-react-refresh";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const ProcessReadGuard = require("./processReadGuard.cjs");
 import { commonConfig, rootFolder } from "./rspack.common";
 import {
   buildRendererEnv,
@@ -11,15 +13,15 @@ import {
   isRsdoctorEnabled,
 } from "./utils";
 
-/**
- * Creates the rspack configuration for the Electron renderer process
- */
+const rendererProcessShim = path.resolve(rootFolder, "src", "renderer", "bootstrap", "process.ts");
+
 export function createRendererConfig(
   mode: "development" | "production",
   options?: { devServer?: boolean },
 ): RspackOptions {
   const isDev = mode === "development";
   const useDevServer = options?.devServer ?? isDev;
+  const devtool = isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map";
 
   // Ensure single instance of styled-components (avoid theme context issues)
   const styledComponentsPath = require.resolve("styled-components");
@@ -28,18 +30,21 @@ export function createRendererConfig(
     ...commonConfig,
     name: "renderer",
     mode,
-    // Use electron-renderer target - ElectronTargetPlugin handles node builtins
-    target: "electron-renderer",
+    // "es2022" pins output.environment; a bare "web" target emits conservative code.
+    target: ["web", "es2022"],
     entry: {
-      renderer: path.resolve(rootFolder, "src", "renderer", "index.ts"),
+      // The shim must run before any module reads process.env.
+      renderer: [rendererProcessShim, path.resolve(rootFolder, "src", "renderer", "index.ts")],
     },
     output: {
       ...commonConfig.output,
       filename: "renderer.bundle.js",
+      // Otherwise the chunk runtime emits `global[...]`, which the renderer does not have.
+      globalObject: "globalThis",
       publicPath: isDev ? "/" : "./",
       assetModuleFilename: "assets/[name]-[hash][ext]",
     },
-    devtool: isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map",
+    devtool,
     resolve: {
       ...commonConfig.resolve,
       // Platform-specific file resolution:
@@ -71,6 +76,28 @@ export function createRendererConfig(
             ".lottie",
           ],
       mainFields: ["browser", "module", "main"],
+      // The object form of `browser` ({"crypto": false}), which mainFields ignores.
+      aliasFields: ["browser"],
+      // Explicit, so each polyfill shows up as a size cost in review. `os` is absent on purpose.
+      fallback: {
+        crypto: require.resolve("crypto-browserify"),
+        stream: require.resolve("readable-stream"),
+        string_decoder: require.resolve("string_decoder/"),
+        url: require.resolve("url/"),
+        querystring: require.resolve("querystring-es3"),
+        path: require.resolve("path-browserify"),
+        util: require.resolve("util/"),
+        assert: require.resolve("assert/"),
+        buffer: require.resolve("buffer/"),
+        // Unreachable once process.release is defined away below.
+        http: false,
+        https: false,
+        net: false,
+        tls: false,
+        zlib: false,
+        fs: false,
+        child_process: false,
+      },
       // Don't require file extensions in imports for ESM modules
       fullySpecified: false,
       // Module resolution paths - needed for features folder to find react, etc.
@@ -91,20 +118,7 @@ export function createRendererConfig(
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),
-        // Force rspack to use node/esm builds for these packages to reduce bundle size
-        // These packages have browser field pointing to larger UMD/web bundles
-        "icon-sdk-js": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "icon-sdk-js@1.5.2",
-          "node_modules",
-          "icon-sdk-js",
-          "build",
-          "icon-sdk-js.node.min.js",
-        ),
+        // icon-sdk-js keeps its browser entry: the smaller Node build needs net, tls and http.
         // @stellar/stellar-sdk: browser field is dist/stellar-sdk.min.js (915KB), main is lib/index.js (smaller, tree-shakeable)
         "@stellar/stellar-sdk": path.resolve(
           rootFolder,
@@ -269,15 +283,33 @@ export function createRendererConfig(
             filename: "assets/[name]-[hash][ext]",
           },
         },
+        // Unguarded process.cwd()/nextTick() callers; processReadGuard fails on new ones.
+        {
+          test: /\.js$/,
+          include:
+            /[\\/]node_modules[\\/](vfile|path-browserify|randombytes|randomfill|eventsource|icon-sdk-js|util)[\\/]/,
+          use: [path.resolve(__dirname, "processShimLoader.cjs")],
+        },
       ],
     },
     plugins: [
       ...getRsdoctorPlugin("renderer"),
-      // ElectronTargetPlugin for proper node/electron module handling
-      new rspack.electron.ElectronTargetPlugin("renderer"),
       new rspack.DefinePlugin({
         ...buildRendererEnv(mode),
         ...buildDotEnvDefine(DOTENV_FILE),
+        // Globals set by src/renderer/bootstrap/process.ts; the more specific keys above win.
+        "process.env": "globalThis.__LLD_PROCESS_ENV__",
+        "process.platform": "globalThis.__LLD_PROCESS_PLATFORM__",
+        "process.mas": "globalThis.__LLD_PROCESS_MAS__",
+        "process.windowsStore": "globalThis.__LLD_PROCESS_WINDOWS_STORE__",
+        "process.type": JSON.stringify("renderer"),
+        // Drops live-network's Node-only https keep-alive branch.
+        "process.release": "undefined",
+        "process.browser": "true",
+        global: "globalThis",
+      }),
+      new rspack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
       }),
       new rspack.HtmlRspackPlugin({
         template: path.resolve(rootFolder, "src", "renderer", "index.html"),
@@ -288,6 +320,8 @@ export function createRendererConfig(
       }),
       // React Fast Refresh for development
       ...(useDevServer ? [new ReactRefreshRspackPlugin()] : []),
+      // Needs a separate source map, so production only.
+      ...(devtool === "source-map" ? [new ProcessReadGuard()] : []),
     ],
     optimization: {
       minimize: !isDev,
