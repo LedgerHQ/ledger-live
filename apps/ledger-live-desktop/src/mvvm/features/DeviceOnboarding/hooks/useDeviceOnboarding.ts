@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
+import type { DevToolsConfig } from "@devtools/shell";
 import {
+  createDelegatedPorts,
+  createOnboardingEventLog,
   deviceOnboardingMachine,
+  flattenDeviceOnboardingContext,
+  stateValueToString,
+  userEvents,
   type DeviceOnboardingPorts,
   type DeviceOnboardingSession,
   type OnboardingEvent,
@@ -11,14 +17,12 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { createActor, type ActorRefFrom } from "xstate";
 import { createDeviceOnboardingPorts } from "../utils/ports";
-import {
-  flattenDeviceOnboardingContext,
-  stateValueToString,
-  toolEvent,
-  type DeviceOnboardingToolProps,
-  userEvents,
-} from "../utils/toolState";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+
+type DeviceOnboardingToolProps = Extract<
+  DevToolsConfig[number],
+  { id: "device-onboarding" }
+>["config"];
 
 type OnboardingActor = ActorRefFrom<typeof deviceOnboardingMachine>;
 
@@ -63,28 +67,17 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
   const transportLostRef = useRef(false);
   const adoptGeneration = useRef(0);
 
-  const delegatedPorts = useRef<DeviceOnboardingPorts>({
-    openSession: () => {
-      if (!portsRef.current) throw new Error("No desktop onboarding session");
-      return portsRef.current.openSession();
-    },
-    currentSessionId: () => {
-      if (!portsRef.current) throw new Error("No desktop onboarding session");
-      return portsRef.current.currentSessionId();
-    },
-    closeSession: () => portsRef.current?.closeSession() ?? Promise.resolve(),
-  }).current;
+  const delegatedPorts = useRef(
+    createDelegatedPorts(() => portsRef.current, "No desktop onboarding session"),
+  ).current;
 
   const appendEvent = useCallback((event: OnboardingEvent) => {
-    if (event.type === "STEP_CHANGED") {
-      const step = event.state.currentOnboardingStep;
-      if (step === lastLoggedStep.current) return;
-      lastLoggedStep.current = step;
-    }
-
-    const sessionId = portsRef.current?.currentSessionId() ?? "unavailable";
-    const next = toolEvent(event, String(eventSequence.current++), sessionId);
-    setEvents(current => [...current.slice(-49), next]);
+    createOnboardingEventLog({
+      currentSessionId: () => portsRef.current?.currentSessionId(),
+      lastLoggedStep,
+      sequence: eventSequence,
+      push: entry => setEvents(current => [...current.slice(-49), entry]),
+    })(event);
   }, []);
 
   const sendToActor = useCallback((event: OnboardingEvent) => {

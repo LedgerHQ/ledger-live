@@ -282,6 +282,45 @@ describe("DeviceOnboarding desktop integration", () => {
     expect(firmwareHookCalls.at(-1)?.isHookEnabled).toBe(false);
     expect(setDrawer).toHaveBeenCalledTimes(1);
   });
+
+  it("should leave the drawer closed when firmware metadata is missing", () => {
+    const send = jest.fn();
+    const rendered = renderHook(() =>
+      useFirmwareUpdateHandover({
+        device: nanoDevice(),
+        machineState: "checks.firmwareUpdateDelegated",
+        send,
+      }),
+    );
+
+    firmwareLookup.status = "available-firmware";
+    rendered.rerender(undefined);
+
+    expect(setDrawer).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("should ignore the firmware completion callback", () => {
+    const send = jest.fn();
+    const rendered = renderHook(() =>
+      useFirmwareUpdateHandover({
+        device: nanoDevice(),
+        machineState: "checks.firmwareUpdateDelegated",
+        send,
+      }),
+    );
+
+    publishAvailableFirmware();
+    rendered.rerender(undefined);
+
+    const drawerProps = setDrawer.mock.calls[0]?.[1] as { setFirmwareUpdateCompleted: () => void };
+    act(() => {
+      drawerProps.setFirmwareUpdateCompleted();
+    });
+
+    expect(send).not.toHaveBeenCalled();
+    expect(setDrawer).toHaveBeenCalledTimes(1);
+  });
 });
 
 function nanoDevice(): Device {
