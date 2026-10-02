@@ -196,7 +196,11 @@ function Effect({
 /**
  * Root countervalues provider (polling + calculation).
  */
-export function CountervaluesProvider({ children, bridge, ...rest }: Props): ReactElement {
+export function CountervaluesProvider({
+  children,
+  bridge,
+  ...rest
+}: Readonly<Props>): ReactElement {
   return (
     <CountervaluesContext.Provider value={bridge}>
       <Effect {...rest} bridge={bridge} />
@@ -242,7 +246,7 @@ export function useCalculate(query: {
   from: Currency;
   to: Currency;
   disableRounding?: boolean;
-  date?: Date | null | undefined;
+  date?: Date | null;
   reverse?: boolean;
 }): number | null | undefined {
   const state = useCountervaluesState();
