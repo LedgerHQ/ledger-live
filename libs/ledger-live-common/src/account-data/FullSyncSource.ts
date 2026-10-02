@@ -26,6 +26,8 @@ export type FullSyncHost = {
   getAccount(accountId: string): Account | undefined;
   prepareCurrency(currency: Account["currency"]): Promise<unknown>;
   blacklistedTokenIds?(): string[];
+  /** The most syncs at once when many accounts are read together, as the background sync allows. */
+  concurrency?: number;
 };
 
 const abortError = (message: string) => new DOMException(message, "AbortError");
@@ -37,9 +39,12 @@ const abortError = (message: string) => new DOMException(message, "AbortError");
  */
 export class FullSyncSource implements AccountDataSource {
   readonly id = "full-sync";
+  readonly concurrency?: number;
   private readonly inflight = new Map<string, Promise<Account>>();
 
-  constructor(private readonly host: FullSyncHost) {}
+  constructor(private readonly host: FullSyncHost) {
+    this.concurrency = host.concurrency;
+  }
 
   supports(ref: AccountRef): boolean {
     return (

@@ -60,7 +60,7 @@ describe("createAccountDataRouter", () => {
     ).rejects.toBeInstanceOf(NoAccountSourceError);
   });
 
-  it("passes the query and signal through, and keeps a class source's `this`", async () => {
+  it("passes the query and signal through when not merging, and keeps a class source's `this`", async () => {
     class PagedSource implements AccountDataSource {
       readonly id = "paged";
       private readonly pageSize = 25;
@@ -71,7 +71,7 @@ describe("createAccountDataRouter", () => {
         return { items: [], nextCursor: `${query?.cursor}:${this.pageSize}:${signal?.aborted}` };
       }
     }
-    const router = createAccountDataRouter([new PagedSource()]);
+    const router = createAccountDataRouter([new PagedSource()], { coalesce: false });
     const { data } = await router.read(
       "feed",
       ref,
