@@ -120,7 +120,7 @@ describe("OperationsList", () => {
       </Stack.Navigator>,
       {
         overrideInitialState: withFlagOverrides({
-          lwmPayTab: { enabled: true },
+          lwmPayTab: { enabled: true, params: { card_native: true } },
         }),
       },
     );
@@ -168,7 +168,7 @@ describe("OperationsList", () => {
         overrideInitialState: withFlagOverrides(
           {
             lwmDustFiltering: { enabled: true },
-            lwmPayTab: { enabled: true },
+            lwmPayTab: { enabled: true, params: { card_native: true } },
           },
           stateWithAccountsAndOperations,
         ),
@@ -215,7 +215,7 @@ describe("OperationsList", () => {
       />,
       {
         overrideInitialState: withFlagOverrides({
-          lwmPayTab: { enabled: true },
+          lwmPayTab: { enabled: true, params: { card_native: true } },
         }),
       },
     );
@@ -241,7 +241,7 @@ describe("OperationsList", () => {
     } as unknown as OperationsListProps["navigation"];
     const view = render(<OperationsList route={operationsListRoute} navigation={navigation} />, {
       overrideInitialState: withFlagOverrides({
-        lwmPayTab: { enabled: true },
+        lwmPayTab: { enabled: true, params: { card_native: true } },
       }),
     });
     const cardRoute = {
@@ -272,7 +272,7 @@ describe("OperationsList", () => {
         { historyTab: "card" },
         {
           overrideInitialState: withFlagOverrides(
-            { lwmPayTab: { enabled: true, params: { card: false } } },
+            { lwmPayTab: { enabled: true, params: { card_native: false } } },
             stateWithAccountsAndOperations,
           ),
         },
@@ -299,7 +299,7 @@ describe("OperationsList", () => {
         { historyTab: "card", asset: "usdc" },
         {
           overrideInitialState: withFlagOverrides(
-            { lwmPayTab: { enabled: true, params: { card: false } } },
+            { lwmPayTab: { enabled: true, params: { card_native: false } } },
             stateWithAccountsAndOperations,
           ),
         },
@@ -315,7 +315,7 @@ describe("OperationsList", () => {
         { historyTab: "card" },
         {
           overrideInitialState: withFlagOverrides(
-            { lwmPayTab: { enabled: true, params: { card: undefined } } },
+            { lwmPayTab: { enabled: true, params: { card_native: undefined } } },
             stateWithAccountsAndOperations,
           ),
         },
@@ -330,7 +330,9 @@ describe("OperationsList", () => {
       const { getByTestId, queryByTestId } = renderOperationsListWithParams(
         { historyTab: "card", asset: "usdc" },
         {
-          overrideInitialState: withFlagOverrides({ lwmPayTab: { enabled: true } }),
+          overrideInitialState: withFlagOverrides({
+            lwmPayTab: { enabled: true, params: { card_native: true } },
+          }),
         },
       );
 

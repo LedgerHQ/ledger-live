@@ -51,6 +51,7 @@ import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepo
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
+import { usePayTabCardState } from "./usePayTabCardState";
 
 export function usePayTabViewModel() {
   const { t } = useTranslation();
@@ -120,6 +121,7 @@ export function usePayTabViewModel() {
     () => ({ oauthConfig, callback, requestProtection: requestCardProtection }),
     [oauthConfig, callback, requestCardProtection],
   );
+  const { cardState, login: cardLogin } = usePayTabCardState(login);
 
   const onShowMore = useCallback(() => {
     navigateToCardHistory(navigation);
@@ -150,7 +152,6 @@ export function usePayTabViewModel() {
 
   const payTab = useFeature("lwmPayTab");
   const isLegacyTopUp = !!payTab?.params?.legacyTopUp;
-  const showCard = payTab?.params?.card !== false;
 
   // The legacy live app has its own top-up flow and its own login. It opens as every other live
   // app does, in the Discover webview, and never in the secure browser. It takes no currency, so
@@ -246,7 +247,6 @@ export function usePayTabViewModel() {
   );
   const card: CardProps = useMemo(
     () => ({
-      login,
       assets: cardAssets,
       formatters: { countervalue: formatCountervalue, transactionAmount: formatTransactionAmount },
       onTopUp,
@@ -255,9 +255,10 @@ export function usePayTabViewModel() {
       onShowMore,
       cardSettingsActions,
       discreet: payCardAssets.discreet,
+      login: cardLogin,
     }),
     [
-      login,
+      cardLogin,
       cardAssets,
       formatCountervalue,
       formatTransactionAmount,
@@ -275,7 +276,7 @@ export function usePayTabViewModel() {
     top: safeAreaTop + WALLET_TAB_HEADER_HEIGHT,
     bottom: bottom + insets.bottom,
     card,
-    showCard,
+    cardState,
     balance,
     actionTiles,
     contacts,

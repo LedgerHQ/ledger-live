@@ -27,7 +27,7 @@ The keys it reads, in the host app's **default** namespace (`app` on Desktop, `c
 | `payTab.featureTour.cta` | Dismiss button |
 | `payTab.featureTour.rows.global.{title,description}` | Row 1 (`Contact`) |
 | `payTab.featureTour.rows.volatility.{title,description}` | Row 2 (`Link`) |
-| `payTab.featureTour.rows.card.{title,description}` | Row 3 (`CreditCard`). Omitted when the Pay feature flag `params.card` is off (`lwdPayTab` on desktop, `lwmPayTab` on mobile) |
+| `payTab.featureTour.rows.card.{title,description}` | Row 3 (`CreditCard`). Omitted when the Pay feature flag `params.card_native` is off (`lwdPayTab` on desktop, `lwmPayTab` on mobile) |
 
 Both apps must carry these keys at the same path until translation keys are colocated per feature
 (a follow-up of [LIVE-36540](https://ledgerhq.atlassian.net/browse/LIVE-36540)). The row icons are
@@ -88,5 +88,5 @@ pay-feature-tour/
 ```
 
 The view shows a hero image, title, subtitle, and Lumen `ListItem` feature rows
-(Contact / Link, plus CreditCard while the Pay feature flag `params.card` is on) inside a
+(Contact / Link, plus CreditCard while the Pay feature flag `params.card_native` is on) inside a
 queued bottom sheet (mobile) or dialog (desktop), with a single "Explore Pay" CTA to dismiss.

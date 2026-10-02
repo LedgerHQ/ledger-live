@@ -240,7 +240,7 @@ describe("usePayCardToolProps", () => {
     expect(result.current.flags.payTabEnabled).toBe(true);
   });
 
-  it("setCardParam updates params.card on lwdPayTab on web", () => {
+  it("setCardNativeParam updates params.card_native on lwdPayTab on web", () => {
     const { result } = renderHook(() => usePayCardToolProps(), {
       wrapper: withStore(store),
     });
@@ -249,15 +249,15 @@ describe("usePayCardToolProps", () => {
       result.current.flags.setPayTabEnabled(true);
     });
     act(() => {
-      result.current.flags.setCardParam(false);
+      result.current.flags.setCardNativeParam(true);
     });
 
-    expect(store.getState().featureFlags.overrides.lwdPayTab?.params?.card).toBe(false);
+    expect(store.getState().featureFlags.overrides.lwdPayTab?.params?.card_native).toBe(true);
     expect(store.getState().featureFlags.overrides.lwmPayTab).toBeUndefined();
-    expect(result.current.flags.cardParam).toBe(false);
+    expect(result.current.flags.cardNativeParam).toBe(true);
   });
 
-  it("setCardParam updates params.card on lwmPayTab on native", () => {
+  it("setCardNativeParam updates params.card_native on lwmPayTab on native", () => {
     const { result } = renderHook(() => usePayCardToolProps({ platform: "native" }), {
       wrapper: withStore(store),
     });
@@ -266,12 +266,12 @@ describe("usePayCardToolProps", () => {
       result.current.flags.setPayTabEnabled(true);
     });
     act(() => {
-      result.current.flags.setCardParam(false);
+      result.current.flags.setCardNativeParam(false);
     });
 
-    expect(store.getState().featureFlags.overrides.lwmPayTab?.params?.card).toBe(false);
+    expect(store.getState().featureFlags.overrides.lwmPayTab?.params?.card_native).toBe(false);
     expect(store.getState().featureFlags.overrides.lwdPayTab).toBeUndefined();
-    expect(result.current.flags.cardParam).toBe(false);
+    expect(result.current.flags.cardNativeParam).toBe(false);
   });
 
   it("keeps the legacyTopUp param when a setter changes another one", () => {
@@ -281,16 +281,59 @@ describe("usePayCardToolProps", () => {
       store.dispatch(
         setOverride({
           key: "lwdPayTab",
-          value: { enabled: true, params: { card: true, legacyTopUp: true } },
+          value: {
+            enabled: true,
+            params: {
+              card_native: true,
+              card_live_app: false,
+              card_disclaimer: false,
+              legacyTopUp: true,
+            },
+          },
         }),
       );
     });
     act(() => {
-      result.current.flags.setCardParam(false);
+      result.current.flags.setCardNativeParam(false);
     });
 
     expect(store.getState().featureFlags.overrides.lwdPayTab?.params).toEqual({
-      card: false,
+      card_native: false,
+      card_live_app: false,
+      card_disclaimer: false,
+      legacyTopUp: true,
+    });
+  });
+
+  it("keeps the other mobile params when a setter changes one", () => {
+    const { result } = renderHook(() => usePayCardToolProps({ platform: "native" }), {
+      wrapper: withStore(store),
+    });
+
+    act(() => {
+      store.dispatch(
+        setOverride({
+          key: "lwmPayTab",
+          value: {
+            enabled: true,
+            params: {
+              card_native: true,
+              card_live_app: false,
+              card_disclaimer: false,
+              legacyTopUp: true,
+            },
+          },
+        }),
+      );
+    });
+    act(() => {
+      result.current.flags.setCardNativeParam(false);
+    });
+
+    expect(store.getState().featureFlags.overrides.lwmPayTab?.params).toEqual({
+      card_native: false,
+      card_live_app: false,
+      card_disclaimer: false,
       legacyTopUp: true,
     });
   });
