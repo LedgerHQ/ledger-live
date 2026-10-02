@@ -1,23 +1,12 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/tsconfig/lib",
   "compilerOptions": {
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "declaration": true,
-    "declarationMap": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "types": ["node", "jest"],
-    "outDir": "lib",
-    "rootDir": "src",
     "exactOptionalPropertyTypes": true
   },
-  "include": [
-    "src/**/*",
-    "deviceTransactionConfig.ts",
-    "transaction.ts"
-  ],
+  "include": ["src/**/*", "deviceTransactionConfig.ts", "transaction.ts"],
   "exclude": []
 }

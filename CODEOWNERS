@@ -75,6 +75,7 @@ support/jest-devtools/                                   @ledgerhq/platform
 support/jest-features-flow/                              @ledgerhq/platform
 support/jest-shared/                                     @ledgerhq/platform
 support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
+support/tsconfig/                                        @ledgerhq/platform
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp

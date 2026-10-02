@@ -1,8 +1,6 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": ["./tsconfig.json", "@support/tsconfig/logic"],
   "compilerOptions": {
-    "moduleSuffixes": [".native", ""]
-  },
-  "include": ["src/**/*", "**/*.d.ts"],
-  "exclude": ["node_modules"]
+    "types": ["jest"]
+  }
 }

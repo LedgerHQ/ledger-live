@@ -1,0 +1,14 @@
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "lib": ["ES2022", "DOM"],
+    "jsx": "react-jsx",
+    "moduleSuffixes": [".native", ""]
+  },
+  "include": ["${configDir}/src/**/*"],
+  "exclude": ["${configDir}/node_modules", "${configDir}/src/**/*.web.*", "${configDir}/src/**/web.ts"]
+}

@@ -1,11 +1,7 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": ["./tsconfig.json", "@support/tsconfig/lib/build"],
   "compilerOptions": {
-    "customConditions": [],
-    "types": [
-      "node",
-      "jest"
-    ]
+    "types": ["node", "jest"]
   },
   "exclude": [
     "src/api/subscan.ts",

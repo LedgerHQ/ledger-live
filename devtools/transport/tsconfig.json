@@ -1,15 +1,8 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/tsconfig/web",
   "compilerOptions": {
-    "lib": ["ES2022", "DOM"],
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "moduleSuffixes": [".web", ""],
-    "jsx": "react-jsx",
-    "noEmit": true,
     "types": ["jest"]
   },
-  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

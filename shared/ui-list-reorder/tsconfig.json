@@ -1,14 +1,8 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/tsconfig/logic",
   "compilerOptions": {
     "lib": ["ES2022", "DOM"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "noEmit": true,
     "types": ["jest", "node", "@testing-library/jest-dom"]
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  }
 }
