@@ -38,7 +38,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import Tooltip from "./Tooltip";
 import { Data, Item } from "./types";
 
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export enum GraphTrackingScreenName {
   Account = "Account",

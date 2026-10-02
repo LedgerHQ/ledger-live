@@ -1,8 +1,8 @@
+import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
-import { screen, track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -67,7 +67,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
 
   useEffect(() => {
     if (readOnlyModeEnabled) {
-      screen("ReadOnly", "Market Coin");
+      trackPage({ category: "ReadOnly", name: "Market Coin" });
     }
   }, [readOnlyModeEnabled]);
 

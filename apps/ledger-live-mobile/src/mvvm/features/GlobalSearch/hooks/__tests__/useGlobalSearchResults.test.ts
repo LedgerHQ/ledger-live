@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { renderHook, act, withFlagOverrides } from "@tests/test-renderer";
 import { setEnv } from "@shared/env";
 import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useGlobalSearchResults } from "../useGlobalSearchResults";
 

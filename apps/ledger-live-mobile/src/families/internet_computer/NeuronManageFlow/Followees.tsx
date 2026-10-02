@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import {
   KNOWN_TOPICS,
   MAX_FOLLOWEES_PER_TOPIC,
@@ -5,7 +6,6 @@ import {
 import { parseNeuronId } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { BaseInput, Button, Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useState } from "react";
-import { TrackScreen } from "~/analytics";
 import KeyboardView from "~/components/KeyboardView";
 import SafeAreaView from "~/components/SafeAreaView";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

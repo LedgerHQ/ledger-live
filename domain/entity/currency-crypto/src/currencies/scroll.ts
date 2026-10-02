@@ -37,9 +37,6 @@ export const scroll = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 534352,
-  },
   explorerViews: [
     {
       tx: "https://scroll.blockscout.com/tx/$hash",

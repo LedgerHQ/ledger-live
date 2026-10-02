@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -6,7 +7,6 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useAssetsData, useInterestRatesByCurrencies } from "@features/platform-aggregated-assets";
 import { getInterestRateForAsset } from "@ledgerhq/live-common/modularDrawer/utils/getInterestRateForAsset";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { screen, track } from "~/analytics";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName } from "~/const";
 import { useDispatch } from "~/context/hooks";
@@ -73,14 +73,17 @@ export function useEarnBannerViewModel({
 
   useEffect(() => {
     if (!isVisible) return;
-    void screen("swap earn promoter", null, {
-      page: PAGE,
-      flow: FLOW,
-      sourceCurrency: sendCurrency?.ticker,
-      targetCurrency: receiveCurrency?.ticker,
-      targetCurrencyID: receiveCurrency?.id,
-      provider,
-      promotedToken,
+    void trackPage({
+      category: "swap earn promoter",
+      props: {
+        page: PAGE,
+        flow: FLOW,
+        sourceCurrency: sendCurrency?.ticker,
+        targetCurrency: receiveCurrency?.ticker,
+        targetCurrencyID: receiveCurrency?.id,
+        provider,
+        promotedToken,
+      },
     });
   }, [
     isVisible,

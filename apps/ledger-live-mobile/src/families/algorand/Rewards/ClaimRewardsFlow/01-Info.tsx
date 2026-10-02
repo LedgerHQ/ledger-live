@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -11,7 +12,6 @@ import ExternalLink from "~/components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "~/components/BulletList";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { urls } from "~/utils/urls";
-import { TrackScreen } from "~/analytics";
 import Illustration from "~/images/illustration/Illustration";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AlgorandClaimRewardsFlowParamList } from "./type";

@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
 import { useRoute } from "@react-navigation/native";
-import { track } from "~/analytics";
 
 interface UseAddAccountCtaResult {
   isOpen: boolean;

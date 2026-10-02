@@ -5,6 +5,7 @@ import {
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
+import { speculosDmkTransportFactory } from "../transport/SpeculosDmkTransport";
 import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
 import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
 import { getEnv } from "@shared/env";
@@ -78,6 +79,7 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
 
     const builder = new DeviceManagementKitBuilder()
       .addTransport(webHidTransportFactory)
+      .addTransport(speculosDmkTransportFactory)
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
       .addConfig({ firmwareDistributionSalt });
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { TopologyChangeError } from "@ledgerhq/coin-canton";
+import { TopologyChangeError, TransferOfferExpiredError } from "@ledgerhq/coin-canton";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
@@ -176,6 +176,72 @@ describe("usePendingTransferProposalsViewModel", () => {
 
       await waitFor(() => {
         expect(mockHandleTopologyChangeError).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe("TransferOfferExpiredError", () => {
+    it("should sync the account and rethrow so the modal shows the error", async () => {
+      const error = new TransferOfferExpiredError();
+      mockPerformTransferInstruction.mockRejectedValue(error);
+
+      const { result } = renderHook(
+        () => usePendingTransferProposalsViewModel(mockAccount, mockAccount),
+        { initialState: buildInitialState() },
+      );
+
+      act(() => {
+        result.current.onOpenModal("contract-123", "accept");
+      });
+
+      await act(async () => {
+        await expect(result.current.onDeviceConfirm("device-id")).rejects.toBe(error);
+      });
+
+      expect(mockSync).toHaveBeenCalledWith({
+        type: "SYNC_ONE_ACCOUNT",
+        accountId: mockAccount.id,
+        priority: 10,
+        reason: "canton-pending-transaction-action",
+      });
+      expect(mockHandleTopologyChangeError).not.toHaveBeenCalled();
+    });
+
+    describe("when the action fails after the offer's deadline", () => {
+      const submitError = new Error("An internal server occurred");
+
+      beforeEach(() => {
+        mockPerformTransferInstruction.mockRejectedValueOnce(submitError);
+      });
+
+      const confirmAfterDeadline = async (action: "accept" | "reject") => {
+        const account = createAccountWithProposal("contract-123", "sender-address", "test-xpub", {
+          expires_at_micros: (Date.now() - 1000) * 1000,
+        });
+        const { result } = renderHook(
+          () => usePendingTransferProposalsViewModel(account, account),
+          { initialState: buildInitialState() },
+        );
+
+        act(() => {
+          result.current.onOpenModal("contract-123", action);
+        });
+
+        let thrown: unknown;
+        await act(async () => {
+          thrown = await result.current.onDeviceConfirm("device-id").catch(e => e);
+        });
+        return thrown;
+      };
+
+      it("should report a failed accept as TransferOfferExpiredError and sync", async () => {
+        expect(await confirmAfterDeadline("accept")).toBeInstanceOf(TransferOfferExpiredError);
+        expect(mockSync).toHaveBeenCalled();
+      });
+
+      it("should rethrow a failed reject unchanged, since reject still works after expiry", async () => {
+        expect(await confirmAfterDeadline("reject")).toBe(submitError);
+        expect(mockSync).not.toHaveBeenCalled();
       });
     });
   });

@@ -37,8 +37,6 @@ const testPathIgnorePatterns = [
 
 const moduleNameMapper = {
   ".*\\.lottie$": "<rootDir>/fileMock.js",
-  "^@ledgerhq/ledger-key-ring-protocol/__mocks__/(.*)$":
-    "<rootDir>/../../libs/ledger-key-ring-protocol/src/__mocks__/$1",
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
   "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",

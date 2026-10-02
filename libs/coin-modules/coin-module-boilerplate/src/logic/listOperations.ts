@@ -3,20 +3,23 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
+import type { BoilerplateCoinConfig } from "../config";
 import { getTransactions } from "../network/indexer";
 import { BoilerplateOperation } from "../network/types";
 
 /**
  * Returns list of operations associated to an account.
+ * @param config Coin config
  * @param address Account address
  * @param options List operations options
  * @returns Operations found and the next cursor for pagination.
  */
 export async function listOperations(
+  config: BoilerplateCoinConfig,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  const transactions = await getTransactions(address, options);
+  const transactions = await getTransactions(config, address, options);
   return { items: transactions.map(convertToCoreOperation(address)), next: undefined };
 }
 

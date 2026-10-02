@@ -6,8 +6,9 @@ import { DepositOptions } from "@features/flow-pay-deposit";
 import { BankTransferIntro } from "@features/flow-pay-bank-transfer";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-request";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import PayTabHeader from "./components/PayTabHeader";
+import { PayCardDisclaimer } from "./components/PayCardDisclaimer";
 import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExecutorLWD";
 import type { PayTabViewModel } from "./usePayTabViewModel";
 
@@ -23,6 +24,7 @@ export function PayTabView({
   ledgerSyncIntroduction,
   contactAddressPicker,
   isContactsEnabled,
+  cardDisclaimer,
   trackRequestAddressVerification,
   trackRecipientAddressSelection,
 }: Readonly<PayTabViewModel>) {
@@ -55,6 +57,8 @@ export function PayTabView({
           <ContactsLedgerSyncIntroductionDialog {...ledgerSyncIntroduction} />
         </>
       )}
+
+      {cardDisclaimer.isVisible && <PayCardDisclaimer onOpenCardApp={cardDisclaimer.openCardApp} />}
 
       <DepositOptions {...depositOptions} />
       <BankTransferIntro {...bankTransferIntro} />

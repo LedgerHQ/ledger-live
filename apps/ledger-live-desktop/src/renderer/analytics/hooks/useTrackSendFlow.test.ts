@@ -15,10 +15,6 @@ jest.mock("@shared/analytics", () => ({
   track: jest.fn(),
 }));
 
-jest.mock("../segment", () => ({
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 describe("useTrackSendFlow", () => {
   const deviceMock = {
     modelId: "europa",

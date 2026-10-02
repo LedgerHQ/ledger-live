@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { type CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { DistributionResult } from "@ledgerhq/live-common/portfolio/useAssetDistribution";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { track } from "~/analytics";
 import { useDistribution } from "~/actions/general";
 import { State } from "~/reducers/types";
 import {

@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useState, useCallback, useRef } from "react";
 import { Platform } from "react-native";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
@@ -19,7 +20,6 @@ import {
 import { navigateToNewUpdateFlow } from "../../utils/navigateToNewUpdateFlow";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 
 export function useUpdateBannerViewModel({
   onBackFromUpdate,

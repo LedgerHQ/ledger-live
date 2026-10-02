@@ -39,9 +39,6 @@ export const ethereum_sepolia = currency({
   isTestnetFor: "ethereum",
   family: "evm",
   blockAvgTime: 15,
-  ethereumLikeInfo: {
-    chainId: 11155111,
-  },
   explorerViews: [
     {
       tx: "https://sepolia.etherscan.io/tx/$hash",

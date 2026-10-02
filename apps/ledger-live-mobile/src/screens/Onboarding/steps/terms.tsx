@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "~/context/hooks";
 import { Linking } from "react-native";
@@ -7,7 +8,6 @@ import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
 import { IconsLegacy } from "@ledgerhq/native-ui/assets/index";
 
 import Touchable from "~/components/Touchable";
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { setAnalytics } from "~/actions/settings";
 import { useAcceptGeneralTerms } from "~/logic/terms";

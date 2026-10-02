@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useEffect, useRef } from "react";
 import { StyleSheet } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -17,7 +18,6 @@ import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Informations } from "./Information";
 import { useTheme } from "styled-components/native";
-import { track } from "~/analytics";
 import { PAGE_NAME } from "../const";
 import { ScrollView } from "react-native-gesture-handler";
 

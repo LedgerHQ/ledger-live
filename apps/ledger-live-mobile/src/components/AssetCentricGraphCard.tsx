@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useState, useCallback, memo, useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
@@ -19,7 +20,6 @@ import Graph from "./Graph";
 import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
 import FormatDate from "./DateFormat/FormatDate";
 import { ensureContrast } from "../colors";
-import { track } from "~/analytics";
 import { Item } from "./Graph/types";
 import { Merge } from "~/types/helpers";
 import { GraphPlaceholder } from "./Graph/Placeholder";

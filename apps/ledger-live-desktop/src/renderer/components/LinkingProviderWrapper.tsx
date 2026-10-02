@@ -7,7 +7,7 @@ import {
   DEFAULT_LANGUAGE,
   type LinkingConfig,
 } from "@shared/linking";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { languageSelector } from "~/renderer/reducers/settings";
 
 export function LinkingProviderWrapper({

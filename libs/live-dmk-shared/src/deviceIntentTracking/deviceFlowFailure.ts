@@ -1,10 +1,6 @@
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import {
-  BaseConnectionErrorTypes,
-  BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
-  type BaseConnectionError,
-  type BaseDiscoveryError,
   type ConnectDeviceUIState,
   type KnownDevice,
 } from "../connectDevice/types";
@@ -18,6 +14,12 @@ import {
   RetryableStateType,
   type EnsureAppReadyState,
 } from "../device-action/EnsureAppReady/state";
+import {
+  type BaseConnectionError,
+  BaseConnectionErrorTypes,
+  type BaseDiscoveryError,
+  BaseDiscoveryErrorTypes,
+} from "../deviceConnectivity/types";
 
 export type DeviceFlowTransport = "ble" | "usb";
 

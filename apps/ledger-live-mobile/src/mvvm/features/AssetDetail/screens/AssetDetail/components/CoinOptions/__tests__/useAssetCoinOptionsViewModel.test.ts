@@ -1,11 +1,9 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { useAssetCoinOptionsViewModel } from "../useAssetCoinOptionsViewModel";
-
-jest.mock("~/analytics", () => ({ track: jest.fn() }));
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 

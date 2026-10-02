@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import React, { memo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import AddAccount from "../Accounts/AddAccount";
 import Touchable from "~/components/Touchable";
-import { track } from "~/analytics";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 

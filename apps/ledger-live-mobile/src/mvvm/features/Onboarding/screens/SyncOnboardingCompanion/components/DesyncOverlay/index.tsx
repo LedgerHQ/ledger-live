@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Flex, IconsLegacy, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import { Container } from "./styles";
 import { useDisplayWithDelay } from "./useDisplayWithDelay";
 import { useDesyncOverlayViewModel } from "./useDesyncOverlayViewModel";

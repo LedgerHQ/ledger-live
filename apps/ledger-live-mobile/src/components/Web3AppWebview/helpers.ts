@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
@@ -30,7 +31,6 @@ import prepareSignTransaction from "./liveSDKLogic";
 import { closePlatformExchange } from "./closePlatformExchange";
 import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import storage from "LLM/storage";
-import { track } from "../../analytics";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { sendWalletAPIResponse } from "~/e2e/bridge/client";
 import Config from "react-native-config";

@@ -123,7 +123,7 @@ import type {
   TransactionRaw as solanaTransactionRaw,
   TransactionStatus as solanaTransactionStatus,
   TransactionStatusRaw as solanaTransactionStatusRaw,
-} from "@ledgerhq/coin-solana/types";
+} from "../families/solana/types";
 import type {
   Transaction as stacksTransaction,
   TransactionRaw as stacksTransactionRaw,

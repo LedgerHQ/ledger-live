@@ -58,12 +58,25 @@ describe("usePageViewModel", () => {
       initialState: withFlagOverrides({
         lwdWallet40: { enabled: true },
         ptxSwapLiveAppOnPortfolio: { enabled: false },
-        lwdPayTab: { enabled: true },
+        lwdPayTab: { enabled: true, params: { card_native: true } },
       }),
     });
 
     expect(result.current.shouldRenderRightPanel).toBe(true);
     expect(result.current.rightPanelVariant).toBe("card");
+  });
+
+  it("hides the card right panel on /paytab when params.card_native is false", () => {
+    mockedUseLocation.mockReturnValue(createLocation("/paytab"));
+    const { result } = renderHook(() => usePageViewModel(), {
+      initialState: withFlagOverrides({
+        lwdWallet40: { enabled: true },
+        lwdPayTab: { enabled: true, params: { card_native: false } },
+      }),
+    });
+
+    expect(result.current.shouldRenderRightPanel).toBe(false);
+    expect(result.current.rightPanelVariant).toBeUndefined();
   });
 
   it("hides the card right panel on /paytab when lwdPayTab is disabled", () => {

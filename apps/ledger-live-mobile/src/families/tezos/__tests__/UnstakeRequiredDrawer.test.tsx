@@ -13,7 +13,6 @@ jest.mock("~/components/QueuedDrawer", () => {
     children: React.ReactNode;
   }) => (isRequestingToBeOpened ? <View>{children}</View> : null);
 });
-jest.mock("~/analytics", () => ({ TrackScreen: () => null }));
 jest.mock("~/context/Locale", () => {
   const { Text } = jest.requireActual("react-native");
   return {

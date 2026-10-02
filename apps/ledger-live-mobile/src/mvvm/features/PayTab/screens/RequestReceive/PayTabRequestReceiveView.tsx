@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-request";
 import type { RequestReceiveProps, VerifyAddressProps } from "@features/flow-pay-request";
 import SafeAreaView from "~/components/SafeAreaView";
 import GenericErrorView from "~/components/GenericErrorView";
-import { TrackScreen } from "~/analytics";
 import {
   VerifyAddressExecutorLWM,
   type VerifyAddressExecutorLWMProps,

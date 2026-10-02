@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";

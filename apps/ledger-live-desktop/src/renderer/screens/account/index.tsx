@@ -17,7 +17,7 @@ import {
   useFilterTokenOperationsZeroAmount,
 } from "~/renderer/actions/settings";
 import { countervalueFirstSelector } from "~/renderer/reducers/settings";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import React, { useState, useCallback, useEffect } from "react";
 import {
@@ -22,7 +23,6 @@ import type {
 import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import InfoModal from "~/components/InfoModal";
 import LText, { getFontStyle } from "~/components/LText";

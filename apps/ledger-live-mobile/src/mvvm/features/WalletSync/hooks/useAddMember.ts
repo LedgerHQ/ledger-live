@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import {
   memberCredentialsSelector,
   setTrustchain,
@@ -11,7 +12,6 @@ import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
-import { track } from "~/analytics";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";

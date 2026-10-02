@@ -1,11 +1,12 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useSendAmount } from "@ledgerhq/live-countervalues-react";
 import { Trans, useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import LText from "~/components/LText/index";
 import CounterValuesSeparator from "./CounterValuesSeparator";
@@ -42,7 +43,7 @@ export default function AmountInput({
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const cryptoUnit = useAccountUnit(account);
   const { fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
-    account,
+    cryptoCurrency: getAccountCurrency(account),
     fiatCurrency,
     cryptoAmount,
   });

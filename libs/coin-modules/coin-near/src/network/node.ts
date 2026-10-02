@@ -3,7 +3,7 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
-import * as nearAPI from "near-api-js";
+import { JsonRpcProvider } from "near-api-js";
 import { type NearConfig } from "../config";
 import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
@@ -12,7 +12,6 @@ import { getActionCosts } from "./protocolConfig";
 import {
   NearAccessKey,
   NearAccountDetails,
-  NearContract,
   NearRawValidator,
   NearStakingPosition,
   NearV3Response,
@@ -238,17 +237,7 @@ export const getStakingPositions = async (
   totalPending: BigNumber;
 }> => {
   const currencyConfig = config;
-  const { connect, keyStores } = nearAPI;
-
-  const nearConnectConfig = {
-    networkId: "mainnet",
-    keyStore: new keyStores.InMemoryKeyStore(),
-    nodeUrl: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
-    headers: {},
-  };
-
-  const near = await connect(nearConnectConfig);
-  const account = await near.account(address);
+  const provider = new JsonRpcProvider({ url: currencyConfig.infra.API_NEAR_PRIVATE_NODE });
 
   let totalStaked = new BigNumber(0);
   let totalAvailable = new BigNumber(0);
@@ -261,29 +250,20 @@ export const getStakingPositions = async (
 
   const stakingPositions = await Promise.all(
     delegatedValidators.data.map(async ({ validator_id: validatorId }) => {
-      const contract = new nearAPI.Contract(account, validatorId, {
-        viewMethods: [
-          "get_account_staked_balance",
-          "get_account_unstaked_balance",
-          "is_account_unstaked_balance_available",
-        ],
-        changeMethods: [],
-        useLocalViewExecution: false,
-      }) as NearContract;
+      const view = <T extends string | boolean>(method: string) =>
+        provider.callFunction<T>({
+          contractId: validatorId,
+          method,
+          args: { account_id: address },
+        });
 
       const [rawStaked, rawUnstaked, isAvailable] = await Promise.all([
-        contract.get_account_staked_balance({
-          account_id: address,
-        }),
-        contract.get_account_unstaked_balance({
-          account_id: address,
-        }),
-        contract.is_account_unstaked_balance_available({
-          account_id: address,
-        }),
+        view<string>("get_account_staked_balance"),
+        view<string>("get_account_unstaked_balance"),
+        view<boolean>("is_account_unstaked_balance_available"),
       ]);
 
-      const unstaked = new BigNumber(rawUnstaked);
+      const unstaked = new BigNumber(rawUnstaked ?? 0);
 
       let available = new BigNumber(0);
       let pending = unstaked;
@@ -292,7 +272,7 @@ export const getStakingPositions = async (
         pending = new BigNumber(0);
       }
 
-      const staked = new BigNumber(rawStaked);
+      const staked = new BigNumber(rawStaked ?? 0);
       available = new BigNumber(available);
       pending = new BigNumber(pending);
 

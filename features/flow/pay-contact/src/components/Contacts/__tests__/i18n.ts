@@ -10,6 +10,7 @@ export const CONTACTS_RESOURCES: I18nResources = {
       payTab: {
         contacts: {
           title: "Pay contact",
+          me: "Me",
           pay: "Pay",
           empty: {
             info: "You don’t have contact yet",

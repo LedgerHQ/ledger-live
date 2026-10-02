@@ -1,7 +1,7 @@
 # @domain/api-market-countervalues
 
 > [!CAUTION]
-> **Status: UNSTABLE** — Being migrated out of `@ledgerhq/live-countervalues`; API may change.
+> **Status: UNSTABLE** — API may change.
 
 Domain API client for **countervalues**: how rates are fetched, and the orchestration that folds
 them into the state `@domain/entity-market-countervalues` owns.

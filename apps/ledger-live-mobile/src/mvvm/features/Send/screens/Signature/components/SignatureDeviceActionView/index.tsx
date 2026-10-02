@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useEffect } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -5,7 +6,7 @@ import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import SelectDevice2, { type SetHeaderOptionsRequest } from "~/components/SelectDevice2";
-import { track, usePageNameFromRoute } from "~/analytics";
+import { usePageNameFromRoute } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
 import { SigningBody } from "./components/SigningBody";

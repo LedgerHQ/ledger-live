@@ -34,6 +34,7 @@ export function View({
   proposal,
   dateFormatted,
   timeRemaining,
+  isExpired,
   handleAction,
 }: PendingTransferProposalsDetailsViewModel) {
   const { t } = useTranslation();
@@ -109,14 +110,14 @@ export function View({
         <OpDetailsData>{dateFormatted}</OpDetailsData>
       </OpDetailsSection>
 
-      {!proposal.isExpired && timeRemaining && (
+      {!isExpired && timeRemaining && (
         <OpDetailsSection>
           <OpDetailsTitle>{t("families.canton.pendingTransactions.expiresIn")}</OpDetailsTitle>
           <OpDetailsData>{timeRemaining}</OpDetailsData>
         </OpDetailsSection>
       )}
 
-      {proposal.isExpired && (
+      {isExpired && (
         <OpDetailsSection>
           <OpDetailsTitle>{t("families.canton.pendingTransactions.status.label")}</OpDetailsTitle>
           <OpDetailsData color="alertRed">
@@ -147,11 +148,7 @@ export function View({
         {isIncoming ? (
           <>
             <Box flex={1}>
-              <Button
-                fullWidth
-                disabled={proposal.isExpired}
-                onClick={() => handleAction("accept")}
-              >
+              <Button fullWidth disabled={isExpired} onClick={() => handleAction("accept")}>
                 <Box horizontal alignItems="center" style={{ gap: "8px" }}>
                   {t("families.canton.pendingTransactions.accept")}
                   <IconCheck size={16} />

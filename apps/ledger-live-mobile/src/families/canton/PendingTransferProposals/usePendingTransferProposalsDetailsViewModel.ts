@@ -15,6 +15,7 @@ type Input = {
 export type PendingTransferProposalsDetailsViewModel = {
   unit: Unit;
   timeRemaining: string;
+  isExpired: boolean;
   handleAction: (action: TransferProposalAction) => void;
   handleCopy: (text: string) => void;
 };
@@ -25,7 +26,10 @@ export function usePendingTransferProposalsDetailsViewModel({
   onOpenModal,
 }: Input): PendingTransferProposalsDetailsViewModel {
   const unit = useAccountUnit(account);
-  const timeRemaining = useTimeRemaining(proposal?.expiresAtMicros, proposal?.isExpired);
+  const { timeRemaining, isExpired } = useTimeRemaining(
+    proposal?.expiresAtMicros,
+    proposal?.isExpired,
+  );
 
   const handleAction = useCallback(
     (action: TransferProposalAction) => {
@@ -41,6 +45,7 @@ export function usePendingTransferProposalsDetailsViewModel({
   return {
     unit,
     timeRemaining,
+    isExpired,
     handleAction,
     handleCopy,
   };

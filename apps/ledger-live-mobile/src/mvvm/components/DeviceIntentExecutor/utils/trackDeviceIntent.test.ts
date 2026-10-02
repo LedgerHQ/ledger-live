@@ -1,3 +1,4 @@
+import { track, resetTrackingPages, setTrackingSource } from "@shared/analytics";
 import {
   type ConnectedDevice,
   DeviceModelId as DMKDeviceModelId,
@@ -5,8 +6,6 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "~/analytics";
-import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import {
   DEVICE_ACTION_BUTTON,
   getConnectedDeviceTrackingProperties,
@@ -26,14 +25,6 @@ import {
   trackDevicePrompted,
   trackDrawerCloseButtonClicked,
 } from "./trackDeviceIntent";
-
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    track: jest.fn(),
-  };
-});
 
 const mockedTrack = jest.mocked(track);
 const TEST_BLE_TRANSPORT: TransportIdentifier = "RN_BLE";

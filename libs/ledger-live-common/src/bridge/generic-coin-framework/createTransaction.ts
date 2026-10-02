@@ -72,7 +72,6 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         maxPriorityFeePerGas: new BigNumber(0),
       };
     }
-    case "solana":
     // hypercore has no send flow; this is a neutral tx used only for (de)serialization.
     case "hypercore":
       return {
@@ -82,6 +81,7 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         fees: null,
         mode: "send",
       };
+    case "solana":
     case "multiversx":
       return sendDefaults(currency.family);
     case "tron":

@@ -16,6 +16,7 @@ import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
+import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./synchronization";
 import { validateAddress } from "./validateAddress";
@@ -59,6 +60,8 @@ function buildAccountBridge(
     broadcast,
     getSerializedAddressParameters,
     validateAddress,
+    assignToAccountRaw,
+    assignFromAccountRaw,
   };
 }
 

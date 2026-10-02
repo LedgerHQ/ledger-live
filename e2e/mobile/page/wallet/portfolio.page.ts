@@ -1,8 +1,8 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
-import { DEFAULT_TIMEOUT, VISIBILITY_PROBE_TIMEOUT } from "@e2e/helpers/elementHelpers";
 import { getFlags } from "@e2e/bridge/server";
 import { isAggregatedAssetsEnabled, isAssetSectionEnabled } from "@e2e/utils/featureFlagUtils";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 import type { Features } from "@shared/feature-flags";
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
@@ -94,7 +94,7 @@ export default class PortfolioPage {
   }
 
   @Step("Wait for portfolio page to load")
-  async waitForPortfolioPageToLoad(timeout = 120000) {
+  async waitForPortfolioPageToLoad(timeout = TIMEOUT.xxxlarge) {
     await waitForElementById(this.portfolioListIdRegex, timeout); // TODO: Remove Regex when legacyWallet is removed from source code
   }
 
@@ -166,7 +166,7 @@ export default class PortfolioPage {
   }
 
   @Step("Open Portfolio via deeplink")
-  async openViaDeeplink(timeout = 120000) {
+  async openViaDeeplink(timeout = TIMEOUT.xxxlarge) {
     await openDeeplink(this.baseLink);
     await this.waitForPortfolioPageToLoad(timeout); // Issue with RN75 : QAA-370
   }
@@ -190,12 +190,12 @@ export default class PortfolioPage {
 
   @Step("Wait for Portfolio with accounts")
   async waitForPortfolioWithAccounts() {
-    await waitForElementById(this.accountsListView, 10000);
+    await waitForElementById(this.accountsListView, TIMEOUT.medium);
   }
 
   @Step("Go to {{{0}}} accounts from portfolio")
   async goToAccounts(currencyName: string, currencyId?: string) {
-    await waitForElementById(this.accountsListView, 10000);
+    await waitForElementById(this.accountsListView, TIMEOUT.medium);
     if (await isAggregatedAssetsEnabled()) {
       await scrollToId("crypto-addresses-button", this.accountsListView);
       await tapById("crypto-addresses-button");
@@ -289,6 +289,11 @@ export default class PortfolioPage {
     await tapByElement(this.operationByType(operationType, accountName).atIndex(0));
   }
 
+  @Step("Tap on Connect button")
+  async tapConnectButton() {
+    await tapById(this.connectButtonId);
+  }
+
   @Step("Tap on tab selector {{{0}}}")
   async tapTabSelector(id: "Accounts" | "Assets") {
     if (await isAssetSectionEnabled()) {
@@ -312,8 +317,7 @@ export default class PortfolioPage {
   }
 
   @Step("Expect market banner to be visible")
-  async expectMarketBannerVisible(direction: "up" | "down" = "down") {
-    await scrollToId(this.marketBannerTitle, this.accountsListView, undefined, direction);
+  async expectMarketBannerVisible() {
     await detoxExpect(getElementById(this.marketBannerList)).toBeVisible();
   }
 
@@ -570,7 +574,7 @@ export default class PortfolioPage {
   }
 
   @Step("Check if full stablecoin list page is visible")
-  async isStablecoinListPageVisible(timeout = VISIBILITY_PROBE_TIMEOUT) {
+  async isStablecoinListPageVisible(timeout = TIMEOUT.xxsmall) {
     return await IsIdVisible(this.stablecoinListId, timeout);
   }
 
@@ -606,7 +610,7 @@ export default class PortfolioPage {
   }
 
   private async scrollToStocksHeader(headerId: string) {
-    await waitForElementById(headerId, DEFAULT_TIMEOUT, { checkVisibility: false });
+    await waitForElementById(headerId, TIMEOUT.xxlarge, { checkVisibility: false });
     await scrollToId(headerId, this.accountsListView);
   }
 

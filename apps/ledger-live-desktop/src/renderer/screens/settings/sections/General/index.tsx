@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import CounterValueSelect from "./CounterValueSelect";
 import LanguageSelect from "./LanguageSelect";

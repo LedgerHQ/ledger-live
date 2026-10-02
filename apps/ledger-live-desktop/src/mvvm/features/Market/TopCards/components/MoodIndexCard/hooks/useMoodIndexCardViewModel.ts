@@ -1,5 +1,5 @@
 import { useFearAndGreedViewModel } from "LLD/features/FearAndGreed/hooks/useFearAndGreedViewModel";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 export const useMoodIndexCardViewModel = () => {
   const { data, isError, isLoading } = useFearAndGreedViewModel();

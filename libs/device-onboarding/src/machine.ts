@@ -56,6 +56,7 @@ export const deviceOnboardingMachine = setup({
         deviceModelId: context.deviceModelId,
       }),
     deviceNotGenuine: ({ context }) => currentVerdict(context)?.isGenuine === false,
+    awaitsStart: ({ context }) => !context.hasStarted,
     canShowEarlyCheck: ({ context }) =>
       !context.checksPaused &&
       isTouchscreen(context.deviceModelId) &&
@@ -118,9 +119,14 @@ export const deviceOnboardingMachine = setup({
       always: [
         { guard: "deviceNotGenuine", target: "checks.notGenuineSupport" },
         { guard: "requiresLegacyFlow", target: "legacyFallback" },
+        { guard: "awaitsStart", target: "awaitingStart" },
         { guard: "canShowEarlyCheck", target: "checks.enteringEarlyCheckScreen" },
         { target: "checks.checksIdle" },
       ],
+    },
+
+    awaitingStart: {
+      on: { CONTINUE: { target: "routing", actions: "rememberStart" } },
     },
 
     checks: {
@@ -250,12 +256,10 @@ export const deviceOnboardingMachine = setup({
         },
 
         checksSucceeded: {
-          on: {
-            CONTINUE: [
-              { guard: "onboardedOnEntry", target: "#deviceOnboarding.onboardedExit" },
-              { target: "#deviceOnboarding.deviceSetup" },
-            ],
-          },
+          always: [
+            { guard: "onboardedOnEntry", target: "#deviceOnboarding.onboardedExit" },
+            { target: "#deviceOnboarding.deviceSetup" },
+          ],
         },
       },
     },

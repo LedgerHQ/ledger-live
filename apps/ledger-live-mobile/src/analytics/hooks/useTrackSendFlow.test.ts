@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@testing-library/react-native";
 import { useTrackSendFlow, UseTrackSendFlow } from "./useTrackSendFlow";
-import { track } from "../segment";
 import {
   TransportRaceCondition,
   LockedDeviceError,

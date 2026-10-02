@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { canRetryNeuronCommand } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import type { ICPTransactionType } from "@ledgerhq/live-common/families/internet_computer/types";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {

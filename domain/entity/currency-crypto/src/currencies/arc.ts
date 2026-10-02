@@ -37,9 +37,6 @@ export const arc = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 5042,
-  },
   explorerViews: [
     {
       tx: "https://explorer.arc.io/tx/$hash",

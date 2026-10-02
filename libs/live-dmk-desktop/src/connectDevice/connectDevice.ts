@@ -9,6 +9,7 @@ import {
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Observable } from "rxjs";
 
+import { SpeculosDeviceDiscoverySource } from "./discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { WebHidDeviceDiscoverySource } from "./discoveryService/sources/WebHidDeviceDiscoverySource";
 import { type DesktopConnectDeviceUIState, type DesktopDiscoveryError } from "./types";
 import { createConnectionError, filterMatchedDevices } from "./utils";
@@ -22,11 +23,13 @@ export type ConnectDeviceInput = {
 
 export function connectDevice(input: ConnectDeviceInput): Observable<DesktopConnectDeviceUIState> {
   const webHidSource = new WebHidDeviceDiscoverySource(input.dmk);
+  const speculosSource = new SpeculosDeviceDiscoverySource(input.dmk);
   const discoverySources: Map<
     TransportIdentifier,
     DeviceDiscoverySource<DesktopDiscoveryError>
   > = new Map();
   discoverySources.set(webHidSource.transportId, webHidSource);
+  discoverySources.set(speculosSource.transportId, speculosSource);
 
   return connectDeviceUseCase({
     ...input,

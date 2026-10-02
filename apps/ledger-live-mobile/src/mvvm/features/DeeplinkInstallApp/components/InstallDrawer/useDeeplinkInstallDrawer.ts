@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import VersionNumber from "react-native-version-number";
-import { track } from "~/analytics";
 import { ScreenName, NavigatorName } from "~/const";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import {

@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
-import { TrackScreen } from "~/analytics";
 import {
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
@@ -12,19 +12,11 @@ import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingCo
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DiscoveringState } from "./DiscoveringState";
 
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    TrackScreen: jest.fn(() => null),
-  };
-});
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
 type DiscoveringUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.Discovering }
+  { type: typeof ConnectDeviceUIStateTypes.Discovering }
 >;
 
 function makeKnownDevice(overrides: Partial<KnownDevice>): KnownDevice {

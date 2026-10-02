@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useState, useCallback, useRef } from "react";
 import { FlatList, FlatListProps, LayoutChangeEvent } from "react-native";
 import Animated, {
@@ -31,7 +32,6 @@ import { ScreenName } from "~/const";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
 import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import Header from "./Header";
-import { TrackScreen } from "~/analytics";
 import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

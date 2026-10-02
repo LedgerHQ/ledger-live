@@ -1,27 +1,19 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
-import { TrackScreen } from "~/analytics";
 import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-mobile";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { WaitingForSelectedDeviceState } from "./WaitingForSelectedDeviceState";
 
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    TrackScreen: jest.fn(() => null),
-  };
-});
-
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
 type WaitingForSelectedDeviceUIState = Extract<
   ConnectDeviceUIState,
-  { type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice }
+  { type: typeof ConnectDeviceUIStateTypes.WaitingForSelectedDevice }
 >;
 
 function makeKnownDevice(overrides: Partial<KnownDevice> = {}): KnownDevice {

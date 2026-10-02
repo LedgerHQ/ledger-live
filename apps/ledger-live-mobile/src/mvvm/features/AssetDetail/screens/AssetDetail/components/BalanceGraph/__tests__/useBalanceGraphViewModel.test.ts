@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
 import { useBalanceGraphViewModel } from "../useBalanceGraphViewModel";
-import { track } from "~/analytics";
 import {
   useGetCurrencyDataQuery,
   useGetAssetChartDataQuery,

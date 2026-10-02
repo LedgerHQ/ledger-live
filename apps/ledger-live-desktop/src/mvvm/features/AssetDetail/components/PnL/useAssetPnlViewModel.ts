@@ -5,7 +5,7 @@ import { useAssetGroupPnL } from "@ledgerhq/wallet-pnl/hooks";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { usePnlViewModelBase } from "LLD/features/PnL/hooks/usePnlViewModelBase";
 import type { PnlViewModel } from "LLD/features/PnL/types";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";

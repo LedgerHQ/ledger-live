@@ -1,4 +1,4 @@
-import { track } from "./segment";
+import { track } from "@shared/analytics";
 
 const EARN = "Earn";
 

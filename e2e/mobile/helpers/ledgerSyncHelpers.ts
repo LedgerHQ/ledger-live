@@ -2,6 +2,7 @@ import { sleep } from "@ledgerhq/live-e2e-shared";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { getFlags } from "@e2e/bridge/server";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 import type { PartialFeatures } from "@shared/feature-flags";
 
@@ -15,8 +16,8 @@ export const LEDGER_SYNC_FEATURE_FLAGS: PartialFeatures = {
     params: {
       environment: ledgerSyncEnvironment,
       watchConfig: {
-        pollingInterval: 2_000,
-        initialTimeout: 500,
+        pollingInterval: INTERVAL.long,
+        initialTimeout: INTERVAL.short,
       },
       learnMoreLink: "",
     },
@@ -46,8 +47,8 @@ export const LEDGER_SYNC_ACTIVATION_FEATURE_FLAGS: PartialFeatures = {
   lwmLedgerSyncOptimisation: { enabled: true },
 };
 
-const ENVIRONMENT_READ_TIMEOUT_MS = 30_000;
-const ENVIRONMENT_READ_POLL_MS = 1_000;
+const ENVIRONMENT_READ_TIMEOUT_MS = TIMEOUT.xlarge;
+const ENVIRONMENT_READ_POLL_MS = INTERVAL.medium;
 
 /** `getFlags` returns "" when the bridge has not connected yet, so poll before believing it. */
 async function readAppLedgerSyncEnvironment() {

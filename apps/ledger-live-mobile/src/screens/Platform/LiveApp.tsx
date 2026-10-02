@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useEffect } from "react";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
@@ -5,7 +6,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import InfiniteLoader from "~/components/InfiniteLoader";
-import TrackScreen from "~/analytics/TrackScreen";
 import WebPlatformPlayer from "~/components/WebPlatformPlayer";
 import GenericErrorView from "~/components/GenericErrorView";
 import { useLocale } from "~/context/Locale";

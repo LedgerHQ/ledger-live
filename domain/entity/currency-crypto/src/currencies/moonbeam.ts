@@ -17,9 +17,6 @@ export const moonbeam = currency({
       magnitude: 18,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 1284,
-  },
   explorerViews: [
     {
       tx: "https://moonbeam.moonscan.io/tx/$hash",

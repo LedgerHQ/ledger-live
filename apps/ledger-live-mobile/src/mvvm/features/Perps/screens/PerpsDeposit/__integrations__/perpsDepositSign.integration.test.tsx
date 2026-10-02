@@ -19,8 +19,8 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCountervaluesState: () => ({}),
 }));
 
-jest.mock("@ledgerhq/live-countervalues/logic", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+jest.mock("@domain/entity-market-countervalues", () => ({
+  ...jest.requireActual("@domain/entity-market-countervalues"),
   calculate: () => 20000000000000000,
 }));
 

@@ -37,9 +37,6 @@ export const metis = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 1088,
-  },
   explorerViews: [
     {
       tx: "https://andromeda-explorer.metis.io/tx/$hash",

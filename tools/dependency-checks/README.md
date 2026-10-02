@@ -28,15 +28,19 @@ skip resolution and never call the hook.
 
 ## Config
 
-[config.json](./config.json) has two kinds of rule:
+[config.json](./config.json) has three kinds of rule:
 
 - **`singletons`** — a package name may resolve to at most `maxVersions` distinct versions
   (default 1). Add `react`, `electron`, or anything else that must not fork in the tree.
+- **`denylists`**: a named group with `why` and `packages`, each with a `reason` and the
+  alternative to `use`. A key is a package name or a `*` pattern. Any match fails the install, so
+  a dependency we replaced cannot come back transitively. Being unused is not a reason: only
+  list a package when a better alternative exists.
 - **`allowlists`** — a named group with `why`, the `patterns` it watches (`*` is the only glob
   honoured) and the `packages` allowed to match them. Anything else matching the patterns fails
   the install, so a package is caught even under a name nobody has seen yet.
 
-Add an allowlist group when the rule is "only these packages may satisfy this concern" — one
+Add a denylist entry when a dependency has a better replacement. Add an allowlist group when the rule is "only these packages may satisfy this concern", for example one
 curve implementation, one bundler, one HTTP client. The first group is `secp256k1`
 ([LIVE-37372](https://ledgerhq.atlassian.net/browse/LIVE-37372)).
 

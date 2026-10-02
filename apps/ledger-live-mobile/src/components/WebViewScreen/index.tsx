@@ -1,10 +1,10 @@
+import { Track } from "@shared/analytics-react";
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { Track } from "~/analytics";
 import WebViewNoConnectionError from "./NoConnectionError";
 import WebViewLoading from "./Loading";
 import SafeAreaView from "~/components/SafeAreaView";

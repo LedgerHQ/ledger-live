@@ -2,9 +2,8 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import BN from "bn.js";
-import { utils, type Account } from "near-api-js";
-import { NETWORK_ID, POOL_BALANCE, POOL_ID } from "./fixtures";
+import { KeyPair, type Account } from "near-api-js";
+import { POOL_BALANCE, POOL_ID } from "./fixtures";
 import type { SandboxHandle } from "./sandbox";
 
 // Pinned to a commit (not `master`) and checked against its digest, so it can't change under the scenario.
@@ -16,7 +15,6 @@ const CACHE_DIR = join(__dirname, "..", ".cache");
 const WASM_PATH = join(CACHE_DIR, "staking_pool.wasm");
 
 const TGAS = 1_000_000_000_000n;
-const toNearBn = (amount: bigint) => new BN(amount.toString());
 
 const digestOf = (wasm: Buffer): string => createHash("sha256").update(wasm).digest("hex");
 
@@ -49,14 +47,17 @@ async function stakingPoolWasm(): Promise<Buffer> {
 // Deploys a staking pool the scenario can delegate to. It logs a harmless `minimum_stake` failure
 // every epoch since it holds far less than the validator seat price; getValidators is stubbed anyway.
 export async function deployStakingPool(sandbox: SandboxHandle): Promise<Account> {
-  const keyPair = utils.KeyPair.fromRandom("ed25519");
-  await sandbox.keyStore.setKey(NETWORK_ID, POOL_ID, keyPair);
-  await sandbox.root.createAccount(POOL_ID, keyPair.getPublicKey(), toNearBn(POOL_BALANCE));
+  const keyPair = KeyPair.fromRandom("ed25519");
+  const pool = sandbox.account(POOL_ID, keyPair);
+  await sandbox.root.createAccount({
+    newAccountId: POOL_ID,
+    publicKey: keyPair.getPublicKey(),
+    nearToTransfer: POOL_BALANCE,
+  });
 
-  const pool = await sandbox.near.account(POOL_ID);
   await pool.deployContract(await stakingPoolWasm());
 
-  await pool.functionCall({
+  await pool.callFunction({
     contractId: POOL_ID,
     methodName: "new",
     args: {
@@ -64,7 +65,7 @@ export async function deployStakingPool(sandbox: SandboxHandle): Promise<Account
       stake_public_key: keyPair.getPublicKey().toString(),
       reward_fee_fraction: { numerator: 10, denominator: 100 },
     },
-    gas: toNearBn(300n * TGAS),
+    gas: 300n * TGAS,
   });
 
   return pool;
@@ -72,10 +73,10 @@ export async function deployStakingPool(sandbox: SandboxHandle): Promise<Account
 
 /** Nudges the pool to settle rewards, which is what refreshes an account's unlock epoch. */
 export async function pingPool(account: Account): Promise<void> {
-  await account.functionCall({
+  await account.callFunction({
     contractId: POOL_ID,
     methodName: "ping",
     args: {},
-    gas: toNearBn(125n * TGAS),
+    gas: 125n * TGAS,
   });
 }
