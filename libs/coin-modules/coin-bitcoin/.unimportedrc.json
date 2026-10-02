@@ -36,7 +36,8 @@
     "src/fixtures/common.fixtures.ts",
     "src/fixtures/rbf.fixtures.ts",
     "src/operation.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/test/msw.ts"
   ],
   "ignoreUnresolved": [
     "@jest/expect-utils",
