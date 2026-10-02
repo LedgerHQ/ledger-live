@@ -62,6 +62,7 @@ describe("CreateBackupStateMachine", () => {
   let sendCommand: jest.Mock;
   let getBackup: jest.Mock;
   let saveBackup: jest.Mock;
+  let removeBackup: jest.Mock;
   let parentEvents: OsUpdatesOrchestratorStateMachineEvent[];
   let parentRef: OsUpdatesOrchestratorStateMachineActorRef;
   let dmk: DeviceManagementKit;
@@ -79,7 +80,7 @@ describe("CreateBackupStateMachine", () => {
       input: {
         dmk,
         connectedDevice: CONNECTED_DEVICE,
-        storage: { getBackup, saveBackup },
+        storage: { getBackup, saveBackup, removeBackup },
         parentRef,
         ...overrides,
       },
@@ -142,6 +143,7 @@ describe("CreateBackupStateMachine", () => {
     sendCommand = jest.fn(async () => success({ name: "BOLOS", version: "2.2.3" }));
     getBackup = jest.fn(async () => undefined);
     saveBackup = jest.fn(async () => undefined);
+    removeBackup = jest.fn(async () => undefined);
     parentEvents = [];
     const parentActor = createActor(
       fromCallback<AnyEventObject>(({ receive }) => {
@@ -182,7 +184,7 @@ describe("CreateBackupStateMachine", () => {
 
       await start();
 
-      expect(getBackup).toHaveBeenCalledWith(DEVICE_ID);
+      expect(getBackup).toHaveBeenCalledWith(DeviceModelId.STAX);
       expect(actor.getSnapshot().status).toBe("done");
       expect(deviceActionRuns).toHaveLength(0);
       expect(saveBackup).not.toHaveBeenCalled();
@@ -294,7 +296,7 @@ describe("CreateBackupStateMachine", () => {
 
       await completeDeviceAction(NEW_BACKUP);
 
-      expect(saveBackup).toHaveBeenCalledWith(DEVICE_ID, NEW_BACKUP);
+      expect(saveBackup).toHaveBeenCalledWith(DeviceModelId.STAX, NEW_BACKUP);
       expect(actor.getSnapshot().status).toBe("done");
     });
 

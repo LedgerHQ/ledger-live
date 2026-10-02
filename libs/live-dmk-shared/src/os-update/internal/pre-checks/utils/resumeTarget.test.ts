@@ -3,10 +3,8 @@ import { resumeTarget } from "./resumeTarget";
 
 describe("resumeTarget", () => {
   describe("success", () => {
-    it("should resume waiting for the app and version from that last action", () => {
-      expect(resumeTarget[PreChecksStateMachineLastAction.WaitForAppAndVersion]).toBe(
-        "WaitingForAppAndVersion",
-      );
+    it("should resume reading the OS version from that last action", () => {
+      expect(resumeTarget[PreChecksStateMachineLastAction.GetOsVersion]).toBe("GetOsVersion");
     });
 
     it("should resume reading the battery from that last action", () => {

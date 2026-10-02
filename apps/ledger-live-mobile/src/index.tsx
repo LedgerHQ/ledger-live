@@ -154,6 +154,7 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const datadogFF = useFeature("llmDatadog");
   const providerNumber = useEnv("FORCE_PROVIDER");
+  const baseSocketUrl = useEnv("BASE_SOCKET_URL");
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
   const isPostOnboardingFlow = useSelector(isPostOnboardingFlowSelector);
   const initiatedIsOnboardingFlow = useRef<boolean>(isOnboardingFlow);
@@ -239,6 +240,12 @@ function App() {
     // setting provider only at initialisation
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk, providerNumber]);
+
+  useEffect(() => {
+    if (baseSocketUrl) {
+      dmk?.setWebSocketUrl(baseSocketUrl);
+    }
+  }, [dmk, baseSocketUrl]);
 
   useEffect(() => registerTransports(), []);
 

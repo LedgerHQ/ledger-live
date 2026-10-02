@@ -10,11 +10,22 @@ export type ProgressHistoryEntry = {
   stateType: string;
 };
 
+export type DebugDiscoveredDevice = {
+  id: string;
+  name: string;
+  transport: string;
+};
+
 export type OsUpdatesOrchestratorDebugScreenViewModel = {
   dmkReady: boolean;
   deviceId: string | null;
   sessionId: string | null;
   deviceStatus: DeviceStatus | null;
+  isScanning: boolean;
+  discoveredDevices: DebugDiscoveredDevice[];
+  connectingDeviceId: string | null;
+  canDisconnect: boolean;
+  connectionErrorMessage: string | null;
   hasBackup: boolean;
   backupAge: string | null;
   isSeedBackupSheetOpen: boolean;
@@ -25,6 +36,9 @@ export type OsUpdatesOrchestratorDebugScreenViewModel = {
   progress: OsUpdatesProgress | null;
   history: ProgressHistoryEntry[];
   errorMessage: string | null;
+  onToggleScan: () => void;
+  onConnectDevice: (deviceId: string) => void;
+  onDisconnect: () => void;
   onSeedBackup: () => void;
   onCloseSeedBackupSheet: () => void;
   onSeedValidBackup: () => void;
