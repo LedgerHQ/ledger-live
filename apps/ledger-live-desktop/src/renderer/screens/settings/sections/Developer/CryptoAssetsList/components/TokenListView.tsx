@@ -1,14 +1,6 @@
 import React from "react";
-import {
-  Flex,
-  Text,
-  SelectInput,
-  InfiniteLoader,
-  Checkbox,
-  Icons,
-  Input,
-} from "@ledgerhq/react-ui/index";
-import { Button } from "@ledgerhq/lumen-ui-react";
+import { Flex, Text, SelectInput, InfiniteLoader, Icons, Input } from "@ledgerhq/react-ui/index";
+import { Button, Checkbox } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { FAMILY_OPTIONS, PAGE_SIZE_OPTIONS, OUTPUT_FIELD_OPTIONS } from "../constants";
 import {
@@ -201,13 +193,12 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
                   {OUTPUT_FIELD_OPTIONS.map(field => (
                     <StyledCheckbox
                       key={field.value}
-                      onClick={() => toggleOutputField(field.value)}
+                      as="label"
                       style={{ padding: "6px 8px", marginBottom: "0" }}
                     >
                       <Checkbox
-                        isChecked={selectedOutputFields.includes(field.value)}
-                        name={`output-${field.value}`}
-                        onChange={() => toggleOutputField(field.value)}
+                        checked={selectedOutputFields.includes(field.value)}
+                        onCheckedChange={() => toggleOutputField(field.value)}
                       />
                       <Text variant="tiny" fontWeight="medium">
                         {field.label}
