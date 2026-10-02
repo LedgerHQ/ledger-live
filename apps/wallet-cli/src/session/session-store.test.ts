@@ -3,7 +3,7 @@ import { YAML } from "bun";
 import { statSync, mkdtempSync, mkdirSync, writeFileSync, chmodSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
-import { generateLabel, getSessionPath, Session } from "./session-store";
+import { generateLabel, getSessionPath, Session, withSessionLock } from "./session-store";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
 const btcNative: AccountDescriptorV1 = {
@@ -78,6 +78,23 @@ const ethGoerli: AccountDescriptorV1 = {
   path: "m/44h/60h/0h/0/0",
 };
 
+// `02` + 64 hex chars, a structurally valid compressed secp256k1 public key (the SEC1 prefix a real
+// key from `createSoftwareAgentIdentity()` always has) — not just any 66-char hex string.
+function makeAgentIntentProfile(overrides: Partial<Record<string, unknown>> = {}) {
+  return {
+    profileId: "trading-bot",
+    displayName: "Trading Bot",
+    description: "Proposes EVM payments for review.",
+    source: "openclaw" as const,
+    environment: "staging" as const,
+    bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+    publicKey: `02${"0".repeat(64)}`,
+    enrollmentExpiresAt: "2026-06-01T00:00:00.000Z",
+    createdAt: "2026-01-01T00:00:00.000Z",
+    ...overrides,
+  };
+}
+
 describe("generateLabel", () => {
   it("bitcoin mainnet native segwit → bitcoin-native-1", () => {
     expect(generateLabel(btcNative, new Set())).toBe("bitcoin-native-1");
@@ -121,8 +138,8 @@ describe("generateLabel", () => {
 describe("Session.addDescriptors", () => {
   it("appends new descriptors with auto-labels", () => {
     const session = Session.from([]);
-    const added = session.addDescriptors([btcNative, ethMain]);
-    expect(added).toBe(2);
+    const results = session.addDescriptors([btcNative, ethMain]);
+    expect(results.filter(r => r.added)).toHaveLength(2);
     expect(session.accounts).toHaveLength(2);
     expect(session.accounts[0].label).toBe("bitcoin-native-1");
     expect(session.accounts[1].label).toBe("ethereum-1");
@@ -136,8 +153,8 @@ describe("Session.addDescriptors", () => {
       },
     ];
     const session = Session.from(existing);
-    const added = session.addDescriptors([btcNative]);
-    expect(added).toBe(0);
+    const results = session.addDescriptors([btcNative]);
+    expect(results.filter(r => r.added)).toHaveLength(0);
     expect(session.accounts).toHaveLength(1);
   });
 
@@ -263,6 +280,79 @@ describe("ring-field resilience", () => {
     expect(session.domains.map(d => d.domain)).toEqual(["good-key"]);
   });
 
+  it("drops only malformed agentIntentProfiles entries, keeping the valid ones", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          makeAgentIntentProfile({ profileId: "good-profile", displayName: "Good" }),
+          { profileId: "missing-fields" }, // malformed — must not nuke the whole list
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
+    expect(session.invalidAgentIntentProfileIds).toEqual(["missing-fields"]);
+  });
+
+  it("write() carries a malformed agentIntentProfiles entry forward instead of erasing it", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          makeAgentIntentProfile({ profileId: "good-profile" }),
+          { profileId: "missing-fields" }, // malformed
+        ],
+      }),
+    );
+    // Simulate an unrelated command's read-modify-write (e.g. `account discover` adding an
+    // account) — it never touches agentIntentProfiles directly, but write() replaces the whole file.
+    const session = await Session.read();
+    session.addDescriptor(btcNative);
+    session.write();
+
+    const rewritten = await Session.read();
+    expect(rewritten.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
+    // The malformed entry must still be there — recoverable, still flagged invalid — not silently
+    // gone, which would orphan its OS-keychain secret for good.
+    expect(rewritten.invalidAgentIntentProfileIds).toEqual(["missing-fields"]);
+  });
+
+  it("readForReset preserves agentIntentProfiles even when the file is otherwise corrupt", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [{ label: "bad label with spaces", descriptor: 42 }], // fails schema
+        agentIntentProfiles: [makeAgentIntentProfile()],
+      }),
+    );
+    const session = await Session.readForReset();
+    expect(session.accounts).toHaveLength(0);
+    expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["trading-bot"]);
+  });
+
+  it("readForReset also reports invalid agentIntentProfiles ids on the ring-salvage path", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [{ label: "bad label with spaces", descriptor: 42 }], // fails schema, forces salvage
+        agentIntentProfiles: [
+          makeAgentIntentProfile({ profileId: "good-profile" }),
+          { profileId: "orphaned-by-corruption" }, // malformed
+        ],
+      }),
+    );
+    const session = await Session.readForReset();
+    expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
+    expect(session.invalidAgentIntentProfileIds).toEqual(["orphaned-by-corruption"]);
+  });
+
   it("still loads accounts when trustchain/domains are malformed (no whole-file failure)", async () => {
     useTmpState();
     writeFileSync(
@@ -298,6 +388,38 @@ describe("ring-field resilience", () => {
     expect(session.accounts).toHaveLength(0);
     expect(session.trustchain).toEqual({ rootId: "root-abc", applicationPath: "m/0'/17'/0'" });
     expect(session.passwordSalt).toBe("0".repeat(32));
+  });
+});
+
+describe("Session.agentIntentProfiles", () => {
+  const profile = makeAgentIntentProfile();
+
+  it("addAgentIntentProfile records a new profile", () => {
+    const session = Session.from([]);
+    session.addAgentIntentProfile(profile);
+    expect(session.agentIntentProfiles).toEqual([profile]);
+    expect(session.getAgentIntentProfile("trading-bot")).toEqual(profile);
+  });
+
+  it("addAgentIntentProfile refuses to overwrite an existing profileId", () => {
+    const session = Session.from([]);
+    session.addAgentIntentProfile(profile);
+    expect(() => session.addAgentIntentProfile(profile)).toThrow("already exists");
+  });
+
+  it("updateAgentIntentProfile merges a patch (e.g. setting trustchainId after complete)", () => {
+    const session = Session.from([]);
+    session.addAgentIntentProfile(profile);
+    const updated = session.updateAgentIntentProfile("trading-bot", { trustchainId: "tc-123" });
+    expect(updated.trustchainId).toBe("tc-123");
+    expect(session.getAgentIntentProfile("trading-bot")?.trustchainId).toBe("tc-123");
+  });
+
+  it("updateAgentIntentProfile throws for an unknown profileId", () => {
+    const session = Session.from([]);
+    expect(() => session.updateAgentIntentProfile("missing", { trustchainId: "tc" })).toThrow(
+      'No Agent Intent profile named "missing"',
+    );
   });
 });
 
@@ -339,5 +461,53 @@ describe("Session.write() permissions", () => {
 
     expect(statSync(stateDirectory).mode & 0o777).toBe(0o700);
     expect(statSync(getSessionPath()).mode & 0o777).toBe(0o600);
+  });
+});
+
+describe("withSessionLock", () => {
+  let tmpDir: string | undefined;
+  let savedEnv: string | undefined;
+
+  afterEach(() => {
+    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
+    else process.env.XDG_STATE_HOME = savedEnv;
+    if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("creates the state directory itself on a machine that has never written a session", async () => {
+    savedEnv = process.env.XDG_STATE_HOME;
+    // Deliberately NOT pre-created (unlike useTmpState() elsewhere in this file) — this is the
+    // "fresh machine" precondition: nothing has ever written here, so the app's own directory
+    // under it doesn't exist yet either. NOTE: on win32, stateDir() resolves via LOCALAPPDATA, not
+    // XDG_STATE_HOME (a known, separately-tracked gap — see session-fixture.ts) — so on that
+    // platform this doesn't actually exercise the fresh-machine path, only the assertions below,
+    // against whatever LOCALAPPDATA already has. The real fresh-machine case is exercised in CI
+    // (Linux), where XDG_STATE_HOME is honored.
+    tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-fresh-"));
+    process.env.XDG_STATE_HOME = tmpDir;
+
+    const result = await withSessionLock(() => "ran");
+
+    expect(result).toBe("ran");
+    expect(statSync(dirname(getSessionPath())).isDirectory()).toBe(true);
+  });
+
+  it("serializes two concurrent calls", async () => {
+    savedEnv = process.env.XDG_STATE_HOME;
+    tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-fresh-"));
+    process.env.XDG_STATE_HOME = tmpDir;
+
+    const events: string[] = [];
+    const first = withSessionLock(async () => {
+      events.push("first-start");
+      await new Promise(resolve => setTimeout(resolve, 100));
+      events.push("first-end");
+    });
+    const second = withSessionLock(() => {
+      events.push("second-start");
+    });
+
+    await Promise.all([first, second]);
+    expect(events).toEqual(["first-start", "first-end", "second-start"]);
   });
 });
