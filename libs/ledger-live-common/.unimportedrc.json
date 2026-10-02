@@ -805,6 +805,7 @@
     "src/families/hedera/bridge/api.ts",
     "src/families/hedera/coinModuleApi.ts",
     "src/families/hedera/config.ts",
+    "src/families/hedera/legacyBridgeAdapter.ts",
     "src/families/icon/config.ts",
     "src/families/internet_computer/config.ts",
     "src/families/kaspa/coinModuleApi.ts",

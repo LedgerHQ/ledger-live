@@ -150,6 +150,25 @@ describe("createTransaction", () => {
     });
   });
 
+  it("returns the Hedera default native send transaction", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("hedera"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "hedera",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+      memoType: null,
+      memoValue: null,
+      nonce: new BigNumber(0),
+    });
+  });
+
   it("throws for an unsupported currency family", () => {
     const account = {
       type: "Account",
