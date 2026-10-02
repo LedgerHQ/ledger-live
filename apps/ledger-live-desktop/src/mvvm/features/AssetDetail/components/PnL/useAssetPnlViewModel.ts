@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { useAssetGroupPnL } from "@ledgerhq/wallet-pnl/hooks";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";

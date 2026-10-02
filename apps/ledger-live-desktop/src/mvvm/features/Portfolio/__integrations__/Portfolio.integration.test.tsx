@@ -12,7 +12,7 @@ jest.mock("@ledgerhq/live-common/portfolio/portfolioReact", () => ({
   ...jest.requireActual("@ledgerhq/live-common/portfolio/portfolioReact"),
   usePortfolioThrottled: jest.fn(),
 }));
-import * as countervaluesReact from "@ledgerhq/live-countervalues-react";
+import * as countervaluesReact from "@features/platform-market-countervalues";
 import { useNavigate } from "react-router";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { createMockCategorizedAssets } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
@@ -132,8 +132,8 @@ jest.mock("~/renderer/hooks/usePrice", () => {
   };
 });
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculate: () => undefined,
 }));
 

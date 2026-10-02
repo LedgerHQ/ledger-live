@@ -60,8 +60,8 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useMaybeAccountUnit: jest.fn(() => ({ code: "ZEC", name: "ZEC", magnitude: 8 })),
 }));
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
   useCalculateCountervalueCallback: jest.fn(() => (_from: unknown, value: unknown) => value),
 }));

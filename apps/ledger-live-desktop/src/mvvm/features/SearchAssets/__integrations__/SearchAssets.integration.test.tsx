@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "tests/testSetup";
 import { useAssetsData, useStablecoinTickers } from "@features/platform-aggregated-assets";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import { useAssetSuggestionsViewModel } from "../hooks/useAssetSuggestionsViewModel";
 import { AssetSuggestionsSection } from "../AssetSuggestionsSection";
@@ -11,7 +11,10 @@ jest.mock("@features/platform-aggregated-assets", () => ({
   useAssetsData: jest.fn(),
   useStablecoinTickers: jest.fn(),
 }));
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate");
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
+  useUsdToFiatRate: jest.fn(),
+}));
 
 const mockedUseAssetsData = jest.mocked(useAssetsData);
 const mockedUseStablecoinTickers = jest.mocked(useStablecoinTickers);

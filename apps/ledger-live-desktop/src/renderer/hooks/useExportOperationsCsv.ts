@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { getEnv } from "@shared/env";
 import { useSelector } from "LLD/hooks/redux";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
 import type { Account } from "@ledgerhq/types-live";

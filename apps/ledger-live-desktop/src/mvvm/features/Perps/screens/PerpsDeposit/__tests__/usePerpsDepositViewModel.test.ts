@@ -22,8 +22,8 @@ jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
 // Countervalues are priced 1:1 in both directions, so the form ceiling is predictable:
 // a balance of 10_000 (2 decimals for USD) means a $100 maximum.
 const mockCalculateCountervalue = jest.fn((_currency: unknown, value: BigNumber) => value);
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => (currency: unknown, value: BigNumber) =>
     mockCalculateCountervalue(currency, value),
   useCountervaluesState: () => ({}),

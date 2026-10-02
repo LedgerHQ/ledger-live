@@ -5,7 +5,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   useCalculateCountervalueCallback,
   useCountervaluesState,
-} from "@ledgerhq/live-countervalues-react";
+} from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";

@@ -6,7 +6,8 @@ import logger from "~/renderer/logger";
 import { saveLogs } from "~/helpers/saveLogs";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
   useCountervaluesPolling: () => ({}),
 }));

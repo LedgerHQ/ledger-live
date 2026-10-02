@@ -62,7 +62,8 @@ jest.mock("@features/platform-aggregated-assets", () => ({
 }));
 
 const mockUseUsdToFiatRate = jest.fn();
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: (...args: unknown[]) => mockUseUsdToFiatRate(...args),
 }));
 
