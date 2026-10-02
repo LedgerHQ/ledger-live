@@ -51,7 +51,6 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --forceExit --runInBand"
   },
   "dependencies": {
