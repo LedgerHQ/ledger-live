@@ -115,6 +115,9 @@ describe("near/banner", () => {
   it("should return display delegate mode is account is not empty", async () => {
     jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(logic, "canUnstake").mockReturnValue(true);
+    // canStake reads the coin module's own preload cache, which the spy above does not reach, so
+    // pin it here rather than let the banner depend on what this fixture balance can afford.
+    jest.spyOn(logic, "canStake").mockReturnValue(true);
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({
       display: true,
