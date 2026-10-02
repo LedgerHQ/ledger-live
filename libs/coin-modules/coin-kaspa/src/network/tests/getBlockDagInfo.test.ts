@@ -29,7 +29,7 @@ describe("getBlockDagInfo", () => {
   });
 });
 it("Should throw an error when fetch returns a 500 response", async () => {
-  // A 5xx is retried first (fetchWithRetry); the error surfaces once every attempt has failed.
+  // A 5xx is retried first (READ_RETRY); the error surfaces once every attempt has failed.
   jest.useFakeTimers();
   global.fetch = jest.fn().mockResolvedValue({
     ok: false,

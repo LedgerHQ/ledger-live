@@ -7,7 +7,7 @@ describe("getFees", () => {
   });
 
   it("Error response", async () => {
-    // A 5xx is retried first (fetchWithRetry); the error surfaces once every attempt has failed.
+    // A 5xx is retried first (READ_RETRY); the error surfaces once every attempt has failed.
     jest.useFakeTimers();
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,

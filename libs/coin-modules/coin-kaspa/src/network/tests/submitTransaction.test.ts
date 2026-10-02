@@ -89,7 +89,7 @@ describe("submitTransaction function", () => {
       jest.useFakeTimers();
       global.fetch = jest
         .fn()
-        .mockResolvedValueOnce({ ok: false, status: 429, headers: { get: () => null } })
+        .mockResolvedValueOnce({ ok: false, status: 429, text: async () => "Too Many Requests" })
         .mockResolvedValueOnce({
           ok: true,
           status: 200,

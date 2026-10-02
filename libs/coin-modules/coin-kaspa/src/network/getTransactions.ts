@@ -1,6 +1,7 @@
+import { retry } from "@ledgerhq/coin-module-framework/promises";
 import { ApiResponseTransaction } from "../types";
 import { API_BASE } from "./config";
-import { fetchWithRetry } from "./fetchWithRetry";
+import { httpError, READ_RETRY } from "./retryPolicy";
 
 // The indexer rejects `before` and `after` together (HTTP 400), so the type allows only one.
 type PageDirection = { after: number; before?: never } | { before?: number; after?: never };
@@ -44,17 +45,17 @@ export const getTransactions = async (
     url.searchParams.set("after", String(after));
   }
 
-  const response = await fetchWithRetry(url, { headers: { Accept: "application/json" } });
+  return retry(async () => {
+    const response = await fetch(url, { headers: { Accept: "application/json" } });
 
-  if (!response.ok) {
-    throw Object.assign(new Error("Network response was not ok."), {
-      status: response.status,
-    });
-  }
+    if (!response.ok) {
+      throw httpError("Network response was not ok.", response.status);
+    }
 
-  const nextPageBefore = response.headers.get("X-Next-Page-Before") || null;
-  const nextPageAfter = response.headers.get("X-Next-Page-After") || null;
-  const transactions = await response.json();
+    const nextPageBefore = response.headers.get("X-Next-Page-Before") || null;
+    const nextPageAfter = response.headers.get("X-Next-Page-After") || null;
+    const transactions = await response.json();
 
-  return { transactions, nextPageBefore, nextPageAfter };
+    return { transactions, nextPageBefore, nextPageAfter };
+  }, READ_RETRY);
 };

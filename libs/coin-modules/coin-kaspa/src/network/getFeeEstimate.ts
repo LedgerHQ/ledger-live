@@ -1,21 +1,23 @@
+import { retry } from "@ledgerhq/coin-module-framework/promises";
 import { ApiResponseFeeEstimate } from "../types";
 import { API_BASE } from "./config";
-import { fetchWithRetry } from "./fetchWithRetry";
+import { httpError, READ_RETRY } from "./retryPolicy";
 
 export const getFeeEstimate = async (): Promise<ApiResponseFeeEstimate> => {
   try {
-    const response = await fetchWithRetry(`${API_BASE}/info/fee-estimate`, {
-      headers: {
-        Accept: "application/json",
-      },
-    });
+    return await retry(async () => {
+      const response = await fetch(`${API_BASE}/info/fee-estimate`, {
+        headers: {
+          Accept: "application/json",
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
+      if (!response.ok) {
+        throw httpError("Network response was not ok", response.status);
+      }
 
-    const fees: ApiResponseFeeEstimate = await response.json();
-    return fees;
+      return (await response.json()) as ApiResponseFeeEstimate;
+    }, READ_RETRY);
   } catch (error) {
     throw new Error(`Failed to fetch fee estimate. ${error}`);
   }

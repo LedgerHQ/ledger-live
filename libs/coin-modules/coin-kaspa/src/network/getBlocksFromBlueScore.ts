@@ -1,5 +1,6 @@
+import { retry } from "@ledgerhq/coin-module-framework/promises";
 import { API_BASE } from "./config";
-import { fetchWithRetry } from "./fetchWithRetry";
+import { httpError, READ_RETRY } from "./retryPolicy";
 import { ApiResponseBlockInfo } from "../types";
 
 // The endpoint returns an array: a blue score can map to several blocks (BlockDAG).
@@ -20,12 +21,16 @@ export const getBlocksFromBlueScore = async (
     includeTransactions: String(includeTransactions),
   });
 
-  const response = await fetchWithRetry(`${API_BASE}/blocks-from-bluescore?${query}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
+  return retry(async () => {
+    const response = await fetch(`${API_BASE}/blocks-from-bluescore?${query}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
 
-  if (!response.ok) throw new Error(`kaspa: getBlocksFromBlueScore: status ${response.status}`);
+    if (!response.ok) {
+      throw httpError(`kaspa: getBlocksFromBlueScore: status ${response.status}`, response.status);
+    }
 
-  return (await response.json()) as ApiResponseBlockInfo[];
+    return (await response.json()) as ApiResponseBlockInfo[];
+  }, READ_RETRY);
 };
