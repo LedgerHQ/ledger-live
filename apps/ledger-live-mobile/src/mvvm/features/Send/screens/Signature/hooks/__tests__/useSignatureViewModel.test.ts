@@ -118,6 +118,15 @@ describe("useSignatureViewModel in a sponsored transfer", () => {
     expect(mockStopSigning).not.toHaveBeenCalled();
   });
 
+  it("keeps signing open once a failed TX-C is handed to the failure screen", () => {
+    const { result } = renderHook(() => useSignatureViewModel());
+
+    act(() => lastOnFinish()?.(SEND_FLOW_COMPLETION.FAILURE, new Error("init failed")));
+    act(() => result.current.onUserCancel());
+
+    expect(mockStopSigning).not.toHaveBeenCalled();
+  });
+
   it("closes the overlay when the user dismisses the sheet", () => {
     const { result } = renderHook(() => useSignatureViewModel());
 

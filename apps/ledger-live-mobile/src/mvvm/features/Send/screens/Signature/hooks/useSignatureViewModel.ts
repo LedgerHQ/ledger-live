@@ -77,6 +77,7 @@ export function useSignatureViewModel() {
   const isSponsoredTransfer = sponsoredState.phase === SPONSORED_PHASE.TRANSFER;
   // Pinned at mount, so an outcome reported after a re-craft is dropped as stale.
   const [signedPaymentTxId] = useState(sponsoredState.paymentTxId);
+  const handedToSponsoredFlowRef = useRef(false);
 
   const goToConfirmation = useCallback(
     (completion: SendFlowCompletion, error?: Error) => {
@@ -88,7 +89,10 @@ export function useSignatureViewModel() {
           error,
         });
         // A failure stays in the overlay: SponsoredFlowHost shows it, and Retry resumes at TRANSFER.
-        if (completion !== SEND_FLOW_COMPLETION.SUCCESS) return;
+        if (completion !== SEND_FLOW_COMPLETION.SUCCESS) {
+          handedToSponsoredFlowRef.current = true;
+          return;
+        }
       }
       // Dismisses the overlay and runs the onComplete callback registered by the triggering screen
       // (Amount or CoinControl). That callback holds the navigation reference to navigate to
@@ -182,7 +186,6 @@ export function useSignatureViewModel() {
   // moves to the confirmation screen.
   // Exception: Contract Data disabled during a sponsored TRANSFER routes into the orchestration,
   // so the user gets the dedicated recovery screen.
-  const handedToSponsoredFlowRef = useRef(false);
   const onIntentJobError = useCallback(
     (error: unknown) => {
       if (isSponsoredTransfer && isContractDataDisabledError(error)) {
