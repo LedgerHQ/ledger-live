@@ -1,9 +1,15 @@
 export interface PayCardFlagsProps {
   readonly payTabEnabled: boolean;
-  readonly cardParam: boolean;
+  readonly cardNativeParam: boolean;
+  readonly cardLiveAppParam: boolean;
+  readonly cardDisclaimerParam: boolean;
+  readonly legacyTopUpParam: boolean;
   readonly ptxCardEnabled: boolean;
   readonly setPayTabEnabled: (value: boolean) => void;
-  readonly setCardParam: (value: boolean) => void;
+  readonly setCardNativeParam: (value: boolean) => void;
+  readonly setCardLiveAppParam: (value: boolean) => void;
+  readonly setCardDisclaimerParam: (value: boolean) => void;
+  readonly setLegacyTopUpParam: (value: boolean) => void;
   readonly setPtxCardEnabled: (value: boolean) => void;
 }
 

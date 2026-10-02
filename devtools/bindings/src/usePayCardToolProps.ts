@@ -137,31 +137,81 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const ptxCard = useFeature("ptxCard");
 
   const payTabEnabled = !!payTab?.enabled;
-  const cardParam = !!payTab?.params?.card;
+  const cardNativeParam = !!payTab?.params?.card_native;
+  const cardLiveAppParam = !!payTab?.params?.card_live_app;
+  const cardDisclaimerParam = !!payTab?.params?.card_disclaimer;
   const legacyTopUpParam = !!payTab?.params?.legacyTopUp;
   const ptxCardEnabled = !!ptxCard?.enabled;
 
-  // An override replaces every param default, so each setter has to carry the params it does not
-  // change. Otherwise a toggle here silently resets them.
   const setPayTabEnabled = useCallback(
     (enabled: boolean) => {
-      const params = { card: cardParam, legacyTopUp: legacyTopUpParam };
-      dispatch(setOverride({ key: payTabKey, value: { enabled, params } }));
-    },
-    [cardParam, legacyTopUpParam, dispatch, payTabKey],
-  );
-
-  const setCardParam = useCallback(
-    (card: boolean) => {
-      const params = { card, legacyTopUp: legacyTopUpParam };
       dispatch(
         setOverride({
           key: payTabKey,
-          value: { enabled: payTabEnabled, params },
+          value: {
+            enabled,
+            params: {
+              card_native: cardNativeParam,
+              card_live_app: cardLiveAppParam,
+              card_disclaimer: cardDisclaimerParam,
+              legacyTopUp: legacyTopUpParam,
+            },
+          },
         }),
       );
     },
-    [dispatch, legacyTopUpParam, payTabEnabled, payTabKey],
+    [cardDisclaimerParam, cardLiveAppParam, cardNativeParam, dispatch, legacyTopUpParam, payTabKey],
+  );
+
+  const setPayTabParam = useCallback(
+    (patch: {
+      card_native?: boolean;
+      card_live_app?: boolean;
+      card_disclaimer?: boolean;
+      legacyTopUp?: boolean;
+    }) => {
+      dispatch(
+        setOverride({
+          key: payTabKey,
+          value: {
+            enabled: payTabEnabled,
+            params: {
+              card_native: cardNativeParam,
+              card_live_app: cardLiveAppParam,
+              card_disclaimer: cardDisclaimerParam,
+              legacyTopUp: legacyTopUpParam,
+              ...patch,
+            },
+          },
+        }),
+      );
+    },
+    [
+      cardDisclaimerParam,
+      cardLiveAppParam,
+      cardNativeParam,
+      dispatch,
+      legacyTopUpParam,
+      payTabEnabled,
+      payTabKey,
+    ],
+  );
+
+  const setCardNativeParam = useCallback(
+    (card_native: boolean) => setPayTabParam({ card_native }),
+    [setPayTabParam],
+  );
+  const setCardLiveAppParam = useCallback(
+    (card_live_app: boolean) => setPayTabParam({ card_live_app }),
+    [setPayTabParam],
+  );
+  const setCardDisclaimerParam = useCallback(
+    (card_disclaimer: boolean) => setPayTabParam({ card_disclaimer }),
+    [setPayTabParam],
+  );
+  const setLegacyTopUpParam = useCallback(
+    (legacyTopUp: boolean) => setPayTabParam({ legacyTopUp }),
+    [setPayTabParam],
   );
 
   const setPtxCardEnabled = useCallback(
@@ -196,13 +246,32 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const flags = useMemo(
     () => ({
       payTabEnabled,
-      cardParam,
+      cardNativeParam,
+      cardLiveAppParam,
+      cardDisclaimerParam,
+      legacyTopUpParam,
       ptxCardEnabled,
       setPayTabEnabled,
-      setCardParam,
+      setCardNativeParam,
+      setCardLiveAppParam,
+      setCardDisclaimerParam,
+      setLegacyTopUpParam,
       setPtxCardEnabled,
     }),
-    [payTabEnabled, cardParam, ptxCardEnabled, setPayTabEnabled, setCardParam, setPtxCardEnabled],
+    [
+      payTabEnabled,
+      cardNativeParam,
+      cardLiveAppParam,
+      cardDisclaimerParam,
+      legacyTopUpParam,
+      ptxCardEnabled,
+      setPayTabEnabled,
+      setCardNativeParam,
+      setCardLiveAppParam,
+      setCardDisclaimerParam,
+      setLegacyTopUpParam,
+      setPtxCardEnabled,
+    ],
   );
 
   const auth = usePayCardAuthProps({ openPayTab: options.openPayTab });

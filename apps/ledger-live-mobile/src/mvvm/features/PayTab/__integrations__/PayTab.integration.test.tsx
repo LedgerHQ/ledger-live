@@ -280,6 +280,18 @@ describe("PayTab integration", () => {
       expect(await screen.findByTestId("pay-card-balance-empty-state")).toBeVisible();
       expect(screen.queryByTestId("card-login")).toBeNull();
       expect(screen.queryByTestId("pay-disclaimer")).toBeNull();
+      expect(screen.queryByTestId("pay-card-disclaimer-link")).toBeNull();
+    });
+
+    it("should show the card disclaimer instead of the card", async () => {
+      renderPayTab({ cardEnabled: false, cardDisclaimer: true });
+
+      expect(await screen.findByTestId("pay-card-balance-empty-state")).toBeVisible();
+      expect(screen.queryByTestId("card-login")).toBeNull();
+      expect(screen.queryByTestId("pay-disclaimer")).toBeNull();
+      expect(screen.getByTestId("pay-card-disclaimer-link")).toBeVisible();
+      expect(screen.getByText("Looking for your crypto card?")).toBeVisible();
+      expect(screen.getByText("Go to CL Card")).toBeVisible();
     });
 
     it("should open the balance filter bottom sheet from the hero pill and track the interaction", async () => {

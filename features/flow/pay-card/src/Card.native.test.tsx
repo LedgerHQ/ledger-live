@@ -326,3 +326,15 @@ describe("Card (native)", () => {
     });
   });
 });
+
+describe("live app login page", () => {
+  it("keeps the login page after a session exists", () => {
+    mockUseCardAuthStatus.mockReturnValue("signedIn");
+
+    renderCard(<Card login={{ oauthConfig, keepLoginPage: true }} onTopUp={jest.fn()} />);
+
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
+    expect(screen.getByTestId("card-login")).toBeVisible();
+    expect(screen.queryByTestId("card-details")).toBeNull();
+  });
+});
