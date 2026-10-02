@@ -1,5 +1,39 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.54.0
+
+### Minor Changes
+
+- [#22561](https://github.com/LedgerHQ/ledger-live/pull/22561) [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae) Thanks [@YazhuEth](https://github.com/YazhuEth)! - chore(currency): drop `CryptoCurrency#bitcoinLikeInfo`
+
+  coin-bitcoin now reads the xpub version from its own `getNetworkParameters`, and coin-zcash from a local `ZCASH_XPUB_VERSION` constant. The unused `bitcoinLikeInfo` field (and `BitcoinLikeInfoSchema`) is removed from the currency types and registry.
+
+- [#21953](https://github.com/LedgerHQ/ledger-live/pull/21953) [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/live-config`, `@ledgerhq/live-env`, `@ledgerhq/live-currency-format`,
+  `@ledgerhq/domain-service` and `@ledgerhq/evm-tools` from npm instead of the workspace — they
+  now live in the `ts-libs` repository. No API change.
+
+- [#22589](https://github.com/LedgerHQ/ledger-live/pull/22589) [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5) Thanks [@qperrot](https://github.com/qperrot)! - Remove the deprecated `CryptoCurrency.explorerId` field and the `LedgerExplorerId` type.
+
+  Bitcoin-like explorer ids now come from the coin config (`config_currency_<id>.explorerId`), as EVM already does, and fall back to the currency id. The config is passed in rather than read from a module global: `toWalletBtcCurrency`, `walletBtcCurrencyById` and coin-bitcoin's `blockchainBaseURL` take it as an argument, the sync functions take the `coinConfig` resolver given to `createBridges`, and `assignFromAccountRaw` is now built with `makeAssignFromAccountRaw(coinConfig)`.
+
+  Adds `config_currency_bitcoin_testnet`, `config_currency_bitcoin_regtest` and `config_currency_zcash_regtest` so every bitcoin-like currency resolves a config entry.
+
+- [#22279](https://github.com/LedgerHQ/ledger-live/pull/22279) [`62cc42f`](https://github.com/LedgerHQ/ledger-live/commit/62cc42f32d041e0e1081e7fdaca04169581429ec) Thanks [@semeano](https://github.com/semeano)! - Fix Zcash mock-bridge and serialization so shielded send still works
+
+  Persisting a _mock_ Zcash account (under `MOCK=true`) routed `toAccountRaw` through coin-bitcoin's mock bridge, which declares no assign hooks at all and so dropped both the viewing key/`privateInfo` and the transparent `bitcoinResources` the load path had just restored. A real account was never affected: coin-bitcoin's real bridge already round-trips `privateInfo` unconditionally via its Zcash chain-adapter. Mock account ids now resolve through the standalone Zcash serialization family instead — unless the host never registered that coin module (wallet-cli registers bitcoin, evm and solana only), in which case they keep coin-bitcoin's adapter instead of failing to resolve a bridge. A real account id keeps resolving through `currency.family` as before, so it never eager-loads the standalone module merely by being deserialized.
+
+  The mock bridge also omitted `getFullViewingKey`, `deriveShieldedAddress`, and `getShieldedAddress`, so activating the private balance under `MOCK=true` threw a TypeError. Those methods now return device-free stand-ins, including a well-formed unified address so the send flow still classifies a self-transfer as a private recipient.
+
+  `@ledgerhq/coin-bitcoin`'s Zcash chain-adapter (`chain-adapters/zcash/serialization.ts`, the bridge a real account id always resolves to) also dropped `lastSyncError` on every round-trip: the field exists on `ZcashPrivateInfoRaw` but neither `toZcashPrivateInfoRaw` nor `fromZcashPrivateInfoRaw` mapped it, so a failed shielded sync lost its retry marker on save/load. Both directions now carry it, matching `@ledgerhq/coin-zcash`'s own serializer.
+
+### Patch Changes
+
+- Updated dependencies [[`2d869a5`](https://github.com/LedgerHQ/ledger-live/commit/2d869a596a4562a00003de01cc657d7277dc6b7c), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d), [`a025d7a`](https://github.com/LedgerHQ/ledger-live/commit/a025d7a872b7b1e4681d16b2bfb54f8949bf6626), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed), [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d)]:
+  - @ledgerhq/types-live@6.126.0
+  - @ledgerhq/ledger-wallet-framework@3.6.0
+  - @ledgerhq/live-signer-zcash@0.10.0
+  - @ledgerhq/wallet-btc@0.6.0
+
 ## 0.54.0-next.0
 
 ### Minor Changes

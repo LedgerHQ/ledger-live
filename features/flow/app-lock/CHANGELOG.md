@@ -1,5 +1,55 @@
 # @features/flow-app-lock
 
+## 0.6.0
+
+### Minor Changes
+
+- [#22453](https://github.com/LedgerHQ/ledger-live/pull/22453) [`370f955`](https://github.com/LedgerHQ/ledger-live/commit/370f95583baf604e3d0e9db3c7c7dadbc6a0c608) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Track the add-password flow through `@shared/analytics`, per the Password tracking plan.
+
+  The protection drawer reports its enable button as `button_clicked` with the variant it offers, and a stored password reports `encryption_activated` with `type: "password"` and the entry point it came from. That `source` is passed by each caller — `settings` from the Settings row, `card` from the Pay tab — and carried through the flow's route params instead of being guessed from where the user happens to be. `password_enabled` and `biometrics_enabled` join every event and the user's traits, read from whichever scheme protects the app, and the traits are refreshed as soon as a password is stored. No payload carries the password or anything derived from it.
+
+  The Settings password and biometrics toggles report `toggle_clicked` with `enabled` set to the state the toggle had when it was tapped, on both the revamped and the legacy rows, and the revamped rows now track through `@shared/analytics` too.
+
+- [#22287](https://github.com/LedgerHQ/ledger-live/pull/22287) [`5f34cb6`](https://github.com/LedgerHQ/ledger-live/commit/5f34cb6848f92e1b520a474a2b779caad6f88804) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Stop a card holder from leaving the app with nothing protecting it.
+
+  Both protection rows in Settings let anyone turn protection off, so someone holding a card could strip the app of its last lock. Without a card that stays allowed — the app lock is opt-in — but a card turns "at least one protection" into a rule.
+
+  Removing the last one is now refused, and a sheet says why at the moment the user asks, rather than a disabled row that explains nothing. Removing one of two is still allowed: at least one protection is the invariant, and which one is the user's choice — so a password can still be swapped for biometrics, or the reverse.
+
+  What counts as holding a card is the **card session stored on the device**, which `@features/platform-card` owns — not Pay's feature flag, and not whether the Pay tab has been opened. A holder who has not been near Pay on this launch is still a holder, and turning Pay's flag off does not turn the rule off. The session is read when the user asks to remove a protection, not when Settings opens, so a tap can never land before the answer, and a session that started or ended with Settings open is seen. A session that cannot be read counts as a card: a refusal can be retried, while a removal cannot be taken back.
+
+  The rule applies to the revamped rows. The legacy rows shown while `lwmPasswordRevamp` is off are left as they are.
+
+- [#22347](https://github.com/LedgerHQ/ledger-live/pull/22347) [`e012138`](https://github.com/LedgerHQ/ledger-live/commit/e012138a1531a651ae62515bed2cada9dbfcfa8c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Require a password of at least six characters from users who set a shorter one, the next time they get in.
+
+  Any length was accepted before this epic — `"1"` among them — so the minimum the new screens enforce would otherwise apply to new passwords only. The prompt cannot be dismissed: there is no close button, the backdrop does not take a press, and the Android back button is swallowed while it holds the screen. A prompt that can be put off is one that short passwords outlive.
+
+  It runs after a successful unlock, not at boot, because that is when the password has been proven and its length is known. Four steps: a sheet that says why, the new password, its confirmation, and a sheet that says it worked. The old password is never asked for again — they just typed it to get in.
+
+  **The requirement is stored, beside the verifier it describes.** The protection state is deliberately not persisted, since a second source of truth about whether a password exists is a lockout risk, and this mark cannot be recomputed from a digest: a verifier says nothing about the length of the password behind it. So it rides in the same keychain record, written and cleared by the single write that sets the password it describes, and the two cannot disagree.
+
+  It is also **re-derived at every password unlock**, which is what heals a record written before the mark existed, and what corrects one whose password was changed elsewhere. The stored mark still earns its place: a biometric unlock never sees a password, and the prompt is owed on that boot too.
+
+  A write the keychain declines is reported as a failure rather than as a password change, so the confirmation holds instead of sending the user off with a verifier that is still the old one. The mark's own repair at unlock is best-effort by contrast: metadata must never cost somebody an unlock they have just earned.
+
+  An overlay rather than a route: a route is presented over the app in its own window, and the sheets — which present into the app's window — would be visible through it while taking none of the taps aimed at them.
+
+- [#22417](https://github.com/LedgerHQ/ledger-live/pull/22417) [`8b387f4`](https://github.com/LedgerHQ/ledger-live/commit/8b387f4d1db967288af2f982a78949e0615ebc7e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Resume after a biometric prompt only once the app is active again, and let the enable button show it is waiting.
+
+  On iOS the system answers the prompt while the Face ID sheet is still leaving, with the app not yet back in the foreground, and native UI presented in that window never appears. The Card login hit it first: pressing Continue straight after enabling Face ID opened no browser, and the web browser module then refused every later attempt until the app was relaunched, because it had recorded a session that never started.
+
+  Every biometric prompt in the app now waits for the app to be active before answering, whatever the answer. The wait is bounded, so an event that never arrives cannot hold anyone up, and it does not apply to an app the user has sent to the background.
+
+  The system prompt also leaves the app pressable, so pressing "Enable Face ID" again while it was up opened a second one. The button now shows its spinner while the prompt is pending and ignores further presses. `InfoState` CTAs gain a `loading` flag for it.
+
+### Patch Changes
+
+- Updated dependencies [[`5f34cb6`](https://github.com/LedgerHQ/ledger-live/commit/5f34cb6848f92e1b520a474a2b779caad6f88804), [`e012138`](https://github.com/LedgerHQ/ledger-live/commit/e012138a1531a651ae62515bed2cada9dbfcfa8c), [`2074967`](https://github.com/LedgerHQ/ledger-live/commit/2074967c2c084e05de67597ae353c783b0b10f92), [`1647f38`](https://github.com/LedgerHQ/ledger-live/commit/1647f38343baf93fbe8333d9abec403797489859), [`8b387f4`](https://github.com/LedgerHQ/ledger-live/commit/8b387f4d1db967288af2f982a78949e0615ebc7e), [`c32cde3`](https://github.com/LedgerHQ/ledger-live/commit/c32cde31461523c72df4f67cd18288c6f65c9951), [`b4599a5`](https://github.com/LedgerHQ/ledger-live/commit/b4599a58f817aa233be256d6f755a0fd4d0fc8a5), [`dccea32`](https://github.com/LedgerHQ/ledger-live/commit/dccea322ed808abfa4e6829364fe945cd0a58383), [`1302bc7`](https://github.com/LedgerHQ/ledger-live/commit/1302bc7968a7d3bf9cd3d556057b662444b22608), [`909c761`](https://github.com/LedgerHQ/ledger-live/commit/909c761357291f48ac0266d91d6ed563aa4ad833), [`3fdfcc0`](https://github.com/LedgerHQ/ledger-live/commit/3fdfcc07ffb1d8e0b5ef39c830a5e7204ced77e3), [`93e6db2`](https://github.com/LedgerHQ/ledger-live/commit/93e6db2db85721b483173e781db9f53db3699715), [`8a305ed`](https://github.com/LedgerHQ/ledger-live/commit/8a305edb307d0a4cd30ad615ccd98ef5d7caf523), [`c020110`](https://github.com/LedgerHQ/ledger-live/commit/c02011033bf5ca5bf38f05c487adb3a27c209a7d)]:
+  - @features/platform-app-lock@0.5.0
+  - @shared/ui-info-state@0.4.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+  - @shared/analytics@0.4.0
+
 ## 0.6.0-next.0
 
 ### Minor Changes

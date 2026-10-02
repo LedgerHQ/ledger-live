@@ -1,5 +1,16 @@
 # @features/platform-currencies
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [[`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43)]:
+  - @domain/entity-currency-crypto@0.14.0
+  - @shared/api-services@0.9.0
+  - @features/platform-feature-flags@0.8.1
+  - @domain/api-currency-token@0.6.3
+  - @domain/entity-currency-token@0.5.4
+
 ## 0.9.1-next.1
 
 ### Patch Changes

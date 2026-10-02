@@ -1,5 +1,11 @@
 # @features/platform-device-action-content
 
+## 0.3.0
+
+### Minor Changes
+
+- [#22563](https://github.com/LedgerHQ/ledger-live/pull/22563) [`3e7af98`](https://github.com/LedgerHQ/ledger-live/commit/3e7af98196476c04a97522109fded33cc17dc868) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump react-native-config to 1.7.2 and drop its pnpmfile peer patch
+
 ## 0.3.0-next.0
 
 ### Minor Changes

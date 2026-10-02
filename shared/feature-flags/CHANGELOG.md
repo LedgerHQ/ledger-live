@@ -1,5 +1,40 @@
 # @shared/feature-flags
 
+## 0.25.0
+
+### Minor Changes
+
+- [#22612](https://github.com/LedgerHQ/ledger-live/pull/22612) [`5adf8f3`](https://github.com/LedgerHQ/ledger-live/commit/5adf8f3b844e21895aa17f96a620a2dfa6b679ad) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Drop the Sui JSON-RPC transport, which the Sui Foundation retires, and make gRPC the default; GraphQL stays selectable through the `suiTransport` flag. coin-sui now owns the chain types it previously borrowed from `@mysten/sui/jsonRpc`.
+
+- [#22058](https://github.com/LedgerHQ/ledger-live/pull/22058) [`f8c92f9`](https://github.com/LedgerHQ/ledger-live/commit/f8c92f9300d4b8268949ed7aff5a6781ed7f60a8) Thanks [@alexstapenka-ledger](https://github.com/alexstapenka-ledger)! - Instrument the shared sign/broadcast bridge defensively and dispatch consent-independent Earn
+  transaction lifecycle events for native staking and allow-listed dApps on Desktop and Mobile.
+
+- [#22534](https://github.com/LedgerHQ/ledger-live/pull/22534) [`7fd570c`](https://github.com/LedgerHQ/ledger-live/commit/7fd570cd3868a675dad0d77136734eab63f11bd1) Thanks [@ysitbon](https://github.com/ysitbon)! - fix(feature-flags): expose when the local cache read has settled
+
+  The slice gains a transient `cachedFlagsSettled` flag, read with `selectCachedFlagsSettled`. The
+  middleware arms it once the `readCachedFlags` prime settles, whether it primed, was empty or failed,
+  and re-resolves first so an empty cache still gets env overrides and version filters applied. It
+  never waits on the network, unlike `remoteFlagsReady`. Without a cache reader it is armed right away.
+
+  A store configured with neither a cache reader nor a fetcher now arms `remoteFlagsReady` too, instead
+  of leaving it `false` forever.
+
+  A reducer or a downstream middleware that throws while the slice is re-resolved no longer aborts
+  the boot sequence: the exception is reported to `onRemoteFlagsError` with the new `sync` stage, and
+  `cachedFlagsSettled` and `remoteFlagsReady` are armed anyway, so a startup waiting on them is never
+  stranded.
+
+- [#22328](https://github.com/LedgerHQ/ledger-live/pull/22328) [`41eca65`](https://github.com/LedgerHQ/ledger-live/commit/41eca657432071ba1d22029b79be85ca3eff6a94) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Open top-up in the legacy `cl-card` live app when the new `legacyTopUp` param of `lwdPayTab` or `lwmPayTab` is on.
+
+- [#22889](https://github.com/LedgerHQ/ledger-live/pull/22889) [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
+- [#22550](https://github.com/LedgerHQ/ledger-live/pull/22550) [`86dbc48`](https://github.com/LedgerHQ/ledger-live/commit/86dbc48147fa1a16aa79c81f844ffe5117b29494) Thanks [@alexstapenka-ledger](https://github.com/alexstapenka-ledger)! - Add the `ptxEarnCtaOnMobile` feature flag and send it to Mixpanel as a boolean identify trait. Earn reads it via Wallet API.
+
+- [#22054](https://github.com/LedgerHQ/ledger-live/pull/22054) [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add `@ledgerhq/live-signer-tron`, wrapping `@ledgerhq/device-signer-kit-tron` as `DmkSignerTron`
+  alongside the legacy `hw-app-trx` path as `LegacySignerTron`. `families/tron/setup.ts` picks
+  between them, using the DMK signer only on a DMK transport with the new `ldmkTronSigner` feature
+  flag on. The flag is disabled by default, so Tron keeps signing through `hw-app-trx`.
+
 ## 0.25.0-next.1
 
 ### Minor Changes

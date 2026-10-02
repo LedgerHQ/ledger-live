@@ -1,5 +1,0 @@
----
-"live-mobile": minor
----
-
-Replace react-native-easy-markdown with @ronradtke/react-native-markdown-display
