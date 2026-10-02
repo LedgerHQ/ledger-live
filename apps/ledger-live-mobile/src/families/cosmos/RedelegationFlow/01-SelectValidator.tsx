@@ -40,9 +40,8 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
-  const { cosmosResources } = mainAccount;
-  invariant(cosmosResources, "cosmosResources required");
-  const delegations = cosmosResources.delegations;
+  const { stakingResources } = mainAccount;
+  const delegations = stakingResources.delegations;
   const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
   const bridgeTransaction = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
@@ -50,28 +49,25 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       account,
       transaction: bridge.updateTransaction(t, {
         mode: "redelegate",
-        validators: [],
-        sourceValidator: route.params?.validatorSrcAddress,
+        valAddress: route.params?.validatorSrcAddress,
       }),
     };
   });
   const { status } = bridgeTransaction;
   const transaction = bridgeTransaction.transaction as Transaction;
-  invariant(transaction && transaction.sourceValidator, "transaction src validator required");
+  invariant(transaction && transaction.valAddress, "transaction src validator required");
   const [searchQuery, setSearchQuery] = useState("");
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
     mainAccount.currency.id,
     searchQuery,
   );
   const validatorSrc = useMemo(
-    () =>
-      validators.find(({ validatorAddress }) => validatorAddress === transaction.sourceValidator),
-    [validators, transaction.sourceValidator],
+    () => validators.find(({ validatorAddress }) => validatorAddress === transaction.valAddress),
+    [validators, transaction.valAddress],
   );
   const srcDelegation = useMemo(
-    () =>
-      delegations.find(({ validatorAddress }) => validatorAddress === transaction.sourceValidator),
-    [delegations, transaction.sourceValidator],
+    () => delegations.find(({ validatorAddress }) => validatorAddress === transaction.valAddress),
+    [delegations, transaction.valAddress],
   );
   const max = srcDelegation?.amount;
   const sections: SectionListData<CosmosValidatorItem>[] = useMemo(
@@ -79,7 +75,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       validators
         .reduce(
           (data, validator) => {
-            if (validator.validatorAddress === transaction?.sourceValidator) return data;
+            if (validator.validatorAddress === transaction?.valAddress) return data;
             if (
               delegations.some(
                 ({ validatorAddress }) => validatorAddress === validator.validatorAddress,
