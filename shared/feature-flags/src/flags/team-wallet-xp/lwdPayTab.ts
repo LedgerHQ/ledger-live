@@ -3,13 +3,13 @@ import { z } from "zod";
 
 export const lwdPayTab = flagWith(
   {
-    card: z.boolean(),
+    card_native: z.boolean(),
     legacyTopUp: z.boolean(),
   },
   {
     enabled: false,
     params: {
-      card: true,
+      card_native: true,
       legacyTopUp: false,
     },
   },

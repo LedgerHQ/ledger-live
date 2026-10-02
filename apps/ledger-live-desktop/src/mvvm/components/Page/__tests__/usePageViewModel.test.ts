@@ -66,12 +66,12 @@ describe("usePageViewModel", () => {
     expect(result.current.rightPanelVariant).toBe("card");
   });
 
-  it("hides the card right panel on /paytab when params.card is false", () => {
+  it("hides the card right panel on /paytab when params.card_native is false", () => {
     mockedUseLocation.mockReturnValue(createLocation("/paytab"));
     const { result } = renderHook(() => usePageViewModel(), {
       initialState: withFlagOverrides({
         lwdWallet40: { enabled: true },
-        lwdPayTab: { enabled: true, params: { card: false } },
+        lwdPayTab: { enabled: true, params: { card_native: false } },
       }),
     });
 

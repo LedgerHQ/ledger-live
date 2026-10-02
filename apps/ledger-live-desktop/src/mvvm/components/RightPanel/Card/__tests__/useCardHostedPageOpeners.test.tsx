@@ -40,7 +40,7 @@ function manifestsFrom(catalog: Record<string, unknown>) {
 function renderOpeners() {
   return renderHook(() => useCardHostedPageOpeners(), {
     initialState: withFlagOverrides({
-      lwdPayTab: { enabled: true, params: { card: true, legacyTopUp: false } },
+      lwdPayTab: { enabled: true, params: { card_native: true, legacyTopUp: false } },
     }),
   });
 }

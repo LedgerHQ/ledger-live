@@ -12,10 +12,10 @@ describe("useCardVisibility", () => {
     expect(result.current).toBe(true);
   });
 
-  it("returns false when lwdPayTab is enabled and params.card is false", () => {
+  it("returns false when lwdPayTab is enabled and params.card_native is false", () => {
     const { result } = renderHook(() => useCardVisibility(), {
       initialState: withFlagOverrides({
-        lwdPayTab: { enabled: true, params: { card: false } },
+        lwdPayTab: { enabled: true, params: { card_native: false } },
       }),
     });
 

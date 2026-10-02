@@ -177,7 +177,7 @@ export const FF_LWD_PAY_TAB = {
   lwdPayTab: {
     enabled: true,
     params: {
-      card: true,
+      card_native: true,
       legacyTopUp: false,
     },
   },

@@ -137,31 +137,37 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const ptxCard = useFeature("ptxCard");
 
   const payTabEnabled = !!payTab?.enabled;
-  const cardParam = !!payTab?.params?.card;
+  const payTabParams = payTab?.params;
+  // Desktop names the card param `card_native`, mobile still names it `card`.
+  const cardParam = !!(
+    payTabParams && ("card_native" in payTabParams ? payTabParams.card_native : payTabParams.card)
+  );
   const legacyTopUpParam = !!payTab?.params?.legacyTopUp;
   const ptxCardEnabled = !!ptxCard?.enabled;
 
   // An override replaces every param default, so each setter has to carry the params it does not
   // change. Otherwise a toggle here silently resets them.
-  const setPayTabEnabled = useCallback(
-    (enabled: boolean) => {
-      const params = { card: cardParam, legacyTopUp: legacyTopUpParam };
-      dispatch(setOverride({ key: payTabKey, value: { enabled, params } }));
+  const setPayTabOverride = useCallback(
+    (enabled: boolean, card: boolean) => {
+      if (platform === "native") {
+        const params = { card, legacyTopUp: legacyTopUpParam };
+        dispatch(setOverride({ key: "lwmPayTab", value: { enabled, params } }));
+      } else {
+        const params = { card_native: card, legacyTopUp: legacyTopUpParam };
+        dispatch(setOverride({ key: "lwdPayTab", value: { enabled, params } }));
+      }
     },
-    [cardParam, legacyTopUpParam, dispatch, payTabKey],
+    [dispatch, legacyTopUpParam, platform],
+  );
+
+  const setPayTabEnabled = useCallback(
+    (enabled: boolean) => setPayTabOverride(enabled, cardParam),
+    [cardParam, setPayTabOverride],
   );
 
   const setCardParam = useCallback(
-    (card: boolean) => {
-      const params = { card, legacyTopUp: legacyTopUpParam };
-      dispatch(
-        setOverride({
-          key: payTabKey,
-          value: { enabled: payTabEnabled, params },
-        }),
-      );
-    },
-    [dispatch, legacyTopUpParam, payTabEnabled, payTabKey],
+    (card: boolean) => setPayTabOverride(payTabEnabled, card),
+    [payTabEnabled, setPayTabOverride],
   );
 
   const setPtxCardEnabled = useCallback(

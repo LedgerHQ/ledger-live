@@ -240,7 +240,7 @@ describe("usePayCardToolProps", () => {
     expect(result.current.flags.payTabEnabled).toBe(true);
   });
 
-  it("setCardParam updates params.card on lwdPayTab on web", () => {
+  it("setCardParam updates params.card_native on lwdPayTab on web", () => {
     const { result } = renderHook(() => usePayCardToolProps(), {
       wrapper: withStore(store),
     });
@@ -252,7 +252,7 @@ describe("usePayCardToolProps", () => {
       result.current.flags.setCardParam(false);
     });
 
-    expect(store.getState().featureFlags.overrides.lwdPayTab?.params?.card).toBe(false);
+    expect(store.getState().featureFlags.overrides.lwdPayTab?.params?.card_native).toBe(false);
     expect(store.getState().featureFlags.overrides.lwmPayTab).toBeUndefined();
     expect(result.current.flags.cardParam).toBe(false);
   });
@@ -281,7 +281,7 @@ describe("usePayCardToolProps", () => {
       store.dispatch(
         setOverride({
           key: "lwdPayTab",
-          value: { enabled: true, params: { card: true, legacyTopUp: true } },
+          value: { enabled: true, params: { card_native: true, legacyTopUp: true } },
         }),
       );
     });
@@ -290,7 +290,7 @@ describe("usePayCardToolProps", () => {
     });
 
     expect(store.getState().featureFlags.overrides.lwdPayTab?.params).toEqual({
-      card: false,
+      card_native: false,
       legacyTopUp: true,
     });
   });
