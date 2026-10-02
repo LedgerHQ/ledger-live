@@ -1293,5 +1293,31 @@ describe("Aptos API", () => {
       expect(ops.items).toHaveLength(2);
       expect(ops.next).toBeUndefined();
     });
+
+    it("skips transactions without an entry-function payload", async () => {
+      const api = new AptosAPI("aptos");
+      const address = "0x12345";
+      const minHeight = 0;
+
+      const transactions: AptosTransaction[] = [
+        {
+          hash: "0x123",
+          gas_used: "0",
+          success: true,
+          type: "block_metadata_transaction",
+          events: [],
+          changes: [],
+          block: { hash: "0xabc", height: 1 },
+          timestamp: "1000000",
+        } as unknown as AptosTransaction,
+      ];
+
+      api.getAccountInfo = jest.fn().mockResolvedValue({ transactions });
+
+      const ops = await api.listOperations(address, minHeight);
+
+      expect(ops.items).toHaveLength(0);
+      expect(ops.next).toBeUndefined();
+    });
   });
 });

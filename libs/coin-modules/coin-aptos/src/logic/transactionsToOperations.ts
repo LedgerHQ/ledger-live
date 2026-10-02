@@ -1,4 +1,4 @@
-import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+import { InputEntryFunctionData, TransactionPayloadResponse } from "@aptos-labs/ts-sdk";
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
@@ -10,12 +10,18 @@ import { normalizeAddress } from "./normalizeAddress";
 import { processRecipients } from "./processRecipients";
 
 export const convertFunctionPayloadResponseToInputEntryFunctionData = (
-  payload: EntryFunctionPayloadResponse,
-): InputEntryFunctionData => ({
-  function: payload.function,
-  typeArguments: payload.type_arguments,
-  functionArguments: payload.arguments,
-});
+  payload: TransactionPayloadResponse | undefined,
+): InputEntryFunctionData | undefined => {
+  if (payload?.type !== "entry_function_payload" || !("function" in payload)) {
+    return undefined;
+  }
+
+  return {
+    function: payload.function,
+    typeArguments: payload.type_arguments,
+    functionArguments: payload.arguments,
+  };
+};
 
 const detectType = (address: string, tx: AptosTransaction, value: BigNumber): OP_TYPE => {
   let type = compareAddress(tx.sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
@@ -47,9 +53,11 @@ export function transactionsToOperations(
       return acc;
     }
 
-    const payload = convertFunctionPayloadResponseToInputEntryFunctionData(
-      tx.payload as EntryFunctionPayloadResponse,
-    );
+    const payload = convertFunctionPayloadResponseToInputEntryFunctionData(tx.payload);
+
+    if (!payload) {
+      return acc;
+    }
 
     const function_address = getFunctionAddress(payload);
 

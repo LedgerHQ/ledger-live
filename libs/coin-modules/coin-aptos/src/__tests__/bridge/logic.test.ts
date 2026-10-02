@@ -258,7 +258,26 @@ describe("Aptos sync logic", () => {
       });
     });
 
-    it("should skip transactions without functions in payload", async () => {
+    it("should skip transactions without an entry-function payload", async () => {
+      const address = "0x11";
+      const id = "test_id";
+      const txs: AptosTransaction[] = [
+        {
+          hash: "0x123",
+          gas_used: "0",
+          success: true,
+          type: "block_metadata_transaction",
+          events: [],
+          changes: [],
+          block: { hash: "0xabc", height: 1 },
+          timestamp: "1000000",
+        } as unknown as AptosTransaction,
+      ];
+
+      await expect(txsToOps({ address }, id, txs)).resolves.toEqual([[], [], []]);
+    });
+
+    it("should skip transactions without functions in an entry-function payload", async () => {
       const address = "0x11";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -268,7 +287,7 @@ describe("Aptos sync logic", () => {
           gas_used: "200",
           gas_unit_price: "100",
           success: true,
-          payload: {} as EntryFunctionPayloadResponse,
+          payload: { type: "entry_function_payload" } as EntryFunctionPayloadResponse,
           events: [],
           changes: [],
           block: { hash: "0xabc", height: 1 },
