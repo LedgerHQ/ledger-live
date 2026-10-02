@@ -72,73 +72,83 @@ function mapSignOperationEvent(
   }
 }
 
-export function createSignOperationJob<Input extends SignOperationJobInput>({
-  getRefusalCurrency,
-  sign,
-}: CreateSignOperationJobParams<Input>): Job<SignTransactionIntentJobState, Input> {
-  return ({ deviceConnectionResult, input }) => {
-    const device = buildSigningDevice(deviceConnectionResult);
-    const mainAccount = getMainAccount(input.account, input.parentAccount ?? undefined);
-    const currency = getRefusalCurrency(mainAccount, input);
+function runSignOperationJob<Input extends SignOperationJobInput>(
+  { getRefusalCurrency, sign }: CreateSignOperationJobParams<Input>,
+  {
+    deviceConnectionResult,
+    input,
+  }: Readonly<{
+    deviceConnectionResult: DeviceConnectionResult;
+    input: Input;
+  }>,
+): Observable<SignTransactionIntentJobState> {
+  const device = buildSigningDevice(deviceConnectionResult);
+  const mainAccount = getMainAccount(input.account, input.parentAccount ?? undefined);
+  const currency = getRefusalCurrency(mainAccount, input);
 
-    return new Observable<SignTransactionIntentJobState>(subscriber => {
-      let innerSubscription: Subscription | undefined;
-      let runRequestId = 0;
+  return new Observable<SignTransactionIntentJobState>(subscriber => {
+    let innerSubscription: Subscription | undefined;
+    let runRequestId = 0;
 
-      const run = () => {
-        const currentRunRequestId = ++runRequestId;
-        innerSubscription?.unsubscribe();
-        subscriber.next({ type: "pending", deviceModelId: device.modelId });
+    const run = () => {
+      const currentRunRequestId = ++runRequestId;
+      innerSubscription?.unsubscribe();
+      subscriber.next({ type: "pending", deviceModelId: device.modelId });
 
-        getAccountBridge(mainAccount)
-          .then(bridge => {
-            if (subscriber.closed || currentRunRequestId !== runRequestId) {
-              return;
-            }
+      getAccountBridge(mainAccount)
+        .then(bridge => {
+          if (subscriber.closed || currentRunRequestId !== runRequestId) {
+            return;
+          }
 
-            innerSubscription = sign({
-              bridge,
-              mainAccount,
-              input,
-              deviceId: device.deviceId,
-              deviceModelId: device.modelId,
-            }).subscribe({
-              next: event => {
-                const state = mapSignOperationEvent(event, device.modelId);
-                if (state) {
-                  subscriber.next(state);
-                }
-              },
-              // A user refusal is a terminal but non-error outcome: surface a dedicated
-              // "cancelled" state (info screen + retry) instead of letting the error escape
-              // the observable, which would otherwise trigger the executor's generic error screen.
-              error: error => {
-                if (isUserRefusalError(error, currency)) {
-                  subscriber.next({ type: "cancelled", retry: run });
-                  return;
-                }
-                subscriber.error(normalizeSignError(error));
-              },
-              complete: () => {
-                subscriber.complete();
-              },
-            });
-          })
-          .catch(error => {
-            if (subscriber.closed || currentRunRequestId !== runRequestId) {
-              return;
-            }
-
-            subscriber.error(normalizeSignError(error));
+          innerSubscription = sign({
+            bridge,
+            mainAccount,
+            input,
+            deviceId: device.deviceId,
+            deviceModelId: device.modelId,
+          }).subscribe({
+            next: event => {
+              const state = mapSignOperationEvent(event, device.modelId);
+              if (state) {
+                subscriber.next(state);
+              }
+            },
+            // A user refusal is a terminal but non-error outcome: surface a dedicated
+            // "cancelled" state (info screen + retry) instead of letting the error escape
+            // the observable, which would otherwise trigger the executor's generic error screen.
+            error: error => {
+              if (isUserRefusalError(error, currency)) {
+                subscriber.next({ type: "cancelled", retry: run });
+                return;
+              }
+              subscriber.error(normalizeSignError(error));
+            },
+            complete: () => {
+              subscriber.complete();
+            },
           });
-      };
+        })
+        .catch(error => {
+          if (subscriber.closed || currentRunRequestId !== runRequestId) {
+            return;
+          }
 
-      run();
+          subscriber.error(normalizeSignError(error));
+        });
+    };
 
-      return () => {
-        runRequestId += 1;
-        innerSubscription?.unsubscribe();
-      };
-    });
-  };
+    run();
+
+    return () => {
+      runRequestId += 1;
+      innerSubscription?.unsubscribe();
+    };
+  });
+}
+
+export function createSignOperationJob<Input extends SignOperationJobInput>(
+  params: CreateSignOperationJobParams<Input>,
+): Job<SignTransactionIntentJobState, Input> {
+  return jobInput => runSignOperationJob(params, jobInput);
 }

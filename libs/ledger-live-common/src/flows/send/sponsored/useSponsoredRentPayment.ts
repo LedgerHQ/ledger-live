@@ -29,7 +29,7 @@ export function useSponsoredRentPayment({
     const needsCraft = phase === SPONSORED_PHASE.IDLE || phase === SPONSORED_PHASE.RENT_SIGNING;
     if (!needsCraft || order || craftInFlightRef.current) return;
     craftInFlightRef.current = true;
-    actions.craftRent().finally(() => {
+    void actions.craftRent().finally(() => {
       craftInFlightRef.current = false;
     });
   }, [phase, order, actions]);
@@ -39,7 +39,7 @@ export function useSponsoredRentPayment({
     (combinedSignature: string) => {
       if (!order || submittedOrderRef.current === order) return;
       submittedOrderRef.current = order;
-      actions.startRentPayment(combinedSignature, paymentTxId);
+      void actions.startRentPayment(combinedSignature, paymentTxId);
     },
     [order, actions, paymentTxId],
   );
