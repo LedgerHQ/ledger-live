@@ -37,7 +37,7 @@ describe("RightPanel card live app face", () => {
   it("should open the Baanx live app from Log in", async () => {
     const { user } = await openLoginIntro();
 
-    await user.click(await screen.findByRole("button", { name: "Log in to Baanx" }));
+    await user.click(await screen.findByRole("button", { name: "Log in to Monavate" }));
 
     expect(mockNavigate).toHaveBeenCalledWith("/card/cl-card", { state: { fromPayTab: true } });
   });

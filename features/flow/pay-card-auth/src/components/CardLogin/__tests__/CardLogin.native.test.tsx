@@ -47,7 +47,7 @@ function buildViewModel(isResolving: boolean): CardLoginViewModel {
     intro: {
       isOpen: false,
       title: "Spend crypto, earn cashback",
-      providedBy: "Card provided by Baanx",
+      providedBy: "Card provided by Monavate",
       rows: [],
       actions: [],
       onActionPress: jest.fn(),
