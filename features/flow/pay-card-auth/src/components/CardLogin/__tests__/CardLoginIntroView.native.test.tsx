@@ -33,7 +33,7 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
 const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
   isOpen: true,
   title: "Spend crypto, earn cashback",
-  providedBy: "Card provided by Baanx",
+  providedBy: "Card provided by Monavate",
   rows: [
     {
       icon: "CoinsAddPlus",
@@ -53,7 +53,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
   ],
   actions: [
     { id: "createAccount", label: "Create an account", appearance: "base" },
-    { id: "logIn", label: "Log in to Baanx", appearance: "gray" },
+    { id: "logIn", label: "Log in to Monavate", appearance: "gray" },
   ],
   onActionPress: jest.fn(),
   onClose: jest.fn(),
@@ -107,7 +107,7 @@ describe("CardLoginIntroView (Native)", () => {
     expect(screen.getByText("Securely top up via Ledger Wallet")).toBeTruthy();
     expect(screen.getByText("Every transfer approved with your Ledger signer.")).toBeTruthy();
     expect(screen.getByTestId("pay-card-login-intro-provided-by")).toBeTruthy();
-    expect(screen.getByText("Card provided by Baanx")).toBeTruthy();
+    expect(screen.getByText("Card provided by Monavate")).toBeTruthy();
   });
 
   it("keeps the hero at the aspect ratio of the artwork", () => {
@@ -139,7 +139,7 @@ describe("CardLoginIntroView (Native)", () => {
     renderIntro();
 
     expect(screen.getByLabelText("Create an account")).toBeTruthy();
-    expect(screen.getByLabelText("Log in to Baanx")).toBeTruthy();
+    expect(screen.getByLabelText("Log in to Monavate")).toBeTruthy();
   });
 
   it.each(["createAccount", "logIn"] as const)("reports the %s press", id => {
