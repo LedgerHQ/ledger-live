@@ -8,17 +8,19 @@ import {
   type CountervaluesSettings,
 } from "@domain/entity-market-countervalues";
 import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
-import { CountervaluesContext } from "@features/platform-market-countervalues";
-import { log } from "@ledgerhq/logs";
-import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
-import type {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { BigNumber } from "bignumber.js";
-import React, { ReactElement, useCallback, useContext, useEffect, useMemo } from "react";
+import React, {
+  ReactElement,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
+import { log } from "./internals/logger";
+import { useDebounce } from "./internals/useDebounce";
 
 export interface PollingState {
   isPolling: boolean;
@@ -82,8 +84,11 @@ export type Props = {
   savedState?: CounterValuesStateRaw;
 };
 
-// The context is the platform package's, so a provider from either package serves the hooks of both
-// while consumers move over.
+/**
+ * Base Countervalues Context to use without polling logic.
+ */
+export const CountervaluesContext = createContext<CountervaluesBridge | null>(null);
+
 function useCountervaluesBridgeContext() {
   const bridge = useContext(CountervaluesContext);
   if (!bridge) {
@@ -191,7 +196,11 @@ function Effect({
 /**
  * Root countervalues provider (polling + calculation).
  */
-export function CountervaluesProvider({ children, bridge, ...rest }: Props): ReactElement {
+export function CountervaluesProvider({
+  children,
+  bridge,
+  ...rest
+}: Readonly<Props>): ReactElement {
   return (
     <CountervaluesContext.Provider value={bridge}>
       <Effect {...rest} bridge={bridge} />
@@ -237,7 +246,7 @@ export function useCalculate(query: {
   from: Currency;
   to: Currency;
   disableRounding?: boolean;
-  date?: Date | null | undefined;
+  date?: Date | null;
   reverse?: boolean;
 }): number | null | undefined {
   const state = useCountervaluesState();
@@ -271,7 +280,7 @@ export function useSendAmount({
   fiatCurrency,
   cryptoAmount,
 }: {
-  cryptoCurrency: CryptoCurrency | TokenCurrency;
+  cryptoCurrency: CryptoOrTokenCurrency;
   fiatCurrency: Currency;
   cryptoAmount: BigNumber;
 }): {

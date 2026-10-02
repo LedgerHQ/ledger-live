@@ -2,7 +2,14 @@ import BigNumber from "bignumber.js";
 import { buildCV, dailyHistory } from "@domain/entity-market-countervalues/mock";
 import { computeAssetPnL, invalidatePnLCache, resetRateLookup } from "@ledgerhq/wallet-pnl";
 import { buy, ETH, makeAccount, USD } from "@ledgerhq/wallet-pnl/scenarios";
+import { setCountervaluesLogger } from "@features/platform-market-countervalues";
+import { log } from "@ledgerhq/logs";
 import { setupRateLookups } from "./bridge-setup";
+
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
+  setCountervaluesLogger: jest.fn(),
+}));
 
 // The global jest setup registers a lookup before every test, which would hide this function
 // no longer registering one, so each test starts from an empty registry.
@@ -36,5 +43,11 @@ describe("setupRateLookups", () => {
     // 10 ETH bought at 2000 USD, now at 2400 USD, in cents
     expect(pnl?.costBasis.toFixed()).toBe("2000000");
     expect(pnl?.unrealisedPnL.toFixed()).toBe("400000");
+  });
+
+  it("hands the app logger to the countervalues platform package", () => {
+    setupRateLookups();
+
+    expect(setCountervaluesLogger).toHaveBeenCalledWith(log);
   });
 });

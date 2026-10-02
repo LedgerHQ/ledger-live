@@ -1099,6 +1099,9 @@ importers:
       '@features/platform-feature-flags-firebase':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags-firebase
+      '@features/platform-market-countervalues':
+        specifier: workspace:^
+        version: link:../../features/platform/market-countervalues
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../features/platform/pay-analytics
@@ -1961,6 +1964,9 @@ importers:
       '@features/platform-feature-flags-firebase':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags-firebase
+      '@features/platform-market-countervalues':
+        specifier: workspace:^
+        version: link:../../features/platform/market-countervalues
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../features/platform/pay-analytics
@@ -9295,6 +9301,76 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  features/platform/market-countervalues:
+    dependencies:
+      '@domain/api-market-countervalues':
+        specifier: workspace:*
+        version: link:../../../domain/api/market-countervalues
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency
+      '@domain/entity-currency-unit':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-unit
+      '@domain/entity-market-countervalues':
+        specifier: workspace:*
+        version: link:../../../domain/entity/market-countervalues
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+    devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-fiat
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-token
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/platform/pay-analytics:
     dependencies:
       '@shared/analytics':
@@ -10442,7 +10518,7 @@ importers:
         version: link:../../types-live
       '@walletconnect/sign-client':
         specifier: 2.23.4
-        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
+        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@walletconnect/types':
         specifier: 2.23.0
         version: 2.23.0
@@ -15784,6 +15860,9 @@ importers:
       '@domain/entity-market-countervalues':
         specifier: workspace:*
         version: link:../../domain/entity/market-countervalues
+      '@features/platform-market-countervalues':
+        specifier: workspace:*
+        version: link:../../features/platform/market-countervalues
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -15793,9 +15872,6 @@ importers:
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.19.0
-      '@ledgerhq/types-live':
-        specifier: workspace:*
-        version: link:../types-live
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -51288,7 +51364,7 @@ snapshots:
 
   '@vscode/sudo-prompt@9.3.1': {}
 
-  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
+  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-provider': 1.0.14
@@ -51302,7 +51378,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
       '@walletconnect/window-getters': 1.0.1
       es-toolkit: 1.44.0
       events: 3.3.0
@@ -51425,16 +51501,16 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
+  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
-      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
+      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 3.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -51523,7 +51599,7 @@ snapshots:
       - ioredis
       - uploadthing
 
-  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)':
+  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)':
     dependencies:
       '@msgpack/msgpack': 3.1.3
       '@noble/ciphers': 1.3.0
@@ -51543,7 +51619,7 @@ snapshots:
       blakejs: 1.2.1
       bs58: 6.0.0
       detect-browser: 5.3.0
-      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@3.25.76)
       uint8arrays: 3.1.1
     transitivePeerDependencies:
       - '@azure/app-configuration'
