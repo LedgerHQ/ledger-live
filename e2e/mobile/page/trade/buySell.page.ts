@@ -48,6 +48,11 @@ export default class BuySellPage {
   // 60s flakes on that alone. Latency is tracked separately, not fixed here.
   cryptoCurrencySelectorTimeout = 120000;
 
+  @Step("Close the Buy screen")
+  async closeBuyScreen() {
+    await tapWebElementByTestId("icon_button_close");
+  }
+
   @Step("Expect Buy screen to be visible")
   async expectBuyScreenToBeVisible() {
     await waitWebElementByTestId(this.cryptoCurrencySelector, {
