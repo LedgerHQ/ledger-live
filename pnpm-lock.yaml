@@ -1352,9 +1352,6 @@ importers:
       '@types/qrcode':
         specifier: 1.5.5
         version: 1.5.5
-      '@types/react-key-handler':
-        specifier: 1.2.4
-        version: 1.2.4
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
@@ -1448,9 +1445,6 @@ importers:
       react-i18next:
         specifier: 'catalog:'
         version: 16.5.0(@typescript/typescript6@6.0.2)(i18next@25.7.3(@typescript/typescript6@6.0.2))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
-      react-key-handler:
-        specifier: 1.2.0-beta.3
-        version: 1.2.0-beta.3(eslint@8.57.0)(react@19.1.4)
       react-lottie:
         specifier: 1.2.10
         version: 1.2.10(react@19.1.4)
@@ -28202,9 +28196,6 @@ packages:
   '@types/react-is@17.0.7':
     resolution: {integrity: sha512-WrTEiT+c6rgq36QApoy0063uAOdltCrhF0QMXLIgYPaTvIdQhAB8hPb5oGGqX18xToElNILS9UprwU6GyINcJg==}
 
-  '@types/react-key-handler@1.2.4':
-    resolution: {integrity: sha512-MgxXP5FfW9PqqbzhZ9P2p06MXdSAobuvFMmolnK0BPL8t5cxIR6gu4XCslnrANgRX3/qYHnWuZNzD/HlvG9CPA==}
-
   '@types/react-lottie@1.2.10':
     resolution: {integrity: sha512-rCd1p3US4ELKJlqwVnP0h5b24zt5p9OCvKUoNpYExLqwbFZMWEiJ6EGLMmH7nmq5V7KomBIbWO2X/XRFsL0vCA==}
 
@@ -31277,12 +31268,6 @@ packages:
       oxlint:
         optional: true
 
-  eslint-plugin-flowtype@2.50.3:
-    resolution: {integrity: sha512-X+AoKVOr7Re0ko/yEXyM5SSZ0tazc6ffdIOocp2fFUlWoDt7DV0Bz99mngOkAFLOAWjqRA5jPwqUCbrx13XoxQ==}
-    engines: {node: '>=4'}
-    peerDependencies:
-      eslint: '>=2.0.0'
-
   eslint-plugin-i18next@6.0.3:
     resolution: {integrity: sha512-RtQXYfg6PZCjejIQ/YG+dUj/x15jPhufJ9hUDGH0kCpJ6CkVMAWOQ9exU1CrbPmzeykxLjrXkjAaOZF/V7+DOA==}
     engines: {node: '>=0.10.0'}
@@ -31391,9 +31376,6 @@ packages:
   execa@9.6.1:
     resolution: {integrity: sha512-9Be3ZoN4LmYR90tUoVu2te2BsbzHfhJyfEiAVfz7N5/zv+jduIfLrV2xdQXOHbaD6KgpGdO9PRPM1Y4Q9QkPkA==}
     engines: {node: ^18.19.0 || >=20.5.0}
-
-  exenv@1.2.2:
-    resolution: {integrity: sha512-Z+ktTxTwv9ILfgKCk32OX3n/doe+OcLTRtqK9pcL+JsP3J1/VW8Uvl4ZjLlKqeW4rzK4oesDOGMEMRIZqtP4Iw==}
 
   exeunt@1.1.0:
     resolution: {integrity: sha512-dd++Yn/0Fp+gtJ04YHov7MeAii+LFivJc6KqnJNfplzLVUkUDrfKoQDTLlCgzcW15vY5hKlHasWeIsQJ8agHsw==}
@@ -35855,11 +35837,6 @@ packages:
 
   react-is@19.2.8:
     resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
-
-  react-key-handler@1.2.0-beta.3:
-    resolution: {integrity: sha512-Isd5O3JKDbPNCERVThPyJ0tTUDkeuTrGHE4+7lNT+6isXlLykroOaGuJ8A22hq6SpbSUKaPmGhxGAFtkag7Bgg==}
-    peerDependencies:
-      react: 19.1.4
 
   react-lifecycles-compat@3.0.4:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
@@ -51111,10 +51088,6 @@ snapshots:
     dependencies:
       '@types/react': 19.0.14
 
-  '@types/react-key-handler@1.2.4':
-    dependencies:
-      '@types/react': 19.0.14
-
   '@types/react-lottie@1.2.10':
     dependencies:
       '@types/react': 19.0.14
@@ -54951,11 +54924,6 @@ snapshots:
       - '@eslint/css'
       - typescript
 
-  eslint-plugin-flowtype@2.50.3(eslint@8.57.0):
-    dependencies:
-      eslint: 8.57.0
-      lodash: 4.17.21
-
   eslint-plugin-i18next@6.0.3:
     dependencies:
       lodash: 4.17.21
@@ -55131,8 +55099,6 @@ snapshots:
       signal-exit: 4.1.0
       strip-final-newline: 4.0.0
       yoctocolors: 2.1.2
-
-  exenv@1.2.2: {}
 
   exeunt@1.1.0: {}
 
@@ -61023,15 +60989,6 @@ snapshots:
   react-is@19.1.1: {}
 
   react-is@19.2.8: {}
-
-  react-key-handler@1.2.0-beta.3(eslint@8.57.0)(react@19.1.4):
-    dependencies:
-      eslint-plugin-flowtype: 2.50.3(eslint@8.57.0)
-      exenv: 1.2.2
-      prop-types: 15.8.1
-      react: 19.1.4
-    transitivePeerDependencies:
-      - eslint
 
   react-lifecycles-compat@3.0.4: {}
 
