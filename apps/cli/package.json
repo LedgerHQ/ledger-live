@@ -17,8 +17,7 @@
     "lib"
   ],
   "scripts": {
-    "prebuild": "zx ./scripts/gen.mjs",
-    "build": "zx ./scripts/build.mjs",
+    "build": "zx ./scripts/gen.mjs && zx ./scripts/build.mjs",
     "prepublishOnly": "zx ./scripts/build.mjs",
     "watch": "rslib build --watch",
     "typecheck": "tsc --project src/tsconfig.json --noEmit --customConditions node",
