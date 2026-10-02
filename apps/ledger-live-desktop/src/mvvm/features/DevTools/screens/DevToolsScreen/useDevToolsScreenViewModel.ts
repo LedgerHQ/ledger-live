@@ -17,6 +17,8 @@ import {
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
 } from "@devtools/bindings";
+import { useCurrenciesByIds } from "@features/platform-currencies";
+import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
@@ -26,7 +28,8 @@ export function useDevToolsScreenViewModel() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const featureFlagsToolProps = useFeatureFlagsToolProps();
-  const payCardToolProps = usePayCardToolProps();
+  const cardCurrencies = useCurrenciesByIds(BAANX_LEDGER_CURRENCY_IDS);
+  const payCardToolProps = usePayCardToolProps({ currencies: cardCurrencies });
   const envToolProps = useEnvDevToolProps();
   const prodToggle = useProdToggle();
   const { wire, wireState } = useDevToolsRelay();
