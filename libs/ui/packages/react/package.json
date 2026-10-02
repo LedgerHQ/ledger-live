@@ -104,7 +104,7 @@
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": ">=0.1.30",
-    "@ledgerhq/lumen-ui-react": ">=0.1.60",
+    "@ledgerhq/lumen-ui-react": "0.1.61",
     "react": ">=17.0.2",
     "react-dom": ">=17.0.2",
     "styled-components": "^5.3.3"
