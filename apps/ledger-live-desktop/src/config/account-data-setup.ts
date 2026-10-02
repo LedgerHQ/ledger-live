@@ -1,4 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
+import { getEnv } from "@shared/env";
 import { createAccountDataRouter, type AccountDataExtra } from "@domain/api-account-data-source";
 import { CoinModuleSource } from "@features/platform-account-source-coin-module";
 import { FullSyncSource } from "@ledgerhq/live-common/account-data/FullSyncSource";
@@ -39,6 +40,7 @@ export function accountDataExtra(getState: () => State): AccountDataExtra {
         getAccount: (accountId): Account | undefined => accountSelector(getState(), { accountId }),
         prepareCurrency,
         blacklistedTokenIds,
+        concurrency: getEnv("SYNC_MAX_CONCURRENT"),
       }),
     ]),
   };

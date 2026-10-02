@@ -107,6 +107,36 @@ describe("FullSyncSource", () => {
     });
   });
 
+  describe("many accounts at once", () => {
+    it("never runs more syncs at once than the host allows", async () => {
+      const accounts = Array.from({ length: 6 }, (_, index) =>
+        account({ id: `js:2:ethereum:0x${index}:` }),
+      );
+      const { sync, release } = pendingBridge();
+      const router = createAccountDataRouter([
+        new FullSyncSource({
+          getAccount: id => accounts.find(candidate => candidate.id === id),
+          prepareCurrency,
+          concurrency: 2,
+        }),
+      ]);
+      const reading = router.readBatch(
+        "balance",
+        accounts.map(({ id }) => AccountRefSchema.parse({ ...ref, accountId: id })),
+      );
+      await settle();
+      expect(sync).toHaveBeenCalledTimes(2);
+      release();
+      await settle();
+      release();
+      await settle();
+      release();
+      const answers = await reading;
+      expect(sync).toHaveBeenCalledTimes(6);
+      expect(answers.every(answer => answer.status === "fulfilled")).toBe(true);
+    });
+  });
+
   describe("the shared sync", () => {
     it("serves balance and operations read together with a single bridge.sync", async () => {
       const { sync, release } = pendingBridge();
