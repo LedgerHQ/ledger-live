@@ -11,7 +11,6 @@ import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings"
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 import { useBorrowLiveConfig } from "LLD/features/Borrow/hooks/useBorrowLiveConfig";
-import { useResumeAddAccountAfterOnboarding } from "./useResumeAddAccountAfterOnboarding";
 
 export interface PortfolioViewModelResult {
   readonly totalAccounts: number;
@@ -32,9 +31,6 @@ export interface PortfolioViewModelResult {
 export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   const accounts = useSelector(accountsSelector);
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
-
-  // Resume the Add Account flow that was interrupted to send the user through device onboarding.
-  useResumeAddAccountAfterOnboarding();
 
   const {
     shouldDisplayAssetSection,
