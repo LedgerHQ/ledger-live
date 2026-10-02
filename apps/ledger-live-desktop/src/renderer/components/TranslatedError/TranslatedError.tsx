@@ -68,10 +68,9 @@ export function TranslatedError({
   }, [args, t, translationKey]);
 
   useEffect(() => {
-    if (!regularError) {
-      logger.critical(`TranslatedError invalid usage: ${String(error)}`);
-    }
-  }, [regularError, error]);
+    if (error == null || error instanceof Error || isDmkError(error)) return;
+    logger.critical(`TranslatedError invalid usage: ${typeof error}`);
+  }, [error]);
 
   if (!error || !regularError) {
     // NOTE: Temporary handling of DMK errors
