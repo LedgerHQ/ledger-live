@@ -911,9 +911,6 @@ importers:
       '@devtools/bindings':
         specifier: workspace:*
         version: link:../../devtools/bindings
-      '@devtools/device-onboarding':
-        specifier: workspace:*
-        version: link:../../devtools/device-onboarding
       '@devtools/shell':
         specifier: workspace:^
         version: link:../../devtools/shell

@@ -68,7 +68,6 @@
     "@datadog/browser-logs": "6.30.1",
     "@datadog/browser-rum": "6.30.1",
     "@devtools/bindings": "workspace:*",
-    "@devtools/device-onboarding": "workspace:*",
     "@devtools/shell": "workspace:^",
     "@devtools/transport-panel": "workspace:*",
     "@devtools/wire": "workspace:*",
