@@ -9,7 +9,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CoinsAddPlus, CreditCard, LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payCardLoginIntro.webp";
 import { CARD_LOGIN_INTRO_FLOW } from "./analytics";
@@ -24,6 +24,14 @@ const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
   CreditCard,
   LedgerLogo,
 };
+
+function CardLoginIntroFooter({ children }: Readonly<{ children: React.ReactNode }>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return (
+    <BottomSheetFooter style={{ paddingBottom: bottomInset + 24 }}>{children}</BottomSheetFooter>
+  );
+}
 
 export function CardLoginIntroView({
   isOpen,
@@ -98,7 +106,7 @@ export function CardLoginIntroView({
               </Box>
             </Box>
           </BottomSheetScrollView>
-          <BottomSheetFooter>
+          <CardLoginIntroFooter>
             <Box lx={{ flexDirection: "column", alignItems: "center", gap: "s16" }}>
               <Text
                 typography="body3"
@@ -121,7 +129,7 @@ export function CardLoginIntroView({
                 </Button>
               ))}
             </Box>
-          </BottomSheetFooter>
+          </CardLoginIntroFooter>
         </>
       ) : null}
     </QueuedBottomSheet>

@@ -28,6 +28,7 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
       {children}
     </View>
   ),
+  useBottomSheetBottomInset: () => 0,
 }));
 
 const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
