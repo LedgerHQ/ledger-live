@@ -116,6 +116,7 @@
     "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@react-native/babel-preset": "catalog:",
+    "@react-native/metro-config": "catalog:",
     "@react-navigation/native": "catalog:",
     "@react-navigation/native-stack": "catalog:",
     "@swc/core": "catalog:",
