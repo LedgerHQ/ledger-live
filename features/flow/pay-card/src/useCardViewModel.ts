@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { cardManagementApi } from "@domain/api-card-management";
-import { useCardAuthStatus } from "@features/flow-pay-card-auth";
+import { useCardAuthStatus, type PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import { useCardWalletsTotal } from "@features/flow-pay-card-assets";
 import {
   useCardOnboardingStatus,
@@ -30,6 +30,12 @@ function currentChooseCardType(
   const currentStep = onboarding.data.steps.find(step => !step.isDone);
 
   return currentStep?.id === "choose-card-type" ? onChooseCardType : undefined;
+}
+
+function cardDisplayState(status: PayCardAuthStatus, isSignedIn: boolean): CardDisplayState {
+  if (status === "unknown") return "resolving";
+  if (isSignedIn) return "signedIn";
+  return "signedOut";
 }
 
 function cardPrimaryAction(
@@ -64,8 +70,8 @@ export function useCardViewModel({
   const dispatch = useDispatch();
   useCardLifecycleTracking();
   const status = useCardAuthStatus();
-  const displayState: CardDisplayState = status === "unknown" ? "resolving" : status;
-  const isSignedIn = status === "signedIn";
+  const isSignedIn = status === "signedIn" && login.keepLoginPage !== true;
+  const displayState = cardDisplayState(status, isSignedIn);
   useCardStatusRefresh({ skip: !isSignedIn });
   const formatCountervalue = formatters?.countervalue;
   const balanceLabel = t("payTab.card.balanceLabel");

@@ -64,7 +64,7 @@ export function useOperationsListViewModel(
   const requestedHistoryTab = cardAsset ? HISTORY_TAB_CARD : selectedHistoryTab;
   const payTab = useFeature("lwmPayTab");
   const isPayTabEnabled = !!payTab?.enabled;
-  const showCardHistory = isPayTabEnabled && payTab?.params?.card === true;
+  const showCardHistory = isPayTabEnabled && payTab?.params?.card_native === true;
   // An asset scope does not bypass a disabled Pay tab or a hidden card, and account-scoped routes
   // never reach the Card API.
   const canShowCardHistory = showCardHistory && (Boolean(cardAsset) || !accountIds?.length);
