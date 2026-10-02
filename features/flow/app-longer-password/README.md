@@ -1,7 +1,7 @@
 # @features/flow-app-longer-password
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Split out of `@features/flow-app-lock` in [LIVE-38259](https://ledgerhq.atlassian.net/browse/LIVE-38259); API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 The mandatory longer-password journey for Ledger Wallet Mobile: a legacy password shorter than the
 minimum has to be replaced before the app opens. The prompt cannot be dismissed; the new password is

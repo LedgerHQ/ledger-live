@@ -1,5 +1,5 @@
 {
-  "name": "@features/flow-app-lock",
+  "name": "@features/flow-app-protection-prompt",
   "targets": {
     "build": {
       "executor": "nx:noop"

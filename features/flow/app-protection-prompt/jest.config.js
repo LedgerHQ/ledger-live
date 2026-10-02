@@ -1,7 +1,5 @@
 // Native-only: the shared config's jsdom project matches nothing and needs jest-environment-jsdom.
-const { projects, ...config } = require("@support/jest-features-flow").createFlowJestConfig({
-  passWithNoTests: true,
-});
+const { projects, ...config } = require("@support/jest-features-flow").createFlowJestConfig();
 
 module.exports = {
   ...config,
