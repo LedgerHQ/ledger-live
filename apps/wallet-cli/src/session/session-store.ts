@@ -178,7 +178,8 @@ function parseSessionData(raw: string): ParsedSessionData {
     };
   } catch {
     throw new Error(
-      `Invalid session file at ${getSessionPath()}. Run \`wallet-cli session reset\` to clear it.`,
+      `Invalid session file at ${getSessionPath()}. Run \`wallet-cli session reset\` to clear it ` +
+        "(add `--force` if the file isn't valid YAML; that also drops any Agent Intent profiles).",
     );
   }
 }

@@ -38,11 +38,8 @@ export const PROFILE_ID_RE = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,62}$/;
 export const PROFILE_ID_MESSAGE =
   "Profile id must contain only letters, numbers, dots, underscores, and dashes.";
 
-export type AgentIntentProfileStatus = "enrolled" | "pending" | "expired";
-
 /** Shared wording for `agent-intent list`/`show` when the session has profile ids that failed to
- * load. Says what actually happens (removed by the next save, not already gone) rather than
- * overstating it. `undefined` when there's nothing to warn about. */
+ * load. `undefined` when there's nothing to warn about. */
 export function formatInvalidAgentIntentProfilesWarning(
   ids: readonly string[],
 ): string | undefined {
@@ -50,11 +47,12 @@ export function formatInvalidAgentIntentProfilesWarning(
   return (
     `⚠ ${ids.length} Agent Intent profile(s) failed to load (invalid session record): ` +
     `${ids.join(", ")}.\n` +
-    `  The record itself is still on disk but is dropped the next time any command saves the ` +
-    `session (discover, enroll, ring …), orphaning its OS-keychain secret — fix or remove it in ` +
-    `session.yaml first if you want to keep it.\n`
+    `  Each record is kept as-is in session.yaml but ignored until it is fixed there. Removing ` +
+    `it instead orphans its OS-keychain secret.\n`
   );
 }
+
+export type AgentIntentProfileStatus = "enrolled" | "pending" | "expired";
 
 /** Structural rather than importing `AgentIntentProfileMeta` from `session-store.ts`, to avoid a
  * circular import (session-store.ts imports `PROFILE_ID_RE` from this module). */

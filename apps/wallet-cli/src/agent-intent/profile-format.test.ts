@@ -6,6 +6,9 @@ import {
   formatInvalidAgentIntentProfilesWarning,
 } from "./profile-format";
 
+const PLAIN_URL = "https://example.com";
+const TRUNCATED_CREDENTIAL_URL = "https://user:secret@";
+
 describe("redactUrlCredentials", () => {
   it("strips userinfo from a URL", () => {
     expect(redactUrlCredentials("https://user:pass@example.com/path")).toBe(
@@ -14,7 +17,7 @@ describe("redactUrlCredentials", () => {
   });
 
   it("passes a URL with no userinfo through completely unchanged (no normalization)", () => {
-    expect(redactUrlCredentials("https://example.com")).toBe("https://example.com");
+    expect(redactUrlCredentials(PLAIN_URL)).toBe(PLAIN_URL);
   });
 
   it("passes a non-URL string through unchanged (catch branch)", () => {
@@ -22,9 +25,9 @@ describe("redactUrlCredentials", () => {
   });
 
   it("still strips userinfo from a value new URL() rejects outright (truncated, no host)", () => {
-    // `new URL("https://user:secret@")` throws — WHATWG requires a host — but the credential is
+    // `new URL(TRUNCATED_CREDENTIAL_URL)` throws — WHATWG requires a host — but the credential is
     // still right there in the string, so the catch branch must not return it unchanged.
-    expect(redactUrlCredentials("https://user:secret@")).toBe("https://");
+    expect(redactUrlCredentials(TRUNCATED_CREDENTIAL_URL)).toBe("https://");
   });
 });
 
@@ -76,10 +79,10 @@ describe("formatInvalidAgentIntentProfilesWarning", () => {
     expect(formatInvalidAgentIntentProfilesWarning([])).toBeUndefined();
   });
 
-  it("names every id and says the record isn't gone yet but will be dropped on next write", () => {
+  it("names every id and says the record is kept but ignored until fixed", () => {
     const warning = formatInvalidAgentIntentProfilesWarning(["broken-1", "broken-2"]);
     expect(warning).toContain("broken-1, broken-2");
-    expect(warning).toContain("still on disk");
-    expect(warning).toContain("dropped the next time any command saves the session");
+    expect(warning).toContain("kept as-is");
+    expect(warning).toContain("ignored until it is fixed");
   });
 });

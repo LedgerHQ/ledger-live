@@ -99,7 +99,7 @@ describe("agent-intent list", () => {
     const warning = stderrChunks.join("");
     expect(warning).toContain("broken-1, broken-2");
     expect(warning).toContain("failed to load");
-    expect(warning).toContain("orphaning its OS-keychain secret");
+    expect(warning).toContain("ignored until it is fixed");
     expect(warning).toContain("session.yaml");
   });
 });

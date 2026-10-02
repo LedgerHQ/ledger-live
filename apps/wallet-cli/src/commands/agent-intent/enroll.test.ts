@@ -12,11 +12,13 @@ let existingProfile: { profileId: string } | undefined;
 // other test leaves this undefined, so both reads keep seeing the same `existingProfile`.
 let existingProfileOnRecheck: { profileId: string } | undefined | "same-as-precheck";
 let keychainHasEntry: boolean;
+let invalidProfileIds: string[];
 let addAgentIntentProfileImpl: (profile: Record<string, unknown>) => void;
 let writeImpl: () => void;
 let sessionReadCalls: number;
 let deleteSecretKeySucceeds: boolean;
 let saveSecretKeyError: Error | undefined;
+let enrollmentUrlError: Error | undefined;
 
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
@@ -31,6 +33,7 @@ beforeAll(() =>
           : existingProfileOnRecheck;
       return {
         getAgentIntentProfile: (_profileId: string) => profile,
+        invalidAgentIntentProfileIds: invalidProfileIds,
         addAgentIntentProfile: (profile: Record<string, unknown>) =>
           addAgentIntentProfileImpl(profile),
         write: () => writeImpl(),
@@ -56,7 +59,10 @@ beforeAll(() =>
         exportSecretKey: () => "deadbeef",
       }),
       createAgentEnrollmentRequest: () => ({ signedRequest: "opaque" }),
-      createAgentEnrollmentUrl: (appUrl: string, _request: unknown) => `${appUrl}#request=opaque`,
+      createAgentEnrollmentUrl: (appUrl: string, _request: unknown) => {
+        if (enrollmentUrlError) throw enrollmentUrlError;
+        return `${appUrl}#request=opaque`;
+      },
     },
   }),
 );
@@ -98,8 +104,10 @@ describe("agent-intent enroll", () => {
     existingProfileOnRecheck = "same-as-precheck";
     sessionReadCalls = 0;
     keychainHasEntry = false;
+    invalidProfileIds = [];
     deleteSecretKeySucceeds = true;
     saveSecretKeyError = undefined;
+    enrollmentUrlError = undefined;
     savedSecretKeys.clear();
     deletedSecretKeyCalls.length = 0;
     addAgentIntentProfileImpl = () => {};
@@ -226,5 +234,30 @@ describe("agent-intent enroll", () => {
       /--app-url must not contain URL credentials/,
     );
     expect(savedSecretKeys.size).toBe(0);
+  });
+
+  it("rejects a non-http(s) --app-url before touching the keychain or session", async () => {
+    await expect(runEnroll({ "app-url": "mailto:a@b.c" })).rejects.toThrow(
+      /--app-url must be an http\(s\) URL/,
+    );
+    expect(savedSecretKeys.size).toBe(0);
+    expect(sessionReadCalls).toBe(0);
+  });
+
+  it("refuses a profile id that matches an invalid session record", async () => {
+    invalidProfileIds = ["test-agent"];
+
+    await expect(runEnroll()).rejects.toThrow(
+      /invalid Agent Intent record for profile "test-agent"/,
+    );
+    expect(savedSecretKeys.size).toBe(0);
+  });
+
+  it("saves nothing when building the enrollment URL fails", async () => {
+    enrollmentUrlError = new TypeError("Invalid URL");
+
+    await expect(runEnroll()).rejects.toThrow(/Invalid URL/);
+    expect(savedSecretKeys.size).toBe(0);
+    expect(sessionReadCalls).toBe(1); // precheck only, never reached the locked write
   });
 });

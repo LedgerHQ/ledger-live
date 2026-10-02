@@ -22,6 +22,12 @@ import {
 } from "../../agent-intent/profile-format";
 import { createCommandOutput } from "../../output";
 
+function assertHttpUrl(value: string, flagName: string): void {
+  if (!/^https?:$/.test(new URL(value).protocol)) {
+    throw new Error(`--${flagName} must be an http(s) URL.`);
+  }
+}
+
 function assertNoUrlCredentials(value: string, flagName: string): void {
   if (hasUrlCredentials(value)) {
     throw new Error(
@@ -39,6 +45,12 @@ function assertProfileAvailable(session: Session, profileId: string): void {
     throw new Error(
       `Agent Intent profile "${profileId}" already exists. Choose a different --profile id, or ` +
         `run \`wallet-cli agent-intent show --profile ${profileId}\`.`,
+    );
+  }
+  if (session.invalidAgentIntentProfileIds.includes(profileId)) {
+    throw new Error(
+      `session.yaml has an invalid Agent Intent record for profile "${profileId}". Fix or remove ` +
+        "it in session.yaml (or choose a different --profile id) before re-enrolling.",
     );
   }
   if (hasAgentIntentSecretKey(profileId)) {
@@ -125,6 +137,7 @@ export default defineCommand({
 
       const bffBaseUrl = DEFAULT_BFF_BASE_URLS[flags.environment];
       const appUrl = flags["app-url"] ?? AGENT_INTENT_FRONTEND_URLS[flags.environment];
+      assertHttpUrl(appUrl, "app-url");
       assertNoUrlCredentials(appUrl, "app-url");
       const enrollmentExpiresAt = new Date(Date.now() + expiresInMs).toISOString();
 
@@ -140,6 +153,8 @@ export default defineCommand({
         source: flags.source,
         expiresAt: enrollmentExpiresAt,
       });
+      // Built before anything is persisted, so a failure here leaves no profile or keychain entry.
+      const enrollmentUrl = createAgentEnrollmentUrl(appUrl, request);
 
       // Shared with every other command that mutates session.yaml (`complete`, `reset`, `account
       // discover`, `ring init`/`destroy`/`encrypt`/`decrypt`) — see withSessionLock's own doc.
@@ -192,7 +207,7 @@ export default defineCommand({
 
       out.agentIntentEnroll({
         profileId: flags.profile,
-        enrollmentUrl: createAgentEnrollmentUrl(appUrl, request),
+        enrollmentUrl,
         fingerprint: formatAgentPublicKeyFingerprint(identity.publicKey),
       });
     });
