@@ -34,7 +34,7 @@ const copy: CardLoginCopy = {
 const intro: CardLoginIntroViewProps = {
   isOpen: false,
   title: "Spend crypto, earn cashback",
-  providedBy: "Card provided by Baanx",
+  providedBy: "Card provided by Monavate",
   rows: [],
   actions: [],
   onActionPress: jest.fn(),
@@ -314,7 +314,7 @@ describe("useCardLoginViewModel intro", () => {
     const { result } = await renderIdleLogin(store);
 
     expect(result.current?.intro.title).toBe("Spend crypto, earn cashback");
-    expect(result.current?.intro.providedBy).toBe("Card provided by Baanx");
+    expect(result.current?.intro.providedBy).toBe("Card provided by Monavate");
     expect(result.current?.intro.rows.map(row => row.title)).toEqual([
       "Uncapped 1% crypto cashback",
       "Free virtual card",
@@ -391,7 +391,7 @@ describe("useCardLoginViewModel intro", () => {
 
     expect(result.current?.intro.actions).toEqual([
       { id: "createAccount", label: "Create an account", appearance: "base" },
-      { id: "logIn", label: "Log in to Baanx", appearance: "gray" },
+      { id: "logIn", label: "Log in to Monavate", appearance: "gray" },
     ]);
   });
 
