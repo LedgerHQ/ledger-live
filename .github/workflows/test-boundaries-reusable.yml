@@ -73,7 +73,10 @@ jobs:
         run: pnpm exec nx run-many -t lint:structure
 
       - name: Test the i18n key check
+        # Older branches (e.g. release) call this workflow from develop but may not have the project yet.
+        if: hashFiles('tools/nx-plugins/enforce-i18n-keys/project.json') != ''
         run: pnpm exec nx run enforce-i18n-keys:test
 
       - name: Check i18n keys exist in the Desktop and Mobile catalogs
+        if: hashFiles('tools/nx-plugins/enforce-i18n-keys/project.json') != ''
         run: pnpm exec nx run enforce-i18n-keys:lint:i18n-keys
