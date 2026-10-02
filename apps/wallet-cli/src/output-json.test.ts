@@ -527,4 +527,74 @@ describe("JsonCommandOutput", () => {
       ],
     });
   });
+
+  it("ledgerSyncEnroll emits member and snake_case root_id", () => {
+    const out = createCommandOutput("json", { command: "ledger-sync enroll", network: "all" });
+    out.ledgerSyncEnroll({ memberName: "my-machine (darwin)", rootId: "root-abc" });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      member: "my-machine (darwin)",
+      root_id: "root-abc",
+    });
+  });
+
+  it("ledgerSyncImport emits the four imported/unchanged/skipped/invalid arrays", () => {
+    const out = createCommandOutput("json", { command: "ledger-sync import", network: "all" });
+    out.ledgerSyncImport({
+      imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+      unchanged: [],
+      skipped: [{ status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" }],
+      invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+      unchanged: [],
+      skipped: [{ status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" }],
+      invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],
+    });
+  });
+
+  it("ledgerSyncDestroy emits destroyed=true when the trustchain was torn down", () => {
+    const out = createCommandOutput("json", { command: "ledger-sync destroy", network: "all" });
+    out.ledgerSyncDestroy({ remoteSucceeded: true, trustchainDestroyed: true, localWiped: true });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      destroyed: true,
+      remote_succeeded: true,
+      local_wiped: true,
+    });
+  });
+
+  it("ledgerSyncDestroy emits member_ejected=true when this machine was already removed remotely", () => {
+    const out = createCommandOutput("json", { command: "ledger-sync destroy", network: "all" });
+    out.ledgerSyncDestroy({
+      remoteSucceeded: true,
+      trustchainDestroyed: false,
+      localWiped: true,
+      memberEjected: true,
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      destroyed: false,
+      remote_succeeded: true,
+      member_ejected: true,
+    });
+  });
+
+  it("ledgerSyncDestroyCancelled emits cancelled:true", () => {
+    const out = createCommandOutput("json", { command: "ledger-sync destroy", network: "all" });
+    out.ledgerSyncDestroyCancelled();
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({ status: "success", cancelled: true });
+  });
 });

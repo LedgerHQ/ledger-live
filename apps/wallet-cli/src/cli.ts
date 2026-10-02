@@ -28,6 +28,7 @@ import GenuineCheckCommand from "./commands/genuine-check";
 import RingGroup from "./commands/ring/index";
 import SkillGroup from "./commands/skill/index";
 import AgentIntentGroup from "./commands/agent-intent/index";
+import LedgerSyncGroup from "./commands/ledger-sync/index";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -53,6 +54,7 @@ export async function runMain(argv: string[] = process.argv.slice(2)): Promise<n
   cli.command(RingGroup);
   cli.command(SkillGroup);
   cli.command(AgentIntentGroup);
+  cli.command(LedgerSyncGroup);
   maybeShowFirstRunNudge(argv);
   const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;
