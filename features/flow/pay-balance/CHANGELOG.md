@@ -1,5 +1,11 @@
 # @features/flow-pay-balance
 
+## 0.6.0-next.1
+
+### Minor Changes
+
+- [#22899](https://github.com/LedgerHQ/ledger-live/pull/22899) [`56640ba`](https://github.com/LedgerHQ/ledger-live/commit/56640ba2c03cec8555f7452da785c8dd949ec010) Thanks [@tonykhaov](https://github.com/tonykhaov)! - fix(pay-balance): keep funded USDC in the balance filter when a testnet USDC is held
+
 ## 0.6.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,22 @@
 # @devtools/bindings
 
+## 0.10.0-next.3
+
+### Minor Changes
+
+- [#22899](https://github.com/LedgerHQ/ledger-live/pull/22899) [`3b5a959`](https://github.com/LedgerHQ/ledger-live/commit/3b5a959ffd24bc06a91bb608924c0575d62eb753) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Pay card devtool: add the card live app and card disclaimer toggles on web, and keep only one card face on at a time.
+
+- [#22889](https://github.com/LedgerHQ/ledger-live/pull/22889) [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
+### Patch Changes
+
+- Updated dependencies [[`56640ba`](https://github.com/LedgerHQ/ledger-live/commit/56640ba2c03cec8555f7452da785c8dd949ec010), [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21)]:
+  - @features/flow-pay-card-auth@0.9.0-next.2
+  - @features/flow-pay-feature-tour@0.7.0-next.2
+  - @shared/feature-flags@0.25.0-next.1
+  - @devtools/registry@0.5.1-next.1
+  - @features/platform-feature-flags@0.8.1-next.1
+
 ## 0.10.0-next.2
 
 ### Patch Changes

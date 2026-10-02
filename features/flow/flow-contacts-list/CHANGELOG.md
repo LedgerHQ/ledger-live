@@ -1,5 +1,12 @@
 # @features/flow-contacts-list
 
+## 0.9.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.9.0-next.2
+
 ## 0.9.0-next.1
 
 ### Patch Changes

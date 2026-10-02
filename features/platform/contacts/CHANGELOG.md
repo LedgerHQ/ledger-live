@@ -1,5 +1,13 @@
 # @features/platform-contacts
 
+## 0.9.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21)]:
+  - @shared/feature-flags@0.25.0-next.1
+  - @features/platform-feature-flags@0.8.1-next.1
+
 ## 0.9.0-next.1
 
 ### Patch Changes

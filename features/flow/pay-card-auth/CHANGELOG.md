@@ -1,5 +1,13 @@
 # @features/flow-pay-card-auth
 
+## 0.9.0-next.2
+
+### Minor Changes
+
+- [#22899](https://github.com/LedgerHQ/ledger-live/pull/22899) [`56640ba`](https://github.com/LedgerHQ/ledger-live/commit/56640ba2c03cec8555f7452da785c8dd949ec010) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Show the Card login on the desktop Pay tab when the `card_live_app` param of `lwdPayTab` is on. "Create an account" opens the card program live app and "Log in" opens the CL Card live app.
+
+- [#22889](https://github.com/LedgerHQ/ledger-live/pull/22889) [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
 ## 0.9.0-next.1
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @features/flow-pay-feature-tour
 
+## 0.7.0-next.2
+
+### Minor Changes
+
+- [#22889](https://github.com/LedgerHQ/ledger-live/pull/22889) [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags@0.8.1-next.1
+
 ## 0.7.0-next.1
 
 ### Minor Changes
