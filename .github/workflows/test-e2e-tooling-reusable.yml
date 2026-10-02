@@ -63,4 +63,3 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-codechecks@develop
         with:
           projects: "tag:scope:e2e-tooling"
-          parallel: "4"
