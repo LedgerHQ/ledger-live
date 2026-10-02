@@ -1,4 +1,4 @@
-import { isGenericBridgeFlagEnabled } from "../bridge/generic-coin-framework/genericCoinFrameworkFamilies";
+import { isGenericCoinFrameworkFamily } from "../bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import type { CoinModuleLoader, FamilySetup } from "./types";
 
 export const coinModuleLoaders: CoinModuleLoader[] = [
@@ -245,11 +245,11 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["hedera", "hedera_testnet"],
     loadSetup: () => import("../families/hedera/setup"),
     loadTransaction: () =>
-      isGenericBridgeFlagEnabled("hedera")
+      isGenericCoinFrameworkFamily("hedera")
         ? import("../families/hedera/transaction").then(m => m.default)
         : import("@ledgerhq/coin-hedera/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      isGenericBridgeFlagEnabled("hedera")
+      isGenericCoinFrameworkFamily("hedera")
         ? import("../families/hedera/deviceTransactionConfig").then(m => m.default)
         : import("@ledgerhq/coin-hedera/deviceTransactionConfig").then(m => m.default),
     loadSigner: () => import("../families/hedera/signer").then(m => m.default),
