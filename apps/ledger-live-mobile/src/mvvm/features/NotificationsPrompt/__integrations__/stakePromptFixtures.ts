@@ -17,6 +17,7 @@ export type AccountKey =
   | "near"
   | "polkadot"
   | "solana"
+  | "stacks"
   | "sui"
   | "tezos";
 
@@ -86,6 +87,9 @@ export const accountsByKey = {
   },
   solana: genAccount("notifications-prompt-solana", {
     currency: getCryptoCurrencyById("solana"),
+  }),
+  stacks: genAccount("notifications-prompt-stacks", {
+    currency: getCryptoCurrencyById("stacks"),
   }),
   sui: genAccount("notifications-prompt-sui", {
     currency: getCryptoCurrencyById("sui"),
@@ -565,6 +569,37 @@ export const stakePromptCases: StakePromptCase[] = [
     operationType: "DELEGATE",
     transaction: { family: "solana", mode: "delegate" },
     params: { validatorName: "solana-validator", source: stakePromptSource },
+  },
+  {
+    label: "Stacks staking",
+    bucket: "delegation/staking",
+    flowName: NavigatorName.StacksStakingFlow,
+    familyExportKey: "StacksStakingFlow",
+    successScreenName: ScreenName.StacksStakingValidationSuccess,
+    errorScreenName: ScreenName.StacksStakingValidationError,
+    accountKey: "stacks",
+    operationType: "DELEGATE",
+    transaction: {
+      family: "stacks",
+      mode: "delegate",
+      valAddress: "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA.native-pool-signer-manager",
+    },
+    params: { source: stakePromptSource },
+  },
+  {
+    label: "Stacks unstaking",
+    bucket: "undelegation/unstaking",
+    flowName: NavigatorName.StacksUnstakingFlow,
+    familyExportKey: "StacksUnstakingFlow",
+    successScreenName: ScreenName.StacksUnstakingValidationSuccess,
+    errorScreenName: ScreenName.StacksUnstakingValidationError,
+    accountKey: "stacks",
+    operationType: "UNDELEGATE",
+    transaction: {
+      family: "stacks",
+      mode: "undelegate",
+      valAddress: "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA.native-pool-signer-manager",
+    },
   },
   {
     label: "Sui staking",

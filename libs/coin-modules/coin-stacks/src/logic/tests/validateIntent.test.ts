@@ -14,7 +14,8 @@ import {
 import { StacksStakeInPreparePhase } from "../../errors";
 import { fetchPoxInfo } from "../../network/pox";
 import type { StacksTxData } from "../../types";
-import { validateIntent } from "../validateIntent";
+import { MAX_NUM_CYCLES as LEGACY_MAX_NUM_CYCLES, validateIntent } from "../validateIntent";
+import { MAX_NUM_CYCLES } from "../../common-logic/staking";
 
 jest.mock("../../network/pox");
 
@@ -47,6 +48,10 @@ function transferIntent(
 }
 
 describe("validateIntent", () => {
+  it("keeps exporting pox-5's MAX_NUM_CYCLES from its public subpath", () => {
+    expect(LEGACY_MAX_NUM_CYCLES).toBe(MAX_NUM_CYCLES);
+  });
+
   it("flags a missing recipient", async () => {
     const { errors } = await validateIntent(
       transferIntent({ recipient: "" }),
@@ -169,7 +174,26 @@ describe("validateIntent", () => {
         stakingIntent({ data: { type: "stacks-pox", numCycles: 97, startBurnHt: 961600 } }),
         nativeBalance(10000000n),
       );
-      expect(errors.data?.message).toMatch(/numCycles must be between/);
+      expect(errors.data?.message).toMatch(/numCycles must be an integer between/);
+    });
+
+    it("flags a fractional numCycles, which uintCV can't encode", async () => {
+      const { errors } = await validateIntent(
+        stakingIntent({ data: { type: "stacks-pox", numCycles: 1.5, startBurnHt: 961600 } }),
+        nativeBalance(10000000n),
+      );
+      expect(errors.data?.message).toMatch(/numCycles must be an integer between/);
+    });
+
+    it.each([
+      ["an invalid address part", "SP1not-an-address.signer-manager"],
+      ["an empty contract name", "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9."],
+    ])("flags a delegate valAddress with %s", async (_, valAddress) => {
+      const { errors } = await validateIntent(
+        stakingIntent({ valAddress }),
+        nativeBalance(10000000n),
+      );
+      expect(errors.valAddress?.message).toMatch(/must be a contract principal/);
     });
 
     it("flags a zero amount for delegate (craftTransaction would otherwise stake 0 on-chain)", async () => {
