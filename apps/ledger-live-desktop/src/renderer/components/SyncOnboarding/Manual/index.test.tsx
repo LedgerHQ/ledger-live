@@ -8,6 +8,7 @@ import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hook
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
 import { addDevice } from "~/renderer/actions/devices";
 import SyncOnboardingScreen from ".";
+import SyncOnboardingCompanion from "LLD/features/Onboarding/screens/SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 
 jest.mock("@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling", () => ({
@@ -39,6 +40,7 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
 const mockedUseOnboardingStatePolling = jest.mocked(useOnboardingStatePolling);
 const mockedUseToggleOnboardingEarlyCheck = jest.mocked(useToggleOnboardingEarlyCheck);
 const mockedEarlySecurityChecks = jest.mocked(EarlySecurityChecks);
+const mockedSyncOnboardingCompanion = jest.mocked(SyncOnboardingCompanion);
 
 const deviceA: Device = {
   deviceId: "device-a",
@@ -54,11 +56,10 @@ const deviceB: Device = {
   wired: true,
 };
 
-function renderScreen(currentDevice: Device) {
-  const resetStates = jest.fn();
+function mockOnboardingStep(currentOnboardingStep: OnboardingStep, resetStates = jest.fn()) {
   mockedUseOnboardingStatePolling.mockReturnValue({
     onboardingState: {
-      currentOnboardingStep: OnboardingStep.OnboardingEarlyCheck,
+      currentOnboardingStep,
       isOnboarded: false,
       isInRecoveryMode: false,
       seedPhraseType: SeedPhraseType.TwentyFour,
@@ -71,6 +72,14 @@ function renderScreen(currentDevice: Device) {
     lockedDevice: false,
     resetStates,
   });
+  return resetStates;
+}
+
+function renderScreen(
+  currentDevice: Device,
+  currentOnboardingStep = OnboardingStep.OnboardingEarlyCheck,
+) {
+  const resetStates = mockOnboardingStep(currentOnboardingStep);
   mockedUseToggleOnboardingEarlyCheck.mockReturnValue({
     state: { toggleStatus: "none", lockedDevice: false, error: null },
   });
@@ -87,6 +96,15 @@ function renderScreen(currentDevice: Device) {
 function lastRenderedDeviceProp() {
   const calls = mockedEarlySecurityChecks.mock.calls;
   return calls.length ? calls[calls.length - 1][0].device : undefined;
+}
+
+function lastEarlySecurityChecksProps() {
+  const calls = mockedEarlySecurityChecks.mock.calls;
+  return calls[calls.length - 1][0];
+}
+
+function companionDeviceIds() {
+  return mockedSyncOnboardingCompanion.mock.calls.map(call => call[0].device.deviceId);
 }
 
 describe("SyncOnboardingScreen (Manual)", () => {
@@ -120,5 +138,40 @@ describe("SyncOnboardingScreen (Manual)", () => {
     expect(mockedEarlySecurityChecks.mock.calls.length).toBeGreaterThanOrEqual(
       callsBeforeRedispatch,
     );
+  });
+
+  it("forces the early security checks before the companion for an unverified device", () => {
+    renderScreen(deviceA, OnboardingStep.SetupChoice);
+
+    expect(companionDeviceIds()).toEqual([]);
+    expect(lastRenderedDeviceProp()?.deviceId).toBe("device-a");
+
+    act(() => {
+      lastEarlySecurityChecksProps().onGenuineCheckPassed("device-a");
+    });
+    act(() => {
+      lastEarlySecurityChecksProps().onComplete();
+    });
+
+    expect(companionDeviceIds()).toContain("device-a");
+  });
+
+  it("never runs the companion on a replacement device reporting a post-check state", () => {
+    const { store } = renderScreen(deviceA, OnboardingStep.SetupChoice);
+    act(() => {
+      lastEarlySecurityChecksProps().onGenuineCheckPassed("device-a");
+    });
+    act(() => {
+      lastEarlySecurityChecksProps().onComplete();
+    });
+    expect(companionDeviceIds()).toContain("device-a");
+
+    mockOnboardingStep(OnboardingStep.Pin);
+    act(() => {
+      store.dispatch(addDevice(deviceB));
+    });
+
+    expect(companionDeviceIds()).not.toContain("device-b");
+    expect(lastRenderedDeviceProp()?.deviceId).toBe("device-b");
   });
 });
