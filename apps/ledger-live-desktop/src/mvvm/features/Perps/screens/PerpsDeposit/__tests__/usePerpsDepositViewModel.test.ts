@@ -88,13 +88,13 @@ function renderViewModel(
   accounts: Account[] = [fundingAccount, fundedAccount],
 ) {
   const props: PerpsDepositData = { receiverAccount, ...data };
-  const { result } = renderHook(() => usePerpsDepositViewModel(props, onClose), {
+  const { result, store } = renderHook(() => usePerpsDepositViewModel(props, onClose), {
     initialState: {
       accounts,
       settings: { discreetMode },
     },
   });
-  return { result, onClose };
+  return { result, onClose, store };
 }
 
 /** The display-unit amount the form settled on and sent to the provider. */
@@ -151,7 +151,7 @@ describe("usePerpsDepositViewModel", () => {
   });
 
   it("adopts the funding account picked in the asset drawer", async () => {
-    const { result } = renderViewModel();
+    const { result, store } = renderViewModel();
 
     act(() => result.current.changeDepositAmount("42"));
     await pickFundingAccount(result);
@@ -159,6 +159,8 @@ describe("usePerpsDepositViewModel", () => {
     expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
       expect.objectContaining({ uiUseCase: "perpetuals:fund" }),
     );
+    // The fund flow keeps accounts that cannot send (e.g. HyperCore) out of the picker.
+    expect(store.getState().modularDialog.flow).toBe("perpetuals:fund");
 
     expect(result.current.depositCurrencyTicker).toBe("ETH");
     expect(result.current.depositAccountName).not.toBeNull();
