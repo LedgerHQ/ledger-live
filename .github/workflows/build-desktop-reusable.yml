@@ -3,6 +3,11 @@ name: "[Desktop] - Build - Called"
 on:
   workflow_call:
     inputs:
+      runner:
+        description: "Runner label for the job under test."
+        type: string
+        required: false
+        default: ledger-live-linux-8CPU-32RAM
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -41,6 +46,16 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      runner:
+        description: "Runner label for the job under test."
+        type: string
+        required: false
+        default: ledger-live-linux-8CPU-32RAM
+      linux-only:
+        description: "Build Linux only, skipping the Windows and macOS matrix entries."
+        type: boolean
+        required: false
+        default: true
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -74,7 +89,7 @@ jobs:
           && '[{"name":"Linux","os":"ledger-live-linux-8CPU-32RAM","image":"linux-x86_64.AppImage","output-name":"linux"}]'
           || '[{"name":"Linux","os":"ledger-live-linux-8CPU-32RAM","image":"linux-x86_64.AppImage","output-name":"linux"},{"name":"Windows","os":"windows-2022","dotnet":true,"image":"win-x64.exe","output-name":"win"},{"name":"macOS","os":"macos-14","image":"mac.dmg","output-name":"mac"}]') }}
     name: "${{ matrix.config.name }} Build"
-    runs-on: ${{ matrix.config.os }}
+    runs-on: ${{ matrix.config.name == 'Linux' && inputs.runner || matrix.config.os }}
     timeout-minutes: 20
     outputs:
       linux: ${{ steps.status.outputs.Linux }}
