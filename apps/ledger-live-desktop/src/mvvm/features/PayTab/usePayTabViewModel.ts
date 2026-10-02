@@ -1,6 +1,7 @@
 import { useContactsFeature } from "@features/platform-contacts";
 import { usePayCardBalance } from "./hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
+import { usePayTabCardDisclaimer } from "./hooks/usePayTabCardDisclaimer";
 import { usePayTabContacts } from "./hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayTabRequestReceive } from "./hooks/usePayTabRequestReceive";
@@ -18,6 +19,7 @@ export function usePayTabViewModel() {
     newPayment.payFromAddress,
   );
   const { isEnabled: isContactsEnabled } = useContactsFeature("desktop");
+  const cardDisclaimer = usePayTabCardDisclaimer();
 
   return {
     balance,
@@ -32,6 +34,7 @@ export function usePayTabViewModel() {
     ledgerSyncIntroduction,
     contactAddressPicker,
     isContactsEnabled,
+    cardDisclaimer,
     trackRequestAddressVerification: verify.phase === "intro",
     trackRecipientAddressSelection: isContactsEnabled && contactAddressPicker.isOpen,
   };
