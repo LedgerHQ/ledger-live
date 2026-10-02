@@ -77,6 +77,13 @@ export class MyLedgerPage extends AppPage {
 
   private readonly updateFirmwareButton = this.page.getByTestId("manager-update-firmware-button");
 
+  private readonly customImageInput = this.page.getByTestId("custom-image-import-image-input");
+  private readonly cropContinueButton = this.page.getByTestId("custom-image-crop-continue-button");
+  private readonly contrastContinueButton = this.page.getByTestId(
+    "custom-image-contrast-continue-button",
+  );
+  private readonly customImageFinishButton = this.page.getByTestId("custom-image-finish-button");
+
   /**
    * `/manager` renders a DeviceAction that connects and runs `listApps` before the
    * dashboard exists, so every My Ledger test starts by waiting on the storage card.
@@ -247,6 +254,21 @@ export class MyLedgerPage extends AppPage {
   @step("Open the custom lock screen manager")
   async openCustomLockScreen() {
     await this.customImageButton.click();
+  }
+
+  /** Each step only renders once the previous one is confirmed, so the flow is driven in order. */
+  @step("Set the custom lock screen from $0")
+  async setCustomLockScreen(imagePath: string) {
+    await this.openCustomLockScreen();
+    await this.customImageInput.setInputFiles(imagePath);
+    await this.cropContinueButton.click();
+    await this.contrastContinueButton.click();
+    await this.customImageFinishButton.click();
+  }
+
+  @step("Expect the custom lock screen action to read $0")
+  async expectCustomLockScreenAction(label: string) {
+    await expect(this.customImageButton).toContainText(label);
   }
 
   @step("Expect a firmware update to be offered")
