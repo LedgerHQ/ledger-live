@@ -654,7 +654,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? op
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
-    const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    const tokensSyncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    const syncHash = bridgeApi.syncVersion
+      ? `${tokensSyncHash}-${bridgeApi.syncVersion}`
+      : tokensSyncHash;
     const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
     // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
     // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
