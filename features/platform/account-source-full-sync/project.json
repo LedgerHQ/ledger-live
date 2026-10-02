@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-account-source-full-sync",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

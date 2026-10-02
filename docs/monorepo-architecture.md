@@ -49,6 +49,13 @@ lets `features/*` and `domain/*` resolve their own copy without depending on an 
 
 ---
 
+## Worked example
+
+[The account data layer](./account-data-layer.md): how a screen reads one datum of an account through
+ranked sources, and how a new datum is added without touching the shared packages.
+
+---
+
 ## Dependency rules (enforced by Nx)
 
 ```

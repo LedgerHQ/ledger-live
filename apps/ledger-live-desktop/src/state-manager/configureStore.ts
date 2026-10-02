@@ -30,6 +30,7 @@ import {
 } from "~/renderer/middlewares/accountAlias";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
+import { accountDataExtra } from "~/config/account-data-setup";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
@@ -91,6 +92,7 @@ const customCreateStore = ({
                 getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
+              ...accountDataExtra(),
               ...authApiExtra({
                 isFeatureEnabled: (): boolean =>
                   selectFeature(store.getState(), "lwdAuth").enabled ?? false,
