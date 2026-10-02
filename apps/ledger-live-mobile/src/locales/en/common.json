@@ -5356,6 +5356,32 @@
             "CUSTOM": "Custom coin selection"
           }
         }
+      },
+      "feePayment": {
+        "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
+      },
+      "sponsoredRentSignature": {
+        "crafting": "Preparing energy rental…",
+        "strategy": "Energy rental - {{provider}}",
+        "fee": "Rental fee: {{amount}}",
+        "cancelled": {
+          "title": "Energy rental canceled",
+          "description": "You rejected the rental fee payment. Your funds won't be affected."
+        }
+      },
+      "sponsoredPolling": {
+        "title": "Waiting for energy delivery",
+        "waiting": "{{provider}} is delivering the rented energy. This can take a moment.",
+        "elapsed": "Elapsed: {{time}}"
+      },
+      "sponsoredFailure": {
+        "rentPayment": "Fee payment failed — your funds were not moved.",
+        "deliveryFailed": "Energy was not delivered. Your rental fee payment was sent — contact {{provider}} support for a refund{{txidSuffix}}.",
+        "contractData": "Contract data is disabled on your TRON app. Enable TRON app → Settings → Contract data, then retry.",
+        "transfer": "Your transfer failed, but the rented energy is still valid — you can retry the transfer.",
+        "retry": "Retry",
+        "retryPaying": "Pay again and retry",
+        "cancel": "Cancel"
       }
     },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",

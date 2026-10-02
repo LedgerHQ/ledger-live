@@ -14,8 +14,16 @@ import {
   type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
 import { broadcastLogger } from "~/datadog";
+import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import { isContractDataDisabledError } from "@ledgerhq/live-common/flows/send/sponsored/failure";
+import { reportSponsoredTransferOutcome } from "@ledgerhq/live-common/flows/send/sponsored/transferOutcome";
+import {
+  SEND_FLOW_COMPLETION,
+  type SendFlowCompletion,
+} from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { signTransactionIntentLWMDefinition } from "../intents/signTransactionIntent/intentLWMDefinition";
 
 function normalizeError(error: unknown): Error {
@@ -26,6 +34,7 @@ export function useSignatureViewModel() {
   const { operation, status } = useSendFlowActions();
   const { state } = useSendFlowData();
   const { finishSigning, stopSigning } = useSendSignature();
+  const { state: sponsoredState, actions: sponsoredActions } = useSponsoredSend();
   const reduxDispatch = useDispatch();
 
   const { account, parentAccount, currency } = state.account;
@@ -65,12 +74,33 @@ export function useSignatureViewModel() {
     [reduxDispatch],
   );
 
-  const goToConfirmation = useCallback(() => {
-    // Dismisses the overlay and runs the onComplete callback registered by the triggering screen
-    // (Amount or CoinControl). That callback holds the navigation reference to navigate to
-    // Confirmation from within the FlowStackNavigator's React subtree.
-    finishSigning();
-  }, [finishSigning]);
+  const isSponsoredTransfer = sponsoredState.phase === SPONSORED_PHASE.TRANSFER;
+  // Pinned at mount, so an outcome reported after a re-craft is dropped as stale.
+  const [signedPaymentTxId] = useState(sponsoredState.paymentTxId);
+  const handedToSponsoredFlowRef = useRef(false);
+
+  const goToConfirmation = useCallback(
+    (completion: SendFlowCompletion, error?: Error) => {
+      if (isSponsoredTransfer) {
+        reportSponsoredTransferOutcome({
+          actions: sponsoredActions,
+          signedPaymentTxId,
+          completion,
+          error,
+        });
+        // A failure stays in the overlay: SponsoredFlowHost shows it, and Retry resumes at TRANSFER.
+        if (completion !== SEND_FLOW_COMPLETION.SUCCESS) {
+          handedToSponsoredFlowRef.current = true;
+          return;
+        }
+      }
+      // Dismisses the overlay and runs the onComplete callback registered by the triggering screen
+      // (Amount or CoinControl). That callback holds the navigation reference to navigate to
+      // Confirmation from within the FlowStackNavigator's React subtree.
+      finishSigning();
+    },
+    [finishSigning, isSponsoredTransfer, sponsoredActions, signedPaymentTxId],
+  );
 
   const { request, finishWithError, onDeviceActionResult } = useSendFlowSignatureCore({
     account,
@@ -154,12 +184,23 @@ export function useSignatureViewModel() {
   // IntentError screen (Retry / Close). We deliberately do not navigate away here so
   // the user stays on the sheet, as opposed to the success path which broadcasts and
   // moves to the confirmation screen.
-  const onIntentJobError = useCallback(() => {}, []);
+  // Exception: Contract Data disabled during a sponsored TRANSFER routes into the orchestration,
+  // so the user gets the dedicated recovery screen.
+  const onIntentJobError = useCallback(
+    (error: unknown) => {
+      if (isSponsoredTransfer && isContractDataDisabledError(error)) {
+        handedToSponsoredFlowRef.current = true;
+        sponsoredActions.setContractDataFailure(error, signedPaymentTxId);
+      }
+    },
+    [isSponsoredTransfer, sponsoredActions, signedPaymentTxId],
+  );
 
   // Explicit dismiss of the sheet (close button / backdrop) closes the overlay and leaves the user
-  // on the underlying review screen.
+  // on the underlying review screen. The sheet also calls this when it unmounts, so it must not
+  // stop signing once the failure screen took over: its Retry reopens TX-C.
   const onUserCancel = useCallback(() => {
-    if (isSigningCompletedRef.current) {
+    if (isSigningCompletedRef.current || handedToSponsoredFlowRef.current) {
       return;
     }
     stopSigning();

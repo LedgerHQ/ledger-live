@@ -8,46 +8,34 @@ import React, {
   useState,
   type ReactNode,
 } from "react";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
 import { useFeature } from "@features/platform-feature-flags";
-import {
-  useSponsoredSendOrchestration,
-  type SponsoredSendActions,
-} from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
+import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
+import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
+import { useSponsoredFeeQuote } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote";
 import {
   SPONSORED_PHASE,
   type SponsoredState,
 } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { buildGenericTransactionIntent } from "@ledgerhq/live-common/bridge/generic-coin-framework/buildIntent";
-import {
-  getSponsoredCoinApi,
-  type RentPayment,
-  type SponsoredCoinApi,
-  type SponsoredFeeQuote,
-} from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import type { SponsoredFeeQuote } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { sponsoredMaxAmount } from "@ledgerhq/live-common/flows/send/sponsored/feeAsset";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useSendFlowData, useSendFlowActions } from "./SendFlowContext";
-import { useSponsoredFee } from "../hooks/useSponsoredFee";
-import { buildRentReservationOperation } from "../utils/rentReservation";
 import { formatSponsoredFeeAmounts } from "../utils/sponsoredFeeAmounts";
-import { findFeeTokenAccount, sponsoredMaxAmount } from "../utils/sponsoredFeeAsset";
 import type { SponsoredFeeAmounts } from "../types";
-
-const SEAM_KIND = "local";
 
 export const STANDARD_FEE_OPTION_ID = "standard";
 
 type SponsoredSendContextValue = Readonly<{
   state: SponsoredState;
   actions: SponsoredSendActions;
+  mainAccount: Account | null;
   selectedFeeOptionId: string;
   sponsoredFeeOptionId: string;
   providerName: string;
@@ -80,105 +68,32 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   const transaction = state.transaction.transaction;
   const flagEnabled = useFeature("gasSponsorship")?.enabled === true;
 
-  const mainAccount = useMemo(
-    () => (account ? getMainAccount(account, parentAccount) : null),
-    [account, parentAccount],
-  );
-  const network = mainAccount?.currency.id ?? "";
-
-  const [seam, setSeam] = useState<SponsoredCoinApi | null>(null);
-  useEffect(() => {
-    let ignore = false;
-    setSeam(null);
-    if (!flagEnabled || !network) return;
-    getSponsoredCoinApi(network, SEAM_KIND).then(
-      resolved => {
-        if (!ignore) setSeam(resolved);
-      },
-      () => {
-        if (!ignore) setSeam(null);
-      },
-    );
-    return () => {
-      ignore = true;
-    };
-  }, [flagEnabled, network]);
-
-  const [intent, setIntent] = useState<unknown>(null);
-
-  useEffect(() => {
-    let ignore = false;
-
-    if (!flagEnabled || !mainAccount || !transaction || !seam) {
-      setIntent(null);
-      return;
-    }
-
-    // Clear first so Review can't craft against the previous transaction's intent during the rebuild.
-    setIntent(null);
-
-    void (async () => {
-      try {
-        const result = await buildGenericTransactionIntent(
-          mainAccount.currency.family,
-          SEAM_KIND,
-          mainAccount,
-          transaction as unknown as GenericTransaction,
-        );
-        if (!ignore) setIntent(result);
-      } catch {
-        // The builder rejects a mid-edit transaction.
-        if (!ignore) setIntent(null);
-      }
-    })();
-
-    return () => {
-      ignore = true;
-    };
-  }, [flagEnabled, mainAccount, transaction, seam]);
-
   const reduxDispatch = useDispatch();
-
-  // Fired from the in-flight submit, even after a reset/unmount; dedupe by paymentTxId so a payment locks once.
-  const reservedTxIdsRef = useRef<Set<string>>(new Set());
-  const handleRentPaymentBroadcast = useCallback(
-    ({
-      paymentTxId,
-      payerAddress,
-      rentPayment,
-    }: {
-      paymentTxId?: string;
-      payerAddress: string;
-      rentPayment: RentPayment;
-    }) => {
-      if (!mainAccount || !seam || !paymentTxId || reservedTxIdsRef.current.has(paymentTxId))
-        return;
-      const tokenAccount = findFeeTokenAccount(mainAccount, rentPayment.asset);
-      if (!tokenAccount) return;
-      const op = buildRentReservationOperation({
-        tokenAccountId: tokenAccount.id,
-        payerAddress,
-        paymentTxId,
-        rentAmount: rentPayment.amount,
-        reservationSequence: seam.reservationDedupKey(paymentTxId),
-      });
-      if (!op) return;
-      reservedTxIdsRef.current.add(paymentTxId);
-      // Dispatched on the parent: addPendingOperation files the op under the sub-account it names.
+  const reservePendingOperation = useCallback(
+    (mainAccountId: string, op: Operation) => {
       reduxDispatch(
-        updateAccountWithUpdater(mainAccount.id, (acc: Account) => addPendingOperation(acc, op)),
+        updateAccountWithUpdater(mainAccountId, (acc: Account) => addPendingOperation(acc, op)),
       );
     },
-    [mainAccount, seam, reduxDispatch],
+    [reduxDispatch],
   );
 
-  const { state: sponsoredState, actions } = useSponsoredSendOrchestration({
-    network,
-    kind: SEAM_KIND,
+  const {
+    mainAccount,
+    seam,
     intent,
-    onRentPaymentBroadcast: handleRentPaymentBroadcast,
+    intentFailed,
+    state: sponsoredState,
+    actions,
+  } = useSponsoredSendSession({
+    enabled: flagEnabled,
+    account,
+    parentAccount,
+    transaction,
+    reservePendingOperation,
   });
 
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const sponsoredFeeOptionId = seam?.feeOptionId ?? "";
   const [selectedFeeOptionId, setSelectedFeeOptionId] = useState<string>(STANDARD_FEE_OPTION_ID);
   const snappedAmountRef = useRef<BigNumber | null>(null);
@@ -210,10 +125,12 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     sponsoredFeeFiat,
     feeCurrencyTicker,
     feeTokenAccount,
-  } = useSponsoredFee({
+  } = useSponsoredFeeQuote({
     mainAccount,
     seam,
     intent,
+    intentFailed,
+    counterValueCurrency,
   });
 
   const sponsoredSelected = selectedFeeOptionId === sponsoredFeeOptionId;
@@ -243,7 +160,6 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     transactionActions,
   ]);
 
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
   const savingsFiatFormatted = useMemo(
     () =>
@@ -281,25 +197,6 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     if (sponsoredSelectionStale) selectStandard();
   }, [sponsoredSelectionStale, selectStandard]);
 
-  // Excludes `sponsored`: toggling the fee option must not discard a crafted order. A max send keys
-  // on "max" rather than its amount, which prepareTransaction keeps re-deriving from the balance.
-  const rentIntentKey = [
-    account?.id,
-    parentAccount?.id,
-    transaction?.recipient,
-    transaction?.useAllAmount ? "max" : transaction?.amount?.toString(),
-    transaction?.subAccountId,
-  ].join("|");
-
-  // Compared by key: `actions` changes on every intent or account rebuild (e.g. the TX-A
-  // reservation), which alone must not reset mid-flow.
-  const lastRentIntentKeyRef = useRef(rentIntentKey);
-  useEffect(() => {
-    if (lastRentIntentKeyRef.current === rentIntentKey) return;
-    lastRentIntentKeyRef.current = rentIntentKey;
-    actions.reset();
-  }, [rentIntentKey, actions]);
-
   const providerName = seam?.providerName ?? "";
   const waivesErrorKeys = seam?.waivesErrorKeys ?? NO_WAIVED_KEYS;
   const waivesWarningKeys = seam?.waivesWarningKeys ?? NO_WAIVED_KEYS;
@@ -308,6 +205,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     () => ({
       state: sponsoredState,
       actions,
+      mainAccount,
       selectedFeeOptionId,
       sponsoredFeeOptionId,
       providerName,
@@ -327,6 +225,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     [
       sponsoredState,
       actions,
+      mainAccount,
       selectedFeeOptionId,
       sponsoredFeeOptionId,
       providerName,

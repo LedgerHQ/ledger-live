@@ -139,7 +139,8 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
-  // Desktop-only sponsored-send steps: no mobile screen yet, present for the exhaustive Record.
+  // Not navigation steps on mobile: SponsoredFlowHost renders the sponsored phases as overlays,
+  // and FEE_PAYMENT has no mobile screen. Present for the exhaustive Record.
   [SEND_FLOW_STEP.FEE_PAYMENT]: {
     id: SEND_FLOW_STEP.FEE_PAYMENT,
     canGoBack: true,
