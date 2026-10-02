@@ -95,7 +95,7 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
 
   const handleWebviewStateChange = useCallback((state: WebviewState) => {
     setWebviewState(state);
-    if (state.url && !state.loading) setIsLoaded(true);
+    if (!state.loading && (state.url !== "" || state.isAppUnavailable)) setIsLoaded(true);
   }, []);
 
   const handleBypassOnboarding = useCallback(() => {
