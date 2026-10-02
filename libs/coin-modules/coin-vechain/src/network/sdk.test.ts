@@ -34,7 +34,7 @@ const eventLogRequestBodies: string[] = [];
 
 const mockGetTransferLogs = jest.fn(async (): Promise<{ data: Operation[] }> => ({ data: [] }));
 const mockGetEventLogs = jest.fn(async (): Promise<{ data: Operation[] }> => ({ data: [] }));
-const mockGetAccount = jest.fn(async (): Promise<{ data: AccountResponse }> => ({
+const mockGetAccount = jest.fn(async (_url?: string): Promise<{ data: AccountResponse }> => ({
   data: mockAccount,
 }));
 const mockGetLastBlockCount = jest.fn(
@@ -75,7 +75,7 @@ jest.mock("@ledgerhq/live-network", () => {
     }
 
     if (args.url.match(/\/accounts/)) {
-      return mockGetAccount();
+      return mockGetAccount(args.url);
     }
 
     if (args.url.match(/\/blocks\/best$/)) {
@@ -120,6 +120,30 @@ describe("sdk", () => {
     test("retrieves an account", async () => {
       const account = await getAccount(mockVechainConfig, "0xmy-address");
       expect(account).toBe(mockAccount);
+    });
+
+    test("queries the latest state when no revision is given", async () => {
+      await getAccount(mockVechainConfig, "0xmy-address");
+
+      expect(mockGetAccount).toHaveBeenLastCalledWith(
+        "https://vechain.coin.ledger.com/accounts/0xmy-address",
+      );
+    });
+
+    test("pins the query to the given revision", async () => {
+      await getAccount(mockVechainConfig, "0xmy-address", 16407349);
+
+      expect(mockGetAccount).toHaveBeenLastCalledWith(
+        "https://vechain.coin.ledger.com/accounts/0xmy-address?revision=16407349",
+      );
+    });
+
+    test("pins the query to the genesis block for revision 0", async () => {
+      await getAccount(mockVechainConfig, "0xmy-address", 0);
+
+      expect(mockGetAccount).toHaveBeenLastCalledWith(
+        "https://vechain.coin.ledger.com/accounts/0xmy-address?revision=0",
+      );
     });
   });
 
