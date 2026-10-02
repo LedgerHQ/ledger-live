@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { ReactNode, useCallback, useEffect } from "react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -18,7 +19,6 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import Skeleton from "~/components/Skeleton";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
 import CurrencyIcon from "~/components/CurrencyIcon";

@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { useTopBarViewModel } from "LLM/components/TopBar/useTopBarViewModel";
 import { useSwapTopBarHeaderViewModel } from "../useSwapTopBarHeaderViewModel";
 

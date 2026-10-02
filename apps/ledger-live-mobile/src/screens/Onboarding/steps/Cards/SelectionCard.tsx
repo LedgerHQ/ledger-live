@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTheme } from "styled-components/native";
-import { track } from "~/analytics";
 import Touchable from "~/components/Touchable";
 
 type SelectionCardProps = {

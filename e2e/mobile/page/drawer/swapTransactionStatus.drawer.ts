@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { normalizeText, isIos } from "@e2e/helpers/commonHelpers";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { DEFAULT_TIMEOUT } from "@e2e/helpers/elementHelpers";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 export type SwapTransactionStatusDetails = {
   date: string;
@@ -55,7 +55,7 @@ export default class SwapTransactionStatusDrawer {
       await detoxExpect(getElementById(this.receivedAmountId)).toBeVisible();
     }
 
-    await waitForElementById(this.networkFeesId, DEFAULT_TIMEOUT, { checkVisibility: false });
+    await waitForElementById(this.networkFeesId, TIMEOUT.xxlarge, { checkVisibility: false });
     await scrollToId(this.networkFeesId, this.scrollViewId);
     jestExpect(normalizeText(await getTextOfElement(this.networkFeesId))).toEqual(
       normalizeText(details.networkFees),
@@ -80,7 +80,7 @@ export default class SwapTransactionStatusDrawer {
     }
     jestExpect(normalizeText(await getTextOfElement(this.swapIdId))).toContain(swapIdPrefix);
 
-    await waitForElementById(this.viewInExplorerButtonId, DEFAULT_TIMEOUT, {
+    await waitForElementById(this.viewInExplorerButtonId, TIMEOUT.xxlarge, {
       checkVisibility: false,
     });
     await scrollToId(this.viewInExplorerButtonId, this.scrollViewId);

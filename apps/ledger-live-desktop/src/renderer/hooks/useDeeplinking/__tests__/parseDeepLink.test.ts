@@ -194,6 +194,13 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates swap history route with swapId", () => {
+      const parsed = parseDeepLink("ledgerwallet://swap/history?swapId=abc-123");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({ type: "swap", history: true, swapId: "abc-123" });
+    });
+
     it("creates bridge route", () => {
       const parsed = parseDeepLink("ledgerwallet://bridge?origin=https://example.com&appName=Test");
       const route = createRoute(parsed);

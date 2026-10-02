@@ -1,7 +1,7 @@
 # @features/flow-app-unlock
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Split out of `@features/flow-app-lock` in [LIVE-38256](https://ledgerhq.atlassian.net/browse/LIVE-38256); API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 The app unlock journey for Ledger Wallet Mobile: the screen that stands between a locked app and the
 wallet, and the sheet reached from it when the password is forgotten. Each step is a ViewModel → View

@@ -1,9 +1,9 @@
+import { trackPage } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import useExportLogs from "~/components/useExportLogs";
-import { screen } from "~/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
@@ -36,9 +36,12 @@ export function useConfirmationViewModel() {
 
   useEffect(() => {
     if (state.flowStatus === FLOW_STATUS.SUCCESS) {
-      void screen("Modal send - transaction sent", undefined, {
-        ...trackingProperties,
-        savedContactDuringFlow,
+      void trackPage({
+        category: "Modal send - transaction sent",
+        props: {
+          ...trackingProperties,
+          savedContactDuringFlow,
+        },
       });
     }
   }, [savedContactDuringFlow, state.flowStatus, trackingProperties]);

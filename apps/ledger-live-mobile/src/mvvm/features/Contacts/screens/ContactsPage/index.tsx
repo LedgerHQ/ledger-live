@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useLayoutEffect } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -6,7 +7,6 @@ import { isContactsSearchNoResultsViewModel } from "@features/flow-contacts";
 import { useContactsFeature } from "@features/platform-contacts";
 import { ScreenName } from "~/const";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
-import { TrackScreen } from "~/analytics";
 import { ContactsPageContent } from "./components/ContactsPageContent";
 import { useContactsAddContactDrawerAdapter } from "./hooks/useContactsAddContactDrawerAdapter";
 import { useContactsPageNavigationViewModel } from "./hooks/useContactsPageNavigationViewModel";

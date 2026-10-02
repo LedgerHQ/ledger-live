@@ -1,6 +1,7 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "fs/promises";
+import cloneDeep from "lodash/cloneDeep";
 import merge from "lodash/merge";
 import * as path from "path";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -15,15 +16,19 @@ import {
   addTeamOwner,
   addAnnotationLinks,
   attachMergedFeatureFlags,
-  runCliStep,
 } from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { lastValueFrom, Observable } from "rxjs";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
+import {
+  canSkipSpeculosLaunch,
+  executeCliCommands,
+  runCliCommandsOnLaunchedApps,
+  type CliCommand,
+} from "tests/utils/cliFixtureUtils";
 import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-e2e-shared/speculos";
 import { attachNetworkLogging } from "tests/utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -34,11 +39,7 @@ import {
   resolveCardSessionBootstrap,
 } from "@ledgerhq/baanx-test-client";
 
-export type CliCommand = ((
-  userdataPath?: string,
-) => Observable<unknown> | Promise<unknown> | string) & {
-  canUseGeneratedUserdata?: () => boolean;
-};
+export type { CliCommand };
 
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
 type SpeculosFixtureHandle = {
@@ -82,16 +83,6 @@ setEnv(
   "SWAP_API_BASE",
   process.env.SWAP_API_BASE || "https://global.api.stg.ledger-test.com/swap/v5",
 );
-
-async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
-  // Factories tag commands via `named(...)`; treat the inferred "cmd" (from `const cmd = …`
-  // factories) as unnamed so a missed factory degrades to "anonymous" (QAA-1433).
-  const label = cmd.name && cmd.name !== "cmd" ? cmd.name : "anonymous";
-  return runCliStep(label, async () => {
-    const promise = await cmd(`${userdataDestinationPath}/app.json`);
-    return promise instanceof Observable ? await lastValueFrom(promise) : await promise;
-  });
-}
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -143,7 +134,8 @@ export const test = base.extend<TestFixtures>({
       ? await readFile(userdataOriginalFile, { encoding: "utf-8" }).then(JSON.parse)
       : {};
 
-    const userData = merge({ data: { settings } }, fileUserData);
+    const perTestSettings = cloneDeep(settings);
+    const userData = merge({ data: { settings: perTestSettings } }, fileUserData);
     if (localManifestOverride?.length) {
       userData.data = userData.data || {};
       userData.data.discover = userData.data.discover || {};
@@ -193,28 +185,19 @@ export const test = base.extend<TestFixtures>({
       unregisterAllTransportModules();
 
       if (cliCommandsOnApp?.length) {
-        for (const { app, cmd } of cliCommandsOnApp) {
-          currentDevice = await launchSpeculos(app.name, testInfo.title);
-          await executeCliCommand(cmd, userdataDestinationPath);
-          await cleanSpeculos(currentDevice);
-        }
+        currentDevice = await runCliCommandsOnLaunchedApps(
+          cliCommandsOnApp,
+          testInfo.title,
+          userdataDestinationPath,
+        );
+      }
+
+      if (speculosApp && !canSkipSpeculosLaunch(speculosForSetupOnly, cliCommands)) {
+        currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
       }
 
       if (speculosApp) {
-        const skipSpeculos =
-          !!speculosForSetupOnly &&
-          !!cliCommands?.length &&
-          cliCommands.every(cmd => cmd.canUseGeneratedUserdata?.() ?? false);
-
-        if (!skipSpeculos) {
-          currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
-        }
-
-        if (cliCommands?.length) {
-          for (const cmd of cliCommands) {
-            await executeCliCommand(cmd, userdataDestinationPath);
-          }
-        }
+        await executeCliCommands(cliCommands, userdataDestinationPath);
       }
 
       await use(handle);

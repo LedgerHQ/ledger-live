@@ -14,7 +14,7 @@ import {
 } from "@e2e/utils/loggingUtils";
 import { allure } from "jest-allure2-reporter/api";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
-import { getLogs } from "@e2e/bridge/server";
+import { BRIDGE_RESPONSE_TIMEOUT, getLogs } from "@e2e/bridge/server";
 import { Circus } from "@jest/types";
 import {
   logMemoryUsage,
@@ -45,6 +45,9 @@ import { withTimeout } from "@e2e/utils/withTimeout";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
+// getLogs is already capped by the bridge's own response timeout; this outer bound is
+// defense-in-depth for a wedged worker where that inner timer is starved, so it must stay larger.
+const GET_LOGS_TIMEOUT_MS = BRIDGE_RESPONSE_TIMEOUT + 2_000;
 
 // Set by the patched Detox retry (patches/detox@20.51.3.patch) to the exact full names of the
 // tests that failed in the previous attempt.
@@ -108,9 +111,7 @@ async function captureFailureDiagnostics(mergedFeatureFlags?: OptionalFeatureMap
       "attachMergedFeatureFlags",
     );
   }
-  // getLogs has its own 10s RESPONSE_TIMEOUT inside the bridge; this outer bound
-  // is just defense-in-depth in case the inner timer is starved on a wedged worker.
-  let logs = await withTimeout(getLogs(), 12_000, "getLogs");
+  let logs = await withTimeout(getLogs(), GET_LOGS_TIMEOUT_MS, "getLogs");
   if (logs)
     await withTimeout(
       attachFailureLogsToAllure(logs),

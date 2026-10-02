@@ -36,11 +36,21 @@ const DAPP_ACTIONS: Record<string, EarnTransactionType> = {
   unstake: "withdraw",
   requestwithdraw: "withdraw",
   requestwithdrawals: "withdraw",
+  requestwithdrawalswithpermit: "withdraw",
   claimwithdrawal: "withdraw",
   claimwithdrawals: "withdraw",
+  // Observed exits, each two legs: queue the exit, then claim the principal once it clears.
+  // Claiming exited principal is not a reward, so both legs are a withdraw.
+  enterexitqueue: "withdraw", // Chorus One
+  claimexitedassets: "withdraw", // Chorus One
+  requestexit: "withdraw", // Coinbase, Kiln pooled
+  multiclaim: "withdraw", // Coinbase, Kiln pooled
+  requestvalidatorsexit: "withdraw", // Kiln dedicated
+  completewithdrawal: "withdraw", // Kelp
   // Share-exact exit (ERC-4626), distinct from an amount-exact withdraw.
   redeem: "redeem",
   redeemyield: "redeem",
+  requestredeem: "redeem", // Kelp
   // Real on-chain delegation, where a validator is named.
   delegate: "delegate",
   undelegate: "undelegate",
@@ -48,6 +58,8 @@ const DAPP_ACTIONS: Record<string, EarnTransactionType> = {
   claim: "claimReward",
   claimrewards: "claimReward",
   getreward: "claimReward",
+  // Not Kiln's `batchWithdrawCLFee`: it sweeps rewards, but after a validator exit the same call
+  // returns the principal, and the selector cannot tell the two apart.
 };
 
 /**

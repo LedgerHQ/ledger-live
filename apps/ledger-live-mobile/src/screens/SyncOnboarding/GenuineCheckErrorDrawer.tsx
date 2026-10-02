@@ -1,8 +1,9 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { Button, Flex, Icons, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { TrackScreen, track } from "~/analytics";
 import GenericErrorView from "~/components/GenericErrorView";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { useNavigation } from "@react-navigation/native";

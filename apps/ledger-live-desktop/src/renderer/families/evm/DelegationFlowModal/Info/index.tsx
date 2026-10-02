@@ -14,8 +14,8 @@ import {
   prefetchValidators,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { buildContext } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/context";
 
 export type Props = Readonly<{
   account: StakingAccount;
@@ -33,7 +33,8 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
   // Warm the validators cache while the user is reading the info screen so
   // the validator list in the next step appears instantly instead of empty.
   useEffect(() => {
-    prefetchValidators(getCurrencyConfiguration<EvmConfigInfo>(currencyId), currencyId);
+    const evmCtx = buildContext<EvmConfigInfo>(currencyId);
+    evmCtx.config().then(config => prefetchValidators(config, currencyId, evmCtx.logger));
   }, [currencyId]);
 
   const onNext = useCallback(() => {
@@ -47,11 +48,9 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
   useEffect(() => {
     let cancelled = false;
     setCheckingSeiAssociation(true);
-    isSeiAccountUnassociated(
-      getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-      account.currency.id,
-      account.freshAddress,
-    )
+    buildContext<EvmConfigInfo>(account.currency.id)
+      .config()
+      .then(config => isSeiAccountUnassociated(config, account.currency.id, account.freshAddress))
       .then(unassociated => {
         if (!cancelled) setShowSeiAssociationWarning(unassociated);
       })

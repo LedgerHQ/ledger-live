@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import {
   FOLLOWABLE_TOPICS,
   KNOWN_TOPICS,
@@ -7,7 +8,6 @@ import { useICPPrincipal } from "@ledgerhq/live-common/families/internet_compute
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { TrackScreen } from "~/analytics";
 import SafeAreaView from "~/components/SafeAreaView";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";

@@ -9,8 +9,8 @@ import {
   resolveStakingValidator,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { buildContext } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/context";
 import { Divider } from "@ledgerhq/react-ui/index";
 import { openURL } from "~/renderer/linking";
 import {
@@ -57,14 +57,15 @@ function DelegateDetails({ operation, account }: { operation: Operation; account
 
   useEffect(() => {
     let cancelled = false;
-    resolveStakingValidator(
-      getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-      account.currency.id,
-      operation,
-      "delegate",
-    ).then(result => {
-      if (!cancelled) setResolved(result);
-    });
+    const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
+    evmCtx
+      .config()
+      .then(config =>
+        resolveStakingValidator(config, account.currency.id, operation, "delegate", evmCtx.logger),
+      )
+      .then(result => {
+        if (!cancelled) setResolved(result);
+      });
     return () => {
       cancelled = true;
     };
@@ -110,14 +111,21 @@ function UndelegateDetails({ operation, account }: { operation: Operation; accou
 
   useEffect(() => {
     let cancelled = false;
-    resolveStakingValidator(
-      getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-      account.currency.id,
-      operation,
-      "undelegate",
-    ).then(result => {
-      if (!cancelled) setResolved(result);
-    });
+    const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
+    evmCtx
+      .config()
+      .then(config =>
+        resolveStakingValidator(
+          config,
+          account.currency.id,
+          operation,
+          "undelegate",
+          evmCtx.logger,
+        ),
+      )
+      .then(result => {
+        if (!cancelled) setResolved(result);
+      });
     return () => {
       cancelled = true;
     };
@@ -167,13 +175,15 @@ function RedelegateDetails({ operation, account }: { operation: Operation; accou
 
   useEffect(() => {
     let cancelled = false;
-    resolveRedelegationValidators(
-      getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-      account.currency.id,
-      operation,
-    ).then(result => {
-      if (!cancelled) setResolved(result);
-    });
+    const evmCtx = buildContext<EvmConfigInfo>(account.currency.id);
+    evmCtx
+      .config()
+      .then(config =>
+        resolveRedelegationValidators(config, account.currency.id, operation, evmCtx.logger),
+      )
+      .then(result => {
+        if (!cancelled) setResolved(result);
+      });
     return () => {
       cancelled = true;
     };
@@ -222,13 +232,13 @@ function RedelegateAmountCell({ operation, unit, currency }: AmountCellExtraProp
 
   useEffect(() => {
     let cancelled = false;
-    resolveRedelegationValidators(
-      getCurrencyConfiguration<EvmConfigInfo>(currency.id),
-      currency.id,
-      operation,
-    ).then(result => {
-      if (!cancelled && result) setAmount(result.amount);
-    });
+    const evmCtx = buildContext<EvmConfigInfo>(currency.id);
+    evmCtx
+      .config()
+      .then(config => resolveRedelegationValidators(config, currency.id, operation, evmCtx.logger))
+      .then(result => {
+        if (!cancelled && result) setAmount(result.amount);
+      });
     return () => {
       cancelled = true;
     };

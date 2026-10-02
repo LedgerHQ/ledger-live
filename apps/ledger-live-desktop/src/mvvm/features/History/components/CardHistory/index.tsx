@@ -16,7 +16,7 @@ export function CardHistory({
       formatters={formatters}
       formatDay={formatDay}
       onGoToPay={onGoToPay}
-      cardVisual={<CardArtwork />}
+      cardVisual={<CardArtwork isFaded size="lg" />}
     />
   );
 }

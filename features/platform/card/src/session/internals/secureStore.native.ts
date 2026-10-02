@@ -20,16 +20,18 @@ import type { CardSessionStore } from "./sessionStore";
 const KEYCHAIN_USERNAME = "payCard";
 
 /**
- * `AFTER_FIRST_UNLOCK` is the weakest level that still protects the user. The session must be
- * readable while the screen is locked, because a Card request can run from a background launch, but
- * it stays unreadable until the user unlocks the device once after boot.
+ * `AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY` is the weakest level that still protects the user. The
+ * session must be readable while the screen is locked, because a Card request can run from a
+ * background launch, but it stays unreadable until the user unlocks the device once after boot.
+ * `THIS_DEVICE_ONLY` keeps the tokens out of backups, so a restored or transferred phone signs in
+ * again instead of inheriting the session.
  *
  * `AES_GCM_NO_AUTH` is the Android half of the same rule. The library otherwise picks the best
  * storage it can find, and the authenticated variant asks for a biometric prompt that a background
  * read cannot answer.
  */
 const writeOptions: SetOptions = {
-  accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK,
+  accessible: ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
   storage: STORAGE_TYPE.AES_GCM_NO_AUTH,
 };
 

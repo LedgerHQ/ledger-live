@@ -2,7 +2,7 @@ import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
 import type { MarketListCategory, MarketState } from "~/renderer/reducers/market";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useMarketCategories } from "../useMarketCategories";
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({

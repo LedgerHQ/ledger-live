@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useRef, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -14,7 +15,6 @@ import {
 } from "~/reducers/productTourDrawer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { ProductTourDrawerViewModel } from "../types";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const/navigation";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../const";

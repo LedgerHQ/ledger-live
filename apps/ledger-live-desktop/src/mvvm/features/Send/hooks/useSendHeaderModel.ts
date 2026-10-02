@@ -1,5 +1,6 @@
 import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { t } from "~/renderer/i18n/init";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -45,6 +46,7 @@ type UseSendHeaderModelResult = Readonly<{
   handleRecipientInputChange: (value: string) => void;
   handleRecipientPaste: () => void;
   handleQrCodeClick: () => void;
+  handleQrScannerError: (error: Error) => void;
   handleScanPicked: (code: string) => void;
   isScannerOpen: boolean;
   recipientContact: RecipientHeaderContact | undefined;
@@ -114,7 +116,7 @@ export function useSendHeaderModel({
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
   const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
-  const { recipientType, setInputMethod } = useSendFlowTracking();
+  const { recipientType, setInputMethod, trackMessage } = useSendFlowTracking();
   const addNewContactHeader = useAddNewContactHeaderState();
   const {
     isEnabled: isContactsFeatureEnabled,
@@ -356,6 +358,31 @@ export function useSendHeaderModel({
     toggleScanner();
   }, [isScannerOpen, toggleScanner, trackingProperties]);
 
+  const handleQrScannerError = useCallback(
+    (error: Error) => {
+      trackMessage({
+        account: state.account.account,
+        parentAccount: state.account.parentAccount,
+        step: SEND_FLOW_STEP.RECIPIENT,
+        message: {
+          messageId: error.name,
+          messageType: "error",
+        },
+        metadata: {
+          recipientType,
+          recipientLength: recipientSearch.value.length,
+        },
+      });
+    },
+    [
+      recipientSearch.value.length,
+      recipientType,
+      state.account.account,
+      state.account.parentAccount,
+      trackMessage,
+    ],
+  );
+
   const pastedInputRef = useRef(false);
   const handleRecipientPaste = useCallback(() => {
     pastedInputRef.current = true;
@@ -402,12 +429,14 @@ export function useSendHeaderModel({
   const transactionError = state.transaction.status?.errors?.transaction;
   const transactionErrorName = transactionError?.name;
 
+  const config = resolveCurrencyConfig(state.account.currency?.id);
   const canSearchContacts =
     isContactsFeatureEnabled &&
     isEligibleAddressCurrency(
       eligibleAddressFamilies,
       state.account.currency ?? undefined,
       excludedCurrencyIds,
+      config,
     );
   const recipientPlaceholder = t(
     getRecipientPlaceholderKey({
@@ -425,6 +454,7 @@ export function useSendHeaderModel({
     handleRecipientInputChange,
     handleRecipientPaste,
     handleQrCodeClick,
+    handleQrScannerError,
     handleScanPicked,
     isScannerOpen: showScanner,
     recipientContact: recipientHeader.contact,

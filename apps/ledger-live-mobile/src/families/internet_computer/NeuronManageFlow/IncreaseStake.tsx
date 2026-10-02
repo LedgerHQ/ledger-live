@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
-import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import KeyboardView from "~/components/KeyboardView";
 import SafeAreaView from "~/components/SafeAreaView";

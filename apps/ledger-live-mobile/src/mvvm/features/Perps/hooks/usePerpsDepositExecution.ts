@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { SignedOperation } from "@ledgerhq/types-live";
@@ -28,7 +29,6 @@ import {
 } from "~/hooks/deviceActions";
 import type { Status } from "~/components/DeviceAction";
 import { broadcastLogger } from "~/datadog";
-import { track } from "~/analytics";
 import { isUserRefusal } from "../utils/isUserRefusal";
 import { getDepositRequestId, settleDepositRequest } from "../utils/perpsDepositRequest";
 
@@ -77,7 +77,7 @@ const FEE_STRATEGY = "medium";
 
 /** The swap orchestration's analytics sink, pointed at the perps flow. */
 const tracking = trackingWrapper((eventName, properties, mandatory) =>
-  track(eventName, { ...properties, flowInitiatedFrom: "Perps" }, mandatory),
+  track(eventName, { ...properties, flowInitiatedFrom: "Perps" }, { mandatory: !!mandatory }),
 );
 
 /**

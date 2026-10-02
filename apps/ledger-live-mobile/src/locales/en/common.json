@@ -632,6 +632,10 @@
       "title": "Something went wrong (Error #17)",
       "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
+    "CosmosMemoTooLong": {
+      "title": "Memo exceeds maximum length",
+      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
     "DeviceAppVerifyNotSupported": {
       "title": "Open My Ledger to update this app",
       "description": "The app verification is not supported."
@@ -1162,6 +1166,10 @@
     "TransactionRefusedOnDevice": {
       "title": "Transaction refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "TransferOfferExpiredError": {
+      "title": "This offer has expired",
+      "description": "The transfer offer expired before it was accepted. Ask the sender to send a new one."
     },
     "TransportError": {
       "title": "Something went wrong. Please reconnect your device.",
@@ -4376,6 +4384,9 @@
       "featureFlagsRestoreAll": "Restore all flag values",
       "featureFlagsTabAll": "All",
       "featureFlagsTabGroups": "Groups",
+      "contentAbTests": {
+        "invalidPayload": "Invalid payload. \"enabled\" must be a boolean and \"copy\" must map keys to strings."
+      },
       "firebaseProject": "Firebase project targeted by this build:",
       "showBannerDesc": "Show banner when flags are overridden",
       "bannerTitle": "Flags overridden locally",
@@ -10795,6 +10806,8 @@
   },
   "payTab": {
     "disclaimer": "Provided by Monavate Onchain",
+    "cardDisclaimer": "Looking for your crypto card?",
+    "cardDisclaimerLink": "Go to CL Card",
     "featureTour": {
       "title": "All your payments, in one place",
       "description": "Meet your new Pay tab, making your crypto ready for everyday money moments.",
@@ -10949,6 +10962,10 @@
         "signedOut": {
           "title": "Log in to see your card transactions",
           "description": "Your card activity appears here once you’re logged in."
+        },
+        "unclaimed": {
+          "title": "Crypto card",
+          "description": "Go to pay to set up your card."
         },
         "empty": {
           "title": "No card transactions yet",
@@ -11112,6 +11129,7 @@
       "title": "Pay",
       "pay": "New",
       "seeAllTitle": "Pay contact",
+      "me": "Me",
       "addressPicker": {
         "title": "Select {{name}}'s address",
         "meTitle": "Select my address",

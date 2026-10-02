@@ -1,3 +1,7 @@
+import {
+  getTransactionTransferFee,
+  isTokenTransferTransaction,
+} from "@ledgerhq/live-common/families/solana/transactions";
 import invariant from "invariant";
 import React from "react";
 import BigNumber from "bignumber.js";
@@ -30,10 +34,7 @@ type SolanaFieldComponentProps = {
 
 const Warning = ({ transaction, device }: SolanaFieldComponentProps) => {
   invariant(transaction.family === "solana", "solana transaction");
-  if (
-    transaction.model.commandDescriptor?.command.kind === "token.transfer" &&
-    device.modelId === DeviceModelId.nanoS
-  ) {
+  if (isTokenTransferTransaction(transaction) && device.modelId === DeviceModelId.nanoS) {
     return (
       <View>
         <Alert type="warning">
@@ -49,26 +50,17 @@ const Warning = ({ transaction, device }: SolanaFieldComponentProps) => {
   return null;
 };
 
-const TokenTranferFeeField = ({ account, transaction, field }: SolanaFieldComponentProps) => {
+const TokenTransferFeeField = ({ account, transaction, field }: SolanaFieldComponentProps) => {
   invariant(transaction.family === "solana", "expect solana transaction");
-  invariant(
-    transaction.model.commandDescriptor?.command.kind === "token.transfer",
-    "expect token.transfer transaction",
-  );
-  invariant(
-    transaction.model.commandDescriptor.command.extensions?.transferFee !== undefined,
-    "expect token.transfer transaction with transfer fee extension",
-  );
+  invariant(isTokenTransferTransaction(transaction), "expect token.transfer transaction");
+  const transferFee = getTransactionTransferFee(transaction);
+  invariant(transferFee, "expect token.transfer transaction with transfer fee extension");
   const unit = useAccountUnit(account);
   return (
     <DataRowUnitValue
       label={field.label}
       unit={unit}
-      value={
-        new BigNumber(
-          transaction.model.commandDescriptor.command.extensions.transferFee.transferFee,
-        )
-      }
+      value={new BigNumber(transferFee.transferFee)}
     />
   );
 };
@@ -76,6 +68,6 @@ const TokenTranferFeeField = ({ account, transaction, field }: SolanaFieldCompon
 export default {
   warning: Warning,
   fieldComponents: {
-    "solana.token.transferFee": TokenTranferFeeField,
+    "solana.token.transferFee": TokenTransferFeeField,
   },
 };

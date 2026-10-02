@@ -9,7 +9,7 @@ import {
   InfiniteLoader,
 } from "@ledgerhq/react-ui";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";

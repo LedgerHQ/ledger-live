@@ -4,7 +4,7 @@ import { useMarketBannerViewModel } from "./hooks/useMarketBannerViewModel";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { TrendingAssetsList } from "./components/TrendingAssetsList";
 import { MarketBannerHeader } from "./components/MarketBannerHeader";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
 type MarketBannerViewProps = {

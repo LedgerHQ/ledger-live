@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "~/context/Locale";
@@ -5,7 +6,6 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSelector } from "~/context/hooks";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useBanner } from "~/components/banners/hooks";
-import TrackScreen from "~/analytics/TrackScreen";
 import { NavigatorName, ScreenName } from "~/const";
 import TwitterBanner from "./TwitterBanner";
 import DAppDisclaimer, { Props as DisclaimerProps } from "./DAppDisclaimer";

@@ -71,10 +71,6 @@ type ExplorerView = {
   stakePool?: string;
 };
 
-type EthereumLikeInfo = {
-  chainId: number;
-};
-
 /**
  * @deprecated Temporary local copy. Kept only until the types that carry it move to
  * `@domain/entity-currency-*`. Use `@domain/entity-currency-crypto` instead.
@@ -100,7 +96,6 @@ export type CryptoCurrency = CurrencyCommon & {
   supportsNativeSegwit?: boolean;
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string;
-  ethereumLikeInfo?: EthereumLikeInfo;
   explorerViews: ExplorerView[];
   tokenTypes?: string[];
 };

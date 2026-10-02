@@ -18,9 +18,6 @@ export const celo = currency({
       magnitude: 18,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 42220,
-  },
   explorerViews: [
     {
       tx: "https://explorer.celo.org/tx/$hash",

@@ -18,9 +18,23 @@ const SORT_LABEL: Record<CatalogSort, string> = {
   name_desc: "Name Z-A",
 };
 
+const BYTE_SIZE = /\d+(\.\d+)? (bytes|KB|MB)/;
+
 export class MyLedgerPage extends AppPage {
   private readonly storageCard = this.page.getByTestId("device-storage-card");
   private readonly deviceOptions = this.page.getByTestId("device-options-container");
+  private readonly renameButton = this.page.getByTestId("manager-device-rename-button");
+  private readonly renameDrawer = this.page.getByTestId("device-rename-container");
+  private readonly renameInput = this.page.getByTestId("current-device-name-input");
+  private readonly submitRenameButton = this.page.getByTestId("submit-device-rename-button");
+  private readonly renameSuccess = this.page.getByTestId("device-renamed");
+  private readonly closeRenameButton = this.page.getByTestId("close-device-rename-button");
+  private readonly osVersion = this.page.getByTestId("device-os-version");
+  private readonly genuineBadge = this.page.getByTestId("device-genuine-badge");
+  private readonly storageUsed = this.page.getByTestId("device-storage-used");
+  private readonly storageCapacity = this.page.getByTestId("device-storage-capacity");
+  private readonly storageAppsCount = this.page.getByTestId("device-storage-apps-count");
+  private readonly storageFree = this.page.getByTestId("device-storage-free");
 
   private readonly catalogTab = this.page.getByTestId("manager-app-catalog-tab");
   private readonly installedAppsTab = this.page.getByTestId("manager-installed-apps-tab");
@@ -58,6 +72,9 @@ export class MyLedgerPage extends AppPage {
 
   private readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
 
+  private readonly appRow = (app: AppInfos) =>
+    this.page.locator(`[id="managerAppsList-${app.name}"]`);
+
   private readonly updateFirmwareButton = this.page.getByTestId("manager-update-firmware-button");
 
   /**
@@ -68,6 +85,40 @@ export class MyLedgerPage extends AppPage {
   async waitForDashboard() {
     await expect(this.storageCard).toBeVisible();
     await expect(this.deviceOptions).toBeVisible();
+  }
+
+  /** The submit button becomes the close button once the rename lands, so both are needed. */
+  @step("Rename the device to $0")
+  async renameDevice(name: string) {
+    await this.renameButton.click();
+    await expect(this.renameDrawer).toBeVisible();
+    await this.renameInput.fill(name);
+    await this.submitRenameButton.click();
+    await expect(this.renameSuccess).toBeVisible();
+    await this.closeRenameButton.click();
+  }
+
+  @step("Expect the device to be named $0")
+  async expectDeviceName(name: string) {
+    await expect(this.storageCard).toContainText(name);
+  }
+
+  /** The summary is read against the device under test, so it follows SPECULOS_DEVICE. */
+  @step("Expect the device summary to report $0")
+  async expectDeviceSummary(deviceName: string) {
+    await expect(this.storageCard).toContainText(deviceName);
+    await expect(this.osVersion).toContainText("OS version");
+    await expect(this.osVersion).toContainText(/\d+\.\d+/);
+    await expect(this.genuineBadge).toContainText("Ledger Genuine check");
+  }
+
+  /** Sizes are matched as a value and a unit, because the capacity differs per model. */
+  @step("Expect the device storage to report $0 installed apps")
+  async expectStorageSummary(appsCount: number) {
+    await expect(this.storageAppsCount).toHaveText(String(appsCount));
+    await expect(this.storageUsed).toHaveText(BYTE_SIZE);
+    await expect(this.storageCapacity).toHaveText(BYTE_SIZE);
+    await expect(this.storageFree).toContainText(BYTE_SIZE);
   }
 
   @step("Open the app catalog tab")
@@ -125,6 +176,18 @@ export class MyLedgerPage extends AppPage {
     await expect.poll(() => this.listedAppNames()).not.toContain(app.name);
   }
 
+  /** Unsupported assets read "Requires 3rd-party wallet" where supported ones read supported. */
+  @step("Expect $0 to be marked as not supported by Ledger Wallet")
+  async expectAppNotSupported(app: AppInfos) {
+    await expect(this.appRow(app)).toContainText("Requires 3rd-party wallet");
+  }
+
+  @step("Expect $0 to offer Learn more rather than Add account")
+  async expectLearnMoreOffered(app: AppInfos) {
+    await expect(this.appRow(app).getByRole("button", { name: "Learn more" })).toBeVisible();
+    await expect(this.appRow(app).getByRole("button", { name: "Add account" })).toBeHidden();
+  }
+
   @step("Install $0")
   async installApp(app: AppInfos) {
     await this.installButton(app).click();
@@ -173,6 +236,12 @@ export class MyLedgerPage extends AppPage {
     await expect(this.languageInstallation).toBeVisible();
     await this.languageOption(language).click();
     await this.installLanguageButton.click();
+  }
+
+  /** The trigger renders the installed language, so it doubles as the read back. */
+  @step("Expect the device language to read $0")
+  async expectDeviceLanguage(label: string) {
+    await expect(this.changeLanguageButton).toContainText(label);
   }
 
   @step("Open the custom lock screen manager")

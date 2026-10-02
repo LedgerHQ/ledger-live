@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
 import { useDispatch } from "~/context/hooks";
 import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings";
-import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsConsentLogic from "~/hooks/analyticsOptInPrompt/useAnalyticsConsentLogic";
 import usePrivacyPolicyPress from "../../hooks/usePrivacyPolicyPress";
@@ -27,7 +27,7 @@ const useSetPreferencesViewModel = ({ entryPoint }: Props) => {
         button: "Confirm",
         flow,
       },
-      shouldWeTrack,
+      { mandatory: !!shouldWeTrack },
     );
     continueOnboarding();
   }, [

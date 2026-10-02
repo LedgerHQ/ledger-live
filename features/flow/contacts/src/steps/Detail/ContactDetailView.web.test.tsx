@@ -141,11 +141,13 @@ describe("ContactDetailView", () => {
     const addressList = screen.getByTestId("contacts-detail-address-list");
     expect(addressList).toBeVisible();
     expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
-    expect(screen.getByTestId(`contacts-detail-address-row-${address.id}`)).toBeVisible();
+    const addressRow = screen.getByTestId(`contacts-detail-address-row-${address.id}`);
+    expect(addressRow).toBeVisible();
+    expect(addressRow).toHaveAttribute("data-address", address.address);
     expect(within(addressList).getByText("1 address")).toBeVisible();
     expect(screen.queryByTestId("contacts-detail-empty-state")).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByTestId(`contacts-detail-address-row-${address.id}`));
+    fireEvent.click(addressRow);
 
     expect(handleAddressRowPress).toHaveBeenCalledWith({
       type: "open-address-detail",

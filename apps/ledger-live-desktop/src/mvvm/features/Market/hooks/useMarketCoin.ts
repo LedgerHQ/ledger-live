@@ -19,8 +19,7 @@ import {
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 import { selectCurrency } from "@features/platform-aggregated-assets";
 import { assetsDataApi } from "@domain/api-aggregated-assets";
-import { track } from "~/renderer/analytics/segment";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);

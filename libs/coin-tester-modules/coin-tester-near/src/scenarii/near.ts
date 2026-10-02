@@ -176,7 +176,7 @@ export const scenarioNear: Scenario<GenericTransaction, Account> = {
     // the only way to reach it without waiting for real time to pass.
     if (step === WITHDRAW_STEP && sandbox) {
       await sandbox.fastForward(EPOCHS_TO_UNLOCK_BLOCKS);
-      await pingPool(await sandbox.near.account(SENDER_ID));
+      await pingPool(sandbox.account(SENDER_ID));
     }
     step += 1;
   },

@@ -2,7 +2,7 @@ import {
   useDeactivatePasswordViewModel,
   type DeactivatePasswordOutcome,
   type DeactivatePasswordViewModel,
-} from "@features/flow-app-lock";
+} from "@features/flow-app-password-removal";
 import { useNavigation } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";

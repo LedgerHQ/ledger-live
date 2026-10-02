@@ -1,18 +1,10 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { ConnectDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
-import { TrackScreen } from "~/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { UnknownErrorState } from "./UnknownErrorState";
-
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    TrackScreen: jest.fn(() => null),
-  };
-});
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 

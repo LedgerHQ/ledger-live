@@ -1,3 +1,4 @@
+import { setTransactionMemo } from "@ledgerhq/live-common/families/solana/transactions";
 import merge from "lodash/merge";
 import React from "react";
 
@@ -11,8 +12,6 @@ export default (props: MemoTagInputProps<SolanaTransaction>) => (
   <GenericMemoTagInput
     {...props}
     textToValue={text => truncateUtf8(text, MAX_MEMO_LENGTH)}
-    valueToTxPatch={value => tx =>
-      merge({}, tx, { model: { uiState: { memo: value || undefined } } })
-    }
+    valueToTxPatch={value => tx => merge({}, tx, setTransactionMemo(value ?? ""))}
   />
 );

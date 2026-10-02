@@ -3,7 +3,7 @@ import { Spinner } from "@ledgerhq/lumen-ui-react";
 import { renderHook, act } from "tests/testSetup";
 import { useActivityIndicator } from "../useActivityIndicator";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
-import * as segment from "~/renderer/analytics/segment";
+import * as segment from "@shared/analytics";
 import { makePortfolioBalanceReturn } from "LLD/hooks/__tests__/fixtures";
 
 const defaultReturn = makePortfolioBalanceReturn();

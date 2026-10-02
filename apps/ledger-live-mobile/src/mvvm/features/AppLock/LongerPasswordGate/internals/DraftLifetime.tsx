@@ -1,4 +1,4 @@
-import type { LongerPasswordStep } from "@features/flow-app-lock";
+import type { LongerPasswordStep } from "@features/flow-app-longer-password";
 import { usePasswordDraft } from "@features/platform-app-lock";
 import { useEffect } from "react";
 

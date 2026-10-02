@@ -46,8 +46,11 @@ jest.mock("@ledgerhq/live-common/firebase/featureFlags", () => ({
   getFeature: jest.fn(),
 }));
 
-jest.mock("@features/platform-feature-flags", () => ({
+jest.mock("@features/platform-feature-flags-firebase", () => ({
   formatToFirebaseFeatureId: (featureId: string) => featureId,
+}));
+
+jest.mock("@features/platform-feature-flags", () => ({
   useFeature: jest.fn(),
   useFeatureFlags: jest.fn(() => ({})),
 }));

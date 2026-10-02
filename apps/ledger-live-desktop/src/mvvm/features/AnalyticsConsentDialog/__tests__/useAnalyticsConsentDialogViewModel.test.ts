@@ -1,11 +1,16 @@
 import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   ANALYTICS_CONSENT_DIALOG_PAGE,
   useAnalyticsConsentDialogViewModel,
 } from "../hooks/useAnalyticsConsentDialogViewModel";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
 
@@ -217,7 +222,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
         privacyPolicyVersion: "1.0",
       },
-      true,
+      { mandatory: true },
     );
   });
 
@@ -247,7 +252,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
         privacyPolicyVersion: "1.1",
       },
-      true,
+      { mandatory: true },
     );
     expect(store.getState().settings.analyticsConsentInfo.consentDate).toBe(consentDate);
     expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe("1.1");
@@ -274,7 +279,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
         privacyPolicyVersion: "1.0",
       },
-      true,
+      { mandatory: true },
     );
   });
 });

@@ -198,6 +198,8 @@ export type CosmosLikeTransaction = TransactionCommon & {
   fees: BigNumber | null | undefined;
   gas: BigNumber | null | undefined;
   memo: string | null | undefined;
+  memoType?: string | null;
+  memoValue?: string | null;
   validators: CosmosDelegationInfo[];
   sourceValidator: string | null | undefined;
 };
@@ -214,6 +216,8 @@ export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
   fees: string | null | undefined;
   gas: string | null | undefined;
   memo: string | null | undefined;
+  memoType?: string | null;
+  memoValue?: string | null;
   validators: CosmosDelegationInfoRaw[];
   sourceValidator: string | null | undefined;
 };

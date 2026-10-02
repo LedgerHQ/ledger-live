@@ -4,7 +4,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { isModalOpened } from "~/renderer/reducers/modals";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import { useRecoverEntry } from "LLD/hooks/useRecoverEntry";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
@@ -14,6 +14,11 @@ import {
   RECOVER_TRIGGER_DISMISS_BUTTON,
   RECOVER_TRIGGER_PAGE_NAME,
 } from "../analytics";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
 
 const defaultParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
 

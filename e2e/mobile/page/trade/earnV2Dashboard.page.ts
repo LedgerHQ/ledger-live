@@ -7,7 +7,8 @@ export default class EarnV2DashboardPage {
   walletHeaderAmount = "wallet-header-amount";
   rewardsSummary = "rewards-summary";
   crowdFavourites = "crowd-favourites";
-  iceColdStartEarnCta = "ice-cold-start-earn-cta";
+  simulateInvestmentCta = "simulate-investment-cta";
+  earnSimulator = "earn-simulator";
   assetItemTicker = (ticker: string) => `asset-item-ticker-${ticker}`;
   assetEarnCta = (ticker: string) => `asset-earn-cta-${ticker}`;
   depositRowXPath = (identifier: string) =>
@@ -31,9 +32,14 @@ export default class EarnV2DashboardPage {
     await expectWebElementNotVisible(this.walletHeaderAmount);
   }
 
-  @Step("Click ice cold start earn CTA")
-  async clickIceColdStartEarnCTA() {
-    await tapWebElementByTestId(this.iceColdStartEarnCta);
+  @Step("Click simulate investment CTA")
+  async clickSimulateInvestmentCta() {
+    await tapWebElementByTestId(this.simulateInvestmentCta);
+  }
+
+  @Step("Verify earn simulator is visible")
+  async verifyEarnSimulatorVisible() {
+    await waitWebElementByTestId(this.earnSimulator);
   }
 
   // --- Cold Start ---

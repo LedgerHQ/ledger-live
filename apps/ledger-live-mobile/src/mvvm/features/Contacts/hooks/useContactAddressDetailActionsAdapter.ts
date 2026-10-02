@@ -23,6 +23,7 @@ import type {
   ContactsRenameAddressDrawerProps,
 } from "@features/flow-contacts-edit-address";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 import { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
@@ -68,7 +69,7 @@ export function useContactAddressDetailActionsAdapter(
 ): ContactAddressDetailActionsFlowProps {
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
-  const ports = useContactsAddressDetailActionsPorts(deviceIntents);
+  const ports = useContactsAddressDetailActionsPorts(deviceIntents, resolveCurrencyConfig);
   const addressValidation = useContactsAddressValidationAdapter();
   const { handleOpenSendFlow } = useOpenSendFlow({
     sourceScreenName: ScreenName.MyWalletContactDetail,

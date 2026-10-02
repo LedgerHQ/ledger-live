@@ -1,4 +1,4 @@
-import { screen, track } from "~/analytics";
+import { trackPage, track } from "@shared/analytics";
 import type {
   WalletV4TourAnalytics,
   WalletV4TourAnalyticsContext,
@@ -55,7 +55,7 @@ export const createQ3WalletV4TourAnalytics = (
     );
 
   const trackStepPage = (context: WalletV4TourAnalyticsContext): void => {
-    screen(page, undefined, getPageProperties(context), true, false);
+    trackPage({ category: page, props: getPageProperties(context) }, { updateRoutes: true });
   };
 
   const trackContinueClick = (context: WalletV4TourAnalyticsContext): void => {

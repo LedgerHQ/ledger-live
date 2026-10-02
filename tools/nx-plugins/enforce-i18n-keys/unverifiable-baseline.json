@@ -1,0 +1,7 @@
+{
+  "unverifiable": 35,
+  "allowMissing": [
+    "Mobile payTab.actions.pay",
+    "Mobile payTab.cardLogin.beforeIntro.alreadyHaveCard"
+  ]
+}

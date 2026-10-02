@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { Flex, Link, Icons, ContinueOnDevice } from "@ledgerhq/react-ui";
 import StepText from "LLD/features/Onboarding/components/StepText";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import Animation from "~/renderer/animations";
 import CHARON from "~/renderer/animations/charon/charon.json";

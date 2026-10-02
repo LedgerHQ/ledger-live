@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import React, { memo, useCallback } from "react";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import OperationsHistoryV1 from "./OperationsHistoryV1";
 import { useNavigation } from "@react-navigation/core";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { InitialProps } from "./types";
 

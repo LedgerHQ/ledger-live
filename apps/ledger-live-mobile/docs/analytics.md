@@ -2,9 +2,14 @@
 
 ## Shared analytics
 
-Mobile uses the shared packages for analytics: [`@shared/analytics`](../../../shared/analytics/README.md) and [`@shared/analytics-react`](../../../shared/analytics-react/README.md).
+Mobile calls [`@shared/analytics`](../../../shared/analytics/README.md) and [`@shared/analytics-react`](../../../shared/analytics-react/README.md) directly.
 
-`~/analytics` imports are historical compatibility shims and will be removed with [LIVE-35992](https://ledgerhq.atlassian.net/browse/LIVE-35992). New code should call the shared packages directly.
+```ts
+import { track, trackPage } from "@shared/analytics";
+import { Track, TrackScreen } from "@shared/analytics-react";
+```
+
+`~/analytics` wires the React Native Segment client, consent, and identify. It does not re-export `track`, `trackPage`, `Track`, or `TrackScreen`.
 
 ## Setup
 

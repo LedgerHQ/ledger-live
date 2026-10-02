@@ -1,4 +1,3 @@
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   calculate,
   filterSupportedTrackingPairs,
@@ -11,8 +10,12 @@ import {
 import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
 import { log } from "@ledgerhq/logs";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
-import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import React, {
   ReactElement,
@@ -273,11 +276,11 @@ export function useCalculateCountervalueCallback({
 
 /** Helper for send-flow: returns fiat amount and reverse calculation. */
 export function useSendAmount({
-  account,
+  cryptoCurrency,
   fiatCurrency,
   cryptoAmount,
 }: {
-  account: AccountLike;
+  cryptoCurrency: CryptoCurrency | TokenCurrency;
   fiatCurrency: Currency;
   cryptoAmount: BigNumber;
 }): {
@@ -285,7 +288,6 @@ export function useSendAmount({
   fiatUnit: Unit;
   calculateCryptoAmount: (fiatAmount: BigNumber) => BigNumber;
 } {
-  const cryptoCurrency = getAccountCurrency(account);
   const fiatCountervalue = useCalculate({
     from: cryptoCurrency,
     to: fiatCurrency,

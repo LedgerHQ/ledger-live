@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { memo, useCallback, useMemo, useContext } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -10,7 +12,6 @@ import Illustration from "~/images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "~/const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "~/utils/urls";
-import { TrackScreen, track } from "~/analytics";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";

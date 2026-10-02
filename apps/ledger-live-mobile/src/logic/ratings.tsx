@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { add, isBefore, parseISO } from "date-fns";
@@ -16,7 +17,6 @@ import {
   setRatingsHappyMoment,
   setRatingsDataOfUser,
 } from "~/actions/ratings";
-import { track } from "~/analytics";
 import { notificationsModalOpenSelector } from "~/reducers/notifications";
 
 export type RatingsHappyMoment = {

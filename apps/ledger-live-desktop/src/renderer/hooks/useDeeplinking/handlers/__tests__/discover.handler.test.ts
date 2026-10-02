@@ -11,6 +11,8 @@ jest.mock("@ledgerhq/live-common/wallet-api/constants", () => ({
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),
   setTrackingSource: jest.fn(),
+  track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 const mockSetTrackingSource = jest.mocked(setTrackingSource);

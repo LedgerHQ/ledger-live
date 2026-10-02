@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import useEnv from "@features/platform-env";
 import { BigNumber } from "bignumber.js";
@@ -6,7 +7,6 @@ import { GestureResponderEvent } from "react-native";
 
 import { usePortfolioForAccounts } from "~/hooks/portfolio";
 import AssetRowLayout from "~/components/AssetRowLayout";
-import { track } from "~/analytics";
 import { Asset } from "~/types/asset";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 

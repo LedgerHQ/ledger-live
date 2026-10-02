@@ -104,6 +104,43 @@ describe("CardTransactionHistoryView (native)", () => {
     expect(onRowClick).toHaveBeenCalledWith(item);
   });
 
+  it("renders the setup state and runs the Pay action when no card is claimed", async () => {
+    const onGoToPay = jest.fn();
+    const user = userEvent.setup();
+
+    render(
+      <CardTransactionHistoryView
+        isLoadingMore={false}
+        displayState={{ kind: "unclaimed" }}
+        onRowClick={jest.fn()}
+        onGoToPay={onGoToPay}
+      />,
+      { wrapper },
+    );
+
+    expect(screen.getByText("Crypto card")).toBeVisible();
+    expect(screen.getByText("Go to pay to set up your card.")).toBeVisible();
+    expect(screen.getByText("Provided by Monavate Onchain")).toBeVisible();
+
+    await user.press(screen.getByTestId("card-history-unclaimed-state-cta"));
+
+    expect(onGoToPay).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the provider disclaimer on the signed-out state", () => {
+    render(
+      <CardTransactionHistoryView
+        isLoadingMore={false}
+        displayState={{ kind: "signedOut" }}
+        onRowClick={jest.fn()}
+        onGoToPay={jest.fn()}
+      />,
+      { wrapper },
+    );
+
+    expect(screen.getByText("Provided by Monavate Onchain")).toBeVisible();
+  });
+
   it("runs the Pay action from the empty state", async () => {
     const onGoToPay = jest.fn();
     const user = userEvent.setup();

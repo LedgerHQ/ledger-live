@@ -34,7 +34,7 @@ setEnv("MOCK", "1");
 
 const rates = createMockRateSource("1");
 
-// Mirror live-countervalues's jest-setup: restrict genAccount to only bitcoin+ethereum
+// Restrict genAccount to only bitcoin+ethereum
 // so the seeded RNG picks the same currency as when the snapshots were generated.
 const LOCAL_CURRENCIES = ["bitcoin", "ethereum"].map(id => getCryptoCurrencyById(id));
 setCurrenciesResolver({

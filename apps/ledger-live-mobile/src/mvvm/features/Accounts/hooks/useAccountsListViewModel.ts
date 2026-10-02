@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import type { FlashListProps } from "@shopify/flash-list";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useCallback, useMemo } from "react";
@@ -6,7 +7,6 @@ import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { GestureResponderEvent } from "react-native";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import {
   BaseNavigationComposite,

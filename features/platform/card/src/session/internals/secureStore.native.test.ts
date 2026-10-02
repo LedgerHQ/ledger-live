@@ -7,7 +7,7 @@ import {
 import { secureStore } from "./secureStore.native";
 
 jest.mock("react-native-keychain", () => ({
-  ACCESSIBLE: { AFTER_FIRST_UNLOCK: "AccessibleAfterFirstUnlock" },
+  ACCESSIBLE: { AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: "AccessibleAfterFirstUnlockThisDeviceOnly" },
   STORAGE_TYPE: { AES_GCM_NO_AUTH: "KeystoreAESGCM_NoAuth" },
   getGenericPassword: jest.fn(),
   setGenericPassword: jest.fn(),
@@ -33,12 +33,12 @@ describe("secureStore.native", () => {
     jest.clearAllMocks();
   });
 
-  it("gives the key its own entry, readable after the first unlock and behind no prompt", async () => {
+  it("gives the key its own entry, readable after the first unlock, kept on this device and behind no prompt", async () => {
     await secureStore.write(KEY, "at_token");
 
     expect(setGenericPassword).toHaveBeenCalledWith("payCard", "at_token", {
       service: KEY,
-      accessible: "AccessibleAfterFirstUnlock",
+      accessible: "AccessibleAfterFirstUnlockThisDeviceOnly",
       storage: "KeystoreAESGCM_NoAuth",
     });
   });

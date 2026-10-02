@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { saveSettings } from "~/renderer/actions/settings";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import BoldToggle from "~/renderer/components/BoldToggle";
 import Box from "~/renderer/components/Box";
 import DropDownSelector, {

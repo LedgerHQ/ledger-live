@@ -8,7 +8,7 @@ import { cardSession, getCardSessionToken, readCardSession } from "./cardSession
 jest.mock("react-native-keychain", () => {
   const entries = new Map<string, string>();
   return {
-    ACCESSIBLE: { AFTER_FIRST_UNLOCK: "AccessibleAfterFirstUnlock" },
+    ACCESSIBLE: { AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: "AccessibleAfterFirstUnlockThisDeviceOnly" },
     STORAGE_TYPE: { AES_GCM_NO_AUTH: "KeystoreAESGCM_NoAuth" },
     getGenericPassword: jest.fn(async ({ service }: { service: string }) => {
       const password = entries.get(service);

@@ -64,16 +64,14 @@
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9",
-    "bn.js": "5.2.5",
     "msw": "catalog:",
-    "near-api-js": "^3.0.2",
+    "near-api-js": "^7.3.1",
     "near-sandbox": "^0.3.2"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/bn.js": "5.2.0",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",

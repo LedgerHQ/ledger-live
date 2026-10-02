@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import { Switch } from "@ledgerhq/native-ui";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppLockBiometricsRow } from "LLM/features/AppLock/components/BiometricsRow";
 import { AppLockPasswordRow } from "LLM/features/AppLock/components/PasswordRow";
 import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
 import React, { useCallback, useState } from "react";
-import { track } from "~/analytics";
 import SettingsRow from "~/components/SettingsRow";
 import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";

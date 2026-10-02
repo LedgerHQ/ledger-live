@@ -35,6 +35,7 @@ import { useLocale } from "~/context/Locale";
 import { formatCardTransactionAmount } from "LLM/features/OperationsHistory/utils/formatCardTransactionAmount";
 import { useCardHostedPageOpener } from "../../hooks/useCardHostedPageOpener";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
+import { useRefreshCardWalletsOnReturn } from "../../hooks/useRefreshCardWalletsOnReturn";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
@@ -51,6 +52,7 @@ import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepo
 import { usePayTabNewPayment } from "LLM/features/PayTab/hooks/usePayTabNewPayment";
 import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
+import { usePayTabCardState } from "./usePayTabCardState";
 
 export function usePayTabViewModel() {
   const { t } = useTranslation();
@@ -107,11 +109,14 @@ export function usePayTabViewModel() {
     [params?.code, params?.app_id],
   );
 
+  const refreshCardWallets = useRefreshCardWalletsOnReturn();
+
   const openInSecureBrowser: OpenCardHostedPage = useCallback(
     async path => {
       await openHostedUrlInSecureBrowser(buildHostedUrl(hostedUiUrl, path), PAY_TAB_DEEP_LINK);
+      refreshCardWallets();
     },
-    [hostedUiUrl],
+    [hostedUiUrl, refreshCardWallets],
   );
 
   const openInDiscover = useCardHostedPageOpener();
@@ -120,6 +125,7 @@ export function usePayTabViewModel() {
     () => ({ oauthConfig, callback, requestProtection: requestCardProtection }),
     [oauthConfig, callback, requestCardProtection],
   );
+  const { cardState, login: cardLogin } = usePayTabCardState(login);
 
   const onShowMore = useCallback(() => {
     navigateToCardHistory(navigation);
@@ -148,7 +154,8 @@ export function usePayTabViewModel() {
     [openHostedWith, openInSecureBrowser],
   );
 
-  const isLegacyTopUp = !!useFeature("lwmPayTab")?.params?.legacyTopUp;
+  const payTab = useFeature("lwmPayTab");
+  const isLegacyTopUp = !!payTab?.params?.legacyTopUp;
 
   // The legacy live app has its own top-up flow and its own login. It opens as every other live
   // app does, in the Discover webview, and never in the secure browser. It takes no currency, so
@@ -244,7 +251,6 @@ export function usePayTabViewModel() {
   );
   const card: CardProps = useMemo(
     () => ({
-      login,
       assets: cardAssets,
       formatters: { countervalue: formatCountervalue, transactionAmount: formatTransactionAmount },
       onTopUp,
@@ -253,9 +259,10 @@ export function usePayTabViewModel() {
       onShowMore,
       cardSettingsActions,
       discreet: payCardAssets.discreet,
+      login: cardLogin,
     }),
     [
-      login,
+      cardLogin,
       cardAssets,
       formatCountervalue,
       formatTransactionAmount,
@@ -273,6 +280,7 @@ export function usePayTabViewModel() {
     top: safeAreaTop + WALLET_TAB_HEADER_HEIGHT,
     bottom: bottom + insets.bottom,
     card,
+    cardState,
     balance,
     actionTiles,
     contacts,

@@ -21,7 +21,7 @@ import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/render
 import useTheme from "~/renderer/hooks/useTheme";
 import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { firstValueFrom } from "rxjs";
 import { useAccountName } from "~/renderer/reducers/wallet";

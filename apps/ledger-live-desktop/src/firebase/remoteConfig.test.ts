@@ -18,8 +18,8 @@ jest.mock("firebase/remote-config", () => ({
 jest.mock("~/firebase-setup", () => ({
   getFirebaseConfig: () => ({ projectId: "test" }),
 }));
-jest.mock("@features/platform-feature-flags", () => ({
-  DEFAULT_FEATURES: { mockFeature: { enabled: false } },
+jest.mock("@features/platform-feature-flags-firebase", () => ({
+  ...jest.requireActual("@features/platform-feature-flags-firebase"),
   formatDefaultFeatures: () => ({ feature_mock_feature: JSON.stringify({ enabled: false }) }),
 }));
 
@@ -65,7 +65,7 @@ describe("fetchRemoteFlags", () => {
       counterValue: { enabled: true },
       lwdWallet40: { enabled: false, params: { mainNav: true } },
     });
-    const { getContentAbTestCopy } = await import("./contentAbTestCopy");
+    const { getContentAbTestCopy } = await import("@features/platform-content-ab-tests");
     expect(getContentAbTestCopy()).toEqual({
       "upgrade.banner.title": "Discover Ledger Flex",
     });

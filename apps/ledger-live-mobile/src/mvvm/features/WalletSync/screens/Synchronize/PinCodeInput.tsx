@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import TrackScreen from "~/analytics/TrackScreen";
 import { NativeSyntheticEvent, TextInput, TextInputKeyPressEventData } from "react-native";
 
 type Props = {

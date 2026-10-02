@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useState } from "react";
 import SafeAreaView from "~/components/SafeAreaView";
 import { StyleSheet } from "react-native";
@@ -5,7 +6,6 @@ import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
-import { TrackScreen } from "~/analytics";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";

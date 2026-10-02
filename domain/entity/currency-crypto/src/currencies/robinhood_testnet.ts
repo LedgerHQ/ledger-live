@@ -38,9 +38,6 @@ export const robinhood_testnet = currency({
     },
   ],
   isTestnetFor: "robinhood",
-  ethereumLikeInfo: {
-    chainId: 46630,
-  },
   explorerViews: [
     {
       tx: "https://explorer.testnet.chain.robinhood.com/tx/$hash",

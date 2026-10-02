@@ -1,8 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React, { useCallback, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
-import { track, TrackScreen } from "~/analytics";
 
 type Props = {
   closeModal: () => void;

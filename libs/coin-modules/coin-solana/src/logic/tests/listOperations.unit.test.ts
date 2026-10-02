@@ -213,6 +213,34 @@ describe("listOperations", () => {
       expect(result.items[0]).toMatchObject({ type: "FEES" });
     });
 
+    it("types a stake split as the fee it costs the owner, as its optimistic operation does", async () => {
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        {
+          transaction: {
+            signatures: ["sig1"],
+            message: {
+              accountKeys: [{ pubkey: new PublicKey(TEST_ADDRESS) }],
+              recentBlockhash: TEST_BLOCKHASH,
+              // What `buildStakeSplitInstructions` crafts; the RPC leaves compute budget unparsed.
+              instructions: [
+                { programId: new PublicKey("ComputeBudget111111111111111111111111111111") },
+                { program: "system", parsed: { type: "allocateWithSeed", info: {} } },
+                { program: "stake", parsed: { type: "split", info: {} } },
+              ],
+            },
+          },
+          meta: { fee: 5000, preBalances: [1_000_000_000], postBalances: [999_995_000] },
+        },
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      expect(result.items[0]).toMatchObject({ type: "FEES", value: 5000n });
+    });
+
     it("ignores a memo when counting instructions", async () => {
       mockGetSignaturesForAddress.mockResolvedValue([
         { signature: "sig1", slot: 100, blockTime: 1700000000, err: null },
