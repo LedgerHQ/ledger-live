@@ -86,6 +86,13 @@ export const FF_NEW_SEND_FLOW_ENABLED = {
   ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } satisfies PartialFeatures;
 
+// Disable new send flow to avoid the new send flow on legacy send flow tests.
+export const FF_DISABLE_NEW_SEND_FLOW: PartialFeatures = {
+  newSendFlow: {
+    enabled: false,
+  },
+};
+
 // Mina staking is not in the remote stakePrograms list yet, so the account's Earn action would not
 // render without this. An empty `redirects` keeps the native Ledger Live flow rather than a partner
 // app.
@@ -154,6 +161,9 @@ export const getMergedFeatureFlags = ({
     releaseTour: { enabled: false },
     brazePushNotifications: { enabled: false },
     ratingsPrompt: { enabled: false },
+    llmWalletApiDeviceIntentSign: {
+      enabled: false, // Note: Prevent usage of DIE, which is not Speculos ready yet.
+    },
     llmModularDrawer: {
       enabled: true,
       params: {

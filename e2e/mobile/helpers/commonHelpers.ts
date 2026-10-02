@@ -95,9 +95,6 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       language: "en-US",
       locale: "en-US",
     },
-    permissions: {
-      camera: "YES",
-    },
     ...customConfig,
   });
   return port;

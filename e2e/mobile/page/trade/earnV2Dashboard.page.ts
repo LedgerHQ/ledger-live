@@ -9,8 +9,6 @@ export default class EarnV2DashboardPage {
   crowdFavourites = "crowd-favourites";
   simulateInvestmentCta = "simulate-investment-cta";
   earnSimulator = "earn-simulator";
-  earnSimulatorCta = "earn-simulator-cta";
-  accountSelectorInput = "account-selector-input";
   assetItemTicker = (ticker: string) => `asset-item-ticker-${ticker}`;
   assetEarnCta = (ticker: string) => `asset-earn-cta-${ticker}`;
   depositRowXPath = (identifier: string) =>
@@ -42,17 +40,6 @@ export default class EarnV2DashboardPage {
   @Step("Verify earn simulator is visible")
   async verifyEarnSimulatorVisible() {
     await waitWebElementByTestId(this.earnSimulator);
-  }
-
-  @Step("Click earn simulator CTA")
-  async clickEarnSimulatorCta() {
-    await waitForWebElementToBeEnabled(this.earnSimulatorCta);
-    await tapWebElementByTestId(this.earnSimulatorCta);
-  }
-
-  @Step("Click account selector input in deposit screen")
-  async clickAccountSelectorInput() {
-    await tapWebElementByTestId(this.accountSelectorInput);
   }
 
   // --- Cold Start ---

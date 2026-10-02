@@ -9,6 +9,7 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { BroadcastFlow, shouldRunSharedAccountFlow } from "@e2e/helpers/broadcastRotation";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import type { InitOptions } from "@e2e/utils/initUtil";
+import { FF_DISABLE_NEW_SEND_FLOW } from "@e2e/utils/featureFlagUtils";
 
 export const BST_SEND_CURRENCIES = new Set([
   "aptos",
@@ -63,12 +64,23 @@ export const beforeAllFunction = async (
   await app.mainNavigation.waitForWallet40Ready();
 };
 
+export const beforeAllLegacyFunction = async (
+  transaction: TransactionType,
+  options?: SendTestOptions,
+) => {
+  await beforeAllFunction(transaction, {
+    ...options,
+    featureFlags: { ...options?.featureFlags, ...FF_DISABLE_NEW_SEND_FLOW },
+  });
+};
+
 const beforeAllInvalidAddressFunction = async (
   transaction: TransactionType,
   overrideRecipient?: string,
 ) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
+    featureFlags: FF_DISABLE_NEW_SEND_FLOW,
     cliCommands: [
       async (userdataPath?: string) => {
         await liveDataCommand(transaction.accountToDebit)(userdataPath);
@@ -135,7 +147,7 @@ export function runSendTest(
     flow === undefined || shouldRunSharedAccountFlow(flow) ? describe : describe.skip;
   describeFlow("Send from 1 account to another", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction, options);
+      await beforeAllLegacyFunction(transaction, options);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
@@ -195,7 +207,7 @@ export function runSendValidAddressTest(
   tags.forEach(tag => $Tag(tag));
   describe("Send - valid address input", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction);
+      await beforeAllLegacyFunction(transaction);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send valid address input - ${testName}`, async () => {
@@ -238,7 +250,7 @@ export function runSendInvalidAmountTest(
   tags.forEach(tag => $Tag(tag));
   describe("Send - invalid amount input", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction);
+      await beforeAllLegacyFunction(transaction);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send invalid amount error: ${expectedErrorMessage || "no error message"} (${transaction.amount || "empty amount"})`, async () => {
@@ -264,7 +276,7 @@ export function runSendInvalidTokenAmountTest(
   tags.forEach(tag => $Tag(tag));
   describe("Send - token", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction);
+      await beforeAllLegacyFunction(transaction);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send invalid amount error (${transaction.amount})`, async () => {
@@ -297,7 +309,7 @@ export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[],
   tags.forEach(tag => $Tag(tag));
   describe("Send - max amount", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction);
+      await beforeAllLegacyFunction(transaction);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send max amount`, async () => {
@@ -323,7 +335,7 @@ export function runSendENSTest(transaction: TransactionType, tmsLinks: string[],
   tags.forEach(tag => $Tag(tag));
   describe("Send - ENS address", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction);
+      await beforeAllLegacyFunction(transaction);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send to ENS address`, async () => {
