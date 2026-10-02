@@ -87,7 +87,6 @@
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

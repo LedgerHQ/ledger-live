@@ -1,4 +1,0 @@
-{
-  "entry": ["src/Near.ts"],
-  "ignoreUnused": ["jest-sonar"]
-}

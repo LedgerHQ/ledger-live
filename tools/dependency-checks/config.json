@@ -36,6 +36,10 @@
         "react-native-haptic-feedback": {
           "reason": "Replaced on mobile.",
           "use": "expo-haptics"
+        },
+        "unimported": {
+          "reason": "Mishandles dynamic import() and needs exception lists that only yield false positives. Pulls typescript@4.9.5 and @typescript-eslint@5 into node_modules.",
+          "use": "knip"
         }
       }
     }
