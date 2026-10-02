@@ -2,7 +2,7 @@
 // parse — e.g. a truncated/hand-edited `session.yaml` entry like `https://user:secret@` (a real
 // example: WHATWG rejects that outright since it has no host). Fails closed rather than open: the
 // point of this pattern is to catch exactly the inputs `new URL()` can't.
-const USERINFO_PATTERN = /:\/\/[^/\s@]*@/;
+const USERINFO_PATTERN = /:\/\/\S*@/;
 
 /** Strips `user:pass@` from a URL before it's ever displayed — `agent-intent list`/`show` must
  * never leak URL credentials, including from a value that isn't a well-formed URL at all (a

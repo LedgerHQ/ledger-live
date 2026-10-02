@@ -29,6 +29,10 @@ describe("redactUrlCredentials", () => {
     // still right there in the string, so the catch branch must not return it unchanged.
     expect(redactUrlCredentials(TRUNCATED_CREDENTIAL_URL)).toBe("https://");
   });
+
+  it("strips userinfo containing a slash from a value new URL() rejects", () => {
+    expect(redactUrlCredentials("https://user:secret/path@host")).toBe("https://host");
+  });
 });
 
 describe("hasUrlCredentials", () => {
