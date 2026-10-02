@@ -355,7 +355,6 @@ async function handleTransferTransaction({
   const feeEstimation = estimateFees({ configOrCurrencyId: config, transactionType });
   const estimatedFees = new BigNumber(feeEstimation.value.toString());
   const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
-  const availableBalance = getAvailableBalance(account, transaction);
 
   const errors: Errors = {};
   const warnings: Warnings = {};
@@ -411,6 +410,8 @@ async function handleTransferTransaction({
   }
 
   if (isPrivateTransaction(transaction)) {
+    // The amount records and the fee record are drawn from separate pools:
+    // validatePrivateTransaction covers the amount, validatePrivateFeeRecord covers the fee.
     Object.assign(
       errors,
       validatePrivateTransaction({
@@ -421,17 +422,22 @@ async function handleTransferTransaction({
         config,
       }),
     );
-  }
+  } else {
+    Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
 
-  Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
+    const availableBalance = getAvailableBalance(account, transaction);
 
-  if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
-    // Nothing to compare against — only whether anything has matured.
-    if (availableBalance.lte(0)) {
-      errors.amount = new AleoNoClaimableUnbondedFunds();
+    if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
+      // Nothing to compare against — only whether anything has matured.
+      if (availableBalance.lte(0)) {
+        errors.amount = new AleoNoClaimableUnbondedFunds();
+      }
+    } else if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
+      errors.amount = new NotEnoughBalance();
+    } else if (!errors.amount && transaction.useAllAmount && calculatedAmount.amount.lte(0)) {
+      // A staking use-all keeps the AmountRequired set by validateStakingAmount.
+      errors.amount = new NotEnoughBalance();
     }
-  } else if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
-    errors.amount = new NotEnoughBalance();
   }
 
   return {

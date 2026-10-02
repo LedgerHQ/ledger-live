@@ -13,6 +13,19 @@ import {
 } from "../logic/utils";
 import type { AleoOperation, AleoPublicTransaction, EnrichedPrivateRecord } from "../types";
 
+/** OUT value is fee-inclusive so the generic UI can subtract the fee back out; IN stays fee-exclusive. */
+function toOperationValue({
+  amount,
+  fee,
+  type,
+}: {
+  amount: BigNumber;
+  fee: BigNumber;
+  type: OperationType;
+}): BigNumber {
+  return type === "OUT" ? amount.plus(fee) : amount;
+}
+
 export const toBridgeOperation = (
   ledgerAccountId: string,
   rawTx: AleoPublicTransaction,
@@ -25,7 +38,11 @@ export const toBridgeOperation = (
     address,
   );
   const stakingType = resolveStakingOperationType(rawTx);
-  const value = stakingType ? new BigNumber(fee) : amount;
+  // Native OUT is fee-inclusive, so the optimistic operation matches the confirmed one; staking
+  // keeps the fee-only value, matching buildOptimisticOperation.
+  const value = stakingType
+    ? new BigNumber(fee)
+    : toOperationValue({ amount, fee: new BigNumber(fee), type });
 
   if (amount.isNaN() || amount.isNegative()) {
     log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);
@@ -71,16 +88,17 @@ export const toPrivateBridgeOperation = (
   const blockHeight = enrichedRecord.rawRecord.block_height;
   const timestamp = toBlockDate(enrichedRecord.rawRecord.block_timestamp);
   const type: OperationType = enrichedRecord.recipient === address ? "IN" : "OUT";
+  const fee = new BigNumber(enrichedRecord.details.fee_value);
 
   return {
     id: encodeOperationId(ledgerAccountId, transactionId, type),
     senders: [enrichedRecord.sender],
     recipients: [enrichedRecord.recipient],
-    value: enrichedRecord.value,
+    value: toOperationValue({ amount: enrichedRecord.value, fee, type }),
     type,
     hasFailed: false,
     hash: transactionId,
-    fee: new BigNumber(enrichedRecord.details.fee_value),
+    fee,
     blockHeight,
     blockHash: enrichedRecord.details.block_hash,
     accountId: ledgerAccountId,
