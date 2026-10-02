@@ -152,18 +152,22 @@ export async function performPublicSync(
   latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
   latestAccountPublicOperations.tokenOperations.sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  // Already-patched ops have modified senders/recipients that differ from raw API data.
-  // Filter them from the incoming ops — mergeOps then simply keeps the patched version
-  // from oldPublicOps untouched, and no patch-restoration pass is needed.
-  const patchedOpIds = new Set(oldPublicOps.filter(op => op.extra?.patched).map(op => op.id));
+  // Drop re-fetched ops that an older patched op covers, so mergeOps keeps the patched one.
+  // Match by hash: promotion to FEES changes the op id.
+  const patchedOpHashes = new Set(oldPublicOps.filter(op => op.extra?.patched).map(op => op.hash));
 
   const filteredLatestPublicOperations = latestAccountPublicOperations.operations.filter(
-    op => !patchedOpIds.has(op.id),
+    op => !patchedOpHashes.has(op.hash),
+  );
+
+  // An earlier sync matched by id and stored the re-fetched NONE op next to its FEES op.
+  const dedupedOldPublicOps = oldPublicOps.filter(
+    op => op.extra?.patched || !patchedOpHashes.has(op.hash),
   );
 
   const publicOperations = shouldSyncFromScratch
     ? latestAccountPublicOperations.operations
-    : (mergeOps(oldPublicOps, filteredLatestPublicOperations) as AleoOperation[]);
+    : (mergeOps(dedupedOldPublicOps, filteredLatestPublicOperations) as AleoOperation[]);
 
   // Empty when shouldSyncFromScratch = true because allOldOperations is reset above.
   // Private ops for removed CAL tokens are cleared this way; private sync rebuilds

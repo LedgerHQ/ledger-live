@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { encodeTokenAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { SyncConfig, DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray, type Observable } from "rxjs";
@@ -780,6 +781,218 @@ describe("sync.ts", () => {
           "patched" in preservedOp.extra &&
           preservedOp.extra.patched,
       ).toBe(true);
+    });
+
+    it("should keep one coin operation when a later sync re-fetches a token transaction already promoted to FEES", async () => {
+      coinConfig.setCoinConfig(() => mockConfigWithTokens);
+
+      const txHash = "tx-resync";
+      // What the previous sync stored: promotion moved the id from -NONE to -FEES.
+      const storedFeesOp = getMockedOperation({
+        id: encodeOperationId(mockLedgerAccountId, txHash, "FEES"),
+        hash: txHash,
+        type: "FEES",
+        accountId: mockLedgerAccountId,
+        value: new BigNumber(42),
+        fee: new BigNumber(42),
+        recipients: [],
+        senders: [MOCK_ALEO_ADDRESS],
+        extra: {
+          functionId: "transfer_public",
+          transactionType: "public",
+          programId: MOCK_TOKEN_PROGRAM_ID,
+          patched: true,
+        },
+      });
+      // What the indexer rebuilds for the same transaction on the next sync: a fresh NONE
+      // coin op under its original, pre-promotion id.
+      const refetchedCoinOp = getMockedOperation({
+        id: encodeOperationId(mockLedgerAccountId, txHash, "NONE"),
+        hash: txHash,
+        type: "NONE",
+        accountId: mockLedgerAccountId,
+        senders: ["aleo1sender"],
+        recipients: [MOCK_ALEO_ADDRESS],
+        extra: {
+          functionId: "transfer_public",
+          transactionType: "public",
+          programId: MOCK_TOKEN_PROGRAM_ID,
+        },
+      });
+      const refetchedTokenOp = getMockedOperation({
+        hash: txHash,
+        accountId: mockLedgerAccountId,
+        senders: ["aleo1sender"],
+        recipients: [MOCK_ALEO_ADDRESS],
+        extra: {
+          functionId: "transfer_public",
+          transactionType: "public",
+          programId: MOCK_TOKEN_PROGRAM_ID,
+        },
+      });
+
+      mockListOperations.mockResolvedValueOnce({
+        operations: [refetchedCoinOp as never],
+        tokenOperations: [refetchedTokenOp as never],
+        calTokens: new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]),
+        nextCursor: null,
+      });
+
+      const accountWithStoredFeesOp = {
+        ...mockInitialAccount,
+        operations: [storedFeesOp],
+      };
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithStoredFeesOp,
+        },
+        mockSyncConfig,
+      );
+
+      const coinOpsForHash = (result.operations ?? []).filter(op => op.hash === txHash);
+      expect(coinOpsForHash).toEqual([
+        expect.objectContaining({ type: "FEES", id: storedFeesOp.id }),
+      ]);
+    });
+
+    it.each([
+      ["an outgoing", [MOCK_ALEO_ADDRESS], ["aleo1recipient"], "FEES", ["OUT"]],
+      ["an incoming", ["aleo1sender"], [MOCK_ALEO_ADDRESS], "NONE", ["IN"]],
+      ["a self", [MOCK_ALEO_ADDRESS], [MOCK_ALEO_ADDRESS], "FEES", ["OUT", "IN"]],
+    ])(
+      "should keep one coin operation and stable sub-operations across repeated syncs of %s token transfer",
+      async (_label, senders, recipients, parentType, subOpTypes) => {
+        coinConfig.setCoinConfig(() => mockConfigWithTokens);
+
+        const txHash = "tx-lifecycle";
+        const extra = {
+          functionId: "transfer_public",
+          transactionType: "public" as const,
+          programId: MOCK_TOKEN_PROGRAM_ID,
+        };
+        mockListOperations.mockImplementation(async () => {
+          const shared = getMockedOperation({
+            id: encodeOperationId(mockLedgerAccountId, txHash, "NONE"),
+            hash: txHash,
+            type: "NONE",
+            accountId: mockLedgerAccountId,
+            value: new BigNumber(500),
+            fee: new BigNumber(42),
+            senders,
+            recipients,
+            extra,
+          });
+          return {
+            operations: [shared as never],
+            tokenOperations: [shared as never],
+            calTokens: new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]),
+            nextCursor: null,
+          };
+        });
+
+        let account: AleoAccount = mockInitialAccount;
+        for (let i = 0; i < 3; i++) {
+          const result = await performPublicSync(
+            {
+              index: mockAccount.index,
+              derivationPath: mockAccount.freshAddressPath,
+              address: mockAccount.freshAddress,
+              currency: mockCurrency,
+              derivationMode: mockDerivationMode,
+              initialAccount: account,
+            },
+            mockSyncConfig,
+          );
+          account = { ...account, ...result } as AleoAccount;
+        }
+
+        const coinOpsForHash = account.operations.filter(op => op.hash === txHash);
+        expect(coinOpsForHash).toEqual([expect.objectContaining({ type: parentType })]);
+        expect(coinOpsForHash[0].subOperations?.map(op => op.type)).toEqual(subOpTypes);
+
+        const tokenOps = account.subAccounts?.flatMap(subAccount => subAccount.operations) ?? [];
+        expect(tokenOps.map(op => op.type).sort()).toEqual([...subOpTypes].sort());
+        expect(
+          tokenOps.map(op => [op.type, op.value.toString(), op.senders, op.recipients]),
+        ).toEqual(subOpTypes.map(t => [t, "500", senders, recipients]));
+      },
+    );
+
+    it("should drop the duplicate NONE operation an earlier sync stored next to a FEES operation", async () => {
+      coinConfig.setCoinConfig(() => mockConfigWithTokens);
+
+      const txHash = "tx-upgrade";
+      const extra = {
+        functionId: "transfer_public",
+        transactionType: "public" as const,
+        programId: MOCK_TOKEN_PROGRAM_ID,
+      };
+      const indexerCoinOp = () =>
+        getMockedOperation({
+          id: encodeOperationId(mockLedgerAccountId, txHash, "NONE"),
+          hash: txHash,
+          type: "NONE",
+          accountId: mockLedgerAccountId,
+          value: new BigNumber(500),
+          fee: new BigNumber(42),
+          senders: [MOCK_ALEO_ADDRESS],
+          recipients: ["aleo1recipient"],
+          extra,
+        });
+      // What a sync before the hash-matching fix stored: the promoted FEES op, plus the
+      // re-fetched NONE op that the id filter let through.
+      const storedFeesOp = getMockedOperation({
+        id: encodeOperationId(mockLedgerAccountId, txHash, "FEES"),
+        hash: txHash,
+        type: "FEES",
+        accountId: mockLedgerAccountId,
+        value: new BigNumber(42),
+        fee: new BigNumber(42),
+        senders: [MOCK_ALEO_ADDRESS],
+        recipients: [],
+        extra: { ...extra, patched: true },
+      });
+
+      mockListOperations.mockImplementation(async () => ({
+        operations: [indexerCoinOp() as never],
+        tokenOperations: [
+          getMockedOperation({
+            hash: txHash,
+            accountId: mockLedgerAccountId,
+            value: new BigNumber(500),
+            fee: new BigNumber(42),
+            senders: [MOCK_ALEO_ADDRESS],
+            recipients: ["aleo1recipient"],
+            extra,
+          }) as never,
+        ],
+        calTokens: new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]),
+        nextCursor: null,
+      }));
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: {
+            ...mockInitialAccount,
+            operations: [indexerCoinOp(), storedFeesOp],
+          },
+        },
+        mockSyncConfig,
+      );
+
+      const coinOpsForHash = (result.operations ?? []).filter(op => op.hash === txHash);
+      expect(coinOpsForHash).toEqual([expect.objectContaining({ type: "FEES" })]);
     });
 
     it("should not trigger full re-sync on CAL change when tokens are disabled", async () => {

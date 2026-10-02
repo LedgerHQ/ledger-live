@@ -125,6 +125,7 @@
     "coin-modules:lint-fix": "nx run-many -t lint:fix -p \"@ledgerhq/coin-*\"",
     "coin-modules:test-integ": "nx run-many -t test-integ -p \"@ledgerhq/coin-*\"",
     "coin:modules:monitoring": "pnpm --filter coin-modules-monitoring",
+    "coin:tester:aleo": "pnpm --filter coin-tester-aleo",
     "coin:tester:cardano": "pnpm --filter coin-tester-cardano",
     "coin:tester:casper": "pnpm --filter coin-tester-casper",
     "coin:tester:cosmos": "pnpm --filter coin-tester-cosmos",
