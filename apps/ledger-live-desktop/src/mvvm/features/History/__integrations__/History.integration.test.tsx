@@ -148,7 +148,7 @@ describe("History integration", () => {
         accounts: [BTC_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
         history: { lastSeenOperationDate: null },
-        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card_native: true } } }),
       },
     });
 
@@ -364,7 +364,7 @@ describe("History integration", () => {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
-          ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+          ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card_native: true } } }),
         },
       },
     );
@@ -384,7 +384,7 @@ describe("History integration", () => {
       initialState: {
         accounts: [BTC_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
-        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card: false } } }),
+        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card_native: false } } }),
       },
     });
 
@@ -399,7 +399,7 @@ describe("History integration", () => {
       initialState: {
         accounts: [BTC_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
-        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card: undefined } } }),
+        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card_native: undefined } } }),
       },
     });
 
@@ -439,7 +439,7 @@ describe("History integration", () => {
         accounts: [BTC_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
         payCardAuth: { hasCard: true, pendingLoginType: null, status: "signedIn" },
-        ...withFlagOverrides({ lwdPayTab: { enabled: true } }),
+        ...withFlagOverrides({ lwdPayTab: { enabled: true, params: { card_native: true } } }),
       },
     });
 

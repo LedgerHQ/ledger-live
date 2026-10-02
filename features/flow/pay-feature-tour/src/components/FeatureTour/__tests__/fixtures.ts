@@ -24,7 +24,7 @@ export function makeFeatureTourStore(payTabFeatureFlag: PayTabFeatureFlag, card:
           ...FEATURE_FLAGS_DEFAULTS,
           [payTabFeatureFlag]: {
             ...payTab,
-            params: { ...payTab.params, card },
+            params: { ...payTab.params, card_native: card },
           },
         },
       },
