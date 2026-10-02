@@ -23,31 +23,16 @@ export type Bootstrap = {
     userData: string;
     home: string;
   };
-  appDirname: string;
   distributionChannel: "mac-app-store" | "windows-store" | "direct";
-  locale: {
-    app: string;
-    system: string;
-  };
   store: Record<string, unknown>;
 };
 
 /**
- * The application database, owned by the main process.
- *
- * One named method per operation, with no channel parameter. A generic
- * `invoke(channel, ...args)` passthrough would be far less code, and would also hand any
- * script running in the renderer the entire main-process surface — including
- * `setEncryptionKey` and `isEncryptionKeyCorrect`, which together are an offline oracle
- * against the account database. Naming each operation keeps that surface reviewable and
- * lets the payloads stay typed.
+ * One method per operation, never a generic `invoke(channel)`: that would expose all of main,
+ * including setEncryptionKey + isEncryptionKeyCorrect, an offline oracle on the account db.
  */
 export type DbBridge = {
   getKey(ns: string, keyPath: string, defaultValue?: unknown): Promise<unknown>;
-  /**
-   * `value` must be JSON-safe. Account graphs contain BigNumber instances, which the
-   * bridge would silently flatten, so callers encode before reaching this point.
-   */
   setKey(ns: string, keyPath: string, value: Serializable): Promise<void>;
   hasEncryptionKey(ns: string, keyPath: string): Promise<boolean>;
   setEncryptionKey(encryptionKey: string): Promise<void>;
@@ -61,10 +46,6 @@ export type DbBridge = {
 
 type TransportError = { message: string; id: string };
 
-/**
- * Transport handlers resolve with a tagged union instead of rejecting, so failures arrive
- * as data. That is why these are typed as unions rather than as promises that throw.
- */
 export type TransportOpenResult =
   | { type: "open-response"; requestId: string; data: { descriptor: string } }
   | { type: "open-error"; requestId: string; error: TransportError };
@@ -81,12 +62,7 @@ export type TransportListenResult =
     }
   | { type: "listen-error"; requestId: string; error: TransportError };
 
-/**
- * Device transport, used only for Speculos and the HTTP proxy. Real devices talk WebHID
- * straight from the renderer and do not come through here.
- *
- * APDUs cross as hex strings: a Buffer would be flattened by the bridge's conversion.
- */
+/** Speculos and the HTTP proxy only: real devices use WebHID from the renderer. */
 export type TransportBridge = {
   open(requestId: string, descriptor: string, timeout?: number): Promise<TransportOpenResult>;
   exchange(requestId: string, apduHex: string, timeout?: number): Promise<TransportExchangeResult>;
@@ -97,23 +73,9 @@ export type TransportBridge = {
   ): Promise<{ type: "unsubscribe-response"; requestId: string }>;
 };
 
-/**
- * Removes a subscription created by one of the `on*` methods below.
- *
- * Subscriptions are cancelled through a returned closure rather than by passing the
- * listener back, because `removeListener(channel, fn)` cannot work across the bridge: the
- * renderer's function arrives in the preload as a proxy with a different identity, so the
- * lookup would silently fail and the listener would leak.
- */
+/** A closure: listener identity does not survive the bridge, so removeListener would no-op. */
 export type Unsubscribe = () => void;
 
-/**
- * Payload pushed by the auto-updater.
- *
- * `status` is kept as a plain string here rather than importing the renderer's
- * `UpdateStatus` union: this file is compiled into the preload bundle and must not pull in
- * renderer code. The consumer narrows it.
- */
 export type UpdaterStatusEvent = {
   status: string;
   payload?: { percent?: number; version?: string };
@@ -130,8 +92,13 @@ export type DeeplinkBridge = {
   onOpen(callback: (url: string) => void): Unsubscribe;
 };
 
-/** Where a save dialog put the file, as returned by Electron. */
-export type SaveTarget = { canceled: boolean; filePath?: string };
+export type SaveRequest = {
+  options: Electron.SaveDialogOptions;
+  /** Honoured only when PLAYWRIGHT_RUN is set in main. */
+  e2ePath?: string;
+};
+
+export type SaveOutcome = "saved" | "canceled" | "failed";
 
 export type AppBridge = {
   reload(): void;
@@ -140,19 +107,11 @@ export type AppBridge = {
   show(): void;
 };
 
-export type DialogsBridge = {
-  showSave(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
-};
-
 export type FilesBridge = {
-  /**
-   * `logsJson` is pre-stringified by the caller. The in-memory logs contain circular
-   * references and typed arrays that neither the bridge nor Electron's IPC serialiser can
-   * carry, so they are serialised with a custom replacer first — do not "simplify" this
-   * into passing the array.
-   */
-  saveLogs(target: SaveTarget, logsJson: string): Promise<void>;
-  exportOperations(target: SaveTarget, csv: string): Promise<boolean>;
+  /** Pre-stringified: the logs hold circular references the bridge cannot carry. */
+  saveLogs(request: SaveRequest, logsJson: string): Promise<SaveOutcome>;
+  exportOperations(request: SaveRequest, csv: string): Promise<SaveOutcome>;
+  savePng(options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome>;
   openUserDataDirectory(): Promise<unknown>;
 };
 
@@ -166,6 +125,19 @@ export type StoreBridge = {
   clear(): void;
 };
 
+/** Its own group, so the lint guardrail matching on a `shell` object still sees the facade. */
+export type ShellBridge = {
+  openExternal(url: string): void;
+};
+
+export type SystemBridge = {
+  clipboardWriteText(text: string): void;
+  /** Resolves null when the clipboard cannot be read, which is not the same as empty. */
+  clipboardReadText(): Promise<string | null>;
+  setVisualZoomLevelLimits(minimum: number, maximum: number): void;
+  getResourceUsage(): Electron.ResourceUsage | undefined;
+};
+
 /** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
 export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
@@ -174,12 +146,13 @@ export type CardSessionBridge = {
 export type LedgerBridge = {
   version: 1;
   bootstrap: Bootstrap;
+  shell: ShellBridge;
+  system: SystemBridge;
   db: DbBridge;
   transport: TransportBridge;
   updater: UpdaterBridge;
   deeplink: DeeplinkBridge;
   app: AppBridge;
-  dialogs: DialogsBridge;
   files: FilesBridge;
   power: PowerBridge;
   store: StoreBridge;
@@ -212,11 +185,19 @@ export const CHANNELS = {
   appRelaunch: "app-relaunch",
   appQuit: "app-quit",
   showApp: "show-app",
-  showSaveDialog: "show-save-dialog",
   saveLogs: "save-logs",
   exportOperations: "export-operations",
+  savePng: "save-png",
   openUserDataDirectory: "openUserDataDirectory",
   keepScreenAwake: "activate-keep-screen-awake",
   releaseScreenAwake: "deactivate-keep-screen-awake",
+  openExternal: "shell:open-external",
+  clipboardWriteText: "clipboard:write-text",
+  clipboardReadText: "clipboard:read-text",
   cardSessionBootstrap: "card-session:bootstrap",
+  // Sent by the preload itself, outside the bridge.
+  reloadRenderer: "reloadRenderer",
+  webviewDomReady: "webview-dom-ready",
+  setBackgroundColor: "set-background-color",
+  readyToShow: "ready-to-show",
 } as const;

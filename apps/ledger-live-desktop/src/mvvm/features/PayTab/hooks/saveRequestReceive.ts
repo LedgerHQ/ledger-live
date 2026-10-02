@@ -1,5 +1,5 @@
-import { ipcRenderer } from "electron";
 import { toPng } from "html-to-image";
+import { savePng } from "~/renderer/files";
 import logger from "~/renderer/logger";
 
 const SUMMARY_SELECTOR = '[data-testid="pay-request-receive-summary"]';
@@ -20,8 +20,7 @@ export async function saveRequestReceive(ticker: string, dialogTitle: string): P
     const dataUrl = await toPng(node, { pixelRatio: 2, cacheBust: true });
     const base64 = dataUrl.replace(BASE64_PNG_PREFIX, "");
 
-    await ipcRenderer.invoke(
-      "save-png",
+    const outcome = await savePng(
       {
         title: dialogTitle,
         defaultPath: `ledger-request-${ticker || "card"}.png`,
@@ -29,6 +28,9 @@ export async function saveRequestReceive(ticker: string, dialogTitle: string): P
       },
       base64,
     );
+    if (outcome === "failed") {
+      logger.error(new Error("Could not write the Pay request card PNG"));
+    }
   } catch (error) {
     logger.error(error);
   }

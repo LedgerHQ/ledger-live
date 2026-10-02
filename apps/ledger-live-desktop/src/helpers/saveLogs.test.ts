@@ -43,7 +43,7 @@ describe("getJSONStringifyReplacer", () => {
 });
 
 describe("saveLogs", () => {
-  const fakePath = { filePath: "/fake/path" } as Electron.SaveDialogReturnValue;
+  const fakeRequest = { options: { defaultPath: "/fake/path" } };
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -55,16 +55,40 @@ describe("saveLogs", () => {
     circularObj.self = circularObj;
     const logs = { log: "test", circularObj };
     (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue(logs);
-    (files.saveLogs as jest.Mock).mockResolvedValue(undefined);
+    jest.mocked(files.saveLogs).mockResolvedValue("saved");
 
     // when
-    await saveLogs(fakePath);
+    await saveLogs(fakeRequest);
 
     // then
     expect(files.saveLogs).toHaveBeenCalledTimes(1);
-    expect(files.saveLogs).toHaveBeenCalledWith(fakePath, expect.any(String));
+    expect(files.saveLogs).toHaveBeenCalledWith(fakeRequest, expect.any(String));
     const serializedLogs = jest.mocked(files.saveLogs).mock.calls[0][1];
     expect(serializedLogs).toContain("[Circular]");
+  });
+
+  it("should warn when main could not write the file", async () => {
+    (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue({ log: "test" });
+    jest.mocked(files.saveLogs).mockResolvedValue("failed");
+    const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+    await saveLogs(fakeRequest);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      "Failed to save logs: the file could not be written",
+    );
+    consoleWarnSpy.mockRestore();
+  });
+
+  it("should not warn when the user cancels the dialog", async () => {
+    (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue({ log: "test" });
+    jest.mocked(files.saveLogs).mockResolvedValue("canceled");
+    const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+    await saveLogs(fakeRequest);
+
+    expect(consoleWarnSpy).not.toHaveBeenCalled();
+    consoleWarnSpy.mockRestore();
   });
 
   it("should log an error if the bridge call rejects", async () => {
@@ -75,7 +99,7 @@ describe("saveLogs", () => {
     const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
     // when
-    await saveLogs(fakePath);
+    await saveLogs(fakeRequest);
 
     // then
     expect(consoleWarnSpy).toHaveBeenCalledWith("Failed to save logs:", error);

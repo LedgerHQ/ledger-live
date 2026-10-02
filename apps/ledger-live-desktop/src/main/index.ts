@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
-import { app, Menu, ipcMain, type BrowserWindow, dialog, protocol, session } from "electron";
+import { app, Menu, ipcMain, type BrowserWindow, protocol, session } from "electron";
 import menu from "./menu";
 import {
   createEarlyMainWindow,
@@ -29,6 +29,7 @@ import {
 } from "@ledgerhq/coin-zcash/network/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
 import { setupExplorerSessionAffinity } from "./explorerSessionAffinity";
+import { CHANNELS } from "~/bridge/contract";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -122,46 +123,46 @@ app.on("ready", async () => {
   // for it (see @ledgerhq/coin-zcash/network/ipc/main-host).
   setupZcashNativeHost();
 
-  ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
+  ipcMain.handle(CHANNELS.getKey, (event, { ns, keyPath, defaultValue }) => {
     assertRendererNamespace(ns);
     return db.getKey(ns, keyPath, defaultValue);
   });
-  ipcMain.handle("setKey", (event, { ns, keyPath, value }) => {
+  ipcMain.handle(CHANNELS.setKey, (event, { ns, keyPath, value }) => {
     assertRendererNamespace(ns);
     return db.setKey(ns, keyPath, value);
   });
-  ipcMain.handle("hasEncryptionKey", () => {
+  ipcMain.handle(CHANNELS.hasEncryptionKey, () => {
     return db.hasEncryptionKey();
   });
   const throttleKeyAttempt = createKeyAttemptThrottle();
-  ipcMain.handle("setEncryptionKey", (event, { encryptionKey }) => {
+  ipcMain.handle(CHANNELS.setEncryptionKey, (event, { encryptionKey }) => {
     return throttleKeyAttempt(
       () => db.setEncryptionKey(encryptionKey),
       () => true,
     );
   });
-  ipcMain.handle("removeEncryptionKey", () => {
+  ipcMain.handle(CHANNELS.removeEncryptionKey, () => {
     return db.removeEncryptionKey();
   });
-  ipcMain.handle("isEncryptionKeyCorrect", (event, { encryptionKey }) => {
+  ipcMain.handle(CHANNELS.isEncryptionKeyCorrect, (event, { encryptionKey }) => {
     return throttleKeyAttempt(
       () => db.isEncryptionKeyCorrect(encryptionKey),
       correct => correct,
     );
   });
-  ipcMain.handle("hasBeenDecrypted", () => {
+  ipcMain.handle(CHANNELS.hasBeenDecrypted, () => {
     return db.hasBeenDecrypted();
   });
-  ipcMain.handle("resetAll", () => {
+  ipcMain.handle(CHANNELS.resetAll, () => {
     return db.resetAll();
   });
-  ipcMain.handle("reload", () => {
+  ipcMain.handle(CHANNELS.reload, () => {
     return db.reload();
   });
-  ipcMain.handle("cleanCache", () => {
+  ipcMain.handle(CHANNELS.cleanCache, () => {
     return db.cleanCache();
   });
-  ipcMain.handle("reloadRenderer", () => {
+  ipcMain.handle(CHANNELS.reloadRenderer, () => {
     console.log("reloading renderer ...");
     loadWindow();
   });
@@ -234,43 +235,41 @@ app.on("window-all-closed", () => {
   app.quit();
 });
 
-ipcMain.on("set-background-color", (_, color) => {
+ipcMain.on(CHANNELS.setBackgroundColor, (_, color) => {
   const w = getMainWindow();
   if (w) {
     w.setBackgroundColor(color);
   }
 });
 
-ipcMain.on("app-quit", () => {
+ipcMain.on(CHANNELS.appQuit, () => {
   app.quit();
 });
 
-ipcMain.once("app-relaunch", () => {
+ipcMain.once(CHANNELS.appRelaunch, () => {
   app.relaunch();
   app.quit();
 });
 
-ipcMain.handle("show-save-dialog", (_, opts) => dialog.showSaveDialog(opts));
-
-ipcMain.on("deep-linking", (_, l) => {
+ipcMain.on(CHANNELS.deepLinking, (_, l) => {
   const win = getMainWindow();
   if (win) sendDeepLink(win, l);
 });
 
-ipcMain.on("app-reload", () => {
+ipcMain.on(CHANNELS.appReload, () => {
   const w = getMainWindow();
   if (w) {
     w.reload();
   }
 });
-ipcMain.on("show-app", () => {
+ipcMain.on(CHANNELS.showApp, () => {
   const w = getMainWindow();
   if (w) {
     show(w);
   }
 });
 
-ipcMain.on("ready-to-show", () => {
+ipcMain.on(CHANNELS.readyToShow, () => {
   console.timeEnd("T-ready");
   const totalTime = process.uptime() * 1000;
   console.log(`TOTAL BOOT TIME: ${totalTime.toFixed(0)}ms`);
@@ -339,9 +338,9 @@ function sendDeepLink(win: BrowserWindow, url: string) {
 
   if (win.webContents.isLoading()) {
     win.webContents.once("did-finish-load", () => {
-      win.webContents.send("deep-linking", url);
+      win.webContents.send(CHANNELS.deepLinking, url);
     });
   } else {
-    win.webContents.send("deep-linking", url);
+    win.webContents.send(CHANNELS.deepLinking, url);
   }
 }

@@ -235,17 +235,9 @@ window.saveLogs = async (path: string): Promise<void> => {
   const memoryLogs = memoryLogger.getMemoryLogs();
 
   try {
-    // Serializes ourself with `stringify` to avoid "object could not be cloned" errors from the electron IPC serializer.
-    //Uses getJSONStringifyReplacer to replace circular references with "[Circular]"
+    // Stringified here: Electron's IPC serialiser cannot carry the logs' circular references.
     const memoryLogsStr = JSON.stringify(memoryLogs, getJSONStringifyReplacer(), 2);
-    // Requests the main process to save logs in a file
-    await files.saveLogs(
-      {
-        canceled: false,
-        filePath: path,
-      },
-      memoryLogsStr,
-    );
+    await files.saveLogs({ options: { defaultPath: path }, e2ePath: path }, memoryLogsStr);
   } catch (error) {
     console.warn("Failed to save logs:", error);
   }

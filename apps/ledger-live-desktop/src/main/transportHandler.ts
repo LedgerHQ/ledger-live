@@ -10,6 +10,7 @@ import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
+import { CHANNELS } from "~/bridge/contract";
 
 const LOG_TYPE = "main-transport-handler";
 
@@ -20,7 +21,7 @@ export function setupTransportHandlers() {
   log(LOG_TYPE, "Setting up transport handlers in main process");
 
   // Handle transport open
-  ipcMain.handle("transport:open", async (event, { requestId, descriptor, timeout }) => {
+  ipcMain.handle(CHANNELS.transportOpen, async (event, { requestId, descriptor, timeout }) => {
     try {
       log(LOG_TYPE, "transport open", { descriptor, requestId });
 
@@ -62,7 +63,7 @@ export function setupTransportHandlers() {
   });
 
   // Handle transport exchange
-  ipcMain.handle("transport:exchange", async (event, { requestId, apdu, timeout }) => {
+  ipcMain.handle(CHANNELS.transportExchange, async (event, { requestId, apdu, timeout }) => {
     try {
       const transport = activeTransports.get(requestId);
       if (!transport) {
@@ -97,7 +98,7 @@ export function setupTransportHandlers() {
   });
 
   // Handle transport close
-  ipcMain.handle("transport:close", async (event, { requestId }) => {
+  ipcMain.handle(CHANNELS.transportClose, async (event, { requestId }) => {
     try {
       const transport = activeTransports.get(requestId);
       if (transport) {
@@ -123,7 +124,7 @@ export function setupTransportHandlers() {
   });
 
   // Handle transport listen (simplified for HTTP transports)
-  ipcMain.handle("transport:listen", async (event, { requestId }) => {
+  ipcMain.handle(CHANNELS.transportListen, (event, { requestId }) => {
     try {
       log(LOG_TYPE, "transport listen", { requestId });
 
@@ -149,7 +150,7 @@ export function setupTransportHandlers() {
   });
 
   // Handle transport listen unsubscribe
-  ipcMain.handle("transport:listen:unsubscribe", async (event, { requestId }) => {
+  ipcMain.handle(CHANNELS.transportListenUnsubscribe, (event, { requestId }) => {
     try {
       log(LOG_TYPE, "transport listen unsubscribe", { requestId });
       // Nothing to do for HTTP transports

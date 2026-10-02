@@ -7,10 +7,11 @@ import type {
   UpdaterBridge,
   UpdaterStatusEvent,
   AppBridge,
-  DialogsBridge,
   FilesBridge,
   PowerBridge,
   StoreBridge,
+  ShellBridge,
+  SystemBridge,
 } from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
@@ -26,16 +27,10 @@ export const bootstrap: Bootstrap = {
     userData: "/tmp/ledger-live-test/userdata",
     home: "/tmp/ledger-live-test/home",
   },
-  appDirname: "/tmp/ledger-live-test/app",
   distributionChannel: "direct",
-  locale: { app: "en-US", system: "en-US" },
   store: {},
 };
 
-/**
- * Database calls resolve to `undefined` by default, matching how the previous
- * `ipcRenderer` mock behaved. Tests that care override individual methods.
- */
 export const db: jest.Mocked<DbBridge> = {
   getKey: jest.fn().mockResolvedValue(undefined),
   setKey: jest.fn().mockResolvedValue(undefined),
@@ -49,11 +44,7 @@ export const db: jest.Mocked<DbBridge> = {
   cleanCache: jest.fn().mockResolvedValue(undefined),
 };
 
-/**
- * Every method resolves by default. Callers chain `.catch()` on these, so returning
- * `undefined` would throw rather than simply doing nothing — the old catch-all
- * `ipcRenderer.invoke` mock resolved for any channel, and this preserves that.
- */
+// Must resolve: callers chain `.catch()`.
 export const transport: jest.Mocked<TransportBridge> = {
   open: jest.fn().mockResolvedValue(undefined),
   exchange: jest.fn().mockResolvedValue(undefined),
@@ -62,10 +53,7 @@ export const transport: jest.Mocked<TransportBridge> = {
   listenUnsubscribe: jest.fn().mockResolvedValue(undefined),
 };
 
-/**
- * `on*` methods return an unsubscribe closure, so the doubles must return one too —
- * consumers call the result on unmount and would otherwise crash.
- */
+// `on*` must return an unsubscribe closure.
 export const updater: jest.Mocked<UpdaterBridge> = {
   init: jest.fn(),
   quitAndInstall: jest.fn(),
@@ -84,13 +72,10 @@ export const app: jest.Mocked<AppBridge> = {
   show: jest.fn(),
 };
 
-export const dialogs: jest.Mocked<DialogsBridge> = {
-  showSave: jest.fn().mockResolvedValue({ canceled: true }),
-};
-
 export const files: jest.Mocked<FilesBridge> = {
-  saveLogs: jest.fn().mockResolvedValue(undefined),
-  exportOperations: jest.fn().mockResolvedValue(true),
+  saveLogs: jest.fn().mockResolvedValue("saved"),
+  exportOperations: jest.fn().mockResolvedValue("saved"),
+  savePng: jest.fn().mockResolvedValue("saved"),
   openUserDataDirectory: jest.fn().mockResolvedValue(undefined),
 };
 
@@ -102,6 +87,17 @@ export const power: jest.Mocked<PowerBridge> = {
 export const store: jest.Mocked<StoreBridge> = {
   set: jest.fn(),
   clear: jest.fn(),
+};
+
+export const shell: jest.Mocked<ShellBridge> = {
+  openExternal: jest.fn(),
+};
+
+export const system: jest.Mocked<SystemBridge> = {
+  clipboardWriteText: jest.fn(),
+  clipboardReadText: jest.fn().mockResolvedValue(null),
+  setVisualZoomLevelLimits: jest.fn(),
+  getResourceUsage: jest.fn(() => undefined),
 };
 
 // Reads the live env so tests can set CARD_SESSION_BOOTSTRAP per case.
