@@ -127,6 +127,17 @@ export function describeOptimisticOperation(
     return { extra: { associatedTokenId: transaction.assetReference } };
   }
 
+  if (mode === "delegate" || mode === "redelegate" || mode === "undelegate") {
+    const { hederaResources } = account as Account & { hederaResources?: HederaResources };
+    const { valId } = transaction;
+    return {
+      extra: {
+        targetStakingNodeId: mode !== "undelegate" && valId ? Number(valId) : null,
+        previousStakingNodeId: hederaResources?.delegation?.nodeId ?? null,
+      },
+    };
+  }
+
   if (mode !== "claimReward" || !isStakingAccount(account)) return undefined;
 
   const reward = account.stakingResources?.pendingRewardsBalance;

@@ -244,6 +244,20 @@ describe("hedera bridge", () => {
         }),
       ).toEqual({ extra: { associatedTokenId: "0.0.1234567" } });
     });
+
+    it.each([
+      ["delegate", null, 3],
+      ["redelegate", 5, 3],
+      ["undelegate", 5, null],
+    ])("tags a %s with its previous and target nodes", (mode, previous, target) => {
+      const account = {
+        hederaResources: { delegation: previous === null ? null : { nodeId: previous } },
+      } as unknown as Account;
+
+      expect(describeOptimisticOperation(mode, account, { valId: "3" })).toEqual({
+        extra: { targetStakingNodeId: target, previousStakingNodeId: previous },
+      });
+    });
   });
 
   describe("buildAccountShape", () => {
