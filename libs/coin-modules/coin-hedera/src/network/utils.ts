@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import { AccountId, TransactionId } from "@hashgraph/sdk";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
@@ -162,8 +163,6 @@ export const enrichERC20Transfers = async ({
   configOrCurrencyId: HederaCoinConfig | string;
   erc20Transfers: ERC20TokenTransfer[];
 }) => {
-  const enrichedTransfers: EnrichedERC20Transfer[] = [];
-
   // with hgraph we can get two different transfers with the same transaction hash
   const groupedByTxHash = new Map<string, [ERC20TokenTransfer, ...ERC20TokenTransfer[]]>();
   for (const transfer of erc20Transfers) {
@@ -177,32 +176,40 @@ export const enrichERC20Transfers = async ({
     group.push(transfer);
   }
 
-  for (const [txHash, transfers] of groupedByTxHash.entries()) {
-    const payerAddress = toEntityId({ num: transfers[0].payer_account_id });
-    const inaccurateConsensusTimestampNs = new BigNumber(transfers[0].consensus_timestamp);
-    const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(9);
+  const enrichedTransfers = await promiseAllBatched(
+    4,
+    [...groupedByTxHash.entries()],
+    async ([txHash, transfers]): Promise<EnrichedERC20Transfer | null> => {
+      const payerAddress = toEntityId({ num: transfers[0].payer_account_id });
+      const inaccurateConsensusTimestampNs = new BigNumber(transfers[0].consensus_timestamp);
+      const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(
+        9,
+      );
 
-    const [contractCallResult, mirrorTransaction] = await Promise.all([
-      apiClient.getContractCallResult({ configOrCurrencyId, transactionHash: txHash }),
-      apiClient.findTransactionByContractCallV2({
-        configOrCurrencyId,
-        payerAddress,
-        timestamp: inaccurateConsensusTimestamp,
-      }),
-    ]);
+      const [contractCallResult, mirrorTransaction] = await Promise.all([
+        apiClient.getContractCallResult({ configOrCurrencyId, transactionHash: txHash }),
+        apiClient.findTransactionByContractCallV2({
+          configOrCurrencyId,
+          payerAddress,
+          timestamp: inaccurateConsensusTimestamp,
+        }),
+      ]);
 
-    if (!mirrorTransaction) {
-      continue;
-    }
+      if (!mirrorTransaction) {
+        return null;
+      }
 
-    enrichedTransfers.push({
-      transfers,
-      contractCallResult,
-      mirrorTransaction,
-    });
-  }
+      return {
+        transfers,
+        contractCallResult,
+        mirrorTransaction,
+      };
+    },
+  );
 
-  return enrichedTransfers;
+  return enrichedTransfers.filter(
+    (transfer): transfer is EnrichedERC20Transfer => transfer !== null,
+  );
 };
 
 // getEnv("LEDGER_COUNTERVALUES_API") must be read lazily, per call — not cached in a

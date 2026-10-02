@@ -1,3 +1,4 @@
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -526,8 +527,8 @@ export async function listOperationsV2(
     fetchAllPages,
   });
 
-  for (const mergedTx of mergeResult.merged) {
-    const result = await processTransactionItem(config, {
+  const results = await promiseAllBatched(4, mergeResult.merged, mergedTx =>
+    processTransactionItem(config, {
       mergedTx,
       address,
       evmAddress,
@@ -535,8 +536,10 @@ export async function listOperationsV2(
       mirrorTokens,
       useEncodedHash,
       useSyntheticBlocks,
-    });
+    }),
+  );
 
+  for (const result of results) {
     coinOperations.push(...result.newCoinOperations);
     tokenOperations.push(...result.newTokenOperations);
   }

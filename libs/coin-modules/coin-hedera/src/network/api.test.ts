@@ -26,6 +26,8 @@ describe("apiClient", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
+    apiClient.getContractCallResult.reset();
+    apiClient.findTransactionByContractCallV2.reset();
 
     mockedResolveConfig.mockReturnValue(mockConfig);
   });
@@ -430,6 +432,17 @@ describe("apiClient", () => {
       expect(requestUrl).toContain("/api/v1/contracts/results");
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
+
+    it("fetches a transaction hash only once", async () => {
+      mockedNetwork.mockResolvedValue(getMockResponse({ gas_used: 150 }));
+      const params = { configOrCurrencyId: mockConfig, transactionHash: "0xabc" };
+
+      await apiClient.getContractCallResult(params);
+      const result = await apiClient.getContractCallResult(params);
+
+      expect(result).toEqual({ gas_used: 150 });
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("findTransactionByContractCallV2", () => {
@@ -534,6 +547,40 @@ describe("apiClient", () => {
       });
 
       expect(result).toEqual(null);
+    });
+
+    it("fetches a found transaction only once", async () => {
+      const transaction = {
+        name: "CONTRACTCALL",
+        transaction_id: "0.0.1234-1758733200-632122898",
+        parent_consensus_timestamp: null,
+      };
+      mockedNetwork.mockResolvedValue(getMockResponse({ transactions: [transaction] }));
+      const params = {
+        configOrCurrencyId: mockConfig,
+        timestamp: "1758733200.632122898",
+        payerAddress: "0.0.1234",
+      };
+
+      await apiClient.findTransactionByContractCallV2(params);
+      const result = await apiClient.findTransactionByContractCallV2(params);
+
+      expect(result).toEqual(transaction);
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
+
+    it("asks again for a transaction the mirror node has not indexed yet", async () => {
+      mockedNetwork.mockResolvedValue(getMockResponse({ transactions: [] }));
+      const params = {
+        configOrCurrencyId: mockConfig,
+        timestamp: "1758733200.632122898",
+        payerAddress: "0.0.1234",
+      };
+
+      await apiClient.findTransactionByContractCallV2(params);
+      await apiClient.findTransactionByContractCallV2(params);
+
+      expect(mockedNetwork).toHaveBeenCalledTimes(2);
     });
   });
 

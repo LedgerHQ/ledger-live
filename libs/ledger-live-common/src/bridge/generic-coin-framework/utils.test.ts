@@ -1596,6 +1596,12 @@ describe("coin-framework utils", () => {
       });
     });
 
+    it.each(["CONTRACT_CALL", "UPDATE_ACCOUNT"])("includes fees in native %s value", type => {
+      const result = adaptCoreOperationToLiveOperation(accountId, { ...baseOp, type });
+
+      expect(result.value).toEqual(new BigNumber(110));
+    });
+
     it("adapts a basic OUT operation", () => {
       const result = adaptCoreOperationToLiveOperation(accountId, baseOp);
 

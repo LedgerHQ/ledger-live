@@ -3228,6 +3228,41 @@ describe("genericGetAccountShape", () => {
         ],
       });
     });
+
+    test("builds the parent operations from the operations the family adapted", async () => {
+      setupSpecTest();
+      const adaptOperationsMock = jest.fn((_address: string, operations: any[]) => [
+        ...operations,
+        { ...operations[0], id: "fees", type: "FEES", value: new BigNumber(1) },
+      ]);
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        adaptOperations: adaptOperationsMock,
+      }));
+      listOperationsMock.mockResolvedValue({
+        items: [
+          toCoreOp({
+            type: "REWARD",
+            senders: ["rewardAccount"],
+            recipients: ["address1"],
+            value: 5,
+            fee: 0,
+            feesPayer: "address1",
+          }),
+        ],
+        next: undefined,
+      });
+      mockNoSubAccounts();
+      mockNoInferSubOps();
+
+      const result = await runGetShape("address1");
+
+      expect(adaptOperationsMock).toHaveBeenCalledTimes(1);
+      expect(adaptOperationsMock).toHaveBeenCalledWith("address1", [
+        expect.objectContaining({ type: "REWARD" }),
+      ]);
+      expect(result.operations?.map(op => op.type)).toEqual(["REWARD", "FEES"]);
+    });
   });
 
   describe("family token account shapes", () => {
@@ -3272,6 +3307,80 @@ describe("genericGetAccountShape", () => {
       );
 
       expect(buildSubAccountsMock.mock.calls[0][0].familyShapes).toBeUndefined();
+    });
+  });
+
+  describe("syncVersion", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+    const storedOperation = {
+      id: "accId-h1-OUT",
+      accountId: "accId",
+      hash: "h1",
+      type: "OUT",
+      blockHeight: 500,
+      extra: {},
+    };
+
+    const syncWith = (syncVersion: string | undefined, storedSyncHash: string) => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), syncVersion }));
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      lastBlockMock.mockResolvedValue({ height: 900 });
+      mergeOpsMock.mockImplementation((oldOps: any[], newOps: any[]) => [...oldOps, ...newOps]);
+      buildSubAccountsMock.mockReturnValue([]);
+
+      return genericGetAccountShape(network, currency.id)(
+        {
+          address: "tz1sync",
+          currency,
+          derivationMode: "",
+          initialAccount: {
+            operations: [storedOperation],
+            pendingOperations: [],
+            blockHeight: 800,
+            syncHash: storedSyncHash,
+          },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+    };
+
+    test("leaves the sync hash alone for a family that declares none", async () => {
+      const shape = await syncWith(undefined, "sync-hash");
+
+      expect(shape.syncHash).toBe("sync-hash");
+      expect(mergeOpsMock).toHaveBeenCalledTimes(1);
+      expect(mergeOpsMock).toHaveBeenCalledWith([storedOperation], expect.anything());
+    });
+
+    test("drops the stored operations of an account synced under another hash", async () => {
+      const shape = await syncWith("1", "sync-hash");
+
+      expect(shape.syncHash).toBe("sync-hash-1");
+      expect(mergeOpsMock).toHaveBeenCalledTimes(1);
+      expect(mergeOpsMock).toHaveBeenCalledWith([], expect.anything());
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "tz1sync",
+        expect.objectContaining({ minHeight: 0 }),
+      );
+    });
+
+    test("keeps syncing incrementally once the account carries the versioned hash", async () => {
+      await syncWith("1", "sync-hash-1");
+
+      expect(mergeOpsMock).toHaveBeenCalledTimes(1);
+      expect(mergeOpsMock).toHaveBeenCalledWith([storedOperation], expect.anything());
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "tz1sync",
+        expect.objectContaining({ minHeight: storedOperation.blockHeight + 1 }),
+      );
     });
   });
 });
