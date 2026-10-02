@@ -30,6 +30,7 @@ import { cantonConfig } from "../families/canton/config";
 import { aleoConfig } from "../families/aleo/config";
 import { concordiumConfig } from "../families/concordium/config";
 import { a4Config } from "../bridge/generic-coin-framework/a4/config";
+import { operationHistoryConfig } from "../bridge/generic-coin-framework/operationHistoryBound";
 
 const countervaluesConfig: ConfigSchema = {
   config_countervalues_refreshRate: {
@@ -79,4 +80,5 @@ export const liveConfig: ConfigSchema = {
   ...aleoConfig,
   ...concordiumConfig,
   ...a4Config,
+  ...operationHistoryConfig,
 };

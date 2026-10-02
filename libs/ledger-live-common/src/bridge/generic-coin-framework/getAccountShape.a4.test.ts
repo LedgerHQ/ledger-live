@@ -1,10 +1,13 @@
 import { log } from "@ledgerhq/logs";
 import { A4HttpError } from "./a4/client/errors";
 import { adaptA4OperationToLiveOperation } from "./a4/client/operations";
+import { PaginationIntegrityError } from "../../errors";
 import { toA4Network } from "./a4/client/utils";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { genericGetAccountShape } from "./getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+
+import { DEFAULT_MAX_OPERATIONS, DEFAULT_PAGE_SIZE_BY_FAMILY } from "./operationHistoryBound";
 
 jest.mock("@ledgerhq/logs");
 
@@ -53,8 +56,10 @@ jest.mock("./accountRawAssign", () => ({
 }));
 
 const inferSubOperationsMock = jest.fn();
+const buildSubOperationIndexMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
   inferSubOperations: (...a: any[]) => inferSubOperationsMock(...a),
+  buildSubOperationIndex: (...a: any[]) => buildSubOperationIndexMock(...a),
 }));
 
 const buildSubAccountsMock = jest.fn();
@@ -124,6 +129,10 @@ describe("genericGetAccountShape - A4 read branch", () => {
     mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
     cleanedOperationMock.mockImplementation((op: any) => op);
     inferSubOperationsMock.mockReturnValue([]);
+    // Parent operations look their sub-operations up in this index instead of rescanning the
+    // sub-accounts per hash; an empty index is this suite's "no sub-operations" case, the same
+    // thing `inferSubOperations` returning [] used to express.
+    buildSubOperationIndexMock.mockReturnValue(new Map());
     buildSubAccountsMock.mockReturnValue([]);
     mergeSubAccountsMock.mockImplementation((_old: any[], subs: any[]) => subs ?? []);
     listOperationsMock.mockResolvedValue({ items: [], next: undefined });
@@ -135,7 +144,7 @@ describe("genericGetAccountShape - A4 read branch", () => {
       environment: "stg",
       maxDcRoamRetries: 5,
     });
-    fetchA4OperationsMock.mockResolvedValue([]);
+    fetchA4OperationsMock.mockResolvedValue({ operations: [], bounded: false });
   });
 
   const call = () =>
@@ -146,12 +155,42 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
   it("calls fetchA4Operations and skips the coin-module delegate when read=true and A4 succeeds", async () => {
     const a4Op = { id: "a4-op-id", hash: "0xtx-a4", type: "IN", accountId: "js:1:ethereum:0xabc:" };
-    fetchA4OperationsMock.mockResolvedValue([a4Op]);
+    fetchA4OperationsMock.mockResolvedValue({ operations: [a4Op], bounded: false });
 
     await call();
 
     expect(fetchA4OperationsMock).toHaveBeenCalledTimes(1);
     expect(listOperationsMock).not.toHaveBeenCalled();
+  });
+
+  it("passes the walk bound to the A4 pagination, not only to the coin-module delegate", async () => {
+    fetchA4OperationsMock.mockResolvedValue({ operations: [], bounded: false });
+
+    await call();
+
+    // Named, not counted: the options object this now goes through (see `fetchA4Operations`) is
+    // exactly what makes this assertion drift-proof -- both fields keep the same name regardless
+    // of where else the signature changes. Without them this path paginates unbounded and
+    // materialises a whole history before the store bound below it ever runs -- and A4 read is
+    // enabled for Ethereum, so the account that produced the out-of-memory report reaches it.
+    const options = fetchA4OperationsMock.mock.calls[0][2];
+    expect(options.maxOperations).toBe(DEFAULT_MAX_OPERATIONS);
+    // This suite drives the `mainnet` family, which has no shipped page size, so none is sent --
+    // the same rule the delegate path follows.
+    expect(options.pageSize).toBeUndefined();
+  });
+
+  it("sends the page size too for a family that has one", async () => {
+    // `size` bounds one A4 response the way `limit` bounds one explorer page; without it a single
+    // response can materialise in full before the walk bound applies.
+    fetchA4OperationsMock.mockResolvedValue({ operations: [], bounded: false });
+
+    await genericGetAccountShape("evm", currency.id)(
+      { address: "0xabc", initialAccount: undefined, currency, derivationMode: "" } as any,
+      { paginationConfig: {} as any },
+    );
+
+    expect(fetchA4OperationsMock.mock.calls[0][2].pageSize).toBe(DEFAULT_PAGE_SIZE_BY_FAMILY.evm);
   });
 
   it("falls back to the coin-module delegate when fetchA4Operations throws with status 5xx", async () => {
@@ -170,6 +209,26 @@ describe("genericGetAccountShape - A4 read branch", () => {
 
     expect(fetchA4OperationsMock).toHaveBeenCalledTimes(1);
     expect(listOperationsMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to the coin-module delegate and logs a malformed history, not a network blip, on a PaginationIntegrityError", async () => {
+    // A stalled A4 cursor is a defect in A4, not a transport failure -- the only other fallback
+    // tests reject with `A4HttpError`, which never exercises the `integrity` branch that picks
+    // `read_failover_integrity` over `read_failover_to_delegate` and the "malformed history"
+    // wording over "read failed".
+    fetchA4OperationsMock.mockRejectedValue(
+      new PaginationIntegrityError("cursor c1 was served twice"),
+    );
+
+    await call();
+
+    expect(fetchA4OperationsMock).toHaveBeenCalledTimes(1);
+    expect(listOperationsMock).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(log)).toHaveBeenCalledWith(
+      "a4",
+      expect.stringContaining("A4 returned a malformed history"),
+      expect.objectContaining({ decision: "read_failover_integrity" }),
+    );
   });
 
   it("skips fetchA4Operations and uses the coin-module delegate when read=false", async () => {
