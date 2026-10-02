@@ -481,6 +481,5 @@
     }
   },
   "defaultBase": "develop",
-  "useDaemonProcess": false,
-  "parallel": 5
+  "useDaemonProcess": false
 }
