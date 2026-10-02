@@ -1,12 +1,15 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react-native";
+import { BottomSheetFooter } from "@ledgerhq/lumen-ui-rnative";
 import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
 import { CardLoginIntroView } from "../CardLoginIntroView.native";
 
 jest.mock("@features/platform-pay-analytics", () =>
   jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
 );
+
+const mockBottomInset = 34;
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: ({
@@ -28,7 +31,7 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
       {children}
     </View>
   ),
-  useBottomSheetBottomInset: () => 0,
+  useBottomSheetBottomInset: () => mockBottomInset,
 }));
 
 const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
@@ -141,6 +144,14 @@ describe("CardLoginIntroView (Native)", () => {
 
     expect(screen.getByLabelText("Create an account")).toBeTruthy();
     expect(screen.getByLabelText("Log in to Baanx")).toBeTruthy();
+  });
+
+  it("keeps the buttons 24px above the bottom safe area", () => {
+    renderIntro();
+
+    expect(screen.UNSAFE_getByType(BottomSheetFooter).props.style).toEqual({
+      paddingBottom: mockBottomInset + 24,
+    });
   });
 
   it.each(["createAccount", "logIn"] as const)("reports the %s press", id => {
