@@ -33,11 +33,6 @@ Prefer, in this order:
    type Stage = "intro" | "login";
    declare const stage: Stage;
    t(`payTab.login.${stage}.title`); // every Stage member is expanded and checked
-   type Copy = { titleKey: string };
-   const COPY = {
-     intro: { titleKey: "x.intro.title" },
-     login: { titleKey: "x.login.title" },
-   } as const satisfies Record<Stage, Copy>;
    ```
 3. **Internal prop typed as a union of full keys**: last resort, it duplicates key strings in a type.
    ```ts
