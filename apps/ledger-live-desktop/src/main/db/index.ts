@@ -210,6 +210,7 @@ function decryptEncryptedPathInMemory(
  */
 async function setEncryptionKey(encryptionKey: string): Promise<void> {
   const nsToSave = new Set<string>();
+  const previousKeys = encryptedDataPaths.map(([ns, keyPath]) => encryptionKeys[ns]?.[keyPath]);
 
   for (const [ns, keyPath] of encryptedDataPaths) {
     nsToSave.add(ns);
@@ -231,6 +232,13 @@ async function setEncryptionKey(encryptionKey: string): Promise<void> {
       decryptEncryptedPathInMemory(ns, keyPath, encryptionKey);
     } catch (err) {
       log("db", "setEncryptionKey failure: " + String(err));
+      // A wrong key left in place would pass isEncryptionKeyCorrect, and the next save would
+      // re-encrypt the still-encrypted data with it.
+      encryptedDataPaths.forEach(([pathNs, pathKey], i) => {
+        const previous = previousKeys[i];
+        if (previous === undefined) delete encryptionKeys[pathNs]?.[pathKey];
+        else encryptionKeys[pathNs]![pathKey] = previous;
+      });
       throw new DBWrongPassword();
     }
   }
