@@ -101,6 +101,19 @@ describe("DeviceOnboarding desktop integration", () => {
     expect(ports.currentSessionId()).toBe("session-3");
   });
 
+  it("should follow the session id when the transport reconnects without republishing", async () => {
+    const ports = createDeviceOnboardingPorts();
+    await ports.openSession();
+
+    const transport = activeDeviceSessionSubject.value?.transport;
+    expect(transport?.sessionId).toBe("session-1");
+    if (!transport) return;
+    transport.sessionId = "session-after-reboot";
+
+    expect(activeDeviceSessionSubject.value?.sessionId).toBe("session-1");
+    expect(ports.currentSessionId()).toBe("session-after-reboot");
+  });
+
   it("should resume the machine from the live session after the transport is lost", async () => {
     const { result } = renderHook(() => useDeviceOnboarding());
 
