@@ -131,6 +131,7 @@ export type BridgeApi = {
     address: string,
   ) => Promise<Record<string, FamilyAccountShape>> | Record<string, FamilyAccountShape>;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
+  adaptOperations?: (address: string, operations: LiveOperation[]) => LiveOperation[];
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
   /**
    * When true, `signOperation` forwards the last estimation's `FeeEstimation.parameters` (carried on
@@ -197,4 +198,9 @@ export type BridgeApi = {
    * merge puts back the operations the shape left out.
    */
   shouldMergeOps?: boolean;
+  /**
+   * Added to `syncHash`: an account stored under another hash resyncs from scratch, replacing its
+   * operations. For a bridge whose operation ids differ from those another bridge stored.
+   */
+  syncVersion?: string;
 };

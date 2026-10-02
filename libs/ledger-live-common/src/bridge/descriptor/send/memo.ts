@@ -35,6 +35,7 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
     memo !== undefined
       ? { transferId: memo, memoType: "transferId", memoValue: memo }
       : { transferId: undefined, memoType: "transferId", memoValue: undefined },
+  hedera: memo => ({ memoType: "string", memoValue: memo }),
   xrp: memo => {
     if (typeof memo === "number") return { tag: memo };
     if (typeof memo === "string") return { tag: Number(memo) };

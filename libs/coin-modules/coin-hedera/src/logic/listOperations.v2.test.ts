@@ -51,6 +51,8 @@ jest.mock("./utils", () => ({
   extractFeesPayer: jest.fn(),
 }));
 
+const mockGetContractCallResult = jest.mocked(apiClient.getContractCallResult);
+
 describe("listOperationsV2", () => {
   const mockCurrency = getMockedCurrency();
   const mockConfig = getMockedConfig();
@@ -1612,7 +1614,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
     (hgraphClient.getERC20Transfers as jest.Mock).mockResolvedValue([mockERC20Transfer]);
-    (apiClient.getContractCallResult as jest.Mock).mockResolvedValue(mockContractCallResult);
+    mockGetContractCallResult.mockResolvedValue(mockContractCallResult);
     (hgraphClient.getLatestIndexedConsensusTimestamp as jest.Mock).mockResolvedValue(
       new BigNumber(sharedTimestamp),
     );

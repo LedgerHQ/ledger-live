@@ -3,9 +3,10 @@ import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import hederaBridge, {
+  adaptOperations,
   buildAccountShape,
   buildIntentData,
   computeIntentType,
@@ -243,6 +244,20 @@ describe("hedera bridge", () => {
         }),
       ).toEqual({ extra: { associatedTokenId: "0.0.1234567" } });
     });
+
+    it.each([
+      ["delegate", null, 3],
+      ["redelegate", 5, 3],
+      ["undelegate", 5, null],
+    ])("tags a %s with its previous and target nodes", (mode, previous, target) => {
+      const account = {
+        hederaResources: { delegation: previous === null ? null : { nodeId: previous } },
+      } as unknown as Account;
+
+      expect(describeOptimisticOperation(mode, account, { valId: "3" })).toEqual({
+        extra: { targetStakingNodeId: target, previousStakingNodeId: previous },
+      });
+    });
   });
 
   describe("buildAccountShape", () => {
@@ -302,7 +317,151 @@ describe("hedera bridge", () => {
     });
   });
 
+  describe("adaptOperations", () => {
+    const address = "0.0.1234";
+    const accountId = "js:2:hedera:0.0.1234:hederaBip44";
+    const tokenContract = "0.0.4794920";
+
+    function operation({
+      type,
+      hash,
+      fee,
+      feePayer,
+      token,
+    }: {
+      type: Operation["type"];
+      hash: string;
+      fee: number;
+      feePayer: string;
+      token?: boolean;
+    }): Operation {
+      return {
+        id: `${accountId}-${hash}-${type}`,
+        hash,
+        type,
+        value: new BigNumber(1),
+        fee: new BigNumber(fee),
+        senders: [address],
+        recipients: ["0.0.5678"],
+        blockHeight: 1,
+        blockHash: "block",
+        accountId,
+        date: new Date("2025-07-07T18:29:08.000Z"),
+        hasFailed: false,
+        extra: {
+          feePayer,
+          transactionId: "0.0.1234-1751912919-510086871",
+          ...(token && {
+            assetReference: tokenContract,
+            assetOwner: address,
+            assetAmount: "1",
+            ledgerOpType: type,
+          }),
+        },
+      };
+    }
+
+    it("adds a native FEES operation for a token transfer whose native operation carries no fee", () => {
+      const reward = operation({ type: "REWARD", hash: "tx1", fee: 0, feePayer: address });
+      const tokenTransfer = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 629386,
+        feePayer: address,
+        token: true,
+      });
+
+      expect(adaptOperations(address, [reward, tokenTransfer])).toEqual([
+        reward,
+        tokenTransfer,
+        {
+          ...tokenTransfer,
+          id: `${accountId}-tx1-FEES`,
+          type: "FEES",
+          value: new BigNumber(629386),
+          recipients: ["0.0.5678"],
+          extra: {
+            feePayer: address,
+            transactionId: "0.0.1234-1751912919-510086871",
+            ledgerOpType: "FEES",
+          },
+        },
+      ]);
+    });
+
+    it("adds nothing when another account paid the fee", () => {
+      const operations = [
+        operation({ type: "REWARD", hash: "tx1", fee: 0, feePayer: "0.0.5678" }),
+        operation({ type: "IN", hash: "tx1", fee: 629386, feePayer: "0.0.5678", token: true }),
+      ];
+
+      expect(adaptOperations(address, operations)).toEqual(operations);
+    });
+
+    it("adds nothing when a native operation already carries the fee", () => {
+      const operations = [
+        operation({ type: "OUT", hash: "tx1", fee: 629386, feePayer: address }),
+        operation({ type: "OUT", hash: "tx1", fee: 629386, feePayer: address, token: true }),
+      ];
+
+      expect(adaptOperations(address, operations)).toEqual(operations);
+    });
+
+    it("adds a native FEES operation sent to the token recipient for a token-only transaction", () => {
+      const tokenTransfer = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 629386,
+        feePayer: address,
+        token: true,
+      });
+
+      expect(adaptOperations(address, [tokenTransfer])).toEqual([
+        tokenTransfer,
+        {
+          ...tokenTransfer,
+          id: `${accountId}-tx1-FEES`,
+          type: "FEES",
+          value: new BigNumber(629386),
+          recipients: ["0.0.5678"],
+          extra: {
+            feePayer: address,
+            transactionId: "0.0.1234-1751912919-510086871",
+            ledgerOpType: "FEES",
+          },
+        },
+      ]);
+    });
+
+    it("adds nothing for a token-only transaction another account paid for", () => {
+      const operations = [
+        operation({ type: "IN", hash: "tx1", fee: 629386, feePayer: "0.0.5678", token: true }),
+      ];
+
+      expect(adaptOperations(address, operations)).toEqual(operations);
+    });
+
+    it("only adds the FEES operation to the transaction that needs it", () => {
+      const operations = [
+        operation({ type: "REWARD", hash: "tx1", fee: 0, feePayer: address }),
+        operation({ type: "OUT", hash: "tx1", fee: 629386, feePayer: address, token: true }),
+        operation({ type: "OUT", hash: "tx2", fee: 100, feePayer: address }),
+      ];
+
+      expect(adaptOperations(address, operations).map(op => op.id)).toEqual([
+        `${accountId}-tx1-REWARD`,
+        `${accountId}-tx1-OUT`,
+        `${accountId}-tx1-FEES`,
+        `${accountId}-tx2-OUT`,
+      ]);
+    });
+  });
+
   describe("bridge surface", () => {
+    it("adapts the synced operations", () => {
+      expect(hederaBridge(currency).adaptOperations).toBe(adaptOperations);
+    });
+
     it("leaves the operation list to the account shape", () => {
       expect(hederaBridge(currency).shouldMergeOps).toBe(false);
     });

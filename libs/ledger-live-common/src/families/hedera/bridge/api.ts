@@ -11,8 +11,11 @@ import type {
   FamilyAccountShape,
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { isStakingAccount, type Account } from "@ledgerhq/types-live";
+import { isStakingAccount, type Account, type Operation } from "@ledgerhq/types-live";
+import groupBy from "lodash/groupBy";
+import omit from "lodash/omit";
 import { getCurrencyConfiguration } from "../../../config";
 
 export async function getAddressesForPublicKey(
@@ -124,10 +127,79 @@ export function describeOptimisticOperation(
     return { extra: { associatedTokenId: transaction.assetReference } };
   }
 
+  if (mode === "delegate" || mode === "redelegate" || mode === "undelegate") {
+    const { hederaResources } = account as Account & { hederaResources?: HederaResources };
+    const { valId } = transaction;
+    return {
+      extra: {
+        targetStakingNodeId: mode !== "undelegate" && valId ? Number(valId) : null,
+        previousStakingNodeId: hederaResources?.delegation?.nodeId ?? null,
+      },
+    };
+  }
+
   if (mode !== "claimReward" || !isStakingAccount(account)) return undefined;
 
   const reward = account.stakingResources?.pendingRewardsBalance;
   return reward ? { value: reward } : undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function getOperationExtra(operation: Operation): Record<string, unknown> {
+  return isRecord(operation.extra) ? operation.extra : {};
+}
+
+function isTokenOperation(operation: Operation): boolean {
+  const { assetReference, assetOwner } = getOperationExtra(operation);
+  return (
+    (typeof assetReference === "string" && assetReference.length > 0) ||
+    (typeof assetOwner === "string" && assetOwner.length > 0)
+  );
+}
+
+function feesOperationForTokenTransfer(
+  address: string,
+  transactionOperations: Operation[],
+): Operation | undefined {
+  const tokenOperation = transactionOperations.find(isTokenOperation);
+  const nativeOperations = transactionOperations.filter(op => !isTokenOperation(op));
+  if (!tokenOperation) return undefined;
+  if (nativeOperations.some(op => !op.fee.isZero())) return undefined;
+
+  const tokenExtra = getOperationExtra(tokenOperation);
+  if (tokenExtra.feePayer !== address || tokenOperation.fee.isZero()) return undefined;
+
+  return {
+    ...tokenOperation,
+    id: encodeOperationId(tokenOperation.accountId, tokenOperation.hash, "FEES"),
+    type: "FEES",
+    value: tokenOperation.fee,
+    extra: {
+      ...omit(tokenExtra, [
+        "assetReference",
+        "assetOwner",
+        "assetAmount",
+        "assetSenders",
+        "assetRecipients",
+      ]),
+      ledgerOpType: "FEES",
+    },
+  };
+}
+
+export function adaptOperations(address: string, operations: Operation[]): Operation[] {
+  const operationsByHash = groupBy(operations, op => op.hash);
+
+  return operations.flatMap(op => {
+    const transactionOperations = operationsByHash[op.hash];
+    if (op !== transactionOperations.at(-1)) return [op];
+
+    const feesOperation = feesOperationForTokenTransfer(address, transactionOperations);
+    return feesOperation ? [op, feesOperation] : [op];
+  });
 }
 
 export default function hederaBridge(currency: CryptoCurrency): BridgeApi {
@@ -142,7 +214,10 @@ export default function hederaBridge(currency: CryptoCurrency): BridgeApi {
     computeIntentType,
     buildIntentData,
     describeOptimisticOperation,
+    adaptOperations,
     stakingSupported: true,
     shouldMergeOps: false,
+    // Legacy stores other operation ids, so each bridge flag flip must resync from scratch.
+    syncVersion: "1",
   };
 }
