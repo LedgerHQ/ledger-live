@@ -320,6 +320,19 @@ describe("usePerpsDepositExecution", () => {
     expect(mockExecuteSwap).not.toHaveBeenCalled();
   });
 
+  it("sends the holder back on retry when a shortfall carries its own message", async () => {
+    // executeSwap moves the original name to the title, so the custom text is all the message holds.
+    const custom = new NotEnoughBalance("Insufficient balance");
+    const shortfall = new CompleteExchangeError("INIT", custom.name, custom.message);
+    const { result, onNotEnoughBalance } = await signWith({ transactionSignError: shortfall });
+    mockExecuteSwap.mockClear();
+
+    act(() => result.current.retry());
+
+    expect(onNotEnoughBalance).toHaveBeenCalledTimes(1);
+    expect(mockExecuteSwap).not.toHaveBeenCalled();
+  });
+
   it("re-runs the deposit on retry after any other failure", async () => {
     const { result, onNotEnoughBalance } = await signWith({
       transactionSignError: new Error("signature failed"),

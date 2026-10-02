@@ -14,6 +14,13 @@ describe("isNotEnoughBalance", () => {
     expect(isNotEnoughBalance(error)).toBe(true);
   });
 
+  it("recognises a shortfall wrapped by executeSwap, which keeps the name as the title", () => {
+    const bridgeError = new NotEnoughBalance("Insufficient balance");
+    const error = new CompleteExchangeError("INIT", bridgeError.name, bridgeError.message);
+
+    expect(isNotEnoughBalance(error)).toBe(true);
+  });
+
   it("recognises a shortfall wrapped by the Exchange app, which keeps only the message", () => {
     const bridgeError = new NotEnoughBalance();
     const error = new CompleteExchangeError("INIT", "amount", bridgeError.message);
