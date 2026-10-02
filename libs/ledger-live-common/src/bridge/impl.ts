@@ -18,10 +18,7 @@ import {
 } from "@ledgerhq/types-live";
 import { getCoinFrameworkAccountBridge } from "./generic-coin-framework/accountBridge";
 import { getCoinFrameworkCurrencyBridge } from "./generic-coin-framework/currencyBridge";
-import {
-  isGenericBridgeFlagEnabled,
-  isGenericCoinFrameworkFamily,
-} from "./generic-coin-framework/genericCoinFrameworkFamilies";
+import { isGenericCoinFrameworkFamily } from "./generic-coin-framework/genericCoinFrameworkFamilies";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import {
   loadSetupForFamily,
@@ -30,6 +27,7 @@ import {
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 import { resolveFamily } from "./zcashRouting";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { log } from "@ledgerhq/logs";
 import { throwError } from "rxjs";
@@ -48,8 +46,15 @@ import {
 // Rejections stay cached: evicting would hand React.use() a fresh Promise per render and re-suspend forever.
 // Callers that want to retry a transient failure must invalidate via clearBridgeCache(family).
 
+// config_casper_generic_bridge=false falls back to the legacy bridge for incident recovery (takes effect after app restart or clearBridgeCache("casper")).
+// Casper shipped on the old bridge before LIVE-35912; seedIdentifier format changed
+// (raw pubkey → tagged address). sameAccountIdentity's freshAddress fallback handles
+// re-scans, but id-keyed settings (account name, etc.) reset on the first rescan.
 function shouldUseGenericCoinFrameworkBridge(family: string) {
-  return isGenericCoinFrameworkFamily(family) && isGenericBridgeFlagEnabled(family);
+  return (
+    isGenericCoinFrameworkFamily(family) &&
+    (family !== "casper" || LiveConfig.getValueByKey("config_casper_generic_bridge"))
+  );
 }
 
 const currencyBridgePromiseCache: Record<string, Promise<CurrencyBridge>> = {};
