@@ -33,14 +33,17 @@ import logReport from "~/log-report";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 import { ptxHandoffStore } from "~/e2e/ptxHandoffStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
-import { getAllEnvs, setEnv } from "@shared/env";
+import { getAllEnvs, getEnv, setEnv } from "@shared/env";
 import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
 import {
   buildSpeculosLegacyDeviceId,
+  getMockScriptRunnerBaseUrl,
   isSpeculosLegacyDeviceId,
+  mockserverIdentifier,
+  setMockServerSessionToken,
   speculosIdentifier,
   speculosTargetSubject,
 } from "@ledgerhq/live-dmk-mobile";
@@ -87,7 +90,40 @@ function overrideLedgerSyncEnvironment() {
   );
 }
 
+function applyMockServerLaunchArgs() {
+  const args = LaunchArguments.value();
+  const token = args["mockServerToken"];
+  const model = args["mockServerModel"];
+  if (typeof token !== "string" || !token || typeof model !== "string" || !model) return;
+
+  setEnv("MOCK_SERVER_TRANSPORT", true);
+  const provider = args["forceProvider"];
+  if (typeof provider === "string" && provider && !Number.isNaN(Number(provider))) {
+    setEnv("FORCE_PROVIDER", Number(provider));
+  }
+  const url = args["mockServerUrl"];
+  if (typeof url === "string" && url) {
+    setEnv("MOCK_SERVER_TRANSPORT_URL", url);
+  }
+
+  setMockServerSessionToken(token);
+  const scriptRunnerUrl = getMockScriptRunnerBaseUrl(getEnv("MOCK_SERVER_TRANSPORT_URL"), token);
+  if (scriptRunnerUrl) {
+    setEnv("BASE_SOCKET_URL", scriptRunnerUrl);
+  }
+
+  store.dispatch(
+    addKnownDevice({
+      transport: mockserverIdentifier,
+      id: "",
+      name: null,
+      deviceModelId: model as DeviceModelId,
+    }),
+  );
+}
+
 export function init() {
+  applyMockServerLaunchArgs();
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
   const mock = LaunchArguments.value()["mock"];
   const disable_broadcast = LaunchArguments.value()["disable_broadcast"];

@@ -7,6 +7,8 @@ export { type HIDDiscoveredDevice } from "./HIDDiscoveredDevice";
 export { filterScannedDevice } from "./filterScannedDevice";
 export {
   getDeviceManagementKit,
+  getMockScriptRunnerBaseUrl,
+  setMockServerSessionToken,
   DeviceManagementKitProvider,
   useDeviceManagementKit,
 } from "./useDeviceManagementKit";

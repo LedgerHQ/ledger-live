@@ -66,6 +66,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*global.api.prd.ledger.com/cal.*",
     ".*127.0.0.1.*",
     ".*speculos.*ldg-tech.com.*",
+    ".*device-mock-server.*",
     ".*optimism.*",
     ".*speculos.ledgerlabs.net.*",
   ];
@@ -81,6 +82,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
   const port = await findFreePort();
   closeBridge();
   initBridge(port);
+  const { launchArgs: extraLaunchArgs, ...restConfig } = customConfig;
   await device.launchApp({
     launchArgs: {
       wsPort: port,
@@ -90,6 +92,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
       ...cardSession,
+      ...extraLaunchArgs,
     },
     languageAndLocale: {
       language: "en-US",
@@ -98,7 +101,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
     permissions: {
       camera: "YES",
     },
-    ...customConfig,
+    ...restConfig,
   });
   return port;
 }

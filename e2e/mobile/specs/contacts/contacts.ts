@@ -1,15 +1,25 @@
 import {
   CONTACT_ADDRESS_DATASET,
+  CONTACTS_ETHEREUM_APP_VERSION,
   CONTACTS_OS_VERSION_BY_MODEL,
   SEEDED_CONTACT_NAMES,
   createSeededContactGroups,
   generateContactName,
 } from "@ledgerhq/live-e2e-shared/contacts";
+import { deviceUnderTest } from "@ledgerhq/live-e2e-shared/mockServer/devices";
+import { withInstallHashes } from "@ledgerhq/live-e2e-shared/mockServer/installedApps";
+import {
+  disposeMockServerSession,
+  provisionMockServerSession,
+} from "@ledgerhq/live-e2e-shared/mockServer/session";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
+import { device } from "detox";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
+import { describeIfNotNanoS, launchApp } from "@e2e/helpers/commonHelpers";
+import { MockServerDevicePage } from "@e2e/page/mockServerDevice.page";
+import { deleteSpeculos } from "@e2e/utils/speculosUtils";
 import {
   LEDGER_SYNC_FEATURE_FLAGS,
   cleanupLedgerSyncAfterAll,
@@ -186,8 +196,128 @@ export function runBrowseAndSearchContactsTest(tmsLinks: string[], tags: string[
   });
 }
 
-// Rename returns the device to the dashboard and ends this Speculos session.
-// Covered by renameContactIntent unit tests.
+// On-device rename leaves the Ethereum app for the dashboard, which ends a Speculos session.
+const CONTACTS_APP_CATALOG_PROVIDER = 4;
+const REGISTER_DEVICE_PROMPT_ID = "contacts-register-external-address-continue-on-device";
+const RENAME_DEVICE_PROMPT_ID = "contacts-rename-contact-continue-on-device";
+
+export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[]) {
+  describeIfContactsDeviceSupported("Contacts - rename with an address (mock server)", () => {
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
+
+    let mockServer: MockServerDevicePage | undefined;
+    let session: { baseUrl: string; token: string } | undefined;
+
+    beforeAll(async () => {
+      const ethereumAddress = CONTACT_ADDRESS_DATASET.find(
+        row => row.networkId === "ethereum" && !row.isEns,
+      );
+      const contactsOsVersion = CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()];
+      if (!contactsOsVersion || !ethereumAddress) {
+        throw new Error("contacts rename mock server spec ran without a supported device");
+      }
+
+      const deviceConfig = deviceUnderTest();
+      const apps = (
+        await withInstallHashes(
+          deviceConfig.modelId,
+          [{ name: AppInfos.ETHEREUM.name, version: CONTACTS_ETHEREUM_APP_VERSION }],
+          { firmware: contactsOsVersion, provider: CONTACTS_APP_CATALOG_PROVIDER },
+        )
+      ).map(appVersion => {
+        if (!appVersion.version) throw new Error(`App "${appVersion.name}" has no version`);
+        return { name: appVersion.name, version: appVersion.version, hash: appVersion.hash };
+      });
+      const { modelId, ...config } = {
+        ...deviceConfig,
+        firmware_version: contactsOsVersion,
+        apps,
+      };
+      session = await provisionMockServerSession([config]);
+      mockServer = new MockServerDevicePage(session.baseUrl, session.token);
+
+      const port = await launchApp({
+        newInstance: true,
+        launchArgs: {
+          mockServerToken: session.token,
+          mockServerModel: modelId,
+          forceProvider: String(CONTACTS_APP_CATALOG_PROVIDER),
+          ...(process.env.MOCK_SERVER_TRANSPORT_URL
+            ? { mockServerUrl: process.env.MOCK_SERVER_TRANSPORT_URL }
+            : {}),
+        },
+      });
+      await device.reverseTcpPort(port);
+      await verifyLedgerSyncEnvironment();
+
+      const trustchainCommands = [
+        ...app.ledgerSync.initializeEmptyTrustchain(),
+        (userdataPath?: string) => app.ledgerSync.saveTrustchainToUserdata(userdataPath),
+      ];
+      await app.init({
+        userdata: CONTACTS_USERDATA,
+        featureFlags: CONTACTS_FEATURE_FLAGS,
+        cliCommands: [],
+        cliCommandsOnApp: trustchainCommands.map(cmd => ({ app: AppInfos.LS, cmd })),
+      });
+      await deleteSpeculos();
+      await app.mainNavigation.waitForWallet40Ready();
+    });
+
+    afterAll(async () => {
+      if (!session) return;
+      try {
+        await disposeMockServerSession(session.baseUrl, session.token);
+      } catch {
+        // The session expires on its own. A failed dispose must not hide the spec result.
+      }
+    });
+
+    setTeamOwner(Team.WALLET_XP);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+
+    it("Register an address and rename the contact on the device", async () => {
+      const ethereumAddress = CONTACT_ADDRESS_DATASET.find(
+        row => row.networkId === "ethereum" && !row.isEns,
+      );
+      if (!ethereumAddress || !mockServer) {
+        throw new Error("contacts rename mock server spec ran without a session");
+      }
+
+      await app.mainNavigation.openMyWallet();
+      await app.myWallet.openContacts();
+      await app.contacts.addContact(CONTACT_NAME);
+      await app.contacts.expectSavedContactDisplayed(CONTACT_NAME);
+
+      const contactRowId = await app.contacts.getSavedContactRowId(CONTACT_NAME);
+      await app.contacts.openSavedContact(contactRowId);
+      await app.contacts.detail.expectName(CONTACT_NAME);
+      await app.contacts.detail.expectNoAddresses();
+
+      await app.contacts.detail.addAddress(ethereumAddress);
+      await mockServer.confirmDeviceIntent(REGISTER_DEVICE_PROMPT_ID);
+      await app.contacts.detail.expectAddressSaved(
+        ethereumAddress.savedValue,
+        ethereumAddress.networkId,
+      );
+
+      await mockServer.mockDashboardRename();
+      await app.contacts.detail.renameContact(RENAMED_CONTACT_NAME);
+      await mockServer.confirmDeviceIntent(RENAME_DEVICE_PROMPT_ID);
+      await app.contacts.detail.expectName(RENAMED_CONTACT_NAME);
+
+      await app.common.goToPreviousPage();
+      await app.contacts.expectScreenVisible();
+      await app.contacts.deleteContact(contactRowId);
+      await app.contacts.expectScreenVisible();
+      await app.contacts.expectSavedContactRemoved(contactRowId);
+      await app.contacts.expectEmptyState();
+    });
+  });
+}
+
 export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags: string[]) {
   describeIfContactsDeviceSupported("Contacts", () => {
     setupLedgerSyncSeed();

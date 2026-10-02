@@ -7,10 +7,12 @@ import {
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { getEnv } from "@shared/env";
 import type { Observable } from "rxjs";
 
 import type { MobileDiscoveryError } from "../deviceConnectivity/types";
 import type { MobileConnectDeviceUIState } from "./types";
+import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource";
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
@@ -34,6 +36,10 @@ export function connectDevice(input: ConnectDeviceInput): Observable<MobileConne
   discoverySources.set(rnHidSource.transportId, rnHidSource);
   discoverySources.set(rnBleSource.transportId, rnBleSource);
   discoverySources.set(speculosSource.transportId, speculosSource);
+  if (getEnv("MOCK_SERVER_TRANSPORT")) {
+    const mockServerSource = new MockServerDeviceDiscoverySource(input.dmk);
+    discoverySources.set(mockServerSource.transportId, mockServerSource);
+  }
 
   return connectDeviceUseCase({
     ...input,
