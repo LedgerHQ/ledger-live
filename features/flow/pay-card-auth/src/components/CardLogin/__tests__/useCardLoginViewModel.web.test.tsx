@@ -386,12 +386,11 @@ describe("useCardLoginViewModel intro", () => {
     expect(result.current?.intro.rows[1].description).toBe(description);
   });
 
-  it("offers two actions, the base one first", async () => {
+  it("offers only the create account action on desktop", async () => {
     const { result } = await renderIdleLogin(store);
 
     expect(result.current?.intro.actions).toEqual([
       { id: "createAccount", label: "Create an account", appearance: "base" },
-      { id: "logIn", label: "Log in to Monavate", appearance: "gray" },
     ]);
   });
 

@@ -61,11 +61,11 @@ export function CardLoginIntroView({
       />
       <DialogContent
         aria-describedby={undefined}
-        className="max-h-[90vh] p-0"
+        className="max-h-[90vh]"
         data-testid="pay-card-login-intro-dialog"
       >
         <DialogHeader density="compact" onClose={handleClose} />
-        <DialogBody className="flex min-h-0 flex-1 flex-col gap-16 overflow-hidden px-16 pb-24">
+        <DialogBody className="flex min-h-0 flex-1 flex-col gap-16 overflow-hidden">
           <div
             className="scrollbar-none flex min-h-0 flex-1 flex-col gap-16 overflow-y-auto"
             data-testid="pay-card-login-intro-content"

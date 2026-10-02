@@ -13,6 +13,7 @@ import { selectPayCardHasSeenLoginIntro } from "../../state/loginIntroSelectors"
 import { selectIsSignedIn } from "../../state/selectors";
 import { setPendingLoginType, setSessionResolving } from "../../state/slice";
 import { CARD_LOGIN_INTRO_FLOW, CARD_LOGIN_INTRO_PAGE } from "./analytics";
+import { INTRO_ACTIONS } from "./introActions";
 import type {
   CardAuthErrorCopy,
   CardLoginCopy,
@@ -51,11 +52,6 @@ const SESSION_RESOLVING_STATES: ReadonlySet<CardLoginStateValue> = new Set([
   "authenticated",
   "fetchingUser",
 ]);
-
-const INTRO_ACTIONS: readonly { id: CardLoginIntroActionId; appearance: "base" | "gray" }[] = [
-  { id: "createAccount", appearance: "base" },
-  { id: "logIn", appearance: "gray" },
-];
 
 const TRACK_BUTTON = {
   getCard: "get card",
