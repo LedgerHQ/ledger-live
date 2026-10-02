@@ -11,6 +11,9 @@ export function CardLogin({
   callback,
   openHostedLogin,
   openHostedPage,
+  keepLoginPage,
+  onCreateAccount,
+  onLogIn,
 }: CardLoginProps) {
   const login = useCardLoginViewModel({
     openHostedLogin: openHostedLogin ?? openHostedLoginInBrowser,
@@ -18,6 +21,9 @@ export function CardLogin({
     mobileWallet,
     oauthConfig,
     callback,
+    keepLoginPage,
+    onCreateAccount,
+    onLogIn,
   });
 
   return (
