@@ -16,6 +16,7 @@ import {
 import { broadcastLogger } from "~/datadog";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendSignature } from "../../../context/SendSignatureContext";
+import { useSignatureTracking } from "./useSignatureTracking";
 import { signTransactionIntentLWMDefinition } from "../intents/signTransactionIntent/intentLWMDefinition";
 
 function normalizeError(error: unknown): Error {
@@ -27,6 +28,7 @@ export function useSignatureViewModel() {
   const { state } = useSendFlowData();
   const { finishSigning, stopSigning } = useSendSignature();
   const reduxDispatch = useDispatch();
+  const { trackDeviceConfirmation, trackSignatureError } = useSignatureTracking();
 
   const { account, parentAccount, currency } = state.account;
   const transaction = state.transaction.transaction;
@@ -134,6 +136,7 @@ export function useSignatureViewModel() {
       if (jobState.type === "signed") {
         isSigningCompletedRef.current = true;
         setIsSigningCompleted(true);
+        trackDeviceConfirmation();
         onDeviceActionResult({
           signedOperation: jobState.signedOperation,
           // Legacy SignatureDeviceActionResult shape; useSendFlowSignatureCore ignores device.
@@ -147,14 +150,14 @@ export function useSignatureViewModel() {
         setIsSigningCompleted(false);
       }
     },
-    [onDeviceActionResult],
+    [onDeviceActionResult, trackDeviceConfirmation],
   );
 
   // On a signing failure the executor keeps the sheet open and renders its native
   // IntentError screen (Retry / Close). We deliberately do not navigate away here so
   // the user stays on the sheet, as opposed to the success path which broadcasts and
   // moves to the confirmation screen.
-  const onIntentJobError = useCallback(() => {}, []);
+  const onIntentJobError = trackSignatureError;
 
   // Explicit dismiss of the sheet (close button / backdrop) closes the overlay and leaves the user
   // on the underlying review screen.

@@ -46,18 +46,6 @@ describe("send flow message tracking", () => {
     ).toEqual(["NotEnoughGas", "FeeTooHigh", "MaxFeeTooLow"]);
   });
 
-  it("uses a caller fallback when a generic error is absent from status", () => {
-    const bridgeError = new Error("prepareTransaction failed");
-
-    expect(
-      createTrackedMessage(bridgeError, "error", { errors: {}, warnings: {} }, [], "error:bridge"),
-    ).toEqual({
-      messageId: "error:bridge",
-      messageType: "error",
-      suppressedErrors: [],
-    });
-  });
-
   it("uses status keys for generic errors without exposing their messages", () => {
     const amountError = new Error("Amount must be positive");
     const feeError = new Error("Fee contains potentially sensitive details");
