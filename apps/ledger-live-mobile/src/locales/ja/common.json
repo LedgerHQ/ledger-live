@@ -10789,6 +10789,8 @@
   },
   "payTab" : {
     "disclaimer" : "Monavate Onchain提供",
+    "cardDisclaimer" : "暗号資産カードをお探しですか？",
+    "cardDisclaimerLink" : "CLカードに移動する",
     "featureTour" : {
       "title" : "すべての支払いを一箇所で管理",
       "description" : "新しい「支払い」タブが登場。日常のお金を使う様々な場面で、暗号資産を利用できるようになります。",
@@ -11083,9 +11085,9 @@
     },
     "cardLoginIntro" : {
       "title" : "暗号資産で支払って、キャッシュバック！",
-      "providedBy" : "Baanx提供のカード",
+      "providedBy" : "Monavate提供のカード",
       "createAccount" : "アカウントを作成",
-      "logIn" : "Baanxにログイン",
+      "logIn" : "Monavateにログイン",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -11110,6 +11112,7 @@
       "title" : "支払う",
       "pay" : "新着",
       "seeAllTitle" : "連絡先に支払う",
+      "me" : "自分",
       "addressPicker" : {
         "title" : "{{name}}のアドレスを選択",
         "meTitle" : "自分のアドレスを選択",
