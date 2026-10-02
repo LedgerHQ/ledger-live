@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react-native";
-import { track } from "~/analytics";
+import { track } from "@shared/analytics";
 import { useAmountScreen } from "../useAmountScreen";
 
 const mockStartSigning = jest.fn();
@@ -8,8 +8,8 @@ let mockReviewReady: boolean;
 jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: jest.fn() }),
 }));
-jest.mock("~/analytics", () => ({
-  screen: jest.fn(),
+jest.mock("@shared/analytics", () => ({
+  trackPage: jest.fn(),
   track: jest.fn(),
 }));
 jest.mock("../../../../context/SendFlowContext", () => ({
