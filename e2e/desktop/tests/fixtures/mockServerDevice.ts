@@ -14,6 +14,8 @@ const SESSION_TOKEN_TIMEOUT_MS = 30_000;
 type MockServerFixtures = {
   mockDevice: MockDevice;
   mockDeviceParams: Partial<MockDevice>;
+  /** Manager catalog provider used to resolve install hashes and `FORCE_PROVIDER`. */
+  catalogProvider: number;
   mockServer: MockServerDevicePage;
 };
 
@@ -24,6 +26,7 @@ type MockServerFixtures = {
  */
 export const test = base.extend<MockServerFixtures>({
   mockDeviceParams: [{}, { option: true }],
+  catalogProvider: [1, { option: true }],
 
   mockDevice: async ({ mockDeviceParams }, use) => {
     await use({ ...deviceUnderTest(), ...mockDeviceParams });
@@ -40,18 +43,35 @@ export const test = base.extend<MockServerFixtures>({
     await use(new MockServerDevicePage(mockServerBaseUrl(), token));
   },
 
-  env: async ({ mockDevice }, use) => {
+  env: async ({ mockDevice, catalogProvider }, use) => {
     await assertMockServerReachable();
 
     // `apps` entries that do not pin a hash get one looked up for the device under test,
     // so a seeded session still follows SPECULOS_DEVICE.
     const devices = [
       mockDevice.apps?.length
-        ? { ...mockDevice, apps: await withInstallHashes(mockDevice.modelId, mockDevice.apps) }
+        ? {
+            ...mockDevice,
+            apps: await withInstallHashes(
+              mockDevice.modelId,
+              mockDevice.apps,
+              catalogProvider === 1
+                ? undefined
+                : { firmware: mockDevice.firmware_version, provider: catalogProvider },
+            ),
+          }
         : mockDevice,
     ];
 
-    await use(await mockServerEnv({ devices }));
+    const launchEnv = await mockServerEnv({ devices });
+    if (catalogProvider !== 1) {
+      launchEnv.FORCE_PROVIDER = String(catalogProvider);
+    }
+    // Setup-only Speculos is already stopped. Leaving its port set makes discovery
+    // probe that emulator while the test is talking to the mock server.
+    launchEnv.SPECULOS_API_PORT = "";
+    launchEnv.SPECULOS_ADDRESS = "";
+    await use(launchEnv);
   },
 });
 

@@ -23,6 +23,7 @@ import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
+import { seedMockServerKnownDevice } from "~/renderer/reducers/knownDevices";
 import { getMockServerSessionToken } from "@ledgerhq/live-dmk-desktop";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
@@ -375,8 +376,10 @@ async function init() {
     store.dispatch(restorePayCardOnboardingWidget(payCardState));
   }
 
-  // Seed the mock server session/device before the DMK is built (if enabled).
-  await bootstrapMockServerTransport();
+  // Seed the mock server session before the DMK is built, then record the device.
+  // Settings hydration has already run, so the known device cannot be seeded there.
+  const mockServerDevice = await bootstrapMockServerTransport();
+  if (mockServerDevice) store.dispatch(seedMockServerKnownDevice(mockServerDevice));
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 

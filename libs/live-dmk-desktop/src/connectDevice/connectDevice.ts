@@ -9,6 +9,7 @@ import {
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Observable } from "rxjs";
 
+import { MockServerDeviceDiscoverySource } from "./discoveryService/sources/MockServerDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "./discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { WebHidDeviceDiscoverySource } from "./discoveryService/sources/WebHidDeviceDiscoverySource";
 import { type DesktopConnectDeviceUIState, type DesktopDiscoveryError } from "./types";
@@ -19,6 +20,7 @@ export type ConnectDeviceInput = {
   acceptedDeviceModelIds?: Array<DeviceModelId>;
   dmk: DeviceManagementKit;
   onConnected: (result: DeviceConnectionResult) => void;
+  mockServerTransportEnabled?: boolean;
 };
 
 export function connectDevice(input: ConnectDeviceInput): Observable<DesktopConnectDeviceUIState> {
@@ -30,6 +32,10 @@ export function connectDevice(input: ConnectDeviceInput): Observable<DesktopConn
   > = new Map();
   discoverySources.set(webHidSource.transportId, webHidSource);
   discoverySources.set(speculosSource.transportId, speculosSource);
+  if (input.mockServerTransportEnabled) {
+    const mockServerSource = new MockServerDeviceDiscoverySource(input.dmk);
+    discoverySources.set(mockServerSource.transportId, mockServerSource);
+  }
 
   return connectDeviceUseCase({
     ...input,

@@ -27,4 +27,5 @@ export type {
 export type { DisplayedDevice } from "@ledgerhq/live-dmk-shared";
 export { connectDevice, type ConnectDeviceInput } from "./connectDevice/connectDevice";
 export { webHidIdentifier as webHidTransportIdentifier } from "@ledgerhq/device-transport-kit-web-hid";
+export { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 export type { DmkError } from "@ledgerhq/device-management-kit";

@@ -1,15 +1,17 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
-import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import { mockserverIdentifier, webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import type { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import reducer, {
   INITIAL_STATE,
+  seedMockServerKnownDevice,
   importKnownDevices,
   knownDevicesSelector,
   knownDevicesStoreSelector,
   mapKnownDeviceToPersistedKnownDevice,
   mapPersistedKnownDeviceToKnownDevice,
+  mockServerKnownDevice,
   type KnownDevicesState,
   type PersistedKnownDevice,
 } from "./knownDevices";
@@ -59,6 +61,36 @@ function withSpeculosEnv(device: string, run: () => void) {
 describe("knownDevices reducer", () => {
   it("starts empty", () => {
     expect(reducer(undefined, { type: "@@INIT" })).toEqual(INITIAL_STATE);
+  });
+
+  describe("mock server device", () => {
+    it("maps the mock server Nano Gen5 type apexp to the apex model", () => {
+      expect(mockServerKnownDevice("apexp")).toEqual({
+        transport: mockserverIdentifier,
+        deviceModelId: DeviceModelId.apex,
+        id: "",
+        name: null,
+      });
+    });
+
+    it("replaces previously seeded devices with the mock server device", () => {
+      const seeded = reducer(
+        INITIAL_STATE,
+        fetchSettings({
+          lastSeenDevice: makeLastSeenDevice(DeviceModelId.stax),
+          lastOnboardedDevice: null,
+        }),
+      );
+      const state = reducer(seeded, seedMockServerKnownDevice(mockServerKnownDevice("nanoX")));
+      expect(state.knownDevices).toEqual([
+        {
+          transport: mockserverIdentifier,
+          deviceModelId: DeviceModelId.nanoX,
+          id: "",
+          name: null,
+        },
+      ]);
+    });
   });
 
   describe("migration on settings fetch", () => {
