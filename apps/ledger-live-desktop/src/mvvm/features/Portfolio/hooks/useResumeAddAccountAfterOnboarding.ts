@@ -2,10 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
-import {
-  setShouldResumeAddAccountAfterOnboarding,
-  shouldResumeAddAccountAfterOnboardingSelector,
-} from "~/renderer/reducers/onboarding";
+import { addAccountResumed, addAccountToResumeSelector } from "~/renderer/reducers/onboarding";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { useShouldRedirect } from "~/renderer/hooks/useAutoRedirectToPostOnboarding/useShouldRedirect";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -16,7 +13,7 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
  */
 export const useResumeAddAccountAfterOnboarding = (): void => {
   const dispatch = useDispatch();
-  const shouldResumeAddAccount = useSelector(shouldResumeAddAccountAfterOnboardingSelector);
+  const shouldResumeAddAccount = useSelector(addAccountToResumeSelector) !== null;
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { shouldRedirectToRecoverUpsell, shouldRedirectToPostOnboarding } = useShouldRedirect();
   const { openAssetFlow } = useOpenAssetFlow(
@@ -33,7 +30,7 @@ export const useResumeAddAccountAfterOnboarding = (): void => {
     ) {
       return;
     }
-    dispatch(setShouldResumeAddAccountAfterOnboarding(false));
+    dispatch(addAccountResumed());
     setOriginFlow(HOOKS_TRACKING_LOCATIONS.addAccountModal);
     openAssetFlow();
   }, [

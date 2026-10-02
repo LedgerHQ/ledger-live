@@ -3,7 +3,17 @@ import useBuyDeviceViewModel from "../useBuyDeviceViewModel";
 import * as originFlow from "~/renderer/analytics/originFlow";
 import { track } from "@shared/analytics";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { shouldResumeAddAccountAfterOnboardingSelector } from "~/renderer/reducers/onboarding";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { addAccountToResumeSelector } from "~/renderer/reducers/onboarding";
+
+// An Add Account flow was started on the portfolio before the Buy Device dialog showed.
+const addAccountStarted = {
+  addAccountResume: {
+    returnTo: "/",
+    currency: getCryptoCurrencyById("bitcoin"),
+    awaitingOnboarding: false,
+  },
+};
 
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),
@@ -46,6 +56,7 @@ describe("useBuyDeviceViewModel", () => {
       initialState: {
         dialogs: { BUY_DEVICE: true },
         settings: { lastOnboardedDevice: null },
+        onboarding: addAccountStarted,
       },
     });
 
@@ -53,7 +64,7 @@ describe("useBuyDeviceViewModel", () => {
       result.current.handleConnect();
     });
 
-    expect(shouldResumeAddAccountAfterOnboardingSelector(store.getState())).toBe(true);
+    expect(addAccountToResumeSelector(store.getState())).not.toBeNull();
   });
 
   it("does not flag a resume when Connect comes from another flow", () => {
@@ -63,6 +74,7 @@ describe("useBuyDeviceViewModel", () => {
       initialState: {
         dialogs: { BUY_DEVICE: true },
         settings: { lastOnboardedDevice: null },
+        onboarding: addAccountStarted,
       },
     });
 
@@ -70,6 +82,6 @@ describe("useBuyDeviceViewModel", () => {
       result.current.handleConnect();
     });
 
-    expect(shouldResumeAddAccountAfterOnboardingSelector(store.getState())).toBe(false);
+    expect(addAccountToResumeSelector(store.getState())).toBeNull();
   });
 });

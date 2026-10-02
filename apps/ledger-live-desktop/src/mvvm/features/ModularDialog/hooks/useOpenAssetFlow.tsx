@@ -4,11 +4,13 @@ import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AssetCategory } from "@domain/api-aggregated-assets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams } from "@ledgerhq/live-common/modularDrawer/types/visibility";
+import { useLocation } from "react-router";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { getCurrentTrackingPage } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData, ModalData } from "~/renderer/modals/types";
+import { addAccountStarted } from "~/renderer/reducers/onboarding";
 import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
 import { CloseButton } from "../components/CloseButton";
@@ -52,6 +54,7 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
   extraModalData?: Omit<NonNullable<GlobalModalData[Name]>, "account" | "parentAccount">,
 ) {
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
   const { trackModularDialogEvent } = useModularDialogAnalytics();
 
   const handleClose = useCallback(() => {
@@ -70,6 +73,7 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
       dispatch(closeDialog());
       dispatch(setFlowValue("add account"));
       dispatch(setSourceValue(source));
+      dispatch(addAccountStarted({ returnTo: pathname, currency }));
 
       const onClose = () => {
         setDrawer();
@@ -103,7 +107,7 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
         { closeButtonComponent: CloseButton, onRequestClose: onClose },
       );
     },
-    [dispatch, extraModalData, modalNameToReopen, source, trackModularDialogEvent],
+    [dispatch, extraModalData, modalNameToReopen, pathname, source, trackModularDialogEvent],
   );
 
   const openAssetFlow = useCallback(

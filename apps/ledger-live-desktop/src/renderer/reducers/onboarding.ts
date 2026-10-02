@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { State } from ".";
 
 interface SyncFlowState {
@@ -9,8 +10,15 @@ export interface OnboardingState {
   isOnboardingReceiveFlow: boolean;
   isOnboardingReceiveSuccess: boolean;
   isSkipDrawerOpen: boolean;
-  shouldResumeAddAccountAfterOnboarding: boolean;
+  addAccountResume: AddAccountResume | null;
 }
+
+/** The last Add Account flow: where it started and its asset, to resume it there after onboarding. */
+export type AddAccountResume = {
+  returnTo: string;
+  currency: CryptoOrTokenCurrency;
+  awaitingOnboarding: boolean;
+};
 
 /*
  * We have separate states for checking if is onboarding flow
@@ -21,7 +29,7 @@ const initialState: OnboardingState = {
   isOnboardingReceiveFlow: false,
   isOnboardingReceiveSuccess: false,
   isSkipDrawerOpen: false,
-  shouldResumeAddAccountAfterOnboarding: false,
+  addAccountResume: null,
 };
 
 const onboardingSlice = createSlice({
@@ -41,8 +49,17 @@ const onboardingSlice = createSlice({
     setSkipDrawerVisibility: (state, action: PayloadAction<boolean>) => {
       state.isSkipDrawerOpen = action.payload;
     },
-    setShouldResumeAddAccountAfterOnboarding: (state, action: PayloadAction<boolean>) => {
-      state.shouldResumeAddAccountAfterOnboarding = action.payload;
+    addAccountStarted: (
+      state,
+      action: PayloadAction<Pick<AddAccountResume, "returnTo" | "currency">>,
+    ) => {
+      state.addAccountResume = { ...action.payload, awaitingOnboarding: false };
+    },
+    addAccountSentToOnboarding: state => {
+      if (state.addAccountResume) state.addAccountResume.awaitingOnboarding = true;
+    },
+    addAccountResumed: state => {
+      state.addAccountResume = null;
     },
   },
 });
@@ -57,14 +74,17 @@ export const onboardingReceiveFlowSelector = (state: State) =>
   state.onboarding.isOnboardingReceiveFlow;
 export const onboardingReceiveSuccessSelector = (state: State) =>
   state.onboarding.isOnboardingReceiveSuccess;
-export const shouldResumeAddAccountAfterOnboardingSelector = (state: State) =>
-  state.onboarding.shouldResumeAddAccountAfterOnboarding;
+/** The Add Account flow interrupted by device onboarding, waiting to resume, if any. */
+export const addAccountToResumeSelector = (state: State) =>
+  state.onboarding.addAccountResume?.awaitingOnboarding ? state.onboarding.addAccountResume : null;
 
 export const {
   setIsOnboardingReceiveFlow,
   setOnboardingSyncFlow,
   setSkipDrawerVisibility,
-  setShouldResumeAddAccountAfterOnboarding,
+  addAccountStarted,
+  addAccountSentToOnboarding,
+  addAccountResumed,
 } = onboardingSlice.actions;
 
 export default onboardingSlice.reducer;

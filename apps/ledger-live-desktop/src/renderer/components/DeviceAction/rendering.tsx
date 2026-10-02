@@ -48,7 +48,7 @@ import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError"
 import { urls } from "~/config/urls";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
-import { setShouldResumeAddAccountAfterOnboarding } from "~/renderer/reducers/onboarding";
+import { addAccountSentToOnboarding } from "~/renderer/reducers/onboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { TrackPage } from "@shared/analytics-react";
 import { track, setTrackingSource } from "@shared/analytics";
@@ -756,10 +756,9 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
 
     const redirectToOnboarding = useCallback(() => {
       setTrackingSource("device action open onboarding button");
-      // The Add Account flow brought the user here without a usable device. Remember the
-      // intent so we can resume it once the user lands back on the portfolio after onboarding.
+      // The Add Account flow brought the user here without a usable device: resume it after onboarding.
       if (location === HOOKS_TRACKING_LOCATIONS.addAccountModal) {
-        dispatch(setShouldResumeAddAccountAfterOnboarding(true));
+        dispatch(addAccountSentToOnboarding());
       }
       dispatch(closeAllModal());
       setDrawer(undefined);
