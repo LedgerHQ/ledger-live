@@ -1,5 +1,5 @@
 import { openAuthSessionAsync } from "expo-web-browser";
-import { AppState, type AppStateStatus } from "react-native";
+import { AppState, Platform, type AppStateStatus } from "react-native";
 import { openHostedUrlInSecureBrowser } from "../openHostedLogin.native";
 
 jest.mock("expo-web-browser", () => ({
@@ -16,6 +16,8 @@ let changeListeners: ((state: AppStateStatus) => void)[] = [];
 const remove = jest.fn();
 
 const setAppState = (state: AppStateStatus) => Object.assign(AppState, { currentState: state });
+const setPlatform = (os: typeof Platform.OS) => Object.assign(Platform, { OS: os });
+const noMatchingBrowser = new Error("No matching browser activity found");
 const becomeActive = () => {
   setAppState("active");
   changeListeners.forEach(listener => listener("active"));
@@ -31,6 +33,7 @@ describe("openHostedUrlInSecureBrowser", () => {
     jest.clearAllMocks();
     changeListeners = [];
     setAppState("active");
+    setPlatform("ios");
     jest.spyOn(AppState, "addEventListener").mockImplementation(((
       _type: string,
       listener: (state: AppStateStatus) => void,
@@ -94,6 +97,49 @@ describe("openHostedUrlInSecureBrowser", () => {
     expect(mockedOpenAuthSessionAsync).toHaveBeenCalledWith(loginUrl, deepLink, {
       createTask: false,
     });
+  });
+
+  it("should retry in Chrome on Android when the default browser cannot open", async () => {
+    setPlatform("android");
+    mockedOpenAuthSessionAsync.mockRejectedValueOnce(noMatchingBrowser);
+
+    await expect(openHostedUrlInSecureBrowser(loginUrl, deepLink)).resolves.toEqual({
+      type: "success",
+      url: deepLink,
+    });
+
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledTimes(2);
+    expect(mockedOpenAuthSessionAsync).toHaveBeenLastCalledWith(loginUrl, deepLink, {
+      createTask: false,
+      browserPackage: "com.android.chrome",
+    });
+  });
+
+  it("should fail on Android when Chrome cannot open either", async () => {
+    setPlatform("android");
+    mockedOpenAuthSessionAsync.mockRejectedValue(noMatchingBrowser);
+
+    await expect(openHostedUrlInSecureBrowser(loginUrl, deepLink)).rejects.toBe(noMatchingBrowser);
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledTimes(2);
+  });
+
+  it("should not retry on iOS", async () => {
+    mockedOpenAuthSessionAsync.mockRejectedValueOnce(noMatchingBrowser);
+
+    await expect(openHostedUrlInSecureBrowser(loginUrl, deepLink)).rejects.toBe(noMatchingBrowser);
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not retry on Android when the user dismisses the default browser", async () => {
+    setPlatform("android");
+    mockedOpenAuthSessionAsync.mockResolvedValue({
+      type: "dismiss",
+    } as Awaited<ReturnType<typeof openAuthSessionAsync>>);
+
+    await expect(openHostedUrlInSecureBrowser(loginUrl, deepLink)).resolves.toEqual({
+      type: "dismissed",
+    });
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledTimes(1);
   });
 
   it("should report the redirect the session ended on", async () => {
