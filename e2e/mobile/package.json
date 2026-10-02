@@ -81,11 +81,5 @@
     "ts-node": "10.9.2",
     "tsconfig-paths": "^4.2.0",
     "ws": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   }
 }

@@ -882,19 +882,6 @@ importers:
       yaml:
         specifier: 2.8.1
         version: 2.8.1
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
     publishDirectory: dist
 
   apps/ledger-live-desktop:
@@ -1749,19 +1736,6 @@ importers:
       yargs:
         specifier: 17.7.2
         version: 17.7.2
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   apps/ledger-live-mobile:
     dependencies:
@@ -2876,18 +2850,6 @@ importers:
       '@napi-rs/keyring':
         specifier: 1.3.0
         version: 1.3.0
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
       '@segment/analytics-node':
         specifier: 3.1.0
         version: 3.1.0
@@ -5769,19 +5731,6 @@ importers:
       tsx:
         specifier: ^4.19.3
         version: 4.20.6
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   e2e/mobile:
     dependencies:
@@ -5954,19 +5903,6 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   e2e/tooling/baanx-test-client:
     dependencies:
@@ -7273,19 +7209,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-balance:
     dependencies:
@@ -7392,19 +7315,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-bank-transfer:
     dependencies:
@@ -7499,19 +7409,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-card:
     dependencies:
@@ -7754,19 +7651,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-card-auth:
     dependencies:
@@ -7906,19 +7790,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-card-details:
     dependencies:
@@ -8061,19 +7932,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-card-transactions:
     dependencies:
@@ -8250,19 +8108,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-card-widget:
     dependencies:
@@ -8357,19 +8202,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-contact:
     dependencies:
@@ -8488,19 +8320,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-deposit:
     dependencies:
@@ -8598,19 +8417,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-feature-tour:
     dependencies:
@@ -8717,19 +8523,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/flow/pay-request:
     dependencies:
@@ -8839,19 +8632,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   features/platform/aggregated-assets:
     dependencies:
@@ -14700,19 +14480,6 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   libs/ledger-services/cal:
     dependencies:
@@ -16506,19 +16273,6 @@ importers:
       tsx:
         specifier: ^4.19.3
         version: 4.20.6
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   libs/live-engagement:
     dependencies:
@@ -19345,19 +19099,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   tools/actions:
     devDependencies:
@@ -24459,22 +24200,10 @@ packages:
     cpu: [arm64]
     os: [android]
 
-  '@oxlint/binding-darwin-arm64@1.51.0':
-    resolution: {integrity: sha512-3QJbeYaMHn6Bh2XeBXuITSsbnIctyTjvHf5nRjKYrT9pPeErNIpp5VDEeAXC0CZSwSVTsc8WOSDwgrAI24JolQ==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm64]
-    os: [darwin]
-
   '@oxlint/binding-darwin-arm64@1.82.0':
     resolution: {integrity: sha512-dsopxqtY5ZdyT9uLHyGt1SyiLop6hi7hWI3PKpePodkRQOkLaCm+OE4fR9CAz9qdfjiFO8531tX/QDyP/psjFg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
-    os: [darwin]
-
-  '@oxlint/binding-darwin-x64@1.51.0':
-    resolution: {integrity: sha512-NzErhMaTEN1cY0E8C5APy74lw5VwsNfJfVPBMWPVQLqAbO0k4FFLjvHURvkUL+Y18Wu+8Vs1kbqPh2hjXYA4pg==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [x64]
     os: [darwin]
 
   '@oxlint/binding-darwin-x64@1.82.0':
@@ -24543,13 +24272,6 @@ packages:
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/binding-linux-x64-gnu@1.51.0':
-    resolution: {integrity: sha512-e0Mz0DizsCoqNIjeOg6OUKe8JKJWZ5zZlwsd05Bmr51Jo3AOL4UJnPvwKumr4BBtBrDZkCmOLhCvDGm95nJM2g==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
   '@oxlint/binding-linux-x64-gnu@1.82.0':
     resolution: {integrity: sha512-XUUUxaBo9XKl+J1B9EmP1cTGQPddzeURvoGkfwh/94PGnbW+hBprDljneoI2M1jzC1bzrIV3ihc7iM9UXl8+tg==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -24580,12 +24302,6 @@ packages:
     resolution: {integrity: sha512-TUSCLaKB2yktpFAJ/r3HAUYsaV/3DT7JS4iNKyoh3a9YNwD0UG7Ezh4D8m23654vQcU6P/RQrCAjRPKe4peP/A==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ia32]
-    os: [win32]
-
-  '@oxlint/binding-win32-x64-msvc@1.51.0':
-    resolution: {integrity: sha512-Q14+fOGb9T28nWF/0EUsYqERiRA7cl1oy4TJrGmLaqhm+aO2cV+JttboHI3CbdeMCAyDI1+NoSlrM7Melhp/cw==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [x64]
     os: [win32]
 
   '@oxlint/binding-win32-x64-msvc@1.82.0':
@@ -46297,12 +46013,8 @@ snapshots:
   '@oxlint/binding-android-arm64@1.82.0':
     optional: true
 
-  '@oxlint/binding-darwin-arm64@1.51.0': {}
-
   '@oxlint/binding-darwin-arm64@1.82.0':
     optional: true
-
-  '@oxlint/binding-darwin-x64@1.51.0': {}
 
   '@oxlint/binding-darwin-x64@1.82.0':
     optional: true
@@ -46334,8 +46046,6 @@ snapshots:
   '@oxlint/binding-linux-s390x-gnu@1.82.0':
     optional: true
 
-  '@oxlint/binding-linux-x64-gnu@1.51.0': {}
-
   '@oxlint/binding-linux-x64-gnu@1.82.0':
     optional: true
 
@@ -46350,8 +46060,6 @@ snapshots:
 
   '@oxlint/binding-win32-ia32-msvc@1.82.0':
     optional: true
-
-  '@oxlint/binding-win32-x64-msvc@1.51.0': {}
 
   '@oxlint/binding-win32-x64-msvc@1.82.0':
     optional: true
