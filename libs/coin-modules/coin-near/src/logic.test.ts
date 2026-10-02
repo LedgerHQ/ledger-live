@@ -421,6 +421,14 @@ describe("canStake with an unseeded preload cache", () => {
   it("rejects an empty account", () => {
     expect(canStake(account("0"))).toBe(false);
   });
+
+  // Same boundary as the seeded suite below: three staking fees at the 10^9 purchase floor come to
+  // 0.165 NEAR. Seeding only gasPrice priced them at 10^8, a tenth of that, and let accounts with
+  // 0.0165–0.165 NEAR stake on the generic route while the legacy route refused them.
+  it("prices the staking fees at the purchase floor, not the current gas price", () => {
+    expect(canStake(account("165000000000000000000000"))).toBe(false);
+    expect(canStake(account("165000000000000000000001"))).toBe(true);
+  });
 });
 
 describe("getTotalSpent", () => {
