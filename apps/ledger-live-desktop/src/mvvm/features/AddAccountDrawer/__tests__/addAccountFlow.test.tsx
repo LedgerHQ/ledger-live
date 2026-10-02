@@ -370,6 +370,33 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expectTrackPage(3, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
   });
 
+  it("should let the user create other BTC address types when the existing account is empty", async () => {
+    const emptyBtcAccount = (derivationMode: Account["derivationMode"], freshAddress: string) => ({
+      ...BTC_ACCOUNT,
+      id: `js:2:bitcoin:xpub-${derivationMode}:${derivationMode}`,
+      xpub: `xpub-${derivationMode}`,
+      derivationMode,
+      freshAddress,
+      used: false,
+      operationsCount: 0,
+      operations: [],
+      balance: new BigNumber(0),
+      spendableBalance: new BigNumber(0),
+    });
+    const nativeSegwit = emptyBtcAccount("native_segwit", "bc1qempty");
+    const taproot = emptyBtcAccount("taproot", "bc1pnew");
+    const segwit = emptyBtcAccount("segwit", "3new");
+
+    setup(bitcoinCurrency, { accounts: [nativeSegwit] });
+
+    await mockScanAccountsSubscription([nativeSegwit, taproot, segwit]);
+
+    expect(screen.queryByText(/A new account cannot be added/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/new account/i)).toBeInTheDocument();
+    expect(screen.getByText("Show all address types")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Confirm" })).not.toBeDisabled();
+  });
+
   it("should allow name edit on already imported empty account", async () => {
     const OLD_NAME = "Arbitrum 2";
     const NEW_NAME = "My Edited Account";
