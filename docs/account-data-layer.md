@@ -19,7 +19,7 @@ serves a new datum from a single file.
 | --- | --- | --- |
 | [`@domain/entity-account`](../domain/entity/account) | `AccountId`, and `AccountRef`: the id plus currency, address and derivation mode | nothing new |
 | [`@domain/entity-account-data`](../domain/entity/account-data) | the open `AccountData` map, one key per datum, and `AccountDataBinding`. Types only | `entity-account` |
-| [`@domain/api-account-data-source`](../domain/api/account-data-source) | `AccountDataSource`, `createAccountDataRouter`, `fetchAccountData`; `./testing` holds two toy datums | `entity-account`, `entity-account-data` |
+| [`@domain/api-account-data-source`](../domain/api/account-data-source) | `AccountDataSource`, `createAccountDataRouter` (`read`, `readBatch`), `fetchAccountData`, `fetchAccountDataBatch`; `./testing` holds two toy datums | `entity-account`, `entity-account-data` |
 | [`@features/platform-account-data`](../features/platform/account-data) | `useAccountData`, and nothing else | `api-account-data-source`, `entity-account-data` |
 | `@domain/entity-account-*` ([balance](../domain/entity/account-balance), [operations](../domain/entity/account-operations)) | the datum's models, its slice, its binding, and the `declare module` that adds its key to `AccountData` | `entity-account`, `entity-account-data` |
 | sources | [`CoinModuleSource`](../features/platform/account-source-coin-module), [`FullSyncSource`](../libs/ledger-live-common/src/account-data/FullSyncSource.ts) | the `AccountDataSource` type and the models they return |
@@ -98,6 +98,101 @@ The hook drives the read and owns no data. The screen reads the data with the en
 
 Without React or Redux, `router.read(datum, ref, query)` returns the same answer.
 
+## Many accounts at once
+
+A portfolio reads the same datum for dozens of accounts. Read one by one, that is dozens of source
+calls in parallel with no limit: on `FullSyncSource`, dozens of `AccountBridge.sync()` at once, where
+the background `BridgeSync` never runs more than `SYNC_MAX_CONCURRENT` (4 by default). And a source
+that can answer many accounts in one call, as a portfolio backend would, never gets the chance.
+
+The router fixes both, and nothing above it changes: not the entities, not the bindings, not the hook.
+
+### What a source may add
+
+```ts
+type AccountDataBatchReader<K> = (
+  refs: readonly AccountRef[],
+  query: AccountDataQuery<K> | undefined,
+  signal?: AbortSignal,
+) => Promise<PromiseSettledResult<AccountDataResult<K>>[]>; // one per ref, in order
+
+type AccountDataSource = {
+  // ...id, supports, the single readers
+  readonly batch?: { readonly [K in AccountDatum]?: AccountDataBatchReader<K> };
+  readonly maxBatchSize?: number; // the router splits above this
+  readonly concurrency?: number; // calls in flight on this source, default 4
+};
+```
+
+`batch` is derived from the same `AccountData` map, so a new datum still touches no framework file.
+A source implements, per datum, a single reader, a batch reader, or both. The router makes up the
+other one:
+
+- **No batch reader:** the router reads each account with the single reader, never more than the
+  source's `concurrency` at once.
+- **No single reader:** the router answers a single read with a batch of one.
+
+Each result is settled on its own, so one account failing never fails the others. In a class, give
+`batch` an explicit type (`readonly batch: AccountDataSource["batch"] = { ... }`): `implements`
+does not type property initialisers. `id`, `supports`, `batch`, `maxBatchSize` and `concurrency` are
+reserved: no datum may use those names.
+
+### How the router reads many accounts
+
+```mermaid
+sequenceDiagram
+    participant H as 50 useAccountData
+    participant R as router
+    participant B as coin module source
+    participant F as full sync source
+    H->>R: 50 read("balance", ref) in one tick
+    Note over R: same datum, same query: one batch
+    R->>R: first ranked source per account
+    R->>B: balance(ref) x 30, at most 4 at once
+    R->>F: balance(ref) x 20, at most SYNC_MAX_CONCURRENT at once
+    B-->>R: 30 settled results
+    F-->>R: 20 settled results
+    R-->>H: each caller gets its own answer
+```
+
+1. **Merging.** `router.read` waits one microtask. The reads issued in the same tick for the same
+   datum, the same query and the same pinned source become one batch. A refresh of 50 rows mounted
+   in one render is one batch. A next page carries its own cursor, so it never merges with another.
+2. **Routing, rank unchanged.** Each account goes to the first ranked source that has a reader for
+   the datum and supports the account, exactly as for one account. Being able to batch never moves a
+   source up the list.
+3. **One call per group.** The accounts of a source are read together: in chunks of `maxBatchSize`
+   through its batch reader, or one by one through its single reader. Groups of different sources run
+   in parallel.
+4. **A cap per source, across calls.** The router keeps one queue per source, shared by every read.
+   Two batches started at once on the same source still never exceed its `concurrency` together.
+5. **Duplicates.** An account asked twice in one batch is read once, and both callers get the
+   answer.
+
+### Failures and abort
+
+- A ref no source can answer fails with `NoAccountSourceError`, alone.
+- A batch call that rejects fails the accounts of that chunk, and only those. It is not retried
+  account by account, which would turn one outage into a storm of calls.
+- A batch reader answering the wrong number of results is a source bug: its chunk fails.
+- Merged reads share one call, so a caller's `signal` stops that caller waiting and nothing more,
+  as with `FullSyncSource`'s shared sync. With `readBatch`, the signal goes to the source, and reads
+  still waiting for a slot leave the queue.
+
+### The batch thunk
+
+`fetchAccountDataBatch(binding, refs, { maxAge, query, signal })` is the explicit form, for a
+"refresh all" or a caller without React. It applies the single read's guards to each ref: freshness,
+and the same in-flight table, so a `useAccountData` mounting during a batch joins it instead of
+reading again. An account listed twice is read once, under its last ref. It reads heads only: each
+account's next page has its own cursor. The desktop balances devtool uses it for "Read all".
+
+Without a store, `router.readBatch(datum, refs, query)` returns one settled `{ data, sourceId }` per
+ref, in order.
+
+Merging is on by default. `createAccountDataRouter(sources, { coalesce: false })` turns it off;
+`{ concurrency }` changes the default cap.
+
 ## Adding a datum
 
 1. In a new `domain/entity/account-<datum>` package: the models, a slice, and a binding typed
@@ -137,7 +232,7 @@ only carries whatever `result` type the entity declares.
 | Source | Serves | Gate |
 | --- | --- | --- |
 | `CoinModuleSource` | a balance from one `getBalance`; a page of operations from one `listOperations` | per datum, the families in the app's `coinModuleFamilies`: the generic coin framework families for `balance`, none for `operations` |
-| `FullSyncSource` | every datum, from one `AccountBridge.sync()` | any known currency whose account is in the legacy store |
+| `FullSyncSource` | every datum, from one `AccountBridge.sync()`, at most `SYNC_MAX_CONCURRENT` syncs at once | any known currency whose account is in the legacy store |
 
 `FullSyncSource` keeps one run per account in flight on the instance, so a balance and an operations
 read of the same account running at once share one sync. Its legacy `Account` mappers are private
@@ -228,19 +323,24 @@ here.
 | Numeric priority | Order of the array | Order of the array |
 | `supports(ref)` per source | `supports(ref)` per source | `supports(ref, datum)`, so balance and operations are gated separately |
 | One thunk and one hook per datum | One thunk and one hook per datum, in a package per entity | One `fetchAccountData`, one `useAccountData`, driven by a binding |
+| Many accounts: one read each, unbounded | Many accounts: one read each, unbounded | Reads merged per tick, one call per source, a batch reader when the source has one, a cap per source |
 | Registry filled from an app setup file | Router in a React `AccountDataProvider` | Router in the thunk `extraArgument`, built in `account-data-setup` |
 | Granular code in live-common | Coin module source in live-common, token id encoding duplicated | `CoinModuleSource` in `features/platform`, two ports injected |
 | Mappers in `legacy-mapping/` | Mappers private in `FullSyncSource` | Mappers private in `FullSyncSource` |
 | Module-level in-flight map | In-flight map on the source instance | In-flight map on the source instance |
 | `paginated: false` | Cursor handed to whichever source the router picks | Next page pinned to the source that answered the head |
 
-Production code for the read path, sources and entities excluded: 325 lines here, the same whatever
-the number of datums. PoC 3 has 384 lines for two datums, and each new datum adds a thunk and a hook
-package. Here each datum adds its binding and its `declare module` block, 26 lines for balance and
-34 for operations, in its own entity.
+Production code for the read path, sources and entities excluded: 691 lines here, the same whatever
+the number of datums. 366 of them are the batch work: merging, the per-source cap, chunking and the
+batch thunk. Without batching it is 325 lines. PoC 3 has 384 lines for two datums, without batching,
+and each new datum adds a thunk and a hook package. Here each datum adds its binding and its
+`declare module` block, 26 lines for balance and 34 for operations, in its own entity.
 
 ## Open points
 
+- **No source batches for real yet.** Every coin module read takes one address, and a sync is one
+  account, so both sources rely on the router's bounded simulation. The batch reader is there for a
+  portfolio backend that answers many accounts in one call; the framework is tested with a toy one.
 - **Persistence.** The slices are meant as stores of record: persisted, updated locally, and later
   replicated through Ledger Sync. No version of this layer wires persistence in the apps yet.
 - **wallet-cli** still reads through its own adapters. Moving it onto `router.read` means reworking
