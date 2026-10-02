@@ -61,6 +61,22 @@ describe("useOpenAssetFlow", () => {
     expect(store.getState().modularDialog.dialogParams?.currencies?.length).toBe(0);
   });
 
+  it("should remember where Add Account was opened and its asset, to resume it after onboarding", () => {
+    const { result, store } = renderHook(
+      () => useOpenAssetFlow({ location: ModularDrawerLocation.ADD_ACCOUNT }, "test"),
+      { initialState: MODULAR_DRAWER_ENABLED, initialRoute: "/paytab" },
+    );
+
+    const ethereum = getCryptoCurrencyById("ethereum");
+    result.current.openAddAccountFlow(ethereum);
+
+    expect(store.getState().onboarding.addAccountResume).toEqual({
+      returnTo: "/paytab",
+      currency: ethereum,
+      awaitingOnboarding: false,
+    });
+  });
+
   it("should open the dialog filtered to the provided network currency ids", () => {
     const { result, store } = renderHook(
       () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),

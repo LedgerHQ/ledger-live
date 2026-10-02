@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { track } from "@shared/analytics";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
-import { setShouldResumeAddAccountAfterOnboarding } from "~/renderer/reducers/onboarding";
+import { addAccountSentToOnboarding } from "~/renderer/reducers/onboarding";
 import { getOriginFlow } from "~/renderer/analytics/originFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
@@ -55,7 +55,7 @@ const useBuyDeviceViewModel = (): BuyDeviceViewProps => {
     });
 
     if (getOriginFlow() === HOOKS_TRACKING_LOCATIONS.addAccountModal) {
-      dispatch(setShouldResumeAddAccountAfterOnboarding(true));
+      dispatch(addAccountSentToOnboarding());
     }
     handleConnectDevice();
     onClose();

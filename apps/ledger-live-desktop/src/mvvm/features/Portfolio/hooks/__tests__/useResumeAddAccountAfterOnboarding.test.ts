@@ -1,6 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE, INITIAL_STATE } from "~/renderer/reducers/settings";
-import { shouldResumeAddAccountAfterOnboardingSelector } from "~/renderer/reducers/onboarding";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { addAccountToResumeSelector } from "~/renderer/reducers/onboarding";
 import { useResumeAddAccountAfterOnboarding } from "../useResumeAddAccountAfterOnboarding";
 
 const mockOpenAssetFlow = jest.fn();
@@ -15,7 +16,11 @@ const resumeOnboardingState = {
   isOnboardingReceiveFlow: false,
   isOnboardingReceiveSuccess: false,
   isSkipDrawerOpen: false,
-  shouldResumeAddAccountAfterOnboarding: true,
+  addAccountResume: {
+    returnTo: "/",
+    currency: getCryptoCurrencyById("bitcoin"),
+    awaitingOnboarding: true,
+  },
 };
 
 describe("useResumeAddAccountAfterOnboarding", () => {
@@ -32,7 +37,7 @@ describe("useResumeAddAccountAfterOnboarding", () => {
     });
 
     expect(mockOpenAssetFlow).toHaveBeenCalledTimes(1);
-    expect(shouldResumeAddAccountAfterOnboardingSelector(store.getState())).toBe(false);
+    expect(addAccountToResumeSelector(store.getState())).toBeNull();
   });
 
   it("keeps the resume intent and does not open Add Account while no device is onboarded", () => {
@@ -44,6 +49,6 @@ describe("useResumeAddAccountAfterOnboarding", () => {
     });
 
     expect(mockOpenAssetFlow).not.toHaveBeenCalled();
-    expect(shouldResumeAddAccountAfterOnboardingSelector(store.getState())).toBe(true);
+    expect(addAccountToResumeSelector(store.getState())).not.toBeNull();
   });
 });
