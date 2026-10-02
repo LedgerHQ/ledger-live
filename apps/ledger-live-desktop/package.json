@@ -131,6 +131,7 @@
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
     "@features/platform-feature-flags-firebase": "workspace:^",
+    "@features/platform-market-countervalues": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
     "@features/platform-style": "workspace:^",
     "@features/platform-verify-address-intent": "workspace:^",
