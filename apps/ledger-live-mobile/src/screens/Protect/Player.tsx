@@ -6,6 +6,7 @@ import {
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTheme } from "styled-components/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -49,6 +50,7 @@ export function RecoverPlayer({ navigation, route }: Props) {
   const hasConnectedNanoS = knownDeviceModelIds.nanoS;
   const userLocale = useSelector(localeSelector);
   const countryCode = useMemo(() => getCountryCodeFromLocale(userLocale), [userLocale]);
+  const insets = useSafeAreaInsets();
 
   const { onboardingState } = useOnboardingStatePolling({
     device: device || null,
@@ -103,6 +105,9 @@ export function RecoverPlayer({ navigation, route }: Props) {
           hasConnectedNanoS: hasConnectedNanoS.toString(),
           countryCode,
           ...params,
+          safeAreaBottom: insets.bottom.toString(),
+          safeAreaLeft: insets.left.toString(),
+          safeAreaRight: insets.right.toString(),
         }}
       />
     </>
