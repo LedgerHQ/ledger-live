@@ -31,6 +31,10 @@ const tokenAccount = {
 } as unknown as NonNullable<Account["subAccounts"]>[number];
 
 describe("solana mock bridge", () => {
+  it("creates a transaction with useAllAmount set, so the send flows offer Max", () => {
+    expect(mockBridge.accountBridge.createTransaction(account).useAllAmount).toBe(false);
+  });
+
   it("prepares a token send so it is not crafted as a native one", async () => {
     const withToken = { ...account, subAccounts: [tokenAccount] } as Account;
     const transaction = {
