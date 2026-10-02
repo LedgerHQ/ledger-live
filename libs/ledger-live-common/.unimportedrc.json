@@ -70,6 +70,7 @@
     "src/earn/stakePrograms/index.ts",
     "src/errors.ts",
     "src/errors/transactionBroadcastErrors.ts",
+    "src/exchange/isNotEnoughBalance.ts",
     "src/exchange/platform/completeExchange.ts",
     "src/exchange/platform/startExchange.ts",
     "src/exchange/platform/types.ts",
