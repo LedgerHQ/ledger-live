@@ -42,6 +42,7 @@ import { renderAllowManager } from "../../../DeviceAction/rendering";
 
 export type Props = {
   onComplete: () => void;
+  onGenuineCheckPassed: (deviceId: string) => void;
   device: Device;
   /**
    * Security checks re-run after a firmware update.
@@ -76,6 +77,7 @@ const commonDrawerProps = {
  */
 const EarlySecurityChecks = ({
   onComplete,
+  onGenuineCheckPassed,
   device,
   restartChecksAfterUpdate,
   isInitialRunOfSecurityChecks,
@@ -329,6 +331,10 @@ const EarlySecurityChecks = ({
       setFirmwareUpdateStatus(SoftwareCheckStatus.active);
     }
   }, [genuineCheckStatus, genuineState, devicePermissionState, genuineCheckError]);
+
+  useEffect(() => {
+    if (genuineState === "genuine") onGenuineCheckPassed(deviceId);
+  }, [genuineState, deviceId, onGenuineCheckPassed]);
 
   useEffect(() => {
     /**
