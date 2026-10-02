@@ -1,5 +1,11 @@
 # @support/jest-features-flow
 
+## 0.7.0
+
+### Minor Changes
+
+- [#22424](https://github.com/LedgerHQ/ledger-live/pull/22424) [`3fdebf4`](https://github.com/LedgerHQ/ledger-live/commit/3fdebf4a84f5630192e50aef9a0a60b0c56f6a2f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Refetch card wallet status when returning from Apple or Google Pay so the add-to-wallet CTA can hide.
+
 ## 0.7.0-next.0
 
 ### Minor Changes

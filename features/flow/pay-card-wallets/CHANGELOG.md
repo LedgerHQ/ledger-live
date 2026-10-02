@@ -1,5 +1,31 @@
 # @features/flow-pay-card-wallets
 
+## 0.5.0
+
+### Minor Changes
+
+- [#22404](https://github.com/LedgerHQ/ledger-live/pull/22404) [`b42673e`](https://github.com/LedgerHQ/ledger-live/commit/b42673eed68aba6b2885486d7294f5f9163f721d) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Read the card cashback banner from `GET /v1/card/cashback`
+
+  - Add `getCardCashback` endpoint, resolving the asset's `currency`/`network` pair (both nullable) to its `ledgerId`
+  - Remove `getRewardWallet` (`GET /v1/wallet/reward`), its schema, types, mock and handlers
+  - `useCardCashback` replaces `useCardRewardWallet` in the reward banner
+  - Banner subtitle now shows the rate and ticker: "Total cashback · 1% in BTC"
+  - `cardRewardsAvailable` / `cardRewardCurrency` analytics now read the cashback (amount > 0)
+
+- [#22353](https://github.com/LedgerHQ/ledger-live/pull/22353) [`ae229f2`](https://github.com/LedgerHQ/ledger-live/commit/ae229f27b250d6bdd06af1b06a2912a8c556a27c) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Show a counter-value on the card rewards banner.
+
+  - The reward wallet now carries the currency it is denominated in, like a linked wallet does.
+  - The banner prices it with the host's rates and leads with the counter-value.
+  - The amount is formatted as a token, not as fiat.
+  - A reward nothing can price shows the asset amount alone.
+  - `priceWallet` is renamed `getCounterValue`: it converts an amount, it does not price a wallet.
+
+### Patch Changes
+
+- Updated dependencies [[`b42673e`](https://github.com/LedgerHQ/ledger-live/commit/b42673eed68aba6b2885486d7294f5f9163f721d), [`83fac3e`](https://github.com/LedgerHQ/ledger-live/commit/83fac3e00782840d1f118180dfb9afb9a484952c), [`ae229f2`](https://github.com/LedgerHQ/ledger-live/commit/ae229f27b250d6bdd06af1b06a2912a8c556a27c), [`e19e6cf`](https://github.com/LedgerHQ/ledger-live/commit/e19e6cf36074363d22085b6c85c54ef964eb382c)]:
+  - @domain/api-card-management@0.8.0
+  - @domain/entity-currency@0.4.5
+
 ## 0.5.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @devtools/pay-card
 
+## 0.8.0
+
+### Minor Changes
+
+- [#22568](https://github.com/LedgerHQ/ledger-live/pull/22568) [`c1f5830`](https://github.com/LedgerHQ/ledger-live/commit/c1f5830bc23997b2b965b2619d6a79935b3f5ba5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add a "Pay contact success (Me)" dev tools quick action, and use valid EVM addresses in the Me contact mock so its seeded addresses can be sent to.
+
+- [#22899](https://github.com/LedgerHQ/ledger-live/pull/22899) [`3b5a959`](https://github.com/LedgerHQ/ledger-live/commit/3b5a959ffd24bc06a91bb608924c0575d62eb753) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Pay card devtool: add the card live app and card disclaimer toggles on web, and keep only one card face on at a time.
+
+- [#22889](https://github.com/LedgerHQ/ledger-live/pull/22889) [`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
+- [#22522](https://github.com/LedgerHQ/ledger-live/pull/22522) [`e19e6cf`](https://github.com/LedgerHQ/ledger-live/commit/e19e6cf36074363d22085b6c85c54ef964eb382c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix the cropped transaction name and date on a card charge funded by several assets, and round card crypto amounts like the rest of the product. A devtool action and a mock fixture now produce such a charge.
+
 ## 0.8.0-next.1
 
 ### Minor Changes

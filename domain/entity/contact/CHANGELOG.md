@@ -1,5 +1,17 @@
 # @domain/entity-contact
 
+## 0.11.0
+
+### Minor Changes
+
+- [#22721](https://github.com/LedgerHQ/ledger-live/pull/22721) [`d5dfa07`](https://github.com/LedgerHQ/ledger-live/commit/d5dfa072c9a724609119c06622004d76a45414d9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Restrict contact names to 1-32 printable ASCII characters, as signers only support ASCII
+
+### Patch Changes
+
+- Updated dependencies [[`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5)]:
+  - @domain/entity-currency-crypto@0.14.0
+  - @domain/entity-currency-token@0.5.4
+
 ## 0.11.0-next.1
 
 ### Minor Changes

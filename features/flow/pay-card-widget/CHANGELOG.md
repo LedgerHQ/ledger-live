@@ -1,5 +1,58 @@
 # @features/flow-pay-card-widget
 
+## 0.5.0
+
+### Minor Changes
+
+- [#22666](https://github.com/LedgerHQ/ledger-live/pull/22666) [`bc28500`](https://github.com/LedgerHQ/ledger-live/commit/bc2850004d7cbc59aac8093b3739bfcc351daf43) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Open card details when the Pay card face is tapped, and replace Top up with Choose card type while that onboarding step is current
+
+- [#22321](https://github.com/LedgerHQ/ledger-live/pull/22321) [`83fac3e`](https://github.com/LedgerHQ/ledger-live/commit/83fac3e00782840d1f118180dfb9afb9a484952c) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Read the Pay Card transaction history one page at a time.
+
+  - `getCardTransactions` is an infinite query; `useGetCardTransactionsQuery` becomes `useGetCardTransactionsInfiniteQuery`.
+  - `page` moves off the filters onto the query's page param, so `PayCardTransactionsRequest` is filters only.
+  - The provider answers a page past the end with an empty array, so an empty page ends the reading. No page size is documented, so a short page is read past at the cost of one further request.
+  - A failure over pages already read no longer blanks the list — a later page or a failed refresh alike. Such a failure is not announced anywhere yet.
+  - `useCardTransactionsViewModel` exposes `loadMore` and `isLoadingMore`; no surface calls them yet.
+  - The joined list is ordered by `dateTime`, newest first, with repeats dropped, because a charge landing between two reads shifts the paging. The ordering applies to callers that only ever read one page.
+  - `toPayGlobalProperties` takes `hasCardTransactions: boolean` in place of the transaction list, so analytics reads the first page through `hasCardTransactions` rather than joining the cached history on every `track()`.
+  - `loadMore` is not offered once a read has failed, so a scroll-driven caller cannot turn one failure into a request loop.
+  - The MSW mock pages, and its page size drops from the 10 #22236 sliced at to 6 — 10 exceeded the eight-charge fixture, so that mock never paged.
+
+- [#22577](https://github.com/LedgerHQ/ledger-live/pull/22577) [`b6a9b53`](https://github.com/LedgerHQ/ledger-live/commit/b6a9b531267360fdca64b8db22dd8781aa414dd9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Pay analytics events that never reached Segment, and align the feature-intro page names.
+
+  Pay tracking no longer travels through a React context: `@features/platform-pay-analytics` exposes
+  module-level trackers built on `@shared/analytics`, and every Pay flow imports the one it needs.
+  The provider could not be reached from inside `@gorhom/bottom-sheet` portals on mobile, so the card
+  details sheet and the reward-currencies CTA silently dropped their events. The `onTrackEvent` prop
+  is gone from every Pay flow package and from both host apps.
+
+  Card milestone events are now planned from a first-read baseline, so they no longer replay on each
+  login. Feature-intro pages report as `Page Feature Intro <flow>`, and the bank transfer flow is
+  named `Cash to stable` instead of `C2S`.
+
+- [#22442](https://github.com/LedgerHQ/ledger-live/pull/22442) [`70d0b90`](https://github.com/LedgerHQ/ledger-live/commit/70d0b90b67ff013f19318378c78a3f3d442f773b) Thanks [@tonykhaov](https://github.com/tonykhaov)! - fix(pay-card): keep lifecycle tracking waiting on onboarding refetches
+
+  `useCardOnboardingStatus` now reports `isFetching` next to `isLoading`, which covers the first
+  read only. The lifecycle tracking and the Pay Card devtool read it, so a milestone is no longer
+  derived from onboarding signals that a refetch is about to replace.
+
+- [#22424](https://github.com/LedgerHQ/ledger-live/pull/22424) [`3fdebf4`](https://github.com/LedgerHQ/ledger-live/commit/3fdebf4a84f5630192e50aef9a0a60b0c56f6a2f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Refetch card wallet status when returning from Apple or Google Pay so the add-to-wallet CTA can hide.
+
+- [#22402](https://github.com/LedgerHQ/ledger-live/pull/22402) [`dccea32`](https://github.com/LedgerHQ/ledger-live/commit/dccea322ed808abfa4e6829364fe945cd0a58383) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Polish the Pay tab: keep the last row of every Pay bottom sheet clear of the Android navigation bar and the iOS home indicator, size the card action buttons to `md`, make the desktop contacts table responsive with a wider name column, wrap the address-picker title, add 32px of scroll padding, widen the history tabs, fix the disclaimer copy and use the shield icon on verify address
+
+- [#22562](https://github.com/LedgerHQ/ledger-live/pull/22562) [`b8a4056`](https://github.com/LedgerHQ/ledger-live/commit/b8a405658b70b0ca43ec94bff53c5d13e2c16487) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Keep re-reading the Pay Card status after the holder returns from Apple or Google Wallet, and when the app comes back to the foreground
+
+- [#22382](https://github.com/LedgerHQ/ledger-live/pull/22382) [`c119e0d`](https://github.com/LedgerHQ/ledger-live/commit/c119e0d38f626314cf679bfa06420ce0e4bca03b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Redirect the "choose card type" onboarding step to the Baanx hosted order-card page, and align pay bottom sheet spacing and tile styles
+
+### Patch Changes
+
+- Updated dependencies [[`b42673e`](https://github.com/LedgerHQ/ledger-live/commit/b42673eed68aba6b2885486d7294f5f9163f721d), [`c32cde3`](https://github.com/LedgerHQ/ledger-live/commit/c32cde31461523c72df4f67cd18288c6f65c9951), [`83fac3e`](https://github.com/LedgerHQ/ledger-live/commit/83fac3e00782840d1f118180dfb9afb9a484952c), [`b6a9b53`](https://github.com/LedgerHQ/ledger-live/commit/b6a9b531267360fdca64b8db22dd8781aa414dd9), [`ae229f2`](https://github.com/LedgerHQ/ledger-live/commit/ae229f27b250d6bdd06af1b06a2912a8c556a27c), [`a39ba90`](https://github.com/LedgerHQ/ledger-live/commit/a39ba900d889155ebc4fe2cab88f82a715e3f605), [`dccea32`](https://github.com/LedgerHQ/ledger-live/commit/dccea322ed808abfa4e6829364fe945cd0a58383), [`909c761`](https://github.com/LedgerHQ/ledger-live/commit/909c761357291f48ac0266d91d6ed563aa4ad833), [`c020110`](https://github.com/LedgerHQ/ledger-live/commit/c02011033bf5ca5bf38f05c487adb3a27c209a7d), [`e19e6cf`](https://github.com/LedgerHQ/ledger-live/commit/e19e6cf36074363d22085b6c85c54ef964eb382c)]:
+  - @domain/api-card-management@0.8.0
+  - @features/flow-pay-card-wallets@0.5.0
+  - @features/platform-pay-analytics@0.3.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+  - @domain/entity-currency@0.4.5
+
 ## 0.5.0-next.0
 
 ### Minor Changes

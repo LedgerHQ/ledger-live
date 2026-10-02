@@ -1,5 +1,15 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.41.0
+
+### Minor Changes
+
+- [#21976](https://github.com/LedgerHQ/ledger-live/pull/21976) [`26e51d9`](https://github.com/LedgerHQ/ledger-live/commit/26e51d98fde1c080e09f566e0dbeb4f2c2e9f382) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add mobile E2E coverage for creating a contact, registering EVM addresses on the device and deleting both, and let device intents run against Speculos by registering it as a discoverable transport. Speculos specs can now pin an OS version so the run uses the Ethereum build the contacts intents require, which the app catalog does not serve yet.
+
+- [#22498](https://github.com/LedgerHQ/ledger-live/pull/22498) [`917815d`](https://github.com/LedgerHQ/ledger-live/commit/917815de670a8971138c64957de865abe5888f31) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the unused detox pnpmfile dependency extension
+
+- [#22521](https://github.com/LedgerHQ/ledger-live/pull/22521) [`e77d5bb`](https://github.com/LedgerHQ/ledger-live/commit/e77d5bb8e8a2c957af8bbc9f35d171c685188d1e) Thanks [@martijnhjk](https://github.com/martijnhjk)! - Inject CARD_SESSION_BOOTSTRAP only when the spec path contains `/paytab/`, on desktop and mobile, using a set env value when present and otherwise minting through the Baanx test client cache.
+
 ## 0.41.0-next.0
 
 ### Minor Changes

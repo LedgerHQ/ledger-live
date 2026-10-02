@@ -1,5 +1,11 @@
 # @ledgerhq/baanx-test-client
 
+## 0.3.0
+
+### Minor Changes
+
+- [#22521](https://github.com/LedgerHQ/ledger-live/pull/22521) [`e77d5bb`](https://github.com/LedgerHQ/ledger-live/commit/e77d5bb8e8a2c957af8bbc9f35d171c685188d1e) Thanks [@martijnhjk](https://github.com/martijnhjk)! - Inject CARD_SESSION_BOOTSTRAP only when the spec path contains `/paytab/`, on desktop and mobile, using a set env value when present and otherwise minting through the Baanx test client cache.
+
 ## 0.3.0-next.0
 
 ### Minor Changes

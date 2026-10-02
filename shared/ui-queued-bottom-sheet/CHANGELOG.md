@@ -1,5 +1,22 @@
 # @shared/ui-queued-bottom-sheet
 
+## 0.6.0
+
+### Minor Changes
+
+- [#22511](https://github.com/LedgerHQ/ledger-live/pull/22511) [`c32cde3`](https://github.com/LedgerHQ/ledger-live/commit/c32cde31461523c72df4f67cd18288c6f65c9951) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix drag-and-drop reordering in the card's manage-assets sheet, which never got the gesture
+
+  - `QueuedBottomSheet` takes `enableContentPanningGesture`, so content that owns a drag gesture can stop the sheet's own pan from claiming it.
+  - The manage-assets scene turns that gesture off and its list is no longer scrollable, leaving the drag uncontested and letting the sheet size to its rows.
+  - The row being dragged takes a `surfacePressed` background.
+  - The balance filter sheet sizes to its options instead of always opening at full height, with the confirm button pinned in the sheet's own footer slot.
+
+- [#22402](https://github.com/LedgerHQ/ledger-live/pull/22402) [`dccea32`](https://github.com/LedgerHQ/ledger-live/commit/dccea322ed808abfa4e6829364fe945cd0a58383) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Polish the Pay tab: keep the last row of every Pay bottom sheet clear of the Android navigation bar and the iOS home indicator, size the card action buttons to `md`, make the desktop contacts table responsive with a wider name column, wrap the address-picker title, add 32px of scroll padding, widen the history tabs, fix the disclaimer copy and use the shield icon on verify address
+
+- [#22501](https://github.com/LedgerHQ/ledger-live/pull/22501) [`909c761`](https://github.com/LedgerHQ/ledger-live/commit/909c761357291f48ac0266d91d6ed563aa4ad833) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix a bottom sheet reopening right after being swiped down before its entrance animation finished. Only a dismissal started for a previous presentation now puts the sheet back on screen.
+
+- [#22616](https://github.com/LedgerHQ/ledger-live/pull/22616) [`c020110`](https://github.com/LedgerHQ/ledger-live/commit/c02011033bf5ca5bf38f05c487adb3a27c209a7d) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix Android taps ignored in the Card Details More menu right after dragging the sheet
+
 ## 0.6.0-next.0
 
 ### Minor Changes

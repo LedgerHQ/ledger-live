@@ -1,5 +1,16 @@
 # @ledgerhq/live-signer-cosmos
 
+## 0.6.0
+
+### Minor Changes
+
+- [#22410](https://github.com/LedgerHQ/ledger-live/pull/22410) [`4efbefe`](https://github.com/LedgerHQ/ledger-live/commit/4efbefe6bf557124596a33f4a94849056953c391) Thanks [@YazhuEth](https://github.com/YazhuEth)! - chore: bump tronweb to 6.5.1 and @zondax/ledger-cosmos-js to 4.2.0, and drop their pnpmfile patches
+
+### Patch Changes
+
+- Updated dependencies [[`e046686`](https://github.com/LedgerHQ/ledger-live/commit/e046686befa308188170ac9950eae394863c76a5), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d)]:
+  - @ledgerhq/coin-cosmos@1.5.0
+
 ## 0.6.0-next.0
 
 ### Minor Changes
