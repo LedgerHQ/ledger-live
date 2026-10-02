@@ -182,7 +182,16 @@ pnpm --silent wallet-cli start send ethereum-1 --to <WETH_CONTRACT_ADDRESS> --am
 pnpm --silent wallet-cli start send ethereum-1 --to <WETH_CONTRACT_ADDRESS> --amount '0 ETH' --data 0x2e1a7d4d00000000000000000000000000000000000000000000000006f05b59d3b20000
 ```
 
-Always run with `--dry-run` first to validate calldata before signing. The CLI cannot verify the semantic correctness of hand-supplied `--data` — the device screen is the last line of defense, so review the decoded call on-device before approving.
+Always run with `--dry-run` first to validate calldata before signing. The CLI cannot verify the semantic correctness of hand-supplied `--data` — the device screen is the last line of defense. What it shows depends on the contract:
+
+- A contract with a clear-signing descriptor in Ledger's
+  [ERC-7730 registry](https://github.com/LedgerHQ/clear-signing-erc7730-registry) (WETH has one) is
+  decoded on the device field by field — review those fields before approving.
+- Any other contract is **blind-signed**: no decoded fields, and for a zero-value call no Amount
+  screen (the host prints `Amount: 0 ETH`; the device does not). The To address is the only thing
+  to verify — compare it character by character against the address you intended and reject
+  anything else. Blind signing is an app-wide setting in the Ethereum app and the app refuses the
+  call while it is off: enable it for the one transaction, then disable it.
 
 ### swap quote
 
