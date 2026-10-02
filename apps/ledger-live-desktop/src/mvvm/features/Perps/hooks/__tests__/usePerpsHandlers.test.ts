@@ -2,7 +2,10 @@ import { renderHook } from "tests/testSetup";
 import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getDepositRequestId, settleDepositRequest } from "../../utils/perpsDepositRequest";
+import {
+  getDepositRequestId,
+  settleDepositRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
   handlers: jest.fn().mockReturnValue({ "custom.perps.signActions": jest.fn() }),

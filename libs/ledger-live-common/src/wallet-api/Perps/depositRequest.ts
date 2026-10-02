@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import type { PerpsDepositResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import type { PerpsDepositResult } from "./server";
 
 type PendingDepositRequest = {
   id: string;
@@ -10,7 +10,7 @@ type PendingDepositRequest = {
 
 let pending: PendingDepositRequest | null = null;
 
-/** Stays pending across the deposit dialogs until settled or cancelled. */
+/** Stays pending across the deposit screens until settled or cancelled. */
 export function beginDepositRequest(): Promise<PerpsDepositResult> {
   const id = uuid();
   return new Promise((resolve, reject) => {

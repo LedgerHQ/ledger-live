@@ -6,6 +6,10 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { act, renderHook } from "@tests/test-renderer";
 import { usePerpsDepositExecution, type PerpsDepositDeviceStep } from "../usePerpsDepositExecution";
+import {
+  beginDepositRequest,
+  cancelDepositRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 const mockExecuteSwap = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Exchange/executeSwap", () => ({
@@ -104,6 +108,8 @@ describe("usePerpsDepositExecution", () => {
     jest.clearAllMocks();
     mockBroadcast.mockResolvedValue(operation);
   });
+
+  afterEach(() => cancelDepositRequest());
 
   it("quotes the deposit as a swap against the perps provider, at the price the review showed", async () => {
     mockExecuteSwap.mockResolvedValue({ operationHash: operation.hash, swapId: "swap-1" });
@@ -221,6 +227,43 @@ describe("usePerpsDepositExecution", () => {
     expect(mockGetUpdateAccountWithUpdaterParams).toHaveBeenCalledWith(
       expect.objectContaining({ magnitudeAwareRate: new BigNumber("0.95") }),
     );
+  });
+
+  it("settles the live app's deposit request with the swap and quoted amount", async () => {
+    const request = beginDepositRequest();
+
+    await signWith({ signedOperation: { operation } });
+
+    await expect(request).resolves.toEqual({ swapId: "swap-1", amountTo: "0.019" });
+  });
+
+  it("does not settle a request that replaced the one it started with", async () => {
+    const settled = jest.fn();
+    beginDepositRequest().catch(() => undefined);
+    mockExecuteSwap.mockImplementation(async deps => {
+      // The screen is left and a new deposit starts while this one is still signing.
+      cancelDepositRequest();
+      beginDepositRequest().then(settled, () => undefined);
+      await new Promise<void>((resolve, reject) => {
+        deps.uiHooks["custom.exchange.swap"]({
+          exchangeParams: swapUiRequest,
+          onSuccess: () => resolve(),
+          onCancel: reject,
+        });
+      });
+    });
+
+    const { result, onDone } = renderExecution();
+    act(() => {
+      void result.current.executeDeposit();
+    });
+    await answerDeviceStep(result.current.deviceStep, {
+      completeExchangeResult: { family: "ethereum", amount: new BigNumber("20000000000000000") },
+    });
+    await answerDeviceStep(result.current.deviceStep, { signedOperation: { operation } });
+
+    expect(onDone).toHaveBeenCalled();
+    expect(settled).not.toHaveBeenCalled();
   });
 
   it("surfaces a failed signature instead of spinning", async () => {

@@ -4,9 +4,9 @@ import {
   cancelDepositRequest,
   getDepositRequestId,
   settleDepositRequest,
-} from "../perpsDepositRequest";
+} from "./depositRequest";
 
-describe("perpsDepositRequest", () => {
+describe("depositRequest", () => {
   afterEach(() => cancelDepositRequest());
 
   it("resolves with the outcome it is settled with", async () => {
