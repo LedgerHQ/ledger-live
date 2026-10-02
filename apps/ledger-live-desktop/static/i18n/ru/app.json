@@ -858,6 +858,8 @@
   },
   "payTab" : {
     "disclaimer" : "От Monavate OnChain",
+    "cardDisclaimer" : "Ищете свою криптокарту?",
+    "cardDisclaimerLink" : "Перейти к CL-карте",
     "featureTour" : {
       "title" : "Все ваши платежи в одном месте",
       "description" : "Встречайте новую вкладку Платежи: теперь ваша криптовалюта всегда готова к повседневным платежам.",
@@ -1072,7 +1074,8 @@
       }
     },
     "contacts" : {
-      "title" : "Оплатить контакту",
+      "title" : "Платежи по контактам",
+      "me" : "Мой",
       "empty" : {
         "info" : "У вас ещë нет контактов",
         "addContact" : "Добавить контакт"
@@ -1196,9 +1199,9 @@
     },
     "cardLoginIntro" : {
       "title" : "Платите криптой и получайте кешбэк",
-      "providedBy" : "Оператор карты — Baanx",
+      "providedBy" : "Оператор карты — Monavate",
       "createAccount" : "Создать аккаунт",
-      "logIn" : "Авторизация в Baanx",
+      "logIn" : "Войти в Monavate",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
