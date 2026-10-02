@@ -17,10 +17,6 @@ jest.mock("@shared/analytics", () => ({
   track: (event: string, props?: Record<string, unknown>) => mockTrack(event, props),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 describe("useLedgerSyncAnalytics", () => {
   beforeEach(() => {
     jest.clearAllMocks();

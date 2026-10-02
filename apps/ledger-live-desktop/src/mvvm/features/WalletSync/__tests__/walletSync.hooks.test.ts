@@ -36,10 +36,6 @@ jest.mock("@shared/analytics", () => ({
   track: (event: string) => Mocks.track(event),
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({ invalidateJwt: Mocks.invalidateJwt }),
 }));

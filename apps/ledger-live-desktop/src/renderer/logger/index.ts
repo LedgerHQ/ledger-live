@@ -250,13 +250,6 @@ export default {
       });
     }
   },
-  analyticsStop: () => {
-    if (logAnalytics) {
-      logger.log("info", "△ stop()", {
-        type: ANALYTICS_TYPE,
-      });
-    }
-  },
   analyticsTrack: (event: string, properties?: object) => {
     if (logAnalytics) {
       logger.log("info", `△ track ${event}`, {
