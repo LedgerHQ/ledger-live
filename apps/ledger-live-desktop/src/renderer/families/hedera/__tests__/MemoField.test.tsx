@@ -2,18 +2,20 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen, fireEvent } from "tests/testSetup";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaGenericTransaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/hedera/types";
 import MemoField from "../MemoField";
 import { HEDERA_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { makeHederaTransaction } from "../__mocks__/transaction.mock";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => ({
-    updateTransaction: (tx: Transaction, patch: Partial<Transaction>): Transaction =>
-      ({
-        ...tx,
-        ...patch,
-      }) as Transaction,
+    updateTransaction: (
+      tx: HederaGenericTransaction,
+      patch: Partial<HederaGenericTransaction>,
+    ): HederaGenericTransaction => ({ ...tx, ...patch }),
   }),
 }));
 
@@ -71,7 +73,7 @@ describe("MemoField", () => {
       render(
         <MemoField
           account={HEDERA_ACCOUNT_1}
-          transaction={makeHederaTransaction({ memo: "prefilled memo" })}
+          transaction={makeHederaTransaction({ memoType: "string", memoValue: "prefilled memo" })}
           onChange={jest.fn()}
           status={makeStatus()}
         />,
@@ -86,7 +88,7 @@ describe("MemoField", () => {
       render(
         <MemoField
           account={HEDERA_ACCOUNT_1}
-          transaction={makeHederaTransaction({ memo: "" })}
+          transaction={makeHederaTransaction()}
           onChange={handleChange}
           status={makeStatus()}
         />,
@@ -96,7 +98,29 @@ describe("MemoField", () => {
       fireEvent.change(screen.getByRole("textbox"), { target: { value: "payment ref" } });
 
       expect(handleChange).toHaveBeenCalledTimes(1);
-      expect(handleChange).toHaveBeenCalledWith(expect.objectContaining({ memo: "payment ref" }));
+      expect(handleChange).toHaveBeenCalledWith(
+        expect.objectContaining({ memoType: "string", memoValue: "payment ref" }),
+      );
+    });
+
+    it("clears the memo value when the user empties the field", () => {
+      const handleChange = jest.fn();
+
+      render(
+        <MemoField
+          account={HEDERA_ACCOUNT_1}
+          transaction={makeHederaTransaction({ memoType: "string", memoValue: "old" })}
+          onChange={handleChange}
+          status={makeStatus()}
+        />,
+        { initialState: defaultState },
+      );
+
+      fireEvent.change(screen.getByRole("textbox"), { target: { value: "" } });
+
+      expect(handleChange).toHaveBeenCalledWith(
+        expect.objectContaining({ memoType: "string", memoValue: undefined }),
+      );
     });
 
     it("shows an inline error when status.errors.transaction is set", () => {
