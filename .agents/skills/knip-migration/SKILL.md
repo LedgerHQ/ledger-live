@@ -1,15 +1,15 @@
 ---
 name: knip-migration
 description: |
-  Dead-code / unused-dependency detection is migrating from the legacy `unimported` tool to
-  `knip`, which requires each package to expose an explicit, minimal `package.json#exports`
-  (no `./*` wildcard). Read this when adding a new package or migrating an existing one.
+  Dead-code / unused-dependency detection uses `knip`, which requires each package to expose an
+  explicit, minimal `package.json#exports` (no `./*` wildcard). Read this when adding a new package.
 ---
 
-# Dead-code detection: explicit exports + knip (not unimported)
+# Dead-code detection: explicit exports + knip
 
-The repo is migrating dead-code / unused-dependency detection from the legacy **`unimported`**
-tool to **`knip`**, one package at a time. The root [`knip.json`](../../../knip.json) holds only
+Dead-code / unused-dependency detection runs on **`knip`**. The legacy `unimported` tool is gone
+and the dependency checks deny it; legacy `libs/*` packages that never migrated have no
+dead-code tooling. The root [`knip.json`](../../../knip.json) holds only
 the shared rules — a package needs no `workspaces` entry there, since knip derives its entry files
 from `package.json` (`main`, `bin`, `exports`) and its own defaults
 ([entry files](https://knip.dev/explanations/entry-files)).
@@ -30,9 +30,7 @@ custom condition declared in `tsconfig.base.json`):
 ```
 
 Because of this wildcard, knip considers **every top-level `src/*.ts` file "used"** and cannot
-detect unused ("zombie") top-level source files — the exact thing `unimported` caught (it
-ignored `exports` and diffed against a curated entry list). So real knip parity for a package
-requires **replacing the `./*` wildcard with explicit, minimal subpath exports** that enumerate
+detect unused ("zombie") top-level source files. So a package needs to **replace the `./*` wildcard with explicit, minimal subpath exports** that enumerate
 the package's true public API.
 
 > The few libs already pointed at knip (e.g. `libs/env`, `libs/promise`) still keep the `./*`
@@ -40,7 +38,7 @@ the package's true public API.
 
 ## New package = born migrated
 
-A new package has no consumers, so it should start in the target state — no `.unimportedrc.json`:
+A new package has no consumers, so it should start in the target state:
 
 1. **Explicit `exports` only.** Enumerate the real public API; do **not** add a `./*` wildcard.
    Mirror the `.` root entry per subpath, keeping the conditions:
@@ -53,26 +51,10 @@ A new package has no consumers, so it should start in the target state — no `.
      "./package.json": "./package.json"
    }
    ```
-2. **Use knip, not unimported** — add a script that runs knip scoped to the workspace:
+2. **Use knip** — add a script that runs knip scoped to the workspace:
    `pnpm knip --directory <relative-hop-to-root> -W <workspace-path>`
    (`--directory` is the hop back to the repo root — `../..` for `libs/<x>`,
    `../../..` for `libs/coin-modules/<x>`; `-W` is the workspace path from root).
-
-## Migrating an existing package off `unimported`
-
-1. **Audit** the real consumers of the package's deep imports.
-2. **Replace** the `./*` wildcard export with explicit subpath exports (the legit public API).
-3. **Refactor** consumers that relied on now-removed arbitrary entry points.
-4. **Switch** the dead-code script `unimported` → knip, delete `.unimportedrc.json`, and verify
-   a deliberately-unused top-level `src` file is now reported.
-
-Start with leaf / low-dependency packages; `ledger-live-common` (largest surface) comes last.
-
-### Notes
-
-- `unimported` stays until a package reaches knip parity — don't bulk-delete it.
-- Unifying the script / nx-target name (`unimported` → `knip-check`) is tracked separately, so
-  matching the surrounding package's existing script name is fine.
 
 ## Dual-platform packages run knip once per platform
 
@@ -148,10 +130,8 @@ Only `typecheck` catches that, which is why it runs before trusting a clean knip
 
 ## Reviewing
 
-For a **new** package, flag either of these and point here:
+For a **new** package, flag this and point here:
 
-- a `.unimportedrc.json` or a script running the **bare `unimported` binary**
-  (`"unimported": "unimported"`) — it must run knip instead; or
 - a **`./*` wildcard** in `package.json#exports` — new packages must enumerate explicit exports
   so knip can detect zombie files.
 

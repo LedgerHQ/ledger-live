@@ -72,7 +72,6 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest --config=jest.config.ts",
-    "test-integ": "jest --config=jest.integ.config.ts",
-    "unimported": "unimported"
+    "test-integ": "jest --config=jest.integ.config.ts"
   }
 }

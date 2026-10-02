@@ -94,7 +94,6 @@
     "test": "jest",
     "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }
