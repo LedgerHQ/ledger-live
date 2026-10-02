@@ -6,7 +6,7 @@ import resolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { getNetworkParameters } from "@ledgerhq/coin-bitcoin/networks";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
-import { BitcoinConfigInfo, setCoinConfig } from "@ledgerhq/coin-bitcoin/config";
+import type { BitcoinCoinConfig, BitcoinContext } from "@ledgerhq/coin-bitcoin/config";
 import { BigNumber } from "bignumber.js";
 import {
   loadWallet,
@@ -28,9 +28,6 @@ import {
 import { buildSigner } from "../signer";
 import { setupServer } from "msw/node";
 
-type BitcoinCoinConfig = {
-  info: BitcoinConfigInfo;
-};
 type BitcoinScenarioTransaction = ScenarioTransaction<BtcTransaction, BitcoinAccount>;
 
 let firstUtxoHash = "";
@@ -271,29 +268,28 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     const signerContext: SignerContext = (_, crypto, fn) => fn(signer);
 
     const coinConfig: BitcoinCoinConfig = {
-      info: {
-        status: {
-          type: "active",
-        },
-        name: "Bitcoin",
-        unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+      status: {
+        type: "active",
       },
+      name: "Bitcoin Regtest",
+      unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
+      explorerId: "btc_regtest",
+      explorer: { url: "http://localhost:9876" },
     };
-    setCoinConfig(() => ({ ...coinConfig }));
+    const context: BitcoinContext = {
+      config: async () => coinConfig,
+      logger: () => {},
+    };
     LiveConfig.setConfig({
       config_currency_bitcoin_regtest: {
         type: "object",
-        default: {
-          status: {
-            type: "active",
-          },
-        },
+        default: coinConfig,
       },
     });
 
-    const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
+    const { accountBridge, currencyBridge } = createBridges(signerContext, context);
     const BITCOIN = getCryptoCurrencyById("bitcoin_regtest");
-    const getAddress = resolver(signerContext);
+    const getAddress = resolver(signerContext, context.logger);
     // Can also test LEGACY here
     const { address, publicKey } = await getAddress("", {
       path: "49'/1'/0'/0/0",

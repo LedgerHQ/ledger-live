@@ -3,15 +3,21 @@ import type { BitcoinInput, BitcoinOutput, Transaction } from "./types";
 import { buildTransaction } from "./buildTransaction";
 import { perCoinLogic } from "./logic";
 import type { Account } from "@ledgerhq/types-live";
+import type { BitcoinCoinConfig } from "./config";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
-const getFeesForTransaction = async ({
-  account,
-  transaction,
-}: {
-  account: Account;
-  transaction: Transaction;
-}): Promise<{ fees: BigNumber; txInputs: BitcoinInput[]; txOutputs: BitcoinOutput[] }> => {
-  const walletTx = await buildTransaction(account, transaction);
+const getFeesForTransaction = async (
+  config: BitcoinCoinConfig,
+  logger: Logger,
+  {
+    account,
+    transaction,
+  }: {
+    account: Account;
+    transaction: Transaction;
+  },
+): Promise<{ fees: BigNumber; txInputs: BitcoinInput[]; txOutputs: BitcoinOutput[] }> => {
+  const walletTx = await buildTransaction(config, logger, account, transaction);
   const fees = new BigNumber(walletTx.fee).integerValue();
   let txInputs = walletTx.inputs.map(i => {
     return {

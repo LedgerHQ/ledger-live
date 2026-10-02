@@ -1,3 +1,4 @@
+import { TEST_CONFIG, TEST_LOGGER } from "../../../__tests__/fixtures/coinConfig";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/wallet-btc/crypto/factory";
@@ -38,7 +39,7 @@ const zip317 = (inputCount: number, outputCount: number) =>
  * the arithmetic.
  */
 const chargingLike = (layoutFor: (rate: number) => [number, number]) =>
-  jest.fn(({ transaction }: { transaction: Transaction }) => {
+  jest.fn((_config: unknown, _logger: unknown, { transaction }: { transaction: Transaction }) => {
     const rate = (transaction.feePerByte as BigNumber).toNumber();
     const [inputCount, outputCount] = layoutFor(rate);
     return Promise.resolve({
@@ -52,7 +53,8 @@ const account = { currency: { id: "zcash" } } as unknown as Account;
 const transaction = { amount: new BigNumber(100000) } as unknown as Transaction;
 
 const safeRate = zcashSafeFeePerByte(crypto, DERIVATION_MODE);
-const resolve = () => resolveZcashFeePerByte(account, transaction, safeRate);
+const resolve = () =>
+  resolveZcashFeePerByte(TEST_CONFIG, TEST_LOGGER, account, transaction, safeRate);
 const feeAt = (rate: BigNumber, inputCount: number, outputCount: number) =>
   rate.times(vbytes(inputCount, outputCount)).toNumber();
 
@@ -158,15 +160,15 @@ describe("the Zcash adapter's resolveFeePerByte hook", () => {
   it("resolves the ZIP-317 rate on the transparent path", async () => {
     calculateFees.mockImplementation(chargingLike(() => [2, 2]));
 
-    const rate = await hook()(account, prepared(safeRate))!;
+    const rate = await hook()(TEST_CONFIG, TEST_LOGGER, account, prepared(safeRate))!;
 
     expect(rate!.lt(safeRate)).toBe(true);
     expect(feeAt(rate!, 2, 2)).toBeGreaterThanOrEqual(ZIP317_MINIMUM_FEE);
   });
 
   it("leaves the rate alone when no usable rate was prepared", () => {
-    expect(hook()(account, prepared(null))).toBeUndefined();
-    expect(hook()(account, prepared(new BigNumber(0)))).toBeUndefined();
+    expect(hook()(TEST_CONFIG, TEST_LOGGER, account, prepared(null))).toBeUndefined();
+    expect(hook()(TEST_CONFIG, TEST_LOGGER, account, prepared(new BigNumber(0)))).toBeUndefined();
     expect(calculateFees).not.toHaveBeenCalled();
   });
 });

@@ -109,6 +109,7 @@ const SelectFeeStrategy = ({
         const disabled =
           (!!transactionToUpdate &&
             bridge.isStrategyDisabled({
+              mainAccount: account,
               transaction: transactionToUpdate,
               feeData: gasOption,
             })) ||
@@ -208,6 +209,7 @@ const SelectFeeStrategy = ({
       transaction,
       disableSlowStrategy,
       transactionToUpdate,
+      account,
     ],
   );
 

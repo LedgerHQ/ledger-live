@@ -9,6 +9,7 @@ import type { NetworkInfo } from "./types";
 import { getMinReplacementFeeRateSatVb, RBF_SEQUENCE_THRESHOLD } from "./rbfFees";
 import { Address } from "@ledgerhq/wallet-btc/storage/types";
 import { scriptToAddress } from "@ledgerhq/wallet-btc/utils";
+import type { BitcoinCoinConfig } from "./config";
 
 export async function getAmountAndRecipient(
   tx: Transaction,
@@ -93,6 +94,7 @@ const buildExcludeUtxos = async (walletAccount: WalletAccount) => {
 };
 
 export const getRbfContext = async (
+  config: BitcoinCoinConfig,
   account: Account,
   originalTxId: string,
 ): Promise<RbfTxContext> => {
@@ -107,7 +109,7 @@ export const getRbfContext = async (
   const originalTx = Transaction.fromHex(hexTx);
   assertRbfEnabled(originalTx);
 
-  const minFeeRateSatVb = await getMinReplacementFeeRateSatVb({
+  const minFeeRateSatVb = await getMinReplacementFeeRateSatVb(config, {
     account,
     originalTxId,
   });

@@ -1,9 +1,10 @@
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { toWalletBtcCurrency } from "./walletBtcCurrency";
-import type { CoinConfig } from "./config";
+import type { BitcoinContext } from "./config";
+import { bindExplorer } from "./explorer";
+import { DEFAULT_REPLACED_OPERATION_EXPIRY_MS } from "./constants";
 import type {
   AccountShapeInfo,
   GetAccountShapeStream,
@@ -92,9 +93,10 @@ function withRecoveredRecipients(
 export async function performTransparentSync(
   info: AccountShapeInfo<BitcoinAccount>,
   signerContext: SignerContext,
-  coinConfig: CoinConfig,
+  context: BitcoinContext,
 ): Promise<Partial<BitcoinAccount>> {
   const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
+  const config = await context.config(currency.id);
 
   // In case we get a full derivation path, extract the seed identification part
   // 44'/0'/0'/0/0 --> 44'/0'
@@ -122,19 +124,25 @@ export async function performTransparentSync(
   const walletNetwork = toWalletNetwork(currency.id);
   const walletDerivationMode = toWalletDerivationMode(derivationMode);
 
-  const walletAccount =
+  // Bound in both cases: wallet-btc caches one explorer per currency id, first set wins, and
+  // deserialization seeds that cache unbound, so a freshly generated account can come back
+  // with a stale explorer too.
+  const walletAccount = bindExplorer(
     initialAccount?.bitcoinResources?.walletAccount ||
-    (await wallet.generateAccount(
-      {
-        xpub,
-        path: rootPath,
-        index,
-        currency: <Currency>currency.id,
-        network: walletNetwork,
-        derivationMode: walletDerivationMode,
-      },
-      toWalletBtcCurrency(currency, coinConfig(currency.id).info),
-    ));
+      (await wallet.generateAccount(
+        {
+          xpub,
+          path: rootPath,
+          index,
+          currency: <Currency>currency.id,
+          network: walletNetwork,
+          derivationMode: walletDerivationMode,
+        },
+        toWalletBtcCurrency(currency, config),
+      )),
+    currency,
+    config,
+  );
 
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
   const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
@@ -166,9 +174,13 @@ export async function performTransparentSync(
   try {
     resolved = await adapter.resolveTransactionDetails?.(transactions, initialAccount);
   } catch (error) {
-    log("bitcoin/performTransparentSync", `Keeping the explorer's view of ${currency.id}`, {
-      error,
-    });
+    context.logger(
+      "bitcoin/performTransparentSync",
+      `Keeping the explorer's view of ${currency.id}`,
+      {
+        error,
+      },
+    );
   }
 
   const newOperations = (resolved?.transactions ?? transactions)
@@ -179,8 +191,10 @@ export async function performTransparentSync(
   const newUniqueOperations = deduplicateOperations(newOperations);
 
   const _operations = mergeOps(oldOperations, newUniqueOperations);
-  const operations = removeReplaced(_operations as BtcOperation[]);
-  const balanceOperations = removeReplaced(_operations as BtcOperation[], Date.now(), true);
+  const now = Date.now();
+  const expiryMs = config.sync?.replacedOperationExpiryMs ?? DEFAULT_REPLACED_OPERATION_EXPIRY_MS;
+  const operations = removeReplaced(_operations as BtcOperation[], now, false, expiryMs);
+  const balanceOperations = removeReplaced(_operations as BtcOperation[], now, true, expiryMs);
   const keptOperationHashes = new Set(balanceOperations.map(op => op.hash));
   const removedOperationHashes = new Set(
     (_operations as BtcOperation[])
@@ -276,14 +290,17 @@ export async function performTransparentSync(
 export function createTransparentSyncObservable(
   info: AccountShapeInfo<BitcoinAccount>,
   signerContext: SignerContext,
-  coinConfig: CoinConfig,
+  context: BitcoinContext,
 ): Observable<Partial<BitcoinAccount>> {
   const currencyId = info.currency.id;
-  log("bitcoin/createTransparentSyncObservable", `Initiating transparent sync for ${currencyId}`);
+  context.logger(
+    "bitcoin/createTransparentSyncObservable",
+    `Initiating transparent sync for ${currencyId}`,
+  );
   return new Observable<Partial<BitcoinAccount>>(subscriber => {
-    performTransparentSync(info, signerContext, coinConfig)
+    performTransparentSync(info, signerContext, context)
       .then(result => {
-        log(
+        context.logger(
           "bitcoin/createTransparentSyncObservable",
           `Transparent sync completed for ${currencyId}`,
           {
@@ -297,9 +314,13 @@ export function createTransparentSyncObservable(
         subscriber.complete();
       })
       .catch(error => {
-        log("bitcoin/createTransparentSyncObservable", `Transparent sync error for ${currencyId}`, {
-          error: error.message,
-        });
+        context.logger(
+          "bitcoin/createTransparentSyncObservable",
+          `Transparent sync error for ${currencyId}`,
+          {
+            error: error.message,
+          },
+        );
         subscriber.error(error);
       });
   });
@@ -309,7 +330,7 @@ export function buildSyncObservables(
   info: AccountShapeInfo<BitcoinAccount>,
   syncConfig: SyncConfig,
   signerContext: SignerContext,
-  coinConfig: CoinConfig,
+  context: BitcoinContext,
 ): { syncs: Observable<Partial<BitcoinAccount>>[]; syncType: number } {
   const { currency } = info;
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
@@ -317,7 +338,7 @@ export function buildSyncObservables(
   const syncs: Observable<Partial<BitcoinAccount>>[] = [];
 
   if (syncType & SYNC_TYPE_TRANSPARENT) {
-    syncs.push(createTransparentSyncObservable(info, signerContext, coinConfig));
+    syncs.push(createTransparentSyncObservable(info, signerContext, context));
   }
 
   // Chain adapter guards (syncType flags, ufvk, syncState) are checked internally
@@ -332,27 +353,31 @@ export function buildSyncObservables(
 
 export function makeGetAccountShape(
   signerContext: SignerContext,
-  coinConfig: CoinConfig,
+  context: BitcoinContext,
 ): GetAccountShapeStream<BitcoinAccount> {
   return (info: AccountShapeInfo<BitcoinAccount>, syncConfig: SyncConfig) =>
     new Observable(o => {
       const { currency } = info;
-      const { syncs, syncType } = buildSyncObservables(info, syncConfig, signerContext, coinConfig);
+      const { syncs, syncType } = buildSyncObservables(info, syncConfig, signerContext, context);
 
       if (syncs.length === 0) {
-        log("bitcoin/makeGetAccountShape", `No syncs to perform for ${currency.id}`);
+        context.logger("bitcoin/makeGetAccountShape", `No syncs to perform for ${currency.id}`);
         o.complete();
         return;
       }
 
-      log("bitcoin/makeGetAccountShape", `Merging ${syncs.length} sync(s) for ${currency.id}`, {
-        hasTransparent: !!(syncType & SYNC_TYPE_TRANSPARENT),
-        syncCount: syncs.length,
-      });
+      context.logger(
+        "bitcoin/makeGetAccountShape",
+        `Merging ${syncs.length} sync(s) for ${currency.id}`,
+        {
+          hasTransparent: !!(syncType & SYNC_TYPE_TRANSPARENT),
+          syncCount: syncs.length,
+        },
+      );
 
       const sub = merge(...syncs).subscribe({
         next: result => {
-          log("bitcoin/makeGetAccountShape", `Sync update received for ${currency.id}`, {
+          context.logger("bitcoin/makeGetAccountShape", `Sync update received for ${currency.id}`, {
             blockHeight: result.blockHeight,
             operationsCount: result.operationsCount,
             hasBitcoinResources: !!result.bitcoinResources,
@@ -360,11 +385,11 @@ export function makeGetAccountShape(
           o.next(result);
         },
         complete: () => {
-          log("bitcoin/makeGetAccountShape", `All syncs completed for ${currency.id}`);
+          context.logger("bitcoin/makeGetAccountShape", `All syncs completed for ${currency.id}`);
           o.complete();
         },
         error: error => {
-          log("bitcoin/makeGetAccountShape", `Sync error for ${currency.id}`, {
+          context.logger("bitcoin/makeGetAccountShape", `Sync error for ${currency.id}`, {
             error: error.message,
           });
           o.error(error);
@@ -453,31 +478,36 @@ function reconcileConfirmedPendingOperations(account: BitcoinAccount): BitcoinAc
   return { ...account, operations, pendingOperations };
 }
 
-export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
-  log("bitcoin/postSync", "bitcoinResources");
-  const perCoin = perCoinLogic[synced.currency.id];
-  let syncedBtc = synced;
-  if (perCoin) {
-    const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
+export const makePostSync =
+  (context: BitcoinContext) =>
+  (_initial: BitcoinAccount, synced: BitcoinAccount): BitcoinAccount => {
+    context.logger("bitcoin/postSync", "bitcoinResources");
+    const perCoin = perCoinLogic[synced.currency.id];
+    let syncedBtc = synced;
+    if (perCoin) {
+      const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
-    // FIXME: unused, can remove?
-    if (postBuildBitcoinResources) {
-      syncedBtc.bitcoinResources = postBuildBitcoinResources(syncedBtc, syncedBtc.bitcoinResources);
-    }
+      // FIXME: unused, can remove?
+      if (postBuildBitcoinResources) {
+        syncedBtc.bitcoinResources = postBuildBitcoinResources(
+          syncedBtc,
+          syncedBtc.bitcoinResources,
+        );
+      }
 
-    if (syncReplaceAddress) {
-      syncedBtc.freshAddress = syncReplaceAddress(syncedBtc.freshAddress);
-      if (syncedBtc.bitcoinResources) {
-        syncedBtc.bitcoinResources.utxos = syncedBtc.bitcoinResources?.utxos.map(u => ({
-          ...u,
-          address: u.address && syncReplaceAddress(u.address),
-        }));
+      if (syncReplaceAddress) {
+        syncedBtc.freshAddress = syncReplaceAddress(syncedBtc.freshAddress);
+        if (syncedBtc.bitcoinResources) {
+          syncedBtc.bitcoinResources.utxos = syncedBtc.bitcoinResources?.utxos.map(u => ({
+            ...u,
+            address: u.address && syncReplaceAddress(u.address),
+          }));
+        }
       }
     }
-  }
 
-  syncedBtc = reconcileConfirmedPendingOperations(syncedBtc);
+    syncedBtc = reconcileConfirmedPendingOperations(syncedBtc);
 
-  log("bitcoin/postSync", "bitcoinResources DONE");
-  return syncedBtc;
-};
+    context.logger("bitcoin/postSync", "bitcoinResources DONE");
+    return syncedBtc;
+  };

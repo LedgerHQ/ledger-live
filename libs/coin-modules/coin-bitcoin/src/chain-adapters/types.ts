@@ -14,6 +14,8 @@ import type {
 import type { TX } from "@ledgerhq/wallet-btc/index";
 import type { BitcoinAddress, BitcoinSigner, BitcoinXPub, SignerContext } from "../signer";
 import type { BitcoinAccount, Transaction, TransactionStatus } from "../types";
+import type { BitcoinCoinConfig } from "../config";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 /**
  * Transactions as a chain corrected them, plus what it could recover that the
@@ -149,7 +151,12 @@ export interface ChainAdapter {
    * transaction's layout — an account-wide rate cannot express it.
    * Return `undefined` to keep the prepared rate.
    */
-  resolveFeePerByte?(account: Account, transaction: Transaction): Promise<BigNumber> | undefined;
+  resolveFeePerByte?(
+    config: BitcoinCoinConfig,
+    logger: Logger,
+    account: Account,
+    transaction: Transaction,
+  ): Promise<BigNumber> | undefined;
 
   /**
    * Override hardware address resolution for chain-specific signer APIs.
