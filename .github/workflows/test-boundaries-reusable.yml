@@ -31,7 +31,7 @@ permissions:
 jobs:
   enforce-boundaries:
     name: Enforce Module Boundaries
-    runs-on: ubuntu-22.04
+    runs-on: ledger-wallet-4cpu-aws-public
     timeout-minutes: 10
     env:
       NODE_OPTIONS: "--max-old-space-size=4096"
@@ -54,6 +54,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dev dependencies for root workspace
         run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts

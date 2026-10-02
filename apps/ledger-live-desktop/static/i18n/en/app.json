@@ -857,6 +857,9 @@
     "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best."
   },
   "payTab": {
+    "disclaimer": "Provided by Monavate Onchain",
+    "cardDisclaimer": "Looking for your crypto card?",
+    "cardDisclaimerLink": "Go to CL Card",
     "featureTour": {
       "title": "All your payments, in one place",
       "description": "Meet your new Pay tab, making your crypto ready for everyday money moments.",
@@ -901,6 +904,7 @@
     "card": {
       "title": "Crypto card",
       "topUp": "Top up",
+      "chooseCardType": "Choose card type",
       "balanceLabel": "Balance",
       "freeze": "Freeze",
       "unfreeze": "Unfreeze",
@@ -922,14 +926,23 @@
       },
       "assets": {
         "title": "Assets",
-        "empty": "No assets yet",
-        "error": "Couldn't load assets",
+        "empty": {
+          "title": "No assets yet",
+          "description": "Add an asset to start using your card.",
+          "cta": "Add asset"
+        },
+        "error": {
+          "title": "Couldn't load assets",
+          "description": "Something went wrong.",
+          "cta": "Retry"
+        },
         "info": "These assets fund your card. Set the order they're charged in, or add more.",
         "manage": "Manage",
         "manageDialog": {
           "title": "Manage assets",
           "description": "Drag to set your funding order. If one asset runs low, the next one is used automatically.",
-          "addAssetCaption": "You'll be redirected to Baanx's page to add asset.",
+          "reorder": "Reorder {{asset}}. Press Space or Enter to pick up, arrow keys to move, and Escape to cancel.",
+          "addAssetCaption": "You will be redirected to Monavate to add asset.",
           "addAsset": "Add asset"
         },
         "details": {
@@ -938,8 +951,8 @@
           "transactions": "Transactions"
         },
         "withdraw": {
-          "title": "You'll be redirected to Baanx",
-          "description": "Withdraw funds from your Baanx account to your Ledger wallet address.",
+          "title": "You will be redirected to Monavate",
+          "description": "Withdraw funds from your Monavate account to your Ledger wallet address.",
           "continue": "Continue"
         },
         "history": {
@@ -950,7 +963,7 @@
         }
       },
       "reward": {
-        "title": "Total cashback"
+        "title": "Total cashback · {{ratePercent}}% in {{ticker}}"
       },
       "numbers": {
         "reveal": "View",
@@ -982,7 +995,9 @@
         "status": "Status",
         "card": "Card",
         "cardInfo": "The last four digits of the card used for this payment.",
-        "fundingSource": "Funding source",
+        "fundingSource_one": "Funding source",
+        "fundingSource_other": "Funding sources",
+        "cashback": "Cashback",
         "transactionId": "Transaction ID",
         "copyTransactionId": "Copy transaction ID",
         "today": "Today {{time}}",
@@ -1010,6 +1025,10 @@
         "signedOut": {
           "title": "Log in to see your card transactions",
           "description": "Your card activity appears here once you’re logged in."
+        },
+        "unclaimed": {
+          "title": "Crypto card",
+          "description": "Go to pay to set up your card."
         },
         "empty": {
           "title": "No card transactions yet",
@@ -1056,6 +1075,7 @@
     },
     "contacts": {
       "title": "Pay contact",
+      "me": "Me",
       "empty": {
         "info": "You don’t have contact yet",
         "addContact": "Add contact"
@@ -1076,10 +1096,11 @@
       },
       "addressPicker": {
         "title": "Select {{name}}'s address",
+        "meTitle": "Select my address",
         "addAddress": "Add address"
       },
       "paySuccess": {
-        "title": "You paid ({{recipient}})",
+        "title": "You paid {{recipient}}",
         "amount": "Amount",
         "estimatedTime": "Est. time",
         "from": "From",
@@ -1135,7 +1156,7 @@
       }
     },
     "cardLogin": {
-      "title": "Crypto Card",
+      "title": "Crypto card",
       "beforeIntro": {
         "title": "Get your crypto card",
         "description": "Get 1% cashback every time you spend",
@@ -1148,19 +1169,39 @@
         "action": "Log in"
       },
       "errors": {
-        "pkce_failed": "Login could not start. Please try again.",
-        "browser_open_failed": "The login page could not open. Please try again.",
-        "missing_attempt": "This login is no longer valid. Please log in again.",
-        "exchange_failed": "Login could not be completed. Please try again.",
-        "persist_failed": "Your session could not be saved. Please try again.",
-        "fetch_user_failed": "Your card could not be loaded. Please try again."
+        "pkce_failed": {
+          "title": "Login could not start",
+          "description": "Please try again."
+        },
+        "browser_open_failed": {
+          "title": "The login page could not open",
+          "description": "Please try again."
+        },
+        "missing_attempt": {
+          "title": "This login is no longer valid",
+          "description": "Please log in again."
+        },
+        "exchange_failed": {
+          "title": "Login could not be completed",
+          "description": "Please try again."
+        },
+        "persist_failed": {
+          "title": "Your session could not be saved",
+          "description": "Please try again."
+        },
+        "fetch_user_failed": {
+          "title": "Your card could not be loaded",
+          "description": "Please try again."
+        },
+        "retryLogin": "Try again",
+        "retryUser": "Retry"
       }
     },
     "cardLoginIntro": {
       "title": "Spend crypto, earn cashback",
-      "providedBy": "Card provided by Baanx",
+      "providedBy": "Card provided by Monavate",
       "createAccount": "Create an account",
-      "logIn": "Log in to Baanx",
+      "logIn": "Log in to Monavate",
       "wallets": {
         "applePay": "Apple Pay",
         "googlePay": "Google Pay",
@@ -1202,8 +1243,9 @@
         "verifyCta": "Verify address",
         "successTitle": "Address displayed on the device's Secure Screen",
         "nextStepsLabel": "Next steps",
-        "nextStepShare": "Share your address via your desired app",
-        "nextStepMatch": "Ensure the shared address matches the one on your Ledger Device.",
+        "nextStepKeepDisplayed": "Keep your address displayed on your Ledger device. Don’t confirm it yet.",
+        "nextStepPaste": "Click “Got it,” then paste your address into the app you’re sharing it with.",
+        "nextStepCheckMatch": "Before sending, check that it matches the one on your Ledger device.",
         "gotItCta": "Got it",
         "device": {
           "cancelledTitle": "Address verification cancelled",
@@ -3623,7 +3665,9 @@
       "title": "Withdraw assets",
       "steps": {
         "amount": {
-          "title": "Withdraw"
+          "title": "Withdraw",
+          "unlockedOn": "Unlocked on {{date}}",
+          "unlocksOn": "Unlocks on {{date}}"
         },
         "connectDevice": {
           "title": "Device"
@@ -5061,8 +5105,7 @@
           },
           "validator": {
             "title": "Validators",
-            "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs",
-            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+            "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs"
           },
           "connectDevice": {
             "title": "Device"
@@ -6775,6 +6818,9 @@
       "transfer_token_private": "private recipient",
       "convert_token_public_to_private": "private recipient",
       "convert_token_private_to_public": "public recipient",
+      "bond_public": "validator",
+      "unbond_public": "recipient",
+      "claim_unbond_public": "recipient",
       "delegate": "validator",
       "redelegate": "validator",
       "undelegate": "validator",
@@ -8591,6 +8637,30 @@
       "title": "This topic cannot be followed",
       "description": "The Internet Computer has retired this topic, or the Ledger Internet Computer app cannot yet sign following on it. Choose another topic."
     },
+    "ICPTooManyFollowees": {
+      "title": "Followee limit reached",
+      "description": "A topic can follow at most {{max}} neurons. Remove neurons until the list holds {{max}} or fewer."
+    },
+    "ICPInvalidFolloweeId": {
+      "title": "Invalid neuron ID",
+      "description": "{{id}} is not a valid neuron ID. Remove it from the list."
+    },
+    "ICPDuplicateFollowee": {
+      "title": "Neuron listed twice",
+      "description": "Neuron {{id}} is listed more than once. Remove the duplicate."
+    },
+    "ICPFolloweeIsSelf": {
+      "title": "A neuron cannot follow itself",
+      "description": "{{id}} is this neuron's own ID. Remove it from the list."
+    },
+    "ICPStartDissolvingNotAllowed": {
+      "title": "Cannot start dissolving this neuron",
+      "description": "Only a locked neuron can start dissolving. Sync your neurons to see their current state."
+    },
+    "ICPStopDissolvingNotAllowed": {
+      "title": "Cannot stop dissolving this neuron",
+      "description": "Only a dissolving neuron can stop dissolving, and this one may have already finished. Sync your neurons to see their current state."
+    },
     "ICPDisburseNotAllowed": {
       "title": "Cannot disburse this neuron",
       "description": "A neuron can be disbursed once it has fully dissolved and its stake is more than the network fee. Sync your neurons to see their current state."
@@ -8634,6 +8704,10 @@
     "ICPCallRejected": {
       "title": "Request not accepted",
       "description": "The Internet Computer rejected the request before it ran, so nothing changed. Please try again. {{reason}}"
+    },
+    "ICPNodeRefused": {
+      "title": "Request not sent",
+      "description": "The Internet Computer did not take the request, so nothing was sent and nothing changed. Please try again. {{reason}}"
     },
     "ICPInvalidPercentage": {
       "title": "Percentage out of range",
@@ -10158,7 +10232,6 @@
   },
   "history": {
     "title": "Transaction history",
-    "cardScope": "Card",
     "cardAssetScope": "Card · {{assetName}}",
     "pending": "Pending transaction",
     "pending_other": "Pending transactions",
@@ -10295,6 +10368,7 @@
     "addAddressEntry": {
       "title": "Enter address",
       "addressPlaceholder": "Address or ENS",
+      "addressPlaceholderNoENS": "Address",
       "confirmAddress": "Continue to review",
       "validatingAddress": "Validating address",
       "validAddress": "Valid address",

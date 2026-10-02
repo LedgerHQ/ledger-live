@@ -3,16 +3,61 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { PayCardAuthStatus } from "@features/flow-pay-card-auth";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardFormatters, CardProps } from "./Card.types";
-import { CARD_TITLE, I18nWrapper } from "./__tests__/i18nWrapper";
+import { CARD_DISCLAIMER, CARD_TITLE } from "./__tests__/i18nWrapper";
+import { cardTestWrapper, createCardTestStore } from "./__tests__/cardTestStore";
 
 let mockStatus: PayCardAuthStatus = "unknown";
+let receivedWidgetChooseCardType: (() => void) | undefined;
+
+type OnboardingStatus = {
+  data: { steps: { id: string; isDone: boolean }[]; completedCount: number };
+  isLoading: boolean;
+  isFetching: boolean;
+  isError: boolean;
+  hasSourceError: boolean;
+  refresh: () => void;
+};
+
+const accountOnboarding: OnboardingStatus = {
+  data: {
+    steps: [
+      { id: "create-account", isDone: false },
+      { id: "choose-card-type", isDone: false },
+    ],
+    completedCount: 0,
+  },
+  isLoading: false,
+  isFetching: false,
+  isError: false,
+  hasSourceError: false,
+  refresh: jest.fn(),
+};
+
+function choosingCardType(overrides: Partial<OnboardingStatus> = {}): OnboardingStatus {
+  return {
+    ...accountOnboarding,
+    ...overrides,
+    data: {
+      steps: [
+        { id: "create-account", isDone: true },
+        { id: "choose-card-type", isDone: false },
+      ],
+      completedCount: 1,
+    },
+  };
+}
+
+let mockOnboardingStatus = accountOnboarding;
 let receivedDetailsFormatters: CardTransactionFormatters | undefined;
+let receivedCardState: string | undefined;
 const mockUseWalletsTotal = jest.fn(() => ({ total: 0, isLoading: false, isError: false }));
 let receivedTransactionFormatters: CardTransactionFormatters | undefined;
 let receivedCardSettingsActions: CardProps["cardSettingsActions"];
 
 jest.mock("@features/flow-pay-card-auth", () => ({
-  CardLogin: () => <div data-testid="card-login" />,
+  CardLogin: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="card-login">{children}</div>
+  ),
   useCardAuthStatus: () => mockStatus,
   useIsCardSignedIn: () => mockStatus === "signedIn",
 }));
@@ -20,17 +65,21 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 jest.mock("@features/flow-pay-card-details", () => ({
   CardArtwork: () => <div data-testid="card-artwork" />,
   CardVisual: () => <div data-testid="card-visual" />,
+  CardLoadingVisual: () => <div data-testid="card-loading-visual" />,
   CardDetails: ({
     cardVisual,
     formatters,
     cardSettingsActions,
+    cardState,
   }: {
     cardVisual?: { balance: number };
     formatters?: CardTransactionFormatters;
     cardSettingsActions?: CardProps["cardSettingsActions"];
+    cardState?: string;
   }) => {
     receivedDetailsFormatters = formatters;
     receivedCardSettingsActions = cardSettingsActions;
+    receivedCardState = cardState;
     return (
       <div
         data-testid={cardVisual ? "card-details-with-visual" : "card-details"}
@@ -38,16 +87,22 @@ jest.mock("@features/flow-pay-card-details", () => ({
       />
     );
   },
-  CardTopUpButton: ({ onTopUp }: { onTopUp?: () => void }) =>
-    onTopUp ? (
-      <button type="button" data-testid="card-top-up" onClick={onTopUp}>
-        Top up
-      </button>
-    ) : null,
+  CardPrimaryActionButton: ({ label, onPress }: { label: string; onPress: () => void }) => (
+    <button type="button" data-testid="card-primary-action" onClick={onPress}>
+      {label}
+    </button>
+  ),
 }));
 
 jest.mock("@features/flow-pay-card-widget", () => ({
-  CardOnboardingWidget: () => <div data-testid="card-onboarding-widget" />,
+  CardOnboardingWidget: ({ onChooseCardType }: { onChooseCardType?: () => void }) => {
+    receivedWidgetChooseCardType = onChooseCardType;
+    return <div data-testid="card-onboarding-widget" />;
+  },
+}));
+
+jest.mock("@features/flow-pay-card-widget/onboarding-status", () => ({
+  useCardOnboardingStatus: () => mockOnboardingStatus,
 }));
 
 jest.mock("@features/flow-pay-card-assets", () => ({
@@ -65,13 +120,12 @@ jest.mock("@features/flow-pay-card-transactions", () => ({
 jest.mock("./useCardLifecycleTracking", () => ({
   useCardLifecycleTracking: jest.fn(),
 }));
-
 import { Card } from "./Card";
 
 const title = CARD_TITLE;
 
 function renderCard(card: React.ReactElement) {
-  return render(card, { wrapper: I18nWrapper });
+  return render(card, { wrapper: cardTestWrapper(createCardTestStore()) });
 }
 
 const oauthConfig: CardProps["login"]["oauthConfig"] = {
@@ -79,6 +133,14 @@ const oauthConfig: CardProps["login"]["oauthConfig"] = {
   clientId: "client-id",
   hostedUiUrl: "https://hosted.example",
   redirectUri: "https://card.example/callback",
+};
+
+const fundingAssets: CardProps["assets"] = {
+  currencies: new Map(),
+  getCounterValue: () => null,
+  formatCountervalue: String,
+  onWithdraw: jest.fn(),
+  onAddAsset: jest.fn(),
 };
 
 const formatters: CardFormatters = {
@@ -96,7 +158,10 @@ describe("Card (web)", () => {
 
   beforeEach(() => {
     mockStatus = "unknown";
+    mockOnboardingStatus = accountOnboarding;
+    receivedWidgetChooseCardType = undefined;
     receivedDetailsFormatters = undefined;
+    receivedCardState = undefined;
     receivedTransactionFormatters = undefined;
     receivedCardSettingsActions = undefined;
   });
@@ -105,6 +170,12 @@ describe("Card (web)", () => {
     renderCard(<Card login={{ oauthConfig }} />);
 
     expect(screen.getByText(title)).toBeVisible();
+  });
+
+  it("always shows the disclaimer", () => {
+    renderCard(<Card login={{ oauthConfig }} />);
+
+    expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
   });
 
   describe("while resolving the session", () => {
@@ -129,6 +200,8 @@ describe("Card (web)", () => {
 
       expect(screen.getByTestId("card-artwork")).toBeVisible();
       expect(screen.getByTestId("card-login")).toBeVisible();
+      expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
+      expect(screen.getByTestId("pay-card-disclaimer")).toHaveClass("mt-auto");
       expect(screen.queryByTestId("card-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-details")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
@@ -150,7 +223,7 @@ describe("Card (web)", () => {
     it("shows no top up button, even when the host wires one", () => {
       renderCard(<Card login={{ oauthConfig }} onTopUp={jest.fn()} />);
 
-      expect(screen.queryByTestId("card-top-up")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-primary-action")).not.toBeInTheDocument();
     });
   });
 
@@ -165,6 +238,8 @@ describe("Card (web)", () => {
       expect(screen.getByTestId("card-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("card-details")).toBeVisible();
       expect(screen.getByTestId("card-transactions")).toBeVisible();
+      expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
+      expect(screen.getByTestId("pay-card-disclaimer")).not.toHaveClass("mt-auto");
       expect(screen.queryByTestId("card-login")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-artwork")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-assets")).not.toBeInTheDocument();
@@ -176,8 +251,10 @@ describe("Card (web)", () => {
           login={{ oauthConfig }}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -192,8 +269,10 @@ describe("Card (web)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -212,8 +291,10 @@ describe("Card (web)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -234,8 +315,10 @@ describe("Card (web)", () => {
           formatters={formatters}
           assets={{
             currencies: new Map(),
-            priceWallet: () => null,
+            getCounterValue: () => null,
             formatCountervalue: String,
+            onWithdraw: jest.fn(),
+            onAddAsset: jest.fn(),
           }}
         />,
       );
@@ -278,15 +361,68 @@ describe("Card (web)", () => {
       const onTopUp = jest.fn();
 
       renderCard(<Card login={{ oauthConfig }} onTopUp={onTopUp} />);
-      fireEvent.click(screen.getByTestId("card-top-up"));
+      fireEvent.click(screen.getByTestId("card-primary-action"));
 
       expect(onTopUp).toHaveBeenCalledTimes(1);
+    });
+
+    it("shows the disclaimer above the top up button", () => {
+      renderCard(<Card login={{ oauthConfig }} onTopUp={jest.fn()} />);
+
+      const disclaimer = screen.getByTestId("pay-card-disclaimer");
+      const topUp = screen.getByTestId("card-primary-action");
+
+      expect(
+        disclaimer.compareDocumentPosition(topUp) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
     });
 
     it("shows no top up button when the host wires none", () => {
       renderCard(<Card login={{ oauthConfig }} />);
 
-      expect(screen.queryByTestId("card-top-up")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-primary-action")).not.toBeInTheDocument();
+    });
+
+    it("should replace top up with choose card type and hide funding sections when that step is current", () => {
+      const onChooseCardType = jest.fn();
+      mockOnboardingStatus = choosingCardType();
+
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          onTopUp={jest.fn()}
+          onChooseCardType={onChooseCardType}
+          assets={fundingAssets}
+        />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Choose card type" }));
+
+      expect(screen.queryByRole("button", { name: "Top up" })).not.toBeInTheDocument();
+      expect(receivedCardState).toBe("choosingCardType");
+      expect(screen.queryByTestId("card-assets")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("card-transactions")).not.toBeInTheDocument();
+      expect(onChooseCardType).toHaveBeenCalledTimes(1);
+      receivedWidgetChooseCardType?.();
+      expect(onChooseCardType).toHaveBeenCalledTimes(2);
+    });
+
+    it("should keep top up and funding sections while the card status read is still in flight", () => {
+      mockOnboardingStatus = choosingCardType({ isLoading: true });
+
+      renderCard(
+        <Card
+          login={{ oauthConfig }}
+          onTopUp={jest.fn()}
+          onChooseCardType={jest.fn()}
+          assets={fundingAssets}
+        />,
+      );
+
+      expect(screen.getByRole("button", { name: "Top up" })).toBeVisible();
+      expect(receivedCardState).toBe("ready");
+      expect(screen.getByTestId("card-assets")).toBeVisible();
+      expect(screen.getByTestId("card-transactions")).toBeVisible();
+      expect(screen.queryByRole("button", { name: "Choose card type" })).not.toBeInTheDocument();
     });
 
     it("hands the settings actions to the details block", () => {

@@ -48,5 +48,4 @@ export const ethereum_hoodi = currency({
       address: "https://hoodi.etherscan.io/address/$address",
     },
   ],
-  explorerId: "eth_hoodi",
 });

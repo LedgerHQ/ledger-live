@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-desktop-e2e-tests",
-  "version": "0.42.0",
+  "version": "0.43.0",
   "private": true,
   "scripts": {
     "lint": "oxlint .",
@@ -18,6 +18,8 @@
     "allure": "pnpm run allure:generate && pnpm run allure:open"
   },
   "dependencies": {
+    "@ledgerhq/device-mockserver-client": "catalog:",
+    "@ledgerhq/baanx-test-client": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",

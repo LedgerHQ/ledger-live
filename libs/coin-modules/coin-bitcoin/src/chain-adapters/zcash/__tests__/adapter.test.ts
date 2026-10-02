@@ -56,6 +56,7 @@ describe("zcash chain adapter — shielded privateInfo (de)serialization", () =>
     shieldedAddress: "u1shieldedpersisted",
     lastSyncTimestamp: 1_700_000_000_000,
     lastProcessedBlock: 3_400_000,
+    lastSyncError: "shielded sync failed: engine down",
     transactions: [
       {
         id: "tx-1",
@@ -94,6 +95,7 @@ describe("zcash chain adapter — shielded privateInfo (de)serialization", () =>
     expect(raw.privateInfo?.ufvk).toBe("uview-persisted");
     expect(raw.privateInfo?.shieldedAddress).toBe("u1shieldedpersisted");
     expect(raw.privateInfo?.orchardBalance).toBe("1234");
+    expect(raw.privateInfo?.lastSyncError).toBe("shielded sync failed: engine down");
 
     const restoredAccount = {} as ZcashAccount;
     adapter.assignFromAccountRaw!(accountRaw, restoredAccount as unknown as Account);
@@ -102,6 +104,10 @@ describe("zcash chain adapter — shielded privateInfo (de)serialization", () =>
     expect(restored.ufvk).toBe("uview-persisted");
     expect(restored.shieldedAddress).toBe("u1shieldedpersisted");
     expect(restored.syncState).toBe("ready");
+    // The retry marker a failed shielded sync leaves behind (useZcashShieldedSync's
+    // catchError) must survive this round-trip too, or a failed sync stops being
+    // retried the next time the account loads.
+    expect(restored.lastSyncError).toBe("shielded sync failed: engine down");
     expect(restored.orchardBalance.toString()).toBe("1234");
     expect(restored.ironwoodBalance.toString()).toBe("56");
     expect(restored.lastProcessedBlock).toBe(3_400_000);

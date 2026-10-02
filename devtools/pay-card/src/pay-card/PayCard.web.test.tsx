@@ -57,10 +57,16 @@ function buildProps(): PayCardToolProps {
   return {
     flags: {
       payTabEnabled: false,
-      cardParam: false,
+      cardNativeParam: false,
+      cardLiveAppParam: false,
+      cardDisclaimerParam: false,
+      legacyTopUpParam: false,
       ptxCardEnabled: false,
       setPayTabEnabled: jest.fn(),
-      setCardParam: jest.fn(),
+      setCardNativeParam: jest.fn(),
+      setCardLiveAppParam: jest.fn(),
+      setCardDisclaimerParam: jest.fn(),
+      setLegacyTopUpParam: jest.fn(),
       setPtxCardEnabled: jest.fn(),
     },
     cardOnboarding: {
@@ -108,6 +114,7 @@ function buildProps(): PayCardToolProps {
       fill: jest.fn(),
       empty: jest.fn(),
       receive: jest.fn(),
+      receiveMultiAsset: jest.fn(),
       clear: jest.fn(),
     },
     reorder: {
@@ -153,6 +160,20 @@ describe("PayCard (web)", () => {
     expect(screen.queryByText("Allow wallet reorder")).toBeNull();
   });
 
+  it("mocks transaction answers, including one funded by several assets", () => {
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    fireEvent.click(screen.getByText("Transactions"));
+    fireEvent.click(screen.getByText("Full fixture"));
+    fireEvent.click(screen.getByText("Receive USDC"));
+    fireEvent.click(screen.getByText("Receive multi-asset"));
+
+    expect(props.transactions.fill).toHaveBeenCalledTimes(1);
+    expect(props.transactions.receive).toHaveBeenCalledWith("usdc");
+    expect(props.transactions.receiveMultiAsset).toHaveBeenCalledTimes(1);
+  });
+
   it("resets the feature tour", () => {
     const props = buildProps();
     render(<PayCard {...props} />);
@@ -178,6 +199,7 @@ describe("PayCard (web)", () => {
     const onNavigateToPortfolio = jest.fn();
     const onNavigateToPayTab = jest.fn();
     const onNavigateToPaySuccess = jest.fn();
+    const onNavigateToPaySuccessMe = jest.fn();
     const onNavigateToSendSuccess = jest.fn();
     render(
       <PayCard
@@ -185,6 +207,7 @@ describe("PayCard (web)", () => {
         onNavigateToPortfolio={onNavigateToPortfolio}
         onNavigateToPayTab={onNavigateToPayTab}
         onNavigateToPaySuccess={onNavigateToPaySuccess}
+        onNavigateToPaySuccessMe={onNavigateToPaySuccessMe}
         onNavigateToSendSuccess={onNavigateToSendSuccess}
       />,
     );
@@ -193,10 +216,12 @@ describe("PayCard (web)", () => {
     fireEvent.click(screen.getByText("Go to Portfolio"));
     fireEvent.click(screen.getByText("Go to Pay tab"));
     fireEvent.click(screen.getByText("Pay contact success"));
+    fireEvent.click(screen.getByText("Pay contact success (Me)"));
     fireEvent.click(screen.getByText("Send success"));
     expect(onNavigateToPortfolio).toHaveBeenCalledTimes(1);
     expect(onNavigateToPayTab).toHaveBeenCalledTimes(1);
     expect(onNavigateToPaySuccess).toHaveBeenCalledTimes(1);
+    expect(onNavigateToPaySuccessMe).toHaveBeenCalledTimes(1);
     expect(onNavigateToSendSuccess).toHaveBeenCalledTimes(1);
   });
 

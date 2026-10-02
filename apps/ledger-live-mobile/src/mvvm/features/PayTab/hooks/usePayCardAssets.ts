@@ -9,7 +9,7 @@ import type { CardTransactionFormatters } from "@features/flow-pay-card-transact
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import { useSelector } from "~/context/hooks";
 import { useLocale } from "~/context/Locale";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { addExtraSessionTrackingPairs, useCalculateCountervalueCallback } from "~/actions/general";
 import { formatCardTransactionAmount } from "LLM/features/OperationsHistory/utils/formatCardTransactionAmount";
 import { useCountervalueFormatter } from "./useCountervalueFormatter";
@@ -17,9 +17,10 @@ import { useFiatFormatter } from "./useFiatFormatter";
 
 const NO_IDS: readonly string[] = [];
 
-export function usePayCardAssets(): CardAssetsProps {
+export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const discreet = useSelector(discreetModeSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
   // Nothing to price until the card is signed in, and the lookups and the polled pairs would be
   // charged to every Pay tab visitor.
@@ -39,7 +40,7 @@ export function usePayCardAssets(): CardAssetsProps {
     addExtraSessionTrackingPairs(pairs);
   }, [currencies, counterValueCurrency]);
 
-  const priceWallet = useCallback(
+  const getCounterValue = useCallback(
     (currency: CryptoOrTokenCurrency, balance: string): number | null => {
       const unit = currency.units[0];
       if (!unit) return null;
@@ -59,13 +60,20 @@ export function usePayCardAssets(): CardAssetsProps {
   const formatters = useMemo<CardTransactionFormatters>(
     () => ({
       amount: (value, currency, kind) =>
-        formatCardTransactionAmount({ value, currency, kind, locale }),
+        formatCardTransactionAmount({ value, currency, kind, locale, discreet }),
     }),
-    [locale],
+    [locale, discreet],
   );
 
   return useMemo(
-    () => ({ currencies, priceWallet, formatCountervalue, formatBalance, formatters }),
-    [currencies, priceWallet, formatCountervalue, formatBalance, formatters],
+    () => ({
+      currencies,
+      getCounterValue,
+      formatCountervalue,
+      formatBalance,
+      formatters,
+      discreet,
+    }),
+    [currencies, getCounterValue, formatCountervalue, formatBalance, formatters, discreet],
   );
 }

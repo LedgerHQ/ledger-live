@@ -25,6 +25,7 @@ import { CardOnboardingScreen } from "../components/CardOnboarding/CardOnboardin
 import { CurrencyMappingScreen } from "../components/CurrencyMapping/CurrencyMapping";
 import { Interaction } from "../components/Interaction/Interaction";
 import { ReorderMock } from "../components/ReorderMock/ReorderMock";
+import { TransactionsScreen } from "../components/Transactions/Transactions";
 import { AuthSection } from "./AuthSection";
 
 function PayCard(props: Readonly<PayCardToolProps>) {
@@ -34,6 +35,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
     interaction,
     balance,
     currencyMapping,
+    transactions,
     reorder,
     hasSeenFeatureTour,
     resetPayCardFeatureTourSeen,
@@ -46,6 +48,7 @@ function PayCard(props: Readonly<PayCardToolProps>) {
     hasSeenLoginIntro,
     resetPayCardLoginIntroSeen,
     onNavigateToPaySuccess,
+    onNavigateToPaySuccessMe,
     onNavigateToSendSuccess,
     auth,
   } = props;
@@ -53,10 +56,11 @@ function PayCard(props: Readonly<PayCardToolProps>) {
     onNavigateToPortfolio ||
     onNavigateToPayTab ||
     onNavigateToPaySuccess ||
+    onNavigateToPaySuccessMe ||
     onNavigateToSendSuccess,
   );
   const [screen, setScreen] = useState<
-    "tool" | "interaction" | "balance" | "onboarding" | "mapping"
+    "tool" | "interaction" | "balance" | "onboarding" | "mapping" | "transactions"
   >("tool");
 
   if (screen === "interaction") {
@@ -73,6 +77,10 @@ function PayCard(props: Readonly<PayCardToolProps>) {
 
   if (screen === "mapping") {
     return <CurrencyMappingScreen rows={currencyMapping} onBack={() => setScreen("tool")} />;
+  }
+
+  if (screen === "transactions") {
+    return <TransactionsScreen {...transactions} onBack={() => setScreen("tool")} />;
   }
 
   return (
@@ -106,6 +114,18 @@ function PayCard(props: Readonly<PayCardToolProps>) {
             <Spot appearance="icon" icon={CoinsCrypto} />
             <ListItemContent>
               <ListItemTitle>Balance & Wallets</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight />
+          </ListItemTrailing>
+        </ListItem>
+
+        <ListItem onClick={() => setScreen("transactions")}>
+          <ListItemLeading>
+            <Spot appearance="icon" icon={CreditCard} />
+            <ListItemContent>
+              <ListItemTitle>Transactions</ListItemTitle>
             </ListItemContent>
           </ListItemLeading>
           <ListItemTrailing>
@@ -153,10 +173,22 @@ function PayCard(props: Readonly<PayCardToolProps>) {
           onChange={flags.setPayTabEnabled}
         />
         <ToggleRow
-          label="Card param"
-          description="params.card"
-          checked={flags.cardParam}
-          onChange={flags.setCardParam}
+          label="Native card"
+          description="params.card_native"
+          checked={flags.cardNativeParam}
+          onChange={flags.setCardNativeParam}
+        />
+        <ToggleRow
+          label="Card live app"
+          description="params.card_live_app"
+          checked={flags.cardLiveAppParam}
+          onChange={flags.setCardLiveAppParam}
+        />
+        <ToggleRow
+          label="Card disclaimer"
+          description="params.card_disclaimer"
+          checked={flags.cardDisclaimerParam}
+          onChange={flags.setCardDisclaimerParam}
         />
         <ToggleRow
           label="Legacy Card"
@@ -218,6 +250,11 @@ function PayCard(props: Readonly<PayCardToolProps>) {
               {onNavigateToPaySuccess ? (
                 <Button appearance="gray" size="sm" onClick={onNavigateToPaySuccess}>
                   Pay contact success
+                </Button>
+              ) : null}
+              {onNavigateToPaySuccessMe ? (
+                <Button appearance="gray" size="sm" onClick={onNavigateToPaySuccessMe}>
+                  Pay contact success (Me)
                 </Button>
               ) : null}
               {onNavigateToSendSuccess ? (

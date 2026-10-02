@@ -2,7 +2,7 @@ import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors"
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
-import coinConfig, { type TronCoinConfig } from "../config";
+import type { TronCoinConfig } from "../config";
 import { TronTransactionExpired } from "../types/errors";
 import {
   broadcastHexTron,
@@ -77,13 +77,6 @@ const recipientHex = "419b3281a60ab7a44f351ef2896c653f134972ad22";
 function mockResponse<T>(data: T) {
   return { data, status: 200 } as never;
 }
-
-beforeAll(() => {
-  coinConfig.setCoinConfig(() => ({
-    status: { type: "active" },
-    explorer: { url: TRON_BASE_URL },
-  }));
-});
 
 beforeEach(() => {
   mockedNetwork.mockReset();
@@ -1049,11 +1042,6 @@ describe("getAccountName", () => {
 describe("super representatives", () => {
   it("fetches super representatives from /wallet/listwitnesses on cache miss", async () => {
     await jest.isolateModulesAsync(async () => {
-      const coinConfigLocal = require("../config").default as typeof coinConfig;
-      coinConfigLocal.setCoinConfig(() => ({
-        status: { type: "active" },
-        explorer: { url: TRON_BASE_URL },
-      }));
       const mod = require(".") as typeof import(".");
       mockedNetwork.mockResolvedValueOnce(
         mockResponse({
@@ -1073,11 +1061,6 @@ describe("super representatives", () => {
 
   it("accountNamesCache resolves through getAccountName on miss", async () => {
     await jest.isolateModulesAsync(async () => {
-      const coinConfigLocal = require("../config").default as typeof coinConfig;
-      coinConfigLocal.setCoinConfig(() => ({
-        status: { type: "active" },
-        explorer: { url: TRON_BASE_URL },
-      }));
       const mod = require(".") as typeof import(".");
       const accountName = Buffer.from("CacheName").toString("hex");
       mockedNetwork.mockResolvedValueOnce(

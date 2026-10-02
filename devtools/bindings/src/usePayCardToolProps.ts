@@ -11,6 +11,7 @@ import {
   emptyPayCardTransactionsMock,
   fillPayCardTransactionsMock,
   readPayCardTransactionsMock,
+  receiveMultiAssetPayCardTransactionMock,
   receivePayCardTransactionMock,
   type PayCardMockTransactionAsset,
 } from "@domain/api-card-management/mock/card-transactions";
@@ -128,6 +129,9 @@ function describeError(error: unknown): string {
   return typeof error === "string" ? error : JSON.stringify(error, null, 2);
 }
 
+const NO_CARD_FACE = { card_native: false, card_live_app: false, card_disclaimer: false };
+type CardFace = keyof typeof NO_CARD_FACE;
+
 export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): PayCardToolProps {
   const platform = options.platform ?? "web";
   const dispatch = useDispatch();
@@ -136,28 +140,87 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const ptxCard = useFeature("ptxCard");
 
   const payTabEnabled = !!payTab?.enabled;
-  const cardParam = !!payTab?.params?.card;
+  const cardNativeParam = !!payTab?.params?.card_native;
+  const cardLiveAppParam = !!payTab?.params?.card_live_app;
+  const cardDisclaimerParam = !!payTab?.params?.card_disclaimer;
+  const legacyTopUpParam = !!payTab?.params?.legacyTopUp;
   const ptxCardEnabled = !!ptxCard?.enabled;
 
   const setPayTabEnabled = useCallback(
     (enabled: boolean) => {
-      const params = { card: cardParam };
-      dispatch(setOverride({ key: payTabKey, value: { enabled, params } }));
-    },
-    [cardParam, dispatch, payTabKey],
-  );
-
-  const setCardParam = useCallback(
-    (card: boolean) => {
-      const params = { card };
       dispatch(
         setOverride({
           key: payTabKey,
-          value: { enabled: payTabEnabled, params },
+          value: {
+            enabled,
+            params: {
+              card_native: cardNativeParam,
+              card_live_app: cardLiveAppParam,
+              card_disclaimer: cardDisclaimerParam,
+              legacyTopUp: legacyTopUpParam,
+            },
+          },
         }),
       );
     },
-    [dispatch, payTabEnabled, payTabKey],
+    [cardDisclaimerParam, cardLiveAppParam, cardNativeParam, dispatch, legacyTopUpParam, payTabKey],
+  );
+
+  const setPayTabParam = useCallback(
+    (patch: {
+      card_native?: boolean;
+      card_live_app?: boolean;
+      card_disclaimer?: boolean;
+      legacyTopUp?: boolean;
+    }) => {
+      dispatch(
+        setOverride({
+          key: payTabKey,
+          value: {
+            enabled: payTabEnabled,
+            params: {
+              card_native: cardNativeParam,
+              card_live_app: cardLiveAppParam,
+              card_disclaimer: cardDisclaimerParam,
+              legacyTopUp: legacyTopUpParam,
+              ...patch,
+            },
+          },
+        }),
+      );
+    },
+    [
+      cardDisclaimerParam,
+      cardLiveAppParam,
+      cardNativeParam,
+      dispatch,
+      legacyTopUpParam,
+      payTabEnabled,
+      payTabKey,
+    ],
+  );
+
+  // Only one card face can be on: turning one on turns the others off.
+  const setCardFace = useCallback(
+    (face: CardFace, on: boolean) =>
+      setPayTabParam(on ? { ...NO_CARD_FACE, [face]: true } : { [face]: false }),
+    [setPayTabParam],
+  );
+  const setCardNativeParam = useCallback(
+    (on: boolean) => setCardFace("card_native", on),
+    [setCardFace],
+  );
+  const setCardLiveAppParam = useCallback(
+    (on: boolean) => setCardFace("card_live_app", on),
+    [setCardFace],
+  );
+  const setCardDisclaimerParam = useCallback(
+    (on: boolean) => setCardFace("card_disclaimer", on),
+    [setCardFace],
+  );
+  const setLegacyTopUpParam = useCallback(
+    (legacyTopUp: boolean) => setPayTabParam({ legacyTopUp }),
+    [setPayTabParam],
   );
 
   const setPtxCardEnabled = useCallback(
@@ -192,13 +255,32 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const flags = useMemo(
     () => ({
       payTabEnabled,
-      cardParam,
+      cardNativeParam,
+      cardLiveAppParam,
+      cardDisclaimerParam,
+      legacyTopUpParam,
       ptxCardEnabled,
       setPayTabEnabled,
-      setCardParam,
+      setCardNativeParam,
+      setCardLiveAppParam,
+      setCardDisclaimerParam,
+      setLegacyTopUpParam,
       setPtxCardEnabled,
     }),
-    [payTabEnabled, cardParam, ptxCardEnabled, setPayTabEnabled, setCardParam, setPtxCardEnabled],
+    [
+      payTabEnabled,
+      cardNativeParam,
+      cardLiveAppParam,
+      cardDisclaimerParam,
+      legacyTopUpParam,
+      ptxCardEnabled,
+      setPayTabEnabled,
+      setCardNativeParam,
+      setCardLiveAppParam,
+      setCardDisclaimerParam,
+      setLegacyTopUpParam,
+      setPtxCardEnabled,
+    ],
   );
 
   const auth = usePayCardAuthProps({ openPayTab: options.openPayTab });
@@ -243,7 +325,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
         canToggle: isMockingEnabled && step.id in STEP_ANSWERS,
       })),
       completedCount: derivedOnboarding.completedCount,
-      isFetching: onboardingStatus.isLoading,
+      isFetching: onboardingStatus.isFetching,
       error: onboardingStatus.isError ? "the account could not be read" : undefined,
       raw: JSON.stringify(derivedOnboarding, null, 2),
       refresh: refreshCardOnboarding,
@@ -253,7 +335,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     };
   }, [
     derivedOnboarding,
-    onboardingStatus.isLoading,
+    onboardingStatus.isFetching,
     onboardingStatus.isError,
     refreshCardOnboarding,
     setDerivedStepDone,
@@ -404,6 +486,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     empty: () => updateTransactions(emptyPayCardTransactionsMock),
     receive: (asset: PayCardMockTransactionAsset) =>
       updateTransactions(() => receivePayCardTransactionMock(asset)),
+    receiveMultiAsset: () => updateTransactions(receiveMultiAssetPayCardTransactionMock),
     clear: () => updateTransactions(clearPayCardTransactionsMock),
   };
 

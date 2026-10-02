@@ -54,19 +54,14 @@ shared-lib:
   - libs/device-core/**/*
   - libs/device-react/**/*
   - libs/disable-network-setup/**/*
-  - libs/domain-service/**/*
-  - libs/env/**/*
   - libs/ethereum-provider/**/*
-  - libs/evm-tools/**/*
   - libs/exchange-module/**/*
   - libs/feature-flag-module/**/*
   - libs/hw-ledger-key-ring-protocol/**/*
   - libs/ledger-key-ring-protocol/**/*
   - libs/ledger-services/**/*
-  - libs/live-config/**/*
   - libs/live-countervalues/**/*
   - libs/live-countervalues-react/**/*
-  - libs/live-currency-format/**/*
   - libs/live-dmk-shared/**/*
   - libs/live-dmk-speculos/**/*
   - libs/live-hooks/**/*
@@ -74,6 +69,7 @@ shared-lib:
   - libs/live-signer-canton/**/*
   - libs/live-signer-evm/**/*
   - libs/live-signer-solana/**/*
+  - libs/live-signer-tron/**/*
   - libs/live-signer-xrp/**/*
   - libs/live-wallet/**/*
   - libs/speculos-transport/**/*

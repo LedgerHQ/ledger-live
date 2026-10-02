@@ -6,10 +6,14 @@ import { mobileWallet } from "./mobileWallet.web";
 import type { CardLoginProps } from "./types";
 
 export function CardLogin({
+  children,
   oauthConfig,
   callback,
   openHostedLogin,
   openHostedPage,
+  keepLoginPage,
+  onCreateAccount,
+  onLogIn,
 }: CardLoginProps) {
   const login = useCardLoginViewModel({
     openHostedLogin: openHostedLogin ?? openHostedLoginInBrowser,
@@ -17,7 +21,15 @@ export function CardLogin({
     mobileWallet,
     oauthConfig,
     callback,
+    keepLoginPage,
+    onCreateAccount,
+    onLogIn,
   });
 
-  return login ? <CardLoginView {...login} /> : null;
+  return (
+    <>
+      {children}
+      {login ? <CardLoginView {...login} /> : null}
+    </>
+  );
 }

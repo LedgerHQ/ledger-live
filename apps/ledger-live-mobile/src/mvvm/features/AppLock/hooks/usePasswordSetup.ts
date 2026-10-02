@@ -1,6 +1,8 @@
 import {
   APP_LOCK_SALT_LENGTH,
+  isPasswordLongEnough,
   setHasPassword,
+  setNeedsLongerPassword,
   storeNewPassword,
 } from "@features/platform-app-lock";
 import { getRandomBytesAsync } from "expo-crypto";
@@ -18,6 +20,7 @@ export function usePasswordSetup(): PasswordSetup {
     async (password: string) => {
       await storeNewPassword(password, await getRandomBytesAsync(APP_LOCK_SALT_LENGTH));
       dispatch(setHasPassword(true));
+      dispatch(setNeedsLongerPassword(!isPasswordLongEnough(password)));
     },
     [dispatch],
   );

@@ -857,6 +857,9 @@
     "exploreCryptoCardsDescription" : "Kripto kartlarımızı inceleyin ve size en uygun kartı bulun."
   },
   "payTab" : {
+    "disclaimer" : "Hizmet sunan: Monavate Onchain",
+    "cardDisclaimer" : "Kripto kartınızı mı arıyorsunuz?",
+    "cardDisclaimerLink" : "CL Kart'a git",
     "featureTour" : {
       "title" : "Tüm ödemeleriniz tek bir yerde",
       "description" : "Kriptonuzu günlük para anlarına hazır hâle getiren yeni Pay sekmenizle tanışın.",
@@ -901,6 +904,7 @@
     "card" : {
       "title" : "Kripto kartı",
       "topUp" : "Bakiye yükle",
+      "chooseCardType" : "Kart türü seçin",
       "balanceLabel" : "Bakiye",
       "freeze" : "Dondur",
       "unfreeze" : "Çöz",
@@ -922,14 +926,23 @@
       },
       "assets" : {
         "title" : "Varlıklar",
-        "empty" : "Henüz varlık yok",
-        "error" : "Varlıklar yüklenemedi",
+        "empty" : {
+          "title" : "Henüz varlık yok",
+          "description" : "Kartınızı kullanmaya başlamak için bir varlık ekleyin.",
+          "cta" : "Varlık ekle"
+        },
+        "error" : {
+          "title" : "Varlıklar yüklenemedi",
+          "description" : "Bir hata oluştu.",
+          "cta" : "Tekrar dene"
+        },
         "info" : "Kartınız, harcamalarınızda bu varlıkları kullanır. Sırasıyla hangi varlıkların harcanacağını belirleyin veya daha fazla varlık ekleyin.",
         "manage" : "Yönet",
         "manageDialog" : {
           "title" : "Varlıkları yönetin",
           "description" : "Harcama sırasını belirlemek için sürükleyin. Bir varlığın bakiyesi yetersiz kalırsa otomatik olarak sıradaki varlık kullanılır.",
-          "addAssetCaption" : "Varlık eklemek için Baanx'in sayfasına yönlendirileceksiniz.",
+          "reorder" : "{{asset}} varlığının sırasını değiştirin. Ögeyi tutmak için Boşluk veya Enter tuşuna, taşımak için yön tuşlarına ve işlemi iptal etmek için Escape tuşuna basın.",
+          "addAssetCaption" : "Varlık eklemek için Monavate'e yönlendirileceksiniz.",
           "addAsset" : "Varlık ekle"
         },
         "details" : {
@@ -938,8 +951,8 @@
           "transactions" : "İşlemler"
         },
         "withdraw" : {
-          "title" : "Baanx'e yönlendirileceksiniz",
-          "description" : "Baanx hesabınızdan Ledger cüzdan adresinize bakiye çekin.",
+          "title" : "Monavate'e yönlendirileceksiniz",
+          "description" : "Monavate hesabınızdan Ledger cüzdan adresinize bakiye çekin.",
           "continue" : "Devam"
         },
         "history" : {
@@ -950,7 +963,7 @@
         }
       },
       "reward" : {
-        "title" : "Toplam para iadesi"
+        "title" : "Toplam para iadesi · {{ticker}} cinsinden %{{ratePercent}}"
       },
       "numbers" : {
         "reveal" : "Görüntüle",
@@ -982,7 +995,9 @@
         "status" : "Durum",
         "card" : "Kart",
         "cardInfo" : "Bu ödeme için kullanılan kartın son dört hanesi.",
-        "fundingSource" : "Fonlama kaynağı",
+        "fundingSource_one" : "Fonlama kaynağı",
+        "fundingSource_other" : "Fonlama kaynağı",
+        "cashback" : "Para iadesi",
         "transactionId" : "İşlem Kimliği (TxID)",
         "copyTransactionId" : "İşlem kimliğini kopyala",
         "today" : "Bugün {{time}}",
@@ -1010,6 +1025,10 @@
         "signedOut" : {
           "title" : "Kart işlemlerinizi görmek için giriş yapın",
           "description" : "Giriş yaptığınızda kart hareketleriniz burada görünür."
+        },
+        "unclaimed" : {
+          "title" : "Kripto kartı",
+          "description" : "Kartınızı kurmak için Ödeme Yap sekmesine gidin."
         },
         "empty" : {
           "title" : "Henüz kart işlemi yok",
@@ -1056,6 +1075,7 @@
     },
     "contacts" : {
       "title" : "Kişiye ödeme yapın",
+      "me" : "Ben",
       "empty" : {
         "info" : "Henüz bir kişiniz yok",
         "addContact" : "Kişi ekle"
@@ -1076,6 +1096,7 @@
       },
       "addressPicker" : {
         "title" : "{{name}} için adres seçin",
+        "meTitle" : "Adresimi seç",
         "addAddress" : "Adres ekle"
       },
       "paySuccess" : {
@@ -1135,7 +1156,7 @@
       }
     },
     "cardLogin" : {
-      "title" : "Kripto Kartı",
+      "title" : "Kripto kartı",
       "beforeIntro" : {
         "title" : "Kripto kartınızı alın",
         "description" : "Her harcamanızda %1 para iadesi alın",
@@ -1148,19 +1169,39 @@
         "action" : "Oturum aç"
       },
       "errors" : {
-        "pkce_failed" : "Oturum açma işlemi başlatılamadı. Lütfen tekrar deneyin.",
-        "browser_open_failed" : "Oturum açma sayfası açılamadı. Lütfen tekrar deneyin.",
-        "missing_attempt" : "Bu giriş bilgileri artık geçerli değil. Lütfen tekrar oturum açın.",
-        "exchange_failed" : "Oturum açma işlemi tamamlanamadı. Lütfen tekrar deneyin.",
-        "persist_failed" : "Oturumunuz kaydedilemedi. Lütfen tekrar deneyin.",
-        "fetch_user_failed" : "Kartınız yüklenemedi. Lütfen tekrar deneyin."
+        "pkce_failed" : {
+          "title" : "Oturum açma işlemi başlatılamadı",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "browser_open_failed" : {
+          "title" : "Oturum açma sayfası açılamadı",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "missing_attempt" : {
+          "title" : "Bu giriş bilgileri artık geçerli değil",
+          "description" : "Lütfen tekrar oturum açın."
+        },
+        "exchange_failed" : {
+          "title" : "Oturum açma işlemi tamamlanamadı",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "persist_failed" : {
+          "title" : "Oturumunuz kaydedilemedi",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "fetch_user_failed" : {
+          "title" : "Kartınız yüklenemedi",
+          "description" : "Lütfen tekrar deneyin."
+        },
+        "retryLogin" : "Tekrar deneyin",
+        "retryUser" : "Tekrar dene"
       }
     },
     "cardLoginIntro" : {
       "title" : "Kripto harcayın, para iadesi alın",
-      "providedBy" : "Kart bir Baanx hizmetidir",
+      "providedBy" : "Kart bir Monavate hizmetidir",
       "createAccount" : "Bir hesap oluştur",
-      "logIn" : "Baanx'e giriş yap",
+      "logIn" : "Monavate'e giriş yap",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -1202,8 +1243,9 @@
         "verifyCta" : "Adresi doğrula",
         "successTitle" : "Adres, cihazınızın Güvenli Ekranında görüntüleniyor",
         "nextStepsLabel" : "Sonraki adımlar",
-        "nextStepShare" : "Adresinizi dilediğiniz uygulama üzerinden paylaşın",
-        "nextStepMatch" : "Paylaşılan adresin Ledger cihazınızdaki adresle eşleştiğinden emin olun.",
+        "nextStepKeepDisplayed" : "Adresinizi Ledger cihazınızın ekranında açık tutun. Henüz onay vermeyin.",
+        "nextStepPaste" : "\"Anladım\" seçeneğine tıklayın ve adresinizi paylaşmak istediğiniz uygulamaya yapıştırın.",
+        "nextStepCheckMatch" : "Göndermeden önce, adresin Ledger cihazınızdaki adresle eşleştiğini kontrol edin.",
         "gotItCta" : "Anladım",
         "device" : {
           "cancelledTitle" : "Adres doğrulaması iptal edildi",
@@ -3612,7 +3654,9 @@
       "title" : "Varlık çekimi",
       "steps" : {
         "amount" : {
-          "title" : "Çekim"
+          "title" : "Çekim",
+          "unlockedOn" : "{{date}} tarihinde kilidi açıldı",
+          "unlocksOn" : "{{date}} tarihinde kilidi açılacak"
         },
         "connectDevice" : {
           "title" : "Cihaz"
@@ -5030,8 +5074,7 @@
           },
           "validator" : {
             "title" : "Doğrulayıcılar",
-            "ledgerByBitwiseTC" : "Ledger by Bitwise Hüküm ve Koşulları",
-            "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
+            "ledgerByBitwiseTC" : "Ledger by Bitwise Hüküm ve Koşulları"
           },
           "connectDevice" : {
             "title" : "Cihaz"
@@ -6745,6 +6788,9 @@
       "transfer_token_private" : "gizli alıcı",
       "convert_token_public_to_private" : "gizli alıcı",
       "convert_token_private_to_public" : "açık alıcı",
+      "bond_public" : "doğrulayıcı",
+      "unbond_public" : "alıcı",
+      "claim_unbond_public" : "alıcı",
       "delegate" : "doğrulayıcı",
       "redelegate" : "doğrulayıcı",
       "undelegate" : "doğrulayıcı",
@@ -8557,6 +8603,30 @@
       "title" : "Bu konu takip edilemiyor",
       "description" : "Internet Computer bu konuyu kullanımdan kaldırdı veya Ledger Internet Computer uygulaması bu konu için takip işlemini henüz imzalayamıyor. Başka bir konu seçin."
     },
+    "ICPTooManyFollowees" : {
+      "title" : "Takip edilen limitine ulaşıldı",
+      "description" : "Bir konu en fazla {{max}} nöronu takip edebilir. Listede {{max}} veya daha az nöron kalana kadar nöronları kaldırın."
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "Geçersiz nöron kimliği",
+      "description" : "{{id}} geçerli bir nöron kimliği değildir. Listeden kaldırın."
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "Nöron iki kez listelendi",
+      "description" : "Nöron {{id}} birden fazla kez listelenmiş. Kopyayı kaldırın."
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "Bir nöron kendisini takip edemez.",
+      "description" : "{{id}}, bu nöronun kendi kimliğidir. Listeden kaldırın."
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "Bu nöronu çözme işlemi başlatılamıyor",
+      "description" : "Yalnızca kilitli bir nöron çözünmeye başlanabilir. Güncel durumlarını görmek için nöronlarınızı senkronize edin."
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "Bu nöronun çözünmesi durdurulamıyor",
+      "description" : "Yalnızca çözünmekte olan bir nöronda çözünme durdurulabilir ve bu nöronun çözünmesi çoktan tamamlanmış olabilir. Güncel durumlarını görmek için nöronlarınızı senkronize edin."
+    },
     "ICPDisburseNotAllowed" : {
       "title" : "Bu nöron dağıtılamaz",
       "description" : "Nöronunuzun kilidi tamamen çözüldüğünde ve stake edilen miktarınız ağ işlem ücretini aştığında varlıklarınızı hesabınıza çekebilirsiniz. Nöronlarınızın en güncel durumunu görüntülemek için uygulamanızı senkronize edin."
@@ -8600,6 +8670,10 @@
     "ICPCallRejected" : {
       "title" : "Talep kabul edilmedi",
       "description" : "Internet Computer, talebi çalıştırılmadan önce reddetti, bu yüzden hiçbir şey değişmedi. Lütfen tekrar deneyin. {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "Talep gönderilmedi",
+      "description" : "Internet Computer talebi almadı, bu yüzden hiçbir şey gönderilmedi ve hiçbir şey değişmedi. Lütfen tekrar deneyin. {{reason}}"
     },
     "ICPInvalidPercentage" : {
       "title" : "Yüzde aralık dışında",
@@ -10121,7 +10195,6 @@
   },
   "history" : {
     "title" : "İşlem geçmişi",
-    "cardScope" : "Kart",
     "cardAssetScope" : "Kart · {{assetName}}",
     "pending" : "Bekleyen işlem",
     "pending_other" : "Bekleyen İşlemler",
@@ -10258,6 +10331,7 @@
     "addAddressEntry" : {
       "title" : "Adresi girin",
       "addressPlaceholder" : "Adres veya ENS",
+      "addressPlaceholderNoENS" : "Adres",
       "confirmAddress" : "İnceleme adımına geç",
       "validatingAddress" : "Adres doğrulanıyor",
       "validAddress" : "Geçerli adres",

@@ -48,6 +48,5 @@ export const bsc = currency({
     },
   ],
   keywords: ["bsc", "bnb", "binance", "binance smart chain", "binance chain"],
-  explorerId: "bnb",
   tokenTypes: ["bep20"],
 });

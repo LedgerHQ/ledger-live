@@ -1,7 +1,7 @@
 import type { PasswordVerifier } from "@shared/password-verifier";
 
 export type PasswordCheck =
-  | Readonly<{ status: "correct"; verifier: PasswordVerifier }>
+  | Readonly<{ status: "correct"; verifier: PasswordVerifier; needsLongerPassword: boolean }>
   | Readonly<{ status: "incorrect" }>
   | Readonly<{ status: "notSet" }>;
 

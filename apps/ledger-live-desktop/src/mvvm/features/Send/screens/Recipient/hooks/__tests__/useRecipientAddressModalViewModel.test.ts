@@ -38,6 +38,9 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts", () => ({
+  useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  ).useContactDisplayName,
   isEligibleAddressCurrency: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
   ).isEligibleAddressCurrency,
@@ -377,7 +380,7 @@ describe("useRecipientAddressModalViewModel", () => {
     expect(result.current.showEmptyContactsState).toBe(false);
   });
 
-  it("only exposes saved contact addresses from the selected network", () => {
+  it("lists Me and saved contacts with only their addresses on the selected network", () => {
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: true,
       showNewBadge: false,
@@ -419,11 +422,10 @@ describe("useRecipientAddressModalViewModel", () => {
       }),
     );
 
-    expect(result.current.contactsOnNetwork).toHaveLength(1);
-    expect(result.current.contactsOnNetwork[0]).toMatchObject({
-      id: "contact-alice",
-      addresses: [{ id: "address-eth" }, { id: "address-usdc" }],
-    });
+    expect(result.current.contactsOnNetwork).toMatchObject([
+      { id: "contact-me", addresses: [{ id: "address-me" }] },
+      { id: "contact-alice", addresses: [{ id: "address-eth" }, { id: "address-usdc" }] },
+    ]);
   });
 
   it("advances with the address matching the current currency when a contact has several network addresses", () => {
@@ -454,7 +456,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0xusdt", undefined, true);
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "0xusdt",
+      undefined,
+      true,
+      undefined,
+      contact.id,
+    );
   });
 
   it("shows a contact choice instead of resolving the first address when a searched contact has several addresses", () => {
@@ -500,6 +508,7 @@ describe("useRecipientAddressModalViewModel", () => {
         matchedContact: {
           contactId: contact.id,
           contactName: contact.name,
+          isMe: false,
           addressId: contact.addresses[0]!.id,
           addressLabel: contact.addresses[0]!.label,
           address: contact.addresses[0]!.address,
@@ -553,7 +562,7 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined, true);
+    expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined, true, undefined, contact.id);
     expect(selectContact).not.toHaveBeenCalled();
   });
 
@@ -575,7 +584,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined);
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "0x123",
+      undefined,
+      undefined,
+      undefined,
+      contact.id,
+    );
     expect(goToStep).toHaveBeenCalledWith("SKIP_MEMO_CONFIRMATION");
   });
 
@@ -595,7 +610,7 @@ describe("useRecipientAddressModalViewModel", () => {
       ],
     });
 
-    const { result } = renderHook(() =>
+    const { result, rerender } = renderHook(() =>
       useRecipientAddressModalViewModel({
         account: mockAccount,
         currency: mockAccount.currency,
@@ -608,9 +623,16 @@ describe("useRecipientAddressModalViewModel", () => {
     expect(selectContact).toHaveBeenCalledWith(contact);
     expect(onAddressSelected).not.toHaveBeenCalled();
 
+    mockedUseRecipientContactSelection.mockReturnValue({
+      selectedContact: contact,
+      selectContact,
+      clearSelectedContact,
+    });
+    rerender();
+
     act(() => result.current.handleContactAddressSelect(contact.addresses[1], 2));
     expect(clearSelectedContact).toHaveBeenCalledTimes(1);
-    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined, true);
+    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined, true, undefined, contact.id);
     expect(setRecipientResolution).toHaveBeenCalledWith("contact address match", "contact");
   });
 
@@ -640,7 +662,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactAddressSelect(contact.addresses[1], 2));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined);
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "0x456",
+      undefined,
+      undefined,
+      undefined,
+      contact.id,
+    );
     expect(goToStep).toHaveBeenCalledWith("SKIP_MEMO_CONFIRMATION");
   });
 
@@ -717,7 +745,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     result.current.handleAddressSelect("new_address", "ens_name");
 
-    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name", true);
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "new_address",
+      "ens_name",
+      true,
+      undefined,
+      undefined,
+    );
   });
 
   it("does not advance when a family notice blocks the recipient step", () => {
@@ -757,7 +791,13 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleAddressSelect("new_address", "ens_name"));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name");
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "new_address",
+      "ens_name",
+      undefined,
+      undefined,
+      undefined,
+    );
     expect(goToStep).toHaveBeenCalledWith("SKIP_MEMO_CONFIRMATION");
   });
 
@@ -777,10 +817,16 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleAddressSelect("new_address"));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("new_address", undefined, true, {
-      value: "",
-      type: "NO_MEMO",
-    });
+    expect(onAddressSelected).toHaveBeenCalledWith(
+      "new_address",
+      undefined,
+      true,
+      {
+        value: "",
+        type: "NO_MEMO",
+      },
+      undefined,
+    );
   });
 
   it("passes the current transaction to address validation", () => {

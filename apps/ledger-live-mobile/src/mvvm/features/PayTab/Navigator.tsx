@@ -9,7 +9,6 @@ import {
 } from "LLM/components/Navigation";
 import { PayTabScreen } from "./screens/PayTab";
 import { PayTabRequestReceiveScreen } from "./screens/RequestReceive";
-import { PayTabSelectContactScreen } from "./screens/SelectContact";
 import { PaySelectContactScreen } from "./screens/PaySelectContact";
 import type { PayTabNavigatorParamList } from "./types";
 
@@ -32,10 +31,6 @@ export default function PayTabNavigator() {
       <TabStack.Screen
         name={ScreenName.PayTabRequestReceive}
         component={PayTabRequestReceiveScreen}
-      />
-      <TabStack.Screen
-        name={ScreenName.PayTabSelectContact}
-        component={PayTabSelectContactScreen}
       />
       <TabStack.Screen
         name={ScreenName.PayTabPayContact}

@@ -25,7 +25,12 @@ import {
   MAINNET_LEDGER_CANISTER_ID,
 } from "../consts";
 import { redactPrincipals } from "../common-logic/redact";
-import { ICPCallRejected, ICPGovernanceRejected, ICPStakeNotRefreshed } from "../errors";
+import {
+  ICPCallRejected,
+  ICPGovernanceRejected,
+  ICPNodeRefused,
+  ICPStakeNotRefreshed,
+} from "../errors";
 import { getAgent } from "../network/agent";
 import {
   decodeCanisterIdlFunc,
@@ -50,20 +55,6 @@ function requestIdFromHex(hex: string): RequestId {
   const bytes = Buffer.from(hex, "hex");
   const copy = new Uint8Array(bytes);
   return copy.buffer as RequestId;
-}
-
-function throwIfLedgerTransferReplyIsErr(replyBuf: ArrayBuffer) {
-  const transferIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "transfer");
-  const decoded = decodeCanisterIdlFunc<[{ Err?: unknown; Ok?: unknown }]>(
-    transferIdlFunc,
-    replyBuf,
-  );
-
-  const out = decoded[0];
-  if (out.Err) {
-    const message = JSON.stringify(out.Err, (_, v) => (typeof v === "bigint" ? v.toString() : v));
-    throw new Error(message);
-  }
 }
 
 // The IC root key is the trust anchor for BLS certificate verification. On mainnet the agent embeds
@@ -105,11 +96,22 @@ export const fetchBlockHeight = async (): Promise<BigNumber> => {
   return BigNumber(decoded.chain_length.toString());
 };
 
+/**
+ * Submit an envelope to the node and return the body it answered with, or `null` when it gave none.
+ *
+ * `null` is not a failure. A 202 means the node took the call but had no certificate for it within
+ * its window; a 5xx that the answer was lost, the call possibly not. Either way the call can still
+ * execute, and only a read of its status can say — the caller polls where it holds a signed
+ * read-state envelope, and reports the outcome unknown where it does not. A 4xx to a call is the
+ * one answer that settles it: the node never took the message. A 4xx to a read_state settles
+ * nothing — the call it asks after was taken already, and the read itself may have expired (it
+ * carries the call's expiry) or been rate-limited — so it counts as no answer, and the poll goes on.
+ */
 export const broadcastTxn = async (
   payload: Buffer,
   canisterId: string,
   type: "call" | "read_state",
-) => {
+): Promise<Uint8Array | null> => {
   log("debug", `[ICP] Broadcasting ${type} to ${canisterId}, body: ${payload.toString("hex")}`);
   // The IC serves the synchronous call on v3 but read_state only on v2 (there is no v3 read_state).
   const version = type === "read_state" ? "v2" : "v3";
@@ -122,40 +124,17 @@ export const broadcastTxn = async (
   });
 
   if (res.status === 200) {
-    return new Uint8Array(await res.arrayBuffer());
+    const body = await res.arrayBuffer();
+    return body.byteLength > 0 ? new Uint8Array(body) : null;
   }
-
-  throw new Error(`Failed to broadcast transaction: ${await res.text()}`);
-};
-
-export const ensureTransferCallAccepted = async (
-  syncCallResponse: Uint8Array,
-  transferRequestIdHex: string,
-) => {
-  const requestId = requestIdFromHex(transferRequestIdHex);
-  const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
-  const top = Cbor.decode<{
-    status?: string;
-    certificate?: ArrayBuffer | Uint8Array;
-  }>(toArrayBuffer(syncCallResponse));
-
-  invariant(
-    top.status === "replied" && top.certificate,
-    "[ICP](ensureTransferCallAccepted) Decoding failed",
-  );
-
-  const rootKey = await getRootKey();
-  const cert = await Certificate.create({
-    certificate: toArrayBuffer(top.certificate),
-    rootKey,
-    canisterId,
-    maxAgeInMinutes: 100,
-  });
-  const replyBuf = lookupResultToBuffer(cert.lookup(["request_status", requestId, "reply"]));
-
-  invariant(replyBuf, "[ICP](ensureTransferCallAccepted) Reply status not found");
-
-  throwIfLedgerTransferReplyIsErr(replyBuf);
+  if (type === "call" && res.status >= 400 && res.status < 500) {
+    const reason = redactPrincipals(await res.text());
+    throw new ICPNodeRefused(`Failed to broadcast transaction: ${reason}`, {
+      status: res.status,
+      reason,
+    });
+  }
+  return null;
 };
 
 export const fetchBalance = async (address: string): Promise<BigNumber> => {
@@ -268,10 +247,27 @@ const terminalReply = async (
     : null;
 };
 
+// What the synchronous /call answers with when it answers at all: a certificate for the request's
+// status, or — for a call the node turned away before replication — the rejection itself.
+interface SyncCallBody {
+  status?: string;
+  certificate?: ArrayBuffer | Uint8Array;
+  reject_message?: string;
+}
+
+// A call refused before replication never ran, exactly like one a certificate marks `rejected`, and
+// is reported the same way. Left unrecognized it reads as a call with no certificate yet, and gets
+// polled for a status it will never have — then reported as an outcome unknown.
+const throwIfRejectedBeforeReplication = (body: SyncCallBody): void => {
+  if (body.status !== "non_replicated_rejection") return;
+  const reason = redactPrincipals(body.reject_message ?? "");
+  throw new ICPCallRejected(`[ICP] call rejected: ${reason || "unknown"}`, { reason });
+};
+
 /**
  * Submit a signed update call and return its reply. The v3 `/call` endpoint may answer synchronously
- * with the terminal certificate; otherwise we poll the signed read-state envelope with bounded
- * backoff until `replied` or `rejected`. Throws on a rejected call. Returns null (indeterminate) if
+ * with the terminal certificate, or with none at all; otherwise we poll the signed read-state
+ * envelope with bounded backoff until `replied` or `rejected`. Throws on a rejected call. Returns null (indeterminate) if
  * no terminal status arrives within the window; the caller decides how to handle it — idempotent
  * reads/claims may retry, non-idempotent governance ops must surface it as unconfirmed (not success).
  */
@@ -286,19 +282,22 @@ export const readReplyFromCanister = async (
   const rootKey = await getRootKey();
 
   const callRes = await broadcastTxn(callBlob, canisterIdStr, "call");
-  const top = Cbor.decode<{ status?: string; certificate?: ArrayBuffer | Uint8Array }>(
-    toArrayBuffer(callRes),
-  );
-  if (top.certificate) {
-    const reply = await terminalReply(top.certificate, canisterId, requestId, rootKey);
-    if (reply) return reply;
+  if (callRes) {
+    const top = Cbor.decode<SyncCallBody>(toArrayBuffer(callRes));
+    throwIfRejectedBeforeReplication(top);
+    if (top.certificate) {
+      const reply = await terminalReply(top.certificate, canisterId, requestId, rootKey);
+      if (reply) return reply;
+    }
   }
 
-  // Poll the same request id via read-state until terminal, or give up (indeterminate).
+  // Poll the same request id via read-state until terminal, or give up (indeterminate). Reached
+  // with no answer at all when the node took the call but could not certify it in time.
   if (!readStateBlob) return null;
   for (let attempt = 0; attempt < READ_STATE_POLL_ATTEMPTS; attempt += 1) {
     await delay(READ_STATE_POLL_INTERVAL_MS);
     const readStateRes = await broadcastTxn(readStateBlob, canisterIdStr, "read_state");
+    if (!readStateRes) continue;
     const { certificate } = Cbor.decode<{ certificate: ArrayBuffer | Uint8Array }>(
       toArrayBuffer(readStateRes),
     );
@@ -307,6 +306,50 @@ export const readReplyFromCanister = async (
     if (reply) return reply;
   }
   return null;
+};
+
+/** The ledger's reply to a transfer: the block it landed in, or the refusal it explains. */
+export interface LedgerTransferOutcome {
+  Ok?: unknown;
+  Err?: unknown;
+}
+
+/**
+ * Read the ledger's verdict on a transfer out of what the synchronous call answered with.
+ *
+ * Throws ICPCallRejected when that answer says the call never ran — the node turned it away before
+ * replication, or the replica rejected it — and a plain error when it cannot be read: a body that
+ * does not decode, a certificate that does not verify, a status that is not terminal. Whether an
+ * unreadable answer is a failure or an outcome unknown is the caller's to say; it knows what the
+ * transfer was for.
+ */
+export const readTransferOutcome = async (
+  syncCallResponse: Uint8Array,
+  transferRequestIdHex: string,
+): Promise<LedgerTransferOutcome> => {
+  const requestId = requestIdFromHex(transferRequestIdHex);
+  const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
+  const top = Cbor.decode<SyncCallBody>(toArrayBuffer(syncCallResponse));
+  throwIfRejectedBeforeReplication(top);
+  invariant(
+    top.status === "replied" && top.certificate,
+    "[ICP](readTransferOutcome) Decoding failed",
+  );
+
+  const reply = await terminalReply(top.certificate, canisterId, requestId, await getRootKey());
+  invariant(reply, "[ICP](readTransferOutcome) Reply status not found");
+
+  const transferIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "transfer");
+  const [outcome] = decodeCanisterIdlFunc<[LedgerTransferOutcome]>(transferIdlFunc, reply);
+  return outcome;
+};
+
+/** The ledger ran the transfer and refused it: nothing moved, and the message carries its reason. */
+export const throwIfLedgerTransferRefused = (outcome: LedgerTransferOutcome): void => {
+  if (!outcome.Err) return;
+  throw new Error(
+    JSON.stringify(outcome.Err, (_, v) => (typeof v === "bigint" ? v.toString() : v)),
+  );
 };
 
 /**
@@ -338,12 +381,23 @@ export const claimOrRefreshNeuronFromAccount = async (
     sender: content.sender,
     ingress_expiry: content.ingress_expiry,
   };
-  const reply = await readReplyFromCanister(
-    Buffer.from(Cbor.encode({ content })),
-    Buffer.from(Cbor.encode({ content: readStateContent })),
-    MAINNET_GOVERNANCE_CANISTER_ID,
-    requestIdHex,
-  );
+  // The claim only ever runs after the transfer settled, so a rejected claim call leaves the same
+  // state as one governance answered with an error: the ICP is in the neuron's account, unclaimed.
+  // It is reported as that rather than as a rejected call, which reads as "nothing ran" — true of
+  // the claim, false of the transfer, and what would get the user offered a retry that stakes twice.
+  let reply: ArrayBuffer | null;
+  try {
+    reply = await readReplyFromCanister(
+      Buffer.from(Cbor.encode({ content })),
+      Buffer.from(Cbor.encode({ content: readStateContent })),
+      MAINNET_GOVERNANCE_CANISTER_ID,
+      requestIdHex,
+    );
+  } catch (error) {
+    if (!(error instanceof ICPCallRejected)) throw error;
+    const reason = typeof error.reason === "string" ? error.reason : "";
+    throw new ICPStakeNotRefreshed(reason || "ICPStakeNotRefreshed", { reason });
+  }
   // Indeterminate (outage only, after polling): the caller decides — a create/top-up surfaces it as
   // unconfirmed rather than reporting success (the transfer already happened).
   if (!reply) return undefined;

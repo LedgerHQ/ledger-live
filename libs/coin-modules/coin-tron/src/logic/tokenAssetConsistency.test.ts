@@ -1,6 +1,6 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import network from "@ledgerhq/live-network";
-import coinConfig, { type TronCoinConfig } from "../config";
+import type { TronCoinConfig } from "../config";
 import { getBlock } from "./getBlock";
 import { listOperations } from "./listOperations";
 
@@ -119,10 +119,6 @@ function mockTronGrid(log: object[]) {
  * amount.
  */
 describe("token asset consistency between listOperations and getBlock", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => config);
-  });
-
   beforeEach(() => {
     mockedNetwork.mockReset();
   });

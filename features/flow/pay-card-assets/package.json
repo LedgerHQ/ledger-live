@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-assets",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Pay Card linked-wallet assets list for Ledger Wallet",
   "main": "src/index.ts",
@@ -35,9 +35,14 @@
     "@features/flow-pay-card-wallets": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
-    "@shared/i18n": "workspace:*"
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-list-reorder": "workspace:*"
   },
   "devDependencies": {
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/modifiers": "catalog:",
+    "@dnd-kit/sortable": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
@@ -62,6 +67,10 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-draggable-flatlist": "catalog:",
+    "react-native-gesture-handler": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
@@ -73,10 +82,18 @@
     "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/modifiers": "catalog:",
+    "@dnd-kit/sortable": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-native-draggable-flatlist": "catalog:",
+    "react-native-gesture-handler": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": ">=4.0.0"
   },
   "peerDependenciesMeta": {
     "react-native": {
@@ -86,6 +103,30 @@
       "optional": true
     },
     "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "@dnd-kit/core": {
+      "optional": true
+    },
+    "@dnd-kit/modifiers": {
+      "optional": true
+    },
+    "@dnd-kit/sortable": {
+      "optional": true
+    },
+    "@dnd-kit/utilities": {
+      "optional": true
+    },
+    "react-native-draggable-flatlist": {
+      "optional": true
+    },
+    "react-native-gesture-handler": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
       "optional": true
     }
   }

@@ -1,7 +1,12 @@
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
-import { Balance, type ActionTilesProps, type BalanceData } from "@features/flow-pay-balance";
+import {
+  ActionTiles,
+  Balance,
+  type ActionTilesProps,
+  type BalanceData,
+} from "@features/flow-pay-balance";
 import { BankTransferIntro, type BankTransferIntroProps } from "@features/flow-pay-bank-transfer";
 import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-deposit";
 import {
@@ -11,17 +16,19 @@ import {
   type ContactsNativeProps,
 } from "@features/flow-pay-contact";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { Wallet40Background } from "LLM/components/Wallet40Background";
+import { Wallet40Background, useScrollOffset } from "LLM/components/Wallet40Background";
+import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";
 import { TrackScreen } from "~/analytics";
-import { ScrollView } from "react-native";
+import Animated from "react-native-reanimated";
+import { CardDisclaimer } from "./CardDisclaimer";
+import { PayDisclaimer } from "./PayDisclaimer";
+import type { PayTabCardState } from "./usePayTabCardState";
 
 type PayTabViewProps = {
   readonly top: number;
   readonly bottom: number;
-  readonly login: CardProps["login"];
-  readonly cardAssets: CardProps["assets"];
-  readonly cardFormatters: CardProps["formatters"];
-  readonly onTopUp: () => Promise<void>;
+  readonly card: CardProps;
+  readonly cardState: PayTabCardState;
   readonly balance: BalanceData;
   readonly actionTiles: ActionTilesProps;
   readonly contacts: ContactsNativeProps;
@@ -29,17 +36,15 @@ type PayTabViewProps = {
   readonly isContactsEnabled: boolean;
   readonly depositOptions: DepositOptionsProps;
   readonly bankTransferIntro: BankTransferIntroProps;
-  readonly onShowMore: () => void;
-  readonly cardSettingsActions: CardProps["cardSettingsActions"];
+  readonly trackRecipientAddressSelection: boolean;
+  readonly disclaimer: string;
 };
 
 export function PayTabView({
   top,
   bottom,
-  login,
-  cardAssets,
-  cardFormatters,
-  onTopUp,
+  card,
+  cardState,
   balance,
   actionTiles,
   contacts,
@@ -47,34 +52,60 @@ export function PayTabView({
   isContactsEnabled,
   depositOptions,
   bankTransferIntro,
-  onShowMore,
-  cardSettingsActions,
+  trackRecipientAddressSelection,
+  disclaimer,
 }: PayTabViewProps) {
+  const { scrollY, onScroll } = useScrollOffset();
+
   return (
     <Box lx={{ flex: 1 }} testID="paytab-screen">
-      <Wallet40Background type="pay" />
-      <ScrollView
+      <Wallet40Background type="pay" scrollY={scrollY} />
+      <Animated.ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1, paddingTop: top, paddingBottom: bottom }}
+        scrollEventThrottle={16}
+        onScroll={onScroll}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingTop: top,
+          paddingBottom: bottom + 16,
+        }}
       >
-        <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
-          <TrackScreen category="Pay" balance_filter={balance.filter} />
-          <Balance {...balance} actionTiles={actionTiles} />
-          {isContactsEnabled && <Contacts {...contacts} />}
-          <ContactAddressPicker {...contactAddressPicker} />
-          <Card
-            login={login}
-            assets={cardAssets}
-            formatters={cardFormatters}
-            onTopUp={onTopUp}
-            onShowMore={onShowMore}
-            cardSettingsActions={cardSettingsActions}
-          />
-          <FeatureTour />
-          <DepositOptions {...depositOptions} />
-          <BankTransferIntro {...bankTransferIntro} />
+        <TrackScreen
+          category="Pay"
+          balanceFilter={
+            balance.filterOptions
+              .find(option => option.id === balance.filter)
+              ?.ticker?.toLowerCase() ?? balance.filter
+          }
+        />
+        <ScreenHeroSectionView ctas={<ActionTiles {...actionTiles} />}>
+          <Balance {...balance} />
+        </ScreenHeroSectionView>
+        <Box lx={{ flex: 1 }}>
+          <Box lx={{ gap: "s24", paddingHorizontal: "s16", marginTop: "s24" }}>
+            {isContactsEnabled && <Contacts {...contacts} />}
+            {trackRecipientAddressSelection && (
+              <TrackScreen category="Recipient address selection" refreshSource={false} />
+            )}
+            <ContactAddressPicker {...contactAddressPicker} />
+            {(cardState.status === "native" || cardState.status === "liveApp") && (
+              <Card {...card} />
+            )}
+            <FeatureTour />
+            <DepositOptions {...depositOptions} />
+            <BankTransferIntro {...bankTransferIntro} />
+
+            {cardState.status === "native" && <PayDisclaimer text={disclaimer} />}
+          </Box>
+          {cardState.status === "disclaimer" && (
+            <CardDisclaimer
+              text={cardState.text}
+              link={cardState.link}
+              onPress={cardState.onPress}
+            />
+          )}
         </Box>
-      </ScrollView>
+      </Animated.ScrollView>
     </Box>
   );
 }

@@ -1,5 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import coinConfig from "../../config";
+import type { TronCoinConfig } from "../../config";
 import { EnergyRentProviderNotConfigured } from "../../types/errors";
 import { tronifyProvider } from "./tronify";
 import type {
@@ -15,8 +15,8 @@ import type {
 export * from "./types";
 
 /** Resolve the energy-rent provider selected in coin-config (the single-file switch). */
-export function getEnergyProvider(): EnergyProvider {
-  const energyRent = coinConfig.getCoinConfig().energyRent;
+export function getEnergyProvider(config: TronCoinConfig): EnergyProvider {
+  const energyRent = config.energyRent;
   if (!energyRent) {
     throw new EnergyRentProviderNotConfigured("No energy-rent provider configured");
   }
@@ -33,28 +33,32 @@ export function getEnergyProvider(): EnergyProvider {
 
 export function getEnergyRentQuote(
   logger: Logger,
+  config: TronCoinConfig,
   request: EnergyRentRequest,
 ): Promise<EnergyRentQuote> {
-  return getEnergyProvider().getQuote(logger, request);
+  return getEnergyProvider(config).getQuote(logger, config, request);
 }
 
 export function craftEnergyRentTransaction(
   logger: Logger,
+  config: TronCoinConfig,
   request: EnergyRentRequest,
 ): Promise<EnergyRentOrder> {
-  return getEnergyProvider().createOrder(logger, request);
+  return getEnergyProvider(config).createOrder(logger, config, request);
 }
 
 export function broadcastEnergyRentTransaction(
   logger: Logger,
+  config: TronCoinConfig,
   payment: { orderId: string; signedTransaction: EnergyRentSignedTransaction },
 ): Promise<void> {
-  return getEnergyProvider().submitPayment(logger, payment);
+  return getEnergyProvider(config).submitPayment(logger, config, payment);
 }
 
 export function getEnergyRentStatus(
   logger: Logger,
+  config: TronCoinConfig,
   order: EnergyRentOrderRef,
 ): Promise<EnergyRentStatus> {
-  return getEnergyProvider().getOrderStatus(logger, order);
+  return getEnergyProvider(config).getOrderStatus(logger, config, order);
 }

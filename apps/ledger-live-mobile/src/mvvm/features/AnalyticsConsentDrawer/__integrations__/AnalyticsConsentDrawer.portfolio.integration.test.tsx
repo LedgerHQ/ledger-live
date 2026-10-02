@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
 import * as analytics from "~/analytics";
+import { trackPage } from "@shared/analytics";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
 import { ScreenName } from "~/const";
@@ -63,6 +64,19 @@ const FRESH_CONSENT_TITLE = "Help us improve Ledger";
 const RECONFIRM_TITLE = "Continue improving Ledger?";
 const PRIVACY_UPDATE_TITLE = "We're updating our privacy policy";
 
+function expectTrackedPhase(
+  phase: "consentFresh" | "consentReconfirm" | "preferences" | "privacy",
+) {
+  expect(trackPage).toHaveBeenCalledWith(
+    {
+      category: "AnalyticsConsentDrawer",
+      name: "Analytics consent",
+      props: { phase, type: "drawer" },
+    },
+    { mandatory: true, refreshSource: false, updateRoutes: true, avoidDuplicates: false },
+  );
+}
+
 describe("AnalyticsConsentDrawer on Portfolio", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -88,18 +102,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("button", { name: "Accept all" }));
         expect(analytics.track).toHaveBeenCalledWith(
@@ -135,18 +138,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("button", { name: "Refuse all" }));
         expect(analytics.track).toHaveBeenCalledWith(
@@ -182,18 +174,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("link", { name: "Set preferences" }));
         expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
@@ -223,18 +204,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("button", { name: "Accept all" }));
         expect(analytics.track).toHaveBeenCalledWith(
@@ -270,18 +240,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("button", { name: "Refuse all" }));
         expect(analytics.track).toHaveBeenCalledWith(
@@ -317,18 +276,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentFresh",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentFresh");
 
         await user.press(screen.getByRole("link", { name: "Set preferences" }));
         expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
@@ -360,18 +308,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("button", { name: "Yes, continue" }));
         expect(analytics.track).toHaveBeenCalledWith(
@@ -407,18 +344,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("button", { name: "No, stop" }));
         expect(analytics.track).toHaveBeenCalledWith(
@@ -454,18 +380,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("link", { name: "Set preferences" }));
         expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
@@ -495,18 +410,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("button", { name: "Yes, continue" }));
         expect(analytics.track).toHaveBeenCalledWith(
@@ -542,18 +446,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("button", { name: "No, stop" }));
         expect(analytics.track).toHaveBeenCalledWith(
@@ -589,18 +482,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
         const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
         expect(drawerTitle).toBeVisible();
-        expect(analytics.screen).toHaveBeenCalledWith(
-          "AnalyticsConsentDrawer",
-          "Analytics consent",
-          expect.objectContaining({
-            phase: "consentReconfirm",
-            type: "drawer",
-          }),
-          true,
-          false,
-          false,
-          true,
-        );
+        expectTrackedPhase("consentReconfirm");
 
         await user.press(screen.getByRole("link", { name: "Set preferences" }));
         expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
@@ -634,18 +516,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
 
       const privacySheetTitle = await screen.findByText(PRIVACY_UPDATE_TITLE);
       expect(privacySheetTitle).toBeVisible();
-      expect(analytics.screen).toHaveBeenCalledWith(
-        "AnalyticsConsentDrawer",
-        "Analytics consent",
-        expect.objectContaining({
-          phase: "privacy",
-          type: "drawer",
-        }),
-        true,
-        false,
-        false,
-        true,
-      );
+      expectTrackedPhase("privacy");
 
       await user.press(screen.getByRole("button", { name: "Got it" }));
       expect(analytics.track).toHaveBeenCalledWith(

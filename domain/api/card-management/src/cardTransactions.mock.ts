@@ -72,11 +72,14 @@ const PAYMENT_BY_CATEGORY = {
     fiatAmount: "4.75",
     assets: [{ currency: "btc", amount: "0.00005231" }],
   },
+  // Three assets, each with the digits the provider actually sends, so a row has to cope with both
+  // a multi-asset charge and an amount longer than the product shows.
   TRAVEL: {
     fiatAmount: "349.90",
     assets: [
-      { currency: "eth", amount: "0.1" },
-      { currency: "usdc", amount: "14.82" },
+      { currency: "eth", amount: "0.104873912345678901" },
+      { currency: "usdc", amount: "14.821903" },
+      { currency: "btc", amount: "0.00218734" },
     ],
   },
   ENTERTAINMENT: {
@@ -227,7 +230,56 @@ export function receivePayCardTransactionMock(asset: PayCardMockTransactionAsset
   transactionOverride = [received, ...(transactionOverride ?? [])];
 }
 
+/**
+ * Adds one newest transaction funded by several assets, the case a row has the least space for.
+ */
+export function receiveMultiAssetPayCardTransactionMock(): void {
+  const template = mockPayCardTransactions().find(
+    transaction => transaction.fundingSources.length > 1,
+  );
+
+  if (!template) return;
+
+  receivedTransactionSerial += 1;
+  const serial = receivedTransactionSerial;
+  const dateTime = new Date().toISOString();
+  const received = {
+    ...template,
+    id: `devtool-multi-${serial}`,
+    transactionId: `devtool-multi-${serial}`,
+    dateTime,
+    fundingSources: template.fundingSources.map((source, index) => ({
+      ...source,
+      id: `devtool-multi-source-${serial}-${index}`,
+      dateTime,
+    })),
+  };
+
+  transactionOverride = [received, ...(transactionOverride ?? [])];
+}
+
 /** Hands the endpoint back to its normal provider/mock-session behavior. */
 export function clearPayCardTransactionsMock(): void {
   transactionOverride = undefined;
+}
+
+/**
+ * The page the mocked provider serves.
+ *
+ * Six rather than the ten #22236 sliced at, because ten exceeds the eight-charge fixture: the mock
+ * answered one page and never paged at all.
+ */
+export const MOCK_CARD_TRANSACTIONS_PAGE_SIZE = 6;
+
+/**
+ * One page of the mocked history, answering as the provider does: a numeric page past the end
+ * gives an empty array, while a missing or non-numeric one falls back to page 0.
+ */
+export function mockPayCardTransactionsPage(request: Request) {
+  const all = readPayCardTransactionsMock() ?? mockPayCardTransactions();
+  const requested = Number(new URL(request.url).searchParams.get("page"));
+  const page = Number.isInteger(requested) && requested >= 0 ? requested : 0;
+  const start = page * MOCK_CARD_TRANSACTIONS_PAGE_SIZE;
+
+  return all.slice(start, start + MOCK_CARD_TRANSACTIONS_PAGE_SIZE);
 }

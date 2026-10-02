@@ -8,16 +8,17 @@ import {
 } from "@features/flow-pay-card-auth";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { SIDEBAR_VALUE_TO_PATH } from "LLD/components/SideBar/utils";
+import { CL_CARD_APP_ID } from "LLD/features/Card/constants";
 import { useCardHostedManifests } from "./useCardHostedManifests";
-import { whenHostedSessionWiped } from "./useWipeHostedSession";
 
 export type CardHostedPageOpeners = {
   readonly openHostedLogin: OpenHostedLogin;
   readonly openHostedPage: OpenCardHostedPage;
+  readonly openLegacyCardApp: () => void;
 };
 
-function manifestRoute(manifest: LiveAppManifest): string {
-  return `/platform/${manifest.id}?returnTo=${encodeURIComponent(SIDEBAR_VALUE_TO_PATH.paytab)}`;
+function liveAppRoute(appId: string): string {
+  return `/platform/${appId}?returnTo=${encodeURIComponent(SIDEBAR_VALUE_TO_PATH.paytab)}`;
 }
 
 function requireManifest(manifest: LiveAppManifest | null | undefined): LiveAppManifest {
@@ -36,9 +37,7 @@ export function useCardHostedPageOpeners(): CardHostedPageOpeners {
     async loginUrl => {
       const manifest = requireManifest(login);
 
-      await whenHostedSessionWiped();
-
-      navigate(manifestRoute(manifest), {
+      navigate(liveAppRoute(manifest.id), {
         state: { goToURL: buildHostedPageUrl(String(manifest.url), loginUrl) },
       });
 
@@ -51,14 +50,21 @@ export function useCardHostedPageOpeners(): CardHostedPageOpeners {
     async path => {
       const manifest = requireManifest(hosted);
 
-      await whenHostedSessionWiped();
-
-      navigate(manifestRoute(manifest), {
+      navigate(liveAppRoute(manifest.id), {
         state: { goToURL: buildHostedUrl(String(manifest.url), path) },
       });
     },
     [navigate, hosted],
   );
 
-  return useMemo(() => ({ openHostedLogin, openHostedPage }), [openHostedLogin, openHostedPage]);
+  // The legacy Card live app resolves its own manifest on the `/platform/:appId` screen, so it
+  // needs no catalog lookup here.
+  const openLegacyCardApp = useCallback(() => {
+    navigate(liveAppRoute(CL_CARD_APP_ID));
+  }, [navigate]);
+
+  return useMemo(
+    () => ({ openHostedLogin, openHostedPage, openLegacyCardApp }),
+    [openHostedLogin, openHostedPage, openLegacyCardApp],
+  );
 }

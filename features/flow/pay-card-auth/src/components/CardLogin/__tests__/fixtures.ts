@@ -3,7 +3,7 @@ export const CARD_LOGIN_INTRO_RESOURCES = {
     translation: {
       payTab: {
         cardLogin: {
-          title: "Crypto Card",
+          title: "Crypto card",
           beforeIntro: {
             title: "Get your crypto card",
             description: "Get 1% cashback every time you spend",
@@ -16,19 +16,36 @@ export const CARD_LOGIN_INTRO_RESOURCES = {
             action: "Log in",
           },
           errors: {
-            pkce_failed: "Login could not start. Please try again.",
-            browser_open_failed: "The login page could not open. Please try again.",
-            missing_attempt: "This login is no longer valid. Please log in again.",
-            exchange_failed: "Login could not be completed. Please try again.",
-            persist_failed: "Your session could not be saved. Please try again.",
-            fetch_user_failed: "Your card could not be loaded. Please try again.",
+            pkce_failed: { title: "Login could not start", description: "Please try again." },
+            browser_open_failed: {
+              title: "The login page could not open",
+              description: "Please try again.",
+            },
+            missing_attempt: {
+              title: "This login is no longer valid",
+              description: "Please log in again.",
+            },
+            exchange_failed: {
+              title: "Login could not be completed",
+              description: "Please try again.",
+            },
+            persist_failed: {
+              title: "Your session could not be saved",
+              description: "Please try again.",
+            },
+            fetch_user_failed: {
+              title: "Your card could not be loaded",
+              description: "Please try again.",
+            },
+            retryLogin: "Try again",
+            retryUser: "Retry",
           },
         },
         cardLoginIntro: {
           title: "Spend crypto, earn cashback",
-          providedBy: "Card provided by Baanx",
+          providedBy: "Card provided by Monavate",
           createAccount: "Create an account",
-          logIn: "Log in to Baanx",
+          logIn: "Log in to Monavate",
           wallets: {
             applePay: "Apple Pay",
             googlePay: "Google Pay",

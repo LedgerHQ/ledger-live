@@ -1,9 +1,6 @@
 import { useCallback } from "react";
-import { Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AssetCategory } from "@domain/api-aggregated-assets";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   useBankTransferIntroAdapter,
   type BankTransferHandoff,
@@ -12,12 +9,10 @@ import {
 import {
   useDepositOptionsAdapter,
   type DepositOptionId,
-  type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
 } from "@features/flow-pay-deposit";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useOpenSwap } from "LLM/features/Swap";
 import { useOpenBuySell } from "LLM/features/Buy";
 
@@ -27,24 +22,13 @@ const FIAT_PROVIDER_MANIFEST_ID = "noah";
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- Re.pack FastImage source must be required from the app.
 const BANK_TRANSFER_INTRO_HERO_IMAGE = require("../assets/bank-transfer-intro-hero.webp");
 
-const DEPOSIT_CATEGORIES: AssetCategory[] = [AssetCategory.Stablecoins];
-
 export type UsePayTabDepositOptions = UseDepositOptionsAdapter & {
   bankTransferIntro: BankTransferIntroProps;
 };
 
-export function usePayTabDepositOptions(
-  onTrackEvent: PayCardTrackEvent | undefined,
-): UsePayTabDepositOptions {
+export function usePayTabDepositOptions(onCryptoAddress: () => void): UsePayTabDepositOptions {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const { bottom } = useSafeAreaInsets();
-  const bottomInset = Platform.OS === "ios" ? bottom : 0;
 
-  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
-    categories: DEPOSIT_CATEGORIES,
-    sourceScreenName: DEPOSIT_PAGE,
-    fromMenu: true,
-  });
   const { handleOpenSwap } = useOpenSwap({ sourceScreenName: DEPOSIT_PAGE });
   const { handleOpenBuySell } = useOpenBuySell({ sourceScreenName: DEPOSIT_PAGE });
 
@@ -64,9 +48,7 @@ export function usePayTabDepositOptions(
 
   const { open: openBankTransferIntro, bankTransferIntro } = useBankTransferIntroAdapter({
     heroImage: BANK_TRANSFER_INTRO_HERO_IMAGE,
-    bottomInset,
     onBankTransfer,
-    onTrackEvent,
   });
 
   const onSelect = useCallback(
@@ -82,18 +64,17 @@ export function usePayTabDepositOptions(
           handleOpenBuySell("buy");
           break;
         case "receive":
-          handleOpenReceiveDrawer();
+          onCryptoAddress();
           break;
       }
     },
-    [openBankTransferIntro, handleOpenSwap, handleOpenBuySell, handleOpenReceiveDrawer],
+    [openBankTransferIntro, handleOpenSwap, handleOpenBuySell, onCryptoAddress],
   );
 
   const { open, depositOptions } = useDepositOptionsAdapter({
     page: DEPOSIT_PAGE,
     onSelect,
-    onTrackEvent,
   });
 
-  return { open, depositOptions: { ...depositOptions, bottomInset: bottom }, bankTransferIntro };
+  return { open, depositOptions, bankTransferIntro };
 }

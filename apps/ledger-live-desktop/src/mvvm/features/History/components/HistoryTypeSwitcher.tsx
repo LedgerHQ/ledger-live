@@ -31,12 +31,19 @@ export function HistoryTypeSwitcher({ selectedTab, onTabChange }: HistoryTypeSwi
         tabLayout="fit"
         aria-label={t("history.tabs.accessibilityLabel")}
         data-testid="history-type-switcher"
-        className="w-max shrink-0"
       >
-        <SegmentedControlButton value={HISTORY_TAB_CRYPTO} data-testid="history-tab-crypto">
+        <SegmentedControlButton
+          value={HISTORY_TAB_CRYPTO}
+          data-testid="history-tab-crypto"
+          className="min-w-[200px]"
+        >
           {t("history.tabs.crypto")}
         </SegmentedControlButton>
-        <SegmentedControlButton value={HISTORY_TAB_CARD} data-testid="history-tab-card">
+        <SegmentedControlButton
+          value={HISTORY_TAB_CARD}
+          data-testid="history-tab-card"
+          className="min-w-[200px]"
+        >
           {t("history.tabs.card")}
         </SegmentedControlButton>
       </SegmentedControl>

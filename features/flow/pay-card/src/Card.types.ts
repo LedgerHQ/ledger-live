@@ -1,6 +1,7 @@
 import type { CardLoginProps } from "@features/flow-pay-card-auth";
 import type {
   CardSettingsActions,
+  CardState,
   CardVisualProps,
   FormattedValue,
 } from "@features/flow-pay-card-details";
@@ -24,21 +25,31 @@ export type CardProps = {
   readonly formatters?: CardFormatters;
   readonly onShowMore?: () => void;
   readonly onTopUp?: () => void;
+  /** Resolves once the hosted order page hands back, when the card status is read again. */
+  readonly onChooseCardType?: () => void | Promise<void>;
+  readonly onViewRewards?: () => void;
   readonly cardSettingsActions?: CardSettingsActions;
+  readonly discreet?: boolean;
 };
 
 /**
  * Which of the three mutually exclusive faces the flow shows.
  *
- * - `resolving` — the login machine is still reading the stored session. Only the title and the bare
- *   artwork show, so nothing flashes before the answer lands.
+ * - `resolving` — the login machine still reads the stored session, or trades a redirect for one.
+ *   The card face shows with a loading balance, so no login CTA flashes before the answer lands.
  * - `signedOut` — nobody is signed in: the bare artwork sits above the login CTA.
  * - `signedIn` — a live session: the card face, onboarding widget and card actions show, no login.
  */
 export type CardDisplayState = "resolving" | "signedOut" | "signedIn";
 
+export type CardPrimaryAction = Readonly<{
+  label: string;
+  onPress: () => void;
+}>;
+
 export type CardViewProps = {
   readonly title: string;
+  readonly disclaimer: string;
   readonly login: CardLoginProps;
   /** Which face to show. The children are mutually exclusive, so the view switches on this. */
   readonly displayState: CardDisplayState;
@@ -47,5 +58,9 @@ export type CardViewProps = {
   readonly formatters?: CardFormatters;
   readonly onShowMore?: () => void;
   readonly onTopUp?: () => void;
+  readonly onChooseCardType?: () => void;
+  readonly primaryAction?: CardPrimaryAction;
+  readonly cardState: CardState;
+  readonly onViewRewards?: () => void;
   readonly cardSettingsActions?: CardSettingsActions;
 };

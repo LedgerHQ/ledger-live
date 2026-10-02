@@ -70,7 +70,13 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
         overflowY="hidden"
       >
         {completed ? (
-          <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
+          <Flex
+            flex={1}
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            data-testid="device-custom-image-removed"
+          >
             <Flex
               width={72}
               height={72}

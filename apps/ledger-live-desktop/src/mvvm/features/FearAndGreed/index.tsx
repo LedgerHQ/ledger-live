@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import type { FearAndGreedIndex } from "@domain/entity-market-sentiment";
+import type { FearAndGreedIndex } from "@domain/entity-market-index-fear-and-greed";
 import { useMoodIndexAvailability } from "./hooks/useMoodIndexAvailability";
 import { useFearAndGreedViewModel } from "./hooks/useFearAndGreedViewModel";
 import { FearAndGreedTile } from "./components/FearAndGreedTile";

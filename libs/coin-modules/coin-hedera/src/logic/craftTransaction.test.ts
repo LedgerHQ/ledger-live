@@ -240,6 +240,26 @@ describe("craftTransaction", () => {
     expect(result.tx.maxTransactionFee).toEqual(sdk.Hbar.fromTinybars(customFees.value.toString()));
   });
 
+  it("should debit the resolved amount of a send-max intent as is", async () => {
+    const txIntent = {
+      intentType: "transaction",
+      type: HEDERA_TRANSACTION_MODES.Send,
+      amount: 950_000n,
+      useAllAmount: true,
+      recipient: "0.0.12345",
+      sender: "0.0.54321",
+      asset: { type: "native" },
+      memo: { kind: "text", type: "string", value: "" },
+    } satisfies TransactionIntent<HederaMemo>;
+
+    const result = await craftTransaction({ configOrCurrencyId: mockConfig, txIntent });
+
+    invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
+    expect(result.tx.hbarTransfers?.get(txIntent.sender)).toEqual(
+      sdk.Hbar.fromTinybars((-txIntent.amount).toString()),
+    );
+  });
+
   it("should throw error when token associate transaction has invalid asset type", async () => {
     const txIntent = {
       intentType: "transaction",

@@ -29,7 +29,7 @@ import { coinMarketCapApi, FIFTEEN_MINUTES_IN_SECONDS } from "@shared/api-servic
 /** Cache tags belong to the use case that owns the data — not to the shared service. */
 export const FEAR_AND_GREED_TAGS = ["FearAndGreedLatest"] as const;
 
-export const marketSentimentApi = coinMarketCapApi
+export const fearAndGreedApi = coinMarketCapApi
   .enhanceEndpoints({ addTagTypes: FEAR_AND_GREED_TAGS })
   .injectEndpoints({
     endpoints: build => ({
@@ -41,7 +41,7 @@ export const marketSentimentApi = coinMarketCapApi
     }),
   });
 
-export const { useGetFearAndGreedLatestQuery } = marketSentimentApi;
+export const { useGetFearAndGreedLatestQuery } = fearAndGreedApi;
 ```
 
 Both `enhanceEndpoints` and `injectEndpoints` **mutate and return the same api object**, so every use

@@ -1,11 +1,16 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { trackedPages } from "@features/platform-pay-analytics/testing/module-mock";
 import { CardLoginIntroView } from "../CardLoginIntroView.web";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
   isOpen: true,
   title: "Spend crypto, earn cashback",
-  providedBy: "Card provided by Baanx",
+  providedBy: "Card provided by Monavate",
   rows: [
     {
       icon: "CoinsAddPlus",
@@ -25,7 +30,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginIntroView> = {
   ],
   actions: [
     { id: "createAccount", label: "Create an account", appearance: "base" },
-    { id: "logIn", label: "Log in to Baanx", appearance: "gray" },
+    { id: "logIn", label: "Log in to Monavate", appearance: "gray" },
   ],
   onActionPress: jest.fn(),
   onClose: jest.fn(),
@@ -49,6 +54,13 @@ describe("CardLoginIntroView (Web)", () => {
 
     expect(screen.queryByTestId("pay-card-login-intro-dialog")).toBeNull();
     expect(screen.queryByText("Spend crypto, earn cashback")).toBeNull();
+    expect(trackedPages()).toHaveLength(0);
+  });
+
+  it("tracks the card feature intro page once open", () => {
+    renderIntro();
+
+    expect(trackedPages()).toContainEqual({ page: "Feature Intro", name: "card", flow: "card" });
   });
 
   it("renders the title, every row and the disclaimer once open", () => {
@@ -64,8 +76,14 @@ describe("CardLoginIntroView (Web)", () => {
     expect(screen.getByText("Securely top up via Ledger Wallet")).toBeVisible();
     expect(screen.getByText("Every transfer approved with your Ledger signer.")).toBeVisible();
     expect(screen.getByTestId("pay-card-login-intro-provided-by")).toHaveTextContent(
-      "Card provided by Baanx",
+      "Card provided by Monavate",
     );
+  });
+
+  it("keeps the hero at the aspect ratio of the artwork", () => {
+    renderIntro();
+
+    expect(screen.getByTestId("pay-card-login-intro-hero")).toHaveClass("aspect-1028/576");
   });
 
   it("renders one row per icon", () => {
@@ -76,13 +94,25 @@ describe("CardLoginIntroView (Web)", () => {
     expect(screen.getByTestId("pay-card-login-intro-row-LedgerLogo")).toBeVisible();
   });
 
+  it("paints every row icon with the theme text color", () => {
+    renderIntro();
+
+    for (const icon of ["CoinsAddPlus", "CreditCard", "LedgerLogo"]) {
+      expect(screen.getByTestId(`pay-card-login-intro-row-${icon}`).firstElementChild).toHaveClass(
+        "text-base",
+      );
+    }
+  });
+
   it("renders both buttons, in the order the actions arrive", () => {
     renderIntro();
 
     expect(screen.getByTestId("pay-card-login-intro-createAccount")).toHaveTextContent(
       "Create an account",
     );
-    expect(screen.getByTestId("pay-card-login-intro-logIn")).toHaveTextContent("Log in to Baanx");
+    expect(screen.getByTestId("pay-card-login-intro-logIn")).toHaveTextContent(
+      "Log in to Monavate",
+    );
   });
 
   it.each(["createAccount", "logIn"] as const)("reports the %s click", id => {

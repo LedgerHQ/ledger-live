@@ -1,7 +1,12 @@
 import React, { type PropsWithChildren } from "react";
 import { act, render, screen, userEvent } from "@testing-library/react-native";
 import type { CardAssetRow, CardAssetsViewModel } from "@features/flow-pay-card-assets";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
+import {
+  trackButtonClicked,
+  trackTransactionClicked,
+  trackedPages,
+} from "@features/platform-pay-analytics/testing/module-mock";
+import { Spinner } from "@ledgerhq/lumen-ui-rnative";
 import {
   cardApiWrapper,
   listenToCardApi,
@@ -10,7 +15,11 @@ import {
 } from "@support/msw-features-flow-pay-card";
 import { ADD_TO_WALLET_COPY, CARD_COPY, MORE_COPY, I18nWrapper } from "../../__tests__/i18nWrapper";
 import { CardDetails } from "./CardDetails";
-import type { CardVisualProps } from "../../types";
+import type { CardDetailsProps, CardVisualProps } from "../../types";
+
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
 
 const mockUseCardAssetsViewModel = jest.fn();
 
@@ -28,33 +37,22 @@ listenToCardApi([...signedInCardApiHandlers, revealCardDetailsHandler]);
 const StoreWrapper = cardApiWrapper({ signedIn: true });
 const assets = {
   currencies: new Map(),
-  priceWallet: () => 125.4,
+  getCounterValue: () => 125.4,
   formatCountervalue: (value: number) => `$${value}`,
+  onAddAsset: jest.fn(),
 };
-let track = jest.fn();
-
 function Wrapper({ children }: PropsWithChildren) {
   return (
     <StoreWrapper>
-      <PayAnalyticsProvider adapter={{ track }}>
-        <I18nWrapper>{children}</I18nWrapper>
-      </PayAnalyticsProvider>
+      <I18nWrapper>{children}</I18nWrapper>
     </StoreWrapper>
   );
 }
 
-function renderCardDetails({
-  onTrackEvent = jest.fn(),
-  onTopUp,
-}: {
-  onTrackEvent?: jest.Mock;
-  onTopUp?: () => void;
-} = {}) {
-  track = onTrackEvent;
+function renderCardDetails(props: Partial<CardDetailsProps> = {}) {
   return {
     user: userEvent.setup(),
-    onTrackEvent,
-    ...render(<CardDetails onTopUp={onTopUp} />, { wrapper: Wrapper }),
+    ...render(<CardDetails {...props} />, { wrapper: Wrapper }),
   };
 }
 
@@ -97,9 +95,10 @@ describe("CardDetails (native)", () => {
       onShowHistoryPress: jest.fn(),
       onWithdrawContinue: jest.fn(),
       onManagePress: jest.fn(),
+      onRetryPress: jest.fn(),
       onAddAssetPress: jest.fn(),
-      onReorderAssets: jest.fn(),
-      reorderingAssetId: null,
+      onMoveAsset: jest.fn(),
+      reorderingAssetIds: new Set(),
     } satisfies CardAssetsViewModel;
     mockUseCardAssetsViewModel.mockReturnValue(viewModel);
   });
@@ -109,6 +108,27 @@ describe("CardDetails (native)", () => {
 
     expect(screen.getByLabelText(CARD_COPY.topUp)).toBeVisible();
     expect(screen.getByLabelText(CARD_COPY.details)).toBeVisible();
+    expect(screen.getByTestId("card-visual-fade")).toBeVisible();
+  });
+
+  it("should replace top up and details with choose card type when that step is current", async () => {
+    const onChooseCardType = jest.fn();
+    const { user } = renderCardDetails({
+      onTopUp: jest.fn(),
+      onChooseCardType,
+      cardState: "choosingCardType",
+    });
+
+    await user.press(screen.getByLabelText(CARD_COPY.chooseCardType));
+
+    expect(onChooseCardType).toHaveBeenCalledTimes(1);
+    expect(screen.queryByLabelText(CARD_COPY.topUp)).toBeNull();
+    expect(screen.queryByLabelText(CARD_COPY.details)).toBeNull();
+    expect(screen.queryByTestId("card-details-button")).toBeNull();
+
+    await user.press(screen.getByTestId("card-details-face"));
+
+    expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
   });
 
   it("should show no top up action when the host wires none", () => {
@@ -157,6 +177,8 @@ describe("CardDetails (native)", () => {
     const amounts = await screen.findAllByTestId("card-visual-amount");
     expect(amounts).toHaveLength(2);
     expect(amounts.map(amount => amount.props.value)).toEqual([2500, 2500]);
+    // The tab's card fades into the page; the sheet's card does not.
+    expect(screen.getAllByTestId("card-visual-fade")).toHaveLength(1);
   });
 
   it("should keep the details sheet content hidden when Details has not been pressed", () => {
@@ -173,6 +195,19 @@ describe("CardDetails (native)", () => {
     expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
     expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(await screen.findByLabelText(MORE_COPY.tile)).toBeVisible();
+  });
+
+  it("should open the details sheet when the card is pressed", async () => {
+    const { user } = renderCardDetails();
+
+    await user.press(screen.getByTestId("card-details-face"));
+
+    expect(screen.getByText(CARD_COPY.numbersReveal)).toBeVisible();
+    expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
+    expect(trackButtonClicked).toHaveBeenCalledWith({
+      button: "card_details",
+      page: "Pay",
+    });
   });
 
   it("should open add-to-wallet instructions from the details footer", async () => {
@@ -209,6 +244,19 @@ describe("CardDetails (native)", () => {
     expect(screen.queryByTestId("card-asset-details-drawer")).not.toBeOnTheScreen();
   });
 
+  it("should close the details sheet when an asset top up opens", async () => {
+    const user = userEvent.setup();
+    render(<CardDetails assets={assets} />, { wrapper: Wrapper });
+
+    await user.press(screen.getByLabelText(CARD_COPY.details));
+    await user.press(await screen.findByTestId("card-asset-w-usdc"));
+    await user.press(screen.getByText("Top up"));
+
+    expect(mockUseCardAssetsViewModel.mock.results[0].value.onTopUpPress).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId("card-asset-details-drawer")).not.toBeOnTheScreen();
+    expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
+  });
+
   it("should return to asset details when withdraw goes back", async () => {
     const user = userEvent.setup();
     render(<CardDetails assets={assets} />, { wrapper: Wrapper });
@@ -224,7 +272,7 @@ describe("CardDetails (native)", () => {
     expect(screen.queryByTestId("card-asset-withdraw-drawer")).not.toBeOnTheScreen();
   });
 
-  it("should show the card numbers image after View", async () => {
+  it("should show and track the card numbers after View", async () => {
     const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
@@ -233,13 +281,22 @@ describe("CardDetails (native)", () => {
     const image = await screen.findByLabelText(CARD_COPY.numbersImageAlt, {
       includeHiddenElements: true,
     });
+    expect(screen.getByLabelText(CARD_COPY.numbersReveal).props.icon).toBe(Spinner);
+
     await act(() => {
       image.props.onLoad();
     });
 
+    expect(screen.getByLabelText(CARD_COPY.numbersHide).props.icon).not.toBe(Spinner);
+
     expect(screen.getByLabelText(CARD_COPY.numbersImageAlt)).toBeVisible();
     expect(screen.getByText(CARD_COPY.numbersHide)).toBeVisible();
     expect(screen.queryByText(CARD_COPY.numbersReveal)).not.toBeOnTheScreen();
+    expect(trackButtonClicked).toHaveBeenCalledWith({
+      button: "view_card_digits",
+      page: "Card details",
+    });
+    expect(trackedPages()).toContainEqual(expect.objectContaining({ page: "Card digits" }));
 
     await user.press(screen.getByText(CARD_COPY.numbersHide));
 
@@ -255,6 +312,10 @@ describe("CardDetails (native)", () => {
 
     expect(screen.getByText(MORE_COPY.rows.managePin)).toBeVisible();
     expect(screen.getByTestId("card-details-more-content")).toBeVisible();
+    expect(trackButtonClicked).toHaveBeenCalledWith({
+      button: "more",
+      page: "Card details",
+    });
   });
 
   it("should return to the overview when leaving More through back", async () => {
@@ -290,16 +351,14 @@ describe("CardDetails (native)", () => {
   });
 
   it("should open the selected transaction in the same sheet and track the click", async () => {
-    const { user, onTrackEvent } = renderCardDetails();
+    const { user } = renderCardDetails();
 
     await user.press(screen.getByLabelText(CARD_COPY.details));
     await user.press(await screen.findByText("NETFLIX.COM"));
 
     expect(screen.getByTestId("card-details-transaction-content")).toBeVisible();
-    expect(
-      onTrackEvent.mock.calls.filter(([event]) => event === "transaction_clicked"),
-    ).toHaveLength(1);
-    expect(onTrackEvent).toHaveBeenCalledWith("transaction_clicked", {
+    expect(trackTransactionClicked).toHaveBeenCalledTimes(1);
+    expect(trackTransactionClicked).toHaveBeenCalledWith({
       category: "card",
       transaction: "out",
       page: "Pay",

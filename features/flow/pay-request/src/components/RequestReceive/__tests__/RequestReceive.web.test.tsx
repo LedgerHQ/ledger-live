@@ -1,13 +1,17 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { i18nWrapper, REQUEST_RESOURCES } from "../../../__tests__/i18nWrapper";
 import { RequestReceive } from "../RequestReceive";
 import { RequestReceiveView } from "../RequestReceiveView.web";
 import { createRequestReceiveProps, REQUEST_RECEIVE_ADDRESS } from "./fixtures";
 import type { RequestReceiveProps } from "../../../types";
+import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
 
-// The QR renderer draws on a real canvas, which is not meaningful under jsdom; it is unit-tested in
-// @shared/ui-qr-code. Stub it here so this suite focuses on the RequestReceive composition.
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
+
 jest.mock("@shared/ui-qr-code", () => ({
   QrCode: ({ value, testID }: { value: string; testID?: string }) => {
     const React = require("react");
@@ -17,10 +21,17 @@ jest.mock("@shared/ui-qr-code", () => ({
 
 function renderRequestReceive(overrides: Partial<RequestReceiveProps> = {}) {
   const props = createRequestReceiveProps(overrides);
-  return { props, ...render(<RequestReceive {...props} />) };
+  return {
+    props,
+    ...render(<RequestReceive {...props} />, { wrapper: i18nWrapper(REQUEST_RESOURCES) }),
+  };
 }
 
 describe("RequestReceive (Web)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -65,7 +76,7 @@ describe("RequestReceive (Web)", () => {
     const { props } = renderRequestReceive();
 
     await user.click(screen.getByTestId("pay-request-receive-save"));
-    expect(props.onTrackEvent).toHaveBeenCalledWith("button_clicked", {
+    expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "save",
       buttonLocation: "request",
       page: "Pay",

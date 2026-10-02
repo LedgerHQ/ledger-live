@@ -166,7 +166,10 @@ export const FF_LWD_PAY_TAB = {
   lwdPayTab: {
     enabled: true,
     params: {
-      card: true,
+      card_native: true,
+      card_live_app: false,
+      card_disclaimer: false,
+      legacyTopUp: false,
     },
   },
 } satisfies PartialFeatures;

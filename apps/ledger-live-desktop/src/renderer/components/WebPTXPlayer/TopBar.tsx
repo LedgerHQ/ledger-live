@@ -26,6 +26,7 @@ import { MobileView } from "~/renderer/hooks/useMobileView";
 /** When Back fails (refs not ready), redirect to this path if location.state has the key set. */
 const BACK_FALLBACK_ROUTES: Record<string, string> = {
   fromCardLanding: "/card-new-wallet",
+  fromPayTab: "/paytab",
 };
 
 function isRecord(obj: unknown): obj is Record<string, unknown> {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-solana",
-  "version": "1.26.2",
+  "version": "1.27.0",
   "private": true,
   "description": "Ledger Solana Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -53,7 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
+    "start": "docker compose build agave-mainnet && docker compose build agave-devnet && pnpm jest --runTestsByPath src/*.test.ts --runInBand",
     "unimported": "unimported"
   },
   "dependencies": {
@@ -61,7 +61,7 @@
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@shared/env": "workspace:*",
     "@solana/spl-token": "catalog:",

@@ -1,10 +1,6 @@
 import { z } from "zod";
+import { isFunction, mustBeAFunction } from "../../internals";
 import type { CardSessionRefreshResult, CardSessionSnapshot } from "./types";
-
-const isFunction = (value: unknown) => typeof value === "function";
-const mustBeAFunction = (name: string) => ({
-  message: `${name} must be a function`,
-});
 
 export const CardApiExtraSchema = z.object({
   /**

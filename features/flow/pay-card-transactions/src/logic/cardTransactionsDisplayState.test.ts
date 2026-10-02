@@ -41,3 +41,25 @@ describe("resolveCardTransactionsDisplayState", () => {
     ).toBe("ready");
   });
 });
+
+describe("a page that failed after earlier ones landed", () => {
+  it("stays ready, so the transactions already read keep showing", () => {
+    expect(
+      resolveCardTransactionsDisplayState({
+        isLoading: false,
+        isError: true,
+        hasTransactions: true,
+      }),
+    ).toBe("ready");
+  });
+
+  it("is still an error when the first read is what failed", () => {
+    expect(
+      resolveCardTransactionsDisplayState({
+        isLoading: false,
+        isError: true,
+        hasTransactions: false,
+      }),
+    ).toBe("error");
+  });
+});

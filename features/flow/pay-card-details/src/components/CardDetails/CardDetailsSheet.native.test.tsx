@@ -1,5 +1,6 @@
 import React, { type PropsWithChildren } from "react";
-import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
+import { AppState, type AppStateStatus } from "react-native";
+import { act, cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import {
@@ -7,7 +8,13 @@ import {
   listenToCardApi,
   signedInCardApiHandlers,
 } from "@support/msw-features-flow-pay-card";
-import { ADD_TO_WALLET_COPY, CARD_COPY, I18nWrapper, MORE_COPY } from "../../__tests__/i18nWrapper";
+import {
+  ADD_TO_WALLET_COPY,
+  CARD_COPY,
+  CARD_DISCLAIMER,
+  I18nWrapper,
+  MORE_COPY,
+} from "../../__tests__/i18nWrapper";
 import { buildMoreViewProps } from "../More/fixtures";
 import type { CardDetailsRoute } from "./Scenes/navigation";
 import type { CardDetailsSceneProps } from "./Scenes/types";
@@ -39,6 +46,7 @@ type SheetOverrides = Readonly<{
 
 const onAddToWalletPress = jest.fn();
 const onAddToWalletDone = jest.fn();
+let appStateListener: ((state: AppStateStatus) => void) | undefined;
 
 function buildScene({ route, confirmState }: SheetOverrides): CardDetailsSceneProps {
   const viewModel: FreezeViewModel = {
@@ -62,6 +70,7 @@ function buildScene({ route, confirmState }: SheetOverrides): CardDetailsScenePr
       onMorePress: jest.fn(),
       onTransactionPress: jest.fn(),
       onAddToWalletPress,
+      disclaimer: CARD_DISCLAIMER,
     },
     freeze: { viewModel },
     more: { viewModel: more },
@@ -94,13 +103,22 @@ function renderSheet(overrides: SheetOverrides = {}) {
     onBack,
     pressDismiss: () => user.press(screen.getByTestId("card-details-sheet-dismiss")),
     pressBack: () => user.press(screen.getByTestId("card-details-sheet-back")),
-    pressAddToWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta-entry")),
-    pressAddToWalletDone: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta")),
+    pressAddToWallet: async () =>
+      user.press(await screen.findByTestId("pay-card-add-to-wallet-cta-entry")),
+    pressOpenWallet: () => user.press(screen.getByTestId("pay-card-add-to-wallet-cta")),
     goTo: (next: SheetOverrides) => view.rerender(sheet(next)),
   };
 }
 
 describe("CardDetailsSheet (native)", () => {
+  beforeEach(() => {
+    appStateListener = undefined;
+    jest.mocked(AppState.addEventListener).mockImplementation((_type, listener) => {
+      appStateListener = listener;
+      return { remove: jest.fn() };
+    });
+  });
+
   afterEach(() => {
     cleanup();
     jest.clearAllMocks();
@@ -119,18 +137,31 @@ describe("CardDetailsSheet (native)", () => {
     expect(screen.getByTestId("card-details-sheet").props.accessibilityState.expanded).toBe(true);
   });
 
-  it("should show freeze and more when the sheet is open", () => {
+  it("should show the card face, freeze and more when the sheet is open", () => {
     renderSheet();
 
-    expect(screen.getByLabelText("Visa")).toBeVisible();
+    expect(screen.getByTestId("card-artwork")).toBeVisible();
     expect(screen.getByText(CARD_COPY.freeze)).toBeVisible();
     expect(screen.getByLabelText(MORE_COPY.tile)).toBeVisible();
   });
 
-  it("should float the add-to-wallet CTA over the overview", () => {
+  it("should float the add-to-wallet CTA over the overview", async () => {
     renderSheet();
 
-    expect(screen.getByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
+    expect(await screen.findByTestId("pay-card-add-to-wallet-cta-entry")).toBeVisible();
+  });
+
+  it("should show the disclaimer after transactions on the overview", () => {
+    renderSheet();
+
+    expect(screen.getByTestId("card-details-overview-disclaimer")).toBeVisible();
+    expect(screen.getByText(CARD_DISCLAIMER)).toBeVisible();
+  });
+
+  it("should keep the disclaimer off the scenes it would cover", () => {
+    renderSheet({ route: { name: "transaction", transaction } });
+
+    expect(screen.queryByTestId("card-details-overview-disclaimer")).toBeNull();
   });
 
   it("should keep the add-to-wallet CTA off the scenes it would cover", () => {
@@ -160,10 +191,21 @@ describe("CardDetailsSheet (native)", () => {
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 
-  it("should leave the add-to-wallet scene once the card is on its way to the wallet", async () => {
-    const { pressAddToWalletDone } = renderSheet({ route: { name: "addToWallet" } });
+  it("should stay on the add-to-wallet scene while the user is in the wallet app", async () => {
+    const { pressOpenWallet } = renderSheet({ route: { name: "addToWallet" } });
 
-    await pressAddToWalletDone();
+    await pressOpenWallet();
+
+    expect(onAddToWalletDone).not.toHaveBeenCalled();
+  });
+
+  it("should leave the add-to-wallet scene once the user comes back from the wallet app", async () => {
+    const { pressOpenWallet } = renderSheet({ route: { name: "addToWallet" } });
+
+    await pressOpenWallet();
+
+    act(() => appStateListener?.("background"));
+    act(() => appStateListener?.("active"));
 
     expect(onAddToWalletDone).toHaveBeenCalledTimes(1);
   });
@@ -187,6 +229,20 @@ describe("CardDetailsSheet (native)", () => {
 
     expect(screen.getByTestId("card-details-transaction-content")).toBeVisible();
     expect(screen.getByText("NETFLIX.COM")).toBeVisible();
+  });
+
+  it("should give transaction details nothing to scroll, so its header stays put", () => {
+    renderSheet({ route: { name: "transaction", transaction } });
+
+    expect(screen.getByTestId("card-details-sheet-static-content")).toBeVisible();
+    expect(screen.queryByTestId("card-details-sheet-content")).toBeNull();
+  });
+
+  it("should keep the overview scrollable, since it opens at full height", () => {
+    renderSheet();
+
+    expect(screen.getByTestId("card-details-sheet-content")).toBeVisible();
+    expect(screen.queryByTestId("card-details-sheet-static-content")).toBeNull();
   });
 
   it("should offer a way back to the overview from transaction details", async () => {

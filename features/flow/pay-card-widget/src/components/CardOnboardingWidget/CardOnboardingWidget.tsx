@@ -5,9 +5,10 @@ import { useCardOnboardingViewModel } from "./useCardOnboardingViewModel";
 
 type CardOnboardingWidgetProps = {
   readonly onTopUp?: () => void;
+  readonly onChooseCardType?: () => void;
 };
 
-export function CardOnboardingWidget({ onTopUp }: CardOnboardingWidgetProps) {
+export function CardOnboardingWidget({ onTopUp, onChooseCardType }: CardOnboardingWidgetProps) {
   const {
     isOpen,
     steps,
@@ -22,7 +23,9 @@ export function CardOnboardingWidget({ onTopUp }: CardOnboardingWidgetProps) {
     handleGotIt,
   } = useCardOnboardingViewModel();
 
-  if (isLoading || isError || hasCompletedOnboarding) return null;
+  const choosingCardType = steps.find(step => !step.isDone)?.id === "choose-card-type";
+
+  if (isLoading || isError || (hasCompletedOnboarding && !choosingCardType)) return null;
 
   return (
     <>
@@ -41,6 +44,7 @@ export function CardOnboardingWidget({ onTopUp }: CardOnboardingWidgetProps) {
         onboardingCompleted={onboardingCompleted}
         handleGotIt={handleGotIt}
         onTopUp={onTopUp}
+        onChooseCardType={onChooseCardType}
       />
     </>
   );

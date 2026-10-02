@@ -1,37 +1,42 @@
 import React from "react";
-import { configureStore } from "@reduxjs/toolkit";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { PayAnalyticsProvider } from "@features/platform-pay-analytics";
-import { markPayCardFeatureTourSeen, payCardFeatureTourSlice } from "../../../state";
+import {
+  trackButtonClicked,
+  trackedPages,
+} from "@features/platform-pay-analytics/testing/module-mock";
+import { markPayCardFeatureTourSeen } from "../../../state";
 import { Provider } from "react-redux";
 import { FeatureTour } from "../FeatureTour";
+import { PAY_TAB_FEATURE_FLAG } from "../payTabFeatureFlag.web";
 import { I18nTestProvider } from "@shared/i18n/testing";
-import { FEATURE_TOUR_RESOURCES } from "./fixtures";
+import { FEATURE_TOUR_RESOURCES, makeFeatureTourStore } from "./fixtures";
 
-function makeStore() {
-  return configureStore({ reducer: { payCardFeatureTour: payCardFeatureTourSlice.reducer } });
+jest.mock("@features/platform-pay-analytics", () =>
+  jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
+);
+
+function makeStore(card = true) {
+  return makeFeatureTourStore(PAY_TAB_FEATURE_FLAG, card);
 }
 
-function renderTour(store = makeStore(), adapter = { track: jest.fn() }) {
+function renderTour(store = makeStore()) {
   return {
     store,
-    adapter,
     ...render(
       <Provider store={store}>
-        <PayAnalyticsProvider
-          adapter={adapter}
-          renderPage={page => <span data-testid="pay-track-page">{page}</span>}
-        >
-          <I18nTestProvider resources={FEATURE_TOUR_RESOURCES}>
-            <FeatureTour />
-          </I18nTestProvider>
-        </PayAnalyticsProvider>
+        <I18nTestProvider resources={FEATURE_TOUR_RESOURCES}>
+          <FeatureTour />
+        </I18nTestProvider>
       </Provider>,
     ),
   };
 }
 
 describe("FeatureTour (Web)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -43,22 +48,30 @@ describe("FeatureTour (Web)", () => {
     expect(screen.getByText("Explore Pay")).toBeVisible();
   });
 
+  it("hides the card row when the pay feature flag card param is off", () => {
+    renderTour(makeStore(false));
+
+    expect(screen.queryByText("Shop worldwide with crypto card")).toBeNull();
+    expect(screen.getByText("Pay your contacts")).toBeVisible();
+    expect(screen.getByText("Request payments")).toBeVisible();
+  });
+
   it("tracks the page when shown", () => {
     renderTour();
 
-    expect(screen.getByTestId("pay-track-page")).toHaveTextContent("card feature intro");
+    expect(trackedPages()).toContainEqual({ page: "Feature Intro", name: "pay", flow: "pay" });
   });
 
   it("marks the tour as seen and emits the click event on the CTA", () => {
-    const { store, adapter } = renderTour();
+    const { store } = renderTour();
 
     fireEvent.click(screen.getByText("Explore Pay"));
 
     expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
-    expect(adapter.track).toHaveBeenCalledWith("button_clicked", {
-      button: "got it",
-      flow: "card",
-      page: "card feature intro",
+    expect(trackButtonClicked).toHaveBeenCalledWith({
+      button: "continue",
+      flow: "pay",
+      page: "Feature Intro pay",
     });
   });
 
@@ -68,19 +81,17 @@ describe("FeatureTour (Web)", () => {
     renderTour(store);
 
     expect(screen.queryByText("Shop worldwide with crypto card")).toBeNull();
-    expect(screen.queryByTestId("pay-track-page")).toBeNull();
+    expect(trackedPages()).toHaveLength(0);
   });
 
   it("resolves its copy from the mounted i18n provider, not from props", () => {
     render(
       <Provider store={makeStore()}>
-        <PayAnalyticsProvider adapter={{ track: jest.fn() }}>
-          <I18nTestProvider
-            resources={{ en: { translation: { payTab: { featureTour: { cta: "Compris" } } } } }}
-          >
-            <FeatureTour />
-          </I18nTestProvider>
-        </PayAnalyticsProvider>
+        <I18nTestProvider
+          resources={{ en: { translation: { payTab: { featureTour: { cta: "Compris" } } } } }}
+        >
+          <FeatureTour />
+        </I18nTestProvider>
       </Provider>,
     );
 

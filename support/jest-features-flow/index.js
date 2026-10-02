@@ -27,6 +27,7 @@ const nativeMocks = {
   // from inside @testing-library/react-native.
   "^react-native$": path.join(__dirname, "mocks/react-native.js"),
   "^react-native-reanimated$": path.join(__dirname, "mocks/reanimated.js"),
+  "^react-native-draggable-flatlist$": path.join(__dirname, "mocks/draggable-flatlist.js"),
   "^react-native-svg(/.*)?$": path.join(__dirname, "mocks/react-native-svg.js"),
   "^react-native-safe-area-context$": path.join(__dirname, "mocks/safe-area-context.js"),
   "^react-native-fast-crypto$": path.join(__dirname, "mocks/fast-crypto.js"),

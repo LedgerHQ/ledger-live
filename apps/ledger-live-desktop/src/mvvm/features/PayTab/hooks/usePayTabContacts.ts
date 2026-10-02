@@ -25,6 +25,7 @@ import {
   type ContactAddressPickerProps,
   type ContactsProps,
 } from "@features/flow-pay-contact";
+import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { useContactsAnalytics } from "LLD/features/Contacts/analytics";
@@ -58,9 +59,20 @@ export function usePayTabContacts(
     },
     [navigate],
   );
+  const handleSelectAddress = useCallback(
+    (address: ContactAddress) => {
+      trackButtonClicked({
+        button: "send to contact",
+        buttonLocation: "contacts",
+        page: "Pay",
+      });
+      onSelectAddress(address);
+    },
+    [onSelectAddress],
+  );
   const { open: openContactAddressPicker, contactAddressPicker } = useContactAddressPickerViewModel(
     {
-      onSelectAddress,
+      onSelectAddress: handleSelectAddress,
       onAddNewAddress: onAddContactAddress,
     },
   );

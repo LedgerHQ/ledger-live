@@ -1,5 +1,21 @@
 # @domain/entity-currency
 
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies [[`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5)]:
+  - @domain/entity-currency-crypto@0.14.0
+  - @domain/entity-currency-token@0.5.4
+
+## 0.4.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5)]:
+  - @domain/entity-currency-crypto@0.14.0-next.0
+  - @domain/entity-currency-token@0.5.4-next.0
+
 ## 0.4.4
 
 ### Patch Changes
@@ -245,19 +261,5 @@
   - @domain/entity-currency-crypto@0.5.0-next.0
   - @domain/entity-currency-token@0.2.0-next.0
   - @domain/entity-currency-unit@0.3.0-next.0
-
-## 0.1.3
-
-### Patch Changes
-
-- Updated dependencies [[`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649)]:
-  - @domain/entity-currency-crypto@0.4.0
-
-## 0.1.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`d149f27`](https://github.com/LedgerHQ/ledger-live/commit/d149f271f18a1727558fa046aa6bc38c391c2649)]:
-  - @domain/entity-currency-crypto@0.4.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

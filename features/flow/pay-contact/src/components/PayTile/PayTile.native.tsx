@@ -1,5 +1,5 @@
 import React from "react";
-import { Spot, Tile, TileContent, TileTitle } from "@ledgerhq/lumen-ui-rnative";
+import { Spot, Tile, TileContent, TileDescription } from "@ledgerhq/lumen-ui-rnative";
 import { Telegram } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 type PayTileProps = Readonly<{
@@ -19,7 +19,7 @@ export function PayTile({ label, onPress }: PayTileProps): React.JSX.Element {
     >
       <Spot size={56} appearance="icon" icon={Telegram} />
       <TileContent>
-        <TileTitle lx={{ color: "base" }}>{label}</TileTitle>
+        <TileDescription>{label}</TileDescription>
       </TileContent>
     </Tile>
   );

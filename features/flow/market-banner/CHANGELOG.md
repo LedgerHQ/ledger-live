@@ -246,16 +246,4 @@
 
 - [#14135](https://github.com/LedgerHQ/ledger-live/pull/14135) [`9d5c4c6`](https://github.com/LedgerHQ/ledger-live/commit/9d5c4c6a0baec0292720d522b3d827a9c2c55247) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(lwd): update lwd and dependent libs to react 19
 
-## 0.2.0
-
-### Minor Changes
-
-- [#14030](https://github.com/LedgerHQ/ledger-live/pull/14030) [`8388db4`](https://github.com/LedgerHQ/ledger-live/commit/8388db4ad26fd6882cef46cfe7da305ce519eccc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen rnative to latest so it uses react 19
-
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#14030](https://github.com/LedgerHQ/ledger-live/pull/14030) [`8388db4`](https://github.com/LedgerHQ/ledger-live/commit/8388db4ad26fd6882cef46cfe7da305ce519eccc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen rnative to latest so it uses react 19
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

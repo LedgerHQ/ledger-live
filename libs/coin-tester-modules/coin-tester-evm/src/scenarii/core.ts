@@ -149,7 +149,7 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
-    await indexBlocks(core.ethereumLikeInfo?.chainId || 1116);
+    await indexBlocks(1116);
   },
   afterAll: _account => {
     // TODO: uncomment when explorer is ready

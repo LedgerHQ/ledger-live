@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { CoinsAddPlus, CreditCard, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
+import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analytics";
 import heroImage from "./payCardLoginIntro.webp";
+import { CARD_LOGIN_INTRO_FLOW } from "./analytics";
 import type { CardLoginIntroRowIcon, CardLoginIntroViewProps } from "./types";
 
 const ROW_ICONS: Record<CardLoginIntroRowIcon, typeof CreditCard> = {
@@ -52,13 +54,18 @@ export function CardLoginIntroView({
 
   return (
     <Dialog open onOpenChange={handleOpenChange}>
+      <PayTrackPage
+        page={FEATURE_INTRO_PAGE}
+        name={CARD_LOGIN_INTRO_FLOW}
+        flow={CARD_LOGIN_INTRO_FLOW}
+      />
       <DialogContent
         aria-describedby={undefined}
-        className="max-h-[90vh] p-0"
+        className="max-h-[90vh]"
         data-testid="pay-card-login-intro-dialog"
       >
         <DialogHeader density="compact" onClose={handleClose} />
-        <DialogBody className="flex min-h-0 flex-1 flex-col gap-16 overflow-hidden px-16 pb-24">
+        <DialogBody className="flex min-h-0 flex-1 flex-col gap-16 overflow-hidden">
           <div
             className="scrollbar-none flex min-h-0 flex-1 flex-col gap-16 overflow-y-auto"
             data-testid="pay-card-login-intro-content"
@@ -66,7 +73,7 @@ export function CardLoginIntroView({
             <img
               src={heroImage}
               alt=""
-              className="h-[192px] w-full rounded-xl object-cover"
+              className="aspect-1028/576 w-full rounded-xl object-cover"
               data-testid="pay-card-login-intro-hero"
               draggable={false}
             />
@@ -80,7 +87,7 @@ export function CardLoginIntroView({
                     className="flex items-center gap-12"
                     data-testid={`pay-card-login-intro-row-${row.icon}`}
                   >
-                    {RowIcon ? <RowIcon size={24} className="shrink-0" /> : null}
+                    {RowIcon ? <RowIcon size={24} className="shrink-0 text-base" /> : null}
                     <div className="flex min-w-0 flex-col gap-4">
                       <p className="body-2-semi-bold text-base">{row.title}</p>
                       <p className="body-3 text-muted">{row.description}</p>

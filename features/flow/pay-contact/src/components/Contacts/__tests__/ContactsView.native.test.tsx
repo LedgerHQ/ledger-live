@@ -1,8 +1,17 @@
 import React from "react";
-import { render, screen } from "@testing-library/react-native";
+import { render as renderWithoutI18n, screen } from "@testing-library/react-native";
+import { I18nTestProvider } from "@shared/i18n/testing";
+import { DEFAULT_ME_CONTACT_NAME } from "@domain/entity-contact";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { ContactsView } from "../ContactsView.native";
+import { CONTACTS_RESOURCES } from "./i18n";
 import type { ContactsViewNativeProps } from "../../../types";
+
+const I18nWrapper = ({ children }: Readonly<{ children: React.ReactNode }>) => (
+  <I18nTestProvider resources={CONTACTS_RESOURCES}>{children}</I18nTestProvider>
+);
+
+const render = (ui: React.ReactElement) => renderWithoutI18n(ui, { wrapper: I18nWrapper });
 
 function makeProps(overrides: Partial<ContactsViewNativeProps> = {}): ContactsViewNativeProps {
   return {
@@ -44,6 +53,23 @@ describe("ContactsView (Native)", () => {
     expect(screen.getByText("Ada")).toBeTruthy();
     expect(screen.getByTestId("pay-contacts-tile-1")).toBeVisible();
     expect(screen.getByText("Bob")).toBeTruthy();
+  });
+
+  it("should name the default Me contact Me", () => {
+    const contacts = [mockContact({ id: "contact-me", name: DEFAULT_ME_CONTACT_NAME, isMe: true })];
+
+    render(<ContactsView {...makeProps({ contacts })} />);
+
+    expect(screen.getByText("Me")).toBeTruthy();
+    expect(screen.queryByText("My addresses (Me)")).toBeNull();
+  });
+
+  it("should keep the renamed Me contact suffixed with (Me)", () => {
+    const contacts = [mockContact({ id: "contact-me", name: "Ada", isMe: true })];
+
+    render(<ContactsView {...makeProps({ contacts })} />);
+
+    expect(screen.getByText("Ada (Me)")).toBeTruthy();
   });
 
   it("should open the Send flow when the Pay tile is pressed", () => {

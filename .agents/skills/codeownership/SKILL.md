@@ -18,7 +18,7 @@ description: Maintain CODEOWNERS file and team directories. Provides resolve-cod
 
 ## Resolving ownership for a list of files
 
-Use `resolve-codeowners.js` to annotate any list of files with their CODEOWNERS team — handy when splitting a large PR by team owner. The script finds `ignore` in the pnpm virtual store automatically (no extra install).
+Use `resolve-codeowners.js` to annotate any list of files with their CODEOWNERS team — handy when splitting a large PR by team owner. It uses the same matcher as the CI check in [validate-codeowners](../../../tools/actions/composites/validate-codeowners/README.md), so it resolves exactly as GitHub does (case-sensitive, no install needed).
 
 ```bash
 # From a git diff
@@ -40,6 +40,16 @@ random/unknown/file.xyz  (no owner)
 ```
 
 Semantics: last-rule-wins; ownerless entries appear as `(no owner)`.
+
+## Checking CODEOWNERS before pushing
+
+After editing `CODEOWNERS`, or moving or deleting files it names, run the CI check locally:
+
+```bash
+node .agents/skills/codeownership/resolve-codeowners.js --check
+```
+
+It fails on rules that match no file, never take effect, re-own narrower rules from a later position, or use an unanchored name that matches in several places. Put defaults such as `**/tsconfig*` near the top; team-specific rules come after them.
 
 ## Target
 

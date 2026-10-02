@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-deposit",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "private": true,
   "description": "Pay deposit options flow for Ledger Wallet",
   "main": "src/index.ts",
@@ -28,6 +28,7 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-deposit"
   },
   "dependencies": {
+    "@features/platform-pay-analytics": "workspace:^",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },

@@ -173,21 +173,4 @@
   - @ledgerhq/hw-transport@6.35.2
   - @ledgerhq/hw-transport-mocker@6.34.2
 
-## 0.12.3-hotfix.0
-
-### Patch Changes
-
-- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
-  - @ledgerhq/errors@6.34.1-hotfix.0
-  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
-  - @ledgerhq/hw-transport@6.35.2-hotfix.0
-  - @ledgerhq/hw-transport-mocker@6.34.2-hotfix.0
-
-## 0.12.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/cryptoassets@13.46.1
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

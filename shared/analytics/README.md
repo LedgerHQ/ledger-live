@@ -90,7 +90,7 @@ setEnabledFn(() => myAnalyticsEnabledSelector(store.getState()));
 
 Mandatory events can be used to bypass the `enabled` state. See [Additional options](#additional-options) below.
 
-`trackPage` emits events named `Page ${category} ${name}`. Use `updateRoutes` and `refreshSource` to keep route refs in sync for subsequent `page` and `source` props on other events.
+`trackPage` emits events named `Page ${category} ${name}`. Use `updateRoutes` and `refreshSource` to keep tracking pages in sync for subsequent `page` and `source` props on other events.
 
 ```ts
 trackPage(
@@ -105,11 +105,10 @@ Use `avoidDuplicates: true` when a screen component may remount and emit the sam
 
 ### Async and await
 
-`track` can be fire-and-forget – async enrichment and delivery will run inside the package. The final delivery status is published on `analyticsEvents$`.
-
-When you need to wait until an event is enqueued, await the call, e.g.
+`track` always returns `Promise<void>`. You can fire-and-forget (`track(...)`) and async enrichment and delivery still run inside the package, or `await track(...)` when you need to wait until delivery has finished. The final delivery status is published on `analyticsEvents$`.
 
 ```ts
+void track("My Event", { foo: "bar" });
 await track("My Crucial Event", { foo: "bar" });
 await trackPage({ category: "Market" });
 ```
@@ -148,22 +147,29 @@ analyticsEvents$.subscribe((event) => {
 // { appVersion: "1.2.3", theme: "light" },
 ```
 
-### Screen refs
+### Tracking pages
 
 ```ts
 import {
-  currentRouteNameRef,
   getCurrentTrackingPage,
+  getPreviousTrackingPage,
+  resetTrackingPages,
   setTrackingSource,
 } from "@shared/analytics";
 ```
 
-Tracking routes are used in analytics to provide props like `page` and `source`. They are **ref objects** (similar to React refs) e.g. `currentRouteNameRef.current`.
+Tracking pages are used in analytics to provide props like `page` and `source`.
 
 `track` adds `page` from `getCurrentTrackingPage()` when a current page is set. Callers can still pass their own `page`.
 
-> [!Note]
-> Exporting the raw refs is **interim** – [LIVE-36002](https://ledgerhq.atlassian.net/browse/LIVE-36002) narrows this to a function-only API. Also, names are overly-varied (`screenRef`, `routeName` and `trackingSource`) – [LIVE-37304](https://ledgerhq.atlassian.net/browse/LIVE-37304) addresses ambigious names and duplicate logic
+Both getters return `""` when the page is unknown. Pass a fallback when the caller needs a different value:
+
+```ts
+getCurrentTrackingPage({ fallback: "Unknown" });
+getPreviousTrackingPage({ fallback: "Portfolio" });
+```
+
+`setTrackingSource(source)` updates the current page, which becomes the source of the next page event. `resetTrackingPages()` clears both the current and previous pages.
 
 ## Analytics Events
 

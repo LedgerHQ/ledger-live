@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
-import { Tile, TileContent, TileTitle } from "@ledgerhq/lumen-ui-rnative";
+import { Tile, TileContent, TileDescription } from "@ledgerhq/lumen-ui-rnative";
 import { ContactAvatar } from "@features/platform-contacts";
+import { usePayContactDisplayName } from "./usePayContactDisplayName";
 import type { Contact } from "@domain/entity-contact";
 
 type ContactTileProps = Readonly<{
@@ -11,6 +12,7 @@ type ContactTileProps = Readonly<{
 
 export function ContactTile({ contact, index, onPress }: ContactTileProps): React.JSX.Element {
   const handlePress = useCallback(() => onPress?.(contact), [contact, onPress]);
+  const getDisplayName = usePayContactDisplayName();
 
   return (
     <Tile
@@ -18,11 +20,11 @@ export function ContactTile({ contact, index, onPress }: ContactTileProps): Reac
       lx={{ width: "s96", flexGrow: 1, marginLeft: "-s8" }}
       testID={`pay-contacts-tile-${index}`}
       accessibilityRole={onPress ? "button" : undefined}
-      accessibilityLabel={contact.name}
+      accessibilityLabel={getDisplayName(contact)}
     >
-      <ContactAvatar contactId={contact.id} name={contact.name} size="lg" />
+      <ContactAvatar contactId={contact.id} name={contact.name} isMe={contact.isMe} size="lg" />
       <TileContent>
-        <TileTitle lx={{ color: "base" }}>{contact.name}</TileTitle>
+        <TileDescription>{getDisplayName(contact)}</TileDescription>
       </TileContent>
     </Tile>
   );

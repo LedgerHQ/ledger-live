@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { SectionList, type SectionListRenderItem } from "react-native";
-import { Box, Skeleton, Spot } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Skeleton, Spinner, Spot } from "@ledgerhq/lumen-ui-rnative";
 import { CreditCard } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { StatusMessage, type StatusMessageProps } from "./components/StatusMessage";
 import { DayHeader } from "./components/DayHeader";
@@ -9,6 +9,8 @@ import { SectionSeparator } from "./components/SectionSeparator";
 import type { CardTransactionItem } from "../types";
 import type { HistorySection } from "./components/types";
 import type { CardTransactionHistoryViewProps } from "./types";
+
+const PROVIDER_DISCLAIMER_KEY = "payTab.disclaimer";
 
 function createPayCta(
   testId: string,
@@ -26,6 +28,8 @@ export function CardTransactionHistoryView({
   onRowClick,
   onGoToPay,
   cardVisual,
+  onLoadMore,
+  isLoadingMore,
 }: CardTransactionHistoryViewProps) {
   const sections: HistorySection[] = useMemo(() => {
     if (displayState.kind !== "ready") return [];
@@ -35,6 +39,20 @@ export function CardTransactionHistoryView({
   const renderItem: SectionListRenderItem<CardTransactionItem, HistorySection> = useCallback(
     ({ item }) => <HistoryRow item={item} formatters={formatters} onRowClick={onRowClick} />,
     [formatters, onRowClick],
+  );
+
+  const renderFooter = useCallback(
+    () =>
+      isLoadingMore ? (
+        <Box
+          lx={{ paddingVertical: "s16", alignItems: "center" }}
+          accessibilityLiveRegion="polite"
+          testID="card-history-loading-more"
+        >
+          <Spinner size={20} />
+        </Box>
+      ) : null,
+    [isLoadingMore],
   );
 
   const renderSectionHeader = useCallback(
@@ -50,7 +68,7 @@ export function CardTransactionHistoryView({
         <StatusMessage
           spot={
             cardVisual ? (
-              <Box lx={{ width: "s320" }}>{cardVisual}</Box>
+              <Box lx={{ width: "full", paddingHorizontal: "s16" }}>{cardVisual}</Box>
             ) : (
               <Spot appearance="icon" icon={CreditCard} size={72} />
             )
@@ -59,6 +77,26 @@ export function CardTransactionHistoryView({
           descriptionKey="payTab.cardTransactions.history.signedOut.description"
           testId="card-history-signed-out-state"
           action={createPayCta("card-history-signed-out-state-cta", onGoToPay)}
+          disclaimerKey={PROVIDER_DISCLAIMER_KEY}
+          overlapSpot={Boolean(cardVisual)}
+        />
+      );
+    case "unclaimed":
+      return (
+        <StatusMessage
+          spot={
+            cardVisual ? (
+              <Box lx={{ width: "full", paddingHorizontal: "s16" }}>{cardVisual}</Box>
+            ) : (
+              <Spot appearance="icon" icon={CreditCard} size={72} />
+            )
+          }
+          titleKey="payTab.cardTransactions.history.unclaimed.title"
+          descriptionKey="payTab.cardTransactions.history.unclaimed.description"
+          testId="card-history-unclaimed-state"
+          action={createPayCta("card-history-unclaimed-state-cta", onGoToPay)}
+          disclaimerKey={PROVIDER_DISCLAIMER_KEY}
+          overlapSpot={Boolean(cardVisual)}
         />
       );
     case "loading":
@@ -97,6 +135,10 @@ export function CardTransactionHistoryView({
           renderItem={renderItem}
           renderSectionHeader={renderSectionHeader}
           SectionSeparatorComponent={SectionSeparator}
+          ListFooterComponent={renderFooter}
+          onEndReached={onLoadMore}
+          // Half a screen out, so the next page is usually there by the time the list reaches it.
+          onEndReachedThreshold={0.5}
           stickySectionHeadersEnabled={false}
           style={listStyle}
           contentContainerStyle={listContentStyle}

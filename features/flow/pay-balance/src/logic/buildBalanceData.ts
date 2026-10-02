@@ -19,7 +19,6 @@ export type BuildBalanceDataParams = Readonly<{
   formatCrypto: (unit: Unit, balance: number) => string;
   formatCountervalue: (value: number) => FormattedValue;
   onConfirmFilter: (filter: BalanceFilter) => void;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
 export type BuildBalanceDataResult = Readonly<{
@@ -41,7 +40,6 @@ export function buildBalanceData({
   formatCrypto,
   formatCountervalue,
   onConfirmFilter,
-  onTrackEvent,
 }: BuildBalanceDataParams): BuildBalanceDataResult {
   const filterOptions = buildBalanceFilterOptions({
     stablecoins,
@@ -59,7 +57,6 @@ export function buildBalanceData({
     filterOptions,
     formatCountervalue,
     onConfirmFilter,
-    onTrackEvent,
   });
 
   const shouldResetFilter = !isLoading && !isError && data.filter !== filter;

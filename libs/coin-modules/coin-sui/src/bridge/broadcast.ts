@@ -21,16 +21,9 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
     signature,
     rawData: { unsigned },
   } = signedOperation as unknown as SuiSignedOperation;
-  const params = {
+  const hash = await logicBroadcast(suiConfig.getCoinConfig(account.currency.id), {
     transactionBlock: unsigned,
     signature,
-    options: {
-      showInput: true,
-      showBalanceChanges: true,
-      showEffects: true,
-      showEvents: true,
-    },
-  };
-  const hash = await logicBroadcast(suiConfig.getCoinConfig(account.currency.id), params);
+  });
   return patchOperationWithHash(operation, hash);
 };

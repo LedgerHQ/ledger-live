@@ -1,13 +1,15 @@
-import type { MockServerDevice, MockServerSession } from "./types";
+import type { MockDevice } from "./devices";
 
 /** Fills in the latest firmware for any device that does not pin one. */
-export async function withResolvedFirmware(device: MockServerDevice): Promise<MockServerDevice> {
+export async function withResolvedFirmware(device: MockDevice): Promise<MockDevice> {
   if (device.firmware_version) return device;
   return { ...device, firmware_version: process.env.SPECULOS_FIRMWARE_VERSION };
 }
 
 /** The launch env that points an app's DMK at the mock server with this session seeded. */
-export async function mockServerEnv(session: MockServerSession): Promise<Record<string, string>> {
+export async function mockServerEnv(session: {
+  devices: MockDevice[];
+}): Promise<Record<string, string>> {
   const devices = await Promise.all(session.devices.map(withResolvedFirmware));
 
   return {

@@ -6,7 +6,6 @@ import { AppState, Linking, Platform, type NativeEventSubscription } from "react
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
-import { ReplaySubject } from "rxjs";
 import {
   getFocusedRouteNameFromRoute,
   ParamListBase,
@@ -14,9 +13,18 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
-import React, { type RefObject } from "react";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { FeatureId, Features } from "@shared/feature-flags";
+import {
+  flush as sharedFlush,
+  publishAnalyticsEvent,
+  setAnalytics,
+  setEnabledFn,
+  setExtraPropsFn,
+  setMandatoryExtraPropsFn,
+  track as sharedTrack,
+  trackPage as sharedTrackPage,
+} from "@shared/analytics";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import {
@@ -30,6 +38,8 @@ import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBui
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import { selectContacts } from "@domain/entity-contact";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
+import { getAppLockAttributes } from "./getAppLockAttributes";
+import { getPayAttributes } from "./getPayAttributes";
 import {
   analyticsEnabledSelector,
   trackingEnabledSelector,
@@ -56,7 +66,6 @@ import { satisfactionSelector } from "../reducers/ratings";
 import { accountsSelector } from "../reducers/accounts";
 import type { AppStore } from "../reducers";
 import { NavigatorName } from "~/const";
-import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { BrazePlugin } from "./BrazePlugin";
@@ -139,6 +148,7 @@ const getFeatureFlagProperties = () => {
     const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
     const ptxBorrowLiveAppFlag = analyticsFeatureFlagMethod("ptxBorrowLiveApp");
     const stableSavingsFlag = analyticsFeatureFlagMethod("stableSavings");
+    const ptxEarnCtaOnMobileFlag = analyticsFeatureFlagMethod("ptxEarnCtaOnMobile");
     const lwmAnalyticsConsentOnboardingFlag = analyticsFeatureFlagMethod(
       "lwmAnalyticsConsentOnboarding",
     );
@@ -157,6 +167,7 @@ const getFeatureFlagProperties = () => {
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
     const borrowFeature = Boolean(ptxBorrowLiveAppFlag?.enabled);
     const stableSavings = Boolean(stableSavingsFlag?.enabled);
+    const ptxEarnCtaOnMobile = Boolean(ptxEarnCtaOnMobileFlag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
 
@@ -194,6 +205,7 @@ const getFeatureFlagProperties = () => {
       ptxSwapLiveAppKycWarningEnabled,
       borrowFeature,
       stableSavings,
+      ptxEarnCtaOnMobile,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
     });
@@ -322,16 +334,6 @@ const getLazyOnboardingBannerAttributes = () => {
   };
 };
 
-const getPayTabAttributes = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const payTab = analyticsFeatureFlagMethod("lwmPayTab");
-
-  return {
-    isEnabled: payTab?.enabled ?? false,
-    card: payTab?.params?.card ?? false,
-  };
-};
-
 const getLdmkAndSyncFlags = () => ({
   ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? {
     enabled: false,
@@ -343,6 +345,12 @@ const getLdmkAndSyncFlags = () => ({
     enabled: false,
   },
   ldmkCosmosSigner: analyticsFeatureFlagMethod?.("ldmkCosmosSigner") ?? {
+    enabled: false,
+  },
+  ldmkPolkadotSigner: analyticsFeatureFlagMethod?.("ldmkPolkadotSigner") ?? {
+    enabled: false,
+  },
+  ldmkTronSigner: analyticsFeatureFlagMethod?.("ldmkTronSigner") ?? {
     enabled: false,
   },
 });
@@ -401,8 +409,14 @@ const extraProperties = async (store: AppStore) => {
   });
   const contactsFeature = analyticsFeatureFlagMethod?.("lwmContacts") ?? { enabled: false };
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
-  const { ldmkTransport, ldmkConnectApp, ldmkSolanaSigner, ldmkCosmosSigner } =
-    getLdmkAndSyncFlags();
+  const {
+    ldmkTransport,
+    ldmkConnectApp,
+    ldmkSolanaSigner,
+    ldmkCosmosSigner,
+    ldmkPolkadotSigner,
+    ldmkTronSigner,
+  } = getLdmkAndSyncFlags();
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -490,7 +504,15 @@ const extraProperties = async (store: AppStore) => {
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
   const lazyOnboardingBannerAttributes = getLazyOnboardingBannerAttributes();
-  const payTabAttributes = getPayTabAttributes();
+  const payAttributes = getPayAttributes(
+    state,
+    analyticsFeatureFlagMethod?.("lwmPayTab")?.enabled ?? false,
+    accounts ?? [],
+  );
+  const appLockAttributes = getAppLockAttributes(
+    state,
+    analyticsFeatureFlagMethod?.("lwmPasswordRevamp")?.enabled ?? false,
+  );
 
   return {
     ...mandatoryProperties,
@@ -537,13 +559,16 @@ const extraProperties = async (store: AppStore) => {
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
+    isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,
+    isLDMKTronSignerEnabled: ldmkTronSigner?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
-    payTabAttributes,
+    ...payAttributes,
+    ...appLockAttributes,
     quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
@@ -552,8 +577,35 @@ const extraProperties = async (store: AppStore) => {
 };
 
 const token = ANALYTICS_TOKEN;
+
+setAnalytics({
+  track: async (event, props) => {
+    if (!token) return "skipped_no_token";
+    if (!segmentClient) {
+      warnOnceNoSegmentClient(event, event.startsWith("Page ") ? "screen" : "track");
+      return "skipped_no_client";
+    }
+    await segmentClient.track(event, props as Parameters<SegmentClient["track"]>[1]);
+  },
+  log: (type, event, props) => {
+    if (!ANALYTICS_LOGS) return;
+    if (type === "page") {
+      console.log("analytics:screen", event, props);
+    } else {
+      console.log("analytics:track", event, props);
+    }
+  },
+  flush: async () => {
+    await segmentClient?.flush();
+  },
+});
+
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
   storeInstance = store;
+
+  setEnabledFn(() => trackingEnabledSelector(store.getState()));
+  setExtraPropsFn(() => extraProperties(store));
+  setMandatoryExtraPropsFn(() => getMandatoryProperties(store));
 
   // Prime the OS notification permission cache and keep it fresh on every foreground, so that
   // `hasEnabledOsNotifications` reflects changes the user made in the phone settings.
@@ -631,87 +683,22 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
   const overlayProperties = { userIdPresent: Boolean(segmentUserId) };
   try {
     await segmentClient.identify(segmentUserId, allProperties);
-    trackSubject.next({
+    publishAnalyticsEvent({
       eventName: "[Identify]",
       eventProperties: overlayProperties,
-      date: new Date(),
       deliveryStatus: "enqueued",
     });
   } catch {
-    trackSubject.next({
+    publishAnalyticsEvent({
       eventName: "[Identify]",
       eventProperties: overlayProperties,
-      date: new Date(),
-      deliveryStatus: "failed",
+      deliveryStatus: "failed_tracking",
     });
   }
 };
 
-type Properties = Error | Record<string, unknown> | null;
-export type AnalyticsDeliveryStatus =
-  | "enqueued"
-  | "failed"
-  | "skipped_no_client"
-  | "skipped_no_store"
-  | "skipped_no_token"
-  | "flushed";
-export type LoggableEvent = {
-  eventName: string;
-  eventProperties?: Properties;
-  eventPropertiesWithoutExtra?: Properties;
-  date: Date;
-  deliveryStatus?: AnalyticsDeliveryStatus;
-};
-export const trackSubject = new ReplaySubject<LoggableEvent>(30);
-
-const enqueueAndLog = async (
-  eventName: string,
-  eventProperties: Record<string, unknown>,
-  eventPropertiesWithoutExtra: Properties,
-  kind: "track" | "screen",
-) => {
-  if (!token) {
-    trackSubject.next({
-      eventName,
-      eventProperties,
-      eventPropertiesWithoutExtra,
-      date: new Date(),
-      deliveryStatus: "skipped_no_token",
-    });
-    return;
-  }
-
-  if (!segmentClient) {
-    warnOnceNoSegmentClient(eventName, kind);
-    trackSubject.next({
-      eventName,
-      eventProperties,
-      eventPropertiesWithoutExtra,
-      date: new Date(),
-      deliveryStatus: "skipped_no_client",
-    });
-    return;
-  }
-
-  try {
-    await segmentClient.track(eventName, eventProperties as Parameters<SegmentClient["track"]>[1]);
-    trackSubject.next({
-      eventName,
-      eventProperties,
-      eventPropertiesWithoutExtra,
-      date: new Date(),
-      deliveryStatus: "enqueued",
-    });
-  } catch {
-    trackSubject.next({
-      eventName,
-      eventProperties,
-      eventPropertiesWithoutExtra,
-      date: new Date(),
-      deliveryStatus: "failed",
-    });
-  }
-};
+export type { LoggableEvent } from "@shared/analytics";
+export { analyticsEvents$ as trackSubject } from "@shared/analytics";
 
 const wrapSegmentClientFlush = (client: SegmentClient) => {
   const originalFlush = client.flush.bind(client);
@@ -720,10 +707,9 @@ const wrapSegmentClientFlush = (client: SegmentClient) => {
     await originalFlush();
     if (pendingEvents === 0) return;
 
-    trackSubject.next({
+    publishAnalyticsEvent({
       eventName: "[Flush]",
       eventProperties: { pendingEvents },
-      date: new Date(),
       deliveryStatus: "flushed",
     });
   };
@@ -752,38 +738,16 @@ export const track = async (
   eventProperties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
-  const state = storeInstance?.getState();
-
-  const isTracking = getIsTracking(state, mandatory);
-  if (!isTracking.enabled) {
-    if (ANALYTICS_LOGS) console.log("analytics:track: not tracking because: ", isTracking.reason);
-    if (isTracking.reason === "store not initialised") {
-      trackSubject.next({
-        eventName: event,
-        eventProperties:
-          eventProperties instanceof Error ? undefined : (eventProperties ?? undefined),
-        date: new Date(),
-        deliveryStatus: "skipped_no_store",
-      });
-    }
+  if (!storeInstance) {
+    publishAnalyticsEvent({
+      eventName: event,
+      eventProperties:
+        eventProperties instanceof Error ? undefined : (eventProperties ?? undefined),
+      deliveryStatus: "skipped_no_store",
+    });
     return;
   }
-
-  const page = currentRouteNameRef.current;
-
-  const userExtraProperties = await extraProperties(storeInstance as AppStore);
-  const mandatoryProperties = getMandatoryProperties(storeInstance as AppStore);
-  const propertiesWithoutExtra = {
-    page,
-    ...eventProperties,
-  };
-  const allProperties = {
-    ...propertiesWithoutExtra,
-    ...(mandatory ? mandatoryProperties : userExtraProperties),
-  };
-  if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
-
-  await enqueueAndLog(event, allProperties, propertiesWithoutExtra, "track");
+  await sharedTrack(event, eventProperties, { mandatory: !!mandatory });
 };
 export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   const routeName = getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
@@ -801,17 +765,12 @@ export const trackWithRoute = (
   track(event, newProperties, mandatory);
 };
 
-export const flush = async () => {
-  if (!segmentClient) return;
-  await segmentClient.flush();
-};
+export const flush = sharedFlush;
 
 export const usePageNameFromRoute = () => {
   const route = useRoute();
   return getPageNameFromRoute(route);
 };
-
-const lastScreenEventName: RefObject<string | null | undefined> = React.createRef();
 
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
@@ -861,41 +820,16 @@ export const screen = async (
 ) => {
   const fullScreenName = (category || "") + (category && name ? " " : "") + (name || "");
   const eventName = `Page ${fullScreenName}`;
-  if (avoidDuplicates && eventName === lastScreenEventName.current) return;
-  lastScreenEventName.current = eventName;
-  if (updateRoutes) {
-    previousRouteNameRef.current = currentRouteNameRef.current;
-    if (refreshSource) {
-      currentRouteNameRef.current = fullScreenName;
-    }
-  }
-
-  const state = storeInstance?.getState();
-
-  const isTracking = getIsTracking(state, mandatory);
-  if (!isTracking.enabled) {
-    if (ANALYTICS_LOGS) console.log("analytics:screen: not tracking because: ", isTracking.reason);
-    if (isTracking.reason === "store not initialised") {
-      trackSubject.next({
-        eventName,
-        eventProperties: properties ?? undefined,
-        date: new Date(),
-        deliveryStatus: "skipped_no_store",
-      });
-    }
+  if (!storeInstance) {
+    publishAnalyticsEvent({
+      eventName,
+      eventProperties: properties ?? undefined,
+      deliveryStatus: "skipped_no_store",
+    });
     return;
   }
-
-  const source = previousRouteNameRef.current;
-
-  const userExtraProperties = await extraProperties(storeInstance as AppStore);
-  const mandatoryProperties = getMandatoryProperties(storeInstance as AppStore);
-  const eventPropertiesWithoutExtra = properties ? { source, ...properties } : { source };
-  const allProperties = {
-    ...eventPropertiesWithoutExtra,
-    ...(mandatory ? mandatoryProperties : userExtraProperties),
-  };
-  if (ANALYTICS_LOGS) console.log("analytics:screen", category, name, allProperties);
-
-  await enqueueAndLog(eventName, allProperties, eventPropertiesWithoutExtra, "screen");
+  await sharedTrackPage(
+    { category, name, props: properties },
+    { updateRoutes, refreshSource, avoidDuplicates, mandatory },
+  );
 };

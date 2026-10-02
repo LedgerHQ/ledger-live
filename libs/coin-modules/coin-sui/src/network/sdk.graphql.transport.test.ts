@@ -1,10 +1,9 @@
-import { JsonRpcHTTPTransport } from "@mysten/sui/jsonRpc";
 import { createSuiGraphQLClient } from "./graphql/client";
+import { createSuiGrpcClient } from "./grpc/client";
 import type { SuiCoinConfig } from "../config";
 
 const config = {
   node: {
-    url: "https://mockapi.sui.io",
     graphqlUrl: "https://mockapi.sui.io/graphql",
     grpcUrl: "https://mockapi.sui.io",
   },
@@ -19,14 +18,12 @@ import {
   getBlockInfo,
   getCheckpoint,
   isGraphQLEnabled,
-  withApi,
 } from "./sdk";
 
 /** Selects a transport through injected config; nothing reads module-level config any more. */
-const configWith = (transport: "json" | "graphql" | "grpc"): SuiCoinConfig =>
+const configWith = (transport: "graphql" | "grpc"): SuiCoinConfig =>
   ({
     node: {
-      url: "https://mockapi.sui.io",
       graphqlUrl: GRAPHQL_MAINNET_URL,
       grpcUrl: "https://mockapi.sui.io",
     },
@@ -34,44 +31,24 @@ const configWith = (transport: "json" | "graphql" | "grpc"): SuiCoinConfig =>
     features: { transport },
   }) as unknown as SuiCoinConfig;
 import { withGraphQLApi } from "./sdk.graphql";
+import { withGrpcApi } from "./sdk.grpc";
 import { bindMockNextGraphQLClient, fakeBalancesPage } from "./sdk.graphql.fixtures";
-
-// JSON-RPC stays mocked — any caller leaking onto it fails loudly via this proxy.
-const unexpectedJsonRpc = jest.fn(() => {
-  throw new Error("JSON-RPC client invoked on GraphQL test path");
-});
 
 jest.mock("./graphql/client", () => ({
   createSuiGraphQLClient: jest.fn(),
 }));
 
-jest.mock("@mysten/sui/jsonRpc", () => ({
-  ...jest.requireActual("@mysten/sui/jsonRpc"),
-  // Captures the `{ url }` arg so the dual-URL routing test can assert it.
-  JsonRpcHTTPTransport: jest.fn(),
-  SuiJsonRpcClient: jest.fn().mockImplementation(
-    () =>
-      new Proxy(
-        {},
-        {
-          get: (_t, prop) => {
-            if (typeof prop === "symbol" || prop === "then") return undefined;
-            return unexpectedJsonRpc;
-          },
-        },
-      ),
-  ),
-  getJsonRpcFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
+jest.mock("./grpc/client", () => ({
+  createSuiGrpcClient: jest.fn(),
 }));
 
 const factoryMock = createSuiGraphQLClient as unknown as jest.Mock;
-const JsonRpcHTTPTransportMock = JsonRpcHTTPTransport as unknown as jest.Mock;
+const grpcFactoryMock = createSuiGrpcClient as unknown as jest.Mock;
 const mockNext = bindMockNextGraphQLClient(factoryMock);
 
 beforeEach(() => {
   factoryMock.mockReset();
-  JsonRpcHTTPTransportMock.mockReset();
-  unexpectedJsonRpc.mockClear();
+  grpcFactoryMock.mockReset();
 });
 
 // ---- isGraphQLEnabled: feature-flag plumbing ----
@@ -81,13 +58,12 @@ describe("isGraphQLEnabled", () => {
     expect(isGraphQLEnabled(configWith("graphql"))).toBe(true);
   });
 
-  it('should return false when features.transport === "json"', () => {
-    expect(isGraphQLEnabled(configWith("json"))).toBe(false);
+  it('should return false when features.transport === "grpc"', () => {
+    expect(isGraphQLEnabled(configWith("grpc"))).toBe(false);
   });
 
-  it("should treat the feature flag as the single source of truth, not node.url", () => {
-    // Even with a GraphQL-shaped URL, the flag-off path should report false.
-    expect(isGraphQLEnabled(configWith("json"))).toBe(false);
+  it("should return false when features.transport is unset", () => {
+    expect(isGraphQLEnabled({ ...configWith("grpc"), features: undefined } as never)).toBe(false);
   });
 });
 
@@ -247,86 +223,109 @@ describe("fetcher: header forwarding", () => {
 
 // ---- dual-URL routing invariant ----
 //
-// `withApi` MUST read `node.url` (JSON-RPC fullnode) and `withGraphQLApi` MUST read
-// `node.graphqlUrl`, regardless of `features.transport`. A config refactor that conflated the two
-// would silently reintroduce the `paymentInfo` failure documented in `sdk.migration.integ.test.ts`.
+// `withGrpcApi` MUST read `node.grpcUrl` and `withGraphQLApi` MUST read `node.graphqlUrl`,
+// regardless of `features.transport`: the GraphQL arm's digest lookups reach gRPC through the former.
 
 describe("dispatcher dual-URL routing", () => {
-  const JSON_RPC_URL = "https://json-rpc.example.test";
+  const GRPC_URL = "https://grpc.example.test";
   const GRAPHQL_URL = "https://graphql.example.test/graphql";
+  const dualConfig = {
+    node: { grpcUrl: GRPC_URL, graphqlUrl: GRAPHQL_URL },
+    status: { type: "active" },
+    features: { transport: "graphql" },
+  } as unknown as SuiCoinConfig;
 
-  it('withApi reads node.url even when features.transport is "graphql"', async () => {
+  it('withGrpcApi reads node.grpcUrl even when features.transport is "graphql"', async () => {
     // GIVEN
     const captured = jest.fn();
+    grpcFactoryMock.mockReturnValue({});
 
     // WHEN
-    await withApi(
-      {
-        node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_URL },
-        status: { type: "active" },
-        features: { transport: "graphql" },
-      } as unknown as SuiCoinConfig,
-      async () => {
-        captured();
-        return null;
-      },
-    );
+    await withGrpcApi(dualConfig, async () => {
+      captured();
+      return null;
+    });
 
     // THEN
     expect(captured).toHaveBeenCalledTimes(1);
-    expect(JsonRpcHTTPTransportMock).toHaveBeenCalledTimes(1);
-    expect(JsonRpcHTTPTransportMock.mock.calls[0][0]).toMatchObject({ url: JSON_RPC_URL });
+    expect(grpcFactoryMock).toHaveBeenCalledTimes(1);
+    expect(grpcFactoryMock.mock.calls[0][0]).toMatchObject({ url: GRPC_URL });
     expect(factoryMock).not.toHaveBeenCalled();
   });
 
-  it("withGraphQLApi reads node.graphqlUrl, not node.url", async () => {
+  it("withGraphQLApi reads node.graphqlUrl, not node.grpcUrl", async () => {
     // GIVEN
     const captured = jest.fn();
     mockNext();
 
     // WHEN
-    await withGraphQLApi(
-      {
-        node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_URL },
-        status: { type: "active" },
-        features: { transport: "graphql" },
-      } as unknown as SuiCoinConfig,
-      async () => {
-        captured();
-        return null;
-      },
-    );
+    await withGraphQLApi(dualConfig, async () => {
+      captured();
+      return null;
+    });
 
     // THEN
     expect(captured).toHaveBeenCalledTimes(1);
     expect(factoryMock).toHaveBeenCalledTimes(1);
     expect(factoryMock.mock.calls[0][0]).toMatchObject({ url: GRAPHQL_URL });
-    expect(JsonRpcHTTPTransportMock).not.toHaveBeenCalled();
+    expect(grpcFactoryMock).not.toHaveBeenCalled();
   });
 });
 
-// ---- getBlock / getBlockInfo: digest input routes to JSON-RPC even with GraphQL on ----
+// ---- getBlock / getBlockInfo: digest input routes to gRPC even with GraphQL on ----
 //
 // GraphQL's `checkpoint(sequenceNumber:)` field doesn't accept digests. To preserve the
-// public contract of accepting either form, digest inputs must fall back to JSON-RPC
-// instead of throwing. These tests pin that routing so a regression flips loudly.
+// public contract of accepting either form, digest inputs fall back to gRPC instead of
+// throwing. These tests pin that routing so a regression flips loudly.
 
 describe("getBlock/getBlockInfo digest routing", () => {
-  it("getBlockInfo with a digest input never constructs a GraphQL client (routes to JSON-RPC)", async () => {
-    // 44-char base58-ish digest; not numeric, so isSequenceNumber returns false.
-    const digest = "5f7c9b3a2e1d0c4b6f8a9e2d1c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c1b";
-    await expect(getBlockInfo(config, digest)).rejects.toThrow();
-    // GraphQL client must NOT have been created — JSON-RPC arm took over.
+  const digest = "5f7c9b3a2e1d0c4b6f8a9e2d1c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c1b";
+
+  const stubGrpcCheckpoint = () => {
+    const getCheckpoint = jest.fn().mockReturnValue({
+      response: Promise.resolve({
+        checkpoint: {
+          digest: "cpDigest",
+          sequenceNumber: 42n,
+          summary: { timestamp: { seconds: 1_700_000_000n, nanos: 0 }, previousDigest: "cpParent" },
+          transactions: [],
+        },
+      }),
+    });
+    grpcFactoryMock.mockReturnValue({ ledgerService: { getCheckpoint } });
+    return getCheckpoint;
+  };
+
+  it("getBlockInfo with a digest input fetches the checkpoint over gRPC", async () => {
+    // GIVEN
+    const getCheckpoint = stubGrpcCheckpoint();
+
+    // WHEN
+    const info = await getBlockInfo(config, digest);
+
+    // THEN
     expect(factoryMock).not.toHaveBeenCalled();
-    // JSON-RPC transport WAS constructed (then the mocked SuiJsonRpcClient throws on any call).
-    expect(JsonRpcHTTPTransportMock).toHaveBeenCalled();
+    expect(getCheckpoint.mock.calls[0][0].checkpointId).toEqual({ oneofKind: "digest", digest });
+    expect(info).toEqual({
+      height: 42,
+      hash: "cpDigest",
+      time: new Date(1_700_000_000_000),
+      parent: { height: 41, hash: "cpParent" },
+    });
   });
 
-  it("getBlock with a digest input never constructs a GraphQL client (routes to JSON-RPC)", async () => {
-    const digest = "5f7c9b3a2e1d0c4b6f8a9e2d1c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c1b";
-    await expect(getBlock(config, digest)).rejects.toThrow();
+  it("getBlock with a digest input fetches the checkpoint over gRPC", async () => {
+    // GIVEN
+    const getCheckpoint = stubGrpcCheckpoint();
+
+    // WHEN
+    const block = await getBlock(config, digest);
+
+    // THEN
     expect(factoryMock).not.toHaveBeenCalled();
-    expect(JsonRpcHTTPTransportMock).toHaveBeenCalled();
+    expect(getCheckpoint.mock.calls[0][0].checkpointId).toEqual({ oneofKind: "digest", digest });
+    expect(block.info.hash).toBe("cpDigest");
+    expect(block.transactions).toEqual([]);
   });
 
   it("getBlockInfo with a sequence number constructs a GraphQL client (flag on)", async () => {
@@ -344,14 +343,23 @@ describe("getBlock/getBlockInfo digest routing", () => {
     });
     const out = await getBlockInfo(config, "42");
     expect(factoryMock).toHaveBeenCalled();
+    expect(grpcFactoryMock).not.toHaveBeenCalled();
     expect(out.hash).toBe("0xdgst");
   });
 
-  it("isSequenceNumber rejects 16+ digit numerics above 2^53-1", async () => {
-    // 17-digit number — Number(id) would silently lose precision; must route to JSON-RPC.
+  it("routes numerics above 2^53-1 to gRPC, which keeps their precision", async () => {
+    // GIVEN — `Number(id)` would silently lose precision on GraphQL's UInt53.
+    const getCheckpoint = stubGrpcCheckpoint();
     const bigNumeric = "99999999999999999";
-    await expect(getBlockInfo(config, bigNumeric)).rejects.toThrow();
+
+    // WHEN
+    await getBlockInfo(config, bigNumeric);
+
+    // THEN
     expect(factoryMock).not.toHaveBeenCalled();
-    expect(JsonRpcHTTPTransportMock).toHaveBeenCalled();
+    expect(getCheckpoint.mock.calls[0][0].checkpointId).toEqual({
+      oneofKind: "sequenceNumber",
+      sequenceNumber: 99999999999999999n,
+    });
   });
 });

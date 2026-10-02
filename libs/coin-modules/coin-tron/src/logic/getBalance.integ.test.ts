@@ -1,6 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
-import coinConfig from "../config";
 import { getBalance } from "./getBalance";
 
 const mockLogger: Logger = jest.fn();
@@ -11,17 +10,6 @@ const mockConfig = {
 } as TronCoinConfig;
 
 describe("getBalance", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      explorer: {
-        url: "https://tron.coin.ledger.com",
-      },
-    }));
-  });
-
   it("fetches native and token balances for TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9", async () => {
     const balances = await getBalance(mockLogger, mockConfig, "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9");
 

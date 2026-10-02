@@ -1,4 +1,4 @@
-import type { AltcoinSeasonIndex } from "@domain/entity-altcoins-sentiment";
+import type { AltcoinSeasonIndex } from "@domain/entity-market-index-altcoin-season";
 
 export interface AltcoinSeasonViewModel {
   readonly data: AltcoinSeasonIndex | undefined;

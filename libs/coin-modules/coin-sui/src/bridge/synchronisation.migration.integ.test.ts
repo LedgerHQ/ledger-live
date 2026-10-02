@@ -1,10 +1,10 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getEnv } from "@ledgerhq/live-env";
-import type { StakeObject } from "@mysten/sui/jsonRpc";
 import coinConfig from "../config";
 import type { SuiTransport } from "../config";
-import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
+import { STAKE_DELEGATOR } from "../test/fixtures";
+import type { StakeObject } from "../types";
 import { getAccountShape } from "./synchronisation";
 
 /** Bridge dispatch is keyed on `currency.id` (always "sui"), so we re-bind the config between runs. */
@@ -13,7 +13,6 @@ function configureTransport(transport: SuiTransport) {
     status: { type: "active" },
     // Every URL always present; the feature flag selects which dispatcher branch runs.
     node: {
-      url: getEnv("API_SUI_NODE_PROXY"),
       graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     },
@@ -33,18 +32,16 @@ const SHAPE_INFO = {
   index: 0,
   derivationPath: "44'/784'/0'/0'/0'",
   currency: getCryptoCurrencyById("sui"),
-  address: FIGMENT_SUI_VALIDATOR_ADDRESS,
+  address: STAKE_DELEGATOR,
   initialAccount: undefined,
   derivationMode: "sui" as const,
 };
 
 const SYNC_CONFIG = { blacklistedTokenIds: [], paginationConfig: {} };
 
-// gRPC is the reference leg. It replaced JSON-RPC here after the Sui Foundation retired the public
-// mainnet fullnode (wk of 2026-07-20), which left this suite skipped with no runnable baseline.
+// gRPC is the reference leg.
 describe("getAccountShape: gRPC vs GraphQL parity (live mainnet)", () => {
-  // Two back-to-back live syncs on a high-traffic validator address: ~70s locally, but slower CI
-  // runners exceeded the 90s default in `jest.integ.config.js`.
+  // Two back-to-back live syncs exceed the 90s default in `jest.integ.config.js` on slower CI runners.
   test("balance, spendable and suiResources.stakes match across transports", async () => {
     configureTransport("grpc");
     const rpc = await getAccountShape(SHAPE_INFO, SYNC_CONFIG);
@@ -64,6 +61,7 @@ describe("getAccountShape: gRPC vs GraphQL parity (live mainnet)", () => {
     const r = sortStakes(flat(rpc.suiResources?.stakes));
     const g = sortStakes(flat(gql.suiResources?.stakes));
 
+    expect(r.length).toBeGreaterThan(0);
     expect(g.length).toBe(r.length);
     // Stake `status` flips Pending→Active at the epoch boundary. Back-to-back syncs ~70s apart
     // can straddle it, so we whitelist that one transition; any other mismatch still fails.

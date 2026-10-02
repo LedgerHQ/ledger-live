@@ -3,7 +3,7 @@ import { WebviewState } from "../Web3AppWebview/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { TopBar } from "./TopBar";
 import { MemoryRouter } from "react-router";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useSelector } from "LLD/hooks/redux";
 
 const mockNavigate = jest.fn();
@@ -129,6 +129,20 @@ describe("TopBar", () => {
     expect(screen.getByText("common.back")).toBeInTheDocument();
     expect(screen.getByText("common.sync.refresh")).toBeInTheDocument();
     expect(screen.queryByText("common.sync.devTools")).toBeNull();
+  });
+
+  it("goes back to the Pay tab when an external app opened from Pay cannot go back", async () => {
+    (useSelector as unknown as jest.Mock).mockReturnValue(false);
+    mockNavigate.mockClear();
+
+    render(
+      <MemoryRouter initialEntries={[{ pathname: "/card/cl-card", state: { fromPayTab: true } }]}>
+        <TopBar {...defaultProps} manifest={{ ...mockManifest, id: "" }} />
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByText("common.back"));
+
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith("/paytab"));
   });
 
   it("navigates using basePath prop when webview URL has goToManifest and goToURL", () => {

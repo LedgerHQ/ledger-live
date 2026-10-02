@@ -1,5 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import coinConfig from "../../config";
+import type { TronCoinConfig } from "../../config";
 import { queryPreorderInfo } from "./index";
 
 // The channel name is not committed. Provide it via the integ env to run this suite:
@@ -13,22 +13,20 @@ const run = TRONIFY_URL && TRONIFY_SOURCE_FLAG ? describe : describe.skip;
 const RECEIVER = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
 run("tronify queryPreorderInfo [integ]", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      explorer: { url: "https://tron.coin.ledger.com" },
-      energyRent: {
-        provider: "tronify",
-        tronify: {
-          url: TRONIFY_URL as string,
-          sourceFlag: TRONIFY_SOURCE_FLAG as string,
-        },
+  const config: TronCoinConfig = {
+    status: { type: "active" },
+    explorer: { url: "https://tron.coin.ledger.com" },
+    energyRent: {
+      provider: "tronify",
+      tronify: {
+        url: TRONIFY_URL as string,
+        sourceFlag: TRONIFY_SOURCE_FLAG as string,
       },
-    }));
-  });
+    },
+  };
 
   it("returns a priced quote for a 10-minute, 32000-energy rental", async () => {
-    const quote = await queryPreorderInfo(logger, {
+    const quote = await queryPreorderInfo(logger, config, {
       fromAddress: RECEIVER,
       pledgeAddress: RECEIVER,
       pledgeNum: 32000,

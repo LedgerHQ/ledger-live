@@ -13,8 +13,7 @@ import { useNavigate } from "react-router";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
 import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecutor";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
-import { trackPage } from "@shared/analytics";
-import { track } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import PayTab from "LLD/features/PayTab";
@@ -47,6 +46,12 @@ const mockNavigate = jest.fn();
 
 jest.mock("../hooks/usePayStablecoins", () => ({
   usePayStablecoins: jest.fn(),
+}));
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 jest.mock("react-router", () => ({
@@ -226,10 +231,10 @@ describe("PayTab integration", () => {
     const dialog = await screen.findByTestId("pay-card-balance-filter-picker");
     expect(dialog).toHaveTextContent("USD Coin");
     expect(dialog).toHaveTextContent("Tether USD");
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "balance filter",
-      page: "Pay",
-    });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "balance filter", page: "Pay" }),
+    );
   });
 
   it("should open the deposit options dialog from the deposit action tile", async () => {
@@ -244,6 +249,23 @@ describe("PayTab integration", () => {
 
     expect(await screen.findByTestId("pay-card-deposit-options")).toBeVisible();
     expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
+  });
+
+  it("should open the request card when Crypto address is selected", async () => {
+    mockFundedPayStablecoins();
+    const { user, store } = renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: fundedState,
+    });
+
+    await user.click(await screen.findByRole("button", { name: "Add stablecoin" }));
+    await user.click(await screen.findByTestId("pay-card-deposit-option-receive"));
+
+    expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
+    expect(openAssetAndAccount).toHaveBeenCalledWith(
+      expect.objectContaining({ categories: [AssetCategory.Stablecoins] }),
+    );
+    expect(store.getState().modularDialog.flow).toBe("request");
+    expect(store.getState().modals.MODAL_RECEIVE?.isOpened).toBeFalsy();
   });
 
   it("should show the cash-to-stable intro when Bank transfer is selected", async () => {
@@ -265,12 +287,18 @@ describe("PayTab integration", () => {
   it("should track the deposit row and the cash-to-stable page when Bank transfer is selected", async () => {
     await openBankTransferIntro();
 
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "bank transfer",
-      buttonLocation: "deposit",
-      page: "Pay",
-    });
-    expect(mockedTrack).toHaveBeenCalledWith("Page cash to stable", { flow: "C2S" });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "bank transfer",
+        buttonLocation: "deposit",
+        page: "Pay",
+      }),
+    );
+    expect(mockedTrackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "Feature Intro", name: "Cash to stable" }),
+      expect.anything(),
+    );
   });
 
   it("should navigate to Noah when Create an account is clicked", async () => {
@@ -281,16 +309,22 @@ describe("PayTab integration", () => {
       pathname: "/bank",
       search: "?noahAuth=createAccount",
     });
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "create an account",
-      flow: "C2S",
-      page: "cash to stable",
-    });
-    expect(mockedTrack).not.toHaveBeenCalledWith("button_clicked", {
-      button: "close",
-      flow: "C2S",
-      page: "cash to stable",
-    });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "create an account",
+        flow: "Cash to stable",
+        page: "Feature Intro Cash to stable",
+      }),
+    );
+    expect(mockedTrack).not.toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "close",
+        flow: "Cash to stable",
+        page: "Feature Intro Cash to stable",
+      }),
+    );
   });
 
   it("should navigate to Noah when Log in to Noah is clicked", async () => {
@@ -301,11 +335,14 @@ describe("PayTab integration", () => {
       pathname: "/bank",
       search: "?noahAuth=logIn",
     });
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "log in to noah",
-      flow: "C2S",
-      page: "cash to stable",
-    });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "log in to noah",
+        flow: "Cash to stable",
+        page: "Feature Intro Cash to stable",
+      }),
+    );
   });
 
   it("should open the stablecoin-filtered send account selection from the new payment action tile", async () => {
@@ -353,11 +390,17 @@ describe("PayTab integration", () => {
     const pill = screen.getByTestId("pay-card-balance-filter-pill");
     expect(within(pill).getByText("USDC")).toBeVisible();
 
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "confirm balance filter",
-      asset: "USDC",
-      page: "Pay",
-    });
+    expect(mockedTrack).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "confirm balance filter",
+        asset: "USDC",
+        page: "Pay",
+      }),
+    );
+    expect(mockedTrackPage.mock.calls.filter(([event]) => event.category === "Pay")).toHaveLength(
+      1,
+    );
   });
 
   it("should mount the DIE on verify and restore the request card once the address is confirmed", async () => {
@@ -425,21 +468,29 @@ describe("PayTab integration", () => {
       flushHintTimers();
 
       expect(screen.getByText(VERIFY_HINT_COPY)).toBeInTheDocument();
-      expect(mockedTrack).toHaveBeenCalledWith("hint_impression", {
-        hint: "verify",
-        buttonLocation: "request",
-        page: "Pay",
-      });
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "hint_impression",
+        expect.objectContaining({
+          hint: "verify",
+          buttonLocation: "request",
+          flow: "request",
+          page: "Request complete",
+        }),
+      );
 
       await user.click(screen.getByRole("button", { name: "Got it" }));
 
       expect(screen.queryByText(VERIFY_HINT_COPY)).not.toBeInTheDocument();
-      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-        button: "got it",
-        hint: "verify",
-        buttonLocation: "request",
-        page: "Pay",
-      });
+      expect(mockedTrack).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "got it",
+          hint: "verify",
+          buttonLocation: "request",
+          flow: "request",
+          page: "Request complete",
+        }),
+      );
 
       await user.click(screen.getByRole("button", { name: /close/i }));
       await openRequestReceiveNow(user);
@@ -475,6 +526,46 @@ describe("PayTab integration", () => {
 
       expect(mockedTrack).not.toHaveBeenCalledWith("hint_impression", expect.anything());
     });
+  });
+
+  it("should show the CL Card disclaimer and open and track the CL Card webview when card_disclaimer is on", async () => {
+    const { user } = render(<PayTab />, {
+      initialRoute: "/paytab",
+      initialState: {
+        ...onboardedState,
+        ...tourSeenState,
+        accounts: [BTC_ACCOUNT],
+        ...withFlagOverrides({
+          lwdPayTab: { enabled: true, params: { card_native: false, card_disclaimer: true } },
+        }),
+      },
+    });
+
+    expect(await screen.findByText("Looking for your crypto card?")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Go to CL Card" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith("/card/cl-card", { state: { fromPayTab: true } });
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "go to cl card",
+      page: "Pay",
+    });
+  });
+
+  it("should not show the CL Card disclaimer when the native card is on", async () => {
+    render(<PayTab />, {
+      initialRoute: "/paytab",
+      initialState: {
+        ...onboardedState,
+        ...tourSeenState,
+        accounts: [BTC_ACCOUNT],
+        ...withFlagOverrides({
+          lwdPayTab: { enabled: true, params: { card_native: true, card_disclaimer: true } },
+        }),
+      },
+    });
+
+    expect(await screen.findByText(EMPTY_TITLE)).toBeVisible();
+    expect(screen.queryByTestId("pay-card-disclaimer")).not.toBeInTheDocument();
   });
 
   it("should not render the contacts section when lwdContacts is disabled", async () => {

@@ -1,10 +1,13 @@
 import React from "react";
-import { Skeleton, Spot, Table, TableRoot } from "@ledgerhq/lumen-ui-react";
+import { Skeleton, Spinner, Spot, Table, TableRoot } from "@ledgerhq/lumen-ui-react";
 import { CreditCard } from "@ledgerhq/lumen-ui-react/symbols";
 import { HistoryTableBody } from "./components/HistoryTableBody";
 import { HistoryTableHeader } from "./components/HistoryTableHeader";
 import { StatusMessage, type StatusMessageProps } from "./components/StatusMessage";
+import { useLoadMoreOnScroll } from "./useLoadMoreOnScroll";
 import type { CardTransactionHistoryViewProps } from "./types";
+
+const PROVIDER_DISCLAIMER_KEY = "payTab.disclaimer";
 
 function createPayCta(
   testId: string,
@@ -22,22 +25,34 @@ export function CardTransactionHistoryView({
   onRowClick,
   onGoToPay,
   cardVisual,
+  onLoadMore,
+  isLoadingMore,
 }: CardTransactionHistoryViewProps) {
+  const attachSentinel = useLoadMoreOnScroll(onLoadMore);
+
   switch (displayState.kind) {
     case "signedOut":
       return (
         <StatusMessage
-          spot={
-            cardVisual ? (
-              <div className="w-[320px]">{cardVisual}</div>
-            ) : (
-              <Spot appearance="icon" icon={CreditCard} size={72} />
-            )
-          }
+          spot={cardVisual ?? <Spot appearance="icon" icon={CreditCard} size={72} />}
           titleKey="payTab.cardTransactions.history.signedOut.title"
           descriptionKey="payTab.cardTransactions.history.signedOut.description"
           testId="card-history-signed-out-state"
           action={createPayCta("card-history-signed-out-state-cta", onGoToPay)}
+          disclaimerKey={PROVIDER_DISCLAIMER_KEY}
+          overlapSpot={Boolean(cardVisual)}
+        />
+      );
+    case "unclaimed":
+      return (
+        <StatusMessage
+          spot={cardVisual ?? <Spot appearance="icon" icon={CreditCard} size={72} />}
+          titleKey="payTab.cardTransactions.history.unclaimed.title"
+          descriptionKey="payTab.cardTransactions.history.unclaimed.description"
+          testId="card-history-unclaimed-state"
+          action={createPayCta("card-history-unclaimed-state-cta", onGoToPay)}
+          disclaimerKey={PROVIDER_DISCLAIMER_KEY}
+          overlapSpot={Boolean(cardVisual)}
         />
       );
     case "loading":
@@ -86,6 +101,23 @@ export function CardTransactionHistoryView({
                 onRowClick={onRowClick}
               />
             </Table>
+            {onLoadMore ? (
+              <div
+                ref={attachSentinel}
+                aria-hidden="true"
+                className="pointer-events-none h-px"
+                data-testid="card-history-load-more-sentinel"
+              />
+            ) : null}
+            {isLoadingMore ? (
+              <div
+                aria-live="polite"
+                className="flex justify-center p-16"
+                data-testid="card-history-loading-more"
+              >
+                <Spinner size={20} />
+              </div>
+            ) : null}
           </div>
         </TableRoot>
       );

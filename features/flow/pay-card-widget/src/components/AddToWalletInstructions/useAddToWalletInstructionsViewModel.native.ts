@@ -1,7 +1,9 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, type NativeEventSubscription } from "react-native";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "@shared/i18n";
 import { Android, Apple } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useGetCardStatusQuery } from "@domain/api-card-management";
+import { startDigitalWalletProvisioning } from "../../state";
 import { getWalletPlatform } from "../getWalletPlatform.native";
 import { openGoogleWalletStore, openWalletApp } from "./openWalletApp";
 
@@ -40,12 +42,19 @@ export function useAddToWalletInstructionsViewModel({
   onDone,
 }: Params): AddToWalletInstructionsViewProps {
   const { t } = useTranslation();
-  const { refetch } = useGetCardStatusQuery();
+  const dispatch = useDispatch();
   const [scene, setScene] = useState<"instructions" | "error">("instructions");
   const [isPending, setIsPending] = useState(false);
+  const walletReturn = useRef<NativeEventSubscription | null>(null);
 
   const { i18nKey, icon } = getWalletPlatform();
   const ctaIcon = WALLET_CTA_ICON[icon];
+
+  useEffect(() => {
+    return () => {
+      walletReturn.current?.remove();
+    };
+  }, []);
 
   const openWallet = useCallback(async () => {
     setIsPending(true);
@@ -57,11 +66,26 @@ export function useAddToWalletInstructionsViewModel({
       return;
     }
 
-    // Opening the wallet app is not the card being added: only the provider answers that, so ask
-    // it again rather than recording a yes here. Its answer may lag the holder finishing.
-    refetch();
-    onDone();
-  }, [refetch, onDone]);
+    let hasLeftApp = AppState.currentState !== "active";
+    walletReturn.current?.remove();
+    walletReturn.current = AppState.addEventListener("change", nextState => {
+      if (nextState !== "active") {
+        hasLeftApp = true;
+        return;
+      }
+
+      if (!hasLeftApp) {
+        return;
+      }
+
+      walletReturn.current?.remove();
+      walletReturn.current = null;
+      // The provider learns about the card from the card network, often well after the holder is
+      // back, so the Pay tab keeps re-asking for a while rather than reading it once here.
+      dispatch(startDigitalWalletProvisioning());
+      onDone();
+    });
+  }, [dispatch, onDone]);
 
   const openStore = useCallback(async () => {
     setIsPending(true);

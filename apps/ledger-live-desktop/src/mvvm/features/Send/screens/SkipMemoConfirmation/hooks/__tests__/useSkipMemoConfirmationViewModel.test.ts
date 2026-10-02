@@ -31,6 +31,7 @@ describe("useSkipMemoConfirmationViewModel", () => {
     mockedUseSendFlowData.mockReturnValue({
       state: {
         account: { account: null, parentAccount: null, currency: null },
+        transaction: { transaction: null },
         recipient: { address: "recipient" },
       },
     } as never);

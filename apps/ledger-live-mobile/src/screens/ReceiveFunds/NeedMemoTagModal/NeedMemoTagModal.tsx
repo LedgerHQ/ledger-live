@@ -1,7 +1,7 @@
 import { useTheme } from "styled-components/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { AppState, Linking } from "react-native";
-import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { AppState, Linking, StyleSheet } from "react-native";
+import { Button, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import Circle from "~/components/Circle";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -33,9 +33,9 @@ export function NeedMemoTagModal() {
 
   return (
     <>
-      <Button type="accent" onPress={openModal}>
+      <Link type="color" onPress={openModal} style={styles.link}>
         {t("transfer.receive.memoTag.link")}
-      </Button>
+      </Link>
 
       <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={closeModal}>
         <Flex alignItems="center" mb={7}>
@@ -68,3 +68,9 @@ export function NeedMemoTagModal() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  link: {
+    marginTop: 16,
+  },
+});

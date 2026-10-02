@@ -11,8 +11,8 @@ import {
 } from "@features/flow-pay-balance";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { localeSelector } from "~/reducers/settings";
-import { track } from "~/analytics";
 import { usePayStablecoins } from "./usePayStablecoins";
 import { useCountervalueFormatter } from "./useCountervalueFormatter";
 import { useFiatFormatter } from "./useFiatFormatter";
@@ -20,6 +20,7 @@ import { useFiatFormatter } from "./useFiatFormatter";
 export function usePayCardBalance(): BalanceData {
   const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
+  const { discreetMode: discreet, toggleDiscreetMode } = useToggleDiscreetMode();
   const filter = useSelector(selectPayCardBalanceFilter);
 
   const { stablecoins, defaultStablecoins, isLoading, isError } = usePayStablecoins();
@@ -28,8 +29,8 @@ export function usePayCardBalance(): BalanceData {
 
   const formatCrypto = useCallback(
     (cryptoUnit: Unit, balance: number): string =>
-      formatCurrencyUnit(cryptoUnit, new BigNumber(balance), { locale, showCode: true }),
-    [locale],
+      formatCurrencyUnit(cryptoUnit, new BigNumber(balance), { locale, showCode: true, discreet }),
+    [locale, discreet],
   );
 
   const formatCountervalue = useCountervalueFormatter();
@@ -45,10 +46,6 @@ export function usePayCardBalance(): BalanceData {
     dispatch(setPayCardBalanceFilter(PAY_CARD_BALANCE_FILTER_ALL));
   }, [dispatch]);
 
-  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
-    track(event, params);
-  }, []);
-
   return useBalanceData({
     stablecoins,
     defaultStablecoins,
@@ -58,8 +55,9 @@ export function usePayCardBalance(): BalanceData {
     formatFiat,
     formatCrypto,
     formatCountervalue,
+    discreet,
+    onToggleDiscreetMode: toggleDiscreetMode,
     onConfirmFilter,
     onResetFilter,
-    onTrackEvent,
   });
 }

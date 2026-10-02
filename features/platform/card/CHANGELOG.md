@@ -1,5 +1,31 @@
 # @features/platform-card
 
+## 0.7.0
+
+### Minor Changes
+
+- [#22790](https://github.com/LedgerHQ/ledger-live/pull/22790) [`cee85b4`](https://github.com/LedgerHQ/ledger-live/commit/cee85b47d7d1f414e23935e77c9ad22d98ddf994) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep the Card session tokens and the PKCE attempt on this device only. The keychain entries move from `AFTER_FIRST_UNLOCK` to `AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY`, so an iOS backup restored onto another phone no longer carries a signed-in Card session. Background reads still work once the device has been unlocked after boot. Existing entries take the new level the next time they are written.
+
+### Patch Changes
+
+- Updated dependencies [[`b42673e`](https://github.com/LedgerHQ/ledger-live/commit/b42673eed68aba6b2885486d7294f5f9163f721d), [`83fac3e`](https://github.com/LedgerHQ/ledger-live/commit/83fac3e00782840d1f118180dfb9afb9a484952c), [`ae229f2`](https://github.com/LedgerHQ/ledger-live/commit/ae229f27b250d6bdd06af1b06a2912a8c556a27c), [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43), [`e19e6cf`](https://github.com/LedgerHQ/ledger-live/commit/e19e6cf36074363d22085b6c85c54ef964eb382c)]:
+  - @domain/api-card-management@0.8.0
+  - @shared/api-services@0.9.0
+
+## 0.7.0-next.1
+
+### Minor Changes
+
+- [#22790](https://github.com/LedgerHQ/ledger-live/pull/22790) [`cee85b4`](https://github.com/LedgerHQ/ledger-live/commit/cee85b47d7d1f414e23935e77c9ad22d98ddf994) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep the Card session tokens and the PKCE attempt on this device only. The keychain entries move from `AFTER_FIRST_UNLOCK` to `AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY`, so an iOS backup restored onto another phone no longer carries a signed-in Card session. Background reads still work once the device has been unlocked after boot. Existing entries take the new level the next time they are written.
+
+## 0.6.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b42673e`](https://github.com/LedgerHQ/ledger-live/commit/b42673eed68aba6b2885486d7294f5f9163f721d), [`83fac3e`](https://github.com/LedgerHQ/ledger-live/commit/83fac3e00782840d1f118180dfb9afb9a484952c), [`ae229f2`](https://github.com/LedgerHQ/ledger-live/commit/ae229f27b250d6bdd06af1b06a2912a8c556a27c), [`0e98a58`](https://github.com/LedgerHQ/ledger-live/commit/0e98a58c4f313f55c088be010a360c6d85ea7d43), [`e19e6cf`](https://github.com/LedgerHQ/ledger-live/commit/e19e6cf36074363d22085b6c85c54ef964eb382c)]:
+  - @domain/api-card-management@0.8.0-next.0
+  - @shared/api-services@0.9.0-next.0
+
 ## 0.6.0
 
 ### Minor Changes

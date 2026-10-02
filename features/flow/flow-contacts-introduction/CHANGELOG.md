@@ -1,5 +1,17 @@
 # @features/flow-contacts-introduction
 
+## 1.3.0
+
+### Minor Changes
+
+- [#22791](https://github.com/LedgerHQ/ledger-live/pull/22791) [`4fc2063`](https://github.com/LedgerHQ/ledger-live/commit/4fc2063b0e49a445ebb660f750214e69d5c4355a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the 24px bottom padding under the "Try now" CTA of the desktop Contacts feature introduction dialog by moving it into the dialog footer
+
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#22791](https://github.com/LedgerHQ/ledger-live/pull/22791) [`4fc2063`](https://github.com/LedgerHQ/ledger-live/commit/4fc2063b0e49a445ebb660f750214e69d5c4355a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the 24px bottom padding under the "Try now" CTA of the desktop Contacts feature introduction dialog by moving it into the dialog footer
+
 ## 1.2.0
 
 ### Minor Changes

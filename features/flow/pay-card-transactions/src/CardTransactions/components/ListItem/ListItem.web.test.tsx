@@ -48,6 +48,18 @@ describe("ListItem", () => {
     expect(formatAmount).toHaveBeenNthCalledWith(2, "-13.0214", "usdc", "crypto");
   });
 
+  it("counts the funding assets when the payment used several, to keep the merchant and date readable", () => {
+    const fundingSources = [
+      { currency: "usdc", amount: "13.0214", sign: "DEBIT" as const },
+      { currency: "btc", amount: "0.00005231", sign: "DEBIT" as const },
+    ];
+
+    render(<ListItem item={item({ fundingSources })} />, { wrapper: cardApiWrapper() });
+
+    expect(screen.getByText("Paid with 2 assets")).toBeVisible();
+    expect(screen.queryByText("-13.0214 USDC")).not.toBeInTheDocument();
+  });
+
   it("does not show the transaction status", () => {
     render(<ListItem item={item({ status: "DECLINED" })} />, { wrapper: cardApiWrapper() });
 
