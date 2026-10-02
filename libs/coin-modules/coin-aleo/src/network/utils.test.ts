@@ -2039,6 +2039,44 @@ describe("network/utils", () => {
       );
     });
 
+    it.each([
+      ["transfer_public_to_private", "OUT" as const, "IN" as const, 4_000_000],
+      ["transfer_private_to_public", "IN" as const, "OUT" as const, 6_000_000],
+    ])(
+      "should move the fee into or out of the cloned %s value when flipping the type",
+      async (functionId, originalType, cloneType, originalValue) => {
+        const txHash = `at1clone_value_${functionId}`;
+        const fee = new BigNumber(25_515);
+        const publicOp = getMockedOperation({
+          hash: txHash,
+          type: originalType,
+          value: new BigNumber(originalValue),
+          fee,
+          extra: { functionId, transactionType: "public" },
+        });
+        const matchingRecord = getMockedRecord({
+          transaction_id: txHash,
+          function_name: functionId,
+        });
+
+        const result = await patchPublicOperations({
+          config: mockConfig,
+          publicOperations: [publicOp],
+          privateRecords: [matchingRecord],
+          address: patchAddress,
+          ledgerAccountId,
+          viewKey: patchViewKey,
+        });
+
+        const original = result.find(op => op.type === originalType);
+        const clone = result.find(op => op.type === cloneType);
+
+        const [outLeg, inLeg] = cloneType === "OUT" ? [clone, original] : [original, clone];
+        expect(inLeg?.value).toEqual(outLeg?.value.minus(fee));
+        expect(clone?.fee).toEqual(fee);
+      },
+    );
+
     it("should give cloned operation a date 1ms after the original", async () => {
       const txHash = "at1clone_date";
       const opDate = new Date("2024-05-01T12:00:00.000Z");

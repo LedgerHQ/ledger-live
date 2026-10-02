@@ -87,6 +87,18 @@ describe("toBridgeOperation", () => {
     expect(result.id).toBe(encodeOperationId(ledgerAccountId, rawTx.transaction_id, "OUT"));
   });
 
+  it("should make an OUT value fee-inclusive and leave an IN value fee-exclusive", () => {
+    const rawTx = getMockedPublicTransaction({ amount: 5_000_000, fee: 34_060 });
+
+    const sent = toBridgeOperation(ledgerAccountId, rawTx, senderAddress);
+    const received = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(sent.value).toEqual(new BigNumber(5_034_060));
+    expect(sent.fee).toEqual(new BigNumber(34_060));
+    expect(received.value).toEqual(new BigNumber(5_000_000));
+    expect(received.fee).toEqual(new BigNumber(34_060));
+  });
+
   it("should attach the source program of a token transfer", () => {
     const rawTx = getMockedPublicTransaction({
       program_id: "usdcx_stablecoin.aleo",
@@ -310,6 +322,23 @@ describe("toPrivateBridgeOperation", () => {
     expect(result.type).toBe("OUT");
     expect(result.senders).toEqual([mockSenderAddress]);
     expect(result.recipients).toEqual([mockRecipientAddress]);
+  });
+
+  it("should make an OUT value fee-inclusive and leave an IN value fee-exclusive", () => {
+    const enriched = getMockedEnrichedPrivateRecord({
+      sender: mockSenderAddress,
+      recipient: mockRecipientAddress,
+      value: new BigNumber(1_000_000),
+      details: { fee_value: 2_308 },
+    });
+
+    const sent = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockSenderAddress);
+    const received = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
+
+    expect(sent.value).toEqual(new BigNumber(1_002_308));
+    expect(sent.fee).toEqual(new BigNumber(2_308));
+    expect(received.value).toEqual(new BigNumber(1_000_000));
+    expect(received.fee).toEqual(new BigNumber(2_308));
   });
 
   it("should encode operation id using ledgerAccountId, transaction_id and type", () => {
