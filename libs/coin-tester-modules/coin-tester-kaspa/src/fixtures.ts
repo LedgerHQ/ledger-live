@@ -74,6 +74,19 @@ export function makeGenericAdapterAccount(address: string): KaspaAccount {
 
 const KASPA_REST_BASE = "http://localhost:8080";
 
+// History page requests (`full-transactions-page`) seen by the MSW proxy since the last reset, as
+// the page each one asked for — lets the scenario check how many pages a sync walked, and that it
+// never asked for the same page twice.
+let historyPageRequests: string[] = [];
+export const historyPages = {
+  reset: (): void => {
+    historyPageRequests = [];
+  },
+  count: (): number => historyPageRequests.length,
+  // Each request's paging position: `before=<ms>`, `after=<ms>`, or "newest" for the first page.
+  requested: (): readonly string[] => historyPageRequests,
+};
+
 // Intercept external Ledger-service calls and reject unhandled non-local requests.
 // The coin module talks only to API_KASPA_ENDPOINT (local REST server), so no blockchain
 // endpoints need interception.
@@ -94,20 +107,29 @@ export function initMSW(): () => void {
     // normalization — zero coin-module changes.
     http.all(`${KASPA_REST_BASE}/*`, async ({ request }) => {
       const response = await fetch(bypass(request));
+      // Only served pages count: a rate-limited request retried by the coin module is not a re-read.
+      const url = new URL(request.url);
+      if (response.ok && url.pathname.endsWith("/full-transactions-page")) {
+        const before = url.searchParams.get("before");
+        const after = url.searchParams.get("after");
+        historyPageRequests.push(before ? `before=${before}` : after ? `after=${after}` : "newest");
+      }
       const body = await response.text();
       const normalized = body.replace(/kaspasim:[a-z0-9]+/g, match => toMainnetAddress(match));
 
       // Rebuild headers explicitly rather than copying response.headers wholesale: the local
       // REST server sends hop-by-hop headers (Transfer-Encoding: chunked, Connection) that are
-      // forbidden on a synthetic Response. Copying them silently corrupted header construction —
-      // this dropped X-Next-Page-After too, which made listOperations/getAllTransactions look
-      // permanently stuck on page 1 (500-item cap) even though the real server had more pages.
-      // Only forward the headers the coin module actually reads.
+      // forbidden on a synthetic Response, and copying them silently corrupted header
+      // construction. Only forward the headers the coin module actually reads — including both
+      // paging cursors: dropping one ends that walk after its first page (X-Next-Page-Before for
+      // listOperations' backward walk, X-Next-Page-After for legacy getAllTransactions).
       const headers = new Headers();
       const contentType = response.headers.get("content-type");
       if (contentType) headers.set("content-type", contentType);
       const nextPageAfter = response.headers.get("x-next-page-after");
       if (nextPageAfter) headers.set("x-next-page-after", nextPageAfter);
+      const nextPageBefore = response.headers.get("x-next-page-before");
+      if (nextPageBefore) headers.set("x-next-page-before", nextPageBefore);
 
       return new HttpResponse(normalized, { status: response.status, headers });
     }),

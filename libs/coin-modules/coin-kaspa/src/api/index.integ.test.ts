@@ -60,13 +60,10 @@ describe("createApi (integration)", () => {
       expect(info.time.getTime()).toBeGreaterThan(0);
     });
 
-    it("getBlock fetches the full block (metadata + transactions) at a known blue score", async () => {
-      const block = await api.getBlock(context, MINTED_BLOCK);
-
-      expect(block.info.height).toBe(MINTED_BLOCK);
-      expect(block.info.hash).toHaveLength(64);
-      expect(block.transactions.length).toBeGreaterThan(0); // at least the coinbase
-    });
+    // getBlock is not repeated here: its live check is logic/history/getBlock.integ.test.ts, and the
+    // createApi delegation is covered in api/index.unit.test.ts. The indexer rate-limits full-block
+    // requests (includeTransactions=true) far more strictly than the rest — a second one from a
+    // parallel test file is enough to get 429 — so only one test makes that request.
   });
 
   // Smoke tests through the createApi() surface — deep coverage lives in the logic/*.integ.test.ts;

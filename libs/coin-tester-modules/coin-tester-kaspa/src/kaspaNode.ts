@@ -71,7 +71,38 @@ export async function getBalance(address: string): Promise<bigint> {
   return 0n;
 }
 
+// Number of txs in the address's indexed history (the indexer's database, not kaspad), or -1 while
+// the REST server can't answer yet.
+export async function getTransactionCount(address: string): Promise<number> {
+  try {
+    const res = await fetch(`${REST_BASE}/addresses/${address}/transactions-count`);
+    if (res.ok) return ((await res.json()) as { total: number }).total;
+  } catch {
+    // REST server not yet ready
+  }
+  return -1;
+}
+
+// Poll the indexer until the address's transaction history holds at least `minCount` txs. Unlike
+// the balance (served from kaspad's UTXO index), this is the history listOperations pages through.
+// `nudge` runs between polls; see chainSetup.ts for why the indexer may need one.
+export async function waitForTransactionCount(
+  address: string,
+  minCount: number,
+  timeoutMs = 120_000,
+  nudge?: () => Promise<void>,
+): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if ((await getTransactionCount(address)) >= minCount) return;
+    await nudge?.();
+    await new Promise(resolve => setTimeout(resolve, 1_000));
+  }
+  throw new Error(`waitForTransactionCount timed out after ${timeoutMs}ms for ${address}`);
+}
+
 // Poll the REST server until the address balance >= minSompi or the timeout elapses.
+// The balance comes from kaspad, so it does not prove the indexer's history has caught up.
 export async function waitForBalance(
   address: string,
   minSompi: bigint,
