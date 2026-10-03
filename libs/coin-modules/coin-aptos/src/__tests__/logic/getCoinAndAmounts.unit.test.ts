@@ -456,4 +456,77 @@ describe("getCoinAndAmounts", () => {
     expect(result.coin_id).toEqual("0xa");
     expect(result.amount_in).toEqual(new BigNumber("28000000"));
   });
+
+  describe("multisig transaction executed by owner 0xowner for account 0xmultisig", () => {
+    const multisigTx = (innerPayload: unknown, events: unknown[], changes: unknown[] = []) =>
+      ({
+        sender: "0xowner",
+        payload: {
+          type: "multisig_payload",
+          multisig_address: "0xmultisig",
+          transaction_payload: { type: "entry_function_payload", ...(innerPayload as object) },
+        },
+        events,
+        changes,
+      }) as unknown as AptosTransaction;
+
+    const faTransfer = multisigTx(
+      {
+        function: "0x1::primary_fungible_store::transfer",
+        type_arguments: [],
+        arguments: ["0xrecipient", "200"],
+      },
+      [
+        {
+          type: "0x1::fungible_asset::Withdraw",
+          guid: { account_address: "0x99", creation_number: "1" },
+          data: { amount: "200", store: "0xstore" },
+        },
+      ],
+      [
+        {
+          type: "write_resource",
+          address: "0xstore",
+          data: {
+            type: APTOS_FUNGIBLE_STORE,
+            data: { metadata: { inner: "0xfaCoin" }, transfer_events: {} },
+          },
+        },
+      ],
+    );
+
+    const addStake = multisigTx(
+      {
+        function: "0x1::delegation_pool::add_stake",
+        type_arguments: [],
+        arguments: ["0xpool", "500"],
+      },
+      [
+        {
+          type: "0x1::delegation_pool::AddStake",
+          guid: { account_address: "0x0", creation_number: "0" },
+          data: { amount_added: "500" },
+        },
+      ],
+    );
+
+    it("debits the multisig account for a fungible transfer it executes", () => {
+      const result = getCoinAndAmounts(faTransfer, "0xmultisig");
+
+      expect(result.coin_id).toEqual("0xfaCoin");
+      expect(result.amount_out).toEqual(new BigNumber(200));
+    });
+
+    it("does not debit the signing owner for the multisig account's fungible transfer", () => {
+      expect(getCoinAndAmounts(faTransfer, "0xowner").amount_out).toEqual(new BigNumber(0));
+    });
+
+    it("stakes from the multisig account, not from the signing owner", () => {
+      expect(getCoinAndAmounts(addStake, "0xmultisig")).toMatchObject({
+        type: OP_TYPE.STAKE,
+        amount_out: new BigNumber(500),
+      });
+      expect(getCoinAndAmounts(addStake, "0xowner").type).not.toEqual(OP_TYPE.STAKE);
+    });
+  });
 });
