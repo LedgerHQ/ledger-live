@@ -21,7 +21,7 @@ export const getBlocksFromBlueScore = async (
     includeTransactions: String(includeTransactions),
   });
 
-  return retry(async () => {
+  const blocks = await retry(async () => {
     const response = await fetch(`${API_BASE}/blocks-from-bluescore?${query}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -33,4 +33,5 @@ export const getBlocksFromBlueScore = async (
 
     return (await response.json()) as ApiResponseBlockInfo[];
   }, READ_RETRY);
+  return blocks;
 };

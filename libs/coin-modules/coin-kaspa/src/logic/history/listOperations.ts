@@ -166,7 +166,7 @@ export async function listOperations(
     // calls, not inside this loop, so stop here rather than re-read if a cursor ever repeats, grows or
     // is malformed.
     const nextBefore = Number.parseInt(nextPageBefore, 10);
-    if (!(nextBefore < (before ?? Number.POSITIVE_INFINITY))) {
+    if (Number.isNaN(nextBefore) || nextBefore >= (before ?? Number.POSITIVE_INFINITY)) {
       log("coin-kaspa", "listOperations: indexer cursor did not move back, stopping", {
         before,
         nextPageBefore,

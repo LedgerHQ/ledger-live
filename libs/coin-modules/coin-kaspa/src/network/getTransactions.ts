@@ -21,7 +21,7 @@ type GetTransactionsOptions = PageDirection & {
  * - `{ before }`: txs older than that block time (ms), walking backward; continue with `nextPageBefore`.
  * - no option: the newest page; continue backward with `nextPageBefore`.
  */
-export const getTransactions = async (
+export const getTransactions = (
   address: string,
   options?: GetTransactionsOptions,
 ): Promise<{

@@ -3,7 +3,7 @@ import { ApiResponseSubmitTransaction } from "../types";
 import { API_BASE } from "./config";
 import { BROADCAST_RETRY, httpError } from "./retryPolicy";
 
-export const submitTransaction = async (
+export const submitTransaction = (
   transactionJson: string,
 ): Promise<ApiResponseSubmitTransaction> => {
   // BROADCAST_RETRY retries only 429 — see retryPolicy.ts for why a 5xx or a network error is not.
