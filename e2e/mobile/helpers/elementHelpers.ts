@@ -140,7 +140,7 @@ export const NativeElementHelpers = {
       ? waitFor(nativeElement).toBeVisible(options?.visibilityPercentage)
       : waitFor(nativeElement).toExist();
     if (!options?.errorElementId) {
-      return withHardTimeout(waitCondition.withTimeout(timeout), timeout * 1.1);
+      return withHardTimeout(waitCondition.withTimeout(timeout));
     }
 
     const startTime = Date.now();
@@ -148,10 +148,7 @@ export const NativeElementHelpers = {
 
     while (Date.now() - startTime < timeout) {
       try {
-        await withHardTimeout(
-          waitCondition.withTimeout(errorCheckTimeout),
-          errorCheckTimeout * 1.1,
-        );
+        await withHardTimeout(waitCondition.withTimeout(TIMEOUT.small), TIMEOUT.small * 1.2);
         return;
       } catch (error) {
         lastWaitError = error instanceof Error ? error : new Error(String(error));
