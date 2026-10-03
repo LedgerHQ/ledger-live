@@ -112,7 +112,7 @@ export class AptosAPI {
     });
   }
 
-  async getAccount(address: string): Promise<AccountData> {
+  getAccount(address: string): Promise<AccountData> {
     return this.aptosClient.getAccountInfo({ accountAddress: address });
   }
 
@@ -129,7 +129,7 @@ export class AptosAPI {
     };
   }
 
-  async estimateGasPrice(): Promise<GasEstimation> {
+  estimateGasPrice(): Promise<GasEstimation> {
     return this.aptosClient.getGasPriceEstimation();
   }
 
@@ -166,7 +166,7 @@ export class AptosAPI {
       });
   }
 
-  async simulateTransaction(
+  simulateTransaction(
     address: Ed25519PublicKey,
     tx: RawTransaction,
     options = {

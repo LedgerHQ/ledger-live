@@ -1,8 +1,4 @@
-import {
-  InputEntryFunctionData,
-  MultisigPayloadResponse,
-  TransactionPayloadResponse,
-} from "@aptos-labs/ts-sdk";
+import { InputEntryFunctionData, TransactionPayloadResponse } from "@aptos-labs/ts-sdk";
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
@@ -12,40 +8,25 @@ import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
 import { getFunctionAddress } from "./getFunctionAddress";
 import { normalizeAddress } from "./normalizeAddress";
 import { processRecipients } from "./processRecipients";
+import { getEntryFunctionPayload, getFundsOwner } from "./transactionPayload";
 
-const ENTRY_FUNCTION_PAYLOAD = "entry_function_payload";
-const MULTISIG_PAYLOAD = "multisig_payload";
-
-const isMultisigPayload = (
-  payload: TransactionPayloadResponse | undefined,
-): payload is MultisigPayloadResponse =>
-  payload?.type === MULTISIG_PAYLOAD && "multisig_address" in payload;
-
-const toInputEntryFunctionData = (
+export const convertFunctionPayloadResponseToInputEntryFunctionData = (
   payload: TransactionPayloadResponse | undefined,
 ): InputEntryFunctionData | undefined => {
-  if (payload?.type !== ENTRY_FUNCTION_PAYLOAD || !("function" in payload)) {
+  const entryFunctionPayload = getEntryFunctionPayload(payload);
+  if (!entryFunctionPayload) {
     return undefined;
   }
 
   return {
-    function: payload.function,
-    typeArguments: payload.type_arguments,
-    functionArguments: payload.arguments,
+    function: entryFunctionPayload.function,
+    typeArguments: entryFunctionPayload.type_arguments,
+    functionArguments: entryFunctionPayload.arguments,
   };
 };
 
-export const convertFunctionPayloadResponseToInputEntryFunctionData = (
-  payload: TransactionPayloadResponse | undefined,
-): InputEntryFunctionData | undefined =>
-  isMultisigPayload(payload)
-    ? toInputEntryFunctionData(payload.transaction_payload)
-    : toInputEntryFunctionData(payload);
-
 export const getTransactionSender = (tx: AptosTransaction, address: string): string =>
-  isMultisigPayload(tx.payload) && !compareAddress(tx.sender, address)
-    ? tx.payload.multisig_address
-    : tx.sender;
+  compareAddress(tx.sender, address) ? tx.sender : getFundsOwner(tx);
 
 const detectType = (address: string, sender: string, value: BigNumber): OP_TYPE => {
   let type = compareAddress(sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;

@@ -7,11 +7,9 @@ import {
   SimpleTransaction,
   Hex,
 } from "@aptos-labs/ts-sdk";
-import { setEnvUnsafe } from "@ledgerhq/live-env";
 import { AptosAPI } from "./client";
 
 describe("richItemByVersion", () => {
-  setEnvUnsafe("LEDGER_CLIENT_VERSION", "lld/2.124.0-dev");
   const client = new AptosAPI("aptos");
 
   it.each([

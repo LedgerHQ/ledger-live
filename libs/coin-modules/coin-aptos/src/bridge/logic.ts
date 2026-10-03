@@ -101,12 +101,8 @@ export const txsToOps = async (
       const { coin_id, amount_in, amount_out, type } = getCoinAndAmounts(tx, address);
       const sender = getTransactionSender(tx, address);
       op.value = calculateAmount(sender, address, amount_in, amount_out);
-      op.type =
-        type !== OP_TYPE.UNKNOWN
-          ? type
-          : compareAddress(sender, address)
-            ? OP_TYPE.OUT
-            : OP_TYPE.IN;
+      const direction = compareAddress(sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
+      op.type = type === OP_TYPE.UNKNOWN ? direction : type;
       op.senders.push(sender);
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(op.accountId, tx.hash, op.type);
