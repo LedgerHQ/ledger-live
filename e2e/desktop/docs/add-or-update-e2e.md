@@ -116,11 +116,14 @@ case Currency.NEWCOIN.id:
   break;
 ```
 
-### Step 7: Add test case to spec
+### Step 7: Add test case to the New Send Flow spec
 
-[File](e2e/desktop/tests/specs/send.tx.spec.ts)
+[File](../tests/specs/newSendFlow.tx.spec.ts)
 
 **Ask user for:** a valid, unused `B2CQA-XXXX` test id
+
+Append one entry to the existing `nativeSendTransactions` array. Do not redeclare the array, and do
+not call `registerNewSendFlowTests` again — the spec already does.
 
 ```typescript
 {
@@ -128,6 +131,20 @@ case Currency.NEWCOIN.id:
   xrayTicket: "B2CQA-XXXX",
 },
 ```
+
+The tests read the family allow-list from `FF_NEW_SEND_FLOW_ENABLED` in
+`tests/utils/featureFlagUtils.ts`. If the new coin's family is not already listed, add its family
+id there:
+
+```typescript
+families: [
+  // ...existing families
+  "<family id>",
+],
+```
+
+That list mirrors the production rollout. A currency whose family is missing, or whose id is in
+`excludedCurrencyIds`, must stay in the legacy spec until it is enabled in production.
 
 ### Step 8: Rebuild dependencies
 
