@@ -7,11 +7,12 @@ import type { RawApiResponse } from "../schema";
  * which leaves the underlying @ledgerhq/live-env unresolvable.
  */
 jest.mock("@shared/env", () => ({
-  getEnv: jest.fn((name: string) =>
-    name === "DADA_API_STAGING"
-      ? "https://dada.api.ledger-test.com/v1"
-      : "https://dada.api.ledger.com/v1",
-  ),
+  getEnv: jest.fn((name: string) => {
+    if (name === "DADA_GRAVITEE_API_KEY") return "";
+    return name === "DADA_API_STAGING"
+      ? "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada"
+      : "https://dada.api.ledger.com/v1";
+  }),
 }));
 
 const params = (overrides: Partial<GetAssetsDataParams> = {}): GetAssetsDataParams => ({
@@ -39,7 +40,9 @@ describe("resolveBaseUrl", () => {
   });
 
   it("uses the staging url when isStaging is true", () => {
-    expect(resolveBaseUrl({ isStaging: true })).toBe("https://dada.api.ledger-test.com/v1");
+    expect(resolveBaseUrl({ isStaging: true })).toBe(
+      "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada",
+    );
   });
 });
 

@@ -167,7 +167,10 @@ const handler = ({ request }: { request: Request }) => {
 };
 
 const handlers = [
-  http.get("https://dada.api.ledger-test.com/v1/assets", handler),
+  http.get(
+    "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+    handler,
+  ),
   http.get("https://dada.api.ledger.com/v1/assets", handler),
 ];
 

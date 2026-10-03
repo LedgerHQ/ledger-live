@@ -4,7 +4,9 @@
  * never resolved — this test only reads a static property.
  */
 jest.mock("@shared/env", () => ({
-  getEnv: jest.fn().mockReturnValue("https://dada.api.ledger.com/v1"),
+  getEnv: jest.fn((key: string) =>
+    key === "DADA_GRAVITEE_API_KEY" ? "" : "https://dada.api.ledger.com/v1",
+  ),
 }));
 
 import { configureStore } from "@reduxjs/toolkit";
