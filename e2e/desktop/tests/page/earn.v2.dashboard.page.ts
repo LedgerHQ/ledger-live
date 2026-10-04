@@ -185,8 +185,12 @@ export class EarnV2Page extends EarnBasePage {
   async selectEthProviderV2(providerId: string) {
     const webview = await this.getWebView();
     await webview.getByTestId(this.ethProviderPanel).waitFor({ state: "visible" });
-    // basic_sorting defaults to a category that can hide the target provider.
-    await webview.getByTestId(this.ethProviderAllCategory).click();
+    // The filter renders with the panel, and only for the basic_sorting and iso_modal cohorts.
+    // The account Stake entry can open this screen without that cohort, so All is not always there.
+    const allCategory = webview.getByTestId(this.ethProviderAllCategory);
+    if (await allCategory.isVisible()) {
+      await allCategory.click();
+    }
     await webview.getByTestId(this.ethProviderCard(providerId)).click();
   }
 
