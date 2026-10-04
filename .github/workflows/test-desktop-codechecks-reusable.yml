@@ -13,11 +13,6 @@ on:
         type: string
         required: false
         default: "95%"
-      timeout-minutes:
-        description: "Timeout of the unit test job, in minutes."
-        type: number
-        required: false
-        default: 10
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -60,11 +55,6 @@ on:
         type: string
         required: false
         default: "95%"
-      timeout-minutes:
-        description: "Timeout of the unit test job, in minutes."
-        type: number
-        required: false
-        default: 10
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -160,7 +150,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    timeout-minutes: ${{ inputs.timeout-minutes }}
+    timeout-minutes: 20
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
