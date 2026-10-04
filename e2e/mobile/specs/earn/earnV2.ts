@@ -59,8 +59,10 @@ const swapToEarnFlags = (depositScreen: DepositScreen): PartialFeatures => ({
   swapToEarn: { enabled: depositScreen === "v2" },
 });
 
-const depositScreenTitle = (depositScreen: DepositScreen) =>
-  depositScreen === "v2" ? " (deposit v2)" : "";
+const depositScreenTitle: Record<DepositScreen, string> = {
+  v1: "",
+  v2: " (deposit v2)",
+};
 
 let earnReady: Promise<string>;
 
@@ -127,7 +129,7 @@ export function runColdStartTest(
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn${depositScreenTitle(depositScreen)}`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn${depositScreenTitle[depositScreen]}`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.waitForColdStartPage();
       await app.earnV2Dashboard.verifyColdStartPage();
@@ -216,7 +218,7 @@ export function runScyStakingCTATest(
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Earn v2 CTA initiates deposit flow${depositScreenTitle(depositScreen)}`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 CTA initiates deposit flow${depositScreenTitle[depositScreen]}`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
       if (depositScreen === "v2") {
@@ -259,7 +261,7 @@ export function runPartnerDappCTATest(
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Earn v2 staking flow with ${providerId}${depositScreenTitle(depositScreen)}`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 staking flow with ${providerId}${depositScreenTitle[depositScreen]}`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
       if (account.currency.ticker === "ETH" && depositV2Amount) {
@@ -366,7 +368,7 @@ export function runInlineAddAccountTest(
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Earn v2 inline add account${depositScreenTitle(depositScreen)}`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 inline add account${depositScreenTitle[depositScreen]}`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
