@@ -3,6 +3,11 @@ name: "[Mobile] - Code Check - Called"
 on:
   workflow_call:
     inputs:
+      jest-shard:
+        description: "Jest --shard value such as 1/2 (empty runs all tests)."
+        type: string
+        required: false
+        default: ""
       runner:
         description: "Runner label for the unit test job."
         type: string
@@ -43,6 +48,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      jest-shard:
+        description: "Jest --shard value such as 1/2 (empty runs all tests)."
+        type: string
+        required: false
+        default: ""
       runner:
         description: "Runner label for the unit test job."
         type: string
@@ -178,6 +188,8 @@ jobs:
         run: pnpm exec nx run live-mobile:build-lib-deps
 
       - name: Run unit tests
+        env:
+          JEST_SHARD: ${{ inputs.jest-shard }}
         shell: bash
         run: |
           set -euo pipefail
@@ -200,7 +212,7 @@ jobs:
           '
           echo "::endgroup::"
           START_TS=$(date +%s)
-          pnpm mobile test:jest:coverage
+          pnpm mobile test:jest:coverage ${JEST_SHARD:+--shard="$JEST_SHARD"}
           END_TS=$(date +%s)
           echo "::notice::jest_ci_metrics app=live-mobile jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
 
