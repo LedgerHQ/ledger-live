@@ -134,7 +134,11 @@ const commonConfig = {
 module.exports = {
   /** CI sets `JEST_MAX_WORKERS` (e.g. `100%`); local default leaves laptops headroom. */
   maxWorkers: process.env.JEST_MAX_WORKERS || "50%",
-  workerIdleMemoryLimit: "1GB",
+  // EVALUATION: JEST_WORKER_IDLE_MEMORY_LIMIT=off disables worker recycling; empty keeps the default.
+  workerIdleMemoryLimit:
+    process.env.JEST_WORKER_IDLE_MEMORY_LIMIT === "off"
+      ? undefined
+      : process.env.JEST_WORKER_IDLE_MEMORY_LIMIT || "1GB",
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.test.{ts,tsx}",

@@ -3,6 +3,11 @@ name: "[Desktop] - Lint & Unit Tests - Called"
 on:
   workflow_call:
     inputs:
+      jest-worker-idle-memory-limit:
+        description: "Jest workerIdleMemoryLimit override: a size such as 4GB, or off to disable worker recycling (empty keeps 1GB)."
+        type: string
+        required: false
+        default: ""
       jest-shard:
         description: "Jest --shard value such as 1/2 (empty runs all tests)."
         type: string
@@ -50,6 +55,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      jest-worker-idle-memory-limit:
+        description: "Jest workerIdleMemoryLimit override: a size such as 4GB, or off to disable worker recycling (empty keeps 1GB)."
+        type: string
+        required: false
+        default: ""
       jest-shard:
         description: "Jest --shard value such as 1/2 (empty runs all tests)."
         type: string
@@ -202,6 +212,7 @@ jobs:
       - name: Run unit tests
         env:
           JEST_SHARD: ${{ inputs.jest-shard }}
+          JEST_WORKER_IDLE_MEMORY_LIMIT: ${{ inputs.jest-worker-idle-memory-limit }}
         shell: bash
         run: |
           set -euo pipefail

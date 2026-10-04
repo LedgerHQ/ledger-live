@@ -67,7 +67,11 @@ module.exports = {
   // engineers see per-test logs live.
   verbose: !process.env.CI,
   preset: "react-native",
-  workerIdleMemoryLimit: "1GB",
+  // EVALUATION: JEST_WORKER_IDLE_MEMORY_LIMIT=off disables worker recycling; empty keeps the default.
+  workerIdleMemoryLimit:
+    process.env.JEST_WORKER_IDLE_MEMORY_LIMIT === "off"
+      ? undefined
+      : process.env.JEST_WORKER_IDLE_MEMORY_LIMIT || "1GB",
   setupFilesAfterEnv: [
     "./node_modules/react-native-gesture-handler/jestSetup.js",
     "./__tests__/jest-setup.js",
