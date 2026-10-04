@@ -98,7 +98,7 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify earn webview redirected to deposit v2 flow")
   async verifyV2DepositFlowVisible() {
-    const url = await waitForCurrentWebviewUrlToContain("/v2/");
+    const url = await waitForCurrentWebviewUrlToContain("/deposit");
     jestExpect(url.toLowerCase()).toMatch(/\/v2\/[^/]+\/deposit/);
   }
 
