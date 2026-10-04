@@ -50,11 +50,31 @@ const FF_STAKE_PROGRAMS_MODAL: PartialFeatures = {
   },
 };
 
+// The earn-live-app routes deposits to /v2/{os}/deposit only when swapToEarn is enabled, so
+// deposit tests pin it instead of inheriting the Remote Config value.
+export type DepositScreen = "v1" | "v2";
+export type DepositV2Amount = { preset: "50" } | { value: string };
+
+const swapToEarnFlags = (depositScreen: DepositScreen): PartialFeatures => ({
+  swapToEarn: { enabled: depositScreen === "v2" },
+});
+
+const depositScreenTitle = (depositScreen: DepositScreen) =>
+  depositScreen === "v2" ? " (deposit v2)" : "";
+
 let earnReady: Promise<string>;
 
 async function navigateToEarn() {
   await app.mainNavigation.tapWallet40Tab("earn");
   await earnReady;
+}
+
+async function enterDepositV2Amount(amount: DepositV2Amount) {
+  if ("preset" in amount) {
+    await app.earnV2Dashboard.selectAmountPresetV2(amount.preset);
+  } else {
+    await app.earnV2Dashboard.enterDepositAmountWithKeyboardV2(amount.value);
+  }
 }
 
 async function beforeAllFunction(options: ApplicationOptions) {
@@ -87,13 +107,18 @@ export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: 
   });
 }
 
-export function runColdStartTest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runColdStartTest(
+  account: Account,
+  tmsLinks: string[],
+  tags: string[],
+  depositScreen: DepositScreen = "v1",
+) {
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        featureFlags: EARN_V2_FLAGS,
+        featureFlags: { ...EARN_V2_FLAGS, ...swapToEarnFlags(depositScreen) },
         cliCommands: [liveDataCommand(account)],
         speculosForSetupOnly: true,
       });
@@ -102,13 +127,18 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn${depositScreenTitle(depositScreen)}`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.waitForColdStartPage();
       await app.earnV2Dashboard.verifyColdStartPage();
       await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-      await app.earnV2Dashboard.verifyEarnFlowStarted(account.currency.ticker);
+      if (depositScreen === "v2") {
+        await app.earnV2Dashboard.verifyV2DepositFlowVisible();
+        await app.earnV2Dashboard.verifyV2DepositScreenVisible();
+      } else {
+        await app.earnV2Dashboard.verifyEarnFlowStarted(account.currency.ticker);
+      }
     });
   });
 }
@@ -166,13 +196,18 @@ export function runNativeStakingCTATest(account: Account, tmsLinks: string[], ta
   });
 }
 
-export function runScyStakingCTATest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runScyStakingCTATest(
+  account: Account,
+  tmsLinks: string[],
+  tags: string[],
+  depositScreen: DepositScreen = "v1",
+) {
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        featureFlags: EARN_V2_FLAGS,
+        featureFlags: { ...EARN_V2_FLAGS, ...swapToEarnFlags(depositScreen) },
         cliCommands: [liveDataWithAddressCommand(account)],
         speculosForSetupOnly: true,
       });
@@ -181,10 +216,14 @@ export function runScyStakingCTATest(account: Account, tmsLinks: string[], tags:
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Earn v2 CTA initiates deposit flow`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 CTA initiates deposit flow${depositScreenTitle(depositScreen)}`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-      await app.earnV2Dashboard.verifyDepositFlowVisible();
+      if (depositScreen === "v2") {
+        await app.earnV2Dashboard.verifyV2DepositFlowVisible();
+      } else {
+        await app.earnV2Dashboard.verifyDepositFlowVisible();
+      }
     });
   });
 }
@@ -197,12 +236,14 @@ export function runPartnerDappCTATest(
   dappUrlSubstring: string,
   tmsLinks: string[],
   tags: string[],
+  depositV2Amount?: DepositV2Amount,
 ) {
+  const depositScreen: DepositScreen = depositV2Amount ? "v2" : "v1";
   // ETH selects a provider in the deposit webview, which requires the category filter bar; pin its
   // cohort so that bar is guaranteed to render. Other tickers use the native staking drawer.
   const featureFlags =
     account.currency.ticker === "ETH"
-      ? { ...EARN_V2_FLAGS, ...FF_STAKE_PROGRAMS_MODAL }
+      ? { ...EARN_V2_FLAGS, ...FF_STAKE_PROGRAMS_MODAL, ...swapToEarnFlags(depositScreen) }
       : EARN_V2_FLAGS;
   describe("Earn v2", () => {
     beforeAll(async () => {
@@ -218,10 +259,16 @@ export function runPartnerDappCTATest(
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Earn v2 staking flow with ${providerId}`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 staking flow with ${providerId}${depositScreenTitle(depositScreen)}`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-      if (account.currency.ticker === "ETH") {
+      if (account.currency.ticker === "ETH" && depositV2Amount) {
+        await app.earnV2Dashboard.verifyV2DepositFlowVisible();
+        await enterDepositV2Amount(depositV2Amount);
+        await app.earnV2Dashboard.completeEthDepositAmountStepV2();
+        await app.earnV2Dashboard.selectEthProviderV2(providerId);
+        await app.earnV2Dashboard.confirmEthDepositProviderV2(providerId);
+      } else if (account.currency.ticker === "ETH") {
         // ETH redirects into the earn deposit webview: pick an amount, choose the provider, then
         // confirm to open the partner dapp (no native staking drawer in this flow).
         await app.earnV2Dashboard.verifyDepositFlowVisible();
@@ -301,20 +348,25 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
 
 // --- Inline Add Account ---
 
-export function runInlineAddAccountTest(account: Account, tmsLinks: string[], tags: string[]) {
+export function runInlineAddAccountTest(
+  account: Account,
+  tmsLinks: string[],
+  tags: string[],
+  depositScreen: DepositScreen = "v1",
+) {
   describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "swap-deeplinks",
         speculosApp: account.currency.speculosApp,
-        featureFlags: EARN_V2_FLAGS,
+        featureFlags: { ...EARN_V2_FLAGS, ...swapToEarnFlags(depositScreen) },
       });
     });
 
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Earn v2 inline add account`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 inline add account${depositScreenTitle(depositScreen)}`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
@@ -324,7 +376,12 @@ export function runInlineAddAccountTest(account: Account, tmsLinks: string[], ta
         account.currency.id,
         0,
       );
-      await app.earnV2Dashboard.verifyEarnFlowStarted(account.currency.ticker);
+
+      if (depositScreen === "v2") {
+        await app.earnV2Dashboard.verifyV2DepositFlowVisible();
+      } else {
+        await app.earnV2Dashboard.verifyEarnFlowStarted(account.currency.ticker);
+      }
     });
   });
 }
