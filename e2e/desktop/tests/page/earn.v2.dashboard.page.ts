@@ -56,7 +56,10 @@ export class EarnV2Page extends EarnBasePage {
   @step("Verify v1 deposit text-button-cta is visible")
   async verifyV1TextButtonCtaVisible() {
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.v1TextButtonCta)).toBeVisible();
+    const cta = webview.getByTestId(this.v1TextButtonCta);
+    await expect(cta).toBeVisible();
+    // v2 reuses this test id for the in-card "Continue" button, so the label tells the screens apart.
+    await expect(cta).toHaveText(/Deposit in/i);
   }
 
   // Cold Start
@@ -147,11 +150,78 @@ export class EarnV2Page extends EarnBasePage {
     await depositCta.click();
   }
 
+  // Deposit screen v2 (swapToEarn enabled)
+
+  private readonly amountInput = "amount-input-section-input";
+  private readonly amountPresets = "amount-presets";
+  private readonly amountPreset = (preset: "25" | "50" | "75" | "max") => `amount-preset-${preset}`;
+  private readonly ethProviderAllCategory = "category-filter-all";
+  private readonly providerContinueCta = "text-button-cta";
+  private readonly ethProviderCard = (providerId: string) =>
+    `eth-provider-card-${EarnV2Page.ethProviderCardIds[providerId] ?? providerId}`;
+
+  @step("Verify deposit screen v2 amount section")
+  async verifyV2DepositScreenVisible() {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.accountSelectorInput)).toBeVisible();
+    await expect(webview.getByTestId(this.amountPresets)).toBeVisible();
+  }
+
+  @step("Select deposit amount preset: $0")
+  async selectAmountPreset(preset: "25" | "50" | "75" | "max") {
+    const webview = await this.getWebView();
+    await webview.getByTestId(this.amountPreset(preset)).click();
+    // The preset value depends on the live balance, so only check that it filled the input.
+    await expect(webview.getByTestId(this.amountInput)).not.toHaveValue(/^0?$/);
+  }
+
+  @step("Enter deposit amount: $0")
+  async enterDepositAmount(amount: string) {
+    const webview = await this.getWebView();
+    await webview.getByTestId(this.amountInput).fill(amount);
+  }
+
+  @step("Select ETH provider in deposit v2 flow: $0")
+  async selectEthProviderV2(providerId: string) {
+    const webview = await this.getWebView();
+    await webview.getByTestId(this.ethProviderPanel).waitFor({ state: "visible" });
+    // basic_sorting defaults to a category that can hide the target provider.
+    await webview.getByTestId(this.ethProviderAllCategory).click();
+    await webview.getByTestId(this.ethProviderCard(providerId)).click();
+  }
+
+  @step("Verify Continue is enabled only in selected ETH provider: $0")
+  async verifyEthProviderContinueEnabled(providerId: string) {
+    const webview = await this.getWebView();
+    const card = webview.getByTestId(this.ethProviderCard(providerId));
+    const continueCta = card.getByTestId(this.providerContinueCta);
+    await expect(continueCta).toBeVisible();
+    await expect(continueCta).toHaveText(/Continue/i);
+    await expect(continueCta).toBeEnabled();
+    await expect(webview.getByTestId(this.providerContinueCta)).toHaveCount(1);
+  }
+
+  @step("Continue with selected ETH provider: $0")
+  async continueWithSelectedEthProvider(providerId: string) {
+    await this.verifyEthProviderContinueEnabled(providerId);
+    const webview = await this.getWebView();
+    await webview
+      .getByTestId(this.ethProviderCard(providerId))
+      .getByTestId(this.providerContinueCta)
+      .click();
+  }
+
   // Navigation
   @step("Verify navigated to deposit flow")
   async verifyDepositFlowVisible() {
     const webview = await this.getWebView();
-    await expect(webview).toHaveURL(/\/deposit/);
+    await expect(webview).toHaveURL(/^(?!.*\/v2\/).*\/deposit/);
+  }
+
+  @step("Verify navigated to deposit v2 flow")
+  async verifyV2DepositFlowVisible() {
+    const webview = await this.getWebView();
+    await expect(webview).toHaveURL(/\/v2\/[^/]+\/deposit/);
   }
 
   @step("Verify navigated to withdrawal flow")
