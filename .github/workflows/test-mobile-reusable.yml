@@ -3,6 +3,16 @@ name: "[Mobile] - Code Check - Called"
 on:
   workflow_call:
     inputs:
+      runner:
+        description: "Runner label for the unit test job."
+        type: string
+        required: false
+        default: ledger-live-linux-16CPU-64RAM
+      jest-max-workers:
+        description: "Jest maxWorkers for the unit test job (number or percentage of cores)."
+        type: string
+        required: false
+        default: "95%"
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -33,6 +43,16 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      runner:
+        description: "Runner label for the unit test job."
+        type: string
+        required: false
+        default: ledger-live-linux-16CPU-64RAM
+      jest-max-workers:
+        description: "Jest maxWorkers for the unit test job (number or percentage of cores)."
+        type: string
+        required: false
+        default: "95%"
       skip-nx-cache:
         description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
         type: boolean
@@ -123,8 +143,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ledger-live-linux-16CPU-64RAM
-      JEST_MAX_WORKERS: "95%"
-    runs-on: [ledger-live-linux-16CPU-64RAM]
+      JEST_MAX_WORKERS: ${{ inputs.jest-max-workers }}
+    runs-on: ${{ inputs.runner }}
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
