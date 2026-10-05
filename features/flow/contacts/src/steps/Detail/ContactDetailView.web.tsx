@@ -45,7 +45,7 @@ export function ContactDetailView({
   if (!hasPopulatedAddresses) {
     return (
       <div
-        className="flex h-full flex-col gap-32 overflow-y-auto px-16 py-32"
+        className="scrollbar-custom flex h-full flex-col gap-32 overflow-y-auto overscroll-y-contain px-16 py-32 [scrollbar-gutter:stable]"
         data-testid="contacts-detail-screen"
       >
         <ContactDetailHeader
