@@ -2,10 +2,10 @@
 "@ledgerhq/wallet-cli": minor
 ---
 
-feat(wallet-cli): add ledger-sync enroll/import/destroy command group
+feat(wallet-cli): add `agent-intent sync` to import Ledger Sync accounts with the agent's key
 
-`ledger-sync enroll` registers this machine as a Ledger Sync member (device required, its own LKRP
-application, separate from `ring`), `ledger-sync import` pulls the synchronized accounts into the
-session (additive and idempotent; unsupported currency families are reported as skipped), and
-`ledger-sync destroy` deactivates it. All three write `session.yaml` through the shared session lock
-against a fresh read, so they never overwrite changes another command saved meanwhile.
+`agent-intent sync --profile <id>` restores the App-16 trustchain with the enrolled agent's own key
+(no device) and merges the synchronized accounts into the session — additive and idempotent, with
+unsupported currency families reported as skipped and malformed entries as invalid. The Cloud Sync
+version is cached per profile, a rotated Ledger Sync key updates the profile's account access, and
+an agent removed from Ledger Sync is reported without deleting anything.

@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show — enroll or recover a remote agent's software identity, no device required, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync — enroll or recover a remote agent's software identity and import the Ledger Sync accounts it was granted, no device required, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -48,6 +48,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "recover this agent", "re-enroll an agent into its trustchain"                       | `agent-intent recover --profile <id>` (no device; blocks until approved) |
 | "what agents are enrolled", "list agent profiles"                                    | `agent-intent list`                                            |
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
+| "pull my synced accounts", "import from Ledger Sync", "sync the agent's accounts"   | `agent-intent sync --profile <id>` (no device)                 |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
 
 ---
@@ -101,6 +102,7 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `agent-intent recover` | No   | **Required** | No          | Yes     |
 | `agent-intent list`  | No     | No           | No          | No      |
 | `agent-intent show`  | No     | No           | No          | No      |
+| `agent-intent sync`  | No     | **Required** | No          | Yes     |
 
 \*`receive` with `--no-verify`, `send` with `--dry-run`, and `earn deposit`/`earn withdraw` with `--dry-run` need no device and no sandbox bypass.
 
@@ -306,7 +308,7 @@ pnpm --silent wallet-cli start ring destroy
 > but it never opens the device and never receives `ring`'s (App-17) domain keys.
 
 Agent Intent enrolls a remote agent (a bot proposing transaction intents for human review) as a
-software identity local to this machine — **no device required for enroll/recover/list/show**. Each
+software identity local to this machine — **no device required for enroll/recover/list/show/sync**. Each
 profile gets its own secp256k1 keypair; the private key never leaves the OS keychain and is never
 printed, logged, or included in any command's output (human or `--output json`).
 
@@ -324,6 +326,10 @@ pnpm --silent wallet-cli start agent-intent recover --profile my-bot
 # List/inspect local profiles (never reveals the secret key):
 pnpm --silent wallet-cli start agent-intent list
 pnpm --silent wallet-cli start agent-intent show --profile my-bot
+
+# Import the Ledger Sync accounts the agent was granted into the session (explicit, never automatic):
+pnpm --silent wallet-cli start agent-intent sync --profile my-bot
+pnpm --silent wallet-cli start agent-intent sync --profile my-bot --output json
 ```
 
 **One blocking command, no copy/paste.** `enroll` prints the URL first (with `--output json`: an
@@ -374,6 +380,27 @@ profile enrolled for staging can never end up holding a production Trustchain ID
 **Status is derived, not stored:** `list`/`show` compute `pending` / `enrolled` / `recovering` /
 `expired` from `trustchainId`, `enrollmentExpiresAt` and any unexpired recovery marker, and show the granted account access (environment +
 App-16 application path) once enrolled.
+
+### Syncing Ledger Sync accounts
+
+`agent-intent sync --profile <id>` imports the accounts synchronized from your other Ledger Wallet
+instances (desktop, mobile) so they can be referenced by label. It authenticates with the **agent's
+own key** (from the OS keychain), which the frontend added to the App-16 stream at enrollment — it
+never opens the device and there is no separate Ledger Sync enrollment. The environment comes from
+the profile's `accountAccess`.
+
+- **Requires an enrolled profile:** a `pending`/`expired` profile (no `accountAccess`) or a missing
+  keychain key fails with a clear error.
+- **Lost access is reported, not repaired:** if the agent was removed from Ledger Sync, `sync`
+  reports "no longer has Ledger Sync access" and deletes nothing.
+- **Key rotation is followed:** if Ledger Sync rotated its key (a member was removed), the profile's
+  `accountAccess` is updated to the new application path and the sync proceeds.
+- **Additive and idempotent:** never deletes or re-labels a session account and never uploads
+  anything; a repeat run reports `unchanged` entries or "Up to date".
+- **Unsupported/malformed entries are isolated:** an account for a currency family wallet-cli
+  doesn't support (only bitcoin/evm/solana) is `skipped`, a malformed one is `invalid` — the rest of
+  the import still proceeds, and an `invalid` entry keeps the next sync from treating the data as
+  up to date.
 
 ---
 
