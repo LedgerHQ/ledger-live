@@ -13,7 +13,7 @@ import { createAgentLedgerSyncSdk } from "../key-ring/lkrp-sdk";
 // Must match the App-16 permission the frontend grants: OWNER without CAN_ADD_BLOCK.
 export const APP_16_CONTROLLED_TEST_PERMISSION = 0xfffffffb;
 
-const APP_16_PATH_RE = /^m\/0'\/16'\/\d+'$/;
+export const APP_16_PATH_RE = /^m\/0'\/16'\/\d+'$/;
 
 type LedgerSyncSdk = Pick<TrustchainSDK, "restoreTrustchain" | "withAuth">;
 

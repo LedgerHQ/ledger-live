@@ -7,7 +7,8 @@ import {
   type TrustchainSDK,
 } from "@shared/cloud-sync";
 import { errMessage } from "../shared/error-message";
-import { CLOUD_SYNC_API_URLS, type LedgerSyncEnvironment } from "../key-ring/constants";
+import type { AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
+import { CLOUD_SYNC_API_URLS } from "../key-ring/constants";
 import {
   toV1,
   serializeNetwork,
@@ -56,7 +57,7 @@ export async function pullSyncedAccounts(
   trustchain: Trustchain,
   memberCredentials: MemberCredentials,
   trustchainSdk: TrustchainSDK,
-  environment: LedgerSyncEnvironment,
+  environment: AgentIntentEnvironment,
   getCurrentVersion: () => number | undefined,
   createSdk: CreateCloudSyncSdk = createCloudSyncSdk,
 ): Promise<PullResult> {
@@ -68,7 +69,7 @@ export async function pullSyncedAccounts(
       return;
     }
     const rawAccounts = event.data.accounts;
-    // Not an empty list: reporting it as `new-data` would let `import` cache this version and
+    // Not an empty list: reporting it as `new-data` would let `agent-intent sync` cache this version and
     // treat every later pull as up to date, so the accounts would never come back once fixed.
     result = Array.isArray(rawAccounts)
       ? { status: "new-data", accounts: rawAccounts, version: event.version }

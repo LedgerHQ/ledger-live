@@ -1,4 +1,5 @@
 import { defineCommand } from "@bunli/core";
+import { createInterface } from "node:readline";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { Spinner } from "yocto-spinner";
 import {
@@ -17,13 +18,26 @@ import {
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { deriveWrappingKey } from "../../key-ring/crypto";
 import { promptHidden } from "../../key-ring/prompt";
-import { outputOption, resolveOutputFormat, confirmTyped, errMessage } from "../inputs";
+import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput, type CommandOutput } from "../../output";
 import {
   trackRingDestroyStarted,
   trackRingDestroyCompleted,
   trackRingDestroyCancelled,
 } from "../../analytics/ring-analytics";
+
+async function confirmDestroy(): Promise<boolean> {
+  const rl = createInterface({ input: process.stdin, output: process.stderr });
+  const answer = await new Promise<string>(resolve => {
+    rl.question('Type "destroy" to confirm: ', ans => {
+      rl.close();
+      resolve(ans.trim());
+    });
+  });
+  return answer === "destroy";
+}
+
+const errMessage = (e: unknown): string => (e instanceof Error ? e.message : String(e));
 
 // "ok": proceed with remote teardown. "abort": stop, change nothing — used whenever a password was
 // expected but unusable, since local-wiping there would orphan the remote trustchain. "local-wipe":
@@ -133,7 +147,7 @@ async function destroyStrayKey(out: CommandOutput): Promise<void> {
   if (!hasStoredKey()) {
     throw new Error("Nothing to destroy — Ledger Key Ring is not initialized.");
   }
-  if (!(await confirmTyped("destroy"))) {
+  if (!(await confirmDestroy())) {
     trackRingDestroyCancelled();
     out.ringDestroyCancelled();
     return;
@@ -186,7 +200,7 @@ export default defineCommand({
         return;
       }
 
-      const confirmed = await confirmTyped("destroy");
+      const confirmed = await confirmDestroy();
       if (!confirmed) {
         trackRingDestroyCancelled();
         out.ringDestroyCancelled();
