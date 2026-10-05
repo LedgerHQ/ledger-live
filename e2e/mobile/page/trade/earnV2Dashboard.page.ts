@@ -182,6 +182,9 @@ export default class EarnV2DashboardPage {
   ethProviderAllCategory = "category-filter-all";
   ethProviderCard = (providerId: string) =>
     `eth-provider-card-${EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId}`;
+  // Expandable cards attach onClick to the header. The card root is not clickable.
+  ethProviderHeader = (providerId: string) =>
+    `eth-provider-header-${EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId}`;
   ethProviderDepositCta = (providerId: string) =>
     `eth-provider-deposit-${EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId}`;
 
@@ -219,7 +222,8 @@ export default class EarnV2DashboardPage {
     await waitWebElementByTestId(this.ethProviderPanel);
     // basic_sorting defaults to a category that can hide the target provider.
     await tapWebElementByTestId(this.ethProviderAllCategory);
-    await tapWebElementByTestId(this.ethProviderCard(providerId));
+    await waitWebElementByTestId(this.ethProviderCard(providerId));
+    await tapWebElementByTestId(this.ethProviderHeader(providerId));
   }
 
   @Step("Confirm ETH deposit v2 provider {{{0}}}")
