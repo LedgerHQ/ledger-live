@@ -1,5 +1,53 @@
 # @ledgerhq/wallet-cli
 
+## 2.9.0
+
+### Minor Changes
+
+- [#22400](https://github.com/LedgerHQ/ledger-live/pull/22400) [`508f932`](https://github.com/LedgerHQ/ledger-live/commit/508f932ae6c69945644f7a337853c738ec36f754) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent enroll/recover/list/show command group
+
+  `agent-intent enroll` (default environment: production) prints a relay-bound signed enrollment URL,
+  then blocks until the approval comes back over the encrypted Trustchain relay. The completion is
+  verified (App-18 token, App-16 permission) before the Trustchain ID and Ledger Sync account access are
+  saved; on timeout or interruption the profile stays pending. There is no manual completion command.
+  `agent-intent recover --profile <id>` re-enrolls an enrolled openclaw/hermes profile's existing key
+  into its previous Trustchain over the same relay, verifying App-18 membership before clearing the
+  profile's `recovering` marker.
+
+  Every command that reads and writes `session.yaml` (enroll/reset/account discover/ring
+  init/destroy/encrypt/decrypt) now serializes through one real cross-process file lock, closing a
+  concurrent-write corruption window. `account discover` reconciles the labels it prints against the
+  one the locked merge actually assigns, and a malformed `agentIntentProfiles` entry now survives a
+  later `write()` instead of being silently dropped and orphaning its OS-keychain secret.
+
+- [#22461](https://github.com/LedgerHQ/ledger-live/pull/22461) [`72c0f50`](https://github.com/LedgerHQ/ledger-live/commit/72c0f50d9a33a06876770f57863355f9a12df568) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add `agent-intent sync` to import Ledger Sync accounts with the agent's key
+
+  `agent-intent sync --profile <id>` restores the App-16 trustchain with the enrolled agent's own key
+  (no device) and merges the synchronized accounts into the session — additive and idempotent, with
+  unsupported currency families reported as skipped and malformed entries as invalid. The Cloud Sync
+  version is cached per profile, a rotated Ledger Sync key updates the profile's account access, and
+  an agent removed from Ledger Sync is reported without deleting anything.
+
+- [#22476](https://github.com/LedgerHQ/ledger-live/pull/22476) [`3b271c9`](https://github.com/LedgerHQ/ledger-live/commit/3b271c942266b360f7680bc6efe83fa000d6e03b) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent send to propose EVM payments for human review
+
+  `agent-intent send` lets an enrolled Agent Intent profile propose a native ETH or ERC-20 transfer on
+  Ethereum mainnet. It signs the proposal with the profile's key, submits it to the Agent Intent
+  service and prints the frontend review link; it never signs or broadcasts a transaction and needs
+  no device. Amounts are converted to exact base units (never rounded), addresses are checked against
+  EIP-55, and `--dry-run` validates a proposal without submitting it.
+
+### Patch Changes
+
+- [#22289](https://github.com/LedgerHQ/ledger-live/pull/22289) [`b6ce6ee`](https://github.com/LedgerHQ/ledger-live/commit/b6ce6ee5adc2036b0ccfcb6999c74965d3f55cdf) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Upgrade the embedded Bun runtime from 1.3.14 to 1.4.2
+
+- [#22405](https://github.com/LedgerHQ/ledger-live/pull/22405) [`42d96b1`](https://github.com/LedgerHQ/ledger-live/commit/42d96b113a754f3459917ad3b87378aad6e4fabd) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Colocate wallet-cli tests with the code they validate
+
+- [#22596](https://github.com/LedgerHQ/ledger-live/pull/22596) [`7ff8f5b`](https://github.com/LedgerHQ/ledger-live/commit/7ff8f5b518a19e73005ef974121ce21e593a8e99) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): read `chainId` from config
+
+- [#22740](https://github.com/LedgerHQ/ledger-live/pull/22740) [`8421e39`](https://github.com/LedgerHQ/ledger-live/commit/8421e39799b898b552dddeb5bbab94b022b29922) Thanks [@LL782](https://github.com/LL782)! - Import track directly from @shared/analytics
+
+- [#22811](https://github.com/LedgerHQ/ledger-live/pull/22811) [`3132a4a`](https://github.com/LedgerHQ/ledger-live/commit/3132a4aba419be9a91320295d8c0260f3509f9bd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/ledger-key-ring-protocol` and `@ledgerhq/hw-ledger-key-ring-protocol` from npm (they now live in `ts-libs`), and bump `axios` to 1.20.0. No API change.
+
 ## 2.7.0
 
 ### Minor Changes
