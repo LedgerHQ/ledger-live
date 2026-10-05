@@ -271,20 +271,15 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   if (!account || !currency || !mainAccount) return null;
 
-  if (currency.type === "CryptoCurrency" && Object.keys(byFamily).includes(currency.family)) {
-    const CustomConfirmation =
-      currency.type === "CryptoCurrency"
-        ? byFamily[currency.family as keyof typeof byFamily]
-        : null;
-    if (CustomConfirmation) {
-      return (
-        <CustomConfirmation
-          account={mainAccount || account}
-          parentAccount={mainAccount}
-          {...{ navigation, route }}
-        />
-      );
-    }
+  const CustomConfirmation = byFamily[mainAccount.currency.family as keyof typeof byFamily];
+  if (CustomConfirmation) {
+    return (
+      <CustomConfirmation
+        account={mainAccount}
+        parentAccount={mainAccount}
+        {...{ navigation, route }}
+      />
+    );
   }
 
   let CustomConfirmationAlert;
