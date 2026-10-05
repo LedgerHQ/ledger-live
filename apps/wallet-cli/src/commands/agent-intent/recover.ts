@@ -26,6 +26,8 @@ import { createCommandOutput } from "../../output";
 
 type EnrolledProfile = AgentIntentProfileMeta & { trustchainId: string };
 
+const RECOVERABLE_SOURCES: ReadonlySet<string> = new Set(SUPPORTED_AGENT_RECOVERY_SOURCES);
+
 function requireRecoverableProfile(session: Session, profileId: string): EnrolledProfile {
   const profile = session.getAgentIntentProfile(profileId);
   if (!profile) {
@@ -44,11 +46,22 @@ function requireRecoverableProfile(session: Session, profileId: string): Enrolle
         "recover — start a fresh `agent-intent enroll` instead.",
     );
   }
-  if (!(SUPPORTED_AGENT_RECOVERY_SOURCES as readonly string[]).includes(profile.source)) {
+  if (!RECOVERABLE_SOURCES.has(profile.source)) {
     throw new Error(
       `Agent Intent recovery supports only ${SUPPORTED_AGENT_RECOVERY_SOURCES.join(", ")} agents; ` +
         `profile "${profileId}" is a ${profile.source} agent.`,
     );
+  }
+  if (profile.keycloakBaseUrl !== undefined) {
+    try {
+      assertServiceUrl(profile.keycloakBaseUrl, "keycloak-url");
+    } catch (e) {
+      throw new Error(
+        `Agent Intent profile "${profileId}" has an invalid stored Keycloak URL — fix the record ` +
+          "in session.yaml before recovering it.",
+        { cause: e },
+      );
+    }
   }
   return { ...profile, trustchainId };
 }

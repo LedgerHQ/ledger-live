@@ -76,13 +76,13 @@ const AgentIntentProfileSchema = z.object({
     .object({
       previousTrustchainId: z.string(),
       requestSignature: z.string(),
-      expiresAt: z.string(),
+      expiresAt: z.iso.datetime(),
     })
     .optional()
     .catch(undefined),
   // Signed into the enrollment request and enforced by the frontend — persisted so `list`/`show`
   // can report "expired" instead of leaving a dead link marked `pending` forever.
-  enrollmentExpiresAt: z.string(),
+  enrollmentExpiresAt: z.iso.datetime(),
   createdAt: z.string(),
 });
 

@@ -40,12 +40,7 @@ export async function loadAgentIntentSecretKey(
   profileId: string,
   wrappingKey?: CryptoKey,
 ): Promise<string | null> {
-  let stored: string | null;
-  try {
-    stored = getEntry(profileId).getPassword();
-  } catch {
-    return null;
-  }
+  const stored = getEntry(profileId).getPassword();
   if (!stored) return null;
 
   // CRLF-tolerant trim: a keychain entry written on Windows may carry a trailing \r.

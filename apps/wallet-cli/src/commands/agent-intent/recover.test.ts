@@ -240,6 +240,19 @@ describe("agent-intent recover", () => {
       expect(hostOptions).toBeUndefined();
     });
 
+    it.each(["https://user:secret@keycloak.example.com/", "file:///etc/keycloak", "not a url"])(
+      "rejects a stored keycloak override %p before authenticating against it",
+      async url => {
+        storedProfile = makeProfile({ keycloakBaseUrl: url });
+
+        await expect(runRecover()).rejects.toThrow(
+          'Agent Intent profile "test-agent" has an invalid stored Keycloak URL',
+        );
+        expect(identityInputs).toEqual([]);
+        expect(hostOptions).toBeUndefined();
+      },
+    );
+
     it("fails closed when the OS keychain cannot be read", async () => {
       keychainError = new Error("keychain locked");
 

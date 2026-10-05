@@ -297,6 +297,20 @@ describe("ring-field resilience", () => {
     expect(session.invalidAgentIntentProfileIds).toEqual(["missing-fields"]);
   });
 
+  it("flags a profile with a malformed enrollment expiry as invalid instead of pending", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [makeAgentIntentProfile({ enrollmentExpiresAt: "not-a-date" })],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.agentIntentProfiles).toEqual([]);
+    expect(session.invalidAgentIntentProfileIds).toEqual(["trading-bot"]);
+  });
+
   it("round-trips an enrolled profile's trustchain id and account access", async () => {
     useTmpState();
     writeFileSync(getSessionPath(), YAML.stringify({ accounts: [] }));
@@ -358,6 +372,28 @@ describe("ring-field resilience", () => {
     expect(session.getAgentIntentProfile("trading-bot")).toBeDefined();
     expect(session.getAgentIntentProfile("trading-bot")?.pendingRecovery).toBeUndefined();
     expect(session.invalidAgentIntentProfileIds).toEqual([]);
+  });
+
+  it("drops a recovery marker with a malformed expiry", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          makeAgentIntentProfile({
+            trustchainId: "app18-root",
+            pendingRecovery: {
+              previousTrustchainId: "app18-root",
+              requestSignature: "ab".repeat(64),
+              expiresAt: "not-a-date",
+            },
+          }),
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.getAgentIntentProfile("trading-bot")?.pendingRecovery).toBeUndefined();
   });
 
   it("write() carries a malformed agentIntentProfiles entry forward instead of erasing it", async () => {
