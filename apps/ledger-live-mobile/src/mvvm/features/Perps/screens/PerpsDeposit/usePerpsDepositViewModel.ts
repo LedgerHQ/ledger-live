@@ -273,6 +273,7 @@ export function usePerpsDepositViewModel({
       enableAccountSelection: true,
       areCurrenciesFiltered: false,
       uiUseCase: PERPS_UI_USE_CASE.fund,
+      flow: PERPS_UI_USE_CASE.fund,
       onAccountSelected: account => {
         setDepositAccountId(account.id);
       },

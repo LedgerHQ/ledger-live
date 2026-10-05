@@ -190,6 +190,8 @@ describe("usePerpsDepositViewModel", () => {
       expect.objectContaining({
         enableAccountSelection: true,
         uiUseCase: "perpetuals:fund",
+        // Keeps accounts that cannot send (e.g. HyperCore) out of the picker.
+        flow: "perpetuals:fund",
       }),
     );
 

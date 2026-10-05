@@ -11,8 +11,9 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import type { PerpsDepositUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { setFlowValue } from "~/renderer/reducers/modularDialog";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
@@ -88,6 +89,7 @@ export function usePerpsDepositViewModel(
 
   const [depositAccountId, setDepositAccountId] = useState(data.draft?.depositAccount.id);
   const [amountText, setAmountText] = useState(() => toAmountText(data.draft?.depositAmount));
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setDepositAccountId(data.draft?.depositAccount.id);
@@ -261,6 +263,7 @@ export function usePerpsDepositViewModel(
   }, []);
 
   const pickDepositAccount = useCallback(() => {
+    dispatch(setFlowValue(PERPS_UI_USE_CASE.fund));
     void openAssetAndAccountPromise({
       uiUseCase: PERPS_UI_USE_CASE.fund,
       areCurrenciesFiltered: false,
@@ -269,7 +272,7 @@ export function usePerpsDepositViewModel(
         setDepositAccountId(account.id);
       })
       .catch(() => undefined);
-  }, [openAssetAndAccountPromise]);
+  }, [dispatch, openAssetAndAccountPromise]);
 
   const handleReview = useCallback(() => {
     if (!canReview || !depositAccount || !depositCurrency || !quote) return;
