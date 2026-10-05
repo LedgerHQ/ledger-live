@@ -29,12 +29,23 @@ const weeklyIntegrationTests = [
   "src/families/cosmos/datasets/cosmos.integration.test.ts",
   "src/families/cosmos/datasets/persistence.integration.test.ts",
   "src/families/cosmos/datasets/stargaze.integration.test.ts",
+  // Quicksilver's owning team confirmed its public network is unavailable.
+  // Keep its live dataset quarantined without excluding the rest of the weekly suite.
   "src/families/cosmos/datasets/quicksilver.integration.test.ts",
   "src/families/cosmos/datasets/xion.integration.test.ts",
   "src/families/mina/bridge.integration.test.ts",
 ];
 
 const weeklyIntegrationTestsRegex = weeklyIntegrationTests.map(
+  p => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\//g, "[/\\\\]") + "$",
+);
+
+const unavailableWeeklyIntegrationTests = [
+  // Quicksilver's owning team confirmed its public network is unavailable.
+  "src/families/cosmos/datasets/quicksilver.integration.test.ts",
+];
+
+const unavailableWeeklyIntegrationTestsRegex = unavailableWeeklyIntegrationTests.map(
   p => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\//g, "[/\\\\]") + "$",
 );
 
@@ -51,6 +62,7 @@ if (process.env.ONLY_INTEGRATION_TESTS) {
 
 if (process.env.ONLY_WEEKLY_INTEGRATION_TESTS) {
   testRegex = weeklyIntegrationTestsRegex;
+  testPathIgnorePatterns.push(...unavailableWeeklyIntegrationTestsRegex);
 }
 
 if (process.env.USE_BACKEND_MOCKS) {

@@ -3,7 +3,7 @@ import * as bech32 from "bech32";
 import BigNumber from "bignumber.js";
 import getTransactionStatus from "./getTransactionStatus";
 import { CosmosAccount, Transaction } from "./types";
-import { COSMOS_MAX_REDELEGATIONS, getMaxEstimatedBalance } from "./logic";
+import { COSMOS_MAX_REDELEGATIONS, COSMOS_MAX_UNBONDINGS, getMaxEstimatedBalance } from "./logic";
 
 // Status-level negative cases for getTransactionStatus. This is pure in-memory
 // logic — no network call, no signer — so it lives here as a coin-cosmos unit
@@ -260,6 +260,64 @@ describe("getTransactionStatus undelegate", () => {
           status: "bonded",
         },
       ],
+    });
+    const transaction = {
+      mode: "undelegate",
+      amount: BABY(2),
+      validators: [{ address: validator1, amount: BABY(2) }],
+      fees: new BigNumber(5000),
+      useAllAmount: false,
+    } as unknown as Transaction;
+
+    const status = await getTransactionStatus(account, transaction);
+
+    expect(status.errors.unbonding).toBeUndefined();
+  });
+
+  it("returns a validation error when the selected validator has the maximum number of unbondings", async () => {
+    const account = makeAccount(BABY(10), babylon, {
+      delegations: [
+        {
+          validatorAddress: validator1,
+          amount: BABY(5),
+          pendingRewards: new BigNumber(0),
+          status: "bonded",
+        },
+      ],
+      unbondings: Array.from({ length: COSMOS_MAX_UNBONDINGS }, () => ({
+        validatorAddress: validator1,
+        amount: BABY(1),
+        completionDate: new Date(),
+      })),
+    });
+    const transaction = {
+      mode: "undelegate",
+      amount: BABY(2),
+      validators: [{ address: validator1, amount: BABY(2) }],
+      fees: new BigNumber(5000),
+      useAllAmount: false,
+    } as unknown as Transaction;
+
+    const status = await getTransactionStatus(account, transaction);
+
+    expect(status.errors.unbonding?.name).toBe("CosmosTooManyUnbondings");
+  });
+
+  it("allows undelegating from a validator with no unbondings when others have reached the maximum", async () => {
+    const account = makeAccount(BABY(10), babylon, {
+      delegations: [
+        {
+          validatorAddress: validator1,
+          amount: BABY(5),
+          pendingRewards: new BigNumber(0),
+          status: "bonded",
+        },
+      ],
+      unbondings: Array.from({ length: COSMOS_MAX_UNBONDINGS }, (_, i) => ({
+        validatorAddress: `validator-${i}`,
+        amount: BABY(1),
+        completionDate: new Date(),
+      })),
     });
     const transaction = {
       mode: "undelegate",

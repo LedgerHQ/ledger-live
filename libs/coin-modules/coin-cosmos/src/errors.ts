@@ -46,6 +46,14 @@ export class ClaimRewardsFeesWarning extends Error {
   }
 }
 
+export class CosmosTooManyUnbondings extends Error {
+  override name = "CosmosTooManyUnbondings";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "CosmosTooManyUnbondings");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class CosmosTooManyRedelegations extends Error {
   override name = "CosmosTooManyRedelegations";
   constructor(message?: string, fields?: Record<string, unknown>) {
