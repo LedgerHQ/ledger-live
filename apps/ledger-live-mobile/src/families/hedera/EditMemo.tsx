@@ -4,7 +4,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import i18next from "~/i18n/instance";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import type { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
@@ -21,15 +21,16 @@ type NavigationProps = BaseComposite<
 function HederaEditMemo({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [memo, setMemo] = useState(route.params.transaction.memo);
+  const [memo, setMemo] = useState(route.params.transaction.memoValue ?? undefined);
   const account = route.params.account;
-  const bridge = useAccountBridge<HederaTransaction>(account);
+  const bridge = useAccountBridge<HederaGenericTransaction>(account);
   const onValidateText = useCallback(() => {
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
-        memo,
+        memoType: "string",
+        memoValue: memo || undefined,
       }),
     });
   }, [navigation, route.params, account, bridge, memo]);
