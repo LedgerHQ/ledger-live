@@ -36,6 +36,7 @@ describe("getAccountShape", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedFindTokenByAddressInCurrency.mockReset();
   });
 
   beforeAll(() => {
@@ -502,6 +503,70 @@ describe("getAccountShape", () => {
         type: "TokenAccount",
       },
     ]);
+  });
+
+  it("finds a leading-zero token by its padded CAL address and attaches its operations", async () => {
+    const CETUS =
+      "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS";
+    const CETUS_SHORT =
+      "0x6864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS";
+    mockedFindTokenByAddressInCurrency.mockImplementation((address: string) =>
+      address === CETUS
+        ? ({
+            contractAddress: CETUS,
+            id: "sui/coin/cetus_token",
+            ticker: "CETUS",
+            parentCurrencyId: "sui",
+            tokenType: "coin",
+          } as unknown as TokenCurrency)
+        : undefined,
+    );
+    mockGetAccountBalances.mockResolvedValue([
+      createAccountBalance(),
+      createAccountBalance({ coinType: CETUS_SHORT, balance: new BigNumber(42) }),
+    ]);
+    mockGetOperations.mockResolvedValue([
+      createFixtureOperation({ id: "sui:cetus-op", extra: { coinType: CETUS_SHORT } }),
+    ]);
+    mockGetStakesRaw.mockResolvedValue([]);
+
+    const shape = await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount: undefined,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    expect(shape.subAccounts).toHaveLength(1);
+    const [cetus] = shape.subAccounts ?? [];
+    expect(cetus.type === "TokenAccount" && cetus.token.ticker).toBe("CETUS");
+    expect(cetus.balance).toEqual(new BigNumber(42));
+    expect(cetus.operations.map(op => op.id)).toEqual(["sui:cetus-op"]);
+  });
+
+  it("does not look up native SUI as a token", async () => {
+    mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
+    mockGetOperations.mockResolvedValue([]);
+    mockGetStakesRaw.mockResolvedValue([]);
+
+    await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount: undefined,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    expect(mockedFindTokenByAddressInCurrency).not.toHaveBeenCalled();
   });
 
   describe("stakes functionality", () => {
