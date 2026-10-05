@@ -21,7 +21,7 @@ import { deriveFromOperationType } from "./operationType";
 import { getStakeTarget, type TransactionLike } from "./transactionShape";
 import { isStakingApp, stakingMethodOf } from "./stakingApps";
 import { outputCurrencyOf, stakingMethodOfContract } from "./stakingContracts";
-import { readAction } from "./resolveAction";
+import { isContractFamily, readAction } from "./resolveAction";
 import { recallSignContext } from "./signContext";
 import { classifyTransactionError, ErrorCategory, toError, unwrapRpcError } from "./errorCategory";
 
@@ -185,9 +185,11 @@ export function buildBroadcastCommonEvent(
  * The called contract, read off the optimistic operation.
  *
  * Gated on the manifest for the same reason the sign stage is: a plain send's recipient is the
- * user's own payee, and must never be reported as a staking contract.
+ * user's own payee, and must never be reported as a staking contract. Gated on EVM too: a
+ * native or TON stake inside an allow-listed app has a recipient, but it is not a contract.
  */
 function contractFromOperation(attribution: Attribution, operation: Operation): string | undefined {
+  if (!isContractFamily(attribution.mainAccount.currency.family)) return undefined;
   if (!isStakingApp(attribution.manifestId)) return undefined;
   const recipient = operation.recipients?.[0];
   return typeof recipient === "string" ? recipient.toLowerCase() : undefined;

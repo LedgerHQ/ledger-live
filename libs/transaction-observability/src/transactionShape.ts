@@ -21,7 +21,34 @@ export type TransactionLike = { family?: string } & Record<string, unknown>;
 export function getRawTransactionType(tx: TransactionLike | undefined | null): string | undefined {
   if (!tx) return undefined;
   if (tx.family === "solana") return (tx.model as { kind?: string } | undefined)?.kind;
+  // TON has no mode: the action is the payload's type. Only the type is read — a comment
+  // payload's text is the user's own.
+  if (tx.family === "ton") return (tx.payload as { type?: string } | undefined)?.type;
   return tx.mode as string | undefined;
+}
+
+// Exact keywords only, mapped to fixed tokens: the comment is user-writable text, so it is
+// matched but never reported.
+const TON_POOL_COMMENTS: Record<string, string> = {
+  // Observed: a P2P stake is a plain transfer to the pool carrying `Deposit`. A P2P withdrawal
+  // is not a comment: it sends the `tonwhales-pool-withdraw` payload.
+  Deposit: "pool-comment-deposit",
+};
+
+/**
+ * The action of a TON nominator-pool transfer, which carries it as a text comment instead of
+ * a payload. Only meaningful inside a known staking app: outside one, a transfer saying
+ * "Deposit" is just a transfer.
+ */
+export function getTonPoolAction(tx: TransactionLike | undefined | null): string | undefined {
+  if (tx?.family !== "ton") return undefined;
+  const comment = tx.comment as { isEncrypted?: boolean; text?: unknown } | undefined;
+  const payload = tx.payload as { type?: string; text?: unknown } | undefined;
+  // Routes that pre-build the message carry the same text as a comment payload instead.
+  const text = payload?.type === "comment" ? payload.text : !comment?.isEncrypted && comment?.text;
+  return typeof text === "string" && Object.hasOwn(TON_POOL_COMMENTS, text)
+    ? TON_POOL_COMMENTS[text]
+    : undefined;
 }
 
 /**

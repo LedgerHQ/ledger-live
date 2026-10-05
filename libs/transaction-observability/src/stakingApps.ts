@@ -12,7 +12,8 @@ export type StakingMethod = "liquid" | "pooling" | "restaking" | "dedicated";
  * `deposit()` on WETH — wrapping ETH — as readily as it is a vault entry. Gating on the app the
  * user opened keeps swaps, bridges and NFT mints out of `earn_transaction_*`.
  *
- * Ethereum is the whole list today: the Earn API returns providers for no other currency.
+ * Most entries are the Earn API's ETH providers. The rest are stakePrograms redirects, which live
+ * in remote config and so have no drift guard: a redirect changing its manifest goes unnoticed.
  *
  * `undefined` means the app stakes more than one way and the manifest cannot say which.
  * `kiln-staking` serves both a pooled and a dedicated product, separated only by a
@@ -22,7 +23,7 @@ export type StakingMethod = "liquid" | "pooling" | "restaking" | "dedicated";
  * active app that is missing here. Stake-program redirects are different: their source of truth
  * is remote config, so hosts inject a synchronous reader for the already-resolved Redux value.
  */
-const STAKING_LIVE_APPS: Record<string, StakingMethod | undefined> = {
+const STAKING_LIVE_APPS = {
   lido: "liquid",
   "stader-eth": "liquid",
   chorusone: "pooling",
@@ -32,9 +33,24 @@ const STAKING_LIVE_APPS: Record<string, StakingMethod | undefined> = {
   p2p: "dedicated",
   // Pooled and dedicated share this manifest — see the docblock above.
   "kiln-staking": undefined,
-};
+  // stakePrograms redirects, not Earn API providers, so the drift guard does not cover them.
+  // One manifest stakes natively, liquidly and through validators across several chains.
+  stakekit: undefined,
+  "p2p-ton-staking": "pooling",
+  // Kiln DeFi: stablecoin vault deposits. A lending yield fits no staking method.
+  "kiln-widget": undefined,
+} satisfies Record<string, StakingMethod | undefined>;
 
-const STAKE_PROGRAM_APPS = new Set(["kiln-widget", "stakekit"]);
+type StakingAppId = keyof typeof STAKING_LIVE_APPS;
+const STAKING_METHODS: Readonly<Record<string, StakingMethod | undefined>> = STAKING_LIVE_APPS;
+
+// Built-in fallback for hosts that send no stakePrograms config. Typed against the allow list,
+// so a stake program that Segment would drop fails to compile rather than going missing.
+const STAKE_PROGRAM_APPS = new Set<string>([
+  "kiln-widget",
+  "stakekit",
+  "p2p-ton-staking",
+] satisfies StakingAppId[]);
 type StakeProgramAppsReader = () => readonly string[];
 let readStakeProgramApps: StakeProgramAppsReader | null = null;
 
@@ -66,7 +82,7 @@ function isConfiguredStakeProgram(manifestId: string): boolean {
 // would open the gate for a manifest of that name and report a function as the method.
 function entry(manifestId: string | undefined): StakingMethod | undefined | null {
   if (manifestId === undefined) return null;
-  return Object.hasOwn(STAKING_LIVE_APPS, manifestId) ? STAKING_LIVE_APPS[manifestId] : null;
+  return Object.hasOwn(STAKING_METHODS, manifestId) ? STAKING_METHODS[manifestId] : null;
 }
 
 /** Whether a manifest's transactions belong in the earn funnel. */
@@ -90,5 +106,5 @@ export function stakingMethodOf(manifestId: string | undefined): StakingMethod |
 
 /** The manifest ids this package knows about — read by the drift guard. */
 export function knownStakingApps(): string[] {
-  return Object.keys(STAKING_LIVE_APPS);
+  return Object.keys(STAKING_METHODS);
 }

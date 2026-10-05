@@ -26,6 +26,16 @@ describe("getRawTransactionType", () => {
     expect(getRawTransactionType(tx({ family: "ethereum", data: "0x095ea7b3" }))).toBeUndefined();
   });
 
+  it("reads TON's payload type, and never a comment's text", () => {
+    expect(
+      getRawTransactionType(tx({ family: "ton", payload: { type: "tonstakers-deposit" } })),
+    ).toBe("tonstakers-deposit");
+    expect(
+      getRawTransactionType(tx({ family: "ton", payload: { type: "comment", text: "d" } })),
+    ).toBe("comment");
+    expect(getRawTransactionType(tx({ family: "ton", comment: { text: "hi" } }))).toBeUndefined();
+  });
+
   it("returns undefined for families with no action discriminator", () => {
     expect(getRawTransactionType(tx({ family: "bitcoin" }))).toBeUndefined();
   });
