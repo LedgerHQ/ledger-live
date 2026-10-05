@@ -793,7 +793,15 @@ function computeOperationValue(
   if (hasFailed) return bnFees;
   if (
     op.asset.type === "native" &&
-    ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(opType)
+    [
+      "OUT",
+      "FEES",
+      "DELEGATE",
+      "UNDELEGATE",
+      "REDELEGATE",
+      "CONTRACT_CALL",
+      "UPDATE_ACCOUNT",
+    ].includes(opType)
   ) {
     return new BigNumber(op.value.toString()).plus(bnFees);
   }
