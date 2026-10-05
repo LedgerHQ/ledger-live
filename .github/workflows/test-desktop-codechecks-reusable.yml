@@ -226,6 +226,8 @@ jobs:
         run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
 
       - name: Restore Jest cache from S3
+        # Scheduled runs on develop start cold and only save, so each saved cache is built fresh.
+        if: ${{ github.event_name != 'schedule' }}
         continue-on-error: true
         uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
