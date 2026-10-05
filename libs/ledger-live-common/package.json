@@ -280,6 +280,7 @@
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
+    "@features/platform-feature-flags-firebase": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",
@@ -478,11 +479,5 @@
     "undici": "catalog:",
     "uuid": "^8.3.2",
     "ws": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   }
 }

@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@testing-library/react-native";
 import {
   useTrackTransactionChecksFlow,
   UseTrackTransactionChecksFlow,
 } from "./useTrackTransactionChecksFlow";
-import { track } from "../segment";
 import { CONNECTION_TYPES } from "./variables";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";

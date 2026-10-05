@@ -1,6 +1,6 @@
+import { getTransactionValidator } from "@ledgerhq/live-common/families/solana/transactions";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
-import { StakeCreateAccountTransaction } from "@ledgerhq/live-common/families/solana/types";
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -36,8 +36,7 @@ function StepConfirmation({
   source,
   account,
 }: StepProps) {
-  const voteAccAddress = (transaction?.model?.uiState as StakeCreateAccountTransaction["uiState"])
-    ?.delegate?.voteAccAddress;
+  const voteAccAddress = transaction ? getTransactionValidator(transaction) : undefined;
   const validators = useValidators(account.currency);
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {

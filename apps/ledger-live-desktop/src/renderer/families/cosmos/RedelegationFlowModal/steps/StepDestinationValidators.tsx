@@ -1,10 +1,10 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import ValidatorField from "../fields/ValidatorField";
-import { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import { type Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+
 export default function StepValidators({
   account,
   parentAccount,
@@ -12,7 +12,7 @@ export default function StepValidators({
   transaction,
   transitionTo,
 }: StepProps) {
-  invariant(account && account.cosmosResources && transaction, "account and transaction required");
+  invariant(account && transaction, "account and transaction required");
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const updateRedelegation = useCallback(
     (newTransaction: Partial<Transaction>) => {
@@ -25,15 +25,7 @@ export default function StepValidators({
     ({ address }: { address: string }) => {
       updateRedelegation({
         ...transaction,
-        validators: [
-          {
-            address,
-            amount:
-              transaction.validators && transaction.validators[0]
-                ? transaction.validators[0].amount || BigNumber(0)
-                : BigNumber(0),
-          },
-        ],
+        dstValAddress: address,
       });
       transitionTo("validators");
     },

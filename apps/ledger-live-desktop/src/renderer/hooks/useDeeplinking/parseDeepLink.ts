@@ -172,6 +172,7 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
         fromCurrency: query.fromCurrency,
         toCurrency: query.toCurrency,
         toAccountId: query.toAccountId,
+        ...(path === "history" && { history: true, swapId: query.swapId }),
       };
       return route;
     }

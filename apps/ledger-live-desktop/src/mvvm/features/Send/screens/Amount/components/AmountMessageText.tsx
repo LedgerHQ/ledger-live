@@ -17,6 +17,7 @@ const messageStyles = cva("text-center body-2", {
 type AmountMessageTextProps = Readonly<{
   message: AmountScreenMessage | null | undefined;
   onLinkPress?: (link: string) => void;
+  testId?: string;
 }>;
 
 function getErrorLinks(error: unknown): string[] {
@@ -27,7 +28,11 @@ function getErrorLinks(error: unknown): string[] {
   return error.links.filter((link): link is string => typeof link === "string");
 }
 
-export function AmountMessageText({ message, onLinkPress }: AmountMessageTextProps) {
+export function AmountMessageText({
+  message,
+  onLinkPress,
+  testId = "send-amount-message",
+}: AmountMessageTextProps) {
   const error = message?.error instanceof Error ? message.error : undefined;
 
   const linkComponents = React.useMemo(() => {
@@ -49,7 +54,7 @@ export function AmountMessageText({ message, onLinkPress }: AmountMessageTextPro
   if (!message) return null;
 
   return (
-    <p className={cn(messageStyles({ type: message.type }))} data-testid="send-amount-message">
+    <p className={cn(messageStyles({ type: message.type }))} data-testid={testId}>
       {error ? (
         <Trans
           i18nKey={`errors.${error.name}.title`}

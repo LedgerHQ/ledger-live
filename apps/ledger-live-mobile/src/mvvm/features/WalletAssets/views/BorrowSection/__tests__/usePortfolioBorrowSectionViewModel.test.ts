@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@tests/test-renderer";
 import { usePortfolioBorrowSectionViewModel } from "../usePortfolioBorrowSectionViewModel";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 
 const mockNavigate = jest.fn();
 

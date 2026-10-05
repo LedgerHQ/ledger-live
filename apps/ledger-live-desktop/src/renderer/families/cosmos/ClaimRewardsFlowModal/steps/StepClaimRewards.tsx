@@ -4,7 +4,6 @@ import { Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { isCompoundRewardSupported } from "@ledgerhq/live-common/families/cosmos/logic";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -16,12 +15,12 @@ import Text from "~/renderer/components/Text";
 import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import type {
-  CosmosLikeTransaction,
-  CosmosMappedDelegation,
-} from "@ledgerhq/coin-cosmos/types/index";
-
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import {
+  type CosmosLikeTransaction,
+  type CosmosMappedDelegation,
+  type Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 
 export default function StepClaimRewards({
   account,
@@ -33,7 +32,7 @@ export default function StepClaimRewards({
   t,
 }: StepProps) {
   const locale = useSelector(localeSelector);
-  invariant(account && account.cosmosResources && transaction, "account and transaction required");
+  invariant(account && transaction, "account and transaction required");
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const unit = useAccountUnit(account);
   const updateClaimRewards = useCallback(
@@ -55,10 +54,9 @@ export default function StepClaimRewards({
     [updateClaimRewards, transaction],
   );
   const compoundSupported = isCompoundRewardSupported(account.currency.id);
-  const selectedValidator = transaction.validators && transaction.validators[0];
   const amount =
-    selectedValidator &&
-    formatCurrencyUnit(unit, selectedValidator.amount, {
+    transaction.valAddress &&
+    formatCurrencyUnit(unit, transaction.amount, {
       disableRounding: true,
       alwaysShowSign: false,
       showCode: true,
@@ -70,12 +68,8 @@ export default function StepClaimRewards({
       const { validatorAddress, pendingRewards } = maybeValue;
       updateClaimRewards({
         ...transaction,
-        validators: [
-          {
-            address: validatorAddress,
-            amount: pendingRewards,
-          },
-        ],
+        valAddress: validatorAddress,
+        amount: pendingRewards,
       });
     },
     [updateClaimRewards, transaction],

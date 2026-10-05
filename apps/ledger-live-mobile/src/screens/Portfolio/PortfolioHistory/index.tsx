@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { memo, useState, useCallback } from "react";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect } from "@react-navigation/native";
@@ -6,7 +7,6 @@ import { useRefreshAccountsOrdering } from "~/actions/general";
 import { accountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { PortfolioHistoryList } from "./PortfolioHistoryV1";
 import { Props } from "./types";
 

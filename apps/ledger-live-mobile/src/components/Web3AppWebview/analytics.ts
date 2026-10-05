@@ -1,4 +1,4 @@
-import { getCurrentTrackingPage } from "~/analytics/screenRefs";
+import { getCurrentTrackingPage } from "@shared/analytics";
 
 export const getTrackingRouteLiveAppSource = (): string => {
   const page = getCurrentTrackingPage({ fallback: "Unknown" });

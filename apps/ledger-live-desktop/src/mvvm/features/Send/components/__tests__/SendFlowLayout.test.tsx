@@ -27,6 +27,9 @@ jest.mock("../../context/RecipientContactSelectionContext", () => ({
 jest.mock("../../context/RecipientScannerContext", () => ({
   RecipientScannerProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
+jest.mock("../../hooks/useSponsoredPhaseNavigator", () => ({
+  useSponsoredPhaseNavigator: jest.fn(),
+}));
 jest.mock("../SendHeader", () => ({ SendHeader: () => null }));
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),

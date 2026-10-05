@@ -5,12 +5,12 @@ import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { getAllEnvs, getEnv } from "@shared/env";
 import { Account } from "@ledgerhq/types-live";
-import KeyHandler from "react-key-handler";
 import { type UserId, userIdSelector } from "@domain/entity-client-identity";
 import logger from "~/renderer/logger";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useTechnicalDateTimeFn } from "../hooks/useDateFormatter";
+import { useCtrlShortcut } from "../hooks/useCtrlShortcut";
 import { saveLogs } from "~/helpers/saveLogs";
 
 type RestProps = ButtonProps & {
@@ -123,21 +123,12 @@ const ExportLogsBtnInner = ({
       setExporting(false);
     }
   }, [exporting, setExporting, exportLogs]);
-  const onKeyHandle = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.ctrlKey) {
-        handleExportLogs();
-      }
-    },
-    [handleExportLogs],
-  );
+  useCtrlShortcut("e", handleExportLogs, Boolean(hookToShortcut) && !customComponent);
   const text = title || t("settings.exportLogs.btn");
   if (customComponent) {
     return customComponent(handleExportLogs);
   }
-  return hookToShortcut ? (
-    <KeyHandler keyValue="e" onKeyHandle={onKeyHandle} />
-  ) : (
+  return hookToShortcut ? null : (
     <Button
       data-testid="export-logs-button"
       small={small}

@@ -1,6 +1,5 @@
 ---
 "live-mobile": minor
-"@features/flow-app-lock": minor
 ---
 
 Track the add-password flow through `@shared/analytics`, per the Password tracking plan.

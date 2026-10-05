@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { ScrollView, View } from "react-native";
 import BigNumber from "bignumber.js";
@@ -17,7 +18,6 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
-import { TrackScreen } from "~/analytics";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Alert from "~/components/Alert";

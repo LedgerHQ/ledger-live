@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ContactCurrencyIdSchema } from "@domain/entity-contact";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AddAddressCurrencySelection } from "@features/flow-contacts-add-address";
-import { track } from "~/analytics/segment";
 import { useTranslation } from "~/context/Locale";
 import { MODULAR_DRAWER_PAGE_NAME } from "LLM/features/ModularDrawer/analytics/modularDrawer.types";
 import {

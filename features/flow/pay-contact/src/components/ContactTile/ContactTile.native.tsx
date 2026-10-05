@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { Tile, TileContent, TileDescription } from "@ledgerhq/lumen-ui-rnative";
-import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
+import { ContactAvatar } from "@features/platform-contacts";
+import { usePayContactDisplayName } from "./usePayContactDisplayName";
 import type { Contact } from "@domain/entity-contact";
 
 type ContactTileProps = Readonly<{
@@ -11,7 +12,7 @@ type ContactTileProps = Readonly<{
 
 export function ContactTile({ contact, index, onPress }: ContactTileProps): React.JSX.Element {
   const handlePress = useCallback(() => onPress?.(contact), [contact, onPress]);
-  const getDisplayName = useContactDisplayName();
+  const getDisplayName = usePayContactDisplayName();
 
   return (
     <Tile

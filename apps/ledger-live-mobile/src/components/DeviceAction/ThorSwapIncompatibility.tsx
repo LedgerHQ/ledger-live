@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React from "react";
 import { ScrollView, Linking } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -7,7 +9,6 @@ import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDevic
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
-import { track, TrackScreen } from "~/analytics";
 import Animation from "../Animation";
 import Button from "../Button";
 

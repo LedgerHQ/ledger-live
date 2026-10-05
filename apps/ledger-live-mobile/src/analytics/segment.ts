@@ -16,14 +16,13 @@ import snakeCase from "lodash/snakeCase";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { FeatureId, Features } from "@shared/feature-flags";
 import {
-  flush as sharedFlush,
+  flush,
   publishAnalyticsEvent,
   setAnalytics,
   setEnabledFn,
   setExtraPropsFn,
   setMandatoryExtraPropsFn,
   track as sharedTrack,
-  trackPage as sharedTrackPage,
 } from "@shared/analytics";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
@@ -38,6 +37,7 @@ import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBui
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import { selectContacts } from "@domain/entity-contact";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
+import { getContentAbTestTracking } from "@features/platform-content-ab-tests";
 import { getAppLockAttributes } from "./getAppLockAttributes";
 import { getPayAttributes } from "./getPayAttributes";
 import {
@@ -257,7 +257,8 @@ const getMandatoryProperties = (store: AppStore) => {
   const analyticsInfo = analyticsConsentInfoSelector(state);
   const analyticsConsentOnboardingAttributes = getAnalyticsConsentOnboardingAttributes();
   const notificationsOptInAttributes = getNotificationsOptInAttributes();
-
+  const language = languageSelector(state);
+  const abTests = getContentAbTestTracking(language);
   return {
     ...(userIdStr ? { userId: userIdStr, braze_external_id: userIdStr } : {}),
     devModeEnabled,
@@ -266,6 +267,7 @@ const getMandatoryProperties = (store: AppStore) => {
     hasSeenAnalyticsOptInPrompt,
     readOnlyMode,
     analyticsInfo,
+    ab_tests: abTests,
     ...analyticsConsentOnboardingAttributes,
     ...notificationsOptInAttributes,
   };
@@ -652,7 +654,7 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     }
   }
 
-  await track("Start", { isDeeplinkSession });
+  await sharedTrack("Start", { isDeeplinkSession });
 
   return segmentClient;
 };
@@ -697,9 +699,6 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
   }
 };
 
-export type { LoggableEvent } from "@shared/analytics";
-export { analyticsEvents$ as trackSubject } from "@shared/analytics";
-
 const wrapSegmentClientFlush = (client: SegmentClient) => {
   const originalFlush = client.flush.bind(client);
   client.flush = async () => {
@@ -733,22 +732,6 @@ export function getIsTracking(
   return { enabled: true };
 }
 
-export const track = async (
-  event: EventType,
-  eventProperties?: Error | Record<string, unknown> | null,
-  mandatory?: boolean | null,
-) => {
-  if (!storeInstance) {
-    publishAnalyticsEvent({
-      eventName: event,
-      eventProperties:
-        eventProperties instanceof Error ? undefined : (eventProperties ?? undefined),
-      deliveryStatus: "skipped_no_store",
-    });
-    return;
-  }
-  await sharedTrack(event, eventProperties, { mandatory: !!mandatory });
-};
 export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   const routeName = getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
   return snakeCase(routeName);
@@ -759,77 +742,12 @@ export const trackWithRoute = (
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
-  const newProperties = properties
-    ? { page: getPageNameFromRoute(route), ...properties }
-    : { page: getPageNameFromRoute(route) };
-  track(event, newProperties, mandatory);
+  const page = getPageNameFromRoute(route);
+  const newProperties = properties ? { page, ...properties } : { page };
+  sharedTrack(event, newProperties, { mandatory: !!mandatory });
 };
-
-export const flush = sharedFlush;
 
 export const usePageNameFromRoute = () => {
   const route = useRoute();
   return getPageNameFromRoute(route);
-};
-
-/**
- * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
- * Extra logic to update the route names used in "screen" and "source"
- * properties of further events can be optionally enabled with the parameters
- * `updateRoutes` and `refreshSource`.
- */
-export const screen = async (
-  /**
-   * First part of the event name string
-   */
-  category?: string,
-  /**
-   * Second part of the event name string, will be concatenated to `category`
-   * after a whitespace if defined.
-   */
-  name?: string | null,
-  /**
-   * Event properties
-   */
-  properties?: Record<string, unknown> | null | undefined,
-  /**
-   * Should this function call update the previous & current route names.
-   * Previous and current route names are used to track:
-   * - the `screen` property in non-screen events (for instance `button_clicked` events)
-   * - the `source` property in further screen events
-   */
-  updateRoutes?: boolean,
-  /**
-   * Should this function call update the current route name.
-   * If true, it means that the full screen name (`category` + " " + `name`) will
-   * be used as a "source" property for further screen events.
-   * NB: the previous parameter `updateRoutes` must be true for this to have
-   * any effect.
-   */
-  refreshSource?: boolean,
-  /**
-   * When true, event will not be emitted if it's a duplicate (if the last
-   * screen event emitted was the same screen event).
-   * This is practical in case a TrackScreen component gets remounted.
-   */
-  avoidDuplicates?: boolean,
-  /**
-   * When true, we force the tracking for this event.
-   */
-  mandatory?: boolean,
-) => {
-  const fullScreenName = (category || "") + (category && name ? " " : "") + (name || "");
-  const eventName = `Page ${fullScreenName}`;
-  if (!storeInstance) {
-    publishAnalyticsEvent({
-      eventName,
-      eventProperties: properties ?? undefined,
-      deliveryStatus: "skipped_no_store",
-    });
-    return;
-  }
-  await sharedTrackPage(
-    { category, name, props: properties },
-    { updateRoutes, refreshSource, avoidDuplicates, mandatory },
-  );
 };

@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import BigNumber from "bignumber.js";
 import { of, EMPTY } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
@@ -7,7 +8,6 @@ import { renderHook, waitFor } from "@tests/test-renderer";
 import { act } from "@testing-library/react-native";
 import { setupScanDeviceTests } from "./shared";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";
-import { track } from "~/analytics";
 
 const mockOnImportAccounts = jest.fn();
 const mockOnScanDeviceAccountsBack = jest.fn();
@@ -21,10 +21,6 @@ jest.mock("LLM/features/Accounts/utils/customAddAccountFlow", () => ({
     // view key is granted, so it needs its own already-imported check.
     isAlreadyImportedAccount: sameAccountIdentity,
   })),
-}));
-
-jest.mock("~/analytics", () => ({
-  track: jest.fn(),
 }));
 
 const mockTrack = jest.mocked(track);

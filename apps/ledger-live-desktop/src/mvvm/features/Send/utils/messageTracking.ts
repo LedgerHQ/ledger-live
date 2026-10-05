@@ -1,8 +1,11 @@
-import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { AddressValidationError } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { SendFlowTrackedMessage } from "./tracking";
 
-type ErrorRecord = TransactionStatus["errors"] | TransactionStatus["warnings"];
+type ErrorRecord = Record<string, Error | undefined>;
+type StatusMessages = Readonly<{
+  errors?: ErrorRecord;
+  warnings?: ErrorRecord;
+}>;
 
 function isNamedError(value: unknown): value is Error {
   return value instanceof Error || (typeof value === "object" && value !== null && "name" in value);
@@ -21,11 +24,7 @@ export function getMessageIds(
     .map(([key, error]) => getStableMessageId(error, `${messageType}:${key}`));
 }
 
-function getStatusMessageId(
-  status: Pick<TransactionStatus, "errors" | "warnings">,
-  error: Error,
-  fallbackId: string,
-): string {
+function getStatusMessageId(status: StatusMessages, error: Error, fallbackId: string): string {
   const errorEntry = Object.entries(status.errors ?? {}).find(([, value]) => value === error);
   if (errorEntry) return getStableMessageId(error, `error:${errorEntry[0]}`);
 
@@ -36,7 +35,7 @@ function getStatusMessageId(
 }
 
 export function getSuppressedMessageIds(
-  status: Pick<TransactionStatus, "errors" | "warnings">,
+  status: StatusMessages,
   primaryMessageId: string,
   additionalIds: readonly string[] = [],
 ): string[] {
@@ -50,7 +49,7 @@ export function getSuppressedMessageIds(
 }
 
 export function getActiveWarningIds(
-  status: Pick<TransactionStatus, "warnings">,
+  status: Readonly<{ warnings?: ErrorRecord }>,
 ): readonly string[] {
   return getMessageIds(status.warnings, "warning");
 }
@@ -69,7 +68,7 @@ export function getAddressValidationMessageId(error: AddressValidationError): st
 export function createTrackedMessage(
   error: Error,
   messageType: SendFlowTrackedMessage["messageType"],
-  status: Pick<TransactionStatus, "errors" | "warnings">,
+  status: StatusMessages,
   additionalSuppressedIds: readonly string[] = [],
   fallbackId = "error:unknown",
 ): SendFlowTrackedMessage {

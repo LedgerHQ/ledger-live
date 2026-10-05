@@ -7,8 +7,13 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
 import { act, renderHook } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID } from "../../../constants/depositFunding";
 import { usePerpsDepositViewModel } from "../usePerpsDepositViewModel";
+import {
+  beginDepositRequest,
+  cancelDepositRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 const mockOpenDrawer = jest.fn();
 jest.mock("LLM/features/ModularDrawer", () => ({
@@ -125,6 +130,8 @@ describe("usePerpsDepositViewModel", () => {
       isUnavailable: false,
     });
   });
+
+  afterEach(() => cancelDepositRequest());
 
   it("starts with an empty amount and no funding account", () => {
     const { props } = createProps();
@@ -486,6 +493,18 @@ describe("usePerpsDepositViewModel", () => {
       expect(result.current.reviewParams).toEqual(reviewed);
     });
 
+    it("returns to the form after a shortfall, keeping the review closed and the draft", () => {
+      const { result } = renderReviewedDeposit();
+      const reviewed = result.current.reviewParams;
+
+      act(() => result.current.handOverToDevice());
+      act(() => result.current.returnToForm());
+
+      expect(result.current.isSignOpen).toBe(false);
+      expect(result.current.isReviewOpen).toBe(false);
+      expect(result.current.reviewParams).toEqual(reviewed);
+    });
+
     it("keeps the device after a decline, so handing over again skips the device list", () => {
       const { result } = renderReviewedDeposit();
 
@@ -519,6 +538,29 @@ describe("usePerpsDepositViewModel", () => {
         swapId: "swap-1",
         provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
       });
+    });
+
+    it("keeps the live app's deposit request open when signing is declined", async () => {
+      const request = beginDepositRequest();
+      const settled = jest.fn();
+      request.then(settled, settled);
+      const { result } = renderReviewedDeposit();
+
+      act(() => result.current.handOverToDevice());
+      act(() => result.current.returnToReview());
+      await act(async () => {});
+
+      expect(settled).not.toHaveBeenCalled();
+    });
+
+    it("abandons the live app's deposit request when the screen is left", async () => {
+      const request = beginDepositRequest();
+      const { props } = createProps();
+      const { unmount } = renderViewModel(props);
+
+      unmount();
+
+      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
     });
 
     it("still shows the receipt when the provider issued no swap id", () => {

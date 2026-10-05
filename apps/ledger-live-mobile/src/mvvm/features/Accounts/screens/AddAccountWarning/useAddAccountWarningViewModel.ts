@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
@@ -5,7 +6,6 @@ import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/core";
 import { useCallback } from "react";
 import { AddAccountContexts } from "../AddAccount/enums";
-import { track } from "~/analytics";
 import useAnalytics from "LLM/hooks/useAnalytics";
 
 export type Props = BaseComposite<

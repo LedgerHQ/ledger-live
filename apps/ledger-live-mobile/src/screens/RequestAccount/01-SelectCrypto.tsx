@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import { StyleSheet, View, FlatList, ListRenderItem } from "react-native";
@@ -5,7 +6,6 @@ import SafeAreaView from "~/components/SafeAreaView";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import KeyboardView from "~/components/KeyboardView";
 import CurrencyRow from "~/components/CurrencyRow";
 import LText from "~/components/LText";

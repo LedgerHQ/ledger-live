@@ -1,8 +1,8 @@
 import { getErrorName as resolveErrorName } from "@ledgerhq/live-common/exchange/error";
+import { track } from "@shared/analytics";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { getCliProcessExitCode } from "../cli-process-exit-error";
 import { parseCommand } from "../shared/parse-command";
-import { track } from "./segment";
 
 const HELP = "Help";
 

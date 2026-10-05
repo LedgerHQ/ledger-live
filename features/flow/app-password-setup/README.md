@@ -1,7 +1,7 @@
 # @features/flow-app-password-setup
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Split out of `@features/flow-app-lock` in [LIVE-38257](https://ledgerhq.atlassian.net/browse/LIVE-38257); API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 The app password setup journey for Ledger Wallet Mobile: choosing a password, then confirming it.
 Each step is a ViewModel → View pair; the containers live in the app, which stores the verifier and

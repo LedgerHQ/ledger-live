@@ -97,6 +97,21 @@ describe("send flow message tracking", () => {
     expect(getActiveWarningIds(status)).toEqual(["warning:feeTooHigh"]);
   });
 
+  it("ignores undefined optional bridge error entries", () => {
+    expect(
+      getSuppressedMessageIds(
+        {
+          errors: {
+            recipient: namedError("InvalidAddress"),
+            sender: undefined,
+          },
+          warnings: {},
+        },
+        "InvalidAddress",
+      ),
+    ).toEqual([]);
+  });
+
   it("maps local recipient validation to stable identifiers", () => {
     expect(getAddressValidationMessageId("incorrect_format")).toBe(
       "newSendFlow.errors.incorrectFormat",

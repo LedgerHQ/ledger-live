@@ -64,6 +64,7 @@ import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFl
 import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { scrubAccountId } from "../helpers/scrubAccountId";
+import { getContentAbTestTracking } from "@features/platform-content-ab-tests";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
@@ -251,7 +252,8 @@ const getMandatoryProperties = (store: ReduxStore) => {
   const devModeEnabled = developerModeSelector(state);
   const readOnlyMode = !hasOnboardedDeviceSelector(state);
   const analyticsInfo = analyticsConsentInfoSelector(state);
-
+  const language = languageSelector(state);
+  const abTests = getContentAbTestTracking(language);
   return {
     devModeEnabled,
     optInAnalytics: analyticsEnabled,
@@ -259,6 +261,7 @@ const getMandatoryProperties = (store: ReduxStore) => {
     hasSeenAnalyticsOptInPrompt,
     readOnlyMode,
     analyticsInfo,
+    ab_tests: abTests,
   };
 };
 

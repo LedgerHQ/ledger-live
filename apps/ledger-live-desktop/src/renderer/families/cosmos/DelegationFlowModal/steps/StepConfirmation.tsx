@@ -34,7 +34,7 @@ function StepConfirmation({
   source,
   account,
 }: StepProps) {
-  const voteAccAddress = transaction?.validators[0]?.address;
+  const voteAccAddress = transaction?.valAddress;
   const currencyId = account.currency.id;
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId);
 
@@ -103,7 +103,7 @@ export function StepConfirmationFooter({
   transaction,
 }: StepProps) {
   const concernedOperation =
-    transaction?.validators.length === 1 && optimisticOperation
+    !!transaction?.valAddress && optimisticOperation
       ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
         ? optimisticOperation.subOperations[0]
         : optimisticOperation

@@ -130,6 +130,8 @@
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
+    "@features/platform-feature-flags-firebase": "workspace:^",
+    "@features/platform-market-countervalues": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
     "@features/platform-style": "workspace:^",
     "@features/platform-verify-address-intent": "workspace:^",
@@ -155,10 +157,10 @@
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/domain-service": "catalog:",
     "@ledgerhq/ethereum-provider": "workspace:^",
-    "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:^",
+    "@ledgerhq/hw-ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/hw-transport-http": "workspace:^",
-    "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
+    "@ledgerhq/ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
@@ -210,7 +212,6 @@
     "@tippyjs/react": "4.2.6",
     "@trust/keyto": "1.0.1",
     "@types/qrcode": "1.5.5",
-    "@types/react-key-handler": "1.2.4",
     "@types/semver": "catalog:",
     "@xstate/react": "catalog:",
     "allure-commandline": "2.28.0",
@@ -242,7 +243,6 @@
     "react-dom": "catalog:",
     "react-easy-crop": "4.7.5",
     "react-i18next": "catalog:",
-    "react-key-handler": "1.2.0-beta.3",
     "react-lottie": "1.2.10",
     "react-markdown": "4.3.1",
     "react-motion": "0.5.2",
@@ -344,11 +344,5 @@
     "ts-node": "10.9.2",
     "typescript": "catalog:",
     "yargs": "17.7.2"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   }
 }

@@ -1,10 +1,10 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import MarketBanner from "LLM/features/MarketBanner";
 import { ScreenName } from "~/const";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
-import TrackScreen from "~/analytics/TrackScreen";
 import { WalletAssetsView } from "LLM/features/WalletAssets";
 
 type PortfolioNoAccountsContentProps = {

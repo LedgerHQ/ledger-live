@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -5,7 +6,6 @@ import { useTheme } from "styled-components/native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import { track } from "~/analytics";
 import type { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
 import ScanDeviceAccounts from "LLM/features/Accounts/screens/ScanDeviceAccounts";
 import { AccountsListNavigator } from "./screens/AccountsList/types";

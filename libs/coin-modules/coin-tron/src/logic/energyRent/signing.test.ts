@@ -1,8 +1,11 @@
+import BigNumber from "bignumber.js";
 import { combine } from "../combine";
+import { TronifyApiError } from "../../types/errors";
 import {
   buildSignedEnergyRentTransaction,
   getEnergyRentSignaturePayload,
-  nativeRentAmount,
+  rentPayment,
+  reservationDedupKey,
 } from "./signing";
 import type { EnergyRentOrder, EnergyRentUnsignedTransaction } from "./types";
 
@@ -34,26 +37,56 @@ describe("buildSignedEnergyRentTransaction", () => {
   });
 });
 
-describe("nativeRentAmount", () => {
-  it("converts the TRX pay amount to smallest-unit sun", () => {
-    const order: EnergyRentOrder = {
-      orderId: "o1",
-      transaction: unsigned,
-      payCoinCode: "TRX",
-      payCoinAmt: "3.124527",
-    };
+describe("reservationDedupKey", () => {
+  it.each([["a1b2c3d4e5f6"], ["a".repeat(63) + "b"]])(
+    "is finite, positive and non-integer for %s",
+    txId => {
+      const key = new BigNumber(reservationDedupKey(txId));
+      expect(key.isFinite()).toBe(true);
+      expect(key.isGreaterThan(0)).toBe(true);
+      expect(key.isInteger()).toBe(false);
+    },
+  );
 
-    expect(nativeRentAmount(order)).toBe(3_124_527n);
+  it("is deterministic per tx id and distinct across ids", () => {
+    expect(reservationDedupKey("a1b2c3d4e5f6")).toBe(reservationDedupKey("a1b2c3d4e5f6"));
+    expect(reservationDedupKey("a1b2c3d4e5f6")).not.toBe(reservationDedupKey("f6e5d4c3b2a1"));
+  });
+});
+
+describe("rentPayment", () => {
+  const orderPaying = (payCoinAmt: string, payCoinCode = "USDT"): EnergyRentOrder => ({
+    orderId: "o1",
+    transaction: unsigned,
+    payCoinCode,
+    payCoinAmt,
   });
 
-  it("rounds up a sub-sun pay amount so the reservation never under-locks", () => {
-    const order: EnergyRentOrder = {
-      orderId: "o1",
-      transaction: unsigned,
-      payCoinCode: "TRX",
-      payCoinAmt: "3.1245271",
-    };
+  it("reserves the USDT rent in base units against the USDT asset", () => {
+    expect(rentPayment(orderPaying("3.124527"))).toEqual({
+      asset: {
+        type: "trc20",
+        assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        name: "Tether USD",
+        unit: { name: "USDT", code: "USDT", magnitude: 6 },
+      },
+      amount: 3_124_527n,
+    });
+  });
 
-    expect(nativeRentAmount(order)).toBe(3_124_528n);
+  it("rounds up a sub-unit amount so the reservation never under-locks", () => {
+    expect(rentPayment(orderPaying("3.1245271")).amount).toBe(3_124_528n);
+  });
+
+  it("accepts a lower-case usdt code", () => {
+    expect(rentPayment(orderPaying("1", "usdt")).amount).toBe(1_000_000n);
+  });
+
+  it.each([
+    ["a TRX-priced order", orderPaying("3.2", "TRX")],
+    ["a zero amount", orderPaying("0")],
+    ["a non-numeric amount", orderPaying("abc")],
+  ])("throws on %s", (_label, order) => {
+    expect(() => rentPayment(order)).toThrow(TronifyApiError);
   });
 });

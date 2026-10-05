@@ -3,6 +3,14 @@ import { intentToMessageParams } from "@ledgerhq/coin-cosmos/logic/transaction/i
 import { transactionToIntent } from "../../generic-coin-framework/utils";
 import type { GenericTransaction } from "../../generic-coin-framework/types";
 import { applyMemoToTransaction, buildRecipientTransactionPatch, cosmosMemoPatch } from "./memo";
+import { TEXT_MEMO_TYPE } from "../../../families/solana/transactions";
+
+it("solana: the inlined memo type is the one the family declares", () => {
+  expect(applyMemoToTransaction("solana", "x")).toEqual({
+    memoType: TEXT_MEMO_TYPE,
+    memoValue: "x",
+  });
+});
 
 describe("applyMemoToTransaction", () => {
   describe("empty value is treated as cleared (no memo/tag)", () => {
@@ -20,7 +28,8 @@ describe("applyMemoToTransaction", () => {
 
     it("solana: empty string clears the memo", () => {
       expect(applyMemoToTransaction("solana", "")).toEqual({
-        model: { uiState: { memo: undefined } },
+        memoType: "TEXT",
+        memoValue: "",
       });
     });
 
@@ -89,15 +98,13 @@ describe("buildRecipientTransactionPatch", () => {
   it("applies memo through the family memo registry", () => {
     expect(
       buildRecipientTransactionPatch(
-        { family: "solana", model: { kind: "transfer", uiState: {} } },
+        { family: "solana" },
         { address: "solana-address", memo: { value: "solana memo" } },
       ),
     ).toEqual({
       recipient: "solana-address",
-      model: {
-        kind: "transfer",
-        uiState: { memo: "solana memo" },
-      },
+      memoType: "TEXT",
+      memoValue: "solana memo",
     });
   });
 

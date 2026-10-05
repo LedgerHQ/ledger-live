@@ -37,7 +37,6 @@ function renderValidatorField(currencyId: string) {
       t={jest.fn() as unknown as TFunction}
       account={genAccount(`${currencyId}-test`, { currency })}
       status={{ errors: {}, warnings: {} } as unknown as TransactionStatus}
-      delegations={[]}
       onChangeValidator={onChangeValidator}
       chosenVoteAccAddr=""
     />,

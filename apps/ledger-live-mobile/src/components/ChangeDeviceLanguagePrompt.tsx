@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { Flex, Text, Link, IconsLegacy } from "@ledgerhq/native-ui";
 import React from "react";
 import { ImageSourcePropType, Linking } from "react-native";
@@ -6,7 +7,6 @@ import { Language } from "@ledgerhq/types-live";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/types-devices";
 import { urls } from "~/utils/urls";
 import Illustration from "~/images/illustration/Illustration";
-import { TrackScreen } from "~/analytics";
 import Button from "./wrappedUi/Button";
 
 type Props = {

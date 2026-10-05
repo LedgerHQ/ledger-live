@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import type { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsConsentLogic from "~/hooks/analyticsOptInPrompt/useAnalyticsConsentLogic";
 import { resolveLottieSource } from "LLM/components/Lottie";
@@ -50,7 +50,7 @@ export const useAnalyticsConsentViewModel = () => {
         flow,
         page: ANALYTICS_CONSENT_PAGE,
       },
-      shouldWeTrack,
+      { mandatory: !!shouldWeTrack },
     );
   }, [goToPersonalizedRecommendationsStep, flow, shouldWeTrack]);
 
@@ -63,7 +63,7 @@ export const useAnalyticsConsentViewModel = () => {
         flow,
         page: ANALYTICS_CONSENT_PAGE,
       },
-      true,
+      { mandatory: true },
     );
   }, [handleAcceptAll, flow]);
 
@@ -76,7 +76,7 @@ export const useAnalyticsConsentViewModel = () => {
         flow,
         page: ANALYTICS_CONSENT_PAGE,
       },
-      shouldWeTrack,
+      { mandatory: !!shouldWeTrack },
     );
   }, [handleRefuseAll, flow, shouldWeTrack]);
 

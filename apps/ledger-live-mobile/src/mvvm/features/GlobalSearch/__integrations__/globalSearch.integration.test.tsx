@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { render, screen, act } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { GlobalSearch } from "../screens/GlobalSearch";
 import { PLACEHOLDER_INTERVAL_MS } from "../screens/GlobalSearch/components/AnimatedSearchPlaceholder/useCyclingPlaceholder";

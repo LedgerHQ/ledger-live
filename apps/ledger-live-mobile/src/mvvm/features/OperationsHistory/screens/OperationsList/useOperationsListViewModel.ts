@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useState, useCallback, useEffect, useMemo, type ComponentType } from "react";
 import { useDustFilteringFeature, useFeature } from "@features/platform-feature-flags";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -9,7 +10,6 @@ import type { IconProps } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { addExtraSessionTrackingPair } from "~/actions/general";
 import { setHideSmallValueTokenOperations } from "~/actions/settings";
-import { track } from "~/analytics";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
@@ -64,7 +64,7 @@ export function useOperationsListViewModel(
   const requestedHistoryTab = cardAsset ? HISTORY_TAB_CARD : selectedHistoryTab;
   const payTab = useFeature("lwmPayTab");
   const isPayTabEnabled = !!payTab?.enabled;
-  const showCardHistory = isPayTabEnabled && payTab?.params?.card === true;
+  const showCardHistory = isPayTabEnabled && payTab?.params?.card_native === true;
   // An asset scope does not bypass a disabled Pay tab or a hidden card, and account-scoped routes
   // never reach the Card API.
   const canShowCardHistory = showCardHistory && (Boolean(cardAsset) || !accountIds?.length);

@@ -12,7 +12,6 @@ export class PayTabPage extends AppPage {
   private readonly moreButton: Locator = this.page.getByTestId("more-tile");
   private readonly balanceAmount: Locator = this.page.getByTestId("pay-card-balance-amount");
   private readonly filterPill: Locator = this.page.getByTestId("pay-card-balance-filter-pill");
-  private readonly filterPicker: Locator = this.page.getByTestId("pay-card-balance-filter-picker");
   private readonly filterConfirm: Locator = this.page.getByTestId(
     "pay-card-balance-filter-confirm",
   );
@@ -21,6 +20,12 @@ export class PayTabPage extends AppPage {
   private readonly payTile: Locator = this.page.getByTestId("action-tile-pay");
   private readonly successStep: Locator = this.page.getByTestId("pay-success-step");
   private readonly successClose: Locator = this.page.getByTestId("pay-success-close");
+  private readonly cardContainer: Locator = this.page.getByTestId("pay-card-container");
+  private readonly freezeTile: Locator = this.page.getByTestId("card-details-freeze-tile");
+  private readonly freezeConfirmSheet: Locator = this.page.getByTestId("freeze-confirm-sheet");
+  private readonly freezeConfirm: Locator = this.page.getByTestId("freeze-confirm-action");
+  private readonly frozenVisual: Locator = this.page.getByTestId("card-visual-frozen");
+  private readonly reward: Locator = this.page.getByTestId("card-details-reward");
   private readonly depositOptions: Locator = this.page.getByTestId("pay-card-deposit-options");
   private readonly requestScreen: Locator = this.page.getByTestId("pay-request-receive");
   private readonly requestAddress: Locator = this.page.getByTestId("pay-request-receive-address");
@@ -35,9 +40,6 @@ export class PayTabPage extends AppPage {
     "pay-bank-transfer-intro-dialog",
   );
   private readonly closeButton: Locator = this.page.getByRole("button", { name: "Close" });
-  private readonly contactAddressPicker: Locator = this.page.getByTestId(
-    "pay-contact-address-picker",
-  );
   private filterOption(rowKey: string) {
     return this.page.getByTestId(`pay-card-balance-filter-option-${rowKey}`);
   }
@@ -81,7 +83,6 @@ export class PayTabPage extends AppPage {
   @step("Filter the balance on $0")
   async filterBalance(rowKey: string) {
     await this.filterPill.click();
-    await expect(this.filterPicker).toBeVisible();
     await this.filterOption(rowKey).click();
     await this.filterConfirm.click();
   }
@@ -180,7 +181,6 @@ export class PayTabPage extends AppPage {
 
   @step("Select contact address $0")
   async selectContactAddress(addressId: string) {
-    await expect(this.contactAddressPicker).toBeVisible();
     await this.contactAddressRow(addressId).click();
   }
 
@@ -195,6 +195,42 @@ export class PayTabPage extends AppPage {
   async closePaySuccess() {
     await this.successClose.click();
     await expect(this.successStep).toBeHidden();
+  }
+
+  @step("Expect the card panel")
+  async expectCardPanel() {
+    await expect(this.cardContainer).toBeVisible();
+  }
+
+  @step("Expect the cashback row")
+  async expectCashbackRow() {
+    await expect(this.reward).toBeVisible();
+  }
+
+  @step("Expect the freeze tile to read $0")
+  async expectFreezeTile(label: string) {
+    await expect(this.freezeTile).toHaveText(label);
+  }
+
+  @step("Open freeze confirmation")
+  async openFreezeConfirmation() {
+    await this.freezeTile.click();
+  }
+
+  @step("Confirm freeze or unfreeze")
+  async confirmFreeze() {
+    await this.freezeConfirm.click();
+    await expect(this.freezeConfirmSheet).toBeHidden();
+  }
+
+  @step("Expect the frozen card")
+  async expectCardFrozen() {
+    await expect(this.frozenVisual).toBeVisible();
+  }
+
+  @step("Expect the card not to be frozen")
+  async expectCardNotFrozen() {
+    await expect(this.frozenVisual).toBeHidden();
   }
 
   @step("Close the request dialog")

@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { Track } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
@@ -5,8 +7,7 @@ import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setPersonalizedRecommendations } from "~/actions/settings";
 import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
-import Track from "~/analytics/Track";
-import { track, updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics";
 
 const PersonalizedRecommendationsRow = () => {
   const { t } = useTranslation();
@@ -26,7 +27,7 @@ const PersonalizedRecommendationsRow = () => {
           toggle: "Recommendations",
           page: "Page Settings General",
         },
-        true,
+        { mandatory: true },
       );
     },
     [dispatch],

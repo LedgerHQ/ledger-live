@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type {
   ICPAccount,
@@ -8,7 +9,6 @@ import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { TrackScreen } from "~/analytics";
 import BulletList, { BulletGreenCheck } from "~/components/BulletList";
 import LText from "~/components/LText";
 import NavigationScrollView from "~/components/NavigationScrollView";

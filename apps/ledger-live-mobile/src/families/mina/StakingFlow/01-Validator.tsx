@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { MinaAccount, ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
 import { Text } from "@ledgerhq/native-ui";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
@@ -7,7 +8,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "~/context/Locale";
 import { FlatList, type ListRenderItemInfo, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TrackScreen } from "~/analytics";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";

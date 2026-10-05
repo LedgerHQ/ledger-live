@@ -7,6 +7,7 @@ import { getEnv } from "@shared/env";
 import { TransactionStatus } from "@ledgerhq/live-e2e-shared/enum/TransactionStatus";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import invariant from "invariant";
+import { FF_DISABLE_NEW_SEND_FLOW } from "@e2e/utils/featureFlagUtils";
 
 const BST_ADD_SUBACCOUNT_PARENT_CURRENCIES = new Set(["algorand", "sui"]);
 
@@ -14,6 +15,7 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
   await app.init({
     userdata: "skip-onboarding",
     speculosApp: transaction.accountToDebit.currency.speculosApp,
+    featureFlags: FF_DISABLE_NEW_SEND_FLOW,
     cliCommands: [
       liveDataCommand(transaction.accountToDebit),
       ...(setAccountToCredit
@@ -141,6 +143,7 @@ export function runAddSubAccountTest(testConfig: {
       await app.init({
         userdata: "skip-onboarding",
         speculosApp: asset.currency.speculosApp,
+        featureFlags: FF_DISABLE_NEW_SEND_FLOW,
       });
       await app.mainNavigation.waitForWallet40Ready();
     });
