@@ -1,5 +1,5 @@
-import { app, Menu, MenuItemConstructorOptions, OpenDevToolsOptions } from "electron";
-import { getMainWindow } from "./window-lifecycle";
+import { app, Menu, MenuItemConstructorOptions } from "electron";
+import { getMainWindow, isDevToolsMode } from "./window-lifecycle";
 const { DEV_TOOLS, DEV_TOOLS_MODE } = process.env;
 
 const template: MenuItemConstructorOptions[] = [
@@ -33,20 +33,8 @@ const template: MenuItemConstructorOptions[] = [
             {
               label: "Main Window Dev Tools",
               click() {
-                const mainWindow = getMainWindow();
-                let mode: OpenDevToolsOptions["mode"] = "bottom";
-                if (
-                  DEV_TOOLS_MODE &&
-                  (DEV_TOOLS_MODE === "detach" ||
-                    DEV_TOOLS_MODE === "right" ||
-                    DEV_TOOLS_MODE === "left" ||
-                    DEV_TOOLS_MODE === "bottom" ||
-                    DEV_TOOLS_MODE === "undocked")
-                ) {
-                  mode = DEV_TOOLS_MODE;
-                }
-                mainWindow?.webContents.openDevTools({
-                  mode,
+                getMainWindow()?.webContents.openDevTools({
+                  mode: isDevToolsMode(DEV_TOOLS_MODE) ? DEV_TOOLS_MODE : "bottom",
                 });
               },
             },
