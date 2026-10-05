@@ -52,14 +52,22 @@ export function formatInvalidAgentIntentProfilesWarning(
   );
 }
 
-export type AgentIntentProfileStatus = "enrolled" | "pending" | "expired";
+export type AgentIntentProfileStatus = "enrolled" | "recovering" | "pending" | "expired";
 
 /** Structural rather than importing `AgentIntentProfileMeta` from `session-store.ts`, to avoid a
- * circular import (session-store.ts imports `PROFILE_ID_RE` from this module). */
+ * circular import (session-store.ts imports `PROFILE_ID_RE` from this module). An expired recovery
+ * marker (left by a killed `recover`) reads as plain "enrolled". */
 export function agentIntentProfileStatus(
-  profile: { trustchainId?: string; enrollmentExpiresAt: string },
+  profile: {
+    trustchainId?: string;
+    enrollmentExpiresAt: string;
+    pendingRecovery?: { expiresAt: string };
+  },
   now: Date = new Date(),
 ): AgentIntentProfileStatus {
-  if (profile.trustchainId) return "enrolled";
+  if (profile.trustchainId) {
+    const recovery = profile.pendingRecovery;
+    return recovery && new Date(recovery.expiresAt) >= now ? "recovering" : "enrolled";
+  }
   return new Date(profile.enrollmentExpiresAt) < now ? "expired" : "pending";
 }

@@ -802,6 +802,29 @@ describe("HumanCommandOutput", () => {
       expect(out).toContain("tc-1");
       expect(out).toContain("staging");
     });
+
+    it("agentIntentRecoveryPending prints the URL, fingerprint and the keep-running hint", () => {
+      createCommandOutput("human", ctx).agentIntentRecoveryPending({
+        profileId: "test-agent",
+        recoveryUrl: "https://example.com/agents/new?recovery=true",
+        fingerprint: "Ez4f ubY2 TD8k Ve",
+        expiresAt: "2026-09-22T11:28:46.999Z",
+      });
+      const out = writes.join("");
+      expect(out).toContain("https://example.com/agents/new?recovery=true");
+      expect(out).toContain("Ez4f ubY2 TD8k Ve");
+      expect(out).toContain("keep this process running");
+    });
+
+    it("agentIntentRecovered confirms the profile and trustchain id", () => {
+      createCommandOutput("human", ctx).agentIntentRecovered({
+        profileId: "test-agent",
+        trustchainId: "tc-1",
+      });
+      const out = writes.join("");
+      expect(out).toContain('"test-agent" recovered');
+      expect(out).toContain("tc-1");
+    });
   });
 });
 

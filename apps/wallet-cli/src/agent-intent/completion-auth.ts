@@ -3,6 +3,7 @@ import {
   createAgentTokenProvider,
   type AgentEnrollmentCompletionV2,
   type AgentIntentEnvironment,
+  type AgentRecoveryCompletion,
   type AgentKeycloakConfig,
   type SoftwareAgentIdentity,
 } from "@ledgerhq/agent-intent-sdk";
@@ -47,8 +48,24 @@ export async function authenticateEnrollmentCompletion(
   await verifyLedgerSyncAccess(input, dependencies.createLedgerSyncSdk);
 }
 
+/**
+ * Proves the agent key is back in the recovered App-18 Trustchain. App-16 access is left untouched
+ * by recovery, so it is not re-verified here.
+ */
+export function authenticateRecoveryCompletion(
+  input: Omit<CompletionAuthInput, "completion"> & { completion: AgentRecoveryCompletion },
+  dependencies: Pick<CompletionAuthDependencies, "createTokenProvider"> = {},
+): Promise<void> {
+  return authenticateApp18Membership(input, dependencies.createTokenProvider);
+}
+
 function authenticateApp18Membership(
-  { completion, identity, environment, keycloak }: CompletionAuthInput,
+  {
+    completion,
+    identity,
+    environment,
+    keycloak,
+  }: Omit<CompletionAuthInput, "completion"> & { completion: { trustchainId: string } },
   createTokenProvider = createAgentTokenProvider,
 ): Promise<void> {
   return createTokenProvider({

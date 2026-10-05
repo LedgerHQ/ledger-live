@@ -509,6 +509,40 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("agentIntentRecoveryPending emits a recovery-pending event, not a final envelope", () => {
+    const out = createCommandOutput("json", { command: "agent-intent recover", network: "all" });
+    out.agentIntentRecoveryPending({
+      profileId: "test-agent",
+      recoveryUrl: "https://example.com/agents/new?recovery=true",
+      fingerprint: "Ez4f ubY2 TD8k Ve",
+      expiresAt: "2026-09-22T11:28:46.999Z",
+    });
+
+    const [line] = parseLines();
+    expect(line).toEqual({
+      type: "recovery-pending",
+      command: "agent-intent recover",
+      network: "all",
+      profileId: "test-agent",
+      recoveryUrl: "https://example.com/agents/new?recovery=true",
+      fingerprint: "Ez4f ubY2 TD8k Ve",
+      expiresAt: "2026-09-22T11:28:46.999Z",
+    });
+  });
+
+  it("agentIntentRecovered emits recovered:true with the trustchain id", () => {
+    const out = createCommandOutput("json", { command: "agent-intent recover", network: "all" });
+    out.agentIntentRecovered({ profileId: "test-agent", trustchainId: "tc-1" });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      profileId: "test-agent",
+      trustchainId: "tc-1",
+      recovered: true,
+    });
+  });
+
   it("agentIntentProfileShow redacts credentials embedded in the Keycloak URL", () => {
     const out = createCommandOutput("json", { command: "agent-intent show", network: "all" });
     out.agentIntentProfileShow({

@@ -233,6 +233,11 @@ export interface CommandOutput {
   agentIntentEnrollmentPending(result: AgentIntentEnrollmentPending): void;
   /** Final `agent-intent enroll` result once the relayed completion is verified and saved. */
   agentIntentEnrolled(result: AgentIntentEnrolled): void;
+  /** First `agent-intent recover` event, before blocking on the relay (json: NDJSON
+   * `recovery-pending` event). Never includes the secret key. */
+  agentIntentRecoveryPending(result: AgentIntentRecoveryPending): void;
+  /** Final `agent-intent recover` result once the relayed completion is verified and saved. */
+  agentIntentRecovered(result: AgentIntentRecovered): void;
 }
 
 export type AgentIntentEnrollmentPending = {
@@ -240,6 +245,18 @@ export type AgentIntentEnrollmentPending = {
   enrollmentUrl: string;
   fingerprint: string;
   expiresAt: string;
+};
+
+export type AgentIntentRecoveryPending = {
+  profileId: string;
+  recoveryUrl: string;
+  fingerprint: string;
+  expiresAt: string;
+};
+
+export type AgentIntentRecovered = {
+  profileId: string;
+  trustchainId: string;
 };
 
 export type AgentIntentEnrolled = {
@@ -761,20 +778,49 @@ class HumanCommandOutput implements CommandOutput {
     fingerprint,
     expiresAt,
   }: AgentIntentEnrollmentPending): void {
-    writeStdout(enrollmentUrl);
+    this._agentIntentLinkPending(
+      enrollmentUrl,
+      fingerprint,
+      "Compare this fingerprint with the one shown when the enrollment link is opened, before " +
+        "approving — this step never touches a Ledger device.",
+      `Profile "${profileId}" saved as pending. Waiting for approval until ${expiresAt} — keep ` +
+        "this process running.",
+    );
+  }
+
+  agentIntentRecoveryPending({
+    profileId,
+    recoveryUrl,
+    fingerprint,
+    expiresAt,
+  }: AgentIntentRecoveryPending): void {
+    this._agentIntentLinkPending(
+      recoveryUrl,
+      fingerprint,
+      "Compare this fingerprint with the one shown when the recovery link is opened, before " +
+        "approving.",
+      `Profile "${profileId}" keeps its existing key and Ledger Sync access while recovering. ` +
+        `Waiting for approval until ${expiresAt} — keep this process running.`,
+    );
+  }
+
+  private _agentIntentLinkPending(
+    url: string,
+    fingerprint: string,
+    compareHint: string,
+    waitingHint: string,
+  ): void {
+    writeStdout(url);
     writeStdout("");
     writeStdout(`Public key fingerprint: ${fingerprint}`);
+    writeStdout(colors.dim(compareHint));
+    writeStdout(colors.dim(waitingHint));
+  }
+
+  agentIntentRecovered({ profileId, trustchainId }: AgentIntentRecovered): void {
     writeStdout(
-      colors.dim(
-        "Compare this fingerprint with the one shown when the enrollment link is opened, before " +
-          "approving — this step never touches a Ledger device.",
-      ),
-    );
-    writeStdout(
-      colors.dim(
-        `Profile "${profileId}" saved as pending. Waiting for approval until ${expiresAt} — keep ` +
-          "this process running.",
-      ),
+      `${colors.green("✔")} Agent Intent profile "${profileId}" recovered. Trustchain ID: ` +
+        `${trustchainId} (existing Ledger Sync access preserved)`,
     );
   }
 
@@ -1167,6 +1213,19 @@ class JsonCommandOutput implements CommandOutput {
 
   agentIntentEnrolled(result: AgentIntentEnrolled): void {
     this._writeNdjson(this._envelope({ ...result, enrolled: true }));
+  }
+
+  agentIntentRecoveryPending(result: AgentIntentRecoveryPending): void {
+    this._writeNdjson({
+      type: "recovery-pending",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...result,
+    });
+  }
+
+  agentIntentRecovered(result: AgentIntentRecovered): void {
+    this._writeNdjson(this._envelope({ ...result, recovered: true }));
   }
 }
 

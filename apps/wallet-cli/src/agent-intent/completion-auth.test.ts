@@ -9,6 +9,7 @@ import {
 import type { JWT, MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import {
   authenticateEnrollmentCompletion,
+  authenticateRecoveryCompletion,
   type CompletionAuthDependencies,
 } from "./completion-auth";
 import { refuseAgentDevice } from "../key-ring/lkrp-sdk";
@@ -185,5 +186,49 @@ describe("refuseAgentDevice", () => {
         throw new Error("job should never run");
       }),
     ).toThrow("Ledger Sync unexpectedly requested a device in software-only agent mode.");
+  });
+});
+
+describe("authenticateRecoveryCompletion", () => {
+  const recovery = {
+    version: 3,
+    recovery: true,
+    agentPubkey: identity.publicKey,
+    previousTrustchainId: "app18-root",
+    requestSignature: "ab".repeat(64),
+    trustchainId: "app18-root",
+  } as const;
+
+  beforeEach(() => {
+    tokenProviderInputs = [];
+    tokenError = undefined;
+    ledgerSyncEnvironments = [];
+    withAuthCalled = false;
+  });
+
+  it("proves App-18 membership of the recovered trustchain without touching App-16", async () => {
+    await authenticateRecoveryCompletion(
+      { completion: recovery, identity, environment: "production" },
+      makeDependencies(),
+    );
+
+    expect(tokenProviderInputs[0]).toMatchObject({
+      identity,
+      trustchainId: "app18-root",
+      keycloak: AGENT_KEYCLOAK_ENVIRONMENTS.production,
+    });
+    expect(ledgerSyncEnvironments).toEqual([]);
+    expect(withAuthCalled).toBe(false);
+  });
+
+  it("fails when no App-18 token can be acquired", async () => {
+    tokenError = new Error("not a member");
+
+    await expect(
+      authenticateRecoveryCompletion(
+        { completion: recovery, identity, environment: "production" },
+        makeDependencies(),
+      ),
+    ).rejects.toThrow("not a member");
   });
 });

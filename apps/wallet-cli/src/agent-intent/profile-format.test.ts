@@ -76,6 +76,32 @@ describe("agentIntentProfileStatus", () => {
       "expired",
     );
   });
+
+  it("is recovering while an enrolled profile has an unexpired recovery marker", () => {
+    expect(
+      agentIntentProfileStatus(
+        {
+          trustchainId: "tc-1",
+          enrollmentExpiresAt: "2020-01-01T00:00:00.000Z",
+          pendingRecovery: { expiresAt: "2026-01-02T00:00:00.000Z" },
+        },
+        now,
+      ),
+    ).toBe("recovering");
+  });
+
+  it("is enrolled again once the recovery marker has expired", () => {
+    expect(
+      agentIntentProfileStatus(
+        {
+          trustchainId: "tc-1",
+          enrollmentExpiresAt: "2020-01-01T00:00:00.000Z",
+          pendingRecovery: { expiresAt: "2025-12-31T00:00:00.000Z" },
+        },
+        now,
+      ),
+    ).toBe("enrolled");
+  });
 });
 
 describe("formatInvalidAgentIntentProfilesWarning", () => {

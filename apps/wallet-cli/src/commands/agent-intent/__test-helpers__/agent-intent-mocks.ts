@@ -29,13 +29,19 @@ const SDK_KEYS = [
   "createAgentEnrollmentRequest",
   "createAgentEnrollmentUrl",
   "createAgentEnrollmentChannelHost",
+  "createAgentRecoveryRequest",
+  "createAgentRecoveryUrl",
 ] as const;
 
-const COMPLETION_AUTH_KEYS = ["authenticateEnrollmentCompletion"] as const;
+const COMPLETION_AUTH_KEYS = [
+  "authenticateEnrollmentCompletion",
+  "authenticateRecoveryCompletion",
+] as const;
 
 const KEYCHAIN_KEYS = [
   "hasAgentIntentSecretKey",
   "saveAgentIntentSecretKey",
+  "loadAgentIntentSecretKey",
   "deleteAgentIntentSecretKey",
 ] as const;
 

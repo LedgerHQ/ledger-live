@@ -318,6 +318,48 @@ describe("ring-field resilience", () => {
     });
   });
 
+  it("round-trips a pending recovery marker and drops it once cleared", async () => {
+    useTmpState();
+    writeFileSync(getSessionPath(), YAML.stringify({ accounts: [] }));
+    const pendingRecovery = {
+      previousTrustchainId: "app18-root",
+      requestSignature: "ab".repeat(64),
+      expiresAt: "2026-01-01T00:30:00.000Z",
+    };
+    const session = await Session.read();
+    session.addAgentIntentProfile(makeAgentIntentProfile({ trustchainId: "app18-root" }));
+    session.updateAgentIntentProfile("trading-bot", { pendingRecovery });
+    session.write();
+
+    const reread = await Session.read();
+    expect(reread.getAgentIntentProfile("trading-bot")?.pendingRecovery).toEqual(pendingRecovery);
+    reread.updateAgentIntentProfile("trading-bot", { pendingRecovery: undefined });
+    reread.write();
+
+    const cleared = await Session.read();
+    expect(cleared.getAgentIntentProfile("trading-bot")).toMatchObject({
+      trustchainId: "app18-root",
+    });
+    expect(cleared.getAgentIntentProfile("trading-bot")?.pendingRecovery).toBeUndefined();
+  });
+
+  it("keeps a profile whose recovery marker is malformed, dropping only the marker", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          makeAgentIntentProfile({ pendingRecovery: { requestSignature: 42 } }),
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.getAgentIntentProfile("trading-bot")).toBeDefined();
+    expect(session.getAgentIntentProfile("trading-bot")?.pendingRecovery).toBeUndefined();
+    expect(session.invalidAgentIntentProfileIds).toEqual([]);
+  });
+
   it("write() carries a malformed agentIntentProfiles entry forward instead of erasing it", async () => {
     useTmpState();
     writeFileSync(

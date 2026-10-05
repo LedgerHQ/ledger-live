@@ -71,6 +71,15 @@ const AgentIntentProfileSchema = z.object({
   publicKey: z.string().regex(/^0[23][0-9a-f]{64}$|^04[0-9a-f]{128}$/i),
   trustchainId: z.string().optional(),
   accountAccess: AgentIntentAccountAccessSchema.optional(),
+  // Set while `agent-intent recover` waits for approval; a bad value is dropped, not fatal.
+  pendingRecovery: z
+    .object({
+      previousTrustchainId: z.string(),
+      requestSignature: z.string(),
+      expiresAt: z.string(),
+    })
+    .optional()
+    .catch(undefined),
   // Signed into the enrollment request and enforced by the frontend — persisted so `list`/`show`
   // can report "expired" instead of leaving a dead link marked `pending` forever.
   enrollmentExpiresAt: z.string(),
