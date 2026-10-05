@@ -260,6 +260,25 @@ describe("getEstimatedFees", () => {
 
     expect(result).toMatchObject({ tinybars: new BigNumber(0) });
     expect(apiClient.getNetworkFees).not.toHaveBeenCalled();
+    expect(apiClient.getAccount).not.toHaveBeenCalled();
+  });
+
+  it("returns zero tinybars early without fetching accounts when recipient is empty", async () => {
+    const result = await estimateFees({
+      configOrCurrencyId: mockedAccount.currency.id,
+      operationType: HEDERA_OPERATION_TYPES.ContractCall,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.Send,
+        sender: senderAddress,
+        recipient: "",
+        amount: BigInt(1000000),
+        asset: { type: "erc20", assetReference: mockedTokenCurrencyERC20.contractAddress },
+      },
+    });
+
+    expect(result).toMatchObject({ tinybars: new BigNumber(0) });
+    expect(apiClient.getAccount).not.toHaveBeenCalled();
   });
 
   it("uses DEFAULT_GAS_PRICE_TINYBARS when ContractCall fee type is absent from network fees", async () => {
