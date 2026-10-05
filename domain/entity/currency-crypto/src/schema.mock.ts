@@ -46,7 +46,6 @@ export function mockEthereumCurrency(overrides?: Partial<CryptoCurrency>): Crypt
         address: "https://etherscan.io/address/$address",
       },
     ],
-    ethereumLikeInfo: { chainId: 1 },
     blockAvgTime: 15,
     tokenTypes: ["erc20"],
     ...overrides,

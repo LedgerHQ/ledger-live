@@ -205,10 +205,28 @@ function PayCard(props: Readonly<PayCardToolProps>) {
             onChange={flags.setPayTabEnabled}
           />
           <ToggleRow
-            label="Card param"
-            description="params.card"
-            checked={flags.cardParam}
-            onChange={flags.setCardParam}
+            label="Native card"
+            description="params.card_native"
+            checked={flags.cardNativeParam}
+            onChange={flags.setCardNativeParam}
+          />
+          <ToggleRow
+            label="Card live app"
+            description="params.card_live_app"
+            checked={flags.cardLiveAppParam}
+            onChange={flags.setCardLiveAppParam}
+          />
+          <ToggleRow
+            label="Card disclaimer"
+            description="params.card_disclaimer"
+            checked={flags.cardDisclaimerParam}
+            onChange={flags.setCardDisclaimerParam}
+          />
+          <ToggleRow
+            label="Legacy top up"
+            description="params.legacyTopUp"
+            checked={flags.legacyTopUpParam}
+            onChange={flags.setLegacyTopUpParam}
           />
           <ToggleRow
             label="Legacy Card"

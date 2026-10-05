@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Button from "~/renderer/components/Button";
 import InfoDisplay from "~/renderer/components/InfoDisplay";
 const Container = styled(Box).attrs(() => ({

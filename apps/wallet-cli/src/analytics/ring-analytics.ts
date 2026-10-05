@@ -1,4 +1,4 @@
-import { track } from "./segment";
+import { track } from "@shared/analytics";
 
 // Ledger Key Ring analytics. Privacy contract: only booleans, enums, and counts are ever emitted —
 // never key/domain names, member names, file paths, trustchain identifiers, salts, or payload bytes.

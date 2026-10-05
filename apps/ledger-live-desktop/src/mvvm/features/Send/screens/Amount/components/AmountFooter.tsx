@@ -1,9 +1,11 @@
 import React from "react";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
-import type { FeeSelectorOption } from "../types";
+import type { FeeSelectorOption, SponsoredFeeDisplay } from "../types";
 import { useSendFlowData } from "../../../context/SendFlowContext";
+import { AmountMessageText } from "./AmountMessageText";
 import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
+import type { SponsoredFeeNudgeProps } from "./Fees/SponsoredFeeNudge";
 
 type AmountFooterProps = Readonly<{
   feesRowLabel: string;
@@ -15,10 +17,13 @@ type AmountFooterProps = Readonly<{
     selectedId: string;
     canOpen: boolean;
   }>;
+  sponsoredNudge: SponsoredFeeNudgeProps;
+  sponsoredFee: SponsoredFeeDisplay | null;
   reviewLabel: string;
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
   reviewLoading: boolean;
+  sponsoredFeeError: string | null;
   onReview: () => void;
   onGetFunds?: () => void;
 }>;
@@ -29,10 +34,13 @@ export function AmountFooter({
   feesRowSecondaryValue,
   feesRowStrategyLabel,
   feeSelector,
+  sponsoredNudge,
+  sponsoredFee,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
   reviewLoading,
+  sponsoredFeeError,
   onReview,
   onGetFunds,
 }: AmountFooterProps) {
@@ -48,6 +56,12 @@ export function AmountFooter({
 
   return (
     <DialogFooter data-testid="send-amount-footer" className="flex flex-col">
+      {sponsoredFeeError ? (
+        <AmountMessageText
+          message={{ type: "error", text: sponsoredFeeError }}
+          testId="send-sponsored-fee-error"
+        />
+      ) : null}
       <div className="border-t border-muted-subtle" />
       <NetworkFeesMenu
         display={{
@@ -57,6 +71,8 @@ export function AmountFooter({
           strategyLabel: feesRowStrategyLabel,
         }}
         feeSelector={feeSelector}
+        sponsoredNudge={sponsoredNudge}
+        sponsoredFee={sponsoredFee}
       />
       <Button
         appearance="base"

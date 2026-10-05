@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback } from "react";
@@ -5,7 +6,6 @@ import { FlatList, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import PoolHead from "../shared/PoolHead";
 import PoolRow from "../shared/PoolRow";

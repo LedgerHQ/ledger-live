@@ -15,8 +15,7 @@
  *  limitations under the License.
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
-import { PublicKey } from "near-api-js/lib/utils";
-import { KeyType } from "near-api-js/lib/utils/key_pair";
+import { KeyType, PublicKey } from "near-api-js";
 import { bip32PathToBytes } from "./utils";
 
 // Based on https://github.com/LedgerHQ/ledger-secure-sdk/blob/master/include/os_io.h#L16

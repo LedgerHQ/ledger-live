@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useRef } from "react";
 import { Linking } from "react-native";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import { COUNTERFEIT_WARNING_BUTTON, COUNTERFEIT_WARNING_PAGE } from "./analytics";
 

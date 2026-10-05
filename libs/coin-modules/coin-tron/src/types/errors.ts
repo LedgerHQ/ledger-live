@@ -203,6 +203,15 @@ export class EnergyRentUnsupportedIntent extends Error {
   }
 }
 
+/** The USDT balance cannot cover the transfer plus the energy rent; raised before any order exists. */
+export class EnergyRentInsufficientBalance extends Error {
+  override name = "EnergyRentInsufficientBalance";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyRentInsufficientBalance");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class InvalidRawDataHex extends Error {
   override name = "InvalidRawDataHex";
   constructor(message?: string, fields?: Record<string, unknown>) {

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { isEnvDefault } from "@shared/env";
 import React from "react";
 import { ScrollView } from "react-native";
@@ -5,7 +6,6 @@ import { useTranslation } from "~/context/Locale";
 import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";
 import { developerFeatures } from "../../../experimental";
-import { TrackScreen } from "~/analytics";
 import FeatureRow from "../Experimental/FeatureRow";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

@@ -14,6 +14,7 @@ const buildViewModel = (
   unit,
   dateFormatted: "2025-06-15",
   timeRemaining: "1h 00m 00s",
+  isExpired: overrides?.proposal?.isExpired ?? false,
   handleAction: jest.fn(),
   ...overrides,
 });
@@ -98,6 +99,15 @@ describe("PendingTransferProposalsDetails View", () => {
       render(<View {...buildViewModel({ proposal })} />);
 
       expect(screen.getByText("Expired")).toBeInTheDocument();
+    });
+
+    it("should display expired status and disable accept once the live countdown expires", () => {
+      const proposal = createProcessedProposal({ isIncoming: true, isExpired: false });
+
+      render(<View {...buildViewModel({ proposal, isExpired: true, timeRemaining: "" })} />);
+
+      expect(screen.getByText("Expired")).toBeInTheDocument();
+      expect(screen.getByText("Accept").closest("button")).toBeDisabled();
     });
 
     it("should display time remaining when not expired", () => {

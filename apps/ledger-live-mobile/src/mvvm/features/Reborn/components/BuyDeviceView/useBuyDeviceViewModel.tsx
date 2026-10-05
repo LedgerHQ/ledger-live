@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { setOnboardingHasDevice } from "~/actions/settings";
-import { track } from "~/analytics";
 import { BuyDeviceNavigatorParamList } from "~/components/RootNavigator/types/BuyDeviceNavigator";
 import {
   BaseNavigationComposite,

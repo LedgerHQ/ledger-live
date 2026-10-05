@@ -10,8 +10,7 @@ import {
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
 import { render, screen, waitFor, act } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
-import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { ScreenName } from "~/const";
 import { track, trackPage } from "@shared/analytics";
 import type { State } from "~/reducers/types";
@@ -27,12 +26,6 @@ const VERIFY_ADDRESS = "Verify address";
 const VERIFY_INTRO = "Verify your address";
 const DIE_LABEL = "Ledger Secure Screen";
 const PAY_DEPOSIT = "Add stablecoin";
-
-jest.mock("@shared/analytics", () => ({
-  ...jest.requireActual("@shared/analytics"),
-  track: jest.fn(),
-  trackPage: jest.fn(),
-}));
 
 jest.mock("@features/flow-pay-card", () => ({
   Card: () => null,

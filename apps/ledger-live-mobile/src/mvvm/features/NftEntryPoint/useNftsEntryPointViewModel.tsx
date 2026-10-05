@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { useFeature } from "@features/platform-feature-flags";
 import { AnalyticsPage, Entry, EntryPointNft } from "./types";
 import { Row } from "./components/Row";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

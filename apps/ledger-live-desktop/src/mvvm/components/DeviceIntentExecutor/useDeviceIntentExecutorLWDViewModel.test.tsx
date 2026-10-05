@@ -7,14 +7,14 @@ import type {
 } from "@features/platform-device-intent";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "~/renderer/analytics/segment";
-import { resetTrackingPages, setTrackingSource } from "~/renderer/analytics/screenRefs";
+import { track, resetTrackingPages, setTrackingSource } from "@shared/analytics";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorLWDViewModel } from "./useDeviceIntentExecutorLWDViewModel";
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 

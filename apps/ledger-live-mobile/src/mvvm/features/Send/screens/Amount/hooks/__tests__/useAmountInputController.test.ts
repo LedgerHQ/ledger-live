@@ -153,6 +153,18 @@ describe("useAmountInputController", () => {
       expect(result.current.maxDecimalLength).toBe(2);
     });
 
+    it("converts with the currency of the account it was given", () => {
+      renderHook(() => useAmountInputController(defaultParams));
+
+      expect(getAccountCurrency).toHaveBeenCalledWith(mockAccount);
+      expect(useSendAmount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          cryptoCurrency: mockCurrency,
+          fiatCurrency: mockCounterValueCurrency,
+        }),
+      );
+    });
+
     it("uses countervalue unit magnitude for maxDecimalLength in fiat mode", () => {
       jest
         .mocked(useSelector)

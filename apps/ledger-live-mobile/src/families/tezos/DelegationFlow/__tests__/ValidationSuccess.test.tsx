@@ -14,8 +14,6 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   useBaker: () => ({ name: "Ledger by Kiln" }),
 }));
 
-jest.mock("~/analytics", () => ({ TrackScreen: () => null, track: jest.fn() }));
-
 jest.mock("~/components/PreventNativeBack", () => () => null);
 
 jest.mock("~/context/Locale", () => {

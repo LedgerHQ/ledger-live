@@ -9,11 +9,12 @@ import {
   mockValidators,
 } from "../../__tests__/testUtils";
 
-jest.mock("~/renderer/analytics/TrackPage", () => {
-  return function MockTrackPage() {
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: function MockTrackPage() {
     return null;
-  };
-});
+  },
+}));
 
 jest.mock("~/renderer/modals/Send/AccountFooter", () => {
   return function MockAccountFooter() {

@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { setTrackingSource, track } from "@shared/analytics";
 import { lastSeenDeviceSelector, hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import useBuyDeviceDialog from "LLD/features/BuyDevice/hooks/useBuyDeviceDialog";
 import { useTranslation } from "react-i18next";

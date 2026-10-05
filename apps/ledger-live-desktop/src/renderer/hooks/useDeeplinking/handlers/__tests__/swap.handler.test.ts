@@ -16,6 +16,25 @@ describe("swap.handler", () => {
   });
 
   describe("swapHandler", () => {
+    it("navigates to swap history with the swapId to open", () => {
+      const context = createMockContext();
+
+      swapHandler(
+        { type: "swap", fromToken: "", toToken: "", history: true, swapId: "abc-123" },
+        context,
+      );
+
+      expect(context.navigate).toHaveBeenCalledWith("/swap/history", { swapId: "abc-123" });
+    });
+
+    it("navigates to swap history without state when no swapId is given", () => {
+      const context = createMockContext();
+
+      swapHandler({ type: "swap", fromToken: "", toToken: "", history: true }, context);
+
+      expect(context.navigate).toHaveBeenCalledWith("/swap/history", undefined);
+    });
+
     it("navigates to swap page with default tokens when fromToken and toToken are different", () => {
       const context = createMockContext();
 

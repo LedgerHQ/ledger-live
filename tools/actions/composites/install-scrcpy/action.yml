@@ -1,0 +1,14 @@
+name: "Install scrcpy"
+description: "Install scrcpy and its server from the official GitHub release"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install scrcpy dependencies
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      with:
+        packages: ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
+
+    - name: Install scrcpy
+      shell: bash
+      run: ${{ github.action_path }}/install-scrcpy.sh

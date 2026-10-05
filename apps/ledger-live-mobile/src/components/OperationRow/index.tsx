@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
@@ -17,7 +18,6 @@ import OperationIcon from "../OperationIcon";
 import { ScreenName } from "~/const";
 import OperationRowDate from "../OperationRowDate";
 import perFamilyOperationDetails from "../../generated/operationDetails";
-import { track } from "~/analytics";
 import { UnionToIntersection } from "~/types/helpers";
 import { BaseNavigation } from "../RootNavigator/types/helpers";
 import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";

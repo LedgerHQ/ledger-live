@@ -36,9 +36,8 @@ jest.mock("./normalizer/networkFeeEstimate", () => ({
 }));
 
 // `live-network` reads `getEnv("LEDGER_CLIENT_VERSION")?.startsWith(...)` and
-// `changes.subscribe(...)` at module load (transitive import via
-// buildFormatContext -> currencies -> live-countervalues -> live-network). We
-// need to satisfy both at module-eval time, so the mock surfaces a no-op
+// `changes.subscribe(...)` at module load, and the modules under test import it
+// transitively. We need to satisfy both at module-eval time, so the mock surfaces a no-op
 // `changes` subject alongside `getEnv`. Per-test `getEnv` overrides happen via
 // the `jest.mocked` hook in the suite body.
 jest.mock("@shared/env", () => ({

@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useMemo, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { Linking, View, StyleSheet } from "react-native";
@@ -21,7 +22,6 @@ import { PAY_TAB_DEEP_LINK_PATH } from "./deeplinks/payTabDeepLink";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
 import { lightTheme, darkTheme, Theme } from "../colors";
-import { track } from "~/analytics";
 import {
   makeSetEarnInfoModalAction,
   makeSetEarnMenuModalAction,
@@ -429,6 +429,14 @@ export const DeeplinksProvider = ({
                           [ScreenName.PerpsTab]: "perps",
                         },
                       },
+                      /**
+                       * ie: "ledgerlive://swap/history?swapId=XXXX" -> will open the swap history with that swap's status drawer
+                       */
+                      [NavigatorName.SwapSubScreens]: {
+                        screens: {
+                          [ScreenName.SwapHistory]: "swap/history",
+                        },
+                      },
                       [NavigatorName.Main]: {
                         initialRouteName: ScreenName.Portfolio,
                         screens: {
@@ -807,6 +815,13 @@ export const DeeplinksProvider = ({
             }
           }
           if (hostname === "swap") {
+            if (pathname === "/history") {
+              const swapId = searchParams.get("swapId");
+              const historyPath = swapId
+                ? `swap/history?swapId=${encodeURIComponent(swapId)}`
+                : "swap/history";
+              return getStateFromPath(historyPath, config);
+            }
             const swapParams = new URLSearchParams();
             const fromPath = searchParams.get("fromPath");
             const fromToken = searchParams.get("fromToken");

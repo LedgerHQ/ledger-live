@@ -6,9 +6,8 @@ import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currenc
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate, historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
 import { setRateLookup as setWalletPnlRateLookup } from "@ledgerhq/wallet-pnl";
-import { historyKey, inferCurrencyAPIID } from "@domain/entity-market-countervalues";
 import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -147,6 +146,11 @@ jest.mock("expo-haptics", () => ({
 
 jest.mock("react-native-launch-arguments", () => ({}));
 
+// Dev-only tooling: its runtime loads ESM-only deps (nanoid) and opens a bridge client
+jest.mock("@rozenite/redux-devtools-plugin", () => ({
+  rozeniteDevToolsEnhancer: () => next => next,
+}));
+
 NativeModules.AppVisibilityModule = {
   isInForeground: () => true,
   addListener: () => {},
@@ -247,9 +251,7 @@ jest.mock("react-native-vision-camera", () => {
 });
 
 jest.mock("~/analytics/segment", () => ({
-  track: jest.fn(),
   setAnalyticsFeatureFlagMethod: jest.fn(),
-  screen: jest.fn(),
   usePageNameFromRoute: jest.fn(() => "portfolio_navigator"),
 }));
 
@@ -258,6 +260,14 @@ jest.mock("@shared/analytics", () => ({
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
+
+jest.mock("@shared/analytics-react", () => {
+  const actual = jest.requireActual("@shared/analytics-react");
+  return {
+    ...actual,
+    TrackScreen: jest.fn(props => actual.TrackScreen(props)),
+  };
+});
 
 // Mock of Native Modules
 jest.mock("react-native-localize", () => mockLocalize);
@@ -348,7 +358,6 @@ jest.mock("LLM/components/Wallet40Background/useScrollOffset", () => {
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
-  track: jest.fn(),
   updateIdentify: jest.fn(),
 }));
 

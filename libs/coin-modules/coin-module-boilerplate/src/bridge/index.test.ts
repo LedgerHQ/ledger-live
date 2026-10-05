@@ -1,8 +1,9 @@
+import { createBoilerplateContext } from "../config.fixture";
 import { createBridges } from ".";
 
 describe("createBridges", () => {
   it("has a currency bridge and an account bridge with required methods", () => {
-    expect(createBridges(undefined as any, {} as any)).toEqual({
+    expect(createBridges(undefined as any, createBoilerplateContext())).toEqual({
       accountBridge: {
         broadcast: expect.any(Function),
         createTransaction: expect.any(Function),

@@ -52,8 +52,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
-    "bn.js": "5.2.5",
-    "near-api-js": "^3.0.2",
+    "near-api-js": "^7.3.1",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -62,14 +61,14 @@
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/bn.js": "5.2.0",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

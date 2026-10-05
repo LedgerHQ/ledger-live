@@ -21,7 +21,7 @@ import {
 } from "../../utils/trackDeviceIntent";
 
 type DiscoveryErrorStateProps = {
-  state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.DiscoveryError }>;
+  state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.DiscoveryError }>;
   platform: Exclude<AppPlatform, "desktop">;
 };
 

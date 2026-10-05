@@ -25,8 +25,11 @@ reach it as `app.<name>`.
 
 ### Pay tab
 
-A spec that needs an injected Card session must live under `specs/paytab/`. `launchApp` opts in when
-the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
+A spec that needs an injected Card session must live under `specs/paytab/`. On CI, `globalSetup` mints
+once before workers when the selected spec paths include that directory. Locally, `globalSetup` does
+not mint; authentication happens only when a selected Pay tab test reaches `launchApp`. `launchApp`
+injects the session when the spec path contains `/paytab/`. A Pay tab spec anywhere else launches
+signed out.
 
 ## Structure
 
@@ -124,13 +127,22 @@ the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed 
 14. **Navigate through the UI, not deeplinks**, unless the deeplink is what's under test: it blurs the
     current screen and closes open bottom sheets.
 
+15. **Avoid hardcoded durations.** Pass a timeout, delay or poll interval as a `TIMEOUT` / `INTERVAL`
+    bucket from [`utils/timeouts.ts`](../utils/timeouts.ts), not a bare number. Add a named constant in
+    the file only when no bucket fits or the value needs its reason written down. Config files can keep
+    literals, since the key already names them (`setupTimeout: 500000` in `detox.config.js`).
+
+    ```ts
+    await waitForElementById(this.screenId, TIMEOUT.small); // not 5000
+    ```
+
 ## Test data
 
-15. **Generate values in `live-e2e-shared`, valid by construction.** Builders are shared with desktop
+16. **Generate values in `live-e2e-shared`, valid by construction.** Builders are shared with desktop
     specs. Derive the shape from the product's validation rule and link that rule in JSDoc instead of
     restating it; use `randomUUID` where the product rejects duplicates.
 
-16. **Mind cross-platform text rewriting.** iOS smart punctuation turns a typed `'` into `’`, so a
+17. **Mind cross-platform text rewriting.** iOS smart punctuation turns a typed `'` into `’`, so a
     straight apostrophe in a fixture fails on iOS only. Keep such characters out, and say why.
 
 ## Test IDs in product code

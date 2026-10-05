@@ -1,0 +1,45 @@
+diff --git a/components/stacks-network/src/orchestrator.rs b/components/stacks-network/src/orchestrator.rs
+--- a/components/stacks-network/src/orchestrator.rs
++++ b/components/stacks-network/src/orchestrator.rs
+@@ -712,6 +712,30 @@ impl DevnetOrchestrator {
+                 .map_err(|e| format!("unable to set bitcoin directory permissions: {e:?}"))?;
+         }
+ 
++        // With the data directory bind-mounted, put the snapshot's bitcoin chain state in place
++        // here, on the host, before the container exists. Copying it into the running container
++        // instead (`boot_bitcoin_node_container`) races bitcoind: when bitcoind has already begun
++        // its own chain state, the stacks-node's snapshot no longer matches the blocks it serves
++        // ("Non-contiguous header"). The files are made world-readable and writable because
++        // bitcoind runs as uid 1000, not as the user running clarinet; a Linux host enforces that.
++        if devnet_config.bind_containers_volumes && !no_snapshot {
++            let bitcoin_snapshot = get_global_snapshot_dir().join("bitcoin").join("regtest");
++            if bitcoin_snapshot.exists() {
++                copy_directory(&bitcoin_snapshot, &bitcoind_data_path.join("regtest"), None)?;
++                let status = std::process::Command::new("chmod")
++                    .args(["-R", "a+rwX"])
++                    .arg(&bitcoind_data_path)
++                    .status()
++                    .map_err(|e| format!("Failed to run chmod on the bitcoin snapshot: {e}"))?;
++                if !status.success() {
++                    return Err(format!(
++                        "chmod of the bitcoin snapshot failed ({status}): {}",
++                        bitcoind_data_path.display()
++                    ));
++                }
++            }
++        }
++
+         let exposed_ports = HashMap::from([
+             (
+                 format!("{}/tcp", devnet_config.bitcoin_node_rpc_port),
+@@ -894,7 +918,9 @@ impl DevnetOrchestrator {
+             .start_exec(&exec.id, None)
+             .await
+             .map_err(|e| format!("Failed to create bitcoin directory: {e}"))?;
+-        if !no_snapshot {
++        // With a bind-mounted data directory the snapshot is already in place
++        // (`prepare_bitcoin_node_config`), before bitcoind started.
++        if !no_snapshot && !self.get_devnet_config()?.bind_containers_volumes {
+             // Ensure the destination directory exists in the container
+             let docker_host = self.get_devnet_config()?.docker_host.as_deref();
+ 

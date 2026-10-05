@@ -1,4 +1,16 @@
-import { applyMemoToTransaction, buildRecipientTransactionPatch } from "./memo";
+import type { Account } from "@ledgerhq/types-live";
+import { intentToMessageParams } from "@ledgerhq/coin-cosmos/logic/transaction/intentAdapter";
+import { transactionToIntent } from "../../generic-coin-framework/utils";
+import type { GenericTransaction } from "../../generic-coin-framework/types";
+import { applyMemoToTransaction, buildRecipientTransactionPatch, cosmosMemoPatch } from "./memo";
+import { TEXT_MEMO_TYPE } from "../../../families/solana/transactions";
+
+it("solana: the inlined memo type is the one the family declares", () => {
+  expect(applyMemoToTransaction("solana", "x")).toEqual({
+    memoType: TEXT_MEMO_TYPE,
+    memoValue: "x",
+  });
+});
 
 describe("applyMemoToTransaction", () => {
   describe("empty value is treated as cleared (no memo/tag)", () => {
@@ -16,7 +28,16 @@ describe("applyMemoToTransaction", () => {
 
     it("solana: empty string clears the memo", () => {
       expect(applyMemoToTransaction("solana", "")).toEqual({
-        model: { uiState: { memo: undefined } },
+        memoType: "TEXT",
+        memoValue: "",
+      });
+    });
+
+    it("cosmos: empty string clears memo/memoType/memoValue", () => {
+      expect(applyMemoToTransaction("cosmos", "")).toEqual({
+        memo: undefined,
+        memoType: null,
+        memoValue: undefined,
       });
     });
 
@@ -51,6 +72,14 @@ describe("applyMemoToTransaction", () => {
       });
     });
 
+    it("cosmos: sets memo/memoType/memoValue, ignoring any incoming type (no type selector exists)", () => {
+      expect(applyMemoToTransaction("cosmos", "hello")).toEqual({
+        memo: "hello",
+        memoType: "text",
+        memoValue: "hello",
+      });
+    });
+
     it("unknown family: generic memo", () => {
       expect(applyMemoToTransaction("algorand", "note")).toEqual({ memo: "note" });
     });
@@ -69,15 +98,13 @@ describe("buildRecipientTransactionPatch", () => {
   it("applies memo through the family memo registry", () => {
     expect(
       buildRecipientTransactionPatch(
-        { family: "solana", model: { kind: "transfer", uiState: {} } },
+        { family: "solana" },
         { address: "solana-address", memo: { value: "solana memo" } },
       ),
     ).toEqual({
       recipient: "solana-address",
-      model: {
-        kind: "transfer",
-        uiState: { memo: "solana memo" },
-      },
+      memoType: "TEXT",
+      memoValue: "solana memo",
     });
   });
 
@@ -138,5 +165,35 @@ describe("buildRecipientTransactionPatch", () => {
     ).toEqual({
       recipient: "xrp-address",
     });
+  });
+});
+
+describe("Cosmos memo survives shared intent construction end to end", () => {
+  const account = { currency: { name: "cosmos", units: [{}] } } as Account;
+
+  it("carries a memo from a UI write-site patch through to the crafted message params", () => {
+    const transaction = {
+      family: "cosmos",
+      ...cosmosMemoPatch("pay invoice 42"),
+    } as unknown as GenericTransaction;
+
+    const intent = transactionToIntent(account, transaction);
+    expect(intent.memo).toEqual({ type: "string", kind: "text", value: "pay invoice 42" });
+
+    const params = intentToMessageParams(intent, "cosmos", "uatom");
+    expect(params.memo).toBe("pay invoice 42");
+  });
+
+  it("resolves to no memo, not an empty-string memo, when the field is cleared", () => {
+    const transaction = {
+      family: "cosmos",
+      ...cosmosMemoPatch(undefined),
+    } as unknown as GenericTransaction;
+
+    const intent = transactionToIntent(account, transaction);
+    expect(intent.memo).toEqual({ type: "none" });
+
+    const params = intentToMessageParams(intent, "cosmos", "uatom");
+    expect(params.memo).toBe("");
   });
 });

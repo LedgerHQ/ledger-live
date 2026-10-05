@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -7,7 +8,6 @@ import { Banner, Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { ExternalLink } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
-import { TrackScreen } from "~/analytics";
 
 interface Props {
   readonly isOpen: boolean;

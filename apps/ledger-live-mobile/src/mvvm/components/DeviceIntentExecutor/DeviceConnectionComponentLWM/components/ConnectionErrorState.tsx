@@ -22,7 +22,7 @@ import {
 import { PeerRemovedPairingState } from "./PeerRemovedPairingState";
 
 type ConnectionErrorStateProps = {
-  state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.ConnectionError }>;
+  state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.ConnectionError }>;
 };
 type ConnectionErrorType = ConnectionErrorStateProps["state"]["error"]["type"];
 

@@ -37,9 +37,6 @@ export const sonic = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 146,
-  },
   explorerViews: [
     {
       tx: "https://sonicscan.org/tx/$hash",

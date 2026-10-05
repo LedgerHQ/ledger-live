@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { UseTrackAddAccountModal, useTrackAddAccountModal } from "./useTrackAddAccountModal";
-import { track } from "../segment";
+import { track } from "@shared/analytics";
 import {
   CantOpenDevice,
   LockedDeviceError,
@@ -11,7 +11,8 @@ import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Device } from "@ledgerhq/types-devices";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-jest.mock("../segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
 
@@ -51,7 +52,7 @@ describe("useTrackAddAccountModal", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -78,7 +79,7 @@ describe("useTrackAddAccountModal", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -98,7 +99,7 @@ describe("useTrackAddAccountModal", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -118,7 +119,7 @@ describe("useTrackAddAccountModal", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -138,7 +139,7 @@ describe("useTrackAddAccountModal", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -165,7 +166,7 @@ describe("useTrackAddAccountModal", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -200,7 +201,7 @@ describe("useTrackAddAccountModal", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -220,7 +221,7 @@ describe("useTrackAddAccountModal", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
-      true,
+      { mandatory: true },
     );
   });
 
@@ -240,7 +241,7 @@ describe("useTrackAddAccountModal", () => {
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
-      true,
+      { mandatory: true },
     );
   });
 });

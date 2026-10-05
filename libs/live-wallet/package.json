@@ -46,6 +46,7 @@
     "jest": "catalog:",
     "msw": "catalog:",
     "timemachine": "^0.3.2",
+    "typescript": "catalog:",
     "ws": "^8.16.0"
   },
   "scripts": {

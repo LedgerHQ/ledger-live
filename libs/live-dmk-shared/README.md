@@ -22,9 +22,13 @@ Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integr
 
 ## Key exports / concepts
 
-- `DefaultDeviceDiscoveryService` — base discovery service both platforms extend
-- `ConnectDeviceUIState` / `DeviceDiscoveryService` — core interfaces for device connection
-- `DeviceDiscoveryStartArgs`, `MatchedDevice`, `KnownDevice` — discovery data types
+- `deviceConnectivity/` — code shared by the device connection flows:
+  - `DeviceDiscoveryService` / `DefaultDeviceDiscoveryService` — discovery service both platforms extend
+  - `Device`, `DeviceDiscoveryStartArgs`, `DeviceConnectionResult` — discovery and connection data types
+  - `ConnectivityUIStateTypes` and the discovery, connection and unknown error UI states
+- `connectDevice/` — the connect device state machine and use case:
+  - `ConnectDeviceUIState` / `ConnectDeviceUIStateTypes` — its UI states, including the shared error states
+  - `MatchedDevice`, `KnownDevice` (alias of `Device`) — data types for known devices
 - `LedgerLiveLogger`, `LiveBlindSigningReporter`, `UserHashService` — shared services
 - `transport/` — shared transport interface definitions
 

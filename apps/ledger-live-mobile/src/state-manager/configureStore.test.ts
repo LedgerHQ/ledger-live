@@ -13,12 +13,6 @@ jest.mock("@react-native-community/netinfo", () => ({
   addEventListener: jest.fn(() => jest.fn()),
 }));
 
-jest.mock("@rozenite/redux-devtools-plugin", () => ({
-  rozeniteDevToolsEnhancer: jest.fn(() => (next: (...args: unknown[]) => unknown) => {
-    return (...args: unknown[]) => next(...args);
-  }),
-}));
-
 jest.mock("~/config/bridge-setup", () => ({
   setupCryptoAssetsStore: jest.fn(),
   setupRateLookups: jest.fn(),

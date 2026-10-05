@@ -119,9 +119,13 @@ describe("useTrackDmkErrorsEvents", () => {
         trackScreen: mockedTrackScreen,
       });
       // then
-      expect(mockedTrackScreen).toHaveBeenCalledWith("Error:", expectedErrorName, {
-        error: expectedErrorName,
-        subError: error._tag,
+      expect(mockedTrackScreen).toHaveBeenCalledWith({
+        category: "Error:",
+        name: expectedErrorName,
+        props: {
+          error: expectedErrorName,
+          subError: error._tag,
+        },
       });
     });
   });
@@ -150,9 +154,13 @@ describe("useTrackDmkErrorsEvents", () => {
       trackScreen: mockedTrackScreen,
     });
     // then
-    expect(mockedTrackScreen).toHaveBeenCalledWith("Error:", "UnregisteredDmkErrorEvent", {
-      error: "UnregisteredDmkErrorEvent",
-      subError: "UnregisteredDmkErrorEvent",
+    expect(mockedTrackScreen).toHaveBeenCalledWith({
+      category: "Error:",
+      name: "UnregisteredDmkErrorEvent",
+      props: {
+        error: "UnregisteredDmkErrorEvent",
+        subError: "UnregisteredDmkErrorEvent",
+      },
     });
   });
 });

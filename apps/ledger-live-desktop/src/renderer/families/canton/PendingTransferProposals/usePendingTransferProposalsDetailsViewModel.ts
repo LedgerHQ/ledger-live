@@ -17,6 +17,7 @@ export type PendingTransferProposalsDetailsViewModel = {
   unit: ReturnType<typeof useAccountUnit>;
   dateFormatted: string;
   timeRemaining: string;
+  isExpired: boolean;
   handleAction: (action: TransferProposalAction) => void;
 };
 
@@ -33,7 +34,10 @@ export function usePendingTransferProposalsDetailsViewModel({
     () => formatDate(new Date((proposal?.expiresAtMicros ?? 0) / 1000)),
     [proposal?.expiresAtMicros, formatDate],
   );
-  const timeRemaining = useTimeRemaining(proposal?.expiresAtMicros, proposal?.isExpired);
+  const { timeRemaining, isExpired } = useTimeRemaining(
+    proposal?.expiresAtMicros,
+    proposal?.isExpired,
+  );
 
   const handleAction = useCallback(
     (action: TransferProposalAction) => {
@@ -50,6 +54,7 @@ export function usePendingTransferProposalsDetailsViewModel({
     unit,
     dateFormatted,
     timeRemaining,
+    isExpired,
     handleAction,
   };
 }

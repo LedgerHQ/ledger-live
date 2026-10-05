@@ -1,5 +1,5 @@
-// End-to-end coverage of loadCountervalues against the deterministic mock rate source. Moved from
-// @ledgerhq/live-countervalues; the expected rates are unchanged, which is the point of the file.
+// End-to-end coverage of loadCountervalues against the deterministic mock rate source. The expected
+// rates predate this package and are unchanged, which is the point of the file.
 // The clock is frozen because every expectation below is a function of "now".
 
 import timemachine from "timemachine";

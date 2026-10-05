@@ -11,6 +11,7 @@ import type {
   AccountReadiness,
   Operation as LiveOperation,
   OperationType,
+  SignRawOperationFnSignature,
   StakingResources,
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
@@ -97,6 +98,8 @@ export type BridgeApi = {
     transaction: Record<string, unknown>,
     account: Account,
   ) => Record<string, unknown> | undefined;
+  /** Replaces the generic raw signing (craft, sign, combine) with the family's own. */
+  signRawOperation?: SignRawOperationFnSignature<Account>;
   /**
    * Family-owned account fields with no generic equivalent — `stakingResources`, `stakingPositions`,
    * whatever the family names — passed through without the framework inspecting them, hence the index

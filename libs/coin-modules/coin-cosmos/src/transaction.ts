@@ -9,46 +9,60 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { resolveSourceValidator, resolveTransactionValidators } from "./buildTransaction";
 import type { Transaction, TransactionRaw } from "./types";
 
-export const formatTransaction = (
-  { mode, amount, fees, recipient, validators, memo, sourceValidator, useAllAmount }: Transaction,
-  account: Account,
-): string => `
+export const formatTransaction = (transaction: Transaction, account: Account): string => {
+  const { mode, amount, fees, recipient, memo, useAllAmount } = transaction;
+  const validators = resolveTransactionValidators(transaction);
+  const sourceValidator = resolveSourceValidator(transaction);
+  return `
 ${mode.toUpperCase()} ${
-  useAllAmount
-    ? "MAX"
-    : amount.isZero()
-      ? ""
-      : " " +
-        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
-          showCode: true,
-          disableRounding: true,
-        })
-}
+    useAllAmount
+      ? "MAX"
+      : amount.isZero()
+        ? ""
+        : " " +
+          formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+            showCode: true,
+            disableRounding: true,
+          })
+  }
 TO ${recipient}
-${
-  !validators
-    ? ""
-    : validators
-        .map(
-          v =>
-            "  " +
-            formatCurrencyUnit(getAccountCurrency(account).units[0], v.amount, {
-              disableRounding: true,
-            }) +
-            " -> " +
-            v.address,
-        )
-        .join("\n")
-}${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
+${validators
+  .map(
+    v =>
+      "  " +
+      formatCurrencyUnit(getAccountCurrency(account).units[0], v.amount, {
+        disableRounding: true,
+      }) +
+      " -> " +
+      v.address,
+  )
+  .join("\n")}${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
 with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees) : "?"}${
-  !memo ? "" : `\n  memo=${memo}`
-}`;
+    !memo ? "" : `\n  memo=${memo}`
+  }`;
+};
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
+
+  let memoValue: string | undefined = undefined;
+  if (tr.memoValue !== undefined && tr.memoValue !== null) {
+    memoValue = tr.memoValue;
+  } else if (tr.memo !== undefined && tr.memo !== null) {
+    memoValue = tr.memo;
+  }
+
+  let memoType: string | undefined = undefined;
+  if (tr.memoType !== undefined && tr.memoType !== null) {
+    memoType = tr.memoType;
+  } else if (memoValue !== undefined) {
+    memoType = "text";
+  }
+
   return {
     ...common,
     family: tr.family,
@@ -64,6 +78,10 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     validators: tr.validators
       ? tr.validators.map(v => ({ ...v, amount: new BigNumber(v.amount) }))
       : [],
+    ...(memoType !== undefined ? { memoType } : {}),
+    ...(memoValue !== undefined ? { memoValue } : {}),
+    ...(tr.valAddress !== undefined ? { valAddress: tr.valAddress } : {}),
+    ...(tr.dstValAddress !== undefined ? { dstValAddress: tr.dstValAddress } : {}),
   };
 };
 
@@ -83,6 +101,10 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     memo: t.memo,
     sourceValidator: t.sourceValidator,
     validators: t.validators ? t.validators.map(v => ({ ...v, amount: v.amount.toString() })) : [],
+    ...(t.memoType !== undefined ? { memoType: t.memoType } : {}),
+    ...(t.memoValue !== undefined ? { memoValue: t.memoValue } : {}),
+    ...(t.valAddress !== undefined ? { valAddress: t.valAddress } : {}),
+    ...(t.dstValAddress !== undefined ? { dstValAddress: t.dstValAddress } : {}),
   };
 };
 

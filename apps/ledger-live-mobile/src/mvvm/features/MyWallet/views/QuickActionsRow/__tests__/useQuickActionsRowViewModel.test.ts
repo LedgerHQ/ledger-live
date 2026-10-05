@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { Linking } from "react-native";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -5,7 +6,6 @@ import { ShieldCheck, ShieldCheckNotification } from "@ledgerhq/lumen-ui-rnative
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { State } from "~/reducers/types";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { PROTECT_ID, withRecoverState } from "LLM/features/Portfolio/utils/recoverTestHelpers";

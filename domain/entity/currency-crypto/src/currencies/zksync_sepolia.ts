@@ -37,9 +37,6 @@ export const zksync_sepolia = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 300,
-  },
   explorerViews: [
     {
       tx: "https://zksync-sepolia.blockscout.com/tx/$hash",

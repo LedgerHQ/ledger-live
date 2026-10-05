@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList, ListRenderItem } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -6,7 +7,6 @@ import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
-import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import AccountCard from "~/components/AccountCard";

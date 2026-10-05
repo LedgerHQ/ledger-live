@@ -141,11 +141,13 @@ describe("ContactDetailView", () => {
     const addressList = screen.getByTestId("contacts-detail-address-list");
     expect(addressList).toBeVisible();
     expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
-    expect(screen.getByTestId(`contacts-detail-address-row-${address.id}`)).toBeVisible();
+    const addressRow = screen.getByTestId(`contacts-detail-address-row-${address.id}`);
+    expect(addressRow).toBeVisible();
+    expect(addressRow).toHaveAttribute("data-address", address.address);
     expect(within(addressList).getByText("1 address")).toBeVisible();
     expect(screen.queryByTestId("contacts-detail-empty-state")).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByTestId(`contacts-detail-address-row-${address.id}`));
+    fireEvent.click(addressRow);
 
     expect(handleAddressRowPress).toHaveBeenCalledWith({
       type: "open-address-detail",
@@ -382,6 +384,24 @@ describe("ContactDetailView", () => {
     expect(handleLedgerWalletAccountsPress).toHaveBeenCalledWith({
       type: "open-ledger-wallet-accounts",
     });
+  });
+
+  it("should keep the Ledger Wallet addresses entry full height and scroll the empty detail on small windows", () => {
+    render(
+      <ContactDetailView
+        {...defaultProps}
+        contact={mockMeContact()}
+        labels={{ ...labels, ledgerWalletAddresses: "Ledger Wallet addresses" }}
+        ledgerWalletAccountsIntent={createContactDetailLedgerWalletAccountsIntent(mockMeContact())}
+        onLedgerWalletAccountsPress={() => undefined}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-detail-screen")).toHaveClass(
+      "overflow-y-auto",
+      "scrollbar-custom",
+    );
+    expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveClass("shrink-0");
   });
 
   it("should not render the Ledger Wallet addresses entry for saved contacts", () => {

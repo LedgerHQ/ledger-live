@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -12,7 +13,6 @@ import invariant from "invariant";
 import SummaryToSection from "./SummaryToSection";
 import SummaryFromSection from "./SummaryFromSection";
 import type { HederaAssociateTokenFlowParamList } from "./types";
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import Button from "~/components/Button";
 import LText from "~/components/LText";

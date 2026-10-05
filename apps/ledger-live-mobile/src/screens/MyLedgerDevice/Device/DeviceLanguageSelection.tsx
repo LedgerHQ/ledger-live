@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import {
   Button,
@@ -11,7 +13,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { TrackScreen, track } from "~/analytics";
 
 type Props = {
   deviceLanguage: Language;

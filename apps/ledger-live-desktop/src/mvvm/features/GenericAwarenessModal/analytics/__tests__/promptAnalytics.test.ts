@@ -1,4 +1,4 @@
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { promptCampaignCard } from "../../testUtils/fixtures";
 import {
   getPromptAnalyticsContext,
@@ -7,6 +7,12 @@ import {
   trackPromptSecondaryClick,
 } from "../promptAnalytics";
 import { PAGE_TRACKING_AWARENESS_MODAL_PROMPT } from "../const";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 describe("promptAnalytics", () => {
   beforeEach(() => {
@@ -22,11 +28,11 @@ describe("promptAnalytics", () => {
     trackPromptPage(promptCampaignCard);
 
     expect(trackPage).toHaveBeenCalledWith(
-      PAGE_TRACKING_AWARENESS_MODAL_PROMPT,
-      undefined,
-      expect.objectContaining({ contentId: promptCampaignCard.id }),
-      true,
-      false,
+      {
+        category: PAGE_TRACKING_AWARENESS_MODAL_PROMPT,
+        props: expect.objectContaining({ contentId: promptCampaignCard.id }),
+      },
+      { updateRoutes: true },
     );
   });
 

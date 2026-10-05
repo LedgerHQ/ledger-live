@@ -9,7 +9,7 @@ import {
   getUnbondingPeriodDays,
   hasUnbondingPeriod,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";

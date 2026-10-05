@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { JSX } from "react";
 import { ScrollView } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { TrackScreen } from "~/analytics";
 import SafeAreaView from "~/components/SafeAreaView";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";

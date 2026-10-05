@@ -1,4 +1,4 @@
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import type { ReleaseTourAnalytics, ReleaseTourAnalyticsContext } from "./types";
 
 type CtaPosition = "primary" | "secondary";
@@ -58,7 +58,7 @@ export const createReleaseTourAnalytics = ({
     );
 
   const trackStepPage = (context: ReleaseTourAnalyticsContext): void => {
-    trackPage(page, undefined, getPageProperties(context), true, false);
+    trackPage({ category: page, props: getPageProperties(context) }, { updateRoutes: true });
   };
 
   return {

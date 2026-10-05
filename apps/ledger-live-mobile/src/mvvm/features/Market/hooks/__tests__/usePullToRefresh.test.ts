@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import usePullToRefresh from "../usePullToRefresh";
 
 const mockedTrack = jest.mocked(track);

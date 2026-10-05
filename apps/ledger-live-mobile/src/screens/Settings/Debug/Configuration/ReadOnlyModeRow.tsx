@@ -1,10 +1,10 @@
+import { Track } from "@shared/analytics-react";
 import React from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import SettingsRow from "~/components/SettingsRow";
 import { setReadOnlyMode } from "~/actions/settings";
 import { reboot } from "~/actions/appstate";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import Track from "~/analytics/Track";
 import Switch from "~/components/Switch";
 
 const ReadOnlyModeRow = () => {

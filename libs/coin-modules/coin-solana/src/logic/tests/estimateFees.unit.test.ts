@@ -5,17 +5,22 @@ import type {
 import type { ChainAPI } from "../../network";
 import { estimateFees, estimateTxFee } from "../estimateFees";
 
-jest.mock("../craftTransaction", () => ({
-  ...jest.requireActual("../craftTransaction"),
-  buildVersionedTransaction: jest.fn(),
-}));
+jest.mock("../craftTransaction", () => {
+  const actual = jest.requireActual("../craftTransaction");
+  return {
+    ...actual,
+    buildVersionedTransaction: jest.fn(),
+    resolveRecipientDescriptor: jest.fn(actual.resolveRecipientDescriptor),
+  };
+});
 
 jest.mock("../../network/chain/web3", () => ({
   ...jest.requireActual("../../network/chain/web3"),
   getStakeAccountAddressWithSeed: jest.fn().mockResolvedValue("stakeAccAddress"),
 }));
 
-const { buildVersionedTransaction } = jest.requireMock("../craftTransaction");
+const { buildVersionedTransaction, resolveRecipientDescriptor } =
+  jest.requireMock("../craftTransaction");
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
@@ -282,6 +287,78 @@ describe("estimateFees", () => {
 
     expect(result.value).toBe(5000n + 2_039_280n);
     expect((api.getAccountInfo as jest.Mock).mock.calls).toHaveLength(1);
+  });
+
+  it("prices a transfer whose recipient holds another token instead of throwing", async () => {
+    const api = createMockApi([5000]);
+    (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
+    setupBuildMock();
+
+    const result = await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1n,
+      asset: {
+        type: "spl-token",
+        assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        assetOwner: TEST_ADDRESS,
+      },
+    } as unknown as TransactionIntent);
+
+    expect(result.value).toBe(5000n);
+    expect(result.parameters?.recipientTokenAccount).toBeUndefined();
+  });
+
+  describe("recipient token destination", () => {
+    const splSend = {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1n,
+      asset: {
+        type: "spl-token",
+        assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        assetOwner: TEST_ADDRESS,
+      },
+    } as unknown as TransactionIntent;
+
+    function mockedApi(): ChainAPI {
+      const api = createMockApi([5000]);
+      (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
+      (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_039_280);
+      setupBuildMock();
+      return api;
+    }
+
+    it("names an existing token account, with no rent to pay", async () => {
+      resolveRecipientDescriptor.mockResolvedValueOnce({
+        shouldCreateAsAssociatedTokenAccount: false,
+        tokenAccAddress: "recipient-ata",
+        walletAddress: TEST_RECIPIENT,
+        userInputType: "sol",
+      });
+
+      expect(await estimateFees(mockedApi(), splSend)).toEqual({
+        value: 5000n,
+        parameters: { recipientTokenAccount: "recipient-ata", userInputType: "sol" },
+      });
+    });
+
+    it("prices the transfer alone when the recipient holds another token", async () => {
+      const { SolanaTokenAccountHoldsAnotherToken } = jest.requireActual("../../errors");
+      resolveRecipientDescriptor.mockRejectedValueOnce(new SolanaTokenAccountHoldsAnotherToken());
+
+      expect(await estimateFees(mockedApi(), splSend)).toEqual({ value: 5000n });
+    });
+
+    it("lets any other failure surface", async () => {
+      resolveRecipientDescriptor.mockRejectedValueOnce(new Error("network down"));
+
+      await expect(estimateFees(mockedApi(), splSend)).rejects.toThrow("network down");
+    });
   });
 
   it("charges no rent to approve", async () => {

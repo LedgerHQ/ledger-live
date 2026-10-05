@@ -1,6 +1,8 @@
+import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
+import { TronifyApiError } from "../../types/errors";
 import { recoverDeviceSignature } from "../combine";
-import { SUN_PER_TRX } from "../constants";
+import { TRONIFY_PAY_ASSET, payAssetBaseUnits, tronifyPayAsset } from "../constants";
 import type {
   EnergyRentOrder,
   EnergyRentSignedTransaction,
@@ -27,10 +29,27 @@ export function buildSignedEnergyRentTransaction(
   };
 }
 
-/** Sun the platform should lock against the payer's balance until TX-A syncs. Rounds up: a sub-sun
- * quote must never under-reserve the lock. */
-export function nativeRentAmount(order: EnergyRentOrder): bigint {
-  return BigInt(
-    new BigNumber(order.payCoinAmt).times(SUN_PER_TRX).toFixed(0, BigNumber.ROUND_CEIL),
-  );
+/** Local dedup key for the pending TX-A reservation; TRON has no nonce. Non-integer so the generic
+ * next-nonce calc never adopts it, and > 0 so it never collides with the sequence-0 ops. */
+export function reservationDedupKey(paymentTxId: string): string {
+  const hex = [...paymentTxId]
+    .map(ch => (ch.codePointAt(0) ?? 0).toString(16).padStart(4, "0"))
+    .join("");
+  return new BigNumber(hex, 16).plus(0.5).toFixed();
+}
+
+/** What the platform should lock against the payer's USDT until TX-A syncs: the order's rent in USDT
+ * base units, rounded up so a sub-unit quote never under-reserves the lock. */
+export function rentPayment(order: EnergyRentOrder): { asset: AssetInfo; amount: bigint } {
+  const amount = payAssetBaseUnits(order.payCoinAmt);
+  if (
+    String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code ||
+    !amount.isFinite() ||
+    !amount.isGreaterThan(0)
+  ) {
+    throw new TronifyApiError(
+      `Cannot reserve an energy-rent payment of ${order.payCoinAmt} ${String(order.payCoinCode)}`,
+    );
+  }
+  return { asset: tronifyPayAsset(), amount: BigInt(amount.toFixed()) };
 }

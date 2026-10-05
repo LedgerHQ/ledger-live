@@ -34,7 +34,7 @@ const copy: CardLoginCopy = {
 const intro: CardLoginIntroViewProps = {
   isOpen: false,
   title: "Spend crypto, earn cashback",
-  providedBy: "Card provided by Baanx",
+  providedBy: "Card provided by Monavate",
   rows: [],
   actions: [],
   onActionPress: jest.fn(),
@@ -93,6 +93,20 @@ describe("mapSnapshotToViewModel", () => {
     expect(
       mapSnapshotToViewModel("ready", null, copy, onLoginPress, onAlreadyHaveCardPress, intro),
     ).toBeNull();
+  });
+
+  it("keeps the login page in ready when the host still wants it", () => {
+    expect(
+      mapSnapshotToViewModel("ready", null, copy, onLoginPress, onAlreadyHaveCardPress, intro, true)
+        ?.loginLabel,
+    ).toBe(copy.loginLabel);
+  });
+
+  it("leaves the login pressable in ready when the host still wants the page", () => {
+    expect(
+      mapSnapshotToViewModel("ready", null, copy, onLoginPress, onAlreadyHaveCardPress, intro, true)
+        ?.isLoading,
+    ).toBe(false);
   });
 
   it.each([
@@ -300,7 +314,7 @@ describe("useCardLoginViewModel intro", () => {
     const { result } = await renderIdleLogin(store);
 
     expect(result.current?.intro.title).toBe("Spend crypto, earn cashback");
-    expect(result.current?.intro.providedBy).toBe("Card provided by Baanx");
+    expect(result.current?.intro.providedBy).toBe("Card provided by Monavate");
     expect(result.current?.intro.rows.map(row => row.title)).toEqual([
       "Uncapped 1% crypto cashback",
       "Free virtual card",
@@ -377,7 +391,7 @@ describe("useCardLoginViewModel intro", () => {
 
     expect(result.current?.intro.actions).toEqual([
       { id: "createAccount", label: "Create an account", appearance: "base" },
-      { id: "logIn", label: "Log in to Baanx", appearance: "gray" },
+      { id: "logIn", label: "Log in to Monavate", appearance: "gray" },
     ]);
   });
 
@@ -425,6 +439,33 @@ describe("useCardLoginViewModel intro", () => {
 
     await waitFor(() => expect(mockPorts.openHostedLogin).toHaveBeenCalledTimes(1));
     expect(result.current?.intro.isOpen).toBe(false);
+  });
+
+  it("sends create account and login to the host when the host owns them", async () => {
+    const onCreateAccount = jest.fn();
+    const onLogIn = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useCardLoginViewModel({
+          openHostedLogin: mockPorts.openHostedLogin,
+          mobileWallet: "both",
+          oauthConfig,
+          onCreateAccount,
+          onLogIn,
+        }),
+      { wrapper: withProviders(store) },
+    );
+
+    await waitFor(() => expect(result.current?.isLoading).toBe(false));
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("createAccount"));
+    expect(onCreateAccount).toHaveBeenCalledTimes(1);
+
+    act(() => result.current?.onLoginPress());
+    act(() => result.current?.intro.onActionPress("logIn"));
+    expect(onLogIn).toHaveBeenCalledTimes(1);
+    expect(mockPorts.openHostedLogin).not.toHaveBeenCalled();
   });
 
   it("opens the provider's signup page from the create account action", async () => {

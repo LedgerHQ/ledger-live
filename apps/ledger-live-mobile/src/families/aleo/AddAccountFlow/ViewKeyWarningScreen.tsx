@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { Linking, ScrollView, StyleSheet, View } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -13,7 +14,6 @@ import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import type { AleoViewKeyFlowParamList } from "./types";
 import QuitConfirmationModal from "./QuitConfirmationModal";
 import useQuitConfirmation from "./useQuitConfirmation";
-import { TrackScreen } from "~/analytics";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoViewKeyWarning>;
 

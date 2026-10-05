@@ -6,7 +6,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import QRCode from "~/renderer/components/QRCode";
 import { useQRCode } from "../../hooks/useQRCode";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import {
   AnalyticsFlow,
   AnalyticsPage,

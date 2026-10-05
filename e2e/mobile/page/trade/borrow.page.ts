@@ -1,12 +1,13 @@
 import { Step } from "jest-allure2-reporter/api";
 import { retryUntilTimeout } from "@e2e/utils/retry";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
-const MODAL_DISMISS_TIMEOUT_MS = 30_000;
-const CONTINUE_READY_TIMEOUT_MS = 30_000;
+const MODAL_DISMISS_TIMEOUT_MS = TIMEOUT.xlarge;
+const CONTINUE_READY_TIMEOUT_MS = TIMEOUT.xlarge;
 /** The partner prepares each transaction server-side, so the CTA stays disabled meanwhile. */
 const EXECUTION_STEP_TIMEOUT_MS = 240_000;
-const PROBE_TIMEOUT_MS = 2_000;
-const STEP_STATE_TIMEOUT_MS = 30_000;
+const PROBE_TIMEOUT_MS = TIMEOUT.xsmall;
+const STEP_STATE_TIMEOUT_MS = TIMEOUT.xlarge;
 
 const MAINNET_FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";

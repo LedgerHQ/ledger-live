@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
-import { app, Menu, ipcMain, type BrowserWindow, dialog, protocol } from "electron";
+import { app, Menu, ipcMain, type BrowserWindow, dialog, protocol, session } from "electron";
 import Store from "electron-store";
 import menu from "./menu";
 import {
@@ -27,6 +27,7 @@ import {
   cleanupZcashNativeHost,
 } from "@ledgerhq/coin-zcash/network/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
+import { setupExplorerSessionAffinity } from "./explorerSessionAffinity";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -157,6 +158,7 @@ app.on("ready", async () => {
     loadWindow();
   });
   setupWebviewHandlers(SUPPORTED_SCHEMES);
+  setupExplorerSessionAffinity(session.defaultSession);
   Menu.setApplicationMenu(menu);
 
   // Apply window parameters now that we have DB data

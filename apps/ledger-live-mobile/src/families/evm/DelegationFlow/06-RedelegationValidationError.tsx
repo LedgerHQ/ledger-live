@@ -1,9 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
 import type {
   BaseComposite,

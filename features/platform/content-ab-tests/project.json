@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-content-ab-tests",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

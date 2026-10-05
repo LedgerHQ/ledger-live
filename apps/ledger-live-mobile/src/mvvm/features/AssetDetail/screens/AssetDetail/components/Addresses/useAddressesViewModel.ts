@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
@@ -8,7 +9,6 @@ import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import { useSortAccountsComparator } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { useOpenAddAccountDrawer } from "LLM/features/Accounts/hooks/useOpenAddAccountDrawer";
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 

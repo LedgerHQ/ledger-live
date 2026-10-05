@@ -34,6 +34,7 @@ import {
   type AddAddressInputSource,
 } from "@features/flow-contacts-add-address";
 import { getMinVersion } from "@ledgerhq/live-common/apps/support";
+import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
 import {
   useContactDisplayName,
   resolveEligibleAddressCurrencyIds,
@@ -121,7 +122,12 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const allContactsAddresses = useOtherContactsAddresses();
   const eligibleNetworkIds = useMemo(
     () =>
-      resolveEligibleAddressCurrencyIds(eligibleAddressFamilies, undefined, excludedCurrencyIds),
+      resolveEligibleAddressCurrencyIds(
+        eligibleAddressFamilies,
+        undefined,
+        excludedCurrencyIds,
+        resolveCurrencyConfig,
+      ),
     [eligibleAddressFamilies, excludedCurrencyIds],
   );
   const {
@@ -148,11 +154,14 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
       isCompletingAddressConfirmation.current = true;
       try {
+        const config = resolveCurrencyConfig(flowState.selectedCurrencyId);
+
         const signedAddress = await deviceIntents.registerExternalAddress({
           contact,
           currencyId: flowState.selectedCurrencyId,
           label: flowState.addressLabel.label,
           address: flowState.addressEntry.resolvedAddress,
+          config,
         });
         const address = contactAddress({
           id: `address-${uuid()}`,

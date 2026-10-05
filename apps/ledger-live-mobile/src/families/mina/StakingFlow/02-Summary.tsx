@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -12,7 +13,6 @@ import React, { ReactNode, useCallback, useEffect } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, StyleProp, StyleSheet, TextStyle, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
 import CurrencyIcon from "~/components/CurrencyIcon";

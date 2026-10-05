@@ -73,6 +73,13 @@ export class NewSendModal extends Modal {
     await this.recipientInput.fill(address);
   }
 
+  @step("Send to the matched recipient")
+  async clickRecipientCardSend() {
+    const button = this.dialog.getByTestId("send-recipient-card-send");
+    await expect(button).toBeEnabled();
+    await button.click();
+  }
+
   @step("Select address from list")
   async clickOnSendToButton(account?: AccountType) {
     const label =

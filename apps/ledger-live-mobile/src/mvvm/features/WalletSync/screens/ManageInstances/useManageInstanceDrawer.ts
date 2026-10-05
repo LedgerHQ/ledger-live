@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useState, useCallback } from "react";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useGetMembers } from "../../hooks/useGetMembers";
@@ -9,7 +10,6 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 const messageLog = "Follow Steps on device";

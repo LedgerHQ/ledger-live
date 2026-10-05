@@ -39,9 +39,10 @@ export async function getStakes({
     actions: [],
     details: {
       stakedNodeId,
-      overstaked: delegatedNode
-        ? BigInt(delegatedNode.stake) >= BigInt(delegatedNode.max_stake)
-        : null,
+      overstaked:
+        typeof delegatedNode?.stake === "number"
+          ? BigInt(delegatedNode.stake) >= BigInt(delegatedNode.max_stake)
+          : null,
     },
     ...(delegatedNode && {
       delegate: delegatedNode.node_account_id,

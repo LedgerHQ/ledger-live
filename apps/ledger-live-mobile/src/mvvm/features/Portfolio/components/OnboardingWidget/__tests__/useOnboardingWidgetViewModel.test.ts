@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import type { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import BigNumber from "bignumber.js";
 import { renderHook, waitFor, act } from "@tests/test-renderer";
@@ -5,7 +6,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { type Account, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { usePostOnboardingHubDrawer } from "LLM/features/PostOnboardingHubDrawer";
-import { track } from "~/analytics";
 import { useOnboardingWidgetViewModel } from "../useOnboardingWidgetViewModel";
 
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index");

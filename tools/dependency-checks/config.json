@@ -3,6 +3,41 @@
     "react": {
       "why": "The workspace must resolve a single React copy.",
       "maxVersions": 1
+    },
+    "react-dom": {
+      "why": "The workspace must resolve a single React DOM copy.",
+      "maxVersions": 1
+    },
+    "react-native": {
+      "why": "The mobile app bundles a single React Native runtime.",
+      "maxVersions": 1
+    },
+    "electron": {
+      "why": "The desktop app ships a single Electron runtime.",
+      "maxVersions": 1
+    },
+    "lodash": {
+      "why": "Lodash versions were uniformized through the pnpm catalog (LIVE-35624).",
+      "maxVersions": 1
+    },
+    "@solana/web3.js": {
+      "why": "The Solana signer and coin module must share one web3.js.",
+      "maxVersions": 1
+    }
+  },
+  "denylists": {
+    "replaced": {
+      "why": "Dependencies we replaced with a better alternative. Re-adding one needs a new decision.",
+      "packages": {
+        "rn-fetch-blob": {
+          "reason": "Replaced on mobile (LIVE-37839).",
+          "use": "expo-file-system"
+        },
+        "react-native-haptic-feedback": {
+          "reason": "Replaced on mobile.",
+          "use": "expo-haptics"
+        }
+      }
     }
   },
   "allowlists": {
@@ -23,17 +58,17 @@
         "elliptic": {
           "tolerated": true,
           "reason": "Legacy pure-JS curve library reached only through third-party SDKs, and the fallback secp256k1 uses when its bindings are missing. Pinned to 6.6.1 by a root pnpm override.",
-          "exit": "LIVE-37448 — the SDKs stop pinning it, or we stop shipping them."
+          "exit": "LIVE-37448 the SDKs stop pinning it, or we stop shipping them."
         },
         "secp256k1": {
           "tolerated": true,
           "reason": "Native bindings, reached only through icon-sdk-js.",
-          "exit": "LIVE-37372 — coin-icon drops icon-sdk-js, or the SDK stops depending on it."
+          "exit": "LIVE-37372 coin-icon drops icon-sdk-js, or the SDK stops depending on it."
         },
         "@noble/secp256k1": {
           "tolerated": true,
           "reason": "Standalone noble package superseded by @noble/curves. Pinned exactly by every SDK.",
-          "exit": "LIVE-37448 — the SDKs move to @noble/curves, or we stop shipping them."
+          "exit": "LIVE-37448 the SDKs move to @noble/curves, or we stop shipping them."
         }
       }
     }

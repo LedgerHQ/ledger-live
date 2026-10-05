@@ -61,8 +61,8 @@ export default class ModularDrawer {
   }
 
   @Step("Perform search on modular drawer by ticker {{{0}}}")
-  async performSearchByTicker(ticker: string) {
-    await typeTextByElement(this.searchBar(), ticker);
+  async performSearchByTicker(ticker: string, closeKeyboard = true) {
+    await typeTextByElement(this.searchBar(), ticker, closeKeyboard);
   }
 
   @Step("Select currency in receive list by ticker {{{0}}}")

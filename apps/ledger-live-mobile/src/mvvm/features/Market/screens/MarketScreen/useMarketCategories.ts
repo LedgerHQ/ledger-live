@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
-import { track } from "~/analytics";
 import type { MarketListCategory } from "~/reducers/types";
 
 export type MarketCategoryTab = {

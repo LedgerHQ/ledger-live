@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";

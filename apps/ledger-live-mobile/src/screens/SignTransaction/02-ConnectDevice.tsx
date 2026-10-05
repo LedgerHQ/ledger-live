@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import React, { memo, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
@@ -10,7 +11,6 @@ import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app"
 import { useTheme } from "@react-navigation/native";
 import { TransactionResult } from "@ledgerhq/live-common/hw/actions/transaction";
 import DeviceAction from "~/components/DeviceAction";
-import { TrackScreen } from "~/analytics";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { ScreenName } from "~/const";
 import type {

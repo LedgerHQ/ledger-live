@@ -1,11 +1,17 @@
 import { act } from "tests/testSetup";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import { closeGenericAwarenessModalDialog } from "LLD/features/GenericAwarenessModal/genericAwarenessModalDialog";
 import { PAGE_TRACKING_AWARENESS_MODAL_PROMPT } from "../../analytics/const";
 import { carouselCampaignCard, promptCampaignCard } from "../../testUtils/fixtures";
 import useGenericAwarenessModalPromptViewModel from "../useGenericAwarenessModalPromptViewModel";
 import { renderHookWithStore } from "../testHelpers/renderHookWithStore";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 const mockLogClick = jest.fn();
 const mockLogDismiss = jest.fn();
@@ -87,11 +93,11 @@ describe("useGenericAwarenessModalPromptViewModel", () => {
     );
 
     expect(trackPage).toHaveBeenCalledWith(
-      PAGE_TRACKING_AWARENESS_MODAL_PROMPT,
-      undefined,
-      expect.objectContaining({ contentId: promptCampaignCard.id }),
-      true,
-      false,
+      {
+        category: PAGE_TRACKING_AWARENESS_MODAL_PROMPT,
+        props: expect.objectContaining({ contentId: promptCampaignCard.id }),
+      },
+      { updateRoutes: true },
     );
   });
 

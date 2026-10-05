@@ -17,6 +17,7 @@ export type PerpsDepositSignProps = Readonly<PerpsDepositReviewParams> &
     onSelectDevice: (device: Device | null | undefined) => void;
     onDone: (outcome: PerpsDepositOutcome) => void;
     onRefused: () => void;
+    onNotEnoughBalance: () => void;
   }>;
 
 export type PerpsDepositSignViewModel = Readonly<{
@@ -34,11 +35,13 @@ export function usePerpsDepositSignViewModel({
   onSelectDevice,
   onDone,
   onRefused,
+  onNotEnoughBalance,
   ...depositParams
 }: PerpsDepositSignProps): PerpsDepositSignViewModel {
   const { deviceStep, executeDeposit, retry } = usePerpsDepositExecution(depositParams, {
     onDone,
     onRefused,
+    onNotEnoughBalance,
   });
 
   const onDeviceError = useCallback(
