@@ -6925,6 +6925,7 @@
       "claimRewardCompound": "validator that will receive the rewards",
       "compoundReward": "validator that will receive the rewards",
       "optIn": "recipient",
+      "tokenAssociate": "recipient",
       "nominate": "validator",
       "stake": "validator",
       "unstake": "validator",
