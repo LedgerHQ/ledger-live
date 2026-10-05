@@ -1,32 +1,26 @@
-import { AccountRefSchema, type AccountRef } from "@domain/entity-account";
-import { counterBinding, makeStore } from "./testing/toyData";
+import { computeAccountId } from "@domain/entity-account-alias";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { counterBinding, descriptorOf, indexOf, makeStore } from "./testing/toyData";
 import { fetchAccountData, fetchAccountDataBatch } from "./fetchAccountData";
-import type { AccountDataSource } from "./source";
+import type { AccountDataSource, AccountTarget } from "./source";
 
-const refOf = (index: number, address = `0x${index}`): AccountRef =>
-  AccountRefSchema.parse({
-    accountId: `js:2:ethereum:0x${index}:`,
-    currencyId: "ethereum",
-    address,
-    derivationMode: "",
-  });
-
-const indexOf = (ref: AccountRef) => Number(ref.accountId.split(":")[3].slice(2));
+const refOf = descriptorOf;
+const idOf = (index: number) => computeAccountId(descriptorOf(index));
 
 function batchSource(
-  answer: (ref: AccountRef) => PromiseSettledResult<number> = ref => ({
+  answer: (target: AccountTarget) => PromiseSettledResult<number> = target => ({
     status: "fulfilled",
-    value: indexOf(ref),
+    value: indexOf(target),
   }),
 ) {
-  const calls: AccountRef[][] = [];
+  const calls: AccountDescriptor[][] = [];
   const source: AccountDataSource = {
     id: "batch",
     supports: () => true,
     batch: {
-      counter: async refs => {
-        calls.push([...refs]);
-        return refs.map(answer);
+      counter: async targets => {
+        calls.push(targets.map(target => target.descriptor));
+        return targets.map(answer);
       },
     },
   };
@@ -40,21 +34,21 @@ describe("fetchAccountDataBatch", () => {
     await store.dispatch(fetchAccountDataBatch(counterBinding, [refOf(0), refOf(1), refOf(2)]));
     expect(calls).toHaveLength(1);
     const { byAccount, status } = store.getState().counter;
-    expect([0, 1, 2].map(index => byAccount[refOf(index).accountId]?.value)).toEqual([0, 1, 2]);
-    expect(status[refOf(1).accountId]).toEqual({ pending: false, sourceId: "batch" });
+    expect([0, 1, 2].map(index => byAccount[idOf(index)]?.value)).toEqual([0, 1, 2]);
+    expect(status[idOf(1)]).toEqual({ pending: false, sourceId: "batch" });
   });
 
   it("records each failure on its own account", async () => {
-    const { source } = batchSource(ref =>
-      indexOf(ref) === 1
+    const { source } = batchSource(target =>
+      indexOf(target) === 1
         ? { status: "rejected", reason: new Error("unknown address") }
-        : { status: "fulfilled", value: indexOf(ref) },
+        : { status: "fulfilled", value: indexOf(target) },
     );
     const store = makeStore([source]);
     await store.dispatch(fetchAccountDataBatch(counterBinding, [refOf(0), refOf(1)]));
     const { byAccount, status } = store.getState().counter;
-    expect(byAccount[refOf(0).accountId]?.value).toBe(0);
-    expect(status[refOf(1).accountId]?.error).toBe("unknown address");
+    expect(byAccount[idOf(0)]?.value).toBe(0);
+    expect(status[idOf(1)]?.error).toBe("unknown address");
   });
 
   it("reads only the accounts that are not fresh", async () => {
@@ -73,19 +67,19 @@ describe("fetchAccountDataBatch", () => {
     expect(calls).toHaveLength(1);
   });
 
-  it("reads an account listed twice once, under its last ref", async () => {
+  it("reads an account listed twice once", async () => {
     const { source, calls } = batchSource();
     const store = makeStore([source]);
-    await store.dispatch(fetchAccountDataBatch(counterBinding, [refOf(0), refOf(0, "0xrotated")]));
-    expect(calls).toEqual([[refOf(0, "0xrotated")]]);
+    await store.dispatch(fetchAccountDataBatch(counterBinding, [refOf(0), refOf(0)]));
+    expect(calls).toEqual([[refOf(0)]]);
   });
 
   it("is joined by a single read of an account it is already reading", async () => {
     let release!: () => void;
     const gate = new Promise<void>(resolve => (release = resolve));
-    const counter = jest.fn(async (ref: AccountRef) => {
+    const counter = jest.fn(async (target: AccountTarget) => {
       await gate;
-      return indexOf(ref);
+      return indexOf(target);
     });
     const store = makeStore([{ id: "s", supports: () => true, counter }]);
     const batch = store.dispatch(fetchAccountDataBatch(counterBinding, [refOf(0), refOf(1)]));
@@ -99,8 +93,8 @@ describe("fetchAccountDataBatch", () => {
     const store = makeStore([], {});
     await store.dispatch(fetchAccountDataBatch(counterBinding, [refOf(0), refOf(1)]));
     const { status } = store.getState().counter;
-    expect(status[refOf(0).accountId]?.error).toMatch(/No account data router/);
-    expect(status[refOf(1).accountId]?.error).toMatch(/No account data router/);
+    expect(status[idOf(0)]?.error).toMatch(/No account data router/);
+    expect(status[idOf(1)]?.error).toMatch(/No account data router/);
   });
 });
 

@@ -4,8 +4,13 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/types";
-import type { AccountDataSource } from "@domain/api-account-data-source";
-import type { AccountId, AccountRef, AnyAccountId, TokenAccountId } from "@domain/entity-account";
+import type { AccountDataSource, AccountTarget } from "@domain/api-account-data-source";
+import type { AccountId, AnyAccountId, TokenAccountId } from "@domain/entity-account";
+import {
+  accountKeyOf,
+  currencyIdFromNetwork,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor";
 import {
   AccountBalanceSchema,
   AmountStrSchema,
@@ -62,28 +67,43 @@ function throwIfAborted(signal: AbortSignal | undefined): void {
   if (signal?.aborted) throw new DOMException("aborted before the read started", "AbortError");
 }
 
+/** What the coin module is asked about: the account's currency, and the key it reads it by. */
+function coinModuleInputOf({ descriptor }: AccountTarget) {
+  return {
+    currencyId: currencyIdFromNetwork(descriptor.network),
+    address: accountKeyOf(descriptor),
+  };
+}
+
 /** Reads straight from a coin module: one `getBalance` or one `listOperations` page, no full sync. */
 export class CoinModuleSource implements AccountDataSource {
   readonly id = "coin-module";
 
   constructor(private readonly config: CoinModuleSourceConfig) {}
 
-  supports(ref: AccountRef, datum: AccountDatum): boolean {
-    const family = findCryptoCurrencyById(ref.currencyId)?.family;
+  supports(descriptor: AccountDescriptor, datum: AccountDatum): boolean {
     const families = this.config.families[datum];
-    if (family === undefined || families === undefined) return false;
+    if (families === undefined) return false;
+    let family: string | undefined;
+    try {
+      family = findCryptoCurrencyById(currencyIdFromNetwork(descriptor.network))?.family;
+    } catch {
+      return false;
+    }
+    if (family === undefined) return false;
     for (const served of families()) if (served === family) return true;
     return false;
   }
 
   async balance(
-    ref: AccountRef,
+    target: AccountTarget,
     _query: undefined,
     signal?: AbortSignal,
   ): Promise<AccountBalance[]> {
     throwIfAborted(signal);
-    const coinModule = await this.config.loadCoinModule(ref.currencyId);
-    const balances = await coinModule.getBalance(ref.address);
+    const { currencyId, address } = coinModuleInputOf(target);
+    const coinModule = await this.config.loadCoinModule(currencyId);
+    const balances = await coinModule.getBalance(address);
     const at = DateTimeIsoSchema.parse(new Date().toISOString());
     const blacklisted = new Set(this.config.blacklistedTokenIds?.() ?? []);
 
@@ -95,9 +115,9 @@ export class CoinModuleSource implements AccountDataSource {
           const token = await coinModule.tokenOf(balance.asset);
           if (!token || blacklisted.has(token.id)) return undefined;
           return this.toBalance(balance, {
-            accountId: this.config.tokenAccountIdOf(ref.accountId, token.id),
+            accountId: this.config.tokenAccountIdOf(target.accountId, token.id),
             assetId: token.id,
-            parentId: ref.accountId,
+            parentId: target.accountId,
             at,
           });
         }),
@@ -105,8 +125,8 @@ export class CoinModuleSource implements AccountDataSource {
 
     return [
       this.toBalance(native ?? { asset: { type: "native" }, value: 0n }, {
-        accountId: ref.accountId,
-        assetId: ref.currencyId,
+        accountId: target.accountId,
+        assetId: currencyId,
         at,
       }),
       ...tokenRows.filter((row): row is AccountBalance => row !== undefined),
@@ -114,14 +134,17 @@ export class CoinModuleSource implements AccountDataSource {
   }
 
   async operations(
-    ref: AccountRef,
+    target: AccountTarget,
     query: AccountOperationsQuery | undefined,
     signal?: AbortSignal,
   ): Promise<AccountOperationsPage> {
     throwIfAborted(signal);
-    const coinModule = await this.config.loadCoinModule(ref.currencyId);
-    const page = await coinModule.listOperations(ref.address, query ?? {});
-    const rows = await Promise.all(page.items.map(item => this.toOperation(ref, coinModule, item)));
+    const { currencyId, address } = coinModuleInputOf(target);
+    const coinModule = await this.config.loadCoinModule(currencyId);
+    const page = await coinModule.listOperations(address, query ?? {});
+    const rows = await Promise.all(
+      page.items.map(item => this.toOperation(target, coinModule, item)),
+    );
     // `listOperations` reports against the address, so token operations are fanned out to their
     // token account here, as the full sync does for its sub-operations.
     const operations = rows.filter((row): row is AccountOperation => row !== undefined);
@@ -144,20 +167,23 @@ export class CoinModuleSource implements AccountDataSource {
   }
 
   private async toOperation(
-    ref: AccountRef,
+    target: AccountTarget,
     coinModule: CoinModule,
     operation: Operation,
   ): Promise<AccountOperation | undefined> {
+    const { currencyId } = coinModuleInputOf(target);
     const isNative = operation.asset.type === "native";
     const token = isNative ? undefined : await coinModule.tokenOf(operation.asset);
     if (!isNative && !token) return undefined;
 
-    const accountId = token ? this.config.tokenAccountIdOf(ref.accountId, token.id) : ref.accountId;
+    const accountId = token
+      ? this.config.tokenAccountIdOf(target.accountId, token.id)
+      : target.accountId;
     const { hash, fees, failed, block, date } = operation.tx;
     return AccountOperationSchema.parse({
       id: `${accountId}-${hash}-${operation.type}`,
       accountId,
-      assetId: token ? token.id : ref.currencyId,
+      assetId: token ? token.id : currencyId,
       hash,
       type: operation.type,
       value: OperationAmountSchema.parse(operationValue(operation).toString()),

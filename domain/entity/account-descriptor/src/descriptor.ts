@@ -1,9 +1,10 @@
 import { z } from "zod";
-import { NetworkSchema } from "./network";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { NetworkSchema, currencyIdFromNetwork } from "./network";
 import type { Network } from "./network";
 
 /**
- * AccountDescriptorV1 — the ADR-specified format.
+ * AccountDescriptor — the common identity of an account, whatever the source asking about it.
  *
  * ADR: https://ledgerhq.atlassian.net/wiki/spaces/TA/pages/6975946770/ADR+-+Account+descriptor
  *
@@ -30,7 +31,7 @@ const SEP = ":" as const;
  * The non-hardened change/address suffix is intentionally omitted: the xpub
  * already represents the full derivation tree from the hardened account root.
  */
-export const UtxoAccountDescriptorV1Schema = z.object({
+export const UtxoAccountDescriptorSchema = z.object({
   purpose: z.literal("account"),
   version: z.literal("1"),
   type: z.literal("utxo"),
@@ -57,7 +58,7 @@ export const UtxoAccountDescriptorV1Schema = z.object({
  * Stores the derived address and the full derivation path used to reach it,
  * including the non-hardened change and address-index components where applicable.
  */
-export const AccountBasedDescriptorV1Schema = z.object({
+export const AddressAccountDescriptorSchema = z.object({
   purpose: z.literal("account"),
   version: z.literal("1"),
   type: z.literal("address"),
@@ -68,36 +69,71 @@ export const AccountBasedDescriptorV1Schema = z.object({
   path: z.string().min(1),
 });
 
-export const AccountDescriptorV1Schema = z.discriminatedUnion("type", [
-  UtxoAccountDescriptorV1Schema,
-  AccountBasedDescriptorV1Schema,
+export const AccountDescriptorSchema = z.discriminatedUnion("type", [
+  UtxoAccountDescriptorSchema,
+  AddressAccountDescriptorSchema,
 ]);
 
-export type UtxoAccountDescriptorV1 = z.infer<typeof UtxoAccountDescriptorV1Schema>;
-export type AccountBasedDescriptorV1 = z.infer<typeof AccountBasedDescriptorV1Schema>;
-export type AccountDescriptorV1 = z.infer<typeof AccountDescriptorV1Schema>;
+export type UtxoAccountDescriptor = z.infer<typeof UtxoAccountDescriptorSchema>;
+export type AddressAccountDescriptor = z.infer<typeof AddressAccountDescriptorSchema>;
+export type AccountDescriptor = z.infer<typeof AccountDescriptorSchema>;
 
-/**
- * Serialize an AccountDescriptorV1 to its canonical colon-separated string form.
- */
-export function serializeV1(descriptor: AccountDescriptorV1): string {
-  const { purpose, version, type, network } = descriptor;
-  const base = [purpose, version, type, network.name, network.env].join(SEP);
-  if (descriptor.type === "utxo") {
-    return [base, descriptor.xpub, descriptor.path].join(SEP);
+/** The key the account is derived from: the xpub for a UTXO account, the address otherwise. */
+export function accountKeyOf(descriptor: AccountDescriptor): string {
+  return descriptor.type === "utxo" ? descriptor.xpub : descriptor.address;
+}
+
+// Address formats where letter case is presentation, not identity (EVM checksums).
+function isCaseInsensitiveAddress(network: Network): boolean {
+  try {
+    return findCryptoCurrencyById(currencyIdFromNetwork(network))?.family === "evm";
+  } catch {
+    return false;
   }
-  return [base, descriptor.address, descriptor.path].join(SEP);
 }
 
 /**
- * Parse a V1 descriptor string into a structured AccountDescriptorV1.
- * Throws a descriptive error if the string is not a valid V1 descriptor.
+ * The spelling every identity is computed from, so that two spellings of the same account (hardened
+ * marker `'` or `h`, EVM address checksummed or not, network in any case) hash to the same id. The
+ * descriptor itself is left as given: sources still receive the address they were handed.
  */
-export function parseV1(input: string): AccountDescriptorV1 {
+export function canonicalizeAccountDescriptor(descriptor: AccountDescriptor): AccountDescriptor {
+  const network = {
+    name: descriptor.network.name.toLowerCase(),
+    env: descriptor.network.env.toLowerCase(),
+  };
+  const path = descriptor.path.replaceAll("'", "h");
+  if (descriptor.type === "utxo") return { ...descriptor, network, path };
+  const address = isCaseInsensitiveAddress(network)
+    ? descriptor.address.toLowerCase()
+    : descriptor.address;
+  return { ...descriptor, network, address, path };
+}
+
+/** Serialize an AccountDescriptor to its colon-separated string form, as given. */
+export function serializeAccountDescriptor(descriptor: AccountDescriptor): string {
+  const { purpose, version, type, network, path } = descriptor;
+  const base = [purpose, version, type, network.name, network.env].join(SEP);
+  return [base, accountKeyOf(descriptor), path].join(SEP);
+}
+
+/**
+ * The identity of an account: the canonical string, and the input of its id hash. Use it, not
+ * `serializeAccountDescriptor`, to compare, dedupe or key descriptors.
+ */
+export function accountDescriptorKey(descriptor: AccountDescriptor): string {
+  return serializeAccountDescriptor(canonicalizeAccountDescriptor(descriptor));
+}
+
+/**
+ * Parse a descriptor string into a structured AccountDescriptor.
+ * Throws a descriptive error if the string is not a valid account descriptor.
+ */
+export function parseAccountDescriptor(input: string): AccountDescriptor {
   // Expected segments (colon-separated):
   //   [0] "account"
   //   [1] "1"
-  //   [2] "utxo" | "account"
+  //   [2] "utxo" | "address"
   //   [3] network name
   //   [4] network env
   //   [5] xpub or address  (no colons in practice, but we join back just in case)
@@ -107,17 +143,17 @@ export function parseV1(input: string): AccountDescriptorV1 {
 
   if (parts.length < 7) {
     throw new Error(
-      `Invalid AccountDescriptorV1: expected at least 7 colon-separated fields, got ${parts.length} in "${input}"`,
+      `Invalid AccountDescriptor: expected at least 7 colon-separated fields, got ${parts.length} in "${input}"`,
     );
   }
 
   const [purpose, version, type, networkName, networkEnv, ...rest] = parts;
 
   if (purpose !== "account") {
-    throw new Error(`Invalid AccountDescriptorV1: expected purpose "account", got "${purpose}"`);
+    throw new Error(`Invalid AccountDescriptor: expected purpose "account", got "${purpose}"`);
   }
   if (version !== "1") {
-    throw new Error(`Invalid AccountDescriptorV1: expected version "1", got "${version}"`);
+    throw new Error(`Invalid AccountDescriptor: expected version "1", got "${version}"`);
   }
 
   // The path is the last segment (starts with "m/"); everything before it is the xpub/address.
@@ -127,7 +163,7 @@ export function parseV1(input: string): AccountDescriptorV1 {
   const network: Network = { name: networkName, env: networkEnv };
 
   if (type === "utxo") {
-    return UtxoAccountDescriptorV1Schema.parse({
+    return UtxoAccountDescriptorSchema.parse({
       purpose: "account",
       version: "1",
       type: "utxo",
@@ -138,7 +174,7 @@ export function parseV1(input: string): AccountDescriptorV1 {
   }
 
   if (type === "address") {
-    return AccountBasedDescriptorV1Schema.parse({
+    return AddressAccountDescriptorSchema.parse({
       purpose: "account",
       version: "1",
       type: "address",
@@ -148,5 +184,5 @@ export function parseV1(input: string): AccountDescriptorV1 {
     });
   }
 
-  throw new Error(`Invalid AccountDescriptorV1 type: "${type}" (expected "utxo" or "address")`);
+  throw new Error(`Invalid AccountDescriptor type: "${type}" (expected "utxo" or "address")`);
 }

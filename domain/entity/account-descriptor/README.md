@@ -1,33 +1,13 @@
-# Account Descriptor
+# @domain/entity-account-descriptor
 
-This module defines two versioned representations of a Ledger account descriptor and the adapters to convert between them.
+> [!CAUTION]
+> **Status: UNSTABLE** (account-\* PoC). New package, API still being designed.
 
-**ADR**: [ADR - Account descriptor](https://ledgerhq.atlassian.net/wiki/spaces/TA/pages/6975946770/ADR+-+Account+descriptor)
+The account descriptor: the minimal, hashable metadata that identifies an account, the same across its whole life (discovery on the device, use in the app, wallet sync, every account data source).
 
----
+**ADR**: [Account descriptor as the common account identity](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7599489111/ADR+Account+descriptor+as+the+common+account+identity), built on the [Account descriptor ADR](https://ledgerhq.atlassian.net/wiki/spaces/TA/pages/6975946770/ADR+-+Account+descriptor).
 
-## AccountDescriptorV0 — WalletSync (internal)
-
-The V0 format comes from Ledger Wallet Sync / live-common. It is the format produced and consumed by live-common's `accountDataToAccount`, `decodeAccountId`, and the bridge stack.
-
-```ts
-{
-  id:             "js:2:bitcoin:xpub6BosfCn...:native_segwit",
-  currencyId:     "bitcoin",
-  freshAddress:   "bc1q...",   // next unused address; "" when unknown
-  seedIdentifier: "xpub6BosfCn...",
-  derivationMode: "native_segwit",
-  index:          0,
-}
-```
-
-The `id` encodes `currencyId`, `seedIdentifier`, and `derivationMode` in the format `js:2:{currencyId}:{seedIdentifier}:{derivationMode}`. It is the primary key passed to the bridge.
-
----
-
-## AccountDescriptorV1 — ADR format
-
-The V1 format is the canonical, human-readable descriptor defined in the ADR.
+It replaces `AccountRef` of the earlier PoCs. It keeps out anything secret (Aleo view key), mutable (`freshAddress`) or server-assigned (Portfolio account UUID): that state lives next to the hash.
 
 ### String representation
 
@@ -78,27 +58,26 @@ account:1:address:solana:main:7xCU4XQfL8589X6vVt8q5F7J3Z9T1z6W6X6X6X6X6X:m/44'/5
 
 ---
 
-## Adapters
+## Utilities
 
 ```ts
-import { toV1, toV0, serializeV1, parseV1 } from "./index";
+import {
+  serializeAccountDescriptor,
+  accountDescriptorKey,
+  parseAccountDescriptor,
+  accountKeyOf,
+  currencyIdFromNetwork,
+  networkFromCurrencyId,
+} from "@domain/entity-account-descriptor";
 ```
 
-### `toV1(v0: AccountDescriptorV0): AccountDescriptorV1`
-
-Converts a V0 descriptor to V1. Derives the type (`utxo` vs `account`) by checking whether `seedIdentifier` looks like an xpub (starts with `xpub`, `ypub`, `zpub`). Reconstructs the BIP32 path from `derivationMode` + `index`.
-
-### `toV0(v1: AccountDescriptorV1): AccountDescriptorV0`
-
-Converts a V1 descriptor back to V0. Recovers `derivationMode` and `index` from the path. Sets `freshAddress: ""` — if the fresh address is required, call `BridgeAdapter.getFreshAddress()` after syncing.
-
-### `serializeV1(v1)` / `parseV1(str)`
-
-Serialize a structured V1 object to its string form, or parse a V1 string back to a structured object.
-
----
+- `serializeAccountDescriptor` / `parseAccountDescriptor`: the string form, as given.
+- `accountDescriptorKey`: the identity of an account, and the input of its id hash (computed by `@domain/entity-account-alias`). Two spellings of one account (`'` or `h`, EVM checksummed or lowercase, network case) have the same key. Use it, not `serializeAccountDescriptor`, to compare, dedupe or key descriptors.
+- `accountKeyOf`: the xpub of a `utxo` descriptor, the address of an `address` one.
+- `currencyIdFromNetwork` / `networkFromCurrencyId`: the static network to currency table, built on the currency registry.
+- `fromLegacyAccount` / `toLegacyAccount` are not here: they need the derivation schemes, so they live in `@ledgerhq/live-common/account-data/legacyAccount`.
 
 ## Limitations
 
-- **`freshAddress` round-trip**: V1 does not store the fresh address. `toV0()` always returns `freshAddress: ""`.
-- **Unsupported families**: Only `bitcoin`, `ethereum`, `solana` (and their known testnets) are mapped. Other currencies throw `UnsupportedFamilyError`.
+- `freshAddress` is not part of the descriptor: it moves, and a descriptor must not.
+- A currency the derivation registry cannot resolve throws `UnknownNetworkError` or `UnsupportedFamilyError`.

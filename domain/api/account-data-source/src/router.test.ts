@@ -1,17 +1,16 @@
-import type { AccountRef } from "@domain/entity-account";
-import { ref } from "./testing/toyData";
+import { accountId, descriptor } from "./testing/toyData";
 import { NoAccountSourceError } from "./errors";
 import { createAccountDataRouter } from "./router";
-import type { AccountDataSource } from "./source";
+import type { AccountDataSource, AccountTarget } from "./source";
 
 describe("createAccountDataRouter", () => {
-  it("asks the first source that has the method and supports the ref", async () => {
+  it("asks the first source that has the method and supports the account", async () => {
     const router = createAccountDataRouter([
       { id: "a", supports: () => false, counter: async () => 1 },
       { id: "b", supports: () => true, counter: async () => 2 },
       { id: "c", supports: () => true, counter: async () => 3 },
     ]);
-    expect(await router.read("counter", ref)).toEqual({ data: 2, sourceId: "b" });
+    expect(await router.read("counter", descriptor)).toEqual({ data: 2, sourceId: "b" });
   });
 
   it("skips a source that does not implement the datum, without asking it", async () => {
@@ -20,14 +19,14 @@ describe("createAccountDataRouter", () => {
       { id: "feed-only", supports, feed: async () => ({ items: [] }) },
       { id: "full", supports: () => true, counter: async () => 1 },
     ]);
-    expect((await router.read("counter", ref)).sourceId).toBe("full");
+    expect((await router.read("counter", descriptor)).sourceId).toBe("full");
     expect(supports).not.toHaveBeenCalled();
   });
 
   it("lets a source support one datum and not another for the same account", async () => {
     const granular: AccountDataSource = {
       id: "granular",
-      supports: (_ref, datum) => datum === "counter",
+      supports: (_descriptor, datum) => datum === "counter",
       counter: async () => 1,
       feed: async () => ({ items: ["granular"] }),
     };
@@ -37,13 +36,20 @@ describe("createAccountDataRouter", () => {
       feed: async () => ({ items: ["fallback"] }),
     };
     const router = createAccountDataRouter([granular, fallback]);
-    expect((await router.read("counter", ref)).sourceId).toBe("granular");
-    expect((await router.read("feed", ref)).sourceId).toBe("fallback");
+    expect((await router.read("counter", descriptor)).sourceId).toBe("granular");
+    expect((await router.read("feed", descriptor)).sourceId).toBe("fallback");
+  });
+
+  it("hands the reader the account id and the descriptor", async () => {
+    const counter = jest.fn(async () => 1);
+    const router = createAccountDataRouter([{ id: "a", supports: () => true, counter }]);
+    await router.read("counter", descriptor);
+    expect(counter).toHaveBeenCalledWith({ accountId, descriptor }, undefined, undefined);
   });
 
   it("throws NoAccountSourceError when nobody can answer", async () => {
     const router = createAccountDataRouter([{ id: "a", supports: () => false }]);
-    await expect(router.read("counter", ref)).rejects.toBeInstanceOf(NoAccountSourceError);
+    await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(NoAccountSourceError);
   });
 
   it("only asks the pinned source, even if a higher-ranked one could answer", async () => {
@@ -51,12 +57,12 @@ describe("createAccountDataRouter", () => {
       { id: "first", supports: () => true, counter: async () => 1 },
       { id: "second", supports: () => true, counter: async () => 2 },
     ]);
-    expect(await router.read("counter", ref, undefined, { sourceId: "second" })).toEqual({
+    expect(await router.read("counter", descriptor, undefined, { sourceId: "second" })).toEqual({
       data: 2,
       sourceId: "second",
     });
     await expect(
-      router.read("counter", ref, undefined, { sourceId: "gone" }),
+      router.read("counter", descriptor, undefined, { sourceId: "gone" }),
     ).rejects.toBeInstanceOf(NoAccountSourceError);
   });
 
@@ -67,14 +73,18 @@ describe("createAccountDataRouter", () => {
       supports() {
         return true;
       }
-      async feed(_ref: AccountRef, query: { cursor?: string } | undefined, signal?: AbortSignal) {
+      async feed(
+        _target: AccountTarget,
+        query: { cursor?: string } | undefined,
+        signal?: AbortSignal,
+      ) {
         return { items: [], nextCursor: `${query?.cursor}:${this.pageSize}:${signal?.aborted}` };
       }
     }
     const router = createAccountDataRouter([new PagedSource()], { coalesce: false });
     const { data } = await router.read(
       "feed",
-      ref,
+      descriptor,
       { cursor: "c1" },
       {
         signal: new AbortController().signal,

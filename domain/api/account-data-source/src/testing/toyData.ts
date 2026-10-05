@@ -1,5 +1,7 @@
 import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { AccountRefSchema, type AccountId, type AccountRef } from "@domain/entity-account";
+import type { AccountId } from "@domain/entity-account";
+import { computeAccountId } from "@domain/entity-account-alias";
+import { accountKeyOf, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountDataBinding, AccountDataReceived } from "@domain/entity-account-data";
 import { createAccountDataRouter } from "../router";
 import type { AccountDataSource } from "../source";
@@ -100,12 +102,31 @@ export const feedBinding: AccountDataBinding<"feed", ToyRootState> = {
   },
 };
 
-export const ref: AccountRef = AccountRefSchema.parse({
-  accountId: "js:2:ethereum:0xabc:",
-  currencyId: "ethereum",
+export const descriptor: AccountDescriptor = {
+  purpose: "account",
+  version: "1",
+  type: "address",
+  network: { name: "ethereum", env: "main" },
   address: "0xabc",
-  derivationMode: "",
+  path: "m/44h/60h/0h/0/0",
+};
+
+/** The `index`th toy account: its address is `0x<index>`, on `network` (ethereum by default). */
+export const descriptorOf = (index: number, network = "ethereum"): AccountDescriptor => ({
+  purpose: "account",
+  version: "1",
+  type: "address",
+  network: { name: network, env: "main" },
+  address: `0x${index}`,
+  path: `m/44h/60h/${index}h/0/0`,
 });
+
+/** The index a toy account was made with. */
+export const indexOf = ({ descriptor }: { descriptor: AccountDescriptor }) =>
+  Number(accountKeyOf(descriptor).slice(2));
+
+/** The id the toy slices key `descriptor` by. */
+export const accountId: AccountId = computeAccountId(descriptor);
 
 /** A store holding both toy datums, with a router over `sources` in the thunk extraArgument. */
 export function makeStore(sources: AccountDataSource[], extra?: unknown) {

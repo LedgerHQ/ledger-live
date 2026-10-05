@@ -1,16 +1,16 @@
 /**
- * Bidirectional adapters between AccountDescriptorV0 (WalletSync / live-common) and
- * AccountDescriptorV1 (ADR format).
+ * Conversions between an AccountDescriptor and the fields the legacy account model keeps for the
+ * same identity (currency, seed identifier, derivation mode, index).
  *
- * V0 → V1 is lossless for any currency supported by getDerivationModesForCurrency.
- * V1 → V0 is lossless for supported currencies; `freshAddress` is always set to ""
- *   because V1 does not store it — callers should sync via BridgeAdapter if needed.
+ * Legacy to descriptor is lossless for any currency supported by getDerivationModesForCurrency.
+ * Descriptor to legacy is lossless for supported currencies; what the descriptor does not carry
+ * (the fresh address, which moves) is left to the caller.
  *
  * Path building and parsing delegate entirely to the derivation helpers from
- * @ledgerhq/ledger-wallet-framework/derivation — no hardcoded coin types or path tables.
+ * the framework derivation module: no hardcoded coin types or path tables.
  */
 
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   getDerivationScheme,
   runDerivationScheme,
@@ -19,9 +19,14 @@ import {
   derivationModeSupportsIndex,
   asDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { AccountDescriptorV0 } from "./v0";
-import type { AccountDescriptorV1, UtxoAccountDescriptorV1, AccountBasedDescriptorV1 } from "./v1";
-import { networkFromCurrencyId, currencyIdFromNetwork } from "./network";
+import {
+  accountKeyOf,
+  networkFromCurrencyId,
+  currencyIdFromNetwork,
+  type AccountDescriptor,
+  type UtxoAccountDescriptor,
+  type AddressAccountDescriptor,
+} from "@domain/entity-account-descriptor";
 
 // ---------------------------------------------------------------------------
 // Public error type
@@ -43,19 +48,19 @@ function isXpub(seedIdentifier: string): boolean {
 }
 
 /**
- * Normalize a derivation scheme output to V1 path format:
+ * Normalize a derivation scheme output to descriptor path format:
  * prepend "m/" and replace apostrophe hardened markers with "h" (shell-safe).
  */
-function toV1Path(schemePath: string): string {
+function toDescriptorPath(schemePath: string): string {
   return "m/" + schemePath.replaceAll("'", "h");
 }
 
 /**
- * Normalize a V1 path segment back to the scheme format used by derivation.ts:
+ * Normalize a descriptor path segment back to the scheme format used by derivation.ts:
  * strip the "m/" prefix and replace "h" hardened markers with "'".
  */
-function fromV1Path(v1Path: string): string {
-  return v1Path.replace(/^m\//, "").replaceAll("h", "'");
+function fromDescriptorPath(descriptorPath: string): string {
+  return descriptorPath.replace(/^m\//, "").replaceAll("h", "'");
 }
 
 type SegmentMatch = { matched: false } | { matched: true; accountIndex?: number };
@@ -131,62 +136,62 @@ function matchSchemeToPath(
   return accountIndex ?? 0;
 }
 
-// ---------------------------------------------------------------------------
-// toV1 — AccountDescriptorV0 → AccountDescriptorV1
-// ---------------------------------------------------------------------------
+/** The legacy account fields that carry an account's identity. */
+export type LegacyAccountIdentity = {
+  currencyId: string;
+  seedIdentifier: string;
+  derivationMode: string;
+  index: number;
+};
 
 /**
- * Convert a V0 (WalletSync / live-common) account descriptor to the V1 ADR format.
+ * The descriptor of a legacy account.
  * Throws UnsupportedFamilyError if the derivation scheme cannot be determined.
  */
-export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
-  const network = networkFromCurrencyId(v0.currencyId);
-  const currency = getCryptoCurrencyById(v0.currencyId);
-  const derivationMode = asDerivationMode(v0.derivationMode);
+export function fromLegacyAccount(legacy: LegacyAccountIdentity): AccountDescriptor {
+  const network = networkFromCurrencyId(legacy.currencyId);
+  const currency = getCryptoCurrencyById(legacy.currencyId);
+  const derivationMode = asDerivationMode(legacy.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
 
-  if (isXpub(v0.seedIdentifier)) {
-    const path = toV1Path(runAccountDerivationScheme(scheme, currency, { account: v0.index }));
+  if (isXpub(legacy.seedIdentifier)) {
+    const path = toDescriptorPath(
+      runAccountDerivationScheme(scheme, currency, { account: legacy.index }),
+    );
     return {
       purpose: "account",
       version: "1",
       type: "utxo",
       network,
-      xpub: v0.seedIdentifier,
+      xpub: legacy.seedIdentifier,
       path,
-    } satisfies UtxoAccountDescriptorV1;
+    } satisfies UtxoAccountDescriptor;
   }
 
-  const path = toV1Path(
-    runDerivationScheme(scheme, { coinType: currency.coinType }, { account: v0.index }),
+  const path = toDescriptorPath(
+    runDerivationScheme(scheme, { coinType: currency.coinType }, { account: legacy.index }),
   );
   return {
     purpose: "account",
     version: "1",
     type: "address",
     network,
-    address: v0.seedIdentifier,
+    address: legacy.seedIdentifier,
     path,
-  } satisfies AccountBasedDescriptorV1;
+  } satisfies AddressAccountDescriptor;
 }
 
-// ---------------------------------------------------------------------------
-// toV0 — AccountDescriptorV1 → AccountDescriptorV0
-// ---------------------------------------------------------------------------
-
 /**
- * Convert a V1 (ADR) account descriptor back to the V0 (WalletSync / live-common) format.
- *
- * `freshAddress` is set to "" — if needed call `BridgeAdapter.getFreshAddress()` after syncing.
- * `id` is reconstructed as `js:2:{currencyId}:{seedIdentifier}:{derivationMode}`.
- *
- * Throws UnsupportedFamilyError if no known derivation mode matches the V1 path.
+ * The legacy identity of a descriptor. `id` is `js:2:{currencyId}:{seedIdentifier}:{derivationMode}`.
+ * Throws UnsupportedFamilyError if no known derivation mode matches the descriptor path.
  */
-export function toV0(v1: AccountDescriptorV1): AccountDescriptorV0 {
-  const currencyId = currencyIdFromNetwork(v1.network);
+export function toLegacyAccount(
+  descriptor: AccountDescriptor,
+): LegacyAccountIdentity & { id: string } {
+  const currencyId = currencyIdFromNetwork(descriptor.network);
   const currency = getCryptoCurrencyById(currencyId);
-  const normalizedPath = fromV1Path(v1.path);
-  const seedIdentifier = v1.type === "utxo" ? v1.xpub : v1.address;
+  const normalizedPath = fromDescriptorPath(descriptor.path);
+  const seedIdentifier = accountKeyOf(descriptor);
 
   const modes = getDerivationModesForCurrency(currency);
   for (const mode of modes) {
@@ -198,7 +203,6 @@ export function toV0(v1: AccountDescriptorV1): AccountDescriptorV0 {
     return {
       id: `js:2:${currencyId}:${seedIdentifier}:${mode}`,
       currencyId,
-      freshAddress: "",
       seedIdentifier,
       derivationMode: mode,
       index,
@@ -207,6 +211,6 @@ export function toV0(v1: AccountDescriptorV1): AccountDescriptorV0 {
 
   const tried = modes.map(m => `"${m}"`).join(", ");
   throw new UnsupportedFamilyError(
-    `No derivation mode for ${currencyId} matches path "${v1.path}". Tried: ${tried}`,
+    `No derivation mode for ${currencyId} matches path "${descriptor.path}". Tried: ${tried}`,
   );
 }

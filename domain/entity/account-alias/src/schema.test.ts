@@ -1,7 +1,9 @@
 import { parseAnyAccountId } from "@domain/entity-account";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
   AccountAliasSchema,
   computeAccountAlias,
+  computeAccountId,
   initialAccountAliasState,
   AccountAliasStateSchema,
 } from "./schema";
@@ -50,5 +52,31 @@ describe("AccountAliasStateSchema", () => {
   it("rejects a non-string entry", () => {
     const state = { accountIdByAlias: { [computeAccountAlias(btcId)]: 42 } };
     expect(AccountAliasStateSchema.safeParse(state).success).toBe(false);
+  });
+});
+
+describe("computeAccountId", () => {
+  const descriptor: AccountDescriptor = {
+    purpose: "account",
+    version: "1",
+    type: "address",
+    network: { name: "ethereum", env: "main" },
+    address: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+    path: "m/44h/60h/0h/0/0",
+  };
+
+  it("is deterministic and carries neither address nor path", () => {
+    const id = computeAccountId(descriptor);
+    expect(computeAccountId({ ...descriptor })).toBe(id);
+    expect(id).not.toContain("0x71C7");
+    expect(id).not.toContain("+");
+  });
+
+  it("differs when any part of the descriptor differs", () => {
+    const id = computeAccountId(descriptor);
+    expect(computeAccountId({ ...descriptor, path: "m/44h/60h/1h/0/0" })).not.toBe(id);
+    expect(
+      computeAccountId({ ...descriptor, network: { name: "ethereum", env: "sepolia" } }),
+    ).not.toBe(id);
   });
 });

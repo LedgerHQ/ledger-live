@@ -1,5 +1,6 @@
 # Bun runtime configuration for wallet-cli.
 
 [test]
+preload = ["./src/test-setup.ts"]
 coverageReporter = ["lcov"]
 coverageDir = "coverage"

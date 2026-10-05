@@ -1,22 +1,29 @@
-import type { AccountRef } from "@domain/entity-account";
+import type { AccountId } from "@domain/entity-account";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type {
   AccountDataQuery,
   AccountDataResult,
   AccountDatum,
 } from "@domain/entity-account-data";
 
+/** What a reader is asked about: the account, by its id and its descriptor. */
+export type AccountTarget = {
+  readonly accountId: AccountId;
+  readonly descriptor: AccountDescriptor;
+};
+
 export type AccountDataReader<K extends AccountDatum> = (
-  ref: AccountRef,
+  target: AccountTarget,
   query: AccountDataQuery<K> | undefined,
   signal?: AbortSignal,
 ) => Promise<AccountDataResult<K>>;
 
 /**
- * Many accounts in one call. Answers one settled result per ref, in the same order, so one account
- * failing does not fail the others.
+ * Many accounts in one call. Answers one settled result per target, in the same order, so one
+ * account failing does not fail the others.
  */
 export type AccountDataBatchReader<K extends AccountDatum> = (
-  refs: readonly AccountRef[],
+  targets: readonly AccountTarget[],
   query: AccountDataQuery<K> | undefined,
   signal?: AbortSignal,
 ) => Promise<PromiseSettledResult<AccountDataResult<K>>[]>;
@@ -28,9 +35,12 @@ export type AccountDataBatchReader<K extends AccountDatum> = (
  */
 export type AccountDataSource = {
   readonly id: string;
-  /** Whether this source can answer `datum` for this account. Called only if it has a reader for it. */
-  supports(ref: AccountRef, datum: AccountDatum): boolean;
-  /** The most refs one batch call takes. The router splits a larger batch. */
+  /**
+   * Whether this source can answer `datum` for this account. Pure and synchronous, from the
+   * descriptor alone; called only if the source has a reader for the datum.
+   */
+  supports(descriptor: AccountDescriptor, datum: AccountDatum): boolean;
+  /** The most targets one batch call takes. The router splits a larger batch. */
   readonly maxBatchSize?: number;
   /** The most calls in flight on this source at once. Overrides the router's default. */
   readonly concurrency?: number;

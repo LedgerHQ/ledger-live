@@ -2,15 +2,19 @@ import BigNumber from "bignumber.js";
 import { of, Subject } from "rxjs";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { createAccountDataRouter } from "@domain/api-account-data-source";
-import { AccountRefSchema } from "@domain/entity-account";
-import { FullSyncSource } from "./FullSyncSource";
+import { AccountIdSchema } from "@domain/entity-account";
+import { FullSyncSource, findAccountByDescriptor } from "./FullSyncSource";
+import { accountDescriptorOf } from "./accountDescriptorOf";
 
 const getAccountBridge = jest.fn();
 jest.mock("../bridge", () => ({
   getAccountBridge: (...args: unknown[]) => getAccountBridge(...args),
 }));
 
+// What the legacy store knows the account by, and what the slices key it by.
 const ACCOUNT_ID = "js:2:ethereum:0xabc:";
+const SLICE_ID = AccountIdSchema.parse("slice-account");
+const SLICE_TOKEN_ID = `${SLICE_ID}+ethereum%2Ferc20%2Fusd__coin`;
 const TOKEN_ACCOUNT_ID = `${ACCOUNT_ID}+ethereum%2Ferc20%2Fusd__coin`;
 const USDC = "ethereum/erc20/usd__coin";
 
@@ -45,6 +49,9 @@ const account = (over: object = {}): Account =>
   ({
     type: "Account",
     id: ACCOUNT_ID,
+    seedIdentifier: "0xabc",
+    derivationMode: "ethM",
+    index: 0,
     currency: { id: "ethereum" },
     balance: new BigNumber("1500000000000000000"),
     spendableBalance: new BigNumber("1400000000000000000"),
@@ -53,12 +60,12 @@ const account = (over: object = {}): Account =>
     ...over,
   }) as unknown as Account;
 
-const ref = AccountRefSchema.parse({
-  accountId: ACCOUNT_ID,
-  currencyId: "ethereum",
-  address: "0xabc",
-  derivationMode: "",
+const targetOf = (described: Account = account(), accountId = SLICE_ID) => ({
+  accountId,
+  descriptor: accountDescriptorOf(described),
 });
+
+const ref = targetOf();
 
 /** A bridge whose sync resolves at once to `synced`. */
 function syncingTo(synced: Account) {
@@ -91,7 +98,7 @@ const prepareCurrency = jest.fn(async () => undefined);
 
 const source = (accounts: Account[] = [account()], blacklistedTokenIds?: () => string[]) =>
   new FullSyncSource({
-    getAccount: id => accounts.find(candidate => candidate.id === id),
+    findAccount: descriptor => findAccountByDescriptor(accounts, descriptor),
     prepareCurrency,
     blacklistedTokenIds,
   });
@@ -100,30 +107,31 @@ beforeEach(() => jest.clearAllMocks());
 
 describe("FullSyncSource", () => {
   describe("supports", () => {
-    it("supports a known currency whose account is in the store", () => {
-      expect(source().supports(ref)).toBe(true);
-      expect(source([]).supports(ref)).toBe(false);
-      expect(source().supports({ ...ref, currencyId: "not-a-currency" })).toBe(false);
+    it("supports a known network", () => {
+      expect(source().supports(ref.descriptor)).toBe(true);
+    });
+
+    it("does not support an unknown network", () => {
+      expect(source().supports({ ...ref.descriptor, network: { name: "nope", env: "main" } })).toBe(
+        false,
+      );
     });
   });
 
   describe("many accounts at once", () => {
     it("never runs more syncs at once than the host allows", async () => {
       const accounts = Array.from({ length: 6 }, (_, index) =>
-        account({ id: `js:2:ethereum:0x${index}:` }),
+        account({ id: `js:2:ethereum:0x${index}:`, seedIdentifier: `0x${index}` }),
       );
       const { sync, release } = pendingBridge();
       const router = createAccountDataRouter([
         new FullSyncSource({
-          getAccount: id => accounts.find(candidate => candidate.id === id),
+          findAccount: descriptor => findAccountByDescriptor(accounts, descriptor),
           prepareCurrency,
           concurrency: 2,
         }),
       ]);
-      const reading = router.readBatch(
-        "balance",
-        accounts.map(({ id }) => AccountRefSchema.parse({ ...ref, accountId: id })),
-      );
+      const reading = router.readBatch("balance", accounts.map(accountDescriptorOf));
       await settle();
       expect(sync).toHaveBeenCalledTimes(2);
       release();
@@ -141,7 +149,10 @@ describe("FullSyncSource", () => {
     it("serves balance and operations read together with a single bridge.sync", async () => {
       const { sync, release } = pendingBridge();
       const router = createAccountDataRouter([source()]);
-      const both = Promise.all([router.read("balance", ref), router.read("operations", ref)]);
+      const both = Promise.all([
+        router.read("balance", ref.descriptor),
+        router.read("operations", ref.descriptor),
+      ]);
       await settle();
       release();
       const [balance, operations] = await both;
@@ -151,12 +162,12 @@ describe("FullSyncSource", () => {
     });
 
     it("does not share between two accounts", async () => {
-      const other = account({ id: "js:2:ethereum:0xdef:" });
+      const other = account({ id: "js:2:ethereum:0xdef:", seedIdentifier: "0xdef" });
       const { sync, release } = pendingBridge();
       const fullSync = source([account(), other]);
       const both = Promise.all([
         fullSync.balance(ref, undefined),
-        fullSync.balance(AccountRefSchema.parse({ ...ref, accountId: other.id }), undefined),
+        fullSync.balance(targetOf(other, AccountIdSchema.parse("other")), undefined),
       ]);
       await settle();
       release();
@@ -204,8 +215,8 @@ describe("FullSyncSource", () => {
       await expect(other).resolves.toHaveLength(1);
     });
 
-    it("fails when the account left the store between supports and the read", async () => {
-      await expect(source([]).balance(ref, undefined)).rejects.toThrow(/not in the store/);
+    it("fails when no account in the store is described by the descriptor", async () => {
+      await expect(source([]).balance(ref, undefined)).rejects.toThrow(/no account in the store/);
     });
   });
 
@@ -214,17 +225,17 @@ describe("FullSyncSource", () => {
       syncingTo(account({ subAccounts: [tokenAccount()] }));
       const [main, token] = await source().balance(ref, undefined);
       expect(main).toMatchObject({
-        accountId: ACCOUNT_ID,
+        accountId: SLICE_ID,
         assetId: "ethereum",
         balance: "1500000000000000000",
         spendableBalance: "1400000000000000000",
       });
       expect(main.parentId).toBeUndefined();
       expect(token).toMatchObject({
-        accountId: TOKEN_ACCOUNT_ID,
+        accountId: SLICE_TOKEN_ID,
         assetId: USDC,
         balance: "2500000",
-        parentId: ACCOUNT_ID,
+        parentId: SLICE_ID,
       });
     });
 
@@ -244,7 +255,7 @@ describe("FullSyncSource", () => {
       expect(await operationsOf(account({ operations: [operation()] }))).toEqual([
         {
           id: "op-1",
-          accountId: ACCOUNT_ID,
+          accountId: SLICE_ID,
           assetId: "ethereum",
           hash: "0xdead",
           type: "OUT",
@@ -286,9 +297,9 @@ describe("FullSyncSource", () => {
         }),
       );
       expect(rows.map(row => [row.id, row.accountId, row.parentOperationId])).toEqual([
-        ["int-1", ACCOUNT_ID, "op-1"],
-        ["op-1", ACCOUNT_ID, undefined],
-        ["sub-1", TOKEN_ACCOUNT_ID, "op-1"],
+        ["int-1", SLICE_ID, "op-1"],
+        ["op-1", SLICE_ID, undefined],
+        ["sub-1", SLICE_TOKEN_ID, "op-1"],
       ]);
     });
 
@@ -322,6 +333,32 @@ describe("FullSyncSource", () => {
       );
       expect(rows.filter(row => row.id === "sub-1")).toHaveLength(1);
       expect(rows.find(row => row.id === "sub-1")?.parentOperationId).toBe("op-1");
+    });
+
+    it("re-keys account, token account, operation and parent operation ids to the slice id", async () => {
+      const own = `${ACCOUNT_ID}-0xdead-OUT`;
+      const rows = await operationsOf(
+        account({
+          operations: [
+            operation({
+              id: own,
+              subOperations: [
+                operation({ id: `${TOKEN_ACCOUNT_ID}-0xbeef-OUT`, accountId: TOKEN_ACCOUNT_ID }),
+              ],
+              internalOperations: [operation({ id: `${ACCOUNT_ID}-0xcafe-IN` })],
+            }),
+          ],
+          subAccounts: [tokenAccount()],
+        }),
+      );
+      expect(rows.map(row => [row.id, row.accountId, row.parentOperationId]).sort()).toEqual(
+        [
+          [`${SLICE_ID}-0xcafe-IN`, SLICE_ID, `${SLICE_ID}-0xdead-OUT`],
+          [`${SLICE_ID}-0xdead-OUT`, SLICE_ID, undefined],
+          [`${SLICE_TOKEN_ID}-0xbeef-OUT`, SLICE_TOKEN_ID, `${SLICE_ID}-0xdead-OUT`],
+        ].sort(),
+      );
+      expect(JSON.stringify(rows)).not.toContain(ACCOUNT_ID);
     });
 
     it("rejects an amount that is not a whole smallest-unit value", async () => {

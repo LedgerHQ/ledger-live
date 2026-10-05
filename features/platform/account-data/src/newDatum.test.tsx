@@ -3,7 +3,9 @@ import { Provider } from "react-redux";
 import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { renderHook, waitFor } from "@testing-library/react";
 import { createAccountDataRouter } from "@domain/api-account-data-source";
-import { AccountRefSchema, type AccountId } from "@domain/entity-account";
+import type { AccountId } from "@domain/entity-account";
+import { computeAccountId } from "@domain/entity-account-alias";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountDataBinding, AccountDataReceived } from "@domain/entity-account-data";
 import { useAccountData } from "./useAccountData";
 
@@ -57,12 +59,15 @@ const stakingBinding: AccountDataBinding<"staking", WithStaking> = {
 
 describe("a datum added from outside the protocol packages", () => {
   it("is routed, read into its slice and driven by the generic hook", async () => {
-    const ref = AccountRefSchema.parse({
-      accountId: "js:2:cosmos:cosmos1abc:",
-      currencyId: "cosmos",
+    const descriptor: AccountDescriptor = {
+      purpose: "account",
+      version: "1",
+      type: "address",
+      network: { name: "cosmos", env: "main" },
       address: "cosmos1abc",
-      derivationMode: "",
-    });
+      path: "m/44h/118h/0h/0/0",
+    };
+    const accountId = computeAccountId(descriptor);
     const store = configureStore({
       reducer: { accountStaking: stakingSlice.reducer },
       middleware: getDefault =>
@@ -74,7 +79,7 @@ describe("a datum added from outside the protocol packages", () => {
                 { id: "balances-only", supports: () => true },
                 {
                   id: "staking-api",
-                  supports: (_ref, datum) => datum === "staking",
+                  supports: (_descriptor, datum) => datum === "staking",
                   staking: async () => ({ staked: "42" }),
                 },
               ]),
@@ -86,11 +91,11 @@ describe("a datum added from outside the protocol packages", () => {
       <Provider store={store}>{children}</Provider>
     );
 
-    const { result } = renderHook(() => useAccountData(stakingBinding, ref), { wrapper });
+    const { result } = renderHook(() => useAccountData(stakingBinding, descriptor), { wrapper });
 
     await waitFor(() => expect(result.current.pending).toBe(false));
-    expect(store.getState().accountStaking.byAccount[ref.accountId]?.staked).toBe("42");
-    expect(store.getState().accountStaking.status[ref.accountId]?.sourceId).toBe("staking-api");
+    expect(store.getState().accountStaking.byAccount[accountId]?.staked).toBe("42");
+    expect(store.getState().accountStaking.status[accountId]?.sourceId).toBe("staking-api");
     expect(result.current.loadMore).toBeUndefined();
   });
 });

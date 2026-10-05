@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { accountRefOf } from "@ledgerhq/live-common/account-data/accountRefOf";
+import { accountDescriptorOf } from "@ledgerhq/live-common/account-data/accountDescriptorOf";
 import { accountNameWithDefaultSelector } from "@domain/entity-account-name";
 import type { AccountBalancesInput } from "@devtools/bindings";
 import { coinModuleFamilies } from "~/config/account-data-setup";
@@ -16,7 +16,14 @@ export function useAccountDataToolInputs(
 
   return useMemo(() => {
     const granularFamilies = new Set(coinModuleFamilies[datum]());
-    return accounts.map(account => {
+    return accounts.flatMap(account => {
+      // An account whose derivation is unknown has no descriptor, so no source can be asked about it.
+      let descriptor;
+      try {
+        descriptor = accountDescriptorOf(account);
+      } catch {
+        return [];
+      }
       const units: Record<string, { code: string; magnitude: number }> = {
         [account.currency.id]: {
           code: account.currency.units[0].code,
@@ -31,12 +38,14 @@ export function useAccountDataToolInputs(
         };
       }
 
-      return {
-        ref: accountRefOf(account),
-        name: accountNameWithDefaultSelector(wallet.accountNames, account),
-        granular: granularFamilies.has(account.currency.family),
-        units,
-      };
+      return [
+        {
+          descriptor,
+          name: accountNameWithDefaultSelector(wallet.accountNames, account),
+          granular: granularFamilies.has(account.currency.family),
+          units,
+        },
+      ];
     });
   }, [accounts, wallet.accountNames, datum]);
 }

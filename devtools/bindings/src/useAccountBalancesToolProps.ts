@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData, fetchAccountDataBatch } from "@domain/api-account-data-source";
-import type { AccountRef } from "@domain/entity-account";
+import { computeAccountId } from "@domain/entity-account-alias";
+import {
+  accountKeyOf,
+  currencyIdFromNetwork,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor";
 import {
   accountBalanceBinding,
   accountBalancesSlice,
@@ -18,7 +23,7 @@ type AccountBalancesToolProps = Extract<
 type Row = AccountBalancesToolProps["accounts"][number];
 
 export type AccountBalancesInput = {
-  ref: AccountRef;
+  descriptor: AccountDescriptor;
   name: string;
   granular: boolean;
   units: Readonly<Record<string, { code: string; magnitude: number }>>;
@@ -35,16 +40,17 @@ export function useAccountBalancesToolProps(
 
   const accounts = useMemo<Row[]>(
     () =>
-      inputs.map(({ ref, name, granular, units }) => {
-        const balance = selectAccountBalance(balances, ref.accountId);
-        const subs = selectSubAccountBalances(balances, ref.accountId);
-        const status = selectAccountBalanceStatus(balances, ref.accountId);
+      inputs.map(({ descriptor, name, granular, units }) => {
+        const accountId = computeAccountId(descriptor);
+        const balance = selectAccountBalance(balances, accountId);
+        const subs = selectSubAccountBalances(balances, accountId);
+        const status = selectAccountBalanceStatus(balances, accountId);
 
         return {
-          accountId: ref.accountId,
+          accountId: accountId,
           name,
-          currencyId: ref.currencyId,
-          address: ref.address,
+          currencyId: currencyIdFromNetwork(descriptor.network),
+          address: accountKeyOf(descriptor),
           granular,
           balance: balance && {
             assetId: balance.assetId,
@@ -66,25 +72,26 @@ export function useAccountBalancesToolProps(
     [inputs, balances],
   );
 
-  const refsById = useMemo(
-    () => new Map(inputs.map(({ ref }) => [String(ref.accountId), ref])),
+  const descriptorsById = useMemo(
+    () =>
+      new Map(inputs.map(({ descriptor }) => [String(computeAccountId(descriptor)), descriptor])),
     [inputs],
   );
 
   const onRead = useCallback(
     (accountId: string) => {
-      const ref = refsById.get(accountId);
-      if (!ref) return;
-      void dispatch(fetchAccountData(accountBalanceBinding, ref, { maxAge: 0 }));
+      const descriptor = descriptorsById.get(accountId);
+      if (!descriptor) return;
+      void dispatch(fetchAccountData(accountBalanceBinding, descriptor, { maxAge: 0 }));
     },
-    [dispatch, refsById],
+    [dispatch, descriptorsById],
   );
 
   const onReadAll = useCallback(() => {
     void dispatch(
       fetchAccountDataBatch(
         accountBalanceBinding,
-        inputs.map(({ ref }) => ref),
+        inputs.map(({ descriptor }) => descriptor),
       ),
     );
   }, [dispatch, inputs]);

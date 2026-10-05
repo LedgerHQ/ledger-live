@@ -1,13 +1,20 @@
 import type { AssetInfo, Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { AccountRefSchema, TokenAccountIdSchema, type AccountId } from "@domain/entity-account";
+import { AccountIdSchema, TokenAccountIdSchema, type AccountId } from "@domain/entity-account";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { CoinModuleSource, type CoinModule, type CoinModuleSourceConfig } from "./CoinModuleSource";
 
-const ref = AccountRefSchema.parse({
-  accountId: "js:2:ethereum:0xabc:",
-  currencyId: "ethereum",
+const descriptor: AccountDescriptor = {
+  purpose: "account",
+  version: "1",
+  type: "address",
+  network: { name: "ethereum", env: "main" },
   address: "0xabc",
-  derivationMode: "",
-});
+  path: "m/44h/60h/0h/0/0",
+};
+
+const accountId = AccountIdSchema.parse("js:2:ethereum:0xabc:");
+
+const target = { accountId, descriptor };
 
 const USDC = { type: "erc20", assetReference: "0xusdc" };
 const SCAM = { type: "erc20", assetReference: "0xscam" };
@@ -70,32 +77,66 @@ function makeSource(coinModule: CoinModule, over: Partial<CoinModuleSourceConfig
 
 describe("CoinModuleSource", () => {
   describe("supports", () => {
+    it("supports an account of a served family", () => {
+      expect(makeSource(makeCoinModule()).supports(descriptor, "balance")).toBe(true);
+    });
+
+    it("supports a UTXO account of a served family", () => {
+      const source = makeSource(makeCoinModule(), { families: { balance: () => ["bitcoin"] } });
+      expect(
+        source.supports(
+          {
+            purpose: "account",
+            version: "1",
+            type: "utxo",
+            network: { name: "bitcoin", env: "main" },
+            xpub: "xpub123",
+            path: "m/84h/0h/0h",
+          },
+          "balance",
+        ),
+      ).toBe(true);
+    });
+
     it("is gated per datum: a family served for balance says nothing about operations", () => {
       const source = makeSource(makeCoinModule(), {
         families: { balance: () => ["evm"], operations: () => [] },
       });
-      expect(source.supports(ref, "balance")).toBe(true);
-      expect(source.supports(ref, "operations")).toBe(false);
+      expect(source.supports(descriptor, "balance")).toBe(true);
+      expect(source.supports(descriptor, "operations")).toBe(false);
     });
 
-    it("does not support an unknown currency or a family it was not given", () => {
+    it("does not support a datum it has no families for", () => {
+      const source = makeSource(makeCoinModule(), { families: { balance: () => ["evm"] } });
+      expect(source.supports(descriptor, "operations")).toBe(false);
+    });
+
+    it("does not support a family it was not given", () => {
       const source = makeSource(makeCoinModule(), { families: { balance: () => ["bitcoin"] } });
-      expect(source.supports(ref, "balance")).toBe(false);
-      expect(source.supports({ ...ref, currencyId: "nope" }, "balance")).toBe(false);
+      expect(source.supports(descriptor, "balance")).toBe(false);
+    });
+
+    it("does not support an unknown network", () => {
+      expect(
+        makeSource(makeCoinModule()).supports(
+          { ...descriptor, network: { name: "nope", env: "main" } },
+          "balance",
+        ),
+      ).toBe(false);
     });
 
     it("reads the gate on every call, so a flag flipped at runtime is honoured", () => {
       let served: string[] = [];
       const source = makeSource(makeCoinModule(), { families: { balance: () => served } });
-      expect(source.supports(ref, "balance")).toBe(false);
+      expect(source.supports(descriptor, "balance")).toBe(false);
       served = ["evm"];
-      expect(source.supports(ref, "balance")).toBe(true);
+      expect(source.supports(descriptor, "balance")).toBe(true);
     });
   });
 
   describe("balance", () => {
     it("returns the native row, then one row per known, non-blacklisted token", async () => {
-      const rows = await makeSource(makeCoinModule()).balance(ref, undefined);
+      const rows = await makeSource(makeCoinModule()).balance(target, undefined);
       expect(
         rows.map(row => [row.accountId, row.assetId, row.balance, row.spendableBalance]),
       ).toEqual([
@@ -107,14 +148,14 @@ describe("CoinModuleSource", () => {
           "25",
         ],
       ]);
-      expect(rows[1].parentId).toBe(ref.accountId);
+      expect(rows[1].parentId).toBe(accountId);
     });
 
     it("reports a zero native balance when the module returns none, and never a negative spendable", async () => {
       const coinModule = makeCoinModule({
         getBalance: jest.fn(async () => [{ asset: USDC, value: 5n, locked: 9n }]),
       });
-      const [native, token] = await makeSource(coinModule).balance(ref, undefined);
+      const [native, token] = await makeSource(coinModule).balance(target, undefined);
       expect(native.balance).toBe("0");
       expect(token.spendableBalance).toBe("0");
     });
@@ -124,7 +165,7 @@ describe("CoinModuleSource", () => {
       const controller = new AbortController();
       controller.abort();
       await expect(
-        makeSource(coinModule).balance(ref, undefined, controller.signal),
+        makeSource(coinModule).balance(target, undefined, controller.signal),
       ).rejects.toThrow(/aborted/);
       expect(coinModule.getBalance).not.toHaveBeenCalled();
     });
@@ -133,7 +174,7 @@ describe("CoinModuleSource", () => {
   describe("operations", () => {
     it("maps a native OUT with the fee added to its value", async () => {
       const { operations, complete } = await makeSource(makeCoinModule()).operations(
-        ref,
+        target,
         undefined,
       );
       expect(complete).toBe(true);
@@ -161,7 +202,7 @@ describe("CoinModuleSource", () => {
           items: [coreOperation({}, { failed: true })],
         })),
       });
-      const [operation] = (await makeSource(coinModule).operations(ref, undefined)).operations;
+      const [operation] = (await makeSource(coinModule).operations(target, undefined)).operations;
       expect(operation.value).toBe("7");
       expect(operation.hasFailed).toBe(true);
     });
@@ -180,7 +221,7 @@ describe("CoinModuleSource", () => {
           ],
         })),
       });
-      const { operations } = await makeSource(coinModule).operations(ref, undefined);
+      const { operations } = await makeSource(coinModule).operations(target, undefined);
       expect(operations).toHaveLength(1);
       expect(operations[0]).toMatchObject({
         accountId: "js:2:ethereum:0xabc:+ethereum%2Ferc20%2Fusd__coin",
@@ -195,7 +236,7 @@ describe("CoinModuleSource", () => {
       const coinModule = makeCoinModule({
         listOperations: jest.fn(async () => ({ items: [], next: "c2" })),
       });
-      const page = await makeSource(coinModule).operations(ref, { cursor: "c1", limit: 10 });
+      const page = await makeSource(coinModule).operations(target, { cursor: "c1", limit: 10 });
       expect(coinModule.listOperations).toHaveBeenCalledWith("0xabc", { cursor: "c1", limit: 10 });
       expect(page).toEqual({ operations: [], nextCursor: "c2", complete: false });
     });
@@ -204,7 +245,7 @@ describe("CoinModuleSource", () => {
       const coinModule = makeCoinModule({
         listOperations: jest.fn(async () => ({ items: [], next: "" })),
       });
-      expect((await makeSource(coinModule).operations(ref, undefined)).complete).toBe(true);
+      expect((await makeSource(coinModule).operations(target, undefined)).complete).toBe(true);
     });
   });
 });

@@ -52,6 +52,7 @@
     "@types/react": "catalog:",
     "@bunli/core": "0.9.1",
     "@bunli/utils": "0.6.0",
+    "@domain/entity-account-descriptor": "workspace:^",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-fiat": "workspace:^",

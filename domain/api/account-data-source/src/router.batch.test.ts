@@ -1,20 +1,13 @@
-import { AccountRefSchema, type AccountRef } from "@domain/entity-account";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { descriptorOf, indexOf } from "./testing/toyData";
 import { NoAccountSourceError } from "./errors";
 import { createAccountDataRouter } from "./router";
-import type { AccountDataSource } from "./source";
+import type { AccountDataSource, AccountTarget } from "./source";
 
-const refOf = (index: number, currencyId = "ethereum"): AccountRef =>
-  AccountRefSchema.parse({
-    accountId: `js:2:${currencyId}:0x${index}:`,
-    currencyId,
-    address: `0x${index}`,
-    derivationMode: "",
-  });
+const refOf = descriptorOf;
 
-const refs = (count: number, currencyId?: string) =>
-  Array.from({ length: count }, (_, index) => refOf(index, currencyId));
-
-const indexOf = (ref: AccountRef) => Number(ref.address.slice(2));
+const refs = (count: number, network?: string) =>
+  Array.from({ length: count }, (_, index) => descriptorOf(index, network));
 
 function deferred() {
   let resolve!: () => void;
@@ -24,14 +17,14 @@ function deferred() {
 
 /** A source with only a batch reader, recording the refs of each call. */
 function batchSource(over: Partial<AccountDataSource> = {}) {
-  const calls: AccountRef[][] = [];
+  const calls: AccountDescriptor[][] = [];
   const source: AccountDataSource = {
     id: "batch",
     supports: () => true,
     batch: {
       counter: async batchRefs => {
-        calls.push([...batchRefs]);
-        return batchRefs.map(ref => ({ status: "fulfilled", value: indexOf(ref) }));
+        calls.push(batchRefs.map(target => target.descriptor));
+        return batchRefs.map(target => ({ status: "fulfilled", value: indexOf(target) }));
       },
     },
     ...over,
@@ -44,12 +37,12 @@ function singleSource(id = "single", over: Partial<AccountDataSource> = {}) {
   let active = 0;
   let peak = 0;
   const gate = deferred();
-  const counter = jest.fn(async (ref: AccountRef) => {
+  const counter = jest.fn(async (target: AccountTarget) => {
     active++;
     peak = Math.max(peak, active);
     await gate.promise;
     active--;
-    return indexOf(ref);
+    return indexOf(target);
   });
   const source: AccountDataSource = { id, supports: () => true, counter, ...over };
   return { source, counter, peak: () => peak, release: gate.resolve };
@@ -77,7 +70,7 @@ describe("createAccountDataRouter, many accounts", () => {
     });
 
     it("does not merge reads asking different questions", async () => {
-      const batch = jest.fn(async (batchRefs: readonly AccountRef[]) =>
+      const batch = jest.fn(async (batchRefs: readonly AccountTarget[]) =>
         batchRefs.map(() => ({ status: "fulfilled" as const, value: { items: [] } })),
       );
       const router = createAccountDataRouter([
@@ -92,7 +85,7 @@ describe("createAccountDataRouter, many accounts", () => {
     });
 
     it("merges queries that only differ in key order", async () => {
-      const batch = jest.fn(async (batchRefs: readonly AccountRef[]) =>
+      const batch = jest.fn(async (batchRefs: readonly AccountTarget[]) =>
         batchRefs.map(() => ({ status: "fulfilled" as const, value: { items: [] } })),
       );
       const router = createAccountDataRouter([
@@ -105,7 +98,7 @@ describe("createAccountDataRouter, many accounts", () => {
       expect(batch).toHaveBeenCalledTimes(1);
     });
 
-    it("reads a ref asked twice once, and answers both callers", async () => {
+    it("reads an account asked twice once, and answers both callers", async () => {
       const { source, calls } = batchSource();
       const router = createAccountDataRouter([source]);
       const [first, second] = await Promise.all([
@@ -159,7 +152,7 @@ describe("createAccountDataRouter, many accounts", () => {
     it("splits the accounts between the sources first for each, keeping the rank", async () => {
       const { source: batch, calls } = batchSource({
         id: "evm",
-        supports: ref => ref.currencyId === "ethereum",
+        supports: descriptor => descriptor.network.name === "ethereum",
       });
       const fallback = singleSource("fallback");
       fallback.release();
@@ -183,7 +176,9 @@ describe("createAccountDataRouter, many accounts", () => {
     });
 
     it("rejects only the accounts no source can answer", async () => {
-      const { source } = batchSource({ supports: ref => ref.currencyId === "ethereum" });
+      const { source } = batchSource({
+        supports: descriptor => descriptor.network.name === "ethereum",
+      });
       const router = createAccountDataRouter([source]);
       const [served, orphan] = await router.readBatch("counter", [refOf(0), refOf(1, "bitcoin")]);
       expect(served.status).toBe("fulfilled");
@@ -237,9 +232,9 @@ describe("createAccountDataRouter, many accounts", () => {
         {
           id: "s",
           supports: () => true,
-          counter: async ref => {
-            if (indexOf(ref) === 1) throw new Error("explorer down");
-            return indexOf(ref);
+          counter: async target => {
+            if (indexOf(target) === 1) throw new Error("explorer down");
+            return indexOf(target);
           },
         },
       ]);
@@ -263,10 +258,10 @@ describe("createAccountDataRouter, many accounts", () => {
           supports: () => true,
           batch: {
             counter: async batchRefs =>
-              batchRefs.map(ref =>
-                indexOf(ref) === 1
+              batchRefs.map(target =>
+                indexOf(target) === 1
                   ? { status: "rejected", reason: new Error("unknown address") }
-                  : { status: "fulfilled", value: indexOf(ref) },
+                  : { status: "fulfilled", value: indexOf(target) },
               ),
           },
         },
@@ -276,9 +271,9 @@ describe("createAccountDataRouter, many accounts", () => {
     });
 
     it("fails only the chunk whose call rejected, without retrying it account by account", async () => {
-      const batch = jest.fn(async (batchRefs: readonly AccountRef[]) => {
-        if (batchRefs.some(ref => indexOf(ref) === 2)) throw new Error("timeout");
-        return batchRefs.map(ref => ({ status: "fulfilled" as const, value: indexOf(ref) }));
+      const batch = jest.fn(async (batchRefs: readonly AccountTarget[]) => {
+        if (batchRefs.some(target => indexOf(target) === 2)) throw new Error("timeout");
+        return batchRefs.map(target => ({ status: "fulfilled" as const, value: indexOf(target) }));
       });
       const router = createAccountDataRouter([
         { id: "s", supports: () => true, maxBatchSize: 2, batch: { counter: batch } },
@@ -317,7 +312,10 @@ describe("createAccountDataRouter, many accounts", () => {
         }
         readonly batch: AccountDataSource["batch"] = {
           counter: async batchRefs =>
-            batchRefs.map(ref => ({ status: "fulfilled", value: indexOf(ref) + this.offset })),
+            batchRefs.map(target => ({
+              status: "fulfilled",
+              value: indexOf(target) + this.offset,
+            })),
         };
       }
       const router = createAccountDataRouter([new PortfolioSource()]);

@@ -20,7 +20,7 @@ mount does, so the reads it *skips*, the ones whose stored balance is still fres
 Everything arrives as props (see [`src/types.ts`](./src/types.ts)), built by
 [`useAccountBalancesToolProps`](../bindings/src/useAccountBalancesToolProps.ts) in
 `@devtools/bindings`. The host supplies only what it alone can know: its accounts, shaped as
-`AccountRef`s, with their display names.
+`AccountDescriptor`s, with their display names.
 
 ## Import boundaries
 

@@ -1,8 +1,8 @@
 {
-  "name": "@domain/entity-account-alias",
-  "version": "0.1.0",
+  "name": "@domain/entity-account-descriptor",
+  "version": "0.0.1",
   "private": true,
-  "description": "AccountAlias entity: non-reversible aliases for account ids, reverse-lookup state and selectors",
+  "description": "Account descriptor: the minimal, hashable identity of an account, shared by discovery, the app, wallet sync and every account data source",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -15,21 +15,18 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-alias"
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-descriptor"
   },
   "dependencies": {
-    "@domain/entity-account": "workspace:^",
-    "@domain/entity-account-descriptor": "workspace:^",
-    "@reduxjs/toolkit": "catalog:",
-    "uuid": "^9.0.0",
+    "@domain/entity-currency-crypto": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/uuid": "^9.0.0",
     "jest": "catalog:",
     "typescript": "catalog:"
   }

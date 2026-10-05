@@ -7,23 +7,27 @@ import { mockAccountBalance } from "@domain/entity-account-balance/schema.mock";
 import { accountOperationsSlice } from "@domain/entity-account-operations";
 import { mockAccountOperation } from "@domain/entity-account-operations/schema.mock";
 import { createAccountDataRouter } from "@domain/api-account-data-source";
-import { AccountRefSchema } from "@domain/entity-account";
+import { computeAccountId } from "@domain/entity-account-alias";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { useAccountBalancesToolProps } from "./useAccountBalancesToolProps";
 import { useAccountOperationsToolProps } from "./useAccountOperationsToolProps";
 
-const ref = AccountRefSchema.parse({
-  accountId: "js:2:ethereum:0xabc:",
-  currencyId: "ethereum",
+const descriptor: AccountDescriptor = {
+  purpose: "account",
+  version: "1",
+  type: "address",
+  network: { name: "ethereum", env: "main" },
   address: "0xabc",
-  derivationMode: "",
-});
+  path: "m/44h/60h/0h/0/0",
+};
+const accountId = computeAccountId(descriptor);
 
-const inputs = [{ ref, name: "Ethereum 1", granular: true, units: {} }];
+const inputs = [{ descriptor, name: "Ethereum 1", granular: true, units: {} }];
 
 const setup = () => {
-  const balance = jest.fn(async () => [mockAccountBalance()]);
+  const balance = jest.fn(async () => [mockAccountBalance({ accountId })]);
   const operations = jest.fn(async () => ({
-    operations: [mockAccountOperation()],
+    operations: [mockAccountOperation({ accountId })],
     nextCursor: "next",
     complete: false,
   }));
@@ -49,7 +53,7 @@ describe("account data tool props", () => {
     const { result } = renderHook(() => useAccountBalancesToolProps(inputs), { wrapper });
 
     expect(result.current.ready).toBe(true);
-    act(() => result.current.onRead(ref.accountId));
+    act(() => result.current.onRead(accountId));
 
     await waitFor(() =>
       expect(result.current.accounts[0]?.balance?.value).toBe("1000000000000000000"),
@@ -72,11 +76,15 @@ describe("account data tool props", () => {
     const { wrapper, operations } = setup();
     const { result } = renderHook(() => useAccountOperationsToolProps(inputs), { wrapper });
 
-    act(() => result.current.onRefresh(ref.accountId));
+    act(() => result.current.onRefresh(accountId));
     await waitFor(() => expect(result.current.accounts[0]?.hasMore).toBe(true));
 
-    act(() => result.current.onLoadMore(ref.accountId));
+    act(() => result.current.onLoadMore(accountId));
     await waitFor(() => expect(operations).toHaveBeenCalledTimes(2));
-    expect(operations).toHaveBeenLastCalledWith(ref, { limit: 50, cursor: "next" }, undefined);
+    expect(operations).toHaveBeenLastCalledWith(
+      { accountId, descriptor },
+      { limit: 50, cursor: "next" },
+      undefined,
+    );
   });
 });

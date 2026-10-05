@@ -5,11 +5,12 @@ import type { AccountDataSource } from "@domain/api-account-data-source";
 import {
   counterBinding,
   feedBinding,
+  accountId,
+  descriptor,
   makeStore,
-  ref,
   type FeedPage,
 } from "@domain/api-account-data-source/testing";
-import type { AccountRef } from "@domain/entity-account";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { useAccountData } from "./useAccountData";
 
 const page = (items: string[], nextCursor?: string): FeedPage => ({
@@ -29,14 +30,14 @@ describe("useAccountData", () => {
   it("reads the datum on mount and exposes the pending state", async () => {
     const counter = jest.fn(async () => 1);
     const { store, wrapper } = setup([{ id: "s", supports: () => true, counter }]);
-    const { result } = renderHook(() => useAccountData(counterBinding, ref), { wrapper });
+    const { result } = renderHook(() => useAccountData(counterBinding, descriptor), { wrapper });
     expect(result.current.pending).toBe(true);
     await waitFor(() => expect(result.current.pending).toBe(false));
-    expect(store.getState().counter.byAccount[ref.accountId]?.value).toBe(1);
+    expect(store.getState().counter.byAccount[accountId]?.value).toBe(1);
     expect(counter).toHaveBeenCalledTimes(1);
   });
 
-  it("does nothing without a ref", () => {
+  it("does nothing without a descriptor", () => {
     const counter = jest.fn(async () => 1);
     const { wrapper } = setup([{ id: "s", supports: () => true, counter }]);
     const { result } = renderHook(() => useAccountData(counterBinding, undefined), { wrapper });
@@ -48,7 +49,7 @@ describe("useAccountData", () => {
     const feed = jest.fn(async () => page(["a"]));
     const { wrapper } = setup([{ id: "s", supports: () => true, feed }]);
     const { result, rerender } = renderHook(
-      () => useAccountData(feedBinding, ref, { query: { limit: 10 }, maxAge: 0 }),
+      () => useAccountData(feedBinding, descriptor, { query: { limit: 10 }, maxAge: 0 }),
       { wrapper },
     );
     await waitFor(() => expect(result.current.pending).toBe(false));
@@ -56,26 +57,32 @@ describe("useAccountData", () => {
     expect(feed).toHaveBeenCalledTimes(1);
   });
 
-  it("reads again when the ref changes, subject to freshness", async () => {
+  it("reads again when the descriptor changes, subject to freshness", async () => {
     const counter = jest.fn(async () => 1);
     const { wrapper } = setup([{ id: "s", supports: () => true, counter }]);
     const { result, rerender } = renderHook(
-      ({ current }: { current: AccountRef }) =>
+      ({ current }: { current: AccountDescriptor }) =>
         useAccountData(counterBinding, current, { maxAge: 0 }),
-      { wrapper, initialProps: { current: ref } },
+      { wrapper, initialProps: { current: descriptor } },
     );
     await waitFor(() => expect(result.current.pending).toBe(false));
-    rerender({ current: { ...ref, address: "0xrotated" } });
+    rerender({ current: { ...descriptor, path: "m/44h/60h/1h/0/0" } });
     await waitFor(() => expect(counter).toHaveBeenCalledTimes(2));
   });
 
   it("refreshes whatever the freshness", async () => {
     const counter = jest.fn(async () => 1);
     const { wrapper } = setup([{ id: "s", supports: () => true, counter }]);
-    const { result } = renderHook(() => useAccountData(counterBinding, ref), { wrapper });
+    const { result } = renderHook(() => useAccountData(counterBinding, descriptor), { wrapper });
     await waitFor(() => expect(result.current.pending).toBe(false));
     await act(() => result.current.refresh());
     expect(counter).toHaveBeenCalledTimes(2);
+  });
+
+  it("exposes the id the account is keyed by", () => {
+    const { wrapper } = setup([{ id: "s", supports: () => true, counter: async () => 1 }]);
+    const { result } = renderHook(() => useAccountData(counterBinding, descriptor), { wrapper });
+    expect(result.current.accountId).toBe(accountId);
   });
 
   it("offers loadMore only on a paginated datum", async () => {
@@ -87,21 +94,21 @@ describe("useAccountData", () => {
         feed: async () => page(["a"]),
       },
     ]);
-    const counter = renderHook(() => useAccountData(counterBinding, ref), { wrapper });
-    const feed = renderHook(() => useAccountData(feedBinding, ref), { wrapper });
+    const counter = renderHook(() => useAccountData(counterBinding, descriptor), { wrapper });
+    const feed = renderHook(() => useAccountData(feedBinding, descriptor), { wrapper });
     expect(counter.result.current.loadMore).toBeUndefined();
     expect(feed.result.current.loadMore).toBeInstanceOf(Function);
     await waitFor(() => expect(feed.result.current.pending).toBe(false));
   });
 
   it("loads the next page into the slice", async () => {
-    const feed = jest.fn(async (_ref: unknown, query?: { cursor?: string }) =>
+    const feed = jest.fn(async (_target: unknown, query?: { cursor?: string }) =>
       query?.cursor === "c1" ? page(["b"]) : page(["a"], "c1"),
     );
     const { store, wrapper } = setup([{ id: "s", supports: () => true, feed }]);
-    const { result } = renderHook(() => useAccountData(feedBinding, ref), { wrapper });
+    const { result } = renderHook(() => useAccountData(feedBinding, descriptor), { wrapper });
     await waitFor(() => expect(result.current.pending).toBe(false));
     await act(() => result.current.loadMore!());
-    expect(store.getState().feed.byAccount[ref.accountId]?.value.items).toEqual(["a", "b"]);
+    expect(store.getState().feed.byAccount[accountId]?.value.items).toEqual(["a", "b"]);
   });
 });

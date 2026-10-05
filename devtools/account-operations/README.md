@@ -25,7 +25,7 @@ from different sources for the same account is the point.
 Everything arrives as props (see [`src/types.ts`](./src/types.ts)), built by
 [`useAccountOperationsToolProps`](../bindings/src/useAccountOperationsToolProps.ts) in
 `@devtools/bindings`. The host supplies only what it alone can know: its accounts shaped as
-`AccountRef`s, their names, the display units, and whether the coin module serves operations for
+`AccountDescriptor`s, their names, the display units, and whether the coin module serves operations for
 each one.
 
 ## Import boundaries

@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data-source";
-import type { AccountRef } from "@domain/entity-account";
+import { computeAccountId } from "@domain/entity-account-alias";
+import {
+  accountKeyOf,
+  currencyIdFromNetwork,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor";
 import {
   accountOperationsBinding,
   accountOperationsSlice,
@@ -20,7 +25,7 @@ type AccountOperationsToolProps = Extract<
 type Row = AccountOperationsToolProps["accounts"][number];
 
 export type AccountOperationsInput = {
-  ref: AccountRef;
+  descriptor: AccountDescriptor;
   name: string;
   granular: boolean;
   units: Readonly<Record<string, { code: string; magnitude: number }>>;
@@ -41,15 +46,16 @@ export function useAccountOperationsToolProps(
 
   const accounts = useMemo<Row[]>(
     () =>
-      inputs.map(({ ref, name, granular, units }) => {
-        const window = selectAccountOperations(operations, ref.accountId);
-        const entry = selectAccountOperationsEntry(operations, ref.accountId);
+      inputs.map(({ descriptor, name, granular, units }) => {
+        const accountId = computeAccountId(descriptor);
+        const window = selectAccountOperations(operations, accountId);
+        const entry = selectAccountOperationsEntry(operations, accountId);
 
         return {
-          accountId: ref.accountId,
+          accountId: accountId,
           name,
-          currencyId: ref.currencyId,
-          address: ref.address,
+          currencyId: currencyIdFromNetwork(descriptor.network),
+          address: accountKeyOf(descriptor),
           granular,
           operations: window.map(operation => ({
             id: operation.id,
@@ -60,38 +66,43 @@ export function useAccountOperationsToolProps(
             date: operation.date,
             blockHeight: operation.blockHeight,
             nested: operation.parentOperationId !== undefined,
-            onTokenAccount: operation.accountId !== ref.accountId,
+            onTokenAccount: operation.accountId !== accountId,
           })),
-          total: selectAccountOperationsTotal(operations, ref.accountId),
+          total: selectAccountOperationsTotal(operations, accountId),
           hasMore: entry.nextCursor !== undefined,
           complete: entry.complete,
-          status: selectAccountOperationsStatus(operations, ref.accountId),
+          status: selectAccountOperationsStatus(operations, accountId),
         };
       }),
     [inputs, operations],
   );
 
-  const refsById = useMemo(
-    () => new Map(inputs.map(({ ref }) => [String(ref.accountId), ref])),
+  const descriptorsById = useMemo(
+    () =>
+      new Map(inputs.map(({ descriptor }) => [String(computeAccountId(descriptor)), descriptor])),
     [inputs],
   );
 
   const onRefresh = useCallback(
     (accountId: string) => {
-      const ref = refsById.get(accountId);
-      if (!ref) return;
-      void dispatch(fetchAccountData(accountOperationsBinding, ref, { maxAge: 0, query: PAGE }));
+      const descriptor = descriptorsById.get(accountId);
+      if (!descriptor) return;
+      void dispatch(
+        fetchAccountData(accountOperationsBinding, descriptor, { maxAge: 0, query: PAGE }),
+      );
     },
-    [dispatch, refsById],
+    [dispatch, descriptorsById],
   );
 
   const onLoadMore = useCallback(
     (accountId: string) => {
-      const ref = refsById.get(accountId);
-      if (!ref) return;
-      void dispatch(fetchAccountData(accountOperationsBinding, ref, { query: PAGE, more: true }));
+      const descriptor = descriptorsById.get(accountId);
+      if (!descriptor) return;
+      void dispatch(
+        fetchAccountData(accountOperationsBinding, descriptor, { query: PAGE, more: true }),
+      );
     },
-    [dispatch, refsById],
+    [dispatch, descriptorsById],
   );
 
   return { accounts, onRefresh, onLoadMore, ready: true };

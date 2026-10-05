@@ -2781,6 +2781,9 @@ importers:
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
+      '@domain/entity-account-descriptor':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-descriptor
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../domain/entity/currency
@@ -3463,12 +3466,15 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../domain/api/card-management
-      '@domain/entity-account':
+      '@domain/entity-account-alias':
         specifier: workspace:*
-        version: link:../../domain/entity/account
+        version: link:../../domain/entity/account-alias
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../domain/entity/account-balance
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-descriptor
       '@domain/entity-account-operations':
         specifier: workspace:*
         version: link:../../domain/entity/account-operations
@@ -4697,9 +4703,15 @@ importers:
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../entity/account
+      '@domain/entity-account-alias':
+        specifier: workspace:^
+        version: link:../../entity/account-alias
       '@domain/entity-account-data':
         specifier: workspace:^
         version: link:../../entity/account-data
+      '@domain/entity-account-descriptor':
+        specifier: workspace:^
+        version: link:../../entity/account-descriptor
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -5239,6 +5251,9 @@ importers:
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../account
+      '@domain/entity-account-descriptor':
+        specifier: workspace:^
+        version: link:../account-descriptor
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -5326,6 +5341,37 @@ importers:
         specifier: workspace:^
         version: link:../account
     devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/account-descriptor:
+    dependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../currency-crypto
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8957,9 +9003,15 @@ importers:
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../../domain/entity/account
+      '@domain/entity-account-alias':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account-alias
       '@domain/entity-account-data':
         specifier: workspace:^
         version: link:../../../domain/entity/account-data
+      '@domain/entity-account-descriptor':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account-descriptor
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -9021,6 +9073,9 @@ importers:
       '@domain/entity-account-data':
         specifier: workspace:^
         version: link:../../../domain/entity/account-data
+      '@domain/entity-account-descriptor':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account-descriptor
       '@domain/entity-account-operations':
         specifier: workspace:^
         version: link:../../../domain/entity/account-operations
@@ -14348,6 +14403,9 @@ importers:
       '@domain/entity-account-balance':
         specifier: workspace:^
         version: link:../../domain/entity/account-balance
+      '@domain/entity-account-descriptor':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-descriptor
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name

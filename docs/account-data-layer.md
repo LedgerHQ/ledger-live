@@ -4,7 +4,7 @@
 > **Status: EXPLORATION.** No product screen reads this yet.
 
 A screen reads one datum of one account, a balance or a page of operations, without a whole
-`Account` and without a global sync having run first. It calls `useAccountData(binding, ref)`. The
+`Account` and without a global sync having run first. It calls `useAccountData(binding, descriptor)`. The
 router picks the first source, in the order the app ranked them, that can serve that datum for that
 account, and the answer lands in the datum's own slice.
 
@@ -13,14 +13,26 @@ per app. The framework packages and the apps' source setup do not change. A test
 [`newDatum.test.tsx`](../features/platform/account-data/src/newDatum.test.tsx) declares, stores and
 serves a new datum from a single file.
 
+## The account descriptor
+
+An account is identified by an `AccountDescriptor` from [`@domain/entity-account-descriptor`](../domain/entity/account-descriptor), which replaces the `AccountRef` of the earlier PoCs ([ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7599489111/ADR+Account+descriptor+as+the+common+account+identity)): the network, the derivation path, and the account key (the xpub for a UTXO account, the address otherwise). It is the same metadata from discovery to every source, and it holds nothing secret, mutable (`freshAddress`) or server-assigned.
+
+- **The account id is a hash of the canonical descriptor string**, computed by `computeAccountId` in [`@domain/entity-account-alias`](../domain/entity/account-alias). Slices are keyed by it, and `useAccountData` returns it as `accountId`.
+- **Sources decide from the descriptor alone.** Each source exposes `supports(descriptor, datum): boolean`, pure and synchronous. The datum is there because `CoinModuleSource` gates its families per datum. Whatever is asynchronous or mutable stays inside the reader.
+- **Readers get an `AccountTarget`**: `{ accountId, descriptor }`.
+- **Identity.** Descriptors are compared, deduplicated and hashed through `accountDescriptorKey`, which is canonical (`'` or `h` in the path, EVM address case, network case). `serializeAccountDescriptor` gives the string as given.
+- The only inputs besides the descriptor are static tables: network to currency id, and (currency, path) to (derivation mode, index), in `libs/ledger-live-common/src/account-data/legacyAccount.ts`.
+
 ## The pieces
 
 | Package | Holds | Knows |
 | --- | --- | --- |
-| [`@domain/entity-account`](../domain/entity/account) | `AccountId`, and `AccountRef`: the id plus currency, address and derivation mode | nothing new |
+| [`@domain/entity-account`](../domain/entity/account) | `AccountId`, `TokenAccountId` | nothing new |
+| [`@domain/entity-account-descriptor`](../domain/entity/account-descriptor) | `AccountDescriptor`, its canonical key, the network tables | currency registry |
+| [`@domain/entity-account-alias`](../domain/entity/account-alias) | `computeAccountId(descriptor)`, the hashed account id | `entity-account`, `entity-account-descriptor` |
 | [`@domain/entity-account-data`](../domain/entity/account-data) | the open `AccountData` map, one key per datum, and `AccountDataBinding`. Types only | `entity-account` |
-| [`@domain/api-account-data-source`](../domain/api/account-data-source) | `AccountDataSource`, `createAccountDataRouter` (`read`, `readBatch`), `fetchAccountData`, `fetchAccountDataBatch`; `./testing` holds two toy datums | `entity-account`, `entity-account-data` |
-| [`@features/platform-account-data`](../features/platform/account-data) | `useAccountData`, and nothing else | `api-account-data-source`, `entity-account-data` |
+| [`@domain/api-account-data-source`](../domain/api/account-data-source) | `AccountDataSource`, `createAccountDataRouter` (`read`, `readBatch`), `fetchAccountData`, `fetchAccountDataBatch`; `./testing` holds two toy datums | `entity-account`, `entity-account-alias`, `entity-account-descriptor`, `entity-account-data` |
+| [`@features/platform-account-data`](../features/platform/account-data) | `useAccountData`, and nothing else | `api-account-data-source`, `entity-account-alias`, `entity-account-descriptor`, `entity-account-data` |
 | `@domain/entity-account-*` ([balance](../domain/entity/account-balance), [operations](../domain/entity/account-operations)) | the datum's models, its slice, its binding, and the `declare module` that adds its key to `AccountData` | `entity-account`, `entity-account-data` |
 | sources | [`CoinModuleSource`](../features/platform/account-source-coin-module), [`FullSyncSource`](../libs/ledger-live-common/src/account-data/FullSyncSource.ts) | the `AccountDataSource` type and the models they return |
 | apps | `config/account-data-setup.ts`: the ranked sources and their family gates, spread into the thunk `extraArgument` | everything: they are the glue |
@@ -34,7 +46,7 @@ they sit in `domain/api`. The hook is React glue, so it sits in `features/platfo
 
 ```mermaid
 flowchart LR
-    account["entity-account<br/>AccountId · AccountRef"]
+    account["entity-account<br/>AccountId"]
     data["entity-account-data<br/>AccountData {} · binding"]
     entity["entity-account-*<br/>models · slice · binding"]
     source["api-account-data-source<br/>contract · router · thunk"]
@@ -71,12 +83,12 @@ sequenceDiagram
     participant R as router
     participant X as source
     participant E as entity slice
-    S->>H: (accountOperationsBinding, ref)
+    S->>H: (accountOperationsBinding, descriptor)
     H->>T: dispatch
     T->>E: binding.selectAt / selectPending
     T->>E: binding.requested
-    T->>R: read("operations", ref, query)
-    R->>X: first ranked source with an operations method and supports(ref, "operations")
+    T->>R: read("operations", descriptor, query)
+    R->>X: first ranked source with an operations method and supports(descriptor, "operations")
     X-->>R: page
     R-->>T: { data, sourceId }
     T->>E: binding.received({ data, sourceId, append, at })
@@ -89,14 +101,15 @@ The hook drives the read and owns no data. The screen reads the data with the en
 
 - **Freshness.** A head read younger than `maxAge` (30 s by default) is not repeated. A stamp in the
   future counts as stale.
-- **One read per ref in flight.** A second head read of the same ref returns at once instead of
-  reading again. A read for another ref of the same account, such as a rotated address, still runs.
+- **One read per account in flight.** A second head read of the same account returns at once instead
+  of reading again. A rotated fresh address does not make a second account: it is not part of the
+  descriptor.
 - **Next page.** `more: true` resumes from `binding.selectNextQuery`, skips the freshness guard, and
   asks only the source that answered the head: a cursor means nothing to another source.
 - **Replace or merge.** `received` carries `append`. The operations slice replaces its window on a
   head read and merges on a next page. The balance slice is never paginated.
 
-Without React or Redux, `router.read(datum, ref, query)` returns the same answer.
+Without React or Redux, `router.read(datum, descriptor, query)` returns the same answer.
 
 ## Many accounts at once
 
@@ -111,10 +124,10 @@ The router fixes both, and nothing above it changes: not the entities, not the b
 
 ```ts
 type AccountDataBatchReader<K> = (
-  refs: readonly AccountRef[],
+  targets: readonly AccountTarget[],
   query: AccountDataQuery<K> | undefined,
   signal?: AbortSignal,
-) => Promise<PromiseSettledResult<AccountDataResult<K>>[]>; // one per ref, in order
+) => Promise<PromiseSettledResult<AccountDataResult<K>>[]>; // one per target, in order
 
 type AccountDataSource = {
   // ...id, supports, the single readers
@@ -145,11 +158,11 @@ sequenceDiagram
     participant R as router
     participant B as coin module source
     participant F as full sync source
-    H->>R: 50 read("balance", ref) in one tick
+    H->>R: 50 read("balance", descriptor) in one tick
     Note over R: same datum, same query: one batch
     R->>R: first ranked source per account
-    R->>B: balance(ref) x 30, at most 4 at once
-    R->>F: balance(ref) x 20, at most SYNC_MAX_CONCURRENT at once
+    R->>B: balance(target) x 30, at most 4 at once
+    R->>F: balance(target) x 20, at most SYNC_MAX_CONCURRENT at once
     B-->>R: 30 settled results
     F-->>R: 20 settled results
     R-->>H: each caller gets its own answer
@@ -171,7 +184,7 @@ sequenceDiagram
 
 ### Failures and abort
 
-- A ref no source can answer fails with `NoAccountSourceError`, alone.
+- A descriptor no source can answer fails with `NoAccountSourceError`, alone.
 - A batch call that rejects fails the accounts of that chunk, and only those. It is not retried
   account by account, which would turn one outage into a storm of calls.
 - A batch reader answering the wrong number of results is a source bug: its chunk fails.
@@ -181,14 +194,14 @@ sequenceDiagram
 
 ### The batch thunk
 
-`fetchAccountDataBatch(binding, refs, { maxAge, query, signal })` is the explicit form, for a
-"refresh all" or a caller without React. It applies the single read's guards to each ref: freshness,
+`fetchAccountDataBatch(binding, descriptors, { maxAge, query, signal })` is the explicit form, for a
+"refresh all" or a caller without React. It applies the single read's guards to each account: freshness,
 and the same in-flight table, so a `useAccountData` mounting during a batch joins it instead of
-reading again. An account listed twice is read once, under its last ref. It reads heads only: each
+reading again. An account listed twice is read once. It reads heads only: each
 account's next page has its own cursor. The desktop balances devtool uses it for "Read all".
 
-Without a store, `router.readBatch(datum, refs, query)` returns one settled `{ data, sourceId }` per
-ref, in order.
+Without a store, `router.readBatch(datum, descriptors, query)` returns one settled `{ data, sourceId }` per
+descriptor, in order.
 
 Merging is on by default. `createAccountDataRouter(sources, { coalesce: false })` turns it off;
 `{ concurrency }` changes the default cap.
@@ -217,7 +230,7 @@ The type system checks the rest: a source method returning the wrong shape does 
 ## Shipping the framework first
 
 The framework is `entity-account-data`, `api-account-data-source` and `platform-account-data`, plus
-`AccountRef` in `entity-account`. None of them depends on an entity or a source, including in tests:
+the descriptor and alias packages. None of them depends on an entity or a source, including in tests:
 they are tested on two toy datums from `@domain/api-account-data-source/testing`, a `counter` read in
 one go and a paginated `feed`. They can merge on their own, before any `account-*` entity or any
 source, and each team then adds its datum or its source against a contract that is already in
@@ -232,10 +245,10 @@ only carries whatever `result` type the entity declares.
 | Source | Serves | Gate |
 | --- | --- | --- |
 | `CoinModuleSource` | a balance from one `getBalance`; a page of operations from one `listOperations` | per datum, the families in the app's `coinModuleFamilies`: the generic coin framework families for `balance`, none for `operations` |
-| `FullSyncSource` | every datum, from one `AccountBridge.sync()`, at most `SYNC_MAX_CONCURRENT` syncs at once | any known currency whose account is in the legacy store |
+| `FullSyncSource` | every datum, from one `AccountBridge.sync()`, at most `SYNC_MAX_CONCURRENT` syncs at once | any known currency; the read finds the legacy account by comparing descriptors and fails if none matches |
 
-`FullSyncSource` keeps one run per account in flight on the instance, so a balance and an operations
-read of the same account running at once share one sync. Its legacy `Account` mappers are private
+`FullSyncSource` keeps one run per legacy account in flight on the instance, so a balance and an operations
+read of the same account running at once share one sync. It re-keys the legacy ids the sync reports (accounts, token accounts, operations) to the hashed account id. Its legacy `Account` mappers are private
 functions in the same file: nothing else maps that way, and they go when the legacy model goes.
 
 `CoinModuleSource` never imports live-common. The app injects `loadCoinModule`, which loads the
@@ -273,8 +286,8 @@ separate reads. Nothing needs it yet, so it is not built.
 
 ## Switching the master
 
-Today the legacy `accounts` slice is the master. `FullSyncSource` reads the legacy `Account` through
-the app's `getAccount` and syncs it; the new slices are read models filled on demand, on their own
+Today the legacy `accounts` slice is the master. `FullSyncSource` finds the legacy `Account` through
+the app's `findAccount(descriptor)` and syncs it; the new slices are read models filled on demand, on their own
 lifecycle.
 
 ```mermaid
@@ -302,16 +315,16 @@ flowchart LR
 2. **Fed by every sync.** The background `BridgeSync` goes through the same `FullSyncSource`
    instance, and each finished sync writes every datum it can serve into the new slices through
    their bindings. The two stores stop drifting because one writer fills both.
-3. **Flipped.** The master becomes the account descriptors (what Ledger Sync already carries: id,
-   currency, address, derivation mode, from which `AccountRef` derives) plus the new slices. Local
+3. **Flipped.** The master becomes the account descriptors (what Ledger Sync already carries, from which
+   the descriptor derives) plus the new slices. Local
    writes, such as a pending operation after a broadcast, go to the slices first. For the screens
    not yet migrated, the app rebuilds a legacy `Account` from the slices. `FullSyncSource` then builds
    the `Account` it syncs from a descriptor instead of reading the legacy store.
 4. **Removed.** Once no screen reads the legacy slice, it goes, and with it the rebuilt `Account`.
 
 The switch is possible without touching the framework or the entities because of three properties
-already in place: sources never read the store (the app injects `getAccount`), an `AccountRef` is
-derivable from a descriptor that was never synced, and every slice is keyed by `AccountId`. Only the
+already in place: sources never read the store (the app injects `findAccount`, today a lookup among the legacy accounts, tomorrow a lookup in a descriptor store), the descriptor is
+derivable from a Ledger Sync account that was never synced, and every slice is keyed by `AccountId`. Only the
 app's `account-data-setup` and the sync wiring change at each step. None of steps 2 to 4 is built
 here.
 
@@ -321,7 +334,7 @@ here.
 | --- | --- | --- |
 | One source type and one registry per datum | One interface with a method per datum, edited centrally | One `AccountDataSource`, derived from the `AccountData` map that each entity augments |
 | Numeric priority | Order of the array | Order of the array |
-| `supports(ref)` per source | `supports(ref)` per source | `supports(ref, datum)`, so balance and operations are gated separately |
+| `supports(ref)` per source | `supports(ref)` per source | pure `supports(descriptor, datum)`, so balance and operations are gated separately |
 | One thunk and one hook per datum | One thunk and one hook per datum, in a package per entity | One `fetchAccountData`, one `useAccountData`, driven by a binding |
 | Many accounts: one read each, unbounded | Many accounts: one read each, unbounded | Reads merged per tick, one call per source, a batch reader when the source has one, a cap per source |
 | Registry filled from an app setup file | Router in a React `AccountDataProvider` | Router in the thunk `extraArgument`, built in `account-data-setup` |

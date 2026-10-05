@@ -1,11 +1,17 @@
-import { accountRefKey, type AccountRef } from "@domain/entity-account";
+import { computeAccountId } from "@domain/entity-account-alias";
+import { accountDescriptorKey, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type {
   AccountDataQuery,
   AccountDataResult,
   AccountDatum,
 } from "@domain/entity-account-data";
 import { NoAccountSourceError } from "./errors";
-import type { AccountDataBatchReader, AccountDataReader, AccountDataSource } from "./source";
+import type {
+  AccountDataBatchReader,
+  AccountDataReader,
+  AccountDataSource,
+  AccountTarget,
+} from "./source";
 
 /** As many calls in flight per source as the legacy sync queue allows by default. */
 export const DEFAULT_ACCOUNT_DATA_CONCURRENCY = 4;
@@ -25,14 +31,14 @@ export type AccountDataRouter = {
   /** One account. Reads issued in the same tick are merged into one batch per source. */
   read<K extends AccountDatum>(
     datum: K,
-    ref: AccountRef,
+    descriptor: AccountDescriptor,
     query?: AccountDataQuery<K>,
     options?: AccountDataReadOptions,
   ): Promise<AccountDataRead<K>>;
-  /** Many accounts, one settled result per ref, in the same order. */
+  /** Many accounts, one settled result per descriptor, in the same order. */
   readBatch<K extends AccountDatum>(
     datum: K,
-    refs: readonly AccountRef[],
+    descriptors: readonly AccountDescriptor[],
     query?: AccountDataQuery<K>,
     options?: AccountDataReadOptions,
   ): Promise<PromiseSettledResult<AccountDataRead<K>>[]>;
@@ -128,7 +134,7 @@ function serves(source: AccountDataSource, datum: AccountDatum): boolean {
 }
 
 type Waiter = {
-  ref: AccountRef;
+  descriptor: AccountDescriptor;
   resolve: (read: AccountDataRead<AccountDatum>) => void;
   reject: (reason: unknown) => void;
 };
@@ -169,7 +175,7 @@ export function createAccountDataRouter(
   async function readFromSource<K extends AccountDatum>(
     source: AccountDataSource,
     datum: K,
-    refs: readonly AccountRef[],
+    targets: readonly AccountTarget[],
     query: AccountDataQuery<K> | undefined,
     signal: AbortSignal | undefined,
   ): Promise<Settled<AccountDataResult<K>>[]> {
@@ -179,11 +185,11 @@ export function createAccountDataRouter(
     if (!batch) {
       const single = source[datum] as AccountDataReader<K>;
       return Promise.allSettled(
-        refs.map(ref => run(() => single.call(source, ref, query, signal), signal)),
+        targets.map(target => run(() => single.call(source, target, query, signal), signal)),
       );
     }
 
-    const parts = chunk(refs, Math.max(1, source.maxBatchSize ?? refs.length));
+    const parts = chunk(targets, Math.max(1, source.maxBatchSize ?? targets.length));
     const answered = await Promise.all(
       parts.map(async (part): Promise<Settled<AccountDataResult<K>>[]> => {
         try {
@@ -205,41 +211,37 @@ export function createAccountDataRouter(
 
   async function route<K extends AccountDatum>(
     datum: K,
-    refs: readonly AccountRef[],
+    descriptors: readonly AccountDescriptor[],
     query: AccountDataQuery<K> | undefined,
     { signal, sourceId }: AccountDataReadOptions,
   ): Promise<Settled<AccountDataRead<K>>[]> {
-    const results: Settled<AccountDataRead<K>>[] = new Array(refs.length);
-    const groups = new Map<AccountDataSource, number[]>();
+    const results: Settled<AccountDataRead<K>>[] = new Array(descriptors.length);
+    const groups = new Map<AccountDataSource, { indexes: number[]; targets: AccountTarget[] }>();
 
-    refs.forEach((ref, index) => {
+    descriptors.forEach((descriptor, index) => {
+      const accountId = computeAccountId(descriptor);
       const source = ranked.find(
         candidate =>
           (sourceId === undefined || candidate.id === sourceId) &&
           serves(candidate, datum) &&
-          candidate.supports(ref, datum),
+          candidate.supports(descriptor, datum),
       );
-      if (!source) {
-        results[index] = {
-          status: "rejected",
-          reason: new NoAccountSourceError(ref.accountId, datum, sourceId),
-        };
+      if (source) {
+        const group = groups.get(source) ?? { indexes: [], targets: [] };
+        group.indexes.push(index);
+        group.targets.push({ accountId, descriptor });
+        groups.set(source, group);
         return;
       }
-      const group = groups.get(source);
-      if (group) group.push(index);
-      else groups.set(source, [index]);
+      results[index] = {
+        status: "rejected",
+        reason: new NoAccountSourceError(accountId, datum, sourceId),
+      };
     });
 
     await Promise.all(
-      [...groups].map(async ([source, indexes]) => {
-        const answers = await readFromSource(
-          source,
-          datum,
-          indexes.map(index => refs[index]),
-          query,
-          signal,
-        );
+      [...groups].map(async ([source, { indexes, targets }]) => {
+        const answers = await readFromSource(source, datum, targets, query, signal);
         answers.forEach((answer, position) => {
           results[indexes[position]] =
             answer.status === "fulfilled"
@@ -251,24 +253,26 @@ export function createAccountDataRouter(
     return results;
   }
 
-  /** Reads each distinct ref once, and hands the same answer to every duplicate. */
+  /** Reads each distinct descriptor once, and hands the same answer to every duplicate. */
   async function readEach<K extends AccountDatum>(
     datum: K,
-    refs: readonly AccountRef[],
+    descriptors: readonly AccountDescriptor[],
     query: AccountDataQuery<K> | undefined,
     options: AccountDataReadOptions,
   ): Promise<Settled<AccountDataRead<K>>[]> {
-    const unique: AccountRef[] = [];
+    const unique: AccountDescriptor[] = [];
     const positionOf = new Map<string, number>();
-    for (const ref of refs) {
-      const key = accountRefKey(ref);
+    for (const descriptor of descriptors) {
+      const key = accountDescriptorKey(descriptor);
       if (!positionOf.has(key)) {
         positionOf.set(key, unique.length);
-        unique.push(ref);
+        unique.push(descriptor);
       }
     }
     const answers = await route(datum, unique, query, options);
-    return refs.map(ref => answers[positionOf.get(accountRefKey(ref)) as number]);
+    return descriptors.map(
+      descriptor => answers[positionOf.get(accountDescriptorKey(descriptor)) as number],
+    );
   }
 
   async function flush(key: string): Promise<void> {
@@ -276,10 +280,10 @@ export function createAccountDataRouter(
     pending.delete(key);
     if (!batch) return;
     try {
-      const refs = batch.waiters.map(waiter => waiter.ref);
+      const descriptors = batch.waiters.map(waiter => waiter.descriptor);
       const answers = await readEach(
         batch.datum,
-        refs,
+        descriptors,
         batch.query as AccountDataQuery<AccountDatum>,
         { sourceId: batch.sourceId },
       );
@@ -294,10 +298,10 @@ export function createAccountDataRouter(
   }
 
   return {
-    async read(datum, ref, query, options = {}) {
+    async read(datum, descriptor, query, options = {}) {
       if (options.signal?.aborted) throw abortError();
       if (!coalesce) {
-        const [answer] = await readEach(datum, [ref], query, options);
+        const [answer] = await readEach(datum, [descriptor], query, options);
         if (answer.status === "rejected") throw answer.reason;
         return answer.value;
       }
@@ -312,14 +316,14 @@ export function createAccountDataRouter(
       }
       const waiters = batch.waiters;
       const answer = new Promise<AccountDataRead<AccountDatum>>((resolve, reject) =>
-        waiters.push({ ref, resolve, reject }),
+        waiters.push({ descriptor, resolve, reject }),
       ) as Promise<AccountDataRead<typeof datum>>;
       return options.signal ? stopWaitingOnAbort(answer, options.signal) : answer;
     },
 
-    async readBatch(datum, refs, query, options = {}) {
+    async readBatch(datum, descriptors, query, options = {}) {
       if (options.signal?.aborted) throw abortError();
-      return readEach(datum, refs, query, options);
+      return readEach(datum, descriptors, query, options);
     },
   };
 }

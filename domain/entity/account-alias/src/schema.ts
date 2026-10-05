@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { v5 as uuidv5 } from "uuid";
-import { type AnyAccountId, parseAnyAccountId } from "@domain/entity-account";
+import {
+  AccountIdSchema,
+  type AccountId,
+  type AnyAccountId,
+  parseAnyAccountId,
+} from "@domain/entity-account";
+import { accountDescriptorKey, type AccountDescriptor } from "@domain/entity-account-descriptor";
 
 /**
  * Namespace for account id aliasing. Randomly generated uuid v4, distinct from the wallet-api one
@@ -8,6 +14,9 @@ import { type AnyAccountId, parseAnyAccountId } from "@domain/entity-account";
  * not a secret — see the reversibility note on `computeAccountAlias`.
  */
 const ACCOUNT_ALIAS_NAMESPACE = "6f2f9d3a-0f5d-4d51-9b5b-2f0f2a2f1c73";
+
+/** Namespace of the account ids derived from a descriptor. Same trade-off as the alias namespace. */
+const ACCOUNT_ID_NAMESPACE = "b0c4f3a2-7d1e-4a8b-9f36-5e2d8c1a4b70";
 
 /** Opaque, deterministic stand-in for an account id. */
 export const AccountAliasSchema = z.uuid().brand<"AccountAlias">();
@@ -31,6 +40,22 @@ export function computeAccountAlias(accountId: AnyAccountId): AccountAlias {
   const alias = AccountAliasSchema.parse(uuidv5(accountId, ACCOUNT_ALIAS_NAMESPACE));
   aliasByAccountId.set(accountId, alias);
   return alias;
+}
+
+const accountIdByDescriptor = new Map<string, AccountId>();
+
+/**
+ * The id of an account: a hash of its canonical descriptor string, so the same account has the same
+ * id on every device and the id carries neither xpub nor address. Same reversibility caveat as
+ * `computeAccountAlias`: a hash for convenience and privacy, not a secret.
+ */
+export function computeAccountId(descriptor: AccountDescriptor): AccountId {
+  const canonical = accountDescriptorKey(descriptor);
+  const cached = accountIdByDescriptor.get(canonical);
+  if (cached) return cached;
+  const accountId = AccountIdSchema.parse(uuidv5(canonical, ACCOUNT_ID_NAMESPACE));
+  accountIdByDescriptor.set(canonical, accountId);
+  return accountId;
 }
 
 export const AccountAliasStateSchema = z.object({

@@ -1,15 +1,17 @@
-import type { Account } from "@ledgerhq/types-live";
 import { getEnv } from "@shared/env";
 import { createAccountDataRouter, type AccountDataExtra } from "@domain/api-account-data-source";
 import { CoinModuleSource } from "@features/platform-account-source-coin-module";
-import { FullSyncSource } from "@ledgerhq/live-common/account-data/FullSyncSource";
+import {
+  FullSyncSource,
+  findAccountByDescriptor,
+} from "@ledgerhq/live-common/account-data/FullSyncSource";
 import {
   loadCoinModule,
   tokenAccountIdOf,
 } from "@ledgerhq/live-common/account-data/coinModulePorts";
 import { getEnabledGenericCoinFrameworkFamilies } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import { prepareCurrency } from "~/renderer/bridge/cache";
-import { accountSelector } from "~/renderer/reducers/accounts";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { State } from "~/renderer/reducers";
 
@@ -37,7 +39,8 @@ export function accountDataExtra(getState: () => State): AccountDataExtra {
         blacklistedTokenIds,
       }),
       new FullSyncSource({
-        getAccount: (accountId): Account | undefined => accountSelector(getState(), { accountId }),
+        findAccount: descriptor =>
+          findAccountByDescriptor(accountsSelector(getState()), descriptor),
         prepareCurrency,
         blacklistedTokenIds,
         concurrency: getEnv("SYNC_MAX_CONCURRENT"),
