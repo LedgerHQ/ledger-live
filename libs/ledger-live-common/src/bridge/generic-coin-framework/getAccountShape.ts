@@ -349,7 +349,10 @@ function parentOpsForTxWithOnlyInternalOperations(
  * ops attached, not emitted as additional top-level operations.
  */
 function buildParentOperations(
-  subAccounts: TokenAccount[],
+  // Built once for all transactions rather than once per hash — the group-once pattern below
+  // already applies to the other side of this join (transactions grouped by hash); this applies it
+  // to the sub-account side.
+  subOperationIndex: SubOperationIndex,
   newNonInternalOperations: OperationCommon[],
   newInternalOperations: OperationCommon[],
   accountId: string,
@@ -357,10 +360,6 @@ function buildParentOperations(
 ): OperationCommon[] {
   const nonInternalByHash = groupBy(newNonInternalOperations, "hash");
   const internalByHash = groupBy(newInternalOperations, "hash");
-  // Built once for all transactions rather than once per hash — the group-once pattern above
-  // already applies to the other side of this join (transactions grouped by hash); this applies it
-  // to the sub-account side.
-  const subOperationIndex = buildSubOperationIndex(subAccounts);
 
   const result: OperationCommon[] = [];
 
@@ -393,6 +392,24 @@ function buildParentOperations(
   }
 
   return result;
+}
+
+/**
+ * Points each parent at the token rows `subOperationIndex` holds for its hash -- what restoring the
+ * account computes from its stored sub-accounts. A parent whose links already match is returned
+ * as-is, so an unchanged history allocates nothing.
+ */
+function relinkSubOperations(
+  operations: OperationCommon[],
+  subOperationIndex: SubOperationIndex,
+): OperationCommon[] {
+  return operations.map(op => {
+    const linked = subOperationIndex.get(op.hash) ?? [];
+    const current = op.subOperations ?? [];
+    const unchanged =
+      current.length === linked.length && current.every((sub, i) => sub.id === linked[i].id);
+    return unchanged ? op : { ...op, subOperations: linked };
+  });
 }
 
 // A4 being intentionally off for a chain is a per-chain steady-state config fact, not a per-sync
@@ -499,6 +516,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           buildShape(address, accountInfo),
         )
       : Promise.resolve(undefined);
+    // Started now but only awaited in the `Promise.all` below, after `getSyncHash`. A handler
+    // attached up front keeps a rejection in the meantime from surfacing as unhandled -- and covers
+    // the case where `getSyncHash` itself rejects and that `Promise.all` is never reached. The
+    // rejection still fails the sync through the `Promise.all`.
+    chainSpecificShapePromise.catch(() => undefined);
     const accountId = encodeAccountId({
       type: "js",
       version: "2",
@@ -598,9 +620,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       }
     }
 
-    const balancePromise = coinModuleApi
-      .getBalance(context, address, balanceOptions)
-      .catch(async err => {
+    const readBalance = (options: BalanceOptions | undefined) =>
+      coinModuleApi.getBalance(context, address, options).catch(async err => {
         // The config rejects when the currency has none, which is not a region restriction.
         const config = await context.config().catch(() => undefined);
         if (isRegionRestrictedFailure(err, config)) {
@@ -608,6 +629,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         }
         throw new UnexpectedGetBalanceError("", err);
       });
+    const balancePromise = readBalance(balanceOptions);
 
     const [blockInfo, balanceRes, validators, readiness, chainSpecificShape] = await Promise.all([
       coinModuleApi.lastBlock(context),
@@ -904,10 +926,39 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       else newNonInternalOperations.push(op);
     }
 
+    // The scoped balance read ran before the walk, so it only looked for new tokens up to that
+    // moment. A token first received in between reaches `newAssetOperations` with no balance
+    // entry: `buildSubAccounts` would not create its sub-account, and the next sync -- resuming
+    // its scan past that transfer -- would not find it either. Read balances once more, unscoped,
+    // and keep the entries for those tokens only. The family's own asset filter applies to that
+    // read, so a token it does not list stays out; the cost is at most one full scan.
+    const balancedReferences = new Set(
+      allTokenAssetsBalances
+        .map(b => ("assetReference" in b.asset ? b.asset.assetReference : undefined))
+        .filter((ref): ref is string => !!ref)
+        .map(ref => ref.toLowerCase()),
+    );
+    const unbalancedReferences = new Set(
+      balanceOptions?.knownAssets
+        ? newAssetOperations
+            .map(op => String(op.extra.assetReference).toLowerCase())
+            .filter(ref => !balancedReferences.has(ref))
+        : [],
+    );
+    const lateTokenBalances = unbalancedReferences.size
+      ? (await readBalance(bridgeApi.balanceOptions)).filter(
+          b =>
+            b.asset.type !== "native" &&
+            "assetReference" in b.asset &&
+            !!b.asset.assetReference &&
+            unbalancedReferences.has(b.asset.assetReference.toLowerCase()),
+        )
+      : [];
+
     const familyShapes = await bridgeApi.buildTokenAccountShapes?.(address);
     const newSubAccounts = await buildSubAccounts({
       accountId,
-      allTokenAssetsBalances,
+      allTokenAssetsBalances: [...allTokenAssetsBalances, ...lateTokenBalances],
       syncConfig,
       operations: newAssetOperations,
       getTokenFromAsset: bridgeApi.getTokenFromAsset,
@@ -940,8 +991,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     // From the bounded sub-accounts, not `newSubAccounts`: a restored account recomputes each
     // parent's sub-operations from the stored (bounded) ones, so the synced shape has to as well.
+    // Confirmed rows only: every parent built or kept here is a confirmed transaction, and a token
+    // transfer that just confirmed still has its optimistic row in `pendingOperations` until
+    // `postSync` prunes it -- indexing that too would attach both rows to the same parent.
+    const confirmedSubOperationIndex = buildSubOperationIndex(
+      subAccounts.map(sa => ({ ...sa, pendingOperations: [] })),
+    );
     const newOpsWithSubs = buildParentOperations(
-      subAccounts,
+      confirmedSubOperationIndex,
       newNonInternalOperations,
       newInternalOperations,
       accountId,
@@ -963,7 +1020,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? await bridgeApi.refreshOperations(operationsToRefresh)
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
-    const mergedOperations = mergeOps(discardOld ? [] : oldOps, newOperations) as OperationCommon[];
+    // A parent carried over from `oldOps` keeps the sub-operations it was stored with, some of
+    // which the token bound may just have evicted; relinked here, against the same index the
+    // parents built this round used, so every retained parent points at what is actually stored.
+    const mergedOperations = mergeOps(
+      discardOld ? [] : relinkSubOperations(oldOps, confirmedSubOperationIndex),
+      newOperations,
+    ) as OperationCommon[];
     // Store bound: `mergeOps` returns newest-first (its own contract), so keeping the head keeps
     // the newest -- this also keeps `minHeight` correct on the next sync, since it derives from
     // the newest stored operation, which the head always retains. Cut on transactions rather than
