@@ -44,7 +44,10 @@ export function ContactDetailView({
 
   if (!hasPopulatedAddresses) {
     return (
-      <div className="flex h-full flex-col gap-32 px-16 py-32" data-testid="contacts-detail-screen">
+      <div
+        className="flex h-full flex-col gap-32 overflow-y-auto px-16 py-32"
+        data-testid="contacts-detail-screen"
+      >
         <ContactDetailHeader
           contact={contact}
           labels={labels}
