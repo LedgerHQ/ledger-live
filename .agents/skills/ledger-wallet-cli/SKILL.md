@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/list/show — enroll a remote agent's software identity, no device required, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show — enroll or recover a remote agent's software identity, no device required, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll` also holds a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -45,6 +45,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "what keys do I have on my ring", "list domains/projects I've encrypted under"       | `ring keys`                                                  |
 | "wipe my key ring", "destroy the ring", "tear down LKRP membership"                 | `ring destroy`                                               |
 | "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name>` (no device; blocks until approved) |
+| "recover this agent", "re-enroll an agent into its trustchain"                       | `agent-intent recover --profile <id>` (no device; blocks until approved) |
 | "what agents are enrolled", "list agent profiles"                                    | `agent-intent list`                                            |
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
@@ -97,6 +98,7 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `ring keys`          | No     | No           | No          | No      |
 | `ring destroy`       | No     | **Required** | Required‡‡  | Yes     |
 | `agent-intent enroll` | No    | **Required** | No          | Yes     |
+| `agent-intent recover` | No   | **Required** | No          | Yes     |
 | `agent-intent list`  | No     | No           | No          | No      |
 | `agent-intent show`  | No     | No           | No          | No      |
 
@@ -304,7 +306,7 @@ pnpm --silent wallet-cli start ring destroy
 > but it never opens the device and never receives `ring`'s (App-17) domain keys.
 
 Agent Intent enrolls a remote agent (a bot proposing transaction intents for human review) as a
-software identity local to this machine — **no device required for enroll/list/show**. Each
+software identity local to this machine — **no device required for enroll/recover/list/show**. Each
 profile gets its own secp256k1 keypair; the private key never leaves the OS keychain and is never
 printed, logged, or included in any command's output (human or `--output json`).
 
@@ -314,6 +316,10 @@ printed, logged, or included in any command's output (human or `--output json`).
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot"
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" \
   --environment staging --expires-in 2h
+
+# Re-enroll an enrolled openclaw/hermes profile's existing key into its previous Trustchain, then
+# BLOCK until approved (environment/keycloak come from the profile):
+pnpm --silent wallet-cli start agent-intent recover --profile my-bot
 
 # List/inspect local profiles (never reveals the secret key):
 pnpm --silent wallet-cli start agent-intent list
@@ -335,6 +341,16 @@ the (non-secret) `accountAccess` references written to the profile.
 **On timeout, Ctrl+C, or a failed check** the profile stays `pending` (and later `expired`) and
 cannot be resumed — start a fresh enrollment with a **new** `--profile` id.
 
+**Recovery reuses the same key.** `recover --profile <id>` signs a recovery request for the
+profile's existing key and Trustchain (no new key, `accountAccess` untouched), then waits on the relay
+exactly like `enroll` (json: a `recovery-pending` event, then `status: "success"`, `recovered: true`,
+`trustchainId`). Only enrolled `openclaw`/`hermes` profiles whose keychain key matches the recorded
+public key can be recovered. The completion must name the same agent key, the same signed request
+and the same Trustchain, and the agent key must obtain an App-18 token for it (App-16 is not
+re-checked). While it waits, `list`/`show` report `recovering`; on timeout, Ctrl+C, or a failed
+check the marker is cleared and the profile stays `enrolled` with its previous data — re-run
+`recover` to retry.
+
 **Fingerprint is the safety check.** `enroll` prints a public-key fingerprint alongside the
 enrollment URL, and `show` prints the same fingerprint for any profile afterwards — compare it
 against what the Agent Intent frontend/device displays before approving. A mismatched fingerprint
@@ -355,8 +371,8 @@ enrolled against. A completion whose `accountAccess.environment` doesn't match i
 profile enrolled for staging can never end up holding a production Trustchain ID. `--bff-url` and
 `--keycloak-url` override that environment's defaults (http(s) only, no `user:pass@`).
 
-**Status is derived, not stored:** `list`/`show` compute `pending` / `enrolled` / `expired` from
-`trustchainId` and `enrollmentExpiresAt`, and show the granted account access (environment +
+**Status is derived, not stored:** `list`/`show` compute `pending` / `enrolled` / `recovering` /
+`expired` from `trustchainId`, `enrollmentExpiresAt` and any unexpired recovery marker, and show the granted account access (environment +
 App-16 application path) once enrolled.
 
 ---
