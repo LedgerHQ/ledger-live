@@ -16,7 +16,7 @@ export default class PayTabPage {
   bankTransferCreateAccountId = "pay-bank-transfer-intro-create-account";
   bankTransferCloseId = "bottom-sheet-header-close-button";
   requestScreenId = "pay-request-receive";
-  requestSummaryId = "pay-request-receive-summary";
+  requestTitleId = "pay-request-receive-title";
   requestCloseId = "pay-request-receive-close";
 
   filterOptionId = (rowKey: string) => `pay-card-balance-filter-option-${rowKey}`;
@@ -24,17 +24,18 @@ export default class PayTabPage {
 
   @Step("Expect the Pay tab screen")
   async expectScreenVisible() {
-    await waitForElementById(this.screenId, undefined, { checkVisibility: false });
+    await detoxExpect(getElementById(this.screenId)).toBeVisible();
   }
 
   @Step("Expect the Pay tab to show a funded balance")
   async expectFundedBalance() {
-    await waitForElementById(this.fundedStateId, undefined, { checkVisibility: false });
+    await detoxExpect(getElementById(this.fundedStateId)).toBeVisible();
   }
 
   @Step("Expect the balance amount")
   async expectBalanceAmount() {
-    await waitForElementById(this.balanceAmountId, undefined, { checkVisibility: false });
+    await detoxExpect(getElementById(this.balanceAmountId)).toBeVisible();
+    await detoxExpect(getElementByIdWithDescendantTexts(this.balanceAmountId, /\d/)).toBeVisible();
   }
 
   @Step("Expect the filter pill to read {{{0}}}")
@@ -56,7 +57,7 @@ export default class PayTabPage {
     await waitForElementById(this.depositOptionsId);
   }
 
-  @Step("Expect the four deposit options")
+  @Step("Expect the deposit options")
   async expectDepositOptions() {
     for (const optionId of DEPOSIT_OPTION_IDS) {
       await detoxExpect(getElementById(this.depositOptionId(optionId))).toBeVisible();
@@ -68,32 +69,32 @@ export default class PayTabPage {
     await tapById(this.depositOptionId(optionId));
   }
 
-  @Step("Expect the bank transfer intro")
-  async expectBankTransferIntro() {
-    await waitForElementById(this.bankTransferCreateAccountId);
+  @Step("Expect the bank transfer intro with {{{0}}}")
+  async expectBankTransferIntro(createAccountLabel: string) {
+    await detoxExpect(
+      getElementByIdWithDescendantTexts(this.bankTransferCreateAccountId, createAccountLabel),
+    ).toBeVisible();
   }
 
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
     await tapById(this.bankTransferCloseId);
-    await this.expectHidden(this.bankTransferContentId);
+    if (!(await waitForElementNotVisible(this.bankTransferContentId))) {
+      throw new Error(`${this.bankTransferContentId} stayed visible`);
+    }
   }
 
   @Step("Expect the request screen titled {{{0}}}")
   async expectRequestTitle(title: string) {
-    await waitForElementById(this.requestSummaryId);
-    await waitForElementByText(title);
+    await detoxExpect(getElementById(this.requestTitleId)).toBeVisible();
+    await detoxExpect(getElementById(this.requestTitleId)).toHaveText(title);
   }
 
   @Step("Close the request screen")
   async closeRequest() {
     await tapById(this.requestCloseId);
-    await this.expectHidden(this.requestScreenId);
-  }
-
-  private async expectHidden(id: string) {
-    if (!(await waitForElementNotVisible(id))) {
-      throw new Error(`${id} stayed visible`);
+    if (!(await waitForElementNotVisible(this.requestScreenId))) {
+      throw new Error(`${this.requestScreenId} stayed visible`);
     }
   }
 }

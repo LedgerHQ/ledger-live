@@ -6,6 +6,8 @@ import { FF_CONTACTS_ENABLED, FF_PAY_TAB } from "@e2e/utils/featureFlagUtils";
 const ALL_STABLECOINS = "All stablecoins";
 const FILTER_TICKER = "USDT";
 const REQUEST_TITLE = "Request Tether USD";
+// i18n `payTab.bankTransferIntro.createAccount`
+const BANK_TRANSFER_CREATE_ACCOUNT = "Create an account";
 const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
 
 export function runPayBalanceAndDepositTest(tmsLinks: string[], tags: string[]) {
@@ -21,7 +23,6 @@ export function runPayBalanceAndDepositTest(tmsLinks: string[], tags: string[]) 
         cliCommands: [liveDataWithRecipientAddressCommand(transaction)],
       });
       await app.mainNavigation.waitForWallet40Ready();
-      await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
     });
 
     setTeamOwner(Team.WALLET_XP);
@@ -43,7 +44,7 @@ export function runPayBalanceAndDepositTest(tmsLinks: string[], tags: string[]) 
       await app.payTab.openDepositOptions();
       await app.payTab.expectDepositOptions();
       await app.payTab.selectDepositOption("bankTransfer");
-      await app.payTab.expectBankTransferIntro();
+      await app.payTab.expectBankTransferIntro(BANK_TRANSFER_CREATE_ACCOUNT);
       await app.payTab.closeBankTransferIntro();
       await app.payTab.expectScreenVisible();
 

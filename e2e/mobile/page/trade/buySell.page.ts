@@ -15,6 +15,7 @@ import { retryUntilTimeout } from "@e2e/utils/retry";
 
 export default class BuySellPage {
   appContainerCssSelector = "#app-container";
+  closeButtonId = "icon_button_close";
   amountInputSectionBaseId = "amount-input-section";
   countryDrawerSearchInput = "countries-drawer-search-input";
   cryptoAccountSelector = "account-details";
@@ -53,7 +54,7 @@ export default class BuySellPage {
 
   @Step("Close the Buy screen")
   async closeBuyScreen() {
-    await tapWebElementByTestId("icon_button_close");
+    await tapWebElementByTestId(this.closeButtonId);
   }
 
   @Step("Expect Buy screen to be visible")
