@@ -101,9 +101,10 @@ async function verifyLedgerSyncAccess(
   ) {
     throw new Error("Restored Ledger Sync identity or application path does not match access.");
   }
-  await sdk.withAuth(restored, credentials, jwt =>
-    Promise.resolve(assertControlledTestPermission(jwt, restored)),
-  );
+  await sdk.withAuth(restored, credentials, jwt => {
+    assertControlledTestPermission(jwt, restored);
+    return Promise.resolve();
+  });
 }
 
 function assertControlledTestPermission(jwt: JWT, trustchain: Trustchain): void {

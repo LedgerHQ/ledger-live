@@ -33,14 +33,14 @@ function log(line: string): void {
   appendFileSync(logPath, `${line}\n`);
 }
 
-async function main(): Promise<void> {
-  for (let i = 0; i < iterations; i++) {
-    await withFileLock(lockPath, async () => {
-      log(`enter:${process.pid}`);
-      await new Promise(resolve => setTimeout(resolve, randomInt(15)));
-      log(`exit:${process.pid}`);
-    });
-  }
-}
-
-await main();
+await Array.from({ length: iterations }).reduce<Promise<void>>(
+  previous =>
+    previous.then(() =>
+      withFileLock(lockPath, async () => {
+        log(`enter:${process.pid}`);
+        await new Promise(resolve => setTimeout(resolve, randomInt(15)));
+        log(`exit:${process.pid}`);
+      }),
+    ),
+  Promise.resolve(),
+);

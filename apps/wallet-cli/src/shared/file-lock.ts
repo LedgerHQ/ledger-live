@@ -1,12 +1,9 @@
 import { linkSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
+import { setInterval } from "node:timers/promises";
 
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 10_000;
 const RETRY_INTERVAL_MS = 50;
-
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 function errorCode(e: unknown): string | undefined {
   return e instanceof Error && "code" in e && typeof e.code === "string" ? e.code : undefined;
@@ -163,6 +160,22 @@ function attemptAcquire(lockPath: string, tmpPath: string, token: string): Attem
   }
 }
 
+/** Returns true once acquired; throws past the deadline. */
+function tryAcquire(lockPath: string, tmpPath: string, token: string, deadline: number): boolean {
+  let result = attemptAcquire(lockPath, tmpPath, token);
+  while (result.kind === "retry-now") result = attemptAcquire(lockPath, tmpPath, token);
+  if (result.kind === "acquired") return true;
+  if (Date.now() > deadline) {
+    throw new Error(
+      `Timed out waiting for a lock (${lockPath}) held by a live process — another wallet-cli ` +
+        `command is running. Wait for it to finish, or delete the lock file if you're sure none ` +
+        `is (a crashed holder whose pid was since reused would otherwise wedge every command).`,
+      { cause: result.cause },
+    );
+  }
+  return false;
+}
+
 /**
  * Serializes access to a resource across wallet-cli processes via an exclusive lock file at
  * `lockPath`. The lock file's content is `<pid>:<nonce>` — this process's own token — so:
@@ -194,19 +207,10 @@ export async function withFileLock<T>(
   const tmpPath = `${lockPath}.tmp-${token.replace(":", "-")}`;
   const deadline = Date.now() + acquireTimeoutMs;
 
-  for (;;) {
-    const result = attemptAcquire(lockPath, tmpPath, token);
-    if (result.kind === "acquired") break;
-    if (result.kind === "retry-now") continue;
-    if (Date.now() > deadline) {
-      throw new Error(
-        `Timed out waiting for a lock (${lockPath}) held by a live process — another wallet-cli ` +
-          `command is running. Wait for it to finish, or delete the lock file if you're sure none ` +
-          `is (a crashed holder whose pid was since reused would otherwise wedge every command).`,
-        { cause: result.cause },
-      );
+  if (!tryAcquire(lockPath, tmpPath, token, deadline)) {
+    for await (const _ of setInterval(RETRY_INTERVAL_MS)) {
+      if (tryAcquire(lockPath, tmpPath, token, deadline)) break;
     }
-    await sleep(RETRY_INTERVAL_MS);
   }
 
   try {

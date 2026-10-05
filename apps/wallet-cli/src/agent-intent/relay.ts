@@ -92,16 +92,14 @@ export function waitForRelayCompletion<Request extends AgentEnrollmentChannelReq
   };
   process.once("SIGINT", onSignal);
   process.once("SIGTERM", onSignal);
-  const completion = new Promise<AgentEnrollmentChannelCompletion<Request>>(resolve =>
-    resolve(
-      host.waitForCompletion({
-        ...input,
-        persist: candidate =>
-          input.persist(candidate).then(() => {
-            persisted = candidate;
-          }),
-      }),
-    ),
+  const completion = Promise.resolve().then(() =>
+    host.waitForCompletion({
+      ...input,
+      persist: candidate =>
+        input.persist(candidate).then(() => {
+          persisted = candidate;
+        }),
+    }),
   );
   return Promise.race([completion, interrupted])
     .catch(e => {
