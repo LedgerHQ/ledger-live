@@ -8,7 +8,6 @@ import {
   RemoteConfig,
 } from "firebase/remote-config";
 import isMatch from "lodash/isMatch";
-import * as fs from "fs";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import {
@@ -118,45 +117,14 @@ function hydrateRemoteConfigValues(all: ReturnType<typeof getAll>): PartialFeatu
   return parseFirebaseFeatures(all);
 }
 
-const parseEnvFile = (fileContent: string) => {
-  const lines = fileContent.split("\n");
-  const envVariables: { [key: string]: string } = {};
-  lines.forEach(line => {
-    const [key, value] = line.split("=");
-    if (key && value) {
-      envVariables[key.trim()] = value.trim().replace(/^"(.*)"$/, "$1");
-    }
-  });
-  return envVariables;
-};
-
 // Spins up a parallel Firebase app per env, fetches its remote config, and warns when remote
 // `config_*` values diverge from the local defaults declared via LiveConfig. Dev-only.
 const warnOnConfigMismatch = async () => {
-  if (!__DEV__) {
+  if (!__DEV__ || !__FIREBASE_ENV_CONFIGS__) {
     return;
   }
-  const envs = ["production", "staging", "testing", "development"];
-  envs.forEach(async (env: string) => {
-    const envFilePath = `./.env.${env}`;
-    let apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId, envVars;
-    try {
-      const fileContent = await fs.promises.readFile(envFilePath, "utf8");
-      envVars = parseEnvFile(fileContent);
-      apiKey = envVars["FIREBASE_API_KEY"];
-      authDomain = envVars["FIREBASE_AUTH_DOMAIN"];
-      projectId = envVars["FIREBASE_PROJECT_ID"];
-      storageBucket = envVars["FIREBASE_STORAGE_BUCKET"];
-      messagingSenderId = envVars["FIREBASE_MESSAGING_SENDER_ID"];
-      appId = envVars["FIREBASE_APP_ID"];
-    } catch {
-      apiKey = undefined;
-    }
-
-    const firebaseOptions = apiKey
-      ? { apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId }
-      : getFirebaseConfig();
-    const firebaseApp = initializeApp(firebaseOptions, env);
+  Object.entries(__FIREBASE_ENV_CONFIGS__).forEach(async ([env, firebaseOptions]) => {
+    const firebaseApp = initializeApp(firebaseOptions ?? getFirebaseConfig(), env);
     const envRemoteConfig = getRemoteConfig(firebaseApp);
     envRemoteConfig.settings.minimumFetchIntervalMillis = 0;
     await fetchAndActivate(envRemoteConfig);

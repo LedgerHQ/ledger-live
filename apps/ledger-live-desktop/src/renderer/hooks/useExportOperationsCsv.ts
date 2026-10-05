@@ -1,4 +1,5 @@
 import { ipcRenderer } from "electron";
+import { showSaveDialog } from "~/renderer/dialog";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { getEnv } from "@shared/env";
 import { useSelector } from "LLD/hooks/redux";
@@ -75,7 +76,7 @@ export function useExportOperationsCsv({
             // test id) to keep parallel runs from racing on the same CSV file.
             filePath: process.env.PLAYWRIGHT_EXPORT_CSV_PATH || "./ledgerwallet-operations.csv",
           }
-        : await ipcRenderer.invoke("show-save-dialog", {
+        : await showSaveDialog({
             title: "Exported account transactions",
             defaultPath: `ledgerwallet-operations-${getDateTxt()}.csv`,
             filters: [{ name: "All Files", extensions: ["csv"] }],

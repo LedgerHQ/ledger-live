@@ -98,6 +98,7 @@ const commonConfig = {
     __PRERELEASE__: "null",
     __CHANNEL__: "null",
     __BUILD_ENVS__: {},
+    __FIREBASE_ENV_CONFIGS__: null,
   },
   moduleNameMapper,
   testPathIgnorePatterns,
