@@ -94,6 +94,7 @@ type FlowStepperProps = {
   continueDisabled?: boolean;
   backLabel?: string;
   disableBack?: boolean;
+  screenId: string;
   children: React.ReactNode;
   handleBack?: () => void;
   handleContinue: () => void;
@@ -107,6 +108,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   continueLoading,
   continueDisabled,
   disableBack,
+  screenId,
   ProgressBar,
   children,
   handleBack,
@@ -137,7 +139,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
             <Flex columnGap="16px">
               {handleContinueSecondary && (
                 <Button
-                  data-testid="v3-tutorial-continue-secondary"
+                  data-testid={`v3-tutorial-continue-secondary-${screenId}`}
                   onClick={handleContinueSecondary}
                   disabled={continueLoading || continueDisabled}
                 >
@@ -145,7 +147,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
                 </Button>
               )}
               <Button
-                data-testid="v3-tutorial-continue"
+                data-testid={`v3-tutorial-continue-${screenId}`}
                 onClick={handleContinue}
                 disabled={continueLoading || continueDisabled}
                 variant="main"
@@ -956,6 +958,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
       </Drawer>
 
       <FlowStepper
+        screenId={currentScreenId}
         continueDisabled={canContinue === false}
         ProgressBar={
           useCase !== OnboardingUseCase.connectDevice && useCase !== OnboardingUseCase.recover ? (
