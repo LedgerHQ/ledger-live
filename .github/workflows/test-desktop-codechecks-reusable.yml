@@ -276,7 +276,8 @@ jobs:
           done
 
       - name: Save Jest cache to S3
-        if: ${{ success() && github.event_name == 'push' && github.ref_name == 'develop' }}
+        # EVALUATION ONLY (never merge): also save on workflow_dispatch to warm the cache pre-merge.
+        if: ${{ success() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'develop')) }}
         continue-on-error: true
         uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
