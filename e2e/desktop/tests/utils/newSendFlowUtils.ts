@@ -1,11 +1,11 @@
-import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { TokenAccount, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { Application } from "tests/page";
+import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 function getRequiredFamily(currencyId: string): string {
@@ -82,99 +82,100 @@ export type NewSendFlowEntry = {
   verifyOperationAmount?: boolean;
 };
 
-export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
-  for (const entry of entries) {
-    const tx = entry.transaction;
-    const family = getFamilyByCurrencyId(tx.accountToDebit.currency.id);
-    const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
-    const currency = tx.accountToDebit.currency;
-    const currencyLabel = currency.testLabel;
+export function newSendFlowFixture(entry: NewSendFlowEntry) {
+  const tx = entry.transaction;
 
-    test.describe("Send - new flow", () => {
-      test.use({
-        teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
-        userdata: "skip-onboarding-with-last-seen-device",
-        speculosApp: tx.accountToDebit.currency.speculosApp,
-        cliCommands: [liveDataWithRecipientAddressCommand(tx)],
-        featureFlags: {
-          ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
-          newSendFlow: {
-            enabled: true,
-            params: { families: NEW_SEND_FLOW_FAMILIES },
-          },
-        },
-      });
+  return {
+    teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: tx.accountToDebit.currency.speculosApp,
+    cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+    featureFlags: {
+      ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
+      newSendFlow: {
+        enabled: true,
+        params: { families: NEW_SEND_FLOW_FAMILIES },
+      },
+    },
+  };
+}
 
-      test(
-        `[${currencyLabel}] - Send (new send flow)${
-          tx.accountToDebit.derivationMode ? ` - ${tx.accountToDebit.derivationMode}` : ""
-        }${validMemoTag ? " with memo" : ""}`,
-        {
-          tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-          annotation: [
-            { type: "TMS", description: entry.xrayTicket },
-            ...(entry.bugTicket ? [{ type: "BUG", description: entry.bugTicket }] : []),
-          ],
-        },
-        async ({ app }) => {
-          const isTokenTransaction = tx.accountToDebit instanceof TokenAccount;
+export function newSendFlowTestOptions(entry: NewSendFlowEntry) {
+  return {
+    tag: buildTags({ currencyId: entry.transaction.accountToDebit.currency.id }),
+    annotation: [
+      { type: "TMS", description: entry.xrayTicket },
+      ...(entry.bugTicket ? [{ type: "BUG", description: entry.bugTicket }] : []),
+    ],
+  };
+}
 
-          const requiresMemoStep = family ? MEMO_STEP_FAMILIES.has(family) : false;
+export function newSendFlowTestName(entry: NewSendFlowEntry): string {
+  const tx = entry.transaction;
+  const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
 
-          await app.mainNavigation.openTargetFromMainNavigation("accounts");
+  return `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow)${
+    tx.accountToDebit.derivationMode ? ` - ${tx.accountToDebit.derivationMode}` : ""
+  }${validMemoTag ? " with memo" : ""}`;
+}
 
-          const accountName = getParentAccountName(tx.accountToDebit);
-          await app.accounts.navigateToAccountByName(accountName);
+export async function sendWithNewSendFlow(app: Application, entry: NewSendFlowEntry) {
+  const tx = entry.transaction;
+  const family = getFamilyByCurrencyId(tx.accountToDebit.currency.id);
+  const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
+  const isTokenTransaction = tx.accountToDebit instanceof TokenAccount;
+  const requiresMemoStep = family ? MEMO_STEP_FAMILIES.has(family) : false;
 
-          if (isTokenTransaction) {
-            await app.account.navigateToTokenInAccount(tx.accountToDebit);
-          }
+  await app.mainNavigation.openTargetFromMainNavigation("accounts");
 
-          await app.account.clickSend();
-          await app.newSendFlow.waitForDialog();
+  const accountName = getParentAccountName(tx.accountToDebit);
+  await app.accounts.navigateToAccountByName(accountName);
 
-          const recipientAddress = tx.accountToCredit.address;
-          if (!recipientAddress) {
-            throw new Error(
-              `Missing recipient address for ${tx.accountToCredit.accountName}. ` +
-                `Ensure the CLI setup populates the address.`,
-            );
-          }
-          await app.newSendFlow.typeAddress(recipientAddress);
+  if (isTokenTransaction) {
+    await app.account.navigateToTokenInAccount(tx.accountToDebit);
+  }
 
-          if (requiresMemoStep && validMemoTag) {
-            await app.newSendFlow.typeMemo(validMemoTag);
-          }
-          await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
-          if (requiresMemoStep && !validMemoTag) {
-            await app.newSendFlow.confirmSkipMemo();
-          }
+  await app.account.clickSend();
+  await app.newSendFlow.waitForDialog();
 
-          await app.newSendFlow.fillCryptoAmount(tx.amount);
-          if (entry.verifyAmountPrecision) {
-            await app.newSendFlow.expectAmountMagnitude(tx.amount);
-          }
+  const recipientAddress = tx.accountToCredit.address;
+  if (!recipientAddress) {
+    throw new Error(
+      `Missing recipient address for ${tx.accountToCredit.accountName}. ` +
+        `Ensure the CLI setup populates the address.`,
+    );
+  }
+  await app.newSendFlow.typeAddress(recipientAddress);
 
-          if (tx.speed) {
-            await app.newSendFlow.selectFeePreset(tx.speed);
-          }
+  if (requiresMemoStep && validMemoTag) {
+    await app.newSendFlow.typeMemo(validMemoTag);
+  }
+  await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
+  if (requiresMemoStep && !validMemoTag) {
+    await app.newSendFlow.confirmSkipMemo();
+  }
 
-          await app.newSendFlow.clickReview();
+  await app.newSendFlow.fillCryptoAmount(tx.amount);
+  if (entry.verifyAmountPrecision) {
+    await app.newSendFlow.expectAmountMagnitude(tx.amount);
+  }
 
-          await app.newSendFlow.waitForSignature();
-          await app.speculos.signSendTransaction(tx);
-          await app.newSendFlow.waitForSuccessConfirmation();
+  if (tx.speed) {
+    await app.newSendFlow.selectFeePreset(tx.speed);
+  }
 
-          await app.newSendFlow.clickViewDetails();
-          await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
-          if (entry.verifyOperationAmount) {
-            await app.sendDrawer.expectAmountVisible(tx.amount);
-          }
-          if (validMemoTag && tx.accountToDebit.currency.id === Currency.SOL.id) {
-            await app.sendDrawer.expectMemoVisible(validMemoTag);
-          }
-        },
-      );
-    });
+  await app.newSendFlow.clickReview();
+
+  await app.newSendFlow.waitForSignature();
+  await app.speculos.signSendTransaction(tx);
+  await app.newSendFlow.waitForSuccessConfirmation();
+
+  await app.newSendFlow.clickViewDetails();
+  await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
+  if (entry.verifyOperationAmount) {
+    await app.sendDrawer.expectAmountVisible(tx.amount);
+  }
+  if (validMemoTag && tx.accountToDebit.currency.id === Currency.SOL.id) {
+    await app.sendDrawer.expectMemoVisible(validMemoTag);
   }
 }

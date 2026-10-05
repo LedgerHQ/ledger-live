@@ -1,7 +1,14 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { NewSendFlowEntry, registerNewSendFlowTests } from "tests/utils/newSendFlowUtils";
+import {
+  NewSendFlowEntry,
+  newSendFlowFixture,
+  newSendFlowTestName,
+  newSendFlowTestOptions,
+  sendWithNewSendFlow,
+} from "tests/utils/newSendFlowUtils";
+import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 const nativeSendTransactions: NewSendFlowEntry[] = [
@@ -152,5 +159,12 @@ const memoSendTransactions: NewSendFlowEntry[] = [
   },
 ];
 
-registerNewSendFlowTests(nativeSendTransactions);
-registerNewSendFlowTests(memoSendTransactions);
+for (const entry of [...nativeSendTransactions, ...memoSendTransactions]) {
+  test.describe("Send - new flow", () => {
+    test.use(newSendFlowFixture(entry));
+
+    test(newSendFlowTestName(entry), newSendFlowTestOptions(entry), async ({ app }) => {
+      await sendWithNewSendFlow(app, entry);
+    });
+  });
+}

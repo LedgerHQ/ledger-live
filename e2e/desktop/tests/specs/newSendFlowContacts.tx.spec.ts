@@ -4,9 +4,14 @@ import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import {
   ContactsEntry,
-  registerContactRetrievalTests,
-  registerSendViaContactTests,
+  contactRetrievalTestName,
+  contactsSendFlowFixture,
+  contactsSendFlowTestOptions,
+  retrieveContact,
+  sendViaContact,
+  sendViaContactTestName,
 } from "tests/utils/newSendFlowContactsUtils";
+import { test } from "tests/fixtures/common";
 
 const sendViaContactTransactions: ContactsEntry[] = [
   {
@@ -35,5 +40,26 @@ const contactRetrievalTransactions: ContactsEntry[] = [
   },
 ];
 
-registerSendViaContactTests(sendViaContactTransactions);
-registerContactRetrievalTests(contactRetrievalTransactions);
+for (const entry of sendViaContactTransactions) {
+  test.describe("Send - new flow - Address Book", () => {
+    test.describe("Send via contact", () => {
+      test.use(contactsSendFlowFixture(entry));
+
+      test(sendViaContactTestName(entry), contactsSendFlowTestOptions(entry), async ({ app }) => {
+        await sendViaContact(app, entry);
+      });
+    });
+  });
+}
+
+for (const entry of contactRetrievalTransactions) {
+  test.describe("Send - new flow - Address Book", () => {
+    test.describe("Contact retrieval", () => {
+      test.use(contactsSendFlowFixture(entry));
+
+      test(contactRetrievalTestName(entry), contactsSendFlowTestOptions(entry), async ({ app }) => {
+        await retrieveContact(app, entry);
+      });
+    });
+  });
+}

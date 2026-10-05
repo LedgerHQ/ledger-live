@@ -1,6 +1,13 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { NewSendFlowEntry, registerNewSendFlowTests } from "tests/utils/newSendFlowUtils";
+import {
+  NewSendFlowEntry,
+  newSendFlowFixture,
+  newSendFlowTestName,
+  newSendFlowTestOptions,
+  sendWithNewSendFlow,
+} from "tests/utils/newSendFlowUtils";
+import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 const tokenSendTransactions: NewSendFlowEntry[] = [
@@ -43,4 +50,12 @@ const tokenSendTransactions: NewSendFlowEntry[] = [
   },
 ];
 
-registerNewSendFlowTests(tokenSendTransactions);
+for (const entry of tokenSendTransactions) {
+  test.describe("Send - new flow", () => {
+    test.use(newSendFlowFixture(entry));
+
+    test(newSendFlowTestName(entry), newSendFlowTestOptions(entry), async ({ app }) => {
+      await sendWithNewSendFlow(app, entry);
+    });
+  });
+}
