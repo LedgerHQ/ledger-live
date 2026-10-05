@@ -3,6 +3,11 @@ name: "[Desktop] - Lint & Unit Tests - Called"
 on:
   workflow_call:
     inputs:
+      jest-passes:
+        description: "Run the Jest command this many times in the same job (evaluation: pass 2 shows a warm cache)."
+        type: string
+        required: false
+        default: "1"
       jest-worker-idle-memory-limit:
         description: "Jest workerIdleMemoryLimit override: a size such as 4GB, or off to disable worker recycling (empty keeps 1GB)."
         type: string
@@ -55,6 +60,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      jest-passes:
+        description: "Run the Jest command this many times in the same job (evaluation: pass 2 shows a warm cache)."
+        type: string
+        required: false
+        default: "1"
       jest-worker-idle-memory-limit:
         description: "Jest workerIdleMemoryLimit override: a size such as 4GB, or off to disable worker recycling (empty keeps 1GB)."
         type: string
@@ -213,6 +223,7 @@ jobs:
         env:
           JEST_SHARD: ${{ inputs.jest-shard }}
           JEST_WORKER_IDLE_MEMORY_LIMIT: ${{ inputs.jest-worker-idle-memory-limit }}
+          JEST_PASSES: ${{ inputs.jest-passes }}
         shell: bash
         run: |
           set -euo pipefail
@@ -234,10 +245,14 @@ jobs:
             console.log("effective_max_workers_estimate=" + m);
           '
           echo "::endgroup::"
-          START_TS=$(date +%s)
-          pnpm desktop test:jest:coverage ${JEST_SHARD:+--shard="$JEST_SHARD"}
-          END_TS=$(date +%s)
-          echo "::notice::jest_ci_metrics app=ledger-live-desktop jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          for PASS in $(seq 1 "${JEST_PASSES:-1}"); do
+            echo "::notice::jest_pass_window pass=${PASS} start=$(date -u +%FT%TZ)"
+            START_TS=$(date +%s)
+            pnpm desktop test:jest:coverage ${JEST_SHARD:+--shard="$JEST_SHARD"}
+            END_TS=$(date +%s)
+            echo "::notice::jest_pass_window pass=${PASS} end=$(date -u +%FT%TZ)"
+            echo "::notice::jest_ci_metrics app=ledger-live-desktop pass=${PASS} jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          done
 
       - name: Upload unit test coverage
         id: generate_coverage
