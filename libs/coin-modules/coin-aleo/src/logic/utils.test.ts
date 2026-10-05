@@ -31,6 +31,7 @@ import {
   getMockedTransaction as getMockedPublicTransaction,
   getMockedRecord,
   getMockedTokenDetails,
+  getMockedTransactionDetails,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
@@ -78,6 +79,8 @@ import {
   determineTransactionType,
   patchAccountWithViewKey,
   toPublicOperation,
+  getPublicFeePayer,
+  isOutgoingPublicTransfer,
   hasPublicAddress,
   resolveConfig,
   getTransactionType,
@@ -560,56 +563,32 @@ describe("toPublicOperation", () => {
   });
 
   describe("feesPayer", () => {
-    const build = (overrides: Partial<AleoPublicTransaction>, address = recipientAddress) =>
+    const build = (feesPayer?: string, overrides: Partial<AleoPublicTransaction> = {}) =>
       toPublicOperation({
         rawTx: getMockedPublicTransaction(overrides),
-        address,
+        address: senderAddress,
         hasOwnedRecord: false,
         tokenTypeByProgramName: NO_TOKENS,
+        ...(feesPayer && { feesPayer }),
       });
 
-    it("should be the sender of an outgoing transfer_public", () => {
-      const result = build({ sender_address: senderAddress }, senderAddress);
-
-      expect(result.type).toBe("OUT");
-      expect(result.tx.feesPayer).toBe(senderAddress);
+    it("should carry the resolved payer", () => {
+      expect(build(senderAddress).tx.feesPayer).toBe(senderAddress);
     });
 
-    it("should be the counterparty of an incoming transfer_public", () => {
-      const result = build({ sender_address: senderAddress }, recipientAddress);
-
-      expect(result.type).toBe("IN");
-      expect(result.tx.feesPayer).toBe(senderAddress);
-    });
-
-    it("should be set on a failed transfer_public, as the fee is paid anyway", () => {
-      const result = build({ sender_address: senderAddress, transaction_status: "Rejected" });
+    it("should carry the payer of a rejected transaction, as the fee is paid anyway", () => {
+      const result = build(senderAddress, { transaction_status: "Rejected" });
 
       expect(result.tx.failed).toBe(true);
       expect(result.tx.feesPayer).toBe(senderAddress);
     });
 
-    it("should stay unset when the explorer blanks the sender", () => {
-      const result = build({ sender_address: "" });
-
-      expect(result.tx).not.toHaveProperty("feesPayer");
+    it("should carry a payer that is not the sender, as with a sponsored fee", () => {
+      expect(build(otherAddress).tx.feesPayer).toBe(otherAddress);
     });
 
-    it.each(["transfer_private_to_public", "transfer_public_to_private", "transfer_private"])(
-      "should stay unset for %s, whose payer is not the published sender",
-      functionId => {
-        const result = build({ function_id: functionId, sender_address: senderAddress });
-
-        expect(result.tx).not.toHaveProperty("feesPayer");
-      },
-    );
-
-    it("should stay unset for a staking call", () => {
-      const result = build({
-        function_id: TRANSACTION_TYPE.BOND_PUBLIC,
-        sender_address: "",
-        recipient_address: "",
-      });
+    it("should stay unset when no payer was resolved, whatever the row says", () => {
+      const result = build(undefined, { function_id: "transfer_public" });
 
       expect(result.tx).not.toHaveProperty("feesPayer");
     });
@@ -3891,5 +3870,87 @@ describe("isFirstBondPending", () => {
         getMockedAccount({ pendingOperations: [getMockedOperation({ type: "UNBOND" })] }),
       ),
     ).toBe(false);
+  });
+});
+
+describe("isOutgoingPublicTransfer", () => {
+  const account = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
+  const other = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
+
+  it("should accept a transfer_public sent by the account", () => {
+    const rawTx = getMockedPublicTransaction({
+      function_id: "transfer_public",
+      sender_address: account,
+    });
+
+    expect(isOutgoingPublicTransfer(rawTx, account)).toBe(true);
+  });
+
+  it("should reject a transfer_public sent by someone else", () => {
+    const rawTx = getMockedPublicTransaction({
+      function_id: "transfer_public",
+      sender_address: other,
+    });
+
+    expect(isOutgoingPublicTransfer(rawTx, account)).toBe(false);
+  });
+
+  it.each(["transfer_public_to_private", "transfer_private_to_public", "bond_public"])(
+    "should reject %s even when the account is the sender",
+    functionId => {
+      const rawTx = getMockedPublicTransaction({
+        function_id: functionId,
+        sender_address: account,
+      });
+
+      expect(isOutgoingPublicTransfer(rawTx, account)).toBe(false);
+    },
+  );
+});
+
+describe("getPublicFeePayer", () => {
+  const payer = "aleo1dg722m22fzpz6xjdrvl9tzu5t68zmypj5p74khlqcac0gvednygqxaax0j";
+  const feeOutput = {
+    id: "output1",
+    type: "future" as const,
+    value: `{\n  program_id: credits.aleo,\n  function_name: fee_public,\n  arguments: [\n    ${payer},\n    34911u64\n  ]\n}`,
+  };
+  const withFee = (fn: string, outputs: unknown[]) =>
+    getMockedTransactionDetails(undefined, {
+      fee: {
+        transition: {
+          ...getMockedTransactionDetails().fee.transition,
+          function: fn,
+          outputs,
+        } as never,
+      },
+    });
+
+  it("should read the payer off the future output of a fee_public transition", () => {
+    expect(getPublicFeePayer(withFee("fee_public", [feeOutput]))).toBe(payer);
+  });
+
+  it("should skip a non-future output to find the future one", () => {
+    const record = { id: "o0", type: "record", tag: "tag1field" };
+
+    expect(getPublicFeePayer(withFee("fee_public", [record, feeOutput]))).toBe(payer);
+  });
+
+  it("should not guess a payer for a fee_private, whose owner stays hidden", () => {
+    expect(getPublicFeePayer(withFee("fee_private", [feeOutput]))).toBeUndefined();
+  });
+
+  it("should return undefined when the transaction carries no fee", () => {
+    expect(getPublicFeePayer({})).toBeUndefined();
+  });
+
+  it("should return undefined when the future output has no address", () => {
+    const noAddress = { ...feeOutput, value: "{ arguments: [ 34911u64 ] }" };
+
+    expect(getPublicFeePayer(withFee("fee_public", [noAddress]))).toBeUndefined();
+  });
+
+  it("should return undefined when the fee transition has no future output", () => {
+    expect(getPublicFeePayer(withFee("fee_public", []))).toBeUndefined();
   });
 });

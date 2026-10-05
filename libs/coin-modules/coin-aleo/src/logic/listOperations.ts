@@ -27,7 +27,9 @@ import type {
 import { lastBlock } from "./lastBlock";
 import {
   classifyAleoTokenType,
+  getPublicFeePayer,
   hasPublicAddress,
+  isOutgoingPublicTransfer,
   isParsableTransferFunction,
   resolveStakingOperationType,
   stripBatcherSuffix,
@@ -227,6 +229,34 @@ async function resolveThirdPartyShieldRecipients({
   return recipients;
 }
 
+/**
+ * The explorer row has no fee payer, and an indexer deducts a fee only from the payer it is told, so
+ * it has to be read off the fee transition (see getPublicFeePayer). Only the account's own outgoing
+ * transfers need it: the fee of any other row cannot touch this account's balance. A payer that is
+ * not published stays out of the map and the operation leaves `feesPayer` unset.
+ */
+async function resolveOutgoingFeesPayers({
+  config,
+  address,
+  transactions,
+}: {
+  config: AleoCoinConfig;
+  address: string;
+  transactions: AleoPublicTransaction[];
+}): Promise<Map<string, string>> {
+  const outgoing = transactions.filter(tx => isOutgoingPublicTransfer(tx, address));
+  const payers = new Map<string, string>();
+
+  await promiseAllBatched(4, outgoing, async tx => {
+    const details = await apiClient.getTransactionById(config, tx.transaction_id);
+    const payer = getPublicFeePayer(details);
+
+    if (payer) payers.set(tx.transaction_id, payer);
+  });
+
+  return payers;
+}
+
 export async function listOperations({
   config,
   address,
@@ -317,8 +347,15 @@ export async function listOperations({
     ownedRecordTxIds,
   });
 
+  const feesPayers = await resolveOutgoingFeesPayers({
+    config,
+    address,
+    transactions: publicTransactions,
+  });
+
   const operations = publicTransactions.map(rawTx => {
     const resolvedRecipient = shieldRecipients.get(rawTx.transaction_id);
+    const feesPayer = feesPayers.get(rawTx.transaction_id);
 
     return toPublicOperation({
       rawTx,
@@ -326,6 +363,7 @@ export async function listOperations({
       hasOwnedRecord: ownedRecordTxIds.has(rawTx.transaction_id),
       tokenTypeByProgramName,
       ...(resolvedRecipient && { resolvedRecipient }),
+      ...(feesPayer && { feesPayer }),
     });
   });
   operations.push(...privateOperations);

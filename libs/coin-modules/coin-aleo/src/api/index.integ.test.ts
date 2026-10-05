@@ -370,7 +370,7 @@ describe("createApi", () => {
         return operation;
       };
 
-      it("names the counterparty as payer of an incoming transfer_public", async () => {
+      it("leaves the payer unset for an incoming transfer_public, whose fee is not this account's", async () => {
         // The oldest of the burst, so the first descending page may stop short of it.
         let operation: Operation | undefined;
         let cursor: string | undefined;
@@ -387,17 +387,17 @@ describe("createApi", () => {
 
         expect(operation.type).toBe("IN");
         expect(operation.tx.fees).toBe(BigInt(referenceTransferPublicTx.fee));
-        expect(operation.tx.feesPayer).toBe(referenceTransferPublicTx.sender);
+        expect(operation.tx).not.toHaveProperty("feesPayer");
       });
 
-      it("names the account as payer of its own transfer_public, even when rejected", () => {
+      it("names the on-chain payer of its own transfer_public, even when rejected", () => {
         const operation = findOperation(referenceFailedTransferPublicTx.id);
 
         expect(operation.tx.failed).toBe(true);
         expect(operation.tx.feesPayer).toBe(testnetAddress);
       });
 
-      it("leaves the payer unset for a shield, whose sender is not a reliable payer", () => {
+      it("leaves the payer unset for a shield", () => {
         expect(findOperation(testnetSelfConversionTx.transaction_id).tx).not.toHaveProperty(
           "feesPayer",
         );

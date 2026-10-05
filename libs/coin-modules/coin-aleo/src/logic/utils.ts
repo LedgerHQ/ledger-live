@@ -54,6 +54,7 @@ import type {
   Intent,
   AleoTransactionIntentData,
   AleoPublicTransaction,
+  AleoPublicTransactionDetailsResponse,
   AleoOperation,
   AleoOperationExtra,
   AleoOperationExtraRaw,
@@ -336,34 +337,39 @@ function resolveOperationType(
   return "NONE";
 }
 
+const ALEO_ADDRESS_PATTERN = /aleo1[a-z0-9]{58}/;
+
 /**
- * Only a `transfer_public` row names its fee payer: the signer pays the fee out of the same public
- * balance the transfer leaves, and the explorer publishes it as `sender_address`. Checked on
- * mainnet against the `fee_public` transition of the transaction: the payer was the published
- * sender in 763 of 769 recent transfers. The rest were called by a program, whose address is then
- * the sender and never an account of ours.
- *
- * Every other shape stays unset (the contract reads that as "no sender paid"):
- *  - private and unshield rows hide the sender;
- *  - a shield row publishes its sender, but another address paid the fee in most of the samples
- *    taken, so the sender is not a reliable payer;
- *  - a staking row blanks both sides, and the account is not always the signer: a pool contract
- *    stakes for it, and the account only shows up through the `transfer_public_as_signer` row of the
- *    same transaction.
- *
- * FIXME(follow-up) not handled yet:
- *  - a sponsored transaction is paid by the sponsor, but its row looks like any `transfer_public`,
- *    so it still reports the sender as payer. The fee is authorized separately from the execution,
- *    so the two can be signed by different keys:
- *    https://docs.aleo.org/learn/advanced/delegated-proving/index.html (step "1. Authorization (User)");
- *  - the unset cases above would need the `fee_public` transition of the transaction, whose future
- *    output is `[payer, amount]`, at the cost of one `getTransactionById` per operation;
- *  - `rawTx.fee` leaves out the priority fee, which the chain deducts too.
+ * A `transfer_public` the account sends itself: the only row whose fee can change the account's
+ * balance, so the only one worth a transaction lookup to name its payer.
  */
-function resolveFeesPayer(rawTx: AleoPublicTransaction): string | undefined {
-  return rawTx.function_id === EXPLORER_TRANSFER_TYPES.PUBLIC
-    ? rawTx.sender_address || undefined
-    : undefined;
+export function isOutgoingPublicTransfer(rawTx: AleoPublicTransaction, address: string): boolean {
+  return rawTx.function_id === EXPLORER_TRANSFER_TYPES.PUBLIC && rawTx.sender_address === address;
+}
+
+/**
+ * The address a transaction's public fee was taken from, or `undefined` when it is not known.
+ *
+ * The explorer row has no payer, and the execution does not decide it: the fee is authorized
+ * separately and may be private, or signed by another key (sponsorship), whatever the execution
+ * is. Only the fee transition tells: `credits.aleo/fee_public` publishes `[payer, amount]` as its
+ * future output. A `fee_private` pays out of a record, whose owner stays hidden, and a transaction
+ * may carry no fee at all; both leave the payer unknown, which the contract reads as "no sender
+ * paid" rather than guessing one.
+ *
+ * Docs: https://docs.aleo.org/learn/advanced/delegated-proving/index.html (step "1. Authorization
+ * (User)": the fee authorization is created separately and bound to an execution).
+ */
+export function getPublicFeePayer(
+  details: Partial<Pick<AleoPublicTransactionDetailsResponse, "fee">>,
+): string | undefined {
+  const feeTransition = details.fee?.transition;
+  if (feeTransition?.function !== "fee_public") return undefined;
+
+  const future = feeTransition.outputs.find(output => output.type === "future");
+  const value = future && "value" in future ? future.value : "";
+
+  return ALEO_ADDRESS_PATTERN.exec(value)?.[0];
 }
 
 /**
@@ -375,6 +381,11 @@ function resolveFeesPayer(rawTx: AleoPublicTransaction): string | undefined {
  * `resolvedRecipient` is the third-party recipient of a shield read back from the transition inputs
  * (see resolveThirdPartyShieldRecipients) — the explorer blanks it and no owned record can stand in
  * for it.
+ *
+ * `feesPayer` is read from the fee transition (see getPublicFeePayer), which costs a request, so
+ * the caller only resolves it for the account's own outgoing transfers. It stays unset otherwise,
+ * and the rest of the fee story is a follow-up: shield, unshield, private and staking fees, and the
+ * priority fee that `rawTx.fee` leaves out.
  */
 export const toPublicOperation = ({
   rawTx,
@@ -382,12 +393,14 @@ export const toPublicOperation = ({
   hasOwnedRecord,
   tokenTypeByProgramName,
   resolvedRecipient,
+  feesPayer,
 }: {
   rawTx: AleoPublicTransaction;
   address: string;
   hasOwnedRecord: boolean;
   tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>;
   resolvedRecipient?: string;
+  feesPayer?: string;
 }): CoinFrameworkOperation => {
   const hash = rawTx.transaction_id.trim();
   const date = toBlockDate(rawTx.block_timestamp);
@@ -399,7 +412,6 @@ export const toPublicOperation = ({
   const stakingType = resolveStakingOperationType(rawTx);
   const type = stakingType ?? resolveOperationType(rawTx, address, sender, recipient);
   const value = stakingType ? new BigNumber(rawTx.fee) : resolveTransactionAmount(rawTx);
-  const feesPayer = resolveFeesPayer(rawTx);
 
   return {
     id: hash,

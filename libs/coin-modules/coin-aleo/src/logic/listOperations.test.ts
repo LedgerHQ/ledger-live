@@ -412,6 +412,93 @@ describe("listOperations", () => {
     expect(items).toEqual([expect.objectContaining({ type: "OUT", recipients: [recipient] })]);
   });
 
+  describe("feesPayer", () => {
+    const payer = "aleo1dg722m22fzpz6xjdrvl9tzu5t68zmypj5p74khlqcac0gvednygqxaax0j";
+    const feeDetails = (fn: string, value: string) =>
+      getMockedTransactionDetails(undefined, {
+        fee: {
+          transition: {
+            ...getMockedTransactionDetails().fee.transition,
+            function: fn,
+            outputs: [{ id: "o0", type: "future", value }],
+          },
+        },
+      });
+    const futureOf = (who: string) =>
+      `{ program_id: credits.aleo, function_name: fee_public, arguments: [ ${who}, 34911u64 ] }`;
+
+    const mockTransfer = (overrides: Parameters<typeof getMockedPublicTransaction>[0]) =>
+      mockedFetchTransitionPage.mockResolvedValue({
+        transitions: [
+          getMockedPublicTransaction({
+            transaction_id: "at1fee",
+            block_number: 500,
+            function_id: "transfer_public",
+            ...overrides,
+          }),
+        ],
+        next: null,
+      });
+
+    it("should name the payer published by the fee transition of an outgoing transfer", async () => {
+      mockTransfer({ sender_address: address });
+      mockedGetTransactionById.mockResolvedValue(feeDetails("fee_public", futureOf(address)));
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(mockedGetTransactionById).toHaveBeenCalledWith(config, "at1fee");
+      expect(items).toEqual([
+        expect.objectContaining({ tx: expect.objectContaining({ feesPayer: address }) }),
+      ]);
+    });
+
+    it("should name the sponsor, not the sender, when another address paid", async () => {
+      mockTransfer({ sender_address: address });
+      mockedGetTransactionById.mockResolvedValue(feeDetails("fee_public", futureOf(payer)));
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(items[0]?.tx.feesPayer).toBe(payer);
+    });
+
+    it("should leave the payer unset when the fee is private, whoever sent the transfer", async () => {
+      mockTransfer({ sender_address: address });
+      mockedGetTransactionById.mockResolvedValue(feeDetails("fee_private", futureOf(address)));
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(items[0]?.tx).not.toHaveProperty("feesPayer");
+    });
+
+    it("should not look up the fee of an incoming transfer", async () => {
+      mockTransfer({ sender_address: recipient, recipient_address: address });
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(mockedGetTransactionById).not.toHaveBeenCalled();
+      expect(items[0]?.tx).not.toHaveProperty("feesPayer");
+    });
+
+    it.each(["transfer_private_to_public", "bond_public"])(
+      "should not look up the fee of a %s row",
+      async functionId => {
+        mockTransfer({ function_id: functionId, sender_address: address });
+
+        const { items } = await run({ minHeight: 0 });
+
+        expect(mockedGetTransactionById).not.toHaveBeenCalled();
+        expect(items.filter(op => op.tx.feesPayer)).toEqual([]);
+      },
+    );
+
+    it("should fail the page when the fee lookup fails, rather than index a wrong balance", async () => {
+      mockTransfer({ sender_address: address });
+      mockedGetTransactionById.mockRejectedValue(new Error("explorer down"));
+
+      await expect(run({ minHeight: 0 })).rejects.toThrow("explorer down");
+    });
+  });
+
   it("should read a batcher-wrapped shield recipient back too", async () => {
     mockedFetchTransitionPage.mockResolvedValue({
       transitions: [
