@@ -28,7 +28,7 @@ export const USDC: TokenCurrency = {
   ],
 };
 
-// Binance-Peg USDC on BNB Chain uses 18 decimals, unlike Ethereum USDC's 6.
+// Binance-Peg USDC on BNB Smart Chain uses 18 decimals, unlike Ethereum USDC's 6.
 // Same asset, different magnitude — used to cover cross-network aggregation.
 export const USDC_BSC: TokenCurrency = {
   type: "TokenCurrency",

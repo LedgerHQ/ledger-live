@@ -4246,7 +4246,7 @@
       },
       "transactionsAlerts": {
         "title": "Transaction Alerts (Beta)",
-        "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
+        "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Smart Chain, Avalanche and Ethereum Classic"
       },
       "totalMarketCap": {
         "title": "Total Market Cap",

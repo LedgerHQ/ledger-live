@@ -4,7 +4,7 @@ export const bsc = currency({
   type: "CryptoCurrency",
   id: "bsc",
   coinType: 60,
-  name: "BNB Chain",
+  name: "BNB Smart Chain",
   managerAppName: "Ethereum",
   ticker: "BNB",
   scheme: "bsc",

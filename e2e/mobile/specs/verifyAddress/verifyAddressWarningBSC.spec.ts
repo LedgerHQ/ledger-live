@@ -3,7 +3,7 @@ import { runVerifyAddressWarningTest } from "@e2e/specs/verifyAddress/verifyAddr
 
 runVerifyAddressWarningTest(
   Account.BSC_1,
-  "Send only tokens from BNB Chain network. Sending from another network may result in permanent loss of your tokens.",
+  "Send only tokens from BNB Smart Chain network. Sending from another network may result in permanent loss of your tokens.",
   ["B2CQA-2698"],
   ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bsc", "@family-evm"],
 );

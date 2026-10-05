@@ -287,7 +287,7 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
-  BNB_Chain: {
+  BNB_Smart_Chain: {
     currency: getCryptoCurrencyById("bsc"),
     appQuery: {
       model: getSpeculosModel(),

@@ -146,7 +146,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         features: [{ id: "blockchain_txs", status: "active" }],
       },
       chainId: 56,
-      name: "BNB Chain",
+      name: "BNB Smart Chain",
       unit: { name: "BNB", code: "BNB", magnitude: 18 },
       node: {
         type: "ledger",

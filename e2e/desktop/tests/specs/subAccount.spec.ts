@@ -451,7 +451,7 @@ const tokenTransactionInvalid = [
   {
     tx: new Transaction(TokenAccount.BSC_BUSD_1, TokenAccount.BSC_BUSD_2, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
-      /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Chain network\. .*/,
+      /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Smart Chain network\. .*/,
     ),
     xrayTicket: "B2CQA-2700",
   },
