@@ -9609,6 +9609,9 @@ importers:
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
+      '@features/platform-market-countervalues':
+        specifier: workspace:*
+        version: link:../../features/platform/market-countervalues
       '@ledgerhq/asset-aggregation':
         specifier: workspace:*
         version: link:../asset-aggregation
@@ -13961,6 +13964,9 @@ importers:
       '@features/platform-feature-flags-firebase':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags-firebase
+      '@features/platform-market-countervalues':
+        specifier: workspace:*
+        version: link:../../features/platform/market-countervalues
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../asset-aggregation
@@ -14156,9 +14162,6 @@ importers:
       '@ledgerhq/live-config':
         specifier: 'catalog:'
         version: 3.9.0
-      '@ledgerhq/live-countervalues-react':
-        specifier: workspace:^
-        version: link:../live-countervalues-react
       '@ledgerhq/live-currency-format':
         specifier: 'catalog:'
         version: 0.16.0
