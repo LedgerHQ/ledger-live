@@ -706,6 +706,37 @@ describe("stakePrograms redirects", () => {
     expect(common.outputCurrency).toBeUndefined();
   });
 
+  it.each([
+    ["POL", "0x2ea3c215daeacc1c90b51443ab5d08a9ad816138", BUY_VOUCHER_POL, "pol"],
+    ["USDe", "0x2d152fb171353e70e45322d32bc748f8a61d9971", ERC4626_DEPOSIT, "usde"],
+  ])("reports the staked token for a StakeKit %s stake", (_, recipient, selector, token) => {
+    const mapped = failed(
+      signEvent({
+        manifestId: "stakekit",
+        transaction: { family: "evm", mode: "send", recipient, data: callData(selector) },
+      }),
+    );
+
+    expect(mapped!.properties).toMatchObject({ input_currency: token, network: "ethereum" });
+  });
+
+  it("keeps the network coin for a contract with no input token", () => {
+    const mapped = failed(
+      signEvent({
+        account: account("avalanche_c_chain", "evm", "AVAX"),
+        manifestId: "stakekit",
+        transaction: {
+          family: "evm",
+          mode: "send",
+          recipient: SAVAX,
+          data: callData(SUBMIT_NO_ARGS),
+        },
+      }),
+    );
+
+    expect(mapped!.properties.input_currency).toBe("avax");
+  });
+
   it("keeps the family vocabulary for a native StakeKit stake", () => {
     const common = signEvent({
       account: tron,
