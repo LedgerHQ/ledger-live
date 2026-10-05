@@ -386,6 +386,24 @@ describe("ContactDetailView", () => {
     });
   });
 
+  it("should keep the Ledger Wallet addresses entry full height and scroll the empty detail on small windows", () => {
+    render(
+      <ContactDetailView
+        {...defaultProps}
+        contact={mockMeContact()}
+        labels={{ ...labels, ledgerWalletAddresses: "Ledger Wallet addresses" }}
+        ledgerWalletAccountsIntent={createContactDetailLedgerWalletAccountsIntent(mockMeContact())}
+        onLedgerWalletAccountsPress={() => undefined}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-detail-screen")).toHaveClass(
+      "overflow-y-auto",
+      "scrollbar-custom",
+    );
+    expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveClass("shrink-0");
+  });
+
   it("should not render the Ledger Wallet addresses entry for saved contacts", () => {
     render(
       <ContactDetailView
