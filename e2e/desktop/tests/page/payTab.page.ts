@@ -9,7 +9,6 @@ export type PayDepositOptionId = (typeof DEPOSIT_OPTION_IDS)[number];
 export class PayTabPage extends AppPage {
   private readonly screen: Locator = this.page.getByTestId("paytab-screen");
   private readonly fundedState: Locator = this.page.getByTestId("pay-card-balance-funded-state");
-  private readonly moreButton: Locator = this.page.getByTestId("more-tile");
   private readonly balanceAmount: Locator = this.page.getByTestId("pay-card-balance-amount");
   private readonly filterPill: Locator = this.page.getByTestId("pay-card-balance-filter-pill");
   private readonly filterConfirm: Locator = this.page.getByTestId(
@@ -62,11 +61,6 @@ export class PayTabPage extends AppPage {
   @step("Expect the Pay tab to show a funded balance")
   async expectFundedBalance() {
     await expect(this.fundedState).toBeVisible();
-  }
-
-  @step("Expect the Pay tab to show the more button")
-  async expectMoreButton() {
-    await expect(this.moreButton).toBeVisible();
   }
 
   @step("Expect the balance amount")
