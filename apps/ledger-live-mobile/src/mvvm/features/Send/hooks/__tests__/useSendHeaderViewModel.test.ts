@@ -120,6 +120,7 @@ describe("useSendHeaderViewModel", () => {
     });
     mockRecipientSearch.value = "";
     mockedUseSendFlowTracking.mockReturnValue({
+      flowSessionId: "flow-id",
       inputMethod: "manual",
       resultType: null,
       recipientType: "external address",
@@ -128,6 +129,11 @@ describe("useSendHeaderViewModel", () => {
       setRecipientResolution: jest.fn(),
       resetRecipientResolution: jest.fn(),
       markContactSaved: jest.fn(),
+      trackMessage: jest.fn(),
+      scheduleMessage: jest.fn(),
+      flushMessage: jest.fn(),
+      clearPendingMessage: jest.fn(),
+      endSession: jest.fn(),
     });
     mockedUseSendFlowData.mockReturnValue({
       uiConfig: {

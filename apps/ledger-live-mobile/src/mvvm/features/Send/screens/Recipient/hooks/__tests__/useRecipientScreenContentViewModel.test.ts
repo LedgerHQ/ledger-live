@@ -8,9 +8,11 @@ import { createMockAccount } from "./accounts";
 import { useRecipientScreenContentViewModel } from "../useRecipientScreenContentViewModel";
 import { useSettleRecipientInputFocus } from "../useSettleRecipientInputFocus";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { useSendFlowMessageTracking } from "../../../../hooks/useSendFlowMessageTracking";
 
 jest.mock("~/analytics");
 jest.mock("../../../../context/SendFlowTrackingContext");
+jest.mock("../../../../hooks/useSendFlowMessageTracking");
 jest.mock("../../../../components/Memo/hooks/useMemoViewModel");
 jest.mock("../useRecipientScreenView");
 jest.mock("../useAddressMatchedSectionViewModel");
@@ -34,6 +36,7 @@ const mockedUseAddressMatchedSectionViewModel = jest.mocked(useAddressMatchedSec
 const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
 const mockedSendFeatures = jest.mocked(sendFeatures);
 const mockedUseSettleRecipientInputFocus = jest.mocked(useSettleRecipientInputFocus);
+const mockedUseSendFlowMessageTracking = jest.mocked(useSendFlowMessageTracking);
 const setRecipientResolution = jest.fn();
 
 const account = createMockAccount({ id: "account_1" });
@@ -87,6 +90,7 @@ const recipientViewModel = {
 } as never;
 
 const memoViewModel = {
+  memo: { value: "12345", type: "MEMO_TEXT" },
   hasFilledMemo: true,
   memoError: undefined,
 } as never;
@@ -109,6 +113,7 @@ describe("useRecipientScreenContentViewModel", () => {
       addressMatchedSectionViewModel as never,
     );
     mockedUseSendFlowTracking.mockReturnValue({
+      flowSessionId: "flow-id",
       inputMethod: "manual",
       resultType: null,
       recipientType: null,
@@ -117,6 +122,11 @@ describe("useRecipientScreenContentViewModel", () => {
       setRecipientResolution,
       resetRecipientResolution: jest.fn(),
       markContactSaved: jest.fn(),
+      trackMessage: jest.fn(),
+      scheduleMessage: jest.fn(),
+      flushMessage: jest.fn(),
+      clearPendingMessage: jest.fn(),
+      endSession: jest.fn(),
     });
   });
 
@@ -195,6 +205,9 @@ describe("useRecipientScreenContentViewModel", () => {
         page: "step recipient",
         resultType: "unknown address",
         recipientType: "external address",
+        flow_session_id: "flow-id",
+        active_warnings: [],
+        active_warnings_count: 0,
       }),
     );
     expect(setRecipientResolution).toHaveBeenCalledWith("unknown address", "external address");
@@ -263,6 +276,7 @@ describe("useRecipientScreenContentViewModel", () => {
 
   it("shows the matched address even when the memo is empty", () => {
     mockedUseMemoViewModel.mockReturnValue({
+      memo: { value: "", type: "MEMO_TEXT" },
       hasFilledMemo: false,
       memoError: undefined,
     } as never);
@@ -270,5 +284,44 @@ describe("useRecipientScreenContentViewModel", () => {
     const { result } = renderViewModel();
 
     expect(result.current.showMatched).toBe(true);
+  });
+
+  it("does not request message tracking when nothing is displayed", () => {
+    renderViewModel();
+
+    expect(mockedUseSendFlowMessageTracking).toHaveBeenLastCalledWith(
+      expect.objectContaining({ step: "RECIPIENT", request: null, immediate: false }),
+    );
+  });
+
+  it("tracks the sanctioned banner immediately with sanitised metadata only", () => {
+    mockedUseRecipientScreenView.mockReturnValue({
+      ...(recipientViewModel as object),
+      showSanctionedBanner: true,
+      showBridgeRecipientWarning: true,
+      bridgeRecipientWarning: Object.assign(new Error(), { name: "RecipientWarning" }),
+    } as never);
+
+    renderViewModel();
+
+    expect(mockedUseSendFlowMessageTracking).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        step: "RECIPIENT",
+        immediate: true,
+        request: expect.objectContaining({
+          message: {
+            messageId: "sanctioned",
+            messageType: "error",
+            suppressedErrors: ["RecipientWarning"],
+          },
+          metadata: {
+            recipientType: "external address",
+            recipientLength: "typed-address".length,
+            memoLength: 5,
+            memoType: "MEMO_TEXT",
+          },
+        }),
+      }),
+    );
   });
 });

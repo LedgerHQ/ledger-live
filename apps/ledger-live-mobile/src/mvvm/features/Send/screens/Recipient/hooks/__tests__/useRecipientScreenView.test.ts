@@ -137,6 +137,7 @@ describe("useRecipientScreenView", () => {
       clearSelectedContact: jest.fn(),
     });
     mockedUseSendFlowTracking.mockReturnValue({
+      flowSessionId: "flow-id",
       inputMethod: "manual",
       resultType: null,
       recipientType: null,
@@ -145,6 +146,11 @@ describe("useRecipientScreenView", () => {
       setRecipientResolution,
       resetRecipientResolution,
       markContactSaved: jest.fn(),
+      trackMessage: jest.fn(),
+      scheduleMessage: jest.fn(),
+      flushMessage: jest.fn(),
+      clearPendingMessage: jest.fn(),
+      endSession: jest.fn(),
     });
     mockedUseContactsFeatureIntroductionViewModel.mockReturnValue({
       isOpen: false,
