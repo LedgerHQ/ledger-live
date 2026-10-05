@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/complete/list/show — enroll a remote agent's software identity, no device required, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/list/show — enroll a remote agent's software identity, no device required, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead. `ring keys` needs neither, and neither does `agent-intent complete`/`list`/`show`: they only read/write the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll` also holds a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -44,8 +44,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "encrypt this file / these env vars / publish tokens", "GPG alternative", "secret manager", "decrypt anywhere with my Ledger" | `ring init` -> `ring encrypt --key <name>` / `ring decrypt --key <name>` |
 | "what keys do I have on my ring", "list domains/projects I've encrypted under"       | `ring keys`                                                  |
 | "wipe my key ring", "destroy the ring", "tear down LKRP membership"                 | `ring destroy`                                               |
-| "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name>` (no device) |
-| "approve the agent's enrollment", "finish enrolling the agent"                       | `agent-intent complete --profile <id> --payload '<json>'`     |
+| "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name>` (no device; blocks until approved) |
 | "what agents are enrolled", "list agent profiles"                                    | `agent-intent list`                                            |
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
@@ -97,6 +96,9 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `ring decrypt`       | No     | **Required** | No          | Yes     |
 | `ring keys`          | No     | No           | No          | No      |
 | `ring destroy`       | No     | **Required** | Required‡‡  | Yes     |
+| `agent-intent enroll` | No    | **Required** | No          | Yes     |
+| `agent-intent list`  | No     | No           | No          | No      |
+| `agent-intent show`  | No     | No           | No          | No      |
 
 \*`receive` with `--no-verify`, `send` with `--dry-run`, and `earn deposit`/`earn withdraw` with `--dry-run` need no device and no sandbox bypass.
 
@@ -297,35 +299,46 @@ pnpm --silent wallet-cli start ring destroy
 
 ## Agent Intent
 
-> **Separate trust model from `ring`.** Agent Intent enrolls as its own software identity (not an
-> LKRP application on the physical device) and never receives `ring`'s domain keys.
+> **Separate trust model from `ring`.** The agent is a software-only LKRP member: it joins its own
+> Agent Intent (App-18) Trustchain and is granted access to the user's Ledger Sync (App-16) stream,
+> but it never opens the device and never receives `ring`'s (App-17) domain keys.
 
 Agent Intent enrolls a remote agent (a bot proposing transaction intents for human review) as a
-software identity local to this machine — **no device required for enroll/complete/list/show**. Each
+software identity local to this machine — **no device required for enroll/list/show**. Each
 profile gets its own secp256k1 keypair; the private key never leaves the OS keychain and is never
 printed, logged, or included in any command's output (human or `--output json`).
 
 ```bash
-# Create a pending profile and print its signed enrollment URL + public-key fingerprint:
+# Create a pending profile, print its signed enrollment URL + fingerprint, then BLOCK until the
+# human approves in the Agent Intent frontend (default environment: production):
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot"
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" \
-  --environment production --expires-in 2h
-
-# After the human approves in the Agent Intent frontend, validate its completion JSON and record
-# the Trustchain ID (reads stdin when --payload is omitted):
-pnpm --silent wallet-cli start agent-intent complete --profile my-bot --payload '<json from frontend>'
-echo '<json from frontend>' | pnpm --silent wallet-cli start agent-intent complete --profile my-bot
+  --environment staging --expires-in 2h
 
 # List/inspect local profiles (never reveals the secret key):
 pnpm --silent wallet-cli start agent-intent list
 pnpm --silent wallet-cli start agent-intent show --profile my-bot
 ```
 
+**One blocking command, no copy/paste.** `enroll` prints the URL first (with `--output json`: an
+`enrollment-pending` NDJSON event), then waits on an encrypted Trustchain relay channel bound into the
+signed request. The frontend delivers the completion over that channel; there is no `complete`
+command and no manual JSON fallback. **Keep the process running** until it prints the final
+`enrolled` result (json: `status: "success"`, `enrolled: true`, `trustchainId`,
+`accountAccessEnvironment`). The wait is bounded by `--expires-in` (default 30m).
+
+**Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
+key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate
+to the claimed App-16 stream with exactly the expected permission. Only then are `trustchainId` and
+the (non-secret) `accountAccess` references written to the profile.
+
+**On timeout, Ctrl+C, or a failed check** the profile stays `pending` (and later `expired`) and
+cannot be resumed — start a fresh enrollment with a **new** `--profile` id.
+
 **Fingerprint is the safety check.** `enroll` prints a public-key fingerprint alongside the
 enrollment URL, and `show` prints the same fingerprint for any profile afterwards — compare it
-against what the Agent Intent frontend/device displays before approving. This is the same purpose as
-`ring`'s trustchain confirmation: a mismatched fingerprint means the enrollment request was tampered
-with or sent to the wrong agent.
+against what the Agent Intent frontend/device displays before approving. A mismatched fingerprint
+means the enrollment request was tampered with or sent to the wrong agent.
 
 **Duplicate protection:** `enroll` refuses to reuse a `--profile` id already recorded in the session,
 and separately refuses if a keychain entry for that id exists without a matching session record
@@ -338,15 +351,13 @@ unlocked collection. Without one (headless Linux, containers, some CI runners) `
 and re-run the same command; there is no file-based fallback by design.
 
 **Environment isolation:** each profile records the environment (`staging`/`production`) it was
-enrolled against. `complete` rejects a completion whose `accountAccess.environment` doesn't match the
-profile's own environment, so a profile enrolled for staging can never end up holding a production
-Trustchain ID.
+enrolled against. A completion whose `accountAccess.environment` doesn't match is rejected, so a
+profile enrolled for staging can never end up holding a production Trustchain ID. `--bff-url` and
+`--keycloak-url` override that environment's defaults (http(s) only, no `user:pass@`).
 
 **Status is derived, not stored:** `list`/`show` compute `pending` / `enrolled` / `expired` from
-`trustchainId` (set by `complete`) and `enrollmentExpiresAt` — an expired, never-completed enrollment
-link is surfaced as `expired` rather than staying `pending` forever. `complete` still accepts a
-matching completion after that time: the frontend refuses expired links, so a valid completion means
-the human approved on the device before expiry, and rejecting it would orphan an authorized agent.
+`trustchainId` and `enrollmentExpiresAt`, and show the granted account access (environment +
+App-16 application path) once enrolled.
 
 ---
 
