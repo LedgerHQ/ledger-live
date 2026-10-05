@@ -50,8 +50,8 @@ jest.mock("LLD/hooks/redux", () => {
   };
 });
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => () => new BigNumber(100),
 }));
 

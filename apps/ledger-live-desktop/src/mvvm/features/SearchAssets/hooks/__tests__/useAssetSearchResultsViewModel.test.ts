@@ -8,7 +8,8 @@ jest.mock("@features/platform-aggregated-assets", () => ({
   useAssetsData: jest.fn(),
   selectCurrencyForMetaId: jest.fn(),
 }));
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: () => ({ rate: 1, status: "ready" }),
 }));
 

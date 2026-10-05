@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAssetsData, useStablecoinTickers } from "@features/platform-aggregated-assets";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";

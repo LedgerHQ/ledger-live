@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
-import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
+import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import type {
   SponsoredCoinApi,
   SponsoredFeeAsset,

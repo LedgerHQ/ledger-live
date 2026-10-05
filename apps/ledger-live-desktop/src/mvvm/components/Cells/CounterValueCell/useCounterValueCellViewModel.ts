@@ -1,7 +1,7 @@
 import type { Currency } from "@domain/entity-currency";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { useCalculate } from "@features/platform-market-countervalues";
 import { useSelector } from "LLD/hooks/redux";
 import {
   counterValueCurrencySelector,

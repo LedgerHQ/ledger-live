@@ -15,8 +15,8 @@ import {
   CountervaluesBridge,
   CountervaluesProvider,
   useCountervaluesPolling,
-} from "@ledgerhq/live-countervalues-react";
-import { useGetCounterValueIdsPolling } from "@ledgerhq/live-common/counterValues/state-manager/useGetCounterValueIdsPolling";
+  useGetCounterValueIdsPolling,
+} from "@features/platform-market-countervalues";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { bindActionCreators } from "redux";
