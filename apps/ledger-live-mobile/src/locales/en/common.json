@@ -11357,13 +11357,16 @@
   "myWallet": {
     "quickActions": {
       "recover": "[L] Recover",
-      "backup": "Backup",
       "help": "Help",
       "referral": "Referral"
     },
+    "walletBackups": {
+      "title": "Wallet backups",
+      "description": "Don't lose access to your assets."
+    },
     "contacts": {
       "title": "Contacts",
-      "description": "Manage your contacts"
+      "description": "Manage your contacts."
     },
     "backupHub": {
       "title": "Backups of your Secret Recovery Phrase",
