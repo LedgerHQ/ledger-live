@@ -107,7 +107,7 @@ const DEFAULT_A4_CONFIG: A4Config = {
   chains: Object.fromEntries(
     A4_SUPPORTED_NETWORKS.map(id => [
       id,
-      { enabled: false, registerOnly: true } satisfies A4ChainEntry,
+      { enabled: false, registerOnly: false } satisfies A4ChainEntry,
     ]),
   ),
 };
