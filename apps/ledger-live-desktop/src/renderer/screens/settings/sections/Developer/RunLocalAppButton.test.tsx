@@ -54,12 +54,12 @@ describe("RunLocalAppButton", () => {
     log.mockRestore();
   });
 
-  it("downloads a local manifest as named JSON", () => {
+  it("downloads a local manifest as named JSON", async () => {
     const manifest = { id: "local-app", name: "Local App", url: "http://localhost:3000" };
     localLiveApps = [manifest];
-    render(<RunLocalAppButton />);
+    const { user } = render(<RunLocalAppButton />);
 
-    fireEvent.click(screen.getByTestId("settings-export-local-manifest"));
+    await user.click(screen.getByTestId("settings-export-local-manifest"));
 
     expect(downloadJson).toHaveBeenCalledWith(
       "Local App-manifest.json",
