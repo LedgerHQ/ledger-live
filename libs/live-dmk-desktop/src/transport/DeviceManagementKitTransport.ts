@@ -105,60 +105,6 @@ export class DeviceManagementKitTransport extends Transport {
     return transport;
   }
 
-  // TODO remove after full ConnectApp migraton: useFeature("ldmkConnectApp")
-  static listenLegacyConnectApp = (observer: Observer<DescriptorEvent<string>>) => {
-    const subscription = getDeviceManagementKit()
-      .listenToAvailableDevices({})
-      .pipe(
-        startWith<DiscoveredDevice[]>([]),
-        pairwise(),
-        map(([prev, curr]) => {
-          const added = curr.filter(item => !prev.some(prevItem => prevItem.id === item.id));
-          const removed = prev.filter(item => !curr.some(currItem => currItem.id === item.id));
-          return { added, removed };
-        }),
-      )
-      .subscribe({
-        next: ({ added, removed }) => {
-          for (const device of added) {
-            const id = dmkToLedgerDeviceIdMap[device.deviceModel.model];
-
-            tracer.trace(`[listen] device added ${id}`);
-            observer.next({
-              type: "add",
-              descriptor: device.id,
-              device: device,
-              // @ts-expect-error types are not matching
-              deviceModel: {
-                id,
-              },
-            });
-          }
-
-          for (const device of removed) {
-            const id = dmkToLedgerDeviceIdMap[device.deviceModel.model];
-
-            tracer.trace(`[listen] device removed ${id}`);
-            observer.next({
-              type: "remove",
-              descriptor: device.id,
-              device: device,
-              // @ts-expect-error types are not matching
-              deviceModel: {
-                id,
-              },
-            });
-          }
-        },
-        error: observer.error,
-        complete: observer.complete,
-      });
-
-    return {
-      unsubscribe: () => subscription.unsubscribe(),
-    };
-  };
-
   // Compose availableDevices and connectedDevices to avoid unwanted disconnection events
   static listen = (observer: Observer<DescriptorEvent<string>>) => {
     const dmk = getDeviceManagementKit();

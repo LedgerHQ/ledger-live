@@ -290,9 +290,6 @@ const extraProperties = (store: ReduxStore) => {
   const ldmkTransport = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkTransport")
     : { enabled: false };
-  const ldmkConnectApp = analyticsFeatureFlagMethod
-    ? analyticsFeatureFlagMethod("ldmkConnectApp")
-    : { enabled: false };
   const ldmkSolanaSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
     : { enabled: false };
@@ -396,7 +393,6 @@ const extraProperties = (store: ReduxStore) => {
     largeScreenUpsellAttributes,
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
-    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     // For tracking receive flow events during onboarding
     ...getOnboardingStatusAttributes(
       postOnboardingInProgress,
