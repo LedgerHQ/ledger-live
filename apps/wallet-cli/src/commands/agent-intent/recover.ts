@@ -5,9 +5,10 @@ import {
   createAgentRecoveryUrl,
   createSoftwareAgentIdentity,
   formatAgentPublicKeyFingerprint,
+  isAgentRecoverySource,
   SUPPORTED_AGENT_RECOVERY_SOURCES,
   AGENT_INTENT_FRONTEND_URLS,
-  type AgentRecoveryChannelRequest,
+  type AgentRecoverySource,
   type SoftwareAgentIdentity,
 } from "@ledgerhq/agent-intent-sdk";
 import { Session, withSessionLock, type AgentIntentProfileMeta } from "../../session/session-store";
@@ -24,9 +25,10 @@ import {
 } from "../../agent-intent/relay";
 import { createCommandOutput } from "../../output";
 
-type EnrolledProfile = AgentIntentProfileMeta & { trustchainId: string };
-
-const RECOVERABLE_SOURCES: ReadonlySet<string> = new Set(SUPPORTED_AGENT_RECOVERY_SOURCES);
+type EnrolledProfile = AgentIntentProfileMeta & {
+  trustchainId: string;
+  source: AgentRecoverySource;
+};
 
 function requireRecoverableProfile(session: Session, profileId: string): EnrolledProfile {
   const profile = session.getAgentIntentProfile(profileId);
@@ -39,17 +41,17 @@ function requireRecoverableProfile(session: Session, profileId: string): Enrolle
     }
     throw new Error(`No Agent Intent profile named "${profileId}".`);
   }
-  const { trustchainId } = profile;
+  const { trustchainId, source } = profile;
   if (!trustchainId) {
     throw new Error(
       `Agent Intent profile "${profileId}" has not completed enrollment, so there is nothing to ` +
         "recover — start a fresh `agent-intent enroll` instead.",
     );
   }
-  if (!RECOVERABLE_SOURCES.has(profile.source)) {
+  if (!isAgentRecoverySource(source)) {
     throw new Error(
       `Agent Intent recovery supports only ${SUPPORTED_AGENT_RECOVERY_SOURCES.join(", ")} agents; ` +
-        `profile "${profileId}" is a ${profile.source} agent.`,
+        `profile "${profileId}" is a ${source} agent.`,
     );
   }
   if (profile.keycloakBaseUrl !== undefined) {
@@ -63,7 +65,7 @@ function requireRecoverableProfile(session: Session, profileId: string): Enrolle
       );
     }
   }
-  return { ...profile, trustchainId };
+  return { ...profile, trustchainId, source };
 }
 
 async function loadProfileIdentity(profile: EnrolledProfile): Promise<SoftwareAgentIdentity> {
@@ -144,7 +146,7 @@ export default defineCommand({
 
       const host = createRelayHost(environment, expiresInMs);
       try {
-        const signed = createAgentRecoveryRequest(identity, {
+        const request = createAgentRecoveryRequest(identity, {
           name: profile.displayName,
           description: profile.description,
           source: profile.source,
@@ -152,11 +154,6 @@ export default defineCommand({
           expiresAt,
           channel: host.binding,
         });
-        const { channel } = signed;
-        if (!channel) {
-          throw new Error("Agent Intent SDK did not build a relay-bound recovery request.");
-        }
-        const request: AgentRecoveryChannelRequest = { ...signed, channel };
         const recoveryUrl = createAgentRecoveryUrl(appUrl, request);
 
         // A newer marker replaces an older one, so a still-running older `recover` refuses to persist.
