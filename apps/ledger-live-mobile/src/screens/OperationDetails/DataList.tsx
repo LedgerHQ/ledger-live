@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "~/context/Locale";
 import LText from "~/components/LText";
 import Touchable from "~/components/Touchable";
+import { OperationDetailsContact } from "LLM/features/OperationDetails/components/OperationDetailsContact";
 import { withTheme, Theme } from "../../colors";
 
 type Props = {
@@ -11,9 +12,10 @@ type Props = {
   rightComp?: React.ReactNode;
   colors: Theme["colors"];
   testID?: string;
+  currencyId?: string;
 };
 
-const DataList = ({ data, title, rightComp, colors, testID }: Props) => {
+const DataList = ({ data, title, rightComp, colors, testID, currencyId }: Props) => {
   const [showAll, setShowAll] = useState(false);
 
   const toggleShowAll = () => {
@@ -63,15 +65,21 @@ const DataList = ({ data, title, rightComp, colors, testID }: Props) => {
         )}
       </View>
       {(shouldShowMore ? data.slice(0, numToShow) : data).map((line, index) => (
-        <LText style={styles.value} semiBold selectable key={line} testID={`${testID}${index}`}>
-          {line}
-        </LText>
+        <View key={line}>
+          <OperationDetailsContact address={line} currencyId={currencyId} />
+          <LText style={styles.value} semiBold selectable testID={`${testID}${index}`}>
+            {line}
+          </LText>
+        </View>
       ))}
       {showAll &&
         data.slice(numToShow).map((line, index) => (
-          <LText style={styles.value} semiBold selectable key={line} testID={`${testID}${index}`}>
-            {line}
-          </LText>
+          <View key={line}>
+            <OperationDetailsContact address={line} currencyId={currencyId} />
+            <LText style={styles.value} semiBold selectable testID={`${testID}${index}`}>
+              {line}
+            </LText>
+          </View>
         ))}
     </View>
   );
