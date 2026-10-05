@@ -2,11 +2,8 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { TokenAccount, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { Application } from "tests/page";
-import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
-import { buildTags } from "tests/utils/tagsUtils";
 
 function getRequiredFamily(currencyId: string): string {
   const family = getFamilyByCurrencyId(currencyId);
@@ -81,43 +78,6 @@ export type NewSendFlowEntry = {
    */
   verifyOperationAmount?: boolean;
 };
-
-export function newSendFlowFixture(entry: NewSendFlowEntry) {
-  const tx = entry.transaction;
-
-  return {
-    teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: tx.accountToDebit.currency.speculosApp,
-    cliCommands: [liveDataWithRecipientAddressCommand(tx)],
-    featureFlags: {
-      ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
-      newSendFlow: {
-        enabled: true,
-        params: { families: NEW_SEND_FLOW_FAMILIES },
-      },
-    },
-  };
-}
-
-export function newSendFlowTestOptions(entry: NewSendFlowEntry) {
-  return {
-    tag: buildTags({ currencyId: entry.transaction.accountToDebit.currency.id }),
-    annotation: [
-      { type: "TMS", description: entry.xrayTicket },
-      ...(entry.bugTicket ? [{ type: "BUG", description: entry.bugTicket }] : []),
-    ],
-  };
-}
-
-export function newSendFlowTestName(entry: NewSendFlowEntry): string {
-  const tx = entry.transaction;
-  const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
-
-  return `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow)${
-    tx.accountToDebit.derivationMode ? ` - ${tx.accountToDebit.derivationMode}` : ""
-  }${validMemoTag ? " with memo" : ""}`;
-}
 
 export async function sendWithNewSendFlow(app: Application, entry: NewSendFlowEntry) {
   const tx = entry.transaction;

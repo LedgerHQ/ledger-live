@@ -4,14 +4,18 @@ import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import {
   ContactsEntry,
-  contactRetrievalTestName,
-  contactsSendFlowFixture,
-  contactsSendFlowTestOptions,
   retrieveContact,
   sendViaContact,
-  sendViaContactTestName,
 } from "tests/utils/newSendFlowContactsUtils";
+import { NEW_SEND_FLOW_FAMILIES } from "tests/utils/newSendFlowUtils";
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import {
+  FF_LWD_CONTACTS_ENABLED,
+  FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
+} from "tests/utils/featureFlagUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 
 const sendViaContactTransactions: ContactsEntry[] = [
   {
@@ -40,26 +44,70 @@ const contactRetrievalTransactions: ContactsEntry[] = [
   },
 ];
 
+const featureFlags = {
+  ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
+  ...FF_LWD_CONTACTS_ENABLED,
+  newSendFlow: { enabled: true, params: { families: NEW_SEND_FLOW_FAMILIES } },
+};
+
+const settings = {
+  shareAnalytics: false,
+  hasSeenAnalyticsOptInPrompt: true,
+  hasDismissedContactsFeatureIntroduction: true,
+};
+
 for (const entry of sendViaContactTransactions) {
+  const tx = entry.transaction;
+
   test.describe("Send - new flow - Address Book", () => {
     test.describe("Send via contact", () => {
-      test.use(contactsSendFlowFixture(entry));
-
-      test(sendViaContactTestName(entry), contactsSendFlowTestOptions(entry), async ({ app }) => {
-        await sendViaContact(app, entry);
+      test.use({
+        teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
+        userdata: "skip-onboarding-with-last-seen-device",
+        settings,
+        speculosApp: tx.accountToDebit.currency.speculosApp,
+        cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+        featureFlags,
       });
+
+      test(
+        `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) via contact`,
+        {
+          tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
+          annotation: { type: "TMS", description: entry.xrayTicket },
+        },
+        async ({ app }) => {
+          await sendViaContact(app, entry);
+        },
+      );
     });
   });
 }
 
 for (const entry of contactRetrievalTransactions) {
+  const tx = entry.transaction;
+
   test.describe("Send - new flow - Address Book", () => {
     test.describe("Contact retrieval", () => {
-      test.use(contactsSendFlowFixture(entry));
-
-      test(contactRetrievalTestName(entry), contactsSendFlowTestOptions(entry), async ({ app }) => {
-        await retrieveContact(app, entry);
+      test.use({
+        teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
+        userdata: "skip-onboarding-with-last-seen-device",
+        settings,
+        speculosApp: tx.accountToDebit.currency.speculosApp,
+        cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+        featureFlags,
       });
+
+      test(
+        `[${tx.accountToDebit.currency.testLabel}] - Contact retrieval and Add contact availability on the recipient step`,
+        {
+          tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
+          annotation: { type: "TMS", description: entry.xrayTicket },
+        },
+        async ({ app }) => {
+          await retrieveContact(app, entry);
+        },
+      );
     });
   });
 }

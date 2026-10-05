@@ -1,20 +1,13 @@
 import invariant from "invariant";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
   buildSeededContacts,
   generateContactName,
   type ContactSeed,
 } from "@ledgerhq/live-e2e-shared/contacts";
 import { Application } from "tests/page";
-import {
-  FF_LWD_CONTACTS_ENABLED,
-  FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
-} from "tests/utils/featureFlagUtils";
-import { NEW_SEND_FLOW_FAMILIES, type NewSendFlowEntry } from "tests/utils/newSendFlowUtils";
-import { buildTags } from "tests/utils/tagsUtils";
+import type { NewSendFlowEntry } from "tests/utils/newSendFlowUtils";
 
 export type ContactsEntry = NewSendFlowEntry & {
   /**
@@ -22,22 +15,6 @@ export type ContactsEntry = NewSendFlowEntry & {
    * "Select address" sheet opens, left unseeded where an unknown recipient is needed.
    */
   spareAddress: string;
-};
-
-const FEATURE_FLAGS = {
-  ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
-  ...FF_LWD_CONTACTS_ENABLED,
-  newSendFlow: {
-    enabled: true,
-    params: { families: NEW_SEND_FLOW_FAMILIES },
-  },
-};
-
-/** `test.use` replaces the fixture's settings, so its analytics defaults are restated here. */
-const SETTINGS = {
-  shareAnalytics: false,
-  hasSeenAnalyticsOptInPrompt: true,
-  hasDismissedContactsFeatureIntroduction: true,
 };
 
 /** Seeded into the running store: the db middleware clobbers a userdata seed before `fetchWallet` reads it. */
@@ -64,29 +41,6 @@ function recipientAddress(tx: Transaction): string {
       `Ensure the CLI setup populates the address.`,
   );
   return address;
-}
-
-export function contactsSendFlowFixture(entry: ContactsEntry) {
-  const tx = entry.transaction;
-  return {
-    teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
-    userdata: "skip-onboarding-with-last-seen-device",
-    settings: SETTINGS,
-    speculosApp: tx.accountToDebit.currency.speculosApp,
-    cliCommands: [liveDataWithRecipientAddressCommand(tx)],
-    featureFlags: FEATURE_FLAGS,
-  };
-}
-
-export function contactsSendFlowTestOptions(entry: ContactsEntry) {
-  return {
-    tag: buildTags({ currencyId: entry.transaction.accountToDebit.currency.id }),
-    annotation: { type: "TMS", description: entry.xrayTicket },
-  };
-}
-
-export function sendViaContactTestName(entry: ContactsEntry): string {
-  return `[${entry.transaction.accountToDebit.currency.testLabel}] - Send (new send flow) via contact`;
 }
 
 export async function sendViaContact(app: Application, entry: ContactsEntry) {
@@ -137,10 +91,6 @@ export async function sendViaContact(app: Application, entry: ContactsEntry) {
 
   await app.newSendFlow.clickViewDetails();
   await app.sendDrawer.addressValueIsVisible(recipientAddress(tx));
-}
-
-export function contactRetrievalTestName(entry: ContactsEntry): string {
-  return `[${entry.transaction.accountToDebit.currency.testLabel}] - Contact retrieval and Add contact availability on the recipient step`;
 }
 
 export async function retrieveContact(app: Application, entry: ContactsEntry) {
