@@ -424,8 +424,9 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
   --to 0xRecipient --amount '0.01 ETH' --dry-run
 ```
 
-- **Enrolled profile only** (`agent-intent complete` done). It uses the profile's environment,
-  and its key in the OS keychain.
+- **Enrolled profile only** (its `agent-intent enroll` approval went through). It uses the
+  profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
+  `--bff-url`/`--keycloak-url` override carries over), and its key in the OS keychain.
 - **Ethereum mainnet only**, for both a `--account` label and a `--from` address. The Agent Intent
   SDK has no testnet, so a staging profile also proposes an Ethereum mainnet transfer.
 - **Addresses:** `--from`, `--to` and `--token` must be `0x` + 40 hex characters. Mixed-case input

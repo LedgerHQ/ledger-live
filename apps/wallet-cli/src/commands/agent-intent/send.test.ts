@@ -310,46 +310,58 @@ describe("agent-intent send", () => {
     it("rejects a profile whose enrollment wasn't completed", async () => {
       profiles = { bot: { ...enrolledProfile, trustchainId: undefined } };
 
-      await expect(runSend()).rejects.toThrow(/not enrolled yet.*agent-intent complete/s);
+      await expect(runSend()).rejects.toThrow(/not enrolled yet.*agent-intent enroll/s);
       expect(secretKeyReads).toBe(0);
     });
 
-    it("refuses a profile whose recorded service URL was changed, before reading the key or sending", async () => {
+    it("uses the BFF and Keycloak URLs recorded on the profile at enroll time", async () => {
       profiles = {
-        bot: { ...enrolledProfile, bffBaseUrl: "https://attacker.example.com/agent-intent" },
+        bot: {
+          ...enrolledProfile,
+          bffBaseUrl: "https://bff.example.com/agent-intent",
+          keycloakBaseUrl: "https://keycloak.example.com/",
+        },
       };
-
-      await expect(runSend()).rejects.toThrow(
-        /unexpected Agent Intent service URL.*nothing was sent/s,
-      );
-      expect(secretKeyReads).toBe(0);
-      expect(clientOptions).toEqual([]);
-    });
-
-    it("refuses a staging profile pointing at the production service", async () => {
-      profiles = {
-        bot: { ...enrolledProfile, bffBaseUrl: "https://global.api.prd.ledger.com/agent-intent" },
-      };
-
-      await expect(runSend()).rejects.toThrow(/unexpected Agent Intent service URL for staging/);
-    });
-
-    it("accepts the recorded service URL with a trailing slash", async () => {
-      profiles = { bot: { ...enrolledProfile, bffBaseUrl: `${enrolledProfile.bffBaseUrl}/` } };
 
       await runSend();
 
       expect(clientOptions).toEqual([
         expect.objectContaining({
-          bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
+          bffBaseUrl: "https://bff.example.com/agent-intent",
+          keycloak: expect.objectContaining({ baseUrl: "https://keycloak.example.com/" }),
         }),
       ]);
     });
 
+    it("leaves Keycloak to the environment default when the profile has no override", async () => {
+      await runSend();
+
+      expect(clientOptions[0]).not.toHaveProperty("keycloak");
+    });
+
+    it.each([
+      ["bffBaseUrl", "BFF URL", "https://user:secret@bff.example.com/"],
+      ["bffBaseUrl", "BFF URL", "file:///etc/agent-intent"],
+      ["keycloakBaseUrl", "Keycloak URL", "not a url"],
+    ])(
+      "refuses an invalid stored %s before reading the key or sending",
+      async (field, label, url) => {
+        profiles = { bot: { ...enrolledProfile, [field]: url } };
+
+        await expect(runSend()).rejects.toThrow(
+          `Agent Intent profile "bot" has an invalid stored ${label}`,
+        );
+        expect(secretKeyReads).toBe(0);
+        expect(clientOptions).toEqual([]);
+      },
+    );
+
     it("reports a missing keychain key without contacting the service", async () => {
       secretKeyImpl = async () => null;
 
-      await expect(runSend()).rejects.toThrow(/No secret key for Agent Intent profile "bot"/);
+      await expect(runSend()).rejects.toThrow(
+        /No agent key found in the OS keychain for profile "bot"/,
+      );
       expect(clientOptions).toEqual([]);
     });
 
@@ -364,7 +376,7 @@ describe("agent-intent send", () => {
     it("catches a keychain key that doesn't belong to the profile before submitting", async () => {
       secretKeyImpl = async () => OTHER_AGENT.exportSecretKey();
 
-      await expect(runSend()).rejects.toThrow(/doesn't match its recorded public key/);
+      await expect(runSend()).rejects.toThrow(/does not match its recorded public key/);
       expect(clientOptions).toEqual([]);
     });
   });

@@ -19,10 +19,9 @@ wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" \
   --environment production --app-url https://agent-intent.ledger-test.com/
 ```
 
-Open the printed link, approve it with a Ledger device, then pass the completion JSON the frontend
-shows to `wallet-cli agent-intent complete --profile <profile-id>`. A `--environment staging`
-profile only completes against a frontend wired to the staging service, which also needs the Ledger
-infra VPN.
+Open the printed link and approve it with a Ledger device; `enroll` waits for the approval to be
+relayed back and saves it. A `--environment staging` profile only completes against a frontend
+wired to the staging service, which also needs the Ledger infra VPN.
 
 Prerequisites:
 

@@ -3,18 +3,11 @@ import { z } from "zod";
 import {
   createAgentIntentClient,
   createNonce,
-  createSoftwareAgentIdentity,
   encodeSendIntentTlv,
   type SendIntent,
 } from "@ledgerhq/agent-intent-sdk";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Session, type AgentIntentProfileMeta } from "../../session/session-store";
-import { loadAgentIntentSecretKey } from "../../key-ring/agent-intent-keychain";
-
-const UNUSABLE_KEY_ERRORS = new Set([
-  "AgentIntentPasswordRequiredError",
-  "AgentIntentCorruptKeychainError",
-]);
 import { outputOption, resolveOutputFormat, resolveAccountDescriptorV1 } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import { parseAmountWithTicker, parseDecimalAmount, parseEvmAddress } from "../../agent-intent/evm";
@@ -26,7 +19,8 @@ import {
   type SendIntentSummary,
 } from "../../agent-intent/send-intent";
 import { findEthereumToken } from "../../agent-intent/token-lookup";
-import { AGENT_INTENT_BFF_URLS } from "../../agent-intent/endpoints";
+import { loadProfileIdentity } from "../../agent-intent/profile-identity";
+import { assertStoredServiceUrl, keycloakOverride } from "../../agent-intent/relay";
 import {
   describeAgentIntentError,
   isAcceptedWithoutReviewLink,
@@ -47,9 +41,14 @@ function requireEnrolledProfile(
   }
   if (!profile.trustchainId) {
     throw new Error(
-      `Agent Intent profile "${profileId}" is not enrolled yet. Finish enrollment with ` +
-        `\`wallet-cli agent-intent complete --profile ${profileId}\` first.`,
+      `Agent Intent profile "${profileId}" is not enrolled yet — approve its \`agent-intent ` +
+        "enroll` link first, or enroll a fresh profile if that link expired.",
     );
+  }
+  // Re-checked here: the signed-in request sends an access token to these hosts.
+  assertStoredServiceUrl(profileId, profile.bffBaseUrl, "bff-url", "BFF URL");
+  if (profile.keycloakBaseUrl !== undefined) {
+    assertStoredServiceUrl(profileId, profile.keycloakBaseUrl, "keycloak-url", "Keycloak URL");
   }
   return { ...profile, trustchainId: profile.trustchainId };
 }
@@ -61,21 +60,6 @@ function parseSenderInput(flags: {
   if (flags.account && !flags.from) return { account: flags.account };
   if (flags.from && !flags.account) return { from: flags.from };
   throw new Error("Pass exactly one sender: --account <session-label> or --from <address>.");
-}
-
-/** The signed-in request carries an access token, so its host comes from the fixed per-environment
- * table, never from the editable session file. A recorded URL that differs means the file was
- * changed by hand or corrupted. */
-function trustedBffUrl(profile: AgentIntentProfileMeta): string {
-  const expected = AGENT_INTENT_BFF_URLS[profile.environment];
-  if (profile.bffBaseUrl.replace(/\/+$/, "") !== expected) {
-    throw new Error(
-      `Profile "${profile.profileId}" records an unexpected Agent Intent service URL for ` +
-        `${profile.environment}, so nothing was sent. The session file may have been edited — ` +
-        "re-enroll under a new --profile id.",
-    );
-  }
-  return expected;
 }
 
 /** Only Ethereum mainnet accounts can send: that's the one network Agent Intent supports. */
@@ -130,34 +114,6 @@ function assertSdkAcceptsIntent(intent: SendIntent): void {
   } catch (e) {
     throw new Error(`Invalid intent: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
   }
-}
-
-async function loadProfileIdentity(profile: AgentIntentProfileMeta) {
-  let secretKey: string | null;
-  try {
-    secretKey = await loadAgentIntentSecretKey(profile.profileId);
-  } catch (e) {
-    if (e instanceof Error && UNUSABLE_KEY_ERRORS.has(e.name)) {
-      throw new Error(`${e.message} Re-enroll under a new --profile id.`, { cause: e });
-    }
-    throw e;
-  }
-  if (!secretKey) {
-    throw new Error(
-      `No secret key for Agent Intent profile "${profile.profileId}" in the OS keychain (missing, ` +
-        "or the keychain is unavailable). Profiles don't move between machines or users — " +
-        "re-enroll here under a new --profile id.",
-    );
-  }
-  const identity = createSoftwareAgentIdentity(secretKey);
-  // Catch a keychain/session mix-up locally, before the service rejects it as an issuer mismatch.
-  if (identity.publicKey.toLowerCase() !== profile.publicKey.toLowerCase()) {
-    throw new Error(
-      `The OS-keychain key for profile "${profile.profileId}" doesn't match its recorded public ` +
-        "key, so the service would reject this intent. Re-enroll under a new --profile id.",
-    );
-  }
-  return identity;
 }
 
 export default defineCommand({
@@ -234,10 +190,11 @@ export default defineCommand({
       }
 
       const client = createAgentIntentClient({
-        bffBaseUrl: trustedBffUrl(profile),
+        bffBaseUrl: profile.bffBaseUrl,
         identity: await loadProfileIdentity(profile),
         trustchainId: profile.trustchainId,
         environment: profile.environment,
+        ...keycloakOverride(profile.environment, profile.keycloakBaseUrl),
       });
 
       let deeplink: string | null;

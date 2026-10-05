@@ -39,7 +39,7 @@ export function redactServiceText(text: string): string {
 }
 
 const RE_ENROLL = (profileId: string) =>
-  `Re-enroll with \`wallet-cli agent-intent enroll\` + \`complete\` under a new --profile id ` +
+  `Re-enroll with \`wallet-cli agent-intent enroll\` under a new --profile id ` +
   `(profile "${profileId}" can't be reused).`;
 
 function httpErrorMessage(e: AgentIntentHttpError, profileId: string): string {
