@@ -197,6 +197,7 @@ export default class EarnV2DashboardPage {
     for (const key of amount) {
       await tapWebElementByTestId(this.customKeyboardKey(key));
     }
+    jestExpect(await getValueByWebTestId(this.ethAmountInput)).toBe(amount);
   }
 
   @Step("Select deposit v2 amount preset {{{0}}}")
