@@ -107,7 +107,11 @@ export default function ReceiveConfirmation({ route }: Props) {
                     bg="constant.white"
                     position="absolute"
                   >
-                    <CurrencyIcon currency={currency} size={48} />
+                    <CurrencyIcon
+                      currency={currency}
+                      size={48}
+                      testID={"receive-currency-icon-" + currency.id}
+                    />
                   </Flex>
                 </Flex>
                 <Text
