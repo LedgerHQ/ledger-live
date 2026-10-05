@@ -2859,6 +2859,9 @@ importers:
       '@shared/analytics':
         specifier: workspace:*
         version: link:../../shared/analytics
+      '@shared/cloud-sync':
+        specifier: workspace:*
+        version: link:../../shared/cloud-sync
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env

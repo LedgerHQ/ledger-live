@@ -31,6 +31,7 @@ wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is int
 | `agent-intent enroll`                 | Create a pending Agent Intent profile, print its signed enrollment URL + public-key fingerprint, then **block** until the approval is relayed back over an encrypted Trustchain channel; the completion is verified (App-18 token + App-16 permission) before the Trustchain ID and account access are saved. Defaults to `--environment production`. On timeout or Ctrl+C the profile stays pending — enroll a fresh profile. **No device** required, but a working OS keychain is (on Linux: a Secret Service provider such as gnome-keyring). **Separate trust model from `ring`** — see the [ledger-wallet-cli skill](../../.agents/skills/ledger-wallet-cli/SKILL.md#agent-intent). |
 | `agent-intent recover`                | Re-enroll an enrolled `openclaw`/`hermes` profile's existing key into its previous Trustchain: prints a signed recovery URL + fingerprint, marks the profile `recovering`, then **blocks** until the approval is relayed back and the App-18 token check passes. Account access is kept. On timeout or Ctrl+C the profile stays enrolled with its previous data. **No device** required. |
 | `agent-intent list` / `agent-intent show` | List local Agent Intent profiles, or show one profile's detail (fingerprint, status, environment, account access). Never reveals the secret key. **No device** required.                                                    |
+| `agent-intent sync`                   | Import the Ledger Sync accounts an enrolled agent was granted into the session, authenticating with the agent's own key (additive, idempotent; unsupported currency families are reported as skipped). Explicit — never runs automatically. **No device** required. |
 | `skill list` / `skill retrieve`       | List the agent skills shipped inside the binary, or print one to stdout. **No device** required.                                                                                                                |
 | `skill install`                       | Install the embedded agent skill for `--agent` (`claude`, `cursor`, `codex`, or generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides. **No device** required.                             |
 | `skill doctor`                        | Detect drift between installed skills and those shipped in the running binary (`up-to-date`, `outdated`, `modified-locally`, `missing`); `--fix` self-heals, `--force` also overwrites local edits.              |
@@ -64,6 +65,7 @@ pnpm wallet-cli start -- agent-intent enroll --help
 pnpm wallet-cli start -- agent-intent recover --help
 pnpm wallet-cli start -- agent-intent list --help
 pnpm wallet-cli start -- agent-intent show --help
+pnpm wallet-cli start -- agent-intent sync --help
 ```
 
 From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (same args after `--`).

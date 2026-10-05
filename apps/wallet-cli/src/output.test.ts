@@ -825,6 +825,32 @@ describe("HumanCommandOutput", () => {
       expect(out).toContain('"test-agent" recovered');
       expect(out).toContain("tc-1");
     });
+
+    it("agentIntentSync reports imported, unchanged, skipped, and invalid entries", () => {
+      createCommandOutput("human", ctx).agentIntentSync({
+        imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+        unchanged: [{ status: "unchanged", label: "eth-2", network: "ethereum:main" }],
+        skipped: [
+          { status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" },
+        ],
+        invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],
+      });
+      const out = writes.join("");
+      expect(out).toContain("eth-1");
+      expect(out).toContain("eth-2");
+      expect(out).toContain("family unsupported");
+      expect(out).toContain("empty address");
+    });
+
+    it("agentIntentSync shows an up-to-date message when nothing changed", () => {
+      createCommandOutput("human", ctx).agentIntentSync({
+        imported: [],
+        unchanged: [],
+        skipped: [],
+        invalid: [],
+      });
+      expect(writes.join("")).toContain("Up to date");
+    });
   });
 });
 

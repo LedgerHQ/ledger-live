@@ -22,6 +22,8 @@ export type AgentIntentMockOverrides = {
   sdk?: Partial<Record<(typeof SDK_KEYS)[number], AnyFn>>;
   keychain?: Partial<Record<(typeof KEYCHAIN_KEYS)[number], AnyFn>>;
   completionAuth?: Partial<Record<(typeof COMPLETION_AUTH_KEYS)[number], AnyFn>>;
+  lkrpSdk?: Partial<Record<(typeof LKRP_SDK_KEYS)[number], AnyFn>>;
+  cloudSync?: Partial<Record<(typeof CLOUD_SYNC_KEYS)[number], AnyFn>>;
 };
 
 const SDK_KEYS = [
@@ -45,6 +47,10 @@ const KEYCHAIN_KEYS = [
   "deleteAgentIntentSecretKey",
 ] as const;
 
+const LKRP_SDK_KEYS = ["createAgentLedgerSyncSdk"] as const;
+
+const CLOUD_SYNC_KEYS = ["pullSyncedAccounts", "mergeSyncedAccounts"] as const;
+
 // Snapshot the genuine exports into PLAIN objects before any mock is installed: `mock.module` re-binds
 // the live namespace to the mock, so a pass-through reading from the namespace would recurse forever.
 const realSessionStore = { ...(await import("../../../session/session-store")) };
@@ -56,6 +62,11 @@ const realKeychain = { ...(await import("../../../key-ring/agent-intent-keychain
 const realCompletionAuth = {
   ...(await import("../../../agent-intent/completion-auth")),
 } as Record<string, unknown>;
+const realLkrpSdk = { ...(await import("../../../key-ring/lkrp-sdk")) } as Record<string, unknown>;
+const realCloudSync = { ...(await import("../../../ledger-sync/cloud-sync-accounts")) } as Record<
+  string,
+  unknown
+>;
 
 let active: AgentIntentMockOverrides | null = null;
 
@@ -103,6 +114,22 @@ function installMocks(): void {
       realCompletionAuth,
       COMPLETION_AUTH_KEYS,
       key => active?.completionAuth?.[key as (typeof COMPLETION_AUTH_KEYS)[number]],
+    ),
+  }));
+  mock.module("../../../key-ring/lkrp-sdk", () => ({
+    ...realLkrpSdk,
+    ...gatedMembers(
+      realLkrpSdk,
+      LKRP_SDK_KEYS,
+      key => active?.lkrpSdk?.[key as (typeof LKRP_SDK_KEYS)[number]],
+    ),
+  }));
+  mock.module("../../../ledger-sync/cloud-sync-accounts", () => ({
+    ...realCloudSync,
+    ...gatedMembers(
+      realCloudSync,
+      CLOUD_SYNC_KEYS,
+      key => active?.cloudSync?.[key as (typeof CLOUD_SYNC_KEYS)[number]],
     ),
   }));
 }

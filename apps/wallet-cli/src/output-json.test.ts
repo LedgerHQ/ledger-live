@@ -584,4 +584,23 @@ describe("JsonCommandOutput", () => {
       ],
     });
   });
+
+  it("agentIntentSync emits the four imported/unchanged/skipped/invalid arrays", () => {
+    const out = createCommandOutput("json", { command: "agent-intent sync", network: "all" });
+    out.agentIntentSync({
+      imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+      unchanged: [],
+      skipped: [{ status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" }],
+      invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+      unchanged: [],
+      skipped: [{ status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" }],
+      invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],
+    });
+  });
 });

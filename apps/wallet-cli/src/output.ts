@@ -34,6 +34,7 @@ import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
+import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 import type {
   EarnDepositResult,
@@ -238,6 +239,10 @@ export interface CommandOutput {
   agentIntentRecoveryPending(result: AgentIntentRecoveryPending): void;
   /** Final `agent-intent recover` result once the relayed completion is verified and saved. */
   agentIntentRecovered(result: AgentIntentRecovered): void;
+
+  /** `agent-intent sync` report (human: grouped lines; json: envelope with the four
+   * imported/unchanged/skipped/invalid arrays). */
+  agentIntentSync(report: LedgerSyncImportReport): void;
 }
 
 export type AgentIntentEnrollmentPending = {
@@ -834,6 +839,30 @@ class HumanCommandOutput implements CommandOutput {
         `${trustchainId} (account access: ${accountAccessEnvironment})`,
     );
   }
+
+  agentIntentSync({ imported, unchanged, skipped, invalid }: LedgerSyncImportReport): void {
+    if (imported.length + unchanged.length + skipped.length + invalid.length === 0) {
+      writeStdout(colors.dim("Up to date. Nothing to import."));
+      return;
+    }
+    if (imported.length > 0) {
+      writeStdout(colors.bold(`Imported (${imported.length}):`));
+      for (const e of imported) writeStdout(`  ${e.label}  ${colors.dim(e.network)}`);
+    }
+    if (unchanged.length > 0) {
+      writeStdout(
+        colors.dim(`Unchanged (${unchanged.length}): ${unchanged.map(e => e.label).join(", ")}`),
+      );
+    }
+    if (skipped.length > 0) {
+      writeStdout(colors.bold(`Skipped (${skipped.length}, unsupported):`));
+      for (const e of skipped) writeStdout(`  ${e.id}: ${e.reason}`);
+    }
+    if (invalid.length > 0) {
+      writeStdout(colors.bold(`Invalid (${invalid.length}):`));
+      for (const e of invalid) writeStdout(`  ${e.id}: ${e.reason}`);
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1226,6 +1255,10 @@ class JsonCommandOutput implements CommandOutput {
 
   agentIntentRecovered(result: AgentIntentRecovered): void {
     this._writeNdjson(this._envelope({ ...result, recovered: true }));
+  }
+
+  agentIntentSync(report: LedgerSyncImportReport): void {
+    this._writeNdjson(this._envelope({ ...report }));
   }
 }
 
