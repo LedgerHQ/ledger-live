@@ -198,12 +198,12 @@ describe("agent-intent send", () => {
       ]);
     });
 
-    it("shows the review link and says nothing was signed or broadcast", async () => {
+    it("shows the review link and says no transaction was signed or broadcast", async () => {
       await runSend();
 
       const printed = stdout.join("");
       expect(printed).toContain(DEEPLINK);
-      expect(printed).toContain("nothing was signed or broadcast");
+      expect(printed).toContain("no transaction was signed or broadcast");
       expect(printed).toContain("Amount:  0.01 ETH");
     });
   });

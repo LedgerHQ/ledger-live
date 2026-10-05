@@ -875,7 +875,7 @@ class HumanCommandOutput implements CommandOutput {
     result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
   ): void {
     writeStdout(
-      `${colors.green("✔")} Intent proposed for human review — nothing was signed or broadcast.`,
+      `${colors.green("✔")} Intent proposed for human review — no transaction was signed or broadcast.`,
     );
     if (result.deeplink) writeStdout(result.deeplink);
     writeStdout("");

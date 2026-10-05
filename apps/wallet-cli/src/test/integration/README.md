@@ -7,7 +7,7 @@ below. CI never sets them.
 
 `agent-intent-send.staging.test.ts` runs the real CLI against a live Agent Intent stack:
 Keycloak/LKRP sign-in and the Agent Intent BFF of the profile's environment. Each run creates a real
-**pending** intent that nobody approves. Nothing is signed or broadcast, but reject it in the
+**pending** intent that nobody approves. No transaction is signed or broadcast, but reject it in the
 frontend afterwards.
 
 The deployed test frontend (`https://agent-intent.ledger-test.com/`) currently talks to the

@@ -7,9 +7,10 @@ import {
 
 /**
  * Opt-in integration test for `agent-intent send` — see ./README.md for prerequisites. Skipped
- * unless WALLET_CLI_AGENT_INTENT_STAGING_PROFILE is set, so CI never runs it. Runs the real CLI as a
- * subprocess against the real session, OS keychain, Keycloak/LKRP and the Agent Intent BFF of the
- * profile's environment, and leaves a real pending intent there for a human to reject.
+ * unless WALLET_CLI_AGENT_INTENT_STAGING_PROFILE and _SENDER are set, so CI never runs it. Runs the
+ * real CLI as a subprocess against the real session and OS keychain, signs in through Keycloak and
+ * LKRP, calls the Agent Intent BFF of the profile's environment, and leaves a real pending intent
+ * there for a human to reject.
  */
 const profile = process.env.WALLET_CLI_AGENT_INTENT_STAGING_PROFILE;
 const sender = process.env.WALLET_CLI_AGENT_INTENT_STAGING_SENDER;
@@ -33,7 +34,7 @@ async function send(
   return { exitCode, envelope: JSON.parse(stdout.trim().split("\n").at(-1) ?? "{}") };
 }
 
-describe.skipIf(!profile)("agent-intent send against staging (opt-in)", () => {
+describe.skipIf(!profile || !sender)("agent-intent send against staging (opt-in)", () => {
   const base = ["--profile", profile ?? "", "--from", sender ?? "", "--to", sender ?? ""];
 
   it("creates a native ETH intent and returns a review link for the profile's environment", async () => {
