@@ -31,7 +31,11 @@ import {
 } from "./output/earn";
 import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from "./wallet/models";
 import { APP_NAME } from "./session/session-store";
-import type { SessionEntry } from "./session/session-store";
+import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
+import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
+import type { SendIntentSummary } from "./agent-intent/send-intent";
+import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
+import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 import type {
   EarnDepositResult,
@@ -106,6 +110,15 @@ export interface CommandOutput {
 
   /** Stream one discovered account (human: print immediately; json: buffer). */
   discoveredAccount(d: DiscoveredAccount): void;
+  /**
+   * Reconcile the labels printed/buffered during the scan with the authoritative ones assigned by
+   * the locked merge in `account discover` — a concurrent write during the (potentially long) device
+   * scan can shift what label a descriptor ends up with. `labels[i]` is the final label for the i-th
+   * account streamed via `discoveredAccount`, in that same order. Human: prints a correction notice
+   * for any label that changed. Json: patches the buffered accounts in place. Call before
+   * `flushDiscovery`.
+   */
+  reconcileDiscoveredLabels(labels: readonly string[]): void;
   /** Signal end of discovery stream. Json: flush buffered accounts as envelope. Human: noop. */
   flushDiscovery(): void;
   /** Note that N new accounts were persisted to session (human: dim footer; json: noop). */
@@ -209,6 +222,74 @@ export interface CommandOutput {
   ringEncrypt(result: { dest: string; bytes: number }): void;
   /** Output decrypt-to-file result (human: ✔ line; json: envelope with output path). */
   ringDecrypt(result: { dest: string }): void;
+
+  // ---- Agent Intent ----
+
+  /** Output agent-intent profiles (human: table or empty message; json: envelope with `profiles`). */
+  agentIntentProfiles(profiles: readonly AgentIntentProfileMeta[]): void;
+  /** Output one agent-intent profile's detail (human: labeled lines; json: envelope). Never includes
+   * the profile's secret key (not part of AgentIntentProfileMeta). */
+  agentIntentProfileShow(profile: AgentIntentProfileMeta): void;
+  /** First `agent-intent enroll` event, before blocking on the relay (human: URL + fingerprint;
+   * json: NDJSON `enrollment-pending` event). Never includes the secret key. */
+  agentIntentEnrollmentPending(result: AgentIntentEnrollmentPending): void;
+  /** Final `agent-intent enroll` result once the relayed completion is verified and saved. */
+  agentIntentEnrolled(result: AgentIntentEnrolled): void;
+  /** First `agent-intent recover` event, before blocking on the relay (json: NDJSON
+   * `recovery-pending` event). Never includes the secret key. */
+  agentIntentRecoveryPending(result: AgentIntentRecoveryPending): void;
+  /** Final `agent-intent recover` result once the relayed completion is verified and saved. */
+  agentIntentRecovered(result: AgentIntentRecovered): void;
+
+  /** `agent-intent sync` report (human: grouped lines; json: envelope with the four
+   * imported/unchanged/skipped/invalid arrays). */
+  agentIntentSync(report: LedgerSyncImportReport): void;
+  /** Output a submitted `agent-intent send` proposal (human: review link first; json: envelope). */
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void;
+  /** Output a validated `agent-intent send --dry-run` proposal that was not submitted. */
+  agentIntentSendDryRun(summary: SendIntentSummary): void;
+}
+
+export type AgentIntentEnrollmentPending = {
+  profileId: string;
+  enrollmentUrl: string;
+  fingerprint: string;
+  expiresAt: string;
+};
+
+export type AgentIntentRecoveryPending = {
+  profileId: string;
+  recoveryUrl: string;
+  fingerprint: string;
+  expiresAt: string;
+};
+
+export type AgentIntentRecovered = {
+  profileId: string;
+  trustchainId: string;
+};
+
+export type AgentIntentEnrolled = {
+  profileId: string;
+  trustchainId: string;
+  accountAccessEnvironment: string;
+};
+
+function formatAccountAccess(profile: AgentIntentProfileMeta): string {
+  const access = profile.accountAccess;
+  return access ? `${access.environment} ${access.applicationPath}` : "-";
+}
+
+function redactProfileUrls(profile: AgentIntentProfileMeta): AgentIntentProfileMeta {
+  return {
+    ...profile,
+    bffBaseUrl: redactUrlCredentials(profile.bffBaseUrl),
+    ...(profile.keycloakBaseUrl === undefined
+      ? {}
+      : { keycloakBaseUrl: redactUrlCredentials(profile.keycloakBaseUrl) }),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -217,6 +298,9 @@ export interface CommandOutput {
 
 class HumanCommandOutput implements CommandOutput {
   private _activeSpin: Spinner | null = null;
+  // Labels as printed live during the scan, in stream order — kept only to diff against the
+  // authoritative labels `reconcileDiscoveredLabels` receives after the locked merge.
+  private readonly _discoveredLabels: string[] = [];
 
   constructor(private readonly _fmt: HumanFormatter) {}
 
@@ -325,7 +409,22 @@ class HumanCommandOutput implements CommandOutput {
 
   discoveredAccount(d: DiscoveredAccount): void {
     this._activeSpin?.clear();
+    this._discoveredLabels.push(d.label);
     writeStdout(this._fmt.formatDiscoveredAccount(d));
+  }
+
+  reconcileDiscoveredLabels(labels: readonly string[]): void {
+    const corrections = labels
+      .map((label, i) => [this._discoveredLabels[i], label] as const)
+      .filter(([printed, final]) => printed !== undefined && printed !== final);
+    if (corrections.length === 0) return;
+    writeStdout(
+      colors.dim(
+        corrections
+          .map(([printed, final]) => `  label corrected: ${printed} -> ${final}`)
+          .join("\n"),
+      ),
+    );
   }
 
   flushDiscovery(): void {
@@ -622,6 +721,194 @@ class HumanCommandOutput implements CommandOutput {
   ringDecrypt({ dest }: { dest: string }): void {
     writeStdout(`${colors.green("✔")} Written to ${dest}`);
   }
+
+  agentIntentProfiles(profiles: readonly AgentIntentProfileMeta[]): void {
+    if (profiles.length === 0) {
+      writeStdout(colors.dim("No Agent Intent profiles. Run `agent-intent enroll` first."));
+      return;
+    }
+    const w = Math.max(7, ...profiles.map(p => p.profileId.length));
+    writeStdout(
+      `${colors.bold("PROFILE".padEnd(w))}  ${colors.bold("NAME")}  ${colors.bold("SOURCE")}  ` +
+        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("ACCOUNT ACCESS")}`,
+    );
+    for (const p of profiles) {
+      writeStdout(
+        `${p.profileId.padEnd(w)}  ${p.displayName}  ${p.source}  ${p.environment}  ` +
+          `${agentIntentProfileStatus(p)}  ${formatAccountAccess(p)}`,
+      );
+    }
+  }
+
+  agentIntentProfileShow(profile: AgentIntentProfileMeta): void {
+    const labels = [
+      "Profile",
+      "Name",
+      "Description",
+      "Source",
+      "Environment",
+      "Status",
+      "Public key",
+      "Fingerprint",
+      "BFF URL",
+      "Keycloak URL",
+      "Trustchain ID",
+      "Account access",
+      "Created",
+    ];
+    const labelWidth = Math.max(...labels.map(l => l.length)) + 1; // +1 for the trailing ":"
+    const line = (label: string, value: string): string =>
+      `${(label + ":").padEnd(labelWidth)} ${value}`;
+    writeStdout(
+      [
+        line("Profile", profile.profileId),
+        line("Name", profile.displayName),
+        line("Description", profile.description),
+        line("Source", profile.source),
+        line("Environment", profile.environment),
+        line("Status", agentIntentProfileStatus(profile)),
+        line("Public key", profile.publicKey),
+        line("Fingerprint", formatAgentPublicKeyFingerprint(profile.publicKey)),
+        line("BFF URL", redactUrlCredentials(profile.bffBaseUrl)),
+        ...(profile.keycloakBaseUrl === undefined
+          ? []
+          : [line("Keycloak URL", redactUrlCredentials(profile.keycloakBaseUrl))]),
+        ...(profile.trustchainId === undefined
+          ? []
+          : [line("Trustchain ID", profile.trustchainId)]),
+        ...(profile.accountAccess === undefined
+          ? []
+          : [line("Account access", formatAccountAccess(profile))]),
+        line("Created", profile.createdAt),
+      ].join("\n"),
+    );
+  }
+
+  agentIntentEnrollmentPending({
+    profileId,
+    enrollmentUrl,
+    fingerprint,
+    expiresAt,
+  }: AgentIntentEnrollmentPending): void {
+    this._agentIntentLinkPending(
+      enrollmentUrl,
+      fingerprint,
+      "Compare this fingerprint with the one shown when the enrollment link is opened, before " +
+        "approving — this step never touches a Ledger device.",
+      `Profile "${profileId}" saved as pending. Waiting for approval until ${expiresAt} — keep ` +
+        "this process running.",
+    );
+  }
+
+  agentIntentRecoveryPending({
+    profileId,
+    recoveryUrl,
+    fingerprint,
+    expiresAt,
+  }: AgentIntentRecoveryPending): void {
+    this._agentIntentLinkPending(
+      recoveryUrl,
+      fingerprint,
+      "Compare this fingerprint with the one shown when the recovery link is opened, before " +
+        "approving.",
+      `Profile "${profileId}" keeps its existing key and Ledger Sync access while recovering. ` +
+        `Waiting for approval until ${expiresAt} — keep this process running.`,
+    );
+  }
+
+  private _agentIntentLinkPending(
+    url: string,
+    fingerprint: string,
+    compareHint: string,
+    waitingHint: string,
+  ): void {
+    writeStdout(url);
+    writeStdout("");
+    writeStdout(`Public key fingerprint: ${fingerprint}`);
+    writeStdout(colors.dim(compareHint));
+    writeStdout(colors.dim(waitingHint));
+  }
+
+  agentIntentRecovered({ profileId, trustchainId }: AgentIntentRecovered): void {
+    writeStdout(
+      `${colors.green("✔")} Agent Intent profile "${profileId}" recovered. Trustchain ID: ` +
+        `${trustchainId} (existing Ledger Sync access preserved)`,
+    );
+  }
+
+  agentIntentEnrolled({
+    profileId,
+    trustchainId,
+    accountAccessEnvironment,
+  }: AgentIntentEnrolled): void {
+    writeStdout(
+      `${colors.green("✔")} Agent Intent profile "${profileId}" enrolled. Trustchain ID: ` +
+        `${trustchainId} (account access: ${accountAccessEnvironment})`,
+    );
+  }
+
+  agentIntentSync({ imported, unchanged, skipped, invalid }: LedgerSyncImportReport): void {
+    if (imported.length + unchanged.length + skipped.length + invalid.length === 0) {
+      writeStdout(colors.dim("Up to date. Nothing to import."));
+      return;
+    }
+    if (imported.length > 0) {
+      writeStdout(colors.bold(`Imported (${imported.length}):`));
+      for (const e of imported) writeStdout(`  ${e.label}  ${colors.dim(e.network)}`);
+    }
+    if (unchanged.length > 0) {
+      writeStdout(
+        colors.dim(`Unchanged (${unchanged.length}): ${unchanged.map(e => e.label).join(", ")}`),
+      );
+    }
+    if (skipped.length > 0) {
+      writeStdout(colors.bold(`Skipped (${skipped.length}, unsupported):`));
+      for (const e of skipped) writeStdout(`  ${e.id}: ${e.reason}`);
+    }
+    if (invalid.length > 0) {
+      writeStdout(colors.bold(`Invalid (${invalid.length}):`));
+      for (const e of invalid) writeStdout(`  ${e.id}: ${e.reason}`);
+    }
+  }
+
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
+    writeStdout(
+      `${colors.green("✔")} Intent proposed for human review — no transaction was signed or broadcast.`,
+    );
+    if (result.deeplink) writeStdout(result.deeplink);
+    writeStdout("");
+    writeStdout(
+      [
+        ...(result.intentId ? [`Intent:  ${result.intentId}`] : []),
+        ...sendIntentSummaryLines(result),
+      ].join("\n"),
+    );
+    writeStdout(
+      colors.dim("Open the link to review it; it only executes once approved on a Ledger device."),
+    );
+  }
+
+  agentIntentSendDryRun(summary: SendIntentSummary): void {
+    writeStdout(`Dry run — intent validated, nothing was submitted.`);
+    writeStdout(sendIntentSummaryLines(summary).join("\n"));
+  }
+}
+
+function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
+  const asset =
+    summary.asset.type === "native"
+      ? summary.asset.ticker
+      : `${summary.asset.ticker} (${summary.asset.contract})`;
+  return [
+    `Profile: ${summary.profileId} (${summary.environment})`,
+    `From:    ${summary.sender}`,
+    `To:      ${summary.recipient}`,
+    `Amount:  ${summary.displayAmount} ${asset}`,
+    `Fee:     ${summary.feeStrategy}`,
+    ...(summary.description ? [`Note:    ${summary.description}`] : []),
+  ];
 }
 
 // ---------------------------------------------------------------------------
@@ -760,6 +1047,13 @@ class JsonCommandOutput implements CommandOutput {
 
   discoveredAccount(d: DiscoveredAccount): void {
     this._discoveredAccounts.push(d);
+  }
+
+  reconcileDiscoveredLabels(labels: readonly string[]): void {
+    labels.forEach((label, i) => {
+      const account = this._discoveredAccounts[i];
+      if (account) account.label = label;
+    });
   }
 
   flushDiscovery(): void {
@@ -954,6 +1248,98 @@ class JsonCommandOutput implements CommandOutput {
   ringDecrypt({ dest }: { dest: string }): void {
     this._writeNdjson(this._envelope({ output: dest }));
   }
+
+  agentIntentProfiles(profiles: readonly AgentIntentProfileMeta[]): void {
+    this._writeNdjson(
+      this._envelope({
+        profiles: profiles.map(p => ({
+          ...redactProfileUrls(p),
+          // `profileStatus`, not `status` — the envelope already uses `status` for success/error.
+          profileStatus: agentIntentProfileStatus(p),
+        })),
+      }),
+    );
+  }
+
+  agentIntentProfileShow(profile: AgentIntentProfileMeta): void {
+    // Nested under `profile`, matching `agentIntentProfiles`'s `profiles` — spreading the profile's
+    // own fields into the envelope (as this used to) would silently collide with envelope fields of
+    // the same name (`makeEnvelope` applies `...data` after `status`/`account`/etc., so a future
+    // profile field named e.g. `account` would overwrite it without warning).
+    this._writeNdjson(
+      this._envelope({
+        profile: {
+          ...redactProfileUrls(profile),
+          profileStatus: agentIntentProfileStatus(profile),
+          fingerprint: formatAgentPublicKeyFingerprint(profile.publicKey),
+        },
+      }),
+    );
+  }
+
+  agentIntentEnrollmentPending(result: AgentIntentEnrollmentPending): void {
+    this._writeNdjson({
+      type: "enrollment-pending",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...result,
+    });
+  }
+
+  agentIntentEnrolled(result: AgentIntentEnrolled): void {
+    this._writeNdjson(this._envelope({ ...result, enrolled: true }));
+  }
+
+  agentIntentRecoveryPending(result: AgentIntentRecoveryPending): void {
+    this._writeNdjson({
+      type: "recovery-pending",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...result,
+    });
+  }
+
+  agentIntentRecovered(result: AgentIntentRecovered): void {
+    this._writeNdjson(this._envelope({ ...result, recovered: true }));
+  }
+
+  agentIntentSync(report: LedgerSyncImportReport): void {
+    this._writeNdjson(this._envelope({ ...report }));
+  }
+
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
+    this._writeNdjson(
+      this._envelope({
+        intentId: result.intentId,
+        deeplink: result.deeplink,
+        ...sendIntentSummaryJson(result),
+        submitted: true,
+      }),
+    );
+  }
+
+  agentIntentSendDryRun(summary: SendIntentSummary): void {
+    this._writeNdjson(
+      this._envelope({ ...sendIntentSummaryJson(summary), submitted: false, dryRun: true }),
+    );
+  }
+}
+
+/** `amount` stays a base-unit decimal string: a JSON number would lose precision past 2^53. */
+function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unknown> {
+  return {
+    profileId: summary.profileId,
+    environment: summary.environment,
+    sender: summary.sender,
+    recipient: summary.recipient,
+    asset: summary.asset,
+    amount: summary.amount,
+    displayAmount: summary.displayAmount,
+    feeStrategy: summary.feeStrategy,
+    ...(summary.description ? { description: summary.description } : {}),
+  };
 }
 
 // ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-import { ipcRenderer, IpcRendererEvent } from "electron";
+import { ipcRenderer, type IpcRendererEvent } from "electron";
 import React, { Component } from "react";
 
 export type UpdateStatus =

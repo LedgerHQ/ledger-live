@@ -3,19 +3,17 @@ import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { u8aConcat } from "@polkadot/util";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
 import { createRegistryAndExtrinsics } from "../network/common";
 import {
   fixtureChainSpec,
   fixtureTransactionParams,
   fixtureTxMaterialWithMetadata,
 } from "../network/sidecar.fixture";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import type { PolkadotOperationMode, PolkadotSigner, PolkadotOperationExtra } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import buildSignOperation from "./signOperation";
 
-jest.mock("../config");
-const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
 const mockRegistry = jest
   .fn()
   .mockResolvedValue(createRegistryAndExtrinsics(fixtureTxMaterialWithMetadata, fixtureChainSpec));
@@ -58,25 +56,8 @@ describe("signOperation", () => {
   };
   const signerContext = <T>(_deviceId: string, fn: (signer: PolkadotSigner) => Promise<T>) =>
     fn(fakeSigner);
-  const signOperation = buildSignOperation(signerContext);
+  const signOperation = buildSignOperation(signerContext, createMockPolkadotContext());
   const deviceId = "dummyDeviceId";
-
-  beforeAll(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return {
-        status: {
-          type: "active",
-        },
-        sidecar: {
-          url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-          credentials: "",
-        },
-        staking: {
-          electionStatusThreshold: 25,
-        },
-      };
-    });
-  });
 
   beforeEach(() => {
     getMetadataMock.mockResolvedValue({

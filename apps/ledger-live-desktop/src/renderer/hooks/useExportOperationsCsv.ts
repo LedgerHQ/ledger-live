@@ -1,8 +1,9 @@
 import { ipcRenderer } from "electron";
+import { showSaveDialog } from "~/renderer/dialog";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { getEnv } from "@shared/env";
 import { useSelector } from "LLD/hooks/redux";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
 import type { Account } from "@ledgerhq/types-live";
@@ -75,7 +76,7 @@ export function useExportOperationsCsv({
             // test id) to keep parallel runs from racing on the same CSV file.
             filePath: process.env.PLAYWRIGHT_EXPORT_CSV_PATH || "./ledgerwallet-operations.csv",
           }
-        : await ipcRenderer.invoke("show-save-dialog", {
+        : await showSaveDialog({
             title: "Exported account transactions",
             defaultPath: `ledgerwallet-operations-${getDateTxt()}.csv`,
             filters: [{ name: "All Files", extensions: ["csv"] }],

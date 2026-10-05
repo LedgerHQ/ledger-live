@@ -1,13 +1,13 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
 import { createRegistryAndExtrinsics } from "../network/common";
 import {
   fixtureChainSpec,
   fixtureTransactionParams,
   fixtureTxMaterialWithMetadata,
 } from "../network/sidecar.fixture";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getEstimatedFees from "./getFeesForTransaction";
 
@@ -23,27 +23,9 @@ jest.mock("../network/sidecar", () => ({
   getTransactionParams: () => mockTransactionParams(),
 }));
 
-jest.mock("../config");
-const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
-
 describe("getEstimatedFees", () => {
   const transaction = createFixtureTransaction();
-  beforeAll(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return {
-        status: {
-          type: "active",
-        },
-        sidecar: {
-          url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-          credentials: "",
-        },
-        staking: {
-          electionStatusThreshold: 25,
-        },
-      };
-    });
-  });
+  const context = createMockPolkadotContext();
 
   beforeEach(() => {
     mockPaymentInfo.mockClear();
@@ -61,7 +43,7 @@ describe("getEstimatedFees", () => {
     });
 
     // When
-    const result = await getEstimatedFees({
+    const result = await getEstimatedFees(context, {
       account,
       transaction,
     });

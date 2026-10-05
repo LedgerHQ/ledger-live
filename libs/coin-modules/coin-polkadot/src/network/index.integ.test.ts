@@ -1,6 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import coinConfig from "../config";
 import polkadotAPI from "./index";
+
+const logger = jest.fn();
+const stakingActiveStatus = {
+  type: "active" as const,
+  features: [{ id: "staking_txs" as const, status: "active" as const }],
+};
 
 const CURRENCY_CONFIGS = {
   polkadot: {
@@ -18,7 +23,7 @@ const CURRENCY_CONFIGS = {
   assethub_polkadot: {
     currency: getCryptoCurrencyById("assethub_polkadot"),
     config: {
-      status: { type: "active" as const },
+      status: stakingActiveStatus,
       name: "Polkadot",
       unit: { name: "DOT", code: "DOT", magnitude: 10 },
       sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1" },
@@ -38,12 +43,8 @@ const CURRENCY_CONFIGS = {
 describe.each(Object.entries(CURRENCY_CONFIGS))("network/index on-demand (%s)", (_, entry) => {
   const { currency, config } = entry;
 
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => config);
-  });
-
   it("getValidators('all') returns validators", async () => {
-    const validators = await polkadotAPI.getValidators("all", currency);
+    const validators = await polkadotAPI.getValidators(config, "all", currency);
     expect(validators.length).toBeGreaterThan(0);
     expect(validators[0]).toMatchObject({
       address: expect.any(String),
@@ -54,23 +55,26 @@ describe.each(Object.entries(CURRENCY_CONFIGS))("network/index on-demand (%s)", 
 
   it("caches per currency, order-independently for stash lists", async () => {
     const [first, second] = await Promise.all([
-      polkadotAPI.getValidators("all", currency),
-      polkadotAPI.getValidators("all", currency),
+      polkadotAPI.getValidators(config, "all", currency),
+      polkadotAPI.getValidators(config, "all", currency),
     ]);
     expect(second).toBe(first);
 
     const stashes = [first[1].address, first[0].address];
-    const byList = await polkadotAPI.getValidators(stashes, currency);
-    const byReversedList = await polkadotAPI.getValidators([...stashes].reverse(), currency);
+    const byList = await polkadotAPI.getValidators(config, stashes, currency);
+    const byReversedList = await polkadotAPI.getValidators(
+      config,
+      [...stashes].reverse(),
+      currency,
+    );
     expect(byReversedList).toBe(byList);
   }, 60000);
 
   it("getStakingProgress and getMinimumBondBalance resolve", async () => {
-    const currencyConfig = coinConfig.getCoinConfig(currency.id);
-    const staking = await polkadotAPI.getStakingProgress(currencyConfig, currency);
+    const staking = await polkadotAPI.getStakingProgress(logger, config, currency);
     expect(typeof staking.activeEra).toBe("number");
     expect(typeof staking.electionClosed).toBe("boolean");
-    const minimumBondBalance = await polkadotAPI.getMinimumBondBalance(currencyConfig, currency);
+    const minimumBondBalance = await polkadotAPI.getMinimumBondBalance(config, currency);
 
     // Staking lives on Asset Hub since the migration, so the relay chain reports
     // neither an active era nor a minimum bond — only assethub_* carries them.

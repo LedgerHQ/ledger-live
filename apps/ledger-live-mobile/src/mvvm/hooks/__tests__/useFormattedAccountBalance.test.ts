@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react-native";
 import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
 import { useSelector } from "~/context/hooks";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { useCalculate } from "@features/platform-market-countervalues";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { discreetModeSelector } from "~/reducers/settings";
 import type { Account } from "@ledgerhq/types-live";
@@ -15,7 +15,7 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 jest.mock("~/context/hooks");
 jest.mock("@ledgerhq/live-common/currencies/index");
 jest.mock("@ledgerhq/live-common/account/index");
-jest.mock("@ledgerhq/live-countervalues-react");
+jest.mock("@features/platform-market-countervalues");
 jest.mock("LLM/hooks/useAccountUnit");
 jest.mock("~/reducers/settings", () => ({
   counterValueCurrencySelector: jest.fn(),

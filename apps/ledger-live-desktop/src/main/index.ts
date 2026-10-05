@@ -242,7 +242,6 @@ ipcMain.once("app-relaunch", () => {
   app.quit();
 });
 
-ipcMain.handle("show-open-dialog", (_, opts) => dialog.showOpenDialog(opts));
 ipcMain.handle("show-save-dialog", (_, opts) => dialog.showSaveDialog(opts));
 
 ipcMain.on("deep-linking", (_, l) => {

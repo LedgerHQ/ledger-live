@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useSideBarViewModel } from "../useSideBarViewModel";
 import { SIDEBAR_VALUE_TO_PATH, SIDEBAR_VALUE_TO_TRACK_ENTRY } from "../utils/constants";
 import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
-import * as segment from "@shared/analytics";
+import * as analytics from "@shared/analytics";
 import type { SideBarViewModel } from "../types";
 import { defaultInitialState, withFeatureFlags } from "./testUtils";
 import { isSideBarNavValue } from "../utils";
@@ -115,7 +115,7 @@ describe("useSideBarViewModel", () => {
 
   describe("navigation handlers", () => {
     it("should navigate to /accounts via handleClickAccounts when asset section is off", () => {
-      const trackSpy = jest.spyOn(segment, "track");
+      const trackSpy = jest.spyOn(analytics, "track");
       const { result } = renderViewModel();
 
       act(() => {
@@ -133,7 +133,7 @@ describe("useSideBarViewModel", () => {
     });
 
     it("should navigate to /cryptos via handleClickAccounts when asset section is on", () => {
-      const trackSpy = jest.spyOn(segment, "track");
+      const trackSpy = jest.spyOn(analytics, "track");
       const { result } = renderViewModel(
         withFeatureFlags({
           lwdWallet40: { enabled: true, params: { assetSection: true } },
@@ -157,7 +157,7 @@ describe("useSideBarViewModel", () => {
     it.each(NAV_HANDLER_CASES)(
       "should navigate to $path and track '$trackEntry' via $handler",
       ({ handler, path, trackEntry }) => {
-        const trackSpy = jest.spyOn(segment, "track");
+        const trackSpy = jest.spyOn(analytics, "track");
         const { result } = renderViewModel();
 
         act(() => {
@@ -211,7 +211,7 @@ describe("useSideBarViewModel", () => {
 
   describe("handleClickRecover", () => {
     it("should open modal and track when enabled without openRecoverFromSidebar", () => {
-      const trackSpy = jest.spyOn(segment, "track");
+      const trackSpy = jest.spyOn(analytics, "track");
       const { result } = renderViewModel(
         withFeatureFlags({ protectServicesDesktop: { enabled: true } }),
       );
@@ -228,7 +228,7 @@ describe("useSideBarViewModel", () => {
     });
 
     it("should track menuentry_clicked for recover when feature is not enabled", () => {
-      const trackSpy = jest.spyOn(segment, "track");
+      const trackSpy = jest.spyOn(analytics, "track");
       const { result } = renderViewModel();
 
       act(() => result.current.handleClickRecover());
@@ -245,7 +245,7 @@ describe("useSideBarViewModel", () => {
 
   describe("handleActiveChange", () => {
     it('should navigate to /accounts for value "accounts" when asset section is off', () => {
-      const trackSpy = jest.spyOn(segment, "track");
+      const trackSpy = jest.spyOn(analytics, "track");
       const { result } = renderViewModel();
 
       act(() => result.current.handleActiveChange("accounts"));
@@ -261,7 +261,7 @@ describe("useSideBarViewModel", () => {
     });
 
     it('should navigate to /cryptos for value "accounts" when asset section is on', () => {
-      const trackSpy = jest.spyOn(segment, "track");
+      const trackSpy = jest.spyOn(analytics, "track");
       const { result } = renderViewModel(
         withFeatureFlags({
           lwdWallet40: { enabled: true, params: { assetSection: true } },
@@ -283,7 +283,7 @@ describe("useSideBarViewModel", () => {
     it.each(ACTIVE_CHANGE_NAV_CASES)(
       'should navigate to $path and track "$trackEntry" for value "$value"',
       ({ value, path, trackEntry }) => {
-        const trackSpy = jest.spyOn(segment, "track");
+        const trackSpy = jest.spyOn(analytics, "track");
         const { result } = renderViewModel();
 
         act(() => result.current.handleActiveChange(value));
@@ -312,7 +312,7 @@ describe("useSideBarViewModel", () => {
     });
 
     it("should delegate to handleClickRecover for 'recover'", () => {
-      const trackSpy = jest.spyOn(segment, "track");
+      const trackSpy = jest.spyOn(analytics, "track");
       const { result } = renderViewModel(
         withFeatureFlags({ protectServicesDesktop: { enabled: true } }),
       );

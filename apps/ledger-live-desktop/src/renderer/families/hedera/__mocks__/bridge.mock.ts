@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { ReplaySubject, Subject } from "rxjs";
 import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import { makeHederaTransaction } from "./transaction.mock";
 import { mockBroadcastedOperation } from "./signedOperation.mock";
 
@@ -21,10 +21,14 @@ export const mockDevice = { modelId: "stax", deviceId: "test-device-id", wired: 
 export const mockAppState = { device: mockDevice, opened: true, isLocked: false };
 
 export const mockAccountBridge = {
-  createTransaction: (): Transaction => makeHederaTransaction(),
-  updateTransaction: (tx: Transaction, patch: Partial<Transaction>): Transaction =>
-    ({ ...tx, ...patch }) as Transaction,
-  prepareTransaction: jest.fn(async (_account: unknown, transaction: Transaction) => transaction),
+  createTransaction: (): HederaGenericTransaction => makeHederaTransaction(),
+  updateTransaction: (
+    tx: HederaGenericTransaction,
+    patch: Partial<HederaGenericTransaction>,
+  ): HederaGenericTransaction => ({ ...tx, ...patch }),
+  prepareTransaction: jest.fn(
+    async (_account: unknown, transaction: HederaGenericTransaction) => transaction,
+  ),
   getTransactionStatus: jest.fn(async () => ({
     errors: {},
     warnings: {},
@@ -33,7 +37,9 @@ export const mockAccountBridge = {
     totalSpent: new BigNumber(1_100_000),
   })),
   sync: () => subjectRefs.sync.asObservable(),
-  signOperation: () => subjectRefs.sign.asObservable(),
+  signOperation: jest.fn((_args: { transaction: HederaGenericTransaction }) =>
+    subjectRefs.sign.asObservable(),
+  ),
   broadcast: async () => mockBroadcastedOperation,
   estimateMaxSpendable: async () => new BigNumber(100_000_000),
   // Hedera has no stuck-transaction (RBF) concept; mirror defaultBridgeExtensions behaviour.
@@ -43,6 +49,7 @@ export const mockAccountBridge = {
 // Convenience aliases for tests that want to assert on or override these.
 export const prepareTransactionSpy = mockAccountBridge.prepareTransaction;
 export const getTransactionStatusSpy = mockAccountBridge.getTransactionStatus;
+export const signOperationSpy = mockAccountBridge.signOperation;
 
 // React's use() fast-path reads .status/.value directly off an already-tracked thenable,
 // which is what Body.tsx's useAccountBridge() relies on (see bridge/useAccountBridge.ts).

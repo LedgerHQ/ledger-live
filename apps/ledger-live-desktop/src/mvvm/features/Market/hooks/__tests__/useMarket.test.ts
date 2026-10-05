@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useSupportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useMarket } from "../useMarket";
 import { addStarredMarketCoins } from "~/renderer/actions/settings";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -14,7 +14,10 @@ import { track } from "@shared/analytics";
 
 jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
 jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider");
-jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate");
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
+  useUsdToFiatRate: jest.fn(),
+}));
 
 const mockedUseMarketData = jest.mocked(useMarketData);
 const mockedUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);

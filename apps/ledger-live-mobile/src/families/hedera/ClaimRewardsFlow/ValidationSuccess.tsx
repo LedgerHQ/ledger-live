@@ -1,12 +1,11 @@
 import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
-import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { isStakingTransaction } from "@ledgerhq/live-common/families/hedera/utils";
+import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import ValidateSuccess from "~/components/ValidateSuccess";
 import { ScreenName } from "~/const";
@@ -30,11 +29,12 @@ type Props = BaseComposite<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
+  const [currentValidatorNodeId] = useState(() => {
+    const hederaAccount =
+      account && "hederaResources" in account ? (account as HederaAccount) : null;
+    return hederaAccount?.hederaResources?.delegation?.nodeId ?? null;
+  });
 
-  const transaction = route.params.transaction;
-  invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
-
-  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
   const source = route.params.source?.name ?? "unknown";
   const delegation = getTrackingDelegationType({ type: route.params.result.type });
   const { ticker } = getAccountCurrency(account);
@@ -47,12 +47,12 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     if (delegation)
       track("claim_rewards_completed", {
         currency: ticker,
-        validator: selectedValidatorNodeId,
+        validator: currentValidatorNodeId,
         source,
         delegation,
         flow: "stake",
       });
-  }, [source, selectedValidatorNodeId, delegation, ticker]);
+  }, [source, currentValidatorNodeId, delegation, ticker]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

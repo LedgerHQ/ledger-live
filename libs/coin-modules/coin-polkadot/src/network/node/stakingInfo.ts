@@ -1,5 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { IUnlocking, SidecarStakingInfo } from "../types";
+import { type PolkadotCoinConfig } from "../../config";
 import getApiPromise from "./apiPromise";
 
 // Required to leverage PolkadotJS *type augmentation*
@@ -15,10 +16,11 @@ import "@polkadot/api-augment";
  * @returns {SidecarStakingInfo}
  */
 export const fetchStakingInfo = async (
+  config: PolkadotCoinConfig,
   addr: string,
   currency?: CryptoCurrency,
 ): Promise<SidecarStakingInfo> => {
-  const api = await getApiPromise(currency);
+  const api = await getApiPromise(config);
   const hash = await api.rpc.chain.getFinalizedHead();
   const historicApi = await api.at(hash);
 

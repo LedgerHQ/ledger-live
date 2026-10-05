@@ -8,11 +8,12 @@ import {
   POLLING_FINISHED_DELAY_MS,
   type WalletSyncUserState,
 } from "../useSyncSources";
-import * as countervaluesReact from "@ledgerhq/live-countervalues-react";
+import * as countervaluesReact from "@features/platform-market-countervalues";
 import * as context from "../context";
 import * as globalSyncStateModule from "../useGlobalSyncState";
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCountervaluesPolling: jest.fn(),
 }));
 

@@ -1,5 +1,5 @@
 import { TypeRegistry } from "@polkadot/types";
-import coinConfig from "../config";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { buildTransaction } from "./buildTransaction";
 
@@ -25,27 +25,10 @@ jest.mock("../network", () => {
   };
 });
 
-jest.mock("../config");
-const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
+const context = createMockPolkadotContext();
 
 describe("buildTransaction", () => {
   let spyRegistry: jest.SpyInstance | undefined;
-  beforeAll(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return {
-        status: {
-          type: "active",
-        },
-        sidecar: {
-          url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-          credentials: "",
-        },
-        staking: {
-          electionStatusThreshold: 25,
-        },
-      };
-    });
-  });
 
   afterEach(() => {
     mockExtrinsics.mockClear();
@@ -78,7 +61,7 @@ describe("buildTransaction", () => {
     });
 
     // WHEN
-    const result = await buildTransaction(account, transaction);
+    const result = await buildTransaction(context, account, transaction);
 
     // THEN
     expect(spyRegistry).toHaveBeenCalledTimes(3);
@@ -134,7 +117,7 @@ describe("buildTransaction", () => {
     });
 
     // WHEN
-    const result = await buildTransaction(account, transaction);
+    const result = await buildTransaction(context, account, transaction);
 
     // THEN
     expect(mockNominate).toHaveBeenCalledTimes(1);
@@ -162,7 +145,7 @@ describe("buildTransaction", () => {
     });
 
     // WHEN
-    const result = await buildTransaction(account, transaction);
+    const result = await buildTransaction(context, account, transaction);
 
     // THEN
     expect(mockChill).toHaveBeenCalledTimes(1);
@@ -192,7 +175,7 @@ describe("buildTransaction", () => {
     });
 
     // WHEN
-    const result = await buildTransaction(account, transaction);
+    const result = await buildTransaction(context, account, transaction);
 
     // THEN
     expect(mockPayoutStakers).toHaveBeenCalledTimes(1);

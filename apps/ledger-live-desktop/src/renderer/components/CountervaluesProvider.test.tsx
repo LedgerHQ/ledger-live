@@ -1,10 +1,10 @@
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesPolling } from "@features/platform-market-countervalues";
 import React, { type ReactNode } from "react";
 import { render } from "tests/testSetup";
 import { CountervaluesBridgedProvider } from "./CountervaluesProvider";
 
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   CountervaluesProvider: ({ children }: { children: ReactNode }) => children,
   useCountervaluesPolling: jest.fn(),
 }));

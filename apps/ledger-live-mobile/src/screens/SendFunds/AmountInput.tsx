@@ -5,7 +5,7 @@ import { useSelector } from "~/context/hooks";
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { useSendAmount } from "@ledgerhq/live-countervalues-react";
+import { useSendAmount } from "@features/platform-market-countervalues";
 import { Trans, useTranslation } from "~/context/Locale";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import LText from "~/components/LText/index";

@@ -21,8 +21,8 @@ jest.mock("LLM/features/ModularDrawer", () => ({
 }));
 
 const mockCalculateCountervalue = jest.fn((_currency: unknown, value: BigNumber) => value);
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
+jest.mock("@features/platform-market-countervalues", () => ({
+  ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculateCountervalueCallback: () => (currency: unknown, value: BigNumber) =>
     mockCalculateCountervalue(currency, value),
   useCountervaluesState: () => ({}),
@@ -190,6 +190,8 @@ describe("usePerpsDepositViewModel", () => {
       expect.objectContaining({
         enableAccountSelection: true,
         uiUseCase: "perpetuals:fund",
+        // Keeps accounts that cannot send (e.g. HyperCore) out of the picker.
+        flow: "perpetuals:fund",
       }),
     );
 

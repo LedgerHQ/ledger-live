@@ -1,9 +1,8 @@
-import { ipcRenderer } from "electron";
+import { downloadJson } from "~/renderer/files";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { readFile, writeFile } from "fs";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
@@ -32,62 +31,33 @@ const RunLocalAppButton = () => {
   const onExportLocalManifest = useCallback(
     (manifest: LiveAppManifest) => {
       const { id, name } = manifest;
-      ipcRenderer
-        .invoke("show-save-dialog", {
-          title: "Export Manifest",
-          defaultPath: `${name}-manifest.json`,
-          buttonLabel: "Export",
-          filters: [{ name: "JSON", extensions: ["json"] }],
-        })
-        .then(function (response) {
-          if (!response.canceled && response.filePath) {
-            const exportedManifest = localLiveApps.find(
-              (manifest: LiveAppManifest) => manifest.id === id,
-            );
-
-            const manifestData = JSON.stringify(exportedManifest, null, 2);
-            try {
-              writeFile(response.filePath, manifestData, "utf-8", () =>
-                console.log("File exported successfully!"),
-              );
-            } catch (parseError) {
-              console.warn(parseError);
-            }
-          }
-        });
+      const exportedManifest = localLiveApps.find((m: LiveAppManifest) => m.id === id);
+      const manifestData = JSON.stringify(exportedManifest, null, 2);
+      downloadJson(`${name}-manifest.json`, manifestData);
     },
     [localLiveApps],
   );
 
-  const onBrowseLocalManifest = useCallback(() => {
-    ipcRenderer
-      .invoke("show-open-dialog", {
-        properties: ["openFile"],
-      })
-      .then(function (response) {
-        if (!response.canceled) {
-          const fileName = response.filePaths[0];
-          readFile(fileName, (readError, data) => {
-            if (!readError) {
-              try {
-                const manifest = JSON.parse(data.toString());
-                if (Array.isArray(manifest)) {
-                  manifest.forEach(m => {
-                    addLocalManifest(m);
-                  });
-                } else {
-                  addLocalManifest(manifest);
-                }
-              } catch (parseError) {
-                console.log(parseError);
-              }
-            }
-          });
+  const manifestInputRef = useRef<HTMLInputElement>(null);
+
+  const onLocalManifestPicked = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = "";
+      if (!file) return;
+      try {
+        const manifest = JSON.parse(await file.text());
+        if (Array.isArray(manifest)) {
+          manifest.forEach(m => addLocalManifest(m));
         } else {
-          console.log("no file selected");
+          addLocalManifest(manifest);
         }
-      });
-  }, [addLocalManifest]);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [addLocalManifest],
+  );
 
   const onOpenModal = useCallback(
     (manifest?: LiveAppManifest) => {
@@ -107,7 +77,15 @@ const RunLocalAppButton = () => {
         desc={t("settings.developer.addLocalAppDesc")}
       >
         <Flex flexDirection={"row"} columnGap={3}>
-          <Button size="sm" appearance="accent" onClick={onBrowseLocalManifest}>
+          <input
+            ref={manifestInputRef}
+            type="file"
+            accept=".json,application/json"
+            hidden
+            onChange={onLocalManifestPicked}
+            data-testid="settings-import-local-manifest-input"
+          />
+          <Button size="sm" appearance="accent" onClick={() => manifestInputRef.current?.click()}>
             {t("settings.developer.addLocalAppButton")}
           </Button>
 

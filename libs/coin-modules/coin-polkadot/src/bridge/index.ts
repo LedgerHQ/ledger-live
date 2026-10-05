@@ -1,4 +1,3 @@
-import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   updateTransaction,
@@ -7,18 +6,18 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import polkadotCoinConfig, { type PolkadotCoinConfig } from "../config";
+import type { PolkadotContext } from "../config";
 import { POLKADOT_NULL_ADDRESS } from "../constants";
 import { validateAddress } from "../logic/validateAddress";
 import signerGetAddress from "../signer";
 import { PolkadotAccount, PolkadotSigner, TransactionStatus, type Transaction } from "../types";
-import { broadcast } from "./broadcast";
+import { buildBroadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
 import { getSerializedAddressParameters } from "./exchange";
 import formatters from "./formatters";
-import { getTransactionStatus } from "./getTransactionStatus";
-import { prepareTransaction } from "./prepareTransaction";
+import { buildGetTransactionStatus } from "./getTransactionStatus";
+import { buildPrepareTransaction } from "./prepareTransaction";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
@@ -26,13 +25,16 @@ import {
   toOperationExtraRaw,
 } from "./serialization";
 import { buildSignOperation } from "./signOperation";
-import { getAccountShape, sync } from "./synchronization";
+import { makeGetAccountShape, makeSyncBridge } from "./synchronization";
 
-function buildCurrencyBridge(signerContext: SignerContext<PolkadotSigner>): CurrencyBridge {
+function buildCurrencyBridge(
+  signerContext: SignerContext<PolkadotSigner>,
+  context: PolkadotContext,
+): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
 
   const scanAccounts = makeScanAccounts({
-    getAccountShape,
+    getAccountShape: makeGetAccountShape(context),
     getAddressFn: getAddressWrapper(getAddress),
   });
 
@@ -43,25 +45,26 @@ function buildCurrencyBridge(signerContext: SignerContext<PolkadotSigner>): Curr
 
 function buildAccountBridge(
   signerContext: SignerContext<PolkadotSigner>,
+  context: PolkadotContext,
 ): AccountBridge<Transaction, PolkadotAccount, TransactionStatus> {
   const getAddress = signerGetAddress(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
-  const signOperation = buildSignOperation(signerContext);
+  const signOperation = buildSignOperation(signerContext, context);
 
   return {
-    estimateMaxSpendable,
+    estimateMaxSpendable: buildEstimateMaxSpendable(context),
     createTransaction,
     updateTransaction,
-    getTransactionStatus,
-    prepareTransaction,
-    sync,
+    getTransactionStatus: buildGetTransactionStatus(context),
+    prepareTransaction: buildPrepareTransaction(context),
+    sync: makeSyncBridge(context),
     receive,
     signOperation,
     signRawOperation: () => {
       throw new Error("signRawOperation is not supported");
     },
-    broadcast,
+    broadcast: buildBroadcast(context),
     assignFromAccountRaw,
     assignToAccountRaw,
     fromOperationExtraRaw,
@@ -76,12 +79,10 @@ function buildAccountBridge(
 
 export function createBridges(
   signerContext: SignerContext<PolkadotSigner>,
-  coinConfig: CoinConfig<PolkadotCoinConfig>,
+  context: PolkadotContext,
 ) {
-  polkadotCoinConfig.setCoinConfig(coinConfig);
-
   return {
-    currencyBridge: buildCurrencyBridge(signerContext),
-    accountBridge: buildAccountBridge(signerContext),
+    currencyBridge: buildCurrencyBridge(signerContext, context),
+    accountBridge: buildAccountBridge(signerContext, context),
   };
 }

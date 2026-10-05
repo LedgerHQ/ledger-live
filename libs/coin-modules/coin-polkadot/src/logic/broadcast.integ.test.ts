@@ -1,27 +1,25 @@
 import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { cryptoWaitReady, encodeAddress, hdLedger, mnemonicGenerate } from "@polkadot/util-crypto";
-import coinConfig from "../config";
+import type { PolkadotCoinConfig } from "../config";
 import { broadcast } from "./broadcast";
 
-describe("Broadcast", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: {
-        url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
-      },
-      sidecar: {
-        url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-      },
-      indexer: {
-        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
-      },
-    }));
-  });
+const config: PolkadotCoinConfig = {
+  status: { type: "active" },
+  name: "Polkadot",
+  unit: { name: "DOT", code: "DOT", magnitude: 10 },
+  node: {
+    url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
+  },
+  sidecar: {
+    url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
+  },
+  indexer: {
+    url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
+  },
+};
 
+describe("Broadcast", () => {
   it("throws on not deployed and empty account", async () => {
     const senderSeed = mnemonicGenerate(24);
     const receiverSeed = mnemonicGenerate(24);
@@ -45,9 +43,7 @@ describe("Broadcast", () => {
         .transferKeepAlive(receiverAddress, 15_000_000_000n)
         .signAsync(signerPair, { nonce: 0 });
 
-      await expect(
-        broadcast(coinConfig.getCoinConfig("polkadot"), signedTx.toHex()),
-      ).rejects.toThrow(/FundsUnavailable/);
+      await expect(broadcast(config, signedTx.toHex())).rejects.toThrow(/FundsUnavailable/);
     } finally {
       await api.disconnect();
     }

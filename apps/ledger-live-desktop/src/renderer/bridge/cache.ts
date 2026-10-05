@@ -3,28 +3,28 @@ import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import logger from "~/renderer/logger";
 export function clearBridgeCache() {
-  Object.keys(global.localStorage)
+  Object.keys(window.localStorage)
     .filter(k => k.startsWith("bridgeproxypreload"))
     .forEach(k => {
-      global.localStorage.removeItem(k);
+      window.localStorage.removeItem(k);
     });
 }
 function currencyCacheId(currency: CryptoCurrency) {
   return `bridgeproxypreload_${currency.id}`;
 }
 export function listCachedCurrencyIds() {
-  return Object.keys(global.localStorage)
+  return Object.keys(window.localStorage)
     .filter(k => k.startsWith("bridgeproxypreload"))
     .map(k => k.replace("bridgeproxypreload_", ""));
 }
 export function setCurrencyCache(currency: CryptoCurrency, data: unknown) {
   if (data) {
     const serialized = JSON.stringify(data);
-    global.localStorage.setItem(currencyCacheId(currency), serialized);
+    window.localStorage.setItem(currencyCacheId(currency), serialized);
   }
 }
 export function getCurrencyCache(currency: CryptoCurrency): unknown {
-  const res = global.localStorage.getItem(currencyCacheId(currency));
+  const res = window.localStorage.getItem(currencyCacheId(currency));
   if (res && res !== "undefined") {
     try {
       return JSON.parse(res);

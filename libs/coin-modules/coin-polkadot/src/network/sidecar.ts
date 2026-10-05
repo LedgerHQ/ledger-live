@@ -1,18 +1,23 @@
-import { makeLRUCache, hours } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
 import { hexToBn } from "@polkadot/util";
-import { log } from "@ledgerhq/logs";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { BigNumber } from "bignumber.js";
 import { type PolkadotCoinConfig } from "../config";
+import {
+  DEFAULT_CHAIN_CONSTANTS_CACHE_TTL_MS,
+  DEFAULT_ELECTION_STATUS_THRESHOLD,
+  DEFAULT_TRANSACTION_MATERIAL_CACHE_TTL_MS,
+} from "../constants";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
   PolkadotUnlocking,
   PolkadotNomination,
 } from "../types";
+import { makeConfigurableLRUCache } from "./cache";
 import { createRegistryAndExtrinsics } from "./common";
 import node from "./node";
 import type {
@@ -61,11 +66,19 @@ const getSidecarUrl = (
 };
 
 const getElectionOptimisticThreshold = (config: PolkadotCoinConfig): number => {
-  return config.staking?.electionStatusThreshold || 25;
+  return config.staking?.electionStatusThreshold ?? DEFAULT_ELECTION_STATUS_THRESHOLD;
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
-const UNSUPPORTED_STAKING_NETWORKS = ["polkadot", "westend"];
+
+const isStakingSupported = (config: PolkadotCoinConfig): boolean => {
+  return (
+    config.status.type === "active" &&
+    (config.status.features ?? []).some(
+      feature => feature.id === "staking_txs" && feature.status === "active",
+    )
+  );
+};
 
 /** Safe default used when staking progress can't be fetched (unsupported network or error). */
 export const DEFAULT_STAKING_PROGRESS: PolkadotStakingProgress = {
@@ -91,6 +104,7 @@ type SidecarPalletConstsResponse = {
 };
 
 async function fetchPalletConsts(
+  logger: Logger,
   config: PolkadotCoinConfig,
   palletId: string,
   currency?: CryptoCurrency,
@@ -109,17 +123,18 @@ async function fetchPalletConsts(
       }
     }
   } catch (e) {
-    log("polkadot/sidecar", `failed to fetch ${palletId} consts, using fallbacks`, { error: e });
+    logger("polkadot/sidecar", `failed to fetch ${palletId} consts, using fallbacks`, { error: e });
   }
   return result;
 }
 
-const getChainConstants = makeLRUCache(
+const getChainConstants = makeConfigurableLRUCache(
   async (
+    logger: Logger,
     config: PolkadotCoinConfig,
     currency: CryptoCurrency | undefined,
   ): Promise<ChainConstants> => {
-    const stakingConsts = await fetchPalletConsts(config, "staking", currency);
+    const stakingConsts = await fetchPalletConsts(logger, config, "staking", currency);
     return {
       expectedBlockTime: DEFAULT_CONSTANTS.expectedBlockTime,
       epochDuration: DEFAULT_CONSTANTS.epochDuration,
@@ -130,8 +145,10 @@ const getChainConstants = makeLRUCache(
       bondingDuration: stakingConsts.get("BondingDuration") ?? DEFAULT_CONSTANTS.bondingDuration,
     };
   },
-  (_config, currency) => currency?.id || "polkadot",
-  hours(1, 1),
+  (_logger, _config, currency) => currency?.id || "polkadot",
+  (_logger, config) =>
+    config.sidecar.chainConstantsCacheTtlMs ?? DEFAULT_CHAIN_CONSTANTS_CACHE_TTL_MS,
+  1,
 );
 
 // blocks = 2 minutes 30
@@ -225,10 +242,11 @@ const fetchControllerAddr = async (
  * @returns {SidecarStakingInfo}
  */
 const fetchStakingInfo = async (
+  config: PolkadotCoinConfig,
   addr: string,
   currency?: CryptoCurrency,
 ): Promise<SidecarStakingInfo> => {
-  return node.fetchStakingInfo(addr, currency);
+  return node.fetchStakingInfo(config, addr, currency);
 };
 
 /**
@@ -283,11 +301,11 @@ export const getMinimumBondBalance = async (
  * @returns {SidecarValidators}
  */
 const fetchValidators = async (
+  config: PolkadotCoinConfig,
   status: SidecarValidatorsParamStatus = "all",
-  currency?: CryptoCurrency,
   addresses?: SidecarValidatorsParamAddresses,
 ): Promise<SidecarValidators> => {
-  return await node.fetchValidators(status, addresses, currency);
+  return await node.fetchValidators(config, status, addresses);
 };
 
 /**
@@ -359,7 +377,7 @@ export const isElectionClosed = async (
   config: PolkadotCoinConfig,
   currency: CryptoCurrency,
 ): Promise<boolean> => {
-  if (UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) return true;
+  if (!isStakingSupported(config)) return true;
 
   const progress = await fetchStakingProgress(config, currency);
   return !progress.electionStatus?.status?.Open;
@@ -408,10 +426,10 @@ export const isControllerAddress = async (
  * @returns {string[]} - addresses that are not validators
  */
 export const verifyValidatorAddresses = async (
+  config: PolkadotCoinConfig,
   validators: string[],
-  currency?: CryptoCurrency,
 ): Promise<string[]> => {
-  const existingValidators = await fetchValidators("all", currency, validators);
+  const existingValidators = await fetchValidators(config, "all", validators);
   const existingIds = existingValidators.map(v => v.accountId);
   return validators.filter(v => !existingIds.includes(v));
 };
@@ -423,13 +441,14 @@ export const verifyValidatorAddresses = async (
  * @param {*} addr
  */
 export const getAccount = async (
+  logger: Logger,
   config: PolkadotCoinConfig,
   addr: string,
   currency: CryptoCurrency,
 ) => {
   const balances = await getBalances(config, addr, currency);
-  const stakingInfo = await getStakingInfo(config, addr, currency);
-  const nominations = await getNominations(addr);
+  const stakingInfo = await getStakingInfo(logger, config, addr, currency);
+  const nominations = await getNominations(logger, config, addr);
 
   const account = { ...balances, ...stakingInfo, nominations };
   account.balance = account.balance
@@ -468,6 +487,7 @@ export const getBalances = async (
  * @param {*} addr
  */
 export const getStakingInfo = async (
+  logger: Logger,
   config: PolkadotCoinConfig,
   addr: string,
   currency: CryptoCurrency,
@@ -477,7 +497,7 @@ export const getStakingInfo = async (
     fetchControllerAddr(config, addr, currency),
   ]);
   // If account is not a stash, no need to fetch staking-info (it would return an error)
-  if (!controller || UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) {
+  if (!controller || !isStakingSupported(config)) {
     return {
       controller: null,
       stash: stash || null,
@@ -488,9 +508,9 @@ export const getStakingInfo = async (
   }
 
   const [stakingInfo, activeEra, chainConsts] = await Promise.all([
-    fetchStakingInfo(addr, currency),
+    fetchStakingInfo(config, addr, currency),
     fetchActiveEra(config, currency),
-    getChainConstants(config, currency),
+    getChainConstants(logger, config, currency),
   ]);
 
   const activeEraIndex = Number(activeEra.value?.index || 0);
@@ -537,9 +557,13 @@ export const getStakingInfo = async (
  *
  * @returns {PolkadotNomination[}
  */
-const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
+const getNominations = async (
+  logger: Logger,
+  config: PolkadotCoinConfig,
+  addr: string,
+): Promise<PolkadotNomination[]> => {
   try {
-    const nominations = await node.fetchNominations(addr);
+    const nominations = await node.fetchNominations(config, addr);
 
     if (!nominations) {
       return [];
@@ -550,7 +574,7 @@ const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
       status: nomination.status,
     }));
   } catch (error) {
-    log("polkadot", `failed to fetch nominations ${addr}`, {
+    logger("polkadot", `failed to fetch nominations ${addr}`, {
       error,
     });
     return [];
@@ -682,15 +706,15 @@ export const paymentInfo = async (
  * @returns {PolkadotValidator[]}
  */
 export const getValidators = async (
+  config: PolkadotCoinConfig,
   stashes: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses = "elected",
-  currency?: CryptoCurrency,
 ): Promise<PolkadotValidator[]> => {
   let validators;
 
   if (Array.isArray(stashes)) {
-    validators = await fetchValidators("all", currency, stashes);
+    validators = await fetchValidators(config, "all", stashes);
   } else {
-    validators = await fetchValidators(stashes, currency);
+    validators = await fetchValidators(config, stashes);
   }
 
   return validators.map(v => ({
@@ -716,16 +740,17 @@ export const getValidators = async (
  * @returns {PolkadotStakingProgress}
  */
 export const getStakingProgress = async (
+  logger: Logger,
   config: PolkadotCoinConfig,
   currency: CryptoCurrency,
 ): Promise<PolkadotStakingProgress> => {
-  if (UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) {
+  if (!isStakingSupported(config)) {
     return DEFAULT_STAKING_PROGRESS;
   }
 
   const [progress, chainConsts] = await Promise.all([
     fetchStakingProgress(config, currency),
-    getChainConstants(config, currency),
+    getChainConstants(logger, config, currency),
   ]);
 
   const activeEra = Number(progress.activeEra);
@@ -815,7 +840,7 @@ export const getLastBlock = async (
  *
  * @returns {Promise<Object>} consts
  */
-export const getTransactionMaterialWithMetadata = makeLRUCache(
+export const getTransactionMaterialWithMetadata = makeConfigurableLRUCache(
   async (
     config: PolkadotCoinConfig,
     currency?: CryptoCurrency,
@@ -824,5 +849,6 @@ export const getTransactionMaterialWithMetadata = makeLRUCache(
   // the key extractor's parameter list so `makeLRUCache` infers the full `(config, currency?)`
   // argument tuple; otherwise the cached wrapper is typed to accept only `config`.
   (_config, currency) => (currency ? currency.id : "polkadot"),
-  hours(1),
+  (config: PolkadotCoinConfig) =>
+    config.sidecar.transactionMaterialCacheTtlMs ?? DEFAULT_TRANSACTION_MATERIAL_CACHE_TTL_MS,
 );

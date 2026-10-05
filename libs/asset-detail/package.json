@@ -23,6 +23,7 @@
     "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@features/platform-aggregated-assets": "workspace:*",
+    "@features/platform-market-countervalues": "workspace:*",
     "@ledgerhq/asset-aggregation": "workspace:*",
     "@ledgerhq/live-common": "workspace:*"
   },

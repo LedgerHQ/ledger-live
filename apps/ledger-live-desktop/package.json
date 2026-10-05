@@ -164,7 +164,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
-    "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/live-currency-format": "catalog:",
     "@ledgerhq/live-dmk-desktop": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
@@ -265,8 +264,6 @@
     "uncontrollable": "7.2.1",
     "undici": "catalog:",
     "uuid": "9.0.1",
-    "winston": "3.13.0",
-    "winston-transport": "4.7.0",
     "write-file-atomic": "5.0.1",
     "ws": "catalog:",
     "xstate": "catalog:"
