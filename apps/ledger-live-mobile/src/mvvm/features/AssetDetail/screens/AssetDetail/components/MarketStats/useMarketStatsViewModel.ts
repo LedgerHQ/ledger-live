@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useTranslation, useLocale } from "~/context/Locale";
-import { track } from "~/analytics";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { resolveMaxSupplyDisplay } from "@ledgerhq/asset-detail";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";

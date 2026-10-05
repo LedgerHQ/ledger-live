@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useState } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
@@ -14,7 +15,7 @@ import {
   setPersonalizedRecommendations,
 } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
-import { track, updateIdentify } from "~/analytics";
+import { updateIdentify } from "~/analytics";
 import {
   resolveAnalyticsConsentPhase,
   useAnalyticsConsentDecision,
@@ -84,7 +85,7 @@ export function useAnalyticsConsentDrawerViewModel() {
         page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      true,
+      { mandatory: true },
     );
     dispatch(setAnalytics(true));
     dispatch(setPersonalizedRecommendations(true));
@@ -100,7 +101,7 @@ export function useAnalyticsConsentDrawerViewModel() {
         page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      true,
+      { mandatory: true },
     );
     dispatch(setAnalytics(false));
     dispatch(setPersonalizedRecommendations(false));
@@ -116,7 +117,7 @@ export function useAnalyticsConsentDrawerViewModel() {
         page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      true,
+      { mandatory: true },
     );
     dispatch(
       setAnalyticsConsentInfo({

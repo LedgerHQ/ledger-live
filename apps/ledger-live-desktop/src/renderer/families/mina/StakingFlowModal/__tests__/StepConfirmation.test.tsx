@@ -7,22 +7,26 @@ import {
   createMockTransaction,
   mockValidators,
 } from "../../__tests__/testUtils";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-jest.mock("~/renderer/analytics/segment");
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: function MockTrackPage() {
+    return null;
+  },
+}));
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 jest.mock("~/renderer/drawers/Provider", () => ({
   __esModule: true,
   ...jest.requireActual("~/renderer/drawers/Provider"),
   setDrawer: jest.fn(),
 }));
-
-jest.mock("~/renderer/analytics/TrackPage", () => {
-  return function MockTrackPage() {
-    return null;
-  };
-});
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   SyncOneAccountOnMount: () => null,

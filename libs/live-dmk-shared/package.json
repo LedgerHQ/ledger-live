@@ -47,6 +47,7 @@
     "xstate": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

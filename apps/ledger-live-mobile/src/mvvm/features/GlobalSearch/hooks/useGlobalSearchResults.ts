@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import VersionNumber from "react-native-version-number";
 import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
@@ -9,7 +10,6 @@ import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { mapDadaMarketToDisplayData } from "LLM/features/GlobalSearch/utils/mapDadaMarketToDisplayData";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";

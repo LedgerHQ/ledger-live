@@ -90,8 +90,6 @@ jest.mock("~/logic/screenTransactionHooks", () => ({
   useTransactionChangeFromNavigation: () => {},
 }));
 
-jest.mock("~/analytics", () => ({ TrackScreen: () => null }));
-
 // Body/footer siblings irrelevant to the warning under test (mocked via ~/ paths = same modules).
 jest.mock("~/families/tezos/DelegatingContainer", () => () => null);
 jest.mock("~/families/tezos/BakerImage", () => () => null);

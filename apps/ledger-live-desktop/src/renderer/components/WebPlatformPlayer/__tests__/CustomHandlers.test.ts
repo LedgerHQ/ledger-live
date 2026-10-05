@@ -1,5 +1,5 @@
 import { createDeeplinkOpenHandler } from "../CustomHandlers";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 jest.mock("electron", () => ({
   ipcRenderer: {
@@ -7,8 +7,10 @@ jest.mock("electron", () => ({
   },
 }));
 
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 const mockTrack = jest.mocked(track);

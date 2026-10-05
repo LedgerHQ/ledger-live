@@ -1,7 +1,7 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { TrackScreen } from "~/analytics";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { PostOnboardingHubDrawerView } from "./PostOnboardingHubDrawerView";

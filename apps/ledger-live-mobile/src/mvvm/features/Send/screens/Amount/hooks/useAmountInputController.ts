@@ -56,7 +56,7 @@ export function useAmountInputController({
   }, [transaction.amount, transaction.useAllAmount, status.amount]);
 
   const { fiatAmount, calculateCryptoAmount } = useSendAmount({
-    account,
+    cryptoCurrency: accountCurrency,
     fiatCurrency: counterValueCurrency,
     cryptoAmount,
   });
@@ -69,8 +69,8 @@ export function useAmountInputController({
   const [fiatInputValue, setFiatInputValue] = useState<string>("");
   const [cryptoInputValue, setCryptoInputValue] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTransactionAmountRef = useRef<BigNumber | null>(cryptoAmount);
   const lastFiatAmountRef = useRef<BigNumber | null>(fiatAmount);
   const lastUseAllAmountRef = useRef<boolean>(transaction.useAllAmount ?? false);

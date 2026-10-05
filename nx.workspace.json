@@ -8,7 +8,8 @@
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/pnpm-lock.yaml",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/pnpm-workspace.yaml"
+      "{workspaceRoot}/pnpm-workspace.yaml",
+      "{workspaceRoot}/.npmrc"
     ],
     "default": [
       "sharedGlobals",

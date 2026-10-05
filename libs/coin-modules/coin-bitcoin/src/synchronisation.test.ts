@@ -27,7 +27,13 @@ import { firstValueFrom } from "rxjs";
 import { registerChainAdapter } from "./chain-adapters/registry";
 import type { CoinConfig } from "./config";
 
-const coinConfig: CoinConfig = () => ({ info: { status: { type: "active" } } });
+const coinConfig: CoinConfig = () => ({
+  info: {
+    status: { type: "active" },
+    name: "Bitcoin",
+    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+  },
+});
 
 describe("removeReplaced", () => {
   const baseTx: Omit<BtcOperation, "hash" | "id" | "blockHeight" | "date" | "extra"> = {

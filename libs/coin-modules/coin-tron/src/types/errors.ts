@@ -176,3 +176,46 @@ export class EnergyRentProviderNotConfigured extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/** Carries `paymentTxId` for the support/refund message. */
+export class EnergyDelegationTimeoutError extends Error {
+  override name = "EnergyDelegationTimeoutError";
+  paymentTxId?: string;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyDelegationTimeoutError");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class EnergyDeliveryAbortedError extends Error {
+  override name = "EnergyDeliveryAbortedError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyDeliveryAbortedError");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class EnergyRentUnsupportedIntent extends Error {
+  override name = "EnergyRentUnsupportedIntent";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyRentUnsupportedIntent");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/** The USDT balance cannot cover the transfer plus the energy rent; raised before any order exists. */
+export class EnergyRentInsufficientBalance extends Error {
+  override name = "EnergyRentInsufficientBalance";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyRentInsufficientBalance");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class InvalidRawDataHex extends Error {
+  override name = "InvalidRawDataHex";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidRawDataHex");
+    if (fields) Object.assign(this, fields);
+  }
+}

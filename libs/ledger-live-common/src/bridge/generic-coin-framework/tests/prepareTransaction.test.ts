@@ -368,7 +368,12 @@ describe("genericPrepareTransaction", () => {
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: jest.fn().mockResolvedValue({
         value: new BigNumber(491),
-        parameters: { ownerTokenAccount: "ata1", stakeAccountRent: 2282880n },
+        parameters: {
+          ownerTokenAccount: "ata1",
+          stakeAccountRent: 2282880n,
+          recipientTokenAccount: "ata2",
+          userInputType: "sol",
+        },
       }),
     });
 
@@ -382,6 +387,8 @@ describe("genericPrepareTransaction", () => {
       expect.objectContaining({
         ownerTokenAccount: "ata1",
         stakeAccountRent: new BigNumber(2282880),
+        recipientTokenAccount: "ata2",
+        userInputType: "sol",
       }),
     );
   });
@@ -399,11 +406,15 @@ describe("genericPrepareTransaction", () => {
       ...baseTransaction,
       ownerTokenAccount: "ata1",
       stakeAccountRent: new BigNumber(2282880),
+      recipientTokenAccount: "ata2",
+      userInputType: "sol",
       customFees: undefined,
     } as GenericTransaction);
 
     expect(result.ownerTokenAccount).toBeUndefined();
     expect(result.stakeAccountRent).toBeUndefined();
+    expect(result.recipientTokenAccount).toBeUndefined();
+    expect(result.userInputType).toBeUndefined();
   });
 
   it("does not propagate the custom gas limit", async () => {
@@ -679,9 +690,11 @@ describe("genericPrepareTransaction", () => {
   });
 
   it("uses the token account spendable balance when sending all amount", async () => {
-    (decodeTokenAccountId as jest.Mock).mockResolvedValueOnce({
-      accountId: "test-sub-account",
-      token: undefined,
+    (getBridgeApi as jest.Mock).mockResolvedValue({
+      getAssetFromToken: jest.fn().mockImplementation((token: TokenCurrency, owner: string) => ({
+        assetOwner: owner,
+        assetReference: token.id,
+      })),
     });
     const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(50) });
     (transactionToIntent as jest.Mock).mockImplementation((_, transaction) => ({
@@ -693,7 +706,13 @@ describe("genericPrepareTransaction", () => {
     const result = await prepareTransaction(
       {
         ...account,
-        subAccounts: [{ id: "test-sub-account", spendableBalance: new BigNumber(100) }],
+        subAccounts: [
+          {
+            id: "test-sub-account",
+            token: { id: "test-token" },
+            spendableBalance: new BigNumber(100),
+          },
+        ],
       },
       {
         subAccountId: "test-sub-account",
@@ -711,9 +730,11 @@ describe("genericPrepareTransaction", () => {
   });
 
   it("subtracts pending token operations from the token send-max", async () => {
-    (decodeTokenAccountId as jest.Mock).mockResolvedValueOnce({
-      accountId: "test-sub-account",
-      token: undefined,
+    (getBridgeApi as jest.Mock).mockResolvedValue({
+      getAssetFromToken: jest.fn().mockImplementation((token: TokenCurrency, owner: string) => ({
+        assetOwner: owner,
+        assetReference: token.id,
+      })),
     });
     const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(50) });
     (transactionToIntent as jest.Mock).mockImplementation((_, transaction) => ({
@@ -728,6 +749,7 @@ describe("genericPrepareTransaction", () => {
         subAccounts: [
           {
             id: "test-sub-account",
+            token: { id: "test-token" },
             spendableBalance: new BigNumber(100),
             pendingOperations: [{ type: "OUT", value: new BigNumber(30) }],
           },

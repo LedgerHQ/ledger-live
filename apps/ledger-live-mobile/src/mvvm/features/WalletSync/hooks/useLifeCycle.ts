@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch } from "~/context/hooks";
 import { ErrorType } from "./type.hooks";
 import { StackActions, useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
-import { track } from "~/analytics";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useRestoreTrustchain } from "./useRestoreTrustchain";
 import { NavigatorName, ScreenName } from "~/const";

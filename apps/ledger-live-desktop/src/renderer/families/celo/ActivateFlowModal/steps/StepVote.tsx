@@ -7,7 +7,7 @@ import {
   activatableVotes,
   fallbackValidatorGroup,
 } from "@ledgerhq/live-common/families/celo/logic";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";

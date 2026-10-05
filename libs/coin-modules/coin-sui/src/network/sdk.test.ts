@@ -20,6 +20,8 @@ const config: SuiCoinConfig = {
   status: { type: "active" },
   node: { graphqlUrl: "https://mockapi.sui.io/graphql", grpcUrl: "https://mockapi.sui.io" },
   features: { transport: "grpc" },
+  name: "Sui",
+  unit: { name: "Sui", code: "SUI", magnitude: 9 },
 };
 
 type MockCoin = { coinObjectId: string; balance: string; digest: string; version: string };

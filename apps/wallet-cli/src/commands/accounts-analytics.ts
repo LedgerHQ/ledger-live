@@ -1,4 +1,4 @@
-import { track } from "../analytics/segment";
+import { track } from "@shared/analytics";
 
 const DISCOVER = "Account - Discover";
 const RECEIVE = "Account - Receive";

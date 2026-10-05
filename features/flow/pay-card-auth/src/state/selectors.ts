@@ -1,6 +1,6 @@
 import type { PayCardAuthState, PayCardAuthStatus } from "./types";
 
-type PayCardAuthStateRoot = {
+export type PayCardAuthStateRoot = {
   payCardAuth: PayCardAuthState;
 };
 

@@ -9,10 +9,11 @@ import {
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Observable } from "rxjs";
 
-import { type MobileConnectDeviceUIState, type MobileDiscoveryError } from "./types";
-import { RnBleDeviceDiscoverySource } from "./discoveryService/sources/RnBleDeviceDiscoverySource";
-import { RnHidDeviceDiscoverySource } from "./discoveryService/sources/RnHidDeviceDiscoverySource";
-import { SpeculosDeviceDiscoverySource } from "./discoveryService/sources/SpeculosDeviceDiscoverySource";
+import type { MobileDiscoveryError } from "../deviceConnectivity/types";
+import type { MobileConnectDeviceUIState } from "./types";
+import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
+import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
+import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 
 export type ConnectDeviceInput = {

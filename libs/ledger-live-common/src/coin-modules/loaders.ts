@@ -247,6 +247,11 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-hedera/deviceTransactionConfig").then(m => m.default),
     loadSigner: () => import("../families/hedera/signer").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/hedera/coinModuleApi").then(m => m.createLocalHederaApi),
+    loadBridgeApi: () => import("../families/hedera/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/hedera/accountRawAssign").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/hedera/bridgeExtensions").then(m => m.default),
   },
   {
     // HyperCore (generic framework): eth-format address, no send. setup/signer only derive the
@@ -339,14 +344,15 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSetup: () => import("../families/solana/setup"),
     loadLocalApi: () =>
       import("../families/solana/coinModuleApi").then(m => m.createLocalSolanaApi),
-    loadTransaction: () => import("@ledgerhq/coin-solana/transaction").then(m => m.default),
+    loadTransaction: () => import("../families/solana/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-solana/deviceTransactionConfig").then(m => m.default),
+      import("../families/solana/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () => import("../families/solana/walletApiAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/solana/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/solana/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/solana/bridge/api").then(m => m.default),
     loadAccountRawAssign: () => import("../families/solana/accountRawAssign").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/solana/bridgeExtensions").then(m => m.default),
   },
   {
     family: "stacks",
@@ -408,6 +414,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["tron"],
     loadSetup: () => import("../families/tron/setup"),
     loadLocalApi: () => import("../families/tron/coinModuleApi").then(m => m.createLocalTronApi),
+    loadSponsoredApi: () =>
+      import("../families/tron/coinModuleApi").then(m => m.createLocalTronSponsoredApi),
     loadTransaction: () => import("../families/tron/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("../families/tron/deviceTransactionConfig").then(m => m.default),

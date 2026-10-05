@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useMemo, useCallback, useRef } from "react";
 import { Platform } from "react-native";
 import {
@@ -9,7 +10,6 @@ import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NavigatorName } from "~/const";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation";
-import { track } from "~/analytics";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";

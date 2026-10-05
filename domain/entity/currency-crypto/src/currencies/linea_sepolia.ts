@@ -38,9 +38,6 @@ export const linea_sepolia = currency({
     },
   ],
   isTestnetFor: "linea",
-  ethereumLikeInfo: {
-    chainId: 59141,
-  },
   explorerViews: [
     {
       tx: "https://sepolia.lineascan.build/tx/$hash",

@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useRef } from "react";
 import { StyleSheet } from "react-native";
@@ -8,7 +9,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import DeviceAction from "~/components/DeviceAction";
 import { renderLoading } from "~/components/DeviceAction/rendering";
 import { useSignedTxHandler } from "~/logic/screenTransactionHooks";
-import { TrackScreen } from "~/analytics";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

@@ -8,7 +8,7 @@ import {
   AptosMappedStakingPosition,
   Transaction,
 } from "@ledgerhq/live-common/families/aptos/types";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { ValidatorField, AmountField } from "../fields";

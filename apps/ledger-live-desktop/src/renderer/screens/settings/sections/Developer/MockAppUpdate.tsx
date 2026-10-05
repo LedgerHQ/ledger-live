@@ -2,7 +2,7 @@ import useEnv from "@features/platform-env";
 import { setEnv } from "@shared/env";
 import React, { useCallback } from "react";
 
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { Switch } from "@ledgerhq/lumen-ui-react";
 
 const MockAppUpdate = () => {

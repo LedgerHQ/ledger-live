@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
@@ -8,7 +10,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckErrorDrawer from "./GenuineCheckErrorDrawer";
 import GenuineCheckNonGenuineDrawer from "./GenuineCheckNonGenuineDrawer";
-import { TrackScreen, track } from "~/analytics";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { Linking, Platform } from "react-native";
 import { LanguagePrompt } from "./LanguagePrompt";

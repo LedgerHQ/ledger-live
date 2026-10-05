@@ -32,6 +32,8 @@ describe("getDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
 
     const descriptor = getDescriptor(currency);
@@ -61,6 +63,8 @@ describe("getDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Ethereum",
+      unit: { name: "ether", code: "ETH", magnitude: 18 },
     });
 
     const descriptor = getDescriptor(currency);
@@ -88,6 +92,8 @@ describe("getDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Solana",
+      unit: { name: "SOL", code: "SOL", magnitude: 9 },
     });
 
     const descriptor = getDescriptor(currency);
@@ -115,6 +121,8 @@ describe("getDescriptor", () => {
           type: "active",
           features: [{ id: "blockchain_txs", status: "inactive" }],
         },
+        name: "Bitcoin",
+        unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
       },
     ],
     [
@@ -124,6 +132,8 @@ describe("getDescriptor", () => {
           type: "under_maintenance",
           message: "Maintenance",
         },
+        name: "Bitcoin",
+        unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
       },
     ],
   ];
@@ -142,6 +152,8 @@ describe("getDescriptor", () => {
       status: {
         type: "active",
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
 
     const descriptor = getDescriptor(bitcoin);
@@ -167,6 +179,8 @@ describe("getSendDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
 
     const sendDescriptor = getSendDescriptor(bitcoin);
@@ -194,6 +208,8 @@ describe("getSendDescriptor", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "inactive" }],
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
 
     const sendDescriptor = getSendDescriptor(bitcoin);
@@ -208,6 +224,8 @@ describe("sendFeatures", () => {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
+      name: "Bitcoin",
+      unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
     });
   });
 
@@ -546,7 +564,7 @@ describe("sendFeatures", () => {
 
   describe("applyMemoToTransaction", () => {
     describe("fallback behavior", () => {
-      it.each(["algorand", "cosmos", "hedera", "stacks", "internet_computer", "mina"])(
+      it.each(["algorand", "hedera", "stacks", "internet_computer", "mina"])(
         "should use default memo field for %s",
         family => {
           const result = applyMemoToTransaction(family, "test memo");
@@ -561,35 +579,19 @@ describe("sendFeatures", () => {
     });
 
     describe("nested structures", () => {
-      it("should apply memo for solana with empty transaction", () => {
-        const result = applyMemoToTransaction("solana", "test memo", {});
-        expect(result).toEqual({
-          model: {
-            uiState: {
-              memo: "test memo",
-            },
-          },
+      it("should apply memo for solana", () => {
+        expect(applyMemoToTransaction("solana", "test memo", {})).toEqual({
+          memoType: "TEXT",
+          memoValue: "test memo",
         });
       });
 
-      it("should apply memo for solana preserving existing data", () => {
-        const transaction = {
-          model: {
-            kind: "transfer",
-            uiState: {
-              amount: "100",
-            },
-          },
-        };
-        const result = applyMemoToTransaction("solana", "test memo", transaction);
-        expect(result).toEqual({
-          model: {
-            kind: "transfer",
-            uiState: {
-              amount: "100",
-              memo: "test memo",
-            },
-          },
+      it("should patch only the memo fields, leaving the rest of the transaction alone", () => {
+        expect(
+          applyMemoToTransaction("solana", "test memo", { mode: "send", amount: "100" }),
+        ).toEqual({
+          memoType: "TEXT",
+          memoValue: "test memo",
         });
       });
 
@@ -622,6 +624,11 @@ describe("sendFeatures", () => {
       it("should apply transferId for casper", () => {
         const result = applyMemoToTransaction("casper", "12345");
         expect(result).toEqual({ transferId: "12345", memoType: "transferId", memoValue: "12345" });
+      });
+
+      it("should apply memo/memoType/memoValue for cosmos", () => {
+        const result = applyMemoToTransaction("cosmos", "test memo");
+        expect(result).toEqual({ memo: "test memo", memoType: "text", memoValue: "test memo" });
       });
 
       it("should apply numeric tag for xrp", () => {
@@ -723,6 +730,8 @@ describe("zcash descriptor resolution", () => {
           type: "active",
           features: [{ id: "blockchain_txs", status: "active" }],
         },
+        name: "Zcash",
+        unit: { name: "zcash", code: "ZEC", magnitude: 8 },
       });
   });
 

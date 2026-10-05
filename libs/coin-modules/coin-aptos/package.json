@@ -118,6 +118,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

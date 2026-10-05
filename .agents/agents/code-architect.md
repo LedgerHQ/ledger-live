@@ -11,6 +11,7 @@ Follow architectural skills in `.agents/skills/` where applicable. Pay special a
 
 - `.agents/skills/mvvm-architecture/SKILL.md` — MVVM architecture is mandatory for new code
 - `.agents/skills/structure-flow/SKILL.md` — New features must follow the monorepo layers and structure user-facing flows as MVVM `steps`
+- `.agents/skills/i18n-keys/SKILL.md` — Features own their wording keys: apps pass domain ids, not keys; key tables and helpers use literal-union types so the i18n key check can verify them
 - `docs/new-library.md` — Required location decision and checklist for every new package
 - `rtk-query-api.mdc` — Data fetching patterns (`dada-client` and `cal-client` are good references)
 

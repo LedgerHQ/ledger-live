@@ -4,7 +4,7 @@ import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/featu
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
 import { useRecipientScanner } from "../../../../context/RecipientScannerContext";
-import { trackPage } from "~/renderer/analytics/segment";
+import { trackPage } from "@shared/analytics";
 import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
 import { useRecipientScreenViewModel } from "../useRecipientScreenViewModel";
 
@@ -31,7 +31,8 @@ jest.mock("@features/platform-contacts", () => ({
     eligibleAddressFamilies: [],
   })),
 }));
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   trackPage: jest.fn(),
 }));
 
@@ -92,14 +93,13 @@ describe("useRecipientScreenViewModel", () => {
       onClose: close,
     });
     expect(mockedTrackPage).toHaveBeenCalledTimes(1);
-    expect(mockedTrackPage).toHaveBeenCalledWith(
-      "Modal send - step recipient",
-      null,
-      expect.objectContaining({
+    expect(mockedTrackPage).toHaveBeenCalledWith({
+      category: "Modal send - step recipient",
+      props: expect.objectContaining({
         hasContacts: false,
         contactsCount: 0,
       }),
-    );
+    });
   });
 
   it("updates the recipient and advances only when requested", () => {

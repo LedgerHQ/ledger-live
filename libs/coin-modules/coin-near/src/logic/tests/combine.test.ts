@@ -7,14 +7,14 @@ const PUBLIC_KEY = "ed25519:HYgHRZBqhvhV4RLsBTz2CoM3JMVYFHDs1QLLZfDdWfPn";
 const BLOCK_HASH = "6ykMPuAsmyPvVMSLKvfg7DBUZP9tYcgKNzVLrLxSnLpj";
 const SIGNATURE = "ab".repeat(64);
 
-const unsigned = (): string => {
-  const transaction = nearAPI.transactions.createTransaction(
+const unsigned = (publicKey = PUBLIC_KEY): string => {
+  const transaction = nearAPI.createTransaction(
     SENDER,
-    nearAPI.utils.PublicKey.fromString(PUBLIC_KEY),
+    nearAPI.PublicKey.fromString(publicKey),
     RECIPIENT,
     42,
-    [nearAPI.transactions.transfer("1000000000000000000000000")],
-    nearAPI.utils.serialize.base_decode(BLOCK_HASH),
+    [nearAPI.actions.transfer(1000000000000000000000000n)],
+    nearAPI.baseDecode(BLOCK_HASH),
   );
 
   return Buffer.from(transaction.encode()).toString("base64");
@@ -23,9 +23,9 @@ const unsigned = (): string => {
 describe("combine", () => {
   it("returns a signed transaction wrapping the crafted one unchanged", () => {
     const tx = unsigned();
-    const crafted = nearAPI.transactions.Transaction.decode(Buffer.from(tx, "base64"));
+    const crafted = nearAPI.Transaction.decode(Buffer.from(tx, "base64"));
 
-    const signed = nearAPI.transactions.SignedTransaction.decode(
+    const signed = nearAPI.SignedTransaction.decode(
       Buffer.from(combine(tx, [SIGNATURE]), "base64"),
     );
 
@@ -38,24 +38,32 @@ describe("combine", () => {
   });
 
   it("carries the signature bytes through", () => {
-    const signed = nearAPI.transactions.SignedTransaction.decode(
+    const signed = nearAPI.SignedTransaction.decode(
       Buffer.from(combine(unsigned(), [SIGNATURE]), "base64"),
     );
 
-    expect(Buffer.from(signed.signature.data).toString("hex")).toBe(SIGNATURE);
+    // Borsh decoding yields the raw enum variant, not a `Signature` instance.
+    expect(Buffer.from(signed.signature.ed25519Signature!.data).toString("hex")).toBe(SIGNATURE);
   });
 
-  it("takes the key type from the transaction's own public key", () => {
-    const tx = unsigned();
-    const expected = nearAPI.transactions.Transaction.decode(Buffer.from(tx, "base64")).publicKey
-      .keyType;
+  it.each([
+    ["ed25519", PUBLIC_KEY, SIGNATURE, "ed25519Signature"],
+    [
+      "secp256k1",
+      nearAPI.KeyPair.fromRandom("secp256k1").getPublicKey().toString(),
+      "ab".repeat(65),
+      "secp256k1Signature",
+    ],
+  ])(
+    "takes the key type from the transaction's own %s public key",
+    (_curve, publicKey, signature, variant) => {
+      const signed = nearAPI.SignedTransaction.decode(
+        Buffer.from(combine(unsigned(publicKey), [signature]), "base64"),
+      );
 
-    const signed = nearAPI.transactions.SignedTransaction.decode(
-      Buffer.from(combine(tx, [SIGNATURE]), "base64"),
-    );
-
-    expect(signed.signature.keyType).toBe(expected);
-  });
+      expect(Object.keys(signed.signature)).toEqual([variant]);
+    },
+  );
 
   it("throws on a payload that is not a crafted transaction", () => {
     expect(() => combine("bm90LWEtdHJhbnNhY3Rpb24=", [SIGNATURE])).toThrow(

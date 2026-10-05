@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
@@ -9,7 +10,7 @@ import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpe
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useAssetChartDataInCounterValue } from "@ledgerhq/live-common/market/hooks/useAssetChartDataInCounterValue";
 import { buildMarketChartSeries } from "@ledgerhq/live-common/market/utils/buildMarketChartSeries";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 import {
   formatPrice,
   formatPriceFragment,
@@ -21,7 +22,6 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 import { hideTransactionsOnChartSelector } from "~/reducers/market";
 import { useCountervaluesState } from "~/reducers/countervalues";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
-import { track } from "~/analytics";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import {

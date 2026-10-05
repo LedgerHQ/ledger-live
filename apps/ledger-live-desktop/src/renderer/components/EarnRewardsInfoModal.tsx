@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Check from "../icons/CheckFull";
-import TrackPage from "../analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { closeModal } from "~/renderer/actions/modals";
 import Rewards from "../images/rewards.svg";
 import Text from "./Text";

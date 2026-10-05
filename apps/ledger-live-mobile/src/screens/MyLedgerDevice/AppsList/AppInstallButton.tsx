@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -11,7 +12,6 @@ import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { hasInstalledAnyAppSelector } from "~/reducers/settings";
 import { setHasInstalledAnyApp } from "~/actions/settings";
 import { useSetAppsWithDependenciesToInstallUninstall } from "../AppsInstallUninstallWithDependenciesContext";
-import { track } from "~/analytics";
 
 type Props = {
   app: App;

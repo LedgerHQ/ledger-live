@@ -37,9 +37,6 @@ export const polygon_zk_evm = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 1101,
-  },
   explorerViews: [
     {
       tx: "https://zkevm.blockscout.com/tx/$hash",

@@ -2,6 +2,8 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { getCurrencyConfiguration } from "../../config";
 
 /** The plain-send defaults shared by families that add nothing of their own. */
 function sendDefaults(family: string): GenericTransaction {
@@ -64,13 +66,12 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         recipient: "",
         useAllAmount: false,
         feesStrategy: "medium",
-        chainId: currency.ethereumLikeInfo?.chainId ?? 0,
+        chainId: getCurrencyConfiguration<EvmConfigInfo>(currency.id).chainId,
         gasLimit: new BigNumber(21000),
         maxFeePerGas: new BigNumber(0),
         maxPriorityFeePerGas: new BigNumber(0),
       };
     }
-    case "solana":
     // hypercore has no send flow; this is a neutral tx used only for (de)serialization.
     case "hypercore":
       return {
@@ -80,6 +81,7 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         fees: null,
         mode: "send",
       };
+    case "solana":
     case "multiversx":
       return sendDefaults(currency.family);
     case "tron":

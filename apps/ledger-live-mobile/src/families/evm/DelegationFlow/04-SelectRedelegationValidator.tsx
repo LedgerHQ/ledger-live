@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { TrackScreen } from "@shared/analytics-react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { useFeature } from "@features/platform-feature-flags";
@@ -19,7 +20,6 @@ import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import ValidatorHead from "~/families/cosmos/shared/ValidatorHead";

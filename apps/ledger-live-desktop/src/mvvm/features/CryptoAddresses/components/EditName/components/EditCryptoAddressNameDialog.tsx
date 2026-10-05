@@ -12,7 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@domain/entity-account-name";
 import { Chip } from "./Chip";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 import { isWithinGhostClickGuard } from "./ghostClickGuard";
 

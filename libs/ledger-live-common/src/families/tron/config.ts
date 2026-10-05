@@ -12,8 +12,15 @@ export const tronConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Tron",
+      unit: { name: "TRX", code: "TRX", magnitude: 6 },
       explorer: {
         url: getEnv("API_TRONGRID_PROXY"),
+      },
+      // The sourceFlag comes from the remote config only: Tronify must confirm the channel name first.
+      energyRent: {
+        provider: "tronify",
+        tronify: { url: "https://tronify.api.live.ledger.com" },
       },
     },
   },

@@ -1,5 +1,4 @@
 import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
-import { resolveContactDeviceContext } from "../device/resolveContactDeviceContext";
 import {
   resolveEligibleAddressCurrencyIds,
   type EligibleAddressNetwork,
@@ -13,15 +12,22 @@ const NETWORKS: readonly EligibleAddressNetwork[] = [
   { id: getCryptoCurrencyById("solana").id, family: "solana" },
 ];
 
+const getConfig = () => ({
+  status: { type: "active" as const },
+  name: "Ethereum",
+  unit: { name: "ether", code: "ETH", magnitude: 18 },
+  chainId: 1,
+});
+
 describe("resolveEligibleAddressCurrencyIds", () => {
   it("resolves the default EVM family from production networks", () => {
     const expectedNetworkIds = listCryptoCurrencies()
-      .filter(network => network.family === "evm" && network.ethereumLikeInfo !== undefined)
+      .filter(network => network.family === "evm")
       .map(network => network.id);
     const excludedNetworkIds = listCryptoCurrencies(true)
       .filter(network => network.family === "evm" && Boolean(network.isTestnetFor))
       .map(network => network.id);
-    const networkIds = resolveEligibleAddressCurrencyIds(["evm"]);
+    const networkIds = resolveEligibleAddressCurrencyIds(["evm"], undefined, [], getConfig);
 
     expect(networkIds).toEqual(expectedNetworkIds);
     expect(expectedNetworkIds).not.toHaveLength(0);
@@ -29,18 +35,19 @@ describe("resolveEligibleAddressCurrencyIds", () => {
     expect(networkIds).toEqual(expect.not.arrayContaining(excludedNetworkIds));
   });
 
-  it("keeps every offered network reachable by a device signature", () => {
-    const networkIds = resolveEligibleAddressCurrencyIds(["evm"]);
+  it("includes EVM networks whose config carries a chain ID", () => {
+    const networkIds = resolveEligibleAddressCurrencyIds(["evm"], undefined, [], getConfig);
 
     expect(networkIds).toContain("sei_evm");
-    expect(networkIds).not.toContain("poa");
-    for (const networkId of networkIds) {
-      expect(() => resolveContactDeviceContext(networkId)).not.toThrow();
-    }
+    expect(networkIds).toContain("poa");
+  });
+
+  it("omits EVM networks whose config carries no chain ID", () => {
+    expect(resolveEligibleAddressCurrencyIds(["evm"], undefined, [], () => undefined)).toEqual([]);
   });
 
   it("resolves future multi-family values in network order", () => {
-    expect(resolveEligibleAddressCurrencyIds(["evm", "tron"], NETWORKS)).toEqual([
+    expect(resolveEligibleAddressCurrencyIds(["evm", "tron"], NETWORKS, [], getConfig)).toEqual([
       "ethereum",
       "base",
       "tron",
@@ -48,17 +55,19 @@ describe("resolveEligibleAddressCurrencyIds", () => {
   });
 
   it("returns no networks for unknown families", () => {
-    expect(resolveEligibleAddressCurrencyIds(["unknown"], NETWORKS)).toEqual([]);
+    expect(resolveEligibleAddressCurrencyIds(["unknown"], NETWORKS, [], getConfig)).toEqual([]);
   });
 
   it("omits explicitly excluded currency ids from the result", () => {
     expect(
-      resolveEligibleAddressCurrencyIds(["evm", "tron"], NETWORKS, ["ethereum", "tron"]),
+      resolveEligibleAddressCurrencyIds(["evm", "tron"], NETWORKS, ["ethereum", "tron"], getConfig),
     ).toEqual(["base"]);
   });
 
   it("returns an empty array when all eligible networks are excluded", () => {
-    expect(resolveEligibleAddressCurrencyIds(["evm"], NETWORKS, ["ethereum", "base"])).toEqual([]);
+    expect(
+      resolveEligibleAddressCurrencyIds(["evm"], NETWORKS, ["ethereum", "base"], getConfig),
+    ).toEqual([]);
   });
 
   it("deduplicates network ids while preserving their first occurrence", () => {
@@ -66,6 +75,8 @@ describe("resolveEligibleAddressCurrencyIds", () => {
       resolveEligibleAddressCurrencyIds(
         ["evm"],
         [...NETWORKS, { id: getCryptoCurrencyById("ethereum").id, family: "evm" }],
+        [],
+        getConfig,
       ),
     ).toEqual(["ethereum", "base"]);
   });

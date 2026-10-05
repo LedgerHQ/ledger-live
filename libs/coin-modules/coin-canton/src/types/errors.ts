@@ -29,3 +29,11 @@ export class TopologyChangeError extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class TransferOfferExpiredError extends Error {
+  override name = "TransferOfferExpiredError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TransferOfferExpiredError");
+    if (fields) Object.assign(this, fields);
+  }
+}

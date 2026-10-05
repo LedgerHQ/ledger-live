@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
@@ -9,7 +10,6 @@ import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

@@ -1,28 +1,24 @@
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   calculate,
   filterSupportedTrackingPairs,
   importCountervalues,
-  loadCountervalues,
-} from "@ledgerhq/live-countervalues/logic";
-import { inferCurrencyAPIID } from "@ledgerhq/live-countervalues/helpers";
-import type {
-  CounterValuesState,
-  CounterValuesStateRaw,
-  CountervaluesSettings,
-} from "@ledgerhq/live-countervalues/types";
+  inferCurrencyAPIID,
+  type CounterValuesState,
+  type CounterValuesStateRaw,
+  type CountervaluesSettings,
+} from "@domain/entity-market-countervalues";
+import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
+import { CountervaluesContext } from "@features/platform-market-countervalues";
+import { log } from "@ledgerhq/logs";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
-import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
-import React, {
-  ReactElement,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { ReactElement, useCallback, useContext, useEffect, useMemo } from "react";
 
 export interface PollingState {
   isPolling: boolean;
@@ -34,6 +30,12 @@ export interface PollingState {
  * @note: make sure that the object is memoized to avoid re-renders.
  */
 export interface CountervaluesBridge {
+  /**
+   * Where rates come from. The app builds one at composition time, because this package holds no
+   * Redux reference and cannot reach a dispatch. It is a plain object, never a hook: the
+   * non-React callers of `loadCountervalues` construct their own.
+   */
+  rates: RateSource;
   setPollingIsPolling(polling: boolean): void;
   setPollingTriggerLoad(triggerLoad: boolean): void;
   setState(state: CounterValuesState): void;
@@ -80,11 +82,8 @@ export type Props = {
   savedState?: CounterValuesStateRaw;
 };
 
-/**
- * Base Countervalues Context to use without polling logic.
- */
-export const CountervaluesContext = createContext<CountervaluesBridge | null>(null);
-
+// The context is the platform package's, so a provider from either package serves the hooks of both
+// while consumers move over.
 function useCountervaluesBridgeContext() {
   const bridge = useContext(CountervaluesContext);
   if (!bridge) {
@@ -146,12 +145,12 @@ function Effect({
     bridge.setPollingTriggerLoad(false);
 
     bridge.setStatePending(true);
-    loadCountervalues(
-      currentState,
-      filteredUserSettings,
+    loadCountervalues(currentState, filteredUserSettings, {
+      rates: bridge.rates,
       batchStrategySolver,
-      filteredUserSettings.granularitiesRates,
-    ).then(
+      granularitiesRates: filteredUserSettings.granularitiesRates,
+      log,
+    }).then(
       s => {
         bridge.setState(s);
         bridge.setStatePending(false);
@@ -268,11 +267,11 @@ export function useCalculateCountervalueCallback({
 
 /** Helper for send-flow: returns fiat amount and reverse calculation. */
 export function useSendAmount({
-  account,
+  cryptoCurrency,
   fiatCurrency,
   cryptoAmount,
 }: {
-  account: AccountLike;
+  cryptoCurrency: CryptoCurrency | TokenCurrency;
   fiatCurrency: Currency;
   cryptoAmount: BigNumber;
 }): {
@@ -280,7 +279,6 @@ export function useSendAmount({
   fiatUnit: Unit;
   calculateCryptoAmount: (fiatAmount: BigNumber) => BigNumber;
 } {
-  const cryptoCurrency = getAccountCurrency(account);
   const fiatCountervalue = useCalculate({
     from: cryptoCurrency,
     to: fiatCurrency,

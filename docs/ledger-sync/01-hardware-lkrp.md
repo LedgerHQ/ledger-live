@@ -1,7 +1,7 @@
 # 1 · Hardware & the low-level LKRP library
 
 > Layer 1 of the [Ledger Sync stack](./README.md). Code:
-> [`libs/hw-ledger-key-ring-protocol`](../../libs/hw-ledger-key-ring-protocol)
+> [`ts-libs/libs/hw-ledger-key-ring-protocol`](https://github.com/LedgerHQ/ts-libs/tree/develop/libs/hw-ledger-key-ring-protocol)
 > (formerly `hw-trustchain`).
 
 This layer talks to the **Ledger Sync** hardware-wallet app

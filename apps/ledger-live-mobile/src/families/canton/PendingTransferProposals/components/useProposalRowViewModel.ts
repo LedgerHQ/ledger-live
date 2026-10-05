@@ -23,6 +23,7 @@ type Input = {
 
 export type ProposalRowViewModel = {
   timeRemaining: string;
+  isExpired: boolean;
   formattedTime: string;
   addressToShow: string;
   amountValue: BigNumber;
@@ -36,9 +37,12 @@ export function useProposalRowViewModel({
   onRowClick,
   onOpenModal,
 }: Input): ProposalRowViewModel {
-  const { isIncoming, isExpired, contractId, sender, receiver, amount, expiresAt } = proposal;
+  const { isIncoming, contractId, sender, receiver, amount, expiresAt } = proposal;
 
-  const timeRemaining = useTimeRemaining(proposal.expiresAtMicros, isExpired);
+  const { timeRemaining, isExpired } = useTimeRemaining(
+    proposal.expiresAtMicros,
+    proposal.isExpired,
+  );
   const hoursAndMinutesOptions = useSelector(hoursAndMinutesOptionsSelector);
 
   const addressToShow = isIncoming ? sender : receiver;
@@ -56,6 +60,7 @@ export function useProposalRowViewModel({
 
   return {
     timeRemaining,
+    isExpired,
     formattedTime,
     addressToShow,
     amountValue,

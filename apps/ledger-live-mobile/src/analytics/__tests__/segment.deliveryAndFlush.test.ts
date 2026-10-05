@@ -1,3 +1,4 @@
+import { analyticsEvents$, flush, track, trackPage, type LoggableEvent } from "@shared/analytics";
 import { AppState, type AppStateStatus, type NativeEventSubscription } from "react-native";
 import { configureStore } from "@reduxjs/toolkit";
 import { DdLogs } from "@datadog/mobile-react-native";
@@ -5,7 +6,6 @@ import type { Subscription } from "rxjs";
 import reducers, { type AppStore } from "~/reducers";
 import { setAnalytics } from "~/actions/settings";
 import * as segment from "../segment";
-import type { LoggableEvent } from "../segment";
 
 jest.unmock("../segment");
 jest.unmock("@shared/analytics");
@@ -76,10 +76,10 @@ describe("segment analytics delivery", () => {
     Object.assign(segmentSdk.createClient(), { flush: clientFlush, pendingEvents });
 
     logged = [];
-    subscription = segment.trackSubject.subscribe(event =>
+    subscription = analyticsEvents$.subscribe(event =>
       logged.push({ ...event, sdkTrackCalls: mockTrack.mock.calls.length }),
     );
-    logged.length = 0; // trackSubject is a ReplaySubject: drop what it replays from earlier tests
+    logged.length = 0; // analyticsEvents$ is a ReplaySubject: drop what it replays from earlier tests
 
     store = makeStore();
   });
@@ -146,7 +146,7 @@ describe("segment analytics delivery", () => {
       await startWithTracking();
       pendingEvents.mockResolvedValue(0);
 
-      await segment.flush();
+      await flush();
 
       expect(clientFlush).toHaveBeenCalledTimes(1);
       expect(logged).toEqual([]);
@@ -156,7 +156,7 @@ describe("segment analytics delivery", () => {
       await startWithTracking();
       pendingEvents.mockResolvedValue(7);
 
-      await segment.flush();
+      await flush();
 
       expect(logged).toEqual([
         expect.objectContaining({
@@ -171,7 +171,7 @@ describe("segment analytics delivery", () => {
       await startWithTracking();
       pendingEvents.mockRejectedValue(new Error("store unavailable"));
 
-      await segment.flush();
+      await flush();
 
       expect(clientFlush).toHaveBeenCalledTimes(1);
       expect(logged).toEqual([]);
@@ -182,7 +182,7 @@ describe("segment analytics delivery", () => {
     it("should log track as enqueued only after the Segment client received it", async () => {
       await startWithTracking();
 
-      await segment.track("TestEvent", { foo: "bar" });
+      await track("TestEvent", { foo: "bar" });
 
       expect(mockTrack).toHaveBeenCalledWith("TestEvent", expect.objectContaining({ foo: "bar" }));
       expect(logged).toEqual([
@@ -197,7 +197,7 @@ describe("segment analytics delivery", () => {
     it("should log screen as enqueued only after the Segment client received it", async () => {
       await startWithTracking();
 
-      await segment.screen("Portfolio", "Detail");
+      await trackPage({ category: "Portfolio", name: "Detail" });
 
       expect(mockTrack).toHaveBeenCalledWith("Page Portfolio Detail", expect.any(Object));
       expect(logged).toEqual([
@@ -214,8 +214,8 @@ describe("segment analytics delivery", () => {
       jest.clearAllMocks();
       logged.length = 0;
 
-      await segment.track("TestEvent", { foo: "bar" });
-      await segment.screen("Portfolio");
+      await track("TestEvent", { foo: "bar" });
+      await trackPage({ category: "Portfolio" });
 
       expect(mockTrack).not.toHaveBeenCalled();
       expect(logged).toEqual([]);
@@ -226,7 +226,7 @@ describe("segment analytics delivery", () => {
       jest.clearAllMocks();
       logged.length = 0;
 
-      await segment.track("MandatoryEvent", null, true);
+      await track("MandatoryEvent", null, { mandatory: true });
 
       expect(logged).toEqual([
         expect.objectContaining({
@@ -241,7 +241,7 @@ describe("segment analytics delivery", () => {
       await startWithTracking();
       mockTrack.mockRejectedValueOnce(new Error("sdk down"));
 
-      await expect(segment.track("TestEvent")).resolves.toBeUndefined();
+      await expect(track("TestEvent")).resolves.toBeUndefined();
 
       expect(logged).toEqual([
         expect.objectContaining({
@@ -255,7 +255,7 @@ describe("segment analytics delivery", () => {
       await startWithTracking();
       mockTrack.mockRejectedValueOnce(new Error("sdk down"));
 
-      await expect(segment.screen("Portfolio", "Detail")).resolves.toBeUndefined();
+      await expect(trackPage({ category: "Portfolio", name: "Detail" })).resolves.toBeUndefined();
 
       expect(logged).toEqual([
         expect.objectContaining({
@@ -294,9 +294,9 @@ describe("segment analytics delivery", () => {
       pendingEvents.mockResolvedValue(2);
 
       await segment.updateIdentify();
-      await segment.track("TestEvent", { foo: "bar" });
-      await segment.screen("Portfolio", "Detail");
-      await segment.flush();
+      await track("TestEvent", { foo: "bar" });
+      await trackPage({ category: "Portfolio", name: "Detail" });
+      await flush();
 
       expect(logged.map(event => event.eventName)).toEqual([
         "[Identify]",
@@ -356,9 +356,9 @@ describe("segment analytics delivery", () => {
       await expect(segment.start(store)).rejects.toThrow(TypeError);
       logged.length = 0;
 
-      await segment.track("FirstSkipped");
-      await segment.track("SecondSkipped");
-      await segment.screen("ThirdSkipped");
+      await track("FirstSkipped");
+      await track("SecondSkipped");
+      await trackPage({ category: "ThirdSkipped" });
 
       expect(logged.map(event => event.deliveryStatus)).toEqual([
         "skipped_no_client",

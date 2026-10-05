@@ -24,7 +24,7 @@ import { useHistoryOperations } from "./useHistoryOperations";
 import { useHistoryTable } from "./useHistoryTable";
 import { useHistoryVirtualization } from "./useHistoryVirtualization";
 import type { HistoryTable, OperationRow, VirtualItem } from "../types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { parseHistoryBackPath } from "../utils/historyLocationState";
 import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
 import {

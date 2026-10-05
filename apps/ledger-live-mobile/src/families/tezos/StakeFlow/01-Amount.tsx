@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
@@ -18,7 +19,6 @@ import {
 import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import Button from "~/components/Button";
 import CancelButton from "~/components/CancelButton";

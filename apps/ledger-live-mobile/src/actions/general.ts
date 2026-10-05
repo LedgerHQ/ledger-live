@@ -6,8 +6,7 @@ import {
   sortAccountsComparatorFromOrder,
 } from "@ledgerhq/live-common/account/ordering";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
-import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { type TrackingPair, pairId } from "@domain/entity-market-countervalues";
 import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@ledgerhq/live-countervalues-react";
 import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-common/portfolio/portfolioReact";

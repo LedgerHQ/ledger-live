@@ -44,6 +44,7 @@
     "@shared/env": "workspace:*"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
@@ -60,6 +61,7 @@
     "react-native": "catalog:",
     "react-native-ble-plx": "3.5.1",
     "rxjs": "catalog:",
+    "typescript": "catalog:",
     "ws": "catalog:"
   },
   "peerDependencies": {

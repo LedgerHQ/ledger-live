@@ -13,19 +13,25 @@ const run = TRONIFY_URL && TRONIFY_SOURCE_FLAG ? describe : describe.skip;
 const RECEIVER = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
 run("tronify queryPreorderInfo [integ]", () => {
-  const config: TronCoinConfig = {
-    status: { type: "active" },
-    explorer: { url: "https://tron.coin.ledger.com" },
-    energyRent: {
-      provider: "tronify",
-      tronify: {
-        url: TRONIFY_URL as string,
-        sourceFlag: TRONIFY_SOURCE_FLAG as string,
-      },
-    },
-  };
+  let config: TronCoinConfig;
 
-  it("returns a priced quote for a 10-minute, 32000-energy rental", async () => {
+  beforeAll(() => {
+    config = {
+      status: { type: "active" },
+      name: "Tron",
+      unit: { name: "TRX", code: "TRX", magnitude: 6 },
+      explorer: { url: "https://tron.coin.ledger.com" },
+      energyRent: {
+        provider: "tronify",
+        tronify: {
+          url: TRONIFY_URL as string,
+          sourceFlag: TRONIFY_SOURCE_FLAG as string,
+        },
+      },
+    } as unknown as TronCoinConfig;
+  });
+
+  it("returns a USDT-priced quote whose pledge also covers the payment transfer", async () => {
     const quote = await queryPreorderInfo(logger, config, {
       fromAddress: RECEIVER,
       pledgeAddress: RECEIVER,
@@ -33,11 +39,11 @@ run("tronify queryPreorderInfo [integ]", () => {
       pledgeDay: "0",
       pledgeHour: "0",
       pledgeMinute: "10",
-      extraTrxNum: "0",
+      extraTrxNum: "0.8",
     });
 
-    expect(quote.pledgeNum).toBe(32000);
+    expect(quote.pledgeNum).toBeGreaterThan(32000);
     expect(Number(quote.payCoinAmt)).toBeGreaterThan(0);
-    expect(quote.payCoinCode.length).toBeGreaterThan(0);
+    expect(quote.payCoinCode).toBe("USDT");
   });
 });

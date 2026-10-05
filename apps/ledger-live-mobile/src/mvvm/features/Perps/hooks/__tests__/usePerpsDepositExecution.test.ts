@@ -1,9 +1,15 @@
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { act, renderHook } from "@tests/test-renderer";
 import { usePerpsDepositExecution, type PerpsDepositDeviceStep } from "../usePerpsDepositExecution";
+import {
+  beginDepositRequest,
+  cancelDepositRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
 
 const mockExecuteSwap = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Exchange/executeSwap", () => ({
@@ -65,8 +71,11 @@ function answerDeviceStep(deviceStep: PerpsDepositDeviceStep, result: unknown) {
 function renderExecution() {
   const onDone = jest.fn();
   const onRefused = jest.fn();
-  const { result } = renderHook(() => usePerpsDepositExecution(params, { onDone, onRefused }));
-  return { result, onDone, onRefused };
+  const onNotEnoughBalance = jest.fn();
+  const { result } = renderHook(() =>
+    usePerpsDepositExecution(params, { onDone, onRefused, onNotEnoughBalance }),
+  );
+  return { result, onDone, onRefused, onNotEnoughBalance };
 }
 
 /** Runs the deposit up to the coin-app signature and answers it with `signResult`. */
@@ -100,6 +109,8 @@ describe("usePerpsDepositExecution", () => {
     mockBroadcast.mockResolvedValue(operation);
   });
 
+  afterEach(() => cancelDepositRequest());
+
   it("quotes the deposit as a swap against the perps provider, at the price the review showed", async () => {
     mockExecuteSwap.mockResolvedValue({ operationHash: operation.hash, swapId: "swap-1" });
     const { result } = renderExecution();
@@ -130,7 +141,7 @@ describe("usePerpsDepositExecution", () => {
       () =>
         usePerpsDepositExecution(
           { ...params, depositAccount: tokenAccount },
-          { onDone: jest.fn(), onRefused: jest.fn() },
+          { onDone: jest.fn(), onRefused: jest.fn(), onNotEnoughBalance: jest.fn() },
         ),
       {
         overrideInitialState: state => ({
@@ -218,6 +229,43 @@ describe("usePerpsDepositExecution", () => {
     );
   });
 
+  it("settles the live app's deposit request with the swap and quoted amount", async () => {
+    const request = beginDepositRequest();
+
+    await signWith({ signedOperation: { operation } });
+
+    await expect(request).resolves.toEqual({ swapId: "swap-1", amountTo: "0.019" });
+  });
+
+  it("does not settle a request that replaced the one it started with", async () => {
+    const settled = jest.fn();
+    beginDepositRequest().catch(() => undefined);
+    mockExecuteSwap.mockImplementation(async deps => {
+      // The screen is left and a new deposit starts while this one is still signing.
+      cancelDepositRequest();
+      beginDepositRequest().then(settled, () => undefined);
+      await new Promise<void>((resolve, reject) => {
+        deps.uiHooks["custom.exchange.swap"]({
+          exchangeParams: swapUiRequest,
+          onSuccess: () => resolve(),
+          onCancel: reject,
+        });
+      });
+    });
+
+    const { result, onDone } = renderExecution();
+    act(() => {
+      void result.current.executeDeposit();
+    });
+    await answerDeviceStep(result.current.deviceStep, {
+      completeExchangeResult: { family: "ethereum", amount: new BigNumber("20000000000000000") },
+    });
+    await answerDeviceStep(result.current.deviceStep, { signedOperation: { operation } });
+
+    expect(onDone).toHaveBeenCalled();
+    expect(settled).not.toHaveBeenCalled();
+  });
+
   it("surfaces a failed signature instead of spinning", async () => {
     const { result, onDone, onRefused } = await signWith({
       transactionSignError: new Error("signature failed"),
@@ -255,5 +303,41 @@ describe("usePerpsDepositExecution", () => {
     expect(onRefused).toHaveBeenCalled();
     expect(result.current.deviceStep).toEqual({ kind: "processing" });
     expect(onDone).not.toHaveBeenCalled();
+  });
+  it.each([
+    // The Exchange app's validation keeps the bridge error's name only as its default message.
+    [
+      "validated by the Exchange app",
+      new CompleteExchangeError("INIT", "amount", new NotEnoughBalance().message),
+    ],
+    // executeSwap moves the name to the title, leaving any custom text in the message.
+    [
+      "wrapped by executeSwap",
+      new CompleteExchangeError("INIT", "NotEnoughBalance", "Insufficient balance"),
+    ],
+  ])(
+    "sends the holder back to the form on retry after a shortfall %s",
+    async (_case, shortfall) => {
+      const { result, onNotEnoughBalance } = await signWith({ transactionSignError: shortfall });
+      expect(result.current.deviceStep).toEqual({ kind: "error", error: shortfall });
+      mockExecuteSwap.mockClear();
+
+      act(() => result.current.retry());
+
+      expect(onNotEnoughBalance).toHaveBeenCalledTimes(1);
+      expect(mockExecuteSwap).not.toHaveBeenCalled();
+    },
+  );
+
+  it("re-runs the deposit on retry after any other failure", async () => {
+    const { result, onNotEnoughBalance } = await signWith({
+      transactionSignError: new Error("signature failed"),
+    });
+    mockExecuteSwap.mockClear();
+
+    await act(async () => result.current.retry());
+
+    expect(onNotEnoughBalance).not.toHaveBeenCalled();
+    expect(mockExecuteSwap).toHaveBeenCalledTimes(1);
   });
 });

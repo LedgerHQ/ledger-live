@@ -1,8 +1,8 @@
+import { track } from "@shared/analytics";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { act, renderHook } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import useAddFundsButtonViewModel from "./useAddFundsButtonViewModel";
 

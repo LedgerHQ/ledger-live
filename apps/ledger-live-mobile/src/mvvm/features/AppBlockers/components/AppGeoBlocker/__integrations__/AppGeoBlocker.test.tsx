@@ -76,7 +76,7 @@ describe("AppGeoBlocker", () => {
       </AppGeoBlocker>,
     );
 
-    const renderedNode = screen.toJSON();
+    const renderedNode = JSON.stringify(screen.toJSON());
     expect(renderedNode.includes("Location unavailable")).toBeTruthy();
     expect(renderedNode.includes("Ledger Wallet is not available in this location.")).toBeTruthy();
   });

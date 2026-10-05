@@ -32,6 +32,12 @@ const mockLogger: Logger = jest.fn();
 const mockConfig = jest.fn<Promise<TronCoinConfig>, []>();
 const mockContext = { logger: mockLogger, config: mockConfig } as unknown as TronContext;
 
+const malformedProviderConfig = {
+  explorer: { url: "https://explorer" },
+  status: { type: "active" },
+  energyRent: { provider: "tronify", tronify: {} },
+} as unknown as TronCoinConfig;
+
 const sendTrc20 = (recipient = RECIPIENT): TransactionIntent<TronMemo, TronTxData> => ({
   intentType: "transaction",
   type: "send",
@@ -62,7 +68,19 @@ const sendTrc10: TransactionIntent<TronMemo, TronTxData> = {
   data: { type: "tron" },
 };
 
-const fee = (value: bigint): FeeEstimation => ({ value });
+// Defaults to an energy shortfall (offers Tronify); pass equal/greater available energy for a sender who needs no rental.
+const fee = (
+  value: bigint,
+  energy: { required: string; available: string } = { required: "10000", available: "0" },
+  energyEstimated = true,
+): FeeEstimation => ({
+  value,
+  parameters: {
+    energyRequired: energy.required,
+    energyAvailable: energy.available,
+    energyEstimated,
+  },
+});
 
 const standardOption = {
   id: STANDARD_FEE_OPTION_ID,
@@ -70,7 +88,7 @@ const standardOption = {
 };
 const tronifyOption = {
   id: TRONIFY_FEE_OPTION_ID,
-  feeAsset: expect.objectContaining({ type: "native" }),
+  feeAsset: expect.objectContaining({ type: "trc20", assetReference: TRC20_CONTRACT }),
 };
 
 describe("listFeeOptions", () => {
@@ -106,12 +124,54 @@ describe("listFeeOptions", () => {
     mockConfig.mockResolvedValue(notActivatedConfig);
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
     expect(mockEstimateFees).not.toHaveBeenCalled();
+    expect(mockLogger).not.toHaveBeenCalled();
   });
 
-  it("returns [standard] when the sender has enough energy/bandwidth (standard fee is 0)", async () => {
-    mockEstimateFees.mockResolvedValue(fee(0n));
+  it("returns [standard] and logs when the Tronify provider block is malformed (no url)", async () => {
+    mockConfig.mockResolvedValue(malformedProviderConfig);
+    await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
+    expect(mockEstimateFees).not.toHaveBeenCalled();
+    expect(mockLogger).toHaveBeenCalledWith(
+      "tron/listFeeOptions",
+      expect.any(String),
+      expect.anything(),
+    );
+  });
+
+  it.each([
+    ["missing", { url: "https://tronify.api.live.ledger.com" }],
+    ["blank", { url: "https://tronify.api.live.ledger.com", sourceFlag: "  " }],
+  ])(
+    "returns [standard] without estimating or logging while the sourceFlag is %s",
+    async (_label, tronify) => {
+      mockConfig.mockResolvedValue({
+        ...activatedConfig,
+        energyRent: { provider: "tronify", tronify },
+      } as unknown as TronCoinConfig);
+      await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+      expect(mockLogger).not.toHaveBeenCalled();
+    },
+  );
+
+  it("returns [standard] for a non-USDT TRC-20 transfer, without estimating", async () => {
+    const otherToken: TransactionIntent<TronMemo, TronTxData> = {
+      ...sendTrc20(),
+      asset: { type: "trc20", assetReference: "TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8" },
+    };
+    await expect(listFeeOptions(mockContext, otherToken)).resolves.toEqual([standardOption]);
+    expect(mockEstimateFees).not.toHaveBeenCalled();
+  });
+
+  it("returns [standard] when the sender covers the transfer for free (standard fee is 0)", async () => {
+    mockEstimateFees.mockResolvedValue(fee(0n, { required: "0", available: "5000" }));
     await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
     expect(mockEstimateFees).toHaveBeenCalledWith(mockLogger, activatedConfig, sendTrc20());
+  });
+
+  it("returns [standard] when the sender already has enough energy, even if a bandwidth/activation fee remains", async () => {
+    mockEstimateFees.mockResolvedValue(fee(1_000_000n, { required: "5000", available: "5000" }));
+    await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
   });
 
   it("returns [tronify, standard] for an activated, energy-deficient TRC-20 transfer", async () => {
@@ -121,12 +181,22 @@ describe("listFeeOptions", () => {
     ]);
   });
 
-  it("reports the fee asset as native TRX for every option", async () => {
+  it("returns [standard] when the energy simulation failed (shortfall is a sentinel)", async () => {
+    mockEstimateFees.mockResolvedValue(fee(1_000_000n, { required: "1", available: "0" }, false));
+    await expect(listFeeOptions(mockContext, sendTrc20())).resolves.toEqual([standardOption]);
+  });
+
+  it("reports USDT as the Tronify fee asset and native TRX as the standard one", async () => {
     const options = await listFeeOptions(mockContext, sendTrc20());
     expect(options).toEqual([
       {
         id: TRONIFY_FEE_OPTION_ID,
-        feeAsset: { type: "native", name: "Tron", unit: expect.objectContaining({ code: "TRX" }) },
+        feeAsset: {
+          type: "trc20",
+          assetReference: TRC20_CONTRACT,
+          name: "Tether USD",
+          unit: { name: "USDT", code: "USDT", magnitude: 6 },
+        },
       },
       {
         id: STANDARD_FEE_OPTION_ID,

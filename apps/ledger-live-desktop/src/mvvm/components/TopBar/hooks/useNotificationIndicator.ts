@@ -4,7 +4,7 @@ import { useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Bell, BellNotification } from "@ledgerhq/lumen-ui-react/symbols";
 import { openInformationCenter } from "~/renderer/actions/UI";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useUnseenNotificationsCount } from "~/renderer/hooks/useUnseenNotificationsCount";
 import { getEnv } from "@shared/env";
 

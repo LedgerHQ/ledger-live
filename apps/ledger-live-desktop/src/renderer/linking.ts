@@ -1,4 +1,4 @@
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { shell } from "electron";
 import { isUrlSafe } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/isUrlSafe";
 

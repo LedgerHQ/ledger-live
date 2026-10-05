@@ -1,9 +1,9 @@
+import { trackPage, track } from "@shared/analytics";
 import React from "react";
 import { Linking } from "react-native";
 import { resetLazyOnboardingBannerSession } from "@features/flow-lazy-onboarding-banner/testing";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
-import { screen as analyticsScreen, track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import {
   LAZY_ONBOARDING_BANNER_BUTTON,
@@ -115,16 +115,14 @@ describe("LazyOnboardingBanner", () => {
     expect(screen.getByText("Why millions choose Ledger?")).toBeVisible();
     expect(screen.getByText("To have peace of mind every time they transact.")).toBeVisible();
 
-    expect(analyticsScreen).toHaveBeenCalledWith(
-      LAZY_ONBOARDING_BANNER_PAGE,
-      undefined,
-      {
+    expect(trackPage).toHaveBeenCalledWith({
+      category: LAZY_ONBOARDING_BANNER_PAGE,
+      props: {
         name: LAZY_ONBOARDING_BANNER_PAGE_NAME,
         ...lazyOnboardingBannerAnalyticsProps,
         abLazyBannerFlow: "shop direct",
       },
-      false,
-    );
+    });
 
     await user.press(screen.getByTestId("lazy-onboarding-banner"));
 
@@ -159,16 +157,14 @@ describe("LazyOnboardingBanner", () => {
   it("should open the tour instead of the shop in feature_intro mode", async () => {
     const { user } = renderBanner({ mode: "feature_intro", withTourMount: true });
 
-    expect(analyticsScreen).toHaveBeenCalledWith(
-      LAZY_ONBOARDING_BANNER_PAGE,
-      undefined,
-      {
+    expect(trackPage).toHaveBeenCalledWith({
+      category: LAZY_ONBOARDING_BANNER_PAGE,
+      props: {
         name: LAZY_ONBOARDING_BANNER_PAGE_NAME,
         ...lazyOnboardingBannerAnalyticsProps,
         abLazyBannerFlow: "feature intro",
       },
-      false,
-    );
+    });
 
     await openTourFromBanner(user);
 
@@ -178,17 +174,15 @@ describe("LazyOnboardingBanner", () => {
       ...lazyOnboardingBannerAnalyticsProps,
       abLazyBannerFlow: "feature intro",
     });
-    expect(analyticsScreen).toHaveBeenCalledWith(
-      LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
-      undefined,
-      {
+    expect(trackPage).toHaveBeenCalledWith({
+      category: LAZY_ONBOARDING_FEATURE_INTRO_PAGE,
+      props: {
         name: LAZY_ONBOARDING_FEATURE_INTRO_PAGE_NAME,
         sourceFlow: LAZY_ONBOARDING_SOURCE_FLOW,
         ...lazyOnboardingBannerAnalyticsProps,
         abLazyBannerFlow: "feature intro",
       },
-      false,
-    );
+    });
     expect(Linking.openURL).not.toHaveBeenCalled();
   });
 

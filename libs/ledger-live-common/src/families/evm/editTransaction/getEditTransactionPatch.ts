@@ -241,7 +241,6 @@ export const getEditTransactionPatch = async ({
   const shouldUseEip1559 = transaction.type === 2;
 
   const gasOptions = await gasTracker.getGasOptions({
-    currencyId: currency.id,
     config,
     options: { useEIP1559: shouldUseEip1559 },
   });

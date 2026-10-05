@@ -179,16 +179,10 @@ test.use({
 
 ### Pay tab
 
-Injection is opt-in on the Playwright fixture. The default is off, and the spec path does nothing.
-A Pay tab spec sets:
-
-```typescript
-test.use({
-  injectCardSession: true,
-});
-```
-
-Without that option, the spec launches signed out.
+A spec that needs an injected Card session must live under `specs/paytab/`. The card-session reporter
+mints once before workers when a selected spec path contains `/paytab/`. `--grep` is already applied,
+so a smoke run that does not select that spec does not log in. The fixture injects the session when
+the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
 
 ---
 
@@ -205,7 +199,7 @@ Without that option, the spec launches signed out.
 ## Best Practices
 
 - **Never use hardcoded timeouts** (e.g., `page.waitForTimeout(1000)`)
-- Use `@step` decorator in Page Objects
+- Do not use Playwright's `test.step()`; use the `@step` decorator in Page Objects instead for reusable, consistently reported steps
 - Access methods via `app` fixture (e.g., `app.layout`, `app.send`, `app.speculos`)
 - **MANDATORY:** Test on all 6 device models (LNS, LNSP, LNX, STAX, FLEX, NG5) before marking tests complete
 - **Every `test()` must include a TMS annotation** with a valid `B2CQA-XXXX` id. The `annotationLinks` auto

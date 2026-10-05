@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { add, isBefore, parseISO } from "date-fns";
@@ -16,11 +17,10 @@ import {
   setRatingsHappyMoment,
   setRatingsDataOfUser,
 } from "~/actions/ratings";
-import { track } from "~/analytics";
 import { notificationsModalOpenSelector } from "~/reducers/notifications";
 
 export type RatingsHappyMoment = {
-  timeout?: number;
+  timeout?: ReturnType<typeof setTimeout>;
   /** Name of the route that will trigger the rating flow */
   // eslint-disable-next-line camelcase
   route_name: string;
@@ -178,10 +178,15 @@ const useRatings = () => {
           const timeout = setTimeout(() => {
             setRatingsModalOpenCallback(true);
           }, happyMoment.timer);
+          const type =
+            happyMoment.type === "on_enter" || happyMoment.type === "on_leave"
+              ? happyMoment.type
+              : undefined;
           dispatch(
             setRatingsHappyMoment({
-              ...happyMoment,
-              // @ts-expect-error TYPINGS
+              route_name: happyMoment.route_name,
+              timer: happyMoment.timer,
+              type,
               timeout,
             }),
           );

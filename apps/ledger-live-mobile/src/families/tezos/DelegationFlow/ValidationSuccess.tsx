@@ -1,9 +1,10 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
-import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import PreventNativeBack from "~/components/PreventNativeBack";

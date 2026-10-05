@@ -5,12 +5,11 @@ import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { cryptoCurrenciesSelector } from "~/renderer/reducers/accounts";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { Track, TrackPage } from "@shared/analytics-react";
 import SelectCurrency from "~/renderer/components/SelectCurrency";
 import Box from "~/renderer/components/Box";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import CurrencyRows from "./CurrencyRows";
-import Track from "~/renderer/analytics/Track";
 
 export default function Currencies() {
   const { t } = useTranslation();

@@ -59,6 +59,7 @@ export function SendHeader() {
     handleRecipientInputChange,
     handleRecipientPaste,
     handleQrCodeClick,
+    handleQrScannerError,
     handleScanPicked,
     isScannerOpen,
     recipientContact,
@@ -121,7 +122,9 @@ export function SendHeader() {
           onQrCodeClick={handleQrCodeClick}
           placeholder={recipientPlaceholder}
         />
-        {isScannerOpen && <RecipientQrScanner onPick={handleScanPicked} />}
+        {isScannerOpen && (
+          <RecipientQrScanner onPick={handleScanPicked} onErrorShown={handleQrScannerError} />
+        )}
         {showMemoControls && currencyId ? (
           <div className="px-24">
             <div className="flex flex-col gap-12">
@@ -179,6 +182,7 @@ export function SendHeader() {
     handleRecipientInputChange,
     handleRecipientPaste,
     handleQrCodeClick,
+    handleQrScannerError,
     handleScanPicked,
     isScannerOpen,
   ]);

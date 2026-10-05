@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { useState, useCallback, useRef, useEffect } from "react";
-import { track } from "~/analytics";
 import { withOptionalVariant, type WalletV4TourAnalytics } from "../analytics";
 import type { WalletV4TourDrawerViewModel } from "../types";
 

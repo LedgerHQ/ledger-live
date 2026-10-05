@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { useTranslation } from "~/context/Locale";
 import { shallowEqual } from "react-redux";
@@ -6,7 +7,6 @@ import { GestureResponderEvent } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDistribution } from "~/actions/general";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import {
   blacklistedTokenIdsSelector,

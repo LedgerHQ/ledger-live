@@ -1,0 +1,402 @@
+import { describe, it, expect, afterEach } from "bun:test";
+import {
+  access,
+  appendFile,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rename,
+  rm,
+  writeFile,
+} from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { runCli } from "../../testing/cli-runner";
+import { getSkill, SIDECAR_FILENAME } from "../../skills/registry";
+import { hashOne, hashSkillFiles } from "../../skills/hash";
+
+const SKILL_NAME = "wallet-cli-usage";
+const LEGACY_SKILL_NAME = "ledger-wallet-cli";
+
+async function exists(p: string): Promise<boolean> {
+  try {
+    await access(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+let tmpDir: string | undefined;
+afterEach(async () => {
+  if (tmpDir) {
+    await rm(tmpDir, { recursive: true, force: true });
+    tmpDir = undefined;
+  }
+});
+
+async function makeTmpDir(): Promise<string> {
+  tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-doctortest-"));
+  return tmpDir;
+}
+
+async function install(dir: string): Promise<void> {
+  const res = await runCli(["skill", "install", SKILL_NAME, "--dir", dir]);
+  expect(res.exitCode, `install stderr: ${res.stderr}`).toBe(0);
+}
+
+/** Read the manifest-tracked files as they currently exist on disk. */
+async function readTrackedFromDisk(
+  skillRoot: string,
+): Promise<{ path: string; content: string }[]> {
+  const skill = getSkill(SKILL_NAME)!;
+  const files: { path: string; content: string }[] = [];
+  for (const f of skill.files) {
+    files.push({ path: f.path, content: await readFile(path.join(skillRoot, f.path), "utf8") });
+  }
+  return files;
+}
+
+/** Rewrite the sidecar so its hashes match the current on-disk files (with a chosen version). */
+async function stampSidecar(skillRoot: string, cliVersion: string): Promise<void> {
+  const files = await readTrackedFromDisk(skillRoot);
+  const sidecar = {
+    name: SKILL_NAME,
+    cliVersion,
+    contentHash: hashSkillFiles(files),
+    files: Object.fromEntries(files.map(f => [f.path, hashOne(f.content)])),
+    installedAt: new Date().toISOString(),
+  };
+  await writeFile(
+    path.join(skillRoot, SIDECAR_FILENAME),
+    `${JSON.stringify(sidecar, null, 2)}\n`,
+    "utf8",
+  );
+}
+
+describe("skill doctor", () => {
+  it("reports up-to-date and exits 0 for a fresh install", async () => {
+    const dir = await makeTmpDir();
+    await install(dir);
+
+    const { stdout, exitCode, stderr } = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    expect(stdout).toContain("up-to-date");
+    expect(stdout).toContain("All skills up-to-date.");
+  });
+
+  it("detects outdated (older sidecar consistent with disk) and heals with --fix", async () => {
+    const dir = await makeTmpDir();
+    await install(dir);
+    const skillRoot = path.join(dir, SKILL_NAME);
+
+    // Simulate an install by an older binary: change the on-disk content and make
+    // the sidecar consistent with it, but different from the shipped content.
+    await appendFile(path.join(skillRoot, "SKILL.md"), "\n<!-- shipped by older wallet-cli -->\n");
+    await stampSidecar(skillRoot, "0.0.1");
+
+    const outdated = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(outdated.exitCode).toBe(1);
+    expect(outdated.stdout).toContain("outdated");
+
+    const fixed = await runCli(["skill", "doctor", "--dir", dir, "--fix"]);
+    expect(fixed.exitCode, `stderr: ${fixed.stderr}`).toBe(0);
+    expect(fixed.stdout).toContain("up-to-date");
+  });
+
+  it("emits `fixed` as diagnosis objects carrying name and root, not bare names", async () => {
+    const dir = await makeTmpDir();
+    await install(dir);
+    const skillRoot = path.join(dir, SKILL_NAME);
+
+    // Make the single installed skill outdated so `--fix` heals exactly it.
+    await appendFile(path.join(skillRoot, "SKILL.md"), "\n<!-- shipped by older wallet-cli -->\n");
+    await stampSidecar(skillRoot, "0.0.1");
+
+    const { stdout, exitCode, stderr } = await runCli([
+      "skill",
+      "doctor",
+      "--dir",
+      dir,
+      "--fix",
+      "--output",
+      "json",
+    ]);
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    const data = JSON.parse(stdout);
+    // `fixed` must be objects (name + root), so the same skill healed in multiple
+    // scan roots stays distinct instead of collapsing to duplicate bare names.
+    expect(Array.isArray(data.fixed)).toBe(true);
+    const fixedEntry = (data.fixed as { name: string; root: string }[]).find(
+      f => f.name === SKILL_NAME,
+    );
+    expect(fixedEntry).toBeDefined();
+    expect(fixedEntry!.root).toBe(dir);
+  });
+
+  it("detects modified-locally, leaves it under --fix, restores under --fix --force", async () => {
+    const dir = await makeTmpDir();
+    await install(dir);
+    const skillRoot = path.join(dir, SKILL_NAME);
+
+    await appendFile(path.join(skillRoot, "SKILL.md"), "\nlocal hand edit\n");
+
+    const modified = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(modified.exitCode).toBe(1);
+    expect(modified.stdout).toContain("modified-locally");
+
+    const fixNoForce = await runCli(["skill", "doctor", "--dir", dir, "--fix"]);
+    expect(fixNoForce.exitCode).toBe(1);
+    expect(fixNoForce.stdout).toContain("modified-locally");
+
+    // `--force` without `--fix` overwrites nothing, so the remediation hint must
+    // still show (regression guard: it was previously suppressed by `--force`).
+    const forceNoFix = await runCli(["skill", "doctor", "--dir", dir, "--force"]);
+    expect(forceNoFix.exitCode).toBe(1);
+    expect(forceNoFix.stdout).toContain("Re-run with --fix --force");
+    // The hint carries each entry's root so the same skill modified in multiple
+    // scan roots (e.g. under --global) stays distinguishable, not `name, name`.
+    expect(forceNoFix.stdout).toContain(`${SKILL_NAME} (${dir})`);
+
+    const fixForce = await runCli(["skill", "doctor", "--dir", dir, "--fix", "--force"]);
+    expect(fixForce.exitCode, `stderr: ${fixForce.stderr}`).toBe(0);
+    expect(fixForce.stdout).toContain("up-to-date");
+    const restored = await readFile(path.join(skillRoot, "SKILL.md"), "utf8");
+    expect(restored).not.toContain("local hand edit");
+  });
+
+  it("reports up-to-date for a sidecar-less install whose files match the shipped content", async () => {
+    const dir = await makeTmpDir();
+    // Install every shipped skill so the scan finds no "missing" ones regardless
+    // of how many skills this binary ships.
+    const res = await runCli(["skill", "install", "--all", "--dir", dir]);
+    expect(res.exitCode, `install --all stderr: ${res.stderr}`).toBe(0);
+    const skillRoot = path.join(dir, SKILL_NAME);
+
+    // Legacy/manual install: files match what we ship, but there's no provenance.
+    await rm(path.join(skillRoot, SIDECAR_FILENAME));
+
+    const { stdout, exitCode, stderr } = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    expect(stdout).toContain("up-to-date");
+    expect(stdout).toContain("All skills up-to-date.");
+  });
+
+  it("treats a sidecar-less install whose files differ from shipped as modified-locally", async () => {
+    const dir = await makeTmpDir();
+    const res = await runCli(["skill", "install", "--all", "--dir", dir]);
+    expect(res.exitCode, `install --all stderr: ${res.stderr}`).toBe(0);
+    const skillRoot = path.join(dir, SKILL_NAME);
+
+    await rm(path.join(skillRoot, SIDECAR_FILENAME));
+    await appendFile(path.join(skillRoot, "SKILL.md"), "\nlocal hand edit\n");
+
+    const modified = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(modified.exitCode).toBe(1);
+    expect(modified.stdout).toContain("modified-locally");
+
+    // Without provenance we don't overwrite without --force.
+    const fixNoForce = await runCli(["skill", "doctor", "--dir", dir, "--fix"]);
+    expect(fixNoForce.exitCode).toBe(1);
+    expect(fixNoForce.stdout).toContain("modified-locally");
+  });
+
+  it("reports missing when the skill is absent from the scanned dir", async () => {
+    const dir = await makeTmpDir();
+
+    const { stdout, exitCode } = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(exitCode).toBe(1);
+    expect(stdout).toContain("missing");
+  });
+
+  it("heals a missing skill with --fix", async () => {
+    const dir = await makeTmpDir();
+
+    const fixed = await runCli(["skill", "doctor", "--dir", dir, "--fix"]);
+    expect(fixed.exitCode, `stderr: ${fixed.stderr}`).toBe(0);
+    expect(fixed.stdout).toContain("up-to-date");
+  });
+
+  it("returns a json envelope with status, command and results", async () => {
+    const dir = await makeTmpDir();
+    await install(dir);
+
+    const { stdout, exitCode } = await runCli([
+      "skill",
+      "doctor",
+      "--dir",
+      dir,
+      "--output",
+      "json",
+    ]);
+    expect(exitCode).toBe(0);
+    const data = JSON.parse(stdout);
+    expect(data.status).toBe("success");
+    expect(data.command).toBe("skill doctor");
+    expect(Array.isArray(data.results)).toBe(true);
+    expect(Array.isArray(data.remainingDrift)).toBe(true);
+    expect(data.results[0].name).toBe(SKILL_NAME);
+    expect(data.results[0].status).toBe("up-to-date");
+  });
+});
+
+describe("skill doctor — pre-rename installs", () => {
+  /** Simulate an install written by a wallet-cli from before the rename. */
+  async function installUnderLegacyName(dir: string): Promise<string> {
+    const canonicalRoot = path.join(dir, SKILL_NAME);
+    const legacyRoot = path.join(dir, LEGACY_SKILL_NAME);
+    await install(dir);
+    await rename(canonicalRoot, legacyRoot);
+    // The sidecar an older binary would have written, naming the old skill.
+    const files = await readTrackedFromDisk(legacyRoot);
+    await writeFile(
+      path.join(legacyRoot, SIDECAR_FILENAME),
+      `${JSON.stringify(
+        {
+          name: LEGACY_SKILL_NAME,
+          cliVersion: "0.0.1",
+          contentHash: hashSkillFiles(files),
+          files: Object.fromEntries(files.map(f => [f.path, hashOne(f.content)])),
+          installedAt: new Date().toISOString(),
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+    return legacyRoot;
+  }
+
+  it("reports the skill as missing and names the superseded path", async () => {
+    const dir = await makeTmpDir();
+    const legacyRoot = await installUnderLegacyName(dir);
+
+    const { stdout, exitCode } = await runCli(["skill", "doctor", "--dir", dir]);
+    // The legacy directory is not an install of the skill we ship today, so the
+    // canonical one is genuinely missing — but it must not be silently orphaned.
+    expect(exitCode).toBe(1);
+    expect(stdout).toContain("missing");
+    expect(stdout).toContain(legacyRoot);
+    expect(stdout).toMatch(/superseded/i);
+  });
+
+  it("heals by installing the canonical skill, leaving the old directory alone", async () => {
+    const dir = await makeTmpDir();
+    const legacyRoot = await installUnderLegacyName(dir);
+
+    const fixed = await runCli(["skill", "doctor", "--dir", dir, "--fix"]);
+    expect(fixed.exitCode, `stderr: ${fixed.stderr}`).toBe(0);
+    expect(fixed.stdout).toContain("up-to-date");
+
+    // Installed under the canonical name...
+    const canonical = await readFile(path.join(dir, SKILL_NAME, "SKILL.md"), "utf8");
+    expect(canonical).toContain(`name: ${SKILL_NAME}`);
+    // ...and the pre-rename copy is reported, not deleted: removing a user's files
+    // is their call, so `--fix` never does it.
+    expect(await readFile(path.join(legacyRoot, "SKILL.md"), "utf8")).toBeTruthy();
+    expect(fixed.stdout).toContain(legacyRoot);
+  });
+
+  it("exposes superseded paths in the json envelope", async () => {
+    const dir = await makeTmpDir();
+    const legacyRoot = await installUnderLegacyName(dir);
+
+    const { stdout, exitCode } = await runCli([
+      "skill",
+      "doctor",
+      "--dir",
+      dir,
+      "--output",
+      "json",
+    ]);
+    expect(exitCode).toBe(1);
+    const data = JSON.parse(stdout);
+    const entry = (data.results as { name: string; supersededRoots?: string[] }[]).find(
+      r => r.name === SKILL_NAME,
+    );
+    expect(entry?.supersededRoots).toEqual([legacyRoot]);
+  });
+
+  it("does not mistake a sidecar-less directory for a pre-rename install", async () => {
+    const dir = await makeTmpDir();
+    // The canonical monorepo source lives at .agents/skills/ledger-wallet-cli, and
+    // .agents/skills is a scanned agent root — reporting it as a stale install of
+    // itself would make `doctor` noisy inside a ledger-live checkout.
+    await mkdir(path.join(dir, LEGACY_SKILL_NAME), { recursive: true });
+    await writeFile(path.join(dir, LEGACY_SKILL_NAME, "SKILL.md"), "source of truth\n", "utf8");
+
+    const { stdout, exitCode } = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(exitCode).toBe(1);
+    expect(stdout).toContain("missing");
+    expect(stdout).not.toMatch(/superseded/i);
+  });
+
+  /** A directory carrying the legacy name whose sidecar attests to another skill. */
+  async function installForeignSkillUnderLegacyName(dir: string): Promise<string> {
+    const legacyRoot = path.join(dir, LEGACY_SKILL_NAME);
+    await mkdir(legacyRoot, { recursive: true });
+    await writeFile(path.join(legacyRoot, "SKILL.md"), "someone else's skill\n", "utf8");
+    await writeFile(
+      path.join(legacyRoot, SIDECAR_FILENAME),
+      `${JSON.stringify(
+        {
+          name: "some-other-skill",
+          cliVersion: "0.0.1",
+          contentHash: "deadbeef",
+          files: { "SKILL.md": "deadbeef" },
+          installedAt: new Date().toISOString(),
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+    return legacyRoot;
+  }
+
+  it("does not report a legacy-named directory whose sidecar names another skill", async () => {
+    const dir = await makeTmpDir();
+    const foreignRoot = await installForeignSkillUnderLegacyName(dir);
+
+    const { stdout, exitCode } = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(exitCode).toBe(1);
+    expect(stdout).toContain("missing");
+    expect(stdout).not.toMatch(/superseded/i);
+    expect(stdout).not.toContain(foreignRoot);
+  });
+
+  it("keeps it out of the json envelope too", async () => {
+    const dir = await makeTmpDir();
+    await installForeignSkillUnderLegacyName(dir);
+
+    const { stdout } = await runCli(["skill", "doctor", "--dir", dir, "--output", "json"]);
+    const entry = (
+      JSON.parse(stdout).results as { name: string; supersededRoots?: string[] }[]
+    ).find(r => r.name === SKILL_NAME);
+    expect(entry?.supersededRoots).toBeUndefined();
+  });
+
+  it("does not let it choose where --fix installs", async () => {
+    // Unchecked, an unrelated directory in a non-default agent root would pull
+    // the install to that root.
+    const dir = await makeTmpDir();
+    const prevCwd = process.cwd();
+    process.chdir(dir);
+    const cwd = process.cwd(); // resolves symlinks (macOS /var -> /private/var)
+    try {
+      await mkdir(path.join(cwd, ".cursor", "skills"), { recursive: true });
+      await installForeignSkillUnderLegacyName(path.join(cwd, ".cursor", "skills"));
+
+      const fixed = await runCli(["skill", "doctor", "--fix"]);
+      expect(fixed.exitCode, `stderr: ${fixed.stderr}`).toBe(0);
+
+      expect(await exists(path.join(cwd, ".claude", "skills", SKILL_NAME, "SKILL.md"))).toBe(true);
+      expect(await exists(path.join(cwd, ".cursor", "skills", SKILL_NAME))).toBe(false);
+      expect(
+        await readFile(path.join(cwd, ".cursor", "skills", LEGACY_SKILL_NAME, "SKILL.md"), "utf8"),
+      ).toBe("someone else's skill\n");
+    } finally {
+      process.chdir(prevCwd);
+    }
+  });
+});

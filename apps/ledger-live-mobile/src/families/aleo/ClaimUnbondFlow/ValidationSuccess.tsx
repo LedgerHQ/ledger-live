@@ -1,7 +1,7 @@
+import { track } from "@shared/analytics";
 import React, { useEffect } from "react";
 import { Trans } from "~/context/Locale";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {

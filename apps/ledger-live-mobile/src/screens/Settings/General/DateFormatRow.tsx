@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Text } from "@ledgerhq/native-ui";
 import { useSelector } from "~/context/hooks";
 import SettingsRow from "~/components/SettingsRow";
 import { DateFormatDrawer } from "./DateFormatDrawer";
-import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import { dateFormatSelector } from "~/reducers/settings";
 import { Format } from "~/components/DateFormat/formatter.util";

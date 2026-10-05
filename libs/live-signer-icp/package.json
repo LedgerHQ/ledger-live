@@ -47,6 +47,7 @@
     "knip-check": "pnpm knip --directory ../.. -W libs/live-signer-icp"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",

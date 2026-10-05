@@ -61,24 +61,26 @@ catalog:
   "@ledgerhq/devices": 8.18.0
   "@ledgerhq/hw-transport": 6.36.0
   "@ledgerhq/hw-transport-mocker": 6.35.0
-  "@ledgerhq/live-network": 3.1.0
+  "@ledgerhq/live-network": 3.2.0
   "@ledgerhq/live-promise": 0.4.0
   "@ledgerhq/psbtv2": 0.6.0
+  "@ledgerhq/hw-ledger-key-ring-protocol": 0.14.0
+  "@ledgerhq/ledger-key-ring-protocol": 0.24.0
   "@ledgerhq/live-config": 3.9.0
   "@ledgerhq/live-env": 4.1.0
   "@ledgerhq/live-currency-format": 0.16.0
-  "@ledgerhq/domain-service": 1.9.0
-  "@ledgerhq/evm-tools": 1.15.0
+  "@ledgerhq/domain-service": 1.9.1
+  "@ledgerhq/evm-tools": 1.15.1
   "@ledgerhq/lumen-design-core": 0.1.30
-  "@ledgerhq/lumen-ui-react": 0.1.60
-  "@ledgerhq/lumen-ui-rnative": 0.1.63
+  "@ledgerhq/lumen-ui-react": 0.1.61
+  "@ledgerhq/lumen-ui-rnative": 0.1.64
   "@ledgerhq/lumen-utils-shared": 0.1.14
   # Wallet API
-  "@ledgerhq/wallet-api-client": 1.15.3
-  "@ledgerhq/wallet-api-client-react": 1.4.34
-  "@ledgerhq/wallet-api-core": 2.0.0
-  "@ledgerhq/wallet-api-server": 3.4.3
-  "@ledgerhq/wallet-api-simulator": 2.3.3
+  "@ledgerhq/wallet-api-client": 1.16.0
+  "@ledgerhq/wallet-api-client-react": 1.4.35
+  "@ledgerhq/wallet-api-core": 2.1.0
+  "@ledgerhq/wallet-api-server": 3.5.0
+  "@ledgerhq/wallet-api-simulator": 2.4.0
   "@ledgerhq/zcash-utils": 2.5.0
   # React Native
   react-native: 0.81.6
@@ -126,6 +128,8 @@ catalog:
   "@rspack/plugin-react-refresh": 2.0.2
   "@rslib/core": 0.23.2
   react-refresh: 0.18.0
+  "@stacks/network": 7.6.0
+  "@stacks/transactions": 7.6.0
   "@swc/core": 1.15.11
   "@swc/helpers": 0.5.23
   "@swc/jest": 0.2.39
@@ -144,7 +148,7 @@ catalog:
   "@typescript/native": "npm:typescript@^7.0.2"
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.6
-  axios: 1.13.5
+  axios: 1.20.0
   babel-jest: 30.5.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
@@ -152,7 +156,7 @@ catalog:
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   electron: 43.1.1
-  eslint-plugin-better-tailwindcss: 4.0.0-beta.3
+  eslint-plugin-better-tailwindcss: 4.7.0
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@noble/curves": 1.9.7
@@ -238,12 +242,12 @@ catalog:
   oxlint: 1.82.0
   oxfmt: 0.67.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 7.0.0
-  "@ledgerhq/coin-hypercore": 3.0.0
-  "@ledgerhq/coin-module-framework": 9.2.0
-  "@ledgerhq/coin-stellar": 10.0.1
-  "@ledgerhq/coin-tezos": 12.0.2
-  "@ledgerhq/coin-xrp": 11.0.0
+  "@ledgerhq/coin-evm": 10.0.0
+  "@ledgerhq/coin-hypercore": 4.0.1
+  "@ledgerhq/coin-module-framework": 10.0.0
+  "@ledgerhq/coin-stellar": 11.0.1
+  "@ledgerhq/coin-tezos": 13.0.1
+  "@ledgerhq/coin-xrp": 12.0.1
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:

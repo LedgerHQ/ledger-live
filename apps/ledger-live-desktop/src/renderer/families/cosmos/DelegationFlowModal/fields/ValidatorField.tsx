@@ -1,6 +1,5 @@
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import {
-  CosmosDelegation,
   CosmosValidatorItem,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cosmos/types";
@@ -22,7 +21,6 @@ type Props = {
   t: TFunction;
   account: Account;
   status: TransactionStatus;
-  delegations: CosmosDelegation[];
   onChangeValidator: (a: { address: string }) => void;
   chosenVoteAccAddr: string;
 };
@@ -38,7 +36,9 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   );
   const shouldDisplayAllValidators =
     account.type === "Account" &&
-    ["quicksilver", "persistence", "mantra", "axelar", "osmo"].includes(account.currency.id);
+    ["quicksilver", "persistence", "mantra", "axelar", "osmo", "babylon"].includes(
+      account.currency.id,
+    );
 
   useEffect(() => {
     if (shouldDisplayAllValidators) {

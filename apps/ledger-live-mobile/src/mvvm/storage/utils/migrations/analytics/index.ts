@@ -1,4 +1,4 @@
-import { track } from "~/analytics";
+import { track } from "@shared/analytics";
 import type { StorageType } from "LLM/storage/types";
 import type { StorageMigrationUserEvent, StorageMigrationUserProps } from "./types";
 import storage from "LLM/storage";

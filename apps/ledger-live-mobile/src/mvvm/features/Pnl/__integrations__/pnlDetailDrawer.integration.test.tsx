@@ -1,17 +1,9 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { TrackScreen } from "~/analytics";
 import { PnlDetailDrawer } from "../components/PnlDetailDrawer";
 import { PnlDetailItem } from "../components/PnlDetailDrawer/types";
 import { PNL_DETAIL_PAGE } from "../const";
-
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    TrackScreen: jest.fn(() => null),
-  };
-});
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 

@@ -1,5 +1,5 @@
 import { CARD_APP_ID, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { setTrackingSource } from "@shared/analytics";
 import { cardHandler, discoverHandler, walletConnectHandler } from "../discover.handler";
 import { createMockContext } from "./test-utils";
 
@@ -8,8 +8,11 @@ jest.mock("@ledgerhq/live-common/wallet-api/constants", () => ({
   WC_ID: "wallet-connect",
 }));
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   setTrackingSource: jest.fn(),
+  track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 
 const mockSetTrackingSource = jest.mocked(setTrackingSource);

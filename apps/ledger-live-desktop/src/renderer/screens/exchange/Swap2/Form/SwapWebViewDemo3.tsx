@@ -24,7 +24,7 @@ import { useLocation } from "react-router";
 import styled from "styled-components";
 import { reduce, firstValueFrom } from "rxjs";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { track } from "~/renderer/analytics/segment";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import {
@@ -59,7 +59,6 @@ import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { useSwapDefaultAccounts } from "./useSwapDefaultAccounts";
 import { buildSwapWebViewHash, type SwapLocationState } from "./buildSwapWebViewHash";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@features/platform-feature-flags";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { SwapLoader } from "./SwapLoader";

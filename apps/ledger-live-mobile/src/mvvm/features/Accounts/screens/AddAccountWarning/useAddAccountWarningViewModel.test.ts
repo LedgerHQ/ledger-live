@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { renderHook } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../AddAccount/enums";
 import useAddAccountWarningViewModel, { Props } from "./useAddAccountWarningViewModel";

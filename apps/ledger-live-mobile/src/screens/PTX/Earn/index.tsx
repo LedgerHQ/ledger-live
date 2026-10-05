@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import {
   stakeProgramsToEarnParam,
   getEthDepositScreenSetting,
@@ -16,7 +17,6 @@ import React, { Fragment, memo, useMemo } from "react";
 import { Platform, View } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
-import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
 import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

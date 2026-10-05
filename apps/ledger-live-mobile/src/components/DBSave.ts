@@ -50,7 +50,7 @@ import { accountPersistedStateChanged } from "@ledgerhq/live-common/account/inde
 import {
   exportCountervalues,
   hasNewCountervaluesToExport,
-} from "@ledgerhq/live-countervalues/logic";
+} from "@domain/entity-market-countervalues";
 
 type MaybeState = Maybe<State>;
 

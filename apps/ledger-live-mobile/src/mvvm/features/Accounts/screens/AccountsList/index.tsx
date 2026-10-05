@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import AccountsListView from "LLM/features/Accounts/components/AccountsListView";
 import { LNUpsellBanner } from "LLM/features/LNUpsell";
@@ -7,7 +8,6 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import AddAccountButton from "LLM/features/Accounts/components/AddAccountButton";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import { RefreshMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import Spinning from "~/components/Spinning";
 import AccountsEmptyList from "LLM/components/EmptyList/AccountsEmptyList";

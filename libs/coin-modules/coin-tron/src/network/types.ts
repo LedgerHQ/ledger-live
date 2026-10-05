@@ -266,10 +266,14 @@ export type TriggerConstantContractParams = {
 
 export type TriggerConstantContractResponse = {
   energy_used?: number;
+  energy_penalty?: number;
   constant_result?: string[];
   result?: {
     result?: boolean;
     code?: string;
     message?: string;
+  };
+  transaction?: {
+    ret?: { ret?: string }[];
   };
 };

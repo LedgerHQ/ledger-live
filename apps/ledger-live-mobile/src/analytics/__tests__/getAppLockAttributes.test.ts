@@ -17,10 +17,12 @@ const stateWith = ({
 describe("getAppLockAttributes", () => {
   it("reports the revamped protection once the flag is on", () => {
     expect(getAppLockAttributes(stateWith({ hasPassword: true }), true)).toEqual({
+      lwm_password_revamp: true,
       password_enabled: true,
       biometrics_enabled: false,
     });
     expect(getAppLockAttributes(stateWith({ biometricsEnabled: true }), true)).toEqual({
+      lwm_password_revamp: true,
       password_enabled: false,
       biometrics_enabled: true,
     });
@@ -28,6 +30,7 @@ describe("getAppLockAttributes", () => {
 
   it("reports the revamped protection a user keeps with the flag off", () => {
     expect(getAppLockAttributes(stateWith({ hasPassword: true }), false)).toEqual({
+      lwm_password_revamp: false,
       password_enabled: true,
       biometrics_enabled: false,
     });
@@ -37,6 +40,7 @@ describe("getAppLockAttributes", () => {
     const state = stateWith({ legacy: { hasPassword: true, biometricsEnabled: true } });
 
     expect(getAppLockAttributes(state, false)).toEqual({
+      lwm_password_revamp: false,
       password_enabled: true,
       biometrics_enabled: true,
     });
@@ -46,6 +50,7 @@ describe("getAppLockAttributes", () => {
     const state = stateWith({ legacy: { hasPassword: true, biometricsEnabled: true } });
 
     expect(getAppLockAttributes(state, true)).toEqual({
+      lwm_password_revamp: true,
       password_enabled: false,
       biometrics_enabled: false,
     });
@@ -53,6 +58,7 @@ describe("getAppLockAttributes", () => {
 
   it("reports nothing enabled before any privacy was ever set", () => {
     expect(getAppLockAttributes(stateWith({ legacy: null }), false)).toEqual({
+      lwm_password_revamp: false,
       password_enabled: false,
       biometrics_enabled: false,
     });

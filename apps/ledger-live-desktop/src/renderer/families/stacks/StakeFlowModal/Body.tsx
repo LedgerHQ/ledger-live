@@ -1,0 +1,241 @@
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSelector } from "LLD/hooks/redux";
+import { Trans, useTranslation } from "react-i18next";
+import invariant from "invariant";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { StacksAccount, Transaction } from "@ledgerhq/live-common/families/stacks/types";
+import { fetchPoxInfo } from "@ledgerhq/live-common/families/stacks/react";
+import logger from "~/renderer/logger";
+import { Track } from "@shared/analytics-react";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import Stepper from "~/renderer/components/Stepper";
+import { useStacksFlowState } from "../useStacksFlowState";
+import StepValidator, { StepValidatorFooter } from "./steps/StepValidator";
+import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
+import StepConnectDevice from "./steps/StepConnectDevice";
+import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
+import { Step, StepId, StepProps } from "./types";
+
+// Well inside pox-5's mainnet/testnet reward-cycle length (2100 / 1050 blocks, ~14 / ~7 days at
+// ~10min/block) -- frequent enough to keep the connect-device wait's staleness window small, far
+// too infrequent to meaningfully load the pox info endpoint.
+const START_BURN_HT_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+
+export type Data = {
+  account: StacksAccount;
+  source?: string;
+};
+
+type Props = {
+  stepId: StepId;
+  onClose: () => void;
+  onChangeStepId: (a: StepId) => void;
+  params: Data;
+};
+
+const steps: Array<Step> = [
+  {
+    id: "validator",
+    label: <Trans i18nKey="stacks.stake.flow.steps.validator.title" />,
+    component: StepValidator,
+    footer: StepValidatorFooter,
+    noScroll: true,
+  },
+  {
+    id: "amount",
+    label: <Trans i18nKey="stacks.stake.flow.steps.amount.title" />,
+    component: StepAmount,
+    footer: StepAmountFooter,
+    noScroll: true,
+  },
+  {
+    id: "connectDevice",
+    label: <Trans i18nKey="stacks.stake.flow.steps.connectDevice.title" />,
+    component: StepConnectDevice,
+    onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
+  },
+  {
+    id: "confirmation",
+    label: <Trans i18nKey="stacks.stake.flow.steps.confirmation.title" />,
+    component: StepConfirmation,
+    footer: StepConfirmationFooter,
+  },
+];
+
+const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
+  invariant(
+    params.account?.type === "Account",
+    "MODAL_STACKS_STAKE: a Stacks main account is required (TokenAccount not supported).",
+  );
+
+  const { t } = useTranslation();
+  const device = useSelector(getCurrentDevice);
+
+  const bridge = useAccountBridge<Transaction>(params.account);
+
+  const { transaction, setTransaction, account, status, bridgeError, bridgePending } =
+    useBridgeTransaction<Transaction>(bridge, () => {
+      // `mode` is set once the pool address is entered (StepValidator's onChangeValAddress), not
+      // here: once Stacks routes through the generic bridge, `transactionToIntent` only populates a
+      // delegation mode when `valAddress` is already present (generic-coin-framework/utils.ts's
+      // `getDelegationIntentFields`), and a staking intent with no `valAddress` at all crashes the
+      // pool-address validation (`intent.valAddress.includes(...)` on `undefined`). Leaving `mode`
+      // unset until there's a `valAddress` to go with it keeps that path safe.
+      const initial = bridge.createTransaction(params.account);
+      const initialTx = bridge.updateTransaction(initial, {
+        familySpecificData: { numCycles: 1 },
+      });
+      return { account: params.account, transaction: initialTx };
+    });
+
+  const {
+    optimisticOperation,
+    transactionError,
+    signed,
+    setSigned,
+    resetFlowState,
+    handleOperationBroadcasted,
+    handleTransactionError,
+  } = useStacksFlowState(account);
+  // Kept apart from transactionError so a later successful refresh can clear it without also
+  // wiping a device/signing error.
+  const [poxError, setPoxError] = useState<Error | null>(null);
+
+  const transactionRef = useRef(transaction);
+  useEffect(() => {
+    transactionRef.current = transaction;
+  }, [transaction]);
+
+  const clearStartBurnHt = useCallback(() => {
+    const tx = transactionRef.current;
+    if (tx?.familySpecificData?.startBurnHt === undefined) return;
+    setTransaction(
+      bridge.updateTransaction(tx, {
+        familySpecificData: { ...tx.familySpecificData, startBurnHt: undefined },
+      }),
+    );
+  }, [bridge, setTransaction]);
+
+  // pox-5.clar derives the reward cycle from `start-burn-ht` and rejects a stake whose height
+  // belongs to a past cycle. No forward buffer is needed: `stake` checks the real tip at mining
+  // time, so this is just resolved against the live chain tip and kept fresh (see the refresh
+  // effect below for when).
+  const startBurnHtRequest = useRef(0);
+  const resolveStartBurnHt = useCallback(() => {
+    const request = ++startBurnHtRequest.current;
+    const isCurrent = () => request === startBurnHtRequest.current;
+    fetchPoxInfo()
+      .then(poxInfo => {
+        const tx = transactionRef.current;
+        if (!isCurrent() || !tx) return;
+        setPoxError(null);
+        setTransaction(
+          bridge.updateTransaction(tx, {
+            familySpecificData: {
+              ...tx.familySpecificData,
+              startBurnHt: poxInfo.current_burnchain_block_height,
+            },
+          }),
+        );
+      })
+      .catch((error: Error) => {
+        if (!isCurrent()) return;
+        logger.critical(error);
+        setPoxError(error);
+      });
+  }, [bridge, setTransaction]);
+
+  // Mirrors StepConnectDevice's own gate: once this is true on the connectDevice step,
+  // GenericStepConnectDevice mounts.
+  const isReadyForDevice =
+    !bridgePending &&
+    !!(transaction?.fee || transaction?.fees) &&
+    transaction?.familySpecificData?.startBurnHt !== undefined;
+
+  // Until a device is present, GenericStepConnectDevice's device-signing hook (hw/actions/transaction.ts)
+  // has no `deviceId` and bails out before ever subscribing to `signOperation` -- so mutating
+  // `transaction` up to that point cannot interrupt anything. Once a device shows up while
+  // isReadyForDevice, that hook may already hold a live sign subscription keyed on this exact
+  // `transaction` reference, and replacing it there tears the subscription down mid-flight,
+  // abandoning a prompt the device could already be showing. So a fresh reference must never be
+  // produced past that point. Stepper mounts only the current step, so that hook cannot exist
+  // before connectDevice: a device already plugged in during validator/amount must not freeze the
+  // refresh there.
+  const mustFreezeTransaction = stepId === "connectDevice" && isReadyForDevice && !!device;
+
+  // `mode` turns "delegate" the moment a pool address is entered (StepValidator's
+  // onChangeValAddress), and coin-stacks's `validateIntent`/`estimateFees` require `startBurnHt`
+  // for any delegate intent -- so resolution must start there too, not only once the device step
+  // is reached: otherwise the amount step's status carries an unresolvable `errors.data` (missing
+  // startBurnHt) that its own Continue button gates on, and the flow can never reach connectDevice
+  // at all. Refreshed immediately once delegate mode starts, then periodically for as long as the
+  // user sits on the pool/amount/connect-device steps -- that wait can take a while, and pox-5
+  // validates start-burn-ht against the real chain tip at *mining* time (see resolveStartBurnHt
+  // above), so a value resolved long ago can belong to a reward cycle that has since rolled over.
+  // The interval is a small fraction of a reward cycle (~7-14 days), so this only ever narrows a
+  // rare edge case, not eliminates a routine one. Stops once a device connection makes further
+  // mutation unsafe (mustFreezeTransaction), not only once signed -- refreshing for as long as
+  // it's safe keeps the staleness window (a device the user hasn't even reached for yet) far
+  // smaller than the interrupt-signing window it must avoid. `handleRetry` resolves a fresh height
+  // again after a failed/refused attempt. Leaving delegate mode (pool address cleared) or signing
+  // stops the interval; the stale leftover `startBurnHt` is harmless since it's only ever read
+  // once `mode` is "delegate" again, at which point it's immediately refreshed here.
+  useEffect(() => {
+    if (transaction?.mode !== "delegate" || signed || mustFreezeTransaction) return;
+    resolveStartBurnHt();
+    const intervalId = setInterval(resolveStartBurnHt, START_BURN_HT_REFRESH_INTERVAL_MS);
+    return () => {
+      startBurnHtRequest.current += 1;
+      clearInterval(intervalId);
+    };
+  }, [transaction?.mode, signed, mustFreezeTransaction, resolveStartBurnHt]);
+
+  const handleRetry = useCallback(() => {
+    resetFlowState();
+    setPoxError(null);
+    clearStartBurnHt();
+    resolveStartBurnHt();
+  }, [resetFlowState, clearStartBurnHt, resolveStartBurnHt]);
+
+  const handleStepChange = useCallback((e: Step) => onChangeStepId(e.id), [onChangeStepId]);
+
+  const error = transactionError || poxError || bridgeError;
+
+  const stepperProps = {
+    title: t("stacks.stake.flow.title"),
+    stepId,
+    steps,
+    errorSteps: error ? [steps.findIndex(s => s.id === stepId)] : [],
+    disabledSteps: [],
+    hideBreadcrumb: !!error,
+    device,
+    account,
+    transaction,
+    signed,
+    error,
+    status,
+    bridgePending,
+    optimisticOperation,
+    source: params.source ?? "Account Page",
+    onClose,
+    onChangeTransaction: setTransaction,
+    onOperationBroadcasted: handleOperationBroadcasted,
+    onTransactionError: handleTransactionError,
+    onRetry: handleRetry,
+    onStepChange: handleStepChange,
+    setSigned,
+  };
+
+  if (!status) return null;
+
+  return (
+    <Stepper {...stepperProps}>
+      <SyncSkipUnderPriority priority={100} />
+      <Track onUnmount event="CloseModalStacksStake" />
+    </Stepper>
+  );
+};
+
+export default Body;

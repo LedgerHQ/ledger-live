@@ -2,8 +2,9 @@
   "name": "@features/platform-app-lock",
   "version": "0.5.0",
   "private": true,
-  "description": "App lock protection state: schemas, types and selectors shared by the flows that read it",
+  "description": "App lock protection state, verifier and biometrics, plus the UI shared by the app lock flows",
   "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
     ".": {
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
+    "@shared/i18n": "workspace:*",
     "@shared/password-verifier": "workspace:*",
     "buffer": "catalog:",
     "react-native-biometrics": "catalog:",
@@ -31,13 +33,34 @@
     "react-native-keychain": "catalog:",
     "zod": "catalog:"
   },
+  "peerDependencies": {
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": ">=19.0.0",
+    "react-native": ">=0.70.0"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/react": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   }
 }

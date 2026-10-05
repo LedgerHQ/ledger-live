@@ -1,3 +1,4 @@
+import { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
 
@@ -12,6 +13,8 @@ export const tezosConfig: Record<string, ConfigInfo> = {
           { id: "staking_txs", status: "active" },
         ],
       },
+      name: "Tezos",
+      unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
       baker: {
         url: getEnv("API_TEZOS_BAKER"),
       },
@@ -29,6 +32,6 @@ export const tezosConfig: Record<string, ConfigInfo> = {
         minFees: 300,
         minEstimatedFees: 300,
       },
-    },
+    } satisfies TezosCoinConfig,
   },
 };

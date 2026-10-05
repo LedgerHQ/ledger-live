@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Card, type CardProps } from "@features/flow-pay-card";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
@@ -18,7 +19,6 @@ import {
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet40Background, useScrollOffset } from "LLM/components/Wallet40Background";
 import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";
-import { TrackScreen } from "~/analytics";
 import Animated from "react-native-reanimated";
 import { CardDisclaimer } from "./CardDisclaimer";
 import { PayDisclaimer } from "./PayDisclaimer";

@@ -1,31 +1,27 @@
-### Analytics
+# Analytics (mobile)
 
-We use a lightweight opt-out analytics layer composed of different api and sdk.
+## Shared analytics
 
-These tools are targetted towards internal contributors only or with
+Mobile calls [`@shared/analytics`](../../../shared/analytics/README.md) and [`@shared/analytics-react`](../../../shared/analytics-react/README.md) directly.
 
-- **_Segment integration_** 🠒 General use analytics
-
-in order to track events we use segment API with specific react API
-
-```js
-import { Track, TrackScreen } from "../analytics";
-import Button from "./Button";
-
-...
-<Track
-  onMount
-  event={`Event - ${data}`}
-  eventProperties={{ myData: data }}
-/>
-<TrackScreen category="ScreenCategory" name="FirstScreen" />
-<Button onPress={callback} event="ButtonPress" eventProperties={{ myData: data }} />
-...
-
+```ts
+import { track, trackPage } from "@shared/analytics";
+import { Track, TrackScreen } from "@shared/analytics-react";
 ```
 
-`Track` helps track events that can be linked to a component lifecycle.
+`~/analytics` wires the React Native Segment client, consent, and identify. It does not re-export `track`, `trackPage`, `Track`, or `TrackScreen`.
 
-`TracScreen` tracks mount events on a page with a formatted category (section of the app) and screen name.
+`AnalyticsContext` ([`src/analytics/AnalyticsContext.tsx`](../src/analytics/AnalyticsContext.tsx)) holds the current `source` and `screen` for the app. Read them with `useContext(AnalyticsContext)`.
 
-`Button` helps track click/press events with event and eventProperties props.
+## Setup
+
+[`src/analytics/segment.ts`](../src/analytics/segment.ts) wires in the React Native Segment client:
+
+- `start(store)` creates the client and registers it (`setAnalytics`, `setEnabledFn`, extra props)
+- `updateIdentify` sends Segment identify traits, including after consent changes
+
+## Debug
+
+The [`AnalyticsConsole`](../src/components/AnalyticsConsole/index.tsx) can be switched on via `ANALYTICS_CONSOLE` (see [Environment variables](../README.md#environment-variables)). It can also be toggled via settings in the app:
+
+Settings → Debug → Configuration

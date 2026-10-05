@@ -20,9 +20,6 @@ const mockedGetGasOptions = jest.fn();
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: CryptoCurrencyIdSchema.parse("my_new_chain"),
-  ethereumLikeInfo: {
-    chainId: 1,
-  },
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
 
@@ -163,7 +160,6 @@ describe("useGasOptions", () => {
 
     await waitFor(() =>
       expect(mockedGetGasOptions).toHaveBeenCalledWith({
-        currencyId: fakeCurrency.id,
         config: {},
         options: { useEIP1559: true },
       }),
@@ -187,7 +183,6 @@ describe("useGasOptions", () => {
 
     await waitFor(() =>
       expect(mockedGetGasOptions).toHaveBeenCalledWith({
-        currencyId: fakeCurrency.id,
         config: {},
         options: { useEIP1559: false },
       }),

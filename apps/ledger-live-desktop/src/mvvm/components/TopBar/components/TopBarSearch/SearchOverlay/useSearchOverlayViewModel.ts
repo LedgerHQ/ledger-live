@@ -10,8 +10,7 @@ import { setMarketCategory } from "~/renderer/actions/market";
 import { useAssetSearchBar } from "./useAssetSearchBar";
 import { SearchOverlayContextValue } from "./types";
 import { useDispatch } from "LLD/hooks/redux";
-import { track } from "~/renderer/analytics/segment";
-import { getCurrentTrackingPage, getPreviousTrackingPage } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage, getPreviousTrackingPage, track } from "@shared/analytics";
 
 export function useSearchOverlayViewModel() {
   const navigate = useNavigate();

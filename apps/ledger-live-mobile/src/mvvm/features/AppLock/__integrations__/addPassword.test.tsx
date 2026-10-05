@@ -1,4 +1,4 @@
-import { PasswordDraftProvider, usePasswordDraft } from "@features/flow-app-lock";
+import { PasswordDraftProvider, usePasswordDraft } from "@features/platform-app-lock";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { track } from "@shared/analytics";
 import { render, screen, waitFor } from "@tests/test-renderer";
@@ -157,7 +157,11 @@ describe("tracking the activation", () => {
       await user.press(screen.getByTestId("app-lock-confirm-password-confirm"));
 
       await waitFor(() =>
-        expect(track).toHaveBeenCalledWith("encryption_activated", { type: "password", source }),
+        expect(track).toHaveBeenCalledWith("encryption_updated", {
+          status: "activated",
+          type: "password",
+          source,
+        }),
       );
       expect(track).toHaveBeenCalledTimes(1);
       expect(updateIdentify).toHaveBeenCalledTimes(1);

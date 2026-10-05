@@ -148,6 +148,17 @@ export const FF_MINA_STAKING_ENABLED = {
   },
 } satisfies PartialFeatures;
 
+export const FF_BABYLON_STAKING_ENABLED = {
+  currencyBabylon: { enabled: true },
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["babylon"],
+      redirects: {},
+    },
+  },
+} satisfies PartialFeatures;
+
 export const FF_NEW_SEND_FLOW_DISABLED = {
   newSendFlow: {
     enabled: false,
@@ -171,19 +182,6 @@ export const FF_LWD_PAY_TAB = {
       card_disclaimer: false,
       legacyTopUp: false,
     },
-  },
-} satisfies PartialFeatures;
-
-/**
- * Contacts on desktop, off by default (`lwdContacts.enabled === false`).
- *
- * The params mirror the flag's own defaults rather than inventing values: `eligibleAddressFamilies`
- * is `["evm"]`, so only EVM addresses are offered as contacts.
- */
-export const FF_LWD_CONTACTS = {
-  lwdContacts: {
-    enabled: true,
-    params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
   },
 } satisfies PartialFeatures;
 

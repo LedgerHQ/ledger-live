@@ -1,19 +1,11 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { DisplayedDevice } from "@ledgerhq/live-dmk-mobile";
-import { track } from "~/analytics";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { DeviceListItem } from "./DeviceListItem";
-
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    track: jest.fn(),
-  };
-});
 
 const mockedTrack = jest.mocked(track);
 

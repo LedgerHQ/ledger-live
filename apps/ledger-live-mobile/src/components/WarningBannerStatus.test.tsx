@@ -28,6 +28,8 @@ describe("WarningBannerStatus", () => {
 
   it("renders migration banner correctly", () => {
     const mockCurrencyConfig: CurrencyConfig = {
+      name: "Fantom",
+      unit: { name: "FTM", code: "FTM", magnitude: 18 },
       status: {
         type: "migration",
         chain: "fantom",
@@ -47,6 +49,8 @@ describe("WarningBannerStatus", () => {
 
   it("renders deprecated banner correctly", () => {
     const mockCurrencyConfig: CurrencyConfig = {
+      name: "Fantom",
+      unit: { name: "FTM", code: "FTM", magnitude: 18 },
       status: {
         type: "will_be_deprecated",
         deprecated_date: "2025-01-01",

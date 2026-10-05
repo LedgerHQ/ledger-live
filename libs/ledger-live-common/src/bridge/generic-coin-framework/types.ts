@@ -71,6 +71,7 @@ export type GasOptionsRaw = {
 export const GENERIC_TRANSACTION_MODE = [
   "send",
   "changeTrust",
+  "tokenAssociate",
   "send-legacy",
   "send-eip1559",
   "delegate",
@@ -114,6 +115,9 @@ export type GenericTransaction = TransactionCommon & {
   transferFee?: TransferFee;
   stakeAccountRent?: BigNumber;
   ownerTokenAccount?: string;
+  recipientTokenAccount?: string;
+  recipientWalletAddress?: string;
+  userInputType?: string;
   sponsored?: boolean;
   valAddress?: string;
   valId?: string;

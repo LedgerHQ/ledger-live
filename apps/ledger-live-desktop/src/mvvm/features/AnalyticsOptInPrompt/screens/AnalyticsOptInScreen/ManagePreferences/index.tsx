@@ -1,7 +1,7 @@
 import React from "react";
 import { HeaderTitle } from "LLD/features/AnalyticsOptInPrompt/screens/components";
 import { Flex } from "@ledgerhq/react-ui";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import {
   ANALYTICS_OPT_IN_PREFERENCES_COPY_KEYS,
   AnalyticsOptInPreferencesLegacySetup,

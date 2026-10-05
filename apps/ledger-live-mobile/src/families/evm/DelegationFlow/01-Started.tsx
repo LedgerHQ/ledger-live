@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -7,7 +8,6 @@ import { getUnbondingPeriodDays } from "@ledgerhq/live-common/families/evm/staki
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "~/const";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import { TrackScreen } from "~/analytics";
 import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";

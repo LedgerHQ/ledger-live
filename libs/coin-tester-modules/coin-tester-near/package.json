@@ -65,7 +65,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9",
     "msw": "catalog:",
-    "near-api-js": "^3.0.2",
+    "near-api-js": "^7.3.1",
     "near-sandbox": "^0.3.2"
   },
   "devDependencies": {

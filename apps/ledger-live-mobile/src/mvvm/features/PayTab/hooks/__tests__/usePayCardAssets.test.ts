@@ -1,6 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
-import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";

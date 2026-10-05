@@ -1,22 +1,17 @@
+import { track, resetTrackingPages, setTrackingSource } from "@shared/analytics";
 import {
   type ConnectedDevice,
   DeviceModelId as DMKDeviceModelId,
   type TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
-import { ConnectionErrorTypes, DiscoveryErrorTypes } from "@ledgerhq/live-dmk-mobile";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { track } from "~/analytics";
-import { resetTrackingPages, setTrackingSource } from "~/analytics/screenRefs";
 import {
   DEVICE_ACTION_BUTTON,
   getConnectedDeviceTrackingProperties,
-  getTrackingSubError,
+  getExecutorStateFailure,
   getTrackingTransport,
-  PAGE_CONNECT_APP,
-  PAGE_CONNECT_DEVICE,
   PAGE_DEVICE_ACTION,
-  setIsInTerminalConnectDeviceError,
   trackDeviceActionButtonClicked,
   trackConnectAppButtonClicked,
   trackConnectDeviceButtonClicked,
@@ -24,22 +19,12 @@ import {
   trackDeviceConnected,
   trackDeviceConnecting,
   trackDeviceSelected,
-  trackDeviceflowAborted,
   trackDeviceflowCanceled,
   trackDeviceflowCompleted,
-  trackDeviceflowFailed,
   trackDeviceflowStarted,
   trackDevicePrompted,
   trackDrawerCloseButtonClicked,
 } from "./trackDeviceIntent";
-
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    track: jest.fn(),
-  };
-});
 
 const mockedTrack = jest.mocked(track);
 const TEST_BLE_TRANSPORT: TransportIdentifier = "RN_BLE";
@@ -59,7 +44,6 @@ const layerABaseProperties = {
 describe("trackDeviceIntent — Layer A tracking helpers", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setIsInTerminalConnectDeviceError(false);
     setTrackingSource("Connect Device - Connecting");
   });
 
@@ -184,41 +168,9 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     });
   });
 
-  describe("trackDeviceflowAborted", () => {
-    describe("Given a sourceFlow", () => {
-      describe("When called", () => {
-        it("Then tracks deviceflow_aborted with the Layer A base properties", () => {
-          trackDeviceflowAborted({ sourceFlow: "my_ledger", extraProperties: {} });
-
-          expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
-            ...layerABaseProperties,
-            sourceFlow: "my_ledger",
-          });
-        });
-      });
-    });
-  });
-
-  describe("trackDeviceflowFailed", () => {
-    describe("Given a sourceFlow", () => {
-      describe("When called", () => {
-        it("Then tracks deviceflow_failed with the Layer A base properties", () => {
-          trackDeviceflowFailed({ sourceFlow: "my_ledger", extraProperties: {} });
-
-          expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
-            ...layerABaseProperties,
-            sourceFlow: "my_ledger",
-          });
-        });
-      });
-    });
-  });
-
   describe("trackDeviceflowCanceled", () => {
-    it("GIVEN the current page is non-blocking WHEN called THEN it tracks deviceflow_aborted", () => {
-      setTrackingSource(PAGE_CONNECT_APP.DeviceBusy);
-
-      trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
+    it("GIVEN no failure is displayed WHEN called THEN it tracks deviceflow_aborted with the base properties only", () => {
+      trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {}, failure: null });
 
       expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
         ...layerABaseProperties,
@@ -226,76 +178,46 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
       });
     });
 
-    it("GIVEN the current page is blocking WHEN called THEN it tracks deviceflow_failed", () => {
-      setTrackingSource(PAGE_CONNECT_APP.UnsupportedFirmware);
-
-      trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
+    it("GIVEN a failure that counts as failed WHEN called THEN it tracks deviceflow_failed with the failure properties", () => {
+      trackDeviceflowCanceled({
+        sourceFlow: "swap",
+        extraProperties: {},
+        failure: getExecutorStateFailure({ type: "deviceDisconnected", device: connectedDevice }),
+      });
 
       expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
         ...layerABaseProperties,
         sourceFlow: "swap",
+        failureType: "DeviceDisconnected",
+        modelId: DeviceModelId.stax,
+        transport: "ble",
       });
     });
 
-    it("GIVEN the current page is a generic device action error WHEN called THEN it tracks deviceflow_failed", () => {
-      setTrackingSource(PAGE_DEVICE_ACTION.Disconnected);
+    it("GIVEN a user-fixable failure WHEN called THEN it tracks deviceflow_aborted with the failure properties", () => {
+      trackDeviceflowCanceled({
+        sourceFlow: "swap",
+        extraProperties: {},
+        failure: { failureType: "DeviceLocked", countsAsFailure: false },
+      });
 
-      trackDeviceflowCanceled({ sourceFlow: "send", extraProperties: {} });
-
-      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
         ...layerABaseProperties,
-        sourceFlow: "send",
+        sourceFlow: "swap",
+        failureType: "DeviceLocked",
       });
     });
-
-    it.each([PAGE_CONNECT_DEVICE.DiscoveryError, PAGE_CONNECT_DEVICE.ConnectionError])(
-      "GIVEN a non-terminal Connect Device error page %s WHEN called THEN it tracks deviceflow_aborted",
-      page => {
-        // GIVEN
-        setTrackingSource(page);
-
-        // WHEN
-        trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
-
-        // THEN
-        expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
-          ...layerABaseProperties,
-          sourceFlow: "swap",
-        });
-      },
-    );
-
-    it.each([PAGE_CONNECT_DEVICE.DiscoveryError, PAGE_CONNECT_DEVICE.ConnectionError])(
-      "GIVEN a terminal Connect Device error page %s WHEN called THEN it tracks deviceflow_failed",
-      page => {
-        // GIVEN
-        setTrackingSource(page);
-        setIsInTerminalConnectDeviceError(true);
-
-        // WHEN
-        trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
-
-        // THEN
-        expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
-          ...layerABaseProperties,
-          sourceFlow: "swap",
-        });
-      },
-    );
   });
 
-  describe("getTrackingSubError", () => {
-    describe("Given a Connect Device error type", () => {
-      describe("When called", () => {
-        it("Then returns the mapped PascalCase subError value", () => {
-          expect(getTrackingSubError(DiscoveryErrorTypes.BluetoothDisabledPromptable)).toBe(
-            "BluetoothDisabledPromptable",
-          );
-          expect(getTrackingSubError(ConnectionErrorTypes.BlePairingPeerRemovedPairing)).toBe(
-            "BlePairingPeerRemovedPairing",
-          );
-        });
-      });
+  describe("getExecutorStateFailure", () => {
+    it("GIVEN an invalid operation WHEN mapping THEN it reports the error name as subError", () => {
+      expect(
+        getExecutorStateFailure({ type: "invalidOperation", error: new TypeError("boom") }),
+      ).toEqual({ failureType: "InvalidOperation", countsAsFailure: true, subError: "TypeError" });
+    });
+
+    it("GIVEN a non-error executor state WHEN mapping THEN it reports no failure", () => {
+      expect(getExecutorStateFailure({ type: "connectingDevice" })).toBeNull();
     });
   });
 
@@ -472,16 +394,9 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
           }),
       },
       {
-        name: "trackDeviceflowAborted",
-        track: () => trackDeviceflowAborted({ sourceFlow: "wallet_api", extraProperties }),
-      },
-      {
-        name: "trackDeviceflowFailed",
-        track: () => trackDeviceflowFailed({ sourceFlow: "wallet_api", extraProperties }),
-      },
-      {
         name: "trackDeviceflowCanceled",
-        track: () => trackDeviceflowCanceled({ sourceFlow: "wallet_api", extraProperties }),
+        track: () =>
+          trackDeviceflowCanceled({ sourceFlow: "wallet_api", extraProperties, failure: null }),
       },
       {
         name: "trackDeviceSelected",

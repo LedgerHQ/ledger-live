@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useState } from "react";
 import { Alert, TouchableOpacity } from "react-native";
 import {
@@ -13,7 +14,6 @@ import type { NotificationPromptTarget } from "LLM/features/NotificationsPrompt"
 import { NotificationsPromptDrawerView } from "LLM/features/NotificationsPrompt/screens/NotificationsPromptDrawerView";
 import { QaInspectorRow } from "LLM/components/QaInspectorRow";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { TrackScreen } from "~/analytics";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { useNotificationsPromptQaViewModel } from "./useNotificationsPromptQaViewModel";
 import {

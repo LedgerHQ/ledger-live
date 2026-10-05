@@ -1,6 +1,6 @@
+import { track } from "@shared/analytics";
 import { useEffect } from "react";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
-import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
 import { SeedPathStatus } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";
 

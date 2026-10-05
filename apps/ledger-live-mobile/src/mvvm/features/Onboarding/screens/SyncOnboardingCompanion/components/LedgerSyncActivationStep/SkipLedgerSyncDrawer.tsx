@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { useTranslation } from "~/context/Locale";
 import { SeedOriginType } from "@ledgerhq/types-live";
-import { TrackScreen } from "~/analytics";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 
 type Props = {

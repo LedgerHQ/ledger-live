@@ -35,6 +35,7 @@ import { useLocale } from "~/context/Locale";
 import { formatCardTransactionAmount } from "LLM/features/OperationsHistory/utils/formatCardTransactionAmount";
 import { useCardHostedPageOpener } from "../../hooks/useCardHostedPageOpener";
 import { usePayCardAssets } from "../../hooks/usePayCardAssets";
+import { useRefreshCardWalletsOnReturn } from "../../hooks/useRefreshCardWalletsOnReturn";
 import { useCountervalueFormatter } from "../../hooks/useCountervalueFormatter";
 import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { navigateToCardHistory } from "LLM/features/OperationsHistory/utils/navigateToCardHistory";
@@ -108,11 +109,14 @@ export function usePayTabViewModel() {
     [params?.code, params?.app_id],
   );
 
+  const refreshCardWallets = useRefreshCardWalletsOnReturn();
+
   const openInSecureBrowser: OpenCardHostedPage = useCallback(
     async path => {
       await openHostedUrlInSecureBrowser(buildHostedUrl(hostedUiUrl, path), PAY_TAB_DEEP_LINK);
+      refreshCardWallets();
     },
-    [hostedUiUrl],
+    [hostedUiUrl, refreshCardWallets],
   );
 
   const openInDiscover = useCardHostedPageOpener();

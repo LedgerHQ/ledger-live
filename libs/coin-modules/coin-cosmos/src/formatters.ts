@@ -2,10 +2,9 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
 import { mapDelegations, mapRedelegations, mapUnbondings } from "./logic";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
-import { CosmosAccount, CosmosOperation, getCosmosResources } from "./types";
+import { CosmosAccount, CosmosOperation } from "./types";
 
 function formatOperationSpecifics(op: CosmosOperation, unit: Unit | null | undefined): string {
   const { validators } = op.extra;
@@ -25,8 +24,7 @@ function formatOperationSpecifics(op: CosmosOperation, unit: Unit | null | undef
 }
 
 export function formatAccountSpecifics(account: CosmosAccount): string {
-  const cosmosResources = getCosmosResources(account);
-  invariant(cosmosResources, "cosmos account expected");
+  const { stakingResources } = account;
   const { validators } = getCurrentCosmosPreloadData()[account.currency.id] ?? {
     validators: [],
   };
@@ -39,17 +37,17 @@ export function formatAccountSpecifics(account: CosmosAccount): string {
   let str = " ";
   str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
-  if (cosmosResources?.delegatedBalance.gt(0)) {
+  if (stakingResources.delegatedBalance.gt(0)) {
     str +=
-      formatCurrencyUnit(unit, cosmosResources.delegatedBalance, formatConfig) + " delegated. ";
+      formatCurrencyUnit(unit, stakingResources.delegatedBalance, formatConfig) + " delegated. ";
   }
 
-  if (cosmosResources?.unbondingBalance.gt(0)) {
+  if (stakingResources.unbondingBalance.gt(0)) {
     str +=
-      formatCurrencyUnit(unit, cosmosResources.unbondingBalance, formatConfig) + " unbonding. ";
+      formatCurrencyUnit(unit, stakingResources.unbondingBalance, formatConfig) + " unbonding. ";
   }
 
-  const mappedDelegations = mapDelegations(cosmosResources?.delegations ?? [], validators, unit);
+  const mappedDelegations = mapDelegations(stakingResources.delegations, validators, unit);
 
   if (mappedDelegations.length) {
     str += "\nDELEGATIONS\n";
@@ -72,7 +70,7 @@ export function formatAccountSpecifics(account: CosmosAccount): string {
       .join("\n");
   }
 
-  const mappedUnbondings = mapUnbondings(cosmosResources?.unbondings ?? [], validators, unit);
+  const mappedUnbondings = mapUnbondings(stakingResources.unbondings, validators, unit);
 
   if (mappedUnbondings.length) {
     str += "\nUNDELEGATIONS\n";
@@ -87,11 +85,7 @@ export function formatAccountSpecifics(account: CosmosAccount): string {
       .join("\n");
   }
 
-  const mappedRedelegations = mapRedelegations(
-    cosmosResources?.redelegations ?? [],
-    validators,
-    unit,
-  );
+  const mappedRedelegations = mapRedelegations(stakingResources.redelegations, validators, unit);
 
   if (mappedRedelegations.length) {
     str += "\nREDELEGATIONS\n";

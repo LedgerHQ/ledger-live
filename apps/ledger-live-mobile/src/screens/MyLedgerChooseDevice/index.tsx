@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -5,8 +7,6 @@ import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
-import TrackScreen from "~/analytics/TrackScreen";
-import { track } from "~/analytics";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import {
   BaseComposite,

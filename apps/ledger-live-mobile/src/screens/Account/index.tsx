@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React, { useState, useCallback, useEffect } from "react";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
@@ -21,7 +23,6 @@ import {
   countervalueFirstSelector,
 } from "~/reducers/settings";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { track, TrackScreen } from "~/analytics";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { NavigatorName, ScreenName } from "~/const";
 import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";

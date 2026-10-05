@@ -1,6 +1,6 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { FeatureToggle } from "@features/platform-feature-flags";
-import { TrackScreen } from "~/analytics";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import ThemeSettingsRow from "./ThemeSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";

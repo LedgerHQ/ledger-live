@@ -4,7 +4,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import {
   HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE_NAME,
   HISTORY_EXPORT_DIALOG_TRACKING_BUTTON,

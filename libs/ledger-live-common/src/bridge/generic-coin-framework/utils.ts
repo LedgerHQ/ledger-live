@@ -223,12 +223,12 @@ export function extractBalance(balances: Balance[], type: string): Balance {
  * chain-specific reference string (VeChain's VTHO address, Stacks' SIP-010 composite key, etc.):
  * guard native assets and an absent/empty reference, then look up by that reference directly.
  */
-export async function defaultGetTokenFromAssetByAddress(
+export function defaultGetTokenFromAssetByAddress(
   currency: CryptoCurrency,
   asset: AssetInfo,
 ): Promise<TokenCurrency | undefined> {
   if (asset.type === "native" || !("assetReference" in asset) || !asset.assetReference) {
-    return undefined;
+    return Promise.resolve(undefined);
   }
   return getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id);
 }
@@ -1107,6 +1107,8 @@ function defaultOperationType(mode: GenericTransaction["mode"]): OperationType {
   switch (mode) {
     case "changeTrust":
       return "OPT_IN";
+    case "tokenAssociate":
+      return "ASSOCIATE_TOKEN";
     case "delegate":
       return "DELEGATE";
     case "redelegate":
@@ -1136,6 +1138,11 @@ function memoExtraFields(
   if (!memoType || !memoValue) return {};
   const extraKey = MEMO_TYPE_TO_EXTRA_KEY[memoType] ?? "memo";
   return { [extraKey]: memoValue };
+}
+
+function grossOutgoingTokenAmount(transaction: GenericTransaction): BigNumber {
+  const including = transaction.transferFee?.transferAmountIncludingFee;
+  return including === undefined ? transaction.amount : new BigNumber(including);
 }
 
 export const buildOptimisticOperation = (
@@ -1202,7 +1209,10 @@ export const buildOptimisticOperation = (
         id: `${subAccountId}--${type}`,
         hash: "",
         type,
-        value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
+        // A Token-2022 transfer fee is debited on top, so the lock covers the gross amount.
+        value: transaction.useAllAmount
+          ? tokenAccount.balance
+          : grossOutgoingTokenAmount(transaction),
         fee: new BigNumber(fees.toString()),
         blockHash: null,
         blockHeight: null,

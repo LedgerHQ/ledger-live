@@ -46,8 +46,11 @@ jest.mock("@ledgerhq/live-common/firebase/featureFlags", () => ({
   getFeature: jest.fn(),
 }));
 
-jest.mock("@features/platform-feature-flags", () => ({
+jest.mock("@features/platform-feature-flags-firebase", () => ({
   formatToFirebaseFeatureId: (featureId: string) => featureId,
+}));
+
+jest.mock("@features/platform-feature-flags", () => ({
   useFeature: jest.fn(),
   useFeatureFlags: jest.fn(() => ({})),
 }));
@@ -115,6 +118,7 @@ function buildDeviceActionViewModel(
     selectedDevice: null,
     setSelectedDevice: jest.fn(),
     onDeviceActionResultCompleted: jest.fn(),
+    onSignatureError: jest.fn(),
     onUserCancel: jest.fn(),
     ...overrides,
   };
@@ -211,6 +215,7 @@ describe("SignatureScreen", () => {
         selectedDevice: viewModel.selectedDevice,
         setSelectedDevice: viewModel.setSelectedDevice,
         onDeviceActionResultCompleted: viewModel.onDeviceActionResultCompleted,
+        onSignatureError: viewModel.onSignatureError,
         onUserCancel: viewModel.onUserCancel,
       }),
     );

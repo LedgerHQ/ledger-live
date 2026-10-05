@@ -5,7 +5,7 @@ import {
   MarketCurrencyData,
   MarketListRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import { NoCryptoPlaceholder } from "~/renderer/screens/market/components/NoCryptoPlaceholder";
 import { ScrollContainer } from "LLD/components/ScrollContainer";
 import { ListHeader } from "../components/ListHeader";

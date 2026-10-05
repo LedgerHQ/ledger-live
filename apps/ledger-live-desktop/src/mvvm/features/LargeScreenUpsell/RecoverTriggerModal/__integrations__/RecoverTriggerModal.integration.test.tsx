@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell";
 import { fireEvent, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import RecoverTriggerModal from "..";
 import {
@@ -11,6 +11,12 @@ import {
   RECOVER_TRIGGER_DISMISS_BUTTON,
   RECOVER_TRIGGER_PAGE_NAME,
 } from "../analytics";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
 
 // `~/renderer/linking` `openURL`: Learn more opens the shop URL.
 // Tests assert the argument. No browser.
@@ -90,18 +96,18 @@ describe("RecoverTriggerModal", () => {
     expect(screen.getByRole("button", { name: "Learn more" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Not now" })).toBeVisible();
     expect(trackPage).toHaveBeenCalledWith(
-      RECOVER_TRIGGER_PAGE_NAME,
-      undefined,
-      expect.objectContaining({
-        name: RECOVER_TRIGGER_PAGE_NAME,
-        sourceFlow: "recover",
-        deviceModel: "lns",
-        personalRecoOptIn: true,
-        offerType: "none",
-        platform: "lwd",
-      }),
-      true,
-      false,
+      {
+        category: RECOVER_TRIGGER_PAGE_NAME,
+        props: expect.objectContaining({
+          name: RECOVER_TRIGGER_PAGE_NAME,
+          sourceFlow: "recover",
+          deviceModel: "lns",
+          personalRecoOptIn: true,
+          offerType: "none",
+          platform: "lwd",
+        }),
+      },
+      { updateRoutes: true },
     );
   });
 

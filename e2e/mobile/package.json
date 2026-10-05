@@ -24,11 +24,13 @@
   },
   "dependencies": {
     "@ledgerhq/logs": "catalog:",
+    "axios": "catalog:",
     "invariant": "2.2.4",
     "rxjs": "catalog:",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@domain/entity-contact": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@jest/reporters": "catalog:",
@@ -37,7 +39,7 @@
     "@shared/feature-flags": "workspace:*",
     "@shared/env": "workspace:*",
     "@ledgerhq/hw-transport": "catalog:",
-    "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
+    "@ledgerhq/ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-e2e-shared": "workspace:^",
@@ -79,11 +81,5 @@
     "ts-node": "10.9.2",
     "tsconfig-paths": "^4.2.0",
     "ws": "catalog:"
-  },
-  "optionalDependencies": {
-    "@oxlint/binding-darwin-arm64": "1.51.0",
-    "@oxlint/binding-darwin-x64": "1.51.0",
-    "@oxlint/binding-linux-x64-gnu": "1.51.0",
-    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   }
 }

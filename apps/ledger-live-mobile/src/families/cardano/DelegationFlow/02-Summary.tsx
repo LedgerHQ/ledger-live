@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -35,7 +36,6 @@ import LText from "~/components/LText";
 import PoolImage from "../shared/PoolImage";
 import { ScreenName } from "~/const";
 import ArrowRight from "~/icons/ArrowRight";
-import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";

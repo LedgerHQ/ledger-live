@@ -84,70 +84,86 @@ describe("useTimeRemaining", () => {
     jest.setSystemTime(new Date("2024-01-01T12:00:00Z"));
   });
 
-  test("should return empty string when proposal is null", () => {
+  test("should report expired with no countdown when proposal is null", () => {
     const { result } = renderHook(() => useTimeRemaining());
-    expect(result.current).toBe("");
+    expect(result.current).toEqual({ timeRemaining: "", isExpired: true });
   });
 
-  test("should return empty string when proposal is expired", () => {
+  test("should report expired with no countdown when proposal is expired", () => {
     const proposal = {
       expiresAt: (Date.now() - 1000) * 1000, // 1 second ago
       isExpired: true,
     };
     const { result } = renderHook(() => useTimeRemaining(proposal.expiresAt, proposal.isExpired));
-    expect(result.current).toBe("");
+    expect(result.current).toEqual({ timeRemaining: "", isExpired: true });
   });
 
-  test("should return formatted time remaining for valid proposal", () => {
+  test("should report expired when the deadline passed but the caller flag is stale", () => {
+    const expiresAt = Date.now() - 1 * SECOND;
+    const { result } = renderHook(() => useTimeRemaining(expiresAt * 1000, false));
+    expect(result.current).toEqual({ timeRemaining: "", isExpired: true });
+  });
+
+  test("should return formatted time remaining for valid proposal on first render", () => {
     const expiresAt = Date.now() + 2 * HOUR + 30 * MINUTE + 15 * SECOND;
     const { result } = renderHook(() => useTimeRemaining(expiresAt * 1000));
-    expect(result.current).toBe("02h 30m 15s");
+    expect(result.current).toEqual({ timeRemaining: "02h 30m 15s", isExpired: false });
   });
 
   test("should update time remaining every second", () => {
     const expiresAt = Date.now() + 2 * MINUTE + 30 * SECOND;
     const { result } = renderHook(() => useTimeRemaining(expiresAt * 1000));
 
-    expect(result.current).toBe("02m 30s");
+    expect(result.current.timeRemaining).toBe("02m 30s");
 
     act(() => {
       jest.advanceTimersByTime(1 * SECOND);
     });
-    expect(result.current).toBe("02m 29s");
+    expect(result.current.timeRemaining).toBe("02m 29s");
 
     act(() => {
       jest.advanceTimersByTime(1 * SECOND);
     });
-    expect(result.current).toBe("02m 28s");
+    expect(result.current.timeRemaining).toBe("02m 28s");
 
     act(() => {
       jest.advanceTimersByTime(30 * SECOND);
     });
-    expect(result.current).toBe("01m 58s");
+    expect(result.current.timeRemaining).toBe("01m 58s");
   });
 
-  test("should return empty string when time expires", () => {
+  test("should flip to expired on the tick that crosses the deadline", () => {
     const expiresAt = Date.now() + 2 * SECOND;
     const { result } = renderHook(() => useTimeRemaining(expiresAt * 1000));
 
-    expect(result.current).toBe("02s");
+    expect(result.current).toEqual({ timeRemaining: "02s", isExpired: false });
 
     act(() => {
       jest.advanceTimersByTime(1 * SECOND);
     });
-    expect(result.current).toBe("01s");
+    expect(result.current).toEqual({ timeRemaining: "01s", isExpired: false });
 
     act(() => {
       jest.advanceTimersByTime(1 * SECOND);
     });
-    expect(result.current).toBe("");
+    expect(result.current).toEqual({ timeRemaining: "", isExpired: true });
+  });
+
+  test("should stop ticking once expired", () => {
+    const expiresAt = Date.now() + 1 * SECOND;
+    renderHook(() => useTimeRemaining(expiresAt * 1000));
+
+    act(() => {
+      jest.advanceTimersByTime(1 * SECOND);
+    });
+    expect(jest.getTimerCount()).toBe(0);
   });
 
   test("should clear interval on unmount", () => {
     const expiresAt = Date.now() + 1 * HOUR;
     const { result, unmount } = renderHook(() => useTimeRemaining(expiresAt * 1000));
 
-    expect(result.current).toBe("01h 00m 00s");
+    expect(result.current.timeRemaining).toBe("01h 00m 00s");
 
     unmount();
 

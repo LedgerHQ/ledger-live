@@ -1,10 +1,10 @@
-import { renderHook, act } from "@tests/test-renderer";
-import { track } from "~/analytics";
 import {
+  track,
   getCurrentTrackingPage,
   resetTrackingPages,
   setTrackingSource,
-} from "~/analytics/screenRefs";
+} from "@shared/analytics";
+import { renderHook, act } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { useGlobalSearchViewModel } from "../useGlobalSearchViewModel";
 import { useGlobalSearchDefaults } from "LLM/features/GlobalSearch/hooks/useGlobalSearchDefaults";

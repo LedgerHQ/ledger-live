@@ -92,6 +92,7 @@ function createTransactionActions(): SendFlowTransactionActions {
     setTransaction: jest.fn(),
     setRecipient: jest.fn(),
     setAccount: jest.fn(),
+    updateAccount: jest.fn(),
   };
 }
 

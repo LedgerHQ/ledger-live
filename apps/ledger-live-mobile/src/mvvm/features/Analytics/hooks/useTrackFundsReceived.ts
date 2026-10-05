@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useEffect, useRef } from "react";
 import { useSelector } from "~/context/hooks";
 import {
@@ -6,7 +7,6 @@ import {
   getFundsReceivedTrackingProperties,
 } from "@ledgerhq/live-common/analytics/fundsReceived";
 import { accountsSelector } from "~/reducers/accounts";
-import { track } from "~/analytics/segment";
 
 export function useTrackFundsReceived(): void {
   const accounts = useSelector(accountsSelector);

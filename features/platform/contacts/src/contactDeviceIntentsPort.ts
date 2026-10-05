@@ -5,6 +5,7 @@ import type {
   ContactAddressValue,
   ContactName,
 } from "@domain/entity-contact";
+import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 export {
   ContactDeviceIntentCancelledError,
   ContactDeviceIntentMissingResultError,
@@ -15,6 +16,7 @@ export type RegisterExternalAddressInput = Readonly<{
   currencyId: ContactAddress["currencyId"];
   label: ContactAddressLabel;
   address: ContactAddressValue;
+  config?: CurrencyConfig;
 }>;
 
 export type RegisterExternalAddressResult = Readonly<{
@@ -29,11 +31,14 @@ export type RenameExternalContactInput = Readonly<{
 
 export type RenameExternalContactResult = NonNullable<Contact["deviceCredentials"]>;
 
+export type ContactsConfigResolver = (currencyId: string) => CurrencyConfig | undefined;
+
 export type EditExternalAddressInput = Readonly<{
   contact: Contact;
   address: ContactAddress;
   updatedLabel: ContactAddressLabel;
   updatedAddress: ContactAddressValue;
+  config?: CurrencyConfig;
 }>;
 
 export type EditExternalAddressResult = ContactAddress["device"];

@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "catalog:",
-    "near-api-js": "^3.0.2"
+    "near-api-js": "^7.3.1"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",

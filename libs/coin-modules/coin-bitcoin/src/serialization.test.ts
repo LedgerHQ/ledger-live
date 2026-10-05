@@ -3,7 +3,13 @@ import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import { BitcoinAccount, BitcoinAccountRaw, BitcoinOutput, BitcoinOutputRaw } from "./types";
 import type { CoinConfig } from "./config";
 
-const coinConfig: CoinConfig = () => ({ info: { status: { type: "active" } } });
+const coinConfig: CoinConfig = () => ({
+  info: {
+    status: { type: "active" },
+    name: "Bitcoin",
+    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+  },
+});
 const assignFromAccountRaw = makeAssignFromAccountRaw(coinConfig);
 
 describe("assignToAccountRaw", () => {

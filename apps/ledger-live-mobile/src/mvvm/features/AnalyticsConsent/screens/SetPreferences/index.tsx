@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { memo } from "react";
 import { ScrollView } from "react-native";
 import {
@@ -10,7 +11,6 @@ import {
   CardTrailing,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
-import { TrackScreen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import Button from "~/components/Button";
 import Switch from "~/components/Switch";

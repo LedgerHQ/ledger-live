@@ -1,8 +1,8 @@
 # 2 · TrustchainSDK
 
 > Layer 2 of the [Ledger Sync stack](./README.md). Code:
-> [`libs/ledger-key-ring-protocol/src`](../../libs/ledger-key-ring-protocol/src) ·
-> interface: [`src/types.ts`](../../libs/ledger-key-ring-protocol/src/types.ts) (formerly `trustchain`).
+> [`ts-libs/libs/ledger-key-ring-protocol/src`](https://github.com/LedgerHQ/ts-libs/tree/develop/libs/ledger-key-ring-protocol/src) ·
+> interface: [`src/types.ts`](https://github.com/LedgerHQ/ts-libs/blob/develop/libs/ledger-key-ring-protocol/src/types.ts) (formerly `trustchain`).
 
 **TrustchainSDK** is the main entry point of the LKRP library. It provides everything needed
 to **create, modify and destroy** the Trustchain for a given Ledger Wallet instance. That
@@ -44,8 +44,8 @@ type Trustchain = {
 
 ## Public API
 
-Exported from `getSdk()` ([`src/index.ts`](../../libs/ledger-key-ring-protocol/src/index.ts)),
-implementing the `TrustchainSDK` interface ([`src/types.ts`](../../libs/ledger-key-ring-protocol/src/types.ts)).
+Exported from `getSdk()` ([`src/index.ts`](https://github.com/LedgerHQ/ts-libs/blob/develop/libs/ledger-key-ring-protocol/src/index.ts)),
+implementing the `TrustchainSDK` interface ([`src/types.ts`](https://github.com/LedgerHQ/ts-libs/blob/develop/libs/ledger-key-ring-protocol/src/types.ts)).
 
 | Method | Device? | What it does |
 |---|---|---|

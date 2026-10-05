@@ -32,6 +32,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@domain/entity-account": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -45,6 +46,7 @@
     "jest": "catalog:",
     "msw": "catalog:",
     "timemachine": "^0.3.2",
+    "typescript": "catalog:",
     "ws": "^8.16.0"
   },
   "scripts": {
