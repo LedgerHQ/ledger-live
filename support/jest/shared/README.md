@@ -1,4 +1,4 @@
-# @support/jest-shared
+# @support/jest/shared
 
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
@@ -15,7 +15,7 @@ Flat node config for the majority of `shared/*` packages.
 
 ```js
 // shared/<pkg>/jest.config.js
-const { createSharedJestConfig } = require("@support/jest-shared");
+const { createSharedJestConfig } = require("@support/jest/shared");
 module.exports = createSharedJestConfig();
 ```
 
@@ -32,7 +32,7 @@ module.exports = createSharedJestConfig({ passWithNoTests: true });
 an extra reporter without duplicating the rest:
 
 ```js
-const { createSharedJestConfig, sharedReporters } = require("@support/jest-shared");
+const { createSharedJestConfig, sharedReporters } = require("@support/jest/shared");
 module.exports = createSharedJestConfig({
   reporters: [
     "default",
@@ -54,7 +54,7 @@ Dual-project config for UI packages with both web and native tests:
 Requires `jest-environment-jsdom` and `@testing-library/jest-dom` in devDependencies.
 
 ```js
-const { createSharedUiJestConfig } = require("@support/jest-shared");
+const { createSharedUiJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiJestConfig();
 ```
 
@@ -84,7 +84,7 @@ safe-area-context, Lumen native, and image stubs by default. Does not require
 `jest-environment-jsdom` or `@testing-library/jest-dom`.
 
 ```js
-const { createSharedUiNativeJestConfig } = require("@support/jest-shared");
+const { createSharedUiNativeJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiNativeJestConfig();
 ```
 
@@ -100,7 +100,7 @@ module.exports = createSharedUiNativeJestConfig({
 
 ## Lumen handling
 
-Identical to `@support/jest-features-flow`: Lumen barrels and `@ledgerhq/crypto-icons` are
+Identical to `@support/jest/features-flow`: Lumen barrels and `@ledgerhq/crypto-icons` are
 redirected to Proxy passthrough stubs so tests don't need to transform them or install their
 peer graph. See `mocks/passthrough-web.js` and `mocks/passthrough-native.js`.
 
@@ -111,6 +111,6 @@ Add the dependency:
 ```jsonc
 // package.json
 "devDependencies": {
-  "@support/jest-shared": "workspace:*"
+  "@support/jest": "workspace:*"
 }
 ```

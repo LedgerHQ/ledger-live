@@ -53,7 +53,7 @@
     }
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@reduxjs/toolkit": "catalog:",

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@support/jest-devtools/native";
+import { fireEvent, render, screen } from "@support/jest/devtools/native";
 import { buildProps } from "jest/deviceOnboardingProps";
 import DeviceOnboarding from "./DeviceOnboarding";
 

@@ -1,4 +1,4 @@
-# @support/jest-features-flow
+# @support/jest/features-flow
 
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
@@ -68,7 +68,7 @@ needs none of this: it runs on node, which has them already.
 
 ```js
 // features/flow/<pkg>/jest.config.js
-module.exports = require("@support/jest-features-flow").createFlowJestConfig();
+module.exports = require("@support/jest/features-flow").createFlowJestConfig();
 ```
 
 Add the dependency:
@@ -76,6 +76,6 @@ Add the dependency:
 ```jsonc
 // package.json
 "devDependencies": {
-  "@support/jest-features-flow": "workspace:*"
+  "@support/jest": "workspace:*"
 }
 ```

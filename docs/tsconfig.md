@@ -158,4 +158,4 @@ The pattern is already in use across the codebase:
 - `features/flow/pay-card-*`, `features/flow/flow-contacts-*`
 - `features/platform/contacts`
 - `shared/ui-qr-code`, `shared/ui-queued-bottom-sheet`
-- `support/jest-devtools`
+- `support/jest/devtools`

@@ -35,9 +35,7 @@ Two kinds of preset:
 
 | Package | Applies to |
 | --- | --- |
-| [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
-| [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
-| [`jest-shared`](./jest-shared) | `shared/*` — flat node preset for logic packages, dual web/native and native-only presets for UI packages |
+| [`jest`](./jest) | jest presets per layer (`devtools`, `features-flow`, `shared`) with their setup files, mocks and fixtures |
 | [`lint`](./lint) | oxlint presets per layer, and the monorepo-wide custom rules |
 | [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*` — MSW + RTK Query test store and server |
 

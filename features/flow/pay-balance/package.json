@@ -38,7 +38,7 @@
     "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",

@@ -39,7 +39,7 @@
     "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-widget/knip.web.config.mjs -W features/flow/pay-card-widget --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-widget/knip.native.config.mjs -W features/flow/pay-card-widget --tsConfig tsconfig.native.json"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@swc/core": "catalog:",

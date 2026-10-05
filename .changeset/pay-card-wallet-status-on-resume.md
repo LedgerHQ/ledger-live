@@ -1,6 +1,6 @@
 ---
 "@features/flow-pay-card-widget": minor
-"@support/jest-features-flow": patch
+"@support/jest": patch
 "live-mobile": patch
 ---
 

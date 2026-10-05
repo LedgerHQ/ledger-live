@@ -70,9 +70,7 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
 support/fmt/                                             @ledgerhq/platform
-support/jest-devtools/                                   @ledgerhq/platform
-support/jest-features-flow/                              @ledgerhq/platform
-support/jest-shared/                                     @ledgerhq/platform
+support/jest/                                            @ledgerhq/platform
 support/lint/                                            @ledgerhq/platform
 support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
 support/tsconfig/                                        @ledgerhq/platform

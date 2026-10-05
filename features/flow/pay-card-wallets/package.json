@@ -31,7 +31,7 @@
     "@domain/entity-currency": "workspace:^"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

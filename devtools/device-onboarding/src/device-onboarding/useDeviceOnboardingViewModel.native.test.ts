@@ -1,4 +1,4 @@
-import { renderHook } from "@support/jest-devtools/native";
+import { renderHook } from "@support/jest/devtools/native";
 import { buildProps } from "jest/deviceOnboardingProps";
 import { useDeviceOnboardingViewModel } from "./useDeviceOnboardingViewModel";
 
