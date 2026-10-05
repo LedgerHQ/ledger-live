@@ -4,9 +4,11 @@ import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Ac
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { device, log } from "detox";
-import { TIMEOUT } from "@e2e/utils/timeouts";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import ErrorPage from "@e2e/page/error.page";
 import { isAggregatedAssetsEnabled } from "@e2e/utils/featureFlagUtils";
+
+const SYNC_TOGGLE_MAX_ATTEMPTS = 3;
 
 export default class CommonPage {
   assetScreenFlatlistId = "asset-screen-flatlist";
@@ -156,19 +158,26 @@ export default class CommonPage {
    * Retries a Detox sync toggle: a just-abandoned withTimeout action can leave the bridge with a
    * phantom in-flight request that this call collides with.
    */
-  private async retryDetoxSync(action: () => Promise<void>, label: string): Promise<void> {
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        await action();
+  private async retryDetoxSync(
+    action: () => Promise<void>,
+    label: string,
+    attempt = 1,
+  ): Promise<void> {
+    try {
+      await action();
+    } catch (error) {
+      const message = sanitizeError(error).message;
+      if (attempt >= SYNC_TOGGLE_MAX_ATTEMPTS) {
+        log.error(
+          `${label} failed (attempt ${attempt}/${SYNC_TOGGLE_MAX_ATTEMPTS}), giving up: ${message}`,
+        );
         return;
-      } catch (error) {
-        const message = sanitizeError(error).message;
-        if (attempt === 3) {
-          log.error(`${label} failed (attempt ${attempt}/3), error: ${message}`);
-        }
-        log.warn(`${label} failed (attempt ${attempt}/3), retrying: ${message}`);
-        await delay(1_000);
       }
+      log.warn(
+        `${label} failed (attempt ${attempt}/${SYNC_TOGGLE_MAX_ATTEMPTS}), retrying: ${message}`,
+      );
+      await delay(INTERVAL.medium);
+      await this.retryDetoxSync(action, label, attempt + 1);
     }
   }
 

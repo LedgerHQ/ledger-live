@@ -112,10 +112,18 @@ async function awaitNativeElement(
     return waitCondition.withTimeout(timeout);
   }
 
+  const errorElementId = options.errorElementId;
   const startTime = Date.now();
   let lastWaitError: Error | null = null;
 
-  while (Date.now() - startTime < timeout) {
+  const poll = async (): Promise<void> => {
+    if (Date.now() - startTime >= timeout) {
+      throw new Error(
+        lastWaitError
+          ? `Timeout waiting for element after ${timeout}ms. Wait error: ${lastWaitError.message}`
+          : `Timeout waiting for element after ${timeout}ms`,
+      );
+    }
     try {
       await waitCondition.withTimeout(errorCheckTimeout);
       return;
@@ -123,16 +131,12 @@ async function awaitNativeElement(
       lastWaitError = error instanceof Error ? error : new Error(String(error));
     }
 
-    await checkForErrorElement(options.errorElementId, errorCheckTimeout);
-
+    await checkForErrorElement(errorElementId, errorCheckTimeout);
     await delay(INTERVAL.tick);
-  }
+    return poll();
+  };
 
-  throw new Error(
-    lastWaitError
-      ? `Timeout waiting for element after ${timeout}ms. Wait error: ${lastWaitError.message}`
-      : `Timeout waiting for element after ${timeout}ms`,
-  );
+  return poll();
 }
 
 export const NativeElementHelpers = {

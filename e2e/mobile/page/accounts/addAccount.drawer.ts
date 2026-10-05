@@ -48,26 +48,31 @@ export default class AddAccountDrawer extends CommonPage {
 
     // disable sync to avoid Detox hanging during busy account discovery and UI animations
     await this.disableSynchronization();
-    try {
-      while (Date.now() - startTime < ACCOUNT_DISCOVERY_TIMEOUT) {
-        const visible = await withTimeout(
-          IsIdVisible(this.continueButtonId, TIMEOUT.medium),
-          TIMEOUT.large,
-          "waitAccountsDiscovery:continueButton",
-        );
-        if (visible) {
-          return;
-        }
-        await withTimeout(
-          checkForErrorModals(TIMEOUT.xxsmall, "Account discovery failed"),
-          TIMEOUT.small,
-          "waitAccountsDiscovery:errorModal",
-          { rethrow: true },
+    const poll = async (): Promise<void> => {
+      if (Date.now() - startTime >= ACCOUNT_DISCOVERY_TIMEOUT) {
+        throw new Error(
+          `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
         );
       }
-      throw new Error(
-        `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
+      const visible = await withTimeout(
+        IsIdVisible(this.continueButtonId, TIMEOUT.medium),
+        TIMEOUT.large,
+        "waitAccountsDiscovery:continueButton",
       );
+      if (visible) {
+        return;
+      }
+      await withTimeout(
+        checkForErrorModals(TIMEOUT.xxsmall, "Account discovery failed"),
+        TIMEOUT.small,
+        "waitAccountsDiscovery:errorModal",
+        { rethrow: true },
+      );
+      return poll();
+    };
+
+    try {
+      await poll();
     } finally {
       await this.enableSynchronization();
     }
