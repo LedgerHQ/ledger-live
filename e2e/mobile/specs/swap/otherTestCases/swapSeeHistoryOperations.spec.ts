@@ -20,7 +20,7 @@ const swapHistoryTestConfig = {
     "@family-evm",
   ],
   details: {
-    date: "July 15, 2025",
+    date: "December 31, 2025",
     sentAmount: "0.07 SOL",
     networkFees: "0.000005 SOL",
     receiveAccount: "Ethereum 1",
