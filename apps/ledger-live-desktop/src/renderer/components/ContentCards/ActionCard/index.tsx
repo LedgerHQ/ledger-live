@@ -1,7 +1,10 @@
 import React from "react";
+import { InteractiveIcon } from "@ledgerhq/lumen-ui-react";
+import { Close } from "@ledgerhq/lumen-ui-react/symbols";
+import { Link } from "@ledgerhq/react-ui";
+
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { Actions, Body, CardContainer, Header, Description, Title } from "./components";
-import { Link } from "@ledgerhq/react-ui";
 
 type Props = {
   img?: string;
@@ -10,6 +13,8 @@ type Props = {
   title: string;
   description: string;
 
+  onClose?: () => void;
+  closeAriaLabel?: string;
   actions: {
     primary: {
       label?: string;
@@ -24,7 +29,15 @@ type Props = {
   };
 };
 
-const ActionCard = ({ img, leftContent, title, description, actions }: Props) => {
+const ActionCard = ({
+  img,
+  leftContent,
+  title,
+  description,
+  onClose,
+  closeAriaLabel = "Close content banner",
+  actions,
+}: Props) => {
   const dismiss = actions.dismiss;
 
   return (
@@ -52,6 +65,16 @@ const ActionCard = ({ img, leftContent, title, description, actions }: Props) =>
           </ButtonV3>
         )}
       </Actions>
+      {onClose ? (
+        <InteractiveIcon
+          type="button"
+          iconType="stroked"
+          icon={Close}
+          size={16}
+          aria-label={closeAriaLabel}
+          onClick={onClose}
+        />
+      ) : null}
     </CardContainer>
   );
 };
