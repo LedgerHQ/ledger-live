@@ -488,6 +488,29 @@ describe("agent-intent enroll", () => {
       }
     });
 
+    it("reports enrolled when SIGINT arrives while the completion is being persisted", async () => {
+      const otherListeners = process.listeners("SIGINT");
+      process.removeAllListeners("SIGINT");
+      try {
+        hostWait = async input => {
+          const completion = makeCompletion();
+          await input.authenticate(completion);
+          const persisting = input.persist(completion);
+          process.emit("SIGINT");
+          await persisting;
+          return new Promise<never>(() => {});
+        };
+
+        await runEnroll();
+
+        expect(storedProfile).toMatchObject({ trustchainId: "app18-root" });
+        expect(stdout.join("")).toContain('Agent Intent profile "test-agent" enrolled');
+        expect(process.listenerCount("SIGINT")).toBe(0);
+      } finally {
+        for (const listener of otherListeners) process.on("SIGINT", listener);
+      }
+    });
+
     it("refuses to persist when the profile was removed while waiting for approval", async () => {
       hostWait = input => {
         storedProfile = undefined;

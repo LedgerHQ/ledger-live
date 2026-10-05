@@ -70,7 +70,7 @@ export function keycloakOverride(
 /**
  * Waits for the relayed completion; SIGINT/SIGTERM close the relay socket and abort the wait.
  * Resolves with the completion once `persist` succeeded, even if only the acknowledgement back to
- * the frontend failed afterwards.
+ * the frontend failed afterwards or a signal arrived while `persist` was in flight.
  */
 export function waitForRelayCompletion<Request extends AgentEnrollmentChannelRequest>(
   host: AgentEnrollmentChannelHost,
@@ -82,6 +82,7 @@ export function waitForRelayCompletion<Request extends AgentEnrollmentChannelReq
   interruptedMessage: string,
 ): Promise<AgentEnrollmentChannelCompletion<Request>> {
   let persisted: AgentEnrollmentChannelCompletion<Request> | undefined;
+  let persisting: Promise<void> | undefined;
   let rejectInterrupted!: (reason: Error) => void;
   const interrupted = new Promise<never>((_, reject) => {
     rejectInterrupted = reject;
@@ -95,17 +96,21 @@ export function waitForRelayCompletion<Request extends AgentEnrollmentChannelReq
   const completion = Promise.resolve().then(() =>
     host.waitForCompletion({
       ...input,
-      persist: candidate =>
-        input.persist(candidate).then(() => {
+      persist: candidate => {
+        persisting = input.persist(candidate).then(() => {
           persisted = candidate;
-        }),
+        });
+        return persisting;
+      },
     }),
   );
   return Promise.race([completion, interrupted])
-    .catch(e => {
-      if (persisted) return persisted;
-      throw e;
-    })
+    .catch(e =>
+      Promise.resolve(persisting?.catch(() => undefined)).then(() => {
+        if (persisted) return persisted;
+        throw e;
+      }),
+    )
     .finally(() => {
       process.off("SIGINT", onSignal);
       process.off("SIGTERM", onSignal);
