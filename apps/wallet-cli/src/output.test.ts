@@ -695,6 +695,13 @@ describe("HumanCommandOutput", () => {
       createdAt: "2026-09-22T10:58:47.007Z",
     };
 
+    const accountAccess = {
+      mode: "direct-app16-key-reader" as const,
+      environment: "staging" as const,
+      trustchainId: "app16-root",
+      applicationPath: "m/0'/16'/0'",
+    };
+
     it("agentIntentProfiles renders a table with profile/name/source/environment columns", () => {
       createCommandOutput("human", ctx).agentIntentProfiles([
         { ...baseProfile, trustchainId: "tc-1" },
@@ -750,25 +757,50 @@ describe("HumanCommandOutput", () => {
       expect(writes.join("")).not.toContain("Trustchain ID:");
     });
 
-    it("agentIntentEnroll prints the enrollment URL and fingerprint to compare with the device", () => {
-      createCommandOutput("human", ctx).agentIntentEnroll({
+    it("agentIntentProfiles shows the account access environment and path once enrolled", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, trustchainId: "tc-1", accountAccess },
+      ]);
+      expect(writes.join("")).toContain("staging m/0'/16'/0'");
+    });
+
+    it("agentIntentProfileShow shows the account access and redacts the Keycloak URL", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        keycloakBaseUrl: "https://user:secret@keycloak.example.com",
+        trustchainId: "tc-1",
+        accountAccess,
+      });
+      const out = writes.join("");
+      expect(out).toContain("Account access:");
+      expect(out).toContain("staging m/0'/16'/0'");
+      expect(out).toContain("Keycloak URL:");
+      expect(out).not.toContain("secret");
+    });
+
+    it("agentIntentEnrollmentPending prints the URL, fingerprint and the keep-running hint", () => {
+      createCommandOutput("human", ctx).agentIntentEnrollmentPending({
         profileId: "test-agent",
         enrollmentUrl: "https://example.com/enroll?x=1",
         fingerprint: "Ez4f ubY2 TD8k Ve",
+        expiresAt: "2026-09-22T11:28:46.999Z",
       });
       const out = writes.join("");
       expect(out).toContain("https://example.com/enroll?x=1");
       expect(out).toContain("Ez4f ubY2 TD8k Ve");
+      expect(out).toContain("keep this process running");
     });
 
-    it("agentIntentComplete confirms the profile and trustchain id", () => {
-      createCommandOutput("human", ctx).agentIntentComplete({
+    it("agentIntentEnrolled confirms the profile, trustchain id and account access environment", () => {
+      createCommandOutput("human", ctx).agentIntentEnrolled({
         profileId: "test-agent",
         trustchainId: "tc-1",
+        accountAccessEnvironment: "staging",
       });
       const out = writes.join("");
       expect(out).toContain("test-agent");
       expect(out).toContain("tc-1");
+      expect(out).toContain("staging");
     });
   });
 });

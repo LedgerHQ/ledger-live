@@ -21,14 +21,17 @@ export type AgentIntentMockOverrides = {
   noopSessionLock?: boolean;
   sdk?: Partial<Record<(typeof SDK_KEYS)[number], AnyFn>>;
   keychain?: Partial<Record<(typeof KEYCHAIN_KEYS)[number], AnyFn>>;
+  completionAuth?: Partial<Record<(typeof COMPLETION_AUTH_KEYS)[number], AnyFn>>;
 };
 
 const SDK_KEYS = [
   "createSoftwareAgentIdentity",
   "createAgentEnrollmentRequest",
   "createAgentEnrollmentUrl",
-  "parseAgentEnrollmentCompletion",
+  "createAgentEnrollmentChannelHost",
 ] as const;
+
+const COMPLETION_AUTH_KEYS = ["authenticateEnrollmentCompletion"] as const;
 
 const KEYCHAIN_KEYS = [
   "hasAgentIntentSecretKey",
@@ -44,6 +47,9 @@ const realKeychain = { ...(await import("../../../key-ring/agent-intent-keychain
   string,
   unknown
 >;
+const realCompletionAuth = {
+  ...(await import("../../../agent-intent/completion-auth")),
+} as Record<string, unknown>;
 
 let active: AgentIntentMockOverrides | null = null;
 
@@ -83,6 +89,14 @@ function installMocks(): void {
       realKeychain,
       KEYCHAIN_KEYS,
       key => active?.keychain?.[key as (typeof KEYCHAIN_KEYS)[number]],
+    ),
+  }));
+  mock.module("../../../agent-intent/completion-auth", () => ({
+    ...realCompletionAuth,
+    ...gatedMembers(
+      realCompletionAuth,
+      COMPLETION_AUTH_KEYS,
+      key => active?.completionAuth?.[key as (typeof COMPLETION_AUTH_KEYS)[number]],
     ),
   }));
 }

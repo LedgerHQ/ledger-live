@@ -48,6 +48,14 @@ type _AgentIntentEnvironmentsExhaustive = AssertTrue<
   AgentIntentEnvironment extends (typeof AGENT_INTENT_ENVIRONMENTS)[number] ? true : false
 >;
 
+// Ledger Sync (App-16) stream the agent was granted on enrollment — references only, not secret.
+const AgentIntentAccountAccessSchema = z.object({
+  mode: z.literal("direct-app16-key-reader"),
+  environment: z.enum(AGENT_INTENT_ENVIRONMENTS),
+  trustchainId: z.string(),
+  applicationPath: z.string(),
+});
+
 // Non-secret Agent Intent profile metadata only. The profile's private key never lives here — it
 // is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`).
 const AgentIntentProfileSchema = z.object({
@@ -57,10 +65,12 @@ const AgentIntentProfileSchema = z.object({
   source: z.enum(SUPPORTED_AGENT_SOURCES),
   environment: z.enum(AGENT_INTENT_ENVIRONMENTS),
   bffBaseUrl: z.string(),
+  keycloakBaseUrl: z.string().optional(),
   // SEC1-prefixed: 02/03 + 32-byte x-coordinate (compressed) or 04 + 64-byte x/y (uncompressed) —
   // not just any 66/130-char hex string, matching what secp256k1.getPublicKey() actually produces.
   publicKey: z.string().regex(/^0[23][0-9a-f]{64}$|^04[0-9a-f]{128}$/i),
   trustchainId: z.string().optional(),
+  accountAccess: AgentIntentAccountAccessSchema.optional(),
   // Signed into the enrollment request and enforced by the frontend — persisted so `list`/`show`
   // can report "expired" instead of leaving a dead link marked `pending` forever.
   enrollmentExpiresAt: z.string(),
@@ -94,7 +104,7 @@ const ringFields = {
  * above — e.g. a hand-edited field, or one a future schema change tightens against an
  * already-persisted value. Dropping is silent at the schema layer (by design, so one bad entry
  * never bricks every command); returning the raw records (not just their ids) is what lets `write()`
- * carry them forward unchanged instead of a subsequent write from ANY command (enroll, complete,
+ * carry them forward unchanged instead of a subsequent write from ANY command (enroll,
  * reset, ring, discover — every one of them calls `write()`) silently erasing them from disk and
  * orphaning their OS-keychain secret for good.
  */
@@ -141,7 +151,7 @@ function getSessionLockPath(): string {
 
 /**
  * Serializes a read-modify-write against `session.yaml` across every command that does one —
- * `enroll`/`complete`/`reset`/`account discover`/`ring init`/`ring destroy`/`ring encrypt`/
+ * `enroll`/`reset`/`account discover`/`ring init`/`ring destroy`/`ring encrypt`/
  * `ring decrypt` all route through this rather than locking their own scope, so none of them can
  * silently overwrite another's write (`Session.write()` replaces the whole file). Computed lazily
  * (not a module-level constant) so it always reflects the current `stateDir()`, including inside
@@ -367,7 +377,7 @@ export class Session {
     this._agentIntentProfiles.push(profile);
   }
 
-  /** Merge a partial update (e.g. setting `trustchainId` after `complete`) into an existing profile. */
+  /** Merge a partial update (e.g. recording the completed enrollment) into an existing profile. */
   updateAgentIntentProfile(
     profileId: string,
     patch: Partial<Omit<AgentIntentProfileMeta, "profileId">>,

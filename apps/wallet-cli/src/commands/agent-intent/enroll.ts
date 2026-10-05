@@ -1,12 +1,17 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import {
+  createAgentEnrollmentChannelHost,
   createAgentEnrollmentRequest,
   createAgentEnrollmentUrl,
   createSoftwareAgentIdentity,
   formatAgentPublicKeyFingerprint,
   SUPPORTED_AGENT_SOURCES,
+  AGENT_ENROLLMENT_CHANNEL_VERSION,
   AGENT_INTENT_FRONTEND_URLS,
+  AGENT_KEYCLOAK_ENVIRONMENTS,
+  type AgentEnrollmentChannelHost,
+  type AgentEnrollmentCompletionV2,
 } from "@ledgerhq/agent-intent-sdk";
 import { Session, AGENT_INTENT_ENVIRONMENTS, withSessionLock } from "../../session/session-store";
 import {
@@ -14,6 +19,8 @@ import {
   saveAgentIntentSecretKey,
   deleteAgentIntentSecretKey,
 } from "../../key-ring/agent-intent-keychain";
+import { AGENT_INTENT_TRUSTCHAIN_URLS } from "../../key-ring/constants";
+import { authenticateEnrollmentCompletion } from "../../agent-intent/completion-auth";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import {
   PROFILE_ID_RE,
@@ -61,12 +68,8 @@ function assertProfileAvailable(session: Session, profileId: string): void {
   }
 }
 
-// Verified against agent-intent-frontend's argocd/{stg,prd}/values.yaml BFF_BASE_URL (2026-09-22),
-// same host/path the reference agent-intent.mjs CLI defaults to. The SDK has no default of its own
-// for bffBaseUrl (unlike AGENT_INTENT_FRONTEND_URLS for the app URL), so this stays local. No
-// override flag: nothing in this codebase yet calls the BFF with a profile's bffBaseUrl (that
-// client ships with NTTVS-746+), so a flag promising to redirect it would do nothing but look like
-// it works — add one once a real consumer exists to wire it into.
+// Verified against agent-intent-frontend's argocd/{stg,prd}/values.yaml BFF_BASE_URL (2026-09-22).
+// The SDK has no default of its own for bffBaseUrl, so this stays local.
 const DEFAULT_BFF_BASE_URLS = {
   staging: "https://global.api.stg.ledger-test.com/agent-intent",
   production: "https://global.api.prd.ledger.com/agent-intent",
@@ -96,10 +99,40 @@ function parseDurationMs(value: string): number {
   return ms;
 }
 
+function assertServiceUrl(value: string, flagName: string): void {
+  assertHttpUrl(value, flagName);
+  assertNoUrlCredentials(value, flagName);
+}
+
+/** Waits for the relayed completion; SIGINT/SIGTERM close the relay socket and abort the wait. */
+function waitForRelayCompletion(
+  host: AgentEnrollmentChannelHost,
+  input: Parameters<AgentEnrollmentChannelHost["waitForCompletion"]>[0],
+): Promise<AgentEnrollmentCompletionV2> {
+  let rejectInterrupted!: (reason: Error) => void;
+  const interrupted = new Promise<never>((_, reject) => {
+    rejectInterrupted = reject;
+  });
+  const onSignal = () => {
+    host.close();
+    rejectInterrupted(new Error("Enrollment interrupted."));
+  };
+  process.once("SIGINT", onSignal);
+  process.once("SIGTERM", onSignal);
+  const completion = new Promise<AgentEnrollmentCompletionV2>(resolve =>
+    resolve(host.waitForCompletion(input)),
+  );
+  return Promise.race([completion, interrupted]).finally(() => {
+    process.off("SIGINT", onSignal);
+    process.off("SIGTERM", onSignal);
+  });
+}
+
 export default defineCommand({
   name: "enroll",
   description:
-    "Create a new Agent Intent profile and print its signed enrollment URL (no device required).",
+    "Create an Agent Intent profile, print its signed enrollment URL, and wait for the approval to " +
+    "be relayed back (no device required).",
   options: {
     profile: option(z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE), {
       description: "Local profile id used to store and reference this agent's credentials.",
@@ -122,8 +155,15 @@ export default defineCommand({
     "expires-in": option(z.string().default("30m"), {
       description: "Enrollment link validity: 45s, 30m, 2h, or 1d (default: 30m).",
     }),
-    environment: option(z.enum(AGENT_INTENT_ENVIRONMENTS).default("staging"), {
+    environment: option(z.enum(AGENT_INTENT_ENVIRONMENTS).default("production"), {
       description: "Agent Intent environment.",
+    }),
+    "bff-url": option(z.string().url().optional(), {
+      description: "Agent Intent BFF base URL (default: the environment's own BFF).",
+    }),
+    "keycloak-url": option(z.string().url().optional(), {
+      description:
+        "Keycloak base URL used to prove App-18 membership (default: the environment's).",
     }),
     output: outputOption,
   },
@@ -135,81 +175,167 @@ export default defineCommand({
     await out.run(async () => {
       const expiresInMs = parseDurationMs(flags["expires-in"]);
 
-      const bffBaseUrl = DEFAULT_BFF_BASE_URLS[flags.environment];
-      const appUrl = flags["app-url"] ?? AGENT_INTENT_FRONTEND_URLS[flags.environment];
-      assertHttpUrl(appUrl, "app-url");
-      assertNoUrlCredentials(appUrl, "app-url");
+      const { environment, profile: profileId } = flags;
+      const bffBaseUrl = flags["bff-url"] ?? DEFAULT_BFF_BASE_URLS[environment];
+      const appUrl = flags["app-url"] ?? AGENT_INTENT_FRONTEND_URLS[environment];
+      const keycloakBaseUrl = flags["keycloak-url"];
+      assertServiceUrl(appUrl, "app-url");
+      assertServiceUrl(bffBaseUrl, "bff-url");
+      if (keycloakBaseUrl !== undefined) assertServiceUrl(keycloakBaseUrl, "keycloak-url");
       const enrollmentExpiresAt = new Date(Date.now() + expiresInMs).toISOString();
 
       // Fast, unlocked precheck: fail on an obvious typo/duplicate before spending a keypair
       // generation + signature on it. Not a substitute for the recheck below — a concurrent enroll
       // of the same profile can still pass this one.
-      assertProfileAvailable(await Session.read(), flags.profile);
+      assertProfileAvailable(await Session.read(), profileId);
 
       const identity = createSoftwareAgentIdentity();
-      const request = createAgentEnrollmentRequest(identity, {
-        name: flags.name,
-        description: flags.description,
-        source: flags.source,
-        expiresAt: enrollmentExpiresAt,
+      // Relay timers default to 15 min; stretch them so only the signed expiry bounds the wait.
+      const host = createAgentEnrollmentChannelHost({
+        environment,
+        relayBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
+        timeouts: { candidateTimeoutMs: expiresInMs, completionTimeoutMs: expiresInMs },
       });
-      // Built before anything is persisted, so a failure here leaves no profile or keychain entry.
-      const enrollmentUrl = createAgentEnrollmentUrl(appUrl, request);
-
-      // Shared with every other command that mutates session.yaml (`complete`, `reset`, `account
-      // discover`, `ring init`/`destroy`/`encrypt`/`decrypt`) — see withSessionLock's own doc.
-      await withSessionLock(async () => {
-        const session = await Session.read();
-        assertProfileAvailable(session, flags.profile);
-
-        try {
-          await saveAgentIntentSecretKey(flags.profile, identity.exportSecretKey());
-        } catch (e) {
-          throw new Error(
-            `Could not store the agent's secret key in the OS keychain (` +
-              `${e instanceof Error ? e.message : String(e)}). Agent Intent needs a working OS ` +
-              "keychain: macOS Keychain, Windows Credential Manager, or on Linux a running Secret " +
-              "Service provider (e.g. gnome-keyring or KeePassXC) with an unlocked collection. " +
-              "Nothing was saved.",
-            { cause: e },
-          );
+      try {
+        const request = createAgentEnrollmentRequest(identity, {
+          name: flags.name,
+          description: flags.description,
+          source: flags.source,
+          expiresAt: enrollmentExpiresAt,
+          channel: host.binding,
+        });
+        if (request.version !== AGENT_ENROLLMENT_CHANNEL_VERSION) {
+          throw new Error("Agent Intent SDK did not build a relay-bound enrollment request.");
         }
-        try {
-          session.addAgentIntentProfile({
-            profileId: flags.profile,
-            displayName: flags.name,
-            description: flags.description,
-            source: flags.source,
-            environment: flags.environment,
-            bffBaseUrl,
-            publicKey: identity.publicKey,
-            enrollmentExpiresAt,
-            createdAt: new Date().toISOString(),
-          });
-          session.write();
-        } catch (e) {
-          // Undo the keychain write so a retry doesn't hit "keychain entry exists but isn't recorded
-          // in the session" — this is the only place that failure can originate from. If the
-          // rollback itself fails, that's exactly the state it would otherwise re-create silently:
-          // say so, so the user knows to remove the entry by hand instead of retrying forever.
-          const rolledBack = deleteAgentIntentSecretKey(flags.profile);
-          if (!rolledBack) {
+        // Built before anything is persisted, so a failure here leaves no profile or keychain entry.
+        const enrollmentUrl = createAgentEnrollmentUrl(appUrl, request);
+
+        // Shared with every other command that mutates session.yaml — see withSessionLock's doc.
+        await withSessionLock(async () => {
+          const session = await Session.read();
+          assertProfileAvailable(session, profileId);
+
+          try {
+            await saveAgentIntentSecretKey(profileId, identity.exportSecretKey());
+          } catch (e) {
             throw new Error(
-              `${e instanceof Error ? e.message : String(e)} Additionally, the keychain rollback ` +
-                `for profile "${flags.profile}" failed — remove that entry manually before retrying, ` +
-                `or re-enrolling will refuse it as an orphaned duplicate.`,
+              `Could not store the agent's secret key in the OS keychain (` +
+                `${e instanceof Error ? e.message : String(e)}). Agent Intent needs a working OS ` +
+                "keychain: macOS Keychain, Windows Credential Manager, or on Linux a running Secret " +
+                "Service provider (e.g. gnome-keyring or KeePassXC) with an unlocked collection. " +
+                "Nothing was saved.",
               { cause: e },
             );
           }
-          throw e;
-        }
-      });
+          try {
+            session.addAgentIntentProfile({
+              profileId,
+              displayName: flags.name,
+              description: flags.description,
+              source: flags.source,
+              environment,
+              bffBaseUrl,
+              ...(keycloakBaseUrl === undefined ? {} : { keycloakBaseUrl }),
+              publicKey: identity.publicKey,
+              enrollmentExpiresAt,
+              createdAt: new Date().toISOString(),
+            });
+            session.write();
+          } catch (e) {
+            // Undo the keychain write so a retry doesn't hit "keychain entry exists but isn't
+            // recorded in the session". If the rollback itself fails, say so, so the user knows to
+            // remove the entry by hand instead of retrying forever.
+            const rolledBack = deleteAgentIntentSecretKey(profileId);
+            if (!rolledBack) {
+              throw new Error(
+                `${e instanceof Error ? e.message : String(e)} Additionally, the keychain rollback ` +
+                  `for profile "${profileId}" failed — remove that entry manually before retrying, ` +
+                  `or re-enrolling will refuse it as an orphaned duplicate.`,
+                { cause: e },
+              );
+            }
+            throw e;
+          }
+        });
 
-      out.agentIntentEnroll({
-        profileId: flags.profile,
-        enrollmentUrl,
-        fingerprint: formatAgentPublicKeyFingerprint(identity.publicKey),
-      });
+        out.agentIntentEnrollmentPending({
+          profileId,
+          enrollmentUrl,
+          fingerprint: formatAgentPublicKeyFingerprint(identity.publicKey),
+          expiresAt: enrollmentExpiresAt,
+        });
+
+        let persisted: AgentEnrollmentCompletionV2 | undefined;
+        const persist = (completion: AgentEnrollmentCompletionV2) =>
+          withSessionLock(async () => {
+            const session = await Session.read();
+            const profile = session.getAgentIntentProfile(profileId);
+            if (!profile || profile.trustchainId || profile.publicKey !== identity.publicKey) {
+              throw new Error(
+                `Agent Intent profile "${profileId}" was removed or changed while waiting for ` +
+                  "approval; refusing to record the completion.",
+              );
+            }
+            const {
+              mode,
+              environment: accessEnvironment,
+              trustchainId,
+              applicationPath,
+            } = completion.accountAccess;
+            session.updateAgentIntentProfile(profileId, {
+              trustchainId: completion.trustchainId,
+              accountAccess: {
+                mode,
+                environment: accessEnvironment,
+                trustchainId,
+                applicationPath,
+              },
+            });
+            session.write();
+            persisted = completion;
+          });
+
+        let completion: AgentEnrollmentCompletionV2;
+        try {
+          completion = await waitForRelayCompletion(host, {
+            request,
+            authenticate: candidate =>
+              authenticateEnrollmentCompletion({
+                completion: candidate,
+                identity,
+                environment,
+                ...(keycloakBaseUrl === undefined
+                  ? {}
+                  : {
+                      keycloak: {
+                        ...AGENT_KEYCLOAK_ENVIRONMENTS[environment],
+                        baseUrl: keycloakBaseUrl,
+                      },
+                    }),
+              }),
+            persist,
+          });
+        } catch (e) {
+          if (!persisted) {
+            throw new Error(
+              `Enrollment did not complete (${e instanceof Error ? e.message : String(e)}). ` +
+                `Profile "${profileId}" stays pending and cannot be resumed — start a fresh ` +
+                "enrollment with a new --profile id.",
+              { cause: e },
+            );
+          }
+          // Saved and verified locally; only the acknowledgement back to the frontend failed.
+          completion = persisted;
+        }
+
+        out.agentIntentEnrolled({
+          profileId,
+          trustchainId: completion.trustchainId,
+          accountAccessEnvironment: completion.accountAccess.environment,
+        });
+      } finally {
+        host.close();
+      }
     });
   },
 });

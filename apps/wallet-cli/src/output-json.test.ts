@@ -470,34 +470,57 @@ describe("JsonCommandOutput", () => {
     });
   });
 
-  it("agentIntentEnroll emits profileId, enrollmentUrl, and fingerprint", () => {
+  it("agentIntentEnrollmentPending emits an enrollment-pending event, not a final envelope", () => {
     const out = createCommandOutput("json", { command: "agent-intent enroll", network: "all" });
-    out.agentIntentEnroll({
+    out.agentIntentEnrollmentPending({
       profileId: "test-agent",
       enrollmentUrl: "https://example.com/enroll?x=1",
       fingerprint: "Ez4f ubY2 TD8k Ve",
+      expiresAt: "2026-09-22T11:28:46.999Z",
     });
 
     const [line] = parseLines();
-    expect(line).toMatchObject({
-      status: "success",
+    expect(line).toEqual({
+      type: "enrollment-pending",
+      command: "agent-intent enroll",
+      network: "all",
       profileId: "test-agent",
       enrollmentUrl: "https://example.com/enroll?x=1",
       fingerprint: "Ez4f ubY2 TD8k Ve",
+      expiresAt: "2026-09-22T11:28:46.999Z",
     });
   });
 
-  it("agentIntentComplete emits completed:true with the trustchain id", () => {
-    const out = createCommandOutput("json", { command: "agent-intent complete", network: "all" });
-    out.agentIntentComplete({ profileId: "test-agent", trustchainId: "tc-1" });
+  it("agentIntentEnrolled emits enrolled:true with the trustchain id and access environment", () => {
+    const out = createCommandOutput("json", { command: "agent-intent enroll", network: "all" });
+    out.agentIntentEnrolled({
+      profileId: "test-agent",
+      trustchainId: "tc-1",
+      accountAccessEnvironment: "staging",
+    });
 
     const [line] = parseLines();
     expect(line).toMatchObject({
       status: "success",
       profileId: "test-agent",
       trustchainId: "tc-1",
-      completed: true,
+      accountAccessEnvironment: "staging",
+      enrolled: true,
     });
+  });
+
+  it("agentIntentProfileShow redacts credentials embedded in the Keycloak URL", () => {
+    const out = createCommandOutput("json", { command: "agent-intent show", network: "all" });
+    out.agentIntentProfileShow({
+      ...baseAgentIntentProfile,
+      keycloakBaseUrl: "https://user:secret@keycloak.example.com/",
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      profile: expect.objectContaining({ keycloakBaseUrl: "https://keycloak.example.com/" }),
+    });
+    expect(JSON.stringify(line)).not.toContain("secret");
   });
 
   it("reconcileDiscoveredLabels() patches buffered account labels before flushDiscovery emits them", () => {

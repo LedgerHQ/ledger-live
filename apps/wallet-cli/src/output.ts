@@ -228,15 +228,39 @@ export interface CommandOutput {
   /** Output one agent-intent profile's detail (human: labeled lines; json: envelope). Never includes
    * the profile's secret key (not part of AgentIntentProfileMeta). */
   agentIntentProfileShow(profile: AgentIntentProfileMeta): void;
-  /** Output the result of `agent-intent enroll` (human: URL + fingerprint to compare against the
-   * device; json: envelope). Never includes the secret key. */
-  agentIntentEnroll(result: {
-    profileId: string;
-    enrollmentUrl: string;
-    fingerprint: string;
-  }): void;
-  /** Output the result of `agent-intent complete` (human: confirmation line; json: envelope). */
-  agentIntentComplete(result: { profileId: string; trustchainId: string }): void;
+  /** First `agent-intent enroll` event, before blocking on the relay (human: URL + fingerprint;
+   * json: NDJSON `enrollment-pending` event). Never includes the secret key. */
+  agentIntentEnrollmentPending(result: AgentIntentEnrollmentPending): void;
+  /** Final `agent-intent enroll` result once the relayed completion is verified and saved. */
+  agentIntentEnrolled(result: AgentIntentEnrolled): void;
+}
+
+export type AgentIntentEnrollmentPending = {
+  profileId: string;
+  enrollmentUrl: string;
+  fingerprint: string;
+  expiresAt: string;
+};
+
+export type AgentIntentEnrolled = {
+  profileId: string;
+  trustchainId: string;
+  accountAccessEnvironment: string;
+};
+
+function formatAccountAccess(profile: AgentIntentProfileMeta): string {
+  const access = profile.accountAccess;
+  return access ? `${access.environment} ${access.applicationPath}` : "-";
+}
+
+function redactProfileUrls(profile: AgentIntentProfileMeta): AgentIntentProfileMeta {
+  return {
+    ...profile,
+    bffBaseUrl: redactUrlCredentials(profile.bffBaseUrl),
+    ...(profile.keycloakBaseUrl === undefined
+      ? {}
+      : { keycloakBaseUrl: redactUrlCredentials(profile.keycloakBaseUrl) }),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -677,12 +701,12 @@ class HumanCommandOutput implements CommandOutput {
     const w = Math.max(7, ...profiles.map(p => p.profileId.length));
     writeStdout(
       `${colors.bold("PROFILE".padEnd(w))}  ${colors.bold("NAME")}  ${colors.bold("SOURCE")}  ` +
-        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}`,
+        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("ACCOUNT ACCESS")}`,
     );
     for (const p of profiles) {
       writeStdout(
         `${p.profileId.padEnd(w)}  ${p.displayName}  ${p.source}  ${p.environment}  ` +
-          agentIntentProfileStatus(p),
+          `${agentIntentProfileStatus(p)}  ${formatAccountAccess(p)}`,
       );
     }
   }
@@ -698,7 +722,9 @@ class HumanCommandOutput implements CommandOutput {
       "Public key",
       "Fingerprint",
       "BFF URL",
+      "Keycloak URL",
       "Trustchain ID",
+      "Account access",
       "Created",
     ];
     const labelWidth = Math.max(...labels.map(l => l.length)) + 1; // +1 for the trailing ":"
@@ -715,23 +741,26 @@ class HumanCommandOutput implements CommandOutput {
         line("Public key", profile.publicKey),
         line("Fingerprint", formatAgentPublicKeyFingerprint(profile.publicKey)),
         line("BFF URL", redactUrlCredentials(profile.bffBaseUrl)),
+        ...(profile.keycloakBaseUrl === undefined
+          ? []
+          : [line("Keycloak URL", redactUrlCredentials(profile.keycloakBaseUrl))]),
         ...(profile.trustchainId === undefined
           ? []
           : [line("Trustchain ID", profile.trustchainId)]),
+        ...(profile.accountAccess === undefined
+          ? []
+          : [line("Account access", formatAccountAccess(profile))]),
         line("Created", profile.createdAt),
       ].join("\n"),
     );
   }
 
-  agentIntentEnroll({
+  agentIntentEnrollmentPending({
     profileId,
     enrollmentUrl,
     fingerprint,
-  }: {
-    profileId: string;
-    enrollmentUrl: string;
-    fingerprint: string;
-  }): void {
+    expiresAt,
+  }: AgentIntentEnrollmentPending): void {
     writeStdout(enrollmentUrl);
     writeStdout("");
     writeStdout(`Public key fingerprint: ${fingerprint}`);
@@ -743,20 +772,20 @@ class HumanCommandOutput implements CommandOutput {
     );
     writeStdout(
       colors.dim(
-        `Profile "${profileId}" saved. After approval, run \`agent-intent complete --profile ${profileId}\`.`,
+        `Profile "${profileId}" saved as pending. Waiting for approval until ${expiresAt} — keep ` +
+          "this process running.",
       ),
     );
   }
 
-  agentIntentComplete({
+  agentIntentEnrolled({
     profileId,
     trustchainId,
-  }: {
-    profileId: string;
-    trustchainId: string;
-  }): void {
+    accountAccessEnvironment,
+  }: AgentIntentEnrolled): void {
     writeStdout(
-      `${colors.green("✔")} Agent Intent profile "${profileId}" enrolled. Trustchain ID: ${trustchainId}`,
+      `${colors.green("✔")} Agent Intent profile "${profileId}" enrolled. Trustchain ID: ` +
+        `${trustchainId} (account access: ${accountAccessEnvironment})`,
     );
   }
 }
@@ -1103,8 +1132,7 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(
       this._envelope({
         profiles: profiles.map(p => ({
-          ...p,
-          bffBaseUrl: redactUrlCredentials(p.bffBaseUrl),
+          ...redactProfileUrls(p),
           // `profileStatus`, not `status` — the envelope already uses `status` for success/error.
           profileStatus: agentIntentProfileStatus(p),
         })),
@@ -1120,8 +1148,7 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(
       this._envelope({
         profile: {
-          ...profile,
-          bffBaseUrl: redactUrlCredentials(profile.bffBaseUrl),
+          ...redactProfileUrls(profile),
           profileStatus: agentIntentProfileStatus(profile),
           fingerprint: formatAgentPublicKeyFingerprint(profile.publicKey),
         },
@@ -1129,28 +1156,17 @@ class JsonCommandOutput implements CommandOutput {
     );
   }
 
-  agentIntentEnroll(result: {
-    profileId: string;
-    enrollmentUrl: string;
-    fingerprint: string;
-  }): void {
-    this._writeNdjson(
-      this._envelope({
-        profileId: result.profileId,
-        enrollmentUrl: result.enrollmentUrl,
-        fingerprint: result.fingerprint,
-      }),
-    );
+  agentIntentEnrollmentPending(result: AgentIntentEnrollmentPending): void {
+    this._writeNdjson({
+      type: "enrollment-pending",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...result,
+    });
   }
 
-  agentIntentComplete(result: { profileId: string; trustchainId: string }): void {
-    this._writeNdjson(
-      this._envelope({
-        profileId: result.profileId,
-        trustchainId: result.trustchainId,
-        completed: true,
-      }),
-    );
+  agentIntentEnrolled(result: AgentIntentEnrolled): void {
+    this._writeNdjson(this._envelope({ ...result, enrolled: true }));
   }
 }
 

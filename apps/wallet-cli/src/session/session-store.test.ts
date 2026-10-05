@@ -297,6 +297,27 @@ describe("ring-field resilience", () => {
     expect(session.invalidAgentIntentProfileIds).toEqual(["missing-fields"]);
   });
 
+  it("round-trips an enrolled profile's trustchain id and account access", async () => {
+    useTmpState();
+    writeFileSync(getSessionPath(), YAML.stringify({ accounts: [] }));
+    const accountAccess = {
+      mode: "direct-app16-key-reader" as const,
+      environment: "staging" as const,
+      trustchainId: "app16-root",
+      applicationPath: "m/0'/16'/0'",
+    };
+    const session = await Session.read();
+    session.addAgentIntentProfile(makeAgentIntentProfile());
+    session.updateAgentIntentProfile("trading-bot", { trustchainId: "app18-root", accountAccess });
+    session.write();
+
+    const reread = await Session.read();
+    expect(reread.getAgentIntentProfile("trading-bot")).toMatchObject({
+      trustchainId: "app18-root",
+      accountAccess,
+    });
+  });
+
   it("write() carries a malformed agentIntentProfiles entry forward instead of erasing it", async () => {
     useTmpState();
     writeFileSync(
