@@ -13,7 +13,7 @@ import {
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { Account } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
+import { useCountervaluesState } from "@features/platform-market-countervalues";
 import { calculate } from "@domain/entity-market-countervalues";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useTranslation } from "~/context/Locale";

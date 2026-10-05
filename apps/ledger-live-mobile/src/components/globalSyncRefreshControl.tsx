@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import React, { useEffect, useRef, useState } from "react";
 import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { SYNC_DELAY } from "~/utils/constants";

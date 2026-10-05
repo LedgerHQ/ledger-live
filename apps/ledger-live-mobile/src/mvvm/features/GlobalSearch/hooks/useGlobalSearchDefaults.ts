@@ -7,7 +7,7 @@ import {
   selectTopAssetsByCategory,
   selectTopStocks,
 } from "@features/platform-aggregated-assets";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";

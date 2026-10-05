@@ -6,9 +6,12 @@ import {
   type RateSource,
 } from "@domain/api-market-countervalues";
 import { createMockRateSource } from "@domain/api-market-countervalues/mock";
-import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import {
+  CountervaluesBridge,
+  CountervaluesProvider,
+  useGetCounterValueIdsPolling,
+} from "@features/platform-market-countervalues";
 import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
-import { useGetCounterValueIdsPolling } from "@ledgerhq/live-common/counterValues/state-manager/useGetCounterValueIdsPolling";
 import { flow } from "lodash/fp";
 import React, { useMemo } from "react";
 import { useCountervaluesPollingLifecycle } from "LLM/hooks/useCountervaluesPollingLifecycle";

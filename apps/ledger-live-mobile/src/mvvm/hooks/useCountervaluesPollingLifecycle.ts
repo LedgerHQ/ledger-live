@@ -1,5 +1,5 @@
 import NetInfo, { type NetInfoState } from "@react-native-community/netinfo";
-import { type Polling, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { type Polling, useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { useEffect, useRef } from "react";
 import { AppState, type AppStateStatus } from "react-native";
 

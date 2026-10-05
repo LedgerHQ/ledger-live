@@ -6,7 +6,10 @@ import { payRequestVerifyHintInitialState } from "@features/flow-pay-request/sta
 import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import {
+  CountervaluesBridge,
+  CountervaluesProvider,
+} from "@features/platform-market-countervalues";
 import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";

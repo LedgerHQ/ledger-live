@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import type { Currency } from "@domain/entity-currency";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { useCalculate } from "@features/platform-market-countervalues";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "~/context/Locale";
 import { counterValueCurrencySelector } from "~/reducers/settings";
