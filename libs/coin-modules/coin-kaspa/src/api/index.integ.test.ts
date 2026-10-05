@@ -46,25 +46,10 @@ describe("createApi (integration)", () => {
     );
   });
 
-  describe("block methods (real network)", () => {
-    // A known, already-confirmed block. Seeding from lastBlock() flakes: the virtual-chain tip is
-    // not yet indexed by /blocks-from-bluescore (tip lag), so it can return no block at that score.
-    const MINTED_BLOCK = 480818084;
-
-    it("getBlockInfo fetches the block at a known blue score", async () => {
-      const info = await api.getBlockInfo(context, MINTED_BLOCK);
-
-      expect(info.height).toBe(MINTED_BLOCK);
-      expect(info.hash).toHaveLength(64); // Kaspa block hash = 64 hex chars
-      expect(info.time).toBeInstanceOf(Date);
-      expect(info.time.getTime()).toBeGreaterThan(0);
-    });
-
-    // getBlock is not repeated here: its live check is logic/history/getBlock.integ.test.ts, and the
-    // createApi delegation is covered in api/index.unit.test.ts. The indexer rate-limits full-block
-    // requests (includeTransactions=true) far more strictly than the rest — a second one from a
-    // parallel test file is enough to get 429 — so only one test makes that request.
-  });
+  // getBlockInfo / getBlock are not repeated here: their live checks are
+  // logic/history/getBlockInfo.integ.test.ts and getBlock.integ.test.ts, and the createApi delegation
+  // is covered in api/index.unit.test.ts. The upstream provider rate-limits /blocks-from-bluescore
+  // hard, so a second request for the same block from a parallel test file is enough to get 429.
 
   // Smoke tests through the createApi() surface — deep coverage lives in the logic/*.integ.test.ts;
   // these verify the factory exposes and delegates each method correctly. Depend on FUNDED_SENDER
