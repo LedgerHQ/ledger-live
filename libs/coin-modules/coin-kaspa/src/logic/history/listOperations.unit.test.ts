@@ -441,6 +441,38 @@ describe("listOperations", () => {
       expect(mockGetTransactions).toHaveBeenCalledTimes(2);
     });
 
+    // A page that has new items is returned at once — its cursor must still be checked, or the next
+    // call would restart from the newest page or repeat this one and return the same items twice.
+    it.each([
+      { name: "repeats the requested one", cursor: "5000" },
+      { name: "grows", cursor: "9000" },
+      { name: "is malformed", cursor: "abc" },
+      { name: "is not positive", cursor: "0" },
+    ])("returns new items without a cursor when the indexer's cursor $name", async ({ cursor }) => {
+      mockGetTransactions.mockResolvedValueOnce({
+        transactions: [tx(150), tx(140)],
+        nextPageBefore: cursor,
+        nextPageAfter: null,
+      });
+
+      const result = await listOperations(ADDRESS, baseOptions({ minHeight: 100, cursor: "5000" }));
+
+      expect(result.items.map(op => op.tx.block.height)).toEqual([150, 140]);
+      expect(result.next).toBeUndefined();
+    });
+
+    it.each(["abc", "0", "-5"])(
+      "ends a full sync instead of following an unusable cursor (%s)",
+      async cursor => {
+        mockPage([50, 40], cursor);
+
+        const result = await listOperations(ADDRESS, baseOptions());
+
+        expect(result.items.map(op => op.tx.block.height)).toEqual([50, 40]);
+        expect(result.next).toBeUndefined();
+      },
+    );
+
     it("keeps the anchor from the cursor across calls", async () => {
       // A previous call saw an already-synced tx at 30 h; this page only reaches 29 h: still inside.
       mockGetTransactions.mockResolvedValueOnce({

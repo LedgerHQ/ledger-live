@@ -124,6 +124,26 @@ function isPastLookback(page: ApiResponseTransaction[], anchor: number | undefin
 }
 
 /**
+ * The indexer's next-page cursor as a block time, or undefined when there is none to follow. It is the
+ * oldest block time on the page and the next page is strictly older, so a usable cursor is a positive
+ * integer below the one just requested. A repeated, growing or malformed cursor would make the next
+ * call re-read pages — duplicating operations or looping, which paginateOperations only notices after
+ * the fact — so the walk ends there instead.
+ */
+function nextCursor(nextPageBefore: string | null, before: number | undefined): number | undefined {
+  if (!nextPageBefore) return undefined;
+  const parsed = Number.parseInt(nextPageBefore, 10);
+  if (Number.isInteger(parsed) && parsed >= 1 && parsed < (before ?? Number.POSITIVE_INFINITY)) {
+    return parsed;
+  }
+  log("coin-kaspa", "listOperations: unusable indexer cursor, ending the walk", {
+    before,
+    nextPageBefore,
+  });
+  return undefined;
+}
+
+/**
  * List native KAS operations for a Kaspa address, newest first. Without a cursor it reads the newest
  * indexer page; the indexer's `X-Next-Page-Before` cursor (surfaced by `network/getTransactions` as
  * `nextPageBefore`) is returned in `next` and fed back as `before`, so each call walks further into
@@ -148,31 +168,22 @@ export async function listOperations(
     const page = transactions ?? [];
     anchor = collectPage(page, minHeight, addressSet, items, anchor);
 
-    // Full sync: nothing is known yet, so every page is new — pass the indexer's cursor through.
+    // Validated once, before any return, so no path can hand an unusable cursor to the next call.
+    const next = nextCursor(nextPageBefore, before);
+
+    // Full sync: nothing is known yet, so every page is new — follow the indexer's cursor.
     if (!minHeight) {
-      return { items, next: nextPageBefore ?? undefined };
+      return { items, next: next === undefined ? undefined : String(next) };
     }
-    if (!nextPageBefore || page.length === 0 || isPastLookback(page, anchor)) {
+    if (next === undefined || page.length === 0 || isPastLookback(page, anchor)) {
       return { items, next: undefined };
     }
     // Inside the lookback window pages are often all already-synced. An empty page that still has a
     // cursor ends generic-coin-framework's paginateOperations walk, so keep reading here until there
     // is something to return or the window is behind us.
     if (items.length > 0) {
-      return { items, next: anchor === undefined ? nextPageBefore : `${nextPageBefore}:${anchor}` };
+      return { items, next: anchor === undefined ? String(next) : `${next}:${anchor}` };
     }
-    // The indexer's cursor is the oldest block time on the page and the next page is strictly older,
-    // so the cursor must strictly decrease. paginateOperations' cycle guard only sees cursors between
-    // calls, not inside this loop, so stop here rather than re-read if a cursor ever repeats, grows or
-    // is malformed.
-    const nextBefore = Number.parseInt(nextPageBefore, 10);
-    if (Number.isNaN(nextBefore) || nextBefore >= (before ?? Number.POSITIVE_INFINITY)) {
-      log("coin-kaspa", "listOperations: indexer cursor did not move back, stopping", {
-        before,
-        nextPageBefore,
-      });
-      return { items, next: undefined };
-    }
-    before = nextBefore;
+    before = next;
   }
 }
