@@ -214,8 +214,9 @@ jobs:
         run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
 
       - name: Restore Jest cache from S3
-        # Scheduled runs on develop start cold and only save, so each saved cache is built fresh.
-        if: ${{ github.event_name != 'schedule' }}
+        # Only PRs restore. Scheduled develop runs start cold and only save; main, release and hotfix stay uncached.
+        # EVALUATION ONLY (never merge): workflow_dispatch also restores so the warm cache can be measured pre-merge.
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
         continue-on-error: true
         uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
