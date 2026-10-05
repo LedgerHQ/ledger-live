@@ -1,14 +1,19 @@
 # @features/platform-app-lock
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Scaffold created in [LIVE-35917](https://ledgerhq.atlassian.net/browse/LIVE-35917); the public API is still being designed.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 App lock protection state — whether a password exists, whether biometrics is enabled, and whether
 the app is currently locked — plus the biometrics status unions and the errors the unlock path
 raises. It says _what state the lock is in_, never _how a digest is compared_ (that lives in
 [`@shared/password-verifier`](../../../shared/password-verifier/README.md)). The screens live in
-[`@features/flow-app-lock`](../../flow/app-lock/README.md); only the UI several of those journeys
-share lives here (see [Shared UI](#shared-ui-native-only)).
+the flow packages, one per journey —
+[`@features/flow-app-unlock`](../../flow/app-unlock/README.md),
+[`@features/flow-app-password-setup`](../../flow/app-password-setup/README.md),
+[`@features/flow-app-password-removal`](../../flow/app-password-removal/README.md),
+[`@features/flow-app-longer-password`](../../flow/app-longer-password/README.md) and
+[`@features/flow-app-protection-prompt`](../../flow/app-protection-prompt/README.md) — and only the UI
+several of those journeys share lives here (see [Shared UI](#shared-ui-native-only)).
 
 ## Why platform and not domain/entity
 
@@ -28,27 +33,43 @@ That combination — cross-flow, domain-adjacent, invisible — is what this lay
 
 ## Scope
 
-This is currently a **scaffold**:
+The default entry (`index.ts`) is plain TypeScript, tested in Node:
 
-- `AppLockStateSchema` / `AppLockState` — `hasPassword`, `biometricsEnabled`, `isLocked`.
-- `AuthenticationTypeSchema` / `AuthenticationType` — `"none" | "password" | "biometrics" | "passwordAndBiometrics"`.
-- `BiometricsAvailability`, `BiometricsPromptResult`, `BiometricsKind`.
+- `appLockSlice`, its schema and selectors — `hasPassword`, `biometricsEnabled`, `isLocked`,
+  `isHydrated`, `needsLongerPassword`, `hasDecidedLaunchLock`.
+- `getAuthenticationType` / `AuthenticationType` — `"none" | "password" | "biometrics" | "passwordAndBiometrics"`.
+- The rules the journeys share: `resolveAppLockScheme` (any stored protection keeps the revamped
+  scheme, whatever the flag says), `isLastProtection`, `isProtectionStale`, `isPasswordLongEnough`.
+- `BiometricsAvailability`, `BiometricsPromptResult`, `BiometricsKind`, `classifyBiometricsPromptError`.
 - `AppLockError` and its members `WrongPassword`, `PasswordNotSet`. The `name` string is the
   contract; catch `AppLockError` to catch the family.
 
-`AuthenticationType` is meant to be **derived** from the two protection flags, not stored: the spec
-allows password-only, biometrics-only and both, so the flags stay the single source of truth and the
-union cannot drift out of sync with them.
+The native entry (`index.native.ts`) adds what needs React Native:
+
+- The verifier store — `storeNewPassword`, `checkPassword`, `clearPasswordIfCorrect`,
+  `clearStoredPassword`, `hasPasswordVerifier`, and the legacy migration (`migrateLegacyPassword`,
+  `isLegacyMigrationComplete`). scrypt through `react-native-fast-crypto`, one Keychain item
+  (`WHEN_UNLOCKED_THIS_DEVICE_ONLY`), compared with
+  [`@shared/password-verifier`](../../../shared/password-verifier/README.md).
+- Biometrics — `getBiometricsAvailability`, `promptBiometrics` (an explicit device-owner check that
+  accepts the device passcode) and the marker that records the choice.
+- The shared UI below.
+
+`AuthenticationType` is **derived** from the two protection flags, not stored: the spec allows
+password-only, biometrics-only and both, so the flags stay the single source of truth and the union
+cannot drift out of sync with them.
 
 The biometrics types are unions rather than booleans because each case needs a different screen:
 `unavailable` (no hardware — never offer it), `notEnrolled` (offer to open system settings) and
 `lockedOut` (the OS decides when to relent). Likewise `cancelled` must stay distinguishable from
-`failed`, so a dismissed sheet is not counted as a failed attempt. These are product requirements
-encoded in the type system; the app's biometrics adapter returns them and the flow switches on them.
+`failed`, so a dismissed sheet is not counted as a failed attempt.
 
-**Known gap to decide later:** with nothing stored in a biometric-gated keystore item, there is no
-way to detect that the user's biometric enrolment has changed. If that matters, it needs a canary
-item and a follow-up decision.
+## Known limits
+
+- The biometrics marker is a plain Keychain item, not a biometric-gated one, so a change of
+  enrolment goes undetected.
+- On iOS, `react-native-keychain` writes an item by deleting it and adding it again. A crash between
+  the two loses the verifier, and the app opens unprotected at the next launch.
 
 ## Shared UI (native only)
 
@@ -62,9 +83,6 @@ Exported from `index.native.ts` only, so the default entry stays free of UI:
 
 Their tests run in the React Native project of `@support/jest-features-flow`
 (`*.native.test.tsx`); the rest of the package keeps its plain Node project (`*.test.ts`).
-
-The slice, selectors, React hooks and the unlock orchestration (which is what raises the errors) land
-with the tickets that consume them — biometrics/password logic, unlock flow, migration.
 
 ## Validation
 

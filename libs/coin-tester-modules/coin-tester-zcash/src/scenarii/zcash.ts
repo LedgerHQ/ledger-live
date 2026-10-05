@@ -346,7 +346,11 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     LiveConfig.setConfig({
       config_currency_zcash_regtest: {
         type: "object",
-        default: { status: { type: "active" } },
+        default: {
+          status: { type: "active" },
+          name: "Zcash Regtest",
+          unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
+        },
       },
     });
 

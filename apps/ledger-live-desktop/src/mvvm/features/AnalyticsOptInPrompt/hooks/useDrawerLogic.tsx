@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useAnalyticsOptInPrompt } from "./useCommonLogic";
 
 interface UseDrawerLogicProps {
@@ -18,12 +18,20 @@ export const useDrawerLogic = ({ entryPoint, onClose }: UseDrawerLogicProps) => 
 
   const handleRequestBack = () => {
     setStep(prevState => prevState - 1);
-    track("button_clicked", { button: "back", entryPoint, flow, variant }, shouldWeTrack);
+    track(
+      "button_clicked",
+      { button: "back", entryPoint, flow, variant },
+      { mandatory: shouldWeTrack },
+    );
   };
 
   const handleRequestClose = () => {
     onClose();
-    track("button_clicked", { button: "close", entryPoint, flow, variant }, shouldWeTrack);
+    track(
+      "button_clicked",
+      { button: "close", entryPoint, flow, variant },
+      { mandatory: shouldWeTrack },
+    );
   };
 
   useEffect(() => {

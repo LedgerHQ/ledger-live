@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Linking, Platform, Share, View } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -24,7 +26,6 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import { addOneAccount } from "~/actions/accounts";
 import { ScreenName } from "~/const";
-import { track, TrackScreen } from "~/analytics";
 import byFamily from "../../generated/Confirmation";
 import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
 import byFamilyTokenAlert from "../../generated/ReceiveConfirmationTokenAlert";

@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
-import { listenToCardApi } from "@support/msw-features-flow-pay-card";
+import { CARD_STATUS, CARD_STATUS_URL, listenToCardApi } from "@support/msw-features-flow-pay-card";
 import { CARD_TRANSACTIONS_URL, cardApiWrapper } from "../__tests__/cardApiStore";
 import { useCardTransactionHistoryViewModel } from "./useCardTransactionHistoryViewModel";
 
@@ -10,12 +10,33 @@ const server = listenToCardApi();
 const onRowClick = () => {};
 
 describe("useCardTransactionHistoryViewModel", () => {
+  beforeEach(() => {
+    server.use(http.get(CARD_STATUS_URL, () => HttpResponse.json(CARD_STATUS)));
+  });
+
   it("should tell a holder with no session apart from one who has not spent yet", () => {
     const { result } = renderHook(() => useCardTransactionHistoryViewModel({ onRowClick }), {
       wrapper: cardApiWrapper({ signedIn: false }),
     });
 
     expect(result.current.displayState.kind).toBe("signedOut");
+  });
+
+  it("should use unclaimed when the signed-in holder has no card", async () => {
+    server.use(
+      http.get(CARD_STATUS_URL, () =>
+        HttpResponse.json({ message: "Card not found" }, { status: 404 }),
+      ),
+      http.get(CARD_TRANSACTIONS_URL, () =>
+        HttpResponse.json({ message: "Card not found" }, { status: 404 }),
+      ),
+    );
+
+    const { result } = renderHook(() => useCardTransactionHistoryViewModel({ onRowClick }), {
+      wrapper: cardApiWrapper({ signedIn: true }),
+    });
+
+    await waitFor(() => expect(result.current.displayState.kind).toBe("unclaimed"));
   });
 
   it("should use empty when the signed-in holder has no transactions", async () => {

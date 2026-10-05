@@ -858,6 +858,8 @@
   },
   "payTab": {
     "disclaimer": "Provided by Monavate Onchain",
+    "cardDisclaimer": "Looking for your crypto card?",
+    "cardDisclaimerLink": "Go to CL Card",
     "featureTour": {
       "title": "All your payments, in one place",
       "description": "Meet your new Pay tab, making your crypto ready for everyday money moments.",
@@ -1024,6 +1026,10 @@
           "title": "Log in to see your card transactions",
           "description": "Your card activity appears here once you’re logged in."
         },
+        "unclaimed": {
+          "title": "Crypto card",
+          "description": "Go to pay to set up your card."
+        },
         "empty": {
           "title": "No card transactions yet",
           "description": "Come back later to see your card transactions."
@@ -1069,6 +1075,7 @@
     },
     "contacts": {
       "title": "Pay contact",
+      "me": "Me",
       "empty": {
         "info": "You don’t have contact yet",
         "addContact": "Add contact"
@@ -1192,9 +1199,9 @@
     },
     "cardLoginIntro": {
       "title": "Spend crypto, earn cashback",
-      "providedBy": "Card provided by Baanx",
+      "providedBy": "Card provided by Monavate",
       "createAccount": "Create an account",
-      "logIn": "Log in to Baanx",
+      "logIn": "Log in to Monavate",
       "wallets": {
         "applePay": "Apple Pay",
         "googlePay": "Google Pay",
@@ -2981,6 +2988,43 @@
       "feeAsset": "Fee asset",
       "feesAmount": "Fees amount ({{unit}})",
       "payFeesIn": "Pay fees in"
+    },
+    "feePayment": {
+      "title": "Select fee payment",
+      "regular": "Regular transfer",
+      "sponsored": "Pay with {{provider}}",
+      "payIn": "Pay network fee in {{feeCurrency}}",
+      "paidIn": "Paid in {{currency}}",
+      "nudge": "You could save {{amount}} with {{provider}}",
+      "saved": "Saved with {{provider}}",
+      "confirm": "Confirm",
+      "disclaimer": "With {{provider}}, a third-party energy provider, fees are paid in {{feeCurrency}}.",
+      "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
+    },
+    "sponsoredRentSignature": {
+      "title": "Step 1 of 2",
+      "strategy": "Energy rental - {{provider}}",
+      "crafting": "Preparing energy rental…",
+      "submitting": "Submitting energy rental payment…",
+      "feeLabel": "Rental fee"
+    },
+    "sponsoredTransferSignature": {
+      "title": "Step 2 of 2"
+    },
+    "sponsoredPolling": {
+      "title": "Waiting for energy delivery",
+      "waiting": "{{provider}} is delivering the rented energy. This can take a moment.",
+      "elapsed": "Elapsed: {{time}}"
+    },
+    "sponsoredFailure": {
+      "title": "Something went wrong",
+      "rentPayment": "Fee payment failed — your funds were not moved.",
+      "deliveryFailed": "Energy was not delivered. Your rental fee payment was sent — contact {{provider}} support for a refund{{txidSuffix}}.",
+      "contractData": "Contract data is disabled on your TRON app. Enable TRON app → Settings → Contract data, then retry.",
+      "transfer": "Your transfer failed, but the rented energy is still valid — you can retry the transfer.",
+      "retry": "Retry",
+      "retryPaying": "Pay again and retry",
+      "cancel": "Cancel"
     },
     "coinControl": {
       "title": "Coin control",
@@ -5151,6 +5195,62 @@
       "OUT": "Withdraw"
     }
   },
+  "stacks": {
+    "stake": {
+      "flow": {
+        "title": "Stake",
+        "preparingTransaction": "Preparing transaction…",
+        "steps": {
+          "validator": {
+            "title": "Pool",
+            "description": "Choose a pool to delegate your STX to for staking.",
+            "poolAddressLabel": "Pool address",
+            "numCyclesLabel": "Number of cycles"
+          },
+          "amount": {
+            "title": "Amount",
+            "disclaimer": "Your STX will be locked until the staking pool releases them."
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "You staked {{amount}}. Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "Visit Account Dashboard"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "unstake": {
+      "flow": {
+        "title": "Unstake",
+        "preparingTransaction": "Preparing transaction…",
+        "steps": {
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your unstaking transaction couldn't be sent to the network. Please try again.",
+            "success": {
+              "title": "Unstake submitted",
+              "text": "Your STX undelegation was broadcasted successfully.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
+    },
+    "account": {
+      "staked": "Staked",
+      "unlockCycle": "Unlock cycle"
+    }
+  },
   "tezos": {
     "operationTypes": {
       "UNSTAKE": "Unstaking",
@@ -5775,6 +5875,9 @@
       "featureFlagsOverride": "Override",
       "featureFlagsRestoreAll": "Restore all flags values",
       "flagHint": "If a feature flag is defined in the targeted Firebase environment \nbut it is missing from the following list, you can type its **exact** name in \nthe search input and it will appear in the list. Type the \nflag name in camelCase without the 'feature' prefix.",
+      "contentAbTests": {
+        "invalidPayload": "Invalid payload. \"enabled\" must be a boolean and \"copy\" must map keys to strings."
+      },
       "showButtonDesc": "Always display the Feature Flags button in the Sidebar",
       "buttonTitle": "Flags overridden locally",
       "overridden": {
@@ -6793,6 +6896,7 @@
       "undelegate": "Please confirm on your device to finalize the operation",
       "redelegate": "Please confirm on your device to finalize the operation",
       "claimRewardCompound": "Please confirm on your device to finalize the operation",
+      "compoundReward": "Please confirm on your device to finalize the operation",
       "nominate": "Please confirm on your device to finalize the operation",
       "chill": "Please confirm on your device to finalize the operation",
       "bond": "Please confirm on your device to finalize the operation",
@@ -6819,6 +6923,7 @@
       "undelegate": "validator",
       "claimReward": "rewards recipient",
       "claimRewardCompound": "validator that will receive the rewards",
+      "compoundReward": "validator that will receive the rewards",
       "optIn": "recipient",
       "nominate": "validator",
       "stake": "validator",
@@ -7275,6 +7380,10 @@
     "CosmosDelegateAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transactions fees"
     },
+    "CosmosMemoTooLong": {
+      "title": "Memo exceeds maximum length",
+      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
     "CurrencyNotSupported": {
       "title": "{{currencyName}} is not supported",
       "description": "This crypto asset is not yet supported. Please contact Ledger Support."
@@ -7633,6 +7742,10 @@
     "TransactionRefusedOnDevice": {
       "title": "Operation denied on device",
       "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "TransferOfferExpiredError": {
+      "title": "This offer has expired",
+      "description": "The transfer offer expired before it was accepted. Ask the sender to send a new one."
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
@@ -8160,6 +8273,10 @@
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
+    },
+    "StacksStakeInPreparePhase": {
+      "title": "Staking is paused until the next reward cycle",
+      "description": "The Stacks network doesn't accept new stakes while it prepares the next reward cycle. Staking reopens in {{blocksUntilReopen}} Bitcoin blocks."
     },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"

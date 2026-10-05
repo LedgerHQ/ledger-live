@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { GestureResponderEvent, Linking } from "react-native";
 import { useFeature } from "@features/platform-feature-flags";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
@@ -6,7 +7,6 @@ import {
   LedgerRecoverSubscriptionStateEnum,
   LedgerRecoverSubscriptionStateInProgressEnum,
 } from "~/types/recoverSubscriptionState";
-import { track } from "~/analytics";
 import useRecoverBannerState from "../../hooks/useRecoverBannerState";
 import { useAddRecoverPostOnboardingAction } from "./useAddRecoverPostOnboardingAction";
 

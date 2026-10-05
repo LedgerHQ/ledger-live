@@ -1,11 +1,10 @@
 import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./currencies";
-import { initialState } from "@ledgerhq/live-countervalues/logic";
+import { initialState, pairId } from "@domain/entity-market-countervalues";
 import { loadCountervalues } from "@domain/api-market-countervalues";
 import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import { inferTrackingPairForAccounts } from "../trackingPairs";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import {
   getPortfolioCount,
   getBalanceHistory,
@@ -35,7 +34,7 @@ setEnv("MOCK", "1");
 
 const rates = createMockRateSource("1");
 
-// Mirror live-countervalues's jest-setup: restrict genAccount to only bitcoin+ethereum
+// Restrict genAccount to only bitcoin+ethereum
 // so the seeded RNG picks the same currency as when the snapshots were generated.
 const LOCAL_CURRENCIES = ["bitcoin", "ethereum"].map(id => getCryptoCurrencyById(id));
 setCurrenciesResolver({

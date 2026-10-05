@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useEffect } from "react";
 import { Divider, Flex, Text, Button, ScrollContainer, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
@@ -10,7 +11,6 @@ import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/po
 import { useDispatch } from "~/context/hooks";
 import { getDeviceModel } from "@ledgerhq/devices";
 import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
-import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
 import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
 import { setHasBeenRedirectedToPostOnboarding, setIsPostOnboardingFlow } from "~/actions/settings";

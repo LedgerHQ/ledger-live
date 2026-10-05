@@ -8,7 +8,7 @@ import React, { memo, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";

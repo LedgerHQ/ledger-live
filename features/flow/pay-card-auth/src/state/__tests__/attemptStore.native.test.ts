@@ -7,7 +7,7 @@ import {
 import { clearAttempt, loadAttempt, saveAttempt } from "../attemptStore.native";
 
 jest.mock("react-native-keychain", () => ({
-  ACCESSIBLE: { AFTER_FIRST_UNLOCK: "AccessibleAfterFirstUnlock" },
+  ACCESSIBLE: { AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: "AccessibleAfterFirstUnlockThisDeviceOnly" },
   STORAGE_TYPE: { AES_GCM_NO_AUTH: "KeystoreAESGCM_NoAuth" },
   getGenericPassword: jest.fn(),
   setGenericPassword: jest.fn(),
@@ -44,7 +44,7 @@ describe("attemptStore (native)", () => {
 
     expect(setGenericPassword).toHaveBeenCalledWith("payCard", JSON.stringify(attempt), {
       service: "payCard.pkce.attempt",
-      accessible: "AccessibleAfterFirstUnlock",
+      accessible: "AccessibleAfterFirstUnlockThisDeviceOnly",
       storage: "KeystoreAESGCM_NoAuth",
     });
   });

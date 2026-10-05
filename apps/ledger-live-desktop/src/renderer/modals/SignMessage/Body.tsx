@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { AccountLike, AnyMessage } from "@ledgerhq/types-live";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { Trans, useTranslation } from "react-i18next";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepSign from "./steps/StepSign";

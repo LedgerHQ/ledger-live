@@ -36,6 +36,7 @@ import {
   validateIntent,
 } from "../logic";
 import { TRONIFY_FEE_OPTION_ID } from "../logic/constants";
+import { TRONIFY_PROVIDER } from "../logic/energyProviders";
 import {
   awaitEnergyDelivery,
   broadcastEnergyRentTransaction,
@@ -45,7 +46,8 @@ import {
   getEnergyRentSignaturePayload,
   getEnergyRentStatus,
   isEnergyDeliveredOnChain,
-  nativeRentAmount,
+  rentPayment,
+  reservationDedupKey,
 } from "../logic/energyRent";
 import type {
   EnergyRentOrder,
@@ -164,6 +166,13 @@ export function createApi() {
  * generic `CoinModuleImpl`/`CoinModuleApi` contract; resolved via the registry's sponsored-API loaders. */
 export function createSponsoredSendApi(context: TronContext) {
   return {
+    feeOptionId: TRONIFY_FEE_OPTION_ID,
+    providerName: TRONIFY_PROVIDER.name,
+    // The rented energy covers the fee, so validateIntent's NotEnoughGas must not block the send.
+    waivesErrorKeys: ["gasLimit"] as const,
+    // ...and TronNotEnoughEnergy's burn warning describes the shortfall the rental fills.
+    waivesWarningKeys: ["amount"] as const,
+    reservationDedupKey,
     listFeeOptions: (intent: TransactionIntent<TronMemo, TronTxData>) =>
       listFeeOptionsLogic(context, intent),
     // Called with logger+config directly, not a framework Context.
@@ -199,7 +208,7 @@ export function createSponsoredSendApi(context: TronContext) {
       transaction: EnergyRentUnsignedTransaction,
       deviceSignature: string,
     ) => buildSignedEnergyRentTransaction(transaction, deviceSignature),
-    nativeRentAmount: (order: EnergyRentOrder) => nativeRentAmount(order),
+    rentPayment: (order: EnergyRentOrder) => rentPayment(order),
   };
 }
 

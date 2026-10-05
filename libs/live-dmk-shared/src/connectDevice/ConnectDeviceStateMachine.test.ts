@@ -10,20 +10,22 @@ import { Subject, type Observer } from "rxjs";
 
 import { DefaultConnectDeviceStateMachine } from "./ConnectDeviceStateMachine";
 import {
-  BaseConnectionErrorTypes,
-  BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
   DisplayedDevice,
   type ConnectDeviceMapConnectionError,
   type ConnectDeviceMatchDiscoveredDevices,
   type ConnectDeviceUIState,
-  type DeviceDiscoveryService,
   type KnownDevice,
   type MatchedDevice,
-  type UnknownConnectionError,
-  type UnknownDiscoveryError,
 } from "./types";
 import { dmkToLedgerDeviceIdMap } from "../config/dmkToLedgerDeviceIdMap";
+import {
+  BaseConnectionErrorTypes,
+  BaseDiscoveryErrorTypes,
+  type DeviceDiscoveryService,
+  type UnknownConnectionError,
+  type UnknownDiscoveryError,
+} from "../deviceConnectivity/types";
 
 // Test helpers
 const testTransport = "RN_BLE" as TransportIdentifier;
@@ -276,7 +278,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(
         (
           discoveringState as {
-            type: ConnectDeviceUIStateTypes.Discovering;
+            type: typeof ConnectDeviceUIStateTypes.Discovering;
             devices: Array<DisplayedDevice>;
           }
         ).devices,
@@ -304,7 +306,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(
         (
           discoveringState as {
-            type: ConnectDeviceUIStateTypes.Discovering;
+            type: typeof ConnectDeviceUIStateTypes.Discovering;
             devices: Array<DisplayedDevice>;
           }
         ).devices,
@@ -335,7 +337,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(
         (
           discoveringState as {
-            type: ConnectDeviceUIStateTypes.Discovering;
+            type: typeof ConnectDeviceUIStateTypes.Discovering;
             devices: Array<DisplayedDevice>;
           }
         ).devices,
@@ -364,7 +366,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(
         (
           discoveringState as {
-            type: ConnectDeviceUIStateTypes.Discovering;
+            type: typeof ConnectDeviceUIStateTypes.Discovering;
             devices: Array<DisplayedDevice>;
           }
         ).devices,
@@ -396,7 +398,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(
         (
           discoveringState as {
-            type: ConnectDeviceUIStateTypes.Discovering;
+            type: typeof ConnectDeviceUIStateTypes.Discovering;
             devices: Array<DisplayedDevice>;
           }
         ).devices,
@@ -424,7 +426,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectingState.type).toBe(ConnectDeviceUIStateTypes.Connecting);
       const connectingStateDevice = (
         connectingState as {
-          type: ConnectDeviceUIStateTypes.Connecting;
+          type: typeof ConnectDeviceUIStateTypes.Connecting;
           device: KnownDevice;
         }
       ).device;
@@ -524,7 +526,7 @@ describe("ConnectDeviceStateMachine", () => {
       const discoveringState = states[states.length - 1];
       const availableDevice = (
         discoveringState as {
-          type: ConnectDeviceUIStateTypes.Discovering;
+          type: typeof ConnectDeviceUIStateTypes.Discovering;
           devices: Array<DisplayedDevice>;
         }
       ).devices[1];
@@ -539,7 +541,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectingState.type).toBe(ConnectDeviceUIStateTypes.Connecting);
       const connectingStateDevice = (
         connectingState as {
-          type: ConnectDeviceUIStateTypes.Connecting;
+          type: typeof ConnectDeviceUIStateTypes.Connecting;
           device: KnownDevice;
         }
       ).device;
@@ -557,7 +559,7 @@ describe("ConnectDeviceStateMachine", () => {
       const discoveringState = states[states.length - 1];
       const unavailableDevice = (
         discoveringState as {
-          type: ConnectDeviceUIStateTypes.Discovering;
+          type: typeof ConnectDeviceUIStateTypes.Discovering;
           devices: Array<DisplayedDevice>;
         }
       ).devices[0];
@@ -568,7 +570,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(waitingState.type).toBe(ConnectDeviceUIStateTypes.WaitingForSelectedDevice);
       const waitingStateDevice = (
         waitingState as {
-          type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
+          type: typeof ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
           device: KnownDevice;
         }
       ).device;
@@ -586,7 +588,7 @@ describe("ConnectDeviceStateMachine", () => {
       const discoveringState = states[states.length - 1];
       const unavailableDevice = (
         discoveringState as {
-          type: ConnectDeviceUIStateTypes.Discovering;
+          type: typeof ConnectDeviceUIStateTypes.Discovering;
           devices: Array<DisplayedDevice>;
         }
       ).devices[0];
@@ -602,7 +604,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(waitingState.type).toBe(ConnectDeviceUIStateTypes.WaitingForSelectedDevice);
       const waitingStateDevice = (
         waitingState as {
-          type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
+          type: typeof ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
           device: KnownDevice;
         }
       ).device;
@@ -623,7 +625,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(discoveringState.type).toBe(ConnectDeviceUIStateTypes.Discovering);
       const unavailableDevice = (
         discoveringState as {
-          type: ConnectDeviceUIStateTypes.Discovering;
+          type: typeof ConnectDeviceUIStateTypes.Discovering;
           devices: Array<DisplayedDevice>;
         }
       ).devices[0];
@@ -639,7 +641,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectingState.type).toBe(ConnectDeviceUIStateTypes.Connecting);
       const connectingStateDevice = (
         connectingState as {
-          type: ConnectDeviceUIStateTypes.Connecting;
+          type: typeof ConnectDeviceUIStateTypes.Connecting;
           device: KnownDevice;
         }
       ).device;
@@ -657,7 +659,7 @@ describe("ConnectDeviceStateMachine", () => {
       const discoveringState = states[states.length - 1];
       const unavailableDevice = (
         discoveringState as {
-          type: ConnectDeviceUIStateTypes.Discovering;
+          type: typeof ConnectDeviceUIStateTypes.Discovering;
           devices: Array<DisplayedDevice>;
         }
       ).devices[0];
@@ -670,7 +672,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(waitingState.type).toBe(ConnectDeviceUIStateTypes.WaitingForSelectedDevice);
       const waitingStateDevice = (
         waitingState as {
-          type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
+          type: typeof ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
           device: KnownDevice;
         }
       ).device;
@@ -690,7 +692,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(discoveringState.type).toBe(ConnectDeviceUIStateTypes.Discovering);
       const unavailableDevice = (
         discoveringState as {
-          type: ConnectDeviceUIStateTypes.Discovering;
+          type: typeof ConnectDeviceUIStateTypes.Discovering;
           devices: Array<DisplayedDevice>;
         }
       ).devices[0];
@@ -706,7 +708,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectingState.type).toBe(ConnectDeviceUIStateTypes.Connecting);
       const connectingStateDevice = (
         connectingState as {
-          type: ConnectDeviceUIStateTypes.Connecting;
+          type: typeof ConnectDeviceUIStateTypes.Connecting;
           device: KnownDevice;
         }
       ).device;
@@ -729,7 +731,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(discoveringState.type).toBe(ConnectDeviceUIStateTypes.Discovering);
       const discoveringStateDevices = (
         discoveringState as {
-          type: ConnectDeviceUIStateTypes.Discovering;
+          type: typeof ConnectDeviceUIStateTypes.Discovering;
           devices: Array<DisplayedDevice>;
         }
       ).devices;
@@ -756,7 +758,7 @@ describe("ConnectDeviceStateMachine", () => {
     expect(waitingState.type).toBe(ConnectDeviceUIStateTypes.WaitingForSelectedDevice);
     const waitingStateDevice = (
       waitingState as {
-        type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
+        type: typeof ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
         device: KnownDevice;
       }
     ).device;
@@ -782,7 +784,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(
         (
           discoveryErrorState as {
-            type: ConnectDeviceUIStateTypes.DiscoveryError;
+            type: typeof ConnectDeviceUIStateTypes.DiscoveryError;
             error: UnknownDiscoveryError;
           }
         ).error,
@@ -809,7 +811,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(
         (
           retryableState as {
-            type: ConnectDeviceUIStateTypes.DiscoveryError;
+            type: typeof ConnectDeviceUIStateTypes.DiscoveryError;
             error: UnknownDiscoveryError;
           }
         ).error,
@@ -830,8 +832,12 @@ describe("ConnectDeviceStateMachine", () => {
       const nonRetryableState = states[states.length - 1];
       expect(nonRetryableState.type).toBe(ConnectDeviceUIStateTypes.DiscoveryError);
       expect(
-        (nonRetryableState as { type: ConnectDeviceUIStateTypes.DiscoveryError; retry: undefined })
-          .retry,
+        (
+          nonRetryableState as {
+            type: typeof ConnectDeviceUIStateTypes.DiscoveryError;
+            retry: undefined;
+          }
+        ).retry,
       ).toBeUndefined();
     });
 
@@ -847,7 +853,7 @@ describe("ConnectDeviceStateMachine", () => {
       const discoveryErrorState = states[states.length - 1];
       const discoveryErrorIgnore = (
         discoveryErrorState as {
-          type: ConnectDeviceUIStateTypes.DiscoveryError;
+          type: typeof ConnectDeviceUIStateTypes.DiscoveryError;
           ignore: () => void;
         }
       ).ignore;
@@ -861,7 +867,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(discoveringState.type).toBe(ConnectDeviceUIStateTypes.Discovering);
       const discoveringStateDevices = (
         discoveringState as {
-          type: ConnectDeviceUIStateTypes.Discovering;
+          type: typeof ConnectDeviceUIStateTypes.Discovering;
           devices: Array<DisplayedDevice>;
         }
       ).devices;
@@ -883,7 +889,10 @@ describe("ConnectDeviceStateMachine", () => {
       emitDiscoveryError(makeDiscoveryError({ resolution: { type: "prompt", retry: onRetry } }));
       const discoveryErrorState = states[states.length - 1];
       const discoveryErrorRetry = (
-        discoveryErrorState as { type: ConnectDeviceUIStateTypes.DiscoveryError; retry: () => void }
+        discoveryErrorState as {
+          type: typeof ConnectDeviceUIStateTypes.DiscoveryError;
+          retry: () => void;
+        }
       ).retry;
       discoveryErrorRetry();
 
@@ -900,7 +909,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(discoveringState.type).toBe(ConnectDeviceUIStateTypes.Discovering);
       const discoveringStateDevices = (
         discoveringState as {
-          type: ConnectDeviceUIStateTypes.Discovering;
+          type: typeof ConnectDeviceUIStateTypes.Discovering;
           devices: Array<DisplayedDevice>;
         }
       ).devices;
@@ -923,7 +932,10 @@ describe("ConnectDeviceStateMachine", () => {
       emitDiscoveryError(makeDiscoveryError({ resolution: { type: "prompt", retry: onRetry } }));
       const discoveryErrorState = states[states.length - 1];
       const discoveryErrorRetry = (
-        discoveryErrorState as { type: ConnectDeviceUIStateTypes.DiscoveryError; retry: () => void }
+        discoveryErrorState as {
+          type: typeof ConnectDeviceUIStateTypes.DiscoveryError;
+          retry: () => void;
+        }
       ).retry;
       discoveryErrorRetry();
 
@@ -938,7 +950,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(retryState.type).toBe(ConnectDeviceUIStateTypes.DiscoveryError);
       const retryStateError = (
         retryState as {
-          type: ConnectDeviceUIStateTypes.DiscoveryError;
+          type: typeof ConnectDeviceUIStateTypes.DiscoveryError;
           error: UnknownDiscoveryError;
         }
       ).error;
@@ -957,7 +969,10 @@ describe("ConnectDeviceStateMachine", () => {
       emitDiscoveryError(retryableError);
       const discoveryErrorState = states[states.length - 1];
       const discoveryErrorRetry = (
-        discoveryErrorState as { type: ConnectDeviceUIStateTypes.DiscoveryError; retry: () => void }
+        discoveryErrorState as {
+          type: typeof ConnectDeviceUIStateTypes.DiscoveryError;
+          retry: () => void;
+        }
       ).retry;
       discoveryErrorRetry();
 
@@ -972,7 +987,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(unknownErrorState.type).toBe(ConnectDeviceUIStateTypes.DiscoveryError);
       const unknownErrorError = (
         unknownErrorState as {
-          type: ConnectDeviceUIStateTypes.DiscoveryError;
+          type: typeof ConnectDeviceUIStateTypes.DiscoveryError;
           error: UnknownDiscoveryError;
         }
       ).error;
@@ -1011,7 +1026,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectionErrorState.type).toBe(ConnectDeviceUIStateTypes.ConnectionError);
       const connectionErrorError = (
         connectionErrorState as {
-          type: ConnectDeviceUIStateTypes.ConnectionError;
+          type: typeof ConnectDeviceUIStateTypes.ConnectionError;
           error: UnknownConnectionError;
         }
       ).error;
@@ -1046,7 +1061,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(connectionErrorState.type).toBe(ConnectDeviceUIStateTypes.ConnectionError);
       const connectionErrorError = (
         connectionErrorState as {
-          type: ConnectDeviceUIStateTypes.ConnectionError;
+          type: typeof ConnectDeviceUIStateTypes.ConnectionError;
           error: UnknownConnectionError;
         }
       ).error;
@@ -1078,7 +1093,7 @@ describe("ConnectDeviceStateMachine", () => {
       const connectionErrorState = states[states.length - 1];
       const connectionErrorRetry = (
         connectionErrorState as {
-          type: ConnectDeviceUIStateTypes.ConnectionError;
+          type: typeof ConnectDeviceUIStateTypes.ConnectionError;
           retry: () => void;
         }
       ).retry;
@@ -1115,7 +1130,7 @@ describe("ConnectDeviceStateMachine", () => {
       const connectionErrorState = states[states.length - 1];
       const connectionErrorIgnore = (
         connectionErrorState as {
-          type: ConnectDeviceUIStateTypes.ConnectionError;
+          type: typeof ConnectDeviceUIStateTypes.ConnectionError;
           ignore: () => void;
         }
       ).ignore;
@@ -1125,7 +1140,7 @@ describe("ConnectDeviceStateMachine", () => {
       expect(deviceDiscoveryService.stop).toHaveBeenCalled();
       const connectionErrorStateError = (
         connectionErrorState as {
-          type: ConnectDeviceUIStateTypes.ConnectionError;
+          type: typeof ConnectDeviceUIStateTypes.ConnectionError;
           error: UnknownConnectionError;
         }
       ).error;

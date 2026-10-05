@@ -22,8 +22,7 @@ import {
   isDataStale,
 } from "~/renderer/screens/market/utils";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
-import { track } from "~/renderer/analytics/segment";
-import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
+import { getCurrentTrackingPage, track } from "@shared/analytics";
 import { useMarketCategories } from "LLD/features/Market/hooks/useMarketCategories";
 import {
   getMarketCategoriesParam,

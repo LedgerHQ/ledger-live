@@ -1,6 +1,8 @@
 import {
   assignFromAccountRaw as hederaAssignFromAccountRaw,
   assignToAccountRaw as hederaAssignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
 } from "@ledgerhq/coin-hedera/bridge/serialization";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import genericAccountRawAssign from "../../bridge/generic-coin-framework/accountRawAssign";
@@ -24,4 +26,6 @@ function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
 export default {
   assignFromAccountRaw,
   assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
 };

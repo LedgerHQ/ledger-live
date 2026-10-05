@@ -11,7 +11,7 @@ import LedgerRecoverLogo from "./images/ledger_recover.png";
 import QrCodeLLMImages from "./images/QRcode_LLM.png";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 type Props = {

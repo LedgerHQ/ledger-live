@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   useCalculateCountervalueCallback,
   useCountervaluesState,
 } from "@ledgerhq/live-countervalues-react";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import type { PerpsDepositUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { setFlowValue } from "~/renderer/reducers/modularDialog";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
@@ -88,6 +89,7 @@ export function usePerpsDepositViewModel(
 
   const [depositAccountId, setDepositAccountId] = useState(data.draft?.depositAccount.id);
   const [amountText, setAmountText] = useState(() => toAmountText(data.draft?.depositAmount));
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setDepositAccountId(data.draft?.depositAccount.id);
@@ -106,10 +108,27 @@ export function usePerpsDepositViewModel(
     [],
   );
 
+  /** The USDC funding account with the highest spendable balance, used as the default. */
+  const defaultDepositAccount = useMemo(
+    () =>
+      accounts
+        .filter(
+          (acc): acc is TokenAccount =>
+            acc.type === "TokenAccount" &&
+            acc.token.id === PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID &&
+            acc.spendableBalance.gt(0),
+        )
+        .reduce<TokenAccount | undefined>(
+          (best, acc) => (!best || acc.spendableBalance.gt(best.spendableBalance) ? acc : best),
+          undefined,
+        ),
+    [accounts],
+  );
+
   /** Read from the store so balances stay live while the form is open. */
   const depositAccount = useMemo(
-    () => accounts.find(account => account.id === depositAccountId),
-    [accounts, depositAccountId],
+    () => accounts.find(account => account.id === depositAccountId) ?? defaultDepositAccount,
+    [accounts, depositAccountId, defaultDepositAccount],
   );
 
   const receiverAccount = data.receiverAccount;
@@ -244,6 +263,7 @@ export function usePerpsDepositViewModel(
   }, []);
 
   const pickDepositAccount = useCallback(() => {
+    dispatch(setFlowValue(PERPS_UI_USE_CASE.fund));
     void openAssetAndAccountPromise({
       uiUseCase: PERPS_UI_USE_CASE.fund,
       areCurrenciesFiltered: false,
@@ -252,7 +272,7 @@ export function usePerpsDepositViewModel(
         setDepositAccountId(account.id);
       })
       .catch(() => undefined);
-  }, [openAssetAndAccountPromise]);
+  }, [dispatch, openAssetAndAccountPromise]);
 
   const handleReview = useCallback(() => {
     if (!canReview || !depositAccount || !depositCurrency || !quote) return;

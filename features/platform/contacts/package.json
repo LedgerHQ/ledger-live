@@ -68,6 +68,7 @@
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@types/semver": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",

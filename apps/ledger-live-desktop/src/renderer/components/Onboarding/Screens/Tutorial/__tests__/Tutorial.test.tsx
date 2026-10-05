@@ -4,8 +4,8 @@ import { render, screen } from "tests/testSetup";
 import Tutorial, { ScreenId } from "../index";
 import { OnboardingUseCase } from "../../../OnboardingUseCase";
 
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
   trackPage: jest.fn(),
 }));

@@ -5,7 +5,7 @@ import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import type { PnLCardProps } from "LLD/features/PnL/components/PnLCard/types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useAssetPnlViewModel } from "../useAssetPnlViewModel";
 
 const mockedTrack = jest.mocked(track);

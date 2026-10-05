@@ -1,3 +1,4 @@
+import { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
 
@@ -31,6 +32,6 @@ export const tezosConfig: Record<string, ConfigInfo> = {
         minFees: 300,
         minEstimatedFees: 300,
       },
-    },
+    } satisfies TezosCoinConfig,
   },
 };

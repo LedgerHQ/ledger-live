@@ -8,7 +8,7 @@ import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 
 type UnknownErrorStateProps = {
-  state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.UnknownError }>;
+  state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.UnknownError }>;
 };
 
 export function UnknownErrorState({ state }: Readonly<UnknownErrorStateProps>): React.ReactNode {

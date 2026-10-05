@@ -14,13 +14,13 @@ jest.mock("~/renderer/logger", () => ({
 }));
 
 import React from "react";
+import { TrackPage } from "@shared/analytics-react";
 import { analyticsEvents$, type LoggableEvent } from "@shared/analytics";
 import { render, waitFor } from "tests/testSetup";
 import createStore from "~/state-manager/configureStore";
 import type { State } from "~/renderer/reducers";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 import logger from "~/renderer/logger";
-import TrackPage from "./TrackPage";
 import { startAnalytics } from "./segment";
 
 const createStoreWithAnalyticsDisabled = () =>

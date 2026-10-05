@@ -1,3 +1,4 @@
+import { getTransactionTransferFee } from "@ledgerhq/live-common/families/solana/transactions";
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
@@ -33,10 +34,7 @@ const StepSummaryAdditionalRows = ({ account, parentAccount, transaction }: Prop
     [mainAccount, transaction.subAccountId],
   );
 
-  const transferFees =
-    transaction.model.commandDescriptor?.command.kind === "token.transfer"
-      ? transaction.model.commandDescriptor.command.extensions?.transferFee
-      : undefined;
+  const transferFees = getTransactionTransferFee(transaction);
 
   return (
     <>

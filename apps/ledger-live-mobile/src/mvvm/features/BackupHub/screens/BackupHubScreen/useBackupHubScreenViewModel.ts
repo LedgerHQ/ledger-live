@@ -1,3 +1,4 @@
+import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { Linking, type ImageSourcePropType } from "react-native";
 import { getNanoOnlyDeviceModel } from "@features/flow-large-screen-upsell/utils/getNanoOnlyDeviceModel";
@@ -16,7 +17,6 @@ import {
   toLargeScreenUpsellDeviceModelAnalyticsValue,
   type LargeScreenUpsellNanoDeviceModelId,
 } from "LLM/features/LargeScreenUpsell/analytics";
-import { screen, track } from "~/analytics";
 import useRecoverBannerState from "LLM/features/Portfolio/hooks/useRecoverBannerState";
 import { useRecoverEntry } from "LLM/hooks/useRecoverEntry";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
@@ -122,15 +122,13 @@ export function useBackupHubScreenViewModel(): BackupHubScreenViewModel {
       return;
     }
 
-    screen(
-      BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
-      undefined,
-      {
+    trackPage({
+      category: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
+      props: {
         name: BACKUP_HUB_UPSELL_TRACKING_PAGE_NAME,
         ...upsellSharedAnalyticsProps,
       },
-      false,
-    );
+    });
   }, [upsellSharedAnalyticsProps]);
 
   const onRecoverPress = useCallback(() => {

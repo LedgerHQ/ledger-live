@@ -1,3 +1,5 @@
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useCallback } from "react";
 import { Text, Flex, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
@@ -9,7 +11,7 @@ import { StyleProp, ViewStyle } from "react-native";
 import CoinsIcon from "./CoinsIcon";
 import TransferButton from "../TransferButton";
 import { NavigatorName, ScreenName } from "~/const";
-import { TrackScreen, track, usePageNameFromRoute } from "~/analytics";
+import { usePageNameFromRoute } from "~/analytics";
 import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { Currency } from "@domain/entity-currency";

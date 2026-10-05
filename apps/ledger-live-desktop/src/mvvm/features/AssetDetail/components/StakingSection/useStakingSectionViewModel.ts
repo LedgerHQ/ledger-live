@@ -9,7 +9,7 @@ import {
   discreetModeSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { useStake } from "LLD/hooks/useStake";
 import useStakeFlow from "~/renderer/screens/stake";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";

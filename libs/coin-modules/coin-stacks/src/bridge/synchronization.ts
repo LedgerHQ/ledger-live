@@ -1,3 +1,4 @@
+import type { Stake } from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   emptyHistoryCache,
@@ -11,7 +12,9 @@ import { getAddressFromPublicKey } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { getConfiguredStacksNetwork, validateAddress } from "../common-logic";
+import { getStakes } from "../logic/getStakes";
 import { TransactionResponse } from "../network";
+import type { StacksAccount, StakingPosition } from "../types";
 import {
   fetchAllTokenBalances,
   fetchBalances,
@@ -26,6 +29,36 @@ import {
   sip010TxnToOperation,
   sip010OpToParentOp,
 } from "./utils/misc";
+
+function toStakingPositionOnAccount(stake: Stake): StakingPosition {
+  const { amount, amountDeposited, amountRewarded, ...rest } = stake;
+  return {
+    ...rest,
+    amount: new BigNumber(amount.toString()),
+    ...(amountDeposited !== undefined && {
+      amountDeposited: new BigNumber(amountDeposited.toString()),
+    }),
+    ...(amountRewarded !== undefined && {
+      amountRewarded: new BigNumber(amountRewarded.toString()),
+    }),
+  };
+}
+
+/**
+ * What to keep when the stake lookup failed. The last-known value can't be kept as-is: a known `[]`
+ * would re-expose Stake (the user may have staked meanwhile, and pox-5 would then abort with
+ * ERR_ALREADY_STAKED), and a known position's `actions` would keep offering Unstake after the stake
+ * may have moved on. So a known position is kept for display with no actions, and anything else
+ * becomes `undefined` ("unknown"), which hides Stake. The key is set explicitly -- even to
+ * `undefined` -- because jsHelpers' `{ ...initialAccount, ...shape }` merge would otherwise fall
+ * through to the stale value.
+ */
+function staleStakingPositions(
+  lastKnown: StakingPosition[] | undefined,
+): StakingPosition[] | undefined {
+  if (!lastKnown?.length) return undefined;
+  return lastKnown.map(position => ({ ...position, actions: [] }));
+}
 
 /**
  * Calculates the spendable balance by subtracting pending transactions from the total balance
@@ -165,7 +198,7 @@ export async function buildTokenAccounts(
   }
 }
 
-export const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape<StacksAccount> = async info => {
   const { initialAccount, currency, rest = {}, derivationMode } = info;
   // for bridge tests specifically the `rest` object is empty and therefore the publicKey is undefined
   // reconciliatePublicKey tries to get pubKey from rest object and then from accountId
@@ -199,19 +232,36 @@ export const getAccountShape: GetAccountShape = async info => {
     : getAddressFromPublicKey(pubKey, getConfiguredStacksNetwork());
 
   // Make API calls in parallel for better performance
-  const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs] = await Promise.all([
-    fetchBlockHeight(),
-    fetchBalances(address),
-    fetchFullTxs(address),
-    fetchAllTokenBalances(address),
-    fetchFullMempoolTxs(address),
-  ]);
+  const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs, stakes] =
+    await Promise.all([
+      fetchBlockHeight(),
+      fetchBalances(address),
+      fetchFullTxs(address),
+      fetchAllTokenBalances(address),
+      fetchFullMempoolTxs(address),
+      getStakes(address)
+        .then(page => page.items)
+        .catch(e => {
+          // A failed stake lookup must not fail the whole account sync, but it also must not be
+          // reported as "no active stake": jsHelpers merges `{ ...initialAccount, ...shape }`
+          // (same convention as the generic-coin-framework's own getAccountShape.ts), so including
+          // `stakingPositions: []` here would clobber a real, previously-known position on a
+          // transient `/v2/pox` failure -- hiding it and wrongly re-exposing the Stake action even
+          // though pox-5 would still reject a new stake with ERR_ALREADY_STAKED. `undefined` here
+          // (as opposed to `[]`) signals the caller to fall back to `staleStakingPositions`.
+          log("error", "stacks error fetching stakes", e);
+          return undefined;
+        }),
+    ]);
 
   const [rawTxs, tokenTxs] = txsResult;
   const balance = new BigNumber(balanceResp.balance);
 
-  // Calculate spendable balance by considering pending transactions
-  const spendableBalance = calculateSpendableBalance(balance, mempoolTxs);
+  // `balanceResp.locked` (the staked/locked amount) is not spendable -- same treatment as
+  // getBalance.ts and buildUnsignedTx.ts's `balance.value - balance.locked`. Subtract it before
+  // accounting for pending transactions.
+  const lockedBalance = new BigNumber(balanceResp.locked || "0");
+  const spendableBalance = calculateSpendableBalance(balance.minus(lockedBalance), mempoolTxs);
 
   // Process pending operations
   const pendingOperations = mempoolTxs.flatMap(mapPendingTxToOps(accountId, address));
@@ -228,7 +278,7 @@ export const getAccountShape: GetAccountShape = async info => {
     initialAccount,
   );
 
-  const result: Partial<Account> = {
+  const result: Partial<StacksAccount> = {
     id: accountId,
     subAccounts: tokenAccounts,
     xpub: pubKey,
@@ -241,6 +291,10 @@ export const getAccountShape: GetAccountShape = async info => {
       ...tokenAccounts.flatMap(t => sip010OpToParentOp(t.operations, accountId)),
     ].sort((a, b) => b.date.getTime() - a.date.getTime()),
     blockHeight: blockHeight.chain_tip.block_height,
+    stakingPositions:
+      stakes !== undefined
+        ? stakes.map(toStakingPositionOnAccount)
+        : staleStakingPositions(initialAccount?.stakingPositions),
   };
 
   return result;

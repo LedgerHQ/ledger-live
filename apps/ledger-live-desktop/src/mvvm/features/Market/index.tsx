@@ -3,7 +3,7 @@ import { Flex, Dropdown } from "@ledgerhq/react-ui";
 import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import styled from "styled-components";
 import { useMarket } from "LLD/features/Market/hooks/useMarket";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 import SearchInputComponent from "./components/SearchInputComponent";
 import SideDrawerFilter from "~/renderer/screens/market/components/SideDrawerFilter";
 import CounterValueSelect from "~/renderer/screens/market/components/CountervalueSelect";

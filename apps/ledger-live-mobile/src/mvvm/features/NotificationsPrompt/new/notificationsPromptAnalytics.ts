@@ -1,4 +1,4 @@
-import { track } from "~/analytics";
+import { track } from "@shared/analytics";
 import {
   type AfterActionTriggerDecision,
   type InactivityTriggerDecision,

@@ -1,8 +1,8 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ScrollView } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import DesyncOverlay from "../DesyncOverlay";
 import FirstStepSyncOnboarding from "../FirstStepSyncOnboarding";
 import SecondStepSyncOnboarding from "../SecondStepSyncOnboarding";

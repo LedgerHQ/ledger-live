@@ -1,10 +1,10 @@
+import * as sharedAnalytics from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useLedgerSyncActivationStepViewModel } from "./useLedgerSyncActivationStepViewModel";
 import { NavigatorName, ScreenName } from "~/const";
 import { setFromLedgerSyncOnboarding, setOnboardingType } from "~/actions/settings";
 import { OnboardingType } from "~/reducers/types";
-import * as analytics from "~/analytics";
 
 const mockNavigate = jest.fn();
 jest.mock("@react-navigation/native", () => ({
@@ -34,8 +34,8 @@ jest.mock("~/actions/settings", () => ({
 
 const mockTrack = jest.fn();
 const mockScreen = jest.fn();
-jest.spyOn(analytics, "track").mockImplementation(mockTrack);
-jest.spyOn(analytics, "screen").mockImplementation(mockScreen);
+jest.spyOn(sharedAnalytics, "track").mockImplementation(mockTrack);
+jest.spyOn(sharedAnalytics, "trackPage").mockImplementation(mockScreen);
 
 describe("useLedgerSyncActivationStepViewModel", () => {
   const device = {
@@ -106,14 +106,14 @@ describe("useLedgerSyncActivationStepViewModel", () => {
     expect(result.current.isDrawerOpen).toBe(false);
     expect(handleContinue).toHaveBeenCalled();
     expect(mockScreen).toHaveBeenCalledWith(
-      "Set up device: Step 4 Ledger Sync Reject",
-      undefined,
       {
-        seedConfiguration: "new_seed",
-        flow: "onboarding",
+        category: "Set up device: Step 4 Ledger Sync Reject",
+        props: {
+          seedConfiguration: "new_seed",
+          flow: "onboarding",
+        },
       },
-      true,
-      true,
+      { updateRoutes: true, refreshSource: true },
     );
   });
 

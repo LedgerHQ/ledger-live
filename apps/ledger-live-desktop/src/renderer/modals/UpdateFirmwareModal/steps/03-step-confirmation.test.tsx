@@ -5,14 +5,10 @@ import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import StepConfirmation from "./03-step-confirmation";
 import type { StepProps } from "../types";
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
-  __esModule: true,
-  default: () => null,
-}));
-
-jest.mock("~/renderer/analytics/Track", () => ({
-  __esModule: true,
-  default: () => null,
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+  Track: () => null,
 }));
 
 // Render i18n keys verbatim so assertions check the chosen key, not translated copy.

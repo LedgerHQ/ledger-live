@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setHideTransactionsOnChart } from "~/renderer/actions/market";
 import { hideTransactionsOnChartSelector } from "~/renderer/reducers/market";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 
 export type UseChartOptionsMenuViewModelProps = Readonly<{

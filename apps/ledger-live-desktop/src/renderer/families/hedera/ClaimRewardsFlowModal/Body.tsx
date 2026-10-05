@@ -16,7 +16,7 @@ import type {
   Transaction as HederaTransaction,
 } from "@ledgerhq/live-common/families/hedera/types";
 import type { Device } from "@ledgerhq/types-devices";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { OpenModal, closeModal, openModal } from "~/renderer/actions/modals";

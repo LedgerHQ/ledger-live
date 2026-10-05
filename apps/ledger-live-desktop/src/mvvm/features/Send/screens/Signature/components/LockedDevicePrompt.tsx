@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
@@ -11,12 +11,21 @@ import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker"
 type LockedDevicePromptProps = Readonly<{
   deviceModelId: DeviceModelId;
   onRetry?: (() => void) | null | undefined;
+  onShown?: () => void;
 }>;
 
-export const LockedDevicePrompt = ({ deviceModelId, onRetry }: LockedDevicePromptProps) => {
+export const LockedDevicePrompt = ({
+  deviceModelId,
+  onRetry,
+  onShown,
+}: LockedDevicePromptProps) => {
   const { t } = useTranslation();
   const theme = useTheme().theme;
   const deviceName = getDeviceModel(deviceModelId).productName;
+
+  useEffect(() => {
+    onShown?.();
+  }, [onShown]);
 
   return (
     <>
@@ -25,7 +34,9 @@ export const LockedDevicePrompt = ({ deviceModelId, onRetry }: LockedDevicePromp
         <Animation animation={getDeviceAnimation(deviceModelId, theme, "enterPinCode")} />
         <div className="flex flex-col items-center gap-12">
           <h2 className="text-center heading-3-semi-bold text-base">
-            {t("errors.LockedDeviceError.descriptionWithProductName", { productName: deviceName })}
+            {t("errors.LockedDeviceError.descriptionWithProductName", {
+              productName: deviceName,
+            })}
           </h2>
         </div>
         {onRetry ? (

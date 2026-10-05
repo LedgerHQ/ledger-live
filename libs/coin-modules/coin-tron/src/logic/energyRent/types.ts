@@ -32,16 +32,18 @@ export type EnergyRentRequest = {
 
 /** Provider-agnostic price quote. Amounts kept as provider-native decimal strings. */
 export type EnergyRentQuote = {
+  /** Tronify's `pledgeNum`: in USDT payment it also covers TX-A's own energy, so it exceeds the
+   * request's. The delivery gate keeps using the request's TX-C energy. */
   energy: bigint;
   /**
    * Rental window actually quoted. Providers only sell fixed windows, so this is rounded up
    * from the requested duration and may exceed it (the price reflects this window, not the request).
    */
   durationSeconds: number;
-  /** Currency the buyer pays in, e.g. "USDT" or "TRX". */
-  payCoinCode: string;
+  /** Currency the buyer pays in, e.g. "USDT"; absent when the provider priced it another way. */
+  payCoinCode?: string;
   /** Total amount to pay, decimal string in `payCoinCode` units. */
-  payCoinAmt: string;
+  payCoinAmt?: string;
   fees: {
     energy: string;
     trx: string;

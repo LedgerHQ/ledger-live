@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { useCallback, useMemo, useState } from "react";
-import { track } from "~/analytics";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {
   selectMarketListSorting,

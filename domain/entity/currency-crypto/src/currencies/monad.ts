@@ -37,9 +37,6 @@ export const monad = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 143,
-  },
   explorerViews: [
     {
       tx: "https://monadexplorer.com/tx/$hash",

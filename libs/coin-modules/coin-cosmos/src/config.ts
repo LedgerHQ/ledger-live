@@ -219,7 +219,6 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
-      disableDelegation: true,
       name: "Babylon",
       unit: { name: "Babylon", code: "BABY", magnitude: 6 },
     },

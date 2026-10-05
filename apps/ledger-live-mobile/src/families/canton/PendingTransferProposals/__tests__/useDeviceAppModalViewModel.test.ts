@@ -140,4 +140,30 @@ describe("useDeviceAppModalViewModel", () => {
       expect(result.current.error).toBeNull();
     });
   });
+
+  describe("on close", () => {
+    it("should clear the error so the error sheet does not reopen", async () => {
+      onConfirm.mockRejectedValueOnce(new Error("fail"));
+      let isOpen = true;
+      const { result, rerender } = renderHook(() =>
+        useDeviceAppModalViewModel({ isOpen, onConfirm, appName: "Canton" }),
+      );
+
+      act(() => {
+        result.current.handleDeviceResult({
+          device: { deviceId: "device-1", wired: true } as any,
+        } as any);
+      });
+
+      await waitFor(() => {
+        expect(result.current.error).not.toBeNull();
+      });
+
+      isOpen = false;
+      rerender({});
+
+      expect(result.current.confirmationState).toBe("pending");
+      expect(result.current.error).toBeNull();
+    });
+  });
 });

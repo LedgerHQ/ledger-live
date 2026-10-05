@@ -1,6 +1,6 @@
 "use strict";
 
-const { allowlists, singletons } = require("./config.json");
+const { allowlists, denylists, singletons } = require("./config.json");
 
 const CONFIG_FILE = "tools/dependency-checks/config.json";
 const DEPENDENCY_FIELDS = ["dependencies", "devDependencies", "optionalDependencies"];
@@ -136,6 +136,20 @@ function findAllowlistViolations(group, lockfile) {
   return violations;
 }
 
+function findDenylistViolations(group, lockfile) {
+  const names = Object.keys(group.packages);
+  const violations = names
+    .filter(name => !group.packages[name].reason || !group.packages[name].use)
+    .map(name => `${name} is listed without a reason and the alternative to use`);
+
+  for (const [name, chain] of [...collectMatches(lockfile, names)].sort()) {
+    const { reason, use } = group.packages[names.find(glob => matchesPatterns(name, [glob]))];
+    violations.push(`${name} entered the tree: ${chain}\n    ${reason} Use ${use}.`);
+  }
+
+  return violations;
+}
+
 function findSingletonViolations(name, rule, versionsByName) {
   const maxVersions = rule.maxVersions ?? 1;
   const versions = [...(versionsByName.get(name) ?? [])].sort();
@@ -157,6 +171,11 @@ function assertDependencyChecks(lockfile) {
       groupName,
       why: group.why,
       violations: findAllowlistViolations(group, lockfile),
+    })),
+    ...Object.entries(denylists ?? {}).map(([groupName, group]) => ({
+      groupName,
+      why: group.why,
+      violations: findDenylistViolations(group, lockfile),
     })),
     ...Object.entries(singletons ?? {}).map(([name, rule]) => ({
       groupName: name,

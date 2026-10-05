@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback, useMemo } from "react";
 import {
   createNativeStackNavigator,
@@ -27,7 +28,6 @@ import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { CryptoScreen } from "LLM/features/Crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
-import { track } from "~/analytics";
 import {
   NavigationProp,
   NavigationState,

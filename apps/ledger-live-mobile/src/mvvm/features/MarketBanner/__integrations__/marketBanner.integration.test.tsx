@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import {
   renderWithReactQuery,
@@ -7,7 +8,6 @@ import {
   within,
 } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";
-import { track } from "~/analytics";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { MarketBannerTest, MOCK_MARKET_PERFORMERS } from "./shared";
 

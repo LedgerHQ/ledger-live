@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -17,7 +18,6 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";

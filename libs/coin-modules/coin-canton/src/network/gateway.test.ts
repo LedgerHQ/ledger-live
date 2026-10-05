@@ -9,7 +9,7 @@ import {
   createMockPendingTransferProposal,
   setupMockCoinConfig,
 } from "../test/fixtures";
-import { TopologyChangeError } from "../types/errors";
+import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors";
 import type { GetBalanceResponse } from "../types/gateway";
 import { TransactionType } from "../types/gateway";
 import {
@@ -29,6 +29,7 @@ import {
   isPartyNotFound,
   isTopologyChangeRequired,
   isTopologyChangeRequiredCached,
+  isTransferOfferExpired,
   prepare,
   prepareOnboarding,
   preparePreApprovalTransaction,
@@ -112,6 +113,24 @@ describe("isPartyAlreadyExists", () => {
 
   it("returns false for non-Error values", () => {
     expect(isPartyAlreadyExists(undefined)).toBe(false);
+  });
+});
+
+describe("isTransferOfferExpired", () => {
+  it("returns true for the gateway expiry message", () => {
+    expect(isTransferOfferExpired(new Error("transfer offer has expired"))).toBe(true);
+  });
+
+  it("is case-insensitive", () => {
+    expect(isTransferOfferExpired(new Error("Transfer offer has expired"))).toBe(true);
+  });
+
+  it("returns false for unrelated errors", () => {
+    expect(isTransferOfferExpired(new Error("An internal server occurred"))).toBe(false);
+  });
+
+  it("returns false for non-Error values", () => {
+    expect(isTransferOfferExpired("transfer offer has expired")).toBe(false);
   });
 });
 
@@ -476,6 +495,29 @@ describe("prepare and submit transaction helpers", () => {
         data: params,
       }),
     );
+  });
+
+  it("prepareTransferInstruction throws TransferOfferExpiredError when the offer has expired", async () => {
+    mockNetwork.mockRejectedValue(new LedgerAPI4xx("transfer offer has expired", { status: 400 }));
+
+    await expect(
+      prepareTransferInstruction(mockCurrency, "party-1", {
+        type: "accept-transfer-instruction",
+        contract_id: "cid",
+      }),
+    ).rejects.toThrow(TransferOfferExpiredError);
+  });
+
+  it("prepareTransferInstruction rethrows other gateway errors unchanged", async () => {
+    const serverError = new Error("An internal server occurred");
+    mockNetwork.mockRejectedValue(serverError);
+
+    await expect(
+      prepareTransferInstruction(mockCurrency, "party-1", {
+        type: "accept-transfer-instruction",
+        contract_id: "cid",
+      }),
+    ).rejects.toBe(serverError);
   });
 
   it("preparePreApprovalTransaction sends transfer-pre-approval-proposal", async () => {

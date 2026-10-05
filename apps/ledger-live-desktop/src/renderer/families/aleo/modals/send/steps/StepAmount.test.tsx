@@ -12,7 +12,10 @@ jest.mock("../../../shared/utils", () => ({
   getAleoCurrencyConfig: jest.fn(),
 }));
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: () => null,
+}));
 jest.mock("~/renderer/components/CurrencyDownStatusAlert", () => ({
   __esModule: true,
   default: () => null,

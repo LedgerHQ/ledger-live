@@ -1,5 +1,5 @@
+import { track } from "@shared/analytics";
 import { useCallback } from "react";
-import { track } from "~/analytics";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import type { MarketListCategory } from "~/reducers/types";

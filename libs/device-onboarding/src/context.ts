@@ -16,6 +16,7 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     ...input,
     lastDeviceState: null,
     firmwareVersion: null,
+    hasStarted: false,
     isOnboarded: false,
     onboardedOnEntry: null,
     genuineVerdict: null,
@@ -77,6 +78,7 @@ export const contextActions = {
       firmwareVersion: event.firmwareVersion,
     };
   }),
+  rememberStart: update({ hasStarted: true }),
   enterEarlyCheckScreen: update({ onEarlyCheckScreen: true }),
   leaveEarlyCheckScreen: update({ onEarlyCheckScreen: false }),
   rememberSecureConnectionRequested: update({ secureConnectionRequested: true }),

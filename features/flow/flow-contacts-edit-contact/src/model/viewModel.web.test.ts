@@ -11,7 +11,7 @@ describe("createRenameContactViewModel", () => {
   });
 
   it("disables confirm for invalid names", () => {
-    expect(createRenameContactViewModel("Ada!", "Ben").isConfirmEnabled).toBe(false);
+    expect(createRenameContactViewModel("Ada 💎", "Ben").isConfirmEnabled).toBe(false);
   });
 
   it("accepts trimmed valid renames", () => {

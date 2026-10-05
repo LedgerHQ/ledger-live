@@ -1,8 +1,8 @@
+import { trackPage } from "@shared/analytics";
 import React, { useEffect, useRef } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import { screen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import { MarketAssetsList } from "./components/MarketAssetsList";
 import { MarketHighlights } from "./components/MarketHighlights";
@@ -26,7 +26,10 @@ export function MarketScreenView({
     if (wasFocused.current === isFocused) return;
     wasFocused.current = isFocused;
     if (isFocused) {
-      screen("Market", undefined, pageTracking, true, true);
+      trackPage(
+        { category: "Market", props: pageTracking },
+        { updateRoutes: true, refreshSource: true },
+      );
     }
   }, [isFocused, pageTracking]);
 

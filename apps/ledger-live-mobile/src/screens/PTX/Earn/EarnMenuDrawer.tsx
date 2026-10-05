@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { Theme } from "@ledgerhq/native-ui/styles/theme";
 import { useRoute, NavigationProp, ParamListBase } from "@react-navigation/native";
@@ -6,7 +7,6 @@ import { Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import styled from "styled-components/native";
 import { makeSetEarnMenuModalAction } from "~/actions/earn";
-import { track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { NavigatorName, ScreenName } from "~/const";
 import { earnMenuModalSelector } from "~/reducers/earn";

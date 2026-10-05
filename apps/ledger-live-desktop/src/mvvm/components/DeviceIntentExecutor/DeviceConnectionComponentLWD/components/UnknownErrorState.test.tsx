@@ -2,15 +2,15 @@ import React from "react";
 import { ConnectDeviceUIStateTypes } from "@ledgerhq/live-dmk-desktop";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackPage } from "@shared/analytics-react";
 
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DeviceIntentTrackingTestWrapper } from "../testUtils";
 import { UnknownErrorState } from "./UnknownErrorState";
 
-jest.mock("~/renderer/analytics/TrackPage", () => ({
-  __esModule: true,
-  default: jest.fn(() => null),
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackPage: jest.fn(() => null),
 }));
 
 const mockedTrackPage = jest.mocked(TrackPage);

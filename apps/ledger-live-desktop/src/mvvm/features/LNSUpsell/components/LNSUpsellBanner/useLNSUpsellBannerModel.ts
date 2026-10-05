@@ -12,7 +12,7 @@ import {
   toLargeScreenUpsellDeviceModelAnalyticsValue,
   type LargeScreenUpsellDeviceModelAnalyticsValue,
 } from "LLD/features/LargeScreenUpsell/analytics";
-import { track, trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 import lnsUpsellPortfolioImageUrl from "~/renderer/images/lns-upsell-banner-portfolio.webp";
 import lnsUpsellManagerImageUrl from "~/renderer/images/lns-upsell-banner-manager.webp";
@@ -125,11 +125,17 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
 }
 
 function trackProfilePageViewed(sharedProps: SharedAnalyticsProps) {
-  trackPage(PROFILE_PAGE, undefined, { name: PROFILE_PAGE, ...sharedProps }, true, false);
+  trackPage(
+    { category: PROFILE_PAGE, props: { name: PROFILE_PAGE, ...sharedProps } },
+    { updateRoutes: true },
+  );
 }
 
 function trackBannerPageViewed(pageName: string, sharedProps: SharedAnalyticsProps) {
-  trackPage(pageName, undefined, { name: pageName, ...sharedProps }, true, false);
+  trackPage(
+    { category: pageName, props: { name: pageName, ...sharedProps } },
+    { updateRoutes: true },
+  );
 }
 
 const AnalyticsPageMap = {

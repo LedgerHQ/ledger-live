@@ -1,20 +1,12 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { BlockingStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import React from "react";
-import { track } from "~/analytics";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { useDeviceOutOfStorageSpaceViewModel } from "./useDeviceOutOfStorageSpaceViewModel";
 import type { InitializerDevice } from "../../types";
 import { DeviceIntentTrackingProvider } from "../../../utils/DeviceIntentTrackingContext";
-
-jest.mock("~/analytics", () => {
-  const actual = jest.requireActual("~/analytics");
-  return {
-    ...actual,
-    track: jest.fn(),
-  };
-});
 
 jest.mock("../../hooks/useInitializerActions");
 

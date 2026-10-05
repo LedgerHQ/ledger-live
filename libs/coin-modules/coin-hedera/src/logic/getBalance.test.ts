@@ -161,6 +161,31 @@ describe("getBalance", () => {
     ]);
   });
 
+  it("should return stake without overstaked status when validator stake is null", async () => {
+    const mockMirrorAccount = {
+      account: address,
+      staked_node_id: 5,
+      balance: { balance: 100 },
+      pending_reward: 100,
+    };
+    const mockMirrorNode = {
+      node_id: 5,
+      node_account_id: "0.0.5",
+      description: "Hosted for Wipro | Amsterdam, Netherlands",
+      max_stake: 45000000000000000,
+      stake: null,
+    };
+
+    (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
+    (apiClient.getAccountTokens as jest.Mock).mockResolvedValue([]);
+    (apiClient.getNode as jest.Mock).mockResolvedValue(mockMirrorNode);
+    (networkUtils.getERC20BalancesForAccountV2 as jest.Mock).mockResolvedValue([]);
+
+    const result = await getBalance(mockConfig, { address });
+
+    expect(result[0]?.stake?.details?.overstaked).toBeNull();
+  });
+
   it("should return all token balances without CAL filtering", async () => {
     const mockMirrorTokens = [
       {

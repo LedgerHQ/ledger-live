@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
@@ -9,7 +10,6 @@ import { UseMutationResult } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { setWallectSyncManageKeyDrawer } from "~/actions/walletSync";
 import { manageKeyDrawerSelector } from "~/reducers/walletSync";
-import { track } from "~/analytics";
 import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { NavigationProps } from "~/screens/AccountSettings";
 

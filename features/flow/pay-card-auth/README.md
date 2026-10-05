@@ -21,7 +21,9 @@ the same Redux flag both sides read.
 They agree through `payCardAuth.isSignedIn`, because two machines would each hydrate the session and
 neither would agree with the other. The login machine writes the flag on entering `ready`, `idle`
 and `error`. Logout writes it once the session is through, and the login machine takes a
-`SESSION_ENDED` event to put the login back on offer.
+`SESSION_ENDED` event to put the login back on offer. At boot, the mobile app calls
+`restoreCardAuthStatus`, because the machine only runs on the Pay tab. It sets the flag to signed in
+when a session token is on disk and the status is still `unknown`. It never sets it to signed out.
 
 `oauthConfig` carries the OAuth client id, the redirect URI and the app's deep link. All three are
 the app's to know. The redirect URI goes to the authorization initiation and to the token exchange,
@@ -187,6 +189,7 @@ pay-card-auth/
     │   ├── loginIntroSelectors.ts          # Login intro selectors, and its persistence lens
     │   ├── loginIntroSlice.ts              # The persisted `payCardLoginIntro` flag
     │   ├── machine.ts                      # States, guards and transitions
+    │   ├── restoreCardAuthStatus.ts        # Signs in at boot from a stored session
     │   ├── selectors.ts                    # Auth selectors
     │   ├── slice.ts                        # Auth-only runtime state (`hasCard`, `isSignedIn`)
     │   ├── store.ts                        # Public state subpath

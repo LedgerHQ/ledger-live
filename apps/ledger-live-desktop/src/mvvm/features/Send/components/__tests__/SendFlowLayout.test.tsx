@@ -10,7 +10,7 @@ import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../context/SendFlowContext";
 import { useSendFlowTracking } from "../../context/SendFlowTrackingContext";
 import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 jest.mock("../../../FlowWizard/FlowWizardContext", () => ({
   useFlowWizard: jest.fn(),
@@ -27,9 +27,14 @@ jest.mock("../../context/RecipientContactSelectionContext", () => ({
 jest.mock("../../context/RecipientScannerContext", () => ({
   RecipientScannerProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
+jest.mock("../../hooks/useSponsoredPhaseNavigator", () => ({
+  useSponsoredPhaseNavigator: jest.fn(),
+}));
 jest.mock("../SendHeader", () => ({ SendHeader: () => null }));
-jest.mock("~/renderer/analytics/segment", () => ({
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
+  trackPage: jest.fn(),
 }));
 jest.mock("@ledgerhq/lumen-ui-react", () => ({
   ...jest.requireActual("@ledgerhq/lumen-ui-react"),

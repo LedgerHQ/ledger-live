@@ -37,9 +37,6 @@ export const optimism = currency({
       magnitude: 0,
     },
   ],
-  ethereumLikeInfo: {
-    chainId: 10,
-  },
   explorerViews: [
     {
       tx: "https://optimism.blockscout.com/tx/$hash",

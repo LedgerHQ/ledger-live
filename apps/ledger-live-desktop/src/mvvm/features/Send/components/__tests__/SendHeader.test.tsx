@@ -60,6 +60,7 @@ const baseModel = {
   handleRecipientInputChange: jest.fn(),
   handleRecipientPaste: jest.fn(),
   handleQrCodeClick: jest.fn(),
+  handleQrScannerError: jest.fn(),
   handleScanPicked: jest.fn(),
   isScannerOpen: false,
   recipientContact: undefined,

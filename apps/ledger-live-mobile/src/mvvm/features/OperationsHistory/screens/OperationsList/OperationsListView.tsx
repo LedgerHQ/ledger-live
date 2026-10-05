@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo } from "react";
 import { SectionList, type SectionListRenderItem } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
@@ -5,7 +6,6 @@ import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { CardArtwork } from "@features/flow-pay-card-details";
 import { CardTransactionHistory } from "@features/flow-pay-card-transactions";
-import { TrackScreen } from "~/analytics";
 import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
 import { HistoryTypeSwitcher } from "./components/HistoryTypeSwitcher";
 import { OperationsEmptyState } from "./components/OperationsEmptyState";
@@ -120,7 +120,7 @@ export function OperationsListView({
           formatters={cardHistoryViewModel.formatters}
           formatDay={cardHistoryViewModel.formatDay}
           onGoToPay={cardHistoryViewModel.onGoToPay}
-          cardVisual={<CardArtwork />}
+          cardVisual={<CardArtwork isFaded />}
         />
       ) : (
         <SectionList

@@ -1,3 +1,5 @@
+import { TrackScreen } from "@shared/analytics-react";
+import { trackPage } from "@shared/analytics";
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "~/context/hooks";
 import { Image } from "react-native";
@@ -12,7 +14,6 @@ import { renderError } from "../DeviceAction/rendering";
 import CustomImageBottomModal from "../CustomImage/CustomImageBottomModal";
 import Button from "../wrappedUi/Button";
 import Link from "../wrappedUi/Link";
-import { screen, TrackScreen } from "~/analytics";
 import { useLoadImageDeviceAction } from "~/hooks/deviceActions";
 import { SettingsSetLastSeenCustomImagePayload } from "~/actions/types";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
@@ -84,7 +85,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
 
   const handleResult = useCallback(
     (lastSeenCustomImage: SettingsSetLastSeenCustomImagePayload) => {
-      screen("The lock screen has successfully loaded");
+      trackPage({ category: "The lock screen has successfully loaded" });
       dispatch(setLastSeenCustomImage(lastSeenCustomImage));
       onResult && onResult(lastSeenCustomImage);
     },

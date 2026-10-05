@@ -97,12 +97,7 @@ describe("EVM Family", () => {
         });
 
         it("if the gasTracker is not filled", () => {
-          const evmWithoutGasTracker: CryptoCurrency = {
-            ...ethereum,
-            ethereumLikeInfo: {
-              chainId: 1,
-            },
-          };
+          const evmWithoutGasTracker: CryptoCurrency = ethereum;
 
           const tokenCurrencyWithoutGasTracker: TokenCurrency = {
             ...usdc,

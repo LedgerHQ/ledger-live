@@ -24,7 +24,7 @@ import { useHistoryOperations } from "./useHistoryOperations";
 import { useHistoryTable } from "./useHistoryTable";
 import { useHistoryVirtualization } from "./useHistoryVirtualization";
 import type { HistoryTable, OperationRow, VirtualItem } from "../types";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 import { parseHistoryBackPath } from "../utils/historyLocationState";
 import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
 import {
@@ -64,14 +64,16 @@ export function useHistoryViewModel(): HistoryViewModel {
 
   const { state: locationState } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const isPayTabEnabled = !!useFeature("lwdPayTab")?.enabled;
+  const payTab = useFeature("lwdPayTab");
+  const isPayTabEnabled = !!payTab?.enabled;
+  const showCardHistory = isPayTabEnabled && payTab?.params?.card_native === true;
   const hasCryptoHistoryFilter = searchParams.has("accountIds") || searchParams.has("contactId");
   const hasCardAssetFilter =
     searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD &&
     Boolean(searchParams.get("asset"));
-  const showHistoryTypeSwitcher = isPayTabEnabled && !hasCryptoHistoryFilter && !hasCardAssetFilter;
+  const showHistoryTypeSwitcher = showCardHistory && !hasCryptoHistoryFilter && !hasCardAssetFilter;
   const historyTab: HistoryTab =
-    isPayTabEnabled && searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD
+    showCardHistory && searchParams.get(HISTORY_TAB_SEARCH_PARAM) === HISTORY_TAB_CARD
       ? HISTORY_TAB_CARD
       : HISTORY_TAB_CRYPTO;
   const cardAsset =

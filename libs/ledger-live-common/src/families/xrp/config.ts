@@ -12,6 +12,6 @@ export const xrpConfig: CurrencyLiveConfigDefinition = {
       name: "XRP",
       unit: { name: "XRP", code: "XRP", magnitude: 6 },
       node: "https://xrp.coin.ledger.com",
-    } as XrpCoinConfig,
+    } satisfies XrpCoinConfig,
   },
 };

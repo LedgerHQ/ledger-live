@@ -13,20 +13,23 @@ type SendRecipientPatchInput = Readonly<{
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
+const COSMOS_MEMO_KIND = "text";
+
+export function cosmosMemoPatch(value: string | number | null | undefined): {
+  memo: string | undefined;
+  memoType: string | null;
+  memoValue: string | undefined;
+} {
+  const memo = value === undefined || value === null || value === "" ? undefined : String(value);
+  return { memo, memoType: memo ? COSMOS_MEMO_KIND : null, memoValue: memo };
+}
+
 const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
-  solana: (memo, _type, transaction) => {
-    const currentModel = isRecord(transaction.model) ? transaction.model : {};
-    const currentUiState = isRecord(currentModel.uiState) ? currentModel.uiState : {};
-    return {
-      model: {
-        ...currentModel,
-        uiState: {
-          ...currentUiState,
-          memo,
-        },
-      },
-    };
-  },
+  // Inlined like every other entry: `TEXT` mirrors `families/solana/transactions`.
+  solana: memo => ({
+    memoType: "TEXT",
+    memoValue: memo === undefined ? "" : String(memo),
+  }),
   // Authoritative Casper memo patch — all Casper UI sites must produce the same cleared state.
   casper: memo =>
     memo !== undefined
@@ -38,6 +41,7 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
     return { tag: undefined };
   },
   stellar: (memo, type) => ({ memoValue: memo, memoType: type }),
+  cosmos: memo => cosmosMemoPatch(memo),
   ton: (memo, _type, transaction) => {
     const currentComment = isRecord(transaction.comment) ? transaction.comment : {};
     return {

@@ -9,7 +9,7 @@ import type {
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/market/utils/timers";
 import { assetsDataApi } from "@domain/api-aggregated-assets";
 import { selectCurrency, useAssetsData } from "@features/platform-aggregated-assets";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { applyDadaMarketFallback } from "../utils/applyDadaMarketFallback";
 import { resolveDadaMarket } from "../utils/resolveDadaMarket";
 import {

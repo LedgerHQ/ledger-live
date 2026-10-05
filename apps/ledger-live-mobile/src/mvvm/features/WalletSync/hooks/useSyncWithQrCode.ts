@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useState, useRef } from "react";
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
@@ -6,7 +7,6 @@ import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-pro
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
-import { track } from "~/analytics";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";

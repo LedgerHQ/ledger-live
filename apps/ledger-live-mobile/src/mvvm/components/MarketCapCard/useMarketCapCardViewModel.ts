@@ -1,10 +1,10 @@
+import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
 import { useGlobalMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useLocale, useTranslation } from "~/context/Locale";
-import { track } from "~/analytics";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import type { MarketCapCardViewModel } from "./types";
 

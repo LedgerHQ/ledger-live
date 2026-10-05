@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback } from "react";
 import { ScrollView, View } from "react-native";
 import BigNumber from "bignumber.js";
@@ -13,7 +14,6 @@ import type { Transaction as AleoTransaction } from "@ledgerhq/live-common/famil
 import SafeAreaView from "~/components/SafeAreaView";
 import { Trans, useTranslation } from "~/context/Locale";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { TrackScreen } from "~/analytics";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Alert from "~/components/Alert";

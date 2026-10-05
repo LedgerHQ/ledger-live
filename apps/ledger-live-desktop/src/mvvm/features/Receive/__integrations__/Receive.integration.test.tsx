@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { ReceiveOptionsDialog } from "../screens/ReceiveOptions";
 import { useNavigate } from "react-router";
-import { track } from "~/renderer/analytics/segment";
+import { track } from "@shared/analytics";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),

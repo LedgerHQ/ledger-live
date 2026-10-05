@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect } from "@react-navigation/native";
@@ -12,7 +13,6 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 import { useDistribution, useRefreshAccountsOrdering } from "~/actions/general";
 import { isUpToDateSelector } from "~/reducers/accounts";
-import TrackScreen from "~/analytics/TrackScreen";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import AssetRow from "../WalletCentricAsset/AssetRow";
 

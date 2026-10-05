@@ -1,3 +1,4 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashList, FlashListProps, ListRenderItemInfo } from "@shopify/flash-list";
@@ -5,7 +6,6 @@ import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";

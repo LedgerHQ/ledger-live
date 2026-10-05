@@ -15,6 +15,8 @@ if (!process.env.NODE_OPTIONS?.includes(tsconfigPathsRegister)) {
 
 const path = require("node:path");
 const { parseExtraFeatureFlags } = require("@ledgerhq/live-e2e-shared/featureFlagsJsonUtils");
+// Node strips the types at require time, so specs that extend the default budget read the same value.
+const { TEST_TIMEOUT } = require("./utils/timeouts.ts");
 
 function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
   const jestPaths = {};
@@ -144,7 +146,7 @@ const config = {
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
   // CI shards exclude `.skip.spec.ts` (apps/ledger-live-mobile/scripts/shard-tests.mjs).
   testPathIgnorePatterns: ["\\.skip\\.spec\\.ts$"],
-  testTimeout: 60_000 * 6,
+  testTimeout: TEST_TIMEOUT,
   reporters: [
     "detox/runners/jest/reporter",
     ["jest-allure2-reporter", jestAllure2ReporterOptions],

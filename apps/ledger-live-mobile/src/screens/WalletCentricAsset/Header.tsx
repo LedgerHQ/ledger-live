@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -13,7 +14,6 @@ import Touchable from "~/components/Touchable";
 import { ScreenName } from "~/const";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { countervalueFirstSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { track } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Placeholder from "~/components/Placeholder";
 import CurrencyHeaderLayout from "~/components/CurrencyHeaderLayout";

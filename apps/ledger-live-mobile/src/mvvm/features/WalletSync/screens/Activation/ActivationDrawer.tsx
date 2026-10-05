@@ -1,6 +1,6 @@
+import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
-import { TrackScreen } from "~/analytics";
 import { Flex } from "@ledgerhq/native-ui";
 import ActivationFlow from "../../components/Activation/ActivationFlow";
 import { Steps } from "../../types/Activation";

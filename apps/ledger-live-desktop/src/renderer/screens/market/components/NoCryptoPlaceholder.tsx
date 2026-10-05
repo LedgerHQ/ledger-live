@@ -3,7 +3,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/type
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
-import Track from "~/renderer/analytics/Track";
+import { Track } from "@shared/analytics-react";
 import Image from "~/renderer/components/Image";
 import NoResultsFoundDark from "~/renderer/images/no-results-found-dark.png";
 import NoResultsFoundLight from "~/renderer/images/no-results-found-light.png";

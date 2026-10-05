@@ -78,9 +78,3 @@ export const ResolutionConfigSchema = z.object({
   appLanguage: z.string().optional(),
   envFlags: z.record(z.string(), OverrideValueSchema.optional()).optional(),
 });
-
-/** Schema that validates an enabled `feature_copy_*` Remote Config experiment. */
-export const EnabledContentAbTestCopySchema = z.object({
-  enabled: z.literal(true),
-  copy: z.record(z.string(), z.string()),
-});

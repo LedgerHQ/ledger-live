@@ -1,9 +1,9 @@
+import { track } from "@shared/analytics";
 import {
   registerTxLifecycleObserver,
   setTransactionObserver,
   toSegmentTrackEvent,
 } from "@ledgerhq/transaction-observability";
-import { track } from "./segment";
 
 /**
  * Forwards every transaction (sign/broadcast) log event from the bridge seam to

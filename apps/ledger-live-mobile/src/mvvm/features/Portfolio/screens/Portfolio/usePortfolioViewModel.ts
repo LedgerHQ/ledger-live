@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { useCallback, useEffect, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
@@ -9,7 +10,6 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Features } from "@shared/feature-flags";
 
 import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
-import { track } from "~/analytics";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 import {
   flattenAccountsSelector,
