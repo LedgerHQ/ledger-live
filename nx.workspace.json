@@ -97,24 +97,6 @@
       },
       {
         "env": "MATCH_PASSWORD"
-      },
-      {
-        "env": "SENTRY_AUTH_TOKEN"
-      },
-      {
-        "env": "SENTRY_ENVIRONMENT"
-      },
-      {
-        "env": "SENTRY_PROJECT"
-      },
-      {
-        "env": "SENTRY_DISABLE_AUTO_UPLOAD"
-      },
-      {
-        "env": "SENTRY_ALLOW_FAILURE"
-      },
-      {
-        "env": "SENTRY_DSN"
       }
     ],
     "mobileEnv": [
