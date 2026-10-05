@@ -21,30 +21,21 @@ export type TransactionLike = { family?: string } & Record<string, unknown>;
 export function getRawTransactionType(tx: TransactionLike | undefined | null): string | undefined {
   if (!tx) return undefined;
   if (tx.family === "solana") return (tx.model as { kind?: string } | undefined)?.kind;
-  // TON has no mode: the action is the payload's type. Only the type is read — a comment
-  // payload's text is the user's own.
+  // Only the type: a comment payload's text is user-written.
   if (tx.family === "ton") return (tx.payload as { type?: string } | undefined)?.type;
   return tx.mode as string | undefined;
 }
 
-// Exact keywords only, mapped to fixed tokens: the comment is user-writable text, so it is
-// matched but never reported.
+// Exact matches only, reported as fixed tokens so the user-written text never leaves.
 const TON_POOL_COMMENTS: Record<string, string> = {
-  // Observed: a P2P stake is a plain transfer to the pool carrying `Deposit`. A P2P withdrawal
-  // is not a comment: it sends the `tonwhales-pool-withdraw` payload.
   Deposit: "pool-comment-deposit",
 };
 
-/**
- * The action of a TON nominator-pool transfer, which carries it as a text comment instead of
- * a payload. Only meaningful inside a known staking app: outside one, a transfer saying
- * "Deposit" is just a transfer.
- */
+/** A nominator-pool action sent as a text comment. Only meaningful inside a staking app. */
 export function getTonPoolAction(tx: TransactionLike | undefined | null): string | undefined {
   if (tx?.family !== "ton") return undefined;
   const comment = tx.comment as { isEncrypted?: boolean; text?: unknown } | undefined;
   const payload = tx.payload as { type?: string; text?: unknown } | undefined;
-  // Routes that pre-build the message carry the same text as a comment payload instead.
   const text = payload?.type === "comment" ? payload.text : !comment?.isEncrypted && comment?.text;
   return typeof text === "string" && Object.hasOwn(TON_POOL_COMMENTS, text)
     ? TON_POOL_COMMENTS[text]
@@ -65,10 +56,7 @@ export function getDappSelector(tx: TransactionLike | undefined | null): string 
   const data = tx?.data;
   if (data === undefined || data === null) return undefined;
 
-  // A live transaction carries a Buffer. A serialised one carries a string, and the optimistic
-  // operation's is *unprefixed* — observed as `a1903eab…` on a real Lido deposit — while other
-  // routes prefix it. So normalise rather than assume: reading a prefixed string as a Buffer
-  // yields `0x0x095ea7`, which looks like a selector and is not one.
+  // A Buffer when live, a hex string when serialised — with or without `0x` depending on route.
   const hex =
     typeof data === "string"
       ? data.replace(/^0x/i, "")

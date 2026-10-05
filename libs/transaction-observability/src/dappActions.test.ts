@@ -16,17 +16,15 @@ import type { TransactionLike } from "./transactionShape";
 
 // Real selectors, so the map is checked against the vocabulary it actually meets.
 const LIDO_SUBMIT = "0xa1903eab"; // keccak256("submit(address)")
-const BUY_VOUCHER_POL = "0xe4457a8a"; // observed on a StakeKit POL stake
-const SUBMIT_NO_ARGS = "0x5bcb2fc6"; // keccak256("submit()"), observed on sAVAX
+const BUY_VOUCHER_POL = "0xe4457a8a"; // buyVoucherPOL(uint256,uint256)
+const SUBMIT_NO_ARGS = "0x5bcb2fc6"; // keccak256("submit()")
 const SAVAX = "0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE";
 const WETH_DEPOSIT = "0xd0e30db0"; // keccak256("deposit()") — wrapping ETH, not staking
 const STAKE_NO_ARGS = "0x3a4b66f1"; // keccak256("stake()")
 const UNMAPPED = "0xdeadbeef";
-const REQUEST_EXIT = "0x721c6513"; // requestExit, observed on a Coinbase exit
+const REQUEST_EXIT = "0x721c6513"; // requestExit()
 const ERC4626_DEPOSIT = "0x6e553f65"; // keccak256("deposit(uint256,address)")
 
-// Observed in a real Lido stake on desktop: `submit(address)` is called on stETH itself, so
-// the deposit target and the receipt token are one address.
 const LIDO_STETH = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 const KILN_PSETH = "0x5DB5235b5C7e247488784986e58019fFFd98FdA4";
 const COINBASE_LCETH = "0xc4dcb059dd98b45b090da8982234c61d0b9e84f9";
@@ -84,7 +82,6 @@ describe("the dApp selector vocabulary", () => {
     ["requestWithdrawals", "withdraw"],
     ["redeem", "redeem"],
     ["claimRewards", "claimReward"],
-    // Observed as `transaction_type: unknown` on real completed stakes (LIVE-38202).
     ["enterExitQueue", "withdraw"],
     ["claimExitedAssets", "withdraw"],
     ["requestExit", "withdraw"],
@@ -97,7 +94,6 @@ describe("the dApp selector vocabulary", () => {
     expect(deriveDappAction(fn)).toBe(action);
   });
 
-  // The names above only help if the selector list resolves real call data to them.
   it("resolves a real exit selector to its name and action", () => {
     const common = signEvent({
       manifestId: "coinbase-staking",
@@ -346,7 +342,6 @@ describe("the staking-app gate", () => {
   it("reports no method for an app that stakes more than one way", () => {
     expect(isStakingApp("kiln-staking")).toBe(true);
     expect(stakingMethodOf("kiln-staking")).toBeUndefined();
-    // Native, liquid and validator staking across several chains, all behind one manifest.
     expect(stakingMethodOf("stakekit")).toBeUndefined();
   });
 });
@@ -646,8 +641,6 @@ describe("stakePrograms redirects", () => {
       error: new Error("nope"),
     } as unknown as LogEvent);
 
-  // A StakeKit EVM stake is a contract call with no staking mode. Before the manifest was
-  // allow-listed it had no action and never reached Segment.
   it("keeps a StakeKit EVM contract call, with no method and no guessed token", () => {
     const mapped = failed(
       signEvent({
@@ -673,9 +666,6 @@ describe("stakePrograms redirects", () => {
     expect(mapped!.properties).not.toHaveProperty("output_currency");
   });
 
-  // Native StakeKit routes already emitted; the allow list must not change their wording.
-  // Observed: a StakeKit AVAX stake calls `submit()` on sAVAX itself. The contract supplies the
-  // method and receipt token that StakeKit's manifest cannot.
   it("names the method and token of a StakeKit AVAX stake from its contract", () => {
     const common = signEvent({
       account: account("avalanche_c_chain", "evm", "AVAX"),
@@ -697,7 +687,6 @@ describe("stakePrograms redirects", () => {
     });
   });
 
-  // Observed: StakeKit stakes POL by calling `buyVoucherPOL` on a validator's ValidatorShare.
   it("reads a StakeKit POL stake as a delegation", () => {
     const common = signEvent({
       manifestId: "stakekit",
@@ -713,7 +702,6 @@ describe("stakePrograms redirects", () => {
       earnTransactionType: "delegate",
       rawTransactionType: "buyVoucherPOL",
     });
-    // One ValidatorShare per validator, so the contract is not a product and names nothing.
     expect(common.stakingMethod).toBeUndefined();
     expect(common.outputCurrency).toBeUndefined();
   });
@@ -729,8 +717,6 @@ describe("stakePrograms redirects", () => {
     expect(common.dappContract).toBeUndefined();
   });
 
-  // StakeKit is now allow-listed, so its native stakes reach the contract fallback. A Tron
-  // recipient is not a contract and must not be reported as one.
   it("never reports a native StakeKit recipient as a contract on success", () => {
     const signed = {
       signature: "sig",
@@ -760,7 +746,6 @@ describe("stakePrograms redirects", () => {
     expect(common.dappContract).toBeUndefined();
   });
 
-  // Kiln DeFi deposits stablecoins into ERC-4626 vaults, whose calls already map.
   it("classifies a Kiln DeFi vault deposit, with no staking method", () => {
     const mapped = failed(
       signEvent({
@@ -800,7 +785,6 @@ describe("stakePrograms redirects", () => {
     });
   });
 
-  // A Tonstakers unstake burns its jetton, and so does any other burn. Unknown, not withdraw.
   it("does not read a jetton burn as an unstake", () => {
     const common = signEvent({
       account: ton,
@@ -820,7 +804,6 @@ describe("stakePrograms redirects", () => {
         transaction: { family: "ton", recipient: "EQpool", comment },
       });
 
-    // Observed on tonviewer: a P2P stake is a plain transfer to the pool saying `Deposit`.
     it("classifies a deposit, and never reports the comment text", () => {
       const mapped = failed(p2pStake({ isEncrypted: false, text: "Deposit" }, "p2p-ton-staking"));
 
@@ -832,8 +815,7 @@ describe("stakePrograms redirects", () => {
       expect(JSON.stringify(mapped!.properties)).not.toContain("Deposit");
     });
 
-    // Observed: P2P withdraws through the structured Whales payload, not a comment.
-    it("classifies the observed withdrawal from its payload", () => {
+    it("classifies a withdrawal from its payload", () => {
       const common = signEvent({
         account: ton,
         manifestId: "p2p-ton-staking",
@@ -846,7 +828,6 @@ describe("stakePrograms redirects", () => {
       });
     });
 
-    // Outside a staking app, "Deposit" is just a note on a transfer.
     it("claims nothing for the same comment on a plain send", () => {
       const common = p2pStake({ isEncrypted: false, text: "Deposit" });
 
@@ -857,7 +838,6 @@ describe("stakePrograms redirects", () => {
     it.each([
       ["an encrypted comment", { isEncrypted: true, text: "Deposit" }],
       ["a near miss", { isEncrypted: false, text: "deposit please" }],
-      // Not observed: P2P withdraws through a payload, so this word maps nothing.
       ["a withdraw comment", { isEncrypted: false, text: "Withdraw" }],
       ["anything else", { isEncrypted: false, text: "rent for march" }],
       ["an inherited name", { isEncrypted: false, text: "toString" }],
@@ -878,10 +858,6 @@ describe("stakePrograms redirects", () => {
       expect(common.earnTransactionType).toBe("deposit");
     });
 
-    /**
-     * Seen on a real P2P withdrawal: the success reported the pool's address, lower-cased, as
-     * `contract_address`. TON has no contract calls, and lower-casing corrupts its addresses.
-     */
     it("never reports a TON recipient as a contract on success", () => {
       const signed = {
         signature: "sig",
@@ -910,7 +886,6 @@ describe("stakePrograms redirects", () => {
       expect(broadcast.dappContract).toBeUndefined();
     });
 
-    // The operation has no comment, so the success names the deposit only through the sign context.
     it("carries the deposit to the broadcast stage", () => {
       const signed = {
         signature: "sig",
@@ -939,8 +914,6 @@ describe("stakePrograms redirects", () => {
     });
   });
 
-  // The TON operation carries no payload, so a success can only name the action through the
-  // sign context.
   it("carries the TON action to the broadcast stage", () => {
     const signed = {
       signature: "sig",
