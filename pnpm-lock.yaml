@@ -22980,7 +22980,7 @@ packages:
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
   '@ledgerhq/agent-intent-sdk@file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz':
-    resolution: {integrity: sha512-NUm02EMA2TPmN0fqFr0gcbzqEOo2seI4RGQdQFPeNANsJ/WTncfbiK8uj1YGqQlbIV7hkvloxt6Ht28bgeAVhQ==, tarball: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz}
+    resolution: {integrity: sha512-+RYV6P06PKr4ZS/+0eB38QtxM7tr1fZcZP2OMeRbKoX4yrfA+mvY45LxSXsFh3/M13AdIY2AmsQUHYJxPrQxqQ==, tarball: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz}
     version: 0.0.0
     engines: {node: '>=24.0.0'}
 

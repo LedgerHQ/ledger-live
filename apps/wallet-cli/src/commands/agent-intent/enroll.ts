@@ -10,7 +10,9 @@ import {
   AGENT_ENROLLMENT_CHANNEL_VERSION,
   AGENT_INTENT_FRONTEND_URLS,
   AGENT_KEYCLOAK_ENVIRONMENTS,
+  type AgentEnrollmentChannelCompletion,
   type AgentEnrollmentChannelHost,
+  type AgentEnrollmentChannelRequest,
   type AgentEnrollmentCompletionV2,
 } from "@ledgerhq/agent-intent-sdk";
 import { Session, AGENT_INTENT_ENVIRONMENTS, withSessionLock } from "../../session/session-store";
@@ -105,10 +107,14 @@ function assertServiceUrl(value: string, flagName: string): void {
 }
 
 /** Waits for the relayed completion; SIGINT/SIGTERM close the relay socket and abort the wait. */
-function waitForRelayCompletion(
+function waitForRelayCompletion<Request extends AgentEnrollmentChannelRequest>(
   host: AgentEnrollmentChannelHost,
-  input: Parameters<AgentEnrollmentChannelHost["waitForCompletion"]>[0],
-): Promise<AgentEnrollmentCompletionV2> {
+  input: {
+    request: Request;
+    authenticate: (completion: AgentEnrollmentChannelCompletion<Request>) => Promise<void>;
+    persist: (completion: AgentEnrollmentChannelCompletion<Request>) => Promise<void>;
+  },
+): Promise<AgentEnrollmentChannelCompletion<Request>> {
   let rejectInterrupted!: (reason: Error) => void;
   const interrupted = new Promise<never>((_, reject) => {
     rejectInterrupted = reject;
@@ -119,7 +125,7 @@ function waitForRelayCompletion(
   };
   process.once("SIGINT", onSignal);
   process.once("SIGTERM", onSignal);
-  const completion = new Promise<AgentEnrollmentCompletionV2>(resolve =>
+  const completion = new Promise<AgentEnrollmentChannelCompletion<Request>>(resolve =>
     resolve(host.waitForCompletion(input)),
   );
   return Promise.race([completion, interrupted]).finally(() => {

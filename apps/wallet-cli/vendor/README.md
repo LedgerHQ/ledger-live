@@ -4,13 +4,15 @@
 
 `ledgerhq-agent-intent-sdk-0.0.0.tgz` is a temporary packed artifact from
 [`LedgerHQ/agent-intent-sdk`](https://github.com/LedgerHQ/agent-intent-sdk) at
-commit `4ceba0a`. Same artifact `agent-intent-frontend` vendors at
-`vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz`, kept in sync with it here.
+commit `a22bd17`, the head of the unmerged
+[PR #14](https://github.com/LedgerHQ/agent-intent-sdk/pull/14) (enrollment
+channel connect/deliver split and agent recovery). Re-pin it to the merged
+commit once that PR lands.
 
 SHA-256:
 
 ```text
-9d1348295478791f9b6b6904d698929ddd58cfc84fbe3a28852685a20152eb1d
+643be65809afa0d0c4e97c28f91848e4cd71dec147af3f2b02327dd835077e30
 ```
 
 The tarball contains compiled JavaScript and declarations, not another editable
