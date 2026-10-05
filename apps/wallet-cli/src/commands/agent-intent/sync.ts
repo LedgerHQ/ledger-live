@@ -1,5 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import { createSoftwareAgentIdentity } from "@ledgerhq/agent-intent-sdk";
 import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Session, withSessionLock, type AgentIntentProfileMeta } from "../../session/session-store";
 import { loadAgentIntentSecretKey } from "../../key-ring/agent-intent-keychain";
@@ -59,7 +60,24 @@ async function requireAgentCredentials(profile: EnrolledProfile): Promise<Member
         "profile.",
     );
   }
+  if (
+    createSoftwareAgentIdentity(secretKey).publicKey.toLowerCase() !==
+    profile.publicKey.toLowerCase()
+  ) {
+    throw new Error(
+      `The OS keychain key of profile "${profile.profileId}" does not match its recorded public key.`,
+    );
+  }
   return { pubkey: profile.publicKey, privatekey: secretKey };
+}
+
+function toEjectedError(profile: EnrolledProfile, e: unknown): unknown {
+  if ((e as { name?: string })?.name !== "TrustchainEjected") return e;
+  return new Error(
+    `Agent "${profile.profileId}" no longer has Ledger Sync access (it was removed from the ` +
+      "Ledger Sync group). Nothing was changed.",
+    { cause: e },
+  );
 }
 
 async function restoreAgentTrustchain(
@@ -78,14 +96,7 @@ async function restoreAgentTrustchain(
     );
   } catch (e) {
     spin?.error("Restore failed");
-    if ((e as { name?: string })?.name === "TrustchainEjected") {
-      throw new Error(
-        `Agent "${profile.profileId}" no longer has Ledger Sync access (it was removed from the ` +
-          "Ledger Sync group). Nothing was changed.",
-        { cause: e },
-      );
-    }
-    throw e;
+    throw toEjectedError(profile, e);
   }
   if (restored.rootId !== trustchainId || !APP_16_PATH_RE.test(restored.applicationPath)) {
     spin?.error("Restore failed");
@@ -132,23 +143,28 @@ function mergeUnderLock(
   pulled: Extract<PullResult, { status: "new-data" } | { status: "deleted" }>,
   profile: EnrolledProfile,
   expected: AccountAccess,
+  pulledFromVersion: number | undefined,
 ): Promise<LedgerSyncImportReport> {
   return withSessionLock(async () => {
     const fresh = await Session.read();
-    if (!isUnchanged(fresh.getAgentIntentProfile(profile.profileId), profile, expected)) {
+    const current = fresh.getAgentIntentProfile(profile.profileId);
+    if (!isUnchanged(current, profile, expected)) {
       throw new Error(
         `Agent Intent profile "${profile.profileId}" changed while this sync was running — ` +
           "nothing was saved. Re-run `wallet-cli agent-intent sync`.",
       );
     }
+    // A concurrent sync already cached a result; this possibly older pull must not override it.
+    const versionMoved = current?.ledgerSyncVersion !== pulledFromVersion;
     if (pulled.status === "deleted") {
+      if (versionMoved) return EMPTY_REPORT;
       fresh.updateAgentIntentProfile(profile.profileId, { ledgerSyncVersion: undefined });
       fresh.write();
       return EMPTY_REPORT;
     }
     const merged = mergeSyncedAccounts(fresh, pulled.accounts);
     // An invalid entry must come back on the next sync, so its version is not cached.
-    if (merged.invalid.length === 0) {
+    if (merged.invalid.length === 0 && !versionMoved) {
       fresh.updateAgentIntentProfile(profile.profileId, { ledgerSyncVersion: pulled.version });
     }
     fresh.write();
@@ -181,17 +197,24 @@ export default defineCommand({
       const restored = await restoreAgentTrustchain(out, sdk, profile, credentials);
       const rotated = restored.applicationPath !== profile.accountAccess.applicationPath;
       const expected = { ...profile.accountAccess, applicationPath: restored.applicationPath };
-      if (rotated) await persistRotation(profile, expected);
+      const pulledFromVersion = rotated ? undefined : profile.ledgerSyncVersion;
 
       const pullSpin = out.spin("Pulling synchronized accounts…");
-      const pulled = await pullSyncedAccounts(
-        restored,
-        credentials,
-        sdk,
-        profile.accountAccess.environment,
-        () => (rotated ? undefined : profile.ledgerSyncVersion),
-      );
+      let pulled: PullResult;
+      try {
+        pulled = await pullSyncedAccounts(
+          restored,
+          credentials,
+          sdk,
+          profile.accountAccess.environment,
+          () => pulledFromVersion,
+        );
+      } catch (e) {
+        pullSpin?.error("Pull failed");
+        throw toEjectedError(profile, e);
+      }
       pullSpin?.stop();
+      if (rotated) await persistRotation(profile, expected);
 
       if (pulled.status === "up-to-date") {
         out.agentIntentSync(EMPTY_REPORT);
@@ -201,7 +224,7 @@ export default defineCommand({
           invalid: [{ status: "invalid", id: "<account list>", reason: pulled.reason }],
         });
       } else {
-        out.agentIntentSync(await mergeUnderLock(pulled, profile, expected));
+        out.agentIntentSync(await mergeUnderLock(pulled, profile, expected, pulledFromVersion));
       }
     });
   },

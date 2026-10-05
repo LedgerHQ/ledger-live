@@ -45,6 +45,17 @@ export type PullResult =
   | { status: "up-to-date" }
   | { status: "deleted" };
 
+function toPullResult(
+  event: Exclude<UpdateEvent<Record<string, unknown>>, { type: "deleted-data" }>,
+): PullResult {
+  const rawAccounts = event.data.accounts;
+  // Not an empty list: reporting it as `new-data` would let `agent-intent sync` cache this version and
+  // treat every later pull as up to date, so the accounts would never come back once fixed.
+  return Array.isArray(rawAccounts)
+    ? { status: "new-data", accounts: rawAccounts, version: event.version }
+    : { status: "malformed", reason: "the synced document has no `accounts` list" };
+}
+
 /**
  * Pull the Ledger Sync account-list document for the given trustchain/member. Read-only: this
  * never pushes wallet-cli-local accounts back to Ledger Sync.
@@ -61,19 +72,11 @@ export async function pullSyncedAccounts(
   getCurrentVersion: () => number | undefined,
   createSdk: CreateCloudSyncSdk = createCloudSyncSdk,
 ): Promise<PullResult> {
-  let result: PullResult = { status: "up-to-date" };
+  let result = { status: "up-to-date" } as PullResult;
 
-  const saveNewUpdate = async (event: UpdateEvent<Record<string, unknown>>): Promise<void> => {
-    if (event.type === "deleted-data") {
-      result = { status: "deleted" };
-      return;
-    }
-    const rawAccounts = event.data.accounts;
-    // Not an empty list: reporting it as `new-data` would let `agent-intent sync` cache this version and
-    // treat every later pull as up to date, so the accounts would never come back once fixed.
-    result = Array.isArray(rawAccounts)
-      ? { status: "new-data", accounts: rawAccounts, version: event.version }
-      : { status: "malformed", reason: "the synced document has no `accounts` list" };
+  const saveNewUpdate = (event: UpdateEvent<Record<string, unknown>>): Promise<void> => {
+    result = event.type === "deleted-data" ? { status: "deleted" } : toPullResult(event);
+    return Promise.resolve();
   };
 
   const sdk = createSdk({
@@ -87,11 +90,10 @@ export async function pullSyncedAccounts(
     await sdk.pull(trustchain, memberCredentials);
   } catch (e) {
     // CloudSyncSDK.pull() (shared/cloud-sync/src/cloudsync/sdk.ts) deliberately throws
-    // TrustchainOutdated right after calling saveNewUpdate({type: "deleted-data"}) when the remote
-    // document was deleted — by then `result` above is already `{status: "deleted"}`, so this is an
-    // expected signal, not a failure: swallow it and return what was already recorded. Anything else
-    // is a real failure and re-throws.
-    if ((e as { name?: string })?.name !== "TrustchainOutdated") throw e;
+    // TrustchainOutdated right after recording a remote deletion; any other failure re-throws.
+    const deletionSignal =
+      (e as { name?: string })?.name === "TrustchainOutdated" && result.status === "deleted";
+    if (!deletionSignal) throw e;
   }
   return result;
 }

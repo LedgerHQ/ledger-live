@@ -275,6 +275,22 @@ describe("pullSyncedAccounts", () => {
     expect(result).toEqual({ status: "deleted" });
   });
 
+  it("rethrows a TrustchainOutdated raised before any deletion was recorded", async () => {
+    const failure = namedError("TrustchainOutdated");
+    const { createSdk } = fakeSdk([], failure);
+
+    await expect(
+      pullSyncedAccounts(
+        trustchain,
+        memberCredentials,
+        trustchainSdk,
+        "production",
+        () => 3,
+        createSdk,
+      ),
+    ).rejects.toBe(failure);
+  });
+
   it("rethrows any other pull failure instead of reporting a partial result", async () => {
     const failure = namedError("NetworkError");
     const { createSdk } = fakeSdk([], failure);

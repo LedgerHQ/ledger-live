@@ -49,6 +49,7 @@ let restoreInputs: Array<{ trustchain: unknown; credentials: unknown }>;
 let pullCalls: Array<{ environment: string; currentVersion: number | undefined }>;
 
 let loadSecretKeyImpl: () => Promise<string | null>;
+let derivedPublicKey: string;
 let restoreTrustchainImpl: () => unknown;
 let pullSyncedAccountsImpl: () => unknown;
 let mergeSyncedAccountsImpl: () => unknown;
@@ -78,6 +79,9 @@ beforeAll(() =>
         deletedSecretKeys.push(profileId);
         return true;
       },
+    },
+    sdk: {
+      createSoftwareAgentIdentity: () => ({ publicKey: derivedPublicKey }),
     },
     lkrpSdk: {
       createAgentLedgerSyncSdk: (environment: string) => {
@@ -138,6 +142,7 @@ describe("agent-intent sync", () => {
     restoreInputs = [];
     pullCalls = [];
     loadSecretKeyImpl = async () => AGENT_SECRET_KEY;
+    derivedPublicKey = AGENT_PUBLIC_KEY;
     restoreTrustchainImpl = () => ({
       rootId: accountAccess.trustchainId,
       applicationPath: accountAccess.applicationPath,
@@ -181,6 +186,13 @@ describe("agent-intent sync", () => {
     };
 
     await expect(runSync()).rejects.toThrow(/Could not read the agent key.*keychain locked/);
+  });
+
+  it("should fail before restoring when the keychain key does not match the recorded public key", async () => {
+    derivedPublicKey = "02".padEnd(66, "1");
+
+    await expect(runSync()).rejects.toThrow(/does not match its recorded public key/);
+    expect(restoreInputs).toEqual([]);
   });
 
   it("should restore the App-16 trustchain with the agent key and the profile's environment", async () => {
@@ -228,6 +240,22 @@ describe("agent-intent sync", () => {
     await expect(runSync()).rejects.toThrow(/no longer has Ledger Sync access/);
     expect(writeCalls).toBe(0);
     expect(deletedSecretKeys).toEqual([]);
+    expect(storedProfile?.accountAccess).toEqual(accountAccess);
+  });
+
+  it("should report lost access without changing the session when ejected during the pull", async () => {
+    restoreTrustchainImpl = () => ({
+      rootId: accountAccess.trustchainId,
+      applicationPath: ROTATED_PATH,
+    });
+    pullSyncedAccountsImpl = () => {
+      const err = new Error("ejected");
+      err.name = "TrustchainEjected";
+      throw err;
+    };
+
+    await expect(runSync()).rejects.toThrow(/no longer has Ledger Sync access/);
+    expect(writeCalls).toBe(0);
     expect(storedProfile?.accountAccess).toEqual(accountAccess);
   });
 
@@ -290,6 +318,26 @@ describe("agent-intent sync", () => {
 
     expect(storedProfile?.ledgerSyncVersion).toBe(5);
     expect(writeCalls).toBe(1);
+  });
+
+  it("should keep the version a concurrent sync cached instead of this pull's", async () => {
+    pullSyncedAccountsImpl = () => ({ status: "new-data", accounts: [], version: 6 });
+    profileAfterFirstRead = makeProfile({ ledgerSyncVersion: 8 });
+
+    await runSync();
+
+    expect(mergedInto).toHaveLength(1);
+    expect(storedProfile?.ledgerSyncVersion).toBe(8);
+  });
+
+  it("should not reset a version a concurrent sync cached when this pull saw a deletion", async () => {
+    pullSyncedAccountsImpl = () => ({ status: "deleted" });
+    profileAfterFirstRead = makeProfile({ ledgerSyncVersion: 8 });
+
+    await runSync();
+
+    expect(writeCalls).toBe(0);
+    expect(storedProfile?.ledgerSyncVersion).toBe(5);
   });
 
   it("should merge into a fresh read taken under the lock", async () => {
