@@ -559,6 +559,62 @@ describe("toPublicOperation", () => {
     expect(result.tx.block.hash).toBe(rawTx.block_hash);
   });
 
+  describe("feesPayer", () => {
+    const build = (overrides: Partial<AleoPublicTransaction>, address = recipientAddress) =>
+      toPublicOperation({
+        rawTx: getMockedPublicTransaction(overrides),
+        address,
+        hasOwnedRecord: false,
+        tokenTypeByProgramName: NO_TOKENS,
+      });
+
+    it("should be the sender of an outgoing transfer_public", () => {
+      const result = build({ sender_address: senderAddress }, senderAddress);
+
+      expect(result.type).toBe("OUT");
+      expect(result.tx.feesPayer).toBe(senderAddress);
+    });
+
+    it("should be the counterparty of an incoming transfer_public", () => {
+      const result = build({ sender_address: senderAddress }, recipientAddress);
+
+      expect(result.type).toBe("IN");
+      expect(result.tx.feesPayer).toBe(senderAddress);
+    });
+
+    it("should be set on a failed transfer_public, as the fee is paid anyway", () => {
+      const result = build({ sender_address: senderAddress, transaction_status: "Rejected" });
+
+      expect(result.tx.failed).toBe(true);
+      expect(result.tx.feesPayer).toBe(senderAddress);
+    });
+
+    it("should stay unset when the explorer blanks the sender", () => {
+      const result = build({ sender_address: "" });
+
+      expect(result.tx).not.toHaveProperty("feesPayer");
+    });
+
+    it.each(["transfer_private_to_public", "transfer_public_to_private", "transfer_private"])(
+      "should stay unset for %s, whose payer is not the published sender",
+      functionId => {
+        const result = build({ function_id: functionId, sender_address: senderAddress });
+
+        expect(result.tx).not.toHaveProperty("feesPayer");
+      },
+    );
+
+    it("should stay unset for a staking call", () => {
+      const result = build({
+        function_id: TRANSACTION_TYPE.BOND_PUBLIC,
+        sender_address: "",
+        recipient_address: "",
+      });
+
+      expect(result.tx).not.toHaveProperty("feesPayer");
+    });
+  });
+
   it("should use amount_u128 over amount when provided, including values beyond JS safe integer range", () => {
     const amountU128 = "123456789012345678901234567890";
     const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });

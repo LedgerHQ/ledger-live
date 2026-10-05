@@ -337,6 +337,36 @@ function resolveOperationType(
 }
 
 /**
+ * Only a `transfer_public` row names its fee payer: the signer pays the fee out of the same public
+ * balance the transfer leaves, and the explorer publishes it as `sender_address`. Checked on
+ * mainnet against the `fee_public` transition of the transaction: the payer was the published
+ * sender in 763 of 769 recent transfers. The rest were called by a program, whose address is then
+ * the sender and never an account of ours.
+ *
+ * Every other shape stays unset (the contract reads that as "no sender paid"):
+ *  - private and unshield rows hide the sender;
+ *  - a shield row publishes its sender, but another address paid the fee in most of the samples
+ *    taken, so the sender is not a reliable payer;
+ *  - a staking row blanks both sides, and the account is not always the signer: a pool contract
+ *    stakes for it, and the account only shows up through the `transfer_public_as_signer` row of the
+ *    same transaction.
+ *
+ * FIXME(follow-up) not handled yet:
+ *  - a sponsored transaction is paid by the sponsor, but its row looks like any `transfer_public`,
+ *    so it still reports the sender as payer. The fee is authorized separately from the execution,
+ *    so the two can be signed by different keys:
+ *    https://docs.aleo.org/learn/advanced/delegated-proving/index.html (step "1. Authorization (User)");
+ *  - the unset cases above would need the `fee_public` transition of the transaction, whose future
+ *    output is `[payer, amount]`, at the cost of one `getTransactionById` per operation;
+ *  - `rawTx.fee` leaves out the priority fee, which the chain deducts too.
+ */
+function resolveFeesPayer(rawTx: AleoPublicTransaction): string | undefined {
+  return rawTx.function_id === EXPLORER_TRANSFER_TYPES.PUBLIC
+    ? rawTx.sender_address || undefined
+    : undefined;
+}
+
+/**
  * The account's own view of a public transaction, merged with what its private records reveal.
  *
  * `hasOwnedRecord` means a record the account owns shares this transaction, so an address the
@@ -369,6 +399,7 @@ export const toPublicOperation = ({
   const stakingType = resolveStakingOperationType(rawTx);
   const type = stakingType ?? resolveOperationType(rawTx, address, sender, recipient);
   const value = stakingType ? new BigNumber(rawTx.fee) : resolveTransactionAmount(rawTx);
+  const feesPayer = resolveFeesPayer(rawTx);
 
   return {
     id: hash,
@@ -387,6 +418,7 @@ export const toPublicOperation = ({
     tx: {
       hash,
       fees: BigInt(new BigNumber(rawTx.fee).toFixed(0)),
+      ...(feesPayer ? { feesPayer } : {}),
       date,
       block: {
         hash: rawTx.block_hash,

@@ -1,11 +1,14 @@
 import invariant from "invariant";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
 import { AleoApiConfigurationResetError } from "../errors";
 import { fromHex } from "../logic/utils";
+import { apiClient } from "../network/api";
 import { accessProvableApi } from "../network/utils";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
+  referenceFailedTransferPublicTx,
   referenceTransferPublicTx,
   TEST_TOKEN_PROGRAM_ID,
   testnetAddress,
@@ -349,6 +352,80 @@ describe("createApi", () => {
           cursor: "not-a-height",
         }),
       ).rejects.toThrow(/malformed listOperations cursor/);
+    });
+
+    describe("feesPayer", () => {
+      let items: Operation[];
+
+      beforeAll(async () => {
+        ({ items } = await api.listOperations(privacyContext, testnetAddress, {
+          minHeight: firstActivityBlock,
+          order: "desc",
+        }));
+      });
+
+      const findOperation = (id: string): Operation => {
+        const operation = items.find(op => op.id === id);
+        invariant(operation, `guard: ${id} is missing from the page`);
+        return operation;
+      };
+
+      it("names the counterparty as payer of an incoming transfer_public", async () => {
+        // The oldest of the burst, so the first descending page may stop short of it.
+        let operation: Operation | undefined;
+        let cursor: string | undefined;
+        do {
+          const page = await api.listOperations(privacyContext, testnetAddress, {
+            minHeight: referenceTransferPublicTx.blockHeight,
+            order: "desc",
+            ...(cursor && { cursor }),
+          });
+          operation = page.items.find(op => op.id === referenceTransferPublicTx.id);
+          cursor = page.next;
+        } while (!operation && cursor);
+        invariant(operation, "guard: the inbound transfer is missing from the listing");
+
+        expect(operation.type).toBe("IN");
+        expect(operation.tx.fees).toBe(BigInt(referenceTransferPublicTx.fee));
+        expect(operation.tx.feesPayer).toBe(referenceTransferPublicTx.sender);
+      });
+
+      it("names the account as payer of its own transfer_public, even when rejected", () => {
+        const operation = findOperation(referenceFailedTransferPublicTx.id);
+
+        expect(operation.tx.failed).toBe(true);
+        expect(operation.tx.feesPayer).toBe(testnetAddress);
+      });
+
+      it("leaves the payer unset for a shield, whose sender is not a reliable payer", () => {
+        expect(findOperation(testnetSelfConversionTx.transaction_id).tx).not.toHaveProperty(
+          "feesPayer",
+        );
+      });
+
+      it("leaves the payer unset for a private-only transaction", () => {
+        expect(
+          findOperation(testnetIncomingPrivateRecord1.transaction_id.trim()).tx,
+        ).not.toHaveProperty("feesPayer");
+      });
+
+      // The explorer row has no payer; the chain does: the `fee_public` transition of the
+      // transaction publishes it as the first argument of its future output.
+      it("matches the payer published by the fee_public transition on chain", async () => {
+        const withPayer = items.filter(op => op.tx.feesPayer);
+        expect(withPayer.length).toBeGreaterThan(0);
+
+        const config = await privacyContext.config();
+        for (const op of withPayer) {
+          const details = await apiClient.getTransactionById(config, op.id);
+          const future = details.fee.transition.outputs.find(output => output.type === "future");
+          const payer =
+            future && "value" in future ? future.value.match(/aleo1[a-z0-9]{58}/)?.[0] : undefined;
+
+          expect(details.fee.transition.function).toBe("fee_public");
+          expect(payer).toBe(op.tx.feesPayer);
+        }
+      });
     });
   });
 
