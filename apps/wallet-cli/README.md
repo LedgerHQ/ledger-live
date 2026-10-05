@@ -1,10 +1,10 @@
 # wallet-cli (`@ledgerhq/wallet-cli`)
 
-Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **2.1.0**.
+Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **2.9.0**.
 
 ## Status (v2)
 
-wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity. The `2.0.0` release adds the **`earn`** (staking & DeFi yield) and **`ring`** (Ledger Key Ring / LKRP encryption) command groups. The `2.1.0` release adds the **`skill`** command group, which installs the Ledger wallet-cli agent skill — embedded in the compiled binary — into your coding agent.
+wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity. The `2.0.0` release adds the **`earn`** (staking & DeFi yield) and **`ring`** (Ledger Key Ring / LKRP encryption) command groups. The `2.1.0` release adds the **`skill`** command group, which installs the Ledger wallet-cli agent skill — embedded in the compiled binary — into your coding agent. The `2.9.0` release adds the **`agent-intent`** command group, which enrolls a remote agent's software identity, imports the Ledger Sync accounts it was granted and proposes EVM payments for human review — no device required, never broadcasts.
 
 **Supported networks** today: **bitcoin**, **ethereum**, and **solana** (aligned with `live-common-setup.ts`). Token flows are supported for tokens on those networks.
 
