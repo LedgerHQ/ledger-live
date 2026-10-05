@@ -1,7 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import {
-  createAgentEnrollmentChannelHost,
   createAgentEnrollmentRequest,
   createAgentEnrollmentUrl,
   createSoftwareAgentIdentity,
@@ -9,11 +8,6 @@ import {
   SUPPORTED_AGENT_SOURCES,
   AGENT_ENROLLMENT_CHANNEL_VERSION,
   AGENT_INTENT_FRONTEND_URLS,
-  AGENT_KEYCLOAK_ENVIRONMENTS,
-  type AgentEnrollmentChannelCompletion,
-  type AgentEnrollmentChannelHost,
-  type AgentEnrollmentChannelRequest,
-  type AgentEnrollmentCompletionV2,
 } from "@ledgerhq/agent-intent-sdk";
 import { Session, AGENT_INTENT_ENVIRONMENTS, withSessionLock } from "../../session/session-store";
 import {
@@ -21,30 +15,17 @@ import {
   saveAgentIntentSecretKey,
   deleteAgentIntentSecretKey,
 } from "../../key-ring/agent-intent-keychain";
-import { AGENT_INTENT_TRUSTCHAIN_URLS } from "../../key-ring/constants";
 import { authenticateEnrollmentCompletion } from "../../agent-intent/completion-auth";
 import { outputOption, resolveOutputFormat } from "../inputs";
+import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import {
-  PROFILE_ID_RE,
-  PROFILE_ID_MESSAGE,
-  hasUrlCredentials,
-} from "../../agent-intent/profile-format";
+  assertServiceUrl,
+  createRelayHost,
+  keycloakOverride,
+  parseDurationMs,
+  waitForRelayCompletion,
+} from "../../agent-intent/relay";
 import { createCommandOutput } from "../../output";
-
-function assertHttpUrl(value: string, flagName: string): void {
-  if (!/^https?:$/.test(new URL(value).protocol)) {
-    throw new Error(`--${flagName} must be an http(s) URL.`);
-  }
-}
-
-function assertNoUrlCredentials(value: string, flagName: string): void {
-  if (hasUrlCredentials(value)) {
-    throw new Error(
-      `--${flagName} must not contain URL credentials (user:pass@) — they would be persisted or ` +
-        "echoed back verbatim.",
-    );
-  }
-}
 
 /** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
  * right before writing — a concurrent enroll of the same profile id could pass the first check and
@@ -76,63 +57,6 @@ const DEFAULT_BFF_BASE_URLS = {
   staging: "https://global.api.stg.ledger-test.com/agent-intent",
   production: "https://global.api.prd.ledger.com/agent-intent",
 } as const;
-
-const DURATION_RE = /^([1-9]\d*)([smhd])$/;
-const DURATION_UNITS_MS = { s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 } as const;
-const MAX_DURATION_MS = 30 * DURATION_UNITS_MS.d;
-
-function isDurationUnit(value: string): value is keyof typeof DURATION_UNITS_MS {
-  return value in DURATION_UNITS_MS;
-}
-
-/** Parses `--expires-in` (e.g. 45s, 30m, 2h, 1d) into milliseconds. Rejects `0` (an already-expired
- * link) and anything past 30 days (an unreasonable validity window, and large enough values overflow
- * `Date`/`toISOString()` with a cryptic `RangeError`). */
-function parseDurationMs(value: string): number {
-  const match = DURATION_RE.exec(value);
-  const unit = match?.[2];
-  if (!match || !unit || !isDurationUnit(unit)) {
-    throw new Error(`--expires-in "${value}" is invalid; use e.g. 45s, 30m, 2h, or 1d.`);
-  }
-  const ms = Number(match[1]) * DURATION_UNITS_MS[unit];
-  if (ms > MAX_DURATION_MS) {
-    throw new Error(`--expires-in "${value}" is too long; the maximum is 30d.`);
-  }
-  return ms;
-}
-
-function assertServiceUrl(value: string, flagName: string): void {
-  assertHttpUrl(value, flagName);
-  assertNoUrlCredentials(value, flagName);
-}
-
-/** Waits for the relayed completion; SIGINT/SIGTERM close the relay socket and abort the wait. */
-function waitForRelayCompletion<Request extends AgentEnrollmentChannelRequest>(
-  host: AgentEnrollmentChannelHost,
-  input: {
-    request: Request;
-    authenticate: (completion: AgentEnrollmentChannelCompletion<Request>) => Promise<void>;
-    persist: (completion: AgentEnrollmentChannelCompletion<Request>) => Promise<void>;
-  },
-): Promise<AgentEnrollmentChannelCompletion<Request>> {
-  let rejectInterrupted!: (reason: Error) => void;
-  const interrupted = new Promise<never>((_, reject) => {
-    rejectInterrupted = reject;
-  });
-  const onSignal = () => {
-    host.close();
-    rejectInterrupted(new Error("Enrollment interrupted."));
-  };
-  process.once("SIGINT", onSignal);
-  process.once("SIGTERM", onSignal);
-  const completion = new Promise<AgentEnrollmentChannelCompletion<Request>>(resolve =>
-    resolve(host.waitForCompletion(input)),
-  );
-  return Promise.race([completion, interrupted]).finally(() => {
-    process.off("SIGINT", onSignal);
-    process.off("SIGTERM", onSignal);
-  });
-}
 
 export default defineCommand({
   name: "enroll",
@@ -196,12 +120,7 @@ export default defineCommand({
       assertProfileAvailable(await Session.read(), profileId);
 
       const identity = createSoftwareAgentIdentity();
-      // Relay timers default to 15 min; stretch them so only the signed expiry bounds the wait.
-      const host = createAgentEnrollmentChannelHost({
-        environment,
-        relayBaseUrl: AGENT_INTENT_TRUSTCHAIN_URLS[environment],
-        timeouts: { candidateTimeoutMs: expiresInMs, completionTimeoutMs: expiresInMs },
-      });
+      const host = createRelayHost(environment, expiresInMs);
       try {
         const request = createAgentEnrollmentRequest(identity, {
           name: flags.name,
@@ -271,68 +190,54 @@ export default defineCommand({
           expiresAt: enrollmentExpiresAt,
         });
 
-        let persisted: AgentEnrollmentCompletionV2 | undefined;
-        const persist = (completion: AgentEnrollmentCompletionV2) =>
-          withSessionLock(async () => {
-            const session = await Session.read();
-            const profile = session.getAgentIntentProfile(profileId);
-            if (!profile || profile.trustchainId || profile.publicKey !== identity.publicKey) {
-              throw new Error(
-                `Agent Intent profile "${profileId}" was removed or changed while waiting for ` +
-                  "approval; refusing to record the completion.",
-              );
-            }
-            const {
-              mode,
-              environment: accessEnvironment,
-              trustchainId,
-              applicationPath,
-            } = completion.accountAccess;
-            session.updateAgentIntentProfile(profileId, {
-              trustchainId: completion.trustchainId,
-              accountAccess: {
-                mode,
-                environment: accessEnvironment,
-                trustchainId,
-                applicationPath,
-              },
-            });
-            session.write();
-            persisted = completion;
-          });
-
-        let completion: AgentEnrollmentCompletionV2;
-        try {
-          completion = await waitForRelayCompletion(host, {
+        const completion = await waitForRelayCompletion(
+          host,
+          {
             request,
             authenticate: candidate =>
               authenticateEnrollmentCompletion({
                 completion: candidate,
                 identity,
                 environment,
-                ...(keycloakBaseUrl === undefined
-                  ? {}
-                  : {
-                      keycloak: {
-                        ...AGENT_KEYCLOAK_ENVIRONMENTS[environment],
-                        baseUrl: keycloakBaseUrl,
-                      },
-                    }),
+                ...keycloakOverride(environment, keycloakBaseUrl),
               }),
-            persist,
-          });
-        } catch (e) {
-          if (!persisted) {
-            throw new Error(
-              `Enrollment did not complete (${e instanceof Error ? e.message : String(e)}). ` +
-                `Profile "${profileId}" stays pending and cannot be resumed — start a fresh ` +
-                "enrollment with a new --profile id.",
-              { cause: e },
-            );
-          }
-          // Saved and verified locally; only the acknowledgement back to the frontend failed.
-          completion = persisted;
-        }
+            persist: relayed =>
+              withSessionLock(async () => {
+                const session = await Session.read();
+                const profile = session.getAgentIntentProfile(profileId);
+                if (!profile || profile.trustchainId || profile.publicKey !== identity.publicKey) {
+                  throw new Error(
+                    `Agent Intent profile "${profileId}" was removed or changed while waiting for ` +
+                      "approval; refusing to record the completion.",
+                  );
+                }
+                const {
+                  mode,
+                  environment: accessEnvironment,
+                  trustchainId,
+                  applicationPath,
+                } = relayed.accountAccess;
+                session.updateAgentIntentProfile(profileId, {
+                  trustchainId: relayed.trustchainId,
+                  accountAccess: {
+                    mode,
+                    environment: accessEnvironment,
+                    trustchainId,
+                    applicationPath,
+                  },
+                });
+                session.write();
+              }),
+          },
+          "Enrollment interrupted.",
+        ).catch(e => {
+          throw new Error(
+            `Enrollment did not complete (${e instanceof Error ? e.message : String(e)}). ` +
+              `Profile "${profileId}" stays pending and cannot be resumed — start a fresh ` +
+              "enrollment with a new --profile id.",
+            { cause: e },
+          );
+        });
 
         out.agentIntentEnrolled({
           profileId,
