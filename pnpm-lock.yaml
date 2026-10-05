@@ -919,6 +919,9 @@ importers:
       '@dnd-kit/utilities':
         specifier: 'catalog:'
         version: 3.2.2(react@19.1.4)
+      '@domain/api-account-data-source':
+        specifier: workspace:^
+        version: link:../../domain/api/account-data-source
       '@domain/api-aggregated-assets':
         specifier: workspace:*
         version: link:../../domain/api/aggregated-assets
@@ -949,9 +952,15 @@ importers:
       '@domain/entity-account-alias':
         specifier: workspace:^
         version: link:../../domain/entity/account-alias
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
+      '@domain/entity-account-operations':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-operations
       '@domain/entity-analytics-consent':
         specifier: workspace:*
         version: link:../../domain/entity/analytics-consent
@@ -1069,6 +1078,9 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:^
         version: link:../../features/flow/pay-request
+      '@features/platform-account-source-coin-module':
+        specifier: workspace:^
+        version: link:../../features/platform/account-source-coin-module
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -1751,6 +1763,9 @@ importers:
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
+      '@domain/api-account-data-source':
+        specifier: workspace:^
+        version: link:../../domain/api/account-data-source
       '@domain/api-aggregated-assets':
         specifier: workspace:*
         version: link:../../domain/api/aggregated-assets
@@ -1778,9 +1793,15 @@ importers:
       '@domain/entity-account':
         specifier: workspace:^
         version: link:../../domain/entity/account
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
+      '@domain/entity-account-operations':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-operations
       '@domain/entity-analytics-consent':
         specifier: workspace:*
         version: link:../../domain/entity/analytics-consent
@@ -1916,6 +1937,9 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:^
         version: link:../../features/flow/pay-request
+      '@features/platform-account-source-coin-module':
+        specifier: workspace:^
+        version: link:../../features/platform/account-source-coin-module
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -3293,6 +3317,138 @@ importers:
         specifier: 'catalog:'
         version: 4.1.18
 
+  devtools/account-balances:
+    devDependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.30
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
+      '@ledgerhq/lumen-utils-shared':
+        specifier: 'catalog:'
+        version: 0.1.14(react@19.1.4)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.4
+        version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
+      '@support/jest-devtools':
+        specifier: workspace:*
+        version: link:../../support/jest-devtools
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.4.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  devtools/account-operations:
+    devDependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.30
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
+      '@ledgerhq/lumen-utils-shared':
+        specifier: 'catalog:'
+        version: 0.1.14(react@19.1.4)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.4
+        version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
+      '@support/jest-devtools':
+        specifier: workspace:*
+        version: link:../../support/jest-devtools
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.4.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   devtools/bindings:
     dependencies:
       '@devtools/env':
@@ -3301,9 +3457,21 @@ importers:
       '@devtools/registry':
         specifier: workspace:*
         version: link:../registry
+      '@domain/api-account-data-source':
+        specifier: workspace:*
+        version: link:../../domain/api/account-data-source
       '@domain/api-card-management':
         specifier: workspace:*
         version: link:../../domain/api/card-management
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../domain/entity/account
+      '@domain/entity-account-balance':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-balance
+      '@domain/entity-account-operations':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-operations
       '@domain/entity-card-asset-mapping':
         specifier: workspace:*
         version: link:../../domain/entity/card-asset-mapping
@@ -3987,6 +4155,12 @@ importers:
 
   devtools/registry:
     dependencies:
+      '@devtools/account-balances':
+        specifier: workspace:*
+        version: link:../account-balances
+      '@devtools/account-operations':
+        specifier: workspace:*
+        version: link:../account-operations
       '@devtools/cloud-sync':
         specifier: workspace:*
         version: link:../cloud-sync
@@ -4511,6 +4685,43 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/api/account-data-source:
+    dependencies:
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../entity/account
+      '@domain/entity-account-data':
+        specifier: workspace:^
+        version: link:../../entity/account-data
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -5060,6 +5271,65 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/entity/account-balance:
+    dependencies:
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../account
+      '@domain/entity-account-data':
+        specifier: workspace:^
+        version: link:../account-data
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:^
+        version: link:../currency-token
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../../shared/schema-primitives
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/account-data:
+    dependencies:
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../account
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/entity/account-name:
     dependencies:
       '@domain/entity-account':
@@ -5078,6 +5348,55 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/account-operations:
+    dependencies:
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../account
+      '@domain/entity-account-data':
+        specifier: workspace:^
+        version: link:../account-data
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:^
+        version: link:../currency-token
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../../shared/schema-primitives
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8630,6 +8949,116 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  features/platform/account-data:
+    dependencies:
+      '@domain/api-account-data-source':
+        specifier: workspace:^
+        version: link:../../../domain/api/account-data-source
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account
+      '@domain/entity-account-data':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account-data
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/platform/account-source-coin-module:
+    dependencies:
+      '@domain/api-account-data-source':
+        specifier: workspace:^
+        version: link:../../../domain/api/account-data-source
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account-balance
+      '@domain/entity-account-data':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account-data
+      '@domain/entity-account-operations':
+        specifier: workspace:^
+        version: link:../../../domain/entity/account-operations
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency-crypto
+      '@ledgerhq/coin-module-framework':
+        specifier: 'catalog:'
+        version: 10.0.0
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../../shared/schema-primitives
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/platform/aggregated-assets:
     dependencies:
       '@domain/api-aggregated-assets':
@@ -10509,7 +10938,7 @@ importers:
         version: link:../../types-live
       '@walletconnect/sign-client':
         specifier: 2.23.4
-        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
       '@walletconnect/types':
         specifier: 2.23.0
         version: 2.23.0
@@ -13898,6 +14327,9 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^8.0.0
         version: 8.0.0
+      '@domain/api-account-data-source':
+        specifier: workspace:^
+        version: link:../../domain/api/account-data-source
       '@domain/api-aggregated-assets':
         specifier: workspace:^
         version: link:../../domain/api/aggregated-assets
@@ -13910,9 +14342,18 @@ importers:
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/account
+      '@domain/entity-account-balance':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-balance
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
+      '@domain/entity-account-operations':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-operations
       '@domain/entity-client-identity':
         specifier: workspace:^
         version: link:../../domain/entity/client-identity
@@ -13940,6 +14381,9 @@ importers:
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
+      '@features/platform-account-source-coin-module':
+        specifier: workspace:^
+        version: link:../../features/platform/account-source-coin-module
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -14249,6 +14693,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../shared/feature-flags
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../shared/schema-primitives
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
         version: 14.0.0
@@ -14397,9 +14844,6 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
-      '@domain/entity-account':
-        specifier: workspace:^
-        version: link:../../domain/entity/account
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -51355,7 +51799,7 @@ snapshots:
 
   '@vscode/sudo-prompt@9.3.1': {}
 
-  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-provider': 1.0.14
@@ -51369,7 +51813,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       '@walletconnect/window-getters': 1.0.1
       es-toolkit: 1.44.0
       events: 3.3.0
@@ -51492,16 +51936,16 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
     dependencies:
-      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 3.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -51590,7 +52034,7 @@ snapshots:
       - ioredis
       - uploadthing
 
-  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)':
+  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)':
     dependencies:
       '@msgpack/msgpack': 3.1.3
       '@noble/ciphers': 1.3.0
@@ -51610,7 +52054,7 @@ snapshots:
       blakejs: 1.2.1
       bs58: 6.0.0
       detect-browser: 5.3.0
-      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@3.25.76)
+      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
       uint8arrays: 3.1.1
     transitivePeerDependencies:
       - '@azure/app-configuration'

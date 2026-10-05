@@ -16,6 +16,7 @@ import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
+import { accountDataExtra } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
 import {
@@ -86,6 +87,7 @@ export const store = configureStore({
               getSwapApiBaseUrl: () => Config.SWAP_API_BASE || SWAP_API_BASE_DEFAULT,
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
+            ...accountDataExtra((): State => store.getState()),
             ...authApiExtra({
               isFeatureEnabled: (): boolean =>
                 selectFeature(store.getState(), "lwmAuth").enabled ?? false,

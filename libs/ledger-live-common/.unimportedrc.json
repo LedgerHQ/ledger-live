@@ -379,7 +379,10 @@
     "src/domain/isMinEarnUiVersion.ts",
     "src/domain/computeEarnUiVersion.ts",
     "src/domain/earnUiVersion.ts",
-    "src/errors/helpers.ts"
+    "src/errors/helpers.ts",
+    "src/account-data/FullSyncSource.ts",
+    "src/account-data/accountRefOf.ts",
+    "src/account-data/coinModulePorts.ts"
   ],
   "extensions": [
     ".ts",

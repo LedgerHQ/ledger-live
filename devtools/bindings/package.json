@@ -23,7 +23,11 @@
   "dependencies": {
     "@devtools/env": "workspace:*",
     "@devtools/registry": "workspace:*",
+    "@domain/api-account-data-source": "workspace:*",
     "@domain/api-card-management": "workspace:*",
+    "@domain/entity-account": "workspace:*",
+    "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-operations": "workspace:*",
     "@domain/entity-card-asset-mapping": "workspace:*",
     "@domain/entity-currency": "workspace:^",
     "@features/flow-pay-card-auth": "workspace:*",
