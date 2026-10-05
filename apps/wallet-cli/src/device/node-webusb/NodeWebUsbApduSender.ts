@@ -60,7 +60,6 @@ async function awaitReadLoopClose(
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeoutPromise = new Promise<void>(resolve => {
     timer = setTimeout(resolve, timeoutMs);
-    timer.unref?.();
   });
 
   try {
