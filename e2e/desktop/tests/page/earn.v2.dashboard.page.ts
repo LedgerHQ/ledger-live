@@ -178,7 +178,11 @@ export class EarnV2Page extends EarnBasePage {
   @step("Enter deposit amount: $0")
   async enterDepositAmount(amount: string) {
     const webview = await this.getWebView();
-    await webview.getByTestId(this.amountInput).fill(amount);
+    const input = webview.getByTestId(this.amountInput);
+    // fill() writes the DOM value without React onChange, so the controlled Lumen input snaps back to 0.
+    await input.click();
+    await input.pressSequentially(amount);
+    await expect(input).toHaveValue(amount);
   }
 
   @step("Select ETH provider in deposit v2 flow: $0")
