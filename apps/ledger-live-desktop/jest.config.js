@@ -129,13 +129,14 @@ const commonConfig = {
     customExportConditions: [""],
   },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
+  // CI restores this directory from S3 so Jest reuses transforms and per-file timings.
+  // Must live in the project config: Jest ignores a top-level cacheDirectory when `projects` is set.
+  ...(process.env.JEST_CACHE_DIRECTORY ? { cacheDirectory: process.env.JEST_CACHE_DIRECTORY } : {}),
 };
 
 module.exports = {
   /** CI sets `JEST_MAX_WORKERS` (e.g. `100%`); local default leaves laptops headroom. */
   maxWorkers: process.env.JEST_MAX_WORKERS || "50%",
-  // CI restores this directory from S3 so Jest reuses transforms and per-file timings.
-  ...(process.env.JEST_CACHE_DIRECTORY ? { cacheDirectory: process.env.JEST_CACHE_DIRECTORY } : {}),
   // EVALUATION: JEST_WORKER_IDLE_MEMORY_LIMIT=off disables worker recycling; empty keeps the default.
   workerIdleMemoryLimit:
     process.env.JEST_WORKER_IDLE_MEMORY_LIMIT === "off"
