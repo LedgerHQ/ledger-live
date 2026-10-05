@@ -239,9 +239,11 @@ export class MyLedgerPage extends AppPage {
     await expect(this.cancelModalButton).toHaveText("Cancel");
 
     await this.modal.getByText("Show apps to uninstall").click();
-    for (const listed of [app, ...dependents]) {
-      await expect(this.modal.getByText(listed.name, { exact: true })).toBeVisible();
-    }
+    await Promise.all(
+      [app, ...dependents].map(listed =>
+        expect(this.modal.getByText(listed.name, { exact: true })).toBeVisible(),
+      ),
+    );
   }
 
   @step("Expect no app to be installed")
