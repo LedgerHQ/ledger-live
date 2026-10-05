@@ -12,7 +12,7 @@ import { Keyboard } from "react-native";
 import { v4 as uuid } from "uuid";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
-import { track } from "~/analytics";
+import { track } from "@shared/analytics";
 import type {
   RecipientInputMethod,
   RecipientResultType,

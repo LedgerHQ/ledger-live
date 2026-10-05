@@ -1,10 +1,8 @@
 import React, { type ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react-native";
 import { Keyboard } from "react-native";
-import { track } from "~/analytics";
+import { track } from "@shared/analytics";
 import { SendFlowTrackingProvider, useSendFlowTracking } from "../SendFlowTrackingContext";
-
-jest.mock("~/analytics");
 
 function wrapper({ children }: Readonly<{ children: ReactNode }>) {
   return <SendFlowTrackingProvider>{children}</SendFlowTrackingProvider>;

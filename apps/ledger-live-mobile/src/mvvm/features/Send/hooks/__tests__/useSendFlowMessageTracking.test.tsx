@@ -1,11 +1,9 @@
 import React, { type ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react-native";
 import { useIsFocused } from "@react-navigation/native";
-import { track } from "~/analytics";
+import { track } from "@shared/analytics";
 import { SendFlowTrackingProvider } from "../../context/SendFlowTrackingContext";
 import { useSendFlowMessageTracking } from "../useSendFlowMessageTracking";
-
-jest.mock("~/analytics");
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useIsFocused: jest.fn(() => true),

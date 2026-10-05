@@ -24,11 +24,7 @@ export function getMessageIds(
     .map(([key, error]) => getStableMessageId(error, `${messageType}:${key}`));
 }
 
-function getStatusMessageId(
-  status: StatusMessages,
-  error: Error,
-  fallbackId: string,
-): string {
+function getStatusMessageId(status: StatusMessages, error: Error, fallbackId: string): string {
   const errorEntry = Object.entries(status.errors ?? {}).find(([, value]) => value === error);
   if (errorEntry) return getStableMessageId(error, `error:${errorEntry[0]}`);
 

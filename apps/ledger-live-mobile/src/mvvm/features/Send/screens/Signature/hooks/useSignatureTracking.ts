@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import { track } from "~/analytics";
+import { track } from "@shared/analytics";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
