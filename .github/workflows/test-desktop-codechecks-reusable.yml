@@ -186,6 +186,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: ledger-live-linux-16CPU-64RAM
       JEST_MAX_WORKERS: ${{ inputs.jest-max-workers }}
+      JEST_CACHE_DIRECTORY: /tmp/jest-cache
     runs-on: ${{ inputs.runner }}
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
@@ -218,6 +219,26 @@ jobs:
 
       - name: Build dependencies
         run: pnpm exec nx run ledger-live-desktop:build-lib-deps
+
+      - name: Get Jest cache date
+        id: jest-cache-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Jest cache from S3
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          path: ${{ env.JEST_CACHE_DIRECTORY }}
+          key: develop/jest-cache-desktop-${{ steps.jest-cache-meta.outputs.date }}
+          restore-keys: |
+            develop/jest-cache-desktop-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
 
       - name: Run unit tests
         env:
@@ -253,6 +274,20 @@ jobs:
             echo "::notice::jest_pass_window pass=${PASS} end=$(date -u +%FT%TZ)"
             echo "::notice::jest_ci_metrics app=ledger-live-desktop pass=${PASS} jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
           done
+
+      - name: Save Jest cache to S3
+        if: ${{ success() && github.event_name == 'push' && github.ref_name == 'develop' }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          path: ${{ env.JEST_CACHE_DIRECTORY }}
+          key: develop/jest-cache-desktop-${{ steps.jest-cache-meta.outputs.date }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
 
       - name: Upload unit test coverage
         id: generate_coverage

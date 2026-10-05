@@ -62,6 +62,8 @@ const transformIncludePatterns = [
 module.exports = {
   /** CI sets `JEST_MAX_WORKERS` (e.g. `100%`); local default leaves laptops headroom. */
   maxWorkers: process.env.JEST_MAX_WORKERS || "50%",
+  // CI restores this directory from S3 so Jest reuses transforms and per-file timings.
+  ...(process.env.JEST_CACHE_DIRECTORY ? { cacheDirectory: process.env.JEST_CACHE_DIRECTORY } : {}),
   // CI: `verbose: false` so Jest uses BufferedConsole and jest-quiet-reporter
   // can replay captured logs only on failure. Local: keep verbose streaming so
   // engineers see per-test logs live.
