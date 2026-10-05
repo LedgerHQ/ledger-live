@@ -12,6 +12,7 @@ import {
   CosmosDelegateAllFundsWarning,
   CosmosRedelegationInProgress,
   CosmosTooManyRedelegations,
+  CosmosTooManyUnbondings,
   CosmosTooManyValidators,
   NotEnoughDelegationBalance,
   RecommendUndelegation,
@@ -19,7 +20,6 @@ import {
 import { AccountBridge } from "@ledgerhq/types-live";
 import * as bech32 from "bech32";
 import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
 import { resolveSourceValidator, resolveTransactionValidators } from "./buildTransaction";
 import cryptoFactory from "./chain/chain";
 import {
@@ -70,18 +70,22 @@ export class CosmosTransactionStatusManager {
         errors.redelegation = redelegationError;
       }
     } else if (transaction.mode === "undelegate") {
-      invariant(
-        account.stakingResources.unbondings.length < COSMOS_MAX_UNBONDINGS,
-        "unbondings should not have more than 6 entries",
-      );
+      const [first] = validators;
+      if (
+        first &&
+        account.stakingResources.unbondings.filter(
+          unbonding => unbonding.validatorAddress === first.address,
+        ).length >= COSMOS_MAX_UNBONDINGS
+      ) {
+        errors.unbonding = new CosmosTooManyUnbondings();
+      }
       if (validators.length === 0)
         errors.recipient = new InvalidAddress(undefined, {
           currencyName: account.currency.name,
         });
-      const [first] = validators;
       const unbondingError = first && this.isDelegable(account, first.address, first.amount);
 
-      if (unbondingError) {
+      if (unbondingError && !errors.unbonding) {
         errors.unbonding = unbondingError;
       }
     }
