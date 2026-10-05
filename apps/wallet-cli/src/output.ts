@@ -33,6 +33,7 @@ import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from
 import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
+import type { SendIntentSummary } from "./agent-intent/send-intent";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
@@ -243,6 +244,12 @@ export interface CommandOutput {
   /** `agent-intent sync` report (human: grouped lines; json: envelope with the four
    * imported/unchanged/skipped/invalid arrays). */
   agentIntentSync(report: LedgerSyncImportReport): void;
+  /** Output a submitted `agent-intent send` proposal (human: review link first; json: envelope). */
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void;
+  /** Output a validated `agent-intent send --dry-run` proposal that was not submitted. */
+  agentIntentSendDryRun(summary: SendIntentSummary): void;
 }
 
 export type AgentIntentEnrollmentPending = {
@@ -863,6 +870,45 @@ class HumanCommandOutput implements CommandOutput {
       for (const e of invalid) writeStdout(`  ${e.id}: ${e.reason}`);
     }
   }
+
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
+    writeStdout(
+      `${colors.green("✔")} Intent proposed for human review — no transaction was signed or broadcast.`,
+    );
+    if (result.deeplink) writeStdout(result.deeplink);
+    writeStdout("");
+    writeStdout(
+      [
+        ...(result.intentId ? [`Intent:  ${result.intentId}`] : []),
+        ...sendIntentSummaryLines(result),
+      ].join("\n"),
+    );
+    writeStdout(
+      colors.dim("Open the link to review it; it only executes once approved on a Ledger device."),
+    );
+  }
+
+  agentIntentSendDryRun(summary: SendIntentSummary): void {
+    writeStdout(`Dry run — intent validated, nothing was submitted.`);
+    writeStdout(sendIntentSummaryLines(summary).join("\n"));
+  }
+}
+
+function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
+  const asset =
+    summary.asset.type === "native"
+      ? summary.asset.ticker
+      : `${summary.asset.ticker} (${summary.asset.contract})`;
+  return [
+    `Profile: ${summary.profileId} (${summary.environment})`,
+    `From:    ${summary.sender}`,
+    `To:      ${summary.recipient}`,
+    `Amount:  ${summary.displayAmount} ${asset}`,
+    `Fee:     ${summary.feeStrategy}`,
+    ...(summary.description ? [`Note:    ${summary.description}`] : []),
+  ];
 }
 
 // ---------------------------------------------------------------------------
@@ -1260,6 +1306,40 @@ class JsonCommandOutput implements CommandOutput {
   agentIntentSync(report: LedgerSyncImportReport): void {
     this._writeNdjson(this._envelope({ ...report }));
   }
+
+  agentIntentSend(
+    result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
+    this._writeNdjson(
+      this._envelope({
+        intentId: result.intentId,
+        deeplink: result.deeplink,
+        ...sendIntentSummaryJson(result),
+        submitted: true,
+      }),
+    );
+  }
+
+  agentIntentSendDryRun(summary: SendIntentSummary): void {
+    this._writeNdjson(
+      this._envelope({ ...sendIntentSummaryJson(summary), submitted: false, dryRun: true }),
+    );
+  }
+}
+
+/** `amount` stays a base-unit decimal string: a JSON number would lose precision past 2^53. */
+function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unknown> {
+  return {
+    profileId: summary.profileId,
+    environment: summary.environment,
+    sender: summary.sender,
+    recipient: summary.recipient,
+    asset: summary.asset,
+    amount: summary.amount,
+    displayAmount: summary.displayAmount,
+    feeStrategy: summary.feeStrategy,
+    ...(summary.description ? { description: summary.description } : {}),
+  };
 }
 
 // ---------------------------------------------------------------------------
