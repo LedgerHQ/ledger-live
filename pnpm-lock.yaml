@@ -11478,9 +11478,6 @@ importers:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
-      '@ledgerhq/logs':
-        specifier: 'catalog:'
-        version: 6.19.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live

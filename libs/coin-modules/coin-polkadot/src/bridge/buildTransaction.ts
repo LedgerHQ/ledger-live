@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import coinConfig from "../config";
+import type { PolkadotContext } from "../config";
 import { craftTransaction, type CreateExtrinsicArg } from "../logic";
 import type { PolkadotAccount, Transaction } from "../types";
 import { isFirstBond, getNonce } from "./utils";
@@ -24,8 +24,12 @@ export const extractExtrinsicArg = (
  * @param {Account} account
  * @param {Transaction} transaction
  */
-export const buildTransaction = async (account: PolkadotAccount, transaction: Transaction) => {
-  const config = coinConfig.getCoinConfig(account.currency.id);
+export const buildTransaction = async (
+  context: PolkadotContext,
+  account: PolkadotAccount,
+  transaction: Transaction,
+) => {
+  const config = await context.config(account.currency.id);
   return craftTransaction(
     config,
     account.freshAddress,

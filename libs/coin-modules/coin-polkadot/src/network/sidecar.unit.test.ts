@@ -1,9 +1,18 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
-import coinConfig from "../config";
+import type { PolkadotCoinConfig } from "../config";
+import { polkadotMainnetConfigValue, polkadotStakingConfigValue } from "../test/config.fixture";
 import * as node from "./node";
-import { getAccount, getBalances, getRegistry, getMetadata } from "./sidecar";
+import {
+  DEFAULT_STAKING_PROGRESS,
+  getAccount,
+  getBalances,
+  getMetadata,
+  getRegistry,
+  getStakingProgress,
+  isElectionClosed,
+} from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
 import { SidecarAccountBalanceInfo, SidecarStakingInfo } from "./types";
 
@@ -18,31 +27,17 @@ beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 afterEach(() => mockServer.resetHandlers());
 afterAll(() => mockServer.close());
 const currency = getCryptoCurrencyById("assethub_polkadot");
+const logger = jest.fn();
+const config: PolkadotCoinConfig = {
+  ...polkadotStakingConfigValue,
+  node: { url: "https://httpbin.org/" },
+  sidecar: { url: SIDECAR_BASE_URL_TEST },
+  indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub" },
+  hasBeenMigrated: true,
+};
 
 describe("getAccount", () => {
   let balanceResponseStub: Partial<SidecarAccountBalanceInfo> = {};
-
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: {
-        url: "https://httpbin.org/",
-      },
-      sidecar: {
-        url: SIDECAR_BASE_URL_TEST,
-      },
-      indexer: {
-        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
-      },
-      hasBeenMigrated: true,
-    }));
-
-    mockServer.listen({ onUnhandledRequest: "error" });
-  });
 
   beforeEach(() => {
     mockServer.use(
@@ -73,7 +68,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount(coinConfig.getCoinConfig(currency.id), "addr", currency);
+    const account = await getAccount(logger, config, "addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -125,7 +120,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount(coinConfig.getCoinConfig(currency.id), "addr", currency);
+    const account = await getAccount(logger, config, "addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -219,7 +214,7 @@ describe("getAccount", () => {
       .plus(lockedBalance.minus(unlockingBalance))
       .plus(unlockingBalance.minus(unlockedBalance));
 
-    const account = await getAccount(coinConfig.getCoinConfig(currency.id), "addr", currency);
+    const account = await getAccount(logger, config, "addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -232,30 +227,31 @@ describe("getAccount", () => {
       unlockingBalance: unlockingBalance,
     });
   });
+
+  it("logs through the injected logger when fetching nominations fails", async () => {
+    balanceResponseStub = {
+      at: {
+        height: "0",
+        hash: "",
+      },
+      nonce: "1",
+      transferable: "10000000000",
+      reserved: "220000000000",
+      free: "30000000000",
+    };
+    const error = new Error("node unreachable");
+    jest.mocked(node.default.fetchNominations).mockRejectedValueOnce(error);
+    const nominationsLogger = jest.fn();
+
+    await getAccount(nominationsLogger, config, "addr", currency);
+
+    expect(nominationsLogger).toHaveBeenCalledWith("polkadot", "failed to fetch nominations addr", {
+      error,
+    });
+  });
 });
 
 describe("getBalances", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: {
-        url: "https://httpbin.org/",
-      },
-      sidecar: {
-        url: SIDECAR_BASE_URL_TEST,
-      },
-      indexer: {
-        url: "",
-      },
-    }));
-
-    mockServer.listen({ onUnhandledRequest: "error" });
-  });
-
   it("should have no spendable balance nor locked balance when API does not return them", async () => {
     const balanceResponseStub = {
       at: {
@@ -272,7 +268,7 @@ describe("getBalances", () => {
       }),
     );
 
-    const account = await getBalances(coinConfig.getCoinConfig(currency.id), "addr");
+    const account = await getBalances(config, "addr");
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: new BigNumber(balanceResponseStub.free!),
@@ -284,64 +280,21 @@ describe("getBalances", () => {
 });
 
 describe("getRegistry", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: {
-        url: "https://httpbin.org/",
-      },
-      indexer: {
-        url: "https://polkadot.coin.ledger.com",
-      },
-      sidecar: {
-        url: SIDECAR_BASE_URL_TEST,
-      },
-    }));
-
-    mockServer.listen({ onUnhandledRequest: "error" });
-  });
-
   it("works", async () => {
-    const { registry, extrinsics } = await getRegistry(
-      coinConfig.getCoinConfig(currency.id),
-      currency,
-    );
+    const { registry, extrinsics } = await getRegistry(config, currency);
     expect(registry).not.toBeNull();
     expect(extrinsics).not.toBeNull();
   });
 });
 
 describe("getMetadata", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      name: "Polkadot",
-      unit: { name: "DOT", code: "DOT", magnitude: 10 },
-      node: {
-        url: "https://httpbin.org/",
-      },
-      sidecar: {
-        url: SIDECAR_BASE_URL_TEST,
-      },
-      indexer: {
-        url: "https://polkadot.coin.ledger.com",
-      },
-    }));
-  });
-
   it("should POST callData, includedInExtrinsic, and includedInSignedData to /transaction/metadata-blob", async () => {
     const callData = "0x0a0300abcdef";
     const includedInExtrinsic = "0xf50020000001";
     const includedInSignedData = "0x" + "aa".repeat(105);
 
     const result = await getMetadata(
-      coinConfig.getCoinConfig(currency.id),
+      config,
       callData,
       includedInExtrinsic,
       includedInSignedData,
@@ -373,18 +326,95 @@ describe("getMetadata", () => {
     const includedInExtrinsic = "0xf50004000001";
     const includedInSignedData = "0x" + "bb".repeat(105);
 
-    await getMetadata(
-      coinConfig.getCoinConfig(currency.id),
-      callData,
-      includedInExtrinsic,
-      includedInSignedData,
-      currency,
-    );
+    await getMetadata(config, callData, includedInExtrinsic, includedInSignedData, currency);
 
     expect(capturedBody).toEqual({
       callData,
       includedInExtrinsic,
       includedInSignedData,
     });
+  });
+});
+
+const progressResponse = (height: string, toggleEstimate: string) =>
+  HttpResponse.json({
+    at: { height, hash: "" },
+    activeEra: "10",
+    forceEra: "NotForcing",
+    nextSessionEstimate: null,
+    unappliedSlashes: null,
+    electionStatus: { status: { Close: null }, toggleEstimate },
+  });
+
+describe("getStakingProgress", () => {
+  it("returns the default progress when the staking feature is not active", async () => {
+    const progress = await getStakingProgress(logger, polkadotMainnetConfigValue, currency);
+
+    expect(progress).toEqual(DEFAULT_STAKING_PROGRESS);
+  });
+
+  it("considers the election open within the default threshold of 25 blocks", async () => {
+    mockServer.use(
+      http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/progress`, () =>
+        progressResponse("980", "1000"),
+      ),
+    );
+
+    const progress = await getStakingProgress(logger, config, currency);
+
+    expect(progress.electionClosed).toEqual(false);
+  });
+
+  it("considers the election closed outside the default threshold of 25 blocks", async () => {
+    mockServer.use(
+      http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/progress`, () =>
+        progressResponse("970", "1000"),
+      ),
+    );
+
+    const progress = await getStakingProgress(logger, config, currency);
+
+    expect(progress.electionClosed).toEqual(true);
+  });
+
+  it("uses the configured election status threshold", async () => {
+    mockServer.use(
+      http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/progress`, () =>
+        progressResponse("980", "1000"),
+      ),
+    );
+
+    const progress = await getStakingProgress(
+      logger,
+      { ...config, staking: { electionStatusThreshold: 5 } },
+      currency,
+    );
+
+    expect(progress.electionClosed).toEqual(true);
+  });
+
+  it("logs through the injected logger when the chain constants cannot be fetched", async () => {
+    mockServer.use(
+      http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/consts`, () =>
+        HttpResponse.json({}, { status: 404 }),
+      ),
+    );
+    const constsLogger = jest.fn();
+
+    await getStakingProgress(constsLogger, config, getCryptoCurrencyById("assethub_westend"));
+
+    expect(constsLogger).toHaveBeenCalledWith(
+      "polkadot/sidecar",
+      "failed to fetch staking consts, using fallbacks",
+      { error: expect.anything() },
+    );
+  });
+});
+
+describe("isElectionClosed", () => {
+  it("returns true without calling the sidecar when the staking feature is not active", async () => {
+    const isClosed = await isElectionClosed(polkadotMainnetConfigValue, currency);
+
+    expect(isClosed).toEqual(true);
   });
 });

@@ -1,3 +1,4 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { type PolkadotCoinConfig } from "../config";
@@ -5,6 +6,7 @@ import network from "../network";
 import { PolkadotOperation } from "../types";
 
 export async function listOperations(
+  logger: Logger,
   config: PolkadotCoinConfig,
   addr: string,
   { limit, startAt }: { limit: number; startAt?: number | undefined },
@@ -13,6 +15,7 @@ export async function listOperations(
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
   const operations = await network.getOperations(
+    logger,
     config,
     fakeAccountId,
     addr,

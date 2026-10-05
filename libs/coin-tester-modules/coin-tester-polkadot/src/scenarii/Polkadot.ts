@@ -5,7 +5,7 @@ import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
-import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
+import type { PolkadotCoinConfig, PolkadotContext } from "@ledgerhq/coin-polkadot/config";
 import { ExplorerExtrinsic } from "@ledgerhq/coin-polkadot";
 import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
 import { makeAccount } from "../fixtures";
@@ -103,6 +103,11 @@ const coinConfig: PolkadotCoinConfig = {
   },
 };
 
+const context: PolkadotContext = {
+  config: async () => coinConfig,
+  logger: () => {},
+};
+
 export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
   name: "Polkadot Ledger Live transactions",
 
@@ -119,7 +124,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     const signer = await buildSigner();
     const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(signer);
 
-    const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
+    const { accountBridge, currencyBridge } = createBridges(signerContext, context);
 
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {

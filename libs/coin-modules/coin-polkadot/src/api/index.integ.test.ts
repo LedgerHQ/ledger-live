@@ -1,6 +1,6 @@
 import type { CoinModuleApi, Operation } from "@ledgerhq/coin-module-framework/api/index";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
-import coinConfig, { type PolkadotCoinConfig } from "../config";
+import type { PolkadotCoinConfig } from "../config";
 import { createMockPolkadotContext } from "../test/config.fixture";
 import { createApi } from ".";
 import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
@@ -27,8 +27,6 @@ describe("Polkadot Api", () => {
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
-    // The api/logic layers still resolve config through the getCoinConfig() singleton, so seed it.
-    coinConfig.setCoinConfig(() => mainnetConfig);
     module = withDefaults(createApi());
   });
 

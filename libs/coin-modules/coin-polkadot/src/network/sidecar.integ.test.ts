@@ -1,6 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
 import {
   getAccount,
   getStakingInfo,
@@ -16,6 +15,12 @@ import {
   getLastBlock,
   fetchChainSpec,
 } from "./sidecar";
+
+const logger = jest.fn();
+const stakingActiveStatus = {
+  type: "active" as const,
+  features: [{ id: "staking_txs" as const, status: "active" as const }],
+};
 
 const CURRENCY_CONFIGS = {
   polkadot: {
@@ -34,7 +39,7 @@ const CURRENCY_CONFIGS = {
   assethub_polkadot: {
     currency: getCryptoCurrencyById("assethub_polkadot"),
     config: {
-      status: { type: "active" as const },
+      status: stakingActiveStatus,
       name: "Polkadot",
       unit: { name: "DOT", code: "DOT", magnitude: 10 },
       sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1" },
@@ -61,7 +66,7 @@ const CURRENCY_CONFIGS = {
   assethub_westend: {
     currency: getCryptoCurrencyById("assethub_westend"),
     config: {
-      status: { type: "active" as const },
+      status: stakingActiveStatus,
       name: "Assethub Westend",
       unit: { name: "WND", code: "WND", magnitude: 12 },
       sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1" },
@@ -76,10 +81,6 @@ describe("sidecar integration test", () => {
   describe.each(Object.entries(CURRENCY_CONFIGS))(
     "%s tests",
     (currencyId, { currency, config, testAddress }) => {
-      beforeAll(() => {
-        coinConfig.setCoinConfig(() => config);
-      });
-
       describe("getValidators", () => {
         // Westend relay-chain staking has migrated to Asset Hub and is no longer supported:
         // the relay node no longer exposes the staking pallet, so `getValidators` returns an
@@ -87,7 +88,7 @@ describe("sidecar integration test", () => {
         // assertion.
         const test = currencyId === "westend" ? it.skip : it;
         test(`returns expected result with ${currencyId}`, async () => {
-          const result = await getValidators(undefined, currency);
+          const result = await getValidators(config, undefined);
 
           expect(result).toEqual(
             expect.arrayContaining([
@@ -108,7 +109,7 @@ describe("sidecar integration test", () => {
 
       describe("getAccount", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getAccount(config, testAddress, currency);
+          const result = await getAccount(logger, config, testAddress, currency);
 
           expect(result).toMatchObject({
             balance: expect.any(BigNumber),
@@ -126,7 +127,7 @@ describe("sidecar integration test", () => {
 
       describe("getStakingInfo", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getStakingInfo(config, testAddress, currency);
+          const result = await getStakingInfo(logger, config, testAddress, currency);
 
           expect(result).toMatchObject({
             unlockedBalance: expect.any(BigNumber),
@@ -138,7 +139,7 @@ describe("sidecar integration test", () => {
 
       describe("getStakingProgress", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getStakingProgress(config, currency);
+          const result = await getStakingProgress(logger, config, currency);
 
           expect(result).toMatchObject({
             activeEra: expect.any(Number),
