@@ -235,7 +235,7 @@ describe("agent-intent recover", () => {
 
       await expect(runRecover()).rejects.toThrow(
         'Agent Intent recovery supports only openclaw, hermes agents; profile "test-agent" is a ' +
-          "codex agent.",
+          "codex agent. Enroll a fresh profile under a new --profile id instead.",
       );
       expect(hostOptions).toBeUndefined();
     });

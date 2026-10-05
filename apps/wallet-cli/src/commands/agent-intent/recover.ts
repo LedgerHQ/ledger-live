@@ -50,7 +50,8 @@ function requireRecoverableProfile(session: Session, profileId: string): Enrolle
   if (!isAgentRecoverySource(source)) {
     throw new Error(
       `Agent Intent recovery supports only ${SUPPORTED_AGENT_RECOVERY_SOURCES.join(", ")} agents; ` +
-        `profile "${profileId}" is a ${source} agent.`,
+        `profile "${profileId}" is a ${source} agent. Enroll a fresh profile under a new ` +
+        "--profile id instead.",
     );
   }
   if (profile.keycloakBaseUrl !== undefined) {
@@ -80,8 +81,8 @@ function clearPendingRecovery(profile: EnrolledProfile, requestSignature: string
 export default defineCommand({
   name: "recover",
   description:
-    "Re-enroll an enrolled Agent Intent profile's existing key into its previous Trustchain, and " +
-    "wait for the approval to be relayed back (no device required).",
+    "Re-enroll an enrolled openclaw or hermes Agent Intent profile's existing key into its " +
+    "previous Trustchain, and wait for the approval to be relayed back (no device required).",
   options: {
     profile: option(z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE), {
       description: "Local id of the enrolled profile to recover.",
