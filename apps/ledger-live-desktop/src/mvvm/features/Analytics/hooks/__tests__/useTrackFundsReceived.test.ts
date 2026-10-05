@@ -12,10 +12,6 @@ jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),
   track: jest.fn(),
 }));
-jest.mock("~/renderer/analytics/segment", () => ({
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 const eth = getCryptoCurrencyById("ethereum");
 const ethAccountId = "js:2:ethereum:0xabc:";
 

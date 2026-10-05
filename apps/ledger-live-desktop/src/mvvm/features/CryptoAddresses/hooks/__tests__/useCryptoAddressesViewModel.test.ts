@@ -14,10 +14,6 @@ import { CRYPTO_TRACKING_PAGE_NAME } from "../../constants";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 const mockTrack = jest.fn();
-jest.mock("~/renderer/analytics/segment", () => ({
-  setAnalyticsFeatureFlagMethod: jest.fn(),
-}));
-
 const mockNavigate = jest.fn();
 const mockOpenAssetFlow = jest.fn();
 const mockTrackAddAccountEvent = jest.fn();

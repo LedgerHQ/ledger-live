@@ -10,7 +10,6 @@ import { useSettleRecipientInputFocus } from "../useSettleRecipientInputFocus";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useSendFlowMessageTracking } from "../../../../hooks/useSendFlowMessageTracking";
 
-jest.mock("~/analytics");
 jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../../../../hooks/useSendFlowMessageTracking");
 jest.mock("../../../../components/Memo/hooks/useMemoViewModel");

@@ -1,7 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { useAccountsSyncStatus } from "../useAccountsSyncStatus";
 import type { AccountWithUpToDateCheck } from "../useAccountsSyncStatus";
-import * as segment from "@shared/analytics";
+import * as analytics from "@shared/analytics";
 
 const createAccountWithUpToDateCheck = (
   id: string,
@@ -31,7 +31,7 @@ describe("useAccountsSyncStatus", () => {
   });
 
   it("does not call track when no accounts have problems", () => {
-    const trackSpy = jest.spyOn(segment, "track");
+    const trackSpy = jest.spyOn(analytics, "track");
     const accounts = [
       createAccountWithUpToDateCheck("a1", "BTC", true),
       createAccountWithUpToDateCheck("a2", "ETH", true),
