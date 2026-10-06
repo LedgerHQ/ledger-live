@@ -19,6 +19,10 @@ wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" --source <
   --environment production --app-url https://agent-intent.ledger-test.com/
 ```
 
+`--source` is required: the runtime or harness the agent runs in, not its model provider. Use one
+of `openclaw`, `hermes`, `claude-code`, `codex`, `cursor`, `muse`, `grok-bot`, or `other` if none
+matches (`--help` lists the same values).
+
 Open the printed link and approve it with a Ledger device; `enroll` waits for the approval to be
 relayed back and saves it. A `--environment staging` profile only completes against a frontend
 wired to the staging service, which also needs the Ledger infra VPN.
