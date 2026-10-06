@@ -13,7 +13,9 @@ We validate that a PR follows the repository conventions:
 - [pr-title.ts](./validation/pr-title.ts) – the PR title is a conventional commit
 - [commits.ts](./validation/commits.ts) – every commit in the PR is a conventional commit
 
-Both read the repo-root [commitlint.config.js](../../commitlint.config.js) via
+A third validation, [node-modules-size.ts](./validation/node-modules-size.ts), is informational: when a PR changes `pnpm-lock.yaml`, it estimates the `node_modules` size delta from the lockfile diff ([engine](./node-modules-size.ts), no install) and, above 50 MB, comments it and adds the `deps-size` label. It never fails the check.
+
+Both title and commit checks read the repo-root [commitlint.config.js](../../commitlint.config.js) via
 [commitlint.ts](./commitlint.ts), but **they are deliberately not equally strict**:
 
 - **commits** get the config in full – its own `rules` plus the inherited
@@ -38,8 +40,8 @@ In future we may also use it to give PR authors extra information on failing che
 2. **workflow** – [danger.yml](../../.github/workflows/danger.yml) defines how it is run in GitHub
 3. **config** –  [dangerfile.ts](./dangerfile.ts) is the entry point targeted by the workflow
 
-The workflow needs no git history – commits come from the PR API via `danger.git.commits` – so the
-checkout stays shallow.
+The workflow needs almost no git history – commits come from the PR API via `danger.git.commits` – so the
+checkout is limited to 2 commits (the PR merge commit and its base, for the lockfile diff).
 
 ## Run Danger locally
 
