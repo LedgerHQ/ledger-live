@@ -1,6 +1,11 @@
 import { createOsVersionResponse } from "../tests/osVersionResponse";
-import { OnboardingStep } from "../types";
-import { readOnboardingState, readOnboardingStep, readWordsInformation } from "./onboardingState";
+import { OnboardingStep, RecoveryKeyStatus } from "../types";
+import {
+  isSameOnboardingState,
+  readOnboardingState,
+  readOnboardingStep,
+  readWordsInformation,
+} from "./onboardingState";
 
 describe("readOnboardingStep", () => {
   it.each(Object.values(OnboardingStep))("reads the %s step", step => {
@@ -61,10 +66,51 @@ describe("readOnboardingState", () => {
       currentOnboardingStep: OnboardingStep.RestoreSeed,
       seedWordIndex: 3,
       seedPhraseWordCount: 18,
+      recoveryKeyStatus: null,
     });
   });
 
   it("has no state on the catalogue version, which decodes neither field", () => {
     expect(readOnboardingState(createOsVersionResponse({ isOnboarded: true }))).toBeNull();
+  });
+
+  it("keeps the Recovery Key flag beside a step that still says the device is ready", () => {
+    const response = createOsVersionResponse({
+      isOnboarded: true,
+      onboardingState: "device-is-ready",
+      numberOfWords: 24,
+      currentWordIndex: 0,
+      recoveryKeyStatus: RecoveryKeyStatus.Choice,
+    });
+
+    expect(readOnboardingState(response)?.recoveryKeyStatus).toBe(RecoveryKeyStatus.Choice);
+  });
+});
+
+describe("isSameOnboardingState", () => {
+  const ready = readOnboardingState(
+    createOsVersionResponse({
+      isOnboarded: true,
+      onboardingState: "device-is-ready",
+      numberOfWords: 24,
+      currentWordIndex: 0,
+      recoveryKeyStatus: RecoveryKeyStatus.Choice,
+    }),
+  );
+
+  it("notices the Recovery Key flag moving while the onboarding step stays put", () => {
+    const naming = readOnboardingState(
+      createOsVersionResponse({
+        isOnboarded: true,
+        onboardingState: "device-is-ready",
+        numberOfWords: 24,
+        currentWordIndex: 0,
+        recoveryKeyStatus: RecoveryKeyStatus.Naming,
+      }),
+    );
+
+    expect(ready).not.toBeNull();
+    expect(naming).not.toBeNull();
+    expect(isSameOnboardingState(ready ?? undefined, naming!)).toBe(false);
   });
 });

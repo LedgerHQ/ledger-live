@@ -48,7 +48,7 @@ export interface SendableOnboardingEvent {
  * What the panel prints, in display order. Closed, so a host cannot put seed progress on a screen
  * that runs during seed entry — see the README for the rest of the boundary.
  *
- * A host flattens the machine onto these names. The device-state three come from `lastDeviceState`;
+ * A host flattens the machine onto these names. The device-state fields come from `lastDeviceState`;
  * `availableFirmwareVersion` from `availableFirmwareUpdate.final.version`; `isGenuine` and
  * `verdictMatchesSession` from the raw `genuineVerdict`; `genuineFailureKind` from
  * `lastGenuineFailure.kind`. The rest read straight off the context.
@@ -61,6 +61,7 @@ export const watchedContextFields = [
   "isInRecoveryMode",
   "managerAllowed",
   "currentOnboardingStep",
+  "recoveryKeyStatus",
   "currentSetupStep",
   "firmwareVersion",
   "availableFirmwareVersion",

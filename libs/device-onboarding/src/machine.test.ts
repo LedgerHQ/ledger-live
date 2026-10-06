@@ -24,7 +24,12 @@ import {
   type ScriptedCommand,
 } from "./tests/fakeDmk";
 import { createOsVersionResponse, type OsVersionResponseOptions } from "./tests/osVersionResponse";
-import { OnboardingStep, type AvailableFirmwareUpdate, type DeviceOnboardingState } from "./types";
+import {
+  OnboardingStep,
+  RecoveryKeyStatus,
+  type AvailableFirmwareUpdate,
+  type DeviceOnboardingState,
+} from "./types";
 
 const unseeded: OsVersionResponseOptions = {
   onboardingState: "welcome-screen-1",
@@ -908,6 +913,87 @@ describe("device setup", () => {
     actor.stop();
   });
 
+  it("stays on the Recovery Key backup while the device still reports itself ready", async () => {
+    const { actor } = await enterSetup();
+
+    await follow(actor, [
+      OnboardingStep.ChooseName,
+      OnboardingStep.Pin,
+      OnboardingStep.SetupChoice,
+      OnboardingStep.NewDevice,
+      OnboardingStep.NewDeviceConfirming,
+    ]);
+
+    expect(stateOf(actor)).toBe("newSeed");
+
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Choice,
+      }),
+    );
+
+    expect(actor.getSnapshot().status).not.toBe("done");
+    expect(stateOf(actor)).toBe("backupRecoveryKey");
+    expect(actor.getSnapshot().context.lastDeviceState?.recoveryKeyStatus).toBe(
+      RecoveryKeyStatus.Choice,
+    );
+
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Running,
+      }),
+    );
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Naming,
+      }),
+    );
+
+    expect(stateOf(actor)).toBe("backupRecoveryKey");
+
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Ready,
+      }),
+    );
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
+  it("keeps a rebooted Recovery Key backup instead of starting onboarding over", async () => {
+    const { actor } = await enterSetup();
+
+    actor.send(stepChanged(OnboardingStep.NewDevice));
+    actor.send(
+      stepChanged(OnboardingStep.WelcomeScreen1, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Running,
+      }),
+    );
+
+    expect(actor.getSnapshot().status).not.toBe("done");
+    expect(stateOf(actor)).toBe("backupRecoveryKey");
+    actor.stop();
+  });
+
+  it("finishes when the Recovery Key backup is refused", async () => {
+    const { actor } = await enterSetup();
+
+    actor.send(stepChanged(OnboardingStep.NewDevice));
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Rejected,
+      }),
+    );
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
   it("follows a new seed on a touchscreen, then exits without offering Ledger Sync", async () => {
     const { actor } = await enterSetup({ offerSync: true });
 
@@ -1173,6 +1259,7 @@ function stepChanged(
       currentOnboardingStep,
       seedWordIndex: 0,
       seedPhraseWordCount: 24 as const,
+      recoveryKeyStatus: null,
       ...extras,
     },
   };

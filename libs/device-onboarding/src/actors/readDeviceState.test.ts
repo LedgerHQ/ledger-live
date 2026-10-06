@@ -1,10 +1,10 @@
 import {
   CommandResultFactory,
-  GetOsVersionCommand,
   InvalidStatusWordError,
   type DeviceManagementKit,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
+import { ReadOnboardingVersionCommand } from "../device/onboardingVersionCommand";
 import { createRetryPolicy } from "../retry";
 import { runActor, settle } from "../tests/actorHarness";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
@@ -31,6 +31,7 @@ const onboardedDeviceState: DeviceOnboardingState = {
   currentOnboardingStep: OnboardingStep.Ready,
   seedWordIndex: 0,
   seedPhraseWordCount: 24,
+  recoveryKeyStatus: null,
 };
 
 const readEvent: ReadDeviceStateEvent = {
@@ -83,6 +84,7 @@ describe("mapDeviceState", () => {
         currentOnboardingStep: OnboardingStep.RestoreSeed,
         seedWordIndex: 5,
         seedPhraseWordCount: 18,
+        recoveryKeyStatus: null,
       },
       firmwareVersion: defaultSeVersion,
     });
@@ -135,7 +137,7 @@ describe("readDeviceState", () => {
 
     expect(sendCommand).toHaveBeenCalledWith({
       sessionId: "session",
-      command: expect.any(GetOsVersionCommand),
+      command: expect.any(ReadOnboardingVersionCommand),
     });
     expect(received).toEqual([readEvent]);
     stop();

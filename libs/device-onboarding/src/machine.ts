@@ -15,6 +15,7 @@ import {
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
 import { isTouchscreen, requiresLegacyFlow } from "./rules";
 import {
+  isRecoveryKeyBackupInProgress,
   isWelcomeStep,
   OnboardingStep,
   type DeviceOnboardingContext,
@@ -80,7 +81,15 @@ export const deviceOnboardingMachine = setup({
       event.type === "STEP_CHANGED" &&
       isWelcomeStep(event.state.currentOnboardingStep) &&
       context.currentSetupStep !== null,
-    deviceIsReady: stepIs(OnboardingStep.Ready),
+    stepBackupRecoveryKey: ({ event }) =>
+      event.type === "STEP_CHANGED" &&
+      (event.state.currentOnboardingStep === OnboardingStep.Ready ||
+        event.state.currentOnboardingStep === OnboardingStep.WelcomeScreen1) &&
+      isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus),
+    deviceIsReady: ({ event }) =>
+      event.type === "STEP_CHANGED" &&
+      event.state.currentOnboardingStep === OnboardingStep.Ready &&
+      !isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus),
     stepNaming: stepIs(OnboardingStep.ChooseName),
     stepPin: stepIs(OnboardingStep.Pin),
     stepSetupChoice: stepIs(OnboardingStep.SetupChoice),
@@ -280,6 +289,11 @@ export const deviceOnboardingMachine = setup({
       on: {
         STEP_CHANGED: [
           {
+            guard: "stepBackupRecoveryKey",
+            target: ".backupRecoveryKey",
+            actions: "rememberSetupStep",
+          },
+          {
             guard: "deviceRestarted",
             target: "#deviceOnboarding.routing",
             actions: ["rememberSetupStep", "forgetSetupProgress"],
@@ -310,6 +324,7 @@ export const deviceOnboardingMachine = setup({
         pin: {},
         setupChoice: {},
         newSeed: {},
+        backupRecoveryKey: {},
         restoreChoice: {},
         restoreWords: {},
         restoreRecover: {},
