@@ -58,7 +58,6 @@ export * from "./currencyMetis";
 export * from "./currencyMina";
 export * from "./currencyMonad";
 export * from "./currencyMonadTestnet";
-export * from "./currencyMoonriver";
 export * from "./currencyNeonEvm";
 export * from "./currencyOptimism";
 export * from "./currencyOptimismSepolia";
