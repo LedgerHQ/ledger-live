@@ -807,6 +807,21 @@ describe("ConnectNewDeviceStateMachine", () => {
       expect(onClose).not.toHaveBeenCalled();
     });
 
+    it("should keep the new DiscoveryError when the ignored DiscoveryError is closed late", () => {
+      const { emitDiscoveryError, lastState, machine, onClose } = setupTest();
+
+      machine.start();
+      emitDiscoveryError(makeDiscoveryError({ transportId: bleTransport }));
+      const ignoredDiscoveryErrorState = lastState(ConnectNewDeviceUIStateTypes.DiscoveryError);
+      ignoredDiscoveryErrorState.ignore();
+      const newDiscoveryError = makeDiscoveryError({ transportId: usbTransport });
+      emitDiscoveryError(newDiscoveryError);
+      ignoredDiscoveryErrorState.close();
+
+      expect(lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).error).toBe(newDiscoveryError);
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
     it("should start discovery again with an empty list when a ConnectionError is closed", async () => {
       const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
 
@@ -839,6 +854,23 @@ describe("ConnectNewDeviceStateMachine", () => {
       connectionErrorState.close();
 
       setup.lastState(ConnectNewDeviceUIStateTypes.Connecting);
+      expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
+    });
+
+    it("should keep the new ConnectionError when the retried ConnectionError is closed late", async () => {
+      const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
+
+      await connectToNanoX(setup);
+      const retriedConnectionErrorState = setup.lastState(
+        ConnectNewDeviceUIStateTypes.ConnectionError,
+      );
+      retriedConnectionErrorState.retry();
+      await flushPromises();
+      const statesCountAtNewConnectionError = setup.states.length;
+      retriedConnectionErrorState.close();
+
+      expect(setup.states).toHaveLength(statesCountAtNewConnectionError);
+      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError);
       expect(setup.deviceDiscoveryService.start).toHaveBeenCalledTimes(1);
     });
   });

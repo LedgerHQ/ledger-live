@@ -55,6 +55,8 @@ export type ConnectNewDeviceStateMachineContext<
   showDeviceNotFound: boolean;
   discoveryError: TDiscoveryError | null;
   connectionError: TConnectionError | null;
+  /** Changes on each entry into an error state, so that a late close of a previous error is ignored. */
+  errorId: number;
   skipTransportIds: Array<TransportIdentifier>;
 };
 
@@ -93,6 +95,7 @@ export type ConnectNewDeviceStateMachineEvent<
     }
   | {
       type: ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError;
+      errorId: number;
     }
   | {
       type: ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionRetry;
@@ -102,6 +105,7 @@ export type ConnectNewDeviceStateMachineEvent<
     }
   | {
       type: ConnectNewDeviceStateMachineEventTypes.UserClosesConnectionError;
+      errorId: number;
     };
 
 /**

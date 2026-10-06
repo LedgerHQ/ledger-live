@@ -64,8 +64,9 @@ stateDiagram-v2
   and `ignore`. Retry connects again to the same device. Ignore goes back to
   `Discovering`, with the skipped transports kept, so that the user can select
   another device. Its `close` action does the same as ignore.
-- Only the error states handle `close`. A late `close` from a sheet that closes
-  after a retry or an ignore does nothing.
+- Only the error states handle `close`, and only the `close` of the current
+  error. A late `close` from a sheet that closes after a retry or an ignore
+  does nothing, also when the machine is already in a new error state.
 - `Connected` is the visible success state. After the success delay
   (`DEFAULT_SUCCESS_DELAY`, 1.5 s), the machine moves to `Done`.
 - `Done` emits the `Done` UI state and calls `onConnected` one time with the

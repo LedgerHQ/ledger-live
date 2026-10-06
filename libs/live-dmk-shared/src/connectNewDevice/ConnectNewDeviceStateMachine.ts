@@ -90,6 +90,8 @@ const createConnectNewDeviceStateMachine = <
     guards: {
       retryOutputIsTrue: (_, params: { output: true | BaseDiscoveryError }) =>
         params.output === true,
+      isCurrentError: ({ context }, params: { errorId: number }) =>
+        params.errorId === context.errorId,
     },
     actions: {
       assignDiscoveredDevices: assign({
@@ -126,6 +128,9 @@ const createConnectNewDeviceStateMachine = <
       }),
       clearConnectionError: assign({
         connectionError: () => null,
+      }),
+      assignNextErrorId: assign({
+        errorId: ({ context }) => context.errorId + 1,
       }),
       assignSessionId: assign({
         sessionId: (_, params: { sessionId: string }) => params.sessionId,
@@ -177,13 +182,17 @@ const createConnectNewDeviceStateMachine = <
         });
       },
       emitDiscoveryError: ({ context, self }) => {
+        const { errorId } = context;
         context.observer.next({
           type: ConnectNewDeviceUIStateTypes.DiscoveryError,
           error: context.discoveryError!,
           ignore: () =>
             self.send({ type: ConnectNewDeviceStateMachineEventTypes.UserTapsDiscoveryIgnore }),
           close: () =>
-            self.send({ type: ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError }),
+            self.send({
+              type: ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError,
+              errorId,
+            }),
           ...(context.discoveryError!.resolution !== undefined &&
           context.discoveryError!.resolution.type !== "none"
             ? {
@@ -202,6 +211,7 @@ const createConnectNewDeviceStateMachine = <
         });
       },
       emitConnectionError: ({ context, self }) => {
+        const { errorId } = context;
         context.observer.next({
           type: ConnectNewDeviceUIStateTypes.ConnectionError,
           error: context.connectionError!,
@@ -211,7 +221,10 @@ const createConnectNewDeviceStateMachine = <
           ignore: () =>
             self.send({ type: ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionIgnore }),
           close: () =>
-            self.send({ type: ConnectNewDeviceStateMachineEventTypes.UserClosesConnectionError }),
+            self.send({
+              type: ConnectNewDeviceStateMachineEventTypes.UserClosesConnectionError,
+              errorId,
+            }),
         });
       },
       emitConnected: ({ context }) => {
@@ -252,6 +265,7 @@ const createConnectNewDeviceStateMachine = <
       showDeviceNotFound: false,
       discoveryError: null,
       connectionError: null,
+      errorId: 0,
       skipTransportIds: [],
     }),
     states: {
@@ -297,7 +311,7 @@ const createConnectNewDeviceStateMachine = <
         },
       },
       DiscoveryError: {
-        entry: ["stopDiscovery", "emitDiscoveryError"],
+        entry: ["stopDiscovery", "assignNextErrorId", "emitDiscoveryError"],
         on: {
           [ConnectNewDeviceStateMachineEventTypes.UserTapsDiscoveryIgnore]: {
             target: "Discovering",
@@ -307,6 +321,10 @@ const createConnectNewDeviceStateMachine = <
             target: "RetryDiscovery",
           },
           [ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError]: {
+            guard: {
+              type: "isCurrentError",
+              params: ({ event }) => ({ errorId: event.errorId }),
+            },
             target: "Terminated",
           },
         },
@@ -318,6 +336,10 @@ const createConnectNewDeviceStateMachine = <
             actions: "ignoreDiscoveryError",
           },
           [ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError]: {
+            guard: {
+              type: "isCurrentError",
+              params: ({ event }) => ({ errorId: event.errorId }),
+            },
             target: "Terminated",
           },
         },
@@ -380,7 +402,7 @@ const createConnectNewDeviceStateMachine = <
         },
       },
       ConnectionError: {
-        entry: "emitConnectionError",
+        entry: ["assignNextErrorId", "emitConnectionError"],
         on: {
           [ConnectNewDeviceStateMachineEventTypes.UserTapsConnectionRetry]: {
             target: "Connecting",
@@ -389,6 +411,10 @@ const createConnectNewDeviceStateMachine = <
             target: "Discovering",
           },
           [ConnectNewDeviceStateMachineEventTypes.UserClosesConnectionError]: {
+            guard: {
+              type: "isCurrentError",
+              params: ({ event }) => ({ errorId: event.errorId }),
+            },
             target: "Discovering",
           },
         },
