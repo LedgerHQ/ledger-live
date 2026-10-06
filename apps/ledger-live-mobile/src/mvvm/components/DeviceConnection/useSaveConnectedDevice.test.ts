@@ -1,4 +1,5 @@
 import { act, renderHook } from "@tests/test-renderer";
+import type { State } from "~/reducers/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   DeviceModelId as DMKDeviceModelId,
@@ -45,9 +46,17 @@ describe("useSaveConnectedDevice", () => {
     expect(store.getState().ble.knownDevices).toEqual([]);
   });
 
-  it("should also save a BLE device in the BLE known devices", () => {
+  it("should update a BLE device that is already in the BLE known devices", () => {
     // GIVEN
-    const { result, store } = renderHook(() => useSaveConnectedDevice());
+    const { result, store } = renderHook(() => useSaveConnectedDevice(), {
+      overrideInitialState: (state: State): State => ({
+        ...state,
+        ble: {
+          ...state.ble,
+          knownDevices: [{ id: "device-id", name: "Old name", modelId: DeviceModelId.nanoX }],
+        },
+      }),
+    });
 
     // WHEN
     act(() => result.current(makeConnectedDevice()));
