@@ -154,6 +154,21 @@ describe("useDeepLinkHandler", () => {
   });
 
   describe("open overlays", () => {
+    it("closes the send flow dialog before handling the deeplink", async () => {
+      const { result, store } = renderHook(() => useDeepLinkHandler(), {
+        initialState: {
+          sendFlow: { isOpen: true, data: { params: {} } },
+        },
+      });
+
+      result.current.handler("ledgerwallet://swap", false);
+
+      await waitFor(() => {
+        expect(store.getState().sendFlow.isOpen).toBe(false);
+      });
+      expect(store.getState().sendFlow.data).toBeNull();
+    });
+
     it("closes the modular dialog, modals and drawer before handling the deeplink", async () => {
       const { result, store } = renderHook(() => useDeepLinkHandler(), {
         initialState: {

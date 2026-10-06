@@ -8,6 +8,7 @@ import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { setTrackingSource } from "@shared/analytics";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { closeDialog as closeModularDialog } from "~/renderer/reducers/modularDialog";
+import { closeSendFlowDialog } from "~/renderer/reducers/sendFlow";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -127,6 +128,7 @@ export function useDeepLinkHandler() {
 
       dispatch(closeAllModal());
       dispatch(closeModularDialog());
+      dispatch(closeSendFlowDialog());
       setDrawer();
 
       executeHandler(route, context);
