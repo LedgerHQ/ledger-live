@@ -193,6 +193,7 @@ the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed 
 - **Build testing:** `pnpm desktop build:testing`
 - **Run test:** `DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts`
 - **Debug:** `PWDEBUG=1 DISABLE_TRANSACTION_BROADCAST=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts`
+- **DevTools:** `DEV_TOOLS=1 pnpm e2e:desktop test:playwright specs/folder/file.spec.ts` opens detached DevTools and turns on developer mode and Live App DevTools (the "DevTools" button in the Live App top bar). Set `DEV_TOOLS_MODE` (`right`, `left`, `bottom`, `undocked`) to dock them instead.
 
 ---
 

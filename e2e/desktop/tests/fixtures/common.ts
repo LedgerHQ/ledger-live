@@ -136,6 +136,12 @@ export const test = base.extend<TestFixtures>({
 
     const perTestSettings = cloneDeep(settings);
     const userData = merge({ data: { settings: perTestSettings } }, fileUserData);
+    if (process.env.DEV_TOOLS) {
+      // Applied after the userdata file, which usually pins `developerMode: false`.
+      merge(userData, {
+        data: { settings: { developerMode: true, enablePlatformDevTools: true } },
+      });
+    }
     if (localManifestOverride?.length) {
       userData.data = userData.data || {};
       userData.data.discover = userData.data.discover || {};
@@ -235,6 +241,7 @@ export const test = base.extend<TestFixtures>({
         SPECULOS_API_PORT: speculos.device ? String(speculos.device.port) : undefined,
         SPECULOS_ADDRESS: speculos.device ? getSpeculosAddress() : undefined,
         DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
+        ...(process.env.DEV_TOOLS && { DEV_TOOLS_MODE: process.env.DEV_TOOLS_MODE || "detach" }),
       },
       env,
     );
