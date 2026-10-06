@@ -8,6 +8,7 @@
     "@commitlint/load": "catalog:",
     "@commitlint/types": "catalog:",
     "@types/node": "catalog:",
-    "danger": "13.0.10"
+    "danger": "13.0.10",
+    "monaco-editor": "0.57.0"
   }
 }
