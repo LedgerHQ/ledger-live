@@ -70,7 +70,7 @@ describe("DebugConnectNewDeviceScreen", () => {
     expect(
       screen.getByText(/onConnected Ledger Nano X \(nanoX, BLE\), session session-id$/),
     ).toBeVisible();
-    expect(screen.getByText(/onClose$/)).toBeVisible();
+    expect(screen.getByText(/^\d{2}:\d{2}:\d{2}\.\d{3} onClose$/)).toBeVisible();
   });
 
   it("should restart the flow with the delays from the inputs", async () => {

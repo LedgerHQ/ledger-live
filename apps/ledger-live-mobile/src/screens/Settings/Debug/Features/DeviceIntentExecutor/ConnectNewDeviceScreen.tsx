@@ -26,7 +26,7 @@ export default function DebugConnectNewDeviceScreen() {
   const logCall = useCallback((callback: CallbackName, details?: string) => {
     setLogEntries(entries =>
       [
-        { id: logIdRef.current++, time: new Date().toLocaleTimeString(), callback, details },
+        { id: logIdRef.current++, time: formatTime(new Date()), callback, details },
         ...entries,
       ].slice(0, MAX_LOG_ENTRIES),
     );
@@ -111,6 +111,14 @@ export default function DebugConnectNewDeviceScreen() {
       </View>
     </View>
   );
+}
+
+function pad(value: number, length = 2): string {
+  return String(value).padStart(length, "0");
+}
+
+function formatTime(date: Date): string {
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${pad(date.getMilliseconds(), 3)}`;
 }
 
 function parseDelay(text: string): number | undefined {
