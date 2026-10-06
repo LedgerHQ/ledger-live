@@ -9,7 +9,13 @@ import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import {
   CountervaluesBridge,
   CountervaluesProvider,
+  setCountervaluesPollingIsPolling,
+  setCountervaluesPollingTriggerLoad,
+  setCountervaluesState,
+  setCountervaluesStateError,
+  setCountervaluesStatePending,
   useGetCounterValueIdsPolling,
+  wipeCountervalues,
 } from "@features/platform-market-countervalues";
 import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { flow } from "lodash/fp";
@@ -17,14 +23,6 @@ import React, { useMemo } from "react";
 import { useCountervaluesPollingLifecycle } from "LLM/hooks/useCountervaluesPollingLifecycle";
 import { useDispatch } from "~/context/hooks";
 import { useUserSettings } from "~/actions/general";
-import {
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-  setCountervaluesState,
-  setCountervaluesStateError,
-  setCountervaluesStatePending,
-  wipeCountervalues,
-} from "../actions/countervalues";
 import {
   useCountervaluesStateError,
   useCountervaluesStatePending,

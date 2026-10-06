@@ -9,6 +9,7 @@ import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-co
 import {
   CountervaluesBridge,
   CountervaluesProvider,
+  countervaluesInitialState as COUNTERVALUES_INITIAL_STATE,
 } from "@features/platform-market-countervalues";
 import { createMockRateSource } from "@domain/api-market-countervalues/mock";
 import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
@@ -34,7 +35,6 @@ import { INITIAL_STATE as APP_STATE_INITIAL_STATE } from "~/reducers/appstate";
 import { INITIAL_STATE as BLE_INITIAL_STATE } from "~/reducers/ble";
 import { INITIAL_STATE as BORROW_INITIAL_STATE } from "~/reducers/borrow";
 import { INITIAL_STATE as CURRENCY_REGION_RESTRICTED_DRAWER_INITIAL_STATE } from "~/reducers/currencyRegionRestrictedDrawer";
-import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "~/reducers/countervalues";
 import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/reducers/dynamicContent";
 import { INITIAL_STATE as EARN_INITIAL_STATE } from "~/reducers/earn";
 import { INITIAL_STATE as IN_VIEW_INITIAL_STATE } from "~/reducers/inView";

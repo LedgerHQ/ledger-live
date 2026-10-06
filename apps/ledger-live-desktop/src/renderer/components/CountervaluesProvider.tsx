@@ -14,14 +14,19 @@ import {
 import {
   CountervaluesBridge,
   CountervaluesProvider,
+  setCountervaluesPollingIsPolling,
+  setCountervaluesPollingTriggerLoad,
+  setCountervaluesState,
+  setCountervaluesStateError,
+  setCountervaluesStatePending,
   useCountervaluesPolling,
   useGetCounterValueIdsPolling,
+  wipeCountervalues,
 } from "@features/platform-market-countervalues";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { bindActionCreators } from "redux";
 import { setKey } from "~/renderer/storage";
-import { countervaluesActions } from "../actions/countervalues";
 import { useCalculateCountervaluesUserSettings } from "../actions/general";
 import {
   useCountervaluesPollingIsPolling,
@@ -68,12 +73,12 @@ export function useCountervaluesBridge() {
       rates,
       ...bindActionCreators(
         {
-          setPollingIsPolling: countervaluesActions.COUNTERVALUES_POLLING_SET_IS_POLLING,
-          setPollingTriggerLoad: countervaluesActions.COUNTERVALUES_POLLING_SET_TRIGGER_LOAD,
-          setState: countervaluesActions.COUNTERVALUES_STATE_SET,
-          setStateError: countervaluesActions.COUNTERVALUES_STATE_SET_ERROR,
-          setStatePending: countervaluesActions.COUNTERVALUES_STATE_SET_PENDING,
-          wipe: countervaluesActions.COUNTERVALUES_WIPE,
+          setPollingIsPolling: setCountervaluesPollingIsPolling,
+          setPollingTriggerLoad: setCountervaluesPollingTriggerLoad,
+          setState: setCountervaluesState,
+          setStateError: setCountervaluesStateError,
+          setStatePending: setCountervaluesStatePending,
+          wipe: wipeCountervalues,
         },
         dispatch,
       ),
