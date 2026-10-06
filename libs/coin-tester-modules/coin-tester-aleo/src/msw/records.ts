@@ -16,8 +16,6 @@ export type RecordStore = {
   refresh: () => Promise<void>;
   list: (filter?: { unspent?: boolean }) => AleoPrivateRecord[];
   plaintextByCommitment: (commitment: string) => string | undefined;
-  readonly watermark: number;
-  readonly blocksScanned: number;
 };
 
 /** View-key-only, incremental credits.aleo scanner; spent records stay listed with `spent: true`. */
@@ -29,7 +27,6 @@ export function createRecordStore({
   address: string;
 }): RecordStore {
   let watermark = -1;
-  let blocksScanned = 0;
   const recordsByCommitment = new Map<string, AleoPrivateRecord>();
   const plaintexts = new Map<string, string>();
   const spentTags = new Set<string>();
@@ -50,8 +47,6 @@ export function createRecordStore({
     const wasm = await loadAleoWasm();
 
     for (const block of await getBlocksFrom(watermark + 1)) {
-      blocksScanned++;
-
       block.transactions.forEach((confirmed, transactionIndex) => {
         collectTransitions(confirmed).forEach((transition, transitionIndex) => {
           for (const input of transition.inputs) {
@@ -123,21 +118,11 @@ export function createRecordStore({
     return plaintexts.get(commitment);
   }
 
-  return {
-    refresh,
-    list,
-    plaintextByCommitment,
-    get watermark() {
-      return watermark;
-    },
-    get blocksScanned() {
-      return blocksScanned;
-    },
-  };
+  return { refresh, list, plaintextByCommitment };
 }
 
 /** Works around the wasm printing `_version` one below the chain's value; see the README's "Known wasm defects". */
-export function correctRecordVersion(plaintext: string): string {
+function correctRecordVersion(plaintext: string): string {
   const versionMatch = plaintext.match(/_version:\s*(\d+)u8/);
   if (!versionMatch) {
     throw new Error("aleo coin-tester: record plaintext carries no _version field");

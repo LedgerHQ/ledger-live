@@ -23,12 +23,12 @@ export async function mintPrivateRecord(recipient: string, amount: number): Prom
 
 const RECORD_SIZE_STEP = 10_000;
 
-/** Mints distinct-sized records, largest first; returns the amounts in mint order. */
+/** Mints distinct-sized records, largest first. */
 export async function mintPrivateRecords(params: {
   recipient: string;
   count: number;
   smallest: number;
-}): Promise<number[]> {
+}): Promise<void> {
   const { recipient, count, smallest } = params;
 
   if (count < 1) {
@@ -47,6 +47,4 @@ export async function mintPrivateRecords(params: {
   for (const amount of amounts) {
     await mintPrivateRecord(recipient, amount);
   }
-
-  return amounts;
 }

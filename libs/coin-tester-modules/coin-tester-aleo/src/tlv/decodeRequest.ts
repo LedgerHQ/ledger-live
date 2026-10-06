@@ -44,7 +44,7 @@ const UNSIGNED_INTEGER_WIDTHS: Readonly<Record<string, number>> = {
   u128: 16,
 };
 
-// 32-byte commitment + 64-byte h-generator (x, y) (tlv.rs:568-581).
+// 32-byte commitment + 64-byte h-generator (x, y) (aleo-backend `src/core/tlv.rs:568-581`).
 const RECORD_INPUT_VALUE_LENGTH = 96;
 
 /** Must throw for an unknown commitment rather than return undefined. */

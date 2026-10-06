@@ -5,12 +5,12 @@
 
 This package contains the testing infrastructure for Aleo in Ledger Live,
 running the `@ledgerhq/coin-aleo` bridge end to end against a local devnode and
-a local Aleo SDK backend. `src/scenarii.test.ts` registers four scenarios:
+a local Aleo SDK backend. `src/scenarii.test.ts` registers three scenarios:
 
-- **Public credit transfer** — sends credits from a funded sender to a fresh
-  recipient and checks both sides through the bridge
-- **Public send-max** — sends a sender's full public balance to a fresh
-  recipient. The fee is sponsored, so nothing is left behind
+- **Public credit transfer and send-max** — sends credits from a funded sender
+  to a fresh recipient, then sends the rest of the balance to the same
+  recipient. The fee is sponsored, so nothing is left behind. Both sides are
+  checked through the bridge
 - **Private credit transfer** — converts two public balances into private
   records, then sends credits privately to a fresh recipient out of one record
   and leaves the other unspent
@@ -20,6 +20,7 @@ a local Aleo SDK backend. `src/scenarii.test.ts` registers four scenarios:
 ## Features
 
 - Deterministic scenarios covering `transfer_public`, a public send-max,
+  `transfer_public_to_private`,
   `transfer_private`, and a private-to-public unshield, exercised through the
   real `coin-aleo` bridge with sponsored fees, as in production
 - Docker-based stack: an `aleo-devnode` (a single-account Aleo devnode,
@@ -75,26 +76,30 @@ values and `op.fee` match production.
 
 One gap remains: on chain, the user signs the fee transition, not a fee
 master. coin-aleo never reads the fee signer. The setup paths that skip the
-prove handler (genesis funding, record minting, the rejected-finalize test)
-still pay their own fees.
+prove handler (genesis funding, record minting) still pay their own fees.
 
-Not covered, and left to the fee-sponsoring epic: the unsponsored path
-(`isFeeSponsored: false`), fee records, the multi-record batcher send-max, and
-token transfers (`enableTokens` is off in production).
+### Not covered
+
+- The encrypted prove path. Production runs `useEncryptedProve: true`; the
+  tester runs the plain `/prove/testnet/prove` path, which coin-aleo marks for
+  removal with LIVE-29982 (`logic/broadcast.ts`). When that ticket lands, the
+  fake prover must move to the encrypted endpoint or every scenario breaks.
+- The unsponsored path (`isFeeSponsored: false`), fee records and the
+  multi-record batcher send-max.
+- Token transfers (`enableTokens` is off in production).
+- Staking: bond, unbond and claim (`enableStaking` is off in the tester).
 
 ### Known wasm defects
 
 - **A decrypted record prints `_version` one below the chain's value**
-  (sdk 0.11.4 / wasm 0.11.11). Every commitment derived from that plaintext is
+  (sdk 0.10.2 / wasm 0.10.2). Every commitment derived from that plaintext is
   one the chain never produced, so a signature over a private record input is
   rejected by `aleo-backend`. `correctRecordVersion` (`src/msw/records.ts`) bumps
   it by one, unconditionally.
-- **Two oracles pin the workaround**, both in `src/scenarii.test.ts` ("signs a
-  transfer_private root intent the backend accepts"): `aleo-backend`'s
-  `record_commitments[0]` must equal the chain's record `id`, and
-  `POST /transactions/authorization` must accept the signature. Both go red
-  once an SDK release prints the right version, which is the signal to drop
-  the `+1`.
+- **The private scenarios pin the workaround.** The private transfer and the
+  unshield both sign over a private record input, so `aleo-backend` rejects
+  their signature as soon as the `+1` is wrong. Both go red once an SDK
+  release prints the right version, which is the signal to drop the `+1`.
 - **Production is unaffected.** `@provablehq/sdk` is only a devDependency of
   `coin-aleo`, used by its test helpers.
 

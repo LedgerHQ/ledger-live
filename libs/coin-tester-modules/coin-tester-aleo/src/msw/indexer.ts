@@ -12,8 +12,8 @@ import { getBlocksFrom, parseFutureSender } from "../devnode";
 import { INDEXED_PROGRAMS, SENDER_ABSENT_FROM_FUTURE } from "./programs";
 import { isSponsorTransaction } from "./sponsor";
 
-function parseUnsignedLiteral(literal: string, suffix: "u64" | "u128", field: string): number {
-  const match = new RegExp(`^(\\d+)${suffix}$`).exec(literal.trim());
+function parseU64(literal: string, field: string): number {
+  const match = /^(\d+)u64$/.exec(literal.trim());
   if (!match) {
     throw new Error(`aleo coin-tester: could not read ${field} from '${literal}'`);
   }
@@ -33,37 +33,7 @@ export function parseFee(transaction: DevnodeTransaction): number {
       `aleo coin-tester: fee transition ${feeTransition.id} does not expose its fee inputs`,
     );
   }
-  return (
-    parseUnsignedLiteral(base.value, "u64", "base fee") +
-    parseUnsignedLiteral(priority.value, "u64", "priority fee")
-  );
-}
-
-// snarkVM stores a rejected execution as a fee transaction; its transitions move to `rejected.execution`.
-type DevnodeRejected = {
-  type: string;
-  execution?: { transitions: DevnodeTransition[] };
-};
-
-type DevnodeConfirmedTransactionWithRejection = DevnodeConfirmedTransaction & {
-  rejected?: DevnodeRejected;
-};
-
-const TRANSACTION_STATUS_BY_DEVNODE_STATUS: Record<string, string> = {
-  accepted: "Accepted",
-  rejected: "Rejected",
-};
-
-function indexableTransitions(
-  confirmed: DevnodeConfirmedTransactionWithRejection,
-): DevnodeTransition[] {
-  const accepted = confirmed.transaction.execution?.transitions;
-  if (accepted) return accepted;
-
-  const rejected = confirmed.rejected;
-  if (rejected?.type === "execution") return rejected.execution?.transitions ?? [];
-
-  return [];
+  return parseU64(base.value, "base fee") + parseU64(priority.value, "priority fee");
 }
 
 function readSender(
@@ -84,10 +54,9 @@ function toRow({
   confirmed: DevnodeConfirmedTransaction;
   transition: DevnodeTransition;
 }): AleoPublicTransaction {
-  const transactionStatus = TRANSACTION_STATUS_BY_DEVNODE_STATUS[confirmed.status];
-  if (!transactionStatus) {
+  if (confirmed.status !== "accepted") {
     throw new Error(
-      `aleo coin-tester: cannot map ${transition.program}/${transition.function} with status '${confirmed.status}'`,
+      `aleo coin-tester: cannot index ${transition.program}/${transition.function} with status '${confirmed.status}'`,
     );
   }
 
@@ -109,15 +78,14 @@ function toRow({
   const sender = readSender(transition, descriptor.senderArgIndex);
 
   return {
-    // For a rejected execution: the stored fee transaction's id, not the broadcast one.
     transaction_id: confirmed.transaction.id,
     transition_id: transition.id,
-    transaction_status: transactionStatus,
+    transaction_status: "Accepted",
     block_number: block.header.metadata.height,
     block_hash: block.block_hash,
     block_timestamp: String(block.header.metadata.timestamp),
     function_id: transition.function,
-    amount: parseUnsignedLiteral(amount.value, descriptor.amountSuffix, "amount"),
+    amount: parseU64(amount.value, "amount"),
     sender_address: sender,
     recipient_address: recipient.value.trim(),
     program_id: transition.program,
@@ -129,11 +97,10 @@ export async function scanIndexedTransfers(): Promise<AleoPublicTransaction[]> {
   const rows: AleoPublicTransaction[] = [];
 
   for (const block of await getBlocksFrom(0)) {
-    for (const confirmed of (block.transactions ??
-      []) as DevnodeConfirmedTransactionWithRejection[]) {
+    for (const confirmed of block.transactions ?? []) {
       // A real fee master leaves no transfer in the user's history.
       if (isSponsorTransaction(confirmed.transaction.id)) continue;
-      for (const transition of indexableTransitions(confirmed)) {
+      for (const transition of confirmed.transaction.execution?.transitions ?? []) {
         if (!INDEXED_PROGRAMS[transition.program]?.[transition.function]) continue;
         rows.push(toRow({ block, confirmed, transition }));
       }
@@ -150,58 +117,15 @@ export async function getAccountTransactionRows(address: string): Promise<AleoPu
     .sort((a, b) => a.block_number - b.block_number);
 }
 
-type TransactionsCursor = {
-  blockNumber?: number;
-  transitionId?: string;
-  order: "asc" | "desc";
-};
-
-function readTransactionsCursor(query: URLSearchParams): TransactionsCursor {
-  const blockNumber = query.get("cursor_block_number");
-  const transitionId = query.get("cursor_transition_id");
-  return {
-    ...(blockNumber !== null && { blockNumber: Number(blockNumber) }),
-    ...(transitionId && { transitionId }),
-    order: query.get("sort") === "desc" ? "desc" : "asc",
-  };
-}
-
-/** Like production: a block number alone skips that whole block, a transition id resumes inside it. */
-function applyTransactionsCursor(
-  rows: AleoPublicTransaction[],
-  { blockNumber, transitionId, order }: TransactionsCursor,
-): AleoPublicTransaction[] {
-  const ordered = order === "asc" ? rows : [...rows].reverse();
-  if (blockNumber === undefined) return ordered;
-
-  if (transitionId) {
-    const index = ordered.findIndex(row => row.transition_id === transitionId);
-    if (index !== -1) return ordered.slice(index + 1);
-  }
-
-  return ordered.filter(row =>
-    order === "asc" ? row.block_number > blockNumber : row.block_number < blockNumber,
-  );
-}
-
-const DEFAULT_PAGE_SIZE = 50;
-
-export function pageTransactions(
+/** Sync resumes with a block number alone, which production reads as "after that whole block". */
+export function transactionsAfterCursor(
   address: string,
   rows: AleoPublicTransaction[],
   query: URLSearchParams,
 ): AleoPublicTransactionsResponse {
-  const pageSize = Number(query.get("limit") ?? DEFAULT_PAGE_SIZE);
-  const remaining = applyTransactionsCursor(rows, readTransactionsCursor(query));
-  const page = remaining.slice(0, pageSize);
-  const last = page.at(-1);
-
+  const cursor = query.get("cursor_block_number");
   return {
     address,
-    transactions: page,
-    ...(last &&
-      remaining.length > page.length && {
-        next_cursor: { block_number: last.block_number, transition_id: last.transition_id },
-      }),
+    transactions: cursor === null ? rows : rows.filter(row => row.block_number > Number(cursor)),
   };
 }

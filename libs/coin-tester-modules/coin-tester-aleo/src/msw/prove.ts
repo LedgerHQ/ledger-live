@@ -73,7 +73,6 @@ function checkRecipientAndAmount(
   inputs: string[],
   recipientIndex: number,
   amountIndex: number,
-  amountSuffix: "u64" | "u128",
   expected: ExpectedTransfer,
 ): void {
   const recipient = inputs[recipientIndex];
@@ -83,14 +82,14 @@ function checkRecipientAndAmount(
       `aleo coin-tester: signed recipient ${recipient} does not match the expected ${expected.recipient}`,
     );
   }
-  if (amount !== `${expected.amount}${amountSuffix}`) {
+  if (amount !== `${expected.amount}u64`) {
     throw new Error(
-      `aleo coin-tester: signed amount ${amount} does not match the expected ${expected.amount}${amountSuffix}`,
+      `aleo coin-tester: signed amount ${amount} does not match the expected ${expected.amount}u64`,
     );
   }
 }
 
-export async function verifyAuthorizations(
+async function verifyAuthorizations(
   body: ProveRequestBody,
   expected: ExpectedTransfer,
 ): Promise<void> {
@@ -119,7 +118,7 @@ export async function verifyAuthorizations(
     if (!request.verify(TRANSFER_PRIVATE_INPUT_TYPES, true)) {
       throw new Error("aleo coin-tester: the private transfer request failed verify()");
     }
-    checkRecipientAndAmount(request.inputs() as string[], 1, 2, "u64", expected);
+    checkRecipientAndAmount(request.inputs() as string[], 1, 2, expected);
     return;
   }
 
@@ -136,7 +135,6 @@ export async function verifyAuthorizations(
     request.inputs() as string[],
     descriptor.recipientInputIndex,
     descriptor.amountInputIndex,
-    descriptor.amountSuffix,
     expected,
   );
 }
@@ -170,49 +168,26 @@ async function buildDevnodeTransaction(
   const programSource = await getProgramSource(PROGRAM_ID.CREDITS);
   const imports = await resolveProgramImports(programSource);
 
-  if (expected.privateRecordStore) {
-    if (!body) {
+  const rootRequest =
+    body &&
+    recoverRequest(wasm, wasm.Authorization.fromString(JSON.stringify(body.authorization)), 0);
+  const functionName = rootRequest?.functionName() ?? TRANSFER_PUBLIC_FUNCTION;
+  const transferInputs = [expected.recipient, `${expected.amount}u64`];
+
+  if (rootRequest?.input_ids().some(isRecordInputId)) {
+    if (!expected.privateRecordStore) {
       throw new Error(
-        "aleo coin-tester: buildTransaction needs the prove request body to find the private record it spends",
+        `aleo coin-tester: ${functionName} spends a private record, but no record store was supplied`,
       );
     }
-
-    const rootRequest = recoverRequest(
-      wasm,
-      wasm.Authorization.fromString(JSON.stringify(body.authorization)),
-      0,
-    );
-
-    const amountRecordPlaintext = resolveRecordPlaintext(expected.privateRecordStore, rootRequest);
-
-    return wasm.ProgramManagerBase.buildDevnodeExecutionTransaction(
-      senderPrivateKey,
-      programSource,
-      rootRequest.functionName(),
-      [amountRecordPlaintext, expected.recipient, `${expected.amount}u64`],
-      0,
-      undefined,
-      ALEO_LOCAL_NODE,
-      imports,
-    );
+    transferInputs.unshift(resolveRecordPlaintext(expected.privateRecordStore, rootRequest));
   }
-
-  const functionName = body
-    ? recoverRequest(
-        wasm,
-        wasm.Authorization.fromString(JSON.stringify(body.authorization)),
-        0,
-      ).functionName()
-    : TRANSFER_PUBLIC_FUNCTION;
-
-  const descriptor = INDEXED_PROGRAMS[PROGRAM_ID.CREDITS][functionName];
-  const amountSuffix = descriptor?.amountSuffix ?? "u64";
 
   return wasm.ProgramManagerBase.buildDevnodeExecutionTransaction(
     senderPrivateKey,
     programSource,
     functionName,
-    [expected.recipient, `${expected.amount}${amountSuffix}`],
+    transferInputs,
     0,
     undefined,
     ALEO_LOCAL_NODE,

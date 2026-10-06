@@ -13,7 +13,6 @@ import type {
   RecordPickingStrategy,
 } from "@ledgerhq/coin-aleo/types";
 import { ALEO_FAKE_NODE, ALEO_LOCAL_SDK, ALEO_NETWORK_TYPE } from "./constants";
-import { getPublicBalance } from "./devnode";
 import { loadAleoWasm } from "./wasm";
 
 // The only prefunded account: devnode seeds genesis from the Dockerfile's single `--private-key`.
@@ -22,27 +21,6 @@ export const GENESIS_ACCOUNT = {
   viewKey: "AViewKey1mSnpFFC8Mj4fXbK5YiWgZ3mjiV8CxA79bYNa8ymUpTrw",
   address: "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px",
 } as const;
-
-export async function assertGenesisAccountIsFunded(): Promise<void> {
-  const balance = await getPublicBalance(GENESIS_ACCOUNT.address);
-
-  if (balance <= 0n) {
-    throw new Error(
-      `The pinned genesis account ${GENESIS_ACCOUNT.address} holds no credits. ` +
-        "devnode likely changed how it seeds genesis from --private-key; " +
-        "re-derive the account before spending.",
-    );
-  }
-}
-
-export const RECIPIENT_ACCOUNT = {
-  privateKey: "APrivateKey1zkpHj8RPJD1wJR818BSyLPa5f5fR4uxYgW2jas7atx83HG8",
-  viewKey: "AViewKey1pkn1tUEsorWKPtj5pMHhN9U65ERwhW4AuNKDpnzWPQU7",
-  address: "aleo1l2x2kxsv3qt4m0364ezpx50y0t47f7pdme0jt0y9m4dxzeck8yxqqgac0y",
-} as const;
-
-// Kept apart from RECIPIENT_ACCOUNT so the scenario can assert its exact received balance.
-export const PROBE_ADDRESS = "aleo1nfhry9rq4tjgp75e0kt9dm6ttxejxrndqtrd598575cmexp8q58qzpucsx";
 
 export const TRANSFER_AMOUNT_MICROCREDITS = 1_000_000;
 

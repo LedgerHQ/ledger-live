@@ -42,7 +42,7 @@
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@provablehq/sdk": "0.11.4",
+    "@provablehq/sdk": "0.10.2",
     "bignumber.js": "^9.1.2",
     "chalk": "^4",
     "docker-compose": "^1",

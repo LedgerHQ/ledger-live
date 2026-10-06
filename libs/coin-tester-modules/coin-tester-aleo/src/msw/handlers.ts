@@ -1,6 +1,6 @@
 import { http, HttpResponse, type RequestHandler } from "msw";
 import { ALEO_FAKE_NODE, ALEO_NETWORK_TYPE } from "../constants";
-import { getAccountTransactionRows, pageTransactions } from "./indexer";
+import { getAccountTransactionRows, transactionsAfterCursor } from "./indexer";
 import { fetchAccountBalanceV2, fetchLatestBlockV2, fetchTransactionV2 } from "./node";
 import { handleProve, type ExpectedTransfer, type ProveRequestBody } from "./prove";
 import type { FakeScanner } from "./scanner";
@@ -41,7 +41,7 @@ export function buildAleoHandlers(
       try {
         const address = String(params.address);
         return HttpResponse.json(
-          pageTransactions(
+          transactionsAfterCursor(
             address,
             await getAccountTransactionRows(address),
             new URL(request.url).searchParams,

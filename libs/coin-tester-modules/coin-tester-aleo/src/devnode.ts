@@ -136,10 +136,6 @@ export async function resolveProgramImports(
   return imports;
 }
 
-export async function getTransaction(id: string): Promise<DevnodeTransaction> {
-  return (await (await get(`transaction/${id}`)).json()) as DevnodeTransaction;
-}
-
 export async function getMapping(
   programId: string,
   mapping: string,

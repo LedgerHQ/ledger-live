@@ -12265,8 +12265,8 @@ importers:
         specifier: workspace:^
         version: link:../../types-live
       '@provablehq/sdk':
-        specifier: 0.11.4
-        version: 0.11.4
+        specifier: 0.10.2
+        version: 0.10.2
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -24835,14 +24835,8 @@ packages:
   '@provablehq/sdk@0.10.2':
     resolution: {integrity: sha512-ZDJsWPSZOZKNRyKGsHMyX0Zxr2RJYwidCwCgIZrvyvk/AewCKv1pOU6ARCM4Hx3eaQVfzEo2h/IJQxWzltubuQ==}
 
-  '@provablehq/sdk@0.11.4':
-    resolution: {integrity: sha512-dkFzd2FG8+Oy9u4hdG9fbJV4hB57LeTRM0Chspdr6c0DlQW4UKM0hcedNqQ2og8loTCg3s1UGu/HMdF9ATbkJg==}
-
   '@provablehq/wasm@0.10.2':
     resolution: {integrity: sha512-/SdilgSWmUshels/DmqmzM1KwCFcQXUSI++SdrL029m6qvgU/kX22J0SqmZ46z/NhDp6ZJRDNNEd0A+tzPTSIA==}
-
-  '@provablehq/wasm@0.11.11':
-    resolution: {integrity: sha512-XunZexf+KGa7uCZtHtIQ1is5iQ5Fg35NUWakfnr2G/lrmtEOTxYSAZt4n3tMR5HmcVF3uTCpPMeUzeGZm+4abQ==}
 
   '@radix-ui/number@1.1.1':
     resolution: {integrity: sha512-MkKCwxlXTgz6CFoJx3pCwn07GKp36+aZyu/u2Ln2VrA5DcdyCZkASEDBTd8x5whTQQL5CiYf4prXKLcgQdv29g==}
@@ -25970,6 +25964,9 @@ packages:
   '@scure/base@1.2.6':
     resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
 
+  '@scure/base@2.0.0':
+    resolution: {integrity: sha512-3E1kpuZginKkek01ovG8krQ0Z44E3DHPjc5S2rjJw9lZn3KSQOs8S7wqikF/AH7iRanHypj85uGyxk0XAyC37w==}
+
   '@scure/base@2.2.0':
     resolution: {integrity: sha512-b8XEupJibegiXV+tDUseI8oLQc8ei3d/4Jkb2RpbHh3MfE054ov3uIz2dhFkB3FI8iwYkEh0gGCApkrYggkPNg==}
 
@@ -26071,9 +26068,6 @@ packages:
   '@sentry/utils@6.19.7':
     resolution: {integrity: sha512-z95ECmE3i9pbWoXQrD/7PgkBAzJYR+iXtPuTkpBjDKs86O3mT+PXOT3BAn79w2wkn7/i3vOGD2xVr1uiMl26dA==}
     engines: {node: '>=6'}
-
-  '@serenity-kit/noble-sodium@0.2.3':
-    resolution: {integrity: sha512-/IQuvJHJXg8M8SvrZexB/kI5vP0jkoMhNglFpm12h1SitJldncoOA0aF5asvtybJ8nldnkA/HwGEvEL7t+VIyw==}
 
   '@shopify/flash-list@2.2.0':
     resolution: {integrity: sha512-mL61IofcfBNRZ/qazIf+pghGULkcZUQ7EZNldH1JBbIjtDb25ADSiQrt62ZTnRz0H5+bPFEZUmN9+WChHzX8pw==}
@@ -46718,26 +46712,14 @@ snapshots:
   '@provablehq/sdk@0.10.2':
     dependencies:
       '@provablehq/wasm': 0.10.2
-      '@scure/base': 2.3.0
+      '@scure/base': 2.0.0
       comlink: 4.4.2
       core-js: 3.47.0
       libsodium-wrappers: 0.8.4
       mime: 4.1.0
       xmlhttprequest-ssl: 4.0.0
 
-  '@provablehq/sdk@0.11.4':
-    dependencies:
-      '@provablehq/wasm': 0.11.11
-      '@scure/base': 2.3.0
-      '@serenity-kit/noble-sodium': 0.2.3
-      comlink: 4.4.2
-      core-js: 3.47.0
-      mime: 4.1.0
-      xmlhttprequest-ssl: 4.0.0
-
   '@provablehq/wasm@0.10.2': {}
-
-  '@provablehq/wasm@0.11.11': {}
 
   '@radix-ui/number@1.1.1': {}
 
@@ -48284,6 +48266,8 @@ snapshots:
 
   '@scure/base@1.2.6': {}
 
+  '@scure/base@2.0.0': {}
+
   '@scure/base@2.2.0': {}
 
   '@scure/base@2.3.0': {}
@@ -48439,12 +48423,6 @@ snapshots:
     dependencies:
       '@sentry/types': 6.19.7
       tslib: 2.6.2
-
-  '@serenity-kit/noble-sodium@0.2.3':
-    dependencies:
-      '@noble/ciphers': 2.2.0
-      '@noble/curves': 2.3.0
-      '@noble/hashes': 2.3.0
 
   '@shopify/flash-list@2.2.0(@babel/runtime@7.28.4)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)':
     dependencies:
