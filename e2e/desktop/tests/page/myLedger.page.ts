@@ -59,6 +59,8 @@ export class MyLedgerPage extends AppPage {
 
   private readonly uninstallAllButton = this.page.getByTestId("manager-uninstall-all-apps-button");
   private readonly confirmModalButton = this.page.getByTestId("modal-confirm-button");
+  private readonly cancelModalButton = this.page.getByTestId("modal-cancel-button");
+  private readonly modal = this.page.getByTestId("modal-container");
   private readonly updateAllButton = this.page.getByTestId("manager-update-all-apps-button");
   private readonly updateAllProgressBar = this.page.getByTestId("manager-update-all-progress-bar");
 
@@ -191,6 +193,26 @@ export class MyLedgerPage extends AppPage {
   @step("Install $0")
   async installApp(app: AppInfos) {
     await this.installButton(app).click();
+  }
+
+  /** Installing a child app opens the shared ConfirmModal, naming the parent it pulls in. */
+  @step("Install $0 together with the app it depends on")
+  async installAppWithDependency(app: AppInfos, dependency: AppInfos) {
+    await this.installButton(app).click();
+    await this.expectDependencyInstallModal(app, dependency);
+    await this.confirmModalButton.click();
+  }
+
+  /** The two images are the app icons the modal links together. */
+  @step("Expect the modal to ask to install the app $0 depends on")
+  async expectDependencyInstallModal(app: AppInfos, dependency: AppInfos) {
+    await expect(this.modal).toContainText(`${dependency.name} app is required`);
+    await expect(this.modal).toContainText(
+      `The ${dependency.name} app will also be installed because the ${app.name} app needs it.`,
+    );
+    await expect(this.modal.locator("img")).toHaveCount(2);
+    await expect(this.confirmModalButton).toHaveText("Install apps");
+    await expect(this.cancelModalButton).toHaveText("Cancel");
   }
 
   @step("Uninstall $0")
