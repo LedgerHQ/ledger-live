@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` (without `--dry-run`) never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
+> **Sandbox:** Only device-touching commands — `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), and `ring init` — may use `dangerouslyDisableSandbox: true` for USB access. **Never use it for Agent Intent.** `agent-intent enroll` and related keychain operations must run only in the agent's current environment; do not escape the sandbox, create or launch a script (including a `.command` file), use `open`, or run enrollment in the user's macOS session. If the current environment cannot access its OS keychain or cannot keep the required interactive process alive, stop and tell the user enrollment cannot be completed there. Offer a next step only when the CLI itself documents one.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -99,13 +99,15 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `ring decrypt`       | No     | **Required** | No          | Yes     |
 | `ring keys`          | No     | No           | No          | No      |
 | `ring destroy`       | No     | **Required** | Required‡‡  | Yes     |
-| `agent-intent enroll` | No    | **Required** | No          | Yes     |
-| `agent-intent recover` | No   | **Required** | No          | Yes     |
+| `agent-intent enroll` | No    | Current env  | No          | Yes     |
+| `agent-intent recover` | No   | Current env  | No          | Yes     |
 | `agent-intent list`  | No     | No           | No          | No      |
 | `agent-intent show`  | No     | No           | No          | No      |
-| `agent-intent sync`  | No     | **Required** | No          | Yes     |
+| `agent-intent sync`  | No     | Current env  | No          | Yes     |
 
 \*`receive` with `--no-verify`, `send` with `--dry-run`, and `earn deposit`/`earn withdraw` with `--dry-run` need no device and no sandbox bypass.
+
+**Current env**: run without a sandbox bypass; the OS keychain must be accessible from the agent's current environment.
 
 †TTY: whether the command requires an interactive terminal for user input.
 
@@ -367,11 +369,14 @@ means the enrollment request was tampered with or sent to the wrong agent.
 and separately refuses if a keychain entry for that id exists without a matching session record
 (an inconsistent state you must clear manually before re-enrolling under the same id).
 
-**Keychain required:** `enroll` needs a working OS keychain — macOS Keychain, Windows Credential
-Manager, or on Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an
-unlocked collection. Without one (headless Linux, containers, some CI runners) `enroll` fails with
-`Could not store the agent's secret key in the OS keychain (…)` and saves nothing — fix the keychain
-and re-run the same command; there is no file-based fallback by design.
+**Keychain and persistent environment required:** `enroll` needs a working OS keychain — macOS
+Keychain, Windows Credential Manager, or on Linux a running Secret Service provider (e.g.
+gnome-keyring or KeePassXC) with an unlocked collection — and an environment that can keep its
+blocking process alive until approval. Without either (headless Linux, containers, some CI runners,
+or a sandbox that blocks keychain access), `enroll` fails with `Could not store the agent's secret key
+in the OS keychain (…)` and saves nothing. **Stop and tell the user enrollment cannot be completed in
+the current environment.** Do not try to escape the sandbox or invoke the user's session; there is no
+file-based fallback or other CLI-documented safe workaround by design.
 
 **Environment isolation:** each profile records the environment (`staging`/`production`) it was
 enrolled against. A completion whose `accountAccess.environment` doesn't match is rejected, so a
