@@ -106,8 +106,8 @@ export class Currency {
   static readonly POL = new Currency("Polygon", "POL", "polygon", AppInfos.POLYGON, [
     Network.POLYGON,
   ]);
-  static readonly BSC = new Currency("BNB Chain", "BNB", "bsc", AppInfos.BNB_CHAIN, [
-    Network.BNB_CHAIN,
+  static readonly BSC = new Currency("BNB Smart Chain", "BNB", "bsc", AppInfos.BNB_SMART_CHAIN, [
+    Network.BNB_SMART_CHAIN,
   ]);
   static readonly GRAM = new Currency("Gram", "GRAM", "ton", AppInfos.TON, [Network.TON]);
   static readonly ETH_USDT = new Currency(
@@ -173,8 +173,8 @@ export class Currency {
     "Binance-Peg BUSD Token",
     "BUSD",
     "bsc",
-    AppInfos.BNB_CHAIN,
-    [Network.BNB_CHAIN, Network.POLYGON],
+    AppInfos.BNB_SMART_CHAIN,
+    [Network.BNB_SMART_CHAIN, Network.POLYGON],
   );
   static readonly POL_DAI = new Currency(
     "(PoS) Dai Stablecoin",
@@ -284,7 +284,7 @@ const CURRENCY_TEST_LABELS = new Map<Currency, string>([
   [Currency.ALGO_USDT, "USDT (Algorand)"],
   [Currency.TRX_USDT, "USDT (Tron)"],
   [Currency.TRX_BTT, "BTT (Tron)"],
-  [Currency.BSC_BUSD, "BUSD (BNB Chain)"],
+  [Currency.BSC_BUSD, "BUSD (BNB Smart Chain)"],
   [Currency.POL_DAI, "DAI (Polygon)"],
   [Currency.POL_UNI, "UNI (Polygon)"],
   [Currency.SOL_GIGA, "GIGA (Solana)"],

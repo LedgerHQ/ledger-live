@@ -145,11 +145,11 @@ export const CONTACT_ADDRESS_DATASET: readonly ContactAddressTestData[] = [
   {
     ticker: "BNB",
     networkId: "bsc",
-    networkName: "BNB Chain",
+    networkName: "BNB Smart Chain",
     addressInput: Addresses.SWAP_HISTORY_ETH_TO,
     savedValue: Addresses.SWAP_HISTORY_ETH_TO,
-    defaultAddressLabel: "BNB Chain",
-    addressLabel: "BNB Chain",
+    defaultAddressLabel: "BNB Smart Chain",
+    addressLabel: "BNB Smart Chain",
   },
   {
     ticker: "POL",

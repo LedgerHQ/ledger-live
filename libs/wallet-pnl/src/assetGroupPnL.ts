@@ -44,7 +44,7 @@ export function computeAssetGroupPnL(
     totalAmount = totalAmount.plus(pnl.reconciliation.onChainBalance);
     // Convert each account's balance to full units with ITS OWN magnitude before
     // summing. The same asset can span networks with different decimals (e.g.
-    // USDC: 6 on Ethereum, 18 on BNB Chain), so a single group-level magnitude
+    // USDC: 6 on Ethereum, 18 on BNB Smart Chain), so a single group-level magnitude
     // would corrupt the total — and reading it from `accounts[0]` let a zero-
     // balance account in another magnitude skew the result.
     const magnitude = getAccountCurrency(account).units[0].magnitude;

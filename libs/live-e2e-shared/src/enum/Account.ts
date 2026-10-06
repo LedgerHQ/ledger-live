@@ -70,8 +70,8 @@ export class Account {
     "cashaddr",
   );
 
-  static readonly BSC_1 = new Account(Currency.BSC, "BNB Chain 1", 0, "44'/60'/0'/0/0");
-  static readonly BSC_2 = new Account(Currency.BSC, "BNB Chain 2", 1, "44'/60'/1'/0/0");
+  static readonly BSC_1 = new Account(Currency.BSC, "BNB Smart Chain 1", 0, "44'/60'/0'/0/0");
+  static readonly BSC_2 = new Account(Currency.BSC, "BNB Smart Chain 2", 1, "44'/60'/1'/0/0");
 
   static readonly BTC_LEGACY_1 = new Account(
     Currency.BTC,

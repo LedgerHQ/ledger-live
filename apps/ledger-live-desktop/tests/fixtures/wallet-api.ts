@@ -559,7 +559,7 @@ export const expectedCurrencyList = [
     type: "CryptoCurrency",
     id: "bsc",
     ticker: "BNB",
-    name: "BNB Chain",
+    name: "BNB Smart Chain",
     family: "ethereum",
     color: "#F0B90A",
     decimals: 18,

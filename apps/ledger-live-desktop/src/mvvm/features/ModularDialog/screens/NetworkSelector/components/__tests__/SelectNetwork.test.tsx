@@ -117,7 +117,7 @@ describe("SelectNetwork Integration Test", () => {
     it("should render the network list with correct networks", () => {
       render(<NetworkSelectorContent {...defaultProps} />);
 
-      expect(screen.getByTestId("network-item-name-BNB Chain")).toBeInTheDocument();
+      expect(screen.getByTestId("network-item-name-BNB Smart Chain")).toBeInTheDocument();
       expect(screen.getByTestId("network-item-name-Base")).toBeInTheDocument();
       expect(screen.getByTestId("network-item-name-Ethereum")).toBeInTheDocument();
       expect(screen.getByTestId("network-item-name-Polygon")).toBeInTheDocument();
@@ -156,7 +156,7 @@ describe("SelectNetwork Integration Test", () => {
 
       const networkList = screen.getAllByTestId(/network-item-name-/);
 
-      expect(networkList[0]).toHaveAttribute("data-testid", "network-item-name-BNB Chain");
+      expect(networkList[0]).toHaveAttribute("data-testid", "network-item-name-BNB Smart Chain");
       expect(networkList[1]).toHaveAttribute("data-testid", "network-item-name-Base");
     });
 
@@ -173,7 +173,7 @@ describe("SelectNetwork Integration Test", () => {
 
       const networkList = screen.getAllByTestId(/network-item-name-/);
 
-      expect(networkList[0]).toHaveAttribute("data-testid", "network-item-name-BNB Chain");
+      expect(networkList[0]).toHaveAttribute("data-testid", "network-item-name-BNB Smart Chain");
       expect(networkList[1]).toHaveAttribute("data-testid", "network-item-name-Base");
     });
   });
@@ -182,7 +182,7 @@ describe("SelectNetwork Integration Test", () => {
     it("should call onNetworkSelected when a network is clicked", async () => {
       const { user } = render(<NetworkSelectorContent {...defaultProps} />);
 
-      const bscNetworkButton = screen.getByTestId("network-item-name-BNB Chain");
+      const bscNetworkButton = screen.getByTestId("network-item-name-BNB Smart Chain");
       await user.click(bscNetworkButton);
 
       expect(mockOnNetworkSelected).toHaveBeenCalledWith(expect.objectContaining(bscCurrency));
@@ -198,7 +198,7 @@ describe("SelectNetwork Integration Test", () => {
       />,
     );
 
-    const bscNetwork = screen.getByTestId("network-item-name-BNB Chain");
+    const bscNetwork = screen.getByTestId("network-item-name-BNB Smart Chain");
     const ethereumNetwork = screen.getByTestId("network-item-name-Ethereum");
 
     expect(bscNetwork).toHaveAttribute("aria-disabled", "true");
@@ -232,7 +232,7 @@ describe("SelectNetwork Integration Test", () => {
     expect(networkNames).toEqual([
       "network-item-name-Ethereum",
       "network-item-name-Polygon",
-      "network-item-name-BNB Chain",
+      "network-item-name-BNB Smart Chain",
       "network-item-name-Base",
     ]);
   });
@@ -260,7 +260,7 @@ describe("SelectNetwork Integration Test", () => {
 
       expect(networkList).toHaveLength(4);
       expect(networkList[0]).toHaveAttribute("data-testid", "network-item-name-Ethereum");
-      expect(networkList[1]).toHaveAttribute("data-testid", "network-item-name-BNB Chain");
+      expect(networkList[1]).toHaveAttribute("data-testid", "network-item-name-BNB Smart Chain");
       expect(networkList[2]).toHaveAttribute("data-testid", "network-item-name-Base");
       expect(networkList[3]).toHaveAttribute("data-testid", "network-item-name-Polygon");
     });
@@ -278,7 +278,7 @@ describe("SelectNetwork Integration Test", () => {
       const networkList = screen.getAllByTestId(/network-item-name-/);
 
       expect(networkList[0]).toHaveAttribute("data-testid", "network-item-name-Ethereum");
-      expect(networkList[1]).toHaveAttribute("data-testid", "network-item-name-BNB Chain");
+      expect(networkList[1]).toHaveAttribute("data-testid", "network-item-name-BNB Smart Chain");
     });
   });
 });
