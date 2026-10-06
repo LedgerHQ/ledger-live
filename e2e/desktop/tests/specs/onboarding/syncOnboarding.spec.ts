@@ -5,13 +5,13 @@ import {
   CHARON_STATUS,
   ONBOARDING_STEP,
 } from "@ledgerhq/live-e2e-shared/mockServer/onboardingFlags";
-import { FF_ANALYTICS_OPT_IN_SCREEN_V2 } from "tests/utils/featureFlagUtils";
+import { FF_DEVICE_ONBOARDING } from "tests/utils/featureFlagUtils";
 import { FRESH_INSTALL_SETTINGS } from "tests/utils/userdata";
 
 test.describe(`Onboarding (mock server)`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
-    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    featureFlags: FF_DEVICE_ONBOARDING,
     settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: false },
   });
@@ -53,7 +53,7 @@ test.describe(`Onboarding (mock server)`, () => {
 test.describe(`Connect an already initialised device`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
-    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    featureFlags: FF_DEVICE_ONBOARDING,
     settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: true },
   });
@@ -94,7 +94,7 @@ test.describe(`Connect an already initialised device`, () => {
 test.describe(`Restore a seed from a configured Ledger Live`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
-    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    featureFlags: FF_DEVICE_ONBOARDING,
     userdata: "1AccountBTC1AccountETH",
     mockDeviceParams: { onboarded: false },
   });
@@ -130,6 +130,7 @@ test.describe(`Restore a seed from a configured Ledger Live`, () => {
       await app.syncOnboarding.installApps();
       await app.syncOnboarding.expectCompletionScreen(mockDevice.modelId);
       await mockServer.expectInstalledApps(["Bitcoin", "Ethereum"]);
+      await app.postOnboarding.closeFinishOnboardingDialog();
 
       await app.portfolio.expectBalanceVisibility();
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
@@ -146,7 +147,7 @@ test.describe(`Restore a seed from a configured Ledger Live`, () => {
 test.describe(`Back up a restored seed with a Ledger Recovery Key`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
-    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    featureFlags: FF_DEVICE_ONBOARDING,
     settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: false },
   });
@@ -196,7 +197,7 @@ test.describe(`Back up a restored seed with a Ledger Recovery Key`, () => {
 test.describe(`Restore a seed from a Ledger Recovery Key`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
-    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    featureFlags: FF_DEVICE_ONBOARDING,
     settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: false },
   });
@@ -244,7 +245,7 @@ test.describe(`Restore a seed from a Ledger Recovery Key`, () => {
 test.describe(`Back up a newly created seed with a Ledger Recovery Key`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
-    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    featureFlags: FF_DEVICE_ONBOARDING,
     settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: false },
   });

@@ -38,6 +38,9 @@ export class OnboardingPage extends AppPage {
   private readonly deviceTile = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-device-${device}`);
   private readonly setupNewDeviceOption = this.page.getByTestId("v3-onboarding-new-device");
+  private readonly counterfeitWarningContinueButton = this.page.getByTestId(
+    "counterfeit-warning-continue-button",
+  );
   private readonly pedagogyModal = this.page.getByTestId("v3-onboarding-pedagogy-modal");
   private readonly stepperContinue = this.page.getByTestId("v3-modal-stepper-continue");
   private readonly stepperEnd = this.page.getByTestId("v3-modal-stepper-end");
@@ -83,9 +86,9 @@ export class OnboardingPage extends AppPage {
 
   @step("Expect a card for each selectable device")
   async expectDeviceCards() {
-    for (const device of SELECTABLE_DEVICES) {
-      await expect(this.deviceContainer(device)).toBeVisible();
-    }
+    await Promise.all(
+      SELECTABLE_DEVICES.map(device => expect(this.deviceContainer(device)).toBeVisible()),
+    );
   }
 
   @step("Expect the use case screen")
@@ -106,6 +109,12 @@ export class OnboardingPage extends AppPage {
   @step("Choose to set up a new device")
   async setUpNewDevice() {
     await this.setupNewDeviceOption.click();
+  }
+
+  /** Nano S, Nano S Plus and Nano X get a "Before you start" warning before any use case runs. */
+  @step("Continue past the counterfeit warning")
+  async continuePastCounterfeitWarning() {
+    await this.counterfeitWarningContinueButton.click();
   }
 
   @step("Complete the pedagogy screens")
