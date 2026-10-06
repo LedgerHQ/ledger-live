@@ -30,7 +30,7 @@ function shouldShowTokenAssociationAlert({ account, mainAccount, token }: Props)
 }
 
 export default function ReceiveConfirmationTokenAlert(props: Readonly<Props>) {
-  const { account } = props;
+  const { account, token } = props;
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
   const showTokenAssociationAlert = shouldShowTokenAssociationAlert(props);
@@ -42,12 +42,18 @@ export default function ReceiveConfirmationTokenAlert(props: Readonly<Props>) {
       page: ScreenName.ReceiveConfirmation,
     });
 
-    navigation.navigate(NavigatorName.HederaAssociateTokenFlow, {
-      screen: ScreenName.HederaAssociateTokenSelectToken,
-      params: {
-        accountId: account.id,
-      },
-    });
+    navigation.navigate(
+      NavigatorName.HederaAssociateTokenFlow,
+      token
+        ? {
+            screen: ScreenName.HederaAssociateTokenSummary,
+            params: { accountId: account.id, token },
+          }
+        : {
+            screen: ScreenName.HederaAssociateTokenSelectToken,
+            params: { accountId: account.id },
+          },
+    );
   }
 
   if (!showTokenAssociationAlert) {

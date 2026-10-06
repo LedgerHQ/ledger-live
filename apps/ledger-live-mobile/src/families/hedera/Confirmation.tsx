@@ -40,7 +40,7 @@ export default function ReceiveConfirmation({ route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
 
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency = account && getAccountCurrency(account);
+  const currency = route.params?.currency || (account && getAccountCurrency(account));
   const mainAccountName = useMaybeAccountName(mainAccount);
   const name = mainAccountName;
 
@@ -48,7 +48,7 @@ export default function ReceiveConfirmation({ route }: Props) {
     return mainAccount && getFreshAccountAddress(mainAccount);
   }, [mainAccount]);
 
-  if (!mainAccount || !account || !currency) return null;
+  if (!mainAccount || !account || !currency || currency.type === "FiatCurrency") return null;
 
   const address = mainAccount.freshAddress;
 
@@ -159,7 +159,11 @@ export default function ReceiveConfirmation({ route }: Props) {
                 }}
               />
             </Alert>
-            <ReceiveConfirmationTokenAlert account={account} mainAccount={mainAccount} />
+            <ReceiveConfirmationTokenAlert
+              account={account}
+              mainAccount={mainAccount}
+              token={currency.type === "TokenCurrency" ? currency : undefined}
+            />
           </Flex>
         </Flex>
       </NavigationScrollView>
