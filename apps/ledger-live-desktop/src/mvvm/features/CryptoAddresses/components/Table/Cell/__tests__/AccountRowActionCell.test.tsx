@@ -5,6 +5,7 @@ import { AccountRowActionCell } from "../AccountRowActionCell";
 import { createWalletState } from "../../../../testUtils/createWalletState";
 
 const ARIA_LABEL = "Edit name";
+const onEditName = jest.fn();
 
 const renderCell = (isSyncing: boolean) =>
   render(
@@ -12,28 +13,28 @@ const renderCell = (isSyncing: boolean) =>
       account={ETH_ACCOUNT}
       editNameAriaLabel={ARIA_LABEL}
       isSyncing={isSyncing}
+      onEditName={onEditName}
     />,
     { initialState: createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH"]])) },
   );
 
 describe("AccountRowActionCell", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("when not syncing", () => {
     it("renders an enabled edit button", () => {
       renderCell(false);
       expect(screen.getByRole("button", { name: ARIA_LABEL })).toBeEnabled();
     });
 
-    it("opens the edit name dialog when clicked", async () => {
+    it("requests the name edition of its account when clicked", async () => {
       const { user } = renderCell(false);
-      expect(
-        screen.queryByTestId("edit-crypto-address-name-dialog-content"),
-      ).not.toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: ARIA_LABEL }));
 
-      await waitFor(() => {
-        expect(screen.getByTestId("edit-crypto-address-name-dialog-content")).toBeVisible();
-      });
+      expect(onEditName).toHaveBeenCalledWith(ETH_ACCOUNT);
     });
   });
 
@@ -63,6 +64,7 @@ describe("AccountRowActionCell", () => {
           account={ETH_ACCOUNT}
           editNameAriaLabel={ARIA_LABEL}
           isSyncing={false}
+          onEditName={onEditName}
         />
       </div>,
       { initialState: createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH"]])) },
