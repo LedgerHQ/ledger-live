@@ -27,7 +27,7 @@ const makeAccount = (): CosmosAccount =>
     freshAddress: "cosmos1test",
     currency: getCryptoCurrencyById("cosmos"),
     spendableBalance: new BigNumber(0),
-    cosmosResources: undefined,
+    stakingResources: { delegations: [] },
   }) as unknown as CosmosAccount;
 
 function mockGetCurrencyConfiguration(currencyConfig: Record<string, unknown>) {

@@ -32,30 +32,23 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
   const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
-  const { cosmosResources } = mainAccount;
-  invariant(cosmosResources, "cosmosResources required");
   const transaction = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,
       transaction: bridge.updateTransaction(t, {
         mode: "claimReward",
-        validators: [],
       }),
     };
   }).transaction as Transaction;
-  invariant(transaction && transaction.validators, "transaction and validators required");
+  invariant(transaction, "transaction required");
   const unit = useAccountUnit(account);
   const delegations = useCosmosFamilyMappedDelegations(mainAccount, "claimReward");
   const onSelect = useCallback(
     (validator: CosmosValidatorItem, value?: BigNumber | null) => {
       const tx = bridge.updateTransaction(transaction, {
-        validators: [
-          {
-            address: validator.validatorAddress,
-            amount: value ?? new BigNumber(0),
-          },
-        ],
+        valAddress: validator.validatorAddress,
+        amount: value ?? new BigNumber(0),
       });
       navigation.navigate(ScreenName.CosmosClaimRewardsMethod, {
         ...route.params,

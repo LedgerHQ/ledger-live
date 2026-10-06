@@ -48,10 +48,7 @@ function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
   const { locale } = useSettings();
-  invariant(
-    account && (account as CosmosAccount).cosmosResources && route.params.transaction,
-    "account and cosmos transaction required",
-  );
+  invariant(account && route.params.transaction, "account and cosmos transaction required");
   const tx = route.params.transaction;
   invariant(
     ["delegate", "redelegate", "undelegate"].includes(tx.mode),
@@ -71,32 +68,17 @@ function DelegationAmount({ navigation, route }: Props) {
   );
   const min = useMemo(() => route?.params?.min ?? BigNumber(0), [route]);
   const onNext = useCallback(async () => {
-    const validators = [...tx.validators];
-    const validatorAddress = route.params.validator ? route.params.validator.validatorAddress : "";
-    const i = validators.findIndex(({ address }) => address === validatorAddress);
-
-    if (i >= 0) {
-      validators[i].amount = value;
-    } else {
-      validators.push({
-        address: validatorAddress,
-        amount: value,
-      });
-    }
-
-    const filteredValidators =
-      tx.mode === "delegate" ? validators.filter(v => !v.amount.eq(0)) : validators;
-    const transaction = bridge.updateTransaction(
-      tx,
-      tx.mode === "delegate"
-        ? {
-            amount: new BigNumber(value),
-            validators: filteredValidators,
-          }
-        : {
-            validators: filteredValidators,
-          },
-    );
+    const validatorAddress = route.params.validator
+      ? route.params.validator.validatorAddress
+      : undefined;
+    const transaction = bridge.updateTransaction(tx, {
+      amount: new BigNumber(value),
+      ...(validatorAddress
+        ? tx.mode === "redelegate"
+          ? { dstValAddress: validatorAddress }
+          : { valAddress: validatorAddress }
+        : {}),
+    });
     const preparedTransaction = await bridge
       .prepareTransaction(account as CosmosAccount, transaction)
       .catch(() => transaction);
