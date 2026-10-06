@@ -450,7 +450,6 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
     "buffer": "catalog:",
     "camelcase": "^6.2.1",
@@ -476,7 +475,7 @@
     "ts-node": "^10.4.0",
     "typescript": "catalog:",
     "undici": "catalog:",
-    "uuid": "^8.3.2",
+    "uuid": "catalog:",
     "ws": "catalog:"
   }
 }

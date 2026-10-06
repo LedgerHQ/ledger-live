@@ -54,7 +54,7 @@ type SendFlowTrackingContextValue = SendFlowTrackingState &
 const SendFlowTrackingContext = createContext<SendFlowTrackingContextValue | null>(null);
 
 export function SendFlowTrackingProvider({ children }: Readonly<{ children: ReactNode }>) {
-  const [flowSessionId] = useState(uuid);
+  const [flowSessionId] = useState(() => uuid());
   const trackedMessagesRef = useRef(new Set<string>());
   const sessionEndedRef = useRef(false);
   const pendingMessagesRef = useRef(

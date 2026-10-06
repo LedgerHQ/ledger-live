@@ -325,7 +325,7 @@
     "styled-system": "catalog:",
     "stylis": "catalog:",
     "text-encoding-polyfill": "0.6.7",
-    "uuid": "8.3.2",
+    "uuid": "catalog:",
     "xstate": "catalog:"
   },
   "devDependencies": {
@@ -392,7 +392,6 @@
     "@types/redux-actions": "2.6.5",
     "@types/semver": "catalog:",
     "@types/styled-system": "5.1.22",
-    "@types/uuid": "8.3.4",
     "babel-jest": "catalog:",
     "babel-loader": "9.2.1",
     "babel-plugin-transform-inline-environment-variables": "0.4.4",
