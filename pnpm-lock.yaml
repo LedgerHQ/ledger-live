@@ -1150,6 +1150,9 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 10.0.0
+      '@ledgerhq/coin-stacks':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-zcash
