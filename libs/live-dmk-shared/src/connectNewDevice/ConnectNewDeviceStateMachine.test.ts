@@ -416,7 +416,25 @@ describe("ConnectNewDeviceStateMachine", () => {
 
       expect(lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).error).toEqual({
         type: BaseDiscoveryErrorTypes.Unknown,
+        transportId: bleTransport,
         error: retryFailure,
+      });
+    });
+
+    it("should restart discovery without the error transport when the unknown DiscoveryError of a thrown retry is ignored", async () => {
+      const retry = jest.fn().mockRejectedValue(new Error("retry failed"));
+      const { deviceDiscoveryService, emitDiscoveryError, lastState, machine } = setupTest();
+
+      machine.start();
+      emitDiscoveryError(
+        makeDiscoveryError({ transportId: bleTransport, resolution: { type: "prompt", retry } }),
+      );
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).retry!();
+      await flushPromises();
+      lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).ignore();
+
+      expect(deviceDiscoveryService.start).toHaveBeenLastCalledWith({
+        ignoreTransportIdentifiers: [bleTransport],
       });
     });
 

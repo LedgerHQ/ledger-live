@@ -52,7 +52,8 @@ stateDiagram-v2
   resolution that is not `"none"`. Ignoring a discovery error adds its
   `transportId` to `skipTransportIds`, then starts discovery again without that
   transport. A successful retry starts discovery again. A failed retry emits
-  the returned error, or an unknown discovery error if the retry throws.
+  the returned error, or an unknown discovery error if the retry throws. The
+  unknown discovery error keeps the `transportId` of the retried error.
 - The discovery error state has a `close` action for when the user closes its
   sheet. It moves to `Terminated`, also while a retry runs: the retry result is
   then dropped.
