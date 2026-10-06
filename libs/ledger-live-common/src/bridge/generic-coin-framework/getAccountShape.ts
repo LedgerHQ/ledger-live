@@ -1,4 +1,8 @@
-import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
+import {
+  decodeAccountId,
+  encodeAccountId,
+  getSyncHash,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getDerivationScheme } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -428,6 +432,26 @@ function logReadDecisionOnce(chain: string, decision: string, message: string): 
   logA4({ level: "info", message, decision, chain });
 }
 
+/**
+ * The `xpubOrAddress` of a family keyed on the public key (`BridgeApi.accountIdFromPublicKey`).
+ * The stored id wins over the live public key, so a sync never re-keys an account, including one
+ * a legacy bridge once keyed on its address. Only a scan, which has no stored id, uses the key.
+ */
+export function publicKeyAccountIdBasis(
+  initialAccount: Account | undefined,
+  publicKey: string | undefined,
+  address: string,
+): string {
+  if (initialAccount) {
+    try {
+      return decodeAccountId(initialAccount.id).xpubOrAddress;
+    } catch {
+      // A malformed stored id falls through to the scan rule.
+    }
+  }
+  return publicKey || address;
+}
+
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode, rest } = info;
@@ -460,7 +484,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       type: "js",
       version: "2",
       currencyId: currency.id,
-      xpubOrAddress: address,
+      xpubOrAddress: bridgeApi.accountIdFromPublicKey
+        ? publicKeyAccountIdBasis(initialAccount, rest?.publicKey, address)
+        : address,
       derivationMode,
     });
 

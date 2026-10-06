@@ -203,4 +203,10 @@ export type BridgeApi = {
    * operations. For a bridge whose operation ids differ from those another bridge stored.
    */
   syncVersion?: string;
+  /**
+   * For a family whose legacy bridge keyed account ids on the public key rather than the address.
+   * When true, a synced account keeps the `xpubOrAddress` already in its id, and a scanned one is
+   * keyed on the device's public key, so moving to the generic bridge never re-keys an account.
+   */
+  accountIdFromPublicKey?: boolean;
 };
