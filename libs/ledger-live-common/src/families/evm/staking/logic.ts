@@ -13,22 +13,59 @@ import type {
   StakingUnbonding,
   StakingValidatorItem,
 } from "@ledgerhq/types-live";
-import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking";
+import type { ChainId, EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import * as evmStaking from "@ledgerhq/coin-evm/staking";
+import { getCurrencyConfiguration } from "../../../config";
+
+// coin-evm keys its staking registries on the EIP-155 chain id. The wrappers below keep the
+// currency-id based API that the apps rely on, and resolve the chain id from the currency config.
+// A currency without a config is not a staking chain: callers get the same fallback as for a
+// chain without a registry entry (`undefined` / `false`) instead of an exception.
+const getChainIdByCurrencyId = (currencyId: string): ChainId | undefined => {
+  try {
+    return getCurrencyConfiguration<EvmConfigInfo>(currencyId).chainId;
+  } catch {
+    return undefined;
+  }
+};
+
+// Turns a coin-evm helper taking a chain id into one taking a currency id.
+const byCurrencyId =
+  <A extends unknown[], R>(fn: (chainId: ChainId, ...args: A) => R, fallback: R) =>
+  (currencyId: string, ...args: A): R => {
+    const chainId = getChainIdByCurrencyId(currencyId);
+    return chainId === undefined ? fallback : fn(chainId, ...args);
+  };
+
+export const getStakingContract = byCurrencyId(
+  (chainId: ChainId) => evmStaking.STAKING_CONTRACTS[chainId],
+  undefined,
+);
+export const getValidatorExplorerUrl = byCurrencyId(evmStaking.getValidatorExplorerUrl, undefined);
+export const getUnbondingPeriodDays = byCurrencyId(evmStaking.getUnbondingPeriodDays, undefined);
+export const getMaxRedelegations = byCurrencyId(evmStaking.getMaxRedelegations, undefined);
+export const getDelegationVisibilityDelayMinutes = byCurrencyId(
+  evmStaking.getDelegationVisibilityDelayMinutes,
+  undefined,
+);
+export const hasUnbondingPeriod = byCurrencyId(evmStaking.hasUnbondingPeriod, false);
+export const hasDelegationVisibilityDelay = byCurrencyId(
+  evmStaking.hasDelegationVisibilityDelay,
+  false,
+);
+export const hasRedelegation = byCurrencyId(evmStaking.hasRedelegation, false);
+export const hasCompound = byCurrencyId(evmStaking.hasCompound, false);
+export const hasChainRewards = byCurrencyId(evmStaking.hasChainRewards, false);
+export const getStakingContractAddress = byCurrencyId(
+  evmStaking.getStakingContractAddress,
+  undefined,
+);
 
 export {
   parseAmountStringToNumber,
   decodeRedelegatePayload,
   resolveRedelegationValidators,
   resolveStakingValidator,
-  getValidatorExplorerUrl,
-  getUnbondingPeriodDays,
-  getMaxRedelegations,
-  getDelegationVisibilityDelayMinutes,
-  hasUnbondingPeriod,
-  hasDelegationVisibilityDelay,
-  hasRedelegation,
-  hasCompound,
-  hasChainRewards,
   getValidators,
   prefetchValidators,
   isSeiAccountUnassociated,
@@ -139,7 +176,7 @@ export function canUndelegate(account: StakingAccount, delegation?: StakingDeleg
   invariant(account.stakingResources, "stakingResources should exist");
   if (!delegation) return true;
   if (delegation.status === "activating") return false;
-  const chainCanUndelegate = STAKING_CONTRACTS[account.currency.id]?.canUndelegate;
+  const chainCanUndelegate = getStakingContract(account.currency.id)?.canUndelegate;
   if (chainCanUndelegate) {
     const shares = BigNumber.isBigNumber(delegation.shares)
       ? BigInt(delegation.shares.toFixed(0))
@@ -164,11 +201,12 @@ export function canRedelegate(
   invariant(account.stakingResources, "stakingResources should exist");
   // The chain must expose a redelegate precompile function; without it the
   // transaction will always fail, so the UI action should be hidden entirely.
-  if (!STAKING_CONTRACTS[account.currency.id]?.functions.redelegate) return false;
+  const stakingContract = getStakingContract(account.currency.id);
+  if (!stakingContract?.functions.redelegate) return false;
   const redelegations = account.stakingResources.redelegations ?? [];
   const now = new Date();
   const activeRedelegations = redelegations.filter(rd => rd.completionDate > now);
-  const maxRedelegations = STAKING_CONTRACTS[account.currency.id]?.maxRedelegations;
+  const maxRedelegations = stakingContract.maxRedelegations;
   if (maxRedelegations !== undefined && activeRedelegations.length >= maxRedelegations)
     return false;
   // Cannot redelegate FROM a validator that currently holds an active incoming
@@ -180,7 +218,7 @@ export function canRedelegate(
 export function canCompound(account: StakingAccount, delegation: StakingDelegation): boolean {
   // The chain must expose a compound precompile function; without it the
   // transaction will always fail, so the UI option should be hidden entirely.
-  if (!STAKING_CONTRACTS[account.currency.id]?.functions.compoundReward) return false;
+  if (!getStakingContract(account.currency.id)?.functions.compoundReward) return false;
   // Compounding restakes accrued rewards, so it only makes sense when there is
   // something to restake.
   return delegation.pendingRewards.gt(0);

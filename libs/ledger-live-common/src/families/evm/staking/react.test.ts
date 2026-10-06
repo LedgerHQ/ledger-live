@@ -7,6 +7,7 @@ import type { Unit } from "@domain/entity-currency-unit";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
+import { CHAIN_ID } from "@ledgerhq/coin-evm/config";
 import * as stakingIndex from "@ledgerhq/coin-evm/staking";
 import * as accountModule from "../../../account";
 import {
@@ -33,10 +34,30 @@ jest.mock("../../../account", () => ({
 // The hook resolves EVM config via buildContext (backed by getCurrencyConfiguration) and passes it to getValidators.
 jest.mock("../../../config", () => ({
   getCurrencyConfiguration: jest.fn((currencyId: string) => {
+    const { CHAIN_ID } = jest.requireActual("@ledgerhq/coin-evm/config");
     const currency = jest
       .requireActual("@domain/entity-currency-crypto")
       .getCryptoCurrencyById(currencyId);
-    return { status: { type: "active" }, name: currency.name, unit: currency.units[0] };
+    const getChainId = () => {
+      switch (currencyId) {
+        case "sei_evm":
+          return CHAIN_ID.SEI_EVM;
+        case "zero_gravity":
+          return CHAIN_ID.ZERO_GRAVITY;
+        case "celo":
+          return CHAIN_ID.CELO;
+        case "monad":
+          return CHAIN_ID.MONAD;
+        default:
+          throw new Error(`Unexpected currencyId: ${currencyId}`);
+      }
+    };
+    return {
+      status: { type: "active" },
+      name: currency.name,
+      unit: currency.units[0],
+      chainId: getChainId(),
+    };
   }),
 }));
 
@@ -66,7 +87,6 @@ describe("useEvmStakingValidators", () => {
 
     expect(mockedGetValidators).toHaveBeenCalledWith(
       expect.anything(),
-      "sei_evm",
       expect.any(Function),
       undefined,
     );
@@ -87,14 +107,12 @@ describe("useEvmStakingValidators", () => {
     expect(mockedGetValidators).toHaveBeenNthCalledWith(
       1,
       expect.anything(),
-      "sei_evm",
       expect.any(Function),
       undefined,
     );
     expect(mockedGetValidators).toHaveBeenNthCalledWith(
       2,
       expect.anything(),
-      "sei_evm",
       expect.any(Function),
       "1",
     );
@@ -226,8 +244,8 @@ describe("useEvmStakingValidators", () => {
       resolveSei = res;
     });
 
-    mockedGetValidators.mockImplementation((_config, currencyId) =>
-      currencyId === "sei_evm"
+    mockedGetValidators.mockImplementation(config =>
+      config.chainId === CHAIN_ID.SEI_EVM
         ? seiPromise
         : Promise.resolve({ items: celoValidators, next: undefined }),
     );

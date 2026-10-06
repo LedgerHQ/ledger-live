@@ -34,7 +34,7 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
   // the validator list in the next step appears instantly instead of empty.
   useEffect(() => {
     const evmCtx = buildContext<EvmConfigInfo>(currencyId);
-    evmCtx.config().then(config => prefetchValidators(config, currencyId, evmCtx.logger));
+    evmCtx.config().then(config => prefetchValidators(config, evmCtx.logger));
   }, [currencyId]);
 
   const onNext = useCallback(() => {
@@ -50,7 +50,7 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
     setCheckingSeiAssociation(true);
     buildContext<EvmConfigInfo>(account.currency.id)
       .config()
-      .then(config => isSeiAccountUnassociated(config, account.currency.id, account.freshAddress))
+      .then(config => isSeiAccountUnassociated(config, account.freshAddress))
       .then(unassociated => {
         if (!cancelled) setShowSeiAssociationWarning(unassociated);
       })

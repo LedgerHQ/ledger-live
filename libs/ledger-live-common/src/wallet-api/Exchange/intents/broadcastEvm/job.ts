@@ -35,9 +35,9 @@ function buildBroadcastObservable(
       const currency = getCryptoCurrencyById(input.currencyId);
       const evmCtx = buildContext<EvmConfigInfo>(currency.id);
       const config = await evmCtx.config();
-      const nodeApi = getNodeApi(config, currency.id, evmCtx.logger);
+      const nodeApi = getNodeApi(config, evmCtx.logger);
 
-      const hash = await nodeApi.broadcastTransaction(currency.id, input.signedTxHex);
+      const hash = await nodeApi.broadcastTransaction(input.signedTxHex);
       if (cancelled) return;
       subscriber.next({ type: "broadcasted", hash });
 
@@ -49,7 +49,7 @@ function buildBroadcastObservable(
 
         let info: Awaited<ReturnType<typeof nodeApi.getTransaction>> | null = null;
         try {
-          info = await nodeApi.getTransaction(currency.id, hash);
+          info = await nodeApi.getTransaction(hash);
         } catch {
           // Some nodes return 404 for not-yet-mined txs — keep polling instead
           // of failing the whole intent on transient lookup errors.
