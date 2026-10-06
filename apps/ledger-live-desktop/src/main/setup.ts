@@ -1,6 +1,7 @@
 import { getEnv, setEnvUnsafe } from "@shared/env";
 import "./env";
 import "./live-common-setup-main";
+import "./bootstrap";
 import { app, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import fs from "fs/promises";
@@ -51,10 +52,6 @@ ipcMain.handle(
 );
 
 ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
-
-ipcMain.handle("getPathUserData", () => app.getPath("userData"));
-
-ipcMain.handle("getPathHome", () => app.getPath("home"));
 
 ipcMain.handle(
   "export-operations",
