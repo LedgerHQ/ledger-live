@@ -1,6 +1,10 @@
 import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
-import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import {
+  Account,
+  TokenAccount,
+  getParentAccountName,
+} from "@ledgerhq/live-e2e-shared/enum/Account";
 import { EarnProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
@@ -512,6 +516,43 @@ test.describe("Earn v2", () => {
         await app.earnV2Dashboard.verifyPositionRowPresent(tokenAccount.currency.ticker);
         await app.earnV2Dashboard.clickPositionRow(tokenAccount.currency.ticker);
         await app.earnV2Dashboard.verifyWithdrawalFlowVisible();
+      },
+    );
+  });
+
+  test.describe("Swap redirect - deposit v2", () => {
+    const emptyAccount = Account.ETH_2;
+    const fundingAccount = TokenAccount.ETH_USDT_1;
+
+    test.use({
+      userdata: "skip-onboarding-with-last-seen-device",
+      speculosApp: emptyAccount.currency.speculosApp,
+      featureFlags: {
+        ...FF_STAKE_PROGRAMS_MODAL,
+        ...FF_SWAP_TO_EARN_ENABLED,
+      },
+      cliCommands: [liveDataCommand(Account.ETH_1), liveDataCommand(emptyAccount)],
+      speculosForSetupOnly: true,
+    });
+
+    test(
+      `[${emptyAccount.currency.testLabel}] - Earn v2 deposit v2 redirects to swap after selecting another account`,
+      { tag: buildTags({ currencyId: emptyAccount.currency.id }) },
+      async ({ app }) => {
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.navigateToAccountByName(emptyAccount.accountName);
+        await app.account.startStakingFlowFromMainStakeButton();
+        await app.earnV2Dashboard.verifyV2DepositFlowVisible();
+        await app.earnV2Dashboard.selectAnotherFundingAccount(app, fundingAccount);
+        await app.earnV2Dashboard.verifySwapToEarnDescription(
+          fundingAccount.currency.ticker,
+          emptyAccount.currency.ticker,
+        );
+        await app.earnV2Dashboard.selectAmountPreset("50");
+        await app.earnV2Dashboard.continueToSwap();
+        await app.swap.checkAssetFromContains(fundingAccount.currency.ticker);
+        await app.swap.checkAssetFromAccountNameContains(getParentAccountName(fundingAccount));
+        await app.swap.checkAssetToContains(emptyAccount.currency.ticker);
       },
     );
   });
