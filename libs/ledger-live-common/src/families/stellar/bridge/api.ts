@@ -3,7 +3,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { BridgeApi, ChainSpecificRules } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { StellarBurnAddressError } from "@ledgerhq/coin-stellar/types";
-import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/constants";
+import { NULL_ACCOUNT as STELLAR_BURN_ADDRESS } from "@stellar/stellar-sdk/contract";
 
 export const getChainSpecificRules: ChainSpecificRules = {
   getAccountShape: (address: string) => {
