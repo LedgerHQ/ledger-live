@@ -17,6 +17,8 @@ const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
   [Currency.BABY.id, { currencyBabylon: { enabled: true } }],
 ]);
 
+const PRUNED_HISTORY_CURRENCIES = new Set([Currency.BABY.id]);
+
 export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
   describe("Add account", () => {
     beforeAll(async () => {
@@ -52,7 +54,9 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
       await app.assetAccountsPage.expectAccountsBalanceVisible();
       await app.common.goToAccount(accountId, currency.id);
       await app.account.expectAccountBalanceVisible(accountId);
-      await app.account.expectOperationHistoryVisible(accountId);
+      if (!PRUNED_HISTORY_CURRENCIES.has(currency.id)) {
+        await app.account.expectOperationHistoryVisible(accountId);
+      }
       await app.account.expectAddressIndex(0);
     });
   });
