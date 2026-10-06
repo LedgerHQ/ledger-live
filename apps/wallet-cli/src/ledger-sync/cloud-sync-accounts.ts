@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   CloudSyncSDK,
   type UpdateEvent,
@@ -11,6 +12,7 @@ import type { AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
 import { CLOUD_SYNC_API_URLS } from "../key-ring/constants";
 import {
   toV1,
+  networkFromCurrencyId,
   serializeNetwork,
   UnsupportedFamilyError,
   UnknownNetworkError,
@@ -147,6 +149,23 @@ function unsupportedFamily(currencyId: string): string | undefined {
   return SUPPORTED_FAMILIES.has(family) ? undefined : family;
 }
 
+/**
+ * Ledger Sync carries live-common's raw `seedIdentifier`: the public key of the seed derivation,
+ * shared by every account of that currency (e.g. `04…` for Ethereum), not the account's address.
+ * toV1() expects the xpub/address encoded in the account id instead — same normalization as
+ * BridgeAdapter.toDescriptor for accounts discovered on the device.
+ */
+function withSeedIdentifierFromId(descriptor: AccountDescriptorV0): AccountDescriptorV0 {
+  const { currencyId, derivationMode, xpubOrAddress } = decodeAccountId(descriptor.id);
+  if (currencyId !== descriptor.currencyId || derivationMode !== descriptor.derivationMode) {
+    throw new Error(
+      `Account id (${currencyId}, "${derivationMode}") does not match its currencyId and ` +
+        `derivationMode (${descriptor.currencyId}, "${descriptor.derivationMode}").`,
+    );
+  }
+  return { ...descriptor, seedIdentifier: xpubOrAddress };
+}
+
 /** Validates and converts one synced entry, isolating any failure to that entry. */
 function convertSyncedAccount(
   raw: unknown,
@@ -174,7 +193,10 @@ function convertSyncedAccount(
 
   let v1: unknown;
   try {
-    v1 = toV1(descriptor);
+    // Resolved first, as toV1() does, so an unknown currency stays "skipped" even when its id
+    // carries a derivation mode this version can't decode.
+    networkFromCurrencyId(descriptor.currencyId);
+    v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {
     return e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError
       ? { status: "skipped", id: descriptor.id, reason: e.message }

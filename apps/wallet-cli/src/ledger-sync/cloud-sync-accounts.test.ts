@@ -7,7 +7,7 @@ import {
   type CreateCloudSyncSdk,
 } from "./cloud-sync-accounts";
 import { parseV1 } from "../shared/accountDescriptor";
-import { XPUB, ETH_ADDR } from "../shared/accountDescriptor/test-fixtures";
+import { XPUB, ETH_ADDR, SOL_ADDR } from "../shared/accountDescriptor/test-fixtures";
 
 const BTC_RAW = {
   id: `js:2:bitcoin:${XPUB}:native_segwit`,
@@ -151,6 +151,65 @@ describe("mergeSyncedAccounts", () => {
     // The one persisted entry must round-trip through parseV1() — this is the exact invariant the
     // empty-address bug violated (a descriptor that looked fine in `session view` but threw here).
     expect(() => parseV1(session.accounts[0]!.descriptor)).not.toThrow();
+  });
+
+  // Real Ledger Sync entries carry live-common's seedIdentifier: the public key of the seed
+  // derivation, not the account's address (which only lives in the id). ETH_RAW hides this because
+  // its seedIdentifier happens to equal the address.
+  it.each([
+    {
+      name: "ethereum",
+      raw: {
+        ...ETH_RAW,
+        seedIdentifier:
+          "046b1e2f6e7c2a4b8f0d7c9e1a3b5d7f9e1c3a5b7d9f1e3c5a7b9d1f3e5c7a9b1d3f5e7c9a1b3d5f7e9c1a3b5d7f9e1c3a5b7d9f1e3c5a7b9d1f3e5c7a9b1d",
+      },
+      address: ETH_ADDR,
+    },
+    {
+      name: "solana",
+      raw: {
+        id: `js:2:solana:${SOL_ADDR}:solanaMain`,
+        currencyId: "solana",
+        freshAddress: SOL_ADDR,
+        seedIdentifier: "So11111111111111111111111111111111111111112",
+        derivationMode: "solanaMain",
+        index: 0,
+      },
+      address: SOL_ADDR,
+    },
+  ])(
+    "persists the $name account address from the id, not the seedIdentifier",
+    ({ raw, address }) => {
+      const session = Session.from([]);
+      const report = mergeSyncedAccounts(session, [raw]);
+
+      expect(report.invalid).toEqual([]);
+      expect(session.accounts.map(({ descriptor }) => parseV1(descriptor))).toEqual([
+        expect.objectContaining({ type: "address", address }),
+      ]);
+    },
+  );
+
+  it("keeps the xpub of a bitcoin account", () => {
+    const session = Session.from([]);
+    mergeSyncedAccounts(session, [{ ...BTC_RAW, seedIdentifier: "02a1b2c3d4e5f6" }]);
+
+    expect(session.accounts.map(({ descriptor }) => parseV1(descriptor))).toEqual([
+      expect.objectContaining({ type: "utxo", xpub: XPUB }),
+    ]);
+  });
+
+  it.each([
+    { name: "currency", id: `js:2:solana:${SOL_ADDR}:solanaMain` },
+    { name: "derivation mode", id: `js:2:ethereum:${ETH_ADDR}:` },
+  ])("isolates an entry whose id names a different $name than its fields as invalid", ({ id }) => {
+    const session = Session.from([]);
+    const mismatched = { ...ETH_RAW, id };
+    const report = mergeSyncedAccounts(session, [mismatched, BTC_RAW]);
+
+    expect(report.invalid).toEqual([expect.objectContaining({ status: "invalid", id })]);
+    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
   });
 
   it("gives a synced account a fresh label when its default one is taken by a different local account", () => {
