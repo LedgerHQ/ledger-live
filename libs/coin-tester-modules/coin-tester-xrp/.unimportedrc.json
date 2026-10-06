@@ -1,8 +1,0 @@
-{
-  "ignorePatterns": [
-    "**/node_modules/**",
-    "**/lib/**",
-    "**/lib-es/**"
-  ],
-  "ignoreUnused": []
-}

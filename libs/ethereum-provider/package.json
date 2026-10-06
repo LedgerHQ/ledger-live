@@ -46,8 +46,7 @@
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "test": "jest",
-    "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported"
+    "typecheck": "tsc --noEmit --customConditions node"
   },
   "exports": {
     ".": {

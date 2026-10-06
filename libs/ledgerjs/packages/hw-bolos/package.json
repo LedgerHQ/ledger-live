@@ -33,8 +33,7 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "unimported"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",
