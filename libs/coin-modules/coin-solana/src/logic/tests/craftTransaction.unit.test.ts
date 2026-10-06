@@ -62,7 +62,6 @@ jest.mock("../../network/chain/web3", () => ({
     .mockResolvedValue("StakeAccAddr1111111111111111111111111111111"),
   getStakeAccountMinimumBalanceForRentExemption: jest.fn().mockResolvedValue(2_282_880),
   getMaybeMintAccount: jest.fn(),
-  getMaybeTokenMintProgram: jest.fn(),
   getMaybeTokenMint: jest.fn(),
   getMaybeTokenAccount: jest.fn(),
   findAssociatedTokenAccountPubkey: jest.fn(),

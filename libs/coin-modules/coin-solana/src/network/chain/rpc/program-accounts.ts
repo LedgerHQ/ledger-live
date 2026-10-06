@@ -73,7 +73,7 @@ export const paginatedProgramAccounts = (
         ],
       };
       // Connection requests are logged through fetchMiddleware; mirror it here so this
-      // raw call still shows up in the network log (see bridge/js.ts httpRequestLogger).
+      // raw call still shows up in the network log.
       logger?.(endpoint, { method: "POST", body: JSON.stringify(body) });
 
       const { result, error }: V2Response = await http.post(endpoint, { json: body }).json();

@@ -147,7 +147,7 @@ export async function computeUnstakeReserve(
 
 /**
  * Convert raw on-chain stake accounts into the legacy {@link SolanaStake} type
- * used throughout the UI (LLD, LLM) and the legacy bridge.
+ * used throughout the UI (LLD, LLM).
  */
 export function mapStakeAccountsToSolanaStakes(
   stakeAccounts: StakeAccount[],
