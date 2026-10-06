@@ -40,6 +40,11 @@ export default class OnboardingStepsPage {
     await tapById(this.getStartedButtonId);
   }
 
+  @Step("Expect the 'Set up your Ledger' option not to be visible")
+  async expectSetupLedgerOptionNotVisible(): Promise<void> {
+    await detoxExpect(this.setupLedgerButton()).not.toBeVisible();
+  }
+
   @Step("Expect 'Get Started' button to be visible")
   async expectGetStartedButtonToBeVisible(): Promise<void> {
     await detoxExpect(this.onboardingGetStartedButton()).toBeVisible();

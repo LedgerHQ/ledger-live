@@ -25,7 +25,7 @@ export default class MainNavigationPage {
   // --- Destination page verification IDs ---
   portfolioScreenId = "portfolio-screen";
   earnScreenId = "earn-screen";
-  cardScreenId = "card-landing-screen";
+  cardLandingTitleId = "card-landing-title";
   discoverHeaderTitle = "Discover";
   notificationsHeaderTitle = "Notifications";
 
@@ -137,7 +137,7 @@ export default class MainNavigationPage {
 
   @Step("Expect Card page visible")
   async expectCardPageVisible() {
-    await waitForElementById(this.cardScreenId);
+    await waitForElementById(this.cardLandingTitleId);
   }
 
   @Step("Expect Discover page visible")
