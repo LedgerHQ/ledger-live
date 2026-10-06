@@ -1,6 +1,7 @@
 import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import wallet from "@ledgerhq/wallet-btc/index";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { getBoundWalletAccount } from "../coinConfig";
 
 /**
  * Best-effort local check for BTC transaction confirmation.
@@ -23,8 +24,14 @@ export async function isTransactionConfirmed({
   hash: string;
 }): Promise<boolean> {
   try {
-    const walletAccount = (account as BitcoinAccount).bitcoinResources?.walletAccount;
-    if (!walletAccount) return false;
+    if (
+      account.type !== "Account" ||
+      !(account as BitcoinAccount).bitcoinResources?.walletAccount
+    ) {
+      return false;
+    }
+    // A deserialized account has no explorer until bound from the coin config.
+    const { walletAccount } = getBoundWalletAccount(account);
     const blockHeight = await wallet.getAccountTxBlockHeight(walletAccount, hash);
     return Boolean(blockHeight && blockHeight > 0);
   } catch {

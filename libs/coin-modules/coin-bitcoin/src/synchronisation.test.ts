@@ -1,3 +1,7 @@
+// The explorer these tests mock on the wallet-btc account must survive the binding from the config.
+jest.mock("./explorer", () => ({
+  bindExplorer: jest.fn((walletAccount: unknown) => walletAccount),
+}));
 jest.mock("@ledgerhq/wallet-btc/index", () => {
   const { BigNumber } = require("bignumber.js");
   const mock = {
@@ -15,7 +19,7 @@ import {
   performTransparentSync,
   createTransparentSyncObservable,
   buildSyncObservables,
-  postSync,
+  makePostSync,
 } from "./synchronisation";
 import { BitcoinAccount, BtcOperation } from "./types";
 import type { TX } from "@ledgerhq/wallet-btc/index";
@@ -25,15 +29,7 @@ import type { Operation, SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import { firstValueFrom } from "rxjs";
 import { registerChainAdapter } from "./chain-adapters/registry";
-import type { CoinConfig } from "./config";
-
-const coinConfig: CoinConfig = () => ({
-  info: {
-    status: { type: "active" },
-    name: "Bitcoin",
-    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
-  },
-});
+import { contextWith, testContext } from "./__tests__/fixtures/coinConfig";
 
 describe("removeReplaced", () => {
   const baseTx: Omit<BtcOperation, "hash" | "id" | "blockHeight" | "date" | "extra"> = {
@@ -570,7 +566,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const observable = createTransparentSyncObservable(info, mockSignerContext, coinConfig);
+    const observable = createTransparentSyncObservable(info, mockSignerContext, testContext);
     const result = await firstValueFrom(observable);
 
     expect(result).toMatchObject({
@@ -595,7 +591,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const result = await performTransparentSync(info, mockSignerContext, coinConfig);
+    const result = await performTransparentSync(info, mockSignerContext, testContext);
 
     expect(result).toMatchObject({
       operationsCount: expect.any(Number),
@@ -629,7 +625,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const result = await performTransparentSync(info, mockSignerContext, coinConfig);
+    const result = await performTransparentSync(info, mockSignerContext, testContext);
 
     expect(result.balance).toEqual(new BigNumber(943_170));
     expect(result.spendableBalance).toEqual(new BigNumber(943_170));
@@ -686,7 +682,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const result = await performTransparentSync(info, mockSignerContext, coinConfig);
+    const result = await performTransparentSync(info, mockSignerContext, testContext);
 
     expect(result.operations?.[0].fee).toEqual(new BigNumber(55_000));
   });
@@ -707,9 +703,28 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       txs: [shieldingTransaction({ outputs: [changeOutput] })],
     });
 
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext, coinConfig);
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
 
     expect(result.operations?.[0].recipients).toEqual(["u1theactualpayee"]);
+  });
+
+  it("drops unconfirmed operations past the expiry of the coin config", async () => {
+    registerChainAdapter({ id: "bitcoin_testnet" });
+    const halfAnHourAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+    const pendingTransaction = () =>
+      shieldingTransaction({ block: null, received_at: halfAnHourAgo, outputs: [changeOutput] });
+
+    wallet.getAccountTransactions.mockResolvedValueOnce({ txs: [pendingTransaction()] });
+    const withDefault = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
+    expect(withDefault.operations).toHaveLength(1);
+
+    wallet.getAccountTransactions.mockResolvedValueOnce({ txs: [pendingTransaction()] });
+    const withShortExpiry = await performTransparentSync(
+      shieldingInfo,
+      mockSignerContext,
+      contextWith({ sync: { replacedOperationExpiryMs: 10 * 60 * 1000 } }),
+    );
+    expect(withShortExpiry.operations).toEqual([]);
   });
 
   it("keeps a genuine transparent recipient alongside the recovered payee", async () => {
@@ -739,7 +754,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       ],
     });
 
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext, coinConfig);
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
 
     expect(result.operations?.[0].recipients).toEqual(["tb1someoneelse", "u1theactualpayee"]);
   });
@@ -774,7 +789,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       ],
     });
 
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext, coinConfig);
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
 
     const incoming = result.operations?.find(op => op.type === "IN");
     const outgoing = result.operations?.find(op => op.type === "OUT");
@@ -796,7 +811,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       txs: [shieldingTransaction({ outputs: [changeOutput] })],
     });
 
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext, coinConfig);
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
 
     expect(result.operations?.[0].recipients).toEqual(["bc1change"]);
   });
@@ -817,13 +832,15 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       },
     };
 
-    const result = await performTransparentSync(info, mockSignerContext, coinConfig);
+    const result = await performTransparentSync(info, mockSignerContext, testContext);
 
     expect(result.spendableBalance).toEqual(result.balance);
   });
 });
 
 describe("postSync", () => {
+  const postSync = makePostSync(testContext);
+
   const makeOperation = (hash: string, type: Operation["type"]): Operation =>
     ({
       id: `js:2:zcash:xpub:-${hash}-${type}`,
@@ -932,7 +949,7 @@ describe("buildSyncObservables", () => {
       baseInfo,
       defaultSyncConfig,
       signerContext,
-      coinConfig,
+      testContext,
     );
 
     expect(syncType).toBe(SYNC_TYPE_TRANSPARENT);
@@ -941,7 +958,7 @@ describe("buildSyncObservables", () => {
 
   it("buildSyncObservables for bitcoin produces only transparent sync (isolation test)", () => {
     const signerContext = jest.fn();
-    const { syncs } = buildSyncObservables(baseInfo, defaultSyncConfig, signerContext, coinConfig);
+    const { syncs } = buildSyncObservables(baseInfo, defaultSyncConfig, signerContext, testContext);
     expect(syncs).toHaveLength(1); // only transparent, no shielded
   });
 });

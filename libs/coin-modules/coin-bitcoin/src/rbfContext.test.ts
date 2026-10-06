@@ -1,3 +1,4 @@
+import { TEST_CONFIG } from "./__tests__/fixtures/coinConfig";
 import { BigNumber } from "bignumber.js";
 import { Transaction as BitcoinTransaction, address as bitcoinAddress } from "bitcoinjs-lib";
 import { getAmountAndRecipient, getRbfContext } from "./rbfContext";
@@ -112,7 +113,7 @@ describe("rbfContext helpers", () => {
         },
       ]);
 
-      const ctx = await getRbfContext({} as any, "orig-txid");
+      const ctx = await getRbfContext(TEST_CONFIG, {} as any, "orig-txid");
 
       expect(ctx.feePerByte.isEqualTo(13)).toBe(true);
       expect(ctx.changeAddress.address).toBe("change-addr");
@@ -131,7 +132,7 @@ describe("rbfContext helpers", () => {
         outs: [{ script: Buffer.from("01", "hex"), value: 1000 }],
       });
 
-      await expect(getRbfContext({} as any, "orig-txid")).rejects.toThrow(
+      await expect(getRbfContext(TEST_CONFIG, {} as any, "orig-txid")).rejects.toThrow(
         "Transaction is not RBF-enabled",
       );
     });

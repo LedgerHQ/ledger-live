@@ -1,23 +1,34 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { getEnv } from "@shared/env";
+import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
+import { getBitcoinCoinConfig } from "../coinConfig";
 import { isEditableOperation, isStuckOperation, getStuckAccountAndOperation } from "./operation";
 
-// Deterministic stuck-timeout threshold, decoupled from the real env default.
+// Deterministic stuck-timeout threshold, decoupled from the module default.
 const STUCK_TIMEOUT = 20 * 60 * 1000;
 
-jest.mock("@shared/env", () => ({
-  getEnv: jest.fn(),
+jest.mock("../coinConfig", () => ({
+  getBitcoinCoinConfig: jest.fn(),
 }));
 
+const mockedGetBitcoinCoinConfig = jest.mocked(getBitcoinCoinConfig);
+const coinConfigWithFees = (fees: BitcoinCoinConfig["fees"] = {}): BitcoinCoinConfig => ({
+  status: { type: "active" },
+  name: "Bitcoin",
+  unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+  explorer: { url: "https://explorer.test.invalid" },
+  fees,
+});
+
 beforeEach(() => {
-  (getEnv as jest.Mock).mockImplementation((key: string) =>
-    key === "BITCOIN_STUCK_TRANSACTION_TIMEOUT" ? STUCK_TIMEOUT : undefined,
+  mockedGetBitcoinCoinConfig.mockReturnValue(
+    coinConfigWithFees({ stuckTransactionTimeoutMs: STUCK_TIMEOUT }),
   );
 });
 
 const makeOperation = (overrides: Partial<Operation> = {}): Operation =>
   ({
     id: "op-1",
+    accountId: "js:2:bitcoin:xpub:native_segwit",
     type: "OUT",
     blockHeight: null,
     date: new Date(),
@@ -70,6 +81,22 @@ describe("isStuckOperation", () => {
   });
 
   it("returns false when the operation is more recent than the stuck timeout", () => {
+    expect(isStuckOperation(makeOperation({ date: recentDate() }))).toBe(false);
+  });
+
+  it("reads the stuck timeout of the operation's currency from its coin config", () => {
+    mockedGetBitcoinCoinConfig.mockReturnValue(
+      coinConfigWithFees({ stuckTransactionTimeoutMs: 1 }),
+    );
+
+    expect(isStuckOperation(makeOperation({ date: recentDate() }))).toBe(true);
+    expect(mockedGetBitcoinCoinConfig).toHaveBeenCalledWith("bitcoin");
+  });
+
+  it("falls back to the module default when the coin config has no stuck timeout", () => {
+    mockedGetBitcoinCoinConfig.mockReturnValue(coinConfigWithFees());
+
+    expect(isStuckOperation(makeOperation({ date: stuckDate() }))).toBe(true);
     expect(isStuckOperation(makeOperation({ date: recentDate() }))).toBe(false);
   });
 });

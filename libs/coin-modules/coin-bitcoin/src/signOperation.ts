@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { isSegwitDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import type { Observer } from "rxjs";
@@ -14,6 +13,8 @@ import { perCoinLogic } from "./logic";
 import { SignerContext } from "./signer";
 import { fromAsyncOperation } from "./observable";
 import { getChainAdapter } from "./chain-adapters/registry";
+import type { BitcoinContext } from "./config";
+import { resolveAccountConfig } from "./explorer";
 
 type SignOperationObserverEvent =
   | { type: "device-signature-granted" }
@@ -54,16 +55,18 @@ async function executeSignOperation(
   deviceId: string,
   transaction: Transaction,
   signerContext: SignerContext,
+  context: BitcoinContext,
 ): Promise<void> {
   const { currency } = account;
+  const config = await resolveAccountConfig(context, account);
   const walletAccount = getWalletAccount(account);
 
-  log("hw", `signTransaction ${currency.id} for account ${account.id}`);
-  const txInfo = await buildTransaction(account, transaction);
+  context.logger("hw", `signTransaction ${currency.id} for account ${account.id}`);
+  const txInfo = await buildTransaction(config, context.logger, account, transaction);
 
   // Maybe better not re-calculate these fields here, instead include them
   // in Transaction type and set them in prepareTransaction?
-  const res = await calculateFees({
+  const res = await calculateFees(config, context.logger, {
     account,
     transaction,
   });
@@ -111,7 +114,7 @@ async function executeSignOperation(
   const inputs = inputRefs.map(r => `${r.hash}-${r.outputIndex}`);
 
   const signature: string = await signerContext(deviceId, currency, signer =>
-    signAccountTx({
+    signAccountTx(context.logger, {
       btc: signer,
       fromAccount: walletAccount,
       txInfo,
@@ -158,14 +161,17 @@ async function executeSignOperation(
 }
 
 export const buildSignOperation =
-  (signerContext: SignerContext): AccountBridge<Transaction>["signOperation"] =>
+  (
+    signerContext: SignerContext,
+    context: BitcoinContext,
+  ): AccountBridge<Transaction>["signOperation"] =>
   ({ account, deviceId, transaction }) => {
     const adapter = getChainAdapter(account.currency.id);
     const custom = adapter.signOperation?.(account, deviceId, transaction, signerContext);
     if (custom) return custom;
 
     return fromAsyncOperation(o =>
-      executeSignOperation(o, account, deviceId, transaction, signerContext),
+      executeSignOperation(o, account, deviceId, transaction, signerContext, context),
     );
   };
 

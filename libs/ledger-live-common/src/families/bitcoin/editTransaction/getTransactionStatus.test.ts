@@ -7,6 +7,28 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/coin-bitcoin/types";
 import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
+import type { Account } from "@ledgerhq/types-live";
+import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
+import { getBitcoinCoinConfig } from "../coinConfig";
+
+jest.mock("../coinConfig", () => ({
+  getBitcoinCoinConfig: jest.fn(),
+}));
+
+const mockedGetBitcoinCoinConfig = jest.mocked(getBitcoinCoinConfig);
+const coinConfigWithFees = (fees: BitcoinCoinConfig["fees"] = {}): BitcoinCoinConfig => ({
+  status: { type: "active" },
+  name: "Bitcoin",
+  unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
+  explorer: { url: "https://explorer.test.invalid" },
+  fees,
+});
+
+const mainAccount = { currency: { id: "bitcoin" } } as Account;
+
+beforeEach(() => {
+  mockedGetBitcoinCoinConfig.mockReturnValue(coinConfigWithFees());
+});
 
 const makeTransaction = (overrides: Partial<BtcTransaction> = {}): BtcTransaction => ({
   family: "bitcoin",
@@ -41,6 +63,7 @@ describe("validateEditTransaction", () => {
     const transactionToUpdate = { rbf: true, feePerByte: new BigNumber(5) } as BtcTransaction;
 
     const result = validateEditTransaction({
+      mainAccount,
       transaction,
       transactionToUpdate,
       editType: undefined as unknown as EditType,
@@ -58,6 +81,7 @@ describe("validateEditTransaction", () => {
     });
 
     const result = validateEditTransaction({
+      mainAccount,
       transaction,
       transactionToUpdate,
       editType: "speedup",
@@ -74,6 +98,7 @@ describe("validateEditTransaction", () => {
     const baseEdited = makeTransaction({ feePerByte: new BigNumber(10) });
 
     const result = validateEditTransaction({
+      mainAccount,
       transaction: { ...baseEdited, feePerByte: undefined },
       transactionToUpdate: baseTx,
       editType: "speedup",
@@ -89,6 +114,7 @@ describe("validateEditTransaction", () => {
     const baseEdited = makeTransaction({ feePerByte: new BigNumber(10) });
 
     const result = validateEditTransaction({
+      mainAccount,
       transaction: baseEdited,
       transactionToUpdate: { ...baseTx, feePerByte: undefined },
       editType: "speedup",
@@ -106,6 +132,7 @@ describe("validateEditTransaction", () => {
     });
 
     const result = validateEditTransaction({
+      mainAccount,
       transaction,
       transactionToUpdate,
       editType: "cancel",
@@ -124,6 +151,7 @@ describe("validateEditTransaction", () => {
     });
 
     const result = validateEditTransaction({
+      mainAccount,
       transaction,
       transactionToUpdate,
       editType: "speedup",
@@ -144,6 +172,7 @@ describe("validateEditTransaction", () => {
     });
 
     const result = validateEditTransaction({
+      mainAccount,
       transaction,
       transactionToUpdate,
       editType: "speedup",
@@ -164,6 +193,7 @@ describe("validateEditTransaction", () => {
     });
 
     const result = validateEditTransaction({
+      mainAccount,
       transaction,
       transactionToUpdate,
       editType: "speedup",
@@ -187,6 +217,7 @@ describe("getEditTransactionStatus", () => {
     });
 
     const result = await getEditTransactionStatus({
+      mainAccount,
       transaction,
       transactionToUpdate,
       status: baseStatus,
@@ -212,6 +243,7 @@ describe("getEditTransactionStatus", () => {
     });
 
     const result = await getEditTransactionStatus({
+      mainAccount,
       transaction,
       transactionToUpdate,
       status: baseStatus,

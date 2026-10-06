@@ -1,3 +1,4 @@
+import { TEST_CONFIG, TEST_LOGGER } from "../fixtures/coinConfig";
 import { BigNumber } from "bignumber.js";
 import { prepareTransaction, sameExcludeUTXOs } from "../../prepareTransaction";
 import { createFixtureAccount, networkInfo } from "../../fixtures/common.fixtures";
@@ -150,7 +151,7 @@ describe("prepareTransaction", () => {
       utxoStrategy: { strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE, excludeUTXOs: [] },
     });
 
-    const result = await prepareTransaction(account, transaction);
+    const result = await prepareTransaction(TEST_CONFIG, TEST_LOGGER, account, transaction);
 
     expect(result).toBe(transaction);
   });
@@ -169,7 +170,7 @@ describe("prepareTransaction", () => {
       utxoStrategy: { strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE, excludeUTXOs: exclusions },
     });
 
-    const result = await prepareTransaction(account, transaction);
+    const result = await prepareTransaction(TEST_CONFIG, TEST_LOGGER, account, transaction);
 
     expect(result).toBe(transaction);
   });
@@ -206,7 +207,7 @@ describe("prepareTransaction", () => {
       },
     });
 
-    const result = await prepareTransaction(account, transaction);
+    const result = await prepareTransaction(TEST_CONFIG, TEST_LOGGER, account, transaction);
 
     expect(result).not.toBe(transaction);
     expect(result.utxoStrategy?.excludeUTXOs).toHaveLength(3);
@@ -227,7 +228,7 @@ describe("prepareTransaction", () => {
       utxoStrategy: { strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE, excludeUTXOs: [] },
     });
 
-    const result = await prepareTransaction(account, transaction);
+    const result = await prepareTransaction(TEST_CONFIG, TEST_LOGGER, account, transaction);
 
     expect(result).not.toBe(transaction);
     expect(result.networkInfo).toEqual(mockNetworkInfo);

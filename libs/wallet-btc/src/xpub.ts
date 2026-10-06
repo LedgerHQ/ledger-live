@@ -6,6 +6,7 @@ import { log } from "@ledgerhq/logs";
 import { NotEnoughBalance, RbfBuildError } from "./errors";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
+import { DEFAULT_EXPLORER_BATCH_SIZE } from "./explorer";
 import { ICrypto } from "./crypto/types";
 import { PickingStrategy } from "./pickingstrategies/types";
 import {
@@ -61,8 +62,9 @@ class Xpub {
 
   GAP = 20;
 
-  // need to be bigger than the number of tx from the same address that can be in the same block
-  txsSyncArraySize = 1000;
+  get txsSyncArraySize(): number {
+    return this.explorer.batchSize ?? DEFAULT_EXPLORER_BATCH_SIZE;
+  }
 
   // the height of the block during the previous synchronization. We do not need to repeatedly synchronize blocks lower than this height.
   // -1 means that this account has not been synchronized
