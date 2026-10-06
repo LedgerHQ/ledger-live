@@ -49,8 +49,9 @@ const createMarketState = (overrides = {}) => ({
   currentPage: 1,
 });
 
-const createSettingsState = (starredMarketCoins: string[] = []) => ({
+const createSettingsState = (starredMarketCoins: string[] = [], counterValue = "USD") => ({
   starredMarketCoins,
+  counterValue,
 });
 
 const defaultStarredMarketCoins: string[] = [];
@@ -58,12 +59,13 @@ const defaultStarredMarketCoins: string[] = [];
 const renderMarketCoinHook = ({
   marketOverrides = {},
   starredMarketCoins = defaultStarredMarketCoins,
+  settingsCounterValue = "USD",
 } = {}) =>
   renderHook(() => useMarketCoin(), {
     minimal: false,
     initialState: {
       market: createMarketState(marketOverrides),
-      settings: createSettingsState(starredMarketCoins),
+      settings: createSettingsState(starredMarketCoins, settingsCounterValue),
       ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
     },
   });
@@ -271,5 +273,14 @@ describe("useMarketCoin", () => {
 
     expect(result.current.counterCurrency).toBe("eur");
     expect(result.current.range).toBe("7d");
+  });
+
+  it("should resolve the unit from the Market counter currency, not from Settings", () => {
+    const { result } = renderMarketCoinHook({
+      marketOverrides: { counterCurrency: "usd" },
+      settingsCounterValue: "EUR",
+    });
+
+    expect(result.current.counterValueUnit.code).toBe("$");
   });
 });

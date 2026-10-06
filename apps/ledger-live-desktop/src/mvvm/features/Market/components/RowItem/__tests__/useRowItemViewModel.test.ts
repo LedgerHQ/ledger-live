@@ -3,6 +3,7 @@ import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fi
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useRowItemViewModel } from "../useRowItemViewModel";
 import { useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
+import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";
 
 const mockNavigate = jest.fn();
 const mockOnBuy = jest.fn();
@@ -218,6 +219,22 @@ describe("useRowItemViewModel", () => {
     });
 
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("formats price and market cap with the Market counter currency, not the Settings one", () => {
+    const { result } = renderHook(
+      () =>
+        useRowItemViewModel({
+          currency: bitcoinCurrency,
+          counterCurrency: "usd",
+          toggleStar: jest.fn(),
+          range: "24h",
+        }),
+      { initialState: { settings: { ...SETTINGS_INITIAL_STATE, counterValue: "EUR" } } },
+    );
+
+    expect(result.current.formattedPrice).toMatch(/^\$/);
+    expect(result.current.formattedMarketCap).toMatch(/^\$/);
   });
 
   it("onStarClick calls toggleStar and prevents propagation", () => {

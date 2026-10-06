@@ -12,12 +12,13 @@ import { getMarketPageCategoryAnalytics } from "LLD/features/Market/utils/market
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useSelector } from "LLD/hooks/redux";
 import { marketCategorySelector } from "~/renderer/reducers/market";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import { useMarketCounterValueUnit } from "LLD/features/Market/hooks/useMarketCounterValueUnit";
 
 type UseMarketRowViewModelProps = {
   size: number;
   start: number;
   currency: MarketCurrencyData;
+  counterCurrency?: string;
   locale: string;
   range?: string;
   isStarred: boolean;
@@ -28,6 +29,7 @@ export function useMarketRowViewModel({
   size,
   start,
   currency,
+  counterCurrency,
   locale,
   range,
   isStarred,
@@ -39,7 +41,7 @@ export function useMarketRowViewModel({
 
   const selectedCategory = useSelector(marketCategorySelector);
   const category = getMarketPageCategoryAnalytics(selectedCategory);
-  const counterValueUnit = useSelector(counterValueCurrencySelector).units[0];
+  const counterValueUnit = useMarketCounterValueUnit(counterCurrency);
   const {
     onBuy,
     onSell,
