@@ -5,4 +5,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-fix(hedera): generic adapter fixes for fee estimation, wallet API memo, token association wording and token receive
+fix(hedera): generic adapter fixes for fee estimation, wallet API memo, token association wording, token receive and swap history saved by the legacy bridge
