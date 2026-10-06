@@ -2,6 +2,7 @@
 @import "tailwindcss/preflight.css";
 @import "tailwindcss/utilities.css";
 @import "@ledgerhq/lumen-ui-react/tailwind.css";
+@import "@ledgerhq/device-mockserver-react/tailwind.css";
 
 @config "../../tailwind.config.ts";
 
