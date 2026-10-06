@@ -1,4 +1,29 @@
 export const FALLBACK_STORAGE_AMOUNT_PER_BYTE = "10000000000000000000";
+/**
+ * The gas price to price staking against until `preload()` reports the live one.
+ *
+ * The generic-coin-framework bridge has no preload step, so on that route the cache keeps its
+ * initial value for the whole session. Seeding this with zero made every fee estimate collapse to
+ * zero, which let `canStake` offer staking to accounts that cannot cover it.
+ *
+ * This is the `gas_price` mainnet blocks report today — check with the `block` RPC method — and the
+ * protocol caps how fast it moves: `gas_price_adjustment_rate` is 1/100, so at most 1% per block.
+ * It cannot drift far within a session, which is enough for a "can you afford this?" heuristic.
+ * Actual transaction pricing still uses the live value via `estimateFees`.
+ */
+export const FALLBACK_GAS_PRICE = "100000000";
+/**
+ * The price attached gas is bought at, until `preload()` reports the live one.
+ *
+ * Staking fees are priced at `max(gasPrice, minGasPurchasePrice)` (see `getStakingFees`), and this
+ * floor sits well above the current gas price, so it is what `canStake` actually prices against.
+ * Seeding `FALLBACK_GAS_PRICE` alone left this at zero on the generic-coin-framework route and
+ * priced staking at a tenth of what the chain charges.
+ *
+ * This is `runtime_config.min_gas_purchase_price` from the `EXPERIMENTAL_protocol_config` RPC
+ * method. It is a protocol parameter, so it only changes with a protocol upgrade.
+ */
+export const FALLBACK_MIN_GAS_PURCHASE_PRICE = "1000000000";
 export const NEW_ACCOUNT_SIZE = 182;
 export const MIN_ACCOUNT_BALANCE_BUFFER = "50000000000000000000000";
 /**
