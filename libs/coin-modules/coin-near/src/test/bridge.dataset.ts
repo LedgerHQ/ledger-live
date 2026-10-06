@@ -25,6 +25,8 @@ const DEFAULT_AMOUNT = "100000000";
 const BIG_AMOUNT = "1000000000000000000000000";
 
 const near: CurrenciesData<Transaction> = {
+  // syncHash is derived from live CAL data, so it changes over time.
+  FIXME_ignoreAccountFields: ["syncHash"],
   scanAccounts: [
     {
       name: "near seed 1",
