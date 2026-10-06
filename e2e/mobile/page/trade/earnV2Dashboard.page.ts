@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export default class EarnV2DashboardPage {
   // Webview locators (shared earn web app v2)
@@ -174,6 +175,7 @@ export default class EarnV2DashboardPage {
   // --- ETH deposit v2 webview flow (swapToEarn enabled) ---
 
   accountSelectorInput = "account-selector-input";
+  swapDescription = "amount-input-section-swap-description";
   amountPresets = "amount-presets";
   amountPreset = (preset: "25" | "50" | "75" | "max") => `amount-preset-${preset}`;
   customKeyboard = "custom-keyboard";
@@ -201,6 +203,28 @@ export default class EarnV2DashboardPage {
       await tapWebElementByTestId(this.customKeyboardKey(key));
     }
     jestExpect(await getValueByWebTestId(this.ethAmountInput)).toBe(amount);
+  }
+
+  @Step("Select another funding account {{{0.accountName}}}")
+  async selectAnotherFundingAccount(account: Account) {
+    await tapWebElementByTestId(this.accountSelectorInput);
+    await app.modularDrawer.selectAssetAndAccount(account);
+  }
+
+  @Step("Verify swap-to-earn copy from {{{0}}} to {{{1}}}")
+  async verifySwapToEarnDescription(fromTicker: string, toTicker: string) {
+    await waitWebElementByTestId(this.swapDescription);
+    const text = await getWebElementText(this.swapDescription);
+    jestExpect(text).toContain(fromTicker);
+    jestExpect(text).toContain(toTicker);
+  }
+
+  @Step("Continue to swap")
+  async continueToSwap() {
+    await waitForWebElementToBeEnabled(this.amountContinueCta);
+    const label = await getWebElementText(this.amountContinueCta);
+    jestExpect(label).toContain("Go to swap");
+    await tapWebElementByTestId(this.amountContinueCta);
   }
 
   @Step("Select deposit v2 amount preset {{{0}}}")

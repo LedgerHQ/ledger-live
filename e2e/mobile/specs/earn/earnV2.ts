@@ -387,3 +387,45 @@ export function runInlineAddAccountTest(
     });
   });
 }
+
+export function runSwapRedirectTest(
+  emptyAccount: Account,
+  fundingAccount: Account,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Earn v2", () => {
+    beforeAll(async () => {
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: emptyAccount.currency.speculosApp,
+        featureFlags: {
+          ...EARN_V2_FLAGS,
+          ...FF_STAKE_PROGRAMS_MODAL,
+          ...swapToEarnFlags("v2"),
+        },
+        cliCommands: [liveDataCommand(Account.ETH_1), liveDataCommand(emptyAccount)],
+        speculosForSetupOnly: true,
+      });
+    });
+
+    setTeamOwner(Team.EARN);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`[${emptyAccount.currency.testLabel}] - Earn v2 deposit v2 redirects to swap after selecting another account`, async () => {
+      await app.portfolio.goToAccounts(emptyAccount.currency.name);
+      await app.common.goToAccountByName(emptyAccount.accountName);
+      await app.account.tapEarn();
+      await app.earnV2Dashboard.verifyV2DepositFlowVisible();
+      await app.earnV2Dashboard.selectAnotherFundingAccount(fundingAccount);
+      await app.earnV2Dashboard.verifySwapToEarnDescription(
+        fundingAccount.currency.ticker,
+        emptyAccount.currency.ticker,
+      );
+      await app.earnV2Dashboard.selectAmountPresetV2("50");
+      await app.earnV2Dashboard.continueToSwap();
+      await app.swapLiveApp.checkAssetFromMatchesAccount(fundingAccount);
+      await app.swapLiveApp.checkAssetToContains(emptyAccount.currency.ticker);
+    });
+  });
+}
