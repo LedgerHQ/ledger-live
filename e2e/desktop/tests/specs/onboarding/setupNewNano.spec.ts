@@ -30,15 +30,15 @@ test.describe(`Onboarding a new Nano (mock server)`, () => {
       await app.onboarding.completePedagogy();
       await app.onboarding.completeTutorialSteps();
       await app.onboarding.completeQuiz();
-      await app.onboarding.continueTutorial();
+      await app.onboarding.continueTutorial("quiz-success");
 
       await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true);
       await app.onboarding.runGenuineCheck();
-      await app.onboarding.continueTutorial();
+      await app.onboarding.continueTutorial("genuine-check");
 
-      await app.onboarding.continueTutorialSecondary(); // skip Ledger Sync
-      await app.onboarding.continueTutorialSecondary(); // skip funding
-      await app.onboarding.continueTutorial();
+      await app.onboarding.continueTutorialSecondary("enable-sync"); // skip Ledger Sync
+      await app.onboarding.continueTutorialSecondary("secure-your-crypto"); // skip funding
+      await app.onboarding.continueTutorial("welcome-to-wallet-without-funds");
 
       await app.portfolio.expectPortfolioEmptyState();
     },
