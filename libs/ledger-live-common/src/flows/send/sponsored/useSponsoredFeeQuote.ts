@@ -1,24 +1,27 @@
 import { useEffect, useMemo, useState } from "react";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "LLD/hooks/redux";
-import { useFeature } from "@features/platform-feature-flags";
+import { log } from "@ledgerhq/logs";
+import type { Currency } from "@domain/entity-currency";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import type {
   SponsoredCoinApi,
   SponsoredFeeAsset,
   SponsoredFeeQuote,
-} from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { findFeeTokenAccount } from "../utils/sponsoredFeeAsset";
+} from "../../../bridge/generic-coin-framework/sponsored";
+import { findFeeTokenAccount } from "./feeAsset";
 
-type UseSponsoredFeeParams = Readonly<{
+type UseSponsoredFeeQuoteParams = Readonly<{
   mainAccount: Account | null;
+  /** Null when sponsorship is off or the network has no seam. */
   seam: SponsoredCoinApi | null;
   intent: unknown;
+  /** The intent builder rejected the transaction: withdraw the option rather than wait on it. */
+  intentFailed?: boolean;
+  counterValueCurrency: Currency;
 }>;
 
-type UseSponsoredFeeResult = Readonly<{
+export type SponsoredFeeQuoteResult = Readonly<{
   available: boolean;
   quote: SponsoredFeeQuote | null;
   feeAsset: SponsoredFeeAsset | null;
@@ -32,13 +35,13 @@ type UseSponsoredFeeResult = Readonly<{
   loading: boolean;
 }>;
 
-export function useSponsoredFee({
+export function useSponsoredFeeQuote({
   mainAccount,
   seam,
   intent,
-}: UseSponsoredFeeParams): UseSponsoredFeeResult {
-  const flagEnabled = useFeature("gasSponsorship")?.enabled === true;
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  intentFailed = false,
+  counterValueCurrency,
+}: UseSponsoredFeeQuoteParams): SponsoredFeeQuoteResult {
   const nativeCurrency = mainAccount?.currency ?? null;
 
   const [available, setAvailable] = useState(false);
@@ -49,7 +52,7 @@ export function useSponsoredFee({
   useEffect(() => {
     let ignore = false;
 
-    if (!flagEnabled || !seam) {
+    if (!seam || intentFailed) {
       setAvailable(false);
       setFeeAsset(null);
       setQuote(null);
@@ -57,7 +60,7 @@ export function useSponsoredFee({
       return;
     }
 
-    // Intent rebuilds after every edit: keep `available` sticky so the user's selection isn't reverted.
+    // Intent rebuilds after every edit: keep `available` sticky so the current pick isn't reverted.
     if (intent == null) {
       setQuote(null);
       setLoading(false);
@@ -71,7 +74,8 @@ export function useSponsoredFee({
       let options: Awaited<ReturnType<typeof seam.listFeeOptions>>;
       try {
         options = await seam.listFeeOptions(intent);
-      } catch {
+      } catch (error) {
+        log("sponsored-send", "listFeeOptions failed", { error });
         if (!ignore) {
           setAvailable(false);
           setFeeAsset(null);
@@ -96,7 +100,8 @@ export function useSponsoredFee({
         const result = await seam.estimateSponsoredFeeQuote(intent);
         if (ignore) return;
         setQuote(result);
-      } catch {
+      } catch (error) {
+        log("sponsored-send", "sponsored fee quote failed", { error });
         // Without a quote the native-fee error can't be waived, so Review would dead-end: withdraw the option.
         if (!ignore) {
           setAvailable(false);
@@ -111,7 +116,7 @@ export function useSponsoredFee({
     return () => {
       ignore = true;
     };
-  }, [flagEnabled, seam, intent]);
+  }, [seam, intent, intentFailed]);
 
   const feeTokenAccount = useMemo(
     () => findFeeTokenAccount(mainAccount, feeAsset),

@@ -1,19 +1,44 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import type { SponsoredFeeAsset } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
-import {
-  TRON_USDT_CONTRACT,
-  TRON_USDT_FEE_ASSET,
-  createMockAccount,
-  createMockCurrency,
-  createMockTronUsdtAccount,
-} from "../../screens/Recipient/__integrations__/__fixtures__/accounts";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { SponsoredFeeAsset } from "../../../bridge/generic-coin-framework/sponsored";
 import {
   findFeeTokenAccount,
   isSponsoredFeeUnaffordable,
   sponsoredMaxAmount,
   tokenSpendableAfterPending,
-} from "../sponsoredFeeAsset";
+} from "./feeAsset";
+import {
+  USDT_CONTRACT as TRON_USDT_CONTRACT,
+  USDT_FEE_ASSET as TRON_USDT_FEE_ASSET,
+} from "./fixtures/usdt";
+
+const createMockTronUsdtAccount = (overrides: Partial<TokenAccount>): TokenAccount => ({
+  type: "TokenAccount",
+  id: "mock_tron_usdt_account_id",
+  parentId: "mock_account_id",
+  token: {
+    type: "TokenCurrency",
+    id: "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
+    contractAddress: TRON_USDT_CONTRACT,
+    parentCurrencyId: "tron",
+    tokenType: "trc20",
+    name: "Tether USD",
+    ticker: "USDT",
+    units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
+  },
+  balance: new BigNumber(0),
+  spendableBalance: new BigNumber(0),
+  creationDate: new Date(0),
+  operationsCount: 0,
+  operations: [],
+  pendingOperations: [],
+  balanceHistoryCache: emptyHistoryCache,
+  swapHistory: [],
+  ...overrides,
+});
 
 const RENT = 3_200_000n;
 
@@ -39,8 +64,10 @@ const usdtWith = (spendable: number, pendingOperations: Operation[] = []): Token
     pendingOperations,
   });
 
-const tronParent = (subAccounts: TokenAccount[]): Account =>
-  createMockAccount({ currency: createMockCurrency({ id: "tron" }), subAccounts });
+const tronParent = (subAccounts: TokenAccount[]): Account => ({
+  ...genAccount("mock_account", { currency: getCryptoCurrencyById("tron") }),
+  subAccounts,
+});
 
 const send = (amount: number, useAllAmount = false) => ({
   amount: new BigNumber(amount),

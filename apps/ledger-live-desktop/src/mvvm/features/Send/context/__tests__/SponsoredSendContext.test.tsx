@@ -90,9 +90,9 @@ const mockUseSponsoredFeeResult = {
   feeCurrencyTicker: "USDT",
   loading: false,
 };
-const mockUseSponsoredFee = jest.fn((..._args: unknown[]) => mockUseSponsoredFeeResult);
-jest.mock("../../hooks/useSponsoredFee", () => ({
-  useSponsoredFee: (...args: unknown[]) => mockUseSponsoredFee(...args),
+const mockUseSponsoredFeeQuote = jest.fn((..._args: unknown[]) => mockUseSponsoredFeeResult);
+jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote", () => ({
+  useSponsoredFeeQuote: (...args: unknown[]) => mockUseSponsoredFeeQuote(...args),
 }));
 
 const mockUpdateAccountWithUpdater = jest.fn((..._args: unknown[]) => ({
@@ -124,7 +124,7 @@ describe("SponsoredSendContext", () => {
   beforeEach(() => {
     mockUseSponsoredSendOrchestration.mockClear();
     mockGetSponsoredCoinApi.mockClear();
-    mockUseSponsoredFee.mockClear();
+    mockUseSponsoredFeeQuote.mockClear();
     mockUpdateTransaction.mockClear();
     mockActions.reset.mockClear();
     mockUseSponsoredFeeResult.available = false;
@@ -140,14 +140,14 @@ describe("SponsoredSendContext", () => {
     mockParentAccount = null;
   });
 
-  it("exposes useSponsoredFee's result (available/quote/savingsFiatFormatted)", () => {
+  it("exposes useSponsoredFeeQuote's result (available/quote/savingsFiatFormatted)", () => {
     const { result } = renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
 
     expect(result.current.available).toBe(false);
     expect(result.current.quote).toBeNull();
     expect(result.current.sponsoredFeeAmounts).toBeNull();
     expect(result.current.savingsFiatFormatted).toBeNull();
-    expect(mockUseSponsoredFee).toHaveBeenCalledWith(
+    expect(mockUseSponsoredFeeQuote).toHaveBeenCalledWith(
       expect.objectContaining({ mainAccount: mockAccount }),
     );
   });
@@ -190,7 +190,7 @@ describe("SponsoredSendContext", () => {
     expect(result.current.state).toBe(mockSponsoredState);
   });
 
-  it("exposes the resolved seam's identity and hands the seam to useSponsoredFee", async () => {
+  it("exposes the resolved seam's identity and hands the seam to useSponsoredFeeQuote", async () => {
     const { result } = renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
     await act(async () => {});
 
@@ -199,7 +199,7 @@ describe("SponsoredSendContext", () => {
     expect(result.current.providerName).toBe("Provider");
     expect(result.current.waivesErrorKeys).toEqual(["gasLimit"]);
     expect(result.current.waivesWarningKeys).toEqual(["amount"]);
-    expect(mockUseSponsoredFee).toHaveBeenLastCalledWith(
+    expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(
       expect.objectContaining({ seam: mockSeam }),
     );
   });
@@ -352,7 +352,9 @@ describe("SponsoredSendContext", () => {
     await act(async () => {});
 
     expect(result.current.sponsoredFeeOptionId).toBe("");
-    expect(mockUseSponsoredFee).toHaveBeenLastCalledWith(expect.objectContaining({ seam: null }));
+    expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({ seam: null }),
+    );
     expect(result.current.state).toBe(mockSponsoredState);
     expect(result.current.actions).toBe(mockActions);
   });

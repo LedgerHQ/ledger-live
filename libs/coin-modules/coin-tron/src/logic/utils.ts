@@ -13,6 +13,13 @@ export function createTronWeb(trongridUrl: string): TronWeb {
   return new TronWeb(fullNode, solidityNode, eventServer);
 }
 
+// tronweb registers its protobuf classes on globalThis when it loads. Mobile inlines requires, so
+// the import above runs only on first use: touching `utils` here loads it before the read.
+function tronWebProto(): any {
+  if (!utils) throw new Error("tronweb is not loaded");
+  return (globalThis as unknown as any).TronWebProto;
+}
+
 /**
  * Convert `raw_data_hex` value from {@link https://developers.tron.network/reference/createtransaction|createTransaction API} to `raw_data` value.
  * The function try to find the correct Protobuf deserialization to use for inner (Contract)[] object.
@@ -24,7 +31,7 @@ export async function decodeTransaction(rawTx: string): Promise<{
   raw_data: Record<string, any>;
   raw_data_hex: string;
 }> {
-  const { Transaction } = (globalThis as unknown as any).TronWebProto;
+  const { Transaction } = tronWebProto();
   const transaction = Transaction.raw.deserializeBinary(Buffer.from(rawTx, "hex"));
 
   return {
@@ -112,7 +119,7 @@ type TrxTransferValue = TransferValue & {
   to_address: string;
 };
 function convertTransferContractFromRaw(contract: any): TrxTransferValue {
-  const { TransferContract } = (globalThis as unknown as any).TronWebProto;
+  const { TransferContract } = tronWebProto();
   const transferContract = TransferContract.deserializeBinary(contract.getParameter().getValue());
 
   // Expected address format in Contract are in Hex and not in Base58,
@@ -130,7 +137,7 @@ type Trc10TransferValue = TransferValue & {
   to_address: string;
 };
 function convertTransferAssetContractFromRaw(contract: any): Trc10TransferValue {
-  const { TransferAssetContract } = (globalThis as unknown as any).TronWebProto;
+  const { TransferAssetContract } = tronWebProto();
   const transferContract = TransferAssetContract.deserializeBinary(
     contract.getParameter().getValue(),
   );
@@ -153,7 +160,7 @@ type Trc20TransferValue = TransferValue & {
   token_id?: number;
 };
 function convertTriggerSmartContractFromRaw(contract: any): Trc20TransferValue {
-  const { TriggerSmartContract } = (globalThis as unknown as any).TronWebProto;
+  const { TriggerSmartContract } = tronWebProto();
   const transferContract = TriggerSmartContract.deserializeBinary(
     contract.getParameter().getValue(),
   );
