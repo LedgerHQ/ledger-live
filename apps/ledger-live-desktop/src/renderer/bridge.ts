@@ -22,4 +22,5 @@ if (bridge.bootstrap?.version !== BOOTSTRAP_VERSION) {
 
 export const bootstrap = bridge.bootstrap;
 export const db = bridge.db;
+export const transport = bridge.transport;
 export const cardSession = bridge.cardSession;
