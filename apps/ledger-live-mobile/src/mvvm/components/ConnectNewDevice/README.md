@@ -1,6 +1,6 @@
 # ConnectNewDevice
 
-Pairs a device that the app does not know yet. It discovers devices, lets the user select one and connects to it. Onboarding and My Wallet use it.
+Pairs a device that the app does not know yet. It discovers devices, lets the user select one and connects to it.
 
 The component runs `connectNewDevice` from `@ledgerhq/live-dmk-mobile`. It shows no top bar and does no navigation: the caller reacts to its callbacks.
 
