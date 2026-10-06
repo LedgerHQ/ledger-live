@@ -11,15 +11,15 @@ nx run @ledgerhq/name_of_lib_here:build
 
 ## Example
 
-### `live-countervalues-react` has been updated and the import in `live-common` is erroring
+### `ledger-wallet-framework` has been updated and the import in `live-common` is erroring
 
 We run `typecheck` and get the following error:
 
-> src/currencies/hooks.ts:1:10 - error TS2305: Module '"@ledgerhq/live-countervalues-react"' has no exported member 'useMarketcapIds'.
-> 1 import { useMarketcapIds } from "@ledgerhq/live-countervalues-react";
+> src/families/tron/transaction.ts:2:10 - error TS2305: Module '"@ledgerhq/ledger-wallet-framework/account"' has no exported member 'getAccountCurrency'.
+> 2 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 
-We need to rebuild `@ledgerhq/live-countervalues-react`
+We need to rebuild `@ledgerhq/ledger-wallet-framework`
 
 ```shell
-nx run @ledgerhq/live-countervalues-react:build
+nx run @ledgerhq/ledger-wallet-framework:build
 ```
