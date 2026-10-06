@@ -20,7 +20,7 @@ const tokenSendTransactions: NewSendFlowEntry[] = [
   },
   {
     transaction: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_GIGA_2, "0.00001"),
-    xrayTicket: "B2CQA-6111",
+    xrayTicket: "B2CQA-3055",
   },
   {
     transaction: new Transaction(TokenAccount.XLM_USDC, TokenAccount.XLM_USDC_3, "0.01"),

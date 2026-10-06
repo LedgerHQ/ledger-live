@@ -24,7 +24,7 @@ async function parseAppJson(filePath: string): Promise<AppJson> {
   try {
     return JSON.parse(raw) as AppJson;
   } catch (e) {
-    throw new Error(`Failed to parse "${filePath}": ${(e as Error).message}`);
+    throw new Error(`Failed to parse "${filePath}": ${(e as Error).message}`, { cause: e });
   }
 }
 
