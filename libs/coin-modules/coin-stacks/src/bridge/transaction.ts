@@ -48,8 +48,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fees: tr.fees !== undefined && tr.fees !== null ? new BigNumber(tr.fees) : tr.fees,
     amount: new BigNumber(tr.amount),
     // Both stay undefined for a generic-bridge transaction, which never reads them.
-    network: tr.network as keyof typeof StacksNetwork,
-    anchorMode: tr.anchorMode as AnchorMode,
+    network: tr.network as keyof typeof StacksNetwork | undefined,
+    anchorMode: tr.anchorMode as AnchorMode | undefined,
     memo: tr.memo,
     mode: tr.mode,
     valAddress: tr.valAddress,

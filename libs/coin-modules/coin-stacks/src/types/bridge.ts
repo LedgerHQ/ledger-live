@@ -38,8 +38,10 @@ export type Transaction = TransactionCommon & {
   fees?: BigNumber | null;
   nonce?: BigNumber;
   memo?: string;
-  network: keyof typeof StacksNetwork;
-  anchorMode: AnchorMode;
+  /** Set by the legacy bridge's `createTransaction`; absent on a generic-bridge transaction, which
+   * reads the configured network instead. Classic consumers narrow it before use. */
+  network?: keyof typeof StacksNetwork;
+  anchorMode?: AnchorMode;
   /** pox-5 staking mode; unset (or "send") on a classic transfer. */
   mode?: StacksTransactionMode;
   /** pox-5 signer-manager contract principal (the staking pool); unused on a transfer. */

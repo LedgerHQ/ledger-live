@@ -449,6 +449,65 @@ describe("listOperations", () => {
     expect(mockFetchFungibleTokenMetadataCached).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps the post-condition token id when canonicalization metadata is unavailable", async () => {
+    findTokenByAddressInCurrency.mockResolvedValue(null);
+    mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_type: "contract_call",
+        post_conditions: [
+          {
+            type: "fungible",
+            condition_code: "eq",
+            amount: "2500",
+            principal: { type_id: "principal_standard", address: SENDER },
+            asset: {
+              asset_name: "tkn",
+              contract_address: "SP_CONTRACT",
+              contract_name: "token-x",
+            },
+          },
+        ],
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
+        },
+      }),
+    ]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+
+    expect(items).toHaveLength(1);
+    expect(items[0].asset).toMatchObject({ assetReference: "sp_contract.token-x::tkn" });
+  });
+
+  it("drops only the unidentifiable transfer when FT metadata is unavailable", async () => {
+    mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_id: "0xtoken",
+        tx_type: "contract_call",
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
+        },
+      }),
+      baseTx({
+        tx_id: "0xnative",
+        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+      }),
+    ]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({ asset: { type: "native" } });
+  });
+
   it("maps any other contract call (e.g. pox-5 stake) to a generic operation", async () => {
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
       baseTx({

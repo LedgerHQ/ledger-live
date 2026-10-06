@@ -137,6 +137,19 @@ describe("transactions utility functions", () => {
       expect(makeUnsignedContractCall).not.toHaveBeenCalled();
       expect(result).toBe(mockTx);
     });
+
+    test("should reject a generic-bridge transaction, which carries no network", async () => {
+      const transaction: Transaction = {
+        family: "stacks" as FamilyType,
+        recipient: "SP_RECIPIENT",
+        amount: new BigNumber(1000),
+      };
+
+      await expect(createTransaction(transaction, "SP_SENDER", "PUBLIC_KEY")).rejects.toThrow(
+        "network is required to build a legacy-bridge transaction",
+      );
+      expect(makeUnsignedSTXTokenTransfer).not.toHaveBeenCalled();
+    });
   });
 
   describe("getTxToBroadcast", () => {

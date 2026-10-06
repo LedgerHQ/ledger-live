@@ -34,6 +34,7 @@ import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/
 import type { OperationCommon } from "./types";
 import type {
   Account,
+  AccountIdParams,
   AccountReadiness,
   StakingDelegation,
   StakingDelegationStatus,
@@ -433,23 +434,25 @@ function logReadDecisionOnce(chain: string, decision: string, message: string): 
 }
 
 /**
- * The `xpubOrAddress` of a family keyed on the public key (`BridgeApi.accountIdFromPublicKey`).
- * The stored id wins over the live public key, so a sync never re-keys an account, including one
- * a legacy bridge once keyed on its address. Only a scan, which has no stored id, uses the key.
+ * The `xpubOrAddress` (and any `customData`) of a family keyed on the public key
+ * (`BridgeApi.accountIdFromPublicKey`). The stored id wins over the live public key, so a sync never
+ * re-keys an account, including one a legacy bridge once keyed on its address. Only a scan, which
+ * has no stored id, uses the key.
  */
 export function publicKeyAccountIdBasis(
   initialAccount: Account | undefined,
   publicKey: string | undefined,
   address: string,
-): string {
+): Pick<AccountIdParams, "xpubOrAddress" | "customData"> {
   if (initialAccount) {
     try {
-      return decodeAccountId(initialAccount.id).xpubOrAddress;
+      const { xpubOrAddress, customData } = decodeAccountId(initialAccount.id);
+      return { xpubOrAddress, ...(customData && { customData }) };
     } catch {
       // A malformed stored id falls through to the scan rule.
     }
   }
-  return publicKey || address;
+  return { xpubOrAddress: publicKey || address };
 }
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
@@ -484,10 +487,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       type: "js",
       version: "2",
       currencyId: currency.id,
-      xpubOrAddress: bridgeApi.accountIdFromPublicKey
-        ? publicKeyAccountIdBasis(initialAccount, rest?.publicKey, address)
-        : address,
       derivationMode,
+      ...(bridgeApi.accountIdFromPublicKey
+        ? publicKeyAccountIdBasis(initialAccount, rest?.publicKey, address)
+        : { xpubOrAddress: address }),
     });
 
     void registerWithA4(currency.id, address);

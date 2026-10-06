@@ -1,4 +1,5 @@
 import { TokenAccount } from "@ledgerhq/types-live";
+import invariant from "invariant";
 import { makeUnsignedContractCall, AnchorMode, StacksTransactionWire } from "@stacks/transactions";
 import type { StacksNetworkName } from "@stacks/network";
 import BigNumber from "bignumber.js";
@@ -75,7 +76,10 @@ export const createTransaction = async (
   fee?: BigNumber,
   nonce?: BigNumber,
 ): Promise<StacksTransactionWire> => {
-  const { recipient, anchorMode, network, memo, amount } = transaction;
+  const { recipient, memo, amount } = transaction;
+  // Only a generic-bridge transaction lacks these, and it never reaches this legacy builder.
+  const { network, anchorMode = AnchorMode.Any } = transaction;
+  invariant(network, "network is required to build a legacy-bridge transaction");
 
   const tokenDetails = getTokenContractDetails(subAccount);
 
