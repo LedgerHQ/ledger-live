@@ -1,5 +1,41 @@
 # @ledgerhq/coin-internet_computer
 
+## 1.32.0
+
+### Minor Changes
+
+- [#22445](https://github.com/LedgerHQ/ledger-live/pull/22445) [`084013e`](https://github.com/LedgerHQ/ledger-live/commit/084013e91394c76a89c961defbc80de19dfbad2d) Thanks [@amaslakov](https://github.com/amaslakov)! - getTransactionStatus now refuses, before the device signs, an invalid followee list on a follow and a start or stop dissolving that the neuron's current state does not allow.
+
+- [#22652](https://github.com/LedgerHQ/ledger-live/pull/22652) [`830d7d7`](https://github.com/LedgerHQ/ledger-live/commit/830d7d7e86acce1c561666ebeef2f2e7469ffa0c) Thanks [@amaslakov](https://github.com/amaslakov)! - Exclude zero from the generated stake nonce, since a memo of 0 is read back as a top-up
+
+- [#21137](https://github.com/LedgerHQ/ledger-live/pull/21137) [`4f8d10f`](https://github.com/LedgerHQ/ledger-live/commit/4f8d10f35d421e460720edc5e26dc4aa70889744) Thanks [@amaslakov](https://github.com/amaslakov)! - Report an Internet Computer stake whose outcome the network did not settle as unconfirmed or unclaimed, never as a failed transaction, so the app does not offer to stake it again.
+
+  That covers a transfer the node took without certifying, or answered with a certificate that could not be read, and one that settled and was then refused a claim or left without a verdict. A call the node refused before replication, or the replica rejected, is reported as rejected: nothing ran, so it can be retried. A governance call the node takes without certifying is polled rather than reported as failed, and a refused status read is polled past rather than taken for a refused call.
+
+### Patch Changes
+
+- Updated dependencies [[`2d869a5`](https://github.com/LedgerHQ/ledger-live/commit/2d869a596a4562a00003de01cc657d7277dc6b7c), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d), [`a025d7a`](https://github.com/LedgerHQ/ledger-live/commit/a025d7a872b7b1e4681d16b2bfb54f8949bf6626), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed), [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d)]:
+  - @ledgerhq/types-live@6.126.0
+  - @ledgerhq/ledger-wallet-framework@3.6.0
+
+## 1.32.0-next.0
+
+### Minor Changes
+
+- [#22445](https://github.com/LedgerHQ/ledger-live/pull/22445) [`084013e`](https://github.com/LedgerHQ/ledger-live/commit/084013e91394c76a89c961defbc80de19dfbad2d) Thanks [@amaslakov](https://github.com/amaslakov)! - getTransactionStatus now refuses, before the device signs, an invalid followee list on a follow and a start or stop dissolving that the neuron's current state does not allow.
+
+- [#22652](https://github.com/LedgerHQ/ledger-live/pull/22652) [`830d7d7`](https://github.com/LedgerHQ/ledger-live/commit/830d7d7e86acce1c561666ebeef2f2e7469ffa0c) Thanks [@amaslakov](https://github.com/amaslakov)! - Exclude zero from the generated stake nonce, since a memo of 0 is read back as a top-up
+
+- [#21137](https://github.com/LedgerHQ/ledger-live/pull/21137) [`4f8d10f`](https://github.com/LedgerHQ/ledger-live/commit/4f8d10f35d421e460720edc5e26dc4aa70889744) Thanks [@amaslakov](https://github.com/amaslakov)! - Report an Internet Computer stake whose outcome the network did not settle as unconfirmed or unclaimed, never as a failed transaction, so the app does not offer to stake it again.
+
+  That covers a transfer the node took without certifying, or answered with a certificate that could not be read, and one that settled and was then refused a claim or left without a verdict. A call the node refused before replication, or the replica rejected, is reported as rejected: nothing ran, so it can be retried. A governance call the node takes without certifying is polled rather than reported as failed, and a refused status read is polled past rather than taken for a refused call.
+
+### Patch Changes
+
+- Updated dependencies [[`2d869a5`](https://github.com/LedgerHQ/ledger-live/commit/2d869a596a4562a00003de01cc657d7277dc6b7c), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d), [`a025d7a`](https://github.com/LedgerHQ/ledger-live/commit/a025d7a872b7b1e4681d16b2bfb54f8949bf6626), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed), [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d)]:
+  - @ledgerhq/types-live@6.126.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.6.0-next.0
+
 ## 1.31.0
 
 ### Minor Changes
@@ -269,29 +305,5 @@
 - Updated dependencies [[`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
   - @ledgerhq/types-live@6.116.0
   - @ledgerhq/ledger-wallet-framework@2.5.0
-
-## 1.26.0-next.0
-
-### Minor Changes
-
-- [#19732](https://github.com/LedgerHQ/ledger-live/pull/19732) [`ecab681`](https://github.com/LedgerHQ/ledger-live/commit/ecab68164ad6401d91569e2eecaeb8d12d126126) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Remove the `@zondax/ledger-live-icp` dependency; the ICP logic now builds directly on the `@dfinity/*` packages. No functional change.
-
-### Patch Changes
-
-- Updated dependencies [[`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
-  - @ledgerhq/types-live@6.116.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.5.0-next.0
-
-## 1.25.0
-
-### Minor Changes
-
-- [#19683](https://github.com/LedgerHQ/ledger-live/pull/19683) [`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f) Thanks [@ysitbon](https://github.com/ysitbon)! - Consume currency accessors and currency types from `@ledgerhq/ledger-wallet-framework` instead of `@ledgerhq/cryptoassets`/`@ledgerhq/types-cryptoassets`. Value accessors now resolve through the framework's injected `CurrenciesResolver`; `CryptoCurrency`/`TokenCurrency`/`Unit`/`ExplorerView` types are imported from the framework.
-
-### Patch Changes
-
-- Updated dependencies [[`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87), [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`e26e68e`](https://github.com/LedgerHQ/ledger-live/commit/e26e68e854ecea6ebbe5e26196c8d8e899329c7d), [`bde85a7`](https://github.com/LedgerHQ/ledger-live/commit/bde85a7ef50cf7990efd2f9bcd7ccc34c0764fb7), [`d631f0d`](https://github.com/LedgerHQ/ledger-live/commit/d631f0dd2480950c5f20dec0c9b4aca515ec63f8), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158)]:
-  - @ledgerhq/ledger-wallet-framework@2.4.0
-  - @ledgerhq/types-live@6.115.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

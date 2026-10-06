@@ -1,5 +1,25 @@
 # @ledgerhq/live-dmk
 
+## 0.34.0
+
+### Minor Changes
+
+- [#22653](https://github.com/LedgerHQ/ledger-live/pull/22653) [`e8d5e1b`](https://github.com/LedgerHQ/ledger-live/commit/e8d5e1bf6eec2a47072ad59762064b24a89701cf) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump DMK dependencies: device-management-kit 1.10.0, device-signer-kit-solana 1.13.3, device-signer-kit-ethereum 1.18.1, context-module 2.6.0, dmk-ledger-wallet 0.6.0, device-contacts-kit 0.5.0, signer-utils 1.3.0, device-transport-kit-mockserver 1.1.2
+
+- [#22503](https://github.com/LedgerHQ/ledger-live/pull/22503) [`33b4952`](https://github.com/LedgerHQ/ledger-live/commit/33b4952ef04d4e0528d2735ba299b4a8073e447e) Thanks [@daniel-choinski-ledger](https://github.com/daniel-choinski-ledger)! - Inject the Tron address book into the DMK Tron signer so Tron transactions can clear-sign saved contact names.
+
+  Adds a generic `AddressBookProvider<T>` in `live-dmk-shared` (the EVM provider is refactored onto it), a `tronAddressBookProvider` instance, a pure `toTronAddressBook` mapper (`Contact[] -> TronAddressBook`, Tron-family only, no chain id, `ledgerAccounts` always empty), and registers the source at each app's composition root. An absent or empty book leaves signing behavior unchanged.
+
+## 0.34.0-next.0
+
+### Minor Changes
+
+- [#22653](https://github.com/LedgerHQ/ledger-live/pull/22653) [`e8d5e1b`](https://github.com/LedgerHQ/ledger-live/commit/e8d5e1bf6eec2a47072ad59762064b24a89701cf) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump DMK dependencies: device-management-kit 1.10.0, device-signer-kit-solana 1.13.3, device-signer-kit-ethereum 1.18.1, context-module 2.6.0, dmk-ledger-wallet 0.6.0, device-contacts-kit 0.5.0, signer-utils 1.3.0, device-transport-kit-mockserver 1.1.2
+
+- [#22503](https://github.com/LedgerHQ/ledger-live/pull/22503) [`33b4952`](https://github.com/LedgerHQ/ledger-live/commit/33b4952ef04d4e0528d2735ba299b4a8073e447e) Thanks [@daniel-choinski-ledger](https://github.com/daniel-choinski-ledger)! - Inject the Tron address book into the DMK Tron signer so Tron transactions can clear-sign saved contact names.
+
+  Adds a generic `AddressBookProvider<T>` in `live-dmk-shared` (the EVM provider is refactored onto it), a `tronAddressBookProvider` instance, a pure `toTronAddressBook` mapper (`Contact[] -> TronAddressBook`, Tron-family only, no chain id, `ledgerAccounts` always empty), and registers the source at each app's composition root. An absent or empty book leaves signing behavior unchanged.
+
 ## 0.33.0
 
 ### Minor Changes
@@ -203,39 +223,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.35.3-next.0
-
-## 0.25.0
-
-### Minor Changes
-
-- [#17583](https://github.com/LedgerHQ/ledger-live/pull/17583) [`157ec37`](https://github.com/LedgerHQ/ledger-live/commit/157ec37d05d79cfe30fcc8e85c228418643c6f84) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix sticky user interaction state in EnsureAppReady pending mapping: when ConnectApp reports `UserInteractionRequired.None` without an install plan, emit a generic loading state instead of returning null so the UI no longer remains stuck on the previous interaction prompt.
-
-- [#17617](https://github.com/LedgerHQ/ledger-live/pull/17617) [`6cbcbdd`](https://github.com/LedgerHQ/ledger-live/commit/6cbcbdda1489face530378a12bfcfc2a60b4c0b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Improve console log readability when debugging via Chrome / React Native DevTools: mobile's `ConsoleLogger` now uses `console.groupCollapsed` with raw objects instead of stringifying everything to JSON, and the DMK logger emits a clearer `DMK[tag]` log type (with backward-compatible filtering in the logs viewer) instead of the generic `live-dmk-logger`.
-
-- [#17436](https://github.com/LedgerHQ/ledger-live/pull/17436) [`74e82f8`](https://github.com/LedgerHQ/ledger-live/commit/74e82f86ca04fa499207a9f80ea8b13a1c088e00) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Reduce `EnsureAppReadyState` installing-app variant to `{ type }` only so consecutive emissions during installation dedupe via deep-equality and render at most once
-
-- [#17578](https://github.com/LedgerHQ/ledger-live/pull/17578) [`75b3b3c`](https://github.com/LedgerHQ/ledger-live/commit/75b3b3cf569a9fe99774cf6e8dffdd18643b5d66) Thanks [@qperrot](https://github.com/qperrot)! - fix(live-dmk-shared): handle Node.js 22 ESM/CJS interop for hw-transport default import
-
-  When loaded via require() in Node.js 22, @ledgerhq/hw-transport resolves to its
-  CJS build where the class is exposed as `module.exports.default`. Unwrap the
-  default export with a fallback so DmkCompatTransport can correctly extend Transport
-  in both ESM and CJS environments.
-
-## 0.25.0-next.0
-
-### Minor Changes
-
-- [#17583](https://github.com/LedgerHQ/ledger-live/pull/17583) [`157ec37`](https://github.com/LedgerHQ/ledger-live/commit/157ec37d05d79cfe30fcc8e85c228418643c6f84) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix sticky user interaction state in EnsureAppReady pending mapping: when ConnectApp reports `UserInteractionRequired.None` without an install plan, emit a generic loading state instead of returning null so the UI no longer remains stuck on the previous interaction prompt.
-
-- [#17617](https://github.com/LedgerHQ/ledger-live/pull/17617) [`6cbcbdd`](https://github.com/LedgerHQ/ledger-live/commit/6cbcbdda1489face530378a12bfcfc2a60b4c0b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Improve console log readability when debugging via Chrome / React Native DevTools: mobile's `ConsoleLogger` now uses `console.groupCollapsed` with raw objects instead of stringifying everything to JSON, and the DMK logger emits a clearer `DMK[tag]` log type (with backward-compatible filtering in the logs viewer) instead of the generic `live-dmk-logger`.
-
-- [#17436](https://github.com/LedgerHQ/ledger-live/pull/17436) [`74e82f8`](https://github.com/LedgerHQ/ledger-live/commit/74e82f86ca04fa499207a9f80ea8b13a1c088e00) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Reduce `EnsureAppReadyState` installing-app variant to `{ type }` only so consecutive emissions during installation dedupe via deep-equality and render at most once
-
-- [#17578](https://github.com/LedgerHQ/ledger-live/pull/17578) [`75b3b3c`](https://github.com/LedgerHQ/ledger-live/commit/75b3b3cf569a9fe99774cf6e8dffdd18643b5d66) Thanks [@qperrot](https://github.com/qperrot)! - fix(live-dmk-shared): handle Node.js 22 ESM/CJS interop for hw-transport default import
-
-  When loaded via require() in Node.js 22, @ledgerhq/hw-transport resolves to its
-  CJS build where the class is exposed as `module.exports.default`. Unwrap the
-  default export with a fallback so DmkCompatTransport can correctly extend Transport
-  in both ESM and CJS environments.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

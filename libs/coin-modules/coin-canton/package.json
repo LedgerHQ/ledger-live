@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-canton",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Canton coin integration",
   "keywords": [
     "Ledger",
@@ -156,7 +156,6 @@
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

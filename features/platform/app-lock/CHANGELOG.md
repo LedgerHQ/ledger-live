@@ -1,5 +1,89 @@
 # @features/platform-app-lock
 
+## 0.5.0
+
+### Minor Changes
+
+- [#22287](https://github.com/LedgerHQ/ledger-live/pull/22287) [`5f34cb6`](https://github.com/LedgerHQ/ledger-live/commit/5f34cb6848f92e1b520a474a2b779caad6f88804) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Stop a card holder from leaving the app with nothing protecting it.
+
+  Both protection rows in Settings let anyone turn protection off, so someone holding a card could strip the app of its last lock. Without a card that stays allowed — the app lock is opt-in — but a card turns "at least one protection" into a rule.
+
+  Removing the last one is now refused, and a sheet says why at the moment the user asks, rather than a disabled row that explains nothing. Removing one of two is still allowed: at least one protection is the invariant, and which one is the user's choice — so a password can still be swapped for biometrics, or the reverse.
+
+  What counts as holding a card is the **card session stored on the device**, which `@features/platform-card` owns — not Pay's feature flag, and not whether the Pay tab has been opened. A holder who has not been near Pay on this launch is still a holder, and turning Pay's flag off does not turn the rule off. The session is read when the user asks to remove a protection, not when Settings opens, so a tap can never land before the answer, and a session that started or ended with Settings open is seen. A session that cannot be read counts as a card: a refusal can be retried, while a removal cannot be taken back.
+
+  The rule applies to the revamped rows. The legacy rows shown while `lwmPasswordRevamp` is off are left as they are.
+
+- [#22347](https://github.com/LedgerHQ/ledger-live/pull/22347) [`e012138`](https://github.com/LedgerHQ/ledger-live/commit/e012138a1531a651ae62515bed2cada9dbfcfa8c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Require a password of at least six characters from users who set a shorter one, the next time they get in.
+
+  Any length was accepted before this epic — `"1"` among them — so the minimum the new screens enforce would otherwise apply to new passwords only. The prompt cannot be dismissed: there is no close button, the backdrop does not take a press, and the Android back button is swallowed while it holds the screen. A prompt that can be put off is one that short passwords outlive.
+
+  It runs after a successful unlock, not at boot, because that is when the password has been proven and its length is known. Four steps: a sheet that says why, the new password, its confirmation, and a sheet that says it worked. The old password is never asked for again — they just typed it to get in.
+
+  **The requirement is stored, beside the verifier it describes.** The protection state is deliberately not persisted, since a second source of truth about whether a password exists is a lockout risk, and this mark cannot be recomputed from a digest: a verifier says nothing about the length of the password behind it. So it rides in the same keychain record, written and cleared by the single write that sets the password it describes, and the two cannot disagree.
+
+  It is also **re-derived at every password unlock**, which is what heals a record written before the mark existed, and what corrects one whose password was changed elsewhere. The stored mark still earns its place: a biometric unlock never sees a password, and the prompt is owed on that boot too.
+
+  A write the keychain declines is reported as a failure rather than as a password change, so the confirmation holds instead of sending the user off with a verifier that is still the old one. The mark's own repair at unlock is best-effort by contrast: metadata must never cost somebody an unlock they have just earned.
+
+  An overlay rather than a route: a route is presented over the app in its own window, and the sheets — which present into the app's window — would be visible through it while taking none of the taps aimed at them.
+
+- [#22556](https://github.com/LedgerHQ/ledger-live/pull/22556) [`2074967`](https://github.com/LedgerHQ/ledger-live/commit/2074967c2c084e05de67597ae353c783b0b10f92) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Stop locking the app on Android for flows the app itself starts.
+
+  Clearing the cache reboots the React tree without restarting the process, and the gate took its remount for a launch and locked again. Whether the launch lock was decided now lives in the app-lock state, which a reboot leaves in place, so it is decided once per process.
+
+  Sharing an address or logs, or saving a file from the share sheet, hands the screen to another app, which Android reports as the app leaving. Those flows now go through `leaveAppFor`, which holds the background lock off until Android resumes the app. The share promise settles before the user is back, so the hold ends on the resume rather than on the promise, and at once if the task fails before anything was shown. iOS keeps its share sheet inside the app and is unaffected.
+
+- [#22435](https://github.com/LedgerHQ/ledger-live/pull/22435) [`1647f38`](https://github.com/LedgerHQ/ledger-live/commit/1647f38343baf93fbe8333d9abec403797489859) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Stop locking the app behind a permission prompt on Android.
+
+  React Native's `AppState` reports `background` on Android as soon as the activity pauses, and a permission dialog is enough to pause it, so the app lock read a prompt shown over the app as the user leaving. Granting the camera put the user back on the unlock screen instead of the camera.
+
+  On Android, the lock now follows the process lifecycle, which only stops once no screen of the app is visible — the signal native apps use for "the app went to the background". iOS keeps `AppState`, whose `background` already means the app has left. The platform split lives in one adapter, so the gate asks a single question on both.
+
+  `isAppBackgrounded`, which only the gate used, is removed from `@features/platform-app-lock`.
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#22287](https://github.com/LedgerHQ/ledger-live/pull/22287) [`5f34cb6`](https://github.com/LedgerHQ/ledger-live/commit/5f34cb6848f92e1b520a474a2b779caad6f88804) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Stop a card holder from leaving the app with nothing protecting it.
+
+  Both protection rows in Settings let anyone turn protection off, so someone holding a card could strip the app of its last lock. Without a card that stays allowed — the app lock is opt-in — but a card turns "at least one protection" into a rule.
+
+  Removing the last one is now refused, and a sheet says why at the moment the user asks, rather than a disabled row that explains nothing. Removing one of two is still allowed: at least one protection is the invariant, and which one is the user's choice — so a password can still be swapped for biometrics, or the reverse.
+
+  What counts as holding a card is the **card session stored on the device**, which `@features/platform-card` owns — not Pay's feature flag, and not whether the Pay tab has been opened. A holder who has not been near Pay on this launch is still a holder, and turning Pay's flag off does not turn the rule off. The session is read when the user asks to remove a protection, not when Settings opens, so a tap can never land before the answer, and a session that started or ended with Settings open is seen. A session that cannot be read counts as a card: a refusal can be retried, while a removal cannot be taken back.
+
+  The rule applies to the revamped rows. The legacy rows shown while `lwmPasswordRevamp` is off are left as they are.
+
+- [#22347](https://github.com/LedgerHQ/ledger-live/pull/22347) [`e012138`](https://github.com/LedgerHQ/ledger-live/commit/e012138a1531a651ae62515bed2cada9dbfcfa8c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Require a password of at least six characters from users who set a shorter one, the next time they get in.
+
+  Any length was accepted before this epic — `"1"` among them — so the minimum the new screens enforce would otherwise apply to new passwords only. The prompt cannot be dismissed: there is no close button, the backdrop does not take a press, and the Android back button is swallowed while it holds the screen. A prompt that can be put off is one that short passwords outlive.
+
+  It runs after a successful unlock, not at boot, because that is when the password has been proven and its length is known. Four steps: a sheet that says why, the new password, its confirmation, and a sheet that says it worked. The old password is never asked for again — they just typed it to get in.
+
+  **The requirement is stored, beside the verifier it describes.** The protection state is deliberately not persisted, since a second source of truth about whether a password exists is a lockout risk, and this mark cannot be recomputed from a digest: a verifier says nothing about the length of the password behind it. So it rides in the same keychain record, written and cleared by the single write that sets the password it describes, and the two cannot disagree.
+
+  It is also **re-derived at every password unlock**, which is what heals a record written before the mark existed, and what corrects one whose password was changed elsewhere. The stored mark still earns its place: a biometric unlock never sees a password, and the prompt is owed on that boot too.
+
+  A write the keychain declines is reported as a failure rather than as a password change, so the confirmation holds instead of sending the user off with a verifier that is still the old one. The mark's own repair at unlock is best-effort by contrast: metadata must never cost somebody an unlock they have just earned.
+
+  An overlay rather than a route: a route is presented over the app in its own window, and the sheets — which present into the app's window — would be visible through it while taking none of the taps aimed at them.
+
+- [#22556](https://github.com/LedgerHQ/ledger-live/pull/22556) [`2074967`](https://github.com/LedgerHQ/ledger-live/commit/2074967c2c084e05de67597ae353c783b0b10f92) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Stop locking the app on Android for flows the app itself starts.
+
+  Clearing the cache reboots the React tree without restarting the process, and the gate took its remount for a launch and locked again. Whether the launch lock was decided now lives in the app-lock state, which a reboot leaves in place, so it is decided once per process.
+
+  Sharing an address or logs, or saving a file from the share sheet, hands the screen to another app, which Android reports as the app leaving. Those flows now go through `leaveAppFor`, which holds the background lock off until Android resumes the app. The share promise settles before the user is back, so the hold ends on the resume rather than on the promise, and at once if the task fails before anything was shown. iOS keeps its share sheet inside the app and is unaffected.
+
+- [#22435](https://github.com/LedgerHQ/ledger-live/pull/22435) [`1647f38`](https://github.com/LedgerHQ/ledger-live/commit/1647f38343baf93fbe8333d9abec403797489859) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Stop locking the app behind a permission prompt on Android.
+
+  React Native's `AppState` reports `background` on Android as soon as the activity pauses, and a permission dialog is enough to pause it, so the app lock read a prompt shown over the app as the user leaving. Granting the camera put the user back on the unlock screen instead of the camera.
+
+  On Android, the lock now follows the process lifecycle, which only stops once no screen of the app is visible — the signal native apps use for "the app went to the background". iOS keeps `AppState`, whose `background` already means the app has left. The platform split lives in one adapter, so the gate asks a single question on both.
+
+  `isAppBackgrounded`, which only the gate used, is removed from `@features/platform-app-lock`.
+
 ## 0.4.0
 
 ### Minor Changes

@@ -78,6 +78,7 @@ import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateForm
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { Divider } from "@ledgerhq/react-ui/index";
+import { OperationDetailsContact } from "LLD/features/OperationDetails/components/OperationDetailsContact";
 
 const mapStateToProps = (
   state: State,
@@ -766,12 +767,14 @@ const OperationD = (props: Props) => {
       {uniqueSenders.length ? (
         <OpDetailsSection data-testid="operation-from">
           <OpDetailsTitle>{t("operationDetails.from")}</OpDetailsTitle>
-          <DataList
-            lines={uniqueSenders}
-            t={t}
-            cryptoCurrency={cryptoCurrency}
-            operation={operation}
-          />
+          <Box alignItems="flex-end" flex="1">
+            <DataList
+              lines={uniqueSenders}
+              t={t}
+              cryptoCurrency={cryptoCurrency}
+              operation={operation}
+            />
+          </Box>
         </OpDetailsSection>
       ) : null}
       {recipients.length ? (
@@ -868,23 +871,32 @@ const DataListLine = ({
   line,
   cryptoCurrencyFamily,
   operationType,
+  currencyId,
 }: {
   line: string;
   cryptoCurrencyFamily: string | undefined;
   operationType: OperationType | undefined;
+  currencyId: string | undefined;
 }) => {
   const specific = useLLDCoinFamily(cryptoCurrencyFamily);
   const SplitAddressComponent =
     specific?.operationDetails?.splitAddress?.[operationType as OperationType] || SplitAddress;
   return (
-    <OpDetailsData relative horizontal>
-      <HashContainer>
-        <SplitAddressComponent value={line} />
-      </HashContainer>
-      <GradientHover>
-        <CopyWithFeedback text={line} />
-      </GradientHover>
-    </OpDetailsData>
+    <OperationDetailsContact address={line} currencyId={currencyId}>
+      {matchedContact => (
+        <OpDetailsData relative horizontal>
+          <HashContainer>
+            <SplitAddressComponent
+              value={line}
+              color={matchedContact ? "neutral.c70" : undefined}
+            />
+          </HashContainer>
+          <GradientHover>
+            <CopyWithFeedback text={line} />
+          </GradientHover>
+        </OpDetailsData>
+      )}
+    </OperationDetailsContact>
   );
 };
 
@@ -917,6 +929,7 @@ export class DataList extends Component<{
         line={line}
         cryptoCurrencyFamily={cryptoCurrency?.family}
         operationType={operation?.type as OperationType | undefined}
+        currencyId={cryptoCurrency?.id}
       />
     );
     return (

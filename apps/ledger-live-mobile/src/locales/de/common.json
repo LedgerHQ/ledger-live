@@ -5,18 +5,264 @@
         "title" : "ICP staken",
         "description" : "Stake ICP und erhalte Prämien, indem du dich an der Governance beteiligst.",
         "cta" : "ICP staken"
+      },
+      "confirmFollowing" : {
+        "description" : "Eines deiner Neuronen verliert an Stimmrecht. Bestätige sein Following, um es wiederherzustellen.",
+        "cta" : "Following bestätigen"
+      },
+      "syncNeurons" : {
+        "description" : "Deine Neuron-Daten sind veraltet. Verbinde dein Gerät, um sie zu aktualisieren.",
+        "cta" : "Neuronen aktualisieren"
+      },
+      "lockNeurons" : {
+        "description" : "Ein Neuron benötigt ein längeres Dissolve Delay (Auflöseverzögerung), bevor es abstimmen und Rewards verdienen kann.",
+        "cta" : "Neuronen verwalten"
+      },
+      "addFollowees" : {
+        "description" : "Folge anderen Neuronen bei Governance-Themen, damit dein Neuron abstimmt und Rewards verdient.",
+        "cta" : "Neuronen verwalten"
       }
     },
     "headerManageActions" : {
       "manageNeurons" : {
-        "title" : "Neuronen verwalten"
+        "title" : "Neuronen"
       }
     },
     "summaryFooter" : {
+      "availableBalanceTooltip" : "ICP, die du sofort ausgeben oder staken kannst. Beinhaltet keine ICP, die bereits in Neuronen gesperrt sind.",
       "stakedBalance" : "Gestaketes Guthaben",
       "stakedBalanceTooltip" : "Die Gesamtzahl der ICP-Token, die aktuell in Neuronen gestaket sind. Gestakete ICP bringen dir Prämien und können für Governance genutzt werden.",
       "totalMaturity" : "Gesamtfälligkeit",
       "totalMaturityTooltip" : "Die gesammelten Prämien aus dem Staking, inklusive gestakete und liquide Fälligkeit. Diese Prämien kannst du entweder wieder staken oder als liquide ICP abheben."
+    },
+    "duration" : {
+      "years_one" : "{{count}} Jahr",
+      "years_other" : "{{count}} Jahre",
+      "months_one" : "{{count}} Monat",
+      "months_other" : "{{count}} Monate",
+      "days_one" : "{{count}} Tag",
+      "days_other" : "{{count}} Tage",
+      "hours_one" : "{{count}} Stunde",
+      "hours_other" : "{{count}} Stunden",
+      "minutes_one" : "{{count}} Minute",
+      "minutes_other" : "{{count}} Minuten",
+      "lessThanAMinute" : "Weniger als eine Minute"
+    },
+    "neuronState" : {
+      "Locked" : "Gesperrt",
+      "Dissolving" : "Auflösung in Bearbeitung",
+      "Dissolved" : "Auflösung abgeschlossen",
+      "Spawning" : "Generierung",
+      "Unknown" : "Unbekannt"
+    },
+    "common" : {
+      "neuronId" : "Neuronen-ID",
+      "stake" : "Staken",
+      "maturity" : "Fälligkeit",
+      "dissolveDelay" : "Auflösungsverzögerung",
+      "state" : "Status",
+      "action" : "Aktion",
+      "none" : "Kein",
+      "disburse" : "Auszahlen",
+      "startDissolving" : "Auflösung starten",
+      "stopDissolving" : "Auflösung beenden",
+      "enabled" : "Aktiviert",
+      "disabled" : "Deaktiviert",
+      "enable" : "Aktivieren",
+      "disable" : "Deaktivieren"
+    },
+    "stakingFlow" : {
+      "started" : {
+        "title" : "ICP staken",
+        "description" : "Das Staking von ICP erstellt ein Neuron: eine gesperrte Position, die bei der Governance abstimmt und Rewards einbringt.",
+        "steps" : {
+          "0" : "Deine ICP sind im Neuron gesperrt, bis du es auflöst.",
+          "1" : "Ein längeres Dissolve Delay (Auflöseverzögerung) bringt mehr Voting-Power und mehr Rewards.",
+          "2" : "Das Neuron stimmt ab, indem es anderen folgt, sodass es Rewards einbringt, ohne dass du manuell abstimmen musst."
+        },
+        "cta" : "ICP staken"
+      },
+      "amount" : {
+        "minimum" : "Mindesteinsatz"
+      },
+      "success" : {
+        "title" : "Neuron erstellt",
+        "description" : "Öffne „Neuronen verwalten“ und aktualisiere, um es zu sehen – Neuron-Daten werden nur mit deinem Gerät abgerufen."
+      }
+    },
+    "manageNeuronFlow" : {
+      "title" : "Neuronen verwalten",
+      "confirmation" : {
+        "backToNeurons" : "Zurück zu Neuronen",
+        "success" : {
+          "title" : "Fertig",
+          "default" : "Dein Neuron wurde aktualisiert.",
+          "list_neurons" : "Deine Neuronen sind auf dem neuesten Stand.",
+          "start_dissolving" : "Dein Neuron hat begonnen, sich aufzulösen.",
+          "stop_dissolving" : "Dein Neuron hat aufgehört, sich aufzulösen.",
+          "disburse" : "Der Stake deines Neurons wurde auf dein Konto ausgezahlt.",
+          "set_dissolve_delay" : "Das Dissolve Delay (Auflöseverzögerung) deines Neurons wurde eingerichtet.",
+          "increase_dissolve_delay" : "Das Dissolve Delay (Auflöseverzögerung) deines Neurons wurde verlängert.",
+          "add_hot_key" : "Der Hotkey wurde deinem Neuron hinzugefügt.",
+          "remove_hot_key" : "Der Hotkey wurde von deinem Neuron entfernt.",
+          "follow" : "Das Following deines Neurons wurde aktualisiert.",
+          "refresh_voting_power" : "Das Stimmrecht deines Neurons wurde aktualisiert.",
+          "stake_maturity" : "Die Maturity deines Neurons wurde gestaket.",
+          "auto_stake_maturity" : "Das automatische Staking der Maturity wurde aktualisiert.",
+          "spawn_neuron" : "Ein neues Neuron wird aus deiner Maturity erzeugt.",
+          "split_neuron" : "Dein Neuron wurde aufgeteilt.",
+          "increase_stake" : "Der Stake deines Neurons wurde erhöht."
+        }
+      },
+      "listNeuron" : {
+        "title" : "Neuronen",
+        "empty" : "Du hast noch keine Neuronen. Staken deine ICP, um ein Neuron zu erstellen.",
+        "lastSynced" : "Letzte Synchronisierung:",
+        "never" : "Nie",
+        "decayingTitle" : "Eines deiner Neuronen verliert an Stimmrecht.",
+        "decayingDescription" : "Durch das Bestätigen des Folgens wird es für weitere sechs Monate wiederhergestellt.",
+        "sync" : "Neuronen aktualisieren"
+      },
+      "manage" : {
+        "title" : "Verwalten",
+        "neuron" : "Neuron",
+        "hotKeyOnly" : "Du besitzt einen Hot-Key für dieses Neuron. Du kannst abstimmen und das Folgen einrichten, aber nicht dessen Staking verschieben.",
+        "missingNeuron" : "Dieses Neuron befindet sich nicht mehr in deinem synchronisierten Snapshot. Kehre zu deinem Neuronen zurück und synchronisiere, um ein anderes auszuwählen.",
+        "votingPower" : {
+          "title" : "Stimmrecht",
+          "tooltip" : "Die Voting-Power bestimmt, wie viel Gewicht dein Neuron in der Governance hat und wie viele Rewards es verdient.",
+          "staked" : "Gestaked",
+          "increaseStake" : "Stake vergrößern",
+          "state" : "Status",
+          "bonusValue" : "+{{percent}}%",
+          "ageBonus" : "Altersbonus",
+          "ageBonusTooltip" : "Ein Neuron erhält mit zunehmendem Alter bis zu +25 % Stimmkraft und erreicht das Maximum nach vier Jahren.",
+          "dissolveDelayBonus" : "Dissolve Delay Bonus: +{{percent}}%",
+          "dissolveDelayBonusTooltip" : "Ein längeres Dissolve Delay (Auflöseverzögerung) bringt bis zu +200 % Voting-Power, wobei das Maximum bei zwei Jahren erreicht wird.",
+          "noDissolveDelay" : "Kein Dissolve Delay (Auflöseverzögerung)",
+          "setDissolveDelay" : "Auflösungsverzögerung festlegen",
+          "increaseDissolveDelay" : "Dissolve Delay (Auflöseverzögerung) verlängern",
+          "decayStartsIn" : "Stimmkraft beginnt in {{duration}} zu verfallen",
+          "decaying" : "Stimmkraft verfällt – erreicht Null in {{duration}}",
+          "expired" : "Stimmkraft verloren – Folgen wurde aufgehoben",
+          "confirmFollowing" : "Following bestätigen",
+          "confirmFollowingTooltip" : "Bestätige dein Folgen mindestens alle sechs Monate, andernfalls verliert dein Neuron allmählich seine Stimmkraft."
+        },
+        "maturity" : {
+          "title" : "Fälligkeit",
+          "tooltip" : "Maturity ist der Reward, den ein Neuron ansammelt. Stake diesen wieder im Neuron oder erzeuge daraus ein neues.",
+          "available" : "Verfügbare Maturity",
+          "staked" : "Gestakete Fälligkeit",
+          "stakedTooltip" : "Maturity bereits im Neuron gestakt. Es trägt zum Stimmgewicht bei und kann nicht mehr in ein neues Neuron überführt werden.",
+          "stake" : "Fälligkeit staken",
+          "spawn" : "Neuron generieren",
+          "autoStake" : "Automatisches Maturity-Staking",
+          "autoStakeTooltip" : "Wenn diese Option aktiviert ist, wird die Maturity direkt wieder im Neuron gestakt, sobald sie anfällt."
+        },
+        "following" : {
+          "title" : "Following",
+          "tooltip" : "Ein Neuron, das anderen folgt, stimmt wie diese ab, wodurch es Rewards erhält, ohne manuell abzustimmen.",
+          "count_one" : "{{count}} Thema",
+          "count_other" : "{{count}} Themen",
+          "edit" : "Neuronen bei einem Governance-Thema folgen",
+          "follow" : "Folgen bearbeiten"
+        },
+        "hotKeys" : {
+          "title" : "Hotkeys",
+          "tooltip" : "Ein Hot-Key kann in deinem Namen abstimmen und das Folgen einrichten, kann aber niemals das Staking des Neurons verschieben.",
+          "add" : "Anderem Principal Hot-Key-Zugriff gewähren",
+          "addAction" : "Hotkey hinzufügen",
+          "remove" : "Entfernen"
+        },
+        "advanced" : {
+          "title" : "Advanced",
+          "split" : "Dieses Neuron in zwei aufteilen",
+          "splitTooltip" : "Sowohl das ursprüngliche als auch das neue Neuron müssen mindestens den Mindest-Stake von 1 ICP halten.",
+          "splitAction" : "Neuron teilen"
+        }
+      },
+      "increaseStake" : {
+        "title" : "Stake vergrößern",
+        "description" : "Füge diesem Neuron ICP hinzu. Die Überweisung geht auf das eigene Konto des Neurons, sodass du keinen Empfänger auswählen musst."
+      },
+      "setDissolveDelay" : {
+        "title" : "Auflösungsverzögerung",
+        "setDescription" : "Wähle aus, wie lange das Neuron braucht, um sich aufzulösen. Zwischen {{min}} und {{max}} Tagen.",
+        "increaseDescription" : "Das Dissolve Delay (Auflöseverzögerung) des Neurons verlängern. Es können bis zu {{remaining}} weitere Tage hinzugefügt werden, für insgesamt {{max}}, und dies kann nie verringert werden.",
+        "days" : "Tage",
+        "resulting" : "Neues Dissolve Delay (Auflöseverzögerung): {{duration}}",
+        "belowVotingThreshold" : "Unter {{days}} Tagen kann das Neuron nicht abstimmen und verdient keine Rewards."
+      },
+      "stakeMaturity" : {
+        "title" : "Fälligkeit staken",
+        "description" : "Stake einen Teil der Maturity dieses Neurons wieder in dieses, um sein Stimmrecht zu erhöhen.",
+        "percentage" : "Prozentsatz zum Staking",
+        "selected" : "Staking-Betrag"
+      },
+      "splitNeuron" : {
+        "title" : "Neuron teilen",
+        "description" : "Verschiebe einen Teil des Staking dieses Neurons in ein neues Neuron. Das neue Neuron startet ohne Dissolve Delay (Auflöseverzögerung) oder Age Bonus.",
+        "amount" : "Abzuspaltender Betrag",
+        "range" : "Zulässiger Bereich:"
+      },
+      "addHotKey" : {
+        "title" : "Hotkey hinzufügen",
+        "description" : "Einem anderen Principal die Berechtigung erteilen, abstimmen und das Folgen für dieses Neuron eingerichtet. Es kann das Staken niemals verschieben.",
+        "principal" : "Principal-ID",
+        "ownPrincipal" : "Der Principal dieses Kontos",
+        "ownPrincipalHint" : "Eingabe eines anderen Principals – in der Regel der, mit dem du dich in der NNS-dApp anmeldest. Dieses Konto steuert bereits das Neuron, sodass das Hinzufügen seines eigenen Principals keine zusätzlichen Rechte gewährt."
+      },
+      "followTopic" : {
+        "title" : "Thema",
+        "description" : "Wähle das Governance-Thema, dessen Following du ändern möchtest.",
+        "followeeCount_one" : "{{count}} Followee",
+        "followeeCount_other" : "{{count}} Followees"
+      },
+      "selectFollowees" : {
+        "title" : "Followees",
+        "description" : "Dein Neuron wird bei {{topic}} genau wie diese Neuronen abstimmen.",
+        "neuronId" : "Zu folgende Neuron-ID",
+        "add" : "Hinzufügen",
+        "remove" : "Entfernen",
+        "empty" : "Noch keine Followees. Dein Neuron wird bei diesem Thema nicht abstimmen.",
+        "clearsFollowing" : "Wenn du fortfährst, wird eine leere Liste übermittelt, wodurch dieses Neuron aufhört, jemandem auf {{topic}} zu folgen. Es folgt derzeit {{count}}.",
+        "notANeuronId" : "Eine Neuron-ID besteht nur aus Ziffern.",
+        "outOfRange" : "Dies ist keine gültige Neuron-ID.",
+        "duplicate" : "Dieses Neuron ist bei diesem Thema bereits ein Followee.",
+        "self" : "Ein Neuron kann sich nicht selbst folgen.",
+        "unadded" : "Tippe auf „Hinzufügen“, um diese Neuron-ID einzubinden, oder leere das Feld.",
+        "atCapacity" : "Ein Thema kann höchstens {{max}} Neuronen folgen. Entferne eines, um ein anderes hinzuzufügen."
+      }
+    },
+    "governanceTopic" : {
+      "Unspecified" : "Alle anderen Themen",
+      "NeuronManagement" : "Neuronenverwaltung",
+      "ExchangeRate" : "Wechselkurs",
+      "NetworkEconomics" : "Netzökonomie",
+      "Governance" : "Governance",
+      "NodeAdmin" : "Knotenadministrator",
+      "ParticipantManagement" : "Teilnehmerverwaltung",
+      "SubnetManagement" : "Subnetzverwaltung",
+      "NetworkCanisterManagement" : "Anwendungs-Canister-Verwaltung",
+      "Kyc" : "KYC",
+      "NodeProviderRewards" : "Prämien für Knotenbetreiber",
+      "SnsDecentralizationSale" : "SNS-Dezentralisierungsverkauf",
+      "IcOsVersionDeployment" : "Bereitstellung der IC-Betriebssystemversion",
+      "IcOsVersionElection" : "Wahl der IC-Betriebssystemversion",
+      "SnsAndCommunityFund" : "SNS & Community-Guthaben",
+      "ApiBoundaryNodeManagement" : "Verwaltung von API-Grenzknoten",
+      "SubnetRental" : "Subnetzvermietung",
+      "ProtocolCanisterManagement" : "Protokoll-Canister-Verwaltung",
+      "ServiceNervousSystemManagement" : "Verwaltung des Servicenervensystems"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Following bestätigen",
+      "description" : "Durch das Bestätigen deines Folgens wird die Voting-Power eines Neurons für weitere sechs Monate wiederhergestellt.",
+      "timeUntilLoss" : "Stimmrecht verloren in",
+      "losing" : "{{duration}} – verliert jetzt an Leistung",
+      "expired" : "Bereits verloren",
+      "confirm" : "Bestätigen",
+      "empty" : "Keines deiner Neuronen befindet sich derzeit in einem Bestätigungs-Timer."
     }
   },
   "buyCurrency" : {
@@ -1476,6 +1722,136 @@
     "CurrencyRegionRestrictedError" : {
       "title" : "{{currencyName}} ist in deiner Region nicht verfügbar",
       "description" : "Der Zugriff auf {{currencyName}} ist in deiner Region eingeschränkt."
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "Betrag zu gering",
+      "description" : "Ein Neuron muss mindestens 1 ICP halten, daher muss der Betrag diesen Wert zuzüglich der Netzwerkgebühr abdecken."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Dissolve Delay (Auflöseverzögerung) zu kurz",
+      "description_one" : "Der Internet Computer erfordert ein Dissolve Delay (Auflöseverzögerung) von mindestens {{minDays}} Tagen.",
+      "description_other" : "Der Internet Computer erfordert ein Dissolve Delay (Auflöseverzögerung) von mindestens {{minDays}} Tagen."
+    },
+    "ICPInvalidDissolveDelayIncrease" : {
+      "title" : "Ungültige Anzahl von Tagen",
+      "description" : "Gebe eine ganze Anzahl von Tagen ein, die größer als null ist."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Dissolve Delay (Auflöseverzögerung) zu lang",
+      "description_one" : "Der Internet Computer begrenzt das Dissolve Delay (Auflöseverzögerung) eines Neurons auf {{maxDays}} Tage.",
+      "description_other" : "Der Internet Computer begrenzt das Dissolve Delay (Auflöseverzögerung) eines Neurons auf {{maxDays}} Tage."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "Dissolve Delay (Auflöseverzögerung) kann nicht verkürzt werden",
+      "description" : "Das Dissolve Delay (Auflöseverzögerung) eines Neurons kann nur verlängert werden. Um es zu verkürzen, starte stattdessen das Auflösen des Neurons."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "Neuron nicht gefunden",
+      "description" : "Dieses Neuron fehlt in deinem letzten synchronisierten Snapshot. Synchronisiere deine Neuronen und versuche es erneut."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Ungültiger Principal",
+      "description" : "Ein Hotkey muss ein gültiger Principal des Internet Computers sein."
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "Hotkey bereits hinzugefügt",
+      "description" : "Dieser Principal ist bereits ein Hotkey auf diesem Neuron."
+    },
+    "ICPHotKeyIsController" : {
+      "title" : "Dieser Principal kontrolliert bereits das Neuron.",
+      "description" : "Gebe einen anderen Principal ein. Ein Hotkey kann nur abstimmen und das Folgen einrichten, was der Controller bereits tun kann."
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "Betrag liegt außerhalb des Bereichs, in dem dieses Neuron aufgeteilt werden kann",
+      "description" : "Sowohl das ursprüngliche als auch das neue Neuron müssen mindestens 1 ICP im Staking behalten, zuzüglich der Netzwerkgebühr für den übertragenen Betrag."
+    },
+    "ICPSpawnNotAllowed" : {
+      "title" : "Aus diesem Neuron kann nicht generiert werden",
+      "description" : "Ein Neuron, das bereits spawnt, kann nicht erneut spawnen, und die gespawnte Maturity muss nach der Maturity-Anpassung des Netzwerks mindestens 1 ICP hinterlassen. Synchronisiere deine Neuronen, um deren aktuellen Zustand zu sehen."
+    },
+    "ICPStakeMaturityNotAllowed" : {
+      "title" : "Die Maturity dieses Neurons kann nicht gestakt werden",
+      "description" : "Die Maturity kann nicht gestakt werden, während das Neuron spawnt, sobald es sich vollständig aufgelöst hat oder wenn das Neuron keine besitzt. Synchronisiere deine Neuronen, um deren aktuellen Zustand zu sehen."
+    },
+    "ICPFollowTopicNotAllowed" : {
+      "title" : "Diesem Thema kann nicht gefolgt werden",
+      "description" : "Der Internet Computer hat dieses Thema eingestellt, oder die Ledger Internet Computer-App kann das Folgen dafür noch nicht signieren. Wähle ein anderes Thema."
+    },
+    "ICPTooManyFollowees" : {
+      "title" : "Followee-Limit erreicht",
+      "description" : "Ein Thema kann höchstens {{max}} Neuronen folgen. Entferne Neuronen, bis die Liste {{max}} oder weniger enthält."
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "Ungültige Neuronen-ID",
+      "description" : "{{id}} ist keine gültige Neuronen-ID. Entferne es aus der Liste."
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "Neuron doppelt aufgelistet",
+      "description" : "Neuron {{id}} ist mehrfach aufgelistet. Entferne das Duplikat."
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "Ein Neuron kann sich nicht selbst folgen.",
+      "description" : "{{id}} ist die eigene ID dieses Neurons. Entferne es aus der Liste."
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "Das Auflösen dieses Neurons kann nicht gestartet werden",
+      "description" : "Nur ein gesperrtes Neuron kann mit dem Auflösen beginnen. Synchronisiere deine Neuronen, um deren aktuellen Zustand zu sehen."
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "Das Auflösen dieses Neurons kann nicht gestoppt werden",
+      "description" : "Nur ein sich auflösendes Neuron kann das Auflösen stoppen, und dieses hat den Vorgang möglicherweise bereits abgeschlossen. Synchronisiere deine Neuronen, um deren aktuellen Zustand zu sehen."
+    },
+    "ICPDisburseNotAllowed" : {
+      "title" : "Dieses Neuron kann nicht ausgezahlt werden",
+      "description" : "Ein Neuron kann ausgezahlt werden, sobald es sich vollständig aufgelöst hat und sein Stake mehr als die Netzwerkgebühr beträgt. Synchronisiere deine Neuronen, um deren aktuellen Zustand zu sehen."
+    },
+    "ICPTooManyHotKeys" : {
+      "title" : "Hotkey-Limit erreicht",
+      "description" : "Ein Neuron kann höchstens {{max}} Hotkeys halten. Entferne eines, um ein anderes hinzuzufügen."
+    },
+    "ICPTopUpBelowMinimumStake" : {
+      "title" : "Aufladung zu gering",
+      "description" : "Der Kontostand eines Neurons muss nach einer Aufstockung 1 ICP erreichen. Seit der letzten Synchronisierung benötigt dieses Neuron mindestens {{missing}} ICP mehr. Ein kleinerer Transfer wird auf dem Konto des Neurons verbucht, aber erst gezählt, wenn eine spätere Aufstockung das Minimum erreicht."
+    },
+    "ICPStakeNotRefreshed" : {
+      "title" : "Stake übertragen, Neuron nicht aktualisieren",
+      "description" : "Die ICP wurden auf das Konto des Neurons übertragen, aber die Internet Computer Governance hat sich geweigert, das Neuron damit zu aktualisieren. {{reason}} Nichts geht verloren: Der Betrag verbleibt auf dem Konto des Neurons und wird auf die nächste Aufstockung angerechnet, die den Kontostand auf mindestens 1 ICP bringt. Ledger Wallet kann es dort noch nicht sehen, daher wird im Betragsfeld weiterhin der gesamte Fehlbetrag verlangt, den die letzte Synchronisierung anzeigt."
+    },
+    "ICPStakeMemoNotRecoverable" : {
+      "title" : "Dieses Neuron kann nicht aufgestockt werden",
+      "description" : "Das Aufstocken eines Neurons erfordert das Memo aus der Transaktion, mit der es erstellt wurde, und dieses ist nicht im Verlauf dieses Kontos enthalten. Stocke es über das Konto auf, mit dem das Neuron erstellt wurde."
+    },
+    "ICPCallUnconfirmed" : {
+      "title" : "Ergebnis unbekannt",
+      "description" : "Der Internet Computer hat die Anfrage angenommen, aber kein Ergebnis zurückgegeben. Sie ist daher möglicherweise wirksam geworden oder nicht. Synchronisiere deine Neuronen, um dies zu überprüfen, bevor du es erneut versuchst."
+    },
+    "ICPInvalidPercentage" : {
+      "title" : "Prozentsatz außerhalb des Bereichs",
+      "description" : "Gib eine ganze Zahl zwischen 1 und 100 ein."
+    },
+    "ICPNeuronsNotRead" : {
+      "title" : "Neuronen nicht aktualisiert",
+      "description" : "Der Internet Computer hat deine Neuronen nicht zurückgegeben, daher sind sie unverändert. Bitte versuche es erneut."
+    },
+    "ICPGovernanceRejected" : {
+      "title" : "Das Netzwerk hat diesen Vorgang abgelehnt",
+      "description" : "Die Governance des Internet Computers hat die Anfrage abgelehnt, daher ist das Neuron unverändert. Synchronisiere deine Neuronen, um deren aktuellen Zustand zu sehen. {{reason}}"
+    },
+    "ICPCallRejected" : {
+      "title" : "Anfrage nicht akzeptiert",
+      "description" : "Der Internet Computer hat die Anfrage abgelehnt, bevor sie ausgeführt wurde, sodass sich nichts geändert hat. Bitte versuche es noch einmal. {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "Anfrage nicht gesendet",
+      "description" : "Der Internet Computer hat die Anfrage nicht angenommen, sodass nichts gesendet wurde und sich nichts geändert hat. Bitte versuche es noch einmal. {{reason}}"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Dies sperrt dein ICP in einem neuen Neuron",
+      "description" : "Das Neuron startet mit dem kürzesten Dissolve Delay (Auflöseverzögerung), das zu kurz ist, um abzustimmen oder Rewards zu erhalten. Erhöhe es unter „Neuronen verwalten“ und stelle dich darauf ein, die Verzögerung abzuwarten, bevor der Stake-Betrag wieder ausgegeben werden kann."
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Dies wird einem gesperrten Staking hinzugefügt",
+      "description" : "Der Betrag wird dem bestehenden Staking des Neurons hinzugefügt und folgt dessen Dissolve Delay (Auflöseverzögerung), sodass er erst ausgegeben werden kann, wenn sich das Neuron auflöst."
     }
   },
   "crash" : {
@@ -1647,6 +2023,23 @@
       "saveFailed" : "Wir konnten dein Passwort nicht speichern. Bitte versuche es noch einmal.",
       "cta" : "Bestätigen"
     },
+    "longerPassword" : {
+      "prompt" : {
+        "title" : "Passwort ändern",
+        "description" : "Gebe für mehr Sicherheit ein Passwort mit mindestens 6 Zeichen ein.",
+        "cta" : "Passwort ändern"
+      },
+      "enter" : {
+        "title" : "Neues Passwort eingeben"
+      },
+      "confirm" : {
+        "title" : "Neues Passwort bestätigen"
+      },
+      "changed" : {
+        "title" : "Passwort geändert",
+        "cta" : "Verstanden"
+      }
+    },
     "unlock" : {
       "wrongPassword" : "Falsches Passwort",
       "forgotPassword" : "Hast du dein Passwort vergessen?",
@@ -1682,6 +2075,17 @@
       },
       "description" : "Du kannst dich jetzt registrieren, um eine Karte zu erhalten",
       "cta" : "Weiter"
+    },
+    "keepProtection" : {
+      "password" : {
+        "title" : "Du kannst dein Passwort nicht deaktivieren",
+        "description" : "Du benötigst ein Passwort oder biometrische Daten, um deinen Zugriff auf Ledger Wallet zu schützen."
+      },
+      "biometrics" : {
+        "title" : "Du kannst {{biometricsType}} nicht deaktivieren",
+        "description" : "Du benötigst {{biometricsType}} oder ein Passwort, um deinen Zugriff auf Ledger Wallet zu schützen."
+      },
+      "cta" : "Verstanden"
     },
     "biometrics" : {
       "title" : "{{biometricsType}}",
@@ -10384,6 +10788,9 @@
     "paytab" : "Bezahlen"
   },
   "payTab" : {
+    "disclaimer" : "Bereitgestellt von Monavate Onchain",
+    "cardDisclaimer" : "Suchst du deine Krypto-Karte?",
+    "cardDisclaimerLink" : "Gehe zur CL-Karte",
     "featureTour" : {
       "title" : "Alle deine Zahlungen an einem Ort",
       "description" : "Lerne deinen neuen Pay-Tab kennen, der deine Kryptos bereit für alltägliche Geldfragen macht.",
@@ -10429,14 +10836,23 @@
       "balanceLabel" : "Saldo",
       "assets" : {
         "title" : "Assets",
-        "empty" : "Noch keine Assets",
-        "error" : "Es konnten keine Assets geladen werden",
+        "empty" : {
+          "title" : "Noch keine Assets",
+          "description" : "Füge ein Asset hinzu, um deine Karte zu nutzen.",
+          "cta" : "Asset hinzufügen"
+        },
+        "error" : {
+          "title" : "Es konnten keine Assets geladen werden",
+          "description" : "Das hat leider nicht funktioniert.",
+          "cta" : "Wiederholen"
+        },
         "info" : "Diese Assets bilden das Guthaben deiner Karte. Lege die Reihenfolge fest, in der sie belastet werden, oder füge weitere hinzu.",
         "manage" : "Verwalten",
         "manageDialog" : {
           "title" : "Assets verwalten",
           "description" : "Deine Assets sind nach Deckungsreihenfolge aufgelistet. Wenn ein Asset zur Neige geht, wird automatisch das nächste verwendet.",
-          "addAssetCaption" : "Du wirst auf die Seite von Baanx weitergeleitet, um Assets hinzuzufügen.",
+          "reorder" : "{{asset}} neu anordnen. Gedrückt halten und ziehen oder Aktionen für Barrierefreiheit nutzen, um nach oben und unten zu verschieben.",
+          "addAssetCaption" : "Du wirst zu Monavate weitergeleitet, um Assets hinzuzufügen.",
           "addAsset" : "Asset hinzufügen"
         },
         "details" : {
@@ -10445,13 +10861,14 @@
           "transactions" : "Transaktionen"
         },
         "withdraw" : {
-          "title" : "Du wirst zu Baanx weitergeleitet",
-          "description" : "Überweise Guthaben von deinem Baanx-Konto auf deine Ledger-Wallet-Adresse.",
+          "title" : "Du wirst zu Monavate weitergeleitet",
+          "description" : "Hebe Guthaben von deinem Baanx-Konto auf deine Ledger Wallet-Adresse ab.",
           "continue" : "Weiter"
         }
       },
       "title" : "Krypto-Karte",
       "topUp" : "Aufladen",
+      "chooseCardType" : "Kartentyp auswählen",
       "details" : "Details",
       "addToWallet" : "Zu {{wallet}} Pay hinzufügen",
       "freeze" : "Sperren",
@@ -10479,7 +10896,7 @@
         "imageAlt" : "Kartennummern"
       },
       "reward" : {
-        "title" : "Gesamt-Cashback"
+        "title" : "Gesamt-Cashback · {{ratePercent}}% in {{ticker}}"
       }
     },
     "cardTransactions" : {
@@ -10499,7 +10916,9 @@
         "status" : "Status",
         "card" : "Karte",
         "cardInfo" : "Die letzten vier Ziffern der für diese Zahlung verwendeten Karte.",
-        "fundingSource" : "Finanzierungsquelle",
+        "fundingSource_one" : "Finanzierungsquelle",
+        "fundingSource_other" : "Finanzierungsquelle",
+        "cashback" : "Cashback",
         "transactionId" : "Transaktions-ID",
         "copyTransactionId" : "Transaktions-ID kopieren",
         "today" : "Heute {{time}}",
@@ -10527,6 +10946,10 @@
           "title" : "Logge dich ein, um deine Kartentransaktionen zu sehen",
           "description" : "Deine Kartenaktivität wird hier angezeigt, sobald du eingeloggt bist."
         },
+        "unclaimed" : {
+          "title" : "Krypto-Karte",
+          "description" : "Gehe zu Pay, um deine Karte einzurichten."
+        },
         "empty" : {
           "title" : "Noch keine Kartentransaktionen",
           "description" : "Komm später wieder, um deine Kartentransaktionen zu sehen."
@@ -10536,9 +10959,6 @@
           "description" : "Prüfe deine Verbindung und versuche es noch einmal."
         }
       }
-    },
-    "selectContact" : {
-      "placeholder" : "Kontakt eingeben"
     },
     "actions" : {
       "deposit" : "Stablecoin hinzufügen",
@@ -10564,8 +10984,9 @@
         "verifyCta" : "Adresse verifizieren",
         "successTitle" : "Auf dem Secure Screen des Geräts angezeigte Adresse",
         "nextStepsLabel" : "Nächste Schritte",
-        "nextStepShare" : "Teile deine Adresse über deine gewünschte App",
-        "nextStepMatch" : "Stelle sicher, dass die freigegebene Adresse mit der auf deinem Ledger-Gerät übereinstimmt.",
+        "nextStepKeepDisplayed" : "Lass deine Adresse auf deinem Ledger-Gerät angezeigt. Bestätige sie noch nicht.",
+        "nextStepPaste" : "Tippe auf „Verstanden“ und füge deine Adresse dann in die App ein, mit der du sie teilst.",
+        "nextStepCheckMatch" : "Prüfe vor dem Senden, ob sie zu der auf deinem Ledger-Gerät passt.",
         "gotItCta" : "Verstanden",
         "device" : {
           "cancelledTitle" : "Adressverifizierung abgebrochen",
@@ -10634,19 +11055,39 @@
         "action" : "Login"
       },
       "errors" : {
-        "pkce_failed" : "Die Anmeldung konnte nicht gestartet werden. Bitte versuche es erneut.",
-        "browser_open_failed" : "Die Anmeldeseite konnte nicht geöffnet werden. Bitte versuche es erneut.",
-        "missing_attempt" : "Dieser Anmeldename ist nicht mehr gültig. Bitte melde dich erneut an.",
-        "exchange_failed" : "Die Anmeldung konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
-        "persist_failed" : "Deine Sitzung konnte nicht gespeichert werden. Bitte versuche es erneut.",
-        "fetch_user_failed" : "Deine Karte konnte nicht geladen werden. Bitte versuche es erneut."
+        "pkce_failed" : {
+          "title" : "Die Anmeldung konnte nicht gestartet werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "browser_open_failed" : {
+          "title" : "Die Anmeldeseite konnte nicht geöffnet werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "missing_attempt" : {
+          "title" : "Dieser Anmeldename ist nicht mehr gültig.",
+          "description" : "Bitte melde dich erneut an."
+        },
+        "exchange_failed" : {
+          "title" : "Die Anmeldung konnte nicht abgeschlossen werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "persist_failed" : {
+          "title" : "Deine Sitzung konnte nicht gespeichert werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "fetch_user_failed" : {
+          "title" : "Deine Karte konnte nicht geladen werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "retryLogin" : "Wiederholen",
+        "retryUser" : "Wiederholen"
       }
     },
     "cardLoginIntro" : {
       "title" : "Mit Krypto zahlen, Cashback sichern",
-      "providedBy" : "Karte bereitgestellt von Baanx",
+      "providedBy" : "Karte bereitgestellt von Monavate",
       "createAccount" : "Konto erstellen",
-      "logIn" : "Bei Baanx einloggen",
+      "logIn" : "Bei Monavate einloggen",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -10671,12 +11112,14 @@
       "title" : "Bezahlen",
       "pay" : "Neu",
       "seeAllTitle" : "Kontakt bezahlen",
+      "me" : "Ich",
       "addressPicker" : {
         "title" : "Adresse von {{name}} auswählen",
+        "meTitle" : "Meine Adresse auswählen",
         "addAddress" : "Adresse hinzufügen"
       },
       "paySuccess" : {
-        "title" : "Du hast ({{recipient}}) bezahlt",
+        "title" : "Du hast {{recipient}} bezahlt",
         "amount" : "Betrag",
         "estimatedTime" : "Geschätzte Zeit",
         "from" : "Von",
@@ -10979,11 +11422,30 @@
     "manage" : {
       "bond" : "Binden",
       "claim" : "Beanspruchen",
+      "unbond" : "Ungebunden",
       "status" : "Status",
       "estimatedRate" : "Geschätzte Rewards-Kurs",
       "unbondPendingInfo" : "Ein Unstake wartet auf die Bestätigung. Aleo verfolgt jeweils nur eine Position zum Entbinden, daher sind sowohl das Entbinden als auch das Beanspruchen nicht verfügbar, bis diese abgeschlossen wurde.",
       "claimPendingInfo" : "Ein Claim wartet auf die Bestätigung. Aleo verfolgt jeweils nur eine Position zum Entbinden, daher sind sowohl das Entbinden als auch das Beanspruchen nicht verfügbar, bis diese abgeschlossen wurde.",
       "unlockBlock" : "Entsperren bei Block"
+    },
+    "unbond" : {
+      "stepperHeader" : {
+        "amount" : "Staken beenden bestätigen",
+        "selectDevice" : "Gerät auswählen",
+        "connectDevice" : "Verbundenes Gerät"
+      },
+      "amount" : {
+        "bondedAmount" : "Aufzuhebender Staking-Betrag",
+        "belowMinimum" : "Dieser Betrag wird für etwa 360 Blöcke (~1 Stunde) eingefroren. Wenn durch das Entbinden weniger als <minimum/> verbunden bleiben würden, wird stattdessen dein gesamter verbundener Kontostand getrennt, da der Mindest-Stake nicht mehr erfüllt wäre.",
+        "max" : "Max."
+      },
+      "validation" : {
+        "success" : {
+          "title" : "Unstaking übermittelt",
+          "description" : "Deine Unbond-Transaktion wird im Aleo-Netzwerk verarbeitet."
+        }
+      }
     },
     "send" : {
       "balanceSelection" : {
@@ -11068,6 +11530,13 @@
         "private" : "Privat"
       }
     },
+    "operationDetails" : {
+      "extra" : {
+        "validator" : "Validator",
+        "bondedAmount" : "Gestaketer Betrag",
+        "unbondedAmount" : "Ungestaketer Betrag"
+      }
+    },
     "shared" : {
       "sponsoredByProvable" : "Gesponsert von Provable"
     }
@@ -11123,6 +11592,7 @@
     "addAddressEntry" : {
       "title" : "Adresse eingeben",
       "addressPlaceholder" : "Adresse oder ENS",
+      "addressPlaceholderNoENS" : "Adresse",
       "confirmAddress" : "Adresse bestätigen",
       "validatingAddress" : "Adresse wird validiert",
       "validAddress" : "Gültige Adresse",

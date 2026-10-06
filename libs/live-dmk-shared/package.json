@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-shared",
-  "version": "0.33.0",
+  "version": "0.34.0",
   "description": "Ledger Device Management Kit shared module",
   "private": true,
   "license": "Apache-2.0",
@@ -26,7 +26,6 @@
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",

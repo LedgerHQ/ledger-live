@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -90,7 +90,6 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "test-integ:debug": "DOTENV_CONFIG_PATH=.env.integ.test node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
@@ -150,7 +150,6 @@
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "test": "cross-env TZ=America/Paris jest",
     "test-integ": "jest --config=jest.integ.config.js",
-    "test:debug": "cross-env TZ=America/Paris node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "unimported": "unimported"
+    "test:debug": "cross-env TZ=America/Paris node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
   }
 }

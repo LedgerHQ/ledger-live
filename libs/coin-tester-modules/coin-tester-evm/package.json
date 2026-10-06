@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.35.0",
+  "version": "1.35.1",
   "private": true,
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -54,8 +54,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "unimported": "unimported"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
     "@features/platform-currencies": "workspace:^",

@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { PolkadotOperation } from "../types";
 import { createMockPolkadotContext } from "../test/config.fixture";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
-import { makeGetAccountShape } from "./synchronization";
+import { makeGetAccountShape, postSync } from "./synchronization";
 
 const mockGetAccount = jest.fn();
 const mockGetOperations = jest.fn();
@@ -374,6 +374,60 @@ describe("getAccountShape", () => {
     );
 
     expect(shape.currency).toEqual(CURRENCY);
+  });
+});
+
+describe("postSync", () => {
+  const sender = "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J";
+  const sendMax: PolkadotOperation = {
+    ...createFixtureOperation({
+      id: "polkadot:send-max",
+      type: "OUT",
+      senders: [sender],
+      date: new Date(Date.now() - 60_000),
+    }),
+    transactionSequenceNumber: new BigNumber(5),
+  };
+  const pendingAfterReap: PolkadotOperation = {
+    ...createFixtureOperation({ id: "polkadot:pending", type: "OUT", senders: [sender] }),
+    date: new Date(),
+    transactionSequenceNumber: new BigNumber(0),
+  };
+
+  it("keeps a pending operation whose nonce was reset by a reap", () => {
+    const account = createFixtureAccount({
+      operations: [sendMax],
+      pendingOperations: [pendingAfterReap],
+    });
+
+    const result = postSync(account, { ...account, pendingOperations: [] });
+
+    expect(result.pendingOperations).toEqual([pendingAfterReap]);
+  });
+
+  it("drops a pending operation once its hash is indexed", () => {
+    const account = createFixtureAccount({
+      operations: [sendMax],
+      pendingOperations: [pendingAfterReap],
+    });
+    const confirmed = { ...pendingAfterReap, blockHeight: 10 };
+
+    const result = postSync(account, { ...account, operations: [confirmed, sendMax] });
+
+    expect(result.pendingOperations).toEqual([]);
+  });
+
+  it("drops a pending operation superseded by a newer confirmed operation", () => {
+    const account = createFixtureAccount({ pendingOperations: [pendingAfterReap] });
+    const replacement: PolkadotOperation = {
+      ...createFixtureOperation({ id: "polkadot:replacement", type: "OUT", senders: [sender] }),
+      date: new Date(Date.now() + 1_000),
+      transactionSequenceNumber: new BigNumber(0),
+    };
+
+    const result = postSync(account, { ...account, operations: [replacement] });
+
+    expect(result.pendingOperations).toEqual([]);
   });
 });
 

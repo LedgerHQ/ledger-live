@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-tezos",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "private": true,
   "description": "Ledger Tezos Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -53,8 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "unimported": "unimported"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
     "@ledgerhq/coin-tester": "workspace:^",

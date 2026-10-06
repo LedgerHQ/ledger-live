@@ -29,8 +29,7 @@
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "unimported"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",

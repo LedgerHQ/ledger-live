@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-zcash",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Ledger Zcash Coin integration (standalone coin-module)",
   "keywords": [
     "Ledger",
@@ -154,7 +154,6 @@
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

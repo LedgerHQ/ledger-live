@@ -1,5 +1,0 @@
-{
-  "entry": ["src/Aptos.ts"],
-  "ignoreUnused": ["jest-sonar"],
-  "ignoreUnimported": []
-}

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-core",
-  "version": "0.11.17",
+  "version": "0.11.18",
   "private": true,
   "description": "Ledger Live device core module",
   "license": "Apache-2.0",
@@ -54,7 +54,6 @@
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "test": "jest",
     "coverage": "jest --coverage"
   },

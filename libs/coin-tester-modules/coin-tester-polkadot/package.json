@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-polkadot",
-  "version": "1.20.8",
+  "version": "1.20.9",
   "private": true,
   "description": "Ledger Polkadot Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -51,7 +51,6 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "start": "pnpm jest --runTestsByPath src/*.test.ts --forceExit --runInBand"
   },
   "dependencies": {

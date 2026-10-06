@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-celo",
-  "version": "7.2.0",
+  "version": "7.2.1",
   "description": "Ledger Hardware Wallet Celo Application API",
   "keywords": [
     "Ledger",
@@ -56,7 +56,6 @@
     "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "unimported": "unimported",
     "format": "oxfmt src tests",
     "format:check": "oxfmt --check src tests"
   },

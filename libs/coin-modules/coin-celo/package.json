@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -160,7 +160,6 @@
     "test-integ": "jest --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

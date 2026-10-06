@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { shouldRetainPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
 import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { PolkadotContext } from "../config";
@@ -77,5 +78,30 @@ export const makeGetAccountShape =
     };
   };
 
+/**
+ * A send max (`balances.transferAll`) reaps the account, which resets its on-chain nonce to 0, so the
+ * next extrinsics reuse nonces already present in the history. The framework's
+ * `shouldRetainPendingOperation` compares a pending operation with the last confirmed one of the same
+ * sender and would drop it right after broadcast.
+ *
+ * Pending operations are resolved here instead: dropped once their hash is indexed, and otherwise
+ * only compared with confirmed operations that are not older than them.
+ */
+export const postSync = (initial: PolkadotAccount, synced: PolkadotAccount): PolkadotAccount => {
+  const confirmedIds = new Set(synced.operations.map(o => o.id));
+
+  return {
+    ...synced,
+    pendingOperations: initial.pendingOperations.filter(
+      op =>
+        !confirmedIds.has(op.id) &&
+        shouldRetainPendingOperation(
+          { ...synced, operations: synced.operations.filter(o => o.date >= op.date) },
+          op,
+        ),
+    ),
+  };
+};
+
 export const makeSyncBridge = (context: PolkadotContext) =>
-  makeSync({ getAccountShape: makeGetAccountShape(context) });
+  makeSync({ getAccountShape: makeGetAccountShape(context), postSync });

@@ -1,5 +1,33 @@
 # @ledgerhq/coin-solana
 
+## 2.3.0
+
+### Minor Changes
+
+- [#21953](https://github.com/LedgerHQ/ledger-live/pull/21953) [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/live-config`, `@ledgerhq/live-env`, `@ledgerhq/live-currency-format`,
+  `@ledgerhq/domain-service` and `@ledgerhq/evm-tools` from npm instead of the workspace — they
+  now live in the `ts-libs` repository. No API change.
+
+### Patch Changes
+
+- Updated dependencies [[`2d869a5`](https://github.com/LedgerHQ/ledger-live/commit/2d869a596a4562a00003de01cc657d7277dc6b7c), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d), [`a025d7a`](https://github.com/LedgerHQ/ledger-live/commit/a025d7a872b7b1e4681d16b2bfb54f8949bf6626), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed), [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d)]:
+  - @ledgerhq/types-live@6.126.0
+  - @ledgerhq/ledger-wallet-framework@3.6.0
+
+## 2.3.0-next.0
+
+### Minor Changes
+
+- [#21953](https://github.com/LedgerHQ/ledger-live/pull/21953) [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Consume `@ledgerhq/live-config`, `@ledgerhq/live-env`, `@ledgerhq/live-currency-format`,
+  `@ledgerhq/domain-service` and `@ledgerhq/evm-tools` from npm instead of the workspace — they
+  now live in the `ts-libs` repository. No API change.
+
+### Patch Changes
+
+- Updated dependencies [[`2d869a5`](https://github.com/LedgerHQ/ledger-live/commit/2d869a596a4562a00003de01cc657d7277dc6b7c), [`f1d8aac`](https://github.com/LedgerHQ/ledger-live/commit/f1d8aac1c7c0bc0be9beb1508c1a9ef3cf7affae), [`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d), [`a025d7a`](https://github.com/LedgerHQ/ledger-live/commit/a025d7a872b7b1e4681d16b2bfb54f8949bf6626), [`a896fca`](https://github.com/LedgerHQ/ledger-live/commit/a896fca1974a46f10e915d1212e0947e2d808ad5), [`8c486aa`](https://github.com/LedgerHQ/ledger-live/commit/8c486aabe3dbd100b21e43d3f344fda5142858ed), [`88bae04`](https://github.com/LedgerHQ/ledger-live/commit/88bae04e2f7e7a3de8d55c340fe32b48e37bd78d)]:
+  - @ledgerhq/types-live@6.126.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.6.0-next.0
+
 ## 2.2.0
 
 ### Minor Changes
@@ -445,35 +473,5 @@
   - @ledgerhq/live-network@3.0.0-next.0
   - @ledgerhq/live-env@3.0.0-next.0
   - @ledgerhq/types-live@6.117.0-next.0
-
-## 0.59.1
-
-### Patch Changes
-
-- [#20154](https://github.com/LedgerHQ/ledger-live/pull/20154) [`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): drop warmupCooldownRate from stake schema
-
-  Agave removed `warmupCooldownRate` from `UiDelegation` in 4.1 (deprecated since 1.16.7 in
-  favour of `solana_stake_interface::state::warmup_cooldown_rate()`), and mainnet now serves
-  `apiVersion: 4.1.0`. Our `Delegation` struct still required it, so parsing threw a
-  `StructError` for any account holding stake accounts — breaking the legacy sync path
-  (`synchronization.ts`) as well as `logic/getStakes` and `logic/getBalance`.
-
-  The field was never read: the activation math uses a hardcoded `WARMUP_COOLDOWN_RATE`, as
-  upstream recommends. Dropping it from the schema restores parsing with no behaviour change.
-
-## 0.59.1-hotfix.0
-
-### Patch Changes
-
-- [#20154](https://github.com/LedgerHQ/ledger-live/pull/20154) [`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): drop warmupCooldownRate from stake schema
-
-  Agave removed `warmupCooldownRate` from `UiDelegation` in 4.1 (deprecated since 1.16.7 in
-  favour of `solana_stake_interface::state::warmup_cooldown_rate()`), and mainnet now serves
-  `apiVersion: 4.1.0`. Our `Delegation` struct still required it, so parsing threw a
-  `StructError` for any account holding stake accounts — breaking the legacy sync path
-  (`synchronization.ts`) as well as `logic/getStakes` and `logic/getBalance`.
-
-  The field was never read: the activation math uses a hardcoded `WARMUP_COOLDOWN_RATE`, as
-  upstream recommends. Dropping it from the schema restores parsing with no behaviour change.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-cardano",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "private": true,
   "description": "Ledger Cardano Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -53,8 +53,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "unimported": "unimported"
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
   },
   "dependencies": {
     "@ledgerhq/coin-cardano": "workspace:^",

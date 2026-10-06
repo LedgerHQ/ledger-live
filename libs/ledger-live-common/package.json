@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "38.1.0",
+  "version": "38.2.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -225,7 +225,6 @@
     "test-bridge": "env-cmd -f .ci.bridge.env pnpm jest --ci --updateSnapshot --passWithNoTests --runInBand",
     "test-bridge-update": "UPDATE_BACKEND_MOCKS=1 env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
     "test-account-migration": "tsx src/__tests__/migration/account-migration.ts",
-    "unimported": "unimported",
     "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci"
   },
   "files": [

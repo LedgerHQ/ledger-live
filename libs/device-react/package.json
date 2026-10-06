@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-react",
-  "version": "0.6.20",
+  "version": "0.6.21",
   "private": true,
   "description": "Ledger Live device react module",
   "keywords": [
@@ -51,7 +51,6 @@
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported",
     "test": "jest",
     "coverage": "jest --coverage"
   },
