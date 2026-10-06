@@ -6,15 +6,22 @@ export const EditNameView = ({
   suggestions,
   initialValue,
   onConfirm,
-  children,
-}: EditNameViewProps & { children: React.ReactNode }) => {
+  open,
+  onOpenChange,
+  isSyncing,
+}: EditNameViewProps & {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  isSyncing: boolean;
+}) => {
   return (
     <EditCryptoAddressNameDialog
+      open={open}
+      onOpenChange={onOpenChange}
       onConfirm={onConfirm}
       initialValue={initialValue}
       suggestions={suggestions}
-    >
-      {children}
-    </EditCryptoAddressNameDialog>
+      isSyncing={isSyncing}
+    />
   );
 };

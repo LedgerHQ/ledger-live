@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { within } from "@testing-library/react";
-import { render, screen } from "tests/testSetup";
+import { act, within } from "@testing-library/react";
+import { render, screen, waitFor } from "tests/testSetup";
 import { CryptoTable } from "../CryptoTable";
 import {
   ETH_ACCOUNT,
@@ -10,6 +10,8 @@ import {
 } from "LLD/features/__mocks__/accounts.mock";
 import { aggregatedAssetsFlags } from "../../../testUtils/aggregatedAssetsFlags";
 import { createWalletState } from "../../../testUtils/createWalletState";
+import { setAccountName } from "~/renderer/reducers/wallet";
+import { setLastUserSyncClickTimestamp } from "~/renderer/reducers/syncRefresh";
 import {
   buildMainAccountByIdMap,
   lookupParentAccountFromMap,
@@ -169,10 +171,90 @@ describe("CryptoTable", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Edit name" }));
+    expect(await screen.findByTestId("edit-crypto-address-name-dialog-content")).toBeVisible();
     expect(mockOnRowClick).not.toHaveBeenCalled();
+
+    await user.keyboard("{Escape}");
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("edit-crypto-address-name-dialog-content"),
+      ).not.toBeInTheDocument();
+    });
 
     await user.click(screen.getByRole("button", { name: /USDT on Eth/ }));
     expect(mockOnRowClick).toHaveBeenCalledTimes(1);
     expect(mockOnRowClick).toHaveBeenCalledWith(tokenAccount, parentAccount);
+  });
+
+  describe("edit name dialog", () => {
+    const DIALOG_TEST_ID = "edit-crypto-address-name-dialog-content";
+    const TYPED_NAME = "Long term savings";
+
+    const renderAndStartEditing = async () => {
+      const rendered = render(
+        <CryptoTable
+          rows={[ETH_ACCOUNT, ETH_ACCOUNT_2]}
+          lookupParentAccount={mockLookupParent}
+          onRowClick={mockOnRowClick}
+        />,
+        {
+          initialState: createWalletState(
+            new Map([
+              [ETH_ACCOUNT.id, "Main"],
+              [ETH_ACCOUNT_2.id, "Secondary"],
+            ]),
+          ),
+        },
+      );
+
+      const mainRow = screen.getByTestId("crypto-account-row-Main");
+      await rendered.user.click(within(mainRow).getByRole("button", { name: "Edit name" }));
+      const input = await screen.findByLabelText("Address name");
+      await rendered.user.clear(input);
+      await rendered.user.type(input, TYPED_NAME);
+
+      return rendered;
+    };
+
+    it("stays open when another account is renamed", async () => {
+      const { store } = await renderAndStartEditing();
+
+      act(() => {
+        store.dispatch(setAccountName(ETH_ACCOUNT_2.id, "Renamed elsewhere"));
+      });
+
+      expect(screen.getByTestId(DIALOG_TEST_ID)).toBeVisible();
+      expect(screen.getByLabelText("Address name")).toHaveValue(TYPED_NAME);
+    });
+
+    it("stays open when a sync refreshes the accounts", async () => {
+      const { rerender } = await renderAndStartEditing();
+
+      rerender(
+        <CryptoTable
+          rows={[
+            { ...ETH_ACCOUNT, balance: new BigNumber("42") },
+            { ...ETH_ACCOUNT_2, balance: new BigNumber("7") },
+          ]}
+          lookupParentAccount={mockLookupParent}
+          onRowClick={mockOnRowClick}
+        />,
+      );
+
+      expect(screen.getByTestId(DIALOG_TEST_ID)).toBeVisible();
+      expect(screen.getByLabelText("Address name")).toHaveValue(TYPED_NAME);
+    });
+
+    it("stays open and blocks saving when the user starts a sync", async () => {
+      const { store } = await renderAndStartEditing();
+
+      act(() => {
+        store.dispatch(setLastUserSyncClickTimestamp(Date.now()));
+      });
+
+      expect(screen.getByTestId(DIALOG_TEST_ID)).toBeVisible();
+      expect(screen.getByLabelText("Address name")).toHaveValue(TYPED_NAME);
+      expect(screen.getByTestId("edit-crypto-address-name-dialog-cta")).toBeDisabled();
+    });
   });
 });
