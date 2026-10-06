@@ -33,6 +33,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      skip-nx-cache:
+        description: "Skip the Nx local and remote task cache so the run measures cold performance. Used for runner benchmarking."
+        type: boolean
+        required: false
+        default: false
       ref:
         description: |
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
@@ -62,6 +67,7 @@ env:
 
 jobs:
   speculos-e2e-tests-linux:
+    if: ${{ github.event_name != 'workflow_dispatch' }} # EVALUATION ONLY: run Ubuntu Mock alone on dispatch
     name: "UI e2e smoke tests NanoSP"
     permissions:
       id-token: write
@@ -199,6 +205,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
+          skip-nx-cache: ${{ inputs.skip-nx-cache }}
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
