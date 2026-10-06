@@ -128,6 +128,9 @@ const commonConfig = {
     customExportConditions: [""],
   },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
+  // CI restores this directory from S3 so Jest reuses transforms and per-file timings.
+  // Must live in the project config: Jest ignores a top-level cacheDirectory when `projects` is set.
+  ...(process.env.JEST_CACHE_DIRECTORY ? { cacheDirectory: process.env.JEST_CACHE_DIRECTORY } : {}),
 };
 
 module.exports = {
