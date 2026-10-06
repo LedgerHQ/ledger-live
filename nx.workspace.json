@@ -11,6 +11,13 @@
       "{workspaceRoot}/pnpm-workspace.yaml",
       "{workspaceRoot}/.npmrc"
     ],
+    "lintConfig": [
+      "{workspaceRoot}/support/lint/**/*",
+      "{workspaceRoot}/*/oxlint.config.mts",
+      "{workspaceRoot}/*/*/oxlint.config.mts"
+    ],
+    "formatConfig": ["{workspaceRoot}/support/fmt/**/*", "{workspaceRoot}/oxfmt.config.mts"],
+    "tsConfig": ["{workspaceRoot}/support/tsconfig/**/*"],
     "default": [
       "sharedGlobals",
       "{projectRoot}/**/*",
@@ -363,6 +370,7 @@
         "{projectRoot}/lib-es/**",
         "{projectRoot}/build/**"
       ],
+      "inputs": ["default", "^default", "tsConfig"],
       "cache": true
     },
     "lint": {
@@ -370,6 +378,7 @@
       "inputs": [
         "default",
         "^default",
+        "lintConfig",
         {
           "env": "CI_OS"
         }
@@ -380,7 +389,7 @@
     },
     "format:check": {
       "cache": true,
-      "inputs": ["default", "^default"]
+      "inputs": ["default", "^default", "formatConfig"]
     },
     "check-export-rules": {
       "cache": false
@@ -391,6 +400,7 @@
       "inputs": [
         "default",
         "^default",
+        "tsConfig",
         {
           "env": "CI_OS"
         }
