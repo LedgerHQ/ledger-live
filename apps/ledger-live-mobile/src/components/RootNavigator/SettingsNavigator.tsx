@@ -15,7 +15,7 @@ import DebugDeviceIntentExecutor from "~/screens/Settings/Debug/Features/DeviceI
 import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
 import DeviceSimulationDevToolScreen from "~/screens/Settings/Debug/Configuration/DeviceSimulationDevTool";
 import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
-import DebugOsUpdateOrchestrator from "LLM/features/OsUpdate/Debug/screens/OsUpdatesOrchestratorDebugScreen";
+import DebugOsUpdateOrchestrator from "LLM/features/OsUpdate/Debug";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
 import DebugStartTour from "~/screens/Settings/Debug/Features/StartTour";
