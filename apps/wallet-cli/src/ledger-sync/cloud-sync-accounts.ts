@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { isDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
   CloudSyncSDK,
   type UpdateEvent,
@@ -9,10 +10,10 @@ import {
 } from "@shared/cloud-sync";
 import { errMessage } from "../shared/error-message";
 import type { AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
+import type { AccountIdParams } from "@ledgerhq/types-live";
 import { CLOUD_SYNC_API_URLS } from "../key-ring/constants";
 import {
   toV1,
-  networkFromCurrencyId,
   serializeNetwork,
   UnsupportedFamilyError,
   UnknownNetworkError,
@@ -149,6 +150,24 @@ function unsupportedFamily(currencyId: string): string | undefined {
   return SUPPORTED_FAMILIES.has(family) ? undefined : family;
 }
 
+/** A synced entry's account id is malformed or disagrees with the entry's own fields. */
+class InvalidAccountIdError extends Error {
+  constructor(id: string, reason: string, options?: ErrorOptions) {
+    super(`Invalid account id "${id}": ${reason}.`, options);
+    this.name = "InvalidAccountIdError";
+  }
+}
+
+/** A synced entry's account id uses a derivation mode this wallet-cli version doesn't know. */
+class UnsupportedDerivationModeError extends Error {
+  constructor(id: string, mode: string) {
+    super(
+      `Derivation mode "${mode}" of account id "${id}" is not supported by this wallet-cli version.`,
+    );
+    this.name = "UnsupportedDerivationModeError";
+  }
+}
+
 /**
  * Ledger Sync carries live-common's raw `seedIdentifier`: the public key of the seed derivation,
  * shared by every account of that currency (e.g. `04…` for Ethereum), not the account's address.
@@ -156,11 +175,20 @@ function unsupportedFamily(currencyId: string): string | undefined {
  * BridgeAdapter.toDescriptor for accounts discovered on the device.
  */
 function withSeedIdentifierFromId(descriptor: AccountDescriptorV0): AccountDescriptorV0 {
-  const { currencyId, derivationMode, xpubOrAddress } = decodeAccountId(descriptor.id);
+  let decoded: AccountIdParams;
+  try {
+    decoded = decodeAccountId(descriptor.id);
+  } catch (cause) {
+    throw isDerivationMode(descriptor.derivationMode)
+      ? new InvalidAccountIdError(descriptor.id, errMessage(cause), { cause })
+      : new UnsupportedDerivationModeError(descriptor.id, descriptor.derivationMode);
+  }
+  const { currencyId, derivationMode, xpubOrAddress } = decoded;
   if (currencyId !== descriptor.currencyId || derivationMode !== descriptor.derivationMode) {
-    throw new Error(
-      `Account id (${currencyId}, "${derivationMode}") does not match its currencyId and ` +
-        `derivationMode (${descriptor.currencyId}, "${descriptor.derivationMode}").`,
+    throw new InvalidAccountIdError(
+      descriptor.id,
+      `it names (${currencyId}, "${derivationMode}") but the entry has ` +
+        `(${descriptor.currencyId}, "${descriptor.derivationMode}")`,
     );
   }
   return { ...descriptor, seedIdentifier: xpubOrAddress };
@@ -193,12 +221,11 @@ function convertSyncedAccount(
 
   let v1: unknown;
   try {
-    // Resolved first, as toV1() does, so an unknown currency stays "skipped" even when its id
-    // carries a derivation mode this version can't decode.
-    networkFromCurrencyId(descriptor.currencyId);
     v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {
-    return e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError
+    return e instanceof UnsupportedFamilyError ||
+      e instanceof UnknownNetworkError ||
+      e instanceof UnsupportedDerivationModeError
       ? { status: "skipped", id: descriptor.id, reason: e.message }
       : { status: "invalid", id: descriptor.id, reason: errMessage(e) };
   }
