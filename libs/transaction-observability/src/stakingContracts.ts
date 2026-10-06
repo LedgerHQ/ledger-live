@@ -37,7 +37,7 @@ type StakingContract = {
  * the ETH2 deposit contract and hand back no token, so they have no entry here and take their
  * method from the manifest.
  */
-const STAKING_CONTRACTS: Record<string, StakingContract> = {
+export const STAKING_CONTRACTS: Readonly<Record<string, StakingContract>> = {
   // Observed: a Lido stake calls `submit(address)` on exactly this address, which is stETH.
   "0xae7ab96520de3a18e5e111b5eaab095312d7fe84": {
     outputCurrency: "stETH",
