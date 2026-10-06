@@ -14,15 +14,9 @@ function toFailure(error: unknown): HttpResponse {
   return HttpResponse.json({ error: message }, { status: 500 });
 }
 
-export type AleoHandlerOptions = {
-  /** Caps every transactions page, whatever `limit` the bridge asks for. */
-  maxPageSize?: number;
-};
-
 /** Pass a getter when the expected transfer changes between the scenario's transactions. */
 export function buildAleoHandlers(
   expected: ExpectedTransfer | (() => ExpectedTransfer),
-  { maxPageSize }: AleoHandlerOptions = {},
 ): RequestHandler[] {
   const currentExpected = typeof expected === "function" ? expected : () => expected;
 
@@ -51,7 +45,6 @@ export function buildAleoHandlers(
             address,
             await getAccountTransactionRows(address),
             new URL(request.url).searchParams,
-            maxPageSize,
           ),
         );
       } catch (error) {

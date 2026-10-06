@@ -40,19 +40,16 @@ a local Aleo SDK backend. `src/scenarii.test.ts` registers four scenarios:
 ## Usage
 
 The package exports no scenarios: they rely on the Docker stack that
-`src/scenarii.test.ts` brings up and tears down. Run them through the package
-scripts:
+`src/scenarii.test.ts` brings up and tears down. Run them with:
 
 ```sh
-pnpm start   # every suite, with Docker
-pnpm test    # offline unit suites only, no Docker
+pnpm start
 ```
 
 ## Development
 
-`pnpm start` spins up the Docker stack, runs the Jest suites, then tears the
-stack down. `pnpm test` and `pnpm coverage` run the `unit` Jest project only
-(see `jest.config.ts`); the `stack` project holds the suites that need Docker.
+`pnpm start` spins up the Docker stack, runs `src/scenarii.test.ts` and
+`src/negativeCases.test.ts`, then tears the stack down.
 
 The first run builds the `aleo-devnode` image, which downloads the `leo`
 binary and checks it against the SHA-256 pinned in `aleo-devnode.Dockerfile`.

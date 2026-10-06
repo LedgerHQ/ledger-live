@@ -12255,9 +12255,6 @@ importers:
       '@ledgerhq/coin-aleo':
         specifier: workspace:^
         version: link:../../coin-modules/coin-aleo
-      '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 10.0.0
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester

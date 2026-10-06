@@ -150,13 +150,13 @@ export async function getAccountTransactionRows(address: string): Promise<AleoPu
     .sort((a, b) => a.block_number - b.block_number);
 }
 
-export type TransactionsCursor = {
+type TransactionsCursor = {
   blockNumber?: number;
   transitionId?: string;
   order: "asc" | "desc";
 };
 
-export function readTransactionsCursor(query: URLSearchParams): TransactionsCursor {
+function readTransactionsCursor(query: URLSearchParams): TransactionsCursor {
   const blockNumber = query.get("cursor_block_number");
   const transitionId = query.get("cursor_transition_id");
   return {
@@ -167,7 +167,7 @@ export function readTransactionsCursor(query: URLSearchParams): TransactionsCurs
 }
 
 /** Like production: a block number alone skips that whole block, a transition id resumes inside it. */
-export function applyTransactionsCursor(
+function applyTransactionsCursor(
   rows: AleoPublicTransaction[],
   { blockNumber, transitionId, order }: TransactionsCursor,
 ): AleoPublicTransaction[] {
@@ -186,14 +186,12 @@ export function applyTransactionsCursor(
 
 const DEFAULT_PAGE_SIZE = 50;
 
-/** Serves at most `maxPageSize` rows, below the requested `limit`, so a sync can be forced across pages. */
 export function pageTransactions(
   address: string,
   rows: AleoPublicTransaction[],
   query: URLSearchParams,
-  maxPageSize = Infinity,
 ): AleoPublicTransactionsResponse {
-  const pageSize = Math.min(Number(query.get("limit") ?? DEFAULT_PAGE_SIZE), maxPageSize);
+  const pageSize = Number(query.get("limit") ?? DEFAULT_PAGE_SIZE);
   const remaining = applyTransactionsCursor(rows, readTransactionsCursor(query));
   const page = remaining.slice(0, pageSize);
   const last = page.at(-1);

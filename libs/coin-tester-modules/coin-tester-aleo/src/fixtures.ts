@@ -44,9 +44,6 @@ export const RECIPIENT_ACCOUNT = {
 // Kept apart from RECIPIENT_ACCOUNT so the scenario can assert its exact received balance.
 export const PROBE_ADDRESS = "aleo1nfhry9rq4tjgp75e0kt9dm6ttxejxrndqtrd598575cmexp8q58qzpucsx";
 
-// Spans the oldest (`execution_cost_v1`) and modern ARC-0005-discounted ConsensusVersion cost tables.
-export const PUBLIC_DEVNODE_FEE_RANGE = { min: 1_000, max: 100_000 };
-
 export const TRANSFER_AMOUNT_MICROCREDITS = 1_000_000;
 
 export const FUNDING_AMOUNT_MICROCREDITS = TRANSFER_AMOUNT_MICROCREDITS * 2;
