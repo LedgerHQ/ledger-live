@@ -131,7 +131,10 @@ test.describe("Earn v2", () => {
 
     test(
       `[${account.currency.testLabel}] - Earn v2 cold start CTA opens deposit screen v2`,
-      { tag: buildTags({ currencyId: account.currency.id }) },
+      {
+        tag: buildTags({ currencyId: account.currency.id }),
+        annotation: { type: "TMS", description: "B2CQA-4640" },
+      },
       async ({ app }) => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.verifyColdStartPage();
@@ -331,7 +334,10 @@ test.describe("Earn v2", () => {
 
     test(
       `[${account.currency.testLabel}] - Earn v2 CTA initiates deposit v2 flow`,
-      { tag: buildTags({ currencyId: account.currency.id }) },
+      {
+        tag: buildTags({ currencyId: account.currency.id }),
+        annotation: { type: "TMS", description: "B2CQA-4645" },
+      },
       async ({ app }) => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
@@ -389,12 +395,17 @@ test.describe("Earn v2", () => {
   const ethProvidersV2: {
     provider: EarnProvider;
     amount: { preset: "50" } | { value: string };
+    xrayTickets: string[];
   }[] = [
-    { provider: EarnProvider.LIDO, amount: { preset: "50" } },
-    { provider: EarnProvider.KILN, amount: { value: "0.02" } },
+    {
+      provider: EarnProvider.LIDO,
+      amount: { preset: "50" },
+      xrayTickets: ["B2CQA-4722", "B2CQA-4644"],
+    },
+    { provider: EarnProvider.KILN, amount: { value: "0.02" }, xrayTickets: ["B2CQA-4724"] },
   ];
 
-  for (const { provider, amount } of ethProvidersV2) {
+  for (const { provider, amount, xrayTickets } of ethProvidersV2) {
     test.describe("Staking flow - deposit v2", () => {
       const account = Account.ETH_1;
 
@@ -412,7 +423,10 @@ test.describe("Earn v2", () => {
 
       test(
         `[${account.currency.testLabel}] - Earn v2 deposit v2 staking flow with ${provider.name}`,
-        { tag: buildTags({ currencyId: account.currency.id }) },
+        {
+          tag: buildTags({ currencyId: account.currency.id }),
+          annotation: { type: "TMS", description: xrayTickets.join(", ") },
+        },
         async ({ app, page }) => {
           await navigateToEarn(app);
           await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
@@ -543,7 +557,10 @@ test.describe("Select a validator - deposit v2", () => {
 
   test(
     `[${account.currency.testLabel}] - Select validator in deposit v2`,
-    { tag: buildTags({ currencyId: account.currency.id, extraTags: ["@smoke"] }) },
+    {
+      tag: buildTags({ currencyId: account.currency.id, extraTags: ["@smoke"] }),
+      annotation: { type: "TMS", description: "B2CQA-3024" },
+    },
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);
