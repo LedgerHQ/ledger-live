@@ -1,0 +1,43 @@
+services:
+  aleo-devnode:
+    platform: linux/amd64
+    container_name: aleo-devnode
+    image: coin-tester-aleo-devnode:latest
+    build:
+      context: .
+      dockerfile: aleo-devnode.Dockerfile
+    ports:
+      - "3030:3030"
+    # Disposable state; no grace period so Ctrl-C teardown finishes in time.
+    stop_grace_period: 0s
+    healthcheck:
+      # Boot fast-forwards past genesis, then height only moves on broadcast.
+      test:
+        - "CMD-SHELL"
+        - >-
+          [ "$$(curl -sf
+          http://127.0.0.1:3030/testnet/block/height/latest)" -ge 1 ]
+      interval: 1s
+      timeout: 5s
+      retries: 30
+
+  aleo-backend:
+    # amd64-only image.
+    platform: linux/amd64
+    container_name: aleo-backend
+    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/aleo-backend:v1.100.2@sha256:622120e3dd66c11915cf9b4d36ca4e2bb62f96fcbbb5e0aa1dbbf4f7acb33577
+    ports:
+      - "3031:3030"
+    stop_grace_period: 0s
+    environment:
+      - APP_SERVER_HOST=0.0.0.0
+      - APP_SERVER_PORT=3030
+      - APP_LOGGING_LEVEL=info
+      # Keeps freeze-list reads off Provable's public API; stablecoin transfers fail here by design.
+      - APP_ALEO_TESTNET_URL=http://aleo-devnode:3030/testnet
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:3030/_health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+      start_period: 5s
