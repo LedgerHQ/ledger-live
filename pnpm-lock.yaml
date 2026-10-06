@@ -19242,6 +19242,9 @@ importers:
       '@commitlint/types':
         specifier: 'catalog:'
         version: 21.2.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       danger:
         specifier: 13.0.10
         version: 13.0.10

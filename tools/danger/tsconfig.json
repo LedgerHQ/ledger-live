@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "types": []
+    "types": ["node"]
   },
   "include": ["**/*.ts"]
 }

@@ -27,6 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          fetch-depth: 2 # HEAD^1 is the base tip, used to diff pnpm-lock.yaml
           persist-credentials: false
 
       # Before the pnpm setup so pnpm itself is fetched through JFrog, not public npm.
