@@ -156,7 +156,6 @@ export class EarnV2Page extends EarnBasePage {
   private readonly amountPresets = "amount-presets";
   private readonly amountPreset = (preset: "25" | "50" | "75" | "max") => `amount-preset-${preset}`;
   private readonly ethProviderAllCategory = "category-filter-all";
-  private readonly providerContinueCta = "text-button-cta";
   private readonly ethProviderCard = (providerId: string) =>
     `eth-provider-card-${EarnV2Page.ethProviderCardIds[providerId] ?? providerId}`;
 
@@ -202,11 +201,11 @@ export class EarnV2Page extends EarnBasePage {
   async verifyEthProviderContinueEnabled(providerId: string) {
     const webview = await this.getWebView();
     const card = webview.getByTestId(this.ethProviderCard(providerId));
-    const continueCta = card.getByTestId(this.providerContinueCta);
+    const continueCta = card.getByTestId(this.v1TextButtonCta);
     await expect(continueCta).toBeVisible();
     await expect(continueCta).toHaveText(/Continue/i);
     await expect(continueCta).toBeEnabled();
-    await expect(webview.getByTestId(this.providerContinueCta)).toHaveCount(1);
+    await expect(webview.getByTestId(this.v1TextButtonCta)).toHaveCount(1);
   }
 
   @step("Continue with selected ETH provider: $0")
@@ -215,7 +214,7 @@ export class EarnV2Page extends EarnBasePage {
     const webview = await this.getWebView();
     await webview
       .getByTestId(this.ethProviderCard(providerId))
-      .getByTestId(this.providerContinueCta)
+      .getByTestId(this.v1TextButtonCta)
       .click();
   }
 
