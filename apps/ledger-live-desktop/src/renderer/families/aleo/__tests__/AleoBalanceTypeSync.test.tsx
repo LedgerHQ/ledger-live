@@ -3,6 +3,7 @@
  */
 import React from "react";
 import BigNumber from "bignumber.js";
+import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { render, screen } from "tests/testSetup";
 import type { AleoAccount, Transaction } from "@ledgerhq/live-common/families/aleo/types";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
@@ -18,7 +19,6 @@ const mockedUseAleoPrivateSync = jest.mocked(useAleoPrivateSync);
 const mockStart = jest.fn();
 const mockOnComplete = jest.fn();
 const mockOnCancel = jest.fn();
-const mockOnAccountUpdated = jest.fn();
 
 const account = ALEO_MAIN_ACCOUNT;
 
@@ -48,13 +48,16 @@ function mockSync(state: { progress?: number; isSyncing?: boolean; error?: Error
 
 function renderSync(transaction: Transaction, syncedAccount: AleoAccount = account) {
   return render(
-    <AleoBalanceTypeSync
-      account={syncedAccount}
-      transaction={transaction}
-      onComplete={mockOnComplete}
-      onCancel={mockOnCancel}
-      onAccountUpdated={mockOnAccountUpdated}
-    />,
+    <Dialog open>
+      <DialogContent aria-describedby={undefined}>
+        <AleoBalanceTypeSync
+          account={syncedAccount}
+          transaction={transaction}
+          onComplete={mockOnComplete}
+          onCancel={mockOnCancel}
+        />
+      </DialogContent>
+    </Dialog>,
   );
 }
 
@@ -67,7 +70,7 @@ describe("AleoBalanceTypeSync", () => {
     renderSync(publicTransaction);
 
     expect(mockedUseAleoPrivateSync).not.toHaveBeenCalled();
-    expect(screen.queryByTestId("aleo-private-sync-dialog")).toBeNull();
+    expect(screen.queryByTestId("aleo-private-sync")).toBeNull();
     expect(mockOnComplete).toHaveBeenCalledTimes(1);
   });
 
@@ -85,20 +88,19 @@ describe("AleoBalanceTypeSync", () => {
     expect(mockOnComplete).not.toHaveBeenCalled();
   });
 
-  it("closes and moves on once the sync has completed", () => {
+  it("moves on once the sync has completed", () => {
     mockSync({ progress: 100, isSyncing: false });
 
     renderSync(privateTransaction);
 
-    expect(screen.queryByTestId("aleo-private-sync-dialog")).toBeNull();
     expect(mockOnComplete).toHaveBeenCalledTimes(1);
   });
 
-  it("stays on the balance choice when the dialog is closed", async () => {
+  it("goes back to the balance choice when the sync is cancelled", async () => {
     mockSync({ progress: 10, isSyncing: true });
 
     const { user } = renderSync(privateTransaction);
-    await user.click(screen.getByRole("button", { name: /close/i }));
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
 
     expect(mockOnCancel).toHaveBeenCalled();
     expect(mockOnComplete).not.toHaveBeenCalled();
@@ -113,15 +115,5 @@ describe("AleoBalanceTypeSync", () => {
     expect(mockOnComplete).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Retry" }));
     expect(mockStart).toHaveBeenCalledTimes(1);
-  });
-
-  it("forwards the refreshed account to the flow", () => {
-    mockSync({ isSyncing: true });
-    renderSync(privateTransaction);
-    const refreshed = { ...ALEO_MAIN_ACCOUNT, lastSyncDate: new Date() };
-
-    mockedUseAleoPrivateSync.mock.calls[0][0].onAccountUpdated?.(refreshed);
-
-    expect(mockOnAccountUpdated).toHaveBeenCalledWith(refreshed);
   });
 });

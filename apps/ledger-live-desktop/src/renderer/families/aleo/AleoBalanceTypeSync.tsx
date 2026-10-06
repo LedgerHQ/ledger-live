@@ -1,16 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  Spot,
-} from "@ledgerhq/lumen-ui-react";
-import type { Account } from "@ledgerhq/types-live";
-import { isAleoAccount, isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
+import { Button, DialogBody, DialogFooter, Spot } from "@ledgerhq/lumen-ui-react";
+import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import type { AleoAccount, Transaction } from "@ledgerhq/live-common/families/aleo/types";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
 
@@ -19,27 +10,13 @@ type Props = Readonly<{
   transaction: Transaction;
   onComplete: () => void;
   onCancel: () => void;
-  onAccountUpdated: (account: AleoAccount) => void;
 }>;
 
-type PrivateSyncDialogProps = Omit<Props, "transaction">;
+type PrivateSyncProgressProps = Omit<Props, "transaction">;
 
-function PrivateSyncDialog({
-  account,
-  onComplete,
-  onCancel,
-  onAccountUpdated,
-}: PrivateSyncDialogProps) {
+function PrivateSyncProgress({ account, onComplete, onCancel }: PrivateSyncProgressProps) {
   const { t } = useTranslation();
-  const { progress, isSyncing, error, start } = useAleoPrivateSync({
-    account,
-    autoStart: true,
-    onAccountUpdated: (updatedAccount: Account) => {
-      if (updatedAccount.type === "Account" && isAleoAccount(updatedAccount)) {
-        onAccountUpdated(updatedAccount);
-      }
-    },
-  });
+  const { progress, isSyncing, error, start } = useAleoPrivateSync({ account, autoStart: true });
 
   const isDone = !isSyncing && !error && progress >= 100;
 
@@ -47,85 +24,73 @@ function PrivateSyncDialog({
     if (isDone) onComplete();
   }, [isDone, onComplete]);
 
-  if (isDone) return null;
-
   const percentage = Math.min(Math.round(progress), 100);
 
   return (
-    <Dialog open onOpenChange={open => !open && onCancel()}>
-      <DialogContent aria-describedby={undefined} data-testid="aleo-private-sync-dialog">
-        <DialogHeader density="compact" onClose={onCancel} />
-        <DialogBody className="flex flex-col items-center gap-16 pb-24 text-center">
-          <Spot appearance={error ? "error" : "loader"} size={48} />
-          <div className="flex flex-col gap-8">
-            <h3 className="heading-4-semi-bold text-base">
-              {error
-                ? t("aleo.send.newFlowPrivateSync.errorTitle")
-                : t("aleo.send.newFlowPrivateSync.title")}
-            </h3>
-            <p className="body-2 text-muted">
-              {error
-                ? t("aleo.send.newFlowPrivateSync.errorDescription")
-                : t("aleo.send.newFlowPrivateSync.description")}
-            </p>
-          </div>
-          {error ? null : (
-            <div className="flex w-full flex-col gap-8" data-testid="aleo-private-sync-progress">
-              <div className="h-4 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full rounded-full bg-interactive transition-all"
-                  style={{ width: `${percentage}%` }}
-                />
-              </div>
-              <span className="body-3 text-muted">
-                {t("aleo.send.newFlowPrivateSync.progress", { percentage })}
-              </span>
+    <>
+      <DialogBody
+        className="flex flex-col items-center gap-16 py-24 text-center"
+        data-testid="aleo-private-sync"
+      >
+        <Spot appearance={error ? "error" : "loader"} size={48} />
+        <div className="flex flex-col gap-8">
+          <h3 className="heading-4-semi-bold text-base">
+            {error
+              ? t("aleo.send.newFlowPrivateSync.errorTitle")
+              : t("aleo.send.newFlowPrivateSync.title")}
+          </h3>
+          <p className="body-2 text-muted">
+            {error
+              ? t("aleo.send.newFlowPrivateSync.errorDescription")
+              : t("aleo.send.newFlowPrivateSync.description")}
+          </p>
+        </div>
+        {error ? null : (
+          <div className="flex w-full flex-col gap-8" data-testid="aleo-private-sync-progress">
+            <div className="h-4 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-interactive transition-all"
+                style={{ width: `${percentage}%` }}
+              />
             </div>
-          )}
-        </DialogBody>
+            <span className="body-3 text-muted">
+              {t("aleo.send.newFlowPrivateSync.progress", { percentage })}
+            </span>
+          </div>
+        )}
+      </DialogBody>
+      <DialogFooter className="flex flex-col gap-8">
         {error ? (
-          <DialogFooter>
-            <Button appearance="base" size="lg" isFull onClick={start}>
-              {t("common.retry")}
-            </Button>
-          </DialogFooter>
+          <Button appearance="base" size="lg" isFull onClick={start}>
+            {t("common.retry")}
+          </Button>
         ) : null}
-      </DialogContent>
-    </Dialog>
+        <Button appearance="gray" size="lg" isFull onClick={onCancel}>
+          {t("common.cancel")}
+        </Button>
+      </DialogFooter>
+    </>
   );
 }
 
 function SkipSync({ onComplete }: Readonly<{ onComplete: () => void }>) {
-  useEffect(() => {
+  useLayoutEffect(() => {
     onComplete();
   }, [onComplete]);
   return null;
 }
 
-/**
- * Refreshes the private records once the private balance is picked, the way the legacy
- * flow's mandatory sync step did: the flow only moves on to the recipient once the sync
- * lands, and the refreshed account is handed back so the transaction picks its records
- * from it. A public pick needs no sync and moves on straight away.
- */
-export function AleoBalanceTypeSync({
-  account,
-  transaction,
-  onComplete,
-  onCancel,
-  onAccountUpdated,
-}: Props) {
+export function AleoBalanceTypeSync({ account, transaction, onComplete, onCancel }: Props) {
   if (transaction.family !== "aleo" || !isPrivateTransaction(transaction)) {
     return <SkipSync onComplete={onComplete} />;
   }
 
   return (
-    <PrivateSyncDialog
+    <PrivateSyncProgress
       key={account.id}
       account={account}
       onComplete={onComplete}
       onCancel={onCancel}
-      onAccountUpdated={onAccountUpdated}
     />
   );
 }

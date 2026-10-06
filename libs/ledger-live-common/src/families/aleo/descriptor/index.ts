@@ -2,7 +2,6 @@ import type { CoinDescriptor } from "../../../bridge/descriptor/types";
 import { TRANSACTION_TYPE } from "../constants";
 import type { Transaction as AleoTransaction } from "../types";
 import { aleoBalanceTypeConfig, isAleoTransaction } from "./balanceType";
-import { estimatedTime } from "./estimatedTime";
 
 type AleoTransferFlow =
   | "public-to-public"
@@ -56,7 +55,6 @@ export const descriptor: CoinDescriptor = {
     },
     selfTransfer: "free",
     balanceType: aleoBalanceTypeConfig,
-    estimatedTime,
     getTrackingAttributes: transaction => getPrivacyAttributes(transaction) ?? {},
   },
 };

@@ -418,25 +418,6 @@ export type BalanceTypeConfig = Readonly<{
 }>;
 
 /**
- * How long the send is expected to take once signed, for coins where it varies per
- * transaction (e.g. Aleo, where each private record adds proving time). The UI shows
- * it under the network fees, with an explainer read from `translationKey`.
- */
-export type EstimatedTimeDescriptor = Readonly<{
-  getEstimatedMs: (transaction: unknown) => number | null;
-  /** i18n key suffix; the UI prepends its namespace and appends `.title` and `.description`. */
-  translationKey: string;
-  learnMoreUrl?: string;
-}>;
-
-/** Resolved estimate for one transaction, as read through `sendFeatures.getEstimatedTime`. */
-export type EstimatedTime = Readonly<{
-  ms: number;
-  translationKey: string;
-  learnMoreUrl?: string;
-}>;
-
-/**
  * Error registry for coin-specific error classes
  */
 export type ErrorRegistry = {
@@ -461,7 +442,6 @@ export type SendDescriptor = {
    * transparent vs shielded); omitted by every coin with a single balance.
    */
   balanceType?: BalanceTypeConfig;
-  estimatedTime?: EstimatedTimeDescriptor;
   /**
    * Family-agnostic key/value attributes appended to every send-flow page event,
    * once computable from the transaction (e.g. Zcash's source-pool privacy).

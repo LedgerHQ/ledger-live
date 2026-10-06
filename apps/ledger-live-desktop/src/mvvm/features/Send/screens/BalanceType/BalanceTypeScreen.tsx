@@ -10,15 +10,14 @@ export function BalanceTypeScreen() {
     return null;
   }
 
-  return (
-    <>
-      <BalanceTypeScreenInner viewModel={viewModel} />
-      {viewModel.sync.isPending ? (
-        <FamilyBalanceTypeSync
-          onComplete={viewModel.sync.onComplete}
-          onCancel={viewModel.sync.onCancel}
-        />
-      ) : null}
-    </>
-  );
+  if (viewModel.sync.isPending) {
+    return (
+      <FamilyBalanceTypeSync
+        onComplete={viewModel.sync.onComplete}
+        onCancel={viewModel.sync.onCancel}
+      />
+    );
+  }
+
+  return <BalanceTypeScreenInner viewModel={viewModel} />;
 }

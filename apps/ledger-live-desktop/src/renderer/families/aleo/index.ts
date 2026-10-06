@@ -1,6 +1,7 @@
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountBodyHeader from "./AccountBodyHeader";
 import { AleoBalanceTypeSync } from "./AleoBalanceTypeSync";
+import { AleoEstimatedTimeRow } from "./AleoEstimatedTimeRow";
 import ModularDrawerAddAccountFlowManager from "./ModularDrawerAddAccountFlowManager";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import createSendSteps from "./createSendSteps";
@@ -25,6 +26,7 @@ const family: AleoFamily = {
   StepSummaryPostAlert,
   StepSummaryAdditionalRows,
   SendBalanceTypeSync: AleoBalanceTypeSync,
+  SendAmountFooterRow: AleoEstimatedTimeRow,
   modalsToPreload: [
     "MODAL_ALEO_SELF_TRANSFER",
     "MODAL_ALEO_BOND_PUBLIC",

@@ -9,10 +9,14 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-react";
 import { ExternalLink, Information } from "@ledgerhq/lumen-ui-react/symbols";
-import type { EstimatedTimeViewModel } from "../hooks/useEstimatedTimeViewModel";
+import type { AleoAccount, Transaction } from "@ledgerhq/live-common/families/aleo/types";
+import {
+  useAleoEstimatedTimeViewModel,
+  type AleoEstimatedTimeViewModel,
+} from "./hooks/useAleoEstimatedTimeViewModel";
 
 type EstimatedTimeInfoDialogProps = Readonly<{
-  info: EstimatedTimeViewModel["info"];
+  info: AleoEstimatedTimeViewModel["info"];
 }>;
 
 function EstimatedTimeInfoDialog({ info }: EstimatedTimeInfoDialogProps) {
@@ -31,30 +35,29 @@ function EstimatedTimeInfoDialog({ info }: EstimatedTimeInfoDialogProps) {
           <Button appearance="base" size="lg" isFull onClick={info.onClose}>
             {info.confirmLabel}
           </Button>
-          {info.learnMoreLabel ? (
-            <Button
-              appearance="gray"
-              size="lg"
-              isFull
-              icon={ExternalLink}
-              onClick={info.onLearnMore}
-              data-testid="send-estimated-time-learn-more"
-            >
-              {info.learnMoreLabel}
-            </Button>
-          ) : null}
+          <Button
+            appearance="gray"
+            size="lg"
+            isFull
+            icon={ExternalLink}
+            onClick={info.onLearnMore}
+            data-testid="send-estimated-time-learn-more"
+          >
+            {info.learnMoreLabel}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
 
-type EstimatedTimeRowProps = Readonly<{
-  estimatedTime: EstimatedTimeViewModel;
+type Props = Readonly<{
+  account: AleoAccount;
+  transaction: Transaction;
 }>;
 
-export function EstimatedTimeRow({ estimatedTime }: EstimatedTimeRowProps) {
-  const { label, value, info } = estimatedTime;
+export function AleoEstimatedTimeRow({ transaction }: Props) {
+  const { label, value, info } = useAleoEstimatedTimeViewModel(transaction);
 
   return (
     <>

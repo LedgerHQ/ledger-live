@@ -442,8 +442,13 @@ export type LLDCoinFamily<
     transaction: T;
     onComplete: () => void;
     onCancel: () => void;
-    onAccountUpdated: (account: A) => void;
   }>;
+
+  /**
+   * Extra row rendered in the new send flow's Amount footer, under the network fees
+   * (e.g. Aleo's estimated signing time). Renders nothing when it does not apply.
+   */
+  SendAmountFooterRow?: React.ComponentType<{ account: A; transaction: T }>;
 
   /**
    *  One time modal that is trigger only one time on a account that never send

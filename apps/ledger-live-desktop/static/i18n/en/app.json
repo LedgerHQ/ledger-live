@@ -3073,17 +3073,6 @@
       "zeroBalance": {
         "warning": "No available balance"
       }
-    },
-    "estimatedTime": {
-      "label": "Est. time",
-      "seconds": "~{{count}}s",
-      "minutes": "~{{count}} min",
-      "gotIt": "Got it",
-      "learnMore": "Learn more",
-      "aleo": {
-        "title": "How estimated time works",
-        "description": "Sending more ALEO uses more records, and each one adds processing time. Larger amounts take longer to confirm."
-      }
     }
   },
   "releaseNotes": {
@@ -10153,6 +10142,17 @@
         "progress": "{{percentage}}% synced",
         "errorTitle": "Private sync failed",
         "errorDescription": "Something went wrong, please try again"
+      },
+      "estimatedTime": {
+        "label": "Est. time",
+        "seconds": "~{{count}}s",
+        "minutes": "~{{count}} min",
+        "info": {
+          "title": "How estimated time works",
+          "description": "Sending more ALEO uses more records, and each one adds processing time. Larger amounts take longer to confirm.",
+          "gotIt": "Got it",
+          "learnMore": "Learn more"
+        }
       }
     },
     "operationTypes": {
