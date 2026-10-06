@@ -120,6 +120,7 @@
     "@rsbuild/plugin-react": "catalog:",
     "@rsbuild/plugin-styled-components": "catalog:",
     "@rspack/core": "catalog:",
+    "@support/jest-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@tailwindcss/postcss": "^4.1.0",

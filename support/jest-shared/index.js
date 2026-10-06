@@ -24,6 +24,44 @@ const sharedReporters = [jestSonarReporter, "@ledgerhq/test-quarantine/jest"];
 
 const reporters = ["default", ...sharedReporters];
 
+// ─── ESM-only dependencies ──────────────────────────────────────────────────
+
+/**
+ * ESM-only packages that CJS code reaches through `require`, and that jest has to transform.
+ * Matched against pnpm's store directory name, where a scope separator becomes a `+`
+ * (`@noble+hashes@2.4.0`), hence the escaped `\\+`.
+ */
+const esmDeps = ["@noble\\+"];
+
+/**
+ * Makes jest transform ESM-only dependencies instead of failing with
+ * `Must use import to load ES Module` when a CJS package `require`s them (e.g. `@noble/hashes` 2.x).
+ *
+ * Everything else in node_modules/.pnpm stays ignored. Merges into `config.transform` and replaces
+ * `config.transformIgnorePatterns`.
+ *
+ *   module.exports = withEsmDeps({ testEnvironment: "node" });
+ *   module.exports = withEsmDeps(config, { extraDeps: ["@ledgerhq\\+"] }); // also keep these transformed
+ *
+ * @param {import('@jest/types').Config.InitialOptions} config
+ * @param {{ extraDeps?: string[] }} [options]
+ * @returns {import('@jest/types').Config.InitialOptions}
+ */
+function withEsmDeps(config, { extraDeps = [] } = {}) {
+  const deps = [...esmDeps, ...extraDeps].join("|");
+  return {
+    ...config,
+    transform: {
+      ...config.transform,
+      [`node_modules[\\\\/]\\.pnpm[\\\\/](${esmDeps.join("|")}).+\\.(js|mjs)$`]: [
+        "@swc/jest",
+        { jsc: { target: "esnext" } },
+      ],
+    },
+    transformIgnorePatterns: [`node_modules[\\\\/]\\.pnpm[\\\\/](?!(${deps}))`],
+  };
+}
+
 // ─── shared/* (logic packages) ──────────────────────────────────────────────
 
 /**
@@ -156,4 +194,5 @@ module.exports = {
   createSharedUiNativeJestConfig,
   jestSonarReporter,
   sharedReporters,
+  withEsmDeps,
 };

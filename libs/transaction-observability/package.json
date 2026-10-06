@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
+    "@support/jest-shared": "workspace:*",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@swc/core": "catalog:",

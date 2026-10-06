@@ -98,6 +98,25 @@ module.exports = createSharedUiNativeJestConfig({
 });
 ```
 
+### ESM-only dependencies
+
+#### `withEsmDeps(config, options?)`
+
+Makes jest transform ESM-only dependencies (`@noble/*` v2) so CJS code can `require` them instead of
+failing with `Must use import to load ES Module`. Merges a swc transform into `config.transform` and
+replaces `config.transformIgnorePatterns`, so everything else in `node_modules/.pnpm` stays ignored.
+
+```js
+const { withEsmDeps } = require("@support/jest-shared");
+module.exports = withEsmDeps({ testEnvironment: "node" });
+```
+
+`extraDeps` keeps more packages transformed, as pnpm store prefixes (`@scope+name`, so `\\+`):
+
+```js
+module.exports = withEsmDeps(config, { extraDeps: ["@ledgerhq\\+"] });
+```
+
 ## Lumen handling
 
 Identical to `@support/jest-features-flow`: Lumen barrels and `@ledgerhq/crypto-icons` are
