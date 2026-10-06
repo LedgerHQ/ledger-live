@@ -229,3 +229,7 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
     parsed.webviewLoadErrors = undefined;
   }
 }
+
+export function someNewFunction(): void {
+  console.info("[LoggingUtils] someNewFunction called.");
+}

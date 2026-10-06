@@ -34,6 +34,10 @@ class CardSessionReporter implements Reporter {
   printsToStdio(): boolean {
     return false;
   }
+
+  someNewFunction(): void {
+    console.info("[CardSessionReporter] someNewFunction called.");
+  }
 }
 
 export default CardSessionReporter;
