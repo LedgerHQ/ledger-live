@@ -4,8 +4,6 @@
 "@ledgerhq/live-e2e-shared": patch
 ---
 
-Add mobile Borrow E2E coverage for full repay (B2CQA-6073) and withdraw collateral (B2CQA-6080),
-closing the LLD/LLM parity gap on those keys, and fix the shared Speculos driver defects that
-blocked every borrow flow: blind signing is now enabled, the collateral spender is resolved from
-the live app's own action, API failures carry their response body, and the transaction-check wait
-ends on the blind-signing screen instead of spending its full 30s budget (QAA-1477).
+Add mobile Borrow E2E coverage for full repay (B2CQA-6073) and withdraw collateral (B2CQA-6080), closing the LLD/LLM parity gap on those keys (QAA-1477). Open loan, repay and withdraw now share one spec, and each resets the ERC-20 allowance its approval step needs, with the spender resolved from the partner's own action.
+
+The borrow driver now enables blind signing on touch devices, and a partner 5xx is retried only on read endpoints, so a lost response can no longer leave a second action behind. A detox retry also skips the describe blocks it has nothing to rerun instead of repeating their on-chain setup. On desktop, waiting for the device validation screen now gets the same budget as the sign modal, since the partner prepares each transaction server-side.

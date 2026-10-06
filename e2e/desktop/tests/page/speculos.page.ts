@@ -13,7 +13,6 @@ import {
   exportUfvk,
   shareViewKey,
   approveToken,
-  approveContractTransaction,
   signTypedMessage as signTypedMessageDevice,
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
   confirmContactAction,
@@ -111,7 +110,7 @@ export class SpeculosPage extends AppPage {
 
   @step("Sign EVM contract transaction")
   async signEvmContractTransaction() {
-    await approveContractTransaction();
+    await approveToken();
   }
 
   @step("Sign typed message on device")
