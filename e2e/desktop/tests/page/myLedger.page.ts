@@ -5,6 +5,7 @@ import type { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 
 type CatalogFilter = "all" | "not_installed" | "supported";
 type CatalogSort = "marketcap_desc" | "name_asc" | "name_desc";
+type StorageSnapshot = { used: string; free: string };
 
 const FILTER_LABEL: Record<CatalogFilter, string> = {
   all: "All",
@@ -35,6 +36,10 @@ export class MyLedgerPage extends AppPage {
   private readonly storageCapacity = this.page.getByTestId("device-storage-capacity");
   private readonly storageAppsCount = this.page.getByTestId("device-storage-apps-count");
   private readonly storageFree = this.page.getByTestId("device-storage-free");
+  private readonly installSuccessBanner = this.page.getByTestId("install-success-banner");
+  private readonly manageAccountsButton = this.page.getByTestId(
+    "install-success-manage-accounts-button",
+  );
 
   private readonly catalogTab = this.page.getByTestId("manager-app-catalog-tab");
   private readonly installedAppsTab = this.page.getByTestId("manager-installed-apps-tab");
@@ -128,6 +133,17 @@ export class MyLedgerPage extends AppPage {
     await expect(this.storageUsed).toHaveText(BYTE_SIZE);
     await expect(this.storageCapacity).toHaveText(BYTE_SIZE);
     await expect(this.storageFree).toContainText(BYTE_SIZE);
+  }
+
+  @step("Read the device storage figures")
+  async readStorage(): Promise<StorageSnapshot> {
+    return { used: await this.storageUsed.innerText(), free: await this.storageFree.innerText() };
+  }
+
+  @step("Expect the device storage to have moved from the snapshot")
+  async expectStorageChangedFrom(before: StorageSnapshot) {
+    await expect(this.storageUsed).not.toHaveText(before.used);
+    await expect(this.storageFree).not.toHaveText(before.free);
   }
 
   @step("Open the app catalog tab")
@@ -232,6 +248,21 @@ export class MyLedgerPage extends AppPage {
   async expectAppInstalled(app: AppInfos) {
     await expect(this.appProgressBar(app)).toBeHidden();
     await expect(this.uninstallButton(app)).toBeVisible();
+  }
+
+  @step("Expect the install success banner to offer to add $0 accounts")
+  async expectInstallSuccessBanner(app: AppInfos) {
+    await expect(this.installSuccessBanner).toContainText(app.name);
+    await expect(this.manageAccountsButton).toBeVisible();
+    await expect(this.manageAccountsButton).toContainText("Manage my accounts");
+  }
+
+  /** A supported asset reads supported and offers Add account where an unsupported one offers Learn more. */
+  @step("Expect $0 to offer Add account rather than Learn more")
+  async expectAddAccountOffered(app: AppInfos) {
+    await expect(this.appRow(app)).toContainText("Ledger Wallet supported");
+    await expect(this.appRow(app).getByRole("button", { name: "Add account" })).toBeVisible();
+    await expect(this.appRow(app).getByRole("button", { name: "Learn more" })).toBeHidden();
   }
 
   @step("Expect $0 to be uninstalled")
