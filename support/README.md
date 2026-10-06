@@ -1,52 +1,60 @@
 # support/
 
 > [!CAUTION]
-> **Status: UNSTABLE** — The layer was just introduced; only the jest preset below exists so far.
+> **Status: UNSTABLE** — The layer is new and its conventions may still change.
 
-Development-only tooling: shared test, TypeScript, lint and format configuration. Packages here
-never ship runtime code, and consumers depend on them through `devDependencies` only.
+Development-only tooling: shared TypeScript, lint, format and test configuration, plus test
+fixtures. Packages here never ship runtime code.
 
-## Why a package per preset, and not a file at the workspace root
+## One package per tool
 
-Configuration in this monorepo is not just `tsconfig.json`. Packages also carry `.oxlintrc.json`,
-`oxfmt` settings, and a jest setup that includes setup files, environment mocks and transform rules.
-A jest preset is therefore not a single JSON file — it is code — and some packages need several jest
-projects in one run. That is not expressible as a root-level file.
+Each tool's shared configuration lives in exactly one package, and its presets are subpaths of that
+package. Each tool picks the axis its presets vary along:
 
-Making each preset a package also makes it a node in the Nx graph, so `nx affected` resolves the real
-blast radius when a preset changes, and `extends` / `require` names the preset explicitly instead of
-relying on convention.
+| Package | Axis | Presets |
+| --- | --- | --- |
+| [`@support/tsconfig`](./tsconfig) | Project archetype | `base`, `logic`, `client`, `web`, `native`, `dual`, `lib`, `lib-react`, `lib-node`, `lib/build` |
+| [`@support/lint`](./lint) | Layer | `base`, `devtools`, `features-flow`, `support`, `tools`, `libs`, `libs-coin-tester` |
+| [`@support/fmt`](./fmt) | None | One config |
+| [`@support/jest`](./jest) | Layer, then platform | `devtools` (`/web`, `/native`), `features-flow`, `shared` |
+
+A preset that a group of packages needs is a new subpath of its tool's package, never a new
+package. It extends the tool's `base`, is named after the axis value it represents, and documents
+which packages it applies to.
 
 See [ADR: Shared Tooling Configuration via `support/` Packages](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7353892916/2026-07-23+ADR+Shared+Tooling+Configuration+via+support+Packages).
 
-## Naming
+## What a consuming package carries
 
-`support/<name>` → `@support/<name>`, following `{tool}-{preset}`.
+Only what its tool cannot inherit:
 
-Two kinds of preset:
+| Tool | In the package | Why |
+| --- | --- | --- |
+| TypeScript | `tsconfig.json` with `extends`, plus `types` and, on a solution root, `references` | TypeScript needs a file per project and does not inherit `references` |
+| Lint | Nothing | oxlint walks up to the layer's one-line `oxlint.config.mts` |
+| Format | Nothing | oxfmt walks up to the root `oxfmt.config.mts` |
+| Jest | A one-line `jest.config.js`, and `@support/jest` in `devDependencies` | Jest needs a config per project |
 
-- **Runtime presets** are defined by the execution environment a package targets: `base` (universal),
-  `web` (browser, and the Electron renderer), `react-native`, `node`.
-- **Product presets** are defined by what a group of packages *does* rather than what it targets,
-  e.g. `coin`, `domain`, `features-flow`, `devtools`. A product preset must build on a runtime
-  preset, must not redefine baseline options, and must document which packages it applies to.
+`@support/tsconfig`, `@support/lint` and `@support/fmt` resolve from the workspace root, where they
+are devDependencies, so the editor and CI read the same configuration and published manifests stay
+free of private packages. `@support/jest` is the exception: its presets carry code and peer
+dependencies, so consumers declare it, which also tells nx which test targets a preset change
+affects. The other three are wired as named inputs in `nx.workspace.json`.
 
-## Packages
+## Other packages
 
 | Package | Applies to |
 | --- | --- |
-| [`jest`](./jest) | jest presets per layer (`devtools`, `features-flow`, `shared`) with their setup files, mocks and fixtures |
-| [`lint`](./lint) | oxlint presets per layer, and the monorepo-wide custom rules |
-| [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*` — MSW + RTK Query test store and server |
+| [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*`: MSW and RTK Query test store and server |
+| [`test-quarantine`](./test-quarantine) | Flaky-test reporters for jest and Playwright |
 
 ## Adding a package
 
 Follow [docs/new-library.md](../docs/new-library.md), then:
 
-- Add a row to the table above.
+- Add a row to the relevant table above.
 - Add a `CODEOWNERS` entry.
 - If the entry points sit outside `src/`, add a `workspaces` entry to `knip.json`.
 
-An override that shows up in more than one consumer belongs in a preset instead. Keeping the override
-in the consumer is fine when it is genuinely package-specific — but it is visible in the diff, so it
-is reviewable.
+An override that shows up in more than one consumer belongs in a preset instead. Keeping it in the
+consumer is fine when it is genuinely package-specific, and it stays visible in review.
