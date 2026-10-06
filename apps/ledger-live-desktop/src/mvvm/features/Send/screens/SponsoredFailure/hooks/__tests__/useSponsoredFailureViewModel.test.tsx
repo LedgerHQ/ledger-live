@@ -1,11 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { renderHook } from "tests/testSetup";
 import {
   TRON_USDT_FEE_ASSET,
   createMockTronUsdtAccount,
 } from "../../../Recipient/__integrations__/__fixtures__/accounts";
-import { buildRentReservationOperation } from "../../../../utils/rentReservation";
+import { buildRentReservationOperation } from "@ledgerhq/live-common/flows/send/sponsored/rentReservation";
 import { useSponsoredFailureViewModel } from "../useSponsoredFailureViewModel";
 
 const mockClose = jest.fn();
@@ -35,7 +35,7 @@ let mockSponsoredState: {
   failureError?: Error | null;
   rentPayment?: { asset: typeof TRON_USDT_FEE_ASSET; amount: bigint } | null;
 };
-let mockFeeTokenAccount: TokenAccount | null = null;
+let mockMainAccount: Account | null = null;
 
 jest.mock("../../../../context/SponsoredSendContext", () => ({
   useSponsoredSend: () => ({
@@ -43,7 +43,7 @@ jest.mock("../../../../context/SponsoredSendContext", () => ({
     actions: { retry: mockRetry },
     providerName: "Provider",
     feeCurrencyTicker: "USDT",
-    feeTokenAccount: mockFeeTokenAccount,
+    mainAccount: mockMainAccount,
   }),
 }));
 
@@ -53,7 +53,7 @@ describe("useSponsoredFailureViewModel", () => {
     mockSponsoredState = { phase: "FAILED", failureKind: "RENT_PAYMENT", paymentTxId: null };
     mockSendingAccount = null;
     mockTransaction = null;
-    mockFeeTokenAccount = null;
+    mockMainAccount = null;
   });
 
   it("renders the RENT_PAYMENT message", () => {
@@ -139,7 +139,7 @@ describe("useSponsoredFailureViewModel", () => {
         pendingOperations: firstRentPending && reservation ? [reservation] : [],
       });
       mockSendingAccount = feeToken;
-      mockFeeTokenAccount = feeToken;
+      mockMainAccount = { id: "mock_account_id", subAccounts: [feeToken] } as unknown as Account;
       mockTransaction = { amount: new BigNumber(5_000), useAllAmount: false };
       mockSponsoredState = {
         phase: "FAILED",

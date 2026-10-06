@@ -20,7 +20,8 @@ import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
-import { isSponsoredFeeUnaffordable } from "../../../utils/sponsoredFeeAsset";
+import { isSponsoredFeeUnaffordable } from "@ledgerhq/live-common/flows/send/sponsored/feeAsset";
+import { withoutWaivedStatus } from "@ledgerhq/live-common/flows/send/sponsored/waivedStatus";
 import { FEE_PLACEHOLDER } from "LLD/features/Send/constants";
 import type { SponsoredFeeAmounts } from "LLD/features/Send/types";
 
@@ -29,13 +30,6 @@ const PENDING_SPONSORED_FEE: SponsoredFeeAmounts["sponsored"] = {
   secondaryValue: null,
   originalValue: null,
 };
-
-function withoutKeys(
-  record: Record<string, Error>,
-  keys: readonly string[],
-): Record<string, Error> {
-  return Object.fromEntries(Object.entries(record).filter(([key]) => !keys.includes(key)));
-}
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -81,19 +75,13 @@ export function useAmountScreenViewModel({
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
 
   const sponsoredCoversNativeFee = sponsoredSelected && available && !!quote;
-  const statusWithoutWaived = useMemo(() => {
-    const waivesAny =
-      waivesErrorKeys.some(key => status.errors?.[key]) ||
-      waivesWarningKeys.some(key => status.warnings?.[key]);
-    if (!sponsoredCoversNativeFee || !waivesAny) {
-      return status;
-    }
-    return {
-      ...status,
-      errors: withoutKeys(status.errors, waivesErrorKeys),
-      warnings: withoutKeys(status.warnings, waivesWarningKeys),
-    };
-  }, [sponsoredCoversNativeFee, waivesErrorKeys, waivesWarningKeys, status]);
+  const statusWithoutWaived = useMemo(
+    () =>
+      sponsoredCoversNativeFee
+        ? withoutWaivedStatus(status, waivesErrorKeys, waivesWarningKeys)
+        : status,
+    [sponsoredCoversNativeFee, waivesErrorKeys, waivesWarningKeys, status],
+  );
 
   const amountReviewCore = useSendFlowAmountReviewCore({
     account,

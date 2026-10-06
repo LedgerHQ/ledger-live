@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { getPendingTokenSpent } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
-import type { SponsoredFeeAsset } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import { getPendingTokenSpent } from "../../../bridge/generic-coin-framework/utils";
+import type { SponsoredFeeAsset } from "../../../bridge/generic-coin-framework/sponsored";
 
 /** The sub-account holding the token a sponsored fee is paid in; null for a native fee asset. */
 export function findFeeTokenAccount(
@@ -38,7 +38,7 @@ export function isSponsoredFeeUnaffordable({
   const spendable = tokenSpendableAfterPending(feeTokenAccount);
   const rent = new BigNumber(rentValue.toString());
   if (account.id !== feeTokenAccount.id) return spendable.lt(rent);
-  // Max spends the whole balance until the snap turns it into an amount.
+  // A Max send spends the whole balance, so nothing is left for the rent.
   const amount = transaction.useAllAmount ? spendable : transaction.amount;
   return spendable.lt(amount.plus(rent));
 }

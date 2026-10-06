@@ -1,5 +1,5 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { buildRentReservationOperation } from "../rentReservation";
+import { buildRentReservationOperation } from "./rentReservation";
 
 const TOKEN_ID = "js:2:tron:TPARENT:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t";
 const PAYER = "TPAYER0000000000000000000000000000";

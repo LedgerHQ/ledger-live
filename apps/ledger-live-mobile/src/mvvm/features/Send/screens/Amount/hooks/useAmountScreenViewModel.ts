@@ -12,7 +12,9 @@ import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import type { AmountScreenMessage, AmountScreenViewModel } from "../types";
 import { useAmountInputController } from "./useAmountInputController";
 import { useQuickActions } from "./useQuickActions";
+import { withoutWaivedStatus } from "@ledgerhq/live-common/flows/send/sponsored/waivedStatus";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
+import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import {
   getAmountScreenRawMessage,
   isAmountInputDisabledByRecipientError,
@@ -48,12 +50,20 @@ export function useAmountScreenViewModel({
   onSelectCustomFees,
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
+  const { waivesNativeFee, waivesErrorKeys, waivesWarningKeys, reviewReady } = useSponsoredSend();
+
+  const statusWithoutWaived = useMemo(
+    () =>
+      waivesNativeFee ? withoutWaivedStatus(status, waivesErrorKeys, waivesWarningKeys) : status,
+    [waivesNativeFee, waivesErrorKeys, waivesWarningKeys, status],
+  );
+  const sponsoredReviewNotReady = !reviewReady;
 
   const amountReviewCore = useSendFlowAmountReviewCore({
     account,
     parentAccount,
     transaction,
-    status,
+    status: statusWithoutWaived,
     bridgePending,
     transactionActions,
     labels: {
@@ -136,15 +146,16 @@ export function useAmountScreenViewModel({
   });
 
   const amountMessage: AmountScreenMessage | null = useMemo(
-    () => getAmountScreenRawMessage({ status, hasRawAmount }),
-    [hasRawAmount, status],
+    () => getAmountScreenRawMessage({ status: statusWithoutWaived, hasRawAmount }),
+    [hasRawAmount, statusWithoutWaived],
   );
   const isAmountInputDisabled = useMemo(
     () => isAmountInputDisabledByRecipientError(status),
     [status],
   );
 
-  const reviewDisabled = coreReviewDisabled || amountInput.isTyping;
+  const reviewDisabled = coreReviewDisabled || amountInput.isTyping || sponsoredReviewNotReady;
+  const reviewLoading = amountComputationPending || sponsoredReviewNotReady;
 
   return useMemo(
     () => ({
@@ -169,7 +180,7 @@ export function useAmountScreenViewModel({
         label: reviewLabel,
         showIcon: coreReviewShowIcon,
         disabled: reviewDisabled,
-        loading: amountComputationPending,
+        loading: reviewLoading,
         onPress: hasInsufficientFundsError ? onGetFunds : onReview,
       },
       message: amountMessage,
@@ -184,7 +195,7 @@ export function useAmountScreenViewModel({
       coreReviewShowIcon,
       hasInsufficientFundsError,
       reviewDisabled,
-      amountComputationPending,
+      reviewLoading,
       onGetFunds,
       onReview,
       amountMessage,
