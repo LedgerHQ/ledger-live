@@ -47,6 +47,17 @@ interface NoFundsStakeModalProps {
   entryPoint?: "get-funds" | undefined;
 }
 
+function pickSwapAccount(
+  account: AccountLike,
+  parentAccount: Account | null | undefined,
+  isAccountInStore: boolean,
+  isParentInStore: boolean,
+): AccountLike | undefined {
+  if (isAccountInStore) return account;
+  if (isParentInStore) return parentAccount ?? undefined;
+  return undefined;
+}
+
 const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeModalProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -106,7 +117,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
       state: buildSwapNavigationState({
         defaultCurrency: currency,
         fromPath: location.pathname,
-        account: isAccountInStore ? account : isParentInStore ? parentAccount : undefined,
+        account: pickSwapAccount(account, parentAccount, isAccountInStore, isParentInStore),
         parentAccount: isAccountInStore ? (parentAccount ?? undefined) : undefined,
       }),
     });

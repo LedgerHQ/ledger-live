@@ -25,6 +25,7 @@ import {
 import { isReceiveDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
@@ -62,6 +63,17 @@ type ButtonItem = {
   style?: StyleProp<ViewStyle>;
   rightArrow: boolean;
 };
+
+function getSwapAccountParams(
+  account: AccountLike,
+  parentAccount: Account | undefined,
+  isAccountInStore: boolean,
+  isParentInStore: boolean,
+) {
+  if (isAccountInStore) return { defaultAccount: account, defaultParentAccount: parentAccount };
+  if (isParentInStore) return { defaultAccount: parentAccount };
+  return {};
+}
 
 /** Entry point is either "stake" button but user has insufficient funds in account, or "Get <ticker>" button on Earn dashboard, so text differs accordingly.  */
 export default function NoFunds({ route }: Readonly<Props>) {
@@ -137,11 +149,7 @@ export default function NoFunds({ route }: Readonly<Props>) {
       params: {
         defaultCurrency: currency,
         fromPath: page,
-        ...(isAccountInStore
-          ? { defaultAccount: account, defaultParentAccount: parentAccount }
-          : isParentInStore
-            ? { defaultAccount: parentAccount }
-            : {}),
+        ...getSwapAccountParams(account, parentAccount, isAccountInStore, isParentInStore),
       },
     });
   }, [account, currency, isAccountInStore, isParentInStore, navigation, page, parentAccount]);
