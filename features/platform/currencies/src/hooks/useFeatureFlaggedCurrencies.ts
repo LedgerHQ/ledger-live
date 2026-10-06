@@ -54,7 +54,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const mantle = useFeature("currencyMantle");
   const mantleSepolia = useFeature("currencyMantleSepolia");
   const boba = useFeature("currencyBoba");
-  const moonriver = useFeature("currencyMoonriver");
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
@@ -150,7 +149,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       mantle,
       mantle_sepolia: mantleSepolia,
       boba,
-      moonriver,
       velas_evm: velasEvm,
       syscoin,
       internet_computer: internetComputer,
@@ -245,7 +243,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       mantle,
       mantleSepolia,
       boba,
-      moonriver,
       velasEvm,
       syscoin,
       internetComputer,
