@@ -96,11 +96,6 @@ export function stakingMethodOfContract(contract: string | undefined): StakingMe
   return lookup(contract)?.method;
 }
 
-/** The addresses this package knows about — read by the drift guard. */
-export function knownStakingContracts(): string[] {
-  return Object.keys(STAKING_CONTRACTS);
-}
-
 /**
  * Only the addresses that are receipt tokens, with the ticker they should resolve to.
  *
