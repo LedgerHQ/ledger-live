@@ -12,6 +12,7 @@ import {
   loadWindow,
 } from "./window-lifecycle";
 import db from "./db";
+import { createKeyAttemptThrottle, type KeyAttemptOutcome } from "./db/keyAttemptThrottle";
 import { assertRendererNamespace } from "./db/rendererNamespaces";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
@@ -132,14 +133,23 @@ app.on("ready", async () => {
   ipcMain.handle("hasEncryptionKey", () => {
     return db.hasEncryptionKey();
   });
-  ipcMain.handle("setEncryptionKey", (event, { encryptionKey }) => {
-    return db.setEncryptionKey(encryptionKey);
+  const throttleKeyAttempt = createKeyAttemptThrottle();
+  const checkedOutcome = (checked: boolean): KeyAttemptOutcome =>
+    checked ? "correct" : "unchecked";
+  ipcMain.handle("setEncryptionKey", async (event, { encryptionKey, currentEncryptionKey }) => {
+    await throttleKeyAttempt(
+      () => db.setEncryptionKey(encryptionKey, currentEncryptionKey),
+      checkedOutcome,
+    );
   });
-  ipcMain.handle("removeEncryptionKey", () => {
-    return db.removeEncryptionKey();
+  ipcMain.handle("removeEncryptionKey", async (event, { currentEncryptionKey }) => {
+    await throttleKeyAttempt(() => db.removeEncryptionKey(currentEncryptionKey), checkedOutcome);
   });
   ipcMain.handle("isEncryptionKeyCorrect", (event, { encryptionKey }) => {
-    return db.isEncryptionKeyCorrect(encryptionKey);
+    return throttleKeyAttempt(
+      () => db.isEncryptionKeyCorrect(encryptionKey),
+      correct => (correct ? "correct" : "wrong"),
+    );
   });
   ipcMain.handle("hasBeenDecrypted", () => {
     return db.hasBeenDecrypted();

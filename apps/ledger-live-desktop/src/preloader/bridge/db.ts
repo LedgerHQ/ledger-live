@@ -11,10 +11,11 @@ export const db: DbBridge = {
   hasEncryptionKey: (ns: string, keyPath: string) =>
     ipcRenderer.invoke(CHANNELS.hasEncryptionKey, { ns, keyPath }),
 
-  setEncryptionKey: (encryptionKey: string) =>
-    ipcRenderer.invoke(CHANNELS.setEncryptionKey, { encryptionKey }),
+  setEncryptionKey: (encryptionKey: string, currentEncryptionKey?: string) =>
+    ipcRenderer.invoke(CHANNELS.setEncryptionKey, { encryptionKey, currentEncryptionKey }),
 
-  removeEncryptionKey: () => ipcRenderer.invoke(CHANNELS.removeEncryptionKey, {}),
+  removeEncryptionKey: (currentEncryptionKey?: string) =>
+    ipcRenderer.invoke(CHANNELS.removeEncryptionKey, { currentEncryptionKey }),
 
   isEncryptionKeyCorrect: (encryptionKey: string) =>
     ipcRenderer.invoke(CHANNELS.isEncryptionKeyCorrect, { encryptionKey }),

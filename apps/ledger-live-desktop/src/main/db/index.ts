@@ -182,16 +182,13 @@ function ensureEncryptedPathInMemory(ns: string, keyPath: EncryptedAppKeyPath): 
   }
 }
 
-function decryptEncryptedPathInMemory(
+function decryptPath(
   ns: string,
   keyPath: EncryptedAppKeyPath,
+  encrypted: string,
   encryptionKey: string,
-) {
-  const memory = memoryNamespaces[ns]!;
-  const val = get(memory, keyPath);
-  if (typeof val !== "string") return;
-
-  let decrypted = JSON.parse(decryptData(val, encryptionKey));
+): unknown {
+  let decrypted = JSON.parse(decryptData(encrypted, encryptionKey));
 
   for (const path of encryptedDataPaths) {
     if (ns === path[0] && keyPath === path[1] && (decrypted as { data?: unknown }).data) {
@@ -200,46 +197,68 @@ function decryptEncryptedPathInMemory(
     }
   }
 
-  set(memory, keyPath, decrypted);
+  return decrypted;
+}
+
+function decryptEncryptedPathInMemory(
+  ns: string,
+  keyPath: EncryptedAppKeyPath,
+  encryptionKey: string,
+) {
+  const memory = memoryNamespaces[ns]!;
+  const val = get(memory, keyPath);
+  if (typeof val !== "string") return;
+  set(memory, keyPath, decryptPath(ns, keyPath, val, encryptionKey));
 }
 
 /**
  * Register a keyPath in db that is encrypted
  * This will decrypt the keyPath at this moment, and will be used
  * in `save` to encrypt it back
+ * Resolves true when it checked a password: a path decrypted, or the held key matched.
  */
-async function setEncryptionKey(encryptionKey: string): Promise<void> {
-  const nsToSave = new Set<string>();
+async function setEncryptionKey(
+  encryptionKey: string,
+  currentEncryptionKey?: string,
+): Promise<boolean> {
+  if (typeof encryptionKey !== "string" || !encryptionKey) throw new DBWrongPassword();
+  const replacesHeldKey = assertHeldKey(currentEncryptionKey);
 
-  for (const [ns, keyPath] of encryptedDataPaths) {
-    nsToSave.add(ns);
-    if (!encryptionKeys[ns]) encryptionKeys[ns] = {};
-    encryptionKeys[ns]![keyPath] = encryptionKey;
-  }
+  const decrypted: Array<[string, EncryptedAppKeyPath, unknown]> = [];
+  const missing: Array<[string, EncryptedAppKeyPath]> = [];
 
   for (const [ns, keyPath] of encryptedDataPaths) {
     const val = await getKey(ns, keyPath, null);
+    if (val === null || val === undefined) missing.push([ns, keyPath]);
 
-    // no need to decode if already decoded
-    if (!val || typeof val !== "string") {
-      if (val === null || val === undefined) {
-        ensureEncryptedPathInMemory(ns, keyPath);
-      }
-      continue;
-    }
+    // no need to decode if already decoded; "" is corrupt ciphertext, not a decoded value
+    if (typeof val !== "string") continue;
     try {
-      decryptEncryptedPathInMemory(ns, keyPath, encryptionKey);
+      decrypted.push([ns, keyPath, decryptPath(ns, keyPath, val, encryptionKey)]);
     } catch (err) {
       log("db", "setEncryptionKey failure: " + String(err));
       throw new DBWrongPassword();
     }
   }
 
+  // Nothing changes until every path decrypts: a partial unlock would leave plaintext that the
+  // next save writes out unencrypted, and a wrong key that passes isEncryptionKeyCorrect.
+  const nsToSave = new Set<string>();
+  for (const [ns, keyPath] of encryptedDataPaths) {
+    nsToSave.add(ns);
+    if (!encryptionKeys[ns]) encryptionKeys[ns] = {};
+    encryptionKeys[ns]![keyPath] = encryptionKey;
+  }
+  for (const [ns, keyPath, value] of decrypted) set(memoryNamespaces[ns]!, keyPath, value);
+  for (const [ns, keyPath] of missing) ensureEncryptedPathInMemory(ns, keyPath);
+
   for (const ns of nsToSave) {
     await save(ns);
   }
+  return replacesHeldKey || decrypted.length > 0;
 }
-async function removeEncryptionKey() {
+async function removeEncryptionKey(currentEncryptionKey?: string): Promise<boolean> {
+  const removesHeldKey = assertHeldKey(currentEncryptionKey);
   const nsToSave = new Set<string>();
   for (const [ns, keyPath] of encryptedDataPaths) {
     nsToSave.add(ns);
@@ -260,6 +279,7 @@ async function removeEncryptionKey() {
   for (const ns of nsToSave) {
     await save(ns);
   }
+  return removesHeldKey;
 }
 
 /**
@@ -381,13 +401,17 @@ async function resetAll() {
     if (e.code !== "ENOENT") throw e;
   });
 }
-function isEncryptionKeyCorrect(encryptionKey: string) {
+function isEncryptionKeyCorrect(encryptionKey: string | undefined) {
   const [ns, keyPath] = encryptedDataPaths[0]; // conventionally we check the first path
-  try {
-    return encryptionKeys[ns]![keyPath] === encryptionKey;
-  } catch {
-    return false;
-  }
+  const current = encryptionKeys[ns]?.[keyPath];
+  return typeof current === "string" && !!current && current === encryptionKey;
+}
+// The db stays decrypted after an auto-lock: replacing or removing the held key without it
+// would change the password without knowing it.
+function assertHeldKey(currentEncryptionKey: string | undefined): boolean {
+  if (!hasEncryptionKey()) return false;
+  if (!isEncryptionKeyCorrect(currentEncryptionKey)) throw new DBWrongPassword();
+  return true;
 }
 function hasEncryptionKey() {
   const [ns, keyPath] = encryptedDataPaths[0]; // conventionally we check the first path

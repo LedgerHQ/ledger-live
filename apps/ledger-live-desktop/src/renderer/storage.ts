@@ -188,9 +188,11 @@ export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val
 export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
   db.hasEncryptionKey(ns, keyPath);
 
-export const setEncryptionKey = (encryptionKey: string) => db.setEncryptionKey(encryptionKey);
+export const setEncryptionKey = (encryptionKey: string, currentEncryptionKey?: string) =>
+  db.setEncryptionKey(encryptionKey, currentEncryptionKey);
 
-export const removeEncryptionKey = () => db.removeEncryptionKey();
+export const removeEncryptionKey = (currentEncryptionKey?: string) =>
+  db.removeEncryptionKey(currentEncryptionKey);
 
 export const isEncryptionKeyCorrect = (encryptionKey: string) =>
   db.isEncryptionKeyCorrect(encryptionKey);

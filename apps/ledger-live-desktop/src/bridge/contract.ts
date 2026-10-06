@@ -39,8 +39,9 @@ export type DbBridge = {
   getKey(ns: string, keyPath: string, defaultValue?: unknown): Promise<unknown>;
   setKey(ns: string, keyPath: string, value: Serializable): Promise<void>;
   hasEncryptionKey(ns: string, keyPath: string): Promise<boolean>;
-  setEncryptionKey(encryptionKey: string): Promise<void>;
-  removeEncryptionKey(): Promise<void>;
+  /** `currentEncryptionKey` is required while a key is held: main rejects a rekey without it. */
+  setEncryptionKey(encryptionKey: string, currentEncryptionKey?: string): Promise<void>;
+  removeEncryptionKey(currentEncryptionKey?: string): Promise<void>;
   isEncryptionKeyCorrect(encryptionKey: string): Promise<boolean>;
   hasBeenDecrypted(): Promise<boolean>;
   resetAll(): Promise<void>;
