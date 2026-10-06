@@ -230,6 +230,15 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
   }
 }
 
+/**
+ * Logs that someNewFunction was called.
+ *
+ * @returns Nothing.
+ */
 export function someNewFunction(): void {
   console.info("[LoggingUtils] someNewFunction called.");
+}
+
+export function someOtherNewFunction(): void {
+  console.info("[LoggingUtils] someOtherNewFunction called.");
 }
