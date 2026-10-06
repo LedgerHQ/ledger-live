@@ -1,4 +1,4 @@
-const { createSharedJestConfig } = require("@support/jest-shared");
+const { createSharedJestConfig } = require("@support/jest/shared");
 
 // React package: jsdom + tsx tests, unlike the node/`*.test.ts` default.
 module.exports = createSharedJestConfig({

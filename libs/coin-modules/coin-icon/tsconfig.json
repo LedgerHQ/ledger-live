@@ -1,19 +1,9 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/tsconfig/lib",
   "compilerOptions": {
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "declaration": true,
-    "declarationMap": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
-    "types": ["node", "jest"],
-    "outDir": "lib",
-    "rootDir": "src"
-  },
-  "include": [
-    "src/**/*"
-  ]
+    "lib": ["es2020", "dom"],
+    "types": ["node", "jest"]
+  }
 }

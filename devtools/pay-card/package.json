@@ -22,7 +22,7 @@
     "unimported": "pnpm knip --directory ../.. -c devtools/pay-card/knip.web.config.mjs -W devtools/pay-card --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/pay-card/knip.native.config.mjs -W devtools/pay-card --tsConfig tsconfig.native.json"
   },
   "devDependencies": {
-    "@support/jest-devtools": "workspace:*",
+    "@support/jest": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@testing-library/dom": "catalog:",

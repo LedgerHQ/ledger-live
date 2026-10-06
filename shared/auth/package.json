@@ -11,10 +11,10 @@
   },
   "sideEffects": false,
   "scripts": {
-    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
-    "lint:fix": "pnpm exec oxfmt -c ../../libs/oxc-live-libs/.oxfmtrc.json ./src && oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
-    "format": "pnpm exec oxfmt -c ../../libs/oxc-live-libs/.oxfmtrc.json ./src",
-    "format:check": "pnpm exec oxfmt -c ../../libs/oxc-live-libs/.oxfmtrc.json ./src --check",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm exec oxfmt ./src && oxlint ./src --fix --quiet",
+    "format": "pnpm exec oxfmt ./src",
+    "format:check": "pnpm exec oxfmt ./src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -36,6 +36,6 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "@support/jest": "workspace:*"
   }
 }

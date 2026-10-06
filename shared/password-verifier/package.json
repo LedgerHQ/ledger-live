@@ -27,6 +27,6 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "@support/jest": "workspace:*"
   }
 }

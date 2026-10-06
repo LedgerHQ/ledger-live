@@ -60,7 +60,6 @@ libs/**/logs/                                            @ledgerhq/platform
 libs/**/types-live/                                      @ledgerhq/platform
 libs/disable-network-setup/                              @ledgerhq/platform
 libs/feature-flag-module/                                @ledgerhq/platform
-libs/oxc-live-libs/                                      @ledgerhq/platform
 
 # Platform — devtools
 devtools/transport/                                      @ledgerhq/platform
@@ -70,10 +69,11 @@ devtools/relay/                                          @ledgerhq/platform
 tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
-support/jest-devtools/                                   @ledgerhq/platform
-support/jest-features-flow/                              @ledgerhq/platform
-support/jest-shared/                                     @ledgerhq/platform
+support/fmt/                                             @ledgerhq/platform
+support/jest/                                            @ledgerhq/platform
+support/lint/                                            @ledgerhq/platform
 support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
+support/tsconfig/                                        @ledgerhq/platform
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
@@ -577,7 +577,8 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 # Platform — monorepo / toolchain (before cross-team opt-out so opt-out patterns win on overlapping paths)
 # codeowners-check: allow-override
 **/.oxlintrc.*                                        @ledgerhq/platform
-**/.oxfmtrc.*                                         @ledgerhq/platform
+**/oxlint.config.*                                    @ledgerhq/platform
+**/oxfmt.config.*                                     @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
 **/tsconfig*                                          @ledgerhq/platform
 **/jest.config*                                       @ledgerhq/platform

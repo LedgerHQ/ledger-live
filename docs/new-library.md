@@ -25,7 +25,7 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 - [ ] `scripts.test` and `scripts.coverage` — `jest` / `jest --coverage`
 - [ ] `scripts.format: "oxfmt src"` — required for the Nx `format` target; add `tests` if the package keeps tests outside `src/` (e.g. `"oxfmt src tests"`)
 - [ ] `scripts.format:check: "oxfmt --check src"` — CI dry-run counterpart; mirror the same paths as `scripts.format`
-- [ ] `scripts.lint: "oxlint -c <path-to>/.oxlintrc.json ./src"` — required for the Nx `lint` target; path to `.oxlintrc.json` depends on depth (e.g. `../../libs/oxc-live-libs/.oxlintrc.json` from `shared/`)
+- [ ] `scripts.lint: "oxlint src"` — required for the Nx `lint` target; oxlint finds the layer config (`<layer>/oxlint.config.mts`) by walking up, so no `-c` and no config file in the package
 
 **Additional files**
 - [ ] `README.md` — scope, problem solved, main exports (a few paragraphs); **must include a status marker** (see [README status marker](#readme-status-marker) below)
@@ -38,20 +38,18 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 
 ```json
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/tsconfig/logic",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "noEmit": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+    "types": ["jest"]
+  }
 }
 ```
 
-`ES2022` not `ESNext`: our app runtimes (Electron, React Native) only guarantee ES2022. Apps can use `esnext` because their bundler controls the final output; packages do not have that safety net.
+`logic` fits a package consumed as source with no DOM. Pick another archetype from
+[`support/tsconfig`](../support/tsconfig/README.md) when the package needs the DOM, JSX, a platform
+split or a build.
+
+The presets target `ES2022`, not `ESNext`: our app runtimes (Electron, React Native) only guarantee ES2022. Apps can use `esnext` because their bundler controls the final output; packages do not have that safety net.
 
 ## Naming
 
@@ -62,7 +60,7 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 | `domain/api/` | `@domain/api-<name>` | `@domain/api-crypto-asset` |
 | `features/platform/` | `@features/platform-<name>` | `@features/platform-feature-flags` |
 | `features/flow/` | `@features/flow-<name>` | `@features/flow-wallet` |
-| `support/` | `@support/<name>` | `@support/jest-devtools` |
+| `support/` | `@support/<tool>` | `@support/jest` |
 | `libs/` (legacy) | `@ledgerhq/<name>` | `@ledgerhq/coin-evm` |
 
 Keep names short and self-describing. No cross-package relative imports — always use the npm package name.

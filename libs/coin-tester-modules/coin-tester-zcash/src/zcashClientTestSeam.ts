@@ -20,8 +20,9 @@
  * ...) is passed through untouched -- this is the real, unmocked engine
  * hitting the real, local zaino gRPC endpoint.
  */
-import type { ZCashClient, ZCashClientArgs } from "@ledgerhq/coin-zcash/network/types";
 import type {
+  ZCashClient,
+  ZCashClientArgs,
   BuildIronwoodTransactionArgs,
   BuildIronwoodTransactionResult,
   BuildTransactionArgs,

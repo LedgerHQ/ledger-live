@@ -1,8 +1,6 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": ["./tsconfig.json", "@support/tsconfig/web"],
   "compilerOptions": {
-    "moduleSuffixes": [".web", ""]
-  },
-  "include": ["src/**/*", "**/*.d.ts"],
-  "exclude": ["node_modules", "src/**/*.native.*", "src/**/native.ts"]
+    "types": ["jest", "@testing-library/jest-dom"]
+  }
 }

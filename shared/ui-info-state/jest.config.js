@@ -1,9 +1,9 @@
 const path = require("path");
-const { createSharedUiJestConfig } = require("@support/jest-shared");
+const { createSharedUiJestConfig } = require("@support/jest/shared");
 
 // Only Banner needs a package-specific stub (see jest/mocks). Supplying moduleNameMapper in a
 // project override replaces that project's defaults, so the shared mocks this package actually
-// relies on are re-declared here from @support/jest-shared rather than copied.
+// relies on are re-declared here from @support/jest/shared rather than copied.
 module.exports = createSharedUiJestConfig({
   webOverrides: {
     moduleNameMapper: {
@@ -12,12 +12,11 @@ module.exports = createSharedUiJestConfig({
   },
   nativeOverrides: {
     moduleNameMapper: {
-      "^react-native$": require.resolve("@support/jest-shared/mocks/react-native"),
+      "^react-native$": require.resolve("@support/jest/shared/mocks/react-native"),
       "^react-native-safe-area-context$":
-        require.resolve("@support/jest-shared/mocks/safe-area-context"),
+        require.resolve("@support/jest/shared/mocks/safe-area-context"),
       "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "jest/mocks/lumen-ui-rnative.js"),
-      "^@shared/ui-queued-bottom-sheet$":
-        "@shared/ui-queued-bottom-sheet/testing/module-mock",
+      "^@shared/ui-queued-bottom-sheet$": "@shared/ui-queued-bottom-sheet/testing/module-mock",
     },
   },
 });

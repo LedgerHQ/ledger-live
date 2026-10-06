@@ -124,7 +124,7 @@ test can't render it. This package ships the double instead of each consumer han
 | `./testing`                                 | `QueuedBottomSheetMock`, `QUEUED_BOTTOM_SHEET_MOCK_TEST_ID`             |
 | `./testing/module-mock`                     | Drop-in module replacement for a jest `moduleNameMapper`                 |
 
-`features/flow/*` packages get it for free: `@support/jest-features-flow` maps the package to
+`features/flow/*` packages get it for free: `@support/jest/features-flow` maps the package to
 `./testing/module-mock` in its native project, so their tests just render the view.
 
 The double renders its children unconditionally — whether content shows while closed is the

@@ -1,26 +1,9 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/tsconfig/lib",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "lib": [
-      "es2022",
-      "dom"
-    ],
-    "types": [
-      "node",
-      "jest"
-    ],
-    "outDir": "lib",
-    "rootDir": "src",
+    "types": ["node", "jest"],
     "exactOptionalPropertyTypes": true,
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ]
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "include": [
-    "src/**/*",
-    "types/*.d.ts"
-  ]
+  "include": ["src/**/*", "types/*.d.ts"]
 }

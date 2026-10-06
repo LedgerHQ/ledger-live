@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from "@support/jest-devtools/native";
+import { render, screen, userEvent } from "@support/jest/devtools/native";
 import PayCard from "./PayCard";
 import type { PayCardToolProps } from "../types";
 

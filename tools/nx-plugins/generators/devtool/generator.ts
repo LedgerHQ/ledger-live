@@ -187,40 +187,21 @@ export default async function devtoolGenerator(tree: Tree, options: devtoolGener
 
   // Tsconfig
   writeJson(tree, `${projectRoot}/tsconfig.json`, {
-    extends: "../../tsconfig.base.json",
-    compilerOptions: {
-      lib: ["ES2022", "DOM"],
-      target: "ES2022",
-      module: "ESNext",
-      moduleResolution: "bundler",
-      jsx: "react-jsx",
-      noEmit: true,
-    },
-    files: [],
+    extends: "@support/tsconfig/dual",
     references: refs,
   });
 
   // Tsconfig.web
   if (options.platform !== "native") {
     writeJson(tree, `${projectRoot}/tsconfig.web.json`, {
-      extends: "./tsconfig.json",
-      compilerOptions: {
-        moduleSuffixes: [".web", ""],
-      },
-      include: ["src/**/*"],
-      exclude: ["node_modules", "src/**/*.native.*"],
+      extends: ["./tsconfig.json", "@support/tsconfig/web"],
     });
   }
 
   //tsconfig.native
   if (options.platform !== "web") {
     writeJson(tree, `${projectRoot}/tsconfig.native.json`, {
-      extends: "./tsconfig.json",
-      compilerOptions: {
-        moduleSuffixes: [".native", ""],
-      },
-      include: ["src/**/*"],
-      exclude: ["node_modules", "src/**/*.web.*"],
+      extends: ["./tsconfig.json", "@support/tsconfig/native"],
     });
   }
 

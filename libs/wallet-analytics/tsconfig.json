@@ -1,13 +1,16 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@support/tsconfig/lib",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "outDir": "lib",
-    "rootDir": "src",
-    "types": ["node", "jest"]
-  },
-  "include": ["src/**/*"]
+    "types": ["node", "jest"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable",
+      "DOM.AsyncIterable",
+      "ScriptHost",
+      "WebWorker.ImportScripts"
+    ]
+  }
 }

@@ -40,7 +40,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage",
