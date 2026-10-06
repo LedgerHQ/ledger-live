@@ -6,6 +6,9 @@ import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { setTrackingSource } from "@shared/analytics";
+import { closeAllModal } from "~/renderer/actions/modals";
+import { closeDialog as closeModularDialog } from "~/renderer/reducers/modularDialog";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useRedirectToPostOnboardingCallback } from "../useAutoRedirectToPostOnboarding";
@@ -122,9 +125,13 @@ export function useDeepLinkHandler() {
 
       const route = createRoute(parsed);
 
+      dispatch(closeAllModal());
+      dispatch(closeModularDialog());
+      setDrawer();
+
       executeHandler(route, context);
     },
-    [context],
+    [context, dispatch],
   );
 
   return { handler };
