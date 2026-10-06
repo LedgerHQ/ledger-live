@@ -881,6 +881,20 @@ describe("stakePrograms redirects", () => {
       expect(common.rawTransactionType).toBe("comment");
     });
 
+    it.each([
+      ["a Deposit comment", { comment: { isEncrypted: false, text: "Deposit" } }],
+      ["a staking payload", { payload: { type: "tonwhales-pool-deposit" } }],
+    ])("claims nothing for a jetton transfer with %s", (_, fields) => {
+      const common = signEvent({
+        account: ton,
+        manifestId: "p2p-ton-staking",
+        transaction: { family: "ton", subAccountId: "jetton-account", ...fields },
+      });
+
+      expect(common.earnTransactionType).toBeUndefined();
+      expect(common.rawTransactionType).toBe("jetton-transfer");
+    });
+
     it("reads the same keyword from a pre-built comment payload", () => {
       const common = signEvent({
         account: ton,

@@ -28,8 +28,10 @@ export function getRawTransactionType(tx: TransactionLike | undefined | null): s
 
 type TonPayload = { type?: string; text?: unknown; isEncrypted?: boolean };
 
-// The signer sends a non-empty top-level comment in place of the payload.
+// The signer's order: a jetton sub-account replaces everything, then a non-empty comment
+// replaces the payload.
 function signedTonPayload(tx: TransactionLike): TonPayload | undefined {
+  if (tx.subAccountId) return { type: "jetton-transfer" };
   const comment = tx.comment as { isEncrypted?: boolean; text?: unknown } | undefined;
   if (typeof comment?.text === "string" && comment.text.length > 0) {
     return { type: "comment", text: comment.text, isEncrypted: comment.isEncrypted };
