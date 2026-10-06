@@ -4509,15 +4509,22 @@ describe("genericGetAccountShape", () => {
         value: 5n,
       };
       // Listed tokens are resolved by reference; anything else is unlisted (spam).
-      const getTokenFromAssetMock = jest.fn(async (asset: any) =>
-        ["ethereum/erc20/0xbbb", "ethereum/erc20/0xeee"].includes(
-          asset.assetReference.toLowerCase(),
-        )
-          ? { id: asset.assetReference.toLowerCase() }
-          : undefined,
-      );
+      const getTokenFromAssetMock = jest.fn();
 
       beforeEach(() => {
+        // Reset, not just cleared: a `...Once` response a test leaves unconsumed would otherwise
+        // answer the next test's call.
+        getBalanceMock.mockReset();
+        // Listed tokens are resolved by reference; anything else is unlisted (spam).
+        getTokenFromAssetMock
+          .mockReset()
+          .mockImplementation(async (asset: any) =>
+            ["ethereum/erc20/0xbbb", "ethereum/erc20/0xeee"].includes(
+              asset.assetReference.toLowerCase(),
+            )
+              ? { id: asset.assetReference.toLowerCase() }
+              : undefined,
+          );
         getBridgeApiMock.mockImplementation(() => ({
           ...defaultBridgeApi(),
           getAssetFromToken: getAssetFromTokenMock,
@@ -4607,14 +4614,38 @@ describe("genericGetAccountShape", () => {
         expect(getBalanceMock).toHaveBeenCalledTimes(1);
       });
 
-      it("does not read balances again after an unscoped read, which already scanned everything", async () => {
-        getBalanceMock.mockResolvedValueOnce([native, held]);
+      it("reconciles after an unscoped read too, so the token is stored for the next, scoped sync", async () => {
+        // A full read (outdated hash) finds A; B arrives before the walk. Stored now, B becomes a
+        // sub-account, and so part of the `knownAssets` the next sync scopes its scan to.
+        getBalanceMock
+          .mockResolvedValueOnce([native, held])
+          .mockResolvedValueOnce([native, held, received]);
         walkTransferOf("ethereum/erc20/0xbbb");
 
         await syncWith({ ...resumed, syncHash: "outdated-sync-hash" });
 
-        expect(getBalanceMock).toHaveBeenCalledTimes(1);
-        expect(getBalanceMock.mock.calls[0][2]?.knownAssets).toBeUndefined();
+        expect(getBalanceMock).toHaveBeenCalledTimes(2);
+        const [first, second] = getBalanceMock.mock.calls.map(call => call[2]);
+        expect(first.knownAssets).toBeUndefined();
+        expect(second.scanAssetsMinHeight).toBeUndefined();
+        expect(second.knownAssets).toEqual([
+          { type: "erc20", assetReference: "ethereum/erc20/0xbbb" },
+        ]);
+        expect(tokenBalancesHandedToSubAccounts()).toEqual([
+          "ethereum/erc20/0xaaa",
+          "ethereum/erc20/0xBbB",
+        ]);
+      });
+
+      it("fails the sync when a walked token's lookup fails, rather than reading it as unlisted", async () => {
+        // Read as unlisted, the token would be skipped while this sync advances the watermark
+        // past its transfer; failed, the next attempt resumes from the same watermark.
+        getBalanceMock.mockResolvedValueOnce([native, held]);
+        walkTransferOf("ethereum/erc20/0xbbb");
+        getTokenFromAssetMock.mockRejectedValueOnce(new Error("store unreachable"));
+
+        await expect(syncWith(resumed)).rejects.toThrow("store unreachable");
+        expect(buildSubAccountsMock).not.toHaveBeenCalled();
       });
     });
   });

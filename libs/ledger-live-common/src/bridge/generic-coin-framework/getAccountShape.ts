@@ -408,6 +408,10 @@ function lowercasedReference(asset: AssetInfo): string | undefined {
  * them in `knownAssets`. Only a token the family resolves and the user has not blacklisted
  * qualifies: `buildSubAccounts` drops any other one regardless, and an unlisted (spam) transfer
  * would otherwise cost a balance read on every sync it appears in.
+ *
+ * A lookup that fails is not an unlisted token, and is left to fail the sync: swallowed, the
+ * token would be skipped while this sync still advances the watermark past its transfer, and no
+ * later sync would look for it again. Failed, the sync is retried from the same watermark.
  */
 async function resolveUnbalancedTokenAssets(
   operations: OperationCommon[],
@@ -430,20 +434,15 @@ async function resolveUnbalancedTokenAssets(
 
   const assets = await Promise.all(
     [...unbalanced.values()].map(async op => {
-      // A family implementation that throws must not fail the whole sync over one token.
-      try {
-        // `"token"` when the precise type is unknown, as when building a transaction intent.
-        const token = await getTokenFromAsset({
-          type: "token",
-          assetReference: String(op.extra.assetReference),
-          assetOwner: String(op.extra.assetOwner),
-        });
-        return token && !blacklistedTokenIds.includes(token.id)
-          ? getAssetFromToken(token, address)
-          : undefined;
-      } catch {
-        return undefined;
-      }
+      // `"token"` when the precise type is unknown, as when building a transaction intent.
+      const token = await getTokenFromAsset({
+        type: "token",
+        assetReference: String(op.extra.assetReference),
+        assetOwner: String(op.extra.assetOwner),
+      });
+      return token && !blacklistedTokenIds.includes(token.id)
+        ? getAssetFromToken(token, address)
+        : undefined;
     }),
   );
   return assets.filter((asset): asset is AssetInfo => asset !== undefined);
@@ -981,13 +980,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       else newNonInternalOperations.push(op);
     }
 
-    // The scoped balance read ran before the walk, so it only looked for new tokens up to that
-    // moment. A token first received in between reaches `newAssetOperations` with no balance
-    // entry: `buildSubAccounts` would not create its sub-account, and the next sync -- resuming
-    // its scan past that transfer -- would not find it either. Such a token is added to
-    // `knownAssets` and balances are read once more, from the same height, keeping only its entry.
-    const scopedBalanceOptions = balanceOptions?.knownAssets ? balanceOptions : undefined;
-    const lateAssets = scopedBalanceOptions
+    // The balance read ran before the walk, so it only looked for tokens up to that moment. A
+    // token first received in between reaches `newAssetOperations` with no balance entry:
+    // `buildSubAccounts` would not create its sub-account, and the next sync -- resuming its scan
+    // past that transfer -- would not find it either. That holds after an unscoped read too: the
+    // next sync scopes its scan to the sub-accounts this one stores. Such a token is added to
+    // `knownAssets` and balances are read once more, with the same scan height, keeping only its
+    // entry. Limited to a family that declares `balanceOptions`, the one that accepts the fields.
+    const lateAssets = balanceOptions
       ? await resolveUnbalancedTokenAssets(
           newAssetOperations,
           allTokenAssetsBalances,
@@ -998,11 +998,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       : [];
     const lateReferences = new Set(lateAssets.map(lowercasedReference));
     const lateTokenBalances =
-      scopedBalanceOptions && lateAssets.length
+      balanceOptions && lateAssets.length
         ? (
             await readBalance({
-              ...scopedBalanceOptions,
-              knownAssets: [...(scopedBalanceOptions.knownAssets ?? []), ...lateAssets],
+              ...balanceOptions,
+              knownAssets: [...(balanceOptions.knownAssets ?? []), ...lateAssets],
             })
           ).filter(b => lateReferences.has(lowercasedReference(b.asset)))
         : [];
