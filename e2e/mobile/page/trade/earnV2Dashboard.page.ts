@@ -93,6 +93,13 @@ export default class EarnV2DashboardPage {
   async verifyDepositFlowVisible() {
     const url = await waitForCurrentWebviewUrlToContain("/deposit");
     jestExpect(url.toLowerCase()).toContain("/deposit");
+    jestExpect(url.toLowerCase()).not.toContain("/v2/");
+  }
+
+  @Step("Verify earn webview redirected to deposit v2 flow")
+  async verifyV2DepositFlowVisible() {
+    const url = await waitForCurrentWebviewUrlToContain("/deposit");
+    jestExpect(url.toLowerCase()).toMatch(/\/v2\/[^/]+\/deposit/);
   }
 
   @Step("Verify earn webview redirected to withdraw flow")
@@ -162,6 +169,67 @@ export default class EarnV2DashboardPage {
   async confirmEthDepositProvider() {
     await waitForWebElementToBeEnabled(this.ethDepositProviderCta);
     await tapWebElementByTestId(this.ethDepositProviderCta);
+  }
+
+  // --- ETH deposit v2 webview flow (swapToEarn enabled) ---
+
+  accountSelectorInput = "account-selector-input";
+  amountPresets = "amount-presets";
+  amountPreset = (preset: "25" | "50" | "75" | "max") => `amount-preset-${preset}`;
+  customKeyboard = "custom-keyboard";
+  customKeyboardKey = (key: string) => `custom-keyboard-key-${key}`;
+  amountContinueCta = "amount-continue-cta";
+  ethProviderAllCategory = "category-filter-all";
+  ethProviderCard = (providerId: string) =>
+    `eth-provider-card-${EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId}`;
+  // Expandable cards attach onClick to the header. The card root is not clickable.
+  ethProviderHeader = (providerId: string) =>
+    `eth-provider-header-${EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId}`;
+  ethProviderDepositCta = (providerId: string) =>
+    `eth-provider-deposit-${EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId}`;
+
+  @Step("Verify deposit screen v2 amount step")
+  async verifyV2DepositScreenVisible() {
+    await waitWebElementByTestId(this.accountSelectorInput);
+    await waitWebElementByTestId(this.amountPresets);
+  }
+
+  @Step("Enter deposit v2 amount {{{0}}} with the in-app keyboard")
+  async enterDepositAmountWithKeyboardV2(amount: string) {
+    await waitWebElementByTestId(this.customKeyboard);
+    for (const key of amount) {
+      await tapWebElementByTestId(this.customKeyboardKey(key));
+    }
+    jestExpect(await getValueByWebTestId(this.ethAmountInput)).toBe(amount);
+  }
+
+  @Step("Select deposit v2 amount preset {{{0}}}")
+  async selectAmountPresetV2(preset: "25" | "50" | "75" | "max") {
+    await tapWebElementByTestId(this.amountPreset(preset));
+    // The preset value depends on the live balance, so only check that it filled the input.
+    const value = await getValueByWebTestId(this.ethAmountInput);
+    jestExpect(value).not.toMatch(/^0?$/);
+  }
+
+  @Step("Complete ETH deposit v2 amount step")
+  async completeEthDepositAmountStepV2() {
+    await waitForWebElementToBeEnabled(this.amountContinueCta);
+    await tapWebElementByTestId(this.amountContinueCta);
+  }
+
+  @Step("Select ETH provider {{{0}}} in deposit v2 webview")
+  async selectEthProviderV2(providerId: string) {
+    await waitWebElementByTestId(this.ethProviderPanel);
+    // basic_sorting defaults to a category that can hide the target provider.
+    await tapWebElementByTestId(this.ethProviderAllCategory);
+    await waitWebElementByTestId(this.ethProviderCard(providerId));
+    await tapWebElementByTestId(this.ethProviderHeader(providerId));
+  }
+
+  @Step("Confirm ETH deposit v2 provider {{{0}}}")
+  async confirmEthDepositProviderV2(providerId: string) {
+    await waitForWebElementToBeEnabled(this.ethProviderDepositCta(providerId));
+    await tapWebElementByTestId(this.ethProviderDepositCta(providerId));
   }
 
   @Step("Tap staking provider in EvmStakingDrawer: {{{0}}}")
