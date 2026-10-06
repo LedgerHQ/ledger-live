@@ -4504,8 +4504,27 @@ describe("genericGetAccountShape", () => {
       const native = { asset: { type: "native" }, value: 0n, locked: 0n };
       const held = { asset: { type: "erc20", assetReference: "ethereum/erc20/0xaaa" }, value: 1n };
       // Casing differs from the walked op on purpose: references are matched case-insensitively.
-      const received = { asset: { type: "erc20", assetReference: "0xBbB" }, value: 5n };
-      const untouched = { asset: { type: "erc20", assetReference: "0xddd" }, value: 7n };
+      const received = {
+        asset: { type: "erc20", assetReference: "ethereum/erc20/0xBbB" },
+        value: 5n,
+      };
+      // Listed tokens are resolved by reference; anything else is unlisted (spam).
+      const getTokenFromAssetMock = jest.fn(async (asset: any) =>
+        ["ethereum/erc20/0xbbb", "ethereum/erc20/0xeee"].includes(
+          asset.assetReference.toLowerCase(),
+        )
+          ? { id: asset.assetReference.toLowerCase() }
+          : undefined,
+      );
+
+      beforeEach(() => {
+        getBridgeApiMock.mockImplementation(() => ({
+          ...defaultBridgeApi(),
+          getAssetFromToken: getAssetFromTokenMock,
+          getTokenFromAsset: getTokenFromAssetMock,
+          balanceOptions: {},
+        }));
+      });
 
       const walkTransferOf = (assetReference: string) => {
         listOperationsMock.mockResolvedValueOnce({
@@ -4537,18 +4556,46 @@ describe("genericGetAccountShape", () => {
           (b: any) => b.asset.assetReference,
         );
 
-      it("reads balances again, unscoped, and keeps only that token's entry", async () => {
+      it("adds that token to knownAssets, reads balances again from the same height, and keeps only its entry", async () => {
         getBalanceMock
           .mockResolvedValueOnce([native, held])
-          .mockResolvedValueOnce([native, held, received, untouched]);
-        walkTransferOf("0xbbb");
+          .mockResolvedValueOnce([native, held, received]);
+        walkTransferOf("ethereum/erc20/0xbbb");
 
         await syncWith(resumed);
 
         expect(getBalanceMock).toHaveBeenCalledTimes(2);
-        expect(getBalanceMock.mock.calls[0][2].knownAssets).toBeDefined();
-        expect(getBalanceMock.mock.calls[1][2]?.knownAssets).toBeUndefined();
-        expect(tokenBalancesHandedToSubAccounts()).toEqual(["ethereum/erc20/0xaaa", "0xBbB"]);
+        const [first, second] = getBalanceMock.mock.calls.map(call => call[2]);
+        expect(second.scanAssetsMinHeight).toBe(first.scanAssetsMinHeight);
+        expect(second.knownAssets).toEqual([
+          ...first.knownAssets,
+          { type: "erc20", assetReference: "ethereum/erc20/0xbbb" },
+        ]);
+        expect(tokenBalancesHandedToSubAccounts()).toEqual([
+          "ethereum/erc20/0xaaa",
+          "ethereum/erc20/0xBbB",
+        ]);
+      });
+
+      it("does not read balances again for a walked token the family does not list", async () => {
+        getBalanceMock.mockResolvedValueOnce([native, held]);
+        walkTransferOf("0xspam");
+
+        await syncWith(resumed);
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      });
+
+      it("does not read balances again for a walked token the user blacklisted", async () => {
+        getBalanceMock.mockResolvedValueOnce([native, held]);
+        walkTransferOf("ethereum/erc20/0xeee");
+
+        await genericGetAccountShape(network, "local")(
+          { address: "0xabc", currency, derivationMode: "", initialAccount: resumed } as any,
+          { paginationConfig: {}, blacklistedTokenIds: ["ethereum/erc20/0xeee"] } as any,
+        );
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
       });
 
       it("does not read balances again when every walked token already has its balance", async () => {
@@ -4562,7 +4609,7 @@ describe("genericGetAccountShape", () => {
 
       it("does not read balances again after an unscoped read, which already scanned everything", async () => {
         getBalanceMock.mockResolvedValueOnce([native, held]);
-        walkTransferOf("0xbbb");
+        walkTransferOf("ethereum/erc20/0xbbb");
 
         await syncWith({ ...resumed, syncHash: "outdated-sync-hash" });
 

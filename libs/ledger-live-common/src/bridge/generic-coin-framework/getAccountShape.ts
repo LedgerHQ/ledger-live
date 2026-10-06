@@ -44,6 +44,7 @@ import type {
   Stake,
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type {
   Account,
   AccountIdParams,
@@ -392,6 +393,60 @@ function buildParentOperations(
   }
 
   return result;
+}
+
+// Lower-cased, like every other asset reference comparison here: a chain's balance response and
+// its own derivations aren't guaranteed to agree on casing.
+function lowercasedReference(asset: AssetInfo): string | undefined {
+  return "assetReference" in asset && asset.assetReference
+    ? asset.assetReference.toLowerCase()
+    : undefined;
+}
+
+/**
+ * The assets of walked token transfers that have no entry in `balances`, as the family would list
+ * them in `knownAssets`. Only a token the family resolves and the user has not blacklisted
+ * qualifies: `buildSubAccounts` drops any other one regardless, and an unlisted (spam) transfer
+ * would otherwise cost a balance read on every sync it appears in.
+ */
+async function resolveUnbalancedTokenAssets(
+  operations: OperationCommon[],
+  balances: Balance[],
+  {
+    getTokenFromAsset,
+    getAssetFromToken,
+  }: Pick<BridgeApi, "getTokenFromAsset" | "getAssetFromToken">,
+  address: string,
+  blacklistedTokenIds: string[],
+): Promise<AssetInfo[]> {
+  if (!getTokenFromAsset || !getAssetFromToken) return [];
+
+  const balanced = new Set(balances.map(b => lowercasedReference(b.asset)));
+  const unbalanced = new Map<string, OperationCommon>();
+  for (const op of operations) {
+    const reference = String(op.extra.assetReference).toLowerCase();
+    if (!balanced.has(reference) && !unbalanced.has(reference)) unbalanced.set(reference, op);
+  }
+
+  const assets = await Promise.all(
+    [...unbalanced.values()].map(async op => {
+      // A family implementation that throws must not fail the whole sync over one token.
+      try {
+        // `"token"` when the precise type is unknown, as when building a transaction intent.
+        const token = await getTokenFromAsset({
+          type: "token",
+          assetReference: String(op.extra.assetReference),
+          assetOwner: String(op.extra.assetOwner),
+        });
+        return token && !blacklistedTokenIds.includes(token.id)
+          ? getAssetFromToken(token, address)
+          : undefined;
+      } catch {
+        return undefined;
+      }
+    }),
+  );
+  return assets.filter((asset): asset is AssetInfo => asset !== undefined);
 }
 
 /**
@@ -929,31 +984,28 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // The scoped balance read ran before the walk, so it only looked for new tokens up to that
     // moment. A token first received in between reaches `newAssetOperations` with no balance
     // entry: `buildSubAccounts` would not create its sub-account, and the next sync -- resuming
-    // its scan past that transfer -- would not find it either. Read balances once more, unscoped,
-    // and keep the entries for those tokens only. The family's own asset filter applies to that
-    // read, so a token it does not list stays out; the cost is at most one full scan.
-    const balancedReferences = new Set(
-      allTokenAssetsBalances
-        .map(b => ("assetReference" in b.asset ? b.asset.assetReference : undefined))
-        .filter((ref): ref is string => !!ref)
-        .map(ref => ref.toLowerCase()),
-    );
-    const unbalancedReferences = new Set(
-      balanceOptions?.knownAssets
-        ? newAssetOperations
-            .map(op => String(op.extra.assetReference).toLowerCase())
-            .filter(ref => !balancedReferences.has(ref))
-        : [],
-    );
-    const lateTokenBalances = unbalancedReferences.size
-      ? (await readBalance(bridgeApi.balanceOptions)).filter(
-          b =>
-            b.asset.type !== "native" &&
-            "assetReference" in b.asset &&
-            !!b.asset.assetReference &&
-            unbalancedReferences.has(b.asset.assetReference.toLowerCase()),
+    // its scan past that transfer -- would not find it either. Such a token is added to
+    // `knownAssets` and balances are read once more, from the same height, keeping only its entry.
+    const scopedBalanceOptions = balanceOptions?.knownAssets ? balanceOptions : undefined;
+    const lateAssets = scopedBalanceOptions
+      ? await resolveUnbalancedTokenAssets(
+          newAssetOperations,
+          allTokenAssetsBalances,
+          bridgeApi,
+          address,
+          syncConfig.blacklistedTokenIds ?? [],
         )
       : [];
+    const lateReferences = new Set(lateAssets.map(lowercasedReference));
+    const lateTokenBalances =
+      scopedBalanceOptions && lateAssets.length
+        ? (
+            await readBalance({
+              ...scopedBalanceOptions,
+              knownAssets: [...(scopedBalanceOptions.knownAssets ?? []), ...lateAssets],
+            })
+          ).filter(b => lateReferences.has(lowercasedReference(b.asset)))
+        : [];
 
     const familyShapes = await bridgeApi.buildTokenAccountShapes?.(address);
     const newSubAccounts = await buildSubAccounts({
