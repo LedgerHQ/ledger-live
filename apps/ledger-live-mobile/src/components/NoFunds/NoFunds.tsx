@@ -84,12 +84,14 @@ export default function NoFunds({ route }: Readonly<Props>) {
     return currency && swapAvailableIds.includes(currency.id);
   }, [currency, swapAvailableIds]);
 
-  // `custom.getFunds` synthesises a token account when the user holds none yet: it is absent
-  // from the store, so the Swap live app cannot match its id. Pre-fill the asset instead.
   const accounts = useSelector(flattenAccountsSelector);
   const isAccountInStore = useMemo(
     () => accounts.some(a => a.id === account.id),
     [accounts, account.id],
+  );
+  const isParentInStore = useMemo(
+    () => !!parentAccount && accounts.some(a => a.id === parentAccount.id),
+    [accounts, parentAccount],
   );
 
   const page = usePageNameFromRoute();
@@ -135,13 +137,14 @@ export default function NoFunds({ route }: Readonly<Props>) {
       params: {
         defaultCurrency: currency,
         fromPath: page,
-        ...(isAccountInStore && {
-          defaultAccount: account,
-          defaultParentAccount: parentAccount,
-        }),
+        ...(isAccountInStore
+          ? { defaultAccount: account, defaultParentAccount: parentAccount }
+          : isParentInStore
+            ? { defaultAccount: parentAccount }
+            : {}),
       },
     });
-  }, [account, currency, isAccountInStore, navigation, page, parentAccount]);
+  }, [account, currency, isAccountInStore, isParentInStore, navigation, page, parentAccount]);
 
   const onBuy = useCallback(() => {
     track("button_clicked", {

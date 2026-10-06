@@ -70,6 +70,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     () => accounts.some(a => a.id === account.id),
     [accounts, account.id],
   );
+  const isParentInStore = !!parentAccount && accounts.some(a => a.id === parentAccount.id);
 
   const modalName = "MODAL_NO_FUNDS_STAKE";
 
@@ -105,11 +106,20 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
       state: buildSwapNavigationState({
         defaultCurrency: currency,
         fromPath: location.pathname,
-        account: isAccountInStore ? account : undefined,
-        parentAccount: parentAccount ?? undefined,
+        account: isAccountInStore ? account : isParentInStore ? parentAccount : undefined,
+        parentAccount: isAccountInStore ? (parentAccount ?? undefined) : undefined,
       }),
     });
-  }, [currency, account, isAccountInStore, parentAccount, location, navigate, dispatch]);
+  }, [
+    currency,
+    account,
+    isAccountInStore,
+    isParentInStore,
+    parentAccount,
+    location,
+    navigate,
+    dispatch,
+  ]);
 
   const onReceive = useCallback(() => {
     track("button_clicked2", {

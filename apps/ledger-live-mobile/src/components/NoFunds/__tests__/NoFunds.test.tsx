@@ -13,6 +13,12 @@ import NoFunds from "../NoFunds";
 type NoFundsProps = StackNavigatorProps<NoFundsNavigatorParamList, ScreenName.NoFunds>;
 
 const mockNavigateToSwapTab = jest.fn();
+const mockNavigate = jest.fn();
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: () => ({ navigate: mockNavigate }),
+}));
 
 jest.mock("~/screens/Swap/navigation/navigateToSwapTab", () => ({
   navigateToSwapTab: (...args: unknown[]) => mockNavigateToSwapTab(...args),
@@ -60,9 +66,7 @@ describe("NoFunds", () => {
     expect(params.defaultCurrency).toEqual(ethereum);
   });
 
-  it("passes the asset only when the token account is absent from the store", async () => {
-    // Shape `custom.getFunds` produces when the user holds none of the token yet: the
-    // account exists nowhere, so its id cannot be resolved by the Swap live app.
+  it("passes the parent account with the token when the token account is absent from the store", async () => {
     const syntheticUsdcAccount = makeEmptyTokenAccount(ethAccount, usdcToken);
 
     const { user } = renderNoFunds(syntheticUsdcAccount, ethAccount, [ethAccount]);
@@ -70,8 +74,49 @@ describe("NoFunds", () => {
     await user.press(screen.getByText("Swap"));
 
     const { params } = mockNavigateToSwapTab.mock.calls[0][0];
-    expect(params.defaultAccount).toBeUndefined();
+    expect(params.defaultAccount).toBe(ethAccount);
     expect(params.defaultParentAccount).toBeUndefined();
     expect(params.defaultCurrency).toEqual(usdcToken);
+  });
+
+  it("passes the asset only when neither the token account nor its parent is in the store", async () => {
+    const syntheticUsdcAccount = makeEmptyTokenAccount(ethAccount, usdcToken);
+
+    const { user } = renderNoFunds(syntheticUsdcAccount, ethAccount, []);
+
+    await user.press(screen.getByText("Swap"));
+
+    const { params } = mockNavigateToSwapTab.mock.calls[0][0];
+    expect(params.defaultAccount).toBeUndefined();
+    expect(params.defaultCurrency).toEqual(usdcToken);
+  });
+
+  it("opens the Buy flow on the parent account of a token account", async () => {
+    const syntheticUsdcAccount = makeEmptyTokenAccount(ethAccount, usdcToken);
+
+    const { user } = renderNoFunds(syntheticUsdcAccount, ethAccount, [ethAccount]);
+
+    await user.press(screen.getByText("Buy"));
+
+    const [, options] = mockNavigate.mock.calls[0];
+    expect(options.params).toEqual({
+      defaultAccountId: ethAccount.id,
+      defaultCurrencyId: usdcToken.id,
+    });
+  });
+
+  it("opens the Receive flow and creates the token account when it is missing", async () => {
+    const syntheticUsdcAccount = makeEmptyTokenAccount(ethAccount, usdcToken);
+
+    const { user } = renderNoFunds(syntheticUsdcAccount, ethAccount, [ethAccount]);
+
+    await user.press(screen.getByText("Receive"));
+
+    const [, options] = mockNavigate.mock.calls[0];
+    expect(options.params).toMatchObject({
+      accountId: syntheticUsdcAccount.id,
+      parentId: ethAccount.id,
+      createTokenAccount: true,
+    });
   });
 });
