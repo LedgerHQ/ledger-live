@@ -168,9 +168,10 @@ export async function resolveWalletApiSpendableBalance(
  *
  * Several bridges catch network/build failures and resolve `0` instead of rejecting
  * (Cardano, Kaspa, Concordium). `0` is also a genuine estimate for an empty account.
- * A zero result is kept only when the synced spendable balance is already zero;
- * otherwise it is treated as an ambiguous failure and omitted. Send-flow callers
- * still receive the raw `0` from those bridges.
+ * A zero result is kept only when the spendable balance exposed to Wallet API is already
+ * zero (see `getWalletApiSpendableBalance`: for Zcash that is the transparent pool only, so
+ * a shielded-only account legitimately estimates `0`); otherwise it is treated as an
+ * ambiguous failure and omitted. Send-flow callers still receive the raw `0` from those bridges.
  */
 export async function resolveWalletApiMaxSpendable(
   account: AccountLike,
@@ -180,11 +181,14 @@ export async function resolveWalletApiMaxSpendable(
     const bridge = await getAccountBridge(account, parentAccount);
     const maxSpendable = await bridge.estimateMaxSpendable({ account, parentAccount });
 
-    if (maxSpendable.isZero() && !account.spendableBalance.isZero()) {
+    const walletApiSpendableBalance =
+      bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance;
+
+    if (maxSpendable.isZero() && !walletApiSpendableBalance.isZero()) {
       log(
         "wallet-api/converters",
         "resolveWalletApiMaxSpendable: omitting ambiguous zero maxSpendable",
-        { spendableBalance: account.spendableBalance.toString() },
+        { walletApiSpendableBalance: walletApiSpendableBalance.toString() },
       );
       return undefined;
     }
