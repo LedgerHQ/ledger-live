@@ -102,10 +102,13 @@ apps/ledger-live-desktop/src/renderer/screens/account/   @ledgerhq/wallet-xp
 apps/ledger-live-desktop/src/renderer/screens/market/    @ledgerhq/wallet-xp
 apps/ledger-live-desktop/src/renderer/screens/asset/     @ledgerhq/wallet-xp
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Accounts/ @ledgerhq/wallet-xp
+apps/ledger-live-desktop/src/renderer/modals/Receive/    @ledgerhq/wallet-xp
 
 # Wallet — mobile
 apps/ledger-live-mobile/src/mvvm/                        @ledgerhq/wallet-xp
 apps/ledger-live-mobile/src/screens/Portfolio/           @ledgerhq/wallet-xp
+apps/ledger-live-mobile/src/mvvm/features/Receive/       @ledgerhq/wallet-xp
+apps/ledger-live-mobile/src/screens/ReceiveFunds/        @ledgerhq/wallet-xp
 
 # Wallet — Contacts
 domain/entity/contact/                                   @ledgerhq/wallet-xp
@@ -184,20 +187,21 @@ apps/ledger-live-desktop/src/mvvm/features/Send/                    @ledgerhq/co
 apps/ledger-live-desktop/src/renderer/components/Transaction*/      @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/components/SignMessage*/      @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/modals/Send/                  @ledgerhq/coin-integration
-apps/ledger-live-desktop/src/renderer/modals/Receive/               @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/modals/SignMessage/           @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/modals/SignRawTransaction/    @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/modals/SignTransaction/       @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/mvvm/features/Send/                     @ledgerhq/coin-integration
-apps/ledger-live-mobile/src/mvvm/features/Receive/                  @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/screens/SendFunds/                      @ledgerhq/coin-integration
-apps/ledger-live-mobile/src/screens/ReceiveFunds/                   @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/screens/SignMessage/                    @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/screens/SignRawTransaction/             @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/coin-integration
 
 # Wallet — desktop UI tests
 apps/ledger-live-desktop/tests/                          @ledgerhq/wallet-xp
+
+# Coin integration — desktop UI tests (after the Wallet tests/ rule so they win)
+apps/ledger-live-desktop/tests/specs/send.spec.ts                @ledgerhq/coin-integration
+apps/ledger-live-desktop/tests/specs/send/                       @ledgerhq/coin-integration
 
 ### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
 domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
@@ -553,12 +557,22 @@ libs/ui/packages/native/src/components/Layout/Slides/                           
 **/useTrackDmkErrorsEvents*                                        @ledgerhq/live-devices
 **/BleDevicePairing*                                               @ledgerhq/live-devices
 
-# UI tests
+# UI tests — QAA
 /e2e/                                                                       @ledgerhq/qaa
 apps/ledger-live-mobile/src/e2e/                                            @ledgerhq/qaa
 libs/live-e2e-shared/                                                       @ledgerhq/qaa
-apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
+
+# UI tests — Wallet XP (override the QAA /e2e/ catch-all)
+apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
+e2e/desktop/tests/page/modal/receive.modal.ts                               @ledgerhq/wallet-xp
+
+# UI tests — Coin integration (override the QAA /e2e/ catch-all)
+e2e/mobile/specs/send/                                                      @ledgerhq/coin-integration
+e2e/desktop/tests/specs/send.tx.spec.ts                                     @ledgerhq/coin-integration
+e2e/desktop/tests/specs/newSendFlow*.spec.ts                                @ledgerhq/coin-integration
+e2e/desktop/tests/page/modal/send.modal.ts                                  @ledgerhq/coin-integration
+e2e/desktop/tests/page/modal/new.send.modal.ts                              @ledgerhq/coin-integration
 
 # Team-split convention: ownership of team-* folders (order: last match wins)
 # codeowners-check: allow-override
