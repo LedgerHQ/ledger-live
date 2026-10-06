@@ -70,6 +70,13 @@ const createConnectNewDeviceStateMachine = <
           const machineStoppedWhileConnecting = signal.aborted;
           if (machineStoppedWhileConnecting) {
             disconnectUnclaimedSession(input.dmk, sessionId);
+          } else {
+            // XState stores the output in a later microtask. A stop() before that aborts the signal.
+            signal.addEventListener(
+              "abort",
+              () => disconnectUnclaimedSession(input.dmk, sessionId),
+              { once: true },
+            );
           }
           return sessionId;
         },

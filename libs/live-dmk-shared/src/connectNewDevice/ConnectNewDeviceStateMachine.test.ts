@@ -899,6 +899,20 @@ describe("ConnectNewDeviceStateMachine", () => {
       expect(setup.dmk.disconnect).toHaveBeenCalledWith({ sessionId: "late-session-id" });
     });
 
+    it("should disconnect the session when the machine is stopped after the connection succeeds but before the session is stored", async () => {
+      const { connect, resolveConnect } = connectAfterStop();
+      const setup = setupTest({ connect });
+
+      await connectToNanoX(setup);
+      // Runs right after the connect actor resumes, before XState hands its output to the machine.
+      void connect.mock.results[0].value.then(() => setup.machine.stop());
+      resolveConnect("late-session-id");
+      await flushPromises();
+
+      expect(setup.dmk.disconnect).toHaveBeenCalledWith({ sessionId: "late-session-id" });
+      setup.lastState(ConnectNewDeviceUIStateTypes.Connecting);
+    });
+
     it("should not call onConnected when the connection succeeds after the machine is stopped", async () => {
       const { connect, resolveConnect } = connectAfterStop();
       const setup = setupTest({ connect });
