@@ -587,26 +587,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_moonbeam: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1284,
-      name: "Moonbeam",
-      unit: { name: "GLMR", code: "GLMR", magnitude: 18 },
-      node: {
-        type: "external",
-        uri: "https://moonbeam.coin.ledger.com",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1284",
-      },
-    },
-  },
   config_currency_rsk: {
     type: "object",
     default: {
@@ -797,26 +777,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "etherscan",
         uri: "https://api.routescan.io/v2/network/mainnet/evm/288/etherscan",
-      },
-    },
-  },
-  config_currency_moonriver: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1285,
-      name: "Moonriver",
-      unit: { name: "MOVR", code: "MOVR", magnitude: 18 },
-      node: {
-        type: "external",
-        uri: "https://moonriver.coin.ledger.com",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1285",
       },
     },
   },

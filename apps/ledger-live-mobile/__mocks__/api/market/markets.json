@@ -203,7 +203,6 @@
       "arbitrum/erc20/usd_coin",
       "ethereum/erc20/usd__coin",
       "stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn",
-      "moonbeam/erc20/usd_coin",
       "base/erc20/usd_coin",
       "tron/trc20/tekxitehnzsmse2xqrbj4w32run966rdz8",
       "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
@@ -765,7 +764,6 @@
       "bsc/bep20/matic_token",
       "polygon/erc20/matic_token",
       "polygon",
-      "moonbeam/erc20/matic",
       "ethereum/erc20/matic"
     ],
     "ticker": "matic",
