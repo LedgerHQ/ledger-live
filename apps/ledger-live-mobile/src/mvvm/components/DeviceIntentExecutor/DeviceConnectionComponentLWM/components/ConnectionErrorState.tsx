@@ -19,7 +19,7 @@ import {
   PAGE_CONNECT_DEVICE,
   trackConnectDeviceButtonClicked,
 } from "../../utils/trackDeviceIntent";
-import { PeerRemovedPairingState } from "./PeerRemovedPairingState";
+import { PeerRemovedPairingState } from "LLM/components/DeviceConnection/PeerRemovedPairingState";
 
 type ConnectionErrorStateProps = {
   state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.ConnectionError }>;
