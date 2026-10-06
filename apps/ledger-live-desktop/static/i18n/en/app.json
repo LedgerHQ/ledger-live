@@ -3062,8 +3062,27 @@
         "pendingNoticeTitle": "Funds maturing",
         "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
+      "aleoPublic": {
+        "title": "Public balance",
+        "subtitle": "Visible on-chain"
+      },
+      "aleoPrivate": {
+        "title": "Private balance",
+        "subtitle": "Encrypted records"
+      },
       "zeroBalance": {
         "warning": "No available balance"
+      }
+    },
+    "estimatedTime": {
+      "label": "Est. time",
+      "seconds": "~{{count}}s",
+      "minutes": "~{{count}} min",
+      "gotIt": "Got it",
+      "learnMore": "Learn more",
+      "aleo": {
+        "title": "How estimated time works",
+        "description": "Sending more ALEO uses more records, and each one adds processing time. Larger amounts take longer to confirm."
       }
     }
   },
@@ -10127,6 +10146,13 @@
         "desc": "Please wait",
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
+      },
+      "newFlowPrivateSync": {
+        "title": "Refreshing your private balance",
+        "description": "This can take up to a minute",
+        "progress": "{{percentage}}% synced",
+        "errorTitle": "Private sync failed",
+        "errorDescription": "Something went wrong, please try again"
       }
     },
     "operationTypes": {

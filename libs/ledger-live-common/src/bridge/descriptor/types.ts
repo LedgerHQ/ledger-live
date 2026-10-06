@@ -390,7 +390,7 @@ export type BalanceTypeConfig = Readonly<{
   /** Id of the pool the transaction draws from, or `null` until the user picks one. */
   getSelectedOptionId: (transaction: unknown) => string | null;
   /** Patch making the transaction draw from `optionId`. */
-  buildSelectionPatch: (optionId: string) => TransactionPatch;
+  buildSelectionPatch: (optionId: string, transaction: unknown) => TransactionPatch;
   /** Destination for a transfer to the account's other pool; `null` when it has none. */
   getSelfTransferTarget: (params: {
     account: AccountLike;
@@ -402,7 +402,10 @@ export type BalanceTypeConfig = Readonly<{
    * `selfTransfer`, which locks the recipient) never infer it from the recipient value,
    * so the flow has to declare it both ways; return `{}` when the recipient says it all.
    */
-  buildSelfTransferPatch: (params: { isSelfTransfer: boolean }) => TransactionPatch;
+  buildSelfTransferPatch: (params: {
+    isSelfTransfer: boolean;
+    transaction: unknown;
+  }) => TransactionPatch;
   /**
    * Balance the amount step may spend from this pool, bounded by the pool's transaction
    * input ceiling (e.g. Zcash's 32-action / 32-UTXO limit). Distinct from
@@ -412,6 +415,25 @@ export type BalanceTypeConfig = Readonly<{
    * ceiling the bridge enforces.
    */
   getSelectableBalance: (params: { account: AccountLike; optionId: string }) => BigNumber;
+}>;
+
+/**
+ * How long the send is expected to take once signed, for coins where it varies per
+ * transaction (e.g. Aleo, where each private record adds proving time). The UI shows
+ * it under the network fees, with an explainer read from `translationKey`.
+ */
+export type EstimatedTimeDescriptor = Readonly<{
+  getEstimatedMs: (transaction: unknown) => number | null;
+  /** i18n key suffix; the UI prepends its namespace and appends `.title` and `.description`. */
+  translationKey: string;
+  learnMoreUrl?: string;
+}>;
+
+/** Resolved estimate for one transaction, as read through `sendFeatures.getEstimatedTime`. */
+export type EstimatedTime = Readonly<{
+  ms: number;
+  translationKey: string;
+  learnMoreUrl?: string;
 }>;
 
 /**
@@ -439,6 +461,7 @@ export type SendDescriptor = {
    * transparent vs shielded); omitted by every coin with a single balance.
    */
   balanceType?: BalanceTypeConfig;
+  estimatedTime?: EstimatedTimeDescriptor;
   /**
    * Family-agnostic key/value attributes appended to every send-flow page event,
    * once computable from the transaction (e.g. Zcash's source-pool privacy).

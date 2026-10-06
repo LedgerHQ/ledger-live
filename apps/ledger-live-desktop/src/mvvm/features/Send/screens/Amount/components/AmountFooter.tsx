@@ -5,6 +5,8 @@ import type { FeeSelectorOption, SponsoredFeeDisplay } from "../types";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { AmountMessageText } from "./AmountMessageText";
 import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
+import { EstimatedTimeRow } from "./EstimatedTimeRow";
+import { useEstimatedTimeViewModel } from "../hooks/useEstimatedTimeViewModel";
 import type { SponsoredFeeNudgeProps } from "./Fees/SponsoredFeeNudge";
 
 type AmountFooterProps = Readonly<{
@@ -47,6 +49,7 @@ export function AmountFooter({
   const { state } = useSendFlowData();
   const { account } = state.account;
   const { transaction } = state.transaction;
+  const estimatedTime = useEstimatedTimeViewModel();
 
   if (!account || !transaction) {
     return null;
@@ -74,6 +77,7 @@ export function AmountFooter({
         sponsoredNudge={sponsoredNudge}
         sponsoredFee={sponsoredFee}
       />
+      {estimatedTime ? <EstimatedTimeRow estimatedTime={estimatedTime} /> : null}
       <Button
         appearance="base"
         size="lg"

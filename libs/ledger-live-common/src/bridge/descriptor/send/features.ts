@@ -4,6 +4,7 @@ import type {
   BalanceTypeConfig,
   CoinControlConfig,
   CustomFeeConfig,
+  EstimatedTime,
   FeeAssetsConfig,
   FeePresetOption,
   FeeUnitLabel,
@@ -120,6 +121,19 @@ export const sendFeatures = {
   ): NetworkFeesInfo | null => {
     const d = getSendDescriptor(currency);
     return d?.fees.getNetworkFeesInfo?.(ctx) ?? null;
+  },
+  getEstimatedTime: (
+    currency: CryptoOrTokenCurrency | undefined,
+    transaction: unknown,
+  ): EstimatedTime | null => {
+    const estimatedTime = getSendDescriptor(currency)?.estimatedTime;
+    const ms = estimatedTime?.getEstimatedMs(transaction);
+    if (!estimatedTime || ms == null) return null;
+    return {
+      ms,
+      translationKey: estimatedTime.translationKey,
+      learnMoreUrl: estimatedTime.learnMoreUrl,
+    };
   },
   hasDefaultStrategy: fromDescriptor(d => d.fees.defaultStrategy != null, false),
   hasBalanceTypeStep: fromDescriptor(d => d.balanceType != null, false),
