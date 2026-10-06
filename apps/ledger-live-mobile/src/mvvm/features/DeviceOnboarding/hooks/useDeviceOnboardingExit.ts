@@ -23,9 +23,14 @@ import { OnboardingType } from "~/reducers/types";
 type UseDeviceOnboardingExitInput = {
   device: Device | null;
   output: DeviceOnboardingOutput | null;
+  navigateOnExit?: boolean;
 };
 
-export function useDeviceOnboardingExit({ device, output }: UseDeviceOnboardingExitInput) {
+export function useDeviceOnboardingExit({
+  device,
+  output,
+  navigateOnExit = true,
+}: UseDeviceOnboardingExitInput) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -33,6 +38,7 @@ export function useDeviceOnboardingExit({ device, output }: UseDeviceOnboardingE
   const handledOutputRef = useRef<DeviceOnboardingOutput | null>(null);
 
   useEffect(() => {
+    if (!navigateOnExit) return;
     if (!output || !device || handledOutputRef.current === output) return;
     handledOutputRef.current = output;
 
@@ -62,7 +68,15 @@ export function useDeviceOnboardingExit({ device, output }: UseDeviceOnboardingE
         }
         break;
     }
-  }, [device, dispatch, hasCompletedOnboarding, navigation, output, shouldDisplayMyWallet]);
+  }, [
+    device,
+    dispatch,
+    hasCompletedOnboarding,
+    navigateOnExit,
+    navigation,
+    output,
+    shouldDisplayMyWallet,
+  ]);
 }
 
 function getRootNavigation(

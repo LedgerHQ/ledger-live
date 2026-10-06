@@ -36,6 +36,7 @@ type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
   knownDevices: KnownDevice[];
   offerSync: boolean;
+  navigateOnExit?: boolean;
 };
 
 type OnboardingActor = ActorRefFrom<typeof deviceOnboardingMachine>;
@@ -56,6 +57,7 @@ export function useDeviceOnboarding({
   dmk,
   knownDevices,
   offerSync,
+  navigateOnExit = true,
 }: UseDeviceOnboardingInput): DeviceOnboardingToolProps {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
@@ -331,7 +333,7 @@ export function useDeviceOnboarding({
     machineState: state,
     send,
   });
-  useDeviceOnboardingExit({ device: liveDevice, output });
+  useDeviceOnboardingExit({ device: liveDevice, output, navigateOnExit });
 
   useEffect(
     () => () => {
