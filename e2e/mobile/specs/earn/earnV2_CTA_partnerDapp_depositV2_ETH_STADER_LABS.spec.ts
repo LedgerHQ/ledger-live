@@ -6,7 +6,7 @@ const testConfig = {
   account: Account.ETH_1,
   provider: EarnProvider.STADER_LABS,
   dappUrlSubstring: `staderlabs.com/${Account.ETH_1.currency.ticker}`,
-  tmsLinks: [],
+  tmsLinks: ["B2CQA-4723"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 

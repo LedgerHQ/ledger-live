@@ -3,7 +3,7 @@ import { runScyStakingCTATest } from "@e2e/specs/earn/earnV2";
 
 const testConfig = {
   account: TokenAccount.ETH_USDT_1,
-  tmsLinks: [],
+  tmsLinks: ["B2CQA-4645"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 

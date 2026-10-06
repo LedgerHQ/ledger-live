@@ -6,7 +6,7 @@ const testConfig = {
   account: Account.ETH_1,
   provider: EarnProvider.LIDO,
   dappUrlSubstring: "stake.lido.fi",
-  tmsLinks: [],
+  tmsLinks: ["B2CQA-4722", "B2CQA-4644"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 

@@ -6,7 +6,7 @@ const testConfig = {
   account: Account.ETH_1,
   provider: EarnProvider.KILN,
   dappUrlSubstring: "ledger-staking.widget.kiln.fi/earn",
-  tmsLinks: [],
+  tmsLinks: ["B2CQA-4724"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
