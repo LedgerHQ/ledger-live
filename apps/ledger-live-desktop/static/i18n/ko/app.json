@@ -857,6 +857,9 @@
     "exploreCryptoCardsDescription" : "다양한 크립토 카드를 살펴보고 내 라이프스타일에 가장 적합한 카드를 선택하세요."
   },
   "payTab" : {
+    "disclaimer" : "Monavate Onchain 제공",
+    "cardDisclaimer" : "암호화폐 카드를 찾고 계신가요?",
+    "cardDisclaimerLink" : "CL 카드로 이동하기",
     "featureTour" : {
       "title" : "모든 결제를 한 곳에서",
       "description" : "새로운 결제 탭에서 크립토를 일상 속 결제에 바로 사용해 보세요.",
@@ -901,6 +904,7 @@
     "card" : {
       "title" : "크립토 카드",
       "topUp" : "충전",
+      "chooseCardType" : "카드 종류 선택",
       "balanceLabel" : "잔액",
       "freeze" : "동결",
       "unfreeze" : "동결 해제",
@@ -922,14 +926,23 @@
       },
       "assets" : {
         "title" : "자산",
-        "empty" : "아직 자산이 없습니다",
-        "error" : "자산을 로드할 수 없습니다",
+        "empty" : {
+          "title" : "아직 자산이 없습니다",
+          "description" : "자산을 추가하고 카드 사용을 시작하세요.",
+          "cta" : "자산 추가"
+        },
+        "error" : {
+          "title" : "자산을 로드할 수 없습니다",
+          "description" : "문제가 발생했습니다.",
+          "cta" : "다시 시도"
+        },
         "info" : "이 자산은 카드 결제에 사용됩니다. 결제 순서를 설정하거나 자산을 더 추가하세요.",
         "manage" : "관리",
         "manageDialog" : {
           "title" : "자산 관리",
           "description" : "드래그하여 자금 조달 순서를 설정하세요. 한 자산이 부족해지면 다음 자산이 자동으로 사용됩니다.",
-          "addAssetCaption" : "자산을 추가하기 위해 Baanx 페이지로 리디렉션됩니다.",
+          "reorder" : "{{asset}}의 순서를 변경하세요. Space 또는 Enter를 눌러 항목을 선택하고, 화살표 키로 이동하거나 Escape를 눌러 취소하세요.",
+          "addAssetCaption" : "자산을 추가하기 위해 Monavate로 리디렉션됩니다.",
           "addAsset" : "자산 추가"
         },
         "details" : {
@@ -938,8 +951,8 @@
           "transactions" : "트랜잭션"
         },
         "withdraw" : {
-          "title" : "Baanx로 리디렉션됩니다.",
-          "description" : "Baanx 계정에서 사용 중인 Ledger 지갑 주소로 자산을 출금하세요.",
+          "title" : "Monavate로 리디렉션됩니다",
+          "description" : "Monavate 계정에서 사용 중인 Ledger 지갑 주소로 자산을 출금하세요.",
           "continue" : "계속"
         },
         "history" : {
@@ -950,7 +963,7 @@
         }
       },
       "reward" : {
-        "title" : "총 캐시백"
+        "title" : "총 캐시백: {{ratePercent}}% {{ticker}}(으)로 지급"
       },
       "numbers" : {
         "reveal" : "보기",
@@ -982,7 +995,9 @@
         "status" : "상태",
         "card" : "카드",
         "cardInfo" : "이 결제에 사용된 카드의 마지막 4자리 숫자.",
-        "fundingSource" : "자금 출처",
+        "fundingSource_one" : "자금 출처",
+        "fundingSource_other" : "사용 자산",
+        "cashback" : "캐시백",
         "transactionId" : "트랜잭션 ID",
         "copyTransactionId" : "트랜잭션 ID 복사",
         "today" : "오늘 {{time}}",
@@ -1010,6 +1025,10 @@
         "signedOut" : {
           "title" : "로그인하여 카드 결제 내역을 확인하세요.",
           "description" : "로그인하면 이곳에 카드 사용 내역이 표시됩니다."
+        },
+        "unclaimed" : {
+          "title" : "크립토 카드",
+          "description" : "결제 화면으로 이동해 카드를 설정하세요."
         },
         "empty" : {
           "title" : "아직 카드 결제 내역이 없습니다.",
@@ -1056,6 +1075,7 @@
     },
     "contacts" : {
       "title" : "저장된 주소로 보내기",
+      "me" : "나",
       "empty" : {
         "info" : "아직 저장된 주소가 없습니다",
         "addContact" : "주소록 추가"
@@ -1076,10 +1096,11 @@
       },
       "addressPicker" : {
         "title" : "{{name}} 주소 선택",
+        "meTitle" : "내 주소 선택",
         "addAddress" : "주소 추가"
       },
       "paySuccess" : {
-        "title" : "지불 완료({{recipient}})",
+        "title" : "{{recipient}}에게 지불 완료",
         "amount" : "금액",
         "estimatedTime" : "예상 시간",
         "from" : "사용 자산",
@@ -1148,19 +1169,39 @@
         "action" : "로그인"
       },
       "errors" : {
-        "pkce_failed" : "로그인을 시작할 수 없습니다. 다시 시도하세요.",
-        "browser_open_failed" : "로그인 페이지를 열 수 없습니다. 다시 시도하세요.",
-        "missing_attempt" : "이 로그인은 더 이상 유효하지 않습니다. 다시 로그인해 주세요.",
-        "exchange_failed" : "로그인을 완료할 수 없습니다. 다시 시도하세요.",
-        "persist_failed" : "세션을 저장하지 못했습니다. 다시 시도하세요.",
-        "fetch_user_failed" : "카드를 불러올 수 없습니다. 다시 시도하세요."
+        "pkce_failed" : {
+          "title" : "로그인을 시작할 수 없습니다",
+          "description" : "다시 시도하세요."
+        },
+        "browser_open_failed" : {
+          "title" : "로그인 페이지를 열 수 없습니다",
+          "description" : "다시 시도하세요."
+        },
+        "missing_attempt" : {
+          "title" : "로그인이 더 이상 유효하지 않습니다",
+          "description" : "다시 로그인해 주세요."
+        },
+        "exchange_failed" : {
+          "title" : "로그인을 완료할 수 없습니다",
+          "description" : "다시 시도하세요."
+        },
+        "persist_failed" : {
+          "title" : "세션을 저장하지 못했습니다",
+          "description" : "다시 시도하세요."
+        },
+        "fetch_user_failed" : {
+          "title" : "카드를 불러올 수 없습니다",
+          "description" : "다시 시도하세요."
+        },
+        "retryLogin" : "다시 시도하세요",
+        "retryUser" : "다시 시도"
       }
     },
     "cardLoginIntro" : {
       "title" : "암호화폐로 결제하면 캐시백이 혜택이",
-      "providedBy" : "Baanx 제공 서비스",
+      "providedBy" : "Monavate 제공 서비스",
       "createAccount" : "계정 생성하기",
-      "logIn" : "Baanx 로그인",
+      "logIn" : "Monavate 로그인",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -1202,8 +1243,9 @@
         "verifyCta" : "주소 확인",
         "successTitle" : "장치의 보안 스크린에 표시된 주소",
         "nextStepsLabel" : "다음 단계",
-        "nextStepShare" : "원하는 앱으로 주소를 공유하세요",
-        "nextStepMatch" : "공유된 주소가 사용 중인 Ledger 장치의 주소와 일치하는지 확인하세요.",
+        "nextStepKeepDisplayed" : "Ledger 장치에 주소가 계속 표시되도록 하세요. 아직 주소를 확정하지 마세요.",
+        "nextStepPaste" : "“Got it”을 클릭한 다음, 공유하려는 앱에 주소를 붙여넣으세요.",
+        "nextStepCheckMatch" : "보내기 전에 해당 주소가 Ledger 장치에 표시된 주소와 일치하는지 확인하세요.",
         "gotItCta" : "확인",
         "device" : {
           "cancelledTitle" : "주소 확인 취소됨",
@@ -3612,7 +3654,9 @@
       "title" : "자산 출금",
       "steps" : {
         "amount" : {
-          "title" : "출금"
+          "title" : "출금",
+          "unlockedOn" : "{{date}}에 잠금 해제됨",
+          "unlocksOn" : "{{date}}에 잠금 해제"
         },
         "connectDevice" : {
           "title" : "장치"
@@ -5030,8 +5074,7 @@
           },
           "validator" : {
             "title" : "검증인",
-            "ledgerByBitwiseTC" : "Ledger by Bitwise 이용약관",
-            "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
+            "ledgerByBitwiseTC" : "Ledger by Bitwise 이용약관"
           },
           "connectDevice" : {
             "title" : "장치"
@@ -6745,6 +6788,9 @@
       "transfer_token_private" : "비공개 수령인",
       "convert_token_public_to_private" : "비공개 수령인",
       "convert_token_private_to_public" : "공개 수령인",
+      "bond_public" : "검증인",
+      "unbond_public" : "수령인",
+      "claim_unbond_public" : "수령인",
       "delegate" : "검증인",
       "redelegate" : "검증인",
       "undelegate" : "검증인",
@@ -8557,6 +8603,30 @@
       "title" : "이 주제는 팔로우할 수 없습니다",
       "description" : "Internet Computer에서 이 주제를 폐기했거나, Ledger Internet Computer 앱이 아직 해당 주제에 대한 팔로우 서명을 지원하지 않습니다. 다른 주제를 선택하세요."
     },
+    "ICPTooManyFollowees" : {
+      "title" : "팔로우 대상 한도에 도달했습니다",
+      "description" : "하나의 주제에서는 최대 {{max}} 개의 뉴런을 팔로우할 수 있습니다. 목록에 {{max}}개 이하의 뉴런이 남도록 뉴런을 삭제하세요."
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "잘못된 뉴런 ID",
+      "description" : "{{id}}은(는) 올바른 뉴런 ID가 아닙니다. 목록에서 삭제하세요."
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "뉴런이 중복되어 있습니다",
+      "description" : "뉴런 {{id}}이(가) 목록에 두 번 이상 포함되어 있습니다. 중복된 뉴런을 삭제하세요."
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "뉴런은 자기 자신을 팔로우할 수 없습니다",
+      "description" : "{{id}}은(는) 이 뉴런의 ID입니다. 목록에서 삭제하세요."
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "이 뉴런의 디졸브를 시작할 수 없습니다",
+      "description" : "잠긴 뉴런만 디졸브를 시작할 수 있습니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "이 뉴런의 디졸브를 중지할 수 없습니다",
+      "description" : "디졸브 중인 뉴런만 디졸브를 중지할 수 있으며, 이 뉴런은 이미 디졸브가 완료되었을 수 있습니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
+    },
     "ICPDisburseNotAllowed" : {
       "title" : "이 뉴런의 예치금을 회수할 수 없습니다.",
       "description" : "뉴런이 완전히 잠금 해제되고 예치금이 네트워크 수수료보다 많은 경우에만 출금할 수 있습니다. 뉴런을 동기화하여 현재 상태를 확인하세요."
@@ -8600,6 +8670,10 @@
     "ICPCallRejected" : {
       "title" : "요청이 처리되지 않았습니다",
       "description" : "Internet Computer 네트워크가 실행 전에 요청을 거부하여 변경 사항이 없습니다. 다시 시도해 주세요. {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "요청이 전송되지 않았습니다",
+      "description" : "Internet Computer 네트워크가 요청을 수락하지 않아 아무것도 전송되지 않았으며 변경 사항도 없습니다. 다시 시도해 주세요. {{reason}}"
     },
     "ICPInvalidPercentage" : {
       "title" : "범위 초과",
@@ -10121,7 +10195,6 @@
   },
   "history" : {
     "title" : "거래 내역",
-    "cardScope" : "카드",
     "cardAssetScope" : "카드 · {{assetName}}",
     "pending" : "보류 중인 트랜잭션",
     "pending_other" : "보류 중인 트랜잭션",
@@ -10258,6 +10331,7 @@
     "addAddressEntry" : {
       "title" : "주소 입력",
       "addressPlaceholder" : "주소 또는 ENS",
+      "addressPlaceholderNoENS" : "주소",
       "confirmAddress" : "계속해서 검토하기",
       "validatingAddress" : "주소 확인 중",
       "validAddress" : "유효한 주소",

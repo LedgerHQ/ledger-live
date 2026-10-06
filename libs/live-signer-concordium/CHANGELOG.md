@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [[`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d)]:
+  - @ledgerhq/coin-concordium@1.5.0
+
+## 0.9.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`381bd0b`](https://github.com/LedgerHQ/ledger-live/commit/381bd0befb6a09f20f13f65c233f0e1479e7051d)]:
+  - @ledgerhq/coin-concordium@1.5.0-next.0
+
 ## 0.9.0
 
 ### Minor Changes
@@ -199,19 +213,5 @@
 
 - Updated dependencies [[`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a)]:
   - @ledgerhq/coin-concordium@0.17.0
-
-## 0.6.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a)]:
-  - @ledgerhq/coin-concordium@0.17.0-next.0
-
-## 0.6.1
-
-### Patch Changes
-
-- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f)]:
-  - @ledgerhq/coin-concordium@0.16.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

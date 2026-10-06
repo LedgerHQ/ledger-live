@@ -1,5 +1,26 @@
 # @devtools/shell
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/registry@0.5.1
+
+## 0.10.1-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/registry@0.5.1-next.1
+
+## 0.10.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/registry@0.5.1-next.0
+
 ## 0.10.0
 
 ### Minor Changes
@@ -195,19 +216,5 @@
 
 - Updated dependencies []:
   - @devtools/registry@0.1.8-next.0
-
-## 0.5.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.7
-
-## 0.5.2-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.1.7-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

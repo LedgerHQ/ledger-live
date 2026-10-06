@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-polkadot",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "sideEffects": false,
   "description": "Ledger Hardware Wallet Polkadot Application API",

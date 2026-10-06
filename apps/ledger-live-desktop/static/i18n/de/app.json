@@ -857,6 +857,9 @@
     "exploreCryptoCardsDescription" : "Entdecke unsere Kryptokarten und finde die, die am besten zu dir passt."
   },
   "payTab" : {
+    "disclaimer" : "Bereitgestellt von Monavate Onchain",
+    "cardDisclaimer" : "Suchst du deine Krypto-Karte?",
+    "cardDisclaimerLink" : "Gehe zur CL-Karte",
     "featureTour" : {
       "title" : "Alle deine Zahlungen an einem Ort",
       "description" : "Lerne deinen neuen Pay-Tab kennen, der deine Kryptos bereit für alltägliche Geldfragen macht.",
@@ -901,6 +904,7 @@
     "card" : {
       "title" : "Krypto-Karte",
       "topUp" : "Aufladen",
+      "chooseCardType" : "Kartentyp auswählen",
       "balanceLabel" : "Saldo",
       "freeze" : "Sperren",
       "unfreeze" : "Entsperren",
@@ -922,14 +926,23 @@
       },
       "assets" : {
         "title" : "Assets",
-        "empty" : "Noch keine Assets",
-        "error" : "Es konnten keine Assets geladen werden",
+        "empty" : {
+          "title" : "Noch keine Assets",
+          "description" : "Füge ein Asset hinzu, um deine Karte zu nutzen.",
+          "cta" : "Asset hinzufügen"
+        },
+        "error" : {
+          "title" : "Es konnten keine Assets geladen werden",
+          "description" : "Das hat leider nicht funktioniert.",
+          "cta" : "Wiederholen"
+        },
         "info" : "Diese Assets bilden das Guthaben deiner Karte. Lege die Reihenfolge fest, in der sie belastet werden, oder füge weitere hinzu.",
         "manage" : "Verwalten",
         "manageDialog" : {
           "title" : "Assets verwalten",
           "description" : "Ziehen, um deine Deckungsreihenfolge festzulegen. Wenn ein Asset knapp wird, wird das nächste automatisch verwendet.",
-          "addAssetCaption" : "Du wirst auf die Seite von Baanx weitergeleitet, um Assets hinzuzufügen.",
+          "reorder" : "Ordne {{asset}} neu an. Drücke die Leertaste oder die Eingabe zum Aufnehmen, die Pfeiltasten zum Verschieben und Escape zum Abbrechen.",
+          "addAssetCaption" : "Du wirst zu Monavate weitergeleitet, um Assets hinzuzufügen.",
           "addAsset" : "Wert hinzufügen"
         },
         "details" : {
@@ -938,7 +951,7 @@
           "transactions" : "Transaktionen"
         },
         "withdraw" : {
-          "title" : "Du wirst zu Baanx weitergeleitet",
+          "title" : "Du wirst zu Monavate weitergeleitet",
           "description" : "Hebe Guthaben von deinem Baanx-Konto auf deine Ledger Wallet-Adresse ab.",
           "continue" : "Weiter"
         },
@@ -950,7 +963,7 @@
         }
       },
       "reward" : {
-        "title" : "Gesamt-Cashback"
+        "title" : "Gesamt-Cashback · {{ratePercent}}% in {{ticker}}"
       },
       "numbers" : {
         "reveal" : "Anzeigen",
@@ -982,7 +995,9 @@
         "status" : "Status",
         "card" : "Karte",
         "cardInfo" : "Die letzten vier Ziffern der für diese Zahlung verwendeten Karte.",
-        "fundingSource" : "Finanzierungsquelle",
+        "fundingSource_one" : "Finanzierungsquelle",
+        "fundingSource_other" : "Finanzierungsquelle",
+        "cashback" : "Cashback",
         "transactionId" : "Transaktions-ID",
         "copyTransactionId" : "Transaktions-ID kopieren",
         "today" : "Heute {{time}}",
@@ -1010,6 +1025,10 @@
         "signedOut" : {
           "title" : "Logge dich ein, um deine Kartentransaktionen zu sehen",
           "description" : "Deine Kartenaktivität wird hier angezeigt, sobald du eingeloggt bist."
+        },
+        "unclaimed" : {
+          "title" : "Krypto-Karte",
+          "description" : "Gehe zu Pay, um deine Karte einzurichten."
         },
         "empty" : {
           "title" : "Noch keine Kartentransaktionen",
@@ -1056,6 +1075,7 @@
     },
     "contacts" : {
       "title" : "Kontakt bezahlen",
+      "me" : "Ich",
       "empty" : {
         "info" : "Du hast noch keine Kontakte",
         "addContact" : "Kontakt hinzufügen"
@@ -1076,10 +1096,11 @@
       },
       "addressPicker" : {
         "title" : "Adresse von {{name}} auswählen",
+        "meTitle" : "Meine Adresse auswählen",
         "addAddress" : "Adresse hinzufügen"
       },
       "paySuccess" : {
-        "title" : "Du hast ({{recipient}}) bezahlt",
+        "title" : "Du hast {{recipient}} bezahlt",
         "amount" : "Betrag",
         "estimatedTime" : "Geschätzte Zeit",
         "from" : "Von",
@@ -1148,19 +1169,39 @@
         "action" : "Anmeldename"
       },
       "errors" : {
-        "pkce_failed" : "Die Anmeldung konnte nicht gestartet werden. Bitte versuche es erneut.",
-        "browser_open_failed" : "Die Anmeldeseite konnte nicht geöffnet werden. Bitte versuche es erneut.",
-        "missing_attempt" : "Dieser Anmeldename ist nicht mehr gültig. Bitte logge dich erneut ein.",
-        "exchange_failed" : "Die Anmeldung konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
-        "persist_failed" : "Deine Sitzung konnte nicht gespeichert werden. Bitte versuche es erneut.",
-        "fetch_user_failed" : "Deine Karte konnte nicht geladen werden. Bitte versuche es erneut."
+        "pkce_failed" : {
+          "title" : "Die Anmeldung konnte nicht gestartet werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "browser_open_failed" : {
+          "title" : "Die Anmeldeseite konnte nicht geöffnet werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "missing_attempt" : {
+          "title" : "Dieser Anmeldename ist nicht mehr gültig.",
+          "description" : "Bitte logge dich erneut ein."
+        },
+        "exchange_failed" : {
+          "title" : "Die Anmeldung konnte nicht abgeschlossen werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "persist_failed" : {
+          "title" : "Deine Sitzung konnte nicht gespeichert werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "fetch_user_failed" : {
+          "title" : "Deine Karte konnte nicht geladen werden.",
+          "description" : "Bitte versuche es erneut."
+        },
+        "retryLogin" : "Wiederholen",
+        "retryUser" : "Wiederholen"
       }
     },
     "cardLoginIntro" : {
       "title" : "Mit Krypto zahlen, Cashback sichern",
-      "providedBy" : "Karte bereitgestellt von Baanx",
+      "providedBy" : "Karte bereitgestellt von Monavate",
       "createAccount" : "Konto erstellen",
-      "logIn" : "Bei Baanx einloggen",
+      "logIn" : "Bei Monavate einloggen",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -1202,8 +1243,9 @@
         "verifyCta" : "Adresse verifizieren",
         "successTitle" : "Auf dem Secure Screen des Geräts angezeigte Adresse",
         "nextStepsLabel" : "Nächste Schritte",
-        "nextStepShare" : "Teile deine Adresse über deine gewünschte App",
-        "nextStepMatch" : "Stelle sicher, dass die freigegebene Adresse mit der auf deinem Ledger-Gerät übereinstimmt.",
+        "nextStepKeepDisplayed" : "Lass deine Adresse auf deinem Ledger-Gerät angezeigt. Bestätige diese noch nicht.",
+        "nextStepPaste" : "Klicke auf „Verstanden“ und füge dann die Adresse in die App ein, mit der du sie teilst.",
+        "nextStepCheckMatch" : "Prüfe vor dem Senden, ob sie mit der auf deinem Ledger-Gerät passt.",
         "gotItCta" : "Verstanden",
         "device" : {
           "cancelledTitle" : "Adressverifizierung abgebrochen",
@@ -3612,7 +3654,9 @@
       "title" : "Vermögenswerte abheben",
       "steps" : {
         "amount" : {
-          "title" : "Abheben"
+          "title" : "Abheben",
+          "unlockedOn" : "Entsperrt am {{date}}",
+          "unlocksOn" : "Wird am {{date}} entsperrt"
         },
         "connectDevice" : {
           "title" : "Gerät"
@@ -5030,8 +5074,7 @@
           },
           "validator" : {
             "title" : "Validatoren",
-            "ledgerByBitwiseTC" : "Ledger laut Bitwise AGBs",
-            "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
+            "ledgerByBitwiseTC" : "Ledger laut Bitwise AGBs"
           },
           "connectDevice" : {
             "title" : "Gerät"
@@ -6745,6 +6788,9 @@
       "transfer_token_private" : "privater Empfänger",
       "convert_token_public_to_private" : "privater Empfänger",
       "convert_token_private_to_public" : "öffentlicher Empfänger",
+      "bond_public" : "Validator",
+      "unbond_public" : "Empfänger",
+      "claim_unbond_public" : "Empfänger",
       "delegate" : "Validator",
       "redelegate" : "Validator",
       "undelegate" : "Validator",
@@ -8557,6 +8603,30 @@
       "title" : "Diesem Thema kann nicht gefolgt werden",
       "description" : "Der Internet Computer hat dieses Thema eingestellt, oder die Ledger Internet Computer-App kann das Folgen dafür noch nicht signieren. Wähle ein anderes Thema."
     },
+    "ICPTooManyFollowees" : {
+      "title" : "Followee-Limit erreicht",
+      "description" : "Ein Thema kann höchstens {{max}} Neuronen folgen. Entferne Neuronen, bis die Liste {{max}} oder weniger enthält."
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "Ungültige Neuronen-ID",
+      "description" : "{{id}} ist keine gültige Neuronen-ID. Entferne es aus der Liste."
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "Neuron doppelt aufgeführt",
+      "description" : "Neuron {{id}} ist mehr als einmal aufgeführt. Entferne das Duplikat."
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "Ein Neuron kann sich nicht selbst folgen.",
+      "description" : "{{id}} ist die eigene ID dieses Neurons. Entferne es aus der Liste."
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "Das Auflösen dieses Neurons kann nicht gestartet werden",
+      "description" : "Nur ein gesperrtes Neuron kann mit dem Auflösen beginnen. Synchronisiere deine Neuronen, um deren aktuellen Zustand zu sehen."
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "Das Auflösen dieses Neurons kann nicht gestoppt werden",
+      "description" : "Nur ein sich auflösendes Neuron kann die Auflösung stoppen, und dieses hat sie möglicherweise bereits abgeschlossen. Synchronisiere deine Neuronen, um deren aktuellen Zustand zu sehen."
+    },
     "ICPDisburseNotAllowed" : {
       "title" : "Dieses Neuron kann nicht ausgezahlt werden",
       "description" : "Ein Neuron kann ausgezahlt werden, sobald es sich vollständig aufgelöst hat und sein Stake mehr als die Netzwerkgebühr beträgt. Synchronisiere deine Neuronen, um deren aktuellen Zustand zu sehen."
@@ -8600,6 +8670,10 @@
     "ICPCallRejected" : {
       "title" : "Anfrage nicht akzeptiert",
       "description" : "Der Internet Computer hat die Anfrage abgelehnt, bevor sie ausgeführt wurde, sodass sich nichts geändert hat. Bitte versuche es noch einmal. {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "Anfrage nicht gesendet",
+      "description" : "Der Internet Computer hat die Anfrage nicht angenommen, sodass nichts gesendet wurde und sich nichts geändert hat. Bitte versuche es noch einmal. {{reason}}"
     },
     "ICPInvalidPercentage" : {
       "title" : "Prozentsatz außerhalb des Bereichs",
@@ -10121,7 +10195,6 @@
   },
   "history" : {
     "title" : "Transaktionsverlauf",
-    "cardScope" : "Karte",
     "cardAssetScope" : "Karte · {{assetName}}",
     "pending" : "Schwebende Transaktion",
     "pending_other" : "Schwebende Transaktionen",
@@ -10258,6 +10331,7 @@
     "addAddressEntry" : {
       "title" : "Adresse eingeben",
       "addressPlaceholder" : "Adresse oder ENS",
+      "addressPlaceholderNoENS" : "Adresse",
       "confirmAddress" : "Überprüfung fortsetzen",
       "validatingAddress" : "Adresse wird überprüft",
       "validAddress" : "Gültige Adresse",

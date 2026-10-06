@@ -857,6 +857,9 @@
     "exploreCryptoCardsDescription" : "ดูบัตรคริปโตของเราแล้วเลือกใบที่เหมาะกับคุณที่สุด"
   },
   "payTab" : {
+    "disclaimer" : "ให้บริการโดย Monavate OnChain",
+    "cardDisclaimer" : "กำลังมองหาบัตรคริปโตของคุณอยู่ใช่ไหม?",
+    "cardDisclaimerLink" : "ไปที่ CL Card",
     "featureTour" : {
       "title" : "การชำระเงินทั้งหมดของคุณในที่เดียว",
       "description" : "พบกับแท็บ 'จ่ายเงิน' ใหม่ ให้คุณใช้จ่ายคริปโตได้ง่าย ๆ ในชีวิตประจำวัน",
@@ -901,6 +904,7 @@
     "card" : {
       "title" : "บัตรคริปโต",
       "topUp" : "เติมเงิน",
+      "chooseCardType" : "เลือกประเภทของบัตร",
       "balanceLabel" : "ยอดคงเหลือในบัญชี",
       "freeze" : "ระงับบัตรชั่วคราว",
       "unfreeze" : "ยกเลิกการระงับบัตร",
@@ -922,14 +926,23 @@
       },
       "assets" : {
         "title" : "สินทรัพย์",
-        "empty" : "ยังไม่มีสินทรัพย์",
-        "error" : "โหลดสินทรัพย์ไม่ได้",
+        "empty" : {
+          "title" : "ยังไม่มีสินทรัพย์",
+          "description" : "เพิ่มสินทรัพย์เพื่อเริ่มใช้งานบัตรของคุณ",
+          "cta" : "เพิ่มสินทรัพย์"
+        },
+        "error" : {
+          "title" : "โหลดสินทรัพย์ไม่ได้",
+          "description" : "มีบางอย่างผิดปกติ",
+          "cta" : "ลองใหม่"
+        },
         "info" : "ระบบจะใช้สินทรัพย์เหล่านี้เติมเงินให้กับบัตรของคุณ กำหนดลำดับการหักเงิน หรือเพิ่มสินทรัพย์เข้ามาได้ที่นี่",
         "manage" : "จัดการ",
         "manageDialog" : {
           "title" : "จัดการสินทรัพย์",
           "description" : "ลากเพื่อจัดลำดับการเติมเงิน หากสินทรัพย์ที่อยู่ด้านบนเหลือน้อย ระบบจะใช้สินทรัพย์ถัดไปโดยอัตโนมัติ",
-          "addAssetCaption" : "ระบบจะนำคุณไปยังหน้าของ Baanx เพื่อเพิ่มสินทรัพย์",
+          "reorder" : "สลับลำดับ {{asset}} ใหม่ กดปุ่ม Space หรือ Enter เเพื่อเลือกสินทรัพย์ ใช้ปุ่มลูกศรเพื่อย้ายตำแหน่ง และกด Escape เพื่อยกเลิก",
+          "addAssetCaption" : "ระบบจะนำคุณไปยัง Monavate เพื่อเพิ่มสินทรัพย์",
           "addAsset" : "เพิ่มสินทรัพย์"
         },
         "details" : {
@@ -938,7 +951,7 @@
           "transactions" : "ธุรกรรม"
         },
         "withdraw" : {
-          "title" : "ระบบจะนำคุณไปยังหน้าของ Baanx",
+          "title" : "ระบบจะนำคุณไปยัง Monavate",
           "description" : "ถอนเงินจากบัญชี Baanx ของคุณไปยังที่อยู่คริปโตใน Ledger ของคุณ",
           "continue" : "ดำเนินการต่อ"
         },
@@ -950,7 +963,7 @@
         }
       },
       "reward" : {
-        "title" : "เครดิตเงินคืนทั้งหมด"
+        "title" : "รับเครดิตเงินคืน {{ratePercent}}% ในรูปแบบ {{ticker}}"
       },
       "numbers" : {
         "reveal" : "ดูหมายเลขบัตร",
@@ -982,7 +995,9 @@
         "status" : "สถานะ",
         "card" : "บัตร",
         "cardInfo" : "หมายเลข 4 ตัวสุดท้ายของบัตรที่ใช้จ่ายธุรกรรมนี้",
-        "fundingSource" : "แหล่งเงินทุน",
+        "fundingSource_one" : "แหล่งเงินทุน",
+        "fundingSource_other" : "แหล่งเงินทุน",
+        "cashback" : "เครดิตเงินคืน",
         "transactionId" : "ID ธุรกรรม",
         "copyTransactionId" : "คัดลอก ID ธุรกรรม",
         "today" : "วันนี้ตอน {{time}}",
@@ -1010,6 +1025,10 @@
         "signedOut" : {
           "title" : "เข้าสู่ระบบเพื่อดูธุรกรรมผ่านบัตรของคุณ",
           "description" : "ประวัติธุรกรรมจะแสดงที่นี่เมื่อคุณเข้าสู่ระบบ"
+        },
+        "unclaimed" : {
+          "title" : "บัตรคริปโต",
+          "description" : "ไปที่ฟีเจอร์ 'จ่ายเงิน' เพื่อตั้งค่าบัตรของคุณ"
         },
         "empty" : {
           "title" : "ยังไม่มีธุรกรรมผ่านบัตร",
@@ -1055,7 +1074,8 @@
       }
     },
     "contacts" : {
-      "title" : "ชำระเงิน",
+      "title" : "จ่ายไปยัง",
+      "me" : "ที่อยู่ของฉัน",
       "empty" : {
         "info" : "คุณยังไม่มีรายชื่อ",
         "addContact" : "เพิ่มรายชื่อ"
@@ -1076,10 +1096,11 @@
       },
       "addressPicker" : {
         "title" : "เลือกที่อยู่คริปโตของ {{name}}",
+        "meTitle" : "เลือกที่อยู่คริปโตของฉัน",
         "addAddress" : "เพิ่มที่อยู่"
       },
       "paySuccess" : {
-        "title" : "คุณได้จ่ายเงิน ({{recipient}}) เรียบร้อยแล้ว",
+        "title" : "คุณได้จ่ายให้ {{recipient}} แล้ว",
         "amount" : "จำนวน",
         "estimatedTime" : "เวลาโดยประมาณ",
         "from" : "จาก",
@@ -1148,19 +1169,39 @@
         "action" : "เข้าสู่ระบบ"
       },
       "errors" : {
-        "pkce_failed" : "ไม่สามารถเข้าสู่ระบบได้ โปรดลองอีกครั้ง",
-        "browser_open_failed" : "ไม่สามารถเปิดหน้าเข้าสู่ระบบได้ในขณะนี้ โปรดลองอีกครั้ง",
-        "missing_attempt" : "ไม่สามารถเข้าสู่ระบบได้แล้ว โปรดเข้าสู่ระบบอีกครั้ง",
-        "exchange_failed" : "ไม่สามารถเข้าสู่ระบบได้ โปรดลองอีกครั้ง",
-        "persist_failed" : "ไม่สามารถบันทึกเซสชันของคุณได้ โปรดลองอีกครั้ง",
-        "fetch_user_failed" : "ไม่สามารถโหลดบัตรของคุณได้ โปรดลองอีกครั้ง"
+        "pkce_failed" : {
+          "title" : "ไม่สามารถเริ่มเข้าสู่ระบบได้",
+          "description" : "โปรดลองอีกครั้ง"
+        },
+        "browser_open_failed" : {
+          "title" : "ไม่สามารถเปิดหน้าที่ใช้เข้าสู่ระบบได้ในขณะนี้",
+          "description" : "โปรดลองอีกครั้ง"
+        },
+        "missing_attempt" : {
+          "title" : "ไม่สามารถเข้าสู่ระบบได้",
+          "description" : "โปรดเข้าสู่ระบบอีกครั้ง"
+        },
+        "exchange_failed" : {
+          "title" : "เกิดข้อผิดพลาดในการเข้าสู่ระบบ",
+          "description" : "โปรดลองอีกครั้ง"
+        },
+        "persist_failed" : {
+          "title" : "ไม่สามารถบันทึกเซสชันการใช้งานของคุณได้",
+          "description" : "โปรดลองอีกครั้ง"
+        },
+        "fetch_user_failed" : {
+          "title" : "ไม่สามารถโหลดบัตรของคุณได้ในขณะนี้",
+          "description" : "โปรดลองอีกครั้ง"
+        },
+        "retryLogin" : "ลองอีกครั้ง",
+        "retryUser" : "ลองใหม่"
       }
     },
     "cardLoginIntro" : {
       "title" : "ใช้จ่ายด้วยคริปโต แล้วรับเครดิตเงินคืน",
-      "providedBy" : "บัตรให้บริการโดย Baanx",
+      "providedBy" : "บัตรให้บริการโดย Monavate",
       "createAccount" : "สร้างบัญชี",
-      "logIn" : "เข้าสู่ระบบ Baanx",
+      "logIn" : "เข้าสู่ระบบ Monavate",
       "wallets" : {
         "applePay" : "Apple Pay",
         "googlePay" : "Google Pay",
@@ -1202,8 +1243,9 @@
         "verifyCta" : "ตรวจสอบทื่อยู่คริปโต",
         "successTitle" : "ที่อยู่คริปโตที่แสดงบนหน้าจอที่ปลอดภัยของอุปกรณ์",
         "nextStepsLabel" : "ขั้นตอนถัดไป",
-        "nextStepShare" : "แชร์ที่อยู่คริปโตของคุณผ่านแอปที่คุณต้องการ",
-        "nextStepMatch" : "ตรวจสอบให้แน่ใจว่าที่อยู่คริปโตที่แชร์ตรงกับที่อยู่คริปโตบนอุปกรณ์ Ledger ของคุณ",
+        "nextStepKeepDisplayed" : "เปิดแสดงที่อยู่คริปโตของคุณค้างไว้บนอุปกรณ์ Ledger ก่อน อย่าเพิ่งยืนยัน",
+        "nextStepPaste" : "คลิก \"เข้าใจแล้ว\" จากนั้นวางที่อยู่คริปโตของคุณลงในแอปที่คุณแชร์ด้วย",
+        "nextStepCheckMatch" : "ก่อนส่งธุรกรรม โปรดตรวจสอบว่าที่อยู่คริปโตตรงกับบนอุปกรณ์ Ledger ของคุณ",
         "gotItCta" : "เข้าใจแล้ว",
         "device" : {
           "cancelledTitle" : "การตรวจสอบที่อยู่คริปโตถูกยกเลิก",
@@ -3612,7 +3654,9 @@
       "title" : "ถอนสินทรัพย์",
       "steps" : {
         "amount" : {
-          "title" : "ถอน"
+          "title" : "ถอน",
+          "unlockedOn" : "ปลดล็อกเมื่อ {{date}}",
+          "unlocksOn" : "จะปลดล็อกวันที่ {{date}}"
         },
         "connectDevice" : {
           "title" : "อุปกรณ์"
@@ -5030,8 +5074,7 @@
           },
           "validator" : {
             "title" : "ผู้ตรวจสอบ",
-            "ledgerByBitwiseTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Bitwise",
-            "ledgerByFigmentTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Figment"
+            "ledgerByBitwiseTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Bitwise"
           },
           "connectDevice" : {
             "title" : "อุปกรณ์"
@@ -6745,6 +6788,9 @@
       "transfer_token_private" : "ผู้รับแบบส่วนตัว",
       "convert_token_public_to_private" : "ผู้รับแบบส่วนตัว",
       "convert_token_private_to_public" : "ผู้รับที่เป็นสาธารณะ",
+      "bond_public" : "ผู้ตรวจสอบ",
+      "unbond_public" : "ผู้รับ",
+      "claim_unbond_public" : "ผู้รับ",
       "delegate" : "ผู้ตรวจสอบ",
       "redelegate" : "ผู้ตรวจสอบ",
       "undelegate" : "ผู้ตรวจสอบ",
@@ -8557,6 +8603,30 @@
       "title" : "ไม่สามารถติดตามหัวข้อนี้ได้",
       "description" : "Internet Computer ได้เลิกใช้งานหัวข้อนี้แล้ว หรือแอป Internet Computer ของ Ledger ยังไม่สามารถลงนามการติดตามในหัวข้อนี้ได้ เลือกหัวข้ออื่น"
     },
+    "ICPTooManyFollowees" : {
+      "title" : "ถึงขีดจำกัดผู้ที่คุณติดตามแล้ว",
+      "description" : "หัวข้อหนึ่งสามารถติดตามได้สูงสุด {{max}} Neuron กรุณาลบออกจนเหลือเท่ากับหรือน้อยกว่า {{max}} Neuron"
+    },
+    "ICPInvalidFolloweeId" : {
+      "title" : "Neuron ID ไม่ถูกต้อง",
+      "description" : "{{id}} ไม่ใช่ Neuron ID ที่ถูกต้อง ลบออกจากรายการ"
+    },
+    "ICPDuplicateFollowee" : {
+      "title" : "พบ Neuron ซ้ำกัน",
+      "description" : "มีการระบุนิวรอน {{id}} มากกว่า 1 ครั้ง ลบรายการซ้ำออก"
+    },
+    "ICPFolloweeIsSelf" : {
+      "title" : "Neuron ไม่สามารถติดตามตัวเองได้",
+      "description" : "{{id}} คือ ID ของ Neuron ตัวเอง ลบออกจากรายการ"
+    },
+    "ICPStartDissolvingNotAllowed" : {
+      "title" : "ไม่สามารถเริ่มยกเลิก Neuron นี้ได้",
+      "description" : "เริ่มยกเลิกได้เฉพาะ Neuron ที่ล็อกไว้เท่านั้น โปรดซิงค์ข้อมูลเพื่อดูสถานะล่าสุด"
+    },
+    "ICPStopDissolvingNotAllowed" : {
+      "title" : "ไม่สามารถหยุดการยกเลิก Neuron นี้ได้",
+      "description" : "เฉพาะ Neuron ที่กำลังยกเลิกเท่านั้นที่สามารถหยุดการยกเลิกได้ โปรดซิงค์ข้อมูลเพื่อดูสถานะล่าสุด"
+    },
     "ICPDisburseNotAllowed" : {
       "title" : "ยังไม่สามารถถอน Neuron นี้ได้",
       "description" : "จะสามารถถอน Neuron ได้เมื่อละลายโดยสมบูรณ์แล้ว และมียอดสเตคมากกว่าค่าธรรมเนียมเครือข่าย ซิงค์ Neuron ของคุณเพื่อดูสถานะปัจจุบัน"
@@ -8600,6 +8670,10 @@
     "ICPCallRejected" : {
       "title" : "คำขอไม่ได้รับการยอมรับ",
       "description" : "ระบบ Internet Computer ปฏิเสธคำขอก่อนจะเรียกใช้งาน จึงไม่มีอะไรเปลี่ยนแปลง โปรดลองอีกครั้ง {{reason}}"
+    },
+    "ICPNodeRefused" : {
+      "title" : "ไม่สามารถส่งคำขอได้",
+      "description" : "ระบบ Internet Computer ไม่รับคำขอนี้ จึงไม่มีการส่งข้อมูลและไม่มีการเปลี่ยนแปลงใด ๆ โปรดลองอีกครั้ง {{reason}}"
     },
     "ICPInvalidPercentage" : {
       "title" : "เปอร์เซ็นต์อยู่นอกช่วงที่กำหนด",
@@ -10121,7 +10195,6 @@
   },
   "history" : {
     "title" : "ประวัติธุรกรรม",
-    "cardScope" : "บัตร",
     "cardAssetScope" : "บัตร · {{assetName}}",
     "pending" : "ธุรกรรมที่ค้างอยู่",
     "pending_other" : "ธุรกรรมที่ค้างอยู่",
@@ -10258,6 +10331,7 @@
     "addAddressEntry" : {
       "title" : "ป้อนที่อยู่คริปโต",
       "addressPlaceholder" : "ที่อยู่คริปโต หรือ ENS",
+      "addressPlaceholderNoENS" : "ที่อยู่คริปโต",
       "confirmAddress" : "ดำเนินการตรวจสอบต่อ",
       "validatingAddress" : "กำลังตรวจสอบความถูกต้องของที่อยู่คริปโต",
       "validAddress" : "ที่อยู่คริปโตถูกต้อง",

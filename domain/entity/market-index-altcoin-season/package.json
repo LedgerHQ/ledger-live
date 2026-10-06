@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-market-index-altcoin-season",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Domain entity for the CMC Altcoin Season Index: canonical Zod schema and type",
   "main": "src/index.ts",
