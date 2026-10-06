@@ -37,7 +37,6 @@
   },
   "domain/entity/client-identity/src/ids/DatadogId.ts": {
     "exportDatadogIdForPersistence": ["domain/entity/client-identity/src/persistence.ts"],
-    "exportDatadogIdForSentry": ["apps/ledger-live-desktop/src/sentry/renderer.ts"],
     "exportDatadogIdForRumUser": [
       "apps/ledger-live-desktop/src/datadog/renderer.ts",
       "apps/ledger-live-mobile/src/index.tsx"

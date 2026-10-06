@@ -26,10 +26,6 @@ export class DatadogId {
     return this[DATADOG_ID_SYMBOL];
   }
 
-  exportDatadogIdForSentry(): string {
-    return this[DATADOG_ID_SYMBOL];
-  }
-
   exportDatadogIdForRumUser(): string {
     return this[DATADOG_ID_SYMBOL];
   }

@@ -304,7 +304,6 @@ export type Features = CurrencyFeatures & {
     }>;
   };
   llmNanoSDeprecation: DefaultFeature;
-  llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   supportDeviceApex: DefaultFeature;
   onboardingWidget: DefaultFeature;
