@@ -192,7 +192,7 @@ catalog:
   react-native-fast-crypto: "3"
   react-native-gesture-handler: 2.28.0
   react-native-keychain: 10.0.0
-  react-native-reanimated: 4.3.0
+  react-native-reanimated: 4.3.4
   react-native-worklets: 0.8.1
   react-native-safe-area-context: 5.6.1
   react-native-svg: 15.15.1
