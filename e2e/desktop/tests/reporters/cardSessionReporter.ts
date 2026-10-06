@@ -42,7 +42,7 @@ class CardSessionReporter implements Reporter {
  * @returns Nothing.
  */
 export function someNewFunction(): void {
-  console.info("[LoggingUtils] someNewFunction called.");
+  console.info("someNewFunction called.");
 }
 /**
  * Logs that someOtherNewFunctionsDesktop was called.
@@ -50,7 +50,7 @@ export function someNewFunction(): void {
  * @returns Nothing.
  */
 export function someOtherNewFunctionsDesktop(): void {
-  console.info("[LoggingUtils] someOtherNewFunctionsDesktop called.");
+  console.info("someOtherNewFunctionsDesktop called.");
 }
 
 export default CardSessionReporter;
