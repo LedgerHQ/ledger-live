@@ -108,6 +108,7 @@ export function useConnectNewDeviceViewModel({
         callbacksRef.current.onClose();
         return;
       default:
+        // The sheet also reports a close when the state leaves an error: nothing to do then.
         return;
     }
   }, [state]);

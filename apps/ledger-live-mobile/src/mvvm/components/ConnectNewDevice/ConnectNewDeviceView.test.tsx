@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@tests/test-renderer";
+import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   BaseConnectionErrorTypes,
@@ -133,40 +133,17 @@ describe("ConnectNewDeviceView", () => {
     expect(screen.getByText("Unknown error")).toBeVisible();
   });
 
-  it("should call onCloseErrorSheet when the user closes the error sheet", () => {
+  it("should call onCloseErrorSheet when the user closes the error sheet", async () => {
     // GIVEN
-    const { onCloseErrorSheet } = renderView({
+    const { user, onCloseErrorSheet } = renderView({
       type: ConnectNewDeviceUIStateTypes.UnknownError,
       error: new Error("boom"),
     });
 
     // WHEN
-    fireEvent(screen.getByTestId("connect-new-device-error-sheet"), "close");
+    await user.press(screen.getByRole("button", { name: "Close" }));
 
     // THEN
     expect(onCloseErrorSheet).toHaveBeenCalledTimes(1);
-  });
-
-  it("should not call onCloseErrorSheet when the error ends without the user closing the sheet", () => {
-    // GIVEN
-    const { rerender, onCloseErrorSheet } = renderView({
-      type: ConnectNewDeviceUIStateTypes.UnknownError,
-      error: new Error("boom"),
-    });
-
-    // WHEN
-    rerender(
-      <ConnectNewDeviceView
-        state={makeDiscoveringState()}
-        lastNonErrorState={makeDiscoveringState()}
-        platform="android"
-        onDeviceNotFound={jest.fn()}
-        onCloseErrorSheet={onCloseErrorSheet}
-      />,
-    );
-    fireEvent(screen.getByTestId("connect-new-device-error-sheet"), "close");
-
-    // THEN
-    expect(onCloseErrorSheet).not.toHaveBeenCalled();
   });
 });

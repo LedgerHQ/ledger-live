@@ -237,6 +237,21 @@ describe("useConnectNewDeviceViewModel", () => {
     expect(props.onClose).toHaveBeenCalledTimes(1);
   });
 
+  it("GIVEN a non-error state WHEN the error sheet reports a close THEN it does nothing", () => {
+    // GIVEN
+    const close = jest.fn();
+    const { result, props } = renderViewModel();
+    emit(makeDiscoveryErrorState(close));
+    emit(discoveringState);
+
+    // WHEN
+    act(() => result.current.onCloseErrorSheet());
+
+    // THEN
+    expect(close).not.toHaveBeenCalled();
+    expect(props.onClose).not.toHaveBeenCalled();
+  });
+
   it("should pass onDeviceNotFound through", () => {
     // GIVEN
     const { result, props } = renderViewModel();
