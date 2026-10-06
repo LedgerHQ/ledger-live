@@ -22,8 +22,19 @@ export function getRawTransactionType(tx: TransactionLike | undefined | null): s
   if (!tx) return undefined;
   if (tx.family === "solana") return (tx.model as { kind?: string } | undefined)?.kind;
   // Only the type: a comment payload's text is user-written.
-  if (tx.family === "ton") return (tx.payload as { type?: string } | undefined)?.type;
+  if (tx.family === "ton") return signedTonPayload(tx)?.type;
   return tx.mode as string | undefined;
+}
+
+type TonPayload = { type?: string; text?: unknown; isEncrypted?: boolean };
+
+// The signer sends a non-empty top-level comment in place of the payload.
+function signedTonPayload(tx: TransactionLike): TonPayload | undefined {
+  const comment = tx.comment as { isEncrypted?: boolean; text?: unknown } | undefined;
+  if (typeof comment?.text === "string" && comment.text.length > 0) {
+    return { type: "comment", text: comment.text, isEncrypted: comment.isEncrypted };
+  }
+  return tx.payload as TonPayload | undefined;
 }
 
 // Exact matches only, reported as fixed tokens so the user-written text never leaves.
@@ -34,9 +45,8 @@ const TON_POOL_COMMENTS: Record<string, string> = {
 /** A nominator-pool action sent as a text comment. Only meaningful inside a staking app. */
 export function getTonPoolAction(tx: TransactionLike | undefined | null): string | undefined {
   if (tx?.family !== "ton") return undefined;
-  const comment = tx.comment as { isEncrypted?: boolean; text?: unknown } | undefined;
-  const payload = tx.payload as { type?: string; text?: unknown } | undefined;
-  const text = payload?.type === "comment" ? payload.text : !comment?.isEncrypted && comment?.text;
+  const signed = signedTonPayload(tx);
+  const text = signed?.type === "comment" && !signed.isEncrypted ? signed.text : undefined;
   return typeof text === "string" && Object.hasOwn(TON_POOL_COMMENTS, text)
     ? TON_POOL_COMMENTS[text]
     : undefined;

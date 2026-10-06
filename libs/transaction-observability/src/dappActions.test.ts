@@ -845,7 +845,40 @@ describe("stakePrograms redirects", () => {
       const common = p2pStake(comment, "p2p-ton-staking");
 
       expect(common.earnTransactionType).toBeUndefined();
-      expect(common.rawTransactionType).toBeUndefined();
+      expect(common.rawTransactionType).toBe("comment");
+      expect(JSON.stringify(common)).not.toContain(comment.text);
+    });
+
+    it("classifies the signed comment, not an overridden withdrawal payload", () => {
+      const common = signEvent({
+        account: ton,
+        manifestId: "p2p-ton-staking",
+        transaction: {
+          family: "ton",
+          comment: { isEncrypted: false, text: "Deposit" },
+          payload: { type: "tonwhales-pool-withdraw" },
+        },
+      });
+
+      expect(common).toMatchObject({
+        earnTransactionType: "deposit",
+        rawTransactionType: "pool-comment-deposit",
+      });
+    });
+
+    it("claims nothing when a top-level comment overrides a Deposit payload", () => {
+      const common = signEvent({
+        account: ton,
+        manifestId: "p2p-ton-staking",
+        transaction: {
+          family: "ton",
+          comment: { isEncrypted: false, text: "rent" },
+          payload: { type: "comment", text: "Deposit" },
+        },
+      });
+
+      expect(common.earnTransactionType).toBeUndefined();
+      expect(common.rawTransactionType).toBe("comment");
     });
 
     it("reads the same keyword from a pre-built comment payload", () => {

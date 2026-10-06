@@ -104,7 +104,7 @@ export function stakingMethodOf(manifestId: string | undefined): StakingMethod |
   return entry(manifestId) ?? undefined;
 }
 
-/** The manifest ids this package knows about — read by the drift guard. */
+/** The manifest ids this package knows about. The drift guard checks only the Earn API's. */
 export function knownStakingApps(): string[] {
   return Object.keys(STAKING_METHODS);
 }
