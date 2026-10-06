@@ -44,7 +44,11 @@ class CardSessionReporter implements Reporter {
 export function someNewFunction(): void {
   console.info("[LoggingUtils] someNewFunction called.");
 }
-
+/**
+ * Logs that someOtherNewFunctionsDesktop was called.
+ *
+ * @returns Nothing.
+ */
 export function someOtherNewFunctionsDesktop(): void {
   console.info("[LoggingUtils] someOtherNewFunctionsDesktop called.");
 }
