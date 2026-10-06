@@ -42,7 +42,7 @@ describe("Xpub", () => {
     mockStorage.hasPendingTx.mockReturnValue(false);
     mockStorage.hasTx.mockReturnValue(true);
 
-    const result = await xpub.syncAddress(0, 0, false);
+    const result = await xpub.syncAddress(jest.fn(), 0, 0, false);
 
     expect(mockCrypto.getAddress).toHaveBeenCalledWith(DERIVATION_MODE, "test-xpub", 0, 0);
     expect(mockStorage.addAddress).toHaveBeenCalled();
@@ -54,20 +54,26 @@ describe("Xpub", () => {
   test("checkAddressesBlock", async () => {
     jest.spyOn(xpub, "syncAddress").mockResolvedValue(true);
 
-    const result = await xpub.checkAddressesBlock(0, 0, false);
+    const result = await xpub.checkAddressesBlock(jest.fn(), 0, 0, false);
 
     expect(xpub.syncAddress).toHaveBeenCalledTimes(xpub.GAP);
     expect(result).toBe(true);
   });
 
   test("checkAddressesBlock does not abort the block when one address throws InvalidXpub", async () => {
-    jest.spyOn(xpub, "syncAddress").mockImplementation(async (_account, index) => {
+    jest.spyOn(xpub, "syncAddress").mockImplementation(async (_logger, _account, index) => {
       if (index === 3) throw new InvalidXpub("undecodable xpub");
       return true;
     });
 
-    const result = await xpub.checkAddressesBlock(0, 0, false);
+    const logger = jest.fn();
+    const result = await xpub.checkAddressesBlock(logger, 0, 0, false);
 
+    expect(logger).toHaveBeenCalledWith(
+      "btcwallet",
+      "checkAddressesBlock: skipping block with undecodable xpub",
+      { account: 0, error: "undecodable xpub" },
+    );
     expect(xpub.syncAddress).toHaveBeenCalledTimes(xpub.GAP);
     expect(result).toBe(true);
   });
@@ -75,7 +81,7 @@ describe("Xpub", () => {
   test("checkAddressesBlock returns false when every address throws InvalidXpub", async () => {
     jest.spyOn(xpub, "syncAddress").mockRejectedValue(new InvalidXpub("undecodable xpub"));
 
-    const result = await xpub.checkAddressesBlock(0, 0, false);
+    const result = await xpub.checkAddressesBlock(jest.fn(), 0, 0, false);
 
     expect(xpub.syncAddress).toHaveBeenCalledTimes(xpub.GAP);
     expect(result).toBe(false);
@@ -84,16 +90,20 @@ describe("Xpub", () => {
   test("checkAddressesBlock still rejects for errors that are not InvalidXpub", async () => {
     jest.spyOn(xpub, "syncAddress").mockRejectedValue(new Error("explorer network error"));
 
-    await expect(xpub.checkAddressesBlock(0, 0, false)).rejects.toThrow("explorer network error");
+    await expect(xpub.checkAddressesBlock(jest.fn(), 0, 0, false)).rejects.toThrow(
+      "explorer network error",
+    );
   });
 
   test("checkAddressesBlock rejects for non-InvalidXpub errors even when an earlier address succeeds", async () => {
-    jest.spyOn(xpub, "syncAddress").mockImplementation(async (_account, index) => {
+    jest.spyOn(xpub, "syncAddress").mockImplementation(async (_logger, _account, index) => {
       if (index === 0) return true;
       throw new Error("explorer network error");
     });
 
-    await expect(xpub.checkAddressesBlock(0, 0, false)).rejects.toThrow("explorer network error");
+    await expect(xpub.checkAddressesBlock(jest.fn(), 0, 0, false)).rejects.toThrow(
+      "explorer network error",
+    );
   });
 
   test("syncAccount", async () => {
@@ -102,7 +112,7 @@ describe("Xpub", () => {
       .mockResolvedValueOnce(true)
       .mockResolvedValueOnce(false);
 
-    const result = await xpub.syncAccount(0, false);
+    const result = await xpub.syncAccount(jest.fn(), 0, false);
 
     expect(xpub.checkAddressesBlock).toHaveBeenCalled();
     expect(result).toBe(xpub.GAP);
@@ -113,7 +123,7 @@ describe("Xpub", () => {
     jest.spyOn(xpub, "syncAccount").mockResolvedValue(0);
     mockCrypto.getAddress.mockResolvedValue("fresh-address");
 
-    await xpub.sync();
+    await xpub.sync(jest.fn());
 
     expect(mockStorage.getHighestBlockHeightAndHash).toHaveBeenCalled();
     expect(xpub.syncAccount).toHaveBeenCalledTimes(2);
@@ -190,7 +200,7 @@ describe("Xpub", () => {
       },
     ]);
 
-    const tx = await xpub.buildTx({
+    const tx = await xpub.buildTx(jest.fn(), {
       destAddress: "destinationAddress",
       amount: new BigNumber(1000),
       feePerByte: 1,
@@ -230,7 +240,7 @@ describe("Xpub", () => {
       .mockRejectedValue(new Error("inner rbf failure"));
 
     await expect(
-      xpub.buildTx({
+      xpub.buildTx(jest.fn(), {
         destAddress: "destinationAddress",
         amount: new BigNumber(1000),
         feePerByte: 1,
@@ -275,7 +285,7 @@ describe("Xpub", () => {
       );
 
     const error = await xpub
-      .buildTx({
+      .buildTx(jest.fn(), {
         destAddress: "destinationAddress",
         amount: new BigNumber(1000),
         feePerByte: 1,

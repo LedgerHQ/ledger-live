@@ -24,7 +24,7 @@ import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 import { makeGetAccountShape, postSync } from "./sync";
 import { updateTransaction } from "./updateTransaction";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import formatters from "./transaction";
 import { getZCashClient } from "../logic/engineClient";
 
@@ -89,7 +89,7 @@ export function createBridges(signerContext: SignerContext, context: ZcashContex
       throw new Error("signRawOperation is not supported");
     },
     broadcast: buildBroadcast(context),
-    assignFromAccountRaw,
+    assignFromAccountRaw: makeAssignFromAccountRaw(context.logger),
     assignToAccountRaw,
     formatAccountSpecifics: () => "",
     getSerializedAddressParameters,

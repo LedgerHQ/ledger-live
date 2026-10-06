@@ -55,7 +55,12 @@ describe.each([
       makeUtxo("h4", 0, 50000, 103),
     ];
     const strat = new Strategy(crypto, DerivationModes.LEGACY, []);
-    const res = await strat.selectUnspentUtxosToUse(makeXpub(utxos), outputsFor(60000), 5);
+    const res = await strat.selectUnspentUtxosToUse(
+      jest.fn(),
+      makeXpub(utxos),
+      outputsFor(60000),
+      5,
+    );
 
     expect(res.unspentUtxos.length).toBeGreaterThan(0);
     expect(res.totalValue.gte(60000)).toBe(true);
@@ -67,7 +72,7 @@ describe.each([
     const utxos = [makeUtxo("h1", 0, 1000, 100), makeUtxo("h2", 0, 2000, 101)];
     const strat = new Strategy(crypto, DerivationModes.LEGACY, []);
     await expect(
-      strat.selectUnspentUtxosToUse(makeXpub(utxos), outputsFor(100000), 5),
+      strat.selectUnspentUtxosToUse(jest.fn(), makeXpub(utxos), outputsFor(100000), 5),
     ).rejects.toBeInstanceOf(NotEnoughBalance);
   });
 
@@ -76,7 +81,12 @@ describe.each([
     const strat = new Strategy(crypto, DerivationModes.LEGACY, [
       { hash: "excluded", outputIndex: 3 },
     ]);
-    const res = await strat.selectUnspentUtxosToUse(makeXpub(utxos), outputsFor(50000), 5);
+    const res = await strat.selectUnspentUtxosToUse(
+      jest.fn(),
+      makeXpub(utxos),
+      outputsFor(50000),
+      5,
+    );
     expect(res.unspentUtxos.some(u => u.output_hash === "excluded")).toBe(false);
   });
 });
@@ -89,6 +99,7 @@ describe("Merge vs DeepFirst selection order", () => {
 
   it("Merge prefers the smaller-value UTXO first", async () => {
     const res = await new Merge(crypto, DerivationModes.LEGACY, []).selectUnspentUtxosToUse(
+      jest.fn(),
       makeXpub(utxos),
       outputsFor(10000),
       1,
@@ -98,6 +109,7 @@ describe("Merge vs DeepFirst selection order", () => {
 
   it("DeepFirst prefers the oldest (lowest block_height) UTXO first", async () => {
     const res = await new DeepFirst(crypto, DerivationModes.LEGACY, []).selectUnspentUtxosToUse(
+      jest.fn(),
       makeXpub(utxos),
       outputsFor(10000),
       1,
@@ -114,6 +126,7 @@ describe("CoinSelect picking strategy", () => {
       makeUtxo("h3", 0, 60000, 102),
     ];
     const res = await new CoinSelect(crypto, DerivationModes.LEGACY, []).selectUnspentUtxosToUse(
+      jest.fn(),
       makeXpub(utxos),
       outputsFor(50000),
       5,
@@ -127,6 +140,7 @@ describe("CoinSelect picking strategy", () => {
     const utxos = [makeUtxo("h1", 0, 1000, 100)];
     await expect(
       new CoinSelect(crypto, DerivationModes.LEGACY, []).selectUnspentUtxosToUse(
+        jest.fn(),
         makeXpub(utxos),
         outputsFor(100000),
         5,

@@ -1,7 +1,7 @@
 import findLast from "lodash/findLast";
 import filter from "lodash/filter";
 import uniqBy from "lodash/uniqBy";
-import { log } from "@ledgerhq/logs";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import Base from "../crypto/base";
 import { Input, IStorage, Output, TX, Address, Block } from "./types";
 
@@ -96,7 +96,7 @@ class BitcoinLikeStorage implements IStorage {
    * add a list of txs to the current account
    * update related indexes and UTXOs of the account
    */
-  appendTxs(txs: TX[]): number {
+  appendTxs(logger: Logger, txs: TX[]): number {
     const lastLength = this.txs.length;
 
     txs.forEach(tx => {
@@ -107,12 +107,12 @@ class BitcoinLikeStorage implements IStorage {
       if (this.txs[this.primaryIndex[index]]) {
         const existing = this.txs[this.primaryIndex[index]];
         if (!existing.block && tx.block) {
-          log("bitcoin[storage]", `appendTxs, replacing with ${index}, pending->confirmed`);
+          logger("bitcoin[storage]", `appendTxs, replacing with ${index}, pending->confirmed`);
           // Replace pending with confirmed version
           this.txs[this.primaryIndex[index]] = tx;
           return;
         }
-        log("bitcoin[storage]", `Already stored ${index}, skipping`);
+        logger("bitcoin[storage]", `Already stored ${index}, skipping`);
         return;
       }
 
@@ -126,7 +126,7 @@ class BitcoinLikeStorage implements IStorage {
 
       tx.outputs.forEach(output => {
         if (output.address === tx.address) {
-          log(
+          logger(
             "bitcoin[storage]",
             `Adding unspent output: ${output.output_hash}:${output.output_index} -> ${tx.address}`,
           );
@@ -197,7 +197,7 @@ class BitcoinLikeStorage implements IStorage {
     );
   }
 
-  removeTxs(txsFilter: { account: number; index: number }): void {
+  removeTxs(logger: Logger, txsFilter: { account: number; index: number }): void {
     const newTxs: TX[] = [];
     this.primaryIndex = {};
     this.accountIndex = {};
@@ -220,7 +220,7 @@ class BitcoinLikeStorage implements IStorage {
 
   // We are a bit ugly because we can't rely undo unspentUTXO
   // So we clean the address and rebuild without the pendings
-  removePendingTxs(txsFilter: { account: number; index: number }): void {
+  removePendingTxs(logger: Logger, txsFilter: { account: number; index: number }): void {
     const newTxs: TX[] = [];
     const txsToReAdd: TX[] = [];
     this.primaryIndex = {};
@@ -245,7 +245,7 @@ class BitcoinLikeStorage implements IStorage {
 
     this.txs = newTxs;
     this.createAccountIndex();
-    this.appendTxs(txsToReAdd);
+    this.appendTxs(logger, txsToReAdd);
   }
 
   addAddress(key: string, address: string): void {
@@ -262,7 +262,7 @@ class BitcoinLikeStorage implements IStorage {
     };
   }
 
-  loadSync(data: { txs: TX[]; addressCache: Record<string, string> }) {
+  loadSync(logger: Logger, data: { txs: TX[]; addressCache: Record<string, string> }) {
     this.txs = [];
     this.primaryIndex = {};
     this.accountIndex = {};
@@ -274,7 +274,7 @@ class BitcoinLikeStorage implements IStorage {
         tx.id = tx.hash;
       }
     });
-    this.appendTxs(data.txs);
+    this.appendTxs(logger, data.txs);
     this.addressCache = data.addressCache;
     const addressCacheConverted: Record<string, Promise<string>> = Object.keys(
       this.addressCache,
@@ -304,8 +304,11 @@ class BitcoinLikeStorage implements IStorage {
   /**
    * load account data(txs, UTXOs, index...) from app.json
    */
-  async load(data: { txs: TX[]; addressCache: Record<string, string> }): Promise<void> {
-    return this.loadSync(data);
+  async load(
+    logger: Logger,
+    data: { txs: TX[]; addressCache: Record<string, string> },
+  ): Promise<void> {
+    return this.loadSync(logger, data);
   }
 
   private createAccountIndex() {

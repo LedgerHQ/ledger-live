@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { makeGetAccountShape, makePostSync } from "../synchronisation";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { assignToAccountRaw, makeAssignFromAccountRaw } from "../serialization";
 import { BitcoinAccount, Transaction, TransactionStatus } from "../types";
 import formatters from "../formatters";
 import { getTransactionStatus } from "../getTransactionStatus";
@@ -98,7 +98,7 @@ function buildAccountBridge(signerContext: SignerContext, context: BitcoinContex
   const accountBridge: BitcoinAccountBridge = {
     estimateMaxSpendable: async params => {
       await resolveAccountConfig(context, getMainAccount(params.account, params.parentAccount));
-      return estimateMaxSpendable(params);
+      return estimateMaxSpendable(context.logger, params);
     },
     createTransaction,
     prepareTransaction: async (account, transaction) =>
@@ -121,7 +121,7 @@ function buildAccountBridge(signerContext: SignerContext, context: BitcoinContex
     signOperation: buildSignOperation(signerContext, context),
     signRawOperation: buildSignRawOperation(signerContext, context.logger),
     broadcast: wrappedBroadcast,
-    assignFromAccountRaw,
+    assignFromAccountRaw: makeAssignFromAccountRaw(context.logger),
     assignToAccountRaw,
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     getSerializedAddressParameters,

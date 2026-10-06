@@ -17,6 +17,7 @@ import type {
 } from "../network/types";
 import { rehydrateOutput } from "../network/serialization/rehydrate";
 import { walletBtcCurrencyById, type ExplorerConfig } from "../walletBtcCurrency";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 // ── Transparent (bitcoinResources) serialization ────────────────────────
 //
@@ -71,11 +72,12 @@ export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw 
 // before first use (see bridge/explorer.ts), so a remote endpoint change is not frozen here.
 const UNBOUND_EXPLORER: ExplorerConfig = { explorer: { url: "" } };
 
-export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
+export function fromBitcoinResourcesRaw(logger: Logger, r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
     ...(r.walletAccount && {
       walletAccount: wallet.importFromSerializedAccountSync(
+        logger,
         r.walletAccount,
         walletBtcCurrencyById(r.walletAccount.params.currency, UNBOUND_EXPLORER),
       ),
@@ -183,14 +185,17 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
   }
 }
 
-export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
-  const zcashAccountRaw = accountRaw as ZcashAccountRaw;
-  if (zcashAccountRaw.bitcoinResources) {
-    (account as ZcashAccount).bitcoinResources = fromBitcoinResourcesRaw(
-      zcashAccountRaw.bitcoinResources,
-    );
-  }
-  if (zcashAccountRaw.privateInfo) {
-    (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashAccountRaw.privateInfo);
-  }
-}
+export const makeAssignFromAccountRaw =
+  (logger: Logger) =>
+  (accountRaw: AccountRaw, account: Account): void => {
+    const zcashAccountRaw = accountRaw as ZcashAccountRaw;
+    if (zcashAccountRaw.bitcoinResources) {
+      (account as ZcashAccount).bitcoinResources = fromBitcoinResourcesRaw(
+        logger,
+        zcashAccountRaw.bitcoinResources,
+      );
+    }
+    if (zcashAccountRaw.privateInfo) {
+      (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashAccountRaw.privateInfo);
+    }
+  };

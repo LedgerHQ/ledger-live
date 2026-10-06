@@ -76,9 +76,9 @@ test("passes manual 1 sat/vB through unchanged", async () => {
   const account = makeAccount();
   const tx = makeTx(1);
 
-  await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
+  await estimateMaxSpendable(jest.fn(), { account, parentAccount: undefined, transaction: tx });
 
-  const feeArg = estimateAccountMaxSpendable.mock.calls[0][1]; // number
+  const feeArg = estimateAccountMaxSpendable.mock.calls[0][2]; // number
   expect(feeArg).toBe(1);
 });
 
@@ -86,9 +86,9 @@ test("passes user fee already above floor through unchanged (user=3)", async () 
   const account = makeAccount();
   const tx = makeTx(3);
 
-  await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
+  await estimateMaxSpendable(jest.fn(), { account, parentAccount: undefined, transaction: tx });
 
-  const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
+  const feeArg = estimateAccountMaxSpendable.mock.calls[0][2];
   expect(feeArg).toBe(3);
 });
 
@@ -96,9 +96,9 @@ test("passes fractional fee through unchanged (user=1.2)", async () => {
   const account = makeAccount();
   const tx = makeTx(1.2);
 
-  await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
+  await estimateMaxSpendable(jest.fn(), { account, parentAccount: undefined, transaction: tx });
 
-  const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
+  const feeArg = estimateAccountMaxSpendable.mock.calls[0][2];
   expect(feeArg).toBe(1.2);
 });
 
@@ -107,9 +107,9 @@ test("ignores higher relay floor when not clamping (relay≈2, user=1 → still 
   const account = makeAccount();
   const tx = makeTx(1);
 
-  await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
+  await estimateMaxSpendable(jest.fn(), { account, parentAccount: undefined, transaction: tx });
 
-  const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
+  const feeArg = estimateAccountMaxSpendable.mock.calls[0][2];
   expect(feeArg).toBe(1);
 });
 
@@ -118,9 +118,9 @@ test("no clamp on explorer error (user=1 → 1)", async () => {
   const account = makeAccount();
   const tx = makeTx(1);
 
-  await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
+  await estimateMaxSpendable(jest.fn(), { account, parentAccount: undefined, transaction: tx });
 
-  const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
+  const feeArg = estimateAccountMaxSpendable.mock.calls[0][2];
   expect(feeArg).toBe(1);
 });
 
@@ -129,10 +129,10 @@ test("uses defaultFeePerByte from getAccountNetworkInfo when tx.feePerByte is mi
   const account = makeAccount();
   const tx = makeTx(undefined);
 
-  await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
+  await estimateMaxSpendable(jest.fn(), { account, parentAccount: undefined, transaction: tx });
 
   expect(getAccountNetworkInfo).toHaveBeenCalled();
-  const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
+  const feeArg = estimateAccountMaxSpendable.mock.calls[0][2];
   expect(feeArg).toBe(1);
 });
 
@@ -141,7 +141,11 @@ test("returns 0 when wallet estimator returns negative", async () => {
   const account = makeAccount();
   const tx = makeTx(2);
 
-  const res = await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
+  const res = await estimateMaxSpendable(jest.fn(), {
+    account,
+    parentAccount: undefined,
+    transaction: tx,
+  });
 
   expect(res.isEqualTo(0)).toBe(true);
 });

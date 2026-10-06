@@ -1,3 +1,5 @@
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
+
 export interface TX {
   id: string;
   hash?: string;
@@ -43,7 +45,7 @@ export interface Address {
 }
 
 export interface IStorage {
-  appendTxs(txs: TX[]): number;
+  appendTxs(logger: Logger, txs: TX[]): number;
   getAddressUnspentUtxos(address: Address): Output[];
   getLastConfirmedTxBlock(txFilter: { account: number; index: number }): Block | null;
   hasTx(txFilter: { account: number; index: number }): boolean;
@@ -53,11 +55,11 @@ export interface IStorage {
   getTx(address: string, txId: string): TX | undefined;
   getTxs(): TX[];
   getUniquesAddresses(addressesFilter: { account?: number; index?: number }): Address[];
-  removeTxs(txsFilter: { account: number; index: number }): void;
-  removePendingTxs(txsFilter: { account: number; index: number }): void;
+  removeTxs(logger: Logger, txsFilter: { account: number; index: number }): void;
+  removePendingTxs(logger: Logger, txsFilter: { account: number; index: number }): void;
   addAddress(key: string, address: string): void;
   export(): Promise<unknown>;
-  load(data: unknown): Promise<void>;
+  load(logger: Logger, data: unknown): Promise<void>;
   exportSync(): unknown;
-  loadSync(data: unknown): void;
+  loadSync(logger: Logger, data: unknown): void;
 }

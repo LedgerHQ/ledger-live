@@ -17932,9 +17932,6 @@ importers:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
-      '@ledgerhq/logs':
-        specifier: 'catalog:'
-        version: 6.19.0
       '@noble/curves':
         specifier: 'catalog:'
         version: 1.9.7
