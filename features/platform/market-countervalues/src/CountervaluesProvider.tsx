@@ -11,14 +11,8 @@ import { loadCountervalues, type RateSource } from "@domain/api-market-counterva
 import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import type { Unit } from "@domain/entity-currency-unit";
 import { BigNumber } from "bignumber.js";
-import React, {
-  ReactElement,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { ReactElement, useCallback, useContext, useEffect, useMemo } from "react";
+import { CountervaluesContext } from "./internals/CountervaluesContext";
 import { log } from "./internals/logger";
 import { useDebounce } from "./internals/useDebounce";
 
@@ -83,11 +77,6 @@ export type Props = {
   debounceDelay?: number;
   savedState?: CounterValuesStateRaw;
 };
-
-/**
- * Base Countervalues Context to use without polling logic.
- */
-export const CountervaluesContext = createContext<CountervaluesBridge | null>(null);
 
 function useCountervaluesBridgeContext() {
   const bridge = useContext(CountervaluesContext);

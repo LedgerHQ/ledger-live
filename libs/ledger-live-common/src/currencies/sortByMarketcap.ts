@@ -26,7 +26,7 @@ export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: st
 };
 
 /**
- * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function
+ * @deprecated the countervalues API query shares a single fetch of this data: use `useCurrenciesByMarketcap`, or read the ids with `useGetCounterValueIdsPolling` from `@features/platform-market-countervalues` and sort them with `sortCurrenciesByIds`
  */
 export const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(async () => {
   if (getEnv("MOCK_COUNTERVALUES")) {
@@ -40,7 +40,7 @@ export const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(async () 
 });
 
 /**
- * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function
+ * @deprecated the countervalues API query shares a single fetch of this data: use `useCurrenciesByMarketcap`, or read the ids with `useGetCounterValueIdsPolling` from `@features/platform-market-countervalues` and sort them with `sortCurrenciesByIds`
  */
 export const currenciesByMarketcap = <C extends Currency>(currencies: C[]): Promise<C[]> =>
   fetchMarketcapIds().then(

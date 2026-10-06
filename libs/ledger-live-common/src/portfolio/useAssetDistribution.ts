@@ -38,9 +38,6 @@ const emptyDistribution: AssetsDistribution = {
 
 /**
  * Fetches DADA-powered asset data and builds a cross-network asset distribution.
- *
- * Designed to be composed with `useDistribution` from `live-countervalues-react`
- * by passing the result as the `assetDistribution` parameter.
  */
 export function useAssetDistribution(opts: UseAssetDistributionOpts): AssetDistributionResult {
   const { accounts, to, product, version, skip = false, ...displayOpts } = opts;

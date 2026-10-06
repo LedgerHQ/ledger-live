@@ -58,7 +58,6 @@ shared-lib:
   - libs/exchange-module/**/*
   - libs/feature-flag-module/**/*
   - libs/ledger-services/**/*
-  - libs/live-countervalues-react/**/*
   - libs/live-dmk-shared/**/*
   - libs/live-dmk-speculos/**/*
   - libs/live-hooks/**/*
