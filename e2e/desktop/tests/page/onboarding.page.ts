@@ -1,9 +1,17 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 const MAX_PEDAGOGY_SCREENS = 10;
+const SELECTABLE_DEVICES = [
+  DeviceModelId.stax,
+  DeviceModelId.europa,
+  DeviceModelId.nanoS,
+  DeviceModelId.nanoSP,
+  DeviceModelId.nanoX,
+  DeviceModelId.apex,
+];
 
 type TutorialScreen =
   | "how-to-get-started"
@@ -24,6 +32,9 @@ type TutorialScreen =
 export class OnboardingPage extends AppPage {
   private readonly getStartedButton = this.page.getByRole("button", { name: "Get Started" });
   private readonly welcomeTitle = this.page.getByTestId("onbording-welcome-title");
+  private readonly acceptAnalyticsButton = this.page.getByTestId(
+    "analytics-opt-in-screen-accept-all",
+  );
   private readonly deviceTile = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-device-${device}`);
   private readonly setupNewDeviceOption = this.page.getByTestId("v3-onboarding-new-device");
@@ -60,9 +71,21 @@ export class OnboardingPage extends AppPage {
     await this.getStartedButton.click();
   }
 
+  @step("Accept analytics in the opt-in screen")
+  async acceptAnalytics() {
+    await this.acceptAnalyticsButton.click();
+  }
+
   @step("Expect the device selection screen")
   async expectDeviceSelectionScreen() {
     await expect(this.page).toHaveURL(/\/onboarding\/select-device$/);
+  }
+
+  @step("Expect a card for each selectable device")
+  async expectDeviceCards() {
+    for (const device of SELECTABLE_DEVICES) {
+      await expect(this.deviceContainer(device)).toBeVisible();
+    }
   }
 
   @step("Expect the use case screen")

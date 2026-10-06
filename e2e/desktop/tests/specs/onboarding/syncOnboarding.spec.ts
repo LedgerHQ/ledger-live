@@ -5,10 +5,14 @@ import {
   CHARON_STATUS,
   ONBOARDING_STEP,
 } from "@ledgerhq/live-e2e-shared/mockServer/onboardingFlags";
+import { FF_ANALYTICS_OPT_IN_SCREEN_V2 } from "tests/utils/featureFlagUtils";
+import { FRESH_INSTALL_SETTINGS } from "tests/utils/userdata";
 
 test.describe(`Onboarding (mock server)`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
+    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: false },
   });
 
@@ -21,6 +25,7 @@ test.describe(`Onboarding (mock server)`, () => {
     async ({ app, mockDevice, mockServer }) => {
       await app.onboarding.waitForLaunch();
       await app.onboarding.getStarted();
+      await app.onboarding.acceptAnalytics();
       await app.portfolio.startConnectDeviceFlow();
       await app.onboarding.selectDevice(mockDevice.modelId);
       await app.syncOnboarding.expectCompanionReached(mockDevice.modelId);
@@ -48,6 +53,8 @@ test.describe(`Onboarding (mock server)`, () => {
 test.describe(`Connect an already initialised device`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
+    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: true },
   });
 
@@ -60,6 +67,7 @@ test.describe(`Connect an already initialised device`, () => {
     async ({ app, mockDevice }) => {
       await app.onboarding.waitForLaunch();
       await app.onboarding.getStarted();
+      await app.onboarding.acceptAnalytics();
       await app.portfolio.startConnectDeviceFlow();
       await app.onboarding.selectDevice(mockDevice.modelId);
 
@@ -86,6 +94,7 @@ test.describe(`Connect an already initialised device`, () => {
 test.describe(`Restore a seed from a configured Ledger Live`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
+    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
     userdata: "1AccountBTC1AccountETH",
     mockDeviceParams: { onboarded: false },
   });
@@ -137,6 +146,8 @@ test.describe(`Restore a seed from a configured Ledger Live`, () => {
 test.describe(`Back up a restored seed with a Ledger Recovery Key`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
+    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: false },
   });
 
@@ -149,6 +160,7 @@ test.describe(`Back up a restored seed with a Ledger Recovery Key`, () => {
     async ({ app, mockDevice, mockServer }) => {
       await app.onboarding.waitForLaunch();
       await app.onboarding.getStarted();
+      await app.onboarding.acceptAnalytics();
       await app.portfolio.startConnectDeviceFlow();
       await app.onboarding.selectDevice(mockDevice.modelId);
       await app.syncOnboarding.expectCompanionReached(mockDevice.modelId);
@@ -184,6 +196,8 @@ test.describe(`Back up a restored seed with a Ledger Recovery Key`, () => {
 test.describe(`Restore a seed from a Ledger Recovery Key`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
+    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: false },
   });
 
@@ -196,6 +210,7 @@ test.describe(`Restore a seed from a Ledger Recovery Key`, () => {
     async ({ app, mockDevice, mockServer }) => {
       await app.onboarding.waitForLaunch();
       await app.onboarding.getStarted();
+      await app.onboarding.acceptAnalytics();
       await app.portfolio.startConnectDeviceFlow();
       await app.onboarding.selectDevice(mockDevice.modelId);
       await app.syncOnboarding.expectCompanionReached(mockDevice.modelId);
@@ -229,6 +244,8 @@ test.describe(`Restore a seed from a Ledger Recovery Key`, () => {
 test.describe(`Back up a newly created seed with a Ledger Recovery Key`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
+    featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: false },
   });
 
@@ -241,6 +258,7 @@ test.describe(`Back up a newly created seed with a Ledger Recovery Key`, () => {
     async ({ app, mockDevice, mockServer }) => {
       await app.onboarding.waitForLaunch();
       await app.onboarding.getStarted();
+      await app.onboarding.acceptAnalytics();
       await app.portfolio.startConnectDeviceFlow();
       await app.onboarding.selectDevice(mockDevice.modelId);
       await app.syncOnboarding.expectCompanionReached(mockDevice.modelId);

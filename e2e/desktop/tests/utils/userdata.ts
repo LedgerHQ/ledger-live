@@ -5,6 +5,9 @@ const getUserdata = async (userdataFile: string) => {
   return JSON.parse(jsonFile);
 };
 
+/** A fresh install has not seen the analytics opt-in screen, so Get started opens it. */
+export const FRESH_INSTALL_SETTINGS = { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: false };
+
 const POLL_INTERVAL_MS = 200;
 const DEFAULT_TIMEOUT_MS = 10000;
 

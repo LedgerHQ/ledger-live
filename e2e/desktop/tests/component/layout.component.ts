@@ -54,6 +54,17 @@ export class Layout extends Component {
     }
   }
 
+  /** The topbar only offers a sync action once the wallet holds an account. */
+  @step("Expect no account sync to be offered")
+  async expectSyncButtonHidden() {
+    await expect(this.topbarSynchronizeButton).toBeHidden();
+  }
+
+  @step("Expect no render error")
+  async expectNoRenderError() {
+    await expect(this.renderError).toBeHidden();
+  }
+
   @step("Wait for accounts sync to be finished")
   async waitForSyncButtonToBeEnabled(options?: SyncWaitOptions) {
     await expect(this.topbarSynchronizeButton).not.toHaveAttribute("disabled", {
