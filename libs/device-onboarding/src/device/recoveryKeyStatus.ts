@@ -49,10 +49,16 @@ export function readRecoveryKeyStatus(
   const field = recoveryKeyField(data);
 
   if (field === null || field.length === 0) {
-    return null;
+    return RecoveryKeyStatus.Unknown;
   }
 
-  return statusFromBits.get(field[0] & 0x0f) ?? null;
+  const bits = field[0] & 0x0f;
+
+  if (bits === 0x0) {
+    return RecoveryKeyStatus.None;
+  }
+
+  return statusFromBits.get(bits) ?? RecoveryKeyStatus.Unknown;
 }
 
 const recoveryKeyStatuses = new Set<string>(Object.values(RecoveryKeyStatus));

@@ -964,6 +964,20 @@ describe("device setup", () => {
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
+  it("enters the Recovery Key backup when the device is already there", async () => {
+    const { actor } = await start(
+      {
+        osVersion: [os({ ...seeded, recoveryKeyStatus: RecoveryKeyStatus.Choice })],
+        ...passingChecks,
+      },
+      { offerSync: true },
+    );
+
+    expect(actor.getSnapshot().status).not.toBe("done");
+    expect(stateOf(actor)).toBe("backupRecoveryKey");
+    actor.stop();
+  });
+
   it("keeps a rebooted Recovery Key backup instead of starting onboarding over", async () => {
     const { actor } = await enterSetup();
 
@@ -972,6 +986,51 @@ describe("device setup", () => {
       stepChanged(OnboardingStep.WelcomeScreen1, {
         isOnboarded: true,
         recoveryKeyStatus: RecoveryKeyStatus.Running,
+      }),
+    );
+
+    expect(actor.getSnapshot().status).not.toBe("done");
+    expect(stateOf(actor)).toBe("backupRecoveryKey");
+    actor.stop();
+  });
+
+  it.each([RecoveryKeyStatus.Ready, RecoveryKeyStatus.Rejected])(
+    "finishes a rebooted Recovery Key backup once it is %s",
+    async status => {
+      const { actor } = await enterSetup();
+
+      actor.send(stepChanged(OnboardingStep.NewDevice));
+      actor.send(
+        stepChanged(OnboardingStep.WelcomeScreen1, {
+          isOnboarded: true,
+          recoveryKeyStatus: RecoveryKeyStatus.Running,
+        }),
+      );
+      actor.send(
+        stepChanged(OnboardingStep.WelcomeScreen1, {
+          isOnboarded: true,
+          recoveryKeyStatus: status,
+        }),
+      );
+
+      expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    },
+  );
+
+  it("does not finish while the Recovery Key flag cannot be read", async () => {
+    const { actor } = await enterSetup();
+
+    actor.send(stepChanged(OnboardingStep.NewDevice));
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Choice,
+      }),
+    );
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Unknown,
       }),
     );
 

@@ -15,9 +15,12 @@ import {
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
 import { isTouchscreen, requiresLegacyFlow } from "./rules";
 import {
+  isOnRecoveryKeyScreen,
+  isRecoveryKeyBackupFinished,
   isRecoveryKeyBackupInProgress,
   isWelcomeStep,
   OnboardingStep,
+  RecoveryKeyStatus,
   type DeviceOnboardingContext,
   type DeviceOnboardingInput,
   type DeviceOnboardingOutput,
@@ -80,16 +83,19 @@ export const deviceOnboardingMachine = setup({
     deviceRestarted: ({ context, event }) =>
       event.type === "STEP_CHANGED" &&
       isWelcomeStep(event.state.currentOnboardingStep) &&
+      !isOnRecoveryKeyScreen(event.state) &&
       context.currentSetupStep !== null,
     stepBackupRecoveryKey: ({ event }) =>
       event.type === "STEP_CHANGED" &&
-      (event.state.currentOnboardingStep === OnboardingStep.Ready ||
-        event.state.currentOnboardingStep === OnboardingStep.WelcomeScreen1) &&
+      isOnRecoveryKeyScreen(event.state) &&
       isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus),
     deviceIsReady: ({ event }) =>
       event.type === "STEP_CHANGED" &&
-      event.state.currentOnboardingStep === OnboardingStep.Ready &&
-      !isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus),
+      event.state.recoveryKeyStatus !== RecoveryKeyStatus.Unknown &&
+      !isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus) &&
+      (event.state.currentOnboardingStep === OnboardingStep.Ready ||
+        (isOnRecoveryKeyScreen(event.state) &&
+          isRecoveryKeyBackupFinished(event.state.recoveryKeyStatus))),
     stepNaming: stepIs(OnboardingStep.ChooseName),
     stepPin: stepIs(OnboardingStep.Pin),
     stepSetupChoice: stepIs(OnboardingStep.SetupChoice),

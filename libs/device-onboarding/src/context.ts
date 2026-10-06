@@ -1,5 +1,6 @@
 import { assign } from "xstate";
 import {
+  isRecoveryKeyBackupInProgress,
   isSetupStep,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
@@ -62,7 +63,9 @@ export const contextActions = {
     return {
       lastDeviceState: event.state,
       isOnboarded: event.state.isOnboarded,
-      onboardedOnEntry: context.onboardedOnEntry ?? event.state.isOnboarded,
+      onboardedOnEntry:
+        context.onboardedOnEntry ??
+        (event.state.isOnboarded && !isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus)),
       firmwareVersion: event.firmwareVersion,
     };
   }),

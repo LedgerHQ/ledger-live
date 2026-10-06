@@ -30,6 +30,8 @@ export const OnboardingStep = {
 export type OnboardingStep = (typeof OnboardingStep)[keyof typeof OnboardingStep];
 
 export const RecoveryKeyStatus = {
+  None: "none",
+  Unknown: "unknown",
   Rejected: "rejected",
   Choice: "choice",
   Running: "running",
@@ -47,6 +49,16 @@ const recoveryKeyBackupInProgress = new Set<RecoveryKeyStatus>([
 
 export function isRecoveryKeyBackupInProgress(status: RecoveryKeyStatus | null): boolean {
   return status !== null && recoveryKeyBackupInProgress.has(status);
+}
+
+const recoveryKeyBackupFinished = new Set<RecoveryKeyStatus>([
+  RecoveryKeyStatus.None,
+  RecoveryKeyStatus.Rejected,
+  RecoveryKeyStatus.Ready,
+]);
+
+export function isRecoveryKeyBackupFinished(status: RecoveryKeyStatus | null): boolean {
+  return status !== null && recoveryKeyBackupFinished.has(status);
 }
 
 const welcomeSteps = new Set<OnboardingStep>([
@@ -95,6 +107,19 @@ export type DeviceOnboardingState = {
   seedPhraseWordCount: SeedPhraseWordCount;
   recoveryKeyStatus: RecoveryKeyStatus | null;
 };
+
+const recoveryKeyScreenSteps = new Set<OnboardingStep>([
+  OnboardingStep.Ready,
+  OnboardingStep.WelcomeScreen1,
+]);
+
+export function isOnRecoveryKeyScreen(state: DeviceOnboardingState): boolean {
+  return (
+    state.isOnboarded &&
+    state.recoveryKeyStatus !== null &&
+    recoveryKeyScreenSteps.has(state.currentOnboardingStep)
+  );
+}
 
 export type OnboardingEvent =
   | { type: "SESSION_READY" }
