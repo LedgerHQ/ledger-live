@@ -135,6 +135,16 @@ export const FF_STAKE_PROGRAMS_MODAL = {
   },
 } satisfies PartialFeatures;
 
+// The earn-live-app routes deposits to /v2/{os}/deposit only when swapToEarn is enabled, so
+// deposit specs pin it explicitly instead of inheriting the Remote Config value.
+export const FF_SWAP_TO_EARN_ENABLED = {
+  swapToEarn: { enabled: true },
+} satisfies PartialFeatures;
+
+export const FF_SWAP_TO_EARN_DISABLED = {
+  swapToEarn: { enabled: false },
+} satisfies PartialFeatures;
+
 // Mina staking is unreleased, so the currency is absent from the remote stakePrograms list. The
 // account header only keeps a "Stake" action when getCanStakeUsingLedgerLive is true, so without
 // this the Earn button never renders.
