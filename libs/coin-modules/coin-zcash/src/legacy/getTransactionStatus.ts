@@ -35,7 +35,7 @@ export const buildLegacyGetTransactionStatus =
     if (!recipientError) {
       const walletAccount = await resolveWalletAccount(context, account);
       try {
-        const { txInfo } = await buildLegacyTransaction(walletAccount, transaction);
+        const { txInfo } = await buildLegacyTransaction(context.logger, walletAccount, transaction);
         estimatedFees = new BigNumber(txInfo.fee);
         const sumOfInputs = txInfo.inputs.reduce(
           (sum, input) => sum.plus(input.value),

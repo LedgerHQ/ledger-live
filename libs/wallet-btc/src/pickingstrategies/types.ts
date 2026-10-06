@@ -3,6 +3,7 @@ import { OutputInfo } from "..";
 import { ICrypto } from "../crypto/types";
 import { Output } from "../storage/types";
 import Xpub from "../xpub";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 export abstract class PickingStrategy {
   crypto: ICrypto;
@@ -32,6 +33,7 @@ export abstract class PickingStrategy {
    * returns the unspent UTXOs to use as input for the transaction
    */
   abstract selectUnspentUtxosToUse(
+    logger: Logger,
     xpub: Xpub,
     outputs: OutputInfo[],
     feePerByte: number,

@@ -3,7 +3,7 @@ import BitcoinLikeStorage from "@ledgerhq/wallet-btc/storage/index";
 describe("testing transaction data load and export", () => {
   it("testing transaction data load and export", async () => {
     const storage = new BitcoinLikeStorage();
-    storage.appendTxs([
+    storage.appendTxs(jest.fn(), [
       {
         id: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
         inputs: [],
@@ -89,7 +89,7 @@ describe("testing transaction data load and export", () => {
     */
     expect(Object.keys(accountIndexCopy["0-0"]).length).toEqual(2);
     const txs = (await storage.export()).txs;
-    storage.load({ txs: txs, addressCache: {} });
+    storage.load(jest.fn(), { txs: txs, addressCache: {} });
     expect(storage.primaryIndex).toMatchObject(primaryIndexCopy);
     expect(storage.accountIndex).toMatchObject(accountIndexCopy);
   }, 30000);

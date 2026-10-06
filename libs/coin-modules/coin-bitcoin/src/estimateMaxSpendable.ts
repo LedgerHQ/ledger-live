@@ -5,17 +5,21 @@ import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import wallet from "@ledgerhq/wallet-btc/index";
 import { getWalletAccount } from "./getWalletAccount";
 import type { Transaction } from "./types";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 /**
  * Returns the maximum possible amount for transaction
  *
  * @param {Object} param - the account, parentAccount and transaction
  */
-export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
-  account,
-  parentAccount,
-  transaction,
-}) => {
+export const estimateMaxSpendable = async (
+  logger: Logger,
+  {
+    account,
+    parentAccount,
+    transaction,
+  }: Parameters<AccountBridge<Transaction>["estimateMaxSpendable"]>[0],
+): ReturnType<AccountBridge<Transaction>["estimateMaxSpendable"]> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const walletAccount = getWalletAccount(mainAccount);
   let feePerByte = transaction?.feePerByte;
@@ -25,6 +29,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   }
 
   const maxSpendable = await wallet.estimateAccountMaxSpendable(
+    logger,
     walletAccount,
     feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     transaction?.utxoStrategy?.excludeUTXOs || [],

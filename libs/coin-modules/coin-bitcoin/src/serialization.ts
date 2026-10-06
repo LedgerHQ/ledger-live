@@ -12,6 +12,7 @@ import type {
 import wallet from "@ledgerhq/wallet-btc/index";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { walletBtcCurrencyById, type ExplorerConfig } from "./walletBtcCurrency";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 export function toBitcoinInputRaw({
   address,
@@ -76,12 +77,13 @@ export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw 
 // use (see explorer.ts), so a remote endpoint change is not frozen here.
 const UNBOUND_EXPLORER: ExplorerConfig = { explorer: { url: "" } };
 
-export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
+export function fromBitcoinResourcesRaw(logger: Logger, r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
     walletAccount:
       r.walletAccount &&
       wallet.importFromSerializedAccountSync(
+        logger,
         r.walletAccount,
         walletBtcCurrencyById(r.walletAccount.params.currency, UNBOUND_EXPLORER),
       ),
@@ -97,8 +99,13 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
   }
 }
 
-export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
-  const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw).bitcoinResources;
-  if (bitcoinResourcesRaw)
-    (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(bitcoinResourcesRaw);
-}
+export const makeAssignFromAccountRaw =
+  (logger: Logger) =>
+  (accountRaw: AccountRaw, account: Account): void => {
+    const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw).bitcoinResources;
+    if (bitcoinResourcesRaw)
+      (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
+        logger,
+        bitcoinResourcesRaw,
+      );
+  };

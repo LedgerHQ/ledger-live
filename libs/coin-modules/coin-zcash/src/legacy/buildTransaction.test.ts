@@ -6,6 +6,7 @@ import { bindExplorer } from "../bridge/explorer";
 import { getWalletAccount } from "../bridge/getWalletAccount";
 import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
 
+const logger = jest.fn();
 const estimateAccountMaxSpendable = jest.fn();
 
 jest.mock("../bridge/explorer", () => ({
@@ -59,9 +60,10 @@ describe("resolveWalletAccount", () => {
 
 describe("buildLegacyTransaction", () => {
   it("builds a final, non-replaceable send to the recipient with change on the change chain", async () => {
-    await buildLegacyTransaction(walletAccount, tx({}));
+    await buildLegacyTransaction(logger, walletAccount, tx({}));
 
     expect(buildTx).toHaveBeenCalledWith(
+      logger,
       expect.objectContaining({
         destAddress: T1,
         amount: new BigNumber(50_000),
@@ -75,10 +77,11 @@ describe("buildLegacyTransaction", () => {
   it("sends what wallet-btc can spend at that rate when sending everything", async () => {
     estimateAccountMaxSpendable.mockResolvedValue(new BigNumber(140_000));
 
-    await buildLegacyTransaction(walletAccount, tx({ useAllAmount: true }));
+    await buildLegacyTransaction(logger, walletAccount, tx({ useAllAmount: true }));
 
-    expect(estimateAccountMaxSpendable).toHaveBeenCalledWith(walletAccount, 40, [], [T1]);
+    expect(estimateAccountMaxSpendable).toHaveBeenCalledWith(logger, walletAccount, 40, [], [T1]);
     expect(buildTx).toHaveBeenCalledWith(
+      logger,
       expect.objectContaining({ amount: new BigNumber(140_000) }),
     );
   });

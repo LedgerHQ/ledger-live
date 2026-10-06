@@ -39,7 +39,7 @@ export const buildLegacyPrepareTransaction =
 
     const walletAccount = await resolveWalletAccount(context, account);
     try {
-      const { txInfo } = await buildLegacyTransaction(walletAccount, transaction);
+      const { txInfo } = await buildLegacyTransaction(context.logger, walletAccount, transaction);
       const change = txInfo.outputs.filter(output => output.isChange);
       const recipientOutput = txInfo.outputs.find(output => !output.isChange);
       return {

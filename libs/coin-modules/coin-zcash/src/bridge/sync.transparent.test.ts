@@ -270,7 +270,11 @@ describe("performTransparentSync", () => {
       },
     ]);
     // Scanned up to the tip the explorer reported, on the account the shape carries.
-    expect(syncAccount).toHaveBeenCalledWith(shape.bitcoinResources?.walletAccount, 3_425_900);
+    expect(syncAccount).toHaveBeenCalledWith(
+      expect.any(Function),
+      shape.bitcoinResources?.walletAccount,
+      3_425_900,
+    );
   });
 
   it("derives an incoming operation crediting the account", async () => {

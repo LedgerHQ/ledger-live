@@ -22,6 +22,7 @@ export const buildLegacyEstimateMaxSpendable =
     );
 
     const maxSpendable = await wallet.estimateAccountMaxSpendable(
+      context.logger,
       walletAccount,
       feePerByte.toNumber(), //!\ wallet-btc handles fees as a JS number
       [],
