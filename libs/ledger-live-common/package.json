@@ -281,6 +281,7 @@
     "@domain/entity-interest-rate": "workspace:^",
     "@domain/entity-market-countervalues": "workspace:*",
     "@domain/entity-recent-addresses": "workspace:^",
+    "@features/platform-account-discovery": "workspace:^",
     "@features/platform-account-source-coin-module": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-device-intent": "workspace:^",

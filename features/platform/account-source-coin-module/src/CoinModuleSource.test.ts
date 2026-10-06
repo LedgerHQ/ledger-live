@@ -248,4 +248,51 @@ describe("CoinModuleSource", () => {
       expect((await makeSource(coinModule).operations(target, undefined)).complete).toBe(true);
     });
   });
+  describe("exists", () => {
+    const noOperations = async () => ({ items: [], next: undefined });
+    const nativeBalance = (value: bigint) => async () => [{ asset: { type: "native" }, value }];
+
+    it("says yes on the first operation, without reading the balance", async () => {
+      const coinModule = makeCoinModule();
+      expect(await makeSource(coinModule).exists(target)).toBe(true);
+      expect(coinModule.listOperations).toHaveBeenCalledWith("0xabc", { limit: 1 });
+      expect(coinModule.getBalance).not.toHaveBeenCalled();
+    });
+
+    it("says yes for an account with a balance and no history", async () => {
+      const coinModule = makeCoinModule({
+        listOperations: jest.fn(noOperations),
+        getBalance: jest.fn(nativeBalance(5n)),
+      });
+      expect(await makeSource(coinModule).exists(target)).toBe(true);
+    });
+
+    it("says no for an account with neither", async () => {
+      const coinModule = makeCoinModule({
+        listOperations: jest.fn(noOperations),
+        getBalance: jest.fn(nativeBalance(0n)),
+      });
+      expect(await makeSource(coinModule).exists(target)).toBe(false);
+    });
+
+    it("is supported for the families the source serves for any datum", () => {
+      const source = makeSource(makeCoinModule(), {
+        families: { balance: () => [], operations: () => ["evm"] },
+      });
+      expect(source.supportsExists(descriptor)).toBe(true);
+      expect(
+        makeSource(makeCoinModule(), { families: { balance: () => [] } }).supportsExists(
+          descriptor,
+        ),
+      ).toBe(false);
+    });
+
+    it("does not start when already aborted", async () => {
+      const coinModule = makeCoinModule();
+      const controller = new AbortController();
+      controller.abort();
+      await expect(makeSource(coinModule).exists(target, controller.signal)).rejects.toThrow();
+      expect(coinModule.listOperations).not.toHaveBeenCalled();
+    });
+  });
 });

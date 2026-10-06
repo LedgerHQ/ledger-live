@@ -29,6 +29,13 @@ export type AccountDataBatchReader<K extends AccountDatum> = (
 ) => Promise<PromiseSettledResult<AccountDataResult<K>>[]>;
 
 /**
+ * Whether an account has any history on chain: an operation or a balance. Cheaper than a read when
+ * the source has a dedicated way to ask (an index lookup, a head request): that is the point of
+ * having it apart from the readers.
+ */
+export type AccountExistence = (target: AccountTarget, signal?: AbortSignal) => Promise<boolean>;
+
+/**
  * What a source implements: for each datum of `AccountData`, a single read named after it, a batch
  * read under `batch`, or both. A source serves what it can and leaves the rest out; the router falls
  * through to the next one, and makes up whichever of single or batch the source does not have.
@@ -44,6 +51,10 @@ export type AccountDataSource = {
   readonly maxBatchSize?: number;
   /** The most calls in flight on this source at once. Overrides the router's default. */
   readonly concurrency?: number;
+  /** Whether this source can answer `exists` for this account. Pure, from the descriptor alone. */
+  supportsExists?(descriptor: AccountDescriptor): boolean;
+  /** The existence predicate, called with the source as `this`. See `AccountExistence`. */
+  readonly exists?: AccountExistence;
   /** Batch readers, called with the source as `this`. */
   readonly batch?: { readonly [K in AccountDatum]?: AccountDataBatchReader<K> };
 } & { readonly [K in AccountDatum]?: AccountDataReader<K> };

@@ -27,7 +27,17 @@ export type AccountDataRead<K extends AccountDatum> = {
   sourceId: string;
 };
 
+export type AccountExistenceRead = { exists: boolean; sourceId: string };
+
 export type AccountDataRouter = {
+  /**
+   * Whether the account has any history, asked to the first source that can say. Throws
+   * `NoAccountSourceError` when none can.
+   */
+  exists(
+    descriptor: AccountDescriptor,
+    options?: AccountDataReadOptions,
+  ): Promise<AccountExistenceRead>;
   /** One account. Reads issued in the same tick are merged into one batch per source. */
   read<K extends AccountDatum>(
     datum: K,
@@ -298,6 +308,24 @@ export function createAccountDataRouter(
   }
 
   return {
+    async exists(descriptor, { signal, sourceId } = {}) {
+      if (signal?.aborted) throw abortError();
+      const source = ranked.find(
+        candidate =>
+          (sourceId === undefined || candidate.id === sourceId) &&
+          typeof candidate.exists === "function" &&
+          (candidate.supportsExists?.(descriptor) ?? true),
+      );
+      const accountId = computeAccountId(descriptor);
+      const check = source?.exists;
+      if (!source || !check) throw new NoAccountSourceError(accountId, "exists", sourceId);
+      const exists = await limiterOf(source)(
+        () => check.call(source, { accountId, descriptor }, signal),
+        signal,
+      );
+      return { exists, sourceId: source.id };
+    },
+
     async read(datum, descriptor, query, options = {}) {
       if (options.signal?.aborted) throw abortError();
       if (!coalesce) {

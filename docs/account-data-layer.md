@@ -23,6 +23,15 @@ An account is identified by an `AccountDescriptor` from [`@domain/entity-account
 - **Identity.** Descriptors are compared, deduplicated and hashed through `accountDescriptorKey`, which is canonical (`'` or `h` in the path, EVM address case, network case). `serializeAccountDescriptor` gives the string as given.
 - The only inputs besides the descriptor are static tables: network to currency id, and (currency, path) to (derivation mode, index), in `libs/ledger-live-common/src/account-data/legacyAccount.ts`.
 
+## Discovery
+
+[`@features/platform-account-discovery`](../features/platform/account-discovery) emits the accounts of a
+currency as a stream of descriptors, following the legacy scan rules held as a table. It asks the
+sources one question the readers do not answer: `exists(descriptor)`, whether the account has any
+history. `AccountDataSource` gets an optional `exists` and `supportsExists`, and the router routes
+`exists` like a read. The scan itself needs a device, injected as `derive`: the
+[Account Discovery devtool](../devtools/account-discovery) on desktop runs it on the connected one.
+
 ## The pieces
 
 | Package | Holds | Knows |

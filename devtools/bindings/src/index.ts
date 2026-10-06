@@ -12,3 +12,5 @@ export { useAccountBalancesToolProps } from "./useAccountBalancesToolProps";
 export type { AccountBalancesInput } from "./useAccountBalancesToolProps";
 export { useAccountOperationsToolProps } from "./useAccountOperationsToolProps";
 export type { AccountOperationsInput } from "./useAccountOperationsToolProps";
+export { useAccountDiscoveryToolProps } from "./useAccountDiscoveryToolProps";
+export type { AccountDiscoveryInputs } from "./useAccountDiscoveryToolProps";

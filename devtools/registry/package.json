@@ -25,6 +25,7 @@
     "@devtools/cloud-sync": "workspace:*",
     "@devtools/device-onboarding": "workspace:*",
     "@devtools/account-balances": "workspace:*",
+    "@devtools/account-discovery": "workspace:*",
     "@devtools/account-operations": "workspace:*"
   },
   "peerDependencies": {

@@ -95,6 +95,23 @@ export class CoinModuleSource implements AccountDataSource {
     return false;
   }
 
+  /** `supports` for any datum this source serves: the same coin module answers the question. */
+  supportsExists(descriptor: AccountDescriptor): boolean {
+    return this.supports(descriptor, "operations") || this.supports(descriptor, "balance");
+  }
+
+  /** One operation is enough to say yes; a non-zero balance covers an account with no history. */
+  async exists(target: AccountTarget, signal?: AbortSignal): Promise<boolean> {
+    throwIfAborted(signal);
+    const { currencyId, address } = coinModuleInputOf(target);
+    const coinModule = await this.config.loadCoinModule(currencyId);
+    const page = await coinModule.listOperations(address, { limit: 1 });
+    if (page.items.length > 0) return true;
+    throwIfAborted(signal);
+    const balances = await coinModule.getBalance(address);
+    return balances.some(balance => balance.value > 0n);
+  }
+
   async balance(
     target: AccountTarget,
     _query: undefined,

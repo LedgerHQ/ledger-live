@@ -18,9 +18,11 @@ import {
   useCloudSyncDevToolProps,
   useAccountBalancesToolProps,
   useAccountOperationsToolProps,
+  useAccountDiscoveryToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useAccountDataToolInputs } from "./useAccountDataToolInputs";
+import { useAccountDiscoveryToolInputs } from "./useAccountDiscoveryToolInputs";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
 const APPLICATION_ID = 16;
@@ -36,6 +38,7 @@ export function useDevToolsScreenViewModel() {
   const accountOperationsToolProps = useAccountOperationsToolProps(
     useAccountDataToolInputs("operations"),
   );
+  const accountDiscoveryToolProps = useAccountDiscoveryToolProps(useAccountDiscoveryToolInputs());
   const { wire, wireState } = useDevToolsRelay();
 
   const createTrustchainSdk = useCallback<Parameters<typeof useTrustchainDevToolProps>[0]>(
@@ -97,6 +100,7 @@ export function useDevToolsScreenViewModel() {
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "account-balances", config: accountBalancesToolProps },
       { id: "account-operations", config: accountOperationsToolProps },
+      { id: "account-discovery", config: accountDiscoveryToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -106,6 +110,7 @@ export function useDevToolsScreenViewModel() {
       cloudSyncToolProps,
       accountBalancesToolProps,
       accountOperationsToolProps,
+      accountDiscoveryToolProps,
     ],
   );
 
