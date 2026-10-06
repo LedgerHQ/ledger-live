@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { CHANNELS, type Bootstrap, type LedgerBridge } from "~/bridge/contract";
+import { BOOTSTRAP_VERSION, CHANNELS, type Bootstrap, type LedgerBridge } from "~/bridge/contract";
 import { installBridge } from "./index";
 
 jest.mock("electron", () => ({
@@ -9,9 +9,11 @@ jest.mock("electron", () => ({
 
 const installAndGetBridge = (): LedgerBridge => {
   Object.defineProperty(process, "contextIsolated", { value: true, configurable: true });
-  jest
-    .mocked(ipcRenderer.sendSync)
-    .mockReturnValue({ version: 1, env: { NODE_ENV: "test" }, store: { a: { b: 1 } } });
+  jest.mocked(ipcRenderer.sendSync).mockReturnValue({
+    version: BOOTSTRAP_VERSION,
+    env: { NODE_ENV: "test" },
+    store: { a: { b: 1 } },
+  });
 
   installBridge();
   const [, bridge] = jest.mocked(contextBridge.exposeInMainWorld).mock.calls[0];
