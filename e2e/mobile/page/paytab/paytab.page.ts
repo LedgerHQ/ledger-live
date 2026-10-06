@@ -108,7 +108,7 @@ export default class PayTabPage {
 
   @Step("Expect the request QR code")
   async expectRequestQrCode() {
-    await detoxExpect(getElementById(this.requestQrId)).toExist();
+    await detoxExpect(getElementById(this.requestQrId)).toBeVisible();
   }
 
   @Step("Expect the request Share action")

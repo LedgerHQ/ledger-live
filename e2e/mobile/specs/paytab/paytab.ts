@@ -71,7 +71,7 @@ export function runPayBalanceAndDepositTest(tmsLinks: string[], tags: string[]) 
 }
 
 export function runPayRequestTest(tmsLinks: string[], tags: string[]) {
-  describe("Pay tab request", () => {
+  describe("Pay tab", () => {
     beforeAll(async () => {
       await app.init({
         userdata: "wallet40-many-stablecoins",
@@ -83,7 +83,6 @@ export function runPayRequestTest(tmsLinks: string[], tags: string[]) {
         cliCommands: [liveDataWithRecipientAddressCommand(transaction)],
       });
       await app.mainNavigation.waitForWallet40Ready();
-      await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
     });
 
     setTeamOwner(Team.WALLET_XP);
@@ -92,6 +91,7 @@ export function runPayRequestTest(tmsLinks: string[], tags: string[]) {
 
     it("Request a payment", async () => {
       await app.mainNavigation.tapWallet40Tab("paytab");
+      await app.payTab.expectScreenVisible();
       await app.payTab.openRequest();
       await app.modularDrawer.selectAssetAndAccount(transaction.accountToDebit);
       await app.payTab.expectRequestTitle(REQUEST_TITLE);
