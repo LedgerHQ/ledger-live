@@ -5,7 +5,7 @@ import {
   Timestamp,
   Transaction as HederaSDKTransaction,
   TransactionId,
-} from "@hashgraph/sdk";
+} from "@hiero-ledger/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import type { ExplorerView, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";

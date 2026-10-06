@@ -1,4 +1,4 @@
-import { PrivateKey } from "@hashgraph/sdk";
+import { PrivateKey } from "@hiero-ledger/sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { combine } from "../logic/combine";

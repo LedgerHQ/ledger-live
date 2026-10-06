@@ -1,4 +1,4 @@
-import { Client } from "@hashgraph/sdk";
+import { Client } from "@hiero-ledger/sdk";
 import type { rpcClient } from "../../network/rpc";
 
 type MockedRpcClient = Record<keyof typeof rpcClient, unknown>;

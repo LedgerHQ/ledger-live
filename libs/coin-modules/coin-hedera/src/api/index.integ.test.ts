@@ -8,7 +8,7 @@ import {
   AccountUpdateTransaction,
   ContractExecuteTransaction,
   ContractFunctionParameters,
-} from "@hashgraph/sdk";
+} from "@hiero-ledger/sdk";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { NotEnoughBalance, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getEnv } from "@ledgerhq/live-env";
