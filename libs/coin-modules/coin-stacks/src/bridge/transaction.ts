@@ -8,6 +8,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
+import type { AnchorMode } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { StacksNetwork } from "../network/api";
 
@@ -33,8 +34,9 @@ TO ${recipient}`;
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
 
-  // validate if network is valid
-  if (!StacksNetwork[tr.network]) {
+  // validate if network is valid -- only the legacy bridge sets it; a generic-bridge transaction
+  // carries neither `network` nor `anchorMode` (the generic path reads the configured network).
+  if (tr.network !== undefined && !StacksNetwork[tr.network]) {
     throw new Error(`network ${tr.network} not valid`);
   }
 
@@ -45,12 +47,15 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fee: tr.fee !== undefined ? new BigNumber(tr.fee) : undefined,
     fees: tr.fees !== undefined && tr.fees !== null ? new BigNumber(tr.fees) : tr.fees,
     amount: new BigNumber(tr.amount),
+    // Both stay undefined for a generic-bridge transaction, which never reads them.
     network: tr.network as keyof typeof StacksNetwork,
-    anchorMode: tr.anchorMode,
+    anchorMode: tr.anchorMode as AnchorMode,
     memo: tr.memo,
     mode: tr.mode,
     valAddress: tr.valAddress,
     familySpecificData: tr.familySpecificData,
+    ...(tr.assetReference !== undefined && { assetReference: tr.assetReference }),
+    ...(tr.assetOwner !== undefined && { assetOwner: tr.assetOwner }),
   };
 };
 
@@ -70,6 +75,8 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     mode: t.mode,
     valAddress: t.valAddress,
     familySpecificData: t.familySpecificData,
+    ...(t.assetReference !== undefined && { assetReference: t.assetReference }),
+    ...(t.assetOwner !== undefined && { assetOwner: t.assetOwner }),
   };
 };
 

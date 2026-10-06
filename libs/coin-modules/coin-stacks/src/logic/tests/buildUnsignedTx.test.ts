@@ -63,6 +63,27 @@ describe("buildUnsignedTx", () => {
     });
   });
 
+  describe("zero-amount sweep", () => {
+    beforeEach(() => {
+      (getBalance as jest.Mock).mockResolvedValue([{ value: 0n, asset: { type: "native" } }]);
+    });
+
+    it("rejects it when crafting", async () => {
+      await expect(
+        buildUnsignedTx(transferIntent({ useAllAmount: true, amount: 0n }), 300n, 5n),
+      ).rejects.toThrow("amount must be positive");
+    });
+
+    it("builds it for a fee estimate, so an empty account's max spendable can be estimated", async () => {
+      await buildUnsignedTx(transferIntent({ useAllAmount: true, amount: 0n }), 0n, 5n, {
+        forEstimation: true,
+      });
+
+      const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
+      expect(call[0].toString()).toBe("0");
+    });
+  });
+
   describe("network selection", () => {
     afterEach(() => {
       setEnv("API_STACKS_NETWORK", "");
