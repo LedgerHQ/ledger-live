@@ -16,7 +16,7 @@ import {
   flattenAccounts,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { useCountervaluesState } from "@features/platform-market-countervalues";
-import { useThrottledValues } from "@ledgerhq/live-hooks/useThrottledFunction";
+import { useThrottledValues } from "../hooks/useThrottledValues";
 import {
   getBalanceHistoryWithCountervalue,
   getPortfolio,

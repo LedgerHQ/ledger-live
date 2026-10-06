@@ -60,7 +60,6 @@ shared-lib:
   - libs/ledger-services/**/*
   - libs/live-dmk-shared/**/*
   - libs/live-dmk-speculos/**/*
-  - libs/live-hooks/**/*
   - libs/live-signer-aleo/**/*
   - libs/live-signer-canton/**/*
   - libs/live-signer-evm/**/*

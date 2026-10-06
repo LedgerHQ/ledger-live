@@ -2075,9 +2075,6 @@ importers:
       '@ledgerhq/live-engagement':
         specifier: workspace:^
         version: link:../../libs/live-engagement
-      '@ledgerhq/live-hooks':
-        specifier: workspace:^
-        version: link:../../libs/live-hooks
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
@@ -14180,9 +14177,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: 'catalog:'
         version: 4.1.0
-      '@ledgerhq/live-hooks':
-        specifier: workspace:*
-        version: link:../live-hooks
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
@@ -16313,45 +16307,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-
-  libs/live-hooks:
-    devDependencies:
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11(@swc/helpers@0.5.23)
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@testing-library/dom':
-        specifier: 'catalog:'
-        version: 10.4.1
-      '@testing-library/react':
-        specifier: 'catalog:'
-        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      '@types/react':
-        specifier: 19.0.14
-        version: 19.0.14
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      jest-environment-jsdom:
-        specifier: 'catalog:'
-        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
-      react-dom:
-        specifier: 19.1.4
-        version: 19.1.4(react@19.1.4)
 
   libs/live-send:
     dependencies:
