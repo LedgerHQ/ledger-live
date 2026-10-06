@@ -181,6 +181,7 @@ const setupTest = (options: SetupTestOptions = {}) => {
   const deviceDiscoveryService: DeviceDiscoveryService = {
     start: jest.fn(),
     stop: jest.fn(),
+    transportIds: [testTransport],
     discoveredDevices,
     errors,
   };
