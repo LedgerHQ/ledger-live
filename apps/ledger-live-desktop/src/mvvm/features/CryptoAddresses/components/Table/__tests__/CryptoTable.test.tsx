@@ -256,5 +256,39 @@ describe("CryptoTable", () => {
       expect(screen.getByLabelText("Address name")).toHaveValue(TYPED_NAME);
       expect(screen.getByTestId("edit-crypto-address-name-dialog-cta")).toBeDisabled();
     });
+
+    it("returns focus to the edit button when closed with Escape", async () => {
+      const { user } = await renderAndStartEditing();
+
+      await user.keyboard("{Escape}");
+
+      await waitFor(() => {
+        expect(screen.queryByTestId(DIALOG_TEST_ID)).not.toBeInTheDocument();
+      });
+      await waitFor(() => {
+        expect(
+          within(screen.getByTestId("crypto-account-row-Main")).getByRole("button", {
+            name: "Edit name",
+          }),
+        ).toHaveFocus();
+      });
+    });
+
+    it("returns focus to the edit button after saving", async () => {
+      const { user } = await renderAndStartEditing();
+
+      await user.click(screen.getByTestId("edit-crypto-address-name-dialog-cta"));
+
+      await waitFor(() => {
+        expect(screen.queryByTestId(DIALOG_TEST_ID)).not.toBeInTheDocument();
+      });
+      await waitFor(() => {
+        expect(
+          within(
+            screen.getByTestId(`crypto-account-row-${TYPED_NAME.replaceAll(" ", "-")}`),
+          ).getByRole("button", { name: "Edit name" }),
+        ).toHaveFocus();
+      });
+    });
   });
 });

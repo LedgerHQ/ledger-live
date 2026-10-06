@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@domain/entity-account-name";
 import { Chip } from "./Chip";
 import { isWithinGhostClickGuard } from "./ghostClickGuard";
+import { useRestoreFocusOnDialogClose } from "LLD/hooks/useRestoreFocusOnDialogClose";
 
 type EditCryptoAddressNameDialogProps = {
   open: boolean;
@@ -36,6 +37,7 @@ export const EditCryptoAddressNameDialog = ({
   const { t } = useTranslation();
   const [value, setValue] = useState(initialValue);
   const openedAtRef = useRef(0);
+  const focusLifecycle = useRestoreFocusOnDialogClose();
 
   useEffect(() => {
     if (open) {
@@ -77,6 +79,7 @@ export const EditCryptoAddressNameDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
+        {...focusLifecycle}
         data-testid="edit-crypto-address-name-dialog-content"
         onPointerDownOutside={handlePointerDownOutside}
       >
