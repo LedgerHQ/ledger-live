@@ -191,6 +191,9 @@ describe("useConnectNewDeviceViewModel", () => {
       modelId: DeviceModelId.nanoX,
       wired: false,
     });
+    expect(store.getState().ble.knownDevices).toEqual([
+      { id: "device-id", name: "Ledger Nano X", modelId: DeviceModelId.nanoX },
+    ]);
     expect(props.onConnected).toHaveBeenCalledWith(connectionResult);
   });
 

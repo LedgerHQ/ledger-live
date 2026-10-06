@@ -57,7 +57,7 @@ export function useConnectNewDeviceViewModel({
 }: ConnectNewDeviceProps): ConnectNewDeviceViewModel {
   const platform = Platform.OS === "ios" ? "ios" : "android";
   const dmk = useDeviceManagementKit();
-  const saveConnectedDevice = useSaveConnectedDevice();
+  const saveConnectedDevice = useSaveConnectedDevice({ isNewDevice: true });
   const [viewState, setViewState] = useState<ViewState>({
     state: INITIAL_STATE,
     lastNonErrorState: INITIAL_STATE,

@@ -46,6 +46,41 @@ describe("useSaveConnectedDevice", () => {
     expect(store.getState().ble.knownDevices).toEqual([]);
   });
 
+  it("should not add an unknown BLE device to the BLE known devices", () => {
+    // GIVEN
+    const { result, store } = renderHook(() => useSaveConnectedDevice());
+
+    // WHEN
+    act(() => result.current(makeConnectedDevice()));
+
+    // THEN
+    expect(store.getState().ble.knownDevices).toEqual([]);
+  });
+
+  it("should add a new BLE device to the BLE known devices", () => {
+    // GIVEN
+    const { result, store } = renderHook(() => useSaveConnectedDevice({ isNewDevice: true }));
+
+    // WHEN
+    act(() => result.current(makeConnectedDevice()));
+
+    // THEN
+    expect(store.getState().ble.knownDevices).toEqual([
+      { id: "device-id", name: "Ledger Nano X", modelId: DeviceModelId.nanoX },
+    ]);
+  });
+
+  it("should not add a new wired device to the BLE known devices", () => {
+    // GIVEN
+    const { result, store } = renderHook(() => useSaveConnectedDevice({ isNewDevice: true }));
+
+    // WHEN
+    act(() => result.current(makeConnectedDevice({ type: "USB", transport: "hid" })));
+
+    // THEN
+    expect(store.getState().ble.knownDevices).toEqual([]);
+  });
+
   it("should update a BLE device that is already in the BLE known devices", () => {
     // GIVEN
     const { result, store } = renderHook(() => useSaveConnectedDevice(), {
