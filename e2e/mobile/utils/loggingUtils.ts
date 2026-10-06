@@ -239,6 +239,6 @@ export function someNewFunction(): void {
   console.info("[LoggingUtils] someNewFunction called.");
 }
 
-export function someOtherNewFunction(): void {
-  console.info("[LoggingUtils] someOtherNewFunction called.");
+export function someOtherNewFunctionsMobile(): void {
+  console.info("[LoggingUtils] someOtherNewFunctionsMobile called.");
 }

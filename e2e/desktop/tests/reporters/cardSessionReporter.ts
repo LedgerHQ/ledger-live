@@ -34,10 +34,19 @@ class CardSessionReporter implements Reporter {
   printsToStdio(): boolean {
     return false;
   }
+}
 
-  someNewFunction(): void {
-    console.info("[CardSessionReporter] someNewFunction called.");
-  }
+/**
+ * Logs that someNewFunction was called.
+ *
+ * @returns Nothing.
+ */
+export function someNewFunction(): void {
+  console.info("[LoggingUtils] someNewFunction called.");
+}
+
+export function someOtherNewFunctionsDesktop(): void {
+  console.info("[LoggingUtils] someOtherNewFunctionsDesktop called.");
 }
 
 export default CardSessionReporter;
