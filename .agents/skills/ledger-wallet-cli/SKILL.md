@@ -333,9 +333,10 @@ pnpm --silent wallet-cli start agent-intent sync --profile my-bot
 pnpm --silent wallet-cli start agent-intent sync --profile my-bot --output json
 ```
 
-**`--source` is required.** Pass the runtime or harness the agent runs in (not its model provider):
+**Always pass `--source`.** It is the runtime or harness the agent runs in (not its model provider):
 `openclaw`, `hermes`, `claude-code`, `codex`, `cursor`, `muse`, `grok-bot`, or `other` when none
-matches. The frontend shows it as the agent's source; never pass a value outside this list. Only
+matches. Omitting it defaults to `other`. The frontend shows it as the agent's source; never pass a
+value outside this list. Only
 `openclaw` and `hermes` profiles can be recovered later (an SDK limit, see below).
 
 **One blocking command, no copy/paste.** `enroll` prints the URL first (with `--output json`: an

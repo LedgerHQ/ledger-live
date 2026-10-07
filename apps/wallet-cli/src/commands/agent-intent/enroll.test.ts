@@ -558,12 +558,14 @@ describe("agent-intent enroll", () => {
 describe("agent-intent enroll --source", () => {
   const sourceSchema = (
     enrollCommand as unknown as {
-      options: { source: { schema: { safeParse: (value: unknown) => { success: boolean } } } };
+      options: {
+        source: { schema: { safeParse: (value: unknown) => { success: boolean; data?: unknown } } };
+      };
     }
   ).options.source.schema;
 
-  it("requires the agent to declare its runtime", () => {
-    expect(sourceSchema.safeParse(undefined).success).toBe(false);
+  it("defaults to other when the agent doesn't declare its runtime", () => {
+    expect(sourceSchema.safeParse(undefined)).toEqual({ success: true, data: "other" });
   });
 
   it.each(["openclaw", "hermes", "claude-code", "codex", "cursor", "muse", "grok-bot", "other"])(
