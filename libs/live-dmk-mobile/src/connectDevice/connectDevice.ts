@@ -11,6 +11,8 @@ import type { Observable } from "rxjs";
 
 import type { MobileDiscoveryError } from "../deviceConnectivity/types";
 import type { MobileConnectDeviceUIState } from "./types";
+import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource";
+import { isMockServerTransportEnabled } from "../mockServerTransportConfig";
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
@@ -24,16 +26,24 @@ export type ConnectDeviceInput = {
 };
 
 export function connectDevice(input: ConnectDeviceInput): Observable<MobileConnectDeviceUIState> {
-  const rnHidSource = new RnHidDeviceDiscoverySource(input.dmk);
-  const rnBleSource = new RnBleDeviceDiscoverySource(input.dmk);
-  const speculosSource = new SpeculosDeviceDiscoverySource(input.dmk);
   const discoverySources: Map<
     TransportIdentifier,
     DeviceDiscoverySource<MobileDiscoveryError>
   > = new Map();
-  discoverySources.set(rnHidSource.transportId, rnHidSource);
-  discoverySources.set(rnBleSource.transportId, rnBleSource);
-  discoverySources.set(speculosSource.transportId, speculosSource);
+
+  // A Bluetooth error stops every source. The iOS simulator has no Bluetooth, so the
+  // mock-server session must be the only source or the test stops on that error.
+  if (isMockServerTransportEnabled()) {
+    const mockServerSource = new MockServerDeviceDiscoverySource(input.dmk);
+    discoverySources.set(mockServerSource.transportId, mockServerSource);
+  } else {
+    const rnHidSource = new RnHidDeviceDiscoverySource(input.dmk);
+    const rnBleSource = new RnBleDeviceDiscoverySource(input.dmk);
+    const speculosSource = new SpeculosDeviceDiscoverySource(input.dmk);
+    discoverySources.set(rnHidSource.transportId, rnHidSource);
+    discoverySources.set(rnBleSource.transportId, rnBleSource);
+    discoverySources.set(speculosSource.transportId, speculosSource);
+  }
 
   return connectDeviceUseCase({
     ...input,

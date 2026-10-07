@@ -4,11 +4,17 @@ import {
   DeviceManagementKit,
   LogLevel,
 } from "@ledgerhq/device-management-kit";
+import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
+import {
+  getConfiguredMockServerTransport,
+  getMockScriptRunnerBaseUrl,
+  isMockServerTransportEnabled,
+} from "../mockServerTransportConfig";
 import { httpProxyTransportFactory, httpProxyUrlSubject } from "../transport/HttpProxyDmkTransport";
 import {
   speculosDmkTransportFactory,
@@ -25,15 +31,27 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
     const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
     tracer.trace("Initialize DeviceManagementKit", {
       firmwareDistributionSalt,
+      mockServerTransportEnabled: isMockServerTransportEnabled(),
     });
-    instance = new DeviceManagementKitBuilder()
+
+    const builder = new DeviceManagementKitBuilder()
       .addTransport(RNBleTransportFactory)
       .addTransport(RNHidTransportFactory)
       .addTransport(httpProxyTransportFactory(httpProxyUrlSubject))
       .addTransport(speculosDmkTransportFactory(speculosTargetSubject))
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
-      .addConfig({ firmwareDistributionSalt })
-      .build();
+      .addConfig({ firmwareDistributionSalt });
+
+    const mockServerTransport = getConfiguredMockServerTransport();
+    if (mockServerTransport) {
+      const { url, token } = mockServerTransport;
+      const webSocketUrl = getMockScriptRunnerBaseUrl(url, token);
+      builder
+        .addTransport(mockserverTransportFactory(url, token))
+        .addConfig({ mockUrl: url, ...(webSocketUrl ? { webSocketUrl } : {}) });
+    }
+
+    instance = builder.build();
   }
   return instance;
 };

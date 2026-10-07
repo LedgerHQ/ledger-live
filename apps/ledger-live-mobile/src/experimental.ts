@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import storage from "LLM/storage";
+import { LaunchArguments } from "react-native-launch-arguments";
 import { setEnvUnsafe, isEnvDefault, changes, type EnvName } from "@shared/env";
+import { readLaunchForceProvider } from "./launchForceProvider";
 
 import type { FeatureId } from "@shared/feature-flags";
 
@@ -159,8 +161,15 @@ export const enabledExperimentalFeatures = (): string[] =>
     setEnvUnsafe(k as EnvName, envs[k]);
   }
 
+  const launchProvider = readLaunchForceProvider(LaunchArguments?.value?.()?.["forceProvider"]);
+
   for (const k in Config) {
+    if (k === "FORCE_PROVIDER" && launchProvider !== undefined) continue;
     setEnvUnsafe(k as EnvName, Config[k]);
+  }
+
+  if (launchProvider !== undefined) {
+    setEnvUnsafe("FORCE_PROVIDER", launchProvider);
   }
 
   const saveEnvs = async (name: string, value: unknown) => {

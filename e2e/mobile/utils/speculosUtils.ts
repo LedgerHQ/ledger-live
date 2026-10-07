@@ -375,6 +375,13 @@ export async function registerKnownSpeculos(speculosPort: number) {
 }
 
 export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string) {
+  if (!deviceId) {
+    await Promise.all(
+      Array.from(speculosDevices.keys(), id => removeSpeculosAndDeregisterKnownSpeculos(id)),
+    );
+    return;
+  }
+
   const speculosPort = await deleteSpeculos(deviceId);
   if (speculosPort) {
     if (!isSpeculosRemote()) {
