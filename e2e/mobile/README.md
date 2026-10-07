@@ -191,3 +191,10 @@ export E2E_MOBILE_FEATURE_FLAGS="some-preset"
 ```
 
 Or use the "Choose a feature flag set" options dropdown on the Github workflow.
+
+### 9. Stall watchdog
+
+A forked jest worker whose event loop freezes is killed after 90 seconds, so Detox retries the spec
+instead of the shard hanging. Look for `[stall-watchdog]` in the log. Local runs are in-band and
+unwatched; to debug with `--maxWorkers=2` or more, `export E2E_STALL_WATCHDOG=0`. See
+[Stall watchdog](docs/stall-watchdog.md) for how it works.

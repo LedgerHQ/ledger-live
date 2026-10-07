@@ -220,11 +220,12 @@ export async function createSpeculosDeviceCI(
   );
 }
 
-export async function releaseSpeculosDeviceCI(runId: string) {
+/** Resolves to whether Speculinho confirmed the release. */
+export async function releaseSpeculosDeviceCI(runId: string): Promise<boolean> {
   const speculinhoUrl = getSpeculinhoBaseUrl();
   if (!speculinhoUrl) {
     console.warn("[speculosCI] SPECULINHO_URL is not set; skipping Speculinho release.");
-    return;
+    return false;
   }
 
   try {
@@ -236,8 +237,10 @@ export async function releaseSpeculosDeviceCI(runId: string) {
         validateStatus: s => s >= 200 && s < 300,
       },
     );
+    return true;
   } catch (error) {
     console.warn(`Failed to release remote Speculos ${runId}:`, sanitizeError(error));
+    return false;
   }
 }
 
