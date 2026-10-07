@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
+import type {
+  DeviceManagementKit,
+  DeviceModelId as DmkDeviceModelId,
+} from "@ledgerhq/device-management-kit";
+import type { DevToolsConfig } from "@devtools/shell";
 import {
+  createDelegatedPorts,
+  createOnboardingEventLog,
+  createSessionEventsActor,
   deviceOnboardingMachine,
+  flattenDeviceOnboardingContext,
+  stateValueToString,
+  userEvents,
   type DeviceOnboardingPorts,
   type DeviceOnboardingSession,
   type OnboardingEvent,
@@ -12,13 +22,14 @@ import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/li
 import { createActor, type ActorRefFrom } from "xstate";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 import {
-  flattenDeviceOnboardingContext,
-  stateValueToString,
-  toolEvent,
-  type DeviceOnboardingToolProps,
-  userEvents,
-} from "../utils/toolState";
-import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+  firmwareUpdateDelegatedState,
+  useFirmwareUpdateHandover,
+} from "./useFirmwareUpdateHandover";
+
+type DeviceOnboardingToolProps = Extract<
+  DevToolsConfig[number],
+  { id: "device-onboarding" }
+>["config"];
 
 type OnboardingActor = ActorRefFrom<typeof deviceOnboardingMachine>;
 
@@ -62,29 +73,21 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
   const sessionReadyRef = useRef(false);
   const transportLostRef = useRef(false);
   const adoptGeneration = useRef(0);
+  const dmkRef = useRef<DeviceManagementKit | null>(null);
+  const lockListenerRef = useRef<{ sessionId: string; stop: () => void } | null>(null);
+  const machineStateRef = useRef<string | null>(null);
 
-  const delegatedPorts = useRef<DeviceOnboardingPorts>({
-    openSession: () => {
-      if (!portsRef.current) throw new Error("No desktop onboarding session");
-      return portsRef.current.openSession();
-    },
-    currentSessionId: () => {
-      if (!portsRef.current) throw new Error("No desktop onboarding session");
-      return portsRef.current.currentSessionId();
-    },
-    closeSession: () => portsRef.current?.closeSession() ?? Promise.resolve(),
-  }).current;
+  const delegatedPorts = useRef(
+    createDelegatedPorts(() => portsRef.current, "No desktop onboarding session"),
+  ).current;
 
   const appendEvent = useCallback((event: OnboardingEvent) => {
-    if (event.type === "STEP_CHANGED") {
-      const step = event.state.currentOnboardingStep;
-      if (step === lastLoggedStep.current) return;
-      lastLoggedStep.current = step;
-    }
-
-    const sessionId = portsRef.current?.currentSessionId() ?? "unavailable";
-    const next = toolEvent(event, String(eventSequence.current++), sessionId);
-    setEvents(current => [...current.slice(-49), next]);
+    createOnboardingEventLog({
+      currentSessionId: () => portsRef.current?.currentSessionId(),
+      lastLoggedStep,
+      sequence: eventSequence,
+      push: entry => setEvents(current => [...current.slice(-49), entry]),
+    })(event);
   }, []);
 
   const sendToActor = useCallback((event: OnboardingEvent) => {
@@ -98,16 +101,197 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     setSendableEvents(availableEvents(actor, sessionReadyRef.current));
   }, []);
 
-  const rememberDevice = useCallback((session: DeviceOnboardingSession) => {
-    const connected = session.dmk.getConnectedDevice({ sessionId: session.sessionId });
-    setLedgerDeviceState(ledgerDevice(connected.id, connected.name ?? null, session.deviceModelId));
-    setDevice({
-      name: connected.name ?? String(session.deviceModelId),
-      modelId: String(session.deviceModelId),
-      sessionId: portsRef.current?.currentSessionId() ?? session.sessionId,
-      wired: true,
-    });
+  const stopLockListener = useCallback(() => {
+    lockListenerRef.current?.stop();
+    lockListenerRef.current = null;
   }, []);
+
+  const handleTransportLost = useCallback(() => {
+    const actor = actorRef.current;
+    if (!actor || transportLostRef.current) return;
+
+    transportLostRef.current = true;
+    stopLockListener();
+    sessionReadyRef.current = false;
+    setDevice(null);
+    setLedgerDeviceState(null);
+    if (actor.getSnapshot().can({ type: "TRANSPORT_LOST" })) {
+      sendToActor({ type: "TRANSPORT_LOST" });
+    }
+  }, [sendToActor, stopLockListener]);
+
+  const syncLockListener = useCallback(() => {
+    if (!actorRef.current) return;
+
+    const dmk = dmkRef.current;
+    const ports = portsRef.current;
+    if (!dmk || !ports || transportLostRef.current) return;
+
+    let sessionId: string;
+    try {
+      sessionId = ports.currentSessionId();
+    } catch {
+      return;
+    }
+
+    if (lockListenerRef.current?.sessionId === sessionId) return;
+    stopLockListener();
+    const entry: { sessionId: string; stop: () => void } = {
+      sessionId,
+      stop: () => undefined,
+    };
+    lockListenerRef.current = entry;
+    const listener = createSessionEventsActor(dmk, sessionId, event => {
+      if (lockListenerRef.current !== entry) return;
+      const actor = actorRef.current;
+      if (event.type === "TRANSPORT_LOST") {
+        if (actor && inFirmwareHandover(actor)) return;
+        handleTransportLost();
+        return;
+      }
+      if (!actor?.getSnapshot().can(event)) return;
+      sendToActor(event);
+    });
+    if (lockListenerRef.current !== entry) {
+      listener.stop();
+      return;
+    }
+    entry.stop = () => listener.stop();
+  }, [handleTransportLost, sendToActor, stopLockListener]);
+
+  const rememberDevice = useCallback(
+    (session: DeviceOnboardingSession) => {
+      dmkRef.current = session.dmk;
+      const connected = session.dmk.getConnectedDevice({ sessionId: session.sessionId });
+      setLedgerDeviceState(
+        ledgerDevice(connected.id, connected.name ?? null, session.deviceModelId),
+      );
+      setDevice({
+        name: connected.name ?? String(session.deviceModelId),
+        modelId: String(session.deviceModelId),
+        sessionId: portsRef.current?.currentSessionId() ?? session.sessionId,
+        wired: true,
+      });
+      syncLockListener();
+    },
+    [syncLockListener],
+  );
+
+  const startActor = useCallback(
+    (session: DeviceOnboardingSession) => {
+      lastLoggedStep.current = null;
+      const connected = session.dmk.getConnectedDevice({ sessionId: session.sessionId });
+      const actor = createActor(deviceOnboardingMachine, {
+        input: {
+          dmk: session.dmk,
+          ports: delegatedPorts,
+          deviceId: connected.id,
+          deviceModelId: session.deviceModelId,
+          offerSync: false,
+        },
+        inspect: inspectionEvent => {
+          if (inspectionEvent.type !== "@xstate.event") return;
+          if (inspectionEvent.actorRef !== actorRef.current) return;
+          if (inspectionEvent.event.type.startsWith("xstate.")) return;
+          appendEvent(inspectionEvent.event as OnboardingEvent);
+        },
+      });
+      actorRef.current = actor;
+      actor.subscribe(snapshot => {
+        if (actorRef.current !== actor) return;
+        const nextState = stateValueToString(snapshot.value);
+        const leftFirmwareHandover =
+          machineStateRef.current === firmwareUpdateDelegatedState &&
+          nextState !== firmwareUpdateDelegatedState;
+        machineStateRef.current = nextState;
+        syncLockListener();
+        setState(nextState);
+        setContext(flattenDeviceOnboardingContext(snapshot.context));
+        refreshSendable(actor);
+
+        if (snapshot.status === "done") {
+          stopLockListener();
+          const output = snapshot.output;
+          setExit({
+            reason: output.reason,
+            sessionId: output.sessionId,
+            modelId: String(output.device.modelId),
+          });
+          setStatus("exited");
+          if (actorRef.current === actor) actorRef.current = null;
+        }
+
+        if (leftFirmwareHandover && activeDeviceSessionSubject.value === null) {
+          queueMicrotask(() => {
+            if (actorRef.current !== actor) return;
+            handleTransportLost();
+          });
+        }
+      });
+      actor.start();
+      setStatus("running");
+    },
+    [
+      appendEvent,
+      delegatedPorts,
+      handleTransportLost,
+      refreshSendable,
+      stopLockListener,
+      syncLockListener,
+    ],
+  );
+
+  const releaseFirmwareDrawer = useFirmwareUpdateHandover({
+    device: ledgerDeviceState,
+    machineState: state,
+    send: sendToActor,
+  });
+
+  const continueWithSession = useCallback(
+    (session: DeviceOnboardingSession, autoResume: boolean) => {
+      const current = actorRef.current;
+      const connected = session.dmk.getConnectedDevice({ sessionId: session.sessionId });
+      const sameLedger =
+        current !== null &&
+        current.getSnapshot().context.deviceId === connected.id &&
+        current.getSnapshot().context.deviceModelId === session.deviceModelId;
+
+      if (current && !sameLedger) {
+        releaseFirmwareDrawer();
+        actorRef.current = null;
+        stopLockListener();
+        current.stop();
+        setEvents([]);
+        setExit(null);
+        sessionReadyRef.current = false;
+        machineStateRef.current = null;
+      }
+
+      rememberDevice(session);
+      setError(null);
+
+      if (!actorRef.current) {
+        startActor(session);
+        return;
+      }
+
+      sessionReadyRef.current = true;
+      if (autoResume && actorRef.current.getSnapshot().can({ type: "SESSION_READY" })) {
+        sendToActor({ type: "SESSION_READY" });
+      } else {
+        refreshSendable(actorRef.current);
+      }
+      setStatus("running");
+    },
+    [
+      releaseFirmwareDrawer,
+      rememberDevice,
+      refreshSendable,
+      sendToActor,
+      startActor,
+      stopLockListener,
+    ],
+  );
 
   const adoptSession = useCallback(async () => {
     const generation = ++adoptGeneration.current;
@@ -123,55 +307,7 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
         return;
       }
 
-      rememberDevice(session);
-      setError(null);
-
-      if (actorRef.current) {
-        sessionReadyRef.current = true;
-        if (recoveringFromLoss && actorRef.current.getSnapshot().can({ type: "SESSION_READY" })) {
-          sendToActor({ type: "SESSION_READY" });
-        } else {
-          refreshSendable(actorRef.current);
-        }
-        setStatus("running");
-        return;
-      }
-
-      lastLoggedStep.current = null;
-      const actor = createActor(deviceOnboardingMachine, {
-        input: {
-          dmk: session.dmk,
-          ports: delegatedPorts,
-          deviceId: session.dmk.getConnectedDevice({ sessionId: session.sessionId }).id,
-          deviceModelId: session.deviceModelId,
-          offerSync: false,
-        },
-        inspect: inspectionEvent => {
-          if (inspectionEvent.type !== "@xstate.event") return;
-          if (inspectionEvent.actorRef !== actorRef.current) return;
-          if (inspectionEvent.event.type.startsWith("xstate.")) return;
-          appendEvent(inspectionEvent.event as OnboardingEvent);
-        },
-      });
-      actorRef.current = actor;
-      actor.subscribe(snapshot => {
-        setState(stateValueToString(snapshot.value));
-        setContext(flattenDeviceOnboardingContext(snapshot.context));
-        refreshSendable(actor);
-
-        if (snapshot.status === "done") {
-          const output = snapshot.output;
-          setExit({
-            reason: output.reason,
-            sessionId: output.sessionId,
-            modelId: String(output.device.modelId),
-          });
-          setStatus("exited");
-          if (actorRef.current === actor) actorRef.current = null;
-        }
-      });
-      actor.start();
-      setStatus("running");
+      continueWithSession(session, recoveringFromLoss);
     } catch {
       await nextPorts.closeSession();
       if (generation !== adoptGeneration.current) return;
@@ -179,7 +315,7 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
       setError("Unable to start device onboarding");
       setStatus(actorRef.current ? "running" : "idle");
     }
-  }, [appendEvent, delegatedPorts, refreshSendable, rememberDevice, sendToActor]);
+  }, [continueWithSession]);
 
   const connect = useCallback(() => {
     setError(null);
@@ -198,8 +334,12 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
 
   const reset = useCallback(() => {
     adoptGeneration.current += 1;
+    releaseFirmwareDrawer();
+    stopLockListener();
+    dmkRef.current = null;
     actorRef.current?.stop();
     actorRef.current = null;
+    machineStateRef.current = null;
     void portsRef.current?.closeSession();
     portsRef.current = null;
     transportLostRef.current = false;
@@ -214,56 +354,61 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     setExit(null);
     setSendableEvents([]);
     setError(null);
-  }, []);
+  }, [releaseFirmwareDrawer, stopLockListener]);
 
   useEffect(() => {
     const subscription = activeDeviceSessionSubject.subscribe(session => {
       const actor = actorRef.current;
       if (!actor) return;
 
+      if (inFirmwareHandover(actor)) return;
+
       if (!session) {
-        transportLostRef.current = true;
-        sessionReadyRef.current = false;
-        setDevice(null);
-        setLedgerDeviceState(null);
-        if (actor.getSnapshot().can({ type: "TRANSPORT_LOST" })) {
-          sendToActor({ type: "TRANSPORT_LOST" });
-        }
+        handleTransportLost();
         return;
       }
 
-      if (!transportLostRef.current) return;
+      if (
+        !transportLostRef.current &&
+        lockListenerRef.current?.sessionId === session.transport.sessionId
+      ) {
+        return;
+      }
+
+      handleTransportLost();
       transportLostRef.current = false;
+      const generation = adoptGeneration.current;
+      const actorAtLoss = actor;
       void (async () => {
         try {
           const opened = await portsRef.current?.openSession();
-          if (opened) rememberDevice(opened);
-          sessionReadyRef.current = true;
-          if (actorRef.current?.getSnapshot().can({ type: "SESSION_READY" })) {
-            sendToActor({ type: "SESSION_READY" });
-          }
+          const stale =
+            generation !== adoptGeneration.current ||
+            actorRef.current !== actorAtLoss ||
+            transportLostRef.current;
+          if (stale || !opened) return;
+          continueWithSession(opened, true);
         } catch {
-          transportLostRef.current = true;
+          if (generation === adoptGeneration.current && actorRef.current === actorAtLoss) {
+            transportLostRef.current = true;
+          }
         }
       })();
     });
 
     return () => subscription.unsubscribe();
-  }, [rememberDevice, sendToActor]);
+  }, [continueWithSession, handleTransportLost]);
 
   useEffect(
     () => () => {
       adoptGeneration.current += 1;
+      releaseFirmwareDrawer();
+      stopLockListener();
       actorRef.current?.stop();
+      actorRef.current = null;
     },
-    [],
+    [releaseFirmwareDrawer, stopLockListener],
   );
-
-  useFirmwareUpdateHandover({
-    device: ledgerDeviceState,
-    machineState: state,
-    send: sendToActor,
-  });
 
   return {
     status,
@@ -278,4 +423,8 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     send,
     reset,
   };
+}
+
+function inFirmwareHandover(actor: OnboardingActor) {
+  return stateValueToString(actor.getSnapshot().value) === firmwareUpdateDelegatedState;
 }

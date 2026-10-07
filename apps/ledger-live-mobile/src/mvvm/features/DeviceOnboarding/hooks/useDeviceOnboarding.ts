@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
+  createSessionEventsActor,
   deviceOnboardingMachine,
   type DeviceOnboardingOutput,
   type DeviceOnboardingPorts,
@@ -23,7 +24,6 @@ import type { Subscription } from "rxjs";
 import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { createDeviceOnboardingPorts } from "../utils/ports";
-import { createSessionEventsActor } from "../utils/sessionEvents";
 import {
   flattenDeviceOnboardingContext,
   stateValueToString,

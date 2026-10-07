@@ -31,6 +31,7 @@ export {
   type RetryPolicy,
 } from "./retry";
 export {
+  createSessionEventsActor,
   mapSession,
   sessionListener,
   type SessionEvent,
@@ -73,3 +74,15 @@ export {
   type SeedPollingEvent,
   type SeedPollingInput,
 } from "./actors/seedPolling";
+export {
+  createDelegatedPorts,
+  flattenDeviceOnboardingContext,
+  createOnboardingEventLog,
+  recordOnboardingToolEvent,
+  stateValueToString,
+  toolEvent,
+  userEvents,
+  type HostToolEvent,
+  type HostToolEventDetail,
+  type WatchedOnboardingContext,
+} from "./host";

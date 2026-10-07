@@ -4,8 +4,7 @@ import {
   type DeviceSessionState,
 } from "@ledgerhq/device-management-kit";
 import { Subject } from "rxjs";
-import { createActor, setup } from "xstate";
-import { mapSession, sessionListener, type SessionEvent } from "./session";
+import { createSessionEventsActor, mapSession, type SessionEvent } from "./session";
 
 describe("mapSession", () => {
   it.each([
@@ -123,29 +122,9 @@ function createListenerActor(
     getDeviceSessionState: jest.fn(() => states.asObservable()),
   } as unknown as DeviceManagementKit,
 ) {
-  const machine = setup({
-    types: {
-      events: {} as SessionEvent,
-    },
-    actors: {
-      sessionListener,
-    },
-    actions: {
-      capture: ({ event }) => received.push(event),
-    },
-  }).createMachine({
-    invoke: {
-      src: "sessionListener",
-      input: { dmk, sessionId: "session" },
-    },
-    on: {
-      LOCKED: { actions: "capture" },
-      UNLOCKED: { actions: "capture" },
-      TRANSPORT_LOST: { actions: "capture" },
-    },
+  return createSessionEventsActor(dmk, "session", event => {
+    received.push(event);
   });
-
-  return createActor(machine).start();
 }
 
 function sessionState(deviceStatus: DeviceStatus): DeviceSessionState {

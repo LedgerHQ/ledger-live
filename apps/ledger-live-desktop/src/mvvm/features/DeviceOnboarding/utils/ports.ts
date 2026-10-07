@@ -5,8 +5,10 @@ import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 export function createDeviceOnboardingPorts(): DeviceOnboardingPorts {
   let heldTransport: DeviceManagementKitTransport | null = null;
 
-  const liveSessionId = () =>
-    activeDeviceSessionSubject.value?.sessionId ?? heldTransport?.sessionId ?? null;
+  const liveSessionId = () => {
+    const transport = activeDeviceSessionSubject.value?.transport ?? heldTransport;
+    return transport?.sessionId ?? null;
+  };
 
   return {
     async openSession() {
