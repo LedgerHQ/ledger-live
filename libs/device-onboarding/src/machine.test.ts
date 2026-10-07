@@ -1040,6 +1040,20 @@ describe("device setup", () => {
     actor.stop();
   });
 
+  it("finishes when the device is ready and the Recovery Key flag was never read", async () => {
+    const { actor } = await enterSetup();
+
+    actor.send(stepChanged(OnboardingStep.NewDevice));
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Unknown,
+      }),
+    );
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+  });
+
   it("finishes when the Recovery Key backup is refused", async () => {
     const { actor } = await enterSetup();
 
