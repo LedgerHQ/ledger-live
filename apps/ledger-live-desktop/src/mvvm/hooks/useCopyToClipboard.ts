@@ -6,12 +6,13 @@ export function useCopyToClipboard(callback?: (text: string) => void) {
 
   const copy = useCallback(async () => {
     const text = textRef.current ?? "";
-    if (!(await copyToClipboard(text))) return;
+    if (!(await copyToClipboard(text))) return false;
     callback?.(text);
+    return true;
   }, [callback]);
 
   return (text: string) => {
     textRef.current = text;
-    copy();
+    return copy();
   };
 }

@@ -4,7 +4,7 @@ import type { RequestReceiveVerifyHint } from "../../types";
 const COPY_FEEDBACK_MS = 3000;
 
 type UseRequestReceiveViewParams = Readonly<{
-  onCopy: () => void;
+  onCopy: () => Promise<boolean>;
   onClose: () => void;
   verifyHint?: RequestReceiveVerifyHint;
 }>;
@@ -33,8 +33,8 @@ export function useRequestReceiveView({
     [],
   );
 
-  const handleCopy = useCallback(() => {
-    onCopy();
+  const handleCopy = useCallback(async () => {
+    if (!(await onCopy())) return;
     setHasCopied(true);
     if (timeoutRef.current !== undefined) {
       clearTimeout(timeoutRef.current);

@@ -19,9 +19,7 @@ export function ContactAddressDetailDialogSheet({
   ...dialogProps
 }: ContactAddressDetailDialogSheetProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const onCopyAddress = useCallback(async (address: string) => {
-    await copyToClipboard(address);
-  }, []);
+  const onCopyAddress = useCallback((address: string) => copyToClipboard(address), []);
   const onShareAddress = useCallback((address: string) => {
     void leaveAppFor(() => Share.share({ message: address })).catch(() => undefined);
   }, []);

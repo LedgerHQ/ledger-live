@@ -45,9 +45,7 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const mainAccount = account?.type === "Account" ? account : undefined;
   const tokenCurrency = currency.type === "TokenCurrency" ? currency : undefined;
 
-  const onCopy = useCallback(async (address: string) => {
-    await copyToClipboard(address);
-  }, []);
+  const onCopy = useCallback((address: string) => copyToClipboard(address), []);
 
   const onShare = useCallback(async (address: string) => {
     try {
