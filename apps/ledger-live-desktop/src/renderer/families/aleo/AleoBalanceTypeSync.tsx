@@ -16,7 +16,11 @@ type PrivateSyncProgressProps = Omit<Props, "transaction">;
 
 function PrivateSyncProgress({ account, onComplete, onCancel }: PrivateSyncProgressProps) {
   const { t } = useTranslation();
-  const { progress, isSyncing, error, start } = useAleoPrivateSync({ account, autoStart: true });
+  const { progress, isSyncing, error, start } = useAleoPrivateSync({
+    account,
+    autoStart: true,
+    keepAliveOnUnmount: true,
+  });
 
   const isDone = !isSyncing && !error && progress >= 100;
 

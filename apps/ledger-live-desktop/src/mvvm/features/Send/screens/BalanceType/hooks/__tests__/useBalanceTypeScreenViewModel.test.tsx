@@ -197,6 +197,20 @@ describe("useBalanceTypeScreenViewModel", () => {
     }
   });
 
+  test("shows a placeholder for a pool whose balance is not known yet", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, balance: null }]);
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      expect(vm.options.map(option => option.id)).toEqual(["public", "private"]);
+      expect(vm.options[1].formattedBalance).toBe("-");
+      expect(vm.options[1].formattedCounterValue).toBe("");
+      expect(vm.options[1].isZero).toBe(false);
+    }
+  });
+
   test("propagates the pending-balance flag of a pool", () => {
     stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, hasPendingBalance: true }]);
 

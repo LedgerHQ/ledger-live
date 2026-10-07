@@ -80,7 +80,7 @@ describe("AleoBalanceTypeSync", () => {
     renderSync(privateTransaction);
 
     expect(mockedUseAleoPrivateSync).toHaveBeenCalledWith(
-      expect.objectContaining({ account, autoStart: true }),
+      expect.objectContaining({ account, autoStart: true, keepAliveOnUnmount: true }),
     );
     expect(screen.getByText("Refreshing your private balance")).toBeVisible();
     expect(screen.getByText("This can take up to a minute")).toBeVisible();

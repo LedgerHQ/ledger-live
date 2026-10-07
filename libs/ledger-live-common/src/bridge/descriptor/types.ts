@@ -356,7 +356,7 @@ export type BalanceTypeOption = Readonly<{
   id: string;
   /** i18n key suffix; the UI prepends its namespace and appends `.title`, `.subtitle`, ... */
   translationKey: string;
-  balance: BigNumber;
+  balance: BigNumber | null;
   /**
    * Whether the pool holds funds that are not spendable yet, so `balance` may still grow
    * (ex: a Zcash note too young to spend). The UI warns instead of hiding the shortfall.

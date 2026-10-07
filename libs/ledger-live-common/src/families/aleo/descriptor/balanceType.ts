@@ -93,7 +93,7 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
   const balances = getBalances(account);
   if (!balances) return [];
 
-  const options: BalanceTypeOption[] = [
+  return [
     {
       id: PUBLIC,
       translationKey: "balanceType.aleoPublic",
@@ -101,19 +101,14 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
       hasPendingBalance: false,
       icon: "check",
     },
+    {
+      id: PRIVATE,
+      translationKey: "balanceType.aleoPrivate",
+      balance: balances.privateBalance,
+      hasPendingBalance: false,
+      icon: "lock",
+    },
   ];
-
-  if (balances.privateBalance === null) return options;
-
-  options.push({
-    id: PRIVATE,
-    translationKey: "balanceType.aleoPrivate",
-    balance: balances.privateBalance,
-    hasPendingBalance: false,
-    icon: "lock",
-  });
-
-  return options;
 }
 
 function getSelectedOptionId(transaction: unknown): string | null {

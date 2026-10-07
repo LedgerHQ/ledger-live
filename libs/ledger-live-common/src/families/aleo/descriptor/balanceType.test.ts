@@ -64,21 +64,22 @@ describe("aleo balance-type config", () => {
         "balanceType.aleoPrivate",
       ]);
       expect(options.map(option => option.icon)).toEqual(["check", "lock"]);
-      expect(options.map(option => option.balance.toNumber())).toEqual([100, 40]);
+      expect(options.map(option => option.balance?.toNumber())).toEqual([100, 40]);
     });
 
-    it("offers only the public balance until the private balance is synced", () => {
+    it("offers the private balance with an unknown amount until it is synced", () => {
       const options = aleoBalanceTypeConfig.getOptions({
         account: account({ privateBalance: null }),
       });
 
-      expect(options.map(option => option.id)).toEqual(["public"]);
+      expect(options.map(option => option.id)).toEqual(["public", "private"]);
+      expect(options[1].balance).toBeNull();
     });
 
     it("reads the balances of an Aleo token account", () => {
       const options = aleoBalanceTypeConfig.getOptions({ account: tokenAccount() });
 
-      expect(options.map(option => option.balance.toNumber())).toEqual([7, 3]);
+      expect(options.map(option => option.balance?.toNumber())).toEqual([7, 3]);
     });
 
     it("offers nothing for a non-Aleo account", () => {
