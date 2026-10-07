@@ -342,6 +342,11 @@ const teamCoinIntegration = {
     parser: stringParser,
     desc: "Cryptoassets list service url (staging)",
   },
+  CONFIDENTIAL_TX_SERVICE_URL: {
+    def: "",
+    parser: stringParser,
+    desc: "Confidential transaction service url, serving the signed map entries that let the device display encrypted ERC-7984 amounts. Empty disables them",
+  },
   LEDGER_CLIENT_VERSION: {
     def: "",
     parser: stringParser,

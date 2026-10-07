@@ -28,6 +28,7 @@ import {
   liveBlindSigningReporter,
 } from "@ledgerhq/live-dmk-shared";
 import { evmAddressBookProvider } from "./addressBook/evmAddressBookProvider";
+import { createMapEntryLoader } from "./confidential/mapEntryLoader";
 
 export type DAError =
   | GetAddressDAError
@@ -57,12 +58,16 @@ export class DmkSignerEth implements EvmSigner {
     liveBlindSigningReporter.setContext({ sessionId });
     const calUrl = getEnv("CAL_SERVICE_URL");
     const calMode = calUrl.includes("ledger-test") || calUrl.includes(".stg.") ? "test" : "prod";
-    const contextModule = new ContextModuleBuilder({ originToken })
+    const contextModuleBuilder = new ContextModuleBuilder({ originToken })
       .setAppSource("ledger-wallet")
       .setBlindSigningReporter(liveBlindSigningReporter)
       .setChain(ContextModuleChainID.Ethereum)
-      .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
-      .build();
+      .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" });
+    const confidentialTxServiceUrl = getEnv("CONFIDENTIAL_TX_SERVICE_URL");
+    if (confidentialTxServiceUrl) {
+      contextModuleBuilder.addLoader(createMapEntryLoader(confidentialTxServiceUrl));
+    }
+    const contextModule = contextModuleBuilder.build();
     const builder = new SignerEthBuilder({
       dmk,
       sessionId,
