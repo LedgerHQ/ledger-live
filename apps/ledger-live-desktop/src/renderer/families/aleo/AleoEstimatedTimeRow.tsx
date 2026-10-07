@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import {
   Button,
   Dialog,
@@ -22,6 +23,15 @@ type EstimatedTimeInfoDialogProps = Readonly<{
 function EstimatedTimeInfoDialog({ info }: EstimatedTimeInfoDialogProps) {
   return (
     <Dialog open={info.isOpen} onOpenChange={open => !open && info.onClose()}>
+      {info.isOpen
+        ? createPortal(
+            <div
+              className="fixed inset-0 z-dialog-content bg-canvas-overlay backdrop-blur-sm animate-fade-in"
+              data-testid="send-estimated-time-info-backdrop"
+            />,
+            document.body,
+          )
+        : null}
       <DialogContent aria-describedby={undefined} data-testid="send-estimated-time-info-dialog">
         <DialogHeader density="compact" onClose={info.onClose} />
         <DialogBody className="flex flex-col items-center gap-16 text-center">
