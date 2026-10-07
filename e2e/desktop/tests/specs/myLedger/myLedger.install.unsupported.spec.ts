@@ -8,7 +8,7 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 test.describe("My Ledger — install an app for an unsupported asset", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
-    teamOwner: Team.WALLET_XP,
+    teamOwner: Team.MY_LEDGER_ONBOARDING,
     featureFlags: { currencyKaspa: { enabled: false } },
   });
 

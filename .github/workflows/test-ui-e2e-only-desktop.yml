@@ -22,7 +22,7 @@ on:
         description: "Run only one team's tests. ANDed with test_filter, Smoke and the device."
         required: false
         type: choice
-        options: [all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp]
+        options: [all, bst, buy-and-sell, coin-integration, earn, engagement, my-ledger-onboarding, swap, wallet-xp]
         default: all
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
@@ -94,7 +94,7 @@ on:
         required: false
         type: string
       team:
-        description: "Team slug whose specs to run. One of: all, bst, buy-and-sell, coin-integration, earn, engagement, swap, wallet-xp."
+        description: "Team slug whose specs to run. One of: all, bst, buy-and-sell, coin-integration, earn, engagement, my-ledger-onboarding, swap, wallet-xp."
         required: false
         type: string
         default: all

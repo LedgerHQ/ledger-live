@@ -10,7 +10,7 @@ const RENAMED = "QAA Renamed";
 test.describe("My Ledger — rename the device", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
-    teamOwner: Team.WALLET_XP,
+    teamOwner: Team.MY_LEDGER_ONBOARDING,
   });
 
   test(
