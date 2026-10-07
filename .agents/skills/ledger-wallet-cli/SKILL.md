@@ -483,8 +483,9 @@ the id `agent-intent send` printed (or `agent-intent intents` lists).
 ```bash
 pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent 0192f7a4-0000-7000-8000-000000000001
 
-# Poll until the human acts (terminal is true once the state is final):
-until pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.terminal == true' >/dev/null; do sleep 30; done
+# Poll while the intent is known to be in progress; stop on a final state (terminal: true),
+# an unknown one (terminal: null) or an error, then read the status:
+while pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.terminal == false' >/dev/null; do sleep 30; done
 ```
 
 - **States:** `created`, `crafted`, `signed`, `broadcast` are in progress (`terminal: false`);
