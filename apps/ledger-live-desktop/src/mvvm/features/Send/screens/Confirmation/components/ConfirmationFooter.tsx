@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
+import { isSendConfirmationRetryable } from "@ledgerhq/live-common/flows/send/presentBroadcastError";
 import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
 
 interface ButtonConfig {
@@ -10,6 +11,7 @@ interface ButtonConfig {
 
 interface ConfirmationFooterProps {
   status: FlowStatus;
+  error?: Error | null;
   onViewDetails: () => void;
   onClose: () => void;
   onRetry: () => void;
@@ -18,11 +20,16 @@ interface ConfirmationFooterProps {
 
 export const ConfirmationFooter: React.FC<ConfirmationFooterProps> = ({
   status,
+  error,
   onViewDetails,
   onClose,
   onRetry,
   t,
 }) => {
+  const errorButton: ButtonConfig =
+    error && isSendConfirmationRetryable(error)
+      ? { label: t("common.tryAgain"), onClick: onRetry, appearance: "base" }
+      : { label: t("common.close"), onClick: onClose, appearance: "base" };
   const buttonConfig: Record<FlowStatus, ButtonConfig[]> = {
     [FLOW_STATUS.SUCCESS]: [
       {
@@ -36,10 +43,7 @@ export const ConfirmationFooter: React.FC<ConfirmationFooterProps> = ({
       { label: t("common.tryAgain"), onClick: onRetry, appearance: "gray" },
       { label: t("common.close"), onClick: onClose, appearance: "base" },
     ],
-    [FLOW_STATUS.ERROR]: [
-      { label: t("common.close"), onClick: onClose, appearance: "gray" },
-      { label: t("common.tryAgain"), onClick: onRetry, appearance: "base" },
-    ],
+    [FLOW_STATUS.ERROR]: [errorButton],
   };
   const buttonsToRender = buttonConfig[status] || [];
   const getButtonTestId = (currentStatus: FlowStatus, index: number) => {
@@ -56,10 +60,9 @@ export const ConfirmationFooter: React.FC<ConfirmationFooterProps> = ({
       return "send-confirmation-close-button";
     }
     if (currentStatus === FLOW_STATUS.ERROR && index === 0) {
-      return "send-confirmation-close-button";
-    }
-    if (currentStatus === FLOW_STATUS.ERROR && index === 1) {
-      return "send-confirmation-retry-button";
+      return error && isSendConfirmationRetryable(error)
+        ? "send-confirmation-retry-button"
+        : "send-confirmation-close-button";
     }
     return "send-confirmation-action-button";
   };
@@ -70,7 +73,7 @@ export const ConfirmationFooter: React.FC<ConfirmationFooterProps> = ({
         {buttonsToRender.map(({ label, onClick, appearance }, index) => (
           <Button
             key={index}
-            className={index === 0 ? "mb-16" : ""}
+            className={index === 0 && buttonsToRender.length > 1 ? "mb-16" : ""}
             appearance={appearance}
             size="lg"
             isFull

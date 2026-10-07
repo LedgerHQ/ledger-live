@@ -289,7 +289,12 @@ describe("useSignatureViewModel", () => {
 
     await waitFor(() => {
       expect(mockOperation.onSigned).toHaveBeenCalledTimes(1);
-      expect(mockOperation.onTransactionError).toHaveBeenCalledWith(err);
+      expect(mockOperation.onTransactionError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "TransactionBroadcastError",
+          message: err.message,
+        }),
+      );
       expect(mockStatus.resetStatus).toHaveBeenCalledTimes(1);
       expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1);
     });

@@ -93,7 +93,7 @@ describe("ConfirmationScreen", () => {
     expect(screen.getByTestId("send-confirmation-success-close")).toBeOnTheScreen();
   });
 
-  it("renders the error state with save logs/retry/close when the flow status is ERROR", () => {
+  it("renders close for a non-retryable confirmation error", () => {
     mockViewModel({
       status: FLOW_STATUS.ERROR,
       transactionError: new Error("broadcast failed"),
@@ -103,15 +103,25 @@ describe("ConfirmationScreen", () => {
     expect(screen.queryByTestId("send-confirmation-success")).toBeNull();
     expect(screen.getByTestId("send-confirmation-error")).toBeOnTheScreen();
     expect(screen.getByTestId("send-confirmation-error-gradient")).toBeOnTheScreen();
+    expect(screen.queryByTestId("send-confirmation-error-retry")).toBeNull();
 
     fireEvent.press(screen.getByTestId("send-confirmation-error-save-logs"));
     expect(onSaveLogs).toHaveBeenCalledTimes(1);
 
-    fireEvent.press(screen.getByTestId("send-confirmation-error-retry"));
-    expect(onRetry).toHaveBeenCalledTimes(1);
-
     fireEvent.press(screen.getByTestId("send-confirmation-error-close"));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders try again for a network confirmation error", () => {
+    mockViewModel({
+      status: FLOW_STATUS.ERROR,
+      transactionError: Object.assign(new Error("upstream down"), { name: "LedgerAPI5xx" }),
+    });
+    render(<ConfirmationScreen />);
+
+    expect(screen.queryByTestId("send-confirmation-error-close")).toBeNull();
+    fireEvent.press(screen.getByTestId("send-confirmation-error-retry"));
+    expect(onRetry).toHaveBeenCalledTimes(1);
   });
 
   it("falls back to the success screen for a non-error status", () => {
