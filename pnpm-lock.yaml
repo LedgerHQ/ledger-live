@@ -22877,7 +22877,7 @@ packages:
     engines: {node: '>= 8.0.0'}
 
   '@ledgerhq/agent-intent-sdk@file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz':
-    resolution: {integrity: sha512-ltQnZS7yWxZFfZML1jyAALNUPUj92cOwsbU6zt/BkdBIetzzb7SGxqwerfpOZuUS723jQMj7hyz/spFPAlScMQ==, tarball: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz}
+    resolution: {integrity: sha512-eelNw3js86Z2l6QLV/Z5cWRAHVqAaA75yFtDRv/RJV1rpegFXKGuqYlERX6ajOc/AqxEupcHgB+nwq3MB461yw==, tarball: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz}
     version: 0.0.0
     engines: {node: '>=24.0.0'}
 
