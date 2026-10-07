@@ -409,7 +409,7 @@ libs/live-signer-polkadot/                                         @ledgerhq/liv
 libs/live-signer-xrp/                                              @ledgerhq/live-devices
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
-apps/ledger-live-desktop/src/mvvm/components/DeviceScreen/         @ledgerhq/live-devices
+apps/ledger-live-desktop/src/mvvm/components/MockServerDeviceWindow/ @ledgerhq/live-devices
 **/useMockServer*                                                  @ledgerhq/live-devices
 **/mockServerTransport*                                            @ledgerhq/live-devices
 **/EnableMockServerTransportToggle*                                @ledgerhq/live-devices
