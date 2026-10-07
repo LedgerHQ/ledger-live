@@ -24,7 +24,23 @@ const rebuildDeps = async (folder, file) => {
   console.log(chalk.blue("file created"));
 };
 
+// pnpm does not hoist packages overridden with `link:`, while electron-builder resolves production
+// dependencies from node_modules/.pnpm/node_modules: expose each linked package there too.
+const hoistLinkedOverrides = () => {
+  const root = path.join(__dirname, "..", "..", "..");
+  const overrides = require(path.join(root, "package.json")).pnpm?.overrides ?? {};
+  for (const [name, spec] of Object.entries(overrides)) {
+    if (typeof spec !== "string" || !spec.startsWith("link:")) continue;
+    const target = path.resolve(root, spec.slice("link:".length));
+    const hoisted = path.join(root, "node_modules", ".pnpm", "node_modules", name);
+    fs.mkdirSync(path.dirname(hoisted), { recursive: true });
+    fs.rmSync(hoisted, { force: true });
+    fs.symlinkSync(target, hoisted);
+  }
+};
+
 async function main() {
+  hoistLinkedOverrides();
   const folder = ".cache/desktop-native-deps/";
   const file = "LEDGER_HASH_pnpm-lock.yaml.hash";
   const fullPath = `${folder}${file}`;

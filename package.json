@@ -241,7 +241,7 @@
       "remove-flow-types-loader>loader-utils": "*",
       "@ledgerhq/devices": "catalog:",
       "@ledgerhq/hw-transport": "catalog:",
-      "@ledgerhq/context-module": "catalog:",
+      "@ledgerhq/context-module": "link:../device-sdk-ts/packages/signer/context-module",
       "tslib": "2.6.2",
       "@ethersproject/providers>ws": "7.5.10",
       "elliptic": "6.6.1",
@@ -263,7 +263,11 @@
       "@jest/create-cache-key-function": "30.5.0",
       "@jest/types": "30.5.0",
       "expect": "30.5.0",
-      "pretty-format@^30.0.0": "30.5.0"
+      "pretty-format@^30.0.0": "30.5.0",
+      "@ledgerhq/device-signer-kit-ethereum": "link:../device-sdk-ts/packages/signer/signer-eth",
+      "@ledgerhq/device-management-kit": "link:../device-sdk-ts/packages/device-management-kit",
+      "@ledgerhq/coin-evm": "link:../../backend/coin-modules/libs/coin-modules/coin-evm",
+      "@ledgerhq/coin-module-framework": "link:../../backend/coin-modules/libs/coin-module-framework"
     },
     "patchedDependencies": {
       "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch",
