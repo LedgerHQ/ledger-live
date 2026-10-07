@@ -1,7 +1,7 @@
 import os from "node:os";
 import { app, ipcMain } from "electron";
 import Store from "electron-store";
-import { CHANNELS, type Bootstrap } from "~/bridge/contract";
+import { BOOTSTRAP_VERSION, CHANNELS, type Bootstrap } from "~/bridge/contract";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
 
 let store: Store | undefined;
@@ -21,7 +21,7 @@ export function buildBootstrap(): Bootstrap {
     Object.entries(process.env).filter(([key]) => key.toUpperCase() !== CARD_SESSION_BOOTSTRAP),
   );
   return {
-    version: 1,
+    version: BOOTSTRAP_VERSION,
     env,
     os: {
       type: os.type(),

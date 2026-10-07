@@ -27,13 +27,13 @@ const DisablePasswordModal = () => {
     async (password?: string | null) => {
       if (password) {
         dispatch(setHasPassword(true));
-        await setEncryptionKey(password);
+        await setEncryptionKey(password, currentPassword);
       } else {
         dispatch(setHasPassword(false));
-        await removeEncryptionKey();
+        await removeEncryptionKey(currentPassword);
       }
     },
-    [dispatch],
+    [dispatch, currentPassword],
   );
   const handleChangePassword = useCallback(
     (password?: string | null) => {

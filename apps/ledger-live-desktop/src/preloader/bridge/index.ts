@@ -1,11 +1,14 @@
 import { ipcRenderer } from "electron";
 import {
+  BRIDGE_VERSION,
   CHANNELS,
   type Bootstrap,
   type CardSessionBridge,
   type LedgerBridge,
 } from "~/bridge/contract";
 import { expose } from "./expose";
+import { db } from "./db";
+import { transport } from "./transport";
 
 const deepFreeze = <T>(value: T): T => {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
@@ -28,8 +31,10 @@ export function installBridge(): void {
   };
 
   const bridge: LedgerBridge = {
-    version: 1,
+    version: BRIDGE_VERSION,
     bootstrap: deepFreeze(bootstrap),
+    db,
+    transport,
     cardSession,
   };
 
