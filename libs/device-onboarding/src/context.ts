@@ -1,6 +1,8 @@
 import { assign } from "xstate";
 import {
+  isRecoveryKeyBackupInProgress,
   isSetupStep,
+  RecoveryKeyStatus,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
   type DeviceOnboardingInput,
@@ -27,7 +29,16 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     checksPaused: false,
     availableFirmwareUpdate: null,
     currentSetupStep: null,
+    recoveryKeyBackupOpen: false,
   };
+}
+
+function recoveryKeyBackupStillOpen(open: boolean, status: RecoveryKeyStatus | null): boolean {
+  if (status === null || status === RecoveryKeyStatus.Unknown) {
+    return open;
+  }
+
+  return isRecoveryKeyBackupInProgress(status);
 }
 
 export function currentVerdict(context: DeviceOnboardingContext): GenuineVerdict | null {
@@ -64,6 +75,10 @@ export const contextActions = {
       isOnboarded: event.state.isOnboarded,
       onboardedOnEntry: context.onboardedOnEntry ?? event.state.isOnboarded,
       firmwareVersion: event.firmwareVersion,
+      recoveryKeyBackupOpen: recoveryKeyBackupStillOpen(
+        context.recoveryKeyBackupOpen,
+        event.state.recoveryKeyStatus,
+      ),
     };
   }),
   rememberUnreadableDeviceState: update(({ context, event }) => {
@@ -133,7 +148,11 @@ export const contextActions = {
       currentSetupStep: isSetupStep(event.state.currentOnboardingStep)
         ? event.state.currentOnboardingStep
         : context.currentSetupStep,
+      recoveryKeyBackupOpen: recoveryKeyBackupStillOpen(
+        context.recoveryKeyBackupOpen,
+        event.state.recoveryKeyStatus,
+      ),
     };
   }),
-  forgetSetupProgress: update({ currentSetupStep: null }),
+  forgetSetupProgress: update({ currentSetupStep: null, recoveryKeyBackupOpen: false }),
 };

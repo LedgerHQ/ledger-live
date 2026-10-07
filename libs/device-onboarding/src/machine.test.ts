@@ -1054,6 +1054,40 @@ describe("device setup", () => {
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
+  it("keeps the Recovery Key backup open when the flag stays unreadable across a reboot", async () => {
+    const { actor } = await enterSetup();
+
+    actor.send(stepChanged(OnboardingStep.NewDevice));
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Choice,
+      }),
+    );
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Unknown,
+      }),
+    );
+    actor.send(
+      stepChanged(OnboardingStep.WelcomeScreen1, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Unknown,
+      }),
+    );
+    actor.send(
+      stepChanged(OnboardingStep.Ready, {
+        isOnboarded: true,
+        recoveryKeyStatus: RecoveryKeyStatus.Unknown,
+      }),
+    );
+
+    expect(actor.getSnapshot().status).not.toBe("done");
+    expect(stateOf(actor)).toBe("backupRecoveryKey");
+    actor.stop();
+  });
+
   it("finishes when the Recovery Key backup is refused", async () => {
     const { actor } = await enterSetup();
 

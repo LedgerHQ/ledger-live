@@ -202,6 +202,7 @@ export type DeviceOnboardingContext = DeviceOnboardingInput & {
   checksPaused: boolean;
   availableFirmwareUpdate: AvailableFirmwareUpdate | null;
   currentSetupStep: OnboardingStep | null;
+  recoveryKeyBackupOpen: boolean;
 };
 
 export type DeviceOnboardingExitReason =

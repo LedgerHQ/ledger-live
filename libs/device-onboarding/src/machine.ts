@@ -92,8 +92,7 @@ export const deviceOnboardingMachine = setup({
     deviceIsReady: ({ context, event }) =>
       event.type === "STEP_CHANGED" &&
       !(
-        event.state.recoveryKeyStatus === RecoveryKeyStatus.Unknown &&
-        isRecoveryKeyBackupInProgress(context.lastDeviceState?.recoveryKeyStatus ?? null)
+        event.state.recoveryKeyStatus === RecoveryKeyStatus.Unknown && context.recoveryKeyBackupOpen
       ) &&
       !isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus) &&
       (event.state.currentOnboardingStep === OnboardingStep.Ready ||
