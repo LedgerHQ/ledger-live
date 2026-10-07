@@ -249,7 +249,7 @@
       "use-isomorphic-layout-effect": "^1.2.1",
       "use-sync-external-store": "^1.6.0",
       "ethers": "6.15.0",
-      "bignumber.js": "9.1.2",
+      "bignumber.js": "link:../../backend/coin-modules/libs/coin-modules/coin-evm/node_modules/bignumber.js",
       "@radix-ui/react-slot": "^1.2.4",
       "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": "1.1.3",
       "@ton/ton>zod": "catalog:",
@@ -266,7 +266,8 @@
       "pretty-format@^30.0.0": "30.5.0",
       "@ledgerhq/device-signer-kit-ethereum": "link:../device-sdk-ts/packages/signer/signer-eth",
       "@ledgerhq/device-management-kit": "link:../device-sdk-ts/packages/device-management-kit",
-      "xstate": "link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate"
+      "xstate": "link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate",
+      "@ledgerhq/coin-evm": "link:../../backend/coin-modules/libs/coin-modules/coin-evm"
     },
     "patchedDependencies": {
       "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch",
