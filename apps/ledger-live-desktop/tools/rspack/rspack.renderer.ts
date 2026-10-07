@@ -1,6 +1,8 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { ReactRefreshRspackPlugin } from "@rspack/plugin-react-refresh";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const ProcessReadGuard = require("./processReadGuard.cjs");
 import { commonConfig, rootFolder } from "./rspack.common";
 import {
   buildRendererEnv,
@@ -281,7 +283,6 @@ export function createRendererConfig(
             filename: "assets/[name]-[hash][ext]",
           },
         },
-        // Unguarded process.cwd()/nextTick() callers.
         {
           test: /\.js$/,
           include:
@@ -317,6 +318,7 @@ export function createRendererConfig(
       }),
       // React Fast Refresh for development
       ...(useDevServer ? [new ReactRefreshRspackPlugin()] : []),
+      ...(devtool === "source-map" ? [new ProcessReadGuard()] : []),
     ],
     optimization: {
       minimize: !isDev,
