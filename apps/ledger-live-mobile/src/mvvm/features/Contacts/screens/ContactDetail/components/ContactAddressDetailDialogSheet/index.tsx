@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import {
   ContactAddressDetailDialog,
   type ContactAddressDetailDialogNativeProps,
@@ -19,9 +19,7 @@ export function ContactAddressDetailDialogSheet({
   ...dialogProps
 }: ContactAddressDetailDialogSheetProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const onCopyAddress = useCallback((address: string) => {
-    Clipboard.setString(address);
-  }, []);
+  const onCopyAddress = useCallback((address: string) => copyToClipboard(address), []);
   const onShareAddress = useCallback((address: string) => {
     void leaveAppFor(() => Share.share({ message: address })).catch(() => undefined);
   }, []);

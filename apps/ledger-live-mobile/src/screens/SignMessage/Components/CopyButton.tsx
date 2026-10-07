@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import { Button, Icons, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
@@ -14,9 +14,8 @@ function CopyButton({ text }: Props) {
   const [copied, setCopied] = useState(false);
   const theme = useTheme();
 
-  const handleCopy = useCallback(() => {
-    const textToCopy = text;
-    Clipboard.setString(textToCopy);
+  const handleCopy = useCallback(async () => {
+    if (!(await copyToClipboard(text))) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1200);
   }, [text]);

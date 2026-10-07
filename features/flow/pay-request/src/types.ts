@@ -71,7 +71,7 @@ export type RequestReceiveAsset = Readonly<{
 export type RequestActionCallbacks = Readonly<{
   /** Optional: mobile-only tile. Desktop does not surface Share. */
   onShare?: (address: string) => void;
-  onCopy: (address: string) => void;
+  onCopy: (address: string) => Promise<boolean>;
   /** Optional: desktop-only tile. Mobile does not surface Save. */
   onSave?: (address: string) => void;
   onVerify: (address: string) => void;
@@ -94,7 +94,7 @@ export type RequestReceiveViewModel = Readonly<{
   addressParts: AddressParts;
   qrPayload: string;
   onShare: () => void;
-  onCopy: () => void;
+  onCopy: () => Promise<boolean>;
   onSave: () => void;
   onVerify: () => void;
 }>;

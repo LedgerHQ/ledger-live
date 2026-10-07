@@ -11,7 +11,7 @@ type ContactAddressDetailDialogViewModelInput = Pick<
 export type ContactAddressDetailDialogViewModel = Readonly<{
   hasSelection: boolean;
   hasCopied: boolean;
-  onCopy: () => void;
+  onCopy: () => Promise<void>;
   onShare: (() => void) | undefined;
 }>;
 
@@ -40,12 +40,12 @@ export function useContactAddressDetailDialogViewModel({
     return () => clearTimeout(timeoutId);
   }, [hasCopied]);
 
-  const onCopy = useCallback(() => {
+  const onCopy = useCallback(async () => {
     if (row === undefined || onCopyAddress === undefined) {
       return;
     }
 
-    onCopyAddress(row.address);
+    if (!(await onCopyAddress(row.address))) return;
     setHasCopied(true);
   }, [onCopyAddress, row]);
 

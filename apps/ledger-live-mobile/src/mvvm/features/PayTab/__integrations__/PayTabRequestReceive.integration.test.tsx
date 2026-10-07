@@ -2,7 +2,7 @@ import React from "react";
 import { Text } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
@@ -26,6 +26,10 @@ const VERIFY_ADDRESS = "Verify address";
 const VERIFY_INTRO = "Verify your address";
 const DIE_LABEL = "Ledger Secure Screen";
 const PAY_DEPOSIT = "Add stablecoin";
+
+jest.mock("@shared/clipboard", () => ({
+  copyToClipboard: jest.fn().mockResolvedValue(true),
+}));
 
 jest.mock("@features/flow-pay-card", () => ({
   Card: () => null,
@@ -225,7 +229,7 @@ describe("PayTab RequestReceive integration", () => {
 
     await user.press(await screen.findByRole("button", { name: "Copy" }));
 
-    expect(Clipboard.setString).toHaveBeenCalledWith(payTabEthAccount.freshAddress);
+    expect(copyToClipboard).toHaveBeenCalledWith(payTabEthAccount.freshAddress);
   });
 
   it("should render the request receive card for the selected account", async () => {

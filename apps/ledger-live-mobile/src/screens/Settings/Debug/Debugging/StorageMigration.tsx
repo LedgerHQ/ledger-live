@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components/native";
 import { useTheme } from "@react-navigation/native";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import { Flex, Alert, Text, Tag, Switch } from "@ledgerhq/native-ui";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Button from "~/components/Button";
@@ -42,7 +42,7 @@ export function DebugStorageMigration() {
 
   async function handleCopyBtnPress() {
     const json = await storage.stringify();
-    Clipboard.setString(json);
+    await copyToClipboard(json);
   }
 
   return (

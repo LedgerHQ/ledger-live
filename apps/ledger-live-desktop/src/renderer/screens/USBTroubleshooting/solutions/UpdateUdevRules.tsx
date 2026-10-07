@@ -7,7 +7,7 @@ import BulletRow from "~/renderer/components/BulletRow";
 import Text from "~/renderer/components/Text";
 import IconCopy from "~/renderer/icons/Copy";
 import illustration from "~/renderer/images/USBTroubleshooting/illus1.png";
-import { writeText } from "~/renderer/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 
 const Pre = styled(Box).attrs({
   selectable: true,
@@ -30,8 +30,8 @@ const snippet =
   "wget -q -O - https://raw.githubusercontent.com/LedgerHQ/udev-rules/master/add_udev_rules.sh | sudo bash";
 const UpdateUdevRulesSolution = ({ number = 1 }: { number?: number }) => {
   const { t } = useTranslation();
-  const onCopy = useCallback(() => {
-    writeText(snippet);
+  const onCopy = useCallback(async () => {
+    await copyToClipboard(snippet);
   }, []);
   return (
     <Wrapper>

@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback } from "react";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import Config from "react-native-config";
 import { EnvName, setEnvUnsafe, getAllEnvs, getDefinition } from "@shared/env";
 import { Flex, Button, Text, Tag, Alert } from "@ledgerhq/native-ui";
@@ -56,8 +56,8 @@ export default function DebugEnv() {
   }, [value, resetIndex]);
 
   const onPress = useCallback(
-    (env: string) => {
-      Clipboard.setString(env);
+    async (env: string) => {
+      if (!(await copyToClipboard(env))) return;
       pushToast({
         id: `debug_toast_${env}`,
         type: "success",

@@ -54,7 +54,7 @@ describe("RequestReceiveView (Native)", () => {
 
   it("invokes onCopy when the copy button is pressed", async () => {
     const user = userEvent.setup();
-    const onCopy = jest.fn();
+    const onCopy = jest.fn().mockResolvedValue(true);
     renderView({ visibleActions: ["share", "copy", "verify"], onCopy });
 
     await user.press(screen.getByTestId("pay-request-receive-copy"));

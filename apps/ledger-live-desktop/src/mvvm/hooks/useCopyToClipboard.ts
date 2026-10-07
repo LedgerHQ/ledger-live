@@ -1,19 +1,18 @@
 import { useCallback, useRef } from "react";
+import { copyToClipboard } from "@shared/clipboard";
 
 export function useCopyToClipboard(callback?: (text: string) => void) {
   const textRef = useRef<string>(undefined);
 
-  const copy = useCallback(() => {
+  const copy = useCallback(async () => {
     const text = textRef.current ?? "";
-    navigator.clipboard.writeText(text).then(() => {
-      if (callback) {
-        callback(text);
-      }
-    });
+    if (!(await copyToClipboard(text))) return false;
+    callback?.(text);
+    return true;
   }, [callback]);
 
   return (text: string) => {
     textRef.current = text;
-    copy();
+    return copy();
   };
 }

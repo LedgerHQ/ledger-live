@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard as copyText } from "@shared/clipboard";
 
 export function useCopyToClipboard() {
   const [isCopied, setIsCopied] = useState(false);
@@ -14,9 +14,8 @@ export function useCopyToClipboard() {
   }, []);
 
   const copyToClipboard = useCallback(
-    (text: string) => {
-      Clipboard.setString(text);
-      if (!shouldShowCopiedFeedback) return;
+    async (text: string) => {
+      if (!(await copyText(text)) || !shouldShowCopiedFeedback) return;
 
       setIsCopied(true);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);

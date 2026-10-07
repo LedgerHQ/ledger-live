@@ -2,9 +2,11 @@ import { act, renderHook } from "@testing-library/react";
 import type { RequestReceiveVerifyHint } from "../../../types";
 import { useRequestReceiveView } from "../useRequestReceiveView.web";
 
-function setup(overrides: { isOpen?: boolean; verifyHint?: RequestReceiveVerifyHint } = {}) {
+function setup(
+  overrides: { isOpen?: boolean; verifyHint?: RequestReceiveVerifyHint; copied?: boolean } = {},
+) {
   const onClose = jest.fn();
-  const onCopy = jest.fn();
+  const onCopy = jest.fn().mockResolvedValue(overrides.copied ?? true);
   const onGotIt = jest.fn();
   const { result } = renderHook(() =>
     useRequestReceiveView({
@@ -72,5 +74,26 @@ describe("useRequestReceiveView", () => {
     });
 
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("shows copied feedback once the copy succeeded", async () => {
+    const { result, onCopy } = setup();
+
+    await act(async () => {
+      await result.current.handleCopy();
+    });
+
+    expect(onCopy).toHaveBeenCalledTimes(1);
+    expect(result.current.hasCopied).toBe(true);
+  });
+
+  it("does not show copied feedback when the copy failed", async () => {
+    const { result } = setup({ copied: false });
+
+    await act(async () => {
+      await result.current.handleCopy();
+    });
+
+    expect(result.current.hasCopied).toBe(false);
   });
 });

@@ -1,0 +1,50 @@
+{
+  "name": "@shared/clipboard",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Cross-platform copy and paste: expo-clipboard on mobile, navigator.clipboard on web",
+  "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../.. -W shared/clipboard",
+    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src"
+  },
+  "peerDependencies": {
+    "expo-clipboard": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "expo-clipboard": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-shared": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "expo-clipboard": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

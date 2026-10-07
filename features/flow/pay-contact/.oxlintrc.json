@@ -43,7 +43,13 @@
     "eslint/no-restricted-imports": [
       "error",
       {
-        "paths": ["lodash"],
+        "paths": [
+          "lodash",
+          {
+            "name": "expo-clipboard",
+            "message": "Use copyToClipboard / readClipboard from @shared/clipboard instead of expo-clipboard."
+          }
+        ],
         "patterns": [
           {
             "group": [
@@ -53,6 +59,14 @@
             "message": "Please remove the /lib import from live-common import."
           }
         ]
+      }
+    ],
+    "eslint/no-restricted-properties": [
+      "error",
+      {
+        "object": "navigator",
+        "property": "clipboard",
+        "message": "Use copyToClipboard / readClipboard from @shared/clipboard instead of navigator.clipboard."
       }
     ],
     "import/no-duplicates": "error",
