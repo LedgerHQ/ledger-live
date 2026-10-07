@@ -92,6 +92,10 @@ export function useDeviceOnboarding({
       return portsRef.current.currentSessionId();
     },
     closeSession: () => portsRef.current?.closeSession() ?? Promise.resolve(),
+    lookupFirmwareUpdate: () => {
+      if (!portsRef.current) throw new Error("No mobile onboarding session");
+      return portsRef.current.lookupFirmwareUpdate();
+    },
   }).current;
 
   const dropLostTransport = useCallback(() => {
@@ -141,6 +145,8 @@ export function useDeviceOnboarding({
         dmk: result.dmk,
         sessionId: result.sessionId,
         wired: result.compatDeviceWired,
+        deviceId: result.compatDeviceId,
+        deviceName: result.compatDeviceName,
       });
       portsRef.current = nextPorts;
       try {

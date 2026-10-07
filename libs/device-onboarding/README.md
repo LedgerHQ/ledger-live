@@ -52,13 +52,14 @@ open. Other reasons: `legacyFallback`, `resumeFirmwareUpdate`, `userQuit`.
 ## Key exports / concepts
 
 - `deviceOnboardingMachine` — the flow. `machine.ts` is the graph, `context.ts` the bookkeeping
-- `DeviceOnboardingPorts` — the session lifecycle each app implements, and nothing else
+- `DeviceOnboardingPorts` — the session lifecycle each app implements, plus the firmware catalogue lookup
 - `OnboardingEvent`, `DeviceOnboardingInput`, `DeviceOnboardingContext`, `DeviceOnboardingOutput` —
   the language the machine and the screens speak
 - `rules.ts` — the pure decisions the transitions ask. Only the Nano SP and Nano X have a firmware
   floor; every other model takes the flow whatever it runs
 - `actors/` — the only code that talks to the device: `readDeviceState`, `genuineCheck`,
-  `firmwareCheck`, `toggleEarlyCheck`, `seedPolling`. Each reports through events only
+  `toggleEarlyCheck`, `seedPolling`. `firmwareCheck` asks the app for the catalogue instead, so it
+  never lists installed apps. Each reports through events only
 - `withRetries`, `createRetryPolicy` — back the retries of the first three, so a failure event from
   them means the retries are exhausted
 - `sessionListener` — maps DMK session status changes to onboarding events. The app owns the

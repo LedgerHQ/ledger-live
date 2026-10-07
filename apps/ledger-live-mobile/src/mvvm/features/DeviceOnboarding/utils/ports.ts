@@ -6,11 +6,14 @@ import {
   DeviceManagementKitHIDTransport,
 } from "@ledgerhq/live-dmk-mobile";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { lookupFirmwareUpdate } from "./lookupFirmwareUpdate";
 
 type CreateDeviceOnboardingPortsInput = {
   dmk: DeviceManagementKit;
   sessionId: DeviceSessionId;
   wired: boolean;
+  deviceId: string;
+  deviceName: string | null;
 };
 
 type MobileDmkTransport = DeviceManagementKitBLETransport | DeviceManagementKitHIDTransport;
@@ -19,6 +22,8 @@ export function createDeviceOnboardingPorts({
   dmk,
   sessionId,
   wired,
+  deviceId,
+  deviceName,
 }: CreateDeviceOnboardingPortsInput): DeviceOnboardingPorts {
   let heldTransport: MobileDmkTransport | null = null;
 
@@ -60,5 +65,6 @@ export function createDeviceOnboardingPorts({
     async closeSession() {
       await heldTransport?.close();
     },
+    lookupFirmwareUpdate: () => lookupFirmwareUpdate(deviceId, deviceName),
   };
 }

@@ -4,7 +4,6 @@ import {
   UnknownDAError,
   UserInteractionRequired,
   type GenuineCheckDAOutput,
-  type GetDeviceMetadataDAOutput,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
 import { createActor, type Actor } from "xstate";
@@ -45,8 +44,8 @@ const availableUpdate = {
 
 const genuine = { completes: { isGenuine: true } as GenuineCheckDAOutput };
 const notGenuine = { completes: { isGenuine: false } as GenuineCheckDAOutput };
-const upToDate = { completes: metadata(undefined) };
-const updateAvailable = { completes: metadata(availableUpdate) };
+const upToDate = { update: null };
+const updateAvailable = { update: availableUpdate };
 
 const lockedDevice: ScriptedCommand<GetOsVersionResponse> = { throws: new Error("locked") };
 
@@ -1108,7 +1107,10 @@ async function launch(
   const actor = createActor(deviceOnboardingMachine, {
     input: {
       dmk: fake.dmk,
-      ports: overrides.ports ?? fixedPorts(),
+      ports: {
+        ...(overrides.ports ?? fixedPorts()),
+        lookupFirmwareUpdate: () => fake.lookupFirmwareUpdate(),
+      },
       deviceId: "device",
       deviceModelId: overrides.deviceModelId ?? DeviceModelId.FLEX,
       offerSync: overrides.offerSync ?? false,
@@ -1183,6 +1185,7 @@ function fixedPorts(): DeviceOnboardingPorts {
     openSession: jest.fn(),
     currentSessionId: jest.fn(() => "session"),
     closeSession: jest.fn(),
+    lookupFirmwareUpdate: jest.fn(),
   };
 }
 
@@ -1193,6 +1196,7 @@ function rebindingPorts(): ReboundPorts {
     openSession: jest.fn(),
     currentSessionId: jest.fn(() => (rebound ? "session-after-update" : "session")),
     closeSession: jest.fn(),
+    lookupFirmwareUpdate: jest.fn(),
     rebind: () => {
       rebound = true;
     },
@@ -1272,10 +1276,6 @@ function refusedToggle(
   return CommandResultFactory({
     error: new ToggleEarlyCheckCommandError({ errorCode, message: "refused" }),
   });
-}
-
-function metadata(update: AvailableFirmwareUpdate | undefined): GetDeviceMetadataDAOutput {
-  return { firmwareUpdateContext: { availableUpdate: update } } as GetDeviceMetadataDAOutput;
 }
 
 const wholeReadDeviceStateBackoffMs = 1500;

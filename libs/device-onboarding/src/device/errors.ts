@@ -3,6 +3,14 @@ const secureChannelTags = new Set(["SecureChannelError", "WebSocketConnectionErr
 /** DMK's `HttpFetchApiError`, which every manager catalogue call rejects with, is tagged `FetchError`. */
 const catalogueTag = "FetchError";
 
+export class CatalogueUnreachable extends Error {
+  override name = "CatalogueUnreachable";
+
+  constructor(cause?: unknown) {
+    super("firmware catalogue is unreachable", cause === undefined ? undefined : { cause });
+  }
+}
+
 export function isDeviceRefusal(error: unknown): boolean {
   return errorTag(error) === refusedByUserTag;
 }
@@ -14,7 +22,10 @@ export function isSecureChannelLost(error: unknown): boolean {
 }
 
 export function isCatalogueUnreachable(error: unknown): boolean {
-  return errorTag(error) === catalogueTag;
+  return (
+    errorTag(error) === catalogueTag ||
+    (error instanceof Error && error.name === "CatalogueUnreachable")
+  );
 }
 
 function errorTag(error: unknown): string | undefined {

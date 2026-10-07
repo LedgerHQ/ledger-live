@@ -1,16 +1,7 @@
-import {
-  GetDeviceMetadataDeviceAction,
-  type DeviceManagementKit,
-  type DeviceSessionId,
-  type GetDeviceMetadataDAError,
-  type GetDeviceMetadataDAIntermediateValue,
-  type GetDeviceMetadataDAOutput,
-} from "@ledgerhq/device-management-kit";
 import { fromCallback } from "xstate";
-import { createDeviceActionRunner } from "../device/deviceAction";
 import { isCatalogueUnreachable } from "../device/errors";
 import { createRetryPolicy, withRetries, type RetryPolicy } from "../retry";
-import type { OnboardingEvent } from "../types";
+import type { AvailableFirmwareUpdate, OnboardingEvent } from "../types";
 
 export type FirmwareCheckEvent = Extract<
   OnboardingEvent,
@@ -18,42 +9,25 @@ export type FirmwareCheckEvent = Extract<
 >;
 
 export type FirmwareCheckInput = {
-  dmk: DeviceManagementKit;
-  sessionId: DeviceSessionId;
+  lookupFirmwareUpdate: () => Promise<AvailableFirmwareUpdate | null>;
   retryPolicy?: RetryPolicy;
 };
 
-export function mapFirmwareMetadata(metadata: GetDeviceMetadataDAOutput): FirmwareCheckEvent {
-  const { availableUpdate } = metadata.firmwareUpdateContext;
-
-  return availableUpdate === undefined
+export function mapFirmwareLookup(update: AvailableFirmwareUpdate | null): FirmwareCheckEvent {
+  return update === null
     ? { type: "FIRMWARE_UP_TO_DATE" }
-    : { type: "FIRMWARE_UPDATE_AVAILABLE", update: availableUpdate };
+    : { type: "FIRMWARE_UPDATE_AVAILABLE", update };
 }
 
 export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput>(
   ({ input, sendBack }) => {
     let stopped = false;
-
-    const runner = createDeviceActionRunner<
-      GetDeviceMetadataDAOutput,
-      GetDeviceMetadataDAError,
-      GetDeviceMetadataDAIntermediateValue
-    >(() =>
-      input.dmk.executeDeviceAction({
-        sessionId: input.sessionId,
-        deviceAction: new GetDeviceMetadataDeviceAction({
-          input: { useSecureChannel: false, forceUpdate: false, allowNonOnboardedDevice: true },
-        }),
-      }),
-    );
-
     const policy = input.retryPolicy ?? createRetryPolicy(isCatalogueUnreachable);
 
-    withRetries(runner.run, policy, { isCancelled: () => stopped })
-      .then(metadata => {
+    withRetries(input.lookupFirmwareUpdate, policy, { isCancelled: () => stopped })
+      .then(update => {
         if (!stopped) {
-          sendBack(mapFirmwareMetadata(metadata));
+          sendBack(mapFirmwareLookup(update));
         }
       })
       .catch(() => {
@@ -64,7 +38,6 @@ export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput
 
     return () => {
       stopped = true;
-      runner.stop();
     };
   },
 );

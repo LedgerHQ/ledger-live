@@ -9,9 +9,9 @@ import {
   type DeviceActionState,
   type DeviceManagementKit,
   type GenuineCheckDAOutput,
-  type GetDeviceMetadataDAOutput,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
+import type { AvailableFirmwareUpdate } from "../types";
 import { concat, NEVER, of, Subject } from "rxjs";
 import {
   ToggleEarlyCheckCommand,
@@ -124,17 +124,22 @@ export type ScriptedDeviceAction<Output> =
   | { fails: unknown }
   | { prompts: UserInteractionRequired };
 
+export type ScriptedFirmwareLookup =
+  | { update: AvailableFirmwareUpdate | null }
+  | { fails: unknown };
+
 export type OnboardingDmkScript = {
   osVersion?: ScriptedCommand<GetOsVersionResponse>[];
   earlyCheck?: ScriptedCommand<void, ToggleEarlyCheckErrorCode>[];
   genuineCheck?: ScriptedDeviceAction<GenuineCheckDAOutput>[];
-  firmwareCheck?: ScriptedDeviceAction<GetDeviceMetadataDAOutput>[];
+  firmwareCheck?: ScriptedFirmwareLookup[];
 };
 
 export type FakeOnboardingDmk = {
   dmk: DeviceManagementKit;
   sendCommand: jest.Mock;
   executeDeviceAction: jest.Mock;
+  lookupFirmwareUpdate: jest.Mock<Promise<AvailableFirmwareUpdate | null>, []>;
   earlyCheckToggles(): number[];
   genuineCheckRuns(): number;
   firmwareCheckRuns(): number;
@@ -172,9 +177,22 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
     },
   );
 
+  const lookupFirmwareUpdate = jest.fn(async () => {
+    const next = firmwareCheck.next();
+
+    if ("fails" in next) {
+      throw next.fails;
+    }
+
+    return next.update;
+  });
+
   const executeDeviceAction = jest.fn(({ deviceAction }: { deviceAction: object }) => {
-    const isGenuineCheck = deviceAction instanceof GenuineCheckDeviceAction;
-    const next = isGenuineCheck ? genuineCheck.next() : firmwareCheck.next();
+    if (!(deviceAction instanceof GenuineCheckDeviceAction)) {
+      throw new Error("firmware check asks the catalogue port and does not run a device action");
+    }
+
+    const next = genuineCheck.next();
 
     if ("prompts" in next) {
       const pending = {
@@ -197,14 +215,9 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
     dmk: { sendCommand, executeDeviceAction } as unknown as DeviceManagementKit,
     sendCommand,
     executeDeviceAction,
+    lookupFirmwareUpdate,
     earlyCheckToggles: () => [...toggles],
-    genuineCheckRuns: () => runsOf(true),
-    firmwareCheckRuns: () => runsOf(false),
+    genuineCheckRuns: () => executeDeviceAction.mock.calls.length,
+    firmwareCheckRuns: () => lookupFirmwareUpdate.mock.calls.length,
   };
-
-  function runsOf(genuine: boolean): number {
-    return executeDeviceAction.mock.calls.filter(
-      ([{ deviceAction }]) => deviceAction instanceof GenuineCheckDeviceAction === genuine,
-    ).length;
-  }
 }

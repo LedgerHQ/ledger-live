@@ -64,6 +64,8 @@ describe("DeviceOnboarding mobile integration", () => {
       dmk,
       sessionId: "session-1",
       wired: false,
+      deviceId: "compat-device-id",
+      deviceName: "Ledger Stax",
     });
     await first.openSession();
     const published = activeDeviceSessionSubject.value?.transport;
@@ -72,6 +74,8 @@ describe("DeviceOnboarding mobile integration", () => {
       dmk,
       sessionId: "session-1",
       wired: false,
+      deviceId: "compat-device-id",
+      deviceName: "Ledger Stax",
     });
     await second.openSession();
 
@@ -83,6 +87,8 @@ describe("DeviceOnboarding mobile integration", () => {
       dmk: createPortDmk(),
       sessionId: "session-1",
       wired: false,
+      deviceId: "compat-device-id",
+      deviceName: "Ledger Stax",
     });
     await ports.openSession();
 
@@ -99,6 +105,8 @@ describe("DeviceOnboarding mobile integration", () => {
       dmk,
       sessionId: "session-1",
       wired: false,
+      deviceId: "compat-device-id",
+      deviceName: "Ledger Stax",
     });
     await ports.openSession();
 
