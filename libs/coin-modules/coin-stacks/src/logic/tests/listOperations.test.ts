@@ -7,11 +7,13 @@ import {
   tupleCV,
   uintCV,
 } from "@stacks/transactions";
-import { fetchAllTransactions } from "../../network/api";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { fetchAllTransactions, fetchFungibleTokenMetadataCached } from "../../network/api";
 import type { TransactionResponse } from "../../types/api";
 import { listOperations } from "../listOperations";
 
 jest.mock("../../network/api");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const SENDER = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
 const RECIPIENT = "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA";
@@ -68,8 +70,27 @@ function baseTx(overrides: Partial<TransactionResponse["tx"]>): TransactionRespo
   };
 }
 
+const findTokenByAddressInCurrency = jest.fn();
+const mockFetchFungibleTokenMetadataCached =
+  fetchFungibleTokenMetadataCached as unknown as jest.Mock;
+
+function sip010TransferArgs() {
+  return [
+    { hex: hex(uintCV(2500)), repr: "", name: "", type: "" },
+    { hex: hex(standardPrincipalCV(SENDER)), repr: "", name: "", type: "" },
+    { hex: hex(standardPrincipalCV(RECIPIENT)), repr: "", name: "", type: "" },
+    { hex: hex(someCV(bufferCV(Buffer.from("memo")))), repr: "", name: "", type: "" },
+  ];
+}
+
 describe("listOperations", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Registered by default, so a post-condition's token id is already canonical.
+    findTokenByAddressInCurrency.mockResolvedValue({ id: "registered" });
+    (getCryptoAssetsStore as jest.Mock).mockReturnValue({ findTokenByAddressInCurrency });
+    mockFetchFungibleTokenMetadataCached.mockResolvedValue({ results: [] });
+  });
 
   it("rejects a limit above the Stacks page-size cap", async () => {
     await expect(listOperations(SENDER, { minHeight: 0, limit: 51 })).rejects.toThrow(
@@ -94,6 +115,34 @@ describe("listOperations", () => {
 
     const { items } = await listOperations(SENDER, { minHeight: 150 });
 
+    expect(items).toHaveLength(1);
+    expect(items[0].tx.hash).toBe("0xtx-new");
+  });
+
+  it("skips a transfer below minHeight before resolving its token, so a failing lookup cannot abort the sync", async () => {
+    mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_id: "0xtoken-old",
+        block_height: 100,
+        tx_type: "contract_call",
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
+        },
+      }),
+      baseTx({
+        tx_id: "0xtx-new",
+        block_height: 200,
+        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+      }),
+    ]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 150 });
+
+    expect(mockFetchFungibleTokenMetadataCached).not.toHaveBeenCalled();
     expect(items).toHaveLength(1);
     expect(items[0].tx.hash).toBe("0xtx-new");
   });
@@ -340,14 +389,10 @@ describe("listOperations", () => {
     });
   });
 
-  it("drops a SIP-010 transfer with no Fungible post-condition (asset name unresolvable)", async () => {
-    const functionArgs = [
-      { hex: hex(uintCV(2500)), repr: "", name: "", type: "" },
-      { hex: hex(standardPrincipalCV(SENDER)), repr: "", name: "", type: "" },
-      { hex: hex(standardPrincipalCV(RECIPIENT)), repr: "", name: "", type: "" },
-      { hex: hex(someCV(bufferCV(Buffer.from("memo")))), repr: "", name: "", type: "" },
-    ];
-
+  it("resolves a SIP-010 transfer with no Fungible post-condition from the contract's FT metadata", async () => {
+    mockFetchFungibleTokenMetadataCached.mockResolvedValue({
+      results: [{ asset_identifier: "SP_CONTRACT.token-x::token-x" }],
+    });
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
       baseTx({
         tx_type: "contract_call",
@@ -355,7 +400,31 @@ describe("listOperations", () => {
           contract_id: "SP_CONTRACT.token-x",
           function_name: "transfer",
           function_signature: "",
-          function_args: functionArgs,
+          function_args: sip010TransferArgs(),
+        },
+      }),
+    ]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+
+    expect(mockFetchFungibleTokenMetadataCached).toHaveBeenCalledWith("SP_CONTRACT.token-x");
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      type: "IN",
+      value: 2500n,
+      asset: { type: "token", assetReference: "sp_contract.token-x::token-x" },
+    });
+  });
+
+  it("drops a SIP-010 transfer whose asset neither a post-condition nor FT metadata identifies", async () => {
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_type: "contract_call",
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
         },
       }),
     ]);
@@ -363,6 +432,102 @@ describe("listOperations", () => {
     const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
 
     expect(items).toHaveLength(0);
+  });
+
+  it("canonicalizes an unregistered SIP-010 token id against the contract's FT metadata", async () => {
+    findTokenByAddressInCurrency.mockResolvedValue(null);
+    mockFetchFungibleTokenMetadataCached.mockResolvedValue({
+      results: [{ asset_identifier: "SP_CONTRACT.token-x::Token-X" }],
+    });
+    (fetchAllTransactions as jest.Mock).mockResolvedValue(
+      ["0xtx1", "0xtx2"].map(tx_id =>
+        baseTx({
+          tx_id,
+          tx_type: "contract_call",
+          post_conditions: [
+            {
+              type: "fungible",
+              condition_code: "eq",
+              amount: "2500",
+              principal: { type_id: "principal_standard", address: SENDER },
+              asset: {
+                asset_name: "tkn",
+                contract_address: "SP_CONTRACT",
+                contract_name: "token-x",
+              },
+            },
+          ],
+          contract_call: {
+            contract_id: "SP_CONTRACT.token-x",
+            function_name: "transfer",
+            function_signature: "",
+            function_args: sip010TransferArgs(),
+          },
+        }),
+      ),
+    );
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+
+    expect(items.map(op => op.asset)).toEqual([
+      expect.objectContaining({ assetReference: "sp_contract.token-x::token-x" }),
+      expect.objectContaining({ assetReference: "sp_contract.token-x::token-x" }),
+    ]);
+    // Resolved once, then reused for the second transfer of the same token.
+    expect(mockFetchFungibleTokenMetadataCached).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails instead of storing an uncanonicalized token id when canonicalization metadata is unavailable", async () => {
+    findTokenByAddressInCurrency.mockResolvedValue(null);
+    mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_type: "contract_call",
+        post_conditions: [
+          {
+            type: "fungible",
+            condition_code: "eq",
+            amount: "2500",
+            principal: { type_id: "principal_standard", address: SENDER },
+            asset: {
+              asset_name: "tkn",
+              contract_address: "SP_CONTRACT",
+              contract_name: "token-x",
+            },
+          },
+        ],
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
+        },
+      }),
+    ]);
+
+    await expect(listOperations(RECIPIENT, { minHeight: 0 })).rejects.toThrow("metadata API down");
+  });
+
+  it("fails instead of dropping a transfer when FT metadata is unavailable", async () => {
+    mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_id: "0xtoken",
+        tx_type: "contract_call",
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
+        },
+      }),
+      baseTx({
+        tx_id: "0xnative",
+        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+      }),
+    ]);
+
+    await expect(listOperations(RECIPIENT, { minHeight: 0 })).rejects.toThrow("metadata API down");
   });
 
   it("maps any other contract call (e.g. pox-5 stake) to a generic operation", async () => {

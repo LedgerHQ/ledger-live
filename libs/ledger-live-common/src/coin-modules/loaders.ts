@@ -373,6 +373,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("../families/stacks/coinModuleApi").then(m => m.createLocalStacksApi),
     loadBridgeApi: () => import("../families/stacks/bridge/api").then(m => m.default),
     loadSigner: () => import("../families/stacks/signer").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/stacks/bridgeExtensions").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/stacks/accountRawAssign").then(m => m.default),
   },
   {
     family: "stellar",

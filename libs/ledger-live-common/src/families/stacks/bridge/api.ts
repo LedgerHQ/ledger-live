@@ -61,5 +61,7 @@ export default function stacksBridge(currency: CryptoCurrency): BridgeApi {
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     buildIntentData,
     usesStakingPositions: true,
+    // The legacy bridge keyed account ids on the public key; keep them so the switch re-keys nothing.
+    accountIdFromPublicKey: true,
   };
 }

@@ -105,6 +105,7 @@ async function buildTransfer(
   intent: TransactionIntent<MemoNotSupported, StacksTxData>,
   fee: bigint,
   nonce: bigint,
+  forEstimation: boolean,
 ): Promise<StacksTransactionWire> {
   if (!intent.senderPublicKey) {
     throw new Error("stacks: senderPublicKey is required to craft a transaction");
@@ -115,7 +116,9 @@ async function buildTransfer(
   const amount = await resolveAmount(intent, fee);
   // Only guards the sweep case -- a not-yet-filled-in draft (amount 0) must still build, since
   // callers probe estimateFees before the user enters anything; validateIntent owns that check.
-  if (intent.useAllAmount && amount.lte(0)) {
+  // An estimation probe skips it too: estimateMaxSpendable sweeps every account, an empty one
+  // included, and a zero-amount transfer has the same byte length, hence the same fee.
+  if (!forEstimation && intent.useAllAmount && amount.lte(0)) {
     throw new Error("stacks: transaction amount must be positive");
   }
 
@@ -234,6 +237,7 @@ export async function buildUnsignedTx(
   intent: TransactionIntent<MemoNotSupported, StacksTxData>,
   fee: bigint,
   nonce: bigint,
+  { forEstimation = false }: { forEstimation?: boolean } = {},
 ): Promise<StacksTransactionWire> {
   if (intent.intentType === "staking") {
     return buildStaking(
@@ -242,5 +246,5 @@ export async function buildUnsignedTx(
       nonce,
     );
   }
-  return buildTransfer(intent, fee, nonce);
+  return buildTransfer(intent, fee, nonce, forEstimation);
 }
