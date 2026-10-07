@@ -289,7 +289,6 @@ function parseAmountInput(input: AleoTransitionValue | undefined): bigint | unde
   return typeof amount === "string" ? BigInt(amount) : undefined;
 }
 
-/** Base fee plus priority fee, read from two consecutive inputs starting at `baseIndex`. */
 function getFeeTotal(transition: AleoTransition, baseIndex: number): bigint | undefined {
   const base = parseAmountInput(transition.inputs[baseIndex]);
   const priority = parseAmountInput(transition.inputs[baseIndex + 1]);
@@ -321,13 +320,13 @@ export function getFees({
 }): { fees: bigint; feesPayer?: string } {
   if (!details.fee) return { fees: 0n };
 
-  const isFeePublic = details.fee.transition.function === "fee_public";
-  const isFeePrivate = details.fee.transition.function === "fee_private";
+  const isFeePublic = details.fee.transition.function === EXPLORER_TRANSFER_TYPES.FEE_PUBLIC;
+  const isFeePrivate = details.fee.transition.function === EXPLORER_TRANSFER_TYPES.FEE_PRIVATE;
 
   if (isFeePublic) {
     const fees = getFeeTotal(details.fee.transition, 0);
     const feesPayer = getFeePublicPayer(details.fee.transition);
-    if (typeof fees === "bigint" && feesPayer) return { fees, feesPayer };
+    if (typeof fees === "bigint") return { fees, ...(feesPayer && { feesPayer }) };
   }
 
   if (isFeePrivate) {
@@ -457,8 +456,9 @@ function getStakeDetails(
  * (see resolveThirdPartyShieldRecipients) — the explorer blanks it and no owned record can stand in
  * for it.
  *
- * A staking call keeps `value` at 0: bonded credits stay in the native balance, so only the fee
- * leaves it.
+ * A staking call's `value` is the fee the account paid, 0 when another address paid or the payer is
+ * unknown: bonded credits stay in the native balance, and the generic-coin-framework adapter never
+ * adds the fee to BOND, UNBOND or WITHDRAW_UNBONDED.
  */
 export const toPublicOperation = ({
   rawTx,
@@ -486,7 +486,9 @@ export const toPublicOperation = ({
       : rawTx.recipient_address || (resolvedRecipient ?? "");
   const stakingType = resolveStakingOperationType(rawTx);
   const type = stakingType ?? resolveOperationType(rawTx, address, sender, recipient);
-  const value = stakingType ? 0n : BigInt(resolveTransactionAmount(rawTx).toFixed(0));
+  const fee = getFees({ details, address, hasOwnedFeeRecord });
+  const stakingValue = fee.feesPayer === address ? fee.fees : 0n;
+  const value = stakingType ? stakingValue : BigInt(resolveTransactionAmount(rawTx).toFixed(0));
   const stake = stakingType ? getStakeDetails(rawTx, details, stakingType) : undefined;
 
   return {
@@ -503,7 +505,7 @@ export const toPublicOperation = ({
       ...(stake && { stake }),
     },
     tx: {
-      ...getFees({ details, address, hasOwnedFeeRecord }),
+      ...fee,
       hash,
       date,
       block: {
@@ -516,12 +518,17 @@ export const toPublicOperation = ({
   };
 };
 
-export const toPrivateOperation = (
-  enrichedRecord: EnrichedPrivateRecord,
-  address: string,
-  tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>,
-  hasOwnedFeeRecord: boolean,
-): CoinFrameworkOperation => {
+export const toPrivateOperation = ({
+  enrichedRecord,
+  address,
+  tokenTypeByProgramName,
+  hasOwnedFeeRecord,
+}: {
+  enrichedRecord: EnrichedPrivateRecord;
+  address: string;
+  tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>;
+  hasOwnedFeeRecord: boolean;
+}): CoinFrameworkOperation => {
   const { rawRecord, details } = enrichedRecord;
   const hash = rawRecord.transaction_id.trim();
   const date = toBlockDate(rawRecord.block_timestamp);

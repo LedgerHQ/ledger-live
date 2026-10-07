@@ -14,6 +14,7 @@ import {
   testnetBondedValidator,
   testnetIncomingPrivateRecord1,
   testnetSelfConversionTx,
+  testnetSponsorAddress,
   testnetViewKey,
 } from "../__tests__/fixtures/api.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
@@ -353,7 +354,6 @@ describe("createApi", () => {
     });
 
     describe("fees", () => {
-      const sponsor = "aleo1xaytw2vtvhz2szhgjzqetadzjd92w2fdx233vq4fq3jdfd9ety8sna28t3";
       const operationsById = new Map<string, Operation>();
 
       beforeAll(async () => {
@@ -384,10 +384,10 @@ describe("createApi", () => {
         ["at10jt4v3glr9pkrpndqclgasqa8ed4hu0gj7r3qujmqhmaekrv05qq5a6tsx", testnetAddress],
         ["at1v6ltk8nl59xygf47jkfzkky20jqcune2a8e9e7juw5ge4ksegg9sl92e4n", testnetAddress],
         ["at1t76kdj3acv28n9x5x6fynpgcxe2jak060ne3cm9r9h4vkpffrg9s8uw7lt", testnetAddress],
-        ["at1jkllchgezse0hx5wkyxh3ljweqpyg47958wdcnrjcnj94ratzu8qls8ksn", sponsor],
-        ["at195ql6qgnjez6cmshd08axspr4wze8w3k93pydpml2qeqtrtf3ursn7aest", sponsor],
-        ["at1qsk9cnzh0wp3tu8qs7v97sydx0u7qakg7spd306tdq77feca0yxqr6mcqx", sponsor],
-        ["at1ru0pnp4djgdd4cxpmjsaqkzke9gcmx20ensxfk4pev6gylz4xs8spszpn6", sponsor],
+        ["at1jkllchgezse0hx5wkyxh3ljweqpyg47958wdcnrjcnj94ratzu8qls8ksn", testnetSponsorAddress],
+        ["at195ql6qgnjez6cmshd08axspr4wze8w3k93pydpml2qeqtrtf3ursn7aest", testnetSponsorAddress],
+        ["at1qsk9cnzh0wp3tu8qs7v97sydx0u7qakg7spd306tdq77feca0yxqr6mcqx", testnetSponsorAddress],
+        ["at1ru0pnp4djgdd4cxpmjsaqkzke9gcmx20ensxfk4pev6gylz4xs8spszpn6", testnetSponsorAddress],
         [
           "at193lqmmxlce4e5zhne9tlmurpa7s43e7pm0cq6a9gh6wvz8d40qpshvkh83",
           "aleo10ju2x3ktenzaacscg9rreln4q99rehh7plsnk8r6t300pgn49c8qqdrkqy",
@@ -414,10 +414,10 @@ describe("createApi", () => {
         expect(op.tx.fees).toBe(fees);
       });
 
-      it("keeps a bond's value at 0 and puts the bond in details.stake", () => {
+      it("sets a bond's value to its fee and puts the bond in details.stake", () => {
         const bond = getOperation("at12c59u57ehxv6utj0pl66d6a58ca8ml9uptttreqzx2jwv7d04q9qwjue6y");
 
-        expect(bond.value).toBe(0n);
+        expect(bond.value).toBe(5621n);
         expect(bond.tx.feesPayer).toBe(testnetAddress);
         expect(bond.tx.fees).toBe(5621n);
         expect(bond.details).toMatchObject({

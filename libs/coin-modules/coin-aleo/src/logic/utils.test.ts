@@ -36,9 +36,12 @@ import {
   getMockedRecord,
   getMockedTokenDetails,
   getMockedTransactionDetails,
+  mockedFeePrivateBase,
+  mockedFeePublicBase,
   testnetAddress,
   testnetBondedMicrocredits,
   testnetBondedValidator,
+  testnetSponsorAddress,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
@@ -558,7 +561,7 @@ describe("toPublicOperation", () => {
 
     const result = toPublicOperation({ ...publicOpArgs, rawTx, address: recipientAddress });
 
-    expect(result.tx.fees).toBe(2725n);
+    expect(result.tx.fees).toBe(mockedFeePublicBase);
     expect(result.tx.feesPayer).toBe(testnetAddress);
     expect(result.tx.block.hash).toBe(rawTx.block_hash);
   });
@@ -693,7 +696,7 @@ describe("toPublicOperation", () => {
     expect(result.recipients).toEqual([recipientAddress]);
   });
 
-  it("should set a BOND value to 0 and put the bond in details.stake", () => {
+  it("should set a BOND value to its fee and put the bond in details.stake", () => {
     const bondTx = getMockedPublicTransaction({
       function_id: "bond_public",
       sender_address: "",
@@ -704,12 +707,12 @@ describe("toPublicOperation", () => {
     const result = toPublicOperation({
       ...publicOpArgs,
       rawTx: bondTx,
-      address: senderAddress,
+      address: testnetAddress,
       details: bondDetails(),
     });
 
     expect(result.type).toBe("BOND");
-    expect(result.value).toBe(0n);
+    expect(result.value).toBe(mockedFeePublicBase);
     expect(result.details).toMatchObject({
       functionId: "bond_public",
       stake: { address: testnetBondedValidator, amount: testnetBondedMicrocredits },
@@ -724,11 +727,11 @@ describe("toPublicOperation", () => {
     const result = toPublicOperation({
       ...publicOpArgs,
       rawTx: bondTx,
-      address: senderAddress,
+      address: testnetAddress,
       details,
     });
 
-    expect(result.value).toBe(0n);
+    expect(result.value).toBe(mockedFeePublicBase);
     expect(result.details).not.toHaveProperty("stake");
     expect(log).toHaveBeenCalledTimes(1);
     expect(log).toHaveBeenCalledWith(
@@ -737,32 +740,67 @@ describe("toPublicOperation", () => {
     );
   });
 
-  it("should set an UNBOND value to 0 and put the explorer amount in details.stake", () => {
+  it("should set an UNBOND value to its fee and put the explorer amount in details.stake", () => {
     const unbondTx = getMockedPublicTransaction({ function_id: "unbond_public", amount: 5000 });
 
-    const result = toPublicOperation({ ...publicOpArgs, rawTx: unbondTx, address: senderAddress });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx: unbondTx, address: testnetAddress });
 
     expect(result.type).toBe("UNBOND");
-    expect(result.value).toBe(0n);
+    expect(result.value).toBe(mockedFeePublicBase);
     expect(result.details).toMatchObject({ stake: { amount: 5000n } });
   });
 
-  it("should set a WITHDRAW_UNBONDED value to 0 with no details.stake", () => {
+  it("should set a WITHDRAW_UNBONDED value to its fee with no details.stake", () => {
     const claimTx = getMockedPublicTransaction({ function_id: "claim_unbond_public" });
 
-    const result = toPublicOperation({ ...publicOpArgs, rawTx: claimTx, address: senderAddress });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx: claimTx, address: testnetAddress });
 
     expect(result.type).toBe("WITHDRAW_UNBONDED");
-    expect(result.value).toBe(0n);
+    expect(result.value).toBe(mockedFeePublicBase);
     expect(result.details).not.toHaveProperty("stake");
     expect(result.details).toMatchObject({
       functionId: "claim_unbond_public",
       ledgerOpType: "WITHDRAW_UNBONDED",
     });
   });
-});
 
-const sponsorAddress = "aleo1xaytw2vtvhz2szhgjzqetadzjd92w2fdx233vq4fq3jdfd9ety8sna28t3";
+  it("should set a staking value to 0 when another address paid the fee", () => {
+    const bondTx = getMockedPublicTransaction({ function_id: "bond_public" });
+    const details = getMockedTransactionDetails("at1bond", {
+      execution: { transitions: [getMockedBondTransition()] },
+      fee: { transition: getMockedFeePublicTransition({ payer: testnetSponsorAddress }) },
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx: bondTx,
+      address: testnetAddress,
+      details,
+    });
+
+    expect(result.value).toBe(0n);
+    expect(result.tx.feesPayer).toBe(testnetSponsorAddress);
+  });
+
+  it("should set a staking value to its fee when the account paid it through a fee_private record", () => {
+    const bondTx = getMockedPublicTransaction({ function_id: "bond_public" });
+    const details = getMockedTransactionDetails("at1bond", {
+      execution: { transitions: [getMockedBondTransition()] },
+      fee: { transition: getMockedFeePrivateTransition() },
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx: bondTx,
+      address: testnetAddress,
+      details,
+      hasOwnedFeeRecord: true,
+    });
+
+    expect(result.value).toBe(mockedFeePrivateBase);
+    expect(result.tx.feesPayer).toBe(testnetAddress);
+  });
+});
 
 function withFee(transition: AleoTransition) {
   return getMockedTransactionDetails("at1tx1", { fee: { transition } });
@@ -778,10 +816,13 @@ describe("getFees", () => {
 
   it("should add base and priority fee of a fee_public transition and read its payer", () => {
     const details = withFee(
-      getMockedFeePublicTransition({ payer: sponsorAddress, base: 2725n, priority: 100n }),
+      getMockedFeePublicTransition({ payer: testnetSponsorAddress, base: 2725n, priority: 100n }),
     );
 
-    expect(getFees({ ...feeArgs, details })).toEqual({ fees: 2825n, feesPayer: sponsorAddress });
+    expect(getFees({ ...feeArgs, details })).toEqual({
+      fees: 2825n,
+      feesPayer: testnetSponsorAddress,
+    });
   });
 
   it("should set the account as payer of a fee_private transaction it owns a fee record of", () => {
@@ -818,6 +859,15 @@ describe("getFees", () => {
         ],
       },
     ],
+  ])("should log and fall back to fee_value on %s", (_, transition) => {
+    const details = withFee(transition);
+
+    expect(getFees({ ...feeArgs, details })).toEqual({ fees: BigInt(details.fee_value) });
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith("aleo/listOperations", "unreadable fee transition in at1tx1");
+  });
+
+  it.each<[string, AleoTransition]>([
     [
       "a future with no arguments",
       {
@@ -829,12 +879,11 @@ describe("getFees", () => {
       "a future whose first argument is not an address",
       getMockedFeePublicTransition({ payer: "1u64" }),
     ],
-  ])("should log and fall back to fee_value on %s", (_, transition) => {
+  ])("should keep the fee_public amount and leave the payer unset on %s", (_, transition) => {
     const details = withFee(transition);
 
-    expect(getFees({ ...feeArgs, details })).toEqual({ fees: BigInt(details.fee_value) });
-    expect(log).toHaveBeenCalledTimes(1);
-    expect(log).toHaveBeenCalledWith("aleo/listOperations", "unreadable fee transition in at1tx1");
+    expect(getFees({ ...feeArgs, details })).toEqual({ fees: mockedFeePublicBase });
+    expect(log).not.toHaveBeenCalled();
   });
 });
 
@@ -886,7 +935,12 @@ describe("toPrivateOperation", () => {
       },
     });
 
-    const result = toPrivateOperation(record, testnetAddress, NO_TOKENS, true);
+    const result = toPrivateOperation({
+      enrichedRecord: record,
+      address: testnetAddress,
+      tokenTypeByProgramName: NO_TOKENS,
+      hasOwnedFeeRecord: true,
+    });
 
     expect(result.tx.fees).toBe(2318n);
     expect(result.tx.feesPayer).toBe(testnetAddress);

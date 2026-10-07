@@ -220,6 +220,9 @@ export const testnetViewKey = "AViewKey1jyaKC65RhaGN3b6h79hLdwTBk3YAMbRL1MMeCArL
 export const testnetAddress = "aleo1uhf67fhy46jvv5hadf586pkdarax6ppuzq8xtpk7jdk9hhujku8sfa39ml";
 export const testnetLedgerAccountId = `js:2:aleo_testnet:${testnetAddress}:`;
 
+export const testnetSponsorAddress =
+  "aleo1xaytw2vtvhz2szhgjzqetadzjd92w2fdx233vq4fq3jdfd9ety8sna28t3";
+
 // Inbound native transfer_public from a third party.
 export const referenceTransferPublicTx = {
   id: "at1tywkrphxmm47ry8zrr30h27ae9st4lnza295mkgu0tgals2qlqpsy797ng",
@@ -684,9 +687,12 @@ export const getMockedDelegatedProvingResponse = (): DelegatedProvingResponse =>
   },
 });
 
+export const mockedFeePublicBase = 2725n;
+export const mockedFeePrivateBase = 2308n;
+
 export const getMockedFeePublicTransition = ({
   payer,
-  base = 2725n,
+  base = mockedFeePublicBase,
   priority = 0n,
 }: {
   payer: string;
@@ -714,7 +720,7 @@ export const getMockedFeePublicTransition = ({
 });
 
 export const getMockedFeePrivateTransition = ({
-  base = 2308n,
+  base = mockedFeePrivateBase,
   priority = 0n,
 }: {
   base?: bigint;

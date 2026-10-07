@@ -11,6 +11,8 @@ import {
   getMockedRecordScannerStatus,
   getMockedTokenDetails,
   getMockedTransactionDetails,
+  mockedFeePrivateBase,
+  mockedFeePublicBase,
   testnetBondedMicrocredits,
   testnetBondedValidator,
 } from "../__tests__/fixtures/api.fixture";
@@ -558,11 +560,10 @@ describe("listOperations", () => {
 
       const { items } = await run({ minHeight: 0 });
 
-      // a fee record does not make the account the hidden side of the transfer
       expect(items).toEqual([
         expect.objectContaining({
           senders: [""],
-          tx: expect.objectContaining({ feesPayer: address, fees: 2308n }),
+          tx: expect.objectContaining({ feesPayer: address, fees: mockedFeePrivateBase }),
         }),
       ]);
     });
@@ -668,7 +669,7 @@ describe("listOperations", () => {
       ]);
     });
 
-    it("should set a bond's value to 0 and put the bond in details.stake", async () => {
+    it("should set a bond's value to its fee and put the bond in details.stake", async () => {
       mockedGetTransactionById.mockImplementation(async (_, id) =>
         getMockedTransactionDetails(id, {
           fee: readableFee,
@@ -681,11 +682,11 @@ describe("listOperations", () => {
       expect(items).toEqual([
         expect.objectContaining({
           id: "at1bond",
-          value: 0n,
+          value: mockedFeePublicBase,
           details: expect.objectContaining({
             stake: { address: testnetBondedValidator, amount: testnetBondedMicrocredits },
           }),
-          tx: expect.objectContaining({ feesPayer: address, fees: 2725n }),
+          tx: expect.objectContaining({ feesPayer: address, fees: mockedFeePublicBase }),
         }),
         expect.objectContaining({ id: "at1transfer" }),
       ]);
