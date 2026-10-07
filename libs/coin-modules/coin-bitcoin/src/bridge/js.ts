@@ -24,7 +24,7 @@ import { SignerContext } from "../signer";
 import { broadcast } from "../broadcast";
 import { perCoinLogic } from "../logic";
 import resolver from "../hw-getAddress";
-import { validateAddress } from "../validateAddress";
+import { validateAddress } from "../logic/validateAddress";
 import buildSignRawOperation from "../signRawOperation";
 import { getBitcoinEstimationRecipient } from "../constants";
 

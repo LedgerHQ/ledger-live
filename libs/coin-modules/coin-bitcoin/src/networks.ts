@@ -1,6 +1,48 @@
 import { BigNumber } from "bignumber.js";
-import type { BitcoinLikeNetworkParameters } from "./types";
-import { BitcoinLikeFeePolicy, BitcoinLikeSigHashType } from "./types";
+
+/**
+ * Network parameters of the currencies coin-bitcoin serves (address versions, fee and dust policy,
+ * sighash type, …), shared by the legacy bridge and the coin module API. Free of Ledger Live types,
+ * so that the API's logic can read them.
+ */
+
+export const BitcoinLikeFeePolicy = Object.freeze({
+  PER_BYTE: "PER_BYTE",
+  PER_KBYTE: "PER_KBYTE",
+});
+
+export const BitcoinLikeSigHashType = Object.freeze({
+  SIGHASH_ALL: 0x01,
+  SIGHASH_NONE: 0x02,
+  SIGHASH_SINGLE: 0x03,
+  SIGHASH_FORKID: 0x40,
+  SIGHASH_ANYONECANPAY: 0x80,
+});
+
+export type BitcoinLikeNetworkParameters = {
+  // Name of the network.
+  identifier: string;
+  // Version of the Pay To Public Hash standard.
+  P2PKHVersion: Buffer;
+  // Version of the Pay To Script Hash standard.
+  P2SHVersion: Buffer;
+  // Version of the Extended Public Key standard.
+  xpubVersion: Buffer;
+  // Policy to use when expressing fee amount, values in BitcoinLikeFeePolicy
+  feePolicy: string;
+  // Minimal amount a UTXO should have before being considered BTC dust.
+  dustAmount: BigNumber;
+  // Constant prefix to prepend all signature messages.
+  messagePrefix: string;
+  // Are transactions encoded with timestamp?
+  usesTimestampedTransaction: boolean;
+  // Delay applied to all timestamps. Used to debounce transactions.
+  timestampDelay: BigNumber;
+  // Bitcoin signature flag indicating what part of a transaction a signature signs, values in BitcoinLikeSigHashType
+  sigHash: number;
+  // Addition BIPs enabled for this network.
+  additionalBIPs: string[];
+};
 
 export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkParameters => {
   if (networkName === "bitcoin") {
