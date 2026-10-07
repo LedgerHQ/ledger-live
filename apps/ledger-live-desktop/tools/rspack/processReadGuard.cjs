@@ -23,7 +23,8 @@ function polarityOf({ o1, l1, o2, l2, neg, n1, n2, p1, p2, other1, other2 }) {
     const literal = (l1 ?? l2).slice(1, -1);
     if (op[0] === "=") return literal === "undefined" ? "absent" : "present";
     if (op[0] === "!") return literal === "undefined" ? "present" : "absent";
-    return literal === "u" && op === (o1 === undefined ? "<" : ">") ? "absent" : "present";
+    if (literal !== "u") return null;
+    return op === (o1 === undefined ? "<" : ">") ? "absent" : "present";
   }
   if (other1 !== undefined || other2 !== undefined) return null;
   const nothingOp = p1 ?? p2;

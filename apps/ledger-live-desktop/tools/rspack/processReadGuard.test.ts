@@ -64,6 +64,8 @@ describe("processReadGuard", () => {
     'if(typeof process>"u"&&x)a();else process.cwd()',
     'if(typeof process>"u")if(x)a();else process.cwd()',
     'typeof process<"u"||function(){process.cwd()}',
+    'typeof process<"z"&&process.cwd()',
+    '"a"<typeof process&&process.cwd()',
   ])("should flag a read no guard protects: %s", code => {
     expect(findUnguarded(code)).toEqual([expect.objectContaining({ property: "cwd" })]);
   });
@@ -88,6 +90,7 @@ describe("processReadGuard", () => {
     'f(typeof setImmediate<"u"),setImmediate(f)',
     'typeof setImmediate<"u"&&x||setImmediate(f)',
     "globalThis.setImmediate!==null&&setImmediate(f)",
+    'typeof setImmediate<"z"&&setImmediate(f)',
   ])("should flag a bare timer call: %s", code => {
     expect(findUnguardedGlobals(code)).toEqual([
       expect.objectContaining({ property: "setImmediate" }),
