@@ -10,6 +10,7 @@ import { expose } from "./expose";
 import { db } from "./db";
 import { deeplink, updater } from "./push";
 import { app, dialogs, files, power, store } from "./shell";
+import { shell, system } from "./system";
 
 const deepFreeze = <T>(value: T): T => {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
@@ -42,6 +43,8 @@ export function installBridge(): void {
     files,
     power,
     store,
+    shell,
+    system,
     cardSession,
   };
 

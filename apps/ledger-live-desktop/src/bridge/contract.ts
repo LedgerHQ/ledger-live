@@ -98,6 +98,18 @@ export type StoreBridge = {
   clear(): void;
 };
 
+/** Its own group, so the lint guardrail matching on a `shell` object still sees the facade. */
+export type ShellBridge = {
+  openExternal(url: string): void;
+};
+
+export type SystemBridge = {
+  /** Compared in main so renderer code never reads the clipboard; null when it cannot be read. */
+  clipboardMatchesText(expected: string): Promise<boolean | null>;
+  setVisualZoomLevelLimits(minimum: number, maximum: number): void;
+  getResourceUsage(): Electron.ResourceUsage | undefined;
+};
+
 /** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
 export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
@@ -106,6 +118,8 @@ export type CardSessionBridge = {
 export type LedgerBridge = {
   version: typeof BRIDGE_VERSION;
   bootstrap: Bootstrap;
+  shell: ShellBridge;
+  system: SystemBridge;
   db: DbBridge;
   updater: UpdaterBridge;
   deeplink: DeeplinkBridge;
@@ -145,5 +159,7 @@ export const CHANNELS = {
   openUserDataDirectory: "openUserDataDirectory",
   keepScreenAwake: "activate-keep-screen-awake",
   releaseScreenAwake: "deactivate-keep-screen-awake",
+  openExternal: "shell:open-external",
+  clipboardMatchesText: "clipboard:matches-text",
   cardSessionBootstrap: "card-session:bootstrap",
 } as const;

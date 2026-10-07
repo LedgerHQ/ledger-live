@@ -2,12 +2,13 @@ import { getEnv, setEnvUnsafe } from "@shared/env";
 import "./env";
 import "./live-common-setup-main";
 import "./bootstrap";
-import { app, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
+import { app, clipboard, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import fs from "fs/promises";
 import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
+import { openURL } from "./openURL";
 
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
@@ -52,6 +53,17 @@ ipcMain.handle(
 );
 
 ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
+
+// openURL validates the scheme; do not swap it for shell.openExternal.
+ipcMain.on("shell:open-external", (_event, url: string) => openURL(url));
+
+ipcMain.handle("clipboard:matches-text", (_event, expected: string) => {
+  try {
+    return clipboard.readText() === expected;
+  } catch {
+    return null;
+  }
+});
 
 ipcMain.handle(
   "export-operations",
