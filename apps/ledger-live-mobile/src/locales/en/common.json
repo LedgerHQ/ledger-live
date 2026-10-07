@@ -3558,8 +3558,6 @@
       "buy": "Buy",
       "connect": "Connect",
       "buyLedger": "Buy a Ledger",
-      "receive": "Receive",
-      "send": "Send",
       "transferDrawer": {
         "title": "Transfer",
         "receiveCrypto": "Receive via crypto address",

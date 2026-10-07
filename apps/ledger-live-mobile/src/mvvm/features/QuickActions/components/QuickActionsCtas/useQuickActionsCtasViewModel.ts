@@ -8,8 +8,6 @@ import {
   Plus,
   LedgerLogo,
   Cart,
-  ArrowUp,
-  ArrowDown,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -18,19 +16,14 @@ import {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import { languageSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { accountsCountSelector, useAreAccountsEmpty } from "~/reducers/accounts";
 import { useFeature } from "@features/platform-feature-flags";
 import { resolveRemoteCopy } from "@ledgerhq/live-common/analytics/remoteABTesting/resolveRemoteCopy";
 import { useTransferDrawerController } from "../../hooks/useTransferDrawerController";
-import { QuickActionCta, UserQuickActionsState } from "../../types";
+import { QuickActionCta } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
 import useBuyDeviceAction from "LLM/features/Reborn/hooks/useBuyDeviceAction";
 import { useOpenSwap } from "LLM/features/Swap";
-import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
-import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
-import { getSendFlowTrackingProperties } from "LLM/features/Send/utils/tracking";
 
 const BUTTON_LOCATION = "quick_action";
 
@@ -40,7 +33,6 @@ interface UseQuickActionsCtasViewModelProps {
 
 interface QuickActionsCtasViewModel {
   quickActions: readonly QuickActionCta[];
-  isVariant: boolean;
 }
 
 export const useQuickActionsCtasViewModel = ({
@@ -53,8 +45,6 @@ export const useQuickActionsCtasViewModel = ({
   const pageName = sourceScreenName ?? route.name;
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const hasAnyAccounts = useSelector(accountsCountSelector) > 0;
-  const hasFunds = !useAreAccountsEmpty() && hasAnyAccounts;
 
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
   const isExchangeEnabled = ptxServiceCtaExchangeDrawer?.enabled ?? true;
@@ -63,27 +53,9 @@ export const useQuickActionsCtasViewModel = ({
   const language = useSelector(languageSelector);
   const isEN = language === "en";
 
-  const shouldDisplayQuickActionsCtasVariant =
-    useFeature("lwmQuickActionsCtasVariant")?.enabled ?? false;
-
   const { openDrawer: openTransferDrawer } = useTransferDrawerController();
   const handleBuyDeviceAction = useBuyDeviceAction();
   const { handleOpenSwap } = useOpenSwap({ sourceScreenName: pageName });
-  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
-    sourceScreenName: pageName,
-    fromMenu: false,
-  });
-  const { isEnabledForFamily } = useNewSendFlowFeature();
-  const shouldOpenNewSendFlow = isEnabledForFamily();
-  const { handleOpenSendFlow } = useOpenSendFlow({
-    sourceScreenName: pageName,
-  });
-
-  const userState: UserQuickActionsState = useMemo(() => {
-    if (readOnlyModeEnabled) return "no_signer";
-    if (!hasFunds) return "no_funds";
-    return "has_funds";
-  }, [readOnlyModeEnabled, hasFunds]);
 
   const trackPress = useCallback(
     (button: string) => {
@@ -128,32 +100,6 @@ export const useQuickActionsCtasViewModel = ({
     trackPress("buy_ledger");
     handleBuyDeviceAction();
   }, [trackPress, handleBuyDeviceAction]);
-
-  const handleReceivePress = useCallback(() => {
-    trackPress("receive");
-    handleOpenReceiveDrawer();
-  }, [trackPress, handleOpenReceiveDrawer]);
-
-  const sendTrackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(null, null, shouldOpenNewSendFlow),
-    [shouldOpenNewSendFlow],
-  );
-
-  const handleSendPress = useCallback(() => {
-    track("button_clicked", {
-      ...sendTrackingProperties,
-      button: "send",
-      buttonLocation: BUTTON_LOCATION,
-      page: pageName,
-    });
-    if (shouldOpenNewSendFlow) {
-      handleOpenSendFlow();
-      return;
-    }
-    navigation.navigate(NavigatorName.SendFunds, {
-      screen: ScreenName.SendCoin,
-    });
-  }, [handleOpenSendFlow, navigation, pageName, sendTrackingProperties, shouldOpenNewSendFlow]);
 
   // no signer: Connect + Buy Ledger
   const noSignerActions: readonly QuickActionCta[] = useMemo(
@@ -222,65 +168,7 @@ export const useQuickActionsCtasViewModel = ({
     ],
   );
 
-  // variant: Receive + Swap + Buy + Send (Send omitted when no funds)
-  const variantActions: readonly QuickActionCta[] = useMemo(
-    () => [
-      {
-        id: "receive",
-        label: t("portfolio.quickActionsCtas.receive"),
-        icon: ArrowDown,
-        disabled: false,
-        onPress: handleReceivePress,
-        testID: QUICK_ACTIONS_TEST_IDS.ctas.receive,
-      },
-      {
-        id: "swap",
-        label: t("portfolio.quickActionsCtas.swap"),
-        icon: Exchange,
-        disabled: !isExchangeEnabled,
-        onPress: handleSwapPress,
-        testID: QUICK_ACTIONS_TEST_IDS.ctas.swap,
-      },
-      {
-        id: "buy",
-        label: t("portfolio.quickActionsCtas.buy"),
-        icon: Plus,
-        disabled: !isExchangeEnabled,
-        onPress: handleBuyPress,
-        testID: QUICK_ACTIONS_TEST_IDS.ctas.buy,
-      },
-      ...(shouldDisplayQuickActionsCtasVariant
-        ? [
-            {
-              id: "send" as const,
-              label: t("portfolio.quickActionsCtas.send"),
-              icon: ArrowUp,
-              disabled: userState !== "has_funds",
-              onPress: handleSendPress,
-              testID: QUICK_ACTIONS_TEST_IDS.ctas.send,
-            },
-          ]
-        : []),
-    ],
-    [
-      t,
-      isExchangeEnabled,
-      userState,
-      shouldDisplayQuickActionsCtasVariant,
-      handleReceivePress,
-      handleSwapPress,
-      handleBuyPress,
-      handleSendPress,
-    ],
-  );
+  const quickActions = readOnlyModeEnabled ? noSignerActions : standardActions;
 
-  const isVariant = shouldDisplayQuickActionsCtasVariant && userState !== "no_signer";
-
-  const quickActions = useMemo(() => {
-    if (userState === "no_signer") return noSignerActions;
-    if (isVariant) return variantActions;
-    return standardActions;
-  }, [userState, isVariant, noSignerActions, variantActions, standardActions]);
-
-  return { quickActions, isVariant };
+  return { quickActions };
 };

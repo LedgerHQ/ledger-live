@@ -1,14 +1,13 @@
 import React, { memo } from "react";
-import { Box, Text, TileButton } from "@ledgerhq/lumen-ui-rnative";
+import { Box, TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { QuickActionCta } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 
 interface QuickActionsCtasViewProps {
   readonly quickActions: readonly QuickActionCta[];
-  readonly isVariant?: boolean;
 }
 
-const QuickActionsCtasView = ({ quickActions, isVariant = false }: QuickActionsCtasViewProps) => {
+const QuickActionsCtasView = ({ quickActions }: QuickActionsCtasViewProps) => {
   return (
     <Box lx={{ flexDirection: "row", gap: "s8" }} testID={QUICK_ACTIONS_TEST_IDS.ctas.container}>
       {quickActions.map(action => (
@@ -22,20 +21,7 @@ const QuickActionsCtasView = ({ quickActions, isVariant = false }: QuickActionsC
           accessibilityLabel={action.label}
           isFull
         >
-          {isVariant ? (
-            <Text
-              typography="body3SemiBold"
-              lx={{
-                textAlign: "center",
-                color: action.disabled ? "disabled" : "base",
-                marginTop: "s2",
-              }}
-            >
-              {action.label}
-            </Text>
-          ) : (
-            action.label
-          )}
+          {action.label}
         </TileButton>
       ))}
     </Box>

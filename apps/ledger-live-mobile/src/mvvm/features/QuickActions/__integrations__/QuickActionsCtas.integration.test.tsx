@@ -6,13 +6,9 @@ import {
   overrideStateWithoutFunds,
   overrideStateNoSigner,
   overrideStateReadOnly,
-  overrideStateWithFundsVariant,
-  overrideStateWithoutFundsVariant,
   overrideStateWithTransferCopyVariant,
   overrideStateWithTransferCopyDisabled,
   getCtaButtons,
-  getVariantCtaButtons,
-  getVariantNoFundsCtaButtons,
   getNoSignerCtaButtons,
 } from "./shared";
 import { QUICK_ACTIONS_TEST_IDS } from "../testIds";
@@ -222,76 +218,5 @@ describe("QuickActionsCtas Integration Tests", () => {
         });
       },
     );
-  });
-
-  describe("Variant mode (lwmQuickActionsCtasVariant enabled)", () => {
-    describe("Has Funds State", () => {
-      it("should display Receive, Send, Swap, Buy buttons when variant is enabled with funds", async () => {
-        render(<TestQuickActionsWrapper />, {
-          overrideInitialState: overrideStateWithFundsVariant,
-        });
-
-        const { receiveButton, sendButton, swapButton, buyButton } = await getVariantCtaButtons();
-
-        expect(receiveButton).toBeVisible();
-        expect(receiveButton).toHaveTextContent(/receive/i);
-
-        expect(sendButton).toBeVisible();
-        expect(sendButton).toHaveTextContent(/send/i);
-
-        expect(swapButton).toBeVisible();
-        expect(swapButton).toHaveTextContent(/swap/i);
-
-        expect(buyButton).toBeVisible();
-        expect(buyButton).toHaveTextContent(/buy/i);
-      });
-
-      it("should enable all four buttons when user has funds in variant mode", async () => {
-        render(<TestQuickActionsWrapper />, {
-          overrideInitialState: overrideStateWithFundsVariant,
-        });
-
-        const { receiveButton, sendButton, swapButton, buyButton } = await getVariantCtaButtons();
-
-        expect(receiveButton).toBeEnabled();
-        expect(sendButton).toBeEnabled();
-        expect(swapButton).toBeEnabled();
-        expect(buyButton).toBeEnabled();
-      });
-
-      it("should not display Transfer button when variant is enabled with funds", async () => {
-        render(<TestQuickActionsWrapper />, {
-          overrideInitialState: overrideStateWithFundsVariant,
-        });
-
-        await screen.findByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container);
-
-        expect(screen.queryByTestId(QUICK_ACTIONS_TEST_IDS.ctas.transfer)).toBeNull();
-      });
-    });
-
-    describe("No Funds State", () => {
-      it("should display Receive, Swap, Buy, Send buttons when variant is enabled without funds", async () => {
-        render(<TestQuickActionsWrapper />, {
-          overrideInitialState: overrideStateWithoutFundsVariant,
-        });
-
-        const { receiveButton, swapButton, buyButton, sendButton } =
-          await getVariantNoFundsCtaButtons();
-
-        expect(receiveButton).toBeVisible();
-        expect(receiveButton).toHaveTextContent(/receive/i);
-
-        expect(swapButton).toBeVisible();
-        expect(swapButton).toHaveTextContent(/swap/i);
-
-        expect(buyButton).toBeVisible();
-        expect(buyButton).toHaveTextContent(/buy/i);
-
-        expect(sendButton).toBeVisible();
-        expect(sendButton).toBeDisabled();
-        expect(sendButton).toHaveTextContent(/send/i);
-      });
-    });
   });
 });
