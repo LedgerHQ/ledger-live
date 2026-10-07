@@ -233,6 +233,12 @@ jobs:
           skip_ruby: true
           install_playwright: true
 
+      - name: Install pipx for mitmproxy (self-hosted image gap)
+        if: ${{ inputs.runner != '' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+        with:
+          packages: pipx
+
       - name: Start mitmproxy
         continue-on-error: true
         run: |
