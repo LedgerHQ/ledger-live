@@ -1,5 +1,8 @@
 # @shared/clipboard
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Cross-platform copy and paste. The API is identical on web and native, so consumers never branch on
 platform:
 

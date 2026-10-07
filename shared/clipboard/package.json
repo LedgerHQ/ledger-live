@@ -20,6 +20,7 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../.. -W shared/clipboard",
+    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src"
   },
@@ -43,6 +44,7 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }
