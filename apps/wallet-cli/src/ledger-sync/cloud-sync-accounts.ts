@@ -10,7 +10,6 @@ import {
 } from "@shared/cloud-sync";
 import { errMessage } from "../shared/error-message";
 import type { AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
-import type { AccountIdParams } from "@ledgerhq/types-live";
 import { CLOUD_SYNC_API_URLS } from "../key-ring/constants";
 import {
   toV1,
@@ -150,24 +149,6 @@ function unsupportedFamily(currencyId: string): string | undefined {
   return SUPPORTED_FAMILIES.has(family) ? undefined : family;
 }
 
-/** A synced entry's account id is malformed or disagrees with the entry's own fields. */
-class InvalidAccountIdError extends Error {
-  constructor(id: string, reason: string, options?: ErrorOptions) {
-    super(`Invalid account id "${id}": ${reason}.`, options);
-    this.name = "InvalidAccountIdError";
-  }
-}
-
-/** A synced entry's account id uses a derivation mode this wallet-cli version doesn't know. */
-class UnsupportedDerivationModeError extends Error {
-  constructor(id: string, mode: string) {
-    super(
-      `Derivation mode "${mode}" of account id "${id}" is not supported by this wallet-cli version.`,
-    );
-    this.name = "UnsupportedDerivationModeError";
-  }
-}
-
 /**
  * Ledger Sync carries live-common's raw `seedIdentifier`: the public key of the seed derivation,
  * shared by every account of that currency (e.g. `04…` for Ethereum), not the account's address.
@@ -175,20 +156,17 @@ class UnsupportedDerivationModeError extends Error {
  * BridgeAdapter.toDescriptor for accounts discovered on the device.
  */
 function withSeedIdentifierFromId(descriptor: AccountDescriptorV0): AccountDescriptorV0 {
-  let decoded: AccountIdParams;
+  let decoded;
   try {
     decoded = decodeAccountId(descriptor.id);
   } catch (cause) {
-    throw isDerivationMode(descriptor.derivationMode)
-      ? new InvalidAccountIdError(descriptor.id, errMessage(cause), { cause })
-      : new UnsupportedDerivationModeError(descriptor.id, descriptor.derivationMode);
+    throw new Error(`Invalid account id "${descriptor.id}": ${errMessage(cause)}.`, { cause });
   }
   const { currencyId, derivationMode, xpubOrAddress } = decoded;
   if (currencyId !== descriptor.currencyId || derivationMode !== descriptor.derivationMode) {
-    throw new InvalidAccountIdError(
-      descriptor.id,
-      `it names (${currencyId}, "${derivationMode}") but the entry has ` +
-        `(${descriptor.currencyId}, "${descriptor.derivationMode}")`,
+    throw new Error(
+      `Invalid account id "${descriptor.id}": it names (${currencyId}, "${derivationMode}") but ` +
+        `the entry has (${descriptor.currencyId}, "${descriptor.derivationMode}").`,
     );
   }
   return { ...descriptor, seedIdentifier: xpubOrAddress };
@@ -219,13 +197,21 @@ function convertSyncedAccount(
     };
   }
 
+  // A newer Ledger Wallet may sync a derivation mode this version can't decode: skip it rather
+  // than report it as invalid, which would keep every later sync re-pulling it.
+  if (!isDerivationMode(descriptor.derivationMode)) {
+    return {
+      status: "skipped",
+      id: descriptor.id,
+      reason: `Derivation mode "${descriptor.derivationMode}" is not supported by this wallet-cli version.`,
+    };
+  }
+
   let v1: unknown;
   try {
     v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {
-    return e instanceof UnsupportedFamilyError ||
-      e instanceof UnknownNetworkError ||
-      e instanceof UnsupportedDerivationModeError
+    return e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError
       ? { status: "skipped", id: descriptor.id, reason: e.message }
       : { status: "invalid", id: descriptor.id, reason: errMessage(e) };
   }
