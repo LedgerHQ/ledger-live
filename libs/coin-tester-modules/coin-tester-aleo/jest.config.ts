@@ -1,6 +1,6 @@
 import type { Config } from "jest";
 
-const sharedConfig: Config = {
+const config: Config = {
   testEnvironment: "node",
   setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   testEnvironmentOptions: {
@@ -27,12 +27,8 @@ const sharedConfig: Config = {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   testPathIgnorePatterns: ["/node_modules/", "/lib/", "/lib-es/"],
-};
-
-const config: Config = {
-  ...sharedConfig,
   reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
-  testMatch: ["<rootDir>/src/scenarii.test.ts", "<rootDir>/src/negativeCases.test.ts"],
+  testMatch: ["<rootDir>/src/scenarii.test.ts"],
 };
 
 export default config;

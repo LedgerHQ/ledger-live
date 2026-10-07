@@ -93,7 +93,7 @@ function toRow({
   };
 }
 
-export async function scanIndexedTransfers(): Promise<AleoPublicTransaction[]> {
+async function scanIndexedTransfers(): Promise<AleoPublicTransaction[]> {
   const rows: AleoPublicTransaction[] = [];
 
   for (const block of await getBlocksFrom(0)) {

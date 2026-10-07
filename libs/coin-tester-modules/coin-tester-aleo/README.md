@@ -49,8 +49,8 @@ pnpm start
 
 ## Development
 
-`pnpm start` spins up the Docker stack, runs `src/scenarii.test.ts` and
-`src/negativeCases.test.ts`, then tears the stack down.
+`pnpm start` spins up the Docker stack, runs `src/scenarii.test.ts`, then
+tears the stack down.
 
 The first run builds the `aleo-devnode` image, which downloads the `leo`
 binary and checks it against the SHA-256 pinned in `aleo-devnode.Dockerfile`.

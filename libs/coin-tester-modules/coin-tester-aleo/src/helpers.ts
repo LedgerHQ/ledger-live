@@ -18,7 +18,7 @@ import { createFakeScanner } from "./msw/scanner";
 import { buildMockAleoSigner } from "./signer";
 import { startMockServer, syncAccount } from "./testSetup";
 
-export function getBridges(signer: AleoSigner, config: AleoCoinConfig) {
+function getBridges(signer: AleoSigner, config: AleoCoinConfig) {
   const signerContext: SignerContext<AleoSigner> = (_, fn) => fn(signer);
   return createBridges(signerContext, () => config);
 }

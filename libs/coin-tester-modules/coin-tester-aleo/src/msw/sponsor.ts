@@ -43,7 +43,7 @@ export function resetSponsor(): void {
   sponsoredFeeByTransactionId.clear();
 }
 
-export async function ensureSponsor(): Promise<GeneratedAleoAccount> {
+async function ensureSponsor(): Promise<GeneratedAleoAccount> {
   if (sponsor) return sponsor;
 
   const account = await generateAleoAccount();

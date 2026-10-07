@@ -149,9 +149,11 @@ export const scenarioTransferPrivateToPublic: Scenario<AleoTransaction, AleoAcco
       expect(operation.senders).toStrictEqual([GENESIS_ACCOUNT.address]);
       expect(operation.recipients).toStrictEqual([sender.address]);
     }
-    expect(account.operations.map(operation => operation.value.toNumber()).sort()).toStrictEqual(
-      [RECORD_A_MICROCREDITS, RECORD_B_MICROCREDITS].sort(),
-    );
+    const mintedValues = account.operations.map(operation => operation.value.toNumber());
+    expect(mintedValues.sort((a, b) => a - b)).toStrictEqual([
+      RECORD_B_MICROCREDITS,
+      RECORD_A_MICROCREDITS,
+    ]);
   },
 
   afterAll: async account => {
