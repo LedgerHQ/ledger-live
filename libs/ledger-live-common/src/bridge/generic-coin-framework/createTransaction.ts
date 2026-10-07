@@ -136,6 +136,19 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         feesStrategy: "fast",
         nonce: new BigNumber(0),
       };
+    case "bitcoin":
+      // UTXO chain without an account sequence, like kaspa above: the synthetic zero nonce (ignored
+      // by crafting, which selects real UTXOs) lets signOperation skip getNextSequence.
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+        feesStrategy: "medium",
+        nonce: new BigNumber(0),
+      };
     case "stacks":
       // Unlike near/vechain/cardano above, leaving nonce unset lets craftTransaction/estimateFees
       // fetch the real sequential nonce instead of defaulting to 0.
