@@ -1,10 +1,15 @@
-import { DeviceModelId as DmkDeviceModelId, DeviceStatus } from "@ledgerhq/device-management-kit";
+import {
+  DeviceActionStatus,
+  DeviceModelId as DmkDeviceModelId,
+  DeviceStatus,
+} from "@ledgerhq/device-management-kit";
+import { OnboardingStep, type DeviceOnboardingState } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { act, renderHook, waitFor } from "tests/testSetup";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
 import { useFirmwareUpdateHandover } from "../hooks/useFirmwareUpdateHandover";
 import { createDeviceOnboardingPorts } from "../utils/ports";
@@ -25,6 +30,18 @@ jest.mock("@ledgerhq/live-dmk-desktop", () => ({
     getConnectedDevice: (input: { sessionId: string }) => getConnectedDevice(input),
     getDeviceSessionState: () => getDeviceSessionState(),
     sendCommand: () => new Promise(() => undefined),
+    executeDeviceAction: () => ({
+      observable: of({
+        status: DeviceActionStatus.Completed,
+        output: {
+          isGenuine: true,
+          firmwareUpdateContext: {
+            availableUpdate: { finalFirmware: { version: "1.5.0" } },
+          },
+        },
+      }),
+      cancel: () => undefined,
+    }),
   }),
 }));
 
@@ -78,6 +95,39 @@ function publishTransport(sessionId: string): PublishedTransport {
   const transport = { sessionId, close: jest.fn() } as unknown as PublishedTransport;
   activeDeviceSessionSubject.next({ sessionId, transport });
   return transport;
+}
+
+const seededDevice: DeviceOnboardingState = {
+  isOnboarded: true,
+  isInRecoveryMode: false,
+  managerAllowed: true,
+  currentOnboardingStep: OnboardingStep.Ready,
+  seedWordIndex: 0,
+  seedPhraseWordCount: 24,
+};
+
+async function reachFirmwareHandover(result: { current: ReturnType<typeof useDeviceOnboarding> }) {
+  act(() => result.current.connect());
+  await waitFor(() => expect(result.current.state).toBe("readingState"));
+
+  act(() => {
+    result.current.send({
+      type: "DEVICE_STATE_READ",
+      state: seededDevice,
+      firmwareVersion: "2.4.0",
+    });
+  });
+  await waitFor(() => expect(result.current.state).toBe("awaitingStart"));
+
+  act(() => {
+    result.current.send({ type: "CONTINUE" });
+  });
+  await waitFor(() => expect(result.current.state).toBe("checks.firmwareUpdateOffered"));
+
+  act(() => {
+    result.current.send({ type: "USER_ACCEPT" });
+  });
+  await waitFor(() => expect(result.current.state).toBe("checks.firmwareUpdateDelegated"));
 }
 
 describe("DeviceOnboarding desktop integration", () => {
@@ -167,6 +217,30 @@ describe("DeviceOnboarding desktop integration", () => {
     expect(result.current.events.some(event => event.type === "SESSION_READY")).toBe(true);
   });
 
+  it("should keep showing the machine when reconnect fails and a later session resumes", async () => {
+    const { result } = renderHook(() => useDeviceOnboarding());
+
+    act(() => result.current.connect());
+    await waitFor(() => expect(result.current.status).toBe("running"));
+
+    act(() => {
+      activeDeviceSessionSubject.next(null);
+    });
+    await waitFor(() => expect(result.current.state).toBe("awaitingSession"));
+
+    openSession.mockRejectedValueOnce(new Error("usb unavailable"));
+    act(() => result.current.connect());
+    await waitFor(() => expect(result.current.error).toBe("Unable to start device onboarding"));
+    expect(result.current.status).toBe("running");
+    expect(result.current.context).not.toBeNull();
+
+    act(() => {
+      publishTransport("session-2");
+    });
+
+    await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
+  });
+
   it("should restart onboarding when the recovered session belongs to another Ledger", async () => {
     const { result } = renderHook(() => useDeviceOnboarding());
 
@@ -213,6 +287,67 @@ describe("DeviceOnboarding desktop integration", () => {
     expect(result.current.context?.deviceModelId).toBe(DmkDeviceModelId.STAX);
     expect(result.current.state).toBe("readingState");
     expect(result.current.events.some(event => event.type === "SESSION_READY")).toBe(false);
+  });
+
+  it("should restart onboarding when another Ledger is connected as firmware handover ends", async () => {
+    const { result } = renderHook(() => useDeviceOnboarding());
+    await reachFirmwareHandover(result);
+
+    getConnectedDevice.mockReturnValue({
+      id: "other-device",
+      name: "Stax",
+      modelId: DmkDeviceModelId.STAX,
+    });
+    act(() => {
+      publishTransport("session-2");
+    });
+    expect(result.current.state).toBe("checks.firmwareUpdateDelegated");
+    expect(result.current.context?.deviceModelId).toBe(DmkDeviceModelId.NANO_X);
+
+    act(() => {
+      result.current.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
+    });
+
+    await waitFor(() => expect(result.current.context?.deviceModelId).toBe(DmkDeviceModelId.STAX));
+    expect(result.current.device?.sessionId).toBe("session-2");
+    expect(result.current.context?.isGenuine).toBeNull();
+    expect(result.current.state).toBe("readingState");
+    expect(result.current.events.some(event => event.type === "SESSION_READY")).toBe(false);
+  });
+
+  it("should keep the same Ledger when its session is replaced during firmware handover", async () => {
+    const { result } = renderHook(() => useDeviceOnboarding());
+    await reachFirmwareHandover(result);
+
+    act(() => {
+      publishTransport("session-2");
+    });
+    act(() => {
+      result.current.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
+    });
+
+    await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
+    expect(result.current.context?.deviceModelId).toBe(DmkDeviceModelId.NANO_X);
+    expect(result.current.context?.isGenuine).toBe(true);
+    expect(result.current.state).toBe("readingState");
+  });
+
+  it("should clear the previous exit when a new run starts", async () => {
+    const { result } = renderHook(() => useDeviceOnboarding());
+
+    act(() => result.current.connect());
+    await waitFor(() => expect(result.current.state).toBe("readingState"));
+
+    act(() => {
+      result.current.send({ type: "QUIT" });
+    });
+    await waitFor(() => expect(result.current.exit?.reason).toBe("userQuit"));
+    expect(result.current.events.some(event => event.type === "QUIT")).toBe(true);
+
+    act(() => result.current.connect());
+    await waitFor(() => expect(result.current.status).toBe("running"));
+    expect(result.current.exit).toBeNull();
+    expect(result.current.events.some(event => event.type === "QUIT")).toBe(false);
   });
 
   it("should pause the machine when the device locks and resume when it unlocks", async () => {
@@ -286,6 +421,34 @@ describe("DeviceOnboarding desktop integration", () => {
     expect(result.current.device).toBeNull();
   });
 
+  it("should listen again when the session stream ends during firmware handover", async () => {
+    const { result } = renderHook(() => useDeviceOnboarding());
+    await reachFirmwareHandover(result);
+    expect(sessionSubscribers).toBe(1);
+
+    act(() => {
+      sessionState.complete();
+    });
+
+    expect(result.current.state).toBe("checks.firmwareUpdateDelegated");
+    expect(sessionSubscribers).toBe(0);
+    expect(activeDeviceSessionSubject.value).not.toBeNull();
+
+    sessionState = new BehaviorSubject<SessionState>({ deviceStatus: DeviceStatus.CONNECTED });
+    act(() => {
+      result.current.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
+    });
+
+    await waitFor(() => expect(result.current.state).toBe("readingState"));
+    expect(sessionSubscribers).toBe(1);
+
+    act(() => {
+      sessionState.next({ deviceStatus: DeviceStatus.LOCKED });
+    });
+
+    await waitFor(() => expect(result.current.state).toBe("deviceLocked"));
+  });
+
   it("should wait for a new session when the session listener fails", async () => {
     const { result } = renderHook(() => useDeviceOnboarding());
 
@@ -348,6 +511,20 @@ describe("DeviceOnboarding desktop integration", () => {
 
     await waitFor(() => expect(result.current.status).toBe("exited"));
     expect(sessionSubscribers).toBe(0);
+  });
+
+  it("should close the desktop session when the tool unmounts", async () => {
+    const { result, unmount } = renderHook(() => useDeviceOnboarding());
+
+    act(() => result.current.connect());
+    await waitFor(() => expect(result.current.status).toBe("running"));
+
+    const transport = activeDeviceSessionSubject.value?.transport;
+    expect(transport?.close).not.toHaveBeenCalled();
+
+    unmount();
+
+    expect(transport?.close).toHaveBeenCalledTimes(1);
   });
 
   it("should unsubscribe when the session is already gone as the listener starts", async () => {

@@ -77,6 +77,10 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     onDone: output => onDoneRef.current(output),
   });
 
+  const resumeAfterFirmwareHandoverRef = useRef<
+    (actorAtHandover: NonNullable<(typeof actorRef)["current"]>) => void
+  >(() => undefined);
+
   const stopLockListener = useCallback(() => {
     lockListenerRef.current?.stop();
     lockListenerRef.current = null;
@@ -121,7 +125,11 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
       if (lockListenerRef.current !== entry) return;
       const actor = actorRef.current;
       if (event.type === "TRANSPORT_LOST") {
-        if (actor && inFirmwareHandover(actor)) return;
+        if (actor && inFirmwareHandover(actor)) {
+          lockListenerRef.current = null;
+          queueMicrotask(() => entry.stop());
+          return;
+        }
         handleTransportLost();
         return;
       }
@@ -145,12 +153,16 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
       const actorAtSnapshot = actorRef.current;
       syncLockListener();
 
-      if (leftFirmwareHandover && activeDeviceSessionSubject.value === null) {
-        queueMicrotask(() => {
-          if (actorRef.current !== actorAtSnapshot) return;
+      if (!leftFirmwareHandover || !actorAtSnapshot) return;
+
+      queueMicrotask(() => {
+        if (actorRef.current !== actorAtSnapshot) return;
+        if (activeDeviceSessionSubject.value === null) {
           handleTransportLost();
-        });
-      }
+          return;
+        }
+        resumeAfterFirmwareHandoverRef.current(actorAtSnapshot);
+      });
     },
     [actorRef, handleTransportLost, syncLockListener],
   );
@@ -244,12 +256,35 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     ],
   );
 
+  const resumeAfterFirmwareHandover = useCallback(
+    (actorAtHandover: NonNullable<(typeof actorRef)["current"]>) => {
+      const generation = adoptGeneration.current;
+      void (async () => {
+        try {
+          const opened = await portsRef.current?.openSession();
+          const stale =
+            generation !== adoptGeneration.current || actorRef.current !== actorAtHandover;
+          if (stale || !opened) return;
+          continueWithSession(opened, true);
+        } catch {
+          if (generation === adoptGeneration.current && actorRef.current === actorAtHandover) {
+            handleTransportLost();
+          }
+        }
+      })();
+    },
+    [actorRef, continueWithSession, handleTransportLost, portsRef],
+  );
+
+  useEffect(() => {
+    resumeAfterFirmwareHandoverRef.current = resumeAfterFirmwareHandover;
+  }, [resumeAfterFirmwareHandover]);
+
   const adoptSession = useCallback(async () => {
     const generation = ++adoptGeneration.current;
     const recoveringFromLoss = transportLostRef.current;
     transportLostRef.current = false;
     const nextPorts = createDeviceOnboardingPorts();
-    portsRef.current = nextPorts;
 
     try {
       const session = await nextPorts.openSession();
@@ -258,6 +293,7 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
         return;
       }
 
+      portsRef.current = nextPorts;
       continueWithSession(session, recoveringFromLoss);
     } catch {
       await nextPorts.closeSession();
@@ -338,8 +374,10 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
       releaseFirmwareDrawer();
       stopLockListener();
       stopActor();
+      void portsRef.current?.closeSession();
+      portsRef.current = null;
     },
-    [releaseFirmwareDrawer, stopActor, stopLockListener],
+    [portsRef, releaseFirmwareDrawer, stopActor, stopLockListener],
   );
 
   return {

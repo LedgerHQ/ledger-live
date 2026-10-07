@@ -37,6 +37,26 @@ export type WatchedOnboardingContext = {
   checksPaused: boolean;
 };
 
+function readSessionId(read: () => string | null | undefined): string | null {
+  try {
+    return read() || null;
+  } catch {
+    return null;
+  }
+}
+
+function verdictMatchesLiveSession(
+  verdict: DeviceOnboardingContext["genuineVerdict"],
+  ports: DeviceOnboardingPorts,
+): boolean | null {
+  if (verdict === null) return null;
+
+  const sessionId = readSessionId(() => ports.currentSessionId());
+  if (sessionId === null) return null;
+
+  return verdict.sessionId === sessionId;
+}
+
 export function flattenDeviceOnboardingContext(
   context: DeviceOnboardingContext,
 ): WatchedOnboardingContext {
@@ -58,8 +78,7 @@ export function flattenDeviceOnboardingContext(
     onEarlyCheckScreen: context.onEarlyCheckScreen,
     secureConnectionRequested: context.secureConnectionRequested,
     isGenuine: verdict?.isGenuine ?? null,
-    verdictMatchesSession:
-      verdict === null ? null : verdict.sessionId === context.ports.currentSessionId(),
+    verdictMatchesSession: verdictMatchesLiveSession(verdict, context.ports),
     genuineFailureKind: context.lastGenuineFailure?.kind ?? null,
     checksPaused: context.checksPaused,
   };
@@ -141,7 +160,7 @@ export function createOnboardingEventLog(deps: {
     const recorded = recordOnboardingToolEvent(
       event,
       String(deps.sequence.current),
-      deps.currentSessionId() ?? "unavailable",
+      readSessionId(deps.currentSessionId) ?? "unavailable",
       deps.lastLoggedStep.current,
     );
     deps.lastLoggedStep.current = recorded.step;

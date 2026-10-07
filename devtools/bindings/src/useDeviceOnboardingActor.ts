@@ -125,6 +125,9 @@ export function useDeviceOnboardingActor({
     (input: StartOnboardingActorInput, hooks?: { beforeStart?: () => void }) => {
       lastLoggedStep.current = null;
       previousSnapshotRef.current = null;
+      setSessionReady(false);
+      setEvents([]);
+      setExit(null);
       const actor = createActor(deviceOnboardingMachine, {
         input: {
           dmk: input.dmk,

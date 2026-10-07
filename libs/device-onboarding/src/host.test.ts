@@ -6,6 +6,7 @@ import {
   recordOnboardingToolEvent,
   stateValueToString,
   toolEvent,
+  type HostToolEvent,
 } from "./host";
 import type { DeviceOnboardingPorts } from "./ports";
 import type {
@@ -89,6 +90,24 @@ describe("flattenDeviceOnboardingContext", () => {
     expect(flattened.currentOnboardingStep).toBe(OnboardingStep.Pin);
     expect(flattened.availableFirmwareVersion).toBe("2.3.0");
     expect(flattened.managerAllowed).toBe(true);
+  });
+
+  it("should leave the verdict unmatched when the live session is missing", () => {
+    const flattened = flattenDeviceOnboardingContext(
+      context({
+        genuineVerdict: { sessionId: "session-1", isGenuine: true },
+        ports: {
+          openSession: jest.fn(),
+          currentSessionId: () => {
+            throw new Error("No desktop onboarding session");
+          },
+          closeSession: jest.fn(async () => undefined),
+        },
+      }),
+    );
+
+    expect(flattened.verdictMatchesSession).toBeNull();
+    expect(flattened.isGenuine).toBe(true);
   });
 
   it("should report a mismatch when the verdict belongs to another session", () => {
@@ -240,6 +259,27 @@ describe("createOnboardingEventLog", () => {
     expect(entries.map(entry => entry.type)).toEqual(["STEP_CHANGED", "RETRY"]);
     expect(sequence.current).toBe(2);
     expect(lastLoggedStep.current).toBe(`${OnboardingStep.Pin}:`);
+  });
+
+  it("should log the event when the live session is missing", () => {
+    const entries: HostToolEvent[] = [];
+    const log = createOnboardingEventLog({
+      currentSessionId: () => {
+        throw new Error("No desktop onboarding session");
+      },
+      lastLoggedStep: { current: null },
+      sequence: { current: 0 },
+      push: entry => entries.push(entry),
+    });
+
+    log({ type: "TRANSPORT_LOST" });
+
+    expect(entries).toEqual([
+      expect.objectContaining({
+        type: "TRANSPORT_LOST",
+        detail: { kind: "session", sessionId: "unavailable" },
+      }),
+    ]);
   });
 });
 
