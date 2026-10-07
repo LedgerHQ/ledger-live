@@ -2,7 +2,7 @@ import { track } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { Linking, TouchableOpacity } from "react-native";
 import { HelpMedium } from "@ledgerhq/native-ui/assets/icons";
-import { Box } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 
 type Props = {
   url: string;
@@ -18,11 +18,11 @@ const HelpButton = ({ url, eventButton }: Props) => {
   }, [url, eventButton]);
 
   return (
-    <Box mr={4}>
-      <TouchableOpacity onPress={onClickButton}>
+    <TouchableOpacity onPress={onClickButton}>
+      <Flex width={40} height={40} alignItems="center" justifyContent="center">
         <HelpMedium size={24} color={"neutral.c100"} />
-      </TouchableOpacity>
-    </Box>
+      </Flex>
+    </TouchableOpacity>
   );
 };
 
