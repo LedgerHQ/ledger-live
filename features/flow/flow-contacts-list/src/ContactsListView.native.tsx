@@ -157,7 +157,10 @@ export function ContactsListView({
     content = (
       <Box lx={{ flex: 1, paddingHorizontal: "s16", paddingTop: "s8" }}>
         {listHeader}
-        <ContactsSearchNoResults message={labels.searchNoResults} />
+        <ContactsSearchNoResults
+          title={labels.searchNoResults}
+          description={labels.searchNoResultsDescription}
+        />
       </Box>
     );
   } else {

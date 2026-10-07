@@ -537,7 +537,7 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-search-no-results")).toHaveTextContent(
-        "No contact found",
+        "No contacts found by that nameTry another name or spelling.",
       );
       expect(screen.queryByTestId("contacts-me-item")).toBeNull();
       expect(screen.queryByTestId("contacts-add-contact-row")).toBeNull();
