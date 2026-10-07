@@ -34,6 +34,7 @@ import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
 import type { SendIntentSummary } from "./agent-intent/send-intent";
+import type { IntentListEntry } from "./agent-intent/intent-list";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
@@ -250,7 +251,16 @@ export interface CommandOutput {
   ): void;
   /** Output a validated `agent-intent send --dry-run` proposal that was not submitted. */
   agentIntentSendDryRun(summary: SendIntentSummary): void;
+  /** One page of `agent-intent intents` (human: table + next-page hint; json: envelope with
+   * `intents`, `count` and `nextCursor`, `null` on the last page). */
+  agentIntentIntents(result: AgentIntentIntentsPage): void;
 }
+
+export type AgentIntentIntentsPage = {
+  profileId: string;
+  intents: readonly IntentListEntry[];
+  nextCursor: string | null;
+};
 
 export type AgentIntentEnrollmentPending = {
   profileId: string;
@@ -894,6 +904,29 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(`Dry run — intent validated, nothing was submitted.`);
     writeStdout(sendIntentSummaryLines(summary).join("\n"));
   }
+
+  agentIntentIntents({ profileId, intents, nextCursor }: AgentIntentIntentsPage): void {
+    if (intents.length === 0) {
+      writeStdout(colors.dim(`No intents for profile "${profileId}".`));
+    } else {
+      const rows = intents.map(i => [
+        i.createdAt.replace("T", " ").slice(0, 16),
+        i.status,
+        i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
+        i.recipient ?? "—",
+        i.id,
+      ]);
+      const headers = ["CREATED", "STATUS", "AMOUNT", "TO", "ID"];
+      const widths = headers.map((h, c) => Math.max(h.length, ...rows.map(r => r[c].length)));
+      const format = (cells: string[]) =>
+        cells.map((cell, c) => (c === cells.length - 1 ? cell : cell.padEnd(widths[c]))).join("  ");
+      writeStdout(colors.bold(format(headers)));
+      for (const row of rows) writeStdout(format(row));
+    }
+    if (nextCursor) {
+      writeStdout(colors.dim(`More intents: re-run with --cursor ${nextCursor}`));
+    }
+  }
 }
 
 function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
@@ -1324,6 +1357,10 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(
       this._envelope({ ...sendIntentSummaryJson(summary), submitted: false, dryRun: true }),
     );
+  }
+
+  agentIntentIntents({ profileId, intents, nextCursor }: AgentIntentIntentsPage): void {
+    this._writeNdjson(this._envelope({ profileId, count: intents.length, intents, nextCursor }));
   }
 }
 
