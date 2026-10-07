@@ -178,7 +178,7 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
     },
   );
 
-  const lookupFirmwareUpdate = jest.fn(async (signal: AbortSignal) => {
+  const lookupFirmwareUpdate = jest.fn((signal: AbortSignal) => {
     const next = firmwareCheck.next();
 
     if ("pending" in next) {
@@ -195,10 +195,10 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
     }
 
     if ("fails" in next) {
-      throw next.fails;
+      return Promise.reject(next.fails);
     }
 
-    return next.update;
+    return Promise.resolve(next.update);
   });
 
   function cancelledFirmwareLookup(): Error {
@@ -209,7 +209,9 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
 
   const executeDeviceAction = jest.fn(({ deviceAction }: { deviceAction: object }) => {
     if (!(deviceAction instanceof GenuineCheckDeviceAction)) {
-      throw new Error("firmware check asks the catalogue port and does not run a device action");
+      throw new TypeError(
+        "firmware check asks the catalogue port and does not run a device action",
+      );
     }
 
     const next = genuineCheck.next();
