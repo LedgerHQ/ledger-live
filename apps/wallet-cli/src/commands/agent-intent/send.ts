@@ -7,8 +7,9 @@ import {
   type SendIntent,
 } from "@ledgerhq/agent-intent-sdk";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { Session, type AgentIntentProfileMeta } from "../../session/session-store";
-import { outputOption, resolveOutputFormat, resolveAccountDescriptorV1 } from "../inputs";
+import { Session } from "../../session/session-store";
+import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
+import { outputOption, resolveOutputFormat } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import { parseAmountWithTicker, parseDecimalAmount, parseEvmAddress } from "../../agent-intent/evm";
 import {
@@ -20,38 +21,14 @@ import {
 } from "../../agent-intent/send-intent";
 import { findEthereumToken } from "../../agent-intent/token-lookup";
 import { loadProfileIdentity } from "../../agent-intent/profile-identity";
-import { assertStoredServiceUrl, keycloakOverride } from "../../agent-intent/relay";
+import { resolveSenderFromAccount } from "../../agent-intent/sender";
+import { keycloakOverride } from "../../agent-intent/relay";
 import {
   describeAgentIntentError,
   isAcceptedWithoutReviewLink,
 } from "../../agent-intent/service-errors";
 import { createCommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
-
-function requireEnrolledProfile(
-  session: Session,
-  profileId: string,
-): AgentIntentProfileMeta & { trustchainId: string } {
-  const profile = session.getAgentIntentProfile(profileId);
-  if (!profile) {
-    throw new Error(
-      `No Agent Intent profile named "${profileId}". Run \`wallet-cli agent-intent list\` to see ` +
-        "your profiles, or `agent-intent enroll` to create one.",
-    );
-  }
-  if (!profile.trustchainId) {
-    throw new Error(
-      `Agent Intent profile "${profileId}" is not enrolled yet — approve its \`agent-intent ` +
-        "enroll` link first, or enroll a fresh profile if that link expired.",
-    );
-  }
-  // Re-checked here: the signed-in request sends an access token to these hosts.
-  assertStoredServiceUrl(profileId, profile.bffBaseUrl, "bff-url", "BFF URL");
-  if (profile.keycloakBaseUrl !== undefined) {
-    assertStoredServiceUrl(profileId, profile.keycloakBaseUrl, "keycloak-url", "Keycloak URL");
-  }
-  return { ...profile, trustchainId: profile.trustchainId };
-}
 
 function parseSenderInput(flags: {
   account?: string;
@@ -60,20 +37,6 @@ function parseSenderInput(flags: {
   if (flags.account && !flags.from) return { account: flags.account };
   if (flags.from && !flags.account) return { from: flags.from };
   throw new Error("Pass exactly one sender: --account <session-label> or --from <address>.");
-}
-
-/** Only Ethereum mainnet accounts can send: that's the one network Agent Intent supports. */
-async function resolveSenderFromAccount(label: string): Promise<string> {
-  const descriptor = await resolveAccountDescriptorV1(label);
-  const { name, env } = descriptor.network;
-  if (name !== "ethereum" || env !== "main" || descriptor.type !== "address") {
-    const network = env === "main" ? name : `${name} ${env}`;
-    throw new Error(
-      `Account "${label}" is on ${network}; Agent Intent send intents support Ethereum mainnet ` +
-        "accounts only.",
-    );
-  }
-  return parseEvmAddress(descriptor.address, "account");
 }
 
 async function resolveAsset(
@@ -163,7 +126,7 @@ export default defineCommand({
       const sender =
         "from" in senderInput
           ? parseEvmAddress(senderInput.from, "from")
-          : await resolveSenderFromAccount(senderInput.account);
+          : await resolveSenderFromAccount(senderInput.account, "send");
       const recipient = parseEvmAddress(flags.to, "to");
       const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
       const asset = await resolveAsset(ticker, flags.token);
