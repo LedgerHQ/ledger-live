@@ -1,5 +1,5 @@
 import React, { forwardRef, useState } from "react";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "~/logic/appVersion";
 import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
 import Config from "react-native-config";
@@ -17,7 +17,7 @@ import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import { E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT } from "~/e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 
-const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
+const APPLICATION_NAME = `ledgerlivemobile/${appVersion} llm-${Platform.OS}/${appVersion}`;
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   (

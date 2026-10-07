@@ -1,4 +1,4 @@
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "~/logic/appVersion";
 import { useReceiveNetworkLedgerIds as useSharedReceiveNetworkLedgerIds } from "@ledgerhq/asset-detail";
 import type { ReceiveNetworkLedgerIdsInput } from "@ledgerhq/asset-detail";
 import useEnv from "@features/platform-env";
@@ -17,7 +17,7 @@ export function useReceiveNetworkLedgerIds(params: Params): string[] {
   return useSharedReceiveNetworkLedgerIds({
     ...params,
     product: "llm",
-    version: VersionNumber.appVersion,
+    version: appVersion,
     isStaging,
     includeTestNetworks: devMode,
   });

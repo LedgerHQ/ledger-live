@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "~/logic/appVersion";
 import {
   useAssetsData,
   useStocksData,
@@ -31,7 +31,7 @@ export function useGlobalSearchDefaults(enabled: boolean): GlobalSearchDefaults 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const counterValueUnit = counterValueCurrency.units[0];
   const { rate: usdToFiatRate, status: rateStatus } = useUsdToFiatRate(counterValueCurrency.ticker);
-  const version = VersionNumber.appVersion ?? "";
+  const version = appVersion ?? "";
   const skip = !enabled;
 
   const { tickers: stablecoinTickers, isLoading: loadingTickers } = useStablecoinTickers(

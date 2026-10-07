@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import Config from "react-native-config";
 import { AppState, Linking, Platform, type NativeEventSubscription } from "react-native";
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
-import VersionNumber from "react-native-version-number";
+import { appVersion as nativeAppVersion, buildVersion } from "~/logic/appVersion";
 import RNLocalize from "react-native-localize";
 import {
   getFocusedRouteNameFromRoute,
@@ -86,7 +86,7 @@ import { DdLogs } from "@datadog/mobile-react-native";
 import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
 
 const sessionId = uuid();
-const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
+const appVersion = `${nativeAppVersion || ""} (${buildVersion || ""})`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 type MaybeAppStore = Maybe<AppStore>;
@@ -506,8 +506,8 @@ const extraProperties = async (store: AppStore) => {
   return {
     ...mandatoryProperties,
     appVersion,
-    androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
-    androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
+    androidVersionCode: getAndroidVersionCode(buildVersion),
+    androidArchitecture: getAndroidArchitecture(buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
     platform: "mobile",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,

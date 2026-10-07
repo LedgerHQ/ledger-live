@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
-import VersionNumber from "react-native-version-number";
+import { appVersion as nativeAppVersion } from "~/logic/appVersion";
 import { Asset } from "~/types/asset";
 
 interface DefaultAssets {
@@ -22,7 +22,7 @@ export function useDefaultAssetsByCategory(
   maxCryptos: number,
   maxStablecoins: number,
 ): DefaultAssets {
-  const appVersion = VersionNumber.appVersion ?? "";
+  const appVersion = nativeAppVersion;
 
   const {
     data: assetsData,

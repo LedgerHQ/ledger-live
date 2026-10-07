@@ -6,7 +6,7 @@ import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "~/logic/appVersion";
 import { Platform } from "react-native";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -44,7 +44,7 @@ setDeviceMode("event");
 setWalletAPIVersion(WALLET_API_VERSION);
 liveBlindSigningReporter.setContext({
   platform: "mobile",
-  appVersion: VersionNumber.appVersion ?? undefined,
+  appVersion: appVersion ?? undefined,
   platformOS: Platform.OS,
   platformVersion: String(Platform.Version),
 });
@@ -53,9 +53,7 @@ if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
   setEnv("FORCE_PROVIDER", parseInt(Config.FORCE_PROVIDER, 10));
 
 let ledgerClientVersion =
-  Platform.OS === "ios"
-    ? `llm-ios/${VersionNumber.appVersion}`
-    : `llm-android/${VersionNumber.appVersion}`;
+  Platform.OS === "ios" ? `llm-ios/${appVersion}` : `llm-android/${appVersion}`;
 
 if (process.env.NODE_ENV !== "production") {
   ledgerClientVersion += "-dev";

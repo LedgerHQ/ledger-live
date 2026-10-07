@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "~/logic/appVersion";
 import network from "@ledgerhq/live-network";
 import { GetNextPageParamFunction, InfiniteData, QueryFunction } from "@tanstack/react-query";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -34,7 +34,7 @@ export const fetchManifestsMock: (
   };
 
 const PLATFORM = Platform.OS === "ios" ? "ios" : "android";
-const LLVersion = VersionNumber.appVersion;
+const LLVersion = appVersion;
 
 const apiVersions = ["1.0.0", "2.0.0"];
 

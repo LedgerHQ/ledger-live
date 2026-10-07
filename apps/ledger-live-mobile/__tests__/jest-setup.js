@@ -325,9 +325,9 @@ jest.mock("@gorhom/bottom-sheet", () => {
   };
 });
 
-jest.mock("react-native-version-number", () => ({
-  appVersion: "1.0.0",
-  buildVersion: "1",
+jest.mock("expo-application", () => ({
+  nativeApplicationVersion: "1.0.0",
+  nativeBuildVersion: "1",
 }));
 
 jest.mock("react-native-startup-time", () => ({
@@ -435,8 +435,9 @@ jest.mock("react-native-linear-gradient", () => {
   return { __esModule: true, default: View };
 });
 
-jest.mock("react-native-device-info", () => ({
-  getDeviceNameSync: jest.fn(() => "Mocked Device"),
+jest.mock("expo-device", () => ({
+  deviceName: "Mocked Device",
+  isDevice: true,
 }));
 
 jest.mock("react-native-linear-gradient", () => {

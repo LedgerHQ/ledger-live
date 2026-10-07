@@ -4,7 +4,7 @@ import {
   selectTopStocks,
   type StockSuggestion,
 } from "@features/platform-aggregated-assets";
-import VersionNumber from "react-native-version-number";
+import { appVersion as nativeAppVersion } from "~/logic/appVersion";
 
 interface DefaultStocksAssets {
   stocks: StockSuggestion[];
@@ -15,7 +15,7 @@ interface DefaultStocksAssets {
 const EMPTY: DefaultStocksAssets = { stocks: [], isLoading: false, isError: false };
 
 export function useDefaultStocksAssets(enabled: boolean, maxStocks: number): DefaultStocksAssets {
-  const appVersion = VersionNumber.appVersion ?? "";
+  const appVersion = nativeAppVersion;
 
   const { data, isLoading, isError } = useStocksData({
     product: "llm",

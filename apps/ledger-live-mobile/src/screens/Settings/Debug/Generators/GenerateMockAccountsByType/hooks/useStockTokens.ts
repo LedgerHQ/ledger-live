@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "~/logic/appVersion";
 import { useStocksData, selectTopStocks } from "@features/platform-aggregated-assets";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { MAX_STOCK_TOKENS } from "../constants";
@@ -10,7 +10,7 @@ export interface StockTokensResult {
 }
 
 export function useStockTokens(enabled = true): StockTokensResult {
-  const version = VersionNumber.appVersion ?? "";
+  const version = appVersion ?? "";
   const { data, isLoading } = useStocksData({ product: "llm", version, skip: !enabled });
 
   const tokensByParent = useMemo(() => {

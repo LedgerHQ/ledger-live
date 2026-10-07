@@ -3,7 +3,7 @@ import React from "react";
 import { Platform } from "react-native";
 import { Box, Text, Button } from "@ledgerhq/lumen-ui-rnative";
 import { CheckmarkCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "~/logic/appVersion";
 import { useTranslation } from "~/context/Locale";
 import type { AppInstallConfig } from "../../constants/appInstallMap";
 
@@ -24,7 +24,7 @@ export function SuccessStep({ appConfig, deviceModelId, onClose }: Props) {
         source="Universal Link"
         device={deviceModelId}
         equipmentOS={Platform.OS}
-        LLVersion={VersionNumber.appVersion}
+        LLVersion={appVersion}
       />
       <Box
         lx={{

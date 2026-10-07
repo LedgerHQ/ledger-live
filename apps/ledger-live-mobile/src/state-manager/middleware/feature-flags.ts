@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "~/logic/appVersion";
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
 import { getEnv } from "@shared/env";
 import {
@@ -54,7 +54,7 @@ export function createMobileFeatureFlagsMiddleware() {
   return createFeatureFlagsMiddleware<State>({
     resolutionConfig: {
       platform: Platform.OS === "ios" ? "ios" : "android",
-      appVersion: VersionNumber.appVersion ?? undefined,
+      appVersion: appVersion || undefined,
       envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
     },
     readCachedFlags,

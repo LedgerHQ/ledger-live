@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { useAssetsData } from "@features/platform-aggregated-assets";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "~/logic/appVersion";
 import { useFeature } from "@features/platform-feature-flags";
 import { buildAssetsSorted } from "@ledgerhq/live-common/modularDrawer/utils/buildAssetsSorted";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
@@ -47,7 +47,7 @@ export function useAssets({
     networkIds: resolvedNetworkIds,
     categories: resolvedCategories,
     product: "llm",
-    version: VersionNumber.appVersion,
+    version: appVersion,
     useCase,
     areCurrenciesFiltered: resolvedNetworkIds === undefined ? areCurrenciesFiltered : false,
     isStaging,
