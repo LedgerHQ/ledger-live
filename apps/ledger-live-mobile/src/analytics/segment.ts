@@ -471,7 +471,6 @@ const extraProperties = async (store: AppStore) => {
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwm");
-  const quickActionsCtasVariantFlag = analyticsFeatureFlagMethod?.("lwmQuickActionsCtasVariant");
   const onboardingWidgetFlag = analyticsFeatureFlagMethod?.("onboardingWidget");
   const onboardingCounterfeitWarningAttributes = getOnboardingCounterfeitWarningAttributes(
     analyticsFeatureFlagMethod,
@@ -561,7 +560,6 @@ const extraProperties = async (store: AppStore) => {
     wallet40Attributes,
     ...payAttributes,
     ...appLockAttributes,
-    quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     ...remoteABTestingAttributes,
