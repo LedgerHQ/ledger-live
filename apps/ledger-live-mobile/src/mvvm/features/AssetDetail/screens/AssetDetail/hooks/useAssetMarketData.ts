@@ -21,18 +21,20 @@ export function useAssetMarketData({ marketApiId, knownLedgerIds, knownMarketId 
   const counterCurrency = counterValueCurrency.ticker.toLowerCase();
   const counterValueUnit = counterValueCurrency.units[0];
 
-  const { marketCurrencyData, marketId, ledgerIds, isLoading, isError } = useSharedAssetMarketData({
-    marketApiId,
-    knownLedgerIds,
-    counterCurrency,
-    product: "llm",
-    version: VersionNumber.appVersion,
-    knownMarketId,
-  });
+  const { marketCurrencyData, marketId, ledgerCurrencyFromDada, ledgerIds, isLoading, isError } =
+    useSharedAssetMarketData({
+      marketApiId,
+      knownLedgerIds,
+      counterCurrency,
+      product: "llm",
+      version: VersionNumber.appVersion,
+      knownMarketId,
+    });
 
   return {
     marketCurrency: marketCurrencyData,
     marketId,
+    ledgerCurrencyFromDada,
     counterCurrency,
     counterValueUnit,
     ledgerIds,

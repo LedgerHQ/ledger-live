@@ -9,6 +9,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
 import { useDistribution } from "~/actions/general";
+import { resolveAssetDetailMarketInfo } from "@ledgerhq/asset-detail";
 import {
   resolveAssetMarketInputs,
   resolveDistributionItem,
@@ -47,7 +48,12 @@ export function useAssetDetailViewModel() {
     hideEmptyTokenAccount,
   });
   const distributionItem = useMemo(
-    () => resolveDistributionItem({ routeAssetId: currencyId, marketState, distribution }),
+    () =>
+      resolveDistributionItem({
+        routeAssetId: currencyId,
+        marketState,
+        distribution,
+      }),
     [currencyId, marketState, distribution],
   );
 
@@ -95,11 +101,27 @@ export function useAssetDetailViewModel() {
     setIsRefreshing(false);
   }, []);
 
-  const { marketId, ledgerIds, marketCurrency } = useAssetMarketData({
+  const {
+    marketId,
+    ledgerIds,
+    marketCurrency,
+    ledgerCurrencyFromDada,
+    isLoading: isMarketLoading,
+  } = useAssetMarketData({
     marketApiId,
     knownLedgerIds,
     knownMarketId,
   });
+  const marketFallback = resolveAssetDetailMarketInfo(marketCurrency);
+  const ledgerCurrency = distributionItem?.currency ?? ledgerCurrencyFromDada;
+  const isHeaderLoading = !marketFallback && (isMarketLoading || distribution.isLoading);
+  const header = {
+    ticker: (ledgerCurrency?.ticker ?? marketFallback?.ticker ?? "").toUpperCase(),
+    ledgerId:
+      ledgerCurrency?.id ??
+      marketFallback?.ledgerIds[0] ??
+      (isHeaderLoading ? currencyId : undefined),
+  };
   // Tokens (e.g. USDT/USDC) collapse to a single ledger id here because CoinGecko
   // does not expose their multi-network list. Expand it from DADA so the receive
   // drawer can offer every network, including ones not held yet. The market ticker
@@ -128,10 +150,15 @@ export function useAssetDetailViewModel() {
     hasPositiveBalance &&
     isRobinhoodExclusiveAsset(receiveLedgerIds);
 
-  const coinOptions = useAssetCoinOptionsViewModel({ currency, currencyId, marketId });
+  const coinOptions = useAssetCoinOptionsViewModel({
+    currency,
+    currencyId,
+    marketId,
+  });
 
   return {
     currency,
+    header,
     distributionItem,
     marketApiId,
     knownLedgerIds,
