@@ -1,4 +1,4 @@
-import { JsonRpcProvider, Signature, Transaction } from "ethers";
+import { JsonRpcProvider, Signature, Transaction, formatEther } from "ethers";
 import { filter, firstValueFrom } from "rxjs";
 import { getEnv } from "@shared/env";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -43,6 +43,13 @@ const CONFIRMATION_POLL_INTERVAL_MS = 3_000;
  */
 const MIN_PRIORITY_FEE_WEI = 100_000_000n;
 const BASE_FEE_HEADROOM = 4n;
+
+/**
+ * Partner gas limits and `eth_estimateGas` alike are the exact gas a call needs against the block
+ * they were estimated on, so a state change before inclusion runs the transaction out of gas. The
+ * partner has quoted `withdrawCollateral` ~15% under what it used; unused gas is not charged.
+ */
+const GAS_LIMIT_HEADROOM_PERCENT = 150n;
 
 function atLeast(suggested: bigint | null, floor: bigint): bigint {
   return suggested !== null && suggested > floor ? suggested : floor;
@@ -206,6 +213,58 @@ export class EvmSpeculosExecutor {
     );
   }
 
+  private async feeCaps(
+    payload: EvmSignablePayload,
+  ): Promise<{ maxFeePerGas: bigint; maxPriorityFeePerGas: bigint }> {
+    let maxFeePerGas = payload.maxFeePerGas ? BigInt(payload.maxFeePerGas) : undefined;
+    let maxPriorityFeePerGas = payload.maxPriorityFeePerGas
+      ? BigInt(payload.maxPriorityFeePerGas)
+      : undefined;
+    if (maxFeePerGas === undefined || maxPriorityFeePerGas === undefined) {
+      const fee = await withRpcRetry(() => this.provider.getFeeData());
+      const block = await withRpcRetry(() => this.provider.getBlock("latest"));
+      maxPriorityFeePerGas ??= atLeast(fee.maxPriorityFeePerGas, MIN_PRIORITY_FEE_WEI);
+      maxFeePerGas ??= (block?.baseFeePerGas ?? 0n) * BASE_FEE_HEADROOM + maxPriorityFeePerGas;
+    }
+    return { maxFeePerGas, maxPriorityFeePerGas };
+  }
+
+  private async gasLimitFor(payload: EvmSignablePayload, from: string): Promise<bigint> {
+    const estimate = payload.gasLimit
+      ? BigInt(payload.gasLimit)
+      : await withRpcRetry(() =>
+          this.provider.estimateGas({
+            from,
+            to: payload.to,
+            data: payload.data ?? "0x",
+            value: payload.value ? BigInt(payload.value) : 0n,
+          }),
+        );
+    return (estimate * GAS_LIMIT_HEADROOM_PERCENT) / 100n;
+  }
+
+  /**
+   * Refuses an action the account cannot pay for in full before its first step goes out, so an
+   * underfunded account stops cleanly instead of being left part-way through it. A step that
+   * cannot be estimated yet — it depends on an earlier step landing — is not counted.
+   */
+  async assertCanAfford(payloads: EvmSignablePayload[], label: string): Promise<void> {
+    const from = payloads.find(payload => payload.from)?.from ?? (await this.getAddress());
+    let needed = 0n;
+    for (const payload of payloads) {
+      const gasLimit = await this.gasLimitFor(payload, from).catch(() => 0n);
+      const { maxFeePerGas } = await this.feeCaps(payload);
+      needed += gasLimit * maxFeePerGas + (payload.value ? BigInt(payload.value) : 0n);
+    }
+    const balance = await withRpcRetry(() => this.provider.getBalance(from));
+    if (balance < needed) {
+      throw new Error(
+        `${label} needs up to ${formatEther(needed)} ETH for gas but ${from} holds ` +
+          `${formatEther(balance)} ETH — fund it before running borrow e2e`,
+      );
+    }
+  }
+
   /**
    * Builds an EIP-1559 tx from a partner `signablePayload`, signs it on
    * Speculos, and (unless `dryRun`) broadcasts it. Missing gas/nonce/fee
@@ -221,20 +280,8 @@ export class EvmSpeculosExecutor {
       payload.nonce ??
       (await withRpcRetry(() => this.provider.getTransactionCount(from, "pending")));
 
-    let maxFeePerGas = payload.maxFeePerGas ? BigInt(payload.maxFeePerGas) : undefined;
-    let maxPriorityFeePerGas = payload.maxPriorityFeePerGas
-      ? BigInt(payload.maxPriorityFeePerGas)
-      : undefined;
-    if (maxFeePerGas === undefined || maxPriorityFeePerGas === undefined) {
-      const fee = await withRpcRetry(() => this.provider.getFeeData());
-      const block = await withRpcRetry(() => this.provider.getBlock("latest"));
-      maxPriorityFeePerGas ??= atLeast(fee.maxPriorityFeePerGas, MIN_PRIORITY_FEE_WEI);
-      maxFeePerGas ??= (block?.baseFeePerGas ?? 0n) * BASE_FEE_HEADROOM + maxPriorityFeePerGas;
-    }
-
-    const gasLimit = payload.gasLimit
-      ? BigInt(payload.gasLimit)
-      : await withRpcRetry(() => this.provider.estimateGas({ from, to, data, value }));
+    const { maxFeePerGas, maxPriorityFeePerGas } = await this.feeCaps(payload);
+    const gasLimit = await this.gasLimitFor(payload, from);
 
     const tx = Transaction.from({
       type: 2,

@@ -5,6 +5,7 @@ import {
   ensureLoanOpen,
   ensureLoanRepaidForWithdraw,
   resetLoanState,
+  waitForChainNonceSettled,
 } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
@@ -58,6 +59,13 @@ async function initBorrowApp() {
   await swapSetup();
 }
 
+/**
+ * The app reads its next nonce as a step starts and does not count a transaction still in flight,
+ * so a step started before the previous one lands reuses its nonce and never confirms.
+ * Called from the spec rather than the page object, which would see an empty borrow address cache.
+ */
+const waitForPreviousStepToLand = () => waitForChainNonceSettled(borrowSetupOptions);
+
 /** Releases the app's Speculos first: the driver clears SPECULOS_API_PORT when it tears its own down. */
 async function resetBorrowState(flowName: string) {
   try {
@@ -106,7 +114,9 @@ describeBorrowFlow("Borrow - Open loan", () => {
       await app.borrow.expectExecutionScreen();
 
       await app.borrow.completeApprovalStep();
+      await waitForPreviousStepToLand();
       await app.borrow.authorizeDeposit();
+      await waitForPreviousStepToLand();
       await app.borrow.authorizeBorrow();
 
       await app.borrow.clickViewMyLoan();
@@ -145,6 +155,7 @@ describeBorrowFlow("Borrow - Repay", () => {
       await app.borrow.submitRepayInFull();
 
       await app.borrow.completeRepayApprovalStep();
+      await waitForPreviousStepToLand();
       await app.borrow.authorizeRepay();
 
       await app.borrow.expectRepaySuccess();

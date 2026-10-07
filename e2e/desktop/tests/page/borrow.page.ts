@@ -1,5 +1,9 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { peekBorrowAddress, readAccountNonces } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
+import {
+  peekBorrowAddress,
+  readAccountNonces,
+  waitForChainNonceSettled,
+} from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "tests/page/webViewApp.page";
 
@@ -406,6 +410,7 @@ export class BorrowPage extends WebViewAppPage {
       "Step 1 approval",
     );
     await expect(webview.getByTestId(this.authorizeDepositing)).toBeEnabled();
+    await waitForChainNonceSettled();
   }
 
   @step("Wait for Step 2 deposit to complete")
@@ -417,6 +422,7 @@ export class BorrowPage extends WebViewAppPage {
       "Step 2 deposit",
     );
     await expect(webview.getByTestId(this.authorizeBorrowing)).toBeEnabled();
+    await waitForChainNonceSettled();
   }
 
   @step("Wait for Step 3 borrow to complete")
@@ -528,6 +534,7 @@ export class BorrowPage extends WebViewAppPage {
       "Repay Step 1 approval",
     );
     await expect(webview.getByTestId(this.authorizeRepay)).toBeEnabled();
+    await waitForChainNonceSettled();
   }
 
   @step("Wait for repay execution to complete")
