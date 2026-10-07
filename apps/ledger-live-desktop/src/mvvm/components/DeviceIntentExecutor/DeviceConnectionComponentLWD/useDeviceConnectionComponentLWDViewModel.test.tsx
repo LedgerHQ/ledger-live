@@ -16,7 +16,7 @@ import {
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import React from "react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
@@ -59,7 +59,7 @@ type ConnectDeviceObserver = {
 const mockedUseDeviceManagementKit = jest.mocked(useDeviceManagementKit);
 const mockedConnectDevice = jest.mocked(connectDevice);
 const mockedTrack = jest.mocked(track);
-const mockDmk = { id: "dmk" } as unknown as NonNullable<ReturnType<typeof useDeviceManagementKit>>;
+const mockDmk = { id: "dmk" } as unknown as ReturnType<typeof useDeviceManagementKit>;
 
 let connectDeviceObserver: ConnectDeviceObserver | undefined;
 let mockUnsubscribe: jest.Mock;
@@ -345,24 +345,6 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
     expect(mockHandleBuyDevice).toHaveBeenCalledTimes(1);
   });
 
-  it("GIVEN Device Management Kit is unavailable WHEN rendering the view model THEN it exposes an unknown error state", async () => {
-    // GIVEN
-    mockedUseDeviceManagementKit.mockReturnValue(null);
-
-    // WHEN
-    const { result } = renderViewModel();
-
-    // THEN
-    await waitFor(() =>
-      expect(result.current.state).toEqual({
-        type: ConnectDeviceUIStateTypes.UnknownError,
-        error: expect.objectContaining({
-          message: "Device Management Kit is not available",
-        }),
-      }),
-    );
-    expect(mockedConnectDevice).not.toHaveBeenCalled();
-  });
   describe("failure reporting", () => {
     const unknownConnectionErrorState: ConnectDeviceUIState = {
       type: ConnectDeviceUIStateTypes.ConnectionError,
@@ -407,15 +389,5 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
 
       expect(mockReportFailure).toHaveBeenLastCalledWith(null);
     });
-  });
-
-  it("should report the missing Device Management Kit as a connect device unknown error", () => {
-    mockedUseDeviceManagementKit.mockReturnValue(null);
-
-    renderViewModel();
-
-    expect(mockReportFailure).toHaveBeenLastCalledWith(
-      expect.objectContaining({ failureType: "ConnectDeviceUnknownError", countsAsFailure: true }),
-    );
   });
 });

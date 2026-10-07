@@ -18,6 +18,14 @@ import { useContactsLedgerSyncStatus } from "LLD/features/Contacts/hooks/useCont
 // This suite exercises the real orchestrator, unlike the regular Contacts integration suite.
 jest.unmock("@features/platform-contacts/device");
 
+// The executor needs a Device Management Kit. Keep its connection step pending so the dialog stays
+// open without a device.
+jest.mock("@ledgerhq/live-dmk-desktop", () => ({
+  ...jest.requireActual<typeof import("@ledgerhq/live-dmk-desktop")>("@ledgerhq/live-dmk-desktop"),
+  useDeviceManagementKit: () => ({}),
+  connectDevice: () => jest.requireActual<typeof import("rxjs")>("rxjs").NEVER,
+}));
+
 jest.mock("react-router", () => ({
   ...jest.requireActual<typeof import("react-router")>("react-router"),
   useNavigate: () => jest.fn(),

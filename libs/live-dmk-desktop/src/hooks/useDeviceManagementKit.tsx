@@ -104,24 +104,10 @@ export const DeviceManagementKitContext = createContext<DeviceManagementKit | nu
 
 type Props = {
   children: React.ReactNode;
-  /** Whether the `ldmkTransport` feature flag is enabled, supplied by the consuming app. */
-  ldmkTransportEnabled: boolean;
 };
 
-export const DeviceManagementKitProvider: React.FC<Props> = ({
-  children,
-  ldmkTransportEnabled,
-}) => {
-  const ldmkTransportFlag = ldmkTransportEnabled;
-
-  const deviceManagementKit = useMemo(() => {
-    if (!ldmkTransportFlag) return null;
-    return getDeviceManagementKit();
-  }, [ldmkTransportFlag]);
-
-  if (!ldmkTransportFlag || deviceManagementKit === null) {
-    return <>{children}</>;
-  }
+export const DeviceManagementKitProvider: React.FC<Props> = ({ children }) => {
+  const deviceManagementKit = useMemo(() => getDeviceManagementKit(), []);
 
   return (
     <DeviceManagementKitContext.Provider value={deviceManagementKit}>
@@ -130,5 +116,10 @@ export const DeviceManagementKitProvider: React.FC<Props> = ({
   );
 };
 
-export const useDeviceManagementKit = (): DeviceManagementKit | null =>
-  useContext(DeviceManagementKitContext);
+export const useDeviceManagementKit = (): DeviceManagementKit => {
+  const deviceManagementKit = useContext(DeviceManagementKitContext);
+  if (!deviceManagementKit) {
+    throw new Error("useDeviceManagementKit must be used within a DeviceManagementKitProvider");
+  }
+  return deviceManagementKit;
+};

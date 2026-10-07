@@ -1,14 +1,12 @@
 import { useEffect } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Subscription, Observable } from "rxjs";
-import { useDeviceManagementKit, DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
+import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 
 export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
-
-  const deviceManagementKit = useDeviceManagementKit();
 
   useEffect(() => {
     let sub: Subscription;
@@ -43,17 +41,14 @@ export const useListenToHidDevices = () => {
       });
     }
 
-    // Always use DeviceManagementKit for device listening (WebHID)
-    const fn = syncDevicesWithDmk;
-
-    const timeoutSyncDevices = setTimeout(fn, 1000);
+    const timeoutSyncDevices = setTimeout(syncDevicesWithDmk, 1000);
 
     return () => {
       console.log("[[useListenToHidDevices]] cleanup");
       clearTimeout?.(timeoutSyncDevices);
       sub?.unsubscribe?.();
     };
-  }, [dispatch, deviceManagementKit]);
+  }, [dispatch]);
 
   return null;
 };

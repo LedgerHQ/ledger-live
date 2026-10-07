@@ -189,10 +189,6 @@ describeContactsWithAddresses("Contacts - with addresses", () => {
 
   test.use({
     ...contactsTestOptions(),
-    featureFlags: {
-      ...CONTACTS_FEATURE_FLAGS,
-      ldmkTransport: { enabled: true },
-    },
     speculosApp: AppInfos.ETHEREUM_CONTACTS,
     cliCommands: [],
     cliCommandsOnApp: [

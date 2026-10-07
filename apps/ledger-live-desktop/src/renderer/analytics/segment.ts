@@ -287,9 +287,6 @@ const extraProperties = (store: ReduxStore) => {
   const hasCompletedOnboarding = hasCompletedOnboardingSelector(state);
 
   const ptxAttributes = getPtxAttributes();
-  const ldmkTransport = analyticsFeatureFlagMethod
-    ? analyticsFeatureFlagMethod("ldmkTransport")
-    : { enabled: false };
   const ldmkSolanaSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
     : { enabled: false };
@@ -392,7 +389,6 @@ const extraProperties = (store: ReduxStore) => {
     ...productTourAttributes,
     largeScreenUpsellAttributes,
     madAttributes,
-    isLDMKTransportEnabled: ldmkTransport?.enabled,
     // For tracking receive flow events during onboarding
     ...getOnboardingStatusAttributes(
       postOnboardingInProgress,
