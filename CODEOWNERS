@@ -563,16 +563,16 @@ apps/ledger-live-mobile/src/e2e/                                            @led
 libs/live-e2e-shared/                                                       @ledgerhq/qaa
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
-# UI tests — Wallet XP (override the QAA /e2e/ catch-all)
-apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
-e2e/desktop/tests/page/modal/receive.modal.ts                               @ledgerhq/wallet-xp
+# UI tests — Wallet XP (co-owned with QAA)
+apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp @ledgerhq/qaa
+e2e/desktop/tests/page/modal/receive.modal.ts                               @ledgerhq/wallet-xp @ledgerhq/qaa
 
-# UI tests — Coin integration (override the QAA /e2e/ catch-all)
-e2e/mobile/specs/send/                                                      @ledgerhq/coin-integration
-e2e/desktop/tests/specs/send.tx.spec.ts                                     @ledgerhq/coin-integration
-e2e/desktop/tests/specs/newSendFlow*.spec.ts                                @ledgerhq/coin-integration
-e2e/desktop/tests/page/modal/send.modal.ts                                  @ledgerhq/coin-integration
-e2e/desktop/tests/page/modal/new.send.modal.ts                              @ledgerhq/coin-integration
+# UI tests — Coin integration (co-owned with QAA)
+e2e/mobile/specs/send/                                                      @ledgerhq/coin-integration @ledgerhq/qaa
+e2e/desktop/tests/specs/send.tx.spec.ts                                     @ledgerhq/coin-integration @ledgerhq/qaa
+e2e/desktop/tests/specs/newSendFlow*.spec.ts                                @ledgerhq/coin-integration @ledgerhq/qaa
+e2e/desktop/tests/page/modal/send.modal.ts                                  @ledgerhq/coin-integration @ledgerhq/qaa
+e2e/desktop/tests/page/modal/new.send.modal.ts                              @ledgerhq/coin-integration @ledgerhq/qaa
 
 # Team-split convention: ownership of team-* folders (order: last match wins)
 # codeowners-check: allow-override
