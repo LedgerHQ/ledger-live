@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import * as nearAPI from "near-api-js";
 import { setCoinConfig } from "../config";
 import { mockNearConfig } from "../test/context";
 import {
@@ -84,6 +85,47 @@ const mockRpc = (views: Record<string, unknown> = {}): void => {
 
 const mockStats = (data: { gas_price: string | null } | null): void => {
   mockServer.use(http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () => HttpResponse.json({ data })));
+};
+
+const timeoutError = (info?: unknown) => ({
+  name: "HANDLER_ERROR",
+  cause: { name: "TIMEOUT_ERROR", ...(info === undefined ? {} : { info }) },
+  code: -32000,
+  message: "Server error",
+  data: "Timeout",
+});
+
+// Replies to every request with the given HTTP status and JSON-RPC error, counting attempts.
+const mockAlwaysFailing = (status: number, error: unknown): { attempts: () => number } => {
+  let attempts = 0;
+  mockServer.use(
+    http.post(NEAR_BASE_URL_MOCKED, () => {
+      attempts += 1;
+      return HttpResponse.json({ jsonrpc: "2.0", id: "id", error }, { status });
+    }),
+  );
+  return { attempts: () => attempts };
+};
+
+// The expected hash comes from near-api-js's own signer, independent of the code under test.
+const signTransaction = async (): Promise<{ signedTx: string; hash: string }> => {
+  const keyPair = nearAPI.KeyPair.fromRandom("ed25519");
+  const transaction = nearAPI.createTransaction(
+    "sender.near",
+    keyPair.getPublicKey(),
+    "recipient.near",
+    42,
+    [nearAPI.actions.transfer(1000000000000000000000000n)],
+    nearAPI.baseDecode("6ykMPuAsmyPvVMSLKvfg7DBUZP9tYcgKNzVLrLxSnLpj"),
+  );
+  const { txHash, signedTransaction } = await new nearAPI.KeyPairSigner(keyPair).signTransaction(
+    transaction,
+  );
+
+  return {
+    signedTx: Buffer.from(signedTransaction.encode()).toString("base64"),
+    hash: nearAPI.baseEncode(txHash),
+  };
 };
 
 describe("node api (indexer-backed calls)", () => {
@@ -367,6 +409,131 @@ describe("node api (indexer-backed calls)", () => {
 
       await expect(broadcastTransaction(mockNearConfig, "signed-tx")).resolves.toBe("retried-hash");
       expect(attempts).toBe(2);
+    });
+
+    describe("HTTP error statuses", () => {
+      it("retries an HTTP 408 timeout then returns the hash", async () => {
+        let attempts = 0;
+        mockServer.use(
+          http.post(NEAR_BASE_URL_MOCKED, () => {
+            attempts += 1;
+            if (attempts === 1) {
+              return HttpResponse.json(
+                { jsonrpc: "2.0", id: "id", error: timeoutError() },
+                { status: 408 },
+              );
+            }
+            return HttpResponse.json({
+              jsonrpc: "2.0",
+              id: "id",
+              result: { transaction: { hash: "retried-hash" } },
+            });
+          }),
+        );
+
+        await expect(broadcastTransaction(mockNearConfig, "signed-tx")).resolves.toBe(
+          "retried-hash",
+        );
+        expect(attempts).toBe(2);
+      });
+
+      it("returns the hash reported by a timeout on an observed transaction once retries are spent", async () => {
+        const node = mockAlwaysFailing(
+          408,
+          timeoutError({
+            cause: "PENDING",
+            status: {
+              final_execution_status: "INCLUDED",
+              transaction: { hash: "observed-hash" },
+            },
+          }),
+        );
+
+        await expect(broadcastTransaction(mockNearConfig, "signed-tx")).resolves.toBe(
+          "observed-hash",
+        );
+        expect(node.attempts()).toBe(7);
+      });
+
+      it("derives the hash from the signed transaction when an observed timeout omits it", async () => {
+        const { signedTx, hash } = await signTransaction();
+        mockAlwaysFailing(
+          408,
+          timeoutError({ cause: "PENDING", status: { final_execution_status: "INCLUDED" } }),
+        );
+
+        await expect(broadcastTransaction(mockNearConfig, signedTx)).resolves.toBe(hash);
+      });
+
+      it("rejects a timeout on a transaction the node never observed", async () => {
+        mockAlwaysFailing(408, timeoutError({ cause: "NOT_OBSERVED" }));
+
+        await expect(broadcastTransaction(mockNearConfig, "signed-tx")).rejects.toThrow(
+          "TIMEOUT_ERROR: Timeout",
+        );
+      });
+
+      it("rejects an observed timeout whose hash cannot be derived from the payload", async () => {
+        mockAlwaysFailing(
+          408,
+          timeoutError({ cause: "PENDING", status: { final_execution_status: "INCLUDED" } }),
+        );
+
+        await expect(broadcastTransaction(mockNearConfig, "signed-tx")).rejects.toThrow(
+          "TIMEOUT_ERROR: Timeout",
+        );
+      });
+
+      it("reports the nested error text of an HTTP 400 instead of [object Object]", async () => {
+        mockAlwaysFailing(400, {
+          name: "REQUEST_VALIDATION_ERROR",
+          cause: {
+            name: "PARSE_ERROR",
+            info: { error_message: "Failed parsing args: invalid transaction version tag: 105" },
+          },
+          code: -32700,
+          message: "Parse error",
+          data: "Failed parsing args: invalid transaction version tag: 105",
+        });
+
+        const error = await broadcastTransaction(mockNearConfig, "signed-tx").catch(
+          (e: Error) => e,
+        );
+
+        expect(error).toBeInstanceOf(Error);
+        expect((error as Error).message).toBe(
+          "PARSE_ERROR: Failed parsing args: invalid transaction version tag: 105",
+        );
+      });
+
+      it("falls back to the message when the error data is an object", async () => {
+        mockAlwaysFailing(200, {
+          name: "HANDLER_ERROR",
+          cause: { name: "INVALID_TRANSACTION", info: {} },
+          code: -32000,
+          message: "Server error",
+          data: { TxExecutionError: { InvalidTxError: "Expired" } },
+        });
+
+        const error = await broadcastTransaction(mockNearConfig, "signed-tx").catch(
+          (e: Error) => e,
+        );
+
+        expect((error as Error).message).toBe("INVALID_TRANSACTION: Server error");
+      });
+
+      it("names the HTTP status when a failing response is not a JSON-RPC body", async () => {
+        mockServer.use(
+          http.post(
+            NEAR_BASE_URL_MOCKED,
+            () => new HttpResponse("Internal Server Error", { status: 500 }),
+          ),
+        );
+
+        await expect(broadcastTransaction(mockNearConfig, "signed-tx")).rejects.toThrow(
+          "Near: send_tx failed with HTTP 500",
+        );
+      });
     });
   });
 
