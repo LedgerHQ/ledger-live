@@ -543,7 +543,6 @@ const SwapWebView = ({
             theme,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
-            swapApiBase: SWAP_API_BASE,
             swapApiEnv: SWAP_API_ENV,
             swapUserIp: SWAP_USER_IP,
             devMode,

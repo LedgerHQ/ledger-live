@@ -258,6 +258,7 @@ describe("useSwapWebviewProps", () => {
       );
 
       expect(result.current.inputs.swapApiEnv).toBe("prd");
+      expect(result.current.inputs).not.toHaveProperty("swapApiBase");
     });
 
     it("should omit swapApiEnv when the swap backend host is unknown", () => {

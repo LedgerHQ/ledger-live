@@ -73,7 +73,6 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
   const inputs = useMemo(
     () => ({
       source: initialSource,
-      swapApiBase: SWAP_API_BASE,
       swapApiEnv: getSwapAPIEnv(SWAP_API_BASE),
       swapUserIp: SWAP_USER_IP,
       devMode,

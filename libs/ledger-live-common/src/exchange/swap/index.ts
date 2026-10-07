@@ -50,11 +50,11 @@ const getSwapAPIEnv = (swapApiBase: string): "stg" | "prd" | undefined => {
   } catch {
     return undefined;
   }
-  const labels = hostname.split(".");
+  const labels = new Set(hostname.split("."));
   const isLdgTech = hostname.endsWith(".ldg-tech.com");
-  if (hostname.endsWith(".ledger-test.com") || (isLdgTech && labels.includes("stg"))) return "stg";
+  if (hostname.endsWith(".ledger-test.com") || (isLdgTech && labels.has("stg"))) return "stg";
   if (hostname === "ledger.com" || hostname.endsWith(".ledger.com")) return "prd";
-  if (isLdgTech && labels.includes("prd")) return "prd";
+  if (isLdgTech && labels.has("prd")) return "prd";
   return undefined;
 };
 

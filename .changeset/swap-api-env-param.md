@@ -8,3 +8,4 @@ Pass `swapApiEnv` (`stg` | `prd`) to the Swap live app so it follows Wallet's Sw
 
 - Derived from the `SWAP_API_BASE` url via new `getSwapAPIEnv` helper in live-common
 - Unknown hosts (e.g. localhost) send nothing; the live app keeps its own default
+- Stop passing the full `swapApiBase` url; the live app no longer reads it
