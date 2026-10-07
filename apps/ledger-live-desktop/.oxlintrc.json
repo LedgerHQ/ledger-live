@@ -53,6 +53,14 @@
     "jest/no-disabled-tests": "warn",
     "typescript/no-explicit-any": "error",
     "typescript/no-deprecated": "error",
+    "eslint/no-restricted-properties": [
+      "error",
+      {
+        "object": "navigator",
+        "property": "clipboard",
+        "message": "Use copyToClipboard / readClipboard from @shared/clipboard instead of navigator.clipboard."
+      }
+    ],
     "import/no-duplicates": "error",
     "import/no-named-as-default": "off",
     "eslint/no-restricted-imports": [
@@ -60,6 +68,15 @@
       {
         "paths": [
           "lodash",
+          {
+            "name": "expo-clipboard",
+            "message": "Use copyToClipboard / readClipboard from @shared/clipboard instead of expo-clipboard."
+          },
+          {
+            "name": "electron",
+            "importNames": ["clipboard"],
+            "message": "Use copyToClipboard / readClipboard from @shared/clipboard. Electron's clipboard is reserved to ~/renderer/clipboard (address-hijack check)."
+          },
           {
             "name": "react-redux",
             "importNames": ["useSelector", "useDispatch", "useStore"],
@@ -142,6 +159,12 @@
     ]
   },
   "overrides": [
+    {
+      "files": ["src/renderer/clipboard.ts"],
+      "rules": {
+        "eslint/no-restricted-imports": "off"
+      }
+    },
     {
       "files": ["src/renderer/families/**"],
       "rules": {
