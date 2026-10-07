@@ -243,7 +243,6 @@ export type Features = CurrencyFeatures & {
   web3hub: Feature_web3hub;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
-  ldmkTransport: Feature_LdmkTransport;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
@@ -611,11 +610,6 @@ export type Feature_EditBitcoinTx = Feature<{
 export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   comment: string;
   project: string;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["ldmkTransport"]` from `@shared/feature-flags` instead. */
-export type Feature_LdmkTransport = Feature<{
-  warningVisible: boolean;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ratingsPrompt"]` from `@shared/feature-flags` instead. */

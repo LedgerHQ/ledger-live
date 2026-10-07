@@ -1,9 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useFeature } from "@features/platform-feature-flags";
 import type { VerifyAddressPhase, VerifyAddressProps } from "@features/flow-pay-request";
-import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
 
 const VERIFY_PAGE = "Request Address Verification";
 
@@ -28,7 +25,7 @@ export type PayVerifyOutcome =
 
 /** Controls the app-side Device Intent Executor host for the verify flow. */
 export type PayVerifyDeviceIntent = Readonly<{
-  /** Whether the DIE should be mounted (only when `ldmkTransport` is on). */
+  /** Whether the DIE should be mounted. */
   active: boolean;
   /** Selection to verify; `null` before the user starts. */
   selection: PayVerifySelection | null;
@@ -50,18 +47,10 @@ export type UsePayTabVerifyAddress = Readonly<{
  * Owns the `hidden -> intro` phase of the Request VerifyAddress overlay and drives the on-device
  * verification. Once the device flow starts, the executor dialog owns the screen: it shows the
  * next steps as soon as the address reaches the Secure Screen, and closing it — on device
- * confirmation or on a user dismissal — comes back here.
- *
- * The whole DMK/DIE path is gated by the `ldmkTransport` feature flag (see `App.tsx` ->
- * `DeviceManagementKitProvider`): when the flag is off, `useDeviceManagementKit()` returns `null`
- * and mounting the DIE would immediately error. So the intro CTA branches:
- * - flag on  -> mount the shared `verifyAddressIntent` DIE (DMK-native per family + legacy
- *   fallback).
- * - flag off -> open the classic Receive modal, which verifies via the legacy transport.
+ * confirmation or on a user dismissal — comes back here. The intro CTA mounts the shared
+ * `verifyAddressIntent` DIE (DMK-native per family + legacy fallback).
  */
 export function usePayTabVerifyAddress(): UsePayTabVerifyAddress {
-  const dispatch = useDispatch();
-  const ldmkTransport = useFeature("ldmkTransport");
   const [phase, setPhase] = useState<VerifyAddressPhase>("hidden");
   const [selection, setSelection] = useState<PayVerifySelection | null>(null);
   const [dieActive, setDieActive] = useState(false);
@@ -89,24 +78,10 @@ export function usePayTabVerifyAddress(): UsePayTabVerifyAddress {
 
   const onVerify = useCallback(() => {
     if (!selection) return;
-
-    if (ldmkTransport?.enabled) {
-      // Keep the intro visible until the executor dialog is actually up (onReady),
-      // otherwise the PayTab shows a blank, clickable gap while the DIE initializes.
-      setDieActive(true);
-      return;
-    }
-
-    // Pure-legacy path: the classic Receive modal verifies via the legacy transport.
-    // Bring the request card back behind it so the user returns to the summary on close.
-    dispatch(
-      openModal("MODAL_RECEIVE", {
-        account: selection.account,
-        parentAccount: selection.parentAccount ?? null,
-      }),
-    );
-    finish(true);
-  }, [selection, ldmkTransport, dispatch, finish]);
+    // Keep the intro visible until the executor dialog is actually up (onReady),
+    // otherwise the PayTab shows a blank, clickable gap while the DIE initializes.
+    setDieActive(true);
+  }, [selection]);
 
   // The executor dialog is up: step the intro aside so only one dialog is visible.
   const onReady = useCallback(() => setPhase("hidden"), []);

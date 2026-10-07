@@ -10,11 +10,7 @@ import { render } from "@testing-library/react";
 const TestComponent: React.FC = () => {
   const dmk = useDeviceManagementKit();
 
-  return (
-    <DeviceManagementKitProvider ldmkTransportEnabled={false}>
-      <span data-testid="dmk">{JSON.stringify(dmk)}</span>
-    </DeviceManagementKitProvider>
-  );
+  return <span data-testid="dmk">{JSON.stringify(dmk)}</span>;
 };
 
 describe("useDeviceManagementKit", () => {
@@ -35,10 +31,10 @@ describe("useDeviceManagementKit", () => {
     });
   });
   describe("<DeviceManagementKitProvider />", () => {
-    it("provides a dmk instance to child element if enabled", async () => {
+    it("provides a dmk instance to child element", () => {
       // given
       const { getByTestId } = render(
-        <DeviceManagementKitProvider ldmkTransportEnabled>
+        <DeviceManagementKitProvider>
           <TestComponent />
         </DeviceManagementKitProvider>,
       );
@@ -47,17 +43,16 @@ describe("useDeviceManagementKit", () => {
       // then
       expect(dmkStr).toHaveTextContent(JSON.stringify(getDeviceManagementKit()));
     });
-    it("provides children if not enabled", () => {
+    it("throws outside the provider", () => {
       // given
-      const { getByTestId } = render(
-        <DeviceManagementKitProvider ldmkTransportEnabled={false}>
-          <TestComponent />
-        </DeviceManagementKitProvider>,
-      );
+      const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
       // when
-      const dmkStr = getByTestId("dmk");
+      const renderOutsideProvider = () => render(<TestComponent />);
       // then
-      expect(dmkStr).toHaveTextContent(JSON.stringify(null));
+      expect(renderOutsideProvider).toThrow(
+        "useDeviceManagementKit must be used within a DeviceManagementKitProvider",
+      );
+      consoleError.mockRestore();
     });
   });
 });

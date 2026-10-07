@@ -26,8 +26,6 @@ import {
   trackDevicePrompted,
 } from "../utils/trackDeviceIntent";
 
-const missingDeviceManagementKitError = new Error("Device Management Kit is not available");
-
 type UseDeviceConnectionComponentLWDViewModelParams = {
   deviceConnectionParams: DeviceConnectionParams;
   onConnected: (connectionResult: DeviceConnectionResult) => void;
@@ -103,14 +101,6 @@ export function useDeviceConnectionComponentLWDViewModel({
       setState(nextState);
       reportFailure(getConnectDeviceFailure(nextState, getTrackingTransport));
     };
-
-    if (!dmk) {
-      handleState({
-        type: ConnectDeviceUIStateTypes.UnknownError,
-        error: missingDeviceManagementKitError,
-      });
-      return;
-    }
 
     const subscription = connectDevice({
       knownDevices: knownDevicesRef.current,

@@ -5,7 +5,6 @@ export * from "./ldmkOsUpdates";
 export * from "./ldmkPolkadotSigner";
 export * from "./ldmkSolanaSigner";
 export * from "./ldmkSolanaSignerIsTxcActive";
-export * from "./ldmkTransport";
 export * from "./ldmkTronSigner";
 export * from "./ldmkXrpSigner";
 export * from "./llmNanoSDeprecation";

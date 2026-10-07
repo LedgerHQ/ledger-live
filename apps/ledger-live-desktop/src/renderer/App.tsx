@@ -67,7 +67,6 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   }, [reloadEnabled]);
 
   const selectedPalette = useSelector(themeSelector) || "light";
-  const ldmkTransport = useFeature("ldmkTransport");
   const zcashShielded = useFeature("zcashShielded");
 
   // Mirror the `zcashShielded` feature flag: neither a coin module nor the bridge
@@ -94,7 +93,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             <ConnectEnvsToDatadog />
             <UpdaterProvider>
               <AppDataStorageProvider>
-                <DeviceManagementKitProvider ldmkTransportEnabled={ldmkTransport?.enabled ?? false}>
+                <DeviceManagementKitProvider>
                   <CountervaluesBridgedProvider initialState={initialCountervalues}>
                     <ToastProvider>
                       <ServiceStatusProviderWrapper>

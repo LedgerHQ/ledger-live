@@ -429,7 +429,7 @@ export default function Default() {
   useEffect(() => {
     // WebHID is now always enabled, set provider if specified
     if (providerNumber) {
-      dmk?.setProvider(providerNumber);
+      dmk.setProvider(providerNumber);
     }
     // setting provider only at initialisation
     // oxlint-disable-next-line react-hooks/exhaustive-deps

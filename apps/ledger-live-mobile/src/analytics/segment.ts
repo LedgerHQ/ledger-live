@@ -337,9 +337,6 @@ const getLazyOnboardingBannerAttributes = () => {
 };
 
 const getLdmkAndSyncFlags = () => ({
-  ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? {
-    enabled: false,
-  },
   ldmkSolanaSigner: analyticsFeatureFlagMethod?.("ldmkSolanaSigner") ?? {
     enabled: false,
   },
@@ -408,7 +405,7 @@ const extraProperties = async (store: AppStore) => {
   });
   const contactsFeature = analyticsFeatureFlagMethod?.("lwmContacts") ?? { enabled: false };
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
-  const { ldmkTransport, ldmkSolanaSigner, ldmkCosmosSigner, ldmkPolkadotSigner, ldmkTronSigner } =
+  const { ldmkSolanaSigner, ldmkCosmosSigner, ldmkPolkadotSigner, ldmkTronSigner } =
     getLdmkAndSyncFlags();
   const deviceInfo = lastDevice
     ? {
@@ -548,7 +545,6 @@ const extraProperties = async (store: AppStore) => {
     ...lazyOnboardingBannerAttributes,
     migrationToMMKV,
     tokenWithFunds,
-    isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,
