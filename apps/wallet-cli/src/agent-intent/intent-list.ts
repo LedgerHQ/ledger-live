@@ -38,9 +38,10 @@ export function parseStatusFilter(value: string | undefined): AgentIntentStatus[
     .filter(Boolean);
   const unknown = statuses.filter(s => !isAgentIntentStatus(s));
   if (statuses.length === 0 || unknown.length > 0) {
+    const offending = unknown.length ? `"${unknown.join(", ")}"` : "value";
     throw new Error(
-      `Unknown --status ${unknown.length ? `"${unknown.join(", ")}"` : "value"}. Use one or more of ` +
-        `${AGENT_INTENT_STATUSES.join(", ")}, comma-separated.`,
+      `Unknown --status ${offending}. Use one or more of ${AGENT_INTENT_STATUSES.join(", ")}, ` +
+        "comma-separated.",
     );
   }
   return [...new Set(statuses)] as AgentIntentStatus[];
