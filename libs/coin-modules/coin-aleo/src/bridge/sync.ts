@@ -515,7 +515,7 @@ export async function performPrivateSync({
   // deduplication is by operation id (encodeOperationId(accountId, txHash, type))
   const privateOperations = mergeOps(oldPrivateOps, latestAccountPrivateOperations.operations);
 
-  const operations = [...patchedPublicOperations, ...(privateOperations as AleoOperation[])].sort(
+  let operations = [...patchedPublicOperations, ...(privateOperations as AleoOperation[])].sort(
     (a, b) => b.date.getTime() - a.date.getTime(),
   );
 
@@ -557,14 +557,12 @@ export async function performPrivateSync({
 
     subAccounts = patchTokenSubAccountOps(tokenSubAccounts);
 
-    attachPrivateTokenOpsToParent({
+    operations = attachPrivateTokenOpsToParent({
       operations,
       privateTokenOpsByAccountId,
       ledgerAccountId,
       address,
-    });
-
-    operations.sort((a, b) => b.date.getTime() - a.date.getTime());
+    }).sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 
   const finalOperations = operations.filter(op => {

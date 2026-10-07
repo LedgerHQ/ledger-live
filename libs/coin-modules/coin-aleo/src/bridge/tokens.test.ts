@@ -682,23 +682,21 @@ describe("tokens utils", () => {
       const privateTokenOpsByAccountId = new Map([[tokenAccountId, [privateOutOp]]]);
 
       const operations: AleoOperation[] = [];
-      attachPrivateTokenOpsToParent({
+      const result = attachPrivateTokenOpsToParent({
         operations,
         privateTokenOpsByAccountId,
         ledgerAccountId,
         address,
       });
 
-      expect(operations).toHaveLength(1);
-      expect(operations[0]).toMatchObject({
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
         type: "FEES",
         value: new BigNumber(99),
         senders: [address],
         id: encodeOperationId(ledgerAccountId, "tx-private-out", "FEES"),
       });
-      expect(operations[0].subOperations).toEqual([
-        expect.objectContaining({ id: privateOutOp.id }),
-      ]);
+      expect(result[0].subOperations).toEqual([expect.objectContaining({ id: privateOutOp.id })]);
     });
 
     it("should promote an existing coin op to FEES with recipients cleared and patched when private token OUT op matches", () => {
@@ -728,14 +726,14 @@ describe("tokens utils", () => {
       const privateTokenOpsByAccountId = new Map([[tokenAccountId, [privateOutOp]]]);
       const operations: AleoOperation[] = [existingCoinOp];
 
-      attachPrivateTokenOpsToParent({
+      const result = attachPrivateTokenOpsToParent({
         operations,
         privateTokenOpsByAccountId,
         ledgerAccountId,
         address,
       });
 
-      expect(operations[0]).toMatchObject({
+      expect(result[0]).toMatchObject({
         type: "FEES",
         recipients: [],
         extra: expect.objectContaining({ patched: true }),
@@ -761,16 +759,90 @@ describe("tokens utils", () => {
       });
 
       const operations = [parentOp];
-      attachPrivateTokenOpsToParent({
+      const result = attachPrivateTokenOpsToParent({
         operations,
         privateTokenOpsByAccountId: new Map([[tokenAccountId, [privateInOp]]]),
         ledgerAccountId,
         address,
       });
 
-      expect(operations[0].subOperations).toEqual([
-        expect.objectContaining({ id: privateInOp.id }),
-      ]);
+      expect(result[0].subOperations).toEqual([expect.objectContaining({ id: privateInOp.id })]);
+    });
+
+    it("should promote a frozen coin op to FEES without mutating it", () => {
+      const txHash = "tx-frozen-promote";
+      const frozenCoinOp = Object.freeze(
+        getMockedOperation({
+          hash: txHash,
+          type: "OUT",
+          accountId: ledgerAccountId,
+          senders: [],
+          recipients: ["aleo1recipient"],
+          extra: {
+            functionId: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+            transactionType: "private",
+          },
+        }),
+      );
+      const privateOutOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        accountId: tokenAccountId,
+        fee: new BigNumber(55),
+        extra: {
+          functionId: EXPLORER_TRANSFER_TYPES.PRIVATE,
+          transactionType: "private",
+          programId: MOCK_TOKEN_PROGRAM_ID,
+        },
+      });
+      const operations: AleoOperation[] = [frozenCoinOp];
+
+      const result = attachPrivateTokenOpsToParent({
+        operations,
+        privateTokenOpsByAccountId: new Map([[tokenAccountId, [privateOutOp]]]),
+        ledgerAccountId,
+        address,
+      });
+
+      expect(result[0]).toMatchObject({
+        id: encodeOperationId(ledgerAccountId, txHash, "FEES"),
+        type: "FEES",
+        senders: [address],
+        subOperations: [expect.objectContaining({ id: privateOutOp.id })],
+      });
+      expect(frozenCoinOp.type).toBe("OUT");
+    });
+
+    it("should attach private IN ops to a frozen parent coin op without mutating it", () => {
+      const frozenParentOp = Object.freeze(
+        getMockedOperation({
+          hash: "tx-frozen-in",
+          type: "NONE",
+          accountId: ledgerAccountId,
+          subOperations: [],
+        }),
+      );
+      const privateInOp = getMockedOperation({
+        hash: "tx-frozen-in",
+        type: "IN",
+        accountId: tokenAccountId,
+        extra: {
+          functionId: EXPLORER_TRANSFER_TYPES.PRIVATE,
+          transactionType: "private",
+          programId: MOCK_TOKEN_PROGRAM_ID,
+        },
+      });
+      const operations: AleoOperation[] = [frozenParentOp];
+
+      const result = attachPrivateTokenOpsToParent({
+        operations,
+        privateTokenOpsByAccountId: new Map([[tokenAccountId, [privateInOp]]]),
+        ledgerAccountId,
+        address,
+      });
+
+      expect(result[0].subOperations).toEqual([expect.objectContaining({ id: privateInOp.id })]);
+      expect(frozenParentOp.subOperations).toEqual([]);
     });
   });
 
