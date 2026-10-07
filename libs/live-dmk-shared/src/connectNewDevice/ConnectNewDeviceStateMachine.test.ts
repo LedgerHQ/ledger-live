@@ -203,8 +203,14 @@ describe("ConnectNewDeviceStateMachine", () => {
       discoverDevices([nanoX, stax]);
 
       expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices).toEqual([
-        { device: nanoXDevice, isAvailable: true, onSelect: expect.any(Function) },
         {
+          key: `${bleTransport}:nano-x-id`,
+          device: nanoXDevice,
+          isAvailable: true,
+          onSelect: expect.any(Function),
+        },
+        {
+          key: `${bleTransport}:stax-id`,
           device: {
             transport: bleTransport,
             deviceModelId: DeviceModelId.stax,
@@ -237,7 +243,7 @@ describe("ConnectNewDeviceStateMachine", () => {
       discoverDevices([stax]);
 
       expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices).toEqual([
-        { device: nanoXDevice, isAvailable: false },
+        { key: `${bleTransport}:nano-x-id`, device: nanoXDevice, isAvailable: false },
         expect.objectContaining({ device: expect.objectContaining({ id: "stax-id" }) }),
       ]);
     });
@@ -251,6 +257,7 @@ describe("ConnectNewDeviceStateMachine", () => {
       discoverDevices([stax, nanoX]);
 
       expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]).toEqual({
+        key: `${bleTransport}:nano-x-id`,
         device: nanoXDevice,
         isAvailable: true,
         onSelect: expect.any(Function),
@@ -269,6 +276,7 @@ describe("ConnectNewDeviceStateMachine", () => {
 
       expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices).toEqual([
         {
+          key: `${usbTransport}:${DMKDeviceModelId.NANO_X}`,
           device: expect.objectContaining({ id: "usb-id-2" }),
           isAvailable: true,
           onSelect: expect.any(Function),

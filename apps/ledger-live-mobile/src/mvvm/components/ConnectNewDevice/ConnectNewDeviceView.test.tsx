@@ -25,7 +25,7 @@ function makeDiscoveringState(
 ): ConnectNewDeviceNonErrorUIState {
   return {
     type: ConnectNewDeviceUIStateTypes.Discovering,
-    devices: [{ device, isAvailable: true, onSelect: jest.fn() }],
+    devices: [{ key: "nano-x", device, isAvailable: true, onSelect: jest.fn() }],
     scanningTransports: [rnBleTransportIdentifier],
     showDeviceNotFound: false,
     ...overrides,
@@ -58,7 +58,7 @@ describe("ConnectNewDeviceView", () => {
     // GIVEN
     const onSelect = jest.fn();
     const { user } = renderView(
-      makeDiscoveringState({ devices: [{ device, isAvailable: true, onSelect }] }),
+      makeDiscoveringState({ devices: [{ key: "nano-x", device, isAvailable: true, onSelect }] }),
     );
 
     // WHEN
@@ -162,10 +162,37 @@ describe("ConnectNewDeviceView", () => {
   );
 
   it("should keep listing a device that is no longer discovered, with its select button disabled", () => {
-    renderView(makeDiscoveringState({ devices: [{ device, isAvailable: false }] }));
+    renderView(makeDiscoveringState({ devices: [{ key: "nano-x", device, isAvailable: false }] }));
 
     expect(screen.getByText("Ledger Nano X")).toBeVisible();
     expect(screen.getByLabelText("Connect Ledger Nano X")).toBeDisabled();
+  });
+
+  it("should keep the same card when a USB device is discovered again with another id", () => {
+    const makeUsbState = (id: string) =>
+      makeDiscoveringState({
+        devices: [
+          {
+            key: "usb-nano-x",
+            device: { ...usbDevice, id },
+            isAvailable: true,
+            onSelect: jest.fn(),
+          },
+        ],
+      });
+    const view = renderView(makeUsbState("usb-id-1"));
+    const card = screen.getByText("Ledger Nano X");
+
+    view.rerender(
+      <ConnectNewDeviceView
+        state={makeUsbState("usb-id-2")}
+        lastNonErrorState={makeDiscoveringState()}
+        platform="android"
+        onCloseErrorSheet={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Ledger Nano X")).toBe(card);
   });
 
   it("should name the device in each select button for screen readers", () => {
@@ -174,8 +201,8 @@ describe("ConnectNewDeviceView", () => {
     renderView(
       makeDiscoveringState({
         devices: [
-          { device, isAvailable: true, onSelect: jest.fn() },
-          { device: stax, isAvailable: true, onSelect: jest.fn() },
+          { key: "nano-x", device, isAvailable: true, onSelect: jest.fn() },
+          { key: "stax", device: stax, isAvailable: true, onSelect: jest.fn() },
         ],
       }),
     );

@@ -44,7 +44,7 @@ const device = {
 
 const discoveringState: ConnectNewDeviceUIState = {
   type: ConnectNewDeviceUIStateTypes.Discovering,
-  devices: [{ device, isAvailable: true, onSelect: jest.fn() }],
+  devices: [{ key: "nano-x", device, isAvailable: true, onSelect: jest.fn() }],
   scanningTransports: [rnBleTransportIdentifier],
   showDeviceNotFound: false,
 };

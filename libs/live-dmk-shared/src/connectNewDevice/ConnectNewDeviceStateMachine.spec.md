@@ -49,7 +49,8 @@ stateDiagram-v2
   `isAvailable: false` and has no `onSelect` callback. When discovery reports
   it again, it becomes available again at the same position. The injected
   `getDiscoveredDeviceKey` tells which discovered device is the same device
-  from one discovery update to the next.
+  from one discovery update to the next. Each listed device has this `key`,
+  so that the UI can use it as the row key.
 - Each entry into `Discovering` clears the device list, the selection and
   the errors, sets `showDeviceNotFound` to `false` and starts the device not
   found delay (`DEFAULT_DEVICE_NOT_FOUND_DELAY`, 5 s). When the delay elapses,

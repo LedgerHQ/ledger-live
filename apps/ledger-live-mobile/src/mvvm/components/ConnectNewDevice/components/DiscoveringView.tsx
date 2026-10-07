@@ -46,10 +46,7 @@ export function DiscoveringView({
       {state.devices.length > 0 ? (
         <Box lx={{ gap: "s16" }}>
           {state.devices.map(selectableDevice => (
-            <DeviceCard
-              key={`${selectableDevice.device.transport}:${selectableDevice.device.id}`}
-              {...selectableDevice}
-            />
+            <DeviceCard key={selectableDevice.key} selectableDevice={selectableDevice} />
           ))}
         </Box>
       ) : null}

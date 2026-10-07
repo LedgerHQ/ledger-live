@@ -19,10 +19,11 @@ import {
 } from "../deviceConnectivity/types";
 
 export type SelectableDevice =
-  | { device: Device; isAvailable: true; onSelect: () => void }
-  | { device: Device; isAvailable: false };
+  | { key: string; device: Device; isAvailable: true; onSelect: () => void }
+  | { key: string; device: Device; isAvailable: false };
 
 export type ListedDevice = {
+  key: string;
   discoveredDevice: DiscoveredDevice;
   isAvailable: boolean;
 };

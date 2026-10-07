@@ -26,12 +26,17 @@ const deviceC = makeDiscoveredDevice("c");
 const getDeviceKeyById: ConnectNewDeviceGetDiscoveredDeviceKey = ({ transport, id }) =>
   `${transport}:${id}`;
 
-const available = (discoveredDevice: DiscoveredDevice): ListedDevice => ({
+const available = (
+  discoveredDevice: DiscoveredDevice,
+  getDiscoveredDeviceKey = getDeviceKeyById,
+): ListedDevice => ({
+  key: getDiscoveredDeviceKey(discoveredDevice),
   discoveredDevice,
   isAvailable: true,
 });
 
 const notAvailable = (discoveredDevice: DiscoveredDevice): ListedDevice => ({
+  key: getDeviceKeyById(discoveredDevice),
   discoveredDevice,
   isAvailable: false,
 });
@@ -97,7 +102,7 @@ describe("mergeDiscoveredDevices", () => {
     ).toEqual([available(renamedDeviceA)]);
   });
 
-  it("should identify the devices with the given key", () => {
+  it("should keep the key of a listed device when its discovered device changes", () => {
     const getDeviceKeyByModel: ConnectNewDeviceGetDiscoveredDeviceKey = ({
       transport,
       deviceModel,
@@ -106,7 +111,13 @@ describe("mergeDiscoveredDevices", () => {
     const rediscoveredUsbDevice = makeDiscoveredDevice("usb-2", { transport: usbTransport });
 
     expect(
-      mergeDiscoveredDevices([available(usbDevice)], [rediscoveredUsbDevice], getDeviceKeyByModel),
-    ).toEqual([available(rediscoveredUsbDevice)]);
+      mergeDiscoveredDevices(
+        [available(usbDevice, getDeviceKeyByModel)],
+        [rediscoveredUsbDevice],
+        getDeviceKeyByModel,
+      ),
+    ).toEqual([
+      { key: `${usbTransport}:nanoX`, discoveredDevice: rediscoveredUsbDevice, isAvailable: true },
+    ]);
   });
 });

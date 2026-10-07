@@ -17,21 +17,17 @@ export const mergeDiscoveredDevices = (
       discoveredDevice,
     ]),
   );
-  const listedKeys = new Set(
-    listedDevices.map(({ discoveredDevice }) => getDiscoveredDeviceKey(discoveredDevice)),
-  );
+  const listedKeys = new Set(listedDevices.map(({ key }) => key));
 
-  const updatedListedDevices = listedDevices.map(({ discoveredDevice }): ListedDevice => {
-    const latestDiscoveredDevice = discoveredDevicesByKey.get(
-      getDiscoveredDeviceKey(discoveredDevice),
-    );
+  const updatedListedDevices = listedDevices.map(({ key, discoveredDevice }): ListedDevice => {
+    const latestDiscoveredDevice = discoveredDevicesByKey.get(key);
     return latestDiscoveredDevice
-      ? { discoveredDevice: latestDiscoveredDevice, isAvailable: true }
-      : { discoveredDevice, isAvailable: false };
+      ? { key, discoveredDevice: latestDiscoveredDevice, isAvailable: true }
+      : { key, discoveredDevice, isAvailable: false };
   });
   const newListedDevices = [...discoveredDevicesByKey]
     .filter(([key]) => !listedKeys.has(key))
-    .map(([, discoveredDevice]): ListedDevice => ({ discoveredDevice, isAvailable: true }));
+    .map(([key, discoveredDevice]): ListedDevice => ({ key, discoveredDevice, isAvailable: true }));
 
   return [...updatedListedDevices, ...newListedDevices];
 };

@@ -30,13 +30,14 @@ export const buildSelectableDevices = <
   listedDevices: Array<ListedDevice>,
   send: (event: ConnectNewDeviceStateMachineEvent<TDiscoveryError>) => void,
 ): Array<SelectableDevice> =>
-  listedDevices.map(({ discoveredDevice, isAvailable }) =>
+  listedDevices.map(({ key, discoveredDevice, isAvailable }) =>
     isAvailable
       ? {
+          key,
           device: toDevice(discoveredDevice),
           isAvailable,
           onSelect: () =>
             send({ type: ConnectNewDeviceStateMachineEventTypes.UserTapsDevice, discoveredDevice }),
         }
-      : { device: toDevice(discoveredDevice), isAvailable },
+      : { key, device: toDevice(discoveredDevice), isAvailable },
   );
