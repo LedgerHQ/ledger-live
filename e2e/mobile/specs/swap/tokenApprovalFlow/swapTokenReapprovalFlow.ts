@@ -83,7 +83,7 @@ export function runSwapTokenReapprovalFlow(
         await app.swapLiveApp.tapGiveApprovalButton();
         await app.send.summaryContinue();
         await app.speculos.signTokenApproval();
-        await app.swapLiveApp.expectExecuteSwapOnStepApproval();
+        await app.swapLiveApp.expectExecuteSwapOnStepApproval({ isTokenApproval: true });
       },
       TOKEN_REAPPROVAL_TEST_TIMEOUT,
     );
