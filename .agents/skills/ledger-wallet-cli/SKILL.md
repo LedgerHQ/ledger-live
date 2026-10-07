@@ -478,7 +478,8 @@ pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethe
   transaction today (`1inch` is accepted for `oneinch`). A quote that needs a token approval or a
   Permit2 signature is skipped, because the frontend can't prepare one yet and the intent would
   stay stuck in review.
-- **`--to-amount`** replaces the quote with your own expected amount and needs `--provider`.
+- **`--to-amount`** signs your own expected amount instead of the quoted one. The swap is still
+  quoted, so the provider is always one the frontend can prepare.
 - **Don't retry blindly**, as for `agent-intent send`: if the service accepted the request, the
   intent may already exist.
 

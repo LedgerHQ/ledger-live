@@ -261,26 +261,37 @@ describe("agent-intent swap", () => {
   });
 
   describe("--to-amount", () => {
-    it("replaces the quote and keeps the amount exactly as typed", async () => {
-      await runSwap({ "to-amount": "1250.50", provider: "velora", output: "json" });
+    it("signs the typed amount with the provider of a quote the frontend can prepare", async () => {
+      quoteImpl = async () => ({ provider: "velora", receiveAmount: 1234.5 });
 
-      expect(quoteRequests).toEqual([]);
+      await runSwap({ "to-amount": "1250.50", output: "json" });
+
+      expect(quoteRequests).toEqual([
+        expect.objectContaining({ providers: ["oneinch", "velora", "okx", "lifi"] }),
+      ]);
       expect(submittedIntents).toEqual([
         expect.objectContaining({ toAmount: "1250.50", provider: "velora" }),
       ]);
       expect(jsonResult()).toMatchObject({ toAmount: "1250.50", quoted: false });
     });
 
-    it("needs --provider", async () => {
-      await expect(runSwap({ "to-amount": "1250" })).rejects.toThrow(
-        "--to-amount replaces the quote, so it needs --provider too.",
+    it("still refuses when no quote can be prepared", async () => {
+      quoteImpl = async () => {
+        throw new Error("Every quote needs a token approval or Permit2 signature first.");
+      };
+
+      await expect(runSwap({ "to-amount": "1250", provider: "okx" })).rejects.toThrow(
+        /needs a token approval/,
       );
+      expect(quoteRequests).toEqual([expect.objectContaining({ providers: ["okx"] })]);
+      expect(submittedIntents).toEqual([]);
     });
 
-    it("rejects more decimals than the bought asset has", async () => {
-      await expect(runSwap({ "to-amount": "1250.0000001", provider: "velora" })).rejects.toThrow(
+    it("rejects more decimals than the bought asset has, before quoting", async () => {
+      await expect(runSwap({ "to-amount": "1250.0000001" })).rejects.toThrow(
         /more than 6 decimal places/,
       );
+      expect(quoteRequests).toEqual([]);
     });
   });
 
