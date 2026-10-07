@@ -37,6 +37,14 @@
           "reason": "Replaced on mobile.",
           "use": "expo-haptics"
         },
+        "@react-native-clipboard/clipboard": {
+          "reason": "Replaced on mobile (LIVE-37327).",
+          "use": "expo-clipboard, through @shared/clipboard"
+        },
+        "react-native-image-picker": {
+          "reason": "Replaced on mobile (LIVE-37312).",
+          "use": "expo-image-picker"
+        },
         "unimported": {
           "reason": "Mishandles dynamic import(), so every package needs an exception list to suppress its false positives. Pulls typescript@4.9.5 and @typescript-eslint@5 into node_modules.",
           "use": "knip"

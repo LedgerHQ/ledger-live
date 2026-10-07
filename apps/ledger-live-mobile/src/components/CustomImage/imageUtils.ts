@@ -1,5 +1,5 @@
 import { Image } from "react-native";
-import * as ImagePicker from "react-native-image-picker";
+import * as ImagePicker from "expo-image-picker";
 import {
   ImageLoadFromGalleryError,
   ImageSizeLoadingError,
@@ -15,29 +15,14 @@ import { ImageDimensions, ImageFileUri } from "./types";
  */
 export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null> {
   try {
-    const pickImagePromise = ImagePicker.launchImageLibrary({
-      mediaType: "photo",
+    const res = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
       quality: 1,
-      includeBase64: false,
-      selectionLimit: 1,
-    })
-      .then(res => {
-        if (res.errorCode)
-          throw new Error(
-            `ImagePicker.launchImageLibrary Error (error code: ${res.errorCode}): ${res.errorMessage}`,
-          );
-        const assets = res?.assets || [];
-        if (assets.length === 0 && !res.didCancel) throw new Error("Assets length is 0");
-        return {
-          cancelled: res.didCancel,
-          uri: assets[0]?.uri,
-        };
-      })
-      .catch(err => {
-        throw err;
-      });
-    const { uri, cancelled } = await pickImagePromise;
-    if (cancelled) return null;
+      base64: false,
+      allowsMultipleSelection: false,
+    });
+    if (res.canceled) return null;
+    const uri = res.assets[0]?.uri;
     if (uri) {
       return {
         imageFileUri: uri,

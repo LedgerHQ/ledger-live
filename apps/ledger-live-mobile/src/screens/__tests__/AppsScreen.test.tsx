@@ -9,7 +9,6 @@ import { ListAppsResult, State } from "@ledgerhq/live-common/apps/types";
 import { getProductName } from "LLM/utils/getProductName";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-jest.mock("react-native-image-picker", () => ({}));
 jest.mock("expo-keep-awake", () => ({}));
 
 jest.mock("@react-navigation/native", () => ({
