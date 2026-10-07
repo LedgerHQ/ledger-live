@@ -20,7 +20,7 @@ test.describe(`Onboarding a new Nano (mock server)`, () => {
     `Factory Nano is set up as a new device`,
     {
       tag: ["@onboarding", ...deviceWithButtonTags()],
-      annotation: { type: "TMS", description: "B2CQA-725" },
+      annotation: { type: "TMS", description: "B2CQA-725, B2CQA-1305" },
     },
     async ({ app, mockDevice, mockServer }) => {
       await app.onboarding.waitForLaunch();
@@ -50,6 +50,7 @@ test.describe(`Onboarding a new Nano (mock server)`, () => {
       await app.onboarding.continueTutorial("welcome-to-wallet-without-funds");
 
       await app.portfolio.expectPortfolioEmptyState();
+      await app.postOnboarding.expectActionsForDevice(mockDevice.modelId);
     },
   );
 });

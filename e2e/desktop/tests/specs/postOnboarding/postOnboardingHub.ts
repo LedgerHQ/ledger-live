@@ -2,6 +2,3 @@
 export const MOCK_ACTIONS = ["claimMock", "personalizeMock", "migrateAssetsMock"] as const;
 
 export const POST_ONBOARDING_USERDATA = "post-onboarding-hub-flow";
-
-// i18n `postOnboarding.dialog.actionCompletedLabel`
-export const ACTION_COMPLETED_LABEL = "Complete";

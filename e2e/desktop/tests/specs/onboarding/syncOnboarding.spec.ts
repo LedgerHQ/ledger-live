@@ -23,7 +23,7 @@ test.describe(`Onboarding (mock server)`, () => {
     `Unseeded device onboards in fresh Ledger Live instance`,
     {
       tag: ONBOARDING_TAGS,
-      annotation: { type: "TMS", description: "B2CQA-1866" },
+      annotation: { type: "TMS", description: "B2CQA-1866, B2CQA-1305" },
     },
     async ({ app, mockDevice, mockServer }) => {
       await app.syncOnboarding.startOnboardingFromFreshInstall(mockDevice.modelId);
@@ -38,6 +38,7 @@ test.describe(`Onboarding (mock server)`, () => {
       await app.syncOnboarding.declineFunding();
       await app.syncOnboarding.expectCompletionScreen(mockDevice.modelId);
       await app.portfolio.expectPortfolioEmptyState();
+      await app.postOnboarding.expectActionsForDevice(mockDevice.modelId);
     },
   );
 });
