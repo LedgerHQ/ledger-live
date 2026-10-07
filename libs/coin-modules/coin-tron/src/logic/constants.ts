@@ -47,6 +47,13 @@ export const ENERGY_RENT_PAYMENT_MAX_EXPIRY_MS = ENERGY_RENT_POLL_TIMEOUT_MS + 5
 // TRC-20 transfers, so the payment needs its own bound.
 export const ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT = 100_000_000;
 
+// About 1.5× what burning TRX for a USDT transfer to an empty recipient cost in October 2026
+// (195k energy at 100 sun, TRX at $0.34), so a real rental clears it with room to spare.
+export const DEFAULT_TRONIFY_MAX_RENT_AMOUNT = 10;
+
+// Tronify's price can move between the Review quote and the order.
+export const DEFAULT_TRONIFY_RENT_PRICE_MARGIN = 0.05;
+
 /** What Tronify rent is paid in: coin-tron always sends `extraTrxNum`, which selects Tronify's USDT
  * payment ("Flow 2"). */
 export const TRONIFY_PAY_ASSET = {

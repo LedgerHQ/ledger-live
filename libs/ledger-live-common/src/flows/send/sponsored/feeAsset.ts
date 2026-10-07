@@ -43,8 +43,8 @@ export function isSponsoredFeeUnaffordable({
   return spendable.lt(amount.plus(rent));
 }
 
-/** Largest amount that leaves the rent plus a 1% margin: craft re-quotes, and its on-chain check
- * uses the fresh price. ≤ 0 means no amount fits. */
+/** Largest amount that leaves the rent plus a 1% margin, so an order priced slightly above the
+ * quote still fits the balance. ≤ 0 means no amount fits. */
 export function sponsoredMaxAmount(feeTokenAccount: TokenAccount, rentValue: bigint): BigNumber {
   const rent = new BigNumber(rentValue.toString());
   return tokenSpendableAfterPending(feeTokenAccount)

@@ -41,14 +41,35 @@ const makeActions = (craftRent = jest.fn().mockResolvedValue(undefined)) =>
     startRentPayment: jest.Mock;
   };
 
-const render = (state: SponsoredState, actions: SponsoredSendActions) =>
+const REVIEW_FEE = 3_200_000n;
+
+const render = (
+  state: SponsoredState,
+  actions: SponsoredSendActions,
+  approvedFee: bigint | null = REVIEW_FEE,
+) =>
   renderHook(
     ({ state: current, actions: currentActions }) =>
-      useSponsoredRentPayment({ state: current, actions: currentActions, locale: "en" }),
+      useSponsoredRentPayment({
+        state: current,
+        actions: currentActions,
+        approvedFee,
+        locale: "en",
+      }),
     { initialProps: { state, actions } },
   );
 
 describe("useSponsoredRentPayment", () => {
+  it.each([
+    ["the fee shown on Review", REVIEW_FEE],
+    ["no fee when Review showed none", null],
+  ])("crafts with %s", (_label, approvedFee) => {
+    const actions = makeActions();
+    render(IDLE_STATE, actions, approvedFee);
+
+    expect(actions.craftRent).toHaveBeenCalledWith(approvedFee);
+  });
+
   it("crafts once on entry, even when the actions are rebuilt mid-craft", async () => {
     let finishCraft: (() => void) | undefined;
     const craftRent = jest.fn(

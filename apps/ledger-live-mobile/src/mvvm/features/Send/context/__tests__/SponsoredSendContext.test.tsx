@@ -154,6 +154,7 @@ describe("SponsoredSendProvider", () => {
       waivesNativeFee: true,
       reviewReady: true,
       feeCurrencyTicker: "USDT",
+      approvedFee: QUOTE.value,
     });
   });
 
@@ -174,6 +175,17 @@ describe("SponsoredSendProvider", () => {
     );
   });
 
+  it.each([
+    [SPONSORED_PHASE.IDLE, true],
+    [SPONSORED_PHASE.RENT_SIGNING, false],
+    [SPONSORED_PHASE.FAILED, false],
+  ])("refreshes the quote in phase %s: %s", (phase, refresh) => {
+    mockPhase = phase;
+    renderContext();
+
+    expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(expect.objectContaining({ refresh }));
+  });
+
   it("holds Review while the sponsored pick's quote reloads, and keeps waiving meanwhile", () => {
     const { result, rerender } = renderContext();
     expect(result.current.selected).toBe(true);
@@ -184,6 +196,7 @@ describe("SponsoredSendProvider", () => {
     expect(result.current.selected).toBe(true);
     expect(result.current.value.reviewReady).toBe(false);
     expect(result.current.value.waivesNativeFee).toBe(true);
+    expect(result.current.value.approvedFee).toBeNull();
   });
 
   it("holds Review on the standard fee until the first lookup decides", () => {

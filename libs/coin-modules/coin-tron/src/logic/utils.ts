@@ -41,6 +41,23 @@ export async function decodeTransaction(rawTx: string): Promise<{
   };
 }
 
+const sameBytes = (a: Uint8Array, b: Uint8Array): boolean => Buffer.from(a).equals(Buffer.from(b));
+
+/** Whether a transaction of TriggerSmartContract calls re-encodes to its own bytes: the decoder
+ * skips unknown and repeated fields, and whatever follows an end-group tag. */
+export function isCanonicalTriggerSmartContractTx(rawDataHex: string): boolean {
+  const { Transaction, TriggerSmartContract } = tronWebProto();
+  const bytes = Buffer.from(rawDataHex, "hex");
+  const raw = Transaction.raw.deserializeBinary(bytes);
+  return (
+    sameBytes(raw.serializeBinary(), bytes) &&
+    raw.getContractList().every((contract: { getParameter(): { getValue_asU8(): Uint8Array } }) => {
+      const value = contract.getParameter().getValue_asU8();
+      return sameBytes(TriggerSmartContract.deserializeBinary(value).serializeBinary(), value);
+    })
+  );
+}
+
 export function tronTxIdFromRawDataHex(rawDataHex: string): string {
   return createHash("sha256")
     .update(new Uint8Array(Buffer.from(rawDataHex, "hex")))
@@ -88,6 +105,14 @@ function convertTxFromRaw(tx: any) {
     };
   }
 
+  const auths = tx.getAuthsList();
+  if (auths.length > 0) {
+    transactionRawData = {
+      ...transactionRawData,
+      auths: auths.map((auth: any) => auth.toObject()),
+    };
+  }
+
   return transactionRawData;
 }
 
@@ -110,6 +135,8 @@ function convertContractFromRaw(contract: any) {
       value,
       type_url: contract.getParameter().getTypeUrl(),
     },
+    // TronGrid's name; 0 (owner) is the default and stays off, as TronGrid leaves it.
+    ...(contract.getPermissionId() ? { Permission_id: contract.getPermissionId() } : {}),
   };
 }
 

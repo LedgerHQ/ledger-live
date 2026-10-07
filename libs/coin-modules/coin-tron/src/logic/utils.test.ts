@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { decodeTransaction, getTronResources } from "./utils";
+import { decodeTransaction, getTronResources, isCanonicalTriggerSmartContractTx } from "./utils";
 
 describe("decodeTransaction", () => {
   it("creates a TRX transaction in TronWeb format", async () => {
@@ -112,6 +112,44 @@ describe("decodeTransaction", () => {
       contract_address: "4142a1e39aefa49290f2b3f9ed688d7cecf86cd6e0",
       call_value: 1,
     });
+  });
+
+  it("surfaces authorities and a non-owner Permission_id", async () => {
+    const result = await decodeTransaction(
+      "0a028ed022087280df3dd121c50c40b0b4cfd1e9334a0812066163746976655ab001081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541f71b647cb5b87f7393217111d80a909c2f7e1650121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000029228e5d382b7a2c2a0dbc05e6d6507f4dbb3bbe000000000000000000000000000000000000000000000000000000000032c562280270b092bac0e933900180c2d72f",
+    );
+
+    expect(result.raw_data.auths).toHaveLength(1);
+    expect(result.raw_data.contract[0].Permission_id).toBe(2);
+  });
+
+  it("surfaces a memo and scripts", async () => {
+    const result = await decodeTransaction(
+      "0a028ed022087280df3dd121c50c40b0b4cfd1e933520268695aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541f71b647cb5b87f7393217111d80a909c2f7e1650121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000029228e5d382b7a2c2a0dbc05e6d6507f4dbb3bbe000000000000000000000000000000000000000000000000000000000032c56262010170b092bac0e933900180c2d72f",
+    );
+
+    expect(Buffer.from(result.raw_data.data).toString()).toBe("hi");
+    expect(Array.from(result.raw_data.scripts)).toEqual([0x01]);
+  });
+});
+
+const TRONIFY_PAYMENT_HEX =
+  "0a028ed022087280df3dd121c50c40b0b4cfd1e9335aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541f71b647cb5b87f7393217111d80a909c2f7e1650121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000029228e5d382b7a2c2a0dbc05e6d6507f4dbb3bbe000000000000000000000000000000000000000000000000000000000032c56270b092bac0e933900180c2d72f";
+
+describe("isCanonicalTriggerSmartContractTx", () => {
+  it("accepts a payment Tronify built", () => {
+    expect(isCanonicalTriggerSmartContractTx(TRONIFY_PAYMENT_HEX)).toBe(true);
+  });
+
+  it.each([
+    ["an unknown field", TRONIFY_PAYMENT_HEX + "9a060400000000"],
+    ["bytes after an end-group tag", TRONIFY_PAYMENT_HEX + "0c5a00"],
+    [
+      "an unknown field inside the TriggerSmartContract",
+      "0a028ed022087280df3dd121c50c40b0b4cfd1e9335ab501081f12b0010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e7472616374127b0a1541f71b647cb5b87f7393217111d80a909c2f7e1650121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000029228e5d382b7a2c2a0dbc05e6d6507f4dbb3bbe000000000000000000000000000000000000000000000000000000000032c5629a06040000000070b092bac0e933900180c2d72f",
+    ],
+  ])("rejects a payment carrying %s", (_label, rawDataHex) => {
+    expect(isCanonicalTriggerSmartContractTx(rawDataHex)).toBe(false);
   });
 });
 

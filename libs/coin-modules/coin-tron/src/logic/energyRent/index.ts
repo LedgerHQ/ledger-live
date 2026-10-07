@@ -21,7 +21,8 @@ import { getTronifyConfig } from "../../network/tronify";
 import { decode58Check } from "../../network/format";
 import { getTronAccountNetwork } from "../../network";
 import { abiDecodeTrc20Transfer, type Trc20TransferData } from "../../network/utils";
-import { decodeTransaction } from "../utils";
+import { decodeTransaction, isCanonicalTriggerSmartContractTx } from "../utils";
+import { maxRentBaseUnits, tronifyPaymentAddresses } from "./paymentPolicy";
 import { tronifyProvider } from "./tronify";
 import type {
   EnergyProvider,
@@ -61,35 +62,45 @@ export function getEnergyRentQuote(
   return getEnergyProvider(config).getQuote(logger, config, request);
 }
 
+const rejected = (rule: string, message: string) => new TronifyApiError(message, { rule });
+
+type ApprovedCost = { amount: BigNumber; code: string };
+
+// The ceiling and its coin code bind the order to the fee approved on Review.
+function approvedCost({ maxPayCoinAmt, maxPayCoinCode }: EnergyRentRequest): ApprovedCost {
+  // No coin code with a ceiling fails closed: an amount alone can't rule out a cheaper-denomination underprice.
+  if (maxPayCoinAmt === undefined || maxPayCoinCode === undefined) {
+    throw rejected("ceiling", "Energy-rent request carries no approved cost ceiling and coin code");
+  }
+  const amount = new BigNumber(maxPayCoinAmt);
+  if (!amount.isFinite()) {
+    throw rejected("ceiling", `Energy-rent cost ceiling "${maxPayCoinAmt}" is not a number`);
+  }
+  return { amount, code: maxPayCoinCode };
+}
+
 // getQuote and createOrder price independently; unchecked, the device could be handed payment
 // bytes for more than the user approved.
-function assertOrderWithinApprovedCost(request: EnergyRentRequest, order: EnergyRentOrder): void {
-  const { maxPayCoinAmt, maxPayCoinCode } = request;
-  if (maxPayCoinAmt === undefined) return;
-
-  // No coin code with a ceiling fails closed: an amount alone can't rule out a cheaper-denomination underprice.
-  if (maxPayCoinCode === undefined) {
-    throw new TronifyApiError(
-      `Energy-rent cost ceiling "${maxPayCoinAmt}" has no approved coin code to compare against`,
-    );
-  }
-  if (String(order.payCoinCode).toUpperCase() !== maxPayCoinCode.toUpperCase()) {
-    throw new TronifyApiError(
-      `Energy-rent order is priced in ${String(order.payCoinCode)}, but ${maxPayCoinCode} was approved`,
+function assertOrderWithinApprovedCost(approved: ApprovedCost, order: EnergyRentOrder): void {
+  if (String(order.payCoinCode).toUpperCase() !== approved.code.toUpperCase()) {
+    throw rejected(
+      "payCoin",
+      `Energy-rent order is priced in ${String(order.payCoinCode)}, but ${approved.code} was approved`,
     );
   }
 
-  const approved = new BigNumber(maxPayCoinAmt);
   const charged = new BigNumber(order.payCoinAmt);
   // Unparseable/negative payCoinAmt must fail, not silently compare false.
-  if (!approved.isFinite() || !charged.isFinite() || charged.isNegative()) {
-    throw new TronifyApiError(
-      `Cannot verify energy-rent cost: approved "${maxPayCoinAmt}", order returned "${order.payCoinAmt}"`,
+  if (!charged.isFinite() || charged.isNegative()) {
+    throw rejected(
+      "ceiling",
+      `Cannot verify energy-rent cost: order returned "${order.payCoinAmt}"`,
     );
   }
-  if (charged.isGreaterThan(approved)) {
-    throw new TronifyApiError(
-      `Energy-rent order costs ${order.payCoinAmt}, above the approved ${maxPayCoinAmt}`,
+  if (charged.isGreaterThan(approved.amount)) {
+    throw rejected(
+      "ceiling",
+      `Energy-rent order costs ${order.payCoinAmt}, above the approved ${approved.amount.toFixed()}`,
     );
   }
 }
@@ -103,98 +114,70 @@ function decodeStrictTrc20Transfer(data: unknown): Trc20TransferData | null {
   return abiDecodeTrc20Transfer(data);
 }
 
-// Verifies the signed bytes themselves (not just provider-declared payCoinAmt/payCoinCode) match the
-// approved USDT transfer — otherwise the device could sign a payment other than what was approved.
-async function assertSignableTransferMatchesRequest(
-  request: EnergyRentRequest,
-  order: EnergyRentOrder,
-): Promise<void> {
-  // Repeated here because assertOrderWithinApprovedCost skips its coin check without a ceiling.
-  if (String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code) {
-    throw new TronifyApiError(
-      `Energy-rent order is priced in ${String(order.payCoinCode)}; only ${TRONIFY_PAY_ASSET.unit.code} payments can be verified`,
-    );
-  }
-
-  const rawDataHex = order.transaction?.raw_data_hex;
-  if (typeof rawDataHex !== "string" || rawDataHex.length === 0) {
-    throw new TronifyApiError(
-      "Energy-rent order carries no raw transaction to verify before signing",
-    );
-  }
-
-  type DecodedContract = {
-    type?: string;
-    parameter?: {
-      value?: {
-        owner_address?: string;
-        contract_address?: string;
-        data?: string;
-        call_value?: number;
-        call_token_value?: number;
-        token_id?: number;
-      };
+type DecodedContract = {
+  type?: string;
+  Permission_id?: number;
+  parameter?: {
+    value?: {
+      owner_address?: string;
+      contract_address?: string;
+      data?: string;
+      call_value?: number;
+      call_token_value?: number;
+      token_id?: number;
     };
   };
-  let contracts: DecodedContract[];
-  let feeLimit: unknown;
-  let expiration: unknown;
+};
+
+async function decodePayment(
+  order: EnergyRentOrder,
+): Promise<{ contracts: DecodedContract[]; rawData: Record<string, unknown> }> {
   try {
-    const decoded = await decodeTransaction(rawDataHex);
-    contracts = (decoded.raw_data?.contract as DecodedContract[] | undefined) ?? [];
-    feeLimit = decoded.raw_data?.fee_limit;
-    expiration = decoded.raw_data?.expiration;
-  } catch {
+    const { raw_data } = await decodeTransaction(order.transaction.raw_data_hex);
+    return {
+      contracts: (raw_data.contract as DecodedContract[] | undefined) ?? [],
+      rawData: raw_data,
+    };
+  } catch (cause) {
     throw new TronifyApiError(
       "Could not decode the energy-rent payment transaction for verification",
+      { rule: "decode", cause },
     );
   }
+}
 
-  if (contracts.length !== 1 || contracts[0]?.type !== "TriggerSmartContract") {
-    const shape =
-      contracts.length === 1 ? String(contracts[0]?.type) : `${contracts.length} contract(s)`;
-    throw new TronifyApiError(
-      `Energy-rent payment must be a single USDT transfer, but the signed bytes carry ${shape}`,
-    );
-  }
+const isUnset = (value: unknown): boolean =>
+  value === undefined || value === null || (value as { length?: unknown }).length === 0;
 
-  const value = contracts[0].parameter?.value ?? {};
-  // decode58Check and the decoder both yield lower-case 0x41-prefixed hex, so compare directly.
-  const signedOwner = (value.owner_address ?? "").toLowerCase();
-  if (signedOwner !== decode58Check(request.payerAddress).toLowerCase()) {
-    throw new TronifyApiError(
-      "Energy-rent payment is signed from a different owner than the approved payer",
-    );
+// Tronify's payments set none of these: only the fields a plain transfer needs get signed.
+function assertNoExtraFields(rawData: Record<string, unknown>, contract: DecodedContract): void {
+  if (!isUnset(rawData.data)) throw rejected("memo", "Energy-rent payment carries a memo");
+  if (!isUnset(rawData.scripts)) throw rejected("scripts", "Energy-rent payment carries scripts");
+  if (!isUnset(rawData.auths)) {
+    throw rejected("auths", "Energy-rent payment carries authorities");
   }
-  const calledContract = (value.contract_address ?? "").toLowerCase();
-  if (calledContract !== decode58Check(TRONIFY_PAY_ASSET.assetReference).toLowerCase()) {
-    throw new TronifyApiError("Energy-rent payment calls a contract other than USDT");
+  if (contract.Permission_id !== undefined && contract.Permission_id !== 0) {
+    throw rejected("permission", "Energy-rent payment is signed under a non-owner permission");
   }
-  if (value.call_value || value.call_token_value || value.token_id) {
-    throw new TronifyApiError("Energy-rent payment attaches TRX or TRC-10 value to the USDT call");
-  }
+}
 
-  const transfer = decodeStrictTrc20Transfer(value.data);
-  if (!transfer) {
-    throw new TronifyApiError(
-      "Energy-rent payment data is not a USDT transfer(address,uint256) call",
-    );
-  }
-
-  // The recipient inside `data` isn't validated (no trusted Tronify address to bind to), and the
-  // amount is pinned only to the provider's own quote. The on-chain energy gate (ADR-058 C4) keeps
-  // TX-C from following a payment that delivered nothing; it does not bound what TX-A pays.
-
-  // Binds the signed amount to the order, which is what the UI shows and reserves. A sub-unit quote
-  // may be paid rounded either way.
+// Binds the signed amount to the order, which is what the UI shows and reserves. A sub-unit quote
+// may be paid rounded either way.
+function assertTransferAmount(
+  transfer: Trc20TransferData,
+  order: EnergyRentOrder,
+  cap: BigNumber,
+): void {
   const approved = payAssetBaseUnits(order.payCoinAmt);
   if (!approved.isFinite() || !approved.isGreaterThan(0)) {
-    throw new TronifyApiError(
+    throw rejected(
+      "amount",
       `Cannot verify energy-rent payment amount: approved "${order.payCoinAmt}"`,
     );
   }
   if (transfer.amount.isGreaterThan(approved)) {
-    throw new TronifyApiError(
+    throw rejected(
+      "amount",
       `Energy-rent payment moves ${transfer.amount.toFixed()} USDT base units, above the approved ${approved.toFixed()}`,
     );
   }
@@ -202,17 +185,28 @@ async function assertSignableTransferMatchesRequest(
     .shiftedBy(TRONIFY_PAY_ASSET.unit.magnitude)
     .integerValue(BigNumber.ROUND_FLOOR);
   if (!transfer.amount.isGreaterThan(0) || transfer.amount.isLessThan(approvedFloor)) {
-    throw new TronifyApiError(
+    throw rejected(
+      "amount",
       `Energy-rent payment moves ${transfer.amount.toFixed()} USDT base units, below the approved ${approvedFloor.toFixed()}`,
     );
   }
+  if (transfer.amount.isGreaterThan(cap)) {
+    throw rejected(
+      "cap",
+      `Energy-rent payment moves ${transfer.amount.toFixed()} USDT base units, above the ${cap.toFixed()} cap`,
+    );
+  }
+}
 
+function assertPaymentWindow(rawData: Record<string, unknown>): void {
+  const { fee_limit: feeLimit, expiration } = rawData;
   // fee_limit caps what the TVM may burn from the payer.
   if (
     feeLimit !== undefined &&
     !(typeof feeLimit === "number" && feeLimit <= ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT)
   ) {
-    throw new TronifyApiError(
+    throw rejected(
+      "feeLimit",
       `Energy-rent payment carries fee_limit ${JSON.stringify(feeLimit)}, above the ${ENERGY_RENT_PAYMENT_MAX_FEE_LIMIT} sun bound`,
     );
   }
@@ -226,10 +220,75 @@ async function assertSignableTransferMatchesRequest(
     expiration <= now ||
     expiration > latestExpiration
   ) {
-    throw new TronifyApiError(
+    throw rejected(
+      "expiration",
       `Energy-rent payment expires at ${JSON.stringify(expiration)}, outside the accepted (${now}, ${latestExpiration}] window`,
     );
   }
+}
+
+// Verifies the signed bytes themselves (not just provider-declared payCoinAmt/payCoinCode) match the
+// approved USDT transfer — otherwise the device could sign a payment other than what was approved.
+async function assertSignableTransferMatchesRequest(
+  request: EnergyRentRequest,
+  order: EnergyRentOrder,
+  limits: { payees: ReadonlySet<string>; cap: BigNumber },
+): Promise<void> {
+  // The caller may approve any coin code; only a USDT payment can be decoded and bounded here.
+  if (String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code) {
+    throw rejected(
+      "payCoin",
+      `Energy-rent order is priced in ${String(order.payCoinCode)}; only ${TRONIFY_PAY_ASSET.unit.code} payments can be verified`,
+    );
+  }
+
+  const { contracts, rawData } = await decodePayment(order);
+  if (contracts.length !== 1 || contracts[0]?.type !== "TriggerSmartContract") {
+    const shape =
+      contracts.length === 1 ? String(contracts[0]?.type) : `${contracts.length} contract(s)`;
+    throw rejected(
+      "shape",
+      `Energy-rent payment must be a single USDT transfer, but the signed bytes carry ${shape}`,
+    );
+  }
+  if (!isCanonicalTriggerSmartContractTx(order.transaction.raw_data_hex)) {
+    throw rejected("encoding", "Energy-rent payment carries bytes the decoder does not read");
+  }
+  assertNoExtraFields(rawData, contracts[0]);
+
+  const value = contracts[0].parameter?.value ?? {};
+  // decode58Check and the decoder both yield lower-case 0x41-prefixed hex, so compare directly.
+  const signedOwner = (value.owner_address ?? "").toLowerCase();
+  if (signedOwner !== decode58Check(request.payerAddress).toLowerCase()) {
+    throw rejected(
+      "owner",
+      "Energy-rent payment is signed from a different owner than the approved payer",
+    );
+  }
+  const calledContract = (value.contract_address ?? "").toLowerCase();
+  if (calledContract !== decode58Check(TRONIFY_PAY_ASSET.assetReference).toLowerCase()) {
+    throw rejected("contract", "Energy-rent payment calls a contract other than USDT");
+  }
+  if (value.call_value || value.call_token_value || value.token_id) {
+    throw rejected(
+      "callValue",
+      "Energy-rent payment attaches TRX or TRC-10 value to the USDT call",
+    );
+  }
+
+  const transfer = decodeStrictTrc20Transfer(value.data);
+  if (!transfer) {
+    throw rejected(
+      "transferCall",
+      "Energy-rent payment data is not a USDT transfer(address,uint256) call",
+    );
+  }
+  if (!limits.payees.has(transfer.to.toLowerCase())) {
+    throw rejected("payee", "Energy-rent payment goes to an address Tronify does not list");
+  }
+
+  assertTransferAmount(transfer, order, limits.cap);
+  assertPaymentWindow(rawData);
 }
 
 export async function craftEnergyRentTransaction(
@@ -237,10 +296,26 @@ export async function craftEnergyRentTransaction(
   config: TronCoinConfig,
   request: EnergyRentRequest,
 ): Promise<EnergyRentOrder> {
-  const order = await getEnergyProvider(config).createOrder(logger, config, request);
-  assertOrderWithinApprovedCost(request, order);
-  await assertSignableTransferMatchesRequest(request, order);
-  return order;
+  // Read before ordering, so a missing payee list never leaves an order behind.
+  const limits = { payees: tronifyPaymentAddresses(config), cap: maxRentBaseUnits(logger, config) };
+  let orderId: string | undefined;
+  try {
+    const approved = approvedCost(request);
+    const order = await getEnergyProvider(config).createOrder(logger, config, request);
+    orderId = order.orderId;
+    assertOrderWithinApprovedCost(approved, order);
+    await assertSignableTransferMatchesRequest(request, order, limits);
+    return order;
+  } catch (error) {
+    // Flags payments refused before signing; a failed Tronify call carries no rule.
+    if (error instanceof TronifyApiError && error.rule) {
+      logger("tron/energyRent", "rent payment rejected before signing", {
+        rule: error.rule,
+        orderId: orderId ?? error.orderId,
+      });
+    }
+    throw error;
+  }
 }
 
 export function broadcastEnergyRentTransaction(

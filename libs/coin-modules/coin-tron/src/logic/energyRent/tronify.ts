@@ -66,6 +66,10 @@ function assertSignableOrder(data: AddTronRentRecordData): void {
   ) {
     throw new TronifyApiError(
       "Tronify returned an energy-rent order missing a signable transaction",
+      {
+        rule: "signableOrder",
+        orderId: typeof data.orderId === "string" ? data.orderId : undefined,
+      },
     );
   }
 }

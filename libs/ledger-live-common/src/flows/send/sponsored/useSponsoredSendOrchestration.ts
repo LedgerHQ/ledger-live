@@ -13,7 +13,7 @@ import type {
   RentPayment,
   SponsoredCoinApi,
 } from "../../../bridge/generic-coin-framework/sponsored";
-import { SponsoredSendUnavailableError } from "./errors";
+import { SponsoredFeeNotApprovedError, SponsoredSendUnavailableError } from "./errors";
 import { SPONSORED_FAILURE_KIND, SPONSORED_PHASE } from "./types";
 import type { SponsoredState } from "./types";
 
@@ -31,7 +31,9 @@ export type UseSponsoredSendOrchestrationParams = Readonly<{
 }>;
 
 export type SponsoredSendActions = Readonly<{
-  craftRent: () => Promise<void>;
+  /** `approvedFee` is the sponsored fee approved on Review. A cycle's first craft binds it and its
+   * retries reuse it; null with nothing bound fails the craft. */
+  craftRent: (approvedFee: bigint | null) => Promise<void>;
   // Callbacks pass the paymentTxId captured when their device step started; a stale cycle's is dropped.
   startRentPayment: (combinedSignature: string, signedPaymentTxId: string | null) => Promise<void>;
   onTransferSuccess: (signedPaymentTxId: string | null) => void;
@@ -400,6 +402,9 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
   // Only the latest craftRent may commit: overlapping calls share a generation.
   const craftSeqRef = useRef(0);
 
+  // The live quote reloads and can be withdrawn mid-cycle; a retry keeps the fee the user approved.
+  const boundFeeRef = useRef<{ generation: number; fee: bigint } | null>(null);
+
   const seamCacheRef = useRef<{ key: string; promise: Promise<SponsoredCoinApi | null> } | null>(
     null,
   );
@@ -416,40 +421,48 @@ export function useSponsoredSendOrchestration(params: UseSponsoredSendOrchestrat
     return seamCacheRef.current.promise;
   }, [params.network, params.kind]);
 
-  const craftRent = useCallback(async () => {
-    const generation = generationRef.current;
-    const craftSeq = ++craftSeqRef.current;
-    const isStale = () => generation !== generationRef.current || craftSeq !== craftSeqRef.current;
-    try {
-      const seam = await getSeam();
-      if (!seam) throw new SponsoredSendUnavailableError();
-      const request = await seam.buildEnergyRentRequest(params.intent);
-      if (isStale()) return;
-      const order = await seam.craftEnergyRentTransaction(request);
-      if (isStale()) return;
-      if (!order || typeof order.transaction !== "object" || order.transaction === null) {
+  const craftRent = useCallback(
+    async (approvedFee: bigint | null) => {
+      const generation = generationRef.current;
+      const craftSeq = ++craftSeqRef.current;
+      const isStale = () =>
+        generation !== generationRef.current || craftSeq !== craftSeqRef.current;
+      try {
+        const bound = boundFeeRef.current;
+        const fee = bound?.generation === generation ? bound.fee : approvedFee;
+        if (fee === null) throw new SponsoredFeeNotApprovedError();
+        boundFeeRef.current = { generation, fee };
+        const seam = await getSeam();
+        if (!seam) throw new SponsoredSendUnavailableError();
+        const request = await seam.buildEnergyRentRequest(params.intent, fee);
+        if (isStale()) return;
+        const order = await seam.craftEnergyRentTransaction(request);
+        if (isStale()) return;
+        if (!order || typeof order.transaction !== "object" || order.transaction === null) {
+          dispatch({
+            type: "CRAFT_FAILURE",
+            error: new Error("Sponsored rent order is missing a signable transaction"),
+          });
+          return;
+        }
+        const { toSign, paymentTxId } = seam.getEnergyRentSignaturePayload(order.transaction);
         dispatch({
-          type: "CRAFT_FAILURE",
-          error: new Error("Sponsored rent order is missing a signable transaction"),
+          type: "CRAFT_SUCCESS",
+          order,
+          toSign,
+          paymentTxId,
+          rentPayment: seam.rentPayment(order),
+          payerAddress: request.payerAddress,
+          receiverAddress: request.receiverAddress,
+          energyNeeded: request.energy,
         });
-        return;
+      } catch (error) {
+        if (isStale()) return;
+        dispatch({ type: "CRAFT_FAILURE", error: error as Error });
       }
-      const { toSign, paymentTxId } = seam.getEnergyRentSignaturePayload(order.transaction);
-      dispatch({
-        type: "CRAFT_SUCCESS",
-        order,
-        toSign,
-        paymentTxId,
-        rentPayment: seam.rentPayment(order),
-        payerAddress: request.payerAddress,
-        receiverAddress: request.receiverAddress,
-        energyNeeded: request.energy,
-      });
-    } catch (error) {
-      if (isStale()) return;
-      dispatch({ type: "CRAFT_FAILURE", error: error as Error });
-    }
-  }, [getSeam, params.intent]);
+    },
+    [getSeam, params.intent],
+  );
 
   const startRentPayment = useCallback(
     async (combinedSignature: string, signedPaymentTxId: string | null) => {

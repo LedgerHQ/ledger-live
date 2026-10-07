@@ -8,7 +8,7 @@ import {
   uploadHash,
 } from "../../network/tronify";
 import { decode58Check } from "../../network/format";
-import { decodeTransaction } from "../utils";
+import { decodeTransaction, isCanonicalTriggerSmartContractTx } from "../utils";
 import {
   EnergyDelegationTimeoutError,
   EnergyDeliveryAbortedError,
@@ -41,6 +41,7 @@ jest.mock("../../network/tronify", () => ({
 jest.mock("../utils", () => ({
   ...jest.requireActual("../utils"),
   decodeTransaction: jest.fn(),
+  isCanonicalTriggerSmartContractTx: jest.fn(),
 }));
 
 // Stubbed to drive the energy the receiver holds mid-poll without hitting a node.
@@ -58,6 +59,7 @@ const mockedAddTronRentRecord = addTronRentRecord as jest.MockedFunction<typeof 
 const mockedUploadHash = uploadHash as jest.MockedFunction<typeof uploadHash>;
 const mockedMyPayOrder = myPayOrder as jest.MockedFunction<typeof myPayOrder>;
 const mockedDecodeTransaction = decodeTransaction as jest.MockedFunction<typeof decodeTransaction>;
+const mockedIsCanonical = jest.mocked(isCanonicalTriggerSmartContractTx);
 
 const mockLogger: Logger = jest.fn();
 
@@ -77,7 +79,14 @@ const purchaseOrder = (overrides: Record<string, unknown>) => ({
   ...overrides,
 });
 
-const tronifyConfig = (): TronCoinConfig =>
+// The first addresses Tronify's docs list; its payments go to each in turn.
+const TRONIFY_PAYEES = [
+  "TDii6vao7xyWg2rKPbCPWVRpSmne8xcqYx",
+  "TPyiQrP19oaLu5bQcn1UJDuRqvZAJvYqjQ",
+  "TWXcJPJhtdVWNiLRU5b4iVL2wJXdiJ3Bmj",
+];
+
+const tronifyConfig = (tronify: Record<string, unknown> = {}): TronCoinConfig =>
   ({
     status: { type: "active" },
     name: "Tron",
@@ -85,7 +94,12 @@ const tronifyConfig = (): TronCoinConfig =>
     explorer: { url: "https://tron.coin.ledger.com" },
     energyRent: {
       provider: "tronify",
-      tronify: { url: "https://open.tronify.io", sourceFlag: "ll" },
+      tronify: {
+        url: "https://open.tronify.io",
+        sourceFlag: "ll",
+        paymentAddresses: TRONIFY_PAYEES,
+        ...tronify,
+      },
     },
   }) as unknown as TronCoinConfig;
 
@@ -94,6 +108,8 @@ const request = {
   receiverAddress: "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1",
   energy: 32000n,
   durationSeconds: 600,
+  maxPayCoinAmt: "5",
+  maxPayCoinCode: "USDT",
 };
 
 // A Tron txID is sha256(raw_data): hardcoded as a matching pair (not derived) so a wrong production
@@ -102,8 +118,8 @@ const SIGNABLE_RAW_DATA_HEX = "abcd";
 const SIGNABLE_TX_ID = "123d4c7ef2d1600a1b3a0f6addc60a10f05a3495c9409f2ecbf4cc095d000a6b";
 
 const USDT_CONTRACT_HEX = decode58Check("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
-// No trusted Tronify address exists to bind the recipient to, so any 20-byte address stands in.
-const RECIPIENT_HEX = decode58Check(request.receiverAddress);
+const RECIPIENT_HEX = decode58Check(TRONIFY_PAYEES[0]);
+const UNLISTED_RECIPIENT_HEX = decode58Check(request.receiverAddress);
 const TRON_ADDRESS_WORD = "0".repeat(22) + RECIPIENT_HEX;
 const EVM_ADDRESS_WORD = "0".repeat(24) + RECIPIENT_HEX.slice(2);
 const transferData = (amount: number, addressWord = TRON_ADDRESS_WORD) =>
@@ -115,14 +131,17 @@ const decodedTrc20Payment = ({
   type = "TriggerSmartContract",
   contracts = 1,
   fee_limit,
-  // Tronify's own payments expire about a minute out; null leaves the field off.
   expiration = Date.now() + 60_000,
+  raw = {},
+  Permission_id,
   ...value
 }: {
   type?: string;
   contracts?: number;
   fee_limit?: number;
   expiration?: number | null;
+  raw?: Record<string, unknown>;
+  Permission_id?: number;
   owner_address?: string;
   contract_address?: string;
   data?: string;
@@ -132,6 +151,7 @@ const decodedTrc20Payment = ({
 } = {}) => {
   const contract = {
     type,
+    ...(Permission_id === undefined ? {} : { Permission_id }),
     parameter: {
       value: {
         owner_address: decode58Check(request.payerAddress),
@@ -148,12 +168,63 @@ const decodedTrc20Payment = ({
       contract: Array.from({ length: contracts }, () => contract),
       ...(fee_limit === undefined ? {} : { fee_limit }),
       ...(expiration === null ? {} : { expiration }),
+      ...raw,
     },
   };
 };
 
-// A real protobuf-encoded USDT TX-A from `request.payerAddress`: 3.2 USDT to a TRON-form address
-// word, fee_limit 50_000_000. The txID is sha256(raw_data_hex), as Tronify orders carry it.
+// Rent payments of real Tronify orders. Their txIDs are sha256(raw_data_hex).
+const TRONIFY_PAYMENTS = [
+  // Broadcast on 2026-06-05.
+  {
+    payer: "TYVnihygBiy6ZY4vYNzAcK9yMvAmYPhuVq",
+    payee: TRONIFY_PAYEES[0],
+    payCoinAmt: "3.32733",
+    rawDataHex:
+      "0a028ed022087280df3dd121c50c40b0b4cfd1e9335aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541f71b647cb5b87f7393217111d80a909c2f7e1650121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000029228e5d382b7a2c2a0dbc05e6d6507f4dbb3bbe000000000000000000000000000000000000000000000000000000000032c56270b092bac0e933900180c2d72f",
+    txId: "26eea5f6072fdd5024596e2cbf9ea60653b996b813ab314eb8b66b44402caf80",
+  },
+  // Three unpaid orders built for the `ledger-live` sourceFlag on 2026-10-06, minutes apart: each
+  // pays the next listed address.
+  {
+    payer: "TGZWHs5PSSkg5o1jEqBEGoVmKByKqko7NM",
+    payee: TRONIFY_PAYEES[0],
+    payCoinAmt: "3.21058",
+    rawDataHex:
+      "0a02b37a2208789ad66574cb328e40d09da79691345aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541484d54851263295961c3650e11e55f009425a4e7121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000029228e5d382b7a2c2a0dbc05e6d6507f4dbb3bbe000000000000000000000000000000000000000000000000000000000030fd5470c4b091969134900180c2d72f",
+    txId: "9874858467647a4cc73fcc1f769f42772a6de8481d2b46a7a28ea3f88c49e283",
+  },
+  {
+    payer: "TGZWHs5PSSkg5o1jEqBEGoVmKByKqko7NM",
+    payee: TRONIFY_PAYEES[1],
+    payCoinAmt: "3.21058",
+    rawDataHex:
+      "0a02b3b622080c75eb4b49588b4740f09bb29691345aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541484d54851263295961c3650e11e55f009425a4e7121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000099aa4fb789b27f45c9c5293260f922dda046014b000000000000000000000000000000000000000000000000000000000030fd5470b1a39c969134900180c2d72f",
+    txId: "c7c3922745790834dc65ec03743b973986ae7c64fa2f6219620b02fdb07cd927",
+  },
+  {
+    payer: "TGZWHs5PSSkg5o1jEqBEGoVmKByKqko7NM",
+    payee: TRONIFY_PAYEES[2],
+    payCoinAmt: "3.21058",
+    rawDataHex:
+      "0a02b4172208657134570083242540a8fdc39691345aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541484d54851263295961c3650e11e55f009425a4e7121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb000000000000000000000000e18346770a4409732b63e57abe70d347114e49bc000000000000000000000000000000000000000000000000000000000030fd5470ef88ae969134900180c2d72f",
+    txId: "cf82b9d18d4572ffe9a16c5575426d0a3880063ebd80dedcfecf0ae98bb88a4a",
+  },
+];
+
+// The June payment with an unknown field (99) appended, and re-encoded with a "hi" memo.
+const JUNE_PAYMENT_PADDED = {
+  rawDataHex: TRONIFY_PAYMENTS[0].rawDataHex + "9a060400000000",
+  txId: "bcbef99ebbd6dc638c48668262196ffa77e8718eb59f502eff78cfcfed18e906",
+};
+const JUNE_PAYMENT_WITH_MEMO = {
+  rawDataHex:
+    "0a028ed022087280df3dd121c50c40b0b4cfd1e933520268695aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541f71b647cb5b87f7393217111d80a909c2f7e1650121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000029228e5d382b7a2c2a0dbc05e6d6507f4dbb3bbe000000000000000000000000000000000000000000000000000000000032c56270b092bac0e933900180c2d72f",
+  txId: "4f4fccd124a0398402e445c8b89bf2c24c7ac562b53275abf0e6937c43ce6a2d",
+};
+
+// A protobuf-encoded USDT TX-A built locally from `request.payerAddress`: 3.2 USDT to an address
+// Tronify does not list, in the TRON-form address word, fee_limit 50_000_000.
 const USDT_PAYMENT_RAW_DATA_HEX =
   "0a02054a22089334553fd5c2cb624098abbfbfd4325aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a15416a91f86fc9b7e98b01a9d9141db61aed6f389b9e121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000004198927ffb9f554dc4a453c64b2e553a02d6df514b000000000000000000000000000000000000000000000000000000000030d400708de6bbbfd432900180e1eb17";
 const USDT_PAYMENT_TX_ID = "14b7ff42f5c7092f81969cbee27a214bfd9de7ad1ff16acbfdc9471df5f90476";
@@ -163,8 +234,13 @@ describe("energyRent provider switch", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Drops a queued once-value a test left unconsumed by rejecting before reaching it.
+    mockedAddTronRentRecord.mockReset();
+    mockedDecodeTransaction.mockReset();
+    mockedIsCanonical.mockReset();
     config = tronifyConfig();
     mockedDecodeTransaction.mockResolvedValue(decodedTrc20Payment());
+    mockedIsCanonical.mockReturnValue(true);
   });
 
   describe("getEnergyProvider", () => {
@@ -345,62 +421,67 @@ describe("energyRent provider switch", () => {
     });
 
     it("accepts an order at or under the approved ceiling", async () => {
-      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("12.50"));
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("4.50"));
       mockedDecodeTransaction.mockResolvedValueOnce(
-        decodedTrc20Payment({ data: transferData(12_500_000) }),
+        decodedTrc20Payment({ data: transferData(4_500_000) }),
       );
 
       const order = await craftEnergyRentTransaction(mockLogger, config, {
         ...request,
-        maxPayCoinAmt: "12.5",
-        maxPayCoinCode: "USDT",
+        maxPayCoinAmt: "4.5",
       });
 
-      expect(order.payCoinAmt).toBe("12.50");
+      expect(order.payCoinAmt).toBe("4.50");
     });
 
-    it("rejects an order priced above the approved ceiling", async () => {
-      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("99.9"));
+    it("rejects an order priced above the Review fee plus its margin", async () => {
+      // 3.36 = 3.2 USDT on Review + 5%.
+      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("3.5"));
 
       await expect(
-        craftEnergyRentTransaction(mockLogger, config, {
-          ...request,
-          maxPayCoinAmt: "12.5",
-          maxPayCoinCode: "USDT",
-        }),
-      ).rejects.toBeInstanceOf(TronifyApiError);
+        craftEnergyRentTransaction(mockLogger, config, { ...request, maxPayCoinAmt: "3.36" }),
+      ).rejects.toMatchObject({ name: "TronifyApiError", rule: "ceiling" });
     });
 
     it("rejects an order priced in a different coin than was approved", async () => {
       mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0", "TRX"));
 
-      await expect(
-        craftEnergyRentTransaction(mockLogger, config, {
-          ...request,
-          maxPayCoinAmt: "12.5",
-          maxPayCoinCode: "USDT",
-        }),
-      ).rejects.toBeInstanceOf(TronifyApiError);
+      await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toMatchObject({
+        name: "TronifyApiError",
+        rule: "payCoin",
+      });
     });
 
     it("rejects an order whose amount cannot be parsed", async () => {
       mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("not-a-number"));
 
-      await expect(
-        craftEnergyRentTransaction(mockLogger, config, {
-          ...request,
-          maxPayCoinAmt: "12.5",
-          maxPayCoinCode: "USDT",
-        }),
-      ).rejects.toBeInstanceOf(TronifyApiError);
+      await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toMatchObject({
+        name: "TronifyApiError",
+        rule: "ceiling",
+      });
     });
 
-    it("rejects a ceiling amount that carries no approved coin code", async () => {
-      mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0", "USDT"));
-
+    it.each([
+      ["no ceiling", { maxPayCoinAmt: undefined }],
+      ["a ceiling without a coin code", { maxPayCoinCode: undefined }],
+      ["an unparseable ceiling", { maxPayCoinAmt: "not-a-number" }],
+    ])("rejects a request carrying %s before ordering", async (_label, ceiling) => {
       await expect(
-        craftEnergyRentTransaction(mockLogger, config, { ...request, maxPayCoinAmt: "12.5" }),
-      ).rejects.toBeInstanceOf(TronifyApiError);
+        craftEnergyRentTransaction(mockLogger, config, { ...request, ...ceiling }),
+      ).rejects.toMatchObject({ name: "TronifyApiError", rule: "ceiling" });
+      expect(mockedAddTronRentRecord).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["missing", undefined],
+      ["empty", []],
+      ["holding an invalid address", [...TRONIFY_PAYEES, "not-an-address"]],
+      ["holding a non-TRON address", [...TRONIFY_PAYEES, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"]],
+    ])("refuses to order while the payment addresses are %s", async (_label, paymentAddresses) => {
+      await expect(
+        craftEnergyRentTransaction(mockLogger, tronifyConfig({ paymentAddresses }), request),
+      ).rejects.toBeInstanceOf(EnergyRentProviderNotConfigured);
+      expect(mockedAddTronRentRecord).not.toHaveBeenCalled();
     });
 
     it.each([
@@ -431,16 +512,18 @@ describe("energyRent provider switch", () => {
         },
       ],
       ["an empty orderId", { ...orderCosting("1.0"), orderId: "" }],
+      ["no orderId", { ...orderCosting("1.0"), orderId: undefined }],
     ])("rejects an order with %s (no signable payment)", async (_label, malformed) => {
       mockedAddTronRentRecord.mockResolvedValueOnce(malformed as never);
 
-      await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toBeInstanceOf(
-        TronifyApiError,
-      );
+      await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toMatchObject({
+        name: "TronifyApiError",
+        rule: "signableOrder",
+      });
     });
 
     describe("signed-bytes verification", () => {
-      const approvedUsdt = { ...request, maxPayCoinAmt: "12.5", maxPayCoinCode: "USDT" };
+      const approvedUsdt = { ...request, maxPayCoinAmt: "4.5" };
 
       it.each([
         ["the TRON (41) address-word form", TRON_ADDRESS_WORD],
@@ -448,9 +531,9 @@ describe("energyRent provider switch", () => {
       ])(
         "accepts a USDT transfer from the payer within the approved amount, in %s",
         async (_label, addressWord) => {
-          mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("12.50"));
+          mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("4.50"));
           mockedDecodeTransaction.mockResolvedValueOnce(
-            decodedTrc20Payment({ data: transferData(12_500_000, addressWord) }),
+            decodedTrc20Payment({ data: transferData(4_500_000, addressWord) }),
           );
 
           await expect(
@@ -505,9 +588,9 @@ describe("energyRent provider switch", () => {
           decodedTrc20Payment({ data: transferData(3_124_526) }),
         );
 
-        await expect(
-          craftEnergyRentTransaction(mockLogger, config, request),
-        ).rejects.toBeInstanceOf(TronifyApiError);
+        await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toMatchObject(
+          { name: "TronifyApiError", rule: "amount" },
+        );
       });
 
       it("rejects an order that charges nothing, even when the payment matches it", async () => {
@@ -516,73 +599,215 @@ describe("energyRent provider switch", () => {
           decodedTrc20Payment({ data: transferData(0) }),
         );
 
-        await expect(
-          craftEnergyRentTransaction(mockLogger, config, request),
-        ).rejects.toBeInstanceOf(TronifyApiError);
+        await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toMatchObject(
+          { name: "TronifyApiError", rule: "amount" },
+        );
       });
 
-      it("accepts a real protobuf-encoded USDT payment", async () => {
-        const realDecode =
-          jest.requireActual<typeof import("../utils")>("../utils").decodeTransaction;
-        // The captured payment's own expiration is long past: judge it from just before then.
-        const { raw_data } = await realDecode(USDT_PAYMENT_RAW_DATA_HEX);
-        const now = jest.spyOn(Date, "now").mockReturnValue(Number(raw_data.expiration) - 30_000);
+      // Each payment's own expiration is long past: judge it from a minute before then.
+      const craftReal = async (
+        rawDataHex: string,
+        txID: string,
+        payCoinAmt: string,
+        payerAddress: string,
+      ) => {
+        const realUtils = jest.requireActual<typeof import("../utils")>("../utils");
+        const { raw_data } = await realUtils.decodeTransaction(rawDataHex);
+        const now = jest.spyOn(Date, "now").mockReturnValue(Number(raw_data.expiration) - 60_000);
         mockedAddTronRentRecord.mockResolvedValueOnce({
-          ...orderCosting("3.2"),
-          transaction: {
-            visible: false,
-            txID: USDT_PAYMENT_TX_ID,
-            raw_data: {},
-            raw_data_hex: USDT_PAYMENT_RAW_DATA_HEX,
-          },
+          ...orderCosting(payCoinAmt),
+          transaction: { visible: false, txID, raw_data: {}, raw_data_hex: rawDataHex },
         });
-        mockedDecodeTransaction.mockImplementationOnce(realDecode);
-
+        mockedDecodeTransaction.mockImplementationOnce(realUtils.decodeTransaction);
+        mockedIsCanonical.mockImplementationOnce(realUtils.isCanonicalTriggerSmartContractTx);
         try {
-          await expect(
-            craftEnergyRentTransaction(mockLogger, config, {
-              ...request,
-              maxPayCoinAmt: "3.2",
-              maxPayCoinCode: "USDT",
-            }),
-          ).resolves.toMatchObject({ orderId: "order-1" });
+          return await craftEnergyRentTransaction(mockLogger, config, {
+            ...request,
+            payerAddress,
+            maxPayCoinAmt: "3.37",
+          });
         } finally {
           now.mockRestore();
         }
+      };
+
+      it.each(
+        TRONIFY_PAYMENTS.map(
+          payment => [payment.payee, payment.txId.slice(0, 8), payment] as const,
+        ),
+      )(
+        "accepts a real Tronify payment to %s (tx %s)",
+        async (_payee, _txId, { rawDataHex, txId, payCoinAmt, payer }) => {
+          await expect(craftReal(rawDataHex, txId, payCoinAmt, payer)).resolves.toMatchObject({
+            orderId: "order-1",
+          });
+        },
+      );
+
+      it("rejects a real protobuf-encoded payment to an address Tronify does not list", async () => {
+        await expect(
+          craftReal(USDT_PAYMENT_RAW_DATA_HEX, USDT_PAYMENT_TX_ID, "3.2", request.payerAddress),
+        ).rejects.toMatchObject({ name: "TronifyApiError", rule: "payee" });
       });
 
       it.each([
-        ["a native TRX TransferContract", decodedTrc20Payment({ type: "TransferContract" })],
-        ["two contracts", decodedTrc20Payment({ contracts: 2 })],
+        ["bytes the decoder does not read", JUNE_PAYMENT_PADDED, "encoding"],
+        ["a memo", JUNE_PAYMENT_WITH_MEMO, "memo"],
+      ])("rejects a real payment carrying %s", async (_label, { rawDataHex, txId }, rule) => {
+        const { payer, payCoinAmt } = TRONIFY_PAYMENTS[0];
+
+        await expect(craftReal(rawDataHex, txId, payCoinAmt, payer)).rejects.toMatchObject({
+          name: "TronifyApiError",
+          rule,
+        });
+      });
+
+      it("accepts an unset memo and the owner permission", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockResolvedValueOnce(
+          decodedTrc20Payment({ raw: { data: "", scripts: "", auths: [] }, Permission_id: 0 }),
+        );
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, request),
+        ).resolves.toMatchObject({ orderId: "order-1" });
+      });
+
+      it("rejects a payment above the 10 USDT cap, even within an approved ceiling", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("10.5"));
+        mockedDecodeTransaction.mockResolvedValueOnce(
+          decodedTrc20Payment({ data: transferData(10_500_000) }),
+        );
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, { ...request, maxPayCoinAmt: "11" }),
+        ).rejects.toMatchObject({ name: "TronifyApiError", rule: "cap" });
+      });
+
+      it("accepts a payment of exactly the 10 USDT cap", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("10"));
+        mockedDecodeTransaction.mockResolvedValueOnce(
+          decodedTrc20Payment({ data: transferData(10_000_000) }),
+        );
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, config, { ...request, maxPayCoinAmt: "10" }),
+        ).resolves.toMatchObject({ orderId: "order-1" });
+      });
+
+      it("applies the cap from coin-config", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockResolvedValueOnce(decodedTrc20Payment());
+
+        await expect(
+          craftEnergyRentTransaction(mockLogger, tronifyConfig({ maxRentAmount: 0.5 }), request),
+        ).rejects.toMatchObject({ name: "TronifyApiError", rule: "cap" });
+      });
+
+      it("logs the failed rule and order id, and no address", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockResolvedValueOnce(
+          decodedTrc20Payment({
+            data: transferData(ONE_USDT, "0".repeat(22) + UNLISTED_RECIPIENT_HEX),
+          }),
+        );
+
+        await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toThrow(
+          "Energy-rent payment goes to an address Tronify does not list",
+        );
+        expect(mockLogger).toHaveBeenCalledWith(
+          "tron/energyRent",
+          "rent payment rejected before signing",
+          { rule: "payee", orderId: "order-1" },
+        );
+      });
+
+      it("logs an unsignable order with the order id Tronify returned", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce({
+          ...orderCosting("1.0"),
+          transaction: { txID: "abc", raw_data: {}, raw_data_hex: SIGNABLE_RAW_DATA_HEX },
+        } as never);
+
+        await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toThrow(
+          "Tronify returned an energy-rent order missing a signable transaction",
+        );
+        expect(mockLogger).toHaveBeenCalledWith(
+          "tron/energyRent",
+          "rent payment rejected before signing",
+          { rule: "signableOrder", orderId: "order-1" },
+        );
+      });
+
+      it.each([
+        ["an error code", new TronifyApiError("Parameter error", { resCode: 114 })],
+        ["a network error", new Error("socket hang up")],
+      ])(
+        "does not log a Tronify call failing with %s as a rejected payment",
+        async (_label, error) => {
+          mockedAddTronRentRecord.mockRejectedValueOnce(error);
+
+          await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toThrow(
+            error.message,
+          );
+          expect(mockLogger).not.toHaveBeenCalled();
+        },
+      );
+
+      it("rejects decoded bytes carrying no contract list", async () => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockResolvedValueOnce({
+          txID: "abc",
+          raw_data_hex: SIGNABLE_RAW_DATA_HEX,
+          raw_data: { expiration: Date.now() + 60_000 },
+        });
+
+        await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toMatchObject(
+          { name: "TronifyApiError", rule: "shape" },
+        );
+      });
+
+      it.each([
+        [
+          "a native TRX TransferContract",
+          "shape",
+          decodedTrc20Payment({ type: "TransferContract" }),
+        ],
+        ["two contracts", "shape", decodedTrc20Payment({ contracts: 2 })],
         [
           "a different owner than the payer",
+          "owner",
           decodedTrc20Payment({ owner_address: decode58Check(request.receiverAddress) }),
         ],
         [
           "a contract other than USDT",
+          "contract",
           decodedTrc20Payment({
             contract_address: decode58Check("TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8"),
           }),
         ],
-        ["a TRX call_value", decodedTrc20Payment({ call_value: 1 })],
-        ["a TRC-10 call_token_value", decodedTrc20Payment({ call_token_value: 1 })],
-        ["a TRC-10 token_id", decodedTrc20Payment({ token_id: 1_002_000 })],
+        ["a TRX call_value", "callValue", decodedTrc20Payment({ call_value: 1 })],
+        ["a TRC-10 call_token_value", "callValue", decodedTrc20Payment({ call_token_value: 1 })],
+        ["a TRC-10 token_id", "callValue", decodedTrc20Payment({ token_id: 1_002_000 })],
         [
           "an approve() selector",
+          "transferCall",
           decodedTrc20Payment({ data: "095ea7b3" + transferData(ONE_USDT).slice(8) }),
         ],
         [
           "trailing bytes after the amount word",
+          "transferCall",
           decodedTrc20Payment({ data: transferData(ONE_USDT) + "00" }),
         ],
         [
           "non-zero address padding",
+          "transferCall",
           decodedTrc20Payment({
             data: "a9059cbb" + "01" + TRON_ADDRESS_WORD.slice(2) + transferData(ONE_USDT).slice(72),
           }),
         ],
         [
           "an address word prefixed 42",
+          "transferCall",
           decodedTrc20Payment({
             data:
               "a9059cbb" +
@@ -592,48 +817,85 @@ describe("energyRent provider switch", () => {
               transferData(ONE_USDT).slice(72),
           }),
         ],
-        ["no call data", decodedTrc20Payment({ data: "" })],
-        ["a fee_limit above the 100 TRX bound", decodedTrc20Payment({ fee_limit: 100_000_001 })],
+        ["no call data", "transferCall", decodedTrc20Payment({ data: "" })],
+        [
+          "a fee_limit above the 100 TRX bound",
+          "feeLimit",
+          decodedTrc20Payment({ fee_limit: 100_000_001 }),
+        ],
         [
           "an amount above the approved order",
+          "amount",
           decodedTrc20Payment({ data: transferData(ONE_USDT + 1) }),
         ],
         [
           "an amount below the approved order",
+          "amount",
           decodedTrc20Payment({ data: transferData(ONE_USDT - 1) }),
         ],
-        ["a zero amount", decodedTrc20Payment({ data: transferData(0) })],
+        ["a zero amount", "amount", decodedTrc20Payment({ data: transferData(0) })],
         [
           "an expiration a day out, long enough to be held past a retry",
+          "expiration",
           decodedTrc20Payment({ expiration: Date.now() + 24 * 60 * 60_000 }),
         ],
-        ["no expiration", decodedTrc20Payment({ expiration: null })],
-        ["an expiration already past", decodedTrc20Payment({ expiration: Date.now() - 1_000 })],
-        ["a non-finite expiration", decodedTrc20Payment({ expiration: Number.NaN })],
-      ])("rejects signed bytes carrying %s", async (_label, decoded) => {
+        ["no expiration", "expiration", decodedTrc20Payment({ expiration: null })],
+        [
+          "an expiration already past",
+          "expiration",
+          decodedTrc20Payment({ expiration: Date.now() - 1_000 }),
+        ],
+        ["a non-finite expiration", "expiration", decodedTrc20Payment({ expiration: Number.NaN })],
+      ])("rejects signed bytes carrying %s (rule %s)", async (_label, rule, decoded) => {
         mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
         mockedDecodeTransaction.mockResolvedValueOnce(decoded);
 
-        await expect(
-          craftEnergyRentTransaction(mockLogger, config, request),
-        ).rejects.toBeInstanceOf(TronifyApiError);
+        await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toMatchObject(
+          { name: "TronifyApiError", rule },
+        );
       });
 
-      it("rejects a TRX-priced order even when no ceiling was approved", async () => {
+      it.each([
+        [
+          "a recipient Tronify does not list",
+          "payee",
+          decodedTrc20Payment({
+            data: transferData(ONE_USDT, "0".repeat(22) + UNLISTED_RECIPIENT_HEX),
+          }),
+        ],
+        ["a memo", "memo", decodedTrc20Payment({ raw: { data: new Uint8Array([0x68, 0x69]) } })],
+        ["scripts", "scripts", decodedTrc20Payment({ raw: { scripts: new Uint8Array([0x01]) } })],
+        [
+          "authorities",
+          "auths",
+          decodedTrc20Payment({ raw: { auths: [{ permissionName: "active" }] } }),
+        ],
+        ["a non-owner permission", "permission", decodedTrc20Payment({ Permission_id: 2 })],
+      ])("rejects signed bytes carrying %s (rule %s)", async (_label, rule, decoded) => {
+        mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
+        mockedDecodeTransaction.mockResolvedValueOnce(decoded);
+
+        await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toMatchObject(
+          { name: "TronifyApiError", rule },
+        );
+      });
+
+      it("rejects a TRX-priced order even when the caller approved TRX", async () => {
         mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0", "TRX"));
 
         await expect(
-          craftEnergyRentTransaction(mockLogger, config, request),
-        ).rejects.toBeInstanceOf(TronifyApiError);
+          craftEnergyRentTransaction(mockLogger, config, { ...request, maxPayCoinCode: "TRX" }),
+        ).rejects.toMatchObject({ name: "TronifyApiError", rule: "payCoin" });
       });
 
-      it("rejects when the payment transaction cannot be decoded", async () => {
+      it("rejects when the payment transaction cannot be decoded, keeping the decoder's error", async () => {
+        const decodeError = new Error("bad protobuf");
         mockedAddTronRentRecord.mockResolvedValueOnce(orderCosting("1.0"));
-        mockedDecodeTransaction.mockRejectedValueOnce(new Error("bad protobuf"));
+        mockedDecodeTransaction.mockRejectedValueOnce(decodeError);
 
-        await expect(
-          craftEnergyRentTransaction(mockLogger, config, request),
-        ).rejects.toBeInstanceOf(TronifyApiError);
+        await expect(craftEnergyRentTransaction(mockLogger, config, request)).rejects.toMatchObject(
+          { name: "TronifyApiError", rule: "decode", cause: decodeError },
+        );
       });
     });
   });

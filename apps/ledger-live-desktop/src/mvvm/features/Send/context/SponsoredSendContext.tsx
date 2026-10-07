@@ -130,6 +130,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     seam,
     intent,
     intentFailed,
+    refresh: sponsoredState.phase === SPONSORED_PHASE.IDLE,
     counterValueCurrency,
   });
 

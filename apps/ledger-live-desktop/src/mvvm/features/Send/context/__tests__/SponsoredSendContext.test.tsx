@@ -152,6 +152,17 @@ describe("SponsoredSendContext", () => {
     );
   });
 
+  it.each([
+    ["IDLE", true],
+    ["RENT_SIGNING", false],
+    ["FAILED", false],
+  ])("refreshes the quote in phase %s: %s", (phase, refresh) => {
+    mockSponsoredState.phase = phase;
+    renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
+
+    expect(mockUseSponsoredFeeQuote).toHaveBeenLastCalledWith(expect.objectContaining({ refresh }));
+  });
+
   it("prices the sponsored fee in the fee asset's unit and the standard fee in the account's", () => {
     mockUseSponsoredFeeResult.quote = USDT_QUOTE;
     const { result } = renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });

@@ -44,12 +44,20 @@ const makeSeam = (overrides: Partial<Record<keyof SponsoredCoinApi, unknown>> = 
 
 const intent = { type: "send" };
 
-const render = (seam: SponsoredCoinApi | null, initialIntent: unknown = intent) =>
+const render = (seam: SponsoredCoinApi | null, initialIntent: unknown = intent, refresh = false) =>
   renderHook(
     ({ currentIntent }) =>
-      useSponsoredFeeQuote({ mainAccount, seam, intent: currentIntent, counterValueCurrency }),
+      useSponsoredFeeQuote({
+        mainAccount,
+        seam,
+        intent: currentIntent,
+        refresh,
+        counterValueCurrency,
+      }),
     { initialProps: { currentIntent: initialIntent } },
   );
+
+const quoteOf = (value: bigint) => ({ feeAsset: USDT_ASSET, value, originalValue: 13_000_000n });
 
 describe("useSponsoredFeeQuote", () => {
   it("is unavailable without a seam", () => {
@@ -107,6 +115,7 @@ describe("useSponsoredFeeQuote", () => {
           seam,
           intent: null,
           intentFailed,
+          refresh: false,
           counterValueCurrency,
         }),
       { initialProps: { intentFailed: false } },
@@ -156,5 +165,84 @@ describe("useSponsoredFeeQuote", () => {
     expect(result.current.available).toBe(false);
     expect(result.current.feeAsset).toBeNull();
     expect(result.current.quote).toBeNull();
+  });
+
+  describe("refresh", () => {
+    beforeEach(() => jest.useFakeTimers());
+    afterEach(() => jest.useRealTimers());
+
+    it("re-quotes every 30 s, keeping the last quote until the next one lands", async () => {
+      let resolveRefresh: (value: unknown) => void = () => undefined;
+      const estimateSponsoredFeeQuote = jest
+        .fn()
+        .mockResolvedValueOnce(quoteOf(3_200_000n))
+        .mockImplementationOnce(() => new Promise(resolve => (resolveRefresh = resolve)));
+      const { result } = render(makeSeam({ estimateSponsoredFeeQuote }), intent, true);
+      await waitFor(() => expect(result.current.quote?.value).toBe(3_200_000n));
+
+      await act(async () => {
+        jest.advanceTimersByTime(30_000);
+      });
+      expect(estimateSponsoredFeeQuote).toHaveBeenCalledTimes(2);
+      expect(result.current.quote?.value).toBe(3_200_000n);
+      expect(result.current.loading).toBe(false);
+
+      await act(async () => resolveRefresh(quoteOf(3_300_000n)));
+      expect(result.current.quote?.value).toBe(3_300_000n);
+    });
+
+    it("waits for a slow refresh before re-quoting, so an older price never lands last", async () => {
+      let resolveRefresh: (value: unknown) => void = () => undefined;
+      const estimateSponsoredFeeQuote = jest
+        .fn()
+        .mockResolvedValueOnce(quoteOf(3_200_000n))
+        .mockImplementationOnce(() => new Promise(resolve => (resolveRefresh = resolve)))
+        .mockResolvedValue(quoteOf(3_400_000n));
+      const { result } = render(makeSeam({ estimateSponsoredFeeQuote }), intent, true);
+      await waitFor(() => expect(result.current.quote?.value).toBe(3_200_000n));
+
+      await act(async () => {
+        jest.advanceTimersByTime(60_000);
+      });
+      expect(estimateSponsoredFeeQuote).toHaveBeenCalledTimes(2);
+
+      await act(async () => resolveRefresh(quoteOf(3_300_000n)));
+      expect(result.current.quote?.value).toBe(3_300_000n);
+
+      await act(async () => {
+        jest.advanceTimersByTime(30_000);
+      });
+      expect(estimateSponsoredFeeQuote).toHaveBeenCalledTimes(3);
+      await waitFor(() => expect(result.current.quote?.value).toBe(3_400_000n));
+    });
+
+    it("keeps the last quote when a refresh fails", async () => {
+      const estimateSponsoredFeeQuote = jest
+        .fn()
+        .mockResolvedValueOnce(quoteOf(3_200_000n))
+        .mockRejectedValueOnce(new Error("down"));
+      const { result } = render(makeSeam({ estimateSponsoredFeeQuote }), intent, true);
+      await waitFor(() => expect(result.current.quote?.value).toBe(3_200_000n));
+
+      await act(async () => {
+        jest.advanceTimersByTime(30_000);
+      });
+
+      expect(estimateSponsoredFeeQuote).toHaveBeenCalledTimes(2);
+      expect(result.current.available).toBe(true);
+      expect(result.current.quote?.value).toBe(3_200_000n);
+    });
+
+    it("does not re-quote unless asked to", async () => {
+      const seam = makeSeam();
+      const { result } = render(seam);
+      await waitFor(() => expect(result.current.quote).not.toBeNull());
+
+      await act(async () => {
+        jest.advanceTimersByTime(60_000);
+      });
+
+      expect(seam.estimateSponsoredFeeQuote).toHaveBeenCalledTimes(1);
+    });
   });
 });

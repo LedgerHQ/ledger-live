@@ -5,7 +5,7 @@ import { useSponsoredRentSignatureViewModel } from "../useSponsoredRentSignature
 
 const mockStopSigning = jest.fn();
 const mockActions = {
-  craftRent: jest.fn(() => Promise.resolve()),
+  craftRent: jest.fn((_approvedFee: bigint | null) => Promise.resolve()),
   startRentPayment: jest.fn(),
   setContractDataFailure: jest.fn(),
   reset: jest.fn(),
@@ -47,6 +47,7 @@ jest.mock("../../../../context/SponsoredSendContext", () => ({
     state: mockSponsoredState,
     actions: mockActions,
     providerName: "Provider",
+    approvedFee: 3_200_000n,
   }),
 }));
 
@@ -96,6 +97,7 @@ describe("useSponsoredRentSignatureViewModel", () => {
     const { result } = renderViewModel();
 
     expect(mockActions.craftRent).toHaveBeenCalledTimes(1);
+    expect(mockActions.craftRent).toHaveBeenCalledWith(3_200_000n);
     expect(result.current.step).toEqual({ type: "loading" });
   });
 

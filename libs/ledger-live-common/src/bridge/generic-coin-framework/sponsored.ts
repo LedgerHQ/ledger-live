@@ -10,7 +10,7 @@ export type EnergyRentRequest = {
   energy: bigint;
   durationSeconds: number;
   extraTrx?: number;
-  // Cost ceiling from assertOrderWithinApprovedCost; drop it and ordering is unbounded.
+  // Cost ceiling: craftEnergyRentTransaction refuses a request without one.
   maxPayCoinAmt?: string;
   maxPayCoinCode?: string;
 };
@@ -50,7 +50,9 @@ export interface SponsoredCoinApi {
   reservationDedupKey(paymentTxId: string): string;
   listFeeOptions(intent: unknown): Promise<FeeOptionMeta[]>;
   estimateSponsoredFeeQuote(intent: unknown): Promise<SponsoredFeeQuote>;
-  buildEnergyRentRequest(intent: unknown): Promise<EnergyRentRequest>;
+  /** `approvedFee` is the sponsored fee approved on Review, in `feeAsset` base units: the order is
+   * bound to it. */
+  buildEnergyRentRequest(intent: unknown, approvedFee: bigint): Promise<EnergyRentRequest>;
   craftEnergyRentTransaction(request: EnergyRentRequest): Promise<EnergyRentOrder>;
   submitEnergyRentPayment(payment: { orderId: string; signedTransaction: unknown }): Promise<void>;
   getEnergyRentStatus(ref: EnergyRentOrderRef): Promise<EnergyRentStatus>;

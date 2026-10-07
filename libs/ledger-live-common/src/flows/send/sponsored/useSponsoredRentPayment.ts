@@ -15,10 +15,12 @@ export type SponsoredRentPayment = Readonly<{
 export function useSponsoredRentPayment({
   state,
   actions,
+  approvedFee,
   locale,
 }: Readonly<{
   state: SponsoredState;
   actions: SponsoredSendActions;
+  approvedFee: bigint | null;
   locale: string;
 }>): SponsoredRentPayment {
   const { phase, order, rentPayment, paymentTxId } = state;
@@ -29,10 +31,10 @@ export function useSponsoredRentPayment({
     const needsCraft = phase === SPONSORED_PHASE.IDLE || phase === SPONSORED_PHASE.RENT_SIGNING;
     if (!needsCraft || order || craftInFlightRef.current) return;
     craftInFlightRef.current = true;
-    void actions.craftRent().finally(() => {
+    void actions.craftRent(approvedFee).finally(() => {
       craftInFlightRef.current = false;
     });
-  }, [phase, order, actions]);
+  }, [phase, order, actions, approvedFee]);
 
   const submittedOrderRef = useRef<typeof order>(null);
   const submitSignature = useCallback(

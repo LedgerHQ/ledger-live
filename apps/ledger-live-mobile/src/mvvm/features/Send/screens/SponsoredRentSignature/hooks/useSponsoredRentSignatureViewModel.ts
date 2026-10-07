@@ -61,11 +61,12 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
   const { t } = useTranslation();
   const { state: sendFlowState } = useSendFlowData();
   const { stopSigning } = useSendSignature();
-  const { state, actions, providerName } = useSponsoredSend();
+  const { state, actions, providerName, approvedFee } = useSponsoredSend();
   const locale = useSelector(localeSelector);
   const { isCrafting, feeAmountLabel, submitSignature } = useSponsoredRentPayment({
     state,
     actions,
+    approvedFee,
     locale,
   });
 
