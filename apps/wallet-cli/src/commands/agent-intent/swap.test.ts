@@ -288,7 +288,9 @@ describe("agent-intent swap", () => {
     it("quotes and validates without reading the key or signing in", async () => {
       await runSwap({ "dry-run": true, output: "json" });
 
-      expect(quoteRequests).toHaveLength(1);
+      expect(quoteRequests).toEqual([
+        expect.objectContaining({ from: ETH.id, to: USDC.id, amount: "0.5" }),
+      ]);
       expect(secretKeyReads).toBe(0);
       expect(clientOptions).toEqual([]);
       expect(jsonResult()).toMatchObject({
@@ -379,23 +381,22 @@ describe("agent-intent swap", () => {
 
       await runSwap({ output: "json" });
 
-      const posted = JSON.parse(bodies[0]) as {
-        issuer: string;
-        nonce: string;
-        intent: SwapIntent;
-      };
-      expect(posted.issuer).toBe(agent.publicKey);
-      expect(posted.intent).toEqual({
-        type: "swap",
-        network: "ethereum",
-        sender: SENDER.toLowerCase(),
-        fromAsset: ETH.id,
-        toAsset: USDC.id,
-        fromAmount: "0.5",
-        toAmount: "1234.567891",
-        provider: "oneinch",
-      });
-      expect(bodies[0]).toContain('"toAmount":"1234.567891"');
+      expect(bodies).toEqual([expect.stringContaining('"toAmount":"1234.567891"')]);
+      expect(bodies.map(body => JSON.parse(body))).toEqual([
+        expect.objectContaining({
+          issuer: agent.publicKey,
+          intent: {
+            type: "swap",
+            network: "ethereum",
+            sender: SENDER.toLowerCase(),
+            fromAsset: ETH.id,
+            toAsset: USDC.id,
+            fromAmount: "0.5",
+            toAmount: "1234.567891",
+            provider: "oneinch",
+          },
+        }),
+      ]);
       expect(jsonResult()).toMatchObject({ intentId: "swap-1", submitted: true });
     });
   });

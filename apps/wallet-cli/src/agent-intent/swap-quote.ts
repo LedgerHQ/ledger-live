@@ -56,8 +56,8 @@ export async function fetchAgentSwapQuote(
   if (result.quotes.length > 0) {
     throw new Error(
       "Every quote needs a token approval or Permit2 signature first, which the Agent Intent " +
-        "frontend can't prepare yet. Approve the provider's router for this token, or pick another " +
-        "provider with --provider.",
+        "frontend can't prepare yet. The token allowance has to be approved outside Agent Intent " +
+        "(for example from Ledger Wallet), or pick another provider with --provider.",
     );
   }
   const reasons = [
