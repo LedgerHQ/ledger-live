@@ -76,6 +76,10 @@ export class MyLedgerPage extends AppPage {
   private readonly languageOption = (language: string) =>
     this.page.getByTestId(`manager-language-option-${language}`);
   private readonly installLanguageButton = this.page.getByTestId("install-language-button");
+  private readonly languageInstalled = this.page.getByTestId("language-installed");
+  private readonly closeLanguageInstallationButton = this.page.getByTestId(
+    "close-language-installation-button",
+  );
 
   private readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
 
@@ -322,6 +326,8 @@ export class MyLedgerPage extends AppPage {
     await expect(this.languageInstallation).toBeVisible();
     await this.languageOption(language).click();
     await this.installLanguageButton.click();
+    await expect(this.languageInstalled).toBeVisible();
+    await this.closeLanguageInstallationButton.click();
   }
 
   /** The trigger renders the installed language, so it doubles as the read back. */
