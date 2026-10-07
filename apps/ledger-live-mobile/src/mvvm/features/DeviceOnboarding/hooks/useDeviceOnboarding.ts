@@ -82,6 +82,7 @@ const DeviceKind = {
 
 const missingSessionId = "none";
 const xstateEventPrefix = "xstate.";
+const hiddenFromPossible = new Set(["LOCKED", "TRANSPORT_LOST", "QUIT"]);
 
 type MachineNode = typeof deviceOnboardingMachine.root;
 
@@ -105,7 +106,7 @@ function nodeAt(root: MachineNode, value: unknown): MachineNode | undefined {
   return node;
 }
 
-function nextStatesFrom(
+export function nextStatesFrom(
   snapshot: OnboardingSnapshot | null,
 ): DeviceOnboardingToolProps["nextStates"] {
   if (!snapshot || snapshot.status !== ActorStatus.Active) return [];
@@ -125,13 +126,23 @@ function nextStatesFrom(
     rows.push({ event, state });
   };
 
+  const handledHere = new Set<string>();
   let node: MachineNode | undefined = start;
   while (node) {
     for (const transition of node.always ?? []) {
       for (const target of transition.target ?? []) add("auto", target);
     }
     for (const [event, transitions] of node.transitions) {
-      if (event.startsWith(xstateEventPrefix)) continue;
+      if (
+        event.startsWith(xstateEventPrefix) ||
+        hiddenFromPossible.has(event) ||
+        handledHere.has(event)
+      ) {
+        continue;
+      }
+      if (transitions.some(transition => transition.guard === undefined)) {
+        handledHere.add(event);
+      }
       for (const transition of transitions) {
         for (const target of transition.target ?? []) add(event, target);
       }
@@ -224,6 +235,7 @@ export function useDeviceOnboarding({
   const [snapshot, setSnapshot] = useState<OnboardingSnapshot | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [events, setEvents] = useState<DeviceOnboardingToolProps["events"]>([]);
+  const [showNextScreen, setShowNextScreen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const actorRef = useRef<OnboardingActor | null>(null);
@@ -467,8 +479,9 @@ export function useDeviceOnboarding({
     device: screenDevice,
     machineState: state,
     send,
+    showNextScreen,
   });
-  useDeviceOnboardingExit({ device: screenDevice, output });
+  useDeviceOnboardingExit({ device: screenDevice, output, showNextScreen });
 
   useEffect(
     () => () => {
@@ -493,5 +506,7 @@ export function useDeviceOnboarding({
     connect,
     send,
     reset,
+    showNextScreen,
+    setShowNextScreen,
   };
 }

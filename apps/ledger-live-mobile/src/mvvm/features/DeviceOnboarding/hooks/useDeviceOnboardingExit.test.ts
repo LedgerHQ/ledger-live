@@ -251,6 +251,19 @@ describe("useDeviceOnboardingExit", () => {
     );
   });
 
+  it("stays on the screen when open next screen is off", () => {
+    const output = {
+      reason: "completed",
+      sessionId: "session-id",
+      device: { id: "device-id", modelId: DMKDeviceModelId.STAX },
+    } as DeviceOnboardingOutput;
+
+    renderHook(() => useDeviceOnboardingExit({ device, output, showNextScreen: false }));
+
+    expect(mockReset).not.toHaveBeenCalled();
+    expect(mockDispatch).not.toHaveBeenCalled();
+  });
+
   it("returns to device selection when onboarding is not completed", async () => {
     renderExit("userQuit");
 
@@ -308,9 +321,13 @@ describe("useDeviceOnboardingExit", () => {
       sessionId: "session-id",
       device: { id: "device-id", modelId: DMKDeviceModelId.STAX },
     } as DeviceOnboardingOutput;
-    const props = { device, output };
+    const props = { device, output, showNextScreen: true };
     const { rerender } = renderHook(() =>
-      useDeviceOnboardingExit({ device: props.device, output: props.output }),
+      useDeviceOnboardingExit({
+        device: props.device,
+        output: props.output,
+        showNextScreen: props.showNextScreen,
+      }),
     );
 
     await waitFor(() => expect(mockReset).toHaveBeenCalledTimes(1));
@@ -330,9 +347,13 @@ function renderExit(reason: DeviceOnboardingOutput["reason"], connectedDevice: D
     },
   } as DeviceOnboardingOutput;
 
-  const props = { device: connectedDevice, output };
+  const props = { device: connectedDevice, output, showNextScreen: true };
   const rendered = renderHook(() =>
-    useDeviceOnboardingExit({ device: props.device, output: props.output }),
+    useDeviceOnboardingExit({
+      device: props.device,
+      output: props.output,
+      showNextScreen: props.showNextScreen,
+    }),
   );
 
   return {

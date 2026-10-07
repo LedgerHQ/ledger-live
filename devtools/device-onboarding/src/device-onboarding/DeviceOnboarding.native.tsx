@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Pressable, ScrollView } from "react-native";
-import { Box, Button, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Box,
+  Button,
+  SegmentedControl,
+  SegmentedControlButton,
+  Switch,
+  Text,
+  useTheme,
+} from "@ledgerhq/lumen-ui-rnative";
 import {
   Bluetooth,
   CheckmarkCircle,
+  ChevronDown,
+  ChevronRight,
   Circles,
   Download,
   ExitLogout,
@@ -13,8 +23,10 @@ import {
   Warning,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
+import { emptyLogCopy, openNextScreenCopy } from "./configCopy";
 import {
   useDeviceOnboardingViewModel,
+  possibleByEvent,
   type DisplayRow,
   type EventRow,
   type StateKind,
@@ -79,6 +91,7 @@ const CHIP_LX = {
 function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   const vm = useDeviceOnboardingViewModel(props);
   const { theme } = useTheme();
+  const [tab, setTab] = useState<"log" | "config">("log");
   const divider = { borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle };
   const base = { color: theme.colors.text.base };
   const muted = { color: theme.colors.text.muted };
@@ -114,8 +127,12 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
             {vm.deviceLabel}
           </Text>
         ) : null}
+        {vm.contextRows.length > 0 ? <ContextLines rows={vm.contextRows} /> : null}
+        <SegmentedControl selectedValue={tab} onSelectedChange={setTab} accessibilityLabel="Screen">
+          <SegmentedControlButton value="log">Log</SegmentedControlButton>
+          <SegmentedControlButton value="config">Config</SegmentedControlButton>
+        </SegmentedControl>
       </Box>
-
       {vm.error ? (
         <Box lx={SECTION_LX} style={divider}>
           <Text typography="body2" style={{ color: theme.colors.text.error }}>
@@ -124,85 +141,100 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
         </Box>
       ) : null}
 
-      <Box lx={SECTION_LX} style={divider}>
-        {vm.sendableRows.length === 0 && vm.logLines.length === 0 && vm.nextStates.length === 0 ? (
-          <Text typography="body2" style={muted}>
-            Connect a paired device.
-          </Text>
-        ) : (
-          <>
-            <Box lx={BUTTONS_LX}>
-              {vm.sendableRows.length === 0 ? (
-                <Text typography="body2" style={muted}>
-                  No event accepted in this state
-                </Text>
-              ) : (
-                vm.sendableRows.map(row => (
-                  <Button
-                    key={row.key}
-                    size="sm"
-                    appearance="transparent"
-                    disabled={!vm.canSend}
-                    onPress={() => vm.send(row.event)}
-                  >
-                    {row.label}
-                  </Button>
-                ))
-              )}
+      {tab === "config" ? (
+        <Box lx={SECTION_LX} style={divider}>
+          <Box lx={HEADER_ROW_LX}>
+            <Box lx={{ flexDirection: "column", gap: "s4", flexShrink: 1 }}>
+              <Text typography="body2" style={base}>
+                {openNextScreenCopy.title}
+              </Text>
+              <Text typography="body2" style={muted}>
+                {openNextScreenCopy.description}
+              </Text>
             </Box>
-            <Box lx={{ ...LOG_LX, marginTop: "s16" }}>
-              <PossibleNext rows={vm.nextStates} />
-              {vm.logLines.length === 0 ? (
-                <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
-                  —
-                </Text>
-              ) : (
-                vm.logLines.map(line =>
-                  line.line === "state" ? (
-                    <StateChip key={line.key} step={line} />
-                  ) : (
-                    <EventLine key={line.id} event={line} />
-                  ),
-                )
-              )}
+            <Box style={{ marginLeft: "auto" }}>
+              <Switch checked={vm.showNextScreen} onCheckedChange={vm.setShowNextScreen} />
             </Box>
-          </>
-        )}
-      </Box>
+          </Box>
+        </Box>
+      ) : null}
 
-      {vm.exitRows.length > 0 ? <Rows title="Exit" rows={vm.exitRows} /> : null}
-      {vm.contextRows.length > 0 ? <Rows title="Context" rows={vm.contextRows} /> : null}
+      {tab === "log" && vm.logIsEmpty ? (
+        <Box lx={SECTION_LX} style={divider}>
+          <Text typography="body2" style={base}>
+            {emptyLogCopy.title}
+          </Text>
+          <Text typography="body2" style={muted}>
+            {emptyLogCopy.description}
+          </Text>
+        </Box>
+      ) : null}
+
+      {tab === "log" && !vm.logIsEmpty ? (
+        <Box lx={SECTION_LX} style={divider}>
+          <Box lx={BUTTONS_LX}>
+            {vm.sendableRows.length === 0 ? (
+              <Text typography="body2" style={muted}>
+                No event accepted in this state
+              </Text>
+            ) : (
+              vm.sendableRows.map(row => (
+                <Button
+                  key={row.key}
+                  size="sm"
+                  appearance="transparent"
+                  disabled={!vm.canSend}
+                  onPress={() => vm.send(row.event)}
+                >
+                  {row.label}
+                </Button>
+              ))
+            )}
+          </Box>
+          <Box lx={{ ...LOG_LX, marginTop: "s16" }}>
+            {vm.logLines.length === 0 ? (
+              <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
+                —
+              </Text>
+            ) : (
+              vm.logLines.map(line =>
+                line.line === "state" ? (
+                  <Fragment key={line.key}>
+                    <StateChip step={line} />
+                    {line.isCurrent ? <PossibleEvents rows={vm.nextStates} /> : null}
+                  </Fragment>
+                ) : (
+                  <EventLine key={line.id} event={line} />
+                ),
+              )
+            )}
+          </Box>
+        </Box>
+      ) : null}
     </ScrollView>
   );
 }
 
-function PossibleNext({ rows }: Readonly<{ rows: DeviceOnboardingToolProps["nextStates"] }>) {
+function PossibleEvents({ rows }: Readonly<{ rows: DeviceOnboardingToolProps["nextStates"] }>) {
   const { theme } = useTheme();
-  if (rows.length === 0) return null;
+  const groups = possibleByEvent(rows);
+  if (groups.length === 0) return null;
+
+  const muted = { color: theme.colors.text.muted, fontFamily: "monospace" };
 
   return (
-    <Box
-      lx={LOG_LX}
-      style={{
-        opacity: 0.55,
-        borderWidth: 1,
-        borderStyle: "dashed",
-        borderColor: theme.colors.border.mutedSubtle,
-        borderRadius: 8,
-        padding: 8,
-      }}
-    >
-      <Text typography="body2" style={{ color: theme.colors.text.muted }}>
-        Possible
-      </Text>
-      {rows.map(row => (
-        <Text
-          key={`${row.event}-${row.state}`}
-          typography="body2"
-          style={{ color: theme.colors.text.muted, fontFamily: "monospace" }}
-        >
-          {row.event} → {row.state}
-        </Text>
+    <Box lx={LOG_LX} style={{ opacity: 0.55 }}>
+      {groups.map(group => (
+        <Box key={group.event} lx={{ ...LOG_LX, paddingLeft: "s16" }}>
+          <Text typography="body2" style={muted}>
+            {group.event}
+          </Text>
+          {group.states.map(state => (
+            <Text key={state} typography="body2" style={{ ...muted, paddingLeft: 16 }}>
+              {state}
+            </Text>
+          ))}
+        </Box>
       ))}
     </Box>
   );
@@ -226,30 +258,42 @@ function StateChip({ step }: Readonly<{ step: StateStep }>) {
   );
 }
 
-function Rows({ title, rows }: Readonly<{ title: string; rows: readonly DisplayRow[] }>) {
+function ContextLines({ rows }: Readonly<{ rows: readonly DisplayRow[] }>) {
+  const [open, setOpen] = useState(false);
   const { theme } = useTheme();
+  const muted = { color: theme.colors.text.muted };
+  const mono = { color: theme.colors.text.base, fontFamily: "monospace" };
 
   return (
-    <Box
-      lx={SECTION_LX}
-      style={{ borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle }}
-    >
-      <Text typography="body2" style={{ color: theme.colors.text.muted }}>
-        {title}
-      </Text>
-      {rows.map(row => (
-        <Box key={row.label} lx={ROW_LX}>
-          <Text typography="body2" style={{ color: theme.colors.text.muted }}>
-            {row.label}
-          </Text>
-          <Text
-            typography="body2"
-            style={{ color: theme.colors.text.base, flex: 1, fontFamily: "monospace" }}
-          >
-            {row.value}
+    <Box lx={LOG_LX}>
+      <Pressable
+        onPress={() => setOpen(current => !current)}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+      >
+        <Box lx={ROW_LX}>
+          {open ? (
+            <ChevronDown size={16} color="muted" />
+          ) : (
+            <ChevronRight size={16} color="muted" />
+          )}
+          <Text typography="body2" style={muted}>
+            Context
           </Text>
         </Box>
-      ))}
+      </Pressable>
+      {open
+        ? rows.map(row => (
+            <Box key={row.label} lx={{ ...ROW_LX, paddingLeft: "s16" }}>
+              <Text typography="body2" style={muted}>
+                {row.label}
+              </Text>
+              <Text typography="body2" style={{ ...mono, flex: 1 }}>
+                {row.value}
+              </Text>
+            </Box>
+          ))
+        : null}
     </Box>
   );
 }
@@ -262,8 +306,17 @@ function EventLine({ event }: Readonly<{ event: EventRow }>) {
 
   return (
     <Box lx={LOG_LX}>
-      <Pressable onPress={() => setOpen(current => !current)} accessibilityRole="button">
+      <Pressable
+        onPress={() => setOpen(current => !current)}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+      >
         <Box lx={ROW_LX}>
+          {open ? (
+            <ChevronDown size={16} color="muted" />
+          ) : (
+            <ChevronRight size={16} color="muted" />
+          )}
           <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
             {event.time}
           </Text>

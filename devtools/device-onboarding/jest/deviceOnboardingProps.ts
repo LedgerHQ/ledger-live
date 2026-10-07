@@ -16,6 +16,8 @@ export function buildProps(
     connect: jest.fn(),
     send: jest.fn(),
     reset: jest.fn(),
+    showNextScreen: false,
+    setShowNextScreen: jest.fn(),
     ...overrides,
   };
 }

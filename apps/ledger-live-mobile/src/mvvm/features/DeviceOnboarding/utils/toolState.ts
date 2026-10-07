@@ -21,6 +21,12 @@ export const userEvents = [
 
 const hiddenPayloadKeys = new Set(["type", "failure", "deviceId", "dmk", "ports"]);
 
+const eventsWithPrivateOutput = new Set<OnboardingEvent["type"]>([
+  "GENUINE_CHECK_REFUSED",
+  "GENUINE_CHECK_FAILED",
+  "SECURE_CHANNEL_LOST",
+]);
+
 export function flattenDeviceOnboardingContext(context: DeviceOnboardingContext): ToolContext {
   const verdict = context.genuineVerdict;
 
@@ -76,11 +82,14 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
   return { id, type: event.type, at: Date.now(), detail, payload: eventPayload(event) };
 }
 
+type CopiedPayload = Exclude<ToolEvent["payload"], undefined>;
+
 function eventPayload(event: OnboardingEvent): ToolEvent["payload"] {
-  const payload: Record<string, NonNullable<ToolEvent["payload"]>> = {};
+  const payload: Record<string, CopiedPayload> = {};
 
   for (const [key, child] of Object.entries(event)) {
     if (hiddenPayloadKeys.has(key)) continue;
+    if (key === "output" && eventsWithPrivateOutput.has(event.type)) continue;
     const copied = plainPayload(child);
     if (copied !== undefined) payload[key] = copied;
   }
@@ -88,7 +97,7 @@ function eventPayload(event: OnboardingEvent): ToolEvent["payload"] {
   return Object.keys(payload).length === 0 ? undefined : payload;
 }
 
-function plainPayload(value: unknown): NonNullable<ToolEvent["payload"]> | undefined {
+function plainPayload(value: unknown): CopiedPayload | undefined {
   if (typeof value === "string") {
     return value.includes("://") ? undefined : value;
   }
@@ -97,7 +106,7 @@ function plainPayload(value: unknown): NonNullable<ToolEvent["payload"]> | undef
   }
   if (value === null || typeof value !== "object") return undefined;
 
-  const nested: Record<string, NonNullable<ToolEvent["payload"]>> = {};
+  const nested: Record<string, CopiedPayload> = {};
   for (const [key, child] of Object.entries(value)) {
     if (hiddenPayloadKeys.has(key)) continue;
     const copied = plainPayload(child);

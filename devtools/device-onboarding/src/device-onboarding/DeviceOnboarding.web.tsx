@@ -1,8 +1,10 @@
-import { useState } from "react";
-import { Button } from "@ledgerhq/lumen-ui-react";
+import { Fragment, useState } from "react";
+import { Button, SegmentedControl, SegmentedControlButton, Switch } from "@ledgerhq/lumen-ui-react";
 import {
   Bluetooth,
   CheckmarkCircle,
+  ChevronDown,
+  ChevronRight,
   Circles,
   Download,
   ExitLogout,
@@ -12,8 +14,10 @@ import {
   Warning,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
+import { emptyLogCopy, openNextScreenCopy } from "./configCopy";
 import {
   useDeviceOnboardingViewModel,
+  possibleByEvent,
   type DisplayRow,
   type EventRow,
   type StateKind,
@@ -38,6 +42,7 @@ const stepPresentation: Record<StateKind, { readonly Icon: IconComponent; readon
 
 function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   const vm = useDeviceOnboardingViewModel(props);
+  const [tab, setTab] = useState<"log" | "config">("log");
 
   return (
     <div className="flex flex-col overflow-y-auto">
@@ -59,62 +64,91 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
           </span>
         </div>
         {vm.deviceLabel ? <code className="text-muted">{vm.deviceLabel}</code> : null}
+        {vm.contextRows.length > 0 ? <ContextLines rows={vm.contextRows} /> : null}
+        <SegmentedControl selectedValue={tab} onSelectedChange={setTab} aria-label="Screen">
+          <SegmentedControlButton value="log">Log</SegmentedControlButton>
+          <SegmentedControlButton value="config">Config</SegmentedControlButton>
+        </SegmentedControl>
       </div>
 
       {vm.error ? (
         <div className="px-16 py-10 border-b border-base body-3 text-error">{vm.error}</div>
       ) : null}
 
-      <div className="px-16 py-12 border-b border-base flex flex-col items-start gap-8">
-        <div className="flex flex-wrap items-center gap-8">
-          {vm.sendableRows.length === 0 ? (
-            <span className="body-3 text-muted">No event accepted in this state</span>
-          ) : (
-            vm.sendableRows.map(row => (
-              <Button
-                key={row.key}
-                size="sm"
-                appearance="transparent"
-                disabled={!vm.canSend}
-                onClick={() => vm.send(row.event)}
-              >
-                {row.label}
-              </Button>
-            ))
-          )}
+      {tab === "config" ? (
+        <div className="px-16 py-12 border-b border-base flex items-center gap-8">
+          <span className="flex flex-col gap-4">
+            <span className="body-3 text-base">{openNextScreenCopy.title}</span>
+            <span className="body-3 text-muted">{openNextScreenCopy.description}</span>
+          </span>
+          <Switch
+            selected={vm.showNextScreen}
+            onChange={vm.setShowNextScreen}
+            aria-label={openNextScreenCopy.title}
+            className="ml-auto"
+          />
         </div>
-        <div className="mt-16 flex flex-col items-start gap-4">
-          <PossibleNext rows={vm.nextStates} />
-          {vm.logLines.length === 0 ? (
-            <code className="text-muted">—</code>
-          ) : (
-            vm.logLines.map(line =>
-              line.line === "state" ? (
-                <StateChip key={line.key} step={line} />
-              ) : (
-                <EventLine key={line.id} event={line} />
-              ),
-            )
-          )}
+      ) : vm.logIsEmpty ? (
+        <div className="px-16 py-12 border-b border-base flex flex-col gap-4">
+          <span className="body-3 text-base">{emptyLogCopy.title}</span>
+          <span className="body-3 text-muted">{emptyLogCopy.description}</span>
         </div>
-      </div>
-
-      {vm.exitRows.length > 0 ? <Rows title="Exit" rows={vm.exitRows} /> : null}
-      {vm.contextRows.length > 0 ? <Rows title="Context" rows={vm.contextRows} /> : null}
+      ) : (
+        <div className="px-16 py-12 border-b border-base flex flex-col items-start gap-8">
+          <div className="flex flex-wrap items-center gap-8">
+            {vm.sendableRows.length === 0 ? (
+              <span className="body-3 text-muted">No event accepted in this state</span>
+            ) : (
+              vm.sendableRows.map(row => (
+                <Button
+                  key={row.key}
+                  size="sm"
+                  appearance="transparent"
+                  disabled={!vm.canSend}
+                  onClick={() => vm.send(row.event)}
+                >
+                  {row.label}
+                </Button>
+              ))
+            )}
+          </div>
+          <div className="mt-16 flex flex-col items-start gap-4">
+            {vm.logLines.length === 0 ? (
+              <code className="text-muted">—</code>
+            ) : (
+              vm.logLines.map(line =>
+                line.line === "state" ? (
+                  <Fragment key={line.key}>
+                    <StateChip step={line} />
+                    {line.isCurrent ? <PossibleEvents rows={vm.nextStates} /> : null}
+                  </Fragment>
+                ) : (
+                  <EventLine key={line.id} event={line} />
+                ),
+              )
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function PossibleNext({ rows }: Readonly<{ rows: DeviceOnboardingToolProps["nextStates"] }>) {
-  if (rows.length === 0) return null;
+function PossibleEvents({ rows }: Readonly<{ rows: DeviceOnboardingToolProps["nextStates"] }>) {
+  const groups = possibleByEvent(rows);
+  if (groups.length === 0) return null;
 
   return (
-    <div className="flex flex-col items-start gap-4 p-8 rounded-sm border border-dashed border-base opacity-60">
-      <span className="body-3 text-muted">Possible</span>
-      {rows.map(row => (
-        <code key={`${row.event}-${row.state}`} className="text-muted">
-          {row.event} → {row.state}
-        </code>
+    <div className="flex flex-col items-start gap-4 pl-16 opacity-60">
+      {groups.map(group => (
+        <div key={group.event} className="flex flex-col items-start gap-4">
+          <code className="text-muted">{group.event}</code>
+          {group.states.map(state => (
+            <code key={state} className="text-muted pl-16">
+              {state}
+            </code>
+          ))}
+        </div>
       ))}
     </div>
   );
@@ -135,17 +169,33 @@ function StateChip({ step }: Readonly<{ step: StateStep }>) {
   );
 }
 
-function Rows({ title, rows }: Readonly<{ title: string; rows: readonly DisplayRow[] }>) {
+function ContextLines({ rows }: Readonly<{ rows: readonly DisplayRow[] }>) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="px-16 py-12 border-b border-base flex flex-col gap-4">
-      <span className="body-3 text-muted">{title}</span>
-      {rows.map(row => (
-        <span key={row.label} className="flex items-baseline gap-8 body-3">
-          <span className="text-muted shrink-0">{row.label}</span>
-          <code className="text-base break-all">{row.value}</code>
-        </span>
-      ))}
-    </div>
+    <span className="flex flex-col items-start gap-4">
+      <button
+        type="button"
+        className="flex items-center gap-8 body-3 bg-transparent border-0 p-0 text-left text-muted"
+        aria-expanded={open}
+        onClick={() => setOpen(current => !current)}
+      >
+        {open ? (
+          <ChevronDown size={16} className="text-muted shrink-0" />
+        ) : (
+          <ChevronRight size={16} className="text-muted shrink-0" />
+        )}
+        Context
+      </button>
+      {open
+        ? rows.map(row => (
+            <span key={row.label} className="flex items-baseline gap-8 body-3 pl-16">
+              <span className="text-muted shrink-0">{row.label}</span>
+              <code className="text-base break-all">{row.value}</code>
+            </span>
+          ))
+        : null}
+    </span>
   );
 }
 
@@ -156,9 +206,15 @@ function EventLine({ event }: Readonly<{ event: EventRow }>) {
     <span className="flex flex-col items-start gap-4">
       <button
         type="button"
-        className="flex items-baseline gap-8 body-3 bg-transparent border-0 p-0 text-left"
+        className="flex items-center gap-8 body-3 bg-transparent border-0 p-0 text-left"
+        aria-expanded={open}
         onClick={() => setOpen(current => !current)}
       >
+        {open ? (
+          <ChevronDown size={16} className="text-muted shrink-0" />
+        ) : (
+          <ChevronRight size={16} className="text-muted shrink-0" />
+        )}
         <code className="text-muted shrink-0">{event.time}</code>
         <code className="text-base shrink-0">{event.type}</code>
         {event.detail ? <code className="text-muted truncate min-w-0">{event.detail}</code> : null}

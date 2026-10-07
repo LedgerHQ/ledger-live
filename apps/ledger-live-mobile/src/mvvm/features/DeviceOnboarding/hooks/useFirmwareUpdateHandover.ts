@@ -13,6 +13,7 @@ type UseFirmwareUpdateHandoverInput = {
   device: Device | null;
   machineState: string | null;
   send: (event: OnboardingEvent) => void;
+  showNextScreen: boolean;
 };
 
 type BaseNavigation = NativeStackNavigationProp<
@@ -25,6 +26,7 @@ export function useFirmwareUpdateHandover({
   device,
   machineState,
   send,
+  showNextScreen,
 }: UseFirmwareUpdateHandoverInput) {
   const navigation = useNavigation<BaseNavigation>();
   const baseNavigation = navigation.getParent<BaseNavigation>(BASE_NAVIGATOR_ID) ?? navigation;
@@ -72,6 +74,7 @@ export function useFirmwareUpdateHandover({
     if (!freshResultRef.current || !device || pushedRef.current) return;
 
     if (status === "available-firmware" && deviceInfo && firmwareUpdateContext) {
+      if (!showNextScreen) return;
       pushedRef.current = true;
       awaitingReturnRef.current = true;
       baseNavigation.push(ScreenName.FirmwareUpdate, {
@@ -94,6 +97,7 @@ export function useFirmwareUpdateHandover({
     deviceInfo,
     firmwareUpdateContext,
     baseNavigation,
+    showNextScreen,
     onBackFromUpdate,
     status,
   ]);

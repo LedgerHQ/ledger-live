@@ -2,7 +2,7 @@ import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { createTestDevice, knownStax } from "../testing/testDevice";
-import { useDeviceOnboarding } from "./useDeviceOnboarding";
+import { nextStatesFrom, useDeviceOnboarding } from "./useDeviceOnboarding";
 import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 
 jest.mock("./useDeviceOnboardingExit", () => ({
@@ -31,11 +31,22 @@ describe("useDeviceOnboarding", () => {
 
     expect(result.current.state).toBe("readingState");
     expect(result.current.nextStates).toEqual(
-      expect.arrayContaining([
-        { event: "DEVICE_STATE_READ", state: "routing" },
-        { event: "QUIT", state: "quitting" },
-      ]),
+      expect.arrayContaining([{ event: "DEVICE_STATE_READ", state: "routing" }]),
     );
+    expect(result.current.nextStates.map(row => row.event)).toEqual(
+      expect.not.arrayContaining(["LOCKED", "TRANSPORT_LOST", "QUIT"]),
+    );
+  });
+
+  it("hides a root move when this step already handles that event", () => {
+    const snapshot = {
+      status: "active",
+      value: { checks: "firmwareUpdateDelegated" },
+    } as Parameters<typeof nextStatesFrom>[0];
+
+    expect(nextStatesFrom(snapshot)).toEqual([
+      { event: "FIRMWARE_UPDATE_FLOW_CLOSED", state: "readingState" },
+    ]);
   });
 
   // A lost Bluetooth connection must bring Connect back.
@@ -90,6 +101,7 @@ describe("useDeviceOnboarding", () => {
       modelId: DeviceModelId.STAX,
     });
     expect(exitHook).toHaveBeenLastCalledWith({
+      showNextScreen: false,
       device: {
         deviceId: "device-id",
         deviceName: "Ledger Stax",

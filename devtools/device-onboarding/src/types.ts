@@ -117,4 +117,7 @@ export interface DeviceOnboardingToolProps {
   readonly connect: () => void;
   readonly send: (event: OnboardingEvent) => void;
   readonly reset: () => void;
+  /** When on, an exit or a firmware update opens the next screen. */
+  readonly showNextScreen: boolean;
+  readonly setShowNextScreen: (showNextScreen: boolean) => void;
 }

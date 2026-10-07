@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@support/jest-devtools/native";
 import { buildProps } from "jest/deviceOnboardingProps";
+import { emptyLogCopy, openNextScreenCopy } from "./configCopy";
 import DeviceOnboarding from "./DeviceOnboarding";
 
 const connectedDevice = {
@@ -10,10 +11,11 @@ const connectedDevice = {
 };
 
 describe("DeviceOnboarding", () => {
-  it("asks to connect a paired device before a run starts", () => {
+  it("asks you to pair a device before the log starts", () => {
     render(<DeviceOnboarding {...buildProps()} />);
 
-    expect(screen.getByText("Connect a paired device.")).toBeTruthy();
+    expect(screen.getByText(emptyLogCopy.title)).toBeTruthy();
+    expect(screen.getByText(emptyLogCopy.description)).toBeTruthy();
     expect(screen.queryByText("No event accepted in this state")).toBeNull();
   });
 
@@ -31,8 +33,9 @@ describe("DeviceOnboarding", () => {
     );
 
     expect(screen.getByText("Ledger Flex · europa · BLE · session-1")).toBeTruthy();
-    expect(screen.getByText("Possible")).toBeTruthy();
-    expect(screen.getByText("DEVICE_STATE_READ → routing")).toBeTruthy();
+    expect(screen.queryByText("Possible")).toBeNull();
+    expect(screen.getByText("DEVICE_STATE_READ")).toBeTruthy();
+    expect(screen.getByText("routing")).toBeTruthy();
     expect(screen.getByText("checks.genuineCheck")).toBeTruthy();
     expect(screen.getByText("CONTINUE")).toBeTruthy();
     expect(screen.getByText("QUIT")).toBeTruthy();
@@ -40,7 +43,7 @@ describe("DeviceOnboarding", () => {
 
   it("sends the event whole, payload included, under the host's own label", () => {
     const send = jest.fn();
-    const refused = { type: "GENUINE_CHECK_REFUSED", failure: new Error("user said no") } as const;
+    const refused = { type: "GENUINE_CHECK_REFUSED", output: new Error("user said no") } as const;
     render(
       <DeviceOnboarding
         {...buildProps({
@@ -74,32 +77,6 @@ describe("DeviceOnboarding", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it("offers a connection only when no flow is running", () => {
-    const connect = jest.fn();
-    render(
-      <DeviceOnboarding
-        {...buildProps({
-          status: "running",
-          device: { name: "Ledger Flex", modelId: "europa", sessionId: "session-1", wired: false },
-          connect,
-        })}
-      />,
-    );
-
-    fireEvent.press(screen.getByText("Connect"));
-
-    expect(connect).not.toHaveBeenCalled();
-  });
-
-  it("offers a connection again once the transport went away mid-run", () => {
-    const connect = jest.fn();
-    render(<DeviceOnboarding {...buildProps({ status: "running", device: null, connect })} />);
-
-    fireEvent.press(screen.getByText("Connect"));
-
-    expect(connect).toHaveBeenCalledTimes(1);
-  });
-
   it("connects on demand and resets the run", () => {
     const connect = jest.fn();
     const reset = jest.fn();
@@ -112,6 +89,24 @@ describe("DeviceOnboarding", () => {
     expect(reset).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps each switch on the config tab, with a short line under its name", () => {
+    render(
+      <DeviceOnboarding
+        {...buildProps({
+          status: "running",
+          sendableEvents: [{ event: { type: "CONTINUE" } }],
+        })}
+      />,
+    );
+
+    expect(screen.getByText("CONTINUE")).toBeTruthy();
+    expect(screen.queryByText(openNextScreenCopy.title)).toBeNull();
+    fireEvent.press(screen.getByText("Config"));
+    expect(screen.getByText(openNextScreenCopy.title)).toBeTruthy();
+    expect(screen.getByText(openNextScreenCopy.description)).toBeTruthy();
+    expect(screen.queryByText("CONTINUE")).toBeNull();
+  });
+
   it("shows the whole run: the device, the context, the log and the exit", () => {
     render(
       <DeviceOnboarding
@@ -122,6 +117,7 @@ describe("DeviceOnboarding", () => {
           context: { isOnboarded: true, verdictMatchesSession: false },
           events: [
             { id: "first", type: "STEP_CHANGED", at: 0, detail: { kind: "step", step: "pin" } },
+            { id: "quit", type: "QUIT", at: 1 },
           ],
           exit: {
             reason: "offerLedgerSync",
@@ -133,8 +129,13 @@ describe("DeviceOnboarding", () => {
     );
 
     expect(screen.getByText("Ledger Flex · europa · BLE · session-1")).toBeTruthy();
+    expect(screen.queryByText("verdictMatchesSession")).toBeNull();
+    fireEvent.press(screen.getByText("Context"));
     expect(screen.getByText("verdictMatchesSession")).toBeTruthy();
-    expect(screen.getByText("offerLedgerSync")).toBeTruthy();
+    expect(screen.queryByText("sessionId")).toBeNull();
+    fireEvent.press(screen.getByText("QUIT"));
+    expect(screen.queryByText("offerLedgerSync")).toBeNull();
+    expect(screen.getByText("sessionId")).toBeTruthy();
     expect(screen.getByText("pin")).toBeTruthy();
   });
 

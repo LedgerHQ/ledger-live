@@ -13,6 +13,23 @@ const displayedEventCount = 40;
 const displayedDetailLength = 80;
 const displayedStateCount = 24;
 
+export function possibleByEvent(
+  rows: readonly DeviceOnboardingNextState[],
+): { event: string; states: string[] }[] {
+  const groups: { event: string; states: string[] }[] = [];
+
+  for (const row of rows) {
+    const group = groups.find(item => item.event === row.event);
+    if (group) {
+      group.states.push(row.state);
+    } else {
+      groups.push({ event: row.event, states: [row.state] });
+    }
+  }
+
+  return groups;
+}
+
 const DeviceLink = {
   Usb: "USB",
   Ble: "BLE",
@@ -134,6 +151,31 @@ interface Trail {
 
 const emptyTrail: Trail = { steps: [], open: [] };
 
+function recordStep(
+  trail: Trail,
+  state: string,
+  fresh: readonly DeviceOnboardingToolEvent[],
+): Trail {
+  const last = trail.steps.at(-1);
+  if (last === undefined) {
+    return { steps: [{ label: state, events: [...trail.open, ...fresh] }], open: [] };
+  }
+
+  if (last.label === state) {
+    if (fresh.length === 0) return trail;
+    return { steps: trail.steps, open: [...trail.open, ...fresh] };
+  }
+
+  return {
+    steps: [
+      ...trail.steps.slice(0, -1),
+      { label: last.label, events: [...last.events, ...trail.open, ...fresh] },
+      { label: state, events: [] },
+    ].slice(-displayedStateCount),
+    open: [],
+  };
+}
+
 export interface DeviceOnboardingViewModel {
   readonly statusLabel: string;
   readonly stateSteps: readonly StateStep[];
@@ -141,9 +183,9 @@ export interface DeviceOnboardingViewModel {
   readonly deviceLabel: string | null;
   readonly isRunning: boolean;
   readonly contextRows: readonly DisplayRow[];
-  readonly exitRows: readonly DisplayRow[];
   readonly sendableRows: readonly SendableRow[];
   readonly nextStates: readonly DeviceOnboardingNextState[];
+  readonly logIsEmpty: boolean;
   readonly error: string | null;
   readonly canConnect: boolean;
   readonly canSend: boolean;
@@ -151,6 +193,8 @@ export interface DeviceOnboardingViewModel {
   readonly connect: () => void;
   readonly send: (event: OnboardingEvent) => void;
   readonly reset: () => void;
+  readonly showNextScreen: boolean;
+  readonly setShowNextScreen: (showNextScreen: boolean) => void;
 }
 
 const hiddenPayloadKeys = new Set(["failure", "deviceId", "dmk", "ports"]);
@@ -246,6 +290,18 @@ function eventLine(event: DeviceOnboardingToolEvent): LogLine {
   };
 }
 
+function withExitOnQuit(lines: readonly LogLine[], exitRows: readonly DisplayRow[]): LogLine[] {
+  if (exitRows.length === 0) return [...lines];
+
+  const quitIndex = lines.findIndex(line => line.line === "event" && line.type === "QUIT");
+  const quit = lines[quitIndex];
+  if (quit?.line !== "event") return [...lines];
+
+  const next = lines.slice();
+  next[quitIndex] = { ...quit, payload: [...quit.payload, ...exitRows] };
+  return next;
+}
+
 function logLinesOf(trail: Trail): LogLine[] {
   const lines: LogLine[] = [];
 
@@ -270,7 +326,19 @@ function logLinesOf(trail: Trail): LogLine[] {
 export function useDeviceOnboardingViewModel(
   props: DeviceOnboardingToolProps,
 ): DeviceOnboardingViewModel {
-  const { status, device, state, context, events, exit, sendableEvents, nextStates, error } = props;
+  const {
+    status,
+    device,
+    state,
+    context,
+    events,
+    exit,
+    sendableEvents,
+    nextStates,
+    error,
+    showNextScreen,
+    setShowNextScreen,
+  } = props;
 
   const seenEventIds = useRef(new Set<string>());
   const [trail, setTrail] = useState<Trail>(emptyTrail);
@@ -287,20 +355,7 @@ export function useDeviceOnboardingViewModel(
     const fresh = events.filter(event => !seenEventIds.current.has(event.id));
     for (const event of fresh) seenEventIds.current.add(event.id);
 
-    setTrail(current => {
-      const last = current.steps.at(-1);
-      if (last?.label === state) {
-        if (fresh.length === 0) return current;
-        return { steps: current.steps, open: [...current.open, ...fresh] };
-      }
-
-      return {
-        steps: [...current.steps, { label: state, events: [...current.open, ...fresh] }].slice(
-          -displayedStateCount,
-        ),
-        open: [],
-      };
-    });
+    setTrail(current => recordStep(current, state, fresh));
   }, [state, events]);
 
   const stateSteps: StateStep[] = trail.steps.map((step, index) => ({
@@ -310,22 +365,20 @@ export function useDeviceOnboardingViewModel(
     isCurrent: index === trail.steps.length - 1,
   }));
 
-  const logLines = logLinesOf(trail);
+  const exitRows: DisplayRow[] =
+    exit === null
+      ? []
+      : [
+          { label: "sessionId", value: formatValue(exit.sessionId) },
+          { label: "modelId", value: formatValue(exit.modelId) },
+        ];
+  const logLines = withExitOnQuit(logLinesOf(trail), exitRows);
   const contextRows: DisplayRow[] =
     context === null
       ? []
       : watchedContextFields
           .filter(field => context[field] !== undefined)
           .map(field => ({ label: field, value: formatValue(context[field]) }));
-
-  const exitRows: DisplayRow[] =
-    exit === null
-      ? []
-      : [
-          { label: "reason", value: formatValue(exit.reason) },
-          { label: "sessionId", value: formatValue(exit.sessionId) },
-          { label: "modelId", value: formatValue(exit.modelId) },
-        ];
 
   const sendableRows: SendableRow[] = sendableEvents.map((entry, index) => ({
     key: `${index}-${entry.event.type}`,
@@ -348,9 +401,9 @@ export function useDeviceOnboardingViewModel(
     deviceLabel,
     isRunning: status === DeviceOnboardingStatus.Running,
     contextRows,
-    exitRows,
     sendableRows,
     nextStates,
+    logIsEmpty: sendableRows.length === 0 && logLines.length === 0 && nextStates.length === 0,
     error,
     canConnect:
       status === DeviceOnboardingStatus.Idle ||
@@ -362,5 +415,7 @@ export function useDeviceOnboardingViewModel(
     connect: props.connect,
     send: props.send,
     reset: props.reset,
+    showNextScreen,
+    setShowNextScreen,
   };
 }

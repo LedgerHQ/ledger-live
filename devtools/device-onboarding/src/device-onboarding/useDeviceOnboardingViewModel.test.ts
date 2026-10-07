@@ -13,6 +13,11 @@ function eventIds(lines: readonly LogLine[]) {
   return lines.flatMap(line => (line.line === "event" ? [line.id] : []));
 }
 
+function quitPayload(lines: readonly LogLine[]) {
+  const quit = lines.find(line => line.line === "event" && line.type === "QUIT");
+  return quit?.line === "event" ? quit.payload : [];
+}
+
 function buildEvents(count: number) {
   return Array.from({ length: count }, (_, index) => ({
     id: `event-${index}`,
@@ -203,6 +208,29 @@ describe("useDeviceOnboardingViewModel", () => {
     ]);
   });
 
+  it("lists the result under output", () => {
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({
+          state: "checks.genuineCheck",
+          events: [
+            {
+              id: "passed",
+              type: "GENUINE_CHECK_PASSED",
+              at: 1,
+              payload: { output: { isGenuine: true } },
+            },
+          ],
+        }),
+      ),
+    );
+
+    const event = result.current.logLines.find(line => line.line === "event");
+    expect(event?.line === "event" ? event.payload : []).toEqual([
+      { label: "output.isGenuine", value: "true" },
+    ]);
+  });
+
   it("lists the opened event payload and skips the failure body and a url", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
@@ -251,7 +279,57 @@ describe("useDeviceOnboardingViewModel", () => {
     expect(eventIds(result.current.logLines)).toEqual(["newest", "middle", "oldest"]);
   });
 
-  it("reads upward: the event sits under the state it led to", () => {
+  it("keeps an event that did not move the state under that state", () => {
+    const locked = { id: "locked", type: "LOCKED" as const, at: 1 };
+    const go = { id: "go", type: "CONTINUE" as const, at: 2 };
+    const { result, rerender } = renderHook(
+      (props: { state: string; events: readonly (typeof locked | typeof go)[] }) =>
+        useDeviceOnboardingViewModel(buildProps(props)),
+      {
+        initialProps: {
+          state: "readingState",
+          events: [] as readonly (typeof locked | typeof go)[],
+        },
+      },
+    );
+
+    rerender({ state: "readingState", events: [locked] });
+    rerender({ state: "routing", events: [locked, go] });
+
+    expect(
+      result.current.logLines.map(line => (line.line === "state" ? line.label : line.type)),
+    ).toEqual(["routing", "readingState", "CONTINUE", "LOCKED"]);
+  });
+
+  it("keeps an event in the state where it happened", () => {
+    const passed = { id: "passed", type: "GENUINE_CHECK_PASSED" as const, at: 1 };
+    const upToDate = { id: "upToDate", type: "FIRMWARE_UP_TO_DATE" as const, at: 2 };
+    const { result, rerender } = renderHook(
+      (props: { state: string; events: readonly (typeof passed | typeof upToDate)[] }) =>
+        useDeviceOnboardingViewModel(buildProps(props)),
+      {
+        initialProps: {
+          state: "checks.genuineCheck",
+          events: [] as readonly (typeof passed | typeof upToDate)[],
+        },
+      },
+    );
+
+    rerender({ state: "checks.firmwareCheck", events: [passed] });
+    rerender({ state: "checks.checksDone", events: [passed, upToDate] });
+
+    expect(
+      result.current.logLines.map(line => (line.line === "state" ? line.label : line.type)),
+    ).toEqual([
+      "checks.checksDone",
+      "checks.firmwareCheck",
+      "FIRMWARE_UP_TO_DATE",
+      "checks.genuineCheck",
+      "GENUINE_CHECK_PASSED",
+    ]);
+  });
+
+  it("reads upward: the event stays in the state where it happened", () => {
     const ready = { id: "ready", type: "SESSION_READY" as const, at: 1 };
     const go = { id: "go", type: "CONTINUE" as const, at: 2 };
     const { result, rerender } = renderHook(
@@ -270,7 +348,7 @@ describe("useDeviceOnboardingViewModel", () => {
 
     expect(
       result.current.logLines.map(line => (line.line === "state" ? line.label : line.type)),
-    ).toEqual(["checks.genuineCheck", "CONTINUE", "routing", "SESSION_READY", "readingState"]);
+    ).toEqual(["checks.genuineCheck", "routing", "CONTINUE", "readingState", "SESSION_READY"]);
   });
 
   it("falls back on the append order when several transitions share a millisecond", () => {
@@ -332,8 +410,8 @@ describe("useDeviceOnboardingViewModel", () => {
   });
 
   it("labels every offered event, so one type offered twice stays readable", () => {
-    const refused = { type: "GENUINE_CHECK_REFUSED", failure: new Error("user said no") } as const;
-    const lost = { type: "GENUINE_CHECK_REFUSED", failure: new Error("channel lost") } as const;
+    const refused = { type: "GENUINE_CHECK_REFUSED", output: new Error("user said no") } as const;
+    const lost = { type: "GENUINE_CHECK_REFUSED", output: new Error("channel lost") } as const;
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
@@ -372,17 +450,18 @@ describe("useDeviceOnboardingViewModel", () => {
     expect(new Set(result.current.sendableRows.map(row => row.key)).size).toBe(4);
   });
 
-  it("spells out the exit contract, without the device id", () => {
+  it("spells out the exit contract on the quit line, without the device id", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
-          exit: { reason: "offerLedgerSync", sessionId: "session-2", modelId: "stax" },
+          state: "exitOnboarding",
+          events: [{ id: "quit", type: "QUIT", at: 1 }],
+          exit: { reason: "userQuit", sessionId: "session-2", modelId: "stax" },
         }),
       ),
     );
 
-    expect(result.current.exitRows).toEqual([
-      { label: "reason", value: "offerLedgerSync" },
+    expect(quitPayload(result.current.logLines)).toEqual([
       { label: "sessionId", value: "session-2" },
       { label: "modelId", value: "stax" },
     ]);
@@ -391,11 +470,15 @@ describe("useDeviceOnboardingViewModel", () => {
   it("marks an exit field the host left empty instead of rendering a blank row", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
-        buildProps({ exit: { reason: "userQuit", sessionId: "", modelId: "stax" } }),
+        buildProps({
+          state: "exitOnboarding",
+          events: [{ id: "quit", type: "QUIT", at: 1 }],
+          exit: { reason: "userQuit", sessionId: "", modelId: "stax" },
+        }),
       ),
     );
 
-    expect(result.current.exitRows[1]).toEqual({ label: "sessionId", value: "—" });
+    expect(quitPayload(result.current.logLines)[0]).toEqual({ label: "sessionId", value: "—" });
   });
 
   const connected = { name: "Ledger Flex", modelId: "europa", sessionId: "s", wired: false };
