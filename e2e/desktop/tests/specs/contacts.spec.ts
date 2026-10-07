@@ -172,13 +172,12 @@ test.describe("Contacts - browse and search", () => {
 
 const CONTACTS_DEVICE_TAGS = deviceTagsWithoutLNS().filter(tag => tag !== "@Stax");
 
-function describeContactsWithAddresses(title: string, body: () => void) {
-  if (!CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()]) return;
+test.describe("Contacts - with addresses", () => {
+  test.skip(
+    !CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()],
+    "No contacts firmware is published for this device",
+  );
 
-  test.describe(title, body);
-}
-
-describeContactsWithAddresses("Contacts - with addresses", () => {
   setupSeed();
   test.afterAll(destroyTrustchain);
 
@@ -197,6 +196,8 @@ describeContactsWithAddresses("Contacts - with addresses", () => {
     ],
   });
 
+  // On-device rename leaves the Ethereum app for the dashboard, which ends this session.
+  // That path is contacts.rename.spec.ts, on the mock server.
   test(
     "Create and delete a contact with an address",
     {

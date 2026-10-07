@@ -15,6 +15,7 @@ import {
   webHidTransportIdentifier,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-desktop";
+import { getEnv } from "@shared/env";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { addNewDeviceModel } from "~/renderer/actions/settings";
@@ -109,6 +110,7 @@ export function useDeviceConnectionComponentLWDViewModel({
       ),
       dmk,
       onConnected: wrappedOnConnected,
+      mockServerTransportEnabled: getEnv("MOCK_SERVER_TRANSPORT"),
     }).subscribe({ next: handleState });
 
     return () => {

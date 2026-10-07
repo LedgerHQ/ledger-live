@@ -1,8 +1,8 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
-import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { mockserverIdentifier, webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { getSpeculosModel } from "./devices";
@@ -105,22 +105,29 @@ export function mapPersistedKnownDeviceToKnownDevice(
   return null;
 }
 
+function isMockServerDevice(device: KnownDevice): boolean {
+  return device.transport === mockserverIdentifier;
+}
+
 function upsertKnownDevice(state: KnownDevicesState, device: KnownDevice | null) {
   if (!device) return;
 
-  const existingIndex = state.knownDevices.findIndex(d => d.deviceModelId === device.deviceModelId);
-
-  if (existingIndex === -1) {
-    state.knownDevices.push(device);
+  const physicalIndex = state.knownDevices.findIndex(
+    known => known.deviceModelId === device.deviceModelId && !isMockServerDevice(known),
+  );
+  if (physicalIndex >= 0) {
+    const existing = state.knownDevices[physicalIndex];
+    state.knownDevices[physicalIndex] = {
+      ...device,
+      name: device.name ?? existing.name,
+    };
     return;
   }
 
-  const existing = state.knownDevices[existingIndex];
-  state.knownDevices[existingIndex] = {
-    ...device,
-    // Keep a previously known name when the new source does not provide one.
-    name: device.name ?? existing.name,
-  };
+  const mockServerHasModel = state.knownDevices.some(
+    known => known.deviceModelId === device.deviceModelId && isMockServerDevice(known),
+  );
+  if (!mockServerHasModel) state.knownDevices.push(device);
 }
 
 const knownDevicesSlice = createSlice({
@@ -128,6 +135,10 @@ const knownDevicesSlice = createSlice({
   initialState: INITIAL_STATE,
   reducers: {
     importKnownDevices: (_state, action: PayloadAction<KnownDevicesState>) => action.payload,
+    seedMockServerKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
+      const savedDevices = state.knownDevices.filter(device => !isMockServerDevice(device));
+      state.knownDevices = [...savedDevices, action.payload];
+    },
   },
   extraReducers: builder => {
     builder
@@ -176,7 +187,7 @@ const knownDevicesSlice = createSlice({
   },
 });
 
-export const { importKnownDevices } = knownDevicesSlice.actions;
+export const { importKnownDevices, seedMockServerKnownDevice } = knownDevicesSlice.actions;
 
 export const knownDevicesSelector = (state: State): KnownDevice[] =>
   state.knownDevices.knownDevices;
