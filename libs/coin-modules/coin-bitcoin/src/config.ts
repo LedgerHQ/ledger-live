@@ -41,6 +41,42 @@ export type BitcoinConfig = {
      */
     replacedOperationExpiryMs?: number;
   };
+  /**
+   * How the currency's transactions are built and signed by its Ledger app, read by the coin module
+   * API. Absent: a Bitcoin-format transaction, version 1, final inputs.
+   */
+  transaction?: {
+    /**
+     * Transaction version: 2 for the currencies signed by app-bitcoin-new (hw-app-btc `BtcNew`),
+     * which build version 2 transactions; 1 for every other app.
+     * @default 1
+     */
+    version?: 1 | 2;
+    /** Inputs signal replace-by-fee (BIP 125). @default false */
+    signalsRbf?: boolean;
+    /**
+     * The format carries an expiry height (Komodo, Decred): not Bitcoin serialization, which
+     * bitcoinjs-lib cannot write, so the transaction is crafted as a signing request instead of a
+     * PSBT, and hw-app-btc serializes it.
+     * @default false
+     */
+    expiryHeight?: boolean;
+    /** Previous transactions carry data after the locktime (hw-app-btc `splitTransaction`). */
+    extraData?: boolean;
+    /**
+     * The locktime is the signing time minus 777 s, which lets Komodo outputs claim their interest.
+     * @default false
+     */
+    interestLockTime?: boolean;
+    /** hw-app-btc format flags (`additionals`) beyond the currency id and address type. */
+    additionals?: string[];
+  };
+  /**
+   * The currency's address format when it is not Bitcoin's. Only `"cashaddr"` (Bitcoin Cash) changes
+   * anything: the explorer is then queried with the `bitcoincash:` form, and the Ledger app told the
+   * recipient's format. Any other value is read as Bitcoin's format.
+   */
+  addressFormat?: string;
 };
 
 export type BitcoinCoinConfig = CurrencyConfig & BitcoinConfig;
