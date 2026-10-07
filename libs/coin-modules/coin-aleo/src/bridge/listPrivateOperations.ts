@@ -27,7 +27,7 @@ export function buildConsumedRecordTags(
 
     const txTransitions = [
       ...(enriched.details.execution?.transitions ?? []),
-      enriched.details.fee.transition,
+      ...(enriched.details.fee ? [enriched.details.fee.transition] : []),
     ];
 
     const inputRecords = txTransitions.flatMap(({ inputs }) =>

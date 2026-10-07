@@ -2,12 +2,19 @@ import BigNumber from "bignumber.js";
 import { TRANSACTION_TYPE } from "../constants";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
+  getMockedBondTransition,
   getMockedEnrichedPrivateRecord,
+  getMockedFeePrivateTransition,
+  getMockedFeePublicTransition,
   getMockedPublicTransaction,
   getMockedRecord,
   getMockedRecordScannerStatus,
   getMockedTokenDetails,
   getMockedTransactionDetails,
+  mockedFeePrivateBase,
+  mockedFeePublicBase,
+  testnetBondedMicrocredits,
+  testnetBondedValidator,
 } from "../__tests__/fixtures/api.fixture";
 import { apiClient } from "../network/api";
 import {
@@ -39,6 +46,7 @@ const address = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr
 const recipient = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
 const provableId = "uuid1field";
 const viewKey = "AViewKey1test";
+const readableFee = { transition: getMockedFeePublicTransition({ payer: address }) };
 
 const run = (options: Omit<Parameters<typeof listOperations>[0]["options"], "order">) =>
   listOperations({ config, address, options: { ...options, order: "desc" }, provableId, viewKey });
@@ -57,7 +65,9 @@ beforeEach(() => {
   mockedFetchAllOwnedRecords.mockResolvedValue([]);
   mockedEnrichPrivateRecords.mockResolvedValue([]);
   mockedFetchAllTokens.mockResolvedValue([]);
-  mockedGetTransactionById.mockResolvedValue(getMockedTransactionDetails());
+  mockedGetTransactionById.mockImplementation(async (_, transactionId) =>
+    getMockedTransactionDetails(transactionId, { fee: readableFee }),
+  );
   mockedResolveTransferArguments.mockResolvedValue(null);
 });
 
@@ -210,7 +220,7 @@ describe("listOperations", () => {
       expect.objectContaining({ records: [] }),
     );
     // an owned record already reveals the counterparty, so no transition lookup is needed
-    expect(mockedGetTransactionById).not.toHaveBeenCalled();
+    expect(mockedResolveTransferArguments).not.toHaveBeenCalled();
   });
 
   it("should keep a batcher-wrapped record and leave the scanner filters off", async () => {
@@ -486,6 +496,137 @@ describe("listOperations", () => {
     expect(items.map(op => op.id)).toEqual(["at1high", "at1low"]);
   });
 
+  describe("fees", () => {
+    const unshield = getMockedPublicTransaction({
+      transaction_id: "at1unshield",
+      block_number: 500,
+      function_id: "transfer_private_to_public",
+      sender_address: "",
+      recipient_address: recipient,
+    });
+
+    const mockFeePrivateDetails = (transactionId: string) =>
+      mockedGetTransactionById.mockImplementation(async (_, id) =>
+        getMockedTransactionDetails(id, {
+          fee: id === transactionId ? { transition: getMockedFeePrivateTransition() } : readableFee,
+        }),
+      );
+
+    it("should fetch details once per public transaction and none for private-only ones", async () => {
+      mockedFetchTransitionPage.mockResolvedValue({
+        transitions: [
+          getMockedPublicTransaction({
+            transaction_id: "at1a",
+            transition_id: "au1a1",
+            block_number: 500,
+          }),
+          getMockedPublicTransaction({
+            transaction_id: "at1a",
+            transition_id: "au1a2",
+            block_number: 500,
+          }),
+          getMockedPublicTransaction({ transaction_id: "at1b", block_number: 400 }),
+        ],
+        next: null,
+      });
+      mockedFetchAllOwnedRecords.mockResolvedValue([
+        getMockedRecord({ transaction_id: "at1private", block_height: 450 }),
+      ]);
+      mockedEnrichPrivateRecords.mockResolvedValue([
+        getMockedEnrichedPrivateRecord({
+          rawRecord: { transaction_id: "at1private", block_height: 450 },
+          details: { fee: readableFee },
+        }),
+      ]);
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(mockedGetTransactionById).toHaveBeenCalledTimes(2);
+      expect(mockedGetTransactionById).toHaveBeenCalledWith(config, "at1a");
+      expect(mockedGetTransactionById).toHaveBeenCalledWith(config, "at1b");
+      expect(items.map(op => op.tx.feesPayer)).toEqual([address, address, address]);
+    });
+
+    it("should set feesPayer on a public row whose fee_private record the account owns", async () => {
+      mockedFetchTransitionPage.mockResolvedValue({ transitions: [unshield], next: null });
+      mockFeePrivateDetails("at1unshield");
+      mockedFetchAllOwnedRecords.mockResolvedValue([
+        getMockedRecord({
+          transaction_id: "at1unshield    ",
+          block_height: 500,
+          function_name: "fee_private",
+        }),
+      ]);
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(items).toEqual([
+        expect.objectContaining({
+          senders: [""],
+          tx: expect.objectContaining({ feesPayer: address, fees: mockedFeePrivateBase }),
+        }),
+      ]);
+    });
+
+    it("should set feesPayer on a private operation whose fee_private record the account owns", async () => {
+      mockedFetchAllOwnedRecords.mockResolvedValue([
+        getMockedRecord({ transaction_id: "at1private", block_height: 500 }),
+        getMockedRecord({
+          transaction_id: "at1private",
+          block_height: 500,
+          function_name: "fee_private",
+        }),
+      ]);
+      mockedEnrichPrivateRecords.mockResolvedValue([
+        getMockedEnrichedPrivateRecord({
+          rawRecord: { transaction_id: "at1private", block_height: 500 },
+          details: { id: "at1private", fee: { transition: getMockedFeePrivateTransition() } },
+        }),
+      ]);
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(items).toEqual([
+        expect.objectContaining({
+          id: "at1private",
+          tx: expect.objectContaining({ feesPayer: address }),
+        }),
+      ]);
+      expect(mockedEnrichPrivateRecords).toHaveBeenCalledWith(
+        expect.objectContaining({
+          records: [expect.objectContaining({ function_name: "transfer_public_to_private" })],
+        }),
+      );
+    });
+
+    it("should leave feesPayer unset for a fee_private record outside the page's block window", async () => {
+      mockedFetchTransitionPage.mockResolvedValue({ transitions: [unshield], next: null });
+      mockFeePrivateDetails("at1unshield");
+      mockedFetchAllOwnedRecords.mockResolvedValue([
+        getMockedRecord({
+          transaction_id: "at1unshield",
+          block_height: 950,
+          function_name: "fee_private",
+        }),
+      ]);
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(items).toEqual([
+        expect.objectContaining({
+          tx: expect.not.objectContaining({ feesPayer: expect.anything() }),
+        }),
+      ]);
+    });
+
+    it("should reject when transaction details cannot be fetched", async () => {
+      mockedFetchTransitionPage.mockResolvedValue({ transitions: [unshield], next: null });
+      mockedGetTransactionById.mockRejectedValue(new Error("explorer down"));
+
+      await expect(run({ minHeight: 0 })).rejects.toThrow("explorer down");
+    });
+  });
+
   describe("enableStaking gating", () => {
     const runWithStaking = () =>
       listOperations({
@@ -524,6 +665,29 @@ describe("listOperations", () => {
 
       expect(items).toEqual([
         expect.objectContaining({ id: "at1bond", type: "BOND" }),
+        expect.objectContaining({ id: "at1transfer" }),
+      ]);
+    });
+
+    it("should set a bond's value to its fee and put the bond in details.stake", async () => {
+      mockedGetTransactionById.mockImplementation(async (_, id) =>
+        getMockedTransactionDetails(id, {
+          fee: readableFee,
+          execution: { transitions: [getMockedBondTransition()] },
+        }),
+      );
+
+      const { items } = await runWithStaking();
+
+      expect(items).toEqual([
+        expect.objectContaining({
+          id: "at1bond",
+          value: mockedFeePublicBase,
+          details: expect.objectContaining({
+            stake: { address: testnetBondedValidator, amount: testnetBondedMicrocredits },
+          }),
+          tx: expect.objectContaining({ feesPayer: address, fees: mockedFeePublicBase }),
+        }),
         expect.objectContaining({ id: "at1transfer" }),
       ]);
     });
