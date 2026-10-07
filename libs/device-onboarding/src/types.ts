@@ -3,6 +3,7 @@ import type {
   DeviceModelId,
   DeviceSessionId,
   FirmwareUpdateContext,
+  GenuineCheckDAOutput,
 } from "@ledgerhq/device-management-kit";
 import type { DeviceOnboardingPorts } from "./ports";
 
@@ -94,13 +95,17 @@ export type OnboardingEvent =
   | { type: "EARLY_CHECK_TOGGLED" }
   | { type: "EARLY_CHECK_UNAVAILABLE" }
   | { type: "ALLOW_SECURE_CONNECTION_REQUESTED" }
-  | { type: "GENUINE_CHECK_PASSED" }
-  | { type: "GENUINE_CHECK_REFUSED"; failure: GenuineCheckFailure }
-  | { type: "GENUINE_CHECK_FAILED"; failure: GenuineCheckFailure }
-  | { type: "DEVICE_NOT_GENUINE"; failure: GenuineCheckFailure }
-  | { type: "SECURE_CHANNEL_LOST"; failure: GenuineCheckFailure }
-  | { type: "FIRMWARE_UP_TO_DATE" }
-  | { type: "FIRMWARE_UPDATE_AVAILABLE"; update: AvailableFirmwareUpdate }
+  | { type: "SECURE_CONNECTION_ALLOWED" }
+  | { type: "GENUINE_CHECK_PASSED"; output: GenuineCheckDAOutput }
+  | { type: "GENUINE_CHECK_REFUSED"; output: GenuineCheckFailure }
+  | { type: "GENUINE_CHECK_FAILED"; output: GenuineCheckFailure }
+  | { type: "DEVICE_NOT_GENUINE"; output: GenuineCheckDAOutput }
+  | { type: "SECURE_CHANNEL_LOST"; output: GenuineCheckFailure }
+  | { type: "FIRMWARE_UP_TO_DATE"; output: InstalledFirmware }
+  | {
+      type: "FIRMWARE_UPDATE_AVAILABLE";
+      output: InstalledFirmware & { update: AvailableFirmwareUpdate };
+    }
   | { type: "FIRMWARE_CHECK_FAILED" }
   | { type: "FIRMWARE_UPDATE_FLOW_CLOSED" }
   | { type: "RETRY" }
@@ -141,6 +146,12 @@ export type DeviceOnboardingInput = {
 };
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
+
+export type InstalledFirmware = {
+  os: string;
+  mcu: string;
+  bootloader: string;
+};
 
 export type DeviceOnboardingContext = DeviceOnboardingInput & {
   lastDeviceState: DeviceOnboardingState | null;

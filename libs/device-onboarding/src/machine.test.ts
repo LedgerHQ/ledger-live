@@ -1275,7 +1275,10 @@ function refusedToggle(
 }
 
 function metadata(update: AvailableFirmwareUpdate | undefined): GetDeviceMetadataDAOutput {
-  return { firmwareUpdateContext: { availableUpdate: update } } as GetDeviceMetadataDAOutput;
+  return {
+    firmwareVersion: { os: "1.4.0", mcu: "2.0.0", bootloader: "3.0.0" },
+    firmwareUpdateContext: { availableUpdate: update },
+  } as GetDeviceMetadataDAOutput;
 }
 
 const wholeReadDeviceStateBackoffMs = 1500;
