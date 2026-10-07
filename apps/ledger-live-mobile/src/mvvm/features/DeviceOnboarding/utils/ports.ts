@@ -7,13 +7,45 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 
+export type OnboardingDeviceKit = Pick<
+  DeviceManagementKit,
+  "getConnectedDevice" | "getDeviceSessionState"
+>;
+
 type CreateDeviceOnboardingPortsInput = {
-  dmk: DeviceManagementKit;
+  dmk: OnboardingDeviceKit;
   sessionId: DeviceSessionId;
   wired: boolean;
 };
 
 type MobileDmkTransport = DeviceManagementKitBLETransport | DeviceManagementKitHIDTransport;
+
+export function openOnboardingTransport(
+  dmk: OnboardingDeviceKit,
+  sessionId: DeviceSessionId,
+  wired: true,
+): DeviceManagementKitHIDTransport;
+export function openOnboardingTransport(
+  dmk: OnboardingDeviceKit,
+  sessionId: DeviceSessionId,
+  wired: false,
+): DeviceManagementKitBLETransport;
+export function openOnboardingTransport(
+  dmk: OnboardingDeviceKit,
+  sessionId: DeviceSessionId,
+  wired: boolean,
+): MobileDmkTransport;
+export function openOnboardingTransport(
+  dmk: OnboardingDeviceKit,
+  sessionId: DeviceSessionId,
+  wired: boolean,
+): MobileDmkTransport {
+  const kit = dmk as DeviceManagementKit;
+
+  return wired
+    ? new DeviceManagementKitHIDTransport(kit, sessionId)
+    : new DeviceManagementKitBLETransport(kit, sessionId);
+}
 
 export function createDeviceOnboardingPorts({
   dmk,
@@ -35,9 +67,7 @@ export function createDeviceOnboardingPorts({
       if (reusableTransport?.sessionId === sessionId) {
         heldTransport = reusableTransport;
       } else {
-        heldTransport = wired
-          ? new DeviceManagementKitHIDTransport(dmk, sessionId)
-          : new DeviceManagementKitBLETransport(dmk, sessionId);
+        heldTransport = openOnboardingTransport(dmk, sessionId, wired);
       }
 
       if (wired) {
@@ -52,7 +82,7 @@ export function createDeviceOnboardingPorts({
       }
 
       const modelId = dmk.getConnectedDevice({ sessionId }).modelId;
-      return { dmk, sessionId, deviceModelId: modelId };
+      return { dmk: dmk as DeviceManagementKit, sessionId, deviceModelId: modelId };
     },
     currentSessionId() {
       return liveTransport()?.sessionId ?? sessionId;
