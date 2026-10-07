@@ -3,41 +3,12 @@ import "./env";
 import "./live-common-setup-main";
 import "./bootstrap";
 import "./saveHandlers";
-import { app, clipboard, ipcMain, powerSaveBlocker, shell } from "electron";
+import "./systemHandlers";
 import contextMenu from "electron-context-menu";
-import updater from "./updater";
-import { openURL } from "./openURL";
 
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
 }
-
-ipcMain.on("updater", (e, type) => {
-  updater(type);
-});
-
-ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
-
-// openURL validates the scheme; do not swap it for shell.openExternal.
-ipcMain.on("shell:open-external", (_event, url: string) => openURL(url));
-
-ipcMain.handle("clipboard:matches-text", (_event, expected: string) => {
-  try {
-    return clipboard.readText() === expected;
-  } catch {
-    return null;
-  }
-});
-
-ipcMain.handle("activate-keep-screen-awake", () => {
-  return powerSaveBlocker.start("prevent-display-sleep");
-});
-
-ipcMain.handle("deactivate-keep-screen-awake", (_ev, id?: number) => {
-  if (id !== undefined && !Number.isNaN(id)) {
-    powerSaveBlocker.stop(id as number);
-  }
-});
 
 process.setMaxListeners(0);
 
