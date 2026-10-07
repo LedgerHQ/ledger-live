@@ -116,6 +116,10 @@ export async function launchSpeculos(appName: string) {
     if (failedRunId) {
       (globalThis.speculosFailedRunIds ??= new Set()).add(failedRunId);
     }
+    const mayHaveStarted = err.name === "SpeculinhoAcquireUnconfirmedError";
+    if (failedRunId && mayHaveStarted) {
+      await writeSpeculosInFile(failedRunId);
+    }
     await attachSpeculosOutputToAllure(err.message);
     const message = ["[E2E Setup] Speculos failed to start.", err.message]
       .filter(Boolean)
@@ -216,9 +220,12 @@ export async function deleteSpeculos(deviceId?: string): Promise<number | undefi
   const port = await findPortByDeviceId(deviceId);
   let stopped = false;
   try {
-    await stopSpeculos(deviceId);
-    log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
-    stopped = true;
+    stopped = await stopSpeculos(deviceId);
+    if (stopped) {
+      log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
+    } else {
+      log.warn("E2E", `Release of Speculos ${deviceId} not confirmed; keeping it for cleanup`);
+    }
   } catch (error) {
     log.error("E2E", `Failed to stop Speculos ${deviceId}: ${sanitizeError(error)}`);
   } finally {
@@ -266,16 +273,17 @@ export async function cleanupAllSpeculos(): Promise<void> {
   if (!orphans.length) return;
 
   log.warn("E2E", `Releasing ${orphans.length} orphan Speculos instance(s) from tracking file`);
-  await Promise.all(
-    orphans.map(async ({ deviceId }) => {
+  const unreleased = await Promise.all(
+    orphans.map(async orphan => {
       try {
-        await stopSpeculos(deviceId);
+        if (await stopSpeculos(orphan.deviceId)) return [];
       } catch (error) {
-        log.warn("E2E", `Orphan release failed for ${deviceId}: ${sanitizeError(error)}`);
+        log.warn("E2E", `Orphan release failed for ${orphan.deviceId}: ${sanitizeError(error)}`);
       }
+      return [orphan];
     }),
   );
-  await writeInstances([]);
+  await writeInstances(unreleased.flat());
 }
 
 export async function takeSpeculosScreenshot() {
