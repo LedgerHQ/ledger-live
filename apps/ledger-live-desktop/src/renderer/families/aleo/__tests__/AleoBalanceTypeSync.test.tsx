@@ -18,7 +18,6 @@ jest.mock("../hooks/useAleoPrivateSync", () => ({
 const mockedUseAleoPrivateSync = jest.mocked(useAleoPrivateSync);
 const mockStart = jest.fn();
 const mockOnComplete = jest.fn();
-const mockOnCancel = jest.fn();
 
 const account = ALEO_MAIN_ACCOUNT;
 
@@ -54,7 +53,6 @@ function renderSync(transaction: Transaction, syncedAccount: AleoAccount = accou
           account={syncedAccount}
           transaction={transaction}
           onComplete={mockOnComplete}
-          onCancel={mockOnCancel}
         />
       </DialogContent>
     </Dialog>,
@@ -85,6 +83,7 @@ describe("AleoBalanceTypeSync", () => {
     expect(screen.getByText("Refreshing your private balance")).toBeVisible();
     expect(screen.getByText("This can take up to a minute")).toBeVisible();
     expect(screen.getByText("42% synced")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Cancel" })).toBeNull();
     expect(mockOnComplete).not.toHaveBeenCalled();
   });
 
@@ -94,16 +93,6 @@ describe("AleoBalanceTypeSync", () => {
     renderSync(privateTransaction);
 
     expect(mockOnComplete).toHaveBeenCalledTimes(1);
-  });
-
-  it("goes back to the balance choice when the sync is cancelled", async () => {
-    mockSync({ progress: 10, isSyncing: true });
-
-    const { user } = renderSync(privateTransaction);
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
-
-    expect(mockOnCancel).toHaveBeenCalled();
-    expect(mockOnComplete).not.toHaveBeenCalled();
   });
 
   it("offers a retry when the sync fails", async () => {

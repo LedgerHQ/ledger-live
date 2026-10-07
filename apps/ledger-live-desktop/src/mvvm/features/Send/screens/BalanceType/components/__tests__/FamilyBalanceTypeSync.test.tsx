@@ -19,7 +19,6 @@ const mockedUseLLDCoinFamily = jest.mocked(useLLDCoinFamily);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 
 const mockOnComplete = jest.fn();
-const mockOnCancel = jest.fn();
 
 const account = { id: "acc-1", type: "Account", currency: { family: "aleo" } };
 const transaction = { family: "aleo", mode: "transfer_private" };
@@ -34,7 +33,7 @@ function mockState() {
 }
 
 function renderSync() {
-  return render(<FamilyBalanceTypeSync onComplete={mockOnComplete} onCancel={mockOnCancel} />);
+  return render(<FamilyBalanceTypeSync onComplete={mockOnComplete} />);
 }
 
 beforeEach(() => jest.clearAllMocks());
@@ -53,7 +52,6 @@ describe("FamilyBalanceTypeSync", () => {
         account,
         transaction,
         onComplete: mockOnComplete,
-        onCancel: mockOnCancel,
       }),
       undefined,
     );

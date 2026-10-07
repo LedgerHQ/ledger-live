@@ -26,7 +26,7 @@ function mockViewModel(isPending: boolean) {
     selectedOptionId: null,
     options: [],
     onSelect: jest.fn(),
-    sync: { isPending, onComplete: jest.fn(), onCancel: jest.fn() },
+    sync: { isPending, onComplete: jest.fn() },
   });
 }
 

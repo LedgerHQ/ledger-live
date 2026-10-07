@@ -44,7 +44,7 @@ function readyViewModel(
     selectedOptionId: null,
     options: [PUBLIC_OPTION, PRIVATE_OPTION],
     onSelect: jest.fn(),
-    sync: { isPending: false, onComplete: jest.fn(), onCancel: jest.fn() },
+    sync: { isPending: false, onComplete: jest.fn() },
     ...overrides,
   };
 }

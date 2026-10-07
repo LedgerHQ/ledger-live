@@ -340,16 +340,6 @@ describe("useBalanceTypeScreenViewModel", () => {
       expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
       expect(readySync(ref).sync.isPending).toBe(false);
     });
-
-    test("stays on the balance-type step when the family sync is cancelled", () => {
-      const ref = renderViewModelRef();
-
-      act(() => readySync(ref).onSelect("private"));
-      act(() => readySync(ref).sync.onCancel());
-
-      expect(mockGoToStep).not.toHaveBeenCalled();
-      expect(readySync(ref).sync.isPending).toBe(false);
-    });
   });
 
   describe("page tracking", () => {

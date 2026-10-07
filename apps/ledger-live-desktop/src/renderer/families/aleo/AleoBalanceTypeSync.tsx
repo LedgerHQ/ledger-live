@@ -9,12 +9,11 @@ type Props = Readonly<{
   account: AleoAccount;
   transaction: Transaction;
   onComplete: () => void;
-  onCancel: () => void;
 }>;
 
 type PrivateSyncProgressProps = Omit<Props, "transaction">;
 
-function PrivateSyncProgress({ account, onComplete, onCancel }: PrivateSyncProgressProps) {
+function PrivateSyncProgress({ account, onComplete }: PrivateSyncProgressProps) {
   const { t } = useTranslation();
   const { progress, isSyncing, error, start } = useAleoPrivateSync({
     account,
@@ -33,7 +32,7 @@ function PrivateSyncProgress({ account, onComplete, onCancel }: PrivateSyncProgr
   return (
     <>
       <DialogBody
-        className="flex flex-col items-center gap-16 py-24 text-center"
+        className="flex flex-col items-center gap-16 pt-48 pb-64 text-center"
         data-testid="aleo-private-sync"
       >
         <Spot appearance={error ? "error" : "loader"} size={48} />
@@ -63,16 +62,13 @@ function PrivateSyncProgress({ account, onComplete, onCancel }: PrivateSyncProgr
           </div>
         )}
       </DialogBody>
-      <DialogFooter className="flex flex-col gap-8">
-        {error ? (
+      {error ? (
+        <DialogFooter>
           <Button appearance="base" size="lg" isFull onClick={start}>
             {t("common.retry")}
           </Button>
-        ) : null}
-        <Button appearance="gray" size="lg" isFull onClick={onCancel}>
-          {t("common.cancel")}
-        </Button>
-      </DialogFooter>
+        </DialogFooter>
+      ) : null}
     </>
   );
 }
@@ -84,17 +80,10 @@ function SkipSync({ onComplete }: Readonly<{ onComplete: () => void }>) {
   return null;
 }
 
-export function AleoBalanceTypeSync({ account, transaction, onComplete, onCancel }: Props) {
+export function AleoBalanceTypeSync({ account, transaction, onComplete }: Props) {
   if (transaction.family !== "aleo" || !isPrivateTransaction(transaction)) {
     return <SkipSync onComplete={onComplete} />;
   }
 
-  return (
-    <PrivateSyncProgress
-      key={account.id}
-      account={account}
-      onComplete={onComplete}
-      onCancel={onCancel}
-    />
-  );
+  return <PrivateSyncProgress key={account.id} account={account} onComplete={onComplete} />;
 }

@@ -5,10 +5,9 @@ import { useLLDCoinFamily } from "~/renderer/families";
 
 type FamilyBalanceTypeSyncProps = Readonly<{
   onComplete: () => void;
-  onCancel: () => void;
 }>;
 
-export function FamilyBalanceTypeSync({ onComplete, onCancel }: FamilyBalanceTypeSyncProps) {
+export function FamilyBalanceTypeSync({ onComplete }: FamilyBalanceTypeSyncProps) {
   const { state } = useSendFlowData();
   const accountLike = state.account.account;
   const parentAccount = state.account.parentAccount;
@@ -19,11 +18,6 @@ export function FamilyBalanceTypeSync({ onComplete, onCancel }: FamilyBalanceTyp
   if (!SendBalanceTypeSync || !mainAccount || !transaction) return null;
 
   return (
-    <SendBalanceTypeSync
-      account={mainAccount}
-      transaction={transaction}
-      onComplete={onComplete}
-      onCancel={onCancel}
-    />
+    <SendBalanceTypeSync account={mainAccount} transaction={transaction} onComplete={onComplete} />
   );
 }

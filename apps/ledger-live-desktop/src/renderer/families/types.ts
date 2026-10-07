@@ -434,14 +434,12 @@ export type LLDCoinFamily<
    * Rendered once the user picks a balance pool on the new send flow's balance-type
    * step, before the recipient step (e.g. Aleo refreshes its private records when the
    * private balance is picked). The flow moves on only when `onComplete` is called,
-   * so a family with nothing to do for the picked pool calls it straight away;
-   * `onCancel` keeps the user on the balance-type step.
+   * so a family with nothing to do for the picked pool calls it straight away.
    */
   SendBalanceTypeSync?: React.ComponentType<{
     account: A;
     transaction: T;
     onComplete: () => void;
-    onCancel: () => void;
   }>;
 
   /**

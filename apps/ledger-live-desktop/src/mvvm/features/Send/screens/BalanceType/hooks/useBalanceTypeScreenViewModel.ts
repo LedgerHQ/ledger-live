@@ -46,7 +46,6 @@ export type BalanceTypeScreenViewModel =
       sync: Readonly<{
         isPending: boolean;
         onComplete: () => void;
-        onCancel: () => void;
       }>;
     };
 
@@ -135,8 +134,6 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
   }, [navigation]);
 
-  const onSyncCancel = useCallback(() => setIsSyncPending(false), []);
-
   if (!account || !transaction || !bridge || !balanceTypeConfig) {
     return { ready: false };
   }
@@ -179,7 +176,6 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     sync: {
       isPending: isSyncPending,
       onComplete: onSyncComplete,
-      onCancel: onSyncCancel,
     },
   };
 }
