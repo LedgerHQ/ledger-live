@@ -16,12 +16,17 @@ export function useSwiper<T>(
   const cards = useCardRotation(cardIndex, initialCards);
   const canSwipeAway = initialCards.length > 1;
 
-  const handleSwipeComplete = useCallback(() => {
-    const nextIndex = (cardIndex + 1) % initialCards.length;
-    setCardIndex(nextIndex);
-    activeIndex.value = nextIndex;
-    onIndexChange(nextIndex);
-  }, [cardIndex, initialCards.length, onIndexChange, activeIndex]);
+  const moveBy = useCallback(
+    (step: 1 | -1) => {
+      const length = initialCards.length;
+      const nextIndex = (cardIndex + step + length) % length;
+      setCardIndex(nextIndex);
+      activeIndex.value = nextIndex;
+      onIndexChange(nextIndex);
+    },
+    [cardIndex, initialCards.length, onIndexChange, activeIndex],
+  );
+  const handleSwipeComplete = useCallback(() => moveBy(1), [moveBy]);
 
   // RN New Arch requires animation values to be reset after React commits the cardIndex change and re-renders
   // This ensures the cards array (from useCardRotation) reflects the new order
@@ -33,5 +38,11 @@ export function useSwiper<T>(
 
   const gesture = createGesture(swipeX, swipeY, handleSwipeComplete, canSwipeAway);
 
-  return { cards, gesture, swipeX, swipeY };
+  return {
+    cards,
+    gesture,
+    swipeX,
+    swipeY,
+    moveBy: canSwipeAway ? moveBy : undefined,
+  };
 }

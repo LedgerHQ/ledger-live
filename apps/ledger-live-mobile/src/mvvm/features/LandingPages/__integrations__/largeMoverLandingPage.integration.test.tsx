@@ -1,4 +1,4 @@
-import { renderWithReactQuery, screen } from "@tests/test-renderer";
+import { fireEvent, renderWithReactQuery, screen } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
 import React from "react";
 import { ScreenName } from "~/const";
@@ -10,8 +10,6 @@ import {
 import { RouteProp } from "@react-navigation/core";
 import * as navigationModule from "@react-navigation/native";
 import { mockNavigation } from "../screens/LargeMoverLandingPage/fixtures/navigation";
-import { PanGesture, State as GestureState } from "react-native-gesture-handler";
-import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { MockedLargeMoverLandingPage } from "./shared";
 import { mappingServiceHandlers } from "../__tests__/mappingServiceHandlers";
 import { i18n } from "~/context/Locale";
@@ -67,6 +65,11 @@ const bitcoinMarket = (overrides: Record<string, unknown> = {}) => [
     ...overrides,
   },
 ];
+
+const adjustCoin = (name: string, actionName: "increment" | "decrement") =>
+  fireEvent(screen.getByRole("adjustable", { name }), "accessibilityAction", {
+    nativeEvent: { actionName },
+  });
 
 describe("LargeMoverLandingPage Integration Tests", () => {
   beforeEach(() => {
@@ -139,7 +142,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     const multiCurrencyRoute = {
       ...mockRoute,
       params: {
-        ledgerIds: "bitcoin,ethereum",
+        ledgerIds: "bitcoin,ethereum,solana",
         initialRange: InitialRange.Day,
       },
     };
@@ -165,17 +168,18 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     );
 
     expect(await screen.findByText("BTC")).toBeOnTheScreen();
+    expect(screen.queryByText("ETH")).toBeNull();
 
-    const panGesture = getByGestureTestId("pan");
-    fireGestureHandler<PanGesture>(panGesture, [
-      { state: GestureState.BEGAN, translationX: 0 },
-      { state: GestureState.ACTIVE, translationX: 10 },
-      { translationX: 100 },
-      { translationX: 200 },
-      { state: GestureState.END, translationX: 300, velocityX: 500 },
-    ]);
+    expect(screen.getByRole("adjustable")).toHaveAccessibilityValue({ text: "1 of 3" });
 
+    adjustCoin("Bitcoin", "increment");
     expect(await screen.findByText("ETH")).toBeOnTheScreen();
+    expect(screen.queryByText("BTC")).toBeNull();
+    expect(screen.getByRole("adjustable")).toHaveAccessibilityValue({ text: "2 of 3" });
+
+    adjustCoin("Ethereum", "decrement");
+    expect(await screen.findByText("BTC")).toBeOnTheScreen();
+    expect(screen.queryByText("ETH")).toBeNull();
   });
 
   it("handles time range changes via Card component", async () => {
@@ -397,5 +401,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     );
 
     expect(await screen.findByText("USDC")).toBeOnTheScreen();
+    // A single coin has no next card to show.
+    expect(screen.queryByRole("adjustable")).toBeNull();
   });
 });

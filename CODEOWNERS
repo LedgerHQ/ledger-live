@@ -506,6 +506,8 @@ apps/ledger-live-mobile/src/mvvm/features/PostOnboardingHubDrawer/              
 apps/ledger-live-mobile/src/mvvm/features/DynamicContent/                                      @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/contexts/InViewContext/                                       @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LandingPages/                                        @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/components/Swiper/                                        @ledgerhq/engagement
+apps/ledger-live-mobile/src/screens/Settings/Debug/Features/SwiperScreenDebug/              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/NotificationsPrompt/                                 @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsentDrawer/                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/ProductTour/                                         @ledgerhq/engagement
@@ -540,6 +542,7 @@ apps/ledger-live-mobile/src/navigation/deeplinks/handleBackupHubDeeplink.ts     
 apps/ledger-live-mobile/src/navigation/deeplinks/__tests__/handleBackupHubDeeplink.test.ts     @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/dynamicContent.ts                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
+apps/ledger-live-mobile/src/actions/largeMoverLandingPage.ts                                   @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/Settings/AnalyticsPreferencesSettings/                     @ledgerhq/engagement
 
 ## Libs
