@@ -30,7 +30,7 @@ import {
   HEADERS_MANIFEST_NOCACHE,
 } from "./manifests/headerSniffer";
 import { ScrollView } from "react-native-gesture-handler";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { readClipboard } from "@shared/clipboard";
 
 const DebuggerButton: React.ComponentType<{
   onPress: TouchableOpacityProps["onPress"];
@@ -123,7 +123,7 @@ export default function CustomManifest({ navigation }: Props) {
         <Box flexDirection="row" alignItems="center">
           <PasteButton
             onPress={async () => {
-              const text = await Clipboard.getString();
+              const text = await readClipboard();
 
               setManifest(text);
             }}

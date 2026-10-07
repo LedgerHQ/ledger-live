@@ -32,7 +32,7 @@ import byFamilyTokenAlert from "../../generated/ReceiveConfirmationTokenAlert";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -210,9 +210,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   }, [freshAccountAddress]);
 
   const onCopyAddress = useCallback(
-    (eventName: string) => {
+    async (eventName: string) => {
       if (!freshAccountAddress) return;
-      Clipboard.setString(freshAccountAddress);
+      if (!(await copyToClipboard(freshAccountAddress))) return;
       setCopied(true);
       track("button_clicked", {
         button: eventName,

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { View } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RequestReceiveProps } from "@features/flow-pay-request";
@@ -45,8 +45,8 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const mainAccount = account?.type === "Account" ? account : undefined;
   const tokenCurrency = currency.type === "TokenCurrency" ? currency : undefined;
 
-  const onCopy = useCallback((address: string) => {
-    Clipboard.setString(address);
+  const onCopy = useCallback(async (address: string) => {
+    await copyToClipboard(address);
   }, []);
 
   const onShare = useCallback(async (address: string) => {

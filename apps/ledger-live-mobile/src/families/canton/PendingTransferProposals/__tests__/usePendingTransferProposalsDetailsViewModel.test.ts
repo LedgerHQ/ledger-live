@@ -2,8 +2,8 @@ import { act, renderHook } from "@tests/test-renderer";
 import { usePendingTransferProposalsDetailsViewModel } from "../usePendingTransferProposalsDetailsViewModel";
 import { createCantonAccount, createProcessedProposal } from "./test-utils";
 
-jest.mock("@react-native-clipboard/clipboard", () => ({
-  setString: jest.fn(),
+jest.mock("@shared/clipboard", () => ({
+  copyToClipboard: jest.fn().mockResolvedValue(true),
 }));
 
 describe("usePendingTransferProposalsDetailsViewModel", () => {

@@ -1,5 +1,5 @@
 import React from "react";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import { Pressable, Text } from "react-native";
 import type { RouteProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -33,6 +33,10 @@ import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { mockEthCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 
 const mockHandleOpenSendFlow = jest.fn();
+jest.mock("@shared/clipboard", () => ({
+  copyToClipboard: jest.fn().mockResolvedValue(true),
+}));
+
 jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
   useOpenSendFlow: () => ({ handleOpenSendFlow: mockHandleOpenSendFlow }),
 }));
@@ -1113,7 +1117,6 @@ describe("Contacts integration", () => {
   });
 
   it("should copy the address from the detail sheet", async () => {
-    const setString = jest.spyOn(Clipboard, "setString");
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(
         { lwmContacts: { enabled: true, params: { newBadge: false } } },
@@ -1127,7 +1130,7 @@ describe("Contacts integration", () => {
     await user.press(await screen.findByTestId("contacts-address-detail-copy"));
 
     await waitFor(() => {
-      expect(setString).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
+      expect(copyToClipboard).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
       expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copied");
     });
   });

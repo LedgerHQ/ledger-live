@@ -1,10 +1,12 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { CardTransactionDetail } from "./CardTransactionDetail";
 import { CATEGORY_LABELS, DETAIL_COPY, cardApiWrapper } from "../../../__tests__/cardApiStore";
+
+jest.mock("@shared/clipboard");
 
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
 const CASHBACK = `${transaction.cashback?.amount} ${transaction.cashback?.currency}`;
@@ -40,6 +42,6 @@ describe("CardTransactionDetail (native)", () => {
 
     await user.press(screen.getByTestId("card-transaction-detail-copy"));
 
-    expect(Clipboard.setString).toHaveBeenCalledWith(transaction.transactionId);
+    expect(copyToClipboard).toHaveBeenCalledWith(transaction.transactionId);
   });
 });

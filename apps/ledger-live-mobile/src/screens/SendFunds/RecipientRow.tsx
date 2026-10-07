@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { Platform, StyleSheet, View } from "react-native";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { readClipboard } from "@shared/clipboard";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";
@@ -22,10 +22,8 @@ const RecipientRow = ({
   warning,
   error,
 }: Props) => {
-  const onPaste = useCallback(() => {
-    Clipboard.getString().then(text => {
-      onChangeText(text);
-    });
+  const onPaste = useCallback(async () => {
+    onChangeText(await readClipboard());
   }, [onChangeText]);
 
   return (

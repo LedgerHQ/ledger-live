@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { copyToClipboard } from "@shared/clipboard";
 import SettingsRow from "~/components/SettingsRow";
 import { useSelector } from "~/context/hooks";
 import { userIdSelector } from "@domain/entity-client-identity";
@@ -9,8 +9,8 @@ const EquipmentIdRow = () => {
   const segmentId = userId.exportUserIdForUserLogs();
   const [copied, setCopied] = useState(false);
 
-  const copyEquipmentIdToClipboard = useCallback(() => {
-    Clipboard.setString(segmentId);
+  const copyEquipmentIdToClipboard = useCallback(async () => {
+    if (!(await copyToClipboard(segmentId))) return;
     setCopied(true);
     setTimeout(() => {
       setCopied(false);

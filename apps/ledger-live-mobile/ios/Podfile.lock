@@ -161,6 +161,8 @@ PODS:
     - Yoga
   - ExpoAsset (12.0.13):
     - ExpoModulesCore
+  - ExpoClipboard (8.0.8):
+    - ExpoModulesCore
   - ExpoCrypto (15.0.8):
     - ExpoModulesCore
   - ExpoDocumentPicker (13.1.6):
@@ -3190,34 +3192,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNCClipboard (1.16.2):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
   - RNCMaskedView (0.2.9):
     - React-Core
   - RNDeviceInfo (11.1.0):
@@ -3657,6 +3631,7 @@ DEPENDENCIES:
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo@54.0.33_@babel+cor_cc53099aed163b8b7d20b8b1bf820ada/node_modules/expo-image-loader/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@54.0.33_@babel+core@7.28.5_@typescript+typ_dffc45b7ed884dcc174eec5578e59c7c/node_modules/expo`)"
   - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@12.0.13_94a4e1045f9065fe9a30eecd0adeb781/node_modules/expo-asset/ios`)"
+  - "ExpoClipboard (from `../../../node_modules/.pnpm/expo-clipboard@8.0.8_fa95938c36eaba3b60d933a0084e355e/node_modules/expo-clipboard/ios`)"
   - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@15.0.8_expo@54.0.33_@babel+core@7.2_efd4049b1b8847c0e6cdd3ce6bf71922/node_modules/expo-crypto/ios`)"
   - "ExpoDocumentPicker (from `../../../node_modules/.pnpm/expo-document-picker@13.1.6_expo@54.0.33_@babel_495af88577aac6b42c7fd20cf01df0e0/node_modules/expo-document-picker/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@19.0.21_26e20d2da1658e2310f07fd70e138799/node_modules/expo-file-system/ios`)"
@@ -3763,7 +3738,6 @@ DEPENDENCIES:
   - "ReactCommon/turbomodule/core (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/ReactCommon`)"
   - "ReactNativeBlur (from `../../../node_modules/.pnpm/@sbaiahmed1+react-native-blur@4.5.5_react-nativ_62afdfdc440319d53408caa2d659faf6/node_modules/@sbaiahmed1/react-native-blur`)"
   - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.1.2_b6029753ecab224c4fafd2e86df4eee6/node_modules/@react-native-async-storage/async-storage`)"
-  - "RNCClipboard (from `../../../node_modules/.pnpm/@react-native-clipboard+clipboard@1.16.2_react-_017f6a06a10162158d616e891ba65d49/node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_3b78009e1f9d2af9ad4d0bd2f05485dd/node_modules/@react-native-masked-view/masked-view`)"
   - "RNDeviceInfo (from `../../../node_modules/.pnpm/react-native-device-info@11.1.0_react-native@0._be2f8c62d56b00e93478596f3f83fbee/node_modules/react-native-device-info`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_a4be0afd73d5d48df377f7bc612dd469/node_modules/react-native-fast-image`)"
@@ -3846,6 +3820,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo@54.0.33_@babel+core@7.28.5_@typescript+typ_dffc45b7ed884dcc174eec5578e59c7c/node_modules/expo"
   ExpoAsset:
     :path: "../../../node_modules/.pnpm/expo-asset@12.0.13_94a4e1045f9065fe9a30eecd0adeb781/node_modules/expo-asset/ios"
+  ExpoClipboard:
+    :path: "../../../node_modules/.pnpm/expo-clipboard@8.0.8_fa95938c36eaba3b60d933a0084e355e/node_modules/expo-clipboard/ios"
   ExpoCrypto:
     :path: "../../../node_modules/.pnpm/expo-crypto@15.0.8_expo@54.0.33_@babel+core@7.2_efd4049b1b8847c0e6cdd3ce6bf71922/node_modules/expo-crypto/ios"
   ExpoDocumentPicker:
@@ -4057,8 +4033,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/@sbaiahmed1+react-native-blur@4.5.5_react-nativ_62afdfdc440319d53408caa2d659faf6/node_modules/@sbaiahmed1/react-native-blur"
   RNCAsyncStorage:
     :path: "../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.1.2_b6029753ecab224c4fafd2e86df4eee6/node_modules/@react-native-async-storage/async-storage"
-  RNCClipboard:
-    :path: "../../../node_modules/.pnpm/@react-native-clipboard+clipboard@1.16.2_react-_017f6a06a10162158d616e891ba65d49/node_modules/@react-native-clipboard/clipboard"
   RNCMaskedView:
     :path: "../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_3b78009e1f9d2af9ad4d0bd2f05485dd/node_modules/@react-native-masked-view/masked-view"
   RNDeviceInfo:
@@ -4119,6 +4093,7 @@ SPEC CHECKSUMS:
   EXImageLoader: 189e3476581efe3ad4d1d3fb4735b7179eb26f05
   Expo: ec20d60a9ba93352323b8f773c0e59bc7aa1c492
   ExpoAsset: 9e5a7c9c0a9fb83ad5b2bb365141f2bd7f289b66
+  ExpoClipboard: b36b287d8356887844bb08ed5c84b5979bb4dd1e
   ExpoCrypto: b6105ebaa15d6b38a811e71e43b52cd934945322
   ExpoDocumentPicker: b263a279685b6640b8c8bc70d71c83067aeaae55
   ExpoFileSystem: 858a44267a3e6e9057e0888ad7c7cfbf55d52063
@@ -4245,7 +4220,6 @@ SPEC CHECKSUMS:
   ReactCommon: 66eb46e6696f1f4816b250ab2807389018bacd78
   ReactNativeBlur: c9fb0b7d56e1899dabe6d6d980be597f533645f6
   RNCAsyncStorage: 19f80a583d24bf587a07e8fe0b7be7e278bc204a
-  RNCClipboard: e2848f1c094a2609237d54b68d5d0a25cdbc6575
   RNCMaskedView: 4b5b12efdee55966f1d68f32d4b3401c2acf05c2
   RNDeviceInfo: 900bd20e1fd3bfd894e7384cc4a83880c0341bd3
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87

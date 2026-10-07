@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
-import Clipboard from "@react-native-clipboard/clipboard";
+import { readClipboard } from "@shared/clipboard";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -7,9 +7,8 @@ import { AppState } from "react-native";
 import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
 
-jest.mock("@react-native-clipboard/clipboard", () => ({
-  __esModule: true,
-  default: { getString: jest.fn() },
+jest.mock("@shared/clipboard", () => ({
+  readClipboard: jest.fn(),
 }));
 
 jest.mock("@react-navigation/native", () => ({
@@ -22,7 +21,7 @@ jest.mock("@react-navigation/native", () => ({
 jest.mock("../useAddressValidation");
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState");
 
-const mockedGetString = jest.mocked(Clipboard.getString);
+const mockedReadClipboard = jest.mocked(readClipboard);
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseRecipientSearchState = jest.mocked(useRecipientSearchState);
 const removeAppStateListener = jest.fn();
@@ -63,7 +62,7 @@ describe("useClipboardRecipient", () => {
   });
 
   it("exposes the clipboard content when it is a valid recipient", async () => {
-    mockedGetString.mockResolvedValue("0x1234567890abcdef");
+    mockedReadClipboard.mockResolvedValue("0x1234567890abcdef");
 
     const { result } = renderClipboardRecipient();
 
@@ -73,21 +72,21 @@ describe("useClipboardRecipient", () => {
   });
 
   it("returns null when the clipboard content is not a valid recipient format", async () => {
-    mockedGetString.mockResolvedValue("0x1234567890abcdef");
+    mockedReadClipboard.mockResolvedValue("0x1234567890abcdef");
     setSearchState(false);
 
     const { result } = renderClipboardRecipient();
 
-    await waitFor(() => expect(mockedGetString).toHaveBeenCalled());
+    await waitFor(() => expect(mockedReadClipboard).toHaveBeenCalled());
     expect(result.current.clipboardAddress).toBeNull();
   });
 
   it("ignores clipboard content that is clearly not a recipient (contains whitespace)", async () => {
-    mockedGetString.mockResolvedValue("some random copied text");
+    mockedReadClipboard.mockResolvedValue("some random copied text");
 
     const { result } = renderClipboardRecipient();
 
-    await waitFor(() => expect(mockedGetString).toHaveBeenCalled());
+    await waitFor(() => expect(mockedReadClipboard).toHaveBeenCalled());
     expect(result.current.clipboardAddress).toBeNull();
     // bridge validation should not even be run on the prose candidate
     expect(mockedUseAddressValidation).toHaveBeenLastCalledWith(
@@ -96,13 +95,13 @@ describe("useClipboardRecipient", () => {
   });
 
   it("does not read the clipboard when disabled", async () => {
-    mockedGetString.mockResolvedValue("0x1234567890abcdef");
+    mockedReadClipboard.mockResolvedValue("0x1234567890abcdef");
 
     const { result } = renderClipboardRecipient(false);
 
     await waitFor(() => {
       expect(result.current.clipboardAddress).toBeNull();
     });
-    expect(mockedGetString).not.toHaveBeenCalled();
+    expect(mockedReadClipboard).not.toHaveBeenCalled();
   });
 });
