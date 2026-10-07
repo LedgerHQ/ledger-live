@@ -243,3 +243,24 @@ export function runPayFreezeTest(tmsLinks: string[], tags: string[]) {
     });
   });
 }
+
+export function runPayCardHistoryTest(tmsLinks: string[], tags: string[]) {
+  describe("Pay tab", () => {
+    beforeAll(async () => {
+      await initPayTabApp();
+    });
+
+    setTeamOwner(Team.WALLET_XP);
+    tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
+
+    it("Open a card transaction from history", async () => {
+      await app.mainNavigation.tapTopBarTransactionHistory();
+      await app.operation.expectCryptoHistoryTab();
+      await app.operation.expectCardHistoryTab();
+      await app.operation.openCardHistoryTab();
+      await app.operation.openFirstCardTransaction();
+      await app.operation.expectCardTransactionDetail();
+    });
+  });
+}
