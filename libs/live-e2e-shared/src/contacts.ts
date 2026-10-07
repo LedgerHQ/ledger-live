@@ -99,16 +99,16 @@ export function createSeededContactsDocument(
   };
 }
 
-// Contacts intents need Ethereum 1.23.0. The catalog is still on 1.22.x, so runs pin
-// coin-apps' 1.23.0-dev and the rc3 OS the contacts kit targets. rc2's 1.23.0-dev
-// rejects address registration with 6a80. Stax rc stops at 1.19.3. Nano S is unsupported.
-export const CONTACTS_ETHEREUM_APP_VERSION = "1.23.0-dev";
+// Contacts intents need Ethereum 1.23.0. That build ships on the production OS.
+// The rc folders only have 1.23.0-dev, and rc2's dev app rejects address registration
+// with 6a80. Stax stops at 1.19.3. Nano S is unsupported.
+export const CONTACTS_ETHEREUM_APP_VERSION = "1.23.0";
 
 export const CONTACTS_OS_VERSION_BY_MODEL: Partial<Record<DeviceModelId, string>> = {
-  [DeviceModelId.nanoSP]: "1.7.0-rc3",
-  [DeviceModelId.nanoX]: "2.8.0-rc3",
-  [DeviceModelId.europa]: "1.7.0-rc3",
-  [DeviceModelId.apex]: "1.2.0-rc3",
+  [DeviceModelId.nanoSP]: "1.7.0",
+  [DeviceModelId.nanoX]: "2.8.0",
+  [DeviceModelId.europa]: "1.7.0",
+  [DeviceModelId.apex]: "1.2.0",
 };
 
 export type ContactAddressTestData = Readonly<{
