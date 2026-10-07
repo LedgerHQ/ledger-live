@@ -127,6 +127,29 @@ describe("DeviceOnboarding", () => {
     expect(screen.getByText("pin")).toBeTruthy();
   });
 
+  it("lists the payload when the event line is opened", () => {
+    render(
+      <DeviceOnboarding
+        {...buildProps({
+          state: "readingState",
+          events: [
+            {
+              id: "read",
+              type: "DEVICE_STATE_READ",
+              at: 1,
+              payload: { firmwareVersion: "1.7.0", state: { seedWordIndex: 2 } },
+            },
+          ],
+        })}
+      />,
+    );
+
+    expect(screen.queryByText("state.seedWordIndex")).toBeNull();
+    fireEvent.press(screen.getByText("DEVICE_STATE_READ"));
+    expect(screen.getByText("state.seedWordIndex")).toBeTruthy();
+    expect(screen.getByText("2")).toBeTruthy();
+  });
+
   it("surfaces a host error", () => {
     render(<DeviceOnboarding {...buildProps({ error: "Bluetooth is off" })} />);
 

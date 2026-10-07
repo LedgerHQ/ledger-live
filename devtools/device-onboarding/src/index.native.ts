@@ -1,12 +1,13 @@
 import DeviceOnboarding from "./device-onboarding/DeviceOnboarding";
-export { watchedContextFields } from "./types";
+export { DeviceOnboardingStatus, watchedContextFields } from "./types";
 export type {
-  DeviceOnboardingStatus,
+  DeviceOnboardingNextState,
   DeviceOnboardingToolContext,
   DeviceOnboardingToolDetail,
   DeviceOnboardingToolDevice,
   DeviceOnboardingToolEvent,
   DeviceOnboardingToolExit,
+  DeviceOnboardingToolPayload,
   DeviceOnboardingToolProps,
   DeviceOnboardingWatchedField,
   SendableOnboardingEvent,

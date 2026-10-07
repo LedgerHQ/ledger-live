@@ -4,7 +4,15 @@ import type {
   OnboardingStep,
 } from "@ledgerhq/device-onboarding";
 
-export type DeviceOnboardingStatus = "idle" | "connecting" | "running" | "exited";
+export const DeviceOnboardingStatus = {
+  Idle: "idle",
+  Connecting: "connecting",
+  Running: "running",
+  Exited: "exited",
+} as const;
+
+export type DeviceOnboardingStatus =
+  (typeof DeviceOnboardingStatus)[keyof typeof DeviceOnboardingStatus];
 
 export interface DeviceOnboardingToolDevice {
   readonly name: string;
@@ -29,6 +37,13 @@ export type DeviceOnboardingToolDetail =
   | { readonly kind: "firmware"; readonly version: string }
   | { readonly kind: "session"; readonly sessionId: string };
 
+export type DeviceOnboardingToolPayload =
+  | string
+  | number
+  | boolean
+  | null
+  | { readonly [key: string]: DeviceOnboardingToolPayload };
+
 export interface DeviceOnboardingToolEvent {
   /** Unique across the run: the view keys on it. */
   readonly id: string;
@@ -36,6 +51,14 @@ export interface DeviceOnboardingToolEvent {
   /** Epoch milliseconds. */
   readonly at: number;
   readonly detail?: DeviceOnboardingToolDetail;
+  /** Plain fields of the event. The screen lists them when the line is opened. */
+  readonly payload?: DeviceOnboardingToolPayload;
+}
+
+/** A state this step can reach. `auto` means the machine may move there with no event. */
+export interface DeviceOnboardingNextState {
+  readonly event: string;
+  readonly state: string;
 }
 
 /** Whole rather than by type: `snapshot.can` needs the payload, and the machine dereferences it. */
@@ -45,13 +68,8 @@ export interface SendableOnboardingEvent {
 }
 
 /**
- * What the panel prints, in display order. Closed, so a host cannot put seed progress on a screen
- * that runs during seed entry — see the README for the rest of the boundary.
- *
- * A host flattens the machine onto these names. The device-state three come from `lastDeviceState`;
- * `availableFirmwareVersion` from `availableFirmwareUpdate.final.version`; `isGenuine` and
- * `verdictMatchesSession` from the raw `genuineVerdict`; `genuineFailureKind` from
- * `lastGenuineFailure.kind`. The rest read straight off the context.
+ * What the panel prints, in display order. Closed, so seed progress stays off this list.
+ * A host flattens the machine onto these names.
  */
 export const watchedContextFields = [
   "deviceModelId",
@@ -91,6 +109,8 @@ export interface DeviceOnboardingToolProps {
   readonly exit: DeviceOnboardingToolExit | null;
   /** Only events the host has already made valid: `SESSION_READY` after it re-opened the session. */
   readonly sendableEvents: readonly SendableOnboardingEvent[];
+  /** States this step can reach. Guards have not picked one yet. */
+  readonly nextStates: readonly DeviceOnboardingNextState[];
   /** Set when the host failed to connect a device or to start the flow. Re-enables Connect. */
   readonly error: string | null;
   /** Opens a session: the first one, or a replacement once the transport went away. */

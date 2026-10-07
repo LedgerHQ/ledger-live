@@ -1,7 +1,6 @@
-import { Fragment } from "react";
+import { useState } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import {
-  ArrowDown,
   Bluetooth,
   CheckmarkCircle,
   Circles,
@@ -66,51 +65,46 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
         <div className="px-16 py-10 border-b border-base body-3 text-error">{vm.error}</div>
       ) : null}
 
-      <div className="px-16 py-12 border-b border-base flex flex-col gap-4">
-        <span className="body-3 text-muted">State</span>
-        {vm.stateSteps.length === 0 ? (
-          <code className="text-muted">—</code>
-        ) : (
-          <span className="flex flex-col items-start gap-2">
-            {vm.stateSteps.map((step, index) => (
-              <Fragment key={step.key}>
-                {index > 0 ? <ArrowDown size={16} className="text-muted ml-8" /> : null}
-                <StateChip step={step} />
-              </Fragment>
-            ))}
-          </span>
-        )}
-      </div>
-
-      <div className="px-16 py-12 border-b border-base flex flex-wrap items-center gap-8">
-        {vm.sendableRows.length === 0 ? (
-          <span className="body-3 text-muted">No event accepted in this state</span>
-        ) : (
-          vm.sendableRows.map(row => (
-            <Button
-              key={row.key}
-              size="sm"
-              appearance="transparent"
-              disabled={!vm.canSend}
-              onClick={() => vm.send(row.event)}
-            >
-              {row.label}
-            </Button>
-          ))
-        )}
+      <div className="px-16 py-12 border-b border-base flex flex-col items-start gap-8">
+        <div className="flex flex-wrap items-center gap-8">
+          {vm.sendableRows.length === 0 ? (
+            <span className="body-3 text-muted">No event accepted in this state</span>
+          ) : (
+            vm.sendableRows.map(row => (
+              <Button
+                key={row.key}
+                size="sm"
+                appearance="transparent"
+                disabled={!vm.canSend}
+                onClick={() => vm.send(row.event)}
+              >
+                {row.label}
+              </Button>
+            ))
+          )}
+        </div>
+        <div className="mt-16 flex flex-col items-start gap-4">
+          {vm.nextStates.map(row => (
+            <code key={`${row.event}-${row.state}`} className="text-muted">
+              {row.event} → {row.state}
+            </code>
+          ))}
+          {vm.logLines.length === 0 ? (
+            <code className="text-muted">—</code>
+          ) : (
+            vm.logLines.map(line =>
+              line.line === "state" ? (
+                <StateChip key={line.key} step={line} />
+              ) : (
+                <EventLine key={line.id} event={line} />
+              ),
+            )
+          )}
+        </div>
       </div>
 
       {vm.exitRows.length > 0 ? <Rows title="Exit" rows={vm.exitRows} /> : null}
       {vm.contextRows.length > 0 ? <Rows title="Context" rows={vm.contextRows} /> : null}
-
-      <div className="px-16 py-12 flex flex-col gap-4">
-        <span className="body-3 text-muted">Events</span>
-        {vm.eventRows.length === 0 ? (
-          <span className="body-3 text-muted">Nothing yet</span>
-        ) : (
-          vm.eventRows.map(event => <EventLine key={event.id} event={event} />)
-        )}
-      </div>
     </div>
   );
 }
@@ -145,11 +139,33 @@ function Rows({ title, rows }: Readonly<{ title: string; rows: readonly DisplayR
 }
 
 function EventLine({ event }: Readonly<{ event: EventRow }>) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <span className="flex items-baseline gap-8 body-3">
-      <code className="text-muted shrink-0">{event.time}</code>
-      <code className="text-base shrink-0">{event.type}</code>
-      {event.detail ? <code className="text-muted truncate min-w-0">{event.detail}</code> : null}
+    <span className="flex flex-col items-start gap-4">
+      <button
+        type="button"
+        className="flex items-baseline gap-8 body-3 bg-transparent border-0 p-0 text-left"
+        onClick={() => setOpen(current => !current)}
+      >
+        <code className="text-muted shrink-0">{event.time}</code>
+        <code className="text-base shrink-0">{event.type}</code>
+        {event.detail ? <code className="text-muted truncate min-w-0">{event.detail}</code> : null}
+      </button>
+      {open ? (
+        <span className="flex flex-col items-start gap-4 pl-16">
+          {event.payload.length === 0 ? (
+            <code className="text-muted">—</code>
+          ) : (
+            event.payload.map(row => (
+              <span key={row.label} className="flex items-baseline gap-8 body-3">
+                <span className="text-muted shrink-0">{row.label}</span>
+                <code className="text-base break-all">{row.value}</code>
+              </span>
+            ))
+          )}
+        </span>
+      ) : null}
     </span>
   );
 }

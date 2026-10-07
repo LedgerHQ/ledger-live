@@ -19,6 +19,8 @@ export const userEvents = [
   { type: "USER_DECLINE" },
 ] as const satisfies readonly OnboardingEvent[];
 
+const hiddenPayloadKeys = new Set(["type", "failure", "deviceId", "dmk", "ports"]);
+
 export function flattenDeviceOnboardingContext(context: DeviceOnboardingContext): ToolContext {
   const verdict = context.genuineVerdict;
 
@@ -71,5 +73,36 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
     detail = { kind: "session", sessionId };
   }
 
-  return { id, type: event.type, at: Date.now(), detail };
+  return { id, type: event.type, at: Date.now(), detail, payload: eventPayload(event) };
+}
+
+function eventPayload(event: OnboardingEvent): ToolEvent["payload"] {
+  const payload: Record<string, NonNullable<ToolEvent["payload"]>> = {};
+
+  for (const [key, child] of Object.entries(event)) {
+    if (hiddenPayloadKeys.has(key)) continue;
+    const copied = plainPayload(child);
+    if (copied !== undefined) payload[key] = copied;
+  }
+
+  return Object.keys(payload).length === 0 ? undefined : payload;
+}
+
+function plainPayload(value: unknown): NonNullable<ToolEvent["payload"]> | undefined {
+  if (typeof value === "string") {
+    return value.includes("://") ? undefined : value;
+  }
+  if (value === null || typeof value === "number" || typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value !== "object") return undefined;
+
+  const nested: Record<string, NonNullable<ToolEvent["payload"]>> = {};
+  for (const [key, child] of Object.entries(value)) {
+    if (hiddenPayloadKeys.has(key)) continue;
+    const copied = plainPayload(child);
+    if (copied !== undefined) nested[key] = copied;
+  }
+
+  return Object.keys(nested).length === 0 ? undefined : nested;
 }

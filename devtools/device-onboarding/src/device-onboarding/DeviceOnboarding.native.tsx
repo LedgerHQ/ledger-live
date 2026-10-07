@@ -1,8 +1,7 @@
-import { Fragment } from "react";
-import { ScrollView } from "react-native";
+import { useState } from "react";
+import { Pressable, ScrollView } from "react-native";
 import { Box, Button, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
 import {
-  ArrowDown,
   Bluetooth,
   CheckmarkCircle,
   Circles,
@@ -55,16 +54,15 @@ const HEADER_LX = {
   padding: "s16",
 } as const;
 const SECTION_LX = { padding: "s16", gap: "s4" } as const;
-const ACTIONS_LX = {
+const BUTTONS_LX = {
   flexDirection: "row",
   flexWrap: "wrap",
   alignItems: "center",
   gap: "s8",
-  padding: "s16",
 } as const;
 const ROW_LX = { flexDirection: "row", alignItems: "baseline", gap: "s8" } as const;
 const HEADER_ACTIONS_LX = { flexDirection: "row", gap: "s4" } as const;
-const TRAIL_LX = { flexDirection: "column", alignItems: "flex-start", gap: "s4" } as const;
+const LOG_LX = { flexDirection: "column", alignItems: "flex-start", gap: "s4" } as const;
 const CHIP_LX = {
   flexDirection: "row",
   alignItems: "center",
@@ -73,7 +71,6 @@ const CHIP_LX = {
   paddingVertical: "s4",
   borderRadius: "sm",
 } as const;
-const ARROW_LX = { marginLeft: "s8" } as const;
 
 function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   const vm = useDeviceOnboardingViewModel(props);
@@ -122,60 +119,53 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
       ) : null}
 
       <Box lx={SECTION_LX} style={divider}>
-        <Text typography="body2" style={muted}>
-          State
-        </Text>
-        {vm.stateSteps.length === 0 ? (
-          <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
-            —
-          </Text>
-        ) : (
-          <Box lx={TRAIL_LX}>
-            {vm.stateSteps.map((step, index) => (
-              <Fragment key={step.key}>
-                {index > 0 ? <ArrowDown size={16} color="muted" lx={ARROW_LX} /> : null}
-                <StateChip step={step} />
-              </Fragment>
-            ))}
-          </Box>
-        )}
-      </Box>
-
-      <Box lx={ACTIONS_LX} style={divider}>
-        {vm.sendableRows.length === 0 ? (
-          <Text typography="body2" style={muted}>
-            No event accepted in this state
-          </Text>
-        ) : (
-          vm.sendableRows.map(row => (
-            <Button
-              key={row.key}
-              size="sm"
-              appearance="transparent"
-              disabled={!vm.canSend}
-              onPress={() => vm.send(row.event)}
+        <Box lx={BUTTONS_LX}>
+          {vm.sendableRows.length === 0 ? (
+            <Text typography="body2" style={muted}>
+              No event accepted in this state
+            </Text>
+          ) : (
+            vm.sendableRows.map(row => (
+              <Button
+                key={row.key}
+                size="sm"
+                appearance="transparent"
+                disabled={!vm.canSend}
+                onPress={() => vm.send(row.event)}
+              >
+                {row.label}
+              </Button>
+            ))
+          )}
+        </Box>
+        <Box lx={{ ...LOG_LX, marginTop: "s16" }}>
+          {vm.nextStates.map(row => (
+            <Text
+              key={`${row.event}-${row.state}`}
+              typography="body2"
+              style={{ ...muted, fontFamily: "monospace" }}
             >
-              {row.label}
-            </Button>
-          ))
-        )}
+              {row.event} → {row.state}
+            </Text>
+          ))}
+          {vm.logLines.length === 0 ? (
+            <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
+              —
+            </Text>
+          ) : (
+            vm.logLines.map(line =>
+              line.line === "state" ? (
+                <StateChip key={line.key} step={line} />
+              ) : (
+                <EventLine key={line.id} event={line} />
+              ),
+            )
+          )}
+        </Box>
       </Box>
 
       {vm.exitRows.length > 0 ? <Rows title="Exit" rows={vm.exitRows} /> : null}
       {vm.contextRows.length > 0 ? <Rows title="Context" rows={vm.contextRows} /> : null}
-
-      <Box lx={SECTION_LX}>
-        <Text typography="body2" style={muted}>
-          Events
-        </Text>
-        {vm.eventRows.length === 0 ? (
-          <Text typography="body2" style={muted}>
-            Nothing yet
-          </Text>
-        ) : (
-          vm.eventRows.map(event => <EventLine key={event.id} event={event} />)
-        )}
-      </Box>
     </ScrollView>
   );
 }
@@ -227,21 +217,47 @@ function Rows({ title, rows }: Readonly<{ title: string; rows: readonly DisplayR
 }
 
 function EventLine({ event }: Readonly<{ event: EventRow }>) {
+  const [open, setOpen] = useState(false);
   const { theme } = useTheme();
   const mono = { color: theme.colors.text.base, fontFamily: "monospace" };
+  const muted = { color: theme.colors.text.muted };
 
   return (
-    <Box lx={ROW_LX}>
-      <Text typography="body2" style={{ color: theme.colors.text.muted, fontFamily: "monospace" }}>
-        {event.time}
-      </Text>
-      <Text typography="body2" style={mono}>
-        {event.type}
-      </Text>
-      {event.detail ? (
-        <Text typography="body2" numberOfLines={1} style={{ ...mono, flex: 1 }}>
-          {event.detail}
-        </Text>
+    <Box lx={LOG_LX}>
+      <Pressable onPress={() => setOpen(current => !current)} accessibilityRole="button">
+        <Box lx={ROW_LX}>
+          <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
+            {event.time}
+          </Text>
+          <Text typography="body2" style={mono}>
+            {event.type}
+          </Text>
+          {event.detail ? (
+            <Text typography="body2" numberOfLines={1} style={{ ...mono, flex: 1 }}>
+              {event.detail}
+            </Text>
+          ) : null}
+        </Box>
+      </Pressable>
+      {open ? (
+        <Box lx={{ ...LOG_LX, paddingLeft: "s16" }}>
+          {event.payload.length === 0 ? (
+            <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
+              —
+            </Text>
+          ) : (
+            event.payload.map(row => (
+              <Box key={row.label} lx={ROW_LX}>
+                <Text typography="body2" style={muted}>
+                  {row.label}
+                </Text>
+                <Text typography="body2" style={{ ...mono, flex: 1 }}>
+                  {row.value}
+                </Text>
+              </Box>
+            ))
+          )}
+        </Box>
       ) : null}
     </Box>
   );

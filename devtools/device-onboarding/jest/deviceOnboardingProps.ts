@@ -11,6 +11,7 @@ export function buildProps(
     events: [],
     exit: null,
     sendableEvents: [],
+    nextStates: [],
     error: null,
     connect: jest.fn(),
     send: jest.fn(),

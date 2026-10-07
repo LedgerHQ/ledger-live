@@ -14,8 +14,11 @@ Design and rationale live in the
 ## What it does
 
 Renders the flow and nothing else: the connected device with its model, transport and session id,
-the current state of the machine, the context fields worth watching, the event log, the exit
-reason, and one button per event the machine accepts right now.
+the context with each nested field named, the log, and the exit reason.
+
+The log reads upward. The newest state is on top. The event that led there sits under that state.
+The buttons for the next action sit above the newest state. Under the buttons, each line
+`event → state` is a state this step can reach. `auto` means the machine may move there with no event.
 
 **The tool runs no machine.** The host owns the session and drives `deviceOnboardingMachine`; this
 package receives what the host observes through `DeviceOnboardingToolProps` and calls back with
@@ -41,20 +44,18 @@ re-read a device that is no longer there. When the transport goes away mid-run t
 `device` to null, which re-enables Connect — that is where the session gets re-opened, and only
 then does `SESSION_READY` belong in `sendableEvents`.
 
-`context` takes primitives under the closed list of names exported as `watchedContextFields`, and
-the view renders nothing outside that list. `verdictMatchesSession` is the row to watch: the
-machine discards the genuine attestation when the session id moved under it, which is the failure
-this tool exists to catch, and nothing else on screen shows it. Derive it from the raw
-`genuineVerdict`, never from the machine's own accessor, or the row can only ever agree with
-`isGenuine`.
+`context` takes simple values under the closed list `watchedContextFields`. The screen prints
+nothing outside that list. `verdictMatchesSession` is the row to watch: the machine drops the
+genuine check when the session id moved. The host builds that row from the raw `genuineVerdict`.
 
-The closed list is a privacy boundary, not a style choice. This panel runs while a recovery phrase
-is being entered, and it is read over shoulders and pasted into bug reports, so it must not be able
-to print `seedWordIndex`, `seedPhraseWordCount`, a device id, or `lastGenuineFailure.failure` —
-which is untyped and, for a fetch error, holds the backend URL and the response body. Two other
-fields answer to the same rule rather than to a host's discretion: an event `detail` is a closed
-set of three shapes, not free text, and the exit contract drops the machine's `device.id` and keeps
-`sessionId`, which tells two runs apart without naming the hardware.
+This panel runs while a recovery phrase is being entered. It is read over shoulders and pasted into
+bug reports, so the context list must not print seed progress, a device id, or `failure`. `failure`
+is untyped and, for a fetch error, holds the backend URL and the response body.
+
+Tap an event to open its payload as a list. That list can show `seedWordIndex` and
+`seedPhraseWordCount`. It still skips `failure`, a device id, and any value that is a URL. The
+short `detail` on the closed line stays a closed set of three shapes. The exit contract drops the
+machine's `device.id` and keeps `sessionId`.
 
 ## Allowed imports
 

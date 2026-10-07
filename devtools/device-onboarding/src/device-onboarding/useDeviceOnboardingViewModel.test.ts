@@ -6,7 +6,12 @@ import {
   formatValue,
   stateKind,
   useDeviceOnboardingViewModel,
+  type LogLine,
 } from "./useDeviceOnboardingViewModel";
+
+function eventIds(lines: readonly LogLine[]) {
+  return lines.flatMap(line => (line.line === "event" ? [line.id] : []));
+}
 
 function buildEvents(count: number) {
   return Array.from({ length: count }, (_, index) => ({
@@ -198,10 +203,42 @@ describe("useDeviceOnboardingViewModel", () => {
     ]);
   });
 
-  it("shows the newest event first, whatever order the host appended", () => {
+  it("lists the opened event payload and skips the failure body and a url", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
+          state: "readingState",
+          events: [
+            {
+              id: "read",
+              type: "DEVICE_STATE_READ",
+              at: 1,
+              payload: {
+                firmwareVersion: "1.7.0",
+                state: { seedWordIndex: 2, seedPhraseWordCount: 24, currentOnboardingStep: "pin" },
+                failure: "https://secret.example/body",
+                note: "see https://secret.example/note",
+              },
+            },
+          ],
+        }),
+      ),
+    );
+
+    const event = result.current.logLines.find(line => line.line === "event");
+    expect(event?.line === "event" ? event.payload : []).toEqual([
+      { label: "firmwareVersion", value: "1.7.0" },
+      { label: "state.seedWordIndex", value: "2" },
+      { label: "state.seedPhraseWordCount", value: "24" },
+      { label: "state.currentOnboardingStep", value: "pin" },
+    ]);
+  });
+
+  it("puts the newest event under the current state, whatever order the host appended", () => {
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({
+          state: "readingState",
           events: [
             { id: "oldest", type: "SESSION_READY", at: 5 },
             { id: "newest", type: "LOCKED", at: 9 },
@@ -211,13 +248,36 @@ describe("useDeviceOnboardingViewModel", () => {
       ),
     );
 
-    expect(result.current.eventRows.map(row => row.id)).toEqual(["newest", "middle", "oldest"]);
+    expect(eventIds(result.current.logLines)).toEqual(["newest", "middle", "oldest"]);
+  });
+
+  it("reads upward: the event sits under the state it led to", () => {
+    const ready = { id: "ready", type: "SESSION_READY" as const, at: 1 };
+    const go = { id: "go", type: "CONTINUE" as const, at: 2 };
+    const { result, rerender } = renderHook(
+      (props: { state: string; events: readonly (typeof ready | typeof go)[] }) =>
+        useDeviceOnboardingViewModel(buildProps(props)),
+      {
+        initialProps: {
+          state: "readingState",
+          events: [] as readonly (typeof ready | typeof go)[],
+        },
+      },
+    );
+
+    rerender({ state: "routing", events: [ready] });
+    rerender({ state: "checks.genuineCheck", events: [ready, go] });
+
+    expect(
+      result.current.logLines.map(line => (line.line === "state" ? line.label : line.type)),
+    ).toEqual(["checks.genuineCheck", "CONTINUE", "routing", "SESSION_READY", "readingState"]);
   });
 
   it("falls back on the append order when several transitions share a millisecond", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
+          state: "readingState",
           events: [
             { id: "first", type: "SESSION_READY", at: 3 },
             { id: "second", type: "UNLOCKED", at: 3 },
@@ -227,15 +287,17 @@ describe("useDeviceOnboardingViewModel", () => {
       ),
     );
 
-    expect(result.current.eventRows.map(row => row.id)).toEqual(["third", "second", "first"]);
+    expect(eventIds(result.current.logLines)).toEqual(["third", "second", "first"]);
   });
 
   it("keeps the most recent entries and leaves the host's log untouched", () => {
     const events = Object.freeze(buildEvents(60));
-    const { result } = renderHook(() => useDeviceOnboardingViewModel(buildProps({ events })));
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(buildProps({ state: "readingState", events })),
+    );
 
-    expect(result.current.eventRows).toHaveLength(40);
-    expect(result.current.eventRows[0].id).toBe("event-59");
+    expect(eventIds(result.current.logLines)).toHaveLength(40);
+    expect(eventIds(result.current.logLines)[0]).toBe("event-59");
     expect(events[0].id).toBe("event-0");
   });
 
@@ -243,6 +305,7 @@ describe("useDeviceOnboardingViewModel", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
+          state: "readingState",
           events: [
             {
               id: "long",
@@ -263,12 +326,9 @@ describe("useDeviceOnboardingViewModel", () => {
       ),
     );
 
-    expect(result.current.eventRows.map(row => row.detail)).toEqual([
-      "x".repeat(80),
-      "2.4.0",
-      "pin",
-      null,
-    ]);
+    expect(
+      result.current.logLines.flatMap(line => (line.line === "event" ? [line.detail] : [])),
+    ).toEqual(["x".repeat(80), "2.4.0", "pin", null]);
   });
 
   it("labels every offered event, so one type offered twice stays readable", () => {

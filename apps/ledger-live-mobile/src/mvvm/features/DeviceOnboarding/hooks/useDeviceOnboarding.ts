@@ -83,6 +83,66 @@ const DeviceKind = {
 const missingSessionId = "none";
 const xstateEventPrefix = "xstate.";
 
+type MachineNode = typeof deviceOnboardingMachine.root;
+
+function stateName(node: MachineNode): string {
+  return node.path.join(".");
+}
+
+function nodeAt(root: MachineNode, value: unknown): MachineNode | undefined {
+  if (typeof value === "string") return root.states[value];
+  if (!value || typeof value !== "object") return undefined;
+
+  let node = root;
+  for (const [key, child] of Object.entries(value)) {
+    const next = node.states[key];
+    if (!next) return undefined;
+    if (typeof child === "string") return next.states[child];
+    if (child && typeof child === "object") return nodeAt(next, child);
+    node = next;
+  }
+
+  return node;
+}
+
+function nextStatesFrom(
+  snapshot: OnboardingSnapshot | null,
+): DeviceOnboardingToolProps["nextStates"] {
+  if (!snapshot || snapshot.status !== ActorStatus.Active) return [];
+
+  const start = nodeAt(deviceOnboardingMachine.root, snapshot.value);
+  if (!start) return [];
+
+  const rows: DeviceOnboardingToolProps["nextStates"][number][] = [];
+  const seen = new Set<string>();
+  const add = (event: string, target: MachineNode | undefined) => {
+    if (!target) return;
+    const state = stateName(target);
+    if (!state) return;
+    const key = `${event}\0${state}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    rows.push({ event, state });
+  };
+
+  let node: MachineNode | undefined = start;
+  while (node) {
+    for (const transition of node.always ?? []) {
+      for (const target of transition.target ?? []) add("auto", target);
+    }
+    for (const [event, transitions] of node.transitions) {
+      if (event.startsWith(xstateEventPrefix)) continue;
+      for (const transition of transitions) {
+        for (const target of transition.target ?? []) add(event, target);
+      }
+    }
+    if (node === deviceOnboardingMachine.root) break;
+    node = node.parent;
+  }
+
+  return rows;
+}
+
 function eventsWeCanSend(snapshot: OnboardingSnapshot | null, sessionReady: boolean) {
   if (!snapshot) return [];
   const choices: OnboardingEvent[] = sessionReady
@@ -204,6 +264,7 @@ export function useDeviceOnboarding({
     : null;
   const sessionReady = sessionIsListening && state === MachineState.AwaitingSession;
   const sendableEvents = eventsWeCanSend(snapshot, sessionReady);
+  const nextStates = nextStatesFrom(snapshot);
   const screenDevice = deviceForScreen(snapshot);
 
   const stopSessionWatch = useCallback(() => {
@@ -427,6 +488,7 @@ export function useDeviceOnboarding({
     events,
     exit,
     sendableEvents,
+    nextStates,
     error,
     connect,
     send,

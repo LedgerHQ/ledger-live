@@ -20,6 +20,24 @@ describe("useDeviceOnboarding", () => {
     jest.clearAllMocks();
   });
 
+  // The preview lists every state this step can reach, before a guard picks one.
+  it("lists the states this step can reach", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+
+    expect(result.current.state).toBe("readingState");
+    expect(result.current.nextStates).toEqual(
+      expect.arrayContaining([
+        { event: "DEVICE_STATE_READ", state: "routing" },
+        { event: "QUIT", state: "quitting" },
+      ]),
+    );
+  });
+
   // A lost Bluetooth connection must bring Connect back.
   // SESSION_READY stays off until a new session is watched.
   it("hides the device when Bluetooth disconnects, so Connect can be used again", async () => {

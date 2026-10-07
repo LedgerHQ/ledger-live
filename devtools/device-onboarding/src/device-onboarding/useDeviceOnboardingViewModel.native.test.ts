@@ -9,6 +9,7 @@ describe("useDeviceOnboardingViewModel (native)", () => {
         buildProps({
           status: "running",
           context: { isOnboarded: false },
+          state: "readingState",
           events: [{ id: "first", type: "SESSION_READY", at: 1 }],
         }),
       ),
@@ -16,7 +17,7 @@ describe("useDeviceOnboardingViewModel (native)", () => {
 
     expect(result.current.statusLabel).toBe("Running");
     expect(result.current.contextRows).toEqual([{ label: "isOnboarded", value: "false" }]);
-    expect(result.current.eventRows[0].type).toBe("SESSION_READY");
+    expect(result.current.logLines.find(line => line.line === "event")?.type).toBe("SESSION_READY");
   });
 
   it("offers a connection again once the host reported a failure", () => {
