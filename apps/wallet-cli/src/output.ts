@@ -939,14 +939,14 @@ class HumanCommandOutput implements CommandOutput {
 
   agentIntentStatus({ profileId, intent: i, terminal }: AgentIntentStatusResult): void {
     const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
+    const baseUnits = i.amount ? `${i.amount} (base units)` : undefined;
+    const amount = i.displayAmount ?? baseUnits;
     writeStdout(
       [
         `Intent:  ${i.id}`,
         `Status:  ${state}${terminal ? " (final)" : ""}`,
         `Profile: ${profileId}`,
-        ...(i.displayAmount || i.amount
-          ? [`Amount:  ${i.displayAmount ?? `${i.amount} (base units)`}`]
-          : []),
+        ...(amount ? [`Amount:  ${amount}`] : []),
         ...(i.sender ? [`From:    ${i.sender}`] : []),
         ...(i.recipient ? [`To:      ${i.recipient}`] : []),
         ...(i.network ? [`Network: ${i.network}`] : []),
