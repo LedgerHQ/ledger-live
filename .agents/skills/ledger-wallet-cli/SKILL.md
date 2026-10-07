@@ -320,7 +320,7 @@ pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My B
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source other \
   --environment staging --expires-in 2h
 
-# Re-enroll an enrolled openclaw/hermes profile's existing key into its previous Trustchain, then
+# Re-enroll an enrolled profile's existing key into its previous Trustchain, then
 # BLOCK until approved (environment/keycloak come from the profile):
 pnpm --silent wallet-cli start agent-intent recover --profile my-bot
 
@@ -336,8 +336,7 @@ pnpm --silent wallet-cli start agent-intent sync --profile my-bot --output json
 **Always pass `--source`.** It is the runtime or harness the agent runs in (not its model provider):
 `openclaw`, `hermes`, `claude-code`, `codex`, `cursor`, `muse`, `grok-bot`, or `other` when none
 matches. Omitting it defaults to `other`. The frontend shows it as the agent's source; never pass a
-value outside this list. Only
-`openclaw` and `hermes` profiles can be recovered later (an SDK limit, see below).
+value outside this list.
 
 **One blocking command, no copy/paste.** `enroll` prints the URL first (with `--output json`: an
 `enrollment-pending` NDJSON event), then waits on an encrypted Trustchain relay channel bound into the
@@ -357,9 +356,8 @@ cannot be resumed — start a fresh enrollment with a **new** `--profile` id.
 **Recovery reuses the same key.** `recover --profile <id>` signs a recovery request for the
 profile's existing key and Trustchain (no new key, `accountAccess` untouched), then waits on the relay
 exactly like `enroll` (json: a `recovery-pending` event, then `status: "success"`, `recovered: true`,
-`trustchainId`). Only enrolled `openclaw`/`hermes` profiles whose keychain key matches the recorded
-public key can be recovered; a profile with any other `--source` is refused, so enroll a fresh
-profile under a new `--profile` id instead. The completion must name the same agent key, the same signed request
+`trustchainId`). Any enrolled profile whose keychain key matches the recorded public key can be
+recovered, whatever its `--source`. The completion must name the same agent key, the same signed request
 and the same Trustchain, and the agent key must obtain an App-18 token for it (App-16 is not
 re-checked). While it waits, `list`/`show` report `recovering`; on timeout, Ctrl+C, or a failed
 check the marker is cleared and the profile stays `enrolled` with its previous data — re-run
