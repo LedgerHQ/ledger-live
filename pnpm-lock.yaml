@@ -1193,9 +1193,6 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
-      '@ledgerhq/hw-transport-http':
-        specifier: workspace:^
-        version: link:../../libs/hw-transport-http
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
         version: 0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)

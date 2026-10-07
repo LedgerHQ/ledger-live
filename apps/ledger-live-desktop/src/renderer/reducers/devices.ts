@@ -77,7 +77,6 @@ export const getCurrentDevice = createSelector(
   [(state: { devices: DevicesState }) => state.devices.currentDevice],
   currentDevice => {
     const envConditions = [
-      { condition: getEnv("DEVICE_PROXY_URL"), modelId: DeviceModelId.nanoS },
       { condition: getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"), modelId: DeviceModelId.nanoS },
       { condition: getEnv("SPECULOS_API_PORT"), modelId: getSpeculosModel() },
     ];

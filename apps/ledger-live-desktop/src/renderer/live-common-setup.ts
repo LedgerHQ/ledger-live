@@ -15,12 +15,10 @@ import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import IPCTransport from "./IPCTransport";
 
 enum RendererTransportModule {
   DeviceManagementKit,
   DeviceManagementKitSpeculos,
-  IPC,
 }
 
 // Speculos cannot tell the DMK transport which device it emulates (it defaults
@@ -60,7 +58,6 @@ export function registerTransportModules(store: Store<State>) {
 
   function whichTransportModuleToUse(): RendererTransportModule {
     if (getEnv("SPECULOS_API_PORT")) return RendererTransportModule.DeviceManagementKitSpeculos;
-    if (getEnv("DEVICE_PROXY_URL")) return RendererTransportModule.IPC;
     return RendererTransportModule.DeviceManagementKit;
   }
 
@@ -123,38 +120,6 @@ export function registerTransportModules(store: Store<State>) {
           maxRetry: 4,
         },
       );
-    },
-    disconnect: () => Promise.resolve(),
-  });
-
-  /**
-   * IPC Transport Module.
-   * Handles HTTP proxy via internal process.
-   * Uses IPC to communicate with internal process that manages actual transports.
-   */
-  registerTransportModule({
-    id: "ipc-transport",
-    open: (_id: string, timeoutMs?: number, context?: TraceContext) => {
-      if (whichTransportModuleToUse() !== RendererTransportModule.IPC) return;
-
-      trace({
-        type: "renderer-setup",
-        message: "Open called on registered module",
-        data: {
-          transport: "IPCTransport",
-          timeoutMs,
-        },
-        context: {
-          openContext: context,
-        },
-      });
-
-      const descriptor = getEnv("DEVICE_PROXY_URL") ? "proxy" : "ipc";
-
-      return retry(() => IPCTransport.open(descriptor, timeoutMs, context), {
-        interval: 500,
-        maxRetry: 4,
-      });
     },
     disconnect: () => Promise.resolve(),
   });
