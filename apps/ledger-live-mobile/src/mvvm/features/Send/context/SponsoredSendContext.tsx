@@ -41,6 +41,7 @@ type SponsoredSendContextValue = Readonly<{
   /** False while Review has to wait for the sponsored pick's intent and quote. */
   reviewReady: boolean;
   feeCurrencyTicker: string;
+  approvedFee: bigint | null;
 }>;
 
 const NO_WAIVED_KEYS: readonly string[] = [];
@@ -119,6 +120,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     seam,
     intent,
     intentFailed,
+    refresh: sponsoredState.phase === SPONSORED_PHASE.IDLE,
     counterValueCurrency,
   });
 
@@ -173,6 +175,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   const providerName = seam?.providerName ?? "";
   const waivesErrorKeys = seam?.waivesErrorKeys ?? NO_WAIVED_KEYS;
   const waivesWarningKeys = seam?.waivesWarningKeys ?? NO_WAIVED_KEYS;
+  const approvedFee = quote?.value ?? null;
 
   const value = useMemo(
     () => ({
@@ -187,6 +190,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       waivesNativeFee,
       reviewReady,
       feeCurrencyTicker,
+      approvedFee,
     }),
     [
       sponsoredState,
@@ -200,6 +204,7 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       waivesNativeFee,
       reviewReady,
       feeCurrencyTicker,
+      approvedFee,
     ],
   );
 

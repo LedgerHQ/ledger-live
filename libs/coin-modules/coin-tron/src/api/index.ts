@@ -178,8 +178,10 @@ export function createSponsoredSendApi(context: TronContext) {
     // Called with logger+config directly, not a framework Context.
     estimateSponsoredFeeQuote: async (intent: TransactionIntent<TronMemo, TronTxData>) =>
       estimateSponsoredFeeQuote(context.logger, await context.config(), intent),
-    buildEnergyRentRequest: async (intent: TransactionIntent<TronMemo, TronTxData>) =>
-      buildEnergyRentRequest(context.logger, await context.config(), intent),
+    buildEnergyRentRequest: async (
+      intent: TransactionIntent<TronMemo, TronTxData>,
+      approvedFee: bigint,
+    ) => buildEnergyRentRequest(context.logger, await context.config(), intent, approvedFee),
     craftEnergyRentTransaction: async (request: EnergyRentRequest) =>
       craftEnergyRentTransaction(context.logger, await context.config(), request),
     submitEnergyRentPayment: async (payment: {

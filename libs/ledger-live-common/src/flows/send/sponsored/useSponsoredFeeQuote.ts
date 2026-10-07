@@ -11,6 +11,9 @@ import type {
 } from "../../../bridge/generic-coin-framework/sponsored";
 import { findFeeTokenAccount } from "./feeAsset";
 
+// The rent is bound to the quote Review shows, so it is kept close to the provider's live price.
+const QUOTE_REFRESH_MS = 30_000;
+
 type UseSponsoredFeeQuoteParams = Readonly<{
   mainAccount: Account | null;
   /** Null when sponsorship is off or the network has no seam. */
@@ -18,6 +21,8 @@ type UseSponsoredFeeQuoteParams = Readonly<{
   intent: unknown;
   /** The intent builder rejected the transaction: withdraw the option rather than wait on it. */
   intentFailed?: boolean;
+  /** Re-quotes periodically while true, keeping the last quote until the next one lands. */
+  refresh: boolean;
   counterValueCurrency: Currency;
 }>;
 
@@ -40,6 +45,7 @@ export function useSponsoredFeeQuote({
   seam,
   intent,
   intentFailed = false,
+  refresh,
   counterValueCurrency,
 }: UseSponsoredFeeQuoteParams): SponsoredFeeQuoteResult {
   const nativeCurrency = mainAccount?.currency ?? null;
@@ -117,6 +123,31 @@ export function useSponsoredFeeQuote({
       ignore = true;
     };
   }, [seam, intent, intentFailed]);
+
+  useEffect(() => {
+    if (!refresh || !available || !seam || intentFailed || intent == null) return;
+    let ignore = false;
+    let refreshInFlight = false;
+    const timer = setInterval(() => {
+      if (refreshInFlight) return;
+      refreshInFlight = true;
+      seam
+        .estimateSponsoredFeeQuote(intent)
+        .then(
+          result => {
+            if (!ignore) setQuote(current => (current ? result : current));
+          },
+          error => log("sponsored-send", "sponsored fee quote refresh failed", { error }),
+        )
+        .finally(() => {
+          refreshInFlight = false;
+        });
+    }, QUOTE_REFRESH_MS);
+    return () => {
+      ignore = true;
+      clearInterval(timer);
+    };
+  }, [refresh, available, seam, intent, intentFailed]);
 
   const feeTokenAccount = useMemo(
     () => findFeeTokenAccount(mainAccount, feeAsset),

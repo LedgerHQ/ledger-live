@@ -30,6 +30,7 @@ const USDT_ASSET = {
   unit: { name: "USDT", code: "USDT", magnitude: 6 },
 };
 const RENT_PAYMENT: RentPayment = { asset: USDT_ASSET, amount: 3_200_000n };
+const REVIEW_FEE = 3_200_000n;
 
 const makeSeam = (overrides: Record<string, unknown> = {}) => ({
   feeOptionId: "sponsored-fixture",
@@ -79,7 +80,7 @@ test("craft failure sets phase FAILED / failureKind RENT_PAYMENT", async () => {
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -100,7 +101,7 @@ test("a crafted order without a signable transaction fails as RENT_PAYMENT, not 
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -119,7 +120,7 @@ test("a rentPayment that throws fails the craft as RENT_PAYMENT and keeps the or
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
 
   expect(seam.rentPayment).toHaveBeenCalledTimes(1);
@@ -127,6 +128,87 @@ test("a rentPayment that throws fails the craft as RENT_PAYMENT and keeps the or
   expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
   expect(result.current.state.order).toBeNull();
   expect(result.current.state.rentPayment).toBeNull();
+});
+
+test("craftRent binds the rent request to the fee approved on Review", async () => {
+  const seam = makeSeam();
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent(REVIEW_FEE);
+  });
+
+  expect(seam.buildEnergyRentRequest).toHaveBeenCalledWith(sendIntent, REVIEW_FEE);
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
+});
+
+test("craftRent without an approved fee fails as RENT_PAYMENT without ordering", async () => {
+  const seam = makeSeam();
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+
+  await act(async () => {
+    await result.current.actions.craftRent(null);
+  });
+
+  expect(seam.buildEnergyRentRequest).not.toHaveBeenCalled();
+  expect(seam.craftEnergyRentTransaction).not.toHaveBeenCalled();
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
+  expect(result.current.state.failureKind).toBe(SPONSORED_FAILURE_KIND.RENT_PAYMENT);
+  expect(result.current.state.failureError?.name).toBe("SponsoredFeeNotApprovedError");
+});
+
+test.each([
+  ["a newer quote", 4_000_000n],
+  ["no live quote", null],
+])("a retry keeps the fee the cycle was approved at over %s", async (_label, liveFee) => {
+  const seam = makeSeam({
+    craftEnergyRentTransaction: jest
+      .fn()
+      .mockRejectedValueOnce(new Error("craft boom"))
+      .mockResolvedValue({
+        orderId: "o1",
+        transaction: {},
+        payCoinCode: "USDT",
+        payCoinAmt: "3.2",
+      }),
+  });
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+  await act(async () => {
+    await result.current.actions.craftRent(REVIEW_FEE);
+  });
+
+  act(() => {
+    result.current.actions.retry();
+  });
+  await act(async () => {
+    await result.current.actions.craftRent(liveFee);
+  });
+
+  expect(seam.buildEnergyRentRequest).toHaveBeenLastCalledWith(sendIntent, REVIEW_FEE);
+  expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
+});
+
+test("a reset lets the next cycle bind the fee approved for it", async () => {
+  const seam = makeSeam();
+  mockGetSponsoredCoinApi.mockResolvedValue(seam);
+  const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
+  await act(async () => {
+    await result.current.actions.craftRent(REVIEW_FEE);
+  });
+
+  act(() => {
+    result.current.actions.reset();
+  });
+  await act(async () => {
+    await result.current.actions.craftRent(4_000_000n);
+  });
+
+  expect(seam.buildEnergyRentRequest).toHaveBeenLastCalledWith(sendIntent, 4_000_000n);
 });
 
 test("buildEnergyRentRequest failure sets phase FAILED / failureKind RENT_PAYMENT", async () => {
@@ -138,7 +220,7 @@ test("buildEnergyRentRequest failure sets phase FAILED / failureKind RENT_PAYMEN
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
 
   expect(seam.craftEnergyRentTransaction).not.toHaveBeenCalled();
@@ -156,7 +238,7 @@ test("submit failure the provider confirms unpaid -> RENT_PAYMENT (safe to re-cr
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
@@ -176,7 +258,7 @@ test("reset while seam resolution is pending skips the irreversible payment subm
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
@@ -197,7 +279,7 @@ test("closing the dialog (unmount) while seam resolution is pending skips the pa
   const { result, unmount } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
@@ -228,7 +310,7 @@ test("closing the dialog (unmount) during polling aborts the delivery poll", asy
   const { result, unmount } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
 
   await act(async () => {
@@ -256,7 +338,7 @@ test.each([["paid"], ["pending"], ["unknown"]])(
     const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
     await act(async () => {
-      await result.current.actions.craftRent();
+      await result.current.actions.craftRent(REVIEW_FEE);
     });
     await act(async () => {
       await result.current.actions.startRentPayment("sig", "txA");
@@ -278,7 +360,7 @@ test("submit failure the provider reports delivered AND the chain confirms -> pr
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -303,7 +385,7 @@ test("submit failure the provider reports delivered but the chain does NOT confi
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -325,7 +407,7 @@ test("submit failure, provider still reports paid but the chain confirms -> proc
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -349,7 +431,7 @@ test("submit-path DELIVERY_FAILED carries the caller's paymentTxId for the suppo
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -369,7 +451,7 @@ test("submit failure whose reconciliation also fails -> DELIVERY_FAILED (avoid d
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -393,7 +475,7 @@ test("delivery timeout the chain then confirms delivered -> proceeds to TRANSFER
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -422,7 +504,7 @@ test("delivery timeout the chain does NOT confirm -> DELIVERY_FAILED (provider s
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -440,7 +522,7 @@ test("happy path: craft -> RENT_SIGNING, startRentPayment -> TRANSFER", async ()
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
   expect(result.current.state.order).toEqual({
@@ -475,7 +557,7 @@ test("a stale signature callback after the flow advanced past RENT_SIGNING does 
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -499,7 +581,7 @@ test("a RETAINED startRentPayment closure re-fired after the flow advanced does 
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
@@ -529,7 +611,7 @@ test("a signature for a reset-and-recrafted cycle's prior order is dropped, not 
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.paymentTxId).toBe("txA");
 
@@ -537,7 +619,7 @@ test("a signature for a reset-and-recrafted cycle's prior order is dropped, not 
     result.current.actions.reset();
   });
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.paymentTxId).toBe("txB");
 
@@ -567,7 +649,7 @@ test("awaitEnergyDelivery timeout -> FAILED / DELIVERY_FAILED, carries paymentTx
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -588,7 +670,7 @@ test("awaitEnergyDelivery generic order failure -> FAILED / DELIVERY_FAILED (pay
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -605,7 +687,7 @@ test("onTransferError sets phase FAILED / failureKind TRANSFER", async () => {
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -631,7 +713,7 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
 
   const timeoutHook = renderHook(() => useSponsoredSendOrchestration(defaultParams));
   await act(async () => {
-    await timeoutHook.result.current.actions.craftRent();
+    await timeoutHook.result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await timeoutHook.result.current.actions.startRentPayment("sig", "txA");
@@ -651,7 +733,7 @@ test("retry from DELIVERY_FAILED -> RENT_SIGNING; retry from TRANSFER -> TRANSFE
 
   const transferHook = renderHook(() => useSponsoredSendOrchestration(defaultParams));
   await act(async () => {
-    await transferHook.result.current.actions.craftRent();
+    await transferHook.result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await transferHook.result.current.actions.startRentPayment("sig", "txA");
@@ -677,7 +759,7 @@ test("contract-data refusal resumes at the phase it failed on, keeping the paid 
 
   const rentHook = renderHook(() => useSponsoredSendOrchestration(defaultParams));
   await act(async () => {
-    await rentHook.result.current.actions.craftRent();
+    await rentHook.result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(rentHook.result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
@@ -697,7 +779,7 @@ test("contract-data refusal resumes at the phase it failed on, keeping the paid 
 
   const transferHook = renderHook(() => useSponsoredSendOrchestration(defaultParams));
   await act(async () => {
-    await transferHook.result.current.actions.craftRent();
+    await transferHook.result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await transferHook.result.current.actions.startRentPayment("sig", "txA");
@@ -723,7 +805,7 @@ test("onTransferSuccess sets phase DONE", async () => {
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -745,7 +827,7 @@ test("a stale transfer callback outside the TRANSFER phase is ignored (does not 
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
@@ -767,7 +849,7 @@ test("a stale contract-data refusal outside a signing phase is ignored (does not
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -805,13 +887,13 @@ test("a contract-data refusal for a reset-and-recrafted cycle's prior order is i
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   act(() => {
     result.current.actions.reset();
   });
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.paymentTxId).toBe("txB");
 
@@ -840,13 +922,13 @@ test("a transfer outcome for a reset cycle's prior order is ignored once a new c
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   act(() => {
     result.current.actions.reset();
   });
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sigB", "txB");
@@ -874,7 +956,7 @@ test("a callback bound to no payment id (null) never matches the current cycle",
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -900,7 +982,7 @@ test("awaitEnergyDelivery gets the craft-derived paymentTxId; a timeout's own id
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -928,7 +1010,7 @@ test("a retried craft clears the prior cycle's paymentTxId", async () => {
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -942,7 +1024,7 @@ test("a retried craft clears the prior cycle's paymentTxId", async () => {
   expect(result.current.state.paymentTxId).toBeNull();
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.paymentTxId).toBe("txA");
 });
@@ -953,7 +1035,7 @@ test("a getSeam rejection in craftRent lands in FAILED / RENT_PAYMENT, not an un
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -966,7 +1048,7 @@ test("seam null -> craftRent fails the flow instead of silently no-op'ing", asyn
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
 
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.FAILED);
@@ -1005,7 +1087,7 @@ test("a craft that resolves after reset() is dropped, not committed as a stale o
 
   let craftPromise!: Promise<void>;
   await act(async () => {
-    craftPromise = result.current.actions.craftRent();
+    craftPromise = result.current.actions.craftRent(REVIEW_FEE);
     await craftCalled.promise;
   });
 
@@ -1051,11 +1133,11 @@ test("overlapping craftRent calls: an older order resolving last doesn't replace
 
   let olderCraft!: Promise<void>;
   await act(async () => {
-    olderCraft = result.current.actions.craftRent();
+    olderCraft = result.current.actions.craftRent(REVIEW_FEE);
     await olderCalled.promise;
   });
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     olderGate.resolve();
@@ -1080,7 +1162,7 @@ test("a delivery that resolves after reset() is dropped, not committed as DELIVE
   const { result } = renderHook(() => useSponsoredSendOrchestration(defaultParams));
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   expect(result.current.state.phase).toBe(SPONSORED_PHASE.RENT_SIGNING);
 
@@ -1119,7 +1201,7 @@ test("onRentPaymentBroadcast fires on the happy submit path with the payer and a
   );
 
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -1143,7 +1225,7 @@ test.each([["paid"], ["pending"], ["unknown"]])(
       useSponsoredSendOrchestration({ ...defaultParams, onRentPaymentBroadcast }),
     );
     await act(async () => {
-      await result.current.actions.craftRent();
+      await result.current.actions.craftRent(REVIEW_FEE);
     });
     await act(async () => {
       await result.current.actions.startRentPayment("sig", "txA");
@@ -1167,7 +1249,7 @@ test("onRentPaymentBroadcast fires when a submit reject reconciles to delivered"
     useSponsoredSendOrchestration({ ...defaultParams, onRentPaymentBroadcast }),
   );
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -1189,7 +1271,7 @@ test("onRentPaymentBroadcast does NOT fire when the provider confirms the paymen
     useSponsoredSendOrchestration({ ...defaultParams, onRentPaymentBroadcast }),
   );
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
   await act(async () => {
     await result.current.actions.startRentPayment("sig", "txA");
@@ -1215,7 +1297,7 @@ test("onRentPaymentBroadcast still fires when reset() abandons the flow mid-subm
     useSponsoredSendOrchestration({ ...defaultParams, onRentPaymentBroadcast }),
   );
   await act(async () => {
-    await result.current.actions.craftRent();
+    await result.current.actions.craftRent(REVIEW_FEE);
   });
 
   let payPromise!: Promise<void>;

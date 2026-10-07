@@ -17,7 +17,7 @@ jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowActions: () => ({ close: mockClose }),
 }));
 
-const mockCraftRent = jest.fn(() => Promise.resolve());
+const mockCraftRent = jest.fn((_approvedFee: bigint | null) => Promise.resolve());
 const mockStartRentPayment = jest.fn(() => Promise.resolve());
 const mockSetContractDataFailure = jest.fn();
 const mockActions = {
@@ -40,11 +40,14 @@ let mockSponsoredState: {
   failureError: Error | null;
 };
 
+let mockQuote: { value: bigint } | null;
+
 jest.mock("../../../../context/SponsoredSendContext", () => ({
   useSponsoredSend: () => ({
     state: mockSponsoredState,
     actions: mockActions,
     providerName: "Provider",
+    quote: mockQuote,
   }),
 }));
 
@@ -82,12 +85,24 @@ describe("useSponsoredRentSignatureViewModel", () => {
       failureKind: null,
       failureError: null,
     };
+    mockQuote = { value: 3_200_000n };
   });
 
   it("crafts the order on entry exactly once when phase is RENT_SIGNING and there is no order yet", () => {
     renderHook(() => useSponsoredRentSignatureViewModel());
 
     expect(mockCraftRent).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["the fee shown on Review", { value: 3_200_000n }, 3_200_000n],
+    ["no fee when Review showed none", null, null],
+  ])("binds the order to %s", (_label, quote, approvedFee) => {
+    mockQuote = quote;
+
+    renderHook(() => useSponsoredRentSignatureViewModel());
+
+    expect(mockCraftRent).toHaveBeenCalledWith(approvedFee);
   });
 
   it("crafts the order on entry exactly once when phase is IDLE and there is no order yet (AMOUNT navigated in without craftRent)", () => {

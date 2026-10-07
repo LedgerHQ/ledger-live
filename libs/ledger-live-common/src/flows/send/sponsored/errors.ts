@@ -5,3 +5,11 @@ export class SponsoredSendUnavailableError extends Error {
     super("Sponsored send is unavailable for this account");
   }
 }
+
+/** No sponsored fee was approved on Review to bind the rent order to. */
+export class SponsoredFeeNotApprovedError extends Error {
+  override name = "SponsoredFeeNotApprovedError";
+  constructor() {
+    super("No sponsored fee was approved on Review");
+  }
+}
