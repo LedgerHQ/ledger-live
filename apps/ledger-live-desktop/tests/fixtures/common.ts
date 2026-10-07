@@ -73,6 +73,7 @@ export const test = base.extend<TestFixtures>({
       simulateCamera,
     },
     use,
+    testInfo,
   ) => {
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
@@ -122,6 +123,8 @@ export const test = base.extend<TestFixtures>({
       userdataDestinationPath,
       simulateCamera,
       windowSize,
+      // Video encoding is CPU heavy: only record the retry of a failed test
+      recordVideo: testInfo.retry > 0,
     });
 
     await use(electronApp);
