@@ -9,7 +9,7 @@ import {
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
-import { outputOption, resolveOutputFormat, resolveAccountDescriptorV1 } from "../inputs";
+import { outputOption, resolveOutputFormat } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
 import { parseAmountWithTicker, parseDecimalAmount, parseEvmAddress } from "../../agent-intent/evm";
 import {
@@ -21,6 +21,7 @@ import {
 } from "../../agent-intent/send-intent";
 import { findEthereumToken } from "../../agent-intent/token-lookup";
 import { loadProfileIdentity } from "../../agent-intent/profile-identity";
+import { resolveSenderFromAccount } from "../../agent-intent/sender";
 import { keycloakOverride } from "../../agent-intent/relay";
 import {
   describeAgentIntentError,
@@ -36,20 +37,6 @@ function parseSenderInput(flags: {
   if (flags.account && !flags.from) return { account: flags.account };
   if (flags.from && !flags.account) return { from: flags.from };
   throw new Error("Pass exactly one sender: --account <session-label> or --from <address>.");
-}
-
-/** Only Ethereum mainnet accounts can send: that's the one network Agent Intent supports. */
-async function resolveSenderFromAccount(label: string): Promise<string> {
-  const descriptor = await resolveAccountDescriptorV1(label);
-  const { name, env } = descriptor.network;
-  if (name !== "ethereum" || env !== "main" || descriptor.type !== "address") {
-    const network = env === "main" ? name : `${name} ${env}`;
-    throw new Error(
-      `Account "${label}" is on ${network}; Agent Intent send intents support Ethereum mainnet ` +
-        "accounts only.",
-    );
-  }
-  return parseEvmAddress(descriptor.address, "account");
 }
 
 async function resolveAsset(
@@ -139,7 +126,7 @@ export default defineCommand({
       const sender =
         "from" in senderInput
           ? parseEvmAddress(senderInput.from, "from")
-          : await resolveSenderFromAccount(senderInput.account);
+          : await resolveSenderFromAccount(senderInput.account, "send");
       const recipient = parseEvmAddress(flags.to, "to");
       const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
       const asset = await resolveAsset(ticker, flags.token);
