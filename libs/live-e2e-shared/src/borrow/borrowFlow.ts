@@ -78,11 +78,9 @@ async function runAction(
 ): Promise<void> {
   console.log(`→ ${body.action} action (${JSON.stringify(body.args)})`);
   const action = await postAction(body);
-  const payloads: EvmSignablePayload[] = action.steps.map(step => JSON.parse(step.signablePayload));
-  if (!dryRun) await executor.assertCanAfford(payloads, `${body.action} action`);
   for (let i = 0; i < action.steps.length; i++) {
     const step = action.steps[i];
-    const payload = payloads[i];
+    const payload: EvmSignablePayload = JSON.parse(step.signablePayload);
     console.log(`  · step ${i + 1}/${action.steps.length} (${step.actionType}) → signing`);
     const { signedHex, hash } = await executor.buildSignBroadcast(payload, dryRun);
     if (dryRun) {

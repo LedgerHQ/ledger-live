@@ -1,8 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
-import { WebElement } from "detox/detox";
-import { sleep } from "@ledgerhq/live-e2e-shared/index";
 import { retryUntilTimeout } from "@e2e/utils/retry";
-import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 const MODAL_DISMISS_TIMEOUT_MS = TIMEOUT.xlarge;
 const CONTINUE_READY_TIMEOUT_MS = TIMEOUT.xlarge;
@@ -10,10 +8,11 @@ const EXECUTION_STEP_TIMEOUT_MS = 240_000;
 const STEP_STATE_TIMEOUT_MS = TIMEOUT.xlarge;
 const SCREEN_READY_TIMEOUT_MS = TIMEOUT.xxlarge;
 const DASHBOARD_READY_TIMEOUT_MS = TIMEOUT.xxxlarge;
-const EXECUTION_POLL_INTERVAL_MS = INTERVAL.long;
 
 const MAINNET_FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
+
+const anyTestId = (ids: string[]): string => ids.map(id => `[data-testid="${id}"]`).join(", ");
 
 export default class BorrowPage {
   private readonly borrowScreenId = "borrow-screen";
@@ -286,8 +285,10 @@ export default class BorrowPage {
   @Step("Click Back to my loans")
   async clickBackToMyLoans() {
     await this.revealAndTap(this.backToMyLoansButtonId);
-    await this.waitForAnyTestId(
-      [this.loansDashboardId, this.getNewLoanButtonId, this.introModalId],
+    await waitWebElement(
+      getWebElementByCssSelector(
+        anyTestId([this.loansDashboardId, this.getNewLoanButtonId, this.introModalId]),
+      ),
       SCREEN_READY_TIMEOUT_MS,
     );
   }
@@ -331,43 +332,21 @@ export default class BorrowPage {
     }
   }
 
-  /** Races the step markers against the execution error, so a failed step surfaces at once. */
+  /** One selector covers the step markers and the execution error, so a failed step surfaces at once. */
   private async awaitStepOutcome(doneIds: string[]) {
-    const deadline = Date.now() + EXECUTION_STEP_TIMEOUT_MS;
-    while (Date.now() < deadline) {
-      if (await this.isAnyPresent(doneIds)) return;
-      if (await this.isPresent(getWebElementByCssSelector(this.executionErrorLocator))) {
-        throw new Error(`Borrow execution failed before "${doneIds[0]}". ${MAINNET_FUNDING_HINT}`);
-      }
-      await sleep(EXECUTION_POLL_INTERVAL_MS);
-    }
-    throw new Error(
-      `Borrow step "${doneIds.join('" / "')}" did not complete within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
+    const outcome = getWebElementByCssSelector(
+      `${anyTestId(doneIds)}, ${this.executionErrorLocator}`,
     );
-  }
-
-  private async waitForAnyTestId(ids: string[], timeout: number) {
-    const deadline = Date.now() + timeout;
-    while (Date.now() < deadline) {
-      if (await this.isAnyPresent(ids)) return;
-      await sleep(EXECUTION_POLL_INTERVAL_MS);
-    }
-    throw new Error(`None of "${ids.join('" / "')}" appeared within ${timeout}ms`);
-  }
-
-  private async isAnyPresent(testIds: string[]): Promise<boolean> {
-    for (const testId of testIds) {
-      if (await this.isPresent(getWebElementByTestId(testId))) return true;
-    }
-    return false;
-  }
-
-  private async isPresent(element: WebElement): Promise<boolean> {
     try {
-      await element.runScript(el => el.innerText);
-      return true;
+      await waitWebElement(outcome, EXECUTION_STEP_TIMEOUT_MS);
     } catch {
-      return false;
+      throw new Error(
+        `Borrow step "${doneIds.join('" / "')}" did not complete within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
+      );
+    }
+    const shown: string = await outcome.runScript(el => el.getAttribute("data-testid"));
+    if (!doneIds.includes(shown)) {
+      throw new Error(`Borrow execution failed before "${doneIds[0]}". ${MAINNET_FUNDING_HINT}`);
     }
   }
 

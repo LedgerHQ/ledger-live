@@ -120,9 +120,7 @@ against it in parallel**. `playwright.config.ts` is `fullyParallel: true`, `work
   `test.setTimeout(...)` **inside** the hook. Manual/nightly `enable_broadcast` lane only.
 - **Funding.** ETH_4 must hold wBTC collateral + ETH for gas **plus a small USDT/USDC buffer** —
   `resetLoanState` repays debt **+ accrued interest**, and an exactly-principal balance reverts with
-  `transferFrom reverted`. Runner also needs `COINAPPS` + Docker (Speculos). An action the
-  account cannot pay gas for in full is refused before its first step is broadcast, so an
-  underfunded account fails with its balance and the amount needed instead of a half-done position.
+  `transferFrom reverted`. Runner also needs `COINAPPS` + Docker (Speculos).
 
 ## Required environment
 
