@@ -62,6 +62,7 @@ shared-lib:
   - libs/live-dmk-speculos/**/*
   - libs/live-signer-aleo/**/*
   - libs/live-signer-canton/**/*
+  - libs/live-signer-casper/**/*
   - libs/live-signer-evm/**/*
   - libs/live-signer-solana/**/*
   - libs/live-signer-tron/**/*

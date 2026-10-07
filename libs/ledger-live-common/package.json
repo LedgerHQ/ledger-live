@@ -353,6 +353,7 @@
     "@ledgerhq/live-promise": "catalog:",
     "@ledgerhq/live-signer-aleo": "workspace:^",
     "@ledgerhq/live-signer-canton": "workspace:^",
+    "@ledgerhq/live-signer-casper": "workspace:^",
     "@ledgerhq/live-signer-celo": "workspace:^",
     "@ledgerhq/live-signer-concordium": "workspace:^",
     "@ledgerhq/live-signer-cosmos": "workspace:^",

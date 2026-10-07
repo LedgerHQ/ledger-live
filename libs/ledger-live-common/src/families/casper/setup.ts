@@ -8,7 +8,7 @@ import { createMessageSigner, createResolver, executeWithSigner } from "../../br
 import { Resolver } from "../../hw/getAddress/types";
 import { TransactionStatus, Transaction } from "@ledgerhq/coin-casper/types";
 import { getCurrencyConfiguration } from "../../config";
-import { createDeviceSigner as createSigner } from "./deviceSigner";
+import { createDeviceSigner as createSigner, setCasperLdmkEnabled } from "./deviceSigner";
 import type { CasperCoinConfig } from "@ledgerhq/coin-casper/types";
 
 const getCoinConfig: CasperCoinConfig = () =>
@@ -25,4 +25,4 @@ const messageSigner = {
 
 const resolver: Resolver = createResolver(createSigner, casperResolver);
 
-export { bridge, messageSigner, resolver };
+export { bridge, messageSigner, resolver, setCasperLdmkEnabled };

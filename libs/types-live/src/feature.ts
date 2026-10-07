@@ -262,6 +262,7 @@ export type Features = CurrencyFeatures & {
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;
   ldmkSolanaSignerIsTxcActive: DefaultFeature;
+  ldmkCasperSigner: DefaultFeature;
   ldmkCosmosSigner: DefaultFeature;
   ldmkPolkadotSigner: DefaultFeature;
   ldmkXrpSigner: DefaultFeature;

@@ -103,6 +103,7 @@ import {
   setSolanaLdmkEnabled,
   setSolanaTxcEnabled,
 } from "@ledgerhq/live-common/families/solana/setup";
+import { setCasperLdmkEnabled } from "@ledgerhq/live-common/families/casper/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { LinkingProviderWrapper } from "~/components/LinkingProviderWrapper";
 import { setPolkadotLdmkEnabled } from "@ledgerhq/live-common/families/polkadot/setup";
@@ -170,6 +171,7 @@ function App() {
   const ldmkPolkadotSignerFeatureFlag = useFeature("ldmkPolkadotSigner");
   const ldmkXrpSignerFeatureFlag = useFeature("ldmkXrpSigner");
   const ldmkTronSignerFeatureFlag = useFeature("ldmkTronSigner");
+  const ldmkCasperSignerFeatureFlag = useFeature("ldmkCasperSigner");
   const suiTransportFeatureFlag = useFeature("suiTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
@@ -228,6 +230,12 @@ function App() {
       setTronLdmkEnabled(ldmkTronSignerFeatureFlag.enabled);
     }
   }, [ldmkTronSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkCasperSignerFeatureFlag?.enabled === "boolean") {
+      setCasperLdmkEnabled(ldmkCasperSignerFeatureFlag.enabled);
+    }
+  }, [ldmkCasperSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiTransport(resolveSuiTransport(suiTransportFeatureFlag));

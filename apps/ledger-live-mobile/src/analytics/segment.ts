@@ -352,6 +352,9 @@ const getLdmkAndSyncFlags = () => ({
   ldmkTronSigner: analyticsFeatureFlagMethod?.("ldmkTronSigner") ?? {
     enabled: false,
   },
+  ldmkCasperSigner: analyticsFeatureFlagMethod?.("ldmkCasperSigner") ?? {
+    enabled: false,
+  },
 });
 
 const getAccountsWithFunds = (accounts: ReturnType<typeof accountsSelector>) =>
@@ -408,8 +411,14 @@ const extraProperties = async (store: AppStore) => {
   });
   const contactsFeature = analyticsFeatureFlagMethod?.("lwmContacts") ?? { enabled: false };
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
-  const { ldmkTransport, ldmkSolanaSigner, ldmkCosmosSigner, ldmkPolkadotSigner, ldmkTronSigner } =
-    getLdmkAndSyncFlags();
+  const {
+    ldmkTransport,
+    ldmkSolanaSigner,
+    ldmkCosmosSigner,
+    ldmkPolkadotSigner,
+    ldmkTronSigner,
+    ldmkCasperSigner,
+  } = getLdmkAndSyncFlags();
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -553,6 +562,7 @@ const extraProperties = async (store: AppStore) => {
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,
     isLDMKTronSignerEnabled: ldmkTronSigner?.enabled,
+    isLDMKCasperSignerEnabled: ldmkCasperSigner?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,

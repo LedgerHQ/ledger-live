@@ -65,6 +65,7 @@ import {
   setSolanaLdmkEnabled,
   setSolanaTxcEnabled,
 } from "@ledgerhq/live-common/families/solana/setup";
+import { setCasperLdmkEnabled } from "@ledgerhq/live-common/families/casper/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { setPolkadotLdmkEnabled } from "@ledgerhq/live-common/families/polkadot/setup";
 import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
@@ -369,6 +370,7 @@ export default function Default() {
   const ldmkPolkadotSignerFeatureFlag = useFeature("ldmkPolkadotSigner");
   const ldmkXrpSignerFeatureFlag = useFeature("ldmkXrpSigner");
   const ldmkTronSignerFeatureFlag = useFeature("ldmkTronSigner");
+  const ldmkCasperSignerFeatureFlag = useFeature("ldmkCasperSigner");
   const suiTransportFeatureFlag = useFeature("suiTransport");
 
   const dmk = useDeviceManagementKit();
@@ -422,6 +424,12 @@ export default function Default() {
       setTronLdmkEnabled(ldmkTronSignerFeatureFlag.enabled);
     }
   }, [ldmkTronSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkCasperSignerFeatureFlag?.enabled === "boolean") {
+      setCasperLdmkEnabled(ldmkCasperSignerFeatureFlag.enabled);
+    }
+  }, [ldmkCasperSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiTransport(resolveSuiTransport(suiTransportFeatureFlag));

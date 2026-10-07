@@ -1,10 +1,16 @@
 import Casper from "@zondax/ledger-casper";
 import Transport from "@ledgerhq/hw-transport";
+import { DmkSignerCasper } from "@ledgerhq/live-signer-casper";
 import { getSigner } from "../../bridge/generic-coin-framework/signer";
 import { coinModuleLoaders } from "../../coin-modules/loaders";
+import { setCasperLdmkEnabled } from "./deviceSigner";
 import casperSigner, { createSigner } from "./signer";
 
 jest.mock("@zondax/ledger-casper");
+jest.mock("@ledgerhq/live-signer-casper", () => ({
+  ...jest.requireActual("@ledgerhq/live-signer-casper"),
+  DmkSignerCasper: jest.fn(),
+}));
 
 const MockedCasper = Casper as jest.MockedClass<typeof Casper>;
 const mockTransport = {} as Transport;
@@ -80,6 +86,40 @@ describe("createSigner (Casper)", () => {
       const signer = createSigner(mockTransport);
 
       await expect(signer.getAddress("44'/506'/0'/0/0")).rejects.toThrow("27264 - nope");
+    });
+  });
+});
+
+describe("createSigner (Casper) over a DMK transport", () => {
+  const dmkTransport = { dmk: {}, sessionId: "session-id" } as unknown as Transport;
+  const MockedDmkSigner = DmkSignerCasper as jest.MockedClass<typeof DmkSignerCasper>;
+  let getAddressAndPubKey: jest.Mock;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setCasperLdmkEnabled(true);
+    getAddressAndPubKey = jest.fn().mockResolvedValue(okAddress);
+    MockedDmkSigner.mockImplementation(
+      () => ({ getAddressAndPubKey }) as unknown as DmkSignerCasper,
+    );
+  });
+
+  afterAll(() => setCasperLdmkEnabled(false));
+
+  it("should read the address through the DMK signer when the ldmkCasperSigner flag is on", async () => {
+    const signer = createSigner(dmkTransport);
+
+    const result = await signer.getAddress("44'/506'/0'/0/0");
+
+    expect(MockedDmkSigner).toHaveBeenCalledTimes(1);
+    expect(MockedDmkSigner).toHaveBeenCalledWith({}, "session-id");
+    expect(getAddressAndPubKey).toHaveBeenCalledTimes(1);
+    expect(getAddressAndPubKey).toHaveBeenCalledWith("44'/506'/0'/0/0");
+    expect(MockedCasper).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      path: "44'/506'/0'/0/0",
+      address: SECP256K1_ADDRESS,
+      publicKey: SECP256K1_ADDRESS,
     });
   });
 });

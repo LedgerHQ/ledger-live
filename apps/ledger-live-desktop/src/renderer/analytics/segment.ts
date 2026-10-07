@@ -302,6 +302,9 @@ const extraProperties = (store: ReduxStore) => {
   const ldmkTronSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkTronSigner")
     : { enabled: false };
+  const ldmkCasperSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkCasperSigner")
+    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -405,6 +408,7 @@ const extraProperties = (store: ReduxStore) => {
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,
     isLDMKTronSignerEnabled: ldmkTronSigner?.enabled,
+    isLDMKCasperSignerEnabled: ldmkCasperSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
