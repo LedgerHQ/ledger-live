@@ -15,6 +15,7 @@ import { retryUntilTimeout } from "@e2e/utils/retry";
 
 export default class BuySellPage {
   appContainerCssSelector = "#app-container";
+  closeButtonId = "icon_button_close";
   amountInputSectionBaseId = "amount-input-section";
   countryDrawerSearchInput = "countries-drawer-search-input";
   cryptoAccountSelector = "account-details";
@@ -50,6 +51,11 @@ export default class BuySellPage {
   // App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
   // 60s flakes on that alone. Latency is tracked separately, not fixed here.
   cryptoCurrencySelectorTimeout = TIMEOUT.xxxlarge;
+
+  @Step("Close the Buy screen")
+  async closeBuyScreen() {
+    await tapWebElementByTestId(this.closeButtonId);
+  }
 
   @Step("Expect Buy screen to be visible")
   async expectBuyScreenToBeVisible() {
