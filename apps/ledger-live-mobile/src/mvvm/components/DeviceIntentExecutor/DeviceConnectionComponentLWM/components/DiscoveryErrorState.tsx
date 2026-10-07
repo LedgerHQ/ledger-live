@@ -8,9 +8,7 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import { getConnectDeviceSubError } from "@ledgerhq/live-dmk-shared";
-import { InfoState } from "@shared/ui-info-state";
-import { useTranslation } from "~/context/Locale";
-import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
+import { DiscoveryErrorState as DiscoveryErrorStateView } from "LLM/components/DeviceConnection";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
@@ -25,257 +23,57 @@ type DiscoveryErrorStateProps = {
   platform: Exclude<AppPlatform, "desktop">;
 };
 
-type InfoStateCta = React.ComponentProps<typeof InfoState>["primaryCta"];
-
-type DiscoveryErrorViewState = {
-  preset: "info" | "error";
-  title: string;
-  description?: string;
-  primaryCta?: InfoStateCta;
-  secondaryCta?: InfoStateCta;
+const retryButtons: Record<DiscoveryError["type"], string> = {
+  [DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable]: CONNECT_DEVICE_BUTTON.AllowBluetooth,
+  [DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings]: CONNECT_DEVICE_BUTTON.OpenSettings,
+  [DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings]:
+    CONNECT_DEVICE_BUTTON.OpenSettings,
+  [DiscoveryErrorTypes.BluetoothDisabledPromptable]: CONNECT_DEVICE_BUTTON.TurnOnBluetooth,
+  [DiscoveryErrorTypes.BluetoothDisabledManualAction]: CONNECT_DEVICE_BUTTON.OpenSettings,
+  [DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly]: CONNECT_DEVICE_BUTTON.Retry,
+  [DiscoveryErrorTypes.BluetoothUnsupported]: CONNECT_DEVICE_BUTTON.Retry,
+  [DiscoveryErrorTypes.LocationPermissionDeniedPromptable]: CONNECT_DEVICE_BUTTON.AllowLocation,
+  [DiscoveryErrorTypes.LocationPermissionDeniedManualSettings]: CONNECT_DEVICE_BUTTON.OpenSettings,
+  [DiscoveryErrorTypes.LocationDisabledPromptable]: CONNECT_DEVICE_BUTTON.TurnOnLocation,
+  [DiscoveryErrorTypes.LocationDisabledManualAction]: CONNECT_DEVICE_BUTTON.OpenSettings,
+  [DiscoveryErrorTypes.LocationServicePermissionMissing]: CONNECT_DEVICE_BUTTON.Retry,
+  [BaseDiscoveryErrorTypes.Unknown]: CONNECT_DEVICE_BUTTON.Retry,
 };
-
-type DiscoveryErrorType = DiscoveryError["type"];
-
-type DiscoveryErrorViewStates = {
-  [DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly]: { title: string };
-} & Record<
-  Exclude<DiscoveryErrorType, DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly>,
-  DiscoveryErrorViewState
->;
-
-const discoveryErrorTranslationBaseKey =
-  "deviceIntentExecutor.connectDevice.states.discoveryError.errors";
 
 export function DiscoveryErrorState({
   state,
   platform,
 }: Readonly<DiscoveryErrorStateProps>): React.ReactNode {
-  const { t } = useTranslation();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const trackingTransport = getTrackingTransport(state.error.transportId);
+  const { retry, ignore } = state;
 
-  const trackingScreen = (
-    <TrackDIEScreen
-      category={PAGE_CONNECT_DEVICE.DiscoveryError}
-      {...(trackingTransport ? { transport: trackingTransport } : {})}
-      subError={getConnectDeviceSubError(state.error)}
-      refreshSource
-    />
-  );
-
-  const retryCta = (labelKey: string, trackButtonName: string): InfoStateCta | undefined => {
-    if (!state.retry) return undefined;
-    const label = t(labelKey);
-    return {
-      label,
-      onPress: () => {
-        trackConnectDeviceButtonClicked({
-          sourceFlow,
-          button: trackButtonName,
-          extraProperties: analyticsProperties,
-        });
-        state.retry?.();
-      },
-    };
-  };
-
-  const ignoreCta = (labelKey: string): InfoStateCta => {
-    const label = t(labelKey);
-    return {
-      label,
-      onPress: () => {
-        trackConnectDeviceButtonClicked({
-          sourceFlow,
-          button: CONNECT_DEVICE_BUTTON.ContinueWithUsb,
-          extraProperties: analyticsProperties,
-        });
-        state.ignore();
-      },
-    };
-  };
-
-  const discoveryErrorViewStates: DiscoveryErrorViewStates = {
-    [DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedPromptable.title`,
-      description: `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedPromptable.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedPromptable.cta.retry`,
-        CONNECT_DEVICE_BUTTON.AllowBluetooth,
-      ),
-      secondaryCta: ignoreCta(
-        `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedPromptable.cta.ignore`,
-      ),
-    },
-    [DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedManualSettings.title`,
-      description: `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedManualSettings.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedManualSettings.cta.retry`,
-        CONNECT_DEVICE_BUTTON.OpenSettings,
-      ),
-      secondaryCta: ignoreCta(
-        `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedManualSettings.cta.ignore`,
-      ),
-    },
-    [DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.bluetoothPermissionUnauthorizedManualSettings.title`,
-      description: `${discoveryErrorTranslationBaseKey}.bluetoothPermissionUnauthorizedManualSettings.description.platform.${platform}`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.bluetoothPermissionUnauthorizedManualSettings.cta.platform.${platform}.retry`,
-        CONNECT_DEVICE_BUTTON.OpenSettings,
-      ),
-      secondaryCta:
-        platform === "android"
-          ? ignoreCta(
-              `${discoveryErrorTranslationBaseKey}.bluetoothPermissionUnauthorizedManualSettings.cta.platform.android.ignore`,
-            )
-          : undefined,
-    },
-    [DiscoveryErrorTypes.BluetoothDisabledPromptable]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.bluetoothDisabledPromptable.title`,
-      description: `${discoveryErrorTranslationBaseKey}.bluetoothDisabledPromptable.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.bluetoothDisabledPromptable.cta.retry`,
-        CONNECT_DEVICE_BUTTON.TurnOnBluetooth,
-      ),
-      secondaryCta: ignoreCta(
-        `${discoveryErrorTranslationBaseKey}.bluetoothDisabledPromptable.cta.ignore`,
-      ),
-    },
-    [DiscoveryErrorTypes.BluetoothDisabledManualAction]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.bluetoothDisabledManualAction.title`,
-      description: `${discoveryErrorTranslationBaseKey}.bluetoothDisabledManualAction.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.bluetoothDisabledManualAction.cta.platform.${platform}.retry`,
-        CONNECT_DEVICE_BUTTON.OpenSettings,
-      ),
-      secondaryCta:
-        platform === "android"
-          ? ignoreCta(
-              `${discoveryErrorTranslationBaseKey}.bluetoothDisabledManualAction.cta.platform.android.ignore`,
-            )
-          : undefined,
-    },
-    [DiscoveryErrorTypes.BluetoothUnsupported]: {
-      preset: "error",
-      title: `${discoveryErrorTranslationBaseKey}.bluetoothUnsupported.title`,
-      description: `${discoveryErrorTranslationBaseKey}.bluetoothUnsupported.description.platform.${platform}`,
-      primaryCta:
-        platform === "android"
-          ? ignoreCta(
-              `${discoveryErrorTranslationBaseKey}.bluetoothUnsupported.cta.platform.android.ignore`,
-            )
-          : undefined,
-    },
-    [DiscoveryErrorTypes.LocationPermissionDeniedPromptable]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedPromptable.title`,
-      description: `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedPromptable.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedPromptable.cta.retry`,
-        CONNECT_DEVICE_BUTTON.AllowLocation,
-      ),
-      secondaryCta: ignoreCta(
-        `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedPromptable.cta.ignore`,
-      ),
-    },
-    [DiscoveryErrorTypes.LocationPermissionDeniedManualSettings]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedManualSettings.title`,
-      description: `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedManualSettings.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedManualSettings.cta.retry`,
-        CONNECT_DEVICE_BUTTON.OpenSettings,
-      ),
-      secondaryCta: ignoreCta(
-        `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedManualSettings.cta.ignore`,
-      ),
-    },
-    [DiscoveryErrorTypes.LocationDisabledPromptable]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.locationDisabledPromptable.title`,
-      description: `${discoveryErrorTranslationBaseKey}.locationDisabledPromptable.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.locationDisabledPromptable.cta.retry`,
-        CONNECT_DEVICE_BUTTON.TurnOnLocation,
-      ),
-      secondaryCta: ignoreCta(
-        `${discoveryErrorTranslationBaseKey}.locationDisabledPromptable.cta.ignore`,
-      ),
-    },
-    [DiscoveryErrorTypes.LocationDisabledManualAction]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.locationDisabledManualAction.title`,
-      description: `${discoveryErrorTranslationBaseKey}.locationDisabledManualAction.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.locationDisabledManualAction.cta.retry`,
-        CONNECT_DEVICE_BUTTON.OpenSettings,
-      ),
-      secondaryCta: ignoreCta(
-        `${discoveryErrorTranslationBaseKey}.locationDisabledManualAction.cta.ignore`,
-      ),
-    },
-    [DiscoveryErrorTypes.LocationServicePermissionMissing]: {
-      preset: "info",
-      title: `${discoveryErrorTranslationBaseKey}.locationServicePermissionMissing.title`,
-      description: `${discoveryErrorTranslationBaseKey}.locationServicePermissionMissing.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.locationServicePermissionMissing.cta.retry`,
-        CONNECT_DEVICE_BUTTON.Retry,
-      ),
-      secondaryCta: ignoreCta(
-        `${discoveryErrorTranslationBaseKey}.locationServicePermissionMissing.cta.ignore`,
-      ),
-    },
-    [BaseDiscoveryErrorTypes.Unknown]: {
-      preset: "error",
-      title: `${discoveryErrorTranslationBaseKey}.unknown.title`,
-      description: `${discoveryErrorTranslationBaseKey}.unknown.description`,
-      primaryCta: retryCta(
-        `${discoveryErrorTranslationBaseKey}.unknown.cta.retry`,
-        CONNECT_DEVICE_BUTTON.Retry,
-      ),
-    },
-    [DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly]: {
-      title: `${discoveryErrorTranslationBaseKey}.bluetoothStateUnknownCheckOnly.title`,
-    },
-  };
-
-  if (state.error.type === DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly) {
-    const errorState = discoveryErrorViewStates[state.error.type];
-
-    return (
-      <Box lx={{ width: "full", alignItems: "center", paddingTop: "s16" }}>
-        {trackingScreen}
-        <Spinner size={32} color="base" />
-        <Text
-          typography="heading4SemiBold"
-          lx={{ color: "base", textAlign: "center", paddingTop: "s16", paddingBottom: "s32" }}
-        >
-          {t(errorState.title)}
-        </Text>
-      </Box>
-    );
-  }
-
-  const errorState = discoveryErrorViewStates[state.error.type];
+  const trackButtonClicked = (button: string) =>
+    trackConnectDeviceButtonClicked({ sourceFlow, button, extraProperties: analyticsProperties });
 
   return (
     <>
-      {trackingScreen}
-      <InfoState
-        preset={errorState.preset}
-        size="hug"
-        title={t(errorState.title)}
-        description={errorState.description ? t(errorState.description) : undefined}
-        primaryCta={errorState.primaryCta}
-        secondaryCta={errorState.secondaryCta}
+      <TrackDIEScreen
+        category={PAGE_CONNECT_DEVICE.DiscoveryError}
+        {...(trackingTransport ? { transport: trackingTransport } : {})}
+        subError={getConnectDeviceSubError(state.error)}
+        refreshSource
+      />
+      <DiscoveryErrorStateView
+        state={{
+          ...state,
+          retry: retry
+            ? () => {
+                trackButtonClicked(retryButtons[state.error.type]);
+                retry();
+              }
+            : undefined,
+          ignore: () => {
+            trackButtonClicked(CONNECT_DEVICE_BUTTON.ContinueWithUsb);
+            ignore();
+          },
+        }}
+        platform={platform}
       />
     </>
   );

@@ -35,29 +35,6 @@ function makeKnownDevice(overrides: Partial<KnownDevice> = {}): KnownDevice {
   };
 }
 
-const errorCases = [
-  {
-    type: ConnectionErrorTypes.BlePairingRefused,
-    title: "Pairing was refused",
-    description: undefined,
-    cta: "Retry pairing",
-  },
-  {
-    type: ConnectionErrorTypes.BlePairingPeerRemovedPairing,
-    title: "Go to your phone’s Bluetooth settings to unpair Ledger device",
-    description:
-      "To fix the pairing issue, remove Ledger device from your phone’s Bluetooth list, then return to this app and try again.",
-    cta: "Learn how to fix",
-  },
-  {
-    type: BaseConnectionErrorTypes.Unknown,
-    title: "Pairing unsuccessful",
-    description:
-      "Please try again or read our Bluetooth troubleshooting article below for more guidance.",
-    cta: "Try again",
-  },
-] as const;
-
 function renderState(errorType: ConnectionErrorType) {
   const retry = jest.fn();
   const ignore = jest.fn();
@@ -78,7 +55,7 @@ function renderState(errorType: ConnectionErrorType) {
   return { ...view, retry, ignore };
 }
 
-describe("ConnectionErrorState", () => {
+describe("ConnectionErrorState (DIE tracking)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setTrackingSource(PAGE_CONNECT_DEVICE.ConnectionError);
@@ -86,61 +63,6 @@ describe("ConnectionErrorState", () => {
   });
 
   afterEach(resetTrackingPages);
-
-  it.each(errorCases)("should render the $type error title and CTA", ({ type, title, cta }) => {
-    renderState(type);
-
-    expect(screen.getByText(title)).toBeVisible();
-    expect(screen.getByText(cta)).toBeVisible();
-  });
-
-  it.each(errorCases.filter(({ description }) => description))(
-    "GIVEN a $type error with a description WHEN rendering THEN it renders the error description",
-    ({ type, description }) => {
-      // GIVEN
-      if (!description) {
-        throw new Error("Expected error case to include a description");
-      }
-
-      // WHEN
-      renderState(type);
-
-      // THEN
-      expect(screen.getByText(description)).toBeVisible();
-    },
-  );
-
-  it("should render the unknown error tip", () => {
-    renderState(BaseConnectionErrorTypes.Unknown);
-
-    expect(screen.getByText("Make sure your device is unlocked.")).toBeVisible();
-  });
-
-  it("should call retry when the retry button is pressed", async () => {
-    const { user, retry } = renderState(BaseConnectionErrorTypes.Unknown);
-
-    await user.press(screen.getByText("Try again"));
-
-    expect(track).toHaveBeenCalledWith("button_clicked", {
-      sourceFlow: "my_ledger",
-      deviceUxV2: true,
-      button: "Retry",
-    });
-    expect(retry).toHaveBeenCalledTimes(1);
-  });
-
-  it("should open the generic pairing help article", async () => {
-    const { user } = renderState(BaseConnectionErrorTypes.Unknown);
-
-    await user.press(screen.getByText("Get help"));
-
-    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
-      sourceFlow: "my_ledger",
-      deviceUxV2: true,
-      button: "Get Help",
-    });
-    expect(Linking.openURL).toHaveBeenCalledWith(urls.pairingIssues);
-  });
 
   it("GIVEN a connection error WHEN rendering THEN it tracks the Device UX V2 page event", () => {
     // GIVEN / WHEN
@@ -170,4 +92,52 @@ describe("ConnectionErrorState", () => {
       undefined,
     );
   });
+
+  it.each([
+    { type: BaseConnectionErrorTypes.Unknown, label: "Try again" },
+    { type: ConnectionErrorTypes.BlePairingPeerRemovedPairing, label: "I unpaired, try again" },
+  ])(
+    "GIVEN a $type error WHEN retry is pressed THEN it tracks button_clicked and retries",
+    async ({ type, label }) => {
+      // GIVEN
+      const { user, retry } = renderState(type);
+
+      // WHEN
+      await user.press(screen.getByText(label));
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+        sourceFlow: "my_ledger",
+        deviceUxV2: true,
+        button: "Retry",
+      });
+      expect(retry).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it.each([
+    { type: BaseConnectionErrorTypes.Unknown, label: "Get help", url: urls.pairingIssues },
+    {
+      type: ConnectionErrorTypes.BlePairingPeerRemovedPairing,
+      label: "Learn how to fix",
+      url: urls.errors.BleForgetDevice,
+    },
+  ])(
+    "GIVEN a $type error WHEN help is pressed THEN it tracks button_clicked and opens the article",
+    async ({ type, label, url }) => {
+      // GIVEN
+      const { user } = renderState(type);
+
+      // WHEN
+      await user.press(screen.getByText(label));
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+        sourceFlow: "my_ledger",
+        deviceUxV2: true,
+        button: "Get Help",
+      });
+      expect(Linking.openURL).toHaveBeenCalledWith(url);
+    },
+  );
 });

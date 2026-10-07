@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render } from "@tests/test-renderer";
 import { ConnectDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import { TrackScreen } from "@shared/analytics-react";
 import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
@@ -16,19 +16,9 @@ function renderState(error: unknown = new Error("boom")) {
   );
 }
 
-describe("UnknownErrorState", () => {
+describe("UnknownErrorState (DIE tracking)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("should render the shared unknown error wording", () => {
-    renderState();
-
-    expect(screen.getByText("Unknown error")).toBeVisible();
-    expect(
-      screen.getByText("Try again or contact Ledger support if the issue continues."),
-    ).toBeVisible();
-    expect(screen.getByTestId("device-intent-executor-connect-device-unknown-error")).toBeVisible();
   });
 
   it("should track the page with the error tag as subError when a DMK error escapes", () => {
