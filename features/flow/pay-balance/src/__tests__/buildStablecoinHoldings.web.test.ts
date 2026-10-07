@@ -109,6 +109,29 @@ describe("buildStablecoinHoldings", () => {
     ).toEqual([usdtCatalog]);
   });
 
+  it("should keep a testnet catalog balance", () => {
+    const arcTestnet: StablecoinItem = {
+      currency: { ...USDC_CURRENCY, id: "arc_testnet" },
+      balance: 5_000_000,
+      value: 0,
+    };
+
+    expect(build({ catalog: [usdcCatalog, arcTestnet] })).toEqual([usdcCatalog, arcTestnet]);
+  });
+
+  it("should keep a testnet account balance in the held-accounts fallback", () => {
+    const arcCurrency = { ...USDC_CURRENCY, id: "arc_testnet" };
+    const arcHeld: HeldAccount = {
+      type: "Account",
+      balance: 5_000_000,
+      currency: arcCurrency,
+    };
+
+    expect(build({ heldAccounts: [arcHeld], stablecoinTickers: new Set(["USDC"]) })).toEqual([
+      { currency: arcCurrency, balance: 5_000_000, value: 0 },
+    ]);
+  });
+
   it("should omit catalog rows with no positive amount", () => {
     expect(
       build({
