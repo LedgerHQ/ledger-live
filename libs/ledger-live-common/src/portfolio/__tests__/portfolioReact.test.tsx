@@ -28,7 +28,7 @@ jest.mock("@features/platform-market-countervalues", () => ({
 }));
 
 const mockThrottledValues = jest.fn();
-jest.mock("@ledgerhq/live-hooks/useThrottledFunction", () => ({
+jest.mock("../../hooks/useThrottledValues", () => ({
   useThrottledValues: (...args: unknown[]) => mockThrottledValues(...args),
 }));
 
