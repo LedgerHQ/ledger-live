@@ -29,7 +29,7 @@ import {
   describeAgentIntentError,
   isAcceptedWithoutReviewLink,
 } from "../../agent-intent/service-errors";
-import { createCommandOutput } from "../../output";
+import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
 
 function parseSenderInput(flags: {
@@ -60,6 +60,40 @@ function assertSdkAcceptsIntent(intent: SwapIntent): void {
   } catch (e) {
     throw new Error(`Invalid intent: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
   }
+}
+
+/** What the agent expects to receive: `--to-amount` with its `--provider`, or the best quote. */
+async function expectedReceive(input: {
+  toAmount: string | undefined;
+  provider: string | undefined;
+  from: SwapAsset;
+  to: SwapAsset;
+  fromAmount: string;
+  sender: string;
+  out: Pick<CommandOutput, "spin">;
+}): Promise<{ toAmount: string; provider: string; quoted: boolean }> {
+  const { to, provider } = input;
+  if (input.toAmount !== undefined) {
+    if (!provider) throw new Error("--to-amount replaces the quote, so it needs --provider too.");
+    return { toAmount: parseSwapAmount(input.toAmount, to, "to-amount"), provider, quoted: false };
+  }
+  const spinner = input.out.spin("Fetching swap quotes…");
+  const quote = await fetchAgentSwapQuote({
+    from: input.from.id,
+    to: to.id,
+    amount: input.fromAmount,
+    sender: input.sender,
+    providers: provider ? [provider] : AGENT_INTENT_SWAP_PROVIDERS,
+  });
+  const toAmount = quotedReceiveAmount(quote.receiveAmount, to);
+  if (!toAmount) {
+    throw new Error(
+      `The ${quote.provider} quote receives less than the smallest unit of ${to.ticker}. ` +
+        "Sell a larger --amount.",
+    );
+  }
+  spinner?.success(`Quoted by ${quote.provider}`);
+  return { toAmount, provider: quote.provider, quoted: true };
 }
 
 export default defineCommand({
@@ -116,9 +150,6 @@ export default defineCommand({
     await out.run(async () => {
       const senderInput = parseSenderInput(flags);
       const provider = flags.provider ? resolveAgentSwapProvider(flags.provider) : undefined;
-      if (flags["to-amount"] && !provider) {
-        throw new Error("--to-amount replaces the quote, so it needs --provider too.");
-      }
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
       const sender =
         "sender" in senderInput
@@ -128,32 +159,15 @@ export default defineCommand({
       const to = await resolveSwapAsset(flags.to, "to");
       if (from.id === to.id) throw new Error("--from and --to are the same asset.");
       const fromAmount = parseSwapAmount(flags.amount, from, "amount");
-
-      let toAmount: string;
-      let quotedProvider: string;
-      if (flags["to-amount"] && provider) {
-        toAmount = parseSwapAmount(flags["to-amount"], to, "to-amount");
-        quotedProvider = provider;
-      } else {
-        const spinner = out.spin("Fetching swap quotes…");
-        const quote = await fetchAgentSwapQuote({
-          from: from.id,
-          to: to.id,
-          amount: fromAmount,
-          sender,
-          providers: provider ? [provider] : AGENT_INTENT_SWAP_PROVIDERS,
-        });
-        const received = quotedReceiveAmount(quote.receiveAmount, to);
-        if (!received) {
-          throw new Error(
-            `The ${quote.provider} quote receives less than the smallest unit of ${to.ticker}. ` +
-              "Sell a larger --amount.",
-          );
-        }
-        spinner?.success(`Quoted by ${quote.provider}`);
-        toAmount = received;
-        quotedProvider = quote.provider;
-      }
+      const receive = await expectedReceive({
+        toAmount: flags["to-amount"],
+        provider,
+        from,
+        to,
+        fromAmount,
+        sender,
+        out,
+      });
 
       const summary: SwapIntentSummary = {
         profileId: profile.profileId,
@@ -162,9 +176,7 @@ export default defineCommand({
         from,
         to,
         fromAmount,
-        toAmount,
-        provider: quotedProvider,
-        quoted: !flags["to-amount"],
+        ...receive,
         description: flags.description,
       };
 
