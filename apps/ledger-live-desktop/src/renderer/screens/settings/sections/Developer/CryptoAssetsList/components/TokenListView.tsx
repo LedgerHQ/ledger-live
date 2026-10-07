@@ -25,6 +25,7 @@ import {
 } from "../styles";
 import { TokenDetailsContent } from "./TokenDetailsContent";
 import { useTokenList } from "../hooks/useTokenList";
+import { copyToClipboard } from "@shared/clipboard";
 
 interface TokenListViewProps {
   initialFamily?: string;
@@ -327,7 +328,7 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
                       appearance="transparent"
                       onClick={e => {
                         e.stopPropagation();
-                        navigator.clipboard.writeText(token.id);
+                        void copyToClipboard(token.id);
                       }}
                     >
                       {t("settings.developer.cryptoAssetsList.drawer.copy")}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { copyToClipboard } from "@shared/clipboard";
 import { ContactAddressDetailActions } from "./ContactAddressDetailActions.web";
 import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary.web";
 import type { ContactAddressDetailDialogProps } from "./types";
@@ -49,7 +50,7 @@ export function ContactAddressDetailDialog({
       return;
     }
 
-    await navigator.clipboard.writeText(row.address);
+    if (!(await copyToClipboard(row.address))) return;
     setHasCopied(true);
   };
 

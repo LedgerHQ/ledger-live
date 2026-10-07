@@ -13,12 +13,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { AssetType } from "../../../../types";
-
-const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {}
-};
+import { copyToClipboard } from "@shared/clipboard";
 
 type AssetListItemProps = AssetType & {
   onClick: (asset: AssetType) => void;

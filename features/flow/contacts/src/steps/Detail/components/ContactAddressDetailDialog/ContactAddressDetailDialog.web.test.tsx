@@ -1,10 +1,13 @@
 import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { copyToClipboard } from "@shared/clipboard";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
 import { ContactAddressDetailDialog } from "./ContactAddressDetailDialog.web";
 import type { ContactAddressDetailDialogProps } from "./types";
+
+jest.mock("@shared/clipboard");
 
 function createProps(
   overrides: Partial<ContactAddressDetailDialogProps> = {},
@@ -50,11 +53,7 @@ function createProps(
 describe("ContactAddressDetailDialog", () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    Object.assign(navigator, {
-      clipboard: {
-        writeText: jest.fn().mockResolvedValue(undefined),
-      },
-    });
+    jest.mocked(copyToClipboard).mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -80,9 +79,7 @@ describe("ContactAddressDetailDialog", () => {
     fireEvent.click(screen.getByTestId("contacts-address-detail-copy"));
 
     await waitFor(() => {
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-        "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
-      );
+      expect(copyToClipboard).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
     });
 
     await waitFor(() => {

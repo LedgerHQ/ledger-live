@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import { Icons, Button, Flex } from "@ledgerhq/react-ui";
 import { t } from "~/renderer/i18n/init";
+import { copyToClipboard } from "@shared/clipboard";
 
 type Props = {
   readonly text: string;
@@ -10,11 +11,10 @@ type Props = {
 export default function CopyButton({ text }: Props) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
-    });
+  const handleCopy = useCallback(async () => {
+    if (!(await copyToClipboard(text))) return;
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
   }, [text]);
 
   return (
