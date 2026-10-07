@@ -127,6 +127,27 @@ export function describeAgentIntentError(e: unknown, profileId: string): Error {
   );
 }
 
+function lookupErrorMessage(e: AgentIntentHttpError, profileId: string, intentId: string): string {
+  if (e.status === 404) {
+    return (
+      `Profile "${profileId}" has no intent ${intentId}: it doesn't exist, or another agent ` +
+      "created it (the service answers both the same way). Run `agent-intent intents` to see " +
+      "this profile's intents."
+    );
+  }
+  if (e.status === 400) {
+    return `The Agent Intent service rejected intent id ${intentId} (${redactServiceText(e.message)}).`;
+  }
+  // A service from before agent point reads answers an agent token with this, not 404.
+  if (e.type === "unexpected_caller") {
+    return (
+      "This Agent Intent service doesn't let agents read a single intent yet. Use " +
+      "`agent-intent intents` to see the status of this profile's intents instead."
+    );
+  }
+  return listErrorMessage(e, profileId);
+}
+
 function listErrorMessage(e: AgentIntentHttpError, profileId: string): string {
   const detail = redactServiceText(e.message);
   const access = accessErrorMessage(e, profileId, detail);
@@ -151,7 +172,26 @@ function listErrorMessage(e: AgentIntentHttpError, profileId: string): string {
  * failure is always safe to retry.
  */
 export function describeAgentIntentListError(e: unknown, profileId: string): Error {
-  if (isHttpError(e)) return new Error(listErrorMessage(e, profileId));
+  return describeReadError(e, profileId, httpError => listErrorMessage(httpError, profileId));
+}
+
+/** Like {@link describeAgentIntentListError}, for reading one intent: a 404 means "not yours". */
+export function describeAgentIntentLookupError(
+  e: unknown,
+  profileId: string,
+  intentId: string,
+): Error {
+  return describeReadError(e, profileId, httpError =>
+    lookupErrorMessage(httpError, profileId, intentId),
+  );
+}
+
+function describeReadError(
+  e: unknown,
+  profileId: string,
+  httpMessage: (e: AgentIntentHttpError) => string,
+): Error {
+  if (isHttpError(e)) return new Error(httpMessage(e));
   const message = redactServiceText(e instanceof Error ? e.message : String(e));
   if (isSdkError(e)) {
     if (/authentication request failed/i.test(message)) {
