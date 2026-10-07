@@ -11,7 +11,7 @@ const DEFAULT_LABEL = "English";
 test.describe("My Ledger — device language", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
-    teamOwner: Team.WALLET_XP,
+    teamOwner: Team.MY_LEDGER_ONBOARDING,
   });
 
   test(

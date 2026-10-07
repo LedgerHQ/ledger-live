@@ -5,7 +5,7 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 test.describe("My Ledger (mock server)", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
-    teamOwner: Team.WALLET_XP,
+    teamOwner: Team.MY_LEDGER_ONBOARDING,
   });
 
   test(
