@@ -225,6 +225,7 @@ export default class EarnV2DashboardPage {
     const label = await getWebElementText(this.amountContinueCta);
     jestExpect(label).toContain("Go to swap");
     await tapWebElementByTestId(this.amountContinueCta);
+    await app.swapLiveApp.expectSwapLiveAppForm();
   }
 
   @Step("Select deposit v2 amount preset {{{0}}}")
