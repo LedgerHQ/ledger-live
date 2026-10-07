@@ -25,7 +25,7 @@ import { broadcast } from "../broadcast";
 import { perCoinLogic } from "../logic";
 import resolver from "../hw-getAddress";
 import getFullViewingKeyResolver, { GetFullViewingKeyResult } from "../hw-getFullViewingKey";
-import { validateAddress } from "../validateAddress";
+import { validateAddress } from "../logic/validateAddress";
 import buildSignRawOperation from "../signRawOperation";
 import { getBitcoinEstimationRecipient } from "../constants";
 // Registers the Zcash chain adapter (transparent Zcash is served by this bridge).

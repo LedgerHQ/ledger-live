@@ -8,6 +8,7 @@ const config = {
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
     "!src/__tests__/**/*.ts",
+    "!src/logic/tests/**/*.ts",
     "!src/datasets/**/*.ts",
     "!src/wallet-btc/__tests__/**/*.ts",
     "!src/chain-adapters/zcash/ipc/**/*.ts",

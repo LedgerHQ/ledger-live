@@ -1,4 +1,3 @@
-import cashaddr from "cashaddrjs";
 import { Currency, isValidAddress } from "@ledgerhq/wallet-btc/index";
 import { RecipientRequired, InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import type {
@@ -15,6 +14,7 @@ import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, OperationType } from "@ledgerhq/types-live";
+import { bchExplicit, coinTraits } from "./logic/coinTraits";
 
 export const inferFeePerByte = (t: Transaction, networkInfo: NetworkInfo): BigNumber => {
   if (t.feesStrategy) {
@@ -83,22 +83,19 @@ export const getUTXOStatus = (utxo: BitcoinOutput, utxoStrategy: UtxoStrategy): 
   };
 };
 
-const bchExplicit = (str: string): string => {
-  const explicit = str.includes(":") ? str : "bitcoincash:" + str;
-
-  try {
-    const { type } = cashaddr.decode(explicit);
-    if (type === "P2PKH") return explicit;
-  } catch {
-    // ignore errors
-  }
-
-  return str;
-};
-
-type CoinLogic = {
+/**
+ * Per-currency logic of the legacy bridge: the transaction-format flags the signer needs
+ * (`hasExtraData`, `hasExpiryHeight`, `getAdditionals`), read from {@link coinTraits}, and
+ * address-format helpers.
+ */
+export type CoinLogic = {
   hasExtraData?: boolean;
   hasExpiryHeight?: boolean;
+  /**
+   * The locktime is set to the signing time minus 777 s, which lets Komodo UTXOs created by
+   * Ledger Wallet claim their interest.
+   */
+  hasInterestLockTime?: boolean;
   getAdditionals?: (arg0: { transaction: Transaction }) => string[];
   asExplicitTransactionRecipient?: (arg0: string) => string;
   onScreenTransactionRecipient?: (arg0: string) => string;
@@ -110,36 +107,28 @@ type CoinLogic = {
 export const bchToCashaddrAddressWithoutPrefix = (recipient: string): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
+/** The format flags of a currency's traits, in the bridge's shape; only the flags it has. */
+function formatOf(currencyId: string): CoinLogic {
+  const traits = coinTraits[currencyId];
+  const additionals = traits?.additionals;
+  return {
+    ...(traits?.hasExtraData ? { hasExtraData: true } : {}),
+    ...(traits?.hasExpiryHeight ? { hasExpiryHeight: true } : {}),
+    ...(traits?.hasInterestLockTime ? { hasInterestLockTime: true } : {}),
+    ...(additionals
+      ? { getAdditionals: ({ transaction }) => additionals(transaction.recipient) }
+      : {}),
+  };
+}
+
 export const perCoinLogic: Partial<Record<string, CoinLogic>> = {
-  zencash: {
-    hasExtraData: true, // FIXME (legacy) investigate why we need this here and drop
-  },
-  zcash: {
-    hasExtraData: true,
-    hasExpiryHeight: true,
-    getAdditionals: () => ["sapling"], // FIXME (legacy) drop in ledgerjs. we always use sapling now for zcash & kmd
-  },
-  komodo: {
-    hasExtraData: true,
-    hasExpiryHeight: true,
-    getAdditionals: () => ["sapling"], // FIXME (legacy) drop in ledgerjs. we always use sapling now for zcash & kmd
-  },
-  decred: {
-    hasExpiryHeight: true,
-  },
-  bitcoin_gold: {
-    getAdditionals: () => ["bip143"],
-  },
+  zencash: formatOf("zencash"),
+  zcash: formatOf("zcash"),
+  komodo: formatOf("komodo"),
+  decred: formatOf("decred"),
+  bitcoin_gold: formatOf("bitcoin_gold"),
   bitcoin_cash: {
-    getAdditionals: ({ transaction }) => {
-      const additionals = ["bip143"];
-
-      if (bchExplicit(transaction.recipient).startsWith("bitcoincash:")) {
-        additionals.push("cashaddr");
-      }
-
-      return additionals;
-    },
+    ...formatOf("bitcoin_cash"),
     // Due to minimal support, we need to return the explicit format of bitcoincash:.. if it's a P2PKH
     asExplicitTransactionRecipient: bchExplicit,
     // to represent what happens on the device, which do not display the bitcoincash: prefix

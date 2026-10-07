@@ -22,7 +22,7 @@ type SignOperationObserverEvent =
   | { type: "device-streaming"; progress: number; index: number; total: number }
   | { type: "signed"; signedOperation: { operation: Operation; signature: string } };
 
-function buildAdditionals(
+export function buildAdditionals(
   currencyId: string,
   derivationMode: string,
   transaction: Transaction,
