@@ -5787,6 +5787,18 @@
     },
     "chooseAccountToFund": "Choose an account to add funds"
   },
+  "connectNewDevice": {
+    "discovering": {
+      "title": "Select your Ledger device",
+      "deviceNotFound": "I don't see my device"
+    },
+    "connecting": {
+      "title": "Pairing with {{deviceName}}"
+    },
+    "connected": {
+      "title": "Your device is paired"
+    }
+  },
   "deviceIntentExecutor": {
     "genericStates": {
       "retryableDeviceLocked": {

@@ -51,6 +51,7 @@ export enum ScreenName {
   DebugDeviceIntentExecutorContent = "DebugDeviceIntentExecutorContent",
   DebugDeviceIntentExecutorInfoState = "DebugDeviceIntentExecutorInfoState",
   DebugDeviceIntentExecutorConnectDevice = "DebugDeviceIntentExecutorConnectDevice",
+  DebugDeviceIntentExecutorConnectNewDevice = "DebugDeviceIntentExecutorConnectNewDevice",
   DebugDeviceIntentExecutorContactsValidation = "DebugDeviceIntentExecutorContactsValidation",
   DebugDeviceIntentExecutorInitialization = "DebugDeviceIntentExecutorInitialization",
   DebugDeviceIntentExecutorInitializerStates = "DebugDeviceIntentExecutorInitializerStates",
