@@ -1441,6 +1441,7 @@ jobs:
     needs: [determine-builds, allure-report-android, allure-report-ios, qaa-allure-upload-ios, qaa-allure-upload-android]
     if: ${{ !cancelled() && (needs.allure-report-ios.outputs.finalStatus || needs.allure-report-android.outputs.finalStatus) }}
     env:
+      SLACK_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
       REF: ${{ inputs.ref || github.ref_name }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       HEADER_DEVICES: >-
@@ -1455,9 +1456,10 @@ jobs:
       ANDROID_LABEL: ${{ inputs.tests_type != 'iOS Only' && 'Android' || '' }}
     steps:
       - name: Report e2e results to Slack
+        if: ${{ env.SLACK_TOKEN != '' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@develop
         with:
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          token: ${{ env.SLACK_TOKEN }}
           channel: CTMQ0S5SB
           # Second channel only on scheduled runs / opt-in.
           secondary_channel: ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'C05FKJ7DFAP' || '' }}
