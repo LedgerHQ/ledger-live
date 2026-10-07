@@ -48,12 +48,12 @@ export function parseStatusFilter(value: string | undefined): AgentIntentStatus[
 }
 
 /** States after which an intent never changes again. */
-const TERMINAL_STATUSES: readonly AgentIntentStatus[] = [
+const TERMINAL_STATUSES: ReadonlySet<AgentIntentStatus> = new Set([
   "success",
   "failed",
   "rejected",
   "expired",
-];
+]);
 
 /**
  * Whether `status` is final, for shell polling: `null` for a state this wallet-cli version doesn't
@@ -61,7 +61,7 @@ const TERMINAL_STATUSES: readonly AgentIntentStatus[] = [
  */
 export function isTerminalIntentStatus(status: string): boolean | null {
   if (!isAgentIntentStatus(status)) return null;
-  return TERMINAL_STATUSES.includes(status);
+  return TERMINAL_STATUSES.has(status);
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
