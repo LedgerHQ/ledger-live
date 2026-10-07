@@ -122,7 +122,8 @@ jobs:
       - name: Login to Ledger Artifactory
         id: jfrog-login
         timeout-minutes: 10
-        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+        # Pinned to a commit SHA (not a branch or moving tag) to enable caching.
+        uses: LedgerHQ/actions-security/actions/jfrog-login@c927e3b6f81f35f3f11f54ff8df47b410186e7a3
 
       - name: Login to JFrog OCI Registry
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
