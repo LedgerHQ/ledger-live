@@ -68,12 +68,18 @@ export const ARTIFACTS_DIR = path.resolve("artifacts");
 const SPECULOS_TRACKING_FILE = path.join(ARTIFACTS_DIR, `speculos-instances.${process.pid}.json`);
 export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.(?<ownerPid>\d+)\.json$/;
 
+let trackingFileQueue: Promise<void> = Promise.resolve();
+
+function updateTrackingFile(update: (instances: SpeculosId[]) => SpeculosId[]): Promise<void> {
+  const run = trackingFileQueue.then(async () => writeInstances(update(await readInstances())));
+  trackingFileQueue = run.catch(() => {});
+  return run;
+}
+
 // Register in tracking file for cross-process cleanup
 async function writeSpeculosInFile(deviceId: string) {
   try {
-    const instances = await readInstances();
-    instances.push({ deviceId });
-    await writeInstances(instances);
+    await updateTrackingFile(instances => [...instances, { deviceId }]);
   } catch (error) {
     log.warn("E2E", `⚠️ Failed to register Speculos instance ${deviceId}:`, sanitizeError(error));
   }
@@ -81,9 +87,7 @@ async function writeSpeculosInFile(deviceId: string) {
 
 async function removeSpeculosFromFile(deviceId: string) {
   try {
-    const instances = await readInstances();
-    const filtered = instances.filter(inst => inst.deviceId !== deviceId);
-    if (filtered.length !== instances.length) await writeInstances(filtered);
+    await updateTrackingFile(instances => instances.filter(inst => inst.deviceId !== deviceId));
   } catch (error) {
     log.warn("E2E", `⚠️ Failed to unregister Speculos instance ${deviceId}:`, sanitizeError(error));
   }
