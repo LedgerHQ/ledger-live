@@ -1,4 +1,6 @@
-module.exports = {
+const { withEsmDeps } = require("@support/jest-shared");
+
+const config = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   transform: {
@@ -21,3 +23,5 @@ module.exports = {
   ],
   setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
 };
+
+module.exports = withEsmDeps(config);

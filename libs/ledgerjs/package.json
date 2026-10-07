@@ -9,6 +9,7 @@
     "lodash": "catalog:"
   },
   "devDependencies": {
+    "@support/jest-shared": "workspace:*",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
