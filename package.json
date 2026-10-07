@@ -266,8 +266,7 @@
       "pretty-format@^30.0.0": "30.5.0",
       "@ledgerhq/device-signer-kit-ethereum": "link:../device-sdk-ts/packages/signer/signer-eth",
       "@ledgerhq/device-management-kit": "link:../device-sdk-ts/packages/device-management-kit",
-      "@ledgerhq/coin-evm": "link:../../backend/coin-modules/libs/coin-modules/coin-evm",
-      "@ledgerhq/coin-module-framework": "link:../../backend/coin-modules/libs/coin-module-framework"
+      "xstate": "link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate"
     },
     "patchedDependencies": {
       "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch",

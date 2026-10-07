@@ -51,9 +51,15 @@ catalogs:
     '@ledgerhq/auth':
       specifier: 0.1.0
       version: 0.1.0
+    '@ledgerhq/coin-evm':
+      specifier: 10.0.0
+      version: 10.0.0
     '@ledgerhq/coin-hypercore':
       specifier: 4.0.1
       version: 4.0.1
+    '@ledgerhq/coin-module-framework':
+      specifier: 10.0.0
+      version: 10.0.0
     '@ledgerhq/coin-stellar':
       specifier: 11.0.1
       version: 11.0.1
@@ -588,9 +594,6 @@ catalogs:
     ws:
       specifier: 8.18.3
       version: 8.18.3
-    xstate:
-      specifier: 5.19.2
-      version: 5.19.2
     zod:
       specifier: 4.4.3
       version: 4.4.3
@@ -631,8 +634,7 @@ overrides:
   pretty-format@^30.0.0: 30.5.0
   '@ledgerhq/device-signer-kit-ethereum': link:../device-sdk-ts/packages/signer/signer-eth
   '@ledgerhq/device-management-kit': link:../device-sdk-ts/packages/device-management-kit
-  '@ledgerhq/coin-evm': link:../../backend/coin-modules/libs/coin-modules/coin-evm
-  '@ledgerhq/coin-module-framework': link:../../backend/coin-modules/libs/coin-module-framework
+  xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
 pnpmfileChecksum: sha256-JyE64KwSjZ7Ykvi+y4PoBd1Pk100XNhr0fI7RUun0QE=
 
@@ -1134,14 +1136,14 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
-        specifier: link:../../../../backend/coin-modules/libs/coin-modules/coin-evm
-        version: link:../../../../backend/coin-modules/libs/coin-modules/coin-evm
+        specifier: 'catalog:'
+        version: 10.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-zcash
@@ -1150,7 +1152,7 @@ importers:
         version: link:../../../device-sdk-ts/packages/signer/context-module
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(@ledgerhq/lumen-design-core@0.1.30)(@ledgerhq/lumen-ui-react@0.1.61(b357638a34898c151c3d2a1e83b5b910))(@ledgerhq/lumen-ui-rnative@0.1.64(809849fda8537dbd6bb99c1f545f90f8))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+        version: 2.0.6(@ledgerhq/lumen-design-core@0.1.30)(@ledgerhq/lumen-ui-react@0.1.61(15ec3592125c523c20d865970939e6b0))(@ledgerhq/lumen-ui-rnative@0.1.64(dbd84150a63dfdebc961f387f7a54cee))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       '@ledgerhq/device-management-kit':
         specifier: link:../../../device-sdk-ts/packages/device-management-kit
         version: link:../../../device-sdk-ts/packages/device-management-kit
@@ -1180,7 +1182,7 @@ importers:
         version: link:../../libs/hw-transport-http
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -1228,7 +1230,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(b357638a34898c151c3d2a1e83b5b910)
+        version: 0.1.61(15ec3592125c523c20d865970939e6b0)
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
@@ -1339,7 +1341,7 @@ importers:
         version: 7.7.1
       '@xstate/react':
         specifier: 'catalog:'
-        version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@5.19.2)
+        version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@device-sdk-ts+packages+device-management-kit+node_modules+xstate)
       allure-commandline:
         specifier: 2.28.0
         version: 2.28.0
@@ -1426,7 +1428,7 @@ importers:
         version: 4.7.5(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       react-i18next:
         specifier: 'catalog:'
-        version: 16.5.0(@typescript/typescript6@6.0.2)(i18next@25.7.3(@typescript/typescript6@6.0.2))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+        version: 16.5.0(@typescript/typescript6@6.0.2)(i18next@25.7.3(@typescript/typescript6@6.0.2))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       react-lottie:
         specifier: 1.2.10
         version: 1.2.10(react@19.1.4)
@@ -1504,10 +1506,10 @@ importers:
         version: 5.0.1
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
+        specifier: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
+        version: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
     devDependencies:
       '@electron/notarize':
         specifier: 3.1.1
@@ -1538,7 +1540,7 @@ importers:
         version: 1.60.0
       '@rsdoctor/rspack-plugin':
         specifier: 'catalog:'
-        version: 2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@rspack/cli':
         specifier: 'catalog:'
         version: 2.1.10(@rspack/core@2.1.10(@swc/helpers@0.5.23))(@rspack/dev-server@2.1.0(@rspack/core@2.1.10(@swc/helpers@0.5.23)))
@@ -1673,7 +1675,7 @@ importers:
         version: 2.5.2
       jest-environment-jsdom:
         specifier: 'catalog:'
-        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       listr:
         specifier: 0.14.3
         version: 0.14.3
@@ -1996,14 +1998,14 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
-        specifier: link:../../../../backend/coin-modules/libs/coin-modules/coin-evm
-        version: link:../../../../backend/coin-modules/libs/coin-modules/coin-evm
+        specifier: 'catalog:'
+        version: 10.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-multiversx
@@ -2476,8 +2478,8 @@ importers:
         specifier: 8.3.2
         version: 8.3.2
       xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
+        specifier: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
+        version: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
     devDependencies:
       '@babel/core':
         specifier: 7.28.5
@@ -2789,11 +2791,11 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
       '@ledgerhq/coin-evm':
-        specifier: link:../../../../backend/coin-modules/libs/coin-modules/coin-evm
-        version: link:../../../../backend/coin-modules/libs/coin-modules/coin-evm
+        specifier: 'catalog:'
+        version: 10.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
@@ -2909,8 +2911,8 @@ importers:
         specifier: 2.17.0
         version: 2.17.0(patch_hash=489095f60f30e6127e8077a75f64dc1962a7187d3e054910d61a8a5de45c30a5)
       xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
+        specifier: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
+        version: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
       yocto-spinner:
         specifier: 0.2.0
         version: 0.2.0
@@ -3011,8 +3013,8 @@ importers:
         specifier: workspace:^
         version: link:../../features/platform/wallet-sync
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.6(@ledgerhq/lumen-design-core@0.1.30)(@ledgerhq/lumen-ui-react@0.1.61(15ec3592125c523c20d865970939e6b0))(@ledgerhq/lumen-ui-rnative@0.1.64(dbd84150a63dfdebc961f387f7a54cee))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -7023,7 +7025,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
+        version: 0.1.61(fdc52fbef596fac53626c7d76e03b458)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7675,7 +7677,7 @@ importers:
         version: link:../../../shared/ui-queued-bottom-sheet
       '@xstate/react':
         specifier: 'catalog:'
-        version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@5.19.2)
+        version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@device-sdk-ts+packages+device-management-kit+node_modules+xstate)
       expo-crypto:
         specifier: 'catalog:'
         version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10))
@@ -7686,8 +7688,8 @@ importers:
         specifier: 'catalog:'
         version: 10.0.0
       xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
+        specifier: link:../../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
+        version: link:../../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
     devDependencies:
       '@features/platform-style':
         specifier: workspace:*
@@ -8872,8 +8874,8 @@ importers:
         version: 7.7.3
     devDependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
@@ -9141,6 +9143,9 @@ importers:
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
+      xstate:
+        specifier: link:../../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
+        version: link:../../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -9187,9 +9192,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-      xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
 
   features/platform/env:
     dependencies:
@@ -9682,8 +9684,8 @@ importers:
         version: 7.8.2
     devDependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
@@ -9733,8 +9735,8 @@ importers:
   libs/coin-modules/coin-aleo:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -9809,8 +9811,8 @@ importers:
   libs/coin-modules/coin-algorand:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9891,8 +9893,8 @@ importers:
         specifier: ^3.1.3
         version: 3.1.3(got@11.8.5)
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -9985,8 +9987,8 @@ importers:
   libs/coin-modules/coin-bitcoin:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10133,8 +10135,8 @@ importers:
   libs/coin-modules/coin-canton:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -10218,8 +10220,8 @@ importers:
   libs/coin-modules/coin-cardano:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10306,8 +10308,8 @@ importers:
   libs/coin-modules/coin-casper:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10385,11 +10387,11 @@ importers:
         specifier: ^14.0.1
         version: 14.0.1
       '@ledgerhq/coin-evm':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-modules/coin-evm
-        version: link:../../../../../backend/coin-modules/libs/coin-modules/coin-evm
+        specifier: 'catalog:'
+        version: 10.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -10437,7 +10439,7 @@ importers:
         version: 7.8.2
       viem:
         specifier: ^2.27.0
-        version: 2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@4.4.3)
+        version: 2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
     devDependencies:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -10491,8 +10493,8 @@ importers:
   libs/coin-modules/coin-concordium:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
@@ -10591,8 +10593,8 @@ importers:
         specifier: ^0.12.300
         version: 0.12.306
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10685,8 +10687,8 @@ importers:
   libs/coin-modules/coin-filecoin:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -10779,8 +10781,8 @@ importers:
         specifier: 2.78.0
         version: 2.78.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -10867,8 +10869,8 @@ importers:
   libs/coin-modules/coin-icon:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -10955,8 +10957,8 @@ importers:
         specifier: 2.14.0
         version: 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -11031,8 +11033,8 @@ importers:
         specifier: ^1.1.1
         version: 1.2.0
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -11140,8 +11142,8 @@ importers:
   libs/coin-modules/coin-mina:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -11225,8 +11227,8 @@ importers:
   libs/coin-modules/coin-module-boilerplate:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -11298,8 +11300,8 @@ importers:
   libs/coin-modules/coin-multiversx:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -11392,8 +11394,8 @@ importers:
   libs/coin-modules/coin-near:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -11462,8 +11464,8 @@ importers:
   libs/coin-modules/coin-polkadot:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -11571,8 +11573,8 @@ importers:
   libs/coin-modules/coin-solana:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -11677,8 +11679,8 @@ importers:
   libs/coin-modules/coin-stacks:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -11777,8 +11779,8 @@ importers:
         specifier: ^1.0.11
         version: 1.0.11(graphql@16.13.2)
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/hw-app-sui':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-sui
@@ -11865,8 +11867,8 @@ importers:
   libs/coin-modules/coin-ton:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -11950,8 +11952,8 @@ importers:
   libs/coin-modules/coin-tron:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
@@ -12017,8 +12019,8 @@ importers:
   libs/coin-modules/coin-vechain:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -12105,8 +12107,8 @@ importers:
   libs/coin-modules/coin-zcash:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -12434,8 +12436,8 @@ importers:
         version: 7.8.2
     devDependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -12482,8 +12484,8 @@ importers:
         specifier: workspace:^
         version: link:../../coin-modules/coin-cosmos
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -12549,8 +12551,8 @@ importers:
         specifier: workspace:^
         version: link:../../../features/platform/currencies
       '@ledgerhq/coin-evm':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-modules/coin-evm
-        version: link:../../../../../backend/coin-modules/libs/coin-modules/coin-evm
+        specifier: 'catalog:'
+        version: 10.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -12583,7 +12585,7 @@ importers:
         version: 1.1.0
       ethers:
         specifier: 6.15.0
-        version: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -12838,8 +12840,8 @@ importers:
   libs/coin-tester-modules/coin-tester-polkadot:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/coin-polkadot':
         specifier: workspace:^
         version: link:../../coin-modules/coin-polkadot
@@ -13642,8 +13644,8 @@ importers:
         specifier: 'catalog:'
         version: 7.7.3
       xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
+        specifier: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
+        version: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -13999,8 +14001,8 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-cosmos
       '@ledgerhq/coin-evm':
-        specifier: link:../../../../backend/coin-modules/libs/coin-modules/coin-evm
-        version: link:../../../../backend/coin-modules/libs/coin-modules/coin-evm
+        specifier: 'catalog:'
+        version: 10.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
       '@ledgerhq/coin-filecoin':
         specifier: workspace:^
         version: link:../coin-modules/coin-filecoin
@@ -14023,8 +14025,8 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-mina
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../coin-modules/coin-multiversx
@@ -14285,7 +14287,7 @@ importers:
         version: 2.6.5
       '@xstate/react':
         specifier: 'catalog:'
-        version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@5.19.2)
+        version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@device-sdk-ts+packages+device-management-kit+node_modules+xstate)
       '@zondax/ledger-casper':
         specifier: ^2.6.1
         version: 2.6.1
@@ -14395,8 +14397,8 @@ importers:
         specifier: ^3.4.0
         version: 3.13.0
       xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
+        specifier: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
+        version: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
       yargs:
         specifier: ^17.0.0
         version: 17.7.2
@@ -14653,8 +14655,8 @@ importers:
   libs/ledger-wallet-framework:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/devices':
         specifier: 8.18.0
         version: 8.18.0
@@ -16120,8 +16122,8 @@ importers:
         specifier: 'catalog:'
         version: 7.7.3
       xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
+        specifier: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
+        version: link:../../../device-sdk-ts/packages/device-management-kit/node_modules/xstate
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -17309,8 +17311,8 @@ importers:
         version: link:../../shared/env
     devDependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -17934,8 +17936,8 @@ importers:
   libs/wallet-btc:
     dependencies:
       '@ledgerhq/coin-module-framework':
-        specifier: link:../../../../backend/coin-modules/libs/coin-module-framework
-        version: link:../../../../backend/coin-modules/libs/coin-module-framework
+        specifier: 'catalog:'
+        version: 10.0.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
@@ -18512,7 +18514,7 @@ importers:
         version: 25.7.3(@typescript/typescript6@6.0.2)
       react-i18next:
         specifier: 'catalog:'
-        version: 16.5.0(@typescript/typescript6@6.0.2)(i18next@25.7.3(@typescript/typescript6@6.0.2))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+        version: 16.5.0(@typescript/typescript6@6.0.2)(i18next@25.7.3(@typescript/typescript6@6.0.2))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -21714,6 +21716,9 @@ packages:
   '@ethersproject/rlp@5.8.0':
     resolution: {integrity: sha512-LqZgAznqDbiEunaUvykH2JAoXTT9NV0Atqk8rQN9nx9SEgThA/WMx5DnW8a9FOufo//6FZOCHZ+XiClzgbqV9Q==}
 
+  '@ethersproject/shims@5.8.0':
+    resolution: {integrity: sha512-6yHbI6DHVaP1KjU0n9gKm8zrzU11EXwNG3VLetyIDBr2YRGpa0nrjk1QnZtLGiOqc+6iSiIoAzfAHf6iPdUunw==}
+
   '@ethersproject/signing-key@5.7.0':
     resolution: {integrity: sha512-MZdy2nL3wO0u7gkB4nA/pEf8lu1TlFswPNmy8AiYkfKTdO6eXBJyUdmHO/ehm/htHw9K/qF8ujnTyUAD+Ry54Q==}
 
@@ -22982,10 +22987,18 @@ packages:
   '@ledgerhq/auth@0.1.0':
     resolution: {integrity: sha512-5gk625VjWuriSPk/+D+o5Y31tRHbRGHg2KCTmMWfxn1Mgij9iQVtC5NCTjfDzSZVHU+deE79Qm+b38+uNpEXkA==}
 
+  '@ledgerhq/coin-evm@10.0.0':
+    resolution: {integrity: sha512-JIRL9s7P29NnSV//0I55CBzVJ8mZLLvR8BSml0wgFhxgokx+GBVfSyC3Fa6k5XJWPWk60HbaeQ1hUoQIZbM7jA==}
+    peerDependencies:
+      '@ledgerhq/live-network': ^3.1.0
+
   '@ledgerhq/coin-hypercore@4.0.1':
     resolution: {integrity: sha512-h8owrE5PVsVl50oYVr0AtRpZu4Fd6ZveaE+DWG4fzBVOQK2n9BgOfZPJCTY5kLkpFKzRKXJaetRyNtdBwg+zDQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
+
+  '@ledgerhq/coin-module-framework@10.0.0':
+    resolution: {integrity: sha512-TCfRLAI+EztxE+6Ndz7dERfvWIhnZDoxrNti85wvXIlOSiezgqcb9oNFC0OhKbFyf/QbDAWNSw4n/mAdolCqaA==}
 
   '@ledgerhq/coin-stellar@11.0.1':
     resolution: {integrity: sha512-U6Q6ZlQuNPVvPjULh/Vq+hUWRLYfWVvF3d2wz1Ct7RXLqPUoY7wiVWw+hnWXtzedwxutbnjhYuiXH+rtv6QQMw==}
@@ -29025,6 +29038,9 @@ packages:
 
   axios@1.13.2:
     resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
+
+  axios@1.13.5:
+    resolution: {integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==}
 
   axios@1.16.0:
     resolution: {integrity: sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==}
@@ -38477,9 +38493,6 @@ packages:
     resolution: {integrity: sha512-b7DXzbCm8VWmII2mQiQHy5VG1L6YBUnNxuCooldWpMUXTwa08uXEz1q5Nv6wlULnSI5GiHuwBIq6pNJrqRh/8Q==}
     engines: {node: '>=13.0.0'}
 
-  xstate@5.19.2:
-    resolution: {integrity: sha512-B8fL2aP0ogn5aviAXFzI5oZseAMqN00fg/TeDa3ZtatyDcViYLIfuQl4y8qmHCiKZgGEzmnTyNtNQL9oeJE2gw==}
-
   xstream@11.14.0:
     resolution: {integrity: sha512-1bLb+kKKtKPbgTK6i/BaoAn03g47PpFstlbe1BA+y3pNS/LfvcaghS5BFf9+EE1J+KwSQsEpfJvFN5GqFtiNmw==}
 
@@ -42347,6 +42360,8 @@ snapshots:
       '@ethersproject/bytes': 5.8.0
       '@ethersproject/logger': 5.8.0
 
+  '@ethersproject/shims@5.8.0': {}
+
   '@ethersproject/signing-key@5.7.0':
     dependencies:
       '@ethersproject/bytes': 5.8.0
@@ -42567,82 +42582,6 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@expo/cli@54.0.23(d9b75c7151b882598cfc90f3d5d4013f)':
-    dependencies:
-      '@0no-co/graphql.web': 1.3.3(graphql@16.14.2)
-      '@expo/code-signing-certificates': 0.0.6
-      '@expo/config': 12.0.13
-      '@expo/config-plugins': 54.0.4
-      '@expo/devcert': 1.2.1
-      '@expo/env': 2.0.11
-      '@expo/image-utils': 0.8.14(@typescript/typescript6@6.0.2)
-      '@expo/json-file': 10.2.0
-      '@expo/metro': 54.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@expo/metro-config': 54.0.14(bufferutil@4.1.0)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
-      '@expo/osascript': 2.3.8
-      '@expo/package-manager': 1.12.1
-      '@expo/plist': 0.4.9
-      '@expo/prebuild-config': 54.0.8(@typescript/typescript6@6.0.2)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
-      '@expo/schema-utils': 0.1.8
-      '@expo/spawn-async': 1.8.0
-      '@expo/ws-tunnel': 1.0.6
-      '@expo/xcpretty': 4.3.1
-      '@react-native/dev-middleware': 0.81.5(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@urql/core': 5.1.1(graphql@16.14.2)
-      '@urql/exchange-retry': 1.3.1(graphql@16.14.2)
-      accepts: 1.3.8
-      arg: 5.0.2
-      better-opn: 3.0.2
-      bplist-creator: 0.1.0
-      bplist-parser: 0.3.2
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      compression: 1.7.4
-      connect: 3.7.0
-      debug: 4.4.3(supports-color@7.2.0)
-      env-editor: 0.4.2
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-      expo-server: 1.0.7
-      freeport-async: 2.0.0
-      getenv: 2.0.0
-      glob: 13.0.6
-      lan-network: 0.1.7
-      minimatch: 9.0.5
-      node-forge: 1.4.0
-      npm-package-arg: 11.0.3
-      ora: 3.4.0
-      picomatch: 3.0.1
-      pretty-bytes: 5.6.0
-      pretty-format: 29.7.0
-      progress: 2.0.3
-      prompts: 2.4.2
-      qrcode-terminal: 0.11.0
-      require-from-string: 2.0.2
-      requireg: 0.2.2
-      resolve: 1.22.12
-      resolve-from: 5.0.0
-      resolve.exports: 2.0.3
-      semver: 7.8.1
-      send: 0.19.1
-      slugify: 1.6.6
-      source-map-support: 0.5.21
-      stacktrace-parser: 0.1.10
-      structured-headers: 0.4.1
-      tar: 7.5.16
-      terminal-link: 2.1.1
-      undici: 6.28.1
-      wrap-ansi: 7.0.0
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    optionalDependencies:
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - graphql
-      - supports-color
-      - typescript
-      - utf-8-validate
-    optional: true
-
   '@expo/code-signing-certificates@0.0.6':
     dependencies:
       node-forge: 1.4.0
@@ -42699,14 +42638,6 @@ snapshots:
     optionalDependencies:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
-  '@expo/devtools@0.1.8(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)':
-    dependencies:
-      chalk: 4.1.2
-    optionalDependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
 
   '@expo/devtools@0.1.8(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)':
     dependencies:
@@ -42807,37 +42738,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@expo/metro-config@54.0.14(bufferutil@4.1.0)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)':
-    dependencies:
-      '@babel/code-frame': 7.29.7
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.28.5
-      '@expo/config': 12.0.13
-      '@expo/env': 2.0.11
-      '@expo/json-file': 10.0.8
-      '@expo/metro': 54.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@expo/spawn-async': 1.8.0
-      browserslist: 4.28.2
-      chalk: 4.1.2
-      debug: 4.4.3(supports-color@7.2.0)
-      dotenv: 16.4.7
-      dotenv-expand: 11.0.6
-      getenv: 2.0.0
-      glob: 13.0.6
-      hermes-parser: 0.29.1
-      jsc-safe-url: 0.2.4
-      lightningcss: 1.30.2
-      minimatch: 9.0.5
-      postcss: 8.4.49
-      resolve-from: 5.0.0
-    optionalDependencies:
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    optional: true
-
   '@expo/metro-config@54.0.14(bufferutil@4.1.0)(expo@54.0.33(@babel/core@7.28.5)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)':
     dependencies:
       '@babel/code-frame': 7.29.7
@@ -42874,7 +42774,7 @@ snapshots:
       metro-babel-transformer: 0.83.3
       metro-cache: 0.83.3
       metro-cache-key: 0.83.3
-      metro-config: 0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      metro-config: 0.83.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       metro-core: 0.83.3
       metro-file-map: 0.83.3
       metro-minify-terser: 0.83.3
@@ -42888,28 +42788,6 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
-
-  '@expo/metro@54.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      metro: 0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      metro-babel-transformer: 0.83.3
-      metro-cache: 0.83.3
-      metro-cache-key: 0.83.3
-      metro-config: 0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      metro-core: 0.83.3
-      metro-file-map: 0.83.3
-      metro-minify-terser: 0.83.3
-      metro-resolver: 0.83.3
-      metro-runtime: 0.83.3
-      metro-source-map: 0.83.3
-      metro-symbolicate: 0.83.3
-      metro-transform-plugins: 0.83.3
-      metro-transform-worker: 0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    optional: true
 
   '@expo/osascript@2.3.8':
     dependencies:
@@ -42947,24 +42825,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
-
-  '@expo/prebuild-config@54.0.8(@typescript/typescript6@6.0.2)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))':
-    dependencies:
-      '@expo/config': 12.0.13
-      '@expo/config-plugins': 54.0.4
-      '@expo/config-types': 54.0.10
-      '@expo/image-utils': 0.8.14(@typescript/typescript6@6.0.2)
-      '@expo/json-file': 10.2.0
-      '@react-native/normalize-colors': 0.81.5
-      debug: 4.4.3(supports-color@7.2.0)
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-      resolve-from: 5.0.0
-      semver: 7.8.1
-      xml2js: 0.6.0
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    optional: true
 
   '@expo/prebuild-config@54.0.8(expo@54.0.33(@babel/core@7.28.5)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2)(utf-8-validate@5.0.10))(typescript@7.0.2)':
     dependencies:
@@ -43012,13 +42872,6 @@ snapshots:
       cross-spawn: 7.0.6
 
   '@expo/sudo-prompt@9.3.2': {}
-
-  '@expo/vector-icons@15.1.1(expo-font@14.0.12(98d405a939d19bc707f0dc636b705d25))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)':
-    dependencies:
-      expo-font: 14.0.12(98d405a939d19bc707f0dc636b705d25)
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
 
   '@expo/vector-icons@15.1.1(expo-font@14.0.12(d6813870560d74cc54251c289084de97))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)':
     dependencies:
@@ -43813,18 +43666,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@gorhom/bottom-sheet@5.2.6(8227958bec82a27a78a33bd6529f64df)':
-    dependencies:
-      '@gorhom/portal': 1.0.14(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      invariant: 2.2.4
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-      react-native-gesture-handler: 2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      react-native-reanimated: 4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-    optionalDependencies:
-      '@types/react': 19.0.14
-    optional: true
-
   '@gorhom/bottom-sheet@5.2.6(a30c3e438665be0fbbfbb966b2eba854)':
     dependencies:
       '@gorhom/portal': 1.0.14(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -43852,13 +43693,6 @@ snapshots:
       nanoid: 3.3.11
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
-  '@gorhom/portal@1.0.14(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)':
-    dependencies:
-      nanoid: 3.3.11
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
 
   '@gorhom/portal@1.0.14(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)':
     dependencies:
@@ -44803,15 +44637,67 @@ snapshots:
       jwt-decode: 4.0.0
       zod: 4.4.3
 
+  '@ledgerhq/coin-evm@10.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(bufferutil@4.1.0)(debug@4.4.3)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)':
+    dependencies:
+      '@ethersproject/shims': 5.8.0
+      '@ledgerhq/coin-module-framework': 10.0.0
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
+      axios: 1.13.5(debug@4.4.3)
+      bignumber.js: 9.1.2
+      eip55: 2.1.1
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - react-native
+      - utf-8-validate
+
+  '@ledgerhq/coin-evm@10.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)':
+    dependencies:
+      '@ethersproject/shims': 5.8.0
+      '@ledgerhq/coin-module-framework': 10.0.0
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      axios: 1.13.5
+      bignumber.js: 9.1.2
+      eip55: 2.1.1
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - react-native
+      - utf-8-validate
+
+  '@ledgerhq/coin-evm@10.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)':
+    dependencies:
+      '@ethersproject/shims': 5.8.0
+      '@ledgerhq/coin-module-framework': 10.0.0
+      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+      axios: 1.13.5
+      bignumber.js: 9.1.2
+      eip55: 2.1.1
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      react-native-get-random-values: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - react-native
+      - utf-8-validate
+
   '@ledgerhq/coin-hypercore@4.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))':
     dependencies:
-      '@ledgerhq/coin-module-framework': link:../../backend/coin-modules/libs/coin-module-framework
+      '@ledgerhq/coin-module-framework': 10.0.0
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
+
+  '@ledgerhq/coin-module-framework@10.0.0':
+    dependencies:
+      bignumber.js: 9.1.2
 
   '@ledgerhq/coin-stellar@11.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': link:../../backend/coin-modules/libs/coin-module-framework
+      '@ledgerhq/coin-module-framework': 10.0.0
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
@@ -44821,7 +44707,7 @@ snapshots:
 
   '@ledgerhq/coin-tezos@13.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(encoding@0.1.13)':
     dependencies:
-      '@ledgerhq/coin-module-framework': link:../../backend/coin-modules/libs/coin-module-framework
+      '@ledgerhq/coin-module-framework': 10.0.0
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
       '@taquito/ledger-signer': 23.0.1(encoding@0.1.13)
       '@taquito/rpc': 23.0.1(encoding@0.1.13)
@@ -44832,7 +44718,7 @@ snapshots:
 
   '@ledgerhq/coin-xrp@12.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
-      '@ledgerhq/coin-module-framework': link:../../backend/coin-modules/libs/coin-module-framework
+      '@ledgerhq/coin-module-framework': 10.0.0
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
       bignumber.js: 9.1.2
       invariant: 2.2.4
@@ -44862,16 +44748,6 @@ snapshots:
       react-dom: 19.1.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
-  '@ledgerhq/crypto-icons@2.0.6(@ledgerhq/lumen-design-core@0.1.30)(@ledgerhq/lumen-ui-react@0.1.61(b357638a34898c151c3d2a1e83b5b910))(@ledgerhq/lumen-ui-rnative@0.1.64(809849fda8537dbd6bb99c1f545f90f8))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)':
-    dependencies:
-      react: 19.1.4
-    optionalDependencies:
-      '@ledgerhq/lumen-design-core': 0.1.30
-      '@ledgerhq/lumen-ui-react': 0.1.61(b357638a34898c151c3d2a1e83b5b910)
-      '@ledgerhq/lumen-ui-rnative': 0.1.64(809849fda8537dbd6bb99c1f545f90f8)
-      react-dom: 19.1.4(react@19.1.4)
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-
   '@ledgerhq/crypto-icons@2.0.6(@ledgerhq/lumen-design-core@0.1.30)(@ledgerhq/lumen-ui-react@0.1.61(fdc52fbef596fac53626c7d76e03b458))(@ledgerhq/lumen-ui-rnative@0.1.64(864995f182e51787fa59c55024b4f6bd))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)':
     dependencies:
       react: 19.1.4
@@ -44890,7 +44766,7 @@ snapshots:
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       semver: 7.7.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-mockserver-client@1.3.0':
     dependencies:
@@ -44905,7 +44781,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-signer-kit-concordium@0.5.0(@ledgerhq/context-module@device-sdk-ts+packages+signer+context-module)(@ledgerhq/device-management-kit@device-sdk-ts+packages+device-management-kit)':
     dependencies:
@@ -44915,7 +44791,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-signer-kit-cosmos@1.0.1(@ledgerhq/device-management-kit@device-sdk-ts+packages+device-management-kit)':
     dependencies:
@@ -44924,7 +44800,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@device-sdk-ts+packages+device-management-kit)':
     dependencies:
@@ -44934,7 +44810,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-signer-kit-icp@0.2.0(@ledgerhq/device-management-kit@device-sdk-ts+packages+device-management-kit)':
     dependencies:
@@ -44943,7 +44819,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-signer-kit-polkadot@0.2.0(@ledgerhq/device-management-kit@device-sdk-ts+packages+device-management-kit)':
     dependencies:
@@ -44952,7 +44828,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-signer-kit-solana@1.13.3(@ledgerhq/device-management-kit@device-sdk-ts+packages+device-management-kit)(encoding@0.1.13)(typescript@7.0.2)':
     dependencies:
@@ -44967,7 +44843,7 @@ snapshots:
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       semver: 7.7.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -44986,7 +44862,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-signer-kit-xrp@0.2.0(@ledgerhq/device-management-kit@device-sdk-ts+packages+device-management-kit)':
     dependencies:
@@ -44995,7 +44871,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-signer-kit-zcash@0.7.1(@ledgerhq/device-management-kit@device-sdk-ts+packages+device-management-kit)':
     dependencies:
@@ -45005,7 +44881,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/device-transport-kit-mockserver@1.1.2(@ledgerhq/device-management-kit@device-sdk-ts+packages+device-management-kit)(rxjs@7.8.2)':
     dependencies:
@@ -45071,7 +44947,7 @@ snapshots:
       purify-ts: 2.1.0
       rxjs: 7.8.2
       semver: 7.7.2
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
 
   '@ledgerhq/domain-service@1.9.1(react@19.1.4)':
     dependencies:
@@ -45299,31 +45175,6 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-react@0.1.61(b357638a34898c151c3d2a1e83b5b910)':
-    dependencies:
-      '@base-ui/react': 1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@ledgerhq/lumen-design-core': 0.1.30
-      '@ledgerhq/lumen-utils-shared': 0.1.14(react@19.1.4)
-      '@radix-ui/react-checkbox': 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@radix-ui/react-slot': 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch': 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@radix-ui/react-tooltip': 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@tanstack/react-table': 8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@types/d3-scale': 4.0.9
-      '@types/d3-shape': 3.2.0
-      class-variance-authority: 0.7.1
-      clsx: 2.1.1
-      d3-scale: 4.0.2
-      d3-shape: 3.2.0
-      i18next: 23.10.1
-      react: 19.1.4
-      react-dom: 19.1.4(react@19.1.4)
-      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      tailwind-merge: 3.4.0
-    transitivePeerDependencies:
-      - react-native
-
   '@ledgerhq/lumen-ui-react@0.1.61(fdc52fbef596fac53626c7d76e03b458)':
     dependencies:
       '@base-ui/react': 1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -45348,34 +45199,6 @@ snapshots:
       tailwind-merge: 3.4.0
     transitivePeerDependencies:
       - react-native
-    optional: true
-
-  '@ledgerhq/lumen-ui-rnative@0.1.64(809849fda8537dbd6bb99c1f545f90f8)':
-    dependencies:
-      '@gorhom/bottom-sheet': 5.2.6(8227958bec82a27a78a33bd6529f64df)
-      '@ledgerhq/lumen-design-core': 0.1.30
-      '@ledgerhq/lumen-utils-shared': 0.1.14(react@19.1.4)
-      '@sbaiahmed1/react-native-blur': 4.5.5(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      '@types/d3-scale': 4.0.9
-      '@types/d3-shape': 3.2.0
-      '@types/react': 19.0.14
-      d3-scale: 4.0.2
-      d3-shape: 3.2.0
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-      expo-haptics: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
-      i18next: 23.10.1
-      react: 19.1.4
-      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-      react-native-reanimated: 4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      react-native-safe-area-context: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-    optionalDependencies:
-      react-native-gesture-handler: 2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      react-native-worklets: 0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-    transitivePeerDependencies:
-      - react-dom
-    optional: true
 
   '@ledgerhq/lumen-ui-rnative@0.1.64(864995f182e51787fa59c55024b4f6bd)':
     dependencies:
@@ -45590,7 +45413,7 @@ snapshots:
       '@open-draft/logger': 0.3.0
       '@open-draft/until': 2.1.0
       is-node-process: 1.2.0
-      jsdom: 26.1.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      jsdom: 26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
     transitivePeerDependencies:
@@ -47434,24 +47257,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@react-native-community/cli-server-api@18.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@react-native-community/cli-tools': 18.0.1
-      body-parser: 1.20.3
-      compression: 1.7.4
-      connect: 3.7.0
-      errorhandler: 1.5.1
-      nocache: 3.0.4
-      open: 6.4.0
-      pretty-format: 26.6.2
-      serve-static: 1.16.2
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    optional: true
-
   '@react-native-community/cli-tools@18.0.1':
     dependencies:
       '@vscode/sudo-prompt': 9.3.1
@@ -47475,30 +47280,6 @@ snapshots:
       '@react-native-community/cli-config': 18.0.1(@typescript/typescript6@6.0.2)
       '@react-native-community/cli-doctor': 18.0.1(@typescript/typescript6@6.0.2)
       '@react-native-community/cli-server-api': 18.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@react-native-community/cli-tools': 18.0.1
-      '@react-native-community/cli-types': 18.0.1
-      chalk: 4.1.2
-      commander: 9.5.0
-      deepmerge: 4.3.1
-      execa: 5.1.1
-      find-up: 5.0.0
-      fs-extra: 8.1.0
-      graceful-fs: 4.2.11
-      prompts: 2.4.2
-      semver: 7.8.1
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - typescript
-      - utf-8-validate
-    optional: true
-
-  '@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@react-native-community/cli-clean': 18.0.1
-      '@react-native-community/cli-config': 18.0.1(@typescript/typescript6@6.0.2)
-      '@react-native-community/cli-doctor': 18.0.1(@typescript/typescript6@6.0.2)
-      '@react-native-community/cli-server-api': 18.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@react-native-community/cli-tools': 18.0.1
       '@react-native-community/cli-types': 18.0.1
       chalk: 4.1.2
@@ -47844,7 +47625,7 @@ snapshots:
       debug: 4.4.3(supports-color@7.2.0)
       invariant: 2.2.4
       metro: 0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      metro-config: 0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      metro-config: 0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       metro-core: 0.83.7
       semver: 7.8.1
     optionalDependencies:
@@ -47854,30 +47635,13 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@react-native/community-cli-plugin@0.81.6(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@react-native/dev-middleware': 0.81.6(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      debug: 4.4.3(supports-color@7.2.0)
-      invariant: 2.2.4
-      metro: 0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      metro-config: 0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      metro-core: 0.83.7
-      semver: 7.8.1
-    optionalDependencies:
-      '@react-native-community/cli': 18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    optional: true
-
   '@react-native/community-cli-plugin@0.81.6(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@react-native/dev-middleware': 0.81.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       debug: 4.4.3(supports-color@7.2.0)
       invariant: 2.2.4
       metro: 0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      metro-config: 0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      metro-config: 0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       metro-core: 0.83.7
       semver: 7.8.1
     optionalDependencies:
@@ -47930,25 +47694,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@react-native/dev-middleware@0.81.5(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@isaacs/ttlcache': 1.4.1
-      '@react-native/debugger-frontend': 0.81.5
-      chrome-launcher: 0.15.2
-      chromium-edge-launcher: 0.2.0
-      connect: 3.7.0
-      debug: 4.4.3(supports-color@7.2.0)
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      open: 7.4.2
-      serve-static: 1.16.2
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    optional: true
-
   '@react-native/dev-middleware@0.81.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@isaacs/ttlcache': 1.4.1
@@ -47966,25 +47711,6 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
-
-  '@react-native/dev-middleware@0.81.6(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@isaacs/ttlcache': 1.4.1
-      '@react-native/debugger-frontend': 0.81.6
-      chrome-launcher: 0.15.2
-      chromium-edge-launcher: 0.2.0
-      connect: 3.7.0
-      debug: 4.4.3(supports-color@7.2.0)
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      open: 7.4.2
-      serve-static: 1.16.2
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    optional: true
 
   '@react-native/gradle-plugin@0.81.6': {}
 
@@ -48012,16 +47738,6 @@ snapshots:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
     optionalDependencies:
       '@types/react': 19.0.14
-
-  '@react-native/virtualized-lists@0.81.6(@types/react@19.0.14)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)':
-    dependencies:
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optionalDependencies:
-      '@types/react': 19.0.14
-    optional: true
 
   '@react-native/virtualized-lists@0.81.6(@types/react@19.0.14)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)':
     dependencies:
@@ -48459,28 +48175,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@rsdoctor/core@2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@rsbuild/plugin-check-syntax': 1.6.1(@rsbuild/core@2.1.13(core-js@3.47.0))
-      '@rsdoctor/graph': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/sdk': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@rsdoctor/types': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/utils': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rspack/resolver': 0.2.8(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
-      browserslist-load-config: 1.0.1
-      es-toolkit: 1.47.0
-      filesize: 11.0.17
-      fs-extra: 11.3.5
-      semver: 7.8.1
-      source-map: 0.7.6
-    transitivePeerDependencies:
-      - '@emnapi/core'
-      - '@emnapi/runtime'
-      - '@rsbuild/core'
-      - '@rspack/core'
-      - bufferutil
-      - utf-8-validate
-
   '@rsdoctor/graph@2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))':
     dependencies:
       '@rsdoctor/types': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
@@ -48507,22 +48201,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@rsdoctor/rspack-plugin@2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@rsdoctor/core': 2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@rsdoctor/graph': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/sdk': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@rsdoctor/types': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/utils': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-    optionalDependencies:
-      '@rspack/core': 2.1.10(@swc/helpers@0.5.23)
-    transitivePeerDependencies:
-      - '@emnapi/core'
-      - '@emnapi/runtime'
-      - '@rsbuild/core'
-      - bufferutil
-      - utf-8-validate
-
   '@rsdoctor/sdk@2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@rsdoctor/client': 2.0.0-alpha.0
@@ -48533,21 +48211,6 @@ snapshots:
       safer-buffer: 2.1.2
       tapable: 2.3.3
       ws: 8.20.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - '@rspack/core'
-      - bufferutil
-      - utf-8-validate
-
-  '@rsdoctor/sdk@2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
-    dependencies:
-      '@rsdoctor/client': 2.0.0-alpha.0
-      '@rsdoctor/graph': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/types': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      '@rsdoctor/utils': 2.0.0-alpha.0(@rspack/core@2.1.10(@swc/helpers@0.5.23))
-      launch-editor: 2.14.0
-      safer-buffer: 2.1.2
-      tapable: 2.3.3
-      ws: 8.20.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     transitivePeerDependencies:
       - '@rspack/core'
       - bufferutil
@@ -48764,12 +48427,6 @@ snapshots:
     dependencies:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
-  '@sbaiahmed1/react-native-blur@4.5.5(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)':
-    dependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
 
   '@sbaiahmed1/react-native-blur@4.5.5(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)':
     dependencies:
@@ -52091,7 +51748,7 @@ snapshots:
       abitype: 1.2.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       fast-json-stable-stringify: 2.1.0
-      viem: 2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
+      viem: 2.37.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -52490,13 +52147,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@xstate/react@5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@5.19.2)':
+  '@xstate/react@5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@device-sdk-ts+packages+device-management-kit+node_modules+xstate)':
     dependencies:
       react: 19.1.4
       use-isomorphic-layout-effect: 1.2.1(@types/react@19.0.14)(react@19.1.4)
       use-sync-external-store: 1.6.0(react@19.1.4)
     optionalDependencies:
-      xstate: 5.19.2
+      xstate: link:../device-sdk-ts/packages/device-management-kit/node_modules/xstate
     transitivePeerDependencies:
       - '@types/react'
 
@@ -53005,6 +52662,22 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  axios@1.13.5:
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
+      form-data: 4.0.6
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
+  axios@1.13.5(debug@4.4.3):
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3)
+      form-data: 4.0.6
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
   axios@1.16.0:
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3(supports-color@7.2.0))
@@ -53268,39 +52941,6 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
-
-  babel-preset-expo@54.0.11(@babel/core@7.28.5)(@babel/runtime@7.28.4)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(react-refresh@0.14.2):
-    dependencies:
-      '@babel/helper-module-imports': 7.27.1
-      '@babel/plugin-proposal-decorators': 7.24.1(@babel/core@7.28.5)
-      '@babel/plugin-proposal-export-default-from': 7.25.9(@babel/core@7.28.5)
-      '@babel/plugin-syntax-export-default-from': 7.25.9(@babel/core@7.28.5)
-      '@babel/plugin-transform-class-static-block': 7.28.3(@babel/core@7.28.5)
-      '@babel/plugin-transform-export-namespace-from': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-flow-strip-types': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-modules-commonjs': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-object-rest-spread': 7.28.4(@babel/core@7.28.5)
-      '@babel/plugin-transform-parameters': 7.27.7(@babel/core@7.28.5)
-      '@babel/plugin-transform-private-methods': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-private-property-in-object': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-runtime': 7.25.9(@babel/core@7.28.5)
-      '@babel/preset-react': 7.28.5(@babel/core@7.28.5)
-      '@babel/preset-typescript': 7.28.5(@babel/core@7.28.5)
-      '@react-native/babel-preset': 0.81.5(@babel/core@7.28.5)
-      babel-plugin-react-compiler: 1.0.0
-      babel-plugin-react-native-web: 0.21.2
-      babel-plugin-syntax-hermes-parser: 0.29.1
-      babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.5)
-      debug: 4.4.3(supports-color@7.2.0)
-      react-refresh: 0.14.2
-      resolve-from: 5.0.0
-    optionalDependencies:
-      '@babel/runtime': 7.28.4
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - supports-color
-    optional: true
 
   babel-preset-expo@54.0.11(@babel/core@7.28.5)(@babel/runtime@7.28.4)(expo@54.0.33(@babel/core@7.28.5)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2)(utf-8-validate@5.0.10))(react-refresh@0.14.2):
     dependencies:
@@ -55805,28 +55445,6 @@ snapshots:
       - supports-color
       - typescript
 
-  expo-asset@12.0.13(ee118011b2eb76f9a098f3ef268cbe2a):
-    dependencies:
-      '@expo/image-utils': 0.8.14(@typescript/typescript6@6.0.2)
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-      expo-constants: 18.0.13(0b5c72c8320c4c2a00f9a36272ba1d4f)
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    optional: true
-
-  expo-constants@18.0.13(0b5c72c8320c4c2a00f9a36272ba1d4f):
-    dependencies:
-      '@expo/config': 12.0.13
-      '@expo/env': 2.0.11
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - supports-color
-    optional: true
-
   expo-constants@18.0.13(26e20d2da1658e2310f07fd70e138799):
     dependencies:
       '@expo/config': 12.0.13
@@ -55863,12 +55481,6 @@ snapshots:
     dependencies:
       expo: 54.0.33(@babel/core@7.28.5)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2)(utf-8-validate@5.0.10)
 
-  expo-file-system@19.0.21(0b5c72c8320c4c2a00f9a36272ba1d4f):
-    dependencies:
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
-
   expo-file-system@19.0.21(26e20d2da1658e2310f07fd70e138799):
     dependencies:
       expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10)
@@ -55878,14 +55490,6 @@ snapshots:
     dependencies:
       expo: 54.0.33(@babel/core@7.28.5)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2)(utf-8-validate@5.0.10)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
-  expo-font@14.0.12(98d405a939d19bc707f0dc636b705d25):
-    dependencies:
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-      fontfaceobserver: 2.3.0
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
 
   expo-font@14.0.12(d6813870560d74cc54251c289084de97):
     dependencies:
@@ -55905,11 +55509,6 @@ snapshots:
     dependencies:
       expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10)
 
-  expo-haptics@15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)):
-    dependencies:
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
-
   expo-haptics@15.0.8(expo@54.0.33(@babel/core@7.28.5)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2)(utf-8-validate@5.0.10)):
     dependencies:
       expo: 54.0.33(@babel/core@7.28.5)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2)(utf-8-validate@5.0.10)
@@ -55927,12 +55526,6 @@ snapshots:
     dependencies:
       expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10)
       react: 19.1.4
-
-  expo-keep-awake@15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6)
-      react: 19.1.4
-    optional: true
 
   expo-keep-awake@15.0.8(expo@54.0.33(@babel/core@7.28.5)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
@@ -55952,13 +55545,6 @@ snapshots:
       invariant: 2.2.4
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
-  expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      invariant: 2.2.4
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
 
   expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
@@ -56008,43 +55594,6 @@ snapshots:
       - supports-color
       - typescript
       - utf-8-validate
-
-  expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6):
-    dependencies:
-      '@babel/runtime': 7.28.4
-      '@expo/cli': 54.0.23(d9b75c7151b882598cfc90f3d5d4013f)
-      '@expo/config': 12.0.13
-      '@expo/config-plugins': 54.0.4
-      '@expo/devtools': 0.1.8(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      '@expo/fingerprint': 0.15.4
-      '@expo/metro': 54.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@expo/metro-config': 54.0.14(bufferutil@4.1.0)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
-      '@expo/vector-icons': 15.1.1(expo-font@14.0.12(98d405a939d19bc707f0dc636b705d25))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      '@ungap/structured-clone': 1.3.1
-      babel-preset-expo: 54.0.11(@babel/core@7.28.5)(@babel/runtime@7.28.4)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(react-refresh@0.14.2)
-      expo-asset: 12.0.13(ee118011b2eb76f9a098f3ef268cbe2a)
-      expo-constants: 18.0.13(0b5c72c8320c4c2a00f9a36272ba1d4f)
-      expo-file-system: 19.0.21(0b5c72c8320c4c2a00f9a36272ba1d4f)
-      expo-font: 14.0.12(98d405a939d19bc707f0dc636b705d25)
-      expo-keep-awake: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      expo-modules-autolinking: 3.0.24
-      expo-modules-core: 3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      pretty-format: 29.7.0
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-      react-refresh: 0.14.2
-      whatwg-url-without-unicode: 8.0.0-3
-    optionalDependencies:
-      react-native-webview: 13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - bufferutil
-      - expo-router
-      - graphql
-      - supports-color
-      - typescript
-      - utf-8-validate
-    optional: true
 
   expo@54.0.33(@babel/core@7.28.5)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2)(utf-8-validate@5.0.10):
     dependencies:
@@ -57685,13 +57234,13 @@ snapshots:
     dependencies:
       ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
-  isows@1.0.7(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)):
+  isows@1.0.7(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
     dependencies:
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   isows@1.0.7(ws@8.18.3):
     dependencies:
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   isstream@0.1.2: {}
 
@@ -59544,12 +59093,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  metro-config@0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6):
+  metro-config@0.83.3(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     dependencies:
       connect: 3.7.0
       flow-enums-runtime: 0.0.6
       jest-validate: 29.7.0
-      metro: 0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      metro: 0.83.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       metro-cache: 0.83.3
       metro-core: 0.83.3
       metro-runtime: 0.83.3
@@ -59559,12 +59108,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  metro-config@0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6):
+  metro-config@0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     dependencies:
       connect: 3.7.0
       flow-enums-runtime: 0.0.6
       jest-validate: 29.7.0
-      metro: 0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      metro: 0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       metro-cache: 0.83.7
       metro-core: 0.83.7
       metro-runtime: 0.83.7
@@ -59826,26 +59375,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  metro-transform-worker@0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.28.5
-      '@babel/parser': 7.29.8
-      '@babel/types': 7.29.8
-      flow-enums-runtime: 0.0.6
-      metro: 0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      metro-babel-transformer: 0.83.3
-      metro-cache: 0.83.3
-      metro-cache-key: 0.83.3
-      metro-minify-terser: 0.83.3
-      metro-source-map: 0.83.3
-      metro-transform-plugins: 0.83.3
-      nullthrows: 1.1.1
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
   metro-transform-worker@0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     dependencies:
       '@babel/core': 7.28.5
@@ -59854,26 +59383,6 @@ snapshots:
       '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       metro: 0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      metro-babel-transformer: 0.83.7
-      metro-cache: 0.83.7
-      metro-cache-key: 0.83.7
-      metro-minify-terser: 0.83.7
-      metro-source-map: 0.83.7
-      metro-transform-plugins: 0.83.7
-      nullthrows: 1.1.1
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  metro-transform-worker@0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.29.8
-      '@babel/parser': 7.29.8
-      '@babel/types': 7.29.8
-      flow-enums-runtime: 0.0.6
-      metro: 0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       metro-babel-transformer: 0.83.7
       metro-cache: 0.83.7
       metro-cache-key: 0.83.7
@@ -59959,7 +59468,7 @@ snapshots:
       metro-babel-transformer: 0.83.3
       metro-cache: 0.83.3
       metro-cache-key: 0.83.3
-      metro-config: 0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      metro-config: 0.83.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       metro-core: 0.83.3
       metro-file-map: 0.83.3
       metro-resolver: 0.83.3
@@ -59974,53 +59483,6 @@ snapshots:
       source-map: 0.5.7
       throat: 5.0.0
       ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  metro@0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    dependencies:
-      '@babel/code-frame': 7.29.7
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.28.5
-      '@babel/parser': 7.29.8
-      '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8
-      '@babel/types': 7.29.8
-      accepts: 1.3.8
-      chalk: 4.1.2
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 4.4.3(supports-color@7.2.0)
-      error-stack-parser: 2.1.4
-      flow-enums-runtime: 0.0.6
-      graceful-fs: 4.2.11
-      hermes-parser: 0.32.0
-      image-size: 1.1.1
-      invariant: 2.2.4
-      jest-worker: 29.7.0
-      jsc-safe-url: 0.2.4
-      lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.83.3
-      metro-cache: 0.83.3
-      metro-cache-key: 0.83.3
-      metro-config: 0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      metro-core: 0.83.3
-      metro-file-map: 0.83.3
-      metro-resolver: 0.83.3
-      metro-runtime: 0.83.3
-      metro-source-map: 0.83.3
-      metro-symbolicate: 0.83.3
-      metro-transform-plugins: 0.83.3
-      metro-transform-worker: 0.83.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      mime-types: 2.1.35
-      nullthrows: 1.1.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      throat: 5.0.0
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
@@ -60052,7 +59514,7 @@ snapshots:
       metro-babel-transformer: 0.83.7
       metro-cache: 0.83.7
       metro-cache-key: 0.83.7
-      metro-config: 0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      metro-config: 0.83.7(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       metro-core: 0.83.7
       metro-file-map: 0.83.7
       metro-resolver: 0.83.7
@@ -60067,52 +59529,6 @@ snapshots:
       source-map: 0.5.7
       throat: 5.0.0
       ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  metro@0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    dependencies:
-      '@babel/code-frame': 7.29.7
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.29.8
-      '@babel/parser': 7.29.8
-      '@babel/template': 7.29.7
-      '@babel/traverse': 7.29.8
-      '@babel/types': 7.29.8
-      accepts: 2.0.0
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 4.4.3(supports-color@7.2.0)
-      error-stack-parser: 2.1.4
-      flow-enums-runtime: 0.0.6
-      graceful-fs: 4.2.11
-      hermes-parser: 0.35.0
-      image-size: 1.1.1
-      invariant: 2.2.4
-      jest-worker: 29.7.0
-      jsc-safe-url: 0.2.4
-      lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.83.7
-      metro-cache: 0.83.7
-      metro-cache-key: 0.83.7
-      metro-config: 0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      metro-core: 0.83.7
-      metro-file-map: 0.83.7
-      metro-resolver: 0.83.7
-      metro-runtime: 0.83.7
-      metro-source-map: 0.83.7
-      metro-symbolicate: 0.83.7
-      metro-transform-plugins: 0.83.7
-      metro-transform-worker: 0.83.7(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      mime-types: 3.0.1
-      nullthrows: 1.1.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      throat: 5.0.0
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
@@ -61875,15 +61291,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    dependencies:
-      shell-quote: 1.10.0
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    optional: true
-
   react-docgen-typescript@1.22.0(typescript@7.0.2):
     dependencies:
       typescript: 7.0.2
@@ -61921,16 +61328,6 @@ snapshots:
       react-dom: 19.1.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
-  react-i18next@14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      '@babel/runtime': 7.28.4
-      html-parse-stringify: 3.0.1
-      i18next: 23.10.1
-      react: 19.1.4
-    optionalDependencies:
-      react-dom: 19.1.4(react@19.1.4)
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-
   react-i18next@14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
       '@babel/runtime': 7.28.4
@@ -61941,7 +61338,7 @@ snapshots:
       react-dom: 19.1.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
-  react-i18next@16.5.0(@typescript/typescript6@6.0.2)(i18next@25.7.3(@typescript/typescript6@6.0.2))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
+  react-i18next@16.5.0(@typescript/typescript6@6.0.2)(i18next@25.7.3(@typescript/typescript6@6.0.2))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
       '@babel/runtime': 7.28.4
       html-parse-stringify: 3.0.1
@@ -61950,7 +61347,7 @@ snapshots:
       use-sync-external-store: 1.6.0(react@19.1.4)
     optionalDependencies:
       react-dom: 19.1.4(react@19.1.4)
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
       typescript: '@typescript/typescript6@6.0.2'
 
   react-i18next@16.5.0(i18next@25.7.3(typescript@7.0.2))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(typescript@7.0.2):
@@ -62121,15 +61518,6 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
-  react-native-gesture-handler@2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      '@egjs/hammerjs': 2.0.17
-      hoist-non-react-statics: 3.3.2
-      invariant: 2.2.4
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
-
   react-native-gesture-handler@2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
       '@egjs/hammerjs': 2.0.17
@@ -62162,12 +61550,6 @@ snapshots:
     dependencies:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
-  react-native-is-edge-to-edge@1.3.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
 
   react-native-is-edge-to-edge@1.3.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
@@ -62230,15 +61612,6 @@ snapshots:
       react-native-worklets: 0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       semver: 7.8.1
 
-  react-native-reanimated@4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-      react-native-is-edge-to-edge: 1.3.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      react-native-worklets: 0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      semver: 7.8.1
-    optional: true
-
   react-native-reanimated@4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
       react: 19.1.4
@@ -62256,12 +61629,6 @@ snapshots:
     dependencies:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
-  react-native-safe-area-context@5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
 
   react-native-safe-area-context@5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
@@ -62304,15 +61671,6 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
       warn-once: 0.1.1
-
-  react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      css-select: 5.1.0
-      css-tree: 1.1.3
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-      warn-once: 0.1.1
-    optional: true
 
   react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
@@ -62374,14 +61732,6 @@ snapshots:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
     optional: true
 
-  react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      escape-string-regexp: 4.0.0
-      invariant: 2.2.4
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-    optional: true
-
   react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
       escape-string-regexp: 4.0.0
@@ -62407,26 +61757,6 @@ snapshots:
       semver: 7.8.1
     transitivePeerDependencies:
       - supports-color
-
-  react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4):
-    dependencies:
-      '@babel/core': 7.28.5
-      '@babel/plugin-transform-arrow-functions': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-class-properties': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-classes': 7.28.4(@babel/core@7.28.5)
-      '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-optional-chaining': 7.28.5(@babel/core@7.28.5)
-      '@babel/plugin-transform-shorthand-properties': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-template-literals': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.5)
-      '@babel/preset-typescript': 7.28.5(@babel/core@7.28.5)
-      convert-source-map: 2.0.0
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-      semver: 7.8.1
-    transitivePeerDependencies:
-      - supports-color
-    optional: true
 
   react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
@@ -62493,54 +61823,6 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
-
-  react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6):
-    dependencies:
-      '@jest/create-cache-key-function': 30.5.0
-      '@react-native/assets-registry': 0.81.6
-      '@react-native/codegen': 0.81.6(@babel/core@7.28.5)
-      '@react-native/community-cli-plugin': 0.81.6(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@react-native/gradle-plugin': 0.81.6
-      '@react-native/js-polyfills': 0.81.6
-      '@react-native/normalize-colors': 0.81.6
-      '@react-native/virtualized-lists': 0.81.6(@types/react@19.0.14)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      abort-controller: 3.0.0
-      anser: 1.4.10
-      ansi-regex: 5.0.1
-      babel-jest: 29.7.0(@babel/core@7.28.5)
-      babel-plugin-syntax-hermes-parser: 0.29.1
-      base64-js: 1.5.1
-      commander: 12.1.0
-      flow-enums-runtime: 0.0.6
-      glob: 7.2.3
-      invariant: 2.2.4
-      jest-environment-node: 30.5.0
-      memoize-one: 5.2.1
-      metro-runtime: 0.83.7
-      metro-source-map: 0.83.7
-      nullthrows: 1.1.1
-      pretty-format: 29.7.0
-      promise: 8.3.0
-      react: 19.1.4
-      react-devtools-core: 6.1.5(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      react-refresh: 0.14.2
-      regenerator-runtime: 0.13.11
-      scheduler: 0.26.0
-      semver: 7.8.1
-      stacktrace-parser: 0.1.10
-      whatwg-fetch: 3.6.20
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      yargs: 17.7.2
-    optionalDependencies:
-      '@types/react': 19.0.14
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@react-native-community/cli'
-      - '@react-native/metro-config'
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    optional: true
 
   react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(bufferutil@4.1.0)(typescript@7.0.2)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10):
     dependencies:
@@ -64965,26 +64247,9 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.1.0(@typescript/typescript6@6.0.2)(zod@4.4.3)
-      isows: 1.0.7(ws@8.18.3)
+      isows: 1.0.7(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
       ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    optionalDependencies:
-      typescript: '@typescript/typescript6@6.0.2'
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-      - zod
-
-  viem@2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@4.4.3):
-    dependencies:
-      '@noble/curves': 1.9.1
-      '@noble/hashes': 1.8.0
-      '@scure/bip32': 1.7.0
-      '@scure/bip39': 1.6.0
-      abitype: 1.1.0(@typescript/typescript6@6.0.2)(zod@4.4.3)
-      isows: 1.0.7(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6))
-      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
     transitivePeerDependencies:
@@ -65001,7 +64266,24 @@ snapshots:
       abitype: 1.1.0(@typescript/typescript6@6.0.2)(zod@3.25.76)
       isows: 1.0.7(ws@8.18.3)
       ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@3.25.76)
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+    optionalDependencies:
+      typescript: '@typescript/typescript6@6.0.2'
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - zod
+
+  viem@2.37.4(@typescript/typescript6@6.0.2)(zod@4.4.3):
+    dependencies:
+      '@noble/curves': 1.9.1
+      '@noble/hashes': 1.8.0
+      '@scure/bip32': 1.7.0
+      '@scure/bip39': 1.6.0
+      abitype: 1.1.0(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      isows: 1.0.7(ws@8.18.3)
+      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
     transitivePeerDependencies:
@@ -65018,7 +64300,7 @@ snapshots:
       abitype: 1.1.0(typescript@7.0.2)(zod@4.4.3)
       isows: 1.0.7(ws@8.18.3)
       ox: 0.9.3(typescript@7.0.2)(zod@4.4.3)
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     optionalDependencies:
       typescript: 7.0.2
     transitivePeerDependencies:
@@ -65266,23 +64548,10 @@ snapshots:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
 
-  ws@6.2.3(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    dependencies:
-      async-limiter: 1.0.1
-    optionalDependencies:
-      bufferutil: 4.1.0
-      utf-8-validate: 6.0.6
-    optional: true
-
   ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
-
-  ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    optionalDependencies:
-      bufferutil: 4.1.0
-      utf-8-validate: 6.0.6
 
   ws@8.17.1(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
@@ -65308,11 +64577,6 @@ snapshots:
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
-
-  ws@8.20.1(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    optionalDependencies:
-      bufferutil: 4.1.0
-      utf-8-validate: 6.0.6
 
   ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
@@ -65360,8 +64624,6 @@ snapshots:
   xmlcreate@2.0.4: {}
 
   xmlhttprequest-ssl@4.0.0: {}
-
-  xstate@5.19.2: {}
 
   xstream@11.14.0:
     dependencies:
