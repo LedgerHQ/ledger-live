@@ -22,7 +22,6 @@ import {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
-import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
 import {
   setupZcashNativeHost,
   cleanupZcashNativeHost,
@@ -112,9 +111,6 @@ app.on("ready", async () => {
   console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
   console.timeEnd("T-db");
-
-  // Set up transport handlers for Speculos and HTTP proxy in main process
-  setupTransportHandlers();
 
   // Set up ZCash native host: lazy-spawn a UtilityProcess hosting the
   // napi-rs engine, bridged to the renderer via IPC. The engine is the one of
@@ -224,14 +220,7 @@ app.on("ready", async () => {
   await clearSessionCache(window.webContents.session);
 });
 
-// Cleanup transports on app shutdown
-app.on("before-quit", () => {
-  console.log("App shutting down, cleaning up transports...");
-  cleanupTransports();
-});
-
 app.on("window-all-closed", () => {
-  cleanupTransports();
   cleanupZcashNativeHost();
   app.quit();
 });

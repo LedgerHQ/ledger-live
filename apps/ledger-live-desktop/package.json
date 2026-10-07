@@ -160,7 +160,6 @@
     "@ledgerhq/ethereum-provider": "workspace:^",
     "@ledgerhq/hw-ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/hw-transport": "catalog:",
-    "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

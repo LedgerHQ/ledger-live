@@ -3,7 +3,6 @@ import {
   type Bootstrap,
   type CardSessionBridge,
   type DbBridge,
-  type TransportBridge,
 } from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
@@ -36,15 +35,6 @@ export const db: jest.Mocked<DbBridge> = {
   resetAll: jest.fn().mockResolvedValue(undefined),
   reload: jest.fn().mockResolvedValue(undefined),
   cleanCache: jest.fn().mockResolvedValue(undefined),
-};
-
-// Must resolve: callers chain `.catch()`.
-export const transport: jest.Mocked<TransportBridge> = {
-  open: jest.fn().mockResolvedValue(undefined),
-  exchange: jest.fn().mockResolvedValue(undefined),
-  close: jest.fn().mockResolvedValue(undefined),
-  listen: jest.fn().mockResolvedValue(undefined),
-  listenUnsubscribe: jest.fn().mockResolvedValue(undefined),
 };
 
 export const cardSession: CardSessionBridge = {
