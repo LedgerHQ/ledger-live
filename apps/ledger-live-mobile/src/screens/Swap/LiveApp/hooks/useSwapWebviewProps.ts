@@ -2,6 +2,7 @@ import { getCurrentTrackingPage } from "@shared/analytics";
 import { useMemo } from "react";
 import { Platform } from "react-native";
 import useEnv from "@features/platform-env";
+import { getSwapAPIEnv } from "@ledgerhq/live-common/exchange/swap/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -73,6 +74,7 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
     () => ({
       source: initialSource,
       swapApiBase: SWAP_API_BASE,
+      swapApiEnv: getSwapAPIEnv(SWAP_API_BASE),
       swapUserIp: SWAP_USER_IP,
       devMode,
       theme,

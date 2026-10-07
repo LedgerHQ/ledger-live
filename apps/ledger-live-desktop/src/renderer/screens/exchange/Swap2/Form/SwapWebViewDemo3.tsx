@@ -1,3 +1,4 @@
+import { getSwapAPIEnv } from "@ledgerhq/live-common/exchange/swap/index";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
@@ -123,6 +124,7 @@ const SwapWebAppWrapper = styled.div`
 `;
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
+const SWAP_API_ENV = getSwapAPIEnv(SWAP_API_BASE);
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 
 const SwapWebView = ({
@@ -542,6 +544,7 @@ const SwapWebView = ({
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
             swapApiBase: SWAP_API_BASE,
+            swapApiEnv: SWAP_API_ENV,
             swapUserIp: SWAP_USER_IP,
             devMode,
             lastSeenDevice: lastSeenDevice?.modelId,

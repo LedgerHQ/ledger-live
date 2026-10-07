@@ -41,6 +41,23 @@ const getSwapUserIP = () => {
   return undefined;
 };
 
+// Lets the Swap live app follow Wallet's backend. Unknown hosts send nothing,
+// so the live app keeps its own default.
+const getSwapAPIEnv = (swapApiBase: string): "stg" | "prd" | undefined => {
+  let hostname: string;
+  try {
+    hostname = new URL(swapApiBase).hostname;
+  } catch {
+    return undefined;
+  }
+  const labels = hostname.split(".");
+  const isLdgTech = hostname.endsWith(".ldg-tech.com");
+  if (hostname.endsWith(".ledger-test.com") || (isLdgTech && labels.includes("stg"))) return "stg";
+  if (hostname === "ledger.com" || hostname.endsWith(".ledger.com")) return "prd";
+  if (isLdgTech && labels.includes("prd")) return "prd";
+  return undefined;
+};
+
 const SWAP_API_BASE_PATTERN = /.*\/v(?<version>\d+)\/*$/;
 const getSwapAPIVersion: () => number = () => {
   const version = Number(getSwapAPIBaseURL().match(SWAP_API_BASE_PATTERN)?.groups?.version);
@@ -135,6 +152,7 @@ export {
   getSwapAPIBaseURL,
   getSwapUserIP,
   getSwapAPIVersion,
+  getSwapAPIEnv,
   getCompleteSwapHistory,
   postSwapAccepted,
   postSwapCancelled,
