@@ -964,19 +964,20 @@ describe("device setup", () => {
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
-  it("enters the Recovery Key backup when the device is already there", async () => {
-    const { actor } = await start(
-      {
-        osVersion: [os({ ...seeded, recoveryKeyStatus: RecoveryKeyStatus.Choice })],
-        ...passingChecks,
-      },
-      { offerSync: true },
-    );
+  it.each([RecoveryKeyStatus.Choice, RecoveryKeyStatus.Running, RecoveryKeyStatus.Naming])(
+    "sends an already onboarded device to the success exit while its Recovery Key flag is %s",
+    async recoveryKeyStatus => {
+      const { actor } = await start(
+        {
+          osVersion: [os({ ...seeded, recoveryKeyStatus })],
+          ...passingChecks,
+        },
+        { offerSync: true },
+      );
 
-    expect(actor.getSnapshot().status).not.toBe("done");
-    expect(stateOf(actor)).toBe("backupRecoveryKey");
-    actor.stop();
-  });
+      expect(exitOf(actor)).toMatchObject({ reason: "offerLedgerSync" });
+    },
+  );
 
   it("keeps a rebooted Recovery Key backup instead of starting onboarding over", async () => {
     const { actor } = await enterSetup();
