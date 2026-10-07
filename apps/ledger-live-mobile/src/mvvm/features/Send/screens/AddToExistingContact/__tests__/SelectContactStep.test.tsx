@@ -25,7 +25,8 @@ const viewModel = createPopulatedContactsListViewModel(me, [me, ada]);
 const labels = {
   title: "Select contact",
   searchPlaceholder: "Search contact",
-  searchNoResults: "No contact found",
+  searchNoResults: "No contacts found by that name",
+  searchNoResultsDescription: "Try another name or spelling.",
   addContact: "Add contact",
   formatAddressCount: (count: number) => `${count} address`,
 };

@@ -27,6 +27,7 @@ export function useAddToExistingContactViewModel({
       title: t("send.newSendFlow.addContact.selectContact"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
+      searchNoResultsDescription: t("contacts.searchNoResultsDescription"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),

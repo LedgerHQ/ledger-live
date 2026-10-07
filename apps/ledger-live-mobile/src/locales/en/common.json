@@ -11717,7 +11717,8 @@
     "addAddress": "Add address",
     "addYourAddress": "Add your address",
     "searchPlaceholder": "Search by name",
-    "searchNoResults": "No contact found",
+    "searchNoResults": "No contacts found by that name",
+    "searchNoResultsDescription": "Try another name or spelling.",
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names. Use a nickname or just a first name + initial, e.g. 'John S.'",
