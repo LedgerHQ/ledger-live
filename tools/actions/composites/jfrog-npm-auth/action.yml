@@ -19,4 +19,5 @@ runs:
         token: ${{ steps.jfrog-login.outputs.oidc-token }}
         registry: ${{ inputs.registry }}
         npmrc-location: "$HOME/.npmrc"
-        package-import-method: hardlink
+        # Hardlink imports only on self-hosted Linux runners; 'false' leaves the pnpm default.
+        package-import-method: ${{ runner.os == 'Linux' && runner.environment == 'self-hosted' && 'hardlink' || 'false' }}
