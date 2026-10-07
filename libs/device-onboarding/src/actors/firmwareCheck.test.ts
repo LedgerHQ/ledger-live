@@ -1,5 +1,4 @@
 import {
-  DeviceActionStatus,
   GetDeviceMetadataDeviceAction,
   UnknownDAError,
   type GetDeviceMetadataDAError,
@@ -100,7 +99,7 @@ describe("firmwareCheck", () => {
     const fake = createFake();
     const { received, stop } = start(fake);
 
-    fake.lastExecution().states.next({ status: DeviceActionStatus.Stopped });
+    fake.lastExecution().stop();
     await settle();
 
     expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED" }]);
@@ -138,14 +137,14 @@ describe("firmwareCheck", () => {
   it("cancels the device action and unsubscribes when the actor stops", () => {
     const fake = createFake();
     const { stop } = start(fake);
-    const { states, cancel } = fake.lastExecution();
+    const execution = fake.lastExecution();
 
-    expect(states.observed).toBe(true);
+    expect(execution.watched).toBe(true);
 
     stop();
 
-    expect(states.observed).toBe(false);
-    expect(cancel).toHaveBeenCalledTimes(1);
+    expect(execution.watched).toBe(false);
+    expect(execution.cancel).toHaveBeenCalledTimes(1);
   });
 
   it("reports nothing once the actor is stopped", async () => {
@@ -154,10 +153,7 @@ describe("firmwareCheck", () => {
     const execution = fake.lastExecution();
 
     stop();
-    execution.states.next({
-      status: DeviceActionStatus.Completed,
-      output: metadata(undefined),
-    });
+    execution.complete(metadata(undefined));
     await settle();
 
     expect(received).toEqual([]);
@@ -185,12 +181,9 @@ function start(fake: FakeFirmwareCheckDmk) {
 }
 
 function complete(fake: FakeFirmwareCheckDmk, update: AvailableFirmwareUpdate | undefined) {
-  fake.lastExecution().states.next({
-    status: DeviceActionStatus.Completed,
-    output: metadata(update),
-  });
+  fake.lastExecution().complete(metadata(update));
 }
 
 function fail(fake: FakeFirmwareCheckDmk, error: GetDeviceMetadataDAError) {
-  fake.lastExecution().states.next({ status: DeviceActionStatus.Error, error });
+  fake.lastExecution().fail(error);
 }

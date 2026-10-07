@@ -1,11 +1,12 @@
-import { CommandResultFactory, type DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { CommandResultFactory } from "@ledgerhq/device-management-kit";
 import { runActor } from "../tests/actorHarness";
-import { createFakeCommandDmk } from "../tests/fakeDmk";
+import { createDeviceManagementKit, createFakeCommandDmk } from "../tests/fakeDmk";
 import { createOsVersionResponse } from "../tests/osVersionResponse";
 import {
   defaultUnlockPollingIntervalMs,
   unlockPolling,
   type UnlockPollingEvent,
+  type UnlockPollingInput,
 } from "./unlockPolling";
 
 const answers = CommandResultFactory({ data: createOsVersionResponse({ isOnboarded: false }) });
@@ -70,8 +71,8 @@ describe("unlockPolling", () => {
   });
 
   it("never has two commands in flight", async () => {
-    const sendCommand = jest.fn(() => new Promise(() => {}));
-    const dmk = { sendCommand } as unknown as DeviceManagementKit;
+    const sendCommand = jest.fn(() => new Promise(() => undefined));
+    const dmk = createDeviceManagementKit({ sendCommand });
     const { stop } = start(dmk);
 
     await jest.advanceTimersByTimeAsync(5 * defaultUnlockPollingIntervalMs);
@@ -93,6 +94,6 @@ describe("unlockPolling", () => {
   });
 });
 
-function start(dmk: DeviceManagementKit) {
+function start(dmk: UnlockPollingInput["dmk"]) {
   return runActor<UnlockPollingEvent>(unlockPolling, { dmk, sessionId: "session" });
 }

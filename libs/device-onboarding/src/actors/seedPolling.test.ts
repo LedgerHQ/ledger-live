@@ -1,9 +1,18 @@
-import { CommandResultFactory, type DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { CommandResultFactory } from "@ledgerhq/device-management-kit";
 import { runActor } from "../tests/actorHarness";
-import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
+import {
+  createDeviceManagementKit,
+  createFakeCommandDmk,
+  type ScriptedCommand,
+} from "../tests/fakeDmk";
 import { createOsVersionResponse, type OsVersionResponseOptions } from "../tests/osVersionResponse";
 import { OnboardingStep, RecoveryKeyStatus } from "../types";
-import { defaultSeedPollingIntervalMs, seedPolling, type SeedPollingEvent } from "./seedPolling";
+import {
+  defaultSeedPollingIntervalMs,
+  seedPolling,
+  type SeedPollingEvent,
+  type SeedPollingInput,
+} from "./seedPolling";
 
 const restoringWord = (currentWordIndex: number): OsVersionResponseOptions => ({
   onboardingState: "restore-recovery-phrase",
@@ -167,8 +176,8 @@ describe("seedPolling", () => {
   });
 
   it("never has two commands in flight", async () => {
-    const sendCommand = jest.fn(() => new Promise(() => {}));
-    const dmk = { sendCommand } as unknown as DeviceManagementKit;
+    const sendCommand = jest.fn(() => new Promise(() => undefined));
+    const dmk = createDeviceManagementKit({ sendCommand });
     const { stop } = start(dmk);
 
     await jest.advanceTimersByTimeAsync(5 * defaultSeedPollingIntervalMs);
@@ -194,7 +203,7 @@ function reads(options: OsVersionResponseOptions): ScriptedCommand<unknown> {
   return CommandResultFactory({ data: createOsVersionResponse(options) });
 }
 
-function start(dmk: DeviceManagementKit) {
+function start(dmk: SeedPollingInput["dmk"]) {
   return runActor<SeedPollingEvent>(seedPolling, {
     dmk,
     sessionId: "session",

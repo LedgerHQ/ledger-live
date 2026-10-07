@@ -1,10 +1,12 @@
+import { DeviceStatus } from "@ledgerhq/device-management-kit";
+import { createDeviceManagementKit } from "../tests/fakeDmk";
+import { createSessionStream, type SessionStream } from "../tests/testStream";
 import {
-  DeviceStatus,
-  type DeviceManagementKit,
-  type DeviceSessionState,
-} from "@ledgerhq/device-management-kit";
-import { Subject } from "rxjs";
-import { createSessionEventsActor, mapSession, type SessionEvent } from "./session";
+  createSessionEventsActor,
+  mapSession,
+  type SessionEvent,
+  type SessionListenerInput,
+} from "./session";
 
 describe("mapSession", () => {
   it.each([
@@ -38,40 +40,40 @@ describe("mapSession", () => {
 
 describe("sessionListener", () => {
   it("reports a session that is already locked", () => {
-    const states = new Subject<DeviceSessionState>();
+    const session = createSessionStream();
     const received: SessionEvent[] = [];
-    const actor = createListenerActor(states, received);
+    const actor = createListenerActor(session, received);
 
-    states.next(sessionState(DeviceStatus.LOCKED));
+    session.set(DeviceStatus.LOCKED);
 
     expect(received).toEqual([{ type: "LOCKED" }]);
     actor.stop();
   });
 
   it("compares statuses against the last non-BUSY status", () => {
-    const states = new Subject<DeviceSessionState>();
+    const session = createSessionStream();
     const received: SessionEvent[] = [];
-    const actor = createListenerActor(states, received);
+    const actor = createListenerActor(session, received);
 
-    states.next(sessionState(DeviceStatus.CONNECTED));
-    states.next(sessionState(DeviceStatus.BUSY));
-    states.next(sessionState(DeviceStatus.LOCKED));
-    states.next(sessionState(DeviceStatus.BUSY));
-    states.next(sessionState(DeviceStatus.CONNECTED));
+    session.set(DeviceStatus.CONNECTED);
+    session.set(DeviceStatus.BUSY);
+    session.set(DeviceStatus.LOCKED);
+    session.set(DeviceStatus.BUSY);
+    session.set(DeviceStatus.CONNECTED);
 
     expect(received).toEqual([{ type: "LOCKED" }, { type: "UNLOCKED" }]);
     actor.stop();
   });
 
   it.each(["completion", "error"] as const)("maps observable %s to transport loss", ending => {
-    const states = new Subject<DeviceSessionState>();
+    const session = createSessionStream();
     const received: SessionEvent[] = [];
-    const actor = createListenerActor(states, received);
+    const actor = createListenerActor(session, received);
 
     if (ending === "completion") {
-      states.complete();
+      session.end();
     } else {
-      states.error(new Error("transport failed"));
+      session.fail(new Error("transport failed"));
     }
 
     expect(received).toEqual([{ type: "TRANSPORT_LOST" }]);
@@ -79,54 +81,54 @@ describe("sessionListener", () => {
   });
 
   it("reports transport loss once when disconnection is followed by completion", () => {
-    const states = new Subject<DeviceSessionState>();
+    const session = createSessionStream();
     const received: SessionEvent[] = [];
-    const actor = createListenerActor(states, received);
+    const actor = createListenerActor(session, received);
 
-    states.next(sessionState(DeviceStatus.CONNECTED));
-    states.next(sessionState(DeviceStatus.NOT_CONNECTED));
-    states.complete();
+    session.set(DeviceStatus.CONNECTED);
+    session.set(DeviceStatus.NOT_CONNECTED);
+    session.end();
 
     expect(received).toEqual([{ type: "TRANSPORT_LOST" }]);
     actor.stop();
   });
 
   it("maps a synchronous subscription failure to transport loss", () => {
-    const states = new Subject<DeviceSessionState>();
+    const session = createSessionStream();
     const received: SessionEvent[] = [];
-    const dmk = {
-      getDeviceSessionState: jest.fn(() => {
+    const dmk = createDeviceManagementKit({
+      getDeviceSessionState: () => {
         throw new Error("session not found");
-      }),
-    } as unknown as DeviceManagementKit;
-    const actor = createListenerActor(states, received, dmk);
+      },
+    });
+    const actor = createListenerActor(session, received, dmk);
 
     expect(received).toEqual([{ type: "TRANSPORT_LOST" }]);
     actor.stop();
   });
 
   it("unsubscribes when the actor stops", () => {
-    const states = new Subject<DeviceSessionState>();
-    const actor = createListenerActor(states, []);
+    const session = createSessionStream();
+    const actor = createListenerActor(session, []);
 
-    expect(states.observed).toBe(true);
+    expect(session.watched).toBe(true);
     actor.stop();
-    expect(states.observed).toBe(false);
+    expect(session.watched).toBe(false);
   });
 });
 
 function createListenerActor(
-  states: Subject<DeviceSessionState>,
+  session: SessionStream,
   received: SessionEvent[],
-  dmk: DeviceManagementKit = {
-    getDeviceSessionState: jest.fn(() => states.asObservable()),
-  } as unknown as DeviceManagementKit,
+  dmk: SessionListenerInput["dmk"] = sessionKit(session),
 ) {
   return createSessionEventsActor(dmk, "session", event => {
     received.push(event);
   });
 }
 
-function sessionState(deviceStatus: DeviceStatus): DeviceSessionState {
-  return { deviceStatus } as DeviceSessionState;
+function sessionKit(session: SessionStream) {
+  return createDeviceManagementKit({
+    getDeviceSessionState: () => session.events,
+  });
 }
