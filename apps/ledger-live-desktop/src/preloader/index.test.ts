@@ -1,7 +1,12 @@
 import { ipcRenderer } from "electron";
 import { CHANNELS } from "~/bridge/contract";
 
-jest.mock("electron", () => ({ ipcRenderer: { send: jest.fn(), invoke: jest.fn() } }));
+jest.mock("electron", () => ({
+  ipcRenderer: { send: jest.fn(), invoke: jest.fn() },
+  contextBridge: {
+    exposeInMainWorld: jest.fn((key: string, api: object) => Object.assign(window, { [key]: api })),
+  },
+}));
 jest.mock("./bridge", () => ({ installBridge: jest.fn() }));
 jest.mock("@ledgerhq/react-ui/styles/index", () => ({
   palettes: {
