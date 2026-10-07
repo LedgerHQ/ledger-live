@@ -268,12 +268,21 @@ export interface CommandOutput {
   ): void;
   /** Output a quoted and validated `agent-intent swap --dry-run` proposal that was not submitted. */
   agentIntentSwapDryRun(summary: SwapIntentSummary): void;
+  /** One intent from `agent-intent status` (human: labeled lines; json: envelope with the intent's
+   * fields, `profileId` and `terminal`, `null` for a state this version doesn't know). */
+  agentIntentStatus(result: AgentIntentStatusResult): void;
 }
 
 export type AgentIntentIntentsPage = {
   profileId: string;
   intents: readonly IntentListEntry[];
   nextCursor: string | null;
+};
+
+export type AgentIntentStatusResult = {
+  profileId: string;
+  intent: IntentListEntry;
+  terminal: boolean | null;
 };
 
 export type AgentIntentEnrollmentPending = {
@@ -972,6 +981,27 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(`Dry run — intent validated, nothing was submitted.`);
     writeStdout(swapIntentSummaryLines(summary).join("\n"));
   }
+
+  agentIntentStatus({ profileId, intent: i, terminal }: AgentIntentStatusResult): void {
+    const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
+    writeStdout(
+      [
+        `Intent:  ${i.id}`,
+        `Status:  ${state}${terminal ? " (final)" : ""}`,
+        `Profile: ${profileId}`,
+        ...(i.displayAmount || i.amount
+          ? [`Amount:  ${i.displayAmount ?? `${i.amount} (base units)`}`]
+          : []),
+        ...(i.sender ? [`From:    ${i.sender}`] : []),
+        ...(i.recipient ? [`To:      ${i.recipient}`] : []),
+        ...(i.network ? [`Network: ${i.network}`] : []),
+        ...(i.description ? [`Note:    ${i.description}`] : []),
+        ...(i.failureReason ? [`Failure: ${i.failureReason}`] : []),
+        `Created: ${i.createdAt}`,
+        `Updated: ${i.updatedAt}`,
+      ].join("\n"),
+    );
+  }
 }
 
 function swapIntentSummaryLines(summary: SwapIntentSummary): string[] {
@@ -1439,6 +1469,10 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(
       this._envelope({ ...swapIntentSummaryJson(summary), submitted: false, dryRun: true }),
     );
+  }
+
+  agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
+    this._writeNdjson(this._envelope({ profileId, terminal, intent }));
   }
 }
 

@@ -4,6 +4,7 @@ import IntentsCommand from "./intents";
 import ListCommand from "./list";
 import RecoverCommand from "./recover";
 import ShowCommand from "./show";
+import StatusCommand from "./status";
 import SendCommand from "./send";
 import SwapCommand from "./swap";
 import SyncCommand from "./sync";
@@ -12,8 +13,8 @@ export default defineGroup({
   name: "agent-intent",
   description:
     "Enroll and manage Agent Intent profiles for AI agents proposing Ethereum and Solana " +
-    "payments and Ethereum swaps for human review, list the intents they proposed, and sync " +
-    "their Ledger Sync accounts.",
+    "payments and Ethereum swaps for human review, list the intents they proposed and check " +
+    "their status, and sync their Ledger Sync accounts.",
   commands: [
     EnrollCommand,
     RecoverCommand,
@@ -22,6 +23,7 @@ export default defineGroup({
     SendCommand,
     SwapCommand,
     IntentsCommand,
+    StatusCommand,
     SyncCommand,
   ],
 });
