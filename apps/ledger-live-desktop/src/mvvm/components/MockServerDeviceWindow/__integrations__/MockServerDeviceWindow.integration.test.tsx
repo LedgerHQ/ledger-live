@@ -18,10 +18,18 @@ jest.mock("@ledgerhq/device-mockserver-react", () => ({
 }));
 
 describe("MockServerDeviceWindow", () => {
+  const playwrightRun = process.env.PLAYWRIGHT_RUN;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    delete process.env.PLAYWRIGHT_RUN;
     mockUseActiveMockServerDeviceId.mockReturnValue("device-1");
     mockGetMockServerSessionToken.mockReturnValue("session-token");
+  });
+
+  afterAll(() => {
+    if (playwrightRun === undefined) delete process.env.PLAYWRIGHT_RUN;
+    else process.env.PLAYWRIGHT_RUN = playwrightRun;
   });
 
   it("floats the screen of the device behind the active session", () => {
@@ -68,6 +76,22 @@ describe("MockServerDeviceWindow", () => {
     render(<MockServerDeviceWindow />);
 
     expect(screen.queryByTestId("mock-server-device")).not.toBeInTheDocument();
+  });
+
+  it("renders nothing in an E2E run", () => {
+    process.env.PLAYWRIGHT_RUN = "true";
+
+    render(<MockServerDeviceWindow />);
+
+    expect(screen.queryByTestId("mock-server-device")).not.toBeInTheDocument();
+  });
+
+  it.each(["", "0", "false"])("still renders when PLAYWRIGHT_RUN is %p", value => {
+    process.env.PLAYWRIGHT_RUN = value;
+
+    render(<MockServerDeviceWindow />);
+
+    expect(screen.getByTestId("mock-server-device")).toBeVisible();
   });
 
   it("renders nothing before the mock server session is seeded", () => {
