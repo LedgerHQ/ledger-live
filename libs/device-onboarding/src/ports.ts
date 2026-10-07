@@ -18,6 +18,6 @@ export type DeviceOnboardingPorts = {
   openSession(): Promise<DeviceOnboardingSession>;
   currentSessionId(): DeviceSessionId;
   closeSession(): Promise<void>;
-  /** `null` means the installed firmware is already the latest. */
-  lookupFirmwareUpdate(): Promise<FirmwareCatalogueUpdate | null>;
+  /** `null` means the installed firmware is already the latest. Aborting `signal` stops the device read. */
+  lookupFirmwareUpdate(signal: AbortSignal): Promise<FirmwareCatalogueUpdate | null>;
 };

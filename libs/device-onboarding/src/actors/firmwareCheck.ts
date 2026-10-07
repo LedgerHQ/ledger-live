@@ -9,7 +9,7 @@ export type FirmwareCheckEvent = Extract<
 >;
 
 export type FirmwareCheckInput = {
-  lookupFirmwareUpdate: () => Promise<AvailableFirmwareUpdate | null>;
+  lookupFirmwareUpdate: (signal: AbortSignal) => Promise<AvailableFirmwareUpdate | null>;
   retryPolicy?: RetryPolicy;
 };
 
@@ -22,9 +22,12 @@ export function mapFirmwareLookup(update: AvailableFirmwareUpdate | null): Firmw
 export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput>(
   ({ input, sendBack }) => {
     let stopped = false;
+    const catalogueLookup = new AbortController();
     const policy = input.retryPolicy ?? createRetryPolicy(isCatalogueUnreachable);
 
-    withRetries(input.lookupFirmwareUpdate, policy, { isCancelled: () => stopped })
+    withRetries(() => input.lookupFirmwareUpdate(catalogueLookup.signal), policy, {
+      isCancelled: () => stopped,
+    })
       .then(update => {
         if (!stopped) {
           sendBack(mapFirmwareLookup(update));
@@ -38,6 +41,7 @@ export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput
 
     return () => {
       stopped = true;
+      catalogueLookup.abort();
     };
   },
 );

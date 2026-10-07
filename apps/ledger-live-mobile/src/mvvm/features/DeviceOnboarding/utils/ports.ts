@@ -65,6 +65,6 @@ export function createDeviceOnboardingPorts({
     async closeSession() {
       await heldTransport?.close();
     },
-    lookupFirmwareUpdate: () => lookupFirmwareUpdate(deviceId, deviceName),
+    lookupFirmwareUpdate: signal => lookupFirmwareUpdate(deviceId, deviceName, signal),
   };
 }

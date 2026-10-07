@@ -189,7 +189,7 @@ export const deviceOnboardingMachine = setup({
           invoke: {
             src: "firmwareCheck",
             input: ({ context }) => ({
-              lookupFirmwareUpdate: () => context.ports.lookupFirmwareUpdate(),
+              lookupFirmwareUpdate: signal => context.ports.lookupFirmwareUpdate(signal),
             }),
           },
           on: {

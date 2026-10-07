@@ -139,7 +139,7 @@ export type FakeOnboardingDmk = {
   dmk: DeviceManagementKit;
   sendCommand: jest.Mock;
   executeDeviceAction: jest.Mock;
-  lookupFirmwareUpdate: jest.Mock<Promise<AvailableFirmwareUpdate | null>, []>;
+  lookupFirmwareUpdate: jest.Mock<Promise<AvailableFirmwareUpdate | null>, [AbortSignal]>;
   earlyCheckToggles(): number[];
   genuineCheckRuns(): number;
   firmwareCheckRuns(): number;
@@ -177,7 +177,7 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
     },
   );
 
-  const lookupFirmwareUpdate = jest.fn(async () => {
+  const lookupFirmwareUpdate = jest.fn(async (_signal: AbortSignal) => {
     const next = firmwareCheck.next();
 
     if ("fails" in next) {

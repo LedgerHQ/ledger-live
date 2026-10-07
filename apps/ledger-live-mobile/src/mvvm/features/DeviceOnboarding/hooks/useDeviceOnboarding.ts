@@ -92,9 +92,9 @@ export function useDeviceOnboarding({
       return portsRef.current.currentSessionId();
     },
     closeSession: () => portsRef.current?.closeSession() ?? Promise.resolve(),
-    lookupFirmwareUpdate: () => {
+    lookupFirmwareUpdate: signal => {
       if (!portsRef.current) throw new Error("No mobile onboarding session");
-      return portsRef.current.lookupFirmwareUpdate();
+      return portsRef.current.lookupFirmwareUpdate(signal);
     },
   }).current;
 

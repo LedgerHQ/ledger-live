@@ -2,7 +2,7 @@ import { CatalogueUnreachable } from "@ledgerhq/device-onboarding";
 import { getLatestFirmwareForDeviceUseCase } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { getDeviceInfoTask } from "@ledgerhq/live-common/deviceSDK/tasks/getDeviceInfo";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { of } from "rxjs";
+import { Observable, of } from "rxjs";
 import { lookupFirmwareUpdate } from "./lookupFirmwareUpdate";
 
 jest.mock("@ledgerhq/live-common/deviceSDK/tasks/getDeviceInfo", () => ({
@@ -50,7 +50,7 @@ describe("lookupFirmwareUpdate", () => {
     mockDeviceInfo();
     mockedGetLatestFirmware.mockResolvedValue(null);
 
-    await expect(lookupFirmwareUpdate("device", null)).resolves.toBeNull();
+    await expect(lookupFirmwareUpdate("device", null, freshSignal())).resolves.toBeNull();
     expect(mockedGetDeviceInfoTask).toHaveBeenCalledWith({
       deviceId: "device",
       deviceName: null,
@@ -61,7 +61,7 @@ describe("lookupFirmwareUpdate", () => {
     mockDeviceInfo();
     mockedGetLatestFirmware.mockResolvedValue(catalogue);
 
-    await expect(lookupFirmwareUpdate("device", "Ledger Stax")).resolves.toEqual({
+    await expect(lookupFirmwareUpdate("device", "Ledger Stax", freshSignal())).resolves.toEqual({
       mcuUpdateRequired: true,
       finalFirmware: {
         id: 1,
@@ -91,7 +91,7 @@ describe("lookupFirmwareUpdate", () => {
       of({ type: "error", error: locked, retrying: false }) as ReturnType<typeof getDeviceInfoTask>,
     );
 
-    await expect(lookupFirmwareUpdate("device", "Ledger Stax")).rejects.toBe(locked);
+    await expect(lookupFirmwareUpdate("device", "Ledger Stax", freshSignal())).rejects.toBe(locked);
     expect(mockedGetLatestFirmware).not.toHaveBeenCalled();
   });
 
@@ -99,11 +99,42 @@ describe("lookupFirmwareUpdate", () => {
     mockDeviceInfo();
     mockedGetLatestFirmware.mockRejectedValue(new Error("offline"));
 
-    await expect(lookupFirmwareUpdate("device", "Ledger Stax")).rejects.toBeInstanceOf(
-      CatalogueUnreachable,
+    await expect(
+      lookupFirmwareUpdate("device", "Ledger Stax", freshSignal()),
+    ).rejects.toBeInstanceOf(CatalogueUnreachable);
+  });
+
+  it("unsubscribes the device read when the lookup is cancelled", async () => {
+    let unsubscribed = false;
+    mockedGetDeviceInfoTask.mockReturnValue(
+      new Observable(() => () => {
+        unsubscribed = true;
+      }) as ReturnType<typeof getDeviceInfoTask>,
     );
+    const controller = new AbortController();
+    const pending = lookupFirmwareUpdate("device", "Ledger Stax", controller.signal);
+
+    controller.abort();
+
+    await expect(pending).rejects.toMatchObject({ name: "AbortError" });
+    expect(unsubscribed).toBe(true);
+    expect(mockedGetLatestFirmware).not.toHaveBeenCalled();
+  });
+
+  it("does not read the device when the lookup is already cancelled", async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(
+      lookupFirmwareUpdate("device", "Ledger Stax", controller.signal),
+    ).rejects.toMatchObject({ name: "AbortError" });
+    expect(mockedGetDeviceInfoTask).not.toHaveBeenCalled();
   });
 });
+
+function freshSignal(): AbortSignal {
+  return new AbortController().signal;
+}
 
 function mockDeviceInfo() {
   mockedGetDeviceInfoTask.mockReturnValue(

@@ -1109,7 +1109,7 @@ async function launch(
       dmk: fake.dmk,
       ports: {
         ...(overrides.ports ?? fixedPorts()),
-        lookupFirmwareUpdate: () => fake.lookupFirmwareUpdate(),
+        lookupFirmwareUpdate: signal => fake.lookupFirmwareUpdate(signal),
       },
       deviceId: "device",
       deviceModelId: overrides.deviceModelId ?? DeviceModelId.FLEX,

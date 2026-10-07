@@ -82,6 +82,17 @@ describe("firmwareCheck", () => {
     stop();
   });
 
+  it("cancels the catalogue lookup when the actor stops", () => {
+    const lookupFirmwareUpdate = jest.fn(
+      (_signal: AbortSignal) => new Promise<AvailableFirmwareUpdate | null>(() => undefined),
+    );
+    const { stop } = start(lookupFirmwareUpdate);
+
+    stop();
+
+    expect(lookupFirmwareUpdate.mock.calls[0][0].aborted).toBe(true);
+  });
+
   it("reports nothing once the actor is stopped", async () => {
     let resolveLookup: (update: AvailableFirmwareUpdate | null) => void = () => undefined;
     const lookupFirmwareUpdate = jest.fn(
@@ -100,7 +111,9 @@ describe("firmwareCheck", () => {
   });
 });
 
-function start(lookupFirmwareUpdate: () => Promise<AvailableFirmwareUpdate | null>) {
+function start(
+  lookupFirmwareUpdate: (signal: AbortSignal) => Promise<AvailableFirmwareUpdate | null>,
+) {
   return runActor<FirmwareCheckEvent>(firmwareCheck, {
     lookupFirmwareUpdate,
     retryPolicy: { ...createRetryPolicy(isCatalogueUnreachable), delaysMs: [0, 0] },
