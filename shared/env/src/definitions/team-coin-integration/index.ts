@@ -347,6 +347,11 @@ const teamCoinIntegration = {
     parser: stringParser,
     desc: "Confidential transaction service url, serving the signed map entries that let the device display encrypted ERC-7984 amounts. Empty disables them",
   },
+  CLEAR_SIGN_UNCERTIFIED_TRANSACTION_INFO: {
+    def: false,
+    parser: boolParser,
+    desc: "Clear-sign with the generic parser even when the transaction info has no certificate. Only an Ethereum app built with a calldata test key accepts it",
+  },
   LEDGER_CLIENT_VERSION: {
     def: "",
     parser: stringParser,

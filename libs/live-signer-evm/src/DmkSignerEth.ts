@@ -201,6 +201,7 @@ export class DmkSignerEth implements EvmSigner {
       this.signer
         .signTransaction(path, buffer, {
           skipOpenApp: true,
+          allowUncertifiedTransactionInfo: getEnv("CLEAR_SIGN_UNCERTIFIED_TRANSACTION_INFO"),
         })
         .observable.subscribe({
           next: result => {
