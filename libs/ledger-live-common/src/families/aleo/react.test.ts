@@ -45,10 +45,6 @@ const mockUseHook = jest.fn();
 const mockMapResult = jest.fn();
 const mockConnectApp = jest.fn();
 
-jest.mock("@features/platform-feature-flags", () => ({
-  useFeature: jest.fn(() => ({ enabled: false })),
-}));
-
 jest.mock("./hw/getViewKey/index", () => ({
   createAction: (...args: unknown[]) => mockCreateAction(...args),
   getViewKeyExec: jest.fn(),
@@ -81,7 +77,6 @@ jest.mock("../../bridge/react", () => ({
   useAccountSyncState: jest.fn(),
 }));
 
-const { useFeature } = jest.requireMock("@features/platform-feature-flags");
 const { getViewKeyExec } = jest.requireMock("./hw/getViewKey/index");
 
 /** One successful chain-tip read, which is what a poll of the shared query resolves to. */
@@ -110,8 +105,7 @@ describe("useAleoViewKeyApproval", () => {
     mockCreateAction.mockReturnValue({ useHook: mockUseHook, mapResult: mockMapResult });
   });
 
-  it("creates action with connectApp when ldmkConnectApp is disabled", () => {
-    useFeature.mockReturnValue({ enabled: false });
+  it("creates action with connectApp by default", () => {
     const mockExec = jest.fn();
     mockConnectApp.mockReturnValue(mockExec);
 
@@ -123,24 +117,8 @@ describe("useAleoViewKeyApproval", () => {
       }),
     );
 
-    expect(mockConnectApp).toHaveBeenCalledWith({ isLdmkConnectAppEnabled: false });
+    expect(mockConnectApp).toHaveBeenCalledWith();
     expect(mockCreateAction).toHaveBeenCalledWith(mockExec, getViewKeyExec);
-  });
-
-  it("creates action with ldmk connectApp when ldmkConnectApp is enabled", () => {
-    useFeature.mockReturnValue({ enabled: true });
-    const mockExec = jest.fn();
-    mockConnectApp.mockReturnValue(mockExec);
-
-    renderHook(() =>
-      useAleoViewKeyApproval({
-        device: mockDevice,
-        selectedAccounts: [mockAccount1],
-        currency: mockCurrency,
-      }),
-    );
-
-    expect(mockConnectApp).toHaveBeenCalledWith({ isLdmkConnectAppEnabled: true });
   });
 
   it("uses provided connectAppExec override instead of default", () => {

@@ -22,7 +22,6 @@ import { createAction as createRawTransactionAction } from "@ledgerhq/live-commo
 import { createAction as createStartExchangeAction } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { getEnv } from "@shared/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { useFeature } from "@features/platform-feature-flags";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import { isDeviceNotOnboardedError } from "@ledgerhq/live-common/device-action/utils";
 
@@ -39,64 +38,45 @@ export default function useConnectAppAction({
 }: {
   allowNonOnboardedDevice?: boolean;
 } = {}): Action<AppRequest, AppState, AppResult> {
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   const action = useMemo(
     () =>
       createAppAction(
-        getEnv("MOCK")
-          ? mockedEventEmitter
-          : connectApp({ isLdmkConnectAppEnabled, allowNonOnboardedDevice }),
+        getEnv("MOCK") ? mockedEventEmitter : connectApp({ allowNonOnboardedDevice }),
       ),
-    [allowNonOnboardedDevice, isLdmkConnectAppEnabled],
+    [allowNonOnboardedDevice],
   );
   return action;
 }
 
 export function useTransactionAction() {
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   const action = useMemo(
-    () =>
-      createTransactionAction(
-        getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
-      ),
-    [isLdmkConnectAppEnabled],
+    () => createTransactionAction(getEnv("MOCK") ? mockedEventEmitter : connectApp()),
+    [],
   );
   return action;
 }
 
 export function useRawTransactionAction() {
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   const action = useMemo(
-    () =>
-      createRawTransactionAction(
-        getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
-      ),
-    [isLdmkConnectAppEnabled],
+    () => createRawTransactionAction(getEnv("MOCK") ? mockedEventEmitter : connectApp()),
+    [],
   );
   return action;
 }
 
 export function useStartExchangeAction() {
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   const action = useMemo(
     () =>
-      createStartExchangeAction(
-        getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
-        startExchange,
-      ),
-    [isLdmkConnectAppEnabled],
+      createStartExchangeAction(getEnv("MOCK") ? mockedEventEmitter : connectApp(), startExchange),
+    [],
   );
   return action;
 }
 
 export function useConnectManagerAction(): Action<ManagerRequest, ManagerState, ManagerResult> {
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   const action = useMemo(
-    () =>
-      createManagerAction(
-        getEnv("MOCK") ? mockedEventEmitter : connectManager({ isLdmkConnectAppEnabled }),
-      ),
-    [isLdmkConnectAppEnabled],
+    () => createManagerAction(getEnv("MOCK") ? mockedEventEmitter : connectManager()),
+    [],
   );
   return action;
 }
@@ -107,13 +87,12 @@ export function useConnectManagerAction(): Action<ManagerRequest, ManagerState, 
  * arbitrary device/proxy errors are presented uniformly to the user.
  */
 export function useGenuineCheckAction(): Action<ManagerRequest, ManagerState, ManagerResult> {
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(() => {
     if (getEnv("MOCK")) {
       return createManagerAction(mockedEventEmitter);
     }
     const task: Parameters<typeof createManagerAction>[0] = input =>
-      connectManager({ isLdmkConnectAppEnabled })(input).pipe(
+      connectManager()(input).pipe(
         catchError(error => {
           if (isCounterfeitError(error)) return throwError(() => error);
           if (isDeviceNotOnboardedError(error)) return throwError(() => error);
@@ -122,5 +101,5 @@ export function useGenuineCheckAction(): Action<ManagerRequest, ManagerState, Ma
         }),
       );
     return createManagerAction(task);
-  }, [isLdmkConnectAppEnabled]);
+  }, []);
 }

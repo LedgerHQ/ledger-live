@@ -12,7 +12,7 @@ import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
-import { DeviceNotOnboarded } from "../errors";
+import { DeviceNotOnboarded, DmkTransportRequired } from "../errors";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
 import { LockedDeviceEvent } from "./actions/types";
 import { ManagerRequest } from "./actions/manager";
@@ -136,27 +136,14 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectManage
     };
   });
 
-export default function connectManagerFactory(
-  {
-    isLdmkConnectAppEnabled,
-  }: {
-    isLdmkConnectAppEnabled: boolean;
-  } = { isLdmkConnectAppEnabled: false },
-) {
-  if (!isLdmkConnectAppEnabled) {
-    return ({ deviceId, deviceName, request }: Input): Observable<ConnectManagerEvent> =>
-      withDevice(
-        deviceId,
-        deviceName ? { matchDeviceByName: deviceName } : undefined,
-      )(transport => cmd(transport, { deviceId, deviceName, request }));
-  }
+export default function connectManagerFactory() {
   return ({ deviceId, deviceName, request }: Input): Observable<ConnectManagerEvent> =>
     withDevice(
       deviceId,
       deviceName ? { matchDeviceByName: deviceName } : undefined,
     )(transport => {
       if (!isDmkTransport(transport)) {
-        return cmd(transport, { deviceId, deviceName, request });
+        return throwError(() => new DmkTransportRequired());
       }
       const { dmk, sessionId } = transport;
       const deviceAction = new PrepareConnectManagerDeviceAction({

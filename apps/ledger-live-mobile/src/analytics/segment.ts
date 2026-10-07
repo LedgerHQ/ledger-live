@@ -340,9 +340,6 @@ const getLdmkAndSyncFlags = () => ({
   ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? {
     enabled: false,
   },
-  ldmkConnectApp: analyticsFeatureFlagMethod?.("ldmkConnectApp") ?? {
-    enabled: false,
-  },
   ldmkSolanaSigner: analyticsFeatureFlagMethod?.("ldmkSolanaSigner") ?? {
     enabled: false,
   },
@@ -411,14 +408,8 @@ const extraProperties = async (store: AppStore) => {
   });
   const contactsFeature = analyticsFeatureFlagMethod?.("lwmContacts") ?? { enabled: false };
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
-  const {
-    ldmkTransport,
-    ldmkConnectApp,
-    ldmkSolanaSigner,
-    ldmkCosmosSigner,
-    ldmkPolkadotSigner,
-    ldmkTronSigner,
-  } = getLdmkAndSyncFlags();
+  const { ldmkTransport, ldmkSolanaSigner, ldmkCosmosSigner, ldmkPolkadotSigner, ldmkTronSigner } =
+    getLdmkAndSyncFlags();
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -558,7 +549,6 @@ const extraProperties = async (store: AppStore) => {
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
-    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,

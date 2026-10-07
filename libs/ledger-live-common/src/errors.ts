@@ -13,6 +13,13 @@ export class ConnectManagerTimeout extends Error {
   }
 }
 
+export class DmkTransportRequired extends Error {
+  override name = "DmkTransportRequired";
+  constructor(message?: string) {
+    super(message || "DmkTransportRequired");
+  }
+}
+
 export class GetAppAndVersionUnsupportedFormat extends Error {
   override name = "GetAppAndVersionUnsupportedFormat";
   constructor(message?: string) {

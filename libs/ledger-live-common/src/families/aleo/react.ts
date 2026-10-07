@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { useFeature } from "@features/platform-feature-flags";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -217,15 +216,9 @@ export function useAleoViewKeyApproval({
   connectAppExec,
   viewKeyExec,
 }: UseAleoViewKeyApprovalParams) {
-  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
-
   const action = useMemo(
-    () =>
-      createAction(
-        connectAppExec ?? connectApp({ isLdmkConnectAppEnabled }),
-        viewKeyExec ?? getViewKeyExec,
-      ),
-    [isLdmkConnectAppEnabled, connectAppExec, viewKeyExec],
+    () => createAction(connectAppExec ?? connectApp(), viewKeyExec ?? getViewKeyExec),
+    [connectAppExec, viewKeyExec],
   );
 
   const request = useMemo<Request>(
