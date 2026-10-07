@@ -561,6 +561,25 @@ describe("the firmware check", () => {
     expectChecksPassed(actor);
     expect(actor.getSnapshot().context.availableFirmwareUpdate).toBeNull();
   });
+
+  it("drops a lookup that is still running when the device locks", async () => {
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded), lockedDevice],
+      genuineCheck: [genuine],
+      firmwareCheck: [{ pending: true }],
+    });
+
+    expect(stateOf(actor)).toBe("firmwareCheck");
+    expect(fake.firmwareCheckRuns()).toBe(1);
+
+    actor.send({ type: "LOCKED" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("deviceLocked");
+    expect(fake.firmwareCheckRuns()).toBe(1);
+    expect(actor.getSnapshot().context.availableFirmwareUpdate).toBeNull();
+    expect(actor.getSnapshot().context.firmwareChecked).toBe(false);
+  });
 });
 
 describe("the firmware handover", () => {
@@ -568,6 +587,7 @@ describe("the firmware handover", () => {
     const { actor, fake } = await start(handoverScript([os(unseeded)]));
     const reads = fake.sendCommand.mock.calls.length;
     const actions = fake.executeDeviceAction.mock.calls.length;
+    const firmwareLookups = fake.firmwareCheckRuns();
 
     actor.send({ type: "USER_ACCEPT" });
     await settle();
@@ -575,6 +595,7 @@ describe("the firmware handover", () => {
     expect(stateOf(actor)).toBe("firmwareUpdateDelegated");
     expect(fake.sendCommand).toHaveBeenCalledTimes(reads);
     expect(fake.executeDeviceAction).toHaveBeenCalledTimes(actions);
+    expect(fake.firmwareCheckRuns()).toBe(firmwareLookups);
   });
 
   it("re-reads the device when the app's flow returns control", async () => {

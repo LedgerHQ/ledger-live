@@ -95,13 +95,63 @@ describe("lookupFirmwareUpdate", () => {
     expect(mockedGetLatestFirmware).not.toHaveBeenCalled();
   });
 
-  it("reports an unreachable catalogue", async () => {
+  it("reports an unreachable catalogue when the network is down", async () => {
     mockDeviceInfo();
-    mockedGetLatestFirmware.mockRejectedValue(new Error("offline"));
+    mockedGetLatestFirmware.mockRejectedValue(namedError("NetworkDown"));
 
     await expect(
       lookupFirmwareUpdate("device", "Ledger Stax", freshSignal()),
     ).rejects.toBeInstanceOf(CatalogueUnreachable);
+  });
+
+  it.each(["FirmwareNotRecognized", "UnknownMCU"])(
+    "fails a %s catalogue error once, without treating it as unreachable",
+    async name => {
+      mockDeviceInfo();
+      const catalogueError = namedError(name);
+      mockedGetLatestFirmware.mockRejectedValue(catalogueError);
+
+      await expect(lookupFirmwareUpdate("device", "Ledger Stax", freshSignal())).rejects.toBe(
+        catalogueError,
+      );
+    },
+  );
+
+  it("fails an unknown catalogue error once", async () => {
+    mockDeviceInfo();
+    const unexpected = new Error("offline");
+    mockedGetLatestFirmware.mockRejectedValue(unexpected);
+
+    await expect(lookupFirmwareUpdate("device", "Ledger Stax", freshSignal())).rejects.toBe(
+      unexpected,
+    );
+  });
+
+  it("rejects a device error the task would retry forever", async () => {
+    const locked = namedError("LockedDeviceError");
+    mockedGetDeviceInfoTask.mockReturnValue(
+      of({ type: "error", error: locked, retrying: true }) as ReturnType<typeof getDeviceInfoTask>,
+    );
+
+    await expect(lookupFirmwareUpdate("device", "Ledger Stax", freshSignal())).rejects.toBe(locked);
+    expect(mockedGetLatestFirmware).not.toHaveBeenCalled();
+  });
+
+  it("keeps reading when the device is briefly unresponsive and then answers", async () => {
+    mockedGetDeviceInfoTask.mockReturnValue(
+      new Observable(subscriber => {
+        subscriber.next({
+          type: "error",
+          error: namedError("UnresponsiveDeviceError"),
+          retrying: true,
+        });
+        subscriber.next({ type: "data", deviceInfo });
+      }) as ReturnType<typeof getDeviceInfoTask>,
+    );
+    mockedGetLatestFirmware.mockResolvedValue(null);
+
+    await expect(lookupFirmwareUpdate("device", "Ledger Stax", freshSignal())).resolves.toBeNull();
+    expect(mockedGetLatestFirmware).toHaveBeenCalledTimes(1);
   });
 
   it("unsubscribes the device read when the lookup is cancelled", async () => {
@@ -113,6 +163,7 @@ describe("lookupFirmwareUpdate", () => {
     );
     const controller = new AbortController();
     const pending = lookupFirmwareUpdate("device", "Ledger Stax", controller.signal);
+    await Promise.resolve();
 
     controller.abort();
 
@@ -131,6 +182,12 @@ describe("lookupFirmwareUpdate", () => {
     expect(mockedGetDeviceInfoTask).not.toHaveBeenCalled();
   });
 });
+
+function namedError(name: string): Error {
+  const error = new Error(name);
+  error.name = name;
+  return error;
+}
 
 function freshSignal(): AbortSignal {
   return new AbortController().signal;

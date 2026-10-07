@@ -126,7 +126,8 @@ export type ScriptedDeviceAction<Output> =
 
 export type ScriptedFirmwareLookup =
   | { update: AvailableFirmwareUpdate | null }
-  | { fails: unknown };
+  | { fails: unknown }
+  | { pending: true };
 
 export type OnboardingDmkScript = {
   osVersion?: ScriptedCommand<GetOsVersionResponse>[];
@@ -177,8 +178,21 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
     },
   );
 
-  const lookupFirmwareUpdate = jest.fn(async (_signal: AbortSignal) => {
+  const lookupFirmwareUpdate = jest.fn(async (signal: AbortSignal) => {
     const next = firmwareCheck.next();
+
+    if ("pending" in next) {
+      return new Promise<AvailableFirmwareUpdate | null>((_resolve, reject) => {
+        const rejectLookup = () => reject(cancelledFirmwareLookup());
+
+        if (signal.aborted) {
+          rejectLookup();
+          return;
+        }
+
+        signal.addEventListener("abort", rejectLookup, { once: true });
+      });
+    }
 
     if ("fails" in next) {
       throw next.fails;
@@ -186,6 +200,12 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
 
     return next.update;
   });
+
+  function cancelledFirmwareLookup(): Error {
+    const error = new Error("firmware lookup cancelled");
+    error.name = "AbortError";
+    return error;
+  }
 
   const executeDeviceAction = jest.fn(({ deviceAction }: { deviceAction: object }) => {
     if (!(deviceAction instanceof GenuineCheckDeviceAction)) {
