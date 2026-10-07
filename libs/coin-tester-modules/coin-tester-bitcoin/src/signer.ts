@@ -270,3 +270,52 @@ export async function buildSigner(): Promise<BitcoinSigner> {
     },
   };
 }
+
+/**
+ * Software signer for the **generic-adapter** strategy: plays the device on coin-bitcoin's
+ * single-address Alpaca path. Accounts are native SegWit (P2WPKH, regtest).
+ *
+ * The generic `signOperation` calls `signTransaction(path, unsignedPsbt)` with the account's
+ * address path; every input spends that one address, so each is signed with the key at `path`.
+ * Like a Ledger app signing through hw-app-btc, it returns the whole signed transaction (hex), which
+ * coin-bitcoin's `combine` checks against what was crafted.
+ */
+export type GenericBitcoinSigner = {
+  getAddress: (path: string) => Promise<{ address: string; publicKey: string }>;
+  signTransaction: (path: string, unsignedPsbtBase64: string) => Promise<string>;
+};
+
+const stripMaster = (path: string): string => path.replace(/^m\//, "");
+
+export async function buildGenericSigner(
+  mnemonic: string = generateMnemonic(),
+): Promise<GenericBitcoinSigner> {
+  const seed = await mnemonicToSeed(mnemonic);
+  const root = BIP32Factory(eccWrapper).fromSeed(seed, bitcoin.networks.regtest);
+  const nodeAt = (path: string) => root.derivePath(stripMaster(path));
+
+  return {
+    getAddress: async (path: string) => {
+      const { publicKey } = nodeAt(path);
+      const address = bitcoin.payments.p2wpkh({
+        pubkey: Buffer.from(publicKey),
+        network: bitcoin.networks.regtest,
+      }).address!;
+      return { address, publicKey: Buffer.from(publicKey).toString("hex") };
+    },
+    signTransaction: async (path: string, unsignedPsbtBase64: string) => {
+      const node = nodeAt(path);
+      const psbt = bitcoin.Psbt.fromBase64(unsignedPsbtBase64, {
+        network: bitcoin.networks.regtest,
+      });
+      for (let index = 0; index < psbt.inputCount; index++) {
+        psbt.signInput(index, {
+          publicKey: Buffer.from(node.publicKey),
+          sign: (hash: Buffer) => Buffer.from(node.sign(hash)),
+        });
+      }
+      psbt.finalizeAllInputs();
+      return psbt.extractTransaction().toHex();
+    },
+  };
+}
