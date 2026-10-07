@@ -4,9 +4,9 @@
 
 `ledgerhq-agent-intent-sdk-0.0.0.tgz` is a temporary packed artifact from
 [`LedgerHQ/agent-intent-sdk`](https://github.com/LedgerHQ/agent-intent-sdk) at
-commit `62a96ed` (branch `feat/NTTVS-925-recover-all-sources`,
-[LedgerHQ/agent-intent-sdk#15](https://github.com/LedgerHQ/agent-intent-sdk/pull/15),
-not merged yet). Re-pack from the `main` merge commit once #15 lands.
+`main` merge commit `3f27d3d`
+([LedgerHQ/agent-intent-sdk#15](https://github.com/LedgerHQ/agent-intent-sdk/pull/15):
+recovery for every agent source).
 
 SHA-256:
 
