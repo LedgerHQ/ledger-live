@@ -134,7 +134,7 @@ export const txsToOps = async (
             op.accountId = tokenAccountId;
             opsTokens.push(op);
 
-            if (op.type === OP_TYPE.OUT) {
+            if (compareAddress(tx.sender, address)) {
               const accountId = tokenAccountId.split("+")[0];
               // Create FEES operation with decoded main account ID
               const feesOp = {

@@ -400,6 +400,90 @@ describe("Aptos sync logic", () => {
         });
       });
 
+      describe("token transfer from the multisig account to its signing owner", () => {
+        const tokenStore = "0x1::coin::CoinStore<0xd111::staked_coin::StakedAptos>";
+        const tokenToOwner = {
+          ...multisigTx,
+          payload: {
+            ...multisigTx.payload,
+            transaction_payload: {
+              type: "entry_function_payload",
+              function: "0x1::coin::transfer",
+              type_arguments: ["0xd111::staked_coin::StakedAptos"],
+              arguments: ["0x31", "100"],
+            },
+          },
+          events: [
+            multisigTx.events[0],
+            { ...multisigTx.events[1], guid: { account_address: "0x31", creation_number: "2" } },
+          ],
+          changes: [
+            {
+              type: "write_resource",
+              data: {
+                type: tokenStore,
+                data: {
+                  withdraw_events: { guid: { id: { addr: "0x21", creation_num: "1" } } },
+                  deposit_events: { guid: { id: { addr: "0x31", creation_num: "2" } } },
+                },
+              },
+            },
+          ],
+        } as unknown as AptosTransaction;
+
+        beforeEach(() => {
+          (encodeTokenAccountId as jest.Mock).mockReturnValue("main_account_id+token");
+          setCryptoAssetsStore({
+            findTokenById: async () => undefined,
+            findTokenByAddressInCurrency: async (address: string) =>
+              address === "0xd111::staked_coin::stakedaptos"
+                ? {
+                    type: "TokenCurrency" as const,
+                    id: TokenCurrencyIdSchema.parse("aptos/coin/dstapt::staked_coin::stakedaptos"),
+                    contractAddress: "0xd111::staked_coin::StakedAptos",
+                    parentCurrencyId: CryptoCurrencyIdSchema.parse("aptos"),
+                    name: "dstAPT",
+                    tokenType: "coin",
+                    ticker: "dstAPT",
+                    disableCountervalue: false,
+                    delisted: false,
+                    units: [{ name: "dstAPT", code: "dstAPT", magnitude: 8 }],
+                  }
+                : undefined,
+            getTokensSyncHash: async () => "0",
+          });
+        });
+
+        afterEach(() => {
+          setCryptoAssetsStore({
+            findTokenById: async () => undefined,
+            findTokenByAddressInCurrency: async () => undefined,
+            getTokensSyncHash: async () => "",
+          });
+        });
+
+        it("debits the gas to the signing owner who receives the token", async () => {
+          const [ops, tokenOps] = await txsToOps({ address: "0x31" }, "test_id", [tokenToOwner]);
+
+          expect(tokenOps).toHaveLength(1);
+          expect(tokenOps[0]).toMatchObject({ type: OP_TYPE.IN, value: new BigNumber(100) });
+          expect(ops).toHaveLength(1);
+          expect(ops[0]).toMatchObject({
+            type: "FEES",
+            value: new BigNumber(20000),
+            accountId: "main_account_id",
+          });
+        });
+
+        it("does not debit the gas to the multisig account, which did not pay it", async () => {
+          const [ops, tokenOps] = await txsToOps({ address: "0x21" }, "test_id", [tokenToOwner]);
+
+          expect(tokenOps).toHaveLength(1);
+          expect(tokenOps[0]).toMatchObject({ type: OP_TYPE.OUT, value: new BigNumber(100) });
+          expect(ops).toHaveLength(0);
+        });
+      });
+
       it("is an incoming operation of the recipient, sent by the multisig account", async () => {
         const [result] = await txsToOps({ address: "0x12" }, "test_id", [multisigTx]);
 

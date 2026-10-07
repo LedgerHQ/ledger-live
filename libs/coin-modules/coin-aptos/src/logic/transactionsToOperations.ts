@@ -97,6 +97,7 @@ export function transactionsToOperations(
           time: new Date(parseInt(tx.timestamp) / 1000),
         },
         fees: BigInt(0),
+        feesPayer: normalizeAddress(tx.sender),
         date: new Date(parseInt(tx.timestamp) / 1000),
         failed: !tx.success,
       },

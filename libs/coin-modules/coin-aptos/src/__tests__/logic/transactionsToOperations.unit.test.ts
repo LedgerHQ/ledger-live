@@ -147,6 +147,15 @@ describe("transactionsToOperations", () => {
     });
   });
 
+  it("keeps the signing owner as the fees payer of a multisig transfer", () => {
+    const tx = multisigTransfer(multisigPayload(transferPayload));
+
+    for (const address of [MULTISIG, RECIPIENT]) {
+      const [op] = transactionsToOperations(address, [tx]);
+      expect(op.tx.feesPayer).toBe(normalizeAddress(OWNER));
+    }
+  });
+
   it("lists a multisig APT transfer as received from the multisig account", () => {
     const [op] = transactionsToOperations(RECIPIENT, [
       multisigTransfer(multisigPayload(transferPayload)),
