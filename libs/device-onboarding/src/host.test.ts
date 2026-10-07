@@ -13,7 +13,7 @@ import type {
   DeviceOnboardingContext,
   DeviceOnboardingState,
 } from "./types";
-import { OnboardingStep } from "./types";
+import { OnboardingStep, RecoveryKeyStatus } from "./types";
 
 function ports(sessionId = "session-1"): DeviceOnboardingPorts {
   return {
@@ -184,11 +184,26 @@ describe("recordOnboardingToolEvent", () => {
       { type: "STEP_CHANGED", state: deviceState(OnboardingStep.Pin) },
       "1",
       "session-1",
-      OnboardingStep.Pin,
+      `${OnboardingStep.Pin}:`,
     );
 
     expect(recorded.entry).toBeNull();
-    expect(recorded.step).toBe(OnboardingStep.Pin);
+    expect(recorded.step).toBe(`${OnboardingStep.Pin}:`);
+  });
+
+  it("should log a recovery key change on the same step", () => {
+    const recorded = recordOnboardingToolEvent(
+      {
+        type: "STEP_CHANGED",
+        state: { ...deviceState(OnboardingStep.Ready), recoveryKeyStatus: RecoveryKeyStatus.Choice },
+      },
+      "1",
+      "session-1",
+      `${OnboardingStep.Ready}:`,
+    );
+
+    expect(recorded.entry?.type).toBe("STEP_CHANGED");
+    expect(recorded.step).toBe(`${OnboardingStep.Ready}:${RecoveryKeyStatus.Choice}`);
   });
 
   it("should log a new step and keep the previous step for other events", () => {
@@ -196,19 +211,19 @@ describe("recordOnboardingToolEvent", () => {
       { type: "STEP_CHANGED", state: deviceState(OnboardingStep.Ready) },
       "2",
       "session-1",
-      OnboardingStep.Pin,
+      `${OnboardingStep.Pin}:`,
     );
     const retried = recordOnboardingToolEvent({ type: "RETRY" }, "3", "session-1", changed.step);
 
     expect(changed.entry?.detail).toEqual({ kind: "step", step: OnboardingStep.Ready });
-    expect(retried.step).toBe(OnboardingStep.Ready);
+    expect(retried.step).toBe(`${OnboardingStep.Ready}:`);
     expect(retried.entry?.type).toBe("RETRY");
   });
 });
 
 describe("createOnboardingEventLog", () => {
   it("should skip a repeated step and append the next event", () => {
-    const lastLoggedStep: { current: OnboardingStep | null } = { current: null };
+    const lastLoggedStep: { current: string | null } = { current: null };
     const sequence = { current: 0 };
     const entries: Array<{ type: string }> = [];
     const log = createOnboardingEventLog({
@@ -224,7 +239,7 @@ describe("createOnboardingEventLog", () => {
 
     expect(entries.map(entry => entry.type)).toEqual(["STEP_CHANGED", "RETRY"]);
     expect(sequence.current).toBe(2);
-    expect(lastLoggedStep.current).toBe(OnboardingStep.Pin);
+    expect(lastLoggedStep.current).toBe(`${OnboardingStep.Pin}:`);
   });
 });
 

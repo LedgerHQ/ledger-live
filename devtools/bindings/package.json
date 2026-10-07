@@ -33,9 +33,11 @@
     "@features/flow-pay-request": "workspace:*",
     "@features/platform-card": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
+    "@ledgerhq/device-onboarding": "workspace:*",
     "@shared/api-services": "workspace:*",
     "@shared/env": "workspace:*",
-    "@shared/feature-flags": "workspace:*"
+    "@shared/feature-flags": "workspace:*",
+    "xstate": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

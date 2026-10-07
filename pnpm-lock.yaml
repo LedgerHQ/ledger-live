@@ -3361,6 +3361,9 @@ importers:
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
+      '@ledgerhq/device-onboarding':
+        specifier: workspace:*
+        version: link:../../libs/device-onboarding
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../shared/api-services
@@ -3370,6 +3373,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      xstate:
+        specifier: 'catalog:'
+        version: 5.19.2
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*

@@ -126,9 +126,14 @@ export function createDelegatedPorts(
   };
 }
 
+function loggedStepKey(event: OnboardingEvent): string | null {
+  if (event.type !== "STEP_CHANGED") return null;
+  return `${event.state.currentOnboardingStep}:${event.state.recoveryKeyStatus ?? ""}`;
+}
+
 export function createOnboardingEventLog(deps: {
   currentSessionId: () => string | null | undefined;
-  lastLoggedStep: { current: OnboardingStep | null };
+  lastLoggedStep: { current: string | null };
   sequence: { current: number };
   push: (entry: HostToolEvent) => void;
 }): (event: OnboardingEvent) => void {
@@ -150,9 +155,9 @@ export function recordOnboardingToolEvent(
   event: OnboardingEvent,
   id: string,
   sessionId: string,
-  lastLoggedStep: OnboardingStep | null,
-): { step: OnboardingStep | null; entry: HostToolEvent | null } {
-  const step = event.type === "STEP_CHANGED" ? event.state.currentOnboardingStep : lastLoggedStep;
+  lastLoggedStep: string | null,
+): { step: string | null; entry: HostToolEvent | null } {
+  const step = loggedStepKey(event) ?? lastLoggedStep;
   if (event.type === "STEP_CHANGED" && step === lastLoggedStep) {
     return { step: lastLoggedStep, entry: null };
   }

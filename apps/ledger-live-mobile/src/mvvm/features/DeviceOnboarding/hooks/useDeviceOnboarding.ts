@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
-  deviceOnboardingMachine,
   type DeviceOnboardingOutput,
-  type DeviceOnboardingPorts,
   type OnboardingEvent,
   type SessionEvent,
 } from "@ledgerhq/device-onboarding";
@@ -19,18 +18,11 @@ import {
   type DeviceConnectionResult,
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
-import { createActor, type ActorRefFrom } from "xstate";
 import type { Subscription } from "rxjs";
 import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { createDeviceOnboardingPorts } from "../utils/ports";
-import {
-  flattenDeviceOnboardingContext,
-  stateValueToString,
-  toolEvent,
-  type DeviceOnboardingToolProps,
-  userEvents,
-} from "../utils/toolState";
+import { type DeviceOnboardingToolProps } from "../utils/toolState";
 
 type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
@@ -39,17 +31,11 @@ type UseDeviceOnboardingInput = {
   navigateOnExit?: boolean;
 };
 
-type OnboardingActor = ActorRefFrom<typeof deviceOnboardingMachine>;
 type StoppableActor = { stop(): void };
 
-function availableEvents(actor: OnboardingActor, sessionReady: boolean) {
-  const candidates: OnboardingEvent[] = sessionReady
-    ? [{ type: "SESSION_READY" }, ...userEvents]
-    : [...userEvents];
-  return candidates.filter(event => actor.getSnapshot().can(event)).map(event => ({ event }));
-}
-
-function statusWithActor(actor: OnboardingActor | null): DeviceOnboardingToolProps["status"] {
+function statusWithActor(
+  actor: { getSnapshot(): unknown } | null,
+): DeviceOnboardingToolProps["status"] {
   return actor ? "running" : "idle";
 }
 
@@ -61,66 +47,70 @@ export function useDeviceOnboarding({
 }: UseDeviceOnboardingInput): DeviceOnboardingToolProps {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
-  const [state, setState] = useState<string | null>(null);
-  const [context, setContext] = useState<DeviceOnboardingToolProps["context"]>(null);
-  const [events, setEvents] = useState<DeviceOnboardingToolProps["events"]>([]);
-  const [exit, setExit] = useState<DeviceOnboardingToolProps["exit"]>(null);
-  const [sendableEvents, setSendableEvents] = useState<DeviceOnboardingToolProps["sendableEvents"]>(
-    [],
-  );
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
   const [output, setOutput] = useState<DeviceOnboardingOutput | null>(null);
 
-  const actorRef = useRef<OnboardingActor | null>(null);
-  const portsRef = useRef<DeviceOnboardingPorts | null>(null);
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
   const retryRef = useRef<(() => void) | null>(null);
-  const eventSequence = useRef(0);
-  const lastLoggedStep = useRef<string | null>(null);
   const selectedDevices = useRef(new Set<string>());
-  const sessionReadyRef = useRef(false);
   const adoptGeneration = useRef(0);
+  const onEventRef = useRef<(event: OnboardingEvent) => void>(() => undefined);
+  const onDoneRef = useRef<(output: DeviceOnboardingOutput) => void>(() => undefined);
 
-  const delegatedPorts = useRef<DeviceOnboardingPorts>({
-    openSession: () => {
-      if (!portsRef.current) throw new Error("No mobile onboarding session");
-      return portsRef.current.openSession();
-    },
-    currentSessionId: () => {
-      if (!portsRef.current) throw new Error("No mobile onboarding session");
-      return portsRef.current.currentSessionId();
-    },
-    closeSession: () => portsRef.current?.closeSession() ?? Promise.resolve(),
-  }).current;
+  const {
+    state,
+    context,
+    events,
+    exit,
+    sendableEvents,
+    setSessionReady,
+    actorRef,
+    portsRef,
+    send,
+    sendToActor,
+    startActor,
+    resetActor,
+    stopActor,
+  } = useDeviceOnboardingActor({
+    missingSessionMessage: "No mobile onboarding session",
+    onEvent: event => onEventRef.current(event),
+    onDone: done => onDoneRef.current(done),
+  });
 
   const dropLostTransport = useCallback(() => {
-    sessionReadyRef.current = false;
+    setSessionReady(false);
     sessionActorRef.current?.stop();
     sessionActorRef.current = null;
     setDevice(null);
-  }, []);
+  }, [setSessionReady]);
 
-  const appendEvent = useCallback((event: OnboardingEvent) => {
-    if (event.type === "STEP_CHANGED") {
-      // Polling re-emits on every seed word, so logging each one would count them on screen.
-      const step = `${event.state.currentOnboardingStep}:${event.state.recoveryKeyStatus ?? ""}`;
-      if (step === lastLoggedStep.current) return;
-      lastLoggedStep.current = step;
-    }
-
-    const sessionId = portsRef.current?.currentSessionId() ?? "unavailable";
-    const next = toolEvent(event, String(eventSequence.current++), sessionId);
-    setEvents(current => [...current.slice(-49), next]);
-  }, []);
-
-  const forwardSessionEvent = useCallback(
-    (event: SessionEvent) => {
-      actorRef.current?.send(event);
+  const handleEvent = useCallback(
+    (event: OnboardingEvent) => {
       if (event.type === "TRANSPORT_LOST") dropLostTransport();
     },
     [dropLostTransport],
+  );
+
+  const handleDone = useCallback((done: DeviceOnboardingOutput) => {
+    setOutput(done);
+    setStatus("exited");
+    sessionActorRef.current?.stop();
+    sessionActorRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    onEventRef.current = handleEvent;
+    onDoneRef.current = handleDone;
+  }, [handleDone, handleEvent]);
+
+  const forwardSessionEvent = useCallback(
+    (event: SessionEvent) => {
+      sendToActor(event);
+      if (event.type === "TRANSPORT_LOST") dropLostTransport();
+    },
+    [dropLostTransport, sendToActor],
   );
 
   const startSessionListener = useCallback(
@@ -168,57 +158,23 @@ export function useDeviceOnboarding({
 
         if (actorRef.current) {
           startSessionListener(result, nextPorts.currentSessionId());
-          sessionReadyRef.current = true;
-          setSendableEvents(availableEvents(actorRef.current, true));
+          setSessionReady(true);
           setStatus("running");
           return;
         }
 
-        lastLoggedStep.current = null;
         setOutput(null);
-
-        const actor = createActor(deviceOnboardingMachine, {
-          input: {
+        startActor(
+          {
             dmk: result.dmk,
-            ports: delegatedPorts,
             deviceId: result.compatDeviceId,
             deviceModelId: session.deviceModelId,
             offerSync,
           },
-          // The invoked actors reach the machine through `sendBack`, so a poll-driven STEP_CHANGED
-          // never passes through `send`. Inspection is the only place that sees the whole traffic.
-          inspect: inspectionEvent => {
-            if (inspectionEvent.type !== "@xstate.event") return;
-            if (inspectionEvent.actorRef !== actorRef.current) return;
-            if (inspectionEvent.event.type.startsWith("xstate.")) return;
-
-            const event = inspectionEvent.event as OnboardingEvent;
-            appendEvent(event);
-            if (event.type === "TRANSPORT_LOST") dropLostTransport();
+          {
+            beforeStart: () => startSessionListener(result, nextPorts.currentSessionId()),
           },
-        });
-        actorRef.current = actor;
-        actor.subscribe(snapshot => {
-          setState(stateValueToString(snapshot.value));
-          setContext(flattenDeviceOnboardingContext(snapshot.context));
-          setSendableEvents(availableEvents(actor, sessionReadyRef.current));
-
-          if (snapshot.status === "done") {
-            const output = snapshot.output;
-            setOutput(output);
-            setExit({
-              reason: output.reason,
-              sessionId: output.sessionId,
-              modelId: String(output.device.modelId),
-            });
-            setStatus("exited");
-            sessionActorRef.current?.stop();
-            sessionActorRef.current = null;
-            if (actorRef.current === actor) actorRef.current = null;
-          }
-        });
-        startSessionListener(result, nextPorts.currentSessionId());
-        actor.start();
+        );
         setStatus("running");
       } catch {
         await nextPorts.closeSession();
@@ -228,39 +184,44 @@ export function useDeviceOnboarding({
         setStatus(statusWithActor(actorRef.current));
       }
     },
-    [appendEvent, delegatedPorts, dropLostTransport, offerSync, startSessionListener],
+    [actorRef, offerSync, portsRef, setSessionReady, startActor, startSessionListener],
   );
 
-  const handleConnectionState = useCallback((connectionState: ConnectDeviceUIState) => {
-    switch (connectionState.type) {
-      case ConnectDeviceUIStateTypes.Discovering: {
-        const available = connectionState.devices.find(candidate => candidate.type === "available");
-        if (available && !selectedDevices.current.has(available.knownDevice.id)) {
-          selectedDevices.current.add(available.knownDevice.id);
-          available.onSelect();
+  const handleConnectionState = useCallback(
+    (connectionState: ConnectDeviceUIState) => {
+      switch (connectionState.type) {
+        case ConnectDeviceUIStateTypes.Discovering: {
+          const available = connectionState.devices.find(
+            candidate => candidate.type === "available",
+          );
+          if (available && !selectedDevices.current.has(available.knownDevice.id)) {
+            selectedDevices.current.add(available.knownDevice.id);
+            available.onSelect();
+          }
+          break;
         }
-        break;
+        case ConnectDeviceUIStateTypes.DiscoveryError:
+          setError(connectionState.error.type);
+          retryRef.current = connectionState.retry ?? null;
+          setStatus(statusWithActor(actorRef.current));
+          break;
+        case ConnectDeviceUIStateTypes.ConnectionError:
+          setError(connectionState.error.type);
+          retryRef.current = connectionState.retry;
+          setStatus(statusWithActor(actorRef.current));
+          break;
+        case ConnectDeviceUIStateTypes.NoKnownDevice:
+          setError("no-known-device");
+          setStatus(statusWithActor(actorRef.current));
+          break;
+        case ConnectDeviceUIStateTypes.UnknownError:
+          setError("unknown-error");
+          setStatus(statusWithActor(actorRef.current));
+          break;
       }
-      case ConnectDeviceUIStateTypes.DiscoveryError:
-        setError(connectionState.error.type);
-        retryRef.current = connectionState.retry ?? null;
-        setStatus(statusWithActor(actorRef.current));
-        break;
-      case ConnectDeviceUIStateTypes.ConnectionError:
-        setError(connectionState.error.type);
-        retryRef.current = connectionState.retry;
-        setStatus(statusWithActor(actorRef.current));
-        break;
-      case ConnectDeviceUIStateTypes.NoKnownDevice:
-        setError("no-known-device");
-        setStatus(statusWithActor(actorRef.current));
-        break;
-      case ConnectDeviceUIStateTypes.UnknownError:
-        setError("unknown-error");
-        setStatus(statusWithActor(actorRef.current));
-        break;
-    }
-  }, []);
+    },
+    [actorRef],
+  );
 
   const connect = useCallback(() => {
     if (!dmk) {
@@ -293,15 +254,7 @@ export function useDeviceOnboarding({
         setStatus(statusWithActor(actorRef.current));
       },
     });
-  }, [adoptConnection, dmk, handleConnectionState, knownDevices]);
-
-  const send = useCallback((event: OnboardingEvent) => {
-    const actor = actorRef.current;
-    if (!actor?.getSnapshot().can(event)) return;
-
-    if (event.type === "SESSION_READY") sessionReadyRef.current = false;
-    actor.send(event);
-  }, []);
+  }, [actorRef, adoptConnection, dmk, handleConnectionState, knownDevices]);
 
   const reset = useCallback(() => {
     adoptGeneration.current += 1;
@@ -309,24 +262,16 @@ export function useDeviceOnboarding({
     connectionRef.current = null;
     sessionActorRef.current?.stop();
     sessionActorRef.current = null;
-    actorRef.current?.stop();
-    actorRef.current = null;
+    resetActor();
     void portsRef.current?.closeSession();
     portsRef.current = null;
     retryRef.current = null;
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);
-    setState(null);
-    setContext(null);
-    setEvents([]);
-    setExit(null);
     setOutput(null);
-    setSendableEvents([]);
     setError(null);
-    sessionReadyRef.current = false;
-    lastLoggedStep.current = null;
-  }, []);
+  }, [portsRef, resetActor]);
 
   useFirmwareUpdateHandover({
     device: liveDevice,
@@ -340,9 +285,9 @@ export function useDeviceOnboarding({
       adoptGeneration.current += 1;
       connectionRef.current?.unsubscribe();
       sessionActorRef.current?.stop();
-      actorRef.current?.stop();
+      stopActor();
     },
-    [],
+    [stopActor],
   );
 
   return {
