@@ -449,7 +449,7 @@ describe("listOperations", () => {
     expect(mockFetchFungibleTokenMetadataCached).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps the post-condition token id when canonicalization metadata is unavailable", async () => {
+  it("fails instead of storing an uncanonicalized token id when canonicalization metadata is unavailable", async () => {
     findTokenByAddressInCurrency.mockResolvedValue(null);
     mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
@@ -477,13 +477,10 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
-
-    expect(items).toHaveLength(1);
-    expect(items[0].asset).toMatchObject({ assetReference: "sp_contract.token-x::tkn" });
+    await expect(listOperations(RECIPIENT, { minHeight: 0 })).rejects.toThrow("metadata API down");
   });
 
-  it("drops only the unidentifiable transfer when FT metadata is unavailable", async () => {
+  it("fails instead of dropping a transfer when FT metadata is unavailable", async () => {
     mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
       baseTx({
@@ -502,10 +499,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
-
-    expect(items).toHaveLength(1);
-    expect(items[0]).toMatchObject({ asset: { type: "native" } });
+    await expect(listOperations(RECIPIENT, { minHeight: 0 })).rejects.toThrow("metadata API down");
   });
 
   it("maps any other contract call (e.g. pox-5 stake) to a generic operation", async () => {

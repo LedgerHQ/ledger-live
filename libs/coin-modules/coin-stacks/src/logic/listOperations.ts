@@ -172,27 +172,22 @@ function sendManyOperations(tx: TransactionResponse, address: string): Operation
  * comes from the transfer's Fungible post-condition, or from the contract's FT metadata when there
  * is none (common for liquid-staking tokens), then is canonicalized against the registry.
  *
- * The FT-metadata lookups only enrich the id, so a failing metadata endpoint must not fail the whole
- * history: a transfer with no post-condition is dropped, as it was before this lookup existed, and
- * one with a post-condition keeps that id uncanonicalized. */
+ * A failing FT-metadata lookup propagates, as on the legacy bridge: the generic sync is incremental
+ * (it resumes above the newest stored operation), so swallowing it would permanently drop the
+ * transfer, or store it under an uncanonicalized id, instead of retrying on the next sync. */
 async function resolveSip010AssetReference(
   contractId: string,
   tx: TransactionResponse,
   resolvedTokenIds: Record<string, string>,
 ): Promise<string | undefined> {
   const assetName = tx.tx.post_conditions?.find(p => p.type === "fungible")?.asset.asset_name;
-  const tokenId = await resolveTokenId(
-    contractId,
-    fetchFungibleTokenMetadataCached,
-    assetName,
-  ).catch(() => undefined);
+  const tokenId = await resolveTokenId(contractId, fetchFungibleTokenMetadataCached, assetName);
   if (!tokenId) return undefined;
   const finalTokenId = await findFinalTokenId(
     tokenId,
     resolvedTokenIds,
     fetchFungibleTokenMetadataCached,
-  ).catch(() => tokenId);
-  // The fallback is recorded too, so every transfer of a token in this call shares one id.
+  );
   resolvedTokenIds[tokenId] = finalTokenId;
   // Lowercased to match `fetchAllTokenBalances`'s own normalization (network/api.ts) -- otherwise
   // an operation's assetReference wouldn't match the balance/registry key for the same token.

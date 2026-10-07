@@ -4,10 +4,13 @@ import { CurrencyRegionRestrictedError } from "../../../errors";
 import type { StakingResources } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "../getAccountShape";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 const getSyncHashMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   encodeAccountId: jest.fn(() => "accId"),
+  decodeAccountId: jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index")
+    .decodeAccountId,
   getSyncHash: (...args: any[]) => getSyncHashMock(...args),
 }));
 
@@ -1526,6 +1529,90 @@ describe("genericGetAccountShape", () => {
 
         expect(result.xpub).toBe("edpkPUBLICKEY");
       });
+    });
+  });
+
+  describe("account id keyed on the public key (accountIdFromPublicKey)", () => {
+    const network = "mainnet";
+    const PUBLIC_KEY = "02aaaa";
+    const ADDRESS = "SP_ADDRESS";
+
+    beforeEach(() => {
+      (encodeAccountId as jest.Mock).mockImplementation(
+        jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index").encodeAccountId,
+      );
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    afterEach(() => {
+      (encodeAccountId as jest.Mock).mockImplementation(() => "accId");
+    });
+
+    const optedIn = () => ({ ...defaultBridgeApi(), accountIdFromPublicKey: true });
+
+    test("keys a scanned account on the device public key", async () => {
+      getBridgeApiMock.mockImplementationOnce(optedIn);
+
+      const getShape = genericGetAccountShape(network, "stacks");
+      const result = await getShape(
+        {
+          address: ADDRESS,
+          initialAccount: undefined,
+          currency: { id: "stacks", name: "Stacks" },
+          derivationMode: "",
+          rest: { publicKey: PUBLIC_KEY },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.id).toBe(`js:2:stacks:${PUBLIC_KEY}:`);
+    });
+
+    test("keeps the stored account id on sync, whatever public key the device reports", async () => {
+      getBridgeApiMock.mockImplementationOnce(optedIn);
+
+      const getShape = genericGetAccountShape(network, "stacks");
+      const result = await getShape(
+        {
+          address: ADDRESS,
+          initialAccount: {
+            id: `js:2:stacks:${ADDRESS}:`,
+            operations: [],
+            pendingOperations: [],
+            blockHeight: 0,
+          },
+          currency: { id: "stacks", name: "Stacks" },
+          derivationMode: "",
+          rest: { publicKey: PUBLIC_KEY },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.id).toBe(`js:2:stacks:${ADDRESS}:`);
+    });
+
+    test("keys a family that does not opt in on its address", async () => {
+      const getShape = genericGetAccountShape(network, "tezos");
+      const result = await getShape(
+        {
+          address: "tz1address",
+          initialAccount: undefined,
+          currency: { id: "tezos", name: "Tezos" },
+          derivationMode: "",
+          rest: { publicKey: "edpkPUBLICKEY" },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.id).toBe("js:2:tezos:tz1address:");
     });
   });
 
