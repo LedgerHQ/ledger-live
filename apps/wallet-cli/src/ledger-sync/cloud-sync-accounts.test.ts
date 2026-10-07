@@ -218,25 +218,29 @@ describe("mergeSyncedAccounts", () => {
     expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
   });
 
-  it("skips a known currency whose id uses a derivation mode this version doesn't know", () => {
-    const session = Session.from([]);
-    const newer = {
-      ...ETH_RAW,
-      id: `js:2:ethereum:${ETH_ADDR}:ethFuture`,
-      derivationMode: "ethFuture",
-    };
-    const report = mergeSyncedAccounts(session, [newer, BTC_RAW]);
+  // Object.prototype keys guard against a predicate that also accepts inherited properties.
+  it.each(["ethFuture", "toString", "__proto__"])(
+    "skips a known currency whose id uses the derivation mode %p, which this version doesn't know",
+    mode => {
+      const session = Session.from([]);
+      const newer = {
+        ...ETH_RAW,
+        id: `js:2:ethereum:${ETH_ADDR}:${mode}`,
+        derivationMode: mode,
+      };
+      const report = mergeSyncedAccounts(session, [newer, BTC_RAW]);
 
-    expect(report.invalid).toEqual([]);
-    expect(report.skipped).toEqual([
-      expect.objectContaining({
-        status: "skipped",
-        id: newer.id,
-        reason: expect.stringContaining('Derivation mode "ethFuture"'),
-      }),
-    ]);
-    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
-  });
+      expect(report.invalid).toEqual([]);
+      expect(report.skipped).toEqual([
+        expect.objectContaining({
+          status: "skipped",
+          id: newer.id,
+          reason: expect.stringContaining(`Derivation mode "${mode}"`),
+        }),
+      ]);
+      expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
+    },
+  );
 
   it("isolates a known currency whose id can't be decoded as invalid, not skipped", () => {
     const session = Session.from([]);

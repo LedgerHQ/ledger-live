@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { isDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { getAllDerivationModes } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
   CloudSyncSDK,
   type UpdateEvent,
@@ -133,6 +133,9 @@ function entryId(raw: unknown): string {
 // much smaller set) but would be unusable the moment any other command tried to act on it.
 const SUPPORTED_FAMILIES = new Set<string>(SUPPORTED_TRANSACTION_FAMILIES);
 
+// Not `isDerivationMode`: it checks `mode in modes`, so inherited keys such as "toString" pass it.
+const KNOWN_DERIVATION_MODES = new Set<string>(getAllDerivationModes());
+
 function issues(error: { issues: ReadonlyArray<{ message: string }> }): string {
   return error.issues.map(i => i.message).join("; ");
 }
@@ -199,7 +202,7 @@ function convertSyncedAccount(
 
   // A newer Ledger Wallet may sync a derivation mode this version can't decode: skip it rather
   // than report it as invalid, which would keep every later sync re-pulling it.
-  if (!isDerivationMode(descriptor.derivationMode)) {
+  if (!KNOWN_DERIVATION_MODES.has(descriptor.derivationMode)) {
     return {
       status: "skipped",
       id: descriptor.id,
