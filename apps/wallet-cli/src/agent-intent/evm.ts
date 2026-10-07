@@ -71,7 +71,8 @@ export function formatBaseUnits(amount: string, decimals: number): string {
     .toString()
     .padStart(decimals + 1, "0");
   const whole = digits.slice(0, digits.length - decimals);
-  const fraction = digits.slice(digits.length - decimals).replace(/0+$/, "");
+  let fraction = digits.slice(digits.length - decimals);
+  while (fraction.endsWith("0")) fraction = fraction.slice(0, -1);
   return fraction ? `${whole}.${fraction}` : whole;
 }
 
