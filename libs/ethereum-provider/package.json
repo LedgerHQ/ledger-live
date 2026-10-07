@@ -21,7 +21,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "events": "^3.3.0",
-    "uuid": "^9.0.0"
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -32,7 +32,6 @@
     "@types/events": "^3.0.3",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/uuid": "^9.0.8",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

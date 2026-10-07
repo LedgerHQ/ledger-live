@@ -217,6 +217,7 @@ catalog:
   "@types/semver": 7.7.1
   "@types/ws": ^8.5.10
   undici: 7.18.2
+  uuid: 11.1.0
   "styled-components": 6.1.19
   "styled-system": 5.1.5
   "stylis": 4.0.0

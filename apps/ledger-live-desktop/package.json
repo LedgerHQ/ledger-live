@@ -263,7 +263,7 @@
     "tippy.js": "6.3.7",
     "uncontrollable": "7.2.1",
     "undici": "catalog:",
-    "uuid": "9.0.1",
+    "uuid": "catalog:",
     "write-file-atomic": "5.0.1",
     "ws": "catalog:",
     "xstate": "catalog:"
@@ -305,7 +305,6 @@
     "@types/serve-handler": "6.1.4",
     "@types/styled-system": "5.1.22",
     "@types/trust__keyto": "1.0.4",
-    "@types/uuid": "8.3.4",
     "@types/write-file-atomic": "4.0.3",
     "@typescript-eslint/parser": "catalog:",
     "allure-playwright": "catalog:",

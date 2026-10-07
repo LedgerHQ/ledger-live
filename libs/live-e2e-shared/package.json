@@ -44,12 +44,11 @@
     "expect": "catalog:",
     "invariant": "^2.2.4",
     "rxjs": "catalog:",
-    "uuid": "^9.0.0"
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "2.2.37",
     "@types/node": "catalog:",
-    "@types/uuid": "^9.0.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "tsx": "^4.19.3"
