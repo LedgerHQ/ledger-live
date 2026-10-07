@@ -4,8 +4,6 @@ import {
   createAgentRecoveryRequest,
   createAgentRecoveryUrl,
   formatAgentPublicKeyFingerprint,
-  isAgentRecoverySource,
-  SUPPORTED_AGENT_RECOVERY_SOURCES,
   AGENT_INTENT_FRONTEND_URLS,
   type AgentRecoverySource,
 } from "@ledgerhq/agent-intent-sdk";
@@ -47,12 +45,6 @@ function requireRecoverableProfile(session: Session, profileId: string): Enrolle
         "recover — start a fresh `agent-intent enroll` instead.",
     );
   }
-  if (!isAgentRecoverySource(source)) {
-    throw new Error(
-      `Agent Intent recovery supports only ${SUPPORTED_AGENT_RECOVERY_SOURCES.join(", ")} agents; ` +
-        `profile "${profileId}" is a ${source} agent.`,
-    );
-  }
   if (profile.keycloakBaseUrl !== undefined) {
     assertStoredServiceUrl(profileId, profile.keycloakBaseUrl, "keycloak-url", "Keycloak URL");
   }
@@ -80,8 +72,8 @@ function clearPendingRecovery(profile: EnrolledProfile, requestSignature: string
 export default defineCommand({
   name: "recover",
   description:
-    "Re-enroll an enrolled Agent Intent profile's existing key into its previous Trustchain, and " +
-    "wait for the approval to be relayed back (no device required).",
+    "Re-enroll an enrolled Agent Intent profile's existing key into its " +
+    "previous Trustchain, and wait for the approval to be relayed back (no device required).",
   options: {
     profile: option(z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE), {
       description: "Local id of the enrolled profile to recover.",

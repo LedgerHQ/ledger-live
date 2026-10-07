@@ -15,9 +15,13 @@ The deployed test frontend (`https://agent-intent.ledger-test.com/`) currently t
 environment and point the handoff at the test frontend:
 
 ```bash
-wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" \
+wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" --source <runtime> \
   --environment production --app-url https://agent-intent.ledger-test.com/
 ```
+
+`--source` is the runtime or harness the agent runs in, not its model provider: one of
+`openclaw`, `hermes`, `claude-code`, `codex`, `cursor`, `muse`, `grok-bot`, or `other` if none
+matches (`--help` lists the same values). Omitting it defaults to `other`.
 
 Open the printed link and approve it with a Ledger device; `enroll` waits for the approval to be
 relayed back and saves it. A `--environment staging` profile only completes against a frontend
