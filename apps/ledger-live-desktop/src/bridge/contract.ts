@@ -1,7 +1,7 @@
 // Bundled into the preload: keep it to types and constants.
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 3;
+export const BRIDGE_VERSION = 4;
 export const BOOTSTRAP_VERSION = 1;
 
 export type Serializable =
@@ -68,7 +68,13 @@ export type DeeplinkBridge = {
   onOpen(callback: (url: string) => void): Unsubscribe;
 };
 
-export type SaveTarget = { canceled: boolean; filePath?: string };
+export type SaveRequest = {
+  options: Electron.SaveDialogOptions;
+  /** Honoured only when PLAYWRIGHT_RUN is set in main. */
+  e2ePath?: string;
+};
+
+export type SaveOutcome = "saved" | "canceled" | "failed";
 
 export type AppBridge = {
   reload(): void;
@@ -77,14 +83,11 @@ export type AppBridge = {
   show(): void;
 };
 
-export type DialogsBridge = {
-  showSave(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
-};
-
 export type FilesBridge = {
   /** Pre-stringified: the logs hold circular references the bridge cannot carry. */
-  saveLogs(target: SaveTarget, logsJson: string): Promise<void>;
-  exportOperations(target: SaveTarget, csv: string): Promise<boolean>;
+  saveLogs(request: SaveRequest, logsJson: string): Promise<SaveOutcome>;
+  exportOperations(request: SaveRequest, csv: string): Promise<SaveOutcome>;
+  savePng(options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome>;
   openUserDataDirectory(): Promise<unknown>;
 };
 
@@ -124,7 +127,6 @@ export type LedgerBridge = {
   updater: UpdaterBridge;
   deeplink: DeeplinkBridge;
   app: AppBridge;
-  dialogs: DialogsBridge;
   files: FilesBridge;
   power: PowerBridge;
   store: StoreBridge;
@@ -153,9 +155,9 @@ export const CHANNELS = {
   appRelaunch: "app-relaunch",
   appQuit: "app-quit",
   showApp: "show-app",
-  showSaveDialog: "show-save-dialog",
   saveLogs: "save-logs",
   exportOperations: "export-operations",
+  savePng: "save-png",
   openUserDataDirectory: "openUserDataDirectory",
   keepScreenAwake: "activate-keep-screen-awake",
   releaseScreenAwake: "deactivate-keep-screen-awake",

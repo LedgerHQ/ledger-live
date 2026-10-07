@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
-import { app, Menu, ipcMain, type BrowserWindow, dialog, protocol, session } from "electron";
+import { app, Menu, ipcMain, type BrowserWindow, protocol, session } from "electron";
 import menu from "./menu";
 import {
   createEarlyMainWindow,
@@ -240,8 +240,6 @@ ipcMain.once("app-relaunch", () => {
   app.relaunch();
   app.quit();
 });
-
-ipcMain.handle("show-save-dialog", (_, opts) => dialog.showSaveDialog(opts));
 
 ipcMain.on("deep-linking", (_, l) => {
   const win = getMainWindow();

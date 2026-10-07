@@ -9,7 +9,7 @@ import {
 import { expose } from "./expose";
 import { db } from "./db";
 import { deeplink, updater } from "./push";
-import { app, dialogs, files, power, store } from "./shell";
+import { app, files, power, store } from "./shell";
 import { shell, system } from "./system";
 
 const deepFreeze = <T>(value: T): T => {
@@ -39,7 +39,6 @@ export function installBridge(): void {
     updater,
     deeplink,
     app,
-    dialogs,
     files,
     power,
     store,

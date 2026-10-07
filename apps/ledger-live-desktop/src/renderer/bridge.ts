@@ -25,7 +25,6 @@ export const db = bridge.db;
 export const updater = bridge.updater;
 export const deeplink = bridge.deeplink;
 export const app = bridge.app;
-export const dialogs = bridge.dialogs;
 export const files = bridge.files;
 export const power = bridge.power;
 export const store = bridge.store;

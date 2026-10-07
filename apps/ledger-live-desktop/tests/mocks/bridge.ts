@@ -7,7 +7,6 @@ import {
   type UpdaterBridge,
   type UpdaterStatusEvent,
   type AppBridge,
-  type DialogsBridge,
   type FilesBridge,
   type PowerBridge,
   type StoreBridge,
@@ -66,13 +65,10 @@ export const app: jest.Mocked<AppBridge> = {
   show: jest.fn(),
 };
 
-export const dialogs: jest.Mocked<DialogsBridge> = {
-  showSave: jest.fn().mockResolvedValue({ canceled: true }),
-};
-
 export const files: jest.Mocked<FilesBridge> = {
-  saveLogs: jest.fn().mockResolvedValue(undefined),
-  exportOperations: jest.fn().mockResolvedValue(true),
+  saveLogs: jest.fn().mockResolvedValue("saved"),
+  exportOperations: jest.fn().mockResolvedValue("saved"),
+  savePng: jest.fn().mockResolvedValue("saved"),
   openUserDataDirectory: jest.fn().mockResolvedValue(undefined),
 };
 

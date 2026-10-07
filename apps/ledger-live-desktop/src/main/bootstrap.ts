@@ -3,6 +3,7 @@ import { app, ipcMain } from "electron";
 import Store from "electron-store";
 import { BOOTSTRAP_VERSION, CHANNELS, type Bootstrap } from "~/bridge/contract";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
+import { isPlaywrightRun } from "./isPlaywrightRun";
 
 let store: Store | undefined;
 
@@ -55,11 +56,6 @@ ipcMain.on(CHANNELS.storeSet, (_event, key: string, value: unknown) => {
 ipcMain.on(CHANNELS.storeClear, () => {
   getStore().clear();
 });
-
-const isPlaywrightRun = () => {
-  const value = process.env.PLAYWRIGHT_RUN;
-  return !!value && value !== "0" && value !== "false";
-};
 
 // Same gate as bootstrapCardSession in the renderer.
 ipcMain.handle(CHANNELS.cardSessionBootstrap, () => {
