@@ -61,6 +61,9 @@ import type {
   TransactionPrivate,
   AleoCoinConfig,
   AleoPrivateRecord,
+  AleoPublicTransactionDetailsResponse,
+  AleoTransition,
+  AleoTransitionValue,
   FeeConfiguration,
   AleoUnspentRecord,
   AleoTransactionIntent,
@@ -108,6 +111,7 @@ const VALIDATOR_FIELD_REGEX = /validator:\s*(aleo1[0-9a-z]+)/;
 const MICROCREDITS_FIELD_REGEX = /microcredits:\s*(\d+u64)/;
 const HEIGHT_FIELD_REGEX = /height:\s*(\d+)u32/;
 const ADDRESS_PLAINTEXT_REGEX = /^(aleo1[0-9a-z]+)$/;
+const FUTURE_FIRST_ARGUMENT_REGEX = /arguments:\s*\[\s*([^,\]\s]+)/;
 
 function parseBondedMapping(raw: string): { validator: string; microcredits: BigNumber } | null {
   const validator = VALIDATOR_FIELD_REGEX.exec(raw)?.[1];
@@ -275,6 +279,89 @@ export function resolveTransactionAmount(rawTx: AleoPublicTransaction): BigNumbe
   return new BigNumber(rawTx.amount_u128 ?? rawTx.amount);
 }
 
+export function getInputValue(input: AleoTransitionValue | undefined): string | null {
+  return input && "value" in input && input.value ? input.value : null;
+}
+
+function parseAmountInput(input: AleoTransitionValue | undefined): bigint | undefined {
+  const value = getInputValue(input);
+  const amount = value ? matchAleoPlaintextAmount(value) : null;
+  return typeof amount === "string" ? BigInt(amount) : undefined;
+}
+
+/** Base fee plus priority fee, read from two consecutive inputs starting at `baseIndex`. */
+function getFeeTotal(transition: AleoTransition, baseIndex: number): bigint | undefined {
+  const base = parseAmountInput(transition.inputs[baseIndex]);
+  const priority = parseAmountInput(transition.inputs[baseIndex + 1]);
+  if (typeof base !== "bigint" || typeof priority !== "bigint") return undefined;
+
+  return base + priority;
+}
+
+function getFeePublicPayer(transition: AleoTransition): string | undefined {
+  const future = transition.outputs.find(output => output.type === "future");
+  const payer = getInputValue(future)?.match(FUTURE_FIRST_ARGUMENT_REGEX)?.[1];
+  return payer && isAleoAddressPlaintext(payer) ? normalizeAleoPlaintext(payer) : undefined;
+}
+
+/**
+ * The operation's `fees` and `feesPayer`. `fee_private` takes the paying record as its first input
+ * and hides its payer on-chain, but its change record always goes back to the payer, so the account
+ * paid exactly when the record scanner returned it a `fee_private` record for this transaction
+ * (`hasOwnedFeeRecord`).
+ */
+export function getFees({
+  details,
+  address,
+  hasOwnedFeeRecord,
+}: {
+  details: AleoPublicTransactionDetailsResponse;
+  address: string;
+  hasOwnedFeeRecord: boolean;
+}): { fees: bigint; feesPayer?: string } {
+  if (!details.fee) return { fees: 0n };
+
+  const isFeePublic = details.fee.transition.function === "fee_public";
+  const isFeePrivate = details.fee.transition.function === "fee_private";
+
+  if (isFeePublic) {
+    const fees = getFeeTotal(details.fee.transition, 0);
+    const feesPayer = getFeePublicPayer(details.fee.transition);
+    if (typeof fees === "bigint" && feesPayer) return { fees, feesPayer };
+  }
+
+  if (isFeePrivate) {
+    const fees = getFeeTotal(details.fee.transition, 1);
+    if (typeof fees === "bigint") return { fees, ...(hasOwnedFeeRecord && { feesPayer: address }) };
+  }
+
+  log("aleo/listOperations", `unreadable fee transition in ${details.id}`);
+  return { fees: BigInt(new BigNumber(details.fee_value).toFixed(0)) };
+}
+
+// A staking call may be wrapped by another program, so the credits.aleo transition is matched by
+// name rather than its position in the list.
+export function findBondPublicTransition(
+  details: AleoPublicTransactionDetailsResponse,
+): AleoTransition | undefined {
+  return details.execution?.transitions.find(
+    ts => ts.program === PROGRAM_ID.CREDITS && ts.function === TRANSACTION_TYPE.BOND_PUBLIC,
+  );
+}
+
+/** Taken positionally against the fixed `bond_public(validator, withdrawal, amount)` signature. */
+export function getBondArguments(
+  transition: AleoTransition,
+): { validator: string; amount: bigint } | undefined {
+  const validator = getInputValue(transition.inputs[0]);
+  if (!validator || !isAleoAddressPlaintext(validator)) return undefined;
+
+  const amount = parseAmountInput(transition.inputs[2]);
+  if (typeof amount !== "bigint") return undefined;
+
+  return { validator: normalizeAleoPlaintext(validator), amount };
+}
+
 export function hasPublicAddress(rawTx: AleoPublicTransaction): boolean {
   return Boolean(rawTx.sender_address || rawTx.recipient_address);
 }
@@ -336,6 +423,30 @@ function resolveOperationType(
   return "NONE";
 }
 
+// UNBOND has no validator in the transaction, and WITHDRAW_UNBONDED carries no amount either.
+function getStakeDetails(
+  rawTx: AleoPublicTransaction,
+  details: AleoPublicTransactionDetailsResponse,
+  stakingType: OperationType,
+): { address?: string; amount: bigint } | undefined {
+  if (stakingType === "UNBOND") {
+    return { amount: BigInt(resolveTransactionAmount(rawTx).toFixed(0)) };
+  }
+
+  if (stakingType !== "BOND") {
+    return undefined;
+  }
+
+  const transition = findBondPublicTransition(details);
+  const bond = transition && getBondArguments(transition);
+  if (!bond) {
+    log("aleo/listOperations", `unreadable bond_public inputs for ${rawTx.transaction_id}`);
+    return undefined;
+  }
+
+  return { address: bond.validator, amount: bond.amount };
+}
+
 /**
  * The account's own view of a public transaction, merged with what its private records reveal.
  *
@@ -345,17 +456,24 @@ function resolveOperationType(
  * `resolvedRecipient` is the third-party recipient of a shield read back from the transition inputs
  * (see resolveThirdPartyShieldRecipients) — the explorer blanks it and no owned record can stand in
  * for it.
+ *
+ * A staking call keeps `value` at 0: bonded credits stay in the native balance, so only the fee
+ * leaves it.
  */
 export const toPublicOperation = ({
   rawTx,
+  details,
   address,
   hasOwnedRecord,
+  hasOwnedFeeRecord,
   tokenTypeByProgramName,
   resolvedRecipient,
 }: {
   rawTx: AleoPublicTransaction;
+  details: AleoPublicTransactionDetailsResponse;
   address: string;
   hasOwnedRecord: boolean;
+  hasOwnedFeeRecord: boolean;
   tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>;
   resolvedRecipient?: string;
 }): CoinFrameworkOperation => {
@@ -368,25 +486,25 @@ export const toPublicOperation = ({
       : rawTx.recipient_address || (resolvedRecipient ?? "");
   const stakingType = resolveStakingOperationType(rawTx);
   const type = stakingType ?? resolveOperationType(rawTx, address, sender, recipient);
-  const value = stakingType ? new BigNumber(rawTx.fee) : resolveTransactionAmount(rawTx);
+  const value = stakingType ? 0n : BigInt(resolveTransactionAmount(rawTx).toFixed(0));
+  const stake = stakingType ? getStakeDetails(rawTx, details, stakingType) : undefined;
 
   return {
     id: hash,
     type,
     senders: stakingType ? [] : [sender],
     recipients: stakingType ? [] : [recipient],
-    value: BigInt(value.toFixed(0)),
+    value,
     asset: toOperationAsset(rawTx.program_id, tokenTypeByProgramName),
-    // No `validator`/`stakedAmount`: those cost one request per bond (see resolveBondArguments),
-    // which the api path does not spend.
     details: {
       functionId: rawTx.function_id,
       transactionType: determineTransactionType(rawTx.function_id, type),
       ledgerOpType: type,
+      ...(stake && { stake }),
     },
     tx: {
+      ...getFees({ details, address, hasOwnedFeeRecord }),
       hash,
-      fees: BigInt(new BigNumber(rawTx.fee).toFixed(0)),
       date,
       block: {
         hash: rawTx.block_hash,
@@ -402,6 +520,7 @@ export const toPrivateOperation = (
   enrichedRecord: EnrichedPrivateRecord,
   address: string,
   tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>,
+  hasOwnedFeeRecord: boolean,
 ): CoinFrameworkOperation => {
   const { rawRecord, details } = enrichedRecord;
   const hash = rawRecord.transaction_id.trim();
@@ -421,8 +540,8 @@ export const toPrivateOperation = (
       ledgerOpType: type,
     },
     tx: {
+      ...getFees({ details, address, hasOwnedFeeRecord }),
       hash,
-      fees: BigInt(new BigNumber(details.fee_value).toFixed(0)),
       date,
       block: {
         hash: details.block_hash,

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { PROGRAM_ID } from "../../constants";
+import { PROGRAM_ID, TRANSACTION_TYPE } from "../../constants";
 import type { DelegatedProvingResponse } from "../../types";
 import {
   AleoDecryptedRecordResponse,
@@ -10,6 +10,7 @@ import {
   AleoPublicTransactionsResponse,
   AleoRecordScannerStatusResponse,
   AleoTokenDetails,
+  AleoTransition,
   EnrichedPrivateRecord,
 } from "../../types";
 
@@ -681,4 +682,71 @@ export const getMockedDelegatedProvingResponse = (): DelegatedProvingResponse =>
     status: "Accepted",
     status_code: 200,
   },
+});
+
+export const getMockedFeePublicTransition = ({
+  payer,
+  base = 2725n,
+  priority = 0n,
+}: {
+  payer: string;
+  base?: bigint;
+  priority?: bigint;
+}): AleoTransition => ({
+  id: "au1feepublic",
+  scm: "scm1",
+  tcm: "tcm1",
+  tpk: "tpk1",
+  inputs: [
+    { id: "input1", type: "public", value: `${base}u64` },
+    { id: "input2", type: "public", value: `${priority}u64` },
+    { id: "input3", type: "public", value: "7513216field" },
+  ],
+  outputs: [
+    {
+      id: "output1",
+      type: "future",
+      value: `{\n  program_id: credits.aleo,\n  function_name: fee_public,\n  arguments: [\n    ${payer},\n    ${base + priority}u64\n  ]\n}`,
+    },
+  ],
+  program: PROGRAM_ID.CREDITS,
+  function: "fee_public",
+});
+
+export const getMockedFeePrivateTransition = ({
+  base = 2308n,
+  priority = 0n,
+}: {
+  base?: bigint;
+  priority?: bigint;
+} = {}): AleoTransition => ({
+  id: "au1feeprivate",
+  scm: "scm1",
+  tcm: "tcm1",
+  tpk: "tpk1",
+  inputs: [
+    { id: "input1", type: "record", tag: "123field" },
+    { id: "input2", type: "public", value: `${base}u64` },
+    { id: "input3", type: "public", value: `${priority}u64` },
+    { id: "input4", type: "public", value: "7513216field" },
+  ],
+  outputs: [{ id: "output1", type: "record", tag: "456field" }],
+  program: PROGRAM_ID.CREDITS,
+  function: "fee_private",
+});
+
+export const getMockedBondTransition = (overrides?: Partial<AleoTransition>): AleoTransition => ({
+  id: "au1bond",
+  scm: "scm1",
+  tcm: "tcm1",
+  tpk: "tpk1",
+  inputs: [
+    { id: "input1", type: "public", value: testnetBondedValidator },
+    { id: "input2", type: "public", value: testnetAddress },
+    { id: "input3", type: "public", value: `${testnetBondedMicrocredits}u64` },
+  ],
+  outputs: [],
+  program: PROGRAM_ID.CREDITS,
+  function: TRANSACTION_TYPE.BOND_PUBLIC,
+  ...overrides,
 });

@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
 import { AleoApiConfigurationResetError } from "../errors";
@@ -349,6 +350,80 @@ describe("createApi", () => {
           cursor: "not-a-height",
         }),
       ).rejects.toThrow(/malformed listOperations cursor/);
+    });
+
+    describe("fees", () => {
+      const sponsor = "aleo1xaytw2vtvhz2szhgjzqetadzjd92w2fdx233vq4fq3jdfd9ety8sna28t3";
+      const operationsById = new Map<string, Operation>();
+
+      beforeAll(async () => {
+        let cursor: string | undefined;
+        do {
+          const page = await api.listOperations(stakingPrivacyContext, testnetAddress, {
+            minHeight: firstActivityBlock,
+            order: "desc",
+            limit: 50,
+            ...(cursor && { cursor }),
+          });
+          for (const op of page.items) operationsById.set(op.id, op);
+          cursor = page.next;
+        } while (cursor);
+      });
+
+      function getOperation(id: string): Operation {
+        const op = operationsById.get(id);
+        invariant(op, `guard: ${id} is missing from the account history`);
+        return op;
+      }
+
+      it.each([
+        ["at1dj2hj6pufrcrqfzuuetg26h2sntpecn7jfc3lddqkkr8n5w9nqfqpwj874", testnetAddress],
+        ["at19p0dlt05nv06dnvk2wymd2denkke8kgzc7k5w8x6tzjk9rsamvysglmznk", testnetAddress],
+        ["at1nt43e57g0nypf7h9saujnceyshtev56aqv69juqyxgmagv2qs5zqzcw7tt", testnetAddress],
+        ["at1jxfrgfn094jsj7qsqnn7acnzss0kj8avqa49uxwtkaexvj44cqxsnzrtfh", testnetAddress],
+        ["at10jt4v3glr9pkrpndqclgasqa8ed4hu0gj7r3qujmqhmaekrv05qq5a6tsx", testnetAddress],
+        ["at1v6ltk8nl59xygf47jkfzkky20jqcune2a8e9e7juw5ge4ksegg9sl92e4n", testnetAddress],
+        ["at1t76kdj3acv28n9x5x6fynpgcxe2jak060ne3cm9r9h4vkpffrg9s8uw7lt", testnetAddress],
+        ["at1jkllchgezse0hx5wkyxh3ljweqpyg47958wdcnrjcnj94ratzu8qls8ksn", sponsor],
+        ["at195ql6qgnjez6cmshd08axspr4wze8w3k93pydpml2qeqtrtf3ursn7aest", sponsor],
+        ["at1qsk9cnzh0wp3tu8qs7v97sydx0u7qakg7spd306tdq77feca0yxqr6mcqx", sponsor],
+        ["at1ru0pnp4djgdd4cxpmjsaqkzke9gcmx20ensxfk4pev6gylz4xs8spszpn6", sponsor],
+        [
+          "at193lqmmxlce4e5zhne9tlmurpa7s43e7pm0cq6a9gh6wvz8d40qpshvkh83",
+          "aleo10ju2x3ktenzaacscg9rreln4q99rehh7plsnk8r6t300pgn49c8qqdrkqy",
+        ],
+        [
+          "at1c92r7gpfdyraelghc4j4ntz3rkkpx4lkj49p4qsq2wrk468vavyq529wx0",
+          "aleo1dtadcxqsjp4fvvafv4ynlq9mp5vgwsap7djlzell8ngag7pj3uysdlhxjs",
+        ],
+        ["at1qfj30cc84vcfdfxpv7prxscs8sxejwa2lny3lsk97u6snm7qdyps4zn0zy", undefined],
+        ["at1tpm2ara52q2udq9adaga348wxsrvf8tukgg4mpk7hwm4rnm8l5yql3w8z9", undefined],
+      ])("sets the fees payer of %s to %s", (id, feesPayer) => {
+        expect(getOperation(id).tx.feesPayer).toBe(feesPayer);
+      });
+
+      it.each([
+        ["at144a06el45t8vd009u3pnmgyy5ks3r3ge38zpfrd3mdwezluf3vqs54gjkt", 2318n],
+        ["at1yh3ydeha8kujptnnwlx9u60rycwsh3wknevdgqxjq8wasmwpjq9sj2ljmt", 2304n],
+        ["at1gte28m0et2trw2xm2n9hjs28398h5pvke0x8ml7wtr5w8crcdvqsswpp70", 2304n],
+        ["at1kce4wgkyssz0ku9zrkdr448d7mcchgxx9g5mwch89r0x6hnqrvxsjwuqxc", 2825n],
+      ])("charges %s's fee of %s, priority fee included, to the account", (id, fees) => {
+        const op = getOperation(id);
+
+        expect(op.tx.feesPayer).toBe(testnetAddress);
+        expect(op.tx.fees).toBe(fees);
+      });
+
+      it("keeps a bond's value at 0 and puts the bond in details.stake", () => {
+        const bond = getOperation("at12c59u57ehxv6utj0pl66d6a58ca8ml9uptttreqzx2jwv7d04q9qwjue6y");
+
+        expect(bond.value).toBe(0n);
+        expect(bond.tx.feesPayer).toBe(testnetAddress);
+        expect(bond.tx.fees).toBe(5621n);
+        expect(bond.details).toMatchObject({
+          stake: { address: testnetBondedValidator, amount: testnetBondedMicrocredits },
+        });
+      });
     });
   });
 

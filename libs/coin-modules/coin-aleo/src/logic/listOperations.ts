@@ -19,6 +19,7 @@ import type {
   AleoCoinConfig,
   AleoPrivateRecord,
   AleoPublicTransaction,
+  AleoPublicTransactionDetailsResponse,
   AleoTokenType,
   AleoTransitionCursor,
   AleoExactTransitionCursor,
@@ -113,6 +114,9 @@ function isEarlierOutput(candidate: AleoPrivateRecord, current: AleoPrivateRecor
 /**
  * The private side of one page: an operation per owned record whose transaction has no public row,
  * plus `ownedRecordTxIds` for the transactions that do have one — those only need tagging.
+ *
+ * `privateFeeTxIds` is kept apart from `ownedRecordTxIds`: paying a fee does not make the account
+ * the hidden side of a transfer.
  */
 async function collectPrivateOperations({
   config,
@@ -132,7 +136,11 @@ async function collectPrivateOperations({
   recordsFrom: number;
   recordsTo: number;
   tokenTypeByProgramName: ReadonlyMap<string, AleoTokenType>;
-}): Promise<{ ownedRecordTxIds: Set<string>; operations: Operation[] }> {
+}): Promise<{
+  ownedRecordTxIds: Set<string>;
+  privateFeeTxIds: Set<string>;
+  operations: Operation[];
+}> {
   const records = await fetchAllOwnedRecords({
     config,
     uuid: provableId,
@@ -145,16 +153,21 @@ async function collectPrivateOperations({
   });
 
   const ownedRecordTxIds = new Set<string>();
+  const privateFeeTxIds = new Set<string>();
   const byTransactionId = new Map<string, AleoPrivateRecord>();
 
   for (const record of records) {
-    if (!isParsableTransferFunction(record.function_name)) continue;
-
     // Redundant with the scanner's own bounds, but a page that re-emitted a covered block would
     // duplicate operations, so the window is not left to the filter alone.
     if (record.block_height < recordsFrom || record.block_height > recordsTo) continue;
 
     const transactionId = record.transaction_id.trim();
+    if (record.function_name === EXPLORER_TRANSFER_TYPES.FEE_PRIVATE) {
+      privateFeeTxIds.add(transactionId);
+    }
+
+    if (!isParsableTransferFunction(record.function_name)) continue;
+
     ownedRecordTxIds.add(transactionId);
     if (publicTxIds.has(transactionId)) continue;
 
@@ -173,10 +186,28 @@ async function collectPrivateOperations({
 
   return {
     ownedRecordTxIds,
-    operations: enriched.flatMap(record =>
-      record ? [toPrivateOperation(record, address, tokenTypeByProgramName)] : [],
-    ),
+    privateFeeTxIds,
+    operations: enriched.flatMap(record => {
+      if (!record) return [];
+
+      const hasOwnedFeeRecord = privateFeeTxIds.has(record.rawRecord.transaction_id.trim());
+      return [toPrivateOperation(record, address, tokenTypeByProgramName, hasOwnedFeeRecord)];
+    }),
   };
+}
+
+async function fetchTransactionDetails(
+  config: AleoCoinConfig,
+  transactions: AleoPublicTransaction[],
+): Promise<Map<string, AleoPublicTransactionDetailsResponse>> {
+  const detailsById = new Map<string, AleoPublicTransactionDetailsResponse>();
+
+  await promiseAllBatched(4, transactions, async tx => {
+    const details = await apiClient.getTransactionById(config, tx.transaction_id);
+    detailsById.set(tx.transaction_id, details);
+  });
+
+  return detailsById;
 }
 
 /**
@@ -189,11 +220,13 @@ async function resolveThirdPartyShieldRecipients({
   config,
   viewKey,
   transactions,
+  detailsById,
   ownedRecordTxIds,
 }: {
   config: AleoCoinConfig;
   viewKey: string;
   transactions: AleoPublicTransaction[];
+  detailsById: ReadonlyMap<string, AleoPublicTransactionDetailsResponse>;
   ownedRecordTxIds: Set<string>;
 }): Promise<Map<string, string>> {
   const unresolved = transactions.filter(
@@ -207,7 +240,7 @@ async function resolveThirdPartyShieldRecipients({
 
   await promiseAllBatched(4, unresolved, async tx => {
     const transactionId = tx.transaction_id;
-    const { execution } = await apiClient.getTransactionById(config, transactionId);
+    const execution = detailsById.get(transactionId)?.execution;
     const transition =
       execution?.transitions.find(ts => ts.id === tx.transition_id) ?? execution?.transitions[0];
     if (!transition) return;
@@ -299,31 +332,42 @@ export async function listOperations({
   );
   const publicTxIds = new Set(publicTransactions.map(tx => tx.transaction_id));
 
-  const { ownedRecordTxIds, operations: privateOperations } = await collectPrivateOperations({
-    config,
-    address,
-    provableId,
-    viewKey,
-    publicTxIds,
-    recordsFrom,
-    recordsTo,
-    tokenTypeByProgramName,
-  });
+  const [detailsById, { ownedRecordTxIds, privateFeeTxIds, operations: privateOperations }] =
+    await Promise.all([
+      // perf: one request per public transaction by design — the explorer row carries neither the
+      // fee payer nor the priority fee.
+      fetchTransactionDetails(config, publicTransactions),
+      collectPrivateOperations({
+        config,
+        address,
+        provableId,
+        viewKey,
+        publicTxIds,
+        recordsFrom,
+        recordsTo,
+        tokenTypeByProgramName,
+      }),
+    ]);
 
   const shieldRecipients = await resolveThirdPartyShieldRecipients({
     config,
     viewKey,
     transactions: publicTransactions,
+    detailsById,
     ownedRecordTxIds,
   });
 
   const operations = publicTransactions.map(rawTx => {
     const resolvedRecipient = shieldRecipients.get(rawTx.transaction_id);
+    const details = detailsById.get(rawTx.transaction_id);
+    invariant(details, `aleo: missing details for ${rawTx.transaction_id}`);
 
     return toPublicOperation({
       rawTx,
+      details,
       address,
       hasOwnedRecord: ownedRecordTxIds.has(rawTx.transaction_id),
+      hasOwnedFeeRecord: privateFeeTxIds.has(rawTx.transaction_id),
       tokenTypeByProgramName,
       ...(resolvedRecipient && { resolvedRecipient }),
     });

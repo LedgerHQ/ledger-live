@@ -29,8 +29,16 @@ import {
 } from "../__tests__/fixtures/account.fixture";
 import {
   getMockedTransaction as getMockedPublicTransaction,
+  getMockedBondTransition,
+  getMockedEnrichedPrivateRecord,
+  getMockedFeePrivateTransition,
+  getMockedFeePublicTransition,
   getMockedRecord,
   getMockedTokenDetails,
+  getMockedTransactionDetails,
+  testnetAddress,
+  testnetBondedMicrocredits,
+  testnetBondedValidator,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
@@ -61,6 +69,7 @@ import type {
   AleoTransactionIntent,
   AleoPublicTransaction,
   AleoTokenType,
+  AleoTransition,
   ProvableApi,
   AleoAccount,
 } from "../types";
@@ -78,6 +87,10 @@ import {
   determineTransactionType,
   patchAccountWithViewKey,
   toPublicOperation,
+  toPrivateOperation,
+  getFees,
+  findBondPublicTransition,
+  getBondArguments,
   hasPublicAddress,
   resolveConfig,
   getTransactionType,
@@ -453,21 +466,36 @@ describe("hasPublicAddress", () => {
 });
 
 const NO_TOKENS = new Map<string, AleoTokenType>();
+const feePublicDetails = getMockedTransactionDetails("at1tx1", {
+  fee: { transition: getMockedFeePublicTransition({ payer: testnetAddress }) },
+});
+const publicOpArgs = {
+  details: feePublicDetails,
+  hasOwnedRecord: false,
+  hasOwnedFeeRecord: false,
+  tokenTypeByProgramName: NO_TOKENS,
+};
+
+function bondDetails(bond = getMockedBondTransition()) {
+  return getMockedTransactionDetails("at1bond", {
+    execution: { transitions: [bond] },
+    fee: { transition: getMockedFeePublicTransition({ payer: testnetAddress }) },
+  });
+}
 
 describe("toPublicOperation", () => {
   const recipientAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
   const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
   const otherAddress = "aleo1test123address456";
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should set type to IN when address is the recipient", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toPublicOperation({
-      rawTx,
-      address: recipientAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: recipientAddress });
 
     expect(result.type).toBe("IN");
   });
@@ -475,12 +503,7 @@ describe("toPublicOperation", () => {
   it("should set type to OUT when address is the sender", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toPublicOperation({
-      rawTx,
-      address: senderAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: senderAddress });
 
     expect(result.type).toBe("OUT");
   });
@@ -488,12 +511,7 @@ describe("toPublicOperation", () => {
   it("should set type to NONE when address is neither sender nor recipient", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toPublicOperation({
-      rawTx,
-      address: otherAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: otherAddress });
 
     expect(result.type).toBe("NONE");
   });
@@ -502,9 +520,9 @@ describe("toPublicOperation", () => {
     const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
 
     const result = toPublicOperation({
+      ...publicOpArgs,
       rawTx,
       address: recipientAddress,
-      hasOwnedRecord: false,
       tokenTypeByProgramName: new Map([["custom.aleo", "arc20"]]),
     });
 
@@ -515,12 +533,7 @@ describe("toPublicOperation", () => {
   it("should map a program missing from the registry to an unknown asset", () => {
     const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
 
-    const result = toPublicOperation({
-      rawTx,
-      address: recipientAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: recipientAddress });
 
     expect(result.asset).toEqual({ type: "unknown", assetReference: "custom.aleo" });
   });
@@ -528,12 +541,7 @@ describe("toPublicOperation", () => {
   it("should map core fields from rawTx", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toPublicOperation({
-      rawTx,
-      address: recipientAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: recipientAddress });
 
     expect(result.id).toBe(rawTx.transaction_id);
     expect(result.senders).toEqual([rawTx.sender_address]);
@@ -545,17 +553,13 @@ describe("toPublicOperation", () => {
     expect(result.tx.failed).toBe(false);
   });
 
-  it("should derive fees and blockHash from rawTx", () => {
+  it("should derive fees and feesPayer from the fee transition and blockHash from rawTx", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toPublicOperation({
-      rawTx,
-      address: recipientAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: recipientAddress });
 
-    expect(result.tx.fees).toBe(BigInt(rawTx.fee));
+    expect(result.tx.fees).toBe(2725n);
+    expect(result.tx.feesPayer).toBe(testnetAddress);
     expect(result.tx.block.hash).toBe(rawTx.block_hash);
   });
 
@@ -563,12 +567,7 @@ describe("toPublicOperation", () => {
     const amountU128 = "123456789012345678901234567890";
     const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });
 
-    const result = toPublicOperation({
-      rawTx,
-      address: recipientAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: recipientAddress });
 
     expect(result.value).toBe(BigInt(amountU128));
   });
@@ -576,12 +575,7 @@ describe("toPublicOperation", () => {
   it("should set failed to true when transaction_status is not Accepted", () => {
     const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
 
-    const result = toPublicOperation({
-      rawTx,
-      address: recipientAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: recipientAddress });
 
     expect(result.tx.failed).toBe(true);
   });
@@ -589,12 +583,7 @@ describe("toPublicOperation", () => {
   it("should include functionId, transactionType, and ledgerOpType in details", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toPublicOperation({
-      rawTx,
-      address: recipientAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: recipientAddress });
 
     expect(result.details).toMatchObject({
       functionId: rawTx.function_id,
@@ -609,10 +598,10 @@ describe("toPublicOperation", () => {
     });
 
     const result = toPublicOperation({
+      ...publicOpArgs,
       rawTx,
       address: senderAddress,
       hasOwnedRecord: true,
-      tokenTypeByProgramName: NO_TOKENS,
     });
 
     expect(result.recipients).toEqual([senderAddress]);
@@ -627,10 +616,10 @@ describe("toPublicOperation", () => {
     });
 
     const result = toPublicOperation({
+      ...publicOpArgs,
       rawTx,
       address: recipientAddress,
       hasOwnedRecord: true,
-      tokenTypeByProgramName: NO_TOKENS,
     });
 
     expect(result.senders).toEqual([recipientAddress]);
@@ -640,12 +629,7 @@ describe("toPublicOperation", () => {
   it("should leave blank addresses alone when no record is owned", () => {
     const rawTx = getMockedPublicTransaction({ recipient_address: "" });
 
-    const result = toPublicOperation({
-      rawTx,
-      address: senderAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: senderAddress });
 
     expect(result.recipients).toEqual([""]);
   });
@@ -656,12 +640,7 @@ describe("toPublicOperation", () => {
       recipient_address: senderAddress,
     });
 
-    const result = toPublicOperation({
-      rawTx,
-      address: senderAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
-    });
+    const result = toPublicOperation({ ...publicOpArgs, rawTx, address: senderAddress });
 
     expect(result.type).toBe("IN");
   });
@@ -674,10 +653,10 @@ describe("toPublicOperation", () => {
     });
 
     const result = toPublicOperation({
+      ...publicOpArgs,
       rawTx,
       address: senderAddress,
       hasOwnedRecord: true,
-      tokenTypeByProgramName: NO_TOKENS,
     });
 
     expect(result.type).toBe("OUT");
@@ -691,10 +670,9 @@ describe("toPublicOperation", () => {
     });
 
     const result = toPublicOperation({
+      ...publicOpArgs,
       rawTx,
       address: senderAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
       resolvedRecipient: recipientAddress,
     });
 
@@ -706,14 +684,212 @@ describe("toPublicOperation", () => {
     const rawTx = getMockedPublicTransaction({ recipient_address: recipientAddress });
 
     const result = toPublicOperation({
+      ...publicOpArgs,
       rawTx,
       address: senderAddress,
-      hasOwnedRecord: false,
-      tokenTypeByProgramName: NO_TOKENS,
       resolvedRecipient: "aleo1someoneelse",
     });
 
     expect(result.recipients).toEqual([recipientAddress]);
+  });
+
+  it("should set a BOND value to 0 and put the bond in details.stake", () => {
+    const bondTx = getMockedPublicTransaction({
+      function_id: "bond_public",
+      sender_address: "",
+      recipient_address: "",
+      amount: 0,
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx: bondTx,
+      address: senderAddress,
+      details: bondDetails(),
+    });
+
+    expect(result.type).toBe("BOND");
+    expect(result.value).toBe(0n);
+    expect(result.details).toMatchObject({
+      functionId: "bond_public",
+      stake: { address: testnetBondedValidator, amount: testnetBondedMicrocredits },
+    });
+  });
+
+  it("should log and leave out details.stake when the bond inputs are unreadable", () => {
+    const bondTx = getMockedPublicTransaction({ function_id: "bond_public" });
+    const bond = getMockedBondTransition();
+    const details = bondDetails(getMockedBondTransition({ inputs: bond.inputs.slice(0, 1) }));
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx: bondTx,
+      address: senderAddress,
+      details,
+    });
+
+    expect(result.value).toBe(0n);
+    expect(result.details).not.toHaveProperty("stake");
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith(
+      "aleo/listOperations",
+      `unreadable bond_public inputs for ${bondTx.transaction_id}`,
+    );
+  });
+
+  it("should set an UNBOND value to 0 and put the explorer amount in details.stake", () => {
+    const unbondTx = getMockedPublicTransaction({ function_id: "unbond_public", amount: 5000 });
+
+    const result = toPublicOperation({ ...publicOpArgs, rawTx: unbondTx, address: senderAddress });
+
+    expect(result.type).toBe("UNBOND");
+    expect(result.value).toBe(0n);
+    expect(result.details).toMatchObject({ stake: { amount: 5000n } });
+  });
+
+  it("should set a WITHDRAW_UNBONDED value to 0 with no details.stake", () => {
+    const claimTx = getMockedPublicTransaction({ function_id: "claim_unbond_public" });
+
+    const result = toPublicOperation({ ...publicOpArgs, rawTx: claimTx, address: senderAddress });
+
+    expect(result.type).toBe("WITHDRAW_UNBONDED");
+    expect(result.value).toBe(0n);
+    expect(result.details).not.toHaveProperty("stake");
+    expect(result.details).toMatchObject({
+      functionId: "claim_unbond_public",
+      ledgerOpType: "WITHDRAW_UNBONDED",
+    });
+  });
+});
+
+const sponsorAddress = "aleo1xaytw2vtvhz2szhgjzqetadzjd92w2fdx233vq4fq3jdfd9ety8sna28t3";
+
+function withFee(transition: AleoTransition) {
+  return getMockedTransactionDetails("at1tx1", { fee: { transition } });
+}
+
+describe("getFees", () => {
+  const feeArgs = { address: testnetAddress, hasOwnedFeeRecord: false };
+  const feePublic = getMockedFeePublicTransition({ payer: testnetAddress });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should add base and priority fee of a fee_public transition and read its payer", () => {
+    const details = withFee(
+      getMockedFeePublicTransition({ payer: sponsorAddress, base: 2725n, priority: 100n }),
+    );
+
+    expect(getFees({ ...feeArgs, details })).toEqual({ fees: 2825n, feesPayer: sponsorAddress });
+  });
+
+  it("should set the account as payer of a fee_private transaction it owns a fee record of", () => {
+    const details = withFee(getMockedFeePrivateTransition({ base: 2308n, priority: 10n }));
+
+    expect(getFees({ ...feeArgs, details, hasOwnedFeeRecord: true })).toEqual({
+      fees: 2318n,
+      feesPayer: testnetAddress,
+    });
+  });
+
+  it("should leave the payer unset for a fee_private transaction it owns no fee record of", () => {
+    const details = withFee(getMockedFeePrivateTransition({ base: 2308n }));
+
+    expect(getFees({ ...feeArgs, details })).toEqual({ fees: 2308n });
+  });
+
+  it("should be 0 with no payer when the transaction has no fee", () => {
+    const { fee: _, ...details } = getMockedTransactionDetails("at1tx1");
+
+    expect(getFees({ ...feeArgs, details })).toEqual({ fees: 0n });
+  });
+
+  it.each<[string, AleoTransition]>([
+    ["an unknown fee function", { ...feePublic, function: "fee_other" }],
+    [
+      "a fee input that is not an amount",
+      {
+        ...feePublic,
+        inputs: [
+          feePublic.inputs[0],
+          { id: "input2", type: "private", value: "ciphertext1" },
+          feePublic.inputs[2],
+        ],
+      },
+    ],
+    [
+      "a future with no arguments",
+      {
+        ...feePublic,
+        outputs: [{ id: "output1", type: "future", value: "{ program_id: credits.aleo }" }],
+      },
+    ],
+    [
+      "a future whose first argument is not an address",
+      getMockedFeePublicTransition({ payer: "1u64" }),
+    ],
+  ])("should log and fall back to fee_value on %s", (_, transition) => {
+    const details = withFee(transition);
+
+    expect(getFees({ ...feeArgs, details })).toEqual({ fees: BigInt(details.fee_value) });
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith("aleo/listOperations", "unreadable fee transition in at1tx1");
+  });
+});
+
+describe("findBondPublicTransition", () => {
+  it("should find a bond_public transition wrapped by another program", () => {
+    const bond = getMockedBondTransition();
+    const wrapper = getMockedBondTransition({
+      id: "au1wrapper",
+      program: "staker.aleo",
+      function: "stake",
+    });
+    const details = getMockedTransactionDetails("at1bond", {
+      execution: { transitions: [wrapper, bond] },
+    });
+
+    expect(findBondPublicTransition(details)).toBe(bond);
+  });
+
+  it("should be undefined when the transaction has no bond_public transition", () => {
+    const details = getMockedTransactionDetails("at1bond", { execution: { transitions: [] } });
+
+    expect(findBondPublicTransition(details)).toBeUndefined();
+  });
+});
+
+describe("getBondArguments", () => {
+  it("should read the validator and amount of a bond_public transition", () => {
+    expect(getBondArguments(getMockedBondTransition())).toEqual({
+      validator: testnetBondedValidator,
+      amount: testnetBondedMicrocredits,
+    });
+  });
+
+  it("should be undefined when the inputs are unreadable", () => {
+    const bond = getMockedBondTransition();
+    const transition = getMockedBondTransition({
+      inputs: [{ id: "input1", type: "private", value: "ciphertext1" }, ...bond.inputs.slice(1)],
+    });
+
+    expect(getBondArguments(transition)).toBeUndefined();
+  });
+});
+
+describe("toPrivateOperation", () => {
+  it("should set fees and feesPayer from the fee transition", () => {
+    const record = getMockedEnrichedPrivateRecord({
+      details: {
+        fee: { transition: getMockedFeePrivateTransition({ base: 2308n, priority: 10n }) },
+      },
+    });
+
+    const result = toPrivateOperation(record, testnetAddress, NO_TOKENS, true);
+
+    expect(result.tx.fees).toBe(2318n);
+    expect(result.tx.feesPayer).toBe(testnetAddress);
   });
 });
 
