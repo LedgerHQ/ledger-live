@@ -1,10 +1,5 @@
 import { useEffect, useRef } from "react";
-import {
-  StackActions,
-  useNavigation,
-  type NavigationProp,
-  type ParamListBase,
-} from "@react-navigation/native";
+import { useNavigation, type NavigationProp, type ParamListBase } from "@react-navigation/native";
 import type { DeviceOnboardingOutput } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
@@ -16,8 +11,7 @@ import {
   setReadOnlyMode,
 } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
-import { useDispatch, useSelector } from "~/context/hooks";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { useDispatch } from "~/context/hooks";
 import { OnboardingType } from "~/reducers/types";
 
 type UseDeviceOnboardingExitInput = {
@@ -28,7 +22,6 @@ type UseDeviceOnboardingExitInput = {
 export function useDeviceOnboardingExit({ device, output }: UseDeviceOnboardingExitInput) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
-  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
   const handledOutputRef = useRef<DeviceOnboardingOutput | null>(null);
 
@@ -55,14 +48,10 @@ export function useDeviceOnboardingExit({ device, output }: UseDeviceOnboardingE
         resetToLegacyOnboarding(navigation, device);
         break;
       case "userQuit":
-        if (hasCompletedOnboarding) {
-          navigation.dispatch(StackActions.popToTop());
-        } else {
-          resetToDeviceSelection(navigation);
-        }
+        // Stay on this screen. Quit only sends the event.
         break;
     }
-  }, [device, dispatch, hasCompletedOnboarding, navigation, output, shouldDisplayMyWallet]);
+  }, [device, dispatch, navigation, output, shouldDisplayMyWallet]);
 }
 
 function getRootNavigation(
@@ -191,31 +180,6 @@ function resetToLegacyOnboarding(navigation: NavigationProp<ParamListBase>, devi
                     name: ScreenName.OnboardingUseCase,
                     params: { deviceModelId: device.modelId },
                   },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    ],
-  });
-}
-
-function resetToDeviceSelection(navigation: NavigationProp<ParamListBase>) {
-  getRootNavigation(navigation).reset({
-    index: 0,
-    routes: [
-      {
-        name: NavigatorName.BaseOnboarding,
-        state: {
-          routes: [
-            {
-              name: NavigatorName.Onboarding,
-              state: {
-                routes: [
-                  { name: ScreenName.OnboardingWelcome },
-                  { name: ScreenName.OnboardingPostWelcomeSelection },
-                  { name: ScreenName.OnboardingDeviceSelection },
                 ],
               },
             },
