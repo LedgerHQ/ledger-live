@@ -1,6 +1,6 @@
 import "../../../src/live-common-set-supported-currencies";
 import test from "../../fixtures/common";
-import { expect } from "@playwright/test";
+import { expect, type ElectronApplication, type Page } from "@playwright/test";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
@@ -92,12 +92,7 @@ test.afterAll(async () => {
   }
 });
 
-test("Wallet API methods @smoke", async ({ page, electronApp }) => {
-  if (!testServerIsRunning) {
-    console.warn("Test server not running - Cancelling Wallet API E2E test");
-    return;
-  }
-
+async function openWalletApiTestApp(page: Page, electronApp: ElectronApplication) {
   const discoverPage = new DiscoverPage(page);
   const liveAppWebview = new LiveAppWebview(page, electronApp);
   const drawer = new Drawer(page);
@@ -105,8 +100,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   const layout = new Layout(page);
   const deviceAction = new DeviceAction(page);
 
-  // Reset the webview after each test to ensure a clean state
-  // We have to call it manually because playwright doesn't support afterEach hook for steps
+  // Reset the webview after each method check to ensure a clean state
   async function resetWebview() {
     await liveAppWebview.clearStates();
   }
@@ -116,194 +110,22 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await discoverPage.openTestApp();
     await drawer.continue();
     await drawer.waitForDrawerToDisappear();
+    await liveAppWebview.waitUntilReady();
   });
 
-  await test.step("account.request", async () => {
-    await liveAppWebview.setCurrencyIds([
-      "bitcoin",
-      "ethereum",
-      "ethereum/erc20/usd_tether__erc20_",
-    ]);
+  return { discoverPage, drawer, liveAppWebview, modal, deviceAction, resetWebview };
+}
 
-    await liveAppWebview.accountRequest();
+test("Wallet API methods: solana and xrp signing @smoke", async ({ page, electronApp }) => {
+  if (!testServerIsRunning) {
+    console.warn("Test server not running - Cancelling Wallet API E2E test");
+    return;
+  }
 
-    await drawer.waitForAssetAccountSelectorVisible();
-    await expect(drawer.selectAssetTitle).toBeVisible();
-
-    await drawer.selectCurrency("tether usd");
-    await expect(drawer.selectAccountTitle).toBeVisible();
-
-    // Test name and balance for tokens
-    await expect(drawer.getAccountButton("Ethereum 3")).toContainText("71.8174 USDT");
-    await drawer.back();
-    await drawer.waitForAccountTitleToDisappear();
-    await expect(drawer.selectAssetTitle).toBeVisible();
-
-    await drawer.selectCurrency("bitcoin");
-    await expect(drawer.selectAccountTitle).toBeVisible();
-    await drawer.selectAccount("Bitcoin 1 (legacy)");
-
-    await drawer.waitForDrawerToDisappear();
-
-    const res = await liveAppWebview.getResOutput();
-    expect(res).toMatchObject({
-      id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
-      address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
-      balance: "35688397",
-      blockHeight: expect.any(Number),
-      currency: "bitcoin",
-      name: "Bitcoin 1 (legacy)",
-      spendableBalance: "35688397",
-    });
-
-    await resetWebview();
-  });
-
-  await test.step("account.receive", async () => {
-    await liveAppWebview.setAccountId("2d23ca2a-069e-579f-b13d-05bc706c7583");
-
-    await liveAppWebview.accountReceive();
-
-    await modal.waitForModalToAppear();
-    await deviceAction.openApp();
-    await deviceAction.complete();
-    await modal.waitForModalToDisappear();
-
-    const res = await liveAppWebview.getResOutput();
-    expect(res).toBe("1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ");
-
-    await resetWebview();
-  });
-
-  await test.step("account.list", async () => {
-    await liveAppWebview.accountList();
-
-    const res = await liveAppWebview.getResOutput();
-    expect(res).toHaveLength(mockedAccountList.length);
-    expect(res).toEqual(
-      expect.arrayContaining(mockedAccountList.map(account => expect.objectContaining(account))),
-    );
-
-    await resetWebview();
-  });
-
-  await test.step("bitcoin.getXPub", async () => {
-    await liveAppWebview.setAccountId("3463fc5b-deb9-5b19-a27e-4554624f2090");
-    await liveAppWebview.bitcoinGetXPub();
-
-    const res = await liveAppWebview.getResOutput();
-    expect(res).toBe("D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2");
-
-    await resetWebview();
-  });
-
-  await test.step("currency.list", async () => {
-    await liveAppWebview.setCurrencyIds([
-      "bitcoin",
-      "ethereum",
-      "ethereum/erc20/usd_tether__erc20_",
-      "arbitrum/erc20/arbitrum",
-    ]);
-
-    await liveAppWebview.currencyList();
-
-    const res = await liveAppWebview.getResOutput();
-    expect(res).toMatchObject([
-      {
-        type: "CryptoCurrency",
-        id: "bitcoin",
-        ticker: "BTC",
-        name: "Bitcoin",
-        family: "bitcoin",
-        color: "#ffae35",
-        decimals: 8,
-      },
-      {
-        type: "CryptoCurrency",
-        id: "ethereum",
-        ticker: "ETH",
-        name: "Ethereum",
-        family: "ethereum",
-        color: "#0ebdcd",
-        decimals: 18,
-      },
-      {
-        type: "TokenCurrency",
-        standard: "ERC20",
-        id: "ethereum/erc20/usd_tether__erc20_",
-        ticker: "USDT",
-        contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-        name: "Tether USD",
-        parent: "ethereum",
-        color: "#0ebdcd",
-        decimals: 6,
-      },
-      {
-        type: "TokenCurrency",
-        standard: "ERC20",
-        id: "arbitrum/erc20/arbitrum",
-        ticker: "ARB",
-        contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
-        name: "Arbitrum",
-        parent: "arbitrum",
-        color: "#28a0f0",
-        decimals: 18,
-      },
-    ]);
-
-    await resetWebview();
-  });
-
-  await test.step("currency.list should stay stable for CryptoCurrency", async () => {
-    await liveAppWebview.setCurrencyIds(listSupportedCurrencies().map(c => c.id));
-    await liveAppWebview.currencyList();
-
-    const res = await liveAppWebview.getResOutput();
-    expect(res).toMatchObject(expectedCurrencyList);
-
-    await resetWebview();
-  });
-
-  await test.step("storage", async () => {
-    await liveAppWebview.storage();
-
-    const res = await liveAppWebview.getResOutput();
-    expect(res).toBe("test-value");
-
-    await resetWebview();
-  });
-
-  await test.step("transaction.sign", async () => {
-    const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
-    const amount = "500000000000000"; // 0.0005 ETH in wei
-    const data = "TestDataForEthereumTransaction";
-
-    await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
-    await liveAppWebview.setRecipient(recipient);
-    await liveAppWebview.setAmount(amount);
-    await liveAppWebview.setData(data);
-    await liveAppWebview.transactionSign();
-
-    await modal.waitForModalToAppear();
-
-    // Step Fees
-    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
-    await modal.continueToSignTransaction();
-
-    // Step Recipient
-    await expect(page.getByText(recipient)).toBeVisible();
-    await modal.continueToSignTransaction();
-
-    // Step Device
-    await deviceAction.silentSign();
-
-    await modal.waitForModalToDisappear();
-
-    const res = await liveAppWebview.getResOutput();
-    expect(res).toBe("empty response");
-
-    await resetWebview();
-  });
+  const { liveAppWebview, modal, deviceAction, resetWebview } = await openWalletApiTestApp(
+    page,
+    electronApp,
+  );
 
   await test.step("transaction.sign solana", async () => {
     const recipient = "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo";
@@ -768,6 +590,62 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await page.unroute("**/all_sanctioned_addresses_without_ticker.json");
     await resetWebview();
   });
+});
+
+test("Wallet API methods: transaction.sign @smoke", async ({ page, electronApp }) => {
+  if (!testServerIsRunning) {
+    console.warn("Test server not running - Cancelling Wallet API E2E test");
+    return;
+  }
+
+  const { liveAppWebview, modal, deviceAction, resetWebview } = await openWalletApiTestApp(
+    page,
+    electronApp,
+  );
+
+  await test.step("transaction.sign", async () => {
+    const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
+    const amount = "500000000000000"; // 0.0005 ETH in wei
+    const data = "TestDataForEthereumTransaction";
+
+    await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.setData(data);
+    await liveAppWebview.transactionSign();
+
+    await modal.waitForModalToAppear();
+
+    // Step Fees
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
+    await modal.continueToSignTransaction();
+
+    // Step Recipient
+    await expect(page.getByText(recipient)).toBeVisible();
+    await modal.continueToSignTransaction();
+
+    // Step Device
+    await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("empty response");
+
+    await resetWebview();
+  });
+});
+
+test("Wallet API methods: transaction.signAndBroadcast @smoke", async ({ page, electronApp }) => {
+  if (!testServerIsRunning) {
+    console.warn("Test server not running - Cancelling Wallet API E2E test");
+    return;
+  }
+
+  const { liveAppWebview, modal, deviceAction, resetWebview } = await openWalletApiTestApp(
+    page,
+    electronApp,
+  );
 
   await test.step("transaction.signAndBroadcast", async () => {
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
@@ -812,6 +690,174 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
     const res = await liveAppWebview.getResOutput();
     expect(res).toBe("93036A2539D5DEEECE463E04A7D43C4BAFA60F6118EF295D35D175A514002FB4");
+
+    await resetWebview();
+  });
+});
+
+test("Wallet API methods: accounts, currencies and wallet @smoke", async ({
+  page,
+  electronApp,
+}) => {
+  if (!testServerIsRunning) {
+    console.warn("Test server not running - Cancelling Wallet API E2E test");
+    return;
+  }
+
+  const { discoverPage, drawer, liveAppWebview, modal, deviceAction, resetWebview } =
+    await openWalletApiTestApp(page, electronApp);
+
+  await test.step("account.request", async () => {
+    await liveAppWebview.setCurrencyIds([
+      "bitcoin",
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+    ]);
+
+    await liveAppWebview.accountRequest();
+
+    await drawer.waitForAssetAccountSelectorVisible();
+    await expect(drawer.selectAssetTitle).toBeVisible();
+
+    await drawer.selectCurrency("tether usd");
+    await expect(drawer.selectAccountTitle).toBeVisible();
+
+    // Test name and balance for tokens
+    await expect(drawer.getAccountButton("Ethereum 3")).toContainText("71.8174 USDT");
+    await drawer.back();
+    await drawer.waitForAccountTitleToDisappear();
+    await expect(drawer.selectAssetTitle).toBeVisible();
+
+    await drawer.selectCurrency("bitcoin");
+    await expect(drawer.selectAccountTitle).toBeVisible();
+    await drawer.selectAccount("Bitcoin 1 (legacy)");
+
+    await drawer.waitForDrawerToDisappear();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
+      id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
+      address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+      balance: "35688397",
+      blockHeight: expect.any(Number),
+      currency: "bitcoin",
+      name: "Bitcoin 1 (legacy)",
+      spendableBalance: "35688397",
+    });
+
+    await resetWebview();
+  });
+
+  await test.step("account.receive", async () => {
+    await liveAppWebview.setAccountId("2d23ca2a-069e-579f-b13d-05bc706c7583");
+
+    await liveAppWebview.accountReceive();
+
+    await modal.waitForModalToAppear();
+    await deviceAction.openApp();
+    await deviceAction.complete();
+    await modal.waitForModalToDisappear();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ");
+
+    await resetWebview();
+  });
+
+  await test.step("account.list", async () => {
+    await liveAppWebview.accountList();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toHaveLength(mockedAccountList.length);
+    expect(res).toEqual(
+      expect.arrayContaining(mockedAccountList.map(account => expect.objectContaining(account))),
+    );
+
+    await resetWebview();
+  });
+
+  await test.step("bitcoin.getXPub", async () => {
+    await liveAppWebview.setAccountId("3463fc5b-deb9-5b19-a27e-4554624f2090");
+    await liveAppWebview.bitcoinGetXPub();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2");
+
+    await resetWebview();
+  });
+
+  await test.step("currency.list", async () => {
+    await liveAppWebview.setCurrencyIds([
+      "bitcoin",
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+      "arbitrum/erc20/arbitrum",
+    ]);
+
+    await liveAppWebview.currencyList();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject([
+      {
+        type: "CryptoCurrency",
+        id: "bitcoin",
+        ticker: "BTC",
+        name: "Bitcoin",
+        family: "bitcoin",
+        color: "#ffae35",
+        decimals: 8,
+      },
+      {
+        type: "CryptoCurrency",
+        id: "ethereum",
+        ticker: "ETH",
+        name: "Ethereum",
+        family: "ethereum",
+        color: "#0ebdcd",
+        decimals: 18,
+      },
+      {
+        type: "TokenCurrency",
+        standard: "ERC20",
+        id: "ethereum/erc20/usd_tether__erc20_",
+        ticker: "USDT",
+        contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        name: "Tether USD",
+        parent: "ethereum",
+        color: "#0ebdcd",
+        decimals: 6,
+      },
+      {
+        type: "TokenCurrency",
+        standard: "ERC20",
+        id: "arbitrum/erc20/arbitrum",
+        ticker: "ARB",
+        contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+        name: "Arbitrum",
+        parent: "arbitrum",
+        color: "#28a0f0",
+        decimals: 18,
+      },
+    ]);
+
+    await resetWebview();
+  });
+
+  await test.step("currency.list should stay stable for CryptoCurrency", async () => {
+    await liveAppWebview.setCurrencyIds(listSupportedCurrencies().map(c => c.id));
+    await liveAppWebview.currencyList();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject(expectedCurrencyList);
+
+    await resetWebview();
+  });
+
+  await test.step("storage", async () => {
+    await liveAppWebview.storage();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("test-value");
 
     await resetWebview();
   });
