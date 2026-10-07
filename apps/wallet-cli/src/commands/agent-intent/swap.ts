@@ -1,17 +1,10 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import {
-  createAgentIntentClient,
-  createNonce,
-  encodeSwapIntentTlv,
-  type SwapIntent,
-} from "@ledgerhq/agent-intent-sdk";
+import { createNonce, encodeSwapIntentTlv } from "@ledgerhq/agent-intent-sdk";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
-import { outputOption, resolveOutputFormat } from "../inputs";
-import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";
+import { resolveOutputFormat } from "../inputs";
 import { parseEvmAddress } from "../../agent-intent/evm";
-import { intentIdFromDeeplink } from "../../agent-intent/send-intent";
 import {
   AGENT_INTENT_SWAP_PROVIDERS,
   parseSwapAmount,
@@ -22,15 +15,14 @@ import {
 } from "../../agent-intent/swap-intent";
 import { fetchAgentSwapQuote } from "../../agent-intent/swap-quote";
 import { findEthereumSwapAsset, type SwapAsset } from "../../agent-intent/token-lookup";
-import { loadProfileIdentity } from "../../agent-intent/profile-identity";
 import { resolveSenderFromAccount } from "../../agent-intent/sender";
-import { keycloakOverride } from "../../agent-intent/relay";
 import {
-  describeAgentIntentError,
-  isAcceptedWithoutReviewLink,
-} from "../../agent-intent/service-errors";
+  assertSdkAcceptsIntent,
+  proposalOptions,
+  submitAgentIntent,
+  warnIfReviewLinkUnusable,
+} from "../../agent-intent/propose-intent";
 import { createCommandOutput, type CommandOutput } from "../../output";
-import { writeStderr } from "../../shared/ui";
 
 function parseSenderInput(flags: {
   account?: string;
@@ -50,16 +42,6 @@ async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAs
     );
   }
   return asset;
-}
-
-/** Runs the SDK's own Swap validation without a key or network, so `--dry-run` rejects exactly
- * what a real submit would. */
-function assertSdkAcceptsIntent(intent: SwapIntent): void {
-  try {
-    encodeSwapIntentTlv(intent, createNonce());
-  } catch (e) {
-    throw new Error(`Invalid intent: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
-  }
 }
 
 /** The provider and amount the intent signs: the best quote the frontend can prepare, with
@@ -104,13 +86,7 @@ export default defineCommand({
     "Propose an Ethereum swap (ETH or ERC-20) for human review in the Agent Intent frontend, at " +
     "the best current Swap API quote. Never signs or broadcasts a transaction, and needs no device.",
   options: {
-    profile: option(z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE), {
-      description: "Enrolled Agent Intent profile that proposes the intent.",
-    }),
-    account: option(z.string().min(1).optional(), {
-      description: "Sender as a session label (Ethereum mainnet account). Exclusive with --sender.",
-      short: "a",
-    }),
+    ...proposalOptions,
     sender: option(z.string().min(1).optional(), {
       description: "Sender as an explicit EVM address. Exclusive with --account.",
     }),
@@ -134,16 +110,12 @@ export default defineCommand({
         "Amount of --to to expect instead of the quoted one (the swap is still quoted, to pick a " +
         "provider the frontend can prepare). Never rounded.",
     }),
-    description: option(z.string().min(1).max(280).optional(), {
-      description: "Note shown to the human reviewer, 1-280 characters.",
-    }),
     "dry-run": option(z.boolean().default(false), {
       description:
         "Quote, validate and print the intent without submitting it (never reads the agent key or " +
         "signs in to Agent Intent).",
       argumentKind: "flag",
     }),
-    output: outputOption,
   },
   handler: async ({ flags }) => {
     const out = createCommandOutput(resolveOutputFormat(flags.output), {
@@ -184,43 +156,16 @@ export default defineCommand({
       };
 
       const intent = toSdkSwapIntent(summary);
-      assertSdkAcceptsIntent(intent);
+      assertSdkAcceptsIntent(() => encodeSwapIntentTlv(intent, createNonce()));
 
       if (flags["dry-run"]) {
         out.agentIntentSwapDryRun(summary);
         return;
       }
 
-      const client = createAgentIntentClient({
-        bffBaseUrl: profile.bffBaseUrl,
-        identity: await loadProfileIdentity(profile),
-        trustchainId: profile.trustchainId,
-        environment: profile.environment,
-        ...keycloakOverride(profile.environment, profile.keycloakBaseUrl),
-      });
-
-      let deeplink: string | null;
-      try {
-        deeplink = await client.createSwapIntent(intent);
-      } catch (e) {
-        if (!isAcceptedWithoutReviewLink(e)) throw describeAgentIntentError(e, profile.profileId);
-        deeplink = null;
-      }
-
-      // Past this point the intent exists: never fail, or a retry would propose a duplicate.
-      const intentId = deeplink ? intentIdFromDeeplink(deeplink) : null;
-      out.agentIntentSwap({ ...summary, intentId, deeplink });
-      if (!deeplink) {
-        writeStderr(
-          "⚠ The Agent Intent service accepted the intent but returned no readable review link. " +
-            "Find it in the Agent Intent frontend — don't re-run, or you'll propose a duplicate.\n",
-        );
-      } else if (!intentId) {
-        writeStderr(
-          "⚠ The review link has an unexpected shape, so no intent id could be extracted. " +
-            "The intent was created — use the review link to find it.\n",
-        );
-      }
+      const submitted = await submitAgentIntent(profile, client => client.createSwapIntent(intent));
+      out.agentIntentSwap({ ...summary, ...submitted });
+      warnIfReviewLinkUnusable(submitted);
     });
   },
 });
