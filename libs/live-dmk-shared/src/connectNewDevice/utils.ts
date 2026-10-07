@@ -3,6 +3,7 @@ import type { DiscoveredDevice, TransportIdentifier } from "@ledgerhq/device-man
 import {
   ConnectNewDeviceStateMachineEventTypes,
   type ConnectNewDeviceStateMachineEvent,
+  type ListedDevice,
   type SelectableDevice,
 } from "./types";
 import { dmkToLedgerDeviceIdMap } from "../config/dmkToLedgerDeviceIdMap";
@@ -26,11 +27,16 @@ export const getScanningTransports = (
 export const buildSelectableDevices = <
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
 >(
-  discoveredDevices: Array<DiscoveredDevice>,
+  listedDevices: Array<ListedDevice>,
   send: (event: ConnectNewDeviceStateMachineEvent<TDiscoveryError>) => void,
 ): Array<SelectableDevice> =>
-  discoveredDevices.map(discoveredDevice => ({
-    device: toDevice(discoveredDevice),
-    onSelect: () =>
-      send({ type: ConnectNewDeviceStateMachineEventTypes.UserTapsDevice, discoveredDevice }),
-  }));
+  listedDevices.map(({ discoveredDevice, isAvailable }) =>
+    isAvailable
+      ? {
+          device: toDevice(discoveredDevice),
+          isAvailable,
+          onSelect: () =>
+            send({ type: ConnectNewDeviceStateMachineEventTypes.UserTapsDevice, discoveredDevice }),
+        }
+      : { device: toDevice(discoveredDevice), isAvailable },
+  );

@@ -12,9 +12,11 @@ import { DEFAULT_DEVICE_NOT_FOUND_DELAY, DEFAULT_SUCCESS_DELAY } from "./constan
 import { DefaultConnectNewDeviceStateMachine } from "./ConnectNewDeviceStateMachine";
 import {
   ConnectNewDeviceUIStateTypes,
+  type ConnectNewDeviceGetDiscoveredDeviceKey,
   type ConnectNewDeviceMapConnectionError,
   type ConnectNewDeviceUIState,
   type ConnectNewDeviceUIStateType,
+  type SelectableDevice,
 } from "./types";
 import {
   BaseConnectionErrorTypes,
@@ -69,11 +71,22 @@ const makeDiscoveryError = (
 
 const flushPromises = () => jest.advanceTimersByTimeAsync(0);
 
+const getDeviceKeyById: ConnectNewDeviceGetDiscoveredDeviceKey = ({ transport, id }) =>
+  `${transport}:${id}`;
+
+const select = (selectableDevice: SelectableDevice) => {
+  if (!selectableDevice.isAvailable) {
+    throw new Error(`${selectableDevice.device.id} is not available`);
+  }
+  selectableDevice.onSelect();
+};
+
 type SetupTestOptions = {
   readonly transportIds?: Array<TransportIdentifier>;
   readonly connect?: jest.Mock;
   readonly connectedDevice?: ConnectedDevice;
   readonly mapConnectionError?: ConnectNewDeviceMapConnectionError;
+  readonly getDiscoveredDeviceKey?: ConnectNewDeviceGetDiscoveredDeviceKey;
   readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
   readonly deviceNotFoundDelay?: number;
   readonly successDelay?: number;
@@ -86,6 +99,7 @@ const setupTest = ({
   connect = jest.fn().mockResolvedValue("session-id"),
   connectedDevice = makeConnectedDevice(),
   mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
+  getDiscoveredDeviceKey = getDeviceKeyById,
   buildCompatDeviceId,
   deviceNotFoundDelay,
   successDelay,
@@ -122,6 +136,7 @@ const setupTest = ({
     onConnected,
     onClose,
     mapConnectionError,
+    getDiscoveredDeviceKey,
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
     ...(deviceNotFoundDelay === undefined ? {} : { deviceNotFoundDelay }),
     ...(successDelay === undefined ? {} : { successDelay }),
@@ -151,7 +166,7 @@ const setupTest = ({
 const connectToNanoX = async (setup: ReturnType<typeof setupTest>) => {
   setup.machine.start();
   setup.discoverDevices([nanoX]);
-  setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
+  select(setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]);
   await flushPromises();
 };
 
@@ -188,7 +203,7 @@ describe("ConnectNewDeviceStateMachine", () => {
       discoverDevices([nanoX, stax]);
 
       expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices).toEqual([
-        { device: nanoXDevice, onSelect: expect.any(Function) },
+        { device: nanoXDevice, isAvailable: true, onSelect: expect.any(Function) },
         {
           device: {
             transport: bleTransport,
@@ -196,12 +211,25 @@ describe("ConnectNewDeviceStateMachine", () => {
             id: "stax-id",
             name: "Stax 3C4D",
           },
+          isAvailable: true,
           onSelect: expect.any(Function),
         },
       ]);
     });
 
-    it("should remove a device from the list when discovery no longer reports it", () => {
+    it("should keep the devices in the order of their first discovery when discovery reorders them", () => {
+      const { discoverDevices, lastState, machine } = setupTest();
+
+      machine.start();
+      discoverDevices([nanoX]);
+      discoverDevices([stax, nanoX]);
+
+      expect(
+        lastState(ConnectNewDeviceUIStateTypes.Discovering).devices.map(({ device }) => device.id),
+      ).toEqual(["nano-x-id", "stax-id"]);
+    });
+
+    it("should keep a device that discovery no longer reports at its position, not available", () => {
       const { discoverDevices, lastState, machine } = setupTest();
 
       machine.start();
@@ -209,7 +237,42 @@ describe("ConnectNewDeviceStateMachine", () => {
       discoverDevices([stax]);
 
       expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices).toEqual([
+        { device: nanoXDevice, isAvailable: false },
         expect.objectContaining({ device: expect.objectContaining({ id: "stax-id" }) }),
+      ]);
+    });
+
+    it("should make a device available again at its position when discovery reports it again", () => {
+      const { discoverDevices, lastState, machine } = setupTest();
+
+      machine.start();
+      discoverDevices([nanoX, stax]);
+      discoverDevices([stax]);
+      discoverDevices([stax, nanoX]);
+
+      expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]).toEqual({
+        device: nanoXDevice,
+        isAvailable: true,
+        onSelect: expect.any(Function),
+      });
+    });
+
+    it("should identify the devices with the injected key", () => {
+      const usbNanoX = { ...nanoX, id: "usb-id-1", transport: usbTransport };
+      const { discoverDevices, lastState, machine } = setupTest({
+        getDiscoveredDeviceKey: ({ transport, deviceModel }) => `${transport}:${deviceModel.model}`,
+      });
+
+      machine.start();
+      discoverDevices([usbNanoX]);
+      discoverDevices([{ ...usbNanoX, id: "usb-id-2" }]);
+
+      expect(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices).toEqual([
+        {
+          device: expect.objectContaining({ id: "usb-id-2" }),
+          isAvailable: true,
+          onSelect: expect.any(Function),
+        },
       ]);
     });
   });
@@ -445,10 +508,23 @@ describe("ConnectNewDeviceStateMachine", () => {
 
       machine.start();
       discoverDevices([nanoX, stax]);
-      lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
+      select(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]);
 
       expect(deviceDiscoveryService.stop).toHaveBeenCalledTimes(1);
       expect(lastState(ConnectNewDeviceUIStateTypes.Connecting).device).toEqual(nanoXDevice);
+    });
+
+    it("should connect to the latest discovered device when a device is discovered again", () => {
+      const { connect, discoverDevices, lastState, machine } = setupTest();
+      const renamedNanoX = { ...nanoX, name: "My Nano X" };
+
+      machine.start();
+      discoverDevices([nanoX]);
+      discoverDevices([]);
+      discoverDevices([renamedNanoX]);
+      select(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]);
+
+      expect(connect).toHaveBeenCalledWith(expect.objectContaining({ device: renamedNanoX }));
     });
 
     it("should connect to the selected discovered device without the session refresher", () => {
@@ -456,7 +532,7 @@ describe("ConnectNewDeviceStateMachine", () => {
 
       machine.start();
       discoverDevices([nanoX, stax]);
-      lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[1].onSelect();
+      select(lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[1]);
 
       expect(connect).toHaveBeenCalledWith({
         device: stax,
@@ -469,7 +545,7 @@ describe("ConnectNewDeviceStateMachine", () => {
 
       setup.machine.start();
       setup.discoverDevices([nanoX]);
-      setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
+      select(setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]);
       jest.advanceTimersByTime(DEFAULT_DEVICE_NOT_FOUND_DELAY);
 
       setup.lastState(ConnectNewDeviceUIStateTypes.Connecting);
@@ -483,8 +559,8 @@ describe("ConnectNewDeviceStateMachine", () => {
       machine.start();
       discoverDevices([nanoX, stax]);
       const { devices } = lastState(ConnectNewDeviceUIStateTypes.Discovering);
-      devices[0].onSelect();
-      devices[1].onSelect();
+      select(devices[0]);
+      select(devices[1]);
 
       expect(connect).toHaveBeenCalledTimes(1);
       expect(lastState(ConnectNewDeviceUIStateTypes.Connecting).device).toEqual(nanoXDevice);
@@ -656,6 +732,18 @@ describe("ConnectNewDeviceStateMachine", () => {
       });
     });
 
+    it("should list only the devices of the new discovery when the ConnectionError is ignored", async () => {
+      const setup = setupTest({ connect: jest.fn().mockRejectedValue(connectionFailure) });
+
+      await connectToNanoX(setup);
+      setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).ignore();
+      setup.discoverDevices([stax]);
+
+      expect(setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices).toEqual([
+        expect.objectContaining({ device: expect.objectContaining({ id: "stax-id" }) }),
+      ]);
+    });
+
     it("should connect to another device selected after the ConnectionError is ignored", async () => {
       const connect = jest.fn().mockRejectedValueOnce(connectionFailure).mockResolvedValue("s-2");
       const setup = setupTest({ connect });
@@ -663,7 +751,7 @@ describe("ConnectNewDeviceStateMachine", () => {
       await connectToNanoX(setup);
       setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).ignore();
       setup.discoverDevices([stax]);
-      setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
+      select(setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]);
       await flushPromises();
 
       expect(connect).toHaveBeenCalledTimes(2);
@@ -678,7 +766,7 @@ describe("ConnectNewDeviceStateMachine", () => {
       setup.emitDiscoveryError(makeDiscoveryError({ transportId: usbTransport }));
       setup.lastState(ConnectNewDeviceUIStateTypes.DiscoveryError).ignore();
       setup.discoverDevices([nanoX]);
-      setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
+      select(setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]);
       await flushPromises();
       setup.lastState(ConnectNewDeviceUIStateTypes.ConnectionError).ignore();
 

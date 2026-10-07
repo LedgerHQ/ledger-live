@@ -14,6 +14,7 @@ import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryServi
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError } from "../connectDevice/utils";
+import { getDiscoveredDeviceKey } from "./getDiscoveredDeviceKey";
 
 jest.mock("@ledgerhq/live-dmk-shared", () => {
   const actual = jest.requireActual("@ledgerhq/live-dmk-shared");
@@ -86,6 +87,7 @@ describe("mobile connectNewDevice", () => {
       ...input,
       deviceDiscoveryService: expect.any(DefaultDeviceDiscoveryService),
       mapConnectionError: createConnectionError,
+      getDiscoveredDeviceKey,
       buildCompatDeviceId: buildMobileCompatDeviceId,
     });
 

@@ -14,6 +14,10 @@ The component runs `connectNewDevice` from `@ledgerhq/live-dmk-mobile`. It shows
 
 `delays` (optional) sets the `deviceNotFound` and `success` delays, in ms. The component reads them on mount only.
 
+## Device list
+
+The devices stay in the order in which they were first discovered, so that a row does not move when the user taps it. A device that is no longer discovered stays at its position with a disabled card and button. It becomes selectable again when it is discovered again.
+
 ## Errors
 
 Discovery, connection and unknown errors show in a bottom sheet, over the last view. The sheet uses the shared error components in [`../DeviceConnection/`](../DeviceConnection/).

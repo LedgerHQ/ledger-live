@@ -3,6 +3,7 @@ import { assign, createActor, fromPromise, setup } from "xstate";
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { log } from "@ledgerhq/logs";
 import { DEFAULT_DEVICE_NOT_FOUND_DELAY, DEFAULT_SUCCESS_DELAY } from "./constants";
+import { mergeDiscoveredDevices } from "./mergeDiscoveredDevices";
 import {
   ConnectNewDeviceStateMachineEventTypes,
   ConnectNewDeviceUIStateTypes,
@@ -92,11 +93,16 @@ const createConnectNewDeviceStateMachine = <
         params.output === true,
     },
     actions: {
-      assignDiscoveredDevices: assign({
-        discoveredDevices: (_, params: { devices: Array<DiscoveredDevice> }) => params.devices,
+      updateListedDevices: assign({
+        listedDevices: ({ context }, params: { devices: Array<DiscoveredDevice> }) =>
+          mergeDiscoveredDevices(
+            context.listedDevices,
+            params.devices,
+            context.getDiscoveredDeviceKey,
+          ),
       }),
-      clearDiscoveredDevices: assign({
-        discoveredDevices: () => [],
+      clearListedDevices: assign({
+        listedDevices: () => [],
       }),
       assignSelectedDevice: assign({
         selectedDevice: (_, params: { discoveredDevice: DiscoveredDevice }) =>
@@ -168,7 +174,7 @@ const createConnectNewDeviceStateMachine = <
       emitDiscovering: ({ context, self }) => {
         context.observer.next({
           type: ConnectNewDeviceUIStateTypes.Discovering,
-          devices: buildSelectableDevices(context.discoveredDevices, self.send),
+          devices: buildSelectableDevices(context.listedDevices, self.send),
           scanningTransports: getScanningTransports(
             context.deviceDiscoveryService.transportIds,
             context.skipTransportIds,
@@ -251,7 +257,7 @@ const createConnectNewDeviceStateMachine = <
       ...input,
       deviceNotFoundDelay: input.deviceNotFoundDelay ?? DEFAULT_DEVICE_NOT_FOUND_DELAY,
       successDelay: input.successDelay ?? DEFAULT_SUCCESS_DELAY,
-      discoveredDevices: [],
+      listedDevices: [],
       selectedDevice: null,
       sessionId: null,
       isDiscovering: false,
@@ -266,7 +272,7 @@ const createConnectNewDeviceStateMachine = <
           "clearDiscoveryError",
           "clearConnectionError",
           "clearSelectedDevice",
-          "clearDiscoveredDevices",
+          "clearListedDevices",
           "hideDeviceNotFound",
           "startDiscovery",
           "emitDiscovering",
@@ -280,7 +286,7 @@ const createConnectNewDeviceStateMachine = <
           [ConnectNewDeviceStateMachineEventTypes.DevicesDiscovered]: {
             actions: [
               {
-                type: "assignDiscoveredDevices",
+                type: "updateListedDevices",
                 params: ({ event }) => ({ devices: event.devices }),
               },
               "emitDiscovering",

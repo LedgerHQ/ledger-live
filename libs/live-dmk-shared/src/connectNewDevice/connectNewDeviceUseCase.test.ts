@@ -64,6 +64,7 @@ const setupTest = () => {
     } as unknown as DeviceManagementKit,
     deviceDiscoveryService,
     mapConnectionError: jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
+    getDiscoveredDeviceKey: ({ transport, id }) => `${transport}:${id}`,
     onConnected: jest.fn(),
     onClose: jest.fn(),
     successDelay: SUCCESS_DELAY,
@@ -132,7 +133,9 @@ describe("connectNewDeviceUseCase", () => {
 
     // Act
     discoverDevices([nanoX]);
-    lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0].onSelect();
+    const [nanoXDevice] = lastState(ConnectNewDeviceUIStateTypes.Discovering).devices;
+    if (!nanoXDevice.isAvailable) throw new Error("Nano X is not available");
+    nanoXDevice.onSelect();
     await jest.advanceTimersByTimeAsync(0);
     await jest.advanceTimersByTimeAsync(SUCCESS_DELAY);
 
