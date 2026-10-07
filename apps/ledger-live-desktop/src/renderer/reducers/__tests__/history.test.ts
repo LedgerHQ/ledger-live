@@ -21,7 +21,7 @@ import historyReducer, {
   hasUnreadOperationsSelector,
 } from "../history";
 import type { State } from "../index";
-import type { CountervaluesState } from "../countervalues";
+import type { CountervaluesState } from "@features/platform-market-countervalues";
 
 const settingsUnreadBase = {
   currenciesSettings: {},

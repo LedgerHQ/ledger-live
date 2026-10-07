@@ -9306,6 +9306,9 @@ importers:
       '@domain/entity-market-countervalues':
         specifier: workspace:*
         version: link:../../../domain/entity/market-countervalues
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2

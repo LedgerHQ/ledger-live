@@ -13,7 +13,7 @@ import { setHideSmallValueTokenOperations } from "~/actions/settings";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
-import { countervaluesStateSelector } from "~/reducers/countervalues";
+import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
 import {
   counterValueCurrencySelector,

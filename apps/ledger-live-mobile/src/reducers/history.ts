@@ -11,7 +11,7 @@ import {
   filterTokenOperationsZeroAmountEnabledSelector,
   hideSmallValueTokenOperationsEffectiveSelector,
 } from "./settings";
-import { countervaluesStateSelector } from "./countervalues";
+import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 
 export type HistoryState = {
   lastSeenOperationDate: string | null;

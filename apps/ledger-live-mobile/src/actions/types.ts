@@ -26,7 +26,6 @@ import type {
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import type { Steps } from "LLM/features/WalletSync/types/Activation";
-import type { CounterValuesState } from "@domain/entity-market-countervalues";
 import type { UnknownAction } from "redux";
 import type {
   BrazeContentCard,
@@ -117,30 +116,6 @@ export type BlePayload =
   | BleUpdateKnownDevicePayload
   | BleImportBlePayload
   | BleSaveDeviceNamePayload;
-
-// === COUNTERVALUES ACTIONS ===
-
-export enum CountervaluesActionTypes {
-  COUNTERVALUES_POLLING_SET_IS_POLLING = "COUNTERVALUES_POLLING_SET_IS_POLLING",
-  COUNTERVALUES_POLLING_SET_TRIGGER_LOAD = "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD",
-  COUNTERVALUES_STATE_SET = "COUNTERVALUES_STATE_SET",
-  COUNTERVALUES_STATE_SET_PENDING = "COUNTERVALUES_STATE_PENDING_SET",
-  COUNTERVALUES_STATE_SET_ERROR = "COUNTERVALUES_STATE_ERROR_SET",
-  COUNTERVALUES_WIPE = "COUNTERVALUES_WIPE_STATE",
-}
-
-export type CountervaluesPollingSetIsPollingPayload = boolean;
-export type CountervaluesPollingSetTriggerLoadPayload = boolean;
-export type CountervaluesStateSetPayload = CounterValuesState;
-export type CountervaluesStateSetPendingPayload = boolean;
-export type CountervaluesStateSetErrorPayload = Error;
-
-export type CountervaluesPayload =
-  | CountervaluesPollingSetIsPollingPayload
-  | CountervaluesPollingSetTriggerLoadPayload
-  | CountervaluesStateSetPayload
-  | CountervaluesStateSetPendingPayload
-  | CountervaluesStateSetErrorPayload;
 
 // === NOTIFICATIONS ACTIONS ===
 

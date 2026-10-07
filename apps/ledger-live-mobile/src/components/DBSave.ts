@@ -29,7 +29,7 @@ import {
   saveWalletExportState,
 } from "~/db";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
-import { countervaluesStateSelector } from "~/reducers/countervalues";
+import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { exportSelector as bleSelector } from "~/reducers/ble";
 import { exportSelector as knownDevicesExportSelector } from "~/reducers/knownDevices";
 import { exportLargeMoverSelector } from "~/reducers/largeMover";

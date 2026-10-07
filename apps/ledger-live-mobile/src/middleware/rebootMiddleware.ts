@@ -1,6 +1,6 @@
 import { Middleware } from "@reduxjs/toolkit";
 import { AppStateActionTypes } from "../actions/types";
-import { wipeCountervalues } from "../actions/countervalues";
+import { wipeCountervalues } from "@features/platform-market-countervalues";
 import SplashScreen from "react-native-splash-screen";
 import { State } from "~/reducers/types";
 

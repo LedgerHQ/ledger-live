@@ -5,7 +5,10 @@ import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { useFeature } from "@features/platform-feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@features/platform-market-countervalues";
+import {
+  setCountervaluesUserSettings,
+  useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
+} from "@features/platform-market-countervalues";
 import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
 import { resolveTrackingPairs } from "@domain/entity-market-countervalues";
 import {
@@ -27,7 +30,6 @@ import {
   userThemeSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "../reducers/wallet";
-import { countervaluesActions } from "./countervalues";
 import { selectExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
 
 export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
@@ -140,7 +142,7 @@ export function useCalculateCountervaluesUserSettings() {
       : undefined;
 
     dispatch(
-      countervaluesActions.COUNTERVALUES_USER_SETTINGS_SET({
+      setCountervaluesUserSettings({
         trackingPairs,
         autofillGaps: true,
         refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
