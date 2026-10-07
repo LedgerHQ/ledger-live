@@ -2,7 +2,7 @@
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
 export const BRIDGE_VERSION = 4;
-export const BOOTSTRAP_VERSION = 1;
+export const BOOTSTRAP_VERSION = 2;
 
 export type Serializable =
   | null
@@ -26,12 +26,7 @@ export type Bootstrap = {
     userData: string;
     home: string;
   };
-  appDirname: string;
   distributionChannel: "mac-app-store" | "windows-store" | "direct";
-  locale: {
-    app: string;
-    system: string;
-  };
   store: Record<string, unknown>;
 };
 

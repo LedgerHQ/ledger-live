@@ -27,9 +27,7 @@ export const bootstrap: Bootstrap = {
     userData: "/tmp/ledger-live-test/userdata",
     home: "/tmp/ledger-live-test/home",
   },
-  appDirname: "/tmp/ledger-live-test/app",
   distributionChannel: "direct",
-  locale: { app: "en-US", system: "en-US" },
   store: {},
 };
 
