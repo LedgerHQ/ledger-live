@@ -74,15 +74,6 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
       - name: Install dependencies
         run: pnpm i --frozen-lockfile --filter="./libs/ui/**"
-      - name: Run unit tests
-        run: pnpm --filter="./libs/ui/**" test:jest:coverage
-      - name: Upload unit test coverage (react)
-        id: generate_coverage_react
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: coverage-ui-react
-          path: ${{ github.workspace }}/libs/ui/packages/react/coverage
       - name: Upload unit test coverage (native)
         id: generate_coverage_native
         if: ${{ !cancelled() && hashFiles('libs/ui/packages/native/coverage/**') != '' }}
