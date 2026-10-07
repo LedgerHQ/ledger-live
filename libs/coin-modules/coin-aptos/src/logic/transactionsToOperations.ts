@@ -25,8 +25,12 @@ export const convertFunctionPayloadResponseToInputEntryFunctionData = (
   };
 };
 
-export const getTransactionSender = (tx: AptosTransaction, address: string): string =>
-  compareAddress(tx.sender, address) ? tx.sender : getFundsOwner(tx);
+export const getTransactionSender = (
+  tx: AptosTransaction,
+  address: string,
+  amountIn: BigNumber,
+): string =>
+  compareAddress(tx.sender, address) && amountIn.isZero() ? tx.sender : getFundsOwner(tx);
 
 const detectType = (address: string, sender: string, value: BigNumber): OP_TYPE => {
   let type = compareAddress(sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
@@ -71,7 +75,7 @@ export function transactionsToOperations(
     }
 
     const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
-    const sender = getTransactionSender(tx, address);
+    const sender = getTransactionSender(tx, address, amount_in);
     const value = calculateAmount(sender, address, amount_in, amount_out);
     const type = detectType(address, sender, value);
 

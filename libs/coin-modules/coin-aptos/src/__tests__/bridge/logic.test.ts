@@ -360,6 +360,46 @@ describe("Aptos sync logic", () => {
         });
       });
 
+      it("is an incoming operation of the signing owner when the owner is the recipient", async () => {
+        const toOwner = {
+          ...multisigTx,
+          payload: {
+            ...multisigTx.payload,
+            transaction_payload: {
+              type: "entry_function_payload",
+              function: "0x1::coin::transfer",
+              type_arguments: [],
+              arguments: ["0x31", "100"],
+            },
+          },
+          events: [
+            multisigTx.events[0],
+            { ...multisigTx.events[1], guid: { account_address: "0x31", creation_number: "2" } },
+          ],
+          changes: [
+            {
+              type: "write_resource",
+              data: {
+                type: APTOS_COIN_CHANGE,
+                data: {
+                  withdraw_events: { guid: { id: { addr: "0x21", creation_num: "1" } } },
+                  deposit_events: { guid: { id: { addr: "0x31", creation_num: "2" } } },
+                },
+              },
+            },
+          ],
+        } as unknown as AptosTransaction;
+
+        const [result] = await txsToOps({ address: "0x31" }, "test_id", [toOwner]);
+
+        expect(result).toHaveLength(1);
+        expect(result[0]).toMatchObject({
+          type: OP_TYPE.IN,
+          value: new BigNumber(100),
+          senders: ["0x21"],
+        });
+      });
+
       it("is an incoming operation of the recipient, sent by the multisig account", async () => {
         const [result] = await txsToOps({ address: "0x12" }, "test_id", [multisigTx]);
 

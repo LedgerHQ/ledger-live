@@ -1,4 +1,5 @@
 import type { TransactionPayloadResponse } from "@aptos-labs/ts-sdk";
+import BigNumber from "bignumber.js";
 import { APTOS_COIN_CHANGE, OP_TYPE } from "../../constants";
 import { normalizeAddress } from "../../logic/normalizeAddress";
 import {
@@ -26,7 +27,10 @@ const multisigPayload = (transaction_payload: unknown) =>
     transaction_payload,
   }) as TransactionPayloadResponse;
 
-const multisigTransfer = (payload: TransactionPayloadResponse): AptosTransaction =>
+const multisigTransfer = (
+  payload: TransactionPayloadResponse,
+  recipient: string = RECIPIENT,
+): AptosTransaction =>
   ({
     type: "user_transaction",
     hash: "0xmultisig",
@@ -43,7 +47,7 @@ const multisigTransfer = (payload: TransactionPayloadResponse): AptosTransaction
       },
       {
         type: "0x1::coin::DepositEvent",
-        guid: { account_address: RECIPIENT, creation_number: "2" },
+        guid: { account_address: recipient, creation_number: "2" },
         data: { amount: "100" },
       },
     ],
@@ -54,7 +58,7 @@ const multisigTransfer = (payload: TransactionPayloadResponse): AptosTransaction
           type: APTOS_COIN_CHANGE,
           data: {
             withdraw_events: { guid: { id: { addr: MULTISIG, creation_num: "1" } } },
-            deposit_events: { guid: { id: { addr: RECIPIENT, creation_num: "2" } } },
+            deposit_events: { guid: { id: { addr: recipient, creation_num: "2" } } },
           },
         },
       },
@@ -111,17 +115,21 @@ describe("getTransactionSender", () => {
   const tx = multisigTransfer(multisigPayload(transferPayload));
 
   it("is the multisig account for the multisig account itself and its counterparties", () => {
-    expect(getTransactionSender(tx, MULTISIG)).toBe(MULTISIG);
-    expect(getTransactionSender(tx, RECIPIENT)).toBe(MULTISIG);
+    expect(getTransactionSender(tx, MULTISIG, BigNumber(0))).toBe(MULTISIG);
+    expect(getTransactionSender(tx, RECIPIENT, BigNumber(100))).toBe(MULTISIG);
   });
 
   it("stays the signing owner for that owner, who only pays the gas", () => {
-    expect(getTransactionSender(tx, OWNER)).toBe(OWNER);
+    expect(getTransactionSender(tx, OWNER, BigNumber(0))).toBe(OWNER);
+  });
+
+  it("is the multisig account for the signing owner when the owner receives the transfer", () => {
+    expect(getTransactionSender(tx, OWNER, BigNumber(100))).toBe(MULTISIG);
   });
 
   it("is the transaction sender for a non-multisig transaction", () => {
     const plainTx = { ...tx, sender: RECIPIENT, payload: transferPayload } as AptosTransaction;
-    expect(getTransactionSender(plainTx, MULTISIG)).toBe(RECIPIENT);
+    expect(getTransactionSender(plainTx, MULTISIG, BigNumber(0))).toBe(RECIPIENT);
   });
 });
 
@@ -142,6 +150,18 @@ describe("transactionsToOperations", () => {
   it("lists a multisig APT transfer as received from the multisig account", () => {
     const [op] = transactionsToOperations(RECIPIENT, [
       multisigTransfer(multisigPayload(transferPayload)),
+    ]);
+
+    expect(op).toMatchObject({
+      type: OP_TYPE.IN,
+      value: BigInt(100),
+      senders: [normalizeAddress(MULTISIG)],
+    });
+  });
+
+  it("lists a multisig APT transfer to its signing owner as received from the multisig account", () => {
+    const [op] = transactionsToOperations(OWNER, [
+      multisigTransfer(multisigPayload({ ...transferPayload, arguments: [OWNER, "100"] }), OWNER),
     ]);
 
     expect(op).toMatchObject({

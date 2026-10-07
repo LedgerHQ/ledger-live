@@ -99,7 +99,7 @@ export const txsToOps = async (
       op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
 
       const { coin_id, amount_in, amount_out, type } = getCoinAndAmounts(tx, address);
-      const sender = getTransactionSender(tx, address);
+      const sender = getTransactionSender(tx, address, amount_in);
       op.value = calculateAmount(sender, address, amount_in, amount_out);
       const direction = compareAddress(sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
       op.type = type === OP_TYPE.UNKNOWN ? direction : type;
