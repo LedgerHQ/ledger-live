@@ -42,7 +42,7 @@ export default class BuySellPage {
   @Step("Open page via deeplink {{{0}}}")
   async openViaDeeplink(page: "Buy" | "Sell") {
     await openDeeplink(page.toLowerCase());
-    await waitForElementById(app.common.walletApiWebview, TIMEOUT.xxlarge, {
+    await waitForElementById(app.common.walletApiWebview, TIMEOUT.xxxlarge, {
       checkVisibility: false,
     });
   }

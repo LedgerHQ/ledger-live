@@ -1,14 +1,9 @@
-import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import CommonPage from "@e2e/page/common.page";
-import { retryUntilTimeout } from "@e2e/utils/retry";
 import { checkForErrorModals } from "@e2e/helpers/errorHelpers";
 import { TIMEOUT } from "@e2e/utils/timeouts";
-
-// Short enough that retryUntilTimeout's own budget still allows a re-tap; the default 60s would
-// consume the whole budget in a single attempt.
-const CONTINUE_DISMISS_TIMEOUT = TIMEOUT.small;
+import { withTimeout } from "@e2e/utils/withTimeout";
 
 // Long enough to outlast the drawer animation, short enough to not stall the variant that skips it.
 const IMPORT_PROMPT_TIMEOUT = TIMEOUT.small;
@@ -52,19 +47,34 @@ export default class AddAccountDrawer extends CommonPage {
     const startTime = Date.now();
 
     // disable sync to avoid Detox hanging during busy account discovery and UI animations
-    await device.disableSynchronization();
-    try {
-      while (Date.now() - startTime < ACCOUNT_DISCOVERY_TIMEOUT) {
-        if (await IsIdVisible(this.continueButtonId, TIMEOUT.medium)) {
-          return;
-        }
-        await checkForErrorModals(TIMEOUT.xxsmall, "Account discovery failed");
+    await this.disableSynchronization();
+    const poll = async (): Promise<void> => {
+      if (Date.now() - startTime >= ACCOUNT_DISCOVERY_TIMEOUT) {
+        throw new Error(
+          `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
+        );
       }
-      throw new Error(
-        `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
+      const visible = await withTimeout(
+        IsIdVisible(this.continueButtonId, TIMEOUT.medium),
+        TIMEOUT.large,
+        "waitAccountsDiscovery:continueButton",
       );
+      if (visible) {
+        return;
+      }
+      await withTimeout(
+        checkForErrorModals(TIMEOUT.xxsmall, "Account discovery failed"),
+        TIMEOUT.small,
+        "waitAccountsDiscovery:errorModal",
+        { rethrow: true },
+      );
+      return poll();
+    };
+
+    try {
+      await poll();
     } finally {
-      await device.enableSynchronization();
+      await this.enableSynchronization();
     }
   }
 
@@ -80,14 +90,9 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Finish account discovery")
   async finishAccountsDiscovery() {
-    await retryUntilTimeout(async () => {
-      await tapById(this.continueButtonId);
-      const dismissed = await waitForElementNotVisible(
-        this.continueButtonId,
-        CONTINUE_DISMISS_TIMEOUT,
-      );
-      if (!dismissed) throw new Error(`${this.continueButtonId} still visible after tap`);
-    });
+    await tapById(this.continueButtonId);
+    const dismissed = await waitForElementNotVisible(this.continueButtonId);
+    if (!dismissed) throw new Error(`${this.continueButtonId} still visible after tap`);
   }
 
   @Step("Expect account discovered {{{0}}}")
