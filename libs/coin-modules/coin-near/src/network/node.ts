@@ -223,8 +223,9 @@ const describeRpcError = (error: SendTxRpcError): string => {
   return detail ? `${name}: ${detail}` : name;
 };
 
-// A NEAR transaction id is the SHA-256 of the Borsh-encoded unsigned transaction, which the
-// signature does not cover.
+// A NEAR transaction id is the SHA-256 of the Borsh-encoded unsigned transaction. That same digest
+// is what gets signed, but the signature itself is not part of the id, so it is hashed from the
+// decoded `transaction` rather than from the signed bytes.
 const deriveTransactionHash = (signedTransaction: string): string | undefined => {
   try {
     const { transaction } = decodeSignedTransaction(base64Decode(signedTransaction));
