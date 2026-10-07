@@ -108,7 +108,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
     currenciesIds,
     loadingChart,
   ]);
-  const renderCard = (card: CardType) => {
+  const renderCard = (card: CardType, moveBy?: (step: 1 | -1) => void) => {
     if (!card.data) return null;
 
     const cardIndex = currenciesWithId.findIndex(c => c.id === card.id);
@@ -130,6 +130,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
         range={range}
         setRange={setRange}
         currentIndex={currentIndex}
+        coinPicker={moveBy && { moveBy, position: cardIndex + 1, total: currenciesWithId.length }}
       />
     );
   };

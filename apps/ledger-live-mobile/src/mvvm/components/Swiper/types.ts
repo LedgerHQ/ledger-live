@@ -6,7 +6,8 @@ type CardWithId = {
 
 type SwiperComponentProps<T> = {
   initialCards: T[];
-  renderCard: (card: T) => React.ReactNode;
+  /** `moveBy` changes card without a gesture; undefined when there is no other card. */
+  renderCard: (card: T, moveBy?: (step: 1 | -1) => void) => React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
   cardContainerStyle?: StyleProp<ViewStyle>;
   currentIndex: number;

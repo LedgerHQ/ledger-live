@@ -10463,6 +10463,7 @@
     }
   },
   "largeMover": {
+    "coinPosition": "{{position}} of {{total}}",
     "info": "Info",
     "marketCap": "Market cap",
     "volume": "Volume (24h)",

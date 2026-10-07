@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { StyleSheet } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import { Ticker } from "./Ticker";
+import { CoinPicker, Ticker } from "./Ticker";
 import { LargeMoverGraph } from "./LargeMoverGraph";
 import { TimeFrame } from "./TimeFrame";
 import { Performance } from "./Performance";
@@ -30,6 +30,7 @@ type CardProps = {
   range: KeysPriceChange;
   setRange: (range: KeysPriceChange) => void;
   currentIndex: number;
+  coinPicker?: CoinPicker;
 };
 
 const { width } = getWindowDimensions();
@@ -43,6 +44,7 @@ export const Card: React.FC<CardProps> = ({
   height,
   chartData,
   currentIndex,
+  coinPicker,
 }) => {
   const graphWidth = width * 0.86;
   const timeframehWidth = width * 0.96;
@@ -86,7 +88,7 @@ export const Card: React.FC<CardProps> = ({
         />
       </Svg>
       <Flex alignItems="center" zIndex={10} top={4}>
-        <Ticker currency={currency} width={width} />
+        <Ticker currency={currency} width={width} coinPicker={coinPicker} />
       </Flex>
       <ScrollView
         showsVerticalScrollIndicator={false}

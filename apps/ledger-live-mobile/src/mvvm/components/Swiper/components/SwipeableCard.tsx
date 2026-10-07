@@ -83,7 +83,12 @@ function useSwipeStyle(swipeX: SharedValue<number>, swipeY: SharedValue<number>,
 export default function SwipeableCard({ children, index, swipeX, swipeY }: SwipeableCardProps) {
   const animatedStyle = useSwipeStyle(swipeX, swipeY, index);
 
-  return <Animated.View style={[styles.card, animatedStyle]}>{children}</Animated.View>;
+  // Only the front card is exposed to screen readers; the stacked ones behind it are not visible.
+  return (
+    <Animated.View style={[styles.card, animatedStyle]} aria-hidden={index !== 0}>
+      {children}
+    </Animated.View>
+  );
 }
 
 const styles = StyleSheet.create({
