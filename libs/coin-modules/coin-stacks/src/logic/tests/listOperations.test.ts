@@ -119,6 +119,34 @@ describe("listOperations", () => {
     expect(items[0].tx.hash).toBe("0xtx-new");
   });
 
+  it("skips a transfer below minHeight before resolving its token, so a failing lookup cannot abort the sync", async () => {
+    mockFetchFungibleTokenMetadataCached.mockRejectedValue(new Error("metadata API down"));
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({
+        tx_id: "0xtoken-old",
+        block_height: 100,
+        tx_type: "contract_call",
+        contract_call: {
+          contract_id: "SP_CONTRACT.token-x",
+          function_name: "transfer",
+          function_signature: "",
+          function_args: sip010TransferArgs(),
+        },
+      }),
+      baseTx({
+        tx_id: "0xtx-new",
+        block_height: 200,
+        token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+      }),
+    ]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 150 });
+
+    expect(mockFetchFungibleTokenMetadataCached).not.toHaveBeenCalled();
+    expect(items).toHaveLength(1);
+    expect(items[0].tx.hash).toBe("0xtx-new");
+  });
+
   it("rejects a cursor", async () => {
     await expect(listOperations(SENDER, { minHeight: 0, cursor: "abc" })).rejects.toThrow(
       "cursor is not supported for Stacks",

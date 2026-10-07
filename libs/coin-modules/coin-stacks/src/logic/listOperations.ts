@@ -306,23 +306,24 @@ export async function listOperations(
     throw new Error("cursor is not supported for Stacks: the full history is fetched in one page");
   }
 
-  const transactions = await fetchAllTransactions(address);
+  // No incremental fetch on the indexer side (the full history is always pulled), so minHeight is
+  // applied here instead of being rejected -- getAccountShape's re-sync always passes a non-zero
+  // minHeight once an account has any operation. It filters transactions before they are converted,
+  // so a token-metadata lookup that fails for an already-synced transfer cannot abort the sync.
+  const transactions = (await fetchAllTransactions(address)).filter(
+    tx => tx.tx.block_height >= minHeight,
+  );
   // Sequential, so each token id is resolved (and its metadata fetched) once per call.
   const resolvedTokenIds: Record<string, string> = {};
   const operations: Operation[] = [];
   for (const tx of transactions) {
     operations.push(...(await toOperations(tx, address, resolvedTokenIds)));
   }
-  const sorted = operations
-    // No incremental fetch on the indexer side (the full history is always pulled above), so
-    // minHeight is applied here instead of being rejected -- getAccountShape's re-sync always
-    // passes a non-zero minHeight once an account has any operation.
-    .filter(op => op.tx.block.height >= minHeight)
-    .sort((a, b) =>
-      order === "asc"
-        ? a.tx.date.getTime() - b.tx.date.getTime()
-        : b.tx.date.getTime() - a.tx.date.getTime(),
-    );
+  const sorted = operations.sort((a, b) =>
+    order === "asc"
+      ? a.tx.date.getTime() - b.tx.date.getTime()
+      : b.tx.date.getTime() - a.tx.date.getTime(),
+  );
   // No cursor support (the full history is always fetched above), so a limit only caps the
   // returned page size -- it does not enable fetching the remainder via `next`.
   const items = limit !== undefined ? sorted.slice(0, limit) : sorted;
