@@ -319,14 +319,14 @@ export async function listOperations(
   for (const tx of transactions) {
     operations.push(...(await toOperations(tx, address, resolvedTokenIds)));
   }
-  const sorted = operations.sort((a, b) =>
+  operations.sort((a, b) =>
     order === "asc"
       ? a.tx.date.getTime() - b.tx.date.getTime()
       : b.tx.date.getTime() - a.tx.date.getTime(),
   );
   // No cursor support (the full history is always fetched above), so a limit only caps the
   // returned page size -- it does not enable fetching the remainder via `next`.
-  const items = limit !== undefined ? sorted.slice(0, limit) : sorted;
+  const items = limit !== undefined ? operations.slice(0, limit) : operations;
 
   return { items, next: undefined };
 }
