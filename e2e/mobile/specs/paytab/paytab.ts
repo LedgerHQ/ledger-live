@@ -23,6 +23,7 @@ const ALL_STABLECOINS = "All stablecoins";
 const BANK_TRANSFER_CREATE_ACCOUNT = "Create an account";
 const FREEZE = "Freeze";
 const UNFREEZE = "Unfreeze";
+const CARD_TRANSACTION_STATUS = /^(Confirmed|Pending|Declined|Reverted)$/;
 const CONTACT_ID = "e2e-pay-contact";
 const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
 const CONTACT_NAME = generateContactName();
@@ -244,6 +245,28 @@ export function runPayFreezeTest(tmsLinks: string[], tags: string[]) {
       await app.payTab.expectCardNotFrozen();
       await app.payTab.expectFreezeTile(FREEZE);
       await app.payTab.closeCardDetails();
+    });
+  });
+}
+
+export function runPayCardHistoryTest(tmsLinks: string[], tags: string[]) {
+  describe("Pay tab", () => {
+    beforeAll(async () => {
+      await initPayTabApp();
+    });
+
+    setTeamOwner(Team.WALLET_XP);
+    tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
+
+    it("Open a card transaction from history", async () => {
+      await app.mainNavigation.tapTopBarTransactionHistory();
+      await app.operation.expectCryptoHistoryTab();
+      await app.operation.expectCardHistoryTab();
+      await app.operation.openCardHistoryTab();
+      await app.operation.openFirstCardTransaction();
+      await app.operation.expectCardTransactionAmount();
+      await app.operation.expectCardTransactionStatus(CARD_TRANSACTION_STATUS);
     });
   });
 }
