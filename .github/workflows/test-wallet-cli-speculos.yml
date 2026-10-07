@@ -1,0 +1,116 @@
+name: "[Wallet CLI] - Speculos smoke test"
+
+on:
+  pull_request:
+    branches-ignore:
+      - "smartling-content-updated**"
+      - "smartling-translation-completed**"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The branch, tag or sha to test
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  determine-affected:
+    name: "Affected"
+    if: ${{ github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork }}
+    permissions:
+      contents: read
+      id-token: write
+    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
+    with:
+      head_branch: ${{ github.event.pull_request.head.ref }}
+      base_branch: ${{ github.event.pull_request.base.ref }}
+    secrets:
+      GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
+      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+  speculos-smoke:
+    name: "Speculos smoke (NanoSP, Ethereum)"
+    needs: determine-affected
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || contains(needs.determine-affected.outputs.paths, 'wallet-cli')) }}
+    runs-on: [ledger-live-4xlarge]
+    timeout-minutes: 30
+    continue-on-error: true
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:v0.26.5
+      SPECULOS_FIRMWARE_VERSION: 1.6.1
+      SPECULOS_DEVICE: nanoSP
+      SPECULOS_API_PORT: 5000
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
+
+      - name: Setup Speculos image and Coin Apps
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        with:
+          coinapps_path: coin-apps
+          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
+          bot_id: ${{ secrets.GH_BOT_CLIENT_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Start Speculos with the Ethereum app
+        run: |
+          app_dir="coin-apps/nanos+/${SPECULOS_FIRMWARE_VERSION}/Ethereum"
+          app=$(ls "$app_dir"/app_*.elf 2>/dev/null | sort -V | tail -n 1)
+          if [ -z "$app" ]; then
+            echo "::error::No Ethereum app found in $app_dir"
+            exit 1
+          fi
+          echo "Using ${app#coin-apps/}"
+          # No --seed: the default Speculos seed is enough, the smoke test checks no fixed address.
+          docker run -d --name wallet-cli-speculos --network=host \
+            -v "$PWD/coin-apps:/speculos/apps" \
+            "$SPECULOS_IMAGE_TAG" \
+            --model nanosp "./apps/${app#coin-apps/}" \
+            --display headless --api-port "$SPECULOS_API_PORT"
+          for _ in $(seq 1 60); do
+            if curl -sf "http://127.0.0.1:${SPECULOS_API_PORT}/events?currentscreenonly=true" > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::Speculos did not start"
+          docker logs wallet-cli-speculos
+          exit 1
+
+      - name: Run the Speculos smoke test
+        run: pnpm exec nx run @ledgerhq/wallet-cli:test:speculos
+
+      - name: Speculos logs
+        if: ${{ failure() }}
+        run: docker logs wallet-cli-speculos || true
+
+      - name: Stop Speculos
+        if: ${{ always() }}
+        run: docker rm -f wallet-cli-speculos || true
