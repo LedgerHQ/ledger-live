@@ -87,7 +87,7 @@ export function createRendererConfig(
         // .node addon stays out of the bundle: it is hosted in a UtilityProcess,
         // reached over the `zcash:*` channels the main process registers (see
         // `@ledgerhq/coin-zcash/network/ipc/main-host`).
-        "@ledgerhq/coin-zcash/network/ZCash$": "@ledgerhq/coin-zcash/network/ZCashIPC",
+        "@ledgerhq/coin-zcash/network/ZCash$": path.resolve(lldRoot, "src", "renderer", "zcash.ts"),
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),

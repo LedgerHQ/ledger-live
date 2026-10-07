@@ -12,6 +12,7 @@ import {
   type StoreBridge,
   type ShellBridge,
   type SystemBridge,
+  type ZcashBridge,
 } from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
@@ -88,6 +89,11 @@ export const system: jest.Mocked<SystemBridge> = {
   clipboardMatchesText: jest.fn().mockResolvedValue(null),
   setVisualZoomLevelLimits: jest.fn(),
   getResourceUsage: jest.fn(() => undefined),
+};
+
+export const zcash: jest.Mocked<ZcashBridge> = {
+  invoke: jest.fn().mockResolvedValue(undefined),
+  subscribe: jest.fn((_channel: string, _callback: (payload: unknown) => void) => () => {}),
 };
 
 export const cardSession: CardSessionBridge = {
