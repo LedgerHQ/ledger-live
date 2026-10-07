@@ -35,7 +35,7 @@ export function useExportLogs() {
         filters: [{ name: "All Files", extensions: ["txt"] }],
       });
 
-      if (path) {
+      if (path && !path.canceled) {
         await saveLogs(path);
       }
     } catch (error) {

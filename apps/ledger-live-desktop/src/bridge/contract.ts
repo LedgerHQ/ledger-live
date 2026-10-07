@@ -49,6 +49,55 @@ export type DbBridge = {
   cleanCache(): Promise<void>;
 };
 
+/** A closure: listener identity does not survive the bridge, so removeListener would no-op. */
+export type Unsubscribe = () => void;
+
+export type UpdaterStatusEvent = {
+  status: string;
+  payload?: { percent?: number; version?: string };
+};
+
+export type UpdaterBridge = {
+  init(): void;
+  quitAndInstall(): void;
+  onStatus(callback: (event: UpdaterStatusEvent) => void): Unsubscribe;
+};
+
+export type DeeplinkBridge = {
+  open(url: string): void;
+  onOpen(callback: (url: string) => void): Unsubscribe;
+};
+
+export type SaveTarget = { canceled: boolean; filePath?: string };
+
+export type AppBridge = {
+  reload(): void;
+  relaunch(): void;
+  quit(): void;
+  show(): void;
+};
+
+export type DialogsBridge = {
+  showSave(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
+};
+
+export type FilesBridge = {
+  /** Pre-stringified: the logs hold circular references the bridge cannot carry. */
+  saveLogs(target: SaveTarget, logsJson: string): Promise<void>;
+  exportOperations(target: SaveTarget, csv: string): Promise<boolean>;
+  openUserDataDirectory(): Promise<unknown>;
+};
+
+export type PowerBridge = {
+  keepScreenAwake(): Promise<number>;
+  release(blockerId?: number): Promise<void>;
+};
+
+export type StoreBridge = {
+  set(key: string, value: unknown): void;
+  clear(): void;
+};
+
 /** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
 export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
@@ -58,6 +107,13 @@ export type LedgerBridge = {
   version: typeof BRIDGE_VERSION;
   bootstrap: Bootstrap;
   db: DbBridge;
+  updater: UpdaterBridge;
+  deeplink: DeeplinkBridge;
+  app: AppBridge;
+  dialogs: DialogsBridge;
+  files: FilesBridge;
+  power: PowerBridge;
+  store: StoreBridge;
   cardSession: CardSessionBridge;
 };
 
@@ -77,5 +133,17 @@ export const CHANNELS = {
   resetAll: "resetAll",
   reload: "reload",
   cleanCache: "cleanCache",
+  updater: "updater",
+  deepLinking: "deep-linking",
+  appReload: "app-reload",
+  appRelaunch: "app-relaunch",
+  appQuit: "app-quit",
+  showApp: "show-app",
+  showSaveDialog: "show-save-dialog",
+  saveLogs: "save-logs",
+  exportOperations: "export-operations",
+  openUserDataDirectory: "openUserDataDirectory",
+  keepScreenAwake: "activate-keep-screen-awake",
+  releaseScreenAwake: "deactivate-keep-screen-awake",
   cardSessionBootstrap: "card-session:bootstrap",
 } as const;

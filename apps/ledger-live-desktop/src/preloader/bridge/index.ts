@@ -8,6 +8,8 @@ import {
 } from "~/bridge/contract";
 import { expose } from "./expose";
 import { db } from "./db";
+import { deeplink, updater } from "./push";
+import { app, dialogs, files, power, store } from "./shell";
 
 const deepFreeze = <T>(value: T): T => {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
@@ -33,6 +35,13 @@ export function installBridge(): void {
     version: BRIDGE_VERSION,
     bootstrap: deepFreeze(bootstrap),
     db,
+    updater,
+    deeplink,
+    app,
+    dialogs,
+    files,
+    power,
+    store,
     cardSession,
   };
 

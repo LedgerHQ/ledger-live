@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from "tests/testSetup";
-import { ipcRenderer } from "electron";
+import { dialogs, files } from "~/renderer/bridge";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
@@ -36,7 +36,8 @@ jest.mock("~/renderer/logger", () => ({
   default: { error: jest.fn(), onReduxAction: jest.fn() },
 }));
 
-const mockedIpcInvoke = jest.mocked(ipcRenderer.invoke);
+const mockShowSave = jest.mocked(dialogs.showSave);
+const mockExportOperations = jest.mocked(files.exportOperations);
 
 const mockToken: TokenCurrency = {
   id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdt"),
@@ -98,9 +99,8 @@ function setupHook(
 }
 
 function mockSaveDialogThenExport(fileSaved: boolean) {
-  mockedIpcInvoke
-    .mockResolvedValueOnce({ filePath: "/path/to/file.csv" })
-    .mockResolvedValueOnce(fileSaved);
+  mockShowSave.mockResolvedValueOnce({ filePath: "/path/to/file.csv" } as never);
+  mockExportOperations.mockResolvedValueOnce(fileSaved);
 }
 
 describe("useExportOperationsCsv", () => {
@@ -256,7 +256,7 @@ describe("useExportOperationsCsv", () => {
   it("should do nothing when save dialog is cancelled", async () => {
     const onSuccess = jest.fn();
     const onError = jest.fn();
-    mockedIpcInvoke.mockResolvedValueOnce({ canceled: true, filePath: "" });
+    mockShowSave.mockResolvedValueOnce({ canceled: true, filePath: "" } as never);
 
     const { result } = setupHook({ onSuccess, onError });
 
@@ -272,7 +272,7 @@ describe("useExportOperationsCsv", () => {
 
   it("should set error when show-save-dialog rejects", async () => {
     const onError = jest.fn();
-    mockedIpcInvoke.mockRejectedValueOnce(new Error("IPC failure"));
+    mockShowSave.mockRejectedValueOnce(new Error("IPC failure"));
 
     const { result } = setupHook({ onError });
 
@@ -286,9 +286,8 @@ describe("useExportOperationsCsv", () => {
 
   it("should set error when export-operations IPC rejects", async () => {
     const onError = jest.fn();
-    mockedIpcInvoke
-      .mockResolvedValueOnce({ filePath: "/path/to/file.csv" })
-      .mockRejectedValueOnce(new Error("write failed"));
+    mockShowSave.mockResolvedValueOnce({ filePath: "/path/to/file.csv" } as never);
+    mockExportOperations.mockRejectedValueOnce(new Error("write failed"));
 
     const { result } = setupHook({ onError });
 

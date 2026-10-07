@@ -109,7 +109,7 @@ const ExportLogsBtnInner = ({
       };
     }
 
-    if (path) {
+    if (path && !path.canceled) {
       await saveLogs(path);
     }
   }, [accounts, getDateTxt, userId]);
