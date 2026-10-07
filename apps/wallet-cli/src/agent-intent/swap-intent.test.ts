@@ -116,7 +116,7 @@ describe("fetchAgentSwapQuote", () => {
       response({
         quotes: [
           quote("okx", { receiveAmount: 1300, tokenAllowance: { isApproved: false } }),
-          quote("velora", { receiveAmount: 1290, permitData: { orderHash: "0x1" } }),
+          quote("velora", { receiveAmount: 1290, permitData: { typedData: { primaryType: "x" } } }),
           {
             ...quote("lifi", { receiveAmount: 1280 }),
             errors: [{ code: "x" }],
@@ -127,6 +127,21 @@ describe("fetchAgentSwapQuote", () => {
     );
 
     expect(result).toEqual({ provider: "oneinch", receiveAmount: 1270 });
+  });
+
+  it("keeps a Velora quote whose permit data is only its price route, not a permit", async () => {
+    const result = await fetchAgentSwapQuote(request, async () =>
+      response({
+        quotes: [
+          quote("velora", {
+            receiveAmount: 1290,
+            permitData: { priceRoute: { blockNumber: 1 }, providerTag: "velora" },
+          }),
+        ],
+      }),
+    );
+
+    expect(result).toEqual({ provider: "velora", receiveAmount: 1290 });
   });
 
   it("explains when every quote needs an approval or a permit", async () => {

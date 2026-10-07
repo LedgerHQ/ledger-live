@@ -7,10 +7,13 @@ import {
 export type AgentSwapQuote = { provider: string; receiveAmount: number };
 
 /** A quote the Agent Intent frontend can prepare without an extra signature: it never crafts a
- * token approval or a Permit2 message, so those would leave the intent stuck in review. */
+ * token approval or a Permit2 message, so those would leave the intent stuck in review.
+ * `permitData` alone isn't a permit: Velora's ordinary route lives there too (`priceRoute`). */
 function isPreparable(quote: Quote): boolean {
   const { tokenAllowance, permitData } = quote.quoteDetails;
-  return quote.errors.length === 0 && tokenAllowance?.isApproved !== false && !permitData;
+  return (
+    quote.errors.length === 0 && tokenAllowance?.isApproved !== false && !permitData?.typedData
+  );
 }
 
 function describeQuotesError(error: QuotesError): string {
