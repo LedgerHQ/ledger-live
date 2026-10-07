@@ -105,14 +105,18 @@ From **this package** (`apps/wallet-cli`):
 pnpm start -- <command> [args]
 ```
 
-`pnpm start` runs `bun run ./src/cli.ts`. Standalone builds under `dist/` rely on `init-cwd.ts` so Bunli config and native bindings resolve correctly; prefer the package scripts when developing from source.
+`pnpm start` runs `bun run ./src/cli.ts`; prefer the package scripts when developing from source.
 
 ## Build (optional)
 
-- In `apps/wallet-cli`: `pnpm build` (Bunli native bundle → `dist/`)
+- In `apps/wallet-cli`: `pnpm build` (`scripts/build.mjs`: one standalone Bun executable per release target → `dist/<target>/cli`)
 - From repo root: `pnpm build:wallet-cli`
 
-`pnpm build` compiles all release targets, so it needs the OpenTUI runtime packages of every platform. CI declares `supportedArchitectures` through the `pnpm-cross-platform-optional-deps` composite; locally, build for your own platform only with `pnpm exec bunli build --targets native`.
+`pnpm build` compiles all release targets, so it needs the native optional packages (such as `@napi-rs/keyring`) of every platform. CI declares `supportedArchitectures` through the `pnpm-cross-platform-optional-deps` composite; locally, build for your own platform only with `pnpm build native`.
+
+## Adding a command
+
+Top-level commands are listed in [`src/commands/registry.ts`](src/commands/registry.ts) with their name, description, subcommand names and a loader. `src/cli.ts` loads only the modules of the commands named on the command line; root help, unknown-command suggestions and analytics read the registry. The command module takes its description from the registry with `commandDescription("<name>")`; `registry.test.ts` fails when a command module is missing from the registry or its subcommands no longer match.
 
 ## Tests
 
@@ -186,4 +190,4 @@ By default `doctor` scans the agent skill directories under the current working 
 
 `--fix` self-heals conservatively: it reinstalls `outdated` and `missing` skills, but leaves `modified-locally` skills untouched unless you also pass `--force` (`skill doctor --fix --force`), which overwrites local edits.
 
-The embedded content is generated from the canonical `.agents/skills/` directory (`.claude/skills` is just a symlink to it) into `src/skills/manifest.gen.ts` by `pnpm generate:skills`. That file is **generated, not committed** (gitignored like `.bunli/commands.gen.ts`) and is regenerated automatically before `typecheck`, `test`, and `build` via the `pretypecheck` / `pretest` / `prebuild` npm hooks. `pnpm check:skills` validates that generation succeeds (every shipped skill is found in the sources).
+The embedded content is generated from the canonical `.agents/skills/` directory (`.claude/skills` is just a symlink to it) into `src/skills/manifest.gen.ts` by `pnpm generate:skills`. That file is **generated, not committed** (gitignored) and is regenerated automatically before `typecheck`, `test`, and `build` via the `pretypecheck` / `pretest` / `prebuild` npm hooks. `pnpm check:skills` validates that generation succeeds (every shipped skill is found in the sources).

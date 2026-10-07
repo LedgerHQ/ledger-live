@@ -14,7 +14,7 @@
 // published to LedgerHQ/agent-skills cannot drift apart.
 //
 // The generated file (src/skills/manifest.gen.ts) is NOT committed — it is
-// gitignored (same convention as .bunli/commands.gen.ts) and regenerated before
+// gitignored and regenerated before
 // typecheck / test / build via the pre* npm scripts.
 //
 // Usage:

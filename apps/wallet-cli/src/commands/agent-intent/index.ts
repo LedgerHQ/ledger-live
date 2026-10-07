@@ -5,11 +5,10 @@ import RecoverCommand from "./recover";
 import ShowCommand from "./show";
 import SendCommand from "./send";
 import SyncCommand from "./sync";
+import { commandDescription } from "../registry";
 
 export default defineGroup({
   name: "agent-intent",
-  description:
-    "Enroll and manage Agent Intent profiles for AI agents proposing EVM payments for human " +
-    "review, and sync their Ledger Sync accounts.",
+  description: commandDescription("agent-intent"),
   commands: [EnrollCommand, RecoverCommand, ListCommand, ShowCommand, SendCommand, SyncCommand],
 });
