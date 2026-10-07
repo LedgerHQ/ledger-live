@@ -125,41 +125,49 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
       ) : null}
 
       <Box lx={SECTION_LX} style={divider}>
-        <Box lx={BUTTONS_LX}>
-          {vm.sendableRows.length === 0 ? (
-            <Text typography="body2" style={muted}>
-              No event accepted in this state
-            </Text>
-          ) : (
-            vm.sendableRows.map(row => (
-              <Button
-                key={row.key}
-                size="sm"
-                appearance="transparent"
-                disabled={!vm.canSend}
-                onPress={() => vm.send(row.event)}
-              >
-                {row.label}
-              </Button>
-            ))
-          )}
-        </Box>
-        <Box lx={{ ...LOG_LX, marginTop: "s16" }}>
-          <PossibleNext rows={vm.nextStates} />
-          {vm.logLines.length === 0 ? (
-            <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
-              —
-            </Text>
-          ) : (
-            vm.logLines.map(line =>
-              line.line === "state" ? (
-                <StateChip key={line.key} step={line} />
+        {vm.sendableRows.length === 0 && vm.logLines.length === 0 && vm.nextStates.length === 0 ? (
+          <Text typography="body2" style={muted}>
+            Connect a paired device.
+          </Text>
+        ) : (
+          <>
+            <Box lx={BUTTONS_LX}>
+              {vm.sendableRows.length === 0 ? (
+                <Text typography="body2" style={muted}>
+                  No event accepted in this state
+                </Text>
               ) : (
-                <EventLine key={line.id} event={line} />
-              ),
-            )
-          )}
-        </Box>
+                vm.sendableRows.map(row => (
+                  <Button
+                    key={row.key}
+                    size="sm"
+                    appearance="transparent"
+                    disabled={!vm.canSend}
+                    onPress={() => vm.send(row.event)}
+                  >
+                    {row.label}
+                  </Button>
+                ))
+              )}
+            </Box>
+            <Box lx={{ ...LOG_LX, marginTop: "s16" }}>
+              <PossibleNext rows={vm.nextStates} />
+              {vm.logLines.length === 0 ? (
+                <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
+                  —
+                </Text>
+              ) : (
+                vm.logLines.map(line =>
+                  line.line === "state" ? (
+                    <StateChip key={line.key} step={line} />
+                  ) : (
+                    <EventLine key={line.id} event={line} />
+                  ),
+                )
+              )}
+            </Box>
+          </>
+        )}
       </Box>
 
       {vm.exitRows.length > 0 ? <Rows title="Exit" rows={vm.exitRows} /> : null}

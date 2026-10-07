@@ -10,6 +10,13 @@ const connectedDevice = {
 };
 
 describe("DeviceOnboarding", () => {
+  it("asks to connect a paired device before a run starts", () => {
+    render(<DeviceOnboarding {...buildProps()} />);
+
+    expect(screen.getByText("Connect a paired device.")).toBeTruthy();
+    expect(screen.queryByText("No event accepted in this state")).toBeNull();
+  });
+
   it("renders the state and one button per offered event", () => {
     render(
       <DeviceOnboarding
