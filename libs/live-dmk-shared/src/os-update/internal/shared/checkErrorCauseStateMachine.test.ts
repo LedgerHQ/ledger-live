@@ -8,12 +8,14 @@ import {
   type ConnectedDevice,
   type DeviceManagementKit,
   type DeviceSessionState,
+  type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import { Subject } from "rxjs";
 import { createActor, fromCallback, type Actor, type AnyEventObject } from "xstate";
 import { checkErrorCauseStateMachine } from "./checkErrorCauseStateMachine";
 import {
   DEVICE_CALL_TIMEOUT_MS,
+  DISCOVERY_TIMEOUT_MS,
   POLL_INTERVAL_MS,
   SESSION_SETTLE_TIMEOUT_MS,
   SESSION_TEARDOWN_TIMEOUT_MS,
@@ -29,14 +31,29 @@ import {
 
 const SESSION_ID = "session-id";
 const DEVICE_ID = "device-id";
+const NEW_DEVICE_ID = "new-device-id";
 const TRANSPORT = "RN_BLE";
 
 const CONNECTED_DEVICE: ConnectedDevice = {
   id: DEVICE_ID,
   sessionId: SESSION_ID,
   modelId: DeviceModelId.STAX,
+  name: "Ledger Stax 123A",
   transport: TRANSPORT,
 } as ConnectedDevice;
+
+const REDISCOVERED_DEVICE: DiscoveredDevice = {
+  id: NEW_DEVICE_ID,
+  name: "123A",
+  deviceModel: { id: NEW_DEVICE_ID, model: DeviceModelId.STAX, name: "Stax" },
+  transport: TRANSPORT,
+} as DiscoveredDevice;
+
+const RECONNECTED_DEVICE: ConnectedDevice = {
+  ...CONNECTED_DEVICE,
+  id: NEW_DEVICE_ID,
+  name: "123A",
+};
 
 const DASHBOARD_APP = { name: "BOLOS", version: "2.2.3" };
 
@@ -52,6 +69,9 @@ describe("checkErrorCauseStateMachine", () => {
   let getDeviceSessionState: jest.Mock;
   let connect: jest.Mock;
   let disconnect: jest.Mock;
+  let stopDiscovering: jest.Mock;
+  let getConnectedDevice: jest.Mock;
+  let availableDevices$: Subject<DiscoveredDevice[]>;
   let sessionState$: Subject<DeviceSessionState>;
   let sessionStateUnsubscribe: jest.Mock;
   let hostEvents: DeviceSituationEvent[];
@@ -88,8 +108,18 @@ describe("checkErrorCauseStateMachine", () => {
     await settle();
   };
 
-  /** The device accepts connections again, as it would once it is back within reach. */
-  const deviceComesBack = () => connect.mockResolvedValue(SESSION_ID);
+  /** The device shows up again under a new address, and the session reopens on it. */
+  const deviceComesBack = async () => {
+    connect.mockResolvedValue(SESSION_ID);
+    getConnectedDevice.mockReturnValue(RECONNECTED_DEVICE);
+    availableDevices$.next([REDISCOVERED_DEVICE]);
+    await settle();
+  };
+
+  const recovered = (connectedDevice: ConnectedDevice = CONNECTED_DEVICE) => ({
+    result: CheckErrorCauseResult.Recovered,
+    connectedDevice,
+  });
 
   const situations = () => hostEvents.map(event => event.situation);
 
@@ -104,12 +134,13 @@ describe("checkErrorCauseStateMachine", () => {
     });
     sessionState$ = new Subject<DeviceSessionState>();
     sessionStateUnsubscribe = jest.fn();
-    // A device that just dropped refuses connections until it is back: tests that cover the
-    // recovery opt in with `deviceComesBack`.
     connect = jest.fn(async () => {
       throw new Error("device unavailable");
     });
     disconnect = jest.fn(async () => undefined);
+    stopDiscovering = jest.fn(async () => undefined);
+    getConnectedDevice = jest.fn(() => CONNECTED_DEVICE);
+    availableDevices$ = new Subject();
     getDeviceSessionState = jest.fn(() => ({
       subscribe: (observer: {
         next?: (state: DeviceSessionState) => void;
@@ -138,6 +169,9 @@ describe("checkErrorCauseStateMachine", () => {
       getDeviceSessionState,
       connect,
       disconnect,
+      stopDiscovering,
+      getConnectedDevice,
+      listenToAvailableDevices: jest.fn(() => availableDevices$.asObservable()),
     } as unknown as DeviceManagementKit;
   });
 
@@ -172,7 +206,7 @@ describe("checkErrorCauseStateMachine", () => {
       await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
       await settle();
 
-      expect(actor.getSnapshot().output).toBe(CheckErrorCauseResult.Recovered);
+      expect(actor.getSnapshot().output).toEqual(recovered());
     });
 
     it("should report a locked device when the settle timeout probe returns a device-locked error", async () => {
@@ -213,7 +247,7 @@ describe("checkErrorCauseStateMachine", () => {
 
       expect(getDeviceSessionState).not.toHaveBeenCalled();
       expect(situations()).toEqual([DeviceSituation.DISCONNECTED]);
-      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnecting" });
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
     });
 
     it("should stay silent while identifying a connection loss", async () => {
@@ -232,7 +266,7 @@ describe("checkErrorCauseStateMachine", () => {
 
       expect(sessionStateUnsubscribe).toHaveBeenCalled();
       expect(situations()).toEqual([DeviceSituation.DISCONNECTED]);
-      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnecting" });
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
     });
 
     it("should report a disconnected device when the session state completes", async () => {
@@ -242,7 +276,7 @@ describe("checkErrorCauseStateMachine", () => {
       await settle();
 
       expect(situations()).toEqual([DeviceSituation.DISCONNECTED]);
-      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnecting" });
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
     });
 
     it("should report a disconnected device when the session is already gone", async () => {
@@ -253,7 +287,7 @@ describe("checkErrorCauseStateMachine", () => {
       await start();
 
       expect(situations()).toEqual([DeviceSituation.DISCONNECTED]);
-      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnecting" });
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
     });
 
     it("should report a disconnected device when the settle timeout probe finds no session left", async () => {
@@ -265,7 +299,7 @@ describe("checkErrorCauseStateMachine", () => {
       await settle();
 
       expect(situations()).toEqual([DeviceSituation.DISCONNECTED]);
-      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnecting" });
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
     });
   });
 
@@ -288,7 +322,8 @@ describe("checkErrorCauseStateMachine", () => {
       resolveDisconnect();
       await settle();
 
-      expect(connect).toHaveBeenCalled();
+      expect(connect).not.toHaveBeenCalled();
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
     });
 
     // Reconnecting over the link the transport still holds hands back a session that looks healthy
@@ -306,7 +341,7 @@ describe("checkErrorCauseStateMachine", () => {
 
       await start({ error: new DeviceDisconnectedWhileSendingError() });
 
-      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnecting" });
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
     });
 
     it("should give up on a transport that never confirms the disconnection", async () => {
@@ -318,148 +353,171 @@ describe("checkErrorCauseStateMachine", () => {
       await jest.advanceTimersByTimeAsync(SESSION_TEARDOWN_TIMEOUT_MS);
       await settle();
 
-      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnecting" });
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
     });
   });
 
   describe("reconnection", () => {
-    it("should reconnect with the captured device so the DMK reuses its session id", async () => {
-      deviceComesBack();
-
+    it("should reconnect under the same session id on the device discovery found", async () => {
       await start({ error: new DeviceDisconnectedWhileSendingError() });
+
+      expect(connect).not.toHaveBeenCalled();
+
+      await deviceComesBack();
 
       expect(connect).toHaveBeenCalledWith({
-        device: expect.objectContaining({ id: DEVICE_ID, sessionId: SESSION_ID }),
+        device: expect.objectContaining({ id: NEW_DEVICE_ID, sessionId: SESSION_ID }),
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
-      expect(actor.getSnapshot().output).toBe(CheckErrorCauseResult.Recovered);
+      expect(stopDiscovering).toHaveBeenCalled();
+      expect(actor.getSnapshot().output).toEqual(recovered(RECONNECTED_DEVICE));
     });
 
-    // The transport holds the link while it runs its own reconnection, which keeps the device from
-    // advertising. Retrying the connection is the only way to find out that it is reachable again.
-    it("should retry until the device accepts the connection", async () => {
+    it("should retry discovery until the device shows up", async () => {
       await start({ error: new DeviceDisconnectedWhileSendingError() });
 
-      expect(connect).toHaveBeenCalledTimes(1);
-      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnecting" });
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
+      expect(connect).not.toHaveBeenCalled();
+
+      await jest.advanceTimersByTimeAsync(DISCOVERY_TIMEOUT_MS);
+      await settle();
+      expect(actor.getSnapshot().value).toEqual({
+        AwaitingDeviceReconnection: "AwaitingDiscoveryRetry",
+      });
 
       await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
-      expect(connect).toHaveBeenCalledTimes(2);
+      await settle();
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
 
-      deviceComesBack();
-      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
+      await deviceComesBack();
 
-      expect(actor.getSnapshot().output).toBe(CheckErrorCauseResult.Recovered);
+      expect(actor.getSnapshot().output).toEqual(recovered(RECONNECTED_DEVICE));
     });
 
-    it("should keep retrying for as long as the device stays unreachable", async () => {
+    it("should keep retrying when discovery fails", async () => {
       await start({ error: new DeviceDisconnectedWhileSendingError() });
 
-      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS * 30);
+      availableDevices$.error(new Error("bluetooth off"));
+      await settle();
 
-      expect(connect.mock.calls.length).toBeGreaterThan(10);
-      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Reconnecting" });
+      await jest.advanceTimersByTimeAsync(DISCOVERY_TIMEOUT_MS);
+      await settle();
+
+      expect(actor.getSnapshot().value).toEqual({
+        AwaitingDeviceReconnection: "AwaitingDiscoveryRetry",
+      });
     });
 
-    // The DMK waits for a session ping the dead link never answers, and a call left pending would
-    // otherwise be the end of the polling.
-    it("should try again when connecting never settles", async () => {
+    it("should keep looking for as long as the device stays out of discovery", async () => {
+      await start({ error: new DeviceDisconnectedWhileSendingError() });
+
+      await jest.advanceTimersByTimeAsync((DISCOVERY_TIMEOUT_MS + POLL_INTERVAL_MS) * 5);
+
+      expect(connect).not.toHaveBeenCalled();
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
+    });
+
+    it("should discover again when connecting never settles", async () => {
       connect.mockImplementation(() => new Promise<string>(() => undefined));
 
       await start({ error: new DeviceDisconnectedWhileSendingError() });
-      expect(connect).toHaveBeenCalledTimes(1);
+      availableDevices$.next([REDISCOVERED_DEVICE]);
+      await settle();
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Connecting" });
 
-      await jest.advanceTimersByTimeAsync(DEVICE_CALL_TIMEOUT_MS + POLL_INTERVAL_MS);
+      await jest.advanceTimersByTimeAsync(DEVICE_CALL_TIMEOUT_MS);
+      await settle();
+      expect(actor.getSnapshot().value).toEqual({
+        AwaitingDeviceReconnection: "AwaitingDiscoveryRetry",
+      });
 
-      expect(connect).toHaveBeenCalledTimes(2);
-    });
-
-    it("should keep bounding the current attempt when an earlier one settles late", async () => {
-      let failFirstAttempt!: () => void;
-      connect
-        .mockImplementationOnce(
-          () =>
-            new Promise<string>((_resolve, reject) => {
-              failFirstAttempt = () => reject(new Error("device unavailable"));
-            }),
-        )
-        .mockImplementation(() => new Promise<string>(() => undefined));
-
-      await start({ error: new DeviceDisconnectedWhileSendingError() });
-      await jest.advanceTimersByTimeAsync(DEVICE_CALL_TIMEOUT_MS + POLL_INTERVAL_MS);
-      expect(connect).toHaveBeenCalledTimes(2);
-
-      failFirstAttempt();
+      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
       await settle();
 
-      await jest.advanceTimersByTimeAsync(DEVICE_CALL_TIMEOUT_MS + POLL_INTERVAL_MS);
-
-      expect(connect).toHaveBeenCalledTimes(3);
+      expect(connect).toHaveBeenCalledTimes(1);
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
     });
 
-    it("should stop retrying once the machine is stopped", async () => {
+    it("should discover again when the connection is refused", async () => {
       await start({ error: new DeviceDisconnectedWhileSendingError() });
+      availableDevices$.next([REDISCOVERED_DEVICE]);
+      await settle();
+
+      expect(actor.getSnapshot().value).toEqual({
+        AwaitingDeviceReconnection: "AwaitingDiscoveryRetry",
+      });
+
       await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
-      const callsBeforeStop = connect.mock.calls.length;
+      await settle();
+
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
+    });
+
+    it("should stop looking once the machine is stopped", async () => {
+      await start({ error: new DeviceDisconnectedWhileSendingError() });
 
       actor.stop();
-      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS * 5);
+      availableDevices$.next([REDISCOVERED_DEVICE]);
+      await settle();
 
-      expect(connect).toHaveBeenCalledTimes(callsBeforeStop);
+      expect(connect).not.toHaveBeenCalled();
     });
   });
 
   describe("connection verification", () => {
     it("should ask the device for its app and version before reporting it back", async () => {
-      deviceComesBack();
-
       await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await deviceComesBack();
 
       expect(appAndVersionCommandCalls()).toHaveLength(1);
-      expect(actor.getSnapshot().output).toBe(CheckErrorCauseResult.Recovered);
+      expect(actor.getSnapshot().output).toEqual(recovered(RECONNECTED_DEVICE));
     });
 
     // The transport hands its cached link back for as long as it hopes to reconnect over it, and
     // the session opened on top swallows its own ping, so connecting says nothing on its own.
     it("should keep waiting when the device does not answer over the link it just accepted", async () => {
-      deviceComesBack();
       getAppAndVersion = () => failure(new DeviceDisconnectedWhileSendingError());
 
       await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await deviceComesBack();
 
       expect(situations()).toEqual([DeviceSituation.DISCONNECTED]);
       expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Retrying" });
     });
 
-    it("should close the unusable session and connect again on the next poll", async () => {
-      deviceComesBack();
+    it("should close the unusable session and connect again once the device is found again", async () => {
       getAppAndVersion = () => failure(new DeviceDisconnectedWhileSendingError());
       await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await deviceComesBack();
 
       await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
       await settle();
-
       expect(disconnect).toHaveBeenCalledTimes(2);
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceReconnection: "Discovering" });
+
+      await deviceComesBack();
+
       expect(connect).toHaveBeenCalledTimes(2);
     });
 
     it("should resolve Recovered once the device answers", async () => {
-      deviceComesBack();
       getAppAndVersion = () => failure(new DeviceDisconnectedWhileSendingError());
       await start({ error: new DeviceDisconnectedWhileSendingError() });
+      await deviceComesBack();
 
       getAppAndVersion = () => success(DASHBOARD_APP);
       await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
       await settle();
+      await deviceComesBack();
 
-      expect(actor.getSnapshot().output).toBe(CheckErrorCauseResult.Recovered);
+      expect(actor.getSnapshot().output).toEqual(recovered(RECONNECTED_DEVICE));
     });
 
     it("should start over when the device never answers the command", async () => {
-      deviceComesBack();
-      sendCommand.mockImplementation(() => new Promise(() => undefined));
-
       await start({ error: new DeviceDisconnectedWhileSendingError() });
+      sendCommand.mockImplementation(() => new Promise(() => undefined));
+      await deviceComesBack();
+
       expect(actor.getSnapshot().value).toEqual({
         AwaitingDeviceReconnection: "VerifyingConnection",
       });
@@ -479,7 +537,7 @@ describe("checkErrorCauseStateMachine", () => {
       await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
       await settle();
 
-      expect(actor.getSnapshot().output).toBe(CheckErrorCauseResult.Recovered);
+      expect(actor.getSnapshot().output).toEqual(recovered());
       expect(hostEvents).toHaveLength(0);
     });
 
@@ -492,7 +550,9 @@ describe("checkErrorCauseStateMachine", () => {
       await settle();
 
       expect(sessionStateUnsubscribe).toHaveBeenCalled();
-      expect(actor.getSnapshot().output).toBe(CheckErrorCauseResult.Unrecoverable);
+      expect(actor.getSnapshot().output).toEqual({
+        result: CheckErrorCauseResult.Unrecoverable,
+      });
       expect(hostEvents).toHaveLength(0);
     });
 

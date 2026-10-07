@@ -1,18 +1,22 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import {
+  ApplyUpdatesStateType,
   CreateBackupStateType,
   OsUpdatesSteps,
   PreChecksStateType,
+  RestoreBackupStateType,
+  type ApplyUpdatesState,
   type CreateBackupState,
   type OsUpdatesProgress,
   type PreChecksState,
+  type RestoreBackupState,
 } from "@ledgerhq/live-dmk-shared";
 import { useOsUpdatesOrchestratorDebugScreenViewModel } from "./useOsUpdatesOrchestratorDebugScreenViewModel";
-import type { ProgressHistoryEntry } from "./types";
+import type { DebugDiscoveredDevice, ProgressHistoryEntry } from "./types";
 
 export default function OsUpdatesOrchestratorDebugScreen() {
   const viewModel = useOsUpdatesOrchestratorDebugScreenViewModel();
@@ -21,8 +25,8 @@ export default function OsUpdatesOrchestratorDebugScreen() {
     <>
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <Section
-          title="Device"
-          subtitle="Connect a device first (My Ledger or Connect Device playground)."
+          title="Device & connection"
+          subtitle="Connects straight to the device, without the legacy My Ledger flow and the bootloader recovery it runs. The session refresher is disabled, as it is for every reconnection the OS update performs."
         >
           <StatusRow label="DMK" value={viewModel.dmkReady ? "ready" : "unavailable"} />
           <StatusRow label="Device id" value={viewModel.deviceId ?? "-"} />
@@ -31,6 +35,48 @@ export default function OsUpdatesOrchestratorDebugScreen() {
             label="Device status"
             value={viewModel.deviceStatus != null ? String(viewModel.deviceStatus) : "-"}
           />
+          <Box lx={{ marginTop: "s8", gap: "s8" }}>
+            <Button
+              size="md"
+              appearance="base"
+              isFull
+              disabled={!viewModel.dmkReady}
+              onPress={viewModel.onToggleScan}
+            >
+              {viewModel.isScanning ? "Stop scanning" : "Scan for devices"}
+            </Button>
+            <Button
+              size="md"
+              appearance="base"
+              isFull
+              disabled={!viewModel.canDisconnect}
+              onPress={viewModel.onDisconnect}
+            >
+              Disconnect
+            </Button>
+          </Box>
+          {viewModel.isScanning && viewModel.discoveredDevices.length === 0 ? (
+            <Text typography="body3" lx={{ color: "muted", marginTop: "s8" }}>
+              Scanning…
+            </Text>
+          ) : null}
+          {viewModel.discoveredDevices.length > 0 ? (
+            <Box lx={{ marginTop: "s8", gap: "s8" }}>
+              {viewModel.discoveredDevices.map(device => (
+                <DiscoveredDeviceRow
+                  key={device.id}
+                  device={device}
+                  disabled={viewModel.connectingDeviceId !== null}
+                  onConnect={viewModel.onConnectDevice}
+                />
+              ))}
+            </Box>
+          ) : null}
+          {viewModel.connectionErrorMessage ? (
+            <Text typography="body3" lx={{ color: "error", marginTop: "s8" }}>
+              {viewModel.connectionErrorMessage}
+            </Text>
+          ) : null}
         </Section>
 
         <Section
@@ -208,6 +254,24 @@ function StatusRow({ label, value }: Readonly<{ label: string; value: string }>)
   );
 }
 
+function DiscoveredDeviceRow({
+  device,
+  disabled,
+  onConnect,
+}: Readonly<{
+  device: DebugDiscoveredDevice;
+  disabled: boolean;
+  onConnect: (deviceId: string) => void;
+}>) {
+  const onPress = useCallback(() => onConnect(device.id), [device.id, onConnect]);
+
+  return (
+    <Button size="md" appearance="base" isFull disabled={disabled} onPress={onPress}>
+      {`${device.name} · ${device.transport}`}
+    </Button>
+  );
+}
+
 function HistoryRow({ entry }: Readonly<{ entry: ProgressHistoryEntry }>) {
   return (
     <Box lx={{ paddingVertical: "s4" }}>
@@ -227,6 +291,10 @@ function StepActions({ progress }: Readonly<{ progress: OsUpdatesProgress }>) {
       return <PreChecksActions state={progress.state} />;
     case OsUpdatesSteps.CREATE_BACKUP:
       return <CreateBackupActions state={progress.state} />;
+    case OsUpdatesSteps.APPLY_UPDATES:
+      return <ApplyUpdatesActions state={progress.state} />;
+    case OsUpdatesSteps.RESTORE_BACKUP:
+      return <RestoreBackupActions state={progress.state} />;
     default: {
       const unhandled: never = progress;
       return unhandled;
@@ -276,6 +344,74 @@ function CreateBackupActions({ state }: Readonly<{ state: CreateBackupState }>) 
     case CreateBackupStateType.DEVICE_LOCKED:
     case CreateBackupStateType.AWAITING_ALLOW_SECURE_CONNECTION:
     case CreateBackupStateType.DEVICE_DISCONNECTED:
+      return null;
+    default: {
+      const unhandled: never = state;
+      return unhandled;
+    }
+  }
+}
+
+function RestoreBackupActions({ state }: Readonly<{ state: RestoreBackupState }>) {
+  switch (state.type) {
+    case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
+      return (
+        <Actions
+          actions={[
+            { label: "Retry", onPress: state.retry },
+            { label: "Cancel", onPress: state.cancel },
+          ]}
+        />
+      );
+    case RestoreBackupStateType.OUT_OF_MEMORY:
+    case RestoreBackupStateType.UNEXPECTED_ERROR:
+      return <Actions actions={[{ label: "Cancel", onPress: state.cancel }]} />;
+    case RestoreBackupStateType.LOADING:
+    case RestoreBackupStateType.RESTORING:
+    case RestoreBackupStateType.DEVICE_LOCKED:
+    case RestoreBackupStateType.AWAITING_ALLOW_SECURE_CONNECTION:
+    case RestoreBackupStateType.AWAITING_GRANT_CONSENT:
+    case RestoreBackupStateType.AWAITING_ALLOW_LIST_APPS:
+    case RestoreBackupStateType.AWAITING_CONFIRM_LOAD_IMAGE:
+    case RestoreBackupStateType.AWAITING_CONFIRM_COMMIT_IMAGE:
+    case RestoreBackupStateType.DEVICE_DISCONNECTED:
+    case RestoreBackupStateType.BACKUP_RESTORED:
+      return null;
+    default: {
+      const unhandled: never = state;
+      return unhandled;
+    }
+  }
+}
+
+function ApplyUpdatesActions({ state }: Readonly<{ state: ApplyUpdatesState }>) {
+  switch (state.type) {
+    case ApplyUpdatesStateType.ALLOW_SECURE_CONNECTION_REFUSED:
+      return (
+        <Actions
+          actions={[
+            { label: "Retry", onPress: state.retry },
+            { label: "Cancel", onPress: state.cancel },
+          ]}
+        />
+      );
+    case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED:
+    case ApplyUpdatesStateType.OUT_OF_MEMORY:
+    case ApplyUpdatesStateType.UNEXPECTED_ERROR:
+      return <Actions actions={[{ label: "Cancel", onPress: state.cancel }]} />;
+    case ApplyUpdatesStateType.LOADING:
+    case ApplyUpdatesStateType.UPDATING:
+    case ApplyUpdatesStateType.RESTORING:
+    case ApplyUpdatesStateType.DEVICE_LOCKED:
+    case ApplyUpdatesStateType.AWAITING_UPDATE_COMPLETE:
+    case ApplyUpdatesStateType.AWAITING_ALLOW_SECURE_CONNECTION:
+    case ApplyUpdatesStateType.AWAITING_ALLOW_INSTALL_FIRMWARE:
+    case ApplyUpdatesStateType.AWAITING_GRANT_CONSENT:
+    case ApplyUpdatesStateType.AWAITING_ALLOW_LIST_APPS:
+    case ApplyUpdatesStateType.AWAITING_CONFIRM_LOAD_IMAGE:
+    case ApplyUpdatesStateType.AWAITING_CONFIRM_COMMIT_IMAGE:
+    case ApplyUpdatesStateType.DEVICE_DISCONNECTED:
+    case ApplyUpdatesStateType.UPDATES_APPLIED:
       return null;
     default: {
       const unhandled: never = state;

@@ -1,6 +1,8 @@
+import { ApplyUpdatesStateType } from "../../../api/model/ApplyUpdatesState";
 import { CreateBackupStateType } from "../../../api/model/CreateBackupState";
 import { OsUpdatesSteps } from "../../../api/model/OsUpdatesSteps";
 import { PreChecksStateType } from "../../../api/model/PreChecksState";
+import { RestoreBackupStateType } from "../../../api/model/RestoreBackupState";
 import type { OsUpdatesState } from "../types";
 
 /** The unexpected error state of the given step, for failures the sub-machines never reported. */
@@ -10,6 +12,10 @@ export const unexpectedErrorState = (step: OsUpdatesSteps, cancel: () => void): 
       return { type: PreChecksStateType.UNEXPECTED_ERROR, cancel };
     case OsUpdatesSteps.CREATE_BACKUP:
       return { type: CreateBackupStateType.UNEXPECTED_ERROR, cancel };
+    case OsUpdatesSteps.APPLY_UPDATES:
+      return { type: ApplyUpdatesStateType.UNEXPECTED_ERROR, cancel };
+    case OsUpdatesSteps.RESTORE_BACKUP:
+      return { type: RestoreBackupStateType.UNEXPECTED_ERROR, cancel };
     default: {
       const unhandled: never = step;
       return unhandled;

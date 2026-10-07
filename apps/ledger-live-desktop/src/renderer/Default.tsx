@@ -362,6 +362,7 @@ export default function Default() {
   const analyticsConsoleActive = useEnv("ANALYTICS_CONSOLE");
   const themeConsoleActive = useEnv("DEBUG_THEME");
   const providerNumber = useEnv("FORCE_PROVIDER");
+  const baseSocketUrl = useEnv("BASE_SOCKET_URL");
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkSolanaSignerIsTxcActiveFeatureFlag = useFeature("ldmkSolanaSignerIsTxcActive");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
@@ -434,6 +435,12 @@ export default function Default() {
     // setting provider only at initialisation
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk]);
+
+  useEffect(() => {
+    if (baseSocketUrl) {
+      dmk?.setWebSocketUrl(baseSocketUrl);
+    }
+  }, [dmk, baseSocketUrl]);
 
   useEffect(() => {
     if (!areSettingsLoadedSelector) {
