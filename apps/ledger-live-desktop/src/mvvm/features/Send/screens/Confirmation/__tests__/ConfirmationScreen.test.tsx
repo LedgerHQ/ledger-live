@@ -39,6 +39,34 @@ beforeEach(() => {
 });
 
 describe("ConfirmationScreen", () => {
+  it("renders close for a non-retryable confirmation error", () => {
+    mockedUseConfirmationViewModel.mockReturnValue({
+      status: FLOW_STATUS.ERROR,
+      transactionError: new Error("broadcast failed"),
+      onViewDetails: jest.fn(),
+      onRetry: jest.fn(),
+      onClose: jest.fn(),
+    });
+    render(<ConfirmationScreen />);
+
+    expect(screen.getByTestId("send-confirmation-close-button")).toBeVisible();
+    expect(screen.queryByTestId("send-confirmation-retry-button")).toBeNull();
+  });
+
+  it("renders try again for a network confirmation error", () => {
+    mockedUseConfirmationViewModel.mockReturnValue({
+      status: FLOW_STATUS.ERROR,
+      transactionError: Object.assign(new Error("upstream down"), { name: "NetworkDown" }),
+      onViewDetails: jest.fn(),
+      onRetry: jest.fn(),
+      onClose: jest.fn(),
+    });
+    render(<ConfirmationScreen />);
+
+    expect(screen.getByTestId("send-confirmation-retry-button")).toBeVisible();
+    expect(screen.queryByTestId("send-confirmation-close-button")).toBeNull();
+  });
+
   it("mounts the family post-broadcast effect alongside the confirmation body", () => {
     render(<ConfirmationScreen />);
 
