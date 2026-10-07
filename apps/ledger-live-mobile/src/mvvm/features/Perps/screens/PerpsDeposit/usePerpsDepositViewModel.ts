@@ -4,6 +4,8 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
+import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/depositMaxBuffer";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   useCalculateCountervalueCallback,
   useCountervaluesState,
@@ -59,6 +61,7 @@ export type PerpsDepositViewModel = Readonly<{
   depositAccountName: string | null;
   depositAccountCounterValue: string | null;
   maxAmount: number;
+  maxBuffer: number;
   statusError: DepositFormError | null;
   canReview: boolean;
   exceedsBalance: boolean;
@@ -215,6 +218,24 @@ export function usePerpsDepositViewModel({
     [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
   );
 
+  const tradeMaxConstant = useFeature("ptxTradeMaxConstant");
+  const maxBuffer = useMemo(() => {
+    if (!tradeMaxConstant?.enabled || !depositAccount || !depositCurrency) return 0;
+    const buffer = getDepositMaxBuffer(depositAccount, tradeMaxConstant.params?.constants);
+    if (buffer.isZero()) return 0;
+    return (
+      calculateCountervalue(depositCurrency, buffer)
+        ?.shiftedBy(-counterValueUnit.magnitude)
+        .toNumber() ?? 0
+    );
+  }, [
+    calculateCountervalue,
+    counterValueUnit.magnitude,
+    depositAccount,
+    depositCurrency,
+    tradeMaxConstant,
+  ]);
+
   const submitError = useMemo(
     () =>
       validateDepositFlow({
@@ -336,6 +357,7 @@ export function usePerpsDepositViewModel({
       : null,
     depositAccountCounterValue,
     maxAmount: maxAmount ?? 0,
+    maxBuffer,
     statusError,
     canReview,
     exceedsBalance,

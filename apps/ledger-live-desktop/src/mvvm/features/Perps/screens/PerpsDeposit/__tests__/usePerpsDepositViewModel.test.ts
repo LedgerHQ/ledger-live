@@ -3,6 +3,7 @@ import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-cu
 import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
 import { PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID } from "../../../constants/depositFunding";
 import { usePerpsDepositViewModel, type PerpsDepositData } from "../usePerpsDepositViewModel";
@@ -86,12 +87,23 @@ function renderViewModel(
   onClose = jest.fn(),
   discreetMode = false,
   accounts: Account[] = [fundingAccount, fundedAccount],
+  maxConstants?: Record<string, string>,
 ) {
   const props: PerpsDepositData = { receiverAccount, ...data };
+  const tradeMaxConstant = maxConstants && {
+    ptxTradeMaxConstant: { enabled: true, params: { constants: maxConstants } },
+  };
   const { result, store } = renderHook(() => usePerpsDepositViewModel(props, onClose), {
     initialState: {
       accounts,
       settings: { discreetMode },
+      ...(tradeMaxConstant && {
+        featureFlags: {
+          ...FEATURE_FLAGS_INITIAL_STATE,
+          overrides: { ...FEATURE_FLAGS_INITIAL_STATE.overrides, ...tradeMaxConstant },
+          resolved: { ...FEATURE_FLAGS_DEFAULTS, ...tradeMaxConstant },
+        },
+      }),
     },
   });
   return { result, onClose, store };
@@ -207,6 +219,21 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.depositAmount).toBe(100);
     expect(result.current.exceedsBalance).toBe(false);
     expect(result.current.canReview).toBe(true);
+  });
+
+  // Countervalues are 1:1 in smallest units: 25 wei of ETH is worth $0.25.
+  it("holds the configured fee buffer back from max for a native coin", async () => {
+    const { result } = renderViewModel({}, jest.fn(), false, undefined, {
+      ethereum: "0.000000000000000025",
+    });
+
+    await pickFundingAccount(result);
+    act(() => result.current.selectMax());
+
+    expect(result.current.maxBuffer).toBe(0.25);
+    expect(result.current.depositAmount).toBe(99.75);
+    // The balance itself is still the ceiling for a typed amount.
+    expect(result.current.maxAmount).toBe(100);
   });
 
   it("restores the draft it was reopened with", () => {

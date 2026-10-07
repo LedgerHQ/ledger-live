@@ -27,6 +27,7 @@ export function PerpsDepositView({
   depositAccountName,
   depositAccountCounterValue,
   maxAmount,
+  maxBuffer,
   selectMax,
   statusError,
   canReview,
@@ -63,6 +64,7 @@ export function PerpsDepositView({
 
         <RatioPicker
           maxValue={maxAmount}
+          maxBuffer={maxBuffer}
           value={depositAmount}
           decimalPlaces={maxDecimalLength}
           onChange={selectAmountRatio}
