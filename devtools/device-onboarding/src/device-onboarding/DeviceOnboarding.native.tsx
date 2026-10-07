@@ -48,10 +48,14 @@ const stepPresentation: Record<StateKind, StepPresentation> = {
 };
 
 const HEADER_LX = {
+  flexDirection: "column",
+  gap: "s8",
+  padding: "s16",
+} as const;
+const HEADER_ROW_LX = {
   flexDirection: "row",
   alignItems: "center",
   gap: "s8",
-  padding: "s16",
 } as const;
 const SECTION_LX = { padding: "s16", gap: "s4" } as const;
 const BUTTONS_LX = {
@@ -82,32 +86,34 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   return (
     <ScrollView>
       <Box lx={HEADER_LX} style={divider}>
-        <Box
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: 4,
-            backgroundColor: vm.isRunning
-              ? theme.colors.text.success
-              : theme.colors.border.mutedSubtle,
-          }}
-        />
-        <Text typography="body2" style={base}>
-          {vm.statusLabel}
-        </Text>
+        <Box lx={HEADER_ROW_LX}>
+          <Box
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: vm.isRunning
+                ? theme.colors.text.success
+                : theme.colors.border.mutedSubtle,
+            }}
+          />
+          <Text typography="body2" style={base}>
+            {vm.statusLabel}
+          </Text>
+          <Box lx={HEADER_ACTIONS_LX} style={{ marginLeft: "auto" }}>
+            <Button size="sm" appearance="accent" disabled={!vm.canConnect} onPress={vm.connect}>
+              Connect
+            </Button>
+            <Button size="sm" appearance="transparent" disabled={!vm.canReset} onPress={vm.reset}>
+              Reset
+            </Button>
+          </Box>
+        </Box>
         {vm.deviceLabel ? (
-          <Text typography="body2" numberOfLines={1} style={{ ...muted, flex: 1 }}>
+          <Text typography="body2" style={muted}>
             {vm.deviceLabel}
           </Text>
         ) : null}
-        <Box lx={HEADER_ACTIONS_LX} style={{ marginLeft: "auto" }}>
-          <Button size="sm" appearance="accent" disabled={!vm.canConnect} onPress={vm.connect}>
-            Connect
-          </Button>
-          <Button size="sm" appearance="transparent" disabled={!vm.canReset} onPress={vm.reset}>
-            Reset
-          </Button>
-        </Box>
       </Box>
 
       {vm.error ? (
@@ -139,15 +145,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
           )}
         </Box>
         <Box lx={{ ...LOG_LX, marginTop: "s16" }}>
-          {vm.nextStates.map(row => (
-            <Text
-              key={`${row.event}-${row.state}`}
-              typography="body2"
-              style={{ ...muted, fontFamily: "monospace" }}
-            >
-              {row.event} → {row.state}
-            </Text>
-          ))}
+          <PossibleNext rows={vm.nextStates} />
           {vm.logLines.length === 0 ? (
             <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
               —
@@ -167,6 +165,38 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
       {vm.exitRows.length > 0 ? <Rows title="Exit" rows={vm.exitRows} /> : null}
       {vm.contextRows.length > 0 ? <Rows title="Context" rows={vm.contextRows} /> : null}
     </ScrollView>
+  );
+}
+
+function PossibleNext({ rows }: Readonly<{ rows: DeviceOnboardingToolProps["nextStates"] }>) {
+  const { theme } = useTheme();
+  if (rows.length === 0) return null;
+
+  return (
+    <Box
+      lx={LOG_LX}
+      style={{
+        opacity: 0.55,
+        borderWidth: 1,
+        borderStyle: "dashed",
+        borderColor: theme.colors.border.mutedSubtle,
+        borderRadius: 8,
+        padding: 8,
+      }}
+    >
+      <Text typography="body2" style={{ color: theme.colors.text.muted }}>
+        Possible
+      </Text>
+      {rows.map(row => (
+        <Text
+          key={`${row.event}-${row.state}`}
+          typography="body2"
+          style={{ color: theme.colors.text.muted, fontFamily: "monospace" }}
+        >
+          {row.event} → {row.state}
+        </Text>
+      ))}
+    </Box>
   );
 }
 

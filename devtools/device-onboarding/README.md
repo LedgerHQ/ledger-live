@@ -16,9 +16,10 @@ Design and rationale live in the
 Renders the flow and nothing else: the connected device with its model, transport and session id,
 the context with each nested field named, the log, and the exit reason.
 
-The log reads upward. The newest state is on top. The event that led there sits under that state.
-The buttons for the next action sit above the newest state. Under the buttons, each line
-`event → state` is a state this step can reach. `auto` means the machine may move there with no event.
+The device name sits under the status. The log reads upward. The newest state is on top.
+The event that led there sits under that state. The buttons sit above the newest state.
+A faded box labeled Possible lists states this step can reach. Those lines are not the log.
+`auto` means the machine may move there with no event.
 
 **The tool runs no machine.** The host owns the session and drives `deviceOnboardingMachine`; this
 package receives what the host observes through `DeviceOnboardingToolProps` and calls back with

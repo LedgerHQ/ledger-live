@@ -18,10 +18,14 @@ describe("DeviceOnboarding", () => {
           device: connectedDevice,
           state: "checks.genuineCheck",
           sendableEvents: [{ event: { type: "CONTINUE" } }, { event: { type: "QUIT" } }],
+          nextStates: [{ event: "DEVICE_STATE_READ", state: "routing" }],
         })}
       />,
     );
 
+    expect(screen.getByText("Ledger Flex · europa · BLE · session-1")).toBeTruthy();
+    expect(screen.getByText("Possible")).toBeTruthy();
+    expect(screen.getByText("DEVICE_STATE_READ → routing")).toBeTruthy();
     expect(screen.getByText("checks.genuineCheck")).toBeTruthy();
     expect(screen.getByText("CONTINUE")).toBeTruthy();
     expect(screen.getByText("QUIT")).toBeTruthy();

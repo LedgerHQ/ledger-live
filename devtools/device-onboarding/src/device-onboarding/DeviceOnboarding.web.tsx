@@ -41,24 +41,24 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
 
   return (
     <div className="flex flex-col overflow-y-auto">
-      <div className="px-16 py-10 border-b border-base flex items-center gap-8 body-3">
-        <span
-          className={`w-8 h-8 rounded-full inline-block ${
-            vm.isRunning ? "bg-success" : "bg-muted"
-          }`}
-        />
-        <span className="text-base">{vm.statusLabel}</span>
-        {vm.deviceLabel ? (
-          <code className="text-muted truncate min-w-0">{vm.deviceLabel}</code>
-        ) : null}
-        <span className="ml-auto flex items-center gap-4">
-          <Button size="sm" appearance="accent" disabled={!vm.canConnect} onClick={vm.connect}>
-            Connect
-          </Button>
-          <Button size="sm" appearance="transparent" disabled={!vm.canReset} onClick={vm.reset}>
-            Reset
-          </Button>
-        </span>
+      <div className="px-16 py-10 border-b border-base flex flex-col gap-8 body-3">
+        <div className="flex items-center gap-8">
+          <span
+            className={`w-8 h-8 rounded-full inline-block ${
+              vm.isRunning ? "bg-success" : "bg-muted"
+            }`}
+          />
+          <span className="text-base">{vm.statusLabel}</span>
+          <span className="ml-auto flex items-center gap-4">
+            <Button size="sm" appearance="accent" disabled={!vm.canConnect} onClick={vm.connect}>
+              Connect
+            </Button>
+            <Button size="sm" appearance="transparent" disabled={!vm.canReset} onClick={vm.reset}>
+              Reset
+            </Button>
+          </span>
+        </div>
+        {vm.deviceLabel ? <code className="text-muted">{vm.deviceLabel}</code> : null}
       </div>
 
       {vm.error ? (
@@ -84,11 +84,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
           )}
         </div>
         <div className="mt-16 flex flex-col items-start gap-4">
-          {vm.nextStates.map(row => (
-            <code key={`${row.event}-${row.state}`} className="text-muted">
-              {row.event} → {row.state}
-            </code>
-          ))}
+          <PossibleNext rows={vm.nextStates} />
           {vm.logLines.length === 0 ? (
             <code className="text-muted">—</code>
           ) : (
@@ -105,6 +101,21 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
 
       {vm.exitRows.length > 0 ? <Rows title="Exit" rows={vm.exitRows} /> : null}
       {vm.contextRows.length > 0 ? <Rows title="Context" rows={vm.contextRows} /> : null}
+    </div>
+  );
+}
+
+function PossibleNext({ rows }: Readonly<{ rows: DeviceOnboardingToolProps["nextStates"] }>) {
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="flex flex-col items-start gap-4 p-8 rounded-sm border border-dashed border-base opacity-60">
+      <span className="body-3 text-muted">Possible</span>
+      {rows.map(row => (
+        <code key={`${row.event}-${row.state}`} className="text-muted">
+          {row.event} → {row.state}
+        </code>
+      ))}
     </div>
   );
 }
