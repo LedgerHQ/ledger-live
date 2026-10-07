@@ -2,7 +2,6 @@ import {
   CommandResultFactory,
   GetOsVersionCommand,
   InvalidStatusWordError,
-  type DeviceManagementKit,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
 import { createRetryPolicy } from "../retry";
@@ -14,7 +13,12 @@ import {
   type OsVersionResponseOptions,
 } from "../tests/osVersionResponse";
 import { OnboardingStep, type DeviceOnboardingState } from "../types";
-import { mapDeviceState, readDeviceState, type ReadDeviceStateEvent } from "./readDeviceState";
+import {
+  mapDeviceState,
+  readDeviceState,
+  type ReadDeviceStateEvent,
+  type ReadDeviceStateInput,
+} from "./readDeviceState";
 
 const onboardedDevice: OsVersionResponseOptions = {
   onboardingState: "device-is-ready",
@@ -206,7 +210,7 @@ function success(
   return CommandResultFactory({ data: createOsVersionResponse(options) });
 }
 
-function start(dmk: DeviceManagementKit) {
+function start(dmk: ReadDeviceStateInput["dmk"]) {
   return runActor<ReadDeviceStateEvent>(readDeviceState, {
     dmk,
     sessionId: "session",
