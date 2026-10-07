@@ -1,14 +1,23 @@
-import React, { useCallback } from "react";
-import { View } from "react-native";
+import React, { useCallback, useState } from "react";
+import { ScrollView, StyleSheet, View, type LayoutChangeEvent } from "react-native";
 import { Button, Divider } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { AmountInputSection } from "./AmountInputSection";
 import { QuickActionsRow } from "./QuickActionsRow";
 import { NetworkFeesRow } from "../../../components/NetworkFeesRow";
 import { NumberKeyboard } from "./NumberKeyboard";
+import { resolveAmountScreenStack } from "./amountScreenLayout";
 import type { AmountScreenViewModel } from "../types";
 import { useTranslation } from "~/context/Locale";
+
+function useMeasuredHeight() {
+  const [height, setHeight] = useState(0);
+  const onLayout = useCallback((event: LayoutChangeEvent) => {
+    const nextHeight = event.nativeEvent.layout.height;
+    setHeight(current => (current === nextHeight ? current : nextHeight));
+  }, []);
+  return [height, onLayout] as const;
+}
 
 type AmountScreenViewProps = Readonly<{
   viewModel: Extract<AmountScreenViewModel, { ready: true }>;
@@ -16,21 +25,14 @@ type AmountScreenViewProps = Readonly<{
 
 export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
   const { t } = useTranslation();
-  const styles = useStyleSheet(
-    theme => ({
-      container: {
-        flex: 1,
-      },
-      upperSection: {
-        flex: 0,
-      },
-      middleSection: {
-        flex: 1,
-        justifyContent: "center",
-      },
-    }),
-    [],
-  );
+  const [viewportHeight, onViewportLayout] = useMeasuredHeight();
+  const [amountHeight, onAmountLayout] = useMeasuredHeight();
+  const [feesHeight, onFeesLayout] = useMeasuredHeight();
+  const [quickActionsHeight, onQuickActionsLayout] = useMeasuredHeight();
+  const { scrollEnabled } = resolveAmountScreenStack({
+    requestedQuickActions: viewModel.quickActions.show,
+    heights: { viewportHeight, amountHeight, feesHeight, quickActionsHeight },
+  });
 
   const handleKeyPress = useCallback(
     (key: string) => {
@@ -56,22 +58,37 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.upperSection}>
-        <AmountInputSection
-          viewModel={viewModel.amountInput}
-          message={viewModel.message}
-          toggleLabel={t("send.amount.toggleCurrency")}
-        />
-      </View>
+      <ScrollView
+        style={styles.flexible}
+        contentContainerStyle={styles.flexibleContent}
+        scrollEnabled={scrollEnabled}
+        bounces={false}
+        showsVerticalScrollIndicator={false}
+        onLayout={onViewportLayout}
+      >
+        <View onLayout={onAmountLayout}>
+          <AmountInputSection
+            viewModel={viewModel.amountInput}
+            message={viewModel.message}
+            toggleLabel={t("send.amount.toggleCurrency")}
+          />
+        </View>
 
-      <View style={styles.middleSection}>
-        <NetworkFeesRow viewModel={viewModel.networkFees} />
-        <Divider />
+        <View style={styles.feesBlock}>
+          <View onLayout={onFeesLayout}>
+            <NetworkFeesRow viewModel={viewModel.networkFees} />
+            <Divider />
+          </View>
 
-        {viewModel.quickActions.show && (
-          <QuickActionsRow actions={viewModel.quickActions.actions} />
-        )}
+          {viewModel.quickActions.show && (
+            <View onLayout={onQuickActionsLayout}>
+              <QuickActionsRow actions={viewModel.quickActions.actions} />
+            </View>
+          )}
+        </View>
+      </ScrollView>
 
+      <View style={styles.keyboard}>
         <NumberKeyboard
           onKeyPress={handleKeyPress}
           allowDecimal={viewModel.amountInput.maxDecimalLength > 0}
@@ -98,3 +115,23 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  flexible: {
+    flex: 1,
+    minHeight: 0,
+  },
+  flexibleContent: {
+    flexGrow: 1,
+  },
+  feesBlock: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+  keyboard: {
+    flexShrink: 0,
+  },
+});
