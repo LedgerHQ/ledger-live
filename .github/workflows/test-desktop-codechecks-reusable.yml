@@ -53,10 +53,6 @@ on:
 permissions:
   contents: read
 
-env:
-  SMOKE_SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:v0.26.5
-  SMOKE_SPECULOS_FIRMWARE_VERSION: 1.6.0
-
 jobs:
   codechecks:
     name: "Desktop Code Check"
