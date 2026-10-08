@@ -11,7 +11,6 @@ import {
   pickMinaValidator,
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { getEnv } from "@shared/env";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
@@ -29,6 +28,9 @@ import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 
 const DISABLE_BROADCAST_ENV = { DISABLE_TRANSACTION_BROADCAST: "1" };
+// `getEnv` does not read process.env in the test runner, so it would always return the default here.
+// The app broadcasts only when the run sets "0" (see the electronApp fixture).
+const IS_BROADCAST_RUN = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
 
 function useDelegateFixtures(
   currency: Currency,
@@ -201,8 +203,7 @@ for (const scenario of delegateScenarios) {
         await app.delegateDrawer.verifyDelegationSummary(delegate, scenario.transactionType);
         await app.drawer.closeDrawer();
 
-        const isBroadcast = !scenario.disableBroadcast && !getEnv("DISABLE_TRANSACTION_BROADCAST");
-        if (isBroadcast) {
+        if (IS_BROADCAST_RUN && !scenario.disableBroadcast) {
           await app.layout.syncAccounts();
           await app.account.clickOnLastOperationAndReturnStatus();
           await app.delegateDrawer.expectDelegationInfos(delegate);
