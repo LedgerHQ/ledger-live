@@ -1,5 +1,5 @@
 diff --git a/dist/changesets-get-github-info.cjs.js b/dist/changesets-get-github-info.cjs.js
-index a74df59f8a5988f458a3476087399f5e6dfe4818..c4e4a072deb098a0efb3e5fa8098e0cd1cc84650 100644
+index a74df59f8a5988f458a3476087399f5e6dfe4818..c4e4a072deb098a0efb3e5fa8098e0cd1cc84651 100644
 --- a/dist/changesets-get-github-info.cjs.js
 +++ b/dist/changesets-get-github-info.cjs.js
 @@ -148,6 +148,19 @@ function makeQuery(repos) {
@@ -119,4 +119,3 @@ index d4daab0335e99c8bbbb36181fa108fe21145fd41..5b272f80cd7a735da3cdfed0798fb846
  
  const validRepoNameRegex = /^[\w.-]+\/[\w.-]+$/;
  
-
