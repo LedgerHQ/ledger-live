@@ -1183,6 +1183,9 @@ importers:
       '@ledgerhq/device-mockserver-react':
         specifier: 'catalog:'
         version: 0.1.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(@ledgerhq/lumen-ui-react@0.1.61(15ec3592125c523c20d865970939e6b0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@ledgerhq/device-onboarding':
+        specifier: workspace:^
+        version: link:../../libs/device-onboarding
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.1(@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -3358,6 +3361,9 @@ importers:
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
+      '@ledgerhq/device-onboarding':
+        specifier: workspace:*
+        version: link:../../libs/device-onboarding
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../shared/api-services
@@ -3367,6 +3373,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      xstate:
+        specifier: 'catalog:'
+        version: 5.19.2
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*

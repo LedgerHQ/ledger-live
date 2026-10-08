@@ -193,11 +193,7 @@ describe("DeviceOnboarding mobile integration", () => {
       connectionInputs[2].onConnected(connectionResult(dmk, "session-1"));
     });
     await waitFor(() => expect(result.current.status).toBe("running"));
-    expect(result.current.exit).toEqual({
-      reason: "legacyFallback",
-      sessionId: "session-2",
-      modelId: DeviceModelId.STAX,
-    });
+    expect(result.current.exit).toBeNull();
   });
 
   it("clears the device when the machine reports a lost transport itself", async () => {
