@@ -14,6 +14,7 @@ import { BigNumber } from "bignumber.js";
 import React, { ReactElement, useCallback, useContext, useEffect, useMemo } from "react";
 import { CountervaluesContext } from "./internals/CountervaluesContext";
 import { log } from "./internals/logger";
+import { countProbe, useProbeBridge, useProbeEffect } from "./internals/renderProbe";
 import { useDebounce } from "./internals/useDebounce";
 
 export interface PollingState {
@@ -123,6 +124,7 @@ function Effect({
 
   // flag used to trigger a loadCountervalues
   const triggerLoad = bridge.usePollingTriggerLoad();
+  useProbeEffect(bridge.usePollingIsPolling());
 
   // trigger poll only when userSettings changes in a debounced way
   useEffect(() => {
@@ -139,6 +141,7 @@ function Effect({
     bridge.setPollingTriggerLoad(false);
 
     bridge.setStatePending(true);
+    countProbe("loads");
     loadCountervalues(currentState, filteredUserSettings, {
       rates: bridge.rates,
       batchStrategySolver,
@@ -160,6 +163,7 @@ function Effect({
   useEffect(() => {
     if (!savedState || typeof savedState !== "object") return;
     if (!Object.keys(savedState).length) return;
+    countProbe("restores");
     bridge.setState(importCountervalues(savedState, userSettings));
   }, [bridge, savedState, userSettings]);
 
@@ -190,6 +194,7 @@ export function CountervaluesProvider({
   bridge,
   ...rest
 }: Readonly<Props>): ReactElement {
+  useProbeBridge(bridge);
   return (
     <CountervaluesContext.Provider value={bridge}>
       <Effect {...rest} bridge={bridge} />
