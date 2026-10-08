@@ -151,8 +151,8 @@ export function ConfidentialBalanceFooterView({
         />
       )}
 
-      {deviceSignature.isOpen && <PermitDeviceModal {...deviceSignature} />}
       {shield && <ShieldModal {...shield} />}
+      {deviceSignature.isOpen && <PermitDeviceModal {...deviceSignature} />}
     </div>
   );
 }

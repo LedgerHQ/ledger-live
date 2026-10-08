@@ -9,6 +9,9 @@ export type CreateConfidentialClient = (options: ConfidentialClientOptions) => C
 
 export const isRealConfidentialApi = (): boolean => process.env.CONFIDENTIAL_API === "real";
 
+export const getSepoliaRpcUrl = (): string =>
+  process.env.CONFIDENTIAL_SEPOLIA_RPC_URL ?? DEFAULT_SEPOLIA_RPC_URL;
+
 let client: ConfidentialClient | undefined;
 
 function getConfidentialClient(createClient: CreateConfidentialClient): ConfidentialClient {
@@ -18,7 +21,7 @@ function getConfidentialClient(createClient: CreateConfidentialClient): Confiden
     throw new ConfidentialError("Unavailable", "CONFIDENTIAL_TX_SERVICE_URL is not set");
   }
   client = createClient({
-    rpcUrl: process.env.CONFIDENTIAL_SEPOLIA_RPC_URL ?? DEFAULT_SEPOLIA_RPC_URL,
+    rpcUrl: getSepoliaRpcUrl(),
     relayerUrl: `${oracleUrl}/relayer`,
     oracleUrl,
   });

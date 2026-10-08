@@ -41,7 +41,7 @@ export function useConfidentialBalanceFooterViewModel({
     accountSelector(state, { accountId: account.parentId }),
   );
   const owner = parentAccount?.freshAddress;
-  const { signTypedData, deviceSignature } = usePermitSigner(parentAccount);
+  const { signTypedData, signTransaction, deviceSignature } = usePermitSigner(parentAccount);
   const unit = useAccountUnit(account);
   const locale = useSelector(localeSelector);
   const discreet = useDiscreetMode();
@@ -169,6 +169,7 @@ export function useConfidentialBalanceFooterViewModel({
             owner,
             pair: balance.pair,
             createConfidentialClient,
+            signTransaction,
             onClose: () => setIsShieldOpen(false),
             onShielded: load,
           }

@@ -16,7 +16,11 @@ import {
   type ConfidentialErrorKind,
 } from "../../utils/getConfidentialErrorKind";
 import { getShieldMaxDecimals, parseShieldAmount } from "../../utils/shieldAmount";
-import { getShieldExecutor, type ShieldStep } from "../../utils/shieldExecutor";
+import {
+  getShieldExecutor,
+  type ShieldStep,
+  type SignTransaction,
+} from "../../utils/shieldExecutor";
 
 export type ShieldPhaseStatus = "pending" | "signing" | "confirming" | "done" | "failed";
 export type ShieldPhase = { status: ShieldPhaseStatus; hash?: string };
@@ -29,6 +33,7 @@ type Props = {
   owner: string;
   pair: ConfidentialPair;
   createConfidentialClient: CreateConfidentialClient;
+  signTransaction: SignTransaction;
   onClose: () => void;
   onShielded: () => void;
 };
@@ -47,6 +52,7 @@ export function useShieldModalViewModel({
   owner,
   pair,
   createConfidentialClient,
+  signTransaction,
   onClose,
   onShielded,
 }: Props) {
@@ -73,13 +79,23 @@ export function useShieldModalViewModel({
     setPhases(current => ({ ...current, [step]: phase }));
 
   const runFrom = async (shield: PreparedShield, completed: Record<ShieldStep, ShieldPhase>) => {
-    const executor = getShieldExecutor();
+    const executor = getShieldExecutor({
+      currencyId,
+      context: createConfidentialContext(currencyId, createConfidentialClient),
+      signTransaction,
+    });
     for (const [index, step] of SHIELD_STEPS.entries()) {
       if (completed[step].status === "done") continue;
+      const transaction = shield.transactions[index];
+      // No approve when the allowance already covers the amount.
+      if (!transaction) {
+        updatePhase(step, { status: "done" });
+        continue;
+      }
       updatePhase(step, { status: "signing" });
       let hash: string | undefined;
       try {
-        hash = await executor.signAndBroadcast(step, shield.transactions[index]);
+        hash = await executor.signAndBroadcast(step, transaction);
         updatePhase(step, { status: "confirming", hash });
         await executor.waitForConfirmation(hash);
         updatePhase(step, { status: "done", hash });

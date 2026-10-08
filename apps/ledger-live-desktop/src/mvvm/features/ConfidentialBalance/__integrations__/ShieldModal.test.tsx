@@ -8,7 +8,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { render, screen, waitFor } from "tests/testSetup";
 import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { ShieldModal } from "../components/ShieldModal";
-import { DeviceRefusedError, mockControls } from "../utils/confidentialApi";
+import { confidentialApi, DeviceRefusedError, mockControls } from "../utils/confidentialApi";
 import { getShieldExecutor, type ShieldExecutor } from "../utils/shieldExecutor";
 
 jest.mock("../utils/confidentialApi", () => {
@@ -75,17 +75,19 @@ function setup() {
   };
   const onClose = jest.fn();
   const onShielded = jest.fn();
+  const signTransaction = jest.fn();
   const result = render(
     <ShieldModal
       account={account}
       owner={OWNER}
       pair={{ underlying: USDC_MOCK, wrapper: CUSDC_MOCK, rate: 1n, wrapperDecimals: 6 }}
       createConfidentialClient={jest.fn()}
+      signTransaction={signTransaction}
       onClose={onClose}
       onShielded={onShielded}
     />,
   );
-  return { ...result, onClose, onShielded };
+  return { ...result, onClose, onShielded, signTransaction };
 }
 
 beforeEach(() => {
@@ -149,6 +151,37 @@ describe("ShieldModal", () => {
     expect(executor.waitForConfirmation).toHaveBeenNthCalledWith(2, `0xb${"0".repeat(63)}`);
     expect(screen.getByTestId("confidential-shield-phase-approve")).toHaveTextContent("Done");
     expect(screen.getByTestId("confidential-shield-phase-wrap")).toHaveTextContent("Done");
+    expect(onShielded).toHaveBeenCalledTimes(1);
+  });
+
+  it("hands the device signer to the executor", async () => {
+    createExecutor();
+    const { user, signTransaction } = setup();
+
+    await user.type(screen.getByTestId("confidential-shield-amount"), "1");
+    await user.click(screen.getByTestId("confidential-shield-submit"));
+
+    expect(await screen.findByTestId("confidential-shield-done")).toBeVisible();
+    expect(getShieldExecutor).toHaveBeenCalledWith(
+      expect.objectContaining({ currencyId: "ethereum_sepolia", signTransaction }),
+    );
+  });
+
+  it("signs only wrap when the allowance already covers the amount", async () => {
+    const { signed } = createExecutor();
+    const prepare = confidentialApi.prepareShield;
+    jest.spyOn(confidentialApi, "prepareShield").mockImplementationOnce(async (...args) => {
+      const prepared = await prepare(...args);
+      return { ...prepared, transactions: [null, prepared.transactions[1]] };
+    });
+    const { user, onShielded } = setup();
+
+    await user.type(screen.getByTestId("confidential-shield-amount"), "1");
+    await user.click(screen.getByTestId("confidential-shield-submit"));
+
+    expect(await screen.findByTestId("confidential-shield-done")).toBeVisible();
+    expect(signed).toEqual(["wrap"]);
+    expect(screen.getByTestId("confidential-shield-phase-approve")).toHaveTextContent("Done");
     expect(onShielded).toHaveBeenCalledTimes(1);
   });
 
