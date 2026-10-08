@@ -3,7 +3,8 @@ import React, { FC, useState, useEffect } from "react";
 import { useTranslation } from "~/context/Locale";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { AddAccountButton as AddAccountButtonComponent } from "@ledgerhq/native-ui/pre-ldls/components/index";
+import { Box, CardButton } from "@ledgerhq/lumen-ui-rnative";
+import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
@@ -39,11 +40,18 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency }) =
 
   return (
     <>
-      <AddAccountButtonComponent
-        label={t("addAccounts.addNewOrExisting")}
-        onClick={handleOpenAddAccountModal}
-        disabled={disabled}
-      />
+      <Box lx={{ flexDirection: "row" }}>
+        <CardButton
+          appearance="outline"
+          icon={Plus}
+          title={t("addAccounts.addNewOrExisting")}
+          hideChevron
+          onPress={handleOpenAddAccountModal}
+          disabled={disabled}
+          lx={{ marginVertical: "s12" }}
+          testID="add-new-account-button"
+        />
+      </Box>
       <AddAccountDrawer
         isOpened={isAddAccountModalOpen}
         onClose={handleCloseAddAccountModal}
