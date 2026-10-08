@@ -7,10 +7,6 @@ import { mockDelegation } from "../__mocks__/delegation.mock";
 
 jest.mock("LLM/hooks/useStake/useStake", () => ({ useStake: jest.fn() }));
 
-jest.mock("@ledgerhq/native-ui/pre-ldls", () => ({
-  CryptoIcon: () => null,
-}));
-
 jest.mock("~/modals/Info", () => ({
   __esModule: true,
   default: () => null,

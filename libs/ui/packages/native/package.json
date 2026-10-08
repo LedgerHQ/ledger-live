@@ -31,10 +31,6 @@
     },
     "./lib/*": "./lib/*.js",
     "./lib/*/": "./lib/*/index.js",
-    "./pre-ldls": {
-      "@ledgerhq/source": "./src/pre-ldls/index.ts",
-      "default": "./lib/pre-ldls/index.js"
-    },
     "./assets/icons": {
       "@ledgerhq/source": "./src/assets/icons.ts",
       "default": "./lib/assets/icons.js"
