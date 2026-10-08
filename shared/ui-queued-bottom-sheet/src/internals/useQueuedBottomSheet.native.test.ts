@@ -920,6 +920,59 @@ describe("useQueuedBottomSheet", () => {
     expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
   });
 
+  describe("a request made while the sheet is on its way out", () => {
+    function renderReopenableHook() {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const rendered = renderHook(() => {
+        const [isOpen, setIsOpen] = useState(true);
+        const hook = useQueuedBottomSheet({
+          isRequestingToBeOpened: isOpen,
+          onClose: () => setIsOpen(false),
+        });
+        return { hook, setIsOpen };
+      });
+      signalOpen();
+      return { ...rendered, signalOpen };
+    }
+
+    it("is held for the next presentation instead of being served by the outgoing one", () => {
+      const { result, signalOpen } = renderReopenableHook();
+
+      act(() => {
+        result.current.hook.handleHeaderClosePressed();
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+
+      // Re-tapped while the close animation is still running.
+      act(() => {
+        result.current.setIsOpen(true);
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(true);
+      expect(mockPresent).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        result.current.hook.handleDismiss();
+      });
+      // Queued once more for the new request, after the slot the re-tap took was released.
+      expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(3);
+      expect(mockPresent).toHaveBeenCalledTimes(1);
+
+      signalOpen();
+      expect(mockPresent).toHaveBeenCalledTimes(2);
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    it("does not hold anything back when the sheet closes without a new request", () => {
+      const { result } = renderReopenableHook();
+
+      act(() => {
+        result.current.hook.handleAnimate(0, -1);
+      });
+
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+  });
+
   describe("a screen losing focus", () => {
     function renderFocusAware(props: { onClose: () => void; restoreOnFocus?: boolean }) {
       let isFocused = true;
