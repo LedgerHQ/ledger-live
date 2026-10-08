@@ -51,7 +51,7 @@ export type PayloadCheckReport<D> = {
   issues: SwapPayloadIssue[];
 };
 
-type Inspect<P, D> = (proto: P, bytes: Uint8Array) => { decoded: D; issues: SwapPayloadIssue[] };
+type Inspect<P, D> = (proto: P, wire: WireScan) => { decoded: D; issues: SwapPayloadIssue[] };
 
 const createIssue =
   (severity: SwapPayloadIssue["severity"]) =>
@@ -78,8 +78,8 @@ function decodeNgPayload(payload: string): Uint8Array | undefined {
 
 /**
  * Runs every check shared by the payload checkers and collects all issues, in this order:
- * `formatIssues`, encoding or protobuf decoding and `inspect`, `sizeIssues`, public key,
- * signature. Never throws: a throwing `inspect` is reported as `PROTOBUF_DECODE_FAILED`.
+ * `formatIssues`, encoding, protobuf decoding, `scanWireFields` and `inspect`, `sizeIssues`,
+ * public key, signature. Never throws: a throwing `inspect` is reported as `PROTOBUF_DECODE_FAILED`.
  */
 export function runPayloadCheck<P, D>({
   bytes,
@@ -87,6 +87,7 @@ export function runPayloadCheck<P, D>({
   formatIssues = [],
   sizeIssues = [],
   messageName,
+  wireFields,
   decode,
   inspect,
   partnerPublicKey,
@@ -97,6 +98,7 @@ export function runPayloadCheck<P, D>({
   formatIssues?: SwapPayloadIssue[];
   sizeIssues?: SwapPayloadIssue[];
   messageName: string;
+  wireFields: WireField[];
   decode: (bytes: Uint8Array) => P;
   inspect: Inspect<P, D>;
   partnerPublicKey: SwapNgPartnerPublicKey;
@@ -120,8 +122,17 @@ export function runPayloadCheck<P, D>({
       );
     }
     if (proto) {
+      const wire = scanWireFields(bytes, wireFields);
+      if (!wire) {
+        issues.push(
+          issueError(
+            "PROTOBUF_DECODE_FAILED",
+            `The payload bytes are not a valid ledger_trade.${messageName} protobuf message for the Exchange app (nanopb): it rejects groups (wire types 3 and 4), a known field with an unexpected wire type and malformed wire data.`,
+          ),
+        );
+      }
       try {
-        const inspection = inspect(proto, bytes);
+        const inspection = inspect(proto, wire ?? { occurrences: new Map(), violations: [] });
         decoded = inspection.decoded;
         issues.push(...inspection.issues);
       } catch {
@@ -172,6 +183,7 @@ export function runNgPayloadCheck<P, D>({
   signature,
   partnerPublicKey,
   messageName,
+  wireFields,
   decode,
   inspect,
 }: {
@@ -179,6 +191,7 @@ export function runNgPayloadCheck<P, D>({
   signature: string;
   partnerPublicKey: SwapNgPartnerPublicKey;
   messageName: string;
+  wireFields: WireField[];
   decode: (bytes: Uint8Array) => P;
   inspect: Inspect<P, D>;
 }): PayloadCheckReport<D> {
@@ -201,6 +214,7 @@ export function runNgPayloadCheck<P, D>({
       : [],
     sizeIssues: apduSizeIssues("ng", Buffer.byteLength(payload, "utf8")),
     messageName,
+    wireFields,
     decode,
     inspect,
     partnerPublicKey,
@@ -394,46 +408,98 @@ function readVarint(
 }
 
 /**
- * @ignore internal, every top-level occurrence of a length-delimited field in raw protobuf bytes,
- * or `undefined` when nanopb `pb_decode` would fail: truncated bytes, a group or invalid wire type,
- * or `fieldNumber` with another wire type. Reads fields the generated JS protocol does not know.
+ * A protobuf field the Exchange app decodes, with its nanopb `max_size` from app-exchange
+ * `src/proto/protocol.options` for a string or bytes field.
  */
-export function scanLengthDelimitedField(
+export type WireField = { fieldNumber: number; protoName: string } & (
+  | { kind: "string" | "bytes"; maxSize: number }
+  | { kind: "varint" }
+  | { kind: "message"; fields: WireField[] }
+);
+
+export type WireScan = {
+  /** every occurrence of each string or bytes field, in wire order */
+  occurrences: Map<WireField, Uint8Array[]>;
+  violations: FieldLimitViolation[];
+};
+
+const VARINT_WIRE_TYPE = 0;
+const LENGTH_DELIMITED_WIRE_TYPE = 2;
+const FIXED_WIRE_TYPE_BYTES: Record<number, number> = { 1: 8, 5: 4 };
+const MAX_TAG = 0xffffffff;
+
+function readWireValue(
   bytes: Uint8Array,
-  fieldNumber: number,
-): Uint8Array[] | undefined {
-  const found: Uint8Array[] = [];
+  offset: number,
+  wireType: number,
+): { content: Uint8Array; next: number } | undefined {
+  if (wireType === LENGTH_DELIMITED_WIRE_TYPE) {
+    const length = readVarint(bytes, offset);
+    if (!length || length.value > bytes.length - length.next) return undefined;
+    const next = length.next + length.value;
+    return { content: bytes.subarray(length.next, next), next };
+  }
+  const next =
+    wireType === VARINT_WIRE_TYPE
+      ? readVarint(bytes, offset)?.next
+      : offset + (FIXED_WIRE_TYPE_BYTES[wireType] ?? Infinity);
+  if (next === undefined || next > bytes.length) return undefined;
+  return { content: bytes.subarray(offset, next), next };
+}
+
+function scanMessage(
+  bytes: Uint8Array,
+  fields: WireField[],
+  occurrences: Map<WireField, Uint8Array[]>,
+): boolean {
+  const fieldsByNumber = new Map(fields.map(field => [field.fieldNumber, field]));
   let offset = 0;
 
   while (offset < bytes.length) {
     const tag = readVarint(bytes, offset);
-    if (!tag) return undefined;
-    offset = tag.next;
+    // nanopb rejects field number 0 ("zero tag") and a tag that does not fit in 32 bits.
+    if (!tag || tag.value < 8 || tag.value > MAX_TAG) return false;
     const wireType = tag.value % 8;
-    const isTargetField = Math.floor(tag.value / 8) === fieldNumber;
+    const value = readWireValue(bytes, tag.next, wireType);
+    if (!value) return false;
+    offset = value.next;
 
-    if (wireType === 2) {
-      const length = readVarint(bytes, offset);
-      if (!length || length.value > bytes.length - length.next) return undefined;
-      offset = length.next + length.value;
-      if (isTargetField) found.push(bytes.subarray(length.next, offset));
-      continue;
+    const field = fieldsByNumber.get(Math.floor(tag.value / 8));
+    if (!field) continue;
+    const expectedWireType =
+      field.kind === "varint" ? VARINT_WIRE_TYPE : LENGTH_DELIMITED_WIRE_TYPE;
+    if (wireType !== expectedWireType) return false;
+    if (field.kind === "message") {
+      if (!scanMessage(value.content, field.fields, occurrences)) return false;
+    } else if (field.kind !== "varint") {
+      occurrences.set(field, [...(occurrences.get(field) ?? []), value.content]);
     }
-    if (isTargetField) return undefined;
-
-    if (wireType === 0) {
-      const varint = readVarint(bytes, offset);
-      if (!varint) return undefined;
-      offset = varint.next;
-    } else if (wireType === 1) {
-      offset += 8;
-    } else if (wireType === 5) {
-      offset += 4;
-    } else {
-      return undefined;
-    }
-    if (offset > bytes.length) return undefined;
   }
+  return true;
+}
 
-  return found;
+function limitViolations(
+  fields: WireField[],
+  occurrences: Map<WireField, Uint8Array[]>,
+): FieldLimitViolation[] {
+  return fields.flatMap(field => {
+    if (field.kind === "message") return limitViolations(field.fields, occurrences);
+    if (field.kind === "varint") return [];
+    // nanopb reserves the NUL terminator of a string in `max_size`.
+    const limit = field.kind === "string" ? field.maxSize - 1 : field.maxSize;
+    const actual = Math.max(0, ...(occurrences.get(field) ?? []).map(({ length }) => length));
+    return actual > limit ? [{ field: field.protoName, limit, actual }] : [];
+  });
+}
+
+/**
+ * Walks raw protobuf bytes like nanopb `pb_decode` in app-exchange, which also rejects what
+ * protobufjs accepts: `undefined` for truncated data, a group or invalid wire type, or a known
+ * field with another wire type. Limits are checked on every occurrence of a field: nanopb fails
+ * on an oversized one even when a later duplicate fits.
+ */
+export function scanWireFields(bytes: Uint8Array, fields: WireField[]): WireScan | undefined {
+  const occurrences = new Map<WireField, Uint8Array[]>();
+  if (!scanMessage(bytes, fields, occurrences)) return undefined;
+  return { occurrences, violations: limitViolations(fields, occurrences) };
 }

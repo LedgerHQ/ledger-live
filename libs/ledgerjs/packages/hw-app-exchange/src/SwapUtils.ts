@@ -84,12 +84,11 @@ export function toSwapPayload(decodePayload: SwapProtobufPayload): SwapPayload {
   return { ...decodePayload, amountToWallet, amountToProvider, deviceTransactionIdNg };
 }
 
-type ProtoFieldKind = "string" | "bytes";
-
-type ProtoFieldLimit<T> = {
-  key: keyof T;
+type ProtoFieldLimit = {
+  key: keyof SwapProtobufPayload;
+  fieldNumber: number;
   protoName: string;
-  kind: ProtoFieldKind;
+  kind: "string" | "bytes";
   maxSize: number;
 };
 
@@ -100,45 +99,67 @@ type ProtoFieldLimit<T> = {
  *
  * @ignore internal lookup table, consumers should use `findSwapPayloadSpecViolation`.
  */
-const NEW_TRANSACTION_RESPONSE_FIELD_LIMITS: ProtoFieldLimit<SwapProtobufPayload>[] = [
-  { key: "payinAddress", protoName: "payin_address", kind: "string", maxSize: 151 },
-  { key: "payinExtraId", protoName: "payin_extra_id", kind: "string", maxSize: 20 },
-  { key: "refundAddress", protoName: "refund_address", kind: "string", maxSize: 151 },
-  { key: "refundExtraId", protoName: "refund_extra_id", kind: "string", maxSize: 20 },
-  { key: "payoutAddress", protoName: "payout_address", kind: "string", maxSize: 151 },
-  { key: "payoutExtraId", protoName: "payout_extra_id", kind: "string", maxSize: 20 },
-  { key: "currencyFrom", protoName: "currency_from", kind: "string", maxSize: 10 },
-  { key: "currencyTo", protoName: "currency_to", kind: "string", maxSize: 10 },
-  { key: "amountToProvider", protoName: "amount_to_provider", kind: "bytes", maxSize: 16 },
-  { key: "amountToWallet", protoName: "amount_to_wallet", kind: "bytes", maxSize: 16 },
-  { key: "deviceTransactionId", protoName: "device_transaction_id", kind: "string", maxSize: 11 },
+export const NEW_TRANSACTION_RESPONSE_FIELD_LIMITS: ProtoFieldLimit[] = [
+  { key: "payinAddress", fieldNumber: 1, protoName: "payin_address", kind: "string", maxSize: 151 },
+  { key: "payinExtraId", fieldNumber: 2, protoName: "payin_extra_id", kind: "string", maxSize: 20 },
+  {
+    key: "refundAddress",
+    fieldNumber: 3,
+    protoName: "refund_address",
+    kind: "string",
+    maxSize: 151,
+  },
+  {
+    key: "refundExtraId",
+    fieldNumber: 4,
+    protoName: "refund_extra_id",
+    kind: "string",
+    maxSize: 20,
+  },
+  {
+    key: "payoutAddress",
+    fieldNumber: 5,
+    protoName: "payout_address",
+    kind: "string",
+    maxSize: 151,
+  },
+  {
+    key: "payoutExtraId",
+    fieldNumber: 6,
+    protoName: "payout_extra_id",
+    kind: "string",
+    maxSize: 20,
+  },
+  { key: "currencyFrom", fieldNumber: 7, protoName: "currency_from", kind: "string", maxSize: 10 },
+  { key: "currencyTo", fieldNumber: 8, protoName: "currency_to", kind: "string", maxSize: 10 },
+  {
+    key: "amountToProvider",
+    fieldNumber: 9,
+    protoName: "amount_to_provider",
+    kind: "bytes",
+    maxSize: 16,
+  },
+  {
+    key: "amountToWallet",
+    fieldNumber: 10,
+    protoName: "amount_to_wallet",
+    kind: "bytes",
+    maxSize: 16,
+  },
+  {
+    key: "deviceTransactionId",
+    fieldNumber: 11,
+    protoName: "device_transaction_id",
+    kind: "string",
+    maxSize: 11,
+  },
   {
     key: "deviceTransactionIdNg",
+    fieldNumber: 12,
     protoName: "device_transaction_id_ng",
     kind: "bytes",
     maxSize: 32,
   },
-];
-
-type SellFieldLimitView = ledger_trade.INewSellResponse & {
-  outAmountCoefficient?: Uint8Array | null;
-};
-
-// Mirrored from app-exchange `src/proto/protocol.options`.
-const NEW_SELL_RESPONSE_FIELD_LIMITS: ProtoFieldLimit<SellFieldLimitView>[] = [
-  { key: "traderEmail", protoName: "trader_email", kind: "string", maxSize: 50 },
-  { key: "inCurrency", protoName: "in_currency", kind: "string", maxSize: 10 },
-  { key: "inAmount", protoName: "in_amount", kind: "bytes", maxSize: 16 },
-  { key: "inAddress", protoName: "in_address", kind: "string", maxSize: 151 },
-  { key: "inExtraId", protoName: "in_extra_id", kind: "string", maxSize: 20 },
-  { key: "outCurrency", protoName: "out_currency", kind: "string", maxSize: 10 },
-  {
-    key: "outAmountCoefficient",
-    protoName: "out_amount.coefficient",
-    kind: "bytes",
-    maxSize: 16,
-  },
-  { key: "deviceTransactionId", protoName: "device_transaction_id", kind: "bytes", maxSize: 32 },
 ];
 
 /** @ignore internal */
@@ -173,7 +194,7 @@ export function findSwapPayloadSpecViolation(
     return undefined;
   }
 
-  const [violation] = findSwapFieldLimitViolations(decoded);
+  const [violation] = findLimitViolations(decoded);
   return violation
     ? new SwapPayloadFieldExceedsLimit(violation.field, violation.limit, violation.actual)
     : undefined;
@@ -182,24 +203,9 @@ export function findSwapPayloadSpecViolation(
 /** @ignore internal */
 export type FieldLimitViolation = { field: string; limit: number; actual: number };
 
-/** @ignore internal */
-export function findSwapFieldLimitViolations(decoded: SwapProtobufPayload): FieldLimitViolation[] {
-  return findLimitViolations(decoded, NEW_TRANSACTION_RESPONSE_FIELD_LIMITS);
-}
-
-/** @ignore internal */
-export function findSellFieldLimitViolations(
-  decoded: ledger_trade.INewSellResponse,
-): FieldLimitViolation[] {
-  return findLimitViolations(
-    { ...decoded, outAmountCoefficient: decoded.outAmount?.coefficient },
-    NEW_SELL_RESPONSE_FIELD_LIMITS,
-  );
-}
-
-function findLimitViolations<T>(decoded: T, limits: ProtoFieldLimit<T>[]): FieldLimitViolation[] {
+function findLimitViolations(decoded: SwapProtobufPayload): FieldLimitViolation[] {
   const violations: FieldLimitViolation[] = [];
-  for (const { key, protoName, kind, maxSize } of limits) {
+  for (const { key, protoName, kind, maxSize } of NEW_TRANSACTION_RESPONSE_FIELD_LIMITS) {
     const actualBytes = measureBytes(decoded[key]);
     const maxBytes = kind === "string" ? maxSize - 1 : maxSize;
 

@@ -88,6 +88,12 @@ const buildInput = ({
   };
 };
 
+const lengthDelimited = (fieldNumber: number, content: Uint8Array): Buffer => {
+  const length = content.length;
+  const lengthBytes = length < 128 ? [length] : [(length & 0x7f) | 0x80, length >> 7];
+  return Buffer.concat([Buffer.from([(fieldNumber << 3) | 2, ...lengthBytes]), content]);
+};
+
 const codesOf = (report: SellPayloadCheckReport): SwapPayloadIssueCode[] =>
   report.issues.map(issue => issue.code);
 
@@ -424,6 +430,89 @@ describe("checkSellPayload", () => {
     expect(report.decoded).toBeUndefined();
     expect(errorCodesOf(report)).toEqual(["PROTOBUF_DECODE_FAILED"]);
     expect(report.issues[0].message).toMatch(/NewSellResponse/);
+  });
+
+  describe("raw wire data", () => {
+    const checkRaw = (raw: Uint8Array) => {
+      const payload = base64url(raw);
+      return checkSellPayload({
+        payload,
+        signature: base64url(signCompact("secp256k1", dotPrefixed(payload))),
+        partnerPublicKey: publicKeyFor("secp256k1"),
+      });
+    };
+
+    const validRaw = encodeFields(VALID_FIELDS).raw;
+
+    // protobufjs decodes these, nanopb fails to decode the message.
+    it.each([
+      ["an unknown field as a group", [0x7b, 0x7c]],
+      ["a group wrapping a field", [0x7b, 0x08, 0x01, 0x7c]],
+      ["in_extra_id as a varint", [0x40, 0x00]],
+      ["out_amount.exponent as length-delimited", [0x32, 0x05, 0x0a, 0x01, 0x05, 0x12, 0x00]],
+      ["a group inside out_amount", [0x32, 0x05, 0x0a, 0x01, 0x05, 0x7b, 0x7c]],
+      ["a truncated in_address length", [0x22, 0x05, 0x01]],
+    ])("reports PROTOBUF_DECODE_FAILED for %s", (_case, suffix) => {
+      const report = checkRaw(Buffer.concat([validRaw, Buffer.from(suffix)]));
+
+      expect(report.valid).toBe(false);
+      expect(errorCodesOf(report)).toEqual(["PROTOBUF_DECODE_FAILED"]);
+    });
+
+    it("still accepts an unknown varint, 32-bit or 64-bit field", () => {
+      const report = checkRaw(
+        Buffer.concat([
+          validRaw,
+          Buffer.from([0x78, 0x01, 0x7d, ...new Array(4).fill(0), 0x79, ...new Array(8).fill(0)]),
+        ]),
+      );
+
+      expect(report.valid).toBe(true);
+      expect(report.issues).toEqual([]);
+    });
+
+    it("reports FIELD_EXCEEDS_LIMIT for an oversized field followed by a valid duplicate", () => {
+      const report = checkRaw(
+        Buffer.concat([lengthDelimited(4, Buffer.alloc(151, 0x61)), validRaw]),
+      );
+
+      expect(report.decoded?.inAddress).toBe(VALID_FIELDS.inAddress);
+      expect(report.issues).toEqual([
+        expect.objectContaining({
+          code: "FIELD_EXCEEDS_LIMIT",
+          field: "in_address",
+          message: expect.stringMatching(/151 bytes.*at most 150 bytes/),
+        }),
+      ]);
+    });
+
+    const outAmount = (...coefficients: Buffer[]) =>
+      lengthDelimited(
+        6,
+        Buffer.concat([...coefficients.map(c => lengthDelimited(1, c)), Buffer.from([0x10, 0x02])]),
+      );
+
+    it.each([
+      ["an out_amount", Buffer.concat([outAmount(Buffer.alloc(17, 0x01)), validRaw])],
+      [
+        "a coefficient in the same out_amount",
+        Buffer.concat([validRaw, outAmount(Buffer.alloc(17, 0x01), Buffer.from("20f6", "hex"))]),
+      ],
+    ])(
+      "reports FIELD_EXCEEDS_LIMIT for an oversized coefficient followed by %s that fits",
+      (_case, raw) => {
+        const report = checkRaw(raw);
+
+        expect(report.decoded?.outAmount).toBe("84.38");
+        expect(report.issues).toEqual([
+          expect.objectContaining({
+            code: "FIELD_EXCEEDS_LIMIT",
+            field: "out_amount.coefficient",
+            message: expect.stringMatching(/17 bytes.*at most 16 bytes/),
+          }),
+        ]);
+      },
+    );
   });
 
   describe("required fields", () => {

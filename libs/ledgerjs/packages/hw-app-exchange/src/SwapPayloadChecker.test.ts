@@ -1277,6 +1277,45 @@ describe.each([
   });
 });
 
+describe.each([
+  ["NG", VALID_FIELDS, signNg],
+  ["legacy", LEGACY_SAMPLE_FIELDS, signLegacy],
+] as const)("checkSwapPayload duplicate fields (%s)", (_format, baseFields, sign) => {
+  it.each([
+    ["payin_extra_id", 2, 20, 19],
+    ["currency_from", 7, 10, 9],
+    ["amount_to_wallet", 10, 17, 16],
+  ])(
+    "reports FIELD_EXCEEDS_LIMIT for an oversized %s followed by a valid duplicate",
+    (field, fieldNumber, actual, limit) => {
+      const raw = Buffer.concat([
+        lengthDelimited(fieldNumber, Buffer.alloc(actual, 0x61)),
+        encodeFields({ ...baseFields, payinExtraId: "memo" }).raw,
+      ]);
+
+      const report = checkSwapPayload(sign(raw));
+
+      expect(report.issues).toEqual([
+        expect.objectContaining({
+          code: "FIELD_EXCEEDS_LIMIT",
+          field,
+          message: expect.stringContaining(
+            `is ${actual} bytes, the Exchange app accepts at most ${limit} bytes`,
+          ),
+        }),
+      ]);
+    },
+  );
+
+  it("reports PROTOBUF_DECODE_FAILED for a known field sent as a varint", () => {
+    const report = checkSwapPayload(
+      sign(Buffer.concat([encodeFields(baseFields).raw, Buffer.from([0x10, 0x00])])),
+    );
+
+    expect(errorCodesOf(report)).toEqual(["PROTOBUF_DECODE_FAILED"]);
+  });
+});
+
 describe("checkSwapPayload partner public key", () => {
   it.each(["secp256k1", "secp256r1"] as const)(
     "warns with PUBLIC_KEY_COMPRESSED for a valid compressed %s key and still verifies",

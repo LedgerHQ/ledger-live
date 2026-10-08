@@ -1,6 +1,5 @@
 import { ledger_trade } from "./generate-protocol";
 import type { SwapNgPartnerPublicKey } from "./SwapSignature";
-import { findSellFieldLimitViolations } from "./SwapUtils";
 import {
   expectedValueIssues,
   fieldLimitIssues,
@@ -11,6 +10,8 @@ import {
   sameHexNonce,
   type PayloadCheckReport,
   type SwapPayloadIssue,
+  type WireField,
+  type WireScan,
 } from "./PayloadCheckerShared";
 
 export type SellPayloadCheckInput = {
@@ -84,8 +85,33 @@ function toDecodedSellPayload(proto: ledger_trade.NewSellResponse): DecodedSellP
 
 // app-exchange trims the leading 0x00 bytes (`trim_amounts`), then only displays a uint64.
 const MAX_SIGNIFICANT_COEFFICIENT_BYTES = 8;
-// app-exchange protocol.options, already reported by `findSellFieldLimitViolations`.
 const MAX_COEFFICIENT_BYTES = 16;
+
+// Mirrored from app-exchange `src/proto/protocol.options`.
+const NEW_SELL_RESPONSE_FIELDS: WireField[] = [
+  { fieldNumber: 1, protoName: "trader_email", kind: "string", maxSize: 50 },
+  { fieldNumber: 2, protoName: "in_currency", kind: "string", maxSize: 10 },
+  { fieldNumber: 3, protoName: "in_amount", kind: "bytes", maxSize: 16 },
+  { fieldNumber: 4, protoName: "in_address", kind: "string", maxSize: 151 },
+  { fieldNumber: 8, protoName: "in_extra_id", kind: "string", maxSize: 20 },
+  { fieldNumber: 5, protoName: "out_currency", kind: "string", maxSize: 10 },
+  {
+    fieldNumber: 6,
+    protoName: "out_amount",
+    kind: "message",
+    fields: [
+      {
+        fieldNumber: 1,
+        protoName: "out_amount.coefficient",
+        kind: "bytes",
+        maxSize: MAX_COEFFICIENT_BYTES,
+      },
+      { fieldNumber: 2, protoName: "out_amount.exponent", kind: "varint" },
+    ],
+  },
+  { fieldNumber: 7, protoName: "device_transaction_id", kind: "bytes", maxSize: 32 },
+];
+
 // app-exchange MAX_PRINTABLE_AMOUNT_SIZE, holds "<out_currency> <amount>\0".
 const PRINTABLE_AMOUNT_BYTES = 50;
 
@@ -135,6 +161,7 @@ function outAmountIssues(proto: ledger_trade.NewSellResponse): SwapPayloadIssue[
 
 function inspectSell(
   proto: ledger_trade.NewSellResponse,
+  wire: WireScan,
   expected: SellPayloadCheckInput["expected"],
 ): { decoded: DecodedSellPayload; issues: SwapPayloadIssue[] } {
   const decoded = toDecodedSellPayload(proto);
@@ -156,7 +183,7 @@ function inspectSell(
       ],
     ),
     ...ngNonceIssues("device_transaction_id", proto.deviceTransactionId),
-    ...fieldLimitIssues(findSellFieldLimitViolations(proto)),
+    ...fieldLimitIssues(wire.violations),
     ...outAmountIssues(proto),
     ...expectedValueIssues([
       {
@@ -187,7 +214,8 @@ export function checkSellPayload(input: SellPayloadCheckInput): SellPayloadCheck
     signature: input.signature,
     partnerPublicKey: input.partnerPublicKey,
     messageName: "NewSellResponse",
+    wireFields: NEW_SELL_RESPONSE_FIELDS,
     decode: bytes => ledger_trade.NewSellResponse.decode(bytes),
-    inspect: proto => inspectSell(proto, input.expected),
+    inspect: (proto, wire) => inspectSell(proto, wire, input.expected),
   });
 }

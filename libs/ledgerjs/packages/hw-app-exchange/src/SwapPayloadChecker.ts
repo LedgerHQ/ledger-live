@@ -1,6 +1,6 @@
 import {
   decodeNewTransactionResponseBytes,
-  findSwapFieldLimitViolations,
+  NEW_TRANSACTION_RESPONSE_FIELD_LIMITS,
   toSwapPayload,
   type SwapPayload,
   type SwapProtobufPayload,
@@ -17,9 +17,10 @@ import {
   runNgPayloadCheck,
   runPayloadCheck,
   sameHexNonce,
-  scanLengthDelimitedField,
   type PayloadCheckReport,
   type SwapPayloadIssue,
+  type WireField,
+  type WireScan,
 } from "./PayloadCheckerShared";
 
 export type { SwapPayloadIssue, SwapPayloadIssueCode } from "./PayloadCheckerShared";
@@ -123,21 +124,27 @@ const orZeroAmount = (bytes: Buffer): Buffer =>
 
 const lastOf = <T>(values: T[]): T | undefined => values[values.length - 1];
 
-// Not in the generated JS protocol, read from the raw bytes.
-const PAYIN_EXTRA_DATA_FIELD_NUMBER = 13;
 const PAYIN_EXTRA_DATA_BYTES = 33;
+
+// Not in the generated JS protocol, only read from the raw bytes.
+const PAYIN_EXTRA_DATA_FIELD: WireField = {
+  fieldNumber: 13,
+  protoName: "payin_extra_data",
+  kind: "bytes",
+  maxSize: PAYIN_EXTRA_DATA_BYTES,
+};
+
+const NEW_TRANSACTION_RESPONSE_FIELDS: WireField[] = [
+  ...NEW_TRANSACTION_RESPONSE_FIELD_LIMITS,
+  PAYIN_EXTRA_DATA_FIELD,
+];
 
 // Mirrors app-exchange `check_extra_id_extra_data`.
 function payinExtraDataIssues(
   proto: SwapProtobufPayload,
   occurrences: Uint8Array[],
 ): SwapPayloadIssue[] {
-  const longest = Math.max(0, ...occurrences.map(({ length }) => length));
-  if (longest > PAYIN_EXTRA_DATA_BYTES) {
-    return fieldLimitIssues([
-      { field: "payin_extra_data", limit: PAYIN_EXTRA_DATA_BYTES, actual: longest },
-    ]);
-  }
+  if (occurrences.some(({ length }) => length > PAYIN_EXTRA_DATA_BYTES)) return [];
 
   // As in protobuf decoders, the last occurrence wins.
   const extraData = lastOf(occurrences);
@@ -169,12 +176,12 @@ function payinExtraDataIssues(
 
 function inspectSwap(
   proto: SwapProtobufPayload,
-  bytes: Uint8Array,
+  wire: WireScan,
   nonce: NonceRules,
   expected: SwapExpected | undefined,
 ): { decoded: DecodedSwapPayload; issues: SwapPayloadIssue[] } {
-  const extraDataOccurrences = scanLengthDelimitedField(bytes, PAYIN_EXTRA_DATA_FIELD_NUMBER);
-  const payinExtraData = lastOf(extraDataOccurrences ?? []);
+  const extraDataOccurrences = wire.occurrences.get(PAYIN_EXTRA_DATA_FIELD) ?? [];
+  const payinExtraData = lastOf(extraDataOccurrences);
   const decoded: DecodedSwapPayload = {
     ...toSwapPayload({
       ...proto,
@@ -185,21 +192,13 @@ function inspectSwap(
   };
 
   const issues = [
-    ...(extraDataOccurrences
-      ? []
-      : [
-          issueError(
-            "PROTOBUF_DECODE_FAILED",
-            'The payload bytes are not a valid ledger_trade.NewTransactionResponse protobuf message for the Exchange app (nanopb): it rejects groups (wire types 3 and 4), a "payin_extra_data" (field 13) that is not length-delimited and malformed wire data.',
-          ),
-        ]),
     ...requiredFieldIssues(
       [...REQUIRED_KEYS, nonce.key].map(key => ({ field: protoFieldName(key), value: proto[key] })),
       AMOUNT_KEYS.map(key => ({ field: protoFieldName(key), value: proto[key] })),
     ),
     ...nonce.issues(proto),
-    ...fieldLimitIssues(findSwapFieldLimitViolations(proto)),
-    ...payinExtraDataIssues(proto, extraDataOccurrences ?? []),
+    ...fieldLimitIssues(wire.violations),
+    ...payinExtraDataIssues(proto, extraDataOccurrences),
     ...expectedValueIssues([
       {
         field: protoFieldName(nonce.key),
@@ -300,8 +299,9 @@ export function checkSwapPayload(input: SwapPayloadCheckInput): SwapPayloadCheck
         'A legacy swap payload must be the hex of the raw protobuf bytes, without a "0x" prefix: an even number of 0-9, a-f, A-F characters.',
       ),
       messageName,
+      wireFields: NEW_TRANSACTION_RESPONSE_FIELDS,
       decode,
-      inspect: (proto, raw) => inspectSwap(proto, raw, LEGACY_NONCE, expected),
+      inspect: (proto, wire) => inspectSwap(proto, wire, LEGACY_NONCE, expected),
       partnerPublicKey,
       checkSignature: raw => legacySignatureIssues(raw, signature, partnerPublicKey),
     });
@@ -312,7 +312,8 @@ export function checkSwapPayload(input: SwapPayloadCheckInput): SwapPayloadCheck
     signature,
     partnerPublicKey,
     messageName,
+    wireFields: NEW_TRANSACTION_RESPONSE_FIELDS,
     decode,
-    inspect: (proto, raw) => inspectSwap(proto, raw, NG_NONCE, expected),
+    inspect: (proto, wire) => inspectSwap(proto, wire, NG_NONCE, expected),
   });
 }
