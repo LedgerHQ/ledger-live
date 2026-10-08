@@ -4,7 +4,7 @@ import { buildContext } from "@ledgerhq/live-common/bridge/generic-coin-framewor
 
 const DEFAULT_SEPOLIA_RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
 
-export type ConfidentialClientOptions = { rpcUrl: string; relayerUrl: string };
+export type ConfidentialClientOptions = { rpcUrl: string; relayerUrl: string; oracleUrl: string };
 export type CreateConfidentialClient = (options: ConfidentialClientOptions) => ConfidentialClient;
 
 export const isRealConfidentialApi = (): boolean => process.env.CONFIDENTIAL_API === "real";
@@ -20,6 +20,7 @@ function getConfidentialClient(createClient: CreateConfidentialClient): Confiden
   client = createClient({
     rpcUrl: process.env.CONFIDENTIAL_SEPOLIA_RPC_URL ?? DEFAULT_SEPOLIA_RPC_URL,
     relayerUrl: `${oracleUrl}/relayer`,
+    oracleUrl,
   });
   return client;
 }
