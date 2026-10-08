@@ -29,12 +29,14 @@ import { EthersProvider } from "@zama-fhe/sdk/ethers";
 import { web } from "@zama-fhe/sdk/web";
 
 const SECONDS_PER_DAY = 86_400;
+const NO_ACCOUNT: Hex = "0x0000000000000000000000000000000000000000";
 
 /** The part of the SDK this client drives, so tests can stand in for it. */
 export type ZamaSdkLike = {
   permits: Pick<ZamaSDK["permits"], "hasPermit" | "registerPermit">;
   offline: Pick<ZamaSDK["offline"], "preparePermit">;
   decryption: Pick<ZamaSDK["decryption"], "decryptValues">;
+  registry: Pick<ZamaSDK["registry"], "getConfidentialToken">;
 };
 
 export type ZamaConfidentialClientOptions = {
@@ -42,6 +44,8 @@ export type ZamaConfidentialClientOptions = {
   rpcUrl: string;
   /** Zama relayer, or a passthrough to it. */
   relayerUrl: string;
+  /** Attestation service that prepares confidential transfers and vouches for their amounts. */
+  oracleUrl: string;
   /** FHE chain preset. Default Sepolia. */
   chain?: FheChain;
   /** Where the SDK keeps permits and transport key pairs. Default in memory. */
@@ -105,6 +109,20 @@ function toConfidentialError(error: unknown, fields?: { contract?: string; handl
 
 const key = (value: string) => value.toLowerCase();
 
+const ORACLE_ERRORS: Record<string, ConfidentialErrorCode> = {
+  WRAPPER_NOT_REGISTERED: "WrapperNotRegistered",
+  RELAYER_ERROR: "RelayerError",
+  RATE_LIMITED: "RelayerError",
+};
+
+type OracleTransaction = { unsignedTx: string; handle: Handle };
+
+function isOracleTransaction(value: unknown): value is OracleTransaction {
+  if (typeof value !== "object" || value === null) return false;
+  const { unsignedTx, handle } = value as Record<string, unknown>;
+  return typeof unsignedTx === "string" && typeof handle === "string" && handle.startsWith("0x");
+}
+
 /**
  * Confidential-token client backed by the Zama SDK in the renderer. It only bridges to Zama:
  * balance states, amounts and the order of calls belong to coin-evm, which receives this client.
@@ -116,6 +134,8 @@ export class ZamaConfidentialClient implements ConfidentialClient {
   // The SDK reports whether a permit exists, not until when: expiries are recorded at registration.
   private readonly expiries = new Map<string, number>();
   private readonly createSdk: (account: Hex) => ZamaSdkLike;
+  private readonly oracleUrl: string;
+  private readonly chainId: number;
 
   constructor(options: ZamaConfidentialClientOptions) {
     const chain = {
@@ -124,6 +144,8 @@ export class ZamaConfidentialClient implements ConfidentialClient {
       relayerUrl: options.relayerUrl,
     };
     const storage = options.storage ?? new MemoryStorage();
+    this.oracleUrl = options.oracleUrl;
+    this.chainId = chain.id;
     this.createSdk =
       options.createSdk ??
       (account =>
@@ -227,16 +249,58 @@ export class ZamaConfidentialClient implements ConfidentialClient {
     return results;
   }
 
-  async getConfidentialToken(): Promise<{ wrapper: string; isValid: boolean } | null> {
-    throw new ConfidentialError("Unavailable", "registry lookup is not wired yet");
+  // Registry reads involve no account: they go through an SDK bound to none.
+  async getConfidentialToken(
+    underlying: string,
+  ): Promise<{ wrapper: string; isValid: boolean } | null> {
+    try {
+      const token = await this.sdkFor(NO_ACCOUNT).registry.getConfidentialToken(underlying as Hex);
+      return token && { wrapper: token.confidentialTokenAddress, isValid: token.isValid };
+    } catch (error) {
+      throw toConfidentialError(error, { contract: underlying });
+    }
   }
 
   async publicDecrypt(): Promise<{ clearValues: Record<Handle, bigint>; decryptionProof: Hex }> {
     throw new ConfidentialError("Unavailable", "public decryption is not wired yet");
   }
 
-  async prepareTransfer(): Promise<OraclePrepared> {
-    throw new ConfidentialError("Unavailable", "confidential transfer is not wired yet");
+  // The service encrypts the amount for `from`, builds the unsigned transaction and keeps the signed map entry
+  // the device needs to show the amount.
+  async prepareTransfer(p: {
+    from: string;
+    wrapper: string;
+    to: string;
+    amount: bigint;
+  }): Promise<OraclePrepared> {
+    let response: Response;
+    try {
+      response = await fetch(`${this.oracleUrl}/prepare/transfer`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          chainId: this.chainId,
+          from: p.from,
+          token: p.wrapper,
+          to: p.to,
+          amount: p.amount.toString(),
+        }),
+      });
+    } catch (error) {
+      throw new ConfidentialError("OracleUnavailable", undefined, {
+        contract: p.wrapper,
+        cause: error,
+      });
+    }
+    const body: unknown = await response.json().catch(() => undefined);
+    if (!response.ok || !isOracleTransaction(body)) {
+      const error = (body as { error?: { code?: string; message?: string } } | undefined)?.error;
+      const code = error?.code ? (ORACLE_ERRORS[error.code] ?? "Unknown") : "OracleUnavailable";
+      throw new ConfidentialError(code, error?.message ?? `oracle answered ${response.status}`, {
+        contract: p.wrapper,
+      });
+    }
+    return { transaction: body.unsignedTx, handle: key(body.handle) as Handle };
   }
 
   async prepareUnwrap(): Promise<OraclePrepared> {
