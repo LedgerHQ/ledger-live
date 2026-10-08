@@ -1,6 +1,6 @@
 import type { BitcoinConfig } from "../../../config";
 import * as bitcoin from "bitcoinjs-lib";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 
 /** Addresses and chain data reused from the existing Bitcoin integration tests. */
 export const FUNDED_P2WPKH = "bc1qhh568mfmwu7ymvwhu5e4mttpfg4ehxfpvhjs64";
@@ -57,7 +57,7 @@ export function buildSignedTxHex(inputs: { prevTxid?: string; index?: number }[]
     psbt.signInput(i, {
       publicKey,
       sign: (hash: Buffer) =>
-        Buffer.from(secp256k1.sign(new Uint8Array(hash), privateKey).toBytes("compact")),
+        Buffer.from(secp256k1.sign(new Uint8Array(hash), privateKey, { prehash: false })),
     }),
   );
   psbt.finalizeAllInputs();

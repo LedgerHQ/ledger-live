@@ -202,8 +202,8 @@ catalogs:
       specifier: 2.7.0
       version: 2.7.0
     '@noble/curves':
-      specifier: 1.9.7
-      version: 1.9.7
+      specifier: 2.4.0
+      version: 2.4.0
     '@noble/hashes':
       specifier: 1.8.0
       version: 1.8.0
@@ -9730,7 +9730,7 @@ importers:
     dependencies:
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@trust/keyto':
         specifier: 1.0.1
         version: 1.0.1
@@ -9738,6 +9738,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -11082,7 +11085,7 @@ importers:
         version: link:../../wallet-framework-test-setup
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@support/jest-shared':
         specifier: workspace:*
         version: link:../../../support/jest-shared
@@ -13187,7 +13190,10 @@ importers:
         version: link:../../wallet-framework-test-setup
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -13363,7 +13369,7 @@ importers:
         version: link:../../types-live
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -13749,7 +13755,7 @@ importers:
         version: link:../../types-live
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -14169,7 +14175,7 @@ importers:
         version: link:../../types-live
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -14242,7 +14248,7 @@ importers:
         version: link:../../types-live
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -14324,7 +14330,7 @@ importers:
         version: link:../../types-live
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -14552,7 +14558,7 @@ importers:
         version: 2.7.0
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -15305,7 +15311,7 @@ importers:
         version: link:../wallet-btc
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -15960,7 +15966,7 @@ importers:
         version: 0.6.1(@typescript/typescript6@6.0.2)
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -16287,7 +16293,7 @@ importers:
         version: link:../../../../support/test-quarantine
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -18834,7 +18840,7 @@ importers:
         version: 3.2.0(axios@1.20.0(debug@4.4.3))
       '@noble/curves':
         specifier: 'catalog:'
-        version: 1.9.7
+        version: 2.4.0
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -18887,6 +18893,9 @@ importers:
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../wallet-framework-test-setup
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
