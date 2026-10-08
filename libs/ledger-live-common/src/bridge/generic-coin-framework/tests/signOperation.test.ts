@@ -103,6 +103,48 @@ describe("genericSignOperation", () => {
     );
   });
 
+  it("signs a family-crafted payload instead of crafting one", async () => {
+    const craftUnsignedTransaction = jest
+      .fn()
+      .mockResolvedValue({ transaction: "familyUnsignedTx", sequence: 7n });
+    (getBridgeApi as jest.Mock).mockResolvedValue({ craftUnsignedTransaction });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    const events = await lastValueFrom(
+      signOperation({ account, transaction, deviceId: "" }).pipe(toArray()),
+    );
+
+    expect(craftUnsignedTransaction).toHaveBeenCalledWith(account, transaction);
+    expect(craftTransaction).not.toHaveBeenCalled();
+    expect(mockSigner.signTransaction).toHaveBeenCalledWith(
+      "44'/144'/0'/0/0",
+      "familyUnsignedTx",
+      expect.objectContaining({ domain: "recipient.gen" }),
+    );
+    expect(buildOptimisticOperation).toHaveBeenCalledWith(account, transaction, 7n, undefined);
+    expect(events.map(e => e.type)).toEqual([
+      "device-signature-requested",
+      "device-signature-granted",
+      "signed",
+    ]);
+  });
+
+  it("crafts generically when the family hook returns nothing", async () => {
+    (getBridgeApi as jest.Mock).mockResolvedValue({
+      craftUnsignedTransaction: jest.fn().mockResolvedValue(undefined),
+    });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
+
+    expect(craftTransaction).toHaveBeenCalledTimes(1);
+    expect(mockSigner.signTransaction).toHaveBeenCalledWith(
+      "44'/144'/0'/0/0",
+      "unsignedTx",
+      expect.anything(),
+    );
+  });
+
   it("maps the coin-declared memoType to the craftTransaction memo shape", async () => {
     const txWithTransferId = {
       amount: new BigNumber(2_500_000_000),

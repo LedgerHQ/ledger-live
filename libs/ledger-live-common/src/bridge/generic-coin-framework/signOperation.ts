@@ -60,6 +60,8 @@ export const genericSignOperation =
             additionalFees: transaction.additionalFees,
           },
         });
+        // A family-built payload is prepared before the device opens: it can take seconds.
+        const familyCrafted = await bridgeApi.craftUnsignedTransaction?.(account, transaction);
         // amount is already finalized by prepareTransaction; sign it as-is
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
@@ -67,6 +69,21 @@ export const genericSignOperation =
             ...bridgeApi.getDeviceSignOptions?.(transaction, account),
             derivationMode: account.derivationMode,
           })) as GetAddressResult;
+
+          if (familyCrafted) {
+            o.next({ type: "device-signature-requested" });
+            const txnSig = await signer.signTransaction(derivationPath, familyCrafted.transaction, {
+              ...transaction.recipientDomain,
+              ...bridgeApi.getDeviceSignOptions?.(transaction, account),
+              derivationMode: account.derivationMode,
+            });
+            return {
+              unsigned: familyCrafted.transaction,
+              txnSig,
+              publicKey,
+              sequence: familyCrafted.sequence,
+            };
+          }
 
           const transactionIntent = transactionToIntent(
             account,

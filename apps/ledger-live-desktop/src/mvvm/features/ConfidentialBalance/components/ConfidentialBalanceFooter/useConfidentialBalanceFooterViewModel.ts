@@ -19,6 +19,7 @@ import {
   getConfidentialErrorKind,
   type ConfidentialErrorKind,
 } from "../../utils/getConfidentialErrorKind";
+import { registerConfidentialSendRuntime } from "../../utils/confidentialSendRuntime";
 import { getSessionBalance, setSessionBalance } from "../../utils/sessionBalances";
 
 export type ConfidentialBalancePhase = "idle" | "signing" | "decrypting";
@@ -52,6 +53,10 @@ export function useConfidentialBalanceFooterViewModel({
   const [phase, setPhase] = useState<ConfidentialBalancePhase>("idle");
   const [error, setError] = useState<ConfidentialErrorKind | null>(null);
   const [isShieldOpen, setIsShieldOpen] = useState(false);
+
+  useEffect(() => {
+    if (isSupportedCurrency) registerConfidentialSendRuntime(createConfidentialClient);
+  }, [createConfidentialClient, isSupportedCurrency]);
 
   const isMounted = useRef(true);
   useEffect(

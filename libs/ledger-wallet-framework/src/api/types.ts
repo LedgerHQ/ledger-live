@@ -13,6 +13,7 @@ import type {
   OperationType,
   SignRawOperationFnSignature,
   StakingResources,
+  TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
 
@@ -98,6 +99,27 @@ export type BridgeApi = {
     transaction: Record<string, unknown>,
     account: Account,
   ) => Record<string, unknown> | undefined;
+  /**
+   * Hands `signOperation` an unsigned transaction the family built itself, for a transaction the
+   * generic intent cannot express (ex: an EVM confidential transfer prepared by an attestation
+   * service). Returning `undefined` keeps the generic craft. When it returns a payload, the framework
+   * skips `transactionToIntent`, `getNextSequence` and `craftTransaction`, and signs, combines and
+   * broadcasts the payload as usual; `sequence` numbers the optimistic operation.
+   *
+   * Called before the device is opened, so slow preparation never holds the device session.
+   */
+  craftUnsignedTransaction?: (
+    account: Account,
+    transaction: Record<string, unknown>,
+  ) => Promise<{ transaction: string; sequence: bigint } | undefined>;
+  /**
+   * Validates a transaction the generic `validateIntent` cannot (ex: an amount drawn from a balance
+   * the account shape does not carry). Returning `undefined` keeps the generic validation.
+   */
+  getTransactionStatus?: (
+    account: Account,
+    transaction: Record<string, unknown>,
+  ) => Promise<TransactionStatusCommon | undefined>;
   /** Replaces the generic raw signing (craft, sign, combine) with the family's own. */
   signRawOperation?: SignRawOperationFnSignature<Account>;
   /**

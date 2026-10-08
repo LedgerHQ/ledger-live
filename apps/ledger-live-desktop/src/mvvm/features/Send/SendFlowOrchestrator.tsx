@@ -12,6 +12,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig as DesktopSendStepConfig } from "./types";
 import { FlowWizardOrchestrator } from "../FlowWizard/FlowWizardOrchestrator";
+import { hasBalanceTypeStepFor } from "./utils/balanceTypeStep";
 
 type SendFlowStepRegistry = StepRegistry<SendFlowStep>;
 
@@ -26,7 +27,10 @@ function getInitialSendFlowStep(
   initParams: SendFlowInitParams | undefined,
   uiConfig: SendFlowUiConfig,
 ): SendFlowStep {
-  if (uiConfig.hasBalanceTypeStep) {
+  if (
+    uiConfig.hasBalanceTypeStep &&
+    (!initParams?.account || hasBalanceTypeStepFor(initParams.account))
+  ) {
     return SEND_FLOW_STEP.BALANCE_TYPE;
   }
   if (canSkipRecipientStep(initParams, uiConfig)) {

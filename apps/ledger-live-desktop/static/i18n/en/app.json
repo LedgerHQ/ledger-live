@@ -3062,6 +3062,14 @@
         "pendingNoticeTitle": "Funds maturing",
         "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
+      "public": {
+        "title": "Public balance",
+        "subtitle": "Visible on-chain"
+      },
+      "confidential": {
+        "title": "Private balance",
+        "subtitle": "Confidential, amount encrypted on-chain"
+      },
       "zeroBalance": {
         "warning": "No available balance"
       }

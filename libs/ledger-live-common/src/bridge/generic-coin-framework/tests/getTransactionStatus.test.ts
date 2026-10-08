@@ -75,6 +75,39 @@ describe("genericGetTransactionStatus", () => {
     },
   );
 
+  it("returns the family status instead of validating the intent when the family answers", async () => {
+    const familyStatus = {
+      errors: {},
+      warnings: {},
+      estimatedFees: new BigNumber(21),
+      amount: new BigNumber(7),
+      totalSpent: new BigNumber(7),
+    };
+    const familyGetTransactionStatus = jest.fn().mockResolvedValue(familyStatus);
+    mockGetBridgeApi.mockResolvedValue({ getTransactionStatus: familyGetTransactionStatus });
+    const transaction = { amount: new BigNumber(7), recipient: "0x", family: "evm" } as any;
+
+    const result = await genericGetTransactionStatus("mainnet", "evm")(account, transaction);
+
+    expect(familyGetTransactionStatus).toHaveBeenCalledWith(account, transaction);
+    expect(validateIntent).not.toHaveBeenCalled();
+    expect(result).toEqual(familyStatus);
+  });
+
+  it("validates the intent when the family status hook returns nothing", async () => {
+    mockGetBridgeApi.mockResolvedValue({
+      getTransactionStatus: jest.fn().mockResolvedValue(undefined),
+    });
+
+    await genericGetTransactionStatus("mainnet", "evm")(account, {
+      amount: new BigNumber(1),
+      recipient: "0x",
+      family: "evm",
+    } as any);
+
+    expect(validateIntent).toHaveBeenCalledTimes(1);
+  });
+
   it("forwards a destination tag through transactionToIntent to validateIntent", async () => {
     const xrpAccount = {
       ...account,

@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { SendDescriptor } from "../../../../bridge/descriptor/types";
+import { evmBalanceTypeConfig } from "./balanceType";
 import { syncGasOptionsEffect } from "./effects";
 import { evmCustomFeeConfig, isBigNumber, isRecord } from "./fees";
 
@@ -78,4 +79,5 @@ export const evmSendDescriptor: SendDescriptor = {
   errors: {
     userRefusedTransaction: "UserRefusedOnDevice",
   },
+  balanceType: evmBalanceTypeConfig,
 };

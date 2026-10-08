@@ -5,6 +5,7 @@ import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { trackPage } from "@shared/analytics";
+import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useBalanceTypeScreenViewModel } from "../useBalanceTypeScreenViewModel";
 
 // Navigation mock
@@ -23,7 +24,10 @@ const mockTransactionActions = {
 };
 
 type MockState = {
-  account: { account: { id: string; type: string; currency: unknown } | null };
+  account: {
+    account: { id: string; type: string; currency: unknown } | null;
+    parentAccount?: { id: string; type: string };
+  };
   transaction: { transaction: { id: string; sender?: string } | null };
 };
 
@@ -144,6 +148,17 @@ describe("useBalanceTypeScreenViewModel", () => {
     mockState.account.account = null;
 
     expect(renderViewModel()?.ready).toBe(false);
+  });
+
+  test("resolves a token account's bridge through its parent account", () => {
+    const parentAccount = { id: "eth-acc", type: "Account" };
+    mockState.account = {
+      account: { id: "token-acc", type: "TokenAccount", currency: { id: "usdc" } },
+      parentAccount,
+    };
+
+    expect(renderViewModel()?.ready).toBe(true);
+    expect(useAccountBridgeOrNull).toHaveBeenCalledWith(mockState.account.account, parentAccount);
   });
 
   test("returns { ready: false } when transaction is null", () => {

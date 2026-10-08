@@ -50,10 +50,11 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     to: counterValueCurrency,
   });
 
-  const { account } = state.account;
+  const { account, parentAccount } = state.account;
   const { transaction } = state.transaction;
 
-  const bridge = useAccountBridgeOrNull<FlowTransaction>(account);
+  // A token account resolves its bridge through its parent (ex: an ERC-20 with a confidential part).
+  const bridge = useAccountBridgeOrNull<FlowTransaction>(account, parentAccount);
   const unit = useMaybeAccountUnit(account ?? undefined);
   const trackingProperties = useSendFlowTrackingProperties();
 

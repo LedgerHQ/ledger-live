@@ -42,6 +42,11 @@ export function genericGetTransactionStatus(
       familySpecificData: transaction.familySpecificData,
     };
 
+    const familyStatus = await bridgeApi.getTransactionStatus?.(account, transaction);
+    if (familyStatus) {
+      return { ...familyStatus, errors: addAccountToBuyLinks(familyStatus.errors, account.id) };
+    }
+
     const chainSpecificValidation = bridgeApi.getChainSpecificRules;
     if (chainSpecificValidation) {
       if (chainSpecificValidation.getTransactionStatus.throwIfPendingOperation) {

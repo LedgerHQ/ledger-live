@@ -7,6 +7,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import BigNumber from "bignumber.js";
 import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sendFlow";
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
+import { hasBalanceTypeStepFor } from "../utils/balanceTypeStep";
 import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { hasDirectRecipient, SEND_FLOW_SOURCE } from "@ledgerhq/live-common/flows/send/types";
@@ -64,7 +65,9 @@ export function useOpenSendFlow() {
         const uiConfig = currency ? getSendUiConfig(currency) : null;
         return (
           isEnabledForFamily(family, currencyId) ||
-          (isEnabledForFamily(family) && (uiConfig?.hasBalanceTypeStep ?? false))
+          (isEnabledForFamily(family) &&
+            (uiConfig?.hasBalanceTypeStep ?? false) &&
+            hasBalanceTypeStepFor(account))
         );
       };
 

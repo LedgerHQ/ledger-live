@@ -24,6 +24,10 @@ import { getNextSequence } from "@ledgerhq/coin-evm/logic";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { getCurrencyConfiguration } from "../../../config";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
+import {
+  craftConfidentialTransaction,
+  getConfidentialTransactionStatus,
+} from "../confidential/send";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -246,6 +250,9 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     balanceOptions: getBalanceOptions(currency),
     enrichStakingResources: (c, addr, ops, sr) => enrichStakingResources(c, addr, ops, sr),
     validateTransaction: (signature: string) => validateTransaction(currency, { signature }),
+    // Both return `undefined` unless the user picked the confidential source of an ERC-20.
+    craftUnsignedTransaction: craftConfidentialTransaction,
+    getTransactionStatus: getConfidentialTransactionStatus,
     ...(STAKING_CONTRACTS[currency.id] ? { stakingSupported: true } : {}),
     // Only Sei has an activation concept; elsewhere readiness stays undefined (= ready).
     ...(currency.id === "sei_evm" ? { getAccountReadiness } : {}),
