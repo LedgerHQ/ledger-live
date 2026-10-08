@@ -448,7 +448,8 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
   chain with the transfer.
 - **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount
   above uint256 (u64 lamports on Solana) is an error. JSON output gives `amount` in base units
-  (wei, token units or lamports) as a string, and `network` as `ethereum` or `solana`.
+  (wei, token units or lamports) as a string, and the envelope's `network` as `ethereum:main` or
+  `solana:main`.
 - **`--fee-strategy slow|medium|fast`** (Ethereum only, default `medium`) is the fee level the human
   is asked to approve. wallet-cli doesn't check the sender's balance; the human reviewing the intent is
   responsible for that.

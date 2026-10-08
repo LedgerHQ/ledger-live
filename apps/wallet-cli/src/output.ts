@@ -1334,7 +1334,6 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
   return {
     profileId: summary.profileId,
     environment: summary.environment,
-    network: summary.network,
     sender: summary.sender,
     recipient: summary.recipient,
     asset: summary.asset,

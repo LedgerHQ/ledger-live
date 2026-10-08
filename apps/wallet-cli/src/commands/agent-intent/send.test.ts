@@ -171,6 +171,8 @@ describe("agent-intent send", () => {
       expect(jsonResult()).toMatchObject({
         status: "success",
         command: "agent-intent send",
+        // The envelope's network, unchanged by Solana support.
+        network: "ethereum:main",
         intentId: "intent-123",
         deeplink: DEEPLINK,
         profileId: "bot",
@@ -252,7 +254,7 @@ describe("agent-intent send", () => {
       const result = jsonResult();
       expect(result).toMatchObject({
         status: "success",
-        network: "solana",
+        network: "solana:main",
         asset: { type: "native", ticker: "SOL", decimals: 9 },
         amount: "500000000",
         memo: "Invoice 42",

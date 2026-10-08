@@ -174,7 +174,7 @@ describe("agent-intent send (CLI, --dry-run)", () => {
     expect(result).toMatchObject({
       status: "success",
       command: "agent-intent send",
-      network: "solana",
+      network: "solana:main",
       dryRun: true,
       sender: SOL_SENDER,
       recipient: SOL_RECIPIENT,
