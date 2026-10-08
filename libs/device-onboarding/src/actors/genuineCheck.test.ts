@@ -113,13 +113,25 @@ describe("genuineCheck", () => {
     stop();
   });
 
-  it("records the user allowing the secure connection when the device reports that request again", async () => {
+  it("stays on the prompt when the device repeats the same request", async () => {
     const fake = createFake();
     const { received, stop } = start(fake);
 
     pending(fake, UserInteractionRequired.AllowSecureConnection);
     pending(fake, UserInteractionRequired.AllowSecureConnection);
     pending(fake, UserInteractionRequired.AllowSecureConnection);
+    await settle();
+
+    expect(received).toEqual([{ type: "ALLOW_SECURE_CONNECTION_REQUESTED" }]);
+    stop();
+  });
+
+  it("records the allow when the prompt goes away", async () => {
+    const fake = createFake();
+    const { received, stop } = start(fake);
+
+    pending(fake, UserInteractionRequired.AllowSecureConnection);
+    pending(fake, UserInteractionRequired.None);
     await settle();
 
     expect(received).toEqual([
@@ -129,11 +141,10 @@ describe("genuineCheck", () => {
     stop();
   });
 
-  it("asks again after the secure connection request has cleared", async () => {
+  it("asks again after the prompt has gone away", async () => {
     const fake = createFake();
     const { received, stop } = start(fake);
 
-    pending(fake, UserInteractionRequired.AllowSecureConnection);
     pending(fake, UserInteractionRequired.AllowSecureConnection);
     pending(fake, UserInteractionRequired.None);
     pending(fake, UserInteractionRequired.AllowSecureConnection);

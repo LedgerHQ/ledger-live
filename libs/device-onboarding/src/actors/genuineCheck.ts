@@ -54,7 +54,6 @@ export const genuineCheck = fromCallback<GenuineCheckEvent, GenuineCheckInput>(
   ({ input, sendBack }) => {
     let stopped = false;
     let secureConnectionOpen = false;
-    let userAllowedSecureConnection = false;
 
     const runner = createDeviceActionRunner<
       GenuineCheckDAOutput,
@@ -70,18 +69,17 @@ export const genuineCheck = fromCallback<GenuineCheckEvent, GenuineCheckInput>(
           }),
         }),
       ({ requiredUserInteraction }) => {
+        if (stopped) return;
+
         const awaitsSecureConnectionApproval =
           requiredUserInteraction === UserInteractionRequired.AllowSecureConnection;
 
-        if (!stopped && awaitsSecureConnectionApproval) {
+        if (awaitsSecureConnectionApproval) {
           if (!secureConnectionOpen) {
             sendBack({ type: "ALLOW_SECURE_CONNECTION_REQUESTED" });
-          } else if (!userAllowedSecureConnection) {
-            sendBack({ type: "SECURE_CONNECTION_ALLOWED" });
-            userAllowedSecureConnection = true;
           }
-        } else {
-          userAllowedSecureConnection = false;
+        } else if (secureConnectionOpen) {
+          sendBack({ type: "SECURE_CONNECTION_ALLOWED" });
         }
 
         secureConnectionOpen = awaitsSecureConnectionApproval;

@@ -334,6 +334,19 @@ describe("the genuine check", () => {
     expect(stateOf(actor)).toBe("genuineCheck");
   });
 
+  it("clears that request when the prompt goes away", async () => {
+    const { actor } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [secureConnectionPrompt],
+    });
+
+    actor.send({ type: "SECURE_CONNECTION_ALLOWED" });
+    await settle();
+
+    expect(actor.getSnapshot().context.secureConnectionRequested).toBe(false);
+    expect(stateOf(actor)).toBe("genuineCheck");
+  });
+
   it.each(["LOCKED", "TRANSPORT_LOST", "QUIT"] as const)(
     "takes that request back on %s, which leaves the check with no one to answer it",
     async type => {
