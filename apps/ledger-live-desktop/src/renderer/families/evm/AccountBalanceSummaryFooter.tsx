@@ -17,6 +17,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import { PlaceholderLine } from "~/renderer/components/BalanceInfos/Placeholder";
 import { TokenAccount, Account } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { ConfidentialBalanceFooter } from "LLD/features/ConfidentialBalance";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -70,6 +71,7 @@ const AccountBalanceSummaryFooter = ({
   const { enabled: isEvmNativeStakingEnabled, params } = useFeature("evmNativeStaking") ?? {};
   const { pending: isSyncing } = useAccountSyncState({ accountId: account.id });
 
+  if (account.type === "TokenAccount") return <ConfidentialBalanceFooter account={account} />;
   if (account.type !== "Account") return null;
 
   const isCurrencySupported = params?.supportedCurrencyIds?.includes(account.currency.id) || false;

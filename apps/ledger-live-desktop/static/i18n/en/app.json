@@ -9826,6 +9826,32 @@
     "downloadOnLedger": "Download on Ledger.com",
     "downloadProgress": "Downloading... {{ progress }}%"
   },
+  "confidentialBalance": {
+    "publicBalance": "Public balance",
+    "privateBalance": "Private balance",
+    "total": "Total",
+    "undisclosed": "Undisclosed",
+    "lastRevealed": "Last revealed: {{amount}}",
+    "reveal": "Reveal private balance",
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "revealHint": "Revealing asks you to sign a decryption permit on your device for {{contract}}, valid {{days}} days.",
+    "permitValidUntil": "Decryption permit valid until {{date}}",
+    "phase": {
+      "signing": "Confirm the decryption permit on your device",
+      "decrypting": "Decrypting your private balance…"
+    },
+    "errors": {
+      "deviceRefused": "The decryption permit was refused on your device.",
+      "permitExpired": "Your decryption permit has expired. Reveal again to re-authorize.",
+      "permitChainMismatch": "Your decryption permit was signed for another network.",
+      "kmsContextRevoked": "The decryption service no longer accepts this permit. Reveal again to re-authorize.",
+      "aclDenied": "This account is not allowed to decrypt this balance.",
+      "denylisted": "This address is blocked by the token contract.",
+      "serviceUnavailable": "The decryption service is unavailable. Try again later.",
+      "unknown": "The private balance could not be read. Try again."
+    }
+  },
   "zcash": {
     "account": {
       "availableBalance": "Available balance",
