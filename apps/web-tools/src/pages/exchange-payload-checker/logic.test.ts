@@ -12,6 +12,7 @@ import {
   providerHelperOf,
   resolveMode,
   resultBanner,
+  surroundingWhitespaceNotice,
   toProviderOptions,
   type SwapFormatChoice,
   type TransactionType,
@@ -768,6 +769,31 @@ describe("pendingReasonOf", () => {
       /public key/,
     );
     expect(pendingReasonOf({ ...READY, hasExpectedErrors: true })).toMatch(/expected values/);
+  });
+});
+
+describe("surroundingWhitespaceNotice", () => {
+  it("is null without surrounding whitespace", () => {
+    expect(surroundingWhitespaceNotice({ payload: "a b", signature: "sig" })).toBeNull();
+  });
+
+  it.each([
+    [" payload", "sig", /^The payload starts or ends/],
+    ["payload", "sig\n", /^The signature starts or ends/],
+    ["\tpayload", " sig ", /^The payload and signature start or end/],
+  ])("names the inputs with surrounding whitespace", (payload, signature, expected) => {
+    expect(surroundingWhitespaceNotice({ payload, signature })).toMatch(expected);
+  });
+
+  it("goes with an invalid verdict: the check runs on the pasted payload", () => {
+    const { valid, issues } = checkPayload("swapNg", {
+      payload: `${SWAP_NG_PAYLOAD}\n`,
+      signature: "",
+      partnerPublicKey: { curve: "secp256k1", data: new Uint8Array() },
+    });
+
+    expect(valid).toBe(false);
+    expect(issues.map(({ code }) => code)).toContain("INVALID_ENCODING");
   });
 });
 

@@ -97,6 +97,9 @@ const lengthDelimited = (fieldNumber: number, content: Uint8Array): Buffer => {
 const uDecimalCoefficient = (hex: string) => lengthDelimited(1, Buffer.from(hex, "hex"));
 const uDecimalExponent = (value: number) => Buffer.from([0x10, value]);
 
+// A curve outside of the TypeScript union, as CAL JSON or a JS caller could provide it.
+const UNSUPPORTED_CURVE: { curve: "secp256k1" } = JSON.parse('{ "curve": "secp384r1" }');
+
 const codesOf = (report: SellPayloadCheckReport): SwapPayloadIssueCode[] =>
   report.issues.map(issue => issue.code);
 
@@ -799,6 +802,18 @@ describe("checkSellPayload", () => {
         expect(report?.valid).toBe(false);
         expect(report && errorCodesOf(report)).toEqual(["SIGNATURE_MALFORMED"]);
       });
+    });
+
+    it("reports PUBLIC_KEY_MALFORMED for an unsupported curve instead of using secp256k1", () => {
+      const input = buildInput();
+      const report = checkSellPayload({
+        ...input,
+        partnerPublicKey: { ...input.partnerPublicKey, ...UNSUPPORTED_CURVE },
+      });
+
+      expect(report.valid).toBe(false);
+      expect(codesOf(report)).toEqual(["PUBLIC_KEY_MALFORMED"]);
+      expect(report.issues[0].message).toContain('"secp384r1" is not supported');
     });
 
     it("reports PUBLIC_KEY_MALFORMED and skips the signature check", () => {

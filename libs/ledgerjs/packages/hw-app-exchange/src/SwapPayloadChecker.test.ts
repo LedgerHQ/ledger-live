@@ -109,6 +109,9 @@ const findSignedFixture = (
   throw new Error("no matching signature found");
 };
 
+// A curve outside of the TypeScript union, as CAL JSON or a JS caller could provide it.
+const UNSUPPORTED_CURVE: { curve: "secp256k1" } = JSON.parse('{ "curve": "secp384r1" }');
+
 const codesOf = (report: SwapPayloadCheckReport): SwapPayloadIssueCode[] =>
   report.issues.map(issue => issue.code);
 
@@ -979,6 +982,17 @@ describe("checkSwapPayload legacy", () => {
       expect(errorCodesOf(report)).toEqual(["SIGNATURE_INVALID"]);
     });
 
+    it("reports PUBLIC_KEY_MALFORMED for an unsupported curve instead of using secp256k1", () => {
+      const input = buildLegacyInput();
+      const report = checkSwapPayload({
+        ...input,
+        partnerPublicKey: { ...input.partnerPublicKey, ...UNSUPPORTED_CURVE },
+      });
+
+      expect(codesOf(report)).toEqual(["PUBLIC_KEY_MALFORMED"]);
+      expect(report.issues[0].message).toContain('"secp384r1" is not supported');
+    });
+
     it("reports PUBLIC_KEY_MALFORMED and skips the signature check", () => {
       const report = checkSwapPayload({
         ...buildLegacyInput({ privateKey: OTHER_PRIVATE_KEY }),
@@ -1398,6 +1412,23 @@ describe("checkSwapPayload partner public key", () => {
 
     expect(report.valid).toBe(true);
     expect(codesOf(report)).toEqual(["PUBLIC_KEY_COMPRESSED"]);
+  });
+
+  it("reports PUBLIC_KEY_MALFORMED naming an unsupported curve instead of using secp256k1", () => {
+    const input = buildInput();
+    const report = checkSwapPayload({
+      ...input,
+      partnerPublicKey: { ...input.partnerPublicKey, ...UNSUPPORTED_CURVE },
+    });
+
+    expect(report.valid).toBe(false);
+    expect(report.issues).toEqual([
+      expect.objectContaining({
+        code: "PUBLIC_KEY_MALFORMED",
+        severity: "error",
+        message: expect.stringContaining('"secp384r1" is not supported'),
+      }),
+    ]);
   });
 
   it("explains that the registered key must be uncompressed when the key is malformed", () => {

@@ -13,6 +13,7 @@ import {
   providerHelperOf,
   resolveMode,
   resultBanner,
+  surroundingWhitespaceNotice,
   toProviderOptions,
   type CalEnv,
   type Curve,
@@ -34,6 +35,7 @@ import {
 export type CheckResult = {
   banner: ResultBanner;
   modeHint: ModeHint | null;
+  whitespaceNotice: string | null;
   issues: SwapPayloadIssue[];
   decodedFields: DecodedField[];
 };
@@ -162,8 +164,8 @@ export const useExchangePayloadCheckerViewModel = (): ExchangePayloadCheckerView
     [selectedCalEnv],
   );
 
+  // Trimmed values only detect empty inputs and guess the format, the check runs on what was pasted.
   const trimmedPayload = payload.trim();
-  const trimmedSignature = signature.trim();
 
   const selectedProvider = useMemo(() => {
     if (keySource !== "provider" || providers.status !== "ready") return null;
@@ -200,7 +202,7 @@ export const useExchangePayloadCheckerViewModel = (): ExchangePayloadCheckerView
 
   const pendingReason = pendingReasonOf({
     payload: trimmedPayload,
-    signature: trimmedSignature,
+    signature: signature.trim(),
     hasPartnerPublicKey: partnerPublicKey !== null,
     keySource,
     sellProviderNotice: mode.texts.sellProviderNotice,
@@ -209,27 +211,15 @@ export const useExchangePayloadCheckerViewModel = (): ExchangePayloadCheckerView
 
   const result = useMemo((): CheckResult | null => {
     if (pendingReason !== null || !partnerPublicKey) return null;
-    const report = checkPayload(mode.kind, {
-      payload: trimmedPayload,
-      signature: trimmedSignature,
-      partnerPublicKey,
-      expected,
-    });
+    const report = checkPayload(mode.kind, { payload, signature, partnerPublicKey, expected });
     return {
       banner: resultBanner(report),
       modeHint: report.valid ? null : modeMismatchHint(modeInputs, report.issues),
+      whitespaceNotice: surroundingWhitespaceNotice({ payload, signature }),
       issues: report.issues,
       decodedFields: report.decoded ? formatDecodedFields(report.decoded) : [],
     };
-  }, [
-    pendingReason,
-    partnerPublicKey,
-    mode.kind,
-    trimmedPayload,
-    trimmedSignature,
-    expected,
-    modeInputs,
-  ]);
+  }, [pendingReason, partnerPublicKey, mode.kind, payload, signature, expected, modeInputs]);
 
   const onApplyModeHint = useCallback(
     ({ transactionType: nextType, swapFormatChoice: nextFormat }: ModeHint["switchTo"]) => {

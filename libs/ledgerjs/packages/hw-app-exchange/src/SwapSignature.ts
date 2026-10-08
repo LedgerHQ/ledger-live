@@ -20,7 +20,8 @@ export type SwapNgPartnerPublicKey = {
  * - `signed_without_dot_prefix`: verifies over the payload without the "." prefix.
  * - `signed_raw_protobuf`: verifies over the decoded protobuf bytes.
  * - `invalid`: verifies over none of the above.
- * - `signature_malformed`: not a 64-byte compact r||s, or r or s is 0 or not below the curve order.
+ * - `signature_malformed`: not a 64-byte compact r||s, r or s is 0 or not below the curve order, or
+ *   the public key curve is not supported.
  */
 export type SwapNgSignatureClassification =
   | "valid"
@@ -32,8 +33,16 @@ export type SwapNgSignatureClassification =
   | "invalid"
   | "signature_malformed";
 
-const curveOf = (curve: SwapNgPartnerPublicKey["curve"]) =>
-  curve === "secp256r1" ? p256 : secp256k1;
+const CURVES = { secp256k1, secp256r1: p256 };
+
+/** @ignore internal, runtime check for a curve coming from CAL or a JS caller. */
+export const isSupportedPartnerCurve = (curve: unknown): curve is SwapNgPartnerPublicKey["curve"] =>
+  curve === "secp256k1" || curve === "secp256r1";
+
+function curveOf(curve: SwapNgPartnerPublicKey["curve"]) {
+  if (!isSupportedPartnerCurve(curve)) throw new Error(`Unsupported curve: ${String(curve)}`);
+  return CURVES[curve];
+}
 
 export function isValidSwapNgPartnerPublicKey(publicKey: SwapNgPartnerPublicKey): boolean {
   try {
@@ -46,7 +55,8 @@ export function isValidSwapNgPartnerPublicKey(publicKey: SwapNgPartnerPublicKey)
 
 /**
  * @ignore internal, verifies a 64-byte compact r||s signature over SHA-256(message) like the
- * Exchange app, which accepts high-S signatures. Throws when r or s is 0 or not below the curve order.
+ * Exchange app, which accepts high-S signatures. Throws when r or s is 0 or not below the curve order,
+ * or on an unsupported curve.
  */
 export function verifyCompactSignature(
   publicKey: SwapNgPartnerPublicKey,

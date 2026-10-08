@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { p256 } from "@noble/curves/nist";
-import { classifySwapNgSignature } from "./SwapSignature";
+import { classifySwapNgSignature, isValidSwapNgPartnerPublicKey } from "./SwapSignature";
 
 const CURVES = { secp256k1, secp256r1: p256 };
 // Deterministic test key, never used outside of these fixtures.
@@ -44,5 +44,26 @@ describe.each(["secp256k1", "secp256r1"] as const)("classifySwapNgSignature on %
     expect(classifySwapNgSignature(PAYLOAD, base64url(new Uint8Array(63)), publicKey)).toBe(
       "signature_malformed",
     );
+  });
+});
+
+// A curve outside of the TypeScript union, as CAL JSON or a JS caller could provide it.
+const UNSUPPORTED_CURVE: { curve: "secp256k1" } = JSON.parse('{ "curve": "secp384r1" }');
+
+describe("unsupported curve", () => {
+  const digest = createHash("sha256").update(`.${PAYLOAD}`).digest();
+  const signature = base64url(
+    secp256k1
+      .sign(Uint8Array.from(digest), PRIVATE_KEY, { lowS: false, prehash: false })
+      .toBytes("compact"),
+  );
+  const publicKey = {
+    ...UNSUPPORTED_CURVE,
+    data: Uint8Array.from(secp256k1.getPublicKey(PRIVATE_KEY, false)),
+  };
+
+  it("does not fall back to secp256k1", () => {
+    expect(isValidSwapNgPartnerPublicKey(publicKey)).toBe(false);
+    expect(classifySwapNgSignature(PAYLOAD, signature, publicKey)).toBe("signature_malformed");
   });
 });

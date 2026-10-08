@@ -448,6 +448,13 @@ export const ExchangePayloadCheckerView = (viewModel: ExchangePayloadCheckerView
               {result.modeHint ? (
                 <ModeHintBanner hint={result.modeHint} onApply={onApplyModeHint} />
               ) : null}
+              {result.whitespaceNotice ? (
+                <Banner
+                  appearance="warning"
+                  title="Surrounding whitespace found"
+                  description={result.whitespaceNotice}
+                />
+              ) : null}
               <Banner {...result.banner} />
               {result.issues.length > 0 ? <IssuesTable issues={result.issues} /> : null}
               {result.decodedFields.length > 0 ? (

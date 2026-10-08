@@ -530,6 +530,28 @@ export function pendingReasonOf({
   return null;
 }
 
+const hasSurroundingWhitespace = (value: string) => value !== value.trim();
+
+/** Ledger Live sends the payload and signature as pasted: flags whitespace left by a copy-paste. */
+export function surroundingWhitespaceNotice({
+  payload,
+  signature,
+}: {
+  payload: string;
+  signature: string;
+}): string | null {
+  const inputs = [
+    ...(hasSurroundingWhitespace(payload) ? ["payload"] : []),
+    ...(hasSurroundingWhitespace(signature) ? ["signature"] : []),
+  ];
+  if (inputs.length === 0) return null;
+  const subject =
+    inputs.length === 1
+      ? `The ${inputs[0]} starts or ends`
+      : "The payload and signature start or end";
+  return `${subject} with whitespace (space, tab or line break), usually a copy-paste artifact. It is checked as pasted, like Ledger Live sends it: remove the whitespace.`;
+}
+
 export type ResultBanner = {
   appearance: "error" | "warning" | "success";
   title: string;

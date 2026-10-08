@@ -2,6 +2,7 @@ import { base64UrlDecode } from "./shared-utils";
 import { measureBytes, type FieldLimitViolation } from "./SwapUtils";
 import {
   classifySwapNgSignature,
+  isSupportedPartnerCurve,
   isValidSwapNgPartnerPublicKey,
   type SwapNgPartnerPublicKey,
 } from "./SwapSignature";
@@ -130,6 +131,14 @@ function inspectPayloadBytes<P, D>(
 }
 
 function partnerPublicKeyIssues(partnerPublicKey: SwapNgPartnerPublicKey): SwapPayloadIssue[] {
+  if (!isSupportedPartnerCurve(partnerPublicKey.curve)) {
+    return [
+      issueError(
+        "PUBLIC_KEY_MALFORMED",
+        `The partner public key curve "${String(partnerPublicKey.curve)}" is not supported: the Exchange app supports secp256k1 and secp256r1 only.`,
+      ),
+    ];
+  }
   if (!isValidSwapNgPartnerPublicKey(partnerPublicKey)) {
     return [
       issueError(
