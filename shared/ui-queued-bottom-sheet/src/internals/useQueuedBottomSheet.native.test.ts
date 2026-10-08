@@ -922,7 +922,7 @@ describe("useQueuedBottomSheet", () => {
 
   describe("a request made while the sheet is on its way out", () => {
     function renderReopenableHook() {
-      const { signalOpen } = setupBottomSheetStateCapture();
+      const { signalOpen, signalClose } = setupBottomSheetStateCapture();
       const rendered = renderHook(() => {
         const [isOpen, setIsOpen] = useState(true);
         const hook = useQueuedBottomSheet({
@@ -932,7 +932,7 @@ describe("useQueuedBottomSheet", () => {
         return { hook, setIsOpen };
       });
       signalOpen();
-      return { ...rendered, signalOpen };
+      return { ...rendered, signalOpen, signalClose };
     }
 
     it("is held for the next presentation instead of being served by the outgoing one", () => {
@@ -962,14 +962,86 @@ describe("useQueuedBottomSheet", () => {
       expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
     });
 
-    it("does not hold anything back when the sheet closes without a new request", () => {
+    it.each([
+      ["a pan-down close", (hook: HookResult) => hook.handleAnimate(0, -1)],
+      ["a queue close", (_hook: HookResult, signalClose: () => void) => signalClose()],
+    ])("holds a request made again after %s for the next presentation", (_d, startClose) => {
+      const { result, signalOpen, signalClose } = renderReopenableHook();
+
+      act(() => {
+        startClose(result.current.hook, signalClose);
+      });
+      act(() => {
+        result.current.setIsOpen(true);
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(true);
+
+      act(() => {
+        result.current.hook.handleDismiss();
+      });
+      signalOpen();
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    it.each([
+      ["the close animation starts", (hook: HookResult) => hook.handleAnimate(0, -1)],
+      ["the header close is pressed", (hook: HookResult) => hook.handleHeaderClosePressed()],
+    ])("holds nothing back when %s without a new request", (_description, startClose) => {
       const { result } = renderReopenableHook();
 
       act(() => {
+        startClose(result.current.hook);
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+
+      act(() => {
+        result.current.hook.handleDismiss();
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    it("holds nothing back when the queue closes it without a new request", () => {
+      const { result, signalClose } = renderReopenableHook();
+
+      signalClose();
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    // The backdrop reports the close only once the sheet is gone, so the consumer still requests
+    // the sheet for the whole animation.
+    it("keeps the content of a sheet closed from the backdrop until it is gone", () => {
+      const { result } = renderReopenableHook();
+
+      act(() => {
+        result.current.hook.handleBackdropPress();
+      });
+      act(() => {
         result.current.hook.handleAnimate(0, -1);
       });
-
       expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+
+      act(() => {
+        result.current.hook.handleDismiss();
+      });
+      expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+    });
+
+    it.each([
+      ["the close animation starts", (hook: HookResult) => hook.handleAnimate(0, -1)],
+      ["the header close is pressed", (hook: HookResult) => hook.handleHeaderClosePressed()],
+      ["the backdrop is pressed", (hook: HookResult) => hook.handleBackdropPress()],
+    ])("keeps the content of a sheet its consumer never lets go when %s", (_d, startClose) => {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { result } = renderHook(() =>
+        useQueuedBottomSheet({ isRequestingToBeOpened: true, onClose: jest.fn() }),
+      );
+      signalOpen();
+
+      act(() => {
+        startClose(result.current);
+      });
+
+      expect(result.current.isAwaitingNextPresentation).toBe(false);
     });
   });
 
@@ -1026,6 +1098,16 @@ describe("useQueuedBottomSheet", () => {
       });
 
       expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("keeps the content while hiding under restoreOnFocus", () => {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      const { result, setFocused } = renderFocusAware({ onClose: jest.fn(), restoreOnFocus: true });
+
+      signalOpen();
+      setFocused(false);
+
+      expect(result.current.isAwaitingNextPresentation).toBe(false);
     });
 
     it("queues the drawer again under restoreOnFocus once the screen is focused", () => {

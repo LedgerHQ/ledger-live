@@ -204,6 +204,17 @@ describe("QueuedBottomSheet (native)", () => {
       expect(screen.getByTestId("sheet").props.footerComponent).toEqual(expect.any(Function));
     });
 
+    it("keeps the content of a sheet closed from the backdrop until it is gone", () => {
+      render(<ReopenableSheet />);
+
+      act(() => {
+        screen.getByTestId("sheet").props.onBackdropPress();
+      });
+
+      expect(screen.getByTestId("sheet-content")).toBeTruthy();
+      expect(screen.getByTestId("sheet").props.footerComponent).toEqual(expect.any(Function));
+    });
+
     it("leaves content the consumer keeps through a close alone", () => {
       render(<ReopenableSheet keepContentWhileClosed />);
 
