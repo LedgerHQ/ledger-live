@@ -419,8 +419,16 @@ export function runSwapRedirectTest(
     tags.forEach(tag => $Tag(tag));
     it(`[${earnAccount.currency.testLabel}] - Earn v2 deposit v2 redirects to swap after selecting another account`, async () => {
       // The account-page Earn action is hidden for an empty balance, so enter from the dashboard.
+      // A second ETH account opens the picker: the CTA only knows the ticker.
+      // A zero balance opens Get funds instead of deposit, so the balance is not asserted.
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(earnAccount.currency.ticker);
+      if (accountsToSeed.length > 1) {
+        await app.modularDrawer.validateAccountNames(
+          accountsToSeed.map(account => account.accountName),
+        );
+        await app.modularDrawer.selectAccount(earnAccount.accountName);
+      }
       await app.earnV2Dashboard.verifyV2DepositFlowVisible();
       await app.earnV2Dashboard.selectAnotherFundingAccount(fundingAccount);
       await app.earnV2Dashboard.verifySwapToEarnDescription(
