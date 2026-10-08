@@ -367,7 +367,20 @@ export function useQueuedBottomSheet({
     reopenCheckSignal,
   ]);
 
-  const isAwaitingNextPresentation = isLeavingState && wantsToBeOpenRef.current;
+  // Only a request the consumer dropped and then made again belongs to the next presentation. A
+  // request held all the way through the close — a backdrop press reports the close only once the
+  // sheet is gone, some consumers never drop it, `restoreOnFocus` keeps it on purpose — still
+  // belongs to the outgoing one, whose content must stay until it is gone.
+  // Derived during render, not in an effect: an effect would commit the content into the outgoing
+  // sheet for one frame, long enough for a field in it to focus itself.
+  const isRequested = isRequestingToBeOpened || isForcingToBeOpened;
+  const [wasReleasedWhileLeaving, setWasReleasedWhileLeaving] = useState(false);
+  if (isLeavingState && !isRequested && !wasReleasedWhileLeaving) {
+    setWasReleasedWhileLeaving(true);
+  } else if (!isLeavingState && wasReleasedWhileLeaving) {
+    setWasReleasedWhileLeaving(false);
+  }
+  const isAwaitingNextPresentation = isLeavingState && isRequested && wasReleasedWhileLeaving;
 
   useEffect(() => {
     if (isAwaitingNextPresentation) {
@@ -388,8 +401,6 @@ export function useQueuedBottomSheet({
     sheetId,
     bottomSheetRef,
     areBottomSheetsLocked,
-    // A request made while the previous presentation is still on its way out is served by the
-    // next presentation, once this one has settled. Until then the sheet has nothing to show.
     isAwaitingNextPresentation,
     handleUserClose,
     handleBackdropPress,
