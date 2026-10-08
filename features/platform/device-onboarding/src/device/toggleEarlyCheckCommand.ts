@@ -23,7 +23,7 @@ export type EarlyCheckToggle = (typeof EarlyCheckToggle)[keyof typeof EarlyCheck
 
 export type ToggleEarlyCheckErrorCode = "6982" | "6700";
 
-export const toggleEarlyCheckErrors: CommandErrors<ToggleEarlyCheckErrorCode> = {
+const toggleEarlyCheckErrors: CommandErrors<ToggleEarlyCheckErrorCode> = {
   "6982": { message: "The device is no longer on a welcome step" },
   "6700": { message: "The firmware does not know the early check command" },
 };

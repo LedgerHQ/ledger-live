@@ -12,7 +12,7 @@ import {
   type HostOnboardingEvent,
   type HostToolEvent,
   type OnboardingEvent,
-} from "@ledgerhq/device-onboarding";
+} from "@features/platform-device-onboarding";
 import { createActor, type ActorRefFrom } from "xstate";
 import type { DeviceOnboardingPorts } from "./ports";
 
