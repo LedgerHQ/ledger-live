@@ -36,6 +36,11 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -91,6 +96,7 @@
     "ecpair": "3.0.1",
     "jest": "catalog:",
     "jest-file-snapshot": "catalog:",
+    "msw": "catalog:",
     "object-hash": "^2.2.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
