@@ -8,6 +8,7 @@ import {
 } from "./useConfidentialBalanceFooterViewModel";
 import type { CreateConfidentialClient } from "../../utils/confidentialRuntime";
 import { PermitDeviceModal } from "../PermitDeviceModal";
+import { ShieldModal } from "../ShieldModal";
 
 type BalanceColumnProps = Readonly<{
   title: string;
@@ -37,6 +38,9 @@ export function ConfidentialBalanceFooterView({
   totalLabel,
   permitExpiresOn,
   deviceSignature,
+  shield,
+  canShield,
+  onShield,
   onReveal,
   onRetry,
 }: ConfidentialBalanceFooterViewModel) {
@@ -83,7 +87,17 @@ export function ConfidentialBalanceFooterView({
               <span className="heading-5-semi-bold text-base">{totalLabel}</span>
             </BalanceColumn>
           )}
-          <div className="ml-auto">
+          <div className="ml-auto flex flex-row gap-8">
+            {canShield && (
+              <Button
+                appearance="gray"
+                size="sm"
+                onClick={onShield}
+                data-testid="confidential-shield-button"
+              >
+                {t("confidentialBalance.shield.open")}
+              </Button>
+            )}
             <Button
               appearance={state === "decrypted" ? "gray" : "accent"}
               size="sm"
@@ -138,6 +152,7 @@ export function ConfidentialBalanceFooterView({
       )}
 
       {deviceSignature.isOpen && <PermitDeviceModal {...deviceSignature} />}
+      {shield && <ShieldModal {...shield} />}
     </div>
   );
 }

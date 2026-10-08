@@ -49,12 +49,15 @@ export class DeviceRefusedError extends Error {
 
 let shouldRefuseNextSignature = false;
 
+export function consumeMockRefusal(): boolean {
+  const refused = shouldRefuseNextSignature;
+  shouldRefuseNextSignature = false;
+  return refused;
+}
+
 export const mockSignTypedData: SignTypedData = async () => {
   await new Promise(resolve => setTimeout(resolve, MOCK_SIGNATURE_DELAY_MS));
-  if (shouldRefuseNextSignature) {
-    shouldRefuseNextSignature = false;
-    throw new DeviceRefusedError();
-  }
+  if (consumeMockRefusal()) throw new DeviceRefusedError();
   return MOCK_SIGNATURE;
 };
 
