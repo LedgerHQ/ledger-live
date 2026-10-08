@@ -92,10 +92,10 @@ function plainPayload(value: unknown): NonNullable<ToolEvent["payload"]> | undef
   if (typeof value === "string") {
     return value.includes("://") ? undefined : value;
   }
-  if (value === null || typeof value === "number" || typeof value === "boolean") {
+  if (typeof value === "number" || typeof value === "boolean") {
     return value;
   }
-  if (typeof value !== "object") return undefined;
+  if (value === null || typeof value !== "object") return undefined;
 
   const nested: Record<string, NonNullable<ToolEvent["payload"]>> = {};
   for (const [key, child] of Object.entries(value)) {
