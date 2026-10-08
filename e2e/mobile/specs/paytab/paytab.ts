@@ -9,7 +9,6 @@ import {
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import type { Contact } from "@domain/entity-contact";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { importContacts } from "@e2e/bridge/server";
 import {
@@ -21,7 +20,6 @@ import type { PartialFeatures } from "@shared/feature-flags";
 
 const ALL_STABLECOINS = "All stablecoins";
 const BANK_TRANSFER_CREATE_ACCOUNT = "Create an account";
-const youPaid = (recipient: string) => `You paid ${recipient}`;
 const CONTACT_ID = "e2e-pay-contact";
 const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
 const CONTACT_NAME = generateContactName();
@@ -154,7 +152,7 @@ export function runPayNewPaymentTest(tmsLinks: string[], tags: string[]) {
     it("New payment", async () => {
       const address = transaction.accountToCredit.address;
       invariant(address, "Recipient address is not set");
-      const expectedTitle = youPaid(formatAddress(address, SEND_ADDRESS_FORMAT_OPTIONS));
+      const expectedTitle = `You paid ${formatAddress(address, SEND_ADDRESS_FORMAT_OPTIONS)}`;
 
       await app.mainNavigation.tapWallet40Tab("paytab");
       await app.payTab.expectScreenVisible();
@@ -179,8 +177,7 @@ export function runPayContactTest(tmsLinks: string[], tags: string[]) {
 
       const address = transaction.accountToCredit.address;
       invariant(address, "Recipient address is not set");
-      const seeded = buildSeededContacts([payContactSeed(address)]) as Contact[];
-      await importContacts(seeded);
+      await importContacts(buildSeededContacts([payContactSeed(address)]));
     });
 
     setTeamOwner(Team.WALLET_XP);
@@ -194,13 +191,13 @@ export function runPayContactTest(tmsLinks: string[], tags: string[]) {
 
       await app.mainNavigation.tapWallet40Tab("paytab");
       await app.payTab.expectScreenVisible();
-      await app.payTab.selectContact(0);
+      await app.payTab.selectContact(CONTACT_ID);
       await app.newSend.selectContactAddress(CONTACT_ADDRESS_ID);
       await app.modularDrawer.selectAccount(accountName);
       await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
       await app.newSend.waitForSignature();
       await app.speculos.signSendTransaction(transaction);
-      await app.payTab.expectPaySuccess(youPaid(CONTACT_NAME));
+      await app.payTab.expectYouPaid(`You paid ${CONTACT_NAME}`);
       await app.payTab.closePaySuccess();
       await app.payTab.expectScreenVisible();
     });
