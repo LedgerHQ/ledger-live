@@ -86,13 +86,13 @@ jobs:
 
       # Before the Vercel build so both npx and Vercel's own install resolve through JFrog.
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Build and Deploy
         id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@ci/skip-mise-action-self-hosted
         with:
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
@@ -102,13 +102,13 @@ jobs:
 
       - name: Check formatting web-tools
         if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@ci/skip-mise-action-self-hosted
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:format:check
           disable_cache: false
 
       - name: Typecheck web-tools
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@ci/skip-mise-action-self-hosted
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:typecheck
           disable_cache: false

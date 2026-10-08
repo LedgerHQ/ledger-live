@@ -87,11 +87,11 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@ci/skip-mise-action-self-hosted
         id: setup-test-desktop
         with:
           skip_ruby: true
@@ -148,7 +148,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 

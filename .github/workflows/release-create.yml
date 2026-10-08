@@ -27,7 +27,7 @@ jobs:
           ref: develop
           token: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@ci/skip-mise-action-self-hosted
       - name: create release branch
         run: |
           git checkout -b $RELEASE_BRANCH
@@ -39,7 +39,7 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
       - name: Push branch
@@ -47,7 +47,7 @@ jobs:
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@ci/skip-mise-action-self-hosted
         with:
           from_level: patch
           to_level: minor

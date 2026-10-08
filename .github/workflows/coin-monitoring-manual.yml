@@ -32,10 +32,10 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@ci/skip-mise-action-self-hosted
         id: monitoring
         timeout-minutes: 120
         with:

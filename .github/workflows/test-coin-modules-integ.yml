@@ -29,7 +29,7 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@ci/skip-mise-action-self-hosted
         id: affected
       - name: Force affected on schedule
         id: set-affected
@@ -73,7 +73,7 @@ jobs:
 
       - name: JFrog npm auth
         if: ${{ !github.event.pull_request.head.repo.fork }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 

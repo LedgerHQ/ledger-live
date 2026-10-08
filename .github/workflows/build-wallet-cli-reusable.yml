@@ -64,12 +64,12 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install other platforms' optional deps (wallet-cli cross-compilation)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/pnpm-cross-platform-optional-deps@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/pnpm-cross-platform-optional-deps@ci/skip-mise-action-self-hosted
 
       - name: Install dependencies
         run: pnpm i --frozen-lockfile --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"

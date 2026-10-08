@@ -70,7 +70,7 @@ jobs:
           skip-nx-cache: "true"
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -98,13 +98,13 @@ jobs:
         run: pnpm changeset version
 
       - name: Get desktop version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@ci/skip-mise-action-self-hosted
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
       - name: Get mobile version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@ci/skip-mise-action-self-hosted
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile

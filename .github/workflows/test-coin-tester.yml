@@ -31,7 +31,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Run live-common-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@ci/skip-mise-action-self-hosted
         id: affected
 
       - name: Build matrix from affected paths or manual input
@@ -133,12 +133,12 @@ jobs:
           password: ${{ steps.jfrog-login.outputs.oidc-token }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Setup environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@ci/skip-mise-action-self-hosted
 
       # coin-tester-stacks builds a patched clarinet from source (~13 min) when its binary is missing.
       # The key hashes docker/clarinet/**, which holds the pinned commit, patches and toolchain.
@@ -152,7 +152,7 @@ jobs:
           key: ${{ runner.os }}-${{ runner.arch }}-clarinet-${{ hashFiles('libs/coin-tester-modules/coin-tester-stacks/docker/clarinet/**') }}
 
       - name: Run Coin Tester
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@ci/skip-mise-action-self-hosted
         with:
           chain: ${{ matrix.chain }}
 

@@ -89,7 +89,7 @@ jobs:
       # Before the install so every package is fetched through JFrog, not public npm.
       - name: JFrog npm auth
         if: ${{ env.IS_SMARTLING != 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -125,7 +125,7 @@ jobs:
       - name: Get affected packages and paths
         id: nx-affected
         if: ${{ env.IS_SMARTLING != 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@ci/skip-mise-action-self-hosted
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD

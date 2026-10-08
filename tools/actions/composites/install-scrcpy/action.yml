@@ -5,7 +5,7 @@ runs:
   using: "composite"
   steps:
     - name: Install scrcpy dependencies
-      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@ci/skip-mise-action-self-hosted
       with:
         packages: ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
 

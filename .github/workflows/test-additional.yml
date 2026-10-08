@@ -41,11 +41,11 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate Changesets
-        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@ci/skip-mise-action-self-hosted
 
       - name: Validate CODEOWNERS
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-codeowners@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-codeowners@ci/skip-mise-action-self-hosted
 
   changes:
     name: Detect Workflow File Changes

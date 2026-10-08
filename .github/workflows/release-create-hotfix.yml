@@ -35,7 +35,7 @@ jobs:
           permission-workflows: write
 
       - name: Generate ref/tag version to use during main checkout
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@ci/skip-mise-action-self-hosted
         id: format-app-tag
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
@@ -47,7 +47,7 @@ jobs:
           ref: ${{ steps.format-app-tag.outputs.main_ref }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@ci/skip-mise-action-self-hosted
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
@@ -60,7 +60,7 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/skip-mise-action-self-hosted
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
       - name: install dependencies
@@ -69,7 +69,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@ci/skip-mise-action-self-hosted
         with:
           from_level: minor
           to_level: patch
@@ -77,7 +77,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@ci/skip-mise-action-self-hosted
         with:
           from_level: major
           to_level: patch

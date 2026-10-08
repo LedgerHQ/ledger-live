@@ -71,7 +71,7 @@ jobs:
 
       - name: Get affected packages and paths
         id: nx-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@ci/skip-mise-action-self-hosted
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD
@@ -81,7 +81,7 @@ jobs:
     name: "Build Desktop (External)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-external-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-external-reusable.yml@ci/skip-mise-action-self-hosted
     with:
       ref: ${{ github.event.pull_request.head.ref }}
       repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -90,7 +90,7 @@ jobs:
     name: "Test Desktop (External)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@ci/skip-mise-action-self-hosted
     with:
       ref: ${{ github.event.pull_request.head.ref }}
       repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -99,7 +99,7 @@ jobs:
     name: "Build Mobile (External)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-external-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-external-reusable.yml@ci/skip-mise-action-self-hosted
     with:
       ref: ${{ github.event.pull_request.head.ref }}
       repository: ${{ github.event.pull_request.head.repo.full_name }}
