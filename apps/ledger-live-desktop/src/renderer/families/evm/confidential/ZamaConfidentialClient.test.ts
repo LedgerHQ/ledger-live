@@ -4,6 +4,8 @@ import { ZamaConfidentialClient, type ZamaSdkLike } from "./ZamaConfidentialClie
 
 const ACCOUNT = "0x0a101aA5347Bb16F43019BE42ce5830395739e33";
 const WRAPPER = "0x7c5BF43B851c1dff1a4feE8dB225b87f2C223639";
+const USDC = "0x9b5Cd13b8eFbB58Dc25A05CF411D8056058aDFfF";
+const RECIPIENT = "0xa92Bd6359601D00Ed49E34079EE91670c34aCF80";
 const HANDLE: Handle = "0x4a1e1aca2ef4eaf69b48b6c7c10504538c016862a3ff0000000000aa36a70500";
 const START = 1_791_466_141;
 
@@ -23,9 +25,19 @@ function setup() {
     permits: { hasPermit: jest.fn().mockResolvedValue(true), registerPermit: jest.fn() },
     offline: { preparePermit: jest.fn().mockResolvedValue(sdkPermit) },
     decryption: { decryptValues: jest.fn() },
+    registry: {
+      getConfidentialToken: jest
+        .fn()
+        .mockResolvedValue({ confidentialTokenAddress: WRAPPER, isValid: true }),
+    },
   };
   const createSdk = jest.fn(() => sdk as unknown as ZamaSdkLike);
-  const client = new ZamaConfidentialClient({ rpcUrl: "rpc", relayerUrl: "relayer", createSdk });
+  const client = new ZamaConfidentialClient({
+    rpcUrl: "rpc",
+    relayerUrl: "relayer",
+    oracleUrl: "http://oracle",
+    createSdk,
+  });
   return { client, sdk, createSdk };
 }
 
@@ -118,8 +130,62 @@ describe("ZamaConfidentialClient", () => {
     expect(createSdk).toHaveBeenCalledTimes(2);
   });
 
-  it("does not offer the transfer and unshield calls yet", async () => {
+  it("reads the wrapper from the registry", async () => {
+    const { client, sdk } = setup();
+    expect(await client.getConfidentialToken(USDC)).toEqual({ wrapper: WRAPPER, isValid: true });
+    expect(sdk.registry.getConfidentialToken).toHaveBeenCalledWith(USDC);
+    sdk.registry.getConfidentialToken.mockResolvedValue(null);
+    expect(await client.getConfidentialToken(USDC)).toBeNull();
+  });
+
+  describe("prepareTransfer", () => {
+    const request = { from: ACCOUNT, wrapper: WRAPPER, to: RECIPIENT, amount: 750_000n };
+    const fetchMock = jest.fn();
+    beforeEach(() => {
+      fetchMock.mockReset();
+      global.fetch = fetchMock;
+    });
+    const answer = (status: number, body: unknown) =>
+      fetchMock.mockResolvedValue({ ok: status < 300, status, json: async () => body });
+
+    it("asks the service for the transfer and returns its transaction and handle", async () => {
+      const { client } = setup();
+      answer(200, { unsignedTx: "0x02f901b0", handle: HANDLE.toUpperCase().replace("0X", "0x") });
+      expect(await client.prepareTransfer(request)).toEqual({
+        transaction: "0x02f901b0",
+        handle: HANDLE,
+      });
+      expect(fetchMock).toHaveBeenCalledWith("http://oracle/prepare/transfer", expect.anything());
+      expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+        chainId: 11155111,
+        from: ACCOUNT,
+        token: WRAPPER,
+        to: RECIPIENT,
+        amount: "750000",
+      });
+    });
+
+    it.each([
+      ["WRAPPER_NOT_REGISTERED", 422, "WrapperNotRegistered"],
+      ["RELAYER_ERROR", 502, "RelayerError"],
+      ["INSUFFICIENT_INPUT", 422, "Unknown"],
+    ])("maps the service error %s", async (code, status, expected) => {
+      const { client } = setup();
+      answer(status, { error: { code, message: "refused" } });
+      await expect(client.prepareTransfer(request)).rejects.toMatchObject({ code: expected });
+    });
+
+    it("reports an unreachable service", async () => {
+      const { client } = setup();
+      fetchMock.mockRejectedValue(new TypeError("Failed to fetch"));
+      await expect(client.prepareTransfer(request)).rejects.toMatchObject({
+        code: "OracleUnavailable",
+      });
+    });
+  });
+
+  it("does not offer the unshield calls yet", async () => {
     const { client } = setup();
-    await expect(client.prepareTransfer()).rejects.toMatchObject({ code: "Unavailable" });
+    await expect(client.publicDecrypt()).rejects.toMatchObject({ code: "Unavailable" });
   });
 });
