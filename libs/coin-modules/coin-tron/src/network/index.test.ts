@@ -83,15 +83,26 @@ beforeEach(() => {
 });
 
 describe("post / fetch error handling", () => {
-  it("throws when the response body contains a key 'Error'", async () => {
+  it("throws the JSON-serialized Error when the POST response contains an object 'Error'", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "boom" } }));
-    await expect(post(mockLogger, mockConfig, "/wallet/anything", {})).rejects.toThrow();
+    await expect(post(mockLogger, mockConfig, "/wallet/anything", {})).rejects.toThrow(
+      new Error('{"message":"boom"}'),
+    );
   });
 
-  it("throws using error.toString() when stringified Error is empty", async () => {
-    mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: "raw-string" }));
+  it("throws the raw Error when the POST response contains a string 'Error'", async () => {
+    const tronError =
+      "class org.tron.core.exception.ContractValidateException : Cannot transfer TRX to yourself.";
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: tronError }));
     await expect(post(mockLogger, mockConfig, "/wallet/anything", {})).rejects.toThrow(
-      "raw-string",
+      new Error(tronError),
+    );
+  });
+
+  it("throws the raw Error when the GET response contains a string 'Error'", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: "get-boom: invalid address" }));
+    await expect(fetchTronAccount(mockLogger, mockConfig, senderBase58)).rejects.toThrow(
+      new Error("get-boom: invalid address"),
     );
   });
 
