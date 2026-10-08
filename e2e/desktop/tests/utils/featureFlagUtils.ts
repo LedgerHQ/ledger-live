@@ -85,10 +85,21 @@ export const FF_DEVICE_ONBOARDING = {
   ...FF_ANALYTICS_OPT_IN_SCREEN_V2,
   recoverUpsellPostOnboarding: { enabled: false },
   lwdProductTour: { enabled: true },
+  lldLedgerSyncEntryPoints: {
+    enabled: true,
+    params: {
+      onboarding: true,
+      manager: true,
+      accounts: true,
+      settings: true,
+      postOnboarding: true,
+      sendFlow: true,
+    },
+  },
 } satisfies PartialFeatures;
 
 // Wallet 4.0 without analytics consent; pins flags that would block the finish-onboarding widget.
-export const FF_POST_ONBOARDING_DESKTOP = {
+export const FF_POST_ONBOARDING_MOCK_DESKTOP = {
   ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
   onboardingWidget: { enabled: true },
   protectServicesDesktop: { enabled: false },

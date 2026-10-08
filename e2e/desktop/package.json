@@ -26,6 +26,7 @@
     "@ledgerhq/live-e2e-shared": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
     "@playwright/test": "catalog:",
     "@shared/feature-flags": "workspace:*",
     "@shared/env": "workspace:*",

@@ -50,7 +50,7 @@ test.describe(`Onboarding a new Nano (mock server)`, () => {
       await app.onboarding.continueTutorial("welcome-to-wallet-without-funds");
 
       await app.portfolio.expectPortfolioEmptyState();
-      await app.postOnboarding.expectActionsForDevice(mockDevice.modelId);
+      await app.postOnboarding.expectActions(mockDevice.modelId);
     },
   );
 });

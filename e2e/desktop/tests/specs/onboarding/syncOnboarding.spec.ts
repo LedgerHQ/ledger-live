@@ -38,7 +38,7 @@ test.describe(`Onboarding (mock server)`, () => {
       await app.syncOnboarding.declineFunding();
       await app.syncOnboarding.expectCompletionScreen(mockDevice.modelId);
       await app.portfolio.expectPortfolioEmptyState();
-      await app.postOnboarding.expectActionsForDevice(mockDevice.modelId);
+      await app.postOnboarding.expectActions(mockDevice.modelId);
     },
   );
 });
