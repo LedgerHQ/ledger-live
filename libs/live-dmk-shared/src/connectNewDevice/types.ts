@@ -18,10 +18,18 @@ import {
   type UnknownErrorUIState,
 } from "../deviceConnectivity/types";
 
-export type SelectableDevice = {
-  device: Device;
-  onSelect: () => void;
+export type SelectableDevice =
+  | { key: string; device: Device; isAvailable: true; onSelect: () => void }
+  | { key: string; device: Device; isAvailable: false };
+
+export type ListedDevice = {
+  key: string;
+  discoveredDevice: DiscoveredDevice;
+  isAvailable: boolean;
 };
+
+/** Returns the same key for the same device in every discovery update. */
+export type ConnectNewDeviceGetDiscoveredDeviceKey = (discoveredDevice: DiscoveredDevice) => string;
 
 export type ConnectNewDeviceMapConnectionError<
   TConnectionError extends BaseConnectionError = BaseConnectionError,
@@ -37,6 +45,7 @@ export type ConnectNewDeviceStateMachineInput<
   onConnected: (result: DeviceConnectionResult) => void;
   onClose: () => void;
   mapConnectionError: ConnectNewDeviceMapConnectionError<TConnectionError>;
+  getDiscoveredDeviceKey: ConnectNewDeviceGetDiscoveredDeviceKey;
   buildCompatDeviceId?: (device: ConnectedDevice) => string;
   deviceNotFoundDelay?: number;
   successDelay?: number;
@@ -48,7 +57,7 @@ export type ConnectNewDeviceStateMachineContext<
 > = ConnectNewDeviceStateMachineInput<TDiscoveryError, TConnectionError> & {
   deviceNotFoundDelay: number;
   successDelay: number;
-  discoveredDevices: Array<DiscoveredDevice>;
+  listedDevices: Array<ListedDevice>;
   selectedDevice: DiscoveredDevice | null;
   sessionId: string | null;
   isDiscovering: boolean;

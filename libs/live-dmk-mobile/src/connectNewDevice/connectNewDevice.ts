@@ -14,6 +14,7 @@ import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryServi
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError } from "../connectDevice/utils";
+import { getDiscoveredDeviceKey } from "./getDiscoveredDeviceKey";
 
 export type ConnectNewDeviceInput = {
   dmk: DeviceManagementKit;
@@ -45,6 +46,7 @@ export function connectNewDevice(
       buildDiscoverySources(input.dmk, Platform.OS),
     ),
     mapConnectionError: createConnectionError,
+    getDiscoveredDeviceKey,
     buildCompatDeviceId: buildMobileCompatDeviceId,
   });
 }

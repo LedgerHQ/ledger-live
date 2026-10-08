@@ -40,10 +40,18 @@ stateDiagram-v2
 
 ## Notes
 
-- `Discovering` starts the discovery service and emits every discovered device
-  with an `onSelect` callback. `scanningTransports` is the discovery service
-  `transportIds` without the skipped transports.
-- Each entry into `Discovering` clears the previous devices, the selection and
+- `Discovering` starts the discovery service and emits the device list.
+  `scanningTransports` is the discovery service `transportIds` without the
+  skipped transports.
+- The device list keeps the order in which the devices were first discovered,
+  so that a device does not move under the user's finger. When discovery no
+  longer reports a device, the device stays at its position with
+  `isAvailable: false` and has no `onSelect` callback. When discovery reports
+  it again, it becomes available again at the same position. The injected
+  `getDiscoveredDeviceKey` tells which discovered device is the same device
+  from one discovery update to the next. Each listed device has this `key`,
+  so that the UI can use it as the row key.
+- Each entry into `Discovering` clears the device list, the selection and
   the errors, sets `showDeviceNotFound` to `false` and starts the device not
   found delay (`DEFAULT_DEVICE_NOT_FOUND_DELAY`, 5 s). When the delay elapses,
   `Discovering` is emitted again with `showDeviceNotFound: true`. Leaving
