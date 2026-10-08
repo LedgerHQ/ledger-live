@@ -214,6 +214,7 @@
     "@types/qrcode": "1.5.5",
     "@types/semver": "catalog:",
     "@xstate/react": "catalog:",
+    "@zama-fhe/sdk": "3.6.0",
     "allure-commandline": "2.28.0",
     "bignumber.js": "9.1.2",
     "chart.js": "2.9.4",
