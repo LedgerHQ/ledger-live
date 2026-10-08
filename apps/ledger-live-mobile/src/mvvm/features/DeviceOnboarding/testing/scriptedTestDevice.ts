@@ -5,6 +5,8 @@ import {
   DeviceStatus,
   GenuineCheckDeviceAction,
   GetDeviceMetadataDeviceAction,
+  UnknownDAError,
+  UserInteractionRequired,
   type DeviceActionState,
   type DeviceManagementKit,
   type DiscoveredDevice,
@@ -76,7 +78,10 @@ export type ScriptedTestDevice = {
   unplug(): void;
   answerState(options: OsVersionAnswer): void;
   acceptToggle(): void;
+  requestSecureConnection(): void;
+  allowSecureConnection(): void;
   passGenuineCheck(): void;
+  failGenuineCheck(): void;
   reportFirmwareUpToDate(): void;
   isWatching(sessionId: string): boolean;
 };
@@ -144,10 +149,32 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
     acceptToggle() {
       commandReplies.push(CommandResultFactory({ data: undefined }));
     },
+    requestSecureConnection() {
+      last(genuineChecks).push({
+        status: DeviceActionStatus.Pending,
+        intermediateValue: {
+          requiredUserInteraction: UserInteractionRequired.AllowSecureConnection,
+        } as GenuineCheckDAIntermediateValue,
+      });
+    },
+    allowSecureConnection() {
+      last(genuineChecks).push({
+        status: DeviceActionStatus.Pending,
+        intermediateValue: {
+          requiredUserInteraction: UserInteractionRequired.None,
+        } as GenuineCheckDAIntermediateValue,
+      });
+    },
     passGenuineCheck() {
       last(genuineChecks).push({
         status: DeviceActionStatus.Completed,
         output: { isGenuine: true } as GenuineCheckDAOutput,
+      });
+    },
+    failGenuineCheck() {
+      last(genuineChecks).push({
+        status: DeviceActionStatus.Error,
+        error: new UnknownDAError(),
       });
     },
     reportFirmwareUpToDate() {

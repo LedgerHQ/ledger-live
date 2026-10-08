@@ -352,6 +352,65 @@ describe("scripted device onboarding", () => {
     expect(device.dmk.sendCommand).toHaveBeenCalledTimes(4);
     expect(device.dmk.executeDeviceAction).toHaveBeenCalledTimes(2);
   });
+
+  it("allows a repeated secure-connection prompt once", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => device.requestSecureConnection());
+    await waitFor(() => expect(result.current.context?.secureConnectionRequested).toBe(true));
+
+    act(() => device.requestSecureConnection());
+    expect(allowedSecureConnections(result)).toHaveLength(0);
+
+    act(() => device.allowSecureConnection());
+    await waitFor(() => expect(result.current.context?.secureConnectionRequested).toBe(false));
+    expect(allowedSecureConnections(result)).toHaveLength(1);
+
+    await finishSetup(result, device);
+    expect(result.current.exit?.reason).toBe("completed");
+  });
+
+  it("retries a failed genuine check and finishes setup", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => device.failGenuineCheck());
+    await waitFor(() => expect(result.current.state).toBe("checks.genuineFailed"));
+
+    act(() => result.current.send({ type: "RETRY" }));
+    await waitFor(() => expect(result.current.state).toBe("checks.genuineCheck.running"));
+
+    await finishSetup(result, device);
+    expect(result.current.exit?.reason).toBe("completed");
+  });
+
+  it("watches the new session before SESSION_READY and finishes on it", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+    await connectToGenuineCheck(result, device);
+
+    act(() => device.unplug());
+    await waitFor(() => expect(result.current.state).toBe("awaitingSession"));
+
+    device.setSession("session-2");
+    device.show();
+    act(() => result.current.connect());
+    await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
+
+    expect(device.isWatching("session-2")).toBe(true);
+    expect(canSend(result, "SESSION_READY")).toBe(true);
+
+    answerWelcome(device);
+    device.acceptToggle();
+    act(() => result.current.send({ type: "SESSION_READY" }));
+    await waitFor(() => expect(result.current.state).toBe("checks.genuineCheck.running"));
+
+    await finishSetup(result, device);
+    expect(result.current.exit).toMatchObject({ reason: "completed", sessionId: "session-2" });
+  });
 });
 
 type ScriptedHook = { current: ReturnType<typeof useDeviceOnboarding> };
@@ -367,15 +426,23 @@ function renderScripted(device: ReturnType<typeof createScriptedTestDevice>) {
   );
 }
 
-async function connectToGenuineCheck(
-  result: ScriptedHook,
-  device: ReturnType<typeof createScriptedTestDevice>,
-) {
+function allowedSecureConnections(result: ScriptedHook) {
+  return result.current.log.filter(row => row.event?.type === "SECURE_CONNECTION_ALLOWED");
+}
+
+function answerWelcome(device: ReturnType<typeof createScriptedTestDevice>) {
   device.answerState({
     onboardingState: OnboardingStep.WelcomeScreen1,
     numberOfWords: 24,
     currentWordIndex: 0,
   });
+}
+
+async function connectToGenuineCheck(
+  result: ScriptedHook,
+  device: ReturnType<typeof createScriptedTestDevice>,
+) {
+  answerWelcome(device);
   device.show();
   act(() => result.current.connect());
 
