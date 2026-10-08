@@ -21,6 +21,7 @@ import React from "react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { track } from "@shared/analytics";
+import { getEnvDefault, setEnv } from "@shared/env";
 import type { State } from "~/renderer/reducers";
 import createStore, { type ReduxStore } from "~/state-manager/configureStore";
 
@@ -168,7 +169,12 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
     connectDeviceObserver = undefined;
     mockUnsubscribe = jest.fn();
     mockedUseDeviceManagementKit.mockReturnValue(mockDmk);
+    setEnv("MOCK_SERVER_TRANSPORT", false);
     mockConnectDeviceSubscription();
+  });
+
+  afterEach(() => {
+    setEnv("MOCK_SERVER_TRANSPORT", getEnvDefault("MOCK_SERVER_TRANSPORT"));
   });
 
   it("GIVEN known devices WHEN rendering the view model THEN it exposes loading state and subscribes to connect device", () => {
@@ -185,7 +191,18 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
       acceptedDeviceModelIds: [],
       dmk: mockDmk,
       onConnected: expect.any(Function),
+      mockServerTransportEnabled: false,
     });
+  });
+
+  it("GIVEN the mock server transport is enabled WHEN rendering THEN connect device receives that flag", () => {
+    setEnv("MOCK_SERVER_TRANSPORT", true);
+
+    renderViewModel();
+
+    expect(mockedConnectDevice).toHaveBeenCalledWith(
+      expect.objectContaining({ mockServerTransportEnabled: true }),
+    );
   });
 
   it("GIVEN accepted device model ids WHEN rendering the view model THEN it passes them to connect device", () => {
