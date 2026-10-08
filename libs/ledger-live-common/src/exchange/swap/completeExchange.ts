@@ -6,11 +6,14 @@ import {
   WrongDeviceForAccountRefund,
 } from "../../errors";
 import {
+  classifySwapNgSignature,
   createExchange,
   ExchangeTypes,
   findSwapPayloadSpecViolation,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
+  type SwapNgPartnerPublicKey,
+  type SwapNgSignatureClassification,
 } from "@ledgerhq/hw-app-exchange";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
 import { getDefaultAccountName } from "@domain/entity-account-name";
@@ -19,8 +22,6 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import { secp256k1 } from "@noble/curves/secp256k1";
-import { p256 } from "@noble/curves/nist";
-import { sha256 } from "../../crypto";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -253,8 +254,6 @@ export function enrichSwapDeserializationError(
   return new CompleteExchangeError(step, errorName, violation.message);
 }
 
-type SwapPartnerPublicKey = { curve: "secp256k1" | "secp256r1"; data: Buffer };
-
 /**
  * Stable, privacy-safe classification of a device SIGN_VERIFICATION_FAIL (0x9d1a). Every value
  * is a fixed enum string that carries no user data (no payload, signature, key, address or hash),
@@ -275,47 +274,20 @@ type SwapSignatureDiagnostic =
   // Signature verifies against none of the known inputs: a genuine payload/signature mismatch.
   | "signature_invalid_all_inputs";
 
-function classifySwapSignatureFailure(
-  binaryPayload: string,
-  signature: string,
-  publicKey: SwapPartnerPublicKey,
-): SwapSignatureDiagnostic | undefined {
-  try {
-    const curve = publicKey.curve === "secp256r1" ? p256 : secp256k1;
-    const compactSignature = base64UrlDecode(signature);
-    // Only compact 64-byte r||s signatures can be classified; anything else is malformed and is
-    // left to the device error so we don't invent misleading diagnostics.
-    if (compactSignature.length !== 64) return undefined;
-
-    const publicKeyBytes = Uint8Array.from(publicKey.data);
-    // Mirror the device: SHA-256 prehash, and disable the low-S policy so we test mathematical
-    // validity (the Exchange app accepts high-S signatures) rather than signature canonicalization.
-    const verifies = (message: Buffer): boolean =>
-      curve.verify(compactSignature, sha256(message), publicKeyBytes, {
-        prehash: false,
-        lowS: false,
-        format: "compact",
-      });
-
-    // The device hashes the JWS signing input: "." + base64url(payload).
-    if (verifies(Buffer.from("." + binaryPayload))) {
-      const rLeadingZero = compactSignature[0] === 0x00;
-      const sLeadingZero = compactSignature[32] === 0x00;
-      if (rLeadingZero && sLeadingZero) return "device_mismatch_leading_zero_rs";
-      if (rLeadingZero) return "device_mismatch_leading_zero_r";
-      if (sLeadingZero) return "device_mismatch_leading_zero_s";
-      return "device_mismatch";
-    }
-
-    if (verifies(Buffer.from(binaryPayload))) return "backend_signed_without_dot_prefix";
-    if (verifies(base64UrlDecode(binaryPayload))) return "backend_signed_raw_protobuf";
-
-    return "signature_invalid_all_inputs";
-  } catch {
-    // Malformed key/signature or an unexpected verification error: defer to the device error.
-    return undefined;
-  }
-}
+const SWAP_SIGNATURE_DIAGNOSTICS: Record<
+  SwapNgSignatureClassification,
+  SwapSignatureDiagnostic | undefined
+> = {
+  valid: "device_mismatch",
+  valid_leading_zero_r: "device_mismatch_leading_zero_r",
+  valid_leading_zero_s: "device_mismatch_leading_zero_s",
+  valid_leading_zero_rs: "device_mismatch_leading_zero_rs",
+  signed_without_dot_prefix: "backend_signed_without_dot_prefix",
+  signed_raw_protobuf: "backend_signed_raw_protobuf",
+  invalid: "signature_invalid_all_inputs",
+  // Left to the device error so we don't invent misleading diagnostics.
+  signature_malformed: undefined,
+};
 
 /**
  * Device stays the source of truth: only once it rejects the partner signature with a generic
@@ -337,7 +309,7 @@ export function enrichSwapSignatureVerificationError({
   isSwapNg: boolean;
   binaryPayload: string;
   signature: string;
-  publicKey: SwapPartnerPublicKey | undefined;
+  publicKey: SwapNgPartnerPublicKey | undefined;
   error: unknown;
 }): CompleteExchangeError | undefined {
   const transportErr = error as { name?: string; statusCode?: number } | null | undefined;
@@ -352,7 +324,8 @@ export function enrichSwapSignatureVerificationError({
   // Diagnostics only cover Swap NG, whose compact JWS signature we can reconstruct locally.
   if (!isSwapNg || !publicKey) return undefined;
 
-  const diagnostic = classifySwapSignatureFailure(binaryPayload, signature, publicKey);
+  const diagnostic =
+    SWAP_SIGNATURE_DIAGNOSTICS[classifySwapNgSignature(binaryPayload, signature, publicKey)];
   if (!diagnostic) return undefined;
 
   const { errorName, errorMessage } = getExchangeErrorMessage(transportErr.statusCode, step);
@@ -383,7 +356,7 @@ const completeExchange = (
     let currentStep: CompleteExchangeStep = "INIT";
     // Captured for the failure path so signature diagnostics can re-verify the partner signature
     // outside the device transport scope. Undefined until the partner config is resolved.
-    let partnerPublicKey: SwapPartnerPublicKey | undefined;
+    let partnerPublicKey: SwapNgPartnerPublicKey | undefined;
     let isSwapNgTransaction = false;
 
     const confirmExchange = async () => {
