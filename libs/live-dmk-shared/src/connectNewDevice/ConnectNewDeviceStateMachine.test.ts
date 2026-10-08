@@ -501,6 +501,16 @@ describe("ConnectNewDeviceStateMachine", () => {
       expect(setup.onConnected).not.toHaveBeenCalled();
     });
 
+    it("should give the connected device in Connected and Done", async () => {
+      const setup = setupTest();
+
+      await connectToNanoX(setup);
+      expect(setup.lastState(ConnectNewDeviceUIStateTypes.Connected).device).toEqual(nanoXDevice);
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+
+      expect(setup.lastState(ConnectNewDeviceUIStateTypes.Done).device).toEqual(nanoXDevice);
+    });
+
     it("should stay Connected before the default success delay has elapsed", async () => {
       const setup = setupTest();
 

@@ -5789,14 +5789,32 @@
   },
   "connectNewDevice": {
     "discovering": {
-      "title": "Select your Ledger device",
-      "deviceNotFound": "I don't see my device"
+      "title": "Looking for your Ledger devices",
+      "description": {
+        "bluetooth": "Make sure your Ledger device is unlocked and close to the mobile phone you want to pair with.",
+        "bluetoothAndUsb": "Unlock your Ledger and connect it to your phone using Bluetooth or a USB cable.",
+        "usb": "Unlock your Ledger and connect it to your phone using a USB cable."
+      },
+      "select": "Connect",
+      "selectAccessibilityLabel": "Connect {{deviceName}}",
+      "deviceNotFound": "I don’t see my device"
     },
     "connecting": {
-      "title": "Pairing with {{deviceName}}"
+      "bluetooth": {
+        "title": "Pairing with {{deviceName}}",
+        "description": "If prompted, confirm the code on your {{productName}}."
+      },
+      "usb": {
+        "title": "Connecting to {{deviceName}}"
+      }
     },
     "connected": {
-      "title": "Your device is paired"
+      "bluetooth": {
+        "title": "Your device is paired"
+      },
+      "usb": {
+        "title": "Your device is connected"
+      }
     }
   },
   "deviceIntentExecutor": {

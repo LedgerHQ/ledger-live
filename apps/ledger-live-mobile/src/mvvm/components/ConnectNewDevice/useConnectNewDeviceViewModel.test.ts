@@ -255,12 +255,20 @@ describe("useConnectNewDeviceViewModel", () => {
     expect(props.onClose).not.toHaveBeenCalled();
   });
 
+  it("should not give an onDeviceNotFound to the view when the caller gives none", () => {
+    // GIVEN / WHEN
+    const { result } = renderViewModel({ onDeviceNotFound: undefined });
+
+    // THEN
+    expect(result.current.onDeviceNotFound).toBeUndefined();
+  });
+
   it("should pass onDeviceNotFound through", () => {
     // GIVEN
     const { result, props } = renderViewModel();
 
     // WHEN
-    act(() => result.current.onDeviceNotFound());
+    act(() => result.current.onDeviceNotFound?.());
 
     // THEN
     expect(props.onDeviceNotFound).toHaveBeenCalledTimes(1);

@@ -66,7 +66,8 @@ stateDiagram-v2
 - Only the error states handle `close`. A late `close` from a sheet that closes
   after a retry or an ignore does nothing.
 - `Connected` is the visible success state. After the success delay
-  (`DEFAULT_SUCCESS_DELAY`, 1.5 s), the machine moves to `Done`.
+  (`DEFAULT_SUCCESS_DELAY`, 1.5 s), the machine moves to `Done`. `Connected`
+  and `Done` carry the connected device, so that the UI can show its transport.
 - `Done` emits the `Done` UI state and calls `onConnected` one time with the
   DMK session, the connected device and the legacy compatibility fields.
 - `Terminated` emits the `Terminated` UI state and calls `onClose` one time.

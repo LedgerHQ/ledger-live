@@ -1,62 +1,59 @@
 import React from "react";
-import {
-  Box,
-  Button,
-  ListItem,
-  ListItemContent,
-  ListItemLeading,
-  ListItemTitle,
-  Spot,
-  Text,
-} from "@ledgerhq/lumen-ui-rnative";
-import type { ConnectNewDeviceUIStateTypes, SelectableDevice } from "@ledgerhq/live-dmk-mobile";
-import { getDeviceSymbolByModelId } from "LLM/utils/getDeviceIcon";
+import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
+import type { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
 import type { ConnectNewDeviceNonErrorUIState } from "../types";
+import { getScanningMode, type ScanningMode } from "../utils/getScanningMode";
+import { DeviceCard } from "./DeviceCard";
+import { StateLayout } from "./StateLayout";
 
 type DiscoveringViewProps = {
   state: Extract<
     ConnectNewDeviceNonErrorUIState,
     { type: typeof ConnectNewDeviceUIStateTypes.Discovering }
   >;
-  onDeviceNotFound: () => void;
+  onDeviceNotFound?: () => void;
 };
 
-// Placeholder: the final design comes with LIVE-38357.
+const descriptionKeys = {
+  bluetooth: "connectNewDevice.discovering.description.bluetooth",
+  bluetoothAndUsb: "connectNewDevice.discovering.description.bluetoothAndUsb",
+  usb: "connectNewDevice.discovering.description.usb",
+} as const satisfies Record<ScanningMode, string>;
+
 export function DiscoveringView({
   state,
   onDeviceNotFound,
 }: Readonly<DiscoveringViewProps>): React.ReactNode {
   const { t } = useTranslation();
+  const scanningMode = getScanningMode(state.scanningTransports);
 
   return (
-    <Box lx={{ width: "full", gap: "s16", paddingHorizontal: "s8" }}>
-      <Text typography="heading4SemiBold" lx={{ color: "base" }}>
-        {t("connectNewDevice.discovering.title")}
-      </Text>
-      <Box>
-        {state.devices.map(({ device, onSelect }: SelectableDevice) => (
-          <ListItem key={`${device.transport}:${device.id}`} onPress={onSelect}>
-            <ListItemLeading>
-              <Spot
-                size={48}
-                appearance="icon"
-                icon={getDeviceSymbolByModelId(device.deviceModelId)}
-              />
-              <ListItemContent>
-                <ListItemTitle typography="body2SemiBold">
-                  {device.name ?? t("deviceIntentExecutor.connectDevice.common.ledgerDevice")}
-                </ListItemTitle>
-              </ListItemContent>
-            </ListItemLeading>
-          </ListItem>
-        ))}
-      </Box>
-      {state.showDeviceNotFound ? (
-        <Button appearance="gray" size="lg" isFull onPress={onDeviceNotFound}>
-          {t("connectNewDevice.discovering.deviceNotFound")}
-        </Button>
+    <StateLayout
+      animation={scanningMode}
+      loopAnimation
+      title={t("connectNewDevice.discovering.title")}
+      description={t(descriptionKeys[scanningMode])}
+      footer={
+        state.showDeviceNotFound && onDeviceNotFound ? (
+          <Button appearance="no-background" size="lg" isFull onPress={onDeviceNotFound}>
+            {t("connectNewDevice.discovering.deviceNotFound")}
+          </Button>
+        ) : null
+      }
+      testID={`connect-new-device-discovering-${scanningMode}`}
+    >
+      {state.devices.length > 0 ? (
+        <Box lx={{ gap: "s16" }}>
+          {state.devices.map(({ device, onSelect }) => (
+            <DeviceCard
+              key={`${device.transport}:${device.id}`}
+              device={device}
+              onSelect={onSelect}
+            />
+          ))}
+        </Box>
       ) : null}
-    </Box>
+    </StateLayout>
   );
 }

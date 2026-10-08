@@ -45,7 +45,7 @@ type ViewState = {
 
 export type ConnectNewDeviceViewModel = ViewState & {
   platform: Exclude<AppPlatform, "desktop">;
-  onDeviceNotFound: () => void;
+  onDeviceNotFound?: () => void;
   onCloseErrorSheet: () => void;
 };
 

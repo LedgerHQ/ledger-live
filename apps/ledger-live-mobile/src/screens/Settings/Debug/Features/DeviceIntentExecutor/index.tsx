@@ -60,6 +60,13 @@ export default function DebugDeviceIntentExecutor() {
         description="Run the ConnectNewDevice component to pair a new device and log its callback calls."
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorConnectNewDevice)}
       />
+      <DebugEntry
+        title="Connect New Device animations"
+        description="Preview each ConnectNewDevice Lottie in the light and the dark theme."
+        onPress={() =>
+          navigation.navigate(ScreenName.DebugDeviceIntentExecutorConnectNewDeviceAnimations)
+        }
+      />
     </ScrollView>
   );
 }
