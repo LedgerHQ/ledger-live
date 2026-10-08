@@ -57,9 +57,12 @@ function setup(token: TokenCurrency = usdcMock, currencyId = "ethereum_sepolia")
     currency: getCryptoCurrencyById(currencyId),
   });
   const tokenAccount: TokenAccount = genTokenAccount(0, parentAccount, token);
-  const result = render(<ConfidentialBalanceFooter account={tokenAccount} />, {
-    initialState: { accounts: [parentAccount] },
-  });
+  const result = render(
+    <ConfidentialBalanceFooter account={tokenAccount} createConfidentialClient={createClient} />,
+    {
+      initialState: { accounts: [parentAccount] },
+    },
+  );
   return { ...result, tokenAccount };
 }
 
@@ -83,6 +86,7 @@ async function sendFromPrivatePart(amount: bigint) {
 }
 
 const signer = mockSignTypedData as jest.Mock;
+const createClient = jest.fn();
 const controls = mockControls as typeof mockControls & { reset: () => void };
 
 beforeEach(() => {
@@ -140,6 +144,7 @@ describe("ConfidentialBalanceFooter", () => {
     rerender(
       <ConfidentialBalanceFooter
         account={{ ...tokenAccount, operationsCount: tokenAccount.operationsCount + 1 }}
+        createConfidentialClient={createClient}
       />,
     );
 
@@ -195,6 +200,13 @@ describe("ConfidentialBalanceFooter", () => {
 
     await waitFor(() => expect(signer).not.toHaveBeenCalled());
     expect(screen.queryByTestId("confidential-balance-footer")).not.toBeInTheDocument();
+  });
+
+  it("never builds the real client while running on the mock", async () => {
+    setup();
+
+    await screen.findByTestId("confidential-undisclosed-badge");
+    expect(createClient).not.toHaveBeenCalled();
   });
 
   it("renders nothing outside the networks that support confidential balances", () => {

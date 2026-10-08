@@ -7,6 +7,13 @@ describe("getConfidentialErrorKind", () => {
     expect(getConfidentialErrorKind(new DeviceRefusedError())).toBe("deviceRefused");
   });
 
+  it("reports a rejection on the device as a refusal", () => {
+    const refusal = Object.assign(new Error("Condition of use not satisfied"), {
+      name: "UserRefusedOnDevice",
+    });
+    expect(getConfidentialErrorKind(refusal)).toBe("deviceRefused");
+  });
+
   it.each([
     ["PermitRequired", "permitExpired"],
     ["PermitExpired", "permitExpired"],

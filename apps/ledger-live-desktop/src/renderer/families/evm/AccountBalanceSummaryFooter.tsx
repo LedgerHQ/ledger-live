@@ -17,7 +17,11 @@ import ToolTip from "~/renderer/components/Tooltip";
 import { PlaceholderLine } from "~/renderer/components/BalanceInfos/Placeholder";
 import { TokenAccount, Account } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { ConfidentialBalanceFooter } from "LLD/features/ConfidentialBalance";
+import {
+  ConfidentialBalanceFooter,
+  type CreateConfidentialClient,
+} from "LLD/features/ConfidentialBalance";
+import { ZamaConfidentialClient } from "./confidential/ZamaConfidentialClient";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -54,6 +58,9 @@ const AmountValue = styled(Text).attrs(() => ({
   color: "neutral.c100",
 }))``;
 
+const createZamaConfidentialClient: CreateConfidentialClient = options =>
+  new ZamaConfidentialClient(options);
+
 type Props = {
   account: Account | TokenAccount;
   counterValue: Currency;
@@ -71,7 +78,14 @@ const AccountBalanceSummaryFooter = ({
   const { enabled: isEvmNativeStakingEnabled, params } = useFeature("evmNativeStaking") ?? {};
   const { pending: isSyncing } = useAccountSyncState({ accountId: account.id });
 
-  if (account.type === "TokenAccount") return <ConfidentialBalanceFooter account={account} />;
+  if (account.type === "TokenAccount") {
+    return (
+      <ConfidentialBalanceFooter
+        account={account}
+        createConfidentialClient={createZamaConfidentialClient}
+      />
+    );
+  }
   if (account.type !== "Account") return null;
 
   const isCurrencySupported = params?.supportedCurrencyIds?.includes(account.currency.id) || false;

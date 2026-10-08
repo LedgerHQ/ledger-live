@@ -25,6 +25,7 @@ const ERROR_KIND_BY_CODE: Partial<Record<ConfidentialErrorCode, ConfidentialErro
 
 export function getConfidentialErrorKind(error: unknown): ConfidentialErrorKind {
   if (error instanceof DeviceRefusedError) return "deviceRefused";
+  if (error instanceof Error && error.name === "UserRefusedOnDevice") return "deviceRefused";
   if (isConfidentialError(error)) return ERROR_KIND_BY_CODE[error.code] ?? "unknown";
   return "unknown";
 }

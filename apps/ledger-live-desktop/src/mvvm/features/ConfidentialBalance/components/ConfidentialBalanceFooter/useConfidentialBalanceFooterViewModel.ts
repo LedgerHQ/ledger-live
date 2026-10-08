@@ -9,11 +9,12 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { CONFIDENTIAL_CURRENCY_IDS, PERMIT_VALIDITY_DAYS } from "../../constants";
+import { confidentialApi } from "../../utils/confidentialApi";
 import {
-  confidentialApi,
-  confidentialContext,
-  mockSignTypedData,
-} from "../../utils/confidentialApi";
+  createConfidentialContext,
+  type CreateConfidentialClient,
+} from "../../utils/confidentialRuntime";
+import { usePermitSigner } from "../../hooks/usePermitSigner";
 import {
   getConfidentialErrorKind,
   type ConfidentialErrorKind,
@@ -24,17 +25,23 @@ export type ConfidentialBalancePhase = "idle" | "signing" | "decrypting";
 
 type Props = {
   account: TokenAccount;
+  createConfidentialClient: CreateConfidentialClient;
 };
 
 const shortenAddress = (address: string) => `${address.slice(0, 6)}…${address.slice(-4)}`;
 
-export function useConfidentialBalanceFooterViewModel({ account }: Props) {
+export function useConfidentialBalanceFooterViewModel({
+  account,
+  createConfidentialClient,
+}: Props) {
   const currencyId = account.token.parentCurrencyId;
   const underlying = account.token.contractAddress;
   const isSupportedCurrency = CONFIDENTIAL_CURRENCY_IDS.has(currencyId);
-  const owner = useSelector(state =>
+  const parentAccount = useSelector(state =>
     accountSelector(state, { accountId: account.parentId }),
-  )?.freshAddress;
+  );
+  const owner = parentAccount?.freshAddress;
+  const { signTypedData, deviceSignature } = usePermitSigner(parentAccount);
   const unit = useAccountUnit(account);
   const locale = useSelector(localeSelector);
   const discreet = useDiscreetMode();
@@ -58,7 +65,7 @@ export function useConfidentialBalanceFooterViewModel({ account }: Props) {
     try {
       const cachedEntry = getSessionBalance(account.id);
       const next = await confidentialApi.getConfidentialBalance(
-        confidentialContext,
+        createConfidentialContext(currencyId, createConfidentialClient),
         currencyId,
         owner,
         underlying,
@@ -76,7 +83,7 @@ export function useConfidentialBalanceFooterViewModel({ account }: Props) {
     } catch (e) {
       if (isMounted.current) setError(getConfidentialErrorKind(e));
     }
-  }, [account.id, currencyId, owner, underlying]);
+  }, [account.id, createConfidentialClient, currencyId, owner, underlying]);
 
   useEffect(() => {
     if (isSupportedCurrency) void load();
@@ -88,20 +95,21 @@ export function useConfidentialBalanceFooterViewModel({ account }: Props) {
     setPhase("decrypting");
     const signOnDevice: SignTypedData = async typedData => {
       setPhase("signing");
-      const signature = await mockSignTypedData(typedData);
+      const signature = await signTypedData(typedData);
       if (isMounted.current) setPhase("decrypting");
       return signature;
     };
     try {
+      const context = createConfidentialContext(currencyId, createConfidentialClient);
       const permits = await confidentialApi.ensurePermit(
-        confidentialContext,
+        context,
         currencyId,
         owner,
         [balance.pair.wrapper],
         signOnDevice,
       );
       const decrypted = await confidentialApi.revealConfidentialBalance(
-        confidentialContext,
+        context,
         currencyId,
         owner,
         underlying,
@@ -117,7 +125,7 @@ export function useConfidentialBalanceFooterViewModel({ account }: Props) {
     } finally {
       if (isMounted.current) setPhase("idle");
     }
-  }, [account.id, balance, currencyId, owner, underlying]);
+  }, [account.id, balance, createConfidentialClient, currencyId, owner, signTypedData, underlying]);
 
   const formatAmount = (value: BigNumber) =>
     formatCurrencyUnit(unit, value, {
@@ -152,6 +160,7 @@ export function useConfidentialBalanceFooterViewModel({ account }: Props) {
     permitExpiresOn: permitExpiresAt
       ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(permitExpiresAt * 1000)
       : undefined,
+    deviceSignature,
     onReveal: reveal,
     onRetry: balance === undefined ? load : reveal,
   };
