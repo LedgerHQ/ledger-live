@@ -5,12 +5,12 @@ import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { useFeature } from "@features/platform-feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import {
-  setCountervaluesUserSettings,
-  useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
-} from "@features/platform-market-countervalues";
+import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@features/platform-market-countervalues";
 import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
-import { resolveTrackingPairs } from "@domain/entity-market-countervalues";
+import {
+  resolveTrackingPairs,
+  type CountervaluesSettings,
+} from "@domain/entity-market-countervalues";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
@@ -118,8 +118,7 @@ export const themeSelector = createSelector(
   (osDark, theme) => theme || (osDark ? "dark" : "light"),
 );
 
-export function useCalculateCountervaluesUserSettings() {
-  const dispatch = useDispatch();
+export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
   const countervalue = useSelector(counterValueCurrencySelector);
 
   // countervalues for accounts
@@ -131,7 +130,8 @@ export function useCalculateCountervaluesUserSettings() {
 
   const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
 
-  useEffect(() => {
+  // A new object only when an input changes: the provider restores and reloads on each one.
+  return useMemo(() => {
     const trackingPairs = resolveTrackingPairs(extraSessionTrackingPairs.concat(trPairs));
 
     const granularitiesRates = granularitiesRatesConfig?.enabled
@@ -141,16 +141,14 @@ export function useCalculateCountervaluesUserSettings() {
         }
       : undefined;
 
-    dispatch(
-      setCountervaluesUserSettings({
-        trackingPairs,
-        autofillGaps: true,
-        refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
-        marketCapBatchingAfterRank: LiveConfig.getValueByKey(
-          "config_countervalues_marketCapBatchingAfterRank",
-        ),
-        granularitiesRates,
-      }),
-    );
-  }, [dispatch, granularitiesRatesConfig, extraSessionTrackingPairs, trPairs]);
+    return {
+      trackingPairs,
+      autofillGaps: true,
+      refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
+      marketCapBatchingAfterRank: LiveConfig.getValueByKey(
+        "config_countervalues_marketCapBatchingAfterRank",
+      ),
+      granularitiesRates,
+    };
+  }, [granularitiesRatesConfig, extraSessionTrackingPairs, trPairs]);
 }

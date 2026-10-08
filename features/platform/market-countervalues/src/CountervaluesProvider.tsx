@@ -43,6 +43,10 @@ export interface CountervaluesBridge {
   useStateError(): Error | null;
   useStatePending(): boolean;
   useState(): CounterValuesState;
+  /**
+   * The settings the app computes from its own state; no store holds them. Return the same object
+   * while the inputs are unchanged: a new one restores the saved state again and reloads.
+   */
   useUserSettings(): CountervaluesSettings;
   wipe(): void;
 }
@@ -166,7 +170,6 @@ function Effect({
   // manage the auto polling loop
   const isPolling = bridge.usePollingIsPolling();
   useEffect(() => {
-    // Both apps initialise refreshRate to 0 and overwrite it from LiveConfig once it resolves.
     // Re-arming at 0 is a zero-delay self-rescheduling loop, so wait for a real rate; the effect
     // re-runs when one arrives.
     if (!isPolling || refreshRate <= 0) return;

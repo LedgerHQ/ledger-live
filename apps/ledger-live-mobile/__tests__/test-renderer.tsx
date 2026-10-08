@@ -12,6 +12,7 @@ import {
   countervaluesInitialState as COUNTERVALUES_INITIAL_STATE,
 } from "@features/platform-market-countervalues";
 import { createMockRateSource } from "@domain/api-market-countervalues/mock";
+import type { CountervaluesSettings } from "@domain/entity-market-countervalues";
 import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
@@ -241,6 +242,14 @@ function withFlagOverrides(
   };
 }
 
+// No tracking pairs and no polling: tests seed the rates they assert on.
+export const countervaluesTestUserSettings: CountervaluesSettings = {
+  trackingPairs: [],
+  autofillGaps: true,
+  refreshRate: 0,
+  marketCapBatchingAfterRank: 0,
+};
+
 function CountervaluesProviders({
   children,
   store,
@@ -266,7 +275,7 @@ function CountervaluesProviders({
       useState: () => state.countervalues.countervalues.state,
       useStateError: () => null,
       useStatePending: () => false,
-      useUserSettings: () => state.countervalues.userSettings,
+      useUserSettings: () => countervaluesTestUserSettings,
       wipe: () => {},
     };
   }, [store]);

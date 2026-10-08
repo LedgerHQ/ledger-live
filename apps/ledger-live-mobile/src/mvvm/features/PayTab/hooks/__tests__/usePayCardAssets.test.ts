@@ -1,4 +1,4 @@
-import { renderHook } from "@tests/test-renderer";
+import { countervaluesTestUserSettings, renderHook } from "@tests/test-renderer";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
@@ -55,7 +55,7 @@ function withRates(state: State): State {
             [pairId({ from: usdc, to: USD })]: { latest: 1 },
             [pairId({ from: BITCOIN, to: USD })]: { latest: 100_000 },
           },
-          state.countervalues.userSettings,
+          countervaluesTestUserSettings,
         ),
       },
     },
