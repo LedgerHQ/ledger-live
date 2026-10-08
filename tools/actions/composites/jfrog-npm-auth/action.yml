@@ -7,13 +7,17 @@ inputs:
 runs:
   using: composite
   steps:
+    # actions-security is pinned to a commit SHA (not a branch or moving tag) so the
+    # action ref is stable and runner caching can be enabled.
     - id: jfrog-login
       if: ${{ inputs.registry != '' }}
-      uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1.4.0
+      uses: LedgerHQ/actions-security/actions/jfrog-login@c927e3b6f81f35f3f11f54ff8df47b410186e7a3
     - id: jfrog-npm
       if: ${{ inputs.registry != '' }}
-      uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
+      uses: LedgerHQ/actions-security/actions/jfrog-npm@c927e3b6f81f35f3f11f54ff8df47b410186e7a3
       with:
         token: ${{ steps.jfrog-login.outputs.oidc-token }}
         registry: ${{ inputs.registry }}
         npmrc-location: "$HOME/.npmrc"
+        # Hardlink imports only on self-hosted Linux runners; 'false' leaves the pnpm default.
+        package-import-method: ${{ runner.os == 'Linux' && runner.environment == 'self-hosted' && 'hardlink' || 'false' }}
