@@ -24,7 +24,7 @@ const probe = () => {
 
 describe("getCalProbe", () => {
   let fetchSpy: jest.SpyInstance;
-  let onLineSpy: jest.SpyInstance | undefined;
+  const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
 
   beforeEach(() => {
     fetchSpy = jest.spyOn(globalThis, "fetch");
@@ -32,8 +32,8 @@ describe("getCalProbe", () => {
 
   afterEach(() => {
     fetchSpy.mockRestore();
-    onLineSpy?.mockRestore();
-    onLineSpy = undefined;
+    if (originalNavigator) Object.defineProperty(globalThis, "navigator", originalNavigator);
+    else Reflect.deleteProperty(globalThis, "navigator");
     jest.useRealTimers();
   });
 
@@ -84,7 +84,10 @@ describe("getCalProbe", () => {
   });
 
   it("returns offline without calling CAL when the OS reports no connectivity", async () => {
-    onLineSpy = jest.spyOn(globalThis.navigator, "onLine", "get").mockReturnValue(false);
+    Object.defineProperty(globalThis, "navigator", {
+      value: { onLine: false },
+      configurable: true,
+    });
 
     expect((await probe()).data).toBe("offline");
     expect(fetchSpy).not.toHaveBeenCalled();
@@ -94,8 +97,8 @@ describe("getCalProbe", () => {
     fetchSpy.mockResolvedValueOnce(new Response("x", { status: 500 }));
     fetchSpy.mockResolvedValueOnce(new Response("[]", { status: 200 }));
 
-    const subscription = await probe();
-    expect(subscription.data).toBe("failed");
+    const subscription = probe();
+    expect((await subscription).data).toBe("failed");
 
     expect((await subscription.refetch()).data).toBe("ok");
   });
