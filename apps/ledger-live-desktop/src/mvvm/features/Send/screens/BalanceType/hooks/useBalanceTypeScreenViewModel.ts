@@ -69,7 +69,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     useLLDCoinFamily(mainAccount?.currency.family).SendBalanceTypeSync,
   );
 
-  const bridge = useAccountBridgeOrNull<FlowTransaction>(account);
+  const bridge = useAccountBridgeOrNull<FlowTransaction>(account, parentAccount);
   const unit = useMaybeAccountUnit(account ?? undefined);
   const trackingProperties = useSendFlowTrackingProperties();
 
