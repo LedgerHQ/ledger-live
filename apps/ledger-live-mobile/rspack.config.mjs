@@ -242,6 +242,7 @@ export default withRozeniteUrlFix(
               "index.browser.mjs",
             ),
             "rpc-websockets": resolvePackageFile("rpc-websockets", "dist", "index.browser.mjs"),
+            // Segment, hiero and coin-evm still import it; route them to the expo-crypto shim (LIVE-37309)
             "react-native-get-random-values": path.resolve(
               __dirname,
               "src/getRandomValuesPolyfill.ts",
