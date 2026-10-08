@@ -163,6 +163,31 @@ on:
         required: false
         type: string
         default: ""
+      ci_smoke:
+        description: "Smoke run from the Build and Test workflows (PR, push, scheduled): pins the Speculos firmware and reports to Allure PR-checks only (no Slack, QAA Allure or AI artifacts)"
+        required: false
+        type: boolean
+        default: false
+      macos_runner_label:
+        description: "macOS runner pool for the iOS build and tests (e.g. performance-pool, general-pool). Empty keeps the build on general-pool and the tests on the QAA pool"
+        required: false
+        type: string
+        default: ""
+      android_runner_label:
+        description: "Runner label for the Android tests"
+        required: false
+        type: string
+        default: ledger-live-linux-e2e-8CPU-32RAM
+      max_shards:
+        description: "Max number of shards per platform (0 = no cap)"
+        required: false
+        type: number
+        default: 0
+      check_pod_lockfile:
+        description: "Validate the iOS Pod lockfile when the native build comes from cache"
+        required: false
+        type: boolean
+        default: false
     secrets:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos, both platforms). Repository secret; pass via secrets inherit when reusing this workflow.
@@ -233,6 +258,8 @@ env:
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
   SPECULOS_IMAGE_TAG_ANDROID: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
   SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
+  SMOKE_SPECULOS_FIRMWARE_VERSION: 2.8.0
+  NIGHTLY_RUN: ${{ github.event_name == 'schedule' && !inputs.ci_smoke }}
   ANDROID_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   IOS_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
@@ -291,6 +318,8 @@ jobs:
       ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
       avd_cache_key: ${{ steps.cache-keys.outputs.avd_cache_key }}
       avd_exists: ${{ steps.check-avd.outputs.cache-hit }}
+      pod_check_key: ${{ steps.cache-keys.outputs.pod_check_key }}
+      pod_lockfile_validated: ${{ steps.check-lockfile-status.outputs.cache-hit }}
     steps:
       - name: generate token
         id: generate-token
@@ -312,6 +341,7 @@ jobs:
             e2e/tooling/filter
             libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
             .pnpmfile.cjs
+            pnpm-lock.yaml
             pnpm-workspace.yaml
             tools
             .mise/tasks
@@ -338,7 +368,6 @@ jobs:
         id: devices
         shell: bash
         env:
-          EVENT_NAME: ${{ github.event_name }}
           SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoX' }}
         run: |
           # Per-platform mapping for scheduled nightly runs (QAA-1193)
@@ -347,7 +376,7 @@ jobs:
             [android]=nanoX   # Android - LNX
           )
 
-          if [ "$EVENT_NAME" = "schedule" ]; then
+          if [ "$NIGHTLY_RUN" = "true" ]; then
             echo "ios_device=${PLATFORM_DEVICE[ios]}"           >> $GITHUB_OUTPUT
             echo "android_device=${PLATFORM_DEVICE[android]}"  >> $GITHUB_OUTPUT
           else
@@ -366,7 +395,7 @@ jobs:
           WORKFLOW_REF: ${{ github.ref_name }}
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
           COMMIT_SHA: ${{ github.sha }}
-          SLACK_NOTIF_STATUS: ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'enabled' || 'disabled' }}
+          SLACK_NOTIF_STATUS: ${{ (inputs.slack_notif || env.NIGHTLY_RUN == 'true') && 'enabled' || 'disabled' }}
         run: |
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
 
@@ -436,6 +465,7 @@ jobs:
           # exists. Bump the trailing version to force a rebuild onto a current
           # emulator; the one pinned since AVD_API went to 36 segfaults mid-run.
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v9" >> $GITHUB_OUTPUT
+          echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> "$GITHUB_OUTPUT"
 
       - name: Prepare test filter
         id: test-filter
@@ -479,6 +509,7 @@ jobs:
           aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
           cache_bucket: ${{ env.cache-bucket }}
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
+          max_shards: ${{ inputs.max_shards || 0 }}
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -486,6 +517,20 @@ jobs:
         with:
           path: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
           key: ${{ steps.cache-keys.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+      - name: Check if pod lockfile has been validated
+        id: check-lockfile-status
+        if: ${{ inputs.check_pod_lockfile }}
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          key: ${{ steps.cache-keys.outputs.pod_check_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -558,7 +603,7 @@ jobs:
       contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
-      macos-specificity-runner-label: "general-pool"
+      macos-specificity-runner-label: ${{ inputs.macos_runner_label || 'general-pool' }}
       disable-nx-cache: false
       build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
@@ -630,6 +675,64 @@ jobs:
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
 
+  test-pod-lockfile:
+    name: "Test Pod Lockfile"
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: [macOS, ARM64]
+    needs: [determine-builds]
+    if: ${{ inputs.check_pod_lockfile && needs.determine-builds.outputs.ios_native_exists == 'true' && needs.determine-builds.outputs.pod_lockfile_validated != 'true' }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-pod-cache: "true"
+          skip-pnpm-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install dependencies
+        run: |
+          pnpm i --frozen-lockfile --filter="live-mobile..." --unsafe-perm --ignore-scripts
+
+      - name: Test Pod Lockfile
+        run: |
+          pnpm mobile postinstall
+
+      - name: Cache pod lockfile validation
+        run: |
+          echo "pod-lockfile-validated=true" > pod-lockfile-cache.txt
+
+      - name: Write cache
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        with:
+          path: pod-lockfile-cache.txt
+          key: ${{ needs.determine-builds.outputs.pod_check_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ll-nx-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
   detox-tests-ios:
     name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     permissions:
@@ -637,7 +740,7 @@ jobs:
       contents: read
     needs: [build-ios, determine-builds]
     if: ${{ always() && !cancelled() && needs.build-ios.result == 'success' && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on: ["qaa", macOS, ARM64, "performance-pool"]
+    runs-on: ${{ fromJSON(inputs.macos_runner_label && format('["{0}","macOS","ARM64"]', inputs.macos_runner_label) || '["qaa","macOS","ARM64","performance-pool"]') }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
@@ -755,6 +858,10 @@ jobs:
           enable_broadcast: ${{ env.IOS_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
 
+      - name: Pin Speculos firmware for smoke runs
+        if: ${{ inputs.ci_smoke }}
+        run: echo "SPECULOS_FIRMWARE_VERSION=$SMOKE_SPECULOS_FIRMWARE_VERSION" >> "$GITHUB_ENV"
+
       - name: Get iOS device info
         run: |
           set -o pipefail
@@ -837,7 +944,7 @@ jobs:
       contents: read
     needs: [build-android, determine-builds, setup-android-avd]
     if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
-    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    runs-on: ${{ inputs.android_runner_label || 'ledger-live-linux-e2e-8CPU-32RAM' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -1008,6 +1115,10 @@ jobs:
         with:
           enable_broadcast: ${{ env.ANDROID_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
+
+      - name: Pin Speculos firmware for smoke runs
+        if: ${{ inputs.ci_smoke }}
+        run: echo "SPECULOS_FIRMWARE_VERSION=$SMOKE_SPECULOS_FIRMWARE_VERSION" >> "$GITHUB_ENV"
 
       - name: Get Android device info
         run: |
@@ -1220,6 +1331,7 @@ jobs:
     name: Allure Report iOS
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
+    continue-on-error: ${{ inputs.ci_smoke == true }}
     needs: [determine-builds, detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
@@ -1248,7 +1360,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
-          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
+          report_path_suffix: ${{ inputs.ci_smoke && 'PR-checks' || (env.NIGHTLY_RUN != 'true' && 'manual' || '') }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
@@ -1275,7 +1387,7 @@ jobs:
           status_11: ${{ needs.detox-tests-ios.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-ios.outputs.status_12 }}
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
+        if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -1283,13 +1395,13 @@ jobs:
           sparse-checkout: e2e/mobile/scripts
           path: repo
       - name: Build iOS AI artifact
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
+        if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
         env:
           ARTIFACTS: ios-test-artifacts
           OUT: ios-ai
         run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
       - name: Upload iOS AI artifact
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
+        if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ios-ai-analysis
@@ -1300,6 +1412,7 @@ jobs:
     name: Allure Report Android
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
+    continue-on-error: ${{ inputs.ci_smoke == true }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
@@ -1328,7 +1441,7 @@ jobs:
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
-          report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
+          report_path_suffix: ${{ inputs.ci_smoke && 'PR-checks' || (env.NIGHTLY_RUN != 'true' && 'manual' || '') }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
@@ -1355,7 +1468,7 @@ jobs:
           status_11: ${{ needs.detox-tests-android.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-android.outputs.status_12 }}
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
+        if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -1363,13 +1476,13 @@ jobs:
           sparse-checkout: e2e/mobile/scripts
           path: repo
       - name: Build Android AI artifact
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
+        if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
         env:
           ARTIFACTS: android-test-artifacts
           OUT: android-ai
         run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
       - name: Upload Android AI artifact
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
+        if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: android-ai-analysis
@@ -1379,7 +1492,7 @@ jobs:
   qaa-allure-upload-ios:
     name: "QAA Allure Upload - iOS (Experimental)"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
+    if: ${{ !cancelled() && !inputs.ci_smoke && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
     continue-on-error: true
     needs: [detox-tests-ios]
     timeout-minutes: 15
@@ -1398,14 +1511,14 @@ jobs:
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ios-test-artifacts
-          name: "mobile-e2e-ios-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-          tags: ${{ format('["mobile","ios",{0}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          name: "mobile-e2e-ios-${{ env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["mobile","ios",{0}]', toJSON(env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
 
   qaa-allure-upload-android:
     name: "QAA Allure Upload - Android (Experimental)"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
+    if: ${{ !cancelled() && !inputs.ci_smoke && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     continue-on-error: true
     needs: [detox-tests-android]
     timeout-minutes: 15
@@ -1430,8 +1543,8 @@ jobs:
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: android-test-artifacts
-          name: "mobile-e2e-android-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-          tags: ${{ format('["mobile","android",{0}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          name: "mobile-e2e-android-${{ env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["mobile","android",{0}]', toJSON(env.NIGHTLY_RUN == 'true' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
           report_attachments: report-attachments
 
@@ -1439,7 +1552,7 @@ jobs:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
     needs: [determine-builds, allure-report-android, allure-report-ios, qaa-allure-upload-ios, qaa-allure-upload-android]
-    if: ${{ !cancelled() && (needs.allure-report-ios.outputs.finalStatus || needs.allure-report-android.outputs.finalStatus) }}
+    if: ${{ !cancelled() && !inputs.ci_smoke && (needs.allure-report-ios.outputs.finalStatus || needs.allure-report-android.outputs.finalStatus) }}
     env:
       SLACK_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
       REF: ${{ inputs.ref || github.ref_name }}
@@ -1462,7 +1575,7 @@ jobs:
           token: ${{ env.SLACK_TOKEN }}
           channel: CTMQ0S5SB
           # Second channel only on scheduled runs / opt-in.
-          secondary_channel: ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'C05FKJ7DFAP' || '' }}
+          secondary_channel: ${{ (inputs.slack_notif || env.NIGHTLY_RUN == 'true') && 'C05FKJ7DFAP' || '' }}
           product: "Ledger Live Mobile E2E"
           ref: ${{ env.REF }}
           smoke_tests: ${{ inputs.smoke_tests }}
