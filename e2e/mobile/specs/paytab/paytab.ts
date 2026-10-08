@@ -1,7 +1,14 @@
+import invariant from "invariant";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_CONTACTS_ENABLED, FF_PAY_TAB } from "@e2e/utils/featureFlagUtils";
+import {
+  FF_CONTACTS_ENABLED,
+  FF_NEW_SEND_FLOW_ENABLED,
+  FF_PAY_TAB,
+} from "@e2e/utils/featureFlagUtils";
 
 const ALL_STABLECOINS = "All stablecoins";
 const BANK_TRANSFER_CREATE_ACCOUNT = "Create an account";
@@ -95,6 +102,47 @@ export function runPayRequestTest(tmsLinks: string[], tags: string[]) {
       await app.payTab.expectRequestVerify();
       await app.payTab.closeRequest();
       await app.payTab.expectFundedBalance();
+    });
+  });
+}
+
+export function runPayNewPaymentTest(tmsLinks: string[], tags: string[]) {
+  describe("Pay tab", () => {
+    beforeAll(async () => {
+      await app.init({
+        userdata: "wallet40-many-stablecoins",
+        speculosApp: transaction.accountToDebit.currency.speculosApp,
+        featureFlags: {
+          ...FF_PAY_TAB,
+          ...FF_CONTACTS_ENABLED,
+          ...FF_NEW_SEND_FLOW_ENABLED,
+        },
+        cliCommands: [liveDataWithRecipientAddressCommand(transaction)],
+      });
+      await app.mainNavigation.waitForWallet40Ready();
+    });
+
+    setTeamOwner(Team.WALLET_XP);
+    tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
+
+    it("New payment", async () => {
+      const address = transaction.accountToCredit.address;
+      invariant(address, "Recipient address is not set");
+      const youPaid = `You paid ${formatAddress(address, SEND_ADDRESS_FORMAT_OPTIONS)}`;
+
+      await app.mainNavigation.tapWallet40Tab("paytab");
+      await app.payTab.expectScreenVisible();
+      await app.payTab.openNewPayment();
+      await app.modularDrawer.selectAssetAndAccount(transaction.accountToDebit);
+      await app.newSend.typeRecipientNewFlow(address);
+      await app.newSend.tapRecipientCardSend();
+      await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
+      await app.newSend.waitForSignature();
+      await app.speculos.signSendTransaction(transaction);
+      await app.payTab.expectYouPaid(youPaid);
+      await app.payTab.closePaySuccess();
+      await app.payTab.expectScreenVisible();
     });
   });
 }
