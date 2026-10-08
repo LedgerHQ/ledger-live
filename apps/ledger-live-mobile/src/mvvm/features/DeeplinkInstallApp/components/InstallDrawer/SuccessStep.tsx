@@ -3,7 +3,7 @@ import React from "react";
 import { Platform } from "react-native";
 import { Box, Text, Button } from "@ledgerhq/lumen-ui-rnative";
 import { CheckmarkCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useTranslation } from "~/context/Locale";
 import type { AppInstallConfig } from "../../constants/appInstallMap";
 

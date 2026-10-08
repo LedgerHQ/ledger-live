@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import network from "@ledgerhq/live-network";
 import { GetNextPageParamFunction, InfiniteData, QueryFunction } from "@tanstack/react-query";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";

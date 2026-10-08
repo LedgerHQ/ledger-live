@@ -4,7 +4,7 @@ import {
   selectTopStocks,
   type StockSuggestion,
 } from "@features/platform-aggregated-assets";
-import { appVersion as nativeAppVersion } from "~/logic/appVersion";
+import { appVersion as nativeAppVersion } from "LLM/utils/appVersion";
 
 interface DefaultStocksAssets {
   stocks: StockSuggestion[];

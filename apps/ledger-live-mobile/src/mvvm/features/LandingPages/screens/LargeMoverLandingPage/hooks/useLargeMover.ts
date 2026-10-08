@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAssetsData } from "@features/platform-aggregated-assets";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { parseLargeMoverLedgerIds } from "../utils/parseLargeMoverLedgerIds";
 import { useMapLedgerIdsToCoinGeckoIds } from "./useLedgerMapping";
 

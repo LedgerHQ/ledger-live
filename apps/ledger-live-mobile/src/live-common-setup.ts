@@ -6,7 +6,7 @@ import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { Platform } from "react-native";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";

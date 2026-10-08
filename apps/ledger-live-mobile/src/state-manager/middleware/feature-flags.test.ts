@@ -17,7 +17,7 @@ jest.mock("~/firebase/remoteConfig", () => ({
   fetchRemoteFlags: jest.fn(),
   readCachedFlags: jest.fn(),
 }));
-jest.mock("~/logic/appVersion", () => ({
+jest.mock("LLM/utils/appVersion", () => ({
   get appVersion() {
     return mockAppVersion ?? "";
   },

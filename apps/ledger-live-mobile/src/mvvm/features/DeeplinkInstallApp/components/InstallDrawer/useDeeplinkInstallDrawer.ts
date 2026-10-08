@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { ScreenName, NavigatorName } from "~/const";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import {

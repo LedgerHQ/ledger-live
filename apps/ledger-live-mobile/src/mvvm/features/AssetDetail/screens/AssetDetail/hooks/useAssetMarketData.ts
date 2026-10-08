@@ -1,4 +1,4 @@
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useAssetMarketData as useSharedAssetMarketData } from "@ledgerhq/asset-detail";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";

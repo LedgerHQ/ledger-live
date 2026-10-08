@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { useAssetsData } from "@features/platform-aggregated-assets";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useFeature } from "@features/platform-feature-flags";
 import { buildAssetsSorted } from "@ledgerhq/live-common/modularDrawer/utils/buildAssetsSorted";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";

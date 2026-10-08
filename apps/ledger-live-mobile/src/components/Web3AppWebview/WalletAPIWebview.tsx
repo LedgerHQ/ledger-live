@@ -1,5 +1,5 @@
 import React, { forwardRef, useState } from "react";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
 import Config from "react-native-config";

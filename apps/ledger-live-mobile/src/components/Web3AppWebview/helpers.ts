@@ -21,7 +21,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector } from "~/context/hooks";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";

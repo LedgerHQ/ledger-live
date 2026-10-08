@@ -11,7 +11,7 @@ import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { useMarket } from "LLM/features/Market/hooks/useMarket";
 import { useMarketCoinDataWithChart } from "LLM/features/Market/hooks/useMarketCoinData";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { selectCurrency } from "@features/platform-aggregated-assets";
 import { assetsDataApi } from "@domain/api-aggregated-assets";
 

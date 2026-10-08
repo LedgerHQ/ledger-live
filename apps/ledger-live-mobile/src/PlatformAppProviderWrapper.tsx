@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";

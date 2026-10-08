@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
-import { appVersion as nativeAppVersion } from "~/logic/appVersion";
+import { appVersion as nativeAppVersion } from "LLM/utils/appVersion";
 import { Asset } from "~/types/asset";
 
 interface DefaultAssets {

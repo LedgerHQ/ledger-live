@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import {
   useAssetsData,
   useStocksData,

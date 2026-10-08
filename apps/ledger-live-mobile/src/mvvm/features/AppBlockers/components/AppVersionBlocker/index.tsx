@@ -5,7 +5,7 @@ import { Linking, Platform } from "react-native";
 import { urls } from "~/utils/urls";
 import { useTheme } from "styled-components/native";
 import { useAppVersionBlockCheck } from "@ledgerhq/live-common/hooks/useAppVersionBlockCheck";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

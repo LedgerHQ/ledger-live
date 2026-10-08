@@ -3,7 +3,7 @@ import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
-import { appVersion as nativeAppVersion, buildVersion } from "~/logic/appVersion";
+import { appVersion as nativeAppVersion, buildVersion } from "LLM/utils/appVersion";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
 import { useSelector } from "~/context/hooks";

@@ -1,4 +1,4 @@
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useReceiveNetworkLedgerIds as useSharedReceiveNetworkLedgerIds } from "@ledgerhq/asset-detail";
 import type { ReceiveNetworkLedgerIdsInput } from "@ledgerhq/asset-detail";
 import useEnv from "@features/platform-env";

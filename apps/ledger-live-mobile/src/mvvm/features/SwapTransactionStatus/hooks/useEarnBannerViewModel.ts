@@ -2,7 +2,7 @@ import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useFeature } from "@features/platform-feature-flags";
 import { useAssetsData, useInterestRatesByCurrencies } from "@features/platform-aggregated-assets";
 import { getInterestRateForAsset } from "@ledgerhq/live-common/modularDrawer/utils/getInterestRateForAsset";

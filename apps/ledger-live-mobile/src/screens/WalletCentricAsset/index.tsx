@@ -12,7 +12,7 @@ import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/curren
 import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTheme } from "styled-components/native";
 import { useAssetsData } from "@features/platform-aggregated-assets";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { Loading } from "~/components/Loading";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

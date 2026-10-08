@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import { appVersion, buildVersion } from "~/logic/appVersion";
+import { appVersion, buildVersion } from "LLM/utils/appVersion";
 
 const mega = 1048576;
 export const getAndroidArchitecture = (buildVersionArg = buildVersion) => {

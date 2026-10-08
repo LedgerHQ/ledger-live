@@ -6,7 +6,7 @@ import {
   type CategorizedAssetItem,
 } from "@ledgerhq/asset-aggregation/assetCategorization/index";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useDistribution } from "~/actions/general";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";

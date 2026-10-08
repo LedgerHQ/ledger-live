@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
 import { useSelector } from "~/context/hooks";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { ActivityIndicator, Linking, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";

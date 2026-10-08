@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
 import { getEnv } from "@shared/env";
 import {

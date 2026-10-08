@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useStocksData, selectTopStocks } from "@features/platform-aggregated-assets";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { MAX_STOCK_TOKENS } from "../constants";

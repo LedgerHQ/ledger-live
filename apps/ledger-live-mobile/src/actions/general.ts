@@ -15,7 +15,7 @@ import {
   type DistributionOpts,
   type DistributionResult,
 } from "@ledgerhq/live-common/portfolio/useAssetDistribution";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { BehaviorSubject } from "rxjs";
 import { replaceAccounts, reorderAccounts } from "./accounts";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

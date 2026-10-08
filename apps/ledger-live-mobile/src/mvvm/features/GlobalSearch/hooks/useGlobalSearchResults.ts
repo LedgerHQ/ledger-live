@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { appVersion } from "~/logic/appVersion";
+import { appVersion } from "LLM/utils/appVersion";
 import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
