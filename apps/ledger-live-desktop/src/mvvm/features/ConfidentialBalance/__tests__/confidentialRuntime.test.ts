@@ -36,7 +36,7 @@ describe("confidentialRuntime", () => {
     expect(ClientMock).not.toHaveBeenCalled();
   });
 
-  it("injects one Zama client, relayed through the oracle, in real mode", () => {
+  it("injects one Zama client, relayed through and preparing transfers with the oracle, in real mode", () => {
     process.env.CONFIDENTIAL_API = "real";
     process.env.CONFIDENTIAL_TX_SERVICE_URL = "http://localhost:8787";
 
@@ -48,6 +48,7 @@ describe("confidentialRuntime", () => {
     expect(ClientMock).toHaveBeenCalledWith({
       rpcUrl: "https://ethereum-sepolia-rpc.publicnode.com",
       relayerUrl: "http://localhost:8787/relayer",
+      oracleUrl: "http://localhost:8787",
     });
   });
 
