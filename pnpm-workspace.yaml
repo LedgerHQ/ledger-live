@@ -236,8 +236,8 @@ catalog:
   "@tanstack/react-table": 8.5.11
   "@playwright/test": 1.63.0
   playwright: 1.63.0
-  allure-playwright: 3.9.0
-  allure-js-commons: 3.9.0
+  allure-playwright: 3.13.0
+  allure-js-commons: 3.13.0
   nx: 22.7.8
   "@nx/devkit": 22.7.8
   detox: 20.51.3
