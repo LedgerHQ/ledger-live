@@ -1,0 +1,41 @@
+{
+  "name": "@domain/api-cal",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Domain API for the CAL service health probe: an endpoint injected into the shared calApi",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W domain/api/cal"
+  },
+  "dependencies": {
+    "@shared/api-services": "workspace:*",
+    "@reduxjs/toolkit": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "react": "catalog:",
+    "react-redux": "catalog:",
+    "typescript": "catalog:"
+  }
+}

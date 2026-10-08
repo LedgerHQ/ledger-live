@@ -1,0 +1,8 @@
+{
+  "name": "@domain/api-cal",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
