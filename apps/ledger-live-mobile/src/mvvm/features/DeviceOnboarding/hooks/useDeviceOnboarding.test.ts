@@ -101,7 +101,7 @@ describe("useDeviceOnboarding", () => {
       modelId: DeviceModelId.STAX,
     });
     expect(exitHook).toHaveBeenLastCalledWith({
-      showNextScreen: false,
+      showNextScreen: true,
       device: {
         deviceId: "device-id",
         deviceName: "Ledger Stax",

@@ -235,7 +235,7 @@ export function useDeviceOnboarding({
   const [snapshot, setSnapshot] = useState<OnboardingSnapshot | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [events, setEvents] = useState<DeviceOnboardingToolProps["events"]>([]);
-  const [showNextScreen, setShowNextScreen] = useState(false);
+  const [showNextScreen, setShowNextScreen] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const actorRef = useRef<OnboardingActor | null>(null);

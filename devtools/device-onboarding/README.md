@@ -18,8 +18,8 @@ the context, and the log. Open the QUIT line to read the session and the model.
 
 The device name sits under the status. Context sits under that name. It starts closed. Tap it to
 open the fields. Log and Config sit under that. Log is the run. Config lists each switch, with a
-short line under its name. Open next screen starts off, so an exit or a firmware update stays on
-this screen. Turn it on to open that screen. Before a run, the log asks you to pair a device and
+short line under its name. Open next screen starts on, so an exit or a firmware update opens
+that screen. Turn it off to stay here. Before a run, the log asks you to pair a device and
 tap Connect. The log reads upward. The newest state is on top.
 An event stays in the state where it happened. Under the current state, each event that can
 happen lists the state it can reach. Those lines are faded. Lock, a lost transport, and quit
