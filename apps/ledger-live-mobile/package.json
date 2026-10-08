@@ -264,7 +264,7 @@
     "expo-keep-awake": "catalog:",
     "expo-modules-autolinking": "catalog:",
     "expo-modules-core": "catalog:",
-    "fuse.js": "6.6.2",
+    "fuse.js": "7.1.0",
     "i18next": "catalog:",
     "invariant": "2.2.4",
     "jotai": "2.17.0",
