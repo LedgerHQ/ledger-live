@@ -1,16 +1,35 @@
 import React from "react";
-import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import type { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import { useTranslation } from "~/context/Locale";
+import type { ConnectNewDeviceNonErrorUIState } from "../types";
+import { getDeviceTransport, type DeviceTransport } from "../utils/getDeviceTransport";
+import { StateLayout } from "./StateLayout";
 
-// Placeholder: the final design comes with LIVE-38357.
-export function ConnectedView(): React.ReactNode {
+type ConnectedViewProps = {
+  state: Extract<
+    ConnectNewDeviceNonErrorUIState,
+    {
+      type:
+        | typeof ConnectNewDeviceUIStateTypes.Connected
+        | typeof ConnectNewDeviceUIStateTypes.Done;
+    }
+  >;
+};
+
+const titleKeys = {
+  bluetooth: "connectNewDevice.connected.bluetooth.title",
+  usb: "connectNewDevice.connected.usb.title",
+} as const satisfies Record<DeviceTransport, string>;
+
+export function ConnectedView({ state }: Readonly<ConnectedViewProps>): React.ReactNode {
   const { t } = useTranslation();
 
   return (
-    <Box lx={{ width: "full", alignItems: "center", paddingVertical: "s32" }}>
-      <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
-        {t("connectNewDevice.connected.title")}
-      </Text>
-    </Box>
+    <StateLayout
+      animation="success"
+      loopAnimation={false}
+      title={t(titleKeys[getDeviceTransport(state.device.transport)])}
+      testID="connect-new-device-connected"
+    />
   );
 }

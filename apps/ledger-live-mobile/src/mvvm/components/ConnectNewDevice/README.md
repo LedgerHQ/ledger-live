@@ -9,7 +9,7 @@ The component runs `connectNewDevice` from `@ledgerhq/live-dmk-mobile`. It shows
 | Prop                  | When the component calls it                                                                                                                       |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `onConnected(result)` | One time, after the success view. `result` contains the DMK session and the connected device, which is already saved as the last connected device and as a known device. |
-| `onDeviceNotFound()`  | The user pressed "I don't see my device". This button shows after a delay.                                                                        |
+| `onDeviceNotFound()`  | Optional. The user pressed "I don't see my device". This button shows after a delay, and only when the caller gives this prop.                    |
 | `onClose()`           | The user closed a discovery error or the unknown error. The flow is over.                                                                         |
 
 `delays` (optional) sets the `deviceNotFound` and `success` delays, in ms. The component reads them on mount only.

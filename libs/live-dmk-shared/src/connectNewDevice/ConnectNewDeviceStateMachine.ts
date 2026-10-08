@@ -215,10 +215,16 @@ const createConnectNewDeviceStateMachine = <
         });
       },
       emitConnected: ({ context }) => {
-        context.observer.next({ type: ConnectNewDeviceUIStateTypes.Connected });
+        context.observer.next({
+          type: ConnectNewDeviceUIStateTypes.Connected,
+          device: toDevice(context.selectedDevice!),
+        });
       },
       emitDone: ({ context }) => {
-        context.observer.next({ type: ConnectNewDeviceUIStateTypes.Done });
+        context.observer.next({
+          type: ConnectNewDeviceUIStateTypes.Done,
+          device: toDevice(context.selectedDevice!),
+        });
       },
       emitTerminated: ({ context }) => {
         context.observer.next({ type: ConnectNewDeviceUIStateTypes.Terminated });

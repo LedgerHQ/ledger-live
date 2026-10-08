@@ -53,6 +53,7 @@ import DebugDeviceActionContentScreen from "~/screens/Settings/Debug/Features/De
 import DebugInfoStateScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InfoStateScreen";
 import DebugConnectDeviceScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectDeviceScreen";
 import DebugConnectNewDeviceScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectNewDeviceScreen";
+import DebugConnectNewDeviceAnimationsScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectNewDeviceAnimationsScreen";
 import DebugDeviceIntentExecutorContactsValidation from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ContactsValidationScreen";
 import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
 import DebugInitializerStatesScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializerStatesScreen";
@@ -356,6 +357,13 @@ export default function SettingsNavigator() {
         component={DebugConnectNewDeviceScreen}
         options={{
           title: "Connect New Device",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorConnectNewDeviceAnimations}
+        component={DebugConnectNewDeviceAnimationsScreen}
+        options={{
+          title: "Connect New Device animations",
         }}
       />
       <Stack.Screen

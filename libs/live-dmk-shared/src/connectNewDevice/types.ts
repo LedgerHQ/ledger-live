@@ -136,9 +136,11 @@ export type ConnectNewDeviceUIState<
     }
   | {
       type: typeof ConnectNewDeviceUIStateTypes.Connected;
+      device: Device;
     }
   | {
       type: typeof ConnectNewDeviceUIStateTypes.Done;
+      device: Device;
     }
   | {
       type: typeof ConnectNewDeviceUIStateTypes.Terminated;
