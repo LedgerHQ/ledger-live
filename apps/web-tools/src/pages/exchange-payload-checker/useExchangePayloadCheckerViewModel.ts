@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { SwapPayloadIssue } from "@ledgerhq/hw-app-exchange";
 import { fetchAndMergeProviderData as fetchSellProviders } from "@ledgerhq/live-common/exchange/providers/sell";
-import {
-  getAvailableProviders,
-  getSwapProvider,
-} from "@ledgerhq/live-common/exchange/providers/swap";
+import { fetchAndMergeProviderData as fetchSwapProviders } from "@ledgerhq/live-common/exchange/providers/swap";
 import {
   checkPayload,
   expectedValuesToggleLabel,
@@ -81,7 +78,7 @@ const LOADING: ProvidersState = { status: "loading" };
 
 const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
-// live-common reads the swap CAL environment from global env flags: swap keys come from production only.
+// live-common caches the swap provider map regardless of environment: swap keys come from production only.
 async function loadProviderOptions(
   transactionType: TransactionType,
   calEnv: CalEnv,
@@ -96,11 +93,11 @@ async function loadProviderOptions(
     return toProviderOptions("sell", configs);
   }
 
-  const ids = await getAvailableProviders();
-  const configs = await Promise.all(
-    ids.map(async id => [id, await getSwapProvider(id).catch(() => null)] as const),
-  );
-  return toProviderOptions("swap", Object.fromEntries(configs));
+  const configs = await fetchSwapProviders({
+    ledgerSignatureEnv: "prod",
+    partnerSignatureEnv: "prod",
+  });
+  return toProviderOptions("swap", configs);
 }
 
 // Privacy: the payload, signature and key stay in this state, never logged, stored or put in the URL.

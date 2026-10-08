@@ -401,10 +401,15 @@ const APDU_LIMITS: Record<"ng" | "legacy", ApduLimit> = {
   },
 };
 
+export const lastOf = <T>(values: T[]): T | undefined => {
+  const [last] = values.slice(-1);
+  return last;
+};
+
 const formatFeeLengths = (feeLengths: number[]): string =>
   feeLengths.length === 1
     ? String(feeLengths[0])
-    : `${feeLengths.slice(0, -1).join(", ")} or ${feeLengths[feeLengths.length - 1]}`;
+    : `${feeLengths.slice(0, -1).join(", ")} or ${lastOf(feeLengths)}`;
 
 /**
  * `PAYLOAD_TOO_LARGE` when the APDU data cannot reach the device with any fee of 1 to 8 bytes,
@@ -569,8 +574,6 @@ export function scanWireFields(bytes: Uint8Array, fields: WireField[]): WireScan
   if (!scanMessage(bytes, fields, occurrences)) return undefined;
   return { occurrences, violations: limitViolations(fields, occurrences) };
 }
-
-export const lastOf = <T>(values: T[]): T | undefined => values[values.length - 1];
 
 /**
  * The value nanopb keeps for a field: its last occurrence, including across repeated occurrences
