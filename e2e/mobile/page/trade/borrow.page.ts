@@ -1,6 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
+import { readAccountNonces } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { retryUntilTimeout } from "@e2e/utils/retry";
-import { TIMEOUT } from "@e2e/utils/timeouts";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 const MODAL_DISMISS_TIMEOUT_MS = TIMEOUT.xlarge;
 const CONTINUE_READY_TIMEOUT_MS = TIMEOUT.xlarge;
@@ -62,6 +63,16 @@ export default class BorrowPage {
     `//*[(self::button or @role='button') and normalize-space(.)='${symbol}']`;
 
   private readonly keypadDigitTestId = (digit: string) => `custom-keyboard-key-${digit}`;
+
+  private chainAccount?: string;
+
+  /**
+   * The borrow address cache lives in the test file's module realm, which this page object cannot
+   * read, so the test hands the address over for the failure diagnostics.
+   */
+  setChainAccount(address: string | undefined) {
+    this.chainAccount = address;
+  }
 
   @Step("Expect borrow native screen visible")
   async expectBorrowScreenVisible() {
@@ -337,16 +348,41 @@ export default class BorrowPage {
     const outcome = getWebElementByCssSelector(
       `${anyTestId(doneIds)}, ${this.executionErrorLocator}`,
     );
+    let shown: string;
     try {
-      await waitWebElement(outcome, EXECUTION_STEP_TIMEOUT_MS);
-    } catch {
+      shown = await retryUntilTimeout(
+        () => outcome.runScript(el => el.dataset.testid),
+        EXECUTION_STEP_TIMEOUT_MS,
+        INTERVAL.long,
+      );
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
       throw new Error(
-        `Borrow step "${doneIds.join('" / "')}" did not complete within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
+        `Borrow step "${doneIds.join('" / "')}" did not complete: ${reason}\n${await this.chainState()}`,
+        { cause: error },
       );
     }
-    const shown: string = await outcome.runScript(el => el.getAttribute("data-testid"));
     if (!doneIds.includes(shown)) {
-      throw new Error(`Borrow execution failed before "${doneIds[0]}". ${MAINNET_FUNDING_HINT}`);
+      throw new Error(`Borrow execution failed before "${doneIds[0]}". ${await this.chainState()}`);
+    }
+  }
+
+  /** Tells a transaction still in flight (very likely dropped) apart from an unfunded account. */
+  private async chainState(): Promise<string> {
+    const address = this.chainAccount;
+    if (!address) return MAINNET_FUNDING_HINT;
+    try {
+      const { latest, pending } = await readAccountNonces(address);
+      if (pending > latest) {
+        return (
+          `Account ${address} is at nonce ${latest} with ${pending - latest} transaction(s) in ` +
+          `flight — another process is spending from it, so the app's transaction was very likely ` +
+          `dropped.`
+        );
+      }
+      return `Account ${address} is at nonce ${latest} with nothing in flight. ${MAINNET_FUNDING_HINT}`;
+    } catch (error) {
+      return `Could not read chain state for ${address} (${error}). ${MAINNET_FUNDING_HINT}`;
     }
   }
 

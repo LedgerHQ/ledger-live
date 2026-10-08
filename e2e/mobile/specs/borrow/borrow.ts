@@ -4,6 +4,7 @@ import {
   DEFAULT_LOAN,
   ensureLoanOpen,
   ensureLoanRepaidForWithdraw,
+  peekBorrowAddress,
   resetLoanState,
   waitForChainNonceSettled,
   waitForLoanOutcome,
@@ -46,6 +47,7 @@ async function initBorrowApp() {
   });
   // Sets SWAP_DISABLE_APPS_INSTALL, without which connectApp quits the single-app container.
   await swapSetup();
+  app.borrow.setChainAccount(peekBorrowAddress());
 }
 
 /**

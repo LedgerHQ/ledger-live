@@ -333,7 +333,14 @@ export async function withTemporarySpeculos<T>(
     await registerSpeculos(speculos.port);
     return await work();
   } finally {
-    await deleteSpeculos(speculos.id);
+    // deleteSpeculos clears SPECULOS_API_PORT, so the caller's device is restored after it, and a
+    // failed release must neither skip that nor replace the error `work` threw.
+    await deleteSpeculos(speculos.id).catch(error =>
+      log.warn(
+        "E2E",
+        `Could not release temporary Speculos ${speculos.id}: ${sanitizeError(error)}`,
+      ),
+    );
     if (previousAddress === undefined) {
       delete process.env.SPECULOS_ADDRESS;
     } else {
