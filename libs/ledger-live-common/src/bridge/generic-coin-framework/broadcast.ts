@@ -10,17 +10,26 @@ export const genericBroadcast: (
   kind: string,
 ) => AccountBridge<GenericTransaction>["broadcast"] =
   (network, kind) =>
-  async ({ signedOperation: { signature, operation }, account, broadcastConfig }) => {
+  async ({ signedOperation: { signature, operation, rawData }, account, broadcastConfig }) => {
     const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
     const context = buildContext(account.currency.id);
     const bridgeApi = await getBridgeApi(account.currency, network);
-    if (bridgeApi.validateTransaction) {
-      const validation = await bridgeApi.validateTransaction(signature);
-      if (validation.error !== undefined) {
-        throw validation.error;
+    const send = async (signed: string) => {
+      if (bridgeApi.validateTransaction) {
+        const validation = await bridgeApi.validateTransaction(signed);
+        if (validation.error !== undefined) {
+          throw validation.error;
+        }
       }
+      return coinModuleApi.broadcast(context, signed, { broadcastConfig });
+    };
+    // A family-built operation can carry payloads to broadcast first, in order (see
+    // `FamilyCraftedTransaction`); only the last one becomes the operation's hash.
+    const prerequisites = Array.isArray(rawData?.prerequisites) ? rawData.prerequisites : [];
+    for (const prerequisite of prerequisites) {
+      if (typeof prerequisite === "string") await send(prerequisite);
     }
-    const hash = await coinModuleApi.broadcast(context, signature, { broadcastConfig });
+    const hash = await send(signature);
 
     return patchOperationWithHash(operation, hash);
   };

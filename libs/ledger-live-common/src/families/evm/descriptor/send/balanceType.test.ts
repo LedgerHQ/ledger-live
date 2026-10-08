@@ -11,20 +11,44 @@ const tokenAccount = {
   spendableBalance: new BigNumber(75_000_000),
 } as any;
 
+const OWNER = "0x0a101aA5347Bb16F43019BE42ce5830395739e33";
+
 function withBalance(balance: ConfidentialBalance | undefined) {
-  setConfidentialSendRuntime({ getBalance: () => balance, prepareSend: jest.fn() });
+  setConfidentialSendRuntime({
+    getBalance: () => balance,
+    getOwner: () => OWNER,
+    prepareSend: jest.fn(),
+    prepareShield: jest.fn(),
+    prepareUnshield: jest.fn(),
+    onUnshieldRequested: jest.fn(),
+  });
 }
+
+const DECRYPTED: ConfidentialBalance = {
+  state: "decrypted",
+  pair: PAIR,
+  handle: HANDLE,
+  value: 2_500_000n,
+  underlyingValue: 2_500_000n,
+  updatedAt: 0,
+};
 
 afterEach(() => setConfidentialSendRuntime(undefined));
 
 describe("evmBalanceTypeConfig", () => {
-  it("offers no source without a host, for native accounts, and before a reveal", () => {
+  it("offers no source without a host or for native accounts", () => {
     expect(evmBalanceTypeConfig.getOptions({ account: tokenAccount })).toEqual([]);
     withBalance({ state: "undisclosed", pair: PAIR, handle: HANDLE });
-    expect(evmBalanceTypeConfig.getOptions({ account: tokenAccount })).toEqual([]);
     expect(
       evmBalanceTypeConfig.getOptions({ account: { type: "Account", id: "eth" } as any }),
     ).toEqual([]);
+  });
+
+  it("offers only the public source before a reveal, so it can still be shielded", () => {
+    withBalance({ state: "undisclosed", pair: PAIR, handle: HANDLE });
+    expect(evmBalanceTypeConfig.getOptions({ account: tokenAccount }).map(o => o.id)).toEqual([
+      "public",
+    ]);
   });
 
   it("offers the public and the revealed private part", () => {
@@ -86,5 +110,60 @@ describe("evmBalanceTypeConfig", () => {
     expect(
       evmBalanceTypeConfig.getSelfTransferTarget({ account: tokenAccount, transaction: {} }),
     ).toBeNull();
+  });
+});
+
+describe("evmBalanceTypeConfig self-transfer", () => {
+  const fromPrivate = { familySpecificData: { balanceType: "confidential" } };
+  const fromPublic = { familySpecificData: { balanceType: "public" } };
+
+  it("offers the account's public part as an unshield target from the private part", () => {
+    withBalance(DECRYPTED);
+    expect(
+      evmBalanceTypeConfig.getSelfTransferTarget({
+        account: tokenAccount,
+        transaction: fromPrivate,
+      }),
+    ).toEqual({
+      address: OWNER,
+      translationKey: "recipient.selfTransfer.toPublic",
+      isDestinationPublic: true,
+    });
+  });
+
+  it("offers the account's private part as a shield target from the public part", () => {
+    withBalance({ state: "undisclosed", pair: PAIR, handle: HANDLE });
+    expect(
+      evmBalanceTypeConfig.getSelfTransferTarget({
+        account: tokenAccount,
+        transaction: fromPublic,
+      }),
+    ).toEqual({
+      address: OWNER,
+      translationKey: "recipient.selfTransfer.toPrivate",
+      isDestinationPublic: false,
+    });
+  });
+
+  it("offers no unshield target before a reveal, nor any target without a source", () => {
+    withBalance({ state: "undisclosed", pair: PAIR, handle: HANDLE });
+    expect(
+      evmBalanceTypeConfig.getSelfTransferTarget({
+        account: tokenAccount,
+        transaction: fromPrivate,
+      }),
+    ).toBeNull();
+    expect(
+      evmBalanceTypeConfig.getSelfTransferTarget({ account: tokenAccount, transaction: {} }),
+    ).toBeNull();
+  });
+
+  it("records the shortcut on the transaction", () => {
+    expect(evmBalanceTypeConfig.buildSelfTransferPatch({ isSelfTransfer: true })).toEqual({
+      selfTransfer: true,
+    });
+    expect(evmBalanceTypeConfig.buildSelfTransferPatch({ isSelfTransfer: false })).toEqual({
+      selfTransfer: false,
+    });
   });
 });

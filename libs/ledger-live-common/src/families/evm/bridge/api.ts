@@ -27,6 +27,7 @@ import { buildContext } from "../../../bridge/generic-coin-framework/api/context
 import {
   craftConfidentialTransaction,
   getConfidentialTransactionStatus,
+  onConfidentialTransactionSigned,
 } from "../confidential/send";
 
 export async function getTokenFromAsset(
@@ -253,6 +254,7 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     // Both return `undefined` unless the user picked the confidential source of an ERC-20.
     craftUnsignedTransaction: craftConfidentialTransaction,
     getTransactionStatus: getConfidentialTransactionStatus,
+    onTransactionSigned: onConfidentialTransactionSigned,
     ...(STAKING_CONTRACTS[currency.id] ? { stakingSupported: true } : {}),
     // Only Sei has an activation concept; elsewhere readiness stays undefined (= ready).
     ...(currency.id === "sei_evm" ? { getAccountReadiness } : {}),

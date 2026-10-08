@@ -71,17 +71,27 @@ export const genericSignOperation =
           })) as GetAddressResult;
 
           if (familyCrafted) {
-            o.next({ type: "device-signature-requested" });
-            const txnSig = await signer.signTransaction(derivationPath, familyCrafted.transaction, {
-              ...transaction.recipientDomain,
-              ...bridgeApi.getDeviceSignOptions?.(transaction, account),
-              derivationMode: account.derivationMode,
-            });
+            const signOnDevice = (unsigned: string) => {
+              o.next({ type: "device-signature-requested" });
+              return signer.signTransaction(derivationPath, unsigned, {
+                ...transaction.recipientDomain,
+                ...bridgeApi.getDeviceSignOptions?.(transaction, account),
+                derivationMode: account.derivationMode,
+              });
+            };
+            const prerequisites: {
+              unsigned: string;
+              txnSig: Awaited<ReturnType<typeof signOnDevice>>;
+            }[] = [];
+            for (const unsigned of familyCrafted.prerequisites ?? []) {
+              prerequisites.push({ unsigned, txnSig: await signOnDevice(unsigned) });
+            }
             return {
               unsigned: familyCrafted.transaction,
-              txnSig,
+              txnSig: await signOnDevice(familyCrafted.transaction),
               publicKey,
               sequence: familyCrafted.sequence,
+              prerequisites,
             };
           }
 
@@ -143,6 +153,16 @@ export const genericSignOperation =
             pubkey: signedInfo.publicKey,
           },
         );
+        // Payloads the family needs broadcast before this one, in order (see `FamilyCraftedTransaction`).
+        const pubkey = signedInfo.publicKey;
+        const prerequisites = await Promise.all(
+          (signedInfo.prerequisites ?? []).map(prerequisite =>
+            coinModuleApi.combine(context, prerequisite.unsigned, [prerequisite.txnSig], {
+              pubkey,
+            }),
+          ),
+        );
+        bridgeApi.onTransactionSigned?.(account, transaction, combined);
         const operation = buildOptimisticOperation(
           account,
           transaction,
@@ -159,6 +179,7 @@ export const genericSignOperation =
           signedOperation: {
             operation,
             signature: combined,
+            ...(prerequisites.length > 0 && { rawData: { prerequisites } }),
           },
         });
       }

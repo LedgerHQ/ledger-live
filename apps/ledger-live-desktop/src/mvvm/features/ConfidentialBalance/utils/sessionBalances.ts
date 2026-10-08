@@ -3,6 +3,8 @@ import type { ConfidentialBalance } from "@ledgerhq/coin-evm/confidential";
 export type SessionBalance = {
   balance: ConfidentialBalance;
   permitExpiresAt?: number;
+  /** The address holding the private part: an unshield pays its public part. */
+  owner?: string;
 };
 
 const sessionBalances = new Map<string, SessionBalance>();

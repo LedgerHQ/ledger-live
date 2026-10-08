@@ -25,6 +25,56 @@ function BalanceColumn({ title, children, testId }: BalanceColumnProps) {
   );
 }
 
+type PendingUnshieldRowProps = NonNullable<ConfidentialBalanceFooterViewModel["unshield"]>;
+
+function PendingUnshieldRow(props: PendingUnshieldRowProps) {
+  const { t } = useTranslation();
+  const { amountLabel, onFinalize, onDismiss } = props;
+
+  if (props.status === "failed") {
+    return (
+      <Banner
+        appearance="error"
+        title={t("confidentialBalance.unshield.failed", { amount: amountLabel })}
+        description={t(`confidentialBalance.errors.${props.error}`)}
+        primaryAction={
+          <Button appearance="transparent" size="sm" onClick={onDismiss}>
+            {t("confidentialBalance.unshield.dismiss")}
+          </Button>
+        }
+        data-testid="confidential-unshield-failed"
+      />
+    );
+  }
+
+  const isBusy = props.status !== "ready";
+  return (
+    <div className="flex flex-row items-center gap-8" data-testid="confidential-unshield">
+      {isBusy && <Spinner size={16} />}
+      <span className="body-3 text-muted" data-testid={`confidential-unshield-${props.status}`}>
+        {props.status === "awaiting-confirmations"
+          ? t("confidentialBalance.unshield.awaiting-confirmations", {
+              amount: amountLabel,
+              confirmations: props.confirmations,
+              required: props.required,
+            })
+          : t(`confidentialBalance.unshield.${props.status}`, { amount: amountLabel })}
+      </span>
+      {props.status === "ready" && (
+        <Button
+          appearance="accent"
+          size="sm"
+          className="ml-auto"
+          onClick={onFinalize}
+          data-testid="confidential-unshield-finalize"
+        >
+          {t("confidentialBalance.unshield.finalize")}
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export function ConfidentialBalanceFooterView({
   isVisible,
   phase,
@@ -38,6 +88,7 @@ export function ConfidentialBalanceFooterView({
   totalLabel,
   permitExpiresOn,
   deviceSignature,
+  unshield,
   shield,
   canShield,
   onShield,
@@ -137,6 +188,8 @@ export function ConfidentialBalanceFooterView({
               })}
         </span>
       )}
+
+      {unshield && <PendingUnshieldRow {...unshield} />}
 
       {error && (
         <Banner

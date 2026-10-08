@@ -1,24 +1,36 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { BalanceTypeConfig, BalanceTypeOption } from "../../../../bridge/descriptor/types";
-import { getSpendableConfidentialBalance } from "../../confidential/runtime";
+import type {
+  BalanceTypeConfig,
+  BalanceTypeOption,
+  BalanceTypeSelfTransferTarget,
+} from "../../../../bridge/descriptor/types";
+import {
+  getConfidentialSendRuntime,
+  getSpendableConfidentialBalance,
+  hasConfidentialPart,
+} from "../../confidential/runtime";
 import { CONFIDENTIAL_SOURCE, PUBLIC_SOURCE, getSelectedSource } from "../../confidential/send";
 
 /**
- * Public or confidential (ERC-7984) source for an ERC-20 whose private part the user revealed. Every
- * other EVM account gets no option, so the send flow skips the step and its send is unchanged.
+ * Public or confidential (ERC-7984) source for an ERC-20 with a confidential wrapper: the private
+ * source once the user revealed it. Every other EVM account gets no option, so the send flow skips
+ * the step and its send is unchanged.
  */
 function getOptions({ account }: { account: AccountLike }): readonly BalanceTypeOption[] {
+  if (!hasConfidentialPart(account)) return [];
+  const publicOption: BalanceTypeOption = {
+    id: PUBLIC_SOURCE,
+    translationKey: "balanceType.public",
+    balance: account.spendableBalance,
+    hasPendingBalance: false,
+    icon: "check",
+  };
+  // An unrevealed private part cannot be spent, but the public part can still be shielded into it.
   const balance = getSpendableConfidentialBalance(account);
-  if (!balance) return [];
+  if (!balance) return [publicOption];
   return [
-    {
-      id: PUBLIC_SOURCE,
-      translationKey: "balanceType.public",
-      balance: account.spendableBalance,
-      hasPendingBalance: false,
-      icon: "check",
-    },
+    publicOption,
     {
       id: CONFIDENTIAL_SOURCE,
       translationKey: "balanceType.confidential",
@@ -42,12 +54,43 @@ function getSelectableBalance({
   return balance ? new BigNumber(balance.underlyingValue.toString()) : new BigNumber(0);
 }
 
+/**
+ * Both parts share the account's address, which stands for the other part: from the private part
+ * sending there is an unshield, from the public part a shield. The flow marks the shortcut with
+ * `selfTransfer`.
+ */
+function getSelfTransferTarget({
+  account,
+  transaction,
+}: {
+  account: AccountLike;
+  transaction: unknown;
+}): BalanceTypeSelfTransferTarget | null {
+  const owner = getConfidentialSendRuntime()?.getOwner(account.id);
+  if (!owner) return null;
+  const source = getSelectedSource(transaction);
+  if (source === CONFIDENTIAL_SOURCE && getSpendableConfidentialBalance(account)) {
+    return {
+      address: owner,
+      translationKey: "recipient.selfTransfer.toPublic",
+      isDestinationPublic: true,
+    };
+  }
+  if (source === PUBLIC_SOURCE && hasConfidentialPart(account)) {
+    return {
+      address: owner,
+      translationKey: "recipient.selfTransfer.toPrivate",
+      isDestinationPublic: false,
+    };
+  }
+  return null;
+}
+
 export const evmBalanceTypeConfig: BalanceTypeConfig = {
   getOptions,
   getSelectedOptionId: getSelectedSource,
   buildSelectionPatch: optionId => ({ familySpecificData: { balanceType: optionId } }),
-  // The two parts belong to one address: there is no other pool to send to.
-  getSelfTransferTarget: () => null,
-  buildSelfTransferPatch: () => ({}),
+  getSelfTransferTarget,
+  buildSelfTransferPatch: ({ isSelfTransfer }) => ({ selfTransfer: isSelfTransfer }),
   getSelectableBalance,
 };

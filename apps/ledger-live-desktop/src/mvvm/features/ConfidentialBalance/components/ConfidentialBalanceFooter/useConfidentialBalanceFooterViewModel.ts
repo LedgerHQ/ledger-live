@@ -14,6 +14,7 @@ import {
   createConfidentialContext,
   type CreateConfidentialClient,
 } from "../../utils/confidentialRuntime";
+import { usePendingUnshield } from "../../hooks/usePendingUnshield";
 import { usePermitSigner } from "../../hooks/usePermitSigner";
 import {
   getConfidentialErrorKind,
@@ -84,6 +85,7 @@ export function useConfidentialBalanceFooterViewModel({
         setSessionBalance(account.id, {
           balance: next,
           permitExpiresAt: cachedEntry?.permitExpiresAt,
+          owner,
         });
       }
     } catch (e) {
@@ -125,13 +127,22 @@ export function useConfidentialBalanceFooterViewModel({
       const expiresAt = permits[0]?.expiresAt;
       setBalance(decrypted);
       setPermitExpiresAt(expiresAt);
-      setSessionBalance(account.id, { balance: decrypted, permitExpiresAt: expiresAt });
+      setSessionBalance(account.id, { balance: decrypted, permitExpiresAt: expiresAt, owner });
     } catch (e) {
       if (isMounted.current) setError(getConfidentialErrorKind(e));
     } finally {
       if (isMounted.current) setPhase("idle");
     }
   }, [account.id, balance, createConfidentialClient, currencyId, owner, signTypedData, underlying]);
+
+  const pendingUnshield = usePendingUnshield({
+    tokenAccountId: account.id,
+    currencyId,
+    pair: balance?.pair,
+    createConfidentialClient,
+    signTransaction,
+    onFinalized: load,
+  });
 
   const formatAmount = (value: BigNumber) =>
     formatCurrencyUnit(unit, value, {
@@ -167,6 +178,15 @@ export function useConfidentialBalanceFooterViewModel({
       ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(permitExpiresAt * 1000)
       : undefined,
     deviceSignature,
+    unshield:
+      pendingUnshield && balance
+        ? {
+            ...pendingUnshield,
+            amountLabel: formatAmount(
+              new BigNumber((pendingUnshield.amount * balance.pair.rate).toString()),
+            ),
+          }
+        : null,
     shield:
       isShieldOpen && owner && balance
         ? {

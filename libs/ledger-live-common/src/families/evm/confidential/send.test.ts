@@ -12,6 +12,7 @@ import {
   ConfidentialBalanceNotRevealed,
   craftConfidentialTransaction,
   getConfidentialTransactionStatus,
+  onConfidentialTransactionSigned,
 } from "./send";
 
 const USDC_MOCK = "0x9b5Cd13b8eFbB58Dc25A05CF411D8056058aDFfF";
@@ -30,7 +31,12 @@ const decrypted: ConfidentialBalance = {
   updatedAt: 0,
 };
 
-const tokenAccount = { type: "TokenAccount", id: "token-1", token: { contractAddress: USDC_MOCK } };
+const tokenAccount = {
+  type: "TokenAccount",
+  id: "token-1",
+  token: { contractAddress: USDC_MOCK },
+  spendableBalance: new BigNumber(75_000_000),
+};
 const account = {
   freshAddress: SENDER,
   currency: { id: "ethereum_sepolia" },
@@ -48,6 +54,20 @@ const unsigned = ethers.Transaction.from({
   maxPriorityFeePerGas: 1n,
 }).unsignedSerialized;
 
+const craftAt = (nonce: number, to: string) =>
+  ethers.Transaction.from({
+    type: 2,
+    chainId: 11155111n,
+    nonce,
+    to,
+    data: "0x",
+    gasLimit: 100_000n,
+    maxFeePerGas: 2n,
+    maxPriorityFeePerGas: 1n,
+  }).unsignedSerialized;
+const approveUnsigned = craftAt(20, USDC_MOCK);
+const wrapUnsigned = craftAt(21, CUSDC_MOCK);
+
 const send = (fields: Record<string, unknown> = {}) => ({
   subAccountId: "token-1",
   recipient: RECIPIENT,
@@ -64,8 +84,27 @@ function setup(balance: ConfidentialBalance | undefined = decrypted) {
     amount: 1_000_000n,
     underlyingAmount: 1_000_000n,
   });
-  setConfidentialSendRuntime({ getBalance: () => balance, prepareSend });
-  return { prepareSend };
+  const prepareUnshield = jest.fn().mockResolvedValue({
+    transaction: unsigned,
+    handle: HANDLE,
+    amount: 1_000_000n,
+    underlyingAmount: 1_000_000n,
+  });
+  const onUnshieldRequested = jest.fn();
+  const prepareShield = jest.fn().mockResolvedValue({
+    transactions: [{ transaction: approveUnsigned }, { transaction: wrapUnsigned }],
+    amountPulled: 1_000_000n,
+    remainder: 0n,
+  });
+  setConfidentialSendRuntime({
+    getBalance: () => balance,
+    getOwner: () => SENDER,
+    prepareSend,
+    prepareShield,
+    prepareUnshield,
+    onUnshieldRequested,
+  });
+  return { prepareSend, prepareShield, prepareUnshield, onUnshieldRequested };
 }
 
 afterEach(() => setConfidentialSendRuntime(undefined));
@@ -148,9 +187,131 @@ describe("craftConfidentialTransaction", () => {
   });
 
   it("refuses without a revealed private balance", async () => {
-    setConfidentialSendRuntime({ getBalance: () => undefined, prepareSend: jest.fn() });
+    setConfidentialSendRuntime({
+      getBalance: () => undefined,
+      getOwner: () => undefined,
+      prepareSend: jest.fn(),
+      prepareShield: jest.fn(),
+      prepareUnshield: jest.fn(),
+      onUnshieldRequested: jest.fn(),
+    });
     await expect(craftConfidentialTransaction(account, send())).rejects.toBeInstanceOf(
       ConfidentialBalanceNotRevealed,
     );
+  });
+});
+
+describe("unshield (confidential self-transfer)", () => {
+  const unshield = (fields: Record<string, unknown> = {}) =>
+    send({ selfTransfer: true, recipient: SENDER, ...fields });
+
+  it("prepares an unwrap to the sender's own public part", async () => {
+    const { prepareSend, prepareUnshield } = setup();
+    const crafted = await craftConfidentialTransaction(account, unshield());
+    expect(prepareSend).not.toHaveBeenCalled();
+    expect(prepareUnshield).toHaveBeenCalledWith("ethereum_sepolia", {
+      sender: SENDER,
+      recipient: SENDER,
+      underlying: USDC_MOCK,
+      amount: 1_000_000n,
+      balance: decrypted,
+    });
+    expect(crafted).toEqual({ transaction: unsigned, sequence: 16n });
+  });
+
+  it("validates against the private balance whatever the recipient field holds", async () => {
+    setup();
+    const status = await getConfidentialTransactionStatus(account, unshield({ recipient: "" }));
+    expect(status?.errors).toEqual({});
+  });
+
+  it("hands the signed request to the host with its hash and wrapper amount", async () => {
+    const { onUnshieldRequested } = setup();
+    const transaction = unshield();
+    await craftConfidentialTransaction(account, transaction);
+    const signed = ethers.Transaction.from(unsigned);
+    signed.signature = ethers.Signature.from({
+      r: `0x${"11".repeat(32)}`,
+      s: `0x${"22".repeat(32)}`,
+      v: 27,
+    });
+
+    onConfidentialTransactionSigned(account, transaction, signed.serialized);
+
+    expect(onUnshieldRequested).toHaveBeenCalledWith("token-1", {
+      requestTxHash: signed.hash,
+      amount: 1_000_000n,
+    });
+  });
+
+  it("reports nothing for a confidential send to someone else", async () => {
+    const { onUnshieldRequested } = setup();
+    const transaction = send();
+    await craftConfidentialTransaction(account, transaction);
+    const signed = ethers.Transaction.from(unsigned);
+    signed.signature = ethers.Signature.from({
+      r: `0x${"11".repeat(32)}`,
+      s: `0x${"22".repeat(32)}`,
+      v: 27,
+    });
+
+    onConfidentialTransactionSigned(account, transaction, signed.serialized);
+
+    expect(onUnshieldRequested).not.toHaveBeenCalled();
+  });
+});
+
+describe("shield (public self-transfer)", () => {
+  const shield = (fields: Record<string, unknown> = {}) =>
+    send({
+      selfTransfer: true,
+      recipient: SENDER,
+      familySpecificData: { balanceType: "public" },
+      ...fields,
+    });
+  const undisclosed: ConfidentialBalance = { state: "undisclosed", pair: PAIR, handle: HANDLE };
+
+  it("signs approve first, then the wrap the operation stands for", async () => {
+    const { prepareShield, prepareSend } = setup(undisclosed);
+    const crafted = await craftConfidentialTransaction(account, shield());
+    expect(prepareSend).not.toHaveBeenCalled();
+    expect(prepareShield).toHaveBeenCalledWith("ethereum_sepolia", {
+      sender: SENDER,
+      underlying: USDC_MOCK,
+      amount: 1_000_000n,
+    });
+    expect(crafted).toEqual({
+      transaction: wrapUnsigned,
+      sequence: 21n,
+      prerequisites: [approveUnsigned],
+    });
+  });
+
+  it("signs the wrap alone when the allowance already covers the amount", async () => {
+    const { prepareShield } = setup(undisclosed);
+    prepareShield.mockResolvedValueOnce({
+      transactions: [null, { transaction: wrapUnsigned }],
+      amountPulled: 1_000_000n,
+      remainder: 0n,
+    });
+    const crafted = await craftConfidentialTransaction(account, shield());
+    expect(crafted?.prerequisites).toEqual([]);
+  });
+
+  it("validates the amount against the public balance, revealed or not", async () => {
+    setup(undisclosed);
+    expect((await getConfidentialTransactionStatus(account, shield()))?.errors).toEqual({});
+    const tooMuch = await getConfidentialTransactionStatus(
+      account,
+      shield({ amount: new BigNumber(75_000_001) }),
+    );
+    expect(tooMuch?.errors.amount).toBeInstanceOf(NotEnoughBalance);
+  });
+
+  it("leaves a plain public send to the generic path", async () => {
+    setup(undisclosed);
+    const plain = send({ familySpecificData: { balanceType: "public" } });
+    expect(await craftConfidentialTransaction(account, plain)).toBeUndefined();
+    expect(await getConfidentialTransactionStatus(account, plain)).toBeUndefined();
   });
 });

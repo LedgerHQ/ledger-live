@@ -129,6 +129,51 @@ describe("genericSignOperation", () => {
     ]);
   });
 
+  it("tells the family the signed payload once combined", async () => {
+    const onTransactionSigned = jest.fn();
+    (getBridgeApi as jest.Mock).mockResolvedValue({ onTransactionSigned });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
+
+    expect(onTransactionSigned).toHaveBeenCalledWith(account, transaction, "signedTx");
+  });
+
+  it("signs the family prerequisites first and carries them for broadcast", async () => {
+    const craftUnsignedTransaction = jest.fn().mockResolvedValue({
+      transaction: "wrapUnsigned",
+      sequence: 8n,
+      prerequisites: ["approveUnsigned"],
+    });
+    (getBridgeApi as jest.Mock).mockResolvedValue({ craftUnsignedTransaction });
+    mockSigner.signTransaction.mockImplementation(async (_path, unsigned) => `sig-${unsigned}`);
+    const combine = jest.fn(async (_context, unsigned: string) => `signed-${unsigned}`);
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      craftTransaction,
+      craftTransactionData,
+      combine,
+    });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    const events = await lastValueFrom(
+      signOperation({ account, transaction, deviceId: "" }).pipe(toArray()),
+    );
+
+    expect(mockSigner.signTransaction.mock.calls.map(call => call[1])).toEqual([
+      "approveUnsigned",
+      "wrapUnsigned",
+    ]);
+    expect(events.filter(e => e.type === "device-signature-requested")).toHaveLength(2);
+    expect(events.at(-1)).toEqual({
+      type: "signed",
+      signedOperation: {
+        operation: { id: "mock-op" },
+        signature: "signed-wrapUnsigned",
+        rawData: { prerequisites: ["signed-approveUnsigned"] },
+      },
+    });
+  });
+
   it("crafts generically when the family hook returns nothing", async () => {
     (getBridgeApi as jest.Mock).mockResolvedValue({
       craftUnsignedTransaction: jest.fn().mockResolvedValue(undefined),

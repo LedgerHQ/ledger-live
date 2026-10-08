@@ -37,9 +37,18 @@ export const mockShieldExecutor: ShieldExecutor = {
   waitForConfirmation: () => wait(MOCK_CONFIRMATION_DELAY_MS),
 };
 
-type Receipt = { status: string } | null;
+/** The fields of an `eth_getTransactionReceipt` result this feature reads, as the node returns them. */
+export type RpcReceipt = {
+  transactionHash: string;
+  blockNumber: string;
+  from: string;
+  status: string;
+  logs: { address: string; topics: string[]; data: string }[];
+};
 
-async function getReceipt(rpcUrl: string, hash: string): Promise<Receipt> {
+type Receipt = RpcReceipt | null;
+
+export async function getReceipt(rpcUrl: string, hash: string): Promise<Receipt> {
   const response = await fetch(rpcUrl, {
     method: "POST",
     headers: { "content-type": "application/json" },

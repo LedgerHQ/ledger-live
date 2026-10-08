@@ -6,20 +6,43 @@ import type { ConfidentialBalance, PreparedConfidentialTx } from "@ledgerhq/coin
 // it mirrors `setZcashShieldedEnabled`, so the EVM descriptor and bridge can offer a confidential
 // source without importing app code.
 
+type PrepareParams = {
+  sender: string;
+  recipient: string;
+  underlying: string;
+  amount: bigint;
+  balance: ConfidentialBalance;
+};
+
 export type ConfidentialSendRuntime = {
   /** The last private balance the host read for this token account, if any. */
   getBalance: (tokenAccountId: string) => ConfidentialBalance | undefined;
+  /** The address that owns the token account's private part, once the host has read it. */
+  getOwner: (tokenAccountId: string) => string | undefined;
   /** Prepares a confidential transfer: coin-evm `prepareConfidentialSend` with the host's client. */
-  prepareSend: (
+  prepareSend: (currencyId: string, p: PrepareParams) => Promise<PreparedConfidentialTx>;
+  /**
+   * Prepares a shield: coin-evm `prepareShield` with the host's client. `approve` is null when the
+   * allowance already covers the amount; `wrap` is pinned to the nonce after approve's.
+   */
+  prepareShield: (
     currencyId: string,
-    p: {
-      sender: string;
-      recipient: string;
-      underlying: string;
-      amount: bigint;
-      balance: ConfidentialBalance;
-    },
-  ) => Promise<PreparedConfidentialTx>;
+    p: { sender: string; underlying: string; amount: bigint },
+  ) => Promise<{
+    transactions: [approve: { transaction: string } | null, wrap: { transaction: string }];
+    amountPulled: bigint;
+    remainder: bigint;
+  }>;
+  /** Prepares phase 1 of an unshield: coin-evm `prepareUnshield` with the host's client. */
+  prepareUnshield: (currencyId: string, p: PrepareParams) => Promise<PreparedConfidentialTx>;
+  /**
+   * A phase-1 unshield was signed: the host follows it until it can be finalized. `amount` is in
+   * wrapper units, as `PendingUnshield.amount`.
+   */
+  onUnshieldRequested: (
+    tokenAccountId: string,
+    request: { requestTxHash: string; amount: bigint },
+  ) => void;
 };
 
 let runtime: ConfidentialSendRuntime | undefined;
@@ -32,6 +55,14 @@ export const setConfidentialSendRuntime = (value: ConfidentialSendRuntime | unde
 export const getConfidentialSendRuntime = (): ConfidentialSendRuntime | undefined => runtime;
 
 type SpendableBalance = Exclude<ConfidentialBalance, { state: "undisclosed" }>;
+
+/**
+ * Whether the host knows this token account has a confidential wrapper: its private part has been
+ * read, revealed or not. Only then can it be shielded into.
+ */
+export function hasConfidentialPart(account: AccountLike): boolean {
+  return account.type === "TokenAccount" && runtime?.getBalance(account.id) !== undefined;
+}
 
 /**
  * The private balance a send may draw from: a decrypted value, current or stale. An undisclosed

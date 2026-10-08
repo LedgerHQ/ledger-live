@@ -59,6 +59,17 @@ export type AddressLookup = {
   keyControlsAccount: (publicKey: string, account: Account) => boolean;
 };
 
+/**
+ * An unsigned payload a family built itself. `prerequisites` are signed first, in the same device
+ * session, and broadcast first, in order (ex: an ERC-20 approve before the call that spends it); they
+ * must not depend on each other being mined to be signed.
+ */
+export type FamilyCraftedTransaction = {
+  transaction: string;
+  sequence: bigint;
+  prerequisites?: string[];
+};
+
 export type BridgeApi = {
   getChainSpecificRules?: ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
@@ -111,7 +122,7 @@ export type BridgeApi = {
   craftUnsignedTransaction?: (
     account: Account,
     transaction: Record<string, unknown>,
-  ) => Promise<{ transaction: string; sequence: bigint } | undefined>;
+  ) => Promise<FamilyCraftedTransaction | undefined>;
   /**
    * Validates a transaction the generic `validateIntent` cannot (ex: an amount drawn from a balance
    * the account shape does not carry). Returning `undefined` keeps the generic validation.
@@ -120,6 +131,15 @@ export type BridgeApi = {
     account: Account,
     transaction: Record<string, unknown>,
   ) => Promise<TransactionStatusCommon | undefined>;
+  /**
+   * Told the signed payload once `signOperation` has combined it, before broadcast (ex: to follow a
+   * request that needs a second transaction later). Must not throw.
+   */
+  onTransactionSigned?: (
+    account: Account,
+    transaction: Record<string, unknown>,
+    signedTransaction: string,
+  ) => void;
   /** Replaces the generic raw signing (craft, sign, combine) with the family's own. */
   signRawOperation?: SignRawOperationFnSignature<Account>;
   /**

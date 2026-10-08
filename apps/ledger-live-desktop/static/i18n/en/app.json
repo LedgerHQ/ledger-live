@@ -9881,6 +9881,16 @@
       "signing": "Confirm the decryption permit on your device",
       "decrypting": "Decrypting your private balance…"
     },
+    "unshield": {
+      "awaiting-request": "Unshield of {{amount}} sent, waiting for it to be mined",
+      "awaiting-confirmations": "Unshield of {{amount}}: {{confirmations}}/{{required}} confirmations",
+      "awaiting-decryption": "Unshield of {{amount}}: waiting for the amount to be decrypted publicly. This can take a while.",
+      "ready": "Unshield of {{amount}} ready to finalize",
+      "finalizing": "Finalizing the unshield of {{amount}} on your device",
+      "finalize": "Finalize",
+      "failed": "The unshield of {{amount}} could not be completed",
+      "dismiss": "Dismiss"
+    },
     "errors": {
       "deviceRefused": "The decryption permit was refused on your device.",
       "permitExpired": "Your decryption permit has expired. Reveal again to re-authorize.",
