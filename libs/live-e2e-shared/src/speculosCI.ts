@@ -155,6 +155,11 @@ export class SpeculinhoAcquireError extends Error {
   }
 }
 
+/** `/acquire` got no response, so an instance may exist under `runId` and must be released. */
+export class SpeculinhoAcquireUnconfirmedError extends SpeculinhoAcquireError {
+  override name = "SpeculinhoAcquireUnconfirmedError";
+}
+
 export function getSpeculinhoRunIdFromError(error: unknown): string | undefined {
   if (error instanceof SpeculinhoAcquireError) return error.runId;
   if (error && typeof error === "object" && "runId" in error) {
@@ -187,11 +192,13 @@ export async function createSpeculosDeviceCI(
     try {
       res = await axios.post<SpeculinhoAcquireResponse>(`${speculinhoUrl}/acquire`, payload, {
         headers: { "Content-Type": "application/json" },
+        timeout: 30_000,
         validateStatus: () => true,
       });
     } catch (error: unknown) {
-      throw new Error(
+      throw new SpeculinhoAcquireUnconfirmedError(
         `[speculosCI] Speculinho /acquire transport error (${speculinhoUrl}): ${sanitizeError(error)}`,
+        runId,
       );
     }
 
@@ -220,7 +227,7 @@ export async function createSpeculosDeviceCI(
   );
 }
 
-/** Resolves to whether Speculinho confirmed the release. */
+/** Resolves to whether Speculinho confirmed the release or reported no such instance. */
 export async function releaseSpeculosDeviceCI(runId: string): Promise<boolean> {
   const speculinhoUrl = getSpeculinhoBaseUrl();
   if (!speculinhoUrl) {
@@ -234,7 +241,8 @@ export async function releaseSpeculosDeviceCI(runId: string): Promise<boolean> {
       { run_id: runId.toString() },
       {
         headers: { "Content-Type": "application/json" },
-        validateStatus: s => s >= 200 && s < 300,
+        timeout: 30_000,
+        validateStatus: s => (s >= 200 && s < 300) || s === 404,
       },
     );
     return true;

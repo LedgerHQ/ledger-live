@@ -554,15 +554,16 @@ export async function startSpeculos(
   }
 }
 
-export async function stopSpeculos(deviceId: string | undefined) {
-  if (deviceId) {
-    log("engine", `test ${deviceId} finished`);
-    if (isSpeculosRemote) {
-      await releaseSpeculosDeviceCI(deviceId);
-    } else {
-      await releaseSpeculosDevice(deviceId);
-    }
+/** Resolves to whether the release was confirmed. */
+export async function stopSpeculos(deviceId: string | undefined): Promise<boolean> {
+  if (!deviceId) return false;
+
+  log("engine", `test ${deviceId} finished`);
+  if (isSpeculosRemote) {
+    return releaseSpeculosDeviceCI(deviceId);
   }
+  await releaseSpeculosDevice(deviceId);
+  return true;
 }
 
 interface Event {
