@@ -196,6 +196,15 @@ describe("agent-intent send", () => {
       ]);
     });
 
+    it("prints the network and fee level in human output", async () => {
+      await runSend({ "dry-run": true });
+
+      const text = stdout.join("");
+      expect(text).toContain("Network: Ethereum mainnet");
+      expect(text).toContain("Fee:     medium");
+      expect(text).not.toContain("Memo:");
+    });
+
     it("passes the fee strategy and description through", async () => {
       await runSend({ "fee-strategy": "fast", description: "Monthly rent" });
 
@@ -267,9 +276,10 @@ describe("agent-intent send", () => {
 
     it.each([
       [{ "fee-strategy": "fast" as const }, "--fee-strategy is Ethereum only"],
-      [{ token: SOL_RECIPIENT }, "Solana token (SPL) sends aren't supported yet"],
-      [{ to: `${SOL_RECIPIENT.slice(0, -1)}0` }, "recipient must be base58"],
-      [{ to: RECIPIENT }, "recipient must be base58"],
+      [{ to: `${SOL_RECIPIENT.slice(0, -1)}0` }, "Invalid intent: --to must be base58."],
+      [{ to: RECIPIENT }, "Invalid intent: --to must be base58."],
+      [{ from: `${SOL_SENDER}11` }, "Invalid intent: --from must be a 32-byte base58 address."],
+      [{ amount: "0 SOL" }, "Amount must be greater than zero."],
       [{ amount: "0.0000000001 SOL" }, "SOL supports at most 9"],
     ])("refuses %j", async (overrides, message) => {
       await expect(sol({ ...overrides, output: undefined })).rejects.toThrow(message);
@@ -279,6 +289,24 @@ describe("agent-intent send", () => {
     it("refuses a memo on an Ethereum send", async () => {
       await expect(runSend({ memo: "Invoice 42" })).rejects.toThrow("--memo is Solana only.");
       expect(submittedIntents).toEqual([]);
+    });
+
+    it("keeps an ERC-20 whose ticker is SOL on Ethereum", async () => {
+      // With --token the SOL ticker names an ERC-20, so the Ethereum path checks it against CAL.
+      await expect(runSend({ amount: "5 SOL", token: USDC })).rejects.toThrow(
+        `--amount is in SOL, but --token ${USDC} is USDC.`,
+      );
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it("prints the network and memo, and no fee level, in human output", async () => {
+      await sol({ memo: "Invoice 42", output: undefined, "dry-run": true });
+
+      const text = stdout.join("");
+      expect(text).toContain("Network: Solana mainnet");
+      expect(text).toContain("Amount:  0.5 SOL");
+      expect(text).toContain("Memo:    Invoice 42");
+      expect(text).not.toContain("Fee:");
     });
   });
 

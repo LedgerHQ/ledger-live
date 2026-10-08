@@ -64,13 +64,15 @@ function parseSenderInput(flags: {
 }
 
 /**
- * The amount's ticker picks the network: native SOL proposes a Solana send, anything else an
- * Ethereum one. Read before the output is set up, so it never throws: a malformed `--amount` is
- * reported by the full parse inside the command.
+ * Native SOL (the SOL ticker without `--token`) proposes a Solana send; anything else, including
+ * an ERC-20 whose ticker is SOL, an Ethereum one. Read before the output is set up, so it never
+ * throws: a malformed `--amount` is reported by the full parse inside the command.
  */
-function networkOfAmount(amount: string): IntentNetwork {
+function networkOf(flags: { amount: string; token?: string }): IntentNetwork {
+  if (flags.token) return "ethereum";
   try {
-    return parseAmountWithTicker(amount).ticker.toUpperCase() === "SOL" ? "solana" : "ethereum";
+    const { ticker } = parseAmountWithTicker(flags.amount);
+    return ticker.toUpperCase() === solanaAsset().ticker.toUpperCase() ? "solana" : "ethereum";
   } catch {
     return "ethereum";
   }
@@ -94,13 +96,8 @@ async function resolveSenderFromAccount(label: string, network: IntentNetwork): 
     : descriptor.address;
 }
 
-/** Solana sends are native SOL only, with no fee level: the service sets the priority fee. */
-function assertSolanaFlags(flags: { token?: string; "fee-strategy"?: string }): void {
-  if (flags.token) {
-    throw new Error(
-      "Solana token (SPL) sends aren't supported yet; omit --token to send native SOL.",
-    );
-  }
+/** A Solana send has no fee level: the service sets the priority fee. */
+function assertSolanaFlags(flags: { "fee-strategy"?: string }): void {
   if (flags["fee-strategy"]) {
     throw new Error("--fee-strategy is Ethereum only: on Solana the service sets the fee.");
   }
@@ -120,7 +117,8 @@ async function resolveAsset(
     if (ticker.toUpperCase() !== eth.ticker.toUpperCase()) {
       throw new Error(
         `--amount is in ${ticker}, but without --token the intent sends native ${eth.ticker}. ` +
-          `Pass the token's contract with --token, or use '${eth.ticker}'.`,
+          `Pass the token's contract with --token, use '${eth.ticker}', or use '${solanaAsset().ticker}' ` +
+          "for a Solana send.",
       );
     }
     return { type: "native", ticker: eth.ticker, decimals: eth.units[0].magnitude };
@@ -143,11 +141,18 @@ async function resolveAsset(
 
 /** Runs the SDK's own intent validation (description length after NFC normalization, TLV
  * encoding) without a key or network, so `--dry-run` rejects exactly what a real submit would. */
-function assertSdkAcceptsIntent(intent: SendIntent): void {
+function assertSdkAcceptsIntent(
+  intent: SendIntent,
+  fields: { sender: string; recipient: string },
+): void {
   try {
     encodeSendIntentTlv(intent, createNonce());
   } catch (e) {
-    throw new Error(`Invalid intent: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
+    const message = (e instanceof Error ? e.message : String(e)).replace(
+      /^(sender|recipient)\b/,
+      field => fields[field as "sender" | "recipient"],
+    );
+    throw new Error(`Invalid intent: ${message}`, { cause: e });
   }
 }
 
@@ -198,7 +203,7 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags }) => {
-    const network = networkOfAmount(flags.amount);
+    const network = networkOf(flags);
     const out = createCommandOutput(resolveOutputFormat(flags.output), {
       command: "agent-intent send",
       network: `${network}:main`,
@@ -220,22 +225,26 @@ export default defineCommand({
       const asset = network === "solana" ? solanaAsset() : await resolveAsset(ticker, flags.token);
       const amount = parseDecimalAmount(displayAmount, asset.decimals, asset.ticker);
 
-      const summary: SendIntentSummary = {
+      const common = {
         profileId: profile.profileId,
         environment: profile.environment,
-        network,
         sender,
         recipient,
         asset,
         amount: amount.toString(),
         displayAmount,
-        ...(network === "ethereum" ? { feeStrategy: flags["fee-strategy"] ?? "medium" } : {}),
-        ...(flags.memo ? { memo: flags.memo } : {}),
         description: flags.description,
       };
+      const summary: SendIntentSummary =
+        network === "solana"
+          ? { ...common, network, ...(flags.memo ? { memo: flags.memo } : {}) }
+          : { ...common, network, feeStrategy: flags["fee-strategy"] ?? "medium" };
 
       const intent = toSdkSendIntent(summary);
-      assertSdkAcceptsIntent(intent);
+      assertSdkAcceptsIntent(intent, {
+        sender: "from" in senderInput ? "--from" : `account "${senderInput.account}"`,
+        recipient: "--to",
+      });
 
       if (flags["dry-run"]) {
         out.agentIntentSendDryRun(summary);

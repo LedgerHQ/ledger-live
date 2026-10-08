@@ -437,14 +437,15 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
   profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
   `--bff-url`/`--keycloak-url` override carries over), and its key in the OS keychain.
 - **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL. The `--amount` ticker picks the
-  network (`SOL` → Solana), and a `--account` label must be a mainnet account of that network. The
+  network (`SOL` without `--token` → Solana; an ERC-20 whose ticker is SOL, with `--token`, stays on
+  Ethereum), and a `--account` label must be a mainnet account of that network. The
   Agent Intent SDK has no testnet, so a staging profile also proposes a mainnet transfer.
 - **Addresses:** on Ethereum, `--from`, `--to` and `--token` must be `0x` + 40 hex characters, and
   mixed-case input must pass its EIP-55 checksum, which catches a typo in a copied address. On
   Solana, `--from` and `--to` must be canonical base58 32-byte addresses.
-- **Solana is native SOL only:** `--token` (SPL) and `--fee-strategy` are refused, because the
-  service sets the priority fee. `--memo` (1-280 characters, Solana only) goes on chain with the
-  transfer.
+- **Solana is native SOL only** (no SPL tokens) and takes no `--fee-strategy`, because the service
+  sets the priority fee. `--memo` (1-280 characters, an emoji counts as two; Solana only) goes on
+  chain with the transfer.
 - **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount
   above uint256 (u64 lamports on Solana) is an error. JSON output gives `amount` in base units
   (wei, token units or lamports) as a string, and `network` as `ethereum` or `solana`.

@@ -15,6 +15,9 @@ import { toChecksumAddress } from "../../agent-intent/evm";
 
 const SENDER = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed";
 const RECIPIENT = "0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359";
+// The 0x11 × 32 and 0x22 × 32 keys of agent-intent-service ADR-0002's Solana vectors.
+const SOL_SENDER = "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2";
+const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
 
 const profile = {
   profileId: "bot",
@@ -47,6 +50,10 @@ describe("agent-intent send (CLI, --dry-run)", () => {
         {
           label: "ethereum-1",
           descriptor: `account:1:address:ethereum:main:${SENDER}:m/44h/60h/0h/0/0`,
+        },
+        {
+          label: "solana-1",
+          descriptor: `account:1:address:solana:main:${SOL_SENDER}:m/44h/501h/0h/0h`,
         },
       ],
       agentIntentProfiles: [profile],
@@ -138,6 +145,44 @@ describe("agent-intent send (CLI, --dry-run)", () => {
       asset: { type: "native", ticker: "ETH" },
       amount: "500000000000000000",
     });
+  });
+
+  it("proposes native SOL from a Solana label, with a memo and no fee level", async () => {
+    const { stdout, exitCode, stderr } = await runCli(
+      [
+        "agent-intent",
+        "send",
+        "--profile",
+        "bot",
+        "--account",
+        "solana-1",
+        "--to",
+        SOL_RECIPIENT,
+        "--amount",
+        "0.25 SOL",
+        "--memo",
+        "Invoice 42",
+        "--dry-run",
+        "--output",
+        "json",
+      ],
+      env,
+    );
+
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    const result = JSON.parse(stdout);
+    expect(result).toMatchObject({
+      status: "success",
+      command: "agent-intent send",
+      network: "solana",
+      dryRun: true,
+      sender: SOL_SENDER,
+      recipient: SOL_RECIPIENT,
+      asset: { type: "native", ticker: "SOL", decimals: 9 },
+      amount: "250000000",
+      memo: "Invoice 42",
+    });
+    expect(result).not.toHaveProperty("feeStrategy");
   });
 
   it("rejects --account and --from together", async () => {

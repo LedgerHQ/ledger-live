@@ -19,7 +19,6 @@ export type IntentAsset =
 export type SendIntentSummary = {
   profileId: string;
   environment: "staging" | "production";
-  network: IntentNetwork;
   sender: string;
   recipient: string;
   asset: IntentAsset;
@@ -27,11 +26,16 @@ export type SendIntentSummary = {
   amount: string;
   /** The amount as the user typed it, for display only. */
   displayAmount: string;
-  /** Ethereum only: on Solana the service sets the priority fee itself. */
-  feeStrategy?: FeeStrategy;
-  /** Solana only: carried on chain with the transfer. */
-  memo?: string;
   description?: string;
+} & (
+  | { network: "ethereum"; feeStrategy: FeeStrategy }
+  /** No fee strategy: on Solana the service sets the priority fee. The memo goes on chain. */
+  | { network: "solana"; memo?: string }
+);
+
+export const NETWORK_LABELS: Record<IntentNetwork, string> = {
+  ethereum: "Ethereum mainnet",
+  solana: "Solana mainnet",
 };
 
 export function toSdkSendIntent(summary: SendIntentSummary): SendIntent {
@@ -57,7 +61,7 @@ export function toSdkSendIntent(summary: SendIntentSummary): SendIntent {
       summary.asset.type === "native"
         ? { type: "native" }
         : { type: "erc20", assetReference: summary.asset.contract },
-    feeStrategy: summary.feeStrategy ?? "medium",
+    feeStrategy: summary.feeStrategy,
     ...(summary.description ? { description: summary.description } : {}),
   };
 }
