@@ -77,6 +77,23 @@ describe("getCalProbe", () => {
     expect((await pending).data).toBe("failed");
   });
 
+  it("returns failed, without calling CAL, when the service URL is malformed", async () => {
+    const store = configureStore({
+      reducer: { [calApi.reducerPath]: calApi.reducer },
+      middleware: gdm =>
+        gdm({
+          thunk: {
+            extraArgument: calApiExtra({ calServiceUrl: "not a url", ledgerClientVersion: "1.2.3" }),
+          },
+        }).concat(calApi.middleware),
+    });
+
+    const result = await store.dispatch(calProbeApi.endpoints.getCalProbe.initiate());
+
+    expect(result.data).toBe("failed");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   it("returns offline on a network error", async () => {
     fetchSpy.mockRejectedValue(new TypeError("Failed to fetch"));
 

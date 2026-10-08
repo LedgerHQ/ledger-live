@@ -16,6 +16,16 @@ export async function probeCal(
 ): Promise<CalProbeResult> {
   if (isOsOffline()) return "offline";
 
+  // A malformed service URL is a misconfiguration, not connectivity: fail closed.
+  let url: URL;
+  try {
+    url = new URL(`${calServiceUrl}/v1/currencies`);
+  } catch {
+    return "failed";
+  }
+  url.searchParams.set("output", "id");
+  url.searchParams.set("limit", "1");
+
   const controller = new AbortController();
   let timedOut = false;
   const timer = setTimeout(() => {
@@ -24,10 +34,6 @@ export async function probeCal(
   }, PROBE_TIMEOUT_MS);
 
   try {
-    const url = new URL(`${calServiceUrl}/v1/currencies`);
-    url.searchParams.set("output", "id");
-    url.searchParams.set("limit", "1");
-
     const response = await fetch(url, {
       headers: { [HEADER_X_LEDGER_CLIENT_VERSION]: ledgerClientVersion },
       signal: controller.signal,
