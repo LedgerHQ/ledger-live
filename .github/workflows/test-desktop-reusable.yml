@@ -189,7 +189,7 @@ jobs:
       LC_ALL: en_US.UTF-8
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ledger-live-linux-16CPU-64RAM]
+    runs-on: [ledger-wallet-16cpu-aws-public]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -231,7 +231,7 @@ jobs:
           FLAKE_API_KEY: ${{ secrets.FLAKE_API_KEY_CI }}
           FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
         run: |
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright --workers=12
 
       - name: Stop mitmproxy
         id: stop-mitmproxy
