@@ -209,7 +209,7 @@ catalog:
   "@xstate/react": 5.0.2
   tailwindcss: ^4.1.0
   tailwind-merge: 3.4.0
-  tsx: 4.20.6
+  tsx: 4.10.3
   ws: 8.18.3
   qrcode: 1.5.4
   "@types/qrcode": 1.5.5

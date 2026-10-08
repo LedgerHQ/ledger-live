@@ -595,8 +595,8 @@ catalogs:
       specifier: ^4.1.0
       version: 4.1.18
     tsx:
-      specifier: 4.20.6
-      version: 4.20.6
+      specifier: 4.10.3
+      version: 4.10.3
     typescript:
       specifier: npm:@typescript/typescript6@^6.0.2
       version: 6.0.2
@@ -4093,7 +4093,7 @@ importers:
         version: 0.67.0
       tsx:
         specifier: 'catalog:'
-        version: 4.20.6
+        version: 4.10.3
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -5954,7 +5954,7 @@ importers:
         version: 1.82.0
       tsx:
         specifier: 'catalog:'
-        version: 4.20.6
+        version: 4.10.3
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
