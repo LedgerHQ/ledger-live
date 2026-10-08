@@ -7,6 +7,7 @@ import {
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import {
+  countervaluesTestUserSettings,
   createStore,
   render,
   renderWithReactQuery,
@@ -181,7 +182,7 @@ function withUsdcHoldings(state: State): State {
         ...state.countervalues.countervalues,
         state: importCountervalues(
           { status: {}, [pairId({ from: usdc, to: usd })]: { latest: 1 } },
-          state.countervalues.userSettings,
+          countervaluesTestUserSettings,
         ),
       },
     },

@@ -1,9 +1,6 @@
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import {
-  initialState as countervaluesInitialState,
-  type CountervaluesSettings,
-} from "@domain/entity-market-countervalues";
+import { initialState as countervaluesInitialState } from "@domain/entity-market-countervalues";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import {
@@ -58,12 +55,6 @@ function createCountervaluesState(): CountervaluesState {
       isPolling: true,
       triggerLoad: false,
     },
-    userSettings: {
-      trackingPairs: [],
-      autofillGaps: true,
-      refreshRate: 0,
-      marketCapBatchingAfterRank: 0,
-    } satisfies CountervaluesSettings,
   };
 }
 

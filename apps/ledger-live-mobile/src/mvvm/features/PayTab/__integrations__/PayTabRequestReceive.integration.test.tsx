@@ -8,7 +8,7 @@ import {
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
-import { render, screen, waitFor, act } from "@tests/test-renderer";
+import { render, screen, waitFor, act, countervaluesTestUserSettings } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { ScreenName } from "~/const";
@@ -66,7 +66,7 @@ function withUsdcHoldings(state: State): State {
         ...state.countervalues.countervalues,
         state: importCountervalues(
           { status: {}, [pairId({ from: usdc, to: usd })]: { latest: 1 } },
-          state.countervalues.userSettings,
+          countervaluesTestUserSettings,
         ),
       },
     },

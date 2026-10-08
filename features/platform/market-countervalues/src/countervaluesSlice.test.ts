@@ -14,13 +14,11 @@ import {
   countervaluesStateErrorSelector,
   countervaluesStatePendingSelector,
   countervaluesStateSelector,
-  countervaluesUserSettingsSelector,
   setCountervaluesPollingIsPolling,
   setCountervaluesPollingTriggerLoad,
   setCountervaluesState,
   setCountervaluesStateError,
   setCountervaluesStatePending,
-  setCountervaluesUserSettings,
   wipeCountervalues,
   type CountervaluesState,
 } from ".";
@@ -67,7 +65,6 @@ describe("countervaluesReducer", () => {
     [setCountervaluesState, "COUNTERVALUES_STATE_SET"],
     [setCountervaluesStateError, "COUNTERVALUES_STATE_SET_ERROR"],
     [setCountervaluesStatePending, "COUNTERVALUES_STATE_SET_PENDING"],
-    [setCountervaluesUserSettings, "COUNTERVALUES_USER_SETTINGS_SET"],
     [wipeCountervalues, "COUNTERVALUES_WIPE"],
   ])("keeps the action type string %#: %s", (creator, type) => {
     expect(creator.type).toBe(type);
@@ -119,26 +116,26 @@ describe("countervaluesReducer", () => {
     expect(state.countervalues.error).toBe(errored.countervalues.error);
   });
 
-  it("sets the user settings", () => {
-    const state = countervaluesReducer(
-      countervaluesInitialState,
-      setCountervaluesUserSettings(settings),
-    );
+  // Each app computes its settings and hands them to the provider; the store never holds them.
+  it("holds no user settings and ignores the former settings action", () => {
+    const state = countervaluesReducer(errored, {
+      type: "COUNTERVALUES_USER_SETTINGS_SET",
+      payload: settings,
+    });
 
-    expect(state.userSettings).toBe(settings);
+    expect(state).toBe(errored);
+    expect(Object.keys(countervaluesInitialState)).toEqual(["countervalues", "polling"]);
   });
 
-  it("wipes rates, pending and error but keeps polling and user settings", () => {
+  it("wipes rates, pending and error but keeps polling", () => {
     const populated: CountervaluesState = {
       countervalues: { state: loadedState, pending: true, error: new Error("network") },
       polling: { isPolling: false, triggerLoad: true },
-      userSettings: settings,
     };
     const state = countervaluesReducer(populated, wipeCountervalues());
 
     expect(state.countervalues).toEqual({ state: initialState, pending: false, error: null });
     expect(state.polling).toBe(populated.polling);
-    expect(state.userSettings).toBe(settings);
   });
 
   it("reads every field through its selector", () => {
@@ -149,7 +146,6 @@ describe("countervaluesReducer", () => {
     expect(countervaluesStateErrorSelector(root)).toBe(errored.countervalues.error);
     expect(countervaluesPollingIsPollingSelector(root)).toBe(true);
     expect(countervaluesPollingTriggerLoadSelector(root)).toBe(false);
-    expect(countervaluesUserSettingsSelector(root)).toBe(errored.userSettings);
   });
 
   it("does not freeze the stored rates", () => {
