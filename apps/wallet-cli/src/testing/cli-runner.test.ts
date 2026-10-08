@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import http from "node:http";
 import https from "node:https";
-import { redirectHttpTo } from "./cli-runner";
+import { liveCommonAxiosDefaults, redirectHttpTo, runCli } from "./cli-runner";
 import { MockServer } from "./mock-server";
 
 type Reply = { status: number; body: string };
@@ -72,5 +72,46 @@ describe("redirectHttpTo", () => {
     const reply = await send(cb => http.request(`http://localhost:${server.port}/local`, cb));
 
     expect(reply).toEqual({ status: 200, body: JSON.stringify({ via: "local" }) });
+  });
+
+  it("puts the original fetch, http(s).request and axios adapter back when cleared", async () => {
+    const axiosDefaults = await liveCommonAxiosDefaults();
+    const original = {
+      fetch: globalThis.fetch,
+      http: http.request,
+      https: https.request,
+      axiosAdapters: axiosDefaults.map(defaults => defaults.adapter),
+    };
+
+    await redirectHttpTo(server.port);
+    expect(globalThis.fetch).not.toBe(original.fetch);
+    expect(axiosDefaults.map(defaults => defaults.adapter)).toEqual(
+      axiosDefaults.map(() => "fetch"),
+    );
+    await redirectHttpTo(null);
+
+    expect(axiosDefaults).not.toHaveLength(0);
+    expect(globalThis.fetch).toBe(original.fetch);
+    expect(http.request).toBe(original.http);
+    expect(https.request).toBe(original.https);
+    expect(axiosDefaults.map(defaults => defaults.adapter)).toEqual(original.axiosAdapters);
+    // axios never defaults to "fetch", so this holds even if an earlier test left it switched.
+    expect(original.axiosAdapters).not.toContain("fetch");
+  });
+});
+
+describe("runCli", () => {
+  it("removes the HTTP redirect when setup fails before the command runs", async () => {
+    const originalFetch = globalThis.fetch;
+
+    await expect(
+      runCli(["--version"], {
+        WALLET_CLI_MOCK_PORT: "1",
+        WALLET_CLI_MOCK_DMK: "1",
+        WALLET_CLI_MOCK_APP_RESULTS: "not json",
+      }),
+    ).rejects.toThrow(SyntaxError);
+
+    expect(globalThis.fetch).toBe(originalFetch);
   });
 });

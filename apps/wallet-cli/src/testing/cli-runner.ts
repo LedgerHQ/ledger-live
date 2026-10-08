@@ -12,19 +12,20 @@
  *   - Within that single process, tests run one at a time, so stdout/stderr capture,
  *     env-var patching, and DMK state are safe without locks as long as each call cleans
  *     up after itself (see the `finally` block in runCli).
- *   - Because module mocks are global, any test file that `mock.module(...)`s a module
- *     also imported by these CLI runs must restore it (or avoid mocking shared modules)
- *     so it does not bleed into other files.
+ *   - Because module mocks are global and cannot be undone, a test file that has to mock a
+ *     module also imported by these CLI runs uses `createGatedModuleMock` (see
+ *     `gated-module-mock.ts`), so other files keep the real module.
  *
  * HTTP interception:
- *   Installed once per worker (idempotent). Uses a module-level variable for the current
- *   mock port so different tests can use different ports without re-patching globals.
+ *   Installed while a mock port is set and removed when it is cleared, so tests that run
+ *   without one see the real fetch, http(s).request and axios adapter. A module-level
+ *   variable holds the current port.
  */
 
 import path from "node:path";
 import { getCliProcessExitCode } from "../cli-process-exit-error";
-import type { ApiAuthKeychain } from "../key-ring/api-auth-identity";
 import { installOutputCapture } from "../shared/ui";
+import { InMemoryKeychain } from "./in-memory-keychain";
 
 // ---------------------------------------------------------------------------
 // Lazy CLI loader — deferred until first runCliInProcess() call
@@ -40,48 +41,51 @@ import { installOutputCapture } from "../shared/ui";
 
 type RunMainFn = (argv: string[]) => Promise<number>;
 type SetTestDmkTransportFn = (transport: unknown) => void;
-type SetTestApiAuthKeychainFn = (keychain: ApiAuthKeychain | null) => void;
+type SetTestKeychainFn = typeof import("../key-ring/keychain-entry")._setTestKeychain;
+type ResetApiAuthIdentityFn = () => void;
 
 let _runMain: RunMainFn | null = null;
 let _setTestDmkTransport: SetTestDmkTransportFn | null = null;
-let _setTestApiAuthKeychain: SetTestApiAuthKeychainFn | null = null;
+let _setTestKeychain: SetTestKeychainFn | null = null;
+let _resetApiAuthIdentity: ResetApiAuthIdentityFn | null = null;
 
 /**
- * Stands in for the OS keychain behind the API auth key, keyed by keychain account (one per
- * XDG_STATE_HOME), so runs never write to the developer's real keychain.
+ * Keychain `runCli` gives the CLI unless the test installed its own with `_setTestKeychain`, so runs
+ * never touch the developer's real keychain. Entries are keyed by account, one per XDG_STATE_HOME.
  */
-const testApiAuthKeychain = new Map<string, string>();
+const runCliKeychain = new InMemoryKeychain();
 
-const inMemoryApiAuthKeychain: ApiAuthKeychain = {
-  getPassword: account => testApiAuthKeychain.get(account) ?? null,
-  setPassword: (account, value) => {
-    testApiAuthKeychain.set(account, value);
-  },
-};
-
-let runCliApiAuthKeychain = inMemoryApiAuthKeychain;
-
-/**
- * Keychain that `runCli` gives the API auth key, e.g. one sharing a suite's `@napi-rs/keyring` mock;
- * `null` restores the in-memory one.
- */
-export function useApiAuthKeychain(keychain: ApiAuthKeychain | null): void {
-  runCliApiAuthKeychain = keychain ?? inMemoryApiAuthKeychain;
+/** Points the keychain seam at the test's own keychain, or else at `runCliKeychain`; returns the undo. */
+function useRunCliKeychain(setTestKeychain: SetTestKeychainFn): () => void {
+  const testKeychain = setTestKeychain(runCliKeychain.open);
+  if (testKeychain) setTestKeychain(testKeychain);
+  return () => {
+    setTestKeychain(testKeychain);
+  };
 }
 
 /** Public key of the API auth key stored for the profile at `XDG_STATE_HOME`, if any. */
 export async function storedApiAuthPubkey(env: {
   XDG_STATE_HOME: string;
 }): Promise<string | undefined> {
-  const [{ apiAuthKeychainAccount }, { pubkeyFromPrivatekey }] = await Promise.all([
+  const [
+    { apiAuthKeychainAccount },
+    { pubkeyFromPrivatekey },
+    { _setTestKeychain: setTestKeychain, openKeychainEntry },
+    { APP_NAME },
+  ] = await Promise.all([
     import("../key-ring/api-auth-identity"),
     import("../key-ring/crypto"),
+    import("../key-ring/keychain-entry"),
+    import("../session/session-store"),
   ]);
   const saved = applyEnv(env);
+  const restoreKeychain = useRunCliKeychain(setTestKeychain);
   try {
-    const privatekey = runCliApiAuthKeychain.getPassword(apiAuthKeychainAccount());
+    const privatekey = openKeychainEntry(APP_NAME, apiAuthKeychainAccount()).getPassword();
     return privatekey ? pubkeyFromPrivatekey(privatekey) : undefined;
   } finally {
+    restoreKeychain();
     restoreEnv(saved);
   }
 }
@@ -89,37 +93,37 @@ export async function storedApiAuthPubkey(env: {
 async function getCliModules(): Promise<{
   runMain: RunMainFn;
   setTestDmkTransport: SetTestDmkTransportFn;
-  setTestApiAuthKeychain: SetTestApiAuthKeychainFn;
+  setTestKeychain: SetTestKeychainFn;
+  resetApiAuthIdentity: ResetApiAuthIdentityFn;
 }> {
   if (!_runMain) {
-    // These imports load the full CLI module graph (live-common-setup, every command, etc.).
-    // They run once per Bun test-worker; the module system caches the result.
-    const [cliMod, dmkMod, apiAuthMod, registryMod] = await Promise.all([
+    // These imports load the CLI module graph (live-common-setup, the command registry, etc.);
+    // commands load on first use, as in the CLI. They run once per Bun test-worker; the module
+    // system caches the result.
+    const [cliMod, dmkMod, apiAuthMod, keychainMod] = await Promise.all([
       import("../cli"),
       import("../device/register-dmk-transport"),
       import("../key-ring/api-auth-identity"),
-      import("../commands/registry"),
+      import("../key-ring/keychain-entry"),
     ]);
-    // The CLI loads commands on demand, but tests keep loading all of them up front: a
-    // mock.module() left by an earlier test file must patch an already-loaded command module,
-    // not stand in for it when the command first loads (see ring.cli.test.ts's lkrp-sdk mocks).
-    await Promise.all(registryMod.COMMANDS.map(entry => entry.load()));
     _runMain = cliMod.runMain;
     _setTestDmkTransport = dmkMod._setTestDmkTransport as SetTestDmkTransportFn;
-    _setTestApiAuthKeychain = apiAuthMod._setTestApiAuthKeychain;
+    _setTestKeychain = keychainMod._setTestKeychain;
+    _resetApiAuthIdentity = apiAuthMod._resetApiAuthIdentity;
   }
   return {
     runMain: _runMain!,
     setTestDmkTransport: _setTestDmkTransport!,
-    setTestApiAuthKeychain: _setTestApiAuthKeychain!,
+    setTestKeychain: _setTestKeychain!,
+    resetApiAuthIdentity: _resetApiAuthIdentity!,
   };
 }
 
 // ---------------------------------------------------------------------------
-// HTTP interceptor — installed once, port updated per invocation
+// HTTP interceptor — installed while a mock port is set
 // ---------------------------------------------------------------------------
 
-let interceptorsInstalled = false;
+let uninstallInterceptors: (() => void) | null = null;
 let currentMockPort: number | null = null;
 
 function resolveHttpArgs(
@@ -152,10 +156,31 @@ function isLocal(url: string): boolean {
   );
 }
 
-async function installInterceptors(): Promise<void> {
-  if (interceptorsInstalled) return;
-  interceptorsInstalled = true;
+type AxiosModule = { defaults: { adapter?: unknown } };
 
+/** Defaults of the axios live-common uses, CommonJS and ESM builds; empty without axios. */
+export async function liveCommonAxiosDefaults(): Promise<AxiosModule["defaults"][]> {
+  const found: AxiosModule["defaults"][] = [];
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const liveCommonDir = path.dirname(require.resolve("@ledgerhq/live-common/package.json"));
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const axiosPkgDir = path.dirname(
+      require.resolve("axios/package.json", { paths: [liveCommonDir] }),
+    );
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const cjs = require(path.join(axiosPkgDir, "dist/node/axios.cjs")) as AxiosModule;
+    found.push(cjs.defaults);
+    const esm = (await import(path.join(axiosPkgDir, "index.js"))) as { default: AxiosModule };
+    found.push(esm.default.defaults);
+  } catch {
+    // axios not present — nothing to patch
+  }
+  return found;
+}
+
+/** Patches fetch, axios and http(s).request; returns the function that puts the originals back. */
+async function installInterceptors(): Promise<() => void> {
   // ---- Layer 1: globalThis.fetch ----
   const origFetch = globalThis.fetch;
   (globalThis as Record<string, unknown>).fetch = (
@@ -181,28 +206,19 @@ async function installInterceptors(): Promise<void> {
   };
 
   // ---- Axios: force fetch adapter so it goes through the patched globalThis.fetch ----
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const liveCommonDir = path.dirname(require.resolve("@ledgerhq/live-common/package.json"));
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const axiosPkgDir = path.dirname(
-      require.resolve("axios/package.json", { paths: [liveCommonDir] }),
-    );
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any
-    (require(path.join(axiosPkgDir, "dist/node/axios.cjs")) as any).defaults.adapter = "fetch";
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ((await import(path.join(axiosPkgDir, "index.js"))) as any).default.defaults.adapter = "fetch";
-  } catch {
-    // axios not present — no action needed
-  }
+  const axiosDefaults = await liveCommonAxiosDefaults();
+  const origAxiosAdapters = axiosDefaults.map(defaults => defaults.adapter);
+  for (const defaults of axiosDefaults) defaults.adapter = "fetch";
 
   // ---- Layer 2: node:http / node:https ----
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const http = require("node:http");
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const https = require("node:https");
-  const origHttpRequest = http.request.bind(http);
-  const origHttpsRequest = https.request.bind(https);
+  const origHttpRequestFn = http.request;
+  const origHttpsRequestFn = https.request;
+  const origHttpRequest = origHttpRequestFn.bind(http);
+  const origHttpsRequest = origHttpsRequestFn.bind(https);
 
   function buildMockOptions(options: unknown): Record<string, unknown> {
     if (typeof options === "string" || options instanceof URL) {
@@ -255,12 +271,34 @@ async function installInterceptors(): Promise<void> {
     const [mockOpts, cb] = resolveHttpArgs(buildMockOptions(options), options, rest);
     return origHttpRequest(mockOpts as unknown as Parameters<typeof http.request>[0], cb);
   };
+
+  return () => {
+    globalThis.fetch = origFetch;
+    axiosDefaults.forEach((defaults, i) => {
+      defaults.adapter = origAxiosAdapters[i];
+    });
+    http.request = origHttpRequestFn;
+    https.request = origHttpsRequestFn;
+  };
 }
 
-/** Redirects external `fetch` and `http(s).request` calls to `localhost:<port>`; `null` stops it. */
+/**
+ * Redirects external `fetch` and `http(s).request` calls to `localhost:<port>`; `null` stops it and
+ * restores the originals.
+ */
 export async function redirectHttpTo(port: number | null): Promise<void> {
-  if (port !== null) await installInterceptors();
+  if (port === null) {
+    stopRedirectingHttp();
+    return;
+  }
+  uninstallInterceptors ??= await installInterceptors();
   currentMockPort = port;
+}
+
+function stopRedirectingHttp(): void {
+  currentMockPort = null;
+  uninstallInterceptors?.();
+  uninstallInterceptors = null;
 }
 
 // ---------------------------------------------------------------------------
@@ -332,7 +370,7 @@ export type RunResult = {
  * Captures stdout/stderr and returns them along with the exit code.
  *
  * This is the in-process equivalent of spawning `bun wrapper.ts ...args`.
- * Module loading (live-common-setup, every command) happens once per worker.
+ * Module loading (live-common-setup, each command on first use) happens once per worker.
  */
 export async function runCli(args: string[], env: Record<string, string> = {}): Promise<RunResult> {
   // Mirror the env defaults set by the old Bun.spawn approach:
@@ -350,56 +388,53 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
   // 0. Lazy-load the CLI module graph (once per worker; cached after first call).
   //    Doing this lazily ensures module-resolution failures appear as individual
   //    test errors rather than a file-level "Unhandled error between tests".
-  const { runMain, setTestDmkTransport, setTestApiAuthKeychain } = await getCliModules();
+  const { runMain, setTestDmkTransport, setTestKeychain, resetApiAuthIdentity } =
+    await getCliModules();
 
-  // Per call rather than once: a unit test may have restored the OS keychain since the last run.
-  setTestApiAuthKeychain(runCliApiAuthKeychain);
+  // Each run loads the API auth key again, as a new process would.
+  resetApiAuthIdentity();
 
-  // 1. HTTP interceptor: install once, update port per call
-  if (mergedEnv.WALLET_CLI_MOCK_PORT) {
-    await redirectHttpTo(Number(mergedEnv.WALLET_CLI_MOCK_PORT));
-  }
-
-  // 2. DMK mock: set before run (cleared in finally)
-  const dmkMockInstalled = await setupDmkMock(mergedEnv, setTestDmkTransport);
-
-  // 3. Temporary env vars (XDG_STATE_HOME, etc.)
-  const savedEnv = applyEnv(mergedEnv);
-
-  // 4. Capture wallet-cli stdout / stderr without patching process-global streams.
+  // A step that can throw registers its undo before the next one starts, so a failure still unwinds
+  // the steps before it and no patched global outlives this run.
+  const cleanups: (() => void)[] = [];
   const outChunks: string[] = [];
   const errChunks: string[] = [];
-  const restoreOutputCapture = installOutputCapture({
-    stdout: chunk => {
-      outChunks.push(chunk);
-    },
-    stderr: chunk => {
-      errChunks.push(chunk);
-    },
-  });
-
   let exitCode = 0;
   try {
+    // 1. HTTP interceptor
+    if (mergedEnv.WALLET_CLI_MOCK_PORT) {
+      cleanups.push(stopRedirectingHttp);
+      await redirectHttpTo(Number(mergedEnv.WALLET_CLI_MOCK_PORT));
+    }
+
+    // 2. DMK mock transport
+    if (await setupDmkMock(mergedEnv, setTestDmkTransport)) {
+      cleanups.push(() => setTestDmkTransport(null));
+    }
+
+    // 3. Temporary env vars (XDG_STATE_HOME, etc.)
+    const savedEnv = applyEnv(mergedEnv);
+    // 4. Capture wallet-cli stdout / stderr without patching process-global streams.
+    const restoreOutputCapture = installOutputCapture({
+      stdout: chunk => {
+        outChunks.push(chunk);
+      },
+      stderr: chunk => {
+        errChunks.push(chunk);
+      },
+    });
+    // 5. Keychain: the test's own, or the in-memory one
+    const restoreKeychain = useRunCliKeychain(setTestKeychain);
+    // Steps 3–5 only assign variables and cannot throw, so they register their undo together.
+    cleanups.push(() => restoreEnv(savedEnv), restoreOutputCapture, restoreKeychain);
+
     exitCode = await runMain(args);
   } catch (e) {
     const code = getCliProcessExitCode(e);
     if (code === null) throw e;
     exitCode = code;
   } finally {
-    restoreOutputCapture();
-
-    // Restore env vars
-    restoreEnv(savedEnv);
-
-    // Clear DMK mock transport for next invocation
-    if (dmkMockInstalled) {
-      setTestDmkTransport(null);
-    }
-
-    // Reset mock port if we set it
-    if (mergedEnv.WALLET_CLI_MOCK_PORT) {
-      await redirectHttpTo(null);
-    }
+    for (const cleanup of cleanups.toReversed()) cleanup();
   }
 
   return {

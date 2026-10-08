@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, spyOn } from "bun:test";
+import { _setTestKeychain } from "../../key-ring/keychain-entry";
 import { _setTestAuthRequestTimeoutMs } from "../../state-manager/auth-fetch";
+import { InMemoryKeychain } from "../../testing/in-memory-keychain";
 import { MockServer, type Route } from "../../testing/mock-server";
-import { runCli, storedApiAuthPubkey, useApiAuthKeychain } from "../../testing/cli-runner";
+import { runCli, storedApiAuthPubkey } from "../../testing/cli-runner";
 import { makeSessionDir } from "../../testing/session-fixture";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { KEYCLOAK_TOKEN, makeAuthRoutes } from "../../testing/auth-routes";
@@ -150,12 +152,9 @@ describe("quote command — API auth key", () => {
       ...quote.routes,
     ]);
     rejectingServer.start();
-    useApiAuthKeychain({
-      getPassword: () => {
-        throw new Error("no secret service");
-      },
-      setPassword: () => {},
-    });
+    const unavailable = new InMemoryKeychain();
+    unavailable.readError = new Error("no secret service");
+    const previousKeychain = _setTestKeychain(unavailable.open);
     try {
       const { exitCode, stdout } = await runCli(JSON_QUOTE_ARGS, {
         WALLET_CLI_MOCK_PORT: String(rejectingServer.port),
@@ -166,7 +165,7 @@ describe("quote command — API auth key", () => {
       expect(JSON.parse(stdout).error.message).toBe("No quotes available: noQuotes");
       expect(signingKeys).toEqual([expect.any(String), signingKeys[0]]);
     } finally {
-      useApiAuthKeychain(null);
+      _setTestKeychain(previousKeychain);
       rejectingServer.stop();
     }
   });

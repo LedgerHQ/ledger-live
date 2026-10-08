@@ -1,15 +1,10 @@
 import { mock } from "bun:test";
+import { createGatedModuleMock } from "../../../testing/gated-module-mock";
 
 /**
- * Shared, flag-gated module mocks for the `agent-intent` command unit tests.
- *
- * Bun evaluates every test file's top-level code in one collection phase before any test runs, and
- * `mock.module` is process-global, so a plain top-level `mock.module("session-store", ...)` in one of
- * these files replaces `Session` for EVERY other file too — including the in-process CLI tests under
- * `src/test/commands`, which then read a fake session with no `accounts` (see `test/helpers/cli-runner.ts`).
- * Instead this installs ONE mock per module whose overridden members delegate to the real
- * implementation unless an agent-intent test file has activated its fakes (`beforeAll`) and not yet
- * released them (`afterAll`). Same approach as `wallet/earn/__test-helpers__/earn-api-mock.ts`.
+ * Shared, flag-gated module mocks for the `agent-intent` command unit tests. The in-process CLI tests
+ * run in the same process and would otherwise read a fake session with no `accounts`, so each
+ * agent-intent test file activates its fakes in `beforeAll` and releases them in `afterAll`.
  */
 
 type AnyFn = (...args: never[]) => unknown;
@@ -58,25 +53,8 @@ const TOKEN_LOOKUP_KEYS = ["findEthereumToken"] as const;
 // Snapshot the genuine exports into PLAIN objects before any mock is installed: `mock.module` re-binds
 // the live namespace to the mock, so a pass-through reading from the namespace would recurse forever.
 const realSessionStore = { ...(await import("../../../session/session-store")) };
-const realSdk = { ...(await import("@ledgerhq/agent-intent-sdk")) } as Record<string, unknown>;
 /** The genuine SDK, for tests that wrap a real SDK function (e.g. a real client over a fake fetch). */
 export const realAgentIntentSdk = { ...(await import("@ledgerhq/agent-intent-sdk")) };
-const realKeychain = { ...(await import("../../../key-ring/agent-intent-keychain")) } as Record<
-  string,
-  unknown
->;
-const realCompletionAuth = {
-  ...(await import("../../../agent-intent/completion-auth")),
-} as Record<string, unknown>;
-const realLkrpSdk = { ...(await import("../../../key-ring/lkrp-sdk")) } as Record<string, unknown>;
-const realCloudSync = { ...(await import("../../../ledger-sync/cloud-sync-accounts")) } as Record<
-  string,
-  unknown
->;
-const realTokenLookup = { ...(await import("../../../agent-intent/token-lookup")) } as Record<
-  string,
-  unknown
->;
 
 let active: AgentIntentMockOverrides | null = null;
 
@@ -90,77 +68,61 @@ const gatedSession = new Proxy(realSessionStore.Session, {
 const gatedWithSessionLock: typeof realSessionStore.withSessionLock = async fn =>
   active?.noopSessionLock ? fn() : realSessionStore.withSessionLock(fn);
 
-function gatedMembers(
-  real: Record<string, unknown>,
-  keys: readonly string[],
-  pick: (key: string) => AnyFn | undefined,
-): Record<string, unknown> {
-  return Object.fromEntries(
-    keys.map(key => [key, (...args: never[]) => (pick(key) ?? (real[key] as AnyFn))(...args)]),
-  );
-}
-
-function installMocks(): void {
+function installSessionMock(): void {
   mock.module("../../../session/session-store", () => ({
     ...realSessionStore,
     Session: gatedSession,
     withSessionLock: gatedWithSessionLock,
   }));
-  mock.module("@ledgerhq/agent-intent-sdk", () => ({
-    ...realSdk,
-    ...gatedMembers(realSdk, SDK_KEYS, key => active?.sdk?.[key as (typeof SDK_KEYS)[number]]),
-  }));
-  mock.module("../../../key-ring/agent-intent-keychain", () => ({
-    ...realKeychain,
-    ...gatedMembers(
-      realKeychain,
-      KEYCHAIN_KEYS,
-      key => active?.keychain?.[key as (typeof KEYCHAIN_KEYS)[number]],
-    ),
-  }));
-  mock.module("../../../agent-intent/completion-auth", () => ({
-    ...realCompletionAuth,
-    ...gatedMembers(
-      realCompletionAuth,
-      COMPLETION_AUTH_KEYS,
-      key => active?.completionAuth?.[key as (typeof COMPLETION_AUTH_KEYS)[number]],
-    ),
-  }));
-  mock.module("../../../key-ring/lkrp-sdk", () => ({
-    ...realLkrpSdk,
-    ...gatedMembers(
-      realLkrpSdk,
-      LKRP_SDK_KEYS,
-      key => active?.lkrpSdk?.[key as (typeof LKRP_SDK_KEYS)[number]],
-    ),
-  }));
-  mock.module("../../../ledger-sync/cloud-sync-accounts", () => ({
-    ...realCloudSync,
-    ...gatedMembers(
-      realCloudSync,
-      CLOUD_SYNC_KEYS,
-      key => active?.cloudSync?.[key as (typeof CLOUD_SYNC_KEYS)[number]],
-    ),
-  }));
-  mock.module("../../../agent-intent/token-lookup", () => ({
-    ...realTokenLookup,
-    ...gatedMembers(
-      realTokenLookup,
-      TOKEN_LOOKUP_KEYS,
-      key => active?.tokenLookup?.[key as (typeof TOKEN_LOOKUP_KEYS)[number]],
-    ),
-  }));
 }
 
-// Installed at load (collection phase) and inactive by default, so every other test sees the real modules.
-installMocks();
+const sdkMock = await createGatedModuleMock("@ledgerhq/agent-intent-sdk", SDK_KEYS);
+const keychainMock = await createGatedModuleMock(
+  require.resolve("../../../key-ring/agent-intent-keychain"),
+  KEYCHAIN_KEYS,
+);
+const completionAuthMock = await createGatedModuleMock(
+  require.resolve("../../../agent-intent/completion-auth"),
+  COMPLETION_AUTH_KEYS,
+);
+const lkrpSdkMock = await createGatedModuleMock(
+  require.resolve("../../../key-ring/lkrp-sdk"),
+  LKRP_SDK_KEYS,
+);
+const cloudSyncMock = await createGatedModuleMock(
+  require.resolve("../../../ledger-sync/cloud-sync-accounts"),
+  CLOUD_SYNC_KEYS,
+);
+const tokenLookupMock = await createGatedModuleMock(
+  require.resolve("../../../agent-intent/token-lookup"),
+  TOKEN_LOOKUP_KEYS,
+);
 
-/** Scope these fakes to the calling test file. Re-installs defensively in case a sibling file restored mocks. */
+// Installed at load (collection phase) and inactive by default, so every other test sees the real module.
+installSessionMock();
+
+/** Scope these fakes to the calling test file. */
 export function activateAgentIntentMocks(overrides: AgentIntentMockOverrides): void {
   active = overrides;
-  installMocks();
+  installSessionMock();
+  sdkMock.activate(overrides.sdk ?? {});
+  keychainMock.activate(overrides.keychain ?? {});
+  completionAuthMock.activate(overrides.completionAuth ?? {});
+  lkrpSdkMock.activate(overrides.lkrpSdk ?? {});
+  cloudSyncMock.activate(overrides.cloudSync ?? {});
+  tokenLookupMock.activate(overrides.tokenLookup ?? {});
 }
 
 export function deactivateAgentIntentMocks(): void {
   active = null;
+  for (const gated of [
+    sdkMock,
+    keychainMock,
+    completionAuthMock,
+    lkrpSdkMock,
+    cloudSyncMock,
+    tokenLookupMock,
+  ]) {
+    gated.deactivate();
+  }
 }

@@ -1,3 +1,4 @@
+import "../live-common-setup";
 import { describe, expect, it } from "bun:test";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
