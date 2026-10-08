@@ -65,13 +65,13 @@ catalog:
   "@ledgerhq/live-network": 3.2.0
   "@ledgerhq/live-promise": 0.4.0
   "@ledgerhq/psbtv2": 0.6.0
-  "@ledgerhq/hw-ledger-key-ring-protocol": 0.14.0
-  "@ledgerhq/ledger-key-ring-protocol": 0.24.0
+  "@ledgerhq/hw-ledger-key-ring-protocol": 1.0.0
+  "@ledgerhq/ledger-key-ring-protocol": 1.0.0
   "@ledgerhq/live-config": 3.9.0
   "@ledgerhq/live-env": 4.1.0
   "@ledgerhq/live-currency-format": 0.16.0
   "@ledgerhq/domain-service": 1.9.1
-  "@ledgerhq/evm-tools": 1.15.1
+  "@ledgerhq/evm-tools": 2.0.0
   "@ledgerhq/lumen-design-core": 0.1.30
   "@ledgerhq/lumen-ui-react": 0.1.61
   "@ledgerhq/lumen-ui-rnative": 0.1.64
@@ -210,7 +210,7 @@ catalog:
   tailwindcss: ^4.1.0
   tailwind-merge: 3.4.0
   tsx: 4.20.6
-  ws: 8.18.3
+  ws: 8.22.0
   qrcode: 1.5.4
   "@types/qrcode": 1.5.5
   otpauth: 9.5.1
