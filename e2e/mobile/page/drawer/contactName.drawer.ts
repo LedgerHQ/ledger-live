@@ -10,9 +10,11 @@ export default class ContactNameDrawer {
 
   contentId = () => `${this.testIDPrefix}-content`;
 
+  confirmButtonId = () => `${this.testIDPrefix}-confirm`;
+
   content = () => getElementById(this.contentId());
   nameInput = () => getElementById(`${this.testIDPrefix}-name-input`);
-  confirmButton = () => getElementById(`${this.testIDPrefix}-confirm`);
+  confirmButton = () => getElementById(this.confirmButtonId());
 
   @Step("Expect the contact name drawer visible")
   async expectVisible() {
@@ -23,6 +25,7 @@ export default class ContactNameDrawer {
   async typeAndConfirm(name: string) {
     // LIVE-37168 - confirm button should remain interactable when the keyboard is open
     await typeTextByElement(this.nameInput(), name, false);
+    await waitForFullyVisibleById(this.confirmButtonId());
     await tapByElement(this.confirmButton());
   }
 }
