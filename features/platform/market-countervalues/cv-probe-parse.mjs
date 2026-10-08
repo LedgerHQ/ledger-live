@@ -1,25 +1,73 @@
 #!/usr/bin/env node
 // MEASUREMENT BUILD ONLY, NEVER MERGE.
-// Reads a log file exported by the desktop (Settings > Help > Save logs) or mobile app, keeps the
-// `cv-probe` summary lines and prints the last one as a table per hook, plus the timeline.
-// Usage: node cv-probe-parse.mjs <exported-logs.txt> [--json]
+// Reads the `cv-probe` summary lines from any of:
+// - a log file exported by the app (Settings > Help > Save logs), desktop or mobile;
+// - the terminal output of the desktop app run with VERBOSE=cv-probe ELECTRON_ENABLE_LOGGING=1;
+// - `adb logcat -s ReactNativeJS:I` output.
+// Prints the last summary as a table per hook, plus the timeline.
+// Usage: node cv-probe-parse.mjs <file> [--json]
 import { readFileSync } from "node:fs";
 
 const [file, flag] = process.argv.slice(2);
 if (!file) {
-  console.error("usage: node cv-probe-parse.mjs <exported-logs.txt> [--json]");
+  console.error("usage: node cv-probe-parse.mjs <file> [--json]");
   process.exit(2);
 }
 
-const entries = JSON.parse(readFileSync(file, "utf8"));
 const PREFIX = "cv-probe ";
-const summaries = entries
-  .filter(e => e && e.type === "cv-probe" && typeof e.message === "string")
-  .map(e => ({
-    at: e.timestamp ?? e.date,
-    ...JSON.parse(e.message.slice(e.message.indexOf(PREFIX) + PREFIX.length)),
-  }))
-  .sort((a, b) => String(a.at).localeCompare(String(b.at)));
+
+// The JSON object that starts at `from`, or null.
+function jsonAt(text, from) {
+  for (let end = text.lastIndexOf("}"); end > from; end = text.lastIndexOf("}", end - 1)) {
+    try {
+      return JSON.parse(text.slice(from, end + 1));
+    } catch {
+      // try a shorter span
+    }
+  }
+  return null;
+}
+
+function fromMessage(message, at) {
+  const i = message.indexOf(PREFIX);
+  const payload = i === -1 ? null : jsonAt(message, i + PREFIX.length);
+  return payload && typeof payload.seq === "number" ? { at, ...payload } : null;
+}
+
+function fromExport(entries) {
+  return entries
+    .filter(e => e && e.type === "cv-probe" && typeof e.message === "string")
+    .map(e => fromMessage(e.message, e.timestamp ?? e.date));
+}
+
+// Terminal lines: a whole log entry printed as JSON (desktop VERBOSE), or the bare line
+// (console.log, as logcat shows it).
+function fromText(text) {
+  return text.split("\n").map(line => {
+    if (!line.includes(PREFIX)) return null;
+    const entryStart = line.indexOf('{"');
+    const entry = entryStart === -1 ? null : jsonAt(line, entryStart);
+    if (entry && entry.type === "cv-probe" && typeof entry.message === "string") {
+      return fromMessage(entry.message, entry.timestamp);
+    }
+    const logcatTime = /^(\d\d-\d\d \d\d:\d\d:\d\d\.\d+)/.exec(line)?.[1];
+    return fromMessage(line, logcatTime);
+  });
+}
+
+const text = readFileSync(file, "utf8");
+let parsed;
+try {
+  parsed = JSON.parse(text);
+} catch {
+  parsed = null;
+}
+const bySeq = new Map();
+for (const s of Array.isArray(parsed) ? fromExport(parsed) : fromText(text)) {
+  // A line can arrive twice (logger and console): keep one per sequence number.
+  if (s && !bySeq.has(s.seq)) bySeq.set(s.seq, s);
+}
+const summaries = [...bySeq.values()].sort((a, b) => a.seq - b.seq);
 
 if (summaries.length === 0) {
   console.error("no cv-probe line in this file");
