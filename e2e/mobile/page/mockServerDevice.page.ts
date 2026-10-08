@@ -9,6 +9,8 @@ const HMAC_NAME_HEX = "11".repeat(32);
 const SUCCESS_STATUS_WORD = "9000";
 
 export class MockServerDevicePage extends MockServerSessionHandle {
+  prompt = (testId: string) => element(by.id(testId));
+
   @Step("Mock the dashboard contact rename")
   async mockDashboardRename() {
     await this.pinApduResponse(
@@ -19,7 +21,7 @@ export class MockServerDevicePage extends MockServerSessionHandle {
 
   @Step("Confirm the open device prompt")
   async confirmDeviceIntent(testId: string) {
-    const prompt = element(by.id(testId));
+    const prompt = this.prompt(testId);
     await waitFor(prompt).toBeVisible().withTimeout(TIMEOUT.xxlarge);
     await this.approvePromptsUntil(async () => {
       try {
@@ -29,6 +31,11 @@ export class MockServerDevicePage extends MockServerSessionHandle {
         return false;
       }
     });
+    await this.dismissDeviceCompletionStatus();
+  }
+
+  @Step("Dismiss the device completion status")
+  async dismissDeviceCompletionStatus() {
     await this.dismissCompletionStatus();
   }
 }

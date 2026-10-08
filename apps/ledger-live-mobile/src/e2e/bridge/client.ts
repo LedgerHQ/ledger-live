@@ -111,12 +111,21 @@ function applyMockServerLaunchArgs() {
     setEnv("BASE_SOCKET_URL", scriptRunnerUrl);
   }
 
+  seedMockServerKnownDevice(model as DeviceModelId);
+}
+
+function seedMockServerKnownDevice(model: DeviceModelId) {
+  const alreadySeeded = knownDevicesSelector(store.getState()).some(
+    device => device.transport === mockserverIdentifier && device.deviceModelId === model,
+  );
+  if (alreadySeeded) return;
+
   store.dispatch(
     addKnownDevice({
       transport: mockserverIdentifier,
       id: "",
       name: null,
-      deviceModelId: model as DeviceModelId,
+      deviceModelId: model,
     }),
   );
 }

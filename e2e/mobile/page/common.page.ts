@@ -185,6 +185,10 @@ export default class CommonPage {
     if (isIos()) await this.disableSynchronization();
   }
 
+  async enableSynchronizationForiOS() {
+    if (isIos()) await this.enableSynchronization();
+  }
+
   async disableSynchronization() {
     await this.retryDetoxSync(() => device.disableSynchronization(), "disableSynchronization");
   }

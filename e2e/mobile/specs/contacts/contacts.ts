@@ -199,7 +199,6 @@ export function runBrowseAndSearchContactsTest(tmsLinks: string[], tags: string[
 // On-device rename leaves the Ethereum app for the dashboard, which ends a Speculos session.
 const CONTACTS_APP_CATALOG_PROVIDER = 4;
 const REGISTER_DEVICE_PROMPT_ID = "contacts-register-external-address-continue-on-device";
-const RENAME_DEVICE_PROMPT_ID = "contacts-rename-contact-continue-on-device";
 const ETHEREUM_ADDRESS = CONTACT_ADDRESS_DATASET.find(
   row => row.networkId === "ethereum" && !row.isEns,
 );
@@ -293,6 +292,7 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
       await app.contacts.detail.expectName(CONTACT_NAME);
       await app.contacts.detail.expectNoAddresses();
 
+      await app.common.disableSynchronizationForiOS();
       await app.contacts.detail.addAddress(ETHEREUM_ADDRESS);
       await mockServer.confirmDeviceIntent(REGISTER_DEVICE_PROMPT_ID);
       await app.contacts.detail.expectAddressSaved(
@@ -302,8 +302,9 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
 
       await mockServer.mockDashboardRename();
       await app.contacts.detail.renameContact(RENAMED_CONTACT_NAME);
-      await mockServer.confirmDeviceIntent(RENAME_DEVICE_PROMPT_ID);
       await app.contacts.detail.expectName(RENAMED_CONTACT_NAME);
+      await mockServer.dismissDeviceCompletionStatus();
+      await app.common.enableSynchronizationForiOS();
 
       await app.common.goToPreviousPage();
       await app.contacts.expectScreenVisible();
