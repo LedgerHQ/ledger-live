@@ -57,6 +57,7 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
     availableFirmwareUpdate: null,
     currentSetupStep: null,
     ...overrides,
+    recoveryKeyBackupOpen: overrides.recoveryKeyBackupOpen ?? false,
   };
 }
 
@@ -214,7 +215,10 @@ describe("recordOnboardingToolEvent", () => {
     const recorded = recordOnboardingToolEvent(
       {
         type: "STEP_CHANGED",
-        state: { ...deviceState(OnboardingStep.Ready), recoveryKeyStatus: RecoveryKeyStatus.Choice },
+        state: {
+          ...deviceState(OnboardingStep.Ready),
+          recoveryKeyStatus: RecoveryKeyStatus.Choice,
+        },
       },
       "1",
       "session-1",
