@@ -58,9 +58,9 @@ export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput
           sendBack(mapFirmwareMetadata(metadata));
         }
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (!stopped) {
-          sendBack({ type: "FIRMWARE_CHECK_FAILED" });
+          sendBack({ type: "FIRMWARE_CHECK_FAILED", output: error });
         }
       });
 

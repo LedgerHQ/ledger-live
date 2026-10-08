@@ -3,6 +3,7 @@ import type {
   DeviceModelId,
   DeviceSessionId,
   FirmwareUpdateContext,
+  GetOsVersionResponse,
   GenuineCheckDAOutput,
 } from "@ledgerhq/device-management-kit";
 import type { DeviceOnboardingPorts } from "./ports";
@@ -79,7 +80,7 @@ export type DeviceOnboardingState = {
 export type OnboardingEvent =
   | { type: "SESSION_READY" }
   | { type: "LOCKED" }
-  | { type: "UNLOCKED" }
+  | { type: "UNLOCKED"; output?: GetOsVersionResponse }
   | { type: "TRANSPORT_LOST" }
   | { type: "STEP_CHANGED"; state: DeviceOnboardingState }
   | { type: "DEVICE_STATE_READ"; state: DeviceOnboardingState; firmwareVersion: string }
@@ -89,11 +90,11 @@ export type OnboardingEvent =
       isInRecoveryMode: boolean;
       firmwareVersion: string;
     }
-  | { type: "DEVICE_STATE_FAILED" }
-  | { type: "DEVICE_IN_BOOTLOADER" }
-  | { type: "DEVICE_IN_OSU" }
+  | { type: "DEVICE_STATE_FAILED"; output: unknown }
+  | { type: "DEVICE_IN_BOOTLOADER"; output: string }
+  | { type: "DEVICE_IN_OSU"; output: string }
   | { type: "EARLY_CHECK_TOGGLED" }
-  | { type: "EARLY_CHECK_UNAVAILABLE" }
+  | { type: "EARLY_CHECK_UNAVAILABLE"; output: unknown }
   | { type: "ALLOW_SECURE_CONNECTION_REQUESTED" }
   | { type: "SECURE_CONNECTION_ALLOWED" }
   | { type: "GENUINE_CHECK_PASSED"; output: GenuineCheckDAOutput }
@@ -106,7 +107,7 @@ export type OnboardingEvent =
       type: "FIRMWARE_UPDATE_AVAILABLE";
       output: InstalledFirmware & { update: AvailableFirmwareUpdate };
     }
-  | { type: "FIRMWARE_CHECK_FAILED" }
+  | { type: "FIRMWARE_CHECK_FAILED"; output: unknown }
   | { type: "FIRMWARE_UPDATE_FLOW_CLOSED" }
   | { type: "RETRY" }
   | { type: "SKIP" }

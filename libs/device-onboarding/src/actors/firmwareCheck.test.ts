@@ -5,6 +5,7 @@ import {
   type GetDeviceMetadataDAIntermediateValue,
   type GetDeviceMetadataDAOutput,
 } from "@ledgerhq/device-management-kit";
+import { DeviceActionStoppedError } from "../device/deviceAction";
 import { isCatalogueUnreachable } from "../device/errors";
 import { createRetryPolicy } from "../retry";
 import { runActor, settle } from "../tests/actorHarness";
@@ -96,11 +97,12 @@ describe("firmwareCheck", () => {
     const fake = createFake();
     const { received, stop } = start(fake);
 
-    fail(fake, new UnknownDAError());
+    const error = new UnknownDAError();
+    fail(fake, error);
     await settle();
 
     expect(fake.executions).toHaveLength(1);
-    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED" }]);
+    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED", output: error }]);
     stop();
   });
 
@@ -111,7 +113,9 @@ describe("firmwareCheck", () => {
     fake.lastExecution().stop();
     await settle();
 
-    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED" }]);
+    expect(received).toEqual([
+      { type: "FIRMWARE_CHECK_FAILED", output: expect.any(DeviceActionStoppedError) },
+    ]);
     stop();
   });
 
@@ -139,7 +143,7 @@ describe("firmwareCheck", () => {
     }
 
     expect(fake.executions).toHaveLength(3);
-    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED" }]);
+    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED", output: catalogueUnreachable }]);
     stop();
   });
 

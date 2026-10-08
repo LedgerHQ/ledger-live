@@ -33,10 +33,10 @@ export const unlockPolling = fromCallback<UnlockPollingEvent, UnlockPollingInput
     const poll = async () => {
       while (!stopped) {
         try {
-          await sendOsVersionCommand(input.dmk, input.sessionId);
+          const output = await sendOsVersionCommand(input.dmk, input.sessionId);
 
           if (!stopped) {
-            sendBack({ type: "UNLOCKED" });
+            sendBack({ type: "UNLOCKED", output });
           }
 
           return;

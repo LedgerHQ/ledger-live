@@ -28,11 +28,11 @@ export type ReadDeviceStateInput = {
 
 export function mapDeviceState(response: GetOsVersionResponse): ReadDeviceStateEvent {
   if (response.isBootloader) {
-    return { type: "DEVICE_IN_BOOTLOADER" };
+    return { type: "DEVICE_IN_BOOTLOADER", output: response.seVersion };
   }
 
   if (response.isOsu) {
-    return { type: "DEVICE_IN_OSU" };
+    return { type: "DEVICE_IN_OSU", output: response.seVersion };
   }
 
   const state = readOnboardingState(response);
@@ -66,9 +66,9 @@ export const readDeviceState = fromCallback<ReadDeviceStateEvent, ReadDeviceStat
           sendBack(mapDeviceState(response));
         }
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (!stopped) {
-          sendBack({ type: "DEVICE_STATE_FAILED" });
+          sendBack({ type: "DEVICE_STATE_FAILED", output: error });
         }
       });
 
