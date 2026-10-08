@@ -99,6 +99,10 @@ test.describe("Contacts - rename with an address (mock server)", () => {
     "Register an address and rename the contact on the device",
     {
       tag: CONTACTS_DEVICE_TAGS,
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-6239",
+      },
     },
     async ({ app, page, mockServer }) => {
       await app.mainNavigation.openTargetFromMainNavigation("home");
