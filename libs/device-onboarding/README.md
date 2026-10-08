@@ -60,8 +60,8 @@ open. Other reasons: `legacyFallback`, `resumeFirmwareUpdate`, `userQuit`.
 - `actors/` — the only code that talks to the device: `readDeviceState`, `genuineCheck`,
   `toggleEarlyCheck`, `seedPolling`. `firmwareCheck` asks the app for the catalogue instead, so it
   never lists installed apps. Each reports through events only
-- `withRetries`, `createRetryPolicy` — back the retries of the first three, so a failure event from
-  them means the retries are exhausted
+- `withRetries`, `createRetryPolicy` — back the retries of `readDeviceState`, `genuineCheck`, and
+  `firmwareCheck`, so a failure event from them means the retries are exhausted
 - `sessionListener` — maps DMK session status changes to onboarding events. The app owns the
   subscription, since it owns the session
 - `ToggleEarlyCheckCommand` — the `e0 03` APDU, which DMK exposes no command for. Import DMK's own

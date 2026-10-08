@@ -47,7 +47,7 @@ export {
   type GenuineCheckFailureEvent,
   type GenuineCheckInput,
 } from "./actors/genuineCheck";
-export { CatalogueUnreachable } from "./device/errors";
+export { CatalogueUnreachable } from "./errors";
 export {
   firmwareCheck,
   mapFirmwareLookup,

@@ -20,7 +20,7 @@ export async function lookupFirmwareUpdate(
 
     return context === null || context === undefined ? null : toAvailableFirmwareUpdate(context);
   } catch (error) {
-    if (isAbortError(error) || !isNetworkDown(error)) {
+    if (isAbortError(error) || !isRetryableCatalogueError(error)) {
       throw error;
     }
 
@@ -169,6 +169,6 @@ function isAbortError(error: unknown): boolean {
   return error instanceof Error && error.name === "AbortError";
 }
 
-function isNetworkDown(error: unknown): boolean {
-  return error instanceof Error && error.name === "NetworkDown";
+function isRetryableCatalogueError(error: unknown): boolean {
+  return error instanceof Error && (error.name === "NetworkDown" || error.name === "LedgerAPI5xx");
 }

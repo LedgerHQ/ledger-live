@@ -1,4 +1,5 @@
-import { CatalogueUnreachable, isCatalogueUnreachable } from "../device/errors";
+import { isCatalogueUnreachable } from "../device/errors";
+import { CatalogueUnreachable } from "../errors";
 import { createRetryPolicy } from "../retry";
 import { runActor, settle } from "../tests/actorHarness";
 import type { AvailableFirmwareUpdate } from "../types";

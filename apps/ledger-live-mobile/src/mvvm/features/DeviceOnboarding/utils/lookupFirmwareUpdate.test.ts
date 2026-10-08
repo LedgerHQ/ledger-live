@@ -95,16 +95,19 @@ describe("lookupFirmwareUpdate", () => {
     expect(mockedGetLatestFirmware).not.toHaveBeenCalled();
   });
 
-  it("reports an unreachable catalogue when the network is down", async () => {
-    mockDeviceInfo();
-    mockedGetLatestFirmware.mockRejectedValue(namedError("NetworkDown"));
+  it.each(["NetworkDown", "LedgerAPI5xx"])(
+    "reports an unreachable catalogue when the catalogue fails with %s",
+    async name => {
+      mockDeviceInfo();
+      mockedGetLatestFirmware.mockRejectedValue(namedError(name));
 
-    await expect(
-      lookupFirmwareUpdate("device", "Ledger Stax", freshSignal()),
-    ).rejects.toBeInstanceOf(CatalogueUnreachable);
-  });
+      await expect(
+        lookupFirmwareUpdate("device", "Ledger Stax", freshSignal()),
+      ).rejects.toBeInstanceOf(CatalogueUnreachable);
+    },
+  );
 
-  it.each(["FirmwareNotRecognized", "UnknownMCU"])(
+  it.each(["FirmwareNotRecognized", "UnknownMCU", "LedgerAPI4xx"])(
     "fails a %s catalogue error once, without treating it as unreachable",
     async name => {
       mockDeviceInfo();
