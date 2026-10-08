@@ -173,14 +173,6 @@ export function createRendererConfig(
             fullySpecified: false,
           },
         },
-        // key-ring-protocol needs its own @noble/* v2, not the v1 pinned in lld's node_modules
-        {
-          test: /\.m?js$/,
-          include: /node_modules\/\.pnpm\/@ledgerhq\+(hw-)?ledger-key-ring-protocol@/,
-          resolve: {
-            modules: ["node_modules"],
-          },
-        },
         // TypeScript/JavaScript with React support
         {
           test: /\.(ts|tsx)$/,
