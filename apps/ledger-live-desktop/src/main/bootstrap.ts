@@ -3,6 +3,7 @@ import { app, ipcMain } from "electron";
 import Store from "electron-store";
 import { BOOTSTRAP_VERSION, CHANNELS, type Bootstrap } from "~/bridge/contract";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
+import { isPlaywrightRun } from "./isPlaywrightRun";
 
 let store: Store | undefined;
 
@@ -33,12 +34,7 @@ export function buildBootstrap(): Bootstrap {
       userData: app.getPath("userData"),
       home: app.getPath("home"),
     },
-    appDirname: app.dirname || "",
     distributionChannel: getDistributionChannel(),
-    locale: {
-      app: app.getLocale(),
-      system: app.getSystemLocale(),
-    },
     store: getStore().store as Record<string, unknown>,
   };
 }
@@ -55,11 +51,6 @@ ipcMain.on(CHANNELS.storeSet, (_event, key: string, value: unknown) => {
 ipcMain.on(CHANNELS.storeClear, () => {
   getStore().clear();
 });
-
-const isPlaywrightRun = () => {
-  const value = process.env.PLAYWRIGHT_RUN;
-  return !!value && value !== "0" && value !== "false";
-};
 
 // Same gate as bootstrapCardSession in the renderer.
 ipcMain.handle(CHANNELS.cardSessionBootstrap, () => {

@@ -7,10 +7,11 @@ import {
   type UpdaterBridge,
   type UpdaterStatusEvent,
   type AppBridge,
-  type DialogsBridge,
   type FilesBridge,
   type PowerBridge,
   type StoreBridge,
+  type ShellBridge,
+  type SystemBridge,
 } from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
@@ -26,9 +27,7 @@ export const bootstrap: Bootstrap = {
     userData: "/tmp/ledger-live-test/userdata",
     home: "/tmp/ledger-live-test/home",
   },
-  appDirname: "/tmp/ledger-live-test/app",
   distributionChannel: "direct",
-  locale: { app: "en-US", system: "en-US" },
   store: {},
 };
 
@@ -64,13 +63,10 @@ export const app: jest.Mocked<AppBridge> = {
   show: jest.fn(),
 };
 
-export const dialogs: jest.Mocked<DialogsBridge> = {
-  showSave: jest.fn().mockResolvedValue({ canceled: true }),
-};
-
 export const files: jest.Mocked<FilesBridge> = {
-  saveLogs: jest.fn().mockResolvedValue(undefined),
-  exportOperations: jest.fn().mockResolvedValue(true),
+  saveLogs: jest.fn().mockResolvedValue("saved"),
+  exportOperations: jest.fn().mockResolvedValue("saved"),
+  savePng: jest.fn().mockResolvedValue("saved"),
   openUserDataDirectory: jest.fn().mockResolvedValue(undefined),
 };
 
@@ -82,6 +78,16 @@ export const power: jest.Mocked<PowerBridge> = {
 export const store: jest.Mocked<StoreBridge> = {
   set: jest.fn(),
   clear: jest.fn(),
+};
+
+export const shell: jest.Mocked<ShellBridge> = {
+  openExternal: jest.fn(),
+};
+
+export const system: jest.Mocked<SystemBridge> = {
+  clipboardMatchesText: jest.fn().mockResolvedValue(null),
+  setVisualZoomLevelLimits: jest.fn(),
+  getResourceUsage: jest.fn(() => undefined),
 };
 
 export const cardSession: CardSessionBridge = {

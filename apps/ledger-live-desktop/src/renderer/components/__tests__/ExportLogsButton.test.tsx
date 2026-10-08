@@ -1,6 +1,6 @@
 import React from "react";
 import { act, fireEvent, render, screen } from "tests/testSetup";
-import { dialogs } from "~/renderer/bridge";
+import { saveLogs } from "~/helpers/saveLogs";
 import ExportLogsButton from "../ExportLogsButton";
 
 jest.mock("~/renderer/logger", () => ({
@@ -10,10 +10,6 @@ jest.mock("~/renderer/logger", () => ({
     critical: jest.fn(),
     onReduxAction: jest.fn(),
   },
-}));
-
-jest.mock("electron", () => ({
-  webFrame: { getResourceUsage: jest.fn(() => ({})) },
 }));
 
 jest.mock("~/helpers/saveLogs", () => ({
@@ -43,7 +39,10 @@ describe("ExportLogsButton", () => {
     await pressCtrlE();
 
     expect(screen.queryByTestId("export-logs-button")).toBeNull();
-    expect(dialogs.showSave).toHaveBeenCalledWith(expect.anything());
+    expect(saveLogs).toHaveBeenCalledWith({
+      options: expect.objectContaining({ title: "Export logs" }),
+      e2ePath: "./ledgerwallet-logs.txt",
+    });
   });
 
   it("does not export the logs on e without ctrl", async () => {
@@ -51,7 +50,7 @@ describe("ExportLogsButton", () => {
 
     await pressCtrlE({ key: "e" });
 
-    expect(dialogs.showSave).not.toHaveBeenCalled();
+    expect(saveLogs).not.toHaveBeenCalled();
   });
 
   it("does not listen to the shortcut when it renders the button", async () => {
@@ -59,6 +58,6 @@ describe("ExportLogsButton", () => {
 
     await pressCtrlE();
 
-    expect(dialogs.showSave).not.toHaveBeenCalled();
+    expect(saveLogs).not.toHaveBeenCalled();
   });
 });

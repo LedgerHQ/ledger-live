@@ -1,9 +1,4 @@
-import { clipboard } from "electron";
+import { system } from "~/renderer/bridge";
 
-export const readText = (): string | null => {
-  try {
-    return clipboard.readText();
-  } catch {
-    return null;
-  }
-};
+export const clipboardMatches = (text: string): Promise<boolean | null> =>
+  system.clipboardMatchesText(text);

@@ -1,8 +1,8 @@
 // Bundled into the preload: keep it to types and constants.
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 3;
-export const BOOTSTRAP_VERSION = 1;
+export const BRIDGE_VERSION = 4;
+export const BOOTSTRAP_VERSION = 2;
 
 export type Serializable =
   | null
@@ -26,12 +26,7 @@ export type Bootstrap = {
     userData: string;
     home: string;
   };
-  appDirname: string;
   distributionChannel: "mac-app-store" | "windows-store" | "direct";
-  locale: {
-    app: string;
-    system: string;
-  };
   store: Record<string, unknown>;
 };
 
@@ -68,7 +63,13 @@ export type DeeplinkBridge = {
   onOpen(callback: (url: string) => void): Unsubscribe;
 };
 
-export type SaveTarget = { canceled: boolean; filePath?: string };
+export type SaveRequest = {
+  options: Electron.SaveDialogOptions;
+  /** Honoured only when PLAYWRIGHT_RUN is set in main. */
+  e2ePath?: string;
+};
+
+export type SaveOutcome = "saved" | "canceled" | "failed";
 
 export type AppBridge = {
   reload(): void;
@@ -77,14 +78,11 @@ export type AppBridge = {
   show(): void;
 };
 
-export type DialogsBridge = {
-  showSave(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
-};
-
 export type FilesBridge = {
   /** Pre-stringified: the logs hold circular references the bridge cannot carry. */
-  saveLogs(target: SaveTarget, logsJson: string): Promise<void>;
-  exportOperations(target: SaveTarget, csv: string): Promise<boolean>;
+  saveLogs(request: SaveRequest, logsJson: string): Promise<SaveOutcome>;
+  exportOperations(request: SaveRequest, csv: string): Promise<SaveOutcome>;
+  savePng(options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome>;
   openUserDataDirectory(): Promise<unknown>;
 };
 
@@ -98,6 +96,18 @@ export type StoreBridge = {
   clear(): void;
 };
 
+/** Its own group, so the lint guardrail matching on a `shell` object still sees the facade. */
+export type ShellBridge = {
+  openExternal(url: string): void;
+};
+
+export type SystemBridge = {
+  /** Compared in main so renderer code never reads the clipboard; null when it cannot be read. */
+  clipboardMatchesText(expected: string): Promise<boolean | null>;
+  setVisualZoomLevelLimits(minimum: number, maximum: number): void;
+  getResourceUsage(): Electron.ResourceUsage | undefined;
+};
+
 /** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
 export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
@@ -106,11 +116,12 @@ export type CardSessionBridge = {
 export type LedgerBridge = {
   version: typeof BRIDGE_VERSION;
   bootstrap: Bootstrap;
+  shell: ShellBridge;
+  system: SystemBridge;
   db: DbBridge;
   updater: UpdaterBridge;
   deeplink: DeeplinkBridge;
   app: AppBridge;
-  dialogs: DialogsBridge;
   files: FilesBridge;
   power: PowerBridge;
   store: StoreBridge;
@@ -139,11 +150,18 @@ export const CHANNELS = {
   appRelaunch: "app-relaunch",
   appQuit: "app-quit",
   showApp: "show-app",
-  showSaveDialog: "show-save-dialog",
   saveLogs: "save-logs",
   exportOperations: "export-operations",
+  savePng: "save-png",
   openUserDataDirectory: "openUserDataDirectory",
   keepScreenAwake: "activate-keep-screen-awake",
   releaseScreenAwake: "deactivate-keep-screen-awake",
+  openExternal: "shell:open-external",
+  clipboardMatchesText: "clipboard:matches-text",
   cardSessionBootstrap: "card-session:bootstrap",
+  // Sent by the preload itself, outside the bridge.
+  reloadRenderer: "reloadRenderer",
+  webviewDomReady: "webview-dom-ready",
+  setBackgroundColor: "set-background-color",
+  readyToShow: "ready-to-show",
 } as const;

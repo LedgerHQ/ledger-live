@@ -75,7 +75,7 @@
           {
             "name": "electron",
             "importNames": ["clipboard"],
-            "message": "Use copyToClipboard / readClipboard from @shared/clipboard. Electron's clipboard is reserved to ~/renderer/clipboard (address-hijack check)."
+            "message": "Use copyToClipboard / readClipboard from @shared/clipboard. Electron's clipboard is reserved to main/systemHandlers (address-hijack check)."
           },
           {
             "name": "react-redux",
@@ -160,7 +160,7 @@
   },
   "overrides": [
     {
-      "files": ["src/renderer/clipboard.ts"],
+      "files": ["src/main/systemHandlers.ts", "src/main/systemHandlers.test.ts"],
       "rules": {
         "eslint/no-restricted-imports": "off"
       }

@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 import { CHANNELS } from "~/bridge/contract";
-import { app, dialogs, files, power, store } from "./shell";
+import { app, files, power, store } from "./shell";
 
 jest.mock("electron", () => ({ ipcRenderer: { send: jest.fn(), invoke: jest.fn() } }));
 
@@ -20,22 +20,22 @@ describe("preload shell bridge", () => {
 
   it.each([
     [
-      "dialogs.showSave",
-      () => dialogs.showSave({ defaultPath: "logs.json" }),
-      CHANNELS.showSaveDialog,
-      [{ defaultPath: "logs.json" }],
-    ],
-    [
       "files.saveLogs",
-      () => files.saveLogs({ canceled: false, filePath: "/tmp/logs.json" }, "[]"),
+      () => files.saveLogs({ options: { defaultPath: "logs.json" } }, "[]"),
       CHANNELS.saveLogs,
-      [{ canceled: false, filePath: "/tmp/logs.json" }, "[]"],
+      [{ options: { defaultPath: "logs.json" } }, "[]"],
     ],
     [
       "files.exportOperations",
-      () => files.exportOperations({ canceled: false, filePath: "/tmp/ops.csv" }, "csv"),
+      () => files.exportOperations({ options: { defaultPath: "ops.csv" } }, "csv"),
       CHANNELS.exportOperations,
-      [{ canceled: false, filePath: "/tmp/ops.csv" }, "csv"],
+      [{ options: { defaultPath: "ops.csv" } }, "csv"],
+    ],
+    [
+      "files.savePng",
+      () => files.savePng({ defaultPath: "qr.png" }, "aGVsbG8="),
+      CHANNELS.savePng,
+      [{ defaultPath: "qr.png" }, "aGVsbG8="],
     ],
     [
       "files.openUserDataDirectory",

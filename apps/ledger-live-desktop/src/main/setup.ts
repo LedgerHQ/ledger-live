@@ -1,107 +1,14 @@
-import { getEnv, setEnvUnsafe } from "@shared/env";
+import { setEnvUnsafe } from "@shared/env";
 import "./env";
 import "./live-common-setup-main";
 import "./bootstrap";
-import { app, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
+import "./saveHandlers";
+import "./systemHandlers";
 import contextMenu from "electron-context-menu";
-import fs from "fs/promises";
-import updater from "./updater";
-import { mergeAllLogsJSON } from "./mergeAllLogs";
-import { InMemoryLogger } from "./logger";
 
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
 }
-
-ipcMain.on("updater", (e, type) => {
-  updater(type);
-});
-
-/**
- * Saves logs from the renderer process to a file.
- */
-ipcMain.handle(
-  "save-logs",
-  async (_event, path: Electron.SaveDialogReturnValue, rendererLogsStr: string) => {
-    if (!path.canceled && path.filePath) {
-      const inMemoryLogger = InMemoryLogger.getLogger();
-      const internalLogsChronological = inMemoryLogger.getLogs().reverse(); // The logs are in reverse order.
-
-      // The deserialization would have been done internally by electron if `rendererLogs` was passed directly as a JS object/array.
-      // But it avoids certain issues with the serialization/deserialization done by electron.
-      let rendererLogsChronological: Array<{ timestamp: string }> = [];
-      try {
-        rendererLogsChronological = JSON.parse(rendererLogsStr).reverse(); // The logs are in reverse order.
-      } catch (e) {
-        console.warn("Error while parsing logs from the renderer process", e);
-        return;
-      }
-
-      fs.writeFile(
-        path.filePath,
-        mergeAllLogsJSON(
-          rendererLogsChronological,
-          internalLogsChronological,
-          getEnv("EXPORT_MAX_LOGS"),
-        ),
-      );
-    } else {
-      console.warn("No path given to save logs");
-    }
-  },
-);
-
-ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
-
-ipcMain.handle(
-  "export-operations",
-  async (
-    event,
-    path: {
-      canceled: boolean;
-      filePath: string;
-    },
-    csv: string,
-  ): Promise<boolean> => {
-    try {
-      if (!path.canceled && path.filePath && csv) {
-        await fs.writeFile(path.filePath, csv);
-        return true;
-      }
-    } catch {
-      // ignore
-    }
-    return false;
-  },
-);
-
-ipcMain.handle(
-  "save-png",
-  async (_event, dialogOptions: Electron.SaveDialogOptions, base64: string): Promise<boolean> => {
-    try {
-      if (base64) {
-        const result = await dialog.showSaveDialog(dialogOptions);
-        if (!result.canceled && result.filePath) {
-          await fs.writeFile(result.filePath, Buffer.from(base64, "base64"));
-          return true;
-        }
-      }
-    } catch {
-      // ignore
-    }
-    return false;
-  },
-);
-
-ipcMain.handle("activate-keep-screen-awake", () => {
-  return powerSaveBlocker.start("prevent-display-sleep");
-});
-
-ipcMain.handle("deactivate-keep-screen-awake", (_ev, id?: number) => {
-  if (id !== undefined && !Number.isNaN(id)) {
-    powerSaveBlocker.stop(id as number);
-  }
-});
 
 process.setMaxListeners(0);
 

@@ -3,6 +3,7 @@ import { autoUpdater, UpdateDownloadedEvent } from "electron-updater";
 import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
 import { isStoreDistribution } from "~/helpers/distributionChannel";
+import { CHANNELS } from "~/bridge/contract";
 
 export type UpdateStatus =
   | "idle"
@@ -23,7 +24,7 @@ const UPDATE_CHECK_FEED = __PRERELEASE__
 const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   const win = getMainWindow();
   if (win) {
-    win.webContents.send("updater", {
+    win.webContents.send(CHANNELS.updater, {
       status,
       payload,
     });
