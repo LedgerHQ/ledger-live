@@ -51,6 +51,9 @@ stateDiagram-v2
   `getDiscoveredDeviceKey` tells which discovered device is the same device
   from one discovery update to the next. Each listed device has this `key`,
   so that the UI can use it as the row key.
+- The injected `filterListedDevices`, when given, selects the listed devices
+  that `Discovering` emits. The machine keeps the hidden devices in its list,
+  so that a hidden device keeps its position when it shows again.
 - Each entry into `Discovering` clears the device list, the selection and
   the errors, sets `showDeviceNotFound` to `false` and starts the device not
   found delay (`DEFAULT_DEVICE_NOT_FOUND_DELAY`, 5 s). When the delay elapses,

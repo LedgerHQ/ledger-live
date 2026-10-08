@@ -18,6 +18,8 @@ The component runs `connectNewDevice` from `@ledgerhq/live-dmk-mobile`. It shows
 
 The devices stay in the order in which they were first discovered, so that a row does not move when the user taps it. A device that is no longer discovered stays at its position with a disabled card and button. It becomes selectable again when it is discovered again.
 
+When a USB device is available, only the available USB devices show. Otherwise, only the devices on the other transports show. The user plugged in that device, and the same device can also be discovered over Bluetooth.
+
 ## Errors
 
 Discovery, connection and unknown errors show in a bottom sheet, over the last view. The sheet uses the shared error components in [`../DeviceConnection/`](../DeviceConnection/).

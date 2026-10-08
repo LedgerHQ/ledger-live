@@ -40,11 +40,13 @@ export {
 } from "./connectDevice/connectDeviceUseCase";
 export { ConnectNewDeviceUIStateTypes } from "./connectNewDevice/types";
 export type {
+  ConnectNewDeviceFilterListedDevices,
   ConnectNewDeviceGetDiscoveredDeviceKey,
   ConnectNewDeviceMapConnectionError,
   ConnectNewDeviceStateMachineInput,
   ConnectNewDeviceUIState,
   ConnectNewDeviceUIStateType,
+  ListedDevice,
   SelectableDevice,
 } from "./connectNewDevice/types";
 export {
