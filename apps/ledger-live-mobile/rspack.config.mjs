@@ -242,6 +242,10 @@ export default withRozeniteUrlFix(
               "index.browser.mjs",
             ),
             "rpc-websockets": resolvePackageFile("rpc-websockets", "dist", "index.browser.mjs"),
+            "react-native-get-random-values": path.resolve(
+              __dirname,
+              "src/getRandomValuesPolyfill.ts",
+            ),
           },
           fallback: {
             ...require("node-libs-react-native"),
