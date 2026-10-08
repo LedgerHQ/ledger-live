@@ -174,48 +174,38 @@ export const getAccessKey = async (
   return data.result || {};
 };
 
-type SendTxStatus = {
-  final_execution_status?: string;
-  transaction?: { hash?: string };
-};
-
-type SendTxRpcError = {
+type NearRpcError = {
   name?: string;
   cause?: {
     name?: string;
-    info?: {
-      cause?: string;
-      error_message?: string;
-      status?: SendTxStatus;
-    };
+    info?: { error_message?: string };
   };
   message?: unknown;
   data?: unknown;
 };
 
-type SendTxResponse = {
+// `send_tx` and `tx` both answer with the transaction on success and a JSON-RPC error otherwise.
+type NearRpcTransactionResponse = {
   result?: { transaction?: { hash?: string } };
-  error?: SendTxRpcError;
+  error?: NearRpcError;
 };
 
 // The node reports a handler error (`TIMEOUT_ERROR` included) with a non-2xx HTTP status. Letting
 // those through keeps the JSON-RPC body readable here instead of having the network layer
 // stringify it into "[object Object]".
-const SEND_TX_RPC_STATUSES = new Set([200, 400, 408, 500]);
+const NEAR_RPC_STATUSES = new Set([200, 400, 408, 500]);
 
-// Finality levels that prove the node has already included the transaction in a block.
-const OBSERVED_FINALITIES = new Set([
-  "INCLUDED",
-  "EXECUTED_OPTIMISTIC",
-  "INCLUDED_FINAL",
-  "EXECUTED",
-  "FINAL",
-]);
+// A timed-out `send_tx` is held open by the node for about 10s. Retries stop being started once
+// this budget is spent, which bounds how long the user waits after signing to roughly the budget
+// plus one last attempt.
+const BROADCAST_RETRY_BUDGET_MS = 30_000;
+
+const TRANSACTION_LOOKUP_TIMEOUT_MS = 10_000;
 
 const asString = (value: unknown): string | undefined =>
   typeof value === "string" && value.length > 0 ? value : undefined;
 
-const describeRpcError = (error: SendTxRpcError): string => {
+const describeRpcError = (error: NearRpcError): string => {
   const name = error.cause?.name ?? error.name ?? "UNKNOWN CAUSE";
   const detail =
     asString(error.cause?.info?.error_message) ?? asString(error.data) ?? asString(error.message);
@@ -223,36 +213,47 @@ const describeRpcError = (error: SendTxRpcError): string => {
   return detail ? `${name}: ${detail}` : name;
 };
 
-// A NEAR transaction id is the SHA-256 of the Borsh-encoded unsigned transaction. That same digest
-// is what gets signed, but the signature itself is not part of the id, so it is hashed from the
-// decoded `transaction` rather than from the signed bytes.
-const deriveTransactionHash = (signedTransaction: string): string | undefined => {
+// A timeout only says the node did not reach the requested finality in time, not that the
+// broadcast failed: the transaction may well have been taken. Whether the node saw it is only
+// reported in the timeout details from nearcore 2.14 on, so ask the node for the transaction by
+// hash, which works on every version. Any failure here leaves the original timeout to be reported.
+const findBroadcastTransactionHash = async (
+  config: NearConfig,
+  signedTransaction: string,
+): Promise<string | undefined> => {
   try {
     const { transaction } = decodeSignedTransaction(base64Decode(signedTransaction));
+    // A NEAR transaction id is the SHA-256 of the Borsh-encoded unsigned transaction. That same
+    // digest is what gets signed, but the signature itself is not part of the id, so it is hashed
+    // from the decoded `transaction` rather than from the signed bytes.
+    const hash = baseEncode(sha256(encodeTransaction(transaction)));
 
-    return baseEncode(sha256(encodeTransaction(transaction)));
+    const { data } = await network<NearRpcTransactionResponse | undefined>({
+      method: "POST",
+      url: config.infra.API_NEAR_PRIVATE_NODE,
+      data: {
+        jsonrpc: "2.0",
+        id: "id",
+        method: "tx",
+        params: { tx_hash: hash, sender_account_id: transaction.signerId, wait_until: "NONE" },
+      },
+      timeout: TRANSACTION_LOOKUP_TIMEOUT_MS,
+      validateStatus: httpStatus => NEAR_RPC_STATUSES.has(httpStatus),
+    });
+
+    if (!data?.result) {
+      log("Near", "broadcastTransaction lookup did not find the transaction", {
+        hash,
+        error: data?.error,
+      });
+      return undefined;
+    }
+
+    return asString(data.result.transaction?.hash) ?? hash;
   } catch (error) {
-    log("Near", "broadcastTransaction could not derive the transaction hash", error);
+    log("Near", "broadcastTransaction lookup failed", error);
     return undefined;
   }
-};
-
-// A timeout only says the node did not reach the requested finality in time. When it reports the
-// transaction as already pending or included, the broadcast went through.
-const getObservedTimeoutHash = (
-  error: SendTxRpcError,
-  signedTransaction: string,
-): string | undefined => {
-  const info = error.cause?.info;
-  const observed =
-    info?.cause === "PENDING" ||
-    OBSERVED_FINALITIES.has(info?.status?.final_execution_status ?? "");
-
-  if (!observed) {
-    return undefined;
-  }
-
-  return asString(info?.status?.transaction?.hash) ?? deriveTransactionHash(signedTransaction);
 };
 
 /**
@@ -260,29 +261,30 @@ const getObservedTimeoutHash = (
  * based on the near documentation: https://docs.near.org/api/rpc/transactions#what-could-go-wrong-send-tx
  *
  * `TIMEOUT_ERROR` can be thrown when the transaction is not yet executed in less than 10 seconds.
- * Documentation advises to "re-submit the request with the identical transaction" in this case.
- * Once the retries are spent, a timeout on a transaction the node has already observed resolves
- * with that transaction's hash rather than failing a broadcast that went through.
+ * Documentation advises to "re-submit the request with the identical transaction" in this case,
+ * which is done until the retries or the time budget (`deadline`) are spent. The node is then asked
+ * for the transaction by hash before reporting a failure for a broadcast that went through.
  */
 export const broadcastTransaction = async (
   config: NearConfig,
   transaction: string,
   retries = 6,
+  deadline = Date.now() + BROADCAST_RETRY_BUDGET_MS,
 ): Promise<string> => {
-  const currencyConfig = config;
-  const { data, status } = await network<SendTxResponse | undefined>({
-    method: "POST",
-    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
-    data: {
-      jsonrpc: "2.0",
-      id: "id",
-      method: "send_tx",
-      params: {
-        signed_tx_base64: transaction,
-        wait_until: "EXECUTED_OPTIMISTIC",
-      },
+  const payload = {
+    jsonrpc: "2.0",
+    id: "id",
+    method: "send_tx",
+    params: {
+      signed_tx_base64: transaction,
+      wait_until: "EXECUTED_OPTIMISTIC",
     },
-    validateStatus: httpStatus => SEND_TX_RPC_STATUSES.has(httpStatus),
+  };
+  const { data, status } = await network<NearRpcTransactionResponse | undefined>({
+    method: "POST",
+    url: config.infra.API_NEAR_PRIVATE_NODE,
+    data: payload,
+    validateStatus: httpStatus => NEAR_RPC_STATUSES.has(httpStatus),
   });
 
   const error = data?.error;
@@ -290,31 +292,17 @@ export const broadcastTransaction = async (
   if (error) {
     const isTimeout = error.cause?.name === "TIMEOUT_ERROR";
 
-    if (isTimeout && retries > 0) {
-      log("Near", "broadcastTransaction retrying after error", {
-        data,
-        payload: {
-          jsonrpc: "2.0",
-          id: "id",
-          method: "send_tx",
-          params: {
-            signed_tx_base64: transaction,
-            wait_until: "EXECUTED_OPTIMISTIC",
-          },
-        },
-        retries,
-      });
-      return broadcastTransaction(config, transaction, retries - 1);
+    if (isTimeout && retries > 0 && Date.now() < deadline) {
+      log("Near", "broadcastTransaction retrying after error", { data, payload, retries });
+      return broadcastTransaction(config, transaction, retries - 1, deadline);
     }
 
     if (isTimeout) {
-      const observedHash = getObservedTimeoutHash(error, transaction);
+      const hash = await findBroadcastTransactionHash(config, transaction);
 
-      if (observedHash) {
-        log("Near", "broadcastTransaction timed out on an observed transaction", {
-          hash: observedHash,
-        });
-        return observedHash;
+      if (hash) {
+        log("Near", "broadcastTransaction timed out but the node has the transaction", { hash });
+        return hash;
       }
     }
 
