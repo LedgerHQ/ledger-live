@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { ScrollView, StyleSheet, TextInput } from "react-native";
+import { ScrollView, TextInput } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import {
   parseContentAbTestPayload,
@@ -7,6 +7,7 @@ import {
   type ContentAbTestPayload,
 } from "@features/platform-content-ab-tests";
 import { Box, Button, Switch, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { refreshMountedScreens } from "./refreshMountedScreens";
 
 const EMPTY_PAYLOAD: ContentAbTestPayload = { enabled: false, copy: {} };
@@ -18,6 +19,22 @@ const ContentAbTestEdit: React.FC<{
   testValue: ContentAbTestPayload | undefined;
 }> = ({ testName, testValue }) => {
   const { t } = useTranslation();
+  const styles = useStyleSheet(
+    theme => ({
+      editor: {
+        borderWidth: theme.borderWidth.s1,
+        borderColor: theme.colors.border.muted,
+        borderRadius: theme.borderRadius.sm,
+        padding: theme.spacings.s8,
+        minHeight: 96,
+        color: theme.colors.text.base,
+      },
+      editorError: {
+        borderColor: theme.colors.border.error,
+      },
+    }),
+    [],
+  );
   const pureValue = testValue ?? EMPTY_PAYLOAD;
   const [error, setError] = useState<string | undefined>();
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
@@ -107,7 +124,7 @@ const ContentAbTestEdit: React.FC<{
       </Box>
       <Box lx={{ padding: "s8", backgroundColor: "surface" }}>
         <ScrollView horizontal>
-          <Text typography="body2" selectable>
+          <Text typography="body2" lx={{ color: "base" }} selectable>
             {formatPayload(pureValue)}
           </Text>
         </ScrollView>
@@ -115,17 +132,5 @@ const ContentAbTestEdit: React.FC<{
     </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  editor: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 8,
-    minHeight: 96,
-  },
-  editorError: {
-    borderColor: "red",
-  },
-});
 
 export default ContentAbTestEdit;
