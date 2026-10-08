@@ -68,7 +68,7 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
   if (event.type === "STEP_CHANGED") {
     detail = { kind: "step", step: event.state.currentOnboardingStep };
   } else if (event.type === "FIRMWARE_UPDATE_AVAILABLE") {
-    detail = { kind: "firmware", version: event.update.finalFirmware.version };
+    detail = { kind: "firmware", version: event.output.update.finalFirmware.version };
   } else if (event.type === "SESSION_READY" || event.type === "TRANSPORT_LOST") {
     detail = { kind: "session", sessionId };
   }
