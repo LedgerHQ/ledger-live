@@ -11,13 +11,20 @@ export default class PayTabPage {
   filterPillId = "pay-card-balance-filter-pill";
   filterConfirmId = "pay-card-balance-filter-confirm";
   depositTileId = "action-tile-deposit";
+  requestTileId = "action-tile-request";
   depositOptionsId = "pay-card-deposit-options";
   bankTransferContentId = "pay-bank-transfer-intro-content";
   bankTransferCreateAccountId = "pay-bank-transfer-intro-create-account";
   bankTransferCloseId = "bottom-sheet-header-close-button";
   requestScreenId = "pay-request-receive";
-  requestTitleId = "pay-request-receive-title";
   requestCloseId = "pay-request-receive-close";
+
+  requestTitle = () => getElementById("pay-request-receive-title");
+  requestAddress = () => getElementById("pay-request-receive-address");
+  requestQr = () => getElementById("pay-request-receive-qr-code");
+  requestShare = () => getElementById("pay-request-receive-share");
+  requestCopy = () => getElementById("pay-request-receive-copy");
+  requestVerify = () => getElementById("pay-request-receive-verify");
 
   filterOptionId = (rowKey: string) => `pay-card-balance-filter-option-${rowKey}`;
   depositOptionId = (optionId: PayDepositOptionId) => `pay-card-deposit-option-${optionId}`;
@@ -84,10 +91,41 @@ export default class PayTabPage {
     }
   }
 
+  @Step("Open request")
+  async openRequest() {
+    await tapById(this.requestTileId);
+    await waitForFullyVisibleById(app.modularDrawer.searchBarId);
+  }
+
   @Step("Expect the request screen titled {{{0}}}")
   async expectRequestTitle(title: string) {
-    await detoxExpect(getElementById(this.requestTitleId)).toBeVisible();
-    await detoxExpect(getElementById(this.requestTitleId)).toHaveText(title);
+    await detoxExpect(this.requestTitle()).toBeVisible();
+    await detoxExpect(this.requestTitle()).toHaveText(title);
+  }
+
+  @Step("Expect the request address")
+  async expectRequestAddress() {
+    await detoxExpect(this.requestAddress()).toBeVisible();
+  }
+
+  @Step("Expect the request QR code")
+  async expectRequestQrCode() {
+    await detoxExpect(this.requestQr()).toBeVisible();
+  }
+
+  @Step("Expect the request Share action")
+  async expectRequestShare() {
+    await detoxExpect(this.requestShare()).toBeVisible();
+  }
+
+  @Step("Expect the request Copy action")
+  async expectRequestCopy() {
+    await detoxExpect(this.requestCopy()).toBeVisible();
+  }
+
+  @Step("Expect the request Verify action")
+  async expectRequestVerify() {
+    await detoxExpect(this.requestVerify()).toBeVisible();
   }
 
   @Step("Close the request screen")
