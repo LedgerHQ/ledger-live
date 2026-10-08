@@ -48,7 +48,12 @@ export function emitProbeSummary(reason: string): void {
     ...provider,
     hooks,
   };
-  log("cv-probe", `cv-probe ${JSON.stringify(payload)}`);
+  const line = `cv-probe ${JSON.stringify(payload)}`;
+  log("cv-probe", line);
+  // Also on the console, so `adb logcat` streams it from a release build: the mobile VERBOSE
+  // switch is fixed at build time.
+  // eslint-disable-next-line no-console
+  console.log(line);
 }
 
 function ensureTimer(): void {
