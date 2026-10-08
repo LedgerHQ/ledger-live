@@ -1,24 +1,24 @@
 import React, { useMemo } from "react";
-import { AccountItem, Account as UIAccount, RightElement } from "@ledgerhq/react-ui/pre-ldls/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import BigNumber from "bignumber.js";
 import { FormattedAccount } from "../screens/AccountsAdded/types";
+import { AccountRow, type AccountRowTrailing } from "./AccountRow";
 
-interface FormattedAccountItemProps {
+type FormattedAccountItemProps = {
   account: FormattedAccount;
-  backgroundColor?: string;
-  rightElement?: RightElement;
   onClick?: () => void;
-}
+  trailing?: AccountRowTrailing;
+  checked?: boolean;
+  onEdit?: () => void;
+};
 
-// Adapter component that formats raw values for UI consumption
-// NB: in future, it should  be on react-ui side to do the <FormattedVal />
-export const FormattedAccountItem: React.FC<FormattedAccountItemProps> = ({
+export const FormattedAccountItem = ({
   account,
-  backgroundColor,
   onClick,
-  rightElement,
-}) => {
+  trailing,
+  checked,
+  onEdit,
+}: FormattedAccountItemProps) => {
   const formattedBalance = useMemo(() => {
     return formatCurrencyUnit(account.balanceUnit, account.balance, {
       showCode: true,
@@ -38,21 +38,17 @@ export const FormattedAccountItem: React.FC<FormattedAccountItemProps> = ({
     return "";
   }, [account.fiatValue, account.fiatUnit, account.discreet, account.locale]);
 
-  const uiAccount: UIAccount = useMemo(
-    () => ({
-      ...account,
-      balance: formattedBalance,
-      fiatValue: formattedFiatValue,
-    }),
-    [account, formattedBalance, formattedFiatValue],
-  );
-
   return (
-    <AccountItem
-      account={uiAccount}
-      backgroundColor={backgroundColor}
+    <AccountRow
+      account={{
+        ...account,
+        balance: formattedBalance,
+        fiatValue: formattedFiatValue,
+      }}
+      checked={checked}
       onClick={onClick}
-      rightElement={rightElement}
+      onEdit={onEdit}
+      trailing={trailing}
     />
   );
 };
