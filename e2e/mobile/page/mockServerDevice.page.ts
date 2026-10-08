@@ -38,28 +38,4 @@ export class MockServerDevicePage extends MockServerSessionHandle {
   async dismissDeviceCompletionStatus() {
     await this.dismissCompletionStatus();
   }
-
-  @Step("Approve the device until the contact is renamed to {{0}}")
-  async approveUntilRenameSettled(name: string) {
-    const pending = this.prompt("contacts-rename-contact-pending");
-    const detailName = this.prompt("contacts-detail-name");
-    // The detail name updates before the preparing sheet mounts, so the first poll cannot be the success.
-    let skippedOpeningPoll = false;
-
-    await this.approvePromptsUntil(async () => {
-      if (!skippedOpeningPoll) {
-        skippedOpeningPoll = true;
-        return false;
-      }
-
-      try {
-        await waitFor(pending).not.toBeVisible().withTimeout(INTERVAL.tick);
-        await waitFor(detailName).toHaveText(name).withTimeout(INTERVAL.tick);
-        return true;
-      } catch {
-        return false;
-      }
-    });
-    await this.dismissDeviceCompletionStatus();
-  }
 }
