@@ -210,7 +210,7 @@
     "@ledgerhq/wallet-pnl": "workspace:^",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/netinfo": "12.0.1",
-    "@react-native-community/slider": "5.1.1",
+    "@react-native-community/slider": "4.5.7",
     "@react-native-firebase/app": "22.2.0",
     "@react-native-firebase/messaging": "22.2.0",
     "@react-native-firebase/remote-config": "22.2.0",
