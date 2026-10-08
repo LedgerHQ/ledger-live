@@ -42,6 +42,11 @@ console.log(
   `provider renders ${last.providerRenders}, bridge changes ${last.bridgeChanges}, polling loop renders ${last.effectRenders}`,
 );
 console.log(
+  last.commits
+    ? `whole tree: ${last.commits} commits, ${last.renderMs.toFixed(0)} ms of render`
+    : "whole tree: 0 commits (not a profiling build of React, or a probe without the <Profiler>)",
+);
+console.log(
   `restores ${last.restores}, loads ${last.loads}; in the first 10 s after mount: restores ${last.bootRestores}, loads ${last.bootLoads}` +
     (boot ? "" : " (no boot line: exported logs dropped the early entries)") +
     "\n",
@@ -55,13 +60,15 @@ for (const [name, s] of Object.entries(last.hooks).sort()) {
 }
 
 console.log("\ntimeline (cumulative):");
-console.log("| at | reason | elapsed s | renders | wasted | bridge changes | restores | loads |");
-console.log("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |");
+console.log(
+  "| at | reason | elapsed s | renders | wasted | bridge changes | restores | loads | commits | render ms |",
+);
+console.log("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
 for (const s of summaries) {
   const hooks = Object.values(s.hooks);
   const renders = hooks.reduce((n, h) => n + h.renders, 0);
   const wasted = hooks.reduce((n, h) => n + h.wasted, 0);
   console.log(
-    `| ${s.at} | ${s.reason} | ${(s.elapsedMs / 1000).toFixed(0)} | ${renders} | ${wasted} | ${s.bridgeChanges} | ${s.restores} | ${s.loads} |`,
+    `| ${s.at} | ${s.reason} | ${(s.elapsedMs / 1000).toFixed(0)} | ${renders} | ${wasted} | ${s.bridgeChanges} | ${s.restores} | ${s.loads} | ${s.commits ?? "-"} | ${s.renderMs?.toFixed(0) ?? "-"} |`,
   );
 }
