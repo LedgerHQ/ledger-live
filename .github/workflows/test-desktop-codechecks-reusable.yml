@@ -67,7 +67,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ledger-wallet-4cpu-aws-public
+    runs-on: ledger-wallet-8cpu-aws-public
     timeout-minutes: 11
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

@@ -76,8 +76,8 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    uses: ./.github/workflows/test-desktop-codechecks-reusable.yml
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -86,6 +86,8 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
       SLACK_LIVE_CI_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+    with:
+      skip-unit-tests: true
 
   test-mobile:
     name: "Codecheck Mobile"
@@ -93,8 +95,8 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    uses: ./.github/workflows/test-mobile-reusable.yml
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -102,6 +104,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      skip-unit-tests: true
 
   build-test-mobile:
     name: "Build & Test Mobile"
@@ -337,8 +341,8 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    uses: ./.github/workflows/test-mobile-e2e-lint-reusable.yml
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -353,8 +357,8 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    uses: ./.github/workflows/test-desktop-e2e-lint-reusable.yml
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
