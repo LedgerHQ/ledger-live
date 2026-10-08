@@ -16,3 +16,5 @@ jobs:
           days-before-issue-stale: 30
           stale-pr-message: "There has been no activity on this PR for the last 15 days. Remove the Stale label or comment, otherwise it will be closed in 7 days."
           days-before-pr-stale: 15
+
+# nx affected scenario s6
