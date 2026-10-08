@@ -11,10 +11,10 @@ import { loadCountervalues, type RateSource } from "@domain/api-market-counterva
 import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import type { Unit } from "@domain/entity-currency-unit";
 import { BigNumber } from "bignumber.js";
-import React, { ReactElement, useCallback, useContext, useEffect, useMemo } from "react";
+import React, { Profiler, ReactElement, useCallback, useContext, useEffect, useMemo } from "react";
 import { CountervaluesContext } from "./internals/CountervaluesContext";
 import { log } from "./internals/logger";
-import { countProbe, useProbeBridge, useProbeEffect } from "./internals/renderProbe";
+import { countProbe, onProbeCommit, useProbeBridge, useProbeEffect } from "./internals/renderProbe";
 import { useDebounce } from "./internals/useDebounce";
 
 export interface PollingState {
@@ -198,7 +198,9 @@ export function CountervaluesProvider({
   return (
     <CountervaluesContext.Provider value={bridge}>
       <Effect {...rest} bridge={bridge} />
-      {children}
+      <Profiler id="cv-probe" onRender={onProbeCommit}>
+        {children}
+      </Profiler>
     </CountervaluesContext.Provider>
   );
 }

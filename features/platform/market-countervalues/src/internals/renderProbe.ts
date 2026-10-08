@@ -3,7 +3,7 @@
 // cumulative summary line, type `cv-probe`, through the package logger: 10 s after the provider
 // mounts, every 60 s, and each time polling stops (window blur on desktop, background on mobile).
 // `probeHook` wraps any hook, so the same file applies on any branch.
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ProfilerOnRenderCallback } from "react";
 import { log } from "./logger";
 
 // The develop commit this probe branch was cut from; builds embed no sha of their own.
@@ -23,6 +23,10 @@ const provider = {
   loads: 0,
   bootRestores: 0,
   bootLoads: 0,
+  // Whole tree under the provider, from a root <Profiler>. Both stay 0 when React is not a
+  // profiling build: then the build did not pick the profiling renderer.
+  commits: 0,
+  renderMs: 0,
 };
 let mountedAt: number | null = null;
 let summaries = 0;
@@ -78,6 +82,12 @@ export function probeHook<Args extends unknown[], Result>(
     return value;
   };
 }
+
+/** The root <Profiler>'s callback: counts commits and sums their render time. */
+export const onProbeCommit: ProfilerOnRenderCallback = (_id, _phase, actualDuration) => {
+  provider.commits++;
+  provider.renderMs += actualDuration;
+};
 
 /** Call where the provider restores the saved state, or starts a load. */
 export function countProbe(kind: "restores" | "loads"): void {

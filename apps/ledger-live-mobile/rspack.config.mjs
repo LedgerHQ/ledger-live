@@ -328,6 +328,19 @@ export default withRozeniteUrlFix(
           new rspack.ProvidePlugin({
             TextDecoder: ["text-encoding-polyfill", "TextDecoder"],
           }),
+          // MEASUREMENT BUILD ONLY: React Native's profiling renderers, so the countervalues
+          // probe's <Profiler> reports commits and render times in release builds.
+          ...(mode === "production"
+            ? [
+                ...["ReactFabric", "ReactNativeRenderer"].map(
+                  renderer =>
+                    new rspack.NormalModuleReplacementPlugin(
+                      new RegExp(`(^|[\\\\/])implementations[\\\\/]${renderer}-prod(\\.js)?$`),
+                      `../implementations/${renderer}-profiling.js`,
+                    ),
+                ),
+              ]
+            : []),
           ...getRsdoctorPlugin(),
         ],
         stats: "errors-warnings",
