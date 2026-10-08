@@ -51,6 +51,7 @@ export function useConfidentialBalanceFooterViewModel({
   const [permitExpiresAt, setPermitExpiresAt] = useState(cached?.permitExpiresAt);
   const [phase, setPhase] = useState<ConfidentialBalancePhase>("idle");
   const [error, setError] = useState<ConfidentialErrorKind | null>(null);
+  const [isShieldOpen, setIsShieldOpen] = useState(false);
 
   const isMounted = useRef(true);
   useEffect(
@@ -161,6 +162,19 @@ export function useConfidentialBalanceFooterViewModel({
       ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(permitExpiresAt * 1000)
       : undefined,
     deviceSignature,
+    shield:
+      isShieldOpen && owner && balance
+        ? {
+            account,
+            owner,
+            pair: balance.pair,
+            createConfidentialClient,
+            onClose: () => setIsShieldOpen(false),
+            onShielded: load,
+          }
+        : null,
+    canShield: Boolean(owner && balance) && account.balance.gt(0) && phase === "idle",
+    onShield: () => setIsShieldOpen(true),
     onReveal: reveal,
     onRetry: balance === undefined ? load : reveal,
   };

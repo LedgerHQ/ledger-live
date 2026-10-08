@@ -202,6 +202,18 @@ describe("ConfidentialBalanceFooter", () => {
     expect(screen.queryByTestId("confidential-balance-footer")).not.toBeInTheDocument();
   });
 
+  it("opens the shield flow from the footer", async () => {
+    const modalsRoot = document.createElement("div");
+    modalsRoot.id = "modals";
+    document.body.appendChild(modalsRoot);
+    const { user } = setup();
+
+    await user.click(await screen.findByTestId("confidential-shield-button"));
+
+    expect(await screen.findByTestId("confidential-shield-amount")).toBeVisible();
+    modalsRoot.remove();
+  });
+
   it("never builds the real client while running on the mock", async () => {
     setup();
 

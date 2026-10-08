@@ -9840,6 +9840,35 @@
     "deviceModal": {
       "title": "Sign the decryption permit"
     },
+    "shield": {
+      "open": "Shield",
+      "title": "Shield {{ticker}}",
+      "description": "Move {{ticker}} from your public balance into your private balance, held by the confidential wrapper {{wrapper}}. It takes two transactions, each confirmed on your device.",
+      "available": "Public balance: {{amount}}",
+      "max": "Max",
+      "submit": "Shield",
+      "close": "Close",
+      "amountErrors": {
+        "invalid": "Enter a valid amount.",
+        "zero": "Enter an amount greater than 0.",
+        "exceedsBalance": "This is more than your public balance.",
+        "tooPrecise": "This amount has more decimals than the confidential token supports."
+      },
+      "steps": {
+        "approve": "Allow the wrapper {{wrapper}} to use your {{ticker}}",
+        "wrap": "Move {{ticker}} into your private balance"
+      },
+      "status": {
+        "pending": "Waiting",
+        "signing": "Confirm on your device",
+        "confirming": "Confirming on the network",
+        "done": "Done",
+        "failed": "Failed"
+      },
+      "done": "{{amount}} moved into your private balance",
+      "revealAgain": "Reveal your private balance to see the new amount.",
+      "remainder": "{{amount}} below the token's precision stays in your public balance."
+    },
     "phase": {
       "signing": "Confirm the decryption permit on your device",
       "decrypting": "Decrypting your private balance…"
