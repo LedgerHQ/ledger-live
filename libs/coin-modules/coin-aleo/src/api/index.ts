@@ -200,10 +200,6 @@ export function createApi(currencyId: string) {
       return lastBlock(config);
     },
     listOperations: async (context: AleoContext, address, options) => {
-      if (options.order && options.order !== "desc") {
-        throw new Error(`aleo: listOperations does not support order "${options.order}"`);
-      }
-
       const { provableId, viewKey } = resolvePrivacyContext(context);
 
       const config = await context.config(currencyId);
