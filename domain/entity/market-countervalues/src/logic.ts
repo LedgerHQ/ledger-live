@@ -247,10 +247,14 @@ export function calculateMany(
 }
 
 /**
- * Merges fetched rate patches into `next` and regenerates the cache of every pair they touch.
+ * Returns `next` with fetched rate patches merged in and the cache of every pair they touch
+ * regenerated.
  *
  * `patches` are keyed by pair id, each holding date keys (and `latest`) to rates; non-numeric values
  * are skipped. `previous` supplies the cache stats to extend and the post-restore hole check.
+ *
+ * Copy-on-write: no argument is mutated. A patched pair gets a new `Map`, the others keep theirs,
+ * so the result can be stored in a frozen (immer) store and fed back on the next load.
  */
 export function applyRatePatches(
   previous: CounterValuesState,
@@ -258,14 +262,15 @@ export function applyRatePatches(
   patches: Array<Record<string, Record<string, unknown>>>,
   settings: CountervaluesSettings,
 ): CounterValuesState {
-  const { data, cache, status } = next;
+  const data = { ...next.data };
+  const cache = { ...next.cache };
+  const { status } = next;
   const changesKeys: Record<string, unknown> = {};
   patches.forEach(patch => {
     Object.keys(patch).forEach(key => {
-      changesKeys[key] = 1;
-
-      if (!data[key]) {
-        data[key] = new Map();
+      if (!changesKeys[key]) {
+        changesKeys[key] = 1;
+        data[key] = new Map(data[key]);
       }
 
       const map = data[key];
