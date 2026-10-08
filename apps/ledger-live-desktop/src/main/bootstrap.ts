@@ -1,9 +1,11 @@
 import os from "node:os";
 import { app, ipcMain } from "electron";
 import Store from "electron-store";
+import { getAllEnvNames } from "@shared/env";
 import { BOOTSTRAP_VERSION, CHANNELS, type Bootstrap } from "~/bridge/contract";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
 import { isPlaywrightRun } from "./isPlaywrightRun";
+import { BUILD_ENV_NAMES, FORWARDED, WITHHELD } from "./rendererEnvKeys.cjs";
 
 let store: Store | undefined;
 
@@ -26,8 +28,10 @@ for (const key of Object.keys(process.env)) {
 }
 
 export function buildBootstrap(): Bootstrap {
+  const rendererKeys = new Set([...getAllEnvNames(), ...BUILD_ENV_NAMES, ...FORWARDED]);
+  for (const key of WITHHELD) rendererKeys.delete(key);
   const env = Object.fromEntries(
-    Object.entries(process.env).filter(([key]) => !isCardSessionKey(key)),
+    Object.entries(process.env).filter(([key]) => rendererKeys.has(key) && !isCardSessionKey(key)),
   );
   return {
     version: BOOTSTRAP_VERSION,

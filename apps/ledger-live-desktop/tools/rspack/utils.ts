@@ -80,21 +80,16 @@ export function buildDotEnvDefine(envPath: string): Record<string, string> {
   return define;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { BUILD_ENV_NAMES } = require("../../src/main/rendererEnvKeys.cjs") as {
+  BUILD_ENV_NAMES: readonly string[];
+};
+
 /**
  * Env vars the app reads through `@shared/env` (getEnv/useEnv) instead of as a literal
  * `process.env.X` expression. DefinePlugin cannot reach those, so they travel as one object
  * that src/renderer/bootstrap/process.ts merges into the renderer environment at boot.
  */
-const BUILD_ENV_NAMES = [
-  "CARD_BAANX_API_URL",
-  "CARD_BAANX_CLIENT_KEY",
-  "CARD_BAANX_HOSTED_UI",
-  "CARD_BAANX_US_APP_ID",
-  "CARD_BAANX_LOGIN_MANIFEST_ID",
-  "CARD_BAANX_HOSTED_MANIFEST_ID",
-  "CARD_OAUTH_REDIRECT_URI",
-];
-
 function buildEnvsDefine(): string {
   const envs: Record<string, string> = {};
   for (const name of BUILD_ENV_NAMES) {

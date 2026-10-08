@@ -1,4 +1,5 @@
 const path = require("node:path");
+const { originLookup } = require("./sourceMapOrigin.cjs");
 
 // Fails the production renderer build on an unguarded `process.*` read or Node timer global.
 // A text heuristic over the minified output, not a proof.
@@ -252,66 +253,6 @@ const ALLOWED = new Map(
   }),
 );
 
-const B64 = new Map(
-  [..."ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"].map((c, i) => [c, i]),
-);
-
-// Hand-rolled: no source-map library is reachable from this package.
-function decodeMappings(mappings) {
-  const perLine = [];
-  let sourceIndex = 0;
-  for (const lineText of mappings.split(";")) {
-    const segments = [];
-    let generatedColumn = 0;
-    for (const segmentText of lineText.split(",")) {
-      if (!segmentText) continue;
-      const values = [];
-      let shift = 0;
-      let value = 0;
-      for (const char of segmentText) {
-        const digit = B64.get(char);
-        if (digit === undefined) break;
-        value += (digit & 31) << shift;
-        if (digit & 32) {
-          shift += 5;
-          continue;
-        }
-        const negative = value & 1;
-        value >>= 1;
-        values.push(negative ? -value : value);
-        shift = 0;
-        value = 0;
-      }
-      if (values.length === 0) continue;
-      generatedColumn += values[0];
-      const isMapped = values.length >= 4;
-      segments.push([generatedColumn, isMapped ? (sourceIndex += values[1]) : null]);
-    }
-    perLine.push(segments);
-  }
-  return perLine;
-}
-
-function sourceAt(decoded, sources, line, column) {
-  const segments = decoded[line - 1];
-  if (!segments || segments.length === 0) return null;
-  let found = null;
-  for (const [generatedColumn, sourceIndex] of segments) {
-    if (generatedColumn > column) break;
-    found = sourceIndex;
-  }
-  return found === null ? null : (sources[found] ?? null);
-}
-
-function originOf(source) {
-  const parts = source.split(/[\\/]node_modules[\\/]/);
-  const tail = parts[parts.length - 1];
-  if (!tail) return source;
-  return parts.length === 1
-    ? tail.replace(/^webpack:\/\/[^/]*\//, "").replace(/^(?:\.\.?\/)+/, "")
-    : tail;
-}
-
 function findUnguarded(code) {
   const hits = [];
   let match;
@@ -384,22 +325,10 @@ module.exports = class ProcessReadGuard {
           );
           return;
         }
-        const decoded = decodeMappings(raw.mappings);
-        const sources = raw.sources;
-
-        const lineStarts = [];
-        for (let i = 0, offset = 0; ; i++) {
-          lineStarts.push(offset);
-          const next = code.indexOf("\n", offset);
-          if (next === -1) break;
-          offset = next + 1;
-        }
+        const originAt = originLookup(code, raw);
 
         for (const hit of hits) {
-          let line = lineStarts.findIndex(start => start > hit.index);
-          line = line === -1 ? lineStarts.length : line;
-          const source = sourceAt(decoded, sources, line, hit.index - lineStarts[line - 1]);
-          const key = `${source ? originOf(source) : name} :: ${hit.property}`;
+          const key = `${originAt(hit.index) ?? name} :: ${hit.property}`;
           const entry = counts.get(key) ?? { count: 0, chunk: name };
           entry.count++;
           counts.set(key, entry);

@@ -54,7 +54,32 @@ describe("bootstrap", () => {
     const { env } = loadBootstrapWithToken().buildBootstrap();
 
     expect(env).not.toHaveProperty("CARD_SESSION_BOOTSTRAP");
-    expect(env.NODE_ENV).toBe(process.env.NODE_ENV);
+  });
+
+  it("should copy only allow-listed keys into the snapshot env", () => {
+    const keys = {
+      MOCK_COUNTERVALUES: "1",
+      DEBUG_LOTTIE: "1",
+      CARD_BAANX_API_URL: "https://card.test",
+      SEED: "abandon abandon about",
+      SOME_RANDOM_SECRET: "secret",
+      NODE_DEBUG: "semver",
+    };
+    Object.assign(process.env, keys);
+    try {
+      const { env } = loadBootstrapWithToken().buildBootstrap();
+
+      expect(env).toMatchObject({
+        MOCK_COUNTERVALUES: "1",
+        DEBUG_LOTTIE: "1",
+        CARD_BAANX_API_URL: "https://card.test",
+      });
+      expect(env).not.toHaveProperty("SEED");
+      expect(env).not.toHaveProperty("SOME_RANDOM_SECRET");
+      expect(env).not.toHaveProperty("NODE_DEBUG");
+    } finally {
+      for (const key of Object.keys(keys)) delete process.env[key];
+    }
   });
 
   it("should keep CARD_SESSION_BOOTSTRAP out of the snapshot env whatever its case", () => {

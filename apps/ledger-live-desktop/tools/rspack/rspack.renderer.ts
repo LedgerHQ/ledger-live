@@ -3,6 +3,8 @@ import { rspack, type RspackOptions } from "@rspack/core";
 import { ReactRefreshRspackPlugin } from "@rspack/plugin-react-refresh";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ProcessReadGuard = require("./processReadGuard.cjs");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const RendererEnvGuard = require("./rendererEnvGuard.cjs");
 import { commonConfig, rootFolder } from "./rspack.common";
 import {
   buildRendererEnv,
@@ -318,7 +320,7 @@ export function createRendererConfig(
       }),
       // React Fast Refresh for development
       ...(useDevServer ? [new ReactRefreshRspackPlugin()] : []),
-      ...(devtool === "source-map" ? [new ProcessReadGuard()] : []),
+      ...(devtool === "source-map" ? [new ProcessReadGuard(), new RendererEnvGuard()] : []),
     ],
     optimization: {
       minimize: !isDev,
