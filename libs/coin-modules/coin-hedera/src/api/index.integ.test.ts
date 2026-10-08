@@ -686,27 +686,36 @@ describe("createApi", () => {
         {
           type: "other",
           ledgerOpType: "DELEGATE",
-          targetStakingNodeId: 34,
-          previousStakingNodeId: null,
           stakedAmount: BigInt(21083322293),
+          familyExtra: expect.objectContaining({
+            previousStakingNodeId: null,
+            targetStakingNodeId: 34,
+            stakedAmount: "21083322293",
+          }),
         },
       ]);
       expect(undelegateOperations).toEqual([
         {
           type: "other",
           ledgerOpType: "UNDELEGATE",
-          targetStakingNodeId: null,
-          previousStakingNodeId: 22,
           stakedAmount: BigInt(21083441623),
+          familyExtra: expect.objectContaining({
+            previousStakingNodeId: 22,
+            targetStakingNodeId: null,
+            stakedAmount: "21083441623",
+          }),
         },
       ]);
       expect(redelegateOperations).toEqual([
         {
           type: "other",
           ledgerOpType: "REDELEGATE",
-          targetStakingNodeId: 6,
-          previousStakingNodeId: 34,
           stakedAmount: BigInt(21083202902),
+          familyExtra: expect.objectContaining({
+            previousStakingNodeId: 34,
+            targetStakingNodeId: 6,
+            stakedAmount: "21083202902",
+          }),
         },
       ]);
       expect(rewardsTransaction?.operations).toEqual(
@@ -854,6 +863,47 @@ describe("createApi", () => {
       expect(transaction).not.toBeUndefined();
       expect(transaction?.operations.length).toBeGreaterThan(0);
       expect(operationAddresses).not.toContain(null);
+    });
+  });
+
+  describe("getBlock and listOperations", () => {
+    it("describe a token association with the same details", async () => {
+      const address = "0.0.10067136";
+      const txHash = "Db9YWie0Q33z8BpLeAkJNT6qYwjRw/ooy09RAhm24pQuMp4dZOltxS3E5fFEeaV3";
+      const consensusTimestamp = "1773149450.568735000";
+
+      const [{ items: ops }, block] = await Promise.all([
+        api.listOperations(context, address, {
+          minHeight: 0,
+          cursor: "1773149451.000000000",
+          limit: 5,
+          order: "desc",
+        }),
+        api.getBlock(context, getSyntheticBlock(consensusTimestamp).blockHeight),
+      ]);
+      const historyOp = ops.find(op => op.tx.hash === txHash);
+      const blockTx = block.transactions.find(tx => tx.hash === txHash);
+      const blockOp = blockTx?.operations.find(op => op.type === "other");
+
+      expect(historyOp?.details).toEqual({
+        ledgerOpType: "ASSOCIATE_TOKEN",
+        familyExtra: {
+          associatedTokenId: "0.0.456858",
+          consensusTimestamp,
+          feesPayer: address,
+          pagingToken: consensusTimestamp,
+          transactionId: "0.0.10067136-1773149434-810531030",
+        },
+      });
+      expect(blockOp).toEqual({ type: "other", ...historyOp?.details });
+      expect(blockTx?.details).toEqual({
+        familyExtra: {
+          consensusTimestamp,
+          feesPayer: address,
+          pagingToken: consensusTimestamp,
+          transactionId: "0.0.10067136-1773149434-810531030",
+        },
+      });
     });
   });
 
