@@ -51,6 +51,7 @@ import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 import { getSendFlowTrackingProperties } from "LLD/features/Send/utils/tracking";
 import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
+import ClaimFundsButton from "LLD/features/LocalNodeFaucet/components/ClaimFundsButton";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -424,6 +425,8 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2} mt={15}>
+      {/* Outside the group hidden on empty accounts: an empty local account is the one to fund */}
+      <ClaimFundsButton account={account} parentAccount={parentAccount} />
       {isAccountEmpty ? null : NonEmptyAccountHeader}
     </Box>
   );

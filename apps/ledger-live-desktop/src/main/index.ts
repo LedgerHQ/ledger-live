@@ -28,11 +28,13 @@ import {
 } from "@ledgerhq/coin-zcash/network/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
 import { setupExplorerSessionAffinity } from "./explorerSessionAffinity";
+import { LOCAL_NODE_CURRENCIES } from "~/localNode";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
 
 setUserDataPath();
+setLocalNodeUserDataPath();
 
 const SUPPORTED_SCHEMES = ["ledgerlive", "ledgerwallet"];
 
@@ -300,6 +302,14 @@ function setUserDataPath() {
 
   const legacyName = currentName.replace("Ledger Wallet", "Ledger Live");
   app.setPath("userData", `${defaultPath.slice(0, -currentName.length)}${legacyName}`);
+}
+
+// Local-node accounts share their ids with the real ones (same currency, same addresses), so
+// they get a profile of their own: they can never mix with real accounts, and both apps can run
+// side by side since the single-instance lock is per profile.
+function setLocalNodeUserDataPath() {
+  if (process.env.LEDGER_CONFIG_DIRECTORY || LOCAL_NODE_CURRENCIES.length === 0) return;
+  app.setPath("userData", `${app.getPath("userData")}-local-node`);
 }
 
 async function installExtensions() {

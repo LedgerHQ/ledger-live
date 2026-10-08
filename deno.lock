@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@deno/installer-shell-setup@*": "0.3.4"
+  },
+  "jsr": {
+    "@deno/installer-shell-setup@0.3.4": {
+      "integrity": "48665d1a737d487cce6874bc97bba70a5aeffa7053aca3f60df93c6fab8963b4"
+    }
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@changesets/changelog-github@0.5.0",
+        "npm:@changesets/cli@2.27.7",
+        "npm:@ton/crypto@^3.3.0",
+        "npm:chalk@4.1.2",
+        "npm:eslint@8.57.0",
+        "npm:jest-sonar@0.2.16",
+        "npm:knip@6.32.2",
+        "npm:nyc@15.1.0",
+        "npm:rimraf@4.4.1",
+        "npm:zx@8.8.5"
+      ]
+    }
+  }
+}

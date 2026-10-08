@@ -30,6 +30,8 @@ import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
 import DebugSkeletons from "~/renderer/components/debug/DebugSkeletons";
 import { DisableTransactionBroadcastWarning } from "~/renderer/components/debug/DisableTransactionBroadcastWarning";
+import { LocalNodeWarning } from "~/renderer/components/debug/LocalNodeWarning";
+import { LOCAL_NODE_CURRENCIES } from "~/localNode";
 import { DebugWrapper } from "~/renderer/components/debug/shared";
 import useDeeplink from "~/renderer/hooks/useDeeplinking";
 import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
@@ -479,6 +481,9 @@ export default function Default() {
                     {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
                     {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}
                   </DebugWrapper>
+                  {LOCAL_NODE_CURRENCIES.length > 0 ? (
+                    <LocalNodeWarning currencies={LOCAL_NODE_CURRENCIES} />
+                  ) : null}
                   {process.env.DISABLE_TRANSACTION_BROADCAST ? (
                     <DisableTransactionBroadcastWarning
                       value={process.env.DISABLE_TRANSACTION_BROADCAST}

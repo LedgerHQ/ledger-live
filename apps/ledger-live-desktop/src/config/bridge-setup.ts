@@ -1,6 +1,7 @@
 import { buildCryptoAssetsStore } from "@features/platform-currencies";
 import { setCountervaluesLogger } from "@features/platform-market-countervalues";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { withLocalNodeTokens } from "@ledgerhq/live-common/localNode/tokens";
 import { log } from "@ledgerhq/logs";
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
@@ -16,7 +17,8 @@ import type { ReduxStore } from "~/state-manager/configureStore";
 
 export function setupCryptoAssetsStore(store: ReduxStore): void {
   const cryptoAssetsStore = buildCryptoAssetsStore({ dispatch: store.dispatch });
-  setCryptoAssetsStore(cryptoAssetsStore);
+  // The tokens of a currency running on its local node are not in the crypto-assets service
+  setCryptoAssetsStore(withLocalNodeTokens(cryptoAssetsStore));
 }
 
 /**
