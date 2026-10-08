@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { renderHook } from "tests/testSetup";
+import type { RentOrderRejection } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
+import { act, renderHook } from "tests/testSetup";
 import {
   TRON_USDT_FEE_ASSET,
   createMockTronUsdtAccount,
@@ -32,14 +33,15 @@ let mockSponsoredState: {
   phase: string;
   failureKind: string | null;
   paymentTxId: string | null;
-  failureError?: Error | null;
   rentPayment?: { asset: typeof TRON_USDT_FEE_ASSET; amount: bigint } | null;
+  rentOrderRejection?: RentOrderRejection | null;
+  retryLockedUntil?: number | null;
 };
 let mockMainAccount: Account | null = null;
 
 jest.mock("../../../../context/SponsoredSendContext", () => ({
   useSponsoredSend: () => ({
-    state: mockSponsoredState,
+    state: { rentOrderRejection: null, retryLockedUntil: null, ...mockSponsoredState },
     actions: { retry: mockRetry },
     providerName: "Provider",
     feeCurrencyTicker: "USDT",
@@ -68,7 +70,7 @@ describe("useSponsoredFailureViewModel", () => {
       phase: "FAILED",
       failureKind: "RENT_PAYMENT",
       paymentTxId: null,
-      failureError: Object.assign(new Error("short"), { name: "EnergyRentInsufficientBalance" }),
+      rentOrderRejection: { reason: "insufficientBalance" },
     };
     const { result } = renderHook(() => useSponsoredFailureViewModel());
 
@@ -77,16 +79,56 @@ describe("useSponsoredFailureViewModel", () => {
     );
   });
 
-  it("keeps the generic RENT_PAYMENT message for any other craft error", () => {
+  it("shows the new price of an order above the approved fee and offers to accept it", () => {
     mockSponsoredState = {
       phase: "FAILED",
       failureKind: "RENT_PAYMENT",
       paymentTxId: null,
-      failureError: Object.assign(new Error("boom"), { name: "TronifyApiError" }),
+      rentOrderRejection: {
+        reason: "priceAboveApproved",
+        offered: { asset: TRON_USDT_FEE_ASSET, amount: 3_500_000n },
+      },
     };
     const { result } = renderHook(() => useSponsoredFailureViewModel());
 
-    expect(result.current.message).toBe("Fee payment failed — your funds were not moved.");
+    expect(result.current.message).toMatch(
+      /^The energy rental price went up to 3\.5\sUSDT\. Your funds were not moved\.$/,
+    );
+    expect(result.current.retryLabel).toBe("Accept new price");
+    expect(result.current.retryDisabled).toBe(false);
+
+    result.current.onRetry();
+
+    expect(mockRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps Accept off when the balance can't pay the new price next to the amount", () => {
+    const feeToken = createMockTronUsdtAccount({
+      balance: new BigNumber(4_400_000),
+      spendableBalance: new BigNumber(4_400_000),
+    });
+    mockSendingAccount = feeToken;
+    mockMainAccount = { id: "mock_account_id", subAccounts: [feeToken] } as unknown as Account;
+    mockTransaction = { amount: new BigNumber(1_000_000), useAllAmount: false };
+    mockSponsoredState = {
+      phase: "FAILED",
+      failureKind: "RENT_PAYMENT",
+      paymentTxId: null,
+      rentOrderRejection: {
+        reason: "priceAboveApproved",
+        offered: { asset: TRON_USDT_FEE_ASSET, amount: 3_500_000n },
+      },
+    };
+    const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+    expect(result.current.retryDisabled).toBe(true);
+    expect(result.current.retryBlockedMessage).toBe(
+      "You don't have enough USDT to cover the amount and the Provider energy rental fee.",
+    );
+
+    result.current.onRetry();
+
+    expect(mockRetry).not.toHaveBeenCalled();
   });
 
   it("renders the DELIVERY_FAILED message with the paymentTxId interpolated", () => {
@@ -174,9 +216,67 @@ describe("useSponsoredFailureViewModel", () => {
 
       expect(mockRetry).toHaveBeenCalledTimes(1);
     });
+
+    it("names the short balance rather than the lock when both block the retry", () => {
+      setUpDeliveryFailure(true);
+      mockSponsoredState.retryLockedUntil = Date.now() + 60_000;
+      const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+      expect(result.current.retryBlockedMessage).toBe(
+        "You don't have enough USDT to cover the amount and the Provider energy rental fee.",
+      );
+    });
   });
 
-  it.each(["RENT_PAYMENT", "CONTRACT_DATA", "TRANSFER"])(
+  describe("while the first payment may still land", () => {
+    beforeEach(() => jest.useFakeTimers());
+    afterEach(() => jest.useRealTimers());
+
+    it.each(["DELIVERY_FAILED", "RENT_PAYMENT"])(
+      "keeps Retry off after %s until the payment expires, and says until when",
+      failureKind => {
+        const lockedUntil = new Date("2026-10-08T14:32:10").getTime();
+        jest.setSystemTime(lockedUntil - 60_000);
+        mockSponsoredState = {
+          phase: "FAILED",
+          failureKind,
+          paymentTxId: null,
+          retryLockedUntil: lockedUntil,
+        };
+        const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+        expect(result.current.retryDisabled).toBe(true);
+        expect(result.current.retryBlockedMessage).toMatch(
+          /^So you don't pay the rental twice, you can retry after .*:33\b.*\.$/,
+        );
+        result.current.onRetry();
+        expect(mockRetry).not.toHaveBeenCalled();
+
+        act(() => jest.advanceTimersByTime(60_000));
+
+        expect(result.current.retryDisabled).toBe(false);
+        expect(result.current.retryBlockedMessage).toBeNull();
+        result.current.onRetry();
+        expect(mockRetry).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    it("says a payment the provider reported failed may still go through", () => {
+      mockSponsoredState = {
+        phase: "FAILED",
+        failureKind: "RENT_PAYMENT",
+        paymentTxId: null,
+        retryLockedUntil: Date.now() + 60_000,
+      };
+      const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+      expect(result.current.message).toBe(
+        "Provider reported the fee payment as failed, but it may still go through.",
+      );
+    });
+  });
+
+  it.each(["RENT_PAYMENT", "TRANSFER"])(
     "keeps the plain retry label for %s, where retrying costs nothing extra",
     failureKind => {
       mockSponsoredState = { phase: "FAILED", failureKind, paymentTxId: null };
@@ -185,15 +285,6 @@ describe("useSponsoredFailureViewModel", () => {
       expect(result.current.retryLabel).toBe("Retry");
     },
   );
-
-  it("renders the CONTRACT_DATA message", () => {
-    mockSponsoredState = { phase: "FAILED", failureKind: "CONTRACT_DATA", paymentTxId: null };
-    const { result } = renderHook(() => useSponsoredFailureViewModel());
-
-    expect(result.current.message).toBe(
-      "Contract data is disabled on your TRON app. Enable TRON app → Settings → Contract data, then retry.",
-    );
-  });
 
   it("renders the TRANSFER message", () => {
     mockSponsoredState = { phase: "FAILED", failureKind: "TRANSFER", paymentTxId: null };
