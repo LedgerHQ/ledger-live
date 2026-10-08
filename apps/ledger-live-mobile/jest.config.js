@@ -200,6 +200,7 @@ module.exports = {
     "^expo-file-system$": "<rootDir>/__mocks__/expo-file-system.ts",
     "^expo-web-browser$": "<rootDir>/__mocks__/expo-web-browser.ts",
     "^expo-clipboard$": "<rootDir>/__mocks__/expo-clipboard.js",
+    "^expo-image-picker$": "<rootDir>/__mocks__/expo-image-picker.ts",
     // react-native-fast-crypto ships ESM and needs a native runtime; one stub for every copy.
     "^react-native-fast-crypto$": "<rootDir>/__mocks__/react-native-fast-crypto.ts",
     // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)

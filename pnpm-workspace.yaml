@@ -111,6 +111,7 @@ catalog:
   expo-file-system: 19.0.21
   expo-image-loader: 6.0.0
   expo-image-manipulator: 14.0.8
+  expo-image-picker: 17.0.11
   expo-haptics: 15.0.8
   expo-keep-awake: 15.0.8
   expo-modules-autolinking: 3.0.24

@@ -177,6 +177,8 @@ PODS:
     - EXImageLoader
     - ExpoModulesCore
     - SDWebImageWebPCoder
+  - ExpoImagePicker (17.0.11):
+    - ExpoModulesCore
   - ExpoKeepAwake (15.0.8):
     - ExpoModulesCore
   - ExpoModulesCore (3.0.29):
@@ -2219,34 +2221,6 @@ PODS:
   - react-native-image-crop-tools (1.6.4):
     - React-Core
     - TOCropViewController (= 2.5.3)
-  - react-native-image-picker (8.2.0):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
   - react-native-launch-arguments (4.0.2):
     - React
   - react-native-netinfo (12.0.1):
@@ -3638,6 +3612,7 @@ DEPENDENCIES:
   - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.12_fa95938c36eaba3b60d933a0084e355e/node_modules/expo-font/ios`)"
   - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@15.0.8_expo@54.0.33_@babel+core@7._adbcae05d864563452d3739943985092/node_modules/expo-haptics/ios`)"
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo@54.0.33_@bab_7cb914ef56058ae3d81db53cfd0d5aeb/node_modules/expo-image-manipulator/ios`)"
+  - "ExpoImagePicker (from `../../../node_modules/.pnpm/expo-image-picker@17.0.11_expo@54.0.33_@babel+c_b3fecac0ca6baecc481e04bb0fdeb08d/node_modules/expo-image-picker/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo@54.0.33_@babel+core_dde8285444011602c2208a43417a3e8c/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_cba21ce7445a28ffb678a08d4aab426e/node_modules/expo-modules-core`)"
   - "ExpoWebBrowser (from `../../../node_modules/.pnpm/expo-web-browser@15.0.10_26e20d2da1658e2310f07fd70e138799/node_modules/expo-web-browser/ios`)"
@@ -3690,7 +3665,6 @@ DEPENDENCIES:
   - "react-native-fast-pbkdf2 (from `../../../node_modules/.pnpm/react-native-fast-pbkdf2@0.3.1_patch_hash=9dfb8_e072431f5c8674f9ecea032c135a4bc5/node_modules/react-native-fast-pbkdf2`)"
   - "react-native-get-random-values (from `../../../node_modules/.pnpm/react-native-get-random-values@1.11.0_react-nat_8621efa15de78b04cd0dce496fadb0a6/node_modules/react-native-get-random-values`)"
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_3048a2acce6c93c72eb65043f45dc785/node_modules/react-native-image-crop-tools`)"
-  - "react-native-image-picker (from `../../../node_modules/.pnpm/react-native-image-picker@8.2.0_react-native@0._8495e0d8fdb0e9eb3c8e40261c228e50/node_modules/react-native-image-picker`)"
   - "react-native-launch-arguments (from `../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_5cc06c1d288e57239c7cde21e316aa7d/node_modules/react-native-launch-arguments`)"
   - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@12.0.1_react-na_dffa296f006627d90b800e4311c06036/node_modules/@react-native-community/netinfo`)"
   - "react-native-pager-view (from `../../../node_modules/.pnpm/react-native-pager-view@7.0.0_react-native@0.81_c2966e9beb2206b937297c78b8a5e773/node_modules/react-native-pager-view`)"
@@ -3834,6 +3808,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-haptics@15.0.8_expo@54.0.33_@babel+core@7._adbcae05d864563452d3739943985092/node_modules/expo-haptics/ios"
   ExpoImageManipulator:
     :path: "../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo@54.0.33_@bab_7cb914ef56058ae3d81db53cfd0d5aeb/node_modules/expo-image-manipulator/ios"
+  ExpoImagePicker:
+    :path: "../../../node_modules/.pnpm/expo-image-picker@17.0.11_expo@54.0.33_@babel+c_b3fecac0ca6baecc481e04bb0fdeb08d/node_modules/expo-image-picker/ios"
   ExpoKeepAwake:
     :path: "../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo@54.0.33_@babel+core_dde8285444011602c2208a43417a3e8c/node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
@@ -3937,8 +3913,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-get-random-values@1.11.0_react-nat_8621efa15de78b04cd0dce496fadb0a6/node_modules/react-native-get-random-values"
   react-native-image-crop-tools:
     :path: "../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_3048a2acce6c93c72eb65043f45dc785/node_modules/react-native-image-crop-tools"
-  react-native-image-picker:
-    :path: "../../../node_modules/.pnpm/react-native-image-picker@8.2.0_react-native@0._8495e0d8fdb0e9eb3c8e40261c228e50/node_modules/react-native-image-picker"
   react-native-launch-arguments:
     :path: "../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_5cc06c1d288e57239c7cde21e316aa7d/node_modules/react-native-launch-arguments"
   react-native-netinfo:
@@ -4100,6 +4074,7 @@ SPEC CHECKSUMS:
   ExpoFont: dfb7c572372b610da45b41e3b436321fd6a97215
   ExpoHaptics: d3a6375d8dcc3a1083d003bc2298ff654fafb536
   ExpoImageManipulator: 607a5c8c88085381639458a46cc55fb9d3869148
+  ExpoImagePicker: ade85e148f735fc7e6f27dfe3eef28eb3887e90a
   ExpoKeepAwake: 55f75eca6499bb9e4231ebad6f3e9cb8f99c0296
   ExpoModulesCore: 91a57f1d109cf53fe58d44fcf6b68a777561549a
   ExpoWebBrowser: 17b064c621789e41d4816c95c93f429b84971f52
@@ -4172,7 +4147,6 @@ SPEC CHECKSUMS:
   react-native-fast-pbkdf2: 329e89b9929a51ed4d9ba88bf355a266f13d9d93
   react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
   react-native-image-crop-tools: 0995d2ece9b4b6b04d298bd1dfe00b2b841507f2
-  react-native-image-picker: 12721145cf1f5a72d9de03beecf19b6df79f6c1a
   react-native-launch-arguments: d4759f7591e2766e6c5ec746b7032429edaf7058
   react-native-netinfo: 9fad4eedfec9840a10e73ac4591ea1158523309b
   react-native-pager-view: 4046e20b89f9ec1d29155668eb06c76a5f464951
