@@ -24,6 +24,7 @@ import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { stopSwapPayloadWatch, withSwapPayloadCheck } from "tests/utils/swapPayloadCheck";
 
 function formatSwapScenario(swap: Swap, amount: string): string {
   const from = swap.accountToDebit.currency.name;
@@ -62,7 +63,7 @@ export class SpeculosPage extends AppPage {
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     const scenario = formatSwapScenario(swap, amount);
     try {
-      await verifyAmountsAndAcceptSwap(swap, amount);
+      await withSwapPayloadCheck(this.page, async () => verifyAmountsAndAcceptSwap(swap, amount));
     } catch (error) {
       if (error instanceof Error) error.message += `\n↳ Swap scenario: ${scenario}`;
       throw error;
@@ -75,12 +76,18 @@ export class SpeculosPage extends AppPage {
     amount: string,
     errorMessage: string | null,
   ) {
-    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
+    await withSwapPayloadCheck(this.page, async () =>
+      verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage),
+    );
   }
 
   @step("Verify amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
-    await verifyAmountsAndRejectSwap(swap, amount);
+    try {
+      await verifyAmountsAndRejectSwap(swap, amount);
+    } finally {
+      await stopSwapPayloadWatch(this.page);
+    }
   }
 
   @step("Activate expert mode")

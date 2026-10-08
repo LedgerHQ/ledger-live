@@ -34,6 +34,8 @@ import { attachNetworkLogging } from "tests/utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
+import { stopSwapPayloadWatch } from "tests/utils/swapPayloadCheck";
+import { SWAP_API_BASE } from "tests/utils/swapApiBase";
 import {
   CARD_SESSION_BOOTSTRAP_ENV,
   resolveCardSessionBootstrap,
@@ -79,10 +81,7 @@ type TestFixtures = {
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
 setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-setEnv(
-  "SWAP_API_BASE",
-  process.env.SWAP_API_BASE || "https://global.api.stg.ledger-test.com/swap/v5",
-);
+setEnv("SWAP_API_BASE", SWAP_API_BASE);
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -241,6 +240,7 @@ export const test = base.extend<TestFixtures>({
         SPECULOS_API_PORT: speculos.device ? String(speculos.device.port) : undefined,
         SPECULOS_ADDRESS: speculos.device ? getSpeculosAddress() : undefined,
         DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
+        SWAP_API_BASE,
         ...(process.env.DEV_TOOLS && { DEV_TOOLS_MODE: process.env.DEV_TOOLS_MODE || "detach" }),
       },
       env,
@@ -330,6 +330,7 @@ export const test = base.extend<TestFixtures>({
 
     // use page in the test
     await use(page);
+    await stopSwapPayloadWatch(page);
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
