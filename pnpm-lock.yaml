@@ -1340,6 +1340,9 @@ importers:
       '@xstate/react':
         specifier: 'catalog:'
         version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@device-sdk-ts+packages+device-management-kit+node_modules+xstate)
+      '@zama-fhe/sdk':
+        specifier: 3.6.0
+        version: 3.6.0(@tanstack/query-core@5.28.9)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)
       allure-commandline:
         specifier: 2.28.0
         version: 2.28.0
@@ -2580,7 +2583,7 @@ importers:
         version: 18.0.1
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@react-native/codegen':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
@@ -3423,7 +3426,7 @@ importers:
         version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -3553,7 +3556,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -3737,7 +3740,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -3872,7 +3875,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -4119,7 +4122,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@react-navigation/native':
         specifier: 'catalog:'
         version: 7.1.17(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -4285,7 +4288,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -4408,7 +4411,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@support/jest-devtools':
         specifier: workspace:*
         version: link:../../support/jest-devtools
@@ -7023,7 +7026,7 @@ importers:
         version: 0.1.30
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.61(5fa6b2a4777b4e899a06a1de0351ea4a)
+        version: 0.1.61(fdc52fbef596fac53626c7d76e03b458)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -17555,7 +17558,7 @@ importers:
         version: 0.81.6
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@testing-library/dom':
         specifier: 'catalog:'
         version: 10.4.1
@@ -21885,6 +21888,21 @@ packages:
   '@fastify/sensible@6.0.4':
     resolution: {integrity: sha512-1vxcCUlPMew6WroK8fq+LVOwbsLtX+lmuRuqpcp6eYqu6vmkLwbKTdBWAZwbeaSgCfW4tzUpTIHLLvTiQQ1BwQ==}
 
+  '@fhevm/sdk@0.13.2':
+    resolution: {integrity: sha512-M1ZUKdRJedxRa57bVeQ7jrzVP6hKAXjS8WabvMNJKBui7C2ZXDsvoyb7qpLqYib85obA+OQTwcPZV/oxWfciWA==}
+    engines: {node: '>=22.0'}
+    peerDependencies:
+      ethers: 6.15.0
+      typescript: '>=5.0.4'
+      viem: '>=2'
+    peerDependenciesMeta:
+      ethers:
+        optional: true
+      typescript:
+        optional: true
+      viem:
+        optional: true
+
   '@firebase/analytics-compat@0.2.17':
     resolution: {integrity: sha512-SJNVOeTvzdqZQvXFzj7yAirXnYcLDxh57wBFROfeowq/kRN1AqOw1tG6U4OiFOEhqi7s3xLze/LMkZatk2IEww==}
     peerDependencies:
@@ -23519,6 +23537,10 @@ packages:
     resolution: {integrity: sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==}
     engines: {node: ^14.21.3 || >=16}
 
+  '@noble/curves@2.0.1':
+    resolution: {integrity: sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw==}
+    engines: {node: '>= 20.19.0'}
+
   '@noble/curves@2.2.0':
     resolution: {integrity: sha512-T/BoHgFXirb0ENSPBquzX0rcjXeM6Lo892a2jlYJkqk83LqZx0l1Of7DzlKJ6jkpvMrkHSnAcgb5JegL8SeIkQ==}
     engines: {node: '>= 20.19.0'}
@@ -23562,6 +23584,10 @@ packages:
   '@noble/hashes@1.8.0':
     resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
     engines: {node: ^14.21.3 || >=16}
+
+  '@noble/hashes@2.0.1':
+    resolution: {integrity: sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==}
+    engines: {node: '>= 20.19.0'}
 
   '@noble/hashes@2.2.0':
     resolution: {integrity: sha512-IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg==}
@@ -25260,8 +25286,6 @@ packages:
   '@react-native/babel-preset@0.81.6':
     resolution: {integrity: sha512-RtIr82ccPoyMLmIC3/vCG96MzRmIT+IzQkjCgTS5b93uAxiER9BS7+d1l7+zD00VanClt6CTBM4K4n6RCnAykg==}
     engines: {node: '>= 20.19.4'}
-    peerDependencies:
-      '@babel/core': '*'
 
   '@react-native/codegen@0.77.3':
     resolution: {integrity: sha512-Q6ZJCE7h6Z3v3DiEZUnqzHbgwF3ZILN+ACTx6qu/x2X1cL96AatKwdX92e0+7J9RFg6gdoFYJgRrW8Q6VnWZsQ==}
@@ -28564,6 +28588,18 @@ packages:
 
   '@yarnpkg/lockfile@1.1.0':
     resolution: {integrity: sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==}
+
+  '@zama-fhe/sdk@3.6.0':
+    resolution: {integrity: sha512-z7EiQQBdffJvPD04S0AK9u4B1FOOzFhXTOe8bvibXbC0z7M+oi3nfhntNKUw8Z+HouD8EIuEDlqQ/wXMIYwxCA==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      '@tanstack/query-core': '>=5'
+      ethers: 6.15.0
+    peerDependenciesMeta:
+      '@tanstack/query-core':
+        optional: true
+      ethers:
+        optional: true
 
   '@zkochan/js-yaml@0.0.7':
     resolution: {integrity: sha512-nrUSn7hzt7J6JWgWGz78ZYI8wj+gdIJdk0Ynjpp8l+trkn58Uqsf6RYrYkEK+3X18EX+TNdtJI0WxAtc+L84SQ==}
@@ -38190,6 +38226,9 @@ packages:
   warn-once@0.1.1:
     resolution: {integrity: sha512-VkQZJbO8zVImzYFteBXvBOZEl1qL175WH8VmZcxF2fZAoudNhNDvHi+doCaAEdU2l2vtcIwa2zn0QK5+I1HQ3Q==}
 
+  wasm-feature-detect@1.9.0:
+    resolution: {integrity: sha512-zonE+xlIIYtxPy++L24ow0hAD8CICb4+FgPyROd3buyXIqsJvUEDkBgfCCoXOd1Hu3DUr0GOfnPIdcGV+YpNaA==}
+
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
 
@@ -43081,6 +43120,16 @@ snapshots:
       type-is: 2.0.1
       vary: 1.1.2
 
+  '@fhevm/sdk@0.13.2(@typescript/typescript6@6.0.2)(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(viem@2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@4.4.3))':
+    dependencies:
+      '@noble/curves': 2.0.1
+      '@noble/hashes': 2.0.1
+      wasm-feature-detect: 1.9.0
+    optionalDependencies:
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      typescript: '@typescript/typescript6@6.0.2'
+      viem: 2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@4.4.3)
+
   '@firebase/analytics-compat@0.2.17(@firebase/app-compat@0.2.50)(@firebase/app@0.11.1)':
     dependencies:
       '@firebase/analytics': 0.10.11(@firebase/app@0.11.1)
@@ -45349,7 +45398,6 @@ snapshots:
       tailwind-merge: 3.4.0
     transitivePeerDependencies:
       - react-native
-    optional: true
 
   '@ledgerhq/lumen-ui-rnative@0.1.64(809849fda8537dbd6bb99c1f545f90f8)':
     dependencies:
@@ -45832,6 +45880,10 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
 
+  '@noble/curves@2.0.1':
+    dependencies:
+      '@noble/hashes': 2.0.1
+
   '@noble/curves@2.2.0':
     dependencies:
       '@noble/hashes': 2.2.0
@@ -45861,6 +45913,8 @@ snapshots:
   '@noble/hashes@1.7.1': {}
 
   '@noble/hashes@1.8.0': {}
+
+  '@noble/hashes@2.0.1': {}
 
   '@noble/hashes@2.2.0': {}
 
@@ -47735,7 +47789,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@react-native/babel-preset@0.81.6(@babel/core@7.28.5)':
+  '@react-native/babel-preset@0.81.6':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-proposal-export-default-from': 7.25.9(@babel/core@7.28.5)
@@ -52069,7 +52123,7 @@ snapshots:
       '@vechain/sdk-errors': 2.0.0
       '@vechain/sdk-logging': 2.0.0
       abitype: 1.2.4(@typescript/typescript6@6.0.2)(zod@3.25.76)
-      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       fast-json-stable-stringify: 2.1.0
       viem: 2.37.4(@typescript/typescript6@6.0.2)(zod@3.25.76)
     transitivePeerDependencies:
@@ -52090,7 +52144,7 @@ snapshots:
       '@vechain/sdk-errors': 2.0.0
       '@vechain/sdk-logging': 2.0.0
       abitype: 1.2.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
-      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       fast-json-stable-stringify: 2.1.0
       viem: 2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
     transitivePeerDependencies:
@@ -52111,7 +52165,7 @@ snapshots:
       '@vechain/sdk-errors': 2.0.0
       '@vechain/sdk-logging': 2.0.0
       abitype: 1.2.4(typescript@7.0.2)(zod@4.4.3)
-      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       fast-json-stable-stringify: 2.1.0
       viem: 2.37.4(typescript@7.0.2)(zod@4.4.3)
     transitivePeerDependencies:
@@ -52133,7 +52187,7 @@ snapshots:
       '@vechain/sdk-errors': 2.0.0
       '@vechain/sdk-logging': 2.0.0
       abitype: 1.0.8(@typescript/typescript6@6.0.2)(zod@3.25.76)
-      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       viem: 2.37.4(@typescript/typescript6@6.0.2)(zod@3.25.76)
     transitivePeerDependencies:
       - bufferutil
@@ -52502,6 +52556,19 @@ snapshots:
       - '@types/react'
 
   '@yarnpkg/lockfile@1.1.0': {}
+
+  '@zama-fhe/sdk@3.6.0(@tanstack/query-core@5.28.9)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(utf-8-validate@6.0.6)':
+    dependencies:
+      '@fhevm/sdk': 0.13.2(@typescript/typescript6@6.0.2)(ethers@6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(viem@2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@4.4.3))
+      viem: 2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@4.4.3)
+      zod: 4.4.3
+    optionalDependencies:
+      '@tanstack/query-core': 5.28.9
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
 
   '@zkochan/js-yaml@0.0.7':
     dependencies:
@@ -64343,7 +64410,7 @@ snapshots:
       axios: 1.18.0
       bignumber.js: link:../../backend/coin-modules/libs/coin-modules/coin-evm/node_modules/bignumber.js
       ethereum-cryptography: 2.2.1
-      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       eventemitter3: 5.0.1
       google-protobuf: 3.21.4
       semver: 7.7.1
@@ -65050,6 +65117,8 @@ snapshots:
       makeerror: 1.0.12
 
   warn-once@0.1.1: {}
+
+  wasm-feature-detect@1.9.0: {}
 
   wcwidth@1.0.1:
     dependencies:
