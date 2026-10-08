@@ -4,6 +4,7 @@ import {
   createAgentIntentClient,
   createNonce,
   encodeSendIntentTlv,
+  type FeeStrategy,
   type SendIntent,
 } from "@ledgerhq/agent-intent-sdk";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -96,11 +97,52 @@ async function resolveSenderFromAccount(label: string, network: IntentNetwork): 
     : descriptor.address;
 }
 
-/** A Solana send has no fee level: the service sets the priority fee. */
-function assertSolanaFlags(flags: { "fee-strategy"?: string }): void {
-  if (flags["fee-strategy"]) {
+/** A Solana send has no fee level (the service sets the priority fee); a memo is Solana only. */
+function assertNetworkFlags(
+  network: IntentNetwork,
+  flags: { "fee-strategy"?: string; memo?: string },
+): void {
+  if (network === "solana" && flags["fee-strategy"]) {
     throw new Error("--fee-strategy is Ethereum only: on Solana the service sets the fee.");
   }
+  if (network === "ethereum" && flags.memo) throw new Error("--memo is Solana only.");
+}
+
+/** Adds what only one network carries: a fee level on Ethereum, a memo on Solana. */
+function withNetworkFields(
+  common: Omit<SendIntentSummary, "network" | "feeStrategy" | "memo">,
+  network: IntentNetwork,
+  flags: { "fee-strategy"?: FeeStrategy; memo?: string },
+): SendIntentSummary {
+  if (network === "solana")
+    return { ...common, network, ...(flags.memo ? { memo: flags.memo } : {}) };
+  return { ...common, network, feeStrategy: flags["fee-strategy"] ?? "medium" };
+}
+
+type SendParties = {
+  sender: string;
+  recipient: string;
+  /** How the sender was given, to name it when the SDK refuses its address. */
+  senderField: string;
+};
+
+/** Solana addresses are checked by the SDK later: canonical base58, 32 bytes. */
+async function resolveParties(
+  network: IntentNetwork,
+  senderInput: { account: string } | { from: string },
+  to: string,
+): Promise<SendParties> {
+  const recipient = network === "ethereum" ? parseEvmAddress(to, "to") : to;
+  if ("account" in senderInput) {
+    return {
+      sender: await resolveSenderFromAccount(senderInput.account, network),
+      recipient,
+      senderField: `account "${senderInput.account}"`,
+    };
+  }
+  const sender =
+    network === "ethereum" ? parseEvmAddress(senderInput.from, "from") : senderInput.from;
+  return { sender, recipient, senderField: "--from" };
 }
 
 function solanaAsset(): IntentAsset {
@@ -137,6 +179,17 @@ async function resolveAsset(
     );
   }
   return { type: "erc20", ticker: token.ticker, decimals: token.decimals, contract };
+}
+
+/** Native SOL on Solana; on Ethereum, ETH or the ERC-20 that `--token` names. */
+function resolveNetworkAsset(
+  network: IntentNetwork,
+  ticker: string,
+  tokenContract: string | undefined,
+): Promise<IntentAsset> {
+  return network === "solana"
+    ? Promise.resolve(solanaAsset())
+    : resolveAsset(ticker, tokenContract);
 }
 
 /** Runs the SDK's own intent validation (description length after NFC normalization, TLV
@@ -210,19 +263,15 @@ export default defineCommand({
     });
     await out.run(async () => {
       const senderInput = parseSenderInput(flags);
-      if (network === "solana") assertSolanaFlags(flags);
-      else if (flags.memo) throw new Error("--memo is Solana only.");
+      assertNetworkFlags(network, flags);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
-      // Solana addresses are checked by the SDK below: canonical base58, 32 bytes.
-      const sender =
-        "from" in senderInput
-          ? network === "ethereum"
-            ? parseEvmAddress(senderInput.from, "from")
-            : senderInput.from
-          : await resolveSenderFromAccount(senderInput.account, network);
-      const recipient = network === "ethereum" ? parseEvmAddress(flags.to, "to") : flags.to;
+      const { sender, recipient, senderField } = await resolveParties(
+        network,
+        senderInput,
+        flags.to,
+      );
       const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
-      const asset = network === "solana" ? solanaAsset() : await resolveAsset(ticker, flags.token);
+      const asset = await resolveNetworkAsset(network, ticker, flags.token);
       const amount = parseDecimalAmount(displayAmount, asset.decimals, asset.ticker);
 
       const common = {
@@ -235,16 +284,10 @@ export default defineCommand({
         displayAmount,
         description: flags.description,
       };
-      const summary: SendIntentSummary =
-        network === "solana"
-          ? { ...common, network, ...(flags.memo ? { memo: flags.memo } : {}) }
-          : { ...common, network, feeStrategy: flags["fee-strategy"] ?? "medium" };
+      const summary = withNetworkFields(common, network, flags);
 
       const intent = toSdkSendIntent(summary);
-      assertSdkAcceptsIntent(intent, {
-        sender: "from" in senderInput ? "--from" : `account "${senderInput.account}"`,
-        recipient: "--to",
-      });
+      assertSdkAcceptsIntent(intent, { sender: senderField, recipient: "--to" });
 
       if (flags["dry-run"]) {
         out.agentIntentSendDryRun(summary);
