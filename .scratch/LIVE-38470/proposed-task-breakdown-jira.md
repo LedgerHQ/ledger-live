@@ -363,6 +363,7 @@ With CAL blocked, desktop reaches the unavailable screen within the 3 second cap
 **Related issues**
 
 - is blocked by: T4, T10
+- implements [https://ledgerhq.atlassian.net/browse/LIVE-30604](https://ledgerhq.atlassian.net/browse/LIVE-30604?xpis=eyJicmlkZ2UiOiJzbWFydExpbmtzIiwiaWQiOiIxNzkxNDkxNDg4Mjk4Iiwic291cmNlIjoiY29uZmx1ZW5jZSJ9)
 
 ---
 
@@ -389,6 +390,7 @@ With CAL blocked, mobile reaches the unavailable screen within the 1 second cap.
 **Related issues**
 
 - is blocked by: T5, T10
+- implements [https://ledgerhq.atlassian.net/browse/LIVE-30604](https://ledgerhq.atlassian.net/browse/LIVE-30604?xpis=eyJicmlkZ2UiOiJzbWFydExpbmtzIiwiaWQiOiIxNzkxNDkxNDg4Mjk4Iiwic291cmNlIjoiY29uZmx1ZW5jZSJ9)
 
 ---
 
