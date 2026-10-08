@@ -395,12 +395,21 @@ export function runSwapRedirectTest(
   tags: string[],
 ) {
   describe("Earn v2", () => {
+    const accountsToSeed = [earnAccount];
+    // USDT is a token of ETH_1. Seed that parent as well when the earn account is the empty one.
+    if (
+      fundingAccount.parentAccount &&
+      fundingAccount.parentAccount.accountPath !== earnAccount.accountPath
+    ) {
+      accountsToSeed.push(fundingAccount.parentAccount);
+    }
+
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: earnAccount.currency.speculosApp,
         featureFlags: { ...EARN_V2_FLAGS, ...swapToEarnFlags("v2") },
-        cliCommands: [liveDataCommand(earnAccount)],
+        cliCommands: accountsToSeed.map(account => liveDataCommand(account)),
         speculosForSetupOnly: true,
       });
     });
