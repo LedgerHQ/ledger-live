@@ -55,6 +55,11 @@ function ticketAnnotations({ xrayTicket, bugTicket }: { xrayTicket: string; bugT
   ];
 }
 
+/** Lock name shared by tests that broadcast from `account`, so they never race on its nonce. */
+function accountLock(account: Account) {
+  return `account:${account.currency.id}:${account.accountPath}`;
+}
+
 async function openAccount(app: Application, account: Account) {
   await app.mainNavigation.openTargetFromMainNavigation("accounts");
   await app.accounts.navigateToAccountByName(account.accountName);
@@ -290,8 +295,11 @@ test.describe("Delegate", () => {
   );
 });
 
-test.describe("Lock and vote - CELO", () => {
-  const celoStaking = new Delegate(Account.CELO_1, "0.001", "N/A");
+const celoStaking = new Delegate(Account.CELO_1, "0.001", "N/A");
+
+// Lock and Vote spend from the same account, and the Celo bridge reads its nonce from the latest
+// block: run in parallel, the second transaction reuses the first one's nonce and is rejected.
+test.describe("Lock and vote - CELO", { lock: accountLock(celoStaking.account) }, () => {
   const { currency } = celoStaking.account;
   useDelegateFixtures(currency, { cliCommands: [liveDataCommand(celoStaking.account)] });
 
