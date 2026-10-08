@@ -62,6 +62,8 @@ export function ShieldModalView({
                   value={input}
                   onChange={event => onChangeInput(event.target.value)}
                   currencyText={ticker}
+                  currencyPosition="right"
+                  placeholder="0"
                   maxDecimalLength={maxDecimals}
                   aria-invalid={amountError !== null}
                   data-testid="confidential-shield-amount"
