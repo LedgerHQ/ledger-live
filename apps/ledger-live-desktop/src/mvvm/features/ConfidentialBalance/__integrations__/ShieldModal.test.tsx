@@ -204,6 +204,22 @@ describe("ShieldModal", () => {
     expect(onShielded).toHaveBeenCalledTimes(1);
   });
 
+  it("prepares the shield again on retry, so a spent nonce is never signed twice", async () => {
+    createExecutor({ wrap: new DeviceRefusedError() });
+    const prepareShield = jest.spyOn(confidentialApi, "prepareShield");
+    const { user } = setup();
+
+    await user.type(screen.getByTestId("confidential-shield-amount"), "1");
+    await user.click(screen.getByTestId("confidential-shield-submit"));
+    expect(await screen.findByTestId("confidential-shield-error-deviceRefused")).toBeVisible();
+
+    await user.click(screen.getByText("Retry"));
+
+    expect(await screen.findByTestId("confidential-shield-done")).toBeVisible();
+    expect(prepareShield).toHaveBeenCalledTimes(2);
+    expect(prepareShield.mock.calls[1][2]).toMatchObject({ amount: 1_000_000n });
+  });
+
   it("stays on the amount when the shield cannot be prepared, and retries it", async () => {
     const { executor } = createExecutor();
     controls.failNext("Denylisted");

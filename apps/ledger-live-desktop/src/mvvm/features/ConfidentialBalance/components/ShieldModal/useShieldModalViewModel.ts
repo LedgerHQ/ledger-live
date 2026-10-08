@@ -109,16 +109,21 @@ export function useShieldModalViewModel({
     onShielded();
   };
 
+  // Prepared on every run, retries included: a nonce from an earlier attempt may be spent, and an approve
+  // already mined makes the next prepare skip it.
+  const prepare = (amount: bigint) =>
+    confidentialApi.prepareShield(
+      createConfidentialContext(currencyId, createConfidentialClient),
+      currencyId,
+      { sender: owner, underlying: account.token.contractAddress, amount },
+    );
+
   const submit = async () => {
     if (parsed.amount === undefined) return;
     setError(null);
     setIsPreparing(true);
     try {
-      const shield = await confidentialApi.prepareShield(
-        createConfidentialContext(currencyId, createConfidentialClient),
-        currencyId,
-        { sender: owner, underlying: account.token.contractAddress, amount: parsed.amount },
-      );
+      const shield = await prepare(parsed.amount);
       setPrepared(shield);
       setPhases(INITIAL_PHASES);
       setScreen("progress");
@@ -133,7 +138,13 @@ export function useShieldModalViewModel({
   const retry = async () => {
     if (!prepared) return;
     setError(null);
-    await runFrom(prepared, phases);
+    try {
+      const shield = await prepare(prepared.amountPulled + prepared.remainder);
+      setPrepared(shield);
+      await runFrom(shield, phases);
+    } catch (e) {
+      setError(getConfidentialErrorKind(e));
+    }
   };
 
   const isRunning = SHIELD_STEPS.some(
