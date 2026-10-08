@@ -10,7 +10,7 @@ import {
   Spot,
   Tag,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ChevronRight, Contact } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Contact } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 export type ContactsButtonProps = {
   title: string;
@@ -35,18 +35,16 @@ export function ContactsButton({
             <CardContentDescription>{description}</CardContentDescription>
           </CardContent>
         </CardLeading>
-        <CardTrailing>
-          {newBadgeLabel ? (
+        {newBadgeLabel ? (
+          <CardTrailing>
             <Tag
               label={newBadgeLabel}
               appearance="accent"
               size="md"
               testID="contacts-button-new-badge"
             />
-          ) : (
-            <ChevronRight size={24} color="muted" />
-          )}
-        </CardTrailing>
+          </CardTrailing>
+        ) : null}
       </CardHeader>
     </Card>
   );
