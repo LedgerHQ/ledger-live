@@ -1,4 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
+import { OnboardingStep } from "@features/platform-device-onboarding";
 import {
   DeviceManagementKitBLETransport,
   activeHidDeviceSessionSubject,
@@ -8,6 +9,7 @@ import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
+import { createScriptedTestDevice } from "../testing/scriptedTestDevice";
 import { createTestDevice, knownStax } from "../testing/testDevice";
 import { useLeaveOnboarding } from "../hooks/useLeaveOnboarding";
 
@@ -330,5 +332,79 @@ async function connectStax(
 
 async function quit(result: { current: ReturnType<typeof useDeviceOnboarding> }) {
   act(() => result.current.send({ type: "QUIT" }));
+  await waitFor(() => expect(result.current.status).toBe("exited"));
+}
+
+describe("scripted device onboarding", () => {
+  it("drives a new device from connection to ready", async () => {
+    const device = createScriptedTestDevice();
+    const { result } = renderScripted(device);
+
+    await connectToGenuineCheck(result, device);
+    await finishSetup(result, device);
+
+    expect(result.current.exit).toEqual({
+      reason: "completed",
+      sessionId: device.sessionId,
+      modelId: DeviceModelId.STAX,
+    });
+    expect(device.isWatching(device.sessionId)).toBe(true);
+    expect(device.dmk.sendCommand).toHaveBeenCalledTimes(4);
+    expect(device.dmk.executeDeviceAction).toHaveBeenCalledTimes(2);
+  });
+});
+
+type ScriptedHook = { current: ReturnType<typeof useDeviceOnboarding> };
+
+function renderScripted(device: ReturnType<typeof createScriptedTestDevice>) {
+  return renderHook(
+    () => useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    {
+      overrideInitialState: withFlagOverrides({
+        deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
+      }),
+    },
+  );
+}
+
+async function connectToGenuineCheck(
+  result: ScriptedHook,
+  device: ReturnType<typeof createScriptedTestDevice>,
+) {
+  device.answerState({
+    onboardingState: OnboardingStep.WelcomeScreen1,
+    numberOfWords: 24,
+    currentWordIndex: 0,
+  });
+  device.show();
+  act(() => result.current.connect());
+
+  await waitFor(() => expect(result.current.state).toBe("awaitingStart"));
+  expect(device.isWatching(device.sessionId)).toBe(true);
+
+  device.acceptToggle();
+  act(() => result.current.send({ type: "CONTINUE" }));
+  await waitFor(() => expect(result.current.state).toBe("checks.genuineCheck.running"));
+}
+
+async function finishSetup(
+  result: ScriptedHook,
+  device: ReturnType<typeof createScriptedTestDevice>,
+) {
+  act(() => device.passGenuineCheck());
+  await waitFor(() => expect(result.current.state).toBe("checks.firmwareCheck"));
+
+  device.acceptToggle();
+  act(() => device.reportFirmwareUpToDate());
+  await waitFor(() => expect(result.current.state).toBe("deviceSetup.waiting"));
+
+  act(() =>
+    device.answerState({
+      onboardingState: OnboardingStep.Ready,
+      numberOfWords: 24,
+      currentWordIndex: 0,
+      isOnboarded: true,
+    }),
+  );
   await waitFor(() => expect(result.current.status).toBe("exited"));
 }
