@@ -64,6 +64,7 @@ export function QueuedBottomSheet({
     enablePanDownToClose: computedEnablePanDownToClose,
     backgroundContextValue,
     backgroundComponent,
+    isAwaitingNextPresentation,
   } = useQueuedBottomSheet({
     isRequestingToBeOpened,
     isForcingToBeOpened,
@@ -76,8 +77,11 @@ export function QueuedBottomSheet({
     restoreOnFocus,
   });
 
+  const content = isAwaitingNextPresentation ? null : children;
+  const footerContent = isAwaitingNextPresentation ? null : footer;
+
   const [footerHeight, setFooterHeight] = useState(0);
-  const hasFooter = footer !== null && footer !== undefined;
+  const hasFooter = footerContent !== null && footerContent !== undefined;
   const contentBottomInset = useContentBottomInset(hasFooter, enableDynamicSizing);
   const showBottomSpace = !hasFooter && !(enableDynamicSizing && contentHasBottomSpace);
 
@@ -88,8 +92,8 @@ export function QueuedBottomSheet({
   const footerStore = footerStoreRef.current;
 
   useEffect(() => {
-    footerStore.setContent(footer ?? null);
-  }, [footer, footerStore]);
+    footerStore.setContent(footerContent ?? null);
+  }, [footerContent, footerStore]);
 
   // gorhom memoizes the footer container on this identity, so a new function every render would
   // remount the footer and throw away its measured height.
@@ -130,7 +134,7 @@ export function QueuedBottomSheet({
         <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>
           <BottomSheetFooterInsetContext.Provider value={hasFooter ? footerHeight : 0}>
             <BottomSheetBottomInsetContext.Provider value={contentBottomInset}>
-              <IsInBottomSheetProvider>{children}</IsInBottomSheetProvider>
+              <IsInBottomSheetProvider>{content}</IsInBottomSheetProvider>
             </BottomSheetBottomInsetContext.Provider>
           </BottomSheetFooterInsetContext.Provider>
         </BottomSheetBackgroundContext.Provider>
