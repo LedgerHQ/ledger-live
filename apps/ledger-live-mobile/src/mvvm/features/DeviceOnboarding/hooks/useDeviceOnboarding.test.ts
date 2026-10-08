@@ -5,6 +5,19 @@ import { createTestDevice, knownStax } from "../testing/testDevice";
 import { nextStatesFrom, useDeviceOnboarding } from "./useDeviceOnboarding";
 import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 
+const loggedEvents: { type: string }[] = [];
+
+jest.mock("../utils/toolState", () => {
+  const actual = jest.requireActual("../utils/toolState");
+  return {
+    ...actual,
+    toolEvent: (event: { type: string }, id: string, sessionId: string) => {
+      loggedEvents.push(event);
+      return actual.toolEvent(event, id, sessionId);
+    },
+  };
+});
+
 jest.mock("./useDeviceOnboardingExit", () => ({
   useDeviceOnboardingExit: jest.fn(),
 }));
@@ -110,6 +123,21 @@ describe("useDeviceOnboarding", () => {
       },
       output: expect.objectContaining({ reason: "userQuit" }),
     });
+  });
+
+  it("quits the run before it clears the screen", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    loggedEvents.length = 0;
+    act(() => result.current.reset());
+
+    expect(loggedEvents.map(event => event.type)).toContain("QUIT");
+    expect(result.current.status).toBe("idle");
+    expect(result.current.events).toEqual([]);
   });
 
   // A new run must drop the old exit. Otherwise the next screen can open again.

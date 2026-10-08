@@ -59,6 +59,11 @@ const MachineState = {
   AwaitingSession: "awaitingSession",
 } as const;
 
+function quitInProgress(value: unknown): boolean {
+  const label = stateValueToString(value);
+  return label === "quitting" || label === "leavingOnQuit";
+}
+
 const OnboardingEventType = {
   SessionReady: "SESSION_READY",
   TransportLost: "TRANSPORT_LOST",
@@ -457,7 +462,7 @@ export function useDeviceOnboarding({
     actor.send(event);
   }, []);
 
-  const reset = useCallback(() => {
+  const clearRun = useCallback(() => {
     connectCount.current += 1;
     connectionRef.current?.unsubscribe();
     connectionRef.current = null;
@@ -474,6 +479,28 @@ export function useDeviceOnboarding({
     setError(null);
     lastStep.current = null;
   }, []);
+
+  const reset = useCallback(() => {
+    const actor = actorRef.current;
+    const snapshot = actor?.getSnapshot();
+
+    if (actor && snapshot?.status === ActorStatus.Active && snapshot.can({ type: "QUIT" })) {
+      actor.send({ type: "QUIT" });
+      const after = actor.getSnapshot();
+
+      if (after.status !== ActorStatus.Done && quitInProgress(after.value)) {
+        connectCount.current += 1;
+        const subscription = actor.subscribe(next => {
+          if (next.status !== ActorStatus.Done) return;
+          subscription.unsubscribe();
+          clearRun();
+        });
+        return;
+      }
+    }
+
+    clearRun();
+  }, [clearRun]);
 
   useFirmwareUpdateHandover({
     device: screenDevice,

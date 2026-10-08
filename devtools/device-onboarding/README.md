@@ -23,7 +23,8 @@ that screen. Turn it off to stay here. Before a run, the log asks you to pair a 
 tap Connect. The log reads upward. The newest state is on top.
 An event stays in the state where it happened. Under the current state, each event that can
 happen lists the state it can reach. Those lines are faded. Lock, a lost transport, and quit
-stay off that list. The buttons sit above the newest state.
+stay off that list. The buttons sit above the newest state. Reset quits the run first,
+then clears this screen.
 `auto` means the machine may move there with no event.
 Export logs sits at the bottom. It shares a JSON log on a phone and downloads it on the web.
 
