@@ -295,7 +295,7 @@ export function useDeviceOnboarding({
 
     const sessionId = portsRef.current?.currentSessionId() ?? missingSessionId;
     const next = toolEvent(event, String(logNumber.current++), sessionId);
-    setEvents(current => [...current.slice(-49), next]);
+    setEvents(current => [...current, next]);
   }, []);
 
   const passSessionEvent = useCallback(

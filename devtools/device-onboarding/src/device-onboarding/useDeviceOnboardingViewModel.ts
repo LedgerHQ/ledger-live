@@ -178,6 +178,7 @@ function recordStep(
 
 export interface DeviceOnboardingViewModel {
   readonly statusLabel: string;
+  readonly exportText: string;
   readonly stateSteps: readonly StateStep[];
   readonly logLines: readonly LogLine[];
   readonly deviceLabel: string | null;
@@ -396,6 +397,7 @@ export function useDeviceOnboardingViewModel(
 
   return {
     statusLabel: statusLabels[status],
+    exportText: JSON.stringify({ status, device, state, context, events, exit }, null, 2),
     stateSteps,
     logLines,
     deviceLabel,

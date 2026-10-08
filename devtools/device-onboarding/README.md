@@ -25,6 +25,7 @@ An event stays in the state where it happened. Under the current state, each eve
 happen lists the state it can reach. Those lines are faded. Lock, a lost transport, and quit
 stay off that list. The buttons sit above the newest state.
 `auto` means the machine may move there with no event.
+Export logs sits at the bottom. It shares a JSON log on a phone and downloads it on the web.
 
 **The tool runs no machine.** The host owns the session and drives `deviceOnboardingMachine`; this
 package receives what the host observes through `DeviceOnboardingToolProps` and calls back with

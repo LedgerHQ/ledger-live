@@ -40,6 +40,13 @@ const stepPresentation: Record<StateKind, { readonly Icon: IconComponent; readon
     quit: { Icon: ExitLogout, tone: "bg-muted-transparent text-muted" },
   };
 
+function exportLogs(content: string) {
+  const link = document.createElement("a");
+  link.href = `data:application/json;charset=utf-8,${encodeURIComponent(content)}`;
+  link.download = "device-onboarding-logs.json";
+  link.click();
+}
+
 function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   const vm = useDeviceOnboardingViewModel(props);
   const [tab, setTab] = useState<"log" | "config">("log");
@@ -128,6 +135,9 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
               )
             )}
           </div>
+          <Button size="sm" appearance="transparent" onClick={() => exportLogs(vm.exportText)}>
+            Export logs
+          </Button>
         </div>
       )}
     </div>

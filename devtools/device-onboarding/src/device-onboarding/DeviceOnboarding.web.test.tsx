@@ -158,6 +158,33 @@ describe("DeviceOnboarding", () => {
     expect(screen.getByText("2")).toBeInTheDocument();
   });
 
+  it("exports every event in the log", async () => {
+    render(
+      <DeviceOnboarding
+        {...buildProps({
+          state: "readingState",
+          events: [
+            { id: "first", type: "SESSION_READY", at: 1 },
+            { id: "second", type: "FIRMWARE_CHECK_FAILED", at: 2 },
+          ],
+        })}
+      />,
+    );
+    const link = document.createElement("a");
+    const click = jest.spyOn(link, "click").mockImplementation();
+    jest.spyOn(document, "createElement").mockReturnValueOnce(link);
+
+    await userEvent.click(screen.getByRole("button", { name: "Export logs" }));
+
+    expect(click).toHaveBeenCalledTimes(1);
+    expect(link.download).toBe("device-onboarding-logs.json");
+    const content = decodeURIComponent(link.href.split(",")[1]);
+    expect(JSON.parse(content)).toMatchObject({
+      state: "readingState",
+      events: [{ id: "first" }, { id: "second" }],
+    });
+  });
+
   it("surfaces a host error", () => {
     render(<DeviceOnboarding {...buildProps({ error: "Bluetooth is off" })} />);
 

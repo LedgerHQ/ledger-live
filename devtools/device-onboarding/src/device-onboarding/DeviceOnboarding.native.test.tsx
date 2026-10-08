@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@support/jest-devtools/native";
+import { Share } from "react-native";
 import { buildProps } from "jest/deviceOnboardingProps";
 import { emptyLogCopy, openNextScreenCopy } from "./configCopy";
 import DeviceOnboarding from "./DeviceOnboarding";
@@ -160,6 +161,29 @@ describe("DeviceOnboarding", () => {
     fireEvent.press(screen.getByText("DEVICE_STATE_READ"));
     expect(screen.getByText("state.seedWordIndex")).toBeTruthy();
     expect(screen.getByText("2")).toBeTruthy();
+  });
+
+  it("exports every event in the log", () => {
+    const share = jest.spyOn(Share, "share").mockResolvedValue({ action: Share.sharedAction });
+    render(
+      <DeviceOnboarding
+        {...buildProps({
+          state: "readingState",
+          events: [
+            { id: "first", type: "SESSION_READY", at: 1 },
+            { id: "second", type: "FIRMWARE_CHECK_FAILED", at: 2 },
+          ],
+        })}
+      />,
+    );
+
+    fireEvent.press(screen.getByText("Export logs"));
+
+    const message = share.mock.calls[0][0].message;
+    expect(JSON.parse(message ?? "")).toMatchObject({
+      state: "readingState",
+      events: [{ id: "first" }, { id: "second" }],
+    });
   });
 
   it("surfaces a host error", () => {

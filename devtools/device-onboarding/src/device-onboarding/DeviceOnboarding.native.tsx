@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { Pressable, ScrollView } from "react-native";
+import { Pressable, ScrollView, Share } from "react-native";
 import {
   Box,
   Button,
@@ -209,6 +209,18 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
               )
             )}
           </Box>
+          <Button
+            size="sm"
+            appearance="transparent"
+            onPress={() =>
+              void Share.share({
+                title: "Device onboarding logs",
+                message: vm.exportText,
+              })
+            }
+          >
+            Export logs
+          </Button>
         </Box>
       ) : null}
     </ScrollView>
