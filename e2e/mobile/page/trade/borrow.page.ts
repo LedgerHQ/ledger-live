@@ -166,8 +166,7 @@ export default class BorrowPage {
     await waitWebElementByTestId(this.loanExecutionScreenId);
     await expectWebElementNotVisible(doneId);
     await this.revealAndTap(buttonId, EXECUTION_STEP_TIMEOUT_MS);
-    await waitForElementById(app.send.summaryContinueEnabledButtonId);
-    await app.send.summaryContinue();
+    await app.walletApiSignatureDrawer.expectVisible();
     await sign();
     await this.expectStepDone(doneId);
   }

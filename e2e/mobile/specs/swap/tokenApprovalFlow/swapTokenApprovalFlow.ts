@@ -73,7 +73,7 @@ export function runSwapTokenApprovalFlow(
         await app.swapLiveApp.tapExecuteSwap(provider.uiName);
         await app.swapLiveApp.expectTwoStepApprovalScreen();
         await app.swapLiveApp.tapGiveApprovalButton();
-        await app.send.summaryContinue();
+        await app.walletApiSignatureDrawer.expectVisible();
         await app.speculos.signTokenApproval();
         if (provider === SwapProvider.UNISWAP) {
           await app.swapLiveApp.tapGiveAuthorizationButton();

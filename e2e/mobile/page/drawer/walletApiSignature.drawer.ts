@@ -3,10 +3,10 @@ import { TIMEOUT } from "@e2e/utils/timeouts";
 
 /** The Device Intent Executor drawer that signs a wallet-api transaction (llmWalletApiDeviceIntentSign). */
 export default class WalletApiSignatureDrawer {
-  contentId = "wallet-api-signature-step";
+  signaturePromptId = "wallet-api-signature-prompt";
 
   @Step("Expect the wallet-api signature drawer visible")
   async expectVisible() {
-    await waitForElementById(this.contentId, TIMEOUT.xlarge);
+    await waitForFullyVisibleById(this.signaturePromptId, TIMEOUT.xlarge);
   }
 }

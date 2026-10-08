@@ -158,6 +158,19 @@ export const getMergedFeatureFlags = ({
     releaseTour: { enabled: false },
     brazePushNotifications: { enabled: false },
     ratingsPrompt: { enabled: false },
+    // Mirrors the production flag; the stg swap manifest is added because e2e loads it unless PRODUCTION=true.
+    llmWalletApiDeviceIntentSign: {
+      enabled: true,
+      params: {
+        variantId: "deviceIntentEnabled",
+        enabledManifestIds: [
+          "swap-live-app-aws",
+          "swap-live-app-stg-aws",
+          "earn-prd-eks",
+          "borrow",
+        ],
+      },
+    },
     llmModularDrawer: {
       enabled: true,
       params: {
