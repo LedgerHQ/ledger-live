@@ -164,7 +164,7 @@ on:
         type: string
         default: ""
       ci_smoke:
-        description: "Smoke run from the Build and Test workflows (PR, push, scheduled): pins the Speculos firmware and reports to Allure PR-checks only (no Slack, QAA Allure or AI artifacts)"
+        description: "Smoke run from the Build and Test workflows (PR, push, scheduled): pins the Speculos firmware and reports to Allure PR-checks only (no Slack, QAA Allure, AI artifacts or timing cache)"
         required: false
         type: boolean
         default: false
@@ -1607,7 +1607,7 @@ jobs:
       contents: read
     needs: [determine-builds, detox-tests-ios]
     runs-on: ubuntu-24.04
-    if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
+    if: ${{ !cancelled() && !inputs.ci_smoke && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
@@ -1639,7 +1639,7 @@ jobs:
       contents: read
     needs: [determine-builds, detox-tests-android]
     runs-on: ubuntu-24.04
-    if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
+    if: ${{ !cancelled() && !inputs.ci_smoke && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
