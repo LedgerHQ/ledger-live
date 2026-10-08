@@ -1,7 +1,16 @@
-import { deriveEarnTransactionType, type EarnTransactionType } from "./earnTransactionType";
+import {
+  deriveEarnTransactionType,
+  resolveFamily,
+  type EarnTransactionType,
+} from "./earnTransactionType";
 import { deriveDappAction, readDappFunction } from "./dappActions";
 import { isStakingApp } from "./stakingApps";
-import { getDappSelector, getRawTransactionType, type TransactionLike } from "./transactionShape";
+import {
+  getDappSelector,
+  getRawTransactionType,
+  getTonPoolAction,
+  type TransactionLike,
+} from "./transactionShape";
 
 export type ResolvedAction = {
   earnTransactionType?: EarnTransactionType;
@@ -13,6 +22,14 @@ export type ResolvedAction = {
    */
   dappContract?: string;
 };
+
+/**
+ * Only EVM has contract calls here. Elsewhere a recipient is a payee or a pool, and its address
+ * may be case-sensitive (TON), so it is never reported as a contract.
+ */
+export function isContractFamily(family: string): boolean {
+  return resolveFamily(family) === "evm";
+}
 
 /**
  * The staking action, read from whichever vocabulary the transaction speaks.
@@ -39,7 +56,15 @@ export function readAction(
 
   if (!isStakingApp(manifestId)) return { rawTransactionType: mode };
 
-  const selector = getDappSelector(transaction);
+  const poolAction = getTonPoolAction(transaction);
+  if (poolAction) {
+    return {
+      earnTransactionType: deriveEarnTransactionType(family, poolAction),
+      rawTransactionType: poolAction,
+    };
+  }
+
+  const selector = isContractFamily(family) ? getDappSelector(transaction) : undefined;
   if (!selector) return { rawTransactionType: mode };
 
   // An unmapped function is still reported, by its selector, so the gap is countable and the

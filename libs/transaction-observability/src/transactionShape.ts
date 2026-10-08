@@ -21,7 +21,37 @@ export type TransactionLike = { family?: string } & Record<string, unknown>;
 export function getRawTransactionType(tx: TransactionLike | undefined | null): string | undefined {
   if (!tx) return undefined;
   if (tx.family === "solana") return (tx.model as { kind?: string } | undefined)?.kind;
+  // Only the type: a comment payload's text is user-written.
+  if (tx.family === "ton") return signedTonPayload(tx)?.type;
   return tx.mode as string | undefined;
+}
+
+type TonPayload = { type?: string; text?: unknown; isEncrypted?: boolean };
+
+// The signer's order: a jetton sub-account replaces everything, then a non-empty comment
+// replaces the payload.
+function signedTonPayload(tx: TransactionLike): TonPayload | undefined {
+  if (tx.subAccountId) return { type: "jetton-transfer" };
+  const comment = tx.comment as { isEncrypted?: boolean; text?: unknown } | undefined;
+  if (typeof comment?.text === "string" && comment.text.length > 0) {
+    return { type: "comment", text: comment.text, isEncrypted: comment.isEncrypted };
+  }
+  return tx.payload as TonPayload | undefined;
+}
+
+// Exact matches only, reported as fixed tokens so the user-written text never leaves.
+const TON_POOL_COMMENTS: Record<string, string> = {
+  Deposit: "pool-comment-deposit",
+};
+
+/** A nominator-pool action sent as a text comment. Only meaningful inside a staking app. */
+export function getTonPoolAction(tx: TransactionLike | undefined | null): string | undefined {
+  if (tx?.family !== "ton") return undefined;
+  const signed = signedTonPayload(tx);
+  const text = signed?.type === "comment" && !signed.isEncrypted ? signed.text : undefined;
+  return typeof text === "string" && Object.hasOwn(TON_POOL_COMMENTS, text)
+    ? TON_POOL_COMMENTS[text]
+    : undefined;
 }
 
 /**
@@ -38,10 +68,7 @@ export function getDappSelector(tx: TransactionLike | undefined | null): string 
   const data = tx?.data;
   if (data === undefined || data === null) return undefined;
 
-  // A live transaction carries a Buffer. A serialised one carries a string, and the optimistic
-  // operation's is *unprefixed* — observed as `a1903eab…` on a real Lido deposit — while other
-  // routes prefix it. So normalise rather than assume: reading a prefixed string as a Buffer
-  // yields `0x0x095ea7`, which looks like a selector and is not one.
+  // A Buffer when live, a hex string when serialised — with or without `0x` depending on route.
   const hex =
     typeof data === "string"
       ? data.replace(/^0x/i, "")

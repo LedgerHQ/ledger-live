@@ -73,6 +73,13 @@ const STAKING_CONTRACTS: Record<string, StakingContract> = {
     method: "pooling",
     isReceiptToken: true,
   },
+  // Observed on avalanche_c_chain: a StakeKit AVAX stake calls `submit` on sAVAX itself, as Lido
+  // does on stETH. This is what gives StakeKit, which has no manifest method, a method here.
+  "0x2b2c81e08f1af8835a78bb2a90ae924ace0ea4be": {
+    outputCurrency: "sAVAX",
+    method: "liquid",
+    isReceiptToken: true,
+  },
 };
 
 function lookup(contract: string | undefined): StakingContract | undefined {
@@ -87,11 +94,6 @@ export function outputCurrencyOf(contract: string | undefined): string | undefin
 /** How this contract stakes, where the contract says it more precisely than the manifest. */
 export function stakingMethodOfContract(contract: string | undefined): StakingMethod | undefined {
   return lookup(contract)?.method;
-}
-
-/** The addresses this package knows about — read by the drift guard. */
-export function knownStakingContracts(): string[] {
-  return Object.keys(STAKING_CONTRACTS);
 }
 
 /**

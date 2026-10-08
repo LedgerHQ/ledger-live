@@ -55,6 +55,9 @@ const DAPP_ACTIONS: Record<string, EarnTransactionType> = {
   delegate: "delegate",
   undelegate: "undelegate",
   redelegate: "redelegate",
+  // Observed: StakeKit's POL stake. Each Polygon validator has its own ValidatorShare contract,
+  // so the call names a validator and is a delegation, not a pool deposit.
+  buyvoucherpol: "delegate",
   claim: "claimReward",
   claimrewards: "claimReward",
   getreward: "claimReward",

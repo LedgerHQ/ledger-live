@@ -16,13 +16,15 @@ import type { TransactionLike } from "./transactionShape";
 
 // Real selectors, so the map is checked against the vocabulary it actually meets.
 const LIDO_SUBMIT = "0xa1903eab"; // keccak256("submit(address)")
+const BUY_VOUCHER_POL = "0xe4457a8a"; // buyVoucherPOL(uint256,uint256)
+const SUBMIT_NO_ARGS = "0x5bcb2fc6"; // keccak256("submit()")
+const SAVAX = "0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE";
 const WETH_DEPOSIT = "0xd0e30db0"; // keccak256("deposit()") — wrapping ETH, not staking
 const STAKE_NO_ARGS = "0x3a4b66f1"; // keccak256("stake()")
 const UNMAPPED = "0xdeadbeef";
-const REQUEST_EXIT = "0x721c6513"; // requestExit, observed on a Coinbase exit
+const REQUEST_EXIT = "0x721c6513"; // requestExit()
+const ERC4626_DEPOSIT = "0x6e553f65"; // keccak256("deposit(uint256,address)")
 
-// Observed in a real Lido stake on desktop: `submit(address)` is called on stETH itself, so
-// the deposit target and the receipt token are one address.
 const LIDO_STETH = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 const KILN_PSETH = "0x5DB5235b5C7e247488784986e58019fFFd98FdA4";
 const COINBASE_LCETH = "0xc4dcb059dd98b45b090da8982234c61d0b9e84f9";
@@ -80,7 +82,6 @@ describe("the dApp selector vocabulary", () => {
     ["requestWithdrawals", "withdraw"],
     ["redeem", "redeem"],
     ["claimRewards", "claimReward"],
-    // Observed as `transaction_type: unknown` on real completed stakes (LIVE-38202).
     ["enterExitQueue", "withdraw"],
     ["claimExitedAssets", "withdraw"],
     ["requestExit", "withdraw"],
@@ -93,7 +94,6 @@ describe("the dApp selector vocabulary", () => {
     expect(deriveDappAction(fn)).toBe(action);
   });
 
-  // The names above only help if the selector list resolves real call data to them.
   it("resolves a real exit selector to its name and action", () => {
     const common = signEvent({
       manifestId: "coinbase-staking",
@@ -138,11 +138,11 @@ describe("the dApp selector vocabulary", () => {
 describe("Earn lifecycle manifest guards", () => {
   afterEach(() => setStakeProgramAppsReader(null));
 
-  it.each(["stakekit", "kiln-widget"])(
-    "admits the stakePrograms redirect %s without changing Segment's provider gate",
+  it.each(["kiln-widget", "stakekit", "p2p-ton-staking"])(
+    "admits the stakePrograms redirect %s to both lifecycle monitoring and Segment",
     manifestId => {
       expect(isEarnMonitoringApp(manifestId)).toBe(true);
-      expect(isStakingApp(manifestId)).toBe(false);
+      expect(isStakingApp(manifestId)).toBe(true);
     },
   );
 
@@ -334,6 +334,7 @@ describe("the staking-app gate", () => {
     expect(stakingMethodOf("lido")).toBe("liquid");
     expect(stakingMethodOf("kelp-dao")).toBe("restaking");
     expect(stakingMethodOf("p2p")).toBe("dedicated");
+    expect(stakingMethodOf("p2p-ton-staking")).toBe("pooling");
   });
 
   // Kiln serves a pooled and a dedicated product behind one manifest, so the manifest cannot
@@ -341,6 +342,7 @@ describe("the staking-app gate", () => {
   it("reports no method for an app that stakes more than one way", () => {
     expect(isStakingApp("kiln-staking")).toBe(true);
     expect(stakingMethodOf("kiln-staking")).toBeUndefined();
+    expect(stakingMethodOf("stakekit")).toBeUndefined();
   });
 });
 
@@ -620,5 +622,369 @@ describe("classifying at broadcast with no sign context", () => {
 
     expect(common.rawTransactionType).toBe("OUT");
     expect(common.dappContract).toBeUndefined();
+  });
+});
+
+describe("stakePrograms redirects", () => {
+  const account = (id: string, family: string, ticker: string) =>
+    ({ id: "account-id", type: "Account", currency: { id, family, ticker } }) as unknown as Account;
+  const bsc = account("bsc", "evm", "BNB");
+  const tron = account("tron", "tron", "TRX");
+  const ton = account("ton", "ton", "TON");
+
+  const failed = (common: ReturnType<typeof signEvent>) =>
+    toSegmentTrackEvent({
+      ...common,
+      status: "failure",
+      stage: "sign",
+      errorCategory: "unknown",
+      error: new Error("nope"),
+    } as unknown as LogEvent);
+
+  it("keeps a StakeKit EVM contract call, with no method and no guessed token", () => {
+    const mapped = failed(
+      signEvent({
+        account: bsc,
+        manifestId: "stakekit",
+        transaction: {
+          family: "evm",
+          mode: "send",
+          recipient: "0x0000000000000000000000000000000000002002",
+          data: callData(UNMAPPED),
+        },
+      }),
+    );
+
+    expect(mapped!.properties).toMatchObject({
+      manifest_id: "stakekit",
+      network: "bsc",
+      transaction_type: "unknown",
+      raw_transaction_type: "0xdeadbeef",
+      contract_address: "0x0000000000000000000000000000000000002002",
+    });
+    expect(mapped!.properties).not.toHaveProperty("staking_method");
+    expect(mapped!.properties).not.toHaveProperty("output_currency");
+  });
+
+  it("names the method and token of a StakeKit AVAX stake from its contract", () => {
+    const common = signEvent({
+      account: account("avalanche_c_chain", "evm", "AVAX"),
+      manifestId: "stakekit",
+      transaction: {
+        family: "evm",
+        mode: "send",
+        recipient: SAVAX,
+        data: callData(SUBMIT_NO_ARGS),
+      },
+    });
+
+    expect(common).toMatchObject({
+      earnTransactionType: "deposit",
+      rawTransactionType: "submit",
+      dappContract: SAVAX.toLowerCase(),
+      stakingMethod: "liquid",
+      outputCurrency: "sAVAX",
+    });
+  });
+
+  it("reads a StakeKit POL stake as a delegation", () => {
+    const common = signEvent({
+      manifestId: "stakekit",
+      transaction: {
+        family: "evm",
+        mode: "send",
+        recipient: "0x2ea3c215daeacc1c90b51443ab5d08a9ad816138",
+        data: callData(BUY_VOUCHER_POL),
+      },
+    });
+
+    expect(common).toMatchObject({
+      earnTransactionType: "delegate",
+      rawTransactionType: "buyVoucherPOL",
+    });
+    expect(common.stakingMethod).toBeUndefined();
+    expect(common.outputCurrency).toBeUndefined();
+  });
+
+  it("keeps the family vocabulary for a native StakeKit stake", () => {
+    const common = signEvent({
+      account: tron,
+      manifestId: "stakekit",
+      transaction: { family: "tron", mode: "freeze", recipient: "TXYZ" },
+    });
+
+    expect(common).toMatchObject({ earnTransactionType: "delegate", rawTransactionType: "freeze" });
+    expect(common.dappContract).toBeUndefined();
+  });
+
+  it("never reports a native StakeKit recipient as a contract on success", () => {
+    const signed = {
+      signature: "sig",
+      operation: { type: "FREEZE", extra: {}, recipients: ["TXYZrecipient"] },
+    } as unknown as SignedOperation;
+    rememberSignContext(signed, "tron", { family: "tron", mode: "freeze" }, "stakekit");
+
+    const broadcast = buildBroadcastCommonEvent({
+      account: tron,
+      mainAccount: tron,
+      pathway: TransactionPathway.WalletApiSignAndBroadcast,
+      manifestId: "stakekit",
+      signedOperation: signed,
+    });
+
+    expect(broadcast.earnTransactionType).toBe("delegate");
+    expect(broadcast.dappContract).toBeUndefined();
+  });
+
+  it("never reports a contract for a StakeKit transfer with no call data", () => {
+    const common = signEvent({
+      account: bsc,
+      manifestId: "stakekit",
+      transaction: { family: "evm", mode: "send", recipient: "0xsomeone" },
+    });
+
+    expect(common.dappContract).toBeUndefined();
+  });
+
+  it("classifies a Kiln DeFi vault deposit, with no staking method", () => {
+    const mapped = failed(
+      signEvent({
+        manifestId: "kiln-widget",
+        transaction: {
+          family: "evm",
+          mode: "send",
+          recipient: "0x00000000000000000000000000000000000000aa",
+          data: callData(ERC4626_DEPOSIT),
+        },
+      }),
+    );
+
+    expect(mapped!.properties).toMatchObject({
+      manifest_id: "kiln-widget",
+      transaction_type: "deposit",
+      raw_transaction_type: "deposit",
+    });
+    expect(mapped!.properties).not.toHaveProperty("staking_method");
+  });
+
+  it("classifies a TON pooled stake from its payload", () => {
+    const mapped = failed(
+      signEvent({
+        account: ton,
+        manifestId: "p2p-ton-staking",
+        transaction: { family: "ton", payload: { type: "tonstakers-deposit" } },
+      }),
+    );
+
+    expect(mapped!.properties).toMatchObject({
+      manifest_id: "p2p-ton-staking",
+      network: "ton",
+      transaction_type: "deposit",
+      raw_transaction_type: "tonstakers-deposit",
+      staking_method: "pooling",
+    });
+  });
+
+  it("does not read a jetton burn as an unstake", () => {
+    const common = signEvent({
+      account: ton,
+      manifestId: "p2p-ton-staking",
+      transaction: { family: "ton", payload: { type: "jetton-burn" } },
+    });
+
+    expect(common.earnTransactionType).toBeUndefined();
+    expect(common.rawTransactionType).toBe("jetton-burn");
+  });
+
+  describe("P2P's nominator-pool comments", () => {
+    const p2pStake = (comment: { isEncrypted: boolean; text: string }, manifestId?: string) =>
+      signEvent({
+        account: ton,
+        manifestId,
+        transaction: { family: "ton", recipient: "EQpool", comment },
+      });
+
+    it("classifies a deposit, and never reports the comment text", () => {
+      const mapped = failed(p2pStake({ isEncrypted: false, text: "Deposit" }, "p2p-ton-staking"));
+
+      expect(mapped!.properties).toMatchObject({
+        transaction_type: "deposit",
+        raw_transaction_type: "pool-comment-deposit",
+        staking_method: "pooling",
+      });
+      expect(JSON.stringify(mapped!.properties)).not.toContain("Deposit");
+    });
+
+    it("classifies a withdrawal from its payload", () => {
+      const common = signEvent({
+        account: ton,
+        manifestId: "p2p-ton-staking",
+        transaction: { family: "ton", payload: { type: "tonwhales-pool-withdraw" } },
+      });
+
+      expect(common).toMatchObject({
+        earnTransactionType: "withdraw",
+        rawTransactionType: "tonwhales-pool-withdraw",
+      });
+    });
+
+    it("claims nothing for the same comment on a plain send", () => {
+      const common = p2pStake({ isEncrypted: false, text: "Deposit" });
+
+      expect(common.earnTransactionType).toBeUndefined();
+      expect(failed(common)).toBeNull();
+    });
+
+    it.each([
+      ["an encrypted comment", { isEncrypted: true, text: "Deposit" }],
+      ["a near miss", { isEncrypted: false, text: "deposit please" }],
+      ["a withdraw comment", { isEncrypted: false, text: "Withdraw" }],
+      ["anything else", { isEncrypted: false, text: "rent for march" }],
+      ["an inherited name", { isEncrypted: false, text: "toString" }],
+    ])("claims nothing for %s, and does not echo it", (_, comment) => {
+      const common = p2pStake(comment, "p2p-ton-staking");
+
+      expect(common.earnTransactionType).toBeUndefined();
+      expect(common.rawTransactionType).toBe("comment");
+      expect(JSON.stringify(common)).not.toContain(comment.text);
+    });
+
+    it("classifies the signed comment, not an overridden withdrawal payload", () => {
+      const common = signEvent({
+        account: ton,
+        manifestId: "p2p-ton-staking",
+        transaction: {
+          family: "ton",
+          comment: { isEncrypted: false, text: "Deposit" },
+          payload: { type: "tonwhales-pool-withdraw" },
+        },
+      });
+
+      expect(common).toMatchObject({
+        earnTransactionType: "deposit",
+        rawTransactionType: "pool-comment-deposit",
+      });
+    });
+
+    it("claims nothing when a top-level comment overrides a Deposit payload", () => {
+      const common = signEvent({
+        account: ton,
+        manifestId: "p2p-ton-staking",
+        transaction: {
+          family: "ton",
+          comment: { isEncrypted: false, text: "rent" },
+          payload: { type: "comment", text: "Deposit" },
+        },
+      });
+
+      expect(common.earnTransactionType).toBeUndefined();
+      expect(common.rawTransactionType).toBe("comment");
+    });
+
+    it.each([
+      ["a Deposit comment", { comment: { isEncrypted: false, text: "Deposit" } }],
+      ["a staking payload", { payload: { type: "tonwhales-pool-deposit" } }],
+    ])("claims nothing for a jetton transfer with %s", (_, fields) => {
+      const common = signEvent({
+        account: ton,
+        manifestId: "p2p-ton-staking",
+        transaction: { family: "ton", subAccountId: "jetton-account", ...fields },
+      });
+
+      expect(common.earnTransactionType).toBeUndefined();
+      expect(common.rawTransactionType).toBe("jetton-transfer");
+    });
+
+    it("reads the same keyword from a pre-built comment payload", () => {
+      const common = signEvent({
+        account: ton,
+        manifestId: "p2p-ton-staking",
+        transaction: { family: "ton", payload: { type: "comment", text: "Deposit" } },
+      });
+
+      expect(common.earnTransactionType).toBe("deposit");
+    });
+
+    it("never reports a TON recipient as a contract on success", () => {
+      const signed = {
+        signature: "sig",
+        operation: {
+          type: "OUT",
+          extra: {},
+          recipients: ["EQAL1QRd508kA3PyrYALid7xR5wBtBY-lWLF5OUkneP2PxTW"],
+        },
+      } as unknown as SignedOperation;
+      rememberSignContext(
+        signed,
+        "ton",
+        { family: "ton", payload: { type: "tonwhales-pool-withdraw" } },
+        "p2p-ton-staking",
+      );
+
+      const broadcast = buildBroadcastCommonEvent({
+        account: ton,
+        mainAccount: ton,
+        pathway: TransactionPathway.WalletApiSignAndBroadcast,
+        manifestId: "p2p-ton-staking",
+        signedOperation: signed,
+      });
+
+      expect(broadcast.earnTransactionType).toBe("withdraw");
+      expect(broadcast.dappContract).toBeUndefined();
+    });
+
+    it("carries the deposit to the broadcast stage", () => {
+      const signed = {
+        signature: "sig",
+        operation: { type: "OUT", extra: {} },
+      } as unknown as SignedOperation;
+      rememberSignContext(
+        signed,
+        "ton",
+        { family: "ton", comment: { isEncrypted: false, text: "Deposit" } },
+        "p2p-ton-staking",
+      );
+
+      const broadcast = buildBroadcastCommonEvent({
+        account: ton,
+        mainAccount: ton,
+        pathway: TransactionPathway.WalletApiSignAndBroadcast,
+        manifestId: "p2p-ton-staking",
+        signedOperation: signed,
+      });
+
+      expect(broadcast).toMatchObject({
+        earnTransactionType: "deposit",
+        rawTransactionType: "pool-comment-deposit",
+        dataSource: "sign",
+      });
+    });
+  });
+
+  it("carries the TON action to the broadcast stage", () => {
+    const signed = {
+      signature: "sig",
+      operation: { type: "OUT", extra: {} },
+    } as unknown as SignedOperation;
+    rememberSignContext(
+      signed,
+      "ton",
+      { family: "ton", payload: { type: "tonwhales-pool-withdraw" } },
+      "p2p-ton-staking",
+    );
+
+    const broadcast = buildBroadcastCommonEvent({
+      account: ton,
+      mainAccount: ton,
+      pathway: TransactionPathway.WalletApiSignAndBroadcast,
+      manifestId: "p2p-ton-staking",
+      signedOperation: signed,
+    });
+
+    expect(broadcast).toMatchObject({
+      earnTransactionType: "withdraw",
+      rawTransactionType: "tonwhales-pool-withdraw",
+      dataSource: "sign",
+    });
   });
 });
