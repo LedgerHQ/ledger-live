@@ -300,12 +300,12 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
         ETHEREUM_ADDRESS.savedValue,
         ETHEREUM_ADDRESS.networkId,
       );
+      await app.common.enableSynchronizationForiOS();
 
       await mockServer.mockDashboardRename();
       await app.contacts.detail.renameContact(RENAMED_CONTACT_NAME);
       await app.contacts.detail.expectName(RENAMED_CONTACT_NAME);
       await mockServer.dismissDeviceCompletionStatus();
-      await app.common.enableSynchronizationForiOS();
 
       await app.common.goToPreviousPage();
       await app.contacts.expectScreenVisible();
