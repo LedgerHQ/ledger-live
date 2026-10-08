@@ -61,7 +61,7 @@ runs:
           tools/nx
 
     - name: Setup the caches
-      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/skip-mise-action-self-hosted
       id: setup-caches
       with:
         skip-pnpm-cache: "true"

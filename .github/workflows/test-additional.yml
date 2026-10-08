@@ -34,7 +34,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Install pnpm
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/skip-mise-action-self-hosted
         id: setup-caches
         with:
           use-mise: true
@@ -90,7 +90,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup mise
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/skip-mise-action-self-hosted
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}

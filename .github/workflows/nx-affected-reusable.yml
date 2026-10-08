@@ -81,7 +81,7 @@ jobs:
       # ones the repo pins. This also writes nx.cache-config.json.
       - name: Setup the caches
         if: ${{ env.IS_SMARTLING != 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/skip-mise-action-self-hosted
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}

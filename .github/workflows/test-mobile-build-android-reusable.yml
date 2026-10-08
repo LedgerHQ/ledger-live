@@ -125,7 +125,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/skip-mise-action-self-hosted
         id: setup-caches
         with:
           use-mise: true
@@ -224,7 +224,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/skip-mise-action-self-hosted
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
