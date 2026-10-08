@@ -24,7 +24,7 @@ function setup() {
   const sdk = {
     permits: { hasPermit: jest.fn().mockResolvedValue(true), registerPermit: jest.fn() },
     offline: { preparePermit: jest.fn().mockResolvedValue(sdkPermit) },
-    decryption: { decryptValues: jest.fn() },
+    decryption: { decryptValues: jest.fn(), decryptPublicValues: jest.fn() },
     registry: {
       getConfidentialToken: jest
         .fn()
@@ -184,8 +184,90 @@ describe("ZamaConfidentialClient", () => {
     });
   });
 
-  it("does not offer the unshield calls yet", async () => {
-    const { client } = setup();
-    await expect(client.publicDecrypt()).rejects.toMatchObject({ code: "Unavailable" });
+  describe("unshield", () => {
+    const REQUEST_ID = HANDLE;
+    const fetchMock = jest.fn();
+    beforeEach(() => {
+      fetchMock.mockReset();
+      global.fetch = fetchMock;
+    });
+    const answer = (status: number, body: unknown) =>
+      fetchMock.mockResolvedValue({ ok: status < 300, status, json: async () => body });
+    const sentBody = () => JSON.parse(fetchMock.mock.calls[0][1].body);
+
+    it("prepares the unwrap of an explicit amount through the service", async () => {
+      const { client } = setup();
+      answer(200, { unsignedTx: "0x02f9", handle: REQUEST_ID });
+      expect(
+        await client.prepareUnwrap({
+          from: ACCOUNT,
+          wrapper: WRAPPER,
+          to: ACCOUNT,
+          amount: 500_000n,
+        }),
+      ).toEqual({ transaction: "0x02f9", handle: REQUEST_ID });
+      expect(fetchMock.mock.calls[0][0]).toBe("http://oracle/prepare/unwrap");
+      expect(sentBody()).toEqual({
+        chainId: 11155111,
+        from: ACCOUNT,
+        token: WRAPPER,
+        to: ACCOUNT,
+        amount: "500000",
+      });
+    });
+
+    it("prepares the finalize with the publicly decrypted cleartext", async () => {
+      const { client } = setup();
+      answer(200, { unsignedTx: "0x02fa", cleartextAmount: "500000" });
+      expect(
+        await client.prepareFinalizeUnwrap({
+          from: ACCOUNT,
+          wrapper: WRAPPER,
+          unwrapRequestId: REQUEST_ID,
+        }),
+      ).toEqual({ transaction: "0x02fa", handle: REQUEST_ID, cleartext: 500_000n });
+      expect(fetchMock.mock.calls[0][0]).toBe("http://oracle/prepare/finalize-unwrap");
+      expect(sentBody()).toEqual({
+        chainId: 11155111,
+        from: ACCOUNT,
+        wrapper: WRAPPER,
+        unwrapRequestId: REQUEST_ID,
+      });
+    });
+
+    it("rejects a finalize answer without a cleartext amount", async () => {
+      const { client } = setup();
+      answer(200, { unsignedTx: "0x02fa" });
+      await expect(
+        client.prepareFinalizeUnwrap({
+          from: ACCOUNT,
+          wrapper: WRAPPER,
+          unwrapRequestId: REQUEST_ID,
+        }),
+      ).rejects.toMatchObject({ code: "Unknown" });
+    });
+
+    it("returns the public decryption with its proof", async () => {
+      const { client, sdk } = setup();
+      sdk.decryption.decryptPublicValues.mockResolvedValue({
+        clearValues: { [REQUEST_ID.toUpperCase().replace("0X", "0x")]: 500_000n },
+        abiEncodedClearValues: "0x",
+        decryptionProof: "0xproof",
+      });
+      expect(await client.publicDecrypt([REQUEST_ID])).toEqual({
+        clearValues: { [REQUEST_ID]: 500_000n },
+        decryptionProof: "0xproof",
+      });
+    });
+
+    it("reports a public decryption that is not ready as a relayer error", async () => {
+      const { client, sdk } = setup();
+      sdk.decryption.decryptPublicValues.mockRejectedValue(
+        new RelayerRequestFailedError("not ready"),
+      );
+      await expect(client.publicDecrypt([REQUEST_ID])).rejects.toMatchObject({
+        code: "RelayerError",
+      });
+    });
   });
 });

@@ -35,7 +35,7 @@ const NO_ACCOUNT: Hex = "0x0000000000000000000000000000000000000000";
 export type ZamaSdkLike = {
   permits: Pick<ZamaSDK["permits"], "hasPermit" | "registerPermit">;
   offline: Pick<ZamaSDK["offline"], "preparePermit">;
-  decryption: Pick<ZamaSDK["decryption"], "decryptValues">;
+  decryption: Pick<ZamaSDK["decryption"], "decryptValues" | "decryptPublicValues">;
   registry: Pick<ZamaSDK["registry"], "getConfidentialToken">;
 };
 
@@ -115,13 +115,18 @@ const ORACLE_ERRORS: Record<string, ConfidentialErrorCode> = {
   RATE_LIMITED: "RelayerError",
 };
 
-type OracleTransaction = { unsignedTx: string; handle: Handle };
+type OracleAnswer = { unsignedTx: string; handle?: unknown; cleartextAmount?: unknown };
 
-function isOracleTransaction(value: unknown): value is OracleTransaction {
-  if (typeof value !== "object" || value === null) return false;
-  const { unsignedTx, handle } = value as Record<string, unknown>;
-  return typeof unsignedTx === "string" && typeof handle === "string" && handle.startsWith("0x");
+function isOracleAnswer(value: unknown): value is OracleAnswer {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as OracleAnswer).unsignedTx === "string"
+  );
 }
+
+const isHandle = (value: unknown): value is Handle =>
+  typeof value === "string" && /^0x[0-9a-fA-F]{64}$/.test(value);
 
 /**
  * Confidential-token client backed by the Zama SDK in the renderer. It only bridges to Zama:
@@ -261,8 +266,20 @@ export class ZamaConfidentialClient implements ConfidentialClient {
     }
   }
 
-  async publicDecrypt(): Promise<{ clearValues: Record<Handle, bigint>; decryptionProof: Hex }> {
-    throw new ConfidentialError("Unavailable", "public decryption is not wired yet");
+  // Public decryption needs no permit: the relayer answers once the handle is publicly decryptable.
+  async publicDecrypt(
+    handles: Handle[],
+  ): Promise<{ clearValues: Record<Handle, bigint>; decryptionProof: Hex }> {
+    try {
+      const result = await this.sdkFor(NO_ACCOUNT).decryption.decryptPublicValues(handles);
+      const clearValues: Record<Handle, bigint> = {};
+      for (const [handle, value] of Object.entries(result.clearValues)) {
+        if (typeof value === "bigint") clearValues[key(handle) as Handle] = value;
+      }
+      return { clearValues, decryptionProof: result.decryptionProof };
+    } catch (error) {
+      throw toConfidentialError(error);
+    }
   }
 
   // The service encrypts the amount for `from`, builds the unsigned transaction and keeps the signed map entry
@@ -273,41 +290,89 @@ export class ZamaConfidentialClient implements ConfidentialClient {
     to: string;
     amount: bigint;
   }): Promise<OraclePrepared> {
+    const answer = await this.oracle("/prepare/transfer", p.wrapper, {
+      from: p.from,
+      token: p.wrapper,
+      to: p.to,
+      amount: p.amount.toString(),
+    });
+    return this.attested(answer, p.wrapper);
+  }
+
+  // Phase 1 of an unshield: an unwrap of an explicit amount, attested like a transfer.
+  async prepareUnwrap(p: {
+    from: string;
+    wrapper: string;
+    to: string;
+    amount: bigint;
+  }): Promise<OraclePrepared> {
+    const answer = await this.oracle("/prepare/unwrap", p.wrapper, {
+      from: p.from,
+      token: p.wrapper,
+      to: p.to,
+      amount: p.amount.toString(),
+    });
+    return this.attested(answer, p.wrapper);
+  }
+
+  // Phase 2: the service runs the public decryption and returns finalizeUnwrap with the cleartext and its proof.
+  async prepareFinalizeUnwrap(p: {
+    from: string;
+    wrapper: string;
+    unwrapRequestId: Handle;
+  }): Promise<OraclePrepared & { cleartext: bigint }> {
+    const answer = await this.oracle("/prepare/finalize-unwrap", p.wrapper, {
+      from: p.from,
+      wrapper: p.wrapper,
+      unwrapRequestId: p.unwrapRequestId,
+    });
+    if (typeof answer.cleartextAmount !== "string" || !/^\d+$/.test(answer.cleartextAmount)) {
+      throw new ConfidentialError("Unknown", "the service returned no cleartext amount", {
+        contract: p.wrapper,
+      });
+    }
+    return {
+      transaction: answer.unsignedTx,
+      handle: key(p.unwrapRequestId) as Handle,
+      cleartext: BigInt(answer.cleartextAmount),
+    };
+  }
+
+  private attested(answer: OracleAnswer, wrapper: string): OraclePrepared {
+    if (!isHandle(answer.handle)) {
+      throw new ConfidentialError("Unknown", "the service returned no handle", {
+        contract: wrapper,
+      });
+    }
+    return { transaction: answer.unsignedTx, handle: key(answer.handle) as Handle };
+  }
+
+  private async oracle(
+    path: string,
+    wrapper: string,
+    body: Record<string, string>,
+  ): Promise<OracleAnswer> {
     let response: Response;
     try {
-      response = await fetch(`${this.oracleUrl}/prepare/transfer`, {
+      response = await fetch(`${this.oracleUrl}${path}`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          chainId: this.chainId,
-          from: p.from,
-          token: p.wrapper,
-          to: p.to,
-          amount: p.amount.toString(),
-        }),
+        body: JSON.stringify({ chainId: this.chainId, ...body }),
       });
     } catch (error) {
       throw new ConfidentialError("OracleUnavailable", undefined, {
-        contract: p.wrapper,
+        contract: wrapper,
         cause: error,
       });
     }
-    const body: unknown = await response.json().catch(() => undefined);
-    if (!response.ok || !isOracleTransaction(body)) {
-      const error = (body as { error?: { code?: string; message?: string } } | undefined)?.error;
+    const answer: unknown = await response.json().catch(() => undefined);
+    if (!response.ok || !isOracleAnswer(answer)) {
+      const error = (answer as { error?: { code?: string; message?: string } } | undefined)?.error;
       const code = error?.code ? (ORACLE_ERRORS[error.code] ?? "Unknown") : "OracleUnavailable";
       throw new ConfidentialError(code, error?.message ?? `oracle answered ${response.status}`, {
-        contract: p.wrapper,
+        contract: wrapper,
       });
     }
-    return { transaction: body.unsignedTx, handle: key(body.handle) as Handle };
-  }
-
-  async prepareUnwrap(): Promise<OraclePrepared> {
-    throw new ConfidentialError("Unavailable", "unwrap is not wired yet");
-  }
-
-  async prepareFinalizeUnwrap(): Promise<OraclePrepared & { cleartext: bigint }> {
-    throw new ConfidentialError("Unavailable", "finalize unwrap is not wired yet");
+    return answer;
   }
 }
