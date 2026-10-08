@@ -15,7 +15,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/ofac"
+    "unimported": "pnpm knip --directory ../../.. -W domain/api/ofac",
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src",
+    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src"
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",
@@ -34,6 +37,8 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:"

@@ -5,7 +5,10 @@
 
 Domain API client for the **OFAC geo-block check**, backed by the Ledger Countervalues Service
 (CVS). Injects a `check` RTK Query endpoint into the shared `countervaluesApi` and exports
-`useCheckQuery`, which returns `true` when the caller is geo-blocked and `false` otherwise.
+`useCheckQuery`.
+
+`data` is `true` only for HTTP 451 (geo-blocked) and `false` only for HTTP 200. Any other status,
+or a network failure, is a query error (`isError`), not an allowed result.
 
 Owns no env/config dependency: the CVS URL comes from the store's thunk `extraArgument` via
 `cvsApiExtra({ getCountervaluesServiceUrl })`, the same contract apps already pass for other CVS
