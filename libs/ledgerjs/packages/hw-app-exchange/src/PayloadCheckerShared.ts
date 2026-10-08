@@ -21,6 +21,7 @@ export type SwapPayloadIssueCode =
   | "PAYLOAD_NEAR_SIZE_LIMIT"
   | "INVALID_PAYIN_EXTRA_DATA"
   | "EXTRA_ID_AND_EXTRA_DATA"
+  | "PAYIN_EXTRA_DATA_NANO_S"
   | "EXPECTED_VALUE_MISMATCH"
   | "PUBLIC_KEY_MALFORMED"
   | "PUBLIC_KEY_COMPRESSED"
@@ -63,7 +64,7 @@ const createIssue =
   });
 
 export const issueError = createIssue("error");
-const issueWarning = createIssue("warning");
+export const issueWarning = createIssue("warning");
 
 const NG_NONCE_BYTES = 32;
 const COMPRESSED_PUBLIC_KEY_BYTES = 33;
@@ -287,12 +288,18 @@ function ngSignatureIssues(
 
 type FieldValue = { field: string; value: unknown };
 
+/** The text the Exchange app reads from a nanopb string: everything before the first NUL. */
+export const cStringOf = (text: string): string => text.split("\0")[0];
+
+const isMissing = (value: unknown): boolean =>
+  typeof value === "string" ? cStringOf(value) === "" : measureBytes(value) === 0;
+
 export function requiredFieldIssues(
   required: FieldValue[],
   amounts: FieldValue[],
 ): SwapPayloadIssue[] {
   const missing = required
-    .filter(({ value }) => measureBytes(value) === 0)
+    .filter(({ value }) => isMissing(value))
     .map(({ field }) =>
       issueError("MISSING_FIELD", `Required field "${field}" is missing or empty.`, field),
     );
@@ -333,6 +340,10 @@ export type ComparedValue = string | bigint | undefined;
 export const sameHexNonce = (expected: ComparedValue, actual: ComparedValue): boolean =>
   String(expected).replace(/^0x/i, "").toLowerCase() === String(actual).toLowerCase();
 
+const cStringView = (value: ComparedValue): ComparedValue =>
+  typeof value === "string" ? cStringOf(value) : value;
+
+/** Without a custom `equals`, a string is compared as the Exchange app reads it, up to its first NUL. */
 export const expectedValueIssues = (
   comparisons: {
     field: string;
@@ -342,10 +353,12 @@ export const expectedValueIssues = (
   }[],
 ): SwapPayloadIssue[] =>
   comparisons
-    .filter(
-      ({ expected, actual, equals = (a, b) => a === b }) =>
-        expected !== undefined && !equals(expected, actual),
-    )
+    .map(({ actual, equals, ...comparison }) => ({
+      ...comparison,
+      actual: equals ? actual : cStringView(actual),
+      equals: equals ?? ((a: ComparedValue, b: ComparedValue) => a === b),
+    }))
+    .filter(({ expected, actual, equals }) => expected !== undefined && !equals(expected, actual))
     .map(({ field, expected, actual }) =>
       issueError(
         "EXPECTED_VALUE_MISMATCH",
@@ -354,61 +367,84 @@ export const expectedValueIssues = (
       ),
     );
 
-// [fee length (1), fee]: Ledger Live sends the uint64 fee in 1 to 8 bytes.
-const FEE_FIELD_BYTES = { min: 1 + 1, max: 1 + 8 };
+// Ledger Live sends the uint64 fee in 1 to 8 bytes, after a 1-byte fee length.
+const MAX_FEE_LENGTH = 8;
+const FEE_LENGTHS = Array.from({ length: MAX_FEE_LENGTH }, (_, index) => index + 1);
+const FEE_LENGTH_FIELD_BYTES = 1;
 
-// NG: the 509-byte limit comes from hw-app-exchange `Exchange.processSplitTransaction`, which
-// corrupts 510 and 511 bytes, app-exchange receives at most 512.
-// Legacy: a single APDU, the transport rejects 256 bytes or more.
-const APDU_LIMITS = {
+type ApduLimit = {
+  headerBytes: number;
+  maxIntactDataBytes: number;
+  otherIntactDataBytes: number[];
+  unit: string;
+  layout: string;
+};
+
+const APDU_LIMITS: Record<"ng" | "legacy", ApduLimit> = {
   ng: {
-    maxDataBytes: 509,
     headerBytes: 3,
+    // hw-app-exchange `Exchange.processSplitTransaction` drops bytes at 510 and 511 bytes of data,
+    // app-exchange receives at most 512 bytes.
+    maxIntactDataBytes: 509,
+    otherIntactDataBytes: [512],
     unit: "base64url characters",
     layout:
-      "Ledger Live sends it to the Exchange app as [encoding (1 byte), payload length (2 bytes), payload, fee length (1 byte), fee], which only reaches the device intact up to 509 bytes (Ledger Live's APDU split drops bytes at 510 and 511 bytes, and the Exchange app receives at most 512 bytes)",
+      "Ledger Live sends it to the Exchange app as [encoding (1 byte), payload length (2 bytes), payload, fee length (1 byte), fee], which only reaches the device intact at up to 509 bytes or at exactly 512 bytes (Ledger Live's APDU split drops bytes at 510 and 511 bytes, and the Exchange app receives at most 512 bytes)",
   },
   legacy: {
-    maxDataBytes: 255,
     headerBytes: 1,
+    maxIntactDataBytes: 255,
+    otherIntactDataBytes: [],
     unit: "decoded hex",
     layout:
       "Ledger Live sends a legacy swap in a single APDU as [payload length (1 byte), payload, fee length (1 byte), fee], and the transport rejects APDU data of 256 bytes or more",
   },
 };
 
+const formatFeeLengths = (feeLengths: number[]): string =>
+  feeLengths.length === 1
+    ? String(feeLengths[0])
+    : `${feeLengths.slice(0, -1).join(", ")} or ${feeLengths[feeLengths.length - 1]}`;
+
 /**
- * `PAYLOAD_TOO_LARGE` when the APDU data exceeds the limit even with a 1-byte fee,
- * `PAYLOAD_NEAR_SIZE_LIMIT` when a fee of up to 8 bytes could exceed it.
+ * `PAYLOAD_TOO_LARGE` when the APDU data cannot reach the device with any fee of 1 to 8 bytes,
+ * `PAYLOAD_NEAR_SIZE_LIMIT` when it cannot with some of them.
  *
  * @param payloadBytes "ng": base64url characters sent (no leading "."), "legacy": protobuf bytes
  */
 export function apduSizeIssues(format: "ng" | "legacy", payloadBytes: number): SwapPayloadIssue[] {
-  const { maxDataBytes, headerBytes, unit, layout } = APDU_LIMITS[format];
-  const maxPayload = maxDataBytes - headerBytes - FEE_FIELD_BYTES.min;
-  const maxPayloadAnyFee = maxDataBytes - headerBytes - FEE_FIELD_BYTES.max;
+  const { headerBytes, maxIntactDataBytes, otherIntactDataBytes, unit, layout } =
+    APDU_LIMITS[format];
+  const isDelivered = (dataBytes: number) =>
+    dataBytes <= maxIntactDataBytes || otherIntactDataBytes.includes(dataBytes);
+  const failingFeeLengths = FEE_LENGTHS.filter(
+    feeLength => !isDelivered(headerBytes + payloadBytes + FEE_LENGTH_FIELD_BYTES + feeLength),
+  );
+  const maxPayloadAnyFee =
+    maxIntactDataBytes - headerBytes - FEE_LENGTH_FIELD_BYTES - MAX_FEE_LENGTH;
   const size = `${payloadBytes} bytes (${unit})`;
+  const advice = `Keep the payload at most ${maxPayloadAnyFee} bytes to fit any fee of up to 8 bytes.`;
 
-  if (payloadBytes > maxPayload) {
+  if (failingFeeLengths.length === FEE_LENGTHS.length) {
     return [
       issueError(
         "PAYLOAD_TOO_LARGE",
-        `The payload is ${size}. ${layout}: the payload must be at most ${maxPayload} bytes even with the smallest (1-byte) fee. Shorten the payload (e.g. optional fields).`,
+        `The payload is ${size}. ${layout}: it does not fit with any fee of 1 to 8 bytes. Shorten the payload (e.g. optional fields). ${advice}`,
       ),
     ];
   }
-  if (payloadBytes > maxPayloadAnyFee) {
+  if (failingFeeLengths.length > 0) {
     return [
       issueWarning(
         "PAYLOAD_NEAR_SIZE_LIMIT",
-        `The payload is ${size}, close to the size limit. ${layout}: a fee longer than ${maxPayload + 1 - payloadBytes} bytes would make the transaction fail. Keep the payload at most ${maxPayloadAnyFee} bytes to fit any fee of up to 8 bytes.`,
+        `The payload is ${size}, close to the size limit. ${layout}: a fee of ${formatFeeLengths(failingFeeLengths)} bytes would make the transaction fail. ${advice}`,
       ),
     ];
   }
   return [];
 }
 
-// Values above 2^53 lose precision, which is fine: they are only compared to a buffer length.
+// Values above 2^53 lose precision, which is fine for a buffer length or a uint32 field.
 function readVarint(
   bytes: Uint8Array,
   offset: number,
@@ -435,7 +471,7 @@ export type WireField = { fieldNumber: number; protoName: string } & (
 );
 
 export type WireScan = {
-  /** every occurrence of each string or bytes field, in wire order */
+  /** every occurrence of each string, bytes or varint field, in wire order */
   occurrences: Map<WireField, Uint8Array[]>;
   violations: FieldLimitViolation[];
 };
@@ -483,9 +519,7 @@ function scanKnownField(
   const expectedWireType = field.kind === "varint" ? VARINT_WIRE_TYPE : LENGTH_DELIMITED_WIRE_TYPE;
   if (wireType !== expectedWireType) return false;
   if (field.kind === "message") return scanMessage(content, field.fields, occurrences);
-  if (field.kind !== "varint") {
-    occurrences.set(field, [...(occurrences.get(field) ?? []), content]);
-  }
+  occurrences.set(field, [...(occurrences.get(field) ?? []), content]);
   return true;
 }
 
@@ -535,3 +569,15 @@ export function scanWireFields(bytes: Uint8Array, fields: WireField[]): WireScan
   if (!scanMessage(bytes, fields, occurrences)) return undefined;
   return { occurrences, violations: limitViolations(fields, occurrences) };
 }
+
+export const lastOf = <T>(values: T[]): T | undefined => values[values.length - 1];
+
+/**
+ * The value nanopb keeps for a field: its last occurrence, including across repeated occurrences
+ * of the embedded message holding it, which nanopb merges where protobufjs keeps the last one.
+ */
+export const lastWireValue = (wire: WireScan, field: WireField): Uint8Array | undefined =>
+  lastOf(wire.occurrences.get(field) ?? []);
+
+export const wireVarintValue = (content: Uint8Array): number | undefined =>
+  readVarint(content, 0)?.value;

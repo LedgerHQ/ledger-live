@@ -1,6 +1,11 @@
 import { secp256k1 } from "@noble/curves/secp256k1";
+import BigNumber from "bignumber.js";
+import { MockTransport } from "@ledgerhq/hw-transport-mocker";
+import Exchange, { ExchangeTypes } from "./Exchange";
 import {
   apduSizeIssues,
+  expectedValueIssues,
+  requiredFieldIssues,
   runPayloadCheck,
   scanWireFields,
   type WireField,
@@ -42,7 +47,10 @@ describe("apduSizeIssues", () => {
     ["ng", 497, []],
     ["ng", 498, ["PAYLOAD_NEAR_SIZE_LIMIT"]],
     ["ng", 504, ["PAYLOAD_NEAR_SIZE_LIMIT"]],
-    ["ng", 505, ["PAYLOAD_TOO_LARGE"]],
+    ["ng", 505, ["PAYLOAD_NEAR_SIZE_LIMIT"]],
+    ["ng", 506, ["PAYLOAD_NEAR_SIZE_LIMIT"]],
+    ["ng", 507, ["PAYLOAD_NEAR_SIZE_LIMIT"]],
+    ["ng", 508, ["PAYLOAD_TOO_LARGE"]],
     ["legacy", 245, []],
     ["legacy", 246, ["PAYLOAD_NEAR_SIZE_LIMIT"]],
     ["legacy", 252, ["PAYLOAD_NEAR_SIZE_LIMIT"]],
@@ -51,9 +59,105 @@ describe("apduSizeIssues", () => {
     expect(apduSizeIssues(format, bytes).map(({ code }) => code)).toEqual(codes);
   });
 
-  it("tells how long a fee can be for a payload near the limit", () => {
-    // 3 + 500 + 1 + fee <= 509
-    expect(apduSizeIssues("ng", 500)[0].message).toContain("a fee longer than 5 bytes");
+  it.each([
+    [500, "a fee of 6 or 7 bytes"],
+    [504, "a fee of 2, 3, 5, 6, 7 or 8 bytes"],
+    [505, "a fee of 1, 2, 4, 5, 6, 7 or 8 bytes"],
+    [506, "a fee of 1, 3, 4, 5, 6, 7 or 8 bytes"],
+  ])("names the NG fee lengths that fail for %d characters", (bytes, failingFees) => {
+    expect(apduSizeIssues("ng", bytes)[0].message).toContain(failingFees);
+  });
+
+  it("accepts a 507-character NG payload with a 1-byte fee (512 bytes of data)", () => {
+    const issues = apduSizeIssues("ng", 507);
+
+    expect(issues).toEqual([
+      expect.objectContaining({ code: "PAYLOAD_NEAR_SIZE_LIMIT", severity: "warning" }),
+    ]);
+    expect(issues[0].message).toContain("a fee of 2, 3, 4, 5, 6, 7 or 8 bytes");
+  });
+
+  it("names the legacy fee lengths that fail", () => {
+    expect(apduSizeIssues("legacy", 250)[0].message).toContain("a fee of 4, 5, 6, 7 or 8 bytes");
+  });
+
+  describe("matches what Exchange.processTransaction delivers to the device", () => {
+    const MAX_DEVICE_DATA_BYTES = 512;
+
+    const deliversIntact = async (payloadBytes: number, feeLength: number) => {
+      const transport = new MockTransport(Buffer.from([0x90, 0x00]));
+      const send = jest.spyOn(transport, "send");
+      const transaction = Buffer.alloc(payloadBytes, 0x41);
+      const fee = new BigNumber(2).pow(8 * (feeLength - 1));
+
+      await new Exchange(transport, ExchangeTypes.SwapNg).processTransaction(
+        transaction,
+        fee,
+        "raw",
+      );
+
+      const received = Buffer.concat(send.mock.calls.map(call => call[4] ?? Buffer.alloc(0)));
+      const sent = Buffer.concat([
+        Buffer.from([0x00, payloadBytes >> 8, payloadBytes & 0xff]),
+        transaction,
+        Buffer.from([feeLength]),
+        Buffer.from(fee.toString(16).padStart(2 * feeLength, "0"), "hex"),
+      ]);
+      return received.length <= MAX_DEVICE_DATA_BYTES && received.equals(sent);
+    };
+
+    it.each(Array.from({ length: 14 }, (_, index) => 496 + index))(
+      "for a %d-character payload",
+      async payloadBytes => {
+        const delivered = await Promise.all(
+          [1, 2, 3, 4, 5, 6, 7, 8].map(feeLength => deliversIntact(payloadBytes, feeLength)),
+        );
+        const expectedCodes = delivered.every(Boolean)
+          ? []
+          : [delivered.some(Boolean) ? "PAYLOAD_NEAR_SIZE_LIMIT" : "PAYLOAD_TOO_LARGE"];
+
+        expect(apduSizeIssues("ng", payloadBytes).map(({ code }) => code)).toEqual(expectedCodes);
+      },
+    );
+  });
+});
+
+describe("requiredFieldIssues", () => {
+  it.each([
+    ["empty", ""],
+    ["starting with NUL", "\0abc"],
+  ])("reports MISSING_FIELD for a required string %s, empty for the device", (_case, value) => {
+    expect(requiredFieldIssues([{ field: "name", value }], [])).toEqual([
+      expect.objectContaining({ code: "MISSING_FIELD", field: "name" }),
+    ]);
+  });
+
+  it("accepts a required string with a NUL after its first character", () => {
+    expect(requiredFieldIssues([{ field: "name", value: "a\0" }], [])).toEqual([]);
+  });
+});
+
+describe("expectedValueIssues", () => {
+  it("compares a string up to its first NUL, as the device reads it", () => {
+    expect(expectedValueIssues([{ field: "name", expected: "abc", actual: "abc\0def" }])).toEqual(
+      [],
+    );
+    expect(
+      expectedValueIssues([{ field: "name", expected: "abcdef", actual: "abc\0def" }]),
+    ).toEqual([
+      expect.objectContaining({
+        code: "EXPECTED_VALUE_MISMATCH",
+        message: 'Field "name" is "abc", expected "abcdef".',
+      }),
+    ]);
+  });
+
+  it("leaves a custom comparison on the raw value", () => {
+    expect(
+      expectedValueIssues([
+        { field: "name", expected: "abc", actual: "abc\0def", equals: (a, b) => a === b },
+      ]),
+    ).toHaveLength(1);
   });
 });
 

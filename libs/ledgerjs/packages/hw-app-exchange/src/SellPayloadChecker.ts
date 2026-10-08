@@ -1,13 +1,16 @@
 import { ledger_trade } from "./generate-protocol";
 import type { SwapNgPartnerPublicKey } from "./SwapSignature";
 import {
+  cStringOf,
   expectedValueIssues,
   fieldLimitIssues,
   issueError,
+  lastWireValue,
   ngNonceIssues,
   requiredFieldIssues,
   runNgPayloadCheck,
   sameHexNonce,
+  wireVarintValue,
   type PayloadCheckReport,
   type SwapPayloadIssue,
   type WireField,
@@ -61,9 +64,10 @@ function withoutTrailingZeros(digits: string): string {
   return digits.slice(0, end);
 }
 
-function formatUDecimal(amount: ledger_trade.IUDecimal | null | undefined): string {
-  const digits = toBigInt(amount?.coefficient).toString();
-  const exponent = amount?.exponent ?? 0;
+type UDecimal = { coefficient: Uint8Array; exponent: number };
+
+function formatUDecimal({ coefficient, exponent }: UDecimal): string {
+  const digits = toBigInt(coefficient).toString();
   if (exponent === 0) return digits;
   if (!Number.isInteger(exponent) || exponent < 0 || exponent > MAX_FORMATTED_EXPONENT) {
     return `${digits}e-${exponent}`;
@@ -75,7 +79,10 @@ function formatUDecimal(amount: ledger_trade.IUDecimal | null | undefined): stri
   return fraction ? `${integer}.${fraction}` : integer;
 }
 
-function toDecodedSellPayload(proto: ledger_trade.NewSellResponse): DecodedSellPayload {
+function toDecodedSellPayload(
+  proto: ledger_trade.NewSellResponse,
+  outAmount: UDecimal,
+): DecodedSellPayload {
   const deviceTransactionId = Buffer.from(proto.deviceTransactionId).toString("hex");
   return {
     ...(proto.traderEmail ? { traderEmail: proto.traderEmail } : {}),
@@ -84,7 +91,7 @@ function toDecodedSellPayload(proto: ledger_trade.NewSellResponse): DecodedSellP
     inAddress: proto.inAddress,
     ...(proto.inExtraId ? { inExtraId: proto.inExtraId } : {}),
     outCurrency: proto.outCurrency,
-    outAmount: formatUDecimal(proto.outAmount),
+    outAmount: formatUDecimal(outAmount),
     ...(deviceTransactionId ? { deviceTransactionId } : {}),
   };
 }
@@ -92,6 +99,18 @@ function toDecodedSellPayload(proto: ledger_trade.NewSellResponse): DecodedSellP
 // app-exchange trims the leading 0x00 bytes (`trim_amounts`), then only displays a uint64.
 const MAX_SIGNIFICANT_COEFFICIENT_BYTES = 8;
 const MAX_COEFFICIENT_BYTES = 16;
+
+const OUT_AMOUNT_COEFFICIENT_FIELD: WireField = {
+  fieldNumber: 1,
+  protoName: "out_amount.coefficient",
+  kind: "bytes",
+  maxSize: MAX_COEFFICIENT_BYTES,
+};
+const OUT_AMOUNT_EXPONENT_FIELD: WireField = {
+  fieldNumber: 2,
+  protoName: "out_amount.exponent",
+  kind: "varint",
+};
 
 // Mirrored from app-exchange `src/proto/protocol.options`.
 const NEW_SELL_RESPONSE_FIELDS: WireField[] = [
@@ -105,15 +124,7 @@ const NEW_SELL_RESPONSE_FIELDS: WireField[] = [
     fieldNumber: 6,
     protoName: "out_amount",
     kind: "message",
-    fields: [
-      {
-        fieldNumber: 1,
-        protoName: "out_amount.coefficient",
-        kind: "bytes",
-        maxSize: MAX_COEFFICIENT_BYTES,
-      },
-      { fieldNumber: 2, protoName: "out_amount.exponent", kind: "varint" },
-    ],
+    fields: [OUT_AMOUNT_COEFFICIENT_FIELD, OUT_AMOUNT_EXPONENT_FIELD],
   },
   { fieldNumber: 7, protoName: "device_transaction_id", kind: "bytes", maxSize: 32 },
 ];
@@ -126,13 +137,31 @@ const PRINTABLE_AMOUNT_BYTES = 50;
  * only the exponent can overflow the buffer left after "<out_currency> ".
  */
 function maxDisplayableExponent(outCurrency: string): number {
-  const tickerBytes = Buffer.byteLength(outCurrency.split("\0")[0], "utf8");
+  const tickerBytes = Buffer.byteLength(cStringOf(outCurrency), "utf8");
   return PRINTABLE_AMOUNT_BYTES - (tickerBytes + 1) - 3;
 }
 
-function outAmountIssues(proto: ledger_trade.NewSellResponse): SwapPayloadIssue[] {
+/**
+ * `out_amount` as decoded by nanopb, which merges repeated occurrences of this embedded message
+ * field by field where protobufjs keeps the last one. Falls back to protobufjs when the wire scan
+ * failed, already reported as `PROTOBUF_DECODE_FAILED`.
+ */
+function effectiveOutAmount(proto: ledger_trade.NewSellResponse, wire: WireScan): UDecimal {
+  const wireExponent = lastWireValue(wire, OUT_AMOUNT_EXPONENT_FIELD);
+  return {
+    coefficient:
+      lastWireValue(wire, OUT_AMOUNT_COEFFICIENT_FIELD) ??
+      proto.outAmount?.coefficient ??
+      new Uint8Array(),
+    exponent: (wireExponent && wireVarintValue(wireExponent)) ?? proto.outAmount?.exponent ?? 0,
+  };
+}
+
+function outAmountIssues(
+  { coefficient, exponent }: UDecimal,
+  outCurrency: string,
+): SwapPayloadIssue[] {
   const issues: SwapPayloadIssue[] = [];
-  const coefficient = proto.outAmount?.coefficient ?? new Uint8Array();
   const firstSignificantByte = coefficient.findIndex(byte => byte !== 0);
   const significantBytes =
     firstSignificantByte === -1 ? 0 : coefficient.length - firstSignificantByte;
@@ -150,8 +179,7 @@ function outAmountIssues(proto: ledger_trade.NewSellResponse): SwapPayloadIssue[
     );
   }
 
-  const exponent = proto.outAmount?.exponent ?? 0;
-  const maxExponent = maxDisplayableExponent(proto.outCurrency ?? "");
+  const maxExponent = maxDisplayableExponent(outCurrency);
   if (exponent > maxExponent) {
     issues.push(
       issueError(
@@ -170,8 +198,8 @@ function inspectSell(
   wire: WireScan,
   expected: SellPayloadCheckInput["expected"],
 ): { decoded: DecodedSellPayload; issues: SwapPayloadIssue[] } {
-  const decoded = toDecodedSellPayload(proto);
-  const outAmountCoefficient = proto.outAmount?.coefficient;
+  const outAmount = effectiveOutAmount(proto, wire);
+  const decoded = toDecodedSellPayload(proto, outAmount);
 
   const issues = [
     ...requiredFieldIssues(
@@ -180,17 +208,17 @@ function inspectSell(
         { field: "in_amount", value: proto.inAmount },
         { field: "in_address", value: proto.inAddress },
         { field: "out_currency", value: proto.outCurrency },
-        { field: "out_amount", value: outAmountCoefficient },
+        { field: "out_amount", value: outAmount.coefficient },
         { field: "device_transaction_id", value: proto.deviceTransactionId },
       ],
       [
         { field: "in_amount", value: proto.inAmount },
-        { field: "out_amount", value: outAmountCoefficient },
+        { field: "out_amount", value: outAmount.coefficient },
       ],
     ),
     ...ngNonceIssues("device_transaction_id", proto.deviceTransactionId),
     ...fieldLimitIssues(wire.violations),
-    ...outAmountIssues(proto),
+    ...outAmountIssues(outAmount, proto.outCurrency ?? ""),
     ...expectedValueIssues([
       {
         field: "device_transaction_id",

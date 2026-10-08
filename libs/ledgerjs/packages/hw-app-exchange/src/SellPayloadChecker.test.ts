@@ -94,6 +94,9 @@ const lengthDelimited = (fieldNumber: number, content: Uint8Array): Buffer => {
   return Buffer.concat([Buffer.from([(fieldNumber << 3) | 2, ...lengthBytes]), content]);
 };
 
+const uDecimalCoefficient = (hex: string) => lengthDelimited(1, Buffer.from(hex, "hex"));
+const uDecimalExponent = (value: number) => Buffer.from([0x10, value]);
+
 const codesOf = (report: SellPayloadCheckReport): SwapPayloadIssueCode[] =>
   report.issues.map(issue => issue.code);
 
@@ -514,6 +517,57 @@ describe("checkSellPayload", () => {
         ]);
       },
     );
+
+    describe("repeated out_amount, merged field by field like nanopb", () => {
+      const { outAmount: _omitted, ...fieldsWithoutOutAmount } = VALID_FIELDS;
+      const rawWithOutAmounts = (...outAmounts: Buffer[]) =>
+        Buffer.concat([
+          encodeFields(fieldsWithoutOutAmount).raw,
+          ...outAmounts.map(content => lengthDelimited(6, content)),
+        ]);
+
+      it("keeps the exponent of an earlier out_amount when a later one only sets the coefficient", () => {
+        const report = checkRaw(
+          rawWithOutAmounts(uDecimalExponent(44), uDecimalCoefficient("20f6")),
+        );
+
+        expect(report.valid).toBe(false);
+        expect(report.issues).toEqual([
+          expect.objectContaining({
+            code: "FIELD_EXCEEDS_LIMIT",
+            severity: "error",
+            field: "out_amount.exponent",
+            message: expect.stringContaining("is 44"),
+          }),
+        ]);
+        expect(report.decoded?.outAmount).toBe(`0.${"0".repeat(40)}8438`);
+      });
+
+      it("keeps the coefficient of an earlier out_amount when a later one only sets the exponent", () => {
+        const report = checkRaw(
+          rawWithOutAmounts(
+            Buffer.concat([uDecimalCoefficient("20f6"), uDecimalExponent(0)]),
+            uDecimalExponent(2),
+          ),
+        );
+
+        expect(report.valid).toBe(true);
+        expect(report.issues).toEqual([]);
+        expect(report.decoded?.outAmount).toBe("84.38");
+      });
+
+      it.each([
+        ["ZERO_AMOUNT", "out_amount", uDecimalCoefficient("0000")],
+        ["FIELD_EXCEEDS_LIMIT", "out_amount.coefficient", uDecimalCoefficient("01".repeat(9))],
+      ])(
+        "reports %s for the coefficient of an earlier out_amount",
+        (code, field, earlierCoefficient) => {
+          const report = checkRaw(rawWithOutAmounts(earlierCoefficient, uDecimalExponent(2)));
+
+          expect(report.issues).toEqual([expect.objectContaining({ code, field })]);
+        },
+      );
+    });
   });
 
   describe("required fields", () => {
@@ -532,6 +586,17 @@ describe("checkSellPayload", () => {
       expect(report.valid).toBe(false);
       expect(report.issues.filter(issue => issue.code === "MISSING_FIELD")).toEqual([
         expect.objectContaining({ code: "MISSING_FIELD", severity: "error", field }),
+      ]);
+    });
+
+    it("reports MISSING_FIELD when a required string starts with NUL, empty for the device", () => {
+      const report = checkSellPayload(
+        buildInput({ fields: { ...VALID_FIELDS, inAddress: "\0bc1qtestinaddress" } }),
+      );
+
+      expect(report.valid).toBe(false);
+      expect(report.issues).toEqual([
+        expect.objectContaining({ code: "MISSING_FIELD", field: "in_address" }),
       ]);
     });
 
@@ -767,7 +832,8 @@ describe("checkSellPayload", () => {
       throw new Error(`no padding gives a ${targetLength}-character payload`);
     };
 
-    // NG data is [encoding (1), length (2), payload, fee length (1), fee]: 509 bytes at most.
+    // NG data is [encoding (1), length (2), payload, fee length (1), fee]: Ledger Live delivers
+    // up to 509 bytes or exactly 512 bytes of it.
     it("accepts a payload that fits with any fee of up to 8 bytes", () => {
       const report = checkSellPayload(paddedToLength(496));
 
@@ -775,17 +841,20 @@ describe("checkSellPayload", () => {
       expect(report.issues).toEqual([]);
     });
 
-    it.each([498, 504])("warns with PAYLOAD_NEAR_SIZE_LIMIT for %d characters", length => {
-      const report = checkSellPayload(paddedToLength(length));
+    it.each([498, 504, 506, 507])(
+      "warns with PAYLOAD_NEAR_SIZE_LIMIT for %d characters",
+      length => {
+        const report = checkSellPayload(paddedToLength(length));
 
-      expect(report.valid).toBe(true);
-      expect(report.issues).toEqual([
-        expect.objectContaining({ code: "PAYLOAD_NEAR_SIZE_LIMIT", severity: "warning" }),
-      ]);
-    });
+        expect(report.valid).toBe(true);
+        expect(report.issues).toEqual([
+          expect.objectContaining({ code: "PAYLOAD_NEAR_SIZE_LIMIT", severity: "warning" }),
+        ]);
+      },
+    );
 
-    it("reports PAYLOAD_TOO_LARGE above 504 characters", () => {
-      const report = checkSellPayload(paddedToLength(506));
+    it("reports PAYLOAD_TOO_LARGE above 507 characters", () => {
+      const report = checkSellPayload(paddedToLength(508));
 
       expect(report.valid).toBe(false);
       expect(report.issues).toEqual([

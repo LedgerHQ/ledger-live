@@ -9,9 +9,12 @@ import { verifyCompactSignature, type SwapNgPartnerPublicKey } from "./SwapSigna
 import { isHexadecimal } from "./shared-utils";
 import {
   apduSizeIssues,
+  cStringOf,
   expectedValueIssues,
   fieldLimitIssues,
   issueError,
+  issueWarning,
+  lastOf,
   ngNonceIssues,
   requiredFieldIssues,
   runNgPayloadCheck,
@@ -123,11 +126,6 @@ const LEGACY_NONCE: NonceRules = {
 const orZeroAmount = (bytes: Buffer): Buffer =>
   bytes && bytes.length > 0 ? bytes : Buffer.from([0x00]);
 
-const lastOf = <T>(values: T[]): T | undefined => {
-  const [last] = values.slice(-1);
-  return last;
-};
-
 const PAYIN_EXTRA_DATA_BYTES = 33;
 
 // Not in the generated JS protocol, only read from the raw bytes.
@@ -143,6 +141,8 @@ const NEW_TRANSACTION_RESPONSE_FIELDS: WireField[] = [
   PAYIN_EXTRA_DATA_FIELD,
 ];
 
+const isNativeId = (extraData: Uint8Array) => extraData.length === 1 && extraData[0] === 0x00;
+
 // Mirrors app-exchange `check_extra_id_extra_data`.
 function payinExtraDataIssues(
   proto: SwapProtobufPayload,
@@ -152,12 +152,10 @@ function payinExtraDataIssues(
 
   // As in protobuf decoders, the last occurrence wins.
   const extraData = lastOf(occurrences);
-  const isEmptyOrNativeId = !extraData?.length || (extraData.length === 1 && extraData[0] === 0x00);
-  if (!extraData || isEmptyOrNativeId) return [];
+  if (!extraData?.length || isNativeId(extraData)) return [];
 
   const issues: SwapPayloadIssue[] = [];
-  const payinExtraId = proto.payinExtraId ?? "";
-  if (payinExtraId.length > 0 && !payinExtraId.startsWith("\0")) {
+  if (cStringOf(proto.payinExtraId ?? "") !== "") {
     issues.push(
       issueError(
         "EXTRA_ID_AND_EXTRA_DATA",
@@ -175,6 +173,13 @@ function payinExtraDataIssues(
       ),
     );
   }
+  issues.push(
+    issueWarning(
+      "PAYIN_EXTRA_DATA_NANO_S",
+      'Field "payin_extra_data" is set: the Exchange app rejects it on Nano S (WRONG_EXTRA_ID_OR_EXTRA_DATA), so this swap fails on a Nano S.',
+      "payin_extra_data",
+    ),
+  );
   return issues;
 }
 

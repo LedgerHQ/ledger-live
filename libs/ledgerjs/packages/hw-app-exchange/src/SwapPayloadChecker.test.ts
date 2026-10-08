@@ -368,15 +368,30 @@ describe("checkSwapPayload", () => {
       ]);
     });
 
-    it("reports MISSING_FIELD when a required string field is empty", () => {
-      const report = checkSwapPayload(
-        buildInput({ fields: { ...VALID_FIELDS, payoutAddress: "" } }),
-      );
+    it.each([
+      ["empty", ""],
+      ["starting with NUL, empty for the device", "\0bc1qpayout"],
+    ])("reports MISSING_FIELD when a required string field is %s", (_case, payoutAddress) => {
+      const report = checkSwapPayload(buildInput({ fields: { ...VALID_FIELDS, payoutAddress } }));
 
       expect(report.valid).toBe(false);
       expect(report.issues).toContainEqual(
         expect.objectContaining({ code: "MISSING_FIELD", field: "payout_address" }),
       );
+    });
+
+    it("compares an expected string to the field up to its first NUL, as the device reads it", () => {
+      const fields = { ...VALID_FIELDS, payoutAddress: `${VALID_FIELDS.payoutAddress}\0suffix` };
+
+      const matching = checkSwapPayload(
+        buildInput({ fields, expected: { payoutAddress: VALID_FIELDS.payoutAddress ?? "" } }),
+      );
+      const mismatching = checkSwapPayload(
+        buildInput({ fields, expected: { payoutAddress: fields.payoutAddress } }),
+      );
+
+      expect(matching.issues).toEqual([]);
+      expect(errorCodesOf(mismatching)).toEqual(["EXPECTED_VALUE_MISMATCH"]);
     });
 
     it.each([
@@ -1059,16 +1074,19 @@ describe("checkSwapPayload APDU size", () => {
       expect(report.issues).toEqual([]);
     });
 
-    it.each([498, 504])("warns with PAYLOAD_NEAR_SIZE_LIMIT for %d characters", length => {
-      const report = checkSwapPayload(ngOfLength(length));
+    it.each([498, 504, 506, 507])(
+      "warns with PAYLOAD_NEAR_SIZE_LIMIT for %d characters",
+      length => {
+        const report = checkSwapPayload(ngOfLength(length));
 
-      expect(report.valid).toBe(true);
-      expect(report.issues).toEqual([
-        expect.objectContaining({ code: "PAYLOAD_NEAR_SIZE_LIMIT", severity: "warning" }),
-      ]);
-    });
+        expect(report.valid).toBe(true);
+        expect(report.issues).toEqual([
+          expect.objectContaining({ code: "PAYLOAD_NEAR_SIZE_LIMIT", severity: "warning" }),
+        ]);
+      },
+    );
 
-    it.each([506, 600])("reports PAYLOAD_TOO_LARGE for %d characters", length => {
+    it.each([508, 600])("reports PAYLOAD_TOO_LARGE for %d characters", length => {
       const report = checkSwapPayload(ngOfLength(length));
 
       expect(report.valid).toBe(false);
@@ -1078,7 +1096,7 @@ describe("checkSwapPayload APDU size", () => {
     });
 
     it("counts the base64url characters sent, padding included", () => {
-      const input = ngOfLength(504);
+      const input = ngOfLength(506);
       const padded = `${input.payload}==`;
 
       const report = checkSwapPayload({
@@ -1161,12 +1179,29 @@ describe.each([
 
   const HASH_WITH_HEADER = Buffer.concat([Buffer.from([0x01]), Buffer.alloc(32, 0xcd)]);
 
+  const NANO_S_WARNING = expect.objectContaining({
+    code: "PAYIN_EXTRA_DATA_NANO_S",
+    severity: "warning",
+    field: "payin_extra_data",
+  });
+
   it("accepts a 33-byte payin_extra_data and decodes it as hex", () => {
     const report = withExtraData([HASH_WITH_HEADER]);
 
     expect(report.valid).toBe(true);
-    expect(report.issues).toEqual([]);
+    expect(report.issues).toEqual([NANO_S_WARNING]);
     expect(report.decoded?.payinExtraData).toBe(HASH_WITH_HEADER.toString("hex"));
+  });
+
+  it("warns with PAYIN_EXTRA_DATA_NANO_S that the Exchange app rejects payin_extra_data on Nano S", () => {
+    const report = withExtraData([HASH_WITH_HEADER]);
+
+    expect(report.issues).toEqual([
+      expect.objectContaining({
+        code: "PAYIN_EXTRA_DATA_NANO_S",
+        message: expect.stringContaining("Nano S"),
+      }),
+    ]);
   });
 
   it("leaves payinExtraData out of the decoded payload when absent", () => {
@@ -1200,6 +1235,7 @@ describe.each([
         field: "payin_extra_data",
         message: expect.stringContaining(`is ${size} bytes`),
       }),
+      NANO_S_WARNING,
     ]);
   });
 
@@ -1226,6 +1262,7 @@ describe.each([
         severity: "error",
         field: "payin_extra_data",
       }),
+      NANO_S_WARNING,
     ]);
   });
 
@@ -1233,7 +1270,9 @@ describe.each([
     expect(withExtraData([Buffer.alloc(32, 0xcd), HASH_WITH_HEADER]).valid).toBe(true);
     expect(codesOf(withExtraData([HASH_WITH_HEADER, Buffer.alloc(32, 0xcd)]))).toEqual([
       "INVALID_PAYIN_EXTRA_DATA",
+      "PAYIN_EXTRA_DATA_NANO_S",
     ]);
+    expect(codesOf(withExtraData([HASH_WITH_HEADER, Uint8Array.from([0x00])]))).toEqual([]);
   });
 
   it("reports FIELD_EXCEEDS_LIMIT when any occurrence is oversized", () => {

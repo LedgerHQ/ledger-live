@@ -52,10 +52,15 @@ Checked rules:
 - Encoding: NG payloads are base64url as the Exchange app decodes them (`/` tolerated, at most two
   trailing `=`, no `+`), without the "." Ledger Live adds. Legacy payloads are hex without "0x".
 - Protobuf decoding, required fields, non-zero amounts, nonce format and device field size limits
-  (app-exchange `protocol.options`).
-- APDU size: at most 509 bytes of NG data and 255 bytes of legacy data, fee included.
-- Swap `payin_extra_data`: empty, `0x00` or exactly 33 bytes, never with a `payin_extra_id`.
-- Sell `out_amount`: must be displayable by the device (64-bit coefficient, bounded exponent).
+  (app-exchange `protocol.options`). Strings are read as the device reads them, up to the first
+  NUL: a required string starting with NUL is missing.
+- APDU size, fee included: NG data reaches the device intact at up to 509 bytes or exactly 512
+  bytes, legacy data at up to 255 bytes. A warning names the fee lengths (1 to 8 bytes) that fail.
+- Swap `payin_extra_data`: empty, `0x00` or exactly 33 bytes, never with a `payin_extra_id`. A value
+  other than empty or `0x00` gets a `PAYIN_EXTRA_DATA_NANO_S` warning: the Exchange app rejects it
+  on Nano S.
+- Sell `out_amount`: must be displayable by the device (64-bit coefficient, bounded exponent),
+  with repeated `out_amount` messages merged field by field like nanopb.
 - Partner key: must be the 65-byte uncompressed key (a compressed key only gets a warning), and
   secp256k1 for a legacy Swap.
 - Signature: verified over the exact bytes the device hashes, with a dedicated code when the partner
