@@ -225,6 +225,40 @@ describe("QueuedBottomSheet (native)", () => {
       expect(screen.getByTestId("sheet-content")).toBeTruthy();
       expect(screen.getByTestId("sheet").props.footerComponent).toEqual(expect.any(Function));
     });
+
+    it("keeps what the outgoing sheet shows until the next presentation", () => {
+      function AlwaysRenderedSheet() {
+        const [isOpen, setIsOpen] = useState(true);
+
+        return (
+          <QueuedBottomSheetsProvider>
+            <Pressable testID="reopen" onPress={() => setIsOpen(true)} />
+            <QueuedBottomSheet
+              testID="sheet"
+              isRequestingToBeOpened={isOpen}
+              onClose={() => setIsOpen(false)}
+              footer={<View testID="cta" />}
+            >
+              <View testID={isOpen ? "sheet-content" : "closed-content"} />
+            </QueuedBottomSheet>
+          </QueuedBottomSheetsProvider>
+        );
+      }
+      render(<AlwaysRenderedSheet />);
+
+      act(() => {
+        screen.getByTestId("sheet").props.onHeaderClosePressed();
+      });
+      fireEvent.press(screen.getByTestId("reopen"));
+      expect(screen.getByTestId("closed-content")).toBeTruthy();
+      expect(screen.queryByTestId("sheet-content")).toBeNull();
+      expect(screen.getByTestId("sheet").props.footerComponent).toEqual(expect.any(Function));
+
+      act(() => {
+        screen.getByTestId("sheet").props.onDismiss();
+      });
+      expect(screen.getByTestId("sheet-content")).toBeTruthy();
+    });
   });
 
   // Keeping gorhom off the Android keyboard leaves the footer free to rise over it on its own,

@@ -77,8 +77,13 @@ export function QueuedBottomSheet({
     restoreOnFocus,
   });
 
-  const content = isAwaitingNextPresentation ? null : children;
-  const footerContent = isAwaitingNextPresentation ? null : footer;
+  // The outgoing sheet keeps what it showed, so a consumer that renders its content at all times
+  // does not see it vanish mid-close.
+  const shownContentRef = useRef({ children, footer });
+  if (!isAwaitingNextPresentation) {
+    shownContentRef.current = { children, footer };
+  }
+  const { children: content, footer: footerContent } = shownContentRef.current;
 
   const [footerHeight, setFooterHeight] = useState(0);
   const hasFooter = footerContent !== null && footerContent !== undefined;
