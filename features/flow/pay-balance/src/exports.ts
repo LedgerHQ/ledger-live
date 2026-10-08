@@ -5,6 +5,7 @@ export * from "./logic/aggregateBalance";
 export * from "./logic/buildBalanceFilterOptions";
 export * from "./logic/buildBalanceData";
 export * from "./logic/buildStablecoinHoldings";
+export * from "./logic/toHeldAccount";
 export * from "./logic/resolveSelection";
 export * from "./types";
 export * from "./state";

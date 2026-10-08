@@ -33,20 +33,35 @@ export type BuildBalanceFilterOptionsParams = Readonly<{
 }>;
 
 function assetOption(
-  id: string,
   item: StablecoinItem,
   formatFiat: (value: number) => string,
   formatCrypto: (unit: Unit, balance: number) => string,
-  override?: Pick<DefaultStablecoin, "name" | "ticker">,
 ): BalanceFilterOption {
   return {
-    id,
-    title: override?.name ?? item.currency.name,
-    ticker: override?.ticker ?? item.currency.ticker,
-    ledgerId: id,
+    id: item.currency.id,
+    title: item.currency.name,
+    ticker: item.currency.ticker,
+    ledgerId: item.currency.id,
     countervalue: item.value,
     countervalueLabel: formatFiat(item.value),
     cryptoAmountLabel: formatCrypto(item.currency.units[0], item.balance),
+  };
+}
+
+function zeroDefaultOption(
+  coin: DefaultStablecoin,
+  formatFiat: (value: number) => string,
+  formatCrypto: (unit: Unit, balance: number) => string,
+): BalanceFilterOption {
+  const unit: Unit = { name: coin.name, code: coin.ticker, magnitude: coin.magnitude };
+  return {
+    id: coin.id,
+    title: coin.name,
+    ticker: coin.ticker,
+    ledgerId: coin.id,
+    countervalue: 0,
+    countervalueLabel: formatFiat(0),
+    cryptoAmountLabel: formatCrypto(unit, 0),
   };
 }
 
@@ -57,12 +72,11 @@ export function buildBalanceFilterOptions({
   formatFiat,
   formatCrypto,
 }: BuildBalanceFilterOptionsParams): BalanceFilterOption[] {
-  const byTicker = new Map<string, StablecoinItem>();
-  for (const item of stablecoins) {
-    byTicker.set(item.currency.ticker.toUpperCase(), item);
-  }
-
   const unfilteredTotal = stablecoins.reduce((total, { value }) => total + value, 0);
+  const heldIds = new Set(stablecoins.map(item => item.currency.id));
+  const held = [...stablecoins].sort(
+    (a, b) => b.value - a.value || a.currency.name.localeCompare(b.currency.name),
+  );
 
   const options: BalanceFilterOption[] = [
     {
@@ -71,40 +85,13 @@ export function buildBalanceFilterOptions({
       countervalue: unfilteredTotal,
       countervalueLabel: formatFiat(unfilteredTotal),
     },
+    ...held.map(item => assetOption(item, formatFiat, formatCrypto)),
   ];
 
-  const defaultTickers = new Set(defaultStablecoins.map(coin => coin.ticker.toUpperCase()));
   for (const coin of defaultStablecoins) {
-    const held = byTicker.get(coin.ticker.toUpperCase());
-    if (held) {
-      options.push(assetOption(coin.id, held, formatFiat, formatCrypto, coin));
-    } else {
-      const unit: Unit = { name: coin.name, code: coin.ticker, magnitude: coin.magnitude };
-      options.push({
-        id: coin.id,
-        title: coin.name,
-        ticker: coin.ticker,
-        ledgerId: coin.id,
-        countervalue: 0,
-        countervalueLabel: formatFiat(0),
-        cryptoAmountLabel: formatCrypto(unit, 0),
-      });
-    }
-  }
-
-  const others = stablecoins
-    .filter(item => !defaultTickers.has(item.currency.ticker.toUpperCase()))
-    .sort((a, b) => b.value - a.value || a.currency.ticker.localeCompare(b.currency.ticker));
-  for (const item of others) {
-    options.push(assetOption(item.currency.id, item, formatFiat, formatCrypto));
+    if (heldIds.has(coin.id)) continue;
+    options.push(zeroDefaultOption(coin, formatFiat, formatCrypto));
   }
 
   return options;
-}
-
-export function tickerForFilter(
-  filter: string,
-  options: readonly BalanceFilterOption[],
-): string | undefined {
-  return options.find(option => option.id === filter)?.ticker;
 }

@@ -1,6 +1,4 @@
 import { useMemo } from "react";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { useDistribution } from "~/renderer/actions/general";
 import {
   useStablecoinTickers,
@@ -10,7 +8,7 @@ import {
 import { useCategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/index";
 import {
   buildStablecoinHoldings,
-  type HeldAccount,
+  toHeldAccount,
   type StablecoinItem,
 } from "@features/flow-pay-balance";
 import { useSelector } from "LLD/hooks/redux";
@@ -26,24 +24,6 @@ export type PayStablecoins = Readonly<{
   isLoading: boolean;
   isError: boolean;
 }>;
-
-function toHeldAccount(account: AccountLike): HeldAccount {
-  const currency = getAccountCurrency(account);
-  return {
-    type: account.type,
-    balance: account.balance.toNumber(),
-    currency: {
-      id: currency.id,
-      name: currency.name,
-      ticker: currency.ticker,
-      units: currency.units.map(unit => ({
-        name: unit.name,
-        code: unit.code,
-        magnitude: unit.magnitude,
-      })),
-    },
-  };
-}
 
 export function usePayStablecoins(): PayStablecoins {
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
