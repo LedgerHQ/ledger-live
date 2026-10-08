@@ -56,11 +56,29 @@ class InitialSessionBusyError extends Error {
   }
 }
 
-/** @internal Test seam — install before the CLI starts (e.g. from dmk-intercept.ts) to bypass USB discovery. */
+/** @internal Test seam — install before the CLI starts (as `runCli` does for `WALLET_CLI_MOCK_DMK=1`) to bypass USB discovery. */
 export function _setTestDmkTransport(t: WalletCliDmkTransport | null): void {
   _testTransport = t;
   singleton = null;
   pendingTransport = null;
+}
+
+type CreateWalletCliDmk = (speculos: SpeculosTarget | null) => Promise<WalletCliDmk>;
+
+/** Loads `./dmk` on the first open rather than at startup: it pulls node-usb. */
+const createRealDmk: CreateWalletCliDmk = async speculos =>
+  (await import("./dmk")).createDeviceManagementKit(speculos);
+let createDmk = createRealDmk;
+
+/**
+ * @internal Test seam — builds a fake kit instead of loading `./dmk`; `null` restores the real one.
+ * Drops the cached kit and session without closing them, so the next open uses the new factory.
+ */
+export function _setTestDmk(create: CreateWalletCliDmk | null): void {
+  createDmk = create ?? createRealDmk;
+  singleton = null;
+  pendingTransport = null;
+  persistentDmk = null;
 }
 
 function closeDmkQuietly(dmk: DeviceManagementKit): void {
@@ -84,12 +102,11 @@ function terminateWalletCliFromSignal(code: number): void {
 }
 
 function getOrCreatePersistentDmk(): Promise<WalletCliDmk> {
-  return (persistentDmk ??= import("./dmk")
-    .then(({ createDeviceManagementKit }) => createDeviceManagementKit(getActiveSpeculosTarget()))
-    .catch(error => {
-      persistentDmk = null;
-      throw error;
-    }));
+  persistentDmk ??= createDmk(getActiveSpeculosTarget()).catch(error => {
+    persistentDmk = null;
+    throw error;
+  });
+  return persistentDmk;
 }
 
 /**

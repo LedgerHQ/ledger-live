@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, spyOn } from "bun:test";
+import { _setTestKeychain } from "../../key-ring/keychain-entry";
 import { _setTestAuthRequestTimeoutMs } from "../../state-manager/auth-fetch";
+import { InMemoryKeychain } from "../../testing/in-memory-keychain";
 import { MockServer, type Route } from "../../testing/mock-server";
-import { runCli, storedApiAuthPubkey, useApiAuthKeychain } from "../../testing/cli-runner";
+import { runCli, storedApiAuthPubkey } from "../../testing/cli-runner";
 import { makeSessionDir } from "../../testing/session-fixture";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { ledgerClientVersion } from "../../shared/client-version";
@@ -158,12 +160,9 @@ describe("quote command — API auth key", () => {
       ...quote.routes,
     ]);
     const warn = spyOn(console, "warn").mockImplementation(() => {});
-    useApiAuthKeychain({
-      getPassword: () => {
-        throw new Error("no secret service");
-      },
-      setPassword: () => {},
-    });
+    const unavailable = new InMemoryKeychain();
+    unavailable.readError = new Error("no secret service");
+    const previousKeychain = _setTestKeychain(unavailable.open);
     noKeyServer.start();
     try {
       const { exitCode, stdout, stderr } = await runCli(JSON_QUOTE_ARGS, {
@@ -178,7 +177,7 @@ describe("quote command — API auth key", () => {
       expect(warn).not.toHaveBeenCalled();
       expect(stderr).toMatch(/No usable OS keychain/);
     } finally {
-      useApiAuthKeychain(null);
+      _setTestKeychain(previousKeychain);
       warn.mockRestore();
       noKeyServer.stop();
     }
@@ -188,17 +187,21 @@ describe("quote command — API auth key", () => {
     // Generous for a slow runner: the rest of the token fetch must fit in it.
     _setTestAuthRequestTimeoutMs(500);
     // The macOS keychain dialog blocks the read until the user answers.
-    useApiAuthKeychain({
-      getPassword: () => {
-        Bun.sleepSync(1_000);
-        return null;
-      },
-      setPassword: () => {},
+    const keychain = new InMemoryKeychain();
+    const previousKeychain = _setTestKeychain((service, account) => {
+      const entry = keychain.open(service, account);
+      return {
+        ...entry,
+        getPassword: () => {
+          Bun.sleepSync(1_000);
+          return entry.getPassword();
+        },
+      };
     });
     try {
       await runQuoteAndGetAuthSignature(fixture.env);
     } finally {
-      useApiAuthKeychain(null);
+      _setTestKeychain(previousKeychain);
       _setTestAuthRequestTimeoutMs(null);
     }
   });

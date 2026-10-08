@@ -14,10 +14,42 @@ const PROBE_SERVICE = `${APP_NAME}-probe`;
 // on reboot. Pinned, the constructor throws when no Secret Service is reachable.
 const SECRET_SERVICE_ONLY: EntryOptions = { linux: { store: "secret-service" } };
 
+/** The part of an OS keychain entry wallet-cli uses. */
+export type KeychainEntry = Pick<Entry, "getPassword" | "setPassword" | "deletePassword">;
+
+type OpenKeychainEntry = (
+  service: string,
+  account: string,
+  options?: EntryOptions,
+) => KeychainEntry;
+
+const openOsKeychainEntry: OpenKeychainEntry = (service, account, options) =>
+  new Entry(service, account, options);
+let openTestEntry: OpenKeychainEntry | null = null;
+
+/**
+ * @internal Test seam — opens every keychain entry in a fake keychain and returns the one it
+ * replaces; `null` restores the OS keychain.
+ */
+export function _setTestKeychain(open: OpenKeychainEntry | null): OpenKeychainEntry | null {
+  const previous = openTestEntry;
+  openTestEntry = open;
+  return previous;
+}
+
+/** The only way wallet-cli reaches the OS keychain, so a test can swap it with `_setTestKeychain`. */
+export function openKeychainEntry(
+  service: string,
+  account: string,
+  options?: EntryOptions,
+): KeychainEntry {
+  return (openTestEntry ?? openOsKeychainEntry)(service, account, options);
+}
+
 // The pinned constructor is the whole check: a read would also report errors (a timeout, a locked
 // collection) that don't mean the Secret Service is missing.
-function probeSecretService(): Entry {
-  return new Entry(PROBE_SERVICE, "probe", SECRET_SERVICE_ONLY);
+function probeSecretService(): KeychainEntry {
+  return openKeychainEntry(PROBE_SERVICE, "probe", SECRET_SERVICE_ONLY);
 }
 
 let probeKeychain: () => unknown = probeSecretService;
@@ -50,7 +82,7 @@ export function assertOsKeychainAvailable(hint: string): void {
  * Once a caller starts using a given `(accountPrefix, hashParts)` pairing, that pairing becomes
  * load-bearing for it — changing either would silently orphan that caller's already-stored entries.
  */
-export function keychainEntry(accountPrefix: string, ...hashParts: string[]): Entry {
+export function keychainEntry(accountPrefix: string, ...hashParts: string[]): KeychainEntry {
   const digest = createHash("sha256")
     .update([stateDir(APP_NAME), ...hashParts].join(" "))
     .digest("hex")
@@ -59,8 +91,8 @@ export function keychainEntry(accountPrefix: string, ...hashParts: string[]): En
 }
 
 // Throws on Linux when no Secret Service is reachable.
-export function osKeychainEntry(account: string): Entry {
-  return new Entry(SERVICE, account, SECRET_SERVICE_ONLY);
+export function osKeychainEntry(account: string): KeychainEntry {
+  return openKeychainEntry(SERVICE, account, SECRET_SERVICE_ONLY);
 }
 
 /**
@@ -68,7 +100,7 @@ export function osKeychainEntry(account: string): Entry {
  * postcondition (no key remains), so both collapse to `true`; only a throw (the key may still
  * persist, or the entry can't even be built) returns `false`.
  */
-export function deleteKeychainEntry(entry: () => Entry): boolean {
+export function deleteKeychainEntry(entry: () => KeychainEntry): boolean {
   try {
     entry().deletePassword();
     return true;
