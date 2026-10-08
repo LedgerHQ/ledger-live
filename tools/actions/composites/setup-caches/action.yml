@@ -65,7 +65,9 @@ runs:
       env:
         MISE_EXPERIMENTAL: "1"
       run: |
-        if command -v mise >/dev/null 2>&1 && [ -z "$(mise ls --missing --local 2>/dev/null)" ]; then
+        # Assigning in the condition keeps mise's exit status: a failing `mise ls` (e.g. a mise too
+        # old for mise.toml) must fall back to mise-action, not look like "nothing missing".
+        if command -v mise >/dev/null 2>&1 && missing="$(mise ls --missing --local 2>/dev/null)" && [ -z "$missing" ]; then
           echo "found=true" >> "$GITHUB_OUTPUT"
         else
           echo "found=false" >> "$GITHUB_OUTPUT"
