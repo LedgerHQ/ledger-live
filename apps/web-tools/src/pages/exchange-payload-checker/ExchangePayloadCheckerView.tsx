@@ -30,6 +30,7 @@ import {
   type DecodedField,
   type KeySource,
   type ModeHint,
+  type ProviderHelper,
   type SwapFormatChoice,
   type TransactionType,
 } from "./logic";
@@ -108,8 +109,51 @@ const TransactionInputs = ({
   </Section>
 );
 
-const PartnerKeyInputs = ({
-  keySource,
+const CalEnvControl = ({
+  calEnv,
+  onCalEnvChange,
+}: Pick<ExchangePayloadCheckerViewModel, "calEnv" | "onCalEnvChange">) => (
+  <>
+    <span className="body-3 text-muted">CAL environment</span>
+    <SegmentedControl
+      selectedValue={calEnv}
+      onSelectedChange={value => onCalEnvChange(value as CalEnv)}
+      tabLayout="fit"
+      className="self-start"
+      aria-label="CAL environment"
+    >
+      <SegmentedControlButton value="prod">Production</SegmentedControlButton>
+      <SegmentedControlButton value="test">Test</SegmentedControlButton>
+    </SegmentedControl>
+  </>
+);
+
+const ProviderHelperText = ({
+  id,
+  helper,
+  onRetry,
+}: {
+  id: string;
+  helper: ProviderHelper;
+  onRetry: ExchangePayloadCheckerViewModel["onRetryProviders"];
+}) => (
+  <div className="flex flex-wrap items-center gap-12">
+    <p
+      id={id}
+      role={helper.failed ? "alert" : undefined}
+      className={helper.failed ? "body-3 text-error" : "body-3 text-muted"}
+    >
+      {helper.text}
+    </p>
+    {helper.failed ? (
+      <Button appearance="gray" size="sm" onClick={onRetry}>
+        Retry
+      </Button>
+    ) : null}
+  </div>
+);
+
+const ProviderKeyInputs = ({
   calEnv,
   calEnvSelectable,
   calEnvHelper,
@@ -118,18 +162,89 @@ const PartnerKeyInputs = ({
   providersReady,
   providerHelper,
   providerId,
-  customCurve,
-  customKeyHex,
-  customKeyError,
   sellProviderNotice,
-  onKeySourceChange,
   onCalEnvChange,
   onProviderChange,
   onRetryProviders,
-  onCustomCurveChange,
-  onCustomKeyHexChange,
 }: ExchangePayloadCheckerViewModel) => {
   const providerHelperId = useId();
+
+  return (
+    <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-8">
+        {calEnvSelectable ? (
+          <CalEnvControl calEnv={calEnv} onCalEnvChange={onCalEnvChange} />
+        ) : null}
+        <p className="body-3 text-muted">{calEnvHelper}</p>
+        {providerListNote ? <p className="body-3 text-muted">{providerListNote}</p> : null}
+      </div>
+      <Select
+        items={providerOptions}
+        value={providerId}
+        onValueChange={onProviderChange}
+        disabled={!providersReady}
+      >
+        <SelectTrigger
+          label="Provider"
+          aria-describedby={providerHelper ? providerHelperId : undefined}
+        />
+        <SelectContent>
+          <SelectList renderItem={renderSelectItem} />
+        </SelectContent>
+      </Select>
+      {providerHelper ? (
+        <ProviderHelperText
+          id={providerHelperId}
+          helper={providerHelper}
+          onRetry={onRetryProviders}
+        />
+      ) : null}
+      {sellProviderNotice ? (
+        <Banner
+          appearance="warning"
+          title="Legacy Sell is not supported"
+          description={sellProviderNotice}
+        />
+      ) : null}
+    </div>
+  );
+};
+
+const CustomKeyInputs = ({
+  customCurve,
+  customKeyHex,
+  customKeyError,
+  onCustomCurveChange,
+  onCustomKeyHexChange,
+}: ExchangePayloadCheckerViewModel) => (
+  <div className="flex flex-col gap-12">
+    <Select
+      items={CURVE_ITEMS}
+      value={customCurve}
+      onValueChange={value => {
+        if (value) onCustomCurveChange(value as Curve);
+      }}
+    >
+      <SelectTrigger label="Curve" />
+      <SelectContent>
+        <SelectList renderItem={renderSelectItem} />
+      </SelectContent>
+    </Select>
+    <TextInput
+      label="Public key (hex, uncompressed or compressed)"
+      value={customKeyHex}
+      onChange={event => onCustomKeyHexChange(event.target.value)}
+      onClear={() => onCustomKeyHexChange("")}
+      status={customKeyError ? "error" : undefined}
+      helperText={customKeyError ?? undefined}
+      spellCheck={false}
+      autoComplete="off"
+    />
+  </div>
+);
+
+const PartnerKeyInputs = (viewModel: ExchangePayloadCheckerViewModel) => {
+  const { keySource, onKeySourceChange } = viewModel;
 
   return (
     <Section title="Partner public key">
@@ -145,89 +260,9 @@ const PartnerKeyInputs = ({
       </SegmentedControl>
 
       {keySource === "provider" ? (
-        <div className="flex flex-col gap-12">
-          <div className="flex flex-col gap-8">
-            {calEnvSelectable ? (
-              <>
-                <span className="body-3 text-muted">CAL environment</span>
-                <SegmentedControl
-                  selectedValue={calEnv}
-                  onSelectedChange={value => onCalEnvChange(value as CalEnv)}
-                  tabLayout="fit"
-                  className="self-start"
-                  aria-label="CAL environment"
-                >
-                  <SegmentedControlButton value="prod">Production</SegmentedControlButton>
-                  <SegmentedControlButton value="test">Test</SegmentedControlButton>
-                </SegmentedControl>
-              </>
-            ) : null}
-            <p className="body-3 text-muted">{calEnvHelper}</p>
-            {providerListNote ? <p className="body-3 text-muted">{providerListNote}</p> : null}
-          </div>
-          <Select
-            items={providerOptions}
-            value={providerId}
-            onValueChange={onProviderChange}
-            disabled={!providersReady}
-          >
-            <SelectTrigger
-              label="Provider"
-              aria-describedby={providerHelper ? providerHelperId : undefined}
-            />
-            <SelectContent>
-              <SelectList renderItem={renderSelectItem} />
-            </SelectContent>
-          </Select>
-          {providerHelper ? (
-            <div className="flex flex-wrap items-center gap-12">
-              <p
-                id={providerHelperId}
-                role={providerHelper.failed ? "alert" : undefined}
-                className={providerHelper.failed ? "body-3 text-error" : "body-3 text-muted"}
-              >
-                {providerHelper.text}
-              </p>
-              {providerHelper.failed ? (
-                <Button appearance="gray" size="sm" onClick={onRetryProviders}>
-                  Retry
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
-          {sellProviderNotice ? (
-            <Banner
-              appearance="warning"
-              title="Legacy Sell is not supported"
-              description={sellProviderNotice}
-            />
-          ) : null}
-        </div>
+        <ProviderKeyInputs {...viewModel} />
       ) : (
-        <div className="flex flex-col gap-12">
-          <Select
-            items={CURVE_ITEMS}
-            value={customCurve}
-            onValueChange={value => {
-              if (value) onCustomCurveChange(value as Curve);
-            }}
-          >
-            <SelectTrigger label="Curve" />
-            <SelectContent>
-              <SelectList renderItem={renderSelectItem} />
-            </SelectContent>
-          </Select>
-          <TextInput
-            label="Public key (hex, uncompressed or compressed)"
-            value={customKeyHex}
-            onChange={event => onCustomKeyHexChange(event.target.value)}
-            onClear={() => onCustomKeyHexChange("")}
-            status={customKeyError ? "error" : undefined}
-            helperText={customKeyError ?? undefined}
-            spellCheck={false}
-            autoComplete="off"
-          />
-        </div>
+        <CustomKeyInputs {...viewModel} />
       )}
     </Section>
   );

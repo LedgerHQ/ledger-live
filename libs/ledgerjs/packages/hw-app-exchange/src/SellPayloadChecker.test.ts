@@ -142,6 +142,7 @@ describe("checkSellPayload", () => {
       ["no exponent", "20f6", 0, "8438"],
       ["trailing zeros", "2710", 2, "100"],
       ["a value below 1", "05", 3, "0.005"],
+      ["a fraction of 255 zeros", (10n ** 255n).toString(16), 255, "1"],
     ])("formats out_amount with %s", (_case, coefficientHex, exponent, outAmount) => {
       const report = checkSellPayload(
         buildInput({

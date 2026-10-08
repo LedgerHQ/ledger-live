@@ -4,5 +4,5 @@ export function isHexadecimal(str: string): boolean {
 
 export function base64UrlDecode(base64Url: string): Buffer {
   // React Native Hermes engine does not support Buffer.from(value, "base64url")
-  return Buffer.from(base64Url.replace(/-/g, "+").replace(/_/g, "/"), "base64");
+  return Buffer.from(base64Url.split("-").join("+").split("_").join("/"), "base64");
 }

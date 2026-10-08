@@ -17,6 +17,7 @@ import {
   runNgPayloadCheck,
   runPayloadCheck,
   sameHexNonce,
+  type ComparedValue,
   type PayloadCheckReport,
   type SwapPayloadIssue,
   type WireField,
@@ -92,7 +93,7 @@ const EXPECTED_KEYS = [
 type NonceRules = {
   key: "deviceTransactionIdNg" | "deviceTransactionId";
   issues: (proto: SwapProtobufPayload) => SwapPayloadIssue[];
-  equals: (expected: unknown, actual: unknown) => boolean;
+  equals: (expected: ComparedValue, actual: ComparedValue) => boolean;
 };
 
 const NG_NONCE: NonceRules = {
@@ -122,7 +123,10 @@ const LEGACY_NONCE: NonceRules = {
 const orZeroAmount = (bytes: Buffer): Buffer =>
   bytes && bytes.length > 0 ? bytes : Buffer.from([0x00]);
 
-const lastOf = <T>(values: T[]): T | undefined => values[values.length - 1];
+const lastOf = <T>(values: T[]): T | undefined => {
+  const [last] = values.slice(-1);
+  return last;
+};
 
 const PAYIN_EXTRA_DATA_BYTES = 33;
 

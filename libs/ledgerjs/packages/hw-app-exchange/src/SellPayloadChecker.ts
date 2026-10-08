@@ -55,6 +55,12 @@ const toBigInt = (bytes: Uint8Array | null | undefined): bigint =>
 // app-exchange `get_fiat_printable_amount` rejects an exponent above UINT8_MAX.
 const MAX_FORMATTED_EXPONENT = 255;
 
+function withoutTrailingZeros(digits: string): string {
+  let end = digits.length;
+  while (end > 0 && digits[end - 1] === "0") end--;
+  return digits.slice(0, end);
+}
+
 function formatUDecimal(amount: ledger_trade.IUDecimal | null | undefined): string {
   const digits = toBigInt(amount?.coefficient).toString();
   const exponent = amount?.exponent ?? 0;
@@ -64,7 +70,7 @@ function formatUDecimal(amount: ledger_trade.IUDecimal | null | undefined): stri
   }
 
   const padded = digits.padStart(exponent + 1, "0");
-  const fraction = padded.slice(-exponent).replace(/0+$/, "");
+  const fraction = withoutTrailingZeros(padded.slice(-exponent));
   const integer = padded.slice(0, -exponent);
   return fraction ? `${integer}.${fraction}` : integer;
 }

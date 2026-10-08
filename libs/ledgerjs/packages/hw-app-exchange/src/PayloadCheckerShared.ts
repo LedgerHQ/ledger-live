@@ -76,6 +76,78 @@ function decodeNgPayload(payload: string): Uint8Array | undefined {
   return base64UrlDecode(payload);
 }
 
+type PayloadDecoding<P, D> = {
+  messageName: string;
+  wireFields: WireField[];
+  decode: (bytes: Uint8Array) => P;
+  inspect: Inspect<P, D>;
+};
+
+function inspectPayloadBytes<P, D>(
+  bytes: Uint8Array,
+  { messageName, wireFields, decode, inspect }: PayloadDecoding<P, D>,
+): { decoded?: D; issues: SwapPayloadIssue[] } {
+  let proto: P;
+  try {
+    proto = decode(bytes);
+  } catch {
+    return {
+      issues: [
+        issueError(
+          "PROTOBUF_DECODE_FAILED",
+          `The payload bytes are not a valid ledger_trade.${messageName} protobuf message.`,
+        ),
+      ],
+    };
+  }
+  if (!proto) return { issues: [] };
+
+  const issues: SwapPayloadIssue[] = [];
+  const wire = scanWireFields(bytes, wireFields);
+  if (!wire) {
+    issues.push(
+      issueError(
+        "PROTOBUF_DECODE_FAILED",
+        `The payload bytes are not a valid ledger_trade.${messageName} protobuf message for the Exchange app (nanopb): it rejects groups (wire types 3 and 4), a known field with an unexpected wire type and malformed wire data.`,
+      ),
+    );
+  }
+  try {
+    const inspection = inspect(proto, wire ?? { occurrences: new Map(), violations: [] });
+    return { decoded: inspection.decoded, issues: [...issues, ...inspection.issues] };
+  } catch {
+    return {
+      issues: [
+        ...issues,
+        issueError(
+          "PROTOBUF_DECODE_FAILED",
+          `The payload decodes as a ledger_trade.${messageName} protobuf message but its fields could not be read.`,
+        ),
+      ],
+    };
+  }
+}
+
+function partnerPublicKeyIssues(partnerPublicKey: SwapNgPartnerPublicKey): SwapPayloadIssue[] {
+  if (!isValidSwapNgPartnerPublicKey(partnerPublicKey)) {
+    return [
+      issueError(
+        "PUBLIC_KEY_MALFORMED",
+        `The partner public key is not a valid ${partnerPublicKey.curve} point. Provide the 65-byte uncompressed public key (0x04 prefix), the form registered with Ledger and sent to the Exchange app. A 33-byte compressed key is also accepted here, for verification only.`,
+      ),
+    ];
+  }
+  if (partnerPublicKey.data.length === COMPRESSED_PUBLIC_KEY_BYTES) {
+    return [
+      issueWarning(
+        "PUBLIC_KEY_COMPRESSED",
+        "The partner public key is the 33-byte compressed form. The signature is verified with it here, but the key registered with Ledger must be the 65-byte uncompressed form (0x04 prefix): the Exchange app only accepts an uncompressed partner key.",
+      ),
+    ];
+  }
+  return [];
+}
+
 /**
  * Runs every check shared by the payload checkers and collects all issues, in this order:
  * `formatIssues`, encoding, protobuf decoding, `scanWireFields` and `inspect`, `sizeIssues`,
@@ -86,86 +158,29 @@ export function runPayloadCheck<P, D>({
   encodingIssue,
   formatIssues = [],
   sizeIssues = [],
-  messageName,
-  wireFields,
-  decode,
-  inspect,
   partnerPublicKey,
   checkSignature,
-}: {
+  ...decoding
+}: PayloadDecoding<P, D> & {
   bytes: Uint8Array | undefined;
   encodingIssue: SwapPayloadIssue;
   formatIssues?: SwapPayloadIssue[];
   sizeIssues?: SwapPayloadIssue[];
-  messageName: string;
-  wireFields: WireField[];
-  decode: (bytes: Uint8Array) => P;
-  inspect: Inspect<P, D>;
   partnerPublicKey: SwapNgPartnerPublicKey;
   checkSignature: (bytes: Uint8Array) => SwapPayloadIssue[];
 }): PayloadCheckReport<D> {
-  const issues: SwapPayloadIssue[] = [...formatIssues];
-  let decoded: D | undefined;
+  const { decoded, issues: decodingIssues } = bytes
+    ? inspectPayloadBytes(bytes, decoding)
+    : { decoded: undefined, issues: [encodingIssue] };
+  const canCheckSignature = bytes && isValidSwapNgPartnerPublicKey(partnerPublicKey);
 
-  if (!bytes) {
-    issues.push(encodingIssue);
-  } else {
-    let proto: P | undefined;
-    try {
-      proto = decode(bytes);
-    } catch {
-      issues.push(
-        issueError(
-          "PROTOBUF_DECODE_FAILED",
-          `The payload bytes are not a valid ledger_trade.${messageName} protobuf message.`,
-        ),
-      );
-    }
-    if (proto) {
-      const wire = scanWireFields(bytes, wireFields);
-      if (!wire) {
-        issues.push(
-          issueError(
-            "PROTOBUF_DECODE_FAILED",
-            `The payload bytes are not a valid ledger_trade.${messageName} protobuf message for the Exchange app (nanopb): it rejects groups (wire types 3 and 4), a known field with an unexpected wire type and malformed wire data.`,
-          ),
-        );
-      }
-      try {
-        const inspection = inspect(proto, wire ?? { occurrences: new Map(), violations: [] });
-        decoded = inspection.decoded;
-        issues.push(...inspection.issues);
-      } catch {
-        issues.push(
-          issueError(
-            "PROTOBUF_DECODE_FAILED",
-            `The payload decodes as a ledger_trade.${messageName} protobuf message but its fields could not be read.`,
-          ),
-        );
-      }
-    }
-  }
-
-  issues.push(...sizeIssues);
-
-  if (!isValidSwapNgPartnerPublicKey(partnerPublicKey)) {
-    issues.push(
-      issueError(
-        "PUBLIC_KEY_MALFORMED",
-        `The partner public key is not a valid ${partnerPublicKey.curve} point. Provide the 65-byte uncompressed public key (0x04 prefix), the form registered with Ledger and sent to the Exchange app. A 33-byte compressed key is also accepted here, for verification only.`,
-      ),
-    );
-  } else {
-    if (partnerPublicKey.data.length === COMPRESSED_PUBLIC_KEY_BYTES) {
-      issues.push(
-        issueWarning(
-          "PUBLIC_KEY_COMPRESSED",
-          "The partner public key is the 33-byte compressed form. The signature is verified with it here, but the key registered with Ledger must be the 65-byte uncompressed form (0x04 prefix): the Exchange app only accepts an uncompressed partner key.",
-        ),
-      );
-    }
-    if (bytes) issues.push(...checkSignature(bytes));
-  }
+  const issues = [
+    ...formatIssues,
+    ...decodingIssues,
+    ...sizeIssues,
+    ...partnerPublicKeyIssues(partnerPublicKey),
+    ...(canCheckSignature ? checkSignature(bytes) : []),
+  ];
 
   return {
     valid: !issues.some(({ severity }) => severity === "error"),
@@ -313,15 +328,17 @@ export const fieldLimitIssues = (violations: FieldLimitViolation[]): SwapPayload
     ),
   );
 
-export const sameHexNonce = (expected: unknown, actual: unknown): boolean =>
+export type ComparedValue = string | bigint | undefined;
+
+export const sameHexNonce = (expected: ComparedValue, actual: ComparedValue): boolean =>
   String(expected).replace(/^0x/i, "").toLowerCase() === String(actual).toLowerCase();
 
 export const expectedValueIssues = (
   comparisons: {
     field: string;
-    expected: unknown;
-    actual: unknown;
-    equals?: (expected: unknown, actual: unknown) => boolean;
+    expected: ComparedValue;
+    actual: ComparedValue;
+    equals?: (expected: ComparedValue, actual: ComparedValue) => boolean;
   }[],
 ): SwapPayloadIssue[] =>
   comparisons
@@ -447,6 +464,31 @@ function readWireValue(
   return { content: bytes.subarray(offset, next), next };
 }
 
+function readTag(
+  bytes: Uint8Array,
+  offset: number,
+): { fieldNumber: number; wireType: number; next: number } | undefined {
+  const tag = readVarint(bytes, offset);
+  // nanopb rejects field number 0 ("zero tag") and a tag that does not fit in 32 bits.
+  if (!tag || tag.value < 8 || tag.value > MAX_TAG) return undefined;
+  return { fieldNumber: Math.floor(tag.value / 8), wireType: tag.value % 8, next: tag.next };
+}
+
+function scanKnownField(
+  field: WireField,
+  wireType: number,
+  content: Uint8Array,
+  occurrences: Map<WireField, Uint8Array[]>,
+): boolean {
+  const expectedWireType = field.kind === "varint" ? VARINT_WIRE_TYPE : LENGTH_DELIMITED_WIRE_TYPE;
+  if (wireType !== expectedWireType) return false;
+  if (field.kind === "message") return scanMessage(content, field.fields, occurrences);
+  if (field.kind !== "varint") {
+    occurrences.set(field, [...(occurrences.get(field) ?? []), content]);
+  }
+  return true;
+}
+
 function scanMessage(
   bytes: Uint8Array,
   fields: WireField[],
@@ -456,24 +498,14 @@ function scanMessage(
   let offset = 0;
 
   while (offset < bytes.length) {
-    const tag = readVarint(bytes, offset);
-    // nanopb rejects field number 0 ("zero tag") and a tag that does not fit in 32 bits.
-    if (!tag || tag.value < 8 || tag.value > MAX_TAG) return false;
-    const wireType = tag.value % 8;
-    const value = readWireValue(bytes, tag.next, wireType);
+    const tag = readTag(bytes, offset);
+    if (!tag) return false;
+    const value = readWireValue(bytes, tag.next, tag.wireType);
     if (!value) return false;
     offset = value.next;
 
-    const field = fieldsByNumber.get(Math.floor(tag.value / 8));
-    if (!field) continue;
-    const expectedWireType =
-      field.kind === "varint" ? VARINT_WIRE_TYPE : LENGTH_DELIMITED_WIRE_TYPE;
-    if (wireType !== expectedWireType) return false;
-    if (field.kind === "message") {
-      if (!scanMessage(value.content, field.fields, occurrences)) return false;
-    } else if (field.kind !== "varint") {
-      occurrences.set(field, [...(occurrences.get(field) ?? []), value.content]);
-    }
+    const field = fieldsByNumber.get(tag.fieldNumber);
+    if (field && !scanKnownField(field, tag.wireType, value.content, occurrences)) return false;
   }
   return true;
 }

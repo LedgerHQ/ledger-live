@@ -28,7 +28,7 @@ export const DEVICE_SIDE_CHECKS_NOTE =
 type Parsed<T> = { value: T; error?: undefined } | { value?: undefined; error: string };
 
 const HEX_PATTERN = /^[0-9a-fA-F]*$/;
-const EVEN_HEX_PAYLOAD_PATTERN = /^(0x)?([0-9a-fA-F]{2})+$/i;
+const EVEN_HEX_PAYLOAD_PATTERN = /^(0x)?([0-9a-f]{2})+$/i;
 const NG_NONCE_PATTERN = /^[0-9a-fA-F]{64}$/;
 const LEGACY_NONCE_PATTERN = /^[\x20-\x7e]{10}$/;
 const INTEGER_PATTERN = /^\d+$/;
@@ -98,6 +98,8 @@ const isLegacySwapHex = (payload: string) =>
 
 const providerFormatOf = (provider: { version?: number } | null): SwapFormat | null =>
   provider ? swapPayloadFormatOf(provider.version) : null;
+
+const SWAP_KINDS: Record<SwapFormat, PayloadKind> = { ng: "swapNg", legacy: "swapLegacy" };
 
 const FORMAT_LABELS: Record<SwapFormat, string> = { ng: "NG", legacy: "Legacy" };
 const FORMAT_NAMES: Record<SwapFormat, string> = { ng: "NG (base64url)", legacy: "Legacy (hex)" };
@@ -236,8 +238,7 @@ export function resolveMode({ transactionType, swapFormatChoice, provider, paylo
   }
 
   const swapFormat = swapFormatOf(swapFormatChoice, providerFormat, payload);
-  const kind: ModeKind =
-    swapFormat === null ? "swapUndetermined" : swapFormat === "legacy" ? "swapLegacy" : "swapNg";
+  const kind: ModeKind = swapFormat ? SWAP_KINDS[swapFormat] : "swapUndetermined";
   return {
     kind,
     texts: textsFor(kind, "swap", {
@@ -282,6 +283,16 @@ const AMOUNT_KEYS: ReadonlySet<ExpectedValueKey> = new Set([
   "inAmount",
 ]);
 
+function parseExpectedValue(
+  key: ExpectedValueKey,
+  value: string,
+  kind: ModeKind,
+): Parsed<string | bigint> {
+  if (key === "deviceTransactionId") return parseNonce(value, kind);
+  if (AMOUNT_KEYS.has(key)) return parseAmount(value);
+  return { value };
+}
+
 export function parseExpectedValues(
   form: ExpectedForm,
   kind: ModeKind,
@@ -293,12 +304,7 @@ export function parseExpectedValues(
     const value = input.trim();
     if (!value) continue;
 
-    const parsed: Parsed<string | bigint> =
-      key === "deviceTransactionId"
-        ? parseNonce(value, kind)
-        : AMOUNT_KEYS.has(key)
-          ? parseAmount(value)
-          : { value };
+    const parsed = parseExpectedValue(key, value, kind);
     if (parsed.error === undefined) expected[key] = parsed.value;
     else errors[key] = parsed.error;
   }
@@ -352,7 +358,7 @@ const toProtobufFieldName = (key: string) =>
 export function formatDecodedFields(
   decoded: DecodedSwapPayload | DecodedSellPayload,
 ): DecodedField[] {
-  const values: Partial<Record<DecodedKey, unknown>> = decoded;
+  const values: Partial<Record<DecodedKey, string | bigint>> = decoded;
   return DECODED_KEYS_IN_ORDER.flatMap(key => {
     const value = values[key];
     if (value === undefined || value === null) return [];
@@ -473,12 +479,14 @@ function swapModeHint(
   return null;
 }
 
+function swapFormatLookalikeOf(payload: string): SwapFormat | null {
+  if (looksLike("swapNg", payload)) return "ng";
+  if (isEvenHex(payload) && looksLike("swapLegacy", stripHexPrefix(payload))) return "legacy";
+  return null;
+}
+
 function sellModeHint({ swapFormatChoice, payload }: ModeInputs): ModeHint | null {
-  const swapFormat: SwapFormat | null = looksLike("swapNg", payload)
-    ? "ng"
-    : isEvenHex(payload) && looksLike("swapLegacy", stripHexPrefix(payload))
-      ? "legacy"
-      : null;
+  const swapFormat = swapFormatLookalikeOf(payload);
   if (!swapFormat) return null;
 
   const keptChoiceRejectsPayload = swapFormatChoice !== "auto" && swapFormatChoice !== swapFormat;

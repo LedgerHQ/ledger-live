@@ -6,7 +6,6 @@ import Exchange, {
   PartnerKeyInfo,
   isExchangeTypeNg,
   PayloadSignatureComputedFormat,
-  swapPayloadFormatOf,
 } from "./Exchange";
 import { decodeSwapPayload, decodePayloadProtobuf } from "./SwapUtils";
 import { decodeSellPayload } from "./SellUtils";
@@ -22,10 +21,10 @@ export {
   PartnerKeyInfo,
   isExchangeTypeNg,
   PayloadSignatureComputedFormat,
-  swapPayloadFormatOf,
   decodeSellPayload,
   decodeFundPayload,
 };
+export { swapPayloadFormatOf } from "./Exchange";
 export { findSwapPayloadSpecViolation } from "./SwapUtils";
 export { SwapPayloadFieldExceedsLimit } from "./errors";
 export { checkSwapPayload } from "./SwapPayloadChecker";
