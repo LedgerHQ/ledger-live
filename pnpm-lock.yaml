@@ -38535,7 +38535,7 @@ snapshots:
 
   '@aptos-labs/aptos-client@2.0.0(got@11.8.5)':
     dependencies:
-      got: 11.8.5
+      got: 11.8.6
 
   '@aptos-labs/ts-sdk@3.1.3(got@11.8.5)':
     dependencies:
