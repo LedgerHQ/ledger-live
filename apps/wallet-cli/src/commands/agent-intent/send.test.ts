@@ -23,6 +23,10 @@ const SENDER = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed";
 const RECIPIENT = "0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359";
 const USDC = toChecksumAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
 
+// The 0x11 × 32 and 0x22 × 32 keys of agent-intent-service ADR-0002's Solana vectors.
+const SOL_SENDER = "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2";
+const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
+
 const DEEPLINK = "https://agent-intent.ledger-test.com/intents/intent-123";
 
 const enrolledProfile = {
@@ -40,6 +44,7 @@ const enrolledProfile = {
 
 const accounts = [
   { label: "ethereum-1", descriptor: `account:1:address:ethereum:main:${SENDER}:m/44h/60h/0h/0/0` },
+  { label: "solana-1", descriptor: `account:1:address:solana:main:${SOL_SENDER}:m/44h/501h/0h/0h` },
   {
     label: "bitcoin-native-1",
     descriptor:
@@ -101,7 +106,8 @@ type SendFlags = {
   to: string;
   amount: string;
   token?: string;
-  "fee-strategy": "slow" | "medium" | "fast";
+  "fee-strategy"?: "slow" | "medium" | "fast";
+  memo?: string;
   description?: string;
   "dry-run": boolean;
   output?: "human" | "json";
@@ -208,6 +214,74 @@ describe("agent-intent send", () => {
     });
   });
 
+  describe("native SOL", () => {
+    const sol = (overrides: Partial<SendFlags> = {}) =>
+      runSend({
+        from: SOL_SENDER,
+        to: SOL_RECIPIENT,
+        amount: "0.5 SOL",
+        "fee-strategy": undefined,
+        output: "json",
+        ...overrides,
+      });
+
+    it("proposes a Solana send in lamports, with its memo and no fee strategy", async () => {
+      await sol({ memo: "Invoice 42", description: "Pay supplier" });
+
+      expect(submittedIntents).toEqual([
+        {
+          type: "send",
+          network: "solana",
+          sender: SOL_SENDER,
+          recipient: SOL_RECIPIENT,
+          amount: "500000000",
+          asset: { type: "native" },
+          memo: "Invoice 42",
+          description: "Pay supplier",
+        },
+      ]);
+      const result = jsonResult();
+      expect(result).toMatchObject({
+        status: "success",
+        network: "solana",
+        asset: { type: "native", ticker: "SOL", decimals: 9 },
+        amount: "500000000",
+        memo: "Invoice 42",
+        submitted: true,
+      });
+      expect(result).not.toHaveProperty("feeStrategy");
+    });
+
+    it("resolves the sender from a Solana mainnet session label", async () => {
+      await sol({ from: undefined, account: "solana-1" });
+
+      expect(submittedIntents).toEqual([expect.objectContaining({ sender: SOL_SENDER })]);
+    });
+
+    it("refuses an Ethereum account for a SOL amount", async () => {
+      await expect(
+        sol({ from: undefined, account: "ethereum-1", output: undefined }),
+      ).rejects.toThrow(/on ethereum; a Solana send intent needs a Solana mainnet account/);
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it.each([
+      [{ "fee-strategy": "fast" as const }, "--fee-strategy is Ethereum only"],
+      [{ token: SOL_RECIPIENT }, "Solana token (SPL) sends aren't supported yet"],
+      [{ to: `${SOL_RECIPIENT.slice(0, -1)}0` }, "recipient must be base58"],
+      [{ to: RECIPIENT }, "recipient must be base58"],
+      [{ amount: "0.0000000001 SOL" }, "SOL supports at most 9"],
+    ])("refuses %j", async (overrides, message) => {
+      await expect(sol({ ...overrides, output: undefined })).rejects.toThrow(message);
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it("refuses a memo on an Ethereum send", async () => {
+      await expect(runSend({ memo: "Invoice 42" })).rejects.toThrow("--memo is Solana only.");
+      expect(submittedIntents).toEqual([]);
+    });
+  });
+
   describe("sender", () => {
     it("resolves an account label to its address", async () => {
       await runSend({ from: undefined, account: "ethereum-1" });
@@ -217,7 +291,7 @@ describe("agent-intent send", () => {
 
     it("rejects a label on a network Agent Intent doesn't support", async () => {
       await expect(runSend({ from: undefined, account: "bitcoin-native-1" })).rejects.toThrow(
-        /on bitcoin; Agent Intent send intents support Ethereum mainnet accounts only/,
+        /on bitcoin; an Ethereum send intent needs an Ethereum mainnet account/,
       );
     });
 

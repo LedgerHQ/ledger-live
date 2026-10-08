@@ -906,7 +906,8 @@ function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
     `From:    ${summary.sender}`,
     `To:      ${summary.recipient}`,
     `Amount:  ${summary.displayAmount} ${asset}`,
-    `Fee:     ${summary.feeStrategy}`,
+    ...(summary.feeStrategy ? [`Fee:     ${summary.feeStrategy}`] : []),
+    ...(summary.memo ? [`Memo:    ${summary.memo}`] : []),
     ...(summary.description ? [`Note:    ${summary.description}`] : []),
   ];
 }
@@ -1332,12 +1333,14 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
   return {
     profileId: summary.profileId,
     environment: summary.environment,
+    network: summary.network,
     sender: summary.sender,
     recipient: summary.recipient,
     asset: summary.asset,
     amount: summary.amount,
     displayAmount: summary.displayAmount,
-    feeStrategy: summary.feeStrategy,
+    ...(summary.feeStrategy ? { feeStrategy: summary.feeStrategy } : {}),
+    ...(summary.memo ? { memo: summary.memo } : {}),
     ...(summary.description ? { description: summary.description } : {}),
   };
 }

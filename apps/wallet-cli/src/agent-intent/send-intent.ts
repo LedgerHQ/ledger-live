@@ -8,6 +8,9 @@ type _FeeStrategiesExhaustive = AssertTrue<
   FeeStrategy extends (typeof FEE_STRATEGIES)[number] ? true : false
 >;
 
+/** The networks `agent-intent send` proposes on: always mainnet, whatever the profile's environment. */
+export type IntentNetwork = "ethereum" | "solana";
+
 export type IntentAsset =
   | { type: "native"; ticker: string; decimals: number }
   | { type: "erc20"; ticker: string; decimals: number; contract: string };
@@ -16,6 +19,7 @@ export type IntentAsset =
 export type SendIntentSummary = {
   profileId: string;
   environment: "staging" | "production";
+  network: IntentNetwork;
   sender: string;
   recipient: string;
   asset: IntentAsset;
@@ -23,11 +27,26 @@ export type SendIntentSummary = {
   amount: string;
   /** The amount as the user typed it, for display only. */
   displayAmount: string;
-  feeStrategy: FeeStrategy;
+  /** Ethereum only: on Solana the service sets the priority fee itself. */
+  feeStrategy?: FeeStrategy;
+  /** Solana only: carried on chain with the transfer. */
+  memo?: string;
   description?: string;
 };
 
 export function toSdkSendIntent(summary: SendIntentSummary): SendIntent {
+  if (summary.network === "solana") {
+    return {
+      type: "send",
+      network: "solana",
+      sender: summary.sender,
+      recipient: summary.recipient,
+      amount: summary.amount,
+      asset: { type: "native" },
+      ...(summary.memo ? { memo: summary.memo } : {}),
+      ...(summary.description ? { description: summary.description } : {}),
+    };
+  }
   return {
     type: "send",
     network: "ethereum",
@@ -38,7 +57,7 @@ export function toSdkSendIntent(summary: SendIntentSummary): SendIntent {
       summary.asset.type === "native"
         ? { type: "native" }
         : { type: "erc20", assetReference: summary.asset.contract },
-    feeStrategy: summary.feeStrategy,
+    feeStrategy: summary.feeStrategy ?? "medium",
     ...(summary.description ? { description: summary.description } : {}),
   };
 }

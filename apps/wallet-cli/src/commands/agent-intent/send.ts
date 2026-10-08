@@ -16,6 +16,7 @@ import {
   intentIdFromDeeplink,
   toSdkSendIntent,
   type IntentAsset,
+  type IntentNetwork,
   type SendIntentSummary,
 } from "../../agent-intent/send-intent";
 import { findEthereumToken } from "../../agent-intent/token-lookup";
@@ -62,18 +63,52 @@ function parseSenderInput(flags: {
   throw new Error("Pass exactly one sender: --account <session-label> or --from <address>.");
 }
 
-/** Only Ethereum mainnet accounts can send: that's the one network Agent Intent supports. */
-async function resolveSenderFromAccount(label: string): Promise<string> {
+/**
+ * The amount's ticker picks the network: native SOL proposes a Solana send, anything else an
+ * Ethereum one. Read before the output is set up, so it never throws: a malformed `--amount` is
+ * reported by the full parse inside the command.
+ */
+function networkOfAmount(amount: string): IntentNetwork {
+  try {
+    return parseAmountWithTicker(amount).ticker.toUpperCase() === "SOL" ? "solana" : "ethereum";
+  } catch {
+    return "ethereum";
+  }
+}
+
+const SEND_INTENT_OF: Record<IntentNetwork, string> = {
+  ethereum: "an Ethereum send intent needs an Ethereum mainnet account",
+  solana: "a Solana send intent needs a Solana mainnet account",
+};
+
+/** Only mainnet address accounts can send, on the network the amount's ticker selected. */
+async function resolveSenderFromAccount(label: string, network: IntentNetwork): Promise<string> {
   const descriptor = await resolveAccountDescriptorV1(label);
   const { name, env } = descriptor.network;
-  if (name !== "ethereum" || env !== "main" || descriptor.type !== "address") {
-    const network = env === "main" ? name : `${name} ${env}`;
+  if (name !== network || env !== "main" || descriptor.type !== "address") {
+    const actual = env === "main" ? name : `${name} ${env}`;
+    throw new Error(`Account "${label}" is on ${actual}; ${SEND_INTENT_OF[network]}.`);
+  }
+  return network === "ethereum"
+    ? parseEvmAddress(descriptor.address, "account")
+    : descriptor.address;
+}
+
+/** Solana sends are native SOL only, with no fee level: the service sets the priority fee. */
+function assertSolanaFlags(flags: { token?: string; "fee-strategy"?: string }): void {
+  if (flags.token) {
     throw new Error(
-      `Account "${label}" is on ${network}; Agent Intent send intents support Ethereum mainnet ` +
-        "accounts only.",
+      "Solana token (SPL) sends aren't supported yet; omit --token to send native SOL.",
     );
   }
-  return parseEvmAddress(descriptor.address, "account");
+  if (flags["fee-strategy"]) {
+    throw new Error("--fee-strategy is Ethereum only: on Solana the service sets the fee.");
+  }
+}
+
+function solanaAsset(): IntentAsset {
+  const sol = getCryptoCurrencyById("solana");
+  return { type: "native", ticker: sol.ticker, decimals: sol.units[0].magnitude };
 }
 
 async function resolveAsset(
@@ -119,28 +154,38 @@ function assertSdkAcceptsIntent(intent: SendIntent): void {
 export default defineCommand({
   name: "send",
   description:
-    "Propose an Ethereum send (ETH or ERC-20) for human review in the Agent Intent frontend. " +
-    "Never signs or broadcasts a transaction, and needs no device.",
+    "Propose an Ethereum send (ETH or ERC-20) or a Solana send (SOL) for human review in the " +
+    "Agent Intent frontend. Never signs or broadcasts a transaction, and needs no device.",
   options: {
     profile: option(z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE), {
       description: "Enrolled Agent Intent profile that proposes the intent.",
     }),
     account: option(z.string().min(1).optional(), {
-      description: "Sender as a session label (Ethereum mainnet account). Exclusive with --from.",
+      description:
+        "Sender as a session label (Ethereum or Solana mainnet account). Exclusive with --from.",
       short: "a",
     }),
     from: option(z.string().min(1).optional(), {
-      description: "Sender as an explicit EVM address. Exclusive with --account.",
+      description:
+        "Sender as an explicit address (EVM, or base58 for Solana). Exclusive with --account.",
     }),
-    to: option(z.string().min(1), { description: "Recipient EVM address." }),
+    to: option(z.string().min(1), {
+      description: "Recipient address (EVM, or base58 for Solana).",
+    }),
     amount: option(z.string().min(1), {
-      description: "Amount with ticker, e.g. '0.01 ETH' or '25 USDC'. Never rounded.",
+      description:
+        "Amount with ticker, e.g. '0.01 ETH', '25 USDC' or '0.5 SOL' (SOL proposes a Solana send). " +
+        "Never rounded.",
     }),
     token: option(z.string().min(1).optional(), {
-      description: "ERC-20 contract address on Ethereum mainnet (omit for native ETH).",
+      description: "ERC-20 contract address on Ethereum mainnet (omit for native ETH or SOL).",
     }),
-    "fee-strategy": option(z.enum(FEE_STRATEGIES).default("medium"), {
-      description: "Fee level the human will be asked to approve.",
+    "fee-strategy": option(z.enum(FEE_STRATEGIES).optional(), {
+      description:
+        "Fee level the human will be asked to approve (Ethereum only, default medium). Solana sets its own fee.",
+    }),
+    memo: option(z.string().min(1).max(280).optional(), {
+      description: "Memo carried on chain with the transfer, 1-280 characters (Solana only).",
     }),
     description: option(z.string().min(1).max(280).optional(), {
       description: "Note shown to the human reviewer, 1-280 characters.",
@@ -153,31 +198,39 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags }) => {
+    const network = networkOfAmount(flags.amount);
     const out = createCommandOutput(resolveOutputFormat(flags.output), {
       command: "agent-intent send",
-      network: "ethereum:main",
+      network: `${network}:main`,
     });
     await out.run(async () => {
       const senderInput = parseSenderInput(flags);
+      if (network === "solana") assertSolanaFlags(flags);
+      else if (flags.memo) throw new Error("--memo is Solana only.");
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
+      // Solana addresses are checked by the SDK below: canonical base58, 32 bytes.
       const sender =
         "from" in senderInput
-          ? parseEvmAddress(senderInput.from, "from")
-          : await resolveSenderFromAccount(senderInput.account);
-      const recipient = parseEvmAddress(flags.to, "to");
+          ? network === "ethereum"
+            ? parseEvmAddress(senderInput.from, "from")
+            : senderInput.from
+          : await resolveSenderFromAccount(senderInput.account, network);
+      const recipient = network === "ethereum" ? parseEvmAddress(flags.to, "to") : flags.to;
       const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
-      const asset = await resolveAsset(ticker, flags.token);
+      const asset = network === "solana" ? solanaAsset() : await resolveAsset(ticker, flags.token);
       const amount = parseDecimalAmount(displayAmount, asset.decimals, asset.ticker);
 
       const summary: SendIntentSummary = {
         profileId: profile.profileId,
         environment: profile.environment,
+        network,
         sender,
         recipient,
         asset,
         amount: amount.toString(),
         displayAmount,
-        feeStrategy: flags["fee-strategy"],
+        ...(network === "ethereum" ? { feeStrategy: flags["fee-strategy"] ?? "medium" } : {}),
+        ...(flags.memo ? { memo: flags.memo } : {}),
         description: flags.description,
       };
 
