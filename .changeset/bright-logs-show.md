@@ -1,6 +1,7 @@
 ---
+"@ledgerhq/device-onboarding": minor
 "@devtools/device-onboarding": minor
 "live-mobile": minor
 ---
 
-Show the onboarding log for QA
+Show and export onboarding logs with the full device answers
