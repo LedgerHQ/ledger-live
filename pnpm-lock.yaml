@@ -661,7 +661,7 @@ patchedDependencies:
     hash: 8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60
     path: patches/@callstack__repack@5.2.5.patch
   '@changesets/get-github-info@0.6.0':
-    hash: e4ccd9dc35d4ccf42e8e83fdf0dcd00efc4170407493e6e0a3d15e2991e7d2b9
+    hash: beb64b7837413deff719bddc6d9350b64ce9bc9671fd7e6ccb4b7568c455433d
     path: patches/@changesets__get-github-info@0.6.0.patch
   '@exodus/patch-broken-hermes-typed-arrays':
     hash: 7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732
