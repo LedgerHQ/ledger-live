@@ -1,10 +1,5 @@
 # OFAC requirements
 
-Working input for [LIVE-38470](https://ledgerhq.atlassian.net/browse/LIVE-38470), step 2.
-Current behaviour is from the code. [LIVE-30604](https://ledgerhq.atlassian.net/browse/LIVE-30604) is the change on top of it.
-
-This note does not choose a home for the code. That is step 3.
-
 ## Sources
 
 | Source | What it contributes |
@@ -95,19 +90,18 @@ Separate from the app-wide screen. It runs while scanning accounts, not at launc
 
 Parent: [LIVE-36609](https://ledgerhq.atlassian.net/browse/LIVE-36609). Related: [TSD-9869](https://ledgerhq.atlassian.net/browse/TSD-9869), [TSD-10250](https://ledgerhq.atlassian.net/browse/TSD-10250).
 
-For this work, the ticket's CAL is the Countervalues API the location check already calls. Same check, no second probe.
+The ticket's CAL is the Crypto Assets List service. It is not the Countervalues Service (CVS) that the location check calls. They are different backends and different outages. The CAL check is a separate probe from the location check.
 
-Today that check fails open: anything other than 200 or 451 shows the app. The splash is already capped (desktop idle at 3 seconds, mobile at 1 second) and is not held for the network.
+Today the location check (CVS) fails open: anything other than 200 or 451 shows the app. The splash is already capped (desktop idle at 3 seconds, mobile at 1 second) and is not held for the network. Nothing probes CAL at launch.
 
 Requested behaviour, both apps:
 
-1. Keep the two success outcomes. HTTP 200 enters the app. HTTP 451 shows the location block, with its current copy and no exit.
-2. A failed check, or one that has not succeeded when the splash cap fires, is unavailable. Leave the splash and show a blocking error screen in place of the app.
-3. Reuse the existing geo-block UI components for that screen. Copy and actions belong to the unavailable state.
-4. A Try again button is the likely recovery. It re-runs the check without restarting the app.
+1. The location check keeps its behaviour and stays fail-open. HTTP 200 enters the app. HTTP 451 shows the location block, with its current copy and no exit. A CVS failure does not block the app.
+2. A separate CAL check is fail-closed. If it fails, or has not succeeded when the splash cap fires, CAL is unavailable. Leave the splash and show a blocking error screen in place of the app.
+3. Reuse the existing geo-block UI components for that screen. Copy and actions belong to the unavailable state, separate from the location-blocked copy.
+4. A Try again button is the likely recovery. It re-runs the CAL check without restarting the app.
+
+Not yet established: which CAL call actually holds users on the splash. It has not been reproduced. The probe's endpoint depends on that.
 
 Design: [Figma, Home Production](https://www.figma.com/design/QZv5fm4oJ1GUS1iIUU8lJt/Home-Production-%E2%80%A2--Wallet-4.0?node-id=23505-84239).
 
-## Out of scope
-
-No placement, migration, or task split. Those are steps 3 to 6.
