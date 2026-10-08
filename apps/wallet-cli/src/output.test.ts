@@ -1,6 +1,6 @@
 import "./live-common-setup";
 import path from "node:path";
-import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import {
   getCryptoAssetsStore,
   setCryptoAssetsStore,
@@ -9,53 +9,13 @@ import {
 import { BigNumberStrSchema } from "@shared/schema-primitives";
 import { DEVICE_EXIT_CODES } from "./device/device-state";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
-import { installOutputCapture } from "./shared/ui";
+import { createCommandOutput } from "./output";
+import { _setTestSpinner, installOutputCapture } from "./shared/ui";
+import { FakeSpinners, type FakeSpinner } from "./testing/fake-spinner";
 
-type MockSpinner = {
-  text: string;
-  isSpinning: boolean;
-  start: () => MockSpinner;
-  stop: () => MockSpinner;
-  success: (text?: string) => MockSpinner;
-  error: (text?: string) => MockSpinner;
-  clear: () => MockSpinner;
-};
-
-const createdSpinners: MockSpinner[] = [];
-
-mock.module("yocto-spinner", () => ({
-  default: ({ text }: { text: string }) => {
-    const spin: MockSpinner = {
-      text,
-      isSpinning: false,
-      start() {
-        this.isSpinning = true;
-        return this;
-      },
-      stop() {
-        this.isSpinning = false;
-        return this;
-      },
-      success(text?: string) {
-        if (text) this.text = text;
-        this.isSpinning = false;
-        return this;
-      },
-      error(text?: string) {
-        if (text) this.text = text;
-        this.isSpinning = false;
-        return this;
-      },
-      clear() {
-        return this;
-      },
-    };
-    createdSpinners.push(spin);
-    return spin;
-  },
-}));
-
-const { createCommandOutput } = await import("./output");
+const spinners = new FakeSpinners();
+beforeAll(() => _setTestSpinner(spinners.create));
+afterAll(() => _setTestSpinner(null));
 
 describe("HumanCommandOutput", () => {
   const envVars = [
@@ -72,7 +32,7 @@ describe("HumanCommandOutput", () => {
   let stderrIsTTY: PropertyDescriptor | undefined;
 
   beforeEach(() => {
-    createdSpinners.length = 0;
+    spinners.created.length = 0;
     savedEnv = {};
     for (const k of [...envVars, "AGENT"]) {
       savedEnv[k] = process.env[k];
@@ -101,12 +61,12 @@ describe("HumanCommandOutput", () => {
       network: "ethereum:main",
       account: "js:2:ethereum:0x123",
     });
-    const spin = out.spin("Preparing transaction…") as unknown as MockSpinner;
+    const spin = out.spin("Preparing transaction…") as unknown as FakeSpinner;
 
     out.sendEvent({ type: "device-signature-requested" });
 
     expect(spin.text).toBe("[⧖] Review on device. Approve or reject.");
-    expect(createdSpinners).toHaveLength(1);
+    expect(spinners.created).toHaveLength(1);
   });
 
   it("emits a plain greppable `hash: <txHash>` line to stdout on broadcasted", async () => {

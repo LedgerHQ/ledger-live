@@ -98,6 +98,13 @@ export type FullSwapPipelineInput = {
   toParentAccount?: Account;
   getAccountBridge?: typeof getAccountBridge;
   getDeviceModelId?: typeof getWalletCliDeviceModelId;
+  withLedgerManagerAppSession?: typeof withLedgerManagerAppSession;
+  startExchange?: typeof startExchange;
+  completeExchange?: typeof completeExchange;
+  retrieveSwapPayload?: typeof retrieveSwapPayload;
+  decodeSwapPayload?: typeof decodeSwapPayload;
+  setBroadcastTransaction?: typeof setBroadcastTransaction;
+  postSwapCancelled?: typeof postSwapCancelled;
   flowId?: string;
 };
 
@@ -150,6 +157,7 @@ async function startExchangeContext(
   out: CommandOutput,
   provider: string,
   getDeviceModelId: typeof getWalletCliDeviceModelId,
+  start: typeof startExchange,
 ): Promise<StartExchangeContext> {
   out.swapExecuteProgress(
     `[1/5] Starting new exchange transaction on the device (open the ${EXCHANGE_APP_NAME} app when prompted)…`,
@@ -159,7 +167,7 @@ async function startExchangeContext(
     modelId: (await getDeviceModelId())!,
     wired: true,
   };
-  const events = startExchange({
+  const events = start({
     device,
     exchangeType: EXCHANGE_SWAP,
     provider,
@@ -200,12 +208,13 @@ async function completeExchangeTransaction(
       toCurrency: CryptoOrTokenCurrency;
     };
     getDeviceModelId: typeof getWalletCliDeviceModelId;
+    completeExchange: typeof completeExchange;
   },
 ): Promise<Transaction> {
   out.swapExecuteProgress(
     "[3/5] Completing exchange on device: partner checks, payout/refund validation, then confirm when the device asks…",
   );
-  const obs = completeExchange({
+  const obs = input.completeExchange({
     deviceId: WALLET_CLI_DMK_DEVICE_ID,
     deviceModelId: await input.getDeviceModelId(),
     provider: input.provider,
@@ -290,6 +299,13 @@ export async function runFullSwapPipeline(
     toParentAccount: toParent,
     getAccountBridge: getBridge = getAccountBridge,
     getDeviceModelId = getWalletCliDeviceModelId,
+    withLedgerManagerAppSession: withAppSession = withLedgerManagerAppSession,
+    startExchange: start = startExchange,
+    completeExchange: complete = completeExchange,
+    retrieveSwapPayload: retrievePayload = retrieveSwapPayload,
+    decodeSwapPayload: decode = decodeSwapPayload,
+    setBroadcastTransaction: setBroadcast = setBroadcastTransaction,
+    postSwapCancelled: postCancelled = postSwapCancelled,
     flowId,
   } = input;
 
@@ -324,16 +340,17 @@ export async function runFullSwapPipeline(
   }
 
   try {
-    return await withLedgerManagerAppSession(EXCHANGE_APP_NAME, async () => {
+    return await withAppSession(EXCHANGE_APP_NAME, async () => {
       const { transactionId, deviceInfo } = await startExchangeContext(
         out,
         provider,
         getDeviceModelId,
+        start,
       );
       hardwareWalletType = deviceInfo.modelId;
 
       out.swapExecuteProgress("[2/5] Requesting swap payload from Ledger swap API…");
-      const payload = await retrieveSwapPayload({
+      const payload = await retrievePayload({
         provider,
         deviceTransactionId: transactionId,
         fromAccountAddress,
@@ -376,7 +393,7 @@ export async function runFullSwapPipeline(
         },
       );
 
-      const decodePayload = await decodeSwapPayload(payload.binaryPayload);
+      const decodePayload = await decode(payload.binaryPayload);
       const toUnit = toCurrency.units[0];
       if (!toUnit) {
         throw new Error(`Destination currency has no unit defined: ${toCurrency.id}`);
@@ -409,6 +426,7 @@ export async function runFullSwapPipeline(
         transaction: tx,
         exchange,
         getDeviceModelId,
+        completeExchange: complete,
       });
       const { operationHash } = await signAndBroadcast(
         out,
@@ -419,7 +437,7 @@ export async function runFullSwapPipeline(
       );
 
       if (swapId && operationHash) {
-        setBroadcastTransaction({
+        setBroadcast({
           provider,
           result: { operation: operationHash, swapId },
           sourceCurrencyId: fromCurrency.id,
@@ -477,7 +495,7 @@ export async function runFullSwapPipeline(
         : new CompleteExchangeError("INIT", rawErrorName, errorMessageWithCause);
 
     if (swapId) {
-      await postSwapCancelled({
+      await postCancelled({
         provider,
         swapId,
         swapStep: getSwapStepFromError(completeExchangeError),
