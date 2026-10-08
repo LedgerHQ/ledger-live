@@ -2,6 +2,45 @@
  * Pure helpers for the webview hardening layer. Kept free of any `electron`
  * imports so they can be unit-tested without mocking the Electron runtime.
  */
+import path from "path";
+
+const WEBVIEW_PRELOADS: ReadonlySet<string> = new Set([
+  "webviewPreloader.bundle.js",
+  "webviewDappPreloader.bundle.js",
+]);
+
+/**
+ * Pins a <webview>'s preferences before Electron creates its guest, and returns
+ * whether the guest may be created at all.
+ *
+ * Electron already copies isolation, sandbox and no-Node from the embedder; this
+ * keeps them pinned even if the embedder changes, and covers what Electron does
+ * not copy: the preload, web security and the first URL.
+ */
+export function applyWebviewAttachPolicy(
+  webPreferences: Electron.WebPreferences,
+  src: string,
+  { appDir, isSrcAllowed }: { appDir: string; isSrcAllowed: (url: string) => boolean },
+): boolean {
+  webPreferences.nodeIntegration = false;
+  webPreferences.nodeIntegrationInSubFrames = false;
+  webPreferences.nodeIntegrationInWorker = false;
+  webPreferences.contextIsolation = true;
+  webPreferences.sandbox = true;
+  webPreferences.webSecurity = true;
+
+  // The renderer builds the preload URL from its own copy of the app dir, which is
+  // not a valid file URL on Windows, so resolve the allowed bundles here instead of
+  // comparing paths.
+  const preload = webPreferences.preload ? path.basename(webPreferences.preload) : undefined;
+  if (preload && WEBVIEW_PRELOADS.has(preload)) {
+    webPreferences.preload = path.join(appDir, preload);
+  } else {
+    delete webPreferences.preload;
+  }
+
+  return isSrcAllowed(src);
+}
 
 /**
  * Builds a scheme-allow checker for Live App <webview> navigations.

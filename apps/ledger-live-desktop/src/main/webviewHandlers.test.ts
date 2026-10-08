@@ -12,6 +12,7 @@ jest.mock("electron", () => ({
     defaultSession: {
       webRequest: {
         onHeadersReceived: jest.fn(),
+        onBeforeRequest: jest.fn(),
       },
     },
   },
@@ -35,6 +36,8 @@ const makeDevToolsContents = () => ({
   on: jest.fn(),
   once: jest.fn(),
 });
+
+const makeWindow = () => ({ getType: jest.fn(() => "window"), on: jest.fn() });
 
 const makeOwner = (id: number, type: string, devToolsWebContents: unknown) => ({
   id,
@@ -105,6 +108,73 @@ describe("setupWebviewHandlers", () => {
     expect(jest.mocked(session.defaultSession.webRequest.onHeadersReceived)).toHaveBeenCalledWith(
       expect.any(Function),
     );
+  });
+
+  it("cancels file requests from webview guests only", () => {
+    setupWebviewHandlers(["ledgerlive"]);
+
+    const [filter, listener] = jest.mocked(session.defaultSession.webRequest.onBeforeRequest).mock
+      .calls[0] as unknown as [
+      Electron.WebRequestFilter,
+      (details: { webContents?: { getType: () => string } }, callback: jest.Mock) => void,
+    ];
+    const callback = jest.fn();
+
+    listener({ webContents: { getType: () => "webview" } }, callback);
+    listener({ webContents: { getType: () => "window" } }, callback);
+
+    expect(filter).toEqual({ urls: ["file://*/*"] });
+    expect(callback.mock.calls).toEqual([[{ cancel: true }], [{ cancel: false }]]);
+  });
+
+  describe("will-attach-webview", () => {
+    type AttachHandler = (
+      event: { preventDefault: jest.Mock },
+      webPreferences: Electron.WebPreferences,
+      params: Record<string, string>,
+    ) => void;
+
+    const getAttachHandler = (embedder: ReturnType<typeof makeWindow>) =>
+      embedder.on.mock.calls.find(
+        ([eventName]) => eventName === "will-attach-webview",
+      )?.[1] as AttachHandler;
+
+    it("guards windows that exist at setup and windows created later", () => {
+      const existing = makeWindow();
+      const created = makeWindow();
+      jest
+        .mocked(webContents.getAllWebContents)
+        .mockReturnValueOnce([existing as unknown as Electron.WebContents]);
+
+      setupWebviewHandlers(["ledgerlive"]);
+      getWebContentsCreatedHandler()?.(
+        {} as Electron.Event,
+        created as unknown as Electron.WebContents,
+      );
+
+      expect(getAttachHandler(existing)).toBeDefined();
+      expect(getAttachHandler(created)).toBeDefined();
+    });
+
+    it("blocks a disallowed src and pins the preferences of an allowed one", () => {
+      const embedder = makeWindow();
+      jest
+        .mocked(webContents.getAllWebContents)
+        .mockReturnValueOnce([embedder as unknown as Electron.WebContents]);
+      setupWebviewHandlers(["ledgerlive"]);
+      const handler = getAttachHandler(embedder);
+
+      const blocked = { preventDefault: jest.fn() };
+      handler(blocked, {}, { src: "file:///etc/hosts" });
+
+      const allowed = { preventDefault: jest.fn() };
+      const webPreferences: Electron.WebPreferences = { nodeIntegration: true, sandbox: false };
+      handler(allowed, webPreferences, { src: "https://example.com" });
+
+      expect(blocked.preventDefault).toHaveBeenCalled();
+      expect(allowed.preventDefault).not.toHaveBeenCalled();
+      expect(webPreferences).toMatchObject({ nodeIntegration: false, sandbox: true });
+    });
   });
 
   it("attaches will-navigate, will-redirect and will-frame-navigate handlers for webview contents", () => {

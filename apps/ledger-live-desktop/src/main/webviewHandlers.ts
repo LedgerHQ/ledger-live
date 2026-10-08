@@ -3,6 +3,7 @@ import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/
 import { openURL } from "./openURL";
 import {
   WEBVIEW_GUEST_CSP,
+  applyWebviewAttachPolicy,
   createLiveAppSchemeChecker,
   mergeCspHeaders,
 } from "./webviewHandlers.helpers";
@@ -181,12 +182,36 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
         responseHeaders: mergeCspHeaders(details.responseHeaders, WEBVIEW_GUEST_CSP),
       });
     });
+
+    // A guest never needs a local file, and the embedder can point one at it with
+    // `src` or `loadURL()`, neither of which fires `will-navigate`.
+    s.webRequest.onBeforeRequest({ urls: ["file://*/*"] }, (details, callback) => {
+      callback({ cancel: details.webContents?.getType() === "webview" });
+    });
   };
 
   app.on("session-created", hardenWebviewSession);
   // Also harden any sessions that already exist (defaultSession + any
   // partitioned sessions that were spun up before this listener attached).
   hardenWebviewSession(session.defaultSession);
+
+  const guardWebviewAttach = (embedder: Electron.WebContents) => {
+    embedder.on("will-attach-webview", (event, webPreferences, params) => {
+      const allowed = applyWebviewAttachPolicy(webPreferences, params.src, {
+        appDir: __dirname,
+        isSrcAllowed: isLiveAppSchemeAllowed,
+      });
+      if (!allowed) {
+        console.warn("Blocked a <webview> with a disallowed src", params.src);
+        event.preventDefault();
+      }
+    });
+  };
+
+  // The main window already exists when this runs, so guard it as well as later windows.
+  for (const contents of webContents.getAllWebContents()) {
+    if (contents.getType() === "window") guardWebviewAttach(contents);
+  }
 
   // Per-WebContents hardening for Live App <webview> guests, attached on
   // `web-contents-created` so every listener is in place BEFORE the guest's
@@ -199,6 +224,8 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
   // delegating the URL to the OS's external-protocol handler.
   app.on("web-contents-created", (_appEvent, contents) => {
     const contentsType = contents.getType();
+
+    if (contentsType === "window") guardWebviewAttach(contents);
 
     if (contentsType === "remote") {
       // DevTools ownership is usually available once the DevTools document loads.
