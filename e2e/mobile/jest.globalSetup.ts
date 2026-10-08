@@ -76,9 +76,13 @@ export default async function setup(
   if (process.env.CI && runIncludesPaytabSpec(globalConfig, projectConfig)) {
     // Create a card session before workers start to avoid rate limiting errors.
     // CI passes explicit spec paths; local name filters resolve after globalSetup instead and authenticate lazily in launchApp.
-    log.warn("[globalSetup] Creating a card session for the run...");
-    process.env[CARD_SESSION_BOOTSTRAP_ENV] = await resolveCardSessionBootstrap();
-    log.warn("[globalSetup] Card session created.");
+    try {
+      log.warn("[globalSetup] Creating a card session for the run...");
+      process.env[CARD_SESSION_BOOTSTRAP_ENV] = await resolveCardSessionBootstrap();
+      log.warn("[globalSetup] Card session created.");
+    } catch (error) {
+      log.warn("[globalSetup] Failed to create a card session:", sanitizeError(error));
+    }
   }
 }
 
