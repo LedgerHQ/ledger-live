@@ -1,5 +1,7 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import { encodeSubOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import type { Operation } from "@ledgerhq/types-live";
 import type { StacksTxData } from "@ledgerhq/coin-stacks/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -55,11 +57,42 @@ export function buildIntentData(transaction: Record<string, unknown>): StacksTxD
   };
 }
 
+/**
+ * `coin-stacks` reports each send-many recipient as an `internal` operation, but the framework keys
+ * an operation by hash and type, so every recipient would share the batch's id, and it adds the fee
+ * to each outgoing native value as if each were a transaction of its own. Restore the legacy
+ * bridge's shape: one sub-operation id per recipient, holding only that recipient's amount.
+ */
+function isInternal(op: Operation): boolean {
+  const { extra } = op;
+  return (
+    typeof extra === "object" && extra !== null && "internal" in extra && extra.internal === true
+  );
+}
+
+export function adaptOperations(_address: string, operations: Operation[]): Operation[] {
+  const internalIndexByHash: Record<string, number> = {};
+
+  return operations.map(op => {
+    if (!isInternal(op)) return op;
+
+    const index = internalIndexByHash[op.hash] ?? 0;
+    internalIndexByHash[op.hash] = index + 1;
+    return {
+      ...op,
+      id: encodeSubOperationId(op.accountId, op.hash, op.type, index),
+      value: op.value.minus(op.fee),
+      contract: "send-many",
+    };
+  });
+}
+
 export default function stacksBridge(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     buildIntentData,
+    adaptOperations,
     usesStakingPositions: true,
     // The legacy bridge keyed account ids on the public key; keep them so the switch re-keys nothing.
     accountIdFromPublicKey: true,
