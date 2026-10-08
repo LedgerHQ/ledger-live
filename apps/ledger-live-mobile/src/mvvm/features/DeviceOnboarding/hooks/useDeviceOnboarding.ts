@@ -5,7 +5,6 @@ import {
   type DeviceOnboardingOutput,
   type DeviceOnboardingPorts,
   type OnboardingEvent,
-  type OnboardingStep,
   type SessionEvent,
 } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -37,6 +36,7 @@ type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
   knownDevices: KnownDevice[];
   offerSync: boolean;
+  navigateOnExit?: boolean;
 };
 
 type OnboardingActor = ActorRefFrom<typeof deviceOnboardingMachine>;
@@ -57,6 +57,7 @@ export function useDeviceOnboarding({
   dmk,
   knownDevices,
   offerSync,
+  navigateOnExit = true,
 }: UseDeviceOnboardingInput): DeviceOnboardingToolProps {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
@@ -77,7 +78,7 @@ export function useDeviceOnboarding({
   const connectionRef = useRef<Subscription | null>(null);
   const retryRef = useRef<(() => void) | null>(null);
   const eventSequence = useRef(0);
-  const lastLoggedStep = useRef<OnboardingStep | null>(null);
+  const lastLoggedStep = useRef<string | null>(null);
   const selectedDevices = useRef(new Set<string>());
   const sessionReadyRef = useRef(false);
   const adoptGeneration = useRef(0);
@@ -104,7 +105,7 @@ export function useDeviceOnboarding({
   const appendEvent = useCallback((event: OnboardingEvent) => {
     if (event.type === "STEP_CHANGED") {
       // Polling re-emits on every seed word, so logging each one would count them on screen.
-      const step = event.state.currentOnboardingStep;
+      const step = `${event.state.currentOnboardingStep}:${event.state.recoveryKeyStatus ?? ""}`;
       if (step === lastLoggedStep.current) return;
       lastLoggedStep.current = step;
     }
@@ -332,7 +333,7 @@ export function useDeviceOnboarding({
     machineState: state,
     send,
   });
-  useDeviceOnboardingExit({ device: liveDevice, output });
+  useDeviceOnboardingExit({ device: liveDevice, output, navigateOnExit });
 
   useEffect(
     () => () => {

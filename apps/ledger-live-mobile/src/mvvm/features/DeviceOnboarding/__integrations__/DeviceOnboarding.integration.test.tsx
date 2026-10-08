@@ -185,6 +185,7 @@ describe("DeviceOnboarding mobile integration", () => {
         wired: false,
       },
       output: expect.objectContaining({ reason: "legacyFallback" }),
+      navigateOnExit: true,
     });
 
     act(() => result.current.connect());

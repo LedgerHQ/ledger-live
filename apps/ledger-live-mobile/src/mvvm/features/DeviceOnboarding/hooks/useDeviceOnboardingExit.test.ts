@@ -3,7 +3,7 @@ import type { DeviceOnboardingOutput } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { StackActions } from "@react-navigation/native";
-import { renderHook, waitFor } from "@tests/test-renderer";
+import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 import {
@@ -299,6 +299,26 @@ describe("useDeviceOnboardingExit", () => {
 
     await waitFor(() => expect(outerReset).toHaveBeenCalled());
     expect(middleReset).not.toHaveBeenCalled();
+    expect(mockReset).not.toHaveBeenCalled();
+  });
+
+  it("stays put when the devtool asks not to navigate", async () => {
+    renderHook(() =>
+      useDeviceOnboardingExit({
+        device,
+        output: {
+          reason: "completed",
+          sessionId: "session-id",
+          device: { id: "device-id", modelId: DMKDeviceModelId.STAX },
+        } as DeviceOnboardingOutput,
+        navigateOnExit: false,
+      }),
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(mockDispatch).not.toHaveBeenCalled();
     expect(mockReset).not.toHaveBeenCalled();
   });
 

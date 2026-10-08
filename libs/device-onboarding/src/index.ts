@@ -1,6 +1,8 @@
 export type { DeviceOnboardingPorts, DeviceOnboardingSession } from "./ports";
 export {
   OnboardingStep,
+  RecoveryKeyStatus,
+  isRecoveryKeyBackupInProgress,
   type AvailableFirmwareUpdate,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,

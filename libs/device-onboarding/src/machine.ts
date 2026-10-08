@@ -15,8 +15,12 @@ import {
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
 import { isTouchscreen, requiresLegacyFlow } from "./rules";
 import {
+  isOnRecoveryKeyScreen,
+  isRecoveryKeyBackupFinished,
+  isRecoveryKeyBackupInProgress,
   isWelcomeStep,
   OnboardingStep,
+  RecoveryKeyStatus,
   type DeviceOnboardingContext,
   type DeviceOnboardingInput,
   type DeviceOnboardingOutput,
@@ -79,8 +83,21 @@ export const deviceOnboardingMachine = setup({
     deviceRestarted: ({ context, event }) =>
       event.type === "STEP_CHANGED" &&
       isWelcomeStep(event.state.currentOnboardingStep) &&
+      !isOnRecoveryKeyScreen(event.state) &&
       context.currentSetupStep !== null,
-    deviceIsReady: stepIs(OnboardingStep.Ready),
+    stepBackupRecoveryKey: ({ event }) =>
+      event.type === "STEP_CHANGED" &&
+      isOnRecoveryKeyScreen(event.state) &&
+      isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus),
+    deviceIsReady: ({ context, event }) =>
+      event.type === "STEP_CHANGED" &&
+      !(
+        event.state.recoveryKeyStatus === RecoveryKeyStatus.Unknown && context.recoveryKeyBackupOpen
+      ) &&
+      !isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus) &&
+      (event.state.currentOnboardingStep === OnboardingStep.Ready ||
+        (isOnRecoveryKeyScreen(event.state) &&
+          isRecoveryKeyBackupFinished(event.state.recoveryKeyStatus))),
     stepNaming: stepIs(OnboardingStep.ChooseName),
     stepPin: stepIs(OnboardingStep.Pin),
     stepSetupChoice: stepIs(OnboardingStep.SetupChoice),
@@ -280,6 +297,11 @@ export const deviceOnboardingMachine = setup({
       on: {
         STEP_CHANGED: [
           {
+            guard: "stepBackupRecoveryKey",
+            target: ".backupRecoveryKey",
+            actions: "rememberSetupStep",
+          },
+          {
             guard: "deviceRestarted",
             target: "#deviceOnboarding.routing",
             actions: ["rememberSetupStep", "forgetSetupProgress"],
@@ -310,6 +332,7 @@ export const deviceOnboardingMachine = setup({
         pin: {},
         setupChoice: {},
         newSeed: {},
+        backupRecoveryKey: {},
         restoreChoice: {},
         restoreWords: {},
         restoreRecover: {},

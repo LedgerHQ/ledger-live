@@ -29,6 +29,38 @@ export const OnboardingStep = {
 
 export type OnboardingStep = (typeof OnboardingStep)[keyof typeof OnboardingStep];
 
+export const RecoveryKeyStatus = {
+  None: "none",
+  Unknown: "unknown",
+  Rejected: "rejected",
+  Choice: "choice",
+  Running: "running",
+  Naming: "naming",
+  Ready: "ready",
+} as const;
+
+export type RecoveryKeyStatus = (typeof RecoveryKeyStatus)[keyof typeof RecoveryKeyStatus];
+
+const recoveryKeyBackupInProgress = new Set<RecoveryKeyStatus>([
+  RecoveryKeyStatus.Choice,
+  RecoveryKeyStatus.Running,
+  RecoveryKeyStatus.Naming,
+]);
+
+export function isRecoveryKeyBackupInProgress(status: RecoveryKeyStatus | null): boolean {
+  return status !== null && recoveryKeyBackupInProgress.has(status);
+}
+
+const recoveryKeyBackupFinished = new Set<RecoveryKeyStatus>([
+  RecoveryKeyStatus.None,
+  RecoveryKeyStatus.Rejected,
+  RecoveryKeyStatus.Ready,
+]);
+
+export function isRecoveryKeyBackupFinished(status: RecoveryKeyStatus | null): boolean {
+  return status !== null && recoveryKeyBackupFinished.has(status);
+}
+
 const welcomeSteps = new Set<OnboardingStep>([
   OnboardingStep.WelcomeScreen1,
   OnboardingStep.WelcomeScreen2,
@@ -73,7 +105,21 @@ export type DeviceOnboardingState = {
   currentOnboardingStep: OnboardingStep;
   seedWordIndex: number;
   seedPhraseWordCount: SeedPhraseWordCount;
+  recoveryKeyStatus: RecoveryKeyStatus | null;
 };
+
+const recoveryKeyScreenSteps = new Set<OnboardingStep>([
+  OnboardingStep.Ready,
+  OnboardingStep.WelcomeScreen1,
+]);
+
+export function isOnRecoveryKeyScreen(state: DeviceOnboardingState): boolean {
+  return (
+    state.isOnboarded &&
+    state.recoveryKeyStatus !== null &&
+    recoveryKeyScreenSteps.has(state.currentOnboardingStep)
+  );
+}
 
 export type OnboardingEvent =
   | { type: "SESSION_READY" }
@@ -156,6 +202,7 @@ export type DeviceOnboardingContext = DeviceOnboardingInput & {
   checksPaused: boolean;
   availableFirmwareUpdate: AvailableFirmwareUpdate | null;
   currentSetupStep: OnboardingStep | null;
+  recoveryKeyBackupOpen: boolean;
 };
 
 export type DeviceOnboardingExitReason =

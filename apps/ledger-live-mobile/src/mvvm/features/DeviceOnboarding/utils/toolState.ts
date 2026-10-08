@@ -30,6 +30,7 @@ export function flattenDeviceOnboardingContext(context: DeviceOnboardingContext)
     isInRecoveryMode: context.lastDeviceState?.isInRecoveryMode ?? null,
     managerAllowed: context.lastDeviceState?.managerAllowed ?? null,
     currentOnboardingStep: context.lastDeviceState?.currentOnboardingStep ?? null,
+    recoveryKeyStatus: context.lastDeviceState?.recoveryKeyStatus ?? null,
     currentSetupStep: context.currentSetupStep,
     firmwareVersion: context.firmwareVersion,
     availableFirmwareVersion: context.availableFirmwareUpdate?.finalFirmware.version ?? null,

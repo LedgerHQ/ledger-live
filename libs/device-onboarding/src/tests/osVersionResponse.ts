@@ -1,4 +1,5 @@
 import type { GetOsVersionResponse } from "@ledgerhq/device-management-kit";
+import type { RecoveryKeyStatus } from "../types";
 
 export type OsVersionResponseOptions = {
   isBootloader?: boolean;
@@ -10,6 +11,7 @@ export type OsVersionResponseOptions = {
   onboardingState?: string;
   numberOfWords?: number;
   currentWordIndex?: number;
+  recoveryKeyStatus?: RecoveryKeyStatus | null;
 };
 
 export const defaultSeVersion = "1.4.0";
@@ -26,12 +28,14 @@ export function createOsVersionResponse({
   isOnboarded = false,
   isInRecoveryMode = false,
   isSecureConnectionAllowed = false,
+  recoveryKeyStatus = null,
   ...onboardingFlags
 }: OsVersionResponseOptions = {}): GetOsVersionResponse {
   return {
     isBootloader,
     isOsu,
     seVersion,
+    recoveryKeyStatus,
     secureElementFlags: {
       isOnboarded,
       isInRecoveryMode,
