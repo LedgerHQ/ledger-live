@@ -44,7 +44,7 @@ setDeviceMode("event");
 setWalletAPIVersion(WALLET_API_VERSION);
 liveBlindSigningReporter.setContext({
   platform: "mobile",
-  appVersion: appVersion ?? undefined,
+  appVersion: appVersion || undefined,
   platformOS: Platform.OS,
   platformVersion: String(Platform.Version),
 });

@@ -42,7 +42,7 @@ export function useDistribution(opts: DistributionOpts = {}): DistributionResult
     accounts,
     to,
     product: "llm",
-    version: appVersion ?? "",
+    version: appVersion,
     skip: !isAssetMode,
     ...displayOpts,
   });

@@ -15,7 +15,7 @@ export function useCategorizedAssetsFromPortfolio() {
   const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
     useWalletFeaturesConfig("mobile");
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const version = appVersion ?? "";
+  const version = appVersion;
 
   const distribution = useDistribution({
     showEmptyAccounts: true,

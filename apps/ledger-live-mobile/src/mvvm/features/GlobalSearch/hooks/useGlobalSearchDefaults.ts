@@ -31,7 +31,7 @@ export function useGlobalSearchDefaults(enabled: boolean): GlobalSearchDefaults 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const counterValueUnit = counterValueCurrency.units[0];
   const { rate: usdToFiatRate, status: rateStatus } = useUsdToFiatRate(counterValueCurrency.ticker);
-  const version = appVersion ?? "";
+  const version = appVersion;
   const skip = !enabled;
 
   const { tickers: stablecoinTickers, isLoading: loadingTickers } = useStablecoinTickers(

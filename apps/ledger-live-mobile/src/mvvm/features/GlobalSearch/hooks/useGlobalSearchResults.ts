@@ -35,7 +35,7 @@ export function useGlobalSearchResults(): GlobalSearchResults {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const counterValueUnit = counterValueCurrency.units[0];
   const { rate: usdToFiatRate, status: rateStatus } = useUsdToFiatRate(counterValueCurrency.ticker);
-  const version = appVersion ?? "";
+  const version = appVersion;
 
   const modularDrawer = useFeature("llmModularDrawer");
   const isStaging = modularDrawer?.params?.backendEnvironment === "STAGING";

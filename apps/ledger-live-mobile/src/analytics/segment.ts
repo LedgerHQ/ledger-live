@@ -86,7 +86,7 @@ import { DdLogs } from "@datadog/mobile-react-native";
 import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
 
 const sessionId = uuid();
-const appVersion = `${nativeAppVersion || ""} (${buildVersion || ""})`;
+const appVersion = `${nativeAppVersion} (${buildVersion})`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 type MaybeAppStore = Maybe<AppStore>;

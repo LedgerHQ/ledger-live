@@ -10,7 +10,7 @@ export interface StockTokensResult {
 }
 
 export function useStockTokens(enabled = true): StockTokensResult {
-  const version = appVersion ?? "";
+  const version = appVersion;
   const { data, isLoading } = useStocksData({ product: "llm", version, skip: !enabled });
 
   const tokensByParent = useMemo(() => {
