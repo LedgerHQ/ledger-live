@@ -17,4 +17,14 @@ describe("processShimLoader", () => {
     expect(output.indexOf(BINDING)).toBeGreaterThan(output.search(/['"]use strict/));
     expect(output.startsWith(source.slice(0, source.search(/['"]use strict/)))).toBe(true);
   });
+
+  it.each([`/*${"*//*".repeat(50_000)}`, "//".repeat(50_000), `/* ${"**".repeat(50_000)}`])(
+    "should reject an unterminated banner in linear time",
+    source => {
+      const start = performance.now();
+
+      expect(processShimLoader(source).startsWith("\n" + BINDING)).toBe(true);
+      expect(performance.now() - start).toBeLessThan(1000);
+    },
+  );
 });

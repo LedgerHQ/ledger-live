@@ -1,7 +1,8 @@
 // DefinePlugin does not rewrite `process.cwd()`-style calls, so they get a module-local `process`.
 const BINDING = "\nvar process = globalThis.__LLD_PROCESS__;\n";
 
-const DIRECTIVE = /^(?:\s|\/\*[\s\S]*?\*\/|\/\/[^\n]*)*(['"])use strict\1;?/;
+// Each alternative matches a given prefix in exactly one way, so a failed match cannot backtrack exponentially.
+const DIRECTIVE = /^(?:\s|\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\/|\/\/[^\n]*\n)*(['"])use strict\1;?/;
 
 module.exports = function processShimLoader(source) {
   const directive = DIRECTIVE.exec(source);
