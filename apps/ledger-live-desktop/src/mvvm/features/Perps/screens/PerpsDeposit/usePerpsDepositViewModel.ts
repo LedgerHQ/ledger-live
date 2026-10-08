@@ -10,6 +10,8 @@ import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import type { PerpsDepositUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/depositMaxBuffer";
+import { useFeature } from "@features/platform-feature-flags";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -67,6 +69,7 @@ export type PerpsDepositViewModel = Readonly<{
   depositAccountName: string | null;
   depositAccountCounterValue: string | null;
   maxAmount: number;
+  maxBuffer: number;
   selectMax: () => void;
   statusError: DepositFormError | null;
   canReview: boolean;
@@ -200,10 +203,28 @@ export function usePerpsDepositViewModel(
     [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
   );
 
+  const tradeMaxConstant = useFeature("ptxTradeMaxConstant");
+  const maxBuffer = useMemo(() => {
+    if (!tradeMaxConstant?.enabled || !depositAccount || !depositCurrency) return 0;
+    const buffer = getDepositMaxBuffer(depositAccount, tradeMaxConstant.params?.constants);
+    if (buffer.isZero()) return 0;
+    return (
+      calculateCountervalue(depositCurrency, buffer)
+        ?.shiftedBy(-counterValueUnit.magnitude)
+        .toNumber() ?? 0
+    );
+  }, [
+    calculateCountervalue,
+    counterValueUnit.magnitude,
+    depositAccount,
+    depositCurrency,
+    tradeMaxConstant,
+  ]);
+
   const selectMax = useCallback(() => {
     if (maxAmount === null) return;
-    setAmountText(toAmountText(applyRatio(maxAmount, 1, maxDecimalLength)));
-  }, [maxAmount, maxDecimalLength]);
+    setAmountText(toAmountText(applyRatio(maxAmount, 1, maxDecimalLength, maxBuffer)));
+  }, [maxAmount, maxBuffer, maxDecimalLength]);
 
   const submitError = useMemo(
     () =>
@@ -316,6 +337,7 @@ export function usePerpsDepositViewModel(
       : null,
     depositAccountCounterValue,
     maxAmount: maxAmount ?? 0,
+    maxBuffer,
     selectMax,
     statusError,
     canReview,

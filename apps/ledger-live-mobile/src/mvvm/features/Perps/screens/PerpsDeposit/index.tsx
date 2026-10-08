@@ -80,6 +80,7 @@ function DepositForm({
   depositAccountName,
   depositAccountCounterValue,
   maxAmount,
+  maxBuffer,
   statusError,
   canReview,
   exceedsBalance,
@@ -128,6 +129,7 @@ function DepositForm({
 
         <RatioPicker
           maxValue={maxAmount}
+          maxBuffer={maxBuffer}
           value={depositAmount}
           decimalPlaces={maxDecimalLength}
           onChange={selectAmountRatio}

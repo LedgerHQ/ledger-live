@@ -29,6 +29,7 @@ export * from "./ptxSwapLiveAppOnPortfolio";
 export * from "./ptxSwapLiveAppOnAsset";
 export * from "./ptxSwapMoonpayProvider";
 export * from "./ptxSwapReceiveTRC20WithoutTrx";
+export * from "./ptxTradeMaxConstant";
 export * from "./receiveStakingFlowConfigDesktop";
 export * from "./stableSavings";
 export * from "./stakeAccountBanner";
