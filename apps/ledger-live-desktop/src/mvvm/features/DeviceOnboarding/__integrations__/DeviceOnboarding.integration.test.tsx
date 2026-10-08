@@ -104,6 +104,7 @@ const seededDevice: DeviceOnboardingState = {
   currentOnboardingStep: OnboardingStep.Ready,
   seedWordIndex: 0,
   seedPhraseWordCount: 24,
+  recoveryKeyStatus: null,
 };
 
 async function reachFirmwareHandover(result: { current: ReturnType<typeof useDeviceOnboarding> }) {
