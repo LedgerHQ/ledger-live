@@ -1,9 +1,8 @@
 import React, { memo, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { ensureContrast } from "../colors";
-import LinearGradient from "react-native-linear-gradient";
 import { StyleSheet, View } from "react-native";
-import { rgba } from "@ledgerhq/native-ui";
+import { LinearGradient } from "@ledgerhq/lumen-ui-rnative";
 
 const CurrencyGradient = ({ gradientColor }: { gradientColor: string }) => {
   const { colors } = useTheme();
@@ -15,17 +14,19 @@ const CurrencyGradient = ({ gradientColor }: { gradientColor: string }) => {
   return (
     <View style={[styles.container, { backgroundColor: colors.background.main }]}>
       <LinearGradient
-        colors={[rgba(contrasted, 0.3), rgba(contrasted, 0)]}
+        stops={[
+          { color: contrasted, opacity: 0.3 },
+          { color: contrasted, opacity: 0 },
+        ]}
         style={styles.gradient}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
       />
 
       <LinearGradient
-        colors={[`${colors.background.main}00`, colors.background.main]}
+        stops={[
+          { color: colors.background.main, opacity: 0 },
+          { color: colors.background.main, opacity: 1 },
+        ]}
         style={styles.gradient}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
       />
     </View>
   );
