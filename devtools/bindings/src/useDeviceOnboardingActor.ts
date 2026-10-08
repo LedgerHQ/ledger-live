@@ -11,7 +11,7 @@ import {
   type DeviceOnboardingPorts,
   type HostToolEvent,
   type OnboardingEvent,
-} from "@ledgerhq/device-onboarding";
+} from "@features/platform-device-onboarding";
 import { createActor, type ActorRefFrom } from "xstate";
 
 type OnboardingActor = ActorRefFrom<typeof deviceOnboardingMachine>;

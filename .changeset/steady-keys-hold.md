@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/device-onboarding": minor
+"@features/platform-device-onboarding": minor
 "live-mobile": minor
 "@devtools/device-onboarding": minor
 ---

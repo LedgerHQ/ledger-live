@@ -5,7 +5,7 @@ import {
   type NavigationProp,
   type ParamListBase,
 } from "@react-navigation/native";
-import type { DeviceOnboardingOutput } from "@ledgerhq/device-onboarding";
+import type { DeviceOnboardingOutput } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {

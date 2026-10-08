@@ -1,7 +1,7 @@
 import { assign } from "xstate";
+import { isSetupStep } from "./types.internals";
 import {
   isRecoveryKeyBackupInProgress,
-  isSetupStep,
   RecoveryKeyStatus,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,

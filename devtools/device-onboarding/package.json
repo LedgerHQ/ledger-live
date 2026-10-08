@@ -29,7 +29,7 @@
     "unimported": "pnpm knip --directory ../.. -c devtools/device-onboarding/knip.web.config.mjs -W devtools/device-onboarding --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/device-onboarding/knip.native.config.mjs -W devtools/device-onboarding --tsConfig tsconfig.native.json"
   },
   "dependencies": {
-    "@ledgerhq/device-onboarding": "workspace:*"
+    "@features/platform-device-onboarding": "workspace:*"
   },
   "devDependencies": {
     "@support/jest-devtools": "workspace:*",

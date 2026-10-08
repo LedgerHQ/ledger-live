@@ -17,8 +17,10 @@ import { isTouchscreen, requiresLegacyFlow } from "./rules";
 import {
   isOnRecoveryKeyScreen,
   isRecoveryKeyBackupFinished,
-  isRecoveryKeyBackupInProgress,
   isWelcomeStep,
+} from "./types.internals";
+import {
+  isRecoveryKeyBackupInProgress,
   OnboardingStep,
   RecoveryKeyStatus,
   type DeviceOnboardingContext,

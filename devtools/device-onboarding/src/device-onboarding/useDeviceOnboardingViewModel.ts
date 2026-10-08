@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
+import type { OnboardingEvent } from "@features/platform-device-onboarding";
 import {
   watchedContextFields,
   type DeviceOnboardingStatus,
