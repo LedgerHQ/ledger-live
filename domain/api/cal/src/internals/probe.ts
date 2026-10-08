@@ -6,6 +6,10 @@ function isOsOffline(): boolean {
   return typeof navigator !== "undefined" && navigator.onLine === false;
 }
 
+function isDirectSuccess(response: Response): boolean {
+  return response.ok && !response.redirected && response.type !== "opaqueredirect";
+}
+
 /**
  * Probes the call that holds the app at launch (`GET /v1/currencies`, as in `getTokensSyncHash`),
  * minimised to a single id. Never throws: every outcome maps to a {@link CalProbeResult}.
@@ -36,9 +40,10 @@ export async function probeCal(
   try {
     const response = await fetch(url, {
       headers: { [HEADER_X_LEDGER_CLIENT_VERSION]: ledgerClientVersion },
+      redirect: "manual",
       signal: controller.signal,
     });
-    return response.ok ? "ok" : "failed";
+    return isDirectSuccess(response) ? "ok" : "failed";
   } catch {
     // A rejection that is not our timeout never got an HTTP answer: a network error.
     return timedOut ? "failed" : "offline";

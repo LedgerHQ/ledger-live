@@ -62,6 +62,23 @@ describe("getCalProbe", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
+  it("asks fetch not to follow redirects and treats a 3xx as failed", async () => {
+    fetchSpy.mockResolvedValue(
+      new Response(null, { status: 302, headers: { Location: "https://elsewhere.test/" } }),
+    );
+
+    expect((await probe()).data).toBe("failed");
+    expect(fetchSpy.mock.calls[0][1].redirect).toBe("manual");
+  });
+
+  it("returns failed when a followed redirect lands on a 2xx", async () => {
+    const redirected = new Response("[]", { status: 200 });
+    Object.defineProperty(redirected, "redirected", { value: true });
+    fetchSpy.mockResolvedValue(redirected);
+
+    expect((await probe()).data).toBe("failed");
+  });
+
   it("returns failed when CAL does not answer within the timeout", async () => {
     jest.useFakeTimers();
     fetchSpy.mockImplementation(
@@ -83,7 +100,10 @@ describe("getCalProbe", () => {
       middleware: gdm =>
         gdm({
           thunk: {
-            extraArgument: calApiExtra({ calServiceUrl: "not a url", ledgerClientVersion: "1.2.3" }),
+            extraArgument: calApiExtra({
+              calServiceUrl: "not a url",
+              ledgerClientVersion: "1.2.3",
+            }),
           },
         }).concat(calApi.middleware),
     });

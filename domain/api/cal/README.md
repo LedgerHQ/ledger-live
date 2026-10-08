@@ -1,7 +1,7 @@
 # @domain/api-cal
 
-> [!NOTE]
-> **Status: EXPERIMENTAL** — New package; the API may change while consumers are wired in.
+> [!CAUTION]
+> **Status: UNSTABLE** — New package; the API may change while consumers are wired in.
 
 Domain API for the **CAL service health probe**. It injects one endpoint, `getCalProbe`, into the
 shared `calApi` from `@shared/api-services` (no new `createApi` or reducer).
@@ -13,7 +13,7 @@ shared `calApi` from `@shared/api-services` (no new `createApi` or reducer).
 | Result    | Meaning                                                                    | Policy      |
 | --------- | -------------------------------------------------------------------------- | ----------- |
 | `ok`      | CAL answered with a 2xx                                                    |             |
-| `failed`  | CAL answered with a non-2xx, did not answer within 5s, or the URL is invalid | fail closed |
+| `failed`  | Non-2xx or redirect, no answer within 5s, or an invalid service URL          | fail closed |
 | `offline` | Network error, or the OS reports no connectivity                           | fail open   |
 
 ## Behaviour
