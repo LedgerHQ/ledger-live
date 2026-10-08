@@ -5,8 +5,6 @@ import { renderHook } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
 
-jest.mock("~/analytics", () => ({ updateIdentify: jest.fn() }));
-
 type PermissionStatus = (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
 
 const withPermissionStatus =

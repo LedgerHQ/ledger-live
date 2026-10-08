@@ -34,7 +34,7 @@ export const useNotificationsPermission = () => {
         ? AuthorizationStatus.AUTHORIZED
         : AuthorizationStatus.DENIED;
     setPermissionStatus(permission);
-    updateIdentify();
+    void updateIdentify();
     return permission;
   }, [setPermissionStatus]);
 
