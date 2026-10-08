@@ -1,5 +1,5 @@
 import * as ecc from "@bitcoinerlab/secp256k1";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { Psbt, Transaction, crypto as btcCrypto, initEccLib, payments } from "bitcoinjs-lib";
 
 initEccLib(ecc);
@@ -32,8 +32,7 @@ export function fundingTransaction(
 
 const ecdsaSigner = {
   publicKey: PUBLIC_KEY,
-  sign: (hash: Buffer) =>
-    Buffer.from(secp256k1.sign(hash, PRIVATE_KEY, { prehash: false }).toBytes("compact")),
+  sign: (hash: Buffer) => Buffer.from(secp256k1.sign(hash, PRIVATE_KEY, { prehash: false })),
 };
 
 function taprootSigner() {

@@ -2,7 +2,7 @@ import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { Psbt, Transaction, address as btcAddress } from "bitcoinjs-lib";
 import { http, HttpResponse } from "msw";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { combine } from "../combine";
 import { craftTransaction, RBF_SEQUENCE } from "../craftTransaction";
 import { estimateFees } from "../estimateFees";
