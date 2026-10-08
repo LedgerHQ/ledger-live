@@ -4,6 +4,7 @@ import {
   Apps,
   ChartPie,
   ColorPalette,
+  Exchange,
   LedgerLogo,
   ListEye,
   NetworkWarning,
@@ -69,6 +70,12 @@ const tools: Tool[] = [
     title: "Dev Tools",
     description: "Feature flags and developer settings.",
     icon: Tools,
+  },
+  {
+    to: "/exchange-payload-checker",
+    title: "Exchange Payload Checker",
+    description: "Check a partner Swap or Sell payload and signature.",
+    icon: Exchange,
   },
   {
     to: "/firmware-app-deployments",

@@ -15,6 +15,7 @@ Today we have:
 - **SVG Icons**: helper to facilitate the creation of currency SVG icons for the Ledger Live application. This will validate icons correctly matches Ledger Live expectations and will prefill a PR creation.
 - **Derivation Paths**: Get a simple list of supported derivation paths for a given currency
 - **Firmware App Deployments**: a matrix of which device app version is published on each device, provider (P1 production, P4 pre-production) and OS track (current stable, and the next prerelease when one exists). Reads the Manager API directly from the browser, so it answers "is this app rebuilt for the upcoming OS yet?" without a device.
+- **Exchange Payload Checker**: checks a partner Swap (NG or legacy) or Sell NG payload and its signature against a Ledger provider key or a custom key, without a device. Everything runs in the browser: the payload, signature and key are never sent anywhere.
 
 ---
 

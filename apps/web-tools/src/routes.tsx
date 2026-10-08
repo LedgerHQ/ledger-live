@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import CryptoIcons from "./pages/crypto-icons";
 import DevToolsPage from "./pages/dev-tools";
+import ExchangePayloadChecker from "./pages/exchange-payload-checker";
 import FirmwareAppDeployments from "./pages/firmware-app-deployments";
 import Home from "./pages/index";
 import LldSignatures from "./pages/lld-signatures";
@@ -15,6 +16,7 @@ const NotFound = () => <main>Not found</main>;
 export const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<Home />} />
+    <Route path="/exchange-payload-checker" element={<ExchangePayloadChecker />} />
     <Route path="/firmware-app-deployments" element={<FirmwareAppDeployments />} />
     <Route path="/lld-signatures" element={<LldSignatures />} />
     <Route path="/logsviewer" element={<LogsViewer />} />
