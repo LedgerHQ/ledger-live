@@ -43,6 +43,9 @@ export default class PortfolioPage {
   quickActionTransferButtonV4 = "quick-action-transfer";
   quickActionSwapButtonV4 = "quick-action-swap";
   quickActionBuyButtonV4 = "quick-action-buy";
+  quickActionSendButtonV4 = "quick-action-send";
+  quickActionBuyLedgerButton = "quick-action-buy-ledger";
+  portfolioBalanceNoSignerTitle = "portfolio-balance-noSigner-title";
   portfolioBalanceNoAccount = "portfolio-balance-noAccounts";
   portfolioBalanceNormal = "portfolio-balance-normal";
   portfolioBalanceAmount = "portfolio-balance-amount";
@@ -404,6 +407,44 @@ export default class PortfolioPage {
     await this.waitForQuickActionsSettled();
     await tapById(this.quickActionTransferButtonV4);
   }
+  @Step("Expect the read-only Wallet to be visible")
+  async expectReadOnlyPortfolioVisible(timeout = TIMEOUT.xxxlarge) {
+    await waitForElementById(this.readOnlyItemsId, timeout);
+  }
+
+  @Step("Expect the no-signer balance title to be visible")
+  async expectNoSignerBalanceTitleVisible() {
+    await detoxExpect(getElementById(this.portfolioBalanceNoSignerTitle)).toBeVisible();
+  }
+
+  @Step("Expect the portfolio balance amount not to be visible")
+  async expectBalanceAmountNotVisible() {
+    await detoxExpect(getElementById(this.portfolioBalanceAmount)).not.toBeVisible();
+  }
+
+  @Step("Expect the Connect quick action to be visible")
+  async expectConnectQuickActionVisible() {
+    await waitForElementById(this.connectButtonId);
+  }
+
+  @Step("Expect the Buy a Ledger quick action to be visible")
+  async expectBuyLedgerQuickActionVisible() {
+    await waitForElementById(this.quickActionBuyLedgerButton);
+  }
+
+  @Step("Expect the Transfer, Send, Swap and Buy quick actions not to be visible")
+  async expectSignerQuickActionsNotVisible() {
+    await detoxExpect(getElementById(this.quickActionTransferButtonV4)).not.toBeVisible();
+    await detoxExpect(getElementById(this.quickActionSendButtonV4)).not.toBeVisible();
+    await detoxExpect(getElementById(this.quickActionSwapButtonV4)).not.toBeVisible();
+    await detoxExpect(getElementById(this.quickActionBuyButtonV4)).not.toBeVisible();
+  }
+
+  @Step("Expect the accounts list not to be visible")
+  async expectAccountsListNotVisible() {
+    await detoxExpect(getElementById(this.accountsListView)).not.toBeVisible();
+  }
+
   @Step("Check no balance title visibility")
   async checkNoBalanceTitleVisibility() {
     await this.ensureHeroVisible(this.portfolioBalanceNoAccount);

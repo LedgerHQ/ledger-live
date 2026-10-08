@@ -2,10 +2,17 @@ import test from "tests/fixtures/mockServerDevice";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { deviceWithButtonTags } from "tests/utils/tagsUtils";
 import { ONBOARDING_STEP } from "@ledgerhq/live-e2e-shared/mockServer/onboardingFlags";
+import { FF_DEVICE_ONBOARDING } from "tests/utils/featureFlagUtils";
+import { FRESH_INSTALL_SETTINGS } from "tests/utils/userdata";
 
 test.describe(`Onboarding a new Nano (mock server)`, () => {
   test.use({
     teamOwner: Team.WALLET_XP,
+    featureFlags: {
+      ...FF_DEVICE_ONBOARDING,
+      lwdOnboardingCounterfeitWarning: { enabled: true },
+    },
+    settings: FRESH_INSTALL_SETTINGS,
     mockDeviceParams: { onboarded: false },
   });
 
@@ -18,6 +25,7 @@ test.describe(`Onboarding a new Nano (mock server)`, () => {
     async ({ app, mockDevice, mockServer }) => {
       await app.onboarding.waitForLaunch();
       await app.onboarding.getStarted();
+      await app.onboarding.acceptAnalytics();
       await app.portfolio.checkConnectButtonVisibility();
 
       await app.portfolio.startConnectDeviceFlow();
@@ -27,6 +35,7 @@ test.describe(`Onboarding a new Nano (mock server)`, () => {
       await app.onboarding.expectUseCaseScreen();
 
       await app.onboarding.setUpNewDevice();
+      await app.onboarding.continuePastCounterfeitWarning();
       await app.onboarding.completePedagogy();
       await app.onboarding.completeTutorialSteps();
       await app.onboarding.completeQuiz();

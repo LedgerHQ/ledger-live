@@ -74,6 +74,7 @@ export const PortfolioBalanceSectionView = ({
           lx={{ color: "base", textAlign: "center" }}
           numberOfLines={2}
           adjustsFontSizeToFit
+          testID={`portfolio-balance-${state}-title`}
         >
           {t(`portfolio.balance.${state}`)}
         </Text>

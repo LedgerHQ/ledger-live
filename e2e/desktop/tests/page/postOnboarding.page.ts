@@ -7,6 +7,9 @@ export class PostOnboardingPage extends AppPage {
   private readonly finishOnboardingDialog = this.page
     .getByRole("dialog")
     .filter({ has: this.page.locator("[data-post-onboarding-action-id]") });
+  private readonly finishOnboardingDialogCloseButton = this.page
+    .getByTestId("finish-onboarding-dialog-header")
+    .getByRole("button");
   private readonly sideDrawer = this.page.getByTestId("side-drawer-container");
   private readonly completeMockActionButton = this.page.getByTestId(
     "postonboarding-complete-action-button",
@@ -30,6 +33,13 @@ export class PostOnboardingPage extends AppPage {
   async openDialogFromWidget() {
     await this.finishOnboardingWidget.click();
     await expect(this.finishOnboardingDialog).toBeVisible();
+  }
+
+  @step("Close the finish-onboarding dialog")
+  async closeFinishOnboardingDialog() {
+    await expect(this.finishOnboardingDialog).toBeVisible();
+    await this.finishOnboardingDialogCloseButton.click();
+    await expect(this.finishOnboardingDialog).toBeHidden();
   }
 
   @step("Expect post-onboarding action $0 to be pending")

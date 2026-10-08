@@ -1,9 +1,17 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 const MAX_PEDAGOGY_SCREENS = 10;
+const SELECTABLE_DEVICES = [
+  DeviceModelId.stax,
+  DeviceModelId.europa,
+  DeviceModelId.nanoS,
+  DeviceModelId.nanoSP,
+  DeviceModelId.nanoX,
+  DeviceModelId.apex,
+];
 
 type TutorialScreen =
   | "how-to-get-started"
@@ -24,9 +32,15 @@ type TutorialScreen =
 export class OnboardingPage extends AppPage {
   private readonly getStartedButton = this.page.getByRole("button", { name: "Get Started" });
   private readonly welcomeTitle = this.page.getByTestId("onbording-welcome-title");
+  private readonly acceptAnalyticsButton = this.page.getByTestId(
+    "analytics-opt-in-screen-accept-all",
+  );
   private readonly deviceTile = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-device-${device}`);
   private readonly setupNewDeviceOption = this.page.getByTestId("v3-onboarding-new-device");
+  private readonly counterfeitWarningContinueButton = this.page.getByTestId(
+    "counterfeit-warning-continue-button",
+  );
   private readonly pedagogyModal = this.page.getByTestId("v3-onboarding-pedagogy-modal");
   private readonly stepperContinue = this.page.getByTestId("v3-modal-stepper-continue");
   private readonly stepperEnd = this.page.getByTestId("v3-modal-stepper-end");
@@ -60,9 +74,21 @@ export class OnboardingPage extends AppPage {
     await this.getStartedButton.click();
   }
 
+  @step("Accept analytics in the opt-in screen")
+  async acceptAnalytics() {
+    await this.acceptAnalyticsButton.click();
+  }
+
   @step("Expect the device selection screen")
   async expectDeviceSelectionScreen() {
     await expect(this.page).toHaveURL(/\/onboarding\/select-device$/);
+  }
+
+  @step("Expect a card for each selectable device")
+  async expectDeviceCards() {
+    await Promise.all(
+      SELECTABLE_DEVICES.map(device => expect(this.deviceContainer(device)).toBeVisible()),
+    );
   }
 
   @step("Expect the use case screen")
@@ -83,6 +109,12 @@ export class OnboardingPage extends AppPage {
   @step("Choose to set up a new device")
   async setUpNewDevice() {
     await this.setupNewDeviceOption.click();
+  }
+
+  /** Nano S, Nano S Plus and Nano X get a "Before you start" warning before any use case runs. */
+  @step("Continue past the counterfeit warning")
+  async continuePastCounterfeitWarning() {
+    await this.counterfeitWarningContinueButton.click();
   }
 
   @step("Complete the pedagogy screens")
