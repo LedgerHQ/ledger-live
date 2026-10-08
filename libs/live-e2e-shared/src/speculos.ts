@@ -661,14 +661,36 @@ function appReadyLabel(appName: string): string {
 }
 
 /**
+ * Status pages an app draws after answering a command, before it redraws its idle screen.
+ */
+const STATUS_SCREEN_LABELS = [DeviceLabels.ADDRESS_VERIFIED].map(label => label.toLowerCase());
+
+/**
+ * The firmware times a status page at 3s, but Speculos on touch models runs it past 5s on CI
+ * (LIVE-37792), so the bound sits well above both.
+ */
+const STATUS_SCREEN_MAX_ATTEMPTS = Math.ceil(15_000 / SCREEN_POLL_INTERVAL_MS);
+
+async function waitForStatusScreenToClear(): Promise<void> {
+  const port = getEnv("SPECULOS_API_PORT");
+
+  for (let attempt = 0; attempt < STATUS_SCREEN_MAX_ATTEMPTS; attempt++) {
+    const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
+    if (!STATUS_SCREEN_LABELS.some(label => texts.includes(label))) return;
+    await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+}
+
+/**
  * Waits for the device to return to its app-ready screen after a status page
  * that answers a command and then draws its own screen -- during that
  * window, the app's own APDU loop can drop an incoming command instead of
- * queuing it (LIVE-37178). The default maxAttempts (9 x the 500ms poll
- * interval = 4.5s) is an upper bound on that screen's own duration, not a
- * guess about CI load.
+ * queuing it (LIVE-37178). The status page itself is waited out first, on
+ * its own bound; the default maxAttempts (9 x the 500ms poll interval =
+ * 4.5s) then covers only the redraw of the idle screen.
  */
 export async function waitForAppReady(speculosApp: AppInfos, maxAttempts = 9): Promise<string> {
+  await waitForStatusScreenToClear();
   return waitFor(appReadyLabel(speculosApp.name), maxAttempts);
 }
 
