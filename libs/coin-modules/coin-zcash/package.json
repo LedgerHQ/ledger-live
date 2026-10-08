@@ -131,6 +131,7 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@noble/curves": "catalog:",
+    "@support/jest-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/bs58": "catalog:",

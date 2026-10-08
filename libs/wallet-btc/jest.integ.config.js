@@ -1,5 +1,7 @@
+const { withEsmDeps } = require("@support/jest-shared");
+
 /** @type {import('jest').Config} */
-module.exports = {
+const config = {
   testEnvironment: "node",
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
@@ -20,3 +22,5 @@ module.exports = {
     ],
   },
 };
+
+module.exports = withEsmDeps(config);

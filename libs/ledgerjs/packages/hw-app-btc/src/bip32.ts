@@ -11,7 +11,7 @@
 
 import bippath from "bip32-path";
 import bs58check from "bs58check";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { hmac } from "@noble/hashes/hmac";
 import { sha512 } from "@noble/hashes/sha2";
 

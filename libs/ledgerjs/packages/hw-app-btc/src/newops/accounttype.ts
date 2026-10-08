@@ -1,5 +1,5 @@
 import { crypto } from "bitcoinjs-lib";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { BufferWriter, PsbtV2 } from "@ledgerhq/psbtv2";
 import { HASH_SIZE, OP_CHECKSIG, OP_DUP, OP_EQUAL, OP_EQUALVERIFY, OP_HASH160 } from "../constants";
 import { hashPublicKey } from "../hashPublicKey";

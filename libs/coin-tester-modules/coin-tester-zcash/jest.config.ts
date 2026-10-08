@@ -19,8 +19,12 @@ const sharedConfig = {
         },
       },
     ],
+    "node_modules[\\\\|/].pnpm[\\\\|/]@noble\\+.+\\.js$": [
+      "@swc/jest",
+      { jsc: { target: "esnext" } },
+    ],
   },
-  transformIgnorePatterns: ["/node_modules/.pnpm/(?!@ledgerhq\\+)"],
+  transformIgnorePatterns: ["/node_modules/.pnpm/(?!(@ledgerhq|@noble)\\+)"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"] as string[],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",

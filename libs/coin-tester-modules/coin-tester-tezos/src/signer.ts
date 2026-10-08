@@ -1,5 +1,5 @@
-import { ed25519 } from "@noble/curves/ed25519";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { ed25519 } from "@noble/curves/ed25519.js";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import bs58 from "bs58";
 import { blake2b } from "@noble/hashes/blake2b";
 import { sha256 } from "@noble/hashes/sha2";
@@ -125,8 +125,8 @@ export async function buildTz2Signer(): Promise<TezosTestSigner> {
     async signTransaction(_path: string, rawTxHex: string) {
       const txBytes = Buffer.from(rawTxHex.replace(/^0x/, ""), "hex");
       const hash = blake2b(txBytes, { dkLen: 32 });
-      const sig = secp256k1.sign(hash, privateKey);
-      return Buffer.from(sig.toBytes("compact")).toString("hex");
+      const sig = secp256k1.sign(hash, privateKey, { prehash: false });
+      return Buffer.from(sig).toString("hex");
     },
   };
 }
