@@ -61,7 +61,7 @@ async function readDeviceInfo(
   throwIfAborted(signal);
 
   const waitForPreviousRead = previousDeviceRead;
-  let releasePreviousRead = () => undefined;
+  let releasePreviousRead: () => void = () => undefined;
   previousDeviceRead = new Promise(resolve => {
     releasePreviousRead = resolve;
   });
