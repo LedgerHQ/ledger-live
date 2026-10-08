@@ -1,4 +1,4 @@
-import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+import { InputEntryFunctionData, TransactionPayloadResponse } from "@aptos-labs/ts-sdk";
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
@@ -8,17 +8,32 @@ import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
 import { getFunctionAddress } from "./getFunctionAddress";
 import { normalizeAddress } from "./normalizeAddress";
 import { processRecipients } from "./processRecipients";
+import { getEntryFunctionPayload, getFundsOwner } from "./transactionPayload";
 
 export const convertFunctionPayloadResponseToInputEntryFunctionData = (
-  payload: EntryFunctionPayloadResponse,
-): InputEntryFunctionData => ({
-  function: payload.function,
-  typeArguments: payload.type_arguments,
-  functionArguments: payload.arguments,
-});
+  payload: TransactionPayloadResponse | undefined,
+): InputEntryFunctionData | undefined => {
+  const entryFunctionPayload = getEntryFunctionPayload(payload);
+  if (!entryFunctionPayload) {
+    return undefined;
+  }
 
-const detectType = (address: string, tx: AptosTransaction, value: BigNumber): OP_TYPE => {
-  let type = compareAddress(tx.sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
+  return {
+    function: entryFunctionPayload.function,
+    typeArguments: entryFunctionPayload.type_arguments,
+    functionArguments: entryFunctionPayload.arguments,
+  };
+};
+
+export const getTransactionSender = (
+  tx: AptosTransaction,
+  address: string,
+  amountIn: BigNumber,
+): string =>
+  compareAddress(tx.sender, address) && amountIn.isZero() ? tx.sender : getFundsOwner(tx);
+
+const detectType = (address: string, sender: string, value: BigNumber): OP_TYPE => {
+  let type = compareAddress(sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
 
   if (!value) {
     // skip transaction that result no Aptos change
@@ -47,9 +62,11 @@ export function transactionsToOperations(
       return acc;
     }
 
-    const payload = convertFunctionPayloadResponseToInputEntryFunctionData(
-      tx.payload as EntryFunctionPayloadResponse,
-    );
+    const payload = convertFunctionPayloadResponseToInputEntryFunctionData(tx.payload);
+
+    if (!payload) {
+      return acc;
+    }
 
     const function_address = getFunctionAddress(payload);
 
@@ -58,8 +75,9 @@ export function transactionsToOperations(
     }
 
     const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
-    const value = calculateAmount(tx.sender, address, amount_in, amount_out);
-    const type = detectType(address, tx, value);
+    const sender = getTransactionSender(tx, address, amount_in);
+    const value = calculateAmount(sender, address, amount_in, amount_out);
+    const type = detectType(address, sender, value);
 
     const op: Operation = {
       id: tx.hash,
@@ -79,6 +97,7 @@ export function transactionsToOperations(
           time: new Date(parseInt(tx.timestamp) / 1000),
         },
         fees: BigInt(0),
+        feesPayer: normalizeAddress(tx.sender),
         date: new Date(parseInt(tx.timestamp) / 1000),
         failed: !tx.success,
       },
@@ -88,7 +107,7 @@ export function transactionsToOperations(
     op.tx.fees = BigInt(fees.toString());
 
     op.value = BigInt(value.isNaN() ? 0 : value.toString());
-    op.senders.push(normalizeAddress(tx.sender));
+    op.senders.push(normalizeAddress(sender));
 
     processRecipients(payload, address, op, function_address);
 
