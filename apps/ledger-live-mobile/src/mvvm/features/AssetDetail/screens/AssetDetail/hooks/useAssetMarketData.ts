@@ -1,4 +1,4 @@
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { useAssetMarketData as useSharedAssetMarketData } from "@ledgerhq/asset-detail";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -27,7 +27,7 @@ export function useAssetMarketData({ marketApiId, knownLedgerIds, knownMarketId 
       knownLedgerIds,
       counterCurrency,
       product: "llm",
-      version: VersionNumber.appVersion,
+      version: appVersion,
       knownMarketId,
     });
 

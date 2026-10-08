@@ -2,7 +2,7 @@ import { trackPage, track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { useFeature } from "@features/platform-feature-flags";
 import { useAssetsData, useInterestRatesByCurrencies } from "@features/platform-aggregated-assets";
 import { getInterestRateForAsset } from "@ledgerhq/live-common/modularDrawer/utils/getInterestRateForAsset";
@@ -49,7 +49,7 @@ export function useEarnBannerViewModel({
     currencyIds: receiveCurrency ? [receiveCurrency.id] : undefined,
     areCurrenciesFiltered: true,
     product: "llm",
-    version: VersionNumber.appVersion,
+    version: appVersion,
     skip: !isEligible,
   });
 

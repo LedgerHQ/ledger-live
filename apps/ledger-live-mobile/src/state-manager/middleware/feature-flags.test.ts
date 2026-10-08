@@ -17,12 +17,9 @@ jest.mock("~/firebase/remoteConfig", () => ({
   fetchRemoteFlags: jest.fn(),
   readCachedFlags: jest.fn(),
 }));
-jest.mock("react-native-version-number", () => ({
-  __esModule: true,
-  default: {
-    get appVersion() {
-      return mockAppVersion;
-    },
+jest.mock("LLM/utils/appVersion", () => ({
+  get appVersion() {
+    return mockAppVersion ?? "";
   },
 }));
 jest.mock("@datadog/mobile-react-native", () => ({

@@ -13,7 +13,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import type { RequestAccountNavigatorParamList } from "~/components/RootNavigator/types/RequestAccountNavigator";
 import { useAssetsData } from "@features/platform-aggregated-assets";
 import useEnv from "@features/platform-env";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import { Flex, InfiniteLoader, SearchInput } from "@ledgerhq/native-ui";
 import { useGetCounterValueIdsSortedByMarketCapQuery } from "@domain/api-market-countervalues";
@@ -54,7 +54,7 @@ export default function RequestAccountsSelectCrypto({ navigation, route }: Props
     search: searchValue,
     currencyIds,
     product: "llm",
-    version: VersionNumber.appVersion,
+    version: appVersion,
     areCurrenciesFiltered: currencyIds && currencyIds.length > 0,
     isStaging: false,
     includeTestNetworks: devMode,

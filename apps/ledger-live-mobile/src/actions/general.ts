@@ -15,7 +15,7 @@ import {
   type DistributionOpts,
   type DistributionResult,
 } from "@ledgerhq/live-common/portfolio/useAssetDistribution";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { BehaviorSubject } from "rxjs";
 import { replaceAccounts, reorderAccounts } from "./accounts";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -42,7 +42,7 @@ export function useDistribution(opts: DistributionOpts = {}): DistributionResult
     accounts,
     to,
     product: "llm",
-    version: VersionNumber.appVersion ?? "",
+    version: appVersion,
     skip: !isAssetMode,
     ...displayOpts,
   });

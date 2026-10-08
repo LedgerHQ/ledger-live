@@ -123,6 +123,8 @@ PODS:
   - DatadogWebViewTracking (3.16.0):
     - DatadogInternal (= 3.16.0)
   - DoubleConversion (1.1.6)
+  - EXApplication (7.0.8):
+    - ExpoModulesCore
   - EXConstants (18.0.13):
     - ExpoModulesCore
   - EXImageLoader (6.0.0):
@@ -164,6 +166,8 @@ PODS:
   - ExpoClipboard (8.0.8):
     - ExpoModulesCore
   - ExpoCrypto (15.0.8):
+    - ExpoModulesCore
+  - ExpoDevice (8.0.10):
     - ExpoModulesCore
   - ExpoDocumentPicker (13.1.6):
     - ExpoModulesCore
@@ -2461,8 +2465,6 @@ PODS:
     - CocoaAsyncSocket
     - React-Core
   - react-native-vector-icons-material-design-icons (13.1.4)
-  - react-native-version-number (0.3.6):
-    - React
   - react-native-video (6.16.1):
     - boost
     - DoubleConversion
@@ -3168,8 +3170,6 @@ PODS:
     - Yoga
   - RNCMaskedView (0.2.9):
     - React-Core
-  - RNDeviceInfo (11.1.0):
-    - React-Core
   - RNFastImage (8.6.3):
     - React-Core
     - SDWebImage (~> 5.11.1)
@@ -3601,12 +3601,14 @@ DEPENDENCIES:
   - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_dfc4210e9eb740ff3866be1d628d2692/node_modules/@callstack/repack`)"
   - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_06a867e0fa6197a684ac6ae82ba56444/node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
+  - "EXApplication (from `../../../node_modules/.pnpm/expo-application@7.0.8_expo@54.0.33_@babel+core_c6350461b54e6edcc4c89d8274e4c493/node_modules/expo-application/ios`)"
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@18.0.13_26e20d2da1658e2310f07fd70e138799/node_modules/expo-constants/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo@54.0.33_@babel+cor_cc53099aed163b8b7d20b8b1bf820ada/node_modules/expo-image-loader/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@54.0.33_@babel+core@7.28.5_@typescript+typ_dffc45b7ed884dcc174eec5578e59c7c/node_modules/expo`)"
   - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@12.0.13_94a4e1045f9065fe9a30eecd0adeb781/node_modules/expo-asset/ios`)"
   - "ExpoClipboard (from `../../../node_modules/.pnpm/expo-clipboard@8.0.8_fa95938c36eaba3b60d933a0084e355e/node_modules/expo-clipboard/ios`)"
   - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@15.0.8_expo@54.0.33_@babel+core@7.2_efd4049b1b8847c0e6cdd3ce6bf71922/node_modules/expo-crypto/ios`)"
+  - "ExpoDevice (from `../../../node_modules/.pnpm/expo-device@8.0.10_expo@54.0.33_@babel+core@7.2_5f43c210ae91deb67dc7256c1a133175/node_modules/expo-device/ios`)"
   - "ExpoDocumentPicker (from `../../../node_modules/.pnpm/expo-document-picker@13.1.6_expo@54.0.33_@babel_495af88577aac6b42c7fd20cf01df0e0/node_modules/expo-document-picker/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@19.0.21_26e20d2da1658e2310f07fd70e138799/node_modules/expo-file-system/ios`)"
   - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.12_fa95938c36eaba3b60d933a0084e355e/node_modules/expo-font/ios`)"
@@ -3676,7 +3678,6 @@ DEPENDENCIES:
   - "react-native-startup-time (from `../../../node_modules/.pnpm/react-native-startup-time@2.1.0_react-native@0._a9294d9a27e522fe86656a91f8dd3c8c/node_modules/react-native-startup-time`)"
   - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_e476df7aee8b54af1e5cd1cf7231b8cf/node_modules/react-native-tcp-socket`)"
   - "react-native-vector-icons-material-design-icons (from `../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_8f9f890bfb9d4ee0af41e288096720a5/node_modules/@react-native-vector-icons/material-design-icons`)"
-  - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
   - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_3476369c6b501856d0c306ef52d862bc/node_modules/react-native-video`)"
   - "react-native-view-shot (from `../../../node_modules/.pnpm/react-native-view-shot@5.1.1_react-native@0.81._c4798cdda4c62cea287294c91811a346/node_modules/react-native-view-shot`)"
   - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@13.16.0_patch_hash=d6fc65a_4b3b7434bb9845433dda70424cd73362/node_modules/react-native-webview`)"
@@ -3713,7 +3714,6 @@ DEPENDENCIES:
   - "ReactNativeBlur (from `../../../node_modules/.pnpm/@sbaiahmed1+react-native-blur@4.5.5_react-nativ_62afdfdc440319d53408caa2d659faf6/node_modules/@sbaiahmed1/react-native-blur`)"
   - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.1.2_b6029753ecab224c4fafd2e86df4eee6/node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_3b78009e1f9d2af9ad4d0bd2f05485dd/node_modules/@react-native-masked-view/masked-view`)"
-  - "RNDeviceInfo (from `../../../node_modules/.pnpm/react-native-device-info@11.1.0_react-native@0._be2f8c62d56b00e93478596f3f83fbee/node_modules/react-native-device-info`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_a4be0afd73d5d48df377f7bc612dd469/node_modules/react-native-fast-image`)"
   - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_88018a124abc2ddcb44848e798f4d5dd/node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_d431263cd4f0a4f188a6166763c19407/node_modules/@react-native-firebase/messaging`)"
@@ -3786,6 +3786,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/@datadog+mobile-react-native@3.7.0_react-native_06a867e0fa6197a684ac6ae82ba56444/node_modules/@datadog/mobile-react-native"
   DoubleConversion:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  EXApplication:
+    :path: "../../../node_modules/.pnpm/expo-application@7.0.8_expo@54.0.33_@babel+core_c6350461b54e6edcc4c89d8274e4c493/node_modules/expo-application/ios"
   EXConstants:
     :path: "../../../node_modules/.pnpm/expo-constants@18.0.13_26e20d2da1658e2310f07fd70e138799/node_modules/expo-constants/ios"
   EXImageLoader:
@@ -3798,6 +3800,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-clipboard@8.0.8_fa95938c36eaba3b60d933a0084e355e/node_modules/expo-clipboard/ios"
   ExpoCrypto:
     :path: "../../../node_modules/.pnpm/expo-crypto@15.0.8_expo@54.0.33_@babel+core@7.2_efd4049b1b8847c0e6cdd3ce6bf71922/node_modules/expo-crypto/ios"
+  ExpoDevice:
+    :path: "../../../node_modules/.pnpm/expo-device@8.0.10_expo@54.0.33_@babel+core@7.2_5f43c210ae91deb67dc7256c1a133175/node_modules/expo-device/ios"
   ExpoDocumentPicker:
     :path: "../../../node_modules/.pnpm/expo-document-picker@13.1.6_expo@54.0.33_@babel_495af88577aac6b42c7fd20cf01df0e0/node_modules/expo-document-picker/ios"
   ExpoFileSystem:
@@ -3935,8 +3939,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_e476df7aee8b54af1e5cd1cf7231b8cf/node_modules/react-native-tcp-socket"
   react-native-vector-icons-material-design-icons:
     :path: "../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_8f9f890bfb9d4ee0af41e288096720a5/node_modules/@react-native-vector-icons/material-design-icons"
-  react-native-version-number:
-    :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-video:
     :path: "../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_3476369c6b501856d0c306ef52d862bc/node_modules/react-native-video"
   react-native-view-shot:
@@ -4009,8 +4011,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.1.2_b6029753ecab224c4fafd2e86df4eee6/node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
     :path: "../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_3b78009e1f9d2af9ad4d0bd2f05485dd/node_modules/@react-native-masked-view/masked-view"
-  RNDeviceInfo:
-    :path: "../../../node_modules/.pnpm/react-native-device-info@11.1.0_react-native@0._be2f8c62d56b00e93478596f3f83fbee/node_modules/react-native-device-info"
   RNFastImage:
     :path: "../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_a4be0afd73d5d48df377f7bc612dd469/node_modules/react-native-fast-image"
   RNFBApp:
@@ -4063,12 +4063,14 @@ SPEC CHECKSUMS:
   DatadogTrace: 5ef84e254e2e1d337bc52e0cdf16396ca102aeb1
   DatadogWebViewTracking: e0470157f55a83680a549d79ba2985e0d17465db
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
+  EXApplication: 1e98d4b1dccdf30627f92917f4b2c5a53c330e5f
   EXConstants: fce59a631a06c4151602843667f7cfe35f81e271
   EXImageLoader: 189e3476581efe3ad4d1d3fb4735b7179eb26f05
   Expo: ec20d60a9ba93352323b8f773c0e59bc7aa1c492
   ExpoAsset: 9e5a7c9c0a9fb83ad5b2bb365141f2bd7f289b66
   ExpoClipboard: b36b287d8356887844bb08ed5c84b5979bb4dd1e
   ExpoCrypto: b6105ebaa15d6b38a811e71e43b52cd934945322
+  ExpoDevice: 6327c3c200816795708885adf540d26ecab83d1a
   ExpoDocumentPicker: b263a279685b6640b8c8bc70d71c83067aeaae55
   ExpoFileSystem: 858a44267a3e6e9057e0888ad7c7cfbf55d52063
   ExpoFont: dfb7c572372b610da45b41e3b436321fd6a97215
@@ -4158,7 +4160,6 @@ SPEC CHECKSUMS:
   react-native-startup-time: c7297d8a7892400239e6828bb94a3721c1a1a9df
   react-native-tcp-socket: 83a30b5da1deed4c720ee25595737ee851c23339
   react-native-vector-icons-material-design-icons: 9e98e87947156bfe95135fb523b62821486044e3
-  react-native-version-number: 3d74b5224ca4e1032b1593937d86d3f3c94bf95c
   react-native-video: 6ed94120c73e29c8fbea89ec4e3cedf3528751d6
   react-native-view-shot: 5ed55de8892be2746074c2f8066e6abc21dd6fd3
   react-native-webview: cdce419e8022d0ef6f07db21890631258e7a9e6e
@@ -4195,7 +4196,6 @@ SPEC CHECKSUMS:
   ReactNativeBlur: c9fb0b7d56e1899dabe6d6d980be597f533645f6
   RNCAsyncStorage: 19f80a583d24bf587a07e8fe0b7be7e278bc204a
   RNCMaskedView: 4b5b12efdee55966f1d68f32d4b3401c2acf05c2
-  RNDeviceInfo: 900bd20e1fd3bfd894e7384cc4a83880c0341bd3
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
   RNFBApp: 6e738f1d86520e65e7dc4d5a6e7422ff0c908e6a
   RNFBMessaging: 0033d4bd56649e3bbf7553d3eb1cd7f2cdcd070d

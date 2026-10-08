@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import useEnv from "@features/platform-env";
 import {
   useStablecoinTickers,
@@ -28,7 +28,7 @@ export function usePayStablecoins(): PayStablecoins {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const heldAccounts = useSelector(flattenAccountsSelector);
-  const version = VersionNumber.appVersion ?? "";
+  const version = appVersion;
 
   // groupBy: "asset" aggregates each ticker across chains into one row.
   // This path does not read the aggregatedAssets wallet flag.

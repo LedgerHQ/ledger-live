@@ -6,7 +6,7 @@ import {
   type CategorizedAssetItem,
 } from "@ledgerhq/asset-aggregation/assetCategorization/index";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import VersionNumber from "react-native-version-number";
+import { appVersion } from "LLM/utils/appVersion";
 import { useDistribution } from "~/actions/general";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
@@ -15,7 +15,7 @@ export function useCategorizedAssetsFromPortfolio() {
   const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
     useWalletFeaturesConfig("mobile");
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const version = VersionNumber.appVersion ?? "";
+  const version = appVersion;
 
   const distribution = useDistribution({
     showEmptyAccounts: true,
