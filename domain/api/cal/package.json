@@ -11,6 +11,9 @@
   },
   "sideEffects": false,
   "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src",
+    "lint": "oxlint -c ../../../libs/oxc-live-libs/.oxlintrc.json ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -34,6 +37,8 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:"
