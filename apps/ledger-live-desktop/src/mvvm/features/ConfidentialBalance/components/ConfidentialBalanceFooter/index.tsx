@@ -6,6 +6,8 @@ import {
   useConfidentialBalanceFooterViewModel,
   type ConfidentialBalanceFooterViewModel,
 } from "./useConfidentialBalanceFooterViewModel";
+import type { CreateConfidentialClient } from "../../utils/confidentialRuntime";
+import { PermitDeviceModal } from "../PermitDeviceModal";
 
 type BalanceColumnProps = Readonly<{
   title: string;
@@ -34,6 +36,7 @@ export function ConfidentialBalanceFooterView({
   lastRevealedLabel,
   totalLabel,
   permitExpiresOn,
+  deviceSignature,
   onReveal,
   onRetry,
 }: ConfidentialBalanceFooterViewModel) {
@@ -133,20 +136,29 @@ export function ConfidentialBalanceFooterView({
           data-testid={`confidential-error-${error}`}
         />
       )}
+
+      {deviceSignature.isOpen && <PermitDeviceModal {...deviceSignature} />}
     </div>
   );
 }
 
 type Props = Readonly<{
   account: TokenAccount;
+  createConfidentialClient: CreateConfidentialClient;
 }>;
 
-function ConfidentialBalanceFooterContainer({ account }: Props) {
-  const viewModel = useConfidentialBalanceFooterViewModel({ account });
+function ConfidentialBalanceFooterContainer(props: Props) {
+  const viewModel = useConfidentialBalanceFooterViewModel(props);
   return <ConfidentialBalanceFooterView {...viewModel} />;
 }
 
-export function ConfidentialBalanceFooter({ account }: Props) {
+export function ConfidentialBalanceFooter({ account, createConfidentialClient }: Props) {
   const rereadHandleOnNewOperation = account.operationsCount;
-  return <ConfidentialBalanceFooterContainer key={rereadHandleOnNewOperation} account={account} />;
+  return (
+    <ConfidentialBalanceFooterContainer
+      key={rereadHandleOnNewOperation}
+      account={account}
+      createConfidentialClient={createConfidentialClient}
+    />
+  );
 }

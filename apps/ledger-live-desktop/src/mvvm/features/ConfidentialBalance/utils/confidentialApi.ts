@@ -1,12 +1,44 @@
+import * as coinEvmConfidential from "@ledgerhq/coin-evm/confidential";
 import {
+  ConfidentialError,
   createMockConfidentialApi,
   type MockConfidentialApi,
   type SignTypedData,
 } from "@ledgerhq/coin-evm/confidential";
+import { isRealConfidentialApi } from "./confidentialRuntime";
 
-export const confidentialApi: MockConfidentialApi = createMockConfidentialApi();
+export type ConfidentialApi = Omit<MockConfidentialApi, "failNext">;
 
-export const confidentialContext = {} as Parameters<MockConfidentialApi["getConfidentialPair"]>[0];
+const CONFIDENTIAL_API_FUNCTIONS = [
+  "getConfidentialPair",
+  "getConfidentialBalance",
+  "ensurePermit",
+  "revealConfidentialBalance",
+  "prepareConfidentialSend",
+  "prepareShield",
+  "prepareUnshield",
+  "parseUnwrapRequested",
+  "resumeUnshield",
+  "prepareFinalizeUnshield",
+] as const satisfies readonly (keyof ConfidentialApi)[];
+
+const notExportedYet = (name: string) => () => {
+  throw new ConfidentialError("Unavailable", `coin-evm does not export ${name} yet`);
+};
+
+export function realConfidentialApi(
+  exported: Partial<ConfidentialApi> = coinEvmConfidential as Partial<ConfidentialApi>,
+): ConfidentialApi {
+  return Object.fromEntries(
+    CONFIDENTIAL_API_FUNCTIONS.map(name => [name, exported[name] ?? notExportedYet(name)]),
+  ) as ConfidentialApi;
+}
+
+const mockApi: MockConfidentialApi = createMockConfidentialApi();
+
+export const confidentialApi: ConfidentialApi = isRealConfidentialApi()
+  ? realConfidentialApi()
+  : mockApi;
 
 const MOCK_SIGNATURE_DELAY_MS = 1500;
 const MOCK_SIGNATURE = `0x${"00".repeat(65)}` as const;
@@ -27,7 +59,7 @@ export const mockSignTypedData: SignTypedData = async () => {
 };
 
 export const mockControls = {
-  failNext: confidentialApi.failNext,
+  failNext: mockApi.failNext,
   refuseNextSignature: () => {
     shouldRefuseNextSignature = true;
   },

@@ -9837,6 +9837,9 @@
     "retry": "Retry",
     "revealHint": "Revealing asks you to sign a decryption permit on your device for {{contract}}, valid {{days}} days.",
     "permitValidUntil": "Decryption permit valid until {{date}}",
+    "deviceModal": {
+      "title": "Sign the decryption permit"
+    },
     "phase": {
       "signing": "Confirm the decryption permit on your device",
       "decrypting": "Decrypting your private balance…"
