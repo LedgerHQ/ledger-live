@@ -671,27 +671,36 @@ const STATUS_SCREEN_LABELS = [DeviceLabels.ADDRESS_VERIFIED].map(label => label.
  */
 const STATUS_SCREEN_MAX_ATTEMPTS = Math.ceil(15_000 / SCREEN_POLL_INTERVAL_MS);
 
-async function waitForStatusScreenToClear(): Promise<void> {
-  const port = getEnv("SPECULOS_API_PORT");
-
-  for (let attempt = 0; attempt < STATUS_SCREEN_MAX_ATTEMPTS; attempt++) {
-    const texts = (await fetchCurrentScreenTexts(port)).toLowerCase();
-    if (!STATUS_SCREEN_LABELS.some(label => texts.includes(label))) return;
-    await sleep(SCREEN_POLL_INTERVAL_MS);
-  }
-}
-
 /**
  * Waits for the device to return to its app-ready screen after a status page
  * that answers a command and then draws its own screen -- during that
  * window, the app's own APDU loop can drop an incoming command instead of
- * queuing it (LIVE-37178). The status page itself is waited out first, on
- * its own bound; the default maxAttempts (9 x the 500ms poll interval =
- * 4.5s) then covers only the redraw of the idle screen.
+ * queuing it (LIVE-37178). Polls spent on the status page don't count
+ * against maxAttempts (9 x the 500ms poll interval = 4.5s), which covers
+ * only the screens around it: the status page may not be drawn yet when
+ * polling starts, so it can't be waited out up front.
  */
 export async function waitForAppReady(speculosApp: AppInfos, maxAttempts = 9): Promise<string> {
-  await waitForStatusScreenToClear();
-  return waitFor(appReadyLabel(speculosApp.name), maxAttempts);
+  const port = getEnv("SPECULOS_API_PORT");
+  const readyLabel = appReadyLabel(speculosApp.name);
+  let texts = "";
+  let attempts = 0;
+  let statusPolls = 0;
+
+  while (attempts < maxAttempts) {
+    texts = await fetchCurrentScreenTexts(port);
+    const screen = texts.toLowerCase();
+    if (screen.includes(readyLabel.toLowerCase())) return texts;
+
+    const onStatusScreen = STATUS_SCREEN_LABELS.some(label => screen.includes(label));
+    if (onStatusScreen && statusPolls < STATUS_SCREEN_MAX_ATTEMPTS) statusPolls++;
+    else attempts++;
+    await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+
+  throw new Error(
+    `Text "${readyLabel}" not found on device screen after ${attempts + statusPolls} attempts. Last screen text: "${texts}"`,
+  );
 }
 
 const SWAP_INIT_STALL_HINT =
