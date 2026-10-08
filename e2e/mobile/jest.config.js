@@ -174,7 +174,7 @@ const config = {
       prefix: "<rootDir>/",
     }),
   },
-  transformIgnorePatterns: [`/node_modules/(?!(${ESM_PACKAGES})/)`],
+  transformIgnorePatterns: [`/node_modules/(?!(${ESM_PACKAGES})/|(\\.pnpm/)?@noble)`],
 
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
