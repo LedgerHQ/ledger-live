@@ -1,8 +1,5 @@
 # @shared/ui-app-unavailable
 
-> [!CAUTION]
-> **Status: UNSTABLE** — New package; API may change.
-
 Full-screen blocked view for when Ledger Wallet cannot be used. The host supplies the copy.
 The same screen covers geo-block and service-unavailable. There is no query, no i18n, and no
 action.

@@ -9,7 +9,7 @@ describe("AppUnavailable", () => {
   it("should show the title and description", () => {
     render(<AppUnavailable title={TITLE} description={DESCRIPTION} />);
 
-    expect(screen.getByText(TITLE)).toBeVisible();
+    expect(screen.getByRole("header", { name: TITLE })).toBeVisible();
     expect(screen.getByText(DESCRIPTION)).toBeVisible();
   });
 

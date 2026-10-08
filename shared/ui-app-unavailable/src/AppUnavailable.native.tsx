@@ -12,6 +12,7 @@ export function AppUnavailable({ title, description, testID }: AppUnavailablePro
         <Spot appearance="icon" icon={Globe} size={SPOT_SIZE} />
         <Box lx={copyStyle}>
           <Text
+            accessibilityRole="header"
             typography="heading4SemiBold"
             lx={{ color: "base", textAlign: "center", width: "full" }}
           >
