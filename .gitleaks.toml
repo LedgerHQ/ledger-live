@@ -81,6 +81,18 @@ id = "generic-api-key"
         '''e2e/mobile/.+''',
     ]
 
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore the Aleo devnode's own public genesis private key (the one `leo devnode start` recommends for local use, baked into the Dockerfile's --private-key flag) -- matched by exact value, not by path, so a real key added anywhere else in these files would still be caught."
+    regexTarget = "match"
+    regexes = [
+        '''APrivateKey1zkp8CZNn3yeCseEtxuVPbDCwSyhGW6yZKUYKfgXmcpoGPWH''',
+    ]
+    paths = [
+        '''libs/coin-tester-modules/coin-tester-aleo/aleo-devnode\.Dockerfile''',
+        '''libs/coin-tester-modules/coin-tester-aleo/src/fixtures\.ts''',
+    ]
+
 [[rules]]
 id = "datadog-access-token"
 

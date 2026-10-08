@@ -57,6 +57,14 @@ describe("toBridgeOperation", () => {
     expect(result.hasFailed).toBe(false);
   });
 
+  it("should flag a rejected transaction as failed", () => {
+    const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
+
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(result.hasFailed).toBe(true);
+  });
+
   it("should use amount_u128 over amount when provided, including values beyond JS safe integer range", () => {
     const amountU128 = "123456789012345678901234567890";
     const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });

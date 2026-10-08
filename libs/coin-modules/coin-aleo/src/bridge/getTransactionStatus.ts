@@ -425,12 +425,18 @@ async function handleTransferTransaction({
 
   Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
 
+  const hasMoreSpecificAmountError = Boolean(errors.amount || errors.amountRecord);
+  const sendMaxLeavesNothing = transaction.useAllAmount && calculatedAmount.amount.lte(0);
+
   if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
     // Nothing to compare against — only whether anything has matured.
     if (availableBalance.lte(0)) {
       errors.amount = new AleoNoClaimableUnbondedFunds();
     }
-  } else if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
+  } else if (
+    availableBalance.isLessThan(calculatedAmount.totalSpent) ||
+    (sendMaxLeavesNothing && !hasMoreSpecificAmountError)
+  ) {
     errors.amount = new NotEnoughBalance();
   }
 
