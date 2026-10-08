@@ -1,4 +1,4 @@
-import { setTimeout as sleep } from "timers/promises";
+import BigNumber from "bignumber.js";
 import { APIResponse, Page, Request, Route, test } from "@playwright/test";
 import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
 import {
@@ -35,6 +35,7 @@ type SwapPayloadCheckResult =
 type SwapPayloadWatch = {
   calls: number;
   exchanges: CapturedSwapExchange[];
+  onCapture?: () => void;
   stop: () => Promise<void>;
 };
 
@@ -53,6 +54,13 @@ function attempt<T>(fn: () => T): T | undefined {
     return undefined;
   }
 }
+
+const toAtomicAmount = (value: string): bigint | undefined => {
+  const amount = new BigNumber(value);
+  return amount.isFinite() && amount.isInteger() && amount.gte(0)
+    ? BigInt(amount.toFixed(0))
+    : undefined;
+};
 
 const isSuccess = ({ status, networkError }: CapturedSwapExchange) =>
   !networkError && status !== undefined && status >= 200 && status < 300;
@@ -90,6 +98,11 @@ export async function startSwapPayloadWatch(page: Page): Promise<void> {
     stop: () => page.unroute(isSwapUrl, handler).catch(ignoreClosedPage),
   };
 
+  const capture = (exchange: CapturedSwapExchange) => {
+    watch.exchanges.push(exchange);
+    watch.onCapture?.();
+  };
+
   async function handler(route: Route, request: Request) {
     if (request.method() !== "POST") return route.fallback();
     watch.calls += 1;
@@ -99,12 +112,12 @@ export async function startSwapPayloadWatch(page: Page): Promise<void> {
       // The app has no timeout on this call, the watch must not cut a slow answer.
       response = await route.fetch({ timeout: 0 });
     } catch (error) {
-      watch.exchanges.push({ request: swapRequest, networkError: String(error) });
+      capture({ request: swapRequest, networkError: String(error) });
       // Abort, never continue: continuing would send the POST a second time.
       return route.abort("failed").catch(ignoreClosedPage);
     }
     const body = await response.text().catch(() => "");
-    watch.exchanges.push({
+    capture({
       request: swapRequest,
       status: response.status(),
       response: attempt(() => JSON.parse(body)),
@@ -144,6 +157,19 @@ async function checkCapturedSwapPayload({
   const partnerPublicKey = config.publicKey;
   if (!partnerPublicKey) return skipped("CEX provider config has no partner public key");
 
+  const amountToProvider = amount === undefined ? undefined : toAtomicAmount(amount);
+  const amountIssues: SwapPayloadIssue[] =
+    amount !== undefined && amountToProvider === undefined
+      ? [
+          {
+            code: "EXPECTED_VALUE_MISMATCH",
+            severity: "error",
+            field: "amount_to_provider",
+            message: `Swap request amount "${amount}" is not a non-negative integer.`,
+          },
+        ]
+      : [];
+
   const format = swapPayloadFormatOf(config.version);
   const libraryReport = checkSwapPayload({
     payload: response?.binaryPayload ?? "",
@@ -152,16 +178,23 @@ async function checkCapturedSwapPayload({
     format,
     expected: {
       deviceTransactionId: request.deviceTransactionId,
-      amountToProvider: amount === undefined ? undefined : attempt(() => BigInt(amount)),
+      amountToProvider,
     },
   });
   const { decoded } = libraryReport;
-  const mismatches = decoded
-    ? addressIssues([
-        { field: "payout_address", expected: request.address, actual: decoded.payoutAddress },
-        { field: "refund_address", expected: request.refundAddress, actual: decoded.refundAddress },
-      ])
-    : [];
+  const mismatches = [
+    ...amountIssues,
+    ...(decoded
+      ? addressIssues([
+          { field: "payout_address", expected: request.address, actual: decoded.payoutAddress },
+          {
+            field: "refund_address",
+            expected: request.refundAddress,
+            actual: decoded.refundAddress,
+          },
+        ])
+      : []),
+  ];
   const report = {
     ...libraryReport,
     valid: libraryReport.valid && mismatches.length === 0,
@@ -170,9 +203,25 @@ async function checkCapturedSwapPayload({
   return { status: "checked", provider, format, report };
 }
 
+const allCallsCaptured = (watch: SwapPayloadWatch) => watch.exchanges.length >= watch.calls;
+
+function waitForInFlightCalls(watch: SwapPayloadWatch): Promise<void> {
+  if (allCallsCaptured(watch)) return Promise.resolve();
+  return new Promise(resolve => {
+    const timer = setTimeout(finish, IN_FLIGHT_WAIT_MS);
+    function finish() {
+      clearTimeout(timer);
+      watch.onCapture = undefined;
+      resolve();
+    }
+    watch.onCapture = () => {
+      if (allCallsCaptured(watch)) finish();
+    };
+  });
+}
+
 async function checkAndAttach(watch: SwapPayloadWatch): Promise<SwapPayloadCheckResult> {
-  const deadline = Date.now() + IN_FLIGHT_WAIT_MS;
-  while (watch.exchanges.length < watch.calls && Date.now() < deadline) await sleep(50);
+  await waitForInFlightCalls(watch);
 
   const exchange = watch.exchanges.findLast(isSuccess) ?? watch.exchanges.at(-1);
   const result: SwapPayloadCheckResult = exchange
@@ -195,6 +244,15 @@ async function checkAndAttach(watch: SwapPayloadWatch): Promise<SwapPayloadCheck
   return result;
 }
 
+async function annotateDeviceFailure(watch: SwapPayloadWatch, error: unknown): Promise<never> {
+  const check = await checkAndAttach(watch).catch(() => undefined);
+  if (check?.status === "checked" && !check.report.valid && error instanceof Error) {
+    const codes = errorIssues(check.report).map(issueLabel).join(", ");
+    error.message += `\n↳ Invalid swap partner payload: ${codes}`;
+  }
+  throw error;
+}
+
 /**
  * Runs a swap device step, then fails the test when the payload captured since
  * `SwapPage.clickExchangeButton` is invalid. When the device step itself fails, its error is
@@ -208,14 +266,9 @@ export async function withSwapPayloadCheck<T>(
   if (!watch) return deviceStep();
 
   try {
-    const result = await deviceStep().catch(async (error: unknown) => {
-      const check = await checkAndAttach(watch).catch(() => undefined);
-      if (check?.status === "checked" && !check.report.valid && error instanceof Error) {
-        const codes = errorIssues(check.report).map(issueLabel).join(", ");
-        error.message += `\n↳ Invalid swap partner payload: ${codes}`;
-      }
-      throw error;
-    });
+    const result = await deviceStep().catch((error: unknown) =>
+      annotateDeviceFailure(watch, error),
+    );
 
     const check = await checkAndAttach(watch);
     if (check.status === "checked" && !check.report.valid) {

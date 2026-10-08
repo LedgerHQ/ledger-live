@@ -63,7 +63,9 @@ export class SpeculosPage extends AppPage {
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     const scenario = formatSwapScenario(swap, amount);
     try {
-      await withSwapPayloadCheck(this.page, async () => verifyAmountsAndAcceptSwap(swap, amount));
+      await withSwapPayloadCheck(this.page, async () => {
+        await verifyAmountsAndAcceptSwap(swap, amount);
+      });
     } catch (error) {
       if (error instanceof Error) error.message += `\n↳ Swap scenario: ${scenario}`;
       throw error;
@@ -76,9 +78,9 @@ export class SpeculosPage extends AppPage {
     amount: string,
     errorMessage: string | null,
   ) {
-    await withSwapPayloadCheck(this.page, async () =>
-      verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage),
-    );
+    await withSwapPayloadCheck(this.page, async () => {
+      await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
+    });
   }
 
   @step("Verify amounts and reject swap")
