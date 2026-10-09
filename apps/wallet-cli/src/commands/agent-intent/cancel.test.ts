@@ -252,6 +252,20 @@ describe("agent-intent cancel", () => {
     expect(cancels).toEqual([INTENT_ID]);
   });
 
+  it("recognizes a 400 from another copy of the SDK's error class", async () => {
+    readStatuses = ["crafted", "signed"];
+    cancelImpl = async () => {
+      throw Object.assign(new Error("Illegal transition"), {
+        name: "AgentIntentHttpError",
+        status: 400,
+      });
+    };
+
+    await expect(runCancel()).rejects.toThrow(
+      `Intent ${INTENT_ID} is signed, so it can't be cancelled`,
+    );
+  });
+
   it.each(["crafted", "archived"])(
     "keeps the service's message for a 400 on a %s intent, which may still be cancellable",
     async status => {

@@ -4,7 +4,7 @@ const MAX_DETAIL_LENGTH = 300;
 
 // Matched by `name`, not `instanceof`: the SDK is a separate package, so its classes can exist
 // twice in a bundle and fail an `instanceof` check.
-function isHttpError(e: unknown): e is AgentIntentHttpError {
+export function isHttpError(e: unknown): e is AgentIntentHttpError {
   return e instanceof Error && e.name === "AgentIntentHttpError";
 }
 

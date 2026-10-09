@@ -1,7 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import {
-  AgentIntentHttpError,
   createAgentIntentClient,
   isAgentIntentStatus,
   type AgentIntentClient,
@@ -16,6 +15,7 @@ import { keycloakOverride } from "../../agent-intent/relay";
 import {
   describeAgentIntentCancelError,
   describeAgentIntentLookupError,
+  isHttpError,
 } from "../../agent-intent/service-errors";
 import { parseIntentId, toIntentListEntry } from "../../agent-intent/intent-list";
 import { askToConfirm, canAskToConfirm } from "../../agent-intent/confirm-prompt";
@@ -98,7 +98,7 @@ export default defineCommand({
       try {
         await client.cancelIntent(intentId);
       } catch (e) {
-        if (e instanceof AgentIntentHttpError && e.status === 400) {
+        if (isHttpError(e) && e.status === 400) {
           // A bare 400 on an intent now in a known final or signed state means it moved on.
           const now = await read().catch(() => undefined);
           if (

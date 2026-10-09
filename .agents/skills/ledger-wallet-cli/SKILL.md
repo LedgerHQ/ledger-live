@@ -516,7 +516,8 @@ yet. A signed intent can't be edited: to change a proposal, cancel it and send a
 pnpm --silent wallet-cli start agent-intent cancel --profile my-bot --intent 0192f7a4-0000-7000-8000-000000000001 --yes
 ```
 
-- **When:** only a `created` or `crafted` intent can be cancelled. Any other state (`signed`
+- **When:** only a `created` or `crafted` intent can be cancelled. A state this wallet-cli version
+  doesn't know goes to the service, which decides. Any other known state (`signed`
   included, since its transaction may still land on-chain) fails with the current state and changes
   nothing. Cancellation is **irreversible**.
 - **Confirmation:** on a terminal it shows the intent and asks `[y/N]` on stderr. Without a
