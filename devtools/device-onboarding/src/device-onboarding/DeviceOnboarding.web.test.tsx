@@ -1,11 +1,12 @@
 import { render, screen } from "@support/jest-devtools/web";
 import userEvent from "@testing-library/user-event";
-import { buildProps } from "jest/deviceOnboardingProps";
+import { buildProps, sampleMachine } from "jest/deviceOnboardingProps";
 import {
   emptyLogCopy,
   featureFlagCopy,
   headerCopy,
   logCopy,
+  machineCopy,
   openNextScreenCopy,
   overrideCopy,
 } from "./configCopy";
@@ -19,6 +20,21 @@ const connectedDevice = {
 };
 
 describe("DeviceOnboarding", () => {
+  it("shows the whole machine on its own tab, with the current state marked", async () => {
+    render(
+      <DeviceOnboarding
+        {...buildProps({ status: "running", state: "checks.checksIdle", machine: sampleMachine })}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole("radio", { name: machineCopy.tab }));
+
+    expect(screen.getByText("checksIdle")).toHaveAttribute("aria-current", "step");
+    expect(screen.getByText("firmwareCheck")).not.toHaveAttribute("aria-current");
+    expect(screen.getByText(machineCopy.sources.user)).toBeInTheDocument();
+    expect(screen.getByText("RETRY")).toBeInTheDocument();
+  });
+
   it("asks you to pair a device before the log starts", () => {
     render(<DeviceOnboarding {...buildProps()} />);
 

@@ -4,16 +4,101 @@ import {
   DeviceOnboardingStatus,
   type DeviceOnboardingFeatureFlag,
   type DeviceOnboardingLogRow,
+  type DeviceOnboardingEventSource,
+  type DeviceOnboardingMachineState,
   type DeviceOnboardingNextState,
   type DeviceOnboardingToolEvent,
   type DeviceOnboardingToolPayload,
   type DeviceOnboardingToolProps,
 } from "../types";
-import { logCopy, overrideCopy, statusCopy } from "./configCopy";
+import { logCopy, machineCopy, overrideCopy, statusCopy } from "./configCopy";
 
 const displayedEventCount = 40;
 const displayedDetailLength = 80;
 const displayedPayloadRows = 80;
+
+export type MachineEmphasis = "current" | "active" | "idle";
+
+/** A color role. Each screen turns it into its own design tokens. */
+export type MachineTone = "active" | "success" | "warning" | "error" | "muted";
+
+export interface MachineBadge {
+  readonly label: string;
+  readonly tone: MachineTone;
+}
+
+export interface MachineTransitionRow {
+  readonly key: string;
+  readonly event: string;
+  readonly tone: MachineTone;
+  /** Null when the machine stays in the same state. */
+  readonly target: string | null;
+  readonly guard: string | null;
+}
+
+export interface MachineRow {
+  readonly key: string;
+  readonly label: string;
+  readonly depth: number;
+  readonly badges: readonly MachineBadge[];
+  /** `current` is the state the machine is in, `active` one of its parents. */
+  readonly emphasis: MachineEmphasis;
+  readonly transitions: readonly MachineTransitionRow[];
+}
+
+const sourceTone: Record<DeviceOnboardingEventSource, MachineTone> = {
+  user: "active",
+  device: "success",
+  app: "warning",
+  auto: "muted",
+};
+
+/** What each event color means, in the order the legend shows it. */
+export const machineLegend: readonly MachineBadge[] = (
+  ["user", "device", "app", "auto"] as const
+).map(source => ({ label: machineCopy.sources[source], tone: sourceTone[source] }));
+
+function machineEmphasis(path: string, leaves: readonly string[]): MachineEmphasis {
+  if (leaves.includes(path)) return "current";
+  const isParent = leaves.some(leaf => path === "" || leaf.startsWith(`${path}.`));
+  return isParent ? "active" : "idle";
+}
+
+function machineBadges(row: DeviceOnboardingMachineState): MachineBadge[] {
+  const badges: (MachineBadge | null)[] = [
+    row.path === "" ? { label: machineCopy.root, tone: "muted" } : null,
+    row.initial ? { label: machineCopy.initial, tone: "success" } : null,
+    row.kind === "final" ? { label: machineCopy.final, tone: "error" } : null,
+    ...row.invokes.map(actor => ({
+      label: `${machineCopy.runs} ${actor}`,
+      tone: "active" as const,
+    })),
+  ];
+  return badges.filter(badge => badge !== null);
+}
+
+/** `state` is the dotted value, with a comma between the leaves of parallel states. */
+export function machineRowsOf(
+  machine: readonly DeviceOnboardingMachineState[],
+  state: string | null,
+): MachineRow[] {
+  const leaves = state === null ? [] : state.split(",");
+
+  return machine.map(row => ({
+    key: row.path || row.key,
+    label: row.key,
+    depth: row.depth,
+    badges: machineBadges(row),
+    emphasis: machineEmphasis(row.path, leaves),
+    transitions: row.transitions.map((transition, index) => ({
+      key: `${index}-${transition.event}`,
+      event: transition.event,
+      tone: sourceTone[transition.source],
+      target: transition.targets.join(", ") || null,
+      guard: transition.guard ?? null,
+    })),
+  }));
+}
 
 export interface NextStateGroup {
   readonly event: string;
@@ -170,6 +255,7 @@ export interface DeviceOnboardingViewModel {
   readonly contextRows: readonly DisplayRow[];
   readonly sendableRows: readonly SendableRow[];
   readonly nextStateGroups: readonly NextStateGroup[];
+  readonly machineRows: readonly MachineRow[];
   readonly logIsEmpty: boolean;
   readonly error: string | null;
   readonly canConnect: boolean;
@@ -395,6 +481,7 @@ export function useDeviceOnboardingViewModel(
     exit,
     sendableEvents,
     nextStates,
+    machine,
     error,
     showNextScreen,
     setShowNextScreen,
@@ -446,6 +533,7 @@ export function useDeviceOnboardingViewModel(
     contextRows,
     sendableRows,
     nextStateGroups: groupByEvent(nextStates),
+    machineRows: machineRowsOf(machine, state),
     // The host offers events and next states only while the machine runs, so they come with a log.
     logIsEmpty: logLines.length === 0,
     error,

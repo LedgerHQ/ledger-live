@@ -42,6 +42,28 @@ export type DeviceOnboardingToolEvent = HostToolEvent;
 export type DeviceOnboardingLogRow = HostLogRow;
 export type DeviceOnboardingNextState = HostNextState;
 
+/** Who sends the event. `auto` means no event: the machine moves by itself. */
+export type DeviceOnboardingEventSource = "user" | "device" | "app" | "auto";
+
+/** No target means the state stays and only runs actions. */
+export interface DeviceOnboardingMachineTransition {
+  readonly event: string;
+  readonly source: DeviceOnboardingEventSource;
+  readonly targets: readonly string[];
+  readonly guard?: string;
+}
+
+/** One state of the machine, parents before children. The root has an empty path. */
+export interface DeviceOnboardingMachineState {
+  readonly path: string;
+  readonly key: string;
+  readonly depth: number;
+  readonly kind: "atomic" | "compound" | "parallel" | "final" | "history";
+  readonly initial: boolean;
+  readonly invokes: readonly string[];
+  readonly transitions: readonly DeviceOnboardingMachineTransition[];
+}
+
 /** Whole rather than by type: `snapshot.can` needs the payload, and the machine dereferences it. */
 export interface SendableOnboardingEvent {
   /** The host adds the session id to SESSION_READY: only it knows the live session. */
@@ -64,6 +86,8 @@ export interface DeviceOnboardingToolProps {
   readonly sendableEvents: readonly SendableOnboardingEvent[];
   /** States this step can reach. Guards have not picked one yet. */
   readonly nextStates: readonly DeviceOnboardingNextState[];
+  /** The whole machine, so anyone can read every state and where each event leads. */
+  readonly machine: readonly DeviceOnboardingMachineState[];
   /** Set when the host failed to connect a device or to start the flow. Re-enables Connect. */
   readonly error: string | null;
   /** Opens a session: the first one, or a replacement once the transport went away. */

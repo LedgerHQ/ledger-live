@@ -1,11 +1,12 @@
 import { fireEvent, render, screen } from "@support/jest-devtools/native";
 import { Share } from "react-native";
-import { buildProps } from "jest/deviceOnboardingProps";
+import { buildProps, sampleMachine } from "jest/deviceOnboardingProps";
 import {
   emptyLogCopy,
   featureFlagCopy,
   headerCopy,
   logCopy,
+  machineCopy,
   openNextScreenCopy,
   overrideCopy,
 } from "./configCopy";
@@ -19,6 +20,21 @@ const connectedDevice = {
 };
 
 describe("DeviceOnboarding", () => {
+  it("shows the whole machine on its own tab, with the current state marked", () => {
+    render(
+      <DeviceOnboarding
+        {...buildProps({ status: "running", state: "checks.checksIdle", machine: sampleMachine })}
+      />,
+    );
+
+    fireEvent.press(screen.getByText(machineCopy.tab));
+
+    expect(screen.getByText("checksIdle")).toBeSelected();
+    expect(screen.getByText("firmwareCheck")).not.toBeSelected();
+    expect(screen.getByText(machineCopy.sources.user)).toBeTruthy();
+    expect(screen.getByText("RETRY")).toBeTruthy();
+  });
+
   it("asks you to pair a device before the log starts", () => {
     render(<DeviceOnboarding {...buildProps()} />);
 
