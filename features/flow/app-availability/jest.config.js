@@ -5,7 +5,7 @@ const config = require("@support/jest-features-flow").createFlowJestConfig();
 const webProject = config.projects.find(project => project.displayName === "web");
 webProject.setupFilesAfterEnv = [
   ...webProject.setupFilesAfterEnv,
-  path.resolve(__dirname, "src/test/unrefSchedulerMessageChannel.js"),
+  path.resolve(__dirname, "jest/setupUnrefSchedulerMessageChannel.js"),
 ];
 
 const nativeProject = config.projects.find(project => project.displayName === "native");
