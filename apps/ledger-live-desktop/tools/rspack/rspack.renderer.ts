@@ -86,7 +86,6 @@ export function createRendererConfig(
         stream: require.resolve("readable-stream"),
         string_decoder: require.resolve("string_decoder/"),
         url: require.resolve("url/"),
-        querystring: require.resolve("querystring-es3"),
         path: require.resolve("path-browserify"),
         util: require.resolve("util/"),
         assert: require.resolve("assert/"),
