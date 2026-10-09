@@ -29,6 +29,18 @@ describe("getConfidentialErrorKind", () => {
     expect(getConfidentialErrorKind(new ConfidentialError(code))).toBe(kind);
   });
 
+  it("reports a balance the relayer has not processed yet as pending, not unavailable", () => {
+    const sdkError = new Error("Ciphertext not ready for decryption on the gateway chain");
+    expect(
+      getConfidentialErrorKind(
+        new ConfidentialError("RelayerError", "relayer request failed", { cause: sdkError }),
+      ),
+    ).toBe("decryptionPending");
+    expect(
+      getConfidentialErrorKind(new ConfidentialError("RelayerError", "readiness_check_timed_out")),
+    ).toBe("decryptionPending");
+  });
+
   it("treats any other failure as unknown", () => {
     expect(getConfidentialErrorKind(new Error("boom"))).toBe("unknown");
   });

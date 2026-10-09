@@ -95,7 +95,7 @@ export function ConfidentialBalanceFooterView({
 
   if (!isVisible) return null;
 
-  const isRevealing = phase === "signing" || phase === "decrypting";
+  const isRevealing = phase === "signing" || phase === "decrypting" || phase === "waiting";
 
   return (
     <div
@@ -156,11 +156,7 @@ export function ConfidentialBalanceFooterView({
       {isRevealing && (
         <div className="flex flex-row items-center gap-8" data-testid="confidential-phase">
           <Spinner size={16} />
-          <span className="body-3 text-muted">
-            {phase === "signing"
-              ? t("confidentialBalance.phase.signing")
-              : t("confidentialBalance.phase.decrypting")}
-          </span>
+          <span className="body-3 text-muted">{t(`confidentialBalance.phase.${phase}`)}</span>
         </div>
       )}
 

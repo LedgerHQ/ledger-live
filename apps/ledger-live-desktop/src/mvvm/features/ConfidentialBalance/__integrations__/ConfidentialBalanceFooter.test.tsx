@@ -1,7 +1,7 @@
 import React from "react";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { ConfidentialErrorCode } from "@ledgerhq/coin-evm/confidential";
+import { ConfidentialError, type ConfidentialErrorCode } from "@ledgerhq/coin-evm/confidential";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { render, screen, waitFor } from "tests/testSetup";
@@ -121,6 +121,27 @@ describe("ConfidentialBalanceFooter", () => {
     );
     expect(signer).toHaveBeenCalledTimes(1);
   });
+
+  it("waits and retries by itself while the network has not processed the balance yet", async () => {
+    const reveal = jest
+      .spyOn(confidentialApi, "revealConfidentialBalance")
+      .mockRejectedValueOnce(
+        new ConfidentialError(
+          "RelayerError",
+          "Ciphertext not ready for decryption on the gateway chain",
+        ),
+      );
+    const { user } = setup();
+
+    await user.click(await screen.findByTestId("confidential-reveal-button"));
+
+    expect(await screen.findByTestId("confidential-phase")).toHaveTextContent(
+      /still processing your private balance/,
+    );
+    expect(screen.queryByTestId(/confidential-error-/)).not.toBeInTheDocument();
+    expect(await screen.findByTestId("confidential-total", {}, { timeout: 8000 })).toBeVisible();
+    expect(reveal).toHaveBeenCalledTimes(2);
+  }, 15000);
 
   it("refreshes a revealed balance without a new signature while the permit is valid", async () => {
     const { user } = setup();

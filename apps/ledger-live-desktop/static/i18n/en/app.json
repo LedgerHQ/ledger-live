@@ -9850,7 +9850,8 @@
     },
     "phase": {
       "signing": "Confirm the decryption permit on your device",
-      "decrypting": "Decrypting your private balance…"
+      "decrypting": "Decrypting your private balance…",
+      "waiting": "The network is still processing your private balance. Retrying automatically…"
     },
     "unshield": {
       "awaiting-request": "Unshield of {{amount}} sent, waiting for it to be mined",
@@ -9870,7 +9871,8 @@
       "aclDenied": "This account is not allowed to decrypt this balance.",
       "denylisted": "This address is blocked by the token contract.",
       "serviceUnavailable": "The decryption service is unavailable. Try again later.",
-      "unknown": "The private balance could not be read. Try again."
+      "unknown": "The private balance could not be read. Try again.",
+      "decryptionPending": "The network is still processing this private balance. Try again in a few minutes."
     }
   },
   "zcash": {
