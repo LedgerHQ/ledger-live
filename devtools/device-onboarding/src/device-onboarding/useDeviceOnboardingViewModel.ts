@@ -184,8 +184,6 @@ export interface DeviceOnboardingViewModel {
   readonly setGenuineOverride: (value: GenuineOverride) => void;
   readonly firmwareOverride: FirmwareOverride;
   readonly setFirmwareOverride: (value: FirmwareOverride) => void;
-  readonly earlyCheckOverride: EarlyCheckOverride;
-  readonly setEarlyCheckOverride: (value: EarlyCheckOverride) => void;
 }
 
 export const GenuineOverride = {
@@ -203,13 +201,6 @@ export const FirmwareOverride = {
 } as const;
 
 export type FirmwareOverride = (typeof FirmwareOverride)[keyof typeof FirmwareOverride];
-
-export const EarlyCheckOverride = {
-  Device: "device",
-  Skip: "skip",
-} as const;
-
-export type EarlyCheckOverride = (typeof EarlyCheckOverride)[keyof typeof EarlyCheckOverride];
 
 const overrideFirmware = { os: "override", mcu: "override", bootloader: "override" };
 
@@ -240,7 +231,6 @@ function overrideEvent(
   state: string | null,
   genuine: GenuineOverride,
   firmware: FirmwareOverride,
-  earlyCheck: EarlyCheckOverride,
 ): OnboardingEvent | null {
   if (state === "checks.genuineCheck" && genuine === GenuineOverride.Pass) {
     return { type: "GENUINE_CHECK_PASSED", output: { isGenuine: true } };
@@ -256,9 +246,6 @@ function overrideEvent(
       type: "FIRMWARE_UPDATE_AVAILABLE",
       output: { ...overrideFirmware, update: overrideUpdate },
     };
-  }
-  if (state === "checks.enteringEarlyCheckScreen" && earlyCheck === EarlyCheckOverride.Skip) {
-    return { type: "EARLY_CHECK_UNAVAILABLE", output: "override" };
   }
   return null;
 }
@@ -434,14 +421,10 @@ export function useDeviceOnboardingViewModel(
   const [firmwareOverride, setFirmwareOverride] = useState<FirmwareOverride>(
     FirmwareOverride.Device,
   );
-  const [earlyCheckOverride, setEarlyCheckOverride] = useState<EarlyCheckOverride>(
-    EarlyCheckOverride.Device,
-  );
-
   useEffect(() => {
-    const event = overrideEvent(state, genuineOverride, firmwareOverride, earlyCheckOverride);
+    const event = overrideEvent(state, genuineOverride, firmwareOverride);
     if (event) send(event);
-  }, [earlyCheckOverride, firmwareOverride, genuineOverride, send, state]);
+  }, [firmwareOverride, genuineOverride, send, state]);
 
   const rows = rowsFor(log, state);
   const stateSteps = stateStepsOf(rows);
@@ -503,7 +486,5 @@ export function useDeviceOnboardingViewModel(
     setGenuineOverride,
     firmwareOverride,
     setFirmwareOverride,
-    earlyCheckOverride,
-    setEarlyCheckOverride,
   };
 }

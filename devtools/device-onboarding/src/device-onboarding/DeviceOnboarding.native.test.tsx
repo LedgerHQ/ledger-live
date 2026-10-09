@@ -127,7 +127,6 @@ describe("DeviceOnboarding", () => {
     expect(screen.getByText(overrideCopy.title)).toBeTruthy();
     expect(screen.getByText(overrideCopy.genuine)).toBeTruthy();
     expect(screen.getByText(overrideCopy.firmware)).toBeTruthy();
-    expect(screen.getByText(overrideCopy.earlyCheck)).toBeTruthy();
     expect(screen.getByText(openNextScreenCopy.title)).toBeTruthy();
     expect(screen.getByText(openNextScreenCopy.description)).toBeTruthy();
     expect(screen.queryByText("CONTINUE")).toBeNull();

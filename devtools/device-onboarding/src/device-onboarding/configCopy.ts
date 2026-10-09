@@ -3,13 +3,11 @@ export const overrideCopy = {
   description: "Pick a result. Device means the real device answers.",
   genuine: "Genuine check",
   firmware: "Firmware",
-  earlyCheck: "Early check",
   device: "Device",
   pass: "Pass",
   fail: "Not genuine",
   upToDate: "Up to date",
   outdated: "Outdated",
-  skip: "Skip",
 };
 
 export const openNextScreenCopy = {

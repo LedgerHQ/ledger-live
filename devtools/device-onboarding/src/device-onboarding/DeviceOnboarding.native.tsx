@@ -25,7 +25,6 @@ import {
 import type { DeviceOnboardingToolProps } from "../types";
 import { emptyLogCopy, featureFlagCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
 import {
-  EarlyCheckOverride,
   FirmwareOverride,
   GenuineOverride,
   possibleByEvent,
@@ -284,20 +283,6 @@ function OverrideSection({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
           </SegmentedControlButton>
           <SegmentedControlButton value={FirmwareOverride.Outdated}>
             {overrideCopy.outdated}
-          </SegmentedControlButton>
-        </SegmentedControl>
-      </OverrideRow>
-      <OverrideRow label={overrideCopy.earlyCheck}>
-        <SegmentedControl
-          selectedValue={vm.earlyCheckOverride}
-          onSelectedChange={vm.setEarlyCheckOverride}
-          accessibilityLabel={overrideCopy.earlyCheck}
-        >
-          <SegmentedControlButton value={EarlyCheckOverride.Device}>
-            {overrideCopy.device}
-          </SegmentedControlButton>
-          <SegmentedControlButton value={EarlyCheckOverride.Skip}>
-            {overrideCopy.skip}
           </SegmentedControlButton>
         </SegmentedControl>
       </OverrideRow>

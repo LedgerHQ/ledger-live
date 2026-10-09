@@ -127,7 +127,6 @@ describe("DeviceOnboarding", () => {
     );
     expect(screen.getByText(overrideCopy.genuine)).toBeInTheDocument();
     expect(screen.getByText(overrideCopy.firmware)).toBeInTheDocument();
-    expect(screen.getByText(overrideCopy.earlyCheck)).toBeInTheDocument();
     expect(screen.getByText(openNextScreenCopy.title)).toBeInTheDocument();
     expect(screen.getByText(openNextScreenCopy.description)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "CONTINUE" })).not.toBeInTheDocument();
