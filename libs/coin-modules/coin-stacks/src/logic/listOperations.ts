@@ -69,7 +69,10 @@ function txFields(tx: TransactionResponse) {
     hash: tx_id,
     blockHeight: block_height,
     blockHash: block_hash,
-    fees: BigInt(fee_rate || "0"),
+    // A sponsored transaction's fee is paid by the sponsor, so it is reported as zero: the framework
+    // adds `fees` to an outgoing native value, and values a failed operation at `fees`, whoever
+    // paid them -- omitting `feesPayer` alone would still charge the sender the sponsor's fee.
+    fees: tx.tx.sponsored ? 0n : BigInt(fee_rate || "0"),
     date: new Date(burn_block_time * 1000),
     failed: tx_status !== "success",
     nonce,

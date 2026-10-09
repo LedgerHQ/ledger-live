@@ -279,6 +279,91 @@ describe("listOperations", () => {
     expect(items[0].tx.feesPayer).toBeUndefined();
   });
 
+  // The framework adds `tx.fees` to an outgoing native value and values a failed operation at it,
+  // so a sponsor-paid fee must not reach `tx.fees`.
+  describe("sponsored transactions report no fee, so the sender is not charged the sponsor's", () => {
+    it("on a native STX transfer", async () => {
+      (fetchAllTransactions as jest.Mock).mockResolvedValue([
+        baseTx({
+          sponsored: true,
+          fee_rate: "180",
+          token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+        }),
+      ]);
+
+      const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+      expect(items[0]).toMatchObject({ type: "OUT", value: 1000n });
+      expect(items[0].tx.fees).toBe(0n);
+    });
+
+    it("on a failed native STX transfer", async () => {
+      (fetchAllTransactions as jest.Mock).mockResolvedValue([
+        baseTx({
+          sponsored: true,
+          fee_rate: "180",
+          tx_status: "abort_by_response",
+          token_transfer: { recipient_address: RECIPIENT, amount: "1000", memo: "" },
+        }),
+      ]);
+
+      const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+      expect(items[0].tx.failed).toBe(true);
+      expect(items[0].tx.fees).toBe(0n);
+    });
+
+    it("on a send-many, for the batch OUT and each internal operation", async () => {
+      const tx = sendManyTx([
+        { to: RECIPIENT, ustx: 5000 },
+        { to: OTHER_RECIPIENT, ustx: 3000 },
+      ]);
+      tx.tx.sponsored = true;
+      tx.tx.fee_rate = "180";
+      (fetchAllTransactions as jest.Mock).mockResolvedValue([tx]);
+
+      const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+      expect(items).toHaveLength(3);
+      expect(items[0].value).toBe(8000n);
+      expect(items.map(op => op.tx.fees)).toEqual([0n, 0n, 0n]);
+    });
+
+    it("on a SIP-010 transfer, whose value is unchanged", async () => {
+      (fetchAllTransactions as jest.Mock).mockResolvedValue([
+        baseTx({
+          sponsored: true,
+          fee_rate: "180",
+          tx_type: "contract_call",
+          post_conditions: [
+            {
+              type: "fungible",
+              condition_code: "eq",
+              amount: "2500",
+              principal: { type_id: "principal_standard", address: SENDER },
+              asset: {
+                asset_name: "token-x",
+                contract_address: "SP_CONTRACT",
+                contract_name: "token-x",
+              },
+            },
+          ],
+          contract_call: {
+            contract_id: "SP_CONTRACT.token-x",
+            function_name: "transfer",
+            function_signature: "",
+            function_args: sip010TransferArgs(),
+          },
+        }),
+      ]);
+
+      const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+      expect(items[0]).toMatchObject({ type: "OUT", value: 2500n, asset: { type: "token" } });
+      expect(items[0].tx.fees).toBe(0n);
+    });
+  });
+
   it("maps a native STX transfer to an IN operation from the recipient's perspective", async () => {
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
       baseTx({
