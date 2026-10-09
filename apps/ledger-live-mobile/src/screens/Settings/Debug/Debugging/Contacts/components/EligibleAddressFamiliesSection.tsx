@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, Button } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Text, Button, Tag } from "@ledgerhq/lumen-ui-rnative";
 import { ELIGIBLE_ADDRESS_FAMILIES_PRESETS } from "../constants";
 import { EligibleAddressFamiliesSectionProps } from "../types";
 
@@ -21,9 +21,11 @@ export const EligibleAddressFamiliesSection = ({
     <Text typography="body2" lx={{ color: "base", marginBottom: "s8" }}>
       Eligible address families
     </Text>
-    <Text typography="body3" lx={{ color: "muted", marginBottom: "s12" }}>
-      Current: {JSON.stringify(families)}
-    </Text>
+    <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8", marginBottom: "s12" }}>
+      {families.map(family => (
+        <Tag key={family} appearance="base" size="sm" label={family} />
+      ))}
+    </Box>
     <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8" }}>
       {ELIGIBLE_ADDRESS_FAMILIES_PRESETS.map(preset => {
         const isSelected = areFamiliesEqual(families, preset.families);

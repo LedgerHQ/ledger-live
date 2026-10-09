@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Tag, TextInput } from "@ledgerhq/lumen-ui-react";
+import { cn } from "LLD/utils/cn";
 import { ELIGIBLE_ADDRESS_FAMILIES_PRESETS } from "../constants";
 
 type EligibleAddressFamiliesSectionProps = {
@@ -33,9 +34,10 @@ export const EligibleAddressFamiliesSection = ({
 
   return (
     <div
-      className={`flex flex-col gap-4 rounded-md bg-surface p-10 transition-opacity ${
-        isEnabled ? "opacity-100" : "opacity-50"
-      }`}
+      className={cn(
+        "flex flex-col gap-4 rounded-md bg-surface p-10 transition-opacity",
+        !isEnabled && "opacity-50",
+      )}
     >
       <div className="flex items-center justify-between gap-2">
         <span className="body-3">
@@ -80,7 +82,7 @@ export const EligibleAddressFamiliesSection = ({
             onClick={onApplyCustomFamilies}
             disabled={!isEnabled || customFamiliesInput.trim().length === 0}
           >
-            {t("settings.developer.contactsDevTool.applyFamilies")}
+            {t("settings.developer.contactsDevTool.apply")}
           </Button>
         </div>
       </div>

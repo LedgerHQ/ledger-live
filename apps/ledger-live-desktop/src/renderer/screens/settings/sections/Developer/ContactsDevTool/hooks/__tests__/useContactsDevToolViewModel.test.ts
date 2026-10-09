@@ -182,6 +182,76 @@ describe("useContactsDevToolViewModel", () => {
     expect(result.current.customFamiliesInput).toBe("evm, aptos");
   });
 
+  it("should show the flag values again once the override is reset", () => {
+    const { result } = renderHook(() => useContactsDevToolViewModel(), {
+      initialState: withFlagOverrides({
+        lwdContacts: {
+          enabled: true,
+          params: {
+            newBadge: false,
+            eligibleAddressFamilies: ["evm", "stellar"],
+            excludedCurrencyIds: ["bitcoin"],
+          },
+        },
+      }),
+    });
+
+    expect(result.current.customFamiliesInput).toBe("evm, stellar");
+    expect(result.current.excludedCurrencyIdsInput).toBe("bitcoin");
+
+    act(() => {
+      result.current.handleResetOverride();
+    });
+
+    expect(result.current.customFamiliesInput).toBe("evm");
+    expect(result.current.excludedCurrencyIdsInput).toBe("");
+  });
+
+  it("should drop an in-progress families input when a preset is selected", () => {
+    const { result } = renderHook(() => useContactsDevToolViewModel(), {
+      initialState: withFlagOverrides({
+        lwdContacts: {
+          enabled: true,
+          params: { newBadge: false, eligibleAddressFamilies: ["evm", "stellar"] },
+        },
+      }),
+    });
+
+    act(() => {
+      result.current.setCustomFamiliesInput("aptos");
+    });
+
+    act(() => {
+      result.current.handleSetEligibleAddressFamilies(["evm"]);
+    });
+
+    expect(result.current.customFamiliesInput).toBe("evm");
+  });
+
+  it("should trim excludedCurrencyIds and drop empty entries", () => {
+    const { result, store } = renderHook(() => useContactsDevToolViewModel(), {
+      initialState: withFlagOverrides({
+        lwdContacts: {
+          enabled: true,
+          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+        },
+      }),
+    });
+
+    act(() => {
+      result.current.setExcludedCurrencyIdsInput(" ethereum ,, bitcoin ");
+    });
+
+    act(() => {
+      result.current.handleApplyExcludedCurrencyIds();
+    });
+
+    expect(
+      store.getState().featureFlags.overrides.lwdContacts?.params?.excludedCurrencyIds,
+    ).toEqual(["ethereum", "bitcoin"]);
+    expect(result.current.excludedCurrencyIdsInput).toBe("ethereum, bitcoin");
+  });
+
   it("should reset the local override", () => {
     const { result, store } = renderHook(() => useContactsDevToolViewModel(), {
       initialState: withFlagOverrides({
