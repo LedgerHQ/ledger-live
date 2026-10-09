@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { http } from "msw";
+import { setupServer } from "msw/node";
 import { token } from "@domain/entity-currency-token";
 import { calApiExtra } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
@@ -10,6 +12,7 @@ import type { PersistedCAL } from "./types";
 // Desktop (renderer/init.tsx) and mobile (LedgerStore.tsx) both `await restoreTokensToCache(...)`
 // before finishing startup, so a stalled CAL holds the splash.
 
+const CAL_URL = "https://cal.test";
 const TTL = 24 * 60 * 60 * 1000;
 const HANG_DEADLINE_MS = 500;
 
@@ -33,23 +36,21 @@ const persisted: PersistedCAL = {
   hashes: { ethereum: "stored-hash" },
 };
 
+const server = setupServer(http.get(`${CAL_URL}/v1/currencies`, () => new Promise<never>(() => {})));
+
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterAll(() => server.close());
+
 describe("restoreTokensToCache when CAL never responds", () => {
-  const realFetch = global.fetch;
-
-  afterEach(() => {
-    global.fetch = realFetch;
-  });
-
   // Documents the bug. Switch to `it` once getTokensSyncHash has a timeout.
   it.failing("settles within a bounded time", async () => {
-    global.fetch = jest.fn(() => new Promise<Response>(() => {})) as typeof fetch;
     const store = configureStore({
       reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
       middleware: gdm =>
         gdm({
           thunk: {
             extraArgument: calApiExtra({
-              calServiceUrl: "https://cal.test",
+              calServiceUrl: CAL_URL,
               ledgerClientVersion: "1.2.3",
             }),
           },

@@ -40,6 +40,7 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
     "typescript": "catalog:"
