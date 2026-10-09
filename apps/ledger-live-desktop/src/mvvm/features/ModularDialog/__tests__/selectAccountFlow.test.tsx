@@ -173,7 +173,10 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should show list placeholders while a single currency is still loading", async () => {
     server.use(
-      http.get("https://dada.api.ledger-test.com/v1/assets", () => new Promise(() => {})),
+      http.get(
+        "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+        () => new Promise(() => {}),
+      ),
       http.get("https://dada.api.ledger.com/v1/assets", () => new Promise(() => {})),
     );
 
@@ -219,8 +222,9 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
   it("should show the asset error when a single-currency catalog request fails", async () => {
     server.use(
-      http.get("https://dada.api.ledger-test.com/v1/assets", () =>
-        HttpResponse.json(null, { status: 500 }),
+      http.get(
+        "https://gravitee-internal-gateway.ldg-stg-apim.aws.stg.ldg-tech.com/dada/assets",
+        () => HttpResponse.json(null, { status: 500 }),
       ),
       http.get("https://dada.api.ledger.com/v1/assets", () =>
         HttpResponse.json(null, { status: 500 }),

@@ -6,3 +6,6 @@
  * error and silently returns `undefined` for every market and interest-rate lookup.
  */
 export const DADA_REDUCER_PATH = "assetsDataApi";
+
+/** Static API key Gravitee requires on every DADA request, sourced from `DADA_GRAVITEE_API_KEY`. */
+export const HEADER_X_GRAVITEE_API_KEY = "x-gravitee-api-key";
