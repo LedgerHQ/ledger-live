@@ -39,7 +39,7 @@ describe("resolveEligibleAddressCurrencyIds", () => {
     const networkIds = resolveEligibleAddressCurrencyIds(["evm"], undefined, [], getConfig);
 
     expect(networkIds).toContain("sei_evm");
-    expect(networkIds).toContain("poa");
+    expect(networkIds).toContain("ethereum_classic");
   });
 
   it("omits EVM networks whose config carries no chain ID", () => {

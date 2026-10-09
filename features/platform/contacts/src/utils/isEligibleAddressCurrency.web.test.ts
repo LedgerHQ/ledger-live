@@ -34,9 +34,9 @@ describe("isEligibleAddressCurrency", () => {
       name: "Ethereum",
       unit: { name: "ether", code: "ETH", magnitude: 18 },
     };
-    expect(isEligibleAddressCurrency(["evm"], getCryptoCurrencyById("poa"), [], config)).toBe(
-      false,
-    );
+    expect(
+      isEligibleAddressCurrency(["evm"], getCryptoCurrencyById("ethereum_classic"), [], config),
+    ).toBe(false);
   });
 
   it("accepts an EVM network WHEN its config carries a chain ID", () => {
@@ -46,11 +46,15 @@ describe("isEligibleAddressCurrency", () => {
       unit: { name: "ether", code: "ETH", magnitude: 18 },
       chainId: 99,
     };
-    expect(isEligibleAddressCurrency(["evm"], getCryptoCurrencyById("poa"), [], config)).toBe(true);
+    expect(
+      isEligibleAddressCurrency(["evm"], getCryptoCurrencyById("ethereum_classic"), [], config),
+    ).toBe(true);
   });
 
   it("rejects an EVM network WHEN no config is given at all", () => {
-    expect(isEligibleAddressCurrency(["evm"], getCryptoCurrencyById("poa"))).toBe(false);
+    expect(isEligibleAddressCurrency(["evm"], getCryptoCurrencyById("ethereum_classic"))).toBe(
+      false,
+    );
   });
 
   it("resolves a token through its parent network", () => {

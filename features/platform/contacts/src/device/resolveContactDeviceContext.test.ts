@@ -97,7 +97,7 @@ describe("resolveContactDeviceContext", () => {
   });
 
   it("GIVEN an EVM network WHEN resolving its context without a config chain ID THEN it rejects the currency", () => {
-    const currencyId = ContactCurrencyIdSchema.parse("poa");
+    const currencyId = ContactCurrencyIdSchema.parse("ethereum_classic");
 
     expect(() => resolveContactDeviceContext(currencyId)).toThrow(
       UnsupportedContactDeviceCurrencyError,
@@ -113,8 +113,6 @@ describe("isContactDeviceCurrencySupported", () => {
     ["tron", true],
     ["ethereum_classic", true],
     ["sei_evm", true],
-    ["poa", true],
-    ["gochain", true],
     ["bitcoin", false],
   ])("GIVEN %s THEN it reports %s", (currencyId, isSupported) => {
     expect(
@@ -123,6 +121,8 @@ describe("isContactDeviceCurrencySupported", () => {
   });
 
   it("GIVEN an EVM network without a config chain ID THEN it reports false", () => {
-    expect(isContactDeviceCurrencySupported(ContactCurrencyIdSchema.parse("poa"))).toBe(false);
+    expect(
+      isContactDeviceCurrencySupported(ContactCurrencyIdSchema.parse("ethereum_classic")),
+    ).toBe(false);
   });
 });
