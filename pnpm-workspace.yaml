@@ -257,3 +257,5 @@ catalog:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: react-router@7.18.2
+  - react-router@7.18.2
