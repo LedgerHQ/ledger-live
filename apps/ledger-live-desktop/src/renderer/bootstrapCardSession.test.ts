@@ -77,7 +77,6 @@ describe("bootstrapCardSession", () => {
     await expect(cardSession.get()).resolves.toBeNull();
     expect(dispatch).not.toHaveBeenCalled();
     expect(logger.log).not.toHaveBeenCalled();
-    expect(process.env.CARD_SESSION_BOOTSTRAP).toBeUndefined();
   });
 
   it("should do nothing when PLAYWRIGHT_RUN is on but CARD_SESSION_BOOTSTRAP is empty", async () => {
@@ -105,7 +104,6 @@ describe("bootstrapCardSession", () => {
       "Card session bootstrapped from CARD_SESSION_BOOTSTRAP",
     );
     expect(logger.log).not.toHaveBeenCalledWith(expect.stringContaining(valid.accessToken));
-    expect(process.env.CARD_SESSION_BOOTSTRAP).toBeUndefined();
     expect(getAllEnvs()).not.toHaveProperty("CARD_SESSION_BOOTSTRAP");
   });
 
@@ -122,7 +120,6 @@ describe("bootstrapCardSession", () => {
       "CARD_SESSION_BOOTSTRAP could not be applied: value is not valid JSON",
     );
     expect(logger.error).not.toHaveBeenCalledWith(expect.stringContaining("bare-token"));
-    expect(process.env.CARD_SESSION_BOOTSTRAP).toBeUndefined();
   });
 
   it("should log unknown error when installing the session rejects with a non-Error", async () => {

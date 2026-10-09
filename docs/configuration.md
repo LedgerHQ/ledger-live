@@ -117,12 +117,14 @@ const hostedUi = process.env.CARD_BAANX_HOSTED_UI;
 ```
 
 No `.env` is committed, so a plain `pnpm desktop start` gets no values — keep a default at the
-use site. Only a literal `process.env.X` is substituted; a dynamic lookup such as
-`process.env[name]` or a `for…in` over `process.env` sees nothing.
+use site. Only a literal `process.env.X` gets the `.env` value. A dynamic lookup such as
+`process.env[name]` or a `for…in` over `process.env` reads the runtime environment instead — in
+the renderer, the `globalThis.__LLD_PROCESS_ENV__` snapshot of main's environment plus the
+`BUILD_ENV_NAMES` values — so it never sees a key that only the `.env` file has.
 
 `__BUILD_ENVS__` is the legacy bridge around that: a hand-maintained `BUILD_ENV_NAMES` allowlist in
-the same file, merged into `process.env` at boot by `src/renderer/env.ts`, for the values the app
-still reads through `getEnv`/`useEnv`. Read the literal expression and no allowlist has to learn
+the same file, merged into the renderer environment at boot by `src/renderer/bootstrap/process.ts`,
+for the values the app still reads through `getEnv`/`useEnv`. Read the literal expression and no allowlist has to learn
 your key.
 
 **Mobile** — `apps/ledger-live-mobile/.env.<platform>.<variant>`, selected by `ENVFILE`

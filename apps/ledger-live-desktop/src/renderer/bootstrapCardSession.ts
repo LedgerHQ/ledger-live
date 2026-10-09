@@ -15,12 +15,8 @@ import type { AppDispatch } from "~/state-manager/configureStore";
  * state, so a `userdata` fixture cannot carry it — an env var at launch is the one route that reaches
  * both `cardSession` and the `isSignedIn` flag.
  *
- * **This injects a bearer credential.** Main hands it over once per page load, outside the
- * bootstrap snapshot. Keeping it out of
- * `@shared/env` keeps `getAllEnvs()` — export-log metadata, the env debug UI, Allure
- * `environment.properties` — from serializing it. After the read, the process env is cleared so a
- * later dump of `process.env` is clear of it too. A later launch still receives the value if the
- * parent environment still has it.
+ * **This injects a bearer credential.** Main strips it from its environment at startup and hands it
+ * over once per page load, outside the bootstrap snapshot and `@shared/env`.
  *
  * It runs in a development build, or in any build launched with `PLAYWRIGHT_RUN`. A packaged build
  * therefore honours it too when that variable is set, so exporting `CARD_SESSION_BOOTSTRAP` makes
@@ -34,8 +30,6 @@ import type { AppDispatch } from "~/state-manager/configureStore";
  */
 export async function bootstrapCardSession(dispatch: AppDispatch): Promise<void> {
   const raw = await cardSessionBridge.takeBootstrap();
-  // Still set while nodeIntegration is on.
-  delete process.env.CARD_SESSION_BOOTSTRAP;
 
   const isDev = typeof __DEV__ !== "undefined" && __DEV__;
   if (!isDev && !getEnv("PLAYWRIGHT_RUN")) return;

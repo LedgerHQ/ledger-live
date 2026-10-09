@@ -11,6 +11,7 @@ import { db } from "./db";
 import { deeplink, updater } from "./push";
 import { app, files, power, store } from "./shell";
 import { shell, system } from "./system";
+import { zcash } from "./zcash";
 
 const deepFreeze = <T>(value: T): T => {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
@@ -44,6 +45,7 @@ export function installBridge(): void {
     store,
     shell,
     system,
+    zcash,
     cardSession,
   };
 
