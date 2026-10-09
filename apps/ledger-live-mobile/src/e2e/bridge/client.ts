@@ -49,6 +49,7 @@ import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { setSpeculosDeviceModel } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
+import { initJsThreadLagMonitor, jsThreadLagStore } from "../jsThreadLagMonitor";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -103,6 +104,7 @@ export function init() {
   overrideLedgerSyncEnvironment();
 
   initAppNetworkLogging();
+  initJsThreadLagMonitor();
 
   if (ws) {
     ws.close();
@@ -218,6 +220,8 @@ async function onMessage(event: WebSocketMessageEvent) {
           appLogs: logReport.getLogs(),
           appNetworkLogs: appNetworkLogStore.getNetworkLogs(),
           appNetworkSummary: appNetworkLogStore.getSummary(),
+          jsThreadLag: jsThreadLagStore.getBuckets(),
+          jsThreadLagSummary: jsThreadLagStore.getSummary(),
           webviewNetworkLogs: webviewLogStore.getNetworkLogs(),
           webviewConsoleLogs: webviewLogStore.getConsoleLogs(),
           webviewLoadErrors: webviewLogStore.getLoadErrors(),

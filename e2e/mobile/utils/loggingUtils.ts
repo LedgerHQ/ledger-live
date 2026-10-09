@@ -147,6 +147,8 @@ type ParsedLogsPayload = {
   appLogs?: unknown;
   appNetworkLogs?: unknown[];
   appNetworkSummary?: { total: number; peakInFlight: number; byHost: Record<string, number> };
+  jsThreadLag?: unknown[];
+  jsThreadLagSummary?: unknown;
   webviewNetworkLogs?: unknown[];
   webviewConsoleLogs?: WebviewConsoleEntry[];
   webviewLoadErrors?: unknown[];
@@ -209,6 +211,22 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
       "application/json",
     );
     parsed.appNetworkSummary = undefined;
+  }
+
+  // App-side request durations include time spent waiting for the JS thread; per-second lag
+  // lined up against the network log timestamps tells a slow backend from a saturated JS thread.
+  if (parsed.jsThreadLag?.length) {
+    await allure.attachment(
+      "JS Thread Lag",
+      JSON.stringify(
+        { summary: parsed.jsThreadLagSummary, perSecond: parsed.jsThreadLag },
+        null,
+        2,
+      ),
+      "application/json",
+    );
+    parsed.jsThreadLag = undefined;
+    parsed.jsThreadLagSummary = undefined;
   }
 
   if (parsed.webviewConsoleLogs?.length) {
