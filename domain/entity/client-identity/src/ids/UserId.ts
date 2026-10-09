@@ -30,7 +30,7 @@ export class UserId {
     return this[USER_ID_SYMBOL];
   }
 
-  /** For Segment and analytics display (live-common-setup USER_ID, segment, Developer). Allowlisted in export-rules.json. */
+  /** For Segment and analytics display (segment, Developer). Allowlisted in export-rules.json. */
   exportUserIdForAnalytics(): string {
     return this[USER_ID_SYMBOL];
   }

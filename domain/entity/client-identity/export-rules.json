@@ -7,7 +7,6 @@
     "exportUserIdForPushDevicesService": ["domain/api/push-devices/src/internals/middleware.ts"],
     "exportUserIdForPersistence": ["domain/entity/client-identity/src/persistence.ts"],
     "exportUserIdForAnalytics": [
-      "apps/ledger-live-desktop/src/renderer/live-common-setup.ts",
       "apps/ledger-live-desktop/src/renderer/analytics/segment.ts",
       "apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/index.tsx",
       "apps/ledger-live-mobile/src/analytics/segment.ts",

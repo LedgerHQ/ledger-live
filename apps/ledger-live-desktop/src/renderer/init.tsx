@@ -452,7 +452,7 @@ async function init() {
     });
   }
 
-  registerTransportModules(store);
+  registerTransportModules();
 
   // expose stuff in Windows for DEBUG purpose
   window.ledger = {
