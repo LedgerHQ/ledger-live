@@ -1,9 +1,5 @@
 import { createAction, type UnknownAction } from "@reduxjs/toolkit";
-import {
-  initialState,
-  type CountervaluesSettings,
-  type CounterValuesState,
-} from "@domain/entity-market-countervalues";
+import { initialState, type CounterValuesState } from "@domain/entity-market-countervalues";
 
 // The Redux slice both apps mount at the `countervalues` store key. Its action types are plain
 // strings because listeners outside the slice match them by value.
@@ -18,7 +14,6 @@ export type CountervaluesState = {
     isPolling: boolean;
     triggerLoad: boolean;
   };
-  userSettings: CountervaluesSettings;
 };
 
 export const countervaluesInitialState: CountervaluesState = {
@@ -30,13 +25,6 @@ export const countervaluesInitialState: CountervaluesState = {
   polling: {
     isPolling: true,
     triggerLoad: false,
-  },
-  // dummy values that should be overriden by the context provider
-  userSettings: {
-    trackingPairs: [],
-    autofillGaps: true,
-    refreshRate: 0,
-    marketCapBatchingAfterRank: 0,
   },
 };
 
@@ -50,9 +38,6 @@ export const setCountervaluesState = createAction<CounterValuesState>("COUNTERVA
 export const setCountervaluesStateError = createAction<Error>("COUNTERVALUES_STATE_SET_ERROR");
 export const setCountervaluesStatePending = createAction<boolean>(
   "COUNTERVALUES_STATE_SET_PENDING",
-);
-export const setCountervaluesUserSettings = createAction<CountervaluesSettings>(
-  "COUNTERVALUES_USER_SETTINGS_SET",
 );
 export const wipeCountervalues = createAction("COUNTERVALUES_WIPE");
 
@@ -90,9 +75,6 @@ export function countervaluesReducer(
       },
     };
   }
-  if (setCountervaluesUserSettings.match(action)) {
-    return { ...state, userSettings: action.payload };
-  }
   if (wipeCountervalues.match(action)) {
     return {
       ...state,
@@ -118,7 +100,4 @@ export function countervaluesStatePendingSelector(s: RootState): boolean {
 }
 export function countervaluesStateErrorSelector(s: RootState): Error | null {
   return s.countervalues.countervalues.error;
-}
-export function countervaluesUserSettingsSelector(s: RootState): CountervaluesSettings {
-  return s.countervalues.userSettings;
 }

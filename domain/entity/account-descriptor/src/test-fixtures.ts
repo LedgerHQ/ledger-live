@@ -1,0 +1,4 @@
+export const XPUB =
+  "xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSE1S2G4UrqdKFNvJx3bR7MNfYTc4FXnAFzBVNMcJYHx5ENKnG9WNzh";
+export const ETH_ADDR = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
+export const SOL_ADDR = "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU";

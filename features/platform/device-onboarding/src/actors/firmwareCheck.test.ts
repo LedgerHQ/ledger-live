@@ -50,12 +50,12 @@ describe("firmwareCheck", () => {
     stop();
   });
 
-  it("reads the metadata without the secure channel the app catalogue would need", () => {
+  it("always lists apps through the secure channel, so a device with no seed still answers", () => {
     const fake = createFake();
     const { stop } = start(fake);
 
     expect(fake.executeDeviceAction.mock.calls[0][0].deviceAction.input).toEqual({
-      useSecureChannel: false,
+      useSecureChannel: true,
       forceUpdate: false,
       allowNonOnboardedDevice: true,
     });

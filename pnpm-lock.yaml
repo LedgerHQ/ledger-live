@@ -136,17 +136,17 @@ catalogs:
       specifier: 1.9.1
       version: 1.9.1
     '@ledgerhq/evm-tools':
-      specifier: 1.15.1
-      version: 1.15.1
+      specifier: 2.0.0
+      version: 2.0.0
     '@ledgerhq/hw-ledger-key-ring-protocol':
-      specifier: 0.14.0
-      version: 0.14.0
+      specifier: 1.0.0
+      version: 1.0.0
     '@ledgerhq/hw-transport-mocker':
       specifier: 6.35.0
       version: 6.35.0
     '@ledgerhq/ledger-key-ring-protocol':
-      specifier: 0.24.0
-      version: 0.24.0
+      specifier: 1.0.0
+      version: 1.0.0
     '@ledgerhq/live-config':
       specifier: 3.9.0
       version: 3.9.0
@@ -613,8 +613,8 @@ catalogs:
       specifier: 11.1.0
       version: 11.1.0
     ws:
-      specifier: 8.18.3
-      version: 8.18.3
+      specifier: 8.22.0
+      version: 8.22.0
     xstate:
       specifier: 5.19.2
       version: 5.19.2
@@ -1203,13 +1203,13 @@ importers:
         version: link:../../libs/ethereum-provider
       '@ledgerhq/hw-ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.14.0
+        version: 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -1521,7 +1521,7 @@ importers:
         version: 5.0.1
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       xstate:
         specifier: 'catalog:'
         version: 5.19.2
@@ -2053,7 +2053,7 @@ importers:
         version: link:../../libs/ethereum-provider
       '@ledgerhq/hw-ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.14.0
+        version: 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -2065,7 +2065,7 @@ importers:
         version: link:../../libs/ui/packages/icons
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -2381,9 +2381,6 @@ importers:
       react-native-keychain:
         specifier: 'catalog:'
         version: 10.0.0
-      react-native-linear-gradient:
-        specifier: 2.8.3
-        version: 2.8.3(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       react-native-localize:
         specifier: 2.2.6
         version: 2.2.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -2756,13 +2753,13 @@ importers:
         version: 4.2.0
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   apps/wallet-cli:
     devDependencies:
       '@bunli/core':
         specifier: 0.9.1
-        version: 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+        version: 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
@@ -2822,13 +2819,13 @@ importers:
         version: link:../../libs/ledgerjs/packages/hw-app-exchange
       '@ledgerhq/hw-ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.14.0
+        version: 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.24.0(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -2906,7 +2903,7 @@ importers:
         version: 1.4.2
       bunli:
         specifier: 0.9.1
-        version: 0.9.1(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+        version: 0.9.1(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       debug:
         specifier: 4.4.3
         version: 4.4.3(supports-color@7.2.0)
@@ -3059,10 +3056,10 @@ importers:
         version: link:../../libs/ledgerjs/packages/hw-app-eth
       '@ledgerhq/hw-ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.14.0
+        version: 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -4068,7 +4065,7 @@ importers:
         version: 0.12.0
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     devDependencies:
       '@devtools/protocols':
         specifier: workspace:*
@@ -5090,6 +5087,43 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/entity/account-descriptor:
+    dependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../currency-crypto
+      uuid:
+        specifier: 'catalog:'
+        version: 11.1.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/entity/account-name:
     dependencies:
       '@domain/entity-account':
@@ -5803,7 +5837,7 @@ importers:
         version: 6.36.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -5929,7 +5963,7 @@ importers:
         version: 4.2.0
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   e2e/tooling/baanx-test-client:
     dependencies:
@@ -10631,7 +10665,7 @@ importers:
         version: link:../../types-live
       '@walletconnect/sign-client':
         specifier: 2.23.4
-        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
       '@walletconnect/types':
         specifier: 2.23.0
         version: 2.23.0
@@ -14006,7 +14040,7 @@ importers:
         version: 1.20.0
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -14220,7 +14254,7 @@ importers:
         version: 1.9.1(react@19.1.4)
       '@ledgerhq/evm-tools':
         specifier: 'catalog:'
-        version: 1.15.1
+        version: 2.0.0
       '@ledgerhq/hw-app-algorand':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-algorand
@@ -14469,7 +14503,7 @@ importers:
         version: 2.2.4
       isomorphic-ws:
         specifier: 'catalog:'
-        version: 5.0.0(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+        version: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       jotai:
         specifier: 2.17.0
         version: 2.17.0(@babel/core@7.28.5)(@babel/template@7.29.7)(@types/react@19.0.14)(react@19.1.4)
@@ -14680,7 +14714,7 @@ importers:
         version: 11.1.0
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   libs/ledger-services/cal:
     dependencies:
@@ -15257,7 +15291,7 @@ importers:
         version: 1.9.1(react@19.1.4)
       '@ledgerhq/evm-tools':
         specifier: 'catalog:'
-        version: 1.15.1
+        version: 2.0.0
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
@@ -16060,7 +16094,7 @@ importers:
         version: 7.8.2
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-dmk-mobile:
     dependencies:
@@ -16151,7 +16185,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   libs/live-dmk-shared:
     dependencies:
@@ -16236,7 +16270,7 @@ importers:
         version: 7.8.2
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-dmk-speculos:
     dependencies:
@@ -16300,7 +16334,7 @@ importers:
         version: 7.8.2
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-e2e-shared:
     dependencies:
@@ -16327,7 +16361,7 @@ importers:
         version: 8.18.0
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
-        version: 0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -16526,7 +16560,7 @@ importers:
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-signer-canton:
     dependencies:
@@ -16807,7 +16841,7 @@ importers:
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-signer-hyperliquid:
     dependencies:
@@ -17201,7 +17235,7 @@ importers:
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-wallet:
     dependencies:
@@ -17330,7 +17364,7 @@ importers:
     dependencies:
       '@ledgerhq/evm-tools':
         specifier: 'catalog:'
-        version: 1.15.1
+        version: 2.0.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -18340,7 +18374,7 @@ importers:
         version: 1.5.1
       isomorphic-ws:
         specifier: 'catalog:'
-        version: 5.0.0(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6))
+        version: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
       pako:
         specifier: ^2.0.4
         version: 2.1.0
@@ -18349,7 +18383,7 @@ importers:
         version: 7.8.2
       ws:
         specifier: 'catalog:'
-        version: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -23158,14 +23192,14 @@ packages:
   '@ledgerhq/errors@6.37.0':
     resolution: {integrity: sha512-T5yiKI5UX7ugeocdTF3TUsCIN2BH41Bio4ZeN410YFjFOf3es08n/5JyMzzKwzRgP0blG3HfBf7s7vJKqCSAeg==}
 
-  '@ledgerhq/evm-tools@1.15.1':
-    resolution: {integrity: sha512-kpZEeBm9ektX9uyXovq7bMahpw6ET4/CGGm1S+H24WGWeZYkic0XxBYPZ6TNmHbwSJB0x3pTKT5Z0nH9TL/dcg==}
+  '@ledgerhq/evm-tools@2.0.0':
+    resolution: {integrity: sha512-wkZQxYduOFNwnNloZQ35Dk8oKBVQ1ajNX09wazEVeLxzfWTDMvZwWWtaKK0WUdX53/OX4l2wr/5vaNCJs+IYow==}
 
   '@ledgerhq/hw-bolos@6.35.1':
     resolution: {integrity: sha512-+osQFmZAKv1JOMZPiYU3G8wgW/JqxA0HCe/Y/O+b72TyH0SOyiXybdyIc1//We6AUyrJ2CiG8cev3vPYfjsjwQ==}
 
-  '@ledgerhq/hw-ledger-key-ring-protocol@0.14.0':
-    resolution: {integrity: sha512-HbOIfHK9sBl+GWfqLzjKEoGgWXua1oycQuL7fW4qVtAJKmBdGoLHCy4uVwqs5HSfRTbDLLRFedF6NfuZykG5kw==}
+  '@ledgerhq/hw-ledger-key-ring-protocol@1.0.0':
+    resolution: {integrity: sha512-iEeKLKMIzKDQ/BhActeUSB/jmzMuMShrCQ3wpxo2tXLW90uV4VLswQlgNkf5SRfFowxRXhcBDIaZg6aiXaI7BQ==}
 
   '@ledgerhq/hw-transport-mocker@6.35.0':
     resolution: {integrity: sha512-ib6CKTYh+fbwahgAuKUrVvl9zHSf9rfLcnalcWQvlY9A4NQ4dkz0P+QlLaR8GeHVNPg29nhzpCQN7+hRlzSU+g==}
@@ -23191,8 +23225,8 @@ packages:
   '@ledgerhq/ledger-cal-service@1.15.1':
     resolution: {integrity: sha512-fmg5kHzIdm1xcWpquWwf86o9QID4rtBItvD7ztSCUpAyCs4cRaOeu6/jV3pEAdjt14BFDIKSQBFZtQ9hCFAvCQ==}
 
-  '@ledgerhq/ledger-key-ring-protocol@0.24.0':
-    resolution: {integrity: sha512-vP7REx0ZaxiUJ2MnYohZjm9vVND2HLGZf8IAf1IxF9jCuod/15rUiIo5wnrdC2wRzVtjDwEm2rpQ+7IQ0bGaXA==}
+  '@ledgerhq/ledger-key-ring-protocol@1.0.0':
+    resolution: {integrity: sha512-4N+AZvvsljNytjFq+3/eMW0SqYg0zw+xUx1NXVuEqIPM9zcEmvBqELQpt5+EhXMnSFZj317MifStreYMCKU+Cg==}
 
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
@@ -23518,6 +23552,10 @@ packages:
 
   '@noble/ciphers@2.2.0':
     resolution: {integrity: sha512-Z6pjIZ/8IJcCGzb2S/0Px5J81yij85xASuk1teLNeg75bfT07MV3a/O2Mtn1I2se43k3lkVEcFaR10N4cgQcZA==}
+    engines: {node: '>= 20.19.0'}
+
+  '@noble/ciphers@2.4.0':
+    resolution: {integrity: sha512-AnjFn0Jv92laAkvMrghlFZq4qQCIN/4DxFV/eooqtC2YTjB7kBeLMS2T9KJX4Dn+ZVXLOwK0lSgqDtx9gvxtiw==}
     engines: {node: '>= 20.19.0'}
 
   '@noble/curves@1.2.0':
@@ -29286,6 +29324,10 @@ packages:
   bip32@4.0.0:
     resolution: {integrity: sha512-aOGy88DDlVUhspIXJN+dVEtclhIsfAUppD43V0j40cPTld3pv/0X/MlrZSZ6jowIaQQzFwP8M6rFU2z2mVYjDQ==}
     engines: {node: '>=6.0.0'}
+
+  bip32@5.0.1:
+    resolution: {integrity: sha512-PWlHIAgYCfVhwqNpZyeakHXuLAGyN6rEQZnhxHxKI3BoFJRVWLl26455fhRlHsmbYcV986HqtPnt33Edu5sTCw==}
+    engines: {node: '>=18.0.0'}
 
   bip39-light@1.0.7:
     resolution: {integrity: sha512-WDTmLRQUsiioBdTs9BmSEmkJza+8xfJmptsNJjxnoq3EydSa/ZBXT6rm66KoT3PJIRYMnhSKNR7S9YL1l7R40Q==}
@@ -35705,12 +35747,6 @@ packages:
       react: 19.1.4
       react-native: '>=0.60.0-rc.0 <1.0.x'
 
-  react-native-linear-gradient@2.8.3:
-    resolution: {integrity: sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==}
-    peerDependencies:
-      react: 19.1.4
-      react-native: '*'
-
   react-native-localize@2.2.6:
     resolution: {integrity: sha512-EZETlC1ZlW/4g6xfsNCwAkAw5BDL2A6zk/08JjFR/GRGxYuKRD7iP1hHn1+h6DEu+xROjPpoNeXfMER2vkTVIQ==}
     peerDependencies:
@@ -38370,8 +38406,8 @@ packages:
       utf-8-validate:
         optional: true
 
-  ws@8.21.0:
-    resolution: {integrity: sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g==}
+  ws@8.22.0:
+    resolution: {integrity: sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -40874,9 +40910,9 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
 
-  '@bunli/core@0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
+  '@bunli/core@0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
     dependencies:
-      '@bunli/runtime': 0.3.2(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@bunli/runtime': 0.3.2(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@bunli/utils': 0.6.0
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
@@ -40895,11 +40931,11 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/generator@0.6.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
+  '@bunli/generator@0.6.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
     dependencies:
       '@babel/parser': 7.29.8
       '@babel/traverse': 7.29.8
-      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       better-result: 2.8.2
       debug: 4.4.3(supports-color@7.2.0)
       zod: 4.4.3
@@ -40913,9 +40949,9 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/plugin-completions@0.3.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
+  '@bunli/plugin-completions@0.3.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
     dependencies:
-      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       better-result: 2.8.2
     transitivePeerDependencies:
       - bun
@@ -40927,10 +40963,10 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/runtime@0.3.2(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
+  '@bunli/runtime@0.3.2(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
     dependencies:
       '@opentui/core': 0.1.97(@typescript/typescript6@6.0.2)
-      '@opentui/react': 0.1.97(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@opentui/react': 0.1.97(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       better-result: 2.8.2
@@ -40946,11 +40982,11 @@ snapshots:
       - web-tree-sitter
       - ws
 
-  '@bunli/tui@0.6.0(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
+  '@bunli/tui@0.6.0(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
     dependencies:
-      '@bunli/runtime': 0.3.2(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@bunli/runtime': 0.3.2(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@opentui/core': 0.1.97(@typescript/typescript6@6.0.2)
-      '@opentui/react': 0.1.97(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@opentui/react': 0.1.97(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
       debug: 4.4.3(supports-color@7.2.0)
@@ -40983,7 +41019,7 @@ snapshots:
       open: 10.2.0
       pretty-format: 28.1.3
       source-map: 0.7.6
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -42421,7 +42457,7 @@ snapshots:
       terminal-link: 2.1.1
       undici: 6.28.1
       wrap-ansi: 7.0.0
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     optionalDependencies:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -44526,13 +44562,13 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
       inversify: 7.5.1(reflect-metadata@0.2.2)
-      isomorphic-ws: 5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
       semver: 7.7.2
       uuid: 11.0.3
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       xstate: 5.19.2
     transitivePeerDependencies:
       - bufferutil
@@ -44543,13 +44579,13 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
       inversify: 7.5.1(reflect-metadata@0.2.2)
-      isomorphic-ws: 5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
+      isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
       semver: 7.7.2
       uuid: 11.0.3
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       xstate: 5.19.2
     transitivePeerDependencies:
       - bufferutil
@@ -44815,13 +44851,13 @@ snapshots:
 
   '@ledgerhq/errors@6.37.0': {}
 
-  '@ledgerhq/evm-tools@1.15.1':
+  '@ledgerhq/evm-tools@2.0.0':
     dependencies:
       '@ethersproject/constants': 5.8.0
       '@ethersproject/hash': 5.8.0
       '@ledgerhq/live-env': 4.1.0
+      '@noble/hashes': 2.4.0
       axios: 1.20.0
-      crypto-js: 4.2.0
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -44830,13 +44866,15 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': 6.36.0
 
-  '@ledgerhq/hw-ledger-key-ring-protocol@0.14.0':
+  '@ledgerhq/hw-ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)':
     dependencies:
       '@ledgerhq/hw-transport': 6.36.0
-      '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-      bip32: 4.0.0
+      '@noble/ciphers': 2.4.0
+      '@noble/curves': 2.4.0
+      '@noble/hashes': 2.4.0
+      bip32: 5.0.1(@typescript/typescript6@6.0.2)
+    transitivePeerDependencies:
+      - typescript
 
   '@ledgerhq/hw-transport-mocker@6.35.0':
     dependencies:
@@ -44868,55 +44906,58 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@ledgerhq/ledger-key-ring-protocol@0.24.0(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@ledgerhq/auth': 0.1.0
-      '@ledgerhq/hw-ledger-key-ring-protocol': 0.14.0
+      '@ledgerhq/hw-ledger-key-ring-protocol': 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport': 6.36.0
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
       '@ledgerhq/logs': 6.19.0
       base64-js: 1.5.1
-      isomorphic-ws: 5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       rxjs: 7.8.2
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       zod: 4.4.3
     transitivePeerDependencies:
       - axios
       - bufferutil
+      - typescript
       - utf-8-validate
 
-  '@ledgerhq/ledger-key-ring-protocol@0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@ledgerhq/auth': 0.1.0
-      '@ledgerhq/hw-ledger-key-ring-protocol': 0.14.0
+      '@ledgerhq/hw-ledger-key-ring-protocol': 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport': 6.36.0
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
       '@ledgerhq/logs': 6.19.0
       base64-js: 1.5.1
-      isomorphic-ws: 5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       rxjs: 7.8.2
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       zod: 4.4.3
     transitivePeerDependencies:
       - axios
       - bufferutil
+      - typescript
       - utf-8-validate
 
-  '@ledgerhq/ledger-key-ring-protocol@0.24.0(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
+  '@ledgerhq/ledger-key-ring-protocol@1.0.0(@typescript/typescript6@6.0.2)(axios@1.20.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
       '@ledgerhq/auth': 0.1.0
-      '@ledgerhq/hw-ledger-key-ring-protocol': 0.14.0
+      '@ledgerhq/hw-ledger-key-ring-protocol': 1.0.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport': 6.36.0
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
       '@ledgerhq/logs': 6.19.0
       base64-js: 1.5.1
-      isomorphic-ws: 5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
+      isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
       rxjs: 7.8.2
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       zod: 4.4.3
     transitivePeerDependencies:
       - axios
       - bufferutil
+      - typescript
       - utf-8-validate
 
   '@ledgerhq/live-app-sdk@0.8.2':
@@ -45133,7 +45174,7 @@ snapshots:
       '@ledgerhq/wallet-api-client': 1.16.0(@ton/crypto@3.3.0)(encoding@0.1.13)
       '@ledgerhq/wallet-api-core': 2.1.0(@ton/crypto@3.3.0)(encoding@0.1.13)
       '@ledgerhq/wallet-api-server': 3.5.0(@ton/crypto@3.3.0)(encoding@0.1.13)
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - '@ton/crypto'
       - bufferutil
@@ -45437,6 +45478,8 @@ snapshots:
   '@noble/ciphers@1.3.0': {}
 
   '@noble/ciphers@2.2.0': {}
+
+  '@noble/ciphers@2.4.0': {}
 
   '@noble/curves@1.2.0':
     dependencies:
@@ -45821,13 +45864,13 @@ snapshots:
       - stage-js
       - typescript
 
-  '@opentui/react@0.1.97(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
+  '@opentui/react@0.1.97(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
     dependencies:
       '@opentui/core': 0.1.97(@typescript/typescript6@6.0.2)
       react: 19.1.4
       react-devtools-core: 6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       react-reconciler: 0.32.0(react@19.1.4)
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - stage-js
       - typescript
@@ -46504,7 +46547,7 @@ snapshots:
     dependencies:
       '@polkadot/x-global': 14.0.1
       tslib: 2.6.2
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -47634,7 +47677,7 @@ snapshots:
       express: 5.2.1
       semver: 7.8.1
       tslib: 2.6.2
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - '@date-fns/tz'
       - '@types/react'
@@ -51215,7 +51258,7 @@ snapshots:
       abitype: 1.2.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       ethers: 6.15.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       fast-json-stable-stringify: 2.1.0
-      viem: 2.37.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      viem: 2.37.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -51245,7 +51288,7 @@ snapshots:
 
   '@vscode/sudo-prompt@9.3.1': {}
 
-  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-provider': 1.0.14
@@ -51259,7 +51302,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       '@walletconnect/window-getters': 1.0.1
       es-toolkit: 1.44.0
       events: 3.3.0
@@ -51382,16 +51425,16 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
     dependencies:
-      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 3.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -51480,7 +51523,7 @@ snapshots:
       - ioredis
       - uploadthing
 
-  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)':
+  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)':
     dependencies:
       '@msgpack/msgpack': 3.1.3
       '@noble/ciphers': 1.3.0
@@ -51500,7 +51543,7 @@ snapshots:
       blakejs: 1.2.1
       bs58: 6.0.0
       detect-browser: 5.3.0
-      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@3.25.76)
+      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
       uint8arrays: 3.1.1
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -51579,7 +51622,7 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
       eventemitter3: 5.0.1
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -51588,7 +51631,7 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
       eventemitter3: 5.0.1
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -52475,6 +52518,16 @@ snapshots:
       typeforce: 1.18.0
       wif: 2.0.6
 
+  bip32@5.0.1(@typescript/typescript6@6.0.2):
+    dependencies:
+      '@noble/hashes': 1.8.0
+      '@scure/base': 1.2.6
+      uint8array-tools: 0.0.8
+      valibot: 1.4.2(@typescript/typescript6@6.0.2)
+      wif: 5.0.0
+    transitivePeerDependencies:
+      - typescript
+
   bip39-light@1.0.7:
     dependencies:
       create-hash: 1.2.0
@@ -52827,12 +52880,12 @@ snapshots:
     dependencies:
       run-applescript: 7.0.0
 
-  bunli@0.9.1(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
+  bunli@0.9.1(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
     dependencies:
-      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@bunli/generator': 0.6.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@bunli/plugin-completions': 0.3.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@bunli/tui': 0.6.0(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@bunli/generator': 0.6.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@bunli/plugin-completions': 0.3.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@bunli/tui': 0.6.0(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@bunli/utils': 0.6.0
       better-result: 2.8.2
       zod: 4.4.3
@@ -56127,7 +56180,7 @@ snapshots:
       utf-8-validate: 6.0.6
       utf8: 3.0.0
       uuid: 9.0.1
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   iconv-corefoundation@1.1.7:
     dependencies:
@@ -56485,29 +56538,17 @@ snapshots:
     dependencies:
       ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
-  isomorphic-ws@5.0.0(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
+  isomorphic-ws@5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
     dependencies:
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
-  isomorphic-ws@5.0.0(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)):
+  isomorphic-ws@5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)):
     dependencies:
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-
-  isomorphic-ws@5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
-    dependencies:
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-
-  isomorphic-ws@5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)):
-    dependencies:
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-
-  isows@1.0.7(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
-    dependencies:
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   isows@1.0.7(ws@8.18.3):
     dependencies:
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   isstream@0.1.2: {}
 
@@ -57390,7 +57431,7 @@ snapshots:
       whatwg-encoding: 3.1.1
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.2.0
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       xml-name-validator: 5.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -57417,7 +57458,7 @@ snapshots:
       whatwg-encoding: 3.1.1
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.2.0
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       xml-name-validator: 5.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -60772,11 +60813,6 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
-  react-native-linear-gradient@2.8.3(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
-    dependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
-
   react-native-localize@2.2.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4):
     dependencies:
       react: 19.1.4
@@ -61483,7 +61519,7 @@ snapshots:
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       eventemitter3: 5.0.1
       uuid: 8.3.2
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
@@ -61854,7 +61890,7 @@ snapshots:
 
   smoldot@2.0.26(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     dependencies:
-      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -63272,7 +63308,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.1.0(@typescript/typescript6@6.0.2)(zod@4.4.3)
-      isows: 1.0.7(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      isows: 1.0.7(ws@8.18.3)
       ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
       ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     optionalDependencies:
@@ -63291,24 +63327,7 @@ snapshots:
       abitype: 1.1.0(@typescript/typescript6@6.0.2)(zod@3.25.76)
       isows: 1.0.7(ws@8.18.3)
       ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@3.25.76)
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-    optionalDependencies:
-      typescript: '@typescript/typescript6@6.0.2'
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-      - zod
-
-  viem@2.37.4(@typescript/typescript6@6.0.2)(zod@4.4.3):
-    dependencies:
-      '@noble/curves': 1.9.1
-      '@noble/hashes': 1.8.0
-      '@scure/bip32': 1.7.0
-      '@scure/bip39': 1.6.0
-      abitype: 1.1.0(@typescript/typescript6@6.0.2)(zod@4.4.3)
-      isows: 1.0.7(ws@8.18.3)
-      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
-      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
     transitivePeerDependencies:
@@ -63581,22 +63600,17 @@ snapshots:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
 
-  ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@6.0.6):
-    optionalDependencies:
-      bufferutil: 4.1.0
-      utf-8-validate: 6.0.6
-
   ws@8.20.1(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
 
-  ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10):
+  ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
 
-  ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
+  ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 6.0.6

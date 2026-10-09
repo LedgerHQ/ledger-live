@@ -34,7 +34,6 @@ import {
   useCountervaluesState,
   useCountervaluesStateError,
   useCountervaluesStatePending,
-  useCountervaluesUserSettings,
 } from "../reducers/countervalues";
 
 /**
@@ -88,7 +87,9 @@ export function useCountervaluesBridge() {
       useState: useCountervaluesState,
       useStateError: useCountervaluesStateError,
       useStatePending: useCountervaluesStatePending,
-      useUserSettings: useCountervaluesUserSettings,
+      // The hook itself, not a value: settings changes then leave the bridge, and so the context,
+      // untouched.
+      useUserSettings: useCalculateCountervaluesUserSettings,
     }),
     [dispatch, rates],
   );
@@ -98,7 +99,6 @@ export function useCountervaluesBridge() {
  * Call side effects outside of the primary render tree, avoiding costly child re-renders
  */
 function Effect() {
-  useCalculateCountervaluesUserSettings();
   useCacheManager();
   usePollingManager();
 
@@ -123,7 +123,7 @@ export function CountervaluesBridgedProvider({
 }
 
 function useCacheManager() {
-  const userSettings = useCountervaluesUserSettings();
+  const userSettings = useCalculateCountervaluesUserSettings();
   const state = useCountervaluesState();
   const lastStateRef = useRef(state);
 

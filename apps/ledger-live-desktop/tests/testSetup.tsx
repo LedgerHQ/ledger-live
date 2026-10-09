@@ -8,7 +8,10 @@ import {
 } from "@shared/feature-flags";
 import { CountervaluesProvider } from "@features/platform-market-countervalues";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
-import { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
+import type {
+  CounterValuesStateRaw,
+  CountervaluesSettings,
+} from "@domain/entity-market-countervalues";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RenderHookResult,
@@ -17,7 +20,7 @@ import {
   act,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React from "react";
+import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { I18nProvider } from "@shared/i18n";
 import { Provider } from "react-redux";
@@ -105,6 +108,18 @@ export function withFlagOverrides(flags: LooseFlagOverrides): DeepPartial<State>
   };
 }
 
+// No tracking pairs and no polling: tests seed the rates they assert on.
+const countervaluesTestUserSettings: CountervaluesSettings = {
+  trackingPairs: [],
+  autofillGaps: true,
+  refreshRate: 0,
+  marketCapBatchingAfterRank: 0,
+};
+
+function useCountervaluesTestUserSettings(): CountervaluesSettings {
+  return countervaluesTestUserSettings;
+}
+
 function CountervaluesProviders({
   children,
   savedState,
@@ -112,7 +127,11 @@ function CountervaluesProviders({
   children: React.ReactNode;
   savedState?: CounterValuesStateRaw | undefined;
 }) {
-  const bridge = useCountervaluesBridge();
+  const appBridge = useCountervaluesBridge();
+  const bridge = useMemo(
+    () => ({ ...appBridge, useUserSettings: useCountervaluesTestUserSettings }),
+    [appBridge],
+  );
 
   return (
     <CountervaluesProvider bridge={bridge} savedState={savedState}>
