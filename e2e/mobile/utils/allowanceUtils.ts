@@ -1,6 +1,7 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { allure } from "jest-allure2-reporter/api";
 import { withTemporarySpeculos } from "@e2e/utils/speculosUtils";
+import { escapeHtml } from "@e2e/helpers/allure/allure-helper";
 
 /**
  * Revokes `account`'s ERC-20 allowance for `spender`, then asserts it settled at zero.
@@ -12,7 +13,9 @@ export async function revokeAllowance(account: TokenAccount, spender: string, la
 
   await withTemporarySpeculos(account.currency.speculosApp.name, async () => {
     const result = await revokeTokenCommand(account, spender);
-    allure.description(`Token revoke result for ${label}:\n\n ${result}`);
+    allure.descriptionHtml(
+      `<p>Token revoke result for ${escapeHtml(label)}:</p><pre>${escapeHtml(result)}</pre>`,
+    );
   });
 
   const allowance = await getTokenAllowanceCommand(account, spender);

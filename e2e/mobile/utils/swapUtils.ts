@@ -6,6 +6,7 @@ import BigNumber from "bignumber.js";
 import { withTemporarySpeculos } from "@e2e/utils/speculosUtils";
 import { revokeAllowance } from "@e2e/utils/allowanceUtils";
 import { QUOTES_FETCH_TIMEOUT } from "@e2e/utils/constants";
+import { escapeHtml } from "@e2e/helpers/allure/allure-helper";
 
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
@@ -82,7 +83,9 @@ export async function ensureTokenApproval(
       provider.contractAddress!,
       new BigNumber(minAmount).times(12).div(10).toFixed(),
     );
-    allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
+    allure.descriptionHtml(
+      `<p>Token approval result for ${escapeHtml(provider.uiName)}:</p><pre>${escapeHtml(result)}</pre>`,
+    );
   });
 }
 

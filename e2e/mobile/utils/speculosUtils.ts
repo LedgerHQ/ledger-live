@@ -23,6 +23,7 @@ import path from "path";
 
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { getCapturedStderr } from "@e2e/utils/loggingUtils";
+import { escapeHtml } from "@e2e/helpers/allure/allure-helper";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 const SPECULOS_STDOUT_MARKER = "--- Speculos stdout ---";
@@ -164,7 +165,7 @@ export async function launchSpeculos(appName: string) {
   if (device.dependencies?.length)
     info += `\nDependencies: ${device.dependencies?.map(dep => dep.name + " (" + dep.appVersion + ")").join(", ") || ""}`;
 
-  allure.description("SPECULOS\n" + info);
+  allure.descriptionHtml(`<p>SPECULOS<br>${escapeHtml(info).replaceAll("\n", "<br>")}</p>`);
 
   return device;
 }
