@@ -202,7 +202,6 @@ export default class SwapLiveAppPage {
     });
     await waitForWebElementToBeEnabled(this.executeSwapButtonStepApproval);
     await tapWebElementByTestId(this.executeSwapButtonStepApproval);
-    await waitForElement(app.send.summaryRecipient());
   }
 
   @Step("Get minimum amount for swap")
