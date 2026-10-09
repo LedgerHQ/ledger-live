@@ -221,7 +221,7 @@ export function createCountervaluesMiddleware<S>(
     function persist(s: Session) {
       if (!config.persist) return;
       const state = countervaluesStateSelector(getState());
-      if (!hasNewCountervaluesToExport(s.lastPersisted, state)) return;
+      if (state === s.lastPersisted || !hasNewCountervaluesToExport(s.lastPersisted, state)) return;
       config.persist(exportCountervalues(state, settingsOf(s).trackingPairs));
       s.lastPersisted = state;
     }
@@ -259,7 +259,8 @@ export function createCountervaluesMiddleware<S>(
       // The first settings load right away; later ones are debounced.
       s.lastFiltered = filteredSettingsOf(s);
       dispatch(setCountervaluesPollingTriggerLoad(true));
-      restore(s, settingsOf(s));
+      // A snapshot that cannot be restored is skipped: the loop still runs and loads from scratch.
+      guarded("restore", () => restore(s, settingsOf(s)));
       syncPollingTimer(s);
       s.unsubscribeAppEvents = config.subscribeAppEvents?.(controls);
       schedulePass();
