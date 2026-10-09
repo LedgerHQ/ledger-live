@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import { CHAIN_ID } from "@ledgerhq/coin-evm/config";
 import { isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking";
 import evmBridge, {
   computeIntentType,
@@ -286,6 +287,11 @@ describe("evm bridge", () => {
     });
 
     it("exposes stakingSupported only for staking-configured currencies", () => {
+      // The staking registry is keyed on the chain id, read from the currency config.
+      LiveConfig.setConfig({
+        config_currency_ethereum: { type: "object", default: { chainId: CHAIN_ID.ETHEREUM } },
+        config_currency_sei_evm: { type: "object", default: { chainId: CHAIN_ID.SEI_EVM } },
+      } as never);
       expect(evmBridge(ethereum)).not.toHaveProperty("stakingSupported");
       expect(evmBridge(seiEvm).stakingSupported).toBe(true);
     });
