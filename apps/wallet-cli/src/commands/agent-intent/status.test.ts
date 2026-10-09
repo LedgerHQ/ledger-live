@@ -154,7 +154,7 @@ describe("agent-intent status", () => {
 
       await runStatus({ output: "json" });
       expect(jsonResult()).toMatchObject({
-        terminal: ["success", "failed", "rejected", "expired"].includes(status),
+        terminal: ["success", "failed", "rejected", "cancelled", "expired"].includes(status),
         intent: { status },
       });
 

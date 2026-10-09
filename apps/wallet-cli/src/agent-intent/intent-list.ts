@@ -52,6 +52,7 @@ const TERMINAL_STATUSES: ReadonlySet<AgentIntentStatus> = new Set([
   "success",
   "failed",
   "rejected",
+  "cancelled",
   "expired",
 ]);
 

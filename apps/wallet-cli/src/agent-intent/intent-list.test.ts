@@ -7,12 +7,12 @@ describe("isTerminalIntentStatus", () => {
     ["success", true],
     ["failed", true],
     ["rejected", true],
+    ["cancelled", true],
     ["expired", true],
     ["created", false],
     ["crafted", false],
     ["signed", false],
     ["broadcast", false],
-    ["cancelled", false],
     ["archived", null],
   ] as const)("%s is %p", (status, expected) => {
     expect(isTerminalIntentStatus(status)).toBe(expected);
