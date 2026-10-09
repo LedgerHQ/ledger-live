@@ -1,15 +1,17 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
+import { activeHidDeviceSessionSubject } from "@ledgerhq/live-dmk-mobile";
+import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
+import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
+import { useDeviceOnboardingExit } from "../hooks/useDeviceOnboardingExit";
 import { createTestDevice, knownStax } from "../testing/testDevice";
-import { useDeviceOnboarding } from "./useDeviceOnboarding";
-import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 
-jest.mock("./useDeviceOnboardingExit", () => ({
+jest.mock("../hooks/useDeviceOnboardingExit", () => ({
   useDeviceOnboardingExit: jest.fn(),
 }));
 
-jest.mock("./useFirmwareUpdateHandover", () => ({
+jest.mock("../hooks/useFirmwareUpdateHandover", () => ({
   useFirmwareUpdateHandover: jest.fn(),
 }));
 
@@ -18,6 +20,8 @@ const exitHook = jest.mocked(useDeviceOnboardingExit);
 describe("useDeviceOnboarding", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    activeDeviceSessionSubject.next(null);
+    activeHidDeviceSessionSubject.next(null);
   });
 
   // A lost Bluetooth connection must bring Connect back.
@@ -35,6 +39,43 @@ describe("useDeviceOnboarding", () => {
     expect(result.current.status).toBe("running");
     expect(result.current.state).toBe("awaitingSession");
     expect(canSend(result, "SESSION_READY")).toBe(false);
+  });
+
+  // The machine can report the lost connection itself, not only the session watch.
+  it("hides the device when the machine reports a lost connection", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    act(() => result.current.send({ type: "TRANSPORT_LOST" }));
+
+    expect(result.current.device).toBeNull();
+    expect(result.current.status).toBe("running");
+    expect(result.current.state).toBe("awaitingSession");
+  });
+
+  // The device id can change between connections (for example a new Bluetooth address).
+  // The next screen must get the id of the last connection.
+  it("passes the last connection's device when the id changes on reconnect", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    act(() => device.unplug());
+    device.setSession("session-2");
+    device.setDeviceId("device-id-2");
+    await connectStax(result, device);
+    await quit(result);
+
+    expect(exitHook).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        device: expect.objectContaining({ deviceId: "device-id-2", wired: false }),
+      }),
+    );
   });
 
   // The watch must start before SESSION_READY.

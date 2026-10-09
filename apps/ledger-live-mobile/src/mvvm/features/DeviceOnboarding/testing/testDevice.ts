@@ -1,20 +1,14 @@
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { DeviceStatus } from "@ledgerhq/device-management-kit";
-import { createDeviceManagementKit } from "../../../../../../../libs/device-onboarding/src/tests/createDeviceManagementKit";
 import {
+  createDeviceManagementKit,
   createSessionStream,
   createTestStream,
   type SessionStream,
-} from "../../../../../../../libs/device-onboarding/src/tests/testStream";
-import {
-  devices,
-  knownStax,
-  OsSlot,
-  type OnboardingDevice,
-  type OsSlot as OsSlotName,
-} from "./deviceClass";
+} from "@ledgerhq/device-onboarding/testing";
+import { devices, OsSlot, type OnboardingDevice, type OsSlot as OsSlotName } from "./deviceClass";
 
-export { knownStax };
+export { knownStax } from "./deviceClass";
 
 export type TestDevice = {
   dmk: DeviceManagementKit;
@@ -24,6 +18,7 @@ export type TestDevice = {
   latest: string;
   sessionId: string;
   setSession(sessionId: string): void;
+  setDeviceId(deviceId: string): void;
   show(): void;
   unplug(sessionId?: string): void;
   failRead(): void;
@@ -38,14 +33,15 @@ export function createTestDevice(
   const foundDevices = createTestStream<DiscoveredDevice[]>({ current: [] });
   const sessions = new Map<string, SessionStream>();
   let sessionId = "session-1";
+  let deviceId = "device-id";
   let readFails = false;
 
   const dmk = createDeviceManagementKit({
     listConnectedDevices: () => [],
     listenToAvailableDevices: () => foundDevices.events,
-    connect: async () => sessionId,
+    connect: () => Promise.resolve(sessionId),
     getConnectedDevice: ({ sessionId: id }) => ({
-      id: "device-id",
+      id: deviceId,
       name: model.name,
       type: model.wired ? "USB" : "BLE",
       sessionId: id,
@@ -69,6 +65,9 @@ export function createTestDevice(
     setSession(nextId: string) {
       sessionId = nextId;
     },
+    setDeviceId(nextId: string) {
+      deviceId = nextId;
+    },
     show() {
       foundDevices.push([foundDevice(model)]);
     },
@@ -85,7 +84,7 @@ export function createTestDevice(
 
   function foundDevice(device: OnboardingDevice): DiscoveredDevice {
     return {
-      id: "device-id",
+      id: deviceId,
       name: device.name,
       transport: device.transport,
       deviceModel: {

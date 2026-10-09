@@ -128,7 +128,7 @@ export const devices = {
     LedgerDeviceModelId.nanoSP,
     cloudVersion.nanoSP,
     nanoFloor(DeviceModelId.NANO_SP),
-    false,
+    true,
   ),
 };
 
