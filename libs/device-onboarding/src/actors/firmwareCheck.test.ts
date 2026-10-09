@@ -27,17 +27,19 @@ const availableUpdate = {
 const catalogueUnreachable = { _tag: "FetchError" } as GetDeviceMetadataDAError;
 
 describe("mapFirmwareMetadata", () => {
-  it("reports an available update", () => {
-    expect(mapFirmwareMetadata(metadata(availableUpdate))).toEqual({
+  it("reports an available update with the full metadata", () => {
+    const reported = metadata(availableUpdate);
+    expect(mapFirmwareMetadata(reported)).toEqual({
       type: "FIRMWARE_UPDATE_AVAILABLE",
-      output: { ...installed, update: availableUpdate },
+      output: reported,
     });
   });
 
-  it("reports a device already up to date", () => {
-    expect(mapFirmwareMetadata(metadata(undefined))).toEqual({
+  it("reports a device already up to date with the full metadata", () => {
+    const reported = metadata(undefined);
+    expect(mapFirmwareMetadata(reported)).toEqual({
       type: "FIRMWARE_UP_TO_DATE",
-      output: installed,
+      output: reported,
     });
   });
 });
@@ -76,7 +78,7 @@ describe("firmwareCheck", () => {
     expect(received).toEqual([
       {
         type: "FIRMWARE_UPDATE_AVAILABLE",
-        output: { ...installed, update: availableUpdate },
+        output: metadata(availableUpdate),
       },
     ]);
     stop();
@@ -89,7 +91,7 @@ describe("firmwareCheck", () => {
     complete(fake, undefined);
     await settle();
 
-    expect(received).toEqual([{ type: "FIRMWARE_UP_TO_DATE", output: installed }]);
+    expect(received).toEqual([{ type: "FIRMWARE_UP_TO_DATE", output: metadata(undefined) }]);
     stop();
   });
 
@@ -129,7 +131,7 @@ describe("firmwareCheck", () => {
     await settle();
 
     expect(fake.executions).toHaveLength(2);
-    expect(received).toEqual([{ type: "FIRMWARE_UP_TO_DATE", output: installed }]);
+    expect(received).toEqual([{ type: "FIRMWARE_UP_TO_DATE", output: metadata(undefined) }]);
     stop();
   });
 
@@ -177,7 +179,12 @@ function metadata(update: AvailableFirmwareUpdate | undefined): GetDeviceMetadat
   return {
     firmwareVersion: installed,
     firmwareUpdateContext: { availableUpdate: update },
-  } as GetDeviceMetadataDAOutput;
+    applications: [{ versionName: "Bitcoin" }],
+    applicationsUpdates: [],
+    installedLanguages: [],
+    catalog: { applications: [], languagePackages: [] },
+    customImage: {},
+  } as unknown as GetDeviceMetadataDAOutput;
 }
 
 function createFake(): FakeFirmwareCheckDmk {

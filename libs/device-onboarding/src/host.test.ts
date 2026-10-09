@@ -170,12 +170,11 @@ describe("toolEvent", () => {
         {
           type: "FIRMWARE_UPDATE_AVAILABLE",
           output: {
-            os: "2.2.0",
-            mcu: "1.0",
-            bootloader: "1.0",
-            update: { finalFirmware: { version: "2.3.0" } } as unknown as AvailableFirmwareUpdate,
+            firmwareUpdateContext: {
+              availableUpdate: { finalFirmware: { version: "2.3.0" } } as AvailableFirmwareUpdate,
+            },
           },
-        },
+        } as OnboardingEvent,
         "2",
         "session-1",
       ),
@@ -338,6 +337,25 @@ describe("toolEvent payload", () => {
 
     expect(row.payload).toEqual({
       output: { name: "Error", message: "https://secret.example/body" },
+    });
+  });
+
+  it("keeps the installed apps on a firmware event", () => {
+    const event = {
+      type: "FIRMWARE_UPDATE_AVAILABLE",
+      output: {
+        firmwareVersion: { os: "1.4.0", mcu: "2.0.0", bootloader: "3.0.0" },
+        firmwareUpdateContext: {
+          availableUpdate: { finalFirmware: { version: "1.5.0" } },
+        },
+        applications: [{ versionName: "Bitcoin" }],
+      },
+    } as OnboardingEvent;
+    const row = toolEvent(event, "1", "session");
+
+    expect(row.detail).toEqual({ kind: "firmware", version: "1.5.0" });
+    expect(row.payload).toMatchObject({
+      output: { applications: [{ versionName: "Bitcoin" }] },
     });
   });
 

@@ -102,6 +102,8 @@ export function useDeviceOnboarding({
     setStatus("exited");
     sessionActorRef.current?.stop();
     sessionActorRef.current = null;
+    connectionRef.current?.unsubscribe();
+    connectionRef.current = null;
   }, []);
 
   useEffect(() => {

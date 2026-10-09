@@ -555,15 +555,36 @@ describe("useDeviceOnboardingViewModel", () => {
     act(() => result.current.setFirmwareOverride(FirmwareOverride.UpToDate));
     expect(send).toHaveBeenCalledWith({
       type: "FIRMWARE_UP_TO_DATE",
-      output: { os: "override", mcu: "override", bootloader: "override" },
+      output: {
+        firmwareVersion: { os: "override", mcu: "override", bootloader: "override" },
+        firmwareUpdateContext: {
+          currentFirmware: {
+            id: 0,
+            version: "override",
+            perso: "",
+            firmware: null,
+            firmwareKey: null,
+            hash: null,
+            bytes: null,
+            mcuVersions: [],
+          },
+        },
+        applications: [],
+        applicationsUpdates: [],
+        installedLanguages: [],
+        catalog: { applications: [], languagePackages: [] },
+        customImage: {},
+      },
     });
 
     act(() => result.current.setFirmwareOverride(FirmwareOverride.Outdated));
     expect(send).toHaveBeenLastCalledWith({
       type: "FIRMWARE_UPDATE_AVAILABLE",
       output: expect.objectContaining({
-        update: expect.objectContaining({
-          finalFirmware: expect.objectContaining({ version: "override" }),
+        firmwareUpdateContext: expect.objectContaining({
+          availableUpdate: expect.objectContaining({
+            finalFirmware: expect.objectContaining({ version: "override" }),
+          }),
         }),
       }),
     });

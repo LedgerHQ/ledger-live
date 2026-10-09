@@ -3,6 +3,7 @@ import type {
   DeviceModelId,
   DeviceSessionId,
   FirmwareUpdateContext,
+  GetDeviceMetadataDAOutput,
   GetOsVersionResponse,
   GenuineCheckDAOutput,
 } from "@ledgerhq/device-management-kit";
@@ -148,11 +149,8 @@ export type OnboardingEvent =
   | { type: "GENUINE_CHECK_FAILED"; output: GenuineCheckFailure }
   | { type: "DEVICE_NOT_GENUINE"; output: GenuineCheckDAOutput }
   | { type: "SECURE_CHANNEL_LOST"; output: GenuineCheckFailure }
-  | { type: "FIRMWARE_UP_TO_DATE"; output: InstalledFirmware }
-  | {
-      type: "FIRMWARE_UPDATE_AVAILABLE";
-      output: InstalledFirmware & { update: AvailableFirmwareUpdate };
-    }
+  | { type: "FIRMWARE_UP_TO_DATE"; output: GetDeviceMetadataDAOutput }
+  | { type: "FIRMWARE_UPDATE_AVAILABLE"; output: GetDeviceMetadataDAOutput }
   | { type: "FIRMWARE_CHECK_FAILED"; output: unknown }
   | { type: "FIRMWARE_UPDATE_FLOW_CLOSED" }
   | { type: "RETRY" }
@@ -193,12 +191,6 @@ export type DeviceOnboardingInput = {
 };
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
-
-export type InstalledFirmware = {
-  os: string;
-  mcu: string;
-  bootloader: string;
-};
 
 export type DeviceOnboardingContext = DeviceOnboardingInput & {
   lastDeviceState: DeviceOnboardingState | null;

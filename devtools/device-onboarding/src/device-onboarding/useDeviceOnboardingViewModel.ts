@@ -14,6 +14,7 @@ import {
 const displayedEventCount = 40;
 const displayedDetailLength = 80;
 const displayedStateCount = 24;
+const displayedPayloadRows = 80;
 
 export function possibleByEvent(
   rows: readonly DeviceOnboardingNextState[],
@@ -159,7 +160,7 @@ export interface SwitchRow {
 
 export interface DeviceOnboardingViewModel {
   readonly statusLabel: string;
-  readonly exportText: string;
+  readonly exportLogs: () => string;
   readonly stateSteps: readonly StateStep[];
   readonly logLines: readonly LogLine[];
   readonly deviceLabel: string | null;
@@ -202,7 +203,26 @@ export const FirmwareOverride = {
 
 export type FirmwareOverride = (typeof FirmwareOverride)[keyof typeof FirmwareOverride];
 
-const overrideFirmware = { os: "override", mcu: "override", bootloader: "override" };
+const overrideFirmware = {
+  firmwareVersion: { os: "override", mcu: "override", bootloader: "override" },
+  firmwareUpdateContext: {
+    currentFirmware: {
+      id: 0,
+      version: "override",
+      perso: "",
+      firmware: null,
+      firmwareKey: null,
+      hash: null,
+      bytes: null,
+      mcuVersions: [],
+    },
+  },
+  applications: [],
+  applicationsUpdates: [],
+  installedLanguages: [],
+  catalog: { applications: [], languagePackages: [] },
+  customImage: {},
+};
 
 const overrideUpdate = {
   osuFirmware: {
@@ -244,7 +264,13 @@ function overrideEvent(
   if (state === "checks.firmwareCheck" && firmware === FirmwareOverride.Outdated) {
     return {
       type: "FIRMWARE_UPDATE_AVAILABLE",
-      output: { ...overrideFirmware, update: overrideUpdate },
+      output: {
+        ...overrideFirmware,
+        firmwareUpdateContext: {
+          ...overrideFirmware.firmwareUpdateContext,
+          availableUpdate: overrideUpdate,
+        },
+      },
     };
   }
   return null;
@@ -257,6 +283,7 @@ function payloadRowsOf(payload: DeviceOnboardingToolPayload | undefined): Displa
 }
 
 function walkPayload(value: DeviceOnboardingToolPayload, path: string, rows: DisplayRow[]) {
+  if (rows.length >= displayedPayloadRows) return;
   if (value === null || typeof value !== "object") {
     if (path === "") return;
     rows.push({ label: path, value: formatValue(value) });
@@ -264,6 +291,10 @@ function walkPayload(value: DeviceOnboardingToolPayload, path: string, rows: Dis
   }
 
   for (const [key, child] of Object.entries(value)) {
+    if (rows.length >= displayedPayloadRows) {
+      rows.push({ label: "…", value: "more fields" });
+      return;
+    }
     if (child === undefined) continue;
     const next = path === "" ? key : `${path}.${key}`;
     if (child === null || typeof child !== "object") {
@@ -459,7 +490,7 @@ export function useDeviceOnboardingViewModel(
 
   return {
     statusLabel: statusLabels[status],
-    exportText: JSON.stringify({ status, device, state, context, log, exit }, null, 2),
+    exportLogs: () => JSON.stringify({ status, device, state, context, log, exit }, null, 2),
     stateSteps,
     logLines,
     deviceLabel,

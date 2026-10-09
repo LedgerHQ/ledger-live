@@ -144,7 +144,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
               )
             )}
           </div>
-          <Button size="sm" appearance="transparent" onClick={() => exportLogs(vm.exportText)}>
+          <Button size="sm" appearance="transparent" onClick={() => exportLogs(vm.exportLogs())}>
             Export logs
           </Button>
         </div>
@@ -240,8 +240,8 @@ function PossibleEvents({ rows }: Readonly<{ rows: DeviceOnboardingToolProps["ne
       {groups.map(group => (
         <div key={group.event} className="flex flex-col items-start gap-4">
           <code className="text-muted">{group.event}</code>
-          {group.states.map(state => (
-            <code key={state} className="text-muted pl-16">
+          {group.states.map((state, index) => (
+            <code key={`${index}-${state}`} className="text-muted pl-16">
               {state}
             </code>
           ))}
@@ -321,8 +321,8 @@ function EventLine({ event }: Readonly<{ event: EventRow }>) {
           {event.payload.length === 0 ? (
             <code className="text-muted">—</code>
           ) : (
-            event.payload.map(row => (
-              <span key={row.label} className="flex items-baseline gap-8 body-3">
+            event.payload.map((row, index) => (
+              <span key={`${index}-${row.label}`} className="flex items-baseline gap-8 body-3">
                 <span className="text-muted shrink-0">{row.label}</span>
                 <code className="text-base break-all">{row.value}</code>
               </span>

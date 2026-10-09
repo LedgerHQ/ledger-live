@@ -228,7 +228,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
             onPress={() =>
               void Share.share({
                 title: "Device onboarding logs",
-                message: vm.exportText,
+                message: vm.exportLogs(),
               })
             }
           >
@@ -357,8 +357,12 @@ function PossibleEvents({ rows }: Readonly<{ rows: DeviceOnboardingToolProps["ne
           <Text typography="body2" style={muted}>
             {group.event}
           </Text>
-          {group.states.map(state => (
-            <Text key={state} typography="body2" style={{ ...muted, paddingLeft: 16 }}>
+          {group.states.map((state, index) => (
+            <Text
+              key={`${index}-${state}`}
+              typography="body2"
+              style={{ ...muted, paddingLeft: 16 }}
+            >
               {state}
             </Text>
           ))}
@@ -459,14 +463,14 @@ function EventLine({ event }: Readonly<{ event: EventRow }>) {
         </Box>
       </Pressable>
       {open ? (
-        <Box lx={{ ...LOG_LX, paddingLeft: "s16" }}>
+        <Box lx={LOG_LX} style={{ paddingLeft: 16 }}>
           {event.payload.length === 0 ? (
             <Text typography="body2" style={{ ...muted, fontFamily: "monospace" }}>
               —
             </Text>
           ) : (
-            event.payload.map(row => (
-              <Box key={row.label} lx={ROW_LX}>
+            event.payload.map((row, index) => (
+              <Box key={`${index}-${row.label}`} lx={ROW_LX}>
                 <Text typography="body2" style={muted}>
                   {row.label}
                 </Text>
