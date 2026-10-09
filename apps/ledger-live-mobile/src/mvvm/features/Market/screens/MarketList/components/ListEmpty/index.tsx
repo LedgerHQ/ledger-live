@@ -1,5 +1,5 @@
 import React from "react";
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetworkState } from "expo-network";
 import { Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "~/context/Locale";
 import EmptyState from "../EmptyState";
@@ -31,7 +31,7 @@ function ListEmpty({
   isLoading = false,
 }: ListEmptyProps) {
   const { t } = useTranslation();
-  const { isConnected } = useNetInfo();
+  const { isConnected } = useNetworkState();
 
   if (isLoading) {
     return null;
@@ -58,7 +58,7 @@ function ListEmpty({
     // Check before connectivity: a no-favorites list is empty regardless of network (LIVE-32173).
     return <EmptyStarredCoins />;
   } else if (isConnected === false) {
-    // Explicit `false` only: `useNetInfo` returns `null` until resolved, which isn't "down".
+    // Explicit `false` only: `useNetworkState` returns `undefined` until resolved, which isn't "down".
     return (
       <EmptyState
         illustrationSource={noNetworkIllustration}

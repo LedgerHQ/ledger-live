@@ -3,16 +3,15 @@ import { renderWithReactQuery, screen, waitFor, withFlagOverrides } from "@tests
 import { server, http, HttpResponse } from "@tests/server";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MOCK_MARKET_PERFORMERS } from "@ledgerhq/live-common/market/utils/fixtures";
-import { useNetInfo, type NetInfoState } from "@react-native-community/netinfo";
+import { useNetworkState, type NetworkState } from "expo-network";
 import MarketList from "../index";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 
-// Use global netinfo mock from jest-setup - do not replace to avoid mock cannibalization
+// Use global expo-network mock from jest-setup - do not replace to avoid mock cannibalization
 
-const setNetInfoState = (state: { isConnected: boolean | null }) => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  jest.mocked(useNetInfo).mockReturnValue(state as NetInfoState);
+const setNetworkState = (state: NetworkState) => {
+  jest.mocked(useNetworkState).mockReturnValue(state);
 };
 
 // Star filter on, no favorited coins (LIVE-32173).
@@ -38,7 +37,7 @@ const MarketListTest = () => (
 
 describe("MarketList Layout", () => {
   beforeEach(() => {
-    setNetInfoState({ isConnected: true });
+    setNetworkState({ isConnected: true });
     server.use(
       http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json(MOCK_MARKET_PERFORMERS)),
     );
@@ -66,7 +65,7 @@ describe("MarketList Layout", () => {
 
   describe("When internet seems to be down", () => {
     it("should display empty market list and 'internet down' message", async () => {
-      setNetInfoState({ isConnected: false });
+      setNetworkState({ isConnected: false });
       server.use(http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json([])));
 
       renderWithReactQuery(<MarketListTest />);
@@ -85,7 +84,7 @@ describe("MarketList Layout", () => {
 
   describe("When the star filter is active with no favorites (LIVE-32173)", () => {
     it("shows the 'no favorites' empty state, not the network-down message, while connected", async () => {
-      setNetInfoState({ isConnected: true });
+      setNetworkState({ isConnected: true });
       server.use(http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json([])));
 
       renderWithReactQuery(<MarketListTest />, {
@@ -99,8 +98,8 @@ describe("MarketList Layout", () => {
       expect(screen.queryByText(/Sorry, internet seems to be down/i)).toBeNull();
     });
 
-    it("shows the 'no favorites' empty state even when connectivity is unknown (isConnected null)", async () => {
-      setNetInfoState({ isConnected: null });
+    it("shows the 'no favorites' empty state even when connectivity is unknown (isConnected undefined)", async () => {
+      setNetworkState({});
       server.use(http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json([])));
 
       renderWithReactQuery(<MarketListTest />, {

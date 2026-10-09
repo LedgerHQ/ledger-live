@@ -1,6 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
-import { useNetInfo } from "@react-native-community/netinfo";
-import type { NetInfoState } from "@react-native-community/netinfo";
+import { useNetworkState, type NetworkState } from "expo-network";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -48,8 +47,8 @@ const mockManifest = {
   url: "https://borrow.example.com",
 } as unknown as LiveAppManifest;
 
-const setNetInfoState = (state: { isConnected: boolean | null }) => {
-  jest.mocked(useNetInfo).mockReturnValue(state as NetInfoState);
+const setNetworkState = (state: NetworkState) => {
+  jest.mocked(useNetworkState).mockReturnValue(state);
 };
 
 const setManifests = ({ local, remote }: { local?: LiveAppManifest; remote?: LiveAppManifest }) => {
@@ -66,7 +65,7 @@ const setRemoteLoadingState = (isLoading: boolean) => {
 describe("useBorrowLiveAppViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setNetInfoState({ isConnected: true });
+    setNetworkState({ isConnected: true });
     setManifests({ remote: mockManifest });
     setRemoteLoadingState(false);
     jest.mocked(useBorrowLiveConfig).mockReturnValue(null);
@@ -99,7 +98,7 @@ describe("useBorrowLiveAppViewModel", () => {
   });
 
   it("should return error when not connected", () => {
-    setNetInfoState({ isConnected: false });
+    setNetworkState({ isConnected: false });
 
     const { result } = renderHook(() => useBorrowLiveAppViewModel());
     expect(result.current.error).toBeInstanceOf(Error);

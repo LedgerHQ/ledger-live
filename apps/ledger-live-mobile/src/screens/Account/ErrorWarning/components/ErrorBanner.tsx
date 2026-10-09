@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Box } from "@ledgerhq/native-ui";
 import HeaderErrorTitle from "~/components/HeaderErrorTitle";
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetworkState } from "expo-network";
 import { NetworkDown } from "@ledgerhq/live-common/errors";
 
 type ErrorBannerProps = {
@@ -9,7 +9,7 @@ type ErrorBannerProps = {
 };
 
 const ErrorBanner = ({ error }: ErrorBannerProps) => {
-  const { isConnected } = useNetInfo();
+  const { isConnected } = useNetworkState();
   const networkError = isConnected ? new NetworkDown() : null;
 
   return (

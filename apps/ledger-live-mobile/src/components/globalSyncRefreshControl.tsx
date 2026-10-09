@@ -4,7 +4,7 @@ import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetworkState } from "expo-network";
 import { SYNC_DELAY } from "~/utils/constants";
 import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
 import { useDispatch, useSelector, useStore } from "~/context/hooks";
@@ -43,7 +43,7 @@ function globalSyncRefreshControl<P>(
     const store = useStore();
     const hasNoAccounts = useSelector(hasNoAccountsSelector);
     const route = useRoute();
-    const { isConnected, isInternetReachable } = useNetInfo();
+    const { isConnected, isInternetReachable } = useNetworkState();
     const refreshingRef = useRef(refreshing);
     refreshingRef.current = refreshing;
 

@@ -22,7 +22,7 @@ import {
 import { useTranslation } from "~/context/Locale";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import { GenericError } from "../../components/GenericError";
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetworkState } from "expo-network";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { useAssetConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { balanceItem } from "../../components/Balance";
@@ -80,7 +80,7 @@ const AssetSelection = ({
   onDisabledAssetPress,
 }: Readonly<AssetSelectionStepProps>) => {
   const { t } = useTranslation();
-  const { isInternetReachable } = useNetInfo();
+  const { isInternetReachable } = useNetworkState();
 
   const isPerpsFund = getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.fund;
 

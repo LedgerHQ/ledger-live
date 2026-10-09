@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetworkState } from "expo-network";
 import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
@@ -52,7 +52,7 @@ const DEFAULT_MANIFEST_ID =
 export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const { t } = useTranslation();
   const borrowConfig = useBorrowLiveConfig();
-  const { isConnected } = useNetInfo();
+  const { isConnected } = useNetworkState();
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const { theme } = useTheme();
   const { language } = useSettings();
