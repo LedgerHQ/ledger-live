@@ -82,6 +82,16 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
+      retries:
+        description: "Retries per failed test (default: the value in e2e/desktop/playwright.config.ts)"
+        required: false
+        type: choice
+        options:
+          - default
+          - "0"
+          - "1"
+          - "2"
+        default: default
 
   workflow_call:
     inputs:
@@ -140,6 +150,11 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
+      retries:
+        description: "Retries per failed test: 0, 1, 2 or default (the value in e2e/desktop/playwright.config.ts)"
+        required: false
+        type: string
+        default: default
 
 permissions:
   contents: read
@@ -147,6 +162,7 @@ permissions:
 env:
   E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  E2E_RETRIES: ${{ inputs.retries || 'default' }}
   # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
   E2E_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 1 * * 1' }}
 
@@ -359,6 +375,7 @@ jobs:
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
+            echo "- **Retries:** $E2E_RETRIES"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate feature flags JSON input

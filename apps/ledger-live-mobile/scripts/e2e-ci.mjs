@@ -9,6 +9,11 @@ let target = "release";
 let filter = "";
 let outputFile = "";
 
+const DEFAULT_CI_RETRIES = 1;
+const retries = /^\d+$/.test(process.env.E2E_RETRIES?.trim() ?? "")
+  ? Number(process.env.E2E_RETRIES)
+  : DEFAULT_CI_RETRIES;
+
 $.verbose = true; // everything works like in v7
 
 if (os.platform() === "win32") {
@@ -70,7 +75,7 @@ const test_ios = async () => {
       --take-screenshots failing \
       --forceExit \
       --headless \
-      --retries ${testType === "mock" ? 1 : 2} \
+      --retries ${retries} \
       --cleanup \
       ${filteredArgs}`.nothrow();
   process.exitCode = result.exitCode;
@@ -88,7 +93,7 @@ const test_android = async () => {
       --take-screenshots failing \\
       --forceExit \\
       --headless \\
-      --retries ${testType === "mock" ? 1 : 2} \\
+      --retries ${retries} \\
       --cleanup \\
       ${filteredArgs}`.nothrow();
   process.exitCode = result.exitCode;

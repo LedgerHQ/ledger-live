@@ -95,6 +95,9 @@ pnpm test:android <testFileName>         # single file
 
 > Android debug (`pnpm test:android:debug`) does not work locally due to a known Detox/Espresso bug. Always use the release configuration.
 
+Failed tests are not retried locally; `export E2E_RETRIES=1` retries them once. On CI, the default
+is set in `apps/ledger-live-mobile/scripts/e2e-ci.mjs` and the E2E workflow's `retries` input overrides it.
+
 > For CI, sharding, and advanced flags, see [the full wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing).
 
 ### 6. Full Documentation

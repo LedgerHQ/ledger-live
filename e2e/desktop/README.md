@@ -79,6 +79,9 @@ pnpm e2e:desktop test:playwright
 pnpm e2e:desktop test:playwright <testFileName>
 ```
 
+Failed tests are not retried locally; `export E2E_RETRIES=1` retries them once. On CI, the default
+is set in `playwright.config.ts` and the E2E workflow's `retries` input overrides it.
+
 ### 5. More Documentation
 
 For detailed setup, debugging, and contribution guidelines, see:
