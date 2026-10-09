@@ -14,6 +14,7 @@ import type {
   AvailableFirmwareUpdate,
   DeviceOnboardingContext,
   DeviceOnboardingState,
+  OnboardingEvent,
 } from "./types";
 import { OnboardingStep, RecoveryKeyStatus } from "./types";
 
@@ -338,5 +339,38 @@ describe("toolEvent payload", () => {
     expect(row.payload).toEqual({
       output: { name: "Error", message: "https://secret.example/body" },
     });
+  });
+
+  it("keeps arrays as arrays", () => {
+    const event = {
+      type: "FIRMWARE_UP_TO_DATE",
+      output: { mcuVersions: ["1.1.0"] },
+    } as unknown as OnboardingEvent;
+
+    expect(toolEvent(event, "1", "session").payload).toEqual({
+      output: { mcuVersions: ["1.1.0"] },
+    });
+  });
+
+  it("stops on an object that points back to itself", () => {
+    const failure: Record<string, unknown> = { status: 500 };
+    failure.request = failure;
+    const event = { type: "FIRMWARE_CHECK_FAILED", output: failure } as OnboardingEvent;
+
+    expect(toolEvent(event, "1", "session").payload).toEqual({
+      output: { status: 500, request: "…" },
+    });
+  });
+
+  it("stops copying once the payload is too large to draw", () => {
+    const event = {
+      type: "FIRMWARE_UP_TO_DATE",
+      output: { applications: Array.from({ length: 600 }, (_, index) => `app-${index}`) },
+    } as unknown as OnboardingEvent;
+    const payload = toolEvent(event, "1", "session").payload as {
+      output: { applications: unknown[] };
+    };
+
+    expect(payload.output.applications).toContain("…");
   });
 });

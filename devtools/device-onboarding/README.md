@@ -20,8 +20,8 @@ The device name sits under the status. Context sits under that name. It starts c
 open the fields. Log and Config sit under that. Log is the run. Config lists each switch, with a
 short line under its name. Override sits first. It can mark the device genuine or not, mark the
 firmware up to date or outdated. The `deviceOnboarding` feature flag sits under that,
-with one switch for `enabled` and one per param, when the host passes it. Open next screen sits under that. It starts on, so an exit or a firmware update opens
-that screen. Turn it off to stay here. Before a run, the log asks you to pair a device and
+with one switch for `enabled` and one per param, when the host passes it. Open next screen sits under that. It starts off, so the run stays here.
+Turn it on to open the next screen on an exit or a firmware update. Quit always stays here. Before a run, the log asks you to pair a device and
 tap Connect. The log reads upward. The newest state is on top.
 Each event sits under the state it led to. The host saves that pair when the machine updates.
 Under the current state, each event that can happen lists the state it can reach.

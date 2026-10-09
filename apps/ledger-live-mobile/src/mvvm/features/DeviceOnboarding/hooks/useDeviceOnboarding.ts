@@ -285,8 +285,10 @@ export function useDeviceOnboarding({
       const after = actor.getSnapshot();
       if (after.status !== "done" && quittingStates.has(stateValueToString(after.value))) {
         adoptGeneration.current += 1;
+        // A lock or a lost connection can pull the machine out of quitting before it is done.
         const subscription = actor.subscribe(next => {
-          if (next.status !== "done") return;
+          const quitting = quittingStates.has(stateValueToString(next.value));
+          if (next.status !== "done" && quitting) return;
           subscription.unsubscribe();
           clearRun();
         });

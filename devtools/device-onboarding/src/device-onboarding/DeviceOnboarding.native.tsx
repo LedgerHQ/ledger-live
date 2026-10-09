@@ -160,7 +160,11 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
                   </Text>
                 </Box>
                 <Box style={{ marginLeft: "auto" }}>
-                  <Switch checked={vm.showNextScreen} onCheckedChange={vm.setShowNextScreen} />
+                  <Switch
+                    checked={vm.showNextScreen}
+                    onCheckedChange={vm.setShowNextScreen}
+                    accessibilityLabel={openNextScreenCopy.title}
+                  />
                 </Box>
               </Box>
             </Box>

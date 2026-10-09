@@ -137,24 +137,54 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
   return { id, type: event.type, at: Date.now(), detail, payload: eventPayload(event) };
 }
 
+const maxCopiedNodes = 500;
+const truncated = "…";
+
 function eventPayload(event: OnboardingEvent): HostToolPayload | undefined {
   const payload: Record<string, HostToolPayload> = {};
+  const budget = { left: maxCopiedNodes };
+  const seen = new WeakSet<object>();
 
   for (const [key, child] of Object.entries(event)) {
     if (key === "type") continue;
-    const copied = plainPayload(child);
+    const copied = plainPayload(child, seen, budget);
     if (copied !== undefined) payload[key] = copied;
   }
 
   return Object.keys(payload).length === 0 ? undefined : payload;
 }
 
-function plainPayload(value: unknown): HostToolPayload | undefined {
+function plainPayload(
+  value: unknown,
+  seen: WeakSet<object>,
+  budget: { left: number },
+): HostToolPayload | undefined {
+  if (budget.left <= 0) return truncated;
   if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    budget.left -= 1;
     return value;
   }
-  if (value === null) return null;
+  if (value === null) {
+    budget.left -= 1;
+    return null;
+  }
   if (typeof value !== "object") return undefined;
+  if (seen.has(value)) return truncated;
+  seen.add(value);
+  budget.left -= 1;
+
+  if (Array.isArray(value)) {
+    const items: HostToolPayload[] = [];
+    for (const child of value) {
+      if (budget.left <= 0) {
+        items.push(truncated);
+        break;
+      }
+      const copied = plainPayload(child, seen, budget);
+      if (copied !== undefined) items.push(copied);
+    }
+    return items;
+  }
 
   const nested: Record<string, HostToolPayload> = {};
   if (value instanceof Error) {
@@ -162,7 +192,11 @@ function plainPayload(value: unknown): HostToolPayload | undefined {
     nested.message = value.message;
   }
   for (const [key, child] of Object.entries(value)) {
-    const copied = plainPayload(child);
+    if (budget.left <= 0) {
+      nested[truncated] = truncated;
+      break;
+    }
+    const copied = plainPayload(child, seen, budget);
     if (copied !== undefined) nested[key] = copied;
   }
 

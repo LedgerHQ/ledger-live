@@ -2,8 +2,7 @@ import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-k
 import type { DeviceOnboardingOutput } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { StackActions } from "@react-navigation/native";
-import { act, renderHook, waitFor } from "@tests/test-renderer";
+import { renderHook, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 import {
@@ -34,7 +33,6 @@ const mockNavigation: {
   dispatch: mockNavigationDispatch,
   getParent: () => mockRootNavigation,
 };
-let mockHasCompletedOnboarding = false;
 let mockShouldDisplayMyWallet = false;
 
 jest.mock("@react-navigation/native", () => ({
@@ -44,7 +42,7 @@ jest.mock("@react-navigation/native", () => ({
 
 jest.mock("~/context/hooks", () => ({
   useDispatch: () => mockDispatch,
-  useSelector: () => mockHasCompletedOnboarding,
+  useSelector: () => false,
 }));
 
 jest.mock("@features/platform-feature-flags", () => ({
@@ -63,7 +61,6 @@ const device: Device = {
 describe("useDeviceOnboardingExit", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockHasCompletedOnboarding = false;
     mockShouldDisplayMyWallet = false;
     mockNavigation.getParent = () => mockRootNavigation;
   });
@@ -264,40 +261,12 @@ describe("useDeviceOnboardingExit", () => {
     expect(mockDispatch).not.toHaveBeenCalled();
   });
 
-  it("returns to device selection when onboarding is not completed", async () => {
+  it("stays on the screen when the user quits", () => {
     renderExit("userQuit");
 
-    await waitFor(() => expect(mockReset).toHaveBeenCalled());
-    expect(mockReset).toHaveBeenCalledWith(
-      expect.objectContaining({
-        routes: [
-          expect.objectContaining({
-            state: expect.objectContaining({
-              routes: [
-                expect.objectContaining({
-                  state: {
-                    routes: [
-                      { name: ScreenName.OnboardingWelcome },
-                      { name: ScreenName.OnboardingPostWelcomeSelection },
-                      { name: ScreenName.OnboardingDeviceSelection },
-                    ],
-                  },
-                }),
-              ],
-            }),
-          }),
-        ],
-      }),
-    );
-  });
-
-  it("leaves the flow without resetting onboarding for an existing user", async () => {
-    mockHasCompletedOnboarding = true;
-    renderExit("userQuit");
-
-    await waitFor(() => expect(mockNavigationDispatch).toHaveBeenCalled());
-    expect(mockNavigationDispatch).toHaveBeenCalledWith(StackActions.popToTop());
     expect(mockReset).not.toHaveBeenCalled();
+    expect(mockNavigationDispatch).not.toHaveBeenCalled();
+    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
   it("resets the outermost navigator", async () => {
