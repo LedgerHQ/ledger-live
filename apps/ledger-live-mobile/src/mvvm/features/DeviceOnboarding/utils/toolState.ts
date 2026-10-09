@@ -5,9 +5,4 @@ export type DeviceOnboardingToolProps = Extract<
   { id: "device-onboarding" }
 >["config"];
 
-export {
-  flattenDeviceOnboardingContext,
-  stateValueToString,
-  toolEvent,
-  userEvents,
-} from "@ledgerhq/device-onboarding";
+export { stateValueToString, toolEvent, userEvents } from "@ledgerhq/device-onboarding";

@@ -27,6 +27,26 @@ describe("useDeviceOnboarding", () => {
     activeHidDeviceSessionSubject.next(null);
   });
 
+  it("saves each event on the state it led to", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    expect(result.current.log.at(-1)?.state).toBe("readingState");
+    expect(result.current.nextStates).toEqual(
+      expect.arrayContaining([{ event: "DEVICE_STATE_READ", state: "routing" }]),
+    );
+    expect(result.current.nextStates.map(row => row.event)).toEqual(
+      expect.not.arrayContaining(["LOCKED", "TRANSPORT_LOST", "QUIT"]),
+    );
+
+    await quit(result);
+    const quitRow = [...result.current.log].reverse().find(row => row.event?.type === "QUIT");
+    expect(quitRow?.state).toBe("exitOnboarding");
+  });
+
   // A lost Bluetooth connection must bring Connect back.
   // SESSION_READY stays off until a new session is watched.
   it("hides the device when Bluetooth disconnects, so Connect can be used again", async () => {
@@ -137,7 +157,7 @@ describe("useDeviceOnboarding", () => {
     });
     expect(leaveOnboarding.mock.calls).toEqual([["userQuit"]]);
     expect(leaveHook).toHaveBeenLastCalledWith({
-      navigateOnExit: true,
+      navigateOnExit: false,
       device: {
         deviceId: "device-id",
         deviceName: "Ledger Stax",

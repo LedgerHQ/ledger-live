@@ -3,7 +3,7 @@ import type { DeviceOnboardingExitReason } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useDispatch } from "~/context/hooks";
-import { exitActions } from "../utils/exitActions";
+import { exitActions, opensNextScreen } from "../utils/exitActions";
 
 type UseLeaveOnboardingInput = {
   device: Device | null;
@@ -20,7 +20,7 @@ export function useLeaveOnboarding({ device, navigateOnExit }: UseLeaveOnboardin
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   return (reason: DeviceOnboardingExitReason) => {
-    if (!navigateOnExit || !device) return;
+    if (!device || !opensNextScreen(reason, navigateOnExit)) return;
     exitActions[reason]({ navigation, dispatch, shouldDisplayMyWallet, device });
   };
 }

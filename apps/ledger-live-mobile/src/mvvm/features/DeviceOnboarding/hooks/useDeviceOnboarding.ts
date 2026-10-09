@@ -28,7 +28,6 @@ type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
   knownDevices: KnownDevice[];
   offerSync: boolean;
-  navigateOnExit?: boolean;
 };
 
 type StoppableActor = { stop(): void };
@@ -43,13 +42,18 @@ export function useDeviceOnboarding({
   dmk,
   knownDevices,
   offerSync,
-  navigateOnExit = true,
 }: UseDeviceOnboardingInput): DeviceOnboardingToolProps {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
-  const leaveOnboarding = useLeaveOnboarding({ device: liveDevice, navigateOnExit });
+  // Off by default: a QA run must not complete the app onboarding or leave the devtool.
+  const [showNextScreen, setShowNextScreen] = useState(false);
+
+  const leaveOnboarding = useLeaveOnboarding({
+    device: liveDevice,
+    navigateOnExit: showNextScreen,
+  });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
@@ -69,9 +73,10 @@ export function useDeviceOnboarding({
   const {
     state,
     context,
-    events,
+    log,
     exit,
     sendableEvents,
+    nextStates,
     setSessionReady,
     actorRef,
     portsRef,
@@ -296,12 +301,15 @@ export function useDeviceOnboarding({
     device,
     state,
     context,
-    events,
+    log,
     exit,
     sendableEvents,
+    nextStates,
     error,
     connect,
     send,
     reset,
+    showNextScreen,
+    setShowNextScreen,
   };
 }

@@ -19,6 +19,11 @@ type ExitDeps = {
   shouldDisplayMyWallet: boolean;
 };
 
+/** A device in bootloader or OSU needs the updater, so that exit opens even when the others stay. */
+export function opensNextScreen(reason: DeviceOnboardingExitReason, navigateOnExit: boolean) {
+  return navigateOnExit || reason === "resumeFirmwareUpdate";
+}
+
 /** What the app does when the machine leaves with each reason. */
 export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) => void> = {
   completed: ({ dispatch, navigation, device }) => {
