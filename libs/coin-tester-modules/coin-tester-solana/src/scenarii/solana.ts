@@ -1,5 +1,5 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import {
@@ -83,6 +83,53 @@ function expectStakingResourcesDefined(account: Account): void {
   expect((account as SolanaAccount).stakingResources).toBeDefined();
 }
 
+function expectTokenSendParentOperation(
+  previousAccount: Account,
+  currentAccount: Account,
+  tokenOperation: Operation,
+  strategy: BridgeStrategy,
+): Operation {
+  const [parent] = currentAccount.operations;
+  expect(parent.fee.isGreaterThan(0)).toBe(true);
+  if (strategy === "generic-adapter") {
+    expect(parent.subOperations?.map(operation => operation.id)).toEqual([tokenOperation.id]);
+  }
+  expect(parent.internalOperations ?? []).toEqual([]);
+  expect(currentAccount.balance).toStrictEqual(previousAccount.balance.minus(parent.value));
+  return parent;
+}
+
+function expectTokenSendToExistingAta(
+  previousAccount: Account,
+  currentAccount: Account,
+  tokenOperation: Operation,
+  strategy: BridgeStrategy,
+): void {
+  const parent = expectTokenSendParentOperation(
+    previousAccount,
+    currentAccount,
+    tokenOperation,
+    strategy,
+  );
+  expect(parent).toMatchObject({ type: "FEES", value: parent.fee });
+}
+
+function expectTokenSendCreatingAta(
+  previousAccount: Account,
+  currentAccount: Account,
+  tokenOperation: Operation,
+  strategy: BridgeStrategy,
+): void {
+  const parent = expectTokenSendParentOperation(
+    previousAccount,
+    currentAccount,
+    tokenOperation,
+    strategy,
+  );
+  expect(parent.type).toEqual("OUT");
+  expect(parent.value.isGreaterThan(parent.fee)).toBe(true);
+}
+
 function makeScenarioTransactions(
   address: string,
   strategy: BridgeStrategy,
@@ -138,6 +185,12 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendCreatingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+        strategy,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e6));
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
@@ -164,6 +217,12 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendToExistingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+        strategy,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
       expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
@@ -198,6 +257,12 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendCreatingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+        strategy,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e2 + 5)); // amount + transfer fee
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
@@ -224,6 +289,12 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendToExistingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+        strategy,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
       expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
@@ -257,6 +328,12 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendCreatingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+        strategy,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e9));
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
@@ -283,6 +360,12 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendToExistingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+        strategy,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
       expect(latestAssociatedTokenAccountOperation.recipients).toStrictEqual([RECIPIENT]);
@@ -316,6 +399,12 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendCreatingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+        strategy,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.value).toStrictEqual(new BigNumber(1e8));
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
@@ -340,6 +429,12 @@ function makeScenarioTransactions(
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
+      expectTokenSendToExistingAta(
+        previousAccount,
+        currentAccount,
+        latestAssociatedTokenAccountOperation,
+        strategy,
+      );
       expect(latestAssociatedTokenAccountOperation.type).toEqual("OUT");
       expect(latestAssociatedTokenAccountOperation.senders).toStrictEqual([address]);
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);

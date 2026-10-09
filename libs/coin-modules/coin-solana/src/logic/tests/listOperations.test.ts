@@ -405,7 +405,6 @@ describe("listOperations (MSW integration)", () => {
         assetAmount: "2000000",
         assetSenders: [TEST_ADDRESS],
         assetRecipients: [TEST_RECIPIENT],
-        internal: true,
       });
     });
 
@@ -515,7 +514,6 @@ describe("listOperations (MSW integration)", () => {
         assetAmount: "3000000",
         assetSenders: [TEST_RECIPIENT],
         assetRecipients: [TEST_ADDRESS],
-        internal: true,
       });
     });
   });
@@ -649,8 +647,7 @@ describe("listOperations (MSW integration)", () => {
 
     it("should have correct FEES operation", () => {
       const op = items.find(op => op.tx.hash === "sig-fees" && op.type === "FEES");
-      expect(op).not.toBeUndefined();
-      expect(op!.value).toBe(5000n);
+      expect(op).toMatchObject({ type: "FEES", value: 0n });
     });
 
     it("should have correct NONE operation", () => {
