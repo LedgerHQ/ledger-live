@@ -1,4 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Platform, View } from "react-native";
 import { BottomSheetFooter, type BottomSheetFooterProps } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -78,12 +85,16 @@ export function QueuedBottomSheet({
   });
 
   // The outgoing sheet keeps what it showed, so a consumer that renders its content at all times
-  // does not see it vanish mid-close.
-  const shownContentRef = useRef({ children, footer });
-  if (!isAwaitingNextPresentation) {
-    shownContentRef.current = { children, footer };
-  }
-  const { children: content, footer: footerContent } = shownContentRef.current;
+  // does not see it vanish mid-close. Recorded on commit, so an abandoned render cannot leak in.
+  const committedContentRef = useRef({ children, footer });
+  useLayoutEffect(() => {
+    if (!isAwaitingNextPresentation) {
+      committedContentRef.current = { children, footer };
+    }
+  }, [isAwaitingNextPresentation, children, footer]);
+  const { children: content, footer: footerContent } = isAwaitingNextPresentation
+    ? committedContentRef.current
+    : { children, footer };
 
   const [footerHeight, setFooterHeight] = useState(0);
   const hasFooter = footerContent !== null && footerContent !== undefined;
