@@ -8,6 +8,7 @@ export const overrideCopy = {
   pass: "Pass",
   fail: "Not genuine",
   upToDate: "Up to date",
+  outdated: "Outdated",
   skip: "Skip",
 };
 

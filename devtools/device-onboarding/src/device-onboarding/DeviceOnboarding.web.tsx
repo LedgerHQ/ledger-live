@@ -214,6 +214,9 @@ function OverrideSection({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
           <SegmentedControlButton value={FirmwareOverride.UpToDate}>
             {overrideCopy.upToDate}
           </SegmentedControlButton>
+          <SegmentedControlButton value={FirmwareOverride.Outdated}>
+            {overrideCopy.outdated}
+          </SegmentedControlButton>
         </SegmentedControl>
       </OverrideRow>
       <OverrideRow label={overrideCopy.earlyCheck}>

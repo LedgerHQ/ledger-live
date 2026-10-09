@@ -557,6 +557,16 @@ describe("useDeviceOnboardingViewModel", () => {
       type: "FIRMWARE_UP_TO_DATE",
       output: { os: "override", mcu: "override", bootloader: "override" },
     });
+
+    act(() => result.current.setFirmwareOverride(FirmwareOverride.Outdated));
+    expect(send).toHaveBeenLastCalledWith({
+      type: "FIRMWARE_UPDATE_AVAILABLE",
+      output: expect.objectContaining({
+        update: expect.objectContaining({
+          finalFirmware: expect.objectContaining({ version: "override" }),
+        }),
+      }),
+    });
   });
 
   it("offers a new session once the transport went away mid-run", () => {

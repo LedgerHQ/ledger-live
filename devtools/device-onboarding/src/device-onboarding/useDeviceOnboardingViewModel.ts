@@ -199,6 +199,7 @@ export type GenuineOverride = (typeof GenuineOverride)[keyof typeof GenuineOverr
 export const FirmwareOverride = {
   Device: "device",
   UpToDate: "upToDate",
+  Outdated: "outdated",
 } as const;
 
 export type FirmwareOverride = (typeof FirmwareOverride)[keyof typeof FirmwareOverride];
@@ -209,6 +210,31 @@ export const EarlyCheckOverride = {
 } as const;
 
 export type EarlyCheckOverride = (typeof EarlyCheckOverride)[keyof typeof EarlyCheckOverride];
+
+const overrideFirmware = { os: "override", mcu: "override", bootloader: "override" };
+
+const overrideUpdate = {
+  osuFirmware: {
+    id: 0,
+    notes: null,
+    perso: "override",
+    firmware: "override",
+    firmwareKey: "override",
+    hash: null,
+    nextFinalFirmware: 0,
+  },
+  finalFirmware: {
+    id: 0,
+    version: "override",
+    perso: "override",
+    firmware: null,
+    firmwareKey: null,
+    hash: null,
+    bytes: null,
+    mcuVersions: [],
+  },
+  mcuUpdateRequired: false,
+};
 
 function overrideEvent(
   state: string | null,
@@ -223,9 +249,12 @@ function overrideEvent(
     return { type: "DEVICE_NOT_GENUINE", output: { isGenuine: false } };
   }
   if (state === "checks.firmwareCheck" && firmware === FirmwareOverride.UpToDate) {
+    return { type: "FIRMWARE_UP_TO_DATE", output: overrideFirmware };
+  }
+  if (state === "checks.firmwareCheck" && firmware === FirmwareOverride.Outdated) {
     return {
-      type: "FIRMWARE_UP_TO_DATE",
-      output: { os: "override", mcu: "override", bootloader: "override" },
+      type: "FIRMWARE_UPDATE_AVAILABLE",
+      output: { ...overrideFirmware, update: overrideUpdate },
     };
   }
   if (state === "checks.enteringEarlyCheckScreen" && earlyCheck === EarlyCheckOverride.Skip) {
