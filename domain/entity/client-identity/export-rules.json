@@ -35,6 +35,7 @@
       "apps/ledger-live-mobile/src/screens/Settings/Debug/Features/TransactionsAlerts.tsx"
     ],
     "exportUserIdForFirmwareSalt": [
+      "libs/ledger-live-common/src/device/firmwareDistributionSalt.ts",
       "libs/live-dmk-shared/src/services/syncFirmwareDistributionSalt.ts"
     ]
   },

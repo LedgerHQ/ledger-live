@@ -15,6 +15,7 @@ import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/qu
 import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { syncFirmwareDistributionSalt } from "@ledgerhq/live-dmk-shared";
 import { setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-mobile";
+import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
@@ -158,3 +159,4 @@ setupCryptoAssetsStore(store);
 setupRateLookups();
 setSwapQuotesStore(store.dispatch);
 syncFirmwareDistributionSalt(store, setFirmwareDistributionSalt);
+setIdentitiesStore(store);

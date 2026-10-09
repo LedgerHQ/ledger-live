@@ -1,5 +1,5 @@
 import { getProviderId } from "../../manager/index";
-import { getEnv } from "@shared/env";
+import { getFirmwareDistributionSaltUserId } from "../firmwareDistributionSalt";
 import { useGetLatestFirmware } from "@ledgerhq/device-react";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 import { DeviceInfoEntity, HttpManagerApiRepository } from "@ledgerhq/device-core";
@@ -11,7 +11,7 @@ export function useLatestFirmware(
   return useGetLatestFirmware({
     deviceInfo,
     providerId: getProviderId(deviceInfo),
-    userId: getEnv("USER_ID"),
+    userId: getFirmwareDistributionSaltUserId(),
     managerApiRepository,
   });
 }

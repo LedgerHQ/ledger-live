@@ -71,6 +71,7 @@ import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/renderer/reducers/wallet";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
+import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
 import {
   setAllOverrides,
   setBannerVisible,
@@ -154,6 +155,7 @@ async function init() {
   setupRateLookups();
   setSwapQuotesStore(store.dispatch);
   syncFirmwareDistributionSalt(store, setFirmwareDistributionSalt);
+  setIdentitiesStore(store);
 
   // Feature flags: install the LiveConfig provider (serves non-feature `config_*` keys) and
   // point analytics at the Redux slice. The middleware (wired at store creation) drives the
