@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { delay } from "@e2e/helpers/commonHelpers";
 
 const DEPOSIT_OPTION_IDS = ["bankTransfer", "swap", "receive", "buy"] as const;
 
@@ -83,14 +84,15 @@ export default class PayTabPage {
   @Step("Expect the bank transfer intro with {{{0}}}")
   async expectBankTransferIntro(createAccountLabel: string) {
     await waitForFullyVisibleById(this.bankTransferContentId);
-    await detoxExpect(getElementByText(createAccountLabel)).toBeVisible();
+    await detoxExpect(
+      getElementByIdWithDescendantTexts(this.bankTransferCreateAccountId, createAccountLabel),
+    ).toBeVisible();
   }
 
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
-    // The deposit sheet can still be mounted, and its close button is index 0.
-    const closeButtonCount = await countElementsById(this.bankTransferCloseId);
-    await tapById(this.bankTransferCloseId, Math.max(closeButtonCount - 1, 0));
+    await delay(15_000);
+    await tapById(this.bankTransferCloseId);
     if (!(await waitForElementNotVisible(this.bankTransferContentId))) {
       throw new Error(`${this.bankTransferContentId} stayed visible`);
     }
