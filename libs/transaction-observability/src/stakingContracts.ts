@@ -2,7 +2,12 @@ import type { StakingMethod } from "./stakingApps";
 
 type StakingContract = {
   /** Receipt token handed back for a deposit. Reported as `output_currency`. */
-  outputCurrency: string;
+  outputCurrency?: string;
+  /**
+   * Token staked, for calls sent from the parent account. Reported as `input_currency`, which
+   * would otherwise name the network coin.
+   */
+  inputCurrency?: string;
   /** Set where the contract identifies the product more precisely than the manifest can. */
   method?: StakingMethod;
   /**
@@ -32,7 +37,7 @@ type StakingContract = {
  * the ETH2 deposit contract and hand back no token, so they have no entry here and take their
  * method from the manifest.
  */
-const STAKING_CONTRACTS: Record<string, StakingContract> = {
+export const STAKING_CONTRACTS: Readonly<Record<string, StakingContract>> = {
   // Observed: a Lido stake calls `submit(address)` on exactly this address, which is stETH.
   "0xae7ab96520de3a18e5e111b5eaab095312d7fe84": {
     outputCurrency: "stETH",
@@ -80,6 +85,10 @@ const STAKING_CONTRACTS: Record<string, StakingContract> = {
     method: "liquid",
     isReceiptToken: true,
   },
+  // StakeKit USDe.
+  "0x2d152fb171353e70e45322d32bc748f8a61d9971": { inputCurrency: "USDe" },
+  // One Polygon validator's ValidatorShare: other validators have their own.
+  "0x2ea3c215daeacc1c90b51443ab5d08a9ad816138": { inputCurrency: "POL" },
 };
 
 function lookup(contract: string | undefined): StakingContract | undefined {
@@ -89,6 +98,11 @@ function lookup(contract: string | undefined): StakingContract | undefined {
 /** The receipt token a deposit into this contract returns. */
 export function outputCurrencyOf(contract: string | undefined): string | undefined {
   return lookup(contract)?.outputCurrency;
+}
+
+/** The token staked into this contract, when the call comes from the parent account. */
+export function inputCurrencyOf(contract: string | undefined): string | undefined {
+  return lookup(contract)?.inputCurrency;
 }
 
 /** How this contract stakes, where the contract says it more precisely than the manifest. */
@@ -104,7 +118,7 @@ export function stakingMethodOfContract(contract: string | undefined): StakingMe
  * that assumed every entry were a token.
  */
 export function tokenBackedContracts(): Array<[string, string]> {
-  return Object.entries(STAKING_CONTRACTS)
-    .filter(([, c]) => c.isReceiptToken)
-    .map(([address, c]) => [address, c.outputCurrency]);
+  return Object.entries(STAKING_CONTRACTS).flatMap(([address, c]) =>
+    c.isReceiptToken && c.outputCurrency ? [[address, c.outputCurrency] as [string, string]] : [],
+  );
 }
