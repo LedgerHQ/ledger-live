@@ -15,6 +15,7 @@ import {
   type OnboardingEvent,
 } from "@ledgerhq/device-onboarding";
 import { createActor, type ActorRefFrom } from "xstate";
+import { machineOutline } from "./machineOutline";
 import type { DeviceOnboardingPorts } from "./ports";
 
 type OnboardingActor = ActorRefFrom<typeof deviceOnboardingMachine>;
@@ -47,6 +48,9 @@ function availableEvents(
     .filter(event => snapshot.can(stampSession(event, sessionId)))
     .map(event => ({ event }));
 }
+
+// The machine does not change at runtime, so it is read once.
+const machineStates = machineOutline();
 
 export function useDeviceOnboardingActor({
   missingSessionMessage,
@@ -227,6 +231,7 @@ export function useDeviceOnboardingActor({
     exit,
     sendableEvents,
     nextStates,
+    machine: machineStates,
     setSessionReady,
     actorRef,
     portsRef,
