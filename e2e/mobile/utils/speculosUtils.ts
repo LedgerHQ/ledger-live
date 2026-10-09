@@ -165,7 +165,7 @@ export async function launchSpeculos(appName: string) {
   if (device.dependencies?.length)
     info += `\nDependencies: ${device.dependencies?.map(dep => dep.name + " (" + dep.appVersion + ")").join(", ") || ""}`;
 
-  allure.descriptionHtml(`<p>SPECULOS<br>${escapeHtml(info).replace(/\n/g, "<br>")}</p>`);
+  allure.descriptionHtml(`<p>SPECULOS<br>${escapeHtml(info).replaceAll("\n", "<br>")}</p>`);
 
   return device;
 }
