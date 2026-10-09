@@ -357,6 +357,7 @@
     "@ledgerhq/live-signer-concordium": "workspace:^",
     "@ledgerhq/live-signer-cosmos": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
+    "@ledgerhq/live-signer-hedera": "workspace:^",
     "@ledgerhq/live-signer-hyperliquid": "workspace:^",
     "@ledgerhq/live-signer-icp": "workspace:^",
     "@ledgerhq/live-signer-polkadot": "workspace:^",

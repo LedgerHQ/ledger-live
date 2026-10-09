@@ -1,6 +1,7 @@
 export * from "./deviceInitialApps";
 export * from "./enableAppsBackup";
 export * from "./ldmkCosmosSigner";
+export * from "./ldmkHederaSigner";
 export * from "./ldmkOsUpdates";
 export * from "./ldmkPolkadotSigner";
 export * from "./ldmkSolanaSigner";

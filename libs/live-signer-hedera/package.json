@@ -1,0 +1,74 @@
+{
+  "name": "@ledgerhq/live-signer-hedera",
+  "version": "0.0.0",
+  "private": true,
+  "sideEffects": false,
+  "description": "Ledger Hardware Wallet Hedera Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "hedera",
+    "hbar",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-signer-hedera",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib-es/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/coin-hedera": "workspace:^",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/hw-app-hedera": "workspace:^",
+    "@ledgerhq/hw-transport": "catalog:",
+    "rxjs": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit --project tsconfig.build.json",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "format": "oxfmt src tests",
+    "format:check": "oxfmt --check src tests",
+    "unimported": "pnpm knip --directory ../.. -W libs/live-signer-hedera"
+  },
+  "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "rimraf": "^4.4.1",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "ts-node": "^10.4.0"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./package.json": "./package.json"
+  }
+}

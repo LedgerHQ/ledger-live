@@ -299,6 +299,9 @@ const extraProperties = (store: ReduxStore) => {
   const ldmkTronSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkTronSigner")
     : { enabled: false };
+  const ldmkHederaSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkHederaSigner")
+    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -401,6 +404,7 @@ const extraProperties = (store: ReduxStore) => {
     isLDMKCosmosSignerEnabled: ldmkCosmosSigner?.enabled,
     isLDMKPolkadotSignerEnabled: ldmkPolkadotSigner?.enabled,
     isLDMKTronSignerEnabled: ldmkTronSigner?.enabled,
+    isLDMKHederaSignerEnabled: ldmkHederaSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,

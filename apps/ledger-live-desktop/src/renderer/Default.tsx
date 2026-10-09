@@ -66,6 +66,7 @@ import {
   setSolanaTxcEnabled,
 } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { setHederaLdmkEnabled } from "@ledgerhq/live-common/families/hedera/setup";
 import { setPolkadotLdmkEnabled } from "@ledgerhq/live-common/families/polkadot/setup";
 import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
 import { setTronLdmkEnabled } from "@ledgerhq/live-common/families/tron/setup";
@@ -369,6 +370,7 @@ export default function Default() {
   const ldmkPolkadotSignerFeatureFlag = useFeature("ldmkPolkadotSigner");
   const ldmkXrpSignerFeatureFlag = useFeature("ldmkXrpSigner");
   const ldmkTronSignerFeatureFlag = useFeature("ldmkTronSigner");
+  const ldmkHederaSignerFeatureFlag = useFeature("ldmkHederaSigner");
   const suiTransportFeatureFlag = useFeature("suiTransport");
 
   const dmk = useDeviceManagementKit();
@@ -422,6 +424,12 @@ export default function Default() {
       setTronLdmkEnabled(ldmkTronSignerFeatureFlag.enabled);
     }
   }, [ldmkTronSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkHederaSignerFeatureFlag?.enabled === "boolean") {
+      setHederaLdmkEnabled(ldmkHederaSignerFeatureFlag.enabled);
+    }
+  }, [ldmkHederaSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiTransport(resolveSuiTransport(suiTransportFeatureFlag));

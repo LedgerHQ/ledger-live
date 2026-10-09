@@ -63,6 +63,7 @@ shared-lib:
   - libs/live-signer-aleo/**/*
   - libs/live-signer-canton/**/*
   - libs/live-signer-evm/**/*
+  - libs/live-signer-hedera/**/*
   - libs/live-signer-solana/**/*
   - libs/live-signer-tron/**/*
   - libs/live-signer-xrp/**/*

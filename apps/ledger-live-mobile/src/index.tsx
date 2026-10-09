@@ -104,6 +104,7 @@ import {
   setSolanaTxcEnabled,
 } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { setHederaLdmkEnabled } from "@ledgerhq/live-common/families/hedera/setup";
 import { LinkingProviderWrapper } from "~/components/LinkingProviderWrapper";
 import { setPolkadotLdmkEnabled } from "@ledgerhq/live-common/families/polkadot/setup";
 import { setXrpLdmkEnabled } from "@ledgerhq/live-common/families/xrp/setup";
@@ -170,6 +171,7 @@ function App() {
   const ldmkPolkadotSignerFeatureFlag = useFeature("ldmkPolkadotSigner");
   const ldmkXrpSignerFeatureFlag = useFeature("ldmkXrpSigner");
   const ldmkTronSignerFeatureFlag = useFeature("ldmkTronSigner");
+  const ldmkHederaSignerFeatureFlag = useFeature("ldmkHederaSigner");
   const suiTransportFeatureFlag = useFeature("suiTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
@@ -228,6 +230,12 @@ function App() {
       setTronLdmkEnabled(ldmkTronSignerFeatureFlag.enabled);
     }
   }, [ldmkTronSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkHederaSignerFeatureFlag?.enabled === "boolean") {
+      setHederaLdmkEnabled(ldmkHederaSignerFeatureFlag.enabled);
+    }
+  }, [ldmkHederaSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiTransport(resolveSuiTransport(suiTransportFeatureFlag));
