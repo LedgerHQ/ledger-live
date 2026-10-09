@@ -191,22 +191,12 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const SendAction = useMemo(
     () => ({
       id: "send",
-      navigationParams: shouldUseNewFlow
-        ? [
-            NavigatorName.SendFlow,
-            {
-              params: {
-                account,
-                parentAccount,
-              },
-            },
-          ]
-        : [
-            NavigatorName.SendFunds,
-            {
-              screen: ScreenName.SendSelectRecipient,
-            },
-          ],
+      navigationParams: [
+        NavigatorName.SendFunds,
+        {
+          screen: ScreenName.SendSelectRecipient,
+        },
+      ],
       label: t("account.send"),
       event: "AccountSend",
       Icon: IconsLegacy.ArrowTopMedium,
@@ -215,6 +205,17 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         component: ZeroBalanceDisabledModalContent,
       },
       ...extraSendActionParams,
+      ...(shouldUseNewFlow && {
+        navigationParams: [
+          NavigatorName.SendFlow,
+          {
+            params: {
+              account,
+              parentAccount,
+            },
+          },
+        ],
+      }),
       additionalPropertiesByEventType: {
         button_clicked: getSendFlowTrackingProperties(account, parentAccount, shouldUseNewFlow),
       },
