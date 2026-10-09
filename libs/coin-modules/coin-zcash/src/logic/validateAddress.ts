@@ -7,8 +7,9 @@ import { zcashNetworkOf } from "./network";
  * Validates a Zcash recipient address for the network of `currencyId`: a valid
  * transparent address (t1/t3, or tm/t2 on testnet, checked via wallet-btc's
  * Base58Check validator) OR a valid ZIP-316 Unified Address carrying an Orchard
- * receiver (checked via classifyZcashRecipient). Sapling-only, malformed and
- * other-network addresses are rejected.
+ * receiver or, without one, a transparent receiver (checked via
+ * classifyZcashRecipient). Sapling-only, malformed and other-network addresses
+ * are rejected.
  */
 export function isValidZcashAddress(address: string, currencyId: string = "zcash"): boolean {
   if (!address) return false;

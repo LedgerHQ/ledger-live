@@ -340,8 +340,9 @@ export function classifyZcashRecipient(
   const lower = address.toLowerCase();
   const { uaHrp, saplingHrp, transparent } = NETWORK_ENCODINGS[network];
 
-  // Transparent: P2PKH or P2SH (t1/t3 on mainnet, tm/t2 on testnet)
-  if (transparent.some(prefix => lower.startsWith(prefix))) {
+  // Transparent: P2PKH or P2SH (t1/t3 on mainnet, tm/t2 on testnet). Base58 is
+  // case-sensitive, so the prefix is matched on the address as typed.
+  if (transparent.some(prefix => address.startsWith(prefix))) {
     // Zcash t-addresses are Base58Check of a fixed 26-byte payload (2-byte
     // version prefix + 20-byte hash + 4-byte checksum). The version prefix is
     // fixed and non-zero (0x1CB8 for t1, 0x1CBD for t3 on mainnet; 0x1D25 for tm,

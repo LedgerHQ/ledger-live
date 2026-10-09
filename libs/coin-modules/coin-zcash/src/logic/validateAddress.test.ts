@@ -90,4 +90,9 @@ describe("logic/validateAddress — per network", () => {
     await expect(validateAddress(TM_ADDRESS)).resolves.toBe(false);
     await expect(validateAddress(T1_MAINNET, { currencyId: "zcash_testnet" })).resolves.toBe(false);
   });
+
+  it("rejects an upper-cased transparent prefix on either network", () => {
+    expect(isValidZcashAddress("T1" + T1_MAINNET.slice(2), "zcash")).toBe(false);
+    expect(isValidZcashAddress("TM" + TM_ADDRESS.slice(2), "zcash_testnet")).toBe(false);
+  });
 });

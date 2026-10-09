@@ -73,6 +73,10 @@ describe("classifyZcashRecipient — transparent addresses", () => {
   it("rejects a too-short t1 string as invalid", () => {
     expect(classifyZcashRecipient("t1short")).toEqual({ error: "invalid" });
   });
+
+  it("rejects an upper-cased transparent prefix as invalid (Base58 is case-sensitive)", () => {
+    expect(classifyZcashRecipient("T1" + T1_ADDRESS.slice(2))).toEqual({ error: "invalid" });
+  });
 });
 
 describe("classifyZcashRecipient — Sapling addresses", () => {
