@@ -17,7 +17,7 @@ object, so one reducer, one middleware and one cache serve every use case on a g
 | `services/cal`           | `calApi`           | `@domain/api-currency-token`                                                         |
 | `services/card`          | `cardApi`          | `@domain/api-card-management`                                                        |
 | `services/coinmarketcap` | `coinMarketCapApi` | `@domain/api-market-index-altcoin-season`, `@domain/api-market-index-fear-and-greed` |
-| `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat`                                                          |
+| `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat`, `@domain/api-market-countervalues`, `@domain/api-ofac`   |
 | `services/push-devices`  | `pushDevicesApi`   | `@domain/api-push-devices`                                                           |
 
 ## What lives here, and what does not

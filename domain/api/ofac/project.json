@@ -1,0 +1,8 @@
+{
+  "name": "@domain/api-ofac",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
