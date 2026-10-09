@@ -1,4 +1,3 @@
-import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
 import { getCurrenciesResolver } from "./resolver";
 import type { CryptoCurrency } from "../types";
@@ -12,6 +11,34 @@ type Data = {
   userGasLimit?: BigNumber;
   gasPrice?: BigNumber;
 };
+
+const stringifyValue = (value: unknown): string => {
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return Number.isFinite(value) ? String(value) : "";
+  if (typeof value === "boolean" || typeof value === "bigint") return String(value);
+  return "";
+};
+
+// Same output as node's querystring.stringify: spaces become %20, not + as with URLSearchParams.
+const stringifyQuery = (query: Record<string, unknown>): string =>
+  Object.entries(query)
+    .flatMap(([key, value]) =>
+      (Array.isArray(value) ? value : [value]).map(
+        item => `${encodeURIComponent(key)}=${encodeURIComponent(stringifyValue(item))}`,
+      ),
+    )
+    .join("&");
+
+const parseQuery = (queryStr: string): Record<string, string | string[]> => {
+  const params = new URLSearchParams(queryStr);
+  return Object.fromEntries(
+    [...new Set(params.keys())].map(key => {
+      const values = params.getAll(key);
+      return [key, values.length > 1 ? values : values[0]];
+    }),
+  );
+};
+
 export function encodeURIScheme(data: Data): string {
   const { currency, address, amount, ...specificFields } = data;
   const query: Record<string, any> = { ...specificFields };
@@ -22,7 +49,7 @@ export function encodeURIScheme(data: Data): string {
     query.amount = amount.div(new BigNumber(10).pow(magnitude)).toNumber();
   }
 
-  const queryStr = querystring.stringify(query);
+  const queryStr = stringifyQuery(query);
   return currency.scheme + ":" + address + (queryStr ? "?" + queryStr : "");
 }
 
@@ -54,7 +81,7 @@ export function decodeURIScheme(str: string): Data {
   }
 
   const [, , scheme, address, , queryStr] = m;
-  const query: Record<string, any> = queryStr ? querystring.parse(queryStr) : {};
+  const query: Record<string, any> = queryStr ? parseQuery(queryStr) : {};
   const currency = getCurrenciesResolver().findCryptoCurrencyByScheme(scheme);
 
   if (!currency) {
