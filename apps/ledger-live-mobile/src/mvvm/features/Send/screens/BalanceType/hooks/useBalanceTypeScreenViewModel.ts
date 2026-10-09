@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { trackPage } from "@shared/analytics";
 import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
@@ -17,7 +17,7 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
-import { hasSendBalanceTypeSync } from "../../../utils/familySendSlots";
+import { isSendAccountSyncRequired } from "../../../utils/familySendSlots";
 import type { SendFlowNavigationProp } from "../../../types";
 
 type FlowTransaction = NonNullable<SendFlowState["transaction"]["transaction"]>;
@@ -41,10 +41,6 @@ export type BalanceTypeScreenViewModel =
       selectedOptionId: string | null;
       options: readonly BalanceTypeOption[];
       onSelect: (optionId: string) => void;
-      sync: Readonly<{
-        isPending: boolean;
-        onComplete: () => void;
-      }>;
     }>;
 
 export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
@@ -60,10 +56,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
 
   const { account, parentAccount } = state.account;
   const { transaction } = state.transaction;
-  const [isSyncPending, setIsSyncPending] = useState(false);
-
   const mainAccount = account ? getMainAccount(account, parentAccount ?? undefined) : undefined;
-  const hasBalanceTypeSync = hasSendBalanceTypeSync(mainAccount?.currency.family);
 
   const bridge = useAccountBridgeOrNull<FlowTransaction>(account, parentAccount);
   const unit = useMaybeAccountUnit(account ?? undefined);
@@ -82,13 +75,9 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     void trackPage({ category: "Modal send - step balance type", props: trackingProperties });
   }, [isReady, trackingProperties]);
 
-  const goToRecipient = useCallback(() => {
-    navigation.navigate(ScreenName.SendFlowRecipient);
-  }, [navigation]);
-
   const onSelect = useCallback(
     (optionId: string) => {
-      if (!account || !transaction || !bridge || !balanceTypeConfig) return;
+      if (!account || !mainAccount || !transaction || !bridge || !balanceTypeConfig) return;
       if (!balanceTypeConfig.getOptions({ account }).some(option => option.id === optionId)) {
         return;
       }
@@ -97,38 +86,34 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
         resetRecipient();
       }
 
-      transactionActions.updateTransaction(currentTransaction =>
+      const applySelection = (currentTransaction: FlowTransaction) =>
         bridge.updateTransaction(
           currentTransaction,
           balanceTypeConfig.buildSelectionPatch(
             optionId,
             currentTransaction,
           ) as Partial<FlowTransaction>,
-        ),
-      );
+        );
 
-      if (hasBalanceTypeSync) {
-        setIsSyncPending(true);
-        return;
-      }
-      goToRecipient();
+      transactionActions.updateTransaction(applySelection);
+
+      navigation.navigate(
+        isSendAccountSyncRequired(mainAccount, applySelection(transaction))
+          ? ScreenName.SendFlowAccountSync
+          : ScreenName.SendFlowRecipient,
+      );
     },
     [
       account,
+      mainAccount,
       transaction,
       bridge,
       balanceTypeConfig,
       resetRecipient,
       transactionActions,
-      hasBalanceTypeSync,
-      goToRecipient,
+      navigation,
     ],
   );
-
-  const onSyncComplete = useCallback(() => {
-    setIsSyncPending(false);
-    goToRecipient();
-  }, [goToRecipient]);
 
   if (!account || !transaction || !bridge || !balanceTypeConfig) {
     return { ready: false };
@@ -169,9 +154,5 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     selectedOptionId: balanceTypeConfig.getSelectedOptionId(transaction),
     options,
     onSelect,
-    sync: {
-      isPending: isSyncPending,
-      onComplete: onSyncComplete,
-    },
   };
 }

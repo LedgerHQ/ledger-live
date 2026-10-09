@@ -1,21 +1,15 @@
 import React, { useEffect } from "react";
 import { Box, Button, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import { WarningFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { useTranslation } from "~/context/Locale";
+import type {
+  SendAccountSync,
+  SendAccountSyncProps,
+} from "LLM/features/Send/utils/familySendSlots";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
 
-type Props = Readonly<{
-  account: Account;
-  transaction: Transaction;
-  onComplete: () => void;
-}>;
-
-type PrivateSyncProgressProps = Omit<Props, "transaction">;
-
-function PrivateSyncProgress({ account, onComplete }: PrivateSyncProgressProps) {
+function PrivateSyncProgress({ account, onComplete }: SendAccountSyncProps) {
   const { t } = useTranslation();
   const { progress, isSyncing, error, start } = useAleoPrivateSync({
     account,
@@ -70,17 +64,10 @@ function PrivateSyncProgress({ account, onComplete }: PrivateSyncProgressProps) 
   );
 }
 
-function SkipSync({ onComplete }: Readonly<{ onComplete: () => void }>) {
-  useEffect(() => {
-    onComplete();
-  }, [onComplete]);
-  return null;
-}
+const aleoSendAccountSync: SendAccountSync = {
+  isRequired: ({ transaction }) =>
+    transaction.family === "aleo" && isPrivateTransaction(transaction),
+  Component: PrivateSyncProgress,
+};
 
-export default function SendBalanceTypeSync({ account, transaction, onComplete }: Props) {
-  if (transaction.family !== "aleo" || !isPrivateTransaction(transaction)) {
-    return <SkipSync onComplete={onComplete} />;
-  }
-
-  return <PrivateSyncProgress key={account.id} account={account} onComplete={onComplete} />;
-}
+export default aleoSendAccountSync;

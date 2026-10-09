@@ -35,6 +35,12 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     showAvailable: false,
     height: "fit",
   },
+  [SEND_FLOW_STEP.ACCOUNT_SYNC]: {
+    id: SEND_FLOW_STEP.ACCOUNT_SYNC,
+    canGoBack: true,
+    showTitle: false,
+    height: "fit",
+  },
   [SEND_FLOW_STEP.RECIPIENT]: {
     id: SEND_FLOW_STEP.RECIPIENT,
     canGoBack: true,

@@ -1,13 +1,17 @@
 import type { ComponentType } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import generatedSendBalanceTypeSync from "~/generated/SendBalanceTypeSync";
+import generatedSendAccountSync from "~/generated/SendAccountSync";
 import generatedSendAmountFooterRow from "~/generated/SendAmountFooterRow";
 
-export type SendBalanceTypeSyncProps = Readonly<{
+export type SendAccountSyncProps = Readonly<{
   account: Account;
-  transaction: Transaction;
   onComplete: () => void;
+}>;
+
+export type SendAccountSync = Readonly<{
+  isRequired: (params: Readonly<{ account: Account; transaction: Transaction }>) => boolean;
+  Component: ComponentType<SendAccountSyncProps>;
 }>;
 
 export type SendAmountFooterRowProps = Readonly<{
@@ -15,14 +19,23 @@ export type SendAmountFooterRowProps = Readonly<{
   transaction: Transaction;
 }>;
 
-type FamilySlots<TProps> = Readonly<Partial<Record<string, ComponentType<TProps>>>>;
+type FamilySlots<TSlot> = Readonly<Partial<Record<string, TSlot>>>;
 
-export const sendBalanceTypeSyncByFamily: FamilySlots<SendBalanceTypeSyncProps> =
-  generatedSendBalanceTypeSync;
+const sendAccountSyncByFamily: FamilySlots<SendAccountSync> = generatedSendAccountSync;
 
-export const sendAmountFooterRowByFamily: FamilySlots<SendAmountFooterRowProps> =
+export const sendAmountFooterRowByFamily: FamilySlots<ComponentType<SendAmountFooterRowProps>> =
   generatedSendAmountFooterRow;
 
-export function hasSendBalanceTypeSync(family: string | undefined): boolean {
-  return Boolean(family && Object.hasOwn(sendBalanceTypeSyncByFamily, family));
+export function getSendAccountSync(family: string | undefined): SendAccountSync | undefined {
+  return family && Object.hasOwn(sendAccountSyncByFamily, family)
+    ? sendAccountSyncByFamily[family]
+    : undefined;
+}
+
+export function isSendAccountSyncRequired(
+  account: Account,
+  transaction: Transaction | null | undefined,
+): boolean {
+  if (!transaction) return false;
+  return getSendAccountSync(account.currency.family)?.isRequired({ account, transaction }) ?? false;
 }

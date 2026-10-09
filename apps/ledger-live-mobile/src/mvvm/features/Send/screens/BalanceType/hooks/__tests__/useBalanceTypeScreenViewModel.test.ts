@@ -6,7 +6,7 @@ import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/
 import { trackPage } from "@shared/analytics";
 import { ScreenName } from "~/const";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
-import { hasSendBalanceTypeSync } from "../../../../utils/familySendSlots";
+import { isSendAccountSyncRequired } from "../../../../utils/familySendSlots";
 import { useBalanceTypeScreenViewModel } from "../useBalanceTypeScreenViewModel";
 
 jest.mock("@react-navigation/native", () => ({
@@ -15,7 +15,7 @@ jest.mock("@react-navigation/native", () => ({
 }));
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("../../../../utils/familySendSlots", () => ({
-  hasSendBalanceTypeSync: jest.fn(() => false),
+  isSendAccountSyncRequired: jest.fn(() => false),
 }));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridgeOrNull: jest.fn((account: { id: string } | null) =>
@@ -48,7 +48,7 @@ const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedUseSendFlowActions = jest.mocked(useSendFlowActions);
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
-const mockedHasSendBalanceTypeSync = jest.mocked(hasSendBalanceTypeSync);
+const mockedIsSendAccountSyncRequired = jest.mocked(isSendAccountSyncRequired);
 const mockedTrackPage = jest.mocked(trackPage);
 
 const PUBLIC_POOL: BalanceTypeOption = {
@@ -116,7 +116,7 @@ function getReadyViewModel(result: { current: ReturnType<typeof useBalanceTypeSc
 describe("useBalanceTypeScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedHasSendBalanceTypeSync.mockReturnValue(false);
+    mockedIsSendAccountSyncRequired.mockReturnValue(false);
     mockedUseNavigation.mockReturnValue({ navigate: mockNavigate } as never);
     mockedUseSendFlowActions.mockReturnValue({
       transaction: { updateTransaction: mockUpdateTransaction, setTransaction: mockSetTransaction },
@@ -232,20 +232,18 @@ describe("useBalanceTypeScreenViewModel", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("GIVEN a family that syncs after a pick WHEN a pool is selected THEN the recipient step waits for the sync", () => {
-    mockedHasSendBalanceTypeSync.mockReturnValue(true);
+  it("GIVEN a pick that needs an account sync WHEN a pool is selected THEN the sync step opens", () => {
+    mockedIsSendAccountSyncRequired.mockReturnValue(true);
 
     const { result } = renderViewModel();
     act(() => getReadyViewModel(result).onSelect("private"));
 
     expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).not.toHaveBeenCalled();
-    expect(getReadyViewModel(result).sync.isPending).toBe(true);
-
-    act(() => getReadyViewModel(result).sync.onComplete());
-
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendFlowRecipient);
-    expect(getReadyViewModel(result).sync.isPending).toBe(false);
+    expect(mockedIsSendAccountSyncRequired).toHaveBeenCalledWith(mockAccount, {
+      id: "tx1",
+      pool: "private",
+    });
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendFlowAccountSync);
   });
 
   it("GIVEN a ready view model WHEN rendered several times THEN the page is tracked once", () => {

@@ -1,7 +1,6 @@
 import React from "react";
 import { SendFlowLayout } from "../../components/SendFlowLayout";
 import { BalanceTypeScreenView } from "./components/BalanceTypeScreenView";
-import { FamilyBalanceTypeSync } from "./components/FamilyBalanceTypeSync";
 import { useBalanceTypeScreenViewModel } from "./hooks/useBalanceTypeScreenViewModel";
 
 export function BalanceTypeScreen() {
@@ -13,11 +12,7 @@ export function BalanceTypeScreen() {
 
   return (
     <SendFlowLayout>
-      {viewModel.sync.isPending ? (
-        <FamilyBalanceTypeSync onComplete={viewModel.sync.onComplete} />
-      ) : (
-        <BalanceTypeScreenView viewModel={viewModel} />
-      )}
+      <BalanceTypeScreenView viewModel={viewModel} />
     </SendFlowLayout>
   );
 }

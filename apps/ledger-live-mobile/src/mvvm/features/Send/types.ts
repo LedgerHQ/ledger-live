@@ -23,6 +23,7 @@ export type SendFlowConfig = ReactNativeFlowConfig<SendFlowStep, SendStepConfig>
 // All the send flow data is stored in the context: atm it stays undefined
 export type SendFlowStackParamList = {
   [ScreenName.SendFlowBalanceType]: undefined;
+  [ScreenName.SendFlowAccountSync]: undefined;
   [ScreenName.SendFlowRecipient]: undefined;
   [ScreenName.SendFlowAmount]: undefined;
   [ScreenName.SendFlowCustomFees]: undefined;
