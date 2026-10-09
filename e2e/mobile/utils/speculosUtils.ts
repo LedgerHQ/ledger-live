@@ -6,7 +6,7 @@ import {
   takeScreenshot,
   setExchangeDependencies,
 } from "@ledgerhq/live-e2e-shared/speculos";
-import { setEnv } from "@shared/env";
+import { getEnv, setEnv } from "@shared/env";
 import { device, log } from "detox";
 import {
   waitForSpeculosReady,
@@ -320,6 +320,48 @@ export async function registerSpeculos(speculosPort: number) {
   delete process.env.DEVICE_PROXY_URL;
   CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
   setEnv("SPECULOS_API_PORT", speculosPort);
+}
+
+/**
+ * Runs `work` on a Speculos of its own, then puts the caller's device back.
+ *
+ * `registerSpeculos` restores the port but reads SPECULOS_ADDRESS as it finds it, so a remote
+ * device — identified by URL, not port — needs its address restored here too.
+ */
+export async function withTemporarySpeculos<T>(
+  appName: string,
+  work: () => Promise<T>,
+): Promise<T> {
+  const previousPort = getEnv("SPECULOS_API_PORT");
+  const previousAddress = process.env.SPECULOS_ADDRESS;
+  const speculos = await launchSpeculos(appName);
+  try {
+    // A remote /acquire returns a sentinel port before the pod exists, and the readiness poll is
+    // what publishes this device's SPECULOS_ADDRESS; registering first sends the work to the
+    // caller's device instead.
+    if (isSpeculosRemote()) {
+      await waitForSpeculosReady(speculos.id);
+    }
+    await registerSpeculos(speculos.port);
+    return await work();
+  } finally {
+    // deleteSpeculos clears SPECULOS_API_PORT, so the caller's device is restored after it, and a
+    // failed release must neither skip that nor replace the error `work` threw.
+    await deleteSpeculos(speculos.id).catch(error =>
+      log.warn(
+        "E2E",
+        `Could not release temporary Speculos ${speculos.id}: ${sanitizeError(error)}`,
+      ),
+    );
+    if (previousAddress === undefined) {
+      delete process.env.SPECULOS_ADDRESS;
+    } else {
+      process.env.SPECULOS_ADDRESS = previousAddress;
+    }
+    if (previousPort > 0) {
+      await registerSpeculos(previousPort);
+    }
+  }
 }
 
 function getKnownSpeculosAddress(speculosPort: number): string {

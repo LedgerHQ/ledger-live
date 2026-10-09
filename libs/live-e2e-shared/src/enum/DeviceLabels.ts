@@ -34,6 +34,7 @@ export enum DeviceLabels {
   NEW_ORDINARY = "New ordinary",
   PLEASE_REVIEW = "Please",
   PUBKEY = "Pubkey",
+  QUIT_APP = "Quit app",
   READY = "Ready",
   RECEIVE_ADDRESS_DOES_NOT_BELONG = "Receive address does",
   RECEIVER = "Receiver",
