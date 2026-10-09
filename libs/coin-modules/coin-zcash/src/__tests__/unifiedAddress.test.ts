@@ -1,4 +1,4 @@
-import { decodeUnifiedAddress, encodeUnifiedAddress } from "./unifiedAddress";
+import { decodeUnifiedAddress, encodeUnifiedAddress } from "./fixtures/unifiedAddress";
 
 // The mainnet fixtures of logic/address.test.ts: the encoder is only trusted for
 // testnet fixtures if it reproduces these exactly.

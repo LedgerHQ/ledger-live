@@ -33,8 +33,8 @@ import {
   UTEST_SAPLING_ONLY,
   UTEST_TRANSPARENT_ONLY,
   U_ORCHARD_MAINNET,
-} from "../test/testnetAddresses";
-import { encodeUnifiedAddress } from "../test/unifiedAddress";
+} from "../__tests__/fixtures/testnetAddresses";
+import { encodeUnifiedAddress } from "../__tests__/fixtures/unifiedAddress";
 
 // ---------------------------------------------------------------------------
 // Real Zcash mainnet addresses (sourced from existing coin-bitcoin test suite)
@@ -312,7 +312,7 @@ describe("deriveZcashTransferType — truth table", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Testnet (fixtures constructed in src/test/testnetAddresses.ts)
+// Testnet (fixtures constructed in src/__tests__/fixtures/testnetAddresses.ts)
 // ---------------------------------------------------------------------------
 
 describe("classifyZcashRecipient — testnet", () => {

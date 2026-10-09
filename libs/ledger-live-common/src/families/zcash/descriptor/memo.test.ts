@@ -1,7 +1,7 @@
 import { memo } from "./memo";
 
 // Unified Addresses built with the forward F4Jumble encoder of coin-zcash's tests
-// (src/test/unifiedAddress.ts): HRP "utest" with an Orchard receiver, and with a
+// (src/__tests__/fixtures/unifiedAddress.ts): HRP "utest" with an Orchard receiver, and with a
 // single transparent receiver.
 const UTEST_ORCHARD =
   "utest1hap277en6ayclu5027232d44kv0s6nd0tacmnj07v0avarpuv4vzyfjreu3qexw05v9jvpx8ce37lpt5j4qexyrwhrlrma9msypee8x4";

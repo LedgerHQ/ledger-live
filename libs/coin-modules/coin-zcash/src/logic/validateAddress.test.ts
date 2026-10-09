@@ -8,7 +8,7 @@ import {
   UTEST_SAPLING_ONLY,
   UTEST_TRANSPARENT_ONLY,
   U_ORCHARD_MAINNET,
-} from "../test/testnetAddresses";
+} from "../__tests__/fixtures/testnetAddresses";
 
 describe("logic/validateAddress", () => {
   it("accepts a valid transparent t1 address", () => {

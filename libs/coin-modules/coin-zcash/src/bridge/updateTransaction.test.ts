@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { updateTransaction } from "./updateTransaction";
 import type { Transaction } from "../types/bridge";
-import { TM_ADDRESS, UTEST_ORCHARD } from "../test/testnetAddresses";
+import { TM_ADDRESS, UTEST_ORCHARD } from "../__tests__/fixtures/testnetAddresses";
 
 const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 const U_ADDRESS =

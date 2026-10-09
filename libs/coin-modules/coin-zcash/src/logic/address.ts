@@ -225,7 +225,9 @@ function stripHrpPadding(plaintext: Uint8Array, hrp: string): Uint8Array | null 
   const suffixStart = plaintext.length - F4JUMBLE_HRP_PAD_LENGTH;
   const suffix = plaintext.slice(suffixStart);
 
-  const paddingValid = suffix.every((byte, i) => byte === (i < hrp.length ? hrp.charCodeAt(i) : 0));
+  const paddingValid = suffix.every(
+    (byte, i) => byte === (i < hrp.length ? hrp.codePointAt(i) : 0),
+  );
   if (!paddingValid) {
     return null;
   }

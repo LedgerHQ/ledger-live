@@ -4,6 +4,7 @@ import type { BitcoinOutput, ZcashAccount, Transaction } from "../types/bridge";
 import { ZcashSaplingRecipientNotSupported, ZcashShieldedKeyMissing } from "../types/errors";
 import { classifyZcashRecipient } from "../logic/address";
 import { zcashNetworkOf } from "../logic/network";
+import { isValidZcashAddress } from "../logic/validateAddress";
 import { TRANSPARENT_OUTPUT_DUST_THRESHOLD } from "../logic/coin-selection";
 import { ZCASH_MAX_TRANSPARENT_INPUTS } from "../constants";
 
@@ -112,6 +113,11 @@ export const computeRecipientError = (
     return cls.error === "sapling-unsupported"
       ? new ZcashSaplingRecipientNotSupported()
       : new InvalidAddress("", { currencyName });
+  }
+  // The classifier reads a transparent address's prefix and length only; the
+  // Base58Check checksum is what rejects a mistyped one.
+  if (recipient.startsWith("t") && !isValidZcashAddress(recipient, currencyId)) {
+    return new InvalidAddress("", { currencyName });
   }
   if (cls.recipientType === "private" && !shieldedKeyAvailable) {
     return new ZcashShieldedKeyMissing();
