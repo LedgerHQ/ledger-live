@@ -1,10 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { track } from "@shared/analytics";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSponsoredSend, STANDARD_FEE_OPTION_ID } from "../../../context/SponsoredSendContext";
+import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
+import { getSendFlowTrackingPage } from "../../../utils/contactTracking";
 import type { FeeAmountDisplay } from "LLD/features/Send/types";
 
 export type FeePaymentOption = Readonly<{
@@ -51,6 +55,8 @@ export function useFeePaymentViewModel(): FeePaymentViewModel {
   const sponsoredDisabled = !feeTokenAccount || !!sponsoredMaxAmount?.lte(0);
   const { account, parentAccount } = state.account;
   const nativeTicker = account ? getMainAccount(account, parentAccount).currency.ticker : "";
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  const { flowSessionId } = useSendFlowTracking();
 
   const [pendingId, setPendingId] = useState(selectedFeeOptionId);
   const pendingUnavailable = pendingId === sponsoredFeeOptionId && sponsoredDisabled;
@@ -65,6 +71,13 @@ export function useFeePaymentViewModel(): FeePaymentViewModel {
 
   const onConfirm = useCallback(() => {
     if (pendingUnavailable) return;
+    track("button_clicked", {
+      button: "confirm",
+      page: getSendFlowTrackingPage(SEND_FLOW_STEP.FEE_PAYMENT),
+      fee_option: pendingId,
+      flow_session_id: flowSessionId,
+      ...sendFlowTrackingProperties,
+    });
     if (pendingId !== selectedFeeOptionId) {
       if (pendingId === sponsoredFeeOptionId) {
         selectSponsored();
@@ -81,6 +94,8 @@ export function useFeePaymentViewModel(): FeePaymentViewModel {
     selectSponsored,
     selectStandard,
     navigation,
+    flowSessionId,
+    sendFlowTrackingProperties,
   ]);
 
   const options: readonly FeePaymentOption[] = useMemo(
