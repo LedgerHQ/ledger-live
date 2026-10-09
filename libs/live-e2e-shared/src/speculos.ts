@@ -662,15 +662,46 @@ function appReadyLabel(appName: string): string {
 }
 
 /**
+ * Status pages an app draws after answering a command, before it redraws its idle screen.
+ */
+const STATUS_SCREEN_LABELS = [DeviceLabels.ADDRESS_VERIFIED].map(label => label.toLowerCase());
+
+/**
+ * The firmware times a status page at 3s, but Speculos on touch models runs it past 5s on CI
+ * (LIVE-37792), so the bound sits well above both.
+ */
+const STATUS_SCREEN_MAX_ATTEMPTS = Math.ceil(15_000 / SCREEN_POLL_INTERVAL_MS);
+
+/**
  * Waits for the device to return to its app-ready screen after a status page
  * that answers a command and then draws its own screen -- during that
  * window, the app's own APDU loop can drop an incoming command instead of
- * queuing it (LIVE-37178). The default maxAttempts (9 x the 500ms poll
- * interval = 4.5s) is an upper bound on that screen's own duration, not a
- * guess about CI load.
+ * queuing it (LIVE-37178). Polls spent on the status page don't count
+ * against maxAttempts (9 x the 500ms poll interval = 4.5s), which covers
+ * only the screens around it: the status page may not be drawn yet when
+ * polling starts, so it can't be waited out up front.
  */
 export async function waitForAppReady(speculosApp: AppInfos, maxAttempts = 9): Promise<string> {
-  return waitFor(appReadyLabel(speculosApp.name), maxAttempts);
+  const port = getEnv("SPECULOS_API_PORT");
+  const readyLabel = appReadyLabel(speculosApp.name);
+  let texts = "";
+  let attempts = 0;
+  let statusPolls = 0;
+
+  while (attempts < maxAttempts) {
+    texts = await fetchCurrentScreenTexts(port);
+    const screen = texts.toLowerCase();
+    if (screen.includes(readyLabel.toLowerCase())) return texts;
+
+    const onStatusScreen = STATUS_SCREEN_LABELS.some(label => screen.includes(label));
+    if (onStatusScreen && statusPolls < STATUS_SCREEN_MAX_ATTEMPTS) statusPolls++;
+    else attempts++;
+    await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+
+  throw new Error(
+    `Text "${readyLabel}" not found on device screen after ${attempts + statusPolls} attempts. Last screen text: "${texts}"`,
+  );
 }
 
 const SWAP_INIT_STALL_HINT =

@@ -4,6 +4,7 @@ export enum DeviceLabels {
   ACCEPT_RISK = "Accept risk",
   ACCOUNT = "Account",
   ADDRESS = "Address",
+  ADDRESS_VERIFIED = "Address verified",
   AMOUNT = "Amount",
   APPROVE = "Approve",
   APP_SETTINGS = "App settings",
