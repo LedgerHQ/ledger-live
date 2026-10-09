@@ -16,7 +16,14 @@ import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
-import { spinner, colors, writeStdout, writeStderr, isInteractive } from "./shared/ui";
+import {
+  spinner,
+  colors,
+  writeStdout,
+  writeStderr,
+  isInteractive,
+  stripControlChars,
+} from "./shared/ui";
 import {
   formatSwapQuoteHuman,
   type SwapQuoteLine,
@@ -975,7 +982,7 @@ class HumanCommandOutput implements CommandOutput {
   }
 }
 
-/** Labeled lines for one intent, as `agent-intent status` and `agent-intent cancel` show it. */
+/** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
 function intentDetailLines(
   profileId: string,
   i: IntentListEntry,
@@ -996,7 +1003,7 @@ function intentDetailLines(
     ...(i.failureReason ? [`Failure: ${i.failureReason}`] : []),
     `Created: ${i.createdAt}`,
     `Updated: ${i.updatedAt}`,
-  ];
+  ].map(stripControlChars);
 }
 
 function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
