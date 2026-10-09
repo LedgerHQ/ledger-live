@@ -1,6 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 import { countervaluesApi, cvsApiExtra } from "@shared/api-services";
 import { ofacApi, useCheckQuery } from "./api";
+
+const CHECK_URL = "https://cvs.test/v3/markets";
 
 // Wired the way the apps wire it: the store registers the service api, and the endpoint only
 // exists because importing this package injected it.
@@ -16,19 +20,6 @@ const makeStore = () =>
         },
       }).concat(countervaluesApi.middleware),
   });
-
-function json(body: unknown, status: number) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
-let fetchSpy: jest.SpyInstance;
-
-afterEach(() => {
-  fetchSpy?.mockRestore();
-});
 
 describe("ofacApi configuration", () => {
   it("has the Countervalues service reducer path", () => {
@@ -46,19 +37,36 @@ describe("ofacApi configuration", () => {
 });
 
 describe("ofacApi check", () => {
+  const server = setupServer();
+
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: "error" });
+  });
+  afterEach(() => {
+    server.resetHandlers();
+  });
+  afterAll(() => {
+    server.close();
+  });
+
   it("hits the injected base URL", async () => {
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(json({}, 200));
+    let seen: Request | undefined;
+    server.use(
+      http.get(CHECK_URL, ({ request }) => {
+        seen = request;
+        return HttpResponse.json({});
+      }),
+    );
     const store = makeStore();
 
     await store.dispatch(ofacApi.endpoints.check.initiate());
 
-    const request = fetchSpy.mock.calls[0][0] as Request;
-    expect(request.url).toBe("https://cvs.test/v3/markets");
-    expect(request.headers.get("Accept")).toBe("application/json");
+    expect(seen?.url).toBe(CHECK_URL);
+    expect(seen?.headers.get("Accept")).toBe("application/json");
   });
 
   it("returns false on HTTP 200", async () => {
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(json({}, 200));
+    server.use(http.get(CHECK_URL, () => HttpResponse.json({})));
     const store = makeStore();
 
     const result = await store.dispatch(ofacApi.endpoints.check.initiate());
@@ -68,7 +76,7 @@ describe("ofacApi check", () => {
   });
 
   it("returns true on HTTP 451", async () => {
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(json({}, 451));
+    server.use(http.get(CHECK_URL, () => HttpResponse.json({}, { status: 451 })));
     const store = makeStore();
 
     const result = await store.dispatch(ofacApi.endpoints.check.initiate());
@@ -78,28 +86,36 @@ describe("ofacApi check", () => {
   });
 
   it("surfaces other HTTP statuses as a query error without retrying", async () => {
-    fetchSpy = jest
-      .spyOn(globalThis, "fetch")
-      .mockImplementation(() => Promise.resolve(json({ error: "no" }, 500)));
+    let calls = 0;
+    server.use(
+      http.get(CHECK_URL, () => {
+        calls += 1;
+        return HttpResponse.json({ error: "no" }, { status: 500 });
+      }),
+    );
     const store = makeStore();
 
     const result = await store.dispatch(ofacApi.endpoints.check.initiate());
 
     expect(result.data).toBeUndefined();
     expect(result.error).toBeDefined();
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(calls).toBe(1);
   });
 
   it("surfaces a network failure as a query error without retrying", async () => {
-    fetchSpy = jest
-      .spyOn(globalThis, "fetch")
-      .mockImplementation(() => Promise.reject(new Error("network error")));
+    let calls = 0;
+    server.use(
+      http.get(CHECK_URL, () => {
+        calls += 1;
+        return HttpResponse.error();
+      }),
+    );
     const store = makeStore();
 
     const result = await store.dispatch(ofacApi.endpoints.check.initiate());
 
     expect(result.data).toBeUndefined();
     expect(result.error).toBeDefined();
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(calls).toBe(1);
   });
 });
