@@ -4,4 +4,4 @@
 "live-mobile": minor
 ---
 
-Log the full device metadata in the onboarding devtool
+Log the full device metadata in the onboarding devtool and stay on screen when the user quits
