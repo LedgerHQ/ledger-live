@@ -79,9 +79,8 @@ describe("encodeURIScheme", () => {
         amount: new BigNumber(100000000),
         label: "x",
         count: 2,
-        flag: true,
       } as EncodeInput),
-    ).toBe(`bitcoin:${BTC_ADDRESS}?label=x&count=2&flag=true&amount=1`);
+    ).toBe(`bitcoin:${BTC_ADDRESS}?label=x&count=2&amount=1`);
   });
 });
 

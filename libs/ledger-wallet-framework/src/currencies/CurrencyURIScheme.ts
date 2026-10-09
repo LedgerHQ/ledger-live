@@ -12,21 +12,16 @@ type Data = {
   gasPrice?: BigNumber;
 };
 
-const stringifyValue = (value: unknown): string => {
-  if (typeof value === "string") return value;
-  if (typeof value === "number") return Number.isFinite(value) ? String(value) : "";
-  if (typeof value === "boolean" || typeof value === "bigint") return String(value);
-  return "";
-};
-
 // Same output as node's querystring.stringify: spaces become %20, not + as with URLSearchParams.
 const stringifyQuery = (query: Record<string, unknown>): string =>
   Object.entries(query)
-    .flatMap(([key, value]) =>
-      (Array.isArray(value) ? value : [value]).map(
-        item => `${encodeURIComponent(key)}=${encodeURIComponent(stringifyValue(item))}`,
-      ),
-    )
+    .map(([key, value]) => {
+      const str =
+        typeof value === "string" || (typeof value === "number" && Number.isFinite(value))
+          ? String(value)
+          : "";
+      return `${encodeURIComponent(key)}=${encodeURIComponent(str)}`;
+    })
     .join("&");
 
 const parseQuery = (queryStr: string): Record<string, string | string[]> => {
