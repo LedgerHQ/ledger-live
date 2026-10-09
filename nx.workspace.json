@@ -8,7 +8,6 @@
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/.npmrc",
-      "{workspaceRoot}/.pnpmfile.cjs",
       "{workspaceRoot}/patches/**/*"
     ],
     "default": [

@@ -2,7 +2,7 @@
 
 const { allowlists, denylists, singletons } = require("./config.json");
 
-const CONFIG_FILE = "tools/dependency-checks/config.json";
+const CONFIG_FILE = "tools/danger/dependency-checks/config.json";
 const DEPENDENCY_FIELDS = ["dependencies", "devDependencies", "optionalDependencies"];
 
 function toRegExp(glob) {
