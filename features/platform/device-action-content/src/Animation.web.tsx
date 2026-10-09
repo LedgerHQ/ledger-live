@@ -1,5 +1,5 @@
 import React from "react";
-import Lottie, { LottieProps } from "react-lottie";
+import { Lottie, type LottieProps } from "@shared/lottie";
 
 // Read straight from the environment rather than through `@shared/env`: that pulls in the legacy
 // `@ledgerhq/live-env`, which only resolves once `libs/` has been built, so any package testing a
@@ -15,21 +15,23 @@ function isPlaywrightRun(): boolean {
 }
 
 export type AnimationProps = Readonly<{
-  animation: unknown;
+  animation?: LottieProps["source"] | null;
   width?: string;
   height?: string;
   loop?: boolean;
   autoplay?: boolean;
-  rendererSettings?: LottieProps["options"]["rendererSettings"];
+  fit?: LottieProps["fit"];
+  align?: LottieProps["align"];
 }>;
 
 export function Animation({
   animation,
   loop = true,
   autoplay = true,
-  width = "100%",
+  width,
   height = "auto",
-  rendererSettings = { preserveAspectRatio: "xMidYMin" },
+  fit = "contain",
+  align = [0.5, 0],
 }: AnimationProps): React.JSX.Element | null {
   const isPlaywright = isPlaywrightRun();
 
@@ -38,15 +40,13 @@ export function Animation({
   return (
     <div className="flex" style={{ maxHeight: "200px", maxWidth: "500px" }}>
       <Lottie
-        style={{ width, height }}
-        isClickToPauseDisabled
-        ariaRole="animation"
-        options={{
-          loop,
-          autoplay: !isPlaywright && autoplay,
-          animationData: animation,
-          rendererSettings,
-        }}
+        source={animation}
+        style={width ? { width, height } : { height }}
+        role="presentation"
+        loop={loop}
+        autoPlay={!isPlaywright && autoplay}
+        fit={fit}
+        align={align}
       />
     </div>
   );

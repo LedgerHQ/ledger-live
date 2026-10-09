@@ -1,8 +1,8 @@
 {
-  "name": "@features/platform-device-action-content",
-  "version": "0.3.0",
+  "name": "@shared/lottie",
+  "version": "0.0.0",
   "private": true,
-  "description": "Shared device-side action content (animation, copy, banner) for web and native",
+  "description": "Cross-platform Lottie player: dotlottie on web, lottie-react-native on mobile",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
@@ -15,44 +15,34 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src",
-    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.web.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/device-action-content/knip.native.config.mjs -W features/platform/device-action-content --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../.. -W shared/lottie",
+    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src"
   },
   "dependencies": {
-    "@features/platform-style": "workspace:^",
-    "@shared/lottie": "workspace:*"
+    "@lottiefiles/dotlottie-react": "0.17.13"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-native": ">=0.70.0",
-    "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "react-native-config": "catalog:",
-    "styled-components": ">=6"
+    "lottie-react-native": "7.3.6"
   },
   "peerDependenciesMeta": {
     "react-native": {
       "optional": true
     },
-    "@ledgerhq/lumen-ui-react": {
-      "optional": true
-    },
-    "@ledgerhq/lumen-ui-rnative": {
-      "optional": true
-    },
-    "react-native-config": {
+    "lottie-react-native": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-shared": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -60,16 +50,17 @@
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "lottie-react-native": "7.3.6",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
-    "react-native-config": "catalog:",
     "react-test-renderer": "catalog:",
-    "styled-components": "catalog:",
     "typescript": "catalog:"
   }
 }

@@ -1,16 +1,16 @@
 import React, { useEffect, useSyncExternalStore } from "react";
-import Lottie, { LottieProps } from "react-lottie";
+import { Lottie, type LottieProps } from "@shared/lottie";
 import { Flex } from "@ledgerhq/react-ui";
 import { getEnv } from "@shared/env";
 
-export type AnimationLoader = () => Promise<{ default: unknown }>;
+export type AnimationLoader = () => Promise<{ default: Record<string, unknown> }>;
 
 /** Parsed Lottie data, or a loader for the code-split device animations. */
-export type AnimationSource = object | AnimationLoader;
+export type AnimationSource = Record<string, unknown> | AnimationLoader;
 
 const isLoader = (value: AnimationSource): value is AnimationLoader => typeof value === "function";
 
-const cache = new WeakMap<AnimationLoader, unknown>();
+const cache = new WeakMap<AnimationLoader, Record<string, unknown>>();
 const listeners = new Set<() => void>();
 
 const subscribe = (listener: () => void) => {
@@ -21,7 +21,9 @@ const subscribe = (listener: () => void) => {
 };
 
 /** Resolves an animation source to its data; undefined while a loader is pending. */
-export function useAnimationData(source?: AnimationSource | null): unknown {
+export function useAnimationData(
+  source?: AnimationSource | null,
+): Record<string, unknown> | undefined {
   const data = useSyncExternalStore(subscribe, () =>
     source && isLoader(source) ? cache.get(source) : source,
   );
@@ -38,20 +40,17 @@ export function useAnimationData(source?: AnimationSource | null): unknown {
       });
   }, [source]);
 
-  return data;
+  return data ?? undefined;
 }
 const Animation = ({
   className = "",
   animation,
   loop = true,
   autoplay = true,
-  width = "100%",
+  width,
   height = "auto",
-  rendererSettings = {
-    preserveAspectRatio: "xMidYMin",
-  },
-  isPaused = false,
-  isStopped = false,
+  fit = "contain",
+  align = [0.5, 0],
 }: {
   className?: string;
   animation?: AnimationSource | null;
@@ -59,9 +58,8 @@ const Animation = ({
   height?: string;
   loop?: boolean;
   autoplay?: boolean;
-  rendererSettings?: LottieProps["options"]["rendererSettings"];
-  isPaused?: boolean;
-  isStopped?: boolean;
+  fit?: LottieProps["fit"];
+  align?: LottieProps["align"];
 }) => {
   // in case of playwright tests, we want to completely stop the animation
   const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
@@ -75,17 +73,13 @@ const Animation = ({
       }}
     >
       <Lottie
-        style={{ width, height }}
-        isClickToPauseDisabled
-        ariaRole="animation"
-        isPaused={isPaused}
-        isStopped={isStopped}
-        options={{
-          loop,
-          autoplay: !isPlaywright && autoplay,
-          animationData: animationData,
-          rendererSettings,
-        }}
+        source={animationData}
+        style={width ? { width, height } : { height }}
+        role="presentation"
+        loop={loop}
+        autoPlay={!isPlaywright && autoplay}
+        fit={fit}
+        align={align}
       />
     </Flex>
   ) : null;

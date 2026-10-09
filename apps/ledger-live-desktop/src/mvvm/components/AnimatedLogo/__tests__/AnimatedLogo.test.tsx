@@ -2,12 +2,12 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { AnimatedLogo } from "../index";
 
-jest.mock("react-lottie", () => {
+jest.mock("@shared/lottie", () => {
   const MockLottie = (props: Record<string, unknown>) => (
-    <div data-testid="lottie" data-is-paused={String(props.isPaused)} />
+    <div data-testid="lottie" data-is-paused={String(props.paused)} />
   );
   MockLottie.displayName = "MockLottie";
-  return MockLottie;
+  return { Lottie: MockLottie };
 });
 
 jest.mock("../dark/collapse.json", () => ({ id: "dark-collapse" }));
