@@ -4,7 +4,7 @@ import { runSwapRedirectTest } from "@e2e/specs/earn/earnV2";
 const testConfig = {
   earnAccount: Account.ETH_2,
   fundingAccount: TokenAccount.ETH_USDT_1,
-  tmsLinks: [] as string[],
+  tmsLinks: ["B2CQA-6692"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
