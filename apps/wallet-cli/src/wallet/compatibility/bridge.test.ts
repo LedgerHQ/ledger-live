@@ -5,6 +5,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
+import type { Operation } from "@ledgerhq/types-live";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
 import {
   applyEvmGasLimitMultiplier,
@@ -194,31 +195,50 @@ describe("buildSolanaTransactionPatch", () => {
   });
 });
 
+const pendingOp = (op: Pick<Operation, "type" | "value" | "fee">) => op as Operation;
+
 describe("toSolanaStakeLimits", () => {
-  it("derives the fee reserve from balance, rent and max stakeable", () => {
+  it("takes the stake account rent off the max spendable and derives the fee reserve", () => {
     expect(
       toSolanaStakeLimits({
         minimumDelegation: new BigNumber(1_000_000_000),
         rent: new BigNumber(1_666_240),
         spendableBalance: new BigNumber(50_929_500),
-        maxStakeable: new BigNumber(49_243_260),
+        pendingDebits: new BigNumber(0),
+        maxSpendable: new BigNumber(50_909_500),
       }),
     ).toEqual({
       minimumDelegation: BigNumberStrSchema.parse("1000000000"),
       rent: BigNumberStrSchema.parse("1666240"),
       spendableBalance: BigNumberStrSchema.parse("50929500"),
+      pendingDebits: BigNumberStrSchema.parse("0"),
       maxStakeable: BigNumberStrSchema.parse("49243260"),
       feeReserve: BigNumberStrSchema.parse("20000"),
     });
   });
 
-  it("floors the fee reserve at 0 when nothing is stakeable", () => {
+  it("keeps pending outgoing SOL out of the fee reserve", () => {
+    const limits = toSolanaStakeLimits({
+      minimumDelegation: new BigNumber(1_000_000_000),
+      rent: new BigNumber(1_666_240),
+      spendableBalance: new BigNumber(600_000_000),
+      pendingDebits: new BigNumber(500_000_000),
+      maxSpendable: new BigNumber(99_980_000),
+    });
+    expect(limits.pendingDebits).toBe(BigNumberStrSchema.parse("500000000"));
+    expect(limits.maxStakeable).toBe(BigNumberStrSchema.parse("98313760"));
+    expect(limits.feeReserve).toBe(BigNumberStrSchema.parse("20000"));
+  });
+
+  it("floors the max stakeable and fee reserve at 0 when the max spendable does not cover the rent", () => {
     const limits = toSolanaStakeLimits({
       minimumDelegation: new BigNumber(1_000_000_000),
       rent: new BigNumber(1_666_240),
       spendableBalance: new BigNumber(1_000_000),
-      maxStakeable: new BigNumber(0),
+      pendingDebits: new BigNumber(0),
+      maxSpendable: new BigNumber(980_000),
     });
+    expect(limits.maxStakeable).toBe(BigNumberStrSchema.parse("0"));
     expect(limits.feeReserve).toBe(BigNumberStrSchema.parse("0"));
   });
 });
@@ -243,7 +263,7 @@ describe("BridgeAdapter.getSolanaStakeLimits", () => {
     restores.splice(0).forEach(restore => restore());
   });
 
-  it("combines the chain stake costs with coin-solana's max stakeable for a new stake account", async () => {
+  async function mockSolanaLimits(maxSpendable: BigNumber) {
     const solanaNetwork = await import("@ledgerhq/coin-solana/network/index");
     const bridge = await getAccountBridge(account);
     const chainApi = {
@@ -252,12 +272,17 @@ describe("BridgeAdapter.getSolanaStakeLimits", () => {
     } as unknown as ReturnType<typeof solanaNetwork.getChainAPI>;
     const getChainAPI = spyOn(solanaNetwork, "getChainAPI").mockReturnValue(chainApi);
     const estimateMaxSpendable = spyOn(bridge, "estimateMaxSpendable").mockResolvedValue(
-      new BigNumber(49_243_260),
+      maxSpendable,
     );
     restores.push(
       () => getChainAPI.mockRestore(),
       () => estimateMaxSpendable.mockRestore(),
     );
+    return { getChainAPI, estimateMaxSpendable };
+  }
+
+  it("combines the chain stake costs with the bridge's max spendable for a new stake account", async () => {
+    const { getChainAPI, estimateMaxSpendable } = await mockSolanaLimits(new BigNumber(50_909_500));
     const adapter = new BridgeAdapter();
     Object.assign(adapter, { sync: async () => account });
 
@@ -265,6 +290,7 @@ describe("BridgeAdapter.getSolanaStakeLimits", () => {
       minimumDelegation: BigNumberStrSchema.parse("1000000000"),
       rent: BigNumberStrSchema.parse("1666240"),
       spendableBalance: BigNumberStrSchema.parse("50929500"),
+      pendingDebits: BigNumberStrSchema.parse("0"),
       maxStakeable: BigNumberStrSchema.parse("49243260"),
       feeReserve: BigNumberStrSchema.parse("20000"),
     });
@@ -273,10 +299,44 @@ describe("BridgeAdapter.getSolanaStakeLimits", () => {
     expect(estimateMaxSpendable).toHaveBeenCalledTimes(1);
     expect(estimateMaxSpendable).toHaveBeenCalledWith({
       account,
-      transaction: expect.objectContaining({
-        model: { kind: "stake.createAccount", uiState: { delegate: { voteAccAddress: "" } } },
-      }),
+      transaction: expect.objectContaining({ mode: "stake" }),
     });
+  });
+
+  it("reports pending outgoing SOL separately from the fee reserve", async () => {
+    await mockSolanaLimits(new BigNumber(99_970_000));
+    const pendingAccount = {
+      ...account,
+      spendableBalance: new BigNumber(600_000_000),
+      pendingOperations: [
+        pendingOp({ type: "OUT", value: new BigNumber(500_000_000), fee: new BigNumber(5_000) }),
+        pendingOp({ type: "FEES", value: new BigNumber(2_000_000), fee: new BigNumber(5_000) }),
+      ],
+    };
+    const adapter = new BridgeAdapter();
+    Object.assign(adapter, { sync: async () => pendingAccount });
+
+    const limits = await adapter.getSolanaStakeLimits(descriptor);
+    expect(limits.pendingDebits).toBe(BigNumberStrSchema.parse("500010000"));
+    expect(limits.maxStakeable).toBe(BigNumberStrSchema.parse("98303760"));
+    expect(limits.feeReserve).toBe(BigNumberStrSchema.parse("20000"));
+  });
+
+  it("reuses the account synced by the preceding prepareSend instead of syncing again", async () => {
+    const { estimateMaxSpendable } = await mockSolanaLimits(new BigNumber(50_909_500));
+    const adapter = new BridgeAdapter();
+    let syncs = 0;
+    Object.assign(adapter, {
+      syncedAccounts: new Map([[descriptor.id, account]]),
+      sync: async () => {
+        syncs += 1;
+        return account;
+      },
+    });
+
+    await adapter.getSolanaStakeLimits(descriptor);
+    expect(syncs).toBe(0);
+    expect(estimateMaxSpendable).toHaveBeenCalledWith(expect.objectContaining({ account }));
   });
 });
 

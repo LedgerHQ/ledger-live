@@ -93,6 +93,7 @@ const MAINNET_LIMITS: Record<keyof SolanaStakeLimits, string> = {
   minimumDelegation: "1000000000",
   rent: "1666240",
   spendableBalance: "50929500",
+  pendingDebits: "0",
   maxStakeable: "49243260",
   feeReserve: "20000",
 };
@@ -105,6 +106,7 @@ function limits(
     minimumDelegation: BigNumberStrSchema.parse(raw.minimumDelegation),
     rent: BigNumberStrSchema.parse(raw.rent),
     spendableBalance: BigNumberStrSchema.parse(raw.spendableBalance),
+    pendingDebits: BigNumberStrSchema.parse(raw.pendingDebits),
     maxStakeable: BigNumberStrSchema.parse(raw.maxStakeable),
     feeReserve: BigNumberStrSchema.parse(raw.feeReserve),
   };
@@ -159,12 +161,29 @@ describe("describeStakeAmountError", () => {
     expect(message).toContain("Requested 0.06 SOL.");
   });
 
+  it("lists pending outgoing SOL separately from the fee reserve", () => {
+    const message = describeReadable(
+      "NotEnoughBalance",
+      "0.2 SOL",
+      limits({
+        spendableBalance: "600000000",
+        pendingDebits: "500000000",
+        maxStakeable: "98313760",
+      }),
+      "solana",
+    );
+    expect(message).toContain(
+      "Max stakeable is 0.09831376 SOL: spendable balance 0.6 SOL minus pending outgoing " +
+        "0.5 SOL, stake account rent 0.00166624 SOL and fee reserve 0.00002 SOL.",
+    );
+  });
+
   it.each(["SolanaStakeAccountAmountTooLow", "NotEnoughBalance"] as const)(
     "adds the SOL still missing when the max stakeable is under the minimum (%s)",
     name => {
       const message = describeReadable(name, "0.01 SOL", limits(), "solana");
       expect(message).toContain(
-        "This account cannot stake until it receives at least ~0.95075674 SOL more.",
+        "This account cannot stake until it receives about 0.95075674 SOL more.",
       );
     },
   );
@@ -177,12 +196,39 @@ describe("describeStakeAmountError", () => {
       "solana",
     );
     expect(message).toContain(
-      "Max stakeable is 0 SOL: spendable balance 0 SOL does not cover the stake account rent " +
-        "0.00166624 SOL and network fees.",
+      "Max stakeable is 0 SOL: spendable balance 0 SOL leaves nothing to stake after stake " +
+        "account rent 0.00166624 SOL and network fees.",
     );
     expect(message).toContain(
-      "This account cannot stake until it receives more than 1.00166624 SOL (minimum plus " +
-        "stake account rent), plus network fees.",
+      "This account cannot stake until it receives at least 1 SOL more, plus the part of " +
+        "those costs its balance does not cover.",
+    );
+  });
+
+  it("does not claim a shortfall when the balance covers the costs exactly", () => {
+    // 1_686_240 lamports = stake account rent + fee reserve, so max stakeable floors at exactly 0.
+    const message = describeReadable(
+      "NotEnoughBalance",
+      "0.01 SOL",
+      limits({ spendableBalance: "1686240", maxStakeable: "0", feeReserve: "0" }),
+      "solana",
+    );
+    expect(message).not.toContain("does not cover the stake account rent");
+    expect(message).toContain(
+      "spendable balance 0.00168624 SOL leaves nothing to stake after stake account rent",
+    );
+  });
+
+  it("names pending outgoing SOL when it uses up the stakeable balance", () => {
+    const message = describeReadable(
+      "NotEnoughBalance",
+      "0.01 SOL",
+      limits({ spendableBalance: "50929500", pendingDebits: "50000000", maxStakeable: "0" }),
+      "solana",
+    );
+    expect(message).toContain(
+      "leaves nothing to stake after pending outgoing 0.05 SOL, stake account rent " +
+        "0.00166624 SOL and network fees.",
     );
   });
 

@@ -65,6 +65,8 @@ export type SolanaStakeLimits = {
   minimumDelegation: BigNumberStr;
   rent: BigNumberStr;
   spendableBalance: BigNumberStr;
+  /** SOL leaving the account in still-pending operations, already held back from `maxStakeable`. */
+  pendingDebits: BigNumberStr;
   maxStakeable: BigNumberStr;
   feeReserve: BigNumberStr;
 };

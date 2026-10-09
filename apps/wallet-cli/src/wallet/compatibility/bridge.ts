@@ -7,6 +7,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { getPendingNativeSpent } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import type { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
@@ -51,18 +52,30 @@ export function buildSolanaTransactionPatch(
   }
 }
 
+/**
+ * `maxSpendable` is the generic bridge's send-max for a new stake account: spendable balance minus
+ * pending debits, network fee and unstake reserve. coin-solana's validateIntent also requires the
+ * stake account rent on top of an explicit amount, so the largest amount it accepts is that minus
+ * the rent.
+ */
 export function toSolanaStakeLimits(values: {
   minimumDelegation: BigNumber;
   rent: BigNumber;
   spendableBalance: BigNumber;
-  maxStakeable: BigNumber;
+  pendingDebits: BigNumber;
+  maxSpendable: BigNumber;
 }): SolanaStakeLimits {
-  const { minimumDelegation, rent, spendableBalance, maxStakeable } = values;
-  const feeReserve = BigNumber.max(spendableBalance.minus(rent).minus(maxStakeable), 0);
+  const { minimumDelegation, rent, spendableBalance, pendingDebits, maxSpendable } = values;
+  const maxStakeable = BigNumber.max(maxSpendable.minus(rent), 0);
+  const feeReserve = BigNumber.max(
+    spendableBalance.minus(pendingDebits).minus(rent).minus(maxStakeable),
+    0,
+  );
   return {
     minimumDelegation: BigNumberStrSchema.parse(minimumDelegation.toFixed()),
     rent: BigNumberStrSchema.parse(rent.toFixed()),
     spendableBalance: BigNumberStrSchema.parse(spendableBalance.toFixed()),
+    pendingDebits: BigNumberStrSchema.parse(pendingDebits.toFixed()),
     maxStakeable: BigNumberStrSchema.parse(maxStakeable.toFixed()),
     feeReserve: BigNumberStrSchema.parse(feeReserve.toFixed()),
   };
@@ -100,6 +113,9 @@ export class BridgeAdapter {
       },
     });
   })();
+
+  /** Latest synced account per descriptor id, so error explanations can skip a second sync. */
+  private readonly syncedAccounts = new Map<string, Account>();
 
   discoverAccounts(currencyId: string, deviceId: string): Observable<AccountDescriptor> {
     const currency = getCryptoCurrencyById(currencyId);
@@ -205,7 +221,11 @@ export class BridgeAdapter {
     });
   }
 
-  /** Uses coin-solana's estimateMaxSpendable so the limits match what prepareTransaction enforces. */
+  /**
+   * Uses the bridge's estimateMaxSpendable and the generic framework's pending debits so the
+   * limits match what getTransactionStatus enforces.
+   * Reuses the account synced by the preceding prepareSend/send instead of syncing again.
+   */
   async getSolanaStakeLimits(descriptor: AccountDescriptor): Promise<SolanaStakeLimits> {
     // Lazy: pulls in @solana/web3.js, which no other bridge method needs.
     const [
@@ -219,18 +239,18 @@ export class BridgeAdapter {
       import("@ledgerhq/coin-solana/network/chain/web3"),
       import("@ledgerhq/coin-solana/utils"),
     ]);
-    const account = await this.sync(descriptor);
+    const account = this.syncedAccounts.get(descriptor.id) ?? (await this.sync(descriptor));
     const bridge = await getAccountBridge(account);
     const currencyId = account.currency.id;
     const api = getSolanaChainAPI({
       endpoint: endpointByCurrencyId(solanaCoinConfig.getCoinConfig(currencyId), currencyId),
     });
-    const model: SolanaTransactionModel = {
-      kind: "stake.createAccount",
-      uiState: { delegate: { voteAccAddress: "" } },
-    };
-    const tx = bridge.updateTransaction(bridge.createTransaction(account), { model });
-    const [minimumDelegation, rent, maxStakeable] = await Promise.all([
+    // The fee estimate depends only on the sender and the stake mode, not on the validator.
+    const tx = bridge.updateTransaction(
+      bridge.createTransaction(account),
+      createStakeAccountTransaction(""),
+    );
+    const [minimumDelegation, rent, maxSpendable] = await Promise.all([
       api.getStakeMinimumDelegation(),
       getStakeAccountMinimumBalanceForRentExemption(api),
       bridge.estimateMaxSpendable({ account, transaction: tx }),
@@ -239,7 +259,8 @@ export class BridgeAdapter {
       minimumDelegation: new BigNumber(minimumDelegation),
       rent: new BigNumber(rent),
       spendableBalance: account.spendableBalance,
-      maxStakeable,
+      pendingDebits: getPendingNativeSpent(account.pendingOperations ?? []),
+      maxSpendable,
     });
   }
 
@@ -372,11 +393,13 @@ export class BridgeAdapter {
     const account = this.buildAccount(descriptor);
     const bridge = await getAccountBridge(account);
     await BridgeAdapter.cache.prepareCurrency(account.currency);
-    return lastValueFrom(
+    const synced = await lastValueFrom(
       bridge
         .sync(account, BridgeAdapter.SYNC_CONFIG)
         .pipe(reduce((acc, updater) => updater(acc), account)),
     );
+    this.syncedAccounts.set(descriptor.id, synced);
+    return synced;
   }
 
   private toDescriptor(account: Account): AccountDescriptor {

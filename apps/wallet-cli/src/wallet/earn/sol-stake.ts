@@ -161,14 +161,18 @@ export function describeStakeAmountError(
   const minimum = new BigNumber(limits.minimumDelegation);
   const rent = new BigNumber(limits.rent);
   const maxStakeable = new BigNumber(limits.maxStakeable);
+  const pendingDebits = new BigNumber(limits.pendingDebits);
   const spendableBalance = fmt(new BigNumber(limits.spendableBalance));
-  const accountReservesUnknown = maxStakeable.isZero();
+  const pending = pendingDebits.gt(0) ? `pending outgoing ${fmt(pendingDebits)}, ` : "";
+  // estimateMaxSpendable floors at 0, so a 0 max hides how far the balance is from the costs.
+  const nothingStakeable = maxStakeable.isZero();
 
-  const maxStakeableBreakdown = accountReservesUnknown
-    ? `Max stakeable is ${fmt(maxStakeable)}: spendable balance ${spendableBalance} does not ` +
-      `cover the stake account rent ${fmt(rent)} and network fees.`
-    : `Max stakeable is ${fmt(maxStakeable)}: spendable balance ${spendableBalance} minus stake ` +
-      `account rent ${fmt(rent)} and fee reserve ${fmt(new BigNumber(limits.feeReserve))}.`;
+  const maxStakeableBreakdown = nothingStakeable
+    ? `Max stakeable is ${fmt(maxStakeable)}: spendable balance ${spendableBalance} leaves ` +
+      `nothing to stake after ${pending}stake account rent ${fmt(rent)} and network fees.`
+    : `Max stakeable is ${fmt(maxStakeable)}: spendable balance ${spendableBalance} minus ` +
+      `${pending}stake account rent ${fmt(rent)} and fee reserve ` +
+      `${fmt(new BigNumber(limits.feeReserve))}.`;
 
   const message =
     errorName === "SolanaStakeAccountAmountTooLow"
@@ -179,12 +183,14 @@ export function describeStakeAmountError(
   const canReachMinimum = maxStakeable.gte(minimum);
   if (canReachMinimum) return message;
 
-  if (accountReservesUnknown) {
-    const lowerBound = minimum.plus(rent);
-    return `${message} This account cannot stake until it receives more than ${fmt(lowerBound)} (minimum plus stake account rent), plus network fees.`;
+  if (nothingStakeable) {
+    return (
+      `${message} This account cannot stake until it receives at least ${fmt(minimum)} more, ` +
+      `plus the part of those costs its balance does not cover.`
+    );
   }
   const missing = minimum.minus(maxStakeable);
-  return `${message} This account cannot stake until it receives at least ~${fmt(missing)} more.`;
+  return `${message} This account cannot stake until it receives about ${fmt(missing)} more.`;
 }
 
 async function explainStakeAmountError(
