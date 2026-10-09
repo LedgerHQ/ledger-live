@@ -85,7 +85,7 @@ export function runPayBalanceAndDepositTest(tmsLinks: string[], tags: string[]) 
       await app.payTab.expectFilterPill(ALL_STABLECOINS);
 
       if (isIos()) {
-        // TODO: investigate and fix for Android
+        // TODO: QAA-1631 - bank transfer not closing for android (CI only)
         await app.payTab.openDepositOptions();
         await app.payTab.expectDepositOptions();
         await app.payTab.selectDepositOption("bankTransfer");
