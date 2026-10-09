@@ -24,9 +24,8 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     genuineVerdict: null,
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
-    firmwareChecked: false,
     checksPaused: false,
-    availableFirmwareUpdate: null,
+    firmware: null,
     currentSetupStep: null,
     recoveryKeyBackupOpen: false,
   };
@@ -121,15 +120,15 @@ export const contextActions = {
     };
   }),
   forgetGenuineFailure: update({ lastGenuineFailure: null }),
-  rememberFirmwareChecked: update({ firmwareChecked: true, availableFirmwareUpdate: null }),
+  rememberFirmwareChecked: update({ firmware: { kind: "checked" } }),
   rememberAvailableUpdate: update(({ event }) => {
     if (event.type !== "FIRMWARE_UPDATE_AVAILABLE") {
       return {};
     }
 
-    return { availableFirmwareUpdate: event.output.update };
+    return { firmware: { kind: "offered", update: event.output.update } };
   }),
-  forgetFirmwareCheck: update({ firmwareChecked: false, availableFirmwareUpdate: null }),
+  forgetFirmwareCheck: update({ firmware: null }),
   adoptSession: update(({ event }) => {
     if (event.type !== "SESSION_READY" && event.type !== "SESSION_CHANGED") {
       return {};

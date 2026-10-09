@@ -75,11 +75,11 @@ export const deviceOnboardingMachine = setup({
     shouldRunFirmwareCheck: ({ context }) =>
       !context.checksPaused &&
       currentVerdict(context)?.isGenuine === true &&
-      !context.firmwareChecked,
+      context.firmware?.kind !== "checked",
     updateAwaitingAnswer: ({ context }) =>
-      !context.checksPaused && context.availableFirmwareUpdate !== null && !context.firmwareChecked,
+      !context.checksPaused && context.firmware?.kind === "offered",
     checksAlreadyPassed: ({ context }) =>
-      currentVerdict(context)?.isGenuine === true && context.firmwareChecked,
+      currentVerdict(context)?.isGenuine === true && context.firmware?.kind === "checked",
     onEarlyCheckScreen: ({ context }) => context.onEarlyCheckScreen,
     isOnboarded: ({ context }) => context.isOnboarded,
     onboardedOnEntry: ({ context }) => context.onboardedOnEntry === true,

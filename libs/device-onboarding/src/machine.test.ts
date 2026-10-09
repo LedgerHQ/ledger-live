@@ -452,7 +452,10 @@ describe("the firmware check", () => {
     });
 
     expect(stateOf(actor)).toBe("firmwareUpdateOffered");
-    expect(actor.getSnapshot().context.availableFirmwareUpdate).toBe(availableUpdate);
+    expect(actor.getSnapshot().context.firmware).toEqual({
+      kind: "offered",
+      update: availableUpdate,
+    });
   });
 
   it("carries on when the user declines it, and forgets it", async () => {
@@ -466,7 +469,7 @@ describe("the firmware check", () => {
     await settle();
 
     expectChecksPassed(actor);
-    expect(actor.getSnapshot().context.availableFirmwareUpdate).toBeNull();
+    expect(actor.getSnapshot().context.firmware).toEqual({ kind: "checked" });
   });
 
   it("keeps the offer standing when the user closes the drawer over it", async () => {
@@ -480,7 +483,10 @@ describe("the firmware check", () => {
     await settle();
 
     expect(stateOf(actor)).toBe("firmwareUpdateOffered");
-    expect(actor.getSnapshot().context.availableFirmwareUpdate).toBe(availableUpdate);
+    expect(actor.getSnapshot().context.firmware).toEqual({
+      kind: "offered",
+      update: availableUpdate,
+    });
   });
 
   it("still installs the update the user accepts from the step screen", async () => {
@@ -581,7 +587,7 @@ describe("the firmware check", () => {
     await settle();
 
     expectChecksPassed(actor);
-    expect(actor.getSnapshot().context.availableFirmwareUpdate).toBeNull();
+    expect(actor.getSnapshot().context.firmware).toEqual({ kind: "checked" });
   });
 });
 

@@ -200,6 +200,11 @@ export type DeviceOnboardingInput = {
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
 
+/** Null until the firmware check answers. "checked" once nothing is left to do with the firmware. */
+export type FirmwareCheck =
+  | { kind: "checked" }
+  | { kind: "offered"; update: AvailableFirmwareUpdate };
+
 export type DeviceOnboardingContext = DeviceOnboardingInput & {
   lastDeviceState: DeviceOnboardingState | null;
   firmwareVersion: string | null;
@@ -209,9 +214,8 @@ export type DeviceOnboardingContext = DeviceOnboardingInput & {
   genuineVerdict: GenuineVerdict | null;
   lastGenuineFailure: GenuineFailureReport | null;
   onEarlyCheckScreen: boolean;
-  firmwareChecked: boolean;
   checksPaused: boolean;
-  availableFirmwareUpdate: AvailableFirmwareUpdate | null;
+  firmware: FirmwareCheck | null;
   currentSetupStep: OnboardingStep | null;
   recoveryKeyBackupOpen: boolean;
 };
