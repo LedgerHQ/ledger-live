@@ -218,6 +218,15 @@ export function extractBalance(balances: Balance[], type: string): Balance {
   );
 }
 
+export function sumBalance(balances: Balance[], type: string): Balance {
+  const matching = balances.filter(balance => balance.asset.type === type);
+  return {
+    asset: { type },
+    value: matching.reduce((sum, balance) => sum + balance.value, 0n),
+    locked: matching.reduce((sum, balance) => sum + (balance.locked ?? 0n), 0n),
+  };
+}
+
 /**
  * Default `getTokenFromAsset` strategy for chains whose token registry is keyed by a bare,
  * chain-specific reference string (VeChain's VTHO address, Stacks' SIP-010 composite key, etc.):

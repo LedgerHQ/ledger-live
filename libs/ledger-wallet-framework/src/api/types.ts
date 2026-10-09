@@ -158,6 +158,11 @@ export type BridgeApi = {
    * distinguishes delegation vs staking vs unstaking via uid prefix).
    */
   usesStakingPositions?: boolean;
+  /**
+   * When true, the account balance and locked amount sum all native `getBalance` entries (Tezos).
+   * Opt-in: Solana's stakes overlap the first native entry; EVM's are extra and carry no `locked`.
+   */
+  partitionsNativeBalance?: boolean;
   balanceOptions?: BalanceOptions;
   /**
    * Optional hook called after operations are merged, allowing a chain bridge to
