@@ -21,7 +21,7 @@ declare module "jest-allure2-reporter/api" {
   export function Step(name: string): MethodDecorator;
 
   export const allure: {
-    description(description: string): void;
+    descriptionHtml(html: string): void;
     attachment(name: string, content: string, type: string): Promise<void>;
     parameter(name: string, value: string): void;
   };

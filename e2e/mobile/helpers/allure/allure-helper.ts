@@ -6,11 +6,23 @@ export function setTeamOwner(team: Team): void {
   $ParentSuite(team);
 }
 
+// Allure 3 never renders `description` when jest-allure2-reporter also writes an empty
+// `descriptionHtml`, so descriptions go through `allure.descriptionHtml` — QAA-1535.
+// Each call's HTML must be a self-contained block: the reporter joins them with a bare "\n".
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export function setAllureDescription(): void {
   const testPath = expect.getState().testPath ?? "";
   const testFileName = testPath.replace(/^.*\/(.+?)(?:\.spec)?\.[^.]+$/, "$1") || "unknown";
   const shardIndex = process.env.SHARD_INDEX;
-  const shardLine = shardIndex ? `\n🔢 Shard: ${shardIndex}` : "";
+  const shardLine = shardIndex ? `<br>🔢 Shard: ${escapeHtml(shardIndex)}` : "";
 
-  allure.description(`📄 Test file: ${testFileName}` + shardLine);
+  allure.descriptionHtml(`<p>📄 Test file: ${escapeHtml(testFileName)}${shardLine}</p>`);
 }
