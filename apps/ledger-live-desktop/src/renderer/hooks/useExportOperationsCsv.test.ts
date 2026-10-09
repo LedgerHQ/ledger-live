@@ -22,7 +22,6 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
 
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
   useCountervaluesState: () => ({}),
   useCountervaluesPolling: () => ({}),
 }));

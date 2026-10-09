@@ -10,6 +10,7 @@ import auth from "./auth";
 import ble from "./ble";
 import borrow from "./borrow";
 import { countervaluesReducer } from "@features/platform-market-countervalues";
+import { countervaluesExtraSessionTrackingReducer } from "./countervaluesExtraSessionTracking";
 import deeplinkInstallApp from "./deeplinkInstallApp";
 import dynamicContent from "./dynamicContent";
 import earn from "./earn";
@@ -64,6 +65,7 @@ const appReducer = combineReducers({
   ble,
   borrow,
   countervalues: countervaluesReducer,
+  countervaluesExtraSessionTracking: countervaluesExtraSessionTrackingReducer,
   deeplinkInstallApp,
   dynamicContent,
   earn,
