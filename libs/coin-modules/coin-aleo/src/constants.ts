@@ -40,6 +40,13 @@ export const STAKING_OPERATION_TYPE = {
 
 export const FEE_INTENT_TYPES = new Set(["fee_public", "fee_private"]);
 
+export const PRIVATE_TRANSACTION_TYPES = new Set<string>([
+  TRANSACTION_TYPE.TRANSFER_PRIVATE,
+  TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+  TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+  TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+]);
+
 // Function names that represent actual private token transfers between parties.
 // Used to exclude internal operations (split, join, fee_private, etc.) from history.
 export const PRIVATE_TRANSFER_FUNCTIONS = new Set([

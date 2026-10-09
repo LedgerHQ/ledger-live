@@ -35,6 +35,7 @@ import {
   MICROCREDITS_PER_CREDIT,
   MIN_BOND_AMOUNT_MICROCREDITS,
   MIN_DELEGATOR_STAKE_MICROCREDITS,
+  PRIVATE_TRANSACTION_TYPES,
   PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
@@ -685,15 +686,7 @@ export const isRecordScannerReady = (provableApi: ProvableApi): boolean => {
 };
 
 export function getOperationTransactionType(transactionType: TransactionType): AleoTransactionType {
-  switch (transactionType) {
-    case TRANSACTION_TYPE.TRANSFER_PRIVATE:
-    case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC:
-    case TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE:
-    case TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC:
-      return "private";
-    default:
-      return "public";
-  }
+  return PRIVATE_TRANSACTION_TYPES.has(transactionType) ? "private" : "public";
 }
 
 export function getStakingOperationType(functionName: string): OperationType | undefined {

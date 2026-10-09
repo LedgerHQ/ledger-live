@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { TRANSACTION_TYPE } from "../../constants";
 import type {
+  AleoApiTransactionIntent,
   AleoStakingMode,
   AleoTransactionIntent,
   AleoTransactionIntentData,
@@ -172,6 +173,37 @@ export const mockTxIntentFeePrivate: AleoTransactionIntent = {
       "7287422539927885800585937944314327552710698933416219800491628782750554575326field",
     priorityFee: 6000n,
     record: mockUnspentRecord2.decryptedData,
+  },
+};
+
+export const mockApiTxIntentTransferPrivate: AleoApiTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 200n,
+  type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+  data: {
+    type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+    recordCommitments: [mockUnspentRecord1.commitment],
+    tvks: [],
+  },
+};
+
+export const mockApiTxIntentTransferPrivateSelection: AleoApiTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 200n,
+  type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+  data: { type: TRANSACTION_TYPE.TRANSFER_PRIVATE },
+};
+
+export const mockApiTxIntentFeePrivate: AleoApiTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 600n,
+  type: "fee_private",
+  data: {
+    type: "fee_private",
+    executionId:
+      "7287422539927885800585937944314327552710698933416219800491628782750554575326field",
+    priorityFee: 6000n,
+    recordCommitment: mockUnspentRecord2.commitment,
   },
 };
 

@@ -9,13 +9,12 @@ import type {
   MemoNotSupported,
   Page,
   Stake,
-  TransactionIntent,
   BalanceOptions,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
-import { FEE_INTENT_TYPES } from "../constants";
+import { FEE_INTENT_TYPES, PRIVATE_TRANSACTION_TYPES } from "../constants";
 import {
   broadcast,
   combine,
@@ -27,6 +26,8 @@ import {
   getValidators,
   lastBlock,
   register,
+  resolveRecords,
+  selectRecords,
   validateAddress,
 } from "../logic";
 import {
@@ -35,17 +36,18 @@ import {
   resolvePrivacyContext,
 } from "../logic/utils";
 import type {
+  AleoApiTransactionIntent,
+  AleoApiTransactionIntentData,
   AleoContext,
   AleoCoinConfig,
   AleoRegistration,
-  AleoTransactionIntentData,
 } from "../types";
 import { listOperations } from "../logic/listOperations";
 
 type AleoCoinModuleImpl = CoinModuleImpl<
   AleoCoinConfig,
   MemoNotSupported,
-  AleoTransactionIntentData
+  AleoApiTransactionIntentData
 >;
 
 function requireViewKey(context: AleoContext, action: string): string {
@@ -95,14 +97,14 @@ export function createApi(currencyId: string) {
     },
     craftTransaction: async (
       context: AleoContext,
-      txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+      txIntent: AleoApiTransactionIntent,
       options?: { customFees?: FeeEstimation },
     ): Promise<CraftedTransaction> => {
       invariant(!txIntent.useAllAmount, "aleo: useAllAmount is not supported");
 
       const config = await context.config();
       const isFeeIntent = FEE_INTENT_TYPES.has(txIntent.type);
-      const isPrivateIntent = "data" in txIntent && "records" in txIntent.data;
+      const isPrivateIntent = PRIVATE_TRANSACTION_TYPES.has(txIntent.type);
       const isPrivateFeeIntent = txIntent.type === "fee_private";
 
       if (isFeeIntent) {
@@ -118,7 +120,7 @@ export function createApi(currencyId: string) {
         // both should match max_base_fee/max_priority_fee from the FeeConfiguration of the root intent
         return craftTransaction({
           config,
-          txIntent,
+          txIntent: await resolveRecords({ config, context, txIntent }),
           feeConfiguration: null,
           ...(context.viewKey && { viewKey: context.viewKey }),
         });
@@ -127,6 +129,11 @@ export function createApi(currencyId: string) {
       if (isPrivateIntent) {
         requireViewKey(context, "craft a private transaction");
       }
+
+      const recordCommitments =
+        "data" in txIntent && "recordCommitments" in txIntent.data
+          ? txIntent.data.recordCommitments
+          : undefined;
 
       const maxBaseFee = options?.customFees
         ? options.customFees.value
@@ -140,18 +147,32 @@ export function createApi(currencyId: string) {
           ? txIntent.data.priorityFee
           : undefined) ?? 0n;
 
+      // A private root intent without record commitments asks for the module's selection; the
+      // client fetches the matching TVK count, then crafts again with the selection.
+      if (isPrivateIntent && !recordCommitments) {
+        const details = await selectRecords({
+          config,
+          context,
+          txIntent,
+          fee: config.isFeeSponsored ? null : maxBaseFee + maxPriorityFee,
+        });
+        return { transaction: "", details };
+      }
+
       const feeConfiguration = buildFeeConfigurationForRootIntent({
         isPrivate: isPrivateIntent,
         maxBaseFee,
         maxPriorityFee,
       });
 
-      return craftTransaction({
+      const crafted = await craftTransaction({
         config,
-        txIntent,
+        txIntent: await resolveRecords({ config, context, txIntent }),
         feeConfiguration,
         ...(context.viewKey && { viewKey: context.viewKey }),
       });
+
+      return recordCommitments ? { ...crafted, details: { recordCommitments } } : crafted;
     },
     estimateFees: async (context: AleoContext, intent, _options?): Promise<FeeEstimation> => {
       const config = await context.config();

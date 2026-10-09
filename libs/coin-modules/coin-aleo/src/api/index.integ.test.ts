@@ -21,7 +21,7 @@ import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPristineAccount } from "../__tests__/helpers/account";
 import type { AleoAccountInfo, AleoContext, PreparedRequestResponse } from "../types";
 import {
-  mockTxIntentTransferPrivate,
+  mockApiTxIntentTransferPrivateSelection,
   mockTxIntentTransferPublic,
 } from "../__tests__/fixtures/transaction.fixture";
 
@@ -72,11 +72,27 @@ describe("createApi", () => {
       );
     });
 
-    it("crafts a prepared request for a private root intent when a viewKey is present", async () => {
+    it("selects records, then crafts a prepared request for a private root intent", async () => {
       const contextWithPrivacy = await withPrivacyContext(context, testnetViewKey);
 
-      const result = await api.craftTransaction(contextWithPrivacy, mockTxIntentTransferPrivate);
+      const selection = await api.craftTransaction(
+        contextWithPrivacy,
+        mockApiTxIntentTransferPrivateSelection,
+      );
+      expect(selection.transaction).toBe("");
+      // a single record needs no TVK, so this needs no device
+      expect(selection.details?.recordCommitments).toHaveLength(1);
 
+      const result = await api.craftTransaction(contextWithPrivacy, {
+        ...mockApiTxIntentTransferPrivateSelection,
+        data: {
+          type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+          recordCommitments: selection.details?.recordCommitments as string[],
+          tvks: [],
+        },
+      });
+
+      expect(result.details).toEqual(selection.details);
       const preparedRequest = fromHex<PreparedRequestResponse>(result.transaction);
       expect(preparedRequest.function_name.toLowerCase()).toContain(
         Buffer.from("transfer_private").toString("hex"),

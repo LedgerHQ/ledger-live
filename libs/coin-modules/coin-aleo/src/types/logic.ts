@@ -149,6 +149,43 @@ export type AleoTransactionIntentData =
 
 export type AleoTransactionIntent = TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
 
+/** Without `recordCommitments`, `craftTransaction` returns the module's record selection instead. */
+export type AleoApiPrivateIntentData =
+  | {
+      type:
+        | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE
+        | typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+      recordCommitments?: string[];
+      tvks?: string[];
+    }
+  | {
+      type:
+        | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE
+        | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC;
+      programId: string;
+      recordCommitments?: string[];
+      tvks?: string[];
+    };
+
+/**
+ * What an API client passes: record commitments instead of the decrypted records the bridge
+ * passes. The API resolves them into {@link AleoTransactionIntentData} before crafting.
+ */
+export type AleoApiTransactionIntentData =
+  | Exclude<AleoTransactionIntentData, { records: unknown } | { record: unknown }>
+  | AleoApiPrivateIntentData
+  | {
+      type: "fee_private";
+      priorityFee?: bigint;
+      executionId: string;
+      recordCommitment: string;
+    };
+
+export type AleoApiTransactionIntent = TransactionIntent<
+  MemoNotSupported,
+  AleoApiTransactionIntentData
+>;
+
 export interface SignedAleoTransaction {
   authorization: string;
   feeAuthorization: string | null;

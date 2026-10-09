@@ -8,6 +8,7 @@ export { getStakes } from "./getStakes";
 export { getValidators } from "./getValidators";
 export { estimateNetRate } from "./utils";
 export { lastBlock } from "./lastBlock";
+export { resolveRecords, selectRecords } from "./recordSelection";
 export { register } from "./register";
 export { validateIntent } from "./validateIntent";
 export { validateAddress } from "./validateAddress";
