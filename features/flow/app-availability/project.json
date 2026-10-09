@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-app-availability",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
