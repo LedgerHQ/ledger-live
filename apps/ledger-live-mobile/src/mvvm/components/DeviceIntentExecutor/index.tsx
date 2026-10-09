@@ -51,6 +51,8 @@ type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecut
    * flow.
    */
   analyticsProperties?: DeviceIntentTrackingProperties;
+  /** Fires once the sheet has left the screen, including when it never opened. */
+  onDeviceSheetDismissed?: () => void;
 };
 
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
@@ -79,11 +81,13 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps, Result = un
     onHeaderClosePressed,
     onBackdropPress,
   } = useDeviceIntentExecutorLWMViewModel(props);
+  const { onDeviceSheetDismissed } = props;
 
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={wrappedProps.enabled}
       onClose={wrappedProps.onUserCancel}
+      onModalHide={onDeviceSheetDismissed}
       onHeaderClosePressed={onHeaderClosePressed}
       onBackdropPress={onBackdropPress}
       hideHandle

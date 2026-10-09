@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   createIntent,
   type Intent,
@@ -37,11 +37,17 @@ type ActiveIntent = Readonly<{
   intent: ContactDeviceIntent;
   initializationInput: ContactsDeviceInitializationInput;
   cancel: () => void;
+  status: "running" | "closing";
 }>;
+
+/** Covers the queued sheet's own dismiss fallback, so a sheet that never presented still clears. */
+const SHEET_DISMISS_WAIT_MS = 700;
 
 export type ContactsIntentsOrchestrator = Readonly<{
   deviceIntents: ContactDeviceIntentsPort;
   dieProps: ContactsDeviceIntentExecutorProps | undefined;
+  /** Clears an executor kept up after success until its sheet has left the screen. */
+  dismissDeviceSheet: () => void;
 }>;
 
 export type UseContactsIntentsOrchestratorParams = Readonly<{
@@ -60,13 +66,24 @@ export type UseContactsIntentsOrchestratorParams = Readonly<{
    * (`ensureAppReadyUseCase`) enforces, via `initializerConfig`.
    */
   getLiveConfigMinVersion?: ContactsGetMinVersion;
+
+  /**
+   * After success, leave the executor mounted with `enabled: false` until
+   * `dismissDeviceSheet`. Unmounting during the sheet's open animation leaves
+   * the native modal on screen.
+   */
+  retainUntilSheetDismissed?: boolean;
 }>;
 
 export function useContactsIntentsOrchestrator({
   intents,
   getLiveConfigMinVersion,
+  retainUntilSheetDismissed = false,
 }: UseContactsIntentsOrchestratorParams): ContactsIntentsOrchestrator {
   const [activeIntent, setActiveIntent] = useState<ActiveIntent>();
+  const retainUntilSheetDismissedRef = useRef(retainUntilSheetDismissed);
+  retainUntilSheetDismissedRef.current = retainUntilSheetDismissed;
+  const isClosingRef = useRef(false);
 
   const getMinVersion = useMemo(
     () => composeContactsGetMinVersion(getLiveConfigMinVersion),
@@ -120,10 +137,16 @@ export function useContactsIntentsOrchestrator({
             }
             hasSettled = true;
             resolve(result);
-            // Success is the only outcome with nothing left to show: the flow
-            // advances and owns the UI from here. Every other ending keeps the
-            // DIE mounted, so this is the one place that dismisses it on the
-            // job's behalf.
+            // Success is the only outcome with nothing left to show. Hosts that
+            // present a sheet keep the executor until that sheet has closed:
+            // unmounting it mid-open leaves the native modal up.
+            if (retainUntilSheetDismissedRef.current) {
+              isClosingRef.current = true;
+              setActiveIntent(current =>
+                current === undefined ? current : { ...current, status: "closing" },
+              );
+              return;
+            }
             setActiveIntent(undefined);
           },
           // A job that completes without reporting, or that lets its observable
@@ -137,6 +160,7 @@ export function useContactsIntentsOrchestrator({
         setActiveIntent({
           intent: intent as unknown as ContactDeviceIntent,
           initializationInput: operation.initializationInput,
+          status: "running",
           // Dismissed (or unmounted) before the job settled: nothing else will
           // settle the promise. Clearing `activeIntent` is the dismissal's own
           // job, not this callback's.
@@ -165,10 +189,23 @@ export function useContactsIntentsOrchestrator({
     [editExternalAddress, execute, intents.registerExternalAddress, intents.renameExternalContact],
   );
 
+  const dismissDeviceSheet = useCallback(() => {
+    isClosingRef.current = false;
+    setActiveIntent(undefined);
+  }, []);
+
   const cancel = useCallback(() => {
+    if (isClosingRef.current) return;
     activeIntent?.cancel();
+    isClosingRef.current = false;
     setActiveIntent(undefined);
   }, [activeIntent]);
+
+  useEffect(() => {
+    if (activeIntent?.status !== "closing") return;
+    const timeoutId = setTimeout(dismissDeviceSheet, SHEET_DISMISS_WAIT_MS);
+    return () => clearTimeout(timeoutId);
+  }, [activeIntent, dismissDeviceSheet]);
 
   useEffect(() => {
     if (activeIntent === undefined) {
@@ -183,7 +220,7 @@ export function useContactsIntentsOrchestrator({
     }
 
     return {
-      enabled: true,
+      enabled: activeIntent.status === "running",
       deviceConnectionParams: DEVICE_CONNECTION_PARAMS,
       deviceInitializationInput: activeIntent.initializationInput,
       intent: activeIntent.intent,
@@ -195,5 +232,5 @@ export function useContactsIntentsOrchestrator({
     };
   }, [activeIntent, cancel, getMinVersion]);
 
-  return { deviceIntents, dieProps };
+  return { deviceIntents, dieProps, dismissDeviceSheet };
 }

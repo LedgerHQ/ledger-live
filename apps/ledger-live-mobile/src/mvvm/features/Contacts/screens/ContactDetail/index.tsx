@@ -40,7 +40,11 @@ export function ContactDetailScreen(): React.JSX.Element | null {
       <ContactsLedgerSyncIntroductionSheet {...viewModel.ledgerSyncIntroduction} />
       <ContactsLedgerSyncActivationDrawer {...viewModel.ledgerSyncActivationDrawer} />
       {viewModel.dieProps === undefined ? null : (
-        <DeviceIntentExecutorLWM sourceFlow="contacts" {...viewModel.dieProps} />
+        <DeviceIntentExecutorLWM
+          sourceFlow="contacts"
+          {...viewModel.dieProps}
+          onDeviceSheetDismissed={viewModel.onDeviceSheetDismissed}
+        />
       )}
     </>
   );
