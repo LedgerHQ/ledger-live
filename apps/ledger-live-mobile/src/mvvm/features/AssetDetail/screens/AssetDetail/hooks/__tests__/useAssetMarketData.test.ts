@@ -11,6 +11,25 @@ type MarketQueryParams = {
   ledgerIds: string[];
 };
 
+function marketItem(id: string, ledgerIds: string[]) {
+  return {
+    id,
+    name: id,
+    ticker: id.toUpperCase(),
+    ledgerIds,
+    price: 1,
+    marketCap: 1,
+    marketCapRank: 1,
+    totalVolume: 1,
+    high24h: 1,
+    low24h: 1,
+    priceChange24h: 0,
+    priceChangePercentage24h: 0,
+    priceChangePercentage: { "1h": 0, "24h": 0, "7d": 0, "30d": 0, "6m": 0, "1y": 0 },
+    image: "",
+  };
+}
+
 function trackMarketQueryParams() {
   const captured: MarketQueryParams = { ids: [], ledgerIds: [] };
   server.use(
@@ -20,7 +39,7 @@ function trackMarketQueryParams() {
       const ledgerIds = url.searchParams.get("ledgerIds");
       if (ids) captured.ids.push(ids);
       if (ledgerIds) captured.ledgerIds.push(ledgerIds);
-      return HttpResponse.json([]);
+      return HttpResponse.json(ids || ledgerIds ? [marketItem(ids ?? "shiba-inu", [])] : []);
     }),
   );
   return captured;
@@ -148,7 +167,7 @@ describe("useAssetMarketData", () => {
   });
 
   describe("market query strategy", () => {
-    it("uses the legacy ids filter for coingecko ids", async () => {
+    it("queries by ledgerIds even when the market api id looks like a coingecko id", async () => {
       const captured = trackMarketQueryParams();
 
       renderHook(() =>
@@ -159,18 +178,17 @@ describe("useAssetMarketData", () => {
       );
 
       await waitFor(() => {
-        expect(captured.ids).toContain(mockBtcCryptoCurrency.id);
+        expect(captured.ledgerIds).toContain(mockBtcCryptoCurrency.id);
       });
-      expect(captured.ledgerIds).toHaveLength(0);
+      expect(captured.ids).toHaveLength(0);
     });
 
-    it("uses the legacy ids filter for DADA urns", async () => {
+    it("uses the legacy ids filter only when no ledger id is known", async () => {
       const captured = trackMarketQueryParams();
 
       const { result } = renderHook(() =>
         useAssetMarketData({
           marketApiId: "urn:crypto:meta-currency:shiba_inu",
-          knownLedgerIds: ["ethereum/erc20/shiba_inu"],
           knownMarketId: "urn:crypto:meta-currency:shiba_inu",
         }),
       );
@@ -226,6 +244,27 @@ describe("useAssetMarketData", () => {
       await waitFor(() => {
         expect(requestedLedgerIds).toContain("ethereum/erc20/shiba_inu");
         expect(result.current.marketId).toBe("shiba-inu");
+      });
+    });
+
+    it("exposes the API-confirmed market id, not the client-derived slug, for the favorite", async () => {
+      server.use(
+        http.get(`${COUNTERVALUES_API}/v3/markets`, ({ request }) => {
+          const ledgerIds = new URL(request.url).searchParams.get("ledgerIds");
+          return HttpResponse.json(ledgerIds ? [marketItem("avalanche-2", [ledgerIds])] : []);
+        }),
+      );
+
+      const { result } = renderHook(() =>
+        useAssetMarketData({
+          marketApiId: "avalanche",
+          knownLedgerIds: ["avalanche_c_chain"],
+          knownMarketId: "avalanche",
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.marketId).toBe("avalanche-2");
       });
     });
 
