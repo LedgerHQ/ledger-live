@@ -2,10 +2,12 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import type { Account, TokenAccount, TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { FamilyCraftedTransaction } from "@ledgerhq/ledger-wallet-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import {
   AmountRequired,
   InvalidAddress,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
@@ -67,6 +69,19 @@ function getAmount(transaction: Record<string, unknown>, privateBalance: BigNumb
   return transaction.useAllAmount ? privateBalance : toBigNumber(transaction.amount);
 }
 
+/** The parent account pays the network fees in its native currency, as on the generic path. */
+function getGasError(account: Account, transaction: Record<string, unknown>): Error | undefined {
+  const fees = toBigNumber(transaction.fees);
+  if (fees.lte(account.spendableBalance)) return undefined;
+  const unit = account.currency.units[0];
+  return new NotEnoughGas(undefined, {
+    fees: unit ? formatCurrencyUnit(unit, fees) : fees.toFixed(),
+    ticker: account.currency.ticker,
+    cryptoName: account.currency.name,
+    links: ["ledgerlive://buy"],
+  });
+}
+
 /** A shield spends the public token balance; the device signs approve and wrap, not a transfer. */
 function getShieldStatus(account: Account, transaction: Record<string, unknown>) {
   const tokenAccount = getTokenAccount(account, transaction);
@@ -76,6 +91,8 @@ function getShieldStatus(account: Account, transaction: Record<string, unknown>)
   if (!hasConfidentialPart(tokenAccount)) errors.amount = new ConfidentialBalanceNotRevealed();
   else if (amount.lte(0)) errors.amount = new AmountRequired();
   else if (amount.gt(publicBalance)) errors.amount = new NotEnoughBalance();
+  const gasError = getGasError(account, transaction);
+  if (gasError) errors.gasPrice = gasError;
   return {
     errors,
     warnings: {},
@@ -111,6 +128,8 @@ export async function getConfidentialTransactionStatus(
   if (!balance) errors.amount = new ConfidentialBalanceNotRevealed();
   else if (amount.lte(0)) errors.amount = new AmountRequired();
   else if (amount.gt(privateBalance)) errors.amount = new NotEnoughBalance();
+  const gasError = getGasError(account, transaction);
+  if (gasError) errors.gasPrice = gasError;
 
   return {
     errors,

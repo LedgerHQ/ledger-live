@@ -5,6 +5,7 @@ import {
   AmountRequired,
   InvalidAddress,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { setConfidentialSendRuntime } from "./runtime";
@@ -39,7 +40,13 @@ const tokenAccount = {
 };
 const account = {
   freshAddress: SENDER,
-  currency: { id: "ethereum_sepolia" },
+  spendableBalance: new BigNumber("100000000000000000"),
+  currency: {
+    id: "ethereum_sepolia",
+    name: "Ethereum Sepolia",
+    ticker: "ETH",
+    units: [{ name: "ether", code: "ETH", magnitude: 18 }],
+  },
   subAccounts: [tokenAccount],
 } as any;
 
@@ -313,5 +320,20 @@ describe("shield (public self-transfer)", () => {
     const plain = send({ familySpecificData: { balanceType: "public" } });
     expect(await craftConfidentialTransaction(account, plain)).toBeUndefined();
     expect(await getConfidentialTransactionStatus(account, plain)).toBeUndefined();
+  });
+});
+
+describe("network fees", () => {
+  it("asks for ETH when the account cannot pay the fees of a shield or a confidential send", async () => {
+    setup();
+    const broke = { ...account, spendableBalance: new BigNumber(0) };
+    const shieldStatus = await getConfidentialTransactionStatus(
+      broke,
+      send({ selfTransfer: true, familySpecificData: { balanceType: "public" } }),
+    );
+    expect(shieldStatus?.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+    expect(shieldStatus?.errors.amount).toBeUndefined();
+    const sendStatus = await getConfidentialTransactionStatus(broke, send());
+    expect(sendStatus?.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
   });
 });
