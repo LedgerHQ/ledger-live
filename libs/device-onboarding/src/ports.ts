@@ -10,7 +10,7 @@ export type DeviceOnboardingSession = {
   deviceModelId: DeviceModelId;
 };
 
-/** The app calls `openSession` and `closeSession`; the machine only ever reads the current id. */
+/** The host's adapter to the device session. The machine never sees it: it gets the id as data. */
 export type DeviceOnboardingPorts = {
   openSession(): Promise<DeviceOnboardingSession>;
   currentSessionId(): DeviceSessionId;

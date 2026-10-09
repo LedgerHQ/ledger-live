@@ -240,9 +240,7 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
       }
 
       setSessionReady(true);
-      if (autoResume && actorRef.current.getSnapshot().can({ type: "SESSION_READY" })) {
-        sendToActor({ type: "SESSION_READY" });
-      }
+      if (autoResume) send({ type: "SESSION_READY" });
       setStatus("running");
     },
     [
@@ -250,7 +248,7 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
       discardActor,
       releaseFirmwareDrawer,
       rememberDevice,
-      sendToActor,
+      send,
       setSessionReady,
       startSessionActor,
       stopLockListener,

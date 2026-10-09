@@ -4,8 +4,8 @@ import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
-import { useDeviceOnboardingExit } from "../hooks/useDeviceOnboardingExit";
 import { createTestDevice, knownStax } from "../testing/testDevice";
+import { useLeaveOnboarding } from "../hooks/useLeaveOnboarding";
 
 const loggedEvents: { type: string }[] = [];
 
@@ -23,15 +23,17 @@ jest.mock("@ledgerhq/device-onboarding", () => {
   };
 });
 
-jest.mock("../hooks/useDeviceOnboardingExit", () => ({
-  useDeviceOnboardingExit: jest.fn(),
+const leaveOnboarding = jest.fn();
+
+jest.mock("../hooks/useLeaveOnboarding", () => ({
+  useLeaveOnboarding: jest.fn(() => leaveOnboarding),
 }));
 
 jest.mock("../hooks/useFirmwareUpdateHandover", () => ({
   useFirmwareUpdateHandover: jest.fn(),
 }));
 
-const exitHook = jest.mocked(useDeviceOnboardingExit);
+const leaveHook = jest.mocked(useLeaveOnboarding);
 
 describe("useDeviceOnboarding", () => {
   beforeEach(() => {
@@ -107,7 +109,8 @@ describe("useDeviceOnboarding", () => {
     await connectStax(result, device);
     await quit(result);
 
-    expect(exitHook).toHaveBeenLastCalledWith(
+    expect(leaveOnboarding).toHaveBeenCalledWith("userQuit");
+    expect(leaveHook).toHaveBeenLastCalledWith(
       expect.objectContaining({
         device: expect.objectContaining({ deviceId: "device-id-2", wired: false }),
       }),
@@ -133,8 +136,8 @@ describe("useDeviceOnboarding", () => {
     expect(canSend(result, "SESSION_READY")).toBe(true);
   });
 
-  // Quit ends the run. The next screen needs the app device, not only the devtool text.
-  it("passes the screen device when the user quits", async () => {
+  // Quit ends the run. The machine leaves once, and the app gets its device, not the devtool text.
+  it("leaves with the screen device when the user quits", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>
       useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
@@ -148,7 +151,8 @@ describe("useDeviceOnboarding", () => {
       sessionId: device.sessionId,
       modelId: DeviceModelId.STAX,
     });
-    expect(exitHook).toHaveBeenLastCalledWith({
+    expect(leaveOnboarding.mock.calls).toEqual([["userQuit"]]);
+    expect(leaveHook).toHaveBeenLastCalledWith({
       showNextScreen: false,
       device: {
         deviceId: "device-id",
@@ -156,7 +160,6 @@ describe("useDeviceOnboarding", () => {
         modelId: LedgerDeviceModelId.stax,
         wired: false,
       },
-      output: expect.objectContaining({ reason: "userQuit" }),
     });
   });
 

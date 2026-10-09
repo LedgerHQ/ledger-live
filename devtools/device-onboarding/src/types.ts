@@ -1,5 +1,6 @@
 import type {
   DeviceOnboardingExitReason,
+  HostOnboardingEvent,
   OnboardingEvent,
   OnboardingStep,
 } from "@ledgerhq/device-onboarding";
@@ -70,7 +71,8 @@ export interface DeviceOnboardingNextState {
 
 /** Whole rather than by type: `snapshot.can` needs the payload, and the machine dereferences it. */
 export interface SendableOnboardingEvent {
-  readonly event: OnboardingEvent;
+  /** The host adds the session id to SESSION_READY: only it knows the live session. */
+  readonly event: HostOnboardingEvent;
   readonly label?: string;
 }
 
@@ -128,7 +130,7 @@ export interface DeviceOnboardingToolProps {
   readonly error: string | null;
   /** Opens a session: the first one, or a replacement once the transport went away. */
   readonly connect: () => void;
-  readonly send: (event: OnboardingEvent) => void;
+  readonly send: (event: HostOnboardingEvent) => void;
   readonly reset: () => void;
   /**
    * Devtool only. When on, an exit or a firmware update opens the app's next screen, as the real

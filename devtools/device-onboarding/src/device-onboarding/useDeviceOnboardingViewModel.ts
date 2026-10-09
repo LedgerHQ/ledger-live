@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
+import type { HostOnboardingEvent, OnboardingEvent } from "@ledgerhq/device-onboarding";
 import {
   DeviceOnboardingStatus,
   watchedContextFields,
@@ -61,7 +61,7 @@ export interface EventRow {
 export interface SendableRow {
   readonly key: string;
   readonly label: string;
-  readonly event: OnboardingEvent;
+  readonly event: HostOnboardingEvent;
 }
 
 export const StateKind = {
@@ -174,7 +174,7 @@ export interface DeviceOnboardingViewModel {
   readonly canSend: boolean;
   readonly canReset: boolean;
   readonly connect: () => void;
-  readonly send: (event: OnboardingEvent) => void;
+  readonly send: (event: HostOnboardingEvent) => void;
   readonly reset: () => void;
   readonly showNextScreen: boolean;
   /** Absent when the host has no next screen to open: the switch is hidden. */

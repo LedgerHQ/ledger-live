@@ -1,6 +1,6 @@
 import type { SnapshotFrom } from "xstate";
 import { deviceOnboardingMachine } from "./machine";
-import type { DeviceOnboardingPorts } from "./ports";
+import type { DeviceSessionId } from "@ledgerhq/device-management-kit";
 import type {
   DeviceOnboardingContext,
   OnboardingEvent,
@@ -47,18 +47,6 @@ function readSessionId(read: () => string | null | undefined): string | null {
   }
 }
 
-function verdictMatchesLiveSession(
-  verdict: DeviceOnboardingContext["genuineVerdict"],
-  ports: DeviceOnboardingPorts,
-): boolean | null {
-  if (verdict === null) return null;
-
-  const sessionId = readSessionId(() => ports.currentSessionId());
-  if (sessionId === null) return null;
-
-  return verdict.sessionId === sessionId;
-}
-
 export function flattenDeviceOnboardingContext(
   context: DeviceOnboardingContext,
 ): WatchedOnboardingContext {
@@ -80,7 +68,7 @@ export function flattenDeviceOnboardingContext(
     onEarlyCheckScreen: context.onEarlyCheckScreen,
     secureConnectionRequested: context.secureConnectionRequested,
     isGenuine: verdict?.isGenuine ?? null,
-    verdictMatchesSession: verdictMatchesLiveSession(verdict, context.ports),
+    verdictMatchesSession: verdict === null ? null : verdict.sessionId === context.sessionId,
     genuineFailureKind: context.lastGenuineFailure?.kind ?? null,
     checksPaused: context.checksPaused,
   };
@@ -204,23 +192,26 @@ function plainPayload(
   return Object.keys(nested).length === 0 ? undefined : nested;
 }
 
-export function createDelegatedPorts(
-  readPorts: () => DeviceOnboardingPorts | null,
-  missingSessionMessage: string,
-): DeviceOnboardingPorts {
-  const requirePorts = () => {
-    const ports = readPorts();
-    if (!ports) {
-      throw new Error(missingSessionMessage);
-    }
-    return ports;
-  };
+type SessionEventType = "SESSION_READY" | "FIRMWARE_UPDATE_FLOW_CLOSED";
 
-  return {
-    openSession: () => requirePorts().openSession(),
-    currentSessionId: () => requirePorts().currentSessionId(),
-    closeSession: () => readPorts()?.closeSession() ?? Promise.resolve(),
-  };
+/** What a host or the devtool sends: the host adds the session id, which only it knows. */
+export type HostOnboardingEvent =
+  | Exclude<OnboardingEvent, { type: SessionEventType }>
+  | { type: SessionEventType; sessionId?: DeviceSessionId };
+
+/** `sessionId` is read only for the session events, so the others can be sent with no session. */
+export function stampSession(
+  event: HostOnboardingEvent,
+  sessionId: () => DeviceSessionId,
+): OnboardingEvent {
+  switch (event.type) {
+    case "SESSION_READY":
+      return { type: "SESSION_READY", sessionId: sessionId() };
+    case "FIRMWARE_UPDATE_FLOW_CLOSED":
+      return { type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: sessionId() };
+    default:
+      return event;
+  }
 }
 
 function loggedStepKey(event: OnboardingEvent): string | null {

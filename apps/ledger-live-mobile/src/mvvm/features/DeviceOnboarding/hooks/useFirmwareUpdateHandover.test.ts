@@ -1,4 +1,4 @@
-import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
+import type { HostOnboardingEvent } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
@@ -188,7 +188,7 @@ describe("useFirmwareUpdateHandover", () => {
 
 const delegated = "checks.firmwareUpdateDelegated";
 
-function renderDelegated(send: (event: OnboardingEvent) => void) {
+function renderDelegated(send: (event: HostOnboardingEvent) => void) {
   const props = { machineState: delegated };
   const rendered = renderHook(() =>
     useFirmwareUpdateHandover({

@@ -13,7 +13,6 @@ import {
   ToggleEarlyCheckCommandError,
   type ToggleEarlyCheckErrorCode,
 } from "./device/toggleEarlyCheckCommand";
-import type { DeviceOnboardingPorts } from "./ports";
 import { deviceOnboardingMachine } from "./machine";
 import { minimumNanoVersions } from "./rules";
 import { settle } from "./tests/actorHarness";
@@ -237,6 +236,19 @@ describe("the on-device waiting screen", () => {
     expect(stateOf(actor)).toBe("checksIdle");
   });
 
+  it("lets the host leave once when the user quits", async () => {
+    const left: string[] = [];
+    const { actor } = await start(
+      { osVersion: [os(unseeded)], genuineCheck: [deviceRefusal] },
+      { leaveOnboarding: reason => left.push(reason) },
+    );
+
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(left).toEqual(["userQuit"]);
+  });
+
   it("is dismissed when the user leaves on the onboarding cross", async () => {
     const { actor, fake } = await start({
       osVersion: [os(unseeded)],
@@ -314,15 +326,14 @@ describe("the genuine check", () => {
   });
 
   it("re-attests a device that came back on another session rather than trusting the verdict", async () => {
-    const ports = rebindingPorts();
-    const { actor, fake } = await start(
-      { osVersion: [os(unseeded)], genuineCheck: [genuine, genuine], firmwareCheck: [upToDate] },
-      { ports },
-    );
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [genuine, genuine],
+      firmwareCheck: [upToDate],
+    });
 
-    ports.rebind();
     actor.send({ type: "TRANSPORT_LOST" });
-    actor.send({ type: "SESSION_READY" });
+    actor.send({ type: "SESSION_READY", sessionId: "session-2" });
     await settle();
 
     expect(fake.genuineCheckRuns()).toBe(2);
@@ -497,7 +508,9 @@ describe("the firmware check", () => {
     });
 
     actor.send({ type: interrupt });
-    actor.send({ type: resume });
+    actor.send(
+      resume === "SESSION_READY" ? { type: resume, sessionId: "session" } : { type: resume },
+    );
     await settle();
 
     expect(stateOf(actor)).toBe("firmwareUpdateOffered");
@@ -540,19 +553,14 @@ describe("the firmware check", () => {
   });
 
   it("runs again on the device that came back on another session", async () => {
-    const ports = rebindingPorts();
-    const { actor, fake } = await start(
-      {
-        osVersion: [os(unseeded)],
-        genuineCheck: [genuine, genuine],
-        firmwareCheck: [upToDate, upToDate],
-      },
-      { ports },
-    );
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [genuine, genuine],
+      firmwareCheck: [upToDate, upToDate],
+    });
 
-    ports.rebind();
     actor.send({ type: "TRANSPORT_LOST" });
-    actor.send({ type: "SESSION_READY" });
+    actor.send({ type: "SESSION_READY", sessionId: "session-2" });
     await settle();
 
     expect(fake.firmwareCheckRuns()).toBe(2);
@@ -560,21 +568,16 @@ describe("the firmware check", () => {
   });
 
   it("never hands the update it found to the device that replaced that one", async () => {
-    const ports = rebindingPorts();
-    const { actor } = await start(
-      {
-        osVersion: [os(unseeded)],
-        genuineCheck: [genuine, genuine],
-        firmwareCheck: [updateAvailable, upToDate],
-      },
-      { ports },
-    );
+    const { actor } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [genuine, genuine],
+      firmwareCheck: [updateAvailable, upToDate],
+    });
 
     expect(stateOf(actor)).toBe("firmwareUpdateOffered");
 
-    ports.rebind();
     actor.send({ type: "TRANSPORT_LOST" });
-    actor.send({ type: "SESSION_READY" });
+    actor.send({ type: "SESSION_READY", sessionId: "session-2" });
     await settle();
 
     expectChecksPassed(actor);
@@ -601,7 +604,7 @@ describe("the firmware handover", () => {
 
     actor.send({ type: "USER_ACCEPT" });
     await settle();
-    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
+    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session" });
 
     expect(stateOf(actor)).toBe("readingState");
   });
@@ -633,32 +636,26 @@ describe("the firmware handover", () => {
   });
 
   it("carries the session read after the update rather than the initial one", async () => {
-    const ports = rebindingPorts();
-    const { actor } = await start(handoverScript([os(unseeded), os({ isBootloader: true })]), {
-      ports,
-    });
+    const { actor } = await start(handoverScript([os(unseeded), os({ isBootloader: true })]));
 
-    await handOverAndReturn(actor, ports);
+    await handOverAndReturn(actor, "session-after-update");
 
     expect(exitOf(actor)).toMatchObject({ sessionId: "session-after-update" });
   });
 
   it("waits through the reboot that drops the transport, rather than leaving the handover", async () => {
-    const ports = rebindingPorts();
     const { actor, fake } = await start(
       handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
-      { ports },
     );
 
     actor.send({ type: "USER_ACCEPT" });
     await settle();
-    ports.rebind();
     actor.send({ type: "TRANSPORT_LOST" });
     await settle();
 
     expect(stateOf(actor)).toBe("firmwareUpdateDelegated");
 
-    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
+    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session-after-update" });
     await settle();
 
     expectChecksPassed(actor);
@@ -677,16 +674,14 @@ describe("the firmware handover", () => {
   });
 
   it("keeps the attestation across the reboot of the update it ran itself", async () => {
-    const ports = rebindingPorts();
     const { actor, fake } = await start(
       handoverScript([os(unseeded)], {
         genuineCheck: [genuine, genuine],
         firmwareCheck: [updateAvailable, upToDate],
       }),
-      { ports },
     );
 
-    await handOverAndReturn(actor, ports);
+    await handOverAndReturn(actor, "session-after-update");
 
     expect(fake.genuineCheckRuns()).toBe(1);
     expectChecksPassed(actor);
@@ -862,28 +857,23 @@ describe("global handlers", () => {
     const { actor } = await start({ osVersion: [os(unseeded)], ...passingChecks });
 
     actor.send({ type: "TRANSPORT_LOST" });
-    actor.send({ type: "SESSION_READY" });
+    actor.send({ type: "SESSION_READY", sessionId: "session" });
     await settle();
 
     expectChecksPassed(actor);
   });
 
   it("starts over on a new session, rather than holding a failure the user dismissed", async () => {
-    const ports = rebindingPorts();
-    const { actor, fake } = await start(
-      {
-        osVersion: [os(unseeded)],
-        genuineCheck: [deviceRefusal, genuine],
-        firmwareCheck: [upToDate],
-      },
-      { ports },
-    );
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [deviceRefusal, genuine],
+      firmwareCheck: [upToDate],
+    });
 
     actor.send({ type: "CLOSE" });
     await settle();
-    ports.rebind();
     actor.send({ type: "TRANSPORT_LOST" });
-    actor.send({ type: "SESSION_READY" });
+    actor.send({ type: "SESSION_READY", sessionId: "session-2" });
     await settle();
 
     expect(fake.genuineCheckRuns()).toBe(2);
@@ -1129,7 +1119,6 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
-    expect(actor.getSnapshot().context.ports.closeSession).not.toHaveBeenCalled();
   });
 
   it("skips naming on a nano and still reaches done", async () => {
@@ -1242,37 +1231,35 @@ describe("device setup", () => {
     actor.stop();
   });
 
-  it("reads the session id at exit, not the one the machine started with", async () => {
-    const ports = rebindingPorts();
-    const { actor } = await enterSetup({ ports });
+  it("exits on the session the app reported last, not the one the machine started with", async () => {
+    const { actor } = await enterSetup();
 
-    ports.rebind();
+    actor.send({ type: "TRANSPORT_LOST" });
+    actor.send({ type: "SESSION_READY", sessionId: "session-2" });
+    await settle();
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toEqual({
-      sessionId: "session-after-update",
+      sessionId: "session-2",
       device: { id: "device", modelId: DeviceModelId.FLEX },
       reason: "completed",
     });
   });
 
-  it("leaves the session open on the Ledger Sync exit too", async () => {
-    const ports = rebindingPorts();
+  it("reports its session on the Ledger Sync exit too", async () => {
     const { actor } = await launch(
       { osVersion: [os(seeded)], ...passingChecks },
-      { offerSync: true, ports },
+      { offerSync: true },
     );
 
-    ports.rebind();
     actor.send({ type: "CONTINUE" });
     await settle();
 
     expect(exitOf(actor)).toEqual({
-      sessionId: "session-after-update",
+      sessionId: "session",
       device: { id: "device", modelId: DeviceModelId.FLEX },
       reason: "offerLedgerSync",
     });
-    expect(ports.closeSession).not.toHaveBeenCalled();
   });
 
   it("polls the device for the whole setup phase and stops once it has exited", async () => {
@@ -1300,22 +1287,26 @@ describe("device setup", () => {
 
 type OnboardingActor = Actor<typeof deviceOnboardingMachine>;
 
-type ReboundPorts = DeviceOnboardingPorts & { rebind(): void };
-
 async function launch(
   script: OnboardingDmkScript,
   overrides: Partial<{
     deviceModelId: DeviceModelId;
     offerSync: boolean;
-    ports: DeviceOnboardingPorts;
+    leaveOnboarding: (reason: string) => void;
   }> = {},
 ): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
   const fake = createFakeOnboardingDmk(script);
+  const leave = overrides.leaveOnboarding;
+  const machine = leave
+    ? deviceOnboardingMachine.provide({
+        actions: { leaveOnboarding: (_, params) => leave(params.reason) },
+      })
+    : deviceOnboardingMachine;
 
-  const actor = createActor(deviceOnboardingMachine, {
+  const actor = createActor(machine, {
     input: {
       dmk: fake.dmk,
-      ports: overrides.ports ?? fixedPorts(),
+      sessionId: "session",
       deviceId: "device",
       deviceModelId: overrides.deviceModelId ?? DeviceModelId.FLEX,
       offerSync: overrides.offerSync ?? false,
@@ -1346,7 +1337,6 @@ async function enterSetup(
   overrides: Partial<{
     deviceModelId: DeviceModelId;
     offerSync: boolean;
-    ports: DeviceOnboardingPorts;
   }> = {},
 ): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
   const needsNanoFirmware =
@@ -1386,27 +1376,6 @@ function stepChanged(
   };
 }
 
-function fixedPorts(): DeviceOnboardingPorts {
-  return {
-    openSession: jest.fn(),
-    currentSessionId: jest.fn(() => "session"),
-    closeSession: jest.fn(),
-  };
-}
-
-function rebindingPorts(): ReboundPorts {
-  let rebound = false;
-
-  return {
-    openSession: jest.fn(),
-    currentSessionId: jest.fn(() => (rebound ? "session-after-update" : "session")),
-    closeSession: jest.fn(),
-    rebind: () => {
-      rebound = true;
-    },
-  };
-}
-
 function handoverScript(
   osVersion: ScriptedCommand<GetOsVersionResponse>[],
   overrides: Partial<OnboardingDmkScript> = {},
@@ -1414,11 +1383,10 @@ function handoverScript(
   return { osVersion, genuineCheck: [genuine], firmwareCheck: [updateAvailable], ...overrides };
 }
 
-async function handOverAndReturn(actor: OnboardingActor, ports?: ReboundPorts): Promise<void> {
+async function handOverAndReturn(actor: OnboardingActor, sessionId = "session"): Promise<void> {
   actor.send({ type: "USER_ACCEPT" });
   await settle();
-  ports?.rebind();
-  actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
+  actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId });
   await settle();
 }
 

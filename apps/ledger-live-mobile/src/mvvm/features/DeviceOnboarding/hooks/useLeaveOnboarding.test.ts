@@ -1,10 +1,9 @@
-import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
-import type { DeviceOnboardingOutput } from "@ledgerhq/device-onboarding";
+import type { DeviceOnboardingExitReason } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { renderHook, waitFor } from "@tests/test-renderer";
+import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
-import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
+import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import {
   completeOnboarding,
   setFromLedgerSyncOnboarding,
@@ -58,17 +57,16 @@ const device: Device = {
   wired: false,
 };
 
-describe("useDeviceOnboardingExit", () => {
+describe("useLeaveOnboarding", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockShouldDisplayMyWallet = false;
     mockNavigation.getParent = () => mockRootNavigation;
   });
 
-  it("completes onboarding and opens the completion screen", async () => {
+  it("completes onboarding and opens the completion screen", () => {
     renderExit("completed");
 
-    await waitFor(() => expect(mockReset).toHaveBeenCalled());
     expect(mockDispatch).toHaveBeenCalledWith(setReadOnlyMode(false));
     expect(mockDispatch).toHaveBeenCalledWith(setHasOrderedNano(false));
     expect(mockDispatch).toHaveBeenCalledWith(completeOnboarding());
@@ -98,10 +96,9 @@ describe("useDeviceOnboardingExit", () => {
     );
   });
 
-  it("opens Wallet Sync with the connected device", async () => {
+  it("opens Wallet Sync with the connected device", () => {
     renderExit("offerLedgerSync");
 
-    await waitFor(() => expect(mockReset).toHaveBeenCalled());
     expect(mockDispatch).toHaveBeenCalledWith(setFromLedgerSyncOnboarding(true));
     expect(mockDispatch).toHaveBeenCalledWith(setOnboardingType(OnboardingType.setupNew));
     expect(mockReset).toHaveBeenCalledWith(
@@ -129,10 +126,9 @@ describe("useDeviceOnboardingExit", () => {
     );
   });
 
-  it("opens My Ledger to resume an interrupted firmware update", async () => {
+  it("opens My Ledger to resume an interrupted firmware update", () => {
     renderExit("resumeFirmwareUpdate");
 
-    await waitFor(() => expect(mockReset).toHaveBeenCalled());
     expect(mockReset).toHaveBeenCalledWith(
       expect.objectContaining({
         routes: [
@@ -160,10 +156,9 @@ describe("useDeviceOnboardingExit", () => {
     );
   });
 
-  it("opens the manager straight into the update for a wired device", async () => {
+  it("opens the manager straight into the update for a wired device", () => {
     renderExit("resumeFirmwareUpdate", { ...device, wired: true });
 
-    await waitFor(() => expect(mockReset).toHaveBeenCalled());
     expect(mockReset).toHaveBeenCalledWith(
       expect.objectContaining({
         routes: [
@@ -188,11 +183,10 @@ describe("useDeviceOnboardingExit", () => {
     );
   });
 
-  it("opens My Wallet when it replaces My Ledger", async () => {
+  it("opens My Wallet when it replaces My Ledger", () => {
     mockShouldDisplayMyWallet = true;
     renderExit("resumeFirmwareUpdate");
 
-    await waitFor(() => expect(mockReset).toHaveBeenCalled());
     expect(mockReset).toHaveBeenCalledWith(
       expect.objectContaining({
         routes: [
@@ -219,10 +213,9 @@ describe("useDeviceOnboardingExit", () => {
     );
   });
 
-  it("opens the legacy onboarding without carrying machine context", async () => {
+  it("opens the legacy onboarding without carrying machine context", () => {
     renderExit("legacyFallback");
 
-    await waitFor(() => expect(mockReset).toHaveBeenCalled());
     expect(mockReset).toHaveBeenCalledWith(
       expect.objectContaining({
         routes: [
@@ -249,13 +242,9 @@ describe("useDeviceOnboardingExit", () => {
   });
 
   it("stays on the screen when open next screen is off", () => {
-    const output = {
-      reason: "completed",
-      sessionId: "session-id",
-      device: { id: "device-id", modelId: DMKDeviceModelId.STAX },
-    } as DeviceOnboardingOutput;
+    const { result } = renderHook(() => useLeaveOnboarding({ device, showNextScreen: false }));
 
-    renderHook(() => useDeviceOnboardingExit({ device, output, showNextScreen: false }));
+    result.current("completed");
 
     expect(mockReset).not.toHaveBeenCalled();
     expect(mockDispatch).not.toHaveBeenCalled();
@@ -269,7 +258,7 @@ describe("useDeviceOnboardingExit", () => {
     expect(mockDispatch).not.toHaveBeenCalled();
   });
 
-  it("resets the outermost navigator", async () => {
+  it("resets the outermost navigator", () => {
     const outerReset = jest.fn();
     const middleReset = jest.fn();
     mockNavigation.getParent = () => ({
@@ -279,57 +268,15 @@ describe("useDeviceOnboardingExit", () => {
 
     renderExit("legacyFallback");
 
-    await waitFor(() => expect(outerReset).toHaveBeenCalled());
+    expect(outerReset).toHaveBeenCalled();
     expect(middleReset).not.toHaveBeenCalled();
     expect(mockReset).not.toHaveBeenCalled();
   });
-
-  it("navigates once when the same exit is rendered again with another device", async () => {
-    const output = {
-      reason: "completed",
-      sessionId: "session-id",
-      device: { id: "device-id", modelId: DMKDeviceModelId.STAX },
-    } as DeviceOnboardingOutput;
-    const props = { device, output, showNextScreen: true };
-    const { rerender } = renderHook(() =>
-      useDeviceOnboardingExit({
-        device: props.device,
-        output: props.output,
-        showNextScreen: props.showNextScreen,
-      }),
-    );
-
-    await waitFor(() => expect(mockReset).toHaveBeenCalledTimes(1));
-    props.device = { ...device, deviceName: "Ledger Flex" };
-    rerender(undefined);
-    expect(mockReset).toHaveBeenCalledTimes(1);
-  });
 });
 
-function renderExit(reason: DeviceOnboardingOutput["reason"], connectedDevice: Device = device) {
-  const output = {
-    reason,
-    sessionId: "session-id",
-    device: {
-      id: "device-id",
-      modelId: DMKDeviceModelId.STAX,
-    },
-  } as DeviceOnboardingOutput;
-
-  const props = { device: connectedDevice, output, showNextScreen: true };
-  const rendered = renderHook(() =>
-    useDeviceOnboardingExit({
-      device: props.device,
-      output: props.output,
-      showNextScreen: props.showNextScreen,
-    }),
+function renderExit(reason: DeviceOnboardingExitReason, connectedDevice: Device = device) {
+  const { result } = renderHook(() =>
+    useLeaveOnboarding({ device: connectedDevice, showNextScreen: true }),
   );
-
-  return {
-    ...rendered,
-    rerender: (next: { device: Device }) => {
-      props.device = next.device;
-      rendered.rerender(undefined);
-    },
-  };
+  result.current(reason);
 }

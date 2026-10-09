@@ -7,7 +7,6 @@ import type {
   GetOsVersionResponse,
   GenuineCheckDAOutput,
 } from "@ledgerhq/device-management-kit";
-import type { DeviceOnboardingPorts } from "./ports";
 
 /** Named with the values DMK's decoding returns, so reading one is a membership check and not a translation. */
 export const OnboardingStep = {
@@ -125,7 +124,7 @@ export function isOnRecoveryKeyScreen(state: DeviceOnboardingState): boolean {
 }
 
 export type OnboardingEvent =
-  | { type: "SESSION_READY" }
+  | { type: "SESSION_READY"; sessionId: DeviceSessionId }
   | { type: "LOCKED" }
   | { type: "UNLOCKED"; output?: GetOsVersionResponse }
   | { type: "TRANSPORT_LOST" }
@@ -152,7 +151,7 @@ export type OnboardingEvent =
   | { type: "FIRMWARE_UP_TO_DATE"; output: GetDeviceMetadataDAOutput }
   | { type: "FIRMWARE_UPDATE_AVAILABLE"; output: GetDeviceMetadataDAOutput }
   | { type: "FIRMWARE_CHECK_FAILED"; output: unknown }
-  | { type: "FIRMWARE_UPDATE_FLOW_CLOSED" }
+  | { type: "FIRMWARE_UPDATE_FLOW_CLOSED"; sessionId: DeviceSessionId }
   | { type: "RETRY" }
   | { type: "SKIP" }
   | { type: "CLOSE" }
@@ -184,7 +183,8 @@ export type GenuineVerdict = {
 
 export type DeviceOnboardingInput = {
   dmk: DeviceManagementKit;
-  ports: DeviceOnboardingPorts;
+  /** The session the machine talks to. It changes only through SESSION_READY or FIRMWARE_UPDATE_FLOW_CLOSED. */
+  sessionId: DeviceSessionId;
   deviceId: string;
   deviceModelId: DeviceModelId;
   offerSync: boolean;

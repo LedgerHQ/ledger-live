@@ -51,7 +51,11 @@ export const deviceOnboardingMachine = setup({
     seedPolling,
     unlockPolling,
   },
-  actions: contextActions,
+  actions: {
+    ...contextActions,
+    // The host provides it: the lib does not know the app's store or navigation.
+    leaveOnboarding: (_args, _params: ExitOutput) => undefined,
+  },
   guards: {
     requiresLegacyFlow: ({ context }) =>
       context.firmwareVersion === null ||
@@ -121,7 +125,7 @@ export const deviceOnboardingMachine = setup({
     readingState: {
       invoke: {
         src: "readDeviceState",
-        input: ({ context }) => ({ dmk: context.dmk, sessionId: context.ports.currentSessionId() }),
+        input: ({ context }) => ({ dmk: context.dmk, sessionId: context.sessionId }),
       },
       on: {
         DEVICE_STATE_READ: { target: "routing", actions: "rememberDeviceState" },
@@ -154,7 +158,7 @@ export const deviceOnboardingMachine = setup({
             src: "toggleEarlyCheck",
             input: ({ context }) => ({
               dmk: context.dmk,
-              sessionId: context.ports.currentSessionId(),
+              sessionId: context.sessionId,
               toggle: EarlyCheckToggle.Enter,
             }),
           },
@@ -179,7 +183,7 @@ export const deviceOnboardingMachine = setup({
             src: "genuineCheck",
             input: ({ context }) => ({
               dmk: context.dmk,
-              sessionId: context.ports.currentSessionId(),
+              sessionId: context.sessionId,
             }),
           },
           exit: "forgetSecureConnectionRequested",
@@ -208,7 +212,7 @@ export const deviceOnboardingMachine = setup({
             src: "firmwareCheck",
             input: ({ context }) => ({
               dmk: context.dmk,
-              sessionId: context.ports.currentSessionId(),
+              sessionId: context.sessionId,
             }),
           },
           on: {
@@ -260,7 +264,7 @@ export const deviceOnboardingMachine = setup({
             src: "toggleEarlyCheck",
             input: ({ context }) => ({
               dmk: context.dmk,
-              sessionId: context.ports.currentSessionId(),
+              sessionId: context.sessionId,
               toggle: EarlyCheckToggle.Exit,
             }),
           },
@@ -292,7 +296,7 @@ export const deviceOnboardingMachine = setup({
         src: "seedPolling",
         input: ({ context }) => ({
           dmk: context.dmk,
-          sessionId: context.ports.currentSessionId(),
+          sessionId: context.sessionId,
         }),
       },
       on: {
@@ -340,13 +344,21 @@ export const deviceOnboardingMachine = setup({
         restoreRecoveryKey: {},
       },
     },
-    syncOffer: { type: "final", output: { reason: "offerLedgerSync" } satisfies ExitOutput },
-    done: { type: "final", output: { reason: "completed" } satisfies ExitOutput },
+    syncOffer: {
+      type: "final",
+      entry: { type: "leaveOnboarding", params: { reason: "offerLedgerSync" } },
+      output: { reason: "offerLedgerSync" } satisfies ExitOutput,
+    },
+    done: {
+      type: "final",
+      entry: { type: "leaveOnboarding", params: { reason: "completed" } },
+      output: { reason: "completed" } satisfies ExitOutput,
+    },
 
     deviceLocked: {
       invoke: {
         src: "unlockPolling",
-        input: ({ context }) => ({ dmk: context.dmk, sessionId: context.ports.currentSessionId() }),
+        input: ({ context }) => ({ dmk: context.dmk, sessionId: context.sessionId }),
       },
       on: { UNLOCKED: "readingState" },
     },
@@ -354,7 +366,7 @@ export const deviceOnboardingMachine = setup({
       on: {
         SESSION_READY: {
           target: "readingState",
-          actions: ["forgetFirmwareCheck", "forgetGenuineFailure", "resumeChecks"],
+          actions: ["adoptSession", "forgetFirmwareCheck", "forgetGenuineFailure", "resumeChecks"],
         },
       },
     },
@@ -371,7 +383,7 @@ export const deviceOnboardingMachine = setup({
         src: "toggleEarlyCheck",
         input: ({ context }) => ({
           dmk: context.dmk,
-          sessionId: context.ports.currentSessionId(),
+          sessionId: context.sessionId,
           toggle: EarlyCheckToggle.Exit,
         }),
       },
@@ -381,11 +393,20 @@ export const deviceOnboardingMachine = setup({
       },
     },
 
-    legacyFallback: { type: "final", output: { reason: "legacyFallback" } satisfies ExitOutput },
+    legacyFallback: {
+      type: "final",
+      entry: { type: "leaveOnboarding", params: { reason: "legacyFallback" } },
+      output: { reason: "legacyFallback" } satisfies ExitOutput,
+    },
     bootloaderRecovery: {
       type: "final",
+      entry: { type: "leaveOnboarding", params: { reason: "resumeFirmwareUpdate" } },
       output: { reason: "resumeFirmwareUpdate" } satisfies ExitOutput,
     },
-    exitOnboarding: { type: "final", output: { reason: "userQuit" } satisfies ExitOutput },
+    exitOnboarding: {
+      type: "final",
+      entry: { type: "leaveOnboarding", params: { reason: "userQuit" } },
+      output: { reason: "userQuit" } satisfies ExitOutput,
+    },
   },
 });

@@ -4,7 +4,6 @@ import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
   stateValueToString,
-  type DeviceOnboardingOutput,
   type OnboardingEvent,
   type SessionEvent,
 } from "@ledgerhq/device-onboarding";
@@ -20,8 +19,8 @@ import {
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import type { Subscription } from "rxjs";
-import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 import { type DeviceOnboardingToolProps } from "../utils/toolState";
 
@@ -50,9 +49,10 @@ export function useDeviceOnboarding({
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
-  const [output, setOutput] = useState<DeviceOnboardingOutput | null>(null);
   // Off by default: a QA run must not complete the app onboarding or leave the devtool.
   const [showNextScreen, setShowNextScreen] = useState(false);
+
+  const leaveOnboarding = useLeaveOnboarding({ device: liveDevice, showNextScreen });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
@@ -60,7 +60,7 @@ export function useDeviceOnboarding({
   const selectedDevices = useRef(new Set<string>());
   const adoptGeneration = useRef(0);
   const onEventRef = useRef<(event: OnboardingEvent) => void>(() => undefined);
-  const onDoneRef = useRef<(output: DeviceOnboardingOutput) => void>(() => undefined);
+  const onDoneRef = useRef<() => void>(() => undefined);
 
   const {
     state,
@@ -80,7 +80,8 @@ export function useDeviceOnboarding({
   } = useDeviceOnboardingActor({
     missingSessionMessage: "No mobile onboarding session",
     onEvent: event => onEventRef.current(event),
-    onDone: done => onDoneRef.current(done),
+    onDone: () => onDoneRef.current(),
+    leaveOnboarding,
   });
 
   const dropLostTransport = useCallback(() => {
@@ -97,8 +98,7 @@ export function useDeviceOnboarding({
     [dropLostTransport],
   );
 
-  const handleDone = useCallback((done: DeviceOnboardingOutput) => {
-    setOutput(done);
+  const handleDone = useCallback(() => {
     setStatus("exited");
     sessionActorRef.current?.stop();
     sessionActorRef.current = null;
@@ -169,7 +169,6 @@ export function useDeviceOnboarding({
           return;
         }
 
-        setOutput(null);
         startActor(
           {
             dmk: result.dmk,
@@ -275,7 +274,6 @@ export function useDeviceOnboarding({
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);
-    setOutput(null);
     setError(null);
   }, [portsRef, resetActor]);
 
@@ -307,7 +305,6 @@ export function useDeviceOnboarding({
     send,
     showNextScreen,
   });
-  useDeviceOnboardingExit({ device: liveDevice, output, showNextScreen });
 
   useEffect(
     () => () => {

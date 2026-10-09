@@ -44,7 +44,7 @@ function recoveryKeyBackupStillOpen(open: boolean, status: RecoveryKeyStatus | n
 export function currentVerdict(context: DeviceOnboardingContext): GenuineVerdict | null {
   const { genuineVerdict } = context;
 
-  if (genuineVerdict === null || genuineVerdict.sessionId !== context.ports.currentSessionId()) {
+  if (genuineVerdict === null || genuineVerdict.sessionId !== context.sessionId) {
     return null;
   }
 
@@ -56,7 +56,7 @@ export function exitContract(
   output: unknown,
 ): DeviceOnboardingOutput {
   return {
-    sessionId: context.ports.currentSessionId(),
+    sessionId: context.sessionId,
     device: { id: context.deviceId, modelId: context.deviceModelId },
     reason: (output as ExitOutput).reason,
   };
@@ -99,13 +99,13 @@ export const contextActions = {
   rememberSecureConnectionRequested: update({ secureConnectionRequested: true }),
   forgetSecureConnectionRequested: update({ secureConnectionRequested: false }),
   rememberGenuineChecked: update(({ context }) => ({
-    genuineVerdict: { sessionId: context.ports.currentSessionId(), isGenuine: true },
+    genuineVerdict: { sessionId: context.sessionId, isGenuine: true },
     lastGenuineFailure: null,
   })),
   rememberGenuineFailure: update(({ context, event }) => {
     if (event.type === "DEVICE_NOT_GENUINE") {
       return {
-        genuineVerdict: { sessionId: context.ports.currentSessionId(), isGenuine: false },
+        genuineVerdict: { sessionId: context.sessionId, isGenuine: false },
         lastGenuineFailure: { kind: event.type, failure: event.output },
       };
     }
@@ -135,14 +135,25 @@ export const contextActions = {
     };
   }),
   forgetFirmwareCheck: update({ firmwareChecked: false, availableFirmwareUpdate: null }),
-  carryAttestationThroughReboot: update(({ context }) => {
-    const { genuineVerdict } = context;
-
-    if (genuineVerdict === null) {
+  adoptSession: update(({ event }) => {
+    if (event.type !== "SESSION_READY") {
       return {};
     }
 
-    return { genuineVerdict: { ...genuineVerdict, sessionId: context.ports.currentSessionId() } };
+    return { sessionId: event.sessionId };
+  }),
+  // The update reboots the device onto a new session, but this app ran it: the verdict still holds.
+  carryAttestationThroughReboot: update(({ context, event }) => {
+    if (event.type !== "FIRMWARE_UPDATE_FLOW_CLOSED") {
+      return {};
+    }
+
+    const { genuineVerdict } = context;
+
+    return {
+      sessionId: event.sessionId,
+      genuineVerdict: genuineVerdict && { ...genuineVerdict, sessionId: event.sessionId },
+    };
   }),
   pauseChecks: update({ checksPaused: true }),
   resumeChecks: update({ checksPaused: false }),

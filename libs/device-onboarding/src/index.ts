@@ -75,15 +75,16 @@ export {
   type SeedPollingInput,
 } from "./actors/seedPolling";
 export {
-  createDelegatedPorts,
   flattenDeviceOnboardingContext,
   createOnboardingEventLog,
   nextStatesFrom,
   recordOnboardingToolEvent,
+  stampSession,
   stateValueToString,
   toolEvent,
   userEvents,
   type HostLogRow,
+  type HostOnboardingEvent,
   type HostNextState,
   type HostToolEvent,
   type HostToolEventDetail,

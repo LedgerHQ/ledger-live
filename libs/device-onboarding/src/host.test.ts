@@ -1,15 +1,14 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import {
-  createDelegatedPorts,
   createOnboardingEventLog,
   flattenDeviceOnboardingContext,
   nextStatesFrom,
   recordOnboardingToolEvent,
+  stampSession,
   stateValueToString,
   toolEvent,
   type HostToolEvent,
 } from "./host";
-import type { DeviceOnboardingPorts } from "./ports";
 import type {
   AvailableFirmwareUpdate,
   DeviceOnboardingContext,
@@ -17,14 +16,6 @@ import type {
   OnboardingEvent,
 } from "./types";
 import { OnboardingStep, RecoveryKeyStatus } from "./types";
-
-function ports(sessionId = "session-1"): DeviceOnboardingPorts {
-  return {
-    openSession: jest.fn(),
-    currentSessionId: () => sessionId,
-    closeSession: jest.fn(async () => undefined),
-  };
-}
 
 function deviceState(step: OnboardingStep): DeviceOnboardingState {
   return {
@@ -41,7 +32,7 @@ function deviceState(step: OnboardingStep): DeviceOnboardingState {
 function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboardingContext {
   return {
     dmk: {} as DeviceOnboardingContext["dmk"],
-    ports: ports(),
+    sessionId: "session-1",
     deviceId: "device",
     deviceModelId: DeviceModelId.NANO_X,
     offerSync: true,
@@ -93,24 +84,6 @@ describe("flattenDeviceOnboardingContext", () => {
     expect(flattened.currentOnboardingStep).toBe(OnboardingStep.Pin);
     expect(flattened.availableFirmwareVersion).toBe("2.3.0");
     expect(flattened.managerAllowed).toBe(true);
-  });
-
-  it("should leave the verdict unmatched when the live session is missing", () => {
-    const flattened = flattenDeviceOnboardingContext(
-      context({
-        genuineVerdict: { sessionId: "session-1", isGenuine: true },
-        ports: {
-          openSession: jest.fn(),
-          currentSessionId: () => {
-            throw new Error("No desktop onboarding session");
-          },
-          closeSession: jest.fn(async () => undefined),
-        },
-      }),
-    );
-
-    expect(flattened.verdictMatchesSession).toBeNull();
-    expect(flattened.isGenuine).toBe(true);
   });
 
   it("should report a mismatch when the verdict belongs to another session", () => {
@@ -187,7 +160,9 @@ describe("toolEvent", () => {
   });
 
   it("should attach the session id when the session is ready or the transport is lost", () => {
-    expect(toolEvent({ type: "SESSION_READY" }, "3", "session-1").detail).toEqual({
+    expect(
+      toolEvent({ type: "SESSION_READY", sessionId: "session-1" }, "3", "session-1").detail,
+    ).toEqual({
       kind: "session",
       sessionId: "session-1",
     });
@@ -291,26 +266,27 @@ describe("createOnboardingEventLog", () => {
   });
 });
 
-describe("createDelegatedPorts", () => {
-  it("should throw when the host has no session", () => {
-    const delegated = createDelegatedPorts(() => null, "No onboarding session");
-
-    expect(() => delegated.openSession()).toThrow("No onboarding session");
-    expect(() => delegated.currentSessionId()).toThrow("No onboarding session");
+describe("stampSession", () => {
+  it("should give the session events the host's session id", () => {
+    expect(stampSession({ type: "SESSION_READY" }, () => "session-2")).toEqual({
+      type: "SESSION_READY",
+      sessionId: "session-2",
+    });
+    expect(
+      stampSession({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "stale" }, () => "session-2"),
+    ).toEqual({
+      type: "FIRMWARE_UPDATE_FLOW_CLOSED",
+      sessionId: "session-2",
+    });
   });
 
-  it("should close without a session and forward calls when one exists", async () => {
-    const current = ports();
-    const delegated = createDelegatedPorts(() => current, "No onboarding session");
+  it("should leave the other events as they are", () => {
+    const event = { type: "RETRY" } as const;
 
-    await expect(
-      createDelegatedPorts(() => null, "missing").closeSession(),
-    ).resolves.toBeUndefined();
-    await delegated.openSession();
-    expect(current.openSession).toHaveBeenCalledTimes(1);
-    expect(delegated.currentSessionId()).toBe("session-1");
-    await delegated.closeSession();
-    expect(current.closeSession).toHaveBeenCalledTimes(1);
+    const sessionId = jest.fn(() => "session-2");
+
+    expect(stampSession(event, sessionId)).toBe(event);
+    expect(sessionId).not.toHaveBeenCalled();
   });
 });
 

@@ -1,16 +1,18 @@
 import { useCallback, useRef, useState } from "react";
 import {
-  createDelegatedPorts,
   createOnboardingEventLog,
   deviceOnboardingMachine,
   flattenDeviceOnboardingContext,
   nextStatesFrom,
+  stampSession,
   stateValueToString,
   userEvents,
   type DeviceOnboardingInput,
+  type DeviceOnboardingExitReason,
   type DeviceOnboardingOutput,
   type DeviceOnboardingPorts,
   type HostLogRow,
+  type HostOnboardingEvent,
   type OnboardingEvent,
 } from "@ledgerhq/device-onboarding";
 import { createActor, type ActorRefFrom } from "xstate";
@@ -29,13 +31,21 @@ type UseDeviceOnboardingActorOptions = {
   onSnapshot?: (next: OnboardingActorSnapshot, previous: OnboardingActorSnapshot | null) => void;
   onDone?: (output: DeviceOnboardingOutput) => void;
   onEvent?: (event: OnboardingEvent) => void;
+  /** Runs once, when the machine enters a final state. The app's exit effects go here. */
+  leaveOnboarding?: (reason: DeviceOnboardingExitReason) => void;
 };
 
-function availableEvents(snapshot: OnboardingActorSnapshot, sessionReady: boolean) {
-  const candidates: OnboardingEvent[] = sessionReady
+function availableEvents(
+  snapshot: OnboardingActorSnapshot,
+  sessionReady: boolean,
+  sessionId: () => string,
+) {
+  const candidates: HostOnboardingEvent[] = sessionReady
     ? [{ type: "SESSION_READY" }, ...userEvents]
     : [...userEvents];
-  return candidates.filter(event => snapshot.can(event)).map(event => ({ event }));
+  return candidates
+    .filter(event => snapshot.can(stampSession(event, sessionId)))
+    .map(event => ({ event }));
 }
 
 export function useDeviceOnboardingActor({
@@ -43,6 +53,7 @@ export function useDeviceOnboardingActor({
   onSnapshot,
   onDone,
   onEvent,
+  leaveOnboarding,
 }: UseDeviceOnboardingActorOptions) {
   const [snapshot, setSnapshot] = useState<OnboardingActorSnapshot | null>(null);
   const [sessionReady, setSessionReady] = useState(false);
@@ -61,18 +72,23 @@ export function useDeviceOnboardingActor({
   const onSnapshotRef = useRef(onSnapshot);
   const onDoneRef = useRef(onDone);
   const onEventRef = useRef(onEvent);
+  const leaveOnboardingRef = useRef(leaveOnboarding);
   onSnapshotRef.current = onSnapshot;
   onDoneRef.current = onDone;
   onEventRef.current = onEvent;
+  leaveOnboardingRef.current = leaveOnboarding;
+
+  // The machine holds the session as data. The host is the one place that reads the live one.
+  const currentSessionId = useCallback(() => {
+    const ports = portsRef.current;
+    if (!ports) throw new Error(missingSessionMessage);
+    return ports.currentSessionId();
+  }, [missingSessionMessage]);
 
   const state = snapshot ? stateValueToString(snapshot.value) : null;
   const context = snapshot ? flattenDeviceOnboardingContext(snapshot.context) : null;
-  const sendableEvents = snapshot ? availableEvents(snapshot, sessionReady) : [];
+  const sendableEvents = snapshot ? availableEvents(snapshot, sessionReady, currentSessionId) : [];
   const nextStates = nextStatesFrom(snapshot);
-
-  const delegatedPorts = useRef(
-    createDelegatedPorts(() => portsRef.current, missingSessionMessage),
-  ).current;
 
   const rememberState = useCallback((state: string) => {
     setLog(current => (current.at(-1)?.state === state ? current : [...current, { state }]));
@@ -96,20 +112,23 @@ export function useDeviceOnboardingActor({
     [rememberState],
   );
 
-  const sendToActor = useCallback((event: OnboardingEvent) => {
-    const actor = actorRef.current;
-    if (!actor) return;
-    if (event.type === "SESSION_READY") setSessionReady(false);
-    actor.send(event);
-  }, []);
+  const sendToActor = useCallback(
+    (event: HostOnboardingEvent) => {
+      const actor = actorRef.current;
+      if (!actor) return;
+      if (event.type === "SESSION_READY") setSessionReady(false);
+      actor.send(stampSession(event, currentSessionId));
+    },
+    [currentSessionId],
+  );
 
   const send = useCallback(
-    (event: OnboardingEvent) => {
+    (event: HostOnboardingEvent) => {
       const actor = actorRef.current;
-      if (!actor?.getSnapshot().can(event)) return;
+      if (!actor?.getSnapshot().can(stampSession(event, currentSessionId))) return;
       sendToActor(event);
     },
-    [sendToActor],
+    [currentSessionId, sendToActor],
   );
 
   const stopActor = useCallback(() => {
@@ -145,10 +164,15 @@ export function useDeviceOnboardingActor({
       setExit(null);
       // The last update reaches inspection after `actorRef` is cleared, so the run keeps its own.
       const run: { actor: OnboardingActor | null } = { actor: null };
-      const actor = createActor(deviceOnboardingMachine, {
+      const machine = deviceOnboardingMachine.provide({
+        actions: {
+          leaveOnboarding: (_, params) => leaveOnboardingRef.current?.(params.reason),
+        },
+      });
+      const actor = createActor(machine, {
         input: {
           dmk: input.dmk,
-          ports: delegatedPorts,
+          sessionId: currentSessionId(),
           deviceId: input.deviceId,
           deviceModelId: input.deviceModelId,
           offerSync: input.offerSync,
@@ -197,7 +221,7 @@ export function useDeviceOnboardingActor({
       hooks?.beforeStart?.();
       actor.start();
     },
-    [appendEvent, delegatedPorts, rememberState],
+    [appendEvent, currentSessionId, rememberState],
   );
 
   return {
