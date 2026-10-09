@@ -90,6 +90,35 @@ export interface AppNetworkLog {
   transport?: "axios" | "fetch";
   /** Requests already in flight when this one started — makes fan-out visible. */
   inFlight?: number;
+  /**
+   * Edge and gateway headers, recorded when present. They tell a slow device-side network path
+   * (a Cloudflare HIT that still takes seconds) from origin or gateway throttling (MISS, dropping
+   * rate-limit quota).
+   */
+  cacheStatus?: string;
+  /** Cloudflare location serving the request, the suffix of `cf-ray` (e.g. `DUB`). */
+  edgeLocation?: string;
+  rateLimitRemaining?: number;
+  /** Prefix of the gateway's client identifier: enough to compare runners, not the full hash. */
+  gatewayClient?: string;
+}
+
+/** Never throws: it runs inside the fetch wrapper, where a throw would fail the real call. */
+export function edgeHeaders(
+  headers: Headers | undefined,
+): Pick<AppNetworkLog, "cacheStatus" | "edgeLocation" | "rateLimitRemaining" | "gatewayClient"> {
+  try {
+    const ray = headers?.get("cf-ray");
+    const remaining = headers?.get("x-rate-limit-remaining");
+    return {
+      cacheStatus: headers?.get("cf-cache-status") ?? undefined,
+      edgeLocation: ray?.includes("-") ? ray.slice(ray.lastIndexOf("-") + 1) : undefined,
+      rateLimitRemaining: remaining ? Number(remaining) : undefined,
+      gatewayClient: headers?.get("x-gravitee-client-identifier")?.slice(0, 8) ?? undefined,
+    };
+  } catch {
+    return {};
+  }
 }
 
 /** Peak concurrency and per-host counts, so a fan-out is legible without reading every entry. */
@@ -264,6 +293,7 @@ function patchFetch(): void {
         duration: Date.now() - startTime,
         transport: "fetch",
         inFlight: depth,
+        ...edgeHeaders(response.headers),
       });
       return response;
     } catch (error) {
