@@ -4,6 +4,8 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { expect } from "@playwright/test";
 
+export type DelegateTxType = "Delegated" | "Staked" | "Locked" | "Voted" | "Redelegated";
+
 export class DelegateDrawer extends Drawer {
   private provider = (provider: string) => this.content.getByText(provider).first();
   private amountValue = this.page.getByTestId("amountReceived-drawer").first();
@@ -50,6 +52,21 @@ export class DelegateDrawer extends Drawer {
   async operationTypeIsCorrect(operationType: string) {
     const operation = await this.operationType.allInnerTexts();
     expect(operation).toContain(operationType);
+  }
+
+  @step("Verify the operation drawer shows a $0 operation")
+  async verifyOperationType(transactionType: DelegateTxType) {
+    await this.waitForDrawerToBeVisible();
+    await this.verifyTxTypeIsVisible();
+    await this.verifyTxTypeIs(transactionType);
+    await this.operationTypeIsCorrect(transactionType);
+  }
+
+  @step("Verify the delegation summary of the $1 operation")
+  async verifyDelegationSummary(delegation: Delegate, transactionType: DelegateTxType) {
+    await this.verifyOperationType(transactionType);
+    await this.providerIsVisible(delegation);
+    await this.amountValueIsVisible(delegation.account.currency.ticker);
   }
 
   @step("Verify that the information of the delegation is visible")
