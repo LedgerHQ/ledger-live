@@ -12,7 +12,6 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import { useTokensData } from "@features/platform-currencies";
-import { getLocalNodeTokens } from "@ledgerhq/live-common/localNode/tokens";
 
 const EllipsisMiddle = ({ children }: { children: string }) => {
   const Start = styled(Box)`
@@ -99,11 +98,7 @@ export default function DelegationSelectorField({
     networkFamily: account.currency.id,
   });
 
-  // The tokens of a local node are not in the crypto-assets service that lists the others
-  const options = useMemo(
-    () => [...getLocalNodeTokens(account.currency.id), ...(data?.tokens || [])],
-    [account.currency.id, data?.tokens],
-  );
+  const options = useMemo(() => data?.tokens || [], [data?.tokens]);
 
   const value = useMemo(
     () =>

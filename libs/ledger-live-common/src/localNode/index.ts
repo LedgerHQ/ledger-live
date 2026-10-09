@@ -1,145 +1,199 @@
-import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
-import type { StellarConfig } from "@ledgerhq/coin-stellar/config";
-import type { TronConfig } from "@ledgerhq/coin-tron/config";
-import type { XrpConfig } from "@ledgerhq/coin-xrp/config";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
-/** Where a currency's node, and explorer when it has one, live when it runs locally. */
-export type LocalNodeEndpoints =
-  | Pick<EvmConfigInfo, "node" | "explorer">
-  | Pick<XrpConfig, "node">
-  | Pick<StellarConfig, "explorer">
-  | Pick<TronConfig, "explorer">;
-
-/** A coin-sandbox EVM chain: its anvil fork on `rpcPort`, its Blockscout API on `apiPort`. */
-const sandboxChain = (rpcPort: number, apiPort: number): LocalNodeEndpoints => ({
-  node: { type: "external", uri: `http://localhost:${rpcPort}` },
-  explorer: { type: "blockscout", uri: `http://localhost:${apiPort}/api` },
-});
+/** coin-sandbox's server (`deno task server`): it lists the running chains and airdrops on them. */
+export const LOCAL_NODE_SERVER_URL = "http://localhost:8000";
 
 /**
- * Every currency that can run on a local node, started by coin-sandbox's
- * `scripts/chain <currency> up`, with the ports of its `docker/<family>/chains.json`. Fixed per
- * currency, so several can run at the same time.
+ * A chain of coin-sandbox, as `GET /<family>/chains` lists it: `network` is the currency id, and
+ * its family gives each port a role (`rpc`, `api`, `ui`...).
  */
-export const LOCAL_NODE_ENDPOINTS: Readonly<Record<string, LocalNodeEndpoints>> = {
-  sonic: sandboxChain(8545, 4000),
-  arbitrum: sandboxChain(8546, 4001),
-  astar: sandboxChain(8547, 4002),
-  base: sandboxChain(8548, 4003),
-  berachain: sandboxChain(8549, 4004),
-  bittorrent: sandboxChain(8550, 4005),
-  cronos: sandboxChain(8551, 4006),
-  energy_web: sandboxChain(8552, 4007),
-  etherlink: sandboxChain(8553, 4008),
-  flare: sandboxChain(8554, 4009),
-  hyperevm: sandboxChain(8555, 4010),
-  linea: sandboxChain(8556, 4011),
-  lukso: sandboxChain(8557, 4012),
-  mantle: sandboxChain(8558, 4013),
-  monad: sandboxChain(8559, 4014),
-  neon_evm: sandboxChain(8560, 4015),
-  optimism: sandboxChain(8561, 4016),
-  polygon_zk_evm: sandboxChain(8562, 4017),
-  rsk: sandboxChain(8563, 4018),
-  scroll: sandboxChain(8564, 4019),
-  sei_evm: sandboxChain(8565, 4020),
-  shape: sandboxChain(8566, 4021),
-  somnia: sandboxChain(8567, 4022),
-  songbird: sandboxChain(8568, 4023),
-  syscoin: sandboxChain(8569, 4024),
-  telos_evm: sandboxChain(8570, 4025),
-  unichain: sandboxChain(8571, 4026),
-  velas_evm: sandboxChain(8572, 4027),
-  zksync: sandboxChain(8573, 4028),
-  zero_gravity: sandboxChain(8574, 4029),
-  adi: sandboxChain(8575, 4030),
-  arc: sandboxChain(8576, 4031),
-  ethereum: sandboxChain(8577, 4032),
-  // A standalone rippled, behind a proxy that adds CORS: the XRP module only talks to its node.
-  ripple: { node: "http://localhost:5005" },
-  // A standalone Stellar network with the public passphrase, which coin-stellar hardcodes: Horizon.
-  stellar: { explorer: { url: "http://localhost:8100" } },
-  // tronbox/tre behind coin-sandbox's indexer, which serves the TronGrid API coin-tron reads.
-  // Energy rental (Tronify) is not a chain field: it stays off.
-  tron: { explorer: { url: "http://localhost:9090" } },
+export type LocalChain = {
+  family: string;
+  network: string;
+  status: string;
+  rpc?: number;
+  api?: number;
+  ui?: number;
+  ws?: number;
+};
+
+type Endpoints = Record<string, unknown>;
+
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+const isLocal = (url: unknown): boolean => {
+  try {
+    return typeof url === "string" && LOCAL_HOSTS.has(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+};
+
+/** Every URL in `value`, at any depth, with the path of the field holding it. */
+const urlsIn = (value: unknown, field = ""): { field: string; url: string }[] => {
+  if (typeof value === "string") return /^[a-z]+:\/\//i.test(value) ? [{ field, url: value }] : [];
+  if (value && typeof value === "object") {
+    return Object.entries(value).flatMap(([key, item]) =>
+      urlsIn(item, field ? `${field}.${key}` : key),
+    );
+  }
+  return [];
+};
+
+const localUrl = (chain: LocalChain, role: "rpc" | "api" | "ui", path = ""): string => {
+  const port = chain[role];
+  if (typeof port !== "number") {
+    throw new Error(`coin-sandbox lists no ${role} port for ${chain.network}`);
+  }
+  return `http://localhost:${port}${path}`;
 };
 
 /**
- * What a local chain keeps from its default configuration, on top of `status`, `name` and `unit`:
- * how the chain behaves, never where to reach it. Anything naming a server — node, explorer, gas
- * tracker, Ledger explorer, node sources — is left out, so the local configuration can only point
- * at localhost.
+ * Which fields of a currency's configuration point at its network, by family, and what they become
+ * on its local chain. Every other field keeps its value (defaults, Firebase, overrides); a field
+ * set to `undefined` is removed.
  */
-const CHAIN_FIELDS = [
-  "chainId",
-  "supportedTokens",
-  "finalizationLevel",
-  "nativeContracts",
-  "minGasPrice",
-  "feeHistoryBlockCount",
-  "feeHistoryRewardPercentile",
-  "calldataFloorGasPerToken",
-  "calldataFloorZeroByteTokens",
-  "forceLegacyTransactions",
-  "eip1559BaseFeeMultiplier",
-  "useStaticFees",
-  "enableNetworkLogs",
-] as const satisfies ReadonlyArray<keyof EvmConfigInfo | keyof StellarConfig>;
+const LOCAL_ENDPOINTS: Readonly<Record<string, (chain: LocalChain) => Endpoints>> = {
+  // Atlas has no UI, Blockscout does. An Atlas chain keeps its `ledger` node, explorer and gas
+  // tracker, and their explorerId: only their base URL moves. A Blockscout chain replaces them.
+  evm: chain =>
+    chain.ui === undefined
+      ? { ledgerExplorerUri: localUrl(chain, "api") }
+      : {
+          node: { type: "external", uri: localUrl(chain, "rpc") },
+          explorer: { type: "blockscout", uri: localUrl(chain, "api", "/api") },
+          gasTracker: undefined,
+          ledgerExplorerUri: undefined,
+        },
+  // Without rpcUrls.solana, coin-solana falls back to Ledger's mainnet proxy (API_SOLANA_PROXY),
+  // a URL no configuration shows. The validator list is mainnet's: without its URL, there is none.
+  solana: chain => ({ rpcUrls: { solana: localUrl(chain, "rpc") }, validatorsUrl: undefined }),
+  xrp: chain => ({ node: localUrl(chain, "rpc") }),
+  // Energy rental is a mainnet service: without its settings, coin-tron turns it off
+  tron: chain => ({ explorer: { url: localUrl(chain, "api") }, energyRent: undefined }),
+};
 
 let localNodeCurrencies: ReadonlySet<string> = new Set();
+let localChains: ReadonlyMap<string, { chain: LocalChain; endpoints: Endpoints }> = new Map();
 
 /**
- * Selects the currencies that run on their local node instead of their default network.
+ * Selects the currencies that run on their local node instead of their default network; their
+ * chains are then read by `loadLocalNodes`.
  *
  * Called once by the app at boot, before any bridge is used: coin modules cache per chain id, so
  * switching a currency that already synced against its default network would mix both.
  */
 export function setLocalNodeCurrencies(currencyIds: Iterable<string>): void {
-  const ids = new Set(currencyIds);
-  const unsupported = [...ids].filter(id => !(id in LOCAL_NODE_ENDPOINTS));
-  if (unsupported.length) {
-    throw new Error(
-      `No local node for ${unsupported.join(", ")}. ` +
-        `Supported: ${Object.keys(LOCAL_NODE_ENDPOINTS).join(", ")}`,
-    );
-  }
-  localNodeCurrencies = ids;
+  localNodeCurrencies = new Set(currencyIds);
+  localChains = new Map();
 }
 
 export function getLocalNodeCurrencies(): string[] {
   return [...localNodeCurrencies];
 }
 
+async function fetchChains(serverUrl: string, family: string): Promise<LocalChain[]> {
+  const url = `${serverUrl}/${family}/chains`;
+  let response: Response;
+  try {
+    response = await fetch(url);
+  } catch (error) {
+    throw new Error(
+      `Cannot reach coin-sandbox's server at ${serverUrl} (${error instanceof Error ? error.message : String(error)}): start it, deno task server`,
+    );
+  }
+  if (!response.ok)
+    throw new Error(`coin-sandbox runs no ${family} chain (${url}: HTTP ${response.status})`);
+  return response.json();
+}
+
+/**
+ * Reads where the selected currencies' chains run from coin-sandbox's server. Throws when the
+ * server is down, has no chain for one of them, or Ledger Live cannot run its family locally:
+ * until it succeeds, their configuration is refused rather than left on their default network.
+ */
+export async function loadLocalNodes(serverUrl: string = LOCAL_NODE_SERVER_URL): Promise<void> {
+  const currencyIds = [...localNodeCurrencies];
+  if (!currencyIds.length) return;
+
+  const families = new Map(currencyIds.map(id => [id, getCryptoCurrencyById(id).family]));
+  const unsupported = currencyIds.filter(id => !LOCAL_ENDPOINTS[families.get(id) ?? ""]);
+  if (unsupported.length) {
+    throw new Error(
+      `Ledger Live cannot run ${unsupported.join(", ")} on a local node. Supported families: ${Object.keys(LOCAL_ENDPOINTS).join(", ")}`,
+    );
+  }
+
+  const chains = (
+    await Promise.all([...new Set(families.values())].map(family => fetchChains(serverUrl, family)))
+  ).flat();
+  const loaded = new Map(
+    currencyIds.map(id => {
+      const chain = chains.find(({ network }) => network === id);
+      if (!chain) throw new Error(`coin-sandbox has no chain for ${id}`);
+      return [id, { chain, endpoints: LOCAL_ENDPOINTS[chain.family](chain) }];
+    }),
+  );
+
+  localChains = loaded;
+  try {
+    // Refuse at boot, rather than at the first sync, a configuration that would leave the machine
+    currencyIds.forEach(getLocalNodeConfig);
+  } catch (error) {
+    localChains = new Map();
+    throw error;
+  }
+}
+
+/** The local chain of `currencyId`, `undefined` unless it runs on its local node. */
+export function getLocalNodeChain(currencyId: string): LocalChain | undefined {
+  return localNodeCurrencies.has(currencyId) ? localChains.get(currencyId)?.chain : undefined;
+}
+
 /**
  * The configuration of `currencyId` when it runs on its local node, `undefined` when it runs on
- * its default network: the chain fields of its default configuration, plus the local endpoints.
+ * its default network: its usual configuration (defaults, Firebase, overrides) with its endpoints
+ * moved to its local chain. Throws rather than return a configuration that could reach anything
+ * but this machine, or while a selected currency's chain is not loaded.
  */
 export function getLocalNodeConfig(currencyId: string): CurrencyConfig | undefined {
-  const endpoints = localNodeCurrencies.has(currencyId)
-    ? LOCAL_NODE_ENDPOINTS[currencyId]
-    : undefined;
-  if (!endpoints) return undefined;
+  if (!localNodeCurrencies.has(currencyId)) return undefined;
+  const local = localChains.get(currencyId);
+  if (!local) {
+    throw new Error(
+      `The local node of ${currencyId} is not loaded: is coin-sandbox's server running?`,
+    );
+  }
 
-  const defaults: (CurrencyConfig & Record<string, unknown>) | undefined = LiveConfig.getValueByKey(
+  const usual: (CurrencyConfig & Record<string, unknown>) | undefined = LiveConfig.getValueByKey(
     `config_currency_${currencyId}`,
   );
-  if (!defaults) {
+  if (!usual) {
     throw new Error(`No currency configuration available for ${currencyId}`);
   }
-  const chainFields = Object.fromEntries(
-    CHAIN_FIELDS.filter(field => defaults[field] !== undefined).map(field => [
-      field,
-      defaults[field],
-    ]),
-  );
+  const config = Object.fromEntries(
+    Object.entries({ ...usual, ...local.endpoints }).filter(([, value]) => value !== undefined),
+  ) as CurrencyConfig & Record<string, unknown>;
 
-  return {
-    status: defaults.status,
-    name: defaults.name,
-    unit: defaults.unit,
-    ...chainFields,
-    ...endpoints,
-  };
+  const remote = urlsIn(config).filter(({ url }) => !isLocal(url));
+  // A `ledger` client without a base URL falls back to Ledger's production explorers
+  const ledgerClients = Object.entries(config)
+    .filter(([, value]) => (value as { type?: unknown } | null)?.type === "ledger")
+    .map(([field]) => field);
+  if (ledgerClients.length && !isLocal(config.ledgerExplorerUri)) {
+    remote.push({
+      field: ledgerClients.join(", "),
+      url: "Ledger's explorers (no ledgerExplorerUri)",
+    });
+  }
+  if (remote.length) {
+    throw new Error(
+      `The local configuration of ${currencyId} still reaches its real network: ${remote
+        .map(({ field, url }) => `${field} = ${url}`)
+        .join(", ")}`,
+    );
+  }
+  return config;
 }

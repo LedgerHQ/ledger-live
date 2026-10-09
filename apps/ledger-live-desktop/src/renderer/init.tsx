@@ -5,6 +5,7 @@ import { getEnv } from "@shared/env";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
+import { loadLocalNodes } from "@ledgerhq/live-common/localNode/index";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/logic/backfillOnboardingDate";
 import {
@@ -126,6 +127,8 @@ async function init() {
   });
 
   expectOperatingSystemSupportStatus();
+  // Before any bridge runs: a currency on its local node has no configuration until then
+  await loadLocalNodes();
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
     each(spectronData.localStorage, (value, key) => {

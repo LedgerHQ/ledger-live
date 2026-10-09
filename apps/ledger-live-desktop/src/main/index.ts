@@ -29,18 +29,20 @@ import {
 import { setupWebviewHandlers } from "./webviewHandlers";
 import { setupExplorerSessionAffinity } from "./explorerSessionAffinity";
 import { LOCAL_NODE_CURRENCIES } from "~/localNode";
+import { localNodeProfilePath, resetLocalNodeProfile } from "./localNodeProfile";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
 
 setUserDataPath();
-setLocalNodeUserDataPath();
+const localNodeProfile = setLocalNodeUserDataPath();
 
 const SUPPORTED_SCHEMES = ["ledgerlive", "ledgerwallet"];
 
 const gotLock = app.requestSingleInstanceLock();
 const { LEDGER_CONFIG_DIRECTORY } = process.env;
 const userDataDirectory = LEDGER_CONFIG_DIRECTORY || app.getPath("userData");
+if (gotLock && localNodeProfile) resetLocalNodeProfile(userDataDirectory);
 
 if (!gotLock) {
   app.quit();
@@ -304,12 +306,12 @@ function setUserDataPath() {
   app.setPath("userData", `${defaultPath.slice(0, -currentName.length)}${legacyName}`);
 }
 
-// Local-node accounts share their ids with the real ones (same currency, same addresses), so
-// they get a profile of their own: they can never mix with real accounts, and both apps can run
-// side by side since the single-instance lock is per profile.
-function setLocalNodeUserDataPath() {
-  if (process.env.LEDGER_CONFIG_DIRECTORY || LOCAL_NODE_CURRENCIES.length === 0) return;
-  app.setPath("userData", `${app.getPath("userData")}-local-node`);
+// A run on local nodes gets a profile of its own, emptied at each launch (see localNodeProfile);
+// an explicit LEDGER_CONFIG_DIRECTORY is left as is. Returns whether it switched.
+function setLocalNodeUserDataPath(): boolean {
+  if (process.env.LEDGER_CONFIG_DIRECTORY || LOCAL_NODE_CURRENCIES.length === 0) return false;
+  app.setPath("userData", localNodeProfilePath(app.getPath("userData"), LOCAL_NODE_CURRENCIES));
+  return true;
 }
 
 async function installExtensions() {

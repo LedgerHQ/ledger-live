@@ -1,7 +1,13 @@
 import type { CryptoCurrency, ExplorerView } from "@domain/entity-currency-crypto";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
+import { getLocalNodeCurrencies } from "./localNode";
+import { getLocalNodeExplorerView } from "./localNode/explorers";
 
 export const getDefaultExplorerView = (currency: CryptoCurrency): ExplorerView | undefined => {
+  // A local node's transactions are unknown to the real network's explorer
+  if (getLocalNodeCurrencies().includes(currency.id)) {
+    return getLocalNodeExplorerView(currency.id);
+  }
   return currency.explorerViews ? currency.explorerViews[0] : undefined;
 };
 

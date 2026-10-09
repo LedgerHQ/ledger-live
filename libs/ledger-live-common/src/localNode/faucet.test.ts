@@ -2,14 +2,8 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
-import { setLocalNodeCurrencies } from ".";
-import { LOCAL_NODE_TOKENS } from "./tokens";
-import {
-  LOCAL_NODE_CLAIM_AMOUNT,
-  LOCAL_NODE_FAUCET_URL,
-  claimLocalNodeFunds,
-  getLocalNodeClaim,
-} from "./faucet";
+import { LOCAL_NODE_SERVER_URL, setLocalNodeCurrencies } from ".";
+import { LOCAL_NODE_CLAIM_AMOUNT, claimLocalNodeFunds, getLocalNodeClaim } from "./faucet";
 
 const account = (currencyId: string) =>
   ({
@@ -19,10 +13,10 @@ const account = (currencyId: string) =>
     freshAddress: "address",
   }) as unknown as Account;
 
-const tokenAccount = (parent: Account, token: TokenAccount["token"]) =>
+const tokenAccount = (parent: Account, token: Partial<TokenAccount["token"]>) =>
   ({ type: "TokenAccount", id: `${parent.id}+token`, parentId: parent.id, token }) as TokenAccount;
 
-const [LOCAL_USDC] = LOCAL_NODE_TOKENS.stellar;
+const USDT_TRC20 = { tokenType: "trc20", contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" };
 
 describe("getLocalNodeClaim", () => {
   afterEach(() => setLocalNodeCurrencies([]));
@@ -50,8 +44,7 @@ describe("getLocalNodeClaim", () => {
     setLocalNodeCurrencies(["base"]);
     const parent = account("base");
     const usdc = tokenAccount(parent, {
-      ...LOCAL_USDC,
-      parentCurrencyId: parent.currency.id,
+      tokenType: "erc20",
       contractAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
     });
 
@@ -63,43 +56,38 @@ describe("getLocalNodeClaim", () => {
     });
   });
 
-  it("claims only the local issuer's Stellar tokens", () => {
-    setLocalNodeCurrencies(["stellar"]);
-    const parent = account("stellar");
+  it("claims an SPL token by mint", () => {
+    setLocalNodeCurrencies(["solana"]);
+    const parent = account("solana");
+    const usdc = tokenAccount(parent, {
+      tokenType: "spl",
+      contractAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    });
 
-    expect(getLocalNodeClaim(tokenAccount(parent, LOCAL_USDC), parent)).toEqual({
-      family: "stellar",
-      network: "stellar",
+    expect(getLocalNodeClaim(usdc, parent)).toEqual({
+      family: "solana",
+      network: "solana",
       address: "address",
-      assetCode: "USDC",
+      contractAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    });
+  });
+
+  it("claims a TRC20 by contract, and no other Tron token", () => {
+    setLocalNodeCurrencies(["tron"]);
+    const parent = account("tron");
+
+    expect(getLocalNodeClaim(tokenAccount(parent, USDT_TRC20), parent)).toEqual({
+      family: "tron",
+      network: "tron",
+      address: "address",
+      contractAddress: USDT_TRC20.contractAddress,
     });
     expect(
       getLocalNodeClaim(
-        tokenAccount(parent, { ...LOCAL_USDC, id: LOCAL_USDC.id.replace("GB6", "GA5") as never }),
+        tokenAccount(parent, { tokenType: "trc10", contractAddress: "1002000" }),
         parent,
       ),
     ).toBeUndefined();
-  });
-
-  it("claims a TRC10 by asset id and a TRC20 by contract", () => {
-    setLocalNodeCurrencies(["tron"]);
-    const parent = account("tron");
-    const trc10 = { ...LOCAL_USDC, id: "tron/trc10/1000001", tokenType: "trc10" };
-    const trc20 = {
-      ...LOCAL_USDC,
-      id: "tron/trc20/tgj3d5xvexcdrdcdf2cpqxnourm1fzfoxs",
-      tokenType: "trc20",
-      contractAddress: "TGJ3D5XVeXcdrdCdF2cpqXNoURm1FZfoXs",
-    };
-
-    expect(getLocalNodeClaim(tokenAccount(parent, trc10 as never), parent)).toMatchObject({
-      family: "tron",
-      tokenId: "1000001",
-    });
-    expect(getLocalNodeClaim(tokenAccount(parent, trc20 as never), parent)).toMatchObject({
-      family: "tron",
-      contractAddress: "TGJ3D5XVeXcdrdCdF2cpqXNoURm1FZfoXs",
-    });
   });
 });
 
@@ -112,37 +100,37 @@ describe("claimLocalNodeFunds", () => {
   it("posts the claim to the family's airdrop route and returns the transaction hash", async () => {
     let received: unknown;
     server.use(
-      http.post(`${LOCAL_NODE_FAUCET_URL}/stellar/airdrop`, async ({ request }) => {
+      http.post(`${LOCAL_NODE_SERVER_URL}/tron/airdrop`, async ({ request }) => {
         received = await request.json();
-        return HttpResponse.json({ ok: true, txHash: "0xhash" });
+        return HttpResponse.json({ ok: true, txHash: "hash" });
       }),
     );
 
     await expect(
       claimLocalNodeFunds({
-        family: "stellar",
-        network: "stellar",
+        family: "tron",
+        network: "tron",
         address: "address",
-        assetCode: "USDC",
+        contractAddress: USDT_TRC20.contractAddress,
       }),
-    ).resolves.toBe("0xhash");
+    ).resolves.toBe("hash");
     expect(received).toEqual({
-      network: "stellar",
+      network: "tron",
       address: "address",
-      assetCode: "USDC",
+      contractAddress: USDT_TRC20.contractAddress,
       amount: LOCAL_NODE_CLAIM_AMOUNT,
     });
   });
 
   it("surfaces the airdrop server's error", async () => {
     server.use(
-      http.post(`${LOCAL_NODE_FAUCET_URL}/stellar/airdrop`, () =>
-        HttpResponse.json({ error: "no trustline" }, { status: 500 }),
+      http.post(`${LOCAL_NODE_SERVER_URL}/xrp/airdrop`, () =>
+        HttpResponse.json({ error: "ripple is not running" }, { status: 500 }),
       ),
     );
 
     await expect(
-      claimLocalNodeFunds({ family: "stellar", network: "stellar", address: "address" }),
-    ).rejects.toThrow("no trustline");
+      claimLocalNodeFunds({ family: "xrp", network: "ripple", address: "address" }),
+    ).rejects.toThrow("ripple is not running");
   });
 });

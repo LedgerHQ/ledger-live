@@ -1,6 +1,7 @@
 /**
  * Runs a currency against its local stack and fails on any request that leaves the machine.
- * Opt-in, as the chain must be up (coin-sandbox's `scripts/chain base up`):
+ * Opt-in, as the chain and coin-sandbox's server must be up (`deno task chain base up`,
+ * `deno task server`):
  *
  *   LOCAL_NODE_STACK=base pnpm common jest src/localNode/stack.test.ts
  */
@@ -14,7 +15,7 @@ import { getCurrencyConfiguration } from "../config";
 import { liveConfig } from "../config/sharedConfig";
 import { getCoinModuleApi } from "../bridge/generic-coin-framework/api";
 import { buildContext } from "../bridge/generic-coin-framework/api/context";
-import { setLocalNodeCurrencies } from ".";
+import { loadLocalNodes, setLocalNodeCurrencies } from ".";
 
 const CURRENCY = process.env.LOCAL_NODE_STACK ?? "";
 const describeWithStack = CURRENCY ? describe : describe.skip;
@@ -27,12 +28,9 @@ const SAMPLES: Record<string, { address: string; sendType: string }> = {
   evm: { address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", sendType: "send-eip1559" },
   // The genesis account of a standalone XRP ledger.
   xrp: { address: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh", sendType: "send" },
-  // The root account of a local Stellar network on the public passphrase.
-  stellar: {
-    address: "GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN7",
-    sendType: "send",
-  },
-  // Any address: tronbox/tre draws new prefunded accounts for every chain.
+  // Any address, funded with the airdrop first: a transfer's fee needs an existing sender.
+  solana: { address: "EpAxPozAvGGn3hD5XnqvWVtewEW82CaTQnX6EVm1vjur", sendType: "transfer" },
+  // Any address: the sync of an unknown one exercises the same endpoints.
   tron: { address: "TQDyHP3QX24zSDn5418DHm2hvYs2wzuYYY", sendType: "send" },
 };
 
@@ -54,10 +52,12 @@ describeWithStack(`${CURRENCY} on its local node`, () => {
     }),
   );
 
-  beforeAll(() => {
+  // The configuration comes from coin-sandbox's running server, as in the app
+  beforeAll(async () => {
     LiveConfig.setConfig(liveConfig);
-    setLocalNodeCurrencies([CURRENCY]);
     server.listen({ onUnhandledRequest: "error" });
+    setLocalNodeCurrencies([CURRENCY]);
+    await loadLocalNodes();
   });
 
   afterAll(() => {

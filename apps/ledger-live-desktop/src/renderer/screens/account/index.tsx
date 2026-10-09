@@ -26,6 +26,7 @@ import { AccountWarningBanner, AccountWarningCustomBanner } from "./AccountWarni
 import AccountHeaderActions from "./AccountHeaderActions";
 import AccountHeaderRow from "./AccountHeaderRow";
 import { PerpsAccountBanner } from "LLD/features/Accounts/components/PerpsAccountBanner";
+import { LocalNodeAccountBanner } from "LLD/features/Accounts/components/LocalNodeAccountBanner";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
@@ -161,6 +162,7 @@ const AccountPage = ({
       <AccountWarningBanner currency={currency} />
       <AccountWarningCustomBanner currency={currency} />
       <PerpsAccountBanner currency={currency} />
+      <LocalNodeAccountBanner currency={currency} />
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}

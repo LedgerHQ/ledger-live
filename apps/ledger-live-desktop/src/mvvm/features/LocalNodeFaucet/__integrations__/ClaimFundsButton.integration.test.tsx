@@ -3,23 +3,25 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { http, HttpResponse, server } from "tests/server";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { BridgeSyncContext } from "@ledgerhq/live-common/bridge/react/context";
-import { setLocalNodeCurrencies } from "@ledgerhq/live-common/localNode/index";
-import { LOCAL_NODE_FAUCET_URL } from "@ledgerhq/live-common/localNode/faucet";
+import {
+  LOCAL_NODE_SERVER_URL,
+  setLocalNodeCurrencies,
+} from "@ledgerhq/live-common/localNode/index";
 import type { Account } from "@ledgerhq/types-live";
 import ClaimFundsButton from "../components/ClaimFundsButton";
 
-const STELLAR_ACCOUNT = {
+const XRP_ACCOUNT = {
   type: "Account",
-  id: "js:2:stellar:GADDRESS:sep5",
-  currency: getCryptoCurrencyById("stellar"),
-  freshAddress: "GADDRESS",
+  id: "js:2:ripple:rADDRESS:",
+  currency: getCryptoCurrencyById("ripple"),
+  freshAddress: "rADDRESS",
 } as unknown as Account;
 
 const renderButton = () => {
   const sync = jest.fn();
   render(
     <BridgeSyncContext.Provider value={sync}>
-      <ClaimFundsButton account={STELLAR_ACCOUNT} />
+      <ClaimFundsButton account={XRP_ACCOUNT} />
     </BridgeSyncContext.Provider>,
   );
   return { sync };
@@ -35,10 +37,10 @@ describe("ClaimFundsButton", () => {
   });
 
   it("claims funds for the account and syncs it", async () => {
-    setLocalNodeCurrencies(["stellar"]);
+    setLocalNodeCurrencies(["ripple"]);
     let claimed: unknown;
     server.use(
-      http.post(`${LOCAL_NODE_FAUCET_URL}/stellar/airdrop`, async ({ request }) => {
+      http.post(`${LOCAL_NODE_SERVER_URL}/xrp/airdrop`, async ({ request }) => {
         claimed = await request.json();
         return HttpResponse.json({ ok: true, txHash: "hash" });
       }),
@@ -49,16 +51,16 @@ describe("ClaimFundsButton", () => {
 
     await waitFor(() =>
       expect(sync).toHaveBeenCalledWith(
-        expect.objectContaining({ type: "SYNC_ONE_ACCOUNT", accountId: STELLAR_ACCOUNT.id }),
+        expect.objectContaining({ type: "SYNC_ONE_ACCOUNT", accountId: XRP_ACCOUNT.id }),
       ),
     );
-    expect(claimed).toEqual({ network: "stellar", address: "GADDRESS", amount: 100 });
+    expect(claimed).toEqual({ network: "ripple", address: "rADDRESS", amount: 100 });
   });
 
   it("shows why a claim failed", async () => {
-    setLocalNodeCurrencies(["stellar"]);
+    setLocalNodeCurrencies(["ripple"]);
     server.use(
-      http.post(`${LOCAL_NODE_FAUCET_URL}/stellar/airdrop`, () =>
+      http.post(`${LOCAL_NODE_SERVER_URL}/xrp/airdrop`, () =>
         HttpResponse.json({ error: "Root account not found" }, { status: 500 }),
       ),
     );

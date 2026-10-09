@@ -1,10 +1,6 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { getLocalNodeCurrencies } from ".";
-import { getLocalNodeTokens } from "./tokens";
-
-/** coin-sandbox's airdrop server, `src/server.ts`. */
-export const LOCAL_NODE_FAUCET_URL = "http://localhost:8000";
+import { LOCAL_NODE_SERVER_URL, getLocalNodeCurrencies } from ".";
 
 /** Whole units claimed at once: enough for any account reserve and plenty of fees. */
 export const LOCAL_NODE_CLAIM_AMOUNT = 100;
@@ -14,12 +10,8 @@ export type LocalNodeClaim = {
   family: string;
   network: string;
   address: string;
-  /** An EVM token to claim instead of the native coin. */
+  /** A token to claim instead of the native coin: an ERC-20, an SPL mint or a TRC20, by address. */
   contractAddress?: string;
-  /** A Stellar token of the local issuer to claim instead of lumens. */
-  assetCode?: string;
-  /** A TRC10 to claim instead of TRX, by its asset id. */
-  tokenId?: string;
 };
 
 /**
@@ -41,19 +33,14 @@ export function getLocalNodeClaim(
     // The fork deals any ERC-20 by writing its balance
     case "evm":
       return { ...claim, contractAddress: token.contractAddress };
-    // Only the local issuer's tokens can be minted
-    case "stellar": {
-      const local = getLocalNodeTokens(currency.id).find(({ id }) => id === token.id);
-      return local ? { ...claim, assetCode: local.tokenIdentifier } : undefined;
-    }
-    // The local node mints its own TRC10 and TRC20; it refuses any other token
-    case "tron": {
-      const trc10Id = token.id.match(/^tron\/trc10\/(\d+)$/)?.[1];
-      if (trc10Id) return { ...claim, tokenId: trc10Id };
+    // The validator holds the SPL tokens of its chains.json, at their mainnet mint
+    case "solana":
+      return { ...claim, contractAddress: token.contractAddress };
+    // The local chain holds the TRC20s of its chains.json, at their mainnet address
+    case "tron":
       return token.tokenType === "trc20"
         ? { ...claim, contractAddress: token.contractAddress }
         : undefined;
-    }
     default:
       return undefined;
   }
@@ -64,7 +51,7 @@ export async function claimLocalNodeFunds(
   { family, ...body }: LocalNodeClaim,
   amount: number = LOCAL_NODE_CLAIM_AMOUNT,
 ): Promise<string> {
-  const response = await fetch(`${LOCAL_NODE_FAUCET_URL}/${family}/airdrop`, {
+  const response = await fetch(`${LOCAL_NODE_SERVER_URL}/${family}/airdrop`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ ...body, amount }),
