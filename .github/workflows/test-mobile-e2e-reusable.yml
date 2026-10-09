@@ -311,7 +311,6 @@ jobs:
             e2e/mobile
             e2e/tooling/filter
             libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
-            .pnpmfile.cjs
             pnpm-workspace.yaml
             tools
             .mise/tasks
