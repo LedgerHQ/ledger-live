@@ -3057,9 +3057,6 @@ importers:
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-eth
-      '@ledgerhq/hw-app-exchange':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/hw-app-exchange
       '@ledgerhq/hw-ledger-key-ring-protocol':
         specifier: 'catalog:'
         version: 0.14.0
