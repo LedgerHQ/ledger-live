@@ -257,3 +257,5 @@ catalog:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: ws@8.21.0
+  - ws@8.21.0
