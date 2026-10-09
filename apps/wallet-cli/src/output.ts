@@ -271,6 +271,12 @@ export interface CommandOutput {
   /** One intent from `agent-intent status` (human: labeled lines; json: envelope with the intent's
    * fields, `profileId` and `terminal`, `null` for a state this version doesn't know). */
   agentIntentStatus(result: AgentIntentStatusResult): void;
+  /** The intent `agent-intent cancel` is about to cancel, before the prompt (both modes: stderr). */
+  agentIntentCancelPreview(result: AgentIntentCancelPreview): void;
+  /** Cancellation declined at the prompt (human: stderr line; json: envelope, `cancelled: false`). */
+  agentIntentCancelAborted(result: { profileId: string; intentId: string }): void;
+  /** A cancelled intent (human: check line + details; json: envelope, `cancelled: true`). */
+  agentIntentCancel(result: AgentIntentCancelResult): void;
 }
 
 export type AgentIntentIntentsPage = {
@@ -283,6 +289,18 @@ export type AgentIntentStatusResult = {
   profileId: string;
   intent: IntentListEntry;
   terminal: boolean | null;
+};
+
+export type AgentIntentCancelPreview = {
+  profileId: string;
+  intent: IntentListEntry;
+};
+
+export type AgentIntentCancelResult = {
+  profileId: string;
+  intent: IntentListEntry;
+  /** The intent was cancelled before this run, so this run changed nothing. */
+  alreadyCancelled: boolean;
 };
 
 export type AgentIntentEnrollmentPending = {
@@ -982,29 +1000,48 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(swapIntentSummaryLines(summary).join("\n"));
   }
 
-  agentIntentStatus({ profileId, intent: i, terminal }: AgentIntentStatusResult): void {
-    const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
-    const baseUnits = i.amount ? `${i.amount} (base units)` : undefined;
-    const amount = i.displayAmount ?? baseUnits;
-    // Every field comes from the service, and an agent's note could carry terminal escapes.
-    writeStdout(
-      [
-        `Intent:  ${i.id}`,
-        `Status:  ${state}${terminal ? " (final)" : ""}`,
-        `Profile: ${profileId}`,
-        ...(amount ? [`Amount:  ${amount}`] : []),
-        ...(i.sender ? [`From:    ${i.sender}`] : []),
-        ...(i.recipient ? [`To:      ${i.recipient}`] : []),
-        ...(i.network ? [`Network: ${i.network}`] : []),
-        ...(i.description ? [`Note:    ${i.description}`] : []),
-        ...(i.failureReason ? [`Failure: ${i.failureReason}`] : []),
-        `Created: ${i.createdAt}`,
-        `Updated: ${i.updatedAt}`,
-      ]
-        .map(stripControlChars)
-        .join("\n"),
-    );
+  agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
+    writeStdout(intentDetailLines(profileId, intent, terminal).join("\n"));
   }
+
+  agentIntentCancelPreview({ profileId, intent }: AgentIntentCancelPreview): void {
+    writeStderr(`${intentDetailLines(profileId, intent, false).join("\n")}\n`);
+  }
+
+  agentIntentCancelAborted({ intentId }: { profileId: string; intentId: string }): void {
+    writeStderr(`Not cancelled: intent ${intentId} is unchanged.\n`);
+  }
+
+  agentIntentCancel({ profileId, intent, alreadyCancelled }: AgentIntentCancelResult): void {
+    const headline = alreadyCancelled
+      ? `Intent ${intent.id} was already cancelled.`
+      : `${colors.green("✔")} Intent ${intent.id} cancelled. The user can no longer sign it.`;
+    writeStdout([headline, ...intentDetailLines(profileId, intent, true)].join("\n"));
+  }
+}
+
+/** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
+function intentDetailLines(
+  profileId: string,
+  i: IntentListEntry,
+  terminal: boolean | null,
+): string[] {
+  const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
+  const baseUnits = i.amount ? `${i.amount} (base units)` : undefined;
+  const amount = i.displayAmount ?? baseUnits;
+  return [
+    `Intent:  ${i.id}`,
+    `Status:  ${state}${terminal ? " (final)" : ""}`,
+    `Profile: ${profileId}`,
+    ...(amount ? [`Amount:  ${amount}`] : []),
+    ...(i.sender ? [`From:    ${i.sender}`] : []),
+    ...(i.recipient ? [`To:      ${i.recipient}`] : []),
+    ...(i.network ? [`Network: ${i.network}`] : []),
+    ...(i.description ? [`Note:    ${i.description}`] : []),
+    ...(i.failureReason ? [`Failure: ${i.failureReason}`] : []),
+    `Created: ${i.createdAt}`,
+    `Updated: ${i.updatedAt}`,
+  ].map(stripControlChars);
 }
 
 function swapIntentSummaryLines(summary: SwapIntentSummary): string[] {
@@ -1476,6 +1513,19 @@ class JsonCommandOutput implements CommandOutput {
 
   agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
     this._writeNdjson(this._envelope({ profileId, terminal, intent }));
+  }
+
+  agentIntentCancelPreview({ profileId, intent }: AgentIntentCancelPreview): void {
+    // Stdout carries only the final envelope; the prompt and what it is about go to stderr.
+    writeStderr(`${intentDetailLines(profileId, intent, false).join("\n")}\n`);
+  }
+
+  agentIntentCancelAborted({ profileId, intentId }: { profileId: string; intentId: string }): void {
+    this._writeNdjson(this._envelope({ profileId, cancelled: false, intentId }));
+  }
+
+  agentIntentCancel({ profileId, intent, alreadyCancelled }: AgentIntentCancelResult): void {
+    this._writeNdjson(this._envelope({ profileId, cancelled: true, alreadyCancelled, intent }));
   }
 }
 
