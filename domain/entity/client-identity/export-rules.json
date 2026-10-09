@@ -7,7 +7,6 @@
     "exportUserIdForPushDevicesService": ["domain/api/push-devices/src/internals/middleware.ts"],
     "exportUserIdForPersistence": ["domain/entity/client-identity/src/persistence.ts"],
     "exportUserIdForAnalytics": [
-      "apps/ledger-live-desktop/src/renderer/live-common-setup.ts",
       "apps/ledger-live-desktop/src/renderer/analytics/segment.ts",
       "apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/index.tsx",
       "apps/ledger-live-mobile/src/analytics/segment.ts",
@@ -33,6 +32,10 @@
     "exportUserIdForChainwatch": [
       "apps/ledger-live-mobile/src/components/TransactionsAlerts.tsx",
       "apps/ledger-live-mobile/src/screens/Settings/Debug/Features/TransactionsAlerts.tsx"
+    ],
+    "exportUserIdForFirmwareSalt": [
+      "libs/ledger-live-common/src/device/firmwareDistributionSalt.ts",
+      "libs/live-dmk-shared/src/services/syncFirmwareDistributionSalt.ts"
     ]
   },
   "domain/entity/client-identity/src/ids/DatadogId.ts": {

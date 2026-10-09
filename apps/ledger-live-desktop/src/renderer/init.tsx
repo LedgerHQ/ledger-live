@@ -25,7 +25,7 @@ import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
 import { seedMockServerKnownDevice } from "~/renderer/reducers/knownDevices";
-import { getMockServerSessionToken } from "@ledgerhq/live-dmk-desktop";
+import { getMockServerSessionToken, setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-desktop";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
@@ -51,7 +51,7 @@ import {
   filterTokenOperationsZeroAmountSelector,
   migrateLegacyCryptoCounterValue,
 } from "~/renderer/reducers/settings";
-import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
+import { liveBlindSigningReporter, syncFirmwareDistributionSalt } from "@ledgerhq/live-dmk-shared";
 import { evmAddressBookProvider } from "@ledgerhq/live-signer-evm";
 import { tronAddressBookProvider } from "@ledgerhq/live-signer-tron";
 import { toEvmAddressBook, toTronAddressBook } from "@features/platform-contacts";
@@ -71,6 +71,7 @@ import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
 import { recentAddressesSelector } from "~/renderer/reducers/wallet";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
+import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
 import {
   setAllOverrides,
   setBannerVisible,
@@ -153,6 +154,8 @@ async function init() {
   setupCryptoAssetsStore(store);
   setupRateLookups();
   setSwapQuotesStore(store.dispatch);
+  syncFirmwareDistributionSalt(store, setFirmwareDistributionSalt);
+  setIdentitiesStore(store);
 
   // Feature flags: install the LiveConfig provider (serves non-feature `config_*` keys) and
   // point analytics at the Redux slice. The middleware (wired at store creation) drives the
@@ -449,7 +452,7 @@ async function init() {
     });
   }
 
-  registerTransportModules(store);
+  registerTransportModules();
 
   // expose stuff in Windows for DEBUG purpose
   window.ledger = {
