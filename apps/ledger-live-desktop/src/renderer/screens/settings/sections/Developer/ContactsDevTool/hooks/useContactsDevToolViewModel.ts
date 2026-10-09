@@ -92,6 +92,8 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
 
   const handleResetOverride = useCallback(() => {
     dispatch(setOverride({ key: CONTACTS_FLAG, value: undefined }));
+    setCustomFamiliesDraft(null);
+    setExcludedCurrencyIdsDraft(null);
   }, [dispatch]);
 
   const handleToggleFeatureIntroductionDismissed = useCallback(() => {

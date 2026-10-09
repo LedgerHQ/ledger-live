@@ -182,7 +182,7 @@ describe("useContactsDevToolViewModel", () => {
     expect(result.current.customFamiliesInput).toBe("evm, aptos");
   });
 
-  it("should show the flag values again once the override is reset", () => {
+  it("should drop in-progress inputs and show the defaults once the override is reset", () => {
     const { result } = renderHook(() => useContactsDevToolViewModel(), {
       initialState: withFlagOverrides({
         lwdContacts: {
@@ -196,8 +196,13 @@ describe("useContactsDevToolViewModel", () => {
       }),
     });
 
-    expect(result.current.customFamiliesInput).toBe("evm, stellar");
-    expect(result.current.excludedCurrencyIdsInput).toBe("bitcoin");
+    act(() => {
+      result.current.setCustomFamiliesInput("aptos");
+      result.current.setExcludedCurrencyIdsInput("ethereum");
+    });
+
+    expect(result.current.customFamiliesInput).toBe("aptos");
+    expect(result.current.excludedCurrencyIdsInput).toBe("ethereum");
 
     act(() => {
       result.current.handleResetOverride();
