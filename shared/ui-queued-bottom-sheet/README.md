@@ -44,6 +44,8 @@ The package must not depend on `libs/*`, Redux, or React Navigation. App-specifi
 
 Adapters default to a no-op set (unlocked, focused, no gradient, no logging), so the package works without any wiring. Pass a **stable** adapters object (module scope or `useMemo`) — the adapter functions are called as hooks per sheet.
 
+A request the consumer drops and makes again while the previous presentation is still animating out is served by the next presentation: until then, the outgoing sheet keeps showing the `children` and `footer` it already had. A request held through the whole close (a backdrop press, a consumer that never drops it, `restoreOnFocus`) keeps its content until the sheet is gone. gorhom keeps the outgoing sheet mounted until its close animation ends, and content mounted into it (a field focusing itself, for one) can keep that sheet from ever reporting its dismissal.
+
 A sheet whose screen loses focus is closed and reported through `onClose`, like any other close, so its consumer stops requesting it. Pass `restoreOnFocus` when the sheet is expected back after a round trip to another screen: the sheet is then hidden without reporting a close, and it is presented again once the screen is focused.
 
 ## Exports (native)

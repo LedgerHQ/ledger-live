@@ -78,6 +78,12 @@ export function useQueuedBottomSheet({
   onModalHideRef.current = onModalHide;
 
   const stateRef = useRef<BottomSheetState>("idle");
+  // React mirror of the ref, for what the sheet renders. The ref alone cannot drive a render.
+  const [isLeavingState, setIsLeavingState] = useState(false);
+  const transitionTo = useCallback((next: BottomSheetState) => {
+    stateRef.current = next;
+    setIsLeavingState(isLeaving(next));
+  }, []);
 
   // A dismissal started for one presentation can land on the next one. Only an onDismiss arriving
   // while one is still unacknowledged can be that stale dismissal; any other is the user closing
@@ -103,11 +109,11 @@ export function useQueuedBottomSheet({
 
   const requestDismiss = useCallback(() => {
     if (stateRef.current !== "idle") {
-      stateRef.current = "dismissing";
+      transitionTo("dismissing");
     }
     isDismissInFlightRef.current = true;
     bottomSheetRef.current?.dismiss();
-  }, [bottomSheetRef]);
+  }, [bottomSheetRef, transitionTo]);
 
   const dismissFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -120,14 +126,14 @@ export function useQueuedBottomSheet({
 
   const settleClosed = useCallback(() => {
     clearDismissFallback();
-    stateRef.current = "idle";
+    transitionTo("idle");
     releaseBottomSheetKeyboard(sheetId);
     cleanupQueue();
-  }, [clearDismissFallback, cleanupQueue, sheetId]);
+  }, [clearDismissFallback, cleanupQueue, sheetId, transitionTo]);
 
   const beginDismissing = useCallback(() => {
     if (stateRef.current !== "dismissing") {
-      stateRef.current = "closing";
+      transitionTo("closing");
     }
     isDismissInFlightRef.current = true;
     cleanupQueue();
@@ -141,7 +147,7 @@ export function useQueuedBottomSheet({
       settleClosed();
       setReopenCheckSignal(s => s + 1);
     }, DISMISS_FALLBACK_DELAY_MS);
-  }, [cleanupQueue, clearDismissFallback, logBottomSheet, settleClosed]);
+  }, [cleanupQueue, clearDismissFallback, logBottomSheet, settleClosed, transitionTo]);
 
   // Hiding the keyboard resizes the sheet container. Doing it while the sheet is already animating
   // out makes the underlying bottom sheet re-evaluate its position mid-close, which can leave it
@@ -176,9 +182,9 @@ export function useQueuedBottomSheet({
 
     logBottomSheet("Opening drawer");
     clearDismissFallback();
-    stateRef.current = "open";
+    transitionTo("open");
     bottomSheetRef.current?.present();
-  }, [bottomSheetRef, cleanupQueue, clearDismissFallback, logBottomSheet]);
+  }, [bottomSheetRef, cleanupQueue, clearDismissFallback, logBottomSheet, transitionTo]);
 
   const handleClose = useCallback(() => {
     const state = stateRef.current;
@@ -253,11 +259,11 @@ export function useQueuedBottomSheet({
 
     logBottomSheet("Header close pressed");
     beginDismissing();
-    stateRef.current = "dismissing";
+    transitionTo("dismissing");
     dismissKeyboard();
     onHeaderClosePressedRef.current?.();
     onCloseRef.current?.();
-  }, [beginDismissing, dismissKeyboard, logBottomSheet]);
+  }, [beginDismissing, dismissKeyboard, logBottomSheet, transitionTo]);
 
   // Fired at the START of an animation. A close animation targets index -1, so this is the
   // earliest deterministic signal that the sheet is closing — for the X (close) button, the
@@ -297,7 +303,7 @@ export function useQueuedBottomSheet({
 
     if (dismissedPresentationStillWanted) {
       logBottomSheet("Dismissed a presentation still being requested - presenting it again");
-      stateRef.current = "restored";
+      transitionTo("restored");
       bottomSheetRef.current?.present();
       return;
     }
@@ -305,7 +311,7 @@ export function useQueuedBottomSheet({
     dismissKeyboard();
 
     if (isOnScreen(state)) {
-      stateRef.current = "dismissing";
+      transitionTo("dismissing");
       onCloseRef.current?.();
       requestDismiss();
     } else if (state === "dismissing" && dismissFallbackRef.current === null) {
@@ -322,7 +328,7 @@ export function useQueuedBottomSheet({
     // isRequestingToBeOpened reflects the user's true intent — false for a normal backdrop close,
     // true only if the consumer genuinely re-requested while the sheet was closing.
     setReopenCheckSignal(s => s + 1);
-  }, [bottomSheetRef, dismissKeyboard, logBottomSheet, requestDismiss, settleClosed]);
+  }, [bottomSheetRef, dismissKeyboard, logBottomSheet, requestDismiss, settleClosed, transitionTo]);
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
@@ -361,6 +367,27 @@ export function useQueuedBottomSheet({
     reopenCheckSignal,
   ]);
 
+  // Only a request the consumer dropped and then made again belongs to the next presentation. A
+  // request held all the way through the close — a backdrop press reports the close only once the
+  // sheet is gone, some consumers never drop it, `restoreOnFocus` keeps it on purpose — still
+  // belongs to the outgoing one, whose content must stay until it is gone.
+  // Derived during render, not in an effect: an effect would commit the content into the outgoing
+  // sheet for one frame, long enough for a field in it to focus itself.
+  const isRequested = isRequestingToBeOpened || isForcingToBeOpened;
+  const [wasReleasedWhileLeaving, setWasReleasedWhileLeaving] = useState(false);
+  if (isLeavingState && !isRequested && !wasReleasedWhileLeaving) {
+    setWasReleasedWhileLeaving(true);
+  } else if (!isLeavingState && wasReleasedWhileLeaving) {
+    setWasReleasedWhileLeaving(false);
+  }
+  const isAwaitingNextPresentation = isLeavingState && isRequested && wasReleasedWhileLeaving;
+
+  useEffect(() => {
+    if (isAwaitingNextPresentation) {
+      logBottomSheet("Requested while leaving - holding content for the next presentation");
+    }
+  }, [isAwaitingNextPresentation, logBottomSheet]);
+
   useEffect(() => {
     return () => {
       logBottomSheet("Component unmounting - cleaning up");
@@ -374,6 +401,7 @@ export function useQueuedBottomSheet({
     sheetId,
     bottomSheetRef,
     areBottomSheetsLocked,
+    isAwaitingNextPresentation,
     handleUserClose,
     handleBackdropPress,
     handleHeaderClosePressed,
