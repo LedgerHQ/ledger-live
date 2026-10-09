@@ -1,40 +1,58 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { http, HttpResponse, delay } from "msw";
+import { setupServer } from "msw/node";
 import { calApi, calApiExtra } from "@shared/api-services";
 import { calProbeApi, useGetCalProbeQuery } from "./api";
 import { PROBE_TIMEOUT_MS } from "./internals";
 
-const makeStore = () =>
+const CAL_SERVICE_URL = "https://cal.test";
+const CURRENCIES_URL = `${CAL_SERVICE_URL}/v1/currencies`;
+const REDIRECT_URL = "https://elsewhere.test/v1/currencies";
+
+const makeStore = (calServiceUrl = CAL_SERVICE_URL) =>
   configureStore({
     reducer: { [calApi.reducerPath]: calApi.reducer },
     middleware: gdm =>
       gdm({
         thunk: {
           extraArgument: calApiExtra({
-            calServiceUrl: "https://cal.test",
+            calServiceUrl,
             ledgerClientVersion: "1.2.3",
           }),
         },
       }).concat(calApi.middleware),
   });
 
-const probe = () => {
-  const store = makeStore();
+const probe = (calServiceUrl?: string) => {
+  const store = makeStore(calServiceUrl);
   return store.dispatch(calProbeApi.endpoints.getCalProbe.initiate());
 };
 
 describe("getCalProbe", () => {
-  let fetchSpy: jest.SpyInstance;
+  const server = setupServer();
+  const requested: string[] = [];
   const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
 
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: "error" });
+    server.events.on("request:start", ({ request }) => {
+      requested.push(request.url);
+    });
+  });
+
   beforeEach(() => {
-    fetchSpy = jest.spyOn(globalThis, "fetch");
+    requested.length = 0;
   });
 
   afterEach(() => {
-    fetchSpy.mockRestore();
+    jest.useRealTimers();
+    server.resetHandlers();
     if (originalNavigator) Object.defineProperty(globalThis, "navigator", originalNavigator);
     else Reflect.deleteProperty(globalThis, "navigator");
-    jest.useRealTimers();
+  });
+
+  afterAll(() => {
+    server.close();
   });
 
   it("is injected into the shared CAL api and exports the hook", () => {
@@ -43,49 +61,53 @@ describe("getCalProbe", () => {
   });
 
   it("returns ok on a 2xx, probing /v1/currencies with the client-version header", async () => {
-    fetchSpy.mockResolvedValue(new Response("[]", { status: 200 }));
+    let seen: Request | undefined;
+    server.use(
+      http.get(CURRENCIES_URL, ({ request }) => {
+        seen = request;
+        return new HttpResponse("[]", { status: 200 });
+      }),
+    );
 
     const result = await probe();
 
     expect(result.data).toBe("ok");
-    const [url, init] = fetchSpy.mock.calls[0];
-    expect(String(url)).toBe("https://cal.test/v1/currencies?output=id&limit=1");
-    expect(init.headers["X-Ledger-Client-Version"]).toBe("1.2.3");
+    expect(seen?.url).toBe(`${CURRENCIES_URL}?output=id&limit=1`);
+    expect(seen?.headers.get("X-Ledger-Client-Version")).toBe("1.2.3");
   });
 
   it("returns failed on a 5xx and does not retry", async () => {
-    fetchSpy.mockResolvedValue(new Response("boom", { status: 503 }));
+    let calls = 0;
+    server.use(
+      http.get(CURRENCIES_URL, () => {
+        calls += 1;
+        return new HttpResponse("boom", { status: 503 });
+      }),
+    );
 
     const result = await probe();
 
     expect(result.data).toBe("failed");
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(calls).toBe(1);
   });
 
-  it("asks fetch not to follow redirects and treats a 3xx as failed", async () => {
-    fetchSpy.mockResolvedValue(
-      new Response(null, { status: 302, headers: { Location: "https://elsewhere.test/" } }),
+  it("returns failed on a redirect and does not request the redirect target", async () => {
+    server.use(
+      http.get(CURRENCIES_URL, () => HttpResponse.redirect(REDIRECT_URL, 302)),
+      http.get(REDIRECT_URL, () => new HttpResponse("[]", { status: 200 })),
     );
 
     expect((await probe()).data).toBe("failed");
-    expect(fetchSpy.mock.calls[0][1].redirect).toBe("manual");
-  });
-
-  it("returns failed when a followed redirect lands on a 2xx", async () => {
-    const redirected = new Response("[]", { status: 200 });
-    Object.defineProperty(redirected, "redirected", { value: true });
-    fetchSpy.mockResolvedValue(redirected);
-
-    expect((await probe()).data).toBe("failed");
+    expect(requested.some(url => url.startsWith(REDIRECT_URL))).toBe(false);
   });
 
   it("returns failed when CAL does not answer within the timeout", async () => {
     jest.useFakeTimers();
-    fetchSpy.mockImplementation(
-      (_url: unknown, init: RequestInit) =>
-        new Promise((_resolve, reject) => {
-          init.signal?.addEventListener("abort", () => reject(new DOMException("", "AbortError")));
-        }),
+    server.use(
+      http.get(CURRENCIES_URL, async () => {
+        await delay(PROBE_TIMEOUT_MS + 1);
+        return new HttpResponse("[]", { status: 200 });
+      }),
     );
 
     const pending = probe();
@@ -94,33 +116,20 @@ describe("getCalProbe", () => {
     expect((await pending).data).toBe("failed");
   });
 
-  it("returns failed, without calling CAL, when the service URL is malformed", async () => {
+  it("returns failed, without calling CAL, when the service URL is malformed while offline", async () => {
     Object.defineProperty(globalThis, "navigator", {
       value: { onLine: false },
       configurable: true,
     });
 
-    const store = configureStore({
-      reducer: { [calApi.reducerPath]: calApi.reducer },
-      middleware: gdm =>
-        gdm({
-          thunk: {
-            extraArgument: calApiExtra({
-              calServiceUrl: "not a url",
-              ledgerClientVersion: "1.2.3",
-            }),
-          },
-        }).concat(calApi.middleware),
-    });
-
-    const result = await store.dispatch(calProbeApi.endpoints.getCalProbe.initiate());
+    const result = await probe("not a url");
 
     expect(result.data).toBe("failed");
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(requested).toEqual([]);
   });
 
   it("returns offline on a network error", async () => {
-    fetchSpy.mockRejectedValue(new TypeError("Failed to fetch"));
+    server.use(http.get(CURRENCIES_URL, () => HttpResponse.error()));
 
     expect((await probe()).data).toBe("offline");
   });
@@ -130,18 +139,22 @@ describe("getCalProbe", () => {
       value: { onLine: false },
       configurable: true,
     });
+    server.use(http.get(CURRENCIES_URL, () => new HttpResponse("[]", { status: 200 })));
 
     expect((await probe()).data).toBe("offline");
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(requested).toEqual([]);
   });
 
   it("probes again on refetch", async () => {
-    fetchSpy.mockResolvedValueOnce(new Response("x", { status: 500 }));
-    fetchSpy.mockResolvedValueOnce(new Response("[]", { status: 200 }));
+    server.use(
+      http.get(CURRENCIES_URL, () => new HttpResponse("x", { status: 500 }), { once: true }),
+      http.get(CURRENCIES_URL, () => new HttpResponse("[]", { status: 200 })),
+    );
 
     const subscription = probe();
     expect((await subscription).data).toBe("failed");
 
     expect((await subscription.refetch()).data).toBe("ok");
+    expect(requested).toHaveLength(2);
   });
 });
