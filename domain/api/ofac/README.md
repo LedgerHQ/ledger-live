@@ -35,6 +35,3 @@ configureStore({
     }).concat(countervaluesApi.middleware),
 });
 ```
-
-Wiring into apps and removing `libs/ledger-live-common/src/api/ofacGeoBlockApi.ts` is out of scope
-for this package.
