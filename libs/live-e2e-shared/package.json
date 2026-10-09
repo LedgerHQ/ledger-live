@@ -64,6 +64,7 @@
     "lint:fix": "oxfmt . && oxlint . --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
+    "test": "tsx --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json --customConditions node",
     "e2e-cli": "tsx src/cli/e2e-cli.ts"
   },
