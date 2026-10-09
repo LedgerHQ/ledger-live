@@ -241,7 +241,7 @@
       "@ledgerhq/hw-transport": "catalog:",
       "@ledgerhq/context-module": "catalog:",
       "tslib": "2.6.2",
-      "@ethersproject/providers>ws": "7.5.10",
+      "@ethersproject/providers>ws": "8.21.0",
       "elliptic": "6.6.1",
       "use-latest-callback": "0.1.9",
       "use-isomorphic-layout-effect": "^1.2.1",
