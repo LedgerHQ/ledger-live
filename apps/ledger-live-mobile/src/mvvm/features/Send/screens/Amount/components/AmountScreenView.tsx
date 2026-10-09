@@ -7,6 +7,7 @@ import { AmountInputSection } from "./AmountInputSection";
 import { QuickActionsRow } from "./QuickActionsRow";
 import { NetworkFeesRow } from "../../../components/NetworkFeesRow";
 import { NumberKeyboard } from "./NumberKeyboard";
+import { FamilySendAmountFooterRow } from "./FamilySendAmountFooterRow";
 import type { AmountScreenViewModel } from "../types";
 import { useTranslation } from "~/context/Locale";
 
@@ -66,6 +67,7 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
 
       <View style={styles.middleSection}>
         <NetworkFeesRow viewModel={viewModel.networkFees} />
+        <FamilySendAmountFooterRow />
         <Divider />
 
         {viewModel.quickActions.show && (

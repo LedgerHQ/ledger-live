@@ -249,6 +249,33 @@ describe("SendFlowOrchestrator", () => {
     );
   });
 
+  it("should start on the balance type step when the currency has several balance pools", () => {
+    mockUseSendFlowBusinessLogic.mockReturnValue({
+      ...mockBusinessContext,
+      uiConfig: { hasMemo: false, hasBalanceTypeStep: true },
+    });
+
+    render(
+      <SendFlowOrchestrator
+        initParams={{
+          recipient: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+          skipRecipientStep: true,
+        }}
+        onClose={mockOnClose}
+        stepRegistry={createStepRegistry()}
+        flowConfig={createFlowConfig()}
+      />,
+    );
+
+    expect(MockFlowStackNavigator).toHaveBeenCalledWith(
+      expect.objectContaining({
+        flowConfig: expect.objectContaining({
+          initialStep: SEND_FLOW_STEP.BALANCE_TYPE,
+        }),
+      }),
+    );
+  });
+
   it("should disable back gestures while signing", () => {
     mockUseSendSignature.mockReturnValue({
       isSigning: true,
