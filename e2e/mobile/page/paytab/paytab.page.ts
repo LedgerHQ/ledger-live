@@ -15,6 +15,7 @@ export default class PayTabPage {
   requestTileId = "action-tile-request";
   depositOptionsId = "pay-card-deposit-options";
   bankTransferContentId = "pay-bank-transfer-intro-content";
+  bankTransferCreateAccountId = "pay-bank-transfer-intro-create-account";
   bankTransferCloseId = "bottom-sheet-header-close-button";
   requestScreenId = "pay-request-receive";
   requestCloseId = "pay-request-receive-close";
