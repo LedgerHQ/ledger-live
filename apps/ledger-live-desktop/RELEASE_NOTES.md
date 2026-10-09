@@ -168,7 +168,7 @@ This release includes small security improvements, UI tweaks, and minor bug fixe
 
 # 2.122.0
 
-This release includes small security improvements, UI tweaks, and minor bug fixes.
+This release includes small security improvements,  UI tweaks, and minor bug fixes.
 
 # 2.120.1
 
