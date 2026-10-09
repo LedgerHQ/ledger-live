@@ -1,10 +1,11 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import {
   createOnboardingEventLog,
-  flattenDeviceOnboardingContext,
+  nextStatesFrom,
   recordOnboardingToolEvent,
   stampSession,
   stateValueToString,
+  toolContext,
   toolEvent,
   type HostToolEvent,
 } from "./host";
@@ -12,6 +13,7 @@ import type {
   AvailableFirmwareUpdate,
   DeviceOnboardingContext,
   DeviceOnboardingState,
+  OnboardingEvent,
 } from "./types";
 import { OnboardingStep, RecoveryKeyStatus } from "./types";
 
@@ -50,48 +52,34 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
   };
 }
 
-function snapshot(
-  overrides: Partial<DeviceOnboardingContext> = {},
-  awaitingApproval = false,
-): Parameters<typeof flattenDeviceOnboardingContext>[0] {
-  return {
-    context: context(overrides),
-    matches: () => awaitingApproval,
-  } as unknown as Parameters<typeof flattenDeviceOnboardingContext>[0];
-}
+describe("toolContext", () => {
+  it("copies every field but the kit and the hardware id", () => {
+    const copied = toolContext(
+      context({
+        lastDeviceState: deviceState(OnboardingStep.Pin),
+        lastGenuineFailure: { kind: "GENUINE_CHECK_FAILED", failure: { status: 500 } },
+      }),
+    ) as Record<string, unknown>;
 
-describe("flattenDeviceOnboardingContext", () => {
-  it("should leave verdict and firmware fields empty when the machine has none", () => {
-    const flattened = flattenDeviceOnboardingContext(snapshot());
-
-    expect(flattened.isGenuine).toBeNull();
-    expect(flattened.verdictMatchesSession).toBeNull();
-    expect(flattened.availableFirmwareVersion).toBeNull();
-    expect(flattened.firmwareChecked).toBe(false);
-    expect(flattened.secureConnectionRequested).toBe(false);
+    expect(copied).not.toHaveProperty("dmk");
+    expect(copied).not.toHaveProperty("deviceId");
+    expect(copied).toMatchObject({
+      lastDeviceState: { currentOnboardingStep: OnboardingStep.Pin, managerAllowed: true },
+      lastGenuineFailure: { kind: "GENUINE_CHECK_FAILED", failure: { status: 500 } },
+      verdictMatchesSession: null,
+    });
   });
 
-  it("should compare the verdict session with the machine session", () => {
-    const matching = flattenDeviceOnboardingContext(
-      snapshot({ genuineVerdict: { sessionId: "session-1", isGenuine: true } }),
+  it("tells whether the verdict belongs to the current session", () => {
+    const matching = toolContext(
+      context({ genuineVerdict: { sessionId: "session-1", isGenuine: true } }),
     );
-    const moved = flattenDeviceOnboardingContext(
-      snapshot({ genuineVerdict: { sessionId: "other-session", isGenuine: false } }),
-    );
-
-    expect(matching.verdictMatchesSession).toBe(true);
-    expect(moved.verdictMatchesSession).toBe(false);
-  });
-
-  it("should read the offered firmware and the secure connection prompt", () => {
-    const update = { finalFirmware: { version: "2.3.0" } } as AvailableFirmwareUpdate;
-    const flattened = flattenDeviceOnboardingContext(
-      snapshot({ firmware: { kind: "offered", update } }, true),
+    const moved = toolContext(
+      context({ genuineVerdict: { sessionId: "other-session", isGenuine: false } }),
     );
 
-    expect(flattened.availableFirmwareVersion).toBe("2.3.0");
-    expect(flattened.firmwareChecked).toBe(false);
-    expect(flattened.secureConnectionRequested).toBe(true);
+    expect(matching).toMatchObject({ verdictMatchesSession: true });
+    expect(moved).toMatchObject({ verdictMatchesSession: false });
   });
 });
 
@@ -126,7 +114,7 @@ describe("toolEvent", () => {
   it("should attach the onboarding step when the step changes", () => {
     expect(
       toolEvent({ type: "STEP_CHANGED", state: deviceState(OnboardingStep.Pin) }, "1", "session-1"),
-    ).toEqual({
+    ).toMatchObject({
       id: "1",
       type: "STEP_CHANGED",
       at: 100,
@@ -139,14 +127,14 @@ describe("toolEvent", () => {
       toolEvent(
         {
           type: "FIRMWARE_UPDATE_AVAILABLE",
-          update: {
-            finalFirmware: { version: "2.3.0" },
-          } as unknown as AvailableFirmwareUpdate,
-        },
+          output: {
+            update: { finalFirmware: { version: "2.3.0" } } as AvailableFirmwareUpdate,
+          },
+        } as OnboardingEvent,
         "2",
         "session-1",
       ),
-    ).toEqual({
+    ).toMatchObject({
       id: "2",
       type: "FIRMWARE_UPDATE_AVAILABLE",
       at: 100,
@@ -280,5 +268,122 @@ describe("stampSession", () => {
 
     expect(stampSession(event, sessionId)).toBe(event);
     expect(sessionId).not.toHaveBeenCalled();
+  });
+});
+
+describe("nextStatesFrom", () => {
+  it("lists an accepted event that keeps the current state", () => {
+    const snapshot = {
+      status: "active",
+      value: { checks: "checksIdle" },
+    } as Parameters<typeof nextStatesFrom>[0];
+
+    const rows = nextStatesFrom(snapshot);
+
+    expect(rows).toContainEqual({ event: "RETRY", state: "checks.checksIdle" });
+    expect(rows.map(row => row.event)).not.toContain("SESSION_CHANGED");
+  });
+
+  it("lists the state a firmware update can return to", () => {
+    const snapshot = {
+      status: "active",
+      value: { checks: "firmwareUpdateDelegated" },
+    } as Parameters<typeof nextStatesFrom>[0];
+
+    expect(nextStatesFrom(snapshot)).toEqual([
+      { event: "FIRMWARE_UPDATE_FLOW_CLOSED", state: "readingState" },
+    ]);
+  });
+});
+
+describe("toolEvent payload", () => {
+  it("keeps the error body and a url", () => {
+    const row = toolEvent(
+      { type: "GENUINE_CHECK_FAILED", output: new Error("https://secret.example/body") },
+      "1",
+      "session",
+    );
+
+    expect(row.payload).toEqual({
+      output: { name: "Error", message: "https://secret.example/body" },
+    });
+  });
+
+  it("keeps the installed apps on a firmware event", () => {
+    const update = { finalFirmware: { version: "1.5.0" } };
+    const event = {
+      type: "FIRMWARE_UPDATE_AVAILABLE",
+      output: {
+        firmwareVersion: { os: "1.4.0", mcu: "2.0.0", bootloader: "3.0.0" },
+        firmwareUpdateContext: { availableUpdate: update },
+        applications: [{ versionName: "Bitcoin" }],
+        update,
+      },
+    } as unknown as OnboardingEvent;
+    const row = toolEvent(event, "1", "session");
+
+    expect(row.detail).toEqual({ kind: "firmware", version: "1.5.0" });
+    // The same update sits in two places. It is not a cycle, so both copies are kept.
+    expect(row.payload).toMatchObject({
+      output: {
+        applications: [{ versionName: "Bitcoin" }],
+        firmwareUpdateContext: { availableUpdate: update },
+        update,
+      },
+    });
+  });
+
+  it("keeps arrays as arrays", () => {
+    const event = {
+      type: "FIRMWARE_UP_TO_DATE",
+      output: { mcuVersions: ["1.1.0"] },
+    } as unknown as OnboardingEvent;
+
+    expect(toolEvent(event, "1", "session").payload).toEqual({
+      output: { mcuVersions: ["1.1.0"] },
+    });
+  });
+
+  it("stops on an object that points back to itself", () => {
+    const failure: Record<string, unknown> = { status: 500 };
+    failure.request = failure;
+    const event = { type: "FIRMWARE_CHECK_FAILED", output: failure } as OnboardingEvent;
+
+    expect(toolEvent(event, "1", "session").payload).toEqual({
+      output: { status: 500, request: "…" },
+    });
+  });
+
+  it("keeps an empty object", () => {
+    const event = {
+      type: "FIRMWARE_UP_TO_DATE",
+      output: { customImage: {}, apps: [{}] },
+    } as unknown as OnboardingEvent;
+
+    expect(toolEvent(event, "1", "session").payload).toEqual({
+      output: { customImage: {}, apps: [{}] },
+    });
+  });
+
+  it("counts each loop back to an ancestor, so the copy stays bounded", () => {
+    const failure: Record<string, unknown> = {};
+    for (let index = 0; index < 600; index++) failure[`field${index}`] = failure;
+    const event = { type: "FIRMWARE_CHECK_FAILED", output: failure } as OnboardingEvent;
+
+    const payload = toolEvent(event, "1", "session").payload as { output: object };
+
+    expect(Object.keys(payload.output).length).toBeLessThan(600);
+  });
+
+  it("stops copying once the payload is too large to draw", () => {
+    const event = {
+      type: "FIRMWARE_UP_TO_DATE",
+      output: { applications: Array.from({ length: 600 }, (_, index) => `app-${index}`) },
+    } as unknown as OnboardingEvent;
+    const payload = toolEvent(event, "1", "session").payload as {
+      output: { applications: unknown[] };
+    };
+
+    expect(payload.output.applications).toContain("…");
   });
 });

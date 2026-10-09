@@ -99,7 +99,12 @@ export const contextActions = {
     lastGenuineFailure: null,
   })),
   rememberGenuineFailure: update(({ context, event }) => {
-    if (!("failure" in event)) {
+    if (
+      event.type !== "GENUINE_CHECK_REFUSED" &&
+      event.type !== "GENUINE_CHECK_FAILED" &&
+      event.type !== "SECURE_CHANNEL_LOST" &&
+      event.type !== "DEVICE_NOT_GENUINE"
+    ) {
       return {};
     }
 
@@ -110,7 +115,7 @@ export const contextActions = {
 
     return {
       genuineVerdict: verdict,
-      lastGenuineFailure: { kind: event.type, failure: event.failure },
+      lastGenuineFailure: { kind: event.type, failure: event.output },
     };
   }),
   forgetGenuineFailure: update({ lastGenuineFailure: null }),
@@ -120,7 +125,7 @@ export const contextActions = {
       return {};
     }
 
-    return { firmware: { kind: "offered", update: event.update } };
+    return { firmware: { kind: "offered", update: event.output.update } };
   }),
   forgetFirmwareCheck: update({ firmware: null }),
   // A new session starts the checks over: the old firmware answer and failure belong to the old one.

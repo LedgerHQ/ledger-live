@@ -1,12 +1,7 @@
-import type { SnapshotFrom } from "xstate";
-import type { deviceOnboardingMachine } from "./machine";
+import { getStateNodes, type SnapshotFrom } from "xstate";
+import { deviceOnboardingMachine } from "./machine";
 import type { DeviceSessionId } from "@ledgerhq/device-management-kit";
-import type {
-  DeviceOnboardingContext,
-  OnboardingEvent,
-  OnboardingStep,
-  RecoveryKeyStatus,
-} from "./types";
+import type { DeviceOnboardingContext, OnboardingEvent, OnboardingStep } from "./types";
 
 export const userEvents = [
   { type: "CONTINUE" },
@@ -18,27 +13,6 @@ export const userEvents = [
   { type: "USER_DECLINE" },
 ] as const satisfies readonly OnboardingEvent[];
 
-export type WatchedOnboardingContext = {
-  deviceModelId: DeviceOnboardingContext["deviceModelId"];
-  offerSync: boolean;
-  isOnboarded: boolean;
-  onboardedOnEntry: boolean | null;
-  isInRecoveryMode: boolean | null;
-  managerAllowed: boolean | null;
-  currentOnboardingStep: OnboardingStep | null;
-  recoveryKeyStatus: RecoveryKeyStatus | null;
-  currentSetupStep: OnboardingStep | null;
-  firmwareVersion: string | null;
-  availableFirmwareVersion: string | null;
-  firmwareChecked: boolean;
-  onEarlyCheckScreen: boolean;
-  secureConnectionRequested: boolean;
-  isGenuine: boolean | null;
-  verdictMatchesSession: boolean | null;
-  genuineFailureKind: string | null;
-  checksPaused: boolean;
-};
-
 function readSessionId(read: () => string | null | undefined): string | null {
   try {
     return read() || null;
@@ -47,34 +21,20 @@ function readSessionId(read: () => string | null | undefined): string | null {
   }
 }
 
-export function flattenDeviceOnboardingContext(
-  snapshot: SnapshotFrom<typeof deviceOnboardingMachine>,
-): WatchedOnboardingContext {
-  const { context } = snapshot;
+/**
+ * The whole context as plain data for a devtool, without the kit and without `deviceId`: a hardware
+ * identifier, the Bluetooth MAC address on Android. `verdictMatchesSession` is the row to watch: the
+ * machine drops the genuine verdict when the session moved under it.
+ */
+export function toolContext(context: DeviceOnboardingContext): HostToolPayload {
   const verdict = context.genuineVerdict;
-  const firmware = context.firmware;
 
-  return {
-    deviceModelId: context.deviceModelId,
-    offerSync: context.offerSync,
-    isOnboarded: context.isOnboarded,
-    onboardedOnEntry: context.onboardedOnEntry,
-    isInRecoveryMode: context.lastDeviceState?.isInRecoveryMode ?? null,
-    managerAllowed: context.lastDeviceState?.managerAllowed ?? null,
-    currentOnboardingStep: context.lastDeviceState?.currentOnboardingStep ?? null,
-    recoveryKeyStatus: context.lastDeviceState?.recoveryKeyStatus ?? null,
-    currentSetupStep: context.currentSetupStep,
-    firmwareVersion: context.firmwareVersion,
-    availableFirmwareVersion:
-      firmware?.kind === "offered" ? firmware.update.finalFirmware.version : null,
-    firmwareChecked: firmware?.kind === "checked",
-    onEarlyCheckScreen: context.onEarlyCheckScreen,
-    secureConnectionRequested: snapshot.matches({ checks: { genuineCheck: "awaitingApproval" } }),
-    isGenuine: verdict?.isGenuine ?? null,
-    verdictMatchesSession: verdict === null ? null : verdict.sessionId === context.sessionId,
-    genuineFailureKind: context.lastGenuineFailure?.kind ?? null,
-    checksPaused: context.checksPaused,
-  };
+  return (
+    plainCopy({
+      ...withoutKey(context, "dmk", "deviceId"),
+      verdictMatchesSession: verdict === null ? null : verdict.sessionId === context.sessionId,
+    }) ?? {}
+  );
 }
 
 export function stateValueToString(value: unknown): string {
@@ -98,11 +58,20 @@ export type HostToolEventDetail =
   | { readonly kind: "firmware"; readonly version: string }
   | { readonly kind: "session"; readonly sessionId: string };
 
+export type HostToolPayload =
+  | string
+  | number
+  | boolean
+  | null
+  | readonly HostToolPayload[]
+  | { readonly [key: string]: HostToolPayload };
+
 export type HostToolEvent = {
   readonly id: string;
   readonly type: OnboardingEvent["type"];
   readonly at: number;
   readonly detail?: HostToolEventDetail;
+  readonly payload?: HostToolPayload;
 };
 
 export function toolEvent(event: OnboardingEvent, id: string, sessionId: string): HostToolEvent {
@@ -111,7 +80,7 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
   if (event.type === "STEP_CHANGED") {
     detail = { kind: "step", step: event.state.currentOnboardingStep };
   } else if (event.type === "FIRMWARE_UPDATE_AVAILABLE") {
-    detail = { kind: "firmware", version: event.update.finalFirmware.version };
+    detail = { kind: "firmware", version: event.output.update.finalFirmware.version };
   } else if (
     event.type === "SESSION_READY" ||
     event.type === "SESSION_CHANGED" ||
@@ -120,7 +89,93 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
     detail = { kind: "session", sessionId };
   }
 
-  return { id, type: event.type, at: Date.now(), detail };
+  return {
+    id,
+    type: event.type,
+    at: Date.now(),
+    detail,
+    payload: plainCopy(withoutKey(event, "type")),
+  };
+}
+
+const maxCopiedNodes = 500;
+const truncated = "…";
+
+function withoutKey(value: object, ...omitted: string[]): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(value).filter(([key]) => !omitted.includes(key)));
+}
+
+/** A plain-data copy that stops after `maxCopiedNodes` values and on a loop back to a parent. */
+function plainCopy(value: unknown): HostToolPayload | undefined {
+  return copyValue(value, new WeakSet<object>(), { left: maxCopiedNodes });
+}
+
+function copyValue(
+  value: unknown,
+  seen: WeakSet<object>,
+  budget: { left: number },
+): HostToolPayload | undefined {
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    budget.left -= 1;
+    return value;
+  }
+  if (value === null) {
+    budget.left -= 1;
+    return null;
+  }
+  if (typeof value !== "object") return undefined;
+  // Only an ancestor makes a cycle. The same object can sit in two places and is copied twice.
+  if (seen.has(value)) {
+    budget.left -= 1;
+    return truncated;
+  }
+  seen.add(value);
+  budget.left -= 1;
+  const copied = Array.isArray(value)
+    ? copyItems(value, seen, budget)
+    : copyFields(value, seen, budget);
+  seen.delete(value);
+
+  return copied;
+}
+
+function copyItems(
+  value: readonly unknown[],
+  seen: WeakSet<object>,
+  budget: { left: number },
+): HostToolPayload[] {
+  const items: HostToolPayload[] = [];
+  for (const child of value) {
+    if (budget.left <= 0) {
+      items.push(truncated);
+      break;
+    }
+    const copied = copyValue(child, seen, budget);
+    if (copied !== undefined) items.push(copied);
+  }
+  return items;
+}
+
+function copyFields(
+  value: object,
+  seen: WeakSet<object>,
+  budget: { left: number },
+): HostToolPayload {
+  const nested: Record<string, HostToolPayload> = {};
+  if (value instanceof Error) {
+    nested.name = value.name;
+    nested.message = value.message;
+  }
+  for (const [key, child] of Object.entries(value)) {
+    if (budget.left <= 0) {
+      nested[truncated] = truncated;
+      break;
+    }
+    const copied = copyValue(child, seen, budget);
+    if (copied !== undefined) nested[key] = copied;
+  }
+
+  return nested;
 }
 
 type SessionEvent = { type: "SESSION_READY" | "SESSION_CHANGED" | "FIRMWARE_UPDATE_FLOW_CLOSED" };
@@ -183,4 +238,75 @@ export function recordOnboardingToolEvent(
   }
 
   return { step, entry: toolEvent(event, id, sessionId) };
+}
+
+/** One machine update. `event` is the event that led to `state`. */
+export type HostLogRow = {
+  readonly state: string;
+  readonly event?: HostToolEvent;
+};
+
+/** A state this step can reach. `auto` means the machine may move there with no event. */
+export type HostNextState = {
+  readonly event: string;
+  readonly state: string;
+};
+
+type MachineNode = typeof deviceOnboardingMachine.root;
+
+// The host sends these from any state, so listing them on every step adds nothing.
+const hiddenFromNextStates = new Set(["LOCKED", "TRANSPORT_LOST", "QUIT", "SESSION_CHANGED"]);
+
+/** The deepest active node is the current state. */
+function currentNode(snapshot: SnapshotFrom<typeof deviceOnboardingMachine>): MachineNode {
+  return getStateNodes(deviceOnboardingMachine.root, snapshot.value).reduce((deepest, node) =>
+    node.path.length > deepest.path.length ? node : deepest,
+  ) as MachineNode;
+}
+
+/**
+ * The events a node handles, with every target. An event with no target is still accepted: the
+ * machine stays in `current`.
+ */
+function transitionsOf(node: MachineNode, current: MachineNode): [string, MachineNode][] {
+  const always = (node.always ?? []).flatMap(transition =>
+    (transition.target ?? []).map(target => ["auto", target] as [string, MachineNode]),
+  );
+  const onEvents = [...node.transitions]
+    .filter(([event]) => !event.startsWith("xstate.") && !hiddenFromNextStates.has(event))
+    .flatMap(([event, transitions]) =>
+      transitions.flatMap(transition =>
+        (transition.target ?? [current]).map(target => [event, target] as [string, MachineNode]),
+      ),
+    );
+  return [...always, ...onEvents];
+}
+
+/** An event without a guard stops the walk: the parents never see it. */
+function handlesAlways(node: MachineNode, event: string): boolean {
+  return node.transitions.get(event)?.some(transition => transition.guard === undefined) ?? false;
+}
+
+export function nextStatesFrom(
+  snapshot: SnapshotFrom<typeof deviceOnboardingMachine> | null,
+): HostNextState[] {
+  if (snapshot?.status !== "active") return [];
+
+  const current = currentNode(snapshot);
+  const rows = new Map<string, HostNextState>();
+  const handled = new Set<string>();
+
+  // Walk from the current state up to the root, like xstate picks a transition.
+  for (let node: MachineNode | undefined = current; node; node = node.parent) {
+    for (const [event, target] of transitionsOf(node, current)) {
+      const state = target.path.join(".");
+      if (handled.has(event) || !state) continue;
+      rows.set(`${event}\0${state}`, { event, state });
+    }
+    for (const event of node.transitions.keys()) {
+      if (handlesAlways(node, event)) handled.add(event);
+    }
+  }
+
+  return [...rows.values()];
 }

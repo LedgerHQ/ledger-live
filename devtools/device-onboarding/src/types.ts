@@ -1,11 +1,22 @@
 import type {
   DeviceOnboardingExitReason,
+  HostLogRow,
+  HostNextState,
   HostOnboardingEvent,
-  OnboardingEvent,
-  OnboardingStep,
+  HostToolEvent,
+  HostToolEventDetail,
+  HostToolPayload,
 } from "@ledgerhq/device-onboarding";
 
-export type DeviceOnboardingStatus = "idle" | "connecting" | "running" | "exited";
+export const DeviceOnboardingStatus = {
+  Idle: "idle",
+  Connecting: "connecting",
+  Running: "running",
+  Exited: "exited",
+} as const;
+
+export type DeviceOnboardingStatus =
+  (typeof DeviceOnboardingStatus)[keyof typeof DeviceOnboardingStatus];
 
 export interface DeviceOnboardingToolDevice {
   readonly name: string;
@@ -25,61 +36,18 @@ export interface DeviceOnboardingToolExit {
 }
 
 /** Closed rather than free text, so a host cannot label an event with the seed progress. */
-export type DeviceOnboardingToolDetail =
-  | { readonly kind: "step"; readonly step: OnboardingStep }
-  | { readonly kind: "firmware"; readonly version: string }
-  | { readonly kind: "session"; readonly sessionId: string };
-
-export interface DeviceOnboardingToolEvent {
-  /** Unique across the run: the view keys on it. */
-  readonly id: string;
-  readonly type: OnboardingEvent["type"];
-  /** Epoch milliseconds. */
-  readonly at: number;
-  readonly detail?: DeviceOnboardingToolDetail;
-}
+export type DeviceOnboardingToolDetail = HostToolEventDetail;
+export type DeviceOnboardingToolPayload = HostToolPayload;
+export type DeviceOnboardingToolEvent = HostToolEvent;
+export type DeviceOnboardingLogRow = HostLogRow;
+export type DeviceOnboardingNextState = HostNextState;
 
 /** Whole rather than by type: `snapshot.can` needs the payload, and the machine dereferences it. */
 export interface SendableOnboardingEvent {
+  /** The host adds the session id to SESSION_READY: only it knows the live session. */
   readonly event: HostOnboardingEvent;
   readonly label?: string;
 }
-
-/**
- * What the panel prints, in display order. Closed, so a host cannot put seed progress on a screen
- * that runs during seed entry — see the README for the rest of the boundary.
- *
- * A host flattens the machine onto these names. The device-state fields come from `lastDeviceState`;
- * `availableFirmwareVersion` from `availableFirmwareUpdate.final.version`; `isGenuine` and
- * `verdictMatchesSession` from the raw `genuineVerdict`; `genuineFailureKind` from
- * `lastGenuineFailure.kind`. The rest read straight off the context.
- */
-export const watchedContextFields = [
-  "deviceModelId",
-  "offerSync",
-  "isOnboarded",
-  "onboardedOnEntry",
-  "isInRecoveryMode",
-  "managerAllowed",
-  "currentOnboardingStep",
-  "recoveryKeyStatus",
-  "currentSetupStep",
-  "firmwareVersion",
-  "availableFirmwareVersion",
-  "firmwareChecked",
-  "onEarlyCheckScreen",
-  "secureConnectionRequested",
-  "isGenuine",
-  "verdictMatchesSession",
-  "genuineFailureKind",
-  "checksPaused",
-] as const;
-
-export type DeviceOnboardingWatchedField = (typeof watchedContextFields)[number];
-
-export type DeviceOnboardingToolContext = Readonly<
-  Partial<Record<DeviceOnboardingWatchedField, string | number | boolean | null>>
->;
 
 export interface DeviceOnboardingToolProps {
   readonly status: DeviceOnboardingStatus;
@@ -87,16 +55,38 @@ export interface DeviceOnboardingToolProps {
   readonly device: DeviceOnboardingToolDevice | null;
   /** Dotted state value, null until the machine starts. */
   readonly state: string | null;
-  readonly context: DeviceOnboardingToolContext | null;
-  /** A new array on every append: the tool recomputes on render, it does not watch for mutation. */
-  readonly events: readonly DeviceOnboardingToolEvent[];
+  /** The machine context as plain data. The screen lists every field. */
+  readonly context: DeviceOnboardingToolPayload | null;
+  /** Saved from each machine update, in the order they happened. */
+  readonly log: readonly DeviceOnboardingLogRow[];
   readonly exit: DeviceOnboardingToolExit | null;
   /** Only events the host has already made valid: `SESSION_READY` after it re-opened the session. */
   readonly sendableEvents: readonly SendableOnboardingEvent[];
+  /** States this step can reach. Guards have not picked one yet. */
+  readonly nextStates: readonly DeviceOnboardingNextState[];
   /** Set when the host failed to connect a device or to start the flow. Re-enables Connect. */
   readonly error: string | null;
   /** Opens a session: the first one, or a replacement once the transport went away. */
   readonly connect: () => void;
   readonly send: (event: HostOnboardingEvent) => void;
   readonly reset: () => void;
+  /**
+   * Devtool only. When on, an exit opens the app's next screen, as the real flow would. Off by
+   * default: a QA run must not complete the app onboarding. A firmware update always opens.
+   * A host that has no next screen leaves both out, and the switch is hidden.
+   */
+  readonly showNextScreen?: boolean;
+  readonly setShowNextScreen?: (showNextScreen: boolean) => void;
+  /**
+   * Devtool only. The app's `deviceOnboarding` feature flag. A host without the flag leaves both
+   * out, and its switches are hidden.
+   */
+  readonly featureFlag?: DeviceOnboardingFeatureFlag;
+  readonly setFeatureFlag?: (featureFlag: DeviceOnboardingFeatureFlag) => void;
+}
+
+/** Each param is a switch, so only boolean params are listed. */
+export interface DeviceOnboardingFeatureFlag {
+  readonly enabled: boolean;
+  readonly params: Readonly<Record<string, boolean>>;
 }

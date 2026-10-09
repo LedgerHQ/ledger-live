@@ -10,7 +10,7 @@ import {
 } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingType } from "~/reducers/types";
-import { exitActions } from "./exitActions";
+import { exitActions, opensNextScreen } from "./exitActions";
 
 type ExitDeps = Parameters<(typeof exitActions)[DeviceOnboardingExitReason]>[0];
 type Route = { name: string; params?: unknown; state?: { routes: Route[] } };
@@ -21,6 +21,17 @@ const stax: Device = {
   modelId: DeviceModelId.stax,
   wired: false,
 };
+
+describe("opensNextScreen", () => {
+  it("stays on the devtool when the switch is off", () => {
+    expect(opensNextScreen("completed", false)).toBe(false);
+    expect(opensNextScreen("completed", true)).toBe(true);
+  });
+
+  it("always opens the updater for a device in bootloader or OSU", () => {
+    expect(opensNextScreen("resumeFirmwareUpdate", false)).toBe(true);
+  });
+});
 
 describe("exitActions", () => {
   it.each([
