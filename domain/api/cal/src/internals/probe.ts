@@ -18,8 +18,6 @@ export async function probeCal(
   calServiceUrl: string,
   ledgerClientVersion: string,
 ): Promise<CalProbeResult> {
-  if (isOsOffline()) return "offline";
-
   // A malformed service URL is a misconfiguration, not connectivity: fail closed.
   let url: URL;
   try {
@@ -29,6 +27,8 @@ export async function probeCal(
   }
   url.searchParams.set("output", "id");
   url.searchParams.set("limit", "1");
+
+  if (isOsOffline()) return "offline";
 
   const controller = new AbortController();
   let timedOut = false;

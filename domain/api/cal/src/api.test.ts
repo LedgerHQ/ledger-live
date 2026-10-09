@@ -95,6 +95,11 @@ describe("getCalProbe", () => {
   });
 
   it("returns failed, without calling CAL, when the service URL is malformed", async () => {
+    Object.defineProperty(globalThis, "navigator", {
+      value: { onLine: false },
+      configurable: true,
+    });
+
     const store = configureStore({
       reducer: { [calApi.reducerPath]: calApi.reducer },
       middleware: gdm =>
