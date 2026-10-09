@@ -1,9 +1,9 @@
-import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
   ApduResponse,
   CommandResultFactory,
   isSuccessCommandResult,
   type CommandResult,
+  type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
 import {
   EarlyCheckToggle,

@@ -1,7 +1,7 @@
-import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
   CommandResultFactory,
   InvalidStatusWordError,
+  type DeviceManagementKit,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
 import { ReadOnboardingVersionCommand } from "../device/onboardingVersionCommand";
