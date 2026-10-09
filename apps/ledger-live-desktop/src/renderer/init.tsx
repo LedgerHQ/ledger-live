@@ -39,6 +39,9 @@ import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
+import { appCountervaluesSources } from "../state-manager/middleware/countervalues";
+import { startCountervaluesSync } from "@features/platform-market-countervalues";
+import type { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
 import { bootstrapCardSession } from "./bootstrapCardSession";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { initAccounts } from "~/renderer/actions/accounts";
@@ -145,6 +148,7 @@ async function init() {
   }
   const store = createStore({
     dbMiddleware,
+    countervalues: appCountervaluesSources,
   });
   const dispatch: AppDispatch = store.dispatch;
 
@@ -383,7 +387,11 @@ async function init() {
   const mockServerDevice = await bootstrapMockServerTransport();
   if (mockServerDevice) store.dispatch(seedMockServerKnownDevice(mockServerDevice));
 
-  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
+  // Started right before the first render, so it shows the saved rates.
+  store.dispatch(
+    startCountervaluesSync({ savedState: initialCountervalues as CounterValuesStateRaw }),
+  );
+  r(<ReactRoot store={store} language={language} />);
 
   await dispatch(fetchTrustchain());
   await dispatch(fetchWallet());

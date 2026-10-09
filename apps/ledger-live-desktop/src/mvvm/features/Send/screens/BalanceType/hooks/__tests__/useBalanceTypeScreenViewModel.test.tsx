@@ -62,7 +62,6 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
 
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
-  CountervaluesProvider: ({ children }: { children: React.ReactNode }) => children,
   useCalculateCountervalueCallback: jest.fn(() => (_from: unknown, value: unknown) => value),
 }));
 

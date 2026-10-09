@@ -9462,6 +9462,9 @@ importers:
       react-dom:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'

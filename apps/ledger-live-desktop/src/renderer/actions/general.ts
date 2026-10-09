@@ -3,14 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { createSelector } from "reselect";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
-import { useFeature } from "@features/platform-feature-flags";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon } from "@features/platform-market-countervalues";
-import { useTrackingPairForAccounts } from "@ledgerhq/live-common/portfolio/useTrackingPairForAccounts";
-import {
-  resolveTrackingPairs,
-  type CountervaluesSettings,
-} from "@domain/entity-market-countervalues";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
@@ -30,7 +23,6 @@ import {
   userThemeSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "../reducers/wallet";
-import { selectExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
 
 export function useDistribution(opts: DistributionOpts = {}): DistributionResult {
   const accounts = useSelector(accountsSelector);
@@ -117,38 +109,3 @@ export const themeSelector = createSelector(
   userThemeSelector,
   (osDark, theme) => theme || (osDark ? "dark" : "light"),
 );
-
-export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
-  const countervalue = useSelector(counterValueCurrencySelector);
-
-  // countervalues for accounts
-  const accounts = useSelector(accountsSelector);
-  const trPairs = useTrackingPairForAccounts(accounts, countervalue);
-
-  // countervalues for on demand session tracking pairs
-  const extraSessionTrackingPairs = useSelector(selectExtraTrackingPairs);
-
-  const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
-
-  // A new object only when an input changes: the provider restores and reloads on each one.
-  return useMemo(() => {
-    const trackingPairs = resolveTrackingPairs(extraSessionTrackingPairs.concat(trPairs));
-
-    const granularitiesRates = granularitiesRatesConfig?.enabled
-      ? {
-          daily: Number(granularitiesRatesConfig.params?.daily),
-          hourly: Number(granularitiesRatesConfig.params?.hourly),
-        }
-      : undefined;
-
-    return {
-      trackingPairs,
-      autofillGaps: true,
-      refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
-      marketCapBatchingAfterRank: LiveConfig.getValueByKey(
-        "config_countervalues_marketCapBatchingAfterRank",
-      ),
-      granularitiesRates,
-    };
-  }, [granularitiesRatesConfig, extraSessionTrackingPairs, trPairs]);
-}

@@ -6,17 +6,24 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { addExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
-import { replaceAccounts } from "./accounts";
-import { useCalculateCountervaluesUserSettings } from "./general";
+import { useMemo } from "react";
+import { useSelector } from "LLD/hooks/redux";
+import { replaceAccounts } from "~/renderer/actions/accounts";
+import { createCountervaluesSettingsSelector } from "./countervalues";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 const usd = getFiatCurrencyByTicker("USD");
 const btcAccount = genAccount("countervalues-settings-btc", { currency: bitcoin });
 
-describe("useCalculateCountervaluesUserSettings", () => {
+function useCountervaluesSettings() {
+  const selectSettings = useMemo(createCountervaluesSettingsSelector, []);
+  return useSelector(selectSettings);
+}
+
+describe("createCountervaluesSettingsSelector", () => {
   it("computes the settings from the accounts, the flag and LiveConfig", () => {
-    const { result } = renderHook(useCalculateCountervaluesUserSettings, {
+    const { result } = renderHook(useCountervaluesSettings, {
       initialState: {
         accounts: [btcAccount],
         ...withFlagOverrides({
@@ -37,7 +44,7 @@ describe("useCalculateCountervaluesUserSettings", () => {
   });
 
   it("leaves the granularities out when the flag is off", () => {
-    const { result } = renderHook(useCalculateCountervaluesUserSettings, {
+    const { result } = renderHook(useCountervaluesSettings, {
       initialState: { accounts: [btcAccount] },
     });
 
@@ -45,7 +52,7 @@ describe("useCalculateCountervaluesUserSettings", () => {
   });
 
   it("keeps the same object until the tracked pairs change", () => {
-    const { result, rerender, store } = renderHook(useCalculateCountervaluesUserSettings, {
+    const { result, rerender, store } = renderHook(useCountervaluesSettings, {
       initialState: { accounts: [btcAccount] },
     });
     const first = result.current;

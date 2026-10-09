@@ -7,10 +7,11 @@ import { useCurrenciesByIds } from "@features/platform-currencies";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { useLocale } from "~/context/Locale";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
-import { addExtraSessionTrackingPairs, useCalculateCountervalueCallback } from "~/actions/general";
+import { useCalculateCountervalueCallback } from "~/actions/general";
+import { addExtraSessionTrackingPairs } from "~/reducers/countervaluesExtraSessionTracking";
 import { formatCardTransactionAmount } from "LLM/features/OperationsHistory/utils/formatCardTransactionAmount";
 import { useCountervalueFormatter } from "./useCountervalueFormatter";
 import { useFiatFormatter } from "./useFiatFormatter";
@@ -19,6 +20,7 @@ const NO_IDS: readonly string[] = [];
 
 export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
   const { locale } = useLocale();
+  const dispatch = useDispatch();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
@@ -37,8 +39,8 @@ export function usePayCardAssets(): Omit<CardAssetsProps, "onAddAsset"> {
       startDate,
     }));
 
-    addExtraSessionTrackingPairs(pairs);
-  }, [currencies, counterValueCurrency]);
+    dispatch(addExtraSessionTrackingPairs(pairs));
+  }, [currencies, counterValueCurrency, dispatch]);
 
   const getCounterValue = useCallback(
     (currency: CryptoOrTokenCurrency, balance: string): number | null => {
