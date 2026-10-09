@@ -56,6 +56,46 @@ export function convertTransportError(
   return err;
 }
 
+const SIGN_VERIFICATION_FAIL_TITLE = "signVerificationFail";
+
+/**
+ * The Exchange app rejected the provider signature over the swap payload. This happens before
+ * anything is shown on the device, and a new `/swap` call returns a new payload and signature.
+ */
+export function isSwapSignatureVerificationError(error: unknown): boolean {
+  return (
+    get(error, "name") === "CompleteExchangeError" &&
+    get(error, "step") === "CHECK_TRANSACTION_SIGNATURE" &&
+    get(error, "title") === SIGN_VERIFICATION_FAIL_TITLE
+  );
+}
+
+/**
+ * Tags a signature rejection with the attempt it happened on: "Code: R0" for the first attempt,
+ * then R1, R2 for the retries.
+ */
+export function withSignatureRetryCode(
+  error: CompleteExchangeError,
+  retryCount: number,
+): CompleteExchangeError {
+  if (!isSwapSignatureVerificationError(error)) return error;
+  return new CompleteExchangeError(
+    error.step,
+    error.title,
+    `${error.message} Code: R${retryCount}`,
+  );
+}
+
+/**
+ * `executeSwap` restarts the swap after this error, so the host must not display it.
+ */
+export function isSwapRetryPending(
+  request: { willRetryOnSignatureError?: boolean },
+  error: unknown,
+): boolean {
+  return request.willRetryOnSignatureError === true && isSwapSignatureVerificationError(error);
+}
+
 export function getErrorDetails(error: unknown): ErrorDetails {
   if (error == null) return { message: "Unknown error" };
   if (typeof error === "string") return { message: error || "Unknown error" };

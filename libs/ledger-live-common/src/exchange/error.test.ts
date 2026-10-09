@@ -7,6 +7,9 @@ import {
   getErrorName,
   getErrorMessage,
   getSwapStepFromError,
+  isSwapRetryPending,
+  isSwapSignatureVerificationError,
+  withSignatureRetryCode,
 } from "./error";
 
 describe("exchange/error", () => {
@@ -352,6 +355,108 @@ describe("exchange/error", () => {
         const error = new CompleteExchangeError(step);
         expect(getSwapStepFromError(error)).toBe(step);
       });
+    });
+  });
+
+  describe("isSwapSignatureVerificationError", () => {
+    it("should match a device signature rejection on CHECK_TRANSACTION_SIGNATURE", () => {
+      const error = convertTransportError(
+        "CHECK_TRANSACTION_SIGNATURE",
+        new TransportStatusError(0x9d1a),
+      );
+
+      expect(isSwapSignatureVerificationError(error)).toBe(true);
+    });
+
+    it("should match a plain object carrying the same fields", () => {
+      const error = {
+        name: "CompleteExchangeError",
+        step: "CHECK_TRANSACTION_SIGNATURE",
+        title: "signVerificationFail",
+      };
+
+      expect(isSwapSignatureVerificationError(error)).toBe(true);
+    });
+
+    it("should not match a signature rejection on another step", () => {
+      const error = convertTransportError("CHECK_PARTNER", new TransportStatusError(0x9d1a));
+
+      expect(isSwapSignatureVerificationError(error)).toBe(false);
+    });
+
+    it("should not match another device status on CHECK_TRANSACTION_SIGNATURE", () => {
+      const error = convertTransportError(
+        "CHECK_TRANSACTION_SIGNATURE",
+        new TransportStatusError(0x6a80),
+      );
+
+      expect(isSwapSignatureVerificationError(error)).toBe(false);
+    });
+
+    it("should not match non-exchange errors", () => {
+      expect(isSwapSignatureVerificationError(new Error("signVerificationFail"))).toBe(false);
+      expect(isSwapSignatureVerificationError(null)).toBe(false);
+      expect(isSwapSignatureVerificationError("signVerificationFail")).toBe(false);
+    });
+  });
+
+  describe("withSignatureRetryCode", () => {
+    const signatureError = new CompleteExchangeError(
+      "CHECK_TRANSACTION_SIGNATURE",
+      "signVerificationFail",
+      "Signature verification failed",
+    );
+
+    it("should tag the first attempt with code R0", () => {
+      expect(withSignatureRetryCode(signatureError, 0).message).toBe(
+        "Signature verification failed Code: R0",
+      );
+    });
+
+    it("should tag a retry with its retry count", () => {
+      expect(withSignatureRetryCode(signatureError, 2).message).toBe(
+        "Signature verification failed Code: R2",
+      );
+    });
+
+    it("should keep the error recognisable as a signature rejection", () => {
+      const tagged = withSignatureRetryCode(signatureError, 1);
+
+      expect(tagged).toMatchObject({
+        name: "CompleteExchangeError",
+        step: "CHECK_TRANSACTION_SIGNATURE",
+        title: "signVerificationFail",
+      });
+      expect(isSwapSignatureVerificationError(tagged)).toBe(true);
+    });
+
+    it("should return other errors unchanged", () => {
+      const partnerError = new CompleteExchangeError("CHECK_PARTNER", "signVerificationFail");
+
+      expect(withSignatureRetryCode(partnerError, 1)).toBe(partnerError);
+    });
+  });
+
+  describe("isSwapRetryPending", () => {
+    const signatureError = new CompleteExchangeError(
+      "CHECK_TRANSACTION_SIGNATURE",
+      "signVerificationFail",
+      "Signature verification failed",
+    );
+
+    it("should be pending when the request allows a retry and the signature was rejected", () => {
+      expect(isSwapRetryPending({ willRetryOnSignatureError: true }, signatureError)).toBe(true);
+    });
+
+    it("should not be pending when no retry is left", () => {
+      expect(isSwapRetryPending({ willRetryOnSignatureError: false }, signatureError)).toBe(false);
+      expect(isSwapRetryPending({}, signatureError)).toBe(false);
+    });
+
+    it("should not be pending for other errors", () => {
+      const otherError = new CompleteExchangeError("CHECK_PARTNER", "signVerificationFail");
+
+      expect(isSwapRetryPending({ willRetryOnSignatureError: true }, otherError)).toBe(false);
     });
   });
 

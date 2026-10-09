@@ -17,6 +17,7 @@ const exchangeAction = createAction(completeExchange);
 
 export type BodyContentProps = {
   error?: Error;
+  isRetryPending?: boolean;
   signedOperation?: SignedOperation;
   signRequest?: {
     tokenCurrency: TokenCurrency | undefined;
@@ -54,6 +55,10 @@ export type BodyContentProps = {
 
 export const BodyContent = (props: BodyContentProps) => {
   const action = useTransactionAction();
+
+  if (props.isRetryPending) {
+    return <BigSpinner size={40} />;
+  }
 
   if (props.error) {
     return <ErrorDisplay error={props.error} />;
