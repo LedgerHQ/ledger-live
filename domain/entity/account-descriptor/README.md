@@ -11,8 +11,8 @@ The account descriptor (V1, see the [ADR](https://ledgerhq.atlassian.net/wiki/sp
 
 | Export | Role |
 | --- | --- |
-| `AccountDescriptorSchema` | zod union of `utxo` (xpub, hardened-only path, `h` marker only) and `address` descriptors |
-| `serializeAccountDescriptor` / `parseAccountDescriptor` | `account:1:<type>:<name>:<env>:<xpub or address>:<path>`, same format as wallet-cli; unlike wallet-cli, apostrophe paths (`m/84'/0'/0'`) are rejected |
-| `accountDescriptorKey` | canonical key: serialized descriptor, with `0x` addresses lowercased; no other normalization (path notation, network and non-`0x` address case are kept as is) |
+| `AccountDescriptorSchema` | zod union of `utxo` (xpub, hardened-only path) and `address` descriptors; `'` and `H` hardened markers are read as `h` |
+| `serializeAccountDescriptor` / `parseAccountDescriptor` | `account:1:<type>:<name>:<env>:<xpub or address>:<path>`, the format wallet-cli uses; a parsed descriptor always has `h` markers |
+| `accountDescriptorKey` | canonical key: serialized descriptor with `h` hardened markers and `0x` addresses lowercased; network and non-`0x` address case are kept as is |
 | `computeAccountUUID` | uuid v5 of the canonical key; same on every device, no xpub nor address |
 | `networkFromCurrencyId` / `currencyIdFromNetwork` | network ↔ currency id |
