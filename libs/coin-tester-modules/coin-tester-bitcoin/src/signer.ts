@@ -3,7 +3,7 @@ import { BitcoinAddress, BitcoinSigner, CreateTransaction } from "@ledgerhq/coin
 import { generateMnemonic, mnemonicToSeed } from "bip39";
 import { BIP32Factory } from "bip32";
 import * as bitcoin from "bitcoinjs-lib";
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { serializeTransaction } from "@ledgerhq/hw-app-btc/serializeTransaction";
 import { BufferReader } from "@ledgerhq/psbtv2";
 
@@ -121,8 +121,7 @@ const eccWrapper = {
   sign(hash: Uint8Array | Buffer, privateKey: Uint8Array | Buffer): Uint8Array {
     const hashBytes = hash instanceof Buffer ? new Uint8Array(hash) : hash;
     const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
-    const signature = secp256k1.sign(hashBytes, keyBytes, { prehash: false });
-    return signature.toBytes("compact");
+    return secp256k1.sign(hashBytes, keyBytes, { prehash: false });
   },
 
   verify(

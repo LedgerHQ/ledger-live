@@ -1,5 +1,7 @@
 // `workerThreads: true` is required for validating object with `bigint` values
-module.exports = {
+const { withEsmDeps } = require("@support/jest-shared");
+
+const config = {
   testEnvironment: "node",
   transform: {
     "^.+\\.(ts|tsx)$": [
@@ -43,3 +45,5 @@ module.exports = {
     "@ledgerhq/test-quarantine/jest",
   ],
 };
+
+module.exports = withEsmDeps(config);

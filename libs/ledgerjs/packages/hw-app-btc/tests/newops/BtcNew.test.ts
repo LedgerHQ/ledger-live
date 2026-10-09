@@ -2,7 +2,7 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { TransportReplayer } from "@ledgerhq/hw-transport-mocker";
 // Using @noble/curves instead of tiny-secp256k1
-import { secp256k1 } from "@noble/curves/secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 
 function pointFromPrivateKey(privateKey: Uint8Array) {
   return secp256k1.Point.BASE.multiply(secp256k1.Point.Fn.fromBytes(privateKey));

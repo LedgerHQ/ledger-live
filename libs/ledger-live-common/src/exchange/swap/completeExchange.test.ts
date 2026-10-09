@@ -1,7 +1,7 @@
 import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
-import { secp256k1 } from "@noble/curves/secp256k1";
-import { p256 } from "@noble/curves/nist";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
+import { p256 } from "@noble/curves/nist.js";
 import BigNumber from "bignumber.js";
 import { CompleteExchangeError } from "../error";
 import { sha256 } from "../../crypto";
@@ -142,9 +142,7 @@ describe("enrichSwapSignatureVerificationError", () => {
   // `prehash: false` mirrors production verification: the sha256 digest is the message, so signing
   // must not hash it again (guards against a double-hash if the @noble/curves default ever changes).
   const signCompact = (curve: NobleCurve, message: Buffer): Buffer =>
-    Buffer.from(
-      curve.sign(sha256(message), PRIVATE_KEY, { lowS: false, prehash: false }).toBytes("compact"),
-    );
+    Buffer.from(curve.sign(sha256(message), PRIVATE_KEY, { lowS: false, prehash: false }));
 
   const publicKeyFor = (curve: NobleCurve, curveName: "secp256k1" | "secp256r1") => ({
     curve: curveName,

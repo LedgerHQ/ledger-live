@@ -1,5 +1,7 @@
 import type { Config } from "jest";
 
+const esmDeps = ["@noble\\+"];
+
 const config: Config = {
   testEnvironment: "node",
   setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
@@ -12,7 +14,12 @@ const config: Config = {
         },
       },
     ],
+    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.js$`]: [
+      "@swc/jest",
+      { jsc: { target: "esnext" } },
+    ],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmDeps.join("|")}))`],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
   reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
