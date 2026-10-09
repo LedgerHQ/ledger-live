@@ -7,7 +7,6 @@ const mockStopSigning = jest.fn();
 const mockActions = {
   craftRent: jest.fn((_approvedFee: bigint | null) => Promise.resolve()),
   startRentPayment: jest.fn(),
-  setContractDataFailure: jest.fn(),
   reset: jest.fn(),
 };
 let mockSponsoredState: Record<string, unknown>;
@@ -65,11 +64,6 @@ const crafted = (overrides: Record<string, unknown> = {}) => ({
   paymentTxId: "txA",
   rentPayment: RENT_PAYMENT,
   ...overrides,
-});
-
-const contractDataError = Object.assign(new Error("refused"), {
-  name: "TransportStatusError",
-  statusCode: 0x6a80,
 });
 
 const renderViewModel = () => renderHook(() => useSponsoredRentSignatureViewModel());
@@ -176,15 +170,16 @@ describe("useSponsoredRentSignatureViewModel", () => {
     expect(mockActions.startRentPayment).not.toHaveBeenCalled();
   });
 
-  it("routes a contract-data refusal to the orchestration and leaves other errors to the executor", () => {
+  it("leaves a sign error to the executor's screen, so cancelling still drops the order", () => {
     mockSponsoredState = crafted();
     const { result } = renderViewModel();
 
     act(() => result.current.onIntentJobError(new Error("locked")));
-    expect(mockActions.setContractDataFailure).not.toHaveBeenCalled();
+    act(() => result.current.onUserCancel());
 
-    act(() => result.current.onIntentJobError(contractDataError));
-    expect(mockActions.setContractDataFailure).toHaveBeenCalledWith(contractDataError, "txA");
+    expect(mockActions.startRentPayment).not.toHaveBeenCalled();
+    expect(mockStopSigning).toHaveBeenCalled();
+    expect(mockActions.reset).toHaveBeenCalled();
   });
 
   it("closes the overlay and resets the order on cancel", () => {
@@ -198,14 +193,11 @@ describe("useSponsoredRentSignatureViewModel", () => {
   });
 
   // The sheet calls onUserCancel when it unmounts, which it does as the flow moves on.
-  it.each([
-    ["TX-A is signed", () => SIGNED, "onIntentJobStateChanged"],
-    ["a contract-data refusal is routed", () => contractDataError, "onIntentJobError"],
-  ] as const)("keeps the flow once %s", (_label, makeArg, handler) => {
+  it("keeps the flow once TX-A is signed", () => {
     mockSponsoredState = crafted();
     const { result } = renderViewModel();
 
-    act(() => result.current[handler](makeArg() as never));
+    act(() => result.current.onIntentJobStateChanged(SIGNED));
     act(() => result.current.onUserCancel());
 
     expect(mockStopSigning).not.toHaveBeenCalled();

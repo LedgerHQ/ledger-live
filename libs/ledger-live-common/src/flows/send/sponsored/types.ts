@@ -1,5 +1,6 @@
 import type {
   EnergyRentOrder,
+  RentOrderRejection,
   RentPayment,
 } from "../../../bridge/generic-coin-framework/sponsored";
 
@@ -17,7 +18,6 @@ export const SPONSORED_FAILURE_KIND = {
   RENT_PAYMENT: "RENT_PAYMENT",
   // Poll timeout or provider failure — same outcome: funds moved, retry re-crafts.
   DELIVERY_FAILED: "DELIVERY_FAILED",
-  CONTRACT_DATA: "CONTRACT_DATA",
   TRANSFER: "TRANSFER",
 } as const;
 export type SponsoredFailureKind =
@@ -36,6 +36,8 @@ export type SponsoredState = Readonly<{
   paymentTxId: string | null;
   failureKind: SponsoredFailureKind | null;
   failureError: Error | null;
-  // CONTRACT_DATA_FAILURE only dispatches from RENT_SIGNING/TRANSFER; RETRY resumes here.
-  contractDataResumePhase: typeof SPONSORED_PHASE.RENT_SIGNING | typeof SPONSORED_PHASE.TRANSFER;
+  /** Why the rent order failed, when the flow can tell the user. */
+  rentOrderRejection: RentOrderRejection | null;
+  /** Retry stays off until then, in ms since epoch: a payment we sent may still land. */
+  retryLockedUntil: number | null;
 }>;

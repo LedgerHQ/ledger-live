@@ -32,10 +32,12 @@ import type {
   EnergyRentRequest,
   EnergyRentSignedTransaction,
   EnergyRentStatus,
+  VerifiedEnergyRentOrder,
 } from "./types";
 
 export * from "./types";
 export * from "./signing";
+export * from "./rejection";
 
 /** The sole config-driven energy-rent provider resolver (energyProviders.ts's lookup is display-only). */
 export function getEnergyProvider(config: TronCoinConfig): EnergyProvider {
@@ -62,7 +64,8 @@ export function getEnergyRentQuote(
   return getEnergyProvider(config).getQuote(logger, config, request);
 }
 
-const rejected = (rule: string, message: string) => new TronifyApiError(message, { rule });
+const rejected = (rule: string, message: string, fields?: Record<string, unknown>) =>
+  new TronifyApiError(message, { ...fields, rule });
 
 type ApprovedCost = { amount: BigNumber; code: string };
 
@@ -81,7 +84,11 @@ function approvedCost({ maxPayCoinAmt, maxPayCoinCode }: EnergyRentRequest): App
 
 // getQuote and createOrder price independently; unchecked, the device could be handed payment
 // bytes for more than the user approved.
-function assertOrderWithinApprovedCost(approved: ApprovedCost, order: EnergyRentOrder): void {
+function assertOrderWithinApprovedCost(
+  approved: ApprovedCost,
+  order: EnergyRentOrder,
+  cap: BigNumber,
+): void {
   if (String(order.payCoinCode).toUpperCase() !== approved.code.toUpperCase()) {
     throw rejected(
       "payCoin",
@@ -98,9 +105,11 @@ function assertOrderWithinApprovedCost(approved: ApprovedCost, order: EnergyRent
     );
   }
   if (charged.isGreaterThan(approved.amount)) {
+    const withinCap = payAssetBaseUnits(order.payCoinAmt).isLessThanOrEqualTo(cap);
     throw rejected(
       "ceiling",
       `Energy-rent order costs ${order.payCoinAmt}, above the approved ${approved.amount.toFixed()}`,
+      withinCap ? { payCoinAmt: order.payCoinAmt } : undefined,
     );
   }
 }
@@ -198,7 +207,8 @@ function assertTransferAmount(
   }
 }
 
-function assertPaymentWindow(rawData: Record<string, unknown>): void {
+/** Returns the payment's expiration. */
+function assertPaymentWindow(rawData: Record<string, unknown>): number {
   const { fee_limit: feeLimit, expiration } = rawData;
   // fee_limit caps what the TVM may burn from the payer.
   if (
@@ -225,6 +235,7 @@ function assertPaymentWindow(rawData: Record<string, unknown>): void {
       `Energy-rent payment expires at ${JSON.stringify(expiration)}, outside the accepted (${now}, ${latestExpiration}] window`,
     );
   }
+  return expiration;
 }
 
 // Verifies the signed bytes themselves (not just provider-declared payCoinAmt/payCoinCode) match the
@@ -233,7 +244,7 @@ async function assertSignableTransferMatchesRequest(
   request: EnergyRentRequest,
   order: EnergyRentOrder,
   limits: { payees: ReadonlySet<string>; cap: BigNumber },
-): Promise<void> {
+): Promise<number> {
   // The caller may approve any coin code; only a USDT payment can be decoded and bounded here.
   if (String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code) {
     throw rejected(
@@ -288,14 +299,14 @@ async function assertSignableTransferMatchesRequest(
   }
 
   assertTransferAmount(transfer, order, limits.cap);
-  assertPaymentWindow(rawData);
+  return assertPaymentWindow(rawData);
 }
 
 export async function craftEnergyRentTransaction(
   logger: Logger,
   config: TronCoinConfig,
   request: EnergyRentRequest,
-): Promise<EnergyRentOrder> {
+): Promise<VerifiedEnergyRentOrder> {
   // Read before ordering, so a missing payee list never leaves an order behind.
   const limits = { payees: tronifyPaymentAddresses(config), cap: maxRentBaseUnits(logger, config) };
   let orderId: string | undefined;
@@ -303,9 +314,9 @@ export async function craftEnergyRentTransaction(
     const approved = approvedCost(request);
     const order = await getEnergyProvider(config).createOrder(logger, config, request);
     orderId = order.orderId;
-    assertOrderWithinApprovedCost(approved, order);
-    await assertSignableTransferMatchesRequest(request, order, limits);
-    return order;
+    assertOrderWithinApprovedCost(approved, order, limits.cap);
+    const paymentExpiresAt = await assertSignableTransferMatchesRequest(request, order, limits);
+    return { ...order, paymentExpiresAt };
   } catch (error) {
     // Flags payments refused before signing; a failed Tronify call carries no rule.
     if (error instanceof TronifyApiError && error.rule) {

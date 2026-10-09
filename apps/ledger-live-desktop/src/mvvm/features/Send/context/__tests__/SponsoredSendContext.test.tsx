@@ -38,7 +38,6 @@ const mockActions = {
   craftRent: jest.fn(),
   startRentPayment: jest.fn(),
   onTransferSuccess: jest.fn(),
-  setContractDataFailure: jest.fn(),
   onTransferError: jest.fn(),
   retry: jest.fn(),
   reset: jest.fn(),

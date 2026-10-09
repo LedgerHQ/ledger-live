@@ -12,7 +12,6 @@ const mockStopSigning = jest.fn();
 const mockSponsoredActions = {
   onTransferSuccess: jest.fn(),
   onTransferError: jest.fn(),
-  setContractDataFailure: jest.fn(),
 };
 let mockSponsoredState: { phase: SponsoredPhase; paymentTxId: string | null };
 
@@ -59,7 +58,7 @@ jest.mock("../useSignatureTracking", () => ({
   }),
 }));
 
-const contractDataError = Object.assign(new Error("refused"), {
+const signError = Object.assign(new Error("refused"), {
   name: "TransportStatusError",
   statusCode: 0x6a80,
 });
@@ -102,28 +101,17 @@ describe("useSignatureViewModel in a sponsored transfer", () => {
     expect(mockFinishSigning).not.toHaveBeenCalled();
   });
 
-  it("routes a contract-data refusal to its recovery screen", () => {
+  it("leaves a sign error on the executor's screen without failing the sponsored flow", () => {
     const { result } = renderHook(() => useSignatureViewModel());
 
-    act(() => result.current.onIntentJobError(contractDataError));
+    act(() => result.current.onIntentJobError(signError));
+    act(() => result.current.onUserCancel());
 
-    expect(mockSponsoredActions.setContractDataFailure).toHaveBeenCalledWith(
-      contractDataError,
-      "txA",
-    );
     expect(mockSponsoredActions.onTransferError).not.toHaveBeenCalled();
+    expect(mockStopSigning).toHaveBeenCalled();
   });
 
   // The sheet calls onUserCancel when it unmounts; the failure screen's Retry reopens TX-C.
-  it("keeps signing open once the refusal is handed to the failure screen", () => {
-    const { result } = renderHook(() => useSignatureViewModel());
-
-    act(() => result.current.onIntentJobError(contractDataError));
-    act(() => result.current.onUserCancel());
-
-    expect(mockStopSigning).not.toHaveBeenCalled();
-  });
-
   it("keeps signing open once a failed TX-C is handed to the failure screen", () => {
     const { result } = renderHook(() => useSignatureViewModel());
 
@@ -151,10 +139,9 @@ describe("useSignatureViewModel in a standard send", () => {
     const { result } = renderHook(() => useSignatureViewModel());
 
     act(() => lastOnFinish()?.(SEND_FLOW_COMPLETION.FAILURE, new Error("boom")));
-    act(() => result.current.onIntentJobError(contractDataError));
+    act(() => result.current.onIntentJobError(signError));
 
     expect(mockFinishSigning).toHaveBeenCalled();
     expect(mockSponsoredActions.onTransferError).not.toHaveBeenCalled();
-    expect(mockSponsoredActions.setContractDataFailure).not.toHaveBeenCalled();
   });
 });
