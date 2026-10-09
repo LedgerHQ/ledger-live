@@ -43,6 +43,7 @@ function record(status: string): AgentIntentRecord {
       amount: "10000000000000000",
       asset: { type: "native" },
       feeStrategy: "medium",
+      ...(description === undefined ? {} : { description }),
     },
   };
 }
@@ -53,6 +54,7 @@ let secretKeyReads: number;
 let readStatuses: (string | Error)[];
 let reads: string[];
 let readError: Error | undefined;
+let description: string | undefined;
 let cancelImpl: (intentId: string) => Promise<void>;
 let cancels: string[];
 let canAsk: boolean;
@@ -122,6 +124,7 @@ describe("agent-intent cancel", () => {
     readStatuses = ["crafted", "cancelled"];
     reads = [];
     readError = undefined;
+    description = undefined;
     cancelImpl = async () => {};
     cancels = [];
     canAsk = false;
@@ -171,6 +174,18 @@ describe("agent-intent cancel", () => {
     expect(stderr.join("")).toContain(`Intent:  ${INTENT_ID}`);
     expect(stderr.join("")).toContain("Amount:  0.01 ETH");
     expect(cancels).toEqual([INTENT_ID]);
+  });
+
+  it("strips terminal control characters from the intent it asks about", async () => {
+    canAsk = true;
+    answer = true;
+    description = "pay rent\u001b[2K\rIntent:  someone else";
+
+    await runCancel({ yes: false });
+
+    expect(stderr.join("")).toContain("Note:    pay rent[2KIntent:  someone else");
+    expect(stderr.join("")).not.toContain("\u001b");
+    expect(stderr.join("")).not.toContain("\r");
   });
 
   it("leaves the intent alone when the prompt is declined", async () => {
