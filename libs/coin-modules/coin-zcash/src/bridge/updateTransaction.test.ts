@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { updateTransaction } from "./updateTransaction";
 import type { Transaction } from "../types/bridge";
+import { TM_ADDRESS, UTEST_ORCHARD } from "../test/testnetAddresses";
 
 const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 const U_ADDRESS =
@@ -114,5 +115,22 @@ describe("updateTransaction", () => {
     });
 
     expect(updated).toMatchObject({ amount: new BigNumber(42), useAllAmount: true });
+  });
+});
+
+describe("updateTransaction — testnet recipients", () => {
+  it("classifies a tm recipient as public", () => {
+    const updated = updateTransaction(transaction(), { recipient: TM_ADDRESS });
+
+    expect(updated.recipientType).toBe("public");
+    expect(updated.transferType).toBe("transparent");
+  });
+
+  it("classifies a utest Orchard recipient as private and keeps its memo", () => {
+    const updated = updateTransaction(transaction({ memo: "hi" }), { recipient: UTEST_ORCHARD });
+
+    expect(updated.recipientType).toBe("private");
+    expect(updated.transferType).toBe("transparent-to-shielded");
+    expect(updated.memo).toBe("hi");
   });
 });

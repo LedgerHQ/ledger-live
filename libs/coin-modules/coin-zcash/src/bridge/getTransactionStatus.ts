@@ -56,7 +56,12 @@ function getTransparentInputStatus(
   const fee = tx.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
   const totalSpent = tx.amount.plus(fee);
 
-  const recipientError = computeRecipientError(tx.recipient, currencyName, hasShieldedKey(account));
+  const recipientError = computeRecipientError(
+    tx.recipient,
+    currencyName,
+    hasShieldedKey(account),
+    account.currency.id,
+  );
   if (recipientError) errors.recipient = recipientError;
 
   if (tx.amount.lte(0) && !tx.useAllAmount) {
@@ -122,6 +127,7 @@ export const getTransactionStatus: AccountBridge<
     transaction.recipient,
     account.currency.name,
     hasShieldedKey(account),
+    account.currency.id,
   );
   if (recipientError) errors.recipient = recipientError;
 

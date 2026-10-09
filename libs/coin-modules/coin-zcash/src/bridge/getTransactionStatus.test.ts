@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { TM_ADDRESS, UTEST_ORCHARD } from "../test/testnetAddresses";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
@@ -241,6 +242,30 @@ describe("computeRecipientError", () => {
     [ZS_ADDRESS, "ZcashSaplingRecipientNotSupported"],
   ])("keeps reporting %s as %s without a UFVK", (recipient, expected) => {
     expect(computeRecipientError(recipient, "Zcash", false)?.name).toBe(expected);
+  });
+});
+
+describe("computeRecipientError — testnet currency", () => {
+  it("accepts testnet recipients for zcash_testnet", () => {
+    for (const recipient of [TM_ADDRESS, UTEST_ORCHARD]) {
+      expect(computeRecipientError(recipient, "Zcash Testnet", true, "zcash_testnet")).toBe(
+        undefined,
+      );
+    }
+  });
+
+  it("rejects a mainnet recipient for zcash_testnet", () => {
+    expect(computeRecipientError(T_ADDRESS, "Zcash Testnet", true, "zcash_testnet")?.name).toBe(
+      "InvalidAddress",
+    );
+    expect(computeRecipientError(U_ADDRESS, "Zcash Testnet", true, "zcash_testnet")?.name).toBe(
+      "InvalidAddress",
+    );
+  });
+
+  it("rejects a testnet recipient for zcash", () => {
+    expect(computeRecipientError(TM_ADDRESS, "Zcash", true, "zcash")?.name).toBe("InvalidAddress");
+    expect(computeRecipientError(TM_ADDRESS, "Zcash", true)?.name).toBe("InvalidAddress");
   });
 });
 

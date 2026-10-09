@@ -1,6 +1,7 @@
 import { blake2b } from "@noble/hashes/blake2b";
 import { bech32m } from "@ledgerhq/wallet-btc/crypto/bech32m";
 import type { ZcashTransferType } from "../types/bridge";
+import type { ZcashNetwork } from "./network";
 
 // ZIP-316 receiver typecodes
 const TYPECODE_P2PKH = 0x00;
@@ -17,9 +18,15 @@ const RECEIVER_LENGTHS = new Map<number, number>([
   [TYPECODE_ORCHARD, 43],
 ]);
 
-// Mainnet HRPs
-const UA_HRP_MAINNET = "u";
-const SAPLING_HRP_MAINNET = "zs";
+// Per-network human-readable parts and transparent address prefixes
+const NETWORK_ENCODINGS: Record<
+  ZcashNetwork,
+  { uaHrp: string; saplingHrp: string; transparent: string[] }
+> = {
+  mainnet: { uaHrp: "u", saplingHrp: "zs", transparent: ["t1", "t3"] },
+  testnet: { uaHrp: "utest", saplingHrp: "ztestsapling", transparent: ["tm", "t2"] },
+};
+const NETWORKS = Object.keys(NETWORK_ENCODINGS) as ZcashNetwork[];
 
 // ZIP-316 section 5.3: trailing padding is HRP zero-padded to 16 bytes
 const F4JUMBLE_HRP_PAD_LENGTH = 16;
@@ -27,9 +34,9 @@ const F4JUMBLE_HRP_PAD_LENGTH = 16;
 /**
  * The result of classifying a Zcash recipient address.
  *
- * - { recipientType: "public" }  -- transparent t1/t3 or UA with only transparent receiver(s).
+ * - { recipientType: "public" }  -- transparent t1/t3 (tm/t2 on testnet) or UA with only transparent receiver(s).
  * - { recipientType: "private" } -- UA containing an Orchard receiver (typecode 0x03).
- * - { error: "sapling-unsupported" } -- Sapling zs or UA with a Sapling but no Orchard receiver.
+ * - { error: "sapling-unsupported" } -- Sapling zs (ztestsapling on testnet) or UA with a Sapling but no Orchard receiver.
  * - { error: "invalid" } -- not a parseable Zcash address (includes Sprout zc).
  */
 export type ZcashRecipientClass =
@@ -172,12 +179,12 @@ function readCompactSize(
 }
 
 /**
- * bech32m-decode a mainnet UA and convert its 5-bit words to bytes.
+ * bech32m-decode a UA of the given HRP and convert its 5-bit words to bytes.
  *
- * Returns null when the string is not a valid bech32m mainnet ("u") UA or is
+ * Returns null when the string is not a valid bech32m UA with that HRP or is
  * too short to hold the F4Jumble padding plus a minimal receiver.
  */
-function decodeUnifiedAddressBytes(address: string): Uint8Array | null {
+function decodeUnifiedAddressBytes(address: string, hrp: string): Uint8Array | null {
   let decoded: { prefix: string; words: number[] };
   try {
     // LIMIT=512 because UAs exceed the default 90-char bech32m limit.
@@ -189,7 +196,7 @@ function decodeUnifiedAddressBytes(address: string): Uint8Array | null {
     return null;
   }
 
-  if (decoded.prefix !== UA_HRP_MAINNET) {
+  if (decoded.prefix !== hrp) {
     return null;
   }
 
@@ -208,17 +215,17 @@ function decodeUnifiedAddressBytes(address: string): Uint8Array | null {
 }
 
 /**
- * Strip and verify the trailing 16-byte HRP padding ("u" + 15 zero bytes) from
- * an F4Jumble-inverted UA plaintext, returning the leading receiver bytes.
+ * Strip and verify the trailing 16-byte HRP padding (the HRP followed by zero
+ * bytes up to 16) from an F4Jumble-inverted UA plaintext, returning the leading
+ * receiver bytes.
  *
  * Returns null when the padding suffix is malformed.
  */
-function stripHrpPadding(plaintext: Uint8Array): Uint8Array | null {
+function stripHrpPadding(plaintext: Uint8Array, hrp: string): Uint8Array | null {
   const suffixStart = plaintext.length - F4JUMBLE_HRP_PAD_LENGTH;
   const suffix = plaintext.slice(suffixStart);
 
-  const paddingValid =
-    suffix[0] === UA_HRP_MAINNET.charCodeAt(0) && suffix.slice(1).every(byte => byte === 0);
+  const paddingValid = suffix.every((byte, i) => byte === (i < hrp.length ? hrp.charCodeAt(i) : 0));
   if (!paddingValid) {
     return null;
   }
@@ -266,24 +273,29 @@ function readReceiverTypecodes(receiverBytes: Uint8Array): number[] | null {
 /**
  * Decode a ZIP-316 Unified Address into its list of receiver typecodes.
  *
- * Returns null when the address is not a valid mainnet UA.
+ * Returns null when the address is not a valid UA of the given network
+ * (mainnet by default).
  *
  * Steps (ZIP-316 section 5.3):
- * 1. bech32m-decode with HRP "u" and LIMIT=512 (UAs exceed the default 90-char limit).
+ * 1. bech32m-decode with the network's HRP ("u" or "utest") and LIMIT=512 (UAs exceed the default 90-char limit).
  * 2. Convert 5-bit words to bytes.
  * 3. Invert F4Jumble.
- * 4. Strip and verify the 16-byte HRP padding suffix ("u" + 15 zero bytes).
+ * 4. Strip and verify the 16-byte HRP padding suffix (the HRP + zero bytes).
  * 5. Walk compact-size (typecode, length, data) tuples.
  */
-export function decodeUnifiedAddressTypecodes(address: string): number[] | null {
-  const bytes = decodeUnifiedAddressBytes(address);
+export function decodeUnifiedAddressTypecodes(
+  address: string,
+  network: ZcashNetwork = "mainnet",
+): number[] | null {
+  const hrp = NETWORK_ENCODINGS[network].uaHrp;
+  const bytes = decodeUnifiedAddressBytes(address, hrp);
   if (bytes === null) {
     return null;
   }
 
   const plaintext = f4jumbleInverse(bytes);
 
-  const receiverBytes = stripHrpPadding(plaintext);
+  const receiverBytes = stripHrpPadding(plaintext, hrp);
   if (receiverBytes === null) {
     return null;
   }
@@ -309,29 +321,37 @@ export function decodeUnifiedAddressTypecodes(address: string): number[] | null 
  */
 export function isZcashShieldedAddress(address: string): boolean {
   const lower = address.toLowerCase();
-  return lower.startsWith(UA_HRP_MAINNET + "1") || lower.startsWith(SAPLING_HRP_MAINNET + "1");
+  return NETWORKS.some(network => {
+    const { uaHrp, saplingHrp } = NETWORK_ENCODINGS[network];
+    return lower.startsWith(uaHrp + "1") || lower.startsWith(saplingHrp + "1");
+  });
 }
 
 /**
- * Classify a recipient address string for the Zcash shielded send flow.
+ * Classify a recipient address string for the Zcash shielded send flow, on the
+ * given network (mainnet by default). An address of the other network is invalid.
  */
-export function classifyZcashRecipient(address: string): ZcashRecipientClass {
+export function classifyZcashRecipient(
+  address: string,
+  network: ZcashNetwork = "mainnet",
+): ZcashRecipientClass {
   const lower = address.toLowerCase();
+  const { uaHrp, saplingHrp, transparent } = NETWORK_ENCODINGS[network];
 
-  // Transparent: t1 (P2PKH) or t3 (P2SH) on Zcash mainnet
-  if (lower.startsWith("t1") || lower.startsWith("t3")) {
+  // Transparent: P2PKH or P2SH (t1/t3 on mainnet, tm/t2 on testnet)
+  if (transparent.some(prefix => lower.startsWith(prefix))) {
     // Zcash t-addresses are Base58Check of a fixed 26-byte payload (2-byte
     // version prefix + 20-byte hash + 4-byte checksum). The version prefix is
-    // fixed and non-zero (0x1CB8 for t1, 0x1CBD for t3), so the encoding is
-    // always exactly 35 characters.
+    // fixed and non-zero (0x1CB8 for t1, 0x1CBD for t3 on mainnet; 0x1D25 for tm,
+    // 0x1CBA for t2 on testnet), so the encoding is always exactly 35 characters.
     if (address.length === 35) {
       return { recipientType: "public" };
     }
     return { error: "invalid" };
   }
 
-  // Sapling: zs1 (Bech32, HRP "zs")
-  if (lower.startsWith(SAPLING_HRP_MAINNET + "1")) {
+  // Sapling: Bech32 with HRP "zs" (mainnet) or "ztestsapling" (testnet)
+  if (lower.startsWith(saplingHrp + "1")) {
     return { error: "sapling-unsupported" };
   }
 
@@ -340,9 +360,9 @@ export function classifyZcashRecipient(address: string): ZcashRecipientClass {
     return { error: "invalid" };
   }
 
-  // Unified Address: bech32m with HRP "u"
-  if (lower.startsWith(UA_HRP_MAINNET + "1")) {
-    const typecodes = decodeUnifiedAddressTypecodes(address);
+  // Unified Address: bech32m with HRP "u" (mainnet) or "utest" (testnet)
+  if (lower.startsWith(uaHrp + "1")) {
+    const typecodes = decodeUnifiedAddressTypecodes(address, network);
     if (typecodes === null) {
       return { error: "invalid" };
     }
@@ -368,6 +388,22 @@ export function classifyZcashRecipient(address: string): ZcashRecipientClass {
   }
 
   return { error: "invalid" };
+}
+
+/**
+ * Classify a recipient for callers that have no account, and so no network:
+ * the first network that accepts the address gives its shape (public/private).
+ * This only derives the shape; whether the address is valid for the account's
+ * network is decided where the account is known (`getTransactionStatus`).
+ */
+export function classifyZcashRecipientShape(address: string): ZcashRecipientClass {
+  let result: ZcashRecipientClass = { error: "invalid" };
+  for (const network of NETWORKS) {
+    const cls = classifyZcashRecipient(address, network);
+    if (!("error" in cls)) return cls;
+    if (cls.error === "sapling-unsupported") result = cls;
+  }
+  return result;
 }
 
 /**

@@ -3,6 +3,7 @@ import { InvalidAddress, RecipientRequired } from "@ledgerhq/ledger-wallet-frame
 import type { BitcoinOutput, ZcashAccount, Transaction } from "../types/bridge";
 import { ZcashSaplingRecipientNotSupported, ZcashShieldedKeyMissing } from "../types/errors";
 import { classifyZcashRecipient } from "../logic/address";
+import { zcashNetworkOf } from "../logic/network";
 import { TRANSPARENT_OUTPUT_DUST_THRESHOLD } from "../logic/coin-selection";
 import { ZCASH_MAX_TRANSPARENT_INPUTS } from "../constants";
 
@@ -103,9 +104,10 @@ export const computeRecipientError = (
   recipient: string,
   currencyName: string,
   shieldedKeyAvailable: boolean,
+  currencyId: string = "zcash",
 ): Error | undefined => {
   if (!recipient) return new RecipientRequired("");
-  const cls = classifyZcashRecipient(recipient);
+  const cls = classifyZcashRecipient(recipient, zcashNetworkOf(currencyId));
   if ("error" in cls) {
     return cls.error === "sapling-unsupported"
       ? new ZcashSaplingRecipientNotSupported()
