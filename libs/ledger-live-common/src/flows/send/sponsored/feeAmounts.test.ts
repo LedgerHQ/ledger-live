@@ -1,14 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import { formatFeeCurrencyAmount } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
-import { TRON_USDT_FEE_ASSET } from "../../screens/Recipient/__integrations__/__fixtures__/accounts";
-import { formatSponsoredFeeAmounts } from "../sponsoredFeeAmounts";
+import { formatFeeCurrencyAmount } from "../utils/networkFeesDisplay";
+import { formatSponsoredFeeAmounts } from "./feeAmounts";
+import { USDT_FEE_ASSET } from "./fixtures/usdt";
 
 const TRX_UNIT = getCryptoCurrencyById("tron").units[0];
 const USDT_UNIT = { name: "USDT", code: "USDT", magnitude: 6 };
 const USD_UNIT = getFiatCurrencyByTicker("USD").units[0];
-const QUOTE = { feeAsset: TRON_USDT_FEE_ASSET, value: 3_200_000n, originalValue: 6_430_000n };
+const QUOTE = { feeAsset: USDT_FEE_ASSET, value: 3_200_000n, originalValue: 6_430_000n };
 
 const format = (sponsoredFeeFiat: BigNumber | null, standardFeeFiat: BigNumber | null) =>
   formatSponsoredFeeAmounts({

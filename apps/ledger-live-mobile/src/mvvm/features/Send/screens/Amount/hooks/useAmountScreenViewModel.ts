@@ -9,6 +9,8 @@ import type {
 } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore";
 import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
+import type { SponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/types";
+import type { SponsoredFeeEntryViewModel } from "../../../types";
 import type { AmountScreenMessage, AmountScreenViewModel } from "../types";
 import { useAmountInputController } from "./useAmountInputController";
 import { useQuickActions } from "./useQuickActions";
@@ -19,6 +21,12 @@ import {
   getAmountScreenRawMessage,
   isAmountInputDisabledByRecipientError,
 } from "@ledgerhq/live-common/flows/send/amount/utils/messages";
+
+const PENDING_SPONSORED_FEE: SponsoredFeeAmounts["sponsored"] = {
+  value: "-",
+  secondaryValue: null,
+  originalValue: null,
+};
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -50,14 +58,25 @@ export function useAmountScreenViewModel({
   onSelectCustomFees,
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
-  const { waivesNativeFee, waivesErrorKeys, waivesWarningKeys, reviewReady } = useSponsoredSend();
+  const {
+    waivesNativeFee,
+    waivesErrorKeys,
+    waivesWarningKeys,
+    reviewReady,
+    available: sponsoredAvailable,
+    sponsoredSelected,
+    providerName,
+    feeCurrencyTicker,
+    savingsFiatFormatted,
+    sponsoredFeeAmounts,
+    sponsoredUnaffordable,
+  } = useSponsoredSend();
 
   const statusWithoutWaived = useMemo(
     () =>
       waivesNativeFee ? withoutWaivedStatus(status, waivesErrorKeys, waivesWarningKeys) : status,
     [waivesNativeFee, waivesErrorKeys, waivesWarningKeys, status],
   );
-  const sponsoredReviewNotReady = !reviewReady;
 
   const amountReviewCore = useSendFlowAmountReviewCore({
     account,
@@ -154,7 +173,59 @@ export function useAmountScreenViewModel({
     [status],
   );
 
-  const reviewDisabled = coreReviewDisabled || amountInput.isTyping || sponsoredReviewNotReady;
+  const sponsoredFee: SponsoredFeeEntryViewModel | null = useMemo(() => {
+    if (!sponsoredAvailable) return null;
+    let label: string | null;
+    if (sponsoredSelected) {
+      label = savingsFiatFormatted
+        ? t("send.newSendFlow.feePayment.saved", { provider: providerName })
+        : null;
+    } else if (savingsFiatFormatted) {
+      label = t("send.newSendFlow.feePayment.nudge", {
+        amount: savingsFiatFormatted,
+        provider: providerName,
+      });
+    } else {
+      // Offered even without a saving: paying in the fee asset can be what makes the send possible.
+      label = t("send.newSendFlow.feePayment.payIn", { feeCurrency: feeCurrencyTicker });
+    }
+    return {
+      label,
+      selected: sponsoredSelected,
+      // While the quote reloads, falling back to the standard estimate would misstate the chosen fee.
+      fee: sponsoredSelected ? (sponsoredFeeAmounts?.sponsored ?? PENDING_SPONSORED_FEE) : null,
+      infoDescription: sponsoredSelected
+        ? t("send.newSendFlow.feePayment.disclaimer", {
+            feeCurrency: feeCurrencyTicker,
+            provider: providerName,
+          })
+        : null,
+      error: sponsoredUnaffordable
+        ? t("send.newSendFlow.feePayment.insufficientFunds", {
+            feeCurrency: feeCurrencyTicker,
+            provider: providerName,
+          })
+        : null,
+    };
+  }, [
+    sponsoredAvailable,
+    sponsoredSelected,
+    savingsFiatFormatted,
+    sponsoredFeeAmounts,
+    sponsoredUnaffordable,
+    providerName,
+    feeCurrencyTicker,
+    t,
+  ]);
+
+  // An insufficient amount turns Review into Get funds, which needs no sponsored quote and stays
+  // pressable.
+  const sponsoredReviewNotReady = !reviewReady && !hasInsufficientFundsError;
+  const reviewDisabled =
+    coreReviewDisabled ||
+    amountInput.isTyping ||
+    sponsoredReviewNotReady ||
+    (sponsoredUnaffordable && !hasInsufficientFundsError);
   const reviewLoading = amountComputationPending || sponsoredReviewNotReady;
 
   return useMemo(
@@ -172,6 +243,7 @@ export function useAmountScreenViewModel({
         onToggleMode: amountInput.onToggleMode,
       },
       networkFees,
+      sponsoredFee,
       quickActions: {
         actions: quickActions,
         show: mainAccount.balance.gt(0),
@@ -189,6 +261,7 @@ export function useAmountScreenViewModel({
       amountInput,
       isAmountInputDisabled,
       networkFees,
+      sponsoredFee,
       quickActions,
       mainAccount.balance,
       reviewLabel,

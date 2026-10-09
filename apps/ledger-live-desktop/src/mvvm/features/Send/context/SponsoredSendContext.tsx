@@ -4,13 +4,10 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useRef,
-  useState,
   type ReactNode,
 } from "react";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
+import type { BigNumber } from "bignumber.js";
 import { useFeature } from "@features/platform-feature-flags";
 import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
 import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
@@ -21,22 +18,26 @@ import {
 } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import type { SponsoredFeeQuote } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { sponsoredMaxAmount } from "@ledgerhq/live-common/flows/send/sponsored/feeAsset";
+import {
+  STANDARD_FEE_OPTION_ID,
+  useSponsoredFeeSelection,
+} from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeSelection";
+import { useSponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeAmounts";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useSendFlowData, useSendFlowActions } from "./SendFlowContext";
-import { formatSponsoredFeeAmounts } from "../utils/sponsoredFeeAmounts";
 import type { SponsoredFeeAmounts } from "../types";
 
-export const STANDARD_FEE_OPTION_ID = "standard";
+export { STANDARD_FEE_OPTION_ID };
 
 type SponsoredSendContextValue = Readonly<{
   state: SponsoredState;
   actions: SponsoredSendActions;
   mainAccount: Account | null;
   selectedFeeOptionId: string;
+  sponsoredSelected: boolean;
   sponsoredFeeOptionId: string;
   providerName: string;
   waivesErrorKeys: readonly string[];
@@ -54,6 +55,8 @@ type SponsoredSendContextValue = Readonly<{
   feeTokenAccount: TokenAccount | null;
   /** Largest amount the fee token covers next to the rent; ≤ 0 when nothing fits, null until quoted. */
   sponsoredMaxAmount: BigNumber | null;
+  /** The sponsored pick can't pay the amount and the rent from the fee token. */
+  sponsoredUnaffordable: boolean;
 }>;
 
 const NO_WAIVED_KEYS: readonly string[] = [];
@@ -94,29 +97,6 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   });
 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const sponsoredFeeOptionId = seam?.feeOptionId ?? "";
-  const [selectedFeeOptionId, setSelectedFeeOptionId] = useState<string>(STANDARD_FEE_OPTION_ID);
-  const snappedAmountRef = useRef<BigNumber | null>(null);
-
-  // `sponsored` makes getPendingNativeSpent skip the native fee on the optimistic op; crafting ignores it.
-  const selectSponsored = useCallback(() => {
-    if (!sponsoredFeeOptionId) return;
-    setSelectedFeeOptionId(sponsoredFeeOptionId);
-    transactionActions.updateTransaction(tx => ({ ...tx, sponsored: true }) as typeof tx);
-  }, [sponsoredFeeOptionId, transactionActions]);
-  // Restores Max only while the amount is still the one the sponsored option snapped it to.
-  const selectStandard = useCallback(() => {
-    setSelectedFeeOptionId(STANDARD_FEE_OPTION_ID);
-    const snapped = snappedAmountRef.current;
-    snappedAmountRef.current = null;
-    transactionActions.updateTransaction(
-      tx =>
-        (snapped !== null && !tx.useAllAmount && tx.amount.eq(snapped)
-          ? { ...tx, sponsored: false, useAllAmount: true, amount: new BigNumber(0) }
-          : { ...tx, sponsored: false }) as typeof tx,
-    );
-  }, [transactionActions]);
-
   const {
     available,
     quote,
@@ -134,60 +114,29 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     counterValueCurrency,
   });
 
-  const sponsoredSelected = selectedFeeOptionId === sponsoredFeeOptionId;
-  const maxAmountWithRent = useMemo(
-    () => (quote && feeTokenAccount ? sponsoredMaxAmount(feeTokenAccount, quote.value) : null),
-    [quote, feeTokenAccount],
-  );
-  const sendsFeeToken = !!feeTokenAccount && account?.id === feeTokenAccount.id;
-  const maxSelected = transaction?.useAllAmount === true;
-
-  // Crafting refuses a Max send, so Max snaps to what the fee token leaves after the rent and its
-  // margin. The snap turns Max off, so a later quote never moves the amount under the user.
-  useEffect(() => {
-    if (!sponsoredSelected || !available || !maxSelected || !sendsFeeToken) return;
-    if (!maxAmountWithRent?.gt(0)) return;
-    const snapped = maxAmountWithRent;
-    snappedAmountRef.current = snapped;
-    transactionActions.updateTransaction(
-      tx => ({ ...tx, useAllAmount: false, amount: snapped }) as typeof tx,
-    );
-  }, [
-    sponsoredSelected,
+  const sponsoredFeeOptionId = seam?.feeOptionId ?? "";
+  const selection = useSponsoredFeeSelection({
+    sponsoredFeeOptionId,
     available,
-    maxSelected,
-    sendsFeeToken,
-    maxAmountWithRent,
-    transactionActions,
-  ]);
+    quote,
+    feeTokenAccount,
+    account,
+    transaction,
+    updateTransaction: transactionActions.updateTransaction,
+  });
+  const { selectedFeeOptionId, selectStandard } = selection;
 
   const locale = useSelector(localeSelector);
-  const savingsFiatFormatted = useMemo(
-    () =>
-      savingsFiat?.gt(0)
-        ? formatCurrencyUnit(counterValueCurrency.units[0], savingsFiat, {
-            showCode: true,
-            disableRounding: true,
-            locale,
-          })
-        : null,
-    [savingsFiat, counterValueCurrency, locale],
-  );
-
   const nativeUnit = useMaybeAccountUnit(mainAccount);
-  const sponsoredFeeAmounts = useMemo(() => {
-    const feeUnit = quote?.feeAsset.unit;
-    if (!quote || !feeUnit || !nativeUnit) return null;
-    return formatSponsoredFeeAmounts({
-      quote,
-      feeUnit,
-      nativeUnit,
-      fiatUnit: counterValueCurrency.units[0],
-      sponsoredFeeFiat,
-      standardFeeFiat,
-      locale,
-    });
-  }, [quote, nativeUnit, counterValueCurrency, sponsoredFeeFiat, standardFeeFiat, locale]);
+  const feeAmounts = useSponsoredFeeAmounts({
+    quote,
+    nativeUnit,
+    fiatUnit: counterValueCurrency.units[0],
+    savingsFiat,
+    sponsoredFeeFiat,
+    standardFeeFiat,
+    locale,
+  });
 
   // IDLE only: once TX-A is paid, fee options drop to standard-only, and reverting would re-craft TX-C.
   const sponsoredSelectionStale =
@@ -207,41 +156,33 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       state: sponsoredState,
       actions,
       mainAccount,
-      selectedFeeOptionId,
+      ...selection,
+      ...feeAmounts,
       sponsoredFeeOptionId,
       providerName,
       waivesErrorKeys,
       waivesWarningKeys,
-      selectSponsored,
-      selectStandard,
       available,
       intentReady: intent !== null,
       quote,
-      sponsoredFeeAmounts,
-      savingsFiatFormatted,
       feeCurrencyTicker,
       feeTokenAccount,
-      sponsoredMaxAmount: maxAmountWithRent,
     }),
     [
       sponsoredState,
       actions,
       mainAccount,
-      selectedFeeOptionId,
+      selection,
+      feeAmounts,
       sponsoredFeeOptionId,
       providerName,
       waivesErrorKeys,
       waivesWarningKeys,
-      selectSponsored,
-      selectStandard,
       available,
       intent,
       quote,
-      sponsoredFeeAmounts,
-      savingsFiatFormatted,
       feeCurrencyTicker,
       feeTokenAccount,
-      maxAmountWithRent,
     ],
   );
 

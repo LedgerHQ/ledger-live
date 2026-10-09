@@ -5360,6 +5360,15 @@
         }
       },
       "feePayment": {
+        "title": "Select fee payment",
+        "regular": "Regular transfer",
+        "sponsored": "Pay with {{provider}}",
+        "payIn": "Pay network fee in {{feeCurrency}}",
+        "paidIn": "Paid in {{currency}}",
+        "nudge": "You could save {{amount}} with {{provider}}",
+        "saved": "Saved with {{provider}}",
+        "confirm": "Confirm",
+        "disclaimer": "With {{provider}}, a third-party energy provider, fees are paid in {{feeCurrency}}.",
         "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
       },
       "sponsoredRentSignature": {

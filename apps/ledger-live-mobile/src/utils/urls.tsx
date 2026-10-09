@@ -77,6 +77,8 @@ export const urls = {
   feesEthereum: "https://support.ledger.com/article/4406211657233-zd",
   feesPolkadot: "https://support.ledger.com/article/360016289919-zd",
   feesTron: "https://support.ledger.com/article/6331588714141-zd",
+  // Support home until product publishes the gas sponsorship article.
+  gasSponsorship: "https://support.ledger.com/",
   verifyTransactionDetails: "https://support.ledger.com/article/4404389453841-zd",
   erc20: "https://support.ledger.com/article/4404389645329-zd",
   errors: {
