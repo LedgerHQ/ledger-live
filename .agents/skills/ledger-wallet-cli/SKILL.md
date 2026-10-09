@@ -527,7 +527,8 @@ pnpm --silent wallet-cli start agent-intent cancel --profile my-bot --intent 019
   the new state.
 - **JSON** (`--output json`): `profileId`, `cancelled: true`, `alreadyCancelled`, and `intent`
   as the service reports it after the cancellation (same fields as `agent-intent status`). A
-  declined prompt prints `cancelled: false` with the `intentId`.
+  declined prompt prints `cancelled: false` and `declined: true` with the `intentId` (unlike
+  `ring destroy`, where `cancelled: true` means the prompt was declined).
 - **Not found:** an unknown id and another agent's intent get the same answer, as for
   `agent-intent status`.
 

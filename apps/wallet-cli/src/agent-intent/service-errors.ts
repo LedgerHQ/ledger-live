@@ -186,16 +186,38 @@ export function describeAgentIntentLookupError(
   );
 }
 
+function cancelErrorMessage(e: AgentIntentHttpError, profileId: string, intentId: string): string {
+  const detail = redactServiceText(e.message);
+  const access = accessErrorMessage(e, profileId, detail);
+  if (access) return access;
+  // The intent was just read as this profile's, so a missing intent means a missing route.
+  if (e.status === 404 || e.status === 405) {
+    return (
+      "This Agent Intent service doesn't let agents cancel intents yet. Intent " +
+      `${intentId} is unchanged.`
+    );
+  }
+  if (e.status === 429) {
+    return `The Agent Intent service is rate-limiting requests (${detail}). Wait a moment and re-run.`;
+  }
+  if (e.status >= 500) {
+    return `The Agent Intent service failed (HTTP ${e.status}: ${detail}). Re-run the command later.`;
+  }
+  return `The Agent Intent service refused to cancel intent ${intentId} (HTTP ${e.status}: ${detail}).`;
+}
+
 /**
- * Like {@link describeAgentIntentLookupError}, for cancelling one intent: a repeat is a no-op on the
- * service, so a failure is safe to retry too.
+ * Like {@link describeAgentIntentLookupError}, for cancelling one intent the profile has just read: a
+ * repeat is a no-op on the service, so a failure is safe to retry too.
  */
 export function describeAgentIntentCancelError(
   e: unknown,
   profileId: string,
   intentId: string,
 ): Error {
-  return describeAgentIntentLookupError(e, profileId, intentId);
+  return describeReadError(e, profileId, httpError =>
+    cancelErrorMessage(httpError, profileId, intentId),
+  );
 }
 
 function describeReadError(

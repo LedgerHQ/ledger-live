@@ -6,14 +6,18 @@ export function canAskToConfirm(): boolean {
   return isInteractive() && process.stdin.isTTY === true;
 }
 
-/** Asks `question` on stderr and reads a yes/no answer from stdin; anything but y/yes is a no. */
+/**
+ * Asks `question` on stderr and reads a yes/no answer from stdin; anything but y/yes is a no, and
+ * so are Ctrl+C and Ctrl+D, which close the prompt without an answer.
+ */
 export async function askToConfirm(question: string): Promise<boolean> {
   const rl = createInterface({ input: process.stdin, output: process.stderr });
-  const answer = await new Promise<string>(resolve => {
-    rl.question(question, value => {
+  return new Promise<boolean>(resolve => {
+    rl.on("SIGINT", () => rl.close());
+    rl.on("close", () => resolve(false));
+    rl.question(question, answer => {
+      resolve(/^y(es)?$/i.test(answer.trim()));
       rl.close();
-      resolve(value);
     });
   });
-  return /^y(es)?$/i.test(answer.trim());
 }

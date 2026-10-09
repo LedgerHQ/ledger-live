@@ -259,7 +259,8 @@ export interface CommandOutput {
   agentIntentStatus(result: AgentIntentStatusResult): void;
   /** The intent `agent-intent cancel` is about to cancel, before the prompt (both modes: stderr). */
   agentIntentCancelPreview(result: AgentIntentCancelPreview): void;
-  /** Cancellation declined at the prompt (human: stderr line; json: envelope, `cancelled: false`). */
+  /** Cancellation declined at the prompt (human: stderr line; json: envelope, `cancelled: false`,
+   * `declined: true`). */
   agentIntentCancelAborted(result: { profileId: string; intentId: string }): void;
   /** A cancelled intent (human: check line + details; json: envelope, `cancelled: true`). */
   agentIntentCancel(result: AgentIntentCancelResult): void;
@@ -1443,7 +1444,7 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   agentIntentCancelAborted({ profileId, intentId }: { profileId: string; intentId: string }): void {
-    this._writeNdjson(this._envelope({ profileId, cancelled: false, intentId }));
+    this._writeNdjson(this._envelope({ profileId, cancelled: false, declined: true, intentId }));
   }
 
   agentIntentCancel({ profileId, intent, alreadyCancelled }: AgentIntentCancelResult): void {

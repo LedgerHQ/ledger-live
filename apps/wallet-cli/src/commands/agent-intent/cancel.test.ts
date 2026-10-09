@@ -49,8 +49,8 @@ function record(status: string): AgentIntentRecord {
 
 let profiles: Record<string, unknown>;
 let secretKeyReads: number;
-/** Statuses the service reports on each successive read. */
-let readStatuses: string[];
+/** What the service answers to each successive read: a status, or an error to throw. */
+let readStatuses: (string | Error)[];
 let reads: string[];
 let readError: Error | undefined;
 let cancelImpl: (intentId: string) => Promise<void>;
@@ -76,8 +76,9 @@ beforeAll(() =>
         getIntent: async (intentId: string) => {
           reads.push(intentId);
           if (readError) throw readError;
-          const status = readStatuses.length > 1 ? readStatuses.shift()! : readStatuses[0];
-          return record(status);
+          const next = readStatuses.length > 1 ? readStatuses.shift()! : readStatuses[0];
+          if (next instanceof Error) throw next;
+          return record(next);
         },
         cancelIntent: async (intentId: string) => {
           cancels.push(intentId);
@@ -179,7 +180,12 @@ describe("agent-intent cancel", () => {
     await runCancel({ yes: false, output: "json" });
 
     expect(cancels).toEqual([]);
-    expect(jsonResult()).toMatchObject({ profileId: "bot", cancelled: false, intentId: INTENT_ID });
+    expect(jsonResult()).toMatchObject({
+      profileId: "bot",
+      cancelled: false,
+      declined: true,
+      intentId: INTENT_ID,
+    });
 
     stdout = [];
     stderr = [];
@@ -210,7 +216,7 @@ describe("agent-intent cancel", () => {
     });
   });
 
-  it.each(["signed", "broadcast", "success", "failed", "rejected", "expired", "archived"])(
+  it.each(["signed", "broadcast", "success", "failed", "rejected", "expired"])(
     "refuses a %s intent without asking or calling the service",
     async status => {
       readStatuses = [status];
@@ -224,10 +230,20 @@ describe("agent-intent cancel", () => {
     },
   );
 
+  it("lets the service decide on a state this version doesn't know", async () => {
+    readStatuses = ["archived", "cancelled"];
+
+    await runCancel({ output: "json" });
+
+    expect(cancels).toEqual([INTENT_ID]);
+    expect(jsonResult()).toMatchObject({ cancelled: true, intent: { status: "cancelled" } });
+  });
+
+  // The service answers an illegal transition with a bare 400, without an error type.
   it("reports the current state when the intent moved on before the cancellation", async () => {
     readStatuses = ["crafted", "signed"];
     cancelImpl = async () => {
-      throw new AgentIntentHttpError("illegal transition", 400, "bad_request");
+      throw new AgentIntentHttpError("Illegal transition", 400);
     };
 
     await expect(runCancel()).rejects.toThrow(
@@ -236,23 +252,53 @@ describe("agent-intent cancel", () => {
     expect(cancels).toEqual([INTENT_ID]);
   });
 
-  it.each([
-    ["reading", "getIntent"],
-    ["cancelling", "cancelIntent"],
-  ])("answers a 404 while %s like an unknown id", async (_, step) => {
-    const notFound = new AgentIntentHttpError("Intent not found", 404);
-    if (step === "cancelIntent") {
-      cancelImpl = async () => {
-        throw notFound;
-      };
-    } else {
-      readError = notFound;
-    }
+  it("keeps the service's message for a 400 on an intent that is still cancellable", async () => {
+    readStatuses = ["crafted"];
+    cancelImpl = async () => {
+      throw new AgentIntentHttpError("Malformed request", 400);
+    };
+
+    await expect(runCancel()).rejects.toThrow(
+      `The Agent Intent service refused to cancel intent ${INTENT_ID} (HTTP 400: Malformed request).`,
+    );
+  });
+
+  it("reports the cancellation even when its new state can't be read back", async () => {
+    readStatuses = ["crafted", new Error("socket hang up")];
+
+    await runCancel({ output: "json" });
+
+    expect(cancels).toEqual([INTENT_ID]);
+    expect(jsonResult()).toMatchObject({ cancelled: true, intent: { status: "cancelled" } });
+    expect(stderr.join("")).toContain("Cancelled, but its new state could not be read back.");
+  });
+
+  it("answers a 404 while reading like an unknown id", async () => {
+    readError = new AgentIntentHttpError("Intent not found", 404);
 
     await expect(runCancel()).rejects.toThrow(
       /has no intent .*doesn't exist, or another agent created it/,
     );
+    expect(cancels).toEqual([]);
   });
+
+  it.each([
+    [404, undefined, /doesn't let agents cancel intents yet/],
+    [405, undefined, /doesn't let agents cancel intents yet/],
+    [403, "not_a_member", /not an active agent on its Trustchain/],
+    [429, undefined, /rate-limiting requests/],
+    [503, undefined, /HTTP 503.*Re-run the command later/],
+    [409, undefined, /refused to cancel intent .*\(HTTP 409: detail\)/],
+  ])(
+    "turns HTTP %d %s from the cancellation into an actionable error",
+    async (status, type, message) => {
+      cancelImpl = async () => {
+        throw new AgentIntentHttpError("detail", status, type);
+      };
+
+      await expect(runCancel()).rejects.toThrow(message);
+    },
+  );
 
   it("normalizes the id and rejects a malformed one before touching the keychain", async () => {
     await runCancel({ intent: ` ${INTENT_ID.toUpperCase()} ` });
