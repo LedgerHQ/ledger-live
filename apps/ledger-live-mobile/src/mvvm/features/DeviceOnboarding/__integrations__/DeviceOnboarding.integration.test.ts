@@ -167,6 +167,20 @@ describe("useDeviceOnboarding", () => {
     });
   });
 
+  it("quits the run before it clears the screen", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    act(() => result.current.reset());
+
+    expect(leaveOnboarding).toHaveBeenCalledWith("userQuit");
+    expect(result.current.status).toBe("idle");
+    expect(result.current.log).toEqual([]);
+  });
+
   it("keeps the screen awake from connect until reset", async () => {
     const device = createTestDevice();
     const { result } = renderHook(() =>

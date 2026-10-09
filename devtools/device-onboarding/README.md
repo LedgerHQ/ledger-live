@@ -26,7 +26,8 @@ tap Connect. The log reads upward. The newest state is on top.
 Each event sits under the state it led to. The host saves that pair when the machine updates.
 Under the current state, each event that can happen lists the state it can reach.
 Those lines are faded. Lock, a lost transport, and quit stay off that list.
-The buttons sit above the newest state.
+The buttons sit above the newest state. Reset quits the run first, so the device leaves the
+early check, then clears this screen.
 Export logs sits at the bottom. It shares a JSON log on a phone and downloads it on the web.
 
 **The tool runs no machine.** The host owns the session and drives `deviceOnboardingMachine`; this
