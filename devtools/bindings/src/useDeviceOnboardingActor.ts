@@ -180,22 +180,18 @@ export function useDeviceOnboardingActor({
         // Each snapshot update carries the event that led to it, including the ones child
         // actors send back. The log keeps both, so a row shows where the event took the machine.
         inspect: inspectionEvent => {
-          if (inspectionEvent.type === "@xstate.snapshot") {
-            if (inspectionEvent.actorRef !== run.actor) return;
-            if (!("value" in inspectionEvent.snapshot)) return;
-            const state = stateValueToString(inspectionEvent.snapshot.value);
-            if (inspectionEvent.event.type.startsWith("xstate.")) {
-              rememberState(state);
-              return;
-            }
-            appendEvent(state, inspectionEvent.event as OnboardingEvent);
+          if (inspectionEvent.type !== "@xstate.snapshot") return;
+          if (inspectionEvent.actorRef !== run.actor) return;
+          if (!("value" in inspectionEvent.snapshot)) return;
+          const state = stateValueToString(inspectionEvent.snapshot.value);
+          if (inspectionEvent.event.type.startsWith("xstate.")) {
+            rememberState(state);
             return;
           }
-
-          if (inspectionEvent.type !== "@xstate.event") return;
-          if (inspectionEvent.actorRef !== actorRef.current) return;
-          if (inspectionEvent.event.type.startsWith("xstate.")) return;
-          onEventRef.current?.(inspectionEvent.event as OnboardingEvent);
+          const event = inspectionEvent.event as OnboardingEvent;
+          appendEvent(state, event);
+          // A discarded run still finishes its log, but the host only hears the current run.
+          if (actorRef.current === run.actor) onEventRef.current?.(event);
         },
       });
       run.actor = actor;

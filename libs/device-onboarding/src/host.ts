@@ -1,4 +1,4 @@
-import type { SnapshotFrom } from "xstate";
+import { getStateNodes, type SnapshotFrom } from "xstate";
 import { deviceOnboardingMachine } from "./machine";
 import type { DeviceSessionId } from "@ledgerhq/device-management-kit";
 import type {
@@ -291,29 +291,15 @@ type MachineNode = typeof deviceOnboardingMachine.root;
 
 const hiddenFromNextStates = new Set(["LOCKED", "TRANSPORT_LOST", "QUIT"]);
 
-function nodeAt(root: MachineNode, value: unknown): MachineNode | undefined {
-  if (typeof value === "string") return root.states[value];
-  if (!value || typeof value !== "object") return undefined;
-
-  let node = root;
-  for (const [key, child] of Object.entries(value)) {
-    const next = node.states[key];
-    if (!next) return undefined;
-    if (typeof child === "string") return next.states[child];
-    if (child && typeof child === "object") return nodeAt(next, child);
-    node = next;
-  }
-
-  return node;
-}
-
 export function nextStatesFrom(
   snapshot: SnapshotFrom<typeof deviceOnboardingMachine> | null,
 ): HostNextState[] {
   if (snapshot?.status !== "active") return [];
 
-  const start = nodeAt(deviceOnboardingMachine.root, snapshot.value);
-  if (!start) return [];
+  // The deepest active node is the current state. Its ancestors are walked below.
+  const start = getStateNodes(deviceOnboardingMachine.root, snapshot.value).reduce(
+    (deepest, node) => (node.path.length > deepest.path.length ? node : deepest),
+  ) as MachineNode;
 
   const rows: HostNextState[] = [];
   const seen = new Set<string>();
