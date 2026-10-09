@@ -252,16 +252,19 @@ describe("agent-intent cancel", () => {
     expect(cancels).toEqual([INTENT_ID]);
   });
 
-  it("keeps the service's message for a 400 on an intent that is still cancellable", async () => {
-    readStatuses = ["crafted"];
-    cancelImpl = async () => {
-      throw new AgentIntentHttpError("Malformed request", 400);
-    };
+  it.each(["crafted", "archived"])(
+    "keeps the service's message for a 400 on a %s intent, which may still be cancellable",
+    async status => {
+      readStatuses = [status];
+      cancelImpl = async () => {
+        throw new AgentIntentHttpError("Malformed request", 400);
+      };
 
-    await expect(runCancel()).rejects.toThrow(
-      `The Agent Intent service refused to cancel intent ${INTENT_ID} (HTTP 400: Malformed request).`,
-    );
-  });
+      await expect(runCancel()).rejects.toThrow(
+        `The Agent Intent service refused to cancel intent ${INTENT_ID} (HTTP 400: Malformed request).`,
+      );
+    },
+  );
 
   it("reports the cancellation even when its new state can't be read back", async () => {
     readStatuses = ["crafted", new Error("socket hang up")];

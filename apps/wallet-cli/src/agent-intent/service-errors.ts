@@ -206,10 +206,7 @@ function cancelErrorMessage(e: AgentIntentHttpError, profileId: string, intentId
   return `The Agent Intent service refused to cancel intent ${intentId} (HTTP ${e.status}: ${detail}).`;
 }
 
-/**
- * Like {@link describeAgentIntentLookupError}, for cancelling one intent the profile has just read: a
- * repeat is a no-op on the service, so a failure is safe to retry too.
- */
+/** A repeated cancel is a no-op on the service, so any failure is safe to retry. */
 export function describeAgentIntentCancelError(
   e: unknown,
   profileId: string,
