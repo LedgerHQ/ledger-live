@@ -45,7 +45,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "catalog:",
     "bip32-path": "^0.4.2",
-    "protobufjs": "7.5.4"
+    "protobufjs": "7.6.1"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",
