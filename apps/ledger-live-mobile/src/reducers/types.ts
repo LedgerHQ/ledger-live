@@ -29,6 +29,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
 import type { BorrowState } from "./borrow";
 import type { CountervaluesState } from "@features/platform-market-countervalues";
+import type { TrackingPair } from "@domain/entity-market-countervalues";
 import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
@@ -454,6 +455,7 @@ export type State = LLMRTKApiState & {
   ble: BleState;
   borrow: BorrowState;
   countervalues: CountervaluesState;
+  countervaluesExtraSessionTracking: TrackingPair[];
   deeplinkInstallApp: DeeplinkInstallAppState;
   dynamicContent: DynamicContentState;
   earn: EarnState;

@@ -40,6 +40,7 @@ import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import { selectFeature } from "@shared/feature-flags";
 import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
+import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 /** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
@@ -120,7 +121,8 @@ export const store = configureStore({
         }),
       )
       .concat(createMobileFeatureFlagsMiddleware())
-      .concat(sleepingListener.middleware),
+      .concat(sleepingListener.middleware)
+      .concat(createMobileCountervaluesMiddleware()),
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
