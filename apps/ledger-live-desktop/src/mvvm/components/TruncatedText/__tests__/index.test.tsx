@@ -51,8 +51,17 @@ describe("TruncatedText", () => {
     const trigger = getTriggerElement(container);
 
     expect(trigger).toHaveTextContent(TEXT);
+    expect(trigger.tagName).toBe("DIV");
     expect(trigger).toHaveClass("custom-class", "truncate", "min-w-0", "max-w-full");
     expect(screen.getByTestId("tooltip-content")).toHaveTextContent(TEXT);
+  });
+
+  it("should render a block span when as is span", () => {
+    const { container } = render(<TruncatedText as="span" text={TEXT} />);
+    const trigger = getTriggerElement(container);
+
+    expect(trigger.tagName).toBe("SPAN");
+    expect(trigger).toHaveClass("block", "truncate", "min-w-0", "max-w-full");
   });
 
   it("should open the tooltip only when the text overflows its container", () => {
