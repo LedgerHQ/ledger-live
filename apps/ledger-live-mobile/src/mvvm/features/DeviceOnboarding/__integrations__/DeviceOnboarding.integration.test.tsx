@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { NEVER, Observable, Subject } from "rxjs";
 import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
 import { useDeviceOnboardingExit } from "../hooks/useDeviceOnboardingExit";
@@ -194,6 +195,20 @@ describe("DeviceOnboarding mobile integration", () => {
     });
     await waitFor(() => expect(result.current.status).toBe("running"));
     expect(result.current.exit).toBeNull();
+  });
+
+  it("keeps the screen awake from connect until reset", () => {
+    mockedConnectDevice.mockReturnValue(NEVER);
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: createPortDmk(), knownDevices: [], offerSync: false }),
+    );
+    expect(activateKeepAwakeAsync).not.toHaveBeenCalled();
+
+    act(() => result.current.connect());
+    expect(activateKeepAwakeAsync).toHaveBeenCalledTimes(1);
+
+    act(() => result.current.reset());
+    expect(deactivateKeepAwake).toHaveBeenCalledTimes(1);
   });
 
   it("clears the device when the machine reports a lost transport itself", async () => {
