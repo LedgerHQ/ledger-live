@@ -65,7 +65,7 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
       </View>
 
       <View style={styles.middleSection}>
-        <NetworkFeesRow viewModel={viewModel.networkFees} />
+        <NetworkFeesRow viewModel={viewModel.networkFees} sponsored={viewModel.sponsoredFee} />
         <Divider />
 
         {viewModel.quickActions.show && (

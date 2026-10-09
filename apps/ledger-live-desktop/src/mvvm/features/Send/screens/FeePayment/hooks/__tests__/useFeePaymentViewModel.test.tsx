@@ -6,8 +6,9 @@ import {
   createMockCurrency,
   createMockTronUsdtAccount,
 } from "../../../Recipient/__integrations__/__fixtures__/accounts";
-import type { SponsoredFeeAmounts } from "LLD/features/Send/types";
-import { useFeePaymentViewModel, type FeePaymentOption } from "../useFeePaymentViewModel";
+import type { FeePaymentOption, SponsoredFeeAmounts } from "LLD/features/Send/types";
+import { openURL } from "~/renderer/linking";
+import { useFeePaymentViewModel } from "../useFeePaymentViewModel";
 
 const SPONSORED_ID = "sponsored-fixture";
 
@@ -46,6 +47,12 @@ jest.mock("../../../../context/SendFlowContext", () => ({
 jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
   useFlowWizard: () => ({ navigation: { goToPreviousStep: mockGoToPreviousStep } }),
 }));
+
+jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: () => "https://support.ledger.com/gas-sponsorship",
+}));
+jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
+const mockedOpenURL = jest.mocked(openURL);
 
 const findSponsored = (options: readonly FeePaymentOption[]) =>
   options.find(option => option.id === SPONSORED_ID);
@@ -191,6 +198,15 @@ describe("useFeePaymentViewModel", () => {
     expect(result.current.disclaimer).toBe(
       "With Provider, a third-party energy provider, fees are paid in USDT.",
     );
+  });
+
+  it("opens the gas sponsorship article from Learn more", () => {
+    const { result } = renderHook(() => useFeePaymentViewModel());
+
+    expect(result.current.learnMoreLabel).toBe("Learn more");
+    act(() => result.current.onLearnMore());
+
+    expect(mockedOpenURL).toHaveBeenCalledWith("https://support.ledger.com/gas-sponsorship");
   });
 
   it("lets both options be picked while the fee token covers the rent", () => {

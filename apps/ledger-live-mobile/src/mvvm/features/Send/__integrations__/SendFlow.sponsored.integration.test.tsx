@@ -331,9 +331,20 @@ describe("Sponsored send flow integration tests", () => {
     });
   }
 
-  async function reviewHalfTheBalance(user: ReturnType<typeof renderSponsoredSend>["user"]) {
+  async function pickSponsoredFee(user: ReturnType<typeof renderSponsoredSend>["user"]) {
+    await user.press(await screen.findByTestId("send-fee-payment-entry"));
+    await user.press(screen.getByTestId(`send-fee-payment-option-${SPONSORED_FEE_OPTION_ID}`));
+    await user.press(screen.getByTestId("send-fee-payment-confirm"));
+    await flushTimers();
+  }
+
+  async function reviewHalfTheBalance(
+    user: ReturnType<typeof renderSponsoredSend>["user"],
+    { sponsored = true } = {},
+  ) {
     await user.press(await screen.findByText("50%"));
     await flushTimers();
+    if (sponsored) await pickSponsoredFee(user);
     await user.press(screen.getByText("Review"));
     await flushTimers();
   }
@@ -451,13 +462,25 @@ describe("Sponsored send flow integration tests", () => {
     expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
   });
 
-  it("should fall back to the standard fee when the USDT balance can't cover the amount and the rent", async () => {
+  it("should send with the standard fee while the sponsored fee isn't picked", async () => {
+    const { user } = renderSponsoredSend(100 * ONE_USDT);
+
+    await reviewHalfTheBalance(user, { sponsored: false });
+
+    expect(await screen.findByTestId("device-intent-executor-transfer")).toBeOnTheScreen();
+    expect(screen.queryByTestId("device-intent-executor-rent")).not.toBeOnTheScreen();
+    expect(seam.craftEnergyRentTransaction).not.toHaveBeenCalled();
+  });
+
+  it("should hold Review and say why when the USDT balance can't cover the amount and the rent", async () => {
     const { user } = renderSponsoredSend(5 * ONE_USDT);
 
     await reviewHalfTheBalance(user);
 
-    expect(await screen.findByTestId("device-intent-executor-transfer")).toBeOnTheScreen();
+    expect(screen.getByTestId("send-sponsored-fee-error")).toBeOnTheScreen();
+    expect(screen.getByText("Review")).toBeDisabled();
     expect(screen.queryByTestId("device-intent-executor-rent")).not.toBeOnTheScreen();
+    expect(screen.queryByTestId("device-intent-executor-transfer")).not.toBeOnTheScreen();
     expect(seam.craftEnergyRentTransaction).not.toHaveBeenCalled();
   });
 });

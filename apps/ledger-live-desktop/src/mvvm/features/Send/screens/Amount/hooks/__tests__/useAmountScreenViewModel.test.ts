@@ -9,7 +9,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useTranslatedBridgeError } from "../../../Recipient/hooks/useTranslatedBridgeError";
-import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
@@ -133,21 +133,6 @@ const SPONSORED_IDENTITY = {
   feeTokenAccount: COVERING_FEE_TOKEN_ACCOUNT,
 };
 const QUOTE = { feeAsset: TRON_USDT_FEE_ASSET, value: 1_000n, originalValue: 1_500n };
-
-const pendingOut = (value: number): Operation => ({
-  id: `pending-out-${value}`,
-  hash: `hash-${value}`,
-  type: "OUT",
-  value: new BigNumber(value),
-  fee: new BigNumber(0),
-  senders: ["TPayer"],
-  recipients: ["TRecipient"],
-  blockHeight: null,
-  blockHash: null,
-  accountId: "mock_tron_usdt_account_id",
-  date: new Date(0),
-  extra: {},
-});
 
 const SPONSORED_FEE_AMOUNTS = {
   sponsored: { value: "$1.06", secondaryValue: "1.06 USDT", originalValue: "$4.44" },
@@ -533,14 +518,11 @@ describe("useAmountScreenViewModel", () => {
 
       mockedUseSponsoredSend.mockReturnValue({
         ...SPONSORED_IDENTITY,
-        feeTokenAccount: createMockTronUsdtAccount({
-          balance: new BigNumber(999),
-          spendableBalance: new BigNumber(999),
-        }),
         selectedFeeOptionId: SPONSORED_ID,
         available: true,
         intentReady: true,
         quote: QUOTE,
+        sponsoredUnaffordable: true,
       } as never);
 
       const { result } = renderViewModel(account, transaction, status);
@@ -551,25 +533,58 @@ describe("useAmountScreenViewModel", () => {
       );
     });
 
-    it("fails closed when the account holds none of the fee token", () => {
-      const { account, transaction, status } = buildAffordableParams(new BigNumber(1_000_000));
+    it("keeps Get funds pressable when the amount itself exceeds the balance", () => {
+      const { account, transaction } = buildAffordableParams(new BigNumber(1_000_000));
+      const status = {
+        errors: { amount: createNamedError("NotEnoughBalance") },
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(1),
+        totalSpent: new BigNumber(1),
+      } as TransactionStatus;
 
       mockedUseSponsoredSend.mockReturnValue({
         ...SPONSORED_IDENTITY,
-        feeTokenAccount: null,
         selectedFeeOptionId: SPONSORED_ID,
         available: true,
         intentReady: true,
         quote: QUOTE,
+        sponsoredUnaffordable: true,
       } as never);
 
       const { result } = renderViewModel(account, transaction, status);
 
-      expect(result.current.reviewDisabled).toBe(true);
+      expect(result.current.reviewShowIcon).toBe(false);
+      expect(result.current.reviewDisabled).toBe(false);
       expect(result.current.sponsoredFeeError).not.toBeNull();
     });
 
-    it("does not force-disable review when the quote is within spendable balance", () => {
+    it("keeps Get funds pressable while the sponsored quote reloads", () => {
+      const { account, transaction } = buildAffordableParams(new BigNumber(1_000_000));
+      const status = {
+        errors: { amount: createNamedError("NotEnoughBalance") },
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(1),
+        totalSpent: new BigNumber(1),
+      } as TransactionStatus;
+
+      mockedUseSponsoredSend.mockReturnValue({
+        ...SPONSORED_IDENTITY,
+        selectedFeeOptionId: SPONSORED_ID,
+        available: true,
+        intentReady: false,
+        quote: null,
+      } as never);
+
+      const { result } = renderViewModel(account, transaction, status);
+
+      expect(result.current.reviewShowIcon).toBe(false);
+      expect(result.current.reviewDisabled).toBe(false);
+      expect(result.current.reviewLoading).toBe(false);
+    });
+
+    it("does not force-disable review when the fee token covers the rent", () => {
       const { account, transaction, status } = buildAffordableParams(new BigNumber(1_000_000));
 
       mockedUseSponsoredSend.mockReturnValue({
@@ -578,22 +593,7 @@ describe("useAmountScreenViewModel", () => {
         available: true,
         intentReady: true,
         quote: QUOTE,
-      } as never);
-
-      const { result } = renderViewModel(account, transaction, status);
-
-      expect(result.current.sponsoredFeeError).toBeNull();
-      expect(result.current.reviewDisabled).toBe(false);
-    });
-
-    it("never disables on its own when the standard fee option is selected", () => {
-      const { account, transaction, status } = buildAffordableParams(new BigNumber(100));
-
-      mockedUseSponsoredSend.mockReturnValue({
-        ...SPONSORED_IDENTITY,
-        selectedFeeOptionId: "standard",
-        available: true,
-        quote: QUOTE,
+        sponsoredUnaffordable: false,
       } as never);
 
       const { result } = renderViewModel(account, transaction, status);
@@ -914,12 +914,11 @@ describe("useAmountScreenViewModel", () => {
         );
       });
 
-      function renderTokenSend(amount: number, pendingOperations: Operation[] = []) {
+      it("shows no error for a Max pick about to snap to what the rent leaves", () => {
         const feeToken = createMockTronUsdtAccount({
           parentId: "tron_parent",
           balance: new BigNumber(10_000),
           spendableBalance: new BigNumber(10_000),
-          pendingOperations,
         });
         const parentAccount = createMockAccount({
           id: "tron_parent",
@@ -929,16 +928,16 @@ describe("useAmountScreenViewModel", () => {
         const transaction = {
           family: "tron",
           recipient: "TRecipient",
-          amount: new BigNumber(amount),
-          useAllAmount: false,
+          amount: new BigNumber(0),
+          useAllAmount: true,
           subAccountId: feeToken.id,
         } as Transaction;
         const status = {
           errors: {},
           warnings: {},
           estimatedFees: new BigNumber(0),
-          amount: new BigNumber(amount),
-          totalSpent: new BigNumber(amount),
+          amount: new BigNumber(10_000),
+          totalSpent: new BigNumber(10_000),
         } as TransactionStatus;
 
         mockedUseSponsoredSend.mockReturnValue({
@@ -948,29 +947,13 @@ describe("useAmountScreenViewModel", () => {
           available: true,
           intentReady: true,
           quote: QUOTE,
+          sponsoredUnaffordable: false,
         } as never);
 
-        return renderViewModel(feeToken, transaction, status, parentAccount);
-      }
+        const { result } = renderViewModel(feeToken, transaction, status, parentAccount);
 
-      it.each([
-        [
-          9_001,
-          "You don't have enough USDT to cover the amount and the Provider energy rental fee.",
-        ],
-        [9_000, null],
-      ])("with a 1 000 rent on 10 000, an amount of %d shows the error %s", (amount, error) => {
-        const { result } = renderTokenSend(amount);
-
-        expect(result.current.sponsoredFeeError).toBe(error);
-        expect(result.current.reviewDisabled).toBe(error !== null);
-      });
-
-      it("counts an unsynced send of the fee token against its balance", () => {
-        const { result } = renderTokenSend(9_000, [pendingOut(500)]);
-
-        expect(result.current.sponsoredFeeError).not.toBeNull();
-        expect(result.current.reviewDisabled).toBe(true);
+        expect(result.current.sponsoredFeeError).toBeNull();
+        expect(result.current.reviewDisabled).toBe(false);
       });
     });
   });

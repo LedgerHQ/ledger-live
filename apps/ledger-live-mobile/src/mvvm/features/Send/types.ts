@@ -2,6 +2,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { ReactNativeFlowStepConfig, ReactNativeFlowConfig } from "../FlowWizard/types";
 import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import type { NetworkFeesInfo } from "@ledgerhq/live-common/bridge/descriptor/types";
+import type { SponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import type {
   FeeSelectorOptionKind,
   FeeSelectorOption,
@@ -46,4 +47,17 @@ export type NetworkFeesViewModel = Readonly<{
   displayOptions: readonly FeeSelectorOption[];
   canOpenSelector: boolean;
   networkFeesInfo: NetworkFeesInfo | null;
+}>;
+
+/** The sponsored fee on the network fees row, which opens the fee payment sheet. */
+export type SponsoredFeeEntryViewModel = Readonly<{
+  /** Nudge toward the sponsored fee, or its saving once picked; null when there is nothing to add. */
+  label: string | null;
+  selected: boolean;
+  /** The picked sponsored fee, shown instead of the standard estimate; null while standard is picked. */
+  fee: SponsoredFeeAmounts["sponsored"] | null;
+  /** Replaces the network fees info while the sponsored fee is picked. */
+  infoDescription: string | null;
+  /** Why the sponsored pick can't go to Review; null while it can. */
+  error: string | null;
 }>;

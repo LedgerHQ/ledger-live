@@ -4,34 +4,41 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useState,
   type ReactNode,
 } from "react";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
 import { useFeature } from "@features/platform-feature-flags";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { isSponsoredFeeUnaffordable } from "@ledgerhq/live-common/flows/send/sponsored/feeAsset";
 import {
   SPONSORED_PHASE,
-  type SponsoredPhase,
+  type SponsoredFeeAmounts,
   type SponsoredState,
 } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useSponsoredFeeQuote } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote";
 import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
 import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
+import { useSponsoredFeeAmounts } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeAmounts";
+import {
+  STANDARD_FEE_OPTION_ID,
+  useSponsoredFeeSelection,
+} from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeSelection";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { useLocale } from "~/context/Locale";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useSendFlowActions, useSendFlowData } from "./SendFlowContext";
 import { useSendSignature } from "./SendSignatureContext";
 
-export const STANDARD_FEE_OPTION_ID = "standard";
+export { STANDARD_FEE_OPTION_ID };
 
 type SponsoredSendContextValue = Readonly<{
   state: SponsoredState;
   actions: SponsoredSendActions;
   mainAccount: Account | null;
   selectedFeeOptionId: string;
+  sponsoredSelected: boolean;
   sponsoredFeeOptionId: string;
   providerName: string;
   waivesErrorKeys: readonly string[];
@@ -41,39 +48,21 @@ type SponsoredSendContextValue = Readonly<{
   /** False while Review has to wait for the sponsored pick's intent and quote. */
   reviewReady: boolean;
   feeCurrencyTicker: string;
+  selectSponsored: () => void;
+  selectStandard: () => void;
+  available: boolean;
+  sponsoredFeeAmounts: SponsoredFeeAmounts | null;
+  savingsFiatFormatted: string | null;
+  /** The sub-account the sponsored fee is paid from; null when the account holds none. */
+  feeTokenAccount: TokenAccount | null;
+  /** Largest amount the fee token covers next to the rent; ≤ 0 when nothing fits, null until quoted. */
+  sponsoredMaxAmount: BigNumber | null;
+  /** The sponsored pick can't pay the amount and the rent from the fee token. */
+  sponsoredUnaffordable: boolean;
   approvedFee: bigint | null;
 }>;
 
 const NO_WAIVED_KEYS: readonly string[] = [];
-
-/**
- * Mobile has no fee picker until LIVE-33403, so the sponsored fee is picked whenever it can pay
- * for the send. Null keeps the current pick: from Review on, and while the quote reloads.
- */
-export function pickAutoFeeOption({
-  phase,
-  signing,
-  sponsoredFeeOptionId,
-  available,
-  quoted,
-  useAllAmount,
-  unaffordable,
-}: Readonly<{
-  phase: SponsoredPhase;
-  signing: boolean;
-  sponsoredFeeOptionId: string;
-  available: boolean;
-  quoted: boolean;
-  useAllAmount: boolean;
-  unaffordable: boolean;
-}>): string | null {
-  if (signing || phase !== SPONSORED_PHASE.IDLE) return null;
-  if (!sponsoredFeeOptionId || !available) return STANDARD_FEE_OPTION_ID;
-  if (!quoted) return null;
-  // Crafting refuses a Max send.
-  if (useAllAmount || unaffordable) return STANDARD_FEE_OPTION_ID;
-  return sponsoredFeeOptionId;
-}
 
 const SponsoredSendContext = createContext<SponsoredSendContextValue | null>(null);
 
@@ -115,7 +104,15 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   });
 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const { available, loading, quote, feeCurrencyTicker, feeTokenAccount } = useSponsoredFeeQuote({
+  const {
+    available,
+    quote,
+    savingsFiat,
+    standardFeeFiat,
+    sponsoredFeeFiat,
+    feeCurrencyTicker,
+    feeTokenAccount,
+  } = useSponsoredFeeQuote({
     mainAccount,
     seam,
     intent,
@@ -125,51 +122,49 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   });
 
   const sponsoredFeeOptionId = seam?.feeOptionId ?? "";
-  const [selectedFeeOptionId, setSelectedFeeOptionId] = useState(STANDARD_FEE_OPTION_ID);
-
-  const unaffordable = useMemo(
-    () =>
-      !!quote &&
-      !!account &&
-      !!transaction &&
-      isSponsoredFeeUnaffordable({ account, transaction, feeTokenAccount, rentValue: quote.value }),
-    [quote, account, transaction, feeTokenAccount],
-  );
-  const autoFeeOptionId = pickAutoFeeOption({
-    phase: sponsoredState.phase,
-    signing: isSigning,
+  const selection = useSponsoredFeeSelection({
     sponsoredFeeOptionId,
     available,
-    quoted: !!quote,
-    useAllAmount: transaction?.useAllAmount === true,
-    unaffordable,
+    quote,
+    feeTokenAccount,
+    account,
+    transaction,
+    updateTransaction: transactionActions.updateTransaction,
+  });
+  const { selectedFeeOptionId, sponsoredSelected, selectStandard } = selection;
+
+  const { locale } = useLocale();
+  const nativeUnit = useMaybeAccountUnit(mainAccount);
+  const feeAmounts = useSponsoredFeeAmounts({
+    quote,
+    nativeUnit,
+    fiatUnit: counterValueCurrency.units[0],
+    savingsFiat,
+    sponsoredFeeFiat,
+    standardFeeFiat,
+    locale,
   });
 
-  // `sponsored` makes getPendingNativeSpent skip the native fee on the optimistic op; crafting ignores it.
+  const phase = sponsoredState.phase;
+  // IDLE only: once TX-A is paid, fee options drop to standard-only, and reverting would re-craft
+  // TX-C. Not while signing either: Review already runs on the pick.
+  const sponsoredSelectionStale =
+    phase === SPONSORED_PHASE.IDLE &&
+    !isSigning &&
+    selectedFeeOptionId !== STANDARD_FEE_OPTION_ID &&
+    (!flagEnabled || !available || selectedFeeOptionId !== sponsoredFeeOptionId);
   useEffect(() => {
-    if (autoFeeOptionId === null || autoFeeOptionId === selectedFeeOptionId) return;
-    setSelectedFeeOptionId(autoFeeOptionId);
-    const sponsored = autoFeeOptionId !== STANDARD_FEE_OPTION_ID;
-    transactionActions.updateTransaction(tx => ({ ...tx, sponsored }) as typeof tx);
-  }, [autoFeeOptionId, selectedFeeOptionId, transactionActions]);
+    if (sponsoredSelectionStale) selectStandard();
+  }, [sponsoredSelectionStale, selectStandard]);
 
   // Once the transfer's overlay closes on DONE, the next Review is a new sponsored send.
-  const phase = sponsoredState.phase;
   useEffect(() => {
     if (phase === SPONSORED_PHASE.DONE && !isSigning) actions.reset();
   }, [phase, isSigning, actions]);
 
-  const sponsoredSelected = !!sponsoredFeeOptionId && selectedFeeOptionId === sponsoredFeeOptionId;
   // Past IDLE, TX-A is under way or paid and Review only reopens TX-C: the live quote is moot.
   const committed = phase !== SPONSORED_PHASE.IDLE;
-  // The pick effect applies a new pick after this render, so Review would act on the old one.
-  const pickPending = autoFeeOptionId !== null && autoFeeOptionId !== selectedFeeOptionId;
-  // Until the lookup decides, a Review would race it with a standard send.
-  const lookupPending = !committed && loading && !available;
-  const reviewReady =
-    !lookupPending &&
-    !pickPending &&
-    (!sponsoredSelected || committed || (available && intent !== null && !!quote));
+  const reviewReady = !sponsoredSelected || committed || (available && intent !== null && !!quote);
   const waivesNativeFee = sponsoredSelected && (committed || available);
 
   const providerName = seam?.providerName ?? "";
@@ -182,7 +177,8 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       state: sponsoredState,
       actions,
       mainAccount,
-      selectedFeeOptionId,
+      ...selection,
+      ...feeAmounts,
       sponsoredFeeOptionId,
       providerName,
       waivesErrorKeys,
@@ -190,13 +186,16 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       waivesNativeFee,
       reviewReady,
       feeCurrencyTicker,
+      available,
+      feeTokenAccount,
       approvedFee,
     }),
     [
       sponsoredState,
       actions,
       mainAccount,
-      selectedFeeOptionId,
+      selection,
+      feeAmounts,
       sponsoredFeeOptionId,
       providerName,
       waivesErrorKeys,
@@ -204,6 +203,8 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
       waivesNativeFee,
       reviewReady,
       feeCurrencyTicker,
+      available,
+      feeTokenAccount,
       approvedFee,
     ],
   );
@@ -221,6 +222,5 @@ export function useSponsoredSend(): SponsoredSendContextValue {
 
 /** True while the sponsored fee is the pick, so Review runs TX-A before the transfer. */
 export function useIsSponsoredSelected(): boolean {
-  const { selectedFeeOptionId, sponsoredFeeOptionId } = useSponsoredSend();
-  return !!sponsoredFeeOptionId && selectedFeeOptionId === sponsoredFeeOptionId;
+  return useSponsoredSend().sponsoredSelected;
 }

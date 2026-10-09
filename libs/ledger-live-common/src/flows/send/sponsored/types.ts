@@ -23,6 +23,40 @@ export const SPONSORED_FAILURE_KIND = {
 export type SponsoredFailureKind =
   (typeof SPONSORED_FAILURE_KIND)[keyof typeof SPONSORED_FAILURE_KIND];
 
+/** A fee amount: `value` leads, `secondaryValue` follows dimmed (the crypto amount when `value` is fiat). */
+export type FeeAmountDisplay = Readonly<{ value: string; secondaryValue: string | null }>;
+
+/** Each fee option priced in its own unit; only fiat is struck through, as both options share it. */
+export type SponsoredFeeAmounts = Readonly<{
+  sponsored: FeeAmountDisplay &
+    Readonly<{
+      /** The standard fee's fiat price, struck through; null unless both fiat prices exist and the sponsored one is lower. */
+      originalValue: string | null;
+    }>;
+  standard: FeeAmountDisplay;
+}>;
+
+export type FeePaymentOption = Readonly<{
+  id: string;
+  label: string;
+  paidInLabel: string;
+  fee: SponsoredFeeAmounts["sponsored"] | null;
+  selected: boolean;
+  disabled: boolean;
+  /** Why the option can't be picked; null while it can. */
+  note: string | null;
+}>;
+
+/** The fee payment options' copy, translated by each app. */
+export type FeePaymentLabels = Readonly<{
+  sponsored: string;
+  sponsoredPaidIn: string;
+  regular: string;
+  regularPaidIn: string;
+  /** Why the sponsored option can't be picked. */
+  insufficientFunds: string;
+}>;
+
 export type SponsoredState = Readonly<{
   phase: SponsoredPhase;
   order: EnergyRentOrder | null;
