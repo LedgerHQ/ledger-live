@@ -269,6 +269,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "zcash_testnet",
+    ticker: "ZEC",
+    name: "Zcash Testnet",
+    family: "bitcoin",
+    color: "#3790ca",
+    decimals: 8,
+  },
+  {
+    type: "CryptoCurrency",
     id: "decred",
     ticker: "DCR",
     name: "Decred",

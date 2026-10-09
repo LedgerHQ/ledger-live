@@ -5,6 +5,7 @@ import type { Transaction } from "../../types";
 import { DmkSignerZcash } from "@ledgerhq/live-signer-zcash";
 import type { ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
+import { ZCASH_CURRENCY_IDS } from "./currency";
 import type { ChainAdapter } from "../types";
 import type { BitcoinCoinConfig } from "../../config";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
@@ -183,4 +184,6 @@ const zcashChainAdapter: ChainAdapter = {
   },
 };
 
-registerChainAdapter(zcashChainAdapter);
+for (const id of ZCASH_CURRENCY_IDS) {
+  registerChainAdapter({ ...zcashChainAdapter, id });
+}

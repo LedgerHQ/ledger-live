@@ -13,6 +13,7 @@
 
 import {
   classifyZcashRecipient,
+  classifyZcashRecipientShape,
   decodeUnifiedAddressTypecodes,
   deriveZcashTransferType,
   isZcashShieldedAddress,
@@ -21,6 +22,19 @@ import {
   TYPECODE_SAPLING,
   TYPECODE_P2PKH,
 } from "./address";
+import {
+  T1_MAINNET,
+  T2_ADDRESS,
+  T3_MAINNET,
+  TM_ADDRESS,
+  UTEST_ORCHARD,
+  UTEST_ORCHARD_RECEIVER,
+  UTEST_SAPLING_AND_ORCHARD,
+  UTEST_SAPLING_ONLY,
+  UTEST_TRANSPARENT_ONLY,
+  U_ORCHARD_MAINNET,
+} from "../__tests__/fixtures/testnetAddresses";
+import { encodeUnifiedAddress } from "../__tests__/fixtures/unifiedAddress";
 
 // ---------------------------------------------------------------------------
 // Real Zcash mainnet addresses (sourced from existing coin-bitcoin test suite)
@@ -58,6 +72,10 @@ describe("classifyZcashRecipient — transparent addresses", () => {
 
   it("rejects a too-short t1 string as invalid", () => {
     expect(classifyZcashRecipient("t1short")).toEqual({ error: "invalid" });
+  });
+
+  it("rejects an upper-cased transparent prefix as invalid (Base58 is case-sensitive)", () => {
+    expect(classifyZcashRecipient("T1" + T1_ADDRESS.slice(2))).toEqual({ error: "invalid" });
   });
 });
 
@@ -294,5 +312,105 @@ describe("deriveZcashTransferType — truth table", () => {
     expect(deriveZcashTransferType(undefined, "public")).toBe("transparent");
     expect(deriveZcashTransferType(undefined, "private")).toBe("transparent-to-shielded");
     expect(deriveZcashTransferType(undefined, undefined)).toBe("transparent");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Testnet (fixtures constructed in src/__tests__/fixtures/testnetAddresses.ts)
+// ---------------------------------------------------------------------------
+
+describe("classifyZcashRecipient — testnet", () => {
+  it("builds the transparent fixtures with the expected prefixes", () => {
+    expect(TM_ADDRESS.startsWith("tm")).toBe(true);
+    expect(T2_ADDRESS.startsWith("t2")).toBe(true);
+    expect(UTEST_ORCHARD.startsWith("utest1")).toBe(true);
+  });
+
+  it.each([TM_ADDRESS, T2_ADDRESS])("accepts %s as public", address => {
+    expect(classifyZcashRecipient(address, "testnet")).toEqual({ recipientType: "public" });
+  });
+
+  it("classifies a utest UA with an Orchard receiver as private", () => {
+    expect(classifyZcashRecipient(UTEST_ORCHARD, "testnet")).toEqual({ recipientType: "private" });
+    expect(classifyZcashRecipient(UTEST_SAPLING_AND_ORCHARD, "testnet")).toEqual({
+      recipientType: "private",
+    });
+  });
+
+  it("rejects a utest UA with only a Sapling receiver as sapling-unsupported", () => {
+    expect(classifyZcashRecipient(UTEST_SAPLING_ONLY, "testnet")).toEqual({
+      error: "sapling-unsupported",
+    });
+  });
+
+  it("classifies a transparent-only utest UA as public", () => {
+    expect(classifyZcashRecipient(UTEST_TRANSPARENT_ONLY, "testnet")).toEqual({
+      recipientType: "public",
+    });
+  });
+
+  it("rejects a ztestsapling address as sapling-unsupported", () => {
+    expect(classifyZcashRecipient("ztestsapling1abcdef", "testnet")).toEqual({
+      error: "sapling-unsupported",
+    });
+  });
+
+  it("rejects a utest UA whose padding carries only the first HRP character", () => {
+    // Same receivers under the utest HRP, but padded with "u" + zeros: the first
+    // byte of the padding matches the HRP, the rest of it does not.
+    const forged = encodeUnifiedAddress("utest", [UTEST_ORCHARD_RECEIVER], "u");
+    expect(decodeUnifiedAddressTypecodes(UTEST_ORCHARD, "testnet")).toEqual([TYPECODE_ORCHARD]);
+    expect(decodeUnifiedAddressTypecodes(forged, "testnet")).toBeNull();
+    expect(classifyZcashRecipient(forged, "testnet")).toEqual({ error: "invalid" });
+  });
+
+  it.each([
+    ["t1", T1_MAINNET],
+    ["t3", T3_MAINNET],
+    ["u1", UA_ORCHARD_ONLY],
+    ["u1 transparent", UA_TRANSPARENT_ONLY],
+    ["zs1", "zs1z7rejlpsa98s2rrrfkwmaxu53e4ue0ulcrw0h4x5g8jl04tak0d3mm47vdtahatqrlkngh9slya"],
+  ])("rejects the mainnet %s form on testnet", (_name, address) => {
+    const cls = classifyZcashRecipient(address, "testnet");
+    expect(cls).toEqual({ error: "invalid" });
+  });
+
+  it.each([
+    ["tm", TM_ADDRESS],
+    ["t2", T2_ADDRESS],
+    ["utest1", UTEST_ORCHARD],
+    ["ztestsapling1", "ztestsapling1abcdef"],
+  ])("rejects the testnet %s form on mainnet", (_name, address) => {
+    expect(classifyZcashRecipient(address)).toEqual({ error: "invalid" });
+    expect(classifyZcashRecipient(address, "mainnet")).toEqual({ error: "invalid" });
+  });
+
+  it("rejects a mainnet UA presented to the testnet decoder, and the reverse", () => {
+    expect(decodeUnifiedAddressTypecodes(UA_ORCHARD_ONLY, "testnet")).toBeNull();
+    expect(decodeUnifiedAddressTypecodes(U_ORCHARD_MAINNET, "mainnet")).toEqual([TYPECODE_ORCHARD]);
+    expect(decodeUnifiedAddressTypecodes(UTEST_ORCHARD)).toBeNull();
+  });
+});
+
+describe("isZcashShieldedAddress — testnet", () => {
+  it.each([UTEST_ORCHARD, "ztestsapling1abcdef", "UTEST1ABC"])("is true for %s", address => {
+    expect(isZcashShieldedAddress(address)).toBe(true);
+  });
+
+  it.each([TM_ADDRESS, T2_ADDRESS])("is false for %s", address => {
+    expect(isZcashShieldedAddress(address)).toBe(false);
+  });
+});
+
+describe("classifyZcashRecipientShape", () => {
+  it.each([
+    [T1_ADDRESS, { recipientType: "public" }],
+    [TM_ADDRESS, { recipientType: "public" }],
+    [UA_ORCHARD_ONLY, { recipientType: "private" }],
+    [UTEST_ORCHARD, { recipientType: "private" }],
+    [UTEST_SAPLING_ONLY, { error: "sapling-unsupported" }],
+    ["not-an-address", { error: "invalid" }],
+  ])("gives the shape of %s", (address, expected) => {
+    expect(classifyZcashRecipientShape(address)).toEqual(expected);
   });
 });

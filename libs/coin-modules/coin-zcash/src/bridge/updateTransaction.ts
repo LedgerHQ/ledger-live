@@ -1,7 +1,7 @@
 import { updateTransaction as defaultUpdateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types/bridge";
-import { classifyZcashRecipient, deriveZcashTransferType } from "../logic/address";
+import { classifyZcashRecipientShape, deriveZcashTransferType } from "../logic/address";
 
 /**
  * Classifies the recipient and re-derives `transferType` on every patch, so
@@ -16,7 +16,7 @@ import { classifyZcashRecipient, deriveZcashTransferType } from "../logic/addres
 export const updateTransaction: AccountBridge<Transaction>["updateTransaction"] = (tx, patch) => {
   const updated = defaultUpdateTransaction(tx, patch);
 
-  const cls = updated.recipient ? classifyZcashRecipient(updated.recipient) : undefined;
+  const cls = updated.recipient ? classifyZcashRecipientShape(updated.recipient) : undefined;
   const recipientType = cls && "recipientType" in cls ? cls.recipientType : undefined;
   if (recipientType !== undefined) {
     updated.recipientType = recipientType;

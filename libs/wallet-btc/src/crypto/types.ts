@@ -41,6 +41,7 @@ export type Currency =
   | "qtum"
   | "zcash"
   | "zcash_regtest"
+  | "zcash_testnet"
   | "bitcoin_gold"
   | "dogecoin"
   | "digibyte"

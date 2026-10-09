@@ -38,6 +38,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "dogecoin",
       "dash",
       "zcash",
+      "zcash_testnet",
       "decred",
       "digibyte",
       "qtum",
