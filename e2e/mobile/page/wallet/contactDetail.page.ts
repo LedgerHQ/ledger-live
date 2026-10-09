@@ -182,9 +182,12 @@ export default class ContactDetailPage {
   }
 
   @Step("Rename the contact to {{0}}")
-  async renameContact(name: string) {
+  async renameContact(name: string, options?: { releaseIosSyncForDeviceSheet?: boolean }) {
     await this.openActionsMenu();
     await this.openRenameDrawer();
+    if (options?.releaseIosSyncForDeviceSheet) {
+      await app.common.disableSynchronizationForiOS();
+    }
     await this.renameDrawer.typeAndConfirm(name);
   }
 
