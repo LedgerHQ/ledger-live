@@ -51,7 +51,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "pull my synced accounts", "import from Ledger Sync", "sync the agent's accounts"   | `agent-intent sync --profile <id>` (no device)                 |
 | "have the agent request a payment", "propose sending X to Y for approval"            | `agent-intent send --profile <id> --account <label> --to <address> --amount '<amount> <ticker>'` (no device, never broadcasts) |
 | "what did the agent propose", "list the agent's intents"                           | `agent-intent intents --profile <id>` (no device; `--status signed,broadcast`, `--cursor` for the next page) |
-| "is my intent approved", "what's the status of intent X", "wait until it's signed"  | `agent-intent status --profile <id> --intent <id>` (no device; JSON `terminal` for polling) |
+| "is my intent approved", "what's the status of intent X", "wait until it's signed"  | `agent-intent status --profile <id> --intent <id>` (no device; poll JSON `intent.status` for one state, `terminal` for a final one) |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
 
 ---
@@ -487,6 +487,9 @@ pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent 019
 # Poll while the intent is known to be in progress; stop on a final state (terminal: true),
 # an unknown one (terminal: null) or an error, then read the status:
 while pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.terminal == false' >/dev/null; do sleep 30; done
+
+# To wait for one state, e.g. until the user signs, poll intent.status instead (signed is not final):
+while pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.intent.status == "created" or .intent.status == "crafted"' >/dev/null; do sleep 30; done
 ```
 
 - **States:** `created`, `crafted`, `signed`, `broadcast` are in progress (`terminal: false`);
