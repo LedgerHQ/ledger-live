@@ -14,7 +14,6 @@ export default class PayTabPage {
   requestTileId = "action-tile-request";
   depositOptionsId = "pay-card-deposit-options";
   bankTransferContentId = "pay-bank-transfer-intro-content";
-  bankTransferCreateAccountId = "pay-bank-transfer-intro-create-account";
   bankTransferCloseId = "bottom-sheet-header-close-button";
   requestScreenId = "pay-request-receive";
   requestCloseId = "pay-request-receive-close";
@@ -84,16 +83,14 @@ export default class PayTabPage {
   @Step("Expect the bank transfer intro with {{{0}}}")
   async expectBankTransferIntro(createAccountLabel: string) {
     await waitForFullyVisibleById(this.bankTransferContentId);
-    await waitForFullyVisibleById(this.bankTransferCreateAccountId);
-    await detoxExpect(getElementById(this.bankTransferCreateAccountId)).toHaveLabel(
-      createAccountLabel,
-    );
+    await detoxExpect(getElementByText(createAccountLabel)).toBeVisible();
   }
 
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
-    await waitForFullyVisibleById(this.bankTransferCloseId);
-    await tapById(this.bankTransferCloseId);
+    // The deposit sheet can still be mounted, and its close button is index 0.
+    const closeButtonCount = await countElementsById(this.bankTransferCloseId);
+    await tapById(this.bankTransferCloseId, Math.max(closeButtonCount - 1, 0));
     if (!(await waitForElementNotVisible(this.bankTransferContentId))) {
       throw new Error(`${this.bankTransferContentId} stayed visible`);
     }
