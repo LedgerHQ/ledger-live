@@ -57,7 +57,7 @@ describe("createRegisterExternalAddressOperation", () => {
     const operation = createRegisterExternalAddressOperation(
       {
         contact,
-        currencyId: CryptoCurrencyIdSchema.parse("poa"),
+        currencyId: CryptoCurrencyIdSchema.parse("ethereum_classic"),
         label: address.label,
         address: address.address,
         config: {
