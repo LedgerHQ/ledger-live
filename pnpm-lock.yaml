@@ -502,8 +502,8 @@ catalogs:
       specifier: 0.7.0
       version: 0.7.0
     lodash:
-      specifier: 4.17.21
-      version: 4.17.21
+      specifier: 4.18.1
+      version: 4.18.1
     msw:
       specifier: ^2.7.3
       version: 2.7.3
@@ -656,8 +656,6 @@ overrides:
   '@jest/types': 30.5.0
   expect: 30.5.0
   pretty-format@^30.0.0: 30.5.0
-
-pnpmfileChecksum: sha256-JyE64KwSjZ7Ykvi+y4PoBd1Pk100XNhr0fI7RUun0QE=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -853,7 +851,7 @@ importers:
         version: 5.2.1
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       readable-stream:
         specifier: ^4.7.0
         version: 4.7.0
@@ -1440,7 +1438,7 @@ importers:
         version: 1.4.0
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       path-browserify:
         specifier: ^1.0.1
         version: 1.0.1
@@ -2347,7 +2345,7 @@ importers:
         version: 0.2.19
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       lottie-react-native:
         specifier: 7.3.6
         version: 7.3.6(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -3188,7 +3186,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       prop-types:
         specifier: ^15.8.1
         version: 15.8.1
@@ -4759,7 +4757,7 @@ importers:
         version: link:../../../shared/api-services
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -5790,7 +5788,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -5972,7 +5970,7 @@ importers:
         version: 1.6.0(@jest/environment@30.5.0)(@jest/reporters@30.5.0)(@jest/types@30.5.0)(bunyan@2.0.5)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8743,7 +8741,7 @@ importers:
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -9393,7 +9391,7 @@ importers:
         version: link:../../../shared/feature-flags
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -9967,7 +9965,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -10061,7 +10059,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -10161,7 +10159,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -10388,7 +10386,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -10464,7 +10462,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -10561,7 +10559,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -10855,7 +10853,7 @@ importers:
         version: 7.4.7(@typescript/typescript6@6.0.2)
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -10940,7 +10938,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -11110,7 +11108,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -11201,7 +11199,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3
@@ -11298,7 +11296,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -11468,7 +11466,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       protobufjs:
         specifier: ^7.2.6
         version: 7.3.2
@@ -11741,7 +11739,7 @@ importers:
         version: 1.7.5
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12026,7 +12024,7 @@ importers:
         version: 9.1.2
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -12093,7 +12091,7 @@ importers:
         version: 2.1.2
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       tronweb:
         specifier: 6.5.1
         version: 6.5.1
@@ -12175,7 +12173,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12330,7 +12328,7 @@ importers:
         version: 4.1.2
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -14539,7 +14537,7 @@ importers:
         version: 0.2.19
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       minimatch:
         specifier: ^5.1.0
         version: 5.1.6
@@ -14890,7 +14888,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -14963,7 +14961,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
     devDependencies:
       '@support/jest-shared':
         specifier: workspace:*
@@ -17706,7 +17704,7 @@ importers:
         version: 7.2.3
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       minimatch:
         specifier: ^5.1.0
         version: 5.1.6
@@ -17796,7 +17794,7 @@ importers:
         version: 11.3.28(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       react-select:
         specifier: ^5.10.2
         version: 5.10.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -17993,7 +17991,7 @@ importers:
         version: 2.2.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
       varuint-bitcoin:
         specifier: 1.1.2
         version: 1.1.2
@@ -18194,7 +18192,7 @@ importers:
         version: link:../analytics
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.18.1
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -33640,6 +33638,9 @@ packages:
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
+
   log-symbols@1.0.2:
     resolution: {integrity: sha512-mmPrW0Fh2fxOzdBbFv4g1m6pR72haFLPJ2G5SJEELf1y+iaQrDG6cWCPjy54RHYbZAt7X+ls690Kw62AdWXBzQ==}
     engines: {node: '>=0.10.0'}
@@ -45215,7 +45216,7 @@ snapshots:
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
       fs-extra: 9.1.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       tmp-promise: 3.0.3
     transitivePeerDependencies:
       - supports-color
@@ -47577,7 +47578,7 @@ snapshots:
   '@redux-devtools/instrument@2.2.0(redux@5.0.1)':
     dependencies:
       '@babel/runtime': 7.28.4
-      lodash: 4.17.21
+      lodash: 4.18.1
       redux: 5.0.1
 
   '@redux-devtools/serialize@0.4.2(immutable@4.3.7)':
@@ -50016,7 +50017,7 @@ snapshots:
       blakejs: 1.2.1
       bs58: 5.0.0
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
-      lodash: 4.17.21
+      lodash: 4.18.1
 
   '@styled-system/background@5.1.2':
     dependencies:
@@ -51965,7 +51966,7 @@ snapshots:
       glob: 8.1.0
       graceful-fs: 4.2.11
       lazystream: 1.0.1
-      lodash: 4.17.21
+      lodash: 4.18.1
       normalize-path: 3.0.0
       readable-stream: 3.6.2
 
@@ -52314,7 +52315,7 @@ snapshots:
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
-      lodash: 4.17.21
+      lodash: 4.18.1
       picomatch: 2.3.1
       styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
     transitivePeerDependencies:
@@ -52469,7 +52470,7 @@ snapshots:
 
   benchmark@2.1.4:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       platform: 1.3.6
 
   better-opn@3.0.2:
@@ -53420,7 +53421,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       date-fns: 2.30.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       rxjs: 7.8.2
       shell-quote: 1.8.4
       spawn-command: 0.0.2
@@ -54025,7 +54026,7 @@ snapshots:
       ini: 1.3.8
       jest-environment-emit: 1.2.0(@jest/environment@30.5.0)(@jest/types@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))
       json-cycle: 1.5.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       multi-sort-stream: 1.0.4
       multipipe: 4.0.0
       node-ipc: 9.2.1
@@ -54076,7 +54077,7 @@ snapshots:
       ini: 1.3.8
       jest-environment-emit: 1.2.0(@jest/environment@30.5.0)(@jest/types@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))
       json-cycle: 1.5.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       multi-sort-stream: 1.0.4
       multipipe: 4.0.0
       node-ipc: 9.2.1
@@ -54609,7 +54610,7 @@ snapshots:
 
   eslint-plugin-i18next@6.0.3:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       requireindex: 1.1.0
 
   eslint-scope@7.2.2:
@@ -56656,7 +56657,7 @@ snapshots:
       handlebars: 4.7.8
       import-from: 4.0.0
       jest-metadata: 1.6.0(@jest/environment@30.5.0)(@jest/reporters@30.5.0)(@jest/types@30.5.0)(bunyan@2.0.5)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))
-      lodash: 4.17.21
+      lodash: 4.18.1
       node-fetch: 2.7.0(encoding@0.1.13)
       pkg-up: 3.1.0
       properties: 1.2.1
@@ -57987,6 +57988,8 @@ snapshots:
   lodash.truncate@4.4.2: {}
 
   lodash@4.17.21: {}
+
+  lodash@4.18.1: {}
 
   log-symbols@1.0.2:
     dependencies:
