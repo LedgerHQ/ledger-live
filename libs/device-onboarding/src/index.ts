@@ -1,4 +1,3 @@
-export type { DeviceOnboardingPorts, DeviceOnboardingSession } from "./ports";
 export {
   OnboardingStep,
   RecoveryKeyStatus,
@@ -75,13 +74,14 @@ export {
   type SeedPollingInput,
 } from "./actors/seedPolling";
 export {
-  createDelegatedPorts,
-  flattenDeviceOnboardingContext,
   createOnboardingEventLog,
+  flattenDeviceOnboardingContext,
   recordOnboardingToolEvent,
+  stampSession,
   stateValueToString,
   toolEvent,
   userEvents,
+  type HostOnboardingEvent,
   type HostToolEvent,
   type HostToolEventDetail,
   type WatchedOnboardingContext,

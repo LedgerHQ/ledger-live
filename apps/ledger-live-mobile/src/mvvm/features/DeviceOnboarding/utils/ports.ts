@@ -1,5 +1,5 @@
 import type { DeviceManagementKit, DeviceSessionId } from "@ledgerhq/device-management-kit";
-import type { DeviceOnboardingPorts } from "@ledgerhq/device-onboarding";
+import type { DeviceOnboardingPorts } from "@devtools/bindings";
 import {
   activeHidDeviceSessionSubject,
   DeviceManagementKitBLETransport,
