@@ -2,6 +2,12 @@ const path = require("path");
 
 const config = require("@support/jest-features-flow").createFlowJestConfig();
 
+const webProject = config.projects.find(project => project.displayName === "web");
+webProject.setupFilesAfterEnv = [
+  ...webProject.setupFilesAfterEnv,
+  path.resolve(__dirname, "src/test/unrefSchedulerMessageChannel.js"),
+];
+
 const nativeProject = config.projects.find(project => project.displayName === "native");
 nativeProject.moduleNameMapper = {
   ...nativeProject.moduleNameMapper,
@@ -12,7 +18,4 @@ nativeProject.moduleNameMapper = {
   ),
 };
 
-module.exports = {
-  ...config,
-  forceExit: true,
-};
+module.exports = config;
