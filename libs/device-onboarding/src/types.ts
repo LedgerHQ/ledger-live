@@ -125,6 +125,8 @@ export function isOnRecoveryKeyScreen(state: DeviceOnboardingState): boolean {
 
 export type OnboardingEvent =
   | { type: "SESSION_READY"; sessionId: DeviceSessionId }
+  /** The host moved to a new session mid-run, before the flow reached SESSION_READY. */
+  | { type: "SESSION_CHANGED"; sessionId: DeviceSessionId }
   | { type: "LOCKED" }
   | { type: "UNLOCKED"; output?: GetOsVersionResponse }
   | { type: "TRANSPORT_LOST" }

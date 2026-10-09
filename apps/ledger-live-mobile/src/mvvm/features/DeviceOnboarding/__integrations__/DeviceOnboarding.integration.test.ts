@@ -115,6 +115,8 @@ describe("useDeviceOnboarding", () => {
         device: expect.objectContaining({ deviceId: "device-id-2", wired: false }),
       }),
     );
+    // The run quits before SESSION_READY, so the machine must already follow the new session.
+    expect(result.current.exit?.sessionId).toBe("session-2");
   });
 
   // The watch must start before SESSION_READY.

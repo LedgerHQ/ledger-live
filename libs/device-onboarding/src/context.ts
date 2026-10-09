@@ -136,7 +136,7 @@ export const contextActions = {
   }),
   forgetFirmwareCheck: update({ firmwareChecked: false, availableFirmwareUpdate: null }),
   adoptSession: update(({ event }) => {
-    if (event.type !== "SESSION_READY") {
+    if (event.type !== "SESSION_READY" && event.type !== "SESSION_CHANGED") {
       return {};
     }
 

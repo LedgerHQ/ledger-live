@@ -119,6 +119,7 @@ export const deviceOnboardingMachine = setup({
     LOCKED: ".deviceLocked",
     TRANSPORT_LOST: ".awaitingSession",
     QUIT: ".quitting",
+    SESSION_CHANGED: { actions: "adoptSession" },
   },
   output: ({ context, event }) => exitContract(context, event.output),
   states: {

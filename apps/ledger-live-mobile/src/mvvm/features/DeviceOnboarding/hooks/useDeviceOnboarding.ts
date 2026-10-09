@@ -164,6 +164,7 @@ export function useDeviceOnboarding({
 
         if (actorRef.current) {
           startSessionListener(result, nextPorts.currentSessionId());
+          sendToActor({ type: "SESSION_CHANGED" });
           setSessionReady(true);
           setStatus("running");
           return;
@@ -189,7 +190,7 @@ export function useDeviceOnboarding({
         setStatus(statusWithActor(actorRef.current));
       }
     },
-    [actorRef, offerSync, portsRef, setSessionReady, startActor, startSessionListener],
+    [actorRef, offerSync, portsRef, sendToActor, setSessionReady, startActor, startSessionListener],
   );
 
   const handleConnectionState = useCallback(

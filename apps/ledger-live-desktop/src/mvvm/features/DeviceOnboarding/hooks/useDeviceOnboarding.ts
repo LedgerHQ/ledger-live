@@ -239,6 +239,7 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
         return;
       }
 
+      send({ type: "SESSION_CHANGED" });
       setSessionReady(true);
       if (autoResume) send({ type: "SESSION_READY" });
       setStatus("running");

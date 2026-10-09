@@ -119,7 +119,11 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
   } else if (event.type === "FIRMWARE_UPDATE_AVAILABLE") {
     const version = event.output.firmwareUpdateContext.availableUpdate?.finalFirmware.version;
     if (version) detail = { kind: "firmware", version };
-  } else if (event.type === "SESSION_READY" || event.type === "TRANSPORT_LOST") {
+  } else if (
+    event.type === "SESSION_READY" ||
+    event.type === "SESSION_CHANGED" ||
+    event.type === "TRANSPORT_LOST"
+  ) {
     detail = { kind: "session", sessionId };
   }
 
@@ -192,7 +196,7 @@ function plainPayload(
   return Object.keys(nested).length === 0 ? undefined : nested;
 }
 
-type SessionEventType = "SESSION_READY" | "FIRMWARE_UPDATE_FLOW_CLOSED";
+type SessionEventType = "SESSION_READY" | "SESSION_CHANGED" | "FIRMWARE_UPDATE_FLOW_CLOSED";
 
 /** What a host or the devtool sends: the host adds the session id, which only it knows. */
 export type HostOnboardingEvent =
@@ -207,6 +211,8 @@ export function stampSession(
   switch (event.type) {
     case "SESSION_READY":
       return { type: "SESSION_READY", sessionId: sessionId() };
+    case "SESSION_CHANGED":
+      return { type: "SESSION_CHANGED", sessionId: sessionId() };
     case "FIRMWARE_UPDATE_FLOW_CLOSED":
       return { type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: sessionId() };
     default:
