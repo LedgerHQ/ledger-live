@@ -35,6 +35,7 @@ wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is int
 | `agent-intent send`                   | Propose an Ethereum send (ETH or ERC-20) from an enrolled profile for **human review** in the Agent Intent frontend; prints the review link. **Never signs or broadcasts** and needs **no device**; `--dry-run` validates without submitting. |
 | `agent-intent intents`                | List the intents an enrolled profile proposed, most recent first, one page at a time (`--status`, `--page-size`, `--cursor` from the previous page). The service scopes the list to the agent, so it never shows another agent's intents. JSON keeps amounts as exact base-unit strings. **No device** required. |
 | `agent-intent status`                 | Show the current status and details of one intent the profile proposed (`--intent <id>`). JSON adds `terminal` (`true` once the state is final, `null` for a state this version doesn't know) for shell polling. Another agent's intent is answered like an unknown id. **No device** required. |
+| `agent-intent cancel`                 | Cancel an intent the profile proposed while the user has not signed it yet (`created` or `crafted`), by `--intent <id>`. Irreversible: asks for confirmation on a terminal, and needs `--yes` without one. Cancelling an already cancelled intent succeeds. A signed intent can't be edited; cancel it and send a new one. **No device** required. |
 | `skill list` / `skill retrieve`       | List the agent skills shipped inside the binary, or print one to stdout. **No device** required.                                                                                                                |
 | `skill install`                       | Install the embedded agent skill for `--agent` (`claude`, `cursor`, `codex`, or generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides. **No device** required.                             |
 | `skill doctor`                        | Detect drift between installed skills and those shipped in the running binary (`up-to-date`, `outdated`, `modified-locally`, `missing`); `--fix` self-heals, `--force` also overwrites local edits.              |
@@ -72,6 +73,7 @@ pnpm wallet-cli start -- agent-intent sync --help
 pnpm wallet-cli start -- agent-intent send --help
 pnpm wallet-cli start -- agent-intent intents --help
 pnpm wallet-cli start -- agent-intent status --help
+pnpm wallet-cli start -- agent-intent cancel --help
 ```
 
 From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (same args after `--`).

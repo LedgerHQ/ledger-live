@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` (without `--dry-run`), `agent-intent intents`, `agent-intent status` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` (without `--dry-run`), `agent-intent intents`, `agent-intent status`, `agent-intent cancel` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -52,6 +52,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "have the agent request a payment", "propose sending X to Y for approval"            | `agent-intent send --profile <id> --account <label> --to <address> --amount '<amount> <ticker>'` (no device, never broadcasts) |
 | "what did the agent propose", "list the agent's intents"                           | `agent-intent intents --profile <id>` (no device; `--status signed,broadcast`, `--cursor` for the next page) |
 | "is my intent approved", "what's the status of intent X", "wait until it's signed"  | `agent-intent status --profile <id> --intent <id>` (no device; poll JSON `intent.status` for one state, `terminal` for a final one) |
+| "cancel intent X", "withdraw the proposal", "the agent changed its mind"            | `agent-intent cancel --profile <id> --intent <id> --yes` (no device; only before the user signs; irreversible) |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
 
 ---
@@ -108,10 +109,13 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `agent-intent sync`  | No     | **Required** | No          | Yes     |
 | `agent-intent intents` | No   | **Required** | No          | Yes     |
 | `agent-intent status` | No    | **Required** | No          | Yes     |
+| `agent-intent cancel` | No    | **Required** | No§§        | Yes     |
 
 \*`receive` with `--no-verify`, `send` with `--dry-run`, and `earn deposit`/`earn withdraw` with `--dry-run` need no device and no sandbox bypass.
 
 †TTY: whether the command requires an interactive terminal for user input.
+
+§§`agent-intent cancel` asks for confirmation on a terminal; without one (scripts, AI agents) it needs `--yes`.
 
 ‡`ring init` requires a password to protect the ring. `WALLET_PASS` must already be provided in the environment by the developer/user before the command runs — the agent never sets or injects it (see [Non-TTY password injection](#ring--ledger-key-ring-lkrp)).
 
@@ -502,6 +506,30 @@ while pnpm --silent wallet-cli start agent-intent status --profile my-bot --inte
   tell them apart. A malformed id is rejected before signing in.
 - Needs a service that lets agents read single intents; an older one says so and points to
   `agent-intent intents`.
+
+### Cancelling an intent (`agent-intent cancel`)
+
+`agent-intent cancel` withdraws an intent the profile proposed, while the user has not signed it
+yet. A signed intent can't be edited: to change a proposal, cancel it and send a new one.
+
+```bash
+pnpm --silent wallet-cli start agent-intent cancel --profile my-bot --intent 0192f7a4-0000-7000-8000-000000000001 --yes
+```
+
+- **When:** only a `created` or `crafted` intent can be cancelled. Any other state (`signed`
+  included, since its transaction may still land on-chain) fails with the current state and changes
+  nothing. Cancellation is **irreversible**.
+- **Confirmation:** on a terminal it shows the intent and asks `[y/N]` on stderr. Without a
+  terminal (scripts, AI agents, piped input) it refuses unless `--yes` is given, before signing in.
+  As an agent, only pass `--yes` when the user asked to cancel this intent.
+- **Repeats:** cancelling an already cancelled intent succeeds and reports
+  `alreadyCancelled: true`. If the user signs it in the meantime, the command fails and reports
+  the new state.
+- **JSON** (`--output json`): `profileId`, `cancelled: true`, `alreadyCancelled`, and `intent`
+  as the service reports it after the cancellation (same fields as `agent-intent status`). A
+  declined prompt prints `cancelled: false` with the `intentId`.
+- **Not found:** an unknown id and another agent's intent get the same answer, as for
+  `agent-intent status`.
 
 ---
 

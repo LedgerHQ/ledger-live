@@ -25,6 +25,7 @@ export type AgentIntentMockOverrides = {
   lkrpSdk?: Partial<Record<(typeof LKRP_SDK_KEYS)[number], AnyFn>>;
   cloudSync?: Partial<Record<(typeof CLOUD_SYNC_KEYS)[number], AnyFn>>;
   tokenLookup?: Partial<Record<(typeof TOKEN_LOOKUP_KEYS)[number], AnyFn>>;
+  confirmPrompt?: Partial<Record<(typeof CONFIRM_PROMPT_KEYS)[number], AnyFn>>;
 };
 
 const SDK_KEYS = [
@@ -55,6 +56,8 @@ const CLOUD_SYNC_KEYS = ["pullSyncedAccounts", "mergeSyncedAccounts"] as const;
 
 const TOKEN_LOOKUP_KEYS = ["findEthereumToken"] as const;
 
+const CONFIRM_PROMPT_KEYS = ["canAskToConfirm", "askToConfirm"] as const;
+
 // Snapshot the genuine exports into PLAIN objects before any mock is installed: `mock.module` re-binds
 // the live namespace to the mock, so a pass-through reading from the namespace would recurse forever.
 const realSessionStore = { ...(await import("../../../session/session-store")) };
@@ -74,6 +77,10 @@ const realCloudSync = { ...(await import("../../../ledger-sync/cloud-sync-accoun
   unknown
 >;
 const realTokenLookup = { ...(await import("../../../agent-intent/token-lookup")) } as Record<
+  string,
+  unknown
+>;
+const realConfirmPrompt = { ...(await import("../../../agent-intent/confirm-prompt")) } as Record<
   string,
   unknown
 >;
@@ -148,6 +155,14 @@ function installMocks(): void {
       realTokenLookup,
       TOKEN_LOOKUP_KEYS,
       key => active?.tokenLookup?.[key as (typeof TOKEN_LOOKUP_KEYS)[number]],
+    ),
+  }));
+  mock.module("../../../agent-intent/confirm-prompt", () => ({
+    ...realConfirmPrompt,
+    ...gatedMembers(
+      realConfirmPrompt,
+      CONFIRM_PROMPT_KEYS,
+      key => active?.confirmPrompt?.[key as (typeof CONFIRM_PROMPT_KEYS)[number]],
     ),
   }));
 }

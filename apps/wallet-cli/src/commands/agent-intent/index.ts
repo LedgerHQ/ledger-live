@@ -1,5 +1,6 @@
 import { defineGroup } from "@bunli/core";
 import EnrollCommand from "./enroll";
+import CancelCommand from "./cancel";
 import IntentsCommand from "./intents";
 import ListCommand from "./list";
 import RecoverCommand from "./recover";
@@ -12,7 +13,7 @@ export default defineGroup({
   name: "agent-intent",
   description:
     "Enroll and manage Agent Intent profiles for AI agents proposing EVM payments for human " +
-    "review, list the intents they proposed and check their status, and sync their Ledger Sync accounts.",
+    "review, list the intents they proposed, check their status and cancel them, and sync their Ledger Sync accounts.",
   commands: [
     EnrollCommand,
     RecoverCommand,
@@ -21,6 +22,7 @@ export default defineGroup({
     SendCommand,
     IntentsCommand,
     StatusCommand,
+    CancelCommand,
     SyncCommand,
   ],
 });

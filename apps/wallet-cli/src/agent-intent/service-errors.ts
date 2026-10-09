@@ -186,6 +186,18 @@ export function describeAgentIntentLookupError(
   );
 }
 
+/**
+ * Like {@link describeAgentIntentLookupError}, for cancelling one intent: a repeat is a no-op on the
+ * service, so a failure is safe to retry too.
+ */
+export function describeAgentIntentCancelError(
+  e: unknown,
+  profileId: string,
+  intentId: string,
+): Error {
+  return describeAgentIntentLookupError(e, profileId, intentId);
+}
+
 function describeReadError(
   e: unknown,
   profileId: string,
