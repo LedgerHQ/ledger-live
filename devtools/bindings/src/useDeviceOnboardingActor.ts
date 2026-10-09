@@ -4,12 +4,13 @@ import {
   createOnboardingEventLog,
   deviceOnboardingMachine,
   flattenDeviceOnboardingContext,
+  nextStatesFrom,
   stateValueToString,
   userEvents,
   type DeviceOnboardingInput,
   type DeviceOnboardingOutput,
   type DeviceOnboardingPorts,
-  type HostToolEvent,
+  type HostLogRow,
   type OnboardingEvent,
 } from "@ledgerhq/device-onboarding";
 import { createActor, type ActorRefFrom } from "xstate";
@@ -45,7 +46,7 @@ export function useDeviceOnboardingActor({
 }: UseDeviceOnboardingActorOptions) {
   const [snapshot, setSnapshot] = useState<OnboardingActorSnapshot | null>(null);
   const [sessionReady, setSessionReady] = useState(false);
-  const [events, setEvents] = useState<HostToolEvent[]>([]);
+  const [log, setLog] = useState<HostLogRow[]>([]);
   const [exit, setExit] = useState<{
     reason: DeviceOnboardingOutput["reason"];
     sessionId: string;
@@ -67,19 +68,33 @@ export function useDeviceOnboardingActor({
   const state = snapshot ? stateValueToString(snapshot.value) : null;
   const context = snapshot ? flattenDeviceOnboardingContext(snapshot.context) : null;
   const sendableEvents = snapshot ? availableEvents(snapshot, sessionReady) : [];
+  const nextStates = nextStatesFrom(snapshot);
 
   const delegatedPorts = useRef(
     createDelegatedPorts(() => portsRef.current, missingSessionMessage),
   ).current;
 
-  const appendEvent = useCallback((event: OnboardingEvent) => {
-    createOnboardingEventLog({
-      currentSessionId: () => portsRef.current?.currentSessionId(),
-      lastLoggedStep,
-      sequence: eventSequence,
-      push: entry => setEvents(current => [...current.slice(-49), entry]),
-    })(event);
+  const rememberState = useCallback((state: string) => {
+    setLog(current => (current.at(-1)?.state === state ? current : [...current, { state }]));
   }, []);
+
+  // A STEP_CHANGED that repeats the logged step still moves the state, so the state is kept.
+  const appendEvent = useCallback(
+    (state: string, event: OnboardingEvent) => {
+      let logged = false;
+      createOnboardingEventLog({
+        currentSessionId: () => portsRef.current?.currentSessionId(),
+        lastLoggedStep,
+        sequence: eventSequence,
+        push: entry => {
+          logged = true;
+          setLog(current => [...current, { state, event: entry }]);
+        },
+      })(event);
+      if (!logged) rememberState(state);
+    },
+    [rememberState],
+  );
 
   const sendToActor = useCallback((event: OnboardingEvent) => {
     const actor = actorRef.current;
@@ -106,7 +121,7 @@ export function useDeviceOnboardingActor({
   const discardActor = useCallback(() => {
     stopActor();
     previousSnapshotRef.current = null;
-    setEvents([]);
+    setLog([]);
     setExit(null);
     setSessionReady(false);
   }, [stopActor]);
@@ -117,7 +132,7 @@ export function useDeviceOnboardingActor({
     lastLoggedStep.current = null;
     setSnapshot(null);
     setSessionReady(false);
-    setEvents([]);
+    setLog([]);
     setExit(null);
   }, [stopActor]);
 
@@ -126,8 +141,10 @@ export function useDeviceOnboardingActor({
       lastLoggedStep.current = null;
       previousSnapshotRef.current = null;
       setSessionReady(false);
-      setEvents([]);
+      setLog([]);
       setExit(null);
+      // The last update reaches inspection after `actorRef` is cleared, so the run keeps its own.
+      const run: { actor: OnboardingActor | null } = { actor: null };
       const actor = createActor(deviceOnboardingMachine, {
         input: {
           dmk: input.dmk,
@@ -136,16 +153,28 @@ export function useDeviceOnboardingActor({
           deviceModelId: input.deviceModelId,
           offerSync: input.offerSync,
         },
+        // Each snapshot update carries the event that led to it, including the ones child
+        // actors send back. The log keeps both, so a row shows where the event took the machine.
         inspect: inspectionEvent => {
+          if (inspectionEvent.type === "@xstate.snapshot") {
+            if (inspectionEvent.actorRef !== run.actor) return;
+            if (!("value" in inspectionEvent.snapshot)) return;
+            const state = stateValueToString(inspectionEvent.snapshot.value);
+            if (inspectionEvent.event.type.startsWith("xstate.")) {
+              rememberState(state);
+              return;
+            }
+            appendEvent(state, inspectionEvent.event as OnboardingEvent);
+            return;
+          }
+
           if (inspectionEvent.type !== "@xstate.event") return;
           if (inspectionEvent.actorRef !== actorRef.current) return;
           if (inspectionEvent.event.type.startsWith("xstate.")) return;
-
-          const event = inspectionEvent.event as OnboardingEvent;
-          appendEvent(event);
-          onEventRef.current?.(event);
+          onEventRef.current?.(inspectionEvent.event as OnboardingEvent);
         },
       });
+      run.actor = actor;
       actorRef.current = actor;
       actor.subscribe(nextSnapshot => {
         if (actorRef.current !== actor) return;
@@ -168,15 +197,16 @@ export function useDeviceOnboardingActor({
       hooks?.beforeStart?.();
       actor.start();
     },
-    [appendEvent, delegatedPorts],
+    [appendEvent, delegatedPorts, rememberState],
   );
 
   return {
     state,
     context,
-    events,
+    log,
     exit,
     sendableEvents,
+    nextStates,
     setSessionReady,
     actorRef,
     portsRef,

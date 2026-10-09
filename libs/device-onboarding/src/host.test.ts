@@ -3,6 +3,7 @@ import {
   createDelegatedPorts,
   createOnboardingEventLog,
   flattenDeviceOnboardingContext,
+  nextStatesFrom,
   recordOnboardingToolEvent,
   stateValueToString,
   toolEvent,
@@ -154,7 +155,7 @@ describe("toolEvent", () => {
   it("should attach the onboarding step when the step changes", () => {
     expect(
       toolEvent({ type: "STEP_CHANGED", state: deviceState(OnboardingStep.Pin) }, "1", "session-1"),
-    ).toEqual({
+    ).toMatchObject({
       id: "1",
       type: "STEP_CHANGED",
       at: 100,
@@ -167,14 +168,17 @@ describe("toolEvent", () => {
       toolEvent(
         {
           type: "FIRMWARE_UPDATE_AVAILABLE",
-          update: {
-            finalFirmware: { version: "2.3.0" },
-          } as unknown as AvailableFirmwareUpdate,
+          output: {
+            os: "2.2.0",
+            mcu: "1.0",
+            bootloader: "1.0",
+            update: { finalFirmware: { version: "2.3.0" } } as unknown as AvailableFirmwareUpdate,
+          },
         },
         "2",
         "session-1",
       ),
-    ).toEqual({
+    ).toMatchObject({
       id: "2",
       type: "FIRMWARE_UPDATE_AVAILABLE",
       at: 100,
@@ -307,5 +311,32 @@ describe("createDelegatedPorts", () => {
     expect(delegated.currentSessionId()).toBe("session-1");
     await delegated.closeSession();
     expect(current.closeSession).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("nextStatesFrom", () => {
+  it("lists the state a firmware update can return to", () => {
+    const snapshot = {
+      status: "active",
+      value: { checks: "firmwareUpdateDelegated" },
+    } as Parameters<typeof nextStatesFrom>[0];
+
+    expect(nextStatesFrom(snapshot)).toEqual([
+      { event: "FIRMWARE_UPDATE_FLOW_CLOSED", state: "readingState" },
+    ]);
+  });
+});
+
+describe("toolEvent payload", () => {
+  it("keeps the error body and a url", () => {
+    const row = toolEvent(
+      { type: "GENUINE_CHECK_FAILED", output: new Error("https://secret.example/body") },
+      "1",
+      "session",
+    );
+
+    expect(row.payload).toEqual({
+      output: { name: "Error", message: "https://secret.example/body" },
+    });
   });
 });

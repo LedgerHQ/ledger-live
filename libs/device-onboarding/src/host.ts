@@ -1,3 +1,5 @@
+import type { SnapshotFrom } from "xstate";
+import { deviceOnboardingMachine } from "./machine";
 import type { DeviceOnboardingPorts } from "./ports";
 import type {
   DeviceOnboardingContext,
@@ -105,11 +107,20 @@ export type HostToolEventDetail =
   | { readonly kind: "firmware"; readonly version: string }
   | { readonly kind: "session"; readonly sessionId: string };
 
+export type HostToolPayload =
+  | string
+  | number
+  | boolean
+  | null
+  | readonly HostToolPayload[]
+  | { readonly [key: string]: HostToolPayload };
+
 export type HostToolEvent = {
   readonly id: string;
   readonly type: OnboardingEvent["type"];
   readonly at: number;
   readonly detail?: HostToolEventDetail;
+  readonly payload?: HostToolPayload;
 };
 
 export function toolEvent(event: OnboardingEvent, id: string, sessionId: string): HostToolEvent {
@@ -118,12 +129,44 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
   if (event.type === "STEP_CHANGED") {
     detail = { kind: "step", step: event.state.currentOnboardingStep };
   } else if (event.type === "FIRMWARE_UPDATE_AVAILABLE") {
-    detail = { kind: "firmware", version: event.update.finalFirmware.version };
+    detail = { kind: "firmware", version: event.output.update.finalFirmware.version };
   } else if (event.type === "SESSION_READY" || event.type === "TRANSPORT_LOST") {
     detail = { kind: "session", sessionId };
   }
 
-  return { id, type: event.type, at: Date.now(), detail };
+  return { id, type: event.type, at: Date.now(), detail, payload: eventPayload(event) };
+}
+
+function eventPayload(event: OnboardingEvent): HostToolPayload | undefined {
+  const payload: Record<string, HostToolPayload> = {};
+
+  for (const [key, child] of Object.entries(event)) {
+    if (key === "type") continue;
+    const copied = plainPayload(child);
+    if (copied !== undefined) payload[key] = copied;
+  }
+
+  return Object.keys(payload).length === 0 ? undefined : payload;
+}
+
+function plainPayload(value: unknown): HostToolPayload | undefined {
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return value;
+  }
+  if (value === null) return null;
+  if (typeof value !== "object") return undefined;
+
+  const nested: Record<string, HostToolPayload> = {};
+  if (value instanceof Error) {
+    nested.name = value.name;
+    nested.message = value.message;
+  }
+  for (const [key, child] of Object.entries(value)) {
+    const copied = plainPayload(child);
+    if (copied !== undefined) nested[key] = copied;
+  }
+
+  return Object.keys(nested).length === 0 ? undefined : nested;
 }
 
 export function createDelegatedPorts(
@@ -182,4 +225,84 @@ export function recordOnboardingToolEvent(
   }
 
   return { step, entry: toolEvent(event, id, sessionId) };
+}
+
+/** One machine update. `event` is the event that led to `state`. */
+export type HostLogRow = {
+  readonly state: string;
+  readonly event?: HostToolEvent;
+};
+
+/** A state this step can reach. `auto` means the machine may move there with no event. */
+export type HostNextState = {
+  readonly event: string;
+  readonly state: string;
+};
+
+type MachineNode = typeof deviceOnboardingMachine.root;
+
+const hiddenFromNextStates = new Set(["LOCKED", "TRANSPORT_LOST", "QUIT"]);
+
+function nodeAt(root: MachineNode, value: unknown): MachineNode | undefined {
+  if (typeof value === "string") return root.states[value];
+  if (!value || typeof value !== "object") return undefined;
+
+  let node = root;
+  for (const [key, child] of Object.entries(value)) {
+    const next = node.states[key];
+    if (!next) return undefined;
+    if (typeof child === "string") return next.states[child];
+    if (child && typeof child === "object") return nodeAt(next, child);
+    node = next;
+  }
+
+  return node;
+}
+
+export function nextStatesFrom(
+  snapshot: SnapshotFrom<typeof deviceOnboardingMachine> | null,
+): HostNextState[] {
+  if (snapshot?.status !== "active") return [];
+
+  const start = nodeAt(deviceOnboardingMachine.root, snapshot.value);
+  if (!start) return [];
+
+  const rows: HostNextState[] = [];
+  const seen = new Set<string>();
+  const add = (event: string, target: MachineNode | undefined) => {
+    if (!target) return;
+    const state = target.path.join(".");
+    if (!state) return;
+    const key = `${event}\0${state}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    rows.push({ event, state });
+  };
+
+  const handledHere = new Set<string>();
+  let node: MachineNode | undefined = start;
+  while (node) {
+    for (const transition of node.always ?? []) {
+      for (const target of transition.target ?? []) add("auto", target);
+    }
+    for (const [event, transitions] of node.transitions) {
+      if (
+        event.startsWith("xstate.") ||
+        hiddenFromNextStates.has(event) ||
+        handledHere.has(event)
+      ) {
+        continue;
+      }
+      if (transitions.some(transition => transition.guard === undefined)) {
+        handledHere.add(event);
+      }
+      for (const transition of transitions) {
+        for (const target of transition.target ?? []) add(event, target);
+      }
+    }
+    if (node === deviceOnboardingMachine.root) break;
+    node = node.parent;
+  }
+
+  return rows;
 }

@@ -8,13 +8,16 @@ export function buildProps(
     device: null,
     state: null,
     context: null,
-    events: [],
+    log: [],
     exit: null,
     sendableEvents: [],
+    nextStates: [],
     error: null,
     connect: jest.fn(),
     send: jest.fn(),
     reset: jest.fn(),
+    showNextScreen: false,
+    setShowNextScreen: jest.fn(),
     ...overrides,
   };
 }

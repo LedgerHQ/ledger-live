@@ -155,12 +155,28 @@ describe("useFirmwareUpdateHandover", () => {
     expect(send).toHaveBeenCalledTimes(1);
   });
 
+  it("stays on this screen when open next screen is off", () => {
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+
+    renderHook(() =>
+      useFirmwareUpdateHandover({
+        device,
+        machineState: delegated,
+        send: jest.fn(),
+        showNextScreen: false,
+      }),
+    );
+
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
   it("does not fetch firmware metadata outside the delegated state", () => {
     renderHook(() =>
       useFirmwareUpdateHandover({
         device,
         machineState: "checks.firmwareUpdateOffered",
         send: jest.fn(),
+        showNextScreen: true,
       }),
     );
 
@@ -179,6 +195,7 @@ function renderDelegated(send: (event: OnboardingEvent) => void) {
       device,
       machineState: props.machineState,
       send,
+      showNextScreen: true,
     }),
   );
 

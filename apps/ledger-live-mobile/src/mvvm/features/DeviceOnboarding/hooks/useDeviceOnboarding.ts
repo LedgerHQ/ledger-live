@@ -3,6 +3,7 @@ import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
+  stateValueToString,
   type DeviceOnboardingOutput,
   type OnboardingEvent,
   type SessionEvent,
@@ -28,10 +29,11 @@ type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
   knownDevices: KnownDevice[];
   offerSync: boolean;
-  navigateOnExit?: boolean;
 };
 
 type StoppableActor = { stop(): void };
+
+const quittingStates = new Set(["quitting", "leavingOnQuit"]);
 
 function statusWithActor(
   actor: { getSnapshot(): unknown } | null,
@@ -43,13 +45,14 @@ export function useDeviceOnboarding({
   dmk,
   knownDevices,
   offerSync,
-  navigateOnExit = true,
 }: UseDeviceOnboardingInput): DeviceOnboardingToolProps {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
   const [output, setOutput] = useState<DeviceOnboardingOutput | null>(null);
+  // Off by default: a QA run must not complete the app onboarding or leave the devtool.
+  const [showNextScreen, setShowNextScreen] = useState(false);
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
@@ -62,9 +65,10 @@ export function useDeviceOnboarding({
   const {
     state,
     context,
-    events,
+    log,
     exit,
     sendableEvents,
+    nextStates,
     setSessionReady,
     actorRef,
     portsRef,
@@ -256,7 +260,7 @@ export function useDeviceOnboarding({
     });
   }, [actorRef, adoptConnection, dmk, handleConnectionState, knownDevices]);
 
-  const reset = useCallback(() => {
+  const clearRun = useCallback(() => {
     adoptGeneration.current += 1;
     connectionRef.current?.unsubscribe();
     connectionRef.current = null;
@@ -273,12 +277,33 @@ export function useDeviceOnboarding({
     setError(null);
   }, [portsRef, resetActor]);
 
+  // Quit first, so the device leaves the flow before the screen is cleared.
+  const reset = useCallback(() => {
+    const actor = actorRef.current;
+    if (actor?.getSnapshot().can({ type: "QUIT" })) {
+      sendToActor({ type: "QUIT" });
+      const after = actor.getSnapshot();
+      if (after.status !== "done" && quittingStates.has(stateValueToString(after.value))) {
+        adoptGeneration.current += 1;
+        const subscription = actor.subscribe(next => {
+          if (next.status !== "done") return;
+          subscription.unsubscribe();
+          clearRun();
+        });
+        return;
+      }
+    }
+
+    clearRun();
+  }, [actorRef, clearRun, sendToActor]);
+
   useFirmwareUpdateHandover({
     device: liveDevice,
     machineState: state,
     send,
+    showNextScreen,
   });
-  useDeviceOnboardingExit({ device: liveDevice, output, navigateOnExit });
+  useDeviceOnboardingExit({ device: liveDevice, output, showNextScreen });
 
   useEffect(
     () => () => {
@@ -295,12 +320,15 @@ export function useDeviceOnboarding({
     device,
     state,
     context,
-    events,
+    log,
     exit,
     sendableEvents,
+    nextStates,
     error,
     connect,
     send,
     reset,
+    showNextScreen,
+    setShowNextScreen,
   };
 }

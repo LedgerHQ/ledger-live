@@ -5,6 +5,7 @@ import {
   type GetDeviceMetadataDAIntermediateValue,
   type GetDeviceMetadataDAOutput,
 } from "@ledgerhq/device-management-kit";
+import { DeviceActionStoppedError } from "../device/deviceAction";
 import { isCatalogueUnreachable } from "../device/errors";
 import { createRetryPolicy } from "../retry";
 import { runActor, settle } from "../tests/actorHarness";
@@ -18,6 +19,7 @@ type FakeFirmwareCheckDmk = FakeDeviceActionDmk<
   GetDeviceMetadataDAIntermediateValue
 >;
 
+const installed = { os: "1.4.0", mcu: "2.0.0", bootloader: "3.0.0" };
 const availableUpdate = {
   mcuUpdateRequired: false,
   finalFirmware: { version: "1.5.0" },
@@ -28,12 +30,15 @@ describe("mapFirmwareMetadata", () => {
   it("reports an available update", () => {
     expect(mapFirmwareMetadata(metadata(availableUpdate))).toEqual({
       type: "FIRMWARE_UPDATE_AVAILABLE",
-      update: availableUpdate,
+      output: { ...installed, update: availableUpdate },
     });
   });
 
   it("reports a device already up to date", () => {
-    expect(mapFirmwareMetadata(metadata(undefined))).toEqual({ type: "FIRMWARE_UP_TO_DATE" });
+    expect(mapFirmwareMetadata(metadata(undefined))).toEqual({
+      type: "FIRMWARE_UP_TO_DATE",
+      output: installed,
+    });
   });
 });
 
@@ -68,7 +73,12 @@ describe("firmwareCheck", () => {
     complete(fake, availableUpdate);
     await settle();
 
-    expect(received).toEqual([{ type: "FIRMWARE_UPDATE_AVAILABLE", update: availableUpdate }]);
+    expect(received).toEqual([
+      {
+        type: "FIRMWARE_UPDATE_AVAILABLE",
+        output: { ...installed, update: availableUpdate },
+      },
+    ]);
     stop();
   });
 
@@ -79,7 +89,7 @@ describe("firmwareCheck", () => {
     complete(fake, undefined);
     await settle();
 
-    expect(received).toEqual([{ type: "FIRMWARE_UP_TO_DATE" }]);
+    expect(received).toEqual([{ type: "FIRMWARE_UP_TO_DATE", output: installed }]);
     stop();
   });
 
@@ -87,11 +97,12 @@ describe("firmwareCheck", () => {
     const fake = createFake();
     const { received, stop } = start(fake);
 
-    fail(fake, new UnknownDAError());
+    const error = new UnknownDAError();
+    fail(fake, error);
     await settle();
 
     expect(fake.executions).toHaveLength(1);
-    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED" }]);
+    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED", output: error }]);
     stop();
   });
 
@@ -102,7 +113,9 @@ describe("firmwareCheck", () => {
     fake.lastExecution().stop();
     await settle();
 
-    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED" }]);
+    expect(received).toEqual([
+      { type: "FIRMWARE_CHECK_FAILED", output: expect.any(DeviceActionStoppedError) },
+    ]);
     stop();
   });
 
@@ -116,7 +129,7 @@ describe("firmwareCheck", () => {
     await settle();
 
     expect(fake.executions).toHaveLength(2);
-    expect(received).toEqual([{ type: "FIRMWARE_UP_TO_DATE" }]);
+    expect(received).toEqual([{ type: "FIRMWARE_UP_TO_DATE", output: installed }]);
     stop();
   });
 
@@ -130,7 +143,7 @@ describe("firmwareCheck", () => {
     }
 
     expect(fake.executions).toHaveLength(3);
-    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED" }]);
+    expect(received).toEqual([{ type: "FIRMWARE_CHECK_FAILED", output: catalogueUnreachable }]);
     stop();
   });
 
@@ -161,7 +174,10 @@ describe("firmwareCheck", () => {
 });
 
 function metadata(update: AvailableFirmwareUpdate | undefined): GetDeviceMetadataDAOutput {
-  return { firmwareUpdateContext: { availableUpdate: update } } as GetDeviceMetadataDAOutput;
+  return {
+    firmwareVersion: installed,
+    firmwareUpdateContext: { availableUpdate: update },
+  } as GetDeviceMetadataDAOutput;
 }
 
 function createFake(): FakeFirmwareCheckDmk {

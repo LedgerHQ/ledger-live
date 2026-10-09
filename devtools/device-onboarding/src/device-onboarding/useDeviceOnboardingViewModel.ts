@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
 import {
+  DeviceOnboardingStatus,
   watchedContextFields,
-  type DeviceOnboardingStatus,
+  type DeviceOnboardingLogRow,
+  type DeviceOnboardingNextState,
   type DeviceOnboardingToolEvent,
+  type DeviceOnboardingToolPayload,
   type DeviceOnboardingToolProps,
 } from "../types";
 
@@ -11,11 +14,33 @@ const displayedEventCount = 40;
 const displayedDetailLength = 80;
 const displayedStateCount = 24;
 
+export function possibleByEvent(
+  rows: readonly DeviceOnboardingNextState[],
+): { event: string; states: string[] }[] {
+  const groups: { event: string; states: string[] }[] = [];
+
+  for (const row of rows) {
+    const group = groups.find(item => item.event === row.event);
+    if (group) {
+      group.states.push(row.state);
+    } else {
+      groups.push({ event: row.event, states: [row.state] });
+    }
+  }
+
+  return groups;
+}
+
+const DeviceLink = {
+  Usb: "USB",
+  Ble: "BLE",
+} as const;
+
 const statusLabels: Record<DeviceOnboardingStatus, string> = {
-  idle: "Not started",
-  connecting: "Connecting…",
-  running: "Running",
-  exited: "Exited",
+  [DeviceOnboardingStatus.Idle]: "Not started",
+  [DeviceOnboardingStatus.Connecting]: "Connecting…",
+  [DeviceOnboardingStatus.Running]: "Running",
+  [DeviceOnboardingStatus.Exited]: "Exited",
 };
 
 export interface DisplayRow {
@@ -28,6 +53,7 @@ export interface EventRow {
   readonly type: string;
   readonly time: string;
   readonly detail: string | null;
+  readonly payload: readonly DisplayRow[];
 }
 
 export interface SendableRow {
@@ -36,16 +62,19 @@ export interface SendableRow {
   readonly event: OnboardingEvent;
 }
 
-export type StateKind =
-  | "progress"
-  | "genuine"
-  | "firmware"
-  | "setup"
-  | "locked"
-  | "session"
-  | "failed"
-  | "succeeded"
-  | "quit";
+export const StateKind = {
+  Progress: "progress",
+  Genuine: "genuine",
+  Firmware: "firmware",
+  Setup: "setup",
+  Locked: "locked",
+  Session: "session",
+  Failed: "failed",
+  Succeeded: "succeeded",
+  Quit: "quit",
+} as const;
+
+export type StateKind = (typeof StateKind)[keyof typeof StateKind];
 
 export interface StateStep {
   readonly key: string;
@@ -54,45 +83,83 @@ export interface StateStep {
   readonly isCurrent: boolean;
 }
 
-const failedStates = new Set([
-  "checks.genuineFailed",
-  "checks.firmwareCheckFailed",
-  "checks.notGenuineSupport",
-  "legacyFallback",
-  "bootloaderRecovery",
+const MachineState = {
+  GenuineFailed: "checks.genuineFailed",
+  FirmwareCheckFailed: "checks.firmwareCheckFailed",
+  NotGenuineSupport: "checks.notGenuineSupport",
+  LegacyFallback: "legacyFallback",
+  BootloaderRecovery: "bootloaderRecovery",
+  ChecksDone: "checks.checksDone",
+  ChecksSucceeded: "checks.checksSucceeded",
+  OnboardedExit: "onboardedExit",
+  SyncOffer: "syncOffer",
+  Done: "done",
+  Quitting: "quitting",
+  LeavingOnQuit: "leavingOnQuit",
+  ExitOnboarding: "exitOnboarding",
+  DeviceLocked: "deviceLocked",
+  AwaitingSession: "awaitingSession",
+  DeviceSetupPrefix: "deviceSetup.",
+} as const;
+
+const failedStates = new Set<string>([
+  MachineState.GenuineFailed,
+  MachineState.FirmwareCheckFailed,
+  MachineState.NotGenuineSupport,
+  MachineState.LegacyFallback,
+  MachineState.BootloaderRecovery,
 ]);
-const succeededStates = new Set([
-  "checks.checksDone",
-  "checks.checksSucceeded",
-  "onboardedExit",
-  "syncOffer",
-  "done",
+const succeededStates = new Set<string>([
+  MachineState.ChecksDone,
+  MachineState.ChecksSucceeded,
+  MachineState.OnboardedExit,
+  MachineState.SyncOffer,
+  MachineState.Done,
 ]);
-const quitStates = new Set(["quitting", "leavingOnQuit", "exitOnboarding"]);
+const quitStates = new Set<string>([
+  MachineState.Quitting,
+  MachineState.LeavingOnQuit,
+  MachineState.ExitOnboarding,
+]);
 const firmwarePattern = /firmware/i;
 const genuinePattern = /genuine|earlycheck/i;
 
 export function stateKind(state: string): StateKind {
-  if (failedStates.has(state)) return "failed";
-  if (succeededStates.has(state)) return "succeeded";
-  if (quitStates.has(state)) return "quit";
-  if (state === "deviceLocked") return "locked";
-  if (state === "awaitingSession") return "session";
-  if (state.startsWith("deviceSetup.")) return "setup";
-  if (firmwarePattern.test(state)) return "firmware";
-  if (genuinePattern.test(state)) return "genuine";
-  return "progress";
+  if (failedStates.has(state)) return StateKind.Failed;
+  if (succeededStates.has(state)) return StateKind.Succeeded;
+  if (quitStates.has(state)) return StateKind.Quit;
+  if (state === MachineState.DeviceLocked) return StateKind.Locked;
+  if (state === MachineState.AwaitingSession) return StateKind.Session;
+  if (state.startsWith(MachineState.DeviceSetupPrefix)) return StateKind.Setup;
+  if (firmwarePattern.test(state)) return StateKind.Firmware;
+  if (genuinePattern.test(state)) return StateKind.Genuine;
+  return StateKind.Progress;
+}
+
+export type LogLine =
+  | (StateStep & { readonly line: "state" })
+  | (EventRow & { readonly line: "event" });
+
+function rowsFor(
+  log: readonly DeviceOnboardingLogRow[],
+  state: string | null,
+): readonly DeviceOnboardingLogRow[] {
+  if (state === null) return [];
+  if (log.at(-1)?.state === state) return log;
+  return [...log, { state }];
 }
 
 export interface DeviceOnboardingViewModel {
   readonly statusLabel: string;
+  readonly exportText: string;
   readonly stateSteps: readonly StateStep[];
+  readonly logLines: readonly LogLine[];
   readonly deviceLabel: string | null;
   readonly isRunning: boolean;
   readonly contextRows: readonly DisplayRow[];
-  readonly eventRows: readonly EventRow[];
-  readonly exitRows: readonly DisplayRow[];
   readonly sendableRows: readonly SendableRow[];
+  readonly nextStates: readonly DeviceOnboardingNextState[];
+  readonly logIsEmpty: boolean;
   readonly error: string | null;
   readonly canConnect: boolean;
   readonly canSend: boolean;
@@ -100,6 +167,85 @@ export interface DeviceOnboardingViewModel {
   readonly connect: () => void;
   readonly send: (event: OnboardingEvent) => void;
   readonly reset: () => void;
+  readonly showNextScreen: boolean;
+  /** Absent when the host has no next screen to open: the switch is hidden. */
+  readonly setShowNextScreen?: (showNextScreen: boolean) => void;
+  readonly genuineOverride: GenuineOverride;
+  readonly setGenuineOverride: (value: GenuineOverride) => void;
+  readonly firmwareOverride: FirmwareOverride;
+  readonly setFirmwareOverride: (value: FirmwareOverride) => void;
+  readonly earlyCheckOverride: EarlyCheckOverride;
+  readonly setEarlyCheckOverride: (value: EarlyCheckOverride) => void;
+}
+
+export const GenuineOverride = {
+  Device: "device",
+  Pass: "pass",
+  Fail: "fail",
+} as const;
+
+export type GenuineOverride = (typeof GenuineOverride)[keyof typeof GenuineOverride];
+
+export const FirmwareOverride = {
+  Device: "device",
+  UpToDate: "upToDate",
+} as const;
+
+export type FirmwareOverride = (typeof FirmwareOverride)[keyof typeof FirmwareOverride];
+
+export const EarlyCheckOverride = {
+  Device: "device",
+  Skip: "skip",
+} as const;
+
+export type EarlyCheckOverride = (typeof EarlyCheckOverride)[keyof typeof EarlyCheckOverride];
+
+function overrideEvent(
+  state: string | null,
+  genuine: GenuineOverride,
+  firmware: FirmwareOverride,
+  earlyCheck: EarlyCheckOverride,
+): OnboardingEvent | null {
+  if (state === "checks.genuineCheck" && genuine === GenuineOverride.Pass) {
+    return { type: "GENUINE_CHECK_PASSED", output: { isGenuine: true } };
+  }
+  if (state === "checks.genuineCheck" && genuine === GenuineOverride.Fail) {
+    return { type: "DEVICE_NOT_GENUINE", output: { isGenuine: false } };
+  }
+  if (state === "checks.firmwareCheck" && firmware === FirmwareOverride.UpToDate) {
+    return {
+      type: "FIRMWARE_UP_TO_DATE",
+      output: { os: "override", mcu: "override", bootloader: "override" },
+    };
+  }
+  if (state === "checks.enteringEarlyCheckScreen" && earlyCheck === EarlyCheckOverride.Skip) {
+    return { type: "EARLY_CHECK_UNAVAILABLE", output: "override" };
+  }
+  return null;
+}
+
+function payloadRowsOf(payload: DeviceOnboardingToolPayload | undefined): DisplayRow[] {
+  const rows: DisplayRow[] = [];
+  if (payload && typeof payload === "object") walkPayload(payload, "", rows);
+  return rows;
+}
+
+function walkPayload(value: DeviceOnboardingToolPayload, path: string, rows: DisplayRow[]) {
+  if (value === null || typeof value !== "object") {
+    if (path === "") return;
+    rows.push({ label: path, value: formatValue(value) });
+    return;
+  }
+
+  for (const [key, child] of Object.entries(value)) {
+    if (child === undefined) continue;
+    const next = path === "" ? key : `${path}.${key}`;
+    if (child === null || typeof child !== "object") {
+      rows.push({ label: next, value: formatValue(child) });
+    } else {
+      walkPayload(child, next, rows);
+    }
+  }
 }
 
 export function formatValue(value: string | number | boolean | null | undefined): string {
@@ -143,64 +289,112 @@ export function formatTime(at: number): string {
   return `${time}.${String(date.getMilliseconds()).padStart(3, "0")}`;
 }
 
-function orderOf(at: number): number {
-  return Number.isFinite(at) ? at : 0;
+function eventLine(event: DeviceOnboardingToolEvent): LogLine {
+  return {
+    line: "event",
+    id: event.id,
+    type: event.type,
+    time: formatTime(event.at),
+    detail: formatDetail(event.detail)?.slice(0, displayedDetailLength) ?? null,
+    payload: payloadRowsOf(event.payload),
+  };
+}
+
+function withExitOnQuit(lines: readonly LogLine[], exitRows: readonly DisplayRow[]): LogLine[] {
+  if (exitRows.length === 0) return [...lines];
+
+  const quitIndex = lines.findIndex(line => line.line === "event" && line.type === "QUIT");
+  const quit = lines[quitIndex];
+  if (quit?.line !== "event") return [...lines];
+
+  const next = lines.slice();
+  next[quitIndex] = { ...quit, payload: [...quit.payload, ...exitRows] };
+  return next;
+}
+
+function stateStepsOf(rows: readonly DeviceOnboardingLogRow[]): StateStep[] {
+  const labels: string[] = [];
+  for (const row of rows) {
+    if (labels.at(-1) !== row.state) labels.push(row.state);
+  }
+
+  return labels.slice(-displayedStateCount).map((label, index, shown) => ({
+    key: `${index}-${label}`,
+    label,
+    kind: stateKind(label),
+    isCurrent: index === shown.length - 1,
+  }));
+}
+
+function logLinesOf(rows: readonly DeviceOnboardingLogRow[]): LogLine[] {
+  const shown = rows.slice(-displayedEventCount);
+  const lines: LogLine[] = [];
+
+  for (let index = shown.length - 1; index >= 0; index -= 1) {
+    const row = shown[index];
+    const newer = shown[index + 1];
+    if (newer === undefined || newer.state !== row.state) {
+      lines.push({
+        line: "state",
+        key: `${index}-${row.state}`,
+        label: row.state,
+        kind: stateKind(row.state),
+        isCurrent: newer === undefined,
+      });
+    }
+    if (row.event) lines.push(eventLine(row.event));
+  }
+
+  return lines;
 }
 
 export function useDeviceOnboardingViewModel(
   props: DeviceOnboardingToolProps,
 ): DeviceOnboardingViewModel {
-  const { status, device, state, context, events, exit, sendableEvents, error } = props;
+  const {
+    status,
+    device,
+    state,
+    context,
+    log,
+    exit,
+    sendableEvents,
+    nextStates,
+    error,
+    showNextScreen,
+    setShowNextScreen,
+    send,
+  } = props;
 
-  const [visitedStates, setVisitedStates] = useState<readonly string[]>([]);
+  const [genuineOverride, setGenuineOverride] = useState<GenuineOverride>(GenuineOverride.Device);
+  const [firmwareOverride, setFirmwareOverride] = useState<FirmwareOverride>(
+    FirmwareOverride.Device,
+  );
+  const [earlyCheckOverride, setEarlyCheckOverride] = useState<EarlyCheckOverride>(
+    EarlyCheckOverride.Device,
+  );
 
   useEffect(() => {
-    setVisitedStates(current => {
-      if (!state) {
-        return current.length === 0 ? current : [];
-      }
-      if (current.at(-1) === state) {
-        return current;
-      }
-      return [...current, state].slice(-displayedStateCount);
-    });
-  }, [state]);
+    const event = overrideEvent(state, genuineOverride, firmwareOverride, earlyCheckOverride);
+    if (event) send(event);
+  }, [earlyCheckOverride, firmwareOverride, genuineOverride, send, state]);
 
-  const stateSteps: StateStep[] = visitedStates.map((label, index) => ({
-    key: `${index}-${label}`,
-    label,
-    kind: stateKind(label),
-    isCurrent: index === visitedStates.length - 1,
-  }));
-
+  const rows = rowsFor(log, state);
+  const stateSteps = stateStepsOf(rows);
+  const exitRows: DisplayRow[] =
+    exit === null
+      ? []
+      : [
+          { label: "sessionId", value: formatValue(exit.sessionId) },
+          { label: "modelId", value: formatValue(exit.modelId) },
+        ];
+  const logLines = withExitOnQuit(logLinesOf(rows), exitRows);
   const contextRows: DisplayRow[] =
     context === null
       ? []
       : watchedContextFields
           .filter(field => context[field] !== undefined)
           .map(field => ({ label: field, value: formatValue(context[field]) }));
-
-  const eventRows: EventRow[] = events
-    .map((event, index) => ({ event, index }))
-    .sort(
-      (left, right) => orderOf(right.event.at) - orderOf(left.event.at) || right.index - left.index,
-    )
-    .slice(0, displayedEventCount)
-    .map(({ event }) => ({
-      id: event.id,
-      type: event.type,
-      time: formatTime(event.at),
-      detail: formatDetail(event.detail)?.slice(0, displayedDetailLength) ?? null,
-    }));
-
-  const exitRows: DisplayRow[] =
-    exit === null
-      ? []
-      : [
-          { label: "reason", value: formatValue(exit.reason) },
-          { label: "sessionId", value: formatValue(exit.sessionId) },
-          { label: "modelId", value: formatValue(exit.modelId) },
-        ];
 
   const sendableRows: SendableRow[] = sendableEvents.map((entry, index) => ({
     key: `${index}-${entry.event.type}`,
@@ -210,31 +404,41 @@ export function useDeviceOnboardingViewModel(
 
   let deviceLabel = null;
   if (device !== null) {
-    const transport = device.wired ? "USB" : "BLE";
+    const transport = device.wired ? DeviceLink.Usb : DeviceLink.Ble;
     deviceLabel = `${device.name} · ${device.modelId} · ${transport} · ${device.sessionId}`;
   }
 
-  const transportWentAwayMidRun = status === "running" && device === null;
+  const transportWentAwayMidRun = status === DeviceOnboardingStatus.Running && device === null;
 
   return {
     statusLabel: statusLabels[status],
+    exportText: JSON.stringify({ status, device, state, context, log, exit }, null, 2),
     stateSteps,
+    logLines,
     deviceLabel,
-    isRunning: status === "running",
+    isRunning: status === DeviceOnboardingStatus.Running,
     contextRows,
-    eventRows,
-    exitRows,
     sendableRows,
+    nextStates,
+    logIsEmpty: sendableRows.length === 0 && logLines.length === 0 && nextStates.length === 0,
     error,
     canConnect:
-      status === "idle" ||
-      status === "exited" ||
-      (status === "connecting" && error !== null) ||
+      status === DeviceOnboardingStatus.Idle ||
+      status === DeviceOnboardingStatus.Exited ||
+      (status === DeviceOnboardingStatus.Connecting && error !== null) ||
       transportWentAwayMidRun,
-    canSend: status === "running" && device !== null,
-    canReset: status !== "idle",
+    canSend: status === DeviceOnboardingStatus.Running && device !== null,
+    canReset: status !== DeviceOnboardingStatus.Idle,
     connect: props.connect,
-    send: props.send,
+    send,
     reset: props.reset,
+    showNextScreen: showNextScreen ?? false,
+    setShowNextScreen,
+    genuineOverride,
+    setGenuineOverride,
+    firmwareOverride,
+    setFirmwareOverride,
+    earlyCheckOverride,
+    setEarlyCheckOverride,
   };
 }

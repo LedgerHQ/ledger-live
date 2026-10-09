@@ -9,7 +9,8 @@ import {
   type UnlockPollingInput,
 } from "./unlockPolling";
 
-const answers = CommandResultFactory({ data: createOsVersionResponse({ isOnboarded: false }) });
+const unlockedResponse = createOsVersionResponse({ isOnboarded: false });
+const answers = CommandResultFactory({ data: unlockedResponse });
 
 beforeEach(() => {
   jest.useFakeTimers();
@@ -26,7 +27,7 @@ describe("unlockPolling", () => {
 
     await jest.advanceTimersByTimeAsync(0);
 
-    expect(received).toEqual([{ type: "UNLOCKED" }]);
+    expect(received).toEqual([{ type: "UNLOCKED", output: unlockedResponse }]);
     stop();
   });
 
@@ -43,7 +44,7 @@ describe("unlockPolling", () => {
 
     await jest.advanceTimersByTimeAsync(2 * defaultUnlockPollingIntervalMs);
 
-    expect(received).toEqual([{ type: "UNLOCKED" }]);
+    expect(received).toEqual([{ type: "UNLOCKED", output: unlockedResponse }]);
     expect(sendCommand).toHaveBeenCalledTimes(3);
     stop();
   });

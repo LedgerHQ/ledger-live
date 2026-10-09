@@ -7,6 +7,22 @@ import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
 import { useDeviceOnboardingExit } from "../hooks/useDeviceOnboardingExit";
 import { createTestDevice, knownStax } from "../testing/testDevice";
 
+const loggedEvents: { type: string }[] = [];
+
+jest.mock("@ledgerhq/device-onboarding", () => {
+  const actual = jest.requireActual("@ledgerhq/device-onboarding");
+  return {
+    ...actual,
+    createOnboardingEventLog: (deps: unknown) => {
+      const log = actual.createOnboardingEventLog(deps);
+      return (event: { type: string }) => {
+        loggedEvents.push(event);
+        log(event);
+      };
+    },
+  };
+});
+
 jest.mock("../hooks/useDeviceOnboardingExit", () => ({
   useDeviceOnboardingExit: jest.fn(),
 }));
@@ -22,6 +38,26 @@ describe("useDeviceOnboarding", () => {
     jest.clearAllMocks();
     activeDeviceSessionSubject.next(null);
     activeHidDeviceSessionSubject.next(null);
+  });
+
+  it("saves each event on the state it led to", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    expect(result.current.log.at(-1)?.state).toBe("readingState");
+    expect(result.current.nextStates).toEqual(
+      expect.arrayContaining([{ event: "DEVICE_STATE_READ", state: "routing" }]),
+    );
+    expect(result.current.nextStates.map(row => row.event)).toEqual(
+      expect.not.arrayContaining(["LOCKED", "TRANSPORT_LOST", "QUIT"]),
+    );
+
+    await quit(result);
+    const quitRow = [...result.current.log].reverse().find(row => row.event?.type === "QUIT");
+    expect(quitRow?.state).toBe("exitOnboarding");
   });
 
   // A lost Bluetooth connection must bring Connect back.
@@ -113,6 +149,7 @@ describe("useDeviceOnboarding", () => {
       modelId: DeviceModelId.STAX,
     });
     expect(exitHook).toHaveBeenLastCalledWith({
+      showNextScreen: false,
       device: {
         deviceId: "device-id",
         deviceName: "Ledger Stax",
@@ -120,8 +157,22 @@ describe("useDeviceOnboarding", () => {
         wired: false,
       },
       output: expect.objectContaining({ reason: "userQuit" }),
-      navigateOnExit: true,
     });
+  });
+
+  it("quits the run before it clears the screen", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    loggedEvents.length = 0;
+    act(() => result.current.reset());
+
+    expect(loggedEvents.map(event => event.type)).toContain("QUIT");
+    expect(result.current.status).toBe("idle");
+    expect(result.current.log).toEqual([]);
   });
 
   // A new run must drop the old exit. Otherwise the next screen can open again.

@@ -339,6 +339,19 @@ describe("the genuine check", () => {
     expect(stateOf(actor)).toBe("genuineCheck");
   });
 
+  it("clears that request when the prompt goes away", async () => {
+    const { actor } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [secureConnectionPrompt],
+    });
+
+    actor.send({ type: "SECURE_CONNECTION_ALLOWED" });
+    await settle();
+
+    expect(actor.getSnapshot().context.secureConnectionRequested).toBe(false);
+    expect(stateOf(actor)).toBe("genuineCheck");
+  });
+
   it.each(["LOCKED", "TRANSPORT_LOST", "QUIT"] as const)(
     "takes that request back on %s, which leaves the check with no one to answer it",
     async type => {
@@ -1470,7 +1483,10 @@ function refusedToggle(
 }
 
 function metadata(update: AvailableFirmwareUpdate | undefined): GetDeviceMetadataDAOutput {
-  return { firmwareUpdateContext: { availableUpdate: update } } as GetDeviceMetadataDAOutput;
+  return {
+    firmwareVersion: { os: "1.4.0", mcu: "2.0.0", bootloader: "3.0.0" },
+    firmwareUpdateContext: { availableUpdate: update },
+  } as GetDeviceMetadataDAOutput;
 }
 
 const wholeReadDeviceStateBackoffMs = 1500;

@@ -1,11 +1,16 @@
-import { ApduResponse, CommandResultFactory } from "@ledgerhq/device-management-kit";
+import {
+  ApduResponse,
+  CommandResultFactory,
+  isSuccessCommandResult,
+  type CommandResult,
+} from "@ledgerhq/device-management-kit";
 import {
   EarlyCheckToggle,
   ToggleEarlyCheckCommand,
   type ToggleEarlyCheckErrorCode,
 } from "../device/toggleEarlyCheckCommand";
 import { runActor, settle } from "../tests/actorHarness";
-import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
+import { createFakeCommandDmk } from "../tests/fakeDmk";
 import {
   toggleEarlyCheck,
   type ToggleEarlyCheckEvent,
@@ -32,22 +37,28 @@ describe("toggleEarlyCheck", () => {
     ["the firmware does not know the APDU", 0x67, 0x00],
     ["the status code is unexpected", 0x6e, 0x00],
   ])("carries on when %s", async (_, first, second) => {
-    const { dmk } = createFakeCommandDmk([deviceRefuses(first, second)]);
+    const refusal = deviceRefuses(first, second);
+    const { dmk } = createFakeCommandDmk([refusal]);
     const { received, stop } = start(dmk);
 
     await settle();
 
-    expect(received).toEqual([{ type: "EARLY_CHECK_UNAVAILABLE" }]);
+    if (isSuccessCommandResult(refusal)) {
+      throw new Error("the refusal fixture answered with success");
+    }
+
+    expect(received).toEqual([{ type: "EARLY_CHECK_UNAVAILABLE", output: refusal.error }]);
     stop();
   });
 
   it("carries on when the transport fails", async () => {
-    const { dmk } = createFakeCommandDmk([{ throws: new Error("transport failed") }]);
+    const error = new Error("transport failed");
+    const { dmk } = createFakeCommandDmk([{ throws: error }]);
     const { received, stop } = start(dmk);
 
     await settle();
 
-    expect(received).toEqual([{ type: "EARLY_CHECK_UNAVAILABLE" }]);
+    expect(received).toEqual([{ type: "EARLY_CHECK_UNAVAILABLE", output: error }]);
     stop();
   });
 
@@ -72,7 +83,7 @@ describe("toggleEarlyCheck", () => {
   });
 });
 
-function deviceRefuses(...statusCode: number[]): ScriptedCommand<void, ToggleEarlyCheckErrorCode> {
+function deviceRefuses(...statusCode: number[]): CommandResult<void, ToggleEarlyCheckErrorCode> {
   return new ToggleEarlyCheckCommand(EarlyCheckToggle.Enter).parseResponse(
     new ApduResponse({ statusCode: Uint8Array.from(statusCode), data: new Uint8Array() }),
   );
