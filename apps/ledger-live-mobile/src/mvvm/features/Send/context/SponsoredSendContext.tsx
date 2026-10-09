@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { useFeature } from "@features/platform-feature-flags";
+import { track } from "@shared/analytics";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { isSponsoredFeeUnaffordable } from "@ledgerhq/live-common/flows/send/sponsored/feeAsset";
 import {
@@ -17,6 +18,7 @@ import {
   type SponsoredState,
 } from "@ledgerhq/live-common/flows/send/sponsored/types";
 import { useSponsoredFeeQuote } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote";
+import { useSponsoredSendFunnelTracking } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendFunnelTracking";
 import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
 import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -24,6 +26,8 @@ import { updateAccountWithUpdater } from "~/actions/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useSendFlowActions, useSendFlowData } from "./SendFlowContext";
 import { useSendSignature } from "./SendSignatureContext";
+import { useSendFlowTracking } from "./SendFlowTrackingContext";
+import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 
 export const STANDARD_FEE_OPTION_ID = "standard";
 
@@ -115,13 +119,35 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
   });
 
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const { available, loading, quote, feeCurrencyTicker, feeTokenAccount } = useSponsoredFeeQuote({
+  const {
+    available,
+    loading,
+    quote,
+    standardFeeFiat,
+    sponsoredFeeFiat,
+    feeCurrencyTicker,
+    feeTokenAccount,
+  } = useSponsoredFeeQuote({
     mainAccount,
     seam,
     intent,
     intentFailed,
     refresh: sponsoredState.phase === SPONSORED_PHASE.IDLE,
     counterValueCurrency,
+  });
+
+  const { flowSessionId } = useSendFlowTracking();
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  useSponsoredSendFunnelTracking({
+    state: sponsoredState,
+    provider: seam?.feeOptionId ?? null,
+    quote,
+    standardFeeFiat,
+    sponsoredFeeFiat,
+    fiatCurrency: counterValueCurrency,
+    flowSessionId,
+    properties: sendFlowTrackingProperties,
+    track,
   });
 
   const sponsoredFeeOptionId = seam?.feeOptionId ?? "";

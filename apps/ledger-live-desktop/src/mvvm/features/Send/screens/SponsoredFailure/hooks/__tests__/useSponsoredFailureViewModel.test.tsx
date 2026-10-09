@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { RentOrderRejection } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
 import { act, renderHook } from "tests/testSetup";
+import { track } from "@shared/analytics";
 import {
   TRON_USDT_FEE_ASSET,
   createMockTronUsdtAccount,
@@ -26,6 +27,14 @@ jest.mock("../../../../context/SendFlowContext", () => ({
     operation: { onRetry: mockOperationRetry },
     status: { resetStatus: mockResetStatus },
   }),
+}));
+
+jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send" }),
+}));
+
+jest.mock("../../../../context/SendFlowTrackingContext", () => ({
+  useSendFlowTracking: () => ({ flowSessionId: "session-1" }),
 }));
 
 const mockRetry = jest.fn();
@@ -203,6 +212,7 @@ describe("useSponsoredFailureViewModel", () => {
       result.current.onRetry();
 
       expect(mockRetry).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
     });
 
     it("allows the retry when the balance covers the amount and a second rent", () => {
@@ -251,6 +261,7 @@ describe("useSponsoredFailureViewModel", () => {
         );
         result.current.onRetry();
         expect(mockRetry).not.toHaveBeenCalled();
+        expect(track).not.toHaveBeenCalled();
 
         act(() => jest.advanceTimersByTime(60_000));
 
@@ -321,5 +332,23 @@ describe("useSponsoredFailureViewModel", () => {
     result.current.onCancel();
 
     expect(mockClose).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["retry", "onRetry"],
+    ["cancel", "onCancel"],
+  ] as const)("tracks the %s click with the failure kind", (button, handler) => {
+    mockSponsoredState = { phase: "FAILED", failureKind: "TRANSFER", paymentTxId: "tx-a" };
+    const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+    result.current[handler]();
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button,
+      page: "step sponsored failure",
+      failure_kind: "TRANSFER",
+      flow_session_id: "session-1",
+      flow: "send",
+    });
   });
 });

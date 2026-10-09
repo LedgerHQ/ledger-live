@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { fireEvent, within } from "tests/testSetup";
 import userEvent from "@testing-library/user-event";
+import { track } from "@shared/analytics";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -48,6 +49,12 @@ import {
   VALID_XRP_RECIPIENT,
   VALID_TRON_RECIPIENT,
 } from "../__mocks__/sendFlowTestUtils";
+
+const sponsoredEvents = () =>
+  jest
+    .mocked(track)
+    .mock.calls.filter(([event]) => event.startsWith("gas_sponsorship_"))
+    .map(([event, properties]) => ({ event, properties }));
 
 const setupFakeTimersUser = () =>
   userEvent.setup({ advanceTimers: jest.advanceTimersByTime, pointerEventsCheck: 0 });
@@ -1044,6 +1051,36 @@ describe("Send Flow Integration", () => {
 
       expect(await screen.findByTestId("send-confirmation-step")).toBeVisible();
       expect(screen.getByTestId("send-confirmation-success-content")).toBeVisible();
+
+      // The real orchestration reaches DONE through onTransferSuccess, which this suite mocks.
+      await act(async () => {
+        setMockOrchestrationState({ phase: SPONSORED_PHASE.DONE });
+      });
+
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({ button: "confirm", fee_option: "tronify" }),
+      );
+      expect(sponsoredEvents()).toEqual([
+        {
+          event: "gas_sponsorship_order_created",
+          properties: expect.objectContaining({
+            provider: "tronify",
+            order_status: "created",
+            fee_amount: 3.2,
+            fee_currency: "USDT",
+            flow_session_id: expect.any(String),
+          }),
+        },
+        {
+          event: "gas_sponsorship_energy_delivered",
+          properties: expect.objectContaining({ order_status: "delivered" }),
+        },
+        {
+          event: "gas_sponsorship_send_success",
+          properties: expect.objectContaining({ order_status: "delivered" }),
+        },
+      ]);
     });
 
     it("offers a retry when the rent payment is refused on the device, and re-signs it on retry", async () => {
@@ -1109,7 +1146,9 @@ describe("Send Flow Integration", () => {
         setMockOrchestrationState({
           phase: SPONSORED_PHASE.FAILED,
           failureKind: SPONSORED_FAILURE_KIND.DELIVERY_FAILED,
-          failureError: new Error("energy delivery timed out"),
+          failureError: Object.assign(new Error("energy delivery timed out"), {
+            name: "EnergyDelegationTimeoutError",
+          }),
         });
       });
 
@@ -1117,6 +1156,15 @@ describe("Send Flow Integration", () => {
       expect(screen.getByTestId("send-sponsored-failure-retry")).toBeVisible();
       expect(screen.getByTestId("send-sponsored-failure-cancel")).toBeVisible();
       expect(screen.getByText(/Energy was not delivered/i)).toBeVisible();
+
+      expect(sponsoredEvents().at(-1)).toEqual({
+        event: "gas_sponsorship_send_failed",
+        properties: expect.objectContaining({
+          order_status: "submitted",
+          failure_kind: SPONSORED_FAILURE_KIND.DELIVERY_FAILED,
+          error_name: "EnergyDelegationTimeoutError",
+        }),
+      });
     });
 
     it("shows the short-balance copy when the on-chain balance check refuses the rent", async () => {

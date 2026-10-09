@@ -12,9 +12,11 @@ import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
 import { useFeature } from "@features/platform-feature-flags";
+import { track } from "@shared/analytics";
 import type { SponsoredSendActions } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestration";
 import { useSponsoredSendSession } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendSession";
 import { useSponsoredFeeQuote } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredFeeQuote";
+import { useSponsoredSendFunnelTracking } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendFunnelTracking";
 import {
   SPONSORED_PHASE,
   type SponsoredState,
@@ -27,6 +29,8 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useSendFlowData, useSendFlowActions } from "./SendFlowContext";
+import { useSendFlowTracking } from "./SendFlowTrackingContext";
+import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { formatSponsoredFeeAmounts } from "../utils/sponsoredFeeAmounts";
 import type { SponsoredFeeAmounts } from "../types";
 
@@ -132,6 +136,20 @@ export function SponsoredSendProvider({ children }: Readonly<{ children: ReactNo
     intentFailed,
     refresh: sponsoredState.phase === SPONSORED_PHASE.IDLE,
     counterValueCurrency,
+  });
+
+  const { flowSessionId } = useSendFlowTracking();
+  const sendFlowTrackingProperties = useSendFlowTrackingProperties();
+  useSponsoredSendFunnelTracking({
+    state: sponsoredState,
+    provider: seam?.feeOptionId ?? null,
+    quote,
+    standardFeeFiat,
+    sponsoredFeeFiat,
+    fiatCurrency: counterValueCurrency,
+    flowSessionId,
+    properties: sendFlowTrackingProperties,
+    track,
   });
 
   const sponsoredSelected = selectedFeeOptionId === sponsoredFeeOptionId;

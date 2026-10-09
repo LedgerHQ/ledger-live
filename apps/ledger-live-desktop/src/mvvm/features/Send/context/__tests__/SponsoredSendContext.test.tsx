@@ -13,6 +13,7 @@ import {
   createMockTronUsdtAccount,
 } from "../../screens/Recipient/__integrations__/__fixtures__/accounts";
 import { getPendingTokenSpent } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
+import { track } from "@shared/analytics";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { SponsoredSendProvider, useSponsoredSend } from "../SponsoredSendContext";
 
@@ -102,6 +103,18 @@ jest.mock("~/renderer/actions/accounts", () => ({
   updateAccountWithUpdater: (...args: unknown[]) => mockUpdateAccountWithUpdater(...args),
 }));
 
+const mockUseSponsoredSendFunnelTracking = jest.fn();
+jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendFunnelTracking", () => ({
+  useSponsoredSendFunnelTracking: (...args: unknown[]) =>
+    mockUseSponsoredSendFunnelTracking(...args),
+}));
+jest.mock("../SendFlowTrackingContext", () => ({
+  useSendFlowTracking: () => ({ flowSessionId: "session-1" }),
+}));
+jest.mock("../../hooks/useSendFlowTrackingProperties", () => ({
+  useSendFlowTrackingProperties: () => ({ flow: "send" }),
+}));
+
 const mockUpdateTransaction = jest.fn();
 jest.mock("../SendFlowContext", () => ({
   useSendFlowData: jest.fn(() => ({
@@ -149,6 +162,26 @@ describe("SponsoredSendContext", () => {
     expect(mockUseSponsoredFeeQuote).toHaveBeenCalledWith(
       expect.objectContaining({ mainAccount: mockAccount }),
     );
+  });
+
+  it("tracks the sponsored send funnel with the send flow's properties", async () => {
+    mockUseSponsoredFeeResult.quote = USDT_QUOTE;
+    mockUseSponsoredFeeResult.standardFeeFiat = new BigNumber(170);
+    mockUseSponsoredFeeResult.sponsoredFeeFiat = new BigNumber(113);
+    renderHook(() => useSponsoredSend(), { wrapper, initialState: flagOn });
+    await act(async () => {});
+
+    expect(mockUseSponsoredSendFunnelTracking).toHaveBeenLastCalledWith({
+      state: mockSponsoredState,
+      provider: "sponsored-fixture",
+      quote: USDT_QUOTE,
+      standardFeeFiat: new BigNumber(170),
+      sponsoredFeeFiat: new BigNumber(113),
+      fiatCurrency: expect.objectContaining({ ticker: "USD" }),
+      flowSessionId: "session-1",
+      properties: { flow: "send" },
+      track,
+    });
   });
 
   it.each([
