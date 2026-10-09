@@ -1,4 +1,4 @@
-import { useCheckQuery } from "@domain/api-ofac";
+import { useCheckOfacGeoBlockQuery } from "@domain/api-ofac";
 
 type CheckQueryResult = {
   data?: boolean;
@@ -7,8 +7,10 @@ type CheckQueryResult = {
 };
 
 export function mockOfacCheckQuery(
-  mockedUseCheckQuery: jest.MockedFunction<typeof useCheckQuery>,
+  mockedUseCheckQuery: jest.MockedFunction<typeof useCheckOfacGeoBlockQuery>,
   result: CheckQueryResult,
 ): void {
-  mockedUseCheckQuery.mockReturnValue(result as unknown as ReturnType<typeof useCheckQuery>);
+  mockedUseCheckQuery.mockReturnValue(
+    result as unknown as ReturnType<typeof useCheckOfacGeoBlockQuery>,
+  );
 }

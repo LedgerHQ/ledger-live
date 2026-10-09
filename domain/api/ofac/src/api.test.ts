@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { countervaluesApi, cvsApiExtra } from "@shared/api-services";
-import { ofacApi, useCheckQuery } from "./api";
+import { ofacApi, useCheckOfacGeoBlockQuery } from "./api";
 
 const CHECK_URL = "https://cvs.test/v3/markets";
 
@@ -31,8 +31,8 @@ describe("ofacApi configuration", () => {
   });
 
   it("exposes the check endpoint and its hook", () => {
-    expect(ofacApi.endpoints.check).toBeDefined();
-    expect(useCheckQuery).toBeDefined();
+    expect(ofacApi.endpoints.checkOfacGeoBlock).toBeDefined();
+    expect(useCheckOfacGeoBlockQuery).toBeDefined();
   });
 });
 
@@ -59,7 +59,7 @@ describe("ofacApi check", () => {
     );
     const store = makeStore();
 
-    await store.dispatch(ofacApi.endpoints.check.initiate());
+    await store.dispatch(ofacApi.endpoints.checkOfacGeoBlock.initiate());
 
     expect(seen?.url).toBe(CHECK_URL);
     expect(seen?.headers.get("Accept")).toBe("application/json");
@@ -69,7 +69,7 @@ describe("ofacApi check", () => {
     server.use(http.get(CHECK_URL, () => HttpResponse.json({})));
     const store = makeStore();
 
-    const result = await store.dispatch(ofacApi.endpoints.check.initiate());
+    const result = await store.dispatch(ofacApi.endpoints.checkOfacGeoBlock.initiate());
 
     expect(result.data).toBe(false);
     expect(result.error).toBeUndefined();
@@ -88,7 +88,7 @@ describe("ofacApi check", () => {
     );
     const store = makeStore();
 
-    const result = await store.dispatch(ofacApi.endpoints.check.initiate());
+    const result = await store.dispatch(ofacApi.endpoints.checkOfacGeoBlock.initiate());
 
     expect(result.data).toBe(true);
     expect(result.error).toBeUndefined();
@@ -104,7 +104,7 @@ describe("ofacApi check", () => {
     );
     const store = makeStore();
 
-    const result = await store.dispatch(ofacApi.endpoints.check.initiate());
+    const result = await store.dispatch(ofacApi.endpoints.checkOfacGeoBlock.initiate());
 
     expect(result.data).toBeUndefined();
     expect(result.error).toBeDefined();
@@ -121,7 +121,7 @@ describe("ofacApi check", () => {
     );
     const store = makeStore();
 
-    const result = await store.dispatch(ofacApi.endpoints.check.initiate());
+    const result = await store.dispatch(ofacApi.endpoints.checkOfacGeoBlock.initiate());
 
     expect(result.data).toBeUndefined();
     expect(result.error).toBeDefined();
