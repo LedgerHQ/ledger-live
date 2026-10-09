@@ -111,9 +111,22 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       });
       setTrackingSource(page);
 
-      navigateToSwap(ledgerCurrency);
+      navigateToSwap(ledgerCurrency, {
+        currencyIds: currency?.ledgerIds.filter(
+          id => currenciesForSwapAllSet.has(id) && !deactivatedCurrencyIds.has(id),
+        ),
+      });
     },
-    [getLedgerCurrency, currency?.ticker, page, swapDefaultTrack, navigateToSwap],
+    [
+      getLedgerCurrency,
+      currency?.ticker,
+      currency?.ledgerIds,
+      page,
+      swapDefaultTrack,
+      navigateToSwap,
+      currenciesForSwapAllSet,
+      deactivatedCurrencyIds,
+    ],
   );
 
   const onStake = useCallback(

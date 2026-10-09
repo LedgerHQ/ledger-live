@@ -128,7 +128,26 @@ describe("useMarketActions", () => {
     expect(mockEvent.preventDefault).toHaveBeenCalled();
     expect(mockEvent.stopPropagation).toHaveBeenCalled();
 
-    expect(mockNavigateToSwap).toHaveBeenCalledWith(expect.objectContaining({ id: "bitcoin" }));
+    expect(mockNavigateToSwap).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "bitcoin" }),
+      expect.objectContaining({ currencyIds: expect.any(Array) }),
+    );
+  });
+
+  // Only networks swap supports and that are not deactivated are offered for selection.
+  it("onSwap hands over the swappable, active networks of the asset", async () => {
+    const { result } = renderMarketActionsHook({
+      ...mockCurrency,
+      ledgerIds: ["bitcoin", "ethereum", "solana", "arbitrum"],
+    });
+
+    await act(async () => {
+      await result.current.onSwap(mockEvent);
+    });
+
+    expect(mockNavigateToSwap).toHaveBeenCalledWith(expect.anything(), {
+      currencyIds: ["bitcoin", "ethereum"],
+    });
   });
 
   it("onSwap should return early if ledgerCurrency.id is falsy", async () => {
