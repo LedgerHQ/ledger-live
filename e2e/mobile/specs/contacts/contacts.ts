@@ -18,7 +18,6 @@ import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/
 import { device } from "detox";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNotNanoS, isIos, launchApp } from "@e2e/helpers/commonHelpers";
-import { $KnownFailure } from "@e2e/helpers/knownFailure";
 import { MockServerDevicePage } from "@e2e/page/mockServerDevice.page";
 import {
   LEDGER_SYNC_FEATURE_FLAGS,
@@ -282,8 +281,6 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    // The rename lands, but the device intent sheet never closes on iOS.
-    if (isIos()) $KnownFailure("LIVE-37909");
     it("Register an address and rename the contact on the device", async () => {
       await app.mainNavigation.openMyWallet();
       await app.myWallet.openContacts();
