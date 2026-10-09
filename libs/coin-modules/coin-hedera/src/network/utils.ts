@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { AccountId, TransactionId } from "@hashgraph/sdk";
+import { AccountId, TransactionId } from "@hiero-ledger/sdk";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";

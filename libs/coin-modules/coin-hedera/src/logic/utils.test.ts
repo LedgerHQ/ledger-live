@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { Transaction as SDKTransaction, TransactionId } from "@hashgraph/sdk";
+import { Transaction as SDKTransaction, TransactionId } from "@hiero-ledger/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";

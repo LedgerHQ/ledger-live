@@ -1,5 +1,5 @@
-import type { Transaction as HederaTransaction, TransactionResponse } from "@hashgraph/sdk";
-import { Client } from "@hashgraph/sdk";
+import type { Transaction as HederaTransaction, TransactionResponse } from "@hiero-ledger/sdk";
+import { Client } from "@hiero-ledger/sdk";
 import { resolveConfig } from "../logic/utils";
 import type { HederaCoinConfig } from "../types";
 
