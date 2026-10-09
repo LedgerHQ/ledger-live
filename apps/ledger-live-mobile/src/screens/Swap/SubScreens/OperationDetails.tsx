@@ -6,10 +6,14 @@ import { useSelector } from "~/context/hooks";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { ScrollView, StyleSheet, View, Linking, TouchableOpacity } from "react-native";
-import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
+import {
+  getDefaultExplorerView,
+  getTransactionExplorer as getDefaultTransactionExplorer,
+} from "@ledgerhq/live-common/explorers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import byFamiliesOperationDetails from "~/generated/operationDetails";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import LText from "~/components/LText";
 import SectionSeparator from "~/components/SectionSeparator";
@@ -76,11 +80,19 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
           return `https://web3.okx.com/fi/explorer/${fromCurrency.id}/tx/${operation.hash}`;
         }
       // fallthrough to default if fromCurrency or fromCurrency.id is undefined
-      default:
-        return (
-          fromCryptoCurrency &&
-          getTransactionExplorer(getDefaultExplorerView(fromCryptoCurrency), operation.hash)
-        );
+      default: {
+        if (!fromCryptoCurrency) return undefined;
+        const specific =
+          byFamiliesOperationDetails[
+            fromCryptoCurrency.family as keyof typeof byFamiliesOperationDetails
+          ];
+        const getTransactionExplorer =
+          specific && "getTransactionExplorer" in specific && specific.getTransactionExplorer;
+        const explorerView = getDefaultExplorerView(fromCryptoCurrency);
+        return getTransactionExplorer
+          ? getTransactionExplorer(explorerView, operation)
+          : getDefaultTransactionExplorer(explorerView, operation.hash);
+      }
     }
   };
 
