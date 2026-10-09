@@ -4,7 +4,7 @@
 > **Status: UNSTABLE** — Shipped ahead of its hosts; the props contract will move with them.
 
 DevTool for the shared device onboarding flow of
-[`@ledgerhq/device-onboarding`](../../libs/device-onboarding/README.md). It is how that flow is run
+[`@features/platform-device-onboarding`](../../features/platform/device-onboarding/README.md). It is how that flow is run
 against a real device before any onboarding screen exists, and the only consumer of it until the
 screens land.
 
@@ -63,7 +63,7 @@ another tool. See [Tool boundaries](../README.md#tool-boundaries) for the full r
 
 What this package does import:
 
-- `@ledgerhq/device-onboarding`, type-only — the library the tool exercises, app-agnostic and
+- `@features/platform-device-onboarding`, type-only — the library the tool exercises, app-agnostic and
   carrying the event and exit reason types that make the props contract exact
 - `@ledgerhq/lumen-ui-react` and `@ledgerhq/lumen-ui-rnative` — the views
 

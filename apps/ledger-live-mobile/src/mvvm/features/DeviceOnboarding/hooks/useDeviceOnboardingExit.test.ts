@@ -1,5 +1,5 @@
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
-import type { DeviceOnboardingOutput } from "@ledgerhq/device-onboarding";
+import type { DeviceOnboardingOutput } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { StackActions } from "@react-navigation/native";

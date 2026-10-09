@@ -1,4 +1,4 @@
-import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
+import type { OnboardingEvent } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor } from "@tests/test-renderer";

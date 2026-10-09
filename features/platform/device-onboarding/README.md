@@ -1,4 +1,4 @@
-# @ledgerhq/device-onboarding
+# @features/platform-device-onboarding
 
 > [!CAUTION]
 > **Status: UNSTABLE** — The shared onboarding API is under active development.
@@ -69,15 +69,15 @@ open. Other reasons: `legacyFallback`, `resumeFirmwareUpdate`, `userQuit`.
 
 ## Usage context
 
-Consumed by `apps/ledger-live-desktop` and `apps/ledger-live-mobile`, which supply the port and
-render the screens. The package imports neither app, nor `live-dmk-desktop`, `live-dmk-mobile`, or
+Consumed by `apps/ledger-live-mobile` and `@devtools/device-onboarding`, which supply the port
+and render the screens. The package imports neither app, nor `live-dmk-desktop`, `live-dmk-mobile`, or
 any legacy onboarding flow.
 
 ## Validation
 
 ```sh
-pnpm nx run @ledgerhq/device-onboarding:build
-pnpm nx run @ledgerhq/device-onboarding:typecheck
-pnpm nx run @ledgerhq/device-onboarding:test
-pnpm nx run @ledgerhq/device-onboarding:lint
+pnpm nx run @features/platform-device-onboarding:build
+pnpm nx run @features/platform-device-onboarding:typecheck
+pnpm nx run @features/platform-device-onboarding:test
+pnpm nx run @features/platform-device-onboarding:lint
 ```

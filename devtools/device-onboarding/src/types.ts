@@ -2,7 +2,7 @@ import type {
   DeviceOnboardingExitReason,
   OnboardingEvent,
   OnboardingStep,
-} from "@ledgerhq/device-onboarding";
+} from "@features/platform-device-onboarding";
 
 export type DeviceOnboardingStatus = "idle" | "connecting" | "running" | "exited";
 

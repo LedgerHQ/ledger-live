@@ -6,7 +6,7 @@ import {
   type DeviceOnboardingOutput,
   type OnboardingEvent,
   type SessionEvent,
-} from "@ledgerhq/device-onboarding";
+} from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   connectDevice,

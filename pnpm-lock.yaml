@@ -1108,6 +1108,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../../features/platform/device-intent
+      '@features/platform-device-onboarding':
+        specifier: workspace:^
+        version: link:../../features/platform/device-onboarding
       '@features/platform-env':
         specifier: workspace:*
         version: link:../../features/platform/env
@@ -1186,9 +1189,6 @@ importers:
       '@ledgerhq/device-mockserver-react':
         specifier: 'catalog:'
         version: 0.1.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(@ledgerhq/lumen-ui-react@0.1.61(15ec3592125c523c20d865970939e6b0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@ledgerhq/device-onboarding':
-        specifier: workspace:^
-        version: link:../../libs/device-onboarding
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.1(@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -1982,6 +1982,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../../features/platform/device-intent
+      '@features/platform-device-onboarding':
+        specifier: workspace:^
+        version: link:../../features/platform/device-onboarding
       '@features/platform-env':
         specifier: workspace:*
         version: link:../../features/platform/env
@@ -2063,9 +2066,6 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
-      '@ledgerhq/device-onboarding':
-        specifier: workspace:^
-        version: link:../../libs/device-onboarding
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.1(@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -3385,12 +3385,12 @@ importers:
       '@features/platform-card':
         specifier: workspace:*
         version: link:../../features/platform/card
+      '@features/platform-device-onboarding':
+        specifier: workspace:*
+        version: link:../../features/platform/device-onboarding
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
-      '@ledgerhq/device-onboarding':
-        specifier: workspace:*
-        version: link:../../libs/device-onboarding
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../shared/api-services
@@ -3573,9 +3573,9 @@ importers:
 
   devtools/device-onboarding:
     dependencies:
-      '@ledgerhq/device-onboarding':
+      '@features/platform-device-onboarding':
         specifier: workspace:*
-        version: link:../../libs/device-onboarding
+        version: link:../../features/platform/device-onboarding
     devDependencies:
       '@babel/plugin-transform-export-namespace-from':
         specifier: 7.27.1
@@ -9324,6 +9324,52 @@ importers:
         specifier: 'catalog:'
         version: 5.19.2
 
+  features/platform/device-onboarding:
+    dependencies:
+      semver:
+        specifier: 'catalog:'
+        version: 7.7.3
+      xstate:
+        specifier: 'catalog:'
+        version: 5.19.2
+    devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/semver':
+        specifier: 'catalog:'
+        version: 7.7.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/platform/env:
     dependencies:
       '@shared/env':
@@ -13835,52 +13881,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.82.0
-
-  libs/device-onboarding:
-    dependencies:
-      semver:
-        specifier: 'catalog:'
-        version: 7.7.3
-      xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
-    devDependencies:
-      '@ledgerhq/device-management-kit':
-        specifier: 'catalog:'
-        version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11(@swc/helpers@0.5.23)
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.7.1
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      oxfmt:
-        specifier: 'catalog:'
-        version: 0.67.0
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.82.0
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
 
   libs/device-react:
     dependencies:

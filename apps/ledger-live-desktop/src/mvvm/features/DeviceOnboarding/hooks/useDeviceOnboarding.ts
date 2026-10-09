@@ -10,7 +10,7 @@ import {
   stateValueToString,
   type DeviceOnboardingOutput,
   type DeviceOnboardingSession,
-} from "@ledgerhq/device-onboarding";
+} from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { createDeviceOnboardingPorts } from "../utils/ports";

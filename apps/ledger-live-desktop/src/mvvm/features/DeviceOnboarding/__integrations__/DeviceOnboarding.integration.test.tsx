@@ -3,7 +3,7 @@ import {
   DeviceModelId as DmkDeviceModelId,
   DeviceStatus,
 } from "@ledgerhq/device-management-kit";
-import { OnboardingStep, type DeviceOnboardingState } from "@ledgerhq/device-onboarding";
+import { OnboardingStep, type DeviceOnboardingState } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";

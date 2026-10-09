@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
+import type { OnboardingEvent } from "@features/platform-device-onboarding";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
