@@ -346,7 +346,7 @@ describe("the genuine check", () => {
       genuineCheck: [secureConnectionPrompt],
     });
 
-    expect(actor.getSnapshot().context.secureConnectionRequested).toBe(true);
+    expect(awaitsApproval(actor)).toBe(true);
     expect(stateOf(actor)).toBe("genuineCheck");
   });
 
@@ -359,7 +359,7 @@ describe("the genuine check", () => {
     actor.send({ type: "SECURE_CONNECTION_ALLOWED" });
     await settle();
 
-    expect(actor.getSnapshot().context.secureConnectionRequested).toBe(false);
+    expect(awaitsApproval(actor)).toBe(false);
     expect(stateOf(actor)).toBe("genuineCheck");
   });
 
@@ -374,7 +374,7 @@ describe("the genuine check", () => {
       actor.send({ type });
       await settle();
 
-      expect(actor.getSnapshot().context.secureConnectionRequested).toBe(false);
+      expect(awaitsApproval(actor)).toBe(false);
     },
   );
 
@@ -1424,10 +1424,17 @@ function expectChecksPassed(actor: OnboardingActor): void {
   expect(stateOf(actor)).toBe("waiting");
 }
 
+function awaitsApproval(actor: OnboardingActor): boolean {
+  return actor.getSnapshot().matches({ checks: { genuineCheck: "awaitingApproval" } });
+}
+
 function stateOf(actor: OnboardingActor): string {
   const { value } = actor.getSnapshot();
 
-  return typeof value === "string" ? value : String(Object.values(value)[0]);
+  if (typeof value === "string") return value;
+  const child = Object.values(value)[0];
+
+  return typeof child === "string" ? child : Object.keys(child)[0];
 }
 
 function exitOf(actor: OnboardingActor) {

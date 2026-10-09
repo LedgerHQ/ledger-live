@@ -242,10 +242,11 @@ function overrideEvent(
   genuine: GenuineOverride,
   firmware: FirmwareOverride,
 ): OnboardingEvent | null {
-  if (state === "checks.genuineCheck" && genuine === GenuineOverride.Genuine) {
+  const inGenuineCheck = state?.startsWith("checks.genuineCheck") ?? false;
+  if (inGenuineCheck && genuine === GenuineOverride.Genuine) {
     return { type: "GENUINE_CHECK_PASSED", output: { isGenuine: true } };
   }
-  if (state === "checks.genuineCheck" && genuine === GenuineOverride.Fail) {
+  if (inGenuineCheck && genuine === GenuineOverride.Fail) {
     return { type: "DEVICE_NOT_GENUINE", output: { isGenuine: false } };
   }
   if (state === "checks.firmwareCheck" && firmware === FirmwareOverride.UpToDate) {

@@ -207,7 +207,6 @@ export type DeviceOnboardingContext = DeviceOnboardingInput & {
   isOnboarded: boolean;
   onboardedOnEntry: boolean | null;
   genuineVerdict: GenuineVerdict | null;
-  secureConnectionRequested: boolean;
   lastGenuineFailure: GenuineFailureReport | null;
   onEarlyCheckScreen: boolean;
   firmwareChecked: boolean;

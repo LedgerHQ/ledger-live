@@ -22,7 +22,6 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     isOnboarded: false,
     onboardedOnEntry: null,
     genuineVerdict: null,
-    secureConnectionRequested: false,
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
     firmwareChecked: false,
@@ -96,8 +95,6 @@ export const contextActions = {
   rememberStart: update({ hasStarted: true }),
   enterEarlyCheckScreen: update({ onEarlyCheckScreen: true }),
   leaveEarlyCheckScreen: update({ onEarlyCheckScreen: false }),
-  rememberSecureConnectionRequested: update({ secureConnectionRequested: true }),
-  forgetSecureConnectionRequested: update({ secureConnectionRequested: false }),
   rememberGenuineChecked: update(({ context }) => ({
     genuineVerdict: { sessionId: context.sessionId, isGenuine: true },
     lastGenuineFailure: null,

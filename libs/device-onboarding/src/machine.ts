@@ -187,10 +187,13 @@ export const deviceOnboardingMachine = setup({
               sessionId: context.sessionId,
             }),
           },
-          exit: "forgetSecureConnectionRequested",
+          // The check keeps running while the device asks to allow the secure connection.
+          initial: "running",
+          states: {
+            running: { on: { ALLOW_SECURE_CONNECTION_REQUESTED: "awaitingApproval" } },
+            awaitingApproval: { on: { SECURE_CONNECTION_ALLOWED: "running" } },
+          },
           on: {
-            ALLOW_SECURE_CONNECTION_REQUESTED: { actions: "rememberSecureConnectionRequested" },
-            SECURE_CONNECTION_ALLOWED: { actions: "forgetSecureConnectionRequested" },
             GENUINE_CHECK_PASSED: { target: "checksIdle", actions: "rememberGenuineChecked" },
             GENUINE_CHECK_REFUSED: { target: "genuineFailed", actions: "rememberGenuineFailure" },
             GENUINE_CHECK_FAILED: { target: "genuineFailed", actions: "rememberGenuineFailure" },

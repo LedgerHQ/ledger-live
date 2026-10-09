@@ -474,7 +474,7 @@ describe("useDeviceOnboardingViewModel", () => {
     act(() => pickOverride(result, "genuine", GenuineOverride.Genuine));
     expect(send).not.toHaveBeenCalled();
 
-    rerender("checks.genuineCheck");
+    rerender("checks.genuineCheck.running");
     expect(send).toHaveBeenCalledWith({
       type: "GENUINE_CHECK_PASSED",
       output: { isGenuine: true },
