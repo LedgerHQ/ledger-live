@@ -157,6 +157,7 @@ export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetu
   isOnboarded: boolean;
   onboardedOnEntry: boolean | null;
   genuineVerdict: GenuineVerdict | null;
+  genuineCheckedThisVisit: boolean;
   lastGenuineFailure: GenuineFailureReport | null;
   onEarlyCheckScreen: boolean;
   checksPaused: boolean;

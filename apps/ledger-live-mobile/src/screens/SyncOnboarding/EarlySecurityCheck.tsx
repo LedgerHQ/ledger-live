@@ -66,17 +66,8 @@ export type EarlySecurityCheckProps = SyncOnboardingScreenProps & {
    * Called when the device is not in a correct state anymore, for ex when a firmware update has completed and the device probably restarted
    */
   notifyEarlySecurityCheckShouldReset: (currentState: {
-    isAlreadyGenuine: boolean;
     isPreviousUpdateCancelled: boolean;
   }) => void;
-
-  /**
-   * To tell the ESC that there is no need to do a genuine check (optional)
-   *
-   * This will bypass the (idle and) genuine check step and go directly to the firmware update check.
-   * Only useful when the EarlySecurityCheck component is mounting.
-   */
-  isAlreadyGenuine?: boolean;
 
   /**
    * To tell the ESC that there is no need to re display the FW update drawer (optional)
@@ -97,7 +88,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   device,
   notifyOnboardingEarlyCheckEnded,
   notifyEarlySecurityCheckShouldReset,
-  isAlreadyGenuine = false,
   isPreviousUpdateCancelled = false,
   onCancelOnboarding,
   navigation,
@@ -105,14 +95,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   const deviceModelId = device.modelId;
   const productName = getDeviceModel(deviceModelId).productName || deviceModelId;
 
-  // If the device is genuine, puts the current step to `genuine-check` and it will automatically go to next step
-  // as the `genuineCheckStatus` is also set as `completed`.
-  const [currentStep, setCurrentStep] = useState<Step>(isAlreadyGenuine ? "genuine-check" : "idle");
+  const [currentStep, setCurrentStep] = useState<Step>("idle");
 
   // Genuine check status state from which will be derived the displayed UI and if the genuine check hook can be started / is ongoing etc.
-  const [genuineCheckStatus, setGenuineCheckStatus] = useState<GenuineCheckStatus>(
-    isAlreadyGenuine ? "completed" : "unchecked",
-  );
+  const [genuineCheckStatus, setGenuineCheckStatus] = useState<GenuineCheckStatus>("unchecked");
 
   const [firmwareUpdateCheckStatus, setFirmwareUpdateCheckStatus] =
     useState<FirmwareUpdateCheckStatus>("unchecked");
@@ -203,7 +189,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       // - the fw update was successful
       // - the user returned after an error during the fw update
       notifyEarlySecurityCheckShouldReset({
-        isAlreadyGenuine: true,
         isPreviousUpdateCancelled: updateState !== "completed",
       });
     },

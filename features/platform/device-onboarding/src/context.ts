@@ -23,6 +23,7 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     isOnboarded: false,
     onboardedOnEntry: null,
     genuineVerdict: null,
+    genuineCheckedThisVisit: false,
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
     checksPaused: false,
@@ -93,10 +94,12 @@ export const contextActions = {
     };
   }),
   rememberStart: update({ hasStarted: true }),
+  beginChecks: update({ genuineCheckedThisVisit: false }),
   enterEarlyCheckScreen: update({ onEarlyCheckScreen: true }),
   leaveEarlyCheckScreen: update({ onEarlyCheckScreen: false }),
   rememberGenuineChecked: update(({ context }) => ({
     genuineVerdict: { sessionId: context.sessionId, isGenuine: true },
+    genuineCheckedThisVisit: true,
     lastGenuineFailure: null,
   })),
   rememberGenuineFailure: update(({ context, event }) => {

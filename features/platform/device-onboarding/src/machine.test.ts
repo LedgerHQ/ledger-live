@@ -220,14 +220,21 @@ describe("the on-device waiting screen", () => {
     expectChecksPassed(actor);
   });
 
-  it("is not dismissed twice when the device locks after the checks passed", async () => {
+  it("shows the early check again after a lock when the device was already genuine", async () => {
     const { actor, fake } = await start({ osVersion: [os(unseeded)], ...passingChecks });
 
     actor.send({ type: "LOCKED" });
     actor.send({ type: "UNLOCKED" });
     await settle();
 
-    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
+    expect(fake.genuineCheckRuns()).toBe(2);
+    expect(fake.earlyCheckToggles()).toEqual([
+      EarlyCheckToggle.Enter,
+      EarlyCheckToggle.Exit,
+      EarlyCheckToggle.Enter,
+      EarlyCheckToggle.Exit,
+    ]);
+    expectChecksPassed(actor);
   });
 
   it("is still dismissed when the device locked halfway through the checks", async () => {
@@ -243,7 +250,11 @@ describe("the on-device waiting screen", () => {
     actor.send({ type: "USER_DECLINE" });
     await settle();
 
-    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
+    expect(fake.earlyCheckToggles()).toEqual([
+      EarlyCheckToggle.Enter,
+      EarlyCheckToggle.Enter,
+      EarlyCheckToggle.Exit,
+    ]);
     expectChecksPassed(actor);
   });
 
@@ -711,7 +722,7 @@ describe("the firmware handover", () => {
     await settle();
 
     expectChecksPassed(actor);
-    expect(fake.genuineCheckRuns()).toBe(1);
+    expect(fake.genuineCheckRuns()).toBe(2);
   });
 
   it("cannot be left on the onboarding cross while the app is flashing the device", async () => {
@@ -725,7 +736,7 @@ describe("the firmware handover", () => {
     expect(stateOf(actor)).toBe("firmwareUpdateDelegated");
   });
 
-  it("keeps the attestation across the reboot of the update it ran itself", async () => {
+  it("checks again across the reboot of the update it ran itself", async () => {
     const { actor, fake } = await start(
       handoverScript([os(unseeded)], {
         genuineCheck: [genuine, genuine],
@@ -735,7 +746,7 @@ describe("the firmware handover", () => {
 
     await handOverAndReturn(actor, "session-after-update");
 
-    expect(fake.genuineCheckRuns()).toBe(1);
+    expect(fake.genuineCheckRuns()).toBe(2);
     expectChecksPassed(actor);
   });
 
@@ -746,18 +757,22 @@ describe("the firmware handover", () => {
 
     await handOverAndReturn(actor);
 
-    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter, EarlyCheckToggle.Exit]);
+    expect(fake.earlyCheckToggles()).toEqual([
+      EarlyCheckToggle.Enter,
+      EarlyCheckToggle.Enter,
+      EarlyCheckToggle.Exit,
+    ]);
     expectChecksPassed(actor);
   });
 
-  it("does not check a device twice for being genuine on the session it already attested", async () => {
+  it("checks a device again after the update, even though it was already genuine", async () => {
     const { actor, fake } = await start(
       handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
     );
 
     await handOverAndReturn(actor);
 
-    expect(fake.genuineCheckRuns()).toBe(1);
+    expect(fake.genuineCheckRuns()).toBe(2);
     expectChecksPassed(actor);
   });
 });
