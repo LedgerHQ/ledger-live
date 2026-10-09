@@ -16,6 +16,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@features/platform-wallet-sync": "workspace:^",
     "@ledgerhq/coin-zcash": "workspace:^",

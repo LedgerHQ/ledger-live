@@ -45,8 +45,8 @@ export function ContactsView({
         style={{ marginHorizontal: MARGIN_HORIZONTAL }}
       >
         <PayTile label={payLabel} onPress={onPay} />
-        {contacts.map((contact, index) => (
-          <ContactTile key={contact.id} contact={contact} index={index} onPress={onContactPress} />
+        {contacts.map(contact => (
+          <ContactTile key={contact.id} contact={contact} onPress={onContactPress} />
         ))}
       </ScrollView>
     </Box>

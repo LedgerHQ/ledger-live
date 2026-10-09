@@ -7,7 +7,6 @@ import {
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import type { Contact } from "@domain/entity-contact";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { importContacts } from "@e2e/bridge/server";
 import { FF_LWM_CONTACTS_ENABLED, FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
@@ -78,8 +77,7 @@ async function initApp(
 
   invariant(retrievalAddress, "Retrieval account address is not set");
   const contacts = buildContacts(transaction, retrievalAddress);
-  const seeded = buildSeededContacts([contacts.sendViaContact, contacts.retrieval]) as Contact[];
-  await importContacts(seeded);
+  await importContacts(buildSeededContacts([contacts.sendViaContact, contacts.retrieval]));
 
   return contacts;
 }

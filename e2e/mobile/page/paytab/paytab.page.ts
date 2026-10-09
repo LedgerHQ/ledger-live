@@ -19,6 +19,7 @@ export default class PayTabPage {
   requestScreenId = "pay-request-receive";
   requestCloseId = "pay-request-receive-close";
   payTileId = "pay-contacts-pay-tile";
+  contactTile = (contactId: string) => getElementById(`pay-contacts-tile-${contactId}`);
   successStepId = "pay-success-step";
   successTitleId = "pay-success-title";
   successCloseId = "pay-success-close";
@@ -82,6 +83,7 @@ export default class PayTabPage {
 
   @Step("Expect the bank transfer intro with {{{0}}}")
   async expectBankTransferIntro(createAccountLabel: string) {
+    await waitForFullyVisibleById(this.bankTransferContentId);
     await detoxExpect(
       getElementByIdWithDescendantTexts(this.bankTransferCreateAccountId, createAccountLabel),
     ).toBeVisible();
@@ -143,6 +145,12 @@ export default class PayTabPage {
   @Step("Open a new payment")
   async openNewPayment() {
     await tapById(this.payTileId);
+  }
+
+  @Step("Select contact {{{0}}}")
+  async selectContact(contactId: string) {
+    await detoxExpect(this.contactTile(contactId)).toBeVisible();
+    await tapByElement(this.contactTile(contactId));
   }
 
   @Step("Expect the Pay success screen to read {{{0}}}")

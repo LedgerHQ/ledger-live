@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { ContactSchema, type Contact } from "@domain/entity-contact";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Addresses } from "./enum/Addresses";
 
@@ -44,16 +45,18 @@ export type ContactSeed = Readonly<{
 const NOT_A_PROOF = "e2e-seeded-contact";
 
 /** Contacts shaped for the `contacts/setContacts` reducer. */
-export function buildSeededContacts(seeds: readonly ContactSeed[]) {
-  return seeds.map(seed => ({
-    ...seed,
-    isMe: false,
-    deviceCredentials: { groupHandle: NOT_A_PROOF, hmacProof: NOT_A_PROOF },
-    addresses: seed.addresses.map(address => ({
-      ...address,
-      device: { blockchainFamily: "e2e", chainId: "0", hmacRest: NOT_A_PROOF },
-    })),
-  }));
+export function buildSeededContacts(seeds: readonly ContactSeed[]): Contact[] {
+  return seeds.map(seed =>
+    ContactSchema.parse({
+      ...seed,
+      isMe: false,
+      deviceCredentials: { groupHandle: NOT_A_PROOF, hmacProof: NOT_A_PROOF },
+      addresses: seed.addresses.map(address => ({
+        ...address,
+        device: { blockchainFamily: "e2e", chainId: "0", hmacRest: NOT_A_PROOF },
+      })),
+    }),
+  );
 }
 
 /** Ten distinct names in storage order, not UI order — the list must sort them alphabetically. */
