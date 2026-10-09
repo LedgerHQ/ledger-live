@@ -23,8 +23,16 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
 export default class SwapLiveAppPage {
-  private static readonly PROVIDER_NAME_PREFIX = "compact-quote-card-provider-name-";
-  private static readonly PROVIDER_NAME_CSS = `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}']`;
+  // swap-live-app's own `ptxLumenQuoteCard` flag picks the quote card markup: compact on stg,
+  // lumen can be served on prod (PRODUCTION=true runs). Drop the unused prefix (and the lumen CTA
+  // label in checkQuoteCardCtaLabel) once the flag is settled.
+  private static readonly PROVIDER_NAME_PREFIXES = [
+    "compact-quote-card-provider-name-",
+    "lumen-quote-card-provider-name-",
+  ];
+  private static readonly PROVIDER_NAME_CSS = SwapLiveAppPage.PROVIDER_NAME_PREFIXES.map(
+    prefix => `[data-testid^='${prefix}']`,
+  ).join(", ");
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -146,19 +154,28 @@ export default class SwapLiveAppPage {
     const providersList = (await this.getProviderList()).filter(
       name => name !== SwapProvider.LIFI.uiName,
     );
-    const prefix = SwapLiveAppPage.PROVIDER_NAME_PREFIX;
 
     for (const providerName of providersList) {
       const provider = SwapProvider.getByUiName(providerName);
       if (provider && !provider.kyc && !provider.app) {
-        const providerTestId = `${prefix}${provider.name}`;
-        await waitWebElementByTestId(providerTestId);
-        await tapWebElementByTestId(providerTestId);
+        await this.tapProviderName(provider.name);
 
         return provider;
       }
     }
     throw new Error("No single-app exchange providers found");
+  }
+
+  // Prefix match: the testid ends with the quote's provider id, which can extend the e2e name
+  // (1inch renders as `oneinchfusion` when its Fusion quote wins).
+  private async tapProviderName(providerName: string) {
+    const providerNameElement = getWebElementByCssSelector(
+      SwapLiveAppPage.PROVIDER_NAME_PREFIXES.map(
+        prefix => `[data-testid^='${prefix}${providerName}']`,
+      ).join(", "),
+    );
+    await waitWebElement(providerNameElement);
+    await tapWebElementByElement(providerNameElement);
   }
 
   @Step("Wait for quotes countdown to be stable")
@@ -324,7 +341,8 @@ export default class SwapLiveAppPage {
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
     const ctaVerb = approvalRequired ? "Approve spending" : "Swap";
-    jestExpect(actualButtonText).toBe(`${ctaVerb} with ${provider}`);
+    const lumenCtaLabel = approvalRequired ? "Continue" : "Review";
+    jestExpect([`${ctaVerb} with ${provider}`, lumenCtaLabel]).toContain(actualButtonText);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -547,9 +565,7 @@ export default class SwapLiveAppPage {
     if (!providerName) {
       throw new Error(`Unknown provider UI name: "${provider}"`);
     }
-    const providerTestId = `${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${providerName}`;
-    await waitWebElementByTestId(providerTestId);
-    await tapWebElementByTestId(providerTestId);
+    await this.tapProviderName(providerName);
   }
 
   @Step("Go to {{{0}}} live app")
