@@ -18,7 +18,7 @@ import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
-import { getAccountShape } from "./synchronization";
+import { getAccountShape, shouldMergeOps } from "./synchronization";
 import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext<StacksSigner>): CurrencyBridge {
@@ -34,7 +34,7 @@ function buildCurrencyBridge(signerContext: SignerContext<StacksSigner>): Curren
   };
 }
 
-const sync = makeSync({ getAccountShape });
+const sync = makeSync({ getAccountShape, shouldMergeOps });
 
 function buildAccountBridge(
   signerContext: SignerContext<StacksSigner>,

@@ -291,6 +291,9 @@ export const getAccountShape: GetAccountShape<StacksAccount> = async info => {
       ...tokenAccounts.flatMap(t => sip010OpToParentOp(t.operations, accountId)),
     ].sort((a, b) => b.date.getTime() - a.date.getTime()),
     blockHeight: blockHeight.chain_tip.block_height,
+    // Only the generic bridge sets a sync hash: clearing it marks the history as this bridge's again,
+    // and makes the generic bridge rebuild it from scratch should the account switch back.
+    syncHash: undefined,
     stakingPositions:
       stakes !== undefined
         ? stakes.map(toStakingPositionOnAccount)
@@ -300,4 +303,11 @@ export const getAccountShape: GetAccountShape<StacksAccount> = async info => {
   return result;
 };
 
-export const sync = makeSync({ getAccountShape });
+/**
+ * An account last synced by the generic bridge (the only one that sets a sync hash) holds operations
+ * this bridge doesn't produce (a FEES parent for a token send, for one), which a merge would keep next
+ * to their legacy counterparts. Every sync fetches the full history, so it is rebuilt instead.
+ */
+export const shouldMergeOps = async (account: Account): Promise<boolean> => !account.syncHash;
+
+export const sync = makeSync({ getAccountShape, shouldMergeOps });

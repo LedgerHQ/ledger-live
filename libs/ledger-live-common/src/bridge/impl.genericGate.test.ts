@@ -1,9 +1,10 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { nearConfig } from "../families/near/config";
+import { stacksConfig } from "../families/stacks/config";
 import { coinModuleLoaders } from "../coin-modules/loaders";
 import { registerCoinModules, resetCoinModulesForTests } from "../coin-modules/registry";
-import { clearBridgeCache, getCurrencyBridge } from ".";
+import { clearBridgeCache, getAccountBridgeByFamily, getCurrencyBridge } from ".";
 
 const NEAR = getCryptoCurrencyById("near");
 const KEY = "config_near_generic_bridge";
@@ -60,5 +61,51 @@ describe("generic coin-framework routing gate", () => {
     const bridge = await getCurrencyBridge(NEAR);
 
     expect("preload" in bridge).toBe(true);
+  });
+});
+
+// Stacks' legacy currency bridge has no preload, so the account bridge tells the routes apart: only
+// the generic one carries the token sub-account raw hooks.
+describe("generic coin-framework routing gate (Stacks incident recovery)", () => {
+  const STACKS_KEY = "config_stacks_generic_bridge";
+  const setStacksKey = (value: boolean | undefined) => {
+    LiveConfig.setOverride(STACKS_KEY, value);
+    clearBridgeCache("stacks");
+  };
+  const isGeneric = async () =>
+    "assignFromTokenAccountRaw" in (await getAccountBridgeByFamily("stacks"));
+
+  beforeAll(() => {
+    LiveConfig.setConfig(stacksConfig);
+    resetCoinModulesForTests();
+    registerCoinModules(coinModuleLoaders.filter(l => l.family === "stacks"));
+  });
+
+  afterAll(() => {
+    LiveConfig.setOverride(STACKS_KEY, undefined);
+    resetCoinModulesForTests();
+    clearBridgeCache();
+  });
+
+  test("ships defaulting to the generic bridge, with no override set", async () => {
+    setStacksKey(undefined);
+
+    expect(stacksConfig[STACKS_KEY].default).toBe(true);
+    expect(await isGeneric()).toBe(true);
+  });
+
+  test("routes Stacks through the generic bridge while the key is on", async () => {
+    setStacksKey(true);
+
+    expect(await isGeneric()).toBe(true);
+  });
+
+  test("falls back to the legacy bridge once the key is turned off and the cache evicted", async () => {
+    setStacksKey(true);
+    await getAccountBridgeByFamily("stacks");
+
+    setStacksKey(false);
+
+    expect(await isGeneric()).toBe(false);
   });
 });
