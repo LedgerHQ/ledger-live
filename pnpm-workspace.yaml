@@ -238,7 +238,7 @@ catalog:
   playwright: 1.63.0
   allure-playwright: 3.13.0
   allure-js-commons: 3.13.0
-  nx: 22.7.8
+  nx: 22.7.9
   "@nx/devkit": 22.7.8
   detox: 20.51.3
   # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
@@ -257,3 +257,5 @@ catalog:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: nx@22.7.9
+  - nx@22.7.9
