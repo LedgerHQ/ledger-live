@@ -20,6 +20,8 @@ import type { PartialFeatures } from "@shared/feature-flags";
 
 const ALL_STABLECOINS = "All stablecoins";
 const BANK_TRANSFER_CREATE_ACCOUNT = "Create an account";
+const FREEZE = "Freeze";
+const UNFREEZE = "Unfreeze";
 const CONTACT_ID = "e2e-pay-contact";
 const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
 const CONTACT_NAME = generateContactName();
@@ -200,6 +202,44 @@ export function runPayContactTest(tmsLinks: string[], tags: string[]) {
       await app.payTab.expectYouPaid(`You paid ${CONTACT_NAME}`);
       await app.payTab.closePaySuccess();
       await app.payTab.expectScreenVisible();
+    });
+  });
+}
+
+export function runPayFreezeTest(tmsLinks: string[], tags: string[]) {
+  describe("Pay tab", () => {
+    beforeAll(async () => {
+      await initPayTabApp();
+    });
+
+    setTeamOwner(Team.WALLET_XP);
+    tmsLinks.forEach(link => $TmsLink(link));
+    tags.forEach(tag => $Tag(tag));
+
+    it("Freeze and unfreeze the card", async () => {
+      await app.mainNavigation.tapWallet40Tab("paytab");
+      await app.payTab.expectScreenVisible();
+      await app.payTab.openCardDetails();
+      await app.payTab.expectCashbackRow();
+      await app.payTab.expectFreezeTile(FREEZE);
+      await app.payTab.openFreezeConfirmation();
+      await app.payTab.confirmFreeze();
+      await app.payTab.expectCardFrozen();
+      await app.payTab.expectFreezeTile(UNFREEZE);
+      await app.payTab.closeCardDetails();
+
+      await app.mainNavigation.tapWallet40Tab("home");
+      await app.mainNavigation.tapWallet40Tab("paytab");
+      await app.payTab.expectScreenVisible();
+      await app.payTab.openCardDetails();
+      await app.payTab.expectCardFrozen();
+      await app.payTab.expectFreezeTile(UNFREEZE);
+
+      await app.payTab.openFreezeConfirmation();
+      await app.payTab.confirmFreeze();
+      await app.payTab.expectCardNotFrozen();
+      await app.payTab.expectFreezeTile(FREEZE);
+      await app.payTab.closeCardDetails();
     });
   });
 }

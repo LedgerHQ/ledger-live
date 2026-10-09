@@ -6,6 +6,8 @@ export type PayDepositOptionId = (typeof DEPOSIT_OPTION_IDS)[number];
 
 export default class PayTabPage {
   screenId = "paytab-screen";
+  sheetCloseId = "bottom-sheet-header-close-button";
+  sheetContentId = "card-details-sheet-content";
   fundedStateId = "pay-card-balance-funded-state";
   balanceAmountId = "pay-card-balance-amount";
   filterPillId = "pay-card-balance-filter-pill";
@@ -23,6 +25,12 @@ export default class PayTabPage {
   successStepId = "pay-success-step";
   successTitleId = "pay-success-title";
   successCloseId = "pay-success-close";
+  detailsButtonId = "card-details-button";
+  rewardId = "card-details-reward";
+  freezeTileId = "card-details-freeze-tile";
+  freezeContentId = "card-details-freeze-content";
+  freezeConfirmId = "freeze-confirm-action";
+  frozenVisualId = "card-visual-frozen";
 
   requestTitle = () => getElementById("pay-request-receive-title");
   requestAddress = () => getElementById("pay-request-receive-address");
@@ -170,5 +178,57 @@ export default class PayTabPage {
     if (!(await waitForElementNotVisible(this.successStepId))) {
       throw new Error(`${this.successStepId} stayed visible`);
     }
+  }
+
+  @Step("Open card details")
+  async openCardDetails() {
+    await revealForTap(this.detailsButtonId, { container: this.screenId });
+    await tapById(this.detailsButtonId);
+    await waitForElementById(this.sheetContentId);
+    await waitForFullyVisibleById(this.freezeTileId);
+  }
+
+  @Step("Close card details")
+  async closeCardDetails() {
+    await tapById(this.sheetCloseId);
+    if (!(await waitForElementNotVisible(this.sheetContentId))) {
+      throw new Error(`${this.sheetContentId} stayed visible`);
+    }
+  }
+
+  @Step("Expect the cashback row")
+  async expectCashbackRow() {
+    await detoxExpect(getElementById(this.rewardId)).toBeVisible();
+  }
+
+  @Step("Expect the freeze tile to read {{{0}}}")
+  async expectFreezeTile(label: string) {
+    await detoxExpect(
+      getElementByIdWithDescendantTexts(this.freezeTileId, new RegExp(`^${label}$`)),
+    ).toBeVisible();
+  }
+
+  @Step("Open freeze confirmation")
+  async openFreezeConfirmation() {
+    await tapById(this.freezeTileId);
+    await waitForFullyVisibleById(this.freezeContentId);
+  }
+
+  @Step("Confirm freeze or unfreeze")
+  async confirmFreeze() {
+    await tapById(this.freezeConfirmId);
+    if (!(await waitForElementNotVisible(this.freezeContentId))) {
+      throw new Error(`${this.freezeContentId} stayed visible`);
+    }
+  }
+
+  @Step("Expect the frozen card")
+  async expectCardFrozen() {
+    await detoxExpect(getElementById(this.frozenVisualId)).toBeVisible();
+  }
+
+  @Step("Expect the card not to be frozen")
+  async expectCardNotFrozen() {
+    await detoxExpect(getElementById(this.frozenVisualId)).not.toBeVisible();
   }
 }
