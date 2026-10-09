@@ -3,6 +3,7 @@ import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
 import {
   DeviceOnboardingStatus,
   watchedContextFields,
+  type DeviceOnboardingFeatureFlag,
   type DeviceOnboardingLogRow,
   type DeviceOnboardingNextState,
   type DeviceOnboardingToolEvent,
@@ -149,6 +150,13 @@ function rowsFor(
   return [...log, { state }];
 }
 
+export interface SwitchRow {
+  readonly key: string;
+  readonly label: string;
+  readonly checked: boolean;
+  readonly onChange: (checked: boolean) => void;
+}
+
 export interface DeviceOnboardingViewModel {
   readonly statusLabel: string;
   readonly exportText: string;
@@ -170,6 +178,8 @@ export interface DeviceOnboardingViewModel {
   readonly showNextScreen: boolean;
   /** Absent when the host has no next screen to open: the switch is hidden. */
   readonly setShowNextScreen?: (showNextScreen: boolean) => void;
+  /** Empty when the host has no feature flag: the section is hidden. */
+  readonly featureFlagRows: readonly SwitchRow[];
   readonly genuineOverride: GenuineOverride;
   readonly setGenuineOverride: (value: GenuineOverride) => void;
   readonly firmwareOverride: FirmwareOverride;
@@ -246,6 +256,29 @@ function walkPayload(value: DeviceOnboardingToolPayload, path: string, rows: Dis
       walkPayload(child, next, rows);
     }
   }
+}
+
+export function featureFlagRows(
+  flag: DeviceOnboardingFeatureFlag | undefined,
+  setFlag: ((flag: DeviceOnboardingFeatureFlag) => void) | undefined,
+): SwitchRow[] {
+  if (!flag || !setFlag) return [];
+
+  return [
+    {
+      key: "enabled",
+      label: "enabled",
+      checked: flag.enabled,
+      onChange: enabled => setFlag({ ...flag, enabled }),
+    },
+    ...Object.entries(flag.params).map(([name, value]) => ({
+      key: `params.${name}`,
+      label: `params.${name}`,
+      checked: value,
+      onChange: (checked: boolean) =>
+        setFlag({ ...flag, params: { ...flag.params, [name]: checked } }),
+    })),
+  ];
 }
 
 export function formatValue(value: string | number | boolean | null | undefined): string {
@@ -363,6 +396,8 @@ export function useDeviceOnboardingViewModel(
     error,
     showNextScreen,
     setShowNextScreen,
+    featureFlag,
+    setFeatureFlag,
     send,
   } = props;
 
@@ -434,6 +469,7 @@ export function useDeviceOnboardingViewModel(
     reset: props.reset,
     showNextScreen: showNextScreen ?? false,
     setShowNextScreen,
+    featureFlagRows: featureFlagRows(featureFlag, setFeatureFlag),
     genuineOverride,
     setGenuineOverride,
     firmwareOverride,

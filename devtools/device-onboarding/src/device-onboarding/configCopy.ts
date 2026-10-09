@@ -21,3 +21,8 @@ export const emptyLogCopy = {
   title: "No log yet",
   description: "Pair a device, then tap Connect. The log starts when the device answers.",
 };
+
+export const featureFlagCopy = {
+  title: "Feature flag deviceOnboarding",
+  description: "Overrides the flag on this app. A new run reads the new value.",
+};

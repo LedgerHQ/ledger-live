@@ -137,4 +137,16 @@ export interface DeviceOnboardingToolProps {
    */
   readonly showNextScreen?: boolean;
   readonly setShowNextScreen?: (showNextScreen: boolean) => void;
+  /**
+   * Devtool only. The app's `deviceOnboarding` feature flag. A host without the flag leaves both
+   * out, and its switches are hidden.
+   */
+  readonly featureFlag?: DeviceOnboardingFeatureFlag;
+  readonly setFeatureFlag?: (featureFlag: DeviceOnboardingFeatureFlag) => void;
+}
+
+/** Each param is a switch, so only boolean params are listed. */
+export interface DeviceOnboardingFeatureFlag {
+  readonly enabled: boolean;
+  readonly params: Readonly<Record<string, boolean>>;
 }

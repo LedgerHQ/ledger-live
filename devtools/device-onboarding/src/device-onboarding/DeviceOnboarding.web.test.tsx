@@ -1,7 +1,7 @@
 import { render, screen } from "@support/jest-devtools/web";
 import userEvent from "@testing-library/user-event";
 import { buildProps } from "jest/deviceOnboardingProps";
-import { emptyLogCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
+import { emptyLogCopy, featureFlagCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
 import DeviceOnboarding from "./DeviceOnboarding";
 
 const connectedDevice = {
@@ -80,6 +80,29 @@ describe("DeviceOnboarding", () => {
 
     expect(connect).toHaveBeenCalledTimes(1);
     expect(reset).toHaveBeenCalledTimes(1);
+  });
+
+  it("toggles a feature flag param and keeps the rest of the flag", async () => {
+    const user = userEvent.setup();
+    const setFeatureFlag = jest.fn();
+    render(
+      <DeviceOnboarding
+        {...buildProps({
+          featureFlag: { enabled: true, params: { offerLedgerSync: false } },
+          setFeatureFlag,
+        })}
+      />,
+    );
+
+    await user.click(screen.getByRole("radio", { name: "Config" }));
+    expect(screen.getByText(featureFlagCopy.title)).toBeInTheDocument();
+    expect(screen.getByRole("switch", { name: "enabled" })).toBeChecked();
+    await user.click(screen.getByRole("switch", { name: "params.offerLedgerSync" }));
+
+    expect(setFeatureFlag).toHaveBeenCalledWith({
+      enabled: true,
+      params: { offerLedgerSync: true },
+    });
   });
 
   it("keeps each switch on the config tab, with a short line under its name", async () => {

@@ -23,7 +23,7 @@ import {
   Warning,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
-import { emptyLogCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
+import { emptyLogCopy, featureFlagCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
 import {
   EarlyCheckOverride,
   FirmwareOverride,
@@ -148,6 +148,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
       {tab === "config" ? (
         <>
           <OverrideSection vm={vm} />
+          {vm.featureFlagRows.length > 0 ? <FeatureFlagSection rows={vm.featureFlagRows} /> : null}
           {vm.setShowNextScreen ? (
             <Box lx={SECTION_LX} style={divider}>
               <Box lx={HEADER_ROW_LX}>
@@ -297,6 +298,42 @@ function OverrideSection({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
           </SegmentedControlButton>
         </SegmentedControl>
       </OverrideRow>
+    </Box>
+  );
+}
+
+function FeatureFlagSection({
+  rows,
+}: Readonly<{ rows: DeviceOnboardingViewModel["featureFlagRows"] }>) {
+  const { theme } = useTheme();
+  const base = { color: theme.colors.text.base };
+  const muted = { color: theme.colors.text.muted };
+
+  return (
+    <Box
+      lx={SECTION_LX}
+      style={{ borderBottomWidth: 1, borderColor: theme.colors.border.mutedSubtle }}
+    >
+      <Text typography="body2" style={base}>
+        {featureFlagCopy.title}
+      </Text>
+      <Text typography="body2" style={muted}>
+        {featureFlagCopy.description}
+      </Text>
+      {rows.map(row => (
+        <Box key={row.key} lx={HEADER_ROW_LX}>
+          <Text typography="body2" style={{ ...base, fontFamily: "monospace" }}>
+            {row.label}
+          </Text>
+          <Box style={{ marginLeft: "auto" }}>
+            <Switch
+              checked={row.checked}
+              onCheckedChange={row.onChange}
+              accessibilityLabel={row.label}
+            />
+          </Box>
+        </Box>
+      ))}
     </Box>
   );
 }

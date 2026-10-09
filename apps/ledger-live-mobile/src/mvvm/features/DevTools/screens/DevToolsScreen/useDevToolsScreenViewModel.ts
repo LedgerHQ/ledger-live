@@ -24,6 +24,7 @@ import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
+import { useDeviceOnboardingFeatureFlag } from "../../../DeviceOnboarding/hooks/useDeviceOnboardingFeatureFlag";
 import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 
@@ -101,11 +102,16 @@ export function useDevToolsScreenViewModel() {
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
   const offerSync = useOfferSync();
-  const deviceOnboardingProps = useDeviceOnboarding({
+  const deviceOnboardingRun = useDeviceOnboarding({
     dmk,
     knownDevices,
     offerSync,
   });
+  const deviceOnboardingFlag = useDeviceOnboardingFeatureFlag();
+  const deviceOnboardingProps = useMemo(
+    () => ({ ...deviceOnboardingRun, ...deviceOnboardingFlag }),
+    [deviceOnboardingRun, deviceOnboardingFlag],
+  );
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
   const { wire, wireState } = useDevToolsRelay();

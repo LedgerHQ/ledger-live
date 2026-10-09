@@ -4,4 +4,4 @@
 "live-mobile": minor
 ---
 
-Show and export onboarding logs with the full device answers
+Show and export onboarding logs with the full device answers, and toggle the deviceOnboarding flag

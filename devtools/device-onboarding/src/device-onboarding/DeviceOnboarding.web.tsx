@@ -14,7 +14,7 @@ import {
   Warning,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
-import { emptyLogCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
+import { emptyLogCopy, featureFlagCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
 import {
   EarlyCheckOverride,
   FirmwareOverride,
@@ -89,6 +89,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
       {tab === "config" ? (
         <div className="flex flex-col">
           <OverrideSection vm={vm} />
+          {vm.featureFlagRows.length > 0 ? <FeatureFlagSection rows={vm.featureFlagRows} /> : null}
           {vm.setShowNextScreen ? (
             <div className="px-16 py-12 border-b border-base flex items-center gap-8">
               <span className="flex flex-col gap-4">
@@ -149,6 +150,30 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
           </Button>
         </div>
       )}
+    </div>
+  );
+}
+
+function FeatureFlagSection({
+  rows,
+}: Readonly<{ rows: DeviceOnboardingViewModel["featureFlagRows"] }>) {
+  return (
+    <div className="px-16 py-12 border-b border-base flex flex-col gap-12">
+      <span className="flex flex-col gap-4">
+        <span className="body-3 text-base">{featureFlagCopy.title}</span>
+        <span className="body-3 text-muted">{featureFlagCopy.description}</span>
+      </span>
+      {rows.map(row => (
+        <div key={row.key} className="flex items-center gap-8">
+          <span className="body-3 text-base">{row.label}</span>
+          <Switch
+            selected={row.checked}
+            onChange={row.onChange}
+            aria-label={row.label}
+            className="ml-auto"
+          />
+        </div>
+      ))}
     </div>
   );
 }

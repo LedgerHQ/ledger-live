@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@support/jest-devtools/native";
 import { Share } from "react-native";
 import { buildProps } from "jest/deviceOnboardingProps";
-import { emptyLogCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
+import { emptyLogCopy, featureFlagCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
 import DeviceOnboarding from "./DeviceOnboarding";
 
 const connectedDevice = {
@@ -87,6 +87,27 @@ describe("DeviceOnboarding", () => {
 
     expect(connect).toHaveBeenCalledTimes(1);
     expect(reset).toHaveBeenCalledTimes(1);
+  });
+
+  it("toggles a feature flag param and keeps the rest of the flag", () => {
+    const setFeatureFlag = jest.fn();
+    render(
+      <DeviceOnboarding
+        {...buildProps({
+          featureFlag: { enabled: true, params: { offerLedgerSync: false } },
+          setFeatureFlag,
+        })}
+      />,
+    );
+
+    fireEvent.press(screen.getByText("Config"));
+    expect(screen.getByText(featureFlagCopy.title)).toBeTruthy();
+    fireEvent.press(screen.getByRole("switch", { name: "params.offerLedgerSync" }));
+
+    expect(setFeatureFlag).toHaveBeenCalledWith({
+      enabled: true,
+      params: { offerLedgerSync: true },
+    });
   });
 
   it("keeps each switch on the config tab, with a short line under its name", () => {

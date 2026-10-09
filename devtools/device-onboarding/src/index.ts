@@ -1,6 +1,7 @@
 import DeviceOnboarding from "./device-onboarding/DeviceOnboarding";
 export { DeviceOnboardingStatus, watchedContextFields } from "./types";
 export type {
+  DeviceOnboardingFeatureFlag,
   DeviceOnboardingLogRow,
   DeviceOnboardingNextState,
   DeviceOnboardingToolContext,
