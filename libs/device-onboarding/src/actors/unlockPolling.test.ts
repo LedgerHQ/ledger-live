@@ -1,12 +1,13 @@
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { CommandResultFactory } from "@ledgerhq/device-management-kit";
 import { runActor } from "../tests/actorHarness";
-import { createDeviceManagementKit, createFakeCommandDmk } from "../tests/fakeDmk";
+import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
+import { createFakeCommandDmk } from "../tests/fakeDmk";
 import { createOsVersionResponse } from "../tests/osVersionResponse";
 import {
   defaultUnlockPollingIntervalMs,
   unlockPolling,
   type UnlockPollingEvent,
-  type UnlockPollingInput,
 } from "./unlockPolling";
 
 const unlockedResponse = createOsVersionResponse({ isOnboarded: false });
@@ -95,6 +96,6 @@ describe("unlockPolling", () => {
   });
 });
 
-function start(dmk: UnlockPollingInput["dmk"]) {
+function start(dmk: DeviceManagementKit) {
   return runActor<UnlockPollingEvent>(unlockPolling, { dmk, sessionId: "session" });
 }

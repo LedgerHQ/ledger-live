@@ -5,7 +5,7 @@ export type TestStream<T> = {
   events: Observable<T>;
   push(value: T): void;
   end(): void;
-  fail(error?: unknown): void;
+  fail(error: unknown): void;
   readonly watched: boolean;
 };
 
@@ -20,7 +20,7 @@ export function createTestStream<T>(options?: { current: T }): TestStream<T> {
     end() {
       states.complete();
     },
-    fail(error = new Error("stream failed")) {
+    fail(error) {
       states.error(error);
     },
     get watched() {

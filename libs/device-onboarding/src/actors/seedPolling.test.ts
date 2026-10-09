@@ -1,18 +1,11 @@
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { CommandResultFactory } from "@ledgerhq/device-management-kit";
 import { runActor } from "../tests/actorHarness";
-import {
-  createDeviceManagementKit,
-  createFakeCommandDmk,
-  type ScriptedCommand,
-} from "../tests/fakeDmk";
+import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
+import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
 import { createOsVersionResponse, type OsVersionResponseOptions } from "../tests/osVersionResponse";
 import { OnboardingStep, RecoveryKeyStatus } from "../types";
-import {
-  defaultSeedPollingIntervalMs,
-  seedPolling,
-  type SeedPollingEvent,
-  type SeedPollingInput,
-} from "./seedPolling";
+import { defaultSeedPollingIntervalMs, seedPolling, type SeedPollingEvent } from "./seedPolling";
 
 const restoringWord = (currentWordIndex: number): OsVersionResponseOptions => ({
   onboardingState: "restore-recovery-phrase",
@@ -203,7 +196,7 @@ function reads(options: OsVersionResponseOptions): ScriptedCommand<unknown> {
   return CommandResultFactory({ data: createOsVersionResponse(options) });
 }
 
-function start(dmk: SeedPollingInput["dmk"]) {
+function start(dmk: DeviceManagementKit) {
   return runActor<SeedPollingEvent>(seedPolling, {
     dmk,
     sessionId: "session",

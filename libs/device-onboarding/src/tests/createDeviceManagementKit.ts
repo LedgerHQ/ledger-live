@@ -14,11 +14,5 @@ export type DeviceManagementKitOverrides = Partial<Record<DmkMethodName, (...arg
 export function createDeviceManagementKit(
   overrides: DeviceManagementKitOverrides = {},
 ): DeviceManagementKit {
-  const dmk = new DeviceManagementKitBuilder().build();
-
-  for (const [name, impl] of Object.entries(overrides)) {
-    jest.spyOn(dmk, name as never).mockImplementation(impl as never);
-  }
-
-  return dmk;
+  return Object.assign(new DeviceManagementKitBuilder().build(), overrides);
 }

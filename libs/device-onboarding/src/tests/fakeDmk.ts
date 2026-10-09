@@ -20,16 +20,13 @@ import { createDeviceManagementKit } from "./createDeviceManagementKit";
 import { createTestStream } from "./testStream";
 import { createOsVersionResponse } from "./osVersionResponse";
 
-export { createDeviceManagementKit };
-export type { DeviceManagementKitOverrides } from "./createDeviceManagementKit";
-
 export type ScriptedCommand<Data, ErrorCodes = void> =
   | CommandResult<Data, ErrorCodes>
   | { throws: unknown };
 
 export type FakeCommandDmk = {
   dmk: DeviceManagementKit;
-  sendCommand: jest.SpyInstance;
+  sendCommand: jest.Mock;
 };
 
 /**
@@ -82,7 +79,7 @@ export type FakeDeviceActionDmk<
   IntermediateValue extends DeviceActionIntermediateValue,
 > = {
   dmk: DeviceManagementKit;
-  executeDeviceAction: jest.SpyInstance;
+  executeDeviceAction: jest.Mock;
   executions: FakeDeviceActionExecution<Output, Error, IntermediateValue>[];
   lastExecution(): FakeDeviceActionExecution<Output, Error, IntermediateValue>;
 };
@@ -155,8 +152,8 @@ export type OnboardingDmkScript = {
 
 export type FakeOnboardingDmk = {
   dmk: DeviceManagementKit;
-  sendCommand: jest.SpyInstance;
-  executeDeviceAction: jest.SpyInstance;
+  sendCommand: jest.Mock;
+  executeDeviceAction: jest.Mock;
   earlyCheckToggles(): number[];
   genuineCheckRuns(): number;
   firmwareCheckRuns(): number;

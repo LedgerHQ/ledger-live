@@ -1,12 +1,8 @@
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DeviceStatus } from "@ledgerhq/device-management-kit";
-import { createDeviceManagementKit } from "../tests/fakeDmk";
+import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
 import { createSessionStream, type SessionStream } from "../tests/testStream";
-import {
-  createSessionEventsActor,
-  mapSession,
-  type SessionEvent,
-  type SessionListenerInput,
-} from "./session";
+import { createSessionEventsActor, mapSession, type SessionEvent } from "./session";
 
 describe("mapSession", () => {
   it.each([
@@ -120,7 +116,7 @@ describe("sessionListener", () => {
 function createListenerActor(
   session: SessionStream,
   received: SessionEvent[],
-  dmk: SessionListenerInput["dmk"] = sessionKit(session),
+  dmk: DeviceManagementKit = sessionKit(session),
 ) {
   return createSessionEventsActor(dmk, "session", event => {
     received.push(event);

@@ -7,22 +7,6 @@ import { useDeviceOnboarding } from "../hooks/useDeviceOnboarding";
 import { createTestDevice, knownStax } from "../testing/testDevice";
 import { useLeaveOnboarding } from "../hooks/useLeaveOnboarding";
 
-const loggedEvents: { type: string }[] = [];
-
-jest.mock("@ledgerhq/device-onboarding", () => {
-  const actual = jest.requireActual("@ledgerhq/device-onboarding");
-  return {
-    ...actual,
-    createOnboardingEventLog: (deps: unknown) => {
-      const log = actual.createOnboardingEventLog(deps);
-      return (event: { type: string }) => {
-        loggedEvents.push(event);
-        log(event);
-      };
-    },
-  };
-});
-
 const leaveOnboarding = jest.fn();
 
 jest.mock("../hooks/useLeaveOnboarding", () => ({
@@ -172,10 +156,9 @@ describe("useDeviceOnboarding", () => {
     );
 
     await connectStax(result, device);
-    loggedEvents.length = 0;
     act(() => result.current.reset());
 
-    expect(loggedEvents.map(event => event.type)).toContain("QUIT");
+    expect(leaveOnboarding).toHaveBeenCalledWith("userQuit");
     expect(result.current.status).toBe("idle");
     expect(result.current.log).toEqual([]);
   });
