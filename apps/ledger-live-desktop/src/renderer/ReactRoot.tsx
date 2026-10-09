@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { UnknownAction, Store } from "redux";
 import { State as StoreState } from "~/renderer/reducers";
+import { CountervaluesProbeProfiler } from "@features/platform-market-countervalues";
 import App from "./App";
 import "./global.css";
 
@@ -25,7 +26,13 @@ class ReactRoot extends Component<Props, State> {
   render() {
     const { store } = this.props;
     const { error } = this.state;
-    return error ? String(error) : <App store={store} />;
+    return error ? (
+      String(error)
+    ) : (
+      <CountervaluesProbeProfiler>
+        <App store={store} />
+      </CountervaluesProbeProfiler>
+    );
   }
 }
 export default ReactRoot;

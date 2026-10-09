@@ -35,6 +35,13 @@ import {
   type CountervaluesState,
 } from "./countervaluesSlice";
 import { log } from "./internals/logger";
+import {
+  markLoopStart,
+  probeLoad,
+  probeRates,
+  probeRestore,
+  probeSettings,
+} from "./internals/renderProbe";
 
 // The countervalues loop as a Redux middleware: it restores the saved state, loads rates when the
 // settings or the supported ids change, when a poll is asked for and on a timer, and nothing runs
@@ -168,7 +175,9 @@ export function createCountervaluesMiddleware<S>(
       const { savedState } = s;
       if (!savedState || typeof savedState !== "object") return;
       if (!Object.keys(savedState).length) return;
-      dispatch(setCountervaluesState(importCountervalues(savedState, settings)));
+      const restored = importCountervalues(savedState, settings);
+      probeRestore(savedState, restored);
+      dispatch(setCountervaluesState(restored));
     }
 
     function load(s: Session, currentState: CounterValuesState, settings: CountervaluesSettings) {
@@ -176,18 +185,20 @@ export function createCountervaluesMiddleware<S>(
       dispatch(setCountervaluesStatePending(true));
       const supportedIds = supportedIdsResult().data ?? defaultCounterValueIdsSortedByMarketCap;
       const { marketCapBatchingAfterRank } = settings;
-      loadCountervalues(currentState, settings, {
-        rates: s.rates,
-        batchStrategySolver: {
-          shouldBatchCurrencyFrom: (currency: Currency) => {
-            if (currency.type === "FiatCurrency") return false;
-            const i = supportedIds.indexOf(inferCurrencyAPIID(currency));
-            return i === -1 || i > marketCapBatchingAfterRank;
+      probeLoad(settings, () =>
+        loadCountervalues(currentState, settings, {
+          rates: s.rates,
+          batchStrategySolver: {
+            shouldBatchCurrencyFrom: (currency: Currency) => {
+              if (currency.type === "FiatCurrency") return false;
+              const i = supportedIds.indexOf(inferCurrencyAPIID(currency));
+              return i === -1 || i > marketCapBatchingAfterRank;
+            },
           },
-        },
-        granularitiesRates: settings.granularitiesRates,
-        log,
-      }).then(
+          granularitiesRates: settings.granularitiesRates,
+          log,
+        }),
+      ).then(
         next => {
           dispatch(setCountervaluesState(next));
           dispatch(setCountervaluesStatePending(false));
@@ -231,7 +242,7 @@ export function createCountervaluesMiddleware<S>(
       // The settings first: if they cannot be computed, nothing starts.
       const selectSettings = settings ? () => settings : config.createSettingsSelector();
       selectSettings(getState());
-      const rates = config.createRates(dispatch);
+      const rates = probeRates(config.createRates(dispatch));
       const subscription = dispatch(
         supportedIdsEndpoint.initiate(undefined, {
           subscriptionOptions: {
@@ -256,8 +267,10 @@ export function createCountervaluesMiddleware<S>(
         lastSupportedIdsError: undefined,
       };
       session = s;
+      markLoopStart();
       // The first settings load right away; later ones are debounced.
       s.lastFiltered = filteredSettingsOf(s);
+      probeSettings(s.lastFiltered);
       dispatch(setCountervaluesPollingTriggerLoad(true));
       restore(s, settingsOf(s));
       syncPollingTimer(s);
@@ -295,6 +308,7 @@ export function createCountervaluesMiddleware<S>(
       s.lastSupportedIdsError = error;
 
       const filtered = filteredSettingsOf(s);
+      probeSettings(filtered);
       if (filtered !== s.lastFiltered) {
         s.lastFiltered = filtered;
         clearTimeout(s.debounceTimer);

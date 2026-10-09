@@ -83,6 +83,9 @@ export function createRendererConfig(
         ...commonConfig.resolve?.alias,
         LLD: path.resolve(lldRoot, "src", "mvvm"),
         "styled-components": styledComponentsPath,
+        // MEASUREMENT BUILD ONLY: React's profiling build, so the countervalues probe's <Profiler>
+        // reports commits and render times in production.
+        ...(isDev ? {} : { "react-dom/client$": require.resolve("react-dom/profiling") }),
         // Route `ZCash` to the IPC client in the renderer so the `zcash-utils`
         // .node addon stays out of the bundle: it is hosted in a UtilityProcess,
         // reached over the `zcash:*` channels the main process registers (see
