@@ -2,10 +2,10 @@ import { useCallback, useRef, useState } from "react";
 import {
   createOnboardingEventLog,
   deviceOnboardingMachine,
-  flattenDeviceOnboardingContext,
   nextStatesFrom,
   stampSession,
   stateValueToString,
+  toolContext,
   userEvents,
   type DeviceOnboardingInput,
   type DeviceOnboardingExitReason,
@@ -86,7 +86,7 @@ export function useDeviceOnboardingActor({
   }, [missingSessionMessage]);
 
   const state = snapshot ? stateValueToString(snapshot.value) : null;
-  const context = snapshot ? flattenDeviceOnboardingContext(snapshot.context) : null;
+  const context = snapshot ? toolContext(snapshot.context) : null;
   const sendableEvents = snapshot ? availableEvents(snapshot, sessionReady, currentSessionId) : [];
   const nextStates = nextStatesFrom(snapshot);
 

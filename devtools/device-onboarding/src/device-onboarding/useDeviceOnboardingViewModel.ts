@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type { HostOnboardingEvent, OnboardingEvent } from "@ledgerhq/device-onboarding";
 import {
   DeviceOnboardingStatus,
-  watchedContextFields,
   type DeviceOnboardingFeatureFlag,
   type DeviceOnboardingLogRow,
   type DeviceOnboardingNextState,
@@ -437,12 +436,7 @@ export function useDeviceOnboardingViewModel(
           { label: "modelId", value: formatValue(exit.modelId) },
         ];
   const logLines = withExitOnQuit(logLinesOf(rows), exitRows);
-  const contextRows: DisplayRow[] =
-    context === null
-      ? []
-      : watchedContextFields
-          .filter(field => context[field] !== undefined)
-          .map(field => ({ label: field, value: formatValue(context[field]) }));
+  const contextRows = payloadRowsOf(context ?? undefined);
 
   const sendableRows: SendableRow[] = sendableEvents.map((entry, index) => ({
     key: `${index}-${entry.event.type}`,

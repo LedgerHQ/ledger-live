@@ -312,7 +312,7 @@ describe("DeviceOnboarding desktop integration", () => {
 
     await waitFor(() => expect(result.current.context?.deviceModelId).toBe(DmkDeviceModelId.STAX));
     expect(result.current.device?.sessionId).toBe("session-2");
-    expect(result.current.context?.isGenuine).toBeNull();
+    expect(result.current.context).toMatchObject({ genuineVerdict: null });
     expect(result.current.state).toBe("readingState");
     expect(result.current.log.some(row => row.event?.type === "SESSION_READY")).toBe(false);
   });
@@ -330,7 +330,7 @@ describe("DeviceOnboarding desktop integration", () => {
 
     await waitFor(() => expect(result.current.device?.sessionId).toBe("session-2"));
     expect(result.current.context?.deviceModelId).toBe(DmkDeviceModelId.NANO_X);
-    expect(result.current.context?.isGenuine).toBe(true);
+    expect(result.current.context).toMatchObject({ genuineVerdict: { isGenuine: true } });
     expect(result.current.state).toBe("readingState");
   });
 

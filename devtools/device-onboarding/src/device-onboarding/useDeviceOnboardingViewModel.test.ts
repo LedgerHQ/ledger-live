@@ -1,6 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
 import { buildProps } from "jest/deviceOnboardingProps";
-import type { DeviceOnboardingToolContext } from "../types";
 import {
   FirmwareOverride,
   GenuineOverride,
@@ -126,16 +125,18 @@ describe("useDeviceOnboardingViewModel", () => {
     expect(result.current.deviceLabel).toBe("Ledger Flex · europa · BLE · session-1");
   });
 
-  it("prints only the fields it watches, whatever else the host hands over", () => {
+  it("lists every context field, a nested one by its path", () => {
     const context = {
       isOnboarded: true,
-      seedWordIndex: 17,
-      seedPhraseWordCount: 24,
-      deviceId: "ble|1",
-    } as DeviceOnboardingToolContext;
+      lastDeviceState: { currentOnboardingStep: "pin", seedPhraseWordCount: 24 },
+    };
     const { result } = renderHook(() => useDeviceOnboardingViewModel(buildProps({ context })));
 
-    expect(result.current.contextRows).toEqual([{ label: "isOnboarded", value: "true" }]);
+    expect(result.current.contextRows).toEqual([
+      { label: "isOnboarded", value: "true" },
+      { label: "lastDeviceState.currentOnboardingStep", value: "pin" },
+      { label: "lastDeviceState.seedPhraseWordCount", value: "24" },
+    ]);
   });
 
   it("keeps a field the machine has not computed yet, which is a verdict that never ran", () => {
@@ -144,22 +145,6 @@ describe("useDeviceOnboardingViewModel", () => {
     );
 
     expect(result.current.contextRows).toEqual([{ label: "verdictMatchesSession", value: "null" }]);
-  });
-
-  it("orders the context rows for reading, not as the host built them", () => {
-    const { result } = renderHook(() =>
-      useDeviceOnboardingViewModel(
-        buildProps({
-          context: { checksPaused: false, isOnboarded: true, deviceModelId: "europa" },
-        }),
-      ),
-    );
-
-    expect(result.current.contextRows.map(row => row.label)).toEqual([
-      "deviceModelId",
-      "isOnboarded",
-      "checksPaused",
-    ]);
   });
 
   it("lists the result under output", () => {

@@ -76,49 +76,14 @@ export interface SendableOnboardingEvent {
   readonly label?: string;
 }
 
-/**
- * What the panel prints, in display order. Closed, so a host cannot put seed progress on a screen
- * that runs during seed entry — see the README for the rest of the boundary.
- *
- * A host flattens the machine onto these names. The device-state fields come from `lastDeviceState`;
- * `availableFirmwareVersion` from `availableFirmwareUpdate.final.version`; `isGenuine` and
- * `verdictMatchesSession` from the raw `genuineVerdict`; `genuineFailureKind` from
- * `lastGenuineFailure.kind`. The rest read straight off the context.
- */
-export const watchedContextFields = [
-  "deviceModelId",
-  "offerSync",
-  "isOnboarded",
-  "onboardedOnEntry",
-  "isInRecoveryMode",
-  "managerAllowed",
-  "currentOnboardingStep",
-  "recoveryKeyStatus",
-  "currentSetupStep",
-  "firmwareVersion",
-  "availableFirmwareVersion",
-  "firmwareChecked",
-  "onEarlyCheckScreen",
-  "secureConnectionRequested",
-  "isGenuine",
-  "verdictMatchesSession",
-  "genuineFailureKind",
-  "checksPaused",
-] as const;
-
-export type DeviceOnboardingWatchedField = (typeof watchedContextFields)[number];
-
-export type DeviceOnboardingToolContext = Readonly<
-  Partial<Record<DeviceOnboardingWatchedField, string | number | boolean | null>>
->;
-
 export interface DeviceOnboardingToolProps {
   readonly status: DeviceOnboardingStatus;
   /** Null while `running` means the transport went away, which re-enables Connect. */
   readonly device: DeviceOnboardingToolDevice | null;
   /** Dotted state value, null until the machine starts. */
   readonly state: string | null;
-  readonly context: DeviceOnboardingToolContext | null;
+  /** The machine context as plain data. The screen lists every field. */
+  readonly context: DeviceOnboardingToolPayload | null;
   /** Saved from each machine update, in the order they happened. */
   readonly log: readonly DeviceOnboardingLogRow[];
   readonly exit: DeviceOnboardingToolExit | null;

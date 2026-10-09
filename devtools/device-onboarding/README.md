@@ -54,9 +54,9 @@ re-read a device that is no longer there. When the transport goes away mid-run t
 `device` to null, which re-enables Connect. That is where the session gets re-opened, and only
 then does `SESSION_READY` belong in `sendableEvents`.
 
-`context` takes simple values under the closed list `watchedContextFields`. The screen prints
-nothing outside that list. `verdictMatchesSession` is the row to watch: the machine drops the
-genuine check when the session id moved. The host builds that row from the raw `genuineVerdict`.
+`context` is the whole machine context as plain data (`toolContext`), without the kit. The screen
+lists every field. `verdictMatchesSession` is the row to watch: the machine drops the genuine check
+when the session id moved. The host builds that row from the raw `genuineVerdict`.
 
 Tap an event to open its payload as a list. A chevron shows if that line is open. The device
 answer sits on `output`. Every field is shown, including an error body, a device id, and a URL.

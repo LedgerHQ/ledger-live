@@ -18,27 +18,6 @@ export const userEvents = [
   { type: "USER_DECLINE" },
 ] as const satisfies readonly OnboardingEvent[];
 
-export type WatchedOnboardingContext = {
-  deviceModelId: DeviceOnboardingContext["deviceModelId"];
-  offerSync: boolean;
-  isOnboarded: boolean;
-  onboardedOnEntry: boolean | null;
-  isInRecoveryMode: boolean | null;
-  managerAllowed: boolean | null;
-  currentOnboardingStep: OnboardingStep | null;
-  recoveryKeyStatus: RecoveryKeyStatus | null;
-  currentSetupStep: OnboardingStep | null;
-  firmwareVersion: string | null;
-  availableFirmwareVersion: string | null;
-  firmwareChecked: boolean;
-  onEarlyCheckScreen: boolean;
-  secureConnectionRequested: boolean;
-  isGenuine: boolean | null;
-  verdictMatchesSession: boolean | null;
-  genuineFailureKind: string | null;
-  checksPaused: boolean;
-};
-
 function readSessionId(read: () => string | null | undefined): string | null {
   try {
     return read() || null;
@@ -47,31 +26,19 @@ function readSessionId(read: () => string | null | undefined): string | null {
   }
 }
 
-export function flattenDeviceOnboardingContext(
-  context: DeviceOnboardingContext,
-): WatchedOnboardingContext {
+/**
+ * The whole context as plain data for a devtool, without the kit. `verdictMatchesSession` is the row
+ * to watch: the machine drops the genuine verdict when the session moved under it.
+ */
+export function toolContext(context: DeviceOnboardingContext): HostToolPayload {
   const verdict = context.genuineVerdict;
 
-  return {
-    deviceModelId: context.deviceModelId,
-    offerSync: context.offerSync,
-    isOnboarded: context.isOnboarded,
-    onboardedOnEntry: context.onboardedOnEntry,
-    isInRecoveryMode: context.lastDeviceState?.isInRecoveryMode ?? null,
-    managerAllowed: context.lastDeviceState?.managerAllowed ?? null,
-    currentOnboardingStep: context.lastDeviceState?.currentOnboardingStep ?? null,
-    recoveryKeyStatus: context.lastDeviceState?.recoveryKeyStatus ?? null,
-    currentSetupStep: context.currentSetupStep,
-    firmwareVersion: context.firmwareVersion,
-    availableFirmwareVersion: context.availableFirmwareUpdate?.finalFirmware.version ?? null,
-    firmwareChecked: context.firmwareChecked,
-    onEarlyCheckScreen: context.onEarlyCheckScreen,
-    secureConnectionRequested: context.secureConnectionRequested,
-    isGenuine: verdict?.isGenuine ?? null,
-    verdictMatchesSession: verdict === null ? null : verdict.sessionId === context.sessionId,
-    genuineFailureKind: context.lastGenuineFailure?.kind ?? null,
-    checksPaused: context.checksPaused,
-  };
+  return (
+    plainCopy({
+      ...withoutKey(context, "dmk"),
+      verdictMatchesSession: verdict === null ? null : verdict.sessionId === context.sessionId,
+    }) ?? {}
+  );
 }
 
 export function stateValueToString(value: unknown): string {
@@ -133,17 +100,15 @@ const maxCopiedNodes = 500;
 const truncated = "…";
 
 function eventPayload(event: OnboardingEvent): HostToolPayload | undefined {
-  const payload: Record<string, HostToolPayload> = {};
-  const budget = { left: maxCopiedNodes };
-  const seen = new WeakSet<object>();
+  return plainCopy(withoutKey(event, "type"));
+}
 
-  for (const [key, child] of Object.entries(event)) {
-    if (key === "type") continue;
-    const copied = plainPayload(child, seen, budget);
-    if (copied !== undefined) payload[key] = copied;
-  }
+function withoutKey(value: object, omitted: string): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(value).filter(([key]) => key !== omitted));
+}
 
-  return Object.keys(payload).length === 0 ? undefined : payload;
+function plainCopy(value: unknown): HostToolPayload | undefined {
+  return plainPayload(value, new WeakSet(), { left: maxCopiedNodes });
 }
 
 function plainPayload(

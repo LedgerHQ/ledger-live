@@ -1,11 +1,11 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import {
   createOnboardingEventLog,
-  flattenDeviceOnboardingContext,
   nextStatesFrom,
   recordOnboardingToolEvent,
   stampSession,
   stateValueToString,
+  toolContext,
   toolEvent,
   type HostToolEvent,
 } from "./host";
@@ -54,47 +54,33 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
   };
 }
 
-describe("flattenDeviceOnboardingContext", () => {
-  it("should leave verdict fields empty when the machine has no verdict", () => {
-    const flattened = flattenDeviceOnboardingContext(context());
-
-    expect(flattened.isGenuine).toBeNull();
-    expect(flattened.verdictMatchesSession).toBeNull();
-    expect(flattened.genuineFailureKind).toBeNull();
-    expect(flattened.isInRecoveryMode).toBeNull();
-    expect(flattened.availableFirmwareVersion).toBeNull();
-  });
-
-  it("should compare the verdict session with the live session id", () => {
-    const flattened = flattenDeviceOnboardingContext(
+describe("toolContext", () => {
+  it("copies every field but the kit", () => {
+    const copied = toolContext(
       context({
         lastDeviceState: deviceState(OnboardingStep.Pin),
-        genuineVerdict: { sessionId: "session-1", isGenuine: true },
-        lastGenuineFailure: { kind: "GENUINE_CHECK_FAILED", failure: null },
-        availableFirmwareUpdate: {
-          finalFirmware: { version: "2.3.0" },
-        } as unknown as DeviceOnboardingContext["availableFirmwareUpdate"],
-        currentSetupStep: OnboardingStep.Pin,
+        lastGenuineFailure: { kind: "GENUINE_CHECK_FAILED", failure: { status: 500 } },
       }),
-    );
+    ) as Record<string, unknown>;
 
-    expect(flattened.verdictMatchesSession).toBe(true);
-    expect(flattened.isGenuine).toBe(true);
-    expect(flattened.genuineFailureKind).toBe("GENUINE_CHECK_FAILED");
-    expect(flattened.currentOnboardingStep).toBe(OnboardingStep.Pin);
-    expect(flattened.availableFirmwareVersion).toBe("2.3.0");
-    expect(flattened.managerAllowed).toBe(true);
+    expect(copied).not.toHaveProperty("dmk");
+    expect(copied).toMatchObject({
+      lastDeviceState: { currentOnboardingStep: OnboardingStep.Pin, managerAllowed: true },
+      lastGenuineFailure: { kind: "GENUINE_CHECK_FAILED", failure: { status: 500 } },
+      verdictMatchesSession: null,
+    });
   });
 
-  it("should report a mismatch when the verdict belongs to another session", () => {
-    const flattened = flattenDeviceOnboardingContext(
-      context({
-        genuineVerdict: { sessionId: "other-session", isGenuine: false },
-      }),
+  it("tells whether the verdict belongs to the current session", () => {
+    const matching = toolContext(
+      context({ genuineVerdict: { sessionId: "session-1", isGenuine: true } }),
+    );
+    const moved = toolContext(
+      context({ genuineVerdict: { sessionId: "other-session", isGenuine: false } }),
     );
 
-    expect(flattened.verdictMatchesSession).toBe(false);
-    expect(flattened.isGenuine).toBe(false);
+    expect(matching).toMatchObject({ verdictMatchesSession: true });
+    expect(moved).toMatchObject({ verdictMatchesSession: false });
   });
 });
 

@@ -75,12 +75,12 @@ export {
   type SeedPollingInput,
 } from "./actors/seedPolling";
 export {
-  flattenDeviceOnboardingContext,
   createOnboardingEventLog,
   nextStatesFrom,
   recordOnboardingToolEvent,
   stampSession,
   stateValueToString,
+  toolContext,
   toolEvent,
   userEvents,
   type HostLogRow,
@@ -89,5 +89,4 @@ export {
   type HostToolEvent,
   type HostToolEventDetail,
   type HostToolPayload,
-  type WatchedOnboardingContext,
 } from "./host";
