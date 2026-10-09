@@ -212,6 +212,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - ExpoSplashScreen (31.0.13):
+    - ExpoModulesCore
   - ExpoWebBrowser (15.0.10):
     - ExpoModulesCore
   - fast_float (8.0.0)
@@ -2453,8 +2455,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-splash-screen (3.3.0):
-    - React-Core
   - react-native-startup-time (2.1.0):
     - React-Core
   - react-native-tcp-socket (6.4.2):
@@ -3612,6 +3612,7 @@ DEPENDENCIES:
   - "ExpoImagePicker (from `../../../node_modules/.pnpm/expo-image-picker@17.0.11_expo@54.0.33_@babel+c_b3fecac0ca6baecc481e04bb0fdeb08d/node_modules/expo-image-picker/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo@54.0.33_@babel+core_dde8285444011602c2208a43417a3e8c/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_cba21ce7445a28ffb678a08d4aab426e/node_modules/expo-modules-core`)"
+  - "ExpoSplashScreen (from `../../../node_modules/.pnpm/expo-splash-screen@31.0.13_@typescript+typescri_8bca69ce4904a4b7b8473f3a07c1ca22/node_modules/expo-splash-screen/ios`)"
   - "ExpoWebBrowser (from `../../../node_modules/.pnpm/expo-web-browser@15.0.10_26e20d2da1658e2310f07fd70e138799/node_modules/expo-web-browser/ios`)"
   - "fast_float (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/third-party-podspecs/fast_float.podspec`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9840bc2f879b00159d6e09b831dd329f/node_modules/react-native/Libraries/FBLazyVector`)"
@@ -3668,7 +3669,6 @@ DEPENDENCIES:
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_cca9b0150d3835118913f0e7886b3a75/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@5.6.1_react-nati_8e7c3ad551f9f523bf19829ce700771a/node_modules/react-native-safe-area-context`)"
   - "react-native-slider (from `../../../node_modules/.pnpm/@react-native-community+slider@5.1.1/node_modules/@react-native-community/slider`)"
-  - "react-native-splash-screen (from `../../../node_modules/.pnpm/react-native-splash-screen@3.3.0_react-native@0_acacc8bf80bbd553e18bdb5a1033c3e8/node_modules/react-native-splash-screen`)"
   - "react-native-startup-time (from `../../../node_modules/.pnpm/react-native-startup-time@2.1.0_react-native@0._a9294d9a27e522fe86656a91f8dd3c8c/node_modules/react-native-startup-time`)"
   - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_e476df7aee8b54af1e5cd1cf7231b8cf/node_modules/react-native-tcp-socket`)"
   - "react-native-vector-icons-material-design-icons (from `../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_8f9f890bfb9d4ee0af41e288096720a5/node_modules/@react-native-vector-icons/material-design-icons`)"
@@ -3810,6 +3810,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo@54.0.33_@babel+core_dde8285444011602c2208a43417a3e8c/node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_cba21ce7445a28ffb678a08d4aab426e/node_modules/expo-modules-core"
+  ExpoSplashScreen:
+    :path: "../../../node_modules/.pnpm/expo-splash-screen@31.0.13_@typescript+typescri_8bca69ce4904a4b7b8473f3a07c1ca22/node_modules/expo-splash-screen/ios"
   ExpoWebBrowser:
     :path: "../../../node_modules/.pnpm/expo-web-browser@15.0.10_26e20d2da1658e2310f07fd70e138799/node_modules/expo-web-browser/ios"
   fast_float:
@@ -3921,8 +3923,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-safe-area-context@5.6.1_react-nati_8e7c3ad551f9f523bf19829ce700771a/node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../../../node_modules/.pnpm/@react-native-community+slider@5.1.1/node_modules/@react-native-community/slider"
-  react-native-splash-screen:
-    :path: "../../../node_modules/.pnpm/react-native-splash-screen@3.3.0_react-native@0_acacc8bf80bbd553e18bdb5a1033c3e8/node_modules/react-native-splash-screen"
   react-native-startup-time:
     :path: "../../../node_modules/.pnpm/react-native-startup-time@2.1.0_react-native@0._a9294d9a27e522fe86656a91f8dd3c8c/node_modules/react-native-startup-time"
   react-native-tcp-socket:
@@ -4068,6 +4068,7 @@ SPEC CHECKSUMS:
   ExpoImagePicker: ade85e148f735fc7e6f27dfe3eef28eb3887e90a
   ExpoKeepAwake: 55f75eca6499bb9e4231ebad6f3e9cb8f99c0296
   ExpoModulesCore: 91a57f1d109cf53fe58d44fcf6b68a777561549a
+  ExpoSplashScreen: bc3cffefca2716e5f22350ca109badd7e50ec14d
   ExpoWebBrowser: 17b064c621789e41d4816c95c93f429b84971f52
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
   FBLazyVector: 812782f0506ba4c4a1b9f4b793e6de1bfdfc4c25
@@ -4144,7 +4145,6 @@ SPEC CHECKSUMS:
   react-native-restart: b195f3ec6628c041e52753fe84a4851240267957
   react-native-safe-area-context: ee1e8e2a7abf737a8d4d9d1a5686a7f2e7466236
   react-native-slider: 05e7080478df08489251c2a6739a0d5628b7c198
-  react-native-splash-screen: 95994222cc95c236bd3cdc59fe45ed5f27969594
   react-native-startup-time: c7297d8a7892400239e6828bb94a3721c1a1a9df
   react-native-tcp-socket: 83a30b5da1deed4c720ee25595737ee851c23339
   react-native-vector-icons-material-design-icons: 9e98e87947156bfe95135fb523b62821486044e3

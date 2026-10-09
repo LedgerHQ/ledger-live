@@ -30,11 +30,10 @@
 		CA3D2EBC2EDDA6FB008E836E /* Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EBB2EDDA6FA008E836E /* Overlay.swift */; };
 		CA3D2EBE2EDDA70E008E836E /* AppKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EBD2EDDA70E008E836E /* AppKeys.swift */; };
 		CA3D2EC22EDE0D9B008E836E /* BluetoothHelperModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EC12EDE0D93008E836E /* BluetoothHelperModule.swift */; };
-		CAEE7B932E9FF33000479D0B /* splash_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = CAEE7B922E9FF33000479D0B /* splash_logo.png */; };
 		D93C63AD261B4E7183B66B1C /* Inter-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C2397DC873B4F8E91B750A8 /* Inter-Regular.otf */; };
 		E466275BA70845F3AFE1D695 /* Inter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D91EB0620BDE4709B6F44620 /* Inter-Bold.otf */; };
 		E55EFC09114D43B3AB041882 /* FontAwesome5_Pro_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */; };
-		E85A22C62B17E835005A8E6D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */; };
+		E85A22C62B17E835005A8E6D /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E85A22C52B17E835005A8E6D /* SplashScreen.storyboard */; };
 		E9558EFF2AF93CD200BBEB55 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9558F012AF93CD200BBEB55 /* InfoPlist.strings */; };
 		F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */; };
 		F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F837348622721A48009D747A /* JavaScriptCore.framework */; };
@@ -76,12 +75,11 @@
 		CA3D2EBB2EDDA6FA008E836E /* Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overlay.swift; sourceTree = "<group>"; };
 		CA3D2EBD2EDDA70E008E836E /* AppKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeys.swift; sourceTree = "<group>"; };
 		CA3D2EC12EDE0D93008E836E /* BluetoothHelperModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothHelperModule.swift; sourceTree = "<group>"; };
-		CAEE7B922E9FF33000479D0B /* splash_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash_logo.png; sourceTree = "<group>"; };
 		D2FF455C6D480B1F5F19E871 /* Pods_ledgerlivemobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ledgerlivemobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D91EB0620BDE4709B6F44620 /* Inter-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.otf"; path = "../assets/fonts/Inter-Bold.otf"; sourceTree = "<group>"; };
 		DBFCC7615DEF4A99944CBB00 /* AppleWalletModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWalletModule.swift; sourceTree = "<group>"; };
 		E45CE71FCE184F60BE140697 /* AppleWalletModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppleWalletModule.m; sourceTree = "<group>"; };
-		E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		E85A22C52B17E835005A8E6D /* SplashScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = ledgerlivemobile/SplashScreen.storyboard; sourceTree = "<group>"; };
 		E9558F002AF93CD200BBEB55 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E9558F022AF93CDA00BBEB55 /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E9558F032AF93CDB00BBEB55 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -136,7 +134,6 @@
 				RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */,
 				RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */,
 				2402D074219C2E6600276138 /* ledgerlivemobile.entitlements */,
-				CAEE7B922E9FF33000479D0B /* splash_logo.png */,
 				CA33C2502ED88BBB003C128E /* AppDelegate.swift */,
 				CA3D2EB52EDDA670008E836E /* FirebaseConfigurator.swift */,
 				CA3D2EBB2EDDA6FA008E836E /* Overlay.swift */,
@@ -146,7 +143,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				E9558F012AF93CD200BBEB55 /* InfoPlist.strings */,
-				E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */,
+				E85A22C52B17E835005A8E6D /* SplashScreen.storyboard */,
 				3FF1B576B23156C611F7B818 /* PrivacyInfo.xcprivacy */,
 			);
 			name = ledgerlivemobile;
@@ -326,7 +323,7 @@
 				AD6EE26071FA4673B5C89936 /* FontAwesome5_Pro_Brands.ttf in Resources */,
 				F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */,
 				2EA091AF2C3FBD5900B6181E /* GoogleService-Info-Testing.plist in Resources */,
-				E85A22C62B17E835005A8E6D /* LaunchScreen.storyboard in Resources */,
+				E85A22C62B17E835005A8E6D /* SplashScreen.storyboard in Resources */,
 				AD7A77B84DF3487C812B091B /* FontAwesome5_Pro_Regular.ttf in Resources */,
 				BA451DE927CE516700AAB209 /* GoogleService-Info-Production.plist in Resources */,
 				E55EFC09114D43B3AB041882 /* FontAwesome5_Pro_Solid.ttf in Resources */,
@@ -334,7 +331,6 @@
 				515E9C2C8C0049EC992210D9 /* Inter-Medium.otf in Resources */,
 				BAE7949027D7C46A00C465F5 /* GoogleService-Info.plist in Resources */,
 				9DB523402249BD405124BA05 /* PrivacyInfo.xcprivacy in Resources */,
-				CAEE7B932E9FF33000479D0B /* splash_logo.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
