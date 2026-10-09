@@ -49,6 +49,7 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
     isOnboarded: false,
     onboardedOnEntry: false,
     genuineVerdict: null,
+    genuineCheckedThisVisit: false,
     secureConnectionRequested: false,
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
