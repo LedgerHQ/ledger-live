@@ -71,7 +71,7 @@ The non-hardened change/address suffix (`/0/0`) is intentionally omitted. The xp
 
 ```
 account:1:utxo:bitcoin:main:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSE1S2G4UrqdKFNvJx3bR7MNfYTc4FXnAFzBVNMcJYHx5ENKnG9WNzh:m/84'/0'/0'
-account:1:utxo:bitcoin:test:tpubD8Lg2gUVPCHWXFnFnqiKdPHZBVjGoMkL2YobGcqEUiE3K72TPFAG6Gjs1TK7d4yKnBqEhqawGXBpNxKzAYtSiRPBwwqvpyiNi4X6MHXTfHe:m/84'/1'/0'
+account:1:utxo:bitcoin:testnet:tpubD8Lg2gUVPCHWXFnFnqiKdPHZBVjGoMkL2YobGcqEUiE3K72TPFAG6Gjs1TK7d4yKnBqEhqawGXBpNxKzAYtSiRPBwwqvpyiNi4X6MHXTfHe:m/84'/1'/0'
 account:1:address:ethereum:main:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:m/44'/60'/0'/0/0
 account:1:address:solana:main:7xCU4XQfL8589X6vVt8q5F7J3Z9T1z6W6X6X6X6X6X:m/44'/501'/0'/0'
 ```

@@ -2766,6 +2766,9 @@ importers:
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
+      '@domain/entity-account-descriptor':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-descriptor
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../domain/entity/currency
