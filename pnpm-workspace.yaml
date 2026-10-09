@@ -257,3 +257,5 @@ catalog:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: postcss@8.5.18
+  - postcss@8.5.18
