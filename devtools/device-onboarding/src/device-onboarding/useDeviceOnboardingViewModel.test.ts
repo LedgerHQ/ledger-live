@@ -536,7 +536,7 @@ describe("useDeviceOnboardingViewModel", () => {
       { initialProps: "readingState" },
     );
 
-    act(() => result.current.setGenuineOverride(GenuineOverride.Pass));
+    act(() => result.current.setGenuineOverride(GenuineOverride.Genuine));
     expect(send).not.toHaveBeenCalled();
 
     rerender("checks.genuineCheck");

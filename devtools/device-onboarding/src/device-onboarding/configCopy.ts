@@ -4,7 +4,7 @@ export const overrideCopy = {
   genuine: "Genuine check",
   firmware: "Firmware",
   device: "Device",
-  pass: "Pass",
+  isGenuine: "Genuine",
   fail: "Not genuine",
   upToDate: "Up to date",
   outdated: "Outdated",

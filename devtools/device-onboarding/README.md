@@ -18,7 +18,7 @@ the context, and the log. Open the QUIT line to read the session and the model.
 
 The device name sits under the status. Context sits under that name. It starts closed. Tap it to
 open the fields. Log and Config sit under that. Log is the run. Config lists each switch, with a
-short line under its name. Override sits first. It can pass the genuine check, mark the
+short line under its name. Override sits first. It can mark the device genuine or not, mark the
 firmware up to date or outdated. The `deviceOnboarding` feature flag sits under that,
 with one switch for `enabled` and one per param, when the host passes it. Open next screen sits under that. It starts on, so an exit or a firmware update opens
 that screen. Turn it off to stay here. Before a run, the log asks you to pair a device and

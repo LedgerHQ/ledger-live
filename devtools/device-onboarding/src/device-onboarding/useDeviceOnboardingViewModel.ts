@@ -188,7 +188,7 @@ export interface DeviceOnboardingViewModel {
 
 export const GenuineOverride = {
   Device: "device",
-  Pass: "pass",
+  Genuine: "genuine",
   Fail: "fail",
 } as const;
 
@@ -232,7 +232,7 @@ function overrideEvent(
   genuine: GenuineOverride,
   firmware: FirmwareOverride,
 ): OnboardingEvent | null {
-  if (state === "checks.genuineCheck" && genuine === GenuineOverride.Pass) {
+  if (state === "checks.genuineCheck" && genuine === GenuineOverride.Genuine) {
     return { type: "GENUINE_CHECK_PASSED", output: { isGenuine: true } };
   }
   if (state === "checks.genuineCheck" && genuine === GenuineOverride.Fail) {

@@ -261,8 +261,8 @@ function OverrideSection({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
           <SegmentedControlButton value={GenuineOverride.Device}>
             {overrideCopy.device}
           </SegmentedControlButton>
-          <SegmentedControlButton value={GenuineOverride.Pass}>
-            {overrideCopy.pass}
+          <SegmentedControlButton value={GenuineOverride.Genuine}>
+            {overrideCopy.isGenuine}
           </SegmentedControlButton>
           <SegmentedControlButton value={GenuineOverride.Fail}>
             {overrideCopy.fail}
