@@ -1,5 +1,5 @@
 import React from "react";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { Lottie } from "@shared/lottie";
 import { useProductTourSlideItemViewModel } from "../hooks/useProductTourSlideItemViewModel";
 
 interface ProductTourSlideItemProps {
@@ -17,11 +17,11 @@ export function ProductTourSlideItem({ slideIndex }: ProductTourSlideItemProps) 
         className="flex w-full shrink-0 items-center justify-center overflow-hidden"
         style={{ height: 208 }}
       >
-        <DotLottieReact
-          src={lottieSrc}
-          loop={true}
-          autoplay={shouldAutoplay}
-          layout={{ fit: "contain" }}
+        <Lottie
+          source={lottieSrc}
+          loop
+          autoPlay={shouldAutoplay}
+          fit="contain"
           style={{ width: 208, height: 208 }}
         />
       </div>

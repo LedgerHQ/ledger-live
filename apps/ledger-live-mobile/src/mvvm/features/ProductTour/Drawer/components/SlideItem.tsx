@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import Animated from "react-native-reanimated";
-import LottieView from "lottie-react-native";
+import { Lottie } from "@shared/lottie";
 import { useSlideItemViewModel } from "../hooks/useSlideItemViewModel";
 
 type SlideItemProps = {
@@ -25,7 +25,7 @@ export function SlideItem({ index }: SlideItemProps) {
   return (
     <Animated.View onLayout={handleLayout} style={[styles.container, animatedStyle]}>
       {shouldRender && isActive ? (
-        <LottieView
+        <Lottie
           key={`${lottieSrc}-${index}-animation`}
           autoPlay
           loop
@@ -33,7 +33,7 @@ export function SlideItem({ index }: SlideItemProps) {
           source={source}
         />
       ) : (
-        <LottieView
+        <Lottie
           key={`${lottieSrc}-${index}-placeholder`}
           autoPlay={false}
           loop={false}
