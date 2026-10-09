@@ -7,7 +7,7 @@ import {
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
 import { speculosDmkTransportFactory } from "../transport/SpeculosDmkTransport";
 import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
-import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
+import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
 import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
 
@@ -49,6 +49,12 @@ export const setMockServerSessionToken = (token: string): void => {
 export const getMockServerSessionToken = (): string | undefined => mockServerSessionToken;
 
 /**
+ * Firmware distribution salt of the current user, which selects their progressive OS rollout.
+ * The app sets it whenever the user ID is known or changes, via {@link setFirmwareDistributionSalt}.
+ */
+let firmwareDistributionSalt: string | undefined;
+
+/**
  * Compute the mock server's secure-channel (ScriptRunner) WebSocket base URL.
  * The session token is carried in the path because the secure-channel WebSocket
  * has no bearer header. Shared by the DMK secure-channel config and the legacy
@@ -68,8 +74,6 @@ export const getMockScriptRunnerBaseUrl = (
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
-    const userId = getEnv("USER_ID");
-    const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
     const mockServerTransportEnabled = getEnv("MOCK_SERVER_TRANSPORT");
     const mockServerUrl = getMockServerTransportUrl();
     tracer.trace("Initialize DeviceManagementKit", {
@@ -81,7 +85,7 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
       .addTransport(webHidTransportFactory)
       .addTransport(speculosDmkTransportFactory)
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
-      .addConfig({ firmwareDistributionSalt });
+      .addConfig(firmwareDistributionSalt ? { firmwareDistributionSalt } : {});
 
     if (mockServerTransportEnabled) {
       // Point the secure channel (genuine check, listApps, install…) at the mock
@@ -98,6 +102,12 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
   }
 
   return instance;
+};
+
+/** Applies to the DMK built next, and to the current one if it already exists. */
+export const setFirmwareDistributionSalt = (salt: string): void => {
+  firmwareDistributionSalt = salt;
+  instance?.setFirmwareDistributionSalt(salt);
 };
 
 export const DeviceManagementKitContext = createContext<DeviceManagementKit | null>(null);

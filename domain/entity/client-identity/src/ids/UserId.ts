@@ -60,6 +60,11 @@ export class UserId {
     return this[USER_ID_SYMBOL];
   }
 
+  /** For the firmware distribution salt of the progressive OS rollout (hashed, sent to the Manager API). Allowlisted in export-rules.json. */
+  exportUserIdForFirmwareSalt(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
   equals(other: UserId): boolean {
     return this[USER_ID_SYMBOL] === other[USER_ID_SYMBOL];
   }

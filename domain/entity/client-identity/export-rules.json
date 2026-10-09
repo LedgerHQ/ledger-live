@@ -33,6 +33,9 @@
     "exportUserIdForChainwatch": [
       "apps/ledger-live-mobile/src/components/TransactionsAlerts.tsx",
       "apps/ledger-live-mobile/src/screens/Settings/Debug/Features/TransactionsAlerts.tsx"
+    ],
+    "exportUserIdForFirmwareSalt": [
+      "libs/live-dmk-shared/src/services/syncFirmwareDistributionSalt.ts"
     ]
   },
   "domain/entity/client-identity/src/ids/DatadogId.ts": {

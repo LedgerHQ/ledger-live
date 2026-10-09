@@ -16186,6 +16186,9 @@ importers:
 
   libs/live-dmk-shared:
     dependencies:
+      '@domain/entity-client-identity':
+        specifier: workspace:*
+        version: link:../../domain/entity/client-identity
       '@ledgerhq/context-module':
         specifier: 2.6.0
         version: 2.6.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
