@@ -143,9 +143,7 @@ describe("toolEvent", () => {
         {
           type: "FIRMWARE_UPDATE_AVAILABLE",
           output: {
-            firmwareUpdateContext: {
-              availableUpdate: { finalFirmware: { version: "2.3.0" } } as AvailableFirmwareUpdate,
-            },
+            update: { finalFirmware: { version: "2.3.0" } } as AvailableFirmwareUpdate,
           },
         } as OnboardingEvent,
         "2",
@@ -317,21 +315,26 @@ describe("toolEvent payload", () => {
   });
 
   it("keeps the installed apps on a firmware event", () => {
+    const update = { finalFirmware: { version: "1.5.0" } };
     const event = {
       type: "FIRMWARE_UPDATE_AVAILABLE",
       output: {
         firmwareVersion: { os: "1.4.0", mcu: "2.0.0", bootloader: "3.0.0" },
-        firmwareUpdateContext: {
-          availableUpdate: { finalFirmware: { version: "1.5.0" } },
-        },
+        firmwareUpdateContext: { availableUpdate: update },
         applications: [{ versionName: "Bitcoin" }],
+        update,
       },
-    } as OnboardingEvent;
+    } as unknown as OnboardingEvent;
     const row = toolEvent(event, "1", "session");
 
     expect(row.detail).toEqual({ kind: "firmware", version: "1.5.0" });
+    // The same update sits in two places. It is not a cycle, so both copies are kept.
     expect(row.payload).toMatchObject({
-      output: { applications: [{ versionName: "Bitcoin" }] },
+      output: {
+        applications: [{ versionName: "Bitcoin" }],
+        firmwareUpdateContext: { availableUpdate: update },
+        update,
+      },
     });
   });
 

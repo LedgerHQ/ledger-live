@@ -23,10 +23,14 @@ import {
   Warning,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
-import { emptyLogCopy, featureFlagCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
 import {
-  FirmwareOverride,
-  GenuineOverride,
+  emptyLogCopy,
+  featureFlagCopy,
+  logCopy,
+  openNextScreenCopy,
+  overrideCopy,
+} from "./configCopy";
+import {
   possibleByEvent,
   useDeviceOnboardingViewModel,
   type DeviceOnboardingViewModel,
@@ -188,7 +192,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
           <Box lx={BUTTONS_LX}>
             {vm.sendableRows.length === 0 ? (
               <Text typography="body2" style={muted}>
-                No event accepted in this state
+                {logCopy.noEvent}
               </Text>
             ) : (
               vm.sendableRows.map(row => (
@@ -232,7 +236,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
               })
             }
           >
-            Export logs
+            {logCopy.export}
           </Button>
         </Box>
       ) : null}
@@ -256,40 +260,21 @@ function OverrideSection({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
       <Text typography="body2" style={muted}>
         {overrideCopy.description}
       </Text>
-      <OverrideRow label={overrideCopy.genuine}>
-        <SegmentedControl
-          selectedValue={vm.genuineOverride}
-          onSelectedChange={vm.setGenuineOverride}
-          accessibilityLabel={overrideCopy.genuine}
-        >
-          <SegmentedControlButton value={GenuineOverride.Device}>
-            {overrideCopy.device}
-          </SegmentedControlButton>
-          <SegmentedControlButton value={GenuineOverride.Genuine}>
-            {overrideCopy.isGenuine}
-          </SegmentedControlButton>
-          <SegmentedControlButton value={GenuineOverride.Fail}>
-            {overrideCopy.fail}
-          </SegmentedControlButton>
-        </SegmentedControl>
-      </OverrideRow>
-      <OverrideRow label={overrideCopy.firmware}>
-        <SegmentedControl
-          selectedValue={vm.firmwareOverride}
-          onSelectedChange={vm.setFirmwareOverride}
-          accessibilityLabel={overrideCopy.firmware}
-        >
-          <SegmentedControlButton value={FirmwareOverride.Device}>
-            {overrideCopy.device}
-          </SegmentedControlButton>
-          <SegmentedControlButton value={FirmwareOverride.UpToDate}>
-            {overrideCopy.upToDate}
-          </SegmentedControlButton>
-          <SegmentedControlButton value={FirmwareOverride.Outdated}>
-            {overrideCopy.outdated}
-          </SegmentedControlButton>
-        </SegmentedControl>
-      </OverrideRow>
+      {vm.overrideRows.map(row => (
+        <OverrideRow key={row.key} label={row.label}>
+          <SegmentedControl
+            selectedValue={row.value}
+            onSelectedChange={row.onChange}
+            accessibilityLabel={row.label}
+          >
+            {row.options.map(option => (
+              <SegmentedControlButton key={option.value} value={option.value}>
+                {option.label}
+              </SegmentedControlButton>
+            ))}
+          </SegmentedControl>
+        </OverrideRow>
+      ))}
     </Box>
   );
 }
@@ -410,7 +395,7 @@ function ContextLines({ rows }: Readonly<{ rows: readonly DisplayRow[] }>) {
             <ChevronRight size={16} color="muted" />
           )}
           <Text typography="body2" style={muted}>
-            Context
+            {logCopy.context}
           </Text>
         </Box>
       </Pressable>

@@ -10,10 +10,10 @@ import {
   type DeviceOnboardingToolPayload,
   type DeviceOnboardingToolProps,
 } from "../types";
+import { overrideCopy } from "./configCopy";
 
 const displayedEventCount = 40;
 const displayedDetailLength = 80;
-const displayedStateCount = 24;
 const displayedPayloadRows = 80;
 
 export function possibleByEvent(
@@ -158,10 +158,17 @@ export interface SwitchRow {
   readonly onChange: (checked: boolean) => void;
 }
 
+export interface OverrideRow {
+  readonly key: string;
+  readonly label: string;
+  readonly value: string;
+  readonly options: readonly { readonly value: string; readonly label: string }[];
+  readonly onChange: (value: string) => void;
+}
+
 export interface DeviceOnboardingViewModel {
   readonly statusLabel: string;
   readonly exportLogs: () => string;
-  readonly stateSteps: readonly StateStep[];
   readonly logLines: readonly LogLine[];
   readonly deviceLabel: string | null;
   readonly isRunning: boolean;
@@ -181,10 +188,7 @@ export interface DeviceOnboardingViewModel {
   readonly setShowNextScreen?: (showNextScreen: boolean) => void;
   /** Empty when the host has no feature flag: the section is hidden. */
   readonly featureFlagRows: readonly SwitchRow[];
-  readonly genuineOverride: GenuineOverride;
-  readonly setGenuineOverride: (value: GenuineOverride) => void;
-  readonly firmwareOverride: FirmwareOverride;
-  readonly setFirmwareOverride: (value: FirmwareOverride) => void;
+  readonly overrideRows: readonly OverrideRow[];
 }
 
 export const GenuineOverride = {
@@ -203,26 +207,13 @@ export const FirmwareOverride = {
 
 export type FirmwareOverride = (typeof FirmwareOverride)[keyof typeof FirmwareOverride];
 
+type FirmwareAnswer = Extract<OnboardingEvent, { type: "FIRMWARE_UP_TO_DATE" }>["output"];
+
+// The machine reads only the update, so the made-up answer carries no more than its versions.
 const overrideFirmware = {
   firmwareVersion: { os: "override", mcu: "override", bootloader: "override" },
-  firmwareUpdateContext: {
-    currentFirmware: {
-      id: 0,
-      version: "override",
-      perso: "",
-      firmware: null,
-      firmwareKey: null,
-      hash: null,
-      bytes: null,
-      mcuVersions: [],
-    },
-  },
-  applications: [],
-  applicationsUpdates: [],
-  installedLanguages: [],
-  catalog: { applications: [], languagePackages: [] },
-  customImage: {},
-};
+  firmwareUpdateContext: {},
+} as FirmwareAnswer;
 
 const overrideUpdate = {
   osuFirmware: {
@@ -264,13 +255,7 @@ function overrideEvent(
   if (state === "checks.firmwareCheck" && firmware === FirmwareOverride.Outdated) {
     return {
       type: "FIRMWARE_UPDATE_AVAILABLE",
-      output: {
-        ...overrideFirmware,
-        firmwareUpdateContext: {
-          ...overrideFirmware.firmwareUpdateContext,
-          availableUpdate: overrideUpdate,
-        },
-      },
+      output: { ...overrideFirmware, update: overrideUpdate },
     };
   }
   return null;
@@ -392,20 +377,6 @@ function withExitOnQuit(lines: readonly LogLine[], exitRows: readonly DisplayRow
   return next;
 }
 
-function stateStepsOf(rows: readonly DeviceOnboardingLogRow[]): StateStep[] {
-  const labels: string[] = [];
-  for (const row of rows) {
-    if (labels.at(-1) !== row.state) labels.push(row.state);
-  }
-
-  return labels.slice(-displayedStateCount).map((label, index, shown) => ({
-    key: `${index}-${label}`,
-    label,
-    kind: stateKind(label),
-    isCurrent: index === shown.length - 1,
-  }));
-}
-
 function logLinesOf(rows: readonly DeviceOnboardingLogRow[]): LogLine[] {
   const shown = rows.slice(-displayedEventCount);
   const lines: LogLine[] = [];
@@ -458,7 +429,6 @@ export function useDeviceOnboardingViewModel(
   }, [firmwareOverride, genuineOverride, send, state]);
 
   const rows = rowsFor(log, state);
-  const stateSteps = stateStepsOf(rows);
   const exitRows: DisplayRow[] =
     exit === null
       ? []
@@ -491,7 +461,6 @@ export function useDeviceOnboardingViewModel(
   return {
     statusLabel: statusLabels[status],
     exportLogs: () => JSON.stringify({ status, device, state, context, log, exit }, null, 2),
-    stateSteps,
     logLines,
     deviceLabel,
     isRunning: status === DeviceOnboardingStatus.Running,
@@ -513,9 +482,29 @@ export function useDeviceOnboardingViewModel(
     showNextScreen: showNextScreen ?? false,
     setShowNextScreen,
     featureFlagRows: featureFlagRows(featureFlag, setFeatureFlag),
-    genuineOverride,
-    setGenuineOverride,
-    firmwareOverride,
-    setFirmwareOverride,
+    overrideRows: [
+      {
+        key: "genuine",
+        label: overrideCopy.genuine,
+        value: genuineOverride,
+        options: [
+          { value: GenuineOverride.Device, label: overrideCopy.device },
+          { value: GenuineOverride.Genuine, label: overrideCopy.isGenuine },
+          { value: GenuineOverride.Fail, label: overrideCopy.fail },
+        ],
+        onChange: value => setGenuineOverride(value as GenuineOverride),
+      },
+      {
+        key: "firmware",
+        label: overrideCopy.firmware,
+        value: firmwareOverride,
+        options: [
+          { value: FirmwareOverride.Device, label: overrideCopy.device },
+          { value: FirmwareOverride.UpToDate, label: overrideCopy.upToDate },
+          { value: FirmwareOverride.Outdated, label: overrideCopy.outdated },
+        ],
+        onChange: value => setFirmwareOverride(value as FirmwareOverride),
+      },
+    ],
   };
 }

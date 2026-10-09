@@ -106,62 +106,12 @@ describe("stateKind", () => {
 });
 
 describe("useDeviceOnboardingViewModel", () => {
-  it("reports the status as a label and no step before the machine runs", () => {
+  it("reports the status as a label before the machine runs", () => {
     const { result } = renderHook(() => useDeviceOnboardingViewModel(buildProps()));
 
     expect(result.current.statusLabel).toBe("Not started");
-    expect(result.current.stateSteps).toEqual([]);
     expect(result.current.deviceLabel).toBeNull();
     expect(result.current.isRunning).toBe(false);
-  });
-
-  it("keeps every state the machine went through, marking the last one as current", () => {
-    const { result } = renderHook(() =>
-      useDeviceOnboardingViewModel(
-        buildProps({
-          state: "checks.genuineCheck",
-          log: [{ state: "readingState" }, { state: "routing" }, { state: "checks.genuineCheck" }],
-        }),
-      ),
-    );
-
-    expect(result.current.stateSteps).toEqual([
-      { key: "0-readingState", label: "readingState", kind: "progress", isCurrent: false },
-      { key: "1-routing", label: "routing", kind: "progress", isCurrent: false },
-      {
-        key: "2-checks.genuineCheck",
-        label: "checks.genuineCheck",
-        kind: "genuine",
-        isCurrent: true,
-      },
-    ]);
-  });
-
-  it("appends a revisited state rather than collapsing it, so a loop stays visible", () => {
-    const { result } = renderHook(() =>
-      useDeviceOnboardingViewModel(
-        buildProps({
-          state: "readingState",
-          log: [{ state: "readingState" }, { state: "deviceLocked" }, { state: "readingState" }],
-        }),
-      ),
-    );
-
-    expect(result.current.stateSteps.map(step => step.label)).toEqual([
-      "readingState",
-      "deviceLocked",
-      "readingState",
-    ]);
-  });
-
-  it("clears the trail once the host drops the state, so a reset starts from scratch", () => {
-    const { result } = renderHook(() =>
-      useDeviceOnboardingViewModel(
-        buildProps({ state: null, log: [{ state: "readingState" }, { state: "routing" }] }),
-      ),
-    );
-
-    expect(result.current.stateSteps).toEqual([]);
   });
 
   it("names the model and the transport in the device label, since the flow branches on both", () => {
@@ -536,7 +486,7 @@ describe("useDeviceOnboardingViewModel", () => {
       { initialProps: "readingState" },
     );
 
-    act(() => result.current.setGenuineOverride(GenuineOverride.Genuine));
+    act(() => pickOverride(result, "genuine", GenuineOverride.Genuine));
     expect(send).not.toHaveBeenCalled();
 
     rerender("checks.genuineCheck");
@@ -552,39 +502,20 @@ describe("useDeviceOnboardingViewModel", () => {
       useDeviceOnboardingViewModel(buildProps({ state: "checks.firmwareCheck", send })),
     );
 
-    act(() => result.current.setFirmwareOverride(FirmwareOverride.UpToDate));
+    act(() => pickOverride(result, "firmware", FirmwareOverride.UpToDate));
     expect(send).toHaveBeenCalledWith({
       type: "FIRMWARE_UP_TO_DATE",
-      output: {
+      output: expect.objectContaining({
         firmwareVersion: { os: "override", mcu: "override", bootloader: "override" },
-        firmwareUpdateContext: {
-          currentFirmware: {
-            id: 0,
-            version: "override",
-            perso: "",
-            firmware: null,
-            firmwareKey: null,
-            hash: null,
-            bytes: null,
-            mcuVersions: [],
-          },
-        },
-        applications: [],
-        applicationsUpdates: [],
-        installedLanguages: [],
-        catalog: { applications: [], languagePackages: [] },
-        customImage: {},
-      },
+      }),
     });
 
-    act(() => result.current.setFirmwareOverride(FirmwareOverride.Outdated));
+    act(() => pickOverride(result, "firmware", FirmwareOverride.Outdated));
     expect(send).toHaveBeenLastCalledWith({
       type: "FIRMWARE_UPDATE_AVAILABLE",
       output: expect.objectContaining({
-        firmwareUpdateContext: expect.objectContaining({
-          availableUpdate: expect.objectContaining({
-            finalFirmware: expect.objectContaining({ version: "override" }),
-          }),
+        update: expect.objectContaining({
+          finalFirmware: expect.objectContaining({ version: "override" }),
         }),
       }),
     });
@@ -599,3 +530,11 @@ describe("useDeviceOnboardingViewModel", () => {
     expect(result.current.canSend).toBe(false);
   });
 });
+
+function pickOverride(
+  result: { current: ReturnType<typeof useDeviceOnboardingViewModel> },
+  key: string,
+  value: string,
+) {
+  result.current.overrideRows.find(row => row.key === key)?.onChange(value);
+}

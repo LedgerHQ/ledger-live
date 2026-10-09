@@ -130,9 +130,7 @@ export const contextActions = {
       return {};
     }
 
-    return {
-      availableFirmwareUpdate: event.output.firmwareUpdateContext.availableUpdate ?? null,
-    };
+    return { availableFirmwareUpdate: event.output.update };
   }),
   forgetFirmwareCheck: update({ firmwareChecked: false, availableFirmwareUpdate: null }),
   adoptSession: update(({ event }) => {

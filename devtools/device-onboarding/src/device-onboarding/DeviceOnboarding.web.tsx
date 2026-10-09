@@ -14,10 +14,14 @@ import {
   Warning,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
-import { emptyLogCopy, featureFlagCopy, openNextScreenCopy, overrideCopy } from "./configCopy";
 import {
-  FirmwareOverride,
-  GenuineOverride,
+  emptyLogCopy,
+  featureFlagCopy,
+  logCopy,
+  openNextScreenCopy,
+  overrideCopy,
+} from "./configCopy";
+import {
   possibleByEvent,
   useDeviceOnboardingViewModel,
   type DeviceOnboardingViewModel,
@@ -113,7 +117,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
         <div className="px-16 py-12 border-b border-base flex flex-col items-start gap-8">
           <div className="flex flex-wrap items-center gap-8">
             {vm.sendableRows.length === 0 ? (
-              <span className="body-3 text-muted">No event accepted in this state</span>
+              <span className="body-3 text-muted">{logCopy.noEvent}</span>
             ) : (
               vm.sendableRows.map(row => (
                 <Button
@@ -145,7 +149,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
             )}
           </div>
           <Button size="sm" appearance="transparent" onClick={() => exportLogs(vm.exportLogs())}>
-            Export logs
+            {logCopy.export}
           </Button>
         </div>
       )}
@@ -184,40 +188,21 @@ function OverrideSection({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
         <span className="body-3 text-base">{overrideCopy.title}</span>
         <span className="body-3 text-muted">{overrideCopy.description}</span>
       </span>
-      <OverrideRow label={overrideCopy.genuine}>
-        <SegmentedControl
-          selectedValue={vm.genuineOverride}
-          onSelectedChange={vm.setGenuineOverride}
-          aria-label={overrideCopy.genuine}
-        >
-          <SegmentedControlButton value={GenuineOverride.Device}>
-            {overrideCopy.device}
-          </SegmentedControlButton>
-          <SegmentedControlButton value={GenuineOverride.Genuine}>
-            {overrideCopy.isGenuine}
-          </SegmentedControlButton>
-          <SegmentedControlButton value={GenuineOverride.Fail}>
-            {overrideCopy.fail}
-          </SegmentedControlButton>
-        </SegmentedControl>
-      </OverrideRow>
-      <OverrideRow label={overrideCopy.firmware}>
-        <SegmentedControl
-          selectedValue={vm.firmwareOverride}
-          onSelectedChange={vm.setFirmwareOverride}
-          aria-label={overrideCopy.firmware}
-        >
-          <SegmentedControlButton value={FirmwareOverride.Device}>
-            {overrideCopy.device}
-          </SegmentedControlButton>
-          <SegmentedControlButton value={FirmwareOverride.UpToDate}>
-            {overrideCopy.upToDate}
-          </SegmentedControlButton>
-          <SegmentedControlButton value={FirmwareOverride.Outdated}>
-            {overrideCopy.outdated}
-          </SegmentedControlButton>
-        </SegmentedControl>
-      </OverrideRow>
+      {vm.overrideRows.map(row => (
+        <OverrideRow key={row.key} label={row.label}>
+          <SegmentedControl
+            selectedValue={row.value}
+            onSelectedChange={row.onChange}
+            aria-label={row.label}
+          >
+            {row.options.map(option => (
+              <SegmentedControlButton key={option.value} value={option.value}>
+                {option.label}
+              </SegmentedControlButton>
+            ))}
+          </SegmentedControl>
+        </OverrideRow>
+      ))}
     </div>
   );
 }
@@ -282,7 +267,7 @@ function ContextLines({ rows }: Readonly<{ rows: readonly DisplayRow[] }>) {
         ) : (
           <ChevronRight size={16} className="text-muted shrink-0" />
         )}
-        Context
+        {logCopy.context}
       </button>
       {open
         ? rows.map(row => (

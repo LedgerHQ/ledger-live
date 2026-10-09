@@ -117,8 +117,7 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
   if (event.type === "STEP_CHANGED") {
     detail = { kind: "step", step: event.state.currentOnboardingStep };
   } else if (event.type === "FIRMWARE_UPDATE_AVAILABLE") {
-    const version = event.output.firmwareUpdateContext.availableUpdate?.finalFirmware.version;
-    if (version) detail = { kind: "firmware", version };
+    detail = { kind: "firmware", version: event.output.update.finalFirmware.version };
   } else if (
     event.type === "SESSION_READY" ||
     event.type === "SESSION_CHANGED" ||
@@ -162,23 +161,40 @@ function plainPayload(
     return null;
   }
   if (typeof value !== "object") return undefined;
+  // Only an ancestor makes a cycle. The same object can sit in two places and is copied twice.
   if (seen.has(value)) return truncated;
   seen.add(value);
   budget.left -= 1;
+  const copied = Array.isArray(value)
+    ? copyItems(value, seen, budget)
+    : copyFields(value, seen, budget);
+  seen.delete(value);
 
-  if (Array.isArray(value)) {
-    const items: HostToolPayload[] = [];
-    for (const child of value) {
-      if (budget.left <= 0) {
-        items.push(truncated);
-        break;
-      }
-      const copied = plainPayload(child, seen, budget);
-      if (copied !== undefined) items.push(copied);
+  return copied;
+}
+
+function copyItems(
+  value: readonly unknown[],
+  seen: WeakSet<object>,
+  budget: { left: number },
+): HostToolPayload[] {
+  const items: HostToolPayload[] = [];
+  for (const child of value) {
+    if (budget.left <= 0) {
+      items.push(truncated);
+      break;
     }
-    return items;
+    const copied = plainPayload(child, seen, budget);
+    if (copied !== undefined) items.push(copied);
   }
+  return items;
+}
 
+function copyFields(
+  value: object,
+  seen: WeakSet<object>,
+  budget: { left: number },
+): HostToolPayload | undefined {
   const nested: Record<string, HostToolPayload> = {};
   if (value instanceof Error) {
     nested.name = value.name;

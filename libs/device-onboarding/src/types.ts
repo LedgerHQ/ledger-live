@@ -151,7 +151,10 @@ export type OnboardingEvent =
   | { type: "DEVICE_NOT_GENUINE"; output: GenuineCheckDAOutput }
   | { type: "SECURE_CHANNEL_LOST"; output: GenuineCheckFailure }
   | { type: "FIRMWARE_UP_TO_DATE"; output: GetDeviceMetadataDAOutput }
-  | { type: "FIRMWARE_UPDATE_AVAILABLE"; output: GetDeviceMetadataDAOutput }
+  | {
+      type: "FIRMWARE_UPDATE_AVAILABLE";
+      output: GetDeviceMetadataDAOutput & { update: AvailableFirmwareUpdate };
+    }
   | { type: "FIRMWARE_CHECK_FAILED"; output: unknown }
   | { type: "FIRMWARE_UPDATE_FLOW_CLOSED"; sessionId: DeviceSessionId }
   | { type: "RETRY" }
@@ -185,7 +188,10 @@ export type GenuineVerdict = {
 
 export type DeviceOnboardingInput = {
   dmk: DeviceManagementKit;
-  /** The session the machine talks to. It changes only through SESSION_READY or FIRMWARE_UPDATE_FLOW_CLOSED. */
+  /**
+   * The session the machine talks to. It changes only through SESSION_READY, SESSION_CHANGED or
+   * FIRMWARE_UPDATE_FLOW_CLOSED.
+   */
   sessionId: DeviceSessionId;
   deviceId: string;
   deviceModelId: DeviceModelId;

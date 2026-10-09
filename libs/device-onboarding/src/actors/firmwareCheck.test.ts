@@ -31,7 +31,7 @@ describe("mapFirmwareMetadata", () => {
     const reported = metadata(availableUpdate);
     expect(mapFirmwareMetadata(reported)).toEqual({
       type: "FIRMWARE_UPDATE_AVAILABLE",
-      output: reported,
+      output: { ...reported, update: availableUpdate },
     });
   });
 
@@ -78,7 +78,7 @@ describe("firmwareCheck", () => {
     expect(received).toEqual([
       {
         type: "FIRMWARE_UPDATE_AVAILABLE",
-        output: metadata(availableUpdate),
+        output: { ...metadata(availableUpdate), update: availableUpdate },
       },
     ]);
     stop();

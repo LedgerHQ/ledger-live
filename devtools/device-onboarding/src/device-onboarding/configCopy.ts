@@ -25,3 +25,9 @@ export const featureFlagCopy = {
   title: "Feature flag deviceOnboarding",
   description: "Overrides the flag on this app. A new run reads the new value.",
 };
+
+export const logCopy = {
+  context: "Context",
+  noEvent: "No event accepted in this state",
+  export: "Export logs",
+};

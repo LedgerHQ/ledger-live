@@ -24,9 +24,11 @@ export type FirmwareCheckInput = {
 };
 
 export function mapFirmwareMetadata(metadata: GetDeviceMetadataDAOutput): FirmwareCheckEvent {
-  return metadata.firmwareUpdateContext.availableUpdate === undefined
+  const { availableUpdate } = metadata.firmwareUpdateContext;
+
+  return availableUpdate === undefined
     ? { type: "FIRMWARE_UP_TO_DATE", output: metadata }
-    : { type: "FIRMWARE_UPDATE_AVAILABLE", output: metadata };
+    : { type: "FIRMWARE_UPDATE_AVAILABLE", output: { ...metadata, update: availableUpdate } };
 }
 
 export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput>(
