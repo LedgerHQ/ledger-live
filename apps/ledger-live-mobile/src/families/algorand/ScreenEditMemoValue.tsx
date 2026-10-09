@@ -4,7 +4,8 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import i18next from "~/i18n/instance";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import type { Transaction as AlgorandTransaction } from "@ledgerhq/live-common/families/algorand/types";
+import { algorandMemoPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
+import type { AlgorandGenericTransaction } from "@ledgerhq/live-common/families/algorand/types";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
@@ -21,16 +22,14 @@ type Props = BaseComposite<
 function AlgorandEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [memo, setMemo] = useState(route.params.transaction.memo ?? undefined);
+  const [memo, setMemo] = useState(route.params.transaction.memoValue ?? undefined);
   const account = route.params.account;
-  const bridge = useAccountBridge<AlgorandTransaction>(account);
+  const bridge = useAccountBridge<AlgorandGenericTransaction>(account);
   const onValidateText = useCallback(() => {
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        memo,
-      }),
+      transaction: bridge.updateTransaction(transaction, algorandMemoPatch(memo)),
       currentNavigation: ScreenName.SendSummary,
       nextNavigation: ScreenName.SendSelectDevice,
     });

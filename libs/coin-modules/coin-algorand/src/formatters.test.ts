@@ -96,7 +96,6 @@ describe("formatters", () => {
       const account = {
         spendableBalance: new BigNumber("10000000"),
         algorandResources: {
-          rewards: new BigNumber("0"),
           nbAssets: 0,
         },
       } as unknown as AlgorandAccount;
@@ -105,37 +104,6 @@ describe("formatters", () => {
 
       expect(result).toContain("10000000");
       expect(result).toContain("spendable");
-    });
-
-    it("should include rewards when greater than zero", () => {
-      const account = {
-        spendableBalance: new BigNumber("10000000"),
-        algorandResources: {
-          rewards: new BigNumber("500000"),
-          nbAssets: 2,
-        },
-      } as unknown as AlgorandAccount;
-
-      const result = formatters.formatAccountSpecifics(account);
-
-      expect(result).toContain("spendable");
-      expect(result).toContain("rewards");
-      expect(result).toContain("500000");
-    });
-
-    it("should not include rewards section when rewards are zero", () => {
-      const account = {
-        spendableBalance: new BigNumber("5000000"),
-        algorandResources: {
-          rewards: new BigNumber("0"),
-          nbAssets: 1,
-        },
-      } as unknown as AlgorandAccount;
-
-      const result = formatters.formatAccountSpecifics(account);
-
-      expect(result).toContain("spendable");
-      expect(result).not.toContain("rewards");
     });
 
     it("should throw when algorandResources is missing", () => {

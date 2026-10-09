@@ -61,22 +61,6 @@ describe("transaction", () => {
       expect(result).toContain("fees=1000 ALGO");
     });
 
-    it("should format a claimReward transaction", () => {
-      const transaction: AlgorandTransaction = {
-        family: "algorand",
-        mode: "claimReward",
-        subAccountId: undefined,
-        amount: new BigNumber("0"),
-        recipient: "RECIPIENT_ADDRESS",
-        fees: new BigNumber("1000"),
-        useAllAmount: false,
-      };
-
-      const result = formatTransaction(transaction, mockMainAccount);
-
-      expect(result).toContain("CLAIM REWARD");
-    });
-
     it("should format an optIn transaction", () => {
       const transaction: AlgorandTransaction = {
         family: "algorand",

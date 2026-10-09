@@ -395,13 +395,6 @@ export enum ScreenName {
 
   // Algorand
   AlgorandEditMemo = "AlgorandEditMemo",
-  AlgorandClaimRewardsInfo = "AlgorandClaimRewardsInfo",
-  AlgorandClaimRewardsStarted = "AlgorandClaimRewardsStarted",
-  AlgorandClaimRewardsSelectDevice = "AlgorandClaimRewardsSelectDevice",
-  AlgorandClaimRewardsConnectDevice = "AlgorandClaimRewardsConnectDevice",
-  AlgorandClaimRewardsSummary = "AlgorandClaimRewardsValidation",
-  AlgorandClaimRewardsValidationError = "AlgorandClaimRewardsValidationError",
-  AlgorandClaimRewardsValidationSuccess = "AlgorandClaimRewardsValidationSuccess",
   AlgorandOptInSelectToken = "AlgorandOptInSelectToken",
   AlgorandOptInSelectDevice = "AlgorandOptInSelectDevice",
   AlgorandOptInConnectDevice = "AlgorandOptInConnectDevice",
@@ -756,7 +749,6 @@ export enum NavigatorName {
   MultiversXDelegationFlow = "MultiversXDelegationFlow",
   MultiversXWithdrawFlow = "MultiversXWithdrawFlow",
   MultiversXUndelegationFlow = "MultiversXUndelegationFlow",
-  AlgorandClaimRewardsFlow = "AlgorandClaimRewardsFlow",
   AlgorandOptInFlow = "AlgorandOptInFlow",
   ClaimRewards = "ClaimRewards",
   Freeze = "Freeze",

@@ -113,7 +113,9 @@ describe("listOperations", () => {
 
     expect(items[0].type).toBe("OUT");
     expect(items[0].value).toBe(100n);
-    expect(items[0].asset).toEqual({ type: "asa", assetReference: "12345" });
+    expect(items[0].asset).toEqual({ type: "asa", assetReference: "12345", assetOwner: address });
+    expect(items[0].details).toEqual({ ledgerOpType: "OUT", familyExtra: { assetId: "12345" } });
+    expect(items[0].tx.feesPayer).toBe(address);
   });
 
   it("should detect OPT_IN operation", async () => {
@@ -141,6 +143,9 @@ describe("listOperations", () => {
     const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items[0].type).toBe("OPT_IN");
+    expect(items[0].asset).toEqual({ type: "native" });
+    expect(items[0].value).toBe(0n);
+    expect(items[0].details).toEqual({ familyExtra: { assetId: "67890" } });
   });
 
   it("should detect OPT_OUT operation", async () => {
@@ -193,16 +198,10 @@ describe("listOperations", () => {
 
     const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
-    expect(items[0].details).toEqual({
-      memo: {
-        type: "string",
-        kind: "note",
-        value: "Test memo",
-      },
-    });
+    expect(items[0].details).toEqual({ memo: "Test memo" });
   });
 
-  it("should include rewards in details when present", async () => {
+  it("should include rewards in family extra when present", async () => {
     const tx = {
       id: "TX_REWARDS",
       type: AlgoTransactionType.PAYMENT,
@@ -225,7 +224,7 @@ describe("listOperations", () => {
 
     const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
-    expect(items[0].details).toEqual({ rewards: 800n });
+    expect(items[0].details).toEqual({ familyExtra: { rewards: "800" } });
   });
 
   it("should sort operations in descending order", async () => {

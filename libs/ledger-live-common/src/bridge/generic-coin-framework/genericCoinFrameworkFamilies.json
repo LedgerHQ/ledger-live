@@ -8,5 +8,6 @@
   "casper": true,
   "solana": true,
   "hedera": true,
-  "near": true
+  "near": true,
+  "algorand": true
 }

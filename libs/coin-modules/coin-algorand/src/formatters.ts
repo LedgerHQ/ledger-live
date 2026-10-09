@@ -30,10 +30,6 @@ function formatAccountSpecifics(account: AlgorandAccount): string {
   let str = " ";
   str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
-  if (algorandResources.rewards.gt(0)) {
-    str += formatCurrencyUnit(unit, algorandResources.rewards, formatConfig) + " rewards. ";
-  }
-
   return str;
 }
 

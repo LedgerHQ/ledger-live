@@ -15,6 +15,7 @@ import type { AlgorandOptInFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import invariant from "invariant";
 import { useTokenById } from "@features/platform-currencies";
+import { addPrefixToken } from "@ledgerhq/live-common/families/algorand/tokens";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = BaseComposite<
@@ -40,7 +41,9 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   invariant(transaction, "Transaction should be present");
 
-  const { data: token, isLoading: loading } = useTokenById(transaction.assetId ?? undefined);
+  const { data: token, isLoading: loading } = useTokenById(
+    transaction.assetReference ? addPrefixToken(transaction.assetReference) : undefined,
+  );
 
   return (
     <View

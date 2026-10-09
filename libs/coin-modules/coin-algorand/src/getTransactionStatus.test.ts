@@ -29,7 +29,7 @@ describe("getTransactionStatus", () => {
     spiedValidateMemo.mockReturnValue(true);
 
     const account = {
-      algorandResources: { nbAssets: 0, rewards: new BigNumber(0) },
+      algorandResources: { nbAssets: 0 },
       balance: new BigNumber(1000000),
       freshAddress: "TESTADDRESS",
     } as unknown as AlgorandAccount;
@@ -47,7 +47,7 @@ describe("getTransactionStatus", () => {
     spiedValidateMemo.mockReturnValue(false);
 
     const account = {
-      algorandResources: { nbAssets: 0, rewards: new BigNumber(0) },
+      algorandResources: { nbAssets: 0 },
       balance: new BigNumber(1000000),
       freshAddress: "TESTADDRESS",
     } as unknown as AlgorandAccount;

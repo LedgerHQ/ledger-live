@@ -3990,46 +3990,6 @@
           }
         }
       }
-    },
-    "claimRewards": {
-      "header": "Rewards",
-      "tooltip": "Algorand rewards are distributed regularly and are claimed automatically when you do a transaction.",
-      "cta": "Claim rewards",
-      "rewardsDisabledTooltip": "You don’t have any rewards. Algorand rewards are claimed automatically when you do a transaction. Receive ALGO to start earning rewards.",
-      "flow": {
-        "title": "Claim rewards",
-        "steps": {
-          "starter": {
-            "description": "Receive Algorand rewards simply for holding Algorand control of your assets.",
-            "bullet": {
-              "delegate": "A minimum balance of 1 ALGO is required to receive rewards.",
-              "access": "Increase the account’s balance to increase rewards.",
-              "ledger": "Perform a transaction to or from the account to claim rewards."
-            },
-            "learnMore": "How Algorand rewards work?",
-            "button": {
-              "cta": "Receive Algo"
-            }
-          },
-          "info": {
-            "title": "Rewards",
-            "description": "Congratulations! You earned {{amount}}. Click on Continue to claim your rewards",
-            "info": "You will be prompted to generate an empty transaction to your account. This will add your current rewards to your balance at the minimal cost of the transaction fees."
-          },
-          "connectDevice": {
-            "title": "Device"
-          },
-          "confirmation": {
-            "title": "Confirmation",
-            "success": {
-              "title": "Rewards successfully claimed!",
-              "text": "Your rewards were added to your available balance",
-              "cta": "View details"
-            },
-            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
-          }
-        }
-      }
     }
   },
   "polkadot": {

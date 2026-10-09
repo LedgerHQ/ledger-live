@@ -14,7 +14,7 @@ import type { TokenAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import {
   AlgorandAccount,
-  AlgorandTransaction,
+  AlgorandGenericTransaction,
 } from "@ledgerhq/live-common/families/algorand/types";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
@@ -91,29 +91,29 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account) as AlgorandAccount;
-  const bridge = useAccountBridge<AlgorandTransaction>(mainAccount);
-  invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
+  const bridge = useAccountBridge<AlgorandGenericTransaction>(mainAccount);
+  invariant(mainAccount, "algorand Account required");
   const { transaction } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,
       transaction: bridge.updateTransaction(t, {
-        mode: "optIn",
-        assetId: null,
+        mode: "changeTrust",
       }),
     };
   });
   const onNext = useCallback(
-    (assetId: string) => {
+    (tokenId: string) => {
       if (!transaction) return;
       navigation.navigate(ScreenName.AlgorandOptInSelectDevice, {
         ...route.params,
         transaction: bridge.updateTransaction(transaction, {
-          assetId,
+          assetReference: extractTokenId(tokenId),
+          assetOwner: mainAccount.freshAddress,
         }),
       });
     },
-    [navigation, route.params, bridge, transaction],
+    [navigation, route.params, bridge, transaction, mainAccount.freshAddress],
   );
   const subAccounts = mainAccount.subAccounts;
 

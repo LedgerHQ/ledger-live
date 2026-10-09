@@ -34,7 +34,6 @@ describe("signOperation", () => {
     freshAddress: "ALGO_ADDRESS",
     freshAddressPath: "44'/283'/0'/0/0",
     algorandResources: {
-      rewards: new BigNumber("0"),
       nbAssets: 0,
     },
   } as unknown as AlgorandAccount;

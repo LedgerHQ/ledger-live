@@ -40,7 +40,6 @@ import type {
 } from "../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
-import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { mevProtectionSelector } from "~/reducers/settings";
 import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
@@ -49,10 +48,6 @@ import type { AppDispatch } from "~/state-manager/configureStore";
 type Navigation =
   | StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorNavigation<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
-  | StackNavigatorNavigation<
-      AlgorandClaimRewardsFlowParamList,
-      ScreenName.AlgorandClaimRewardsSummary
-    >
   | StackNavigatorNavigation<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidation>;
 
 const shouldRestartFlow = (error: Error) => error.name === "InvalidTransactionError";
@@ -60,7 +55,6 @@ const shouldRestartFlow = (error: Error) => error.name === "InvalidTransactionEr
 type Route =
   | StackNavigatorRoute<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorRoute<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
-  | StackNavigatorRoute<AlgorandClaimRewardsFlowParamList, ScreenName.AlgorandClaimRewardsSummary>
   | StackNavigatorRoute<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidation>;
 
 const completeSignBroadcast = ({

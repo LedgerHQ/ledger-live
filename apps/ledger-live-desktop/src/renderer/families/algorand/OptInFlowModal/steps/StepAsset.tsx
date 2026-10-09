@@ -4,7 +4,8 @@ import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { Transaction } from "@ledgerhq/live-common/families/algorand/types";
+import { AlgorandGenericTransaction } from "@ledgerhq/live-common/families/algorand/types";
+import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -21,19 +22,19 @@ export default function StepAsset({
   t,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
-  const bridge = useAccountBridge<Transaction>(account);
+  const bridge = useAccountBridge<AlgorandGenericTransaction>(account);
   const onUpdateAsset = useCallback(
     (t?: TokenCurrency | null) => {
       // NOTE: to match the signature of AsaSelector, i had to change a bit the function
       if (!t) return;
-      const { id: assetId } = t;
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
-          assetId,
+          assetReference: extractTokenId(t.id),
+          assetOwner: account.freshAddress,
         }),
       );
     },
-    [bridge, onUpdateTransaction],
+    [bridge, onUpdateTransaction, account.freshAddress],
   );
   return (
     <Box flow={1}>

@@ -21,7 +21,6 @@ describe("prepareTransaction", () => {
     id: "algorand-account-1",
     freshAddress: "ALGO_FRESH_ADDRESS",
     algorandResources: {
-      rewards: new BigNumber("0"),
       nbAssets: 0,
     },
   } as unknown as AlgorandAccount;
@@ -114,23 +113,6 @@ describe("prepareTransaction", () => {
 
       expect(result.fees?.toString()).toBe("1000");
       expect(mockGetEstimatedFees).toHaveBeenCalled();
-    });
-  });
-
-  describe("claimReward mode", () => {
-    it("should set recipient to freshAddress and amount to 0", async () => {
-      const transaction: Transaction = {
-        family: "algorand",
-        mode: "claimReward",
-        amount: new BigNumber("100"),
-        recipient: "SOME_ADDRESS",
-        fees: null,
-      };
-
-      const result = await prepareTransaction(mockAccount, transaction);
-
-      expect(result.recipient).toBe("ALGO_FRESH_ADDRESS");
-      expect(result.amount.toString()).toBe("0");
     });
   });
 

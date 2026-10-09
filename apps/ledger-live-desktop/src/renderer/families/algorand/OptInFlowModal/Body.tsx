@@ -25,7 +25,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import logger from "~/renderer/logger";
 import {
   AlgorandAccount,
-  Transaction as AlgorandTransaction,
+  AlgorandGenericTransaction,
 } from "@ledgerhq/live-common/families/algorand/types";
 
 export type Data = {
@@ -78,7 +78,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const bridge = useAccountBridge<AlgorandTransaction>(params.account);
+  const bridge = useAccountBridge<AlgorandGenericTransaction>(params.account);
   const {
     transaction,
     setTransaction,
@@ -92,7 +92,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     invariant(account, "algorand: account required");
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
-      mode: "optIn",
+      mode: "changeTrust",
     });
     return {
       account,

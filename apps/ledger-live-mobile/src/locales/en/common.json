@@ -6688,43 +6688,6 @@
   },
   "algorand": {
     "token": "ASA (Assets)",
-    "claimRewards": {
-      "title": "Rewards",
-      "button": "Claim",
-      "stepperHeader": {
-        "info": "Earn rewards",
-        "starter": "Rewards",
-        "connectDevice": "Connect device",
-        "verification": "Verification",
-        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
-      },
-      "flow": {
-        "steps": {
-          "info": {
-            "description": "Delegate your Algo to earn rewards while keeping full security and control on your assets.",
-            "steps": {
-              "0": "A minimum balance of 1 Algo is required to receive rewards.",
-              "1": "Increase the account’s balance to increase rewards.",
-              "2": "Perform a transaction to or from the account to claim rewards."
-            },
-            "howItWorks": "How rewards work",
-            "cta": "Receive Algo"
-          },
-          "starter": {
-            "title": "Congratulations! You earned {{amount}}. Continue to claim your rewards.",
-            "howItWorks": "How rewards work",
-            "warning": "You will be prompted to generate an empty transaction to your account. This will add your current rewards to your balance at the minimal cost of the transaction fees.",
-            "cta": "Continue"
-          },
-          "confirmation": {
-            "success": {
-              "title": "Rewards successfully claimed!",
-              "text": "Your rewards were added to your available balance."
-            }
-          }
-        }
-      }
-    },
     "optIn": {
       "stepperHeader": {
         "selectToken": "Add ASA (Asset)",

@@ -4,7 +4,7 @@ import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 
 import type {
   AlgorandAccount,
-  AlgorandTransaction,
+  AlgorandGenericTransaction,
   TransactionStatus as AlgorandTransactionStatus,
 } from "@ledgerhq/live-common/families/algorand/types";
 import type {
@@ -63,7 +63,7 @@ export type SwapNavigatorParamList = {
     accountId?: string;
     parentId?: string;
     account: AlgorandAccount;
-    transaction: AlgorandTransaction;
+    transaction: AlgorandGenericTransaction;
     status?: AlgorandTransactionStatus;
     currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SendSummary;
     nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;

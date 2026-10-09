@@ -29,7 +29,6 @@ describe("estimateMaxSpendable", () => {
       spendableBalance: new BigNumber(balance),
       freshAddress: "ALGO_ADDRESS",
       algorandResources: {
-        rewards: new BigNumber("0"),
         nbAssets,
       },
       subAccounts,

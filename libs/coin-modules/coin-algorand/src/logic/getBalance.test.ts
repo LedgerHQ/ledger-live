@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import * as network from "../network";
+import { computeAlgoMaxSpendable } from "../bridgeLogic";
 import { getBalance } from "./getBalance";
 import { mockAlgorandContext } from "../test/context";
 
@@ -51,11 +52,11 @@ describe("getBalance", () => {
       },
       {
         value: 500n,
-        asset: { type: "asa", assetReference: "123" },
+        asset: { type: "asa", assetReference: "123", assetOwner: "ALGO_ADDRESS" },
       },
       {
         value: 1000n,
-        asset: { type: "asa", assetReference: "456" },
+        asset: { type: "asa", assetReference: "456", assetOwner: "ALGO_ADDRESS" },
       },
     ]);
   });
@@ -111,4 +112,29 @@ describe("getBalance", () => {
       "Account not found",
     );
   });
+
+  it.each([0, 1, 5])(
+    "should leave the legacy max spendable as value - locked with %i assets",
+    async nbAssets => {
+      const balance = new BigNumber("3000000");
+      mockGetAccount.mockResolvedValue({
+        balance,
+        pendingRewards: new BigNumber("0"),
+        assets: Array.from({ length: nbAssets }, (_, i) => ({
+          assetId: String(i),
+          balance: new BigNumber("1"),
+        })),
+      });
+
+      const [native] = await getBalance(mockAlgorandContext, "ALGO_ADDRESS");
+
+      expect((native.value - (native.locked ?? 0n)).toString()).toBe(
+        computeAlgoMaxSpendable({
+          accountBalance: balance,
+          nbAccountAssets: nbAssets,
+          mode: "send",
+        }).toFixed(),
+      );
+    },
+  );
 });

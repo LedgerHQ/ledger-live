@@ -24,6 +24,14 @@ export function cosmosMemoPatch(value: string | number | null | undefined): {
   return { memo, memoType: memo ? COSMOS_MEMO_KIND : null, memoValue: memo };
 }
 
+export function algorandMemoPatch(value: string | number | undefined): {
+  memoType: "note" | undefined;
+  memoValue: string | undefined;
+} {
+  const memo = value === undefined || value === "" ? undefined : String(value);
+  return { memoType: memo === undefined ? undefined : "note", memoValue: memo };
+}
+
 const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
   // Inlined like every other entry: `TEXT` mirrors `families/solana/transactions`.
   solana: memo => ({
@@ -36,6 +44,7 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
       ? { transferId: memo, memoType: "transferId", memoValue: memo }
       : { transferId: undefined, memoType: "transferId", memoValue: undefined },
   hedera: memo => ({ memoType: "string", memoValue: memo }),
+  algorand: memo => algorandMemoPatch(memo),
   xrp: memo => {
     if (typeof memo === "number") return { tag: memo };
     if (typeof memo === "string") return { tag: Number(memo) };

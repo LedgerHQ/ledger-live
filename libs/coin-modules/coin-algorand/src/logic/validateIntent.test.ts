@@ -2,6 +2,7 @@ import { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/
 import { BigNumber } from "bignumber.js";
 import * as network from "../network";
 import type { AlgorandMemo } from "../types";
+import { computeMinimumBalance } from "./common";
 import { validateIntent } from "./validateIntent";
 import { mockAlgorandContext } from "../test/context";
 
@@ -368,6 +369,149 @@ describe("validateIntent", () => {
       });
 
       expect(result.totalSpent).toBe(500n); // Only token amount, fees are in ALGO
+    });
+  });
+
+  describe("send max", () => {
+    const fees = 1000n;
+    const locked = 100000n;
+
+    it("should error when the resolved amount is 0", async () => {
+      const intent: TransactionIntent<AlgorandMemo> = {
+        sender: validSender,
+        recipient: validRecipient,
+        amount: 0n,
+        asset: { type: "native" },
+        useAllAmount: true,
+      };
+      const balances: Balance[] = [{ value: locked + fees, asset: { type: "native" }, locked }];
+
+      const result = await validateIntent(mockAlgorandContext, intent, balances, { value: fees });
+
+      expect(result.amount).toBe(0n);
+      expect(result.errors.amount?.message).toBe("NotEnoughBalance");
+    });
+
+    it("should pass when one microalgo is left after fees", async () => {
+      const intent: TransactionIntent<AlgorandMemo> = {
+        sender: validSender,
+        recipient: validRecipient,
+        amount: 0n,
+        asset: { type: "native" },
+        useAllAmount: true,
+      };
+      const balances: Balance[] = [
+        { value: locked + fees + 1n, asset: { type: "native" }, locked },
+      ];
+
+      const result = await validateIntent(mockAlgorandContext, intent, balances, { value: fees });
+
+      expect(result.amount).toBe(1n);
+      expect(result.errors).toEqual({});
+    });
+  });
+
+  describe("fee too high warning", () => {
+    it("should warn without blocking when fees exceed a tenth of a native amount", async () => {
+      const intent: TransactionIntent<AlgorandMemo> = {
+        sender: validSender,
+        recipient: validRecipient,
+        amount: 200000n,
+        asset: { type: "native" },
+        useAllAmount: false,
+      };
+
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances, {
+        value: 50000n,
+      });
+
+      expect(result.warnings.feeTooHigh?.name).toBe("FeeTooHigh");
+      expect(result.errors).toEqual({});
+    });
+
+    it("should not warn on a token send", async () => {
+      mockGetAccount.mockResolvedValue({
+        balance: new BigNumber("1000000"),
+        pendingRewards: new BigNumber("0"),
+        assets: [{ assetId: "123", amount: new BigNumber("1000") }],
+      });
+      const intent: TransactionIntent<AlgorandMemo> = {
+        sender: validSender,
+        recipient: validRecipient,
+        amount: 1n,
+        asset: { type: "asa", assetReference: "123" },
+        useAllAmount: false,
+      };
+      const balancesWithToken: Balance[] = [
+        ...defaultBalances,
+        { value: 1000n, asset: { type: "asa", assetReference: "123" } },
+      ];
+
+      const result = await validateIntent(mockAlgorandContext, intent, balancesWithToken, {
+        value: 50000n,
+      });
+
+      expect(result.warnings.feeTooHigh).toBeUndefined();
+    });
+  });
+
+  describe("opt-in", () => {
+    const fees = 1000n;
+    const optInIntent: TransactionIntent<AlgorandMemo> = {
+      intentType: "transaction",
+      type: "changeTrust",
+      sender: validSender,
+      recipient: "",
+      amount: 0n,
+      asset: { type: "token", assetReference: "123", assetOwner: validSender },
+    };
+
+    it("should validate with amount 0 and no recipient", async () => {
+      const result = await validateIntent(mockAlgorandContext, optInIntent, defaultBalances, {
+        value: fees,
+      });
+
+      expect(result.errors).toEqual({});
+      expect(result.amount).toBe(0n);
+      expect(mockGetAccount).not.toHaveBeenCalled();
+    });
+
+    it("should error when the asset reference is missing", async () => {
+      const intent = { ...optInIntent, asset: { type: "native" as const } };
+
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances, {
+        value: fees,
+      });
+
+      expect(result.errors.assetId).toBeInstanceOf(Error);
+    });
+
+    it("should error when the balance does not cover the extra reserve", async () => {
+      const locked = computeMinimumBalance(1);
+      const balances: Balance[] = [
+        { value: locked + fees, asset: { type: "native" }, locked },
+        { value: 0n, asset: { type: "asa", assetReference: "999" } },
+      ];
+
+      const result = await validateIntent(mockAlgorandContext, optInIntent, balances, {
+        value: fees,
+      });
+
+      expect(result.errors.amount?.message).toBe("NotEnoughBalance");
+    });
+
+    it("should pass when the balance covers the extra reserve", async () => {
+      const locked = computeMinimumBalance(1);
+      const balances: Balance[] = [
+        { value: computeMinimumBalance(1, true) + fees, asset: { type: "native" }, locked },
+        { value: 0n, asset: { type: "asa", assetReference: "999" } },
+      ];
+
+      const result = await validateIntent(mockAlgorandContext, optInIntent, balances, {
+        value: fees,
+      });
+
+      expect(result.errors).toEqual({});
     });
   });
 });

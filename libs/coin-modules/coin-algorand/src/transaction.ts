@@ -18,7 +18,7 @@ export const formatTransaction = (
     (subAccountId && (mainAccount.subAccounts || []).find(a => a.id === subAccountId)) ||
     mainAccount;
   return `
-    ${mode === "claimReward" ? "CLAIM REWARD" : mode === "optIn" ? "OPT_IN" : "SEND"} ${
+    ${mode === "optIn" ? "OPT_IN" : "SEND"} ${
       useAllAmount
         ? "MAX"
         : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {

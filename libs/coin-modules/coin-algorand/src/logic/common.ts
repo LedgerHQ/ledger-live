@@ -1,4 +1,13 @@
+import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+
 export const ALGORAND_MIN_ACCOUNT_BALANCE = 100000n; // 0.1 ALGO in microAlgos
+
+// The shared intent builder types an opt-in asset "token", not "asa": only the reference is reliable.
+export function hasAssetReference(
+  asset: AssetInfo,
+): asset is AssetInfo & { assetReference: string } {
+  return "assetReference" in asset && !!asset.assetReference;
+}
 
 /**
  * Compute minimum balance required for an Algorand account

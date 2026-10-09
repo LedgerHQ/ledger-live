@@ -13,29 +13,25 @@ import type {
 import Algorand from "@ledgerhq/hw-app-algorand";
 import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
-import { getEnv } from "@shared/env";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import { getCurrencyConfiguration } from "../../config";
 import type { Resolver } from "../../hw/getAddress/types";
+import { withGenericTransactionSupport } from "./legacyBridgeAdapter";
 
-// Coin configuration, resolved from the environment and threaded into createBridges (which seeds
-// the coin-algorand config singleton), mirroring the other coin families.
-const getCoinConfig: CoinConfig<AlgorandCoinConfig> = () => {
-  const baseUrl = getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
-  return {
-    status: { type: "active" },
-    name: "Algorand",
-    unit: { name: "ALGO", code: "ALGO", magnitude: 6 },
-    node: `${baseUrl}/ps2/v2`,
-    indexer: `${baseUrl}/idx2/v2`,
-  };
-};
+const getCoinConfig: CoinConfig<AlgorandCoinConfig> = () =>
+  getCurrencyConfiguration<AlgorandCoinConfig>("algorand");
 
 const createSigner: CreateSigner<Algorand> = (transport: Transport) => {
   return new Algorand(transport);
 };
 
-const bridge: Bridge<Transaction, AlgorandAccount, TransactionStatus, AlgorandOperation> =
+const legacyBridge: Bridge<Transaction, AlgorandAccount, TransactionStatus, AlgorandOperation> =
   createBridges(executeWithSigner(createSigner), getCoinConfig);
+
+const bridge: Bridge<Transaction, AlgorandAccount, TransactionStatus, AlgorandOperation> = {
+  ...legacyBridge,
+  accountBridge: withGenericTransactionSupport(legacyBridge.accountBridge),
+};
 
 const resolver: Resolver = createResolver(createSigner, algorandResolver);
 

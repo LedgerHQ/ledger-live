@@ -32,6 +32,7 @@ export async function getBalance(context: AlgorandContext, address: string): Pro
       asset: {
         type: "asa",
         assetReference: asset.assetId,
+        assetOwner: address,
       },
     });
   }

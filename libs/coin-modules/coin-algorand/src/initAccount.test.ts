@@ -1,18 +1,7 @@
-import { BigNumber } from "bignumber.js";
 import { initAccount } from "./initAccount";
 import type { AlgorandAccount } from "./types";
 
 describe("initAccount", () => {
-  it("should initialize algorandResources with zero rewards", () => {
-    const account = {} as AlgorandAccount;
-
-    initAccount(account);
-
-    expect(account.algorandResources).not.toBeUndefined();
-    expect(account.algorandResources?.rewards).toBeInstanceOf(BigNumber);
-    expect(account.algorandResources?.rewards.toString()).toBe("0");
-  });
-
   it("should set nbAssets to 0 when no subAccounts", () => {
     const account = {} as AlgorandAccount;
 
@@ -54,7 +43,6 @@ describe("initAccount", () => {
   it("should overwrite existing algorandResources", () => {
     const account = {
       algorandResources: {
-        rewards: new BigNumber("1000000"),
         nbAssets: 5,
       },
       subAccounts: [{ id: "sub1" }],
@@ -62,7 +50,6 @@ describe("initAccount", () => {
 
     initAccount(account);
 
-    expect(account.algorandResources?.rewards.toString()).toBe("0");
     expect(account.algorandResources?.nbAssets).toBe(1);
   });
 

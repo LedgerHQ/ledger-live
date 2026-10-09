@@ -20,7 +20,6 @@ import type { PolkadotNominateFlowParamList } from "~/families/polkadot/Nominate
 import type { PolkadotUnbondFlowParamList } from "~/families/polkadot/UnbondFlow/type";
 import type { PolkadotRebondFlowParamList } from "~/families/polkadot/RebondFlow/type";
 import type { PolkadotBondFlowParamList } from "~/families/polkadot/BondFlow/types";
-import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { AlgorandOptInFlowParamList } from "~/families/algorand/OptInFlow/types";
 import type { CardanoDelegationFlowParamList } from "~/families/cardano/DelegationFlow/types";
 import type { CardanoUndelegationFlowParamList } from "~/families/cardano/UndelegationFlow/types";
@@ -83,10 +82,6 @@ type Props =
   | StackNavigatorProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondConnectDevice>
   | StackNavigatorProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondConnectDevice>
   | StackNavigatorProps<PolkadotBondFlowParamList, ScreenName.PolkadotBondConnectDevice>
-  | StackNavigatorProps<
-      AlgorandClaimRewardsFlowParamList,
-      ScreenName.AlgorandClaimRewardsConnectDevice
-    >
   | StackNavigatorProps<CardanoDelegationFlowParamList, ScreenName.CardanoDelegationConnectDevice>
   | StackNavigatorProps<
       CardanoUndelegationFlowParamList,

@@ -305,3 +305,52 @@ describe("craftApiTransaction", () => {
     );
   });
 });
+
+describe("craftApiTransaction opt-in", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetTransactionParams.mockResolvedValue({
+      fee: 0,
+      minFee: 1000,
+      firstRound: 1000,
+      lastRound: 2000,
+      genesisHash: "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=",
+      genesisID: "mainnet-v1.0",
+    });
+  });
+
+  it("should craft an asset transfer of 0 to the sender", async () => {
+    const intent: TransactionIntent<AlgorandMemo> = {
+      intentType: "transaction",
+      type: "changeTrust",
+      sender: "SENDER_ADDR",
+      recipient: "",
+      amount: 0n,
+      asset: { type: "token", assetReference: "12345", assetOwner: "SENDER_ADDR" },
+    };
+
+    const result = await craftApiTransaction(mockAlgorandContext, intent);
+
+    const decoded = decodeTxPayload(result.transaction);
+    expect(decoded.type).toBe("axfer");
+    expect(decoded.amt).toBe(0);
+    expect(decoded.xaid).toBe(12345);
+    expect(Buffer.from(decoded.snd as Uint8Array).toString()).toBe("SENDER_ADDR");
+    expect(Buffer.from(decoded.arcv as Uint8Array).toString()).toBe("SENDER_ADDR");
+  });
+
+  it("should reject an opt-in without an asset reference", async () => {
+    const intent: TransactionIntent<AlgorandMemo> = {
+      intentType: "transaction",
+      type: "changeTrust",
+      sender: "SENDER_ADDR",
+      recipient: "",
+      amount: 0n,
+      asset: { type: "native" },
+    };
+
+    await expect(craftApiTransaction(mockAlgorandContext, intent)).rejects.toThrow(
+      "Opt-in requires an asset reference",
+    );
+  });
+});

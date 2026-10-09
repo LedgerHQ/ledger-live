@@ -7,7 +7,7 @@ import {
   AlgoPaymentInfo,
   AlgoAssetTransferInfo,
 } from "../network";
-import type { ListOperationsOptions, AlgorandMemo } from "../types";
+import type { ListOperationsOptions } from "../types";
 
 const SECONDS_TO_MILLISECONDS = 1000;
 
@@ -53,15 +53,16 @@ export async function listOperations(
 
 function convertToOperation(tx: AlgoTransaction, address: string): Operation {
   const type = getOperationType(tx, address);
-  const value = getOperationValue(tx, address);
+  // Kept on the native asset: the generic layer re-types an asset operation from its token
+  // sub-account, and opt-in / opt-out never reach one.
+  const isOptInOrOut = type === "OPT_IN" || type === "OPT_OUT";
+  // Unlike the legacy sync, `value` leaves out pre-2022 participation rewards: they are reported
+  // in `familyExtra.rewards` only.
+  const value = isOptInOrOut ? 0n : getOperationValue(tx, address);
   const { senders, recipients } = getOperationParties(tx);
-  const asset = getOperationAsset(tx);
+  const asset = isOptInOrOut ? { type: "native" } : getOperationAsset(tx, address);
 
   const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
-
-  const memo: AlgorandMemo | undefined = tx.note
-    ? { type: "string", kind: "note", value: tx.note }
-    : undefined;
 
   const operation: Operation = {
     id: tx.id,
@@ -78,6 +79,7 @@ function convertToOperation(tx: AlgoTransaction, address: string): Operation {
         time: date,
       },
       fees: BigInt(tx.fee.toString()),
+      feesPayer: tx.senderAddress,
       date,
       failed: false, // Algorand only returns confirmed (successful) transactions
     },
@@ -85,15 +87,28 @@ function convertToOperation(tx: AlgoTransaction, address: string): Operation {
 
   const details: Record<string, unknown> = {};
 
-  // Add memo to details if present
-  if (memo) {
-    details.memo = memo;
+  // The generic layer types a token sub-account operation from this, not from `type`
+  if (asset.type === "asa") {
+    details.ledgerOpType = type;
   }
 
-  // Add rewards to details if present
+  if (tx.note) {
+    details.memo = tx.note;
+  }
+
+  const familyExtra: Record<string, string> = {};
+
   const rewards = tx.senderRewards.plus(tx.recipientRewards);
   if (!rewards.isZero()) {
-    details.rewards = BigInt(rewards.toString());
+    familyExtra.rewards = rewards.toFixed();
+  }
+
+  if (tx.type === AlgoTransactionType.ASSET_TRANSFER) {
+    familyExtra.assetId = (tx.details as AlgoAssetTransferInfo).assetId;
+  }
+
+  if (Object.keys(familyExtra).length) {
+    details.familyExtra = familyExtra;
   }
 
   if (Object.keys(details).length) {
@@ -168,12 +183,16 @@ function getOperationParties(tx: AlgoTransaction): { senders: string[]; recipien
   return { senders, recipients };
 }
 
-function getOperationAsset(tx: AlgoTransaction): { type: string; assetReference?: string } {
+function getOperationAsset(
+  tx: AlgoTransaction,
+  address: string,
+): { type: string; assetReference?: string; assetOwner?: string } {
   if (tx.type === AlgoTransactionType.ASSET_TRANSFER) {
     const details = tx.details as AlgoAssetTransferInfo;
     return {
       type: "asa",
       assetReference: details.assetId,
+      assetOwner: address,
     };
   }
 

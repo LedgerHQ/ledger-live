@@ -21,7 +21,7 @@ export const prepareTransaction: AccountBridge<
     amount = transaction.useAllAmount
       ? await estimateMaxSpendable({ account, transaction })
       : transaction.amount;
-  } else if (transaction.mode === "optIn" || transaction.mode === "claimReward") {
+  } else if (transaction.mode === "optIn") {
     recipient = account.freshAddress;
     amount = new BigNumber(0);
   } else {

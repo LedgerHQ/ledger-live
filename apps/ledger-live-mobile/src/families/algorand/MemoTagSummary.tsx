@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import type {
   AlgorandAccount,
-  Transaction as AlgorandTransaction,
+  AlgorandGenericTransaction,
 } from "@ledgerhq/live-common/families/algorand/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ScreenName } from "~/const";
@@ -26,7 +26,7 @@ type Props = {
 
 export default function AlgorandMemoTagSummary(props: Props) {
   const { account } = props;
-  const transaction = props.transaction as AlgorandTransaction;
+  const transaction = props.transaction as AlgorandGenericTransaction;
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
 
@@ -40,5 +40,5 @@ export default function AlgorandMemoTagSummary(props: Props) {
     });
   }, [navigation, route.params, account, transaction]);
 
-  return <GenericMemoTagSummary memoTag={transaction.memo ?? ""} editMemo={editMemo} />;
+  return <GenericMemoTagSummary memoTag={transaction.memoValue ?? ""} editMemo={editMemo} />;
 }

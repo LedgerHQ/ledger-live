@@ -30,7 +30,6 @@ import type { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { AlgorandOptInFlowParamList } from "../../../families/algorand/OptInFlow/types";
-import type { AlgorandClaimRewardsFlowParamList } from "../../../families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { CeloActivateFlowParamList } from "../../../families/celo/ActivateFlow/types";
 import type { CeloLockFlowParamList } from "../../../families/celo/LockFlow/types";
 import type { CeloRegistrationFlowParamList } from "../../../families/celo/RegistrationFlow/types";
@@ -294,7 +293,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.PolkadotBondFlow]: NavigatorScreenParams<PolkadotBondFlowParamList>;
 
   // Algorand
-  [NavigatorName.AlgorandClaimRewardsFlow]: NavigatorScreenParams<AlgorandClaimRewardsFlowParamList>;
   [NavigatorName.AlgorandOptInFlow]: NavigatorScreenParams<AlgorandOptInFlowParamList>;
 
   // Celo

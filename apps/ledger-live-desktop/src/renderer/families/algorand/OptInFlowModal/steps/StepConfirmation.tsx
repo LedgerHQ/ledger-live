@@ -14,6 +14,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import invariant from "invariant";
 import { useTokenById } from "@features/platform-currencies";
+import { addPrefixToken } from "@ledgerhq/live-common/families/algorand/tokens";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -28,7 +29,9 @@ const Container = styled(Box).attrs(() => ({
 function StepConfirmation({ optimisticOperation, error, signed, transaction }: StepProps) {
   invariant(transaction, "Transaction should be present");
 
-  const { data: token, isLoading: loading } = useTokenById(transaction.assetId!);
+  const { data: token, isLoading: loading } = useTokenById(
+    transaction.assetReference ? addPrefixToken(transaction.assetReference) : undefined,
+  );
 
   if (optimisticOperation) {
     return (

@@ -42,7 +42,7 @@ describe("applyMemoToTransaction", () => {
     });
 
     it("unknown family: empty string clears the generic memo", () => {
-      expect(applyMemoToTransaction("algorand", "")).toEqual({ memo: undefined });
+      expect(applyMemoToTransaction("polkadot", "")).toEqual({ memo: undefined });
     });
 
     it("ton: empty string keeps the comment text an empty string, not undefined", () => {
@@ -81,7 +81,7 @@ describe("applyMemoToTransaction", () => {
     });
 
     it("unknown family: generic memo", () => {
-      expect(applyMemoToTransaction("algorand", "note")).toEqual({ memo: "note" });
+      expect(applyMemoToTransaction("polkadot", "note")).toEqual({ memo: "note" });
     });
   });
 });
@@ -195,5 +195,27 @@ describe("Cosmos memo survives shared intent construction end to end", () => {
 
     const params = intentToMessageParams(intent, "cosmos", "uatom");
     expect(params.memo).toBe("");
+  });
+});
+
+describe("Algorand note reaches the intent", () => {
+  const account = { currency: { name: "algorand", units: [{}] } } as Account;
+
+  it("writes the note as a generic memo the intent carries as a StringMemo<'note'>", () => {
+    const patch = applyMemoToTransaction("algorand", "hello");
+    expect(patch).toEqual({ memoType: "note", memoValue: "hello" });
+
+    const intent = transactionToIntent(account, {
+      family: "algorand",
+      ...patch,
+    } as unknown as GenericTransaction);
+    expect(intent.memo).toEqual({ type: "string", kind: "note", value: "hello" });
+  });
+
+  it("clears both fields on an empty note", () => {
+    expect(applyMemoToTransaction("algorand", "")).toEqual({
+      memoType: undefined,
+      memoValue: undefined,
+    });
   });
 });

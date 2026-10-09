@@ -11,19 +11,11 @@ import {
   type AlgorandResourcesRaw,
 } from "./types";
 
-function toResourcesRaw(r: AlgorandResources): AlgorandResourcesRaw {
-  const { rewards, nbAssets } = r;
-  return {
-    rewards: rewards.toString(),
-    nbAssets,
-  };
+function toResourcesRaw({ nbAssets }: AlgorandResources): AlgorandResourcesRaw {
+  return { nbAssets };
 }
-function fromResourcesRaw(r: AlgorandResourcesRaw): AlgorandResources {
-  const { rewards, nbAssets } = r;
-  return {
-    rewards: new BigNumber(rewards),
-    nbAssets,
-  };
+function fromResourcesRaw({ nbAssets }: AlgorandResourcesRaw): AlgorandResources {
+  return { nbAssets };
 }
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {

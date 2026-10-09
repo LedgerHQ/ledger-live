@@ -55,20 +55,7 @@ describe("mock", () => {
       const result = mock.genAccountEnhanceOperations(account, rng) as AlgorandAccount;
 
       expect(result.algorandResources).not.toBeUndefined();
-      expect(result.algorandResources.rewards).toBeInstanceOf(BigNumber);
       expect(result.algorandResources.nbAssets).not.toBeUndefined();
-    });
-
-    it("should set rewards to 1% of balance", () => {
-      const balance = "10000000";
-      const account = createMockAccount(balance, []);
-      const rng = new Prando("test-seed");
-
-      const result = mock.genAccountEnhanceOperations(account, rng) as AlgorandAccount;
-
-      expect(result.algorandResources.rewards.toString()).toBe(
-        new BigNumber(balance).multipliedBy(0.01).toString(),
-      );
     });
 
     it("should set nbAssets to subAccounts length", () => {
@@ -124,32 +111,8 @@ describe("mock", () => {
   });
 
   describe("postSyncAccount", () => {
-    it("should update spendableBalance with rewards", () => {
-      const account = createMockAccount("10000000", []) as AlgorandAccount;
-      account.algorandResources = {
-        rewards: new BigNumber("50000"),
-        nbAssets: 0,
-      };
-
-      const result = mock.postSyncAccount(account);
-
-      expect(result.spendableBalance.toString()).toBe("10050000");
-    });
-
     it("should handle missing algorandResources", () => {
       const account = createMockAccount("10000000", []);
-
-      const result = mock.postSyncAccount(account);
-
-      expect(result.spendableBalance.toString()).toBe("10000000");
-    });
-
-    it("should handle missing rewards", () => {
-      const account = createMockAccount("10000000", []) as AlgorandAccount;
-      account.algorandResources = {
-        rewards: undefined as unknown as BigNumber,
-        nbAssets: 0,
-      };
 
       const result = mock.postSyncAccount(account);
 
@@ -159,7 +122,6 @@ describe("mock", () => {
     it("should return the same account object", () => {
       const account = createMockAccount("10000000", []) as AlgorandAccount;
       account.algorandResources = {
-        rewards: new BigNumber("1000"),
         nbAssets: 0,
       };
 
@@ -189,13 +151,11 @@ describe("mock", () => {
     it("should reset algorandResources when isEmpty is true", () => {
       const account = createMockAccount("10000000", []) as AlgorandAccount;
       account.algorandResources = {
-        rewards: new BigNumber("50000"),
         nbAssets: 5,
       };
 
       const result = mock.postScanAccount(account, { isEmpty: true }) as AlgorandAccount;
 
-      expect(result.algorandResources.rewards.toString()).toBe("0");
       expect(result.algorandResources.nbAssets).toBe(0);
     });
 
@@ -204,7 +164,6 @@ describe("mock", () => {
       const subAccounts = [{ id: "sub-1" }];
       const account = createMockAccount("10000000", operations, subAccounts) as AlgorandAccount;
       account.algorandResources = {
-        rewards: new BigNumber("50000"),
         nbAssets: 1,
       };
 
@@ -212,7 +171,6 @@ describe("mock", () => {
 
       expect(result.operations).toEqual(operations);
       expect(result.subAccounts).toEqual(subAccounts);
-      expect(result.algorandResources.rewards.toString()).toBe("50000");
     });
 
     it("should return the same account object", () => {

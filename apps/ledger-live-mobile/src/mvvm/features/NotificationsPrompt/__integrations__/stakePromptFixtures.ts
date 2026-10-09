@@ -134,17 +134,6 @@ export const stakePromptCases: StakePromptCase[] = [
     transaction: { family: "aleo", mode: "unbond_public" },
   },
   {
-    label: "Algorand claim rewards",
-    bucket: "revoke/claim/lifecycle",
-    flowName: NavigatorName.AlgorandClaimRewardsFlow,
-    familyExportKey: "AlgorandClaimRewardsFlow",
-    successScreenName: ScreenName.AlgorandClaimRewardsValidationSuccess,
-    errorScreenName: ScreenName.AlgorandClaimRewardsValidationError,
-    accountKey: "algorand",
-    operationType: "REWARD",
-    transaction: { family: "algorand", mode: "claimRewards" },
-  },
-  {
     label: "Cardano delegation",
     bucket: "delegation/staking",
     flowName: NavigatorName.CardanoDelegationFlow,

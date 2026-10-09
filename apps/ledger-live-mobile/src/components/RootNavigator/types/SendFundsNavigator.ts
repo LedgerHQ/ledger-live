@@ -21,7 +21,7 @@ import type {
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import type {
   AlgorandAccount,
-  AlgorandTransaction,
+  AlgorandGenericTransaction,
   TransactionStatus as AlgorandTransactionStatus,
 } from "@ledgerhq/live-common/families/algorand/types";
 import {
@@ -149,7 +149,7 @@ export type SendFundsNavigatorStackParamList = {
     accountId?: string;
     parentId?: string;
     account: AlgorandAccount;
-    transaction: AlgorandTransaction;
+    transaction: AlgorandGenericTransaction;
     status?: AlgorandTransactionStatus;
     currentNavigation:
       | ScreenName.SignTransactionSummary

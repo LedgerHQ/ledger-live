@@ -65,7 +65,6 @@ describe("Synchronization", () => {
         expect(result.xpub).toBe("ALGO_ADDRESS");
         expect(result.blockHeight).toBe(50000000);
         expect(result.balance.toString()).toBe("10000000");
-        expect(result.algorandResources?.rewards.toString()).toBe("5000");
         expect(result.algorandResources?.nbAssets).toBe(0);
       });
 

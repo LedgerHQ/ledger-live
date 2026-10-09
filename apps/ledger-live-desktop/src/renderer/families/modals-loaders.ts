@@ -6,8 +6,6 @@ import type { Data as AleoManageData } from "./aleo/ManageModal/ManageModal";
 import type { Data as AleoUnbondData } from "./aleo/UnbondFlowModal/Body";
 import type { Data as AleoClaimUnbondData } from "./aleo/ClaimUnbondFlowModal/Body";
 import type { Data as AlgorandOptInData } from "./algorand/OptInFlowModal/Body";
-import type { Data as AlgorandClaimRewardsData } from "./algorand/Rewards/ClaimRewardsFlowModal/Body";
-import type { Props as AlgorandEarnRewardsInfoProps } from "./algorand/Rewards/EarnRewardsInfoModal";
 import type { Data as AptosStakeData } from "./aptos/StakingFlowModal/Body";
 import type { Props as AptosRewardsInfoProps } from "./aptos/StakingFlowModal/Info";
 import type { Data as AptosUnstakeData } from "./aptos/UnstakingFlowModal/Body";
@@ -92,8 +90,6 @@ export type CoinModalsData = {
   MODAL_ALEO_UNBOND: AleoUnbondData;
   MODAL_ALEO_CLAIM_UNBOND: AleoClaimUnbondData;
   MODAL_ALGORAND_OPT_IN: AlgorandOptInData;
-  MODAL_ALGORAND_CLAIM_REWARDS: AlgorandClaimRewardsData;
-  MODAL_ALGORAND_EARN_REWARDS_INFO: AlgorandEarnRewardsInfoProps;
   MODAL_APTOS_STAKE: AptosStakeData;
   MODAL_APTOS_REWARDS_INFO: AptosRewardsInfoProps;
   MODAL_APTOS_UNSTAKE: AptosUnstakeData;
@@ -187,8 +183,6 @@ export const coinModalImports: Record<CoinModalKey, CoinModalImport> = {
   MODAL_ALEO_UNBOND: () => import("./aleo/UnbondFlowModal"),
   MODAL_ALEO_CLAIM_UNBOND: () => import("./aleo/ClaimUnbondFlowModal"),
   MODAL_ALGORAND_OPT_IN: () => import("./algorand/OptInFlowModal"),
-  MODAL_ALGORAND_CLAIM_REWARDS: () => import("./algorand/Rewards/ClaimRewardsFlowModal"),
-  MODAL_ALGORAND_EARN_REWARDS_INFO: () => import("./algorand/Rewards/EarnRewardsInfoModal"),
   MODAL_APTOS_STAKE: () => import("./aptos/StakingFlowModal"),
   MODAL_APTOS_REWARDS_INFO: () => import("./aptos/StakingFlowModal/Info"),
   MODAL_APTOS_UNSTAKE: () => import("./aptos/UnstakingFlowModal"),

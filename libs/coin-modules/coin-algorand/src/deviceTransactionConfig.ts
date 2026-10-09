@@ -5,7 +5,7 @@ import type { CommonDeviceTransactionField as DeviceTransactionField } from "@le
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { extractTokenId } from "./tokens";
-import type { AlgorandTransaction, Transaction, TransactionStatus } from "./types";
+import type { AlgorandTransaction, TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField = {
   type: "polkadot.validators";
@@ -16,10 +16,8 @@ export const displayTokenValue = (token: TokenCurrency) =>
   `${token.name} (#${extractTokenId(token.id)})`;
 
 const getSendFields = (
-  transaction: Transaction,
   status: TransactionStatus,
   account: AccountLike,
-  addRecipient: boolean,
 ): Array<DeviceTransactionField> => {
   const { estimatedFees, amount } = status;
   const fields: Array<DeviceTransactionField> = [];
@@ -33,14 +31,6 @@ const getSendFields = (
     fields.push({
       type: "fees",
       label: "Fee",
-    });
-  }
-
-  if (addRecipient) {
-    fields.push({
-      type: "address",
-      label: "Recipient",
-      address: transaction.recipient,
     });
   }
 
@@ -81,11 +71,7 @@ async function getDeviceTransactionConfig({
 
   switch (mode) {
     case "send":
-      fields = getSendFields(transaction, status, account, false);
-      break;
-
-    case "claimReward":
-      fields = getSendFields(transaction, status, account, true);
+      fields = getSendFields(status, account);
       break;
 
     case "optIn":

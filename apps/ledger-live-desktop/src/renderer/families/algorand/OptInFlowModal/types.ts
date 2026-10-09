@@ -4,7 +4,7 @@ import { Step } from "~/renderer/components/Stepper";
 import { Operation } from "@ledgerhq/types-live";
 import {
   TransactionStatus,
-  Transaction,
+  AlgorandGenericTransaction as Transaction,
   AlgorandAccount,
 } from "@ledgerhq/live-common/families/algorand/types";
 import { OpenModal } from "~/renderer/actions/modals";

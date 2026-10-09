@@ -15,6 +15,7 @@ import type { AlgorandContext, AlgorandCoinConfig } from "../config";
 import { getTransactionParams } from "../network";
 import type { AlgorandMemo } from "../types";
 import { estimateFees } from "./estimateFees";
+import { hasAssetReference } from "./common";
 
 export type CraftedAlgorandTransaction = {
   serializedTransaction: string;
@@ -115,10 +116,19 @@ export async function craftApiTransaction(
   const config = await context.config();
   const fees = customFees?.value ?? (await estimateFees(context)).value;
 
-  const memo = transactionIntent.memo?.type === "string" ? transactionIntent.memo.value : undefined;
+  const { asset } = transactionIntent;
+  const assetId = hasAssetReference(asset) ? asset.assetReference : undefined;
 
-  const assetId =
-    transactionIntent.asset.type === "asa" ? transactionIntent.asset.assetReference : undefined;
+  if (transactionIntent.type === "changeTrust") {
+    if (!assetId) {
+      throw new Error("Opt-in requires an asset reference");
+    }
+
+    const optIn = await craftOptInTransaction(config, transactionIntent.sender, assetId, fees);
+    return { transaction: optIn.serializedTransaction, details: { txPayload: optIn.txPayload } };
+  }
+
+  const memo = transactionIntent.memo?.type === "string" ? transactionIntent.memo.value : undefined;
 
   const result = await craftTransaction(config, {
     sender: transactionIntent.sender,

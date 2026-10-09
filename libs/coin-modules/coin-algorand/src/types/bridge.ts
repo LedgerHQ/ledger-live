@@ -21,12 +21,10 @@ export const AlgorandOperationTypeEnum = {
 };
 
 export type AlgorandResourcesBridge = {
-  rewards: BigNumber;
   nbAssets: number;
 };
 
 export type AlgorandResourcesRaw = {
-  rewards: string;
   nbAssets: number;
 };
 
@@ -81,9 +79,9 @@ export function isAlgorandOperationExtraRaw(
 }
 
 export type AlgorandAccount = Account & {
-  algorandResources: AlgorandResourcesBridge;
+  algorandResources?: AlgorandResourcesBridge;
 };
 
 export type AlgorandAccountRaw = AccountRaw & {
-  algorandResources: AlgorandResourcesRaw;
+  algorandResources?: AlgorandResourcesRaw;
 };

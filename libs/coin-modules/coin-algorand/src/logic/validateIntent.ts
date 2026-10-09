@@ -5,6 +5,7 @@ import {
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/types";
 import {
+  FeeTooHigh,
   InvalidAddress,
   RecipientRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -18,8 +19,31 @@ import type { AlgorandContext } from "../config";
 import { AlgorandASANotOptInInRecipient, AlgorandMemoExceededSizeError } from "../errors";
 import { getAccount } from "../network";
 import type { AlgorandMemo } from "../types";
-import { ALGORAND_MIN_ACCOUNT_BALANCE } from "./common";
+import { ALGORAND_MIN_ACCOUNT_BALANCE, computeMinimumBalance, hasAssetReference } from "./common";
 import { validateMemo } from "./validateMemo";
+
+const OPT_IN_RESERVE = computeMinimumBalance(0, true) - computeMinimumBalance(0);
+
+function validateOptIn(
+  intent: TransactionIntent<AlgorandMemo>,
+  balances: Balance[],
+  fees: bigint,
+  errors: Record<string, Error>,
+): TransactionValidation {
+  if (!hasAssetReference(intent.asset)) {
+    // Not translated: it only blocks the flow until the user picks an asset
+    errors.assetId = new Error("Asset Id is not set");
+  }
+
+  const nativeBalance = balances.find(b => b.asset.type === "native");
+  const spendable = (nativeBalance?.value ?? 0n) - (nativeBalance?.locked ?? 0n);
+
+  if (spendable - OPT_IN_RESERVE < fees) {
+    errors.amount = new NotEnoughBalance();
+  }
+
+  return { errors, warnings: {}, estimatedFees: fees, amount: 0n, totalSpent: fees };
+}
 
 /**
  * Validate a transaction intent for Algorand
@@ -40,6 +64,15 @@ export async function validateIntent(
   const fees = customFees?.value ?? 0n;
   let amount = intent.amount;
 
+  const memoValue = intent.memo?.type === "string" ? intent.memo.value : undefined;
+  if (memoValue && !validateMemo(memoValue)) {
+    errors.transaction = new AlgorandMemoExceededSizeError();
+  }
+
+  if (intent.type === "changeTrust") {
+    return validateOptIn(intent, balances, fees, errors);
+  }
+
   // Validate recipient
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired();
@@ -55,16 +88,14 @@ export async function validateIntent(
   const locked = nativeBalance?.locked ?? 0n;
 
   // Check for token transfer
-  const isTokenTransfer = intent.asset.type !== "native";
+  const assetReference = hasAssetReference(intent.asset) ? intent.asset.assetReference : undefined;
+  const isTokenTransfer = assetReference !== undefined;
   let tokenBalance: Balance | undefined;
 
   if (isTokenTransfer) {
-    const intentAssetRef = (intent.asset as { assetReference?: string }).assetReference;
-    tokenBalance = balances.find(b => {
-      if (b.asset.type !== "asa") return false;
-      const balanceAssetRef = (b.asset as { assetReference?: string }).assetReference;
-      return balanceAssetRef === intentAssetRef;
-    });
+    tokenBalance = balances.find(
+      b => hasAssetReference(b.asset) && b.asset.assetReference === assetReference,
+    );
 
     if (!tokenBalance) {
       errors.amount = new NotEnoughBalance();
@@ -91,7 +122,9 @@ export async function validateIntent(
 
   // Check balance
   if (!errors.amount) {
-    if (isTokenTransfer) {
+    if (intent.useAllAmount && amount === 0n) {
+      errors.amount = new NotEnoughBalance();
+    } else if (isTokenTransfer) {
       // Check token balance
       if (tokenBalance && amount > tokenBalance.value) {
         errors.amount = new NotEnoughBalance();
@@ -117,12 +150,9 @@ export async function validateIntent(
 
       if (isTokenTransfer) {
         // Check if recipient has opted in to the ASA token
-        const intentAssetRef = (intent.asset as { assetReference?: string }).assetReference;
-        if (intentAssetRef) {
-          const hasOptedIn = recipientAccount.assets.map(a => a.assetId).includes(intentAssetRef);
-          if (!hasOptedIn) {
-            errors.recipient = new AlgorandASANotOptInInRecipient();
-          }
+        const hasOptedIn = recipientAccount.assets.map(a => a.assetId).includes(assetReference);
+        if (!hasOptedIn) {
+          errors.recipient = new AlgorandASANotOptInInRecipient();
         }
       } else if (amount > 0n) {
         // Check minimum balance requirement for native transfers
@@ -149,10 +179,8 @@ export async function validateIntent(
     }
   }
 
-  // Validate memo
-  const memoValue = intent.memo?.type === "string" ? intent.memo.value : undefined;
-  if (memoValue && !validateMemo(memoValue)) {
-    errors.transaction = new AlgorandMemoExceededSizeError();
+  if (!isTokenTransfer && amount > 0n && fees * 10n > amount) {
+    warnings.feeTooHigh = new FeeTooHigh();
   }
 
   return {

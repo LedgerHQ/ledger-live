@@ -15,11 +15,19 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "algorand",
     supportedCoins: ["algorand"],
     loadSetup: () => import("../families/algorand/setup"),
-    loadTransaction: () => import("@ledgerhq/coin-algorand/transaction").then(m => m.default),
+    loadTransaction: () => import("../families/algorand/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-algorand/deviceTransactionConfig").then(m => m.default),
+      import("../families/algorand/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/algorand/bridge/mock").then(m => m.default),
     loadMockAccount: () => import("@ledgerhq/coin-algorand/mock").then(m => m.default),
+    loadSigner: () => import("../families/algorand/signer").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/algorand/coinModuleApi").then(m => m.createLocalAlgorandApi),
+    loadBridgeApi: () => import("../families/algorand/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () =>
+      import("../families/algorand/accountRawAssign").then(m => m.default),
+    loadBridgeExtensions: () =>
+      import("../families/algorand/bridgeExtensions").then(m => m.default),
   },
   {
     family: "aptos",

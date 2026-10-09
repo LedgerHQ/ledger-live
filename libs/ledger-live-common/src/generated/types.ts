@@ -11,6 +11,10 @@ import type {
   TransactionStatusRaw as algorandTransactionStatusRaw,
 } from "@ledgerhq/coin-algorand/types/index";
 import type {
+  AlgorandGenericTransaction as algorandGenericTransaction,
+  AlgorandGenericTransactionRaw as algorandGenericTransactionRaw,
+} from "../families/algorand/types";
+import type {
   Transaction as aptosTransaction,
   TransactionRaw as aptosTransactionRaw,
   TransactionStatus as aptosTransactionStatus,
@@ -180,6 +184,7 @@ import type {
 export type Transaction =
   | aleoTransaction
   | algorandTransaction
+  | algorandGenericTransaction
   | aptosTransaction
   | bitcoinTransaction
   | cantonTransaction
@@ -212,6 +217,7 @@ export type Transaction =
 export type TransactionRaw =
   | aleoTransactionRaw
   | algorandTransactionRaw
+  | algorandGenericTransactionRaw
   | aptosTransactionRaw
   | bitcoinTransactionRaw
   | cantonTransactionRaw
