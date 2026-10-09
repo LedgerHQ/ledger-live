@@ -537,7 +537,10 @@ test.describe("Earn v2", () => {
 
     test(
       `[${emptyAccount.currency.testLabel}] - Earn v2 deposit v2 redirects to swap after selecting another account`,
-      { tag: buildTags({ currencyId: emptyAccount.currency.id }) },
+      {
+        tag: buildTags({ currencyId: emptyAccount.currency.id }),
+        annotation: { type: "TMS", description: "B2CQA-6691" },
+      },
       async ({ app }) => {
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(emptyAccount.accountName);
