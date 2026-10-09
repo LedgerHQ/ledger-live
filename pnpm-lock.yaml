@@ -612,9 +612,6 @@ catalogs:
     uuid:
       specifier: 11.1.0
       version: 11.1.0
-    ws:
-      specifier: 8.22.0
-      version: 8.22.0
     xstate:
       specifier: 5.19.2
       version: 5.19.2
@@ -656,8 +653,6 @@ overrides:
   '@jest/types': 30.5.0
   expect: 30.5.0
   pretty-format@^30.0.0: 30.5.0
-
-pnpmfileChecksum: sha256-JyE64KwSjZ7Ykvi+y4PoBd1Pk100XNhr0fI7RUun0QE=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
@@ -1521,7 +1516,7 @@ importers:
         version: 5.0.1
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       xstate:
         specifier: 'catalog:'
         version: 5.19.2
@@ -2750,7 +2745,7 @@ importers:
         version: 4.2.0
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   apps/wallet-cli:
     devDependencies:
@@ -4062,7 +4057,7 @@ importers:
         version: 0.12.0
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     devDependencies:
       '@devtools/protocols':
         specifier: workspace:*
@@ -5960,7 +5955,7 @@ importers:
         version: 4.2.0
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   e2e/tooling/baanx-test-client:
     dependencies:
@@ -10616,7 +10611,7 @@ importers:
         version: link:../../types-live
       '@walletconnect/sign-client':
         specifier: 2.23.4
-        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
       '@walletconnect/types':
         specifier: 2.23.0
         version: 2.23.0
@@ -14037,7 +14032,7 @@ importers:
         version: 1.20.0
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -14500,7 +14495,7 @@ importers:
         version: 2.2.4
       isomorphic-ws:
         specifier: 'catalog:'
-        version: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+        version: 5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       jotai:
         specifier: 2.17.0
         version: 2.17.0(@babel/core@7.28.5)(@babel/template@7.29.7)(@types/react@19.0.14)(react@19.1.4)
@@ -14711,7 +14706,7 @@ importers:
         version: 11.1.0
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   libs/ledger-services/cal:
     dependencies:
@@ -16091,7 +16086,7 @@ importers:
         version: 7.8.2
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-dmk-mobile:
     dependencies:
@@ -16182,7 +16177,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
   libs/live-dmk-shared:
     dependencies:
@@ -16267,7 +16262,7 @@ importers:
         version: 7.8.2
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-dmk-speculos:
     dependencies:
@@ -16331,7 +16326,7 @@ importers:
         version: 7.8.2
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-e2e-shared:
     dependencies:
@@ -16560,7 +16555,7 @@ importers:
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-signer-canton:
     dependencies:
@@ -16841,7 +16836,7 @@ importers:
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-signer-hyperliquid:
     dependencies:
@@ -17235,7 +17230,7 @@ importers:
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/live-wallet:
     dependencies:
@@ -17320,7 +17315,7 @@ importers:
         version: '@typescript/typescript6@6.0.2'
       ws:
         specifier: ^8.16.0
-        version: 8.17.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/speculos-transport:
     dependencies:
@@ -17748,7 +17743,7 @@ importers:
     dependencies:
       '@ledgerhq/icons-ui':
         specifier: workspace:^
-        version: file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(styled-system@5.1.5)
+        version: file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.0)(react@19.1.4))(styled-system@5.1.5)
       '@ledgerhq/ui-shared':
         specifier: workspace:^
         version: link:../shared
@@ -17839,7 +17834,7 @@ importers:
         version: 4.4.1
       styled-components:
         specifier: ^5.3.3
-        version: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
+        version: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.0)(react@19.1.4)
       stylelint:
         specifier: ^14.9.1
         version: 14.16.1
@@ -18374,7 +18369,7 @@ importers:
         version: 1.5.1
       isomorphic-ws:
         specifier: 'catalog:'
-        version: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
+        version: 5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
       pako:
         specifier: ^2.0.4
         version: 2.1.0
@@ -18383,7 +18378,7 @@ importers:
         version: 7.8.2
       ws:
         specifier: 'catalog:'
-        version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+        version: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -20044,6 +20039,11 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
+  '@babel/parser@7.29.9':
+    resolution: {integrity: sha512-CjXrNHTnvqBVqHgdBysY3vk2T8tpJHb5/RMeHJBTyVa9xgugCB0CJTx/3oO8RV2QRQP391RWpB7D6hLjm8V9uA==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.28.5':
     resolution: {integrity: sha512-87GDMS3tsmMSi/3bWOte1UblL+YUTFMV8SZPZ2eSEL17s74Cw/l63rR6NmGVKMYW2GYi85nE+/d6Hw5N0bEk2Q==}
     engines: {node: '>=6.9.0'}
@@ -20651,6 +20651,10 @@ packages:
 
   '@babel/traverse@7.29.0':
     resolution: {integrity: sha512-4HPiQr0X7+waHfyXPZpWPfWL/J7dcN1mx9gL6WdQVMbPnF3+ZhSMs8tCxN7oHddJE9fhNE7+lxdnlyemKfJRuA==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/traverse@7.29.10':
+    resolution: {integrity: sha512-B3lYAs2nkKskbgQ1nfy8Ma9ao9Q1rntTAQHrzzyDuj+TSO+X3le6PfWwqDvodsb+OumE10eMFfuMCTQSQ5iuIQ==}
     engines: {node: '>=6.9.0'}
 
   '@babel/traverse@7.29.8':
@@ -27733,8 +27737,8 @@ packages:
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
     engines: {node: '>= 6'}
 
-  '@tootallnate/once@2.0.0':
-    resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
+  '@tootallnate/once@2.0.1':
+    resolution: {integrity: sha512-HqmEUIGRJ5fSXchkVgR5F7qn48bDBzv0kWj/Kfu5e6uci4UlEeng4331LnBkWffb++Ei3FOVLxo8JJWMFBDMeQ==}
     engines: {node: '>= 10'}
 
   '@trust/keyto@1.0.1':
@@ -32162,8 +32166,8 @@ packages:
   http-cache-semantics@4.1.1:
     resolution: {integrity: sha512-er295DKPVsV82j5kw1Gjt+ADA/XYHsajl82cGNQG2eyoPkvgUhX+nDIyelzhIWbbsXP39EHcI6l5tYs2FYqYXQ==}
 
-  http-cache-semantics@4.2.0:
-    resolution: {integrity: sha512-dTxcvPXqPvXBQpq5dUr6mEMJX4oIEFv6bwom3FDwKRDsuIjjJGANqhBuoAn9c1RQJIdAKav33ED65E2ys+87QQ==}
+  http-cache-semantics@4.3.0:
+    resolution: {integrity: sha512-M5t5LlJpS1UHMjvwRQVdFHvPISGeLAxNcrWuJkeGh0KxsqCHZ1O3NXZU/8x7cD0BDcGW8kapxMKTvwlqrNkHkA==}
 
   http-errors@1.6.3:
     resolution: {integrity: sha512-lks+lVC8dgGyh97jxvxeYTWQFvh4uw4yC12gVl63Cg30sjPX4wuGcdkICVXDAESr6OJGjqGA8Iz5mkeN6zlD7A==}
@@ -32399,8 +32403,8 @@ packages:
     peerDependencies:
       reflect-metadata: ~0.2.2
 
-  ip-address@10.7.0:
-    resolution: {integrity: sha512-BGFsyJd5mpXp3rK6jIdADLNgpJUK1jnjzvYF8lK+VyDab9JAmqN0YOKDdP17HlgKb2+ehPgDc8EtnRLbGCAMhA==}
+  ip-address@10.7.3:
+    resolution: {integrity: sha512-A1kdq/tSb5QjvKvAMgIoEvDBIgL7qaqVP/jkvSwYYRZ9iEzvPpopxp2wQfu3SuZRHtpHNxMn8Fs0bS+gf5Xmwg==}
     engines: {node: '>= 12'}
 
   ipaddr.js@1.9.1:
@@ -35621,6 +35625,9 @@ packages:
   react-is@19.2.8:
     resolution: {integrity: sha512-s5un28nYxKJw5gvUHyW5PCC28CvBqLu9r3cWgzHT4Vo/5fqqkFcdRYsGcKf50WMPpjjFZS5d76fn3YCo2njKwQ==}
 
+  react-is@19.3.0:
+    resolution: {integrity: sha512-UpMYezM4v5/18F28aC66AEsjXIgE02kyEMH6yLdgLXu/UTfa1Ntwck/nNLrbqJsEXW7gPb0coNO9FQse9WTovA==}
+
   react-lifecycles-compat@3.0.4:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
 
@@ -36720,8 +36727,8 @@ packages:
     resolution: {integrity: sha512-Fgl0YPZ902wEsAyiQ+idGd1A7rSFx/ayC1CQVMw5P+EQx2V0SgpGtf6OKFhVjPflPUl9YMmEOnmfjCdMUsygww==}
     engines: {node: '>= 10'}
 
-  socks@2.8.9:
-    resolution: {integrity: sha512-LJhUYUvItdQ0LkJTmPeaEObWXAqFyfmP85x0tch/ez9cahmhlBBLbIqDFnvBnUJGagb0JbIQrkBs1wJ+yRYpEw==}
+  socks@2.8.10:
+    resolution: {integrity: sha512-e0VyvkVTwVYViNovRkZ9aodhxVlyoMn7eJhVUPxZ+eK9P/7CBkxvvsBOHqFPEH416726W8tLXXXjKwqgTErrCQ==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
   sonic-boom@4.0.1:
@@ -38333,8 +38340,8 @@ packages:
     resolution: {integrity: sha512-FdNA4RyH1L43TlvGG8qOMIfcEczwA5ij+zLXUy3Z83CjxhLvcV7/Q/8pk22wnCgYw7PJhtK+7lhO+qqyT4NdvQ==}
     engines: {node: '>=16.14'}
 
-  ws@6.2.3:
-    resolution: {integrity: sha512-jmTjYU0j60B+vHey6TfR3Z7RD61z/hmxBS3VMSGIrroOWXQEneK1zNuotOUrGyBHQj0yrpsLHPWtigEFd13ndA==}
+  ws@6.2.6:
+    resolution: {integrity: sha512-XTrf1gv7kXoVf1hbC3PAyAiPgR8Wz1blcrYIjEsUmr08BLksT41R8KbjmS9408C2ERx7v1JDLD/BkpLEttjfKA==}
     peerDependencies:
       bufferutil: ^4.0.1
       utf-8-validate: ^5.0.2
@@ -38344,8 +38351,8 @@ packages:
       utf-8-validate:
         optional: true
 
-  ws@7.5.10:
-    resolution: {integrity: sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==}
+  ws@7.5.13:
+    resolution: {integrity: sha512-rsKI6xDBFVf4r/x8XyChGK04QR/XHroxs/jUcoWvtEZM8TPU/X/uIY9B1CsSzYws9ZJb/6bbBu7dPhFW00CAoA==}
     engines: {node: '>=8.3.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -38382,6 +38389,18 @@ packages:
 
   ws@8.20.1:
     resolution: {integrity: sha512-It4dO0K5v//JtTXuPkfEOaI3uUN87iYPnqo/ZzqCoG3g8uhA66QUMs/SrM0YK7/NAu+r4LMh/9dq2A7k+rHs+w==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
+  ws@8.21.0:
+    resolution: {integrity: sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -40027,6 +40046,10 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.8
 
+  '@babel/parser@7.29.9':
+    dependencies:
+      '@babel/types': 7.29.8
+
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.28.5(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -40801,6 +40824,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/traverse@7.29.10':
+    dependencies:
+      '@babel/code-frame': 7.29.7
+      '@babel/generator': 7.29.8
+      '@babel/helper-globals': 7.29.7
+      '@babel/parser': 7.29.9
+      '@babel/template': 7.29.7
+      '@babel/types': 7.29.8
+      debug: 4.4.3(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/traverse@7.29.8':
     dependencies:
       '@babel/code-frame': 7.29.7
@@ -41005,7 +41040,7 @@ snapshots:
       open: 10.2.0
       pretty-format: 28.1.3
       source-map: 0.7.6
-      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -41509,8 +41544,8 @@ snapshots:
   '@cosmjs/socket@0.37.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@cosmjs/stream': 0.37.0
-      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      isomorphic-ws: 4.0.1(ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       xstream: 11.14.0
     transitivePeerDependencies:
       - bufferutil
@@ -41772,7 +41807,7 @@ snapshots:
       make-fetch-happen: 10.2.1
       nopt: 6.0.0
       proc-log: 2.0.1
-      semver: 7.8.1
+      semver: 7.7.3
       tar: 6.2.1
       which: 2.0.2
     transitivePeerDependencies:
@@ -42443,7 +42478,7 @@ snapshots:
       terminal-link: 2.1.1
       undici: 6.28.1
       wrap-ansi: 7.0.0
-      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     optionalDependencies:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -44542,13 +44577,13 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
       inversify: 7.5.1(reflect-metadata@0.2.2)
-      isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      isomorphic-ws: 5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
       semver: 7.7.2
       uuid: 11.0.3
-      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       xstate: 5.19.2
     transitivePeerDependencies:
       - bufferutil
@@ -44559,13 +44594,13 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
       inversify: 7.5.1(reflect-metadata@0.2.2)
-      isomorphic-ws: 5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
+      isomorphic-ws: 5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
       semver: 7.7.2
       uuid: 11.0.3
-      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       xstate: 5.19.2
     transitivePeerDependencies:
       - bufferutil
@@ -44869,11 +44904,11 @@ snapshots:
       '@ledgerhq/logs': 6.19.0
       events: 3.3.0
 
-  '@ledgerhq/icons-ui@file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(styled-system@5.1.5)':
+  '@ledgerhq/icons-ui@file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.0)(react@19.1.4))(styled-system@5.1.5)':
     dependencies:
       react: 19.1.4
       react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
-      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
+      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.0)(react@19.1.4)
       styled-system: 5.1.5
     optionalDependencies:
       '@types/react': 19.0.14
@@ -45546,7 +45581,7 @@ snapshots:
   '@npmcli/fs@2.1.2':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.8.1
+      semver: 7.7.3
 
   '@npmcli/move-file@2.0.1':
     dependencies:
@@ -47037,7 +47072,7 @@ snapshots:
       open: 6.4.0
       pretty-format: 26.6.2
       serve-static: 1.16.2
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 6.2.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -47337,7 +47372,7 @@ snapshots:
   '@react-native/codegen@0.81.5(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/parser': 7.29.8
+      '@babel/parser': 7.29.9
       glob: 7.2.3
       hermes-parser: 0.29.1
       invariant: 2.2.4
@@ -47410,7 +47445,7 @@ snapshots:
       open: 7.4.2
       selfsigned: 2.4.1
       serve-static: 1.16.2
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 6.2.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -47428,7 +47463,7 @@ snapshots:
       nullthrows: 1.1.1
       open: 7.4.2
       serve-static: 1.16.2
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 6.2.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -47446,7 +47481,7 @@ snapshots:
       nullthrows: 1.1.1
       open: 7.4.2
       serve-static: 1.16.2
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 6.2.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -47655,7 +47690,7 @@ snapshots:
       express: 5.2.1
       semver: 7.8.1
       tslib: 2.6.2
-      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - '@date-fns/tz'
       - '@types/react'
@@ -50535,7 +50570,7 @@ snapshots:
 
   '@tootallnate/once@1.1.2': {}
 
-  '@tootallnate/once@2.0.0': {}
+  '@tootallnate/once@2.0.1': {}
 
   '@trust/keyto@1.0.1':
     dependencies:
@@ -51266,7 +51301,7 @@ snapshots:
 
   '@vscode/sudo-prompt@9.3.1': {}
 
-  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-provider': 1.0.14
@@ -51280,7 +51315,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       '@walletconnect/window-getters': 1.0.1
       es-toolkit: 1.44.0
       events: 3.3.0
@@ -51347,7 +51382,7 @@ snapshots:
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/safe-json': 1.0.2
       events: 3.3.0
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -51403,16 +51438,16 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
     dependencies:
-      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 3.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -51501,7 +51536,7 @@ snapshots:
       - ioredis
       - uploadthing
 
-  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)':
+  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)':
     dependencies:
       '@msgpack/msgpack': 3.1.3
       '@noble/ciphers': 1.3.0
@@ -51521,7 +51556,7 @@ snapshots:
       blakejs: 1.2.1
       bs58: 6.0.0
       detect-browser: 5.3.0
-      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@3.25.76)
+      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
       uint8arrays: 3.1.1
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -52296,14 +52331,14 @@ snapshots:
 
   babel-plugin-react-native-web@0.21.2: {}
 
-  babel-plugin-styled-components@2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(supports-color@5.5.0):
+  babel-plugin-styled-components@2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.0)(react@19.1.4))(supports-color@5.5.0):
     dependencies:
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
+      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.0)(react@19.1.4)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -54044,7 +54079,7 @@ snapshots:
       tmp: 0.2.7
       trace-event-lib: 1.4.1
       which: 1.3.1
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       yargs: 17.7.2
       yargs-parser: 21.1.1
       yargs-unparser: 2.0.0
@@ -54095,7 +54130,7 @@ snapshots:
       tmp: 0.2.7
       trace-event-lib: 1.4.1
       which: 1.3.1
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       yargs: 17.7.2
       yargs-parser: 21.1.1
       yargs-unparser: 2.0.0
@@ -55992,7 +56027,7 @@ snapshots:
 
   http-cache-semantics@4.1.1: {}
 
-  http-cache-semantics@4.2.0: {}
+  http-cache-semantics@4.3.0: {}
 
   http-errors@1.6.3:
     dependencies:
@@ -56029,7 +56064,7 @@ snapshots:
 
   http-proxy-agent@5.0.0:
     dependencies:
-      '@tootallnate/once': 2.0.0
+      '@tootallnate/once': 2.0.1
       agent-base: 6.0.2(supports-color@7.2.0)
       debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
@@ -56278,7 +56313,7 @@ snapshots:
       '@inversifyjs/core': 5.2.0(reflect-metadata@0.2.2)
       reflect-metadata: 0.2.2
 
-  ip-address@10.7.0: {}
+  ip-address@10.7.3: {}
 
   ipaddr.js@1.9.1: {}
 
@@ -56508,13 +56543,21 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  isomorphic-ws@4.0.1(ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
+  isomorphic-ws@4.0.1(ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
     dependencies:
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
-  isomorphic-ws@4.0.1(ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6)):
+  isomorphic-ws@4.0.1(ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@6.0.6)):
     dependencies:
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+
+  isomorphic-ws@5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
+    dependencies:
+      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+
+  isomorphic-ws@5.0.0(ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)):
+    dependencies:
+      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   isomorphic-ws@5.0.0(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
     dependencies:
@@ -56627,11 +56670,11 @@ snapshots:
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
-      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      isomorphic-ws: 4.0.1(ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       json-stringify-safe: 5.0.1
       stream-json: 1.9.1
       uuid: 8.3.2
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -56645,11 +56688,11 @@ snapshots:
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
-      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6))
+      isomorphic-ws: 4.0.1(ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@6.0.6))
       json-stringify-safe: 5.0.1
       stream-json: 1.9.1
       uuid: 8.3.2
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -57409,7 +57452,7 @@ snapshots:
       whatwg-encoding: 3.1.1
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.2.0
-      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       xml-name-validator: 5.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -57436,7 +57479,7 @@ snapshots:
       whatwg-encoding: 3.1.1
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.2.0
-      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       xml-name-validator: 5.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -58216,7 +58259,7 @@ snapshots:
     dependencies:
       agentkeepalive: 4.6.0
       cacache: 16.1.3
-      http-cache-semantics: 4.2.0
+      http-cache-semantics: 4.3.0
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1(supports-color@7.2.0)
       is-lambda: 1.0.1
@@ -58590,7 +58633,7 @@ snapshots:
   metro-source-map@0.83.3:
     dependencies:
       '@babel/traverse': 7.29.8
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.8'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.29.10'
       '@babel/types': 7.29.8
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
@@ -58782,7 +58825,7 @@ snapshots:
       serialize-error: 2.1.0
       source-map: 0.5.7
       throat: 5.0.0
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
@@ -58829,7 +58872,7 @@ snapshots:
       serialize-error: 2.1.0
       source-map: 0.5.7
       throat: 5.0.0
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
@@ -58875,7 +58918,7 @@ snapshots:
       serialize-error: 2.1.0
       source-map: 0.5.7
       throat: 5.0.0
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
@@ -60279,7 +60322,7 @@ snapshots:
   pretty-format@30.5.0:
     dependencies:
       '@jest/react-is-18': react-is@18.3.1
-      '@jest/react-is-19': react-is@19.2.8
+      '@jest/react-is-19': react-is@19.3.0
       '@jest/schemas': 30.5.0
       ansi-styles: 5.2.0
 
@@ -60593,7 +60636,7 @@ snapshots:
   react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     dependencies:
       shell-quote: 1.10.0
-      ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -60665,6 +60708,8 @@ snapshots:
   react-is@19.1.1: {}
 
   react-is@19.2.8: {}
+
+  react-is@19.3.0: {}
 
   react-lifecycles-compat@3.0.4: {}
 
@@ -60970,7 +61015,7 @@ snapshots:
       semver: 7.8.1
       stacktrace-parser: 0.1.10
       whatwg-fetch: 3.6.20
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      ws: 6.2.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       yargs: 17.7.2
     optionalDependencies:
       '@types/react': 19.0.14
@@ -61883,13 +61928,13 @@ snapshots:
     dependencies:
       agent-base: 6.0.2(supports-color@7.2.0)
       debug: 4.4.3(supports-color@7.2.0)
-      socks: 2.8.9
+      socks: 2.8.10
     transitivePeerDependencies:
       - supports-color
 
-  socks@2.8.9:
+  socks@2.8.10:
     dependencies:
-      ip-address: 10.7.0
+      ip-address: 10.7.3
       smart-buffer: 4.2.0
 
   sonic-boom@4.0.1:
@@ -62201,19 +62246,19 @@ snapshots:
 
   style-search@0.1.0: {}
 
-  styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4):
+  styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.0)(react@19.1.4):
     dependencies:
       '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
       '@babel/traverse': 7.28.5(supports-color@5.5.0)
       '@emotion/is-prop-valid': 1.4.0
       '@emotion/stylis': 0.8.5
       '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(supports-color@5.5.0)
+      babel-plugin-styled-components: 2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.3.0)(react@19.1.4))(supports-color@5.5.0)
       css-to-react-native: 3.2.0
       hoist-non-react-statics: 3.3.2
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
-      react-is: 19.2.8
+      react-is: 19.3.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
     transitivePeerDependencies:
@@ -63542,19 +63587,19 @@ snapshots:
       js-yaml: 4.1.0
       write-file-atomic: 5.0.1
 
-  ws@6.2.3(bufferutil@4.1.0)(utf-8-validate@5.0.10):
+  ws@6.2.6(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     dependencies:
       async-limiter: 1.0.1
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
 
-  ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10):
+  ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
 
-  ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@6.0.6):
+  ws@7.5.13(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 6.0.6
@@ -63578,6 +63623,16 @@ snapshots:
     optionalDependencies:
       bufferutil: 4.1.0
       utf-8-validate: 5.0.10
+
+  ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@5.0.10):
+    optionalDependencies:
+      bufferutil: 4.1.0
+      utf-8-validate: 5.0.10
+
+  ws@8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
+    optionalDependencies:
+      bufferutil: 4.1.0
+      utf-8-validate: 6.0.6
 
   ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10):
     optionalDependencies:
