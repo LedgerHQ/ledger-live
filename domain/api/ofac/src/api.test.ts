@@ -75,8 +75,17 @@ describe("ofacApi check", () => {
     expect(result.error).toBeUndefined();
   });
 
-  it("returns true on HTTP 451", async () => {
-    server.use(http.get(CHECK_URL, () => HttpResponse.json({}, { status: 451 })));
+  it("returns true on HTTP 451 with a non-JSON body", async () => {
+    server.use(
+      http.get(
+        CHECK_URL,
+        () =>
+          new HttpResponse("<html><body>Unavailable for legal reasons</body></html>", {
+            status: 451,
+            headers: { "Content-Type": "text/html" },
+          }),
+      ),
+    );
     const store = makeStore();
 
     const result = await store.dispatch(ofacApi.endpoints.check.initiate());

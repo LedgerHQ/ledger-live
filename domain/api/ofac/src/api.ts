@@ -19,6 +19,7 @@ export const ofacApi = countervaluesApi.injectEndpoints({
     check: build.query<boolean, void>({
       query: () => ({
         url: "/v3/markets",
+        responseHandler: "text",
         validateStatus: response => OFAC_ACCEPTED_STATUSES.has(response.status),
       }),
       transformResponse: (_response: unknown, meta: FetchBaseQueryMeta | undefined) =>
