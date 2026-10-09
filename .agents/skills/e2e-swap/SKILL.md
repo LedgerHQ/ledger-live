@@ -67,6 +67,16 @@ description: Write or update Swap E2E tests for Ledger Live Desktop (Playwright)
   - `verifyContinueButtonVisible()` in desktop swap page (removed)
   - `selectProviderQuoteWithRetry(...)` in swap utils (removed)
 
+### Swap partner payload check
+
+`tests/utils/swapPayloadCheck.ts` checks the partner payload of every desktop swap without spec changes:
+
+- `app.swap.clickExchangeButton(...)` starts a pass-through watch of the app `POST ${SWAP_API_BASE}/swap` call (traffic is never modified, one watch per page, stopped by the device steps, the reject step and the `page` fixture).
+- `app.speculos.verifyAmountsAndAcceptSwap*` run `checkSwapPayload` (`@ledgerhq/hw-app-exchange`) on the latest 2xx `/swap` answer, with the partner key and format from `getSwapProvider`, comparing the nonce, payout and refund addresses and amount with the request.
+- The result is attached as "Swap payload check" (with the number of `/swap` calls). An invalid payload fails the test with the issue codes and messages; if the device step itself failed, the codes are appended to its error after `↳ Invalid swap partner payload:`.
+- DEX providers, unknown providers, non-2xx answers and flows without a `/swap` call are reported as skipped or not captured, never failed.
+- `SWAP_API_BASE` lives in `tests/utils/swapApiBase.ts` and is also passed to the launched app. A local run without it uses staging for both.
+
 ## Mobile patterns (current API)
 
 - Multi-step flow should assert progression, not only click:

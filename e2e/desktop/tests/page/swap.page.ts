@@ -13,6 +13,7 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { expectAmountCloseTo } from "tests/utils/amountUtils";
+import { startSwapPayloadWatch } from "tests/utils/swapPayloadCheck";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
@@ -401,6 +402,7 @@ export class SwapPage extends WebViewAppPage {
   @step("Click Exchange button")
   async clickExchangeButton(provider: string) {
     const webview = await this.getWebView();
+    await startSwapPayloadWatch(this.page);
     await webview
       .locator(this.providerContainerSelector(provider))
       .getByTestId(this.swapBtn)
