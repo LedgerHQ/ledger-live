@@ -61,6 +61,10 @@
           "reason": "Adds a native module for what Lumen draws with react-native-svg (LIVE-37310).",
           "use": "LinearGradient from @ledgerhq/lumen-ui-rnative"
         },
+        "react-native-splash-screen": {
+          "reason": "Unmaintained since 2021, replaced on mobile (LIVE-37328).",
+          "use": "expo-splash-screen"
+        },
         "unimported": {
           "reason": "Mishandles dynamic import(), so every package needs an exception list to suppress its false positives. Pulls typescript@4.9.5 and @typescript-eslint@5 into node_modules.",
           "use": "knip"
