@@ -185,6 +185,7 @@ export const deviceOnboardingMachine = setup({
           exit: "forgetSecureConnectionRequested",
           on: {
             ALLOW_SECURE_CONNECTION_REQUESTED: { actions: "rememberSecureConnectionRequested" },
+            SECURE_CONNECTION_ALLOWED: { actions: "forgetSecureConnectionRequested" },
             GENUINE_CHECK_PASSED: { target: "checksIdle", actions: "rememberGenuineChecked" },
             GENUINE_CHECK_REFUSED: { target: "genuineFailed", actions: "rememberGenuineFailure" },
             GENUINE_CHECK_FAILED: { target: "genuineFailed", actions: "rememberGenuineFailure" },

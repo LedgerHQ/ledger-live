@@ -1,18 +1,33 @@
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { buildProps } from "jest/deviceOnboardingProps";
 import type { DeviceOnboardingToolContext } from "../types";
 import {
+  FirmwareOverride,
+  GenuineOverride,
   formatTime,
   formatValue,
   stateKind,
   useDeviceOnboardingViewModel,
+  type LogLine,
 } from "./useDeviceOnboardingViewModel";
 
-function buildEvents(count: number) {
+function eventIds(lines: readonly LogLine[]) {
+  return lines.flatMap(line => (line.line === "event" ? [line.id] : []));
+}
+
+function quitPayload(lines: readonly LogLine[]) {
+  const quit = lines.find(line => line.line === "event" && line.type === "QUIT");
+  return quit?.line === "event" ? quit.payload : [];
+}
+
+function buildLog(count: number) {
   return Array.from({ length: count }, (_, index) => ({
-    id: `event-${index}`,
-    type: "CONTINUE" as const,
-    at: index,
+    state: "readingState",
+    event: {
+      id: `event-${index}`,
+      type: "CONTINUE" as const,
+      at: index,
+    },
   }));
 }
 
@@ -101,13 +116,14 @@ describe("useDeviceOnboardingViewModel", () => {
   });
 
   it("keeps every state the machine went through, marking the last one as current", () => {
-    const { result, rerender } = renderHook(
-      (state: string | null) => useDeviceOnboardingViewModel(buildProps({ state })),
-      { initialProps: "readingState" as string | null },
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({
+          state: "checks.genuineCheck",
+          log: [{ state: "readingState" }, { state: "routing" }, { state: "checks.genuineCheck" }],
+        }),
+      ),
     );
-
-    rerender("routing");
-    rerender("checks.genuineCheck");
 
     expect(result.current.stateSteps).toEqual([
       { key: "0-readingState", label: "readingState", kind: "progress", isCurrent: false },
@@ -122,14 +138,14 @@ describe("useDeviceOnboardingViewModel", () => {
   });
 
   it("appends a revisited state rather than collapsing it, so a loop stays visible", () => {
-    const { result, rerender } = renderHook(
-      (state: string | null) => useDeviceOnboardingViewModel(buildProps({ state })),
-      { initialProps: "readingState" as string | null },
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({
+          state: "readingState",
+          log: [{ state: "readingState" }, { state: "deviceLocked" }, { state: "readingState" }],
+        }),
+      ),
     );
-
-    rerender("deviceLocked");
-    rerender("readingState");
-    rerender("readingState");
 
     expect(result.current.stateSteps.map(step => step.label)).toEqual([
       "readingState",
@@ -139,13 +155,11 @@ describe("useDeviceOnboardingViewModel", () => {
   });
 
   it("clears the trail once the host drops the state, so a reset starts from scratch", () => {
-    const { result, rerender } = renderHook(
-      (state: string | null) => useDeviceOnboardingViewModel(buildProps({ state })),
-      { initialProps: "readingState" as string | null },
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({ state: null, log: [{ state: "readingState" }, { state: "routing" }] }),
+      ),
     );
-
-    rerender("routing");
-    rerender(null);
 
     expect(result.current.stateSteps).toEqual([]);
   });
@@ -198,82 +212,232 @@ describe("useDeviceOnboardingViewModel", () => {
     ]);
   });
 
-  it("shows the newest event first, whatever order the host appended", () => {
+  it("lists the result under output", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
-          events: [
-            { id: "oldest", type: "SESSION_READY", at: 5 },
-            { id: "newest", type: "LOCKED", at: 9 },
-            { id: "middle", type: "UNLOCKED", at: 7 },
+          state: "checks.genuineCheck",
+          log: [
+            {
+              state: "checks.genuineCheck",
+              event: {
+                id: "passed",
+                type: "GENUINE_CHECK_PASSED",
+                at: 1,
+                payload: { output: { isGenuine: true } },
+              },
+            },
           ],
         }),
       ),
     );
 
-    expect(result.current.eventRows.map(row => row.id)).toEqual(["newest", "middle", "oldest"]);
+    const event = result.current.logLines.find(line => line.line === "event");
+    expect(event?.line === "event" ? event.payload : []).toEqual([
+      { label: "output.isGenuine", value: "true" },
+    ]);
   });
 
-  it("falls back on the append order when several transitions share a millisecond", () => {
+  it("lists every field on the opened event, including an error body and a url", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
-          events: [
-            { id: "first", type: "SESSION_READY", at: 3 },
-            { id: "second", type: "UNLOCKED", at: 3 },
-            { id: "third", type: "STEP_CHANGED", at: 3 },
+          state: "readingState",
+          log: [
+            {
+              state: "readingState",
+              event: {
+                id: "read",
+                type: "DEVICE_STATE_READ",
+                at: 1,
+                payload: {
+                  firmwareVersion: "1.7.0",
+                  state: {
+                    seedWordIndex: 2,
+                    seedPhraseWordCount: 24,
+                    currentOnboardingStep: "pin",
+                  },
+                  failure: "https://secret.example/body",
+                  note: "see https://secret.example/note",
+                },
+              },
+            },
           ],
         }),
       ),
     );
 
-    expect(result.current.eventRows.map(row => row.id)).toEqual(["third", "second", "first"]);
+    const event = result.current.logLines.find(line => line.line === "event");
+    expect(event?.line === "event" ? event.payload : []).toEqual([
+      { label: "firmwareVersion", value: "1.7.0" },
+      { label: "state.seedWordIndex", value: "2" },
+      { label: "state.seedPhraseWordCount", value: "24" },
+      { label: "state.currentOnboardingStep", value: "pin" },
+      { label: "failure", value: "https://secret.example/body" },
+      { label: "note", value: "see https://secret.example/note" },
+    ]);
+  });
+
+  it("shows the latest saved row first", () => {
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({
+          state: "readingState",
+          log: [
+            { state: "readingState", event: { id: "oldest", type: "SESSION_READY", at: 1 } },
+            { state: "readingState", event: { id: "middle", type: "UNLOCKED", at: 2 } },
+            { state: "readingState", event: { id: "newest", type: "LOCKED", at: 3 } },
+          ],
+        }),
+      ),
+    );
+
+    expect(eventIds(result.current.logLines)).toEqual(["newest", "middle", "oldest"]);
+  });
+
+  it("puts an event under the state it led to", () => {
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({
+          state: "routing",
+          log: [
+            { state: "readingState", event: { id: "locked", type: "LOCKED", at: 1 } },
+            { state: "routing", event: { id: "go", type: "CONTINUE", at: 2 } },
+          ],
+        }),
+      ),
+    );
+
+    expect(
+      result.current.logLines.map(line => (line.line === "state" ? line.label : line.type)),
+    ).toEqual(["routing", "CONTINUE", "readingState", "LOCKED"]);
+  });
+
+  it("keeps the pair when the next update arrives", () => {
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({
+          state: "checks.checksDone",
+          log: [
+            {
+              state: "checks.firmwareCheck",
+              event: { id: "passed", type: "GENUINE_CHECK_PASSED", at: 1 },
+            },
+            {
+              state: "checks.checksDone",
+              event: { id: "upToDate", type: "FIRMWARE_UP_TO_DATE", at: 2 },
+            },
+          ],
+        }),
+      ),
+    );
+
+    expect(
+      result.current.logLines.map(line => (line.line === "state" ? line.label : line.type)),
+    ).toEqual([
+      "checks.checksDone",
+      "FIRMWARE_UP_TO_DATE",
+      "checks.firmwareCheck",
+      "GENUINE_CHECK_PASSED",
+    ]);
+  });
+
+  it("reads upward, with the newest state first", () => {
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({
+          state: "checks.genuineCheck",
+          log: [
+            { state: "routing", event: { id: "ready", type: "SESSION_READY", at: 1 } },
+            { state: "checks.genuineCheck", event: { id: "go", type: "CONTINUE", at: 2 } },
+          ],
+        }),
+      ),
+    );
+
+    expect(
+      result.current.logLines.map(line => (line.line === "state" ? line.label : line.type)),
+    ).toEqual(["checks.genuineCheck", "CONTINUE", "routing", "SESSION_READY"]);
+  });
+
+  it("keeps the saved order when several updates share a millisecond", () => {
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(
+        buildProps({
+          state: "readingState",
+          log: [
+            { state: "readingState", event: { id: "first", type: "SESSION_READY", at: 3 } },
+            { state: "readingState", event: { id: "second", type: "UNLOCKED", at: 3 } },
+            { state: "readingState", event: { id: "third", type: "STEP_CHANGED", at: 3 } },
+          ],
+        }),
+      ),
+    );
+
+    expect(eventIds(result.current.logLines)).toEqual(["third", "second", "first"]);
   });
 
   it("keeps the most recent entries and leaves the host's log untouched", () => {
-    const events = Object.freeze(buildEvents(60));
-    const { result } = renderHook(() => useDeviceOnboardingViewModel(buildProps({ events })));
+    const log = Object.freeze(buildLog(60));
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(buildProps({ state: "readingState", log })),
+    );
 
-    expect(result.current.eventRows).toHaveLength(40);
-    expect(result.current.eventRows[0].id).toBe("event-59");
-    expect(events[0].id).toBe("event-0");
+    expect(eventIds(result.current.logLines)).toHaveLength(40);
+    expect(eventIds(result.current.logLines)[0]).toBe("event-59");
+    expect(log[0].event.id).toBe("event-0");
   });
 
   it("prints each kind of detail, and truncates one the host allowed to grow", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
-          events: [
+          state: "readingState",
+          log: [
             {
-              id: "long",
-              type: "SESSION_READY",
-              at: 3,
-              detail: { kind: "session", sessionId: "x".repeat(200) },
+              state: "readingState",
+              event: { id: "none", type: "CONTINUE", at: 0 },
             },
             {
-              id: "firmware",
-              type: "DEVICE_STATE_READ",
-              at: 2,
-              detail: { kind: "firmware", version: "2.4.0" },
+              state: "readingState",
+              event: {
+                id: "step",
+                type: "STEP_CHANGED",
+                at: 1,
+                detail: { kind: "step", step: "pin" },
+              },
             },
-            { id: "step", type: "STEP_CHANGED", at: 1, detail: { kind: "step", step: "pin" } },
-            { id: "none", type: "CONTINUE", at: 0 },
+            {
+              state: "readingState",
+              event: {
+                id: "firmware",
+                type: "DEVICE_STATE_READ",
+                at: 2,
+                detail: { kind: "firmware", version: "2.4.0" },
+              },
+            },
+            {
+              state: "readingState",
+              event: {
+                id: "long",
+                type: "SESSION_READY",
+                at: 3,
+                detail: { kind: "session", sessionId: "x".repeat(200) },
+              },
+            },
           ],
         }),
       ),
     );
 
-    expect(result.current.eventRows.map(row => row.detail)).toEqual([
-      "x".repeat(80),
-      "2.4.0",
-      "pin",
-      null,
-    ]);
+    expect(
+      result.current.logLines.flatMap(line => (line.line === "event" ? [line.detail] : [])),
+    ).toEqual(["x".repeat(80), "2.4.0", "pin", null]);
   });
 
   it("labels every offered event, so one type offered twice stays readable", () => {
-    const refused = { type: "GENUINE_CHECK_REFUSED", failure: new Error("user said no") } as const;
-    const lost = { type: "GENUINE_CHECK_REFUSED", failure: new Error("channel lost") } as const;
+    const refused = { type: "GENUINE_CHECK_REFUSED", output: new Error("user said no") } as const;
+    const lost = { type: "GENUINE_CHECK_REFUSED", output: new Error("channel lost") } as const;
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
@@ -312,17 +476,18 @@ describe("useDeviceOnboardingViewModel", () => {
     expect(new Set(result.current.sendableRows.map(row => row.key)).size).toBe(4);
   });
 
-  it("spells out the exit contract, without the device id", () => {
+  it("spells out the exit contract on the quit line, without the device id", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
         buildProps({
-          exit: { reason: "offerLedgerSync", sessionId: "session-2", modelId: "stax" },
+          state: "exitOnboarding",
+          log: [{ state: "exitOnboarding", event: { id: "quit", type: "QUIT", at: 1 } }],
+          exit: { reason: "userQuit", sessionId: "session-2", modelId: "stax" },
         }),
       ),
     );
 
-    expect(result.current.exitRows).toEqual([
-      { label: "reason", value: "offerLedgerSync" },
+    expect(quitPayload(result.current.logLines)).toEqual([
       { label: "sessionId", value: "session-2" },
       { label: "modelId", value: "stax" },
     ]);
@@ -331,11 +496,15 @@ describe("useDeviceOnboardingViewModel", () => {
   it("marks an exit field the host left empty instead of rendering a blank row", () => {
     const { result } = renderHook(() =>
       useDeviceOnboardingViewModel(
-        buildProps({ exit: { reason: "userQuit", sessionId: "", modelId: "stax" } }),
+        buildProps({
+          state: "exitOnboarding",
+          log: [{ state: "exitOnboarding", event: { id: "quit", type: "QUIT", at: 1 } }],
+          exit: { reason: "userQuit", sessionId: "", modelId: "stax" },
+        }),
       ),
     );
 
-    expect(result.current.exitRows[1]).toEqual({ label: "sessionId", value: "—" });
+    expect(quitPayload(result.current.logLines)[0]).toEqual({ label: "sessionId", value: "—" });
   });
 
   const connected = { name: "Ledger Flex", modelId: "europa", sessionId: "s", wired: false };
@@ -358,6 +527,36 @@ describe("useDeviceOnboardingViewModel", () => {
       canReset: result.current.canReset,
     }).toEqual(expected);
     expect(result.current.isRunning).toBe(status === "running");
+  });
+
+  it("sends the picked genuine result when that check is current", () => {
+    const send = jest.fn();
+    const { result, rerender } = renderHook(
+      (state: string) => useDeviceOnboardingViewModel(buildProps({ state, send })),
+      { initialProps: "readingState" },
+    );
+
+    act(() => result.current.setGenuineOverride(GenuineOverride.Pass));
+    expect(send).not.toHaveBeenCalled();
+
+    rerender("checks.genuineCheck");
+    expect(send).toHaveBeenCalledWith({
+      type: "GENUINE_CHECK_PASSED",
+      output: { isGenuine: true },
+    });
+  });
+
+  it("sends the firmware result only while the firmware check is current", () => {
+    const send = jest.fn();
+    const { result } = renderHook(() =>
+      useDeviceOnboardingViewModel(buildProps({ state: "checks.firmwareCheck", send })),
+    );
+
+    act(() => result.current.setFirmwareOverride(FirmwareOverride.UpToDate));
+    expect(send).toHaveBeenCalledWith({
+      type: "FIRMWARE_UP_TO_DATE",
+      output: { os: "override", mcu: "override", bootloader: "override" },
+    });
   });
 
   it("offers a new session once the transport went away mid-run", () => {

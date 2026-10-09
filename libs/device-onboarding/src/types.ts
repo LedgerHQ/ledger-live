@@ -3,6 +3,8 @@ import type {
   DeviceModelId,
   DeviceSessionId,
   FirmwareUpdateContext,
+  GetOsVersionResponse,
+  GenuineCheckDAOutput,
 } from "@ledgerhq/device-management-kit";
 import type { DeviceOnboardingPorts } from "./ports";
 
@@ -124,7 +126,7 @@ export function isOnRecoveryKeyScreen(state: DeviceOnboardingState): boolean {
 export type OnboardingEvent =
   | { type: "SESSION_READY" }
   | { type: "LOCKED" }
-  | { type: "UNLOCKED" }
+  | { type: "UNLOCKED"; output?: GetOsVersionResponse }
   | { type: "TRANSPORT_LOST" }
   | { type: "STEP_CHANGED"; state: DeviceOnboardingState }
   | { type: "DEVICE_STATE_READ"; state: DeviceOnboardingState; firmwareVersion: string }
@@ -134,20 +136,24 @@ export type OnboardingEvent =
       isInRecoveryMode: boolean;
       firmwareVersion: string;
     }
-  | { type: "DEVICE_STATE_FAILED" }
-  | { type: "DEVICE_IN_BOOTLOADER" }
-  | { type: "DEVICE_IN_OSU" }
+  | { type: "DEVICE_STATE_FAILED"; output: unknown }
+  | { type: "DEVICE_IN_BOOTLOADER"; output: string }
+  | { type: "DEVICE_IN_OSU"; output: string }
   | { type: "EARLY_CHECK_TOGGLED" }
-  | { type: "EARLY_CHECK_UNAVAILABLE" }
+  | { type: "EARLY_CHECK_UNAVAILABLE"; output: unknown }
   | { type: "ALLOW_SECURE_CONNECTION_REQUESTED" }
-  | { type: "GENUINE_CHECK_PASSED" }
-  | { type: "GENUINE_CHECK_REFUSED"; failure: GenuineCheckFailure }
-  | { type: "GENUINE_CHECK_FAILED"; failure: GenuineCheckFailure }
-  | { type: "DEVICE_NOT_GENUINE"; failure: GenuineCheckFailure }
-  | { type: "SECURE_CHANNEL_LOST"; failure: GenuineCheckFailure }
-  | { type: "FIRMWARE_UP_TO_DATE" }
-  | { type: "FIRMWARE_UPDATE_AVAILABLE"; update: AvailableFirmwareUpdate }
-  | { type: "FIRMWARE_CHECK_FAILED" }
+  | { type: "SECURE_CONNECTION_ALLOWED" }
+  | { type: "GENUINE_CHECK_PASSED"; output: GenuineCheckDAOutput }
+  | { type: "GENUINE_CHECK_REFUSED"; output: GenuineCheckFailure }
+  | { type: "GENUINE_CHECK_FAILED"; output: GenuineCheckFailure }
+  | { type: "DEVICE_NOT_GENUINE"; output: GenuineCheckDAOutput }
+  | { type: "SECURE_CHANNEL_LOST"; output: GenuineCheckFailure }
+  | { type: "FIRMWARE_UP_TO_DATE"; output: InstalledFirmware }
+  | {
+      type: "FIRMWARE_UPDATE_AVAILABLE";
+      output: InstalledFirmware & { update: AvailableFirmwareUpdate };
+    }
+  | { type: "FIRMWARE_CHECK_FAILED"; output: unknown }
   | { type: "FIRMWARE_UPDATE_FLOW_CLOSED" }
   | { type: "RETRY" }
   | { type: "SKIP" }
@@ -187,6 +193,12 @@ export type DeviceOnboardingInput = {
 };
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
+
+export type InstalledFirmware = {
+  os: string;
+  mcu: string;
+  bootloader: string;
+};
 
 export type DeviceOnboardingContext = DeviceOnboardingInput & {
   lastDeviceState: DeviceOnboardingState | null;

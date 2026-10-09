@@ -103,18 +103,24 @@ export const contextActions = {
     lastGenuineFailure: null,
   })),
   rememberGenuineFailure: update(({ context, event }) => {
-    if (!("failure" in event)) {
+    if (event.type === "DEVICE_NOT_GENUINE") {
+      return {
+        genuineVerdict: { sessionId: context.ports.currentSessionId(), isGenuine: false },
+        lastGenuineFailure: { kind: event.type, failure: event.output },
+      };
+    }
+
+    if (
+      event.type !== "GENUINE_CHECK_REFUSED" &&
+      event.type !== "GENUINE_CHECK_FAILED" &&
+      event.type !== "SECURE_CHANNEL_LOST"
+    ) {
       return {};
     }
 
-    const verdict =
-      event.type === "DEVICE_NOT_GENUINE"
-        ? { sessionId: context.ports.currentSessionId(), isGenuine: false }
-        : context.genuineVerdict;
-
     return {
-      genuineVerdict: verdict,
-      lastGenuineFailure: { kind: event.type, failure: event.failure },
+      genuineVerdict: context.genuineVerdict,
+      lastGenuineFailure: { kind: event.type, failure: event.output },
     };
   }),
   forgetGenuineFailure: update({ lastGenuineFailure: null }),
@@ -124,7 +130,7 @@ export const contextActions = {
       return {};
     }
 
-    return { availableFirmwareUpdate: event.update };
+    return { availableFirmwareUpdate: event.output.update };
   }),
   forgetFirmwareCheck: update({ firmwareChecked: false, availableFirmwareUpdate: null }),
   carryAttestationThroughReboot: update(({ context }) => {
