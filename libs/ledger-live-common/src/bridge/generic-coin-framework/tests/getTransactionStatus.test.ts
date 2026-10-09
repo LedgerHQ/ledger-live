@@ -101,6 +101,28 @@ describe("genericGetTransactionStatus", () => {
     );
   });
 
+  it.each([[true], [undefined]])(
+    "rebuilds the balances with the family's partitionsNativeBalance (%p)",
+    async partitionsNativeBalance => {
+      const getAssetFromToken = jest.fn();
+      mockGetBridgeApi.mockResolvedValue({ partitionsNativeBalance, getAssetFromToken });
+      const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+      await getStatus(account, {
+        amount: new BigNumber(1),
+        useAllAmount: false,
+        recipient: "0x",
+        family: "evm",
+      } as any);
+
+      expect(mockExtractBalances).toHaveBeenCalledWith(
+        account,
+        getAssetFromToken,
+        partitionsNativeBalance,
+      );
+    },
+  );
+
   it("carries familySpecificData through the draft transaction to the family's buildIntentData", async () => {
     const familySpecificData = { chosenOption: "OPTION_A", chosenList: [], chosenCount: 3 };
     const buildIntentData = jest.fn().mockReturnValue({ type: "none" });

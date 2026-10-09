@@ -2139,4 +2139,115 @@ describe("extractBalances", () => {
   it("returns only the native balance for an account with no staking resources", () => {
     expect(extractBalances({ ...account, stakingResources: undefined } as Account)).toHaveLength(1);
   });
+
+  describe("with a stake account that holds lamports outside the wallet account", () => {
+    const stakedAccount = {
+      balance: new BigNumber(3_002_282_880),
+      spendableBalance: new BigNumber(999_099_120),
+      freshAddress: "owner",
+      stakingResources: {
+        delegations: [
+          {
+            positionId: "stake-acc-1",
+            validatorAddress: "vote-acc",
+            amount: new BigNumber(2_000_000_000),
+            pendingRewards: new BigNumber(0),
+            status: "bonded",
+            activeAmount: new BigNumber(2_000_000_000),
+            lockedReserve: new BigNumber(2_282_880),
+          },
+        ],
+        unbondings: [],
+      },
+    } as unknown as Account;
+
+    it("keeps the total on the first native entry and repeats the stake when the native balance is not partitioned", () => {
+      expect(extractBalances(stakedAccount)).toEqual([
+        { value: 3_002_282_880n, locked: 2_003_183_760n, asset: { type: "native" } },
+        expect.objectContaining({ value: 2_002_282_880n, stake: expect.anything() }),
+      ]);
+    });
+
+    it("carves the stake out of the first native entry when the native balance is partitioned", () => {
+      expect(extractBalances(stakedAccount, undefined, true)).toEqual([
+        { value: 1_000_000_000n, locked: 900_880n, asset: { type: "native" } },
+        expect.objectContaining({
+          value: 2_002_282_880n,
+          locked: 2_002_282_880n,
+          stake: expect.anything(),
+        }),
+      ]);
+    });
+
+    it("leaves an account that carries staking positions instead of staking resources untouched, as Tezos is", () => {
+      const tezosAccount = {
+        balance: new BigNumber(1_000),
+        spendableBalance: new BigNumber(600),
+        freshAddress: "owner",
+        stakingPositions: [{ positionId: "delegation-1", amount: new BigNumber(400) }],
+      } as unknown as Account;
+
+      expect(extractBalances(tezosAccount, undefined, true)).toEqual(extractBalances(tezosAccount));
+      expect(extractBalances(tezosAccount, undefined, true)).toEqual([
+        { value: 1_000n, locked: 400n, asset: { type: "native" } },
+      ]);
+    });
+
+    it.each([
+      [
+        "active, with rewards above the delegation",
+        "delegations",
+        "bonded",
+        2_000_000_000,
+        2_000_000_000,
+        5_000_000,
+      ],
+      ["activating", "delegations", "activating", 1_000_000_000, 300_000_000, 700_000_000],
+      ["deactivating", "unbondings", "deactivating", 500_000_000, 500_000_000, 0],
+      ["inactive", "unbondings", "withdrawable", 0, 0, 3_000_000_000],
+    ])(
+      "rebuilds the lamports of a %s stake account exactly",
+      (_state, list, status, amount, active, inactive) => {
+        const account = {
+          balance: new BigNumber(1_000_000_000 + active + inactive + 2_282_880),
+          spendableBalance: new BigNumber(999_099_120),
+          freshAddress: "owner",
+          stakingResources: {
+            delegations: [],
+            unbondings: [],
+            [list]: [
+              {
+                positionId: "stake-acc-1",
+                validatorAddress: "vote-acc",
+                amount: new BigNumber(amount),
+                pendingRewards: new BigNumber(0),
+                completionDate: new Date(0),
+                status,
+                activeAmount: new BigNumber(active),
+                inactiveAmount: new BigNumber(inactive),
+                lockedReserve: new BigNumber(2_282_880),
+              },
+            ],
+          },
+        } as unknown as Account;
+
+        expect(extractBalances(account, undefined, true)).toEqual([
+          { value: 1_000_000_000n, locked: 900_880n, asset: { type: "native" } },
+          expect.objectContaining({
+            value: BigInt(active + inactive + 2_282_880),
+            locked: BigInt(active + inactive + 2_282_880),
+          }),
+        ]);
+      },
+    );
+
+    it("keeps the native entries adding up to the account balance and spendable once partitioned", () => {
+      const natives = extractBalances(stakedAccount, undefined, true);
+
+      expect(natives.reduce((total, entry) => total + entry.value, 0n)).toBe(3_002_282_880n);
+      expect(natives.reduce((total, entry) => total + entry.value - (entry.locked ?? 0n), 0n)).toBe(
+        999_099_120n,
+      );
+    });
+  });
 });

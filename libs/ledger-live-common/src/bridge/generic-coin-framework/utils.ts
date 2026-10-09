@@ -329,17 +329,22 @@ export function getPendingTokenSpent(pendingOperations: Operation[]): BigNumber 
  * The staking positions, in the `Balance` shape `getBalance` reported them in. Appended after the
  * native balance, which stays first.
  */
-function stakingBalances(account: Account): Balance[] {
+function stakingBalances(account: Account, holdsAccountLamports?: boolean): Balance[] {
   // `isStakingAccount` only tests that the key is present, so the value can still be undefined.
   const resources = isStakingAccount(account) ? account.stakingResources : undefined;
   if (!resources) return [];
+
+  const lamportsOf = (position: StakingDelegation | StakingUnbonding): BigNumber =>
+    holdsAccountLamports && position.activeAmount && position.inactiveAmount
+      ? position.activeAmount.plus(position.inactiveAmount).plus(position.lockedReserve ?? 0)
+      : position.amount.plus(position.lockedReserve ?? 0);
 
   const toBalance = (
     position: StakingDelegation | StakingUnbonding,
     state: StakeState,
     delegate: string | undefined,
   ): Balance => ({
-    value: BigInt(position.amount.plus(position.lockedReserve ?? 0).toFixed()),
+    value: BigInt(lamportsOf(position).toFixed()),
     asset: { type: "native" },
     stake: {
       uid: position.positionId ?? "",
@@ -389,22 +394,38 @@ function numericDetailEntry(
 export function extractBalances(
   account: Account,
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
+  partitionsNativeBalance?: boolean,
 ): Balance[] {
-  const nativeReserve = BigNumber.max(account.balance.minus(account.spendableBalance), 0);
-  const nativePending = getPendingNativeSpent(account.pendingOperations ?? []);
+  const nativeReserve = BigInt(
+    BigNumber.max(account.balance.minus(account.spendableBalance), 0).toFixed(),
+  );
+  const nativePending = BigInt(getPendingNativeSpent(account.pendingOperations ?? []).toFixed());
+  const stakes = stakingBalances(account, partitionsNativeBalance);
+  const staked = partitionsNativeBalance
+    ? stakes.reduce((sum, stake) => sum + stake.value, 0n)
+    : 0n;
+  const total = BigInt(account.balance.toFixed());
+  const nativeValue = total > staked ? total - staked : 0n;
+  const nativeLocked = (nativeReserve > staked ? nativeReserve - staked : 0n) + nativePending;
   const balances: Balance[] = [
     {
       // `value` is the total balance, `locked` is the non-spendable part of it.
       // Consumers must compute available funds as `value - locked`.
       // We lock the chain reserve plus any funds already committed to pending
       // (optimistic, not-yet-synced) transactions, capped at the total balance.
-      value: BigInt(account.balance.toFixed()),
+      // When the family partitions its native balance, the staking positions are carved out
+      // of it, as `getBalance` reports them.
+      value: nativeValue,
       asset: { type: "native" },
-      locked: BigInt(BigNumber.min(nativeReserve.plus(nativePending), account.balance).toFixed()),
+      locked: nativeLocked > nativeValue ? nativeValue : nativeLocked,
     },
   ];
 
-  balances.push(...stakingBalances(account));
+  balances.push(
+    ...(partitionsNativeBalance
+      ? stakes.map(stake => ({ ...stake, locked: stake.value }))
+      : stakes),
+  );
 
   if (!account.subAccounts?.length || !getAssetFromToken) {
     return balances;

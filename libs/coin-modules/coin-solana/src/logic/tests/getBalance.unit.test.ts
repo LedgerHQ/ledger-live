@@ -272,7 +272,7 @@ describe("getBalance", () => {
   });
 
   describe("stakeAccounts", () => {
-    it("should include staked lamports in totalBalance", async () => {
+    it("should partition the account lamports between the system entry and the stake entries", async () => {
       mockGetBalance.mockResolvedValue(1_000_000_000);
       mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
       mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
@@ -284,18 +284,24 @@ describe("getBalance", () => {
       const result = await getBalance(api, TEST_ADDRESS);
 
       expect(result[0]).toEqual({
-        value: 3_000_000_000n,
+        value: 1_000_000_000n,
         asset: { type: "native" },
-        locked: 890880n + 2_000_000_000n,
+        locked: 890880n,
       });
       expect(result[1]).toMatchObject({
         value: 2_000_000_000n,
         asset: { type: "native" },
+        locked: 2_000_000_000n,
         stake: expect.objectContaining({ amount: 2_000_000_000n, state: "active" }),
       });
       const stake = result[1].stake!;
       // Invariant: total stake amount equals deposited principal plus accrued rewards.
       expect(stake.amount).toBe((stake.amountDeposited ?? 0n) + (stake.amountRewarded ?? 0n));
+      const natives = result.filter(balance => balance.asset.type === "native");
+      expect(natives.reduce((total, balance) => total + balance.value, 0n)).toBe(3_000_000_000n);
+      expect(natives.reduce((total, balance) => total + (balance.locked ?? 0n), 0n)).toBe(
+        890880n + 2_000_000_000n,
+      );
     });
 
     it("should report zero rewards for a freshly delegated stake with no accrued rewards", async () => {
@@ -351,15 +357,14 @@ describe("getBalance", () => {
 
       const result = await getBalance(api, TEST_ADDRESS);
 
-      // locked = rentExemptMin + stakedLamports + unstakeReserve
       expect(result[0]).toEqual({
-        value: 3_000_000_000n,
+        value: 1_000_000_000n,
         asset: { type: "native" },
-        locked: 890880n + 2_000_000_000n + 11000n,
+        locked: 890880n + 11000n,
       });
     });
 
-    it("should clamp locked to totalBalance when rawLocked exceeds it", async () => {
+    it("should clamp the system entry's locked to its own value when rent and reserve exceed it", async () => {
       mockGetBalance.mockResolvedValue(100);
       mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
       mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
@@ -368,13 +373,12 @@ describe("getBalance", () => {
 
       const result = await getBalance(api, TEST_ADDRESS);
 
-      // totalBalance = 100 + 1000 = 1100
-      // rawLocked = 100 (balance < rentExemptMin) + 1000 + 999_999 = 1_001_099 > 1100
       expect(result[0]).toEqual({
-        value: 1100n,
+        value: 100n,
         asset: { type: "native" },
-        locked: 1100n,
+        locked: 100n,
       });
+      expect(result[1]).toMatchObject({ value: 1000n, locked: 1000n });
     });
 
     it("populates stake.actions and the position details the generic bridge reads", async () => {
@@ -431,14 +435,22 @@ describe("getBalance", () => {
       const result = await getBalance(api, TEST_ADDRESS);
 
       expect(result[0]).toEqual({
-        value: 4_500_000_000n,
+        value: 500_000_000n,
         asset: { type: "native" },
-        locked: 890880n + 4_000_000_000n,
+        locked: 890880n,
       });
       // two stake balance entries
       expect(result).toHaveLength(3);
-      expect(result[1]).toMatchObject({ value: 1_000_000_000n, stake: { uid: "Stake1" } });
-      expect(result[2]).toMatchObject({ value: 3_000_000_000n, stake: { uid: "Stake2" } });
+      expect(result[1]).toMatchObject({
+        value: 1_000_000_000n,
+        locked: 1_000_000_000n,
+        stake: { uid: "Stake1", amount: 1_000_000_000n },
+      });
+      expect(result[2]).toMatchObject({
+        value: 3_000_000_000n,
+        locked: 3_000_000_000n,
+        stake: { uid: "Stake2", amount: 3_000_000_000n },
+      });
     });
   });
 });

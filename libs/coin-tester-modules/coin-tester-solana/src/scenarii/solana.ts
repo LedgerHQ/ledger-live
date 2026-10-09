@@ -83,6 +83,17 @@ function expectStakingResourcesDefined(account: Account): void {
   expect((account as SolanaAccount).stakingResources).toBeDefined();
 }
 
+function expectStakedFundsCountedInBalanceButNotSpendable(account: Account): void {
+  const stakedAmount = getSolanaPositions(account).reduce(
+    (total, position) => total.plus(position.amount),
+    new BigNumber(0),
+  );
+  expect(stakedAmount.isGreaterThan(0)).toBe(true);
+  expect(account.balance.minus(account.spendableBalance).isGreaterThanOrEqualTo(stakedAmount)).toBe(
+    true,
+  );
+}
+
 function expectTokenSendParentOperation(
   previousAccount: Account,
   currentAccount: Account,
@@ -489,6 +500,7 @@ function makeScenarioTransactions(
       );
       // Verify staking resources are populated after sync with delegation to the validator
       expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
+      expectStakedFundsCountedInBalanceButNotSpendable(currentAccount);
     },
   };
 
@@ -513,6 +525,7 @@ function makeScenarioTransactions(
       );
       // Verify the stake account is now delegated
       expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
+      expectStakedFundsCountedInBalanceButNotSpendable(currentAccount);
     },
   };
 
@@ -591,6 +604,7 @@ function makeScenarioTransactions(
       expect(currentAccount.spendableBalance).toStrictEqual(new BigNumber(0));
       // Verify staking resources reflect the new stake
       expectDelegationTo(currentAccount, VOTE_ACCOUNT!.votePubkey);
+      expectStakedFundsCountedInBalanceButNotSpendable(currentAccount);
     },
   };
 

@@ -645,8 +645,7 @@ function spendableBalance(balances: Balance[]): bigint {
 /** More generous than `spendableBalance`: undelegate and withdraw may draw on the unstake reserve. */
 function liquidBalance(balances: Balance[]): bigint {
   const native = balances.find(b => b.asset.type === "native");
-  const staked = balances.reduce((sum, b) => (b.stake ? sum + b.value : sum), 0n);
-  return (native?.value ?? 0n) - staked;
+  return native?.value ?? 0n;
 }
 
 function validateFeeCoverage(

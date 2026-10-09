@@ -199,6 +199,7 @@ export function getDeviceSignOptions(
 export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
   return {
     stakingSupported: true,
+    partitionsNativeBalance: true,
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
