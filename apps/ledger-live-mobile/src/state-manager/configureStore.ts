@@ -5,8 +5,8 @@ import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
 import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { addNetworkStateListener, getNetworkStateAsync, type NetworkState } from "expo-network";
 import reducers from "~/reducers";
+import { subscribeToNetworkState } from "~/logic/subscribeToNetworkState";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
@@ -141,20 +141,15 @@ configureCardSessionRenewal({
   },
 });
 
-setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
-  const handleNetworkChange = (state: NetworkState) => {
+setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) =>
+  subscribeToNetworkState(state => {
     if (state.isConnected) {
       dispatch(onOnline());
     } else {
       dispatch(onOffline());
     }
-  };
-  const subscription = addNetworkStateListener(handleNetworkChange);
-  getNetworkStateAsync()
-    .then(handleNetworkChange)
-    .catch(() => {});
-  return () => subscription.remove();
-});
+  }),
+);
 connectRecentAddressesStore(store, recentAddressesSelector);
 setupCryptoAssetsStore(store);
 setupRateLookups();

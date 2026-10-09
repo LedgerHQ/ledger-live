@@ -1,7 +1,8 @@
-import { addNetworkStateListener, getNetworkStateAsync, type NetworkState } from "expo-network";
+import type { NetworkState } from "expo-network";
 import { type Polling, useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { useEffect, useRef } from "react";
 import { AppState, type AppStateStatus } from "react-native";
+import { subscribeToNetworkState } from "~/logic/subscribeToNetworkState";
 
 type PollingActions = Pick<Polling, "poll" | "start" | "stop">;
 type NetworkStatus = "online" | "offline" | "unknown";
@@ -81,22 +82,16 @@ export function useCountervaluesPollingLifecycle(): void {
       },
     );
 
-    let isMounted = true;
-    const handleNetworkChange = createNetworkChangeHandler(
-      () => currentAppState,
-      () => pollingActionsRef.current.poll(),
+    const unsubscribeNetwork = subscribeToNetworkState(
+      createNetworkChangeHandler(
+        () => currentAppState,
+        () => pollingActionsRef.current.poll(),
+      ),
     );
-    const networkSubscription = addNetworkStateListener(handleNetworkChange);
-    getNetworkStateAsync()
-      .then(state => {
-        if (isMounted) handleNetworkChange(state);
-      })
-      .catch(() => {});
 
     return () => {
-      isMounted = false;
       appStateSubscription.remove();
-      networkSubscription.remove();
+      unsubscribeNetwork();
     };
   }, []);
 }
