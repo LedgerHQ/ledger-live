@@ -341,7 +341,6 @@ jobs:
             e2e/tooling/filter
             libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
             .pnpmfile.cjs
-            pnpm-lock.yaml
             pnpm-workspace.yaml
             tools
             .mise/tasks
@@ -500,7 +499,7 @@ jobs:
         with:
           test_directory: e2e/mobile
           test_filter: ${{ steps.test-filter.outputs.runner_filter }}
-          event_name: ${{ github.event_name }}
+          event_name: ${{ inputs.ci_smoke && 'workflow_call' || github.event_name }}
           ref: ${{ inputs.ref || github.ref_name }}
           ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
           android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
@@ -730,7 +729,7 @@ jobs:
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-nx-cache
+          bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
   detox-tests-ios:
@@ -858,10 +857,6 @@ jobs:
           enable_broadcast: ${{ env.IOS_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
 
-      - name: Pin Speculos firmware for smoke runs
-        if: ${{ inputs.ci_smoke }}
-        run: echo "SPECULOS_FIRMWARE_VERSION=$SMOKE_SPECULOS_FIRMWARE_VERSION" >> "$GITHUB_ENV"
-
       - name: Get iOS device info
         run: |
           set -o pipefail
@@ -910,6 +905,7 @@ jobs:
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           NX_SKIP_NX_CACHE: true
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
+          SPECULOS_FIRMWARE_VERSION: ${{ inputs.ci_smoke && env.SMOKE_SPECULOS_FIRMWARE_VERSION || '' }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
@@ -1116,10 +1112,6 @@ jobs:
           enable_broadcast: ${{ env.ANDROID_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
 
-      - name: Pin Speculos firmware for smoke runs
-        if: ${{ inputs.ci_smoke }}
-        run: echo "SPECULOS_FIRMWARE_VERSION=$SMOKE_SPECULOS_FIRMWARE_VERSION" >> "$GITHUB_ENV"
-
       - name: Get Android device info
         run: |
           DEVICE_NAME=$(echo '${{ env.AVD_PROFILE }}' | sed 's/_/ /g; s/\b\w/\U&/g')
@@ -1166,6 +1158,7 @@ jobs:
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
+          SPECULOS_FIRMWARE_VERSION: ${{ inputs.ci_smoke && env.SMOKE_SPECULOS_FIRMWARE_VERSION || '' }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           REMOTE_SPECULOS: "true"
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
