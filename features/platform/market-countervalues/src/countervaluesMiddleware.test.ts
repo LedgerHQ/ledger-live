@@ -548,6 +548,32 @@ describe("createCountervaluesMiddleware", () => {
     setCountervaluesLogger(() => {});
   });
 
+  it("still wires the app events and the timer when the saved state cannot be restored", async () => {
+    const logs: string[] = [];
+    setCountervaluesLogger((type, message) => logs.push(`${type}: ${message}`));
+    const savedState = Object.defineProperty({ status: {} }, "USD bitcoin", {
+      enumerable: true,
+      get() {
+        throw new Error("unreadable snapshot");
+      },
+    });
+    const subscribeAppEvents = jest.fn(() => () => {});
+    const { store, dispatched } = createTestStore({ isPolling: true, subscribeAppEvents });
+
+    store.dispatch(startCountervaluesSync({ savedState }));
+    await flush();
+    expect(subscribeAppEvents).toHaveBeenCalledTimes(1);
+    expect(dispatched.filter(setCountervaluesState.match)).toHaveLength(1);
+    expect(loads()).toBe(1);
+
+    jest.advanceTimersByTime(3_000);
+    await flush();
+
+    expect(loads()).toBe(2);
+    expect(logs).toEqual(["countervalues: sync restore failed"]);
+    setCountervaluesLogger(() => {});
+  });
+
   it("logs a supported-ids failure once", async () => {
     const logs: string[] = [];
     setCountervaluesLogger((type, message) => logs.push(`${type}: ${message}`));
