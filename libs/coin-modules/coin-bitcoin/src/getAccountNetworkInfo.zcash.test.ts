@@ -72,3 +72,23 @@ describe("getAccountNetworkInfo for Zcash (ZIP-317 pricing)", () => {
     }
   });
 });
+
+describe("getAccountNetworkInfo for the Zcash testnet", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("prices zcash_testnet with ZIP-317 exactly as zcash", async () => {
+    const testnet = await getAccountNetworkInfo({
+      currency: { id: "zcash_testnet" },
+    } as unknown as Account);
+    const mainnet = await getAccountNetworkInfo(zcashAccount());
+
+    expect(getFees).not.toHaveBeenCalled();
+    expect(testnet).toEqual(mainnet);
+  });
+
+  it("keeps zcash_regtest on the explorer's fee market", async () => {
+    await getAccountNetworkInfo({ currency: { id: "zcash_regtest" } } as unknown as Account);
+
+    expect(getFees).toHaveBeenCalled();
+  });
+});

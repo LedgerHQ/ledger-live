@@ -110,15 +110,18 @@ type CoinLogic = {
 export const bchToCashaddrAddressWithoutPrefix = (recipient: string): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
+const zcashLogic: CoinLogic = {
+  hasExtraData: true,
+  hasExpiryHeight: true,
+  getAdditionals: () => ["sapling"], // FIXME (legacy) drop in ledgerjs. we always use sapling now for zcash & kmd
+};
+
 export const perCoinLogic: Partial<Record<string, CoinLogic>> = {
   zencash: {
     hasExtraData: true, // FIXME (legacy) investigate why we need this here and drop
   },
-  zcash: {
-    hasExtraData: true,
-    hasExpiryHeight: true,
-    getAdditionals: () => ["sapling"], // FIXME (legacy) drop in ledgerjs. we always use sapling now for zcash & kmd
-  },
+  zcash: zcashLogic,
+  zcash_testnet: zcashLogic,
   komodo: {
     hasExtraData: true,
     hasExpiryHeight: true,
