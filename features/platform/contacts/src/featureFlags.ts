@@ -66,6 +66,10 @@ export function parseEligibleAddressFamiliesInput(value: string): string[] {
   return normalizeEligibleAddressFamilies(value.split(","));
 }
 
+export function parseExcludedCurrencyIdsInput(value: string): string[] {
+  return normalizeExcludedCurrencyIds(value.split(",").map(id => id.trim()));
+}
+
 export function updateContactsFeatureValue(
   current: ContactsFeatureValue | null | undefined,
   patch: ContactsFeatureValuePatch,

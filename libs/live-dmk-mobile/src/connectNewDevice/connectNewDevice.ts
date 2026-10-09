@@ -14,6 +14,7 @@ import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryServi
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError } from "../connectDevice/utils";
+import { filterListedDevices } from "./filterListedDevices";
 import { getDiscoveredDeviceKey } from "./getDiscoveredDeviceKey";
 
 export type ConnectNewDeviceInput = {
@@ -47,6 +48,7 @@ export function connectNewDevice(
     ),
     mapConnectionError: createConnectionError,
     getDiscoveredDeviceKey,
+    filterListedDevices,
     buildCompatDeviceId: buildMobileCompatDeviceId,
   });
 }

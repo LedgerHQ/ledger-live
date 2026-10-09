@@ -197,7 +197,6 @@ export function useModularDialogFlowState({
 
       if (assetItem.networks.length > 0) {
         const currency = assetItem.networks[0];
-
         handleAssetSelected(currency);
       }
     }

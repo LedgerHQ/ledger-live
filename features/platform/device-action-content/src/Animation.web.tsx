@@ -5,13 +5,14 @@ import Lottie, { LottieProps } from "react-lottie";
 // `@ledgerhq/live-env`, which only resolves once `libs/` has been built, so any package testing a
 // component that renders this one would fail to run. Playwright passes PLAYWRIGHT_RUN into the
 // app's process env (see apps/ledger-live-desktop/tests/fixtures/common.ts).
-// Read off globalThis so this stays typed without pulling Node globals into a web UI package.
-function isPlaywrightRun(): boolean {
-  const { process } = globalThis as {
-    process?: { env?: Record<string, string | undefined> };
-  };
+declare const process: { env: Record<string, string | undefined> };
 
-  return !!process?.env?.PLAYWRIGHT_RUN;
+function isPlaywrightRun(): boolean {
+  try {
+    return !!process.env.PLAYWRIGHT_RUN;
+  } catch {
+    return false;
+  }
 }
 
 export type AnimationProps = Readonly<{

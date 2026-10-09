@@ -4,7 +4,6 @@ import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { isContractDataDisabledError } from "@ledgerhq/live-common/flows/send/sponsored/failure";
 import { useSponsoredRentPayment } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredRentPayment";
 import { useRawTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import logger from "~/renderer/logger";
@@ -76,25 +75,20 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
     };
   }, [account, parentAccount, toSign]);
 
-  const signingPaymentTxId = state.paymentTxId;
   const onResult = useCallback(
     (result: SponsoredRentSignatureResult) => {
       if ("signedOperation" in result) {
         if (result.signedOperation) submitSignature(result.signedOperation.signature);
       } else if ("transactionSignError" in result) {
         const error = result.transactionSignError;
-        if (isContractDataDisabledError(error)) {
-          actions.setContractDataFailure(error, signingPaymentTxId);
-        } else {
-          if (!DEVICE_REFUSAL_ERROR_NAMES.has(error.name)) {
-            logger.critical(error);
-          }
-          // DeviceAction offers a retry for connect errors only, never for a sign error.
-          setSignError(error);
+        if (!DEVICE_REFUSAL_ERROR_NAMES.has(error.name)) {
+          logger.critical(error);
         }
+        // DeviceAction offers a retry for connect errors only, never for a sign error.
+        setSignError(error);
       }
     },
-    [submitSignature, actions, signingPaymentTxId],
+    [submitSignature],
   );
 
   const onRetrySign = useCallback(() => {

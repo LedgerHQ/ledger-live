@@ -4,8 +4,6 @@ import { reboot } from "~/actions/appstate";
 import { setCountervaluesState, wipeCountervalues } from "@features/platform-market-countervalues";
 import { AppStateActionTypes } from "~/actions/types";
 
-jest.mock("react-native-splash-screen", () => ({ show: jest.fn() }));
-
 function buildStore() {
   const dispatched: string[] = [];
   const recorder: Middleware = () => next => action => {

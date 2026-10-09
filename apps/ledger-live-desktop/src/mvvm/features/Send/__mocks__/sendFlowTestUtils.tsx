@@ -203,6 +203,7 @@ function fakeSponsoredSeam(overrides: Partial<SponsoredCoinApi> = {}): Sponsored
       durationSeconds: 60,
     }),
     craftEnergyRentTransaction: jest.fn(),
+    classifyRentOrderError: jest.fn().mockReturnValue(null),
     submitEnergyRentPayment: jest.fn().mockResolvedValue(undefined),
     getEnergyRentStatus: jest.fn().mockResolvedValue("pending"),
     awaitEnergyDelivery: jest.fn().mockResolvedValue(undefined),
@@ -258,7 +259,8 @@ const initialMockOrchestrationState: SponsoredState = {
   paymentTxId: null,
   failureKind: null,
   failureError: null,
-  contractDataResumePhase: SPONSORED_PHASE.RENT_SIGNING,
+  rentOrderRejection: null,
+  retryLockedUntil: null,
 };
 let mockOrchestrationState: SponsoredState = initialMockOrchestrationState;
 let mockOrchestrationSetState: ((state: SponsoredState) => void) | null = null;
@@ -268,7 +270,6 @@ export const mockSponsoredOrchestrationActions = {
   startRentPayment: jest.fn(() => Promise.resolve()),
   onTransferSuccess: jest.fn(),
   onTransferError: jest.fn(),
-  setContractDataFailure: jest.fn(),
   retry: jest.fn(),
   reset: jest.fn(),
 };

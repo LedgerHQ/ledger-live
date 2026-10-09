@@ -1,5 +1,7 @@
-import { CommandResultFactory, type DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { CommandResultFactory } from "@ledgerhq/device-management-kit";
 import { runActor } from "../tests/actorHarness";
+import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
 import { createOsVersionResponse, type OsVersionResponseOptions } from "../tests/osVersionResponse";
 import { OnboardingStep, RecoveryKeyStatus } from "../types";
@@ -167,8 +169,8 @@ describe("seedPolling", () => {
   });
 
   it("never has two commands in flight", async () => {
-    const sendCommand = jest.fn(() => new Promise(() => {}));
-    const dmk = { sendCommand } as unknown as DeviceManagementKit;
+    const sendCommand = jest.fn(() => new Promise(() => undefined));
+    const dmk = createDeviceManagementKit({ sendCommand });
     const { stop } = start(dmk);
 
     await jest.advanceTimersByTimeAsync(5 * defaultSeedPollingIntervalMs);

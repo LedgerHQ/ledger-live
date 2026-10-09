@@ -10,6 +10,12 @@ import type { OutgoingOperation } from "@features/platform-contacts";
 import { Contacts } from "../Contacts.native";
 import { makeContactsProps, renderWithContacts } from "./shared.native";
 
+function contactTileLabels(): string[] {
+  return screen
+    .getAllByTestId(/^pay-contacts-tile-/)
+    .map(tile => String(tile.props.accessibilityLabel));
+}
+
 describe("Contacts (Native)", () => {
   it("should render Me as a payable contact and forward it when pressed", () => {
     const me = mockMeContact();
@@ -18,7 +24,7 @@ describe("Contacts (Native)", () => {
 
     expect(screen.getByTestId("pay-contacts-pay-tile")).toBeVisible();
     expect(screen.getByText("Me")).toBeVisible();
-    screen.getByTestId("pay-contacts-tile-0").props.onPress();
+    screen.getByTestId(`pay-contacts-tile-${me.id}`).props.onPress();
     expect(onContactPress).toHaveBeenCalledWith(me);
   });
 
@@ -28,8 +34,7 @@ describe("Contacts (Native)", () => {
       <Contacts {...makeContactsProps()} />,
     );
 
-    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Ada");
-    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Me");
+    expect(contactTileLabels()).toEqual(["Ada", "Me"]);
   });
 
   it("should open the Send flow from the Pay tile", () => {
@@ -52,8 +57,9 @@ describe("Contacts (Native)", () => {
       <Contacts {...makeContactsProps({ onSeeAll })} />,
     );
 
-    expect(screen.getByTestId("pay-contacts-tile-7")).toBeVisible();
-    expect(screen.queryByTestId("pay-contacts-tile-8")).toBeNull();
+    expect(screen.getAllByTestId(/^pay-contacts-tile-/)).toHaveLength(8);
+    expect(screen.queryByTestId("pay-contacts-tile-contact-0")).toBeNull();
+    expect(screen.queryByTestId("pay-contacts-tile-contact-me")).toBeNull();
 
     screen.getByTestId("pay-contacts-see-all").props.onPress();
     expect(onSeeAll).toHaveBeenCalledTimes(1);
@@ -66,7 +72,7 @@ describe("Contacts (Native)", () => {
 
     renderWithContacts([mockMeContact(), ...savedContacts], <Contacts {...makeContactsProps()} />);
 
-    expect(screen.getByTestId("pay-contacts-tile-7")).toBeVisible();
+    expect(screen.getAllByTestId(/^pay-contacts-tile-/)).toHaveLength(8);
     expect(screen.getByTestId("pay-contacts-see-all").props.onPress).toBeUndefined();
   });
 
@@ -94,17 +100,13 @@ describe("Contacts (Native)", () => {
       <Contacts {...makeContactsProps({ outgoingOperations: sentToBob })} />,
     );
 
-    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Bob");
-    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Alice");
-    expect(screen.getByTestId("pay-contacts-tile-2").props.accessibilityLabel).toBe("Me");
+    expect(contactTileLabels()).toEqual(["Bob", "Alice", "Me"]);
   });
 
   it("should fall back to last added order when no outgoing operation matches", () => {
     renderWithContacts([mockMeContact(), bob, alice], <Contacts {...makeContactsProps()} />);
 
-    expect(screen.getByTestId("pay-contacts-tile-0").props.accessibilityLabel).toBe("Alice");
-    expect(screen.getByTestId("pay-contacts-tile-1").props.accessibilityLabel).toBe("Bob");
-    expect(screen.getByTestId("pay-contacts-tile-2").props.accessibilityLabel).toBe("Me");
+    expect(contactTileLabels()).toEqual(["Alice", "Bob", "Me"]);
   });
 
   it("should resolve its copy from the mounted i18n provider, not from props", () => {

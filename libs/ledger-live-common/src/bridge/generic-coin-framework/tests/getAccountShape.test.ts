@@ -3352,6 +3352,96 @@ describe("genericGetAccountShape", () => {
     });
   });
 
+  describe("partitionsNativeBalance", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+    const position = (uid: string, amount: bigint) => ({
+      uid,
+      address: "tz1partitioned",
+      state: "active" as const,
+      asset: { type: "native" as const },
+      amount,
+    });
+    const delegation = (amount: bigint) => ({
+      value: amount,
+      asset: { type: "native" },
+      stake: position("delegation-tz1partitioned", amount),
+    });
+    const frozen = (uid: string, amount: bigint) => ({
+      value: amount,
+      locked: amount,
+      asset: { type: "native" },
+      stake: position(uid, amount),
+    });
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    test.each([
+      {
+        name: "delegated and staked",
+        balances: [delegation(70n), frozen("stake-tz1partitioned", 30n)],
+        spendable: 70,
+      },
+      {
+        name: "delegated, staked and unstaking",
+        balances: [
+          delegation(60n),
+          frozen("stake-tz1partitioned", 30n),
+          frozen("unstaking-1", 10n),
+        ],
+        spendable: 60,
+      },
+      {
+        name: "delegated, unstaked funds without a position",
+        balances: [{ value: 10n, locked: 10n, asset: { type: "native" } }, delegation(90n)],
+        spendable: 90,
+      },
+      {
+        name: "undelegated and unstaking",
+        balances: [{ value: 90n, asset: { type: "native" } }, frozen("unstaking-1", 10n)],
+        spendable: 90,
+      },
+      {
+        name: "no stakes",
+        balances: [{ value: 100n, asset: { type: "native" } }],
+        spendable: 100,
+      },
+    ])(
+      "sums the native partitions of a 100 XTZ account: $name",
+      async ({ balances, spendable }) => {
+        getBalanceMock.mockResolvedValue(balances);
+        getBridgeApiMock.mockImplementationOnce(() => ({
+          ...defaultBridgeApi(),
+          usesStakingPositions: true,
+          partitionsNativeBalance: true,
+        }));
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "tz1partitioned",
+            initialAccount: undefined,
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        expect(result.balance).toEqual(new BigNumber(100));
+        expect(result.spendableBalance).toEqual(new BigNumber(spendable));
+        expect(extractBalanceMock).not.toHaveBeenCalled();
+      },
+    );
+  });
+
   describe("family token account shapes", () => {
     const network = "mainnet";
     const currency = { id: "tezos", name: "Tezos" };

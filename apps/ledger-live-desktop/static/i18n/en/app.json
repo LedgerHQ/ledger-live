@@ -3019,11 +3019,14 @@
     "sponsoredFailure": {
       "title": "Something went wrong",
       "rentPayment": "Fee payment failed — your funds were not moved.",
+      "rentPaymentReportedFailed": "{{provider}} reported the fee payment as failed, but it may still go through.",
+      "priceIncreased": "The energy rental price went up to {{fee}}. Your funds were not moved.",
       "deliveryFailed": "Energy was not delivered. Your rental fee payment was sent — contact {{provider}} support for a refund{{txidSuffix}}.",
-      "contractData": "Contract data is disabled on your TRON app. Enable TRON app → Settings → Contract data, then retry.",
       "transfer": "Your transfer failed, but the rented energy is still valid — you can retry the transfer.",
+      "retryLocked": "So you don't pay the rental twice, you can retry after {{time}}.",
       "retry": "Retry",
       "retryPaying": "Pay again and retry",
+      "acceptPrice": "Accept new price",
       "cancel": "Cancel"
     },
     "coinControl": {
@@ -5766,7 +5769,10 @@
         "eligibleAddressFamilies": "Eligible address families",
         "customFamiliesHint": "Comma-separated families for custom multi-family testing.",
         "customFamiliesPlaceholder": "evm, stellar, aptos",
-        "applyFamilies": "Apply",
+        "apply": "Apply",
+        "newBadge": "New badge",
+        "excludedCurrencyIds": "Excluded currency IDs",
+        "excludedCurrencyIdsPlaceholder": "e.g. ethereum, bitcoin",
         "contactsData": "Contacts data",
         "loadPopulatedContacts": "Load populated contacts",
         "loadFromSendHistory": "Load contacts from send history",

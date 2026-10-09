@@ -103,14 +103,14 @@ async function resolveBorrowAddress(options: BorrowSetupOptions): Promise<string
 
 async function waitForPartnerState(
   address: string,
-  isReady: (loan: OpenLoan) => boolean,
+  isReady: (loans: OpenLoan[]) => boolean,
   expectedState: string,
 ): Promise<void> {
   const deadline = Date.now() + PARTNER_INDEX_TIMEOUT_MS;
   let loans = findPositions(await getPositions(address));
 
   while (Date.now() < deadline) {
-    if (loans.some(isReady)) return;
+    if (isReady(loans)) return;
     await new Promise(resolve => setTimeout(resolve, PARTNER_INDEX_POLL_MS));
     loans = findPositions(await getPositions(address));
   }
@@ -122,10 +122,44 @@ async function waitForPartnerState(
 }
 
 const waitForPartnerWithdrawReady = (address: string): Promise<void> =>
-  waitForPartnerState(address, isWithdrawReady, "withdraw-ready state");
+  waitForPartnerState(address, loans => loans.some(isWithdrawReady), "withdraw-ready state");
 
 const waitForPartnerLoanDebt = (address: string): Promise<void> =>
-  waitForPartnerState(address, loan => positive(loan.debtBalance), "loan debt");
+  waitForPartnerState(
+    address,
+    loans => loans.some(loan => positive(loan.debtBalance)),
+    "loan debt",
+  );
+
+const waitForPartnerCollateralWithdrawn = (address: string): Promise<void> =>
+  waitForPartnerState(
+    address,
+    loans => !loans.some(loan => positive(loan.collateralBalance)),
+    "collateral withdrawn",
+  );
+
+export type LoanOutcome = "opened" | "repaid" | "withdrawn";
+
+const PARTNER_OUTCOMES: Record<LoanOutcome, (address: string) => Promise<void>> = {
+  opened: waitForPartnerLoanDebt,
+  repaid: waitForPartnerWithdrawReady,
+  withdrawn: waitForPartnerCollateralWithdrawn,
+};
+
+/**
+ * Waits for the partner to index what a test's last on-chain step produced. The app reports the
+ * step complete before its transaction is mined, so a cleanup started straight after reads stale
+ * positions and races that transaction for the same nonce.
+ */
+export async function waitForLoanOutcome(
+  outcome: LoanOutcome,
+  options: BorrowSetupOptions = {},
+): Promise<void> {
+  if (!broadcastEnabled()) return;
+  const address = await resolveBorrowAddress(options);
+  await PARTNER_OUTCOMES[outcome](address);
+  await waitForChainNonceSettled(options);
+}
 
 export async function ensureLoanOpen(options: BorrowSetupOptions = {}): Promise<void> {
   if (!broadcastEnabled()) {

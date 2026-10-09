@@ -19,7 +19,8 @@ const IDLE_STATE: SponsoredState = {
   paymentTxId: null,
   failureKind: null,
   failureError: null,
-  contractDataResumePhase: SPONSORED_PHASE.RENT_SIGNING,
+  rentOrderRejection: null,
+  retryLockedUntil: null,
 };
 
 const ORDER = { orderId: "order-1" } as unknown as EnergyRentOrder;

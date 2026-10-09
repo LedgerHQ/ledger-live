@@ -1,4 +1,9 @@
-import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import {
+  DeviceModelId,
+  type DeviceManagementKit,
+  type DiscoveredDevice,
+  type TransportIdentifier,
+} from "@ledgerhq/device-management-kit";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
@@ -7,6 +12,7 @@ import {
   DefaultDeviceDiscoveryService,
 } from "@ledgerhq/live-dmk-shared";
 import { Platform } from "react-native";
+import { NEVER, startWith } from "rxjs";
 
 import { connectNewDevice, type ConnectNewDeviceInput } from "./connectNewDevice";
 import { ConnectNewDeviceUIStateTypes, type MobileConnectNewDeviceUIState } from "./types";
@@ -14,6 +20,7 @@ import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryServi
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError } from "../connectDevice/utils";
+import { filterListedDevices } from "./filterListedDevices";
 import { getDiscoveredDeviceKey } from "./getDiscoveredDeviceKey";
 
 jest.mock("@ledgerhq/live-dmk-shared", () => {
@@ -54,6 +61,27 @@ const setPlatformOS = (platformOS: typeof Platform.OS) => {
   Object.assign(Platform, { OS: platformOS });
 };
 
+const discoverOn = (
+  source: typeof RnBleDeviceDiscoverySource | typeof RnHidDeviceDiscoverySource,
+  transport: TransportIdentifier,
+  id: string,
+) => {
+  const discoveredDevice = {
+    id,
+    name: "Nano X 1A2B",
+    deviceModel: { id: "nanoX", model: DeviceModelId.NANO_X, name: "Ledger Nano X" },
+    transport,
+  } as DiscoveredDevice;
+
+  jest.mocked(source).mockImplementationOnce(
+    () =>
+      ({
+        transportId: transport,
+        listen: () => NEVER.pipe(startWith({ type: "devices", devices: [discoveredDevice] })),
+      }) as unknown as RnBleDeviceDiscoverySource & RnHidDeviceDiscoverySource,
+  );
+};
+
 const setupTest = () => {
   const input: ConnectNewDeviceInput = {
     dmk: {} as DeviceManagementKit,
@@ -88,8 +116,29 @@ describe("mobile connectNewDevice", () => {
       deviceDiscoveryService: expect.any(DefaultDeviceDiscoveryService),
       mapConnectionError: createConnectionError,
       getDiscoveredDeviceKey,
+      filterListedDevices,
       buildCompatDeviceId: buildMobileCompatDeviceId,
     });
+
+    subscription.unsubscribe();
+  });
+
+  it("should list only the available USB devices when a device is discovered over USB and Bluetooth", () => {
+    // GIVEN
+    setPlatformOS("android");
+    discoverOn(RnBleDeviceDiscoverySource, rnBleTransportIdentifier, "ble-id");
+    discoverOn(RnHidDeviceDiscoverySource, rnHidTransportIdentifier, "usb-id");
+
+    // WHEN
+    const { states, subscription } = setupTest();
+
+    // THEN
+    const lastState = states[states.length - 1];
+    expect(lastState?.type).toBe(ConnectNewDeviceUIStateTypes.Discovering);
+    expect(
+      lastState?.type === ConnectNewDeviceUIStateTypes.Discovering &&
+        lastState.devices.map(({ device }) => device.id),
+    ).toEqual(["usb-id"]);
 
     subscription.unsubscribe();
   });

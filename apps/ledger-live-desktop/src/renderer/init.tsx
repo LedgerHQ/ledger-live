@@ -232,6 +232,9 @@ async function init() {
     delete legacySettings.sentryLogs;
   }
 
+  // The sidebar collapse is session-only: drop the persisted value so it always starts fully open.
+  delete (settingsToLoad as Record<string, unknown>).sidebarCollapsed;
+
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
   }

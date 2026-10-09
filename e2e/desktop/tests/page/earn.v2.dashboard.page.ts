@@ -1,6 +1,6 @@
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Account, type AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { EarnBasePage } from "tests/page/earn.base.page";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import type { Application } from "tests/page/index";
@@ -153,6 +153,7 @@ export class EarnV2Page extends EarnBasePage {
   // Deposit screen v2 (swapToEarn enabled)
 
   private readonly amountInput = "amount-input-section-input";
+  private readonly swapDescription = "amount-input-section-swap-description";
   private readonly amountPresets = "amount-presets";
   private readonly amountPreset = (preset: "25" | "50" | "75" | "max") => `amount-preset-${preset}`;
   private readonly ethProviderAllCategory = "category-filter-all";
@@ -172,6 +173,33 @@ export class EarnV2Page extends EarnBasePage {
     await webview.getByTestId(this.amountPreset(preset)).click();
     // The preset value depends on the live balance, so only check that it filled the input.
     await expect(webview.getByTestId(this.amountInput)).not.toHaveValue(/^0?$/);
+  }
+
+  @step("Select another funding account: $0")
+  async selectAnotherFundingAccount(app: Application, account: AccountType) {
+    // account.request opens the host account drawer. Pick the asset first, then the account row.
+    await this.clickAccountSelectorInput();
+    await this.selectAssetInModularSelector(app, account.currency);
+    await app.modularDialog.selectAccount(account);
+  }
+
+  @step("Verify swap-to-earn copy from $0 to $1")
+  async verifySwapToEarnDescription(fromTicker: string, toTicker: string) {
+    const webview = await this.getWebView();
+    const description = webview.getByTestId(this.swapDescription);
+    await expect(description).toBeVisible();
+    await expect(description).toContainText(fromTicker);
+    await expect(description).toContainText(toTicker);
+  }
+
+  @step("Continue to swap")
+  async continueToSwap() {
+    const webview = await this.getWebView();
+    // Same test id as the provider Continue button. The accessible name only exists in swap mode.
+    const swapCta = webview.getByRole("button", { name: "Go to swap" });
+    await expect(swapCta).toBeVisible();
+    await expect(swapCta).toBeEnabled();
+    await swapCta.click();
   }
 
   @step("Enter deposit amount: $0")

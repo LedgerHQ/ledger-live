@@ -116,6 +116,7 @@ catalog:
   expo-image-picker: 17.0.11
   expo-haptics: 15.0.8
   expo-keep-awake: 15.0.8
+  expo-splash-screen: 31.0.13
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29
   "@jest/reporters": 30.5.0
@@ -234,10 +235,10 @@ catalog:
   "@radix-ui/react-switch": 1.2.6
   "@radix-ui/react-tooltip": 1.2.8
   "@tanstack/react-table": 8.5.11
-  "@playwright/test": 1.60.0
-  playwright: 1.60.0
-  allure-playwright: 3.9.0
-  allure-js-commons: 3.9.0
+  "@playwright/test": 1.63.0
+  playwright: 1.63.0
+  allure-playwright: 3.13.0
+  allure-js-commons: 3.13.0
   nx: 22.7.8
   "@nx/devkit": 22.7.8
   detox: 20.51.3
@@ -251,7 +252,7 @@ catalog:
   "@ledgerhq/coin-hypercore": 4.0.1
   "@ledgerhq/coin-module-framework": 10.0.0
   "@ledgerhq/coin-stellar": 12.0.0
-  "@ledgerhq/coin-tezos": 13.0.1
+  "@ledgerhq/coin-tezos": 13.0.2
   "@ledgerhq/coin-xrp": 12.0.1
 
 minimumReleaseAge: 3000

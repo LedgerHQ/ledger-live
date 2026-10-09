@@ -113,7 +113,7 @@ export function useAssetMarketData({
 
   return {
     marketCurrencyData,
-    marketId: marketFromHook?.id ?? resolveCoingeckoIdForIdsQuery(knownMarketId),
+    marketId: marketFromHook?.id ?? dadaMarket?.id ?? resolveCoingeckoIdForIdsQuery(knownMarketId),
     ledgerCurrencyFromDada,
     ledgerIds,
     isLoading: isLoadingMarket || isLoadingDada || (!!dadaMarket && rateStatus === "loading"),

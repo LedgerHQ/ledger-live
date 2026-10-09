@@ -16,6 +16,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@features/platform-wallet-sync": "workspace:^",
     "@ledgerhq/coin-zcash": "workspace:^",
@@ -63,6 +64,7 @@
     "lint:fix": "oxfmt . && oxlint . --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
+    "test": "tsx --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json --customConditions node",
     "e2e-cli": "tsx src/cli/e2e-cli.ts"
   },

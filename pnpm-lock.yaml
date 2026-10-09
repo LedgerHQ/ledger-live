@@ -64,8 +64,8 @@ catalogs:
       specifier: 12.0.0
       version: 12.0.0
     '@ledgerhq/coin-tezos':
-      specifier: 13.0.1
-      version: 13.0.1
+      specifier: 13.0.2
+      version: 13.0.2
     '@ledgerhq/coin-xrp':
       specifier: 12.0.1
       version: 12.0.1
@@ -217,8 +217,8 @@ catalogs:
       specifier: 5.0.7
       version: 5.0.7
     '@playwright/test':
-      specifier: 1.60.0
-      version: 1.60.0
+      specifier: 1.63.0
+      version: 1.63.0
     '@polkadot/api':
       specifier: 16.5.4
       version: 16.5.4
@@ -403,11 +403,11 @@ catalogs:
       specifier: 5.0.2
       version: 5.0.2
     allure-js-commons:
-      specifier: 3.9.0
-      version: 3.9.0
+      specifier: 3.13.0
+      version: 3.13.0
     allure-playwright:
-      specifier: 3.9.0
-      version: 3.9.0
+      specifier: 3.13.0
+      version: 3.13.0
     axios:
       specifier: 1.20.0
       version: 1.20.0
@@ -480,6 +480,9 @@ catalogs:
     expo-modules-core:
       specifier: 3.0.29
       version: 3.0.29
+    expo-splash-screen:
+      specifier: 31.0.13
+      version: 31.0.13
     i18next:
       specifier: 25.7.3
       version: 25.7.3
@@ -520,8 +523,8 @@ catalogs:
       specifier: 1.82.0
       version: 1.82.0
     playwright:
-      specifier: 1.60.0
-      version: 1.60.0
+      specifier: 1.63.0
+      version: 1.63.0
     qrcode:
       specifier: 1.5.4
       version: 1.5.4
@@ -599,7 +602,7 @@ catalogs:
       version: 3.4.0
     tailwindcss:
       specifier: ^4.1.0
-      version: 4.1.18
+      version: 4.2.2
     tsx:
       specifier: 4.20.6
       version: 4.20.6
@@ -1366,9 +1369,15 @@ importers:
       allure-commandline:
         specifier: 2.28.0
         version: 2.28.0
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      buffer:
+        specifier: 'catalog:'
+        version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       chart.js:
         specifier: 2.9.4
         version: 2.9.4
@@ -1381,6 +1390,9 @@ importers:
       color:
         specifier: 4.2.3
         version: 4.2.3
+      crypto-browserify:
+        specifier: ^3.12.1
+        version: 3.12.1
       dotenv:
         specifier: 16.4.5
         version: 16.4.5
@@ -1399,6 +1411,9 @@ importers:
       embla-carousel-react:
         specifier: 8.0.0-rc17
         version: 8.0.0-rc17(react@19.1.4)
+      events:
+        specifier: ^3.3.0
+        version: 3.3.0
       firebase:
         specifier: 9.23.0
         version: 9.23.0(encoding@0.1.13)
@@ -1429,6 +1444,9 @@ importers:
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
+      path-browserify:
+        specifier: ^1.0.1
+        version: 1.0.1
       prando:
         specifier: 5.1.2
         version: 5.1.2
@@ -1438,6 +1456,9 @@ importers:
       qrcode:
         specifier: 'catalog:'
         version: 1.5.4
+      querystring-es3:
+        specifier: ^0.2.1
+        version: 0.2.1
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -1474,6 +1495,9 @@ importers:
       react-transition-group:
         specifier: 4.4.5
         version: 4.4.5(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      readable-stream:
+        specifier: ^4.7.0
+        version: 4.7.0
       redux:
         specifier: 'catalog:'
         version: 5.0.1
@@ -1492,6 +1516,9 @@ importers:
       semver:
         specifier: 'catalog:'
         version: 7.7.3
+      string_decoder:
+        specifier: ^1.3.0
+        version: 1.3.0
       styled-components:
         specifier: 'catalog:'
         version: 6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -1513,6 +1540,12 @@ importers:
       undici:
         specifier: 'catalog:'
         version: 7.18.2
+      url:
+        specifier: ^0.11.4
+        version: 0.11.4
+      util:
+        specifier: ^0.12.5
+        version: 0.12.5
       uuid:
         specifier: 'catalog:'
         version: 11.1.0
@@ -1552,7 +1585,7 @@ importers:
         version: link:../../libs/test-utils
       '@playwright/test':
         specifier: 'catalog:'
-        version: 1.60.0
+        version: 1.63.0
       '@rsdoctor/rspack-plugin':
         specifier: 'catalog:'
         version: 2.0.0-alpha.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.1.13(core-js@3.47.0))(@rspack/core@2.1.10(@swc/helpers@0.5.23))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -1639,16 +1672,13 @@ importers:
         version: 8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0)
       allure-playwright:
         specifier: 'catalog:'
-        version: 3.9.0(@playwright/test@1.60.0)
+        version: 3.13.0(@playwright/test@1.63.0)
       autoprefixer:
         specifier: 10.4.22
         version: 10.4.22(postcss@8.5.6)
       axios:
         specifier: 'catalog:'
         version: 1.20.0
-      buffer:
-        specifier: 'catalog:'
-        version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       chalk:
         specifier: 4.1.2
         version: 4.1.2
@@ -1726,7 +1756,7 @@ importers:
         version: 6.1.5
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -2303,6 +2333,9 @@ importers:
       expo-modules-core:
         specifier: 'catalog:'
         version: 3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
+      expo-splash-screen:
+        specifier: 'catalog:'
+        version: 31.0.13(@typescript/typescript6@6.0.2)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10))
       fuse.js:
         specifier: 6.6.2
         version: 6.6.2
@@ -2372,9 +2405,6 @@ importers:
       react-native-gesture-handler:
         specifier: 'catalog:'
         version: 2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
-      react-native-get-random-values:
-        specifier: 1.11.0
-        version: 1.11.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))
       react-native-image-crop-tools:
         specifier: 1.6.4
         version: 1.6.4(patch_hash=8dc28ff513f78de4133eb71abe17699348337c4354a1e7fa23aeb5083009e0b2)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -2417,9 +2447,6 @@ importers:
       react-native-share:
         specifier: 12.2.0
         version: 12.2.0
-      react-native-splash-screen:
-        specifier: 3.3.0
-        version: 3.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))
       react-native-startup-time:
         specifier: 2.1.0
         version: 2.1.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -2766,6 +2793,9 @@ importers:
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
+      '@domain/entity-account-descriptor':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-descriptor
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../domain/entity/currency
@@ -3318,7 +3348,7 @@ importers:
         version: 8.5.6
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
 
   devtools/bindings:
     dependencies:
@@ -5736,7 +5766,7 @@ importers:
         version: link:../../libs/types-live
       '@playwright/test':
         specifier: 'catalog:'
-        version: 1.60.0
+        version: 1.63.0
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -5748,10 +5778,10 @@ importers:
         version: 24.12.0
       allure-js-commons:
         specifier: 'catalog:'
-        version: 3.9.0(allure-playwright@3.9.0(@playwright/test@1.60.0))
+        version: 3.13.0(allure-playwright@3.13.0(@playwright/test@1.63.0))
       allure-playwright:
         specifier: 'catalog:'
-        version: 3.9.0(@playwright/test@1.60.0)
+        version: 3.13.0(@playwright/test@1.63.0)
       axios:
         specifier: 'catalog:'
         version: 1.20.0
@@ -5788,7 +5818,7 @@ importers:
         version: 1.82.0
       playwright:
         specifier: 'catalog:'
-        version: 1.60.0
+        version: 1.63.0
       tsx:
         specifier: ^4.19.3
         version: 4.20.6
@@ -7233,7 +7263,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -7269,7 +7299,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7348,7 +7378,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -7375,7 +7405,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7442,7 +7472,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -7469,7 +7499,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7548,7 +7578,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -7575,7 +7605,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7672,7 +7702,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -7711,7 +7741,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7811,7 +7841,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -7850,7 +7880,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7953,7 +7983,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -7992,7 +8022,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8071,7 +8101,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8107,7 +8137,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8347,7 +8377,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8380,7 +8410,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8450,7 +8480,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8477,7 +8507,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8550,7 +8580,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8583,7 +8613,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8662,7 +8692,7 @@ importers:
         version: 8.57.0
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
-        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18)
+        version: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8692,7 +8722,7 @@ importers:
         version: 19.1.4(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -9617,7 +9647,7 @@ importers:
         version: 6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       tailwindcss:
         specifier: 'catalog:'
-        version: 4.1.18
+        version: 4.2.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -10665,7 +10695,7 @@ importers:
         version: link:../../types-live
       '@walletconnect/sign-client':
         specifier: 2.23.4
-        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
+        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@walletconnect/types':
         specifier: 2.23.0
         version: 2.23.0
@@ -14218,7 +14248,7 @@ importers:
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 13.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(encoding@0.1.13)
+        version: 13.0.2(@ledgerhq/live-network@3.2.0(axios@1.20.0))(encoding@0.1.13)
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -16338,6 +16368,9 @@ importers:
 
   libs/live-e2e-shared:
     dependencies:
+      '@domain/entity-contact':
+        specifier: workspace:*
+        version: link:../../domain/entity/contact
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
@@ -19084,7 +19117,7 @@ importers:
         version: 30.5.0
       '@playwright/test':
         specifier: 'catalog:'
-        version: 1.60.0
+        version: 1.63.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -22319,12 +22352,6 @@ packages:
   '@floating-ui/dom@1.8.0':
     resolution: {integrity: sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg==}
 
-  '@floating-ui/react-dom@2.0.8':
-    resolution: {integrity: sha512-HOdqOt3R3OGeTKidaLvJKcgg75S6tibQ3Tif4eyd91QnIJWr0NLvoXFpJA/j8HqkFSL68GDca9AuyWEHlhyClw==}
-    peerDependencies:
-      react: 19.1.4
-      react-dom: 19.1.4
-
   '@floating-ui/react-dom@2.1.9':
     resolution: {integrity: sha512-JDjEFGCpImxDCA7JJKviA0M9+RtmJdj0m/NVU5IMgBK+AmZouAQQ7/+2GLH0GXXY0YMw9oXPB8hKdbPYg5QLYg==}
     peerDependencies:
@@ -23025,8 +23052,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-tezos@13.0.1':
-    resolution: {integrity: sha512-h2A8G6fXfAdOvMKAI4xyz2z1MGtpmhNXs3JO3IEhHzeb+58BAKM59MvUdQQEqlUGyNfIy3wHnIZad8gNucy2pg==}
+  '@ledgerhq/coin-tezos@13.0.2':
+    resolution: {integrity: sha512-tqYpEs8gqlFAee3Q2+JsEq1ibZn4Kkh9zZY2laibrbcuM1IU7T1LYNJeE09eaxg25HtpCQkNS8YEkTLlaUdI4A==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -24517,17 +24544,13 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@pkgr/core@0.2.9':
-    resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
-    engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
-
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
     engines: {node: ^14.18.0 || >=16.0.0}
 
-  '@playwright/test@1.60.0':
-    resolution: {integrity: sha512-O71yZIbAh/PxDMNGns37GHBIfrVkEVyn+AXyIa5dOTfb4/xNvRWV+Vv/NMbNCtODB/pO7vLlF2OTmMVLhmr7Ag==}
-    engines: {node: '>=18'}
+  '@playwright/test@1.63.0':
+    resolution: {integrity: sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ==}
+    engines: {node: '>=20'}
     hasBin: true
 
   '@pnpm/catalogs.protocol-parser@1000.0.0':
@@ -28754,18 +28777,18 @@ packages:
     resolution: {integrity: sha512-TZ3oxop0zseJp2bRKb8Zzkxa4/aB+RvKEMnhylbY6UiOkqhNAHovRJx03bFA9bbvE/nsR70sX+ktU5xI2WJiqQ==}
     hasBin: true
 
-  allure-js-commons@3.9.0:
-    resolution: {integrity: sha512-uVQcGE6MWIvGR/zW1XEUwHXUQa1EJKY0Cah+0TZK1qKuw6ptyhftDr34XE3wExTyCZirRrI98dbRtPeYYuyI+g==}
+  allure-js-commons@3.13.0:
+    resolution: {integrity: sha512-NC4qcbmfpuYTstdw+EgimzhpHD2T85wzBNWRMPpu9rukkLzRlLvSmUCo5hy6vEvwQd9BUQh2yMFplJ+shIpVrA==}
     peerDependencies:
-      allure-playwright: 3.9.0
+      allure-playwright: 3.13.0
     peerDependenciesMeta:
       allure-playwright:
         optional: true
 
-  allure-playwright@3.9.0:
-    resolution: {integrity: sha512-bv8J4BaHhs7Cd7GaAz7xEuD6vthZuw235YtHpe/9y7FDPn3oB6n6KcxZOhU0lYvwVKO5cUVqnquHKqoLkSCrgA==}
+  allure-playwright@3.13.0:
+    resolution: {integrity: sha512-U9pLbm1+kTtGd+1Wqgb0wgsVTX730BdRc6tT0uQ8upzhEjsyjC2OnPCaMScXKPCv4uLWzORyem7d7cgnVz8fEA==}
     peerDependencies:
-      '@playwright/test': '>=1.53.0'
+      '@playwright/test': '>=1.62.0'
 
   allure-store@1.1.2:
     resolution: {integrity: sha512-8C4Hh3twQx39Poj4URHwaiHVPk9e8cQEQil9/9GWmYlzaq/QPeF/tOWNzpGGROufCXHKDyLMafLF0hZmA46Lqg==}
@@ -30269,9 +30292,6 @@ packages:
   crypt@0.0.2:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
 
-  crypto-browserify@3.12.0:
-    resolution: {integrity: sha512-fz4spIh+znjO2VjL+IdhEpRJ3YN6sMzITSBijk6FK2UvTqruSQW+/cCZTSNsMiZNvUeq0CqurF+dAbyiGOY6Wg==}
-
   crypto-browserify@3.12.1:
     resolution: {integrity: sha512-r4ESw/IlusD17lgQi1O20Fa3qNnsckR126TdUuBgAu7GBYSIPvdNyONd3Zrxh0xCwA4+6w/TDArBPsMvhur+KQ==}
     engines: {node: '>= 0.10'}
@@ -31278,6 +31298,11 @@ packages:
     resolution: {integrity: sha512-mcmyML3oXcqFUXUxtdtCL1O00ztNI2v76d+MdniXRUgHNxIcHZ05zo+DqBaOOT6LQnPk4vA4YHqQl7iGUfRb3g==}
     engines: {node: '>=20.16.0'}
 
+  expo-splash-screen@31.0.13:
+    resolution: {integrity: sha512-1epJLC1cDlwwj089R2h8cxaU5uk4ONVAC+vzGiTZH4YARQhL4Stlz1MbR6yAS173GMosvkE6CAeihR7oIbCkDA==}
+    peerDependencies:
+      expo: '*'
+
   expo-web-browser@15.0.10:
     resolution: {integrity: sha512-fvDhW4bhmXAeWFNFiInmsGCK83PAqAcQaFyp/3pE/jbdKmFKoRCWr46uZGIfN4msLK/OODhaQ/+US7GSJNDHJg==}
     peerDependencies:
@@ -31726,11 +31751,6 @@ packages:
 
   fs@0.0.1-security:
     resolution: {integrity: sha512-3XY9e1pP0CVEUCdj5BmfIZxRBTSDycnbqhIOGec9QYtmVH2fbLpj86CFWkrNOkt/Fvty4KZG5lTglL9j/gJ87w==}
-
-  fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
 
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -32617,10 +32637,6 @@ packages:
   is-subdir@1.2.0:
     resolution: {integrity: sha512-2AT6j+gXe/1ueqbW6fLZJiIw3F8iXGJtt0yDrZaBhAZEG1raiTxKWU+IPqMCzQAXOUCKdA4UDMgacKH25XG2Cw==}
     engines: {node: '>=4'}
-
-  is-typed-array@1.1.13:
-    resolution: {integrity: sha512-uZ25/bUAlUY5fR4OKT4rZQEBrzQWYV9ZJYGGsUmEJ6thodVJ1HX64ePQ6Z0qPWP+m+Uq6e9UugrE38jeYsDSMw==}
-    engines: {node: '>= 0.4'}
 
   is-typed-array@1.1.15:
     resolution: {integrity: sha512-p3EcsicXjit7SaskXHs1hA91QxgTw46Fv6EFKKGS5DRFLD8yKnohjF3hxoju94b/OcMZoQukzpPpBE9uLVKzgQ==}
@@ -35152,14 +35168,14 @@ packages:
   platform@1.3.6:
     resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
 
-  playwright-core@1.60.0:
-    resolution: {integrity: sha512-9bW6zvX/m0lEbgTKJ6YppOKx8H3VOPBMOCFh2irXFOT4BbHgrx5hPjwJYLT40Lu+4qtD36qKc/Hn56StUW57IA==}
-    engines: {node: '>=18'}
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
     hasBin: true
 
-  playwright@1.60.0:
-    resolution: {integrity: sha512-hheHdokM8cdqCb0lcE3s+zT4t4W+vvjpGxsZlDnikarzx8tSzMebh3UiFtgqwFwnTnjYQcsyMF8ei2mCO/tpeA==}
-    engines: {node: '>=18'}
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
     hasBin: true
 
   plist@3.1.0:
@@ -35825,11 +35841,6 @@ packages:
   react-native-share@12.2.0:
     resolution: {integrity: sha512-f6MB9BsKa9xVvu0DKbxq5jw4IyYHqQeqUlCNkD8eAFoJx6SD31ObPAn7SQ6NG9AOuhCy6aYuSJYJvx25DaoMZQ==}
     engines: {node: '>=16'}
-
-  react-native-splash-screen@3.3.0:
-    resolution: {integrity: sha512-rGjt6HkoSXxMqH4SQUJ1gnPQlPJV8+J47+4yhgTIan4bVvAwJhEeJH7wWt9hXSdH4+VfwTS0GTaflj1Tw83IhA==}
-    peerDependencies:
-      react-native: '>=0.57.0'
 
   react-native-sse@1.2.1:
     resolution: {integrity: sha512-zejanlScF+IB9tYnbdry0MT34qjBXbiV/E72qGz33W/tX1bx8MXsbB4lxiuPETc9v/008vYZ60yjIstW22VlVg==}
@@ -37162,10 +37173,6 @@ packages:
   symbol.inspect@1.0.1:
     resolution: {integrity: sha512-YQSL4duoHmLhsTD1Pw8RW6TZ5MaTX5rXJnqacJottr2P2LZBF/Yvrc3ku4NUpMOm8aM0KOCqM+UAkMA5HWQCzQ==}
 
-  synckit@0.11.11:
-    resolution: {integrity: sha512-MeQTA1r0litLUf0Rp/iisCaL8761lKAZHaimlbGK4j0HysC4PLfqygQj9srcs0m2RdtDYnF8UuYyKpbjHYp7Jw==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-
   synckit@0.11.13:
     resolution: {integrity: sha512-eNRKgb3z66Yp3D2CixVujOUvXLFUTij/zVnV8KRyvFdQwpz7I5DS8UfRkTeLzb64u+dkzDSdelE24izu+zSSUg==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -37940,9 +37947,6 @@ packages:
   url-parse@1.5.10:
     resolution: {integrity: sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==}
 
-  url@0.11.3:
-    resolution: {integrity: sha512-6hxOLGfZASQK/cijlZnZJTq8OXAkt/3YGfQX45vvMYXpZoo8NdWZcY73K108Jf759lS1Bv/8wXnHDTSz17dSRw==}
-
   url@0.11.4:
     resolution: {integrity: sha512-oCwdVC7mTuWiPyjLUz/COz5TLk6wgp0RCsN+wHZ2Ekneac9w8uuV0njcbbie2ME+Vs+d6duwmYuR3HgQXs1fOg==}
     engines: {node: '>= 0.4'}
@@ -38252,10 +38256,6 @@ packages:
   which-pm@2.2.0:
     resolution: {integrity: sha512-MOiaDbA5ZZgUjkeMWM5EkJp4loW5ZRoa5bc3/aeMox/PJelMhE6t7S/mLuiY43DBupyxH+S0U1bTui9kWUlmsw==}
     engines: {node: '>=8.15'}
-
-  which-typed-array@1.1.15:
-    resolution: {integrity: sha512-oV0jmFtUky6CXfkqehVvBP/LSWJ2sy4vWMioiENyJLePrBO/yKyV9OyJySfAKosh+RYkIl5zJCNZ8/4JncrpdA==}
-    engines: {node: '>= 0.4'}
 
   which-typed-array@1.1.19:
     resolution: {integrity: sha512-rEvr90Bck4WZt9HHFC4DJMsjvu7x+r6bImz0/BrbWb7A2djJ8hnZMrWnHo9F8ssv0OMErasDhftrfROTyqSDrw==}
@@ -43392,12 +43392,6 @@ snapshots:
       '@floating-ui/core': 1.8.0
       '@floating-ui/utils': 0.2.12
 
-  '@floating-ui/react-dom@2.0.8(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      '@floating-ui/dom': 1.6.3
-      react: 19.1.4
-      react-dom: 19.1.4(react@19.1.4)
-
   '@floating-ui/react-dom@2.1.9(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
       '@floating-ui/dom': 1.8.0
@@ -44468,7 +44462,7 @@ snapshots:
       - debug
       - supports-color
 
-  '@ledgerhq/coin-tezos@13.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(encoding@0.1.13)':
+  '@ledgerhq/coin-tezos@13.0.2(@ledgerhq/live-network@3.2.0(axios@1.20.0))(encoding@0.1.13)':
     dependencies:
       '@ledgerhq/coin-module-framework': 10.0.0
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
@@ -45017,7 +45011,7 @@ snapshots:
 
   '@ledgerhq/lumen-design-core@0.1.30':
     dependencies:
-      tailwindcss: 4.1.18
+      tailwindcss: 4.2.2
       tslib: 2.6.2
 
   '@ledgerhq/lumen-ui-react@0.1.61(15ec3592125c523c20d865970939e6b0)':
@@ -45352,8 +45346,8 @@ snapshots:
       '@google-cloud/kms': 5.4.0
       '@mysten/ledgerjs-hw-app-sui': 0.7.1
       '@mysten/sui': 2.23.1(@typescript/typescript6@6.0.2)
-      '@noble/curves': 2.3.0
-      '@noble/hashes': 2.3.0
+      '@noble/curves': 2.4.0
+      '@noble/hashes': 2.4.0
       asn1-ts: 11.0.6
     transitivePeerDependencies:
       - supports-color
@@ -45363,8 +45357,8 @@ snapshots:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.14.2)
       '@mysten/bcs': 2.1.0
       '@mysten/utils': 0.4.0
-      '@noble/curves': 2.3.0
-      '@noble/hashes': 2.3.0
+      '@noble/curves': 2.4.0
+      '@noble/hashes': 2.4.0
       '@protobuf-ts/grpcweb-transport': 2.11.1
       '@protobuf-ts/runtime': 2.11.1
       '@protobuf-ts/runtime-rpc': 2.11.1
@@ -46171,13 +46165,11 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@pkgr/core@0.2.9': {}
-
   '@pkgr/core@0.3.6': {}
 
-  '@playwright/test@1.60.0':
+  '@playwright/test@1.63.0':
     dependencies:
-      playwright: 1.60.0
+      playwright: 1.63.0
 
   '@pnpm/catalogs.protocol-parser@1000.0.0': {}
 
@@ -46763,7 +46755,7 @@ snapshots:
 
   '@radix-ui/react-popper@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
-      '@floating-ui/react-dom': 2.0.8(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@floating-ui/react-dom': 2.1.9(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-arrow': 1.1.7(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.0.14)(react@19.1.4)
       '@radix-ui/react-context': 1.1.2(@types/react@19.0.14)(react@19.1.4)
@@ -47617,7 +47609,7 @@ snapshots:
       immer: 11.1.3
       redux: 5.0.1
       redux-thunk: 3.1.0(redux@5.0.1)
-      reselect: 5.1.1
+      reselect: 5.3.0
     optionalDependencies:
       react: 19.1.4
       react-redux: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
@@ -51288,7 +51280,7 @@ snapshots:
 
   '@vscode/sudo-prompt@9.3.1': {}
 
-  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
+  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-provider': 1.0.14
@@ -51302,7 +51294,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
       '@walletconnect/window-getters': 1.0.1
       es-toolkit: 1.44.0
       events: 3.3.0
@@ -51425,16 +51417,16 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
+  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
-      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
+      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 3.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -51523,7 +51515,7 @@ snapshots:
       - ioredis
       - uploadthing
 
-  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)':
+  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)':
     dependencies:
       '@msgpack/msgpack': 3.1.3
       '@noble/ciphers': 1.3.0
@@ -51543,7 +51535,7 @@ snapshots:
       blakejs: 1.2.1
       bs58: 6.0.0
       detect-browser: 5.3.0
-      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@3.25.76)
       uint8arrays: 3.1.1
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -51846,16 +51838,16 @@ snapshots:
 
   allure-commandline@2.28.0: {}
 
-  allure-js-commons@3.9.0(allure-playwright@3.9.0(@playwright/test@1.60.0)):
+  allure-js-commons@3.13.0(allure-playwright@3.13.0(@playwright/test@1.63.0)):
     dependencies:
       md5: 2.3.0
     optionalDependencies:
-      allure-playwright: 3.9.0(@playwright/test@1.60.0)
+      allure-playwright: 3.13.0(@playwright/test@1.63.0)
 
-  allure-playwright@3.9.0(@playwright/test@1.60.0):
+  allure-playwright@3.13.0(@playwright/test@1.63.0):
     dependencies:
-      '@playwright/test': 1.60.0
-      allure-js-commons: 3.9.0(allure-playwright@3.9.0(@playwright/test@1.60.0))
+      '@playwright/test': 1.63.0
+      allure-js-commons: 3.13.0(allure-playwright@3.13.0(@playwright/test@1.63.0))
 
   allure-store@1.1.2:
     dependencies:
@@ -53683,20 +53675,6 @@ snapshots:
 
   crypt@0.0.2: {}
 
-  crypto-browserify@3.12.0:
-    dependencies:
-      browserify-cipher: 1.0.1
-      browserify-sign: 4.2.3
-      create-ecdh: 4.0.4
-      create-hash: 1.2.0
-      create-hmac: 1.1.7
-      diffie-hellman: 5.0.3
-      inherits: 2.0.4
-      pbkdf2: 3.1.2
-      public-encrypt: 4.0.3
-      randombytes: 2.1.0
-      randomfill: 1.0.4
-
   crypto-browserify@3.12.1:
     dependencies:
       browserify-cipher: 1.0.1
@@ -54612,7 +54590,7 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-plugin-better-tailwindcss@4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.1.18):
+  eslint-plugin-better-tailwindcss@4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2):
     dependencies:
       '@eslint/css-tree': 4.1.1
       '@valibot/to-json-schema': 1.8.0(valibot@1.4.2(@typescript/typescript6@6.0.2))
@@ -54620,7 +54598,7 @@ snapshots:
       jiti: 2.7.0
       synckit: 0.11.13
       tailwind-csstree: 0.3.3
-      tailwindcss: 4.1.18
+      tailwindcss: 4.2.2
       tsconfig-paths-webpack-plugin: 4.2.0
       valibot: 1.4.2(@typescript/typescript6@6.0.2)
     optionalDependencies:
@@ -54921,6 +54899,14 @@ snapshots:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
   expo-server@1.0.7: {}
+
+  expo-splash-screen@31.0.13(@typescript/typescript6@6.0.2)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10)):
+    dependencies:
+      '@expo/prebuild-config': 54.0.8(@typescript/typescript6@6.0.2)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10))
+      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   expo-web-browser@15.0.10(26e20d2da1658e2310f07fd70e138799):
     dependencies:
@@ -55499,9 +55485,6 @@ snapshots:
   fs.realpath@1.0.0: {}
 
   fs@0.0.1-security: {}
-
-  fsevents@2.3.2:
-    optional: true
 
   fsevents@2.3.3:
     optional: true
@@ -56173,7 +56156,7 @@ snapshots:
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       bufferutil: 4.1.0
       core-js: 3.36.1
-      crypto-browserify: 3.12.0
+      crypto-browserify: 3.12.1
       js-sha3: 0.8.0
       readable-stream: 4.7.0
       secp256k1: 5.0.0
@@ -56448,10 +56431,6 @@ snapshots:
     dependencies:
       better-path-resolve: 1.0.0
 
-  is-typed-array@1.1.13:
-    dependencies:
-      which-typed-array: 1.1.19
-
   is-typed-array@1.1.15:
     dependencies:
       which-typed-array: 1.1.19
@@ -56501,7 +56480,7 @@ snapshots:
       '@ipld/dag-cbor': 9.2.7
       '@ledgerhq/errors': 6.37.0
       '@noble/curves': 1.9.7
-      '@noble/hashes': 2.3.0
+      '@noble/hashes': 2.4.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.2.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
@@ -57158,7 +57137,7 @@ snapshots:
       jest-util: 30.5.0
       pretty-format: 30.5.0
       semver: 7.8.1
-      synckit: 0.11.11
+      synckit: 0.11.13
     transitivePeerDependencies:
       - supports-color
 
@@ -59322,7 +59301,7 @@ snapshots:
       string_decoder: 1.3.0
       timers-browserify: 2.0.12
       tty-browserify: 0.0.0
-      url: 0.11.3
+      url: 0.11.4
       util: 0.10.4
 
   node-mock-http@1.0.4: {}
@@ -60161,13 +60140,11 @@ snapshots:
 
   platform@1.3.6: {}
 
-  playwright-core@1.60.0: {}
+  playwright-core@1.63.0: {}
 
-  playwright@1.60.0:
+  playwright@1.63.0:
     dependencies:
-      playwright-core: 1.60.0
-    optionalDependencies:
-      fsevents: 2.3.2
+      playwright-core: 1.63.0
 
   plist@3.1.0:
     dependencies:
@@ -60876,10 +60853,6 @@ snapshots:
       warn-once: 0.1.1
 
   react-native-share@12.2.0: {}
-
-  react-native-splash-screen@3.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)):
-    dependencies:
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
 
   react-native-sse@1.2.1: {}
 
@@ -62407,10 +62380,6 @@ snapshots:
 
   symbol.inspect@1.0.1: {}
 
-  synckit@0.11.11:
-    dependencies:
-      '@pkgr/core': 0.2.9
-
   synckit@0.11.13:
     dependencies:
       '@pkgr/core': 0.3.6
@@ -63134,11 +63103,6 @@ snapshots:
       querystringify: 2.2.0
       requires-port: 1.0.0
 
-  url@0.11.3:
-    dependencies:
-      punycode: 1.4.1
-      qs: 6.14.1
-
   url@0.11.4:
     dependencies:
       punycode: 1.4.1
@@ -63211,8 +63175,8 @@ snapshots:
       inherits: 2.0.4
       is-arguments: 1.1.1
       is-generator-function: 1.0.10
-      is-typed-array: 1.1.13
-      which-typed-array: 1.1.15
+      is-typed-array: 1.1.15
+      which-typed-array: 1.1.19
 
   utility-types@3.11.0: {}
 
@@ -63427,14 +63391,6 @@ snapshots:
     dependencies:
       load-yaml-file: 0.2.0
       path-exists: 4.0.0
-
-  which-typed-array@1.1.15:
-    dependencies:
-      available-typed-arrays: 1.0.7
-      call-bind: 1.0.8
-      for-each: 0.3.5
-      gopd: 1.2.0
-      has-tostringtag: 1.0.2
 
   which-typed-array@1.1.19:
     dependencies:

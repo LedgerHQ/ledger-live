@@ -19,6 +19,7 @@ import {
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import type { Subscription } from "rxjs";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { createDeviceOnboardingPorts } from "../utils/ports";
@@ -279,6 +280,7 @@ export function useDeviceOnboarding({
     send,
   });
   useDeviceOnboardingExit({ device: liveDevice, output, navigateOnExit });
+  useKeepScreenAwake(status === "connecting" || status === "running");
 
   useEffect(
     () => () => {

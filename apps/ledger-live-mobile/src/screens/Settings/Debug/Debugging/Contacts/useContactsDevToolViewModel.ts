@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { setContacts } from "@domain/entity-contact";
+import { mockContactsFromSendHistory } from "@domain/entity-contact/schema.mock";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   resolveContactsFeatureParams,
@@ -12,7 +13,7 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { hasDismissedContactsFeatureIntroductionSelector } from "~/reducers/settings";
 import { CONTACTS_FLAG } from "./constants";
-import { createContactsDebugSamples, createContactsFromSendHistory } from "./mockContacts";
+import { createContactsDebugSamples } from "./mockContacts";
 
 export function useContactsDevToolViewModel() {
   const dispatch = useDispatch();
@@ -25,6 +26,10 @@ export function useContactsDevToolViewModel() {
   const params = useMemo(
     () => resolveContactsFeatureParams(featureFlag?.params),
     [featureFlag?.params],
+  );
+  const featureFlagSummary = useMemo(
+    () => JSON.stringify({ enabled: isEnabled, params: featureFlag?.params ?? null }, null, 2),
+    [isEnabled, featureFlag?.params],
   );
 
   const setContactsOverride = useCallback(
@@ -63,7 +68,7 @@ export function useContactsDevToolViewModel() {
   }, [dispatch]);
 
   const handleLoadFromSendHistory = useCallback(() => {
-    dispatch(setContacts(createContactsFromSendHistory(accounts)));
+    dispatch(setContacts(mockContactsFromSendHistory(accounts)));
   }, [dispatch, accounts]);
 
   const handleClearContacts = useCallback(() => {
@@ -75,7 +80,7 @@ export function useContactsDevToolViewModel() {
   }, [dispatch, hasDismissedFeatureIntroduction]);
 
   return {
-    featureFlag,
+    featureFlagSummary,
     isEnabled,
     newBadge: params.newBadge,
     eligibleAddressFamilies: params.eligibleAddressFamilies,

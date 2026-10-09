@@ -1,4 +1,11 @@
-import type { BorrowAction, OpenLoan, PartnerActionResponse, PartnerActionStep } from "./types";
+import { Interface } from "ethers";
+import type {
+  BorrowAction,
+  EvmSignablePayload,
+  OpenLoan,
+  PartnerActionResponse,
+  PartnerActionStep,
+} from "./types";
 
 /** Staging only — the staging Borrow API is keyless (reads and actions). */
 const BASE_URL = "https://global.api.stg.ledger-test.com/borrow";
@@ -19,6 +26,8 @@ export const ETHEREUM_CHAIN_ID = 1;
 export const DEFAULT_MARKET_ID =
   "morpho-blue-borrow-ethereum-wbtc-usdt-0xa921ef34e2fc7a27ccc50ae7e4b154e16c9799d3387076c421423ef52ac4df99";
 
+const ERC20 = new Interface(["function approve(address spender, uint256 value)"]);
+
 function get(v: unknown, key: string): unknown {
   return v !== null && typeof v === "object" ? Reflect.get(v, key) : undefined;
 }
@@ -28,23 +37,29 @@ function getString(v: unknown, key: string): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-/** Rejected at the edge rather than by the partner, so the request never reached it. */
-function isThrottled(status: number): boolean {
-  return status >= 500 || status === 403 || status === 429;
+/**
+ * Rejected by the edge before the partner saw the request. A partner-side 5xx is deliberately not
+ * included: `post` also builds actions, and retrying one the partner already accepted but whose
+ * response was lost would leave a second action behind.
+ */
+function isEdgeRejection(status: number): boolean {
+  return status === 403 || status === 429;
 }
 
 function isTransientRead(status: number): boolean {
   return status >= 500 || status === 429;
 }
 
-async function post(pathname: string, body: unknown): Promise<Response> {
+/** `retryOn5xx` is for the endpoints that only read, where a repeat cannot create anything. */
+async function post(pathname: string, body: unknown, retryOn5xx = false): Promise<Response> {
   for (let attempt = 1; ; attempt++) {
     const res = await fetch(`${BASE_URL}${pathname}`, {
       method: "POST",
       headers: JSON_HEADERS,
       body: JSON.stringify(body),
     });
-    if (!isThrottled(res.status) || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
+    const retriable = isEdgeRejection(res.status) || (retryOn5xx && res.status >= 500);
+    if (!retriable || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
     console.log(
       `    api: ${res.status} on ${pathname}, retrying (${attempt}/${THROTTLE_RETRY_ATTEMPTS - 1})`,
     );
@@ -84,7 +99,7 @@ function normalizeStep(raw: unknown, index: number): PartnerActionStep {
 
 /** `POST /v1/positions` — returns the raw `{ positions, errors, metadata }`. */
 export async function getPositions(address: string): Promise<unknown> {
-  const res = await post("/v1/positions", [{ network: ETHEREUM_NETWORK, address }]);
+  const res = await post("/v1/positions", [{ network: ETHEREUM_NETWORK, address }], true);
   if (!res.ok) throw await failedRequest("POST /v1/positions", res);
   return res.json();
 }
@@ -101,6 +116,90 @@ export async function postAction(body: ActionRequest): Promise<PartnerActionResp
     throw new Error(`Partner returned no steps[] (actionId ${actionId})`);
   }
   return { actionId, steps: steps.map((step, i) => normalizeStep(step, i)) };
+}
+
+function parseStepPayload(step: PartnerActionStep, index: number): EvmSignablePayload {
+  try {
+    return JSON.parse(step.signablePayload);
+  } catch {
+    throw new Error(
+      `Malformed signablePayload on partner step[${index}] (${step.actionType}): ${step.signablePayload}`,
+    );
+  }
+}
+
+/**
+ * Address that needs an ERC-20 allowance to carry out `action`.
+ *
+ * The approve step is found by decoding calldata rather than by matching `step.actionType`,
+ * because the spender is an argument of that calldata: one decode both identifies the step and
+ * yields the value. `actionType` is an undocumented partner label — an open `string` with no
+ * union and no other consumer — so it is reported on failure, not matched on.
+ *
+ * The partner omits the approve step entirely once the allowance already covers the amount, and
+ * an earlier run can leave an unlimited one behind. Reading the spender only off that step would
+ * therefore fail exactly when there is an allowance to revoke, so the target of the final step —
+ * the contract that pulls the tokens, and so the spender — is the fallback.
+ */
+function requireAllowanceSpender(
+  steps: PartnerActionStep[],
+  action: BorrowAction,
+  marketId: string,
+): string {
+  for (const [index, step] of steps.entries()) {
+    const { data } = parseStepPayload(step, index);
+    const approve = data ? ERC20.parseTransaction({ data }) : null;
+    if (approve?.name === "approve") return String(approve.args.getValue("spender"));
+  }
+  const last = steps.at(-1);
+  if (last) {
+    const { to } = parseStepPayload(last, steps.length - 1);
+    if (to) return to;
+  }
+  const actionTypes = steps.map(step => step.actionType).join(", ");
+  throw new Error(
+    `Partner ${action} for ${marketId} returned neither an ERC-20 approve step nor a step with a ` +
+      `target to read the spender from (actionTypes: ${actionTypes})`,
+  );
+}
+
+/**
+ * Address the collateral allowance is granted to, read from the approve step the partner builds.
+ * It is an adapter the partner can redeploy, so it is resolved rather than pinned. Building an
+ * action does not broadcast anything.
+ *
+ * Posts `supplyAndBorrow`, which is what the borrow live app posts, **not** `supply`: the two
+ * take different routes and so approve different spenders — `supply` grants Morpho Blue directly
+ * (`0xBBBB…`) while `supplyAndBorrow` goes through a bundler (`0x38B0C1…`). Resolving from the
+ * wrong one zeroes an allowance the UI never uses, and the approval step the spec drives then
+ * silently stays unnecessary.
+ */
+export async function resolveCollateralSpender(
+  address: string,
+  collateralAmount: string,
+  loanAmount: string,
+  marketId: string = DEFAULT_MARKET_ID,
+): Promise<string> {
+  const { steps } = await postAction({
+    address,
+    action: "supplyAndBorrow",
+    args: { marketId, amount: loanAmount, collateralAmount },
+  });
+  return requireAllowanceSpender(steps, "supplyAndBorrow", marketId);
+}
+
+/**
+ * Same for the debt-token allowance a repay pulls through. `marketId` is the long id of the
+ * position being repaid (not a market's `collateral[].id`), so an open loan with debt must
+ * already exist — the partner has nothing to build a repay against otherwise.
+ */
+export async function resolveRepaySpender(address: string, marketId: string): Promise<string> {
+  const { steps } = await postAction({
+    address,
+    action: "repay",
+    args: { marketId, repayAll: true },
+  });
+  return requireAllowanceSpender(steps, "repay", marketId);
 }
 
 /** Best-effort notify; the state we act on is the on-chain confirmation, not this. */

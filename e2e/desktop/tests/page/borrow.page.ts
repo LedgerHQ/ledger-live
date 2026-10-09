@@ -1,5 +1,9 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { peekBorrowAddress, readAccountNonces } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
+import {
+  peekBorrowAddress,
+  readAccountNonces,
+  waitForChainNonceSettled,
+} from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "tests/page/webViewApp.page";
 
@@ -9,6 +13,8 @@ const FUNDING_HINT =
 const EXECUTION_TIMEOUT_MS = 240_000;
 const APPROVAL_TIMEOUT_MS = 60_000;
 const SCREEN_TIMEOUT_MS = 60_000;
+/** The partner prepares each transaction server-side, which outlasts the global expect timeout. */
+const DEVICE_SIGNATURE_TIMEOUT_MS = 120_000;
 
 export class BorrowPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "borrow";
@@ -368,13 +374,15 @@ export class BorrowPage extends WebViewAppPage {
 
   @step("Wait for host device validation screen")
   async waitForHostDeviceValidation() {
-    await expect(this.deviceTransactionConfirm).toBeVisible();
+    await expect(this.deviceTransactionConfirm).toBeVisible({
+      timeout: DEVICE_SIGNATURE_TIMEOUT_MS,
+    });
   }
 
   @step("Wait for host sign modal to close")
   async waitForHostSignModalClosed() {
-    await expect(this.hostSignModal).toBeHidden({ timeout: 120_000 });
-    await expect(this.modalBackdrop).toBeHidden({ timeout: 120_000 });
+    await expect(this.hostSignModal).toBeHidden({ timeout: DEVICE_SIGNATURE_TIMEOUT_MS });
+    await expect(this.modalBackdrop).toBeHidden({ timeout: DEVICE_SIGNATURE_TIMEOUT_MS });
   }
 
   @step("Complete host device signature")
@@ -402,6 +410,7 @@ export class BorrowPage extends WebViewAppPage {
       "Step 1 approval",
     );
     await expect(webview.getByTestId(this.authorizeDepositing)).toBeEnabled();
+    await waitForChainNonceSettled();
   }
 
   @step("Wait for Step 2 deposit to complete")
@@ -413,6 +422,7 @@ export class BorrowPage extends WebViewAppPage {
       "Step 2 deposit",
     );
     await expect(webview.getByTestId(this.authorizeBorrowing)).toBeEnabled();
+    await waitForChainNonceSettled();
   }
 
   @step("Wait for Step 3 borrow to complete")
@@ -524,6 +534,7 @@ export class BorrowPage extends WebViewAppPage {
       "Repay Step 1 approval",
     );
     await expect(webview.getByTestId(this.authorizeRepay)).toBeEnabled();
+    await waitForChainNonceSettled();
   }
 
   @step("Wait for repay execution to complete")
