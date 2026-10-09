@@ -7,12 +7,14 @@ import {
   buildTransaction,
   CosmosTransactionParams,
   messageParamsFromTransaction,
+  resolveSourceValidator,
+  resolveTransactionValidators,
   txToMessages,
 } from "./buildTransaction";
 import cryptoFactory from "./chain/chain";
 import { getMaxEstimatedBalance } from "./logic";
 import { CosmosAPI } from "./network/Cosmos";
-import { CosmosAccount, Transaction } from "./types";
+import { Transaction } from "./types";
 
 export const calculateFees: CacheRes<
   Array<{
@@ -36,13 +38,13 @@ export const calculateFees: CacheRes<
   ({ account, transaction }) =>
     `${account.id}_${account.currency.id}_${transaction.amount.toFixed()}_${
       transaction.recipient
-    }_${String(transaction.useAllAmount)}_${transaction.mode}_${
-      transaction.validators
-        ? transaction.validators.map(v => `${v.address}-${v.amount}`).join("_")
-        : ""
-    }_${transaction.memo ? transaction.memo.toString() : ""}_${
-      transaction.sourceValidator ? transaction.sourceValidator : ""
-    }_${transaction.valAddress ?? ""}_${transaction.dstValAddress ?? ""}`,
+    }_${String(transaction.useAllAmount)}_${transaction.mode}_${resolveTransactionValidators(
+      transaction,
+    )
+      .map(v => `${v.address}-${v.amount}`)
+      .join("_")}_${transaction.memo ? transaction.memo.toString() : ""}_${
+      resolveSourceValidator(transaction) ?? ""
+    }`,
   {
     ttl: 1000 * 10, // 10 sec
   },
@@ -120,7 +122,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   });
 
   if (transaction.useAllAmount) {
-    amount = getMaxEstimatedBalance(account as CosmosAccount, gasWantedFees);
+    amount = getMaxEstimatedBalance(account, gasWantedFees);
   }
 
   if (

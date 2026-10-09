@@ -1,8 +1,9 @@
+import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { TokenAccount } from "@ledgerhq/types-live";
+import { isStakingAccount, TokenAccount } from "@ledgerhq/types-live";
 import {
   useCosmosFamilyPreloadData,
   useCosmosFamilyMappedDelegations,
@@ -26,7 +27,7 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/cosmosBase";
 import { useNavigate } from "react-router";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { getAccountUrl } from "~/renderer/utils";
@@ -45,6 +46,7 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: CosmosAccount }) => {
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
@@ -52,13 +54,12 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     pendingRewardsBalance: _pendingRewardsBalance,
     unbondings,
   } = account.stakingResources;
+  const validators = account.stakingResources.validators ?? [];
 
   const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   const validatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const delegationEnabled = canDelegate(account);
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);
-  const currencyId = account.currency.id;
-  const { validators } = useCosmosFamilyPreloadData(currencyId);
   const unit = useAccountUnit(account);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
@@ -77,10 +78,10 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
       isCroAccount
         ? goToStakekit()
         : dispatch(
-            openModal("MODAL_COSMOS_REWARDS_INFO", {
-              account,
-            }),
-          ),
+          openModal("MODAL_COSMOS_REWARDS_INFO", {
+            account,
+          }),
+        ),
     [account, dispatch, isCroAccount, goToStakekit],
   );
 
@@ -89,10 +90,10 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
       isCroAccount
         ? goToStakekit()
         : dispatch(
-            openModal("MODAL_COSMOS_DELEGATE", {
-              account,
-            }),
-          ),
+          openModal("MODAL_COSMOS_DELEGATE", {
+            account,
+          }),
+        ),
     [account, dispatch, isCroAccount, goToStakekit],
   );
   const onClaimRewards = useCallback(
@@ -100,10 +101,10 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
       isCroAccount
         ? goToStakekit()
         : dispatch(
-            openModal("MODAL_COSMOS_CLAIM_REWARDS", {
-              account,
-            }),
-          ),
+          openModal("MODAL_COSMOS_CLAIM_REWARDS", {
+            account,
+          }),
+        ),
     [account, dispatch, isCroAccount, goToStakekit],
   );
 

@@ -4,6 +4,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { extractBalance, extractBalances, transactionToIntent } from "../utils";
 import type { GenericTransaction } from "../types";
+import cosmosBridge from "../../../families/cosmos/bridge/api";
 
 describe("generic-coin-framework send-max accounts for pending operations", () => {
   const ethereum = getCryptoCurrencyById("ethereum");
@@ -67,5 +68,69 @@ describe("generic-coin-framework send-max accounts for pending operations", () =
 
     const onChainAvailableAfterPending = BigInt(ONE_ETH.toFixed()) - pendingAmount - FEE;
     expect(withPending + FEE).toBeLessThanOrEqual(onChainAvailableAfterPending);
+  });
+
+  describe("cosmos", () => {
+    const cosmos = getCryptoCurrencyById("cosmos");
+
+    const ONE_ATOM = new BigNumber("1000000");
+    const cosmosRecipient = "cosmos1recipient";
+    const cosmosSender = "cosmos1sender";
+    const COSMOS_FEE = 7_500n;
+
+    const makeCosmosAccount = (pendingOperations: Operation[]): Account =>
+      ({
+        id: "js:2:cosmos:cosmos1sender:",
+        type: "Account",
+        currency: cosmos,
+        freshAddress: cosmosSender,
+        balance: ONE_ATOM,
+        spendableBalance: ONE_ATOM,
+        subAccounts: [],
+        pendingOperations,
+      }) as unknown as Account;
+
+    const cosmosSendMax = (account: Account): bigint => {
+      const transaction = {
+        mode: "send",
+        family: "cosmos",
+        recipient: cosmosRecipient,
+        amount: account.spendableBalance,
+        useAllAmount: true,
+      } as unknown as GenericTransaction;
+
+      const intent = transactionToIntent(account, transaction, computeCosmosIntentType);
+      expect(intent.type).toBe("send");
+      expect(intent.useAllAmount).toBe(true);
+      expect(intent.asset).toMatchObject({ type: "native" });
+
+      const native = extractBalance(extractBalances(account), "native");
+      const available = native.value - (native.locked ?? 0n);
+      return available - COSMOS_FEE;
+    };
+
+    const computeCosmosIntentType = cosmosBridge(cosmos).computeIntentType!;
+
+    it("offers the full balance minus fees when there is no pending operation", () => {
+      expect(cosmosSendMax(makeCosmosAccount([]))).toBe(1_000_000n - COSMOS_FEE);
+    });
+
+    it("subtracts a pending send (amount + its fee) from the send-max amount", () => {
+      const pendingAmount = 400_000n;
+      const pendingOp = {
+        id: "pending-out",
+        type: "OUT",
+        value: new BigNumber(pendingAmount.toString()),
+        fee: new BigNumber(COSMOS_FEE.toString()),
+        senders: [cosmosSender],
+        recipients: [cosmosRecipient],
+      } as unknown as Operation;
+
+      const withPending = cosmosSendMax(makeCosmosAccount([pendingOp]));
+
+      // 1000000 - (400000 + 7500) pending - 7500 fee
+      expect(withPending).toBe(585_000n);
+      expect(withPending).toBe(cosmosSendMax(makeCosmosAccount([])) - (pendingAmount + COSMOS_FEE));
+    });
   });
 });

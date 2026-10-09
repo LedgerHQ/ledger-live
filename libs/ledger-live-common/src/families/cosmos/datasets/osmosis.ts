@@ -6,17 +6,12 @@ import {
   AmountRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import invariant from "invariant";
-import type { CosmosAccount, Transaction } from "../types";
+import type { Transaction } from "../types";
 import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
-import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
+import { AccountRaw, CurrenciesData, isStakingAccount } from "@ledgerhq/types-live";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [
-    "cosmosResources",
-    "stakingResources",
-    "operationsCount",
-    "operations",
-  ],
+  FIXME_ignoreAccountFields: ["sequence", "stakingResources", "operationsCount", "operations"],
   FIXME_ignorePreloadFields: ["validators"], // the APY of validators changes over time
   scanAccounts: [
     {
@@ -89,18 +84,16 @@ const dataset: CurrenciesData<Transaction> = {
             useAllAmount: true,
             family: "cosmos",
             networkInfo: null,
-            validators: [],
-            sourceValidator: null,
             fees: null,
             gas: null,
             memo: null,
             mode: "send",
           }) as Transaction,
           expectedStatus: account => {
-            const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources) throw new Error("Should exist because it's osmosis");
+            if (!isStakingAccount(account)) throw new Error("Should exist because it's osmosis");
+            const { stakingResources } = account;
             const totalSpent = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
+              stakingResources.unbondingBalance.plus(stakingResources.delegatedBalance),
             );
             return {
               errors: {},
@@ -117,19 +110,17 @@ const dataset: CurrenciesData<Transaction> = {
             useAllAmount: true,
             family: "cosmos",
             networkInfo: null,
-            validators: [],
-            sourceValidator: null,
             fees: null,
             gas: null,
             memo: "test",
             mode: "send",
           }) as Transaction,
           expectedStatus: (account, t) => {
-            const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources) throw new Error("Should exist because it's osmosis");
+            if (!isStakingAccount(account)) throw new Error("Should exist because it's osmosis");
+            const { stakingResources } = account;
             invariant(t.memo === "test", "Should have a memo");
             const totalSpent = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
+              stakingResources.unbondingBalance.plus(stakingResources.delegatedBalance),
             );
             return {
               errors: {},
@@ -157,21 +148,13 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             amount: new BigNumber(100),
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(100),
-              },
-            ],
-            sourceValidator: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            dstValAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
             mode: "redelegate",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
-            return {
-              errors: {},
-              warnings: {},
-            };
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
         {
@@ -179,13 +162,8 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "redelegate",
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(0),
-              },
-            ],
-            sourceValidator: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            dstValAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
           }),
           expectedStatus: {
             errors: {
@@ -199,17 +177,12 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "redelegate",
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(100),
-              },
-            ],
-            sourceValidator: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            dstValAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
           }),
           expectedStatus: {
             errors: {
-              redelegation: new InvalidAddressBecauseDestinationIsAlsoSource(),
+              dstValAddress: new InvalidAddressBecauseDestinationIsAlsoSource(),
             },
             warnings: {},
           },
@@ -219,19 +192,11 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "undelegate",
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(100),
-              },
-            ],
+            valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
-            return {
-              errors: {},
-              warnings: {},
-            };
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
         {
@@ -239,12 +204,7 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "undelegate",
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(0),
-              },
-            ],
+            valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
           }),
           expectedStatus: {
             errors: {
@@ -258,19 +218,11 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "delegate",
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(105),
-              },
-            ],
+            valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
-            return {
-              errors: {},
-              warnings: {},
-            };
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
         {
@@ -278,16 +230,12 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "delegate",
-            validators: [
-              {
-                address: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
-                amount: new BigNumber(100),
-              },
-            ],
+            valAddress: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
           }),
           expectedStatus: {
             errors: {
-              recipient: new InvalidAddress(),
+              amount: new AmountRequired(),
+              valAddress: new InvalidAddress(),
             },
             warnings: {},
           },
@@ -296,37 +244,24 @@ const dataset: CurrenciesData<Transaction> = {
           name: "ClaimReward - success",
           transaction: t => ({
             ...t,
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(0),
-              },
-            ],
+            valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
             mode: "claimReward",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
-            return {
-              errors: {},
-              warnings: {},
-            };
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
         {
           name: "ClaimReward - not a osmovaloper",
           transaction: t => ({
             ...t,
-            validators: [
-              {
-                address: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
-                amount: new BigNumber(0),
-              },
-            ],
+            valAddress: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
             mode: "claimReward",
           }),
           expectedStatus: {
             errors: {
-              recipient: new InvalidAddress(),
+              valAddress: new InvalidAddress(),
             },
             warnings: {},
           },
@@ -335,20 +270,12 @@ const dataset: CurrenciesData<Transaction> = {
           name: "claimRewardCompound - success",
           transaction: t => ({
             ...t,
-            validators: [
-              {
-                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
-                amount: new BigNumber(100),
-              },
-            ],
-            mode: "claimRewardCompound",
+            valAddress: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            mode: "compoundReward",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
-            return {
-              errors: {},
-              warnings: {},
-            };
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
       ],

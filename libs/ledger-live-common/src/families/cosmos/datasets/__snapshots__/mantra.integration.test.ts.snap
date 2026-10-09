@@ -13,10 +13,11 @@ exports[`mantra currency bridge scanAccounts mantra seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
     "spendableBalance": "819728000000000000",
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1f4ff6d1",
     "used": true,
-    "xpub": "mantra1gyauvl44q2apn3u3aujm36q8zrj74vry7n5nvn",
+    "xpub": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
   },
   {
     "balance": "0",
@@ -29,10 +30,11 @@ exports[`mantra currency bridge scanAccounts mantra seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
     "spendableBalance": "0",
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1f4ff6d1",
     "used": false,
-    "xpub": "mantra1v2mp0m7k96dm9qv60fkspcqlzpkzrwnefwef05",
+    "xpub": "02c8f29e73a2c99d11de0544615a87afc6c6575d22746af18a8ef733066f088b1f",
   },
 ]
 `;

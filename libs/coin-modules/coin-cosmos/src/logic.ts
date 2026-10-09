@@ -1,15 +1,17 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import {
+  isStakingAccount,
+  type Account,
   type StakingDelegation,
   type StakingRedelegation,
   type StakingUnbonding,
 } from "@ledgerhq/types-live";
 import * as bech32 from "bech32";
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import cryptoFactory from "./chain/chain";
 import type {
-  CosmosAccount,
   CosmosDelegationInfo,
   CosmosMappedDelegation,
   CosmosMappedDelegationInfo,
@@ -148,20 +150,15 @@ export const searchFilter: CosmosSearchFilter =
     const terms = `${validator?.name ?? ""} ${validator?.validatorAddress ?? ""}`;
     return terms.toLowerCase().includes(query.toLowerCase().trim());
   };
-export function getMaxDelegationAvailable(
-  account: CosmosAccount,
-  validatorsLength: number,
-): BigNumber {
+export function getMaxDelegationAvailable(account: Account, validatorsLength: number): BigNumber {
   const numberOfDelegations = Math.min(COSMOS_MAX_DELEGATIONS, validatorsLength || 1);
   const { spendableBalance } = account;
   return spendableBalance
     .minus(COSMOS_MIN_FEES.multipliedBy(numberOfDelegations))
     .minus(COSMOS_MIN_SAFE);
 }
-export const getMaxEstimatedBalance = (
-  account: CosmosAccount,
-  estimatedFees: BigNumber,
-): BigNumber => {
+export const getMaxEstimatedBalance = (account: Account, estimatedFees: BigNumber): BigNumber => {
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const { unbondingBalance, delegatedBalance } = account.stakingResources;
   const blockBalance = unbondingBalance.plus(delegatedBalance);
   const amount = account.balance.minus(estimatedFees).minus(blockBalance);
@@ -175,19 +172,18 @@ export const getMaxEstimatedBalance = (
   return amount;
 };
 
-export function canUndelegate(account: CosmosAccount): boolean {
+export function canUndelegate(account: Account): boolean {
+  invariant(isStakingAccount(account), "cosmos staking account required");
   return account.stakingResources.unbondings.length < COSMOS_MAX_UNBONDINGS;
 }
 
-export function canDelegate(account: CosmosAccount): boolean {
+export function canDelegate(account: Account): boolean {
   const maxSpendableBalance = getMaxDelegationAvailable(account, 1);
   return maxSpendableBalance.gt(0);
 }
 
-export function canRedelegate(
-  account: CosmosAccount,
-  delegation: { validatorAddress: string },
-): boolean {
+export function canRedelegate(account: Account, delegation: { validatorAddress: string }): boolean {
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const { redelegations } = account.stakingResources;
   const now = new Date();
   const activeRedelegations = redelegations.filter(
@@ -200,9 +196,10 @@ export function canRedelegate(
 }
 
 export function getRedelegation(
-  account: CosmosAccount,
+  account: Account,
   delegation: CosmosMappedDelegation,
 ): CosmosRedelegation | undefined {
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const { redelegations } = account.stakingResources;
   const now = new Date();
   return redelegations.find(
@@ -213,7 +210,7 @@ export function getRedelegation(
 }
 
 export function getRedelegationCompletionDate(
-  account: CosmosAccount,
+  account: Account,
   delegation: CosmosMappedDelegation,
 ): Date | null | undefined {
   const currentRedelegation = getRedelegation(account, delegation);

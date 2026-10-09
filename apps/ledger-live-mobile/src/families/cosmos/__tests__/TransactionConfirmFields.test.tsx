@@ -80,21 +80,6 @@ describe("cosmos TransactionConfirmFields", () => {
       expect(screen.queryByText("Source Val")).toBeNull();
     });
 
-    it("still renders a legacy validators[] transaction", () => {
-      render(
-        <DelegateValidatorsField
-          account={account}
-          transaction={tx({
-            mode: "delegate",
-            amount: new BigNumber(0),
-            validators: [{ address: "cosmosvaloper1dst", amount: new BigNumber(3_000_000) }],
-          })}
-          field={field}
-        />,
-      );
-      expect(screen.getByText("Dest Val")).toBeVisible();
-    });
-
     it("renders nothing, without crashing, when no validator is set", () => {
       render(
         <DelegateValidatorsField
@@ -156,17 +141,6 @@ describe("cosmos TransactionConfirmFields", () => {
         />,
       );
       expect(screen.getByText("Source Val")).toBeVisible();
-    });
-
-    it("falls back to the legacy sourceValidator", () => {
-      render(
-        <SourceValidatorNameField
-          account={account}
-          transaction={tx({ mode: "redelegate", sourceValidator: "cosmosvaloper1dst" })}
-          field={field}
-        />,
-      );
-      expect(screen.getByText("Dest Val")).toBeVisible();
     });
 
     it("renders nothing when there is no source validator", () => {
