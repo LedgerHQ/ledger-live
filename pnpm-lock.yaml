@@ -6096,6 +6096,9 @@ importers:
       '@domain/api-ofac':
         specifier: workspace:*
         version: link:../../../domain/api/ofac
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
       '@shared/ui-app-unavailable':
         specifier: workspace:*
         version: link:../../../shared/ui-app-unavailable
