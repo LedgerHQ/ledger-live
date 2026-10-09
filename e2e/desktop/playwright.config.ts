@@ -1,8 +1,16 @@
 import { PlaywrightTestConfig } from "@playwright/test";
 
+const DEFAULT_RETRIES = process.env.CI ? 1 : 0;
+
+const parseRetries = (value: string | undefined) => {
+  const raw = (value ?? "").trim();
+  const parsed = Number(raw);
+  return raw && Number.isInteger(parsed) && parsed >= 0 ? parsed : DEFAULT_RETRIES;
+};
+
 const config: PlaywrightTestConfig = {
   testDir: "./tests/specs",
-  retries: process.env.CI ? 2 : 0,
+  retries: parseRetries(process.env.E2E_RETRIES),
   timeout: process.env.CI ? 400000 : 1200000,
   outputDir: "./tests/artifacts/test-results",
   expect: {

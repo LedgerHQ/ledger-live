@@ -65,6 +65,8 @@ Mobile **requires** `tests_type` (`Android Only`|`iOS Only`|`iOS & Android`) and
 
 `-f team=` only exists on branches that already carry the input — a branch cut before it landed will reject the flag.
 
+`retries` is optional on both: `default` (the test config's value), `0`, `1` or `2`. Pass `-f retries=0` to see raw flakiness, `-f retries=2` when only a passing run matters. Like `team`, older branches reject it. The **Workflow Context** summary prints a **Retries** line.
+
 **Verify the filter took effect:** open the run's Summary → **Workflow Context**. Desktop prints **Filtered pattern**; Mobile prints both **Filtered pattern** (your raw input) and **Resolved filtered pattern** (what the runner selects with). Both print a **Team** line.
 
 A filter that matches 0 specs is wasted, and the failure mode depends on whether a team is set:

@@ -148,8 +148,8 @@ signed out.
 ## Known failures
 
 A test that fails because of a tracked bug is flagged with `$KnownFailure`, not skipped. It still
-runs once and still fails the run, but Detox does not retry it, so it costs one attempt instead of
-three.
+runs once and still fails the run, but Detox does not retry it, so it costs one attempt whatever the
+retry setting.
 
 ```ts
 import { $KnownFailure } from "@e2e/helpers/knownFailure";

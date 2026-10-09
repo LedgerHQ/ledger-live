@@ -103,6 +103,16 @@ on:
         required: false
         type: string
         default: ""
+      retries:
+        description: "Retries per failed test (default: the value in apps/ledger-live-mobile/scripts/e2e-ci.mjs)"
+        required: false
+        type: choice
+        options:
+          - default
+          - "0"
+          - "1"
+          - "2"
+        default: default
 
   workflow_call:
     inputs:
@@ -163,6 +173,11 @@ on:
         required: false
         type: string
         default: ""
+      retries:
+        description: "Retries per failed test: 0, 1, 2 or default (the value in apps/ledger-live-mobile/scripts/e2e-ci.mjs)"
+        required: false
+        type: string
+        default: default
     secrets:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos, both platforms). Repository secret; pass via secrets inherit when reusing this workflow.
@@ -236,6 +251,7 @@ env:
   ANDROID_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   IOS_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  E2E_RETRIES: ${{ inputs.retries || 'default' }}
   USERDATA_CACHE_ENABLED: ${{ !inputs.production_firebase }}
   E2E_GENERATED_USERDATA_DIR: ${{ !inputs.production_firebase && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
   # Broadcast on explicit request, or on the platform's own broadcast nightly (see the schedule above).
@@ -395,6 +411,7 @@ jobs:
           echo "- **Android Feature Flags:** $ANDROID_FEATURE_FLAGS"
           echo "- **iOS Feature Flags:** $IOS_FEATURE_FLAGS"
           echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
+          echo "- **Retries:** $E2E_RETRIES"
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Validate feature flags JSON input
