@@ -387,3 +387,58 @@ export function runInlineAddAccountTest(
     });
   });
 }
+
+export function runSwapRedirectTest(
+  earnAccount: Account,
+  fundingAccount: Account,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Earn v2", () => {
+    const accountsToSeed = [earnAccount];
+    // USDT is a token of ETH_1. Seed that parent as well when the earn account is the empty one.
+    if (
+      fundingAccount.parentAccount &&
+      fundingAccount.parentAccount.accountPath !== earnAccount.accountPath
+    ) {
+      accountsToSeed.push(fundingAccount.parentAccount);
+    }
+
+    beforeAll(async () => {
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: earnAccount.currency.speculosApp,
+        featureFlags: { ...EARN_V2_FLAGS, ...swapToEarnFlags("v2") },
+        cliCommands: accountsToSeed.map(account => liveDataCommand(account)),
+        speculosForSetupOnly: true,
+      });
+    });
+
+    setTeamOwner(Team.EARN);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`[${earnAccount.currency.testLabel}] - Earn v2 deposit v2 redirects to swap after selecting another account`, async () => {
+      // The account-page Earn action is hidden for an empty balance, so enter from the dashboard.
+      // A second ETH account opens the picker: the CTA only knows the ticker.
+      // A zero balance opens Get funds instead of deposit, so the balance is not asserted.
+      await navigateToEarn();
+      await app.earnV2Dashboard.clickAssetEarnCta(earnAccount.currency.ticker);
+      if (accountsToSeed.length > 1) {
+        await app.modularDrawer.validateAccountNames(
+          accountsToSeed.map(account => account.accountName),
+        );
+        await app.modularDrawer.selectAccount(earnAccount.accountName);
+      }
+      await app.earnV2Dashboard.verifyV2DepositFlowVisible();
+      await app.earnV2Dashboard.selectAnotherFundingAccount(fundingAccount);
+      await app.earnV2Dashboard.verifySwapToEarnDescription(
+        fundingAccount.currency.ticker,
+        earnAccount.currency.ticker,
+      );
+      await app.earnV2Dashboard.selectAmountPresetV2("50");
+      await app.earnV2Dashboard.continueToSwap();
+      await app.swapLiveApp.checkAssetFromMatchesAccount(fundingAccount);
+      await app.swapLiveApp.checkAssetToContains(earnAccount.currency.ticker);
+    });
+  });
+}
