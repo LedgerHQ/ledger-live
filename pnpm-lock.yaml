@@ -15395,6 +15395,12 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: 6.36.0
         version: 6.36.0
+      '@noble/curves':
+        specifier: 'catalog:'
+        version: 1.9.7
+      '@noble/hashes':
+        specifier: 'catalog:'
+        version: 1.8.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -15417,9 +15423,6 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
-      '@noble/curves':
-        specifier: 'catalog:'
-        version: 1.9.7
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
