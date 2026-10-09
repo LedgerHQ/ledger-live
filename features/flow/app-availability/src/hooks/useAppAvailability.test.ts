@@ -1,13 +1,13 @@
 import { renderHook } from "@testing-library/react";
-import { useCheckQuery } from "@domain/api-ofac";
+import { useCheckOfacGeoBlockQuery } from "@domain/api-ofac";
 import { mockOfacCheckQuery } from "../test/mockOfacCheckQuery";
 import { useAppAvailability } from "./useAppAvailability";
 
 jest.mock("@domain/api-ofac", () => ({
-  useCheckQuery: jest.fn(),
+  useCheckOfacGeoBlockQuery: jest.fn(),
 }));
 
-const mockedUseCheckQuery = jest.mocked(useCheckQuery);
+const mockedUseCheckQuery = jest.mocked(useCheckOfacGeoBlockQuery);
 
 describe("useAppAvailability", () => {
   afterEach(() => {

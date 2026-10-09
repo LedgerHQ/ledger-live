@@ -1,15 +1,15 @@
 import React from "react";
 import { Text } from "react-native";
 import { render, screen } from "@testing-library/react-native";
-import { useCheckQuery } from "@domain/api-ofac";
+import { useCheckOfacGeoBlockQuery } from "@domain/api-ofac";
 import { mockOfacCheckQuery } from "../test/mockOfacCheckQuery";
 import { AppAvailability } from "./AppAvailability";
 
 jest.mock("@domain/api-ofac", () => ({
-  useCheckQuery: jest.fn(),
+  useCheckOfacGeoBlockQuery: jest.fn(),
 }));
 
-const mockedUseCheckQuery = jest.mocked(useCheckQuery);
+const mockedUseCheckQuery = jest.mocked(useCheckOfacGeoBlockQuery);
 
 const TITLE = "Location unavailable";
 const DESCRIPTION = "Ledger Wallet is not available in this location.";
