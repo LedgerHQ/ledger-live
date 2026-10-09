@@ -12,6 +12,7 @@ import { DEFAULT_DEVICE_NOT_FOUND_DELAY, DEFAULT_SUCCESS_DELAY } from "./constan
 import { DefaultConnectNewDeviceStateMachine } from "./ConnectNewDeviceStateMachine";
 import {
   ConnectNewDeviceUIStateTypes,
+  type ConnectNewDeviceFilterListedDevices,
   type ConnectNewDeviceGetDiscoveredDeviceKey,
   type ConnectNewDeviceMapConnectionError,
   type ConnectNewDeviceUIState,
@@ -87,6 +88,7 @@ type SetupTestOptions = {
   readonly connectedDevice?: ConnectedDevice;
   readonly mapConnectionError?: ConnectNewDeviceMapConnectionError;
   readonly getDiscoveredDeviceKey?: ConnectNewDeviceGetDiscoveredDeviceKey;
+  readonly filterListedDevices?: ConnectNewDeviceFilterListedDevices;
   readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
   readonly deviceNotFoundDelay?: number;
   readonly successDelay?: number;
@@ -100,6 +102,7 @@ const setupTest = ({
   connectedDevice = makeConnectedDevice(),
   mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
   getDiscoveredDeviceKey = getDeviceKeyById,
+  filterListedDevices,
   buildCompatDeviceId,
   deviceNotFoundDelay,
   successDelay,
@@ -137,6 +140,7 @@ const setupTest = ({
     onClose,
     mapConnectionError,
     getDiscoveredDeviceKey,
+    ...(filterListedDevices ? { filterListedDevices } : {}),
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
     ...(deviceNotFoundDelay === undefined ? {} : { deviceNotFoundDelay }),
     ...(successDelay === undefined ? {} : { successDelay }),
@@ -282,6 +286,23 @@ describe("ConnectNewDeviceStateMachine", () => {
           onSelect: expect.any(Function),
         },
       ]);
+    });
+
+    it("should emit only the devices that the injected filter keeps, at their positions", () => {
+      const { discoverDevices, lastState, machine } = setupTest({
+        filterListedDevices: listedDevices =>
+          listedDevices.filter(({ isAvailable }) => isAvailable),
+      });
+      const listedIds = () =>
+        lastState(ConnectNewDeviceUIStateTypes.Discovering).devices.map(({ device }) => device.id);
+
+      machine.start();
+      discoverDevices([nanoX, stax]);
+      discoverDevices([stax]);
+      expect(listedIds()).toEqual(["stax-id"]);
+
+      discoverDevices([stax, nanoX]);
+      expect(listedIds()).toEqual(["nano-x-id", "stax-id"]);
     });
   });
 
