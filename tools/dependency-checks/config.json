@@ -99,6 +99,33 @@
           "exit": "LIVE-37448 the SDKs move to @noble/curves, or we stop shipping them."
         }
       }
+    },
+    "secure-random": {
+      "why": "Mobile installs crypto.getRandomValues from expo-crypto (LIVE-37309).",
+      "patterns": [
+        "*get-random-values*",
+        "react-native-randombytes",
+        "react-native-securerandom",
+        "react-native-quick-crypto",
+        "expo-random",
+        "expo-crypto"
+      ],
+      "packages": {
+        "expo-crypto": {
+          "target": true,
+          "reason": "The implementation we converge on. Backs the global crypto.getRandomValues through src/getRandomValuesPolyfill.ts."
+        },
+        "react-native-get-random-values": {
+          "tolerated": true,
+          "reason": "Imported by @hiero-ledger/cryptography, @ledgerhq/coin-evm@10.1.0 and @segment/analytics-react-native. Mobile aliases it to the expo-crypto shim in rspack.config.mjs and excludes it from autolinking.",
+          "exit": "Those packages stop importing it."
+        },
+        "react-native-randombytes": {
+          "tolerated": true,
+          "reason": "Native module reached through node-libs-react-native's crypto shim (react-native-crypto).",
+          "exit": "node-libs-react-native is replaced, or its crypto shim no longer pulls it."
+        }
+      }
     }
   }
 }

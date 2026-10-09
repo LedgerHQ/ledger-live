@@ -1,4 +1,4 @@
-import "react-native-get-random-values";
+import "./src/getRandomValuesPolyfill";
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native
 import "node-libs-react-native/globals";
