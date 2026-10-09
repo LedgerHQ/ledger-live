@@ -13,6 +13,10 @@ hooks {
             ["gitleaks"] {
                 check = "gitleaks git --pre-commit --staged --redact --no-banner --verbose --config .gitleaks.toml"
             }
+            ["dependency-checks"] {
+                glob = List("pnpm-lock.yaml", "tools/danger/dependency-checks/**")
+                check = "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/danger/dependency-checks/cli.ts"
+            }
             ["actionlint"] = Builtins.actionlint
             ["zizmor"] = (Builtins.zizmor) {
                 glob = List(".github/workflows/*.yml", "tools/actions/**/*.yml")
