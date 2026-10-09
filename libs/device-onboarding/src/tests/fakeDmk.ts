@@ -38,7 +38,7 @@ export function createFakeCommandDmk<Data, ErrorCodes = void>(
 ): FakeCommandDmk {
   const commands = scriptQueue(script, "command");
 
-  const sendCommand = jest.fn(async () => played(commands.next()));
+  const sendCommand = jest.fn(() => played(commands.next()));
   const dmk = createDeviceManagementKit({ sendCommand });
 
   return { dmk, sendCommand };
@@ -173,7 +173,7 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
 
   const toggles: number[] = [];
 
-  const sendCommand = jest.fn(async ({ command }) => {
+  const sendCommand = jest.fn(({ command }) => {
     if (command instanceof ToggleEarlyCheckCommand) {
       toggles.push(command.getApdu().p2);
 
@@ -206,12 +206,13 @@ export function createFakeOnboardingDmk(script: OnboardingDmkScript = {}): FakeO
   }
 }
 
-function played<T>(entry: T | { throws: unknown }): T {
+/** What the device answers: the scripted entry, or a rejection when the script says it throws. */
+function played<T>(entry: T | { throws: unknown }): Promise<T> {
   if (typeof entry === "object" && entry !== null && "throws" in entry) {
-    throw entry.throws;
+    return Promise.reject(entry.throws);
   }
 
-  return entry as T;
+  return Promise.resolve(entry as T);
 }
 
 function scriptedAction(next: ScriptedDeviceAction<unknown>) {
