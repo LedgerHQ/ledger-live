@@ -487,7 +487,7 @@ export async function performTransparentSync(
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
   const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
   const blockHeight = currentBlock?.height || 0;
-  await wallet.syncAccount(walletAccount, blockHeight);
+  await wallet.syncAccount(context.logger, walletAccount, blockHeight);
 
   const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
 

@@ -153,7 +153,7 @@ describe("xpub integration sync", () => {
       it(
         "should sync from zero correctly",
         async () => {
-          await xpub.sync();
+          await xpub.sync(jest.fn());
           // const truthDump = path.join(__dirname, 'data', 'sync', `${dataset.xpub}.json`);
           // const data = await storage.export();
           // data.txs = orderBy(data.txs, ['derivationMode', 'account', 'index', 'block.height', 'id']);

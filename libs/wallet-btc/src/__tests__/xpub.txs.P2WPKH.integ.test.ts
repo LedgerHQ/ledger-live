@@ -74,7 +74,7 @@ describe.skip("testing xpub native segwit transactions", () => {
     await sleep(30000);
 
     try {
-      await xpubs[0].xpub.sync();
+      await xpubs[0].xpub.sync(jest.fn());
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log("praline explorer setup error", e);
@@ -95,7 +95,7 @@ describe.skip("testing xpub native segwit transactions", () => {
 
     const utxoPickingStrategy = new Merge(xpubs[0].xpub.crypto, xpubs[0].xpub.derivationMode, []);
 
-    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx({
+    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx(jest.fn(), {
       destAddress: address,
       amount: new BigNumber(100000000),
       feePerByte: 100,
@@ -153,8 +153,8 @@ describe.skip("testing xpub native segwit transactions", () => {
     // time for explorer to sync
     await sleep(40000);
 
-    await xpubs[0].xpub.sync();
-    await xpubs[1].xpub.sync();
+    await xpubs[0].xpub.sync(jest.fn());
+    await xpubs[1].xpub.sync(jest.fn());
 
     expectedFee1 =
       utils.maxTxSizeCeil(

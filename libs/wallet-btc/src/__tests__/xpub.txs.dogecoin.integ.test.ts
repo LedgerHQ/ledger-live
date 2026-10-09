@@ -27,7 +27,7 @@ describe("testing dogecoin transactions", () => {
   it("testing dogecoin transactions with huge amount", async () => {
     const utxoPickingStrategy = new Merge(xpub.crypto, xpub.derivationMode, []);
     const changeAddress = await xpub.getNewAddress(1, 0);
-    xpub.storage.appendTxs([
+    xpub.storage.appendTxs(jest.fn(), [
       {
         id: "c4ee70c30b9c5c5fed60c37ce86046156af3623f32aa5be94556b35dcf0af147",
         inputs: [],
@@ -61,7 +61,7 @@ describe("testing dogecoin transactions", () => {
       },
     ]);
 
-    const txInfo = await xpub.buildTx({
+    const txInfo = await xpub.buildTx(jest.fn(), {
       destAddress: "D9fSjc6zAyjdRgSfbfMLv5z5FpuacvguUi",
       amount: new BigNumber(200000000000000000),
       feePerByte: 100,
