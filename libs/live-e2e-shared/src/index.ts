@@ -38,11 +38,15 @@ export const formatFlagsData = (data: Partial<{ [key in FeatureId]: Feature }>) 
 
 const SENSITIVE_ENV_KEYS: Set<string> = new Set(["SEED"]);
 
+/** Same masking as `redactSecureChannelToken` in ledger-live-common. A mock `BASE_SOCKET_URL` carries the session token in the path. */
+const redactSecureChannelToken = (value: string): string =>
+  value.replace(/(\/secure-channel\/)[^/?#]+/g, "$1***").replace(/([?&]token=)[^&#]+/g, "$1***");
+
 export const formatEnvData = (data: Record<string, unknown>) => {
   let allureData = "";
   for (const [key, value] of Object.entries(data)) {
     if (SENSITIVE_ENV_KEYS.has(key)) continue;
-    allureData += `ENV.${key} = ${value}\n`;
+    allureData += `ENV.${key} = ${redactSecureChannelToken(String(value))}\n`;
   }
   return allureData;
 };
