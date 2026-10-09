@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { UnknownAction, Store } from "redux";
 import { State as StoreState } from "~/renderer/reducers";
+import { CountervaluesProbeProfiler } from "@features/platform-market-countervalues";
 import App from "./App";
 import "./global.css";
 import { Countervalues } from "./storage";
@@ -31,7 +32,9 @@ class ReactRoot extends Component<Props, State> {
     return error ? (
       String(error)
     ) : (
-      <App store={store} initialCountervalues={initialCountervalues as CounterValuesStateRaw} />
+      <CountervaluesProbeProfiler>
+        <App store={store} initialCountervalues={initialCountervalues as CounterValuesStateRaw} />
+      </CountervaluesProbeProfiler>
     );
   }
 }

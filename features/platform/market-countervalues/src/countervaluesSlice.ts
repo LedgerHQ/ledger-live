@@ -1,5 +1,6 @@
 import { createAction, type UnknownAction } from "@reduxjs/toolkit";
 import { initialState, type CounterValuesState } from "@domain/entity-market-countervalues";
+import { probeAction } from "./internals/renderProbe";
 
 // The Redux slice both apps mount at the `countervalues` store key. Its action types are plain
 // strings because listeners outside the slice match them by value.
@@ -49,6 +50,7 @@ export function countervaluesReducer(
   state: CountervaluesState = countervaluesInitialState,
   action: UnknownAction,
 ): CountervaluesState {
+  probeAction(state, action);
   if (setCountervaluesPollingIsPolling.match(action)) {
     return { ...state, polling: { ...state.polling, isPolling: action.payload } };
   }

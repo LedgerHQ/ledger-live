@@ -14,6 +14,14 @@ import { BigNumber } from "bignumber.js";
 import React, { ReactElement, useCallback, useContext, useEffect, useMemo } from "react";
 import { CountervaluesContext } from "./internals/CountervaluesContext";
 import { log } from "./internals/logger";
+import {
+  countEffectRender,
+  probeLoad,
+  probeRates,
+  probeRestore,
+  probeSettings,
+  useProbeBridge,
+} from "./internals/renderProbe";
 import { useDebounce } from "./internals/useDebounce";
 
 export interface PollingState {
@@ -101,6 +109,7 @@ function Effect({
   debounceDelay = 1000,
   pollInitDelay = 3 * 1000,
 }: Pick<Props, "autopollInterval" | "bridge" | "debounceDelay" | "pollInitDelay" | "savedState">) {
+  countEffectRender();
   const userSettings = bridge.useUserSettings();
   const { refreshRate, marketCapBatchingAfterRank } = userSettings;
 
@@ -112,6 +121,7 @@ function Effect({
     }),
     [supportedCryptoIds, userSettings],
   );
+  useEffect(() => probeSettings(filteredUserSettings), [filteredUserSettings]);
   const debouncedUserSettings = useDebounce(filteredUserSettings, debounceDelay);
 
   const batchStrategySolver = useMemo(
@@ -143,12 +153,14 @@ function Effect({
     bridge.setPollingTriggerLoad(false);
 
     bridge.setStatePending(true);
-    loadCountervalues(currentState, filteredUserSettings, {
-      rates: bridge.rates,
-      batchStrategySolver,
-      granularitiesRates: filteredUserSettings.granularitiesRates,
-      log,
-    }).then(
+    probeLoad(filteredUserSettings, () =>
+      loadCountervalues(currentState, filteredUserSettings, {
+        rates: probeRates(bridge.rates),
+        batchStrategySolver,
+        granularitiesRates: filteredUserSettings.granularitiesRates,
+        log,
+      }),
+    ).then(
       s => {
         bridge.setState(s);
         bridge.setStatePending(false);
@@ -164,7 +176,9 @@ function Effect({
   useEffect(() => {
     if (!savedState || typeof savedState !== "object") return;
     if (!Object.keys(savedState).length) return;
-    bridge.setState(importCountervalues(savedState, userSettings));
+    const restored = importCountervalues(savedState, userSettings);
+    probeRestore(savedState, restored);
+    bridge.setState(restored);
   }, [bridge, savedState, userSettings]);
 
   // manage the auto polling loop
@@ -193,6 +207,7 @@ export function CountervaluesProvider({
   bridge,
   ...rest
 }: Readonly<Props>): ReactElement {
+  useProbeBridge(bridge);
   return (
     <CountervaluesContext.Provider value={bridge}>
       <Effect {...rest} bridge={bridge} />
