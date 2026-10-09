@@ -241,16 +241,29 @@ describe("getBalance (MSW integration)", () => {
       };
     }
 
-    it("should include staked balance in totalBalance and locked", async () => {
-      const stakeLamports = 2_000_000_000;
-      server.use(rpcHandler(stakeHandlers(stakeLamports)));
+    it("reports the system lamports on the first native entry, with rent and unstake reserve locked", async () => {
+      server.use(rpcHandler(stakeHandlers(2_000_000_000)));
 
       const result = await getBalance(api, TEST_ADDRESS);
 
       const native = result[0];
-      expect(native.value).toBe(BigInt(1_000_000_000 + stakeLamports));
+      expect(native.value).toBe(1_000_000_000n);
       expect(native.asset).toEqual({ type: "native" });
-      expect(native.locked).toBeGreaterThan(BigInt(890880 + stakeLamports));
+      expect(native.locked).toBeGreaterThan(890880n);
+    });
+
+    it("partitions the account total across the native entries, counting the stake account once", async () => {
+      server.use(rpcHandler(stakeHandlers(2_000_000_000)));
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      const natives = result.filter(balance => balance.asset.type === "native");
+      expect(natives.reduce((total, balance) => total + balance.value, 0n)).toBe(3_000_000_000n);
+      expect(result[1]).toMatchObject({
+        value: 2_000_000_000n,
+        locked: 2_000_000_000n,
+        stake: expect.anything(),
+      });
     });
   });
 
