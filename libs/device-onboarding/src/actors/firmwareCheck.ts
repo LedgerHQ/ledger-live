@@ -27,8 +27,8 @@ export function mapFirmwareMetadata(metadata: GetDeviceMetadataDAOutput): Firmwa
   const { availableUpdate } = metadata.firmwareUpdateContext;
 
   return availableUpdate === undefined
-    ? { type: "FIRMWARE_UP_TO_DATE" }
-    : { type: "FIRMWARE_UPDATE_AVAILABLE", update: availableUpdate };
+    ? { type: "FIRMWARE_UP_TO_DATE", output: metadata }
+    : { type: "FIRMWARE_UPDATE_AVAILABLE", output: { ...metadata, update: availableUpdate } };
 }
 
 export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput>(
@@ -56,9 +56,9 @@ export const firmwareCheck = fromCallback<FirmwareCheckEvent, FirmwareCheckInput
           sendBack(mapFirmwareMetadata(metadata));
         }
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (!stopped) {
-          sendBack({ type: "FIRMWARE_CHECK_FAILED" });
+          sendBack({ type: "FIRMWARE_CHECK_FAILED", output: error });
         }
       });
 

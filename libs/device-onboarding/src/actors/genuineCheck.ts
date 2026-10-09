@@ -11,7 +11,7 @@ import { fromCallback } from "xstate";
 import { createDeviceActionRunner } from "../device/deviceAction";
 import { isCatalogueUnreachable, isDeviceRefusal, isSecureChannelLost } from "../device/errors";
 import { createRetryPolicy, withRetries, type RetryPolicy } from "../retry";
-import type { GenuineCheckFailure, OnboardingEvent } from "../types";
+import type { OnboardingEvent } from "../types";
 
 export type GenuineCheckEvent = Extract<
   OnboardingEvent,
@@ -27,7 +27,10 @@ export type GenuineCheckEvent = Extract<
   }
 >;
 
-export type GenuineCheckFailureEvent = Extract<GenuineCheckEvent, { failure: GenuineCheckFailure }>;
+export type GenuineCheckFailureEvent = Extract<
+  GenuineCheckEvent,
+  { type: "GENUINE_CHECK_REFUSED" | "GENUINE_CHECK_FAILED" | "SECURE_CHANNEL_LOST" }
+>;
 
 export type GenuineCheckInput = {
   dmk: DeviceManagementKit;
@@ -37,14 +40,14 @@ export type GenuineCheckInput = {
 
 export function mapGenuineCheckFailure(error: unknown): GenuineCheckFailureEvent {
   if (isDeviceRefusal(error)) {
-    return { type: "GENUINE_CHECK_REFUSED", failure: error };
+    return { type: "GENUINE_CHECK_REFUSED", output: error };
   }
 
   if (isSecureChannelLost(error)) {
-    return { type: "SECURE_CHANNEL_LOST", failure: error };
+    return { type: "SECURE_CHANNEL_LOST", output: error };
   }
 
-  return { type: "GENUINE_CHECK_FAILED", failure: error };
+  return { type: "GENUINE_CHECK_FAILED", output: error };
 }
 
 export const genuineCheck = fromCallback<GenuineCheckEvent, GenuineCheckInput>(
@@ -86,8 +89,8 @@ export const genuineCheck = fromCallback<GenuineCheckEvent, GenuineCheckInput>(
         if (!stopped) {
           sendBack(
             output.isGenuine
-              ? { type: "GENUINE_CHECK_PASSED" }
-              : { type: "DEVICE_NOT_GENUINE", failure: output },
+              ? { type: "GENUINE_CHECK_PASSED", output }
+              : { type: "DEVICE_NOT_GENUINE", output },
           );
         }
       })

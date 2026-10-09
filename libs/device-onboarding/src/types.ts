@@ -3,6 +3,9 @@ import type {
   DeviceModelId,
   DeviceSessionId,
   FirmwareUpdateContext,
+  GetDeviceMetadataDAOutput,
+  GetOsVersionResponse,
+  GenuineCheckDAOutput,
 } from "@ledgerhq/device-management-kit";
 
 /** Named with the values DMK's decoding returns, so reading one is a membership check and not a translation. */
@@ -125,7 +128,7 @@ export type OnboardingEvent =
   /** The host moved to a new session mid-run, before the flow reached SESSION_READY. */
   | { type: "SESSION_CHANGED"; sessionId: DeviceSessionId }
   | { type: "LOCKED" }
-  | { type: "UNLOCKED" }
+  | { type: "UNLOCKED"; output?: GetOsVersionResponse }
   | { type: "TRANSPORT_LOST" }
   | { type: "STEP_CHANGED"; state: DeviceOnboardingState }
   | { type: "DEVICE_STATE_READ"; state: DeviceOnboardingState; firmwareVersion: string }
@@ -135,21 +138,24 @@ export type OnboardingEvent =
       isInRecoveryMode: boolean;
       firmwareVersion: string;
     }
-  | { type: "DEVICE_STATE_FAILED" }
-  | { type: "DEVICE_IN_BOOTLOADER" }
-  | { type: "DEVICE_IN_OSU" }
+  | { type: "DEVICE_STATE_FAILED"; output: unknown }
+  | { type: "DEVICE_IN_BOOTLOADER"; output: string }
+  | { type: "DEVICE_IN_OSU"; output: string }
   | { type: "EARLY_CHECK_TOGGLED" }
-  | { type: "EARLY_CHECK_UNAVAILABLE" }
+  | { type: "EARLY_CHECK_UNAVAILABLE"; output: unknown }
   | { type: "ALLOW_SECURE_CONNECTION_REQUESTED" }
   | { type: "SECURE_CONNECTION_ALLOWED" }
-  | { type: "GENUINE_CHECK_PASSED" }
-  | { type: "GENUINE_CHECK_REFUSED"; failure: GenuineCheckFailure }
-  | { type: "GENUINE_CHECK_FAILED"; failure: GenuineCheckFailure }
-  | { type: "DEVICE_NOT_GENUINE"; failure: GenuineCheckFailure }
-  | { type: "SECURE_CHANNEL_LOST"; failure: GenuineCheckFailure }
-  | { type: "FIRMWARE_UP_TO_DATE" }
-  | { type: "FIRMWARE_UPDATE_AVAILABLE"; update: AvailableFirmwareUpdate }
-  | { type: "FIRMWARE_CHECK_FAILED" }
+  | { type: "GENUINE_CHECK_PASSED"; output: GenuineCheckDAOutput }
+  | { type: "GENUINE_CHECK_REFUSED"; output: GenuineCheckFailure }
+  | { type: "GENUINE_CHECK_FAILED"; output: GenuineCheckFailure }
+  | { type: "DEVICE_NOT_GENUINE"; output: GenuineCheckDAOutput }
+  | { type: "SECURE_CHANNEL_LOST"; output: GenuineCheckFailure }
+  | { type: "FIRMWARE_UP_TO_DATE"; output: GetDeviceMetadataDAOutput }
+  | {
+      type: "FIRMWARE_UPDATE_AVAILABLE";
+      output: GetDeviceMetadataDAOutput & { update: AvailableFirmwareUpdate };
+    }
+  | { type: "FIRMWARE_CHECK_FAILED"; output: unknown }
   | { type: "FIRMWARE_UPDATE_FLOW_CLOSED"; sessionId: DeviceSessionId }
   | { type: "RETRY" }
   | { type: "SKIP" }

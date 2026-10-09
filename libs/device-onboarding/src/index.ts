@@ -75,14 +75,17 @@ export {
 } from "./actors/seedPolling";
 export {
   createOnboardingEventLog,
-  flattenDeviceOnboardingContext,
+  nextStatesFrom,
   recordOnboardingToolEvent,
   stampSession,
   stateValueToString,
+  toolContext,
   toolEvent,
   userEvents,
+  type HostLogRow,
   type HostOnboardingEvent,
+  type HostNextState,
   type HostToolEvent,
   type HostToolEventDetail,
-  type WatchedOnboardingContext,
+  type HostToolPayload,
 } from "./host";

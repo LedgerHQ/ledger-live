@@ -1,6 +1,7 @@
 import {
   CommandResultFactory,
   InvalidStatusWordError,
+  type DeviceManagementKit,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
 import { ReadOnboardingVersionCommand } from "../device/onboardingVersionCommand";
@@ -13,12 +14,7 @@ import {
   type OsVersionResponseOptions,
 } from "../tests/osVersionResponse";
 import { OnboardingStep, type DeviceOnboardingState } from "../types";
-import {
-  mapDeviceState,
-  readDeviceState,
-  type ReadDeviceStateEvent,
-  type ReadDeviceStateInput,
-} from "./readDeviceState";
+import { mapDeviceState, readDeviceState, type ReadDeviceStateEvent } from "./readDeviceState";
 
 const onboardedDevice: OsVersionResponseOptions = {
   onboardingState: "device-is-ready",
@@ -97,12 +93,13 @@ describe("mapDeviceState", () => {
   it("reports a bootloader before anything else", () => {
     expect(
       mapDeviceState(createOsVersionResponse({ ...onboardedDevice, isBootloader: true })),
-    ).toEqual({ type: "DEVICE_IN_BOOTLOADER" });
+    ).toEqual({ type: "DEVICE_IN_BOOTLOADER", output: defaultSeVersion });
   });
 
   it("reports an OS updater before anything else", () => {
     expect(mapDeviceState(createOsVersionResponse({ ...onboardedDevice, isOsu: true }))).toEqual({
       type: "DEVICE_IN_OSU",
+      output: defaultSeVersion,
     });
   });
 
@@ -162,13 +159,14 @@ describe("readDeviceState", () => {
   });
 
   it("fails only once the retries are exhausted", async () => {
-    const { dmk, sendCommand } = createFakeCommandDmk([{ throws: new Error("transport failed") }]);
+    const error = new Error("transport failed");
+    const { dmk, sendCommand } = createFakeCommandDmk([{ throws: error }]);
     const { received, stop } = start(dmk);
 
     await settle();
 
     expect(sendCommand).toHaveBeenCalledTimes(3);
-    expect(received).toEqual([{ type: "DEVICE_STATE_FAILED" }]);
+    expect(received).toEqual([{ type: "DEVICE_STATE_FAILED", output: error }]);
     stop();
   });
 
@@ -184,14 +182,13 @@ describe("readDeviceState", () => {
   });
 
   it("fails when the device answers with an error status word", async () => {
-    const { dmk } = createFakeCommandDmk([
-      CommandResultFactory({ error: new InvalidStatusWordError("6a80") }),
-    ]);
+    const error = new InvalidStatusWordError("6a80");
+    const { dmk } = createFakeCommandDmk([CommandResultFactory({ error })]);
     const { received, stop } = start(dmk);
 
     await settle();
 
-    expect(received).toEqual([{ type: "DEVICE_STATE_FAILED" }]);
+    expect(received).toEqual([{ type: "DEVICE_STATE_FAILED", output: error }]);
     stop();
   });
 
@@ -212,7 +209,7 @@ function success(
   return CommandResultFactory({ data: createOsVersionResponse(options) });
 }
 
-function start(dmk: ReadDeviceStateInput["dmk"]) {
+function start(dmk: DeviceManagementKit) {
   return runActor<ReadDeviceStateEvent>(readDeviceState, {
     dmk,
     sessionId: "session",

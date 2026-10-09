@@ -30,7 +30,7 @@ describe("mapGenuineCheckFailure", () => {
 
     expect(mapGenuineCheckFailure(error)).toEqual({
       type: "GENUINE_CHECK_REFUSED",
-      failure: error,
+      output: error,
     });
   });
 
@@ -40,7 +40,7 @@ describe("mapGenuineCheckFailure", () => {
   ])("reports %s as a lost secure channel", (_, error) => {
     expect(mapGenuineCheckFailure(error)).toEqual({
       type: "SECURE_CHANNEL_LOST",
-      failure: error,
+      output: error,
     });
   });
 
@@ -51,7 +51,7 @@ describe("mapGenuineCheckFailure", () => {
   ])("reports %s as a failure", (_, error) => {
     expect(mapGenuineCheckFailure(error)).toEqual({
       type: "GENUINE_CHECK_FAILED",
-      failure: error,
+      output: error,
     });
   });
 
@@ -60,7 +60,7 @@ describe("mapGenuineCheckFailure", () => {
     ["a lost secure channel", new SecureChannelError(new Error("closed"))],
     ["an unreachable catalogue", catalogueUnreachable],
   ])("hands the app %s untouched rather than a copy of it", (_, error) => {
-    expect(mapGenuineCheckFailure(error).failure).toBe(error);
+    expect(mapGenuineCheckFailure(error).output).toBe(error);
   });
 });
 
@@ -86,7 +86,7 @@ describe("genuineCheck", () => {
     complete(fake, true);
     await settle();
 
-    expect(received).toEqual([{ type: "GENUINE_CHECK_PASSED" }]);
+    expect(received).toEqual([{ type: "GENUINE_CHECK_PASSED", output: { isGenuine: true } }]);
     stop();
   });
 
@@ -97,7 +97,7 @@ describe("genuineCheck", () => {
     complete(fake, false);
     await settle();
 
-    expect(received).toEqual([{ type: "DEVICE_NOT_GENUINE", failure: { isGenuine: false } }]);
+    expect(received).toEqual([{ type: "DEVICE_NOT_GENUINE", output: { isGenuine: false } }]);
     stop();
   });
 
@@ -170,7 +170,7 @@ describe("genuineCheck", () => {
     fail(fake, error as GenuineCheckDAError);
     await settle();
 
-    expect(received).toEqual([{ type, failure: error }]);
+    expect(received).toEqual([{ type, output: error }]);
     stop();
   });
 
@@ -184,7 +184,7 @@ describe("genuineCheck", () => {
     expect(received).toEqual([
       {
         type: "GENUINE_CHECK_FAILED",
-        failure: expect.any(DeviceActionStoppedError),
+        output: expect.any(DeviceActionStoppedError),
       },
     ]);
     stop();
@@ -200,7 +200,7 @@ describe("genuineCheck", () => {
     await settle();
 
     expect(fake.executions).toHaveLength(2);
-    expect(received).toEqual([{ type: "GENUINE_CHECK_PASSED" }]);
+    expect(received).toEqual([{ type: "GENUINE_CHECK_PASSED", output: { isGenuine: true } }]);
     stop();
   });
 
@@ -214,7 +214,7 @@ describe("genuineCheck", () => {
     }
 
     expect(fake.executions).toHaveLength(3);
-    expect(received).toEqual([{ type: "GENUINE_CHECK_FAILED", failure: catalogueUnreachable }]);
+    expect(received).toEqual([{ type: "GENUINE_CHECK_FAILED", output: catalogueUnreachable }]);
     stop();
   });
 
