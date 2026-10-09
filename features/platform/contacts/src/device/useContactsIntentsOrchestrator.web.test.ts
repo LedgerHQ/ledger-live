@@ -119,6 +119,53 @@ describe("useContactsIntentsOrchestrator", () => {
     expect(result.current.dieProps).toBeUndefined();
   });
 
+  it("GIVEN retainUntilSheetDismissed WHEN success THEN the DIE stays until the sheet is dismissed", async () => {
+    jest.useFakeTimers();
+    try {
+      // GIVEN
+      const { result, unmount } = renderHook(() =>
+        useContactsIntentsOrchestrator({ intents, retainUntilSheetDismissed: true }),
+      );
+      let request!: ReturnType<typeof startRegisterExternalAddress>;
+      act(() => {
+        request = startRegisterExternalAddress(result.current);
+      });
+      const dieProps = getActiveDieProps(result.current);
+
+      // WHEN
+      act(() => {
+        dieProps.intent.onResult?.(registerExternalAddressSuccessResult(request));
+        dieProps.intent.onJobComplete?.();
+      });
+
+      // THEN the promise resolves, but the executor stays so its sheet can finish closing.
+      await expect(request.promise).resolves.toEqual({
+        deviceCredentials: request.credentials,
+        addressDeviceContext: request.address.device,
+      });
+      expect(result.current.dieProps?.enabled).toBe(false);
+
+      act(() => {
+        result.current.dieProps?.onUserCancel();
+      });
+      expect(result.current.dieProps?.enabled).toBe(false);
+
+      act(() => {
+        result.current.dismissDeviceSheet();
+      });
+      expect(result.current.dieProps).toBeUndefined();
+
+      act(() => {
+        jest.advanceTimersByTime(700);
+      });
+      expect(result.current.dieProps).toBeUndefined();
+      unmount();
+    } finally {
+      jest.clearAllTimers();
+      jest.useRealTimers();
+    }
+  });
+
   it("GIVEN an active operation WHEN its intent reports failure THEN it rejects with that failure and keeps the DIE open", async () => {
     // GIVEN
     const { result } = renderHook(() => useContactsIntentsOrchestrator({ intents }));

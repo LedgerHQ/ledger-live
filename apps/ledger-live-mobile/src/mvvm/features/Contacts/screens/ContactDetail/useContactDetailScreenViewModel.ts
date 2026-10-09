@@ -82,6 +82,7 @@ type ContactDetailScreenViewModel =
       ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
       ledgerSyncActivationDrawer: ContactsLedgerSyncActivationDrawerProps;
       dieProps: ContactsDeviceIntentExecutorProps | undefined;
+      onDeviceSheetDismissed: () => void;
     }>;
 
 type NavigationProp = BaseNavigationComposite<
@@ -105,9 +106,10 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     useContactsLedgerSyncActivationDrawer();
   const [isLedgerSyncIntroductionOpen, setIsLedgerSyncIntroductionOpen] = useState(false);
   const { t } = useTranslation();
-  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
+  const { deviceIntents, dieProps, dismissDeviceSheet } = useContactsIntentsOrchestrator({
     intents: contactsIntentLWMDefinitions,
     getLiveConfigMinVersion: getMinVersion,
+    retainUntilSheetDismissed: true,
   });
   const emptyContact = useEmptyContactDetail(route.params.contactId);
   const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
@@ -500,5 +502,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     },
     ledgerSyncActivationDrawer,
     dieProps,
+    onDeviceSheetDismissed: dismissDeviceSheet,
   };
 }

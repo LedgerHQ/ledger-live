@@ -1,3 +1,4 @@
+import { waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import type { ContactAddressTestData } from "@ledgerhq/live-e2e-shared/contacts";
 import ContactNameDrawer, { RENAME_CONTACT_PREFIX } from "@e2e/page/drawer/contactName.drawer";
@@ -50,8 +51,12 @@ export default class ContactDetailPage {
   }
 
   @Step("Expect contact detail name to be {{0}}")
-  async expectName(name: string) {
-    await detoxExpect(this.name()).toHaveText(name);
+  async expectName(name: string, timeout?: number) {
+    if (timeout === undefined) {
+      await detoxExpect(this.name()).toHaveText(name);
+      return;
+    }
+    await waitFor(this.name()).toHaveText(name).withTimeout(timeout);
   }
 
   @Step("Expect the contact to have no address")
