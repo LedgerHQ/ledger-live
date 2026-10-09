@@ -258,5 +258,7 @@
     "@ledgerhq/generators": "0.1.0",
     "@ledgerhq/prune-changelogs": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "lwd-lwm-4-23-1-release-notes"
+  ]
 }

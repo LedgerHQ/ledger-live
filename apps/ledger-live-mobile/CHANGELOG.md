@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.23.1-hotfix.0
+
+### Patch Changes
+
+- [#23138](https://github.com/LedgerHQ/ledger-live/pull/23138) [`4f37ff5`](https://github.com/LedgerHQ/ledger-live/commit/4f37ff5b30af4d3082bf5248c8a8345eca146f60) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - LWD 4.23.1 and LWM 4.23.1 release notes
+
 ## 4.23.0
 
 ### Minor Changes
