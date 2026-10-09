@@ -12,7 +12,7 @@ import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import {
   resolveSourceValidator,
   resolveTransactionValidators,
-} from "@ledgerhq/coin-cosmos/buildTransaction";
+} from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { openURL } from "~/renderer/linking";
 import {

@@ -1,11 +1,18 @@
 import BigNumber from "bignumber.js";
 import { lastValueFrom } from "rxjs";
-import { toArray } from "rxjs/operators";
+import { tap, toArray } from "rxjs/operators";
 import { genericSignOperation } from "../signOperation";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getCoinModuleApi } from "../api";
 import { getBridgeApi } from "../bridge";
 import { buildOptimisticOperation } from "../utils";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ExpertModeRequired } from "@ledgerhq/coin-cosmos/errors";
+import { RETURN_CODES } from "@ledgerhq/coin-cosmos/types/index";
+import { LegacySignerCosmos } from "@ledgerhq/live-signer-cosmos";
+import { getDeviceSignOptions } from "../../../families/cosmos/bridge/api";
+import { createSigner as createCosmosSigner } from "../../../families/cosmos/signer";
 
 jest.mock("../api", () => ({
   getCoinModuleApi: jest.fn(),
@@ -13,6 +20,11 @@ jest.mock("../api", () => ({
 
 jest.mock("../bridge", () => ({
   getBridgeApi: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/live-signer-cosmos", () => ({
+  LegacySignerCosmos: jest.fn(),
+  DmkSignerCosmos: jest.fn(),
 }));
 
 jest.mock("../utils", () => ({
@@ -360,5 +372,116 @@ describe("genericSignOperation", () => {
 
     const { parameters } = craftTransaction.mock.calls.at(-1)[2].customFees;
     expect(parameters.feeLimit).toBeUndefined();
+  });
+  describe("cosmos", () => {
+    const cosmosTransaction = {
+      amount: new BigNumber(1_000_000),
+      fees: new BigNumber(5_000),
+      recipient: "cosmos1recipient",
+      family: "cosmos",
+      mode: "send",
+    } as any;
+
+    const cosmosAccountFor = (currencyId: string, path: string) =>
+      ({
+        freshAddressPath: path,
+        freshAddress: "cosmos1sender",
+        address: "cosmos1sender",
+        currency: getCryptoCurrencyById(currencyId),
+      }) as any;
+
+    it.each([
+      ["cosmos", "44'/118'/0'/0/0", "cosmos"],
+      ["injective", "44'/60'/0'/0/0", "inj"],
+    ])("hands the %s chain's hrp and sign prefix to the device signer", async (id, path, hrp) => {
+      (getBridgeApi as jest.Mock).mockResolvedValue({ getDeviceSignOptions });
+
+      const signOperation = genericSignOperation("mainnet", "cosmos")(mockSignerContext);
+      await lastValueFrom(
+        signOperation({
+          account: cosmosAccountFor(id, path),
+          transaction: cosmosTransaction,
+          deviceId: "",
+        }).pipe(toArray()),
+      );
+
+      expect(mockSigner.getAddress).toHaveBeenCalledWith(
+        path,
+        expect.objectContaining({ hrp, signWithPrefix: true }),
+      );
+      expect(mockSigner.signTransaction).toHaveBeenCalledWith(
+        path,
+        "unsignedTx",
+        expect.objectContaining({ hrp, signWithPrefix: true }),
+      );
+    });
+
+    describe("device refusal", () => {
+      const PATH = "44'/118'/0'/0/0";
+      const mockDeviceSign = jest.fn();
+      const mockDeviceGetAddress = jest.fn();
+
+      beforeEach(() => {
+        mockDeviceGetAddress.mockReset().mockResolvedValue({
+          address: "cosmos1sender",
+          publicKey: `02${"11".repeat(32)}`,
+        });
+        (LegacySignerCosmos as jest.Mock).mockImplementation(() => ({
+          getAddress: mockDeviceGetAddress,
+          sign: mockDeviceSign,
+        }));
+        // The framework's own signer is the family's real adapter over the mocked device app.
+        const cosmosSigner = createCosmosSigner({} as any);
+        mockSignerContext.mockImplementation(async (_deviceId, cb) => cb(cosmosSigner));
+        craftTransaction.mockResolvedValue({
+          transaction: JSON.stringify({ signable: Buffer.from("signable").toString("base64") }),
+        });
+        (getBridgeApi as jest.Mock).mockResolvedValue({ getDeviceSignOptions });
+      });
+
+      it("reads the public key without asking the user to confirm the address on the device", async () => {
+        mockDeviceSign.mockResolvedValue({
+          signature: null,
+          return_code: RETURN_CODES.REFUSED_OPERATION,
+        });
+
+        const signOperation = genericSignOperation("mainnet", "cosmos")(mockSignerContext);
+        await lastValueFrom(
+          signOperation({
+            account: cosmosAccountFor("cosmos", PATH),
+            transaction: cosmosTransaction,
+            deviceId: "",
+          }),
+        ).catch(() => undefined);
+
+        expect(mockDeviceGetAddress).toHaveBeenCalledTimes(1);
+        expect(mockDeviceGetAddress).toHaveBeenCalledWith(PATH, "cosmos", false);
+      });
+
+      it.each([
+        ["refused on the device", RETURN_CODES.REFUSED_OPERATION, UserRefusedOnDevice],
+        ["rejected for lack of expert mode", RETURN_CODES.EXPERT_MODE_REQUIRED, ExpertModeRequired],
+      ])("surfaces a signature %s as its typed error", async (_label, return_code, ErrorClass) => {
+        mockDeviceSign.mockResolvedValue({ signature: null, return_code });
+
+        const signOperation = genericSignOperation("mainnet", "cosmos")(mockSignerContext);
+        const events: unknown[] = [];
+        const observable = signOperation({
+          account: cosmosAccountFor("cosmos", PATH),
+          transaction: cosmosTransaction,
+          deviceId: "",
+        });
+
+        await expect(
+          lastValueFrom(observable.pipe(tap(e => events.push(e)))),
+        ).rejects.toBeInstanceOf(ErrorClass);
+        expect(events).toEqual([{ type: "device-signature-requested" }]);
+        expect(mockDeviceSign).toHaveBeenCalledWith(
+          [44, 118, 0, 0, 0],
+          Buffer.from("signable"),
+          "cosmos",
+        );
+      });
+    });
   });
 });

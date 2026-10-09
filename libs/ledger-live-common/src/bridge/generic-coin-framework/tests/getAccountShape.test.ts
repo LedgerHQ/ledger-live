@@ -25,6 +25,7 @@ const buildAccountShapeMock = jest.fn();
 const refreshOperationsMock = jest.fn();
 const getAccountInfoMock = jest.fn();
 const getValidatorsMock = jest.fn();
+const getNextSequenceMock = jest.fn();
 jest.mock("../api", () => ({
   getCoinModuleApi: () => ({
     lastBlock: (...a: any[]) => lastBlockMock(...a),
@@ -32,6 +33,7 @@ jest.mock("../api", () => ({
     listOperations: (...a: any[]) => listOperationsMock(...a),
     getAccountInfo: (...a: any[]) => getAccountInfoMock(...a),
     getValidators: (...a: any[]) => getValidatorsMock(...a),
+    getNextSequence: (...a: any[]) => getNextSequenceMock(...a),
   }),
 }));
 let mockRegionRestricted = false;
@@ -3381,6 +3383,56 @@ describe("genericGetAccountShape", () => {
         "tz1sync",
         expect.objectContaining({ minHeight: storedOperation.blockHeight + 1 }),
       );
+    });
+  });
+
+  describe("cosmos", () => {
+    const network = "cosmos";
+    const currency = { id: "cosmos", name: "Cosmos" };
+    const address = "cosmos1address";
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+      getNextSequenceMock.mockResolvedValue(17n);
+    });
+
+    const sync = (bridgeApi: Record<string, unknown>, rest?: Record<string, unknown>) => {
+      getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), ...bridgeApi }));
+      return genericGetAccountShape(network, currency.id)(
+        { address, initialAccount: undefined, currency, derivationMode: "", rest } as any,
+        { paginationConfig: {} as any },
+      );
+    };
+
+    test("stores the next sequence as a number when the bridge supports it", async () => {
+      const result = await sync({ accountSequenceSupported: true });
+
+      expect(getNextSequenceMock).toHaveBeenCalledTimes(1);
+      expect(getNextSequenceMock).toHaveBeenCalledWith(expect.anything(), address);
+      expect((result as { sequence?: number }).sequence).toBe(17);
+    });
+
+    test("stores no sequence and never asks for it when the bridge does not support it", async () => {
+      const result = await sync({});
+
+      expect(getNextSequenceMock).not.toHaveBeenCalled();
+      expect(result).not.toHaveProperty("sequence");
+    });
+
+    test("uses the signer public key as xpub, and the address without one", async () => {
+      const withKey = await sync({}, { publicKey: "A1b2c3PUBKEY" });
+      const withoutKey = await sync({});
+
+      expect(withKey.xpub).toBe("A1b2c3PUBKEY");
+      expect(withoutKey.xpub).toBe(address);
     });
   });
 });

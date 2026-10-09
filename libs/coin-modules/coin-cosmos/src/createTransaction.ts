@@ -1,6 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { CosmosDelegationInfo, Transaction } from "./types";
+import type { Transaction } from "./types";
 
 /**
  * Create an empty transaction
@@ -17,8 +17,6 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
   useAllAmount: false,
   networkInfo: null,
   memo: null,
-  sourceValidator: null,
-  validators: [] as CosmosDelegationInfo[],
 });
 
 export default createTransaction;

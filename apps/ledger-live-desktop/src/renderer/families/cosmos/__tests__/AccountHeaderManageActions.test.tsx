@@ -111,4 +111,16 @@ describe("AccountHeaderManageActions (cosmos)", () => {
     expect(warn).toHaveBeenCalled();
     warn.mockRestore();
   });
+
+  it("throws when the account has no staking resources", () => {
+    mockGetCurrencyConfiguration({ disableDelegation: false });
+    jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const account = genAccount("cosmos-test", { currency }) as unknown as CosmosAccount;
+
+    expect(() =>
+      renderHook(() =>
+        AccountHeaderActions({ account, parentAccount: null, source: "Account Page" }),
+      ),
+    ).toThrow("cosmos staking account required");
+  });
 });

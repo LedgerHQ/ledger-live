@@ -3,7 +3,7 @@
 exports[`coreum currency bridge scanAccounts coreum seed 1 1`] = `
 [
   {
-    "balance": "2457355",
+    "balance": "2638906",
     "currencyId": "coreum",
     "derivationMode": "",
     "freshAddress": "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",
@@ -13,10 +13,11 @@ exports[`coreum currency bridge scanAccounts coreum seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "03633639c689420031c73c1157975ea734e22eae588045a96fc9495d28aba3f0d1",
     "spendableBalance": "949364",
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1f4ff6d1",
     "used": true,
-    "xpub": "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",
+    "xpub": "03633639c689420031c73c1157975ea734e22eae588045a96fc9495d28aba3f0d1",
   },
   {
     "balance": "1000000",
@@ -29,10 +30,11 @@ exports[`coreum currency bridge scanAccounts coreum seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "03633639c689420031c73c1157975ea734e22eae588045a96fc9495d28aba3f0d1",
     "spendableBalance": "1000000",
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1f4ff6d1",
     "used": true,
-    "xpub": "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
+    "xpub": "03da7e01e4a9c30aecb7574bda681dd021745f9982b3644b7733628f7579c8c310",
   },
   {
     "balance": "0",
@@ -45,10 +47,11 @@ exports[`coreum currency bridge scanAccounts coreum seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "03633639c689420031c73c1157975ea734e22eae588045a96fc9495d28aba3f0d1",
     "spendableBalance": "0",
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1f4ff6d1",
     "used": false,
-    "xpub": "core1mdj6j89ev4yfelv3kqn7prj4h92er5zlxssxwk",
+    "xpub": "0209796438379822529674761b7a65e7b0262ba571a8bc8b1786ef942622b73bc7",
   },
 ]
 `;

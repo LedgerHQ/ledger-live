@@ -490,6 +490,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         })
       : Promise.resolve(undefined);
 
+    const sequencePromise: Promise<number | undefined> = bridgeApi.accountSequenceSupported
+      ? coinModuleApi.getNextSequence(context, address).then(Number)
+      : Promise.resolve(undefined);
+
     const balancePromise = coinModuleApi
       .getBalance(context, address, bridgeApi.balanceOptions)
       .catch(async err => {
@@ -501,13 +505,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         throw new UnexpectedGetBalanceError("", err);
       });
 
-    const [blockInfo, balanceRes, validators, readiness, chainSpecificShape] = await Promise.all([
-      coinModuleApi.lastBlock(context),
-      balancePromise,
-      validatorsPromise,
-      readinessPromise,
-      chainSpecificShapePromise,
-    ]);
+    const [blockInfo, balanceRes, validators, readiness, chainSpecificShape, sequence] =
+      await Promise.all([
+        coinModuleApi.lastBlock(context),
+        balancePromise,
+        validatorsPromise,
+        readinessPromise,
+        chainSpecificShapePromise,
+        sequencePromise,
+      ]);
 
     const nativeAsset = extractBalance(balanceRes, "native");
     const freshTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
@@ -809,6 +815,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       !getDerivationScheme({ derivationMode, currency }).includes("<account>");
 
     const res: Partial<Account> & {
+      sequence?: number;
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];
     } = {
@@ -827,6 +834,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
       // readiness lookup retains the last persisted value instead of clearing it.
       ...(readiness !== undefined ? { readiness } : {}),
+      ...(sequence !== undefined ? { sequence } : {}),
       ...stakingShape,
     };
     return res;

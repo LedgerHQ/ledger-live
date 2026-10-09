@@ -1,3 +1,4 @@
+import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import invariant from "invariant";
@@ -33,7 +34,7 @@ export default function StepDelegation({
     },
     [bridge, onUpdateTransaction, transaction],
   );
-  const chosenVoteAccAddr = transaction.valAddress || "";
+  const chosenVoteAccAddr = getValAddress(transaction);
 
   return (
     <Box flow={1}>
@@ -72,7 +73,7 @@ export function StepDelegationFooter({
     !bridgePending &&
     !errors.validators &&
     transaction &&
-    !!transaction.valAddress &&
+    !!getValAddress(transaction) &&
     !errors.sender;
   return (
     <>

@@ -1,4 +1,4 @@
-import { AccountRaw } from "@ledgerhq/types-live";
+import { AccountRaw, isStakingAccount } from "@ledgerhq/types-live";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import accountModel from "./accountModel";
 
@@ -63,7 +63,7 @@ describe("accountModel migrations", () => {
     });
   });
 
-  describe("crypto_org cosmosResources fallback", () => {
+  describe("crypto_org staking resources fallback", () => {
     const cryptoOrgRaw = (extra: Partial<AccountRaw> = {}): AccountRaw =>
       ({
         ...baseRaw,
@@ -74,13 +74,11 @@ describe("accountModel migrations", () => {
         ...extra,
       }) as AccountRaw;
 
-    it("initialises cosmosResources when missing", async () => {
+    it("initialises stakingResources when missing", async () => {
       const [account] = await decodeLegacy(cryptoOrgRaw());
-      const { cosmosResources } = account as typeof account & {
-        cosmosResources: Record<string, unknown>;
-      };
-      expect(cosmosResources).toBeDefined();
-      expect(cosmosResources.delegations).toEqual([]);
+      expect(isStakingAccount(account)).toBe(true);
+      expect(isStakingAccount(account) && account.stakingResources.delegations).toEqual([]);
+      expect("cosmosResources" in account).toBe(false);
     });
   });
 

@@ -4,12 +4,7 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../types";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [
-    "cosmosResources",
-    "stakingResources",
-    "operationsCount",
-    "operations",
-  ],
+  FIXME_ignoreAccountFields: ["sequence", "stakingResources", "operationsCount", "operations"],
   FIXME_ignorePreloadFields: ["validators"],
   scanAccounts: [
     {

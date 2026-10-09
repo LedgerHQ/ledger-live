@@ -21,8 +21,6 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         useAllAmount: false,
         networkInfo: null,
         memo: null,
-        sourceValidator: null,
-        validators: [],
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
@@ -52,8 +50,6 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         useAllAmount: false,
         networkInfo: null,
         memo: null,
-        sourceValidator: null,
-        validators: [],
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
@@ -85,6 +81,70 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
       expect(liveTx.memo).toBe("pay invoice 42");
       expect(liveTx.memoType).toBe("text");
       expect(liveTx.memoValue).toBe("pay invoice 42");
+    });
+
+    it("maps the validator of a staking transaction to valAddress", () => {
+      const { liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: {
+          family: "cosmos",
+          amount: new BigNumber(100),
+          recipient: "",
+          mode: "delegate",
+          validators: [{ address: "cosmosvaloper1", amount: new BigNumber(100) }],
+        },
+        account: {} as Account,
+      });
+
+      expect(liveTx).toMatchObject({ mode: "delegate", valAddress: "cosmosvaloper1" });
+      expect(liveTx).not.toHaveProperty("dstValAddress");
+    });
+
+    it("defaults valAddress to an empty string without validators", () => {
+      const { liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: {
+          family: "cosmos",
+          amount: new BigNumber(100),
+          recipient: "",
+          mode: "claimReward",
+        },
+        account: {} as Account,
+      });
+
+      expect(liveTx).toMatchObject({ mode: "claimReward", valAddress: "" });
+    });
+
+    it("maps source and destination validators of a redelegation", () => {
+      const { liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: {
+          family: "cosmos",
+          amount: new BigNumber(100),
+          recipient: "",
+          mode: "redelegate",
+          sourceValidator: "cosmosvaloper1",
+          validators: [{ address: "cosmosvaloper2", amount: new BigNumber(100) }],
+        },
+        account: {} as Account,
+      });
+
+      expect(liveTx).toMatchObject({
+        mode: "redelegate",
+        valAddress: "cosmosvaloper1",
+        dstValAddress: "cosmosvaloper2",
+      });
+    });
+
+    it("defaults redelegation validators to empty strings", () => {
+      const { liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: {
+          family: "cosmos",
+          amount: new BigNumber(100),
+          recipient: "",
+          mode: "redelegate",
+        },
+        account: {} as Account,
+      });
+
+      expect(liveTx).toMatchObject({ valAddress: "", dstValAddress: "" });
     });
   });
 });

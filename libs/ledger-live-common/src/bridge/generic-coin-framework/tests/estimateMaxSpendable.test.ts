@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { genericEstimateMaxSpendable } from "../estimateMaxSpendable";
 import * as coinframework from "../api";
 import { Account } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 // Mock the coin module API
 jest.mock("../api", () => ({
@@ -353,6 +354,64 @@ describe("genericEstimateMaxSpendable", () => {
       });
 
       expect(result.toString()).toBe("29000000");
+    });
+  });
+
+  describe("Cosmos: delegated and unbonding funds are not spendable", () => {
+    const cosmos = getCryptoCurrencyById("cosmos");
+
+    it("returns the liquid spendableBalance - fee, ignoring staked and unbonding principal", async () => {
+      const { default: cosmosBridge } = await import("../../../families/cosmos/bridge/api");
+      getBridgeApiMock.mockResolvedValueOnce(cosmosBridge(cosmos));
+      const cosmosAccount = {
+        ...dummyAccount,
+        currency: cosmos,
+        freshAddress: "cosmos1sender",
+        // balance = liquid 5_000_000 + delegated 40_000_000 + unbonding 15_000_000
+        balance: new BigNumber(60_000_000),
+        spendableBalance: new BigNumber(5_000_000),
+        stakingResources: {
+          delegations: [
+            {
+              validatorAddress: "cosmosvaloper1validator",
+              amount: new BigNumber(40_000_000),
+              status: "active",
+            },
+          ],
+          unbondings: [
+            {
+              validatorAddress: "cosmosvaloper1validator",
+              amount: new BigNumber(15_000_000),
+              status: "deactivating",
+            },
+          ],
+        },
+      } as unknown as Account;
+
+      mockedGetCoinModuleApi.mockReturnValue({
+        craftTransactionData,
+        estimateFees: estimateFeesMock.mockResolvedValue({ value: 7_500n }),
+      });
+
+      const estimate = genericEstimateMaxSpendable("cosmos", "cosmos");
+      const result = await estimate({
+        account: cosmosAccount,
+        parentAccount: null,
+        transaction: {} as any,
+      });
+
+      // 5000000 liquid - 7500 fee; the 55000000 staked/unbonding principal is out of reach
+      expect(result.toString()).toBe("4992500");
+      expect(estimateFeesMock).toHaveBeenCalledWith(
+        expect.anything(), // context
+        expect.objectContaining({
+          type: "send",
+          intentType: "transaction",
+          sender: "cosmos1sender",
+          amount: 5_000_000n,
+          useAllAmount: true,
+        }),
+      );
     });
   });
 });

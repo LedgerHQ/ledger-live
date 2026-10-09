@@ -7,7 +7,6 @@ import {
   OperationRaw,
   StakingDelegation,
   StakingRedelegation,
-  StakingResources,
   StakingResourcesRaw,
   StakingUnbonding,
   TransactionCommon,
@@ -62,19 +61,9 @@ export type CosmosMessage = {
   attributes: { key: string; value: string; index?: boolean }[];
 };
 
-export type CosmosResources = {
-  delegations: CosmosDelegation[];
-  redelegations: CosmosRedelegation[];
-  unbondings: CosmosUnbonding[];
-  delegatedBalance: BigNumber;
-  pendingRewardsBalance: BigNumber;
-  unbondingBalance: BigNumber;
-} & LegacyCosmosResourcesFields;
-
+/** Legacy fields persisted inside the resources of accounts saved before the generic adapter. */
 export type LegacyCosmosResourcesFields = {
   sequence?: number;
-  // Compressed secp256k1 public key (hex) of this account, captured at scan from the
-  // device. Optional/empty when unknown (e.g. accounts synced before this was persisted).
   publicKey?: string;
 };
 
@@ -198,20 +187,37 @@ export type CosmosDelegationInfoRaw = {
   amount: string;
 };
 
-export type CosmosLikeTransaction = TransactionCommon & {
+type CosmosLikeTransactionBase = TransactionCommon & {
   family: string;
-  mode: CosmosOperationMode;
   networkInfo: CosmosLikeNetworkInfo | null | undefined;
   fees: BigNumber | null | undefined;
   gas: BigNumber | null | undefined;
   memo: string | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
-  validators: CosmosDelegationInfo[];
-  sourceValidator: string | null | undefined;
-  valAddress?: string;
-  dstValAddress?: string;
 };
+
+export type CosmosStakingOperationMode = Exclude<CosmosOperationMode, "send" | "redelegate">;
+
+type CosmosSendTransaction = CosmosLikeTransactionBase & {
+  mode: "send";
+};
+
+type CosmosStakingTransaction = CosmosLikeTransactionBase & {
+  mode: CosmosStakingOperationMode;
+  valAddress: string;
+};
+
+type CosmosRedelegateTransaction = CosmosLikeTransactionBase & {
+  mode: "redelegate";
+  valAddress: string;
+  dstValAddress: string;
+};
+
+export type CosmosLikeTransaction =
+  | CosmosSendTransaction
+  | CosmosStakingTransaction
+  | CosmosRedelegateTransaction;
 
 export type Transaction = CosmosLikeTransaction & {
   family: "cosmos";
@@ -227,10 +233,12 @@ export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
   memo: string | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
-  validators: CosmosDelegationInfoRaw[];
-  sourceValidator: string | null | undefined;
   valAddress?: string;
   dstValAddress?: string;
+  /** Legacy: only read to migrate persisted transactions, never written. */
+  validators?: CosmosDelegationInfoRaw[];
+  /** Legacy: only read to migrate persisted transactions, never written. */
+  sourceValidator?: string | null;
 };
 
 export type TransactionRaw = CosmosLikeTransactionRaw & {
@@ -277,16 +285,20 @@ export type CosmosSearchFilter = (
   query: string,
 ) => (delegation: CosmosMappedDelegation | CosmosMappedValidator) => boolean;
 export function isCosmosAccount(account: Account): account is CosmosAccount {
-  return "cosmosResources" in account;
+  return account.currency.family === "cosmos";
 }
 export type CosmosAccount = Account & {
-  cosmosResources: CosmosResources;
-  stakingResources: StakingResources & LegacyCosmosResourcesFields;
+  sequence: number;
 };
 
+/**
+ * `cosmosResources` and the `sequence`/`publicKey` inside `stakingResources` are legacy fields:
+ * they are only read to migrate accounts persisted before the generic adapter, never written.
+ */
 export type CosmosAccountRaw = AccountRaw & {
-  cosmosResources: CosmosResourcesRaw;
-  stakingResources: StakingResourcesRaw & LegacyCosmosResourcesFields;
+  sequence?: number;
+  stakingResources?: StakingResourcesRaw & LegacyCosmosResourcesFields;
+  cosmosResources?: CosmosResourcesRaw;
 };
 export type TransactionStatus = TransactionStatusCommon;
 

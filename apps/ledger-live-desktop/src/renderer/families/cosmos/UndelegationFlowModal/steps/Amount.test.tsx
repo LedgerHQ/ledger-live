@@ -7,7 +7,7 @@ import type {
   CosmosMappedDelegation,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import StepAmount from "./Amount";
+import StepAmount, { StepAmountFooter } from "./Amount";
 import type { StepProps } from "../types";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
@@ -19,7 +19,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ATOM", name: "Cosmos", magnitude: 6 }),
 }));
-jest.mock("@ledgerhq/coin-cosmos/chain/chain", () => ({
+jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => ({
   __esModule: true,
   default: () => ({ unbondingPeriod: 21 }),
 }));
@@ -58,6 +58,13 @@ const buildAccount = (): CosmosAccount =>
     freshAddress: "cosmos1test",
     currency: getCryptoCurrencyById("cosmos"),
     stakingResources: { delegations: [] },
+  }) as unknown as CosmosAccount;
+
+const noStakingAccount = () =>
+  ({
+    type: "Account",
+    freshAddress: "cosmos1test",
+    currency: getCryptoCurrencyById("cosmos"),
   }) as unknown as CosmosAccount;
 
 const buildProps = (transaction: Partial<Transaction>): StepProps =>
@@ -118,5 +125,18 @@ describe("Cosmos Undelegation StepAmount", () => {
     props.status.errors = { amount: { name: "SomeOtherError" } as unknown as Error };
     render(<StepAmount {...props} />);
     expect(screen.queryByTestId("not-enough-funds")).not.toBeInTheDocument();
+  });
+
+  describe("without staking resources", () => {
+    beforeEach(() => {
+      jest.spyOn(console, "error").mockImplementation(() => undefined);
+    });
+
+    it("throws from the footer", () => {
+      const props = { ...buildProps({ amount: BigNumber(0) }), account: noStakingAccount() };
+      expect(() => render(<StepAmountFooter {...props} />)).toThrow(
+        "cosmos staking account required",
+      );
+    });
   });
 });

@@ -1,16 +1,12 @@
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
-import { Account, StakingResources } from "@ledgerhq/types-live";
+import { Account, isStakingAccount, StakingResources } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import {
-  CosmosAccount,
-  CosmosCurrencyConfig,
-  CosmosOperationExtra,
-} from "@ledgerhq/coin-cosmos/types/index";
+import { CosmosCurrencyConfig, CosmosOperationExtra } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { makeAccount } from "../fixtures";
 import { buildSigner } from "../signer";
@@ -116,21 +112,8 @@ export function makeCosmosScenario(
   let recipientAddress = "";
   let validatorAddress = "";
 
-  /** The subset of delegation-shaped fields both `CosmosResources` and the generic
-   * framework's `StakingResources` agree on (only `status`'s literal union differs). */
-  interface StakingView {
-    delegations: Array<{ validatorAddress: string; amount: BigNumber }>;
-    delegatedBalance: BigNumber;
-  }
-
-  /**
-   * Legacy exposes `cosmosResources`, generic-adapter `stakingResources` (untyped on Account —
-   * genericGetAccountShape sets it directly), so each is read behind a cast.
-   */
-  const getStakingView = (account: Account, strategy: BridgeStrategy): StakingView | undefined =>
-    strategy === "legacy"
-      ? (account as CosmosAccount).cosmosResources
-      : (account as Account & { stakingResources?: StakingResources }).stakingResources;
+  const getStakingView = (account: Account): StakingResources | undefined =>
+    isStakingAccount(account) ? account.stakingResources : undefined;
 
   const getTransactions = (
     _address: string,
@@ -185,7 +168,7 @@ export function makeCosmosScenario(
           expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
           // The retry budget lets the delegation land (immediate on Hub, next epoch on Babylon).
           // Named `stakingView` so it doesn't shadow the `staking` capability flag above.
-          const stakingView = getStakingView(currentAccount, strategy);
+          const stakingView = getStakingView(currentAccount);
           expect(stakingView).toBeDefined();
           expect(stakingView!.delegations.some(d => d.validatorAddress === validatorAddress)).toBe(
             true,
@@ -280,8 +263,6 @@ export function makeCosmosScenario(
 
       const account = makeAccount(address, currency);
       return {
-        // Typed on the broad `Account`: legacy sets `cosmosResources`, generic-adapter
-        // `stakingResources`, so no single family type fits both — getStakingView reads the right one.
         accountBridge,
         currencyBridge,
         account,

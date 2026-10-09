@@ -106,3 +106,35 @@ describe("getStakes via MSW", () => {
     await expect(getStakes(api, ADDR)).rejects.toThrow();
   });
 });
+
+describe("getStakes validator bond status via MSW", () => {
+  it.each([
+    ["BOND_STATUS_BONDED", "bonded"],
+    ["BOND_STATUS_UNBONDING", "unbonding"],
+    ["BOND_STATUS_UNBONDED", "unbonded"],
+  ])("reports a delegation to a %s validator as %s", async (validatorStatus, expected) => {
+    const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    server.use(
+      http.get(DELEGATIONS, () =>
+        HttpResponse.json({
+          delegation_responses: [
+            {
+              delegation: { validator_address: DELEGATED_VALIDATOR },
+              balance: { denom: "uatom", amount: "1000000" },
+            },
+          ],
+        }),
+      ),
+      http.get(VALIDATOR(DELEGATED_VALIDATOR), () =>
+        HttpResponse.json({ validator: { status: validatorStatus } }),
+      ),
+      http.get(REWARDS, () => HttpResponse.json({ rewards: [] })),
+      http.get(UNBONDINGS, () => HttpResponse.json({ unbonding_responses: [] })),
+    );
+
+    const page = await getStakes(api, ADDR);
+
+    expect(page.items).toHaveLength(1);
+    expect(page.items[0].details).toEqual({ status: expected });
+  });
+});

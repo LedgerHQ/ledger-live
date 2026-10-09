@@ -42,12 +42,18 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
     Object.assign(liveTx, cosmosMemoPatch(walletApiTransaction.memo));
   }
 
-  if (walletApiTransaction.sourceValidator) {
-    liveTx.sourceValidator = walletApiTransaction.sourceValidator;
+  const validator = walletApiTransaction.validators?.[0]?.address ?? "";
+
+  if (liveTx.mode === "redelegate") {
+    return {
+      ...liveTx,
+      valAddress: walletApiTransaction.sourceValidator ?? "",
+      dstValAddress: validator,
+    };
   }
 
-  if (walletApiTransaction.validators) {
-    liveTx.validators = walletApiTransaction.validators;
+  if (liveTx.mode !== "send") {
+    return { ...liveTx, valAddress: validator };
   }
 
   return liveTx;

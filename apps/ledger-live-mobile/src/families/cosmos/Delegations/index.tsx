@@ -27,10 +27,11 @@ import {
   AccountBannerState,
   getAccountBannerState as getCosmosBannerState,
 } from "@ledgerhq/live-common/families/cosmos/banner";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, isStakingAccount } from "@ledgerhq/types-live";
+import invariant from "invariant";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import IlluRewards from "~/icons/images/Rewards";
@@ -71,6 +72,7 @@ function Delegations({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account) as CosmosAccount;
+  invariant(isStakingAccount(mainAccount), "cosmos staking account required");
   const delegations: CosmosMappedDelegation[] = useCosmosFamilyMappedDelegations(mainAccount);
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
   const currency = getAccountCurrency(mainAccount);

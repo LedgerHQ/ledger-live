@@ -23,8 +23,10 @@ const listOperationsMock = jest.fn();
 const getBalanceMock = jest.fn();
 const lastBlockMock = jest.fn();
 const getAccountInfoMock = jest.fn();
+const getNextSequenceMock = jest.fn();
 jest.mock("./api", () => ({
   getCoinModuleApi: () => ({
+    getNextSequence: (...a: any[]) => getNextSequenceMock(...a),
     lastBlock: (...a: any[]) => lastBlockMock(...a),
     getBalance: (...a: any[]) => getBalanceMock(...a),
     listOperations: (...a: any[]) => listOperationsMock(...a),
@@ -279,5 +281,50 @@ describe("genericGetAccountShape - A4 read branch", () => {
         },
       ],
     ]);
+  });
+});
+
+describe("genericGetAccountShape - account sequence", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    getSyncHashMock.mockReturnValue("sync-hash");
+    getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+    extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+    lastBlockMock.mockResolvedValue({ height: 0 });
+    mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+    cleanedOperationMock.mockImplementation((op: any) => op);
+    inferSubOperationsMock.mockReturnValue([]);
+    buildSubAccountsMock.mockReturnValue([]);
+    mergeSubAccountsMock.mockImplementation((_old: any[], subs: any[]) => subs ?? []);
+    listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+    resolveA4ChainConfigMock.mockReturnValue({ read: false, register: false });
+  });
+
+  const call = () =>
+    genericGetAccountShape(network, currency.id)(
+      { address: "0xabc", initialAccount: undefined, currency, derivationMode: "" } as any,
+      { paginationConfig: {} as any },
+    );
+
+  it("stores the next sequence of the address when the chain supports it", async () => {
+    getBridgeApiMock.mockImplementation(() => ({
+      ...defaultBridgeApi(),
+      accountSequenceSupported: true,
+    }));
+    getNextSequenceMock.mockResolvedValue(42n);
+
+    const shape = await call();
+
+    expect(getNextSequenceMock).toHaveBeenCalledWith(expect.anything(), "0xabc");
+    expect(shape).toMatchObject({ sequence: 42 });
+  });
+
+  it("does not fetch nor store a sequence when the chain does not support it", async () => {
+    getBridgeApiMock.mockImplementation(defaultBridgeApi);
+
+    const shape = await call();
+
+    expect(getNextSequenceMock).not.toHaveBeenCalled();
+    expect(shape).not.toHaveProperty("sequence");
   });
 });

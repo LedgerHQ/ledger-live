@@ -10,7 +10,8 @@ import {
   CosmosValidatorItem,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
+import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -95,7 +96,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
       updateTransaction(_ => tmpTransaction);
     }
 
-    if (chosenValidator && chosenValidator.validatorAddress !== transaction.valAddress) {
+    if (chosenValidator && chosenValidator.validatorAddress !== getValAddress(transaction)) {
       setTransaction(
         bridge.updateTransaction(transaction, {
           valAddress: chosenValidator.validatorAddress,

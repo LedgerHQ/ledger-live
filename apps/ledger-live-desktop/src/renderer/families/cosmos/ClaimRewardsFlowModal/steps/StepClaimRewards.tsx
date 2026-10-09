@@ -1,3 +1,4 @@
+import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -55,7 +56,7 @@ export default function StepClaimRewards({
   );
   const compoundSupported = isCompoundRewardSupported(account.currency.id);
   const amount =
-    transaction.valAddress &&
+    getValAddress(transaction) &&
     formatCurrencyUnit(unit, transaction.amount, {
       disableRounding: true,
       alwaysShowSign: false,
@@ -67,12 +68,11 @@ export default function StepClaimRewards({
       if (!maybeValue) return;
       const { validatorAddress, pendingRewards } = maybeValue;
       updateClaimRewards({
-        ...transaction,
         valAddress: validatorAddress,
         amount: pendingRewards,
       });
     },
-    [updateClaimRewards, transaction],
+    [updateClaimRewards],
   );
   const key = transaction.mode === "claimReward" ? "claimInfo" : "compoundInfo";
   return (

@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import { isStakingAccount } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -25,9 +26,11 @@ import {
   type Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import {
+  getDstValAddress,
+  getValAddress,
   resolveSourceValidator,
   resolveTransactionValidators,
-} from "@ledgerhq/coin-cosmos/buildTransaction";
+} from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 
 const SelectButton = styled(Base)`
   border-radius: 4px;
@@ -68,16 +71,17 @@ export default function StepValidators({
   transitionTo,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
+  const valAddress = getValAddress(transaction);
+  const dstValAddress = getDstValAddress(transaction);
   const sourceValidator = useMemo(() => {
-    const found = account.stakingResources.delegations.find(
-      d => d.validatorAddress === transaction.valAddress,
-    );
+    const found = account.stakingResources.delegations.find(d => d.validatorAddress === valAddress);
 
     if (!found) return;
 
     return { address: found.validatorAddress, amount: found.amount };
-  }, [transaction.valAddress, account.stakingResources]);
+  }, [valAddress, account.stakingResources]);
   const updateRedelegation = useCallback(
     (newTransaction: Partial<NonNullable<StepProps["transaction"]>>) => {
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
@@ -93,12 +97,11 @@ export default function StepValidators({
         d => d.validatorAddress === sourceValidator,
       );
       updateRedelegation({
-        ...transaction,
         valAddress: sourceValidator,
         amount: source?.amount ?? BigNumber(0),
       });
     },
-    [updateRedelegation, transaction, account.stakingResources],
+    [updateRedelegation, account.stakingResources],
   );
   const onChangeAmount = useCallback(
     (amount: BigNumber) => updateRedelegation({ ...transaction, amount }),
@@ -109,10 +112,10 @@ export default function StepValidators({
   const { validators } = useCosmosFamilyPreloadData(currencyId);
   const selectedValidatorData = useMemo(
     () =>
-      transaction.dstValAddress
-        ? validators.find(({ validatorAddress }) => validatorAddress === transaction.dstValAddress)
+      dstValAddress
+        ? validators.find(({ validatorAddress }) => validatorAddress === dstValAddress)
         : null,
-    [transaction, validators],
+    [dstValAddress, validators],
   );
   const open = useCallback(() => {
     transitionTo("destinationValidators");
@@ -193,6 +196,7 @@ export function StepValidatorsFooter({
   transaction,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const validators = resolveTransactionValidators(transaction);

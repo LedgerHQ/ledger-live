@@ -1,4 +1,8 @@
 import BigNumber from "bignumber.js";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CosmosDelegateAllFundsWarning, ValAddressRequired } from "@ledgerhq/coin-cosmos/errors";
+import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/ledger-wallet-framework/errors";
+import cosmosBridge from "../../../families/cosmos/bridge/api";
 import { genericGetTransactionStatus } from "../getTransactionStatus";
 import { getCoinModuleApi } from "../api";
 import { getBridgeApi } from "../bridge";
@@ -249,6 +253,131 @@ describe("genericGetTransactionStatus", () => {
       } as any);
 
       expect("gasLimit" in readParameters()).toBe(false);
+    });
+  });
+
+  describe("cosmos", () => {
+    const cosmosAccount = {
+      ...account,
+      freshAddress: "cosmos1sender",
+      currency: getCryptoCurrencyById("cosmos"),
+    };
+    const draft = {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "cosmos1recipient",
+      family: "cosmos",
+    };
+    const readIntent = () => validateIntent.mock.calls[0][1];
+
+    beforeEach(() => {
+      mockGetBridgeApi.mockResolvedValue({
+        computeIntentType: cosmosBridge(getCryptoCurrencyById("cosmos")).computeIntentType,
+      });
+    });
+
+    it("sends the memo to the coin module as a text memo", async () => {
+      await genericGetTransactionStatus("mainnet", "cosmos")(cosmosAccount, {
+        ...draft,
+        mode: "send",
+        memoType: "text",
+        memoValue: "invoice 42",
+      } as any);
+
+      expect(readIntent()).toMatchObject({
+        intentType: "transaction",
+        type: "send",
+        memo: { type: "string", kind: "text", value: "invoice 42" },
+      });
+    });
+
+    it("sends no memo when the transaction has none", async () => {
+      await genericGetTransactionStatus("mainnet", "cosmos")(cosmosAccount, {
+        ...draft,
+        mode: "send",
+      } as any);
+
+      expect(readIntent().memo).toEqual({ type: "none" });
+    });
+
+    it.each(["delegate", "undelegate", "claimReward", "compoundReward"])(
+      "validates %s as a staking intent carrying the validator",
+      async mode => {
+        await genericGetTransactionStatus("mainnet", "cosmos")(cosmosAccount, {
+          ...draft,
+          recipient: "",
+          mode,
+          valAddress: "cosmosvaloper1source",
+        } as any);
+
+        expect(readIntent()).toMatchObject({
+          intentType: "staking",
+          type: mode,
+          mode,
+          valAddress: "cosmosvaloper1source",
+        });
+      },
+    );
+
+    it("carries both validators of a redelegation to the coin module", async () => {
+      await genericGetTransactionStatus("mainnet", "cosmos")(cosmosAccount, {
+        ...draft,
+        recipient: "",
+        mode: "redelegate",
+        valAddress: "cosmosvaloper1source",
+        dstValAddress: "cosmosvaloper1destination",
+      } as any);
+
+      expect(readIntent()).toMatchObject({
+        intentType: "staking",
+        type: "redelegate",
+        mode: "redelegate",
+        valAddress: "cosmosvaloper1source",
+        dstValAddress: "cosmosvaloper1destination",
+      });
+    });
+
+    it("surfaces the coin module's staking validation errors under their field", async () => {
+      const sameValidator = new InvalidAddressBecauseDestinationIsAlsoSource();
+      const missingValidator = new ValAddressRequired();
+      validateIntent.mockResolvedValue({
+        ...validateIntentResult,
+        errors: { valAddress: missingValidator, dstValAddress: sameValidator },
+      });
+
+      const status = await genericGetTransactionStatus("mainnet", "cosmos")(cosmosAccount, {
+        ...draft,
+        recipient: "",
+        mode: "redelegate",
+      } as any);
+
+      expect(status.errors.valAddress).toBe(missingValidator);
+      expect(status.errors.dstValAddress).toBe(sameValidator);
+    });
+
+    it("surfaces the coin module's warnings, such as a delegate-all-funds notice", async () => {
+      const warning = new CosmosDelegateAllFundsWarning();
+      validateIntent.mockResolvedValue({ ...validateIntentResult, warnings: { amount: warning } });
+
+      const status = await genericGetTransactionStatus("mainnet", "cosmos")(cosmosAccount, {
+        ...draft,
+        recipient: "",
+        mode: "delegate",
+        useAllAmount: true,
+        valAddress: "cosmosvaloper1source",
+      } as any);
+
+      expect(status.warnings.amount).toBe(warning);
+    });
+
+    it("rejects a transaction mode the family does not support, rather than validating it as a send", async () => {
+      await expect(
+        genericGetTransactionStatus("mainnet", "cosmos")(cosmosAccount, {
+          ...draft,
+          mode: "swap",
+        } as any),
+      ).rejects.toThrow("Unsupported Cosmos transaction mode: swap");
+      expect(validateIntent).not.toHaveBeenCalled();
     });
   });
 });

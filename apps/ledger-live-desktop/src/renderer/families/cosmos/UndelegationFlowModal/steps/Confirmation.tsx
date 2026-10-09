@@ -1,3 +1,4 @@
+import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
@@ -30,9 +31,9 @@ export default function StepConfirmation({
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   if (optimisticOperation) {
-    const validator = transaction?.valAddress
-      ? { address: transaction.valAddress, amount: transaction.amount }
-      : null;
+    const valAddress = transaction ? getValAddress(transaction) : "";
+    const validator =
+      transaction && valAddress ? { address: valAddress, amount: transaction.amount } : null;
     const v =
       validator &&
       validators.find(({ validatorAddress }) => validatorAddress === validator.address);

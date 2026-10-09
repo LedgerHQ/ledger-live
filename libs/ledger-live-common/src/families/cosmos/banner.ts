@@ -1,7 +1,9 @@
+import { isStakingAccount, type Account } from "@ledgerhq/types-live";
+import invariant from "invariant";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { getCurrentCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
 import { canDelegate, canRedelegate } from "./logic";
-import type { CosmosAccount, CosmosValidatorItem } from "./types";
+import type { CosmosValidatorItem } from "./types";
 
 export interface AccountBannerState {
   display: boolean;
@@ -10,7 +12,8 @@ export interface AccountBannerState {
   ledgerValidator: CosmosValidatorItem | undefined;
 }
 
-export function getAccountBannerState(account: CosmosAccount): AccountBannerState {
+export function getAccountBannerState(account: Account): AccountBannerState {
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const { delegations, redelegations } = account.stakingResources;
   const delegationAddresses = delegations.map(delegation => {
     return delegation.validatorAddress;

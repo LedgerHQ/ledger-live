@@ -46,19 +46,6 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     spendableBalance = new BigNumber(0);
   }
 
-  const cosmosResources = {
-    delegations,
-    redelegations,
-    unbondings,
-    delegatedBalance,
-    pendingRewardsBalance,
-    unbondingBalance,
-    sequence: accountInfo.sequence,
-    // Captured from the device at scan (hw-getAddress); plain re-syncs have no device,
-    // so carry the previously-persisted value forward.
-    publicKey: rest?.publicKey ?? initialAccount?.cosmosResources?.publicKey ?? "",
-  };
-
   const stakingResources: StakingResources = {
     delegations,
     redelegations,
@@ -70,14 +57,16 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
 
   const shape = {
     id: accountId,
-    xpub: address,
+    // Captured from the device at scan (hw-getAddress); plain re-syncs have no device,
+    // so carry the previously-persisted value forward.
+    xpub: rest?.publicKey || initialAccount?.xpub || address,
     balance: balance,
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
-    cosmosResources,
+    sequence: accountInfo.sequence,
     stakingResources,
-    used: !isAccountEmpty({ balance, cosmosResources }),
+    used: !isAccountEmpty({ balance, sequence: accountInfo.sequence }),
   };
 
   if (shape.spendableBalance && shape.spendableBalance.lt(0)) {

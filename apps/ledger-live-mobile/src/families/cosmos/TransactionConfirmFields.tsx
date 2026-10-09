@@ -10,12 +10,12 @@ import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import {
   resolveSourceValidator,
   resolveTransactionValidators,
-} from "@ledgerhq/coin-cosmos/buildTransaction";
+} from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import { useTheme } from "@react-navigation/native";
 import LText from "~/components/LText";
 import { DataRow, TextValueField } from "~/components/ValidateOnDeviceDataRow";
 import Info from "~/icons/Info";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type FieldProps = {

@@ -3,7 +3,7 @@ import type { Transaction } from "../types";
 
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
-    "cosmosResources",
+    "sequence",
     "stakingResources",
     "operationsCount",
     "operations",

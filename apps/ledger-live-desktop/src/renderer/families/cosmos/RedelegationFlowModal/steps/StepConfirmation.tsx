@@ -1,26 +1,29 @@
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { getDstValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
+import { isStakingAccount } from "@ledgerhq/types-live";
+import { track } from "@shared/analytics";
+import { TrackPage } from "@shared/analytics-react";
+import invariant from "invariant";
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { TrackPage } from "@shared/analytics-react";
-import { track } from "@shared/analytics";
-import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import RetryButton from "~/renderer/components/RetryButton";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
+import Button from "~/renderer/components/Button";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "neutral.c100",
-}))<{
+})) <{
   shouldSpace?: boolean;
 }>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
@@ -35,9 +38,11 @@ function StepConfirmation({
   source,
   account,
 }: StepProps) {
-  const voteAccAddress = transaction?.dstValAddress;
+  invariant(isStakingAccount(account), "cosmos staking account required");
+
+  const voteAccAddress = transaction ? getDstValAddress(transaction) : "";
   const currencyId = account.currency.id;
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, account.stakingResources.validators);
 
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {

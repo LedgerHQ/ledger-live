@@ -108,3 +108,71 @@ describe("logic/transaction/craftTransaction", () => {
     expect(api.getAccount).not.toHaveBeenCalled();
   });
 });
+
+describe("logic/transaction/craftTransaction memo", () => {
+  const craft = async (memo: unknown) => {
+    const intent = { ...sendIntent, memo } as unknown as TransactionIntent;
+    const crafted = await craftTransaction(makeApi(), "cosmos", intent, {
+      value: 500n,
+      parameters: { gasLimit: "200000" },
+    });
+    const payload = JSON.parse(crafted.transaction) as CosmosCraftedTransaction;
+    const signDoc = JSON.parse(Buffer.from(payload.signable, "base64").toString("utf-8"));
+    return { payload, signDoc };
+  };
+
+  it("carries the memo in the payload and in the document the device signs", async () => {
+    const { payload, signDoc } = await craft({ type: "string", kind: "text", value: "invoice 42" });
+
+    expect(payload.memo).toBe("invoice 42");
+    expect(signDoc.memo).toBe("invoice 42");
+  });
+
+  it("signs an empty memo when the intent has none", async () => {
+    const { payload, signDoc } = await craft({ type: "none" });
+
+    expect(payload.memo).toBe("");
+    expect(signDoc.memo).toBe("");
+  });
+});
+
+describe("logic/transaction/craftTransaction staking memo", () => {
+  const stakingIntent = (memo?: unknown) =>
+    ({
+      intentType: "staking",
+      type: "delegate",
+      mode: "delegate",
+      sender: "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq",
+      recipient: "",
+      amount: 1_000_000n,
+      valAddress: "cosmosvaloper1validator",
+      asset: { type: "native" },
+      ...(memo ? { memo } : {}),
+    }) as unknown as TransactionIntent;
+
+  const craft = async (intent: TransactionIntent) => {
+    const crafted = await craftTransaction(makeApi(), "cosmos", intent, {
+      value: 500n,
+      parameters: { gasLimit: "250000" },
+    });
+    const payload = JSON.parse(crafted.transaction) as CosmosCraftedTransaction;
+    const signDoc = JSON.parse(Buffer.from(payload.signable, "base64").toString("utf-8"));
+    return { payload, signDoc };
+  };
+
+  it("puts the Ledger Live memo in the payload and in the document the device signs", async () => {
+    const { payload, signDoc } = await craft(stakingIntent());
+
+    expect(payload.memo).toBe("Ledger Live");
+    expect(signDoc.memo).toBe("Ledger Live");
+  });
+
+  it("keeps the memo the user typed", async () => {
+    const { payload, signDoc } = await craft(
+      stakingIntent({ type: "string", kind: "text", value: "my memo" }),
+    );
+
+    expect(payload.memo).toBe("my memo");
+    expect(signDoc.memo).toBe("my memo");
+  });
+});

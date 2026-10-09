@@ -235,3 +235,167 @@ describe("assignFromAccountRaw", () => {
     expect(mockAssignStakingResourcesFromAccountRaw).toHaveBeenCalledWith(accountRaw, account);
   });
 });
+
+describe("cosmos account raw round trip", () => {
+  const cosmosHooks = jest.requireActual("../../../families/cosmos/accountRawAssign").default;
+  const actualSerialization = jest.requireActual("@ledgerhq/ledger-wallet-framework/serialization");
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+    jest
+      .mocked(assignStakingResourcesToAccountRaw)
+      .mockImplementation(actualSerialization.assignStakingResourcesToAccountRaw);
+    jest
+      .mocked(assignStakingResourcesFromAccountRaw)
+      .mockImplementation(actualSerialization.assignStakingResourcesFromAccountRaw);
+  });
+
+  const completionDate = new Date("2026-03-01T12:00:00.000Z");
+
+  it("keeps staking resources, sequence and xpub through a JSON round trip", () => {
+    const account = {
+      freshAddress: "cosmos1abc",
+      xpub: "03publickey",
+      sequence: 42,
+      stakingResources: {
+        delegations: [
+          {
+            validatorAddress: "cosmosvaloper1a",
+            amount: new BigNumber(1_000),
+            pendingRewards: new BigNumber(5),
+            status: "bonded",
+          },
+        ],
+        redelegations: [
+          {
+            validatorSrcAddress: "cosmosvaloper1a",
+            validatorDstAddress: "cosmosvaloper1b",
+            amount: new BigNumber(300),
+            completionDate,
+          },
+        ],
+        unbondings: [
+          { validatorAddress: "cosmosvaloper1a", amount: new BigNumber(200), completionDate },
+        ],
+        delegatedBalance: new BigNumber(1_000),
+        pendingRewardsBalance: new BigNumber(5),
+        unbondingBalance: new BigNumber(200),
+      },
+    } as unknown as Account;
+
+    const accountRaw = { xpub: account.xpub } as AccountRaw;
+    cosmosHooks.assignToAccountRaw(account, accountRaw);
+    const persisted = JSON.parse(JSON.stringify(accountRaw));
+
+    expect(persisted.sequence).toBe(42);
+    expect(persisted.xpub).toBe("03publickey");
+    expect(persisted.stakingResources.delegations[0].amount).toBe("1000");
+    expect(persisted.stakingResources.unbondings[0].completionDate).toBe(
+      "2026-03-01T12:00:00.000Z",
+    );
+
+    const revived = { freshAddress: "cosmos1abc", xpub: persisted.xpub } as any;
+    cosmosHooks.assignFromAccountRaw(persisted, revived);
+
+    expect(revived.sequence).toBe(42);
+    expect(revived.xpub).toBe("03publickey");
+    expect(revived.stakingResources.delegations[0].amount).toEqual(new BigNumber(1_000));
+    expect(revived.stakingResources.delegations[0].pendingRewards).toEqual(new BigNumber(5));
+    expect(revived.stakingResources.redelegations[0].amount).toEqual(new BigNumber(300));
+    expect(revived.stakingResources.redelegations[0].completionDate).toEqual(completionDate);
+    expect(revived.stakingResources.unbondings[0].completionDate).toEqual(completionDate);
+    expect(revived.stakingResources.delegatedBalance).toEqual(new BigNumber(1_000));
+    expect(revived.stakingResources.unbondingBalance).toEqual(new BigNumber(200));
+  });
+
+  it("migrates a legacy cosmosResources account to stakingResources and xpub", () => {
+    const legacyRaw = {
+      cosmosResources: {
+        delegations: [
+          {
+            validatorAddress: "cosmosvaloper1a",
+            amount: "1000",
+            pendingRewards: "5",
+            status: "bonded",
+          },
+        ],
+        redelegations: [],
+        unbondings: [
+          {
+            validatorAddress: "cosmosvaloper1a",
+            amount: "200",
+            completionDate: "2026-03-01T12:00:00.000Z",
+          },
+        ],
+        delegatedBalance: "1000",
+        pendingRewardsBalance: "5",
+        unbondingBalance: "200",
+        sequence: 7,
+        publicKey: "03legacykey",
+      },
+    } as unknown as AccountRaw;
+    const account = { freshAddress: "cosmos1abc", xpub: "cosmos1abc" } as any;
+
+    cosmosHooks.assignFromAccountRaw(legacyRaw, account);
+
+    expect(account.sequence).toBe(7);
+    expect(account.xpub).toBe("03legacykey");
+    expect(account.stakingResources.delegations[0].amount).toEqual(new BigNumber(1_000));
+    expect(account.stakingResources.unbondings[0].completionDate).toEqual(completionDate);
+    expect(account.stakingResources.unbondingBalance).toEqual(new BigNumber(200));
+  });
+
+  describe("operation extra", () => {
+    it("round-trips a delegation's validators as BigNumber and string", () => {
+      const raw = cosmosHooks.toOperationExtraRaw({
+        validators: [
+          { address: "cosmosvaloper1a", amount: new BigNumber(10) },
+          { address: "cosmosvaloper1b", amount: new BigNumber(20) },
+        ],
+      });
+
+      expect(raw).toEqual({
+        validators: [
+          { address: "cosmosvaloper1a", amount: "10" },
+          { address: "cosmosvaloper1b", amount: "20" },
+        ],
+      });
+      expect(cosmosHooks.fromOperationExtraRaw(JSON.parse(JSON.stringify(raw)))).toEqual({
+        validators: [
+          { address: "cosmosvaloper1a", amount: new BigNumber(10) },
+          { address: "cosmosvaloper1b", amount: new BigNumber(20) },
+        ],
+      });
+    });
+
+    it("round-trips a single validator, the redelegation source and the memo", () => {
+      const extra = {
+        validator: { address: "cosmosvaloper1b", amount: new BigNumber(300) },
+        sourceValidator: "cosmosvaloper1a",
+        memo: "thanks",
+      };
+
+      const raw = cosmosHooks.toOperationExtraRaw(extra);
+
+      expect(raw).toEqual({
+        validator: { address: "cosmosvaloper1b", amount: "300" },
+        sourceValidator: "cosmosvaloper1a",
+        memo: "thanks",
+      });
+      expect(cosmosHooks.fromOperationExtraRaw(raw)).toEqual(extra);
+    });
+
+    it("round-trips the auto-claimed rewards of a delegation", () => {
+      const extra = { autoClaimedRewards: "12" };
+
+      expect(cosmosHooks.toOperationExtraRaw(extra)).toEqual({ autoClaimedRewards: "12" });
+      expect(cosmosHooks.fromOperationExtraRaw({ autoClaimedRewards: "12" })).toEqual(extra);
+    });
+
+    it("drops empty validators and returns an empty extra for a non-cosmos bag", () => {
+      expect(cosmosHooks.toOperationExtraRaw({ validators: [], memo: "m" })).toEqual({ memo: "m" });
+      expect(cosmosHooks.toOperationExtraRaw({ ledgerOpType: "FREEZE" })).toEqual({});
+      expect(cosmosHooks.fromOperationExtraRaw({ ledgerOpType: "FREEZE" })).toEqual({});
+    });
+  });
+});

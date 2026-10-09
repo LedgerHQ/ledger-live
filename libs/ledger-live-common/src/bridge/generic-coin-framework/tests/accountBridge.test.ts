@@ -3,6 +3,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import { getCoinFrameworkAccountBridge } from "../accountBridge";
+import genericCoinFrameworkFamilies from "../genericCoinFrameworkFamilies.json";
 import type { CoinFrameworkSigner } from "../types";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
@@ -103,5 +104,30 @@ describe("getCoinFrameworkAccountBridge — shouldMergeOps", () => {
 
   it("leaves the operation list to the account shape for a family that opts out", async () => {
     await expect(mergesOpsFor({ shouldMergeOps: false })).resolves.toBe(false);
+  });
+});
+
+describe("getCoinFrameworkAccountBridge — cosmos", () => {
+  it("resolves the generic account bridge for the cosmos family", async () => {
+    const bridge = await getCoinFrameworkAccountBridge("cosmos", "local", stubSigner);
+
+    for (const method of [
+      "receive",
+      "createTransaction",
+      "updateTransaction",
+      "prepareTransaction",
+      "getTransactionStatus",
+      "estimateMaxSpendable",
+      "broadcast",
+      "signOperation",
+    ] as const) {
+      expect(bridge[method]).toEqual(expect.any(Function));
+    }
+    expect(bridge.assignFromAccountRaw).toBe(assignFromAccountRawMock);
+    expect(bridge.toOperationExtraRaw).toBe(toOperationExtraRawMock);
+  });
+
+  it("lists cosmos among the generic coin framework families", () => {
+    expect(genericCoinFrameworkFamilies.cosmos).toBe(true);
   });
 });

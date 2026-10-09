@@ -26,8 +26,8 @@ import {
   resolveClaimRewardMode,
   searchFilter,
 } from "./logic";
+import type { Account, StakingAccount } from "@ledgerhq/types-live";
 import type {
-  CosmosAccount,
   CosmosDelegationInfo,
   CosmosMappedDelegation,
   CosmosUnbonding,
@@ -43,7 +43,9 @@ const buildUnbonding = (validatorAddress: string, completionDate: string): Cosmo
   completionDate: new Date(completionDate),
 });
 
-const makeAccount = (stakingResources: Partial<CosmosAccount["stakingResources"]>): CosmosAccount =>
+const makeAccount = (
+  stakingResources: Partial<StakingAccount["stakingResources"]>,
+): StakingAccount =>
   ({
     stakingResources: {
       delegations: [],
@@ -54,7 +56,7 @@ const makeAccount = (stakingResources: Partial<CosmosAccount["stakingResources"]
       unbondingBalance: new BigNumber(0),
       ...stakingResources,
     },
-  }) as unknown as CosmosAccount;
+  }) as unknown as StakingAccount;
 
 const amountFormatOptions = { disableRounding: true, alwaysShowSign: false, showCode: true };
 
@@ -390,7 +392,7 @@ describe("searchFilter", () => {
 
 describe("getMaxDelegationAvailable", () => {
   it("subtracts fees scaled by the validator count and the min-safe buffer", () => {
-    const account = { spendableBalance: new BigNumber(10_000_000) } as CosmosAccount;
+    const account = { spendableBalance: new BigNumber(10_000_000) } as StakingAccount;
 
     const result = getMaxDelegationAvailable(account, 3);
 
@@ -402,7 +404,7 @@ describe("getMaxDelegationAvailable", () => {
   });
 
   it("caps the fee scaling at COSMOS_MAX_DELEGATIONS even with more validators", () => {
-    const account = { spendableBalance: new BigNumber(10_000_000) } as CosmosAccount;
+    const account = { spendableBalance: new BigNumber(10_000_000) } as StakingAccount;
 
     const result = getMaxDelegationAvailable(account, 100);
 
@@ -416,7 +418,7 @@ describe("getMaxDelegationAvailable", () => {
   });
 
   it("treats a validator count of 0 as 1", () => {
-    const account = { spendableBalance: new BigNumber(1_000_000) } as CosmosAccount;
+    const account = { spendableBalance: new BigNumber(1_000_000) } as StakingAccount;
 
     const result = getMaxDelegationAvailable(account, 0);
 
@@ -434,7 +436,7 @@ describe("getMaxEstimatedBalance", () => {
         unbondingBalance: new BigNumber(2_000_000),
         delegatedBalance: new BigNumber(3_000_000),
       },
-    } as CosmosAccount;
+    } as StakingAccount;
 
     const result = getMaxEstimatedBalance(account, new BigNumber(1_000_000));
 
@@ -448,7 +450,7 @@ describe("getMaxEstimatedBalance", () => {
         unbondingBalance: new BigNumber(0),
         delegatedBalance: new BigNumber(0),
       },
-    } as CosmosAccount;
+    } as StakingAccount;
 
     const result = getMaxEstimatedBalance(account, new BigNumber(5_000_000));
 
@@ -458,12 +460,12 @@ describe("getMaxEstimatedBalance", () => {
 
 describe("canDelegate", () => {
   it("returns true when the spendable balance covers fees and the min-safe buffer", () => {
-    const account = { spendableBalance: new BigNumber(200_000) } as CosmosAccount;
+    const account = { spendableBalance: new BigNumber(200_000) } as StakingAccount;
     expect(canDelegate(account)).toBe(true);
   });
 
   it("returns false when the spendable balance does not cover fees and the min-safe buffer", () => {
-    const account = { spendableBalance: new BigNumber(100_000) } as CosmosAccount;
+    const account = { spendableBalance: new BigNumber(100_000) } as StakingAccount;
     expect(canDelegate(account)).toBe(false);
   });
 });
@@ -503,5 +505,18 @@ describe("parseAmountStringToNumber", () => {
 
   it("returns the whole string (unit code stripped) when there is no comma", () => {
     expect(parseAmountStringToNumber("42 ATOM", "ATOM")).toBe("42 ");
+  });
+});
+
+describe("staking guard", () => {
+  const notStaking = { balance: new BigNumber(0) } as unknown as Account;
+
+  it.each([
+    ["getMaxEstimatedBalance", () => getMaxEstimatedBalance(notStaking, new BigNumber(0))],
+    ["canUndelegate", () => canUndelegate(notStaking)],
+    ["canRedelegate", () => canRedelegate(notStaking, { validatorAddress: "v" })],
+    ["getRedelegation", () => getRedelegation(notStaking, { validatorAddress: "v" } as never)],
+  ])("%s throws for an account without staking resources", (_name, call) => {
+    expect(call).toThrow("cosmos staking account required");
   });
 });

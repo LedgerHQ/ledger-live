@@ -45,44 +45,63 @@ with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees
   }`;
 };
 
+/**
+ * Transactions persisted before `valAddress`/`dstValAddress` only carry `validators` and
+ * `sourceValidator`: derive the new fields from them.
+ */
+function legacyValidatorFields(tr: TransactionRaw): {
+  valAddress?: string;
+  dstValAddress?: string;
+} {
+  if (tr.mode === "send") return {};
+  if (tr.mode === "redelegate") {
+    return {
+      valAddress: tr.valAddress ?? tr.sourceValidator ?? "",
+      dstValAddress: tr.dstValAddress ?? tr.validators?.[0]?.address ?? "",
+    };
+  }
+  return { valAddress: tr.valAddress ?? tr.validators?.[0]?.address ?? "" };
+}
+
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
 
-  let memoValue: string | undefined = undefined;
-  if (tr.memoValue !== undefined && tr.memoValue !== null) {
-    memoValue = tr.memoValue;
-  } else if (tr.memo !== undefined && tr.memo !== null) {
+  // A `null` memo field is kept as `null`: the generic `createTransaction` creates it that way, and
+  // a round trip must give back the transaction it was given.
+  let memoValue = tr.memoValue;
+  if (
+    (memoValue === undefined || memoValue === null) &&
+    tr.memo !== undefined &&
+    tr.memo !== null
+  ) {
     memoValue = tr.memo;
   }
 
-  let memoType: string | undefined = undefined;
-  if (tr.memoType !== undefined && tr.memoType !== null) {
-    memoType = tr.memoType;
-  } else if (memoValue !== undefined) {
+  let memoType = tr.memoType;
+  if (
+    (memoType === undefined || memoType === null) &&
+    memoValue !== undefined &&
+    memoValue !== null
+  ) {
     memoType = "text";
   }
 
   return {
     ...common,
     family: tr.family,
-    mode: tr.mode,
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: new BigNumber(networkInfo.fees),
     },
     fees: tr.fees ? new BigNumber(tr.fees) : null,
-    gas: tr.gas ? new BigNumber(tr.gas) : null,
+    gas: tr.gas === undefined ? undefined : tr.gas ? new BigNumber(tr.gas) : null,
     memo: tr.memo,
-    sourceValidator: tr.sourceValidator,
-    validators: tr.validators
-      ? tr.validators.map(v => ({ ...v, amount: new BigNumber(v.amount) }))
-      : [],
     ...(memoType !== undefined ? { memoType } : {}),
     ...(memoValue !== undefined ? { memoValue } : {}),
-    ...(tr.valAddress !== undefined ? { valAddress: tr.valAddress } : {}),
-    ...(tr.dstValAddress !== undefined ? { dstValAddress: tr.dstValAddress } : {}),
-  };
+    mode: tr.mode,
+    ...legacyValidatorFields(tr),
+  } as Transaction;
 };
 
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
@@ -97,14 +116,12 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       fees: networkInfo.fees.toString(),
     },
     fees: t.fees ? t.fees.toString() : null,
-    gas: t.gas ? t.gas.toString() : null,
+    gas: t.gas === undefined ? undefined : t.gas ? t.gas.toString() : null,
     memo: t.memo,
-    sourceValidator: t.sourceValidator,
-    validators: t.validators ? t.validators.map(v => ({ ...v, amount: v.amount.toString() })) : [],
     ...(t.memoType !== undefined ? { memoType: t.memoType } : {}),
     ...(t.memoValue !== undefined ? { memoValue: t.memoValue } : {}),
-    ...(t.valAddress !== undefined ? { valAddress: t.valAddress } : {}),
-    ...(t.dstValAddress !== undefined ? { dstValAddress: t.dstValAddress } : {}),
+    ...(t.mode !== "send" ? { valAddress: t.valAddress } : {}),
+    ...(t.mode === "redelegate" ? { dstValAddress: t.dstValAddress } : {}),
   };
 };
 

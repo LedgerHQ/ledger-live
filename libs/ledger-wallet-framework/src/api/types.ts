@@ -151,6 +151,11 @@ export type BridgeApi = {
    */
   stakingSupported?: boolean;
   /**
+   * Whether the chain keeps the account's next sequence number (`getNextSequence`) on the
+   * synced `account.sequence`
+   */
+  accountSequenceSupported?: boolean;
+  /**
    * When true, the chain consumes per-stake positions via
    * `account.stakingPositions` (raw `Stake[]` from `getBalance`) instead of
    * the EVM-style `stakingResources` aggregate. Used by chains where each

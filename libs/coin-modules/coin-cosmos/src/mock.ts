@@ -1,31 +1,32 @@
 import { genAddress, genHex } from "@ledgerhq/ledger-wallet-framework/mocks/helpers";
-import type { Account, OperationType } from "@ledgerhq/types-live";
+import {
+  createEmptyStakingResources,
+  isStakingAccount,
+  type Account,
+  type OperationType,
+  type StakingDelegation,
+  type StakingRedelegation,
+  type StakingResources,
+  type StakingUnbonding,
+} from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import Prando from "prando";
 import preloadedData from "./preloadedData.mock";
-import {
-  isCosmosAccount,
-  type CosmosAccount,
-  type CosmosDelegation,
-  type CosmosOperation,
-  type CosmosRedelegation,
-  type CosmosResources,
-  type CosmosUnbonding,
-} from "./types";
+import { isCosmosAccount, type CosmosAccount, type CosmosOperation } from "./types";
 const { validators } = preloadedData;
 
-function setCosmosResources(
+function getStakingResources(account: CosmosAccount): StakingResources {
+  return isStakingAccount(account) ? account.stakingResources : createEmptyStakingResources();
+}
+
+function setStakingResources(
   account: CosmosAccount,
-  delegations: CosmosDelegation[],
+  delegations: StakingDelegation[],
   unbondingBalance: BigNumber = new BigNumber(0),
-  unbondings: CosmosUnbonding[] | null | undefined,
-  redelegations: CosmosRedelegation[] | null | undefined,
-): CosmosAccount {
-  const resolvedUnbondingBalance = account.cosmosResources
-    ? account.cosmosResources.unbondingBalance.plus(unbondingBalance)
-    : unbondingBalance;
-  const resolvedUnbondings = unbondings ?? account.cosmosResources?.unbondings ?? [];
-  const resolvedRedelegations = redelegations ?? account.cosmosResources?.redelegations ?? [];
+  unbondings: StakingUnbonding[] | null | undefined,
+  redelegations: StakingRedelegation[] | null | undefined,
+): void {
+  const current = getStakingResources(account);
   const delegatedBalance = delegations.reduce(
     (sum, { amount }) => sum.plus(amount),
     new BigNumber(0),
@@ -35,25 +36,18 @@ function setCosmosResources(
     new BigNumber(0),
   );
 
-  /** format cosmosResources given the new delegations */
-  account.cosmosResources = {
-    delegations,
-    delegatedBalance,
-    pendingRewardsBalance,
-    unbondingBalance: resolvedUnbondingBalance,
-    unbondings: resolvedUnbondings,
-    redelegations: resolvedRedelegations,
-    sequence: (account.cosmosResources?.sequence ?? 0) + 1,
-  };
-  account.stakingResources = {
-    delegations,
-    redelegations: resolvedRedelegations,
-    unbondings: resolvedUnbondings,
-    delegatedBalance,
-    pendingRewardsBalance,
-    unbondingBalance: resolvedUnbondingBalance,
-  };
-  return account;
+  /** format stakingResources given the new delegations */
+  Object.assign(account, {
+    stakingResources: {
+      delegations,
+      delegatedBalance,
+      pendingRewardsBalance,
+      unbondingBalance: current.unbondingBalance.plus(unbondingBalance),
+      unbondings: unbondings ?? current.unbondings,
+      redelegations: redelegations ?? current.redelegations,
+    },
+  });
+  account.sequence += 1;
 }
 
 function setOperationFeeValue(operation: CosmosOperation, base: BigNumber): CosmosOperation {
@@ -102,25 +96,14 @@ function genBaseOperation(
  */
 function addDelegationOperation(account: CosmosAccount, rng: Prando): CosmosAccount {
   const { spendableBalance } = account;
-  const cosmosResources: CosmosResources = account.cosmosResources
-    ? account.cosmosResources
-    : {
-        delegations: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-
-        unbondings: [],
-        redelegations: [],
-        sequence: 1,
-      };
+  const stakingResources = getStakingResources(account);
   if (spendableBalance.isZero()) return account;
 
   /** select position on the operation stack where we will insert the new delegation */
   const opIndex = rng.next(0, 10);
   const delegationOp = genBaseOperation(account, rng, "DELEGATE", opIndex);
   const feeOp = genBaseOperation(account, rng, "FEES", opIndex);
-  const value = spendableBalance.plus(cosmosResources.delegatedBalance);
+  const value = spendableBalance.plus(stakingResources.delegatedBalance);
 
   /** select between 3 to 5 validators and split the amount evenly */
   const delegatedValidators = Array.from({
@@ -140,7 +123,7 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): CosmosAcco
   };
 
   /** format delegations and randomize rewards and status */
-  const delegations: CosmosDelegation[] = delegatedValidators.map(({ address, amount }) => ({
+  const delegations: StakingDelegation[] = delegatedValidators.map(({ address, amount }) => ({
     validatorAddress: address,
     amount,
     pendingRewards: rng.nextBoolean()
@@ -148,15 +131,10 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): CosmosAcco
       : new BigNumber(0),
     status: rng.next() > 0.33 ? "bonded" : "unbonded",
   }));
-  setCosmosResources(account, delegations, undefined, undefined, undefined);
-  setOperationFeeValue(
-    delegationOp,
-    account.cosmosResources ? account.cosmosResources.delegatedBalance : new BigNumber(0),
-  );
-  setOperationFeeValue(
-    feeOp,
-    account.cosmosResources ? account.cosmosResources.delegatedBalance : new BigNumber(0),
-  );
+  setStakingResources(account, delegations, undefined, undefined, undefined);
+  const { delegatedBalance } = getStakingResources(account);
+  setOperationFeeValue(delegationOp, delegatedBalance);
+  setOperationFeeValue(feeOp, delegatedBalance);
   postSyncAccount(account);
   account.operations.splice(opIndex, 0, delegationOp, feeOp);
   account.operationsCount += 2;
@@ -170,24 +148,13 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): CosmosAcco
  * @param {Prando} rng
  */
 function addRedelegationOperation(account: CosmosAccount, rng: Prando): CosmosAccount {
-  const cosmosResources: CosmosResources = account.cosmosResources
-    ? account.cosmosResources
-    : {
-        delegations: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-
-        unbondings: [],
-        redelegations: [],
-        sequence: 1,
-      };
-  if (!cosmosResources.delegations.length) return account;
+  const stakingResources = getStakingResources(account);
+  if (!stakingResources.delegations.length) return account;
 
   /** select position on the operation stack where we will insert the new delegation */
   const opIndex = rng.next(0, 10);
   const redelegationOp = genBaseOperation(account, rng, "REDELEGATE", opIndex);
-  const fromDelegation = rng.nextArrayItem(cosmosResources.delegations);
+  const fromDelegation = rng.nextArrayItem(stakingResources.delegations);
   const amount = new BigNumber(Math.round(fromDelegation.amount.toNumber() * rng.next(0.1, 1)));
   const toDelegation = rng.nextArrayItem(validators);
   redelegationOp.extra = {
@@ -197,7 +164,7 @@ function addRedelegationOperation(account: CosmosAccount, rng: Prando): CosmosAc
     },
     sourceValidator: fromDelegation.validatorAddress,
   };
-  const delegations = cosmosResources.delegations
+  const delegations = stakingResources.delegations
     .filter(({ validatorAddress }) => validatorAddress === fromDelegation.validatorAddress)
     .concat([
       {
@@ -209,7 +176,7 @@ function addRedelegationOperation(account: CosmosAccount, rng: Prando): CosmosAc
         status: rng.next() > 0.33 ? "bonded" : "unbonded",
       },
     ]);
-  setCosmosResources(account, delegations, undefined, undefined, [
+  setStakingResources(account, delegations, undefined, undefined, [
     {
       validatorSrcAddress: fromDelegation.validatorAddress,
       validatorDstAddress: toDelegation.validatorAddress,
@@ -230,24 +197,13 @@ function addRedelegationOperation(account: CosmosAccount, rng: Prando): CosmosAc
  * @param {Prando} rng
  */
 function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): CosmosAccount {
-  const cosmosResources: CosmosResources = account.cosmosResources
-    ? account.cosmosResources
-    : {
-        delegations: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-
-        unbondings: [],
-        redelegations: [],
-        sequence: 1,
-      };
-  if (!cosmosResources.delegations.length) return account;
+  const stakingResources = getStakingResources(account);
+  if (!stakingResources.delegations.length) return account;
 
   /** select position on the operation stack where we will insert the new claim rewards */
   const opIndex = rng.next(0, 10);
   const claimRewardOp = genBaseOperation(account, rng, "REWARD", opIndex);
-  const fromDelegation = rng.nextArrayItem(cosmosResources.delegations);
+  const fromDelegation = rng.nextArrayItem(stakingResources.delegations);
   const amount = fromDelegation.pendingRewards.gt(0)
     ? fromDelegation.pendingRewards
     : new BigNumber(Math.round(fromDelegation.amount.toNumber() * 0.01));
@@ -257,14 +213,14 @@ function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): CosmosAc
       amount,
     },
   };
-  const delegations = cosmosResources.delegations.map(delegation => ({
+  const delegations = stakingResources.delegations.map(delegation => ({
     ...delegation,
     pendingRewards:
       delegation.validatorAddress === fromDelegation.validatorAddress
         ? new BigNumber(0)
         : delegation.pendingRewards,
   }));
-  setCosmosResources(account, delegations, undefined, undefined, undefined);
+  setStakingResources(account, delegations, undefined, undefined, undefined);
   claimRewardOp.fee = new BigNumber(Math.round(amount.toNumber() * 0.001));
   claimRewardOp.value = amount;
   account.operations.splice(opIndex, 0, claimRewardOp);
@@ -279,24 +235,13 @@ function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): CosmosAc
  * @param {Prando} rng
  */
 function addUndelegationOperation(account: CosmosAccount, rng: Prando): CosmosAccount {
-  const cosmosResources: CosmosResources = account.cosmosResources
-    ? account.cosmosResources
-    : {
-        delegations: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-
-        unbondings: [],
-        redelegations: [],
-        sequence: 1,
-      };
-  if (!cosmosResources.delegations.length) return account;
+  const stakingResources = getStakingResources(account);
+  if (!stakingResources.delegations.length) return account;
 
   /** select position on the operation stack where we will insert the new claim rewards */
   const opIndex = rng.next(0, 10);
   const undelegationOp = genBaseOperation(account, rng, "UNDELEGATE", opIndex);
-  const fromDelegation = rng.nextArrayItem(cosmosResources.delegations);
+  const fromDelegation = rng.nextArrayItem(stakingResources.delegations);
   const amount = new BigNumber(
     Math.round(fromDelegation.amount.toNumber() * (rng.nextBoolean() ? rng.next(0.1, 1) : 1)),
   );
@@ -307,7 +252,7 @@ function addUndelegationOperation(account: CosmosAccount, rng: Prando): CosmosAc
       amount,
     },
   };
-  const delegations = cosmosResources.delegations
+  const delegations = stakingResources.delegations
     .map(delegation => ({
       ...delegation,
       amount:
@@ -317,7 +262,7 @@ function addUndelegationOperation(account: CosmosAccount, rng: Prando): CosmosAc
       pendingRewards: new BigNumber(0),
     }))
     .filter(({ amount }) => amount.gt(0));
-  setCosmosResources(
+  setStakingResources(
     account,
     delegations,
     amount,
@@ -361,9 +306,7 @@ function postSyncAccount(account: Account): Account {
   if (!isCosmosAccount(account)) {
     throw new Error("postSyncAccount must be called with a CosmosAccount type parameter");
   }
-  const cosmosResources = account?.cosmosResources;
-  const delegatedBalance = cosmosResources?.delegatedBalance ?? new BigNumber(0);
-  const unbondingBalance = cosmosResources?.unbondingBalance ?? new BigNumber(0);
+  const { delegatedBalance, unbondingBalance } = getStakingResources(account);
   account.spendableBalance = account.balance.minus(delegatedBalance).minus(unbondingBalance);
   return account;
 }
@@ -389,23 +332,8 @@ function postScanAccount(
   }
 
   if (isEmpty) {
-    account.cosmosResources = {
-      delegations: [],
-      delegatedBalance: new BigNumber(0),
-      pendingRewardsBalance: new BigNumber(0),
-      unbondingBalance: new BigNumber(0),
-      unbondings: [],
-      redelegations: [],
-      sequence: 0,
-    };
-    account.stakingResources = {
-      delegations: [],
-      redelegations: [],
-      unbondings: [],
-      delegatedBalance: new BigNumber(0),
-      pendingRewardsBalance: new BigNumber(0),
-      unbondingBalance: new BigNumber(0),
-    };
+    account.sequence = 0;
+    Object.assign(account, { stakingResources: createEmptyStakingResources() });
     account.operations = [];
   }
 

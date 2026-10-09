@@ -159,4 +159,14 @@ describe("RedelegationFlowModal/Body", () => {
       }),
     );
   });
+
+  it("throws when the account has no staking resources", () => {
+    jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const noStaking = {
+      type: "Account",
+      freshAddress: "cosmos1test",
+      currency,
+    } as unknown as CosmosAccount;
+    expect(() => renderBody({ account: noStaking })).toThrow("cosmos staking account required");
+  });
 });
