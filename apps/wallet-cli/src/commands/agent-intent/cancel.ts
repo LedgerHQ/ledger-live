@@ -99,10 +99,14 @@ export default defineCommand({
         await client.cancelIntent(intentId);
       } catch (e) {
         if (e instanceof AgentIntentHttpError && e.status === 400) {
-          // Most likely the user signed it since it was read: report its state now. The service
-          // sends no error type for this, so a still cancellable intent means another refusal.
+          // A bare 400 on an intent now in a known final or signed state means it moved on.
           const now = await read().catch(() => undefined);
-          if (now && now.status !== "cancelled" && !CANCELLABLE_STATUSES.has(now.status)) {
+          if (
+            now &&
+            isAgentIntentStatus(now.status) &&
+            now.status !== "cancelled" &&
+            !CANCELLABLE_STATUSES.has(now.status)
+          ) {
             throw new Error(notCancellableMessage(intentId, now.status));
           }
         }

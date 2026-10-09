@@ -36,4 +36,22 @@ describe("askToConfirm", () => {
 
     expect(await askToConfirm("Cancel? [y/N] ")).toBe(false);
   });
+
+  it("declines on Ctrl+C at a terminal", async () => {
+    const stdin = new PassThrough();
+    Object.defineProperty(process, "stdin", { get: () => stdin, configurable: true });
+    process.stderr.write = (() => true) as typeof process.stderr.write;
+    const stderrIsTTY = Object.getOwnPropertyDescriptor(process.stderr, "isTTY");
+    // readline only turns Ctrl+C into SIGINT when its output is a terminal.
+    Object.defineProperty(process.stderr, "isTTY", { value: true, configurable: true });
+    try {
+      const answer = askToConfirm("Cancel? [y/N] ");
+      stdin.write("\x03");
+
+      expect(await answer).toBe(false);
+    } finally {
+      if (stderrIsTTY) Object.defineProperty(process.stderr, "isTTY", stderrIsTTY);
+      else delete (process.stderr as { isTTY?: boolean }).isTTY;
+    }
+  });
 });
