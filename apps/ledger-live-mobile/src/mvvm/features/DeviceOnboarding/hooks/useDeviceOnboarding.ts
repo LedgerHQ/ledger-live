@@ -3,7 +3,6 @@ import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
-  type DeviceOnboardingOutput,
   type OnboardingEvent,
   type SessionEvent,
 } from "@ledgerhq/device-onboarding";
@@ -20,8 +19,8 @@ import {
 } from "@ledgerhq/live-dmk-shared";
 import type { Subscription } from "rxjs";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
-import { useDeviceOnboardingExit } from "./useDeviceOnboardingExit";
 import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { createDeviceOnboardingPorts } from "../utils/ports";
 import { type DeviceOnboardingToolProps } from "../utils/toolState";
 
@@ -50,7 +49,7 @@ export function useDeviceOnboarding({
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
-  const [output, setOutput] = useState<DeviceOnboardingOutput | null>(null);
+  const leaveOnboarding = useLeaveOnboarding({ device: liveDevice, navigateOnExit });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
@@ -58,7 +57,14 @@ export function useDeviceOnboarding({
   const selectedDevices = useRef(new Set<string>());
   const adoptGeneration = useRef(0);
   const onEventRef = useRef<(event: OnboardingEvent) => void>(() => undefined);
-  const onDoneRef = useRef<(output: DeviceOnboardingOutput) => void>(() => undefined);
+
+  const handleDone = useCallback(() => {
+    setStatus("exited");
+    sessionActorRef.current?.stop();
+    sessionActorRef.current = null;
+    connectionRef.current?.unsubscribe();
+    connectionRef.current = null;
+  }, []);
 
   const {
     state,
@@ -77,7 +83,8 @@ export function useDeviceOnboarding({
   } = useDeviceOnboardingActor({
     missingSessionMessage: "No mobile onboarding session",
     onEvent: event => onEventRef.current(event),
-    onDone: done => onDoneRef.current(done),
+    onDone: handleDone,
+    leaveOnboarding,
   });
 
   const dropLostTransport = useCallback(() => {
@@ -94,17 +101,9 @@ export function useDeviceOnboarding({
     [dropLostTransport],
   );
 
-  const handleDone = useCallback((done: DeviceOnboardingOutput) => {
-    setOutput(done);
-    setStatus("exited");
-    sessionActorRef.current?.stop();
-    sessionActorRef.current = null;
-  }, []);
-
   useEffect(() => {
     onEventRef.current = handleEvent;
-    onDoneRef.current = handleDone;
-  }, [handleDone, handleEvent]);
+  }, [handleEvent]);
 
   const forwardSessionEvent = useCallback(
     (event: SessionEvent) => {
@@ -158,13 +157,15 @@ export function useDeviceOnboarding({
         setError(null);
 
         if (actorRef.current) {
+          // The machine takes the new session first: a locked device reports LOCKED as soon as
+          // it is watched, and unlock polling must start on this session, not the lost one.
+          send({ type: "SESSION_CHANGED" });
           startSessionListener(result, nextPorts.currentSessionId());
           setSessionReady(true);
           setStatus("running");
           return;
         }
 
-        setOutput(null);
         startActor(
           {
             dmk: result.dmk,
@@ -185,7 +186,7 @@ export function useDeviceOnboarding({
         setStatus(statusWithActor(actorRef.current));
       }
     },
-    [actorRef, offerSync, portsRef, setSessionReady, startActor, startSessionListener],
+    [actorRef, offerSync, portsRef, send, setSessionReady, startActor, startSessionListener],
   );
 
   const handleConnectionState = useCallback(
@@ -270,7 +271,6 @@ export function useDeviceOnboarding({
     setStatus("idle");
     setDevice(null);
     setLiveDevice(null);
-    setOutput(null);
     setError(null);
   }, [portsRef, resetActor]);
 
@@ -279,7 +279,6 @@ export function useDeviceOnboarding({
     machineState: state,
     send,
   });
-  useDeviceOnboardingExit({ device: liveDevice, output, navigateOnExit });
   useKeepScreenAwake(status === "connecting" || status === "running");
 
   useEffect(

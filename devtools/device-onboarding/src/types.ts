@@ -1,5 +1,6 @@
 import type {
   DeviceOnboardingExitReason,
+  HostOnboardingEvent,
   OnboardingEvent,
   OnboardingStep,
 } from "@ledgerhq/device-onboarding";
@@ -40,7 +41,7 @@ export interface DeviceOnboardingToolEvent {
 
 /** Whole rather than by type: `snapshot.can` needs the payload, and the machine dereferences it. */
 export interface SendableOnboardingEvent {
-  readonly event: OnboardingEvent;
+  readonly event: HostOnboardingEvent;
   readonly label?: string;
 }
 
@@ -96,6 +97,6 @@ export interface DeviceOnboardingToolProps {
   readonly error: string | null;
   /** Opens a session: the first one, or a replacement once the transport went away. */
   readonly connect: () => void;
-  readonly send: (event: OnboardingEvent) => void;
+  readonly send: (event: HostOnboardingEvent) => void;
   readonly reset: () => void;
 }

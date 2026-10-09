@@ -4,7 +4,6 @@ import type {
   DeviceSessionId,
   FirmwareUpdateContext,
 } from "@ledgerhq/device-management-kit";
-import type { DeviceOnboardingPorts } from "./ports";
 
 /** Named with the values DMK's decoding returns, so reading one is a membership check and not a translation. */
 export const OnboardingStep = {
@@ -122,7 +121,9 @@ export function isOnRecoveryKeyScreen(state: DeviceOnboardingState): boolean {
 }
 
 export type OnboardingEvent =
-  | { type: "SESSION_READY" }
+  | { type: "SESSION_READY"; sessionId: DeviceSessionId }
+  /** The host moved to a new session mid-run, before the flow reached SESSION_READY. */
+  | { type: "SESSION_CHANGED"; sessionId: DeviceSessionId }
   | { type: "LOCKED" }
   | { type: "UNLOCKED" }
   | { type: "TRANSPORT_LOST" }
@@ -140,6 +141,7 @@ export type OnboardingEvent =
   | { type: "EARLY_CHECK_TOGGLED" }
   | { type: "EARLY_CHECK_UNAVAILABLE" }
   | { type: "ALLOW_SECURE_CONNECTION_REQUESTED" }
+  | { type: "SECURE_CONNECTION_ALLOWED" }
   | { type: "GENUINE_CHECK_PASSED" }
   | { type: "GENUINE_CHECK_REFUSED"; failure: GenuineCheckFailure }
   | { type: "GENUINE_CHECK_FAILED"; failure: GenuineCheckFailure }
@@ -148,7 +150,7 @@ export type OnboardingEvent =
   | { type: "FIRMWARE_UP_TO_DATE" }
   | { type: "FIRMWARE_UPDATE_AVAILABLE"; update: AvailableFirmwareUpdate }
   | { type: "FIRMWARE_CHECK_FAILED" }
-  | { type: "FIRMWARE_UPDATE_FLOW_CLOSED" }
+  | { type: "FIRMWARE_UPDATE_FLOW_CLOSED"; sessionId: DeviceSessionId }
   | { type: "RETRY" }
   | { type: "SKIP" }
   | { type: "CLOSE" }
@@ -180,13 +182,22 @@ export type GenuineVerdict = {
 
 export type DeviceOnboardingInput = {
   dmk: DeviceManagementKit;
-  ports: DeviceOnboardingPorts;
+  /**
+   * The session the machine talks to. It changes only through SESSION_READY, SESSION_CHANGED or
+   * FIRMWARE_UPDATE_FLOW_CLOSED.
+   */
+  sessionId: DeviceSessionId;
   deviceId: string;
   deviceModelId: DeviceModelId;
   offerSync: boolean;
 };
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
+
+/** Null until the firmware check answers. "checked" once nothing is left to do with the firmware. */
+export type FirmwareCheck =
+  | { kind: "checked" }
+  | { kind: "offered"; update: AvailableFirmwareUpdate };
 
 export type DeviceOnboardingContext = DeviceOnboardingInput & {
   lastDeviceState: DeviceOnboardingState | null;
@@ -195,12 +206,10 @@ export type DeviceOnboardingContext = DeviceOnboardingInput & {
   isOnboarded: boolean;
   onboardedOnEntry: boolean | null;
   genuineVerdict: GenuineVerdict | null;
-  secureConnectionRequested: boolean;
   lastGenuineFailure: GenuineFailureReport | null;
   onEarlyCheckScreen: boolean;
-  firmwareChecked: boolean;
   checksPaused: boolean;
-  availableFirmwareUpdate: AvailableFirmwareUpdate | null;
+  firmware: FirmwareCheck | null;
   currentSetupStep: OnboardingStep | null;
   recoveryKeyBackupOpen: boolean;
 };

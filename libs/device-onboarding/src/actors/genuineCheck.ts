@@ -18,6 +18,7 @@ export type GenuineCheckEvent = Extract<
   {
     type:
       | "ALLOW_SECURE_CONNECTION_REQUESTED"
+      | "SECURE_CONNECTION_ALLOWED"
       | "GENUINE_CHECK_PASSED"
       | "GENUINE_CHECK_REFUSED"
       | "GENUINE_CHECK_FAILED"
@@ -49,6 +50,7 @@ export function mapGenuineCheckFailure(error: unknown): GenuineCheckFailureEvent
 export const genuineCheck = fromCallback<GenuineCheckEvent, GenuineCheckInput>(
   ({ input, sendBack }) => {
     let stopped = false;
+    let awaitingApproval = false;
 
     const runner = createDeviceActionRunner<
       GenuineCheckDAOutput,
@@ -64,12 +66,16 @@ export const genuineCheck = fromCallback<GenuineCheckEvent, GenuineCheckInput>(
           }),
         }),
       ({ requiredUserInteraction }) => {
-        const awaitsSecureConnectionApproval =
-          requiredUserInteraction === UserInteractionRequired.AllowSecureConnection;
+        if (stopped) return;
 
-        if (!stopped && awaitsSecureConnectionApproval) {
-          sendBack({ type: "ALLOW_SECURE_CONNECTION_REQUESTED" });
+        // Tell the machine only when the prompt shows or goes away, not on each update.
+        const prompting = requiredUserInteraction === UserInteractionRequired.AllowSecureConnection;
+        if (prompting !== awaitingApproval) {
+          sendBack({
+            type: prompting ? "ALLOW_SECURE_CONNECTION_REQUESTED" : "SECURE_CONNECTION_ALLOWED",
+          });
         }
+        awaitingApproval = prompting;
       },
     );
 
