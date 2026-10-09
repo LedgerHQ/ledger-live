@@ -1,6 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:best-practices", ":dependencyDashboard"],
+  "extends": [
+    "github>LedgerHQ/renovate-config//base.json5",
+    "github>LedgerHQ/renovate-config//infra/gha.json5",
+    ":dependencyDashboard"
+  ],
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "automerge": false,
@@ -113,11 +117,6 @@
       "groupName": null
     },
     {
-      "description": "Global npm minimum release age",
-      "matchDatasources": ["npm"],
-      "minimumReleaseAge": "2 days"
-    },
-    {
       "description": "E2E Playwright and Allure linked updates",
       "matchManagers": ["npm"],
       "groupName": "e2e playwright and allure",
@@ -150,6 +149,5 @@
   ],
   "prConcurrentLimit": 10,
   "separateMinorPatch": true,
-  "timezone": "Europe/Paris",
   "enabledManagers": ["npm", "github-actions"]
 }
