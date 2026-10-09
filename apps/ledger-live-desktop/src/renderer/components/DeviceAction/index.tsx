@@ -446,7 +446,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (displayUpgradeWarning && appAndVersion && passWarning) {
-    return renderWarningOutdated({ appName: appAndVersion.name, passWarning });
+    return renderWarningOutdated({ appName: appAndVersion.name, passWarning, onOpenManager });
   }
 
   if (repairModalOpened && repairModalOpened.auto && closeRepairModal) {
@@ -608,6 +608,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       return renderError({
         t,
         error,
+        onOpenManager,
         managerAppName:
           e.name === "UpdateYourApp"
             ? (error as { managerAppName?: string }).managerAppName
@@ -620,6 +621,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         t,
         error,
         requireFirmwareUpdate: true,
+        onOpenManager,
       });
     }
 
