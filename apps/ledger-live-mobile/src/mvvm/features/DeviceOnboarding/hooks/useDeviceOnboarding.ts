@@ -3,6 +3,7 @@ import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
+  stateValueToString,
   type OnboardingEvent,
   type SessionEvent,
 } from "@ledgerhq/device-onboarding";
@@ -31,6 +32,8 @@ type UseDeviceOnboardingInput = {
 };
 
 type StoppableActor = { stop(): void };
+
+const quittingStates = new Set(["quitting", "leavingOnQuit"]);
 
 function statusWithActor(
   actor: { getSnapshot(): unknown } | null,
@@ -264,7 +267,7 @@ export function useDeviceOnboarding({
     });
   }, [actorRef, adoptConnection, dmk, handleConnectionState, knownDevices]);
 
-  const reset = useCallback(() => {
+  const clearRun = useCallback(() => {
     adoptGeneration.current += 1;
     connectionRef.current?.unsubscribe();
     connectionRef.current = null;
@@ -279,6 +282,28 @@ export function useDeviceOnboarding({
     setLiveDevice(null);
     setError(null);
   }, [portsRef, resetActor]);
+
+  // Quit first, so the device leaves the flow before the screen is cleared.
+  const reset = useCallback(() => {
+    const actor = actorRef.current;
+    if (actor?.getSnapshot().can({ type: "QUIT" })) {
+      sendToActor({ type: "QUIT" });
+      const after = actor.getSnapshot();
+      if (after.status !== "done" && quittingStates.has(stateValueToString(after.value))) {
+        adoptGeneration.current += 1;
+        // A lock or a lost connection can pull the machine out of quitting before it is done.
+        const subscription = actor.subscribe(next => {
+          const quitting = quittingStates.has(stateValueToString(next.value));
+          if (next.status !== "done" && quitting) return;
+          subscription.unsubscribe();
+          clearRun();
+        });
+        return;
+      }
+    }
+
+    clearRun();
+  }, [actorRef, clearRun, sendToActor]);
 
   useFirmwareUpdateHandover({
     device: liveDevice,
