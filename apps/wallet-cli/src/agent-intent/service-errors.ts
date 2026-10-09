@@ -1,4 +1,5 @@
 import type { AgentIntentHttpError } from "@ledgerhq/agent-intent-sdk";
+import { stripControlChars } from "../shared/ui";
 
 const MAX_DETAIL_LENGTH = 300;
 
@@ -23,15 +24,15 @@ export function isAcceptedWithoutReviewLink(e: unknown): boolean {
  * through verbatim, and a fetch failure message can embed the request URL. Strips URL userinfo and
  * bearer tokens, key-sized hex runs (a 32-byte secp256k1 secret is 64 hex characters, shorter
  * than the generic threshold), long token-like runs (same threshold the SDK's own auth errors
- * use), and truncates. EVM addresses (40 hex characters) stay readable.
+ * use) and terminal control characters, and truncates. EVM addresses (40 hex characters) stay
+ * readable.
  */
 export function redactServiceText(text: string): string {
-  const redacted = text
+  const redacted = stripControlChars(text.replace(/\s+/g, " "))
     .replace(/:\/\/[^/\s@]*@/g, "://")
     .replace(/Bearer\s+\S+/gi, "Bearer [redacted]")
     .replace(/(0x)?[0-9a-fA-F]{64,}/g, "[redacted]")
     .replace(/[A-Za-z0-9_\-.~+/=]{80,}/g, "[redacted]")
-    .replace(/\s+/g, " ")
     .trim();
   return redacted.length > MAX_DETAIL_LENGTH
     ? `${redacted.slice(0, MAX_DETAIL_LENGTH)}…`
