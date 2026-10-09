@@ -6,10 +6,10 @@
       "{workspaceRoot}/nx.s3.defaults.json",
       "{workspaceRoot}/sonar-project.properties",
       "{workspaceRoot}/tsconfig.base.json",
-      "{workspaceRoot}/pnpm-lock.yaml",
       "{workspaceRoot}/package.json",
-      "{workspaceRoot}/pnpm-workspace.yaml",
-      "{workspaceRoot}/.npmrc"
+      "{workspaceRoot}/.npmrc",
+      "{workspaceRoot}/.pnpmfile.cjs",
+      "{workspaceRoot}/patches/**/*"
     ],
     "default": [
       "sharedGlobals",
@@ -331,6 +331,11 @@
         "env": "UPDATE_CHECK_PUBKEY"
       }
     ]
+  },
+  "pluginsConfig": {
+    "@nx/js": {
+      "projectsAffectedByDependencyUpdates": "auto"
+    }
   },
   "plugins": [
     "./tools/nx-plugins/project-tags/plugin.js",
