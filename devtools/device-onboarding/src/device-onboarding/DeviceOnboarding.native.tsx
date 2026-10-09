@@ -28,6 +28,7 @@ import {
   headerCopy,
   featureFlagCopy,
   logCopy,
+  machineCopy,
   openNextScreenCopy,
   overrideCopy,
 } from "./configCopy";
@@ -36,6 +37,11 @@ import {
   type DeviceOnboardingViewModel,
   type DisplayRow,
   type EventRow,
+  machineLegend,
+  type MachineBadge,
+  type MachineEmphasis,
+  type MachineRow,
+  type MachineTone,
   type NextStateGroup,
   type StateKind,
   type StateStep,
@@ -111,7 +117,7 @@ function useToolStyles() {
 function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   const vm = useDeviceOnboardingViewModel(props);
   const { theme, divider, base, muted } = useToolStyles();
-  const [tab, setTab] = useState<"log" | "config">("log");
+  const [tab, setTab] = useState<"log" | "config" | "machine">("log");
 
   return (
     <ScrollView>
@@ -161,6 +167,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
         >
           <SegmentedControlButton value="log">{headerCopy.log}</SegmentedControlButton>
           <SegmentedControlButton value="config">{headerCopy.config}</SegmentedControlButton>
+          <SegmentedControlButton value="machine">{machineCopy.tab}</SegmentedControlButton>
         </SegmentedControl>
       </Box>
       {vm.error ? (
@@ -171,7 +178,9 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
         </Box>
       ) : null}
 
-      {tab === "config" ? <ConfigTab vm={vm} /> : <LogTab vm={vm} />}
+      {tab === "log" ? <LogTab vm={vm} /> : null}
+      {tab === "config" ? <ConfigTab vm={vm} /> : null}
+      {tab === "machine" ? <MachineSection rows={vm.machineRows} /> : null}
     </ScrollView>
   );
 }
@@ -284,6 +293,96 @@ function LogTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
       >
         {logCopy.export}
       </Button>
+    </Box>
+  );
+}
+
+const stateColor: Record<MachineEmphasis, "active" | "base" | "muted"> = {
+  current: "active",
+  active: "base",
+  idle: "muted",
+};
+
+const tonePresentation: Record<MachineTone, Pick<StepPresentation, "backgroundColor" | "color">> = {
+  active: { backgroundColor: "activeSubtle", color: "active" },
+  success: { backgroundColor: "successTransparent", color: "success" },
+  warning: { backgroundColor: "warningTransparent", color: "warning" },
+  error: { backgroundColor: "errorTransparent", color: "error" },
+  muted: { backgroundColor: "mutedTransparent", color: "muted" },
+};
+
+const WRAP_ROW_LX = {
+  flexDirection: "row",
+  flexWrap: "wrap",
+  alignItems: "center",
+  gap: "s8",
+} as const;
+
+function MachineSection({ rows }: Readonly<{ rows: readonly MachineRow[] }>) {
+  const { theme, divider, muted, mono, mutedMono } = useToolStyles();
+
+  return (
+    <Box lx={SECTION_LX} style={divider}>
+      <Text typography="body2" style={muted}>
+        {machineCopy.description}
+      </Text>
+      <Box lx={WRAP_ROW_LX}>
+        {machineLegend.map(item => (
+          <Badge key={item.label} {...item} />
+        ))}
+      </Box>
+      {rows.map(row => (
+        <Box key={row.key} lx={LOG_LX} style={{ paddingLeft: row.depth * 16 }}>
+          <Box lx={WRAP_ROW_LX}>
+            <Box
+              lx={row.emphasis === "current" ? { ...CHIP_LX, backgroundColor: "activeSubtle" } : {}}
+            >
+              <Text
+                typography={row.emphasis === "current" ? "body2SemiBold" : "body2"}
+                style={{
+                  color: theme.colors.text[stateColor[row.emphasis]],
+                  fontFamily: "monospace",
+                }}
+                accessibilityState={{ selected: row.emphasis === "current" }}
+              >
+                {row.label}
+              </Text>
+            </Box>
+            {row.badges.map(badge => (
+              <Badge key={badge.label} {...badge} />
+            ))}
+          </Box>
+          {row.transitions.map(transition => (
+            <Box key={transition.key} lx={WRAP_ROW_LX} style={{ paddingLeft: 16 }}>
+              <Badge label={transition.event} tone={transition.tone} />
+              <Text typography="body2" style={muted}>
+                →
+              </Text>
+              <Text typography="body2" style={transition.target ? mono : mutedMono}>
+                {transition.target ?? machineCopy.stay}
+              </Text>
+              {transition.guard ? (
+                <Text typography="body2" style={muted}>
+                  {machineCopy.guard} {transition.guard}
+                </Text>
+              ) : null}
+            </Box>
+          ))}
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
+function Badge({ label, tone }: Readonly<MachineBadge>) {
+  const { theme } = useTheme();
+  const { backgroundColor, color } = tonePresentation[tone];
+
+  return (
+    <Box lx={{ paddingHorizontal: "s4", borderRadius: "sm", backgroundColor }}>
+      <Text typography="body2" style={{ color: theme.colors.text[color], fontFamily: "monospace" }}>
+        {label}
+      </Text>
     </Box>
   );
 }

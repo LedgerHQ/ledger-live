@@ -19,6 +19,7 @@ import {
   headerCopy,
   featureFlagCopy,
   logCopy,
+  machineCopy,
   openNextScreenCopy,
   overrideCopy,
 } from "./configCopy";
@@ -27,6 +28,11 @@ import {
   type DeviceOnboardingViewModel,
   type DisplayRow,
   type EventRow,
+  machineLegend,
+  type MachineBadge,
+  type MachineEmphasis,
+  type MachineRow,
+  type MachineTone,
   type NextStateGroup,
   type StateKind,
   type StateStep,
@@ -48,6 +54,21 @@ const stepPresentation: Record<StateKind, { readonly Icon: IconComponent; readon
     quit: { Icon: ExitLogout, tone: "bg-muted-transparent text-muted" },
   };
 
+const stateEmphasis: Record<MachineEmphasis, string> = {
+  current:
+    "px-8 py-4 rounded-sm border border-current bg-active-subtle text-active body-3-semi-bold",
+  active: "text-base",
+  idle: "text-muted",
+};
+
+const toneClass: Record<MachineTone, string> = {
+  active: "bg-active-subtle text-active",
+  success: "bg-success-transparent text-success",
+  warning: "bg-warning-transparent text-warning",
+  error: "bg-error-transparent text-error",
+  muted: "bg-muted-transparent text-muted",
+};
+
 function exportLogs(content: string) {
   const link = document.createElement("a");
   link.href = `data:application/json;charset=utf-8,${encodeURIComponent(content)}`;
@@ -57,7 +78,7 @@ function exportLogs(content: string) {
 
 function DeviceOnboarding(props: DeviceOnboardingToolProps) {
   const vm = useDeviceOnboardingViewModel(props);
-  const [tab, setTab] = useState<"log" | "config">("log");
+  const [tab, setTab] = useState<"log" | "config" | "machine">("log");
 
   return (
     <div className="flex flex-col overflow-y-auto">
@@ -92,6 +113,7 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
         >
           <SegmentedControlButton value="log">{headerCopy.log}</SegmentedControlButton>
           <SegmentedControlButton value="config">{headerCopy.config}</SegmentedControlButton>
+          <SegmentedControlButton value="machine">{machineCopy.tab}</SegmentedControlButton>
         </SegmentedControl>
       </div>
 
@@ -99,7 +121,9 @@ function DeviceOnboarding(props: DeviceOnboardingToolProps) {
         <div className="px-16 py-10 border-b border-base body-3 text-error">{vm.error}</div>
       ) : null}
 
-      {tab === "config" ? <ConfigTab vm={vm} /> : <LogTab vm={vm} />}
+      {tab === "log" ? <LogTab vm={vm} /> : null}
+      {tab === "config" ? <ConfigTab vm={vm} /> : null}
+      {tab === "machine" ? <MachineSection rows={vm.machineRows} /> : null}
     </div>
   );
 }
@@ -169,6 +193,56 @@ function LogTab({ vm }: Readonly<{ vm: DeviceOnboardingViewModel }>) {
       </Button>
     </div>
   );
+}
+
+function MachineSection({ rows }: Readonly<{ rows: readonly MachineRow[] }>) {
+  return (
+    <div className="px-16 py-12 border-b border-base flex flex-col gap-12">
+      <span className="body-3 text-muted">{machineCopy.description}</span>
+      <div className="flex flex-wrap gap-8">
+        {machineLegend.map(item => (
+          <Badge key={item.label} {...item} />
+        ))}
+      </div>
+      {rows.map(row => (
+        <div
+          key={row.key}
+          className="flex flex-col items-start gap-4"
+          style={{ paddingLeft: row.depth * 16 }}
+        >
+          <span className="flex flex-wrap items-center gap-8 body-3">
+            <code
+              className={stateEmphasis[row.emphasis]}
+              aria-current={row.emphasis === "current" ? "step" : undefined}
+            >
+              {row.label}
+            </code>
+            {row.badges.map(badge => (
+              <Badge key={badge.label} {...badge} />
+            ))}
+          </span>
+          {row.transitions.map(transition => (
+            <span key={transition.key} className="flex flex-wrap items-center gap-8 body-3 pl-16">
+              <Badge label={transition.event} tone={transition.tone} />
+              <span className="text-muted">→</span>
+              <code className={transition.target ? "text-base" : "text-muted"}>
+                {transition.target ?? machineCopy.stay}
+              </code>
+              {transition.guard ? (
+                <span className="text-muted">
+                  {machineCopy.guard} <code>{transition.guard}</code>
+                </span>
+              ) : null}
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Badge({ label, tone }: Readonly<MachineBadge>) {
+  return <code className={`px-4 rounded-sm body-3 ${toneClass[tone]}`}>{label}</code>;
 }
 
 function FeatureFlagSection({

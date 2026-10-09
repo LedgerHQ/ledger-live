@@ -40,6 +40,23 @@ export const statusCopy = {
   exited: "Exited",
 };
 
+export const machineCopy = {
+  tab: "Machine",
+  description: "Every state, and where each event leads. The current state is highlighted.",
+  root: "every state hears these, unless it handles them itself",
+  initial: "initial",
+  final: "final",
+  runs: "runs",
+  stay: "stays here",
+  guard: "if",
+  sources: {
+    user: "user taps",
+    device: "device answers",
+    app: "app reports the session",
+    auto: "no event: the machine moves by itself",
+  },
+};
+
 export const logCopy = {
   context: "Context",
   noEvent: "No event accepted in this state",

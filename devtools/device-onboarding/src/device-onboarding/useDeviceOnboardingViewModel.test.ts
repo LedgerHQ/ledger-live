@@ -1,12 +1,13 @@
 import { act, renderHook } from "@testing-library/react";
-import { buildProps } from "jest/deviceOnboardingProps";
+import { buildProps, sampleMachine } from "jest/deviceOnboardingProps";
 import type { DeviceOnboardingToolPayload } from "../types";
-import { logCopy, statusCopy } from "./configCopy";
+import { logCopy, machineCopy, statusCopy } from "./configCopy";
 import {
   FirmwareOverride,
   GenuineOverride,
   formatTime,
   formatValue,
+  machineRowsOf,
   stateKind,
   useDeviceOnboardingViewModel,
   type LogLine,
@@ -31,6 +32,52 @@ function buildLog(count: number) {
     },
   }));
 }
+
+describe("machineRowsOf", () => {
+  it("highlights the current state and its parents", () => {
+    const rows = machineRowsOf(sampleMachine, "checks.checksIdle");
+
+    expect(rows.map(row => [row.label, row.emphasis])).toEqual([
+      ["deviceOnboarding", "active"],
+      ["checks", "active"],
+      ["checksIdle", "current"],
+      ["firmwareCheck", "idle"],
+    ]);
+  });
+
+  it("highlights nothing before the machine starts", () => {
+    const rows = machineRowsOf(sampleMachine, null);
+
+    expect(rows.every(row => row.emphasis === "idle")).toBe(true);
+  });
+
+  it("marks the root, the initial state and what a state runs", () => {
+    const [root, checks, idle, firmware] = machineRowsOf(sampleMachine, null);
+
+    expect(root.badges).toEqual([{ label: machineCopy.root, tone: "muted" }]);
+    expect(checks.badges).toEqual([]);
+    expect(idle.badges).toEqual([{ label: machineCopy.initial, tone: "success" }]);
+    expect(firmware.badges).toEqual([{ label: "runs firmwareCheck", tone: "active" }]);
+  });
+
+  it("colors each event by who sends it, and says where it leads", () => {
+    const [root, , idle] = machineRowsOf(sampleMachine, null);
+
+    expect(root.transitions).toEqual([
+      { key: "0-LOCKED", event: "LOCKED", tone: "warning", target: "deviceLocked", guard: null },
+    ]);
+    expect(idle.transitions).toEqual([
+      {
+        key: "0-auto",
+        event: "auto",
+        tone: "muted",
+        target: "checks.genuineCheck",
+        guard: "shouldRunGenuineCheck",
+      },
+      { key: "1-RETRY", event: "RETRY", tone: "active", target: null, guard: null },
+    ]);
+  });
+});
 
 describe("formatValue", () => {
   it.each([
