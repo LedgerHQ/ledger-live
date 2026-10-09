@@ -71,7 +71,7 @@ describe("parseV1", () => {
   it("accepts apostrophe hardened markers as aliases for h", () => {
     const result = parseV1(`account:1:utxo:bitcoin:main:${XPUB}:m/84'/0'/0'`);
     expect(result.type).toBe("utxo");
-    expect((result as UtxoAccountDescriptorV1).path).toBe("m/84'/0'/0'");
+    expect((result as UtxoAccountDescriptorV1).path).toBe("m/84h/0h/0h");
   });
 
   it("round-trips: serializeV1 → parseV1", () => {
