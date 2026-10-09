@@ -84,13 +84,15 @@ export default class PayTabPage {
   @Step("Expect the bank transfer intro with {{{0}}}")
   async expectBankTransferIntro(createAccountLabel: string) {
     await waitForFullyVisibleById(this.bankTransferContentId);
-    await detoxExpect(
-      getElementByIdWithDescendantTexts(this.bankTransferCreateAccountId, createAccountLabel),
-    ).toBeVisible();
+    await waitForFullyVisibleById(this.bankTransferCreateAccountId);
+    await detoxExpect(getElementById(this.bankTransferCreateAccountId)).toHaveLabel(
+      createAccountLabel,
+    );
   }
 
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
+    await waitForFullyVisibleById(this.bankTransferCloseId);
     await tapById(this.bankTransferCloseId);
     if (!(await waitForElementNotVisible(this.bankTransferContentId))) {
       throw new Error(`${this.bankTransferContentId} stayed visible`);
