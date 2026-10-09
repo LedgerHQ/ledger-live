@@ -1,4 +1,3 @@
-import querystring from "querystring";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
@@ -146,9 +145,9 @@ export const getTxHistory = async (
   network: CryptoCurrency,
   limit: number = LIMIT,
 ): Promise<IconTransactionType[]> => {
-  const query = querystring.stringify({
-    skip: skip,
-    limit: limit,
+  const query = new URLSearchParams({
+    skip: String(skip),
+    limit: String(limit),
   });
 
   const data = await fetch(`${getApiUrl(network)}/transactions/address/${addr}?${query}`);
