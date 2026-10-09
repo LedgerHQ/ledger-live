@@ -37,4 +37,21 @@ class CardSessionReporter implements Reporter {
   }
 }
 
+/**
+ * Logs that someNewFunction was called.
+ *
+ * @returns Nothing.
+ */
+export function someNewFunction(): void {
+  console.info("someNewFunction called.");
+}
+/**
+ * Logs that someOtherNewFunctionsDesktop was called.
+ *
+ * @returns Nothing.
+ */
+export function someOtherNewFunctionsDesktop(): void {
+  console.info("someOtherNewFunctionsDesktop called.");
+}
+
 export default CardSessionReporter;
