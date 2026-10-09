@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Box } from "@ledgerhq/native-ui";
 import HeaderErrorTitle from "~/components/HeaderErrorTitle";
-import { useNetworkState } from "expo-network";
+import { useNetworkState } from "@shared/network-status";
 import { NetworkDown } from "@ledgerhq/live-common/errors";
 
 type ErrorBannerProps = {

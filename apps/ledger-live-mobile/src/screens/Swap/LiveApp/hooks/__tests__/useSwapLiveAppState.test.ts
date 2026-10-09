@@ -1,6 +1,6 @@
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useNetworkState } from "expo-network";
+import { useNetworkState } from "@shared/network-status";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { useSwapLiveAppState } from "../useSwapLiveAppState";
 

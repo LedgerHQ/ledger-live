@@ -1,5 +1,5 @@
 import { onlineManager } from "@tanstack/react-query";
-import { subscribeToNetworkState } from "~/logic/subscribeToNetworkState";
+import { subscribeToNetworkState } from "@shared/network-status";
 
 onlineManager.setEventListener(setOnline =>
   subscribeToNetworkState(state => {

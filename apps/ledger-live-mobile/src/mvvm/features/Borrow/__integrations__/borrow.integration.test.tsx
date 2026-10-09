@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { useNetworkState } from "expo-network";
+import { useNetworkState } from "@shared/network-status";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,

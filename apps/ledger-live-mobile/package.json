@@ -239,6 +239,7 @@
     "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*",
     "@shared/lottie": "workspace:*",
+    "@shared/network-status": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@shopify/flash-list": "2.2.0",

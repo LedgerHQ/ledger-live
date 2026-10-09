@@ -4,7 +4,7 @@ import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
-import { useNetworkState } from "expo-network";
+import { useNetworkState } from "@shared/network-status";
 import { SYNC_DELAY } from "~/utils/constants";
 import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
 import { useDispatch, useSelector, useStore } from "~/context/hooks";

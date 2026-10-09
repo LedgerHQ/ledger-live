@@ -42,7 +42,10 @@ import "@mocks/console";
 import { server } from "./server";
 import { NativeModules } from "react-native";
 import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
-import { useNetworkState as mockUseNetworkState, connectedNetworkState } from "expo-network";
+import {
+  useNetworkState as mockUseNetworkState,
+  connectedNetworkState,
+} from "@shared/network-status";
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 import mockLocalize from "react-native-localize/mock";

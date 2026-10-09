@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useNetworkState } from "expo-network";
+import { useNetworkState } from "@shared/network-status";
 import { accountsWithUpToDateCheckSelector, hasNoAccountsSelector } from "~/reducers/accounts";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
 import { getDefaultAccountName } from "@domain/entity-account-name";

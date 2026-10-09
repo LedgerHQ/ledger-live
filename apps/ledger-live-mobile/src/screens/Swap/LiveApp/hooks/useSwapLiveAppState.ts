@@ -11,7 +11,7 @@ import { useTranslation } from "~/context/Locale";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { DefaultAccountSwapParamList } from "../../types";
-import { useNetworkState } from "expo-network";
+import { useNetworkState } from "@shared/network-status";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID

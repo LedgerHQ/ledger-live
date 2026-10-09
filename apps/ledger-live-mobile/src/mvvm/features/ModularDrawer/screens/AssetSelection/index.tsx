@@ -22,7 +22,7 @@ import {
 import { useTranslation } from "~/context/Locale";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import { GenericError } from "../../components/GenericError";
-import { useNetworkState } from "expo-network";
+import { useNetworkState } from "@shared/network-status";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { useAssetConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { balanceItem } from "../../components/Balance";

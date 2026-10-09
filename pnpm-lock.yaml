@@ -1337,6 +1337,9 @@ importers:
       '@shared/lottie':
         specifier: workspace:*
         version: link:../../shared/lottie
+      '@shared/network-status':
+        specifier: workspace:*
+        version: link:../../shared/network-status
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../shared/ui-info-state
@@ -2241,6 +2244,9 @@ importers:
       '@shared/lottie':
         specifier: workspace:*
         version: link:../../shared/lottie
+      '@shared/network-status':
+        specifier: workspace:*
+        version: link:../../shared/network-status
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../shared/ui-info-state
@@ -10632,7 +10638,7 @@ importers:
         version: link:../../types-live
       '@walletconnect/sign-client':
         specifier: 2.23.4
-        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        version: 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
       '@walletconnect/types':
         specifier: 2.23.0
         version: 2.23.0
@@ -18703,6 +18709,69 @@ importers:
       lottie-react-native:
         specifier: 7.3.6
         version: 7.3.6(@lottiefiles/dotlottie-react@0.17.13(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  shared/network-status:
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.5.0(@types/node@24.12.0))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      expo-network:
+        specifier: 'catalog:'
+        version: 8.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -51308,7 +51377,7 @@ snapshots:
 
   '@vscode/sudo-prompt@9.3.1': {}
 
-  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@walletconnect/core@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-provider': 1.0.14
@@ -51322,7 +51391,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       '@walletconnect/window-getters': 1.0.1
       es-toolkit: 1.44.0
       events: 3.3.0
@@ -51445,16 +51514,16 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
+  '@walletconnect/sign-client@2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)':
     dependencies:
-      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@walletconnect/core': 2.23.4(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.4.3)
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 3.0.2
       '@walletconnect/time': 1.0.2
       '@walletconnect/types': 2.23.4
-      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)
+      '@walletconnect/utils': 2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -51543,7 +51612,7 @@ snapshots:
       - ioredis
       - uploadthing
 
-  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)':
+  '@walletconnect/utils@2.23.4(@typescript/typescript6@6.0.2)(zod@4.4.3)':
     dependencies:
       '@msgpack/msgpack': 3.1.3
       '@noble/ciphers': 1.3.0
@@ -51563,7 +51632,7 @@ snapshots:
       blakejs: 1.2.1
       bs58: 6.0.0
       detect-browser: 5.3.0
-      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@3.25.76)
+      ox: 0.9.3(@typescript/typescript6@6.0.2)(zod@4.4.3)
       uint8arrays: 3.1.1
     transitivePeerDependencies:
       - '@azure/app-configuration'

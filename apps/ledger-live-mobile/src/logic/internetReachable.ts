@@ -1,4 +1,3 @@
-import { getNetworkStateAsync } from "expo-network";
+import { getNetworkState } from "@shared/network-status";
 
-export const internetReachable = async () =>
-  (await getNetworkStateAsync()).isInternetReachable === true;
+export const internetReachable = async () => (await getNetworkState()).isInternetReachable === true;

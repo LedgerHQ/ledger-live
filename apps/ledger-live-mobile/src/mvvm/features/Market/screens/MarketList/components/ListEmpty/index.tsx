@@ -1,5 +1,5 @@
 import React from "react";
-import { useNetworkState } from "expo-network";
+import { useNetworkState } from "@shared/network-status";
 import { Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "~/context/Locale";
 import EmptyState from "../EmptyState";

@@ -1,5 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
-import { useNetworkState, type NetworkState } from "expo-network";
+import { useNetworkState, type NetworkState } from "@shared/network-status";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,

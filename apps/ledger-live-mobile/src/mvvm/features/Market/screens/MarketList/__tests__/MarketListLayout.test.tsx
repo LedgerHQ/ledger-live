@@ -3,12 +3,12 @@ import { renderWithReactQuery, screen, waitFor, withFlagOverrides } from "@tests
 import { server, http, HttpResponse } from "@tests/server";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MOCK_MARKET_PERFORMERS } from "@ledgerhq/live-common/market/utils/fixtures";
-import { useNetworkState, type NetworkState } from "expo-network";
+import { useNetworkState, type NetworkState } from "@shared/network-status";
 import MarketList from "../index";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 
-// Use global expo-network mock from jest-setup - do not replace to avoid mock cannibalization
+// Use global @shared/network-status mock from jest-setup - do not replace to avoid mock cannibalization
 
 const setNetworkState = (state: NetworkState) => {
   jest.mocked(useNetworkState).mockReturnValue(state);

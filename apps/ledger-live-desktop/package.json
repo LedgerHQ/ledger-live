@@ -206,6 +206,7 @@
     "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*",
     "@shared/lottie": "workspace:*",
+    "@shared/network-status": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@tanstack/react-query": "5.28.9",
     "@tanstack/react-query-devtools": "5.28.14",

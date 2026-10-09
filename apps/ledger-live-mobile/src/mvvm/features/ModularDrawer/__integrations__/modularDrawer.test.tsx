@@ -22,7 +22,7 @@ import { INITIAL_STATE } from "~/reducers/settings";
 
 import { http, HttpResponse } from "msw";
 import { server } from "@tests/server";
-import { NetworkStateType, useNetworkState, type NetworkState } from "expo-network";
+import { useNetworkState, type NetworkState } from "@shared/network-status";
 import { parseAnyAccountId } from "@domain/entity-account";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
@@ -31,9 +31,9 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
 
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
-// Use global expo-network mock from jest-setup - do not replace to avoid mock cannibalization
+// Use global @shared/network-status mock from jest-setup - do not replace to avoid mock cannibalization
 const setNetworkState = (override?: NetworkState) => {
-  jest.mocked(useNetworkState).mockReturnValue({ type: NetworkStateType.UNKNOWN, ...override });
+  jest.mocked(useNetworkState).mockReturnValue({ ...override });
 };
 
 const advanceTimers = () => {
@@ -241,7 +241,6 @@ describe.each(DRAWER_VARIANTS)(
       setNetworkState({
         isConnected: false,
         isInternetReachable: false,
-        type: NetworkStateType.NONE,
       });
 
       const { getByText, user } = render(<ModularDrawerSharedNavigator />, renderOptions);

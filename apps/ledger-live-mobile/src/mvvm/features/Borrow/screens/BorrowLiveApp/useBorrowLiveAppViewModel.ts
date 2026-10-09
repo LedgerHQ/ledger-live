@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { useNetworkState } from "expo-network";
+import { useNetworkState } from "@shared/network-status";
 import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
