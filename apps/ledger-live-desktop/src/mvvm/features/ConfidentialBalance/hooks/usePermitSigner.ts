@@ -5,9 +5,9 @@ import { DeviceRefusedError, mockSignTypedData } from "../utils/confidentialApi"
 import { isRealConfidentialApi } from "../utils/confidentialRuntime";
 import { signPermitOnDevice } from "../utils/devicePermitSigner";
 import { signTransactionOnDevice } from "../utils/deviceTransactionSigner";
-import type { SignTransaction } from "../utils/shieldExecutor";
+import type { SignTransaction } from "../utils/deviceTransactionExecutor";
 
-// One device request at a time: a permit for a reveal, or a shield transaction.
+// One device request at a time: a permit for a reveal, or an unshield finalize.
 type PendingSignature =
   | {
       kind: "typedData";

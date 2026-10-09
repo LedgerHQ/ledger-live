@@ -1,7 +1,7 @@
 import { createApi } from "@ledgerhq/coin-evm/api";
 import { isConfidentialError } from "@ledgerhq/coin-evm/confidential";
 import type { EvmContext } from "@ledgerhq/coin-evm/config";
-import { createDeviceShieldExecutor } from "../utils/shieldExecutor";
+import { createDeviceTransactionExecutor } from "../utils/deviceTransactionExecutor";
 
 jest.mock("@ledgerhq/coin-evm/api", () => ({ createApi: jest.fn() }));
 
@@ -22,7 +22,7 @@ function setup(receipts: ({ status: string } | null)[] = []) {
     fetchMock.mockResolvedValueOnce({ json: async () => ({ result }) });
   global.fetch = fetchMock;
   const signTransaction = jest.fn().mockResolvedValue(SIGNATURE);
-  const executor = createDeviceShieldExecutor({
+  const executor = createDeviceTransactionExecutor({
     currencyId: "ethereum_sepolia",
     context,
     signTransaction,
@@ -33,11 +33,11 @@ function setup(receipts: ({ status: string } | null)[] = []) {
   return { api, executor, signTransaction, fetchMock };
 }
 
-describe("createDeviceShieldExecutor", () => {
+describe("createDeviceTransactionExecutor", () => {
   it("signs on the device, combines and broadcasts through coin-evm", async () => {
     const { api, executor, signTransaction } = setup();
 
-    expect(await executor.signAndBroadcast("approve", { transaction: UNSIGNED })).toBe(HASH);
+    expect(await executor.signAndBroadcast({ transaction: UNSIGNED })).toBe(HASH);
     expect(signTransaction).toHaveBeenCalledWith(UNSIGNED);
     expect(api.combine).toHaveBeenCalledWith(context, UNSIGNED, [SIGNATURE]);
     expect(api.broadcast).toHaveBeenCalledWith(context, SIGNED);
@@ -47,9 +47,7 @@ describe("createDeviceShieldExecutor", () => {
     const { api, executor, signTransaction } = setup();
     signTransaction.mockRejectedValueOnce(new Error("refused"));
 
-    await expect(executor.signAndBroadcast("wrap", { transaction: UNSIGNED })).rejects.toThrow(
-      "refused",
-    );
+    await expect(executor.signAndBroadcast({ transaction: UNSIGNED })).rejects.toThrow("refused");
     expect(api.broadcast).not.toHaveBeenCalled();
   });
 

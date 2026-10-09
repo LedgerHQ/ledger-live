@@ -7,15 +7,15 @@ import {
   getSessionUnshield,
   setSessionUnshield,
 } from "../utils/sessionUnshields";
-import { createDeviceShieldExecutor, getReceipt } from "../utils/shieldExecutor";
+import { createDeviceTransactionExecutor, getReceipt } from "../utils/deviceTransactionExecutor";
 
 jest.mock("../utils/confidentialRuntime", () => ({
   createConfidentialContext: jest.fn(() => ({ config: jest.fn(), logger: jest.fn() })),
   getSepoliaRpcUrl: jest.fn(() => "rpc"),
 }));
-jest.mock("../utils/shieldExecutor", () => ({
+jest.mock("../utils/deviceTransactionExecutor", () => ({
   getReceipt: jest.fn(),
-  createDeviceShieldExecutor: jest.fn(),
+  createDeviceTransactionExecutor: jest.fn(),
 }));
 jest.mock("../utils/confidentialApi", () => ({
   confidentialApi: {
@@ -115,7 +115,7 @@ describe("usePendingUnshield", () => {
       signAndBroadcast: jest.fn().mockResolvedValue("0xhash"),
       waitForConfirmation: jest.fn().mockResolvedValue(undefined),
     };
-    jest.mocked(createDeviceShieldExecutor).mockReturnValue(executor);
+    jest.mocked(createDeviceTransactionExecutor).mockReturnValue(executor);
     setSessionUnshield(ACCOUNT_ID, {
       requestTxHash: REQUEST_HASH,
       amount: 1_000_000n,
@@ -131,10 +131,10 @@ describe("usePendingUnshield", () => {
       "ethereum_sepolia",
       PENDING,
     );
-    expect(createDeviceShieldExecutor).toHaveBeenCalledWith(
+    expect(createDeviceTransactionExecutor).toHaveBeenCalledWith(
       expect.objectContaining({ currencyId: "ethereum_sepolia", signTransaction }),
     );
-    expect(executor.signAndBroadcast).toHaveBeenCalledWith("wrap", { transaction: "0xfinalize" });
+    expect(executor.signAndBroadcast).toHaveBeenCalledWith({ transaction: "0xfinalize" });
     expect(executor.waitForConfirmation).toHaveBeenCalledWith("0xhash");
     expect(onFinalized).toHaveBeenCalledTimes(1);
     expect(getSessionUnshield(ACCOUNT_ID)).toBeUndefined();

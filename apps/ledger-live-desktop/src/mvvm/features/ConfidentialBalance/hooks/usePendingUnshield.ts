@@ -17,11 +17,11 @@ import {
   subscribeSessionUnshields,
 } from "../utils/sessionUnshields";
 import {
-  createDeviceShieldExecutor,
+  createDeviceTransactionExecutor,
   getReceipt,
   type RpcReceipt,
   type SignTransaction,
-} from "../utils/shieldExecutor";
+} from "../utils/deviceTransactionExecutor";
 
 export const UNSHIELD_POLL_MS = 10_000;
 export const UNSHIELD_REQUIRED_CONFIRMATIONS = 2;
@@ -129,8 +129,8 @@ export function usePendingUnshield({
     try {
       const context = createConfidentialContext(currencyId, createConfidentialClient);
       const prepared = await confidentialApi.prepareFinalizeUnshield(context, currencyId, pending);
-      const executor = createDeviceShieldExecutor({ currencyId, context, signTransaction });
-      const hash = await executor.signAndBroadcast("wrap", { transaction: prepared.transaction });
+      const executor = createDeviceTransactionExecutor({ currencyId, context, signTransaction });
+      const hash = await executor.signAndBroadcast({ transaction: prepared.transaction });
       await executor.waitForConfirmation(hash);
       clearSessionUnshield(tokenAccountId);
       onFinalized();
