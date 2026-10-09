@@ -466,7 +466,8 @@ pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <n
   JSON has a `nextCursor` (human output prints the follow-up command); it is `null` on the last
   page. With `--cursor`, `--status` and `--page-size` are ignored.
 - **`--status`** takes comma-separated states: `created`, `crafted`, `signed`, `broadcast`,
-  `success`, `failed`, `rejected`, `expired`. An unknown state is rejected before signing in.
+  `success`, `failed`, `rejected`, `cancelled`, `expired`. An unknown state is rejected before
+  signing in.
 - **JSON** (`--output json`): `profileId`, `count`, `nextCursor`, and `intents[]` with `id`,
   `status`, `type`, `network`, `sender`, `recipient`, `amount` (exact base units, a string),
   `displayAmount` (e.g. `"0.01 ETH"`, `null` when the asset is unknown), `asset`, `feeStrategy`,
@@ -489,7 +490,7 @@ while pnpm --silent wallet-cli start agent-intent status --profile my-bot --inte
 ```
 
 - **States:** `created`, `crafted`, `signed`, `broadcast` are in progress (`terminal: false`);
-  `success`, `failed`, `rejected`, `expired` are final (`terminal: true`). A state this wallet-cli
+  `success`, `failed`, `rejected`, `cancelled`, `expired` are final (`terminal: true`). A state this wallet-cli
   version doesn't know is shown as-is with `terminal: null`: don't treat it as final or as an error.
 - **JSON** (`--output json`): `profileId`, `terminal`, and `intent` with the same fields as an
   `agent-intent intents` entry (exact base-unit `amount` as a string, `displayAmount`,

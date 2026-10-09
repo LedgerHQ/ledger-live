@@ -154,7 +154,7 @@ describe("agent-intent status", () => {
 
       await runStatus({ output: "json" });
       expect(jsonResult()).toMatchObject({
-        terminal: ["success", "failed", "rejected", "expired"].includes(status),
+        terminal: ["success", "failed", "rejected", "cancelled", "expired"].includes(status),
         intent: { status },
       });
 
@@ -165,14 +165,14 @@ describe("agent-intent status", () => {
   );
 
   it("passes an unknown future state through with terminal null instead of failing", async () => {
-    getImpl = async () => record({ status: "cancelled" });
+    getImpl = async () => record({ status: "archived" });
 
     await runStatus({ output: "json" });
-    expect(jsonResult()).toMatchObject({ terminal: null, intent: { status: "cancelled" } });
+    expect(jsonResult()).toMatchObject({ terminal: null, intent: { status: "archived" } });
 
     stdout = [];
     await runStatus();
-    expect(stdout.join("")).toContain("cancelled (unknown to this wallet-cli version)");
+    expect(stdout.join("")).toContain("archived (unknown to this wallet-cli version)");
   });
 
   it("shows why a failed intent failed", async () => {

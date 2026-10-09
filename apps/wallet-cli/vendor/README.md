@@ -4,15 +4,15 @@
 
 `ledgerhq-agent-intent-sdk-0.0.0.tgz` is a temporary packed artifact from
 [`LedgerHQ/agent-intent-sdk`](https://github.com/LedgerHQ/agent-intent-sdk) at
-commit `0aa03d2` (branch `feat/NTTVS-748-get-intent`,
-[LedgerHQ/agent-intent-sdk#17](https://github.com/LedgerHQ/agent-intent-sdk/pull/17),
-stacked on #16, not merged yet: adds `listIntents` and `getIntent`). Re-pack from the
-`main` merge commit once #16 and #17 land.
+commit `2629bfc` (branch `feat/NTTVS-748-get-intent`,
+[LedgerHQ/agent-intent-sdk#17](https://github.com/LedgerHQ/agent-intent-sdk/pull/17), on top
+of the merged #16: adds `listIntents` and `getIntent`). Re-pack from the `main` merge commit
+once #17 lands.
 
 SHA-256:
 
 ```text
-7a259e9ed2c8705179630dcfecb516947862e74316a1ca2ff674c4b467ab61ba
+744cbcc032cfa336185f4bedeace6abde0a9aa219fa377a7c18c2111276b2062
 ```
 
 The tarball contains compiled JavaScript and declarations, not another editable
