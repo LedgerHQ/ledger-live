@@ -23,7 +23,7 @@ export const dataset: DatasetTest<Transaction> = {
         "cardanoResources.protocolParams", // protocol params can change anytime
         "cardanoResources.delegation.rewards", // rewards will always be increasing
         "balance", // Rewards are included in balance, so this will too keep changing
-        "spendableBalance", // rewards are included here too, same as above
+        "spendableBalance", // changes with the live UTXO set
       ],
       scanAccounts: cardanoScanAccounts,
       accounts: [

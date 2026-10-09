@@ -137,7 +137,7 @@ describe("getBalance", () => {
     const stakeBalance = balances.find(b => b.stake !== undefined);
 
     expect(balances[0].value).toBe(6500000n); // utxo 5,000,000 + rewards 1,500,000
-    expect(balances[0].locked).toBe(1500000n); // rewards not spendable (no dRep)
+    expect(balances[0].locked).toBe(1500000n);
     expect(stakeBalance).toMatchObject({
       value: 3500000n,
       asset: { type: "native", name: "ADA" },
@@ -156,7 +156,7 @@ describe("getBalance", () => {
     });
   });
 
-  it("unlocks rewards once delegated to a dRep", async () => {
+  it("keeps rewards locked when delegated to a dRep", async () => {
     mockFetchTxs.mockResolvedValue(
       paged([makeTx({ hash: "a", outputs: [output(PAYMENT_KEY, "5000000")] })]),
     );
@@ -173,8 +173,7 @@ describe("getBalance", () => {
     const balances = await getBalance(currency, ADDRESS);
     const stakeBalance = balances.find(b => b.stake !== undefined);
 
-    expect(balances[0].locked).toBe(0n); // rewards spendable when delegated to a dRep
-    // dRep doesn't add a claim action — Cardano rewards are withdrawn implicitly within a tx.
+    expect(balances[0].locked).toBe(1500000n);
     expect(stakeBalance?.stake?.actions).toEqual(["delegate", "undelegate"]);
     expect(stakeBalance?.stake?.details).toMatchObject({ dRepHex: "drep1abc" });
   });

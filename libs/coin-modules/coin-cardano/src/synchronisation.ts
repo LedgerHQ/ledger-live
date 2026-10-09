@@ -159,7 +159,6 @@ export const makeGetAccountShape =
       utxosSum,
       minAdaForTokens,
       rewards: delegationInfo?.rewards ?? new BigNumber(0),
-      delegatedToDRep: !!delegationInfo?.dRepHex,
     });
 
     const newOperations = newTransactions.map(t =>
