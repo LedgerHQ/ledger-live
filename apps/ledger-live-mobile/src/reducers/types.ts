@@ -149,7 +149,8 @@ export type NotificationsState = {
     | "swap"
     | "stake"
     | "add_favorite_coin"
-    | "inactivity";
+    | "inactivity"
+    | "deeplink";
   drawerPromptTarget?: NotificationPromptTarget;
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
   dataOfUser?: DataOfUser;
