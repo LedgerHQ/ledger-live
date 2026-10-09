@@ -5,7 +5,7 @@ import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
 import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import NetInfo from "@react-native-community/netinfo";
+import { addNetworkStateListener, getNetworkStateAsync, type NetworkState } from "expo-network";
 import reducers from "~/reducers";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
@@ -142,14 +142,18 @@ configureCardSessionRenewal({
 });
 
 setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
-  const unsubscribe = NetInfo.addEventListener(state => {
+  const handleNetworkChange = (state: NetworkState) => {
     if (state.isConnected) {
       dispatch(onOnline());
     } else {
       dispatch(onOffline());
     }
-  });
-  return unsubscribe;
+  };
+  const subscription = addNetworkStateListener(handleNetworkChange);
+  getNetworkStateAsync()
+    .then(handleNetworkChange)
+    .catch(() => {});
+  return () => subscription.remove();
 });
 connectRecentAddressesStore(store, recentAddressesSelector);
 setupCryptoAssetsStore(store);

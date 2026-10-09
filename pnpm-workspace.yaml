@@ -116,6 +116,7 @@ catalog:
   expo-image-picker: 17.0.11
   expo-haptics: 15.0.8
   expo-keep-awake: 15.0.8
+  expo-network: 8.0.8
   expo-splash-screen: 31.0.13
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29

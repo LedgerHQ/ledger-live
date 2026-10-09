@@ -1,6 +1,6 @@
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetworkState } from "expo-network";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { useSwapLiveAppState } from "../useSwapLiveAppState";
 
@@ -42,14 +42,14 @@ jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index"
   useRemoteLiveAppContext: () => ({ state: mockRemoteLiveAppState }),
 }));
 
-const mockedUseNetInfo = jest.mocked(useNetInfo);
+const mockedUseNetworkState = jest.mocked(useNetworkState);
 
 describe("useSwapLiveAppState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseLocalLiveAppManifest.mockReturnValue(STUB_MANIFEST);
     mockUseRemoteLiveAppManifest.mockReturnValue(undefined);
-    mockedUseNetInfo.mockReturnValue({ isConnected: true } as ReturnType<typeof useNetInfo>);
+    mockedUseNetworkState.mockReturnValue({ isConnected: true });
   });
 
   it("should return manifest and no error when manifest is available and network is up", () => {
@@ -92,7 +92,7 @@ describe("useSwapLiveAppState", () => {
   });
 
   it("should return a network error when offline", () => {
-    mockedUseNetInfo.mockReturnValue({ isConnected: false } as ReturnType<typeof useNetInfo>);
+    mockedUseNetworkState.mockReturnValue({ isConnected: false });
 
     const { result } = renderHook(() => useSwapLiveAppState(null));
 
@@ -219,10 +219,10 @@ describe("useSwapLiveAppState", () => {
     expect(result.current.defaultParams).toBeNull();
   });
 
-  it("should return no error when isConnected is null and manifest is available (QAA edge case)", () => {
-    // isConnected=null causes hasError=true (via !isConnected) but none of the specific
+  it("should return no error when isConnected is undefined and manifest is available (QAA edge case)", () => {
+    // isConnected=undefined causes hasError=true (via !isConnected) but none of the specific
     // error conditions apply, so the error memo falls through to `return null`.
-    mockedUseNetInfo.mockReturnValue({ isConnected: null } as ReturnType<typeof useNetInfo>);
+    mockedUseNetworkState.mockReturnValue({});
 
     const { result } = renderHook(() => useSwapLiveAppState(null));
 

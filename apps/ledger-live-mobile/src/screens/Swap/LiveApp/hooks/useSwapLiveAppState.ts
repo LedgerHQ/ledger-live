@@ -11,7 +11,7 @@ import { useTranslation } from "~/context/Locale";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { DefaultAccountSwapParamList } from "../../types";
-import { useNetInfo } from "@react-native-community/netinfo";
+import { useNetworkState } from "expo-network";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -54,7 +54,7 @@ const isDefaultAccountSwapParamsList = (
 export function useSwapLiveAppState(params: unknown) {
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
-  const { isConnected } = useNetInfo();
+  const { isConnected } = useNetworkState();
   const [webviewState, setWebviewStateInternal] = useState<WebviewState>(initialWebviewState);
   const isWebviewError = webviewState?.url.includes("/unknown-error");
 

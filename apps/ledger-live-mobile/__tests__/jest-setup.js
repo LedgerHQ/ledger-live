@@ -42,7 +42,7 @@ import "@mocks/console";
 import { server } from "./server";
 import { NativeModules } from "react-native";
 import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
-import mockRNCNetInfo from "@react-native-community/netinfo/jest/netinfo-mock.js";
+import { useNetworkState as mockUseNetworkState, connectedNetworkState } from "expo-network";
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 import mockLocalize from "react-native-localize/mock";
@@ -67,12 +67,7 @@ beforeAll(() =>
 afterEach(() => {
   server.resetHandlers();
   // Reset shared mocks to prevent state leaking between tests (mock cannibalization)
-  mockRNCNetInfo.useNetInfo.mockReturnValue({
-    type: "cellular",
-    isConnected: true,
-    isInternetReachable: true,
-    details: { isConnectionExpensive: true, cellularGeneration: "3g" },
-  });
+  mockUseNetworkState.mockReturnValue(connectedNetworkState);
   mockUseCameraPermission.mockReturnValue({
     hasPermission: true,
     requestPermission: jest.fn(() => Promise.resolve(true)),
@@ -333,8 +328,6 @@ jest.mock("expo-application", () => ({
 jest.mock("react-native-startup-time", () => ({
   getStartupTime: jest.fn(),
 }));
-
-jest.mock("@react-native-community/netinfo", () => mockRNCNetInfo);
 
 jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 

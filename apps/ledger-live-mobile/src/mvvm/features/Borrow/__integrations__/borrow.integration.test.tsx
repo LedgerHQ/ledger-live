@@ -1,7 +1,6 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { useNetInfo } from "@react-native-community/netinfo";
-import type { NetInfoState } from "@react-native-community/netinfo";
+import { useNetworkState } from "expo-network";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -79,9 +78,7 @@ describe("Borrow integration (mobile)", () => {
   });
 
   it("should render the error view when offline", () => {
-    jest.mocked(useNetInfo).mockReturnValue({
-      isConnected: false,
-    } as NetInfoState);
+    jest.mocked(useNetworkState).mockReturnValue({ isConnected: false });
 
     render(<BorrowLiveAppWrapper />);
 
@@ -90,9 +87,7 @@ describe("Borrow integration (mobile)", () => {
   });
 
   it("should render the loader when loading and offline", () => {
-    jest.mocked(useNetInfo).mockReturnValue({
-      isConnected: false,
-    } as NetInfoState);
+    jest.mocked(useNetworkState).mockReturnValue({ isConnected: false });
     jest.mocked(useRemoteLiveAppContext).mockReturnValue({
       state: { isLoading: true },
     } as ReturnType<typeof useRemoteLiveAppContext>);
