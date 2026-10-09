@@ -458,18 +458,28 @@ export function apduSizeIssues(format: "ng" | "legacy", payloadBytes: number): S
   return [];
 }
 
+const MAX_VARINT_BYTES = 10;
+
 // Values above 2^53 lose precision, which is fine for a buffer length or a uint32 field.
 function readVarint(
   bytes: Uint8Array,
   offset: number,
 ): { value: number; next: number } | undefined {
   let value = 0;
-  for (let index = 0; index < 10; index++) {
+  for (let index = 0; index < MAX_VARINT_BYTES; index++) {
     const at = offset + index;
     if (at >= bytes.length) return undefined;
     const byte = bytes[at];
     value += (byte & 0x7f) * 2 ** (7 * index);
     if ((byte & 0x80) === 0) return { value, next: at + 1 };
+  }
+  return undefined;
+}
+
+// Like nanopb `pb_skip_varint`: no length or overflow limit.
+function skipVarint(bytes: Uint8Array, offset: number): number | undefined {
+  for (let at = offset; at < bytes.length; at++) {
+    if ((bytes[at] & 0x80) === 0) return at + 1;
   }
   return undefined;
 }
@@ -508,7 +518,7 @@ function readWireValue(
   }
   const next =
     wireType === VARINT_WIRE_TYPE
-      ? readVarint(bytes, offset)?.next
+      ? skipVarint(bytes, offset)
       : offset + (FIXED_WIRE_TYPE_BYTES[wireType] ?? Infinity);
   if (next === undefined || next > bytes.length) return undefined;
   return { content: bytes.subarray(offset, next), next };
@@ -532,6 +542,8 @@ function scanKnownField(
 ): boolean {
   const expectedWireType = field.kind === "varint" ? VARINT_WIRE_TYPE : LENGTH_DELIMITED_WIRE_TYPE;
   if (wireType !== expectedWireType) return false;
+  // nanopb `pb_decode_varint` rejects an 11th byte ("varint overflow"), not a 10th byte above 0x01.
+  if (field.kind === "varint" && content.length > MAX_VARINT_BYTES) return false;
   if (field.kind === "message") return scanMessage(content, field.fields, occurrences);
   occurrences.set(field, [...(occurrences.get(field) ?? []), content]);
   return true;

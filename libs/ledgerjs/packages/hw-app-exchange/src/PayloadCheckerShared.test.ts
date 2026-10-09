@@ -243,7 +243,29 @@ describe("scanWireFields", () => {
     ).toEqual(["name", "data"]);
   });
 
+  const longVarint = (length: number, last: number) => [...new Array(length - 1).fill(0xff), last];
+
   it.each([
+    ["a 10-byte varint ending with 0x01", longVarint(10, 0x01)],
+    ["a 10-byte varint ending with 0x02", longVarint(10, 0x02)],
+    ["an 11-byte varint", longVarint(11, 0x01)],
+  ])("skips %s in an unknown field like nanopb pb_skip_varint", (_case, varint) => {
+    const wire = scan([0x10, ...varint, ...field13([0x01])]);
+
+    expect(wire?.occurrences.get(DATA)?.map(value => Array.from(value))).toEqual([[0x01]]);
+  });
+
+  it("accepts a 10-byte varint in a known varint field", () => {
+    const wire = scan(lengthDelimited(6, [0x10, ...longVarint(10, 0x02)]));
+
+    expect(wire?.occurrences.get(AMOUNT.fields[1])).toHaveLength(1);
+  });
+
+  it.each([
+    [
+      "a varint field of a message longer than 10 bytes",
+      lengthDelimited(6, [0x10, ...longVarint(11, 0x01)]),
+    ],
     ["a truncated tag", [0x80]],
     ["field number 0", [0x00, 0x01]],
     ["a tag above 32 bits", [0x80, 0x80, 0x80, 0x80, 0x10, 0x00]],
