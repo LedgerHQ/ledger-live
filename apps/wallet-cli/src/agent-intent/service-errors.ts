@@ -42,15 +42,13 @@ const RE_ENROLL = (profileId: string) =>
   `Re-enroll with \`wallet-cli agent-intent enroll\` under a new --profile id ` +
   `(profile "${profileId}" can't be reused).`;
 
-function httpErrorMessage(e: AgentIntentHttpError, profileId: string): string {
-  const detail = redactServiceText(e.message);
+/** Messages for authentication and Trustchain-membership failures, shared by every request. */
+function accessErrorMessage(
+  e: AgentIntentHttpError,
+  profileId: string,
+  detail: string,
+): string | null {
   switch (e.type) {
-    case "pubkey_mismatch":
-      return (
-        `The Agent Intent service rejected the intent: its issuer does not match the authenticated ` +
-        `agent (${detail}). The OS-keychain key for profile "${profileId}" doesn't belong to its ` +
-        `enrollment. ${RE_ENROLL(profileId)}`
-      );
     case "not_a_member":
     case "ambiguous_trustchain":
     case "unexpected_caller":
@@ -64,6 +62,21 @@ function httpErrorMessage(e: AgentIntentHttpError, profileId: string): string {
       return (
         `Authentication with the Agent Intent service failed even after re-authenticating ` +
         `(${detail}). Check that profile "${profileId}"'s enrollment is still active.`
+      );
+  }
+  return null;
+}
+
+function httpErrorMessage(e: AgentIntentHttpError, profileId: string): string {
+  const detail = redactServiceText(e.message);
+  const access = accessErrorMessage(e, profileId, detail);
+  if (access) return access;
+  switch (e.type) {
+    case "pubkey_mismatch":
+      return (
+        `The Agent Intent service rejected the intent: its issuer does not match the authenticated ` +
+        `agent (${detail}). The OS-keychain key for profile "${profileId}" doesn't belong to its ` +
+        `enrollment. ${RE_ENROLL(profileId)}`
       );
     case "signature_invalid":
     case "signature_malformed":
@@ -111,5 +124,45 @@ export function describeAgentIntentError(e: unknown, profileId: string): Error {
   return new Error(
     `Could not reach the Agent Intent service (${message}). Check the network/VPN, then look for ` +
       "the intent in the Agent Intent frontend before re-running — a timeout can hide a success.",
+  );
+}
+
+function listErrorMessage(e: AgentIntentHttpError, profileId: string): string {
+  const detail = redactServiceText(e.message);
+  const access = accessErrorMessage(e, profileId, detail);
+  if (access) return access;
+  if (e.status === 400) {
+    return (
+      `The Agent Intent service rejected the listing (${detail}). Check --status and --page-size; ` +
+      `a --cursor only works with the profile and filters of the listing that returned it.`
+    );
+  }
+  if (e.status === 429) {
+    return `The Agent Intent service is rate-limiting requests (${detail}). Wait a moment and re-run.`;
+  }
+  if (e.status >= 500) {
+    return `The Agent Intent service failed (HTTP ${e.status}: ${detail}). Re-run the command later.`;
+  }
+  return `The Agent Intent service rejected the listing (HTTP ${e.status}: ${detail}).`;
+}
+
+/**
+ * Like {@link describeAgentIntentError}, for read-only listing requests: nothing is created, so a
+ * failure is always safe to retry.
+ */
+export function describeAgentIntentListError(e: unknown, profileId: string): Error {
+  if (isHttpError(e)) return new Error(listErrorMessage(e, profileId));
+  const message = redactServiceText(e instanceof Error ? e.message : String(e));
+  if (isSdkError(e)) {
+    if (/authentication request failed/i.test(message)) {
+      return new Error(
+        `Could not authenticate profile "${profileId}" with Agent Intent (${message}). Check the ` +
+          "network/VPN, and that the profile's enrollment is still active.",
+      );
+    }
+    return new Error(`Agent Intent request failed: ${message}`);
+  }
+  return new Error(
+    `Could not reach the Agent Intent service (${message}). Check the network/VPN and re-run.`,
   );
 }
