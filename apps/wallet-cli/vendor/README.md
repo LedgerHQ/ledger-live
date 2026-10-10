@@ -4,14 +4,13 @@
 
 `ledgerhq-agent-intent-sdk-0.0.0.tgz` is a temporary packed artifact from
 [`LedgerHQ/agent-intent-sdk`](https://github.com/LedgerHQ/agent-intent-sdk) at
-`main` merge commit `3f27d3d`
-([LedgerHQ/agent-intent-sdk#15](https://github.com/LedgerHQ/agent-intent-sdk/pull/15):
-recovery for every agent source).
+`3e7fb3e` on branch `feat/NTTVS-953-solana-send` (native SOL sends, NTTVS-953), on top of
+`main` `3f27d3d`. Re-pack from `main` once that branch merges.
 
 SHA-256:
 
 ```text
-14cf25de7b8b0a8265d1bbe831241eda9be1e229f0df7c89e9da09dff0d8866a
+910fe2a75f2513da56e324198eab3396112bbbb3ad5d409b17186e639bab55ed
 ```
 
 The tarball contains compiled JavaScript and declarations, not another editable
