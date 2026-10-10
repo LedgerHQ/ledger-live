@@ -50,6 +50,7 @@ import { resolveMarketOrAssetDeeplinkIntent } from "./deeplinks/resolveMarketOrA
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink";
 import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
+import { handleNotificationsOptInDeeplink } from "./deeplinks/handleNotificationsOptInDeeplink";
 import { handleProductTourDeeplink } from "./deeplinks/handleProductTourDeeplink";
 import { handleBackupHubDeeplink } from "./deeplinks/handleBackupHubDeeplink";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
@@ -353,6 +354,7 @@ export const DeeplinksProvider = ({
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
+  const brazePushNotificationsFlag = useFeature("brazePushNotifications");
 
   const {
     shouldDisplayAssetSection,
@@ -876,6 +878,15 @@ export const DeeplinksProvider = ({
             });
           }
 
+          if (hostname === "notifications-opt-in") {
+            return handleNotificationsOptInDeeplink({
+              isPushNotificationsEnabled: brazePushNotificationsFlag?.enabled ?? false,
+              hasCompletedOnboarding,
+              dispatch,
+              config,
+            });
+          }
+
           // Handle wallet deeplink with installApp param
           // ledgerlive://wallet?installApp=RecoveryKeyUpdater
           if (
@@ -934,6 +945,7 @@ export const DeeplinksProvider = ({
     manifests,
     web3hubFlag?.enabled,
     genericAwarenessModalFlag?.enabled,
+    brazePushNotificationsFlag?.enabled,
     lwmProductTourFlag?.enabled,
     lwmBackupHubFlag?.enabled,
     lwmPayTabFlag?.enabled,

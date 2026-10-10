@@ -14,7 +14,10 @@ type PermissionStatus =
 type BrazePushNotificationsFeature = BrazePushNotifications | null | undefined;
 
 export type NotificationsPromptSource = NonNullable<NotificationsState["drawerSource"]>;
-export type NotificationsPromptAfterActionSource = Exclude<NotificationsPromptSource, "inactivity">;
+export type NotificationsPromptAfterActionSource = Exclude<
+  NotificationsPromptSource,
+  "inactivity" | "deeplink"
+>;
 export type NotificationsPromptRepromptDelay = NonNullable<
   BrazePushNotifications["params"]
 >["reprompt_schedule"][number];
