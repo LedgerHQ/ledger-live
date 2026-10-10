@@ -33,6 +33,7 @@ wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is int
 | `agent-intent list` / `agent-intent show` | List local Agent Intent profiles, or show one profile's detail (fingerprint, status, environment, account access). Never reveals the secret key. **No device** required.                                                    |
 | `agent-intent sync`                   | Import the Ledger Sync accounts an enrolled agent was granted into the session, authenticating with the agent's own key (additive, idempotent; unsupported currency families are reported as skipped). Explicit — never runs automatically. **No device** required. |
 | `agent-intent send`                   | Propose an Ethereum send (ETH or ERC-20) from an enrolled profile for **human review** in the Agent Intent frontend; prints the review link. **Never signs or broadcasts** and needs **no device**; `--dry-run` validates without submitting. |
+| `agent-intent swap`                   | Propose an Ethereum swap (ETH or ERC-20) from an enrolled profile for **human review**, at the best Swap API quote among the providers the Agent Intent frontend can prepare (`--provider` narrows it, `--to-amount` replaces the quoted amount); prints the review link. **Never signs or broadcasts** and needs **no device**; `--dry-run` quotes and validates without submitting. |
 | `skill list` / `skill retrieve`       | List the agent skills shipped inside the binary, or print one to stdout. **No device** required.                                                                                                                |
 | `skill install`                       | Install the embedded agent skill for `--agent` (`claude`, `cursor`, `codex`, or generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides. **No device** required.                             |
 | `skill doctor`                        | Detect drift between installed skills and those shipped in the running binary (`up-to-date`, `outdated`, `modified-locally`, `missing`); `--fix` self-heals, `--force` also overwrites local edits.              |
@@ -68,6 +69,7 @@ pnpm wallet-cli start -- agent-intent list --help
 pnpm wallet-cli start -- agent-intent show --help
 pnpm wallet-cli start -- agent-intent sync --help
 pnpm wallet-cli start -- agent-intent send --help
+pnpm wallet-cli start -- agent-intent swap --help
 ```
 
 From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (same args after `--`).

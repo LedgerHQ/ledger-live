@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted and propose EVM payments for human review, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/swap — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted and propose EVM payments and swaps for human review, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` (without `--dry-run`) never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` and `agent-intent swap` (without `--dry-run`) never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -50,6 +50,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
 | "pull my synced accounts", "import from Ledger Sync", "sync the agent's accounts"   | `agent-intent sync --profile <id>` (no device)                 |
 | "have the agent request a payment", "propose sending X to Y for approval"            | `agent-intent send --profile <id> --account <label> --to <address> --amount '<amount> <ticker>'` (no device, never broadcasts) |
+| "have the agent propose a swap", "propose swapping X ETH to USDC for approval"        | `agent-intent swap --profile <id> --account <label> --from ethereum --to <currency id> --amount <amount>` (no device, never broadcasts) |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
 
 ---
@@ -444,6 +445,43 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
 - **Don't retry blindly.** If the service accepted the request (a timeout, or an unreadable link),
   the intent may already exist. Check the frontend before re-running, or you'll propose a duplicate.
   A service rejection is explained with a next step (for example, re-enroll after an issuer mismatch).
+
+### Proposing a swap (`agent-intent swap`)
+
+`agent-intent swap` **proposes** an Ethereum swap for a human to review, in the same way as
+`agent-intent send`: it never signs or broadcasts, needs no device, and prints a review link.
+It first asks the Swap API for quotes, then signs the pair, the amounts and the provider of the
+best quote the Agent Intent frontend can prepare. When the human opens the link, the frontend
+fetches a fresh quote and builds the transaction.
+
+```bash
+# Sell 0.5 ETH for USDC at the best quote (currency ids, as in `swap quote`):
+pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethereum-1 \
+  --from ethereum --to ethereum/erc20/usd__coin --amount 0.5 --description "Rebalance"
+
+# Quote one provider only:
+pnpm --silent wallet-cli start agent-intent swap --profile my-bot --sender 0xSender \
+  --from ethereum/erc20/usd__coin --to ethereum --amount 1000 --provider oneinch
+
+# Quote and validate without submitting (doesn't read the agent key or sign in):
+pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethereum-1 \
+  --from ethereum --to ethereum/erc20/usd__coin --amount 0.5 --dry-run
+```
+
+- **Enrolled profile only**, as for `agent-intent send`. **Ethereum mainnet only**: `--from` and
+  `--to` are `ethereum` or an Ethereum ERC-20 currency id (`assets token ethereum <contract>`
+  prints it), and the sender is a `--account` label or a `--sender` address.
+- **Amounts are human units** (`0.5` ETH, `1000` USDC), never rounded. More decimals than the
+  asset has, zero, a sign or an exponent is an error. The quoted amount to receive is rounded
+  **down** to the bought asset's precision. JSON output gives `fromAmount` and `toAmount` as strings.
+- **Providers:** only `oneinch`, `velora`, `okx` and `lifi`, the ones the frontend can turn into a
+  transaction today (`1inch` is accepted for `oneinch`). A quote that needs a token approval or a
+  Permit2 signature is skipped, because the frontend can't prepare one yet and the intent would
+  stay stuck in review.
+- **`--to-amount`** signs your own expected amount instead of the quoted one. The swap is still
+  quoted, so the provider is always one the frontend can prepare.
+- **Don't retry blindly**, as for `agent-intent send`: if the service accepted the request, the
+  intent may already exist.
 
 ---
 
