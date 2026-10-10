@@ -1,0 +1,73 @@
+name: "[Config] - Remote Config Export - Scheduled"
+run-name: Remote Config Export
+permissions:
+  contents: read
+on:
+  schedule:
+    - cron: "0 6 * * *" # every day at 6am UTC
+  workflow_dispatch:
+
+concurrency:
+  group: remote-config-export
+  cancel-in-progress: false
+
+jobs:
+  export:
+    name: Export production Remote Config
+    runs-on: ledger-wallet-4cpu-aws-public
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      OUT_DIR: ${{ github.workspace }}/remote-config-export
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile -F "@ledgerhq/live-common..."
+      - name: Build live-common and its dependencies
+        run: pnpm exec nx run @ledgerhq/live-common:build
+      - name: Dump code defaults
+        working-directory: libs/ledger-live-common
+        run: node --import tsx ../../tools/remote-config-export/dump-defaults.ts "$OUT_DIR/defaults.json"
+      - name: Fetch production Remote Config
+        run: node tools/remote-config-export/fetch-remote-config.mjs "$OUT_DIR"
+      - name: Build report
+        run: |
+          node tools/remote-config-export/build-report.mjs "$OUT_DIR"
+          cat "$OUT_DIR/summary.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload export
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: remote-config-export
+          path: ${{ env.OUT_DIR }}
+          retention-days: 30
+
+      # S3 publication is enabled once the bucket and its OIDC role are provisioned.
+      - name: Configure AWS credentials
+        if: vars.REMOTE_CONFIG_EXPORT_ROLE_ARN != '' && github.ref == 'refs/heads/develop'
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
+        with:
+          role-to-assume: ${{ vars.REMOTE_CONFIG_EXPORT_ROLE_ARN }}
+          aws-region: ${{ vars.REMOTE_CONFIG_EXPORT_REGION }}
+      - name: Publish to S3
+        if: vars.REMOTE_CONFIG_EXPORT_ROLE_ARN != '' && github.ref == 'refs/heads/develop'
+        env:
+          BUCKET: ${{ vars.REMOTE_CONFIG_EXPORT_BUCKET }}
+        run: |
+          aws s3 sync "$OUT_DIR" "s3://$BUCKET/remote-config/latest/" --delete --content-type application/json --exclude "*.md"
+          aws s3 sync "$OUT_DIR" "s3://$BUCKET/remote-config/history/$(date -u +%F)/" --content-type application/json --exclude "*.md"
