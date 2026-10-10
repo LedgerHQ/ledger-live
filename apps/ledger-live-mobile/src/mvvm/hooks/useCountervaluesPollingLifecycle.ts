@@ -1,12 +1,13 @@
-import NetInfo, { type NetInfoState } from "@react-native-community/netinfo";
+import type { NetworkState } from "expo-network";
 import { type Polling, useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { useEffect, useRef } from "react";
 import { AppState, type AppStateStatus } from "react-native";
+import { subscribeToNetworkState } from "~/logic/subscribeToNetworkState";
 
 type PollingActions = Pick<Polling, "poll" | "start" | "stop">;
 type NetworkStatus = "online" | "offline" | "unknown";
 
-function getNetworkStatus(state: NetInfoState): NetworkStatus {
+function getNetworkStatus(state: NetworkState): NetworkStatus {
   if (state.isConnected === false || state.isInternetReachable === false) {
     return "offline";
   }
@@ -21,7 +22,7 @@ function getNetworkStatus(state: NetInfoState): NetworkStatus {
 function createNetworkChangeHandler(
   getAppState: () => AppStateStatus | null,
   poll: () => void,
-): (state: NetInfoState) => void {
+): (state: NetworkState) => void {
   let previousNetworkStatus: NetworkStatus | null = null;
   let isFirstNetworkUpdate = true;
 
@@ -81,7 +82,7 @@ export function useCountervaluesPollingLifecycle(): void {
       },
     );
 
-    const unsubscribeNetInfo = NetInfo.addEventListener(
+    const unsubscribeNetwork = subscribeToNetworkState(
       createNetworkChangeHandler(
         () => currentAppState,
         () => pollingActionsRef.current.poll(),
@@ -90,7 +91,7 @@ export function useCountervaluesPollingLifecycle(): void {
 
     return () => {
       appStateSubscription.remove();
-      unsubscribeNetInfo();
+      unsubscribeNetwork();
     };
   }, []);
 }

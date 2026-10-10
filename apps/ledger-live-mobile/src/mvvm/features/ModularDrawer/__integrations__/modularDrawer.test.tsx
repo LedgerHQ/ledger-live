@@ -22,13 +22,7 @@ import { INITIAL_STATE } from "~/reducers/settings";
 
 import { http, HttpResponse } from "msw";
 import { server } from "@tests/server";
-import {
-  NetInfoStateType,
-  useNetInfo,
-  type NetInfoState,
-  type NetInfoNoConnectionState,
-  type NetInfoUnknownState,
-} from "@react-native-community/netinfo";
+import { NetworkStateType, useNetworkState, type NetworkState } from "expo-network";
 import { parseAnyAccountId } from "@domain/entity-account";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
@@ -37,45 +31,9 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
 
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
-// Use global netinfo mock from jest-setup - do not replace to avoid mock cannibalization
-type NetInfoOverride =
-  | ({
-      type: NetInfoStateType.none;
-    } & Partial<Omit<NetInfoNoConnectionState, "type">>)
-  | ({
-      type?: NetInfoStateType.unknown;
-    } & Partial<Omit<NetInfoUnknownState, "type">>);
-
-const buildNetInfoState = (override?: NetInfoOverride): NetInfoState => {
-  if (override?.type === NetInfoStateType.none) {
-    const noConnectionBase: NetInfoNoConnectionState = {
-      type: NetInfoStateType.none,
-      isConnected: false,
-      isInternetReachable: false,
-      details: null,
-    };
-
-    return {
-      ...noConnectionBase,
-      ...override,
-    };
-  }
-
-  const unknownBase: NetInfoUnknownState = {
-    type: NetInfoStateType.unknown,
-    isConnected: null,
-    isInternetReachable: null,
-    details: null,
-  };
-
-  return {
-    ...unknownBase,
-    ...override,
-  };
-};
-
-const setNetInfoState = (override?: NetInfoOverride) => {
-  jest.mocked(useNetInfo).mockReturnValue(buildNetInfoState(override));
+// Use global expo-network mock from jest-setup - do not replace to avoid mock cannibalization
+const setNetworkState = (override?: NetworkState) => {
+  jest.mocked(useNetworkState).mockReturnValue({ type: NetworkStateType.UNKNOWN, ...override });
 };
 
 const advanceTimers = () => {
@@ -106,7 +64,7 @@ describe.each(DRAWER_VARIANTS)(
   ({ backButtonTestId, renderOptions }) => {
     beforeEach(() => {
       jest.clearAllMocks();
-      setNetInfoState();
+      setNetworkState();
     });
 
     afterEach(() => {
@@ -280,10 +238,10 @@ describe.each(DRAWER_VARIANTS)(
     });
 
     it("should display generic error when an internet error occurs", async () => {
-      setNetInfoState({
+      setNetworkState({
         isConnected: false,
         isInternetReachable: false,
-        type: NetInfoStateType.none,
+        type: NetworkStateType.NONE,
       });
 
       const { getByText, user } = render(<ModularDrawerSharedNavigator />, renderOptions);
@@ -362,7 +320,7 @@ describe("ModularDrawer — Lumen BottomSheet specific", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    setNetInfoState();
+    setNetworkState();
   });
 
   it("should show BottomSheetHeader title and hide legacy Title when Lumen path is active", async () => {

@@ -1,8 +1,8 @@
-import NetInfo from "@react-native-community/netinfo";
 import { onlineManager } from "@tanstack/react-query";
+import { subscribeToNetworkState } from "~/logic/subscribeToNetworkState";
 
 onlineManager.setEventListener(setOnline =>
-  NetInfo.addEventListener(state => {
+  subscribeToNetworkState(state => {
     setOnline(!!state.isConnected);
   }),
 );

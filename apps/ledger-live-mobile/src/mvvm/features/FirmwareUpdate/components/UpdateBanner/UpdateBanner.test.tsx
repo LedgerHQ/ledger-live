@@ -95,7 +95,7 @@ describe("<UpdateBanner />", () => {
   let PlatformSpy: jest.SpyInstance;
   beforeEach(() => {
     // Use clearAllMocks instead of restoreAllMocks to avoid restoring global mocks
-    // that other tests depend on (netinfo, vision-camera, etc.)
+    // that other tests depend on (expo-network, vision-camera, etc.)
     jest.clearAllMocks();
     navigateToNewUpdateFlow.mockClear();
     PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");

@@ -9,10 +9,6 @@ import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
 
-jest.mock("@react-native-community/netinfo", () => ({
-  addEventListener: jest.fn(() => jest.fn()),
-}));
-
 jest.mock("~/config/bridge-setup", () => ({
   setupCryptoAssetsStore: jest.fn(),
   setupRateLookups: jest.fn(),

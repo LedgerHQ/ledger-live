@@ -65,6 +65,10 @@
           "reason": "Unmaintained since 2021, replaced on mobile (LIVE-37328).",
           "use": "expo-splash-screen"
         },
+        "@react-native-community/netinfo": {
+          "reason": "Replaced on mobile (LIVE-38981).",
+          "use": "expo-network"
+        },
         "unimported": {
           "reason": "Mishandles dynamic import(), so every package needs an exception list to suppress its false positives. Pulls typescript@4.9.5 and @typescript-eslint@5 into node_modules.",
           "use": "knip"
