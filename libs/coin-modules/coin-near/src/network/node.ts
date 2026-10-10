@@ -3,6 +3,7 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { sha256 } from "@noble/hashes/sha2";
+import { isAxiosError } from "axios";
 import { BigNumber } from "bignumber.js";
 import {
   JsonRpcProvider,
@@ -195,12 +196,41 @@ type NearRpcTransactionResponse = {
 // stringify it into "[object Object]".
 const NEAR_RPC_STATUSES = new Set([200, 400, 408, 500]);
 
-// A timed-out `send_tx` is held open by the node for about 10s. Retries stop being started once
-// this budget is spent, which bounds how long the user waits after signing to roughly the budget
-// plus one last attempt.
-const BROADCAST_RETRY_BUDGET_MS = 30_000;
+type BroadcastTiming = {
+  // No retry is started once this much time has passed since the first attempt.
+  retryBudgetMs: number;
+  // Client-side limit for a single `send_tx`, capped by what is left of the budget.
+  attemptTimeoutMs: number;
+  // Wait before the first retry, doubled for each following one up to `maxRetryDelayMs`.
+  retryDelayMs: number;
+  maxRetryDelayMs: number;
+};
+
+// A timed-out `send_tx` is held open by the node for about 10s, so the per-attempt limit is only a
+// safety net for a node or proxy that never answers. With the budget it bounds how long the user
+// waits after signing to about the budget plus the lookup. The delay spreads the retries out when
+// the node answers fast, so a struggling node is not hit by a burst of calls.
+const BROADCAST_TIMING: BroadcastTiming = {
+  retryBudgetMs: 30_000,
+  attemptTimeoutMs: 15_000,
+  retryDelayMs: 500,
+  maxRetryDelayMs: 5_000,
+};
 
 const TRANSACTION_LOOKUP_TIMEOUT_MS = 10_000;
+
+// What a `send_tx` that got no answer in time is reported as, so that it takes the same path as the
+// node's own `TIMEOUT_ERROR`: the transaction may well have been accepted.
+const CLIENT_TIMEOUT_ERROR: NearRpcError = {
+  name: "HANDLER_ERROR",
+  cause: { name: "TIMEOUT_ERROR" },
+  data: "no answer from the node in time",
+};
+
+const isClientTimeout = (error: unknown): boolean =>
+  isAxiosError(error) && (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT");
+
+const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
 const asString = (value: unknown): string | undefined =>
   typeof value === "string" && value.length > 0 ? value : undefined;
@@ -256,48 +286,83 @@ const findBroadcastTransactionHash = async (
   }
 };
 
+// A client-side timeout is reported as a node `TIMEOUT_ERROR` so both take the same path.
+const sendTransaction = async (
+  config: NearConfig,
+  signedTransaction: string,
+  timeout: number,
+): Promise<{ data: NearRpcTransactionResponse | undefined; status: number }> => {
+  try {
+    const { data, status } = await network<NearRpcTransactionResponse | undefined>({
+      method: "POST",
+      url: config.infra.API_NEAR_PRIVATE_NODE,
+      data: {
+        jsonrpc: "2.0",
+        id: "id",
+        method: "send_tx",
+        params: { signed_tx_base64: signedTransaction, wait_until: "EXECUTED_OPTIMISTIC" },
+      },
+      timeout,
+      validateStatus: httpStatus => NEAR_RPC_STATUSES.has(httpStatus),
+    });
+
+    return { data, status };
+  } catch (error) {
+    if (isClientTimeout(error)) {
+      return { data: { error: CLIENT_TIMEOUT_ERROR }, status: 408 };
+    }
+
+    throw error;
+  }
+};
+
 /**
  * Implements a retry mechanism for broadcasting a transaction
  * based on the near documentation: https://docs.near.org/api/rpc/transactions#what-could-go-wrong-send-tx
  *
  * `TIMEOUT_ERROR` can be thrown when the transaction is not yet executed in less than 10 seconds.
  * Documentation advises to "re-submit the request with the identical transaction" in this case,
- * which is done until the retries or the time budget (`deadline`) are spent. The node is then asked
- * for the transaction by hash before reporting a failure for a broadcast that went through.
+ * which is done, with a growing delay between attempts, until the retries or the time budget are
+ * spent. The node is then asked for the transaction by hash before reporting a failure for a
+ * broadcast that went through.
  */
 export const broadcastTransaction = async (
   config: NearConfig,
   transaction: string,
   retries = 6,
-  deadline = Date.now() + BROADCAST_RETRY_BUDGET_MS,
+  timing: BroadcastTiming = BROADCAST_TIMING,
 ): Promise<string> => {
-  const payload = {
-    jsonrpc: "2.0",
-    id: "id",
-    method: "send_tx",
-    params: {
-      signed_tx_base64: transaction,
-      wait_until: "EXECUTED_OPTIMISTIC",
-    },
-  };
-  const { data, status } = await network<NearRpcTransactionResponse | undefined>({
-    method: "POST",
-    url: config.infra.API_NEAR_PRIVATE_NODE,
-    data: payload,
-    validateStatus: httpStatus => NEAR_RPC_STATUSES.has(httpStatus),
-  });
+  const deadline = Date.now() + timing.retryBudgetMs;
 
-  const error = data?.error;
+  for (let attempt = 0; ; attempt++) {
+    // `timeout: 0` would mean no limit at all, so never let the remaining budget reach it.
+    const timeout = Math.max(1, Math.min(timing.attemptTimeoutMs, deadline - Date.now()));
+    const { data, status } = await sendTransaction(config, transaction, timeout);
+    const error = data?.error;
 
-  if (error) {
-    const isTimeout = error.cause?.name === "TIMEOUT_ERROR";
+    if (!error) {
+      if (!data?.result && status >= 400) {
+        throw new Error(`Near: send_tx failed with HTTP ${status}`);
+      }
 
-    if (isTimeout && retries > 0 && Date.now() < deadline) {
-      log("Near", "broadcastTransaction retrying after error", { data, payload, retries });
-      return broadcastTransaction(config, transaction, retries - 1, deadline);
+      const hash = data?.result?.transaction?.hash;
+
+      if (!hash) {
+        throw new Error("Near: send_tx returned no transaction hash");
+      }
+
+      return hash;
     }
 
-    if (isTimeout) {
+    if (error.cause?.name === "TIMEOUT_ERROR") {
+      const delay = Math.min(timing.retryDelayMs * 2 ** attempt, timing.maxRetryDelayMs);
+
+      if (attempt < retries && Date.now() + delay < deadline) {
+        log("Near", "broadcastTransaction retrying after error", { data, attempt, delay });
+        await sleep(delay);
+        continue;
+      }
+
       const hash = await findBroadcastTransactionHash(config, transaction);
 
       if (hash) {
@@ -309,18 +374,6 @@ export const broadcastTransaction = async (
     log("Near", "broadcastTransaction error", error);
     throw new Error(describeRpcError(error));
   }
-
-  if (!data?.result && status >= 400) {
-    throw new Error(`Near: send_tx failed with HTTP ${status}`);
-  }
-
-  const hash = data?.result?.transaction?.hash;
-
-  if (!hash) {
-    throw new Error("Near: send_tx returned no transaction hash");
-  }
-
-  return hash;
 };
 
 export const getStakingPositions = async (
