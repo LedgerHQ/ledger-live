@@ -208,7 +208,53 @@ describe("mergeSyncedAccounts", () => {
     const mismatched = { ...ETH_RAW, id };
     const report = mergeSyncedAccounts(session, [mismatched, BTC_RAW]);
 
-    expect(report.invalid).toEqual([expect.objectContaining({ status: "invalid", id })]);
+    expect(report.invalid).toEqual([
+      expect.objectContaining({
+        status: "invalid",
+        id,
+        reason: expect.stringMatching(/^Invalid account id .*: it names/),
+      }),
+    ]);
+    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
+  });
+
+  // Object.prototype keys guard against a predicate that also accepts inherited properties.
+  it.each(["ethFuture", "toString", "__proto__"])(
+    "skips a known currency whose id uses the derivation mode %p, which this version doesn't know",
+    mode => {
+      const session = Session.from([]);
+      const newer = {
+        ...ETH_RAW,
+        id: `js:2:ethereum:${ETH_ADDR}:${mode}`,
+        derivationMode: mode,
+      };
+      const report = mergeSyncedAccounts(session, [newer, BTC_RAW]);
+
+      expect(report.invalid).toEqual([]);
+      expect(report.skipped).toEqual([
+        expect.objectContaining({
+          status: "skipped",
+          id: newer.id,
+          reason: expect.stringContaining(`Derivation mode "${mode}"`),
+        }),
+      ]);
+      expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
+    },
+  );
+
+  it("isolates a known currency whose id can't be decoded as invalid, not skipped", () => {
+    const session = Session.from([]);
+    const broken = { ...ETH_RAW, id: `js:2:ethereum:${ETH_ADDR}` };
+    const report = mergeSyncedAccounts(session, [broken, BTC_RAW]);
+
+    expect(report.skipped).toEqual([]);
+    expect(report.invalid).toEqual([
+      expect.objectContaining({
+        status: "invalid",
+        id: broken.id,
+        reason: expect.stringMatching(/^Invalid account id/),
+      }),
+    ]);
     expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
   });
 
