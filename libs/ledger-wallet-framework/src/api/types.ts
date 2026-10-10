@@ -199,8 +199,9 @@ export type BridgeApi = {
    */
   addressLookup?: AddressLookup;
   /**
-   * Defaults to `true`. Set `false` when the account shape returns the whole operation list, or the
-   * merge puts back the operations the shape left out.
+   * Defaults to `false` on the generic coin framework bridge, whose account shape already returns
+   * the merged, bounded list: merging again would put back the operations the bound dropped. Set
+   * `true` only for a family whose shape returns new operations alone, at the cost of that bound.
    */
   shouldMergeOps?: boolean;
   /**

@@ -4274,6 +4274,54 @@ describe("genericGetAccountShape", () => {
         expect(parent?.subOperations).toEqual([]);
       });
 
+      test("a parent carried over from storage follows a token row the merge replaced under the same id", async () => {
+        // The stored token row for h9 is corrected by this sync (a different sender, as after a
+        // reorg): `mergeOps` swaps in the new object under the same id. The stored parent h9 still
+        // holds the old one, so an id comparison alone would keep it.
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h10", 10)] });
+        const stale = tokenRow("tok-h9", "h9", 9);
+        const corrected = { ...tokenRow("tok-h9", "h9", 9), senders: ["corrected"] };
+        buildSubAccountsMock.mockReturnValue([
+          { id: "subNew", token: { id: "tok1" }, operations: [corrected], pendingOperations: [] },
+        ]);
+        const storedParent = {
+          id: "h9",
+          accountId: "accId",
+          hash: "h9",
+          type: "IN",
+          blockHeight: 9,
+          date: new Date(9 * 1000),
+          extra: {},
+          senders: [],
+          recipients: [],
+          subOperations: [stale],
+        };
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "addr1",
+            initialAccount: {
+              blockHeight: 9,
+              syncHash: "sync-hash",
+              operations: [storedParent],
+              pendingOperations: [],
+              subAccounts: [
+                { id: "subNew", token: { id: "tok1" }, operations: [stale], pendingOperations: [] },
+              ],
+            },
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        const subAccounts = result.subAccounts as any[];
+        expect(subAccounts[0].operations[0]).toBe(corrected);
+        const parent = result.operations?.find(op => op.hash === "h9");
+        expect(parent?.subOperations?.[0]).toBe(corrected);
+      });
+
       test("a parent whose token transfer just confirmed links the confirmed row only, not the optimistic one still pending", async () => {
         // The stored token account still holds the optimistic row for h9 -- `postSync` prunes it
         // only after this shape is built.
@@ -4533,17 +4581,15 @@ describe("genericGetAccountShape", () => {
         }));
       });
 
-      const walkTransferOf = (assetReference: string) => {
+      const walkTransferOf = (...assetReferences: string[]) => {
         listOperationsMock.mockResolvedValueOnce({
-          items: [
-            {
-              hash: "h60",
-              type: "IN",
-              tx: { failed: false, block: { height: 60 } },
-              height: 60,
-              asset: { type: "erc20", assetReference, assetOwner: "0xabc" },
-            },
-          ],
+          items: assetReferences.map((assetReference, i) => ({
+            hash: `h${60 + i}`,
+            type: "IN",
+            tx: { failed: false, block: { height: 60 } },
+            height: 60,
+            asset: { type: "erc20", assetReference, assetOwner: "0xabc" },
+          })),
           next: undefined,
         });
         adaptCoreOperationToLiveOperationMock.mockImplementation((_accId: string, op: any) => ({
@@ -4602,6 +4648,28 @@ describe("genericGetAccountShape", () => {
           { paginationConfig: {}, blacklistedTokenIds: ["ethereum/erc20/0xeee"] } as any,
         );
 
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      });
+
+      it("looks walked tokens up in bounded batches, not all at once", async () => {
+        getBalanceMock.mockResolvedValueOnce([native, held]);
+        const references = Array.from({ length: 120 }, (_, i) => `0xspam${i}`);
+        walkTransferOf(...references);
+        let inFlight = 0;
+        let peak = 0;
+        getTokenFromAssetMock.mockImplementation(async () => {
+          inFlight++;
+          peak = Math.max(peak, inFlight);
+          await new Promise(resolve => setTimeout(resolve, 0));
+          inFlight--;
+          return undefined;
+        });
+
+        await syncWith(resumed);
+
+        expect(getTokenFromAssetMock).toHaveBeenCalledTimes(references.length);
+        expect(peak).toBeGreaterThan(1);
+        expect(peak).toBeLessThanOrEqual(50);
         expect(getBalanceMock).toHaveBeenCalledTimes(1);
       });
 
