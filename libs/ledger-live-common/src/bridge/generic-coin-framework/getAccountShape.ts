@@ -8,6 +8,7 @@ import { getDerivationScheme } from "@ledgerhq/ledger-wallet-framework/derivatio
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
+import chunk from "lodash/chunk";
 import groupBy from "lodash/groupBy";
 import { A4Client } from "./a4/client/index";
 import { deriveA4AccountId } from "./a4/client/accountId";
@@ -395,6 +396,8 @@ function buildParentOperations(
   return result;
 }
 
+const TOKEN_LOOKUP_BATCH_SIZE = 50;
+
 // Lower-cased, like every other asset reference comparison here: a chain's balance response and
 // its own derivations aren't guaranteed to agree on casing.
 function lowercasedReference(asset: AssetInfo): string | undefined {
@@ -432,19 +435,23 @@ async function resolveUnbalancedTokenAssets(
     if (!balanced.has(reference) && !unbalanced.has(reference)) unbalanced.set(reference, op);
   }
 
-  const assets = await Promise.all(
-    [...unbalanced.values()].map(async op => {
-      // `"token"` when the precise type is unknown, as when building a transaction intent.
-      const token = await getTokenFromAsset({
-        type: "token",
-        assetReference: String(op.extra.assetReference),
-        assetOwner: String(op.extra.assetOwner),
-      });
-      return token && !blacklistedTokenIds.includes(token.id)
-        ? getAssetFromToken(token, address)
-        : undefined;
-    }),
-  );
+  const resolve = async (op: OperationCommon) => {
+    // `"token"` when the precise type is unknown, as when building a transaction intent.
+    const token = await getTokenFromAsset({
+      type: "token",
+      assetReference: String(op.extra.assetReference),
+      assetOwner: String(op.extra.assetOwner),
+    });
+    return token && !blacklistedTokenIds.includes(token.id)
+      ? getAssetFromToken(token, address)
+      : undefined;
+  };
+  // In batches: a walk of a spam-heavy address can carry thousands of distinct unlisted
+  // references, each a crypto-assets store lookup.
+  const assets: (AssetInfo | undefined)[] = [];
+  for (const batch of chunk([...unbalanced.values()], TOKEN_LOOKUP_BATCH_SIZE)) {
+    assets.push(...(await Promise.all(batch.map(resolve))));
+  }
   return assets.filter((asset): asset is AssetInfo => asset !== undefined);
 }
 
@@ -460,8 +467,10 @@ function relinkSubOperations(
   return operations.map(op => {
     const linked = subOperationIndex.get(op.hash) ?? [];
     const current = op.subOperations ?? [];
+    // By reference, not id: `mergeOps` keeps an unchanged token row's object and replaces a row it
+    // updated under the same id, so an id match alone would leave the parent holding the old row.
     const unchanged =
-      current.length === linked.length && current.every((sub, i) => sub.id === linked[i].id);
+      current.length === linked.length && current.every((sub, i) => sub === linked[i]);
     return unchanged ? op : { ...op, subOperations: linked };
   });
 }
