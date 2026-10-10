@@ -1,48 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import { FakeSpinners, type FakeSpinner } from "../testing/fake-spinner";
+import { _setTestSpinner, spinner } from "./ui";
 
-type MockSpinner = {
-  text: string;
-  isSpinning: boolean;
-  start: () => MockSpinner;
-  stop: () => MockSpinner;
-  success: () => MockSpinner;
-  error: () => MockSpinner;
-  clear: () => MockSpinner;
-};
-
-const createdSpinners: MockSpinner[] = [];
-
-mock.module("yocto-spinner", () => ({
-  default: ({ text }: { text: string }) => {
-    const spin: MockSpinner = {
-      text,
-      isSpinning: false,
-      start() {
-        this.isSpinning = true;
-        return this;
-      },
-      stop() {
-        this.isSpinning = false;
-        return this;
-      },
-      success() {
-        this.isSpinning = false;
-        return this;
-      },
-      error() {
-        this.isSpinning = false;
-        return this;
-      },
-      clear() {
-        return this;
-      },
-    };
-    createdSpinners.push(spin);
-    return spin;
-  },
-}));
-
-const { spinner } = await import("./ui");
+const spinners = new FakeSpinners();
+beforeAll(() => _setTestSpinner(spinners.create));
+afterAll(() => _setTestSpinner(null));
 
 describe("spinner", () => {
   const envVars = [
@@ -59,7 +21,7 @@ describe("spinner", () => {
   let stderrIsTTY: PropertyDescriptor | undefined;
 
   beforeEach(() => {
-    createdSpinners.length = 0;
+    spinners.created.length = 0;
     savedEnv = {};
     for (const k of [...envVars, "AGENT"]) {
       savedEnv[k] = process.env[k];
@@ -83,12 +45,12 @@ describe("spinner", () => {
   });
 
   it("stops the previous spinner before starting a new one", () => {
-    const first = spinner("first") as unknown as MockSpinner;
+    const first = spinner("first") as unknown as FakeSpinner;
     expect(first.isSpinning).toBe(true);
 
-    const second = spinner("second") as unknown as MockSpinner;
+    const second = spinner("second") as unknown as FakeSpinner;
     expect(first.isSpinning).toBe(false);
     expect(second.isSpinning).toBe(true);
-    expect(createdSpinners).toHaveLength(2);
+    expect(spinners.created).toHaveLength(2);
   });
 });

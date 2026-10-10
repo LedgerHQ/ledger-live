@@ -1,13 +1,13 @@
-import { beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { Observable } from "rxjs";
 import type { GetGenuineCheckFromDeviceIdResult } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { runCli } from "../testing/cli-runner";
+import { _setTestGenuineCheck } from "./genuine-check";
 
 let genuineCheckImpl: () => Observable<GetGenuineCheckFromDeviceIdResult>;
 
-mock.module("@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId", () => ({
-  getGenuineCheckFromDeviceId: () => genuineCheckImpl(),
-}));
+beforeAll(() => _setTestGenuineCheck(() => genuineCheckImpl()));
+afterAll(() => _setTestGenuineCheck(null));
 
 const MOCK_DMK_ENV = {
   WALLET_CLI_MOCK_DMK: "1",

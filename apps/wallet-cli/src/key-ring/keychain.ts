@@ -1,8 +1,8 @@
-import { Entry } from "@napi-rs/keyring";
 import { createHash } from "node:crypto";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
 import { pubkeyFromPrivatekey, encryptData, decryptData, hexToBytes } from "./crypto";
+import { openKeychainEntry } from "./keychain-entry";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 
 const SERVICE = APP_NAME;
@@ -36,7 +36,7 @@ function keychainAccount(): string {
 }
 
 function getEntry() {
-  return new Entry(SERVICE, keychainAccount());
+  return openKeychainEntry(SERVICE, keychainAccount());
 }
 
 /**

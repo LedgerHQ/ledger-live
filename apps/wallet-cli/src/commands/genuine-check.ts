@@ -13,6 +13,13 @@ import { commandDescription } from "./registry";
 
 const SOCKET_EVENT_PAYLOAD_GENUINE = "0000";
 
+let genuineCheck = getGenuineCheckFromDeviceId;
+
+/** @internal Test seam — replaces the device genuine check; `null` restores live-common's. */
+export function _setTestGenuineCheck(check: typeof getGenuineCheckFromDeviceId | null): void {
+  genuineCheck = check ?? getGenuineCheckFromDeviceId;
+}
+
 class NonGenuineDeviceError extends Error {
   constructor() {
     super("Device is not genuine.");
@@ -61,7 +68,7 @@ export default defineCommand({
 
       await withDmkDeviceSession(async () => {
         await runObservable<GetGenuineCheckFromDeviceIdResult>({
-          source$: getGenuineCheckFromDeviceId({
+          source$: genuineCheck({
             deviceId: WALLET_CLI_DMK_DEVICE_ID,
             deviceName: null,
           }).pipe(timeout({ each: flags["device-timeout"] })),
