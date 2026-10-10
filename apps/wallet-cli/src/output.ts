@@ -254,12 +254,21 @@ export interface CommandOutput {
   /** One page of `agent-intent intents` (human: table + next-page hint; json: envelope with
    * `intents`, `count` and `nextCursor`, `null` on the last page). */
   agentIntentIntents(result: AgentIntentIntentsPage): void;
+  /** One intent from `agent-intent status` (human: labeled lines; json: envelope with the intent's
+   * fields, `profileId` and `terminal`, `null` for a state this version doesn't know). */
+  agentIntentStatus(result: AgentIntentStatusResult): void;
 }
 
 export type AgentIntentIntentsPage = {
   profileId: string;
   intents: readonly IntentListEntry[];
   nextCursor: string | null;
+};
+
+export type AgentIntentStatusResult = {
+  profileId: string;
+  intent: IntentListEntry;
+  terminal: boolean | null;
 };
 
 export type AgentIntentEnrollmentPending = {
@@ -927,6 +936,27 @@ class HumanCommandOutput implements CommandOutput {
       writeStdout(colors.dim(`More intents: re-run with --cursor ${nextCursor}`));
     }
   }
+
+  agentIntentStatus({ profileId, intent: i, terminal }: AgentIntentStatusResult): void {
+    const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
+    const baseUnits = i.amount ? `${i.amount} (base units)` : undefined;
+    const amount = i.displayAmount ?? baseUnits;
+    writeStdout(
+      [
+        `Intent:  ${i.id}`,
+        `Status:  ${state}${terminal ? " (final)" : ""}`,
+        `Profile: ${profileId}`,
+        ...(amount ? [`Amount:  ${amount}`] : []),
+        ...(i.sender ? [`From:    ${i.sender}`] : []),
+        ...(i.recipient ? [`To:      ${i.recipient}`] : []),
+        ...(i.network ? [`Network: ${i.network}`] : []),
+        ...(i.description ? [`Note:    ${i.description}`] : []),
+        ...(i.failureReason ? [`Failure: ${i.failureReason}`] : []),
+        `Created: ${i.createdAt}`,
+        `Updated: ${i.updatedAt}`,
+      ].join("\n"),
+    );
+  }
 }
 
 function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
@@ -1361,6 +1391,10 @@ class JsonCommandOutput implements CommandOutput {
 
   agentIntentIntents({ profileId, intents, nextCursor }: AgentIntentIntentsPage): void {
     this._writeNdjson(this._envelope({ profileId, count: intents.length, intents, nextCursor }));
+  }
+
+  agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
+    this._writeNdjson(this._envelope({ profileId, terminal, intent }));
   }
 }
 

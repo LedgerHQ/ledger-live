@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/intents — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose EVM payments for human review and list the intents it proposed, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/intents/status — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose EVM payments for human review, list the intents it proposed and check their status, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` (without `--dry-run`), `agent-intent intents` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` (without `--dry-run`), `agent-intent intents`, `agent-intent status` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -50,7 +50,8 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
 | "pull my synced accounts", "import from Ledger Sync", "sync the agent's accounts"   | `agent-intent sync --profile <id>` (no device)                 |
 | "have the agent request a payment", "propose sending X to Y for approval"            | `agent-intent send --profile <id> --account <label> --to <address> --amount '<amount> <ticker>'` (no device, never broadcasts) |
-| "what did the agent propose", "list the agent's intents", "is my intent approved"   | `agent-intent intents --profile <id>` (no device; `--status signed,broadcast`, `--cursor` for the next page) |
+| "what did the agent propose", "list the agent's intents"                           | `agent-intent intents --profile <id>` (no device; `--status signed,broadcast`, `--cursor` for the next page) |
+| "is my intent approved", "what's the status of intent X", "wait until it's signed"  | `agent-intent status --profile <id> --intent <id>` (no device; poll JSON `intent.status` for one state, `terminal` for a final one) |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
 
 ---
@@ -106,6 +107,7 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `agent-intent show`  | No     | No           | No          | No      |
 | `agent-intent sync`  | No     | **Required** | No          | Yes     |
 | `agent-intent intents` | No   | **Required** | No          | Yes     |
+| `agent-intent status` | No    | **Required** | No          | Yes     |
 
 \*`receive` with `--no-verify`, `send` with `--dry-run`, and `earn deposit`/`earn withdraw` with `--dry-run` need no device and no sandbox bypass.
 
@@ -464,7 +466,8 @@ pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <n
   JSON has a `nextCursor` (human output prints the follow-up command); it is `null` on the last
   page. With `--cursor`, `--status` and `--page-size` are ignored.
 - **`--status`** takes comma-separated states: `created`, `crafted`, `signed`, `broadcast`,
-  `success`, `failed`, `rejected`, `expired`. An unknown state is rejected before signing in.
+  `success`, `failed`, `rejected`, `cancelled`, `expired`. An unknown state is rejected before
+  signing in.
 - **JSON** (`--output json`): `profileId`, `count`, `nextCursor`, and `intents[]` with `id`,
   `status`, `type`, `network`, `sender`, `recipient`, `amount` (exact base units, a string),
   `displayAmount` (e.g. `"0.01 ETH"`, `null` when the asset is unknown), `asset`, `feeStrategy`,
@@ -472,6 +475,33 @@ pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <n
   `count: 0`.
 - **Read-only:** it never creates, approves or cancels anything, so a failure is always safe to
   re-run.
+
+### Checking one intent (`agent-intent status`)
+
+`agent-intent status` reads the current status and details of one intent the profile proposed, by
+the id `agent-intent send` printed (or `agent-intent intents` lists).
+
+```bash
+pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent 0192f7a4-0000-7000-8000-000000000001
+
+# Poll while the intent is known to be in progress; stop on a final state (terminal: true),
+# an unknown one (terminal: null) or an error, then read the status:
+while pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.terminal == false' >/dev/null; do sleep 30; done
+
+# To wait for one state, e.g. until the user signs, poll intent.status instead (signed is not final):
+while pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.intent.status == "created" or .intent.status == "crafted"' >/dev/null; do sleep 30; done
+```
+
+- **States:** `created`, `crafted`, `signed`, `broadcast` are in progress (`terminal: false`);
+  `success`, `failed`, `rejected`, `cancelled`, `expired` are final (`terminal: true`). A state this wallet-cli
+  version doesn't know is shown as-is with `terminal: null`: don't treat it as final or as an error.
+- **JSON** (`--output json`): `profileId`, `terminal`, and `intent` with the same fields as an
+  `agent-intent intents` entry (exact base-unit `amount` as a string, `displayAmount`,
+  `failureReason` for a failed intent, timestamps).
+- **Not found:** an unknown id and another agent's intent get the same answer, so the error can't
+  tell them apart. A malformed id is rejected before signing in.
+- Needs a service that lets agents read single intents; an older one says so and points to
+  `agent-intent intents`.
 
 ---
 

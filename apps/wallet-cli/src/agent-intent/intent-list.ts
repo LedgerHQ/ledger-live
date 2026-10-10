@@ -47,6 +47,38 @@ export function parseStatusFilter(value: string | undefined): AgentIntentStatus[
   return [...new Set(statuses)] as AgentIntentStatus[];
 }
 
+/** States after which an intent never changes again. */
+const TERMINAL_STATUSES: ReadonlySet<AgentIntentStatus> = new Set([
+  "success",
+  "failed",
+  "rejected",
+  "cancelled",
+  "expired",
+]);
+
+/**
+ * Whether `status` is final, for shell polling: `null` for a state this wallet-cli version doesn't
+ * know (a newer service), so callers neither stop nor loop forever on a guess.
+ */
+export function isTerminalIntentStatus(status: string): boolean | null {
+  if (!isAgentIntentStatus(status)) return null;
+  return TERMINAL_STATUSES.has(status);
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Validates `--intent` before any sign-in: the service only issues UUID intent ids. */
+export function parseIntentId(value: string): string {
+  const id = value.trim();
+  if (!UUID_RE.test(id)) {
+    throw new Error(
+      `--intent "${value}" is not an intent id (a UUID such as 0192f7a4-…). Copy it from ` +
+        "`agent-intent intents` or from the `agent-intent send` output.",
+    );
+  }
+  return id.toLowerCase();
+}
+
 function text(value: unknown): string | null {
   return typeof value === "string" ? value : null;
 }
@@ -70,35 +102,46 @@ export async function toIntentListEntries(
     return tokens.get(key)!;
   };
 
-  return Promise.all(
-    records.map(async ({ id, status, intent, createdAt, updatedAt, failureReason }) => {
-      const amount = text(intent.amount);
-      const asset = intent.asset
-        ? { type: intent.asset.type, assetReference: intent.asset.assetReference ?? null }
-        : null;
-      let displayAmount: string | null = null;
-      if (amount !== null && intent.network === "ethereum" && asset?.type === "native") {
-        displayAmount = `${formatBaseUnits(amount, ETH_DECIMALS)} ETH`;
-      } else if (amount !== null && intent.network === "ethereum" && asset?.assetReference) {
-        const known = await token(asset.assetReference);
-        if (known) displayAmount = `${formatBaseUnits(amount, known.decimals)} ${known.ticker}`;
-      }
-      return {
-        id,
-        status,
-        type: intent.type,
-        network: text(intent.network),
-        sender: text(intent.sender),
-        recipient: text(intent.recipient),
-        amount,
-        displayAmount,
-        asset,
-        feeStrategy: text(intent.feeStrategy),
-        description: text(intent.description),
-        failureReason: failureReason ?? null,
-        createdAt,
-        updatedAt,
-      };
-    }),
-  );
+  return Promise.all(records.map(record => toEntry(record, token)));
+}
+
+/** Like {@link toIntentListEntries}, for a single intent. */
+export async function toIntentListEntry(
+  record: AgentIntentRecord,
+  lookupToken: (contract: string) => Promise<EthereumToken | null>,
+): Promise<IntentListEntry> {
+  return toEntry(record, contract => lookupToken(contract).catch(() => null));
+}
+
+async function toEntry(
+  { id, status, intent, createdAt, updatedAt, failureReason }: AgentIntentRecord,
+  token: (contract: string) => Promise<EthereumToken | null>,
+): Promise<IntentListEntry> {
+  const amount = text(intent.amount);
+  const asset = intent.asset
+    ? { type: intent.asset.type, assetReference: intent.asset.assetReference ?? null }
+    : null;
+  let displayAmount: string | null = null;
+  if (amount !== null && intent.network === "ethereum" && asset?.type === "native") {
+    displayAmount = `${formatBaseUnits(amount, ETH_DECIMALS)} ETH`;
+  } else if (amount !== null && intent.network === "ethereum" && asset?.assetReference) {
+    const known = await token(asset.assetReference);
+    if (known) displayAmount = `${formatBaseUnits(amount, known.decimals)} ${known.ticker}`;
+  }
+  return {
+    id,
+    status,
+    type: intent.type,
+    network: text(intent.network),
+    sender: text(intent.sender),
+    recipient: text(intent.recipient),
+    amount,
+    displayAmount,
+    asset,
+    feeStrategy: text(intent.feeStrategy),
+    description: text(intent.description),
+    failureReason: failureReason ?? null,
+    createdAt,
+    updatedAt,
+  };
 }
