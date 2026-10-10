@@ -2844,6 +2844,9 @@ importers:
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.1(@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@ledgerhq/device-transport-kit-speculos':
+        specifier: 'catalog:'
+        version: 1.2.1(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(rxjs@7.8.2)
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-exchange

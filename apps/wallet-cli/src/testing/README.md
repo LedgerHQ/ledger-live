@@ -31,12 +31,21 @@ All external I/O is replaced — no real device or network needed:
 | `MockServer` | Outbound `fetch` / axios / `http(s).request` calls | `runCli` with `WALLET_CLI_MOCK_PORT=<n>` redirects them to the server |
 | `MockDeviceManagementKit` | USB Ledger device (DMK) | `runCli` with `WALLET_CLI_MOCK_DMK=1` installs a mock transport; coin results come from `WALLET_CLI_MOCK_APP_RESULTS` (JSON) |
 
+## Speculos smoke tests
+
+A `.speculos.test.ts` test runs a command through `runCli` against a live
+Speculos instead of the device mock, while `MockServer` still serves HTTP. It is
+skipped unless `SPECULOS_API_PORT` is set, so `pnpm test` stays hardware-free.
+Speculos must listen on localhost: `MockServer` redirection leaves only local
+hosts alone.
+
 ## Running
 
 ```sh
 pnpm test                          # everything: bun test src/ scripts/
 bun test src/commands/             # every command's tests
 bun test src/commands/swap/        # one command group
+SPECULOS_API_PORT=5000 SPECULOS_DEVICE=nanoSP pnpm test:speculos   # Speculos smoke tests
 ```
 
 `scripts/` is part of the run because the skills codegen tests live beside the

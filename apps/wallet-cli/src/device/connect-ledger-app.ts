@@ -15,6 +15,7 @@ import { EmptyError, lastValueFrom } from "rxjs";
 import { tap } from "rxjs/operators";
 import { walletCliDebug } from "../shared/log";
 import type { DeviceState } from "./device-state";
+import { speculosTarget } from "./dmk-transport-factory";
 import { WalletCliDeviceError } from "./wallet-cli-device-error";
 
 type ConnectAppState = DeviceActionState<
@@ -190,7 +191,7 @@ async function connectLedgerAppOnce(
     ]);
   } catch (e) {
     if (e instanceof EmptyError) {
-      throw new WalletCliDeviceError({ code: "disconnected" }, { cause: e });
+      throw new WalletCliDeviceError({ code: "disconnected", ...speculosTarget() }, { cause: e });
     }
     throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName });
   } finally {
