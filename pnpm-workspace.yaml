@@ -258,3 +258,5 @@ catalog:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: protobufjs-cli@1.3.2
+  - protobufjs-cli@1.3.2
