@@ -3,6 +3,7 @@ import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/error
 import { CurrencyRegionRestrictedError } from "../../../errors";
 import type { StakingResources } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "../getAccountShape";
+import { extractBalances } from "../utils";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
@@ -3438,6 +3439,97 @@ describe("genericGetAccountShape", () => {
         expect(result.balance).toEqual(new BigNumber(100));
         expect(result.spendableBalance).toEqual(new BigNumber(spendable));
         expect(extractBalanceMock).not.toHaveBeenCalled();
+      },
+    );
+  });
+
+  describe("partitionsNativeBalance, rebuilt by extractBalances", () => {
+    const network = "mainnet";
+    const currency = { id: "solana", name: "Solana" };
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    test.each([
+      [
+        "active, with rewards above the delegation",
+        "active",
+        ["undelegate"],
+        2_000_000_000,
+        2_000_000_000,
+        5_000_000,
+      ],
+      ["activating", "activating", ["undelegate"], 1_000_000_000, 300_000_000, 700_000_000],
+      ["deactivating", "deactivating", ["delegate"], 500_000_000, 500_000_000, 0],
+      ["inactive", "inactive", ["withdraw", "delegate"], 0, 0, 3_000_000_000],
+    ])(
+      "returns what getBalance reported for a %s Solana stake account",
+      async (_label, state, actions, amount, active, inactive) => {
+        const lamports = BigInt(active + inactive + 2_282_880);
+        const reported = [
+          { value: 1_000_000_000n, locked: 900_880n, asset: { type: "native" } },
+          {
+            value: lamports,
+            locked: lamports,
+            asset: { type: "native" },
+            stake: {
+              uid: "stake-acc-1",
+              address: "stake-acc-1",
+              state,
+              asset: { type: "native" },
+              amount: BigInt(amount),
+              delegate: "vote-acc",
+              actions,
+              details: {
+                activeAmount: active,
+                inactiveAmount: inactive,
+                withdrawableAmount: 0,
+                lockedReserve: 2_282_880,
+                canStake: true,
+                canWithdraw: true,
+              },
+            },
+          },
+        ];
+        getBalanceMock.mockResolvedValue(reported);
+        getBridgeApiMock.mockImplementationOnce(() => ({
+          ...defaultBridgeApi(),
+          partitionsNativeBalance: true,
+        }));
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const shape = await getShape(
+          {
+            address: "solana-owner",
+            initialAccount: undefined,
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        const rebuilt = extractBalances(
+          { ...shape, freshAddress: "solana-owner", pendingOperations: [] } as any,
+          undefined,
+          true,
+        );
+
+        expect(rebuilt).toEqual([
+          reported[0],
+          expect.objectContaining({
+            value: reported[1].value,
+            locked: reported[1].locked,
+            asset: { type: "native" },
+            stake: expect.objectContaining({ uid: "stake-acc-1" }),
+          }),
+        ]);
       },
     );
   });

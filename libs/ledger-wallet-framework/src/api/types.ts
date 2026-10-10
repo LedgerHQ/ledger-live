@@ -159,8 +159,10 @@ export type BridgeApi = {
    */
   usesStakingPositions?: boolean;
   /**
-   * When true, the account balance and locked amount sum all native `getBalance` entries (Tezos).
-   * Opt-in: Solana's stakes overlap the first native entry; EVM's are extra and carry no `locked`.
+   * When true, the account balance and locked amount sum all native `getBalance` entries (Tezos,
+   * Solana). The entries are disjoint parts of the account, so each unit of funds sits in exactly
+   * one of them; their order and what each carries (stake metadata, `locked`) is the family's.
+   * Opt-in: EVM's stakes are extra and carry no `locked`, so summing them would inflate the balance.
    */
   partitionsNativeBalance?: boolean;
   balanceOptions?: BalanceOptions;

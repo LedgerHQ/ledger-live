@@ -92,7 +92,7 @@ export function genericGetTransactionStatus(
       await coinModuleApi.validateIntent(
         context,
         intent,
-        extractBalances(account, bridgeApi.getAssetFromToken),
+        extractBalances(account, bridgeApi.getAssetFromToken, bridgeApi.partitionsNativeBalance),
         { customFees },
       );
 

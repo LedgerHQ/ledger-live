@@ -43,6 +43,12 @@ describe("solana bridge", () => {
     });
   });
 
+  describe("native balance", () => {
+    it("sums the native entries, which partition the account balance", () => {
+      expect(solanaBridge(solana).partitionsNativeBalance).toBe(true);
+    });
+  });
+
   describe("computeIntentType", () => {
     it.each([
       [{ mode: "send" }, "send"],
