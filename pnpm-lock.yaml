@@ -664,7 +664,7 @@ pnpmfileChecksum: sha256-JyE64KwSjZ7Ykvi+y4PoBd1Pk100XNhr0fI7RUun0QE=
 
 patchedDependencies:
   '@bunli/core@0.9.1':
-    hash: fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565
+    hash: 9f2206355a37ee31169d7ee9c87e59a3e1cb4592b35c6f01ac33c8fe5c0105bf
     path: patches/@bunli__core@0.9.1.patch
   '@callstack/repack@5.2.5':
     hash: 8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60
@@ -2786,7 +2786,7 @@ importers:
     devDependencies:
       '@bunli/core':
         specifier: 0.9.1
-        version: 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+        version: 0.9.1(patch_hash=9f2206355a37ee31169d7ee9c87e59a3e1cb4592b35c6f01ac33c8fe5c0105bf)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
@@ -2931,9 +2931,6 @@ importers:
       bun-types:
         specifier: 1.4.2
         version: 1.4.2
-      bunli:
-        specifier: 0.9.1
-        version: 0.9.1(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       debug:
         specifier: 4.4.3
         version: 4.4.3(supports-color@7.2.0)
@@ -20769,19 +20766,8 @@ packages:
     resolution: {integrity: sha512-R4VbiNnevyr3acPi0VXd1OOo9enc4JgTb8fQTp2F1uXDclHfnI2azznsWmFQL5tinxeB3eKzMB7FeWk212FoCQ==}
     engines: {bun: '>=1.0.0'}
 
-  '@bunli/generator@0.6.5':
-    resolution: {integrity: sha512-r7ZaA/p7IMf7hk4YhsndfYvQSzoVz7XV/ohLL2dBS9rCAG8xF5epRiCZcFpy+B5YCfSs9nyKUOzQZqVW/L03Zg==}
-
-  '@bunli/plugin-completions@0.3.5':
-    resolution: {integrity: sha512-nOwUWWEt7GmZF3Bz638HikIGUv+NcmICnK8aLS3Hmyiq6vPjwwuHmUEg5dK8SvRyvqxMkCb23j5YlLK8TGct6Q==}
-
   '@bunli/runtime@0.3.2':
     resolution: {integrity: sha512-jFveHMTmukxRGu0g8nDe7efwNzvgyUJojeyXxwgeZG14hTxOavbqXhYzFQkvE9ZSlM+N78Rg1mdQpOFrlNS1Ow==}
-    peerDependencies:
-      react: 19.1.4
-
-  '@bunli/tui@0.6.0':
-    resolution: {integrity: sha512-vz+xOO1iXFd5J8mWv3zh6oydnR+M1ZZaejlTd0kMJi3cOxNJPDGQNjfkMlu6CmNMaJVFhNgB9auoO8Csz0VSrw==}
     peerDependencies:
       react: 19.1.4
 
@@ -29586,10 +29572,6 @@ packages:
   bundle-name@4.1.0:
     resolution: {integrity: sha512-tjwM5exMg6BGRI+kNmTntNsvdZS1X8BFYS6tnJ2hdH0kVxM6/eVZ2xy+FqStSWvYmtfFMDLIxurorHwDKfDz5Q==}
     engines: {node: '>=18'}
-
-  bunli@0.9.1:
-    resolution: {integrity: sha512-cdH80mbjdtqCNpZDxZPZMUAU5S1u+gRjIzRLeMAFP9PL2kzuX9z4pVO1WqrzKvIYt3991jF0JAuPFfzbvdcjEw==}
-    hasBin: true
 
   bunyamin@1.6.3:
     resolution: {integrity: sha512-m1hAijFhu8pFiidsVc0XEDic46uxPK+mKNLqkb5mluNx0nTolNzx/DjwMqHChQWCgfOLMjKYJJ2uPTQLE6t4Ng==}
@@ -40910,7 +40892,7 @@ snapshots:
       '@types/tough-cookie': 4.0.5
       tough-cookie: 4.1.4
 
-  '@bunli/core@0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
+  '@bunli/core@0.9.1(patch_hash=9f2206355a37ee31169d7ee9c87e59a3e1cb4592b35c6f01ac33c8fe5c0105bf)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
     dependencies:
       '@bunli/runtime': 0.3.2(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@bunli/utils': 0.6.0
@@ -40921,38 +40903,6 @@ snapshots:
       debug: 4.4.3(supports-color@7.2.0)
       yaml: 2.8.3
       zod: 4.4.3
-    transitivePeerDependencies:
-      - bun
-      - react
-      - react-devtools-core
-      - stage-js
-      - supports-color
-      - typescript
-      - web-tree-sitter
-      - ws
-
-  '@bunli/generator@0.6.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
-    dependencies:
-      '@babel/parser': 7.29.8
-      '@babel/traverse': 7.29.8
-      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      better-result: 2.8.2
-      debug: 4.4.3(supports-color@7.2.0)
-      zod: 4.4.3
-    transitivePeerDependencies:
-      - bun
-      - react
-      - react-devtools-core
-      - stage-js
-      - supports-color
-      - typescript
-      - web-tree-sitter
-      - ws
-
-  '@bunli/plugin-completions@0.3.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
-    dependencies:
-      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      better-result: 2.8.2
     transitivePeerDependencies:
       - bun
       - react
@@ -40974,24 +40924,6 @@ snapshots:
       fuse.js: 7.1.0
       react: 19.1.4
       zod: 4.4.3
-    transitivePeerDependencies:
-      - react-devtools-core
-      - stage-js
-      - supports-color
-      - typescript
-      - web-tree-sitter
-      - ws
-
-  '@bunli/tui@0.6.0(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
-    dependencies:
-      '@bunli/runtime': 0.3.2(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@opentui/core': 0.1.97(@typescript/typescript6@6.0.2)
-      '@opentui/react': 0.1.97(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@standard-schema/spec': 1.1.0
-      '@standard-schema/utils': 0.3.0
-      debug: 4.4.3(supports-color@7.2.0)
-      fuse.js: 7.1.0
-      react: 19.1.4
     transitivePeerDependencies:
       - react-devtools-core
       - stage-js
@@ -52871,25 +52803,6 @@ snapshots:
   bundle-name@4.1.0:
     dependencies:
       run-applescript: 7.0.0
-
-  bunli@0.9.1(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
-    dependencies:
-      '@bunli/core': 0.9.1(patch_hash=fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565)(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@bunli/generator': 0.6.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@bunli/plugin-completions': 0.3.5(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@bunli/tui': 0.6.0(@typescript/typescript6@6.0.2)(react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(react@19.1.4)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@bunli/utils': 0.6.0
-      better-result: 2.8.2
-      zod: 4.4.3
-    transitivePeerDependencies:
-      - bun
-      - react
-      - react-devtools-core
-      - stage-js
-      - supports-color
-      - typescript
-      - web-tree-sitter
-      - ws
 
   bunyamin@1.6.3(bunyan@2.0.5):
     dependencies:

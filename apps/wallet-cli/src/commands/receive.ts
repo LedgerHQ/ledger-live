@@ -24,10 +24,11 @@ import {
   resolveOutputFormat,
 } from "./inputs";
 import { trackAddressResolved } from "./accounts-analytics";
+import { commandDescription } from "./registry";
 
 export default defineCommand({
   name: "receive",
-  description: "Get receive address for an account (optionally verify on device)",
+  description: commandDescription("receive"),
   options: {
     account: accountOption,
     verify: option(z.boolean().default(true), {

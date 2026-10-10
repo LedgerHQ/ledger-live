@@ -26,6 +26,11 @@ describe("parseCommand", () => {
     expect(parseCommand(["account", "discover", "ethereum"])).toBe("account discover");
   });
 
+  it("resolves ring subcommands built by a factory", () => {
+    expect(parseCommand(["ring", "encrypt", "-k", "notes"])).toBe("ring encrypt");
+    expect(parseCommand(["ring", "decrypt"])).toBe("ring decrypt");
+  });
+
   it("returns just the group when no subcommand is given", () => {
     expect(parseCommand(["swap"])).toBe("swap");
   });

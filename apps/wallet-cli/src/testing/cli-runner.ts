@@ -92,13 +92,18 @@ async function getCliModules(): Promise<{
   setTestApiAuthKeychain: SetTestApiAuthKeychainFn;
 }> {
   if (!_runMain) {
-    // These imports load the full CLI module graph (live-common-setup, commands.gen, etc.).
+    // These imports load the full CLI module graph (live-common-setup, every command, etc.).
     // They run once per Bun test-worker; the module system caches the result.
-    const [cliMod, dmkMod, apiAuthMod] = await Promise.all([
+    const [cliMod, dmkMod, apiAuthMod, registryMod] = await Promise.all([
       import("../cli"),
       import("../device/register-dmk-transport"),
       import("../key-ring/api-auth-identity"),
+      import("../commands/registry"),
     ]);
+    // The CLI loads commands on demand, but tests keep loading all of them up front: a
+    // mock.module() left by an earlier test file must patch an already-loaded command module,
+    // not stand in for it when the command first loads (see ring.cli.test.ts's lkrp-sdk mocks).
+    await Promise.all(registryMod.COMMANDS.map(entry => entry.load()));
     _runMain = cliMod.runMain;
     _setTestDmkTransport = dmkMod._setTestDmkTransport as SetTestDmkTransportFn;
     _setTestApiAuthKeychain = apiAuthMod._setTestApiAuthKeychain;
@@ -327,7 +332,7 @@ export type RunResult = {
  * Captures stdout/stderr and returns them along with the exit code.
  *
  * This is the in-process equivalent of spawning `bun wrapper.ts ...args`.
- * Module loading (live-common-setup, commands.gen) happens once per worker.
+ * Module loading (live-common-setup, every command) happens once per worker.
  */
 export async function runCli(args: string[], env: Record<string, string> = {}): Promise<RunResult> {
   // Mirror the env defaults set by the old Bun.spawn approach:
