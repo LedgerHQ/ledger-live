@@ -1,9 +1,11 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import { TFunction } from "i18next";
-import { SolanaAccount, SolanaTokenAccount } from "@ledgerhq/live-common/families/solana/types";
+import type { SolanaTokenAccount } from "@ledgerhq/live-common/families/solana/types";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { Account } from "@ledgerhq/types-live";
+import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { useLLDCoinFamily } from "~/renderer/families";
 import StepRecipient from "./StepRecipient";
 
@@ -19,6 +21,28 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 const mockTFunction: jest.Mock<TFunction> = jest.fn(key => key) as unknown as jest.Mock<TFunction>;
 const mockUseLLDCoinFamily = jest.mocked(useLLDCoinFamily);
 
+const solanaAccount = genAccount("solana-1", {
+  currency: getCryptoCurrencyById("solana"),
+});
+
+const splToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: TokenCurrencyIdSchema.parse("solana/spl/fake"),
+  contractAddress: "FakeMint1111111111111111111111111111111111",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("solana"),
+  tokenType: "spl",
+  name: "Fake",
+  ticker: "FAKE",
+  units: [{ name: "Fake", code: "FAKE", magnitude: 8 }],
+  delisted: false,
+  disableCountervalue: false,
+};
+
+const makeSplTokenAccount = (extensions: SolanaTokenAccount["extensions"]): SolanaTokenAccount => ({
+  ...genTokenAccount(0, solanaAccount, splToken),
+  extensions,
+});
+
 describe("StepRecipient", () => {
   const baseParams = {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -27,10 +51,7 @@ describe("StepRecipient", () => {
     openedFromAccount: true,
     device: null,
     parentAccount: null,
-    account: {
-      type: "Account",
-      currency: {},
-    } as unknown as Account,
+    account: solanaAccount,
     transaction: null,
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     status: {} as unknown as TransactionStatus,
@@ -65,22 +86,8 @@ describe("StepRecipient", () => {
     render(
       <StepRecipient
         {...baseParams}
-        parentAccount={
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            type: "Account",
-            currency: {},
-          } as unknown as SolanaAccount
-        }
-        account={
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            type: "TokenAccount",
-            extensions: {
-              [extension]: {},
-            },
-          } as unknown as SolanaTokenAccount
-        }
+        parentAccount={solanaAccount}
+        account={makeSplTokenAccount({ [extension]: {} })}
       />,
     );
 
@@ -93,20 +100,8 @@ describe("StepRecipient", () => {
     render(
       <StepRecipient
         {...baseParams}
-        parentAccount={
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            type: "Account",
-            currency: {},
-          } as unknown as SolanaAccount
-        }
-        account={
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            type: "TokenAccount",
-            extensions: {},
-          } as unknown as SolanaTokenAccount
-        }
+        parentAccount={solanaAccount}
+        account={makeSplTokenAccount({})}
       />,
     );
 
