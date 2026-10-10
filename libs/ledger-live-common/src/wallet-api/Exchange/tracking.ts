@@ -152,6 +152,23 @@ export default function trackingWrapper(trackCall: TrackExchange) {
       track("Completes Exchange no params", getEventData(manifest));
     },
 
+    // Exchange app rejected the provider signature, the swap restarts with a new payload
+    swapSignatureVerificationRetry: ({
+      provider,
+      exchangeType,
+      isEmbeddedSwap,
+      swapEntryPoint,
+      retryCount,
+    }: TrackEventPayload & { retryCount: number }) => {
+      track("Swap signature verification retry", {
+        provider,
+        exchangeType,
+        isEmbeddedSwap: formatIsEmbeddedSwap(isEmbeddedSwap),
+        swapEntryPoint,
+        retryCount: String(retryCount),
+      });
+    },
+
     swapPayloadRequested: ({
       provider,
       transactionId,

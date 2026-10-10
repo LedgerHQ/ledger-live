@@ -2,6 +2,7 @@ import {
   DisabledTransactionBroadcastError,
   MissingSwapPayloadParamaters,
 } from "@ledgerhq/live-common/errors";
+import { isSwapRetryPending } from "@ledgerhq/live-common/exchange/error";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
@@ -49,6 +50,7 @@ export type Data = {
   sponsored?: boolean;
   isEmbeddedSwap?: boolean;
   swapEntryPoint?: string;
+  willRetryOnSignatureError?: boolean;
 };
 
 type ResultsState = {
@@ -133,6 +135,7 @@ const Body = ({
     payoutAddress,
     isEmbeddedSwap,
     swapEntryPoint,
+    willRetryOnSignatureError,
     ...exchangeParams
   } = data;
   const { exchange, provider, transaction: transactionParams, sponsored } = exchangeParams;
@@ -369,10 +372,13 @@ const Body = ({
     broadcast(signedOperation).then(onBroadcastSuccess, setError);
   }, [signedOperation, broadcast, onBroadcastSuccess, setError]);
 
+  const isRetryPending = !!error && isSwapRetryPending({ willRetryOnSignatureError }, error);
+
   return (
     <Root>
       <BodyContent
         error={error}
+        isRetryPending={isRetryPending}
         signRequest={signRequest}
         signedOperation={signedOperation}
         request={{ ...exchangeParams }}

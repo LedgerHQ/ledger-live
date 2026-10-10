@@ -23,7 +23,14 @@ import { padHexString } from "@ledgerhq/hw-app-eth";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getAccountBridge } from "../../bridge";
 import { Transaction } from "../../coin-modules/transaction-types";
-import { CompleteExchangeError, getErrorDetails, getSwapStepFromError } from "../../exchange/error";
+import {
+  CompleteExchangeError,
+  getErrorDetails,
+  getSwapStepFromError,
+  isSwapRetryPending,
+  isSwapSignatureVerificationError,
+  withSignatureRetryCode,
+} from "../../exchange/error";
 import {
   readEvmNotEnoughGasDiagnostics,
   readNotEnoughBalanceDiagnostics,
@@ -62,6 +69,8 @@ export type SwapDeps = {
   >;
 };
 
+const MAX_SIGNATURE_VERIFICATION_RETRIES = 2;
+
 /**
  * Runs a swap end to end: nonce on device, provider payload, funding
  * transaction, then the device confirmation / signature / broadcast the caller's
@@ -70,10 +79,40 @@ export type SwapDeps = {
  * Shared by the `custom.exchange.swap` RPC handler (live apps) and by in-app
  * flows that need the same sequence behind their own screens, so the two can't
  * drift apart.
+ *
+ * When the Exchange app rejects the provider signature, the whole sequence runs
+ * again with a new nonce and payload. `willRetryOnSignatureError` on the
+ * `custom.exchange.swap` request tells the host to keep that error off screen.
  */
-export async function executeSwap(
+export async function executeSwap(deps: SwapDeps, params: ExchangeSwapParams): Promise<SwapResult> {
+  for (let retryCount = 0; ; retryCount++) {
+    const willRetryOnSignatureError = retryCount < MAX_SIGNATURE_VERIFICATION_RETRIES;
+    try {
+      return await executeSwapAttempt(deps, params, { retryCount, willRetryOnSignatureError });
+    } catch (error) {
+      if (!willRetryOnSignatureError || !isSwapSignatureVerificationError(error)) {
+        throw error;
+      }
+      deps.tracking.swapSignatureVerificationRetry({
+        provider: params.provider,
+        exchangeType: params.exchangeType,
+        isEmbeddedSwap: params.isEmbedded,
+        swapEntryPoint: params.swapEntryPoint,
+        retryCount: retryCount + 1,
+      });
+    }
+  }
+}
+
+type SwapAttempt = {
+  retryCount: number;
+  willRetryOnSignatureError: boolean;
+};
+
+async function executeSwapAttempt(
   { accounts, tracking, flags, getFeature, uiHooks }: SwapDeps,
   params: ExchangeSwapParams,
+  { retryCount, willRetryOnSignatureError }: SwapAttempt,
 ): Promise<SwapResult> {
   const {
     "custom.exchange.start": uiExchangeStart,
@@ -304,6 +343,7 @@ export async function executeSwap(
           isEmbeddedSwap: isEmbedded,
           swapEntryPoint,
           ...(correlationId && { correlationId }),
+          willRetryOnSignatureError,
         },
         onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
           succeeded = true;
@@ -345,11 +385,13 @@ export async function executeSwap(
           const causeSuffix = rawErrorCause ? `, ${JSON.stringify(rawErrorCause)}` : "";
           const errorMessageWithCause = rawErrorMessage + causeSuffix;
 
-          const completeExchangeError =
+          const completeExchangeError = withSignatureRetryCode(
             // step provided in libs/ledger-live-common/src/exchange/platform/transfer/completeExchange.ts
             error instanceof CompleteExchangeError
               ? error
-              : new CompleteExchangeError("INIT", rawErrorName, errorMessageWithCause);
+              : new CompleteExchangeError("INIT", rawErrorName, errorMessageWithCause),
+            retryCount,
+          );
 
           postSwapCancelled({
             provider: provider,
@@ -388,6 +430,10 @@ export async function executeSwap(
     // Skip DrawerClosedError
     // do not redirect to the error screen
     if (isDrawerClosedError(error)) {
+      throw error;
+    }
+
+    if (isSwapRetryPending({ willRetryOnSignatureError }, error)) {
       throw error;
     }
 

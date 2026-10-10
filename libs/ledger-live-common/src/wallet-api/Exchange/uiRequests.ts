@@ -51,6 +51,7 @@ export type SwapUiRequest = CompleteExchangeUiRequest & {
   toAccountId?: string;
   tokenCurrency?: string;
   correlationId?: string;
+  willRetryOnSignatureError?: boolean;
 };
 
 export type ExchangeUiHooks = {
