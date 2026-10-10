@@ -19,6 +19,7 @@ import {
 import { isAccountEmpty } from "../account/helpers";
 import { fromNFTRaw, toNFTRaw } from "./nft";
 import {
+  buildSubOperationIndex,
   fromOperationRaw,
   fromSwapOperationRaw,
   toOperationRaw,
@@ -31,6 +32,28 @@ export type FromFamiliyRaw = {
   assignFromTokenAccountRaw?: AccountBridge<TransactionCommon>["assignFromTokenAccountRaw"];
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"];
 };
+
+// Old account data that didn't have the field yet: an account is "used" iff it isn't empty.
+function resolveUsed(used: boolean | undefined, res: Account): boolean {
+  return typeof used === "undefined" ? !isAccountEmpty(res) : used;
+}
+
+// Isolated so the nested `forEach`/`if` doesn't add to `fromAccountRaw`'s own complexity --
+// it is a self-contained pass, unrelated to how the rest of the account is built.
+function applyAssignFromTokenAccountRaw(
+  fromRaw: FromFamiliyRaw | undefined,
+  res: Account,
+  subAccountsRaw: AccountRaw["subAccounts"],
+): void {
+  if (!fromRaw?.assignFromTokenAccountRaw || !res.subAccounts) return;
+
+  res.subAccounts.forEach((subAcc, index) => {
+    const subAccRaw = subAccountsRaw?.[index];
+    if (subAcc.type === "TokenAccount" && subAccRaw?.type === "TokenAccountRaw") {
+      fromRaw.assignFromTokenAccountRaw?.(subAccRaw, subAcc);
+    }
+  });
+}
 
 export async function fromAccountRaw(
   rawAccount: AccountRaw,
@@ -84,8 +107,21 @@ export async function fromAccountRaw(
       ).then(results => results.filter(Boolean))
     : undefined;
 
+  // Built once for the whole account rather than once per operation: `fromOperationRaw` is called
+  // below for every restored operation *and* every pending operation, and would otherwise rescan
+  // every sub-account's operations for each of them.
+  const subOperationIndex = subAccounts
+    ? buildSubOperationIndex(subAccounts as TokenAccount[])
+    : undefined;
+
   const convertOperation = (op: OperationRaw) =>
-    fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
+    fromOperationRaw(
+      op,
+      id,
+      subAccounts as TokenAccount[],
+      fromRaw?.fromOperationExtraRaw,
+      subOperationIndex,
+    );
 
   const currency = getCurrenciesResolver().getCryptoCurrencyById(currencyId);
   const feesCurrency = feesCurrencyId
@@ -122,12 +158,7 @@ export async function fromAccountRaw(
   };
   res.balanceHistoryCache = generateHistoryFromOperations(res);
 
-  if (typeof used === "undefined") {
-    // old account data that didn't had the field yet
-    res.used = !isAccountEmpty(res);
-  } else {
-    res.used = used;
-  }
+  res.used = resolveUsed(used, res);
 
   if (xpub) {
     res.xpub = xpub;
@@ -153,14 +184,7 @@ export async function fromAccountRaw(
     fromRaw.assignFromAccountRaw(rawAccount, res);
   }
 
-  if (fromRaw?.assignFromTokenAccountRaw && res.subAccounts) {
-    res.subAccounts.forEach((subAcc, index) => {
-      const subAccRaw = subAccountsRaw?.[index];
-      if (subAcc.type === "TokenAccount" && subAccRaw?.type === "TokenAccountRaw") {
-        fromRaw.assignFromTokenAccountRaw?.(subAccRaw, subAcc);
-      }
-    });
-  }
+  applyAssignFromTokenAccountRaw(fromRaw, res, subAccountsRaw);
 
   return res;
 }

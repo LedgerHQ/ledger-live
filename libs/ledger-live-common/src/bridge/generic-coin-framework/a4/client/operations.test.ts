@@ -6,6 +6,7 @@ import {
   withDcRoamRetry,
 } from "./operations";
 import { A4HttpError } from "./errors";
+import { PaginationIntegrityError } from "../../../../errors";
 import { clearA4RegistrationCache, ensureA4Registered } from "./registration";
 import type { A4OperationView } from "./types";
 import { A4Client } from "./index";
@@ -796,27 +797,125 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
-      client,
-      "a4AccountId",
-      "liveAccountId",
-      "0xaddress",
-      "ethereum",
-      0,
-      5,
-    );
+    const { operations: ops, bounded } = await fetchA4Operations(client, "a4AccountId", {
+      liveAccountId: "liveAccountId",
+      address: "0xaddress",
+      chain: "ethereum",
+      minHeight: 0,
+      maxDcRoamRetries: 5,
+    });
 
     expect(ops).toEqual([
       expect.objectContaining({ hash: "0xtx1" }),
       expect.objectContaining({ hash: "0xtx2" }),
     ]);
+    expect(bounded).toBe(false);
+  });
+
+  it("bounds on adapted operations, not raw transactions, so a fanned-out transaction stops the walk on its own page", async () => {
+    // One transaction with 4 assets adapts to 4 operations (`buildOpsFromAssets`, one per asset).
+    // Paginating raw views would see 2 raw items on this page -- under `maxOperations = 3`, well
+    // below the bound -- and fetch a second page regardless of the 5 operations the page actually
+    // produces. Paginating adapted operations sees 5 >= 3 and stops here instead.
+    listOperationsSpy.mockResolvedValueOnce({
+      data: {
+        items: [
+          {
+            ...makeA4Op("0xtx-a"),
+            block: { hash: "0xblock", height: 100, time: "2024-01-01T00:00:00Z" },
+          },
+          {
+            ...makeA4Op("0xtx-b"),
+            block: { hash: "0xblock", height: 99, time: "2024-01-01T00:00:00Z" },
+            assets: {
+              "token.erc20.0xa": "10",
+              "token.erc20.0xb": "20",
+              "token.erc20.0xc": "30",
+              "token.erc20.0xd": "40",
+            },
+          },
+        ],
+        nextToken: "page2",
+      },
+      version: undefined,
+    });
+
+    const { operations: ops, bounded } = await fetchA4Operations(client, "a4AccountId", {
+      liveAccountId: "liveAccountId",
+      address: "0xaddress",
+      chain: "ethereum",
+      minHeight: 0,
+      maxDcRoamRetries: 5,
+      maxOperations: 3,
+    });
+
+    // The lowest block on the page (0xtx-b, height 99) is the one a page boundary could have cut
+    // in half, so it is dropped whole -- leaving only 0xtx-a's single operation. What matters here
+    // is that the walk never asks for a second page: proof that 5 adapted operations, not 2 raw
+    // transactions, is what tripped the bound.
+    expect(ops).toEqual([expect.objectContaining({ hash: "0xtx-a" })]);
+    expect(listOperationsSpy).toHaveBeenCalledTimes(1);
+    expect(bounded).toBe(true);
+  });
+
+  it("sends the resolved page size on every request, not just the first", async () => {
+    // `size` bounds one response, `maxOperations` bounds the walk. Without the first, a single
+    // A4 response can materialise in full before the walk gets a say -- the same distinction the
+    // delegate path makes between `limit` and the bound.
+    listOperationsSpy
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx1")], nextToken: "page2" },
+        version: undefined,
+      })
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx2")], nextToken: undefined },
+        version: undefined,
+      });
+
+    await fetchA4Operations(client, "a4AccountId", {
+      liveAccountId: "liveAccountId",
+      address: "0xaddress",
+      chain: "ethereum",
+      minHeight: 0,
+      maxDcRoamRetries: 5,
+      maxOperations: 200,
+      pageSize: 100,
+    });
+
+    expect(listOperationsSpy).toHaveBeenCalledTimes(2);
+    for (const call of listOperationsSpy.mock.calls) {
+      expect(call[1]).toEqual(expect.objectContaining({ size: 100 }));
+    }
+  });
+
+  it("omits size when no page size is resolved, leaving A4 its own default", async () => {
+    listOperationsSpy.mockResolvedValueOnce({
+      data: { items: [makeA4Op("0xtx1")], nextToken: undefined },
+      version: undefined,
+    });
+
+    await fetchA4Operations(client, "a4AccountId", {
+      liveAccountId: "liveAccountId",
+      address: "0xaddress",
+      chain: "ethereum",
+      minHeight: 0,
+      maxDcRoamRetries: 5,
+    });
+
+    expect(listOperationsSpy.mock.calls[0][1]).not.toHaveProperty("size");
   });
 
   it("throws on 5xx so the caller can fall back to the delegate", async () => {
     listOperationsSpy.mockRejectedValueOnce(new A4HttpError("server error", 500));
 
     await expect(
-      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 5),
+      fetchA4Operations(client, "a4AccountId", {
+        liveAccountId: "liveAccountId",
+        address: "0xaddress",
+        chain: "ethereum",
+        minHeight: 0,
+        maxDcRoamRetries: 5,
+      }),
     ).rejects.toThrow(A4HttpError);
     expect(jest.mocked(ensureA4Registered)).not.toHaveBeenCalled();
   });
@@ -825,8 +924,41 @@ describe("fetchA4Operations", () => {
     listOperationsSpy.mockRejectedValueOnce(new A4HttpError("account not ready", 422));
 
     await expect(
-      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 5),
+      fetchA4Operations(client, "a4AccountId", {
+        liveAccountId: "liveAccountId",
+        address: "0xaddress",
+        chain: "ethereum",
+        minHeight: 0,
+        maxDcRoamRetries: 5,
+      }),
     ).rejects.toThrow(A4HttpError);
+    expect(jest.mocked(ensureA4Registered)).not.toHaveBeenCalled();
+  });
+
+  it("rethrows a stalled cursor as a PaginationIntegrityError, not an A4HttpError, and does not treat it as a DC roam", async () => {
+    // Goes through the real walk and the real `withDcRoamRetry`: the caller logs a malformed A4
+    // history apart from a transport failure by this type, and normalising it would erase it.
+    listOperationsSpy
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx1")], nextToken: "p1" },
+        version: undefined,
+      })
+      .mockResolvedValueOnce({
+        data: { items: [makeA4Op("0xtx2")], nextToken: "p1" },
+        version: undefined,
+      });
+
+    await expect(
+      fetchA4Operations(client, "a4AccountId", {
+        liveAccountId: "liveAccountId",
+        address: "0xaddress",
+        chain: "ethereum",
+        minHeight: 0,
+        maxDcRoamRetries: 5,
+      }),
+    ).rejects.toBeInstanceOf(PaginationIntegrityError);
+    expect(listOperationsSpy).toHaveBeenCalledTimes(2);
+    expect(jest.mocked(clearA4RegistrationCache)).not.toHaveBeenCalled();
     expect(jest.mocked(ensureA4Registered)).not.toHaveBeenCalled();
   });
 
@@ -838,15 +970,13 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
-      client,
-      "a4AccountId",
-      "liveAccountId",
-      "0xaddress",
-      "ethereum",
-      0,
-      5,
-    );
+    const { operations: ops } = await fetchA4Operations(client, "a4AccountId", {
+      liveAccountId: "liveAccountId",
+      address: "0xaddress",
+      chain: "ethereum",
+      minHeight: 0,
+      maxDcRoamRetries: 5,
+    });
 
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
     expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(1);
@@ -865,7 +995,13 @@ describe("fetchA4Operations", () => {
       .mockRejectedValueOnce(new A4HttpError("precondition failed", 412));
 
     await expect(
-      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 1),
+      fetchA4Operations(client, "a4AccountId", {
+        liveAccountId: "liveAccountId",
+        address: "0xaddress",
+        chain: "ethereum",
+        minHeight: 0,
+        maxDcRoamRetries: 1,
+      }),
     ).rejects.toThrow(A4HttpError);
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
     expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(1);
@@ -883,15 +1019,13 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
-      client,
-      "a4AccountId",
-      "liveAccountId",
-      "0xaddress",
-      "ethereum",
-      0,
-      5,
-    );
+    const { operations: ops } = await fetchA4Operations(client, "a4AccountId", {
+      liveAccountId: "liveAccountId",
+      address: "0xaddress",
+      chain: "ethereum",
+      minHeight: 0,
+      maxDcRoamRetries: 5,
+    });
 
     expect(listOperationsSpy).toHaveBeenCalledTimes(3);
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(1);
@@ -915,15 +1049,13 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
-      client,
-      "a4AccountId",
-      "liveAccountId",
-      "0xaddress",
-      "ethereum",
-      0,
-      5,
-    );
+    const { operations: ops } = await fetchA4Operations(client, "a4AccountId", {
+      liveAccountId: "liveAccountId",
+      address: "0xaddress",
+      chain: "ethereum",
+      minHeight: 0,
+      maxDcRoamRetries: 5,
+    });
 
     expect(listOperationsSpy).toHaveBeenCalledTimes(2);
     expect(ops).toEqual([expect.objectContaining({ hash: "0xtx-eth" })]);
@@ -938,15 +1070,13 @@ describe("fetchA4Operations", () => {
         version: undefined,
       });
 
-    const ops = await fetchA4Operations(
-      client,
-      "a4AccountId",
-      "liveAccountId",
-      "0xaddress",
-      "ethereum",
-      0,
-      5,
-    );
+    const { operations: ops } = await fetchA4Operations(client, "a4AccountId", {
+      liveAccountId: "liveAccountId",
+      address: "0xaddress",
+      chain: "ethereum",
+      minHeight: 0,
+      maxDcRoamRetries: 5,
+    });
 
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(2);
     expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(2);
@@ -957,7 +1087,13 @@ describe("fetchA4Operations", () => {
     listOperationsSpy.mockRejectedValue(new A4HttpError("precondition failed", 412));
 
     await expect(
-      fetchA4Operations(client, "a4AccountId", "liveAccountId", "0xaddress", "ethereum", 0, 2),
+      fetchA4Operations(client, "a4AccountId", {
+        liveAccountId: "liveAccountId",
+        address: "0xaddress",
+        chain: "ethereum",
+        minHeight: 0,
+        maxDcRoamRetries: 2,
+      }),
     ).rejects.toThrow(A4HttpError);
     expect(jest.mocked(clearA4RegistrationCache)).toHaveBeenCalledTimes(2);
     expect(jest.mocked(ensureA4Registered)).toHaveBeenCalledTimes(2);

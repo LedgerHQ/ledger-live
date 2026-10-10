@@ -54,6 +54,15 @@ jest.mock("../a4/client/registration", () => ({
   ensureA4Registered: jest.fn(),
   clearA4RegistrationCache: jest.fn(),
 }));
+
+// Defaults to unbounded (the shipped default) so every existing test in this file keeps
+// exercising today's behaviour unchanged; the dedicated "operation history bound" suite below
+// overrides this per test.
+const resolveOperationHistoryBoundMock = jest.fn();
+jest.mock("../operationHistoryBound", () => ({
+  resolveOperationHistoryBound: (...a: any[]) => resolveOperationHistoryBoundMock(...a),
+}));
+resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined });
 const defaultBridgeApi = () => ({
   getTokenFromAsset: getTokenFromAssetMock,
   getChainSpecificRules: {
@@ -81,10 +90,18 @@ jest.mock("../accountRawAssign", () => ({
 const inferSubOperationsMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
   inferSubOperations: (...a: any[]) => inferSubOperationsMock(...a),
+  // The SUT now builds one index per sync instead of scanning per hash; this shim keeps every
+  // existing inferSubOperationsMock setup below valid unchanged by routing lookups through it.
+  buildSubOperationIndex: (subAccounts: any[]) => ({
+    get: (hash: string) => inferSubOperationsMock(hash, subAccounts),
+  }),
 }));
 
 const buildSubAccountsMock = jest.fn();
-const mergeSubAccountsMock = jest.fn();
+// Defaults to passing the freshly built sub-accounts through, which is what the real function does
+// when nothing is stored. Without it the scratch path — which now goes through the bounded merge
+// rather than around it — would see `undefined`.
+const mergeSubAccountsMock = jest.fn((...args: any[]) => args[1] ?? []);
 jest.mock("../buildSubAccounts", () => ({
   adoptStoredSubAccountIds: jest.requireActual("../buildSubAccounts").adoptStoredSubAccountIds,
   buildSubAccounts: (...a: any[]) => buildSubAccountsMock(...a),
@@ -267,7 +284,10 @@ describe("genericGetAccountShape", () => {
 
       expect(result.subAccounts).toHaveLength(1);
       expect(result.subAccounts[0].id).toBe("framework-id");
-      expect(mergeSubAccountsMock).not.toHaveBeenCalled();
+      // A scratch rebuild goes through the same bounded merge with *nothing* stored, rather than
+      // around it, so the retention bound applies to the sub-accounts this sync creates. Passing
+      // an empty old list is what keeps a vanished token from being carried over.
+      expect(mergeSubAccountsMock).toHaveBeenCalledWith([], expect.anything(), undefined);
     });
 
     it("contributes nothing when the bridge has no getAssetFromToken hook", async () => {
@@ -706,6 +726,9 @@ describe("genericGetAccountShape", () => {
         blockHeight: 10,
         syncHash: "sync-hash",
       };
+
+      // No sub-accounts, so the index links nothing: carried-over parents have nothing to relink.
+      inferSubOperationsMock.mockReturnValue([]);
 
       const getShape = genericGetAccountShape(network, currency.id);
       const result = await getShape(
@@ -1248,6 +1271,107 @@ describe("genericGetAccountShape", () => {
       expect(attachedInternalOp?.type).toBe("IN");
       expect((attachedInternalOp as any)?.extra?.internal).toBe(true);
     });
+
+    test("buildParentOperations: subOperations match inferSubOperations for a large account, order included", async () => {
+      // Real inferSubOperations used as the oracle for what the (mocked) index-based path should
+      // produce -- a full scan by construction cannot drift from itself, so this proves the
+      // getAccountShape wiring rather than re-testing inferSubOperations.
+      const { inferSubOperations: realInferSubOperations } = jest.requireActual(
+        "@ledgerhq/ledger-wallet-framework/serialization",
+      );
+
+      const TX_COUNT = 60;
+      const SUB_ACCOUNT_COUNT = 6;
+      const hashes = Array.from({ length: TX_COUNT }, (_, i) => `large-tx-${i}`);
+      const pendingOnlyHash = "large-tx-pending-only";
+      const allTxHashes = [...hashes, pendingOnlyHash];
+
+      // Interleaved on purpose: a given hash's sub-operations come from more than one sub-account
+      // -- exactly what a regression to a naive per-item scan or a wrongly-ordered index would get
+      // wrong. One hash only has a pendingOperations entry: a confirmed parent links confirmed token
+      // rows only, so that one must come out with none.
+      const subAccounts = Array.from({ length: SUB_ACCOUNT_COUNT }, (_, subIndex) => {
+        const operations = hashes
+          .filter((_, i) => i % SUB_ACCOUNT_COUNT === subIndex || i % 3 === 0)
+          .map(hash => ({
+            hash,
+            type: "OUT",
+            accountId: `tokenAcc${subIndex}`,
+            id: `tokenAcc${subIndex}_${hash}_OUT`,
+            value: new BigNumber(1),
+            fee: new BigNumber(0),
+          }));
+        const pendingOperations =
+          subIndex === 0
+            ? [
+                {
+                  hash: pendingOnlyHash,
+                  type: "OUT",
+                  accountId: "tokenAcc0",
+                  id: `tokenAcc0_${pendingOnlyHash}_OUT`,
+                  value: new BigNumber(1),
+                  fee: new BigNumber(0),
+                },
+              ]
+            : [];
+        return {
+          id: `tokenAcc${subIndex}`,
+          type: "TokenAccount",
+          operations,
+          pendingOperations,
+        };
+      });
+
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      listOperationsMock.mockResolvedValue({
+        items: allTxHashes.map(hash => ({ hash, type: "OUT", height: 1, tx: { failed: false } })),
+      });
+      lastBlockMock.mockResolvedValue({ height: 100 });
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId, op: any) => ({
+        hash: op.hash,
+        type: op.type,
+        blockHeight: op.height,
+        blockHash: "0xblock",
+        fee: new BigNumber(21000),
+        value: new BigNumber(1),
+        senders: ["0xabc"],
+        recipients: ["0xdef"],
+        date: new Date("2024-01-15"),
+        extra: {},
+      }));
+      buildSubAccountsMock.mockReturnValue(subAccounts);
+      inferSubOperationsMock.mockImplementation((hash: string, accounts: any[]) =>
+        realInferSubOperations(hash, accounts),
+      );
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: `${currency.id}_addr_large`,
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const confirmedSubAccounts = subAccounts.map(sa => ({ ...sa, pendingOperations: [] }));
+      expect(result.operations).toHaveLength(allTxHashes.length);
+      for (const parentOp of result.operations ?? []) {
+        const expectedSubOps = realInferSubOperations(parentOp.hash, confirmedSubAccounts);
+        expect(parentOp.subOperations?.map((o: any) => o.id)).toEqual(
+          expectedSubOps.map((o: any) => o.id),
+        );
+      }
+
+      // Dedicated check for the pending-only hash: its sole token row lives only in
+      // tokenAcc0.pendingOperations, which a confirmed parent does not link.
+      const pendingOnlyParent = result.operations?.find(op => op.hash === pendingOnlyHash);
+      expect(pendingOnlyParent?.subOperations).toEqual([]);
+    });
   });
 
   describe("chain-specific account shape contribution", () => {
@@ -1321,6 +1445,33 @@ describe("genericGetAccountShape", () => {
       expect(buildAccountShapeMock).toHaveBeenCalledWith("addr2", undefined);
       expect(result.balance).toBeDefined();
       expect((result as any).familyResources).toBeUndefined();
+    });
+
+    test("fails the sync on a sync hash lookup error, without leaving the family shape's rejection unhandled", async () => {
+      // The family shape is requested before `getSyncHash` is awaited and only collected by the
+      // later `Promise.all`; when the hash lookup fails first, that `Promise.all` is never reached.
+      const unhandled = jest.fn();
+      process.on("unhandledRejection", unhandled);
+      try {
+        buildAccountShapeMock.mockRejectedValueOnce(new Error("shape failed"));
+        getSyncHashMock.mockReturnValueOnce(
+          new Promise((_, reject) => setTimeout(() => reject(new Error("hash failed")), 20)),
+        );
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        await expect(
+          getShape(
+            { address: "addr5", initialAccount: undefined, currency, derivationMode: "" } as any,
+            { paginationConfig: {} as any },
+          ),
+        ).rejects.toThrow("hash failed");
+        // Node reports an unhandled rejection once the microtask queue has drained.
+        await new Promise(resolve => setImmediate(resolve));
+      } finally {
+        process.off("unhandledRejection", unhandled);
+      }
+
+      expect(unhandled).not.toHaveBeenCalled();
     });
 
     test("does not spend a getAccountInfo network call when the family declares no mapper", async () => {
@@ -3499,6 +3650,10 @@ describe("genericGetAccountShape", () => {
       extra: {},
     };
 
+    afterEach(() => {
+      getBridgeApiMock.mockImplementation(defaultBridgeApi);
+    });
+
     const syncWith = (syncVersion: string | undefined, storedSyncHash: string) => {
       getSyncHashMock.mockReturnValue("sync-hash");
       getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), syncVersion }));
@@ -3558,6 +3713,1008 @@ describe("genericGetAccountShape", () => {
         "tz1sync",
         expect.objectContaining({ minHeight: storedOperation.blockHeight + 1 }),
       );
+    });
+  });
+
+  describe("operation history bound", () => {
+    const network = "mainnet";
+    const currency = { id: "evm-hist", name: "EVMHIST" };
+
+    // Raw core op as a family's `listOperations` would emit it, newest-first (`order: "desc"`).
+    const coreOp = (hash: string, height: number) => ({
+      hash,
+      type: "IN",
+      // `block` is not optional on the framework's `Operation`, and the walk reads its height to
+      // drop the block a bounded stop cut into -- a fixture without it tests a shape no module
+      // can return.
+      tx: { failed: false, block: { height } },
+      height,
+    });
+
+    beforeEach(() => {
+      // `jest.clearAllMocks()` (the outer suite's beforeEach) clears call history but never the
+      // queued `mockResolvedValueOnce` responses -- a bound stopping the walk early leaves pages
+      // un-consumed, which would otherwise bleed into the next test's calls.
+      listOperationsMock.mockReset();
+      const { mergeOps: realMergeOps } = jest.requireActual(
+        "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers",
+      );
+      // The real merge/sort logic is required here: these tests assert on the actual newest-first
+      // ordering the store bound relies on, not on a test double's simplified behaviour.
+      mergeOpsMock.mockImplementation(realMergeOps);
+      mergeSubAccountsMock.mockImplementation((_old: any[], newSub: any[]) => newSub ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      lastBlockMock.mockResolvedValue({ height: 1000 });
+      // accountId "accId" matches the mocked encodeAccountId, so `oldOps` on a later sync is
+      // passed through unchanged rather than re-encoded.
+      adaptCoreOperationToLiveOperationMock.mockImplementation((_accId: string, op: any) => ({
+        id: op.hash,
+        accountId: "accId",
+        hash: op.hash,
+        type: op.type,
+        blockHeight: op.height,
+        // Tied 1:1 to height so the real mergeOps's date-based sort agrees with block order.
+        date: new Date(op.height * 1000),
+        extra: {},
+        senders: [],
+        recipients: [],
+      }));
+    });
+
+    afterEach(() => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined });
+    });
+
+    test("from-scratch bounded sync retains the most recent operations, contiguously, with no gap at a page boundary and no duplicate ids", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 5 });
+      listOperationsMock
+        .mockResolvedValueOnce({
+          items: [coreOp("h9", 9), coreOp("h8", 8), coreOp("h7", 7)],
+          next: "c1",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h6", 6), coreOp("h5", 5), coreOp("h4", 4)],
+          next: "c2",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h3", 3), coreOp("h2", 2), coreOp("h1", 1)],
+        });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // The walk stopped after page 2 (6 raw ops >= bound 5): page 3 was never fetched.
+      expect(listOperationsMock).toHaveBeenCalledTimes(2);
+      // Store bound keeps the newest 5 of the 6 walked: h4 (height 4) is dropped.
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7, 6, 5]);
+      const ids = result.operations?.map(op => op.id) ?? [];
+      expect(new Set(ids).size).toBe(ids.length);
+      // `operationsCount` carries the retained count (5), not the true walked count (6).
+      expect(result.operationsCount).toBe(5);
+    });
+
+    test("with the bound unset, the produced account is identical to today's: nothing is truncated", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined });
+      listOperationsMock
+        .mockResolvedValueOnce({
+          items: [coreOp("h9", 9), coreOp("h8", 8), coreOp("h7", 7)],
+          next: "c1",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h6", 6), coreOp("h5", 5), coreOp("h4", 4)],
+          next: "c2",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h3", 3), coreOp("h2", 2), coreOp("h1", 1)],
+        });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock).toHaveBeenCalledTimes(3);
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+      expect(result.operationsCount).toBe(9);
+    });
+
+    test("stability across syncs: the stored count never exceeds the bound, no gap reappears, and the resume position derives from the newest retained operation", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 3 });
+
+      // Sync 1: two pages, walk-bounded to 4 raw ops (overshoots 3, whole page kept); store
+      // bound then keeps only the newest 3.
+      listOperationsMock
+        .mockResolvedValueOnce({ items: [coreOp("h9", 9), coreOp("h8", 8)], next: "c1" })
+        .mockResolvedValueOnce({ items: [coreOp("h7", 7), coreOp("h6", 6)] });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result1 = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result1.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7]);
+      expect(result1.operationsCount).toBe(3);
+
+      // Sync 2: minHeight must resume from the newest retained operation of sync 1 (height 9),
+      // i.e. 10 -- not from the newest *walked* operation, which the store bound already dropped.
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h11", 11), coreOp("h10", 10)],
+      });
+
+      const result2 = await getShape(
+        {
+          address: "addr1",
+          initialAccount: { ...result1, pendingOperations: [], subAccounts: [] },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock).toHaveBeenNthCalledWith(
+        3,
+        expect.anything(),
+        "addr1",
+        expect.objectContaining({ minHeight: 10 }),
+      );
+      // Still bounded to 3, contiguous, and no operation ever seen twice.
+      expect(result2.operations?.map(op => op.blockHeight)).toEqual([11, 10, 9]);
+      expect(result2.operationsCount).toBe(3);
+
+      // Sync 3: same check one generation further -- the bound does not erode over time.
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h14", 14), coreOp("h13", 13), coreOp("h12", 12)],
+      });
+
+      const result3 = await getShape(
+        {
+          address: "addr1",
+          initialAccount: { ...result2, pendingOperations: [], subAccounts: [] },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock).toHaveBeenNthCalledWith(
+        4,
+        expect.anything(),
+        "addr1",
+        expect.objectContaining({ minHeight: 12 }),
+      );
+      expect(result3.operations?.map(op => op.blockHeight)).toEqual([14, 13, 12]);
+      expect(result3.operationsCount).toBe(3);
+    });
+
+    test("a bounded history does not shrink the fresh token list, and no sub-account is emitted with a zero balance because of the bound", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 2 });
+      const tokenBalance = {
+        asset: { type: "token", assetReference: "0xusdc", assetOwner: "addr1" },
+        value: 500n,
+      };
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 0n, locked: 0n },
+        tokenBalance,
+      ]);
+      const heldSubAccount = {
+        id: "subAcc1",
+        type: "TokenAccount",
+        balance: new BigNumber(500),
+        operations: [],
+      };
+      buildSubAccountsMock.mockReturnValue([heldSubAccount]);
+      // One page of 3 (walk overshoots the bound of 2, keeping the whole page) then the store
+      // bound trims the merged list back down to the newest 2.
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h7", 7), coreOp("h6", 6), coreOp("h5", 5)],
+      });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // The bound did truncate the history in this scenario (3 walked, 2 retained) ...
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([7, 6]);
+      expect(result.operations).toHaveLength(2);
+      // ... yet the fresh balance list handed to buildSubAccounts is untouched by it.
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([tokenBalance]);
+      expect(result.subAccounts).toEqual([heldSubAccount]);
+      expect((result.subAccounts as any)[0].balance.toString()).toBe("500");
+    });
+
+    test("with the bound unset, listOperations still receives the page size as limit -- page cost and retention are independent", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: undefined, pageSize: 100 });
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h1", 1)] });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // `limit` bounds what one page costs -- the crash safety, always on. `maxOperations` bounds
+      // how much history is retained -- a product decision, unset here. Gating the first on the
+      // second would make a paginated fetch unreachable without a retention figure, and on the
+      // Ledger-explorer arm an absent `limit` means the exhaustive path that runs out of memory.
+      const options = listOperationsMock.mock.calls[0][2];
+      expect(Object.prototype.hasOwnProperty.call(options, "limit")).toBe(true);
+      expect(options.limit).toBe(100);
+    });
+
+    test("with maxOperations set and no explicit pageSize, listOperations receives the resolved fallback page size as limit", async () => {
+      // `pageSize: 100` here mirrors what `resolveOperationHistoryBound` itself resolves to when
+      // no `pageSize` is configured (see `operationHistoryBound.test.ts`) -- this test is about
+      // the call-site wiring: whatever page size the bound resolves to reaches `listOperations`
+      // as `limit`, once and only once a bound applies.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 5, pageSize: 100 });
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h1", 1)] });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock.mock.calls[0][2]).toMatchObject({ limit: 100 });
+    });
+
+    test("with both maxOperations and pageSize configured, listOperations receives the configured pageSize as limit", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 5, pageSize: 250 });
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h1", 1)] });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock.mock.calls[0][2]).toMatchObject({ limit: 250 });
+    });
+
+    test("a multi-page bounded walk forwards the same limit on every page and still terminates at maxOperations, retaining the newest operations", async () => {
+      // The walk bound (`maxOperations`) and the page size (`limit`) are independent knobs: this
+      // proves neither masks the other -- the walk still stops once the bound is reached
+      // regardless of how the pages happen to be sized, and every fetched page carried the
+      // configured limit.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 5, pageSize: 3 });
+      listOperationsMock
+        .mockResolvedValueOnce({
+          items: [coreOp("h9", 9), coreOp("h8", 8), coreOp("h7", 7)],
+          next: "c1",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h6", 6), coreOp("h5", 5), coreOp("h4", 4)],
+          next: "c2",
+        })
+        .mockResolvedValueOnce({
+          items: [coreOp("h3", 3), coreOp("h2", 2), coreOp("h1", 1)],
+        });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // The walk stopped after page 2 (6 raw ops >= bound 5): page 3 was never fetched.
+      expect(listOperationsMock).toHaveBeenCalledTimes(2);
+      // Every fetched page carried the same configured limit.
+      expect(listOperationsMock.mock.calls.map(call => call[2].limit)).toEqual([3, 3]);
+      // Store bound keeps the newest 5 of the 6 walked: h4 (height 4) is dropped.
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([9, 8, 7, 6, 5]);
+    });
+
+    test("a resync whose walk is bound-truncated discards old parent operations and old sub-accounts instead of merging across the un-walked interval", async () => {
+      // Old watermark: newest stored operation at height 3, so this round resumes at minHeight 4.
+      // The walk is bound to 2 and the first page alone already reaches it with heights 10 and 9
+      // -- `dropTrailingBlock` then cuts the lowest of those (9), leaving one new operation at
+      // height 10. Naively merging that with the stored operation at height 3 would look
+      // contiguous (two entries, newest-first) while hiding a real gap: heights 4-9 were never
+      // walked, because the second page (which might hold them) was never fetched.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 2 });
+      // A pending operation that would confirm at height 2, below this round's cut: kept, it would
+      // sit under a gap between it and height 10 that no later sync revisits.
+      refreshOperationsMock.mockResolvedValue([
+        {
+          id: "pend-1",
+          accountId: "accId",
+          hash: "hpend",
+          blockHeight: 2,
+          type: "OUT",
+          date: new Date(2000),
+          extra: {},
+          senders: [],
+          recipients: [],
+        },
+      ]);
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h10", 10), coreOp("h9", 9)],
+        next: "c1",
+      });
+      const oldSubAccounts = [{ id: "subOld", token: { id: "tok1" }, operations: [] }] as any;
+      buildSubAccountsMock.mockReturnValue([{ id: "subNew" }]);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            blockHeight: 3,
+            syncHash: "sync-hash",
+            operations: [
+              {
+                id: "old1",
+                accountId: "accId",
+                hash: "hold",
+                blockHeight: 3,
+                type: "IN",
+                date: new Date(3000),
+                extra: {},
+                senders: [],
+                recipients: [],
+              },
+            ],
+            pendingOperations: [{ id: "pend-1", hash: "hpend", accountId: "accId", type: "OUT" }],
+            subAccounts: oldSubAccounts,
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // The second page was never fetched, so nothing here claims to know what, if anything, sits
+      // in [4, 9] -- the walk stopped on the bound, not on a clean end of stream.
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
+      // The old operation at height 3 is gone: kept, it would sit right below height 10 with no
+      // visible sign that heights 4-9 were skipped rather than empty.
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([10]);
+      expect(refreshOperationsMock).not.toHaveBeenCalled();
+      // Same treatment for the sub-account's operations -- zeroed, not the sub-account itself
+      // dropped, so `mergeSubAccounts` still matches it against `newSubAccounts` and carries over
+      // what an empty `oldSubAccounts` array would otherwise skip (see the dedicated test below).
+      expect(mergeSubAccountsMock.mock.calls[0][0]).toEqual([
+        { ...oldSubAccounts[0], operations: [] },
+      ]);
+    });
+
+    test("a bounded (not from-scratch) round zeroes only a sub-account's operations, keeping pendingOperations, swapHistory, balanceHistoryCache and creationDate carried over", async () => {
+      // An empty `oldSubAccounts` array (the fix two tests up, before this one) takes
+      // `mergeSubAccounts`'s early-return path, which hands back the freshly built sub-account
+      // as-is -- skipping the carry-over of these four fields from the stored one, none of which
+      // `buildSubAccounts` can reconstruct (`swapHistory` in particular is local-only, never
+      // re-derivable from chain data). Zeroing `operations` alone starves the merge of the old
+      // rows without also losing that state.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 1 });
+      listOperationsMock.mockResolvedValueOnce({
+        items: [coreOp("h10", 10), coreOp("h9", 9)],
+        next: "c1",
+      });
+      const creationDate = new Date("2020-01-01");
+      const oldSubAccounts = [
+        {
+          id: "subOld",
+          token: { id: "tok1" },
+          operations: [{ id: "stale-op" }],
+          pendingOperations: [{ id: "pending-1" }],
+          swapHistory: [{ swapId: "swap-1" }],
+          balanceHistoryCache: { HOUR: { balances: [1], latestDate: 0 } },
+          creationDate,
+        },
+      ] as any;
+      buildSubAccountsMock.mockReturnValue([
+        { id: "subNew", token: { id: "tok1" }, operations: [] },
+      ]);
+      // The real merge is what actually carries these fields over -- a mock replacing it would
+      // only prove the call argument looks right, not that the fields survive.
+      const { mergeSubAccounts: realMergeSubAccounts } = jest.requireActual("../buildSubAccounts");
+      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: "addr1",
+          initialAccount: {
+            blockHeight: 3,
+            syncHash: "sync-hash",
+            operations: [],
+            pendingOperations: [],
+            subAccounts: oldSubAccounts,
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const subAccount = (result.subAccounts as any[])[0];
+      expect(subAccount.operations).toEqual([]);
+      expect(subAccount.pendingOperations).toEqual([{ id: "pending-1" }]);
+      expect(subAccount.swapHistory).toEqual([{ swapId: "swap-1" }]);
+      expect(subAccount.balanceHistoryCache).toEqual({ HOUR: { balances: [1], latestDate: 0 } });
+      expect(subAccount.creationDate).toBe(creationDate);
+    });
+
+    test("builds parent sub-operations from the bounded token accounts, as a restored account does", async () => {
+      // The token has two rows, a newer token-only one (h10) and the token part of h9. Bounded at 1,
+      // its account keeps only h10, while the parent h9 is kept. A restored account recomputes h9's
+      // sub-operations from that stored, bounded account; the synced one must match it.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 1 });
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h9", 9)] });
+      const tokenRow = (hash: string, height: number) => ({
+        id: `tok-${hash}`,
+        accountId: "subNew",
+        hash,
+        blockHeight: height,
+        type: "IN",
+        date: new Date(height * 1000),
+        extra: {},
+        senders: [],
+        recipients: [],
+      });
+      buildSubAccountsMock.mockReturnValue([
+        {
+          id: "subNew",
+          token: { id: "tok1" },
+          operations: [tokenRow("h10", 10), tokenRow("h9", 9)],
+          pendingOperations: [],
+        },
+      ]);
+      const { mergeSubAccounts: realMergeSubAccounts } = jest.requireActual("../buildSubAccounts");
+      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+      const { inferSubOperations: realInferSubOperations } = jest.requireActual(
+        "@ledgerhq/ledger-wallet-framework/serialization",
+      );
+      inferSubOperationsMock.mockImplementation(realInferSubOperations);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const subAccounts = result.subAccounts as any[];
+      expect(subAccounts[0].operations.map((op: any) => op.hash)).toEqual(["h10"]);
+      const parent = result.operations?.find(op => op.hash === "h9");
+      expect(parent?.subOperations).toEqual(realInferSubOperations("h9", subAccounts));
+      expect(parent?.subOperations).toEqual([]);
+    });
+
+    describe("sub-operation links", () => {
+      const tokenRow = (id: string, hash: string, height: number) => ({
+        id,
+        accountId: "subNew",
+        hash,
+        blockHeight: height,
+        type: "IN",
+        date: new Date(height * 1000),
+        extra: {},
+        senders: [],
+        recipients: [],
+      });
+      const { inferSubOperations: realInferSubOperations } = jest.requireActual(
+        "@ledgerhq/ledger-wallet-framework/serialization",
+      );
+
+      beforeEach(() => {
+        const { mergeSubAccounts: realMergeSubAccounts } =
+          jest.requireActual("../buildSubAccounts");
+        mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+        inferSubOperationsMock.mockImplementation(realInferSubOperations);
+      });
+
+      test("a parent carried over from storage drops the sub-operation the token bound evicted, as a restored account does", async () => {
+        // Resumed sync, bound 2. The token's stored row h9 is pushed out by two newer ones (t11 is
+        // token-only, h10 also has a parent), while the parent h9 itself still fits in the parent
+        // bound -- carried over from storage with its old link to the evicted row.
+        resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 2 });
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h10", 10)] });
+        buildSubAccountsMock.mockReturnValue([
+          {
+            id: "subNew",
+            token: { id: "tok1" },
+            operations: [tokenRow("tok-t11", "t11", 11), tokenRow("tok-h10", "h10", 10)],
+            pendingOperations: [],
+          },
+        ]);
+        const evicted = tokenRow("tok-h9", "h9", 9);
+        const storedParent = {
+          id: "h9",
+          accountId: "accId",
+          hash: "h9",
+          type: "IN",
+          blockHeight: 9,
+          date: new Date(9 * 1000),
+          extra: {},
+          senders: [],
+          recipients: [],
+          subOperations: [evicted],
+        };
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "addr1",
+            initialAccount: {
+              blockHeight: 9,
+              syncHash: "sync-hash",
+              operations: [storedParent],
+              pendingOperations: [],
+              subAccounts: [
+                {
+                  id: "subNew",
+                  token: { id: "tok1" },
+                  operations: [evicted],
+                  pendingOperations: [],
+                },
+              ],
+            },
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        const subAccounts = result.subAccounts as any[];
+        expect(subAccounts[0].operations.map((op: any) => op.hash)).toEqual(["t11", "h10"]);
+        const parent = result.operations?.find(op => op.hash === "h9");
+        expect(parent?.subOperations).toEqual(realInferSubOperations("h9", subAccounts));
+        expect(parent?.subOperations).toEqual([]);
+      });
+
+      test("a parent carried over from storage follows a token row the merge replaced under the same id", async () => {
+        // The stored token row for h9 is corrected by this sync (a different sender, as after a
+        // reorg): `mergeOps` swaps in the new object under the same id. The stored parent h9 still
+        // holds the old one, so an id comparison alone would keep it.
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h10", 10)] });
+        const stale = tokenRow("tok-h9", "h9", 9);
+        const corrected = { ...tokenRow("tok-h9", "h9", 9), senders: ["corrected"] };
+        buildSubAccountsMock.mockReturnValue([
+          { id: "subNew", token: { id: "tok1" }, operations: [corrected], pendingOperations: [] },
+        ]);
+        const storedParent = {
+          id: "h9",
+          accountId: "accId",
+          hash: "h9",
+          type: "IN",
+          blockHeight: 9,
+          date: new Date(9 * 1000),
+          extra: {},
+          senders: [],
+          recipients: [],
+          subOperations: [stale],
+        };
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "addr1",
+            initialAccount: {
+              blockHeight: 9,
+              syncHash: "sync-hash",
+              operations: [storedParent],
+              pendingOperations: [],
+              subAccounts: [
+                { id: "subNew", token: { id: "tok1" }, operations: [stale], pendingOperations: [] },
+              ],
+            },
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        const subAccounts = result.subAccounts as any[];
+        expect(subAccounts[0].operations[0]).toBe(corrected);
+        const parent = result.operations?.find(op => op.hash === "h9");
+        expect(parent?.subOperations?.[0]).toBe(corrected);
+      });
+
+      test("a parent whose token transfer just confirmed links the confirmed row only, not the optimistic one still pending", async () => {
+        // The stored token account still holds the optimistic row for h9 -- `postSync` prunes it
+        // only after this shape is built.
+        listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h9", 9)] });
+        buildSubAccountsMock.mockReturnValue([
+          {
+            id: "subNew",
+            token: { id: "tok1" },
+            operations: [tokenRow("tok-h9", "h9", 9)],
+            pendingOperations: [],
+          },
+        ]);
+
+        const getShape = genericGetAccountShape(network, currency.id);
+        const result = await getShape(
+          {
+            address: "addr1",
+            initialAccount: {
+              blockHeight: 8,
+              syncHash: "sync-hash",
+              operations: [],
+              pendingOperations: [],
+              subAccounts: [
+                {
+                  id: "subNew",
+                  token: { id: "tok1" },
+                  operations: [],
+                  pendingOperations: [tokenRow("tok-h9-optimistic", "h9", 9)],
+                },
+              ],
+            },
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        );
+
+        const parent = result.operations?.find(op => op.hash === "h9");
+        expect(parent?.subOperations?.map((op: any) => op.id)).toEqual(["tok-h9"]);
+      });
+    });
+
+    test("a first sync whose newest rows are all failed-incoming walks past them instead of retaining nothing", async () => {
+      // Counted raw, this first page reaches the bound on its own and the walk stops there; the
+      // filter then leaves nothing, the shape keeps `blockHeight: 0`, and every later sync reads as
+      // from-scratch and walks the same page again. Filtered before the count, the page is empty
+      // and the walk moves on to rows it can keep.
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 1 });
+      const failed = (hash: string, height: number) => ({
+        ...coreOp(hash, height),
+        tx: { failed: true, block: { height } },
+      });
+      listOperationsMock
+        .mockResolvedValueOnce({ items: [failed("h10", 10), failed("h9", 9)], next: "c1" })
+        .mockResolvedValueOnce({ items: [coreOp("h8", 8), coreOp("h7", 7)], next: "c2" });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock).toHaveBeenCalledTimes(2);
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([8]);
+      expect(result.blockHeight).not.toBe(0);
+    });
+  });
+
+  describe("resumable token discovery", () => {
+    const network = "mainnet";
+    const currency = { id: "ethereum", name: "Ethereum" };
+    const getAssetFromTokenMock = jest.fn();
+
+    const subAccount = (contract: string) =>
+      ({ type: "TokenAccount", token: { id: `ethereum/erc20/${contract}` } }) as any;
+
+    beforeEach(() => {
+      getSyncHashMock.mockResolvedValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 100 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      getAssetFromTokenMock.mockImplementation((token: any) => ({
+        type: "erc20",
+        assetReference: token.id,
+      }));
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: getAssetFromTokenMock,
+        // Declaring `balanceOptions` is what marks a family as accepting the parameter at all,
+        // and therefore the resume fields; evm declares one, which is why it is the family that
+        // gets them.
+        balanceOptions: {},
+      }));
+    });
+
+    const syncWith = (initialAccount: any) =>
+      genericGetAccountShape(network, "local")(
+        { address: "0xabc", currency, derivationMode: "", initialAccount } as any,
+        { paginationConfig: {}, blacklistedTokenIds: [] } as any,
+      );
+
+    it("hands the module what the account already holds, and the height to resume from", async () => {
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa"), subAccount("0xbbb")],
+      });
+
+      const options = getBalanceMock.mock.calls[0][2];
+      expect(options.scanAssetsMinHeight).toBe(43); // newest stored operation + 1, the same watermark the walk uses
+      expect(options.knownAssets).toEqual([
+        { type: "erc20", assetReference: "ethereum/erc20/0xaaa" },
+        { type: "erc20", assetReference: "ethereum/erc20/0xbbb" },
+      ]);
+    });
+
+    it("resumes from nothing when the token list changed, so a newly listed token is still found", async () => {
+      // The completeness `scanAssetsMinHeight` demands is held by `syncHash`: it covers the currency's CAL
+      // list and the blacklist, so a token becoming listed invalidates the resume rather than
+      // leaving it permanently undiscovered.
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "a-different-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa")],
+      });
+
+      const options = getBalanceMock.mock.calls[0][2];
+      expect(options.scanAssetsMinHeight).toBeUndefined();
+      expect(options.knownAssets).toBeUndefined();
+    });
+
+    it("passes neither option when the account holds no token yet", async () => {
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [],
+      });
+
+      const options = getBalanceMock.mock.calls[0][2];
+      expect(options.scanAssetsMinHeight).toBeUndefined();
+      expect(options.knownAssets).toBeUndefined();
+    });
+
+    it("calls a family that declares no balance options with none at all, tokens or not", async () => {
+      // coin-tron and coin-casper wrap `getBalance` in `rejectBalanceOptions`, which throws on any
+      // truthy options value -- `{}` included. So a family that declares no `balanceOptions` must
+      // keep receiving `undefined`, even for an account whose sub-accounts would otherwise produce
+      // a `knownAssets` list. Both are routed through this framework, and tron holds TRC20 tokens.
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: getAssetFromTokenMock,
+      }));
+
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa")],
+      });
+
+      expect(getBalanceMock.mock.calls[0][2]).toBeUndefined();
+      // Called exactly once per sub-account -- the pre-existing vanished-token check just below,
+      // which is unconditional by design. Not twice: `getAssetFromToken` is not guaranteed
+      // side-effect-free for a family that declares one without declaring `balanceOptions`
+      // (coin-tron does both), and a second, knownAssets-deriving call would be wasted regardless.
+      expect(getAssetFromTokenMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not fail the sync when a resumed family's getAssetFromToken throws deriving knownAssets", async () => {
+      // The same guard `vanishedTokenBalances` already needs (see above): a throwing family
+      // implementation must not fail the whole sync over one sub-account it is merely trying to
+      // describe to the module, on a call whose entire purpose is a caller-side optimization.
+      //
+      // Falls all the way back to an unscoped scan rather than a partial `knownAssets`: the
+      // module reads that list as *every* asset already held, and one that failed to convert
+      // would be missing from both the list and the scanned window if it hasn't moved since the
+      // watermark -- gone from the balance response, not merely stale.
+      getAssetFromTokenMock.mockImplementationOnce(() => {
+        throw new Error("boom");
+      });
+
+      await expect(
+        syncWith({
+          blockHeight: 50,
+          syncHash: "sync-hash",
+          operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+          pendingOperations: [],
+          subAccounts: [subAccount("0xaaa"), subAccount("0xbbb")],
+        }),
+      ).resolves.toBeDefined();
+
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({});
+    });
+
+    it("falls back the same way when a conversion returns undefined rather than throwing", async () => {
+      getAssetFromTokenMock.mockReturnValueOnce(undefined);
+
+      await syncWith({
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa"), subAccount("0xbbb")],
+      });
+
+      expect(getBalanceMock.mock.calls[0][2]).toEqual({});
+    });
+
+    describe("a token received between the balance read and the walk", () => {
+      const resumed = {
+        blockHeight: 50,
+        syncHash: "sync-hash",
+        operations: [{ blockHeight: 42, hash: "h", accountId: "accId", type: "IN" }],
+        pendingOperations: [],
+        subAccounts: [subAccount("0xaaa")],
+      };
+      const native = { asset: { type: "native" }, value: 0n, locked: 0n };
+      const held = { asset: { type: "erc20", assetReference: "ethereum/erc20/0xaaa" }, value: 1n };
+      // Casing differs from the walked op on purpose: references are matched case-insensitively.
+      const received = {
+        asset: { type: "erc20", assetReference: "ethereum/erc20/0xBbB" },
+        value: 5n,
+      };
+      // Listed tokens are resolved by reference; anything else is unlisted (spam).
+      const getTokenFromAssetMock = jest.fn();
+
+      beforeEach(() => {
+        // Reset, not just cleared: a `...Once` response a test leaves unconsumed would otherwise
+        // answer the next test's call.
+        getBalanceMock.mockReset();
+        // Listed tokens are resolved by reference; anything else is unlisted (spam).
+        getTokenFromAssetMock
+          .mockReset()
+          .mockImplementation(async (asset: any) =>
+            ["ethereum/erc20/0xbbb", "ethereum/erc20/0xeee"].includes(
+              asset.assetReference.toLowerCase(),
+            )
+              ? { id: asset.assetReference.toLowerCase() }
+              : undefined,
+          );
+        getBridgeApiMock.mockImplementation(() => ({
+          ...defaultBridgeApi(),
+          getAssetFromToken: getAssetFromTokenMock,
+          getTokenFromAsset: getTokenFromAssetMock,
+          balanceOptions: {},
+        }));
+      });
+
+      const walkTransferOf = (...assetReferences: string[]) => {
+        listOperationsMock.mockResolvedValueOnce({
+          items: assetReferences.map((assetReference, i) => ({
+            hash: `h${60 + i}`,
+            type: "IN",
+            tx: { failed: false, block: { height: 60 } },
+            height: 60,
+            asset: { type: "erc20", assetReference, assetOwner: "0xabc" },
+          })),
+          next: undefined,
+        });
+        adaptCoreOperationToLiveOperationMock.mockImplementation((_accId: string, op: any) => ({
+          id: op.hash,
+          accountId: "accId",
+          hash: op.hash,
+          type: op.type,
+          blockHeight: op.height,
+          date: new Date(op.height * 1000),
+          extra: { assetReference: op.asset.assetReference, assetOwner: op.asset.assetOwner },
+          senders: [],
+          recipients: [],
+        }));
+      };
+      const tokenBalancesHandedToSubAccounts = () =>
+        buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances.map(
+          (b: any) => b.asset.assetReference,
+        );
+
+      it("adds that token to knownAssets, reads balances again from the same height, and keeps only its entry", async () => {
+        getBalanceMock
+          .mockResolvedValueOnce([native, held])
+          .mockResolvedValueOnce([native, held, received]);
+        walkTransferOf("ethereum/erc20/0xbbb");
+
+        await syncWith(resumed);
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(2);
+        const [first, second] = getBalanceMock.mock.calls.map(call => call[2]);
+        expect(second.scanAssetsMinHeight).toBe(first.scanAssetsMinHeight);
+        expect(second.knownAssets).toEqual([
+          ...first.knownAssets,
+          { type: "erc20", assetReference: "ethereum/erc20/0xbbb" },
+        ]);
+        expect(tokenBalancesHandedToSubAccounts()).toEqual([
+          "ethereum/erc20/0xaaa",
+          "ethereum/erc20/0xBbB",
+        ]);
+      });
+
+      it("does not read balances again for a walked token the family does not list", async () => {
+        getBalanceMock.mockResolvedValueOnce([native, held]);
+        walkTransferOf("0xspam");
+
+        await syncWith(resumed);
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      });
+
+      it("does not read balances again for a walked token the user blacklisted", async () => {
+        getBalanceMock.mockResolvedValueOnce([native, held]);
+        walkTransferOf("ethereum/erc20/0xeee");
+
+        await genericGetAccountShape(network, "local")(
+          { address: "0xabc", currency, derivationMode: "", initialAccount: resumed } as any,
+          { paginationConfig: {}, blacklistedTokenIds: ["ethereum/erc20/0xeee"] } as any,
+        );
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      });
+
+      it("looks walked tokens up in bounded batches, not all at once", async () => {
+        getBalanceMock.mockResolvedValueOnce([native, held]);
+        const references = Array.from({ length: 120 }, (_, i) => `0xspam${i}`);
+        walkTransferOf(...references);
+        let inFlight = 0;
+        let peak = 0;
+        getTokenFromAssetMock.mockImplementation(async () => {
+          inFlight++;
+          peak = Math.max(peak, inFlight);
+          await new Promise(resolve => setTimeout(resolve, 0));
+          inFlight--;
+          return undefined;
+        });
+
+        await syncWith(resumed);
+
+        expect(getTokenFromAssetMock).toHaveBeenCalledTimes(references.length);
+        expect(peak).toBeGreaterThan(1);
+        expect(peak).toBeLessThanOrEqual(50);
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      });
+
+      it("does not read balances again when every walked token already has its balance", async () => {
+        getBalanceMock.mockResolvedValueOnce([native, held]);
+        walkTransferOf("ethereum/erc20/0xAAA");
+
+        await syncWith(resumed);
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      });
+
+      it("reconciles after an unscoped read too, so the token is stored for the next, scoped sync", async () => {
+        // A full read (outdated hash) finds A; B arrives before the walk. Stored now, B becomes a
+        // sub-account, and so part of the `knownAssets` the next sync scopes its scan to.
+        getBalanceMock
+          .mockResolvedValueOnce([native, held])
+          .mockResolvedValueOnce([native, held, received]);
+        walkTransferOf("ethereum/erc20/0xbbb");
+
+        await syncWith({ ...resumed, syncHash: "outdated-sync-hash" });
+
+        expect(getBalanceMock).toHaveBeenCalledTimes(2);
+        const [first, second] = getBalanceMock.mock.calls.map(call => call[2]);
+        expect(first.knownAssets).toBeUndefined();
+        expect(second.scanAssetsMinHeight).toBeUndefined();
+        expect(second.knownAssets).toEqual([
+          { type: "erc20", assetReference: "ethereum/erc20/0xbbb" },
+        ]);
+        expect(tokenBalancesHandedToSubAccounts()).toEqual([
+          "ethereum/erc20/0xaaa",
+          "ethereum/erc20/0xBbB",
+        ]);
+      });
+
+      it("fails the sync when a walked token's lookup fails, rather than reading it as unlisted", async () => {
+        // Read as unlisted, the token would be skipped while this sync advances the watermark
+        // past its transfer; failed, the next attempt resumes from the same watermark.
+        getBalanceMock.mockResolvedValueOnce([native, held]);
+        walkTransferOf("ethereum/erc20/0xbbb");
+        getTokenFromAssetMock.mockRejectedValueOnce(new Error("store unreachable"));
+
+        await expect(syncWith(resumed)).rejects.toThrow("store unreachable");
+        expect(buildSubAccountsMock).not.toHaveBeenCalled();
+      });
     });
   });
 });

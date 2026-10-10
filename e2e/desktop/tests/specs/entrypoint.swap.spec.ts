@@ -265,7 +265,7 @@ test.describe("Swap - history", () => {
     addressFrom: Addresses.SWAP_HISTORY_SOL_FROM,
     addressTo: Addresses.SWAP_HISTORY_ETH_TO,
     details: {
-      date: "July 15, 2025",
+      date: "December 31, 2025",
       sentAmount: "0.07 SOL",
       receivedAmount: "751.0672 ETH",
       networkFees: "0.000005 SOL",
