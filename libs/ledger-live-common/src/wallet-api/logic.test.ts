@@ -39,6 +39,7 @@ import {
   CryptoCurrency,
   CryptoCurrencyIdSchema,
   CRYPTO_CURRENCIES_REGISTRY,
+  getCryptoCurrencyById,
 } from "@domain/entity-currency-crypto";
 import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { AccountNamesState } from "@domain/entity-account-name";
@@ -384,6 +385,39 @@ describe("completeExchangeLogic", () => {
         );
       },
     );
+
+    // A live app names Zcash's currency family, "bitcoin"; coin-zcash serves the account and
+    // converts the request into a "zcash" transaction.
+    it("calls uiNavigation for a bitcoin-family transaction on a zcash account", async () => {
+      // Given
+      const fromAccountId = "js:2:zcash:0x018:";
+      const toAccountId = "js:2:ethereum:0x042:";
+      const fromAccount = createFixtureAccount("18", getCryptoCurrencyById("zcash"));
+      context.accounts = [...context.accounts, fromAccount];
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f1",
+        toAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f2",
+        transaction: createWalletAPIBitcoinTransaction(),
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+        swapId: "1234",
+        rate: 1,
+      };
+
+      mockedGetAccountIdFromWalletAccountId
+        .mockReturnValueOnce(fromAccountId)
+        .mockReturnValueOnce(toAccountId);
+
+      // When
+      await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
+
+      // Then
+      expect(uiNavigation).toHaveBeenCalledTimes(1);
+      expect(uiNavigation.mock.calls[0][0]["transaction"].family).toEqual("zcash");
+    });
 
     it("calls the tracking for success", async () => {
       // Given
