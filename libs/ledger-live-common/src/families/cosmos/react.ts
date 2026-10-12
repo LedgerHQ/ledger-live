@@ -133,19 +133,14 @@ export function useSortedValidators(
 
 export function useLedgerFirstShuffledValidatorsCosmosFamily(
   currencyId: string,
-  validatorsOrSearch?: StakingValidatorItem[] | string,
+  validators: StakingValidatorItem[] | undefined,
   searchInput?: string,
 ): CosmosValidatorItem[] {
-  const validators = Array.isArray(validatorsOrSearch)
-    ? validatorsOrSearch
-    : getCurrentCosmosPreloadData()[currencyId]?.validators;
-  const resolvedSearchInput =
-    typeof validatorsOrSearch === "string" ? validatorsOrSearch : searchInput;
   const ledgerValidatorAddress = cryptoFactory(currencyId).ledgerValidator;
 
   return useMemo(() => {
-    return reorderValidators(validators ?? [], ledgerValidatorAddress, resolvedSearchInput);
-  }, [validators, ledgerValidatorAddress, resolvedSearchInput]);
+    return reorderValidators(validators ?? [], ledgerValidatorAddress, searchInput);
+  }, [validators, ledgerValidatorAddress, searchInput]);
 }
 
 function reorderValidators(

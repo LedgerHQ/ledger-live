@@ -94,3 +94,36 @@ describe("logic/transaction/intentAdapter", () => {
     });
   });
 });
+
+describe("logic/transaction/intentAdapter default staking memo", () => {
+  it.each(["delegate", "undelegate", "redelegate", "claimReward", "compoundReward"])(
+    "gives a %s without a memo the Ledger Live memo",
+    mode => {
+      const params = intentToMessageParams(
+        stakingIntent({ mode, valAddress: "cosmosvaloper1v", dstValAddress: "cosmosvaloper1d" }),
+        "cosmos",
+        "uatom",
+      );
+
+      expect(params.memo).toBe("Ledger Live");
+    },
+  );
+
+  it("keeps the memo the user typed on a staking transaction", () => {
+    const params = intentToMessageParams(
+      stakingIntent({
+        mode: "delegate",
+        valAddress: "cosmosvaloper1v",
+        memo: { type: "string", kind: "text", value: "my memo" },
+      }),
+      "cosmos",
+      "uatom",
+    );
+
+    expect(params.memo).toBe("my memo");
+  });
+
+  it("does not give a send the Ledger Live memo", () => {
+    expect(intentToMessageParams(baseSend, "cosmos", "uatom").memo).toBe("");
+  });
+});
