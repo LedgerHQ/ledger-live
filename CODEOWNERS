@@ -610,7 +610,6 @@ mise.toml                                             @ledgerhq/platform
 .koda/                             @ledgerhq/platform
 /CLAUDE.md                         @ledgerhq/platform
 /docs/                             @ledgerhq/platform
-# Root only. A bare AGENTS.md also matches e2e/**/AGENTS.md and steals them from /e2e/.
 /AGENTS.md                         @ledgerhq/platform
 
 # Monitoring
