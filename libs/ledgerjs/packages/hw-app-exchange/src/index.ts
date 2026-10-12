@@ -41,7 +41,6 @@ export type {
   SellPayloadCheckInput,
   SellPayloadCheckReport,
 } from "./SellPayloadChecker";
-export { classifySwapNgSignature } from "./SwapSignature";
-export type { SwapNgPartnerPublicKey, SwapNgSignatureClassification } from "./SwapSignature";
+export type { SwapNgPartnerPublicKey } from "./SwapSignature";
 
 export default Exchange;
