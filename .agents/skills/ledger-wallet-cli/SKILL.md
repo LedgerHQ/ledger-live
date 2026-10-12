@@ -565,7 +565,8 @@ while pnpm --silent wallet-cli start agent-intent status --profile my-bot --inte
 ### Cancelling an intent (`agent-intent cancel`)
 
 `agent-intent cancel` withdraws an intent the profile proposed, while the user has not signed it
-yet. A signed intent can't be edited: to change a proposal, cancel it and send a new one.
+yet. An intent can't be edited: to change a proposal before the user signs it, cancel it and send
+a new one.
 
 ```bash
 pnpm --silent wallet-cli start agent-intent cancel --profile my-bot --intent 0192f7a4-0000-7000-8000-000000000001 --yes
