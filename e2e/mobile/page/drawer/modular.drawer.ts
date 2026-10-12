@@ -2,27 +2,27 @@ import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export default class ModularDrawer {
-  bottomSheetId = (component: string) => `bottom-sheet-${component}`;
+  private readonly bottomSheetId = (component: string) => `bottom-sheet-${component}`;
 
-  accountItem = "account-item";
-  searchBarId = "modular-drawer-search-input";
-  selectCryptoScrollViewId = "modular-drawer-select-crypto-scrollView";
-  modularDrawerFlowViewId = "modular-drawer-flow-view";
-  basedTitleIdMAD = `${this.bottomSheetId("header-title")}`;
-  networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
+  private readonly accountItem = "account-item";
+  private readonly searchBarId = "modular-drawer-search-input";
+  private readonly selectCryptoScrollViewId = "modular-drawer-select-crypto-scrollView";
+  private readonly networkSelectionScrollViewId = "modular-drawer-network-selection-scrollView";
 
-  assetScreenId = "Asset-screen";
-  accountScreenId = "Account-screen";
-  networkScreenId = "Network-screen";
-  addNewOrExistingAccountButton = "add-new-account-button";
-  drawerCloseButtonId = `${this.bottomSheetId("header-close-button")}`;
-  drawerBackButtonId = `${this.bottomSheetId("header-back-button")}`;
+  private readonly assetScreenId = "Asset-screen";
+  private readonly accountScreenId = "Account-screen";
+  private readonly networkScreenId = "Network-screen";
+  private readonly addNewOrExistingAccountButton = "add-new-account-button";
+  private readonly basedTitleIdMAD = `${this.bottomSheetId("header-title")}`;
+  private readonly drawerCloseButtonId = `${this.bottomSheetId("header-close-button")}`;
+  private readonly drawerBackButtonId = `${this.bottomSheetId("header-back-button")}`;
 
-  accountItemNameId = (name: string) => `account-item-name-${name}`;
+  private readonly accountItemNameId = (name: string) => `account-item-name-${name}`;
 
-  searchBar = () => getElementById(this.searchBarId);
-  assetItemByTicker = (ticker: string) => new RegExp(`asset-item-${ticker}`, "i");
-  networkItemIdMAD = (networkId: string) => new RegExp(`network-item-${networkId}`, "i");
+  private readonly searchBar = () => getElementById(this.searchBarId);
+  private readonly assetItemByTicker = (ticker: string) => new RegExp(`asset-item-${ticker}`, "i");
+  private readonly networkItemIdMAD = (networkId: string) =>
+    new RegExp(`network-item-${networkId}`, "i");
 
   getNetworkNameForAccount(account: Account): string {
     return account?.parentAccount === undefined
@@ -213,5 +213,12 @@ export default class ModularDrawer {
     }
     await waitForElement(getElementById(this.drawerCloseButtonId));
     await tapById(this.drawerCloseButtonId);
+  }
+
+  // iOS counts a view flush with the sheet edge as hidden
+  // wait on the inset search field instead of the container
+  @Step("Wait for modular drawer search bar")
+  async waitForSearchBar() {
+    await waitForFullyVisibleById(this.searchBarId);
   }
 }
