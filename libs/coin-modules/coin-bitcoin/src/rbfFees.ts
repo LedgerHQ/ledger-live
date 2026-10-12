@@ -36,7 +36,7 @@ export async function getUtxoValue(
   const tx = Transaction.fromHex(rawHex);
   const output = tx.outs[index];
   if (!output) throw new Error(`Output index ${index} does not exist`);
-  return output.value;
+  return Number(output.value);
 }
 
 type OriginalTxFeeContext = {
@@ -66,7 +66,7 @@ export async function getOriginalTxFeeContext(
   );
 
   const totalInputSat = inputValues.reduce((a, b) => a + b, 0);
-  const totalOutputSat = tx.outs.reduce((a, o) => a + o.value, 0);
+  const totalOutputSat = tx.outs.reduce((a, o) => a + Number(o.value), 0);
 
   const oldFeeSatNumber = totalInputSat - totalOutputSat;
   if (oldFeeSatNumber < 0) return null;

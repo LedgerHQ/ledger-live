@@ -19,7 +19,7 @@ import { Merge } from "../pickingstrategies/Merge";
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);
-const verifyEcdsa = (pubkey: Buffer, msghash: Buffer, signature: Buffer) =>
+const verifyEcdsa = (pubkey: Uint8Array, msghash: Uint8Array, signature: Uint8Array) =>
   ecc.verify(msghash, pubkey, signature);
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -120,7 +120,7 @@ describe.skip("testing xpub legacy transactions", () => {
     outputs.forEach((output: OutputInfo) => {
       psbt.addOutput({
         script: output.script,
-        value: output.value.toNumber(),
+        value: BigInt(output.value.toFixed(0)),
       });
     });
     expect(outputs.length).toEqual(2);
@@ -224,7 +224,7 @@ describe.skip("testing xpub legacy transactions", () => {
     outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
-        value: output.value.toNumber(),
+        value: BigInt(output.value.toFixed(0)),
       });
     });
 
@@ -342,7 +342,7 @@ describe.skip("Build transactions", () => {
     outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
-        value: output.value.toNumber(),
+        value: BigInt(output.value.toFixed(0)),
       });
     });
   });

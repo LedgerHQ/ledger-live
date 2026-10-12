@@ -475,7 +475,7 @@ export default class BtcNew {
       psbt.setInputSighashType(i, sigHashType);
     }
     const inputTxBuffer = serializeTransaction(inputTx, true);
-    const inputTxid = crypto.hash256(inputTxBuffer);
+    const inputTxid = Buffer.from(crypto.hash256(inputTxBuffer));
     const xpubBase58 = await this.client.getExtendedPubkey(false, pathElements);
 
     const pubkey = pubkeyFromXpub(xpubBase58);

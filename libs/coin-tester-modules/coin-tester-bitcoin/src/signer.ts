@@ -210,8 +210,7 @@ function createPaymentTransaction(seed: Buffer, arg: CreateTransaction): Promise
     const inputTxid = bitcoin.crypto.hash256(inputTxBuffer);
     const spentOutputIndex = input[1];
     const spentTxOutput = input[0].outputs[spentOutputIndex];
-    const amount =
-      (spentTxOutput.amount.readUInt32LE(4) << 32) + spentTxOutput.amount.readUInt32LE(0);
+    const amount = spentTxOutput.amount.readBigUInt64LE(0);
     const sequence = input[3];
     const inputNode = root.derivePath(arg.associatedKeysets[i]);
     const inputP2wpkh = bitcoin.payments.p2wpkh({
@@ -242,7 +241,7 @@ function createPaymentTransaction(seed: Buffer, arg: CreateTransaction): Promise
     const amount = outputsBufferReader.readUInt64();
     const outputScript = outputsBufferReader.readVarSlice();
 
-    tx.addOutput({ value: amount, script: outputScript });
+    tx.addOutput({ value: BigInt(amount), script: outputScript });
   }
 
   for (let i = 0; i < tx.inputCount; i++) {

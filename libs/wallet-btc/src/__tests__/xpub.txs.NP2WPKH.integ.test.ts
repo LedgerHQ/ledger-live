@@ -17,7 +17,7 @@ import * as utils from "../utils";
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);
-const verifyEcdsa = (pubkey: Buffer, msghash: Buffer, signature: Buffer) =>
+const verifyEcdsa = (pubkey: Uint8Array, msghash: Uint8Array, signature: Uint8Array) =>
   ecc.verify(msghash, pubkey, signature);
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -110,22 +110,22 @@ describe.skip("testing xpub segwit transactions", () => {
         network,
       });
       const p2sh = bitcoin.payments.p2sh({ redeem: p2wpkh, network });
-      const redeemScript = p2sh.redeem?.output?.toString("hex");
-      const publickeyHash = bitcoin.crypto
-        .ripemd160(bitcoin.crypto.sha256(keyPair.publicKey))
-        .toString("hex");
+      const redeemScript = p2sh.redeem?.output && Buffer.from(p2sh.redeem.output).toString("hex");
+      const publickeyHash = Buffer.from(
+        bitcoin.crypto.ripemd160(bitcoin.crypto.sha256(keyPair.publicKey)),
+      ).toString("hex");
 
       psbt.addInput({
         hash: tx.getId(),
         index: input.output_index,
         witnessUtxo: {
           script: Buffer.from(
-            `a914${bitcoin.crypto
-              .hash160(Buffer.from(`0014${publickeyHash}`, "hex"))
-              .toString("hex")}87`,
+            `a914${Buffer.from(
+              bitcoin.crypto.hash160(Buffer.from(`0014${publickeyHash}`, "hex")),
+            ).toString("hex")}87`,
             "hex",
           ),
-          value: Number(input.value),
+          value: BigInt(input.value),
         },
         redeemScript: Buffer.from(redeemScript || "", "hex"),
       });
@@ -133,7 +133,7 @@ describe.skip("testing xpub segwit transactions", () => {
     outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
-        value: output.value.toNumber(),
+        value: BigInt(output.value.toFixed(0)),
       });
     });
     expect(outputs.length).toEqual(2);

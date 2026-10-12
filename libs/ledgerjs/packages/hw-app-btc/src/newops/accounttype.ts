@@ -33,8 +33,8 @@ export function computeTaprootOutputKey(internalXonlyPubkey: Buffer): Buffer {
   if (internalXonlyPubkey.length !== 32) {
     throw new Error("Expected 32 byte pubkey. Got " + internalXonlyPubkey.length);
   }
-  const h = crypto.sha256(Buffer.from("TapTweak", "utf-8"));
-  const tweak = crypto.sha256(Buffer.concat([h, h, internalXonlyPubkey]));
+  const h = Buffer.from(crypto.sha256(Buffer.from("TapTweak", "utf-8")));
+  const tweak = Buffer.from(crypto.sha256(Buffer.concat([h, h, internalXonlyPubkey])));
   const evenEcdsaPubkey = Buffer.concat([Buffer.from([0x02]), internalXonlyPubkey]);
   const tweakedKey = pointAddScalar(evenEcdsaPubkey, tweak);
   if (!tweakedKey) throw new Error("Point addition failed");
