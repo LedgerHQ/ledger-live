@@ -388,9 +388,11 @@ function openSession<S>(
 function startSession<S>(context: SyncContext<S>, session: Session): void {
   session.lastSupportedSettings = readSupportedSettings(context, session);
   context.dispatch(setCountervaluesPollingTriggerLoad(true));
-  tryStep("restore", () =>
-    restoreSavedState(context, session.savedState, readSettings(context, session)),
-  );
+  tryStep("restore", () => {
+    restoreSavedState(context, session.savedState, readSettings(context, session));
+    // Disk already holds what was just restored: only a load adding to it is worth a save.
+    session.lastPersisted = countervaluesStateSelector(context.getState());
+  });
   syncPollingTimer(context, session);
   session.unsubscribeAppEvents = context.config.subscribeAppEvents?.(context.controls);
 }

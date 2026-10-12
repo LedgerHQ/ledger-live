@@ -114,7 +114,7 @@ describe("countervalues sync at startup", () => {
     jest.useRealTimers();
   });
 
-  it("restores and loads once with the account pairs, then saves the restored rates", async () => {
+  it("restores and loads once with the account pairs, without writing the restored rates back", async () => {
     const store = createTestStore("countervalues-startup-btc");
 
     store.dispatch(startCountervaluesSync({ savedState }));
@@ -132,7 +132,7 @@ describe("countervalues sync at startup", () => {
     expect(boot).toEqual({
       restores: 1,
       loadedPairs: [[BTC_USD]],
-      savedKeys: [["status", BTC_USD]],
+      savedKeys: [],
       restoredPairs: [BTC_USD],
     });
   });

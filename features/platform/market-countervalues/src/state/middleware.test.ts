@@ -12,7 +12,7 @@ import {
   type CountervaluesSettings,
   type TrackingPair,
 } from "@domain/entity-market-countervalues";
-import { buildCV } from "@domain/entity-market-countervalues/mock";
+import { buildCV, buildMultiCV } from "@domain/entity-market-countervalues/mock";
 import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
 import type { Currency } from "@domain/entity-currency";
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -63,6 +63,7 @@ jest.mock("@domain/api-market-countervalues", () => {
 const mockSupportedIdsSubscriptions = { active: 0 };
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum");
 const usd = getFiatCurrencyByTicker("USD");
 const mockLoadCountervalues = jest.mocked(loadCountervalues);
 
@@ -495,16 +496,39 @@ describe("createCountervaluesMiddleware", () => {
       buildCV({ pair: { from: bitcoin, to: usd }, latest: 30_000 }),
       [trackingPair(bitcoin)],
     );
+    mockLoadCountervalues.mockImplementation(() =>
+      Promise.resolve(
+        buildMultiCV([
+          { pair: { from: bitcoin, to: usd }, latest: 30_000 },
+          { pair: { from: ethereum, to: usd }, latest: 2_000 },
+        ]),
+      ),
+    );
     const { store } = createTestStore({ persist });
     store.dispatch(startCountervaluesSync({ savedState }));
     await flush();
-    const saves = persist.mock.calls.length;
-    expect(saves).toBeGreaterThan(0);
+    expect(persist).toHaveBeenCalledTimes(1);
 
     store.dispatch(unrelated());
     await flush();
 
-    expect(persist).toHaveBeenCalledTimes(saves);
+    expect(persist).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not write the restored state back to disk while no load has added to it", async () => {
+    const persist = jest.fn();
+    const savedState = exportCountervalues(
+      buildCV({ pair: { from: bitcoin, to: usd }, latest: 30_000 }),
+      [trackingPair(bitcoin)],
+    );
+    mockLoadCountervalues.mockImplementation(() => Promise.reject(new Error("offline")));
+    const { store } = createTestStore({ persist });
+
+    store.dispatch(startCountervaluesSync({ savedState }));
+    await flush();
+
+    expect(loads()).toBe(1);
+    expect(persist).not.toHaveBeenCalled();
   });
 
   it("creates a fresh settings selector on each start", async () => {
@@ -571,6 +595,23 @@ describe("createCountervaluesMiddleware", () => {
 
     expect(loads()).toBe(2);
     expect(logs).toEqual(["countervalues: sync restore failed"]);
+    setCountervaluesLogger(() => {});
+  });
+
+  it("never throws into a dispatch when restartOn throws", async () => {
+    const logs: string[] = [];
+    setCountervaluesLogger((type, message) => logs.push(`${type}: ${message}`));
+    const { store } = createTestStore({
+      restartOn: () => {
+        throw new Error("restartOn failed");
+      },
+    });
+    store.dispatch(startCountervaluesSync());
+    await flush();
+    logs.length = 0;
+
+    expect(() => store.dispatch(unrelated())).not.toThrow();
+    expect(logs).toContain("countervalues: sync action failed");
     setCountervaluesLogger(() => {});
   });
 

@@ -103,7 +103,7 @@ export function createCountervaluesMiddleware<S>(
       } else if (stopCountervaluesSync.match(action)) {
         tryStep("stop", () => stopSync(ref));
       } else {
-        onAction(context, ref, action);
+        tryStep("action", () => onAction(context, ref, action));
       }
       return result;
     };
