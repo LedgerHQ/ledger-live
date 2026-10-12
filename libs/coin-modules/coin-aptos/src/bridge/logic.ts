@@ -140,7 +140,9 @@ export const txsToOps = async (
               // Create FEES operation with decoded main account ID
               const feesOp = {
                 ...op,
+                id: encodeOperationId(id, tx.hash, OP_TYPE.OUT),
                 accountId,
+                senders: [getFeesPayer(tx)],
                 value: op.fee,
                 type: "FEES" as const,
               };

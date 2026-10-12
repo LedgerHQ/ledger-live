@@ -469,9 +469,11 @@ describe("Aptos sync logic", () => {
           expect(tokenOps[0]).toMatchObject({ type: OP_TYPE.IN, value: new BigNumber(100) });
           expect(ops).toHaveLength(1);
           expect(ops[0]).toMatchObject({
+            id: "test_id-0x456-OUT",
             type: "FEES",
             value: new BigNumber(20000),
             accountId: "main_account_id",
+            senders: ["0x31"],
           });
         });
 
