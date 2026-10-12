@@ -42,7 +42,8 @@ export function SelectDevice() {
   const fromQuickAction = !!location.state?.fromQuickAction;
   const isTouchscreenCounterfeitWarningEnabled =
     useFeature("lwdOnboardingCounterfeitWarningTouchscreens")?.enabled === true;
-  const [pendingDeviceModelId, setPendingDeviceModelId] = useState<DeviceModelId | null>(null);
+  const [warningDeviceModelId, setWarningDeviceModelId] = useState<DeviceModelId | null>(null);
+  const [isWarningOpen, setIsWarningOpen] = useState(false);
 
   const proceedWithDevice = useCallback(
     (deviceModelId: DeviceModelId) => {
@@ -60,7 +61,8 @@ export function SelectDevice() {
     (deviceModelId: DeviceModelId) => {
       track("Onboarding Device - Selection", { deviceModelId, flow: "Onboarding" });
       if (isTouchscreenCounterfeitWarningEnabled && isSyncOnboardingSupported(deviceModelId)) {
-        setPendingDeviceModelId(deviceModelId);
+        setWarningDeviceModelId(deviceModelId);
+        setIsWarningOpen(true);
         return;
       }
       proceedWithDevice(deviceModelId);
@@ -69,15 +71,14 @@ export function SelectDevice() {
   );
 
   const handleCounterfeitWarningProceed = useCallback(() => {
-    const deviceModelId = pendingDeviceModelId;
-    setPendingDeviceModelId(null);
-    if (deviceModelId) {
-      proceedWithDevice(deviceModelId);
+    setIsWarningOpen(false);
+    if (warningDeviceModelId) {
+      proceedWithDevice(warningDeviceModelId);
     }
-  }, [pendingDeviceModelId, proceedWithDevice]);
+  }, [warningDeviceModelId, proceedWithDevice]);
 
   const handleCounterfeitWarningDismiss = useCallback(() => {
-    setPendingDeviceModelId(null);
+    setIsWarningOpen(false);
   }, []);
 
   return (
@@ -96,10 +97,10 @@ export function SelectDevice() {
       />
       <DeviceSelector onClick={handleDeviceSelect} />
       <TitleText variant="h1">{t("onboarding.screens.selectDevice.title")}</TitleText>
-      {pendingDeviceModelId ? (
+      {warningDeviceModelId ? (
         <CounterfeitWarningDialog
-          open
-          deviceModelId={pendingDeviceModelId}
+          open={isWarningOpen}
+          deviceModelId={warningDeviceModelId}
           onProceed={handleCounterfeitWarningProceed}
           onDismiss={handleCounterfeitWarningDismiss}
         />
