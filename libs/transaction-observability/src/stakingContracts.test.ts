@@ -53,6 +53,7 @@ describe("looking a contract up", () => {
 
   it("names the staked token only where the call sends a token", () => {
     expect(inputCurrencyOf(STAKEKIT_USDE)).toBe("USDe");
+    expect(outputCurrencyOf(STAKEKIT_USDE)).toBe("stk-USDe");
     expect(inputCurrencyOf(POL_VALIDATOR_SHARE)).toBe("POL");
     expect(inputCurrencyOf(STETH)).toBeUndefined();
   });
@@ -67,11 +68,11 @@ describe("the contracts CAL can check", () => {
   });
 
   it.each([
-    ["the Stader pool", STADER_POOL],
-    ["the Kelp pool", KELP_POOL],
-    ["the StakeKit USDe contract", STAKEKIT_USDE],
-    ["the POL ValidatorShare", POL_VALIDATOR_SHARE],
-  ])("leaves out %s, which is not a token", (_, address) => {
+    ["the Stader pool, which is not a token", STADER_POOL],
+    ["the Kelp pool, which is not a token", KELP_POOL],
+    ["the StakeKit USDe vault, which CAL does not list", STAKEKIT_USDE],
+    ["the POL ValidatorShare, which names no output token", POL_VALIDATOR_SHARE],
+  ])("leaves out %s", (_, address) => {
     expect(checked.has(address)).toBe(false);
   });
 });

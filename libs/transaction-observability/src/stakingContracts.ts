@@ -85,8 +85,11 @@ export const STAKING_CONTRACTS: Readonly<Record<string, StakingContract>> = {
     method: "liquid",
     isReceiptToken: true,
   },
-  // StakeKit USDe.
-  "0x2d152fb171353e70e45322d32bc748f8a61d9971": { inputCurrency: "USDe" },
+  // StakeKit USDe vault. Not in CAL, so the drift guard cannot check it.
+  "0x2d152fb171353e70e45322d32bc748f8a61d9971": {
+    inputCurrency: "USDe",
+    outputCurrency: "stk-USDe",
+  },
   // One Polygon validator's ValidatorShare: other validators have their own.
   "0x2ea3c215daeacc1c90b51443ab5d08a9ad816138": { inputCurrency: "POL" },
 };
