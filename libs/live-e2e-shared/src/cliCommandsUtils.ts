@@ -16,7 +16,7 @@ import {
 import type { TokenApprovalOpts } from "./runCli";
 import { sleep } from "./index";
 import { setEnv } from "@shared/env";
-import { runWithCrossProcessLock } from "./crossProcessLock";
+import { runWithAccountBroadcastLock } from "./broadcastLock";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
 import { enableBlindSigningOnNanoS } from "./speculos";
@@ -498,20 +498,18 @@ async function runTokenApprovalWithRetry(opts: TokenApprovalOpts): Promise<strin
 }
 
 /**
- * Serializes the broadcast under a cross-worker lock on the parent EOA so two
- * Playwright workers never grab the same nonce (QAA-1323).
+ * Serializes the broadcast on the parent EOA, until it is confirmed, with every other
+ * worker and CI machine broadcasting from it (QAA-1323).
  */
 async function broadcastTokenApproval(
   account: TokenAccount,
   opts: TokenApprovalOpts,
 ): Promise<string> {
-  const owner = account.parentAccount ?? account;
-  const eoa = (owner.address ?? (await getAccountAddress(owner))).toLowerCase();
-  const lockKey = `${owner.currency.id}:${eoa}`;
   // Before the CLI starts: once its approve reaches the device, the setting can no longer change.
   await enableBlindSigningOnNanoS();
-  // Prevent nonce races across workers (QAA-1323).
-  return runWithCrossProcessLock(lockKey, () => runTokenApprovalWithRetry(opts));
+  return runWithAccountBroadcastLock([account], `token ${opts.mode}`, () =>
+    runTokenApprovalWithRetry(opts),
+  );
 }
 
 export function approveTokenCommand(account: TokenAccount, spender: string, approveAmount: string) {

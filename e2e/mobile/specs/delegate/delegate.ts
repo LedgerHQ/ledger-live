@@ -23,6 +23,7 @@ import type { PartialFeatures } from "@shared/feature-flags";
 import { getCurrencyManagerApp } from "@e2e/models/currencies";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNanoSSupports, describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
+import { declareBroadcastAccounts } from "@e2e/helpers/broadcastLock";
 
 const DELEGATE_FEATURE_FLAGS = new Map<string, PartialFeatures>([
   [Currency.BABY.id, FF_BABYLON_STAKING_ENABLED],
@@ -44,6 +45,7 @@ export function runDelegateTest(
   tags: string[],
   options?: { skipLNS?: boolean },
 ) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -104,6 +106,7 @@ export function runDelegateTest(
 }
 
 export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -135,6 +138,7 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
 }
 
 export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -301,6 +305,7 @@ export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -333,6 +338,7 @@ export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: 
 }
 
 export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
