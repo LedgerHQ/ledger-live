@@ -14,8 +14,10 @@ import type {
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { isStakingAccount, type Account, type Operation } from "@ledgerhq/types-live";
+import countBy from "lodash/countBy";
 import groupBy from "lodash/groupBy";
 import omit from "lodash/omit";
+import uniq from "lodash/uniq";
 import { getCurrencyConfiguration } from "../../../config";
 
 export async function getAddressesForPublicKey(
@@ -190,16 +192,60 @@ function feesOperationForTokenTransfer(
   };
 }
 
-export function adaptOperations(address: string, operations: Operation[]): Operation[] {
-  const operationsByHash = groupBy(operations, op => op.hash);
+// The framework keys an operation by hash and type, but coin-hedera reports one OUT per recipient
+// of a multi-recipient transfer, so those would all share one id.
+function withUniqueNativeIds(operations: Operation[]): Operation[] {
+  const nativeIdCounts = countBy(
+    operations.filter(op => !isTokenOperation(op)),
+    op => op.id,
+  );
+
+  return operations.map(op => {
+    if (isTokenOperation(op) || nativeIdCounts[op.id] === 1) return op;
+
+    return { ...op, id: `${op.id}-${op.recipients[0] ?? op.value.toFixed()}` };
+  });
+}
+
+// The framework keys a token operation by token account, hash and type, but coin-hedera reports one
+// operation per recipient of a multi-recipient token transfer, so those are reported as one.
+function mergeTokenOperationsByRecipient(operations: Operation[]): Operation[] {
+  const groupKey = (op: Operation) =>
+    `${op.hash}:${op.type}:${String(getOperationExtra(op).assetReference)}`;
+  const tokenGroups = groupBy(operations.filter(isTokenOperation), groupKey);
 
   return operations.flatMap(op => {
+    if (!isTokenOperation(op)) return [op];
+
+    const group = tokenGroups[groupKey(op)];
+    if (group.length === 1) return [op];
+    if (op !== group[0]) return [];
+
+    const value = BigNumber.sum(...group.map(groupOp => groupOp.value));
+    return [
+      {
+        ...op,
+        value,
+        recipients: uniq(group.flatMap(groupOp => groupOp.recipients)),
+        extra: { ...getOperationExtra(op), assetAmount: value.toFixed() },
+      },
+    ];
+  });
+}
+
+export function adaptOperations(address: string, rawOperations: Operation[]): Operation[] {
+  const operations = mergeTokenOperationsByRecipient(rawOperations);
+  const operationsByHash = groupBy(operations, op => op.hash);
+
+  const adapted = operations.flatMap(op => {
     const transactionOperations = operationsByHash[op.hash];
     if (op !== transactionOperations.at(-1)) return [op];
 
     const feesOperation = feesOperationForTokenTransfer(address, transactionOperations);
     return feesOperation ? [op, feesOperation] : [op];
   });
+
+  return withUniqueNativeIds(adapted);
 }
 
 export default function hederaBridge(currency: CryptoCurrency): BridgeApi {

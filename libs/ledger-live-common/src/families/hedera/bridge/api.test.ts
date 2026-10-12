@@ -455,6 +455,70 @@ describe("hedera bridge", () => {
         `${accountId}-tx2-OUT`,
       ]);
     });
+
+    it("tells apart the per-recipient OUT operations of one transaction by recipient", () => {
+      const toFirst = operation({ type: "OUT", hash: "tx1", fee: 0, feePayer: address });
+      const toSecond = {
+        ...operation({ type: "OUT", hash: "tx1", fee: 0, feePayer: address }),
+        recipients: ["0.0.9999"],
+      };
+
+      expect(adaptOperations(address, [toFirst, toSecond]).map(op => op.id)).toEqual([
+        `${accountId}-tx1-OUT-0.0.5678`,
+        `${accountId}-tx1-OUT-0.0.9999`,
+      ]);
+    });
+
+    it("merges the per-recipient operations of one token in one transaction", () => {
+      const toFirst = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 0,
+        feePayer: "0.0.5678",
+        token: true,
+      });
+      const toSecond = { ...toFirst, value: new BigNumber(2), recipients: ["0.0.9999"] };
+
+      expect(adaptOperations(address, [toFirst, toSecond])).toEqual([
+        {
+          ...toFirst,
+          value: new BigNumber(3),
+          recipients: ["0.0.5678", "0.0.9999"],
+          extra: { ...toFirst.extra, assetAmount: "3" },
+        },
+      ]);
+    });
+
+    it("keeps the operations of different tokens in one transaction apart", () => {
+      const firstToken = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 0,
+        feePayer: "0.0.5678",
+        token: true,
+      });
+      const secondToken = {
+        ...firstToken,
+        extra: { ...firstToken.extra, assetReference: "0.0.42" },
+      };
+
+      expect(adaptOperations(address, [firstToken, secondToken])).toEqual([
+        firstToken,
+        secondToken,
+      ]);
+    });
+
+    it("keeps the id of a native operation that only shares it with a token operation", () => {
+      const operations = [
+        operation({ type: "OUT", hash: "tx1", fee: 629386, feePayer: address }),
+        operation({ type: "OUT", hash: "tx1", fee: 629386, feePayer: address, token: true }),
+      ];
+
+      expect(adaptOperations(address, operations).map(op => op.id)).toEqual([
+        `${accountId}-tx1-OUT`,
+        `${accountId}-tx1-OUT`,
+      ]);
+    });
   });
 
   describe("bridge surface", () => {
