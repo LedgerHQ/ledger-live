@@ -3,6 +3,7 @@
  */
 import {
   isAnimatedHeightCapped,
+  isStackedHeightTarget,
   measureStackedHeight,
   readAvailableHeight,
   resolveAnimatedHeight,
@@ -28,6 +29,12 @@ describe("animatedHeightLayout", () => {
     if (originalOffsetHeight) {
       Object.defineProperty(HTMLElement.prototype, "offsetHeight", originalOffsetHeight);
     }
+  });
+
+  it("should ignore fields that resize themselves while typing", () => {
+    expect(isStackedHeightTarget(document.createElement("input"))).toBe(false);
+    expect(isStackedHeightTarget(document.createElement("textarea"))).toBe(false);
+    expect(isStackedHeightTarget(document.createElement("p"))).toBe(true);
   });
 
   it("should keep a short recipient list at its content height", () => {
