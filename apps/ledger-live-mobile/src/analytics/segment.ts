@@ -153,6 +153,7 @@ const getFeatureFlagProperties = () => {
       "lwmAnalyticsConsentOnboarding",
     );
     const lwmNotificationsOptInFlag = analyticsFeatureFlagMethod("lwmNotificationsOptIn");
+    const lwmOnboardingSeededDeviceFlag = analyticsFeatureFlagMethod("lwmOnboardingSeededDevice");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -170,6 +171,7 @@ const getFeatureFlagProperties = () => {
     const ptxEarnCtaOnMobile = Boolean(ptxEarnCtaOnMobileFlag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
+    const lwmOnboardingSeededDevice = Boolean(lwmOnboardingSeededDeviceFlag?.enabled);
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -208,6 +210,7 @@ const getFeatureFlagProperties = () => {
       ptxEarnCtaOnMobile,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
+      lwmOnboardingSeededDevice,
     });
   })();
 };
