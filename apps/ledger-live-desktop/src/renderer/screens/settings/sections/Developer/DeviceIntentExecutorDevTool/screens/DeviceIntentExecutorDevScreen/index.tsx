@@ -12,7 +12,7 @@ import type {
   RegisterExternalAddressJobState,
   RegisterExternalAddressResult,
 } from "@features/platform-contacts/device/intents";
-import { registerExternalAddressIntentLWDDefinition } from "LLD/features/Contacts/deviceIntents/registerExternalAddressIntent/intentLWDDefinition";
+import { registerExternalAddressIntentPlatformDefinition } from "LLD/features/Contacts/deviceIntents/registerExternalAddressIntent/intentPlatformDefinition";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import {
@@ -22,7 +22,7 @@ import {
 } from "LLD/components/DeviceIntentExecutor";
 import type { InitializerConfig } from "LLD/components/DeviceIntentExecutor/ContextInitializer";
 import { INITIALIZATION_SCENARIOS } from "../../initializationScenarios";
-import { initializationEchoIntentLWDDefinition } from "../../intents/initializationEchoIntent/intentLWDDefinition";
+import { initializationEchoIntentPlatformDefinition } from "../../intents/initializationEchoIntent/intentPlatformDefinition";
 import type {
   InitializationEchoIntentInput,
   InitializationEchoIntentJobState,
@@ -56,7 +56,7 @@ const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
 };
 
-const initializationIntent = createIntent(initializationEchoIntentLWDDefinition, undefined);
+const initializationIntent = createIntent(initializationEchoIntentPlatformDefinition, undefined);
 const CONTACTS_VALIDATION_INPUT: RegisterExternalAddressIntentInput = {
   contactName: "DIE validation",
   scope: "Ethereum",
@@ -65,7 +65,7 @@ const CONTACTS_VALIDATION_INPUT: RegisterExternalAddressIntentInput = {
   chainId: 1,
 };
 const contactsValidationIntent = createIntent(
-  registerExternalAddressIntentLWDDefinition,
+  registerExternalAddressIntentPlatformDefinition,
   CONTACTS_VALIDATION_INPUT,
 );
 

@@ -36,8 +36,8 @@ jest.mock("~/context/hooks", () => ({
   useDispatch: () => jest.fn(),
   useSelector: () => false,
 }));
-jest.mock("../../intents/signTransactionIntent/intentLWMDefinition", () => ({
-  signTransactionIntentLWMDefinition: {},
+jest.mock("../../intents/signTransactionIntent/intentPlatformDefinition", () => ({
+  signTransactionIntentPlatformDefinition: {},
 }));
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowActions: () => ({ operation: mockOperation, status: mockStatus }),

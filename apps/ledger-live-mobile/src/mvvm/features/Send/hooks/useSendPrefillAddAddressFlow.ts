@@ -23,7 +23,7 @@ import {
   useAddAddressFlowViewModel,
   type PrefillAddAddressFlowVisibleState,
 } from "@features/flow-contacts-add-address";
-import { contactsIntentLWMDefinitions } from "LLM/features/Contacts/deviceIntents/contactsIntentPlatformDefinitions";
+import { contactsIntentPlatformDefinitions } from "LLM/features/Contacts/deviceIntents/contactsIntentPlatformDefinitions";
 import { useContactsAddressValidationAdapter } from "LLM/features/Contacts/hooks/useContactsAddressValidationAdapter";
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
 import { useSendFlowTracking } from "LLM/features/Send/context/SendFlowTrackingContext";
@@ -64,7 +64,7 @@ export function useSendPrefillAddAddressFlow({
   const isSaving = useRef(false);
   const addressValidation = useContactsAddressValidationAdapter();
   const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
-    intents: contactsIntentLWMDefinitions,
+    intents: contactsIntentPlatformDefinitions,
     getLiveConfigMinVersion: getMinVersion,
   });
   const allContactsAddresses = useOtherContactsAddresses();

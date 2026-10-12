@@ -24,7 +24,7 @@ import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowCo
 import { useSendSignature } from "../../../context/SendSignatureContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 import { useSignatureTracking } from "./useSignatureTracking";
-import { signTransactionIntentLWMDefinition } from "../intents/signTransactionIntent/intentLWMDefinition";
+import { signTransactionIntentPlatformDefinition } from "../intents/signTransactionIntent/intentPlatformDefinition";
 
 function normalizeError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error));
@@ -156,7 +156,7 @@ export function useSignatureViewModel() {
   }, [finishWithError, request]);
 
   const signatureIntent = useMemo(
-    () => (request ? createIntent(signTransactionIntentLWMDefinition, request) : null),
+    () => (request ? createIntent(signTransactionIntentPlatformDefinition, request) : null),
     [request],
   );
 

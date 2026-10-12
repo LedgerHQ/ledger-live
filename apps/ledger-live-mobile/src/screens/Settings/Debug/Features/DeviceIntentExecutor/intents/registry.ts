@@ -1,12 +1,12 @@
 import type { DemoIntentDefinitions } from "./orchestrationTypes";
-import { getAddressLegacyWithDeviceDemoIntentLWMDefinition } from "./getAddressLegacyWithDeviceDemoIntent/intentLWMDefinition";
-import { getEthAddressDMKSignerDemoIntentLWMDefinition } from "./getEthAddressDMKSignerDemoIntent/intentLWMDefinition";
-import { timerDemoIntentLWMDefinition } from "./timerDemoIntent/intentLWMDefinition";
-import { uninstallAppDemoIntentLWMDefinition } from "./uninstallAppDemoIntent/intentLWMDefinition";
+import { getAddressLegacyWithDeviceDemoIntentPlatformDefinition } from "./getAddressLegacyWithDeviceDemoIntent/intentPlatformDefinition";
+import { getEthAddressDMKSignerDemoIntentPlatformDefinition } from "./getEthAddressDMKSignerDemoIntent/intentPlatformDefinition";
+import { timerDemoIntentPlatformDefinition } from "./timerDemoIntent/intentPlatformDefinition";
+import { uninstallAppDemoIntentPlatformDefinition } from "./uninstallAppDemoIntent/intentPlatformDefinition";
 
 export const DEMO_INTENT_DEFS: DemoIntentDefinitions = {
-  timer: timerDemoIntentLWMDefinition,
-  getAddressLegacyWithDevice: getAddressLegacyWithDeviceDemoIntentLWMDefinition,
-  getEthAddressDMKSigner: getEthAddressDMKSignerDemoIntentLWMDefinition,
-  uninstallApp: uninstallAppDemoIntentLWMDefinition,
+  timer: timerDemoIntentPlatformDefinition,
+  getAddressLegacyWithDevice: getAddressLegacyWithDeviceDemoIntentPlatformDefinition,
+  getEthAddressDMKSigner: getEthAddressDMKSignerDemoIntentPlatformDefinition,
+  uninstallApp: uninstallAppDemoIntentPlatformDefinition,
 };

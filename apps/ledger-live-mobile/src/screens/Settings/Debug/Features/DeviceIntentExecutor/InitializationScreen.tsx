@@ -9,7 +9,7 @@ import { Text, Flex, Button, SelectableList } from "@ledgerhq/native-ui";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
-import { initializationEchoIntentLWMDefinition } from "./intents/initializationEchoIntent/intentLWMDefinition";
+import { initializationEchoIntentPlatformDefinition } from "./intents/initializationEchoIntent/intentPlatformDefinition";
 import type { InitializationEchoIntentJobState } from "./intents/initializationEchoIntent/types";
 import { INITIALIZATION_SCENARIOS } from "./initializationScenarios";
 
@@ -19,7 +19,7 @@ const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
 };
 
-const intent = createIntent(initializationEchoIntentLWMDefinition);
+const intent = createIntent(initializationEchoIntentPlatformDefinition);
 
 export default function DebugDeviceIntentExecutorInitialization() {
   const [selectedScenarioId, setSelectedScenarioId] = useState(INITIALIZATION_SCENARIOS[0].id);

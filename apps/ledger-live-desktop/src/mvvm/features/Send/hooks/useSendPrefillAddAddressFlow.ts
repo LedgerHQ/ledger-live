@@ -37,7 +37,7 @@ import {
 } from "@features/flow-contacts-add-address";
 import { useContactsAddressValidationAdapter } from "LLD/features/Contacts/hooks/useContactsAddressValidationAdapter";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { contactsIntentLWDDefinitions } from "LLD/features/Contacts/deviceIntents/contactsIntentPlatformDefinitions";
+import { contactsIntentPlatformDefinitions } from "LLD/features/Contacts/deviceIntents/contactsIntentPlatformDefinitions";
 import { useDispatch } from "LLD/hooks/redux";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
@@ -94,7 +94,7 @@ export function useSendPrefillAddAddressFlow({
   const isSaving = useRef(false);
   const addressValidation = useContactsAddressValidationAdapter();
   const { deviceIntents, dieProps } = useContactsIntentsOrchestrator({
-    intents: contactsIntentLWDDefinitions,
+    intents: contactsIntentPlatformDefinitions,
     getLiveConfigMinVersion: getMinVersion,
   });
   const allContactsAddresses = useOtherContactsAddresses();

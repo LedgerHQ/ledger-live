@@ -868,12 +868,12 @@ libs/my-shared-intents/src/signTransactionDemoIntent/
 └── intentDefinition.ts
 
 apps/ledger-live-mobile/src/.../signTransactionDemoIntent/
-├── componentLWM.tsx
-└── intentLWMDefinition.ts
+├── component.tsx
+└── intentPlatformDefinition.ts
 
 apps/ledger-live-desktop/src/.../signTransactionDemoIntent/
-├── componentLWD.tsx
-└── intentLWDDefinition.ts
+├── component.tsx
+└── intentPlatformDefinition.ts
 ```
 
 Recommended responsibilities:
@@ -885,11 +885,13 @@ Recommended responsibilities:
   constants used by that job.
 - `intentDefinition.ts` -- exports the shared `IntentDefinition` object
   (`label`, execution flags, `job`) with no platform UI dependency.
-- `componentLWM.tsx` / `componentLWD.tsx` -- exports the platform-specific React
-  renderer receiving `jobState` and `extraProps`.
-- `intentLWMDefinition.ts` / `intentLWDDefinition.ts` -- exports the
-  `IntentPlatformDefinition` built by combining the shared definition with the
-  platform component.
+- `component.tsx` -- exports the platform-specific React renderer receiving
+  `jobState` and `extraProps`. The app's path already says which platform it
+  renders for.
+- `intentPlatformDefinition.ts` -- exports the `IntentPlatformDefinition` built
+  by combining the shared definition with the platform component. It is not
+  named `intentDefinition.ts`, so it can sit next to the shared
+  `intentDefinition.ts` when an intent keeps all five files in one app.
 
 `ExtraProps` nuance: even though `ExtraProps` live on
 `IntentPlatformDefinition` rather than `IntentDefinition`, they should still be

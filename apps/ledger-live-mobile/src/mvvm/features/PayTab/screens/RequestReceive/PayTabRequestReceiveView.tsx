@@ -6,16 +6,16 @@ import type { RequestReceiveProps, VerifyAddressProps } from "@features/flow-pay
 import SafeAreaView from "~/components/SafeAreaView";
 import GenericErrorView from "~/components/GenericErrorView";
 import {
-  VerifyAddressExecutorLWM,
-  type VerifyAddressExecutorLWMProps,
-} from "LLM/features/PayTab/verifyAddressIntent/VerifyAddressExecutorLWM";
+  VerifyAddressExecutor,
+  type VerifyAddressExecutorProps,
+} from "LLM/features/PayTab/verifyAddressIntent/VerifyAddressExecutor";
 
 const requestReceiveAccountMissingError = new Error("RequestReceiveAccountMissing");
 
 export type PayTabRequestReceiveViewProps = Readonly<{
   requestReceive: RequestReceiveProps;
   verifyAddress: VerifyAddressProps;
-  verifyDevice?: VerifyAddressExecutorLWMProps;
+  verifyDevice?: VerifyAddressExecutorProps;
 }>;
 
 export function PayTabRequestReceiveView({
@@ -38,7 +38,7 @@ export function PayTabRequestReceiveView({
           {verifyAddress.phase === "intro" ? <TrackScreen category={verifyAddress.page} /> : null}
           <RequestReceive {...requestReceive} />
           <VerifyAddress {...verifyAddress} />
-          {verifyDevice ? <VerifyAddressExecutorLWM {...verifyDevice} /> : null}
+          {verifyDevice ? <VerifyAddressExecutor {...verifyDevice} /> : null}
         </>
       ) : (
         <GenericErrorView error={requestReceiveAccountMissingError} hasExportLogButton={false} />
