@@ -1,4 +1,15 @@
-import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountRaw,
+  OperationExtra,
+  OperationExtraRaw,
+  StakingAccount,
+  StakingResources,
+} from "@ledgerhq/types-live";
+import {
+  assignStakingResourcesFromAccountRaw,
+  assignStakingResourcesToAccountRaw,
+} from "@ledgerhq/ledger-wallet-framework/serialization";
 import { BigNumber } from "bignumber.js";
 import {
   CosmosOperationExtra,
@@ -6,117 +17,18 @@ import {
   isCosmosOperationExtraRaw,
   type CosmosAccount,
   type CosmosAccountRaw,
-  type CosmosDelegationStatus,
-  type CosmosResources,
   type CosmosResourcesRaw,
-  type LegacyCosmosResourcesFields,
 } from "./types";
-import {
-  type StakingDelegationStatus,
-  type StakingResources,
-  type StakingResourcesRaw,
-} from "@ledgerhq/types-live";
 
-function toResourcesRaw<Status extends string>(
-  r: ResourcesShape<Status>,
-): ResourcesRawShape<Status> {
-  const {
-    delegatedBalance,
-    delegations,
-    pendingRewardsBalance,
-    unbondingBalance,
-    redelegations,
-    unbondings,
-    sequence,
-    publicKey,
-  } = r;
-
+function parseLegacyCosmosResourcesRaw(r: CosmosResourcesRaw): StakingResources {
   return {
-    delegations: delegations.map(({ amount, status, pendingRewards, validatorAddress }) => ({
-      amount: amount.toString(),
-      status,
-      pendingRewards: pendingRewards.toString(),
-      validatorAddress,
-    })),
-    redelegations: redelegations.map(
-      ({ amount, completionDate, validatorSrcAddress, validatorDstAddress }) => ({
-        amount: amount.toString(),
-        completionDate: completionDate.toString(),
-        validatorSrcAddress,
-        validatorDstAddress,
-      }),
-    ),
-    unbondings: unbondings.map(({ amount, completionDate, validatorAddress }) => ({
-      amount: amount.toString(),
-      completionDate: completionDate.toString(),
-      validatorAddress,
-    })),
-    delegatedBalance: delegatedBalance.toString(),
-    pendingRewardsBalance: pendingRewardsBalance.toString(),
-    unbondingBalance: unbondingBalance.toString(),
-    ...(sequence !== undefined ? { sequence } : {}),
-    ...(publicKey !== undefined ? { publicKey } : {}),
-  };
-}
-type ResourcesRawShape<Status extends string> = {
-  delegations: {
-    amount: string;
-    status: Status;
-    pendingRewards: string;
-    validatorAddress: string;
-  }[];
-  redelegations: {
-    amount: string;
-    completionDate: string;
-    validatorSrcAddress: string;
-    validatorDstAddress: string;
-  }[];
-  unbondings: { amount: string; completionDate: string; validatorAddress: string }[];
-  delegatedBalance: string;
-  pendingRewardsBalance: string;
-  unbondingBalance: string;
-} & LegacyCosmosResourcesFields;
-
-type ResourcesShape<Status extends string> = {
-  delegations: {
-    amount: BigNumber;
-    status: Status;
-    pendingRewards: BigNumber;
-    validatorAddress: string;
-  }[];
-  redelegations: {
-    amount: BigNumber;
-    completionDate: Date;
-    validatorSrcAddress: string;
-    validatorDstAddress: string;
-  }[];
-  unbondings: { amount: BigNumber; completionDate: Date; validatorAddress: string }[];
-  delegatedBalance: BigNumber;
-  pendingRewardsBalance: BigNumber;
-  unbondingBalance: BigNumber;
-} & LegacyCosmosResourcesFields;
-
-function parseResourcesRaw<Status extends string>(
-  r: ResourcesRawShape<Status>,
-): ResourcesShape<Status> {
-  const {
-    delegatedBalance,
-    delegations,
-    pendingRewardsBalance,
-    redelegations,
-    unbondingBalance,
-    unbondings,
-    sequence,
-    publicKey,
-  } = r;
-  return {
-    delegations: delegations.map(({ amount, status, pendingRewards, validatorAddress }) => ({
+    delegations: r.delegations.map(({ amount, status, pendingRewards, validatorAddress }) => ({
       amount: new BigNumber(amount),
       status,
       pendingRewards: new BigNumber(pendingRewards),
       validatorAddress,
     })),
-    redelegations: redelegations.map(
+    redelegations: r.redelegations.map(
       ({ amount, completionDate, validatorSrcAddress, validatorDstAddress }) => ({
         amount: new BigNumber(amount),
         completionDate: new Date(completionDate),
@@ -124,72 +36,43 @@ function parseResourcesRaw<Status extends string>(
         validatorDstAddress,
       }),
     ),
-    unbondings: unbondings.map(({ amount, completionDate, validatorAddress }) => ({
+    unbondings: r.unbondings.map(({ amount, completionDate, validatorAddress }) => ({
       amount: new BigNumber(amount),
       completionDate: new Date(completionDate),
       validatorAddress,
     })),
-    delegatedBalance: new BigNumber(delegatedBalance),
-    pendingRewardsBalance: new BigNumber(pendingRewardsBalance),
-    unbondingBalance: new BigNumber(unbondingBalance),
-    ...(sequence !== undefined ? { sequence } : {}),
-    ...(publicKey !== undefined ? { publicKey } : {}),
+    delegatedBalance: new BigNumber(r.delegatedBalance),
+    pendingRewardsBalance: new BigNumber(r.pendingRewardsBalance),
+    unbondingBalance: new BigNumber(r.unbondingBalance),
   };
-}
-
-function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
-  return parseResourcesRaw<CosmosDelegationStatus>(r);
-}
-
-function createEmptyCosmosResources(): CosmosResources {
-  return {
-    delegations: [],
-    redelegations: [],
-    unbondings: [],
-    delegatedBalance: new BigNumber(0),
-    pendingRewardsBalance: new BigNumber(0),
-    unbondingBalance: new BigNumber(0),
-  };
-}
-
-function fromStakingResourcesRaw(
-  r: StakingResourcesRaw & LegacyCosmosResourcesFields,
-): StakingResources & LegacyCosmosResourcesFields {
-  return parseResourcesRaw<StakingDelegationStatus>(r);
-}
-
-function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
-  return toResourcesRaw<CosmosDelegationStatus>(r);
-}
-
-function toStakingResourcesRaw(
-  r: StakingResources & LegacyCosmosResourcesFields,
-): StakingResourcesRaw & LegacyCosmosResourcesFields {
-  return toResourcesRaw<StakingDelegationStatus>(r);
 }
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
-  const cosmosAccount = account as CosmosAccount;
-  const cosmosAccountRaw = accountRaw as CosmosAccountRaw;
-  if (cosmosAccount.stakingResources) {
-    cosmosAccountRaw.stakingResources = toStakingResourcesRaw(cosmosAccount.stakingResources);
-  }
-  if (cosmosAccount.cosmosResources) {
-    cosmosAccountRaw.cosmosResources = toCosmosResourcesRaw(cosmosAccount.cosmosResources);
-  }
+  assignStakingResourcesToAccountRaw(account, accountRaw);
+  (accountRaw as CosmosAccountRaw).sequence = (account as CosmosAccount).sequence;
 }
 
+/**
+ * Accounts persisted before the generic adapter keep their staking data in `cosmosResources` and
+ * their sequence in `cosmosResources`/`stakingResources`: read them so those accounts still load.
+ */
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
-  const cosmosAccountRaw = accountRaw as CosmosAccountRaw;
+  assignStakingResourcesFromAccountRaw(accountRaw, account);
+  const { sequence, stakingResources, cosmosResources } = accountRaw as CosmosAccountRaw;
   const cosmosAccount = account as CosmosAccount;
 
-  cosmosAccount.cosmosResources = cosmosAccountRaw.cosmosResources
-    ? fromCosmosResourcesRaw(cosmosAccountRaw.cosmosResources)
-    : createEmptyCosmosResources();
+  cosmosAccount.sequence = sequence ?? stakingResources?.sequence ?? cosmosResources?.sequence ?? 0;
 
-  cosmosAccount.stakingResources = cosmosAccountRaw.stakingResources
-    ? fromStakingResourcesRaw(cosmosAccountRaw.stakingResources)
-    : { ...cosmosAccount.cosmosResources };
+  // The compressed public key used to live in the resources; `xpub` holds it now. Only accounts
+  // whose `xpub` is still the plain address (synced before the key was persisted) are migrated.
+  const legacyPublicKey = stakingResources?.publicKey || cosmosResources?.publicKey;
+  if (legacyPublicKey && (!account.xpub || account.xpub === account.freshAddress)) {
+    account.xpub = legacyPublicKey;
+  }
+
+  if (!stakingResources && cosmosResources) {
+    (account as StakingAccount).stakingResources = parseLegacyCosmosResourcesRaw(cosmosResources);
+  }
 }
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
