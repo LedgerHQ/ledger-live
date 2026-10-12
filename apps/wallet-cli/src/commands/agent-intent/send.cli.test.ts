@@ -210,6 +210,8 @@ describe("agent-intent send (CLI, --dry-run)", () => {
       sender: SENDER,
       asset: { type: "native", ticker: "ETH" },
       amount: "500000000000000000",
+      // No --fee-strategy: Ethereum defaults to medium.
+      feeStrategy: "medium",
     });
   });
 

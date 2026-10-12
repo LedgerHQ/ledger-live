@@ -49,6 +49,10 @@ const accounts = [
   { label: "ethereum-1", descriptor: `account:1:address:ethereum:main:${SENDER}:m/44h/60h/0h/0/0` },
   { label: "solana-1", descriptor: `account:1:address:solana:main:${SOL_SENDER}:m/44h/501h/0h/0h` },
   {
+    label: "solana-corrupt",
+    descriptor: `account:1:address:solana:main:${SOL_SENDER}11:m/44h/501h/1h/0h`,
+  },
+  {
     label: "bitcoin-native-1",
     descriptor:
       "account:1:utxo:bitcoin:main:xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz:m/84h/0h/0h",
@@ -320,6 +324,15 @@ describe("agent-intent send", () => {
       expect(text).toContain("Amount:  0.5 SOL");
       expect(text).toContain("Memo:    Invoice 42");
       expect(text).not.toContain("Fee:");
+    });
+
+    it("names the account label when the SDK refuses its address", async () => {
+      await expect(
+        sol({ from: undefined, account: "solana-corrupt", output: undefined }),
+      ).rejects.toThrow(
+        'Invalid intent: account "solana-corrupt" must be a 32-byte base58 address.',
+      );
+      expect(submittedIntents).toEqual([]);
     });
   });
 
