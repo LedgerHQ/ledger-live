@@ -29,10 +29,44 @@ const sessionTokens = new Map<string, string | undefined>();
 const SESSION_TOKEN_DIR = path.join(os.tmpdir(), "ledger-live-speculinho-sessions");
 const RUN_ID_PATTERN = /^[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?$/;
 
+function sessionTokenPath(runId: string): string | undefined {
+  return RUN_ID_PATTERN.test(runId) ? path.join(SESSION_TOKEN_DIR, runId) : undefined;
+}
+
+/**
+ * Whether the token directory is a real directory owned by this user, which is then made private
+ * (0700). Under a fixed name in the shared temp dir it may have been created by someone else, who
+ * could read or plant files in it; `mkdir`'s `mode` only applies when it creates the directory.
+ */
+async function claimSessionTokenDir(): Promise<boolean> {
+  try {
+    const stats = await fs.lstat(SESSION_TOKEN_DIR);
+    const uid = process.getuid?.();
+    if (!stats.isDirectory() || (uid !== undefined && stats.uid !== uid)) return false;
+    await fs.chmod(SESSION_TOKEN_DIR, 0o700);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function persistSessionToken(runId: string, token: string): Promise<void> {
+  const file = sessionTokenPath(runId);
+  if (!file) {
+    console.warn(
+      `[speculosCI] Not persisting the session token of invalid run_id ${JSON.stringify(runId)}`,
+    );
+    return;
+  }
   try {
     await fs.mkdir(SESSION_TOKEN_DIR, { recursive: true, mode: 0o700 });
-    await fs.writeFile(path.join(SESSION_TOKEN_DIR, runId), token, { mode: 0o600 });
+    if (!(await claimSessionTokenDir())) {
+      console.warn(
+        `[speculosCI] Not persisting the session token of ${runId}: ${SESSION_TOKEN_DIR} is not a directory of this user`,
+      );
+      return;
+    }
+    await fs.writeFile(file, token, { mode: 0o600 });
   } catch (error) {
     console.warn(
       `[speculosCI] Could not persist the session token of ${runId}:`,
@@ -43,8 +77,9 @@ async function persistSessionToken(runId: string, token: string): Promise<void> 
 
 async function getSessionToken(runId: string): Promise<string | undefined> {
   if (sessionTokens.has(runId)) return sessionTokens.get(runId);
-  if (!RUN_ID_PATTERN.test(runId)) return undefined;
-  return fs.readFile(path.join(SESSION_TOKEN_DIR, runId), "utf-8").catch(() => undefined);
+  const file = sessionTokenPath(runId);
+  if (!file || !(await claimSessionTokenDir())) return undefined;
+  return await fs.readFile(file, "utf-8").catch(() => undefined);
 }
 
 function authHeaders(token?: string): Record<string, string> {
@@ -61,9 +96,8 @@ async function forgetSession(runId: string): Promise<void> {
   if (token && process.env.SPECULOS_SESSION_TOKEN === token) {
     delete process.env.SPECULOS_SESSION_TOKEN;
   }
-  if (RUN_ID_PATTERN.test(runId)) {
-    await fs.rm(path.join(SESSION_TOKEN_DIR, runId), { force: true });
-  }
+  const file = sessionTokenPath(runId);
+  if (file) await fs.rm(file, { force: true });
 }
 
 let warnedUnprotected = false;

@@ -147,7 +147,8 @@ export default class SpeculosHttpTransport extends Transport {
     model: DeviceModelId | undefined,
     bearerToken: string | undefined,
   ): DmkEntry {
-    let deviceManagementEntry = this.byBase.get(baseUrl);
+    const key = `${baseUrl}|${model ?? ""}|${bearerToken ?? ""}`;
+    let deviceManagementEntry = this.byBase.get(key);
     if (!deviceManagementEntry) {
       const deviceManagementKit = new DeviceManagementKitBuilder()
         .addTransport(speculosTransportFactory(baseUrl, true, model, { bearerToken }))
@@ -158,7 +159,7 @@ export default class SpeculosHttpTransport extends Transport {
         timeout: connectionTimeoutMs,
       };
 
-      this.byBase.set(baseUrl, deviceManagementEntry);
+      this.byBase.set(key, deviceManagementEntry);
     } else {
       deviceManagementEntry.timeout = connectionTimeoutMs;
     }

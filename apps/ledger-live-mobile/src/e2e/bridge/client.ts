@@ -89,6 +89,7 @@ function overrideLedgerSyncEnvironment() {
 
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
+  const wsToken = LaunchArguments.value()["wsToken"];
   const mock = LaunchArguments.value()["mock"];
   const disable_broadcast = LaunchArguments.value()["disable_broadcast"];
 
@@ -110,7 +111,7 @@ export function init() {
 
   const ipAddress = Platform.OS === "ios" ? "localhost" : "10.0.2.2";
   const path = `${ipAddress}:${wsPort}`;
-  ws = new WebSocket(`ws://${path}`);
+  ws = new WebSocket(`ws://${path}/?token=${wsToken}`);
 
   ws.onopen = () => {
     log(`Connection opened on ${path}`);
