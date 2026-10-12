@@ -1,6 +1,5 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CardanoCoinConfig } from "./config";
 import type { OperationType } from "@ledgerhq/types-live";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import {
@@ -329,8 +328,8 @@ export function getOperationType({
       : "NONE";
 }
 
-export function isTestnet(currency: CryptoCurrency): boolean {
-  return getCryptoCurrencyById(currency.id).isTestnetFor ? true : false;
+export function isTestnet(config: CardanoCoinConfig): boolean {
+  return config.testnet;
 }
 
 export function getAccountChange(

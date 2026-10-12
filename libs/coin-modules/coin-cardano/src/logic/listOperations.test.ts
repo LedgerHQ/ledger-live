@@ -1,5 +1,5 @@
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { cardanoCoinConfig as config } from "../fixtures/config";
 import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhonjs";
 import network from "@ledgerhq/live-network/network";
 import { APITransaction, HashType, TransactionCertificates } from "../api/api-types";
@@ -8,8 +8,6 @@ import { listOperations } from "./listOperations";
 jest.mock("@ledgerhq/live-network/network");
 
 const mockNetwork = network as jest.Mock;
-
-const currency = getCryptoCurrencyById("cardano");
 
 const PAYMENT_HASH = "11".repeat(28);
 const STAKE_HASH = "22".repeat(28);
@@ -75,14 +73,14 @@ beforeEach(() => {
 describe("listOperations", () => {
   describe("early returns without hitting the network", () => {
     it("returns an empty page for an empty address", async () => {
-      const page = await listOperations(currency, "", options);
+      const page = await listOperations(config, "cardano", "", options);
 
       expect(page).toEqual({ items: [], next: undefined });
       expect(mockNetwork).not.toHaveBeenCalled();
     });
 
     it("returns an empty page for an unsupported/unparseable address", async () => {
-      const page = await listOperations(currency, "not-a-cardano-address", options);
+      const page = await listOperations(config, "cardano", "not-a-cardano-address", options);
 
       expect(page).toEqual({ items: [], next: undefined });
       expect(mockNetwork).not.toHaveBeenCalled();
@@ -92,7 +90,7 @@ describe("listOperations", () => {
   it("queries the API with the payment key derived from the address", async () => {
     mockResponse([]);
 
-    await listOperations(currency, ADDRESS, options);
+    await listOperations(config, "cardano", ADDRESS, options);
 
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -119,7 +117,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({
@@ -164,7 +162,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     // value EXCLUDES the fee (amount sent = 7_000_000); the generic-coin-framework
     // adapter re-adds tx.fees, so including it here would double-count.
@@ -189,7 +187,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     // A pure-fee self-transfer carries value 0; the adapter surfaces tx.fees.
     expect(items[0]).toMatchObject({ type: "FEES", value: 0n });
@@ -224,7 +222,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items[0].type).toBe("OUT");
     expect(items[0].value).toBe(0n);
@@ -255,7 +253,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     const tokenOp = items.find(op => op.asset.type === "token");
     expect(tokenOp).toMatchObject({
@@ -291,7 +289,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items.every(op => op.asset.type === "native")).toBe(true);
   });
@@ -313,7 +311,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     const tokenOp = items.find(op => op.asset.type === "token");
     expect(tokenOp).toMatchObject({ type: "OUT", value: 50n });
@@ -346,7 +344,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     const tokenOps = items.filter(op => op.asset.type === "token");
     expect(tokenOps).toHaveLength(2);
@@ -384,7 +382,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     const tokenOps = items.filter(op => op.asset.type === "token");
     // net = (40 + 10 received) - (20 spent) = +30
@@ -419,7 +417,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items[0].type).toBe("DELEGATE");
     expect(items[0].details).toMatchObject({ poolId: expect.stringMatching(/^pool1/) });
@@ -455,7 +453,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items[0].type).toBe("IN");
     expect(items[0].details).not.toHaveProperty("poolId");
@@ -484,7 +482,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items[0].type).toBe("UNDELEGATE");
     expect(items[0].details).toMatchObject({ refund: "2000000" });
@@ -516,7 +514,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items[0].type).toBe("IN");
     expect(items[0].details).not.toHaveProperty("refund");
@@ -545,7 +543,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items[0].details).toMatchObject({ deposit: "2000000" });
     // A bare registration (no delegation) is not a staking type: it stays value-based.
@@ -578,7 +576,7 @@ describe("listOperations", () => {
       { stakeKeyDeposit: "500000" },
     );
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items[0].details).toMatchObject({ deposit: "500000" });
   });
@@ -600,7 +598,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    await listOperations(currency, ADDRESS, options);
+    await listOperations(config, "cardano", ADDRESS, options);
 
     const fetchedNetworkInfo = mockNetwork.mock.calls.some(
       ([req]: [{ url?: string }]) =>
@@ -633,7 +631,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items[0].details).toMatchObject({ rewards: "1500000" });
   });
@@ -659,7 +657,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
 
     expect(items[0].details).toMatchObject({ memo: "hello, world", metadataHash: "metadata-hash" });
   });
@@ -685,7 +683,7 @@ describe("listOperations", () => {
         { limit: 1 },
       );
 
-      const { next } = await listOperations(currency, ADDRESS, options);
+      const { next } = await listOperations(config, "cardano", ADDRESS, options);
 
       expect(next).toBe("2");
     });
@@ -712,7 +710,10 @@ describe("listOperations", () => {
         { limit: 1, pageNo: 5 },
       );
 
-      const { next } = await listOperations(currency, ADDRESS, { ...options, cursor: "999" });
+      const { next } = await listOperations(config, "cardano", ADDRESS, {
+        ...options,
+        cursor: "999",
+      });
 
       expect(next).toBe("6");
     });
@@ -737,7 +738,7 @@ describe("listOperations", () => {
         { limit: 50 },
       );
 
-      const { next } = await listOperations(currency, ADDRESS, options);
+      const { next } = await listOperations(config, "cardano", ADDRESS, options);
 
       expect(next).toBeUndefined();
     });
@@ -745,7 +746,7 @@ describe("listOperations", () => {
     it("requests the page indicated by the cursor", async () => {
       mockResponse([], { limit: 50 });
 
-      await listOperations(currency, ADDRESS, { ...options, cursor: "3" });
+      await listOperations(config, "cardano", ADDRESS, { ...options, cursor: "3" });
 
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({ data: expect.objectContaining({ pageNo: 3 }) }),
@@ -755,7 +756,7 @@ describe("listOperations", () => {
     it("falls back to page 1 for an invalid cursor", async () => {
       mockResponse([], { limit: 50 });
 
-      await listOperations(currency, ADDRESS, { ...options, cursor: "not-a-number" });
+      await listOperations(config, "cardano", ADDRESS, { ...options, cursor: "not-a-number" });
 
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({ data: expect.objectContaining({ pageNo: 1 }) }),
@@ -768,7 +769,7 @@ describe("listOperations", () => {
       // — hasMore keys off the raw transaction count, not the operation count.
       mockResponse([makeTx({ blockHeight: 1000 })], { limit: 1 });
 
-      const { items, next } = await listOperations(currency, ADDRESS, {
+      const { items, next } = await listOperations(config, "cardano", ADDRESS, {
         ...options,
         minHeight: 2000,
       });
@@ -781,7 +782,10 @@ describe("listOperations", () => {
   it("filters out transactions below minHeight", async () => {
     mockResponse([makeTx({ blockHeight: 1000 })]);
 
-    const { items } = await listOperations(currency, ADDRESS, { ...options, minHeight: 2000 });
+    const { items } = await listOperations(config, "cardano", ADDRESS, {
+      ...options,
+      minHeight: 2000,
+    });
 
     expect(items).toEqual([]);
   });
@@ -820,7 +824,10 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, { ...options, order: "desc" });
+    const { items } = await listOperations(config, "cardano", ADDRESS, {
+      ...options,
+      order: "desc",
+    });
 
     expect(items[0].id).toBe("cardano-newer");
     expect(items[1].id).toBe("cardano-older");
@@ -847,7 +854,7 @@ describe("listOperations", () => {
       }),
     ]);
 
-    const { items } = await listOperations(currency, ADDRESS, options);
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
     const refs = items
       .filter(op => op.asset.type === "token")
       .map(op => (op.asset as { assetReference: string }).assetReference);
@@ -857,8 +864,8 @@ describe("listOperations", () => {
   });
 
   it("rejects ascending order (cannot be honored across pages on a newest-first backend)", async () => {
-    await expect(listOperations(currency, ADDRESS, { ...options, order: "asc" })).rejects.toThrow(
-      "ascending order is not supported",
-    );
+    await expect(
+      listOperations(config, "cardano", ADDRESS, { ...options, order: "asc" }),
+    ).rejects.toThrow("ascending order is not supported");
   });
 });

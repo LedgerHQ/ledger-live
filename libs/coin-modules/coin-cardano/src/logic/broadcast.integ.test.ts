@@ -5,7 +5,7 @@ import {
   address as TyphonAddress,
   types as TyphonTypes,
 } from "@stricahq/typhonjs";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { cardanoTestnetCoinConfig as config } from "../fixtures/config";
 import BigNumber from "bignumber.js";
 import { broadcast } from "./broadcast";
 
@@ -16,8 +16,6 @@ import { broadcast } from "./broadcast";
 // a funded round-trip would need a faucet-seeded key in CI secrets, which is out of scope here.
 describe("broadcast (alpaca, preprod)", () => {
   it("rejects a well-formed transaction spending a nonexistent input", async () => {
-    const currency = getCryptoCurrencyById("cardano_testnet");
-
     const privKey = await Bip32PrivateKey.fromEntropy(randomBytes(64));
     const pubKeyBytes = privKey.toBip32PublicKey().toPublicKey().toBytes();
 
@@ -57,8 +55,6 @@ describe("broadcast (alpaca, preprod)", () => {
 
     // The preprod node returns 400 "tx submission failed" — a real validation rejection, not a
     // transport blip, so matching the message keeps the test from passing on an unreachable endpoint.
-    await expect(broadcast(currency, { signature: payload })).rejects.toThrow(
-      /tx submission failed/,
-    );
+    await expect(broadcast(config, { signature: payload })).rejects.toThrow(/tx submission failed/);
   });
 });

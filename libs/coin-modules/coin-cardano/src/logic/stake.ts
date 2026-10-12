@@ -4,7 +4,7 @@ import type {
   StakeAction,
   StakeState,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CardanoCoinConfig } from "../config";
 import BigNumber from "bignumber.js";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { extractStakeKeyFromAddress } from "../utils";
@@ -18,11 +18,11 @@ export const NATIVE_ASSET: AssetInfo = { type: "native", name: "ADA" };
  * otherwise the delegation is whatever {@link getDelegationInfo} returns for the stake key.
  */
 export async function fetchDelegation(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
   address: string,
 ): Promise<{ stakeKey: string | undefined; delegation: CardanoDelegation | undefined }> {
   const stakeKey = extractStakeKeyFromAddress(address);
-  const delegation = stakeKey ? await getDelegationInfo(currency, stakeKey) : undefined;
+  const delegation = stakeKey ? await getDelegationInfo(config, stakeKey) : undefined;
   return { stakeKey, delegation };
 }
 

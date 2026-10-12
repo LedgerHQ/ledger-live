@@ -5,20 +5,16 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import type { CardanoCoinConfig } from "../config";
+import { cardanoCoinConfig } from "../fixtures/config";
 import { craftTransaction } from "../logic/craftTransaction";
 
 jest.mock("../logic/craftTransaction");
 const mockCraftTransaction = jest.mocked(craftTransaction);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config = cardanoCoinConfig;
 const mockCtx: Context<CardanoCoinConfig> = {
-  config: async () => ({
-    ...config,
-    status: { type: "active" },
-    name: "Cardano",
-    unit: { name: "ada", code: "ADA", magnitude: 6 },
-  }),
+  config: async () => config,
   logger: () => {},
 };
 
@@ -36,7 +32,7 @@ describe("craftTransaction", () => {
     jest.clearAllMocks();
   });
 
-  it("delegates to logic craftTransaction with the resolved currency, intent and custom fees", async () => {
+  it("delegates to logic craftTransaction with the resolved config, intent and custom fees", async () => {
     const crafted = { transaction: "deadbeef", details: { fees: "170000" } };
     mockCraftTransaction.mockResolvedValue(crafted);
     const customFees: FeeEstimation = { value: 200_000n };
@@ -46,9 +42,10 @@ describe("craftTransaction", () => {
 
     expect(result).toBe(crafted);
     expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
-    expect(mockCraftTransaction.mock.calls[0][0].id).toBe("cardano");
-    expect(mockCraftTransaction.mock.calls[0][1]).toBe(intent);
-    expect(mockCraftTransaction.mock.calls[0][2]).toBe(customFees);
+    expect(mockCraftTransaction.mock.calls[0][0]).toBe(config);
+    expect(mockCraftTransaction.mock.calls[0][1]).toBe("cardano");
+    expect(mockCraftTransaction.mock.calls[0][2]).toBe(intent);
+    expect(mockCraftTransaction.mock.calls[0][3]).toBe(customFees);
   });
 
   it("propagates errors from logic craftTransaction", async () => {

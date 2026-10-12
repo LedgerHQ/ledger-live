@@ -75,6 +75,7 @@ describe("Cardano negative cases (Yaci devnet)", () => {
           unit: { name: "ada", code: "tADA", magnitude: 6 },
           maxFeesWarning: 0,
           maxFeesError: 0,
+          testnet: true,
         },
       },
     });

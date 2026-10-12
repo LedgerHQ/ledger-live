@@ -45,6 +45,7 @@ describe("getTransactionStatus", () => {
     spiedGetCoinConfig.mockReturnValue({
       maxFeesWarning: BigNumber(0),
       maxFeesError: BigNumber(0),
+      testnet: false,
     } as unknown as CardanoCoinConfig);
   });
 
@@ -137,6 +138,7 @@ describe("getTransactionStatus", () => {
     ] as unknown as CardanoOutput[];
 
     const account = {
+      currency: { id: "cardano" },
       pendingOperations: [],
       cardanoResources: {
         utxos: utxos,
@@ -170,6 +172,7 @@ describe("getTransactionStatus", () => {
     ] as unknown as CardanoOutput[];
 
     const account = {
+      currency: { id: "cardano" },
       pendingOperations: [],
       cardanoResources: {
         utxos: utxos,
@@ -189,6 +192,7 @@ describe("getTransactionStatus", () => {
     spiedValidateMemo.mockReturnValueOnce(true);
 
     const account = {
+      currency: { id: "cardano" } as CardanoAccount["currency"],
       pendingOperations: [] as Operation[],
       cardanoResources: {
         utxos: [{} as CardanoOutput],
@@ -206,6 +210,7 @@ describe("getTransactionStatus", () => {
     spiedValidateMemo.mockReturnValueOnce(false);
 
     const account = {
+      currency: { id: "cardano" } as CardanoAccount["currency"],
       pendingOperations: [] as Operation[],
       cardanoResources: {
         utxos: [{} as CardanoOutput],

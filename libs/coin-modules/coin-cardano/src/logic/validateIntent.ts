@@ -16,7 +16,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CardanoCoinConfig } from "../config";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
@@ -40,7 +40,7 @@ const FEE_TOO_HIGH_RATIO = 10n;
  * validateIntent hits the network. Craft re-checks it (calculateMinUtxoAmountBabbage) as a backstop.
  */
 export async function validateIntent(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
   intent: Intent,
   balances: Balance[],
   customFees?: FeeEstimation,
@@ -62,7 +62,7 @@ export async function validateIntent(
 
   const isTokenTransfer = isTokenAsset(intent.asset);
 
-  validateRecipient(currency, intent, errors);
+  validateRecipient(config, intent, errors);
   // Self-send: compare sender/recipient payment-credential hashes (robust to base/enterprise
   // re-encodings). Non-blocking warning, only when the recipient is otherwise valid. LIVE-33176.
   if (!errors.recipient && intent.recipient) {
@@ -81,7 +81,7 @@ export async function validateIntent(
   // NotEnoughBalance (so it overrides) but not AmountRequired (hence the amount > 0n guard).
   // Best-effort: a network blip fetching params must not fail validation — craft re-checks the floor.
   if (!isTokenTransfer && !errors.recipient && amount > 0n) {
-    const minAda = await computeMinUtxo(currency, intent.recipient).catch(() => undefined);
+    const minAda = await computeMinUtxo(config, intent.recipient).catch(() => undefined);
     if (minAda && new BigNumber(amount.toString()).lt(minAda)) {
       errors.amount = new CardanoMinAmountError("", { amount: minAda.div(1e6).toString() });
     }
@@ -127,23 +127,23 @@ function validateStakingIntent(
 }
 
 function validateRecipient(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
   intent: Intent,
   errors: Record<string, Error>,
 ): void {
   // Shelley addresses embed a network tag in the header byte (CIP-19): testnet = 0, mainnet = 1.
-  const networkId = isTestnet(currency) ? 0 : 1;
+  const networkId = isTestnet(config) ? 0 : 1;
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired("");
   } else if (!isValidAddress(intent.recipient, networkId)) {
-    errors.recipient = new InvalidAddress("", { currencyName: currency.name });
+    errors.recipient = new InvalidAddress("", { currencyName: config.name });
   }
 }
 
 // Babbage min-UTXO for a plain ADA output to `recipient`. CARDANO_MAX_SUPPLY is a worst-case amount so
 // the serialized-size estimate (and thus the floor) is an upper bound; mirrors legacy getTransactionStatus.
-async function computeMinUtxo(currency: CryptoCurrency, recipient: string): Promise<BigNumber> {
-  const { protocolParams } = await fetchNetworkInfo(currency);
+async function computeMinUtxo(config: CardanoCoinConfig, recipient: string): Promise<BigNumber> {
+  const { protocolParams } = await fetchNetworkInfo(config);
   return TyphonUtils.calculateMinUtxoAmountBabbage(
     {
       address: TyphonUtils.getAddressFromString(recipient),
