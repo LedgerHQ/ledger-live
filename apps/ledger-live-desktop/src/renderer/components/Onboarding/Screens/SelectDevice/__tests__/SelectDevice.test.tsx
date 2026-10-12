@@ -1,28 +1,14 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { render, screen, withFlagOverrides } from "tests/testSetup";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import { track } from "@shared/analytics";
+import { COUNTERFEIT_WARNING_PAGE } from "LLD/features/Onboarding/components/CounterfeitWarningDialog/analytics";
 
 const mockNavigate = jest.fn();
 
-jest.mock("LLD/features/Onboarding/components/CounterfeitWarningDialog", () => ({
-  __esModule: true,
-  default: ({
-    open,
-    deviceModelId,
-    onProceed,
-    onDismiss,
-  }: {
-    open: boolean;
-    deviceModelId: string;
-    onProceed: () => void;
-    onDismiss: () => void;
-  }) =>
-    open ? (
-      <div data-testid="counterfeit-warning-dialog" data-device-model-id={deviceModelId}>
-        <button type="button" data-testid="counterfeit-warning-continue" onClick={onProceed} />
-        <button type="button" data-testid="counterfeit-warning-close" onClick={onDismiss} />
-      </div>
-    ) : null,
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
 }));
 
 jest.mock("react-router", () => ({
@@ -77,10 +63,13 @@ describe("SelectDevice counterfeit warning gate", () => {
 
       await user.click(screen.getByTestId(`v3-device-${deviceModelId}`));
 
-      expect(screen.getByTestId("counterfeit-warning-dialog")).toHaveAttribute(
-        "data-device-model-id",
+      await waitFor(() => {
+        expect(screen.getByTestId("counterfeit-warning-dialog")).toBeVisible();
+      });
+      expect(track).toHaveBeenCalledWith("page_viewed", {
+        page: COUNTERFEIT_WARNING_PAGE,
         deviceModelId,
-      );
+      });
       expect(mockNavigate).not.toHaveBeenCalled();
     },
   );
@@ -89,9 +78,11 @@ describe("SelectDevice counterfeit warning gate", () => {
     const { user } = renderSelectDevice(TOUCHSCREEN_WARNING_ON);
 
     await user.click(screen.getByTestId(`v3-device-${DeviceModelId.stax}`));
-    await user.click(screen.getByTestId("counterfeit-warning-continue"));
+    await user.click(await screen.findByTestId("counterfeit-warning-continue-button"));
 
-    expect(screen.queryByTestId("counterfeit-warning-dialog")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByTestId("counterfeit-warning-dialog")).not.toBeInTheDocument();
+    });
     expect(mockNavigate).toHaveBeenCalledWith(`/onboarding/sync/${DeviceModelId.stax}`);
   });
 
@@ -99,10 +90,13 @@ describe("SelectDevice counterfeit warning gate", () => {
     const { user } = renderSelectDevice(TOUCHSCREEN_WARNING_ON);
 
     await user.click(screen.getByTestId(`v3-device-${DeviceModelId.stax}`));
-    await user.click(screen.getByTestId("counterfeit-warning-close"));
+    await screen.findByTestId("counterfeit-warning-dialog");
+    await user.keyboard("{Escape}");
 
-    expect(screen.queryByTestId("counterfeit-warning-dialog")).not.toBeInTheDocument();
-    expect(screen.getByTestId(`v3-device-${DeviceModelId.stax}`)).toBeVisible();
+    await waitFor(() => {
+      expect(screen.queryByTestId("counterfeit-warning-dialog")).not.toBeInTheDocument();
+    });
+    expect(screen.getByTestId(`v3-device-${DeviceModelId.stax}`)).toBeInTheDocument();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
