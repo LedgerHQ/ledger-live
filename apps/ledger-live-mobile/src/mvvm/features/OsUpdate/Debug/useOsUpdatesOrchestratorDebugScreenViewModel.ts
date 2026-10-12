@@ -7,27 +7,28 @@ import {
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
 import {
-  OsUpdatesOrchestratorUseCase,
   ResolveOsUpdatePathUseCase,
   type DeviceBackupStorage,
-  type OsUpdatesOrchestrator,
   type OsUpdatesOrchestratorUseCaseInput,
-  type OsUpdatesProgress,
 } from "@ledgerhq/live-dmk-shared";
 import {
   useBleDevicesScanning,
   useDeviceManagementKit,
   useHidDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import { deviceBackupStorage } from "../storage/deviceBackupStorage";
 import type {
   DebugDiscoveredDevice,
+  OrchestratorRun,
   OrchestratorRunPhase,
   OsUpdatesOrchestratorDebugScreenViewModel,
-  ProgressHistoryEntry,
+  WhatsNew,
 } from "./types";
 
 type Backup = NonNullable<Awaited<ReturnType<DeviceBackupStorage["getBackup"]>>>;
 type OsUpdates = OsUpdatesOrchestratorUseCaseInput["osUpdates"];
+type PendingRun = { device: ConnectedDevice; osUpdates: OsUpdates };
 
 const MS_PER_HOUR = 60 * 60 * 1000;
 const MINUTES_PER_HOUR = 60;
@@ -84,39 +85,49 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
   const [isScanning, setIsScanning] = useState(false);
   const [connectingDeviceId, setConnectingDeviceId] = useState<string | null>(null);
   const [connectError, setConnectError] = useState<string | null>(null);
-  const [backups, setBackups] = useState<Record<string, Backup>>({});
+  const [backup, setBackup] = useState<Backup | undefined>(undefined);
   const [isSeedBackupSheetOpen, setSeedBackupSheetOpen] = useState(false);
   const [phase, setPhase] = useState<OrchestratorRunPhase>("idle");
-  const [progress, setProgress] = useState<OsUpdatesProgress | null>(null);
-  const [history, setHistory] = useState<ProgressHistoryEntry[]>([]);
+  const [orchestratorRun, setOrchestratorRun] = useState<OrchestratorRun | null>(null);
+  const [pendingRun, setPendingRun] = useState<PendingRun | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const backupsRef = useRef(backups);
-  backupsRef.current = backups;
-
   const resolveGenerationRef = useRef(0);
-  const orchestratorRef = useRef<OsUpdatesOrchestrator | null>(null);
-  const orchestratorUnsubscribeRef = useRef<(() => void) | null>(null);
-  const historyIdRef = useRef(0);
 
+  // Same persistence as the product, mirrored in state so this screen shows the stored backup.
   const storage = useMemo<DeviceBackupStorage>(
     () => ({
-      getBackup: deviceModelId => Promise.resolve(backupsRef.current[deviceModelId]),
-      saveBackup: (deviceModelId, backup) => {
-        setBackups(current => ({ ...current, [deviceModelId]: backup }));
-        return Promise.resolve();
+      getBackup: deviceModelId => deviceBackupStorage.getBackup(deviceModelId),
+      saveBackup: async (deviceModelId, nextBackup) => {
+        await deviceBackupStorage.saveBackup(deviceModelId, nextBackup);
+        setBackup(nextBackup);
       },
-      removeBackup: deviceModelId => {
-        setBackups(current => {
-          const next = { ...current };
-          delete next[deviceModelId];
-          return next;
-        });
-        return Promise.resolve();
+      removeBackup: async deviceModelId => {
+        await deviceBackupStorage.removeBackup(deviceModelId);
+        setBackup(undefined);
       },
     }),
     [],
   );
+
+  const modelId = connectedDevice?.modelId;
+  useEffect(() => {
+    if (modelId === undefined) {
+      return;
+    }
+    let isCurrent = true;
+    storage
+      .getBackup(modelId)
+      .then(stored => {
+        if (isCurrent) setBackup(stored);
+      })
+      .catch(() => {
+        if (isCurrent) setBackup(undefined);
+      });
+    return () => {
+      isCurrent = false;
+    };
+  }, [modelId, storage]);
 
   useEffect(() => {
     setConnectedDevice(getFirstConnectedDevice(dmk));
@@ -229,31 +240,11 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
 
   const stopRun = useCallback(() => {
     resolveGenerationRef.current += 1;
-    orchestratorUnsubscribeRef.current?.();
-    orchestratorUnsubscribeRef.current = null;
-    orchestratorRef.current?.stop();
-    orchestratorRef.current = null;
+    setOrchestratorRun(null);
+    setPendingRun(null);
   }, []);
 
   useEffect(() => stopRun, [stopRun]);
-
-  const appendHistory = useCallback((next: OsUpdatesProgress) => {
-    setHistory(current => {
-      const latest = current[0];
-      if (latest && latest.step === next.step && latest.stateType === next.state.type) {
-        return current;
-      }
-      return [
-        {
-          id: historyIdRef.current++,
-          time: new Date().toLocaleTimeString(),
-          step: next.step,
-          stateType: next.state.type,
-        },
-        ...current.slice(0, 19),
-      ];
-    });
-  }, []);
 
   const seedBackup = useCallback(
     (ageMs: number) => {
@@ -261,12 +252,9 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
       if (!connectedDevice) {
         return;
       }
-      setBackups(current => ({
-        ...current,
-        [connectedDevice.modelId]: dummyBackup(ageMs),
-      }));
+      void storage.saveBackup(connectedDevice.modelId, dummyBackup(ageMs));
     },
-    [connectedDevice],
+    [connectedDevice, storage],
   );
 
   const onSeedBackup = useCallback(() => setSeedBackupSheetOpen(true), []);
@@ -281,12 +269,8 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     if (!connectedDevice) {
       return;
     }
-    setBackups(current => {
-      const next = { ...current };
-      delete next[connectedDevice.modelId];
-      return next;
-    });
-  }, [connectedDevice]);
+    void storage.removeBackup(connectedDevice.modelId);
+  }, [connectedDevice, storage]);
 
   const startOrchestrator = useCallback(
     (device: ConnectedDevice, resolvedOsUpdates: OsUpdates) => {
@@ -294,26 +278,19 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
         return;
       }
 
-      const orchestrator = new OsUpdatesOrchestratorUseCase().execute({
+      setOrchestratorRun({
         dmk,
         connectedDevice: device,
         osUpdates: resolvedOsUpdates,
         storage,
         onStop: () => {
+          setOrchestratorRun(null);
           setPhase("stopped");
         },
       });
-
-      const subscription = orchestrator.subscribe(next => {
-        setProgress(next);
-        appendHistory(next);
-      });
-      orchestratorRef.current = orchestrator;
-      orchestratorUnsubscribeRef.current = () => subscription.unsubscribe();
       setPhase("running");
-      orchestrator.start();
     },
-    [appendHistory, dmk, storage],
+    [dmk, storage],
   );
 
   const onStart = useCallback(() => {
@@ -328,10 +305,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     const generation = resolveGenerationRef.current;
 
     setPhase("resolving");
-    setProgress(null);
-    setHistory([]);
     setErrorMessage(null);
-    historyIdRef.current = 0;
 
     void (async () => {
       try {
@@ -357,9 +331,17 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
           sessionId: device.sessionId,
           unlockTimeout: 0,
         });
-        if (generation === resolveGenerationRef.current) {
-          startOrchestrator(device, resolvedOsUpdates);
+        if (generation !== resolveGenerationRef.current) {
+          return;
         }
+
+        if (resolvedOsUpdates.length === 0) {
+          startOrchestrator(device, resolvedOsUpdates);
+          return;
+        }
+
+        setPendingRun({ device, osUpdates: resolvedOsUpdates });
+        setPhase("reviewing");
       } catch (error) {
         if (generation !== resolveGenerationRef.current) {
           return;
@@ -370,16 +352,35 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     })();
   }, [dmk, startOrchestrator, stopRun]);
 
+  const onConfirmStart = useCallback(() => {
+    if (!pendingRun) {
+      return;
+    }
+    setPendingRun(null);
+    startOrchestrator(pendingRun.device, pendingRun.osUpdates);
+  }, [pendingRun, startOrchestrator]);
+
+  const whatsNew = useMemo<WhatsNew | null>(() => {
+    const lastOsUpdate = pendingRun?.osUpdates.at(-1);
+    return lastOsUpdate
+      ? {
+          version: lastOsUpdate.finalFirmware.version,
+          notes: lastOsUpdate.osuFirmware.notes,
+        }
+      : null;
+  }, [pendingRun]);
+
   const onStop = useCallback(() => {
     stopRun();
     setPhase("stopped");
   }, [stopRun]);
 
-  const isBusy = phase === "resolving" || phase === "running";
+  const isBusy = phase === "resolving" || phase === "reviewing" || phase === "running";
+  useKeepScreenAwake(phase === "running");
   const connectionErrorMessage =
     connectError ?? (scanningBleError ? formatUnknown(scanningBleError) : null);
   const deviceId = connectedDevice?.id ?? null;
-  const backup = connectedDevice !== null ? backups[connectedDevice.modelId] : undefined;
+  const shownBackup = connectedDevice === null ? undefined : backup;
 
   return {
     dmkReady: Boolean(dmk),
@@ -391,15 +392,15 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     connectingDeviceId,
     canDisconnect: Boolean(dmk && connectedDevice),
     connectionErrorMessage,
-    hasBackup: backup !== undefined,
-    backupAge: backup ? formatAge(backup.createdAt) : null,
+    hasBackup: shownBackup !== undefined,
+    backupAge: shownBackup ? formatAge(shownBackup.createdAt) : null,
     isSeedBackupSheetOpen,
     canStart: Boolean(dmk && connectedDevice && !isBusy),
     canStop: isBusy,
     isBusy,
     phase,
-    progress,
-    history,
+    orchestratorRun,
+    whatsNew,
     errorMessage,
     onToggleScan,
     onConnectDevice,
@@ -410,6 +411,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     onSeedExpiredBackup,
     onRemoveBackup,
     onStart,
+    onConfirmStart,
     onStop,
   };
 }

@@ -1,25 +1,42 @@
 import React, { useCallback } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import {
-  ApplyUpdatesStateType,
-  CreateBackupStateType,
-  OsUpdatesSteps,
-  PreChecksStateType,
-  RestoreBackupStateType,
-  type ApplyUpdatesState,
-  type CreateBackupState,
-  type OsUpdatesProgress,
-  type PreChecksState,
-  type RestoreBackupState,
-} from "@ledgerhq/live-dmk-shared";
+import { OsUpdatesOrchestratorComponent } from "@ledgerhq/live-common/os-update/components/OsUpdatesOrchestratorComponent";
+import { osUpdatePlatformComponents } from "../components/osUpdatePlatformComponents";
+import { WhatsNewScreen } from "../screens/WhatsNewScreen";
 import { useOsUpdatesOrchestratorDebugScreenViewModel } from "./useOsUpdatesOrchestratorDebugScreenViewModel";
-import type { DebugDiscoveredDevice, ProgressHistoryEntry } from "./types";
+import type { DebugDiscoveredDevice } from "./types";
 
 export default function OsUpdatesOrchestratorDebugScreen() {
   const viewModel = useOsUpdatesOrchestratorDebugScreenViewModel();
+
+  if (viewModel.orchestratorRun) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.orchestrator}>
+          <OsUpdatesOrchestratorComponent
+            {...viewModel.orchestratorRun}
+            platformComponents={osUpdatePlatformComponents}
+          />
+        </View>
+      </View>
+    );
+  }
+
+  if (viewModel.whatsNew) {
+    return (
+      <View style={styles.container}>
+        <WhatsNewScreen
+          version={viewModel.whatsNew.version}
+          notes={viewModel.whatsNew.notes}
+          onStart={viewModel.onConfirmStart}
+          onClose={viewModel.onStop}
+        />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -81,7 +98,7 @@ export default function OsUpdatesOrchestratorDebugScreen() {
 
         <Section
           title="Backup storage"
-          subtitle="In-memory only. Pre-checks treat a present backup as RestoreBackup. Create backup only asks what to do when the backup is expired."
+          subtitle="Persisted in the app storage, one backup per device model, so it survives an app restart. Pre-checks treat a present backup as RestoreBackup. Create backup only asks what to do when the backup is expired."
         >
           <StatusRow label="Backup" value={viewModel.hasBackup ? "present" : "absent"} />
           <StatusRow label="Age" value={viewModel.backupAge ?? "-"} />
@@ -134,25 +151,6 @@ export default function OsUpdatesOrchestratorDebugScreen() {
               {viewModel.errorMessage}
             </Text>
           ) : null}
-        </Section>
-
-        <Section title="Orchestrator progress">
-          <StatusRow label="Step" value={viewModel.progress?.step ?? "-"} />
-          <StatusRow label="State" value={viewModel.progress?.state.type ?? "-"} />
-          {viewModel.progress ? <StepActions progress={viewModel.progress} /> : null}
-          <Text typography="body3" lx={{ color: "muted", marginTop: "s8" }}>
-            {formatProgress(viewModel.progress)}
-          </Text>
-        </Section>
-
-        <Section title="History">
-          {viewModel.history.length === 0 ? (
-            <Text typography="body3" lx={{ color: "muted" }}>
-              No progress emitted yet.
-            </Text>
-          ) : (
-            viewModel.history.map(entry => <HistoryRow key={entry.id} entry={entry} />)
-          )}
         </Section>
       </ScrollView>
 
@@ -272,180 +270,8 @@ function DiscoveredDeviceRow({
   );
 }
 
-function HistoryRow({ entry }: Readonly<{ entry: ProgressHistoryEntry }>) {
-  return (
-    <Box lx={{ paddingVertical: "s4" }}>
-      <Text typography="body3SemiBold" lx={{ color: "base" }}>
-        {entry.time} · {entry.step}
-      </Text>
-      <Text typography="body3" lx={{ color: "muted" }}>
-        {entry.stateType}
-      </Text>
-    </Box>
-  );
-}
-
-function StepActions({ progress }: Readonly<{ progress: OsUpdatesProgress }>) {
-  switch (progress.step) {
-    case OsUpdatesSteps.PRE_CHECKS:
-      return <PreChecksActions state={progress.state} />;
-    case OsUpdatesSteps.CREATE_BACKUP:
-      return <CreateBackupActions state={progress.state} />;
-    case OsUpdatesSteps.APPLY_UPDATES:
-      return <ApplyUpdatesActions state={progress.state} />;
-    case OsUpdatesSteps.RESTORE_BACKUP:
-      return <RestoreBackupActions state={progress.state} />;
-    default: {
-      const unhandled: never = progress;
-      return unhandled;
-    }
-  }
-}
-
-function PreChecksActions({ state }: Readonly<{ state: PreChecksState }>) {
-  switch (state.type) {
-    case PreChecksStateType.BATTERY_TOO_LOW:
-    case PreChecksStateType.UNEXPECTED_ERROR:
-      return <Actions actions={[{ label: "Cancel", onPress: state.cancel }]} />;
-    case PreChecksStateType.LOADING:
-    case PreChecksStateType.DEVICE_LOCKED:
-    case PreChecksStateType.DEVICE_DISCONNECTED:
-      return null;
-    default: {
-      const unhandled: never = state;
-      return unhandled;
-    }
-  }
-}
-
-function CreateBackupActions({ state }: Readonly<{ state: CreateBackupState }>) {
-  switch (state.type) {
-    case CreateBackupStateType.AWAITING_BACKUP_SELECTION:
-      return (
-        <Actions
-          actions={[
-            { label: "Use existing backup", onPress: state.useExistingBackup },
-            { label: "Create a new backup", onPress: state.createNewBackup },
-          ]}
-        />
-      );
-    case CreateBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
-      return (
-        <Actions
-          actions={[
-            { label: "Retry", onPress: state.retry },
-            { label: "Cancel", onPress: state.cancel },
-          ]}
-        />
-      );
-    case CreateBackupStateType.UNEXPECTED_ERROR:
-      return <Actions actions={[{ label: "Cancel", onPress: state.cancel }]} />;
-    case CreateBackupStateType.LOADING:
-    case CreateBackupStateType.DEVICE_LOCKED:
-    case CreateBackupStateType.AWAITING_ALLOW_SECURE_CONNECTION:
-    case CreateBackupStateType.DEVICE_DISCONNECTED:
-      return null;
-    default: {
-      const unhandled: never = state;
-      return unhandled;
-    }
-  }
-}
-
-function RestoreBackupActions({ state }: Readonly<{ state: RestoreBackupState }>) {
-  switch (state.type) {
-    case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
-      return (
-        <Actions
-          actions={[
-            { label: "Retry", onPress: state.retry },
-            { label: "Cancel", onPress: state.cancel },
-          ]}
-        />
-      );
-    case RestoreBackupStateType.OUT_OF_MEMORY:
-    case RestoreBackupStateType.UNEXPECTED_ERROR:
-      return <Actions actions={[{ label: "Cancel", onPress: state.cancel }]} />;
-    case RestoreBackupStateType.LOADING:
-    case RestoreBackupStateType.RESTORING:
-    case RestoreBackupStateType.DEVICE_LOCKED:
-    case RestoreBackupStateType.AWAITING_ALLOW_SECURE_CONNECTION:
-    case RestoreBackupStateType.AWAITING_GRANT_CONSENT:
-    case RestoreBackupStateType.AWAITING_ALLOW_LIST_APPS:
-    case RestoreBackupStateType.AWAITING_CONFIRM_LOAD_IMAGE:
-    case RestoreBackupStateType.AWAITING_CONFIRM_COMMIT_IMAGE:
-    case RestoreBackupStateType.DEVICE_DISCONNECTED:
-    case RestoreBackupStateType.BACKUP_RESTORED:
-      return null;
-    default: {
-      const unhandled: never = state;
-      return unhandled;
-    }
-  }
-}
-
-function ApplyUpdatesActions({ state }: Readonly<{ state: ApplyUpdatesState }>) {
-  switch (state.type) {
-    case ApplyUpdatesStateType.ALLOW_SECURE_CONNECTION_REFUSED:
-      return (
-        <Actions
-          actions={[
-            { label: "Retry", onPress: state.retry },
-            { label: "Cancel", onPress: state.cancel },
-          ]}
-        />
-      );
-    case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED:
-    case ApplyUpdatesStateType.OUT_OF_MEMORY:
-    case ApplyUpdatesStateType.UNEXPECTED_ERROR:
-      return <Actions actions={[{ label: "Cancel", onPress: state.cancel }]} />;
-    case ApplyUpdatesStateType.LOADING:
-    case ApplyUpdatesStateType.UPDATING:
-    case ApplyUpdatesStateType.RESTORING:
-    case ApplyUpdatesStateType.DEVICE_LOCKED:
-    case ApplyUpdatesStateType.AWAITING_UPDATE_COMPLETE:
-    case ApplyUpdatesStateType.AWAITING_ALLOW_SECURE_CONNECTION:
-    case ApplyUpdatesStateType.AWAITING_ALLOW_INSTALL_FIRMWARE:
-    case ApplyUpdatesStateType.AWAITING_GRANT_CONSENT:
-    case ApplyUpdatesStateType.AWAITING_ALLOW_LIST_APPS:
-    case ApplyUpdatesStateType.AWAITING_CONFIRM_LOAD_IMAGE:
-    case ApplyUpdatesStateType.AWAITING_CONFIRM_COMMIT_IMAGE:
-    case ApplyUpdatesStateType.DEVICE_DISCONNECTED:
-    case ApplyUpdatesStateType.UPDATES_APPLIED:
-      return null;
-    default: {
-      const unhandled: never = state;
-      return unhandled;
-    }
-  }
-}
-
-function Actions({
-  actions,
-}: Readonly<{ actions: Array<{ label: string; onPress: () => void }> }>) {
-  return (
-    <Box lx={{ marginTop: "s8", gap: "s8" }}>
-      {actions.map(({ label, onPress }) => (
-        <Button key={label} size="md" appearance="base" isFull onPress={onPress}>
-          {label}
-        </Button>
-      ))}
-    </Box>
-  );
-}
-
-function formatProgress(progress: OsUpdatesProgress | null): string {
-  if (!progress) {
-    return "No progress yet.";
-  }
-  return JSON.stringify(
-    progress,
-    (_key, value) => (typeof value === "function" ? "[Function]" : value),
-    2,
-  );
-}
-
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 16 },
+  orchestrator: { flex: 1 },
 });

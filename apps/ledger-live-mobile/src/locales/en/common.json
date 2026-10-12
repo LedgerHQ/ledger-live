@@ -5818,6 +5818,80 @@
       }
     }
   },
+  "osUpdates": {
+    "actions": {
+      "retry": "Retry",
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "closeConfirmation": {
+      "title": "OS update is in progress",
+      "description": "Your settings and apps may not be restored properly if you cancel the update now.",
+      "continue": "Continue OS update",
+      "cancel": "Cancel OS update"
+    },
+    "whatsNew": {
+      "productName": "LedgerOS™",
+      "version": "Version {{version}}",
+      "banner": "Ensure your 24 words Secret Recovery Phrase is written down on the recovery Sheet and is available, as a precaution.",
+      "title": "What’s in this OS update?",
+      "start": "Start update"
+    },
+    "preparing": {
+      "title": "Preparing for install"
+    },
+    "progress": {
+      "updatingTitle": "Updating your {{productName}}",
+      "restoringTitle": "Restoring your apps and settings",
+      "updateCount": "Update {{index}} of {{count}}",
+      "description": "Keep your device connected and nearby until the update is complete."
+    },
+    "applied": {
+      "title": "Update complete",
+      "description": "Your {{productName}} is up to date."
+    },
+    "restored": {
+      "title": "Backup restored",
+      "description": "Your apps and settings are back on your {{productName}}."
+    },
+    "continueOnDevice": {
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen."
+    },
+    "unlockDevice": {
+      "title": "Unlock your {{productName}}"
+    },
+    "deviceDisconnected": {
+      "title": "Device disconnected",
+      "description": "Reconnect your Ledger device to continue. The update will resume automatically."
+    },
+    "unexpectedError": {
+      "title": "Something went wrong",
+      "description": "The OS update could not continue. Contact Ledger support if the problem persists."
+    },
+    "batteryTooLow": {
+      "title": "Charge your {{productName}}",
+      "description": "Your device battery is at {{percentage}}%. Plug it in or charge it above 20% to continue."
+    },
+    "backupSelection": {
+      "title": "Use your existing backup?",
+      "description": "Your latest backup is more than 24 hours old. You can use it, or create a new one that will replace it. Security Key credentials are part of the backup.",
+      "useExisting": "Use existing backup",
+      "createNew": "Create a new backup"
+    },
+    "secureConnectionRefused": {
+      "title": "Secure connection refused",
+      "description": "You refused the secure connection on your device. Retry to continue."
+    },
+    "installFirmwareRefused": {
+      "title": "Installation refused",
+      "description": "The installation was refused on your device, so the update cannot continue."
+    },
+    "outOfMemory": {
+      "title": "Not enough space on your device",
+      "description": "Your device does not have enough memory to continue. Free some space and try again."
+    }
+  },
   "deviceIntentExecutor": {
     "genericStates": {
       "retryableDeviceLocked": {
