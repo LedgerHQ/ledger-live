@@ -46,7 +46,7 @@ describe("Asset discoverability", () => {
   TAGS.forEach(tag => $Tag(tag));
 
   it(`[${Account.ETH_1.currency.testLabel}] - Open the stocks assets page from the stocks category`, async () => {
-    await app.portfolio.checkStocksHoldingsSectionVisible();
+    await app.portfolio.validateStocksHoldingsSectionVisible();
 
     await app.portfolio.tapStocksSectionTitle();
 

@@ -670,7 +670,7 @@ export default class PortfolioPage {
   }
 
   @Step("Check stocks holdings section is visible")
-  async checkStocksHoldingsSectionVisible() {
+  async validateStocksHoldingsSectionVisible() {
     await this.scrollToStocksHeader(this.stocksSectionHeaderId);
     await detoxExpect(getElementById(this.stocksSectionHeaderId)).toBeVisible();
     await detoxExpect(getElementById(this.portfolioStocksListId)).toExist();
@@ -682,7 +682,6 @@ export default class PortfolioPage {
     await tapById(this.stocksSectionHeaderId);
   }
 
-  @Step("Check full stocks list page is visible")
   async checkStocksListPageVisible() {
     await this.checkListPageVisible(this.stocksListId);
   }
@@ -691,6 +690,12 @@ export default class PortfolioPage {
   async expectBorrowEntryPointVisible() {
     await scrollToId(this.borrowEntryPointId, this.accountsListView);
     await waitForElementById(this.borrowEntryPointId);
+  }
+
+  async testBorrowEntryPointVisible() {
+    // test only - delete me
+    await scrollToId(this.borrowEntryPointId, this.accountsListView);
+    await detoxExpect(getElementById(this.borrowEntryPointId)).toBeVisible();
   }
 
   /**
