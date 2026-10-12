@@ -32,6 +32,7 @@ export type MarketScreenAssetsList = {
   filters: MarketFilters;
   onAssetPress: (asset: MarketAssetDisplayData) => void;
   onEndReached: () => void;
+  onVisibleIndexChange: (index: number) => void;
 };
 
 export type MarketScreenViewModel = {
@@ -53,14 +54,21 @@ export function useMarketScreenViewModel(): MarketScreenViewModel {
   const categories = useMarketCategories({ routeCategory });
   const filters = useMarketFilters();
   const starredMarketCoins = useSelector(starredMarketCoinsSelector);
-  const { assets, loading, isFetchingNextPage, isError, emptyState, onEndReached } =
-    useMarketAssets({
-      search: search.query,
-      category: categories.selectedCategory,
-      sorting: filters.sorting,
-      timeframe: filters.timeframe,
-      starredMarketCoins,
-    });
+  const {
+    assets,
+    loading,
+    isFetchingNextPage,
+    isError,
+    emptyState,
+    onEndReached,
+    onVisibleIndexChange,
+  } = useMarketAssets({
+    search: search.query,
+    category: categories.selectedCategory,
+    sorting: filters.sorting,
+    timeframe: filters.timeframe,
+    starredMarketCoins,
+  });
   const onAssetPress = useMarketAssetPress(categories.selectedCategory);
 
   const pageTracking = useMemo(
@@ -90,6 +98,7 @@ export function useMarketScreenViewModel(): MarketScreenViewModel {
       filters,
       onAssetPress,
       onEndReached,
+      onVisibleIndexChange,
     },
     isSearchActive: search.isActive,
     pageTracking,

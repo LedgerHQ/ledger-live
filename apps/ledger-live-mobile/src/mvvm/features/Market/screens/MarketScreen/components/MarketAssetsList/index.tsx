@@ -13,7 +13,7 @@ import { MarketFiltersDrawer } from "../MarketFiltersDrawer";
 import { MarketAssetsEmptyState } from "./MarketAssetsEmptyState";
 import { MarketAssetsListHeader } from "./MarketAssetsListHeader";
 import { MarketCategorySwitcher } from "./MarketCategorySwitcher";
-import { useMarketAssetsList } from "./useMarketAssetsList";
+import { useMarketAssetsList, viewabilityConfig } from "./useMarketAssetsList";
 
 const HORIZONTAL_PADDING = 16;
 
@@ -33,6 +33,7 @@ type Props = Readonly<{
   filters: MarketFilters;
   onAssetPress: (asset: MarketAssetDisplayData) => void;
   onEndReached: () => void;
+  onVisibleIndexChange: (index: number) => void;
   showSubheader: boolean;
   header?: ReactNode;
 }>;
@@ -49,6 +50,7 @@ export function MarketAssetsList({
   filters,
   onAssetPress,
   onEndReached,
+  onVisibleIndexChange,
   showSubheader,
   header,
 }: Props) {
@@ -63,8 +65,9 @@ export function MarketAssetsList({
     handleListLayout,
     handleHeaderLayout,
     handleCategorySwitcherLayout,
+    handleViewableItemsChanged,
     keyExtractor,
-  } = useMarketAssetsList({ assets, selectedCategory, showSubheader });
+  } = useMarketAssetsList({ assets, selectedCategory, showSubheader, onVisibleIndexChange });
 
   const contentContainerStyle = useMemo(
     () => ({
@@ -168,6 +171,8 @@ export function MarketAssetsList({
         ListFooterComponent={listFooter}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
+        onViewableItemsChanged={handleViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"

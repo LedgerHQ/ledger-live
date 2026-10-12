@@ -42,6 +42,7 @@ function mockMarketAssets(overrides: Partial<ReturnType<typeof useMarketAssets>>
     isError: false,
     emptyState: undefined,
     onEndReached: jest.fn(),
+    onVisibleIndexChange: jest.fn(),
     ...overrides,
   });
 }

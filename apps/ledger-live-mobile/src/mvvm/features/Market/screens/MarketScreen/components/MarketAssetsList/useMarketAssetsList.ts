@@ -4,6 +4,7 @@ import type {
   NativeScrollEvent,
   NativeSyntheticEvent,
   SectionList,
+  ViewToken,
 } from "react-native";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import type { MarketListCategory } from "~/reducers/types";
@@ -12,12 +13,18 @@ type UseMarketAssetsListParams = Readonly<{
   assets: MarketAssetDisplayData[];
   selectedCategory: MarketListCategory;
   showSubheader: boolean;
+  onVisibleIndexChange: (index: number) => void;
 }>;
+
+export const viewabilityConfig = {
+  viewAreaCoveragePercentThreshold: 72,
+};
 
 export function useMarketAssetsList({
   assets,
   selectedCategory,
   showSubheader,
+  onVisibleIndexChange,
 }: UseMarketAssetsListParams) {
   const [listHeight, setListHeight] = useState(0);
   const [headerHeight, setHeaderHeight] = useState(0);
@@ -41,6 +48,25 @@ export function useMarketAssetsList({
   const handleCategorySwitcherLayout = useCallback((event: LayoutChangeEvent) => {
     setCategorySwitcherHeight(event.nativeEvent.layout.height);
   }, []);
+
+  const onVisibleIndexChangeRef = useRef(onVisibleIndexChange);
+  useEffect(() => {
+    onVisibleIndexChangeRef.current = onVisibleIndexChange;
+  }, [onVisibleIndexChange]);
+
+  const handleViewableItemsChanged = useCallback(
+    ({
+      viewableItems,
+    }: {
+      viewableItems: ViewToken<MarketAssetDisplayData>[];
+      changed: unknown;
+    }) => {
+      const visibleIndexes = viewableItems.flatMap(({ index }) => (index == null ? [] : [index]));
+      if (visibleIndexes.length === 0) return;
+      onVisibleIndexChangeRef.current(Math.max(...visibleIndexes));
+    },
+    [],
+  );
 
   const keyExtractor = useCallback((item: MarketAssetDisplayData) => item.id, []);
 
@@ -67,6 +93,7 @@ export function useMarketAssetsList({
     handleListLayout,
     handleHeaderLayout,
     handleCategorySwitcherLayout,
+    handleViewableItemsChanged,
     keyExtractor,
   };
 }

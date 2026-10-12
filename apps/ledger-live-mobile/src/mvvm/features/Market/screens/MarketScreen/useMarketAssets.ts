@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useResolveMarketCounterCurrency } from "@ledgerhq/live-common/market/hooks/useResolveMarketCounterCurrency";
@@ -23,12 +23,14 @@ import {
   getMarketAssets,
   getMarketDataForDisplay,
 } from "./marketAssetsHelpers";
+import { getCurrentPage } from "../../utils";
 import { useMarketAssetCategoryState } from "./useMarketAssetCategoryState";
 import {
   getNextPaginationState,
   type PaginationParams,
   useMarketAssetPagination,
 } from "./useMarketAssetPagination";
+import { useMarketAssetsRefresh } from "./useMarketAssetsRefresh";
 
 const PAGE_SIZE = 20;
 
@@ -47,6 +49,7 @@ export interface MarketAssetsResult {
   isError: boolean;
   emptyState: EmptyState;
   onEndReached: () => void;
+  onVisibleIndexChange: (index: number) => void;
 }
 
 export function useMarketAssets({
@@ -121,6 +124,20 @@ export function useMarketAssets({
   );
   const marketData = getMarketDataForDisplay(result.data, shouldFetchMarketData);
 
+  const [visibleRow, setVisibleRow] = useState({ index: 0, params: paginationParams });
+  const visiblePage =
+    visibleRow.params === paginationParams ? getCurrentPage(visibleRow.index, PAGE_SIZE) : 1;
+  const onVisibleIndexChange = useCallback(
+    (index: number) => setVisibleRow({ index, params: paginationParams }),
+    [paginationParams],
+  );
+
+  useMarketAssetsRefresh({
+    cachedMetadataMap: result.cachedMetadataMap,
+    visiblePage,
+    enabled: shouldFetchMarketData,
+  });
+
   const assets = useMemo(
     () =>
       rate == null
@@ -178,5 +195,6 @@ export function useMarketAssets({
     isError: shouldFetchAssets && (result.isError || isRateError),
     emptyState: getEmptyState({ isFavoritesCategory, hasFavoriteIds, isStocksCategory }),
     onEndReached,
+    onVisibleIndexChange,
   };
 }

@@ -269,6 +269,76 @@ describe("useMarketAssets", () => {
     });
   });
 
+  describe("refresh", () => {
+    const THREE_MINUTES = 3 * 60 * 1000;
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    function mockPagesMetadata() {
+      const staleSince = Date.now() - 2 * THREE_MINUTES;
+      const firstPageRefetch = jest.fn();
+      const secondPageRefetch = jest.fn();
+      mockMarketData({
+        data: fullMarketPage,
+        cachedMetadataMap: new Map([
+          ["0", { updatedAt: staleSince, refetch: firstPageRefetch }],
+          ["1", { updatedAt: staleSince, refetch: secondPageRefetch }],
+        ]),
+      });
+      return { firstPageRefetch, secondPageRefetch };
+    }
+
+    it("refreshes the first page when it goes stale", () => {
+      const { firstPageRefetch, secondPageRefetch } = mockPagesMetadata();
+      renderHook(() => useMarketAssets());
+
+      act(() => jest.advanceTimersByTime(THREE_MINUTES));
+
+      expect(firstPageRefetch).toHaveBeenCalledTimes(1);
+      expect(secondPageRefetch).not.toHaveBeenCalled();
+    });
+
+    it("refreshes the page that holds the last visible row", () => {
+      const { firstPageRefetch, secondPageRefetch } = mockPagesMetadata();
+      const { result } = renderHook(() => useMarketAssets());
+
+      act(() => result.current.onVisibleIndexChange(25));
+      act(() => jest.advanceTimersByTime(THREE_MINUTES));
+
+      expect(secondPageRefetch).toHaveBeenCalledTimes(1);
+      expect(firstPageRefetch).not.toHaveBeenCalled();
+    });
+
+    it("refreshes the first page again after the filters change", () => {
+      const { firstPageRefetch, secondPageRefetch } = mockPagesMetadata();
+      let sorting: "marketCap" | "volume" = "marketCap";
+      const { result, rerender } = renderHook(() => useMarketAssets({ sorting }));
+
+      act(() => result.current.onVisibleIndexChange(25));
+      sorting = "volume";
+      rerender(undefined);
+      act(() => jest.advanceTimersByTime(THREE_MINUTES));
+
+      expect(firstPageRefetch).toHaveBeenCalledTimes(1);
+      expect(secondPageRefetch).not.toHaveBeenCalled();
+    });
+
+    it("does not refresh while the market request is disabled", () => {
+      const { firstPageRefetch } = mockPagesMetadata();
+      renderHook(() => useMarketAssets({ category: "starred", starredMarketCoins: [] }));
+
+      act(() => jest.advanceTimersByTime(THREE_MINUTES));
+
+      expect(firstPageRefetch).not.toHaveBeenCalled();
+    });
+  });
+
   describe("unsupported fiat countervalue (COP)", () => {
     const SUPPORTED_WITHOUT_COP = ["usd", "eur", "vnd"];
 

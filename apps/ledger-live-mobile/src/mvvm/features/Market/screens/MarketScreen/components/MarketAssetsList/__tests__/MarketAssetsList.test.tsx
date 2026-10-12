@@ -39,6 +39,7 @@ const defaultProps = {
   filters,
   onAssetPress: jest.fn(),
   onEndReached: jest.fn(),
+  onVisibleIndexChange: jest.fn(),
   showSubheader: true,
   header: <Box testID="market-assets-list-header" />,
 } satisfies React.ComponentProps<typeof MarketAssetsList>;
@@ -46,6 +47,26 @@ const defaultProps = {
 describe("MarketAssetsList", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it("should report the last visible row to track the page on screen", () => {
+    const assets = Array.from({ length: 10 }, (_, index) =>
+      createMarketAssetDisplayData({ id: `asset-${index}` }),
+    );
+    render(<MarketAssetsList {...defaultProps} assets={assets} />);
+
+    act(() => {
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.onViewableItemsChanged({
+        viewableItems: [
+          { index: 0, item: {}, key: "header", isViewable: true },
+          { index: 7, item: assets[6], key: "asset-6", isViewable: true },
+          { index: 8, item: assets[7], key: "asset-7", isViewable: true },
+        ],
+        changed: [],
+      });
+    });
+
+    expect(defaultProps.onVisibleIndexChange).toHaveBeenCalledWith(7);
   });
 
   it("should render the header, subheader, and asset rows when ready", () => {

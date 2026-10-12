@@ -59,6 +59,7 @@ export function MarketScreenView({
         filters={assetsList.filters}
         onAssetPress={assetsList.onAssetPress}
         onEndReached={assetsList.onEndReached}
+        onVisibleIndexChange={assetsList.onVisibleIndexChange}
         showSubheader={!isSearchActive}
         header={
           !isSearchActive ? (

@@ -1,6 +1,7 @@
 import { act, renderHook } from "@tests/test-renderer";
 import type {
   LayoutChangeEvent,
+  ViewToken,
   NativeScrollEvent,
   NativeSyntheticEvent,
   SectionList,
@@ -31,10 +32,25 @@ function assignScrollResponder(
   } as unknown as SectionList<MarketAssetDisplayData>;
 }
 
+const onVisibleIndexChange = jest.fn();
+
+function viewToken(index: number | null): ViewToken<MarketAssetDisplayData> {
+  return { index, isViewable: true, key: String(index), item: {} as MarketAssetDisplayData };
+}
+
 describe("useMarketAssetsList", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should reserve the viewport space below the header and category tabs for empty states", () => {
     const { result } = renderHook(() =>
-      useMarketAssetsList({ assets: [], selectedCategory: "favorites", showSubheader: true }),
+      useMarketAssetsList({
+        assets: [],
+        selectedCategory: "favorites",
+        showSubheader: true,
+        onVisibleIndexChange,
+      }),
     );
 
     act(() => {
@@ -54,7 +70,12 @@ describe("useMarketAssetsList", () => {
     let selectedCategory: MarketListCategory = "all";
     const scrollTo = jest.fn();
     const { result, rerender } = renderHook(() =>
-      useMarketAssetsList({ assets: [], selectedCategory, showSubheader: true }),
+      useMarketAssetsList({
+        assets: [],
+        selectedCategory,
+        showSubheader: true,
+        onVisibleIndexChange,
+      }),
     );
 
     assignScrollResponder(result.current.listRef, scrollTo);
@@ -73,7 +94,12 @@ describe("useMarketAssetsList", () => {
     let selectedCategory: MarketListCategory = "all";
     const scrollTo = jest.fn();
     const { result, rerender } = renderHook(() =>
-      useMarketAssetsList({ assets: [], selectedCategory, showSubheader: true }),
+      useMarketAssetsList({
+        assets: [],
+        selectedCategory,
+        showSubheader: true,
+        onVisibleIndexChange,
+      }),
     );
 
     assignScrollResponder(result.current.listRef, scrollTo);
@@ -86,5 +112,66 @@ describe("useMarketAssetsList", () => {
     rerender(undefined);
 
     expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("should report the last visible row index", () => {
+    const { result } = renderHook(() =>
+      useMarketAssetsList({
+        assets: [],
+        selectedCategory: "all",
+        showSubheader: true,
+        onVisibleIndexChange,
+      }),
+    );
+
+    act(() => {
+      result.current.handleViewableItemsChanged({
+        viewableItems: [viewToken(null), viewToken(21), viewToken(23), viewToken(22)],
+        changed: [],
+      });
+    });
+
+    expect(onVisibleIndexChange).toHaveBeenCalledWith(23);
+  });
+
+  it("should not report anything when no row is visible", () => {
+    const { result } = renderHook(() =>
+      useMarketAssetsList({
+        assets: [],
+        selectedCategory: "all",
+        showSubheader: true,
+        onVisibleIndexChange,
+      }),
+    );
+
+    act(() => {
+      result.current.handleViewableItemsChanged({ viewableItems: [viewToken(null)], changed: [] });
+    });
+
+    expect(onVisibleIndexChange).not.toHaveBeenCalled();
+  });
+
+  it("should keep the viewability handler stable and call the latest callback", () => {
+    let callback = jest.fn();
+    const { result, rerender } = renderHook(() =>
+      useMarketAssetsList({
+        assets: [],
+        selectedCategory: "all",
+        showSubheader: true,
+        onVisibleIndexChange: callback,
+      }),
+    );
+    const initialHandler = result.current.handleViewableItemsChanged;
+
+    callback = jest.fn();
+    rerender(undefined);
+
+    expect(result.current.handleViewableItemsChanged).toBe(initialHandler);
+
+    act(() => {
+      result.current.handleViewableItemsChanged({ viewableItems: [viewToken(4)], changed: [] });
+    });
+
+    expect(callback).toHaveBeenCalledWith(4);
   });
 });
