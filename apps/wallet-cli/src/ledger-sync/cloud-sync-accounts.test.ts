@@ -242,6 +242,25 @@ describe("mergeSyncedAccounts", () => {
     },
   );
 
+  // The mode check is global and toV1() reads only the address from an EVM id, so a mode another
+  // family uses still imports the account.
+  it("imports an EVM account whose known mode belongs to another family", () => {
+    const session = Session.from([]);
+    const foreign = {
+      ...ETH_RAW,
+      id: `js:2:ethereum:${ETH_ADDR}:segwit`,
+      derivationMode: "segwit",
+    };
+    const report = mergeSyncedAccounts(session, [foreign]);
+
+    expect(report.skipped).toEqual([]);
+    expect(report.invalid).toEqual([]);
+    expect(report.imported).toEqual([expect.objectContaining({ network: "ethereum:main" })]);
+    expect(session.accounts.map(({ descriptor }) => parseV1(descriptor))).toEqual([
+      expect.objectContaining({ address: ETH_ADDR }),
+    ]);
+  });
+
   it("isolates a known currency whose id can't be decoded as invalid, not skipped", () => {
     const session = Session.from([]);
     const broken = { ...ETH_RAW, id: `js:2:ethereum:${ETH_ADDR}` };

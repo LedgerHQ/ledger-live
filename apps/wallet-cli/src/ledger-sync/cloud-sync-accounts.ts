@@ -201,7 +201,8 @@ function convertSyncedAccount(
   }
 
   // A newer Ledger Wallet may sync a derivation mode this version can't decode: skip it rather
-  // than report it as invalid, which would keep every later sync re-pulling it.
+  // than report it as invalid, which would keep every later sync re-pulling it. This runs before
+  // the id is decoded, so an unknown mode is skipped even when its id is also malformed.
   if (!KNOWN_DERIVATION_MODES.has(descriptor.derivationMode)) {
     return {
       status: "skipped",
