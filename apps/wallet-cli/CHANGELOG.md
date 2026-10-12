@@ -1,5 +1,27 @@
 # @ledgerhq/wallet-cli
 
+## 2.11.0
+
+### Minor Changes
+
+- [#23045](https://github.com/LedgerHQ/ledger-live/pull/23045) [`1b2216c`](https://github.com/LedgerHQ/ledger-live/commit/1b2216cfa6763f92595e71b3f7d61bdf1436981d) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent swap to propose a swap for human review
+
+  `agent-intent swap --profile <id> --from <currency id> --to <currency id> --amount <amount>` quotes the swap with the Swap API, then signs and submits the best quote the Agent Intent frontend can prepare (oneinch, velora, okx or lifi, with no pending token approval or Permit2) as a Swap intent, and prints the review link. `--provider` narrows the quote, `--to-amount` replaces the quoted amount, and `--dry-run` quotes and validates without submitting. Ethereum mainnet ETH and ERC-20 only; amounts are human units and stay exact.
+
+- [#23105](https://github.com/LedgerHQ/ledger-live/pull/23105) [`4bd9273`](https://github.com/LedgerHQ/ledger-live/commit/4bd9273844b2a964baef76f1a193f405966a3e90) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent send` proposes Solana sends of SOL or an SPL token (a base58 `--token` mint; Token-2022 is refused) from a Solana mainnet account to a base58 `--to`, with an optional on-chain `--memo` and no fee strategy (NTTVS-953).
+
+- [#23037](https://github.com/LedgerHQ/ledger-live/pull/23037) [`59a6452`](https://github.com/LedgerHQ/ledger-live/commit/59a64522a3f735da61fcea113a178e22faa3de19) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent status to read one intent's current state
+
+  `agent-intent status --profile <id> --intent <id>` shows the current status and details of one intent the profile proposed, using its own key. JSON adds `terminal` (true once the state is final, null for a state this version does not know) for shell polling. An unknown id and another agent's intent get the same not-found answer.
+
+- [#23174](https://github.com/LedgerHQ/ledger-live/pull/23174) [`ae6dff8`](https://github.com/LedgerHQ/ledger-live/commit/ae6dff8d85871d230dbbf4af7cd57f2ad7b53303) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent cancel to withdraw an intent before the user signs it
+
+  `agent-intent cancel --profile <id> --intent <id>` cancels a `created` or `crafted` intent, after confirmation or with `--yes`. Other known states are refused; a state this version doesn't know is left to the service.
+
+### Patch Changes
+
+- [#23273](https://github.com/LedgerHQ/ledger-live/pull/23273) [`a5e458f`](https://github.com/LedgerHQ/ledger-live/commit/a5e458f5fc1fcc33a1c36efb6995e94730daa552) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-cli): point agent-intent enrollment, recovery and intent links at app.agents.ledger(-test).com
+
 ## 2.9.0
 
 ### Minor Changes
