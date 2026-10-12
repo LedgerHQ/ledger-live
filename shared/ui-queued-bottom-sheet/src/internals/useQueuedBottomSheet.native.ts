@@ -265,6 +265,14 @@ export function useQueuedBottomSheet({
   // onDismiss (which the X button defers until the close animation finishes). Otherwise a tap on
   // another trigger during the close window sets new state that the late onDismiss would wipe,
   // forcing the user to tap twice.
+  const handleOpened = useCallback(() => {
+    if (wantsToBeOpenRef.current) return false;
+
+    logBottomSheet("Sheet settled open while no longer requested - dismissing");
+    requestDismiss();
+    return true;
+  }, [logBottomSheet, requestDismiss]);
+
   const handleAnimate = useCallback(
     (fromIndex: number, toIndex: number) => {
       if (toIndex >= 0) {
@@ -378,6 +386,7 @@ export function useQueuedBottomSheet({
     handleBackdropPress,
     handleHeaderClosePressed,
     handleDismiss,
+    handleOpened,
     handleAnimate,
     onBack,
     enablePanDownToClose: !areBottomSheetsLocked && !preventBackdropClick,

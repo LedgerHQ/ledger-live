@@ -631,6 +631,48 @@ describe("useQueuedBottomSheet", () => {
 
   // gorhom ignores a dismiss for a sheet that has not finished presenting, so the sheet arrives on
   // screen showing a consumer that has already been told to hide its content.
+  it("dismisses a sheet that settles open after a close during its entrance was ignored", () => {
+    jest.useFakeTimers();
+    try {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      let isRequestingToBeOpened = true;
+
+      const { result, rerender } = renderHook(() =>
+        useQueuedBottomSheet({ isRequestingToBeOpened }),
+      );
+
+      signalOpen();
+      isRequestingToBeOpened = false;
+      rerender(undefined);
+      expect(mockDismiss).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+      act(() => {
+        result.current.handleOpened();
+      });
+
+      expect(mockDismiss).toHaveBeenCalledTimes(2);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it("leaves a settled sheet open while it is still requested", () => {
+    const { signalOpen } = setupBottomSheetStateCapture();
+
+    const { result } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }));
+
+    signalOpen();
+    mockDismiss.mockClear();
+    act(() => {
+      result.current.handleOpened();
+    });
+
+    expect(mockDismiss).not.toHaveBeenCalled();
+  });
+
   it("dismisses a sheet that arrives on screen after being settled as closed", () => {
     jest.useFakeTimers();
     try {

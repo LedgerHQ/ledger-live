@@ -59,6 +59,7 @@ export function QueuedBottomSheet({
     handleBackdropPress,
     handleHeaderClosePressed,
     handleDismiss,
+    handleOpened,
     handleAnimate,
     onBack: hookOnBack,
     enablePanDownToClose: computedEnablePanDownToClose,
@@ -120,7 +121,10 @@ export function QueuedBottomSheet({
       onBack={hasBackButton ? hookOnBack : undefined}
       onHeaderClosePressed={handleHeaderClosePressed}
       onAnimate={handleAnimate}
-      onOpen={onOpened}
+      onOpen={() => {
+        if (handleOpened()) return;
+        onOpened?.();
+      }}
       onDismiss={handleDismiss}
       backdropPressBehavior={preventBackdropClick || areBottomSheetsLocked ? "none" : "close"}
       onBackdropPress={handleBackdropPress}
