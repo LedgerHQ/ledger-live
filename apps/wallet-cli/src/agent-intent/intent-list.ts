@@ -1,6 +1,7 @@
 import {
   AGENT_INTENT_STATUSES,
   isAgentIntentStatus,
+  isSendOperation,
   type AgentIntentRecord,
   type AgentIntentStatus,
 } from "@ledgerhq/agent-intent-sdk";
@@ -120,10 +121,10 @@ async function toEntry(
   { id, status, intent, createdAt, updatedAt, failureReason }: AgentIntentRecord,
   token: (contract: string) => Promise<EthereumToken | null>,
 ): Promise<IntentListEntry> {
-  // TODO(NTTVS-1028): narrow with isSendOperation once the vendored SDK types listed operations.
-  const amount = text(intent.amount);
-  const asset = intent.asset
-    ? { type: intent.asset.type, assetReference: intent.asset.assetReference ?? null }
+  const send = isSendOperation(intent) ? intent : null;
+  const amount = send?.amount ?? null;
+  const asset = send
+    ? { type: send.asset.type, assetReference: send.asset.assetReference ?? null }
     : null;
   let displayAmount: string | null = null;
   // BigInt would throw on a malformed amount and fail the whole page, or read hex.
@@ -140,11 +141,11 @@ async function toEntry(
     type: intent.type,
     network: text(intent.network),
     sender: text(intent.sender),
-    recipient: text(intent.recipient),
+    recipient: send?.recipient ?? null,
     amount,
     displayAmount,
     asset,
-    feeStrategy: text(intent.feeStrategy),
+    feeStrategy: send?.feeStrategy ?? null,
     description: text(intent.description),
     failureReason: failureReason ?? null,
     createdAt,

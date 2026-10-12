@@ -30,7 +30,7 @@ const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const PYUSD_MINT = "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo";
 
-const DEEPLINK = "https://agent-intent.ledger-test.com/intents/intent-123";
+const DEEPLINK = "https://app.agents.ledger-test.com/intents/intent-123";
 
 const enrolledProfile = {
   profileId: "bot",
@@ -662,7 +662,7 @@ describe("agent-intent send", () => {
     });
 
     it("succeeds with a null intent id and a warning when the link has an unexpected shape", async () => {
-      createSendIntentImpl = async () => "https://agent-intent.ledger-test.com/review?id=abc";
+      createSendIntentImpl = async () => "https://app.agents.ledger-test.com/review?id=abc";
 
       await runSend({ output: "json" });
 

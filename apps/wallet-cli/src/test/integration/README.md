@@ -24,8 +24,10 @@ wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" --source <
 matches (`--help` lists the same values). Omitting it defaults to `other`.
 
 Open the printed link and approve it with a Ledger device; `enroll` waits for the approval to be
-relayed back and saves it. A `--environment staging` profile only completes against a frontend
-wired to the staging service, which also needs the Ledger infra VPN.
+relayed back and saves it. The deployed test frontend rejects a `--environment staging` link with
+"This enrollment link is for the staging Agent Intent environment, but this app uses production."
+A staging profile only completes against a frontend wired to the staging service, which also needs
+the Ledger infra VPN.
 
 Prerequisites:
 
