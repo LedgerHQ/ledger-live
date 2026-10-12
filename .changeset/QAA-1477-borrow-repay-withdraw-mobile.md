@@ -1,7 +1,7 @@
 ---
-"ledger-live-mobile-e2e-tests": patch
-"ledger-live-desktop-e2e-tests": patch
-"@ledgerhq/live-e2e-shared": patch
+"ledger-live-mobile-e2e-tests": minor
+"ledger-live-desktop-e2e-tests": minor
+"@ledgerhq/live-e2e-shared": minor
 ---
 
 Add mobile Borrow E2E coverage for full repay (B2CQA-6073) and withdraw collateral (B2CQA-6080), closing the LLD/LLM parity gap on those keys (QAA-1477). Open loan, repay and withdraw now share one spec, and each resets the ERC-20 allowance its approval step needs, with the spender resolved from the partner's own action.

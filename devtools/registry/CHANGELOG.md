@@ -219,25 +219,4 @@
 - Updated dependencies []:
   - @devtools/feature-flags@0.6.4
 
-## 0.1.9-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.6.4-next.0
-
-## 0.1.8
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.6.3
-
-## 0.1.8-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.6.3-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

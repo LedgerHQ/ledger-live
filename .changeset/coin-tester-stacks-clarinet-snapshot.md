@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tester-stacks": patch
+"@ledgerhq/coin-tester-stacks": minor
 ---
 
 perf: boot the devnet from Clarinet's epoch-4.0 snapshot on Clarinet v3.24.1

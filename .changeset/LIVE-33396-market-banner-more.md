@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 Rename the market banner "View all" tile to "More" so it no longer gets cropped in longer languages.

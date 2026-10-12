@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/coin-cardano": major
 "@ledgerhq/live-common": minor
-"@ledgerhq/coin-tester-cardano": patch
+"@ledgerhq/coin-tester-cardano": minor
 ---
 
 fix(coin-cardano): stop resolving the currency with `getCryptoCurrencyById`

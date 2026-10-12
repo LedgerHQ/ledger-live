@@ -1,5 +1,5 @@
 ---
-"@features/flow-pay-contact": patch
+"@features/flow-pay-contact": minor
 ---
 
 Wrap long Pay contact names inside the desktop tooltip

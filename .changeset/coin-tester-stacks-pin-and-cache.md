@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tester-stacks": patch
+"@ledgerhq/coin-tester-stacks": minor
 ---
 
 fix: pin the devnet images and rust toolchain, and cache the patched clarinet binary in CI

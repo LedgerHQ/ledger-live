@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-dmk-shared": patch
+"@ledgerhq/live-dmk-shared": minor
 "@ledgerhq/live-common": minor
 "live-mobile": minor
 ---

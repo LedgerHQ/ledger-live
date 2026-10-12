@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-aleo": patch
+"@ledgerhq/coin-aleo": minor
 ---
 
 Aleo listOperations: set tx.feesPayer, include the priority fee in tx.fees, add details.stake to staking operations

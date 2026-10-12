@@ -1,6 +1,6 @@
 ---
-"@domain/api-aggregated-assets": patch
-"@ledgerhq/live-common": patch
+"@domain/api-aggregated-assets": minor
+"@ledgerhq/live-common": minor
 ---
 
 chore(llc): read `chainId` from config

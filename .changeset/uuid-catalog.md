@@ -1,9 +1,9 @@
 ---
-"@ledgerhq/coin-solana": patch
-"@ledgerhq/ledger-wallet-framework": patch
-"@ledgerhq/live-common": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/coin-solana": minor
+"@ledgerhq/ledger-wallet-framework": minor
+"@ledgerhq/live-common": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 chore: take `uuid` from the pnpm catalog (11.1.0)

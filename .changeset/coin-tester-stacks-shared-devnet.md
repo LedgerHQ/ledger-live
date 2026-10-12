@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tester-stacks": patch
+"@ledgerhq/coin-tester-stacks": minor
 ---
 
 perf: run every scenario on one shared devnet, each with its own sender account

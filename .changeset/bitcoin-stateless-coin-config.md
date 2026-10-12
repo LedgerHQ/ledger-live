@@ -4,9 +4,9 @@
 "@ledgerhq/live-common": minor
 "@ledgerhq/types-live": minor
 "@shared/env": minor
-"@ledgerhq/coin-tester-bitcoin": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/coin-tester-bitcoin": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 fix(coin-bitcoin): read the explorer and tuning values from the injected coin config

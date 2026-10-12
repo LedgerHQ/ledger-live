@@ -2,8 +2,8 @@
 "@ledgerhq/live-dmk-desktop": minor
 "@ledgerhq/types-live": minor
 "@shared/feature-flags": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 chore(live-dmk): remove the ldmkTransport feature flag

@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-stacks": patch
-"@ledgerhq/coin-tester-stacks": patch
+"@ledgerhq/coin-stacks": minor
+"@ledgerhq/coin-tester-stacks": minor
 ---
 
 chore: take `@stacks/network` and `@stacks/transactions` from the pnpm catalog

@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 fix(sidebar): reopen the sidebar after an automatic collapse

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tester-stacks": patch
+"@ledgerhq/coin-tester-stacks": minor
 ---
 
 fix: put the bitcoin snapshot in place before bitcoind starts, and print why the devnet failed to boot

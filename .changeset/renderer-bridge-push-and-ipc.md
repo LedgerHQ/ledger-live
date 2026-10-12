@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 Move the auto-updater and deep-link channels and the remaining renderer IPC onto the preload bridge, in preparation for enabling `contextIsolation`.

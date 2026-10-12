@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/transaction-observability": patch
+"@ledgerhq/transaction-observability": minor
 ---
 
 Map the ETH staking dApp exit calls that reached `earn_transaction_*` as `transaction_type: unknown`.

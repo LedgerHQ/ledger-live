@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 fix(notifications): request POST_NOTIFICATIONS on Android 13+

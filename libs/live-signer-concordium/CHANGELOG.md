@@ -199,19 +199,4 @@
   - @ledgerhq/errors@7.0.0
   - @ledgerhq/coin-concordium@0.18.0
 
-## 0.6.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004), [`8ab9e50`](https://github.com/LedgerHQ/ledger-live/commit/8ab9e504a5b004e28f5e80f490b837b3c2526f44)]:
-  - @ledgerhq/errors@7.0.0-next.0
-  - @ledgerhq/coin-concordium@0.18.0-next.0
-
-## 0.6.2
-
-### Patch Changes
-
-- Updated dependencies [[`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a)]:
-  - @ledgerhq/coin-concordium@0.17.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 "@features/flow-app-password-removal": minor
 ---
 

@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/live-common": patch
-"@ledgerhq/coin-cosmos": patch
-"@ledgerhq/coin-celo": patch
+"@ledgerhq/live-common": minor
+"@ledgerhq/coin-cosmos": minor
+"@ledgerhq/coin-celo": minor
 ---
 
 chore(llc): Backfill the now-mandatory `name`/`unit` fields

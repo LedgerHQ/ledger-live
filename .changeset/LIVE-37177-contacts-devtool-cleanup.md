@@ -1,8 +1,8 @@
 ---
 "@domain/entity-contact": minor
 "@features/platform-contacts": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 refactor(contacts): clean up the Contacts debug tools

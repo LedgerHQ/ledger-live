@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tester-stacks": patch
+"@ledgerhq/coin-tester-stacks": minor
 ---
 
 chore: drop the external bitcoin miner and tighten the devnet timeouts

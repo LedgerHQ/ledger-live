@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/live-common": minor
-"live-mobile": patch
-"ledger-live-desktop": patch
+"live-mobile": minor
+"ledger-live-desktop": minor
 ---
 
 fix(cg-client): remove the unused CoinGecko supported coins list query
