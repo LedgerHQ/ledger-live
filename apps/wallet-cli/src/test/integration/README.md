@@ -10,13 +10,13 @@ Keycloak/LKRP sign-in and the Agent Intent BFF of the profile's environment. Eac
 **pending** intent that nobody approves. No transaction is signed or broadcast, but reject it in the
 frontend afterwards.
 
-The deployed test frontend (`https://agent-intent.ledger-test.com/`) currently talks to the
+The deployed test frontend (`https://app.agents.ledger-test.com/`) currently talks to the
 **production** service stack, so its enrollment completion is for `production`. Enroll with that
 environment and point the handoff at the test frontend:
 
 ```bash
 wallet-cli agent-intent enroll --profile <profile-id> --name "<name>" --source <runtime> \
-  --environment production --app-url https://agent-intent.ledger-test.com/
+  --environment production --app-url https://app.agents.ledger-test.com/
 ```
 
 `--source` is the runtime or harness the agent runs in, not its model provider: one of

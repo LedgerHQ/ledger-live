@@ -54,7 +54,12 @@ const LKRP_SDK_KEYS = ["createAgentLedgerSyncSdk"] as const;
 
 const CLOUD_SYNC_KEYS = ["pullSyncedAccounts", "mergeSyncedAccounts"] as const;
 
-const TOKEN_LOOKUP_KEYS = ["findEthereumToken", "findEthereumSwapAsset"] as const;
+const TOKEN_LOOKUP_KEYS = [
+  "findEthereumToken",
+  "findEthereumSwapAsset",
+  "findSolanaToken",
+  "findSolanaMintProgram",
+] as const;
 
 const SWAP_QUOTE_KEYS = ["fetchAgentSwapQuote"] as const;
 

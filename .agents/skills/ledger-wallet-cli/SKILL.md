@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/swap/intents — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose EVM payments and swaps for human review and list the intents it proposed, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/swap/intents — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose Ethereum and Solana payments and Ethereum swaps for human review and list the intents it proposed, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -413,7 +413,7 @@ the profile's `accountAccess`.
 
 ### Proposing a payment (`agent-intent send`)
 
-`agent-intent send` **proposes** an Ethereum send for a human to review — it never signs or
+`agent-intent send` **proposes** an Ethereum or Solana send for a human to review — it never signs or
 broadcasts anything and needs no device. It signs the proposal with the profile's key, submits it
 to the Agent Intent service, and prints a review link; the payment only happens if a human opens
 that link and approves it on their Ledger device.
@@ -427,6 +427,14 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
 pnpm --silent wallet-cli start agent-intent send --profile my-bot --from 0xSender \
   --to 0xRecipient --amount '25 USDC' --token 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
 
+# Native SOL: the 'SOL' ticker makes it a Solana send; base58 addresses, optional on-chain memo:
+pnpm --silent wallet-cli start agent-intent send --profile my-bot --account solana-1 \
+  --to RecipientBase58 --amount '0.5 SOL' --memo "Invoice 42"
+
+# SPL token: a base58 --token is the mint, so the send is on Solana:
+pnpm --silent wallet-cli start agent-intent send --profile my-bot --account solana-1 \
+  --to RecipientBase58 --amount '25 USDC' --token EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+
 # Validate everything and print the proposal without submitting (no keychain, no sign-in):
 pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
   --to 0xRecipient --amount '0.01 ETH' --dry-run
@@ -435,14 +443,23 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
 - **Enrolled profile only** (its `agent-intent enroll` approval went through). It uses the
   profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
   `--bff-url`/`--keycloak-url` override carries over), and its key in the OS keychain.
-- **Ethereum mainnet only**, for both a `--account` label and a `--from` address. The Agent Intent
-  SDK has no testnet, so a staging profile also proposes an Ethereum mainnet transfer.
-- **Addresses:** `--from`, `--to` and `--token` must be `0x` + 40 hex characters. Mixed-case input
-  must pass its EIP-55 checksum, which catches a typo in a copied address.
+- **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL and SPL tokens. `--token` picks
+  the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana); without it, `SOL`
+  → Solana and any other ticker → Ethereum. A `--account` label must be a mainnet account of that
+  network. The Agent Intent SDK has no testnet, so a staging profile also proposes a mainnet transfer.
+- **Addresses:** on Ethereum, `--from`, `--to` and `--token` must be `0x` + 40 hex characters, and
+  mixed-case input must pass its EIP-55 checksum, which catches a typo in a copied address. On
+  Solana, `--from` and `--to` must be canonical base58 32-byte addresses.
+- **Tokens** are looked up in CAL (`assets token ethereum|solana <address>`), and the `--amount`
+  ticker must match. Token-2022 mints are refused, because Agent Intent can't send them yet.
+- **Solana** takes no `--fee-strategy`, because the service sets the priority fee. `--memo` (1-280
+  characters, an emoji counts as two; Solana only) goes on chain with the transfer.
 - **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount
-  above uint256 is an error. JSON output gives `amount` in base units as a string.
-- **`--fee-strategy slow|medium|fast`** (default `medium`) is the fee level the human is asked to
-  approve. wallet-cli doesn't check the sender's balance; the human reviewing the intent is
+  above uint256 (u64 lamports on Solana) is an error. JSON output gives `amount` in base units
+  (wei, token units or lamports) as a string, and the envelope's `network` as `ethereum:main` or
+  `solana:main`.
+- **`--fee-strategy slow|medium|fast`** (Ethereum only, default `medium`) is the fee level the human
+  is asked to approve. wallet-cli doesn't check the sender's balance; the human reviewing the intent is
   responsible for that.
 - **Don't retry blindly.** If the service accepted the request (a timeout, or an unreadable link),
   the intent may already exist. Check the frontend before re-running, or you'll propose a duplicate.

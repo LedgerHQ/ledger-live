@@ -129,7 +129,7 @@ export default defineCommand({
       const sender =
         "sender" in senderInput
           ? parseEvmAddress(senderInput.sender, "sender")
-          : await resolveSenderFromAccount(senderInput.account, "swap");
+          : await resolveSenderFromAccount(senderInput.account, "swap", "ethereum");
       const from = await resolveSwapAsset(flags.from, "from");
       const to = await resolveSwapAsset(flags.to, "to");
       if (from.id === to.id) throw new Error("--from and --to are the same asset.");

@@ -40,7 +40,7 @@ import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from
 import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
-import type { SendIntentSummary } from "./agent-intent/send-intent";
+import { NETWORK_LABELS, type SendIntentSummary } from "./agent-intent/send-intent";
 import type { IntentListEntry } from "./agent-intent/intent-list";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
@@ -987,16 +987,19 @@ function swapIntentSummaryLines(summary: SwapIntentSummary): string[] {
 }
 
 function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
+  const { asset: sent } = summary;
   const asset =
-    summary.asset.type === "native"
-      ? summary.asset.ticker
-      : `${summary.asset.ticker} (${summary.asset.contract})`;
+    sent.type === "native"
+      ? sent.ticker
+      : `${sent.ticker} (${sent.type === "erc20" ? sent.contract : sent.mint})`;
   return [
     `Profile: ${summary.profileId} (${summary.environment})`,
     `From:    ${summary.sender}`,
     `To:      ${summary.recipient}`,
+    `Network: ${NETWORK_LABELS[summary.network]}`,
     `Amount:  ${summary.displayAmount} ${asset}`,
-    `Fee:     ${summary.feeStrategy}`,
+    ...(summary.network === "ethereum" ? [`Fee:     ${summary.feeStrategy}`] : []),
+    ...(summary.network === "solana" && summary.memo ? [`Memo:    ${summary.memo}`] : []),
     ...(summary.description ? [`Note:    ${summary.description}`] : []),
   ];
 }
@@ -1465,7 +1468,8 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
     asset: summary.asset,
     amount: summary.amount,
     displayAmount: summary.displayAmount,
-    feeStrategy: summary.feeStrategy,
+    ...(summary.network === "ethereum" ? { feeStrategy: summary.feeStrategy } : {}),
+    ...(summary.network === "solana" && summary.memo ? { memo: summary.memo } : {}),
     ...(summary.description ? { description: summary.description } : {}),
   };
 }

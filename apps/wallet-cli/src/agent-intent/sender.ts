@@ -1,20 +1,27 @@
 import { resolveAccountDescriptorV1 } from "../commands/inputs";
 import { parseEvmAddress } from "./evm";
 
-/** Only Ethereum mainnet accounts can propose an intent: that's the one network Agent Intent
- * supports in wallet-cli. */
+const MAINNET_ACCOUNT = {
+  ethereum: "an Ethereum mainnet account",
+  solana: "a Solana mainnet account",
+};
+
+/** Only a mainnet address account on the intent's network can propose it. */
 export async function resolveSenderFromAccount(
   label: string,
   intentType: "send" | "swap",
+  network: keyof typeof MAINNET_ACCOUNT,
 ): Promise<string> {
   const descriptor = await resolveAccountDescriptorV1(label);
   const { name, env } = descriptor.network;
-  if (name !== "ethereum" || env !== "main" || descriptor.type !== "address") {
-    const network = env === "main" ? name : `${name} ${env}`;
+  if (name !== network || env !== "main" || descriptor.type !== "address") {
+    const actual = env === "main" ? name : `${name} ${env}`;
     throw new Error(
-      `Account "${label}" is on ${network}; Agent Intent ${intentType} intents support Ethereum ` +
-        "mainnet accounts only.",
+      `Account "${label}" is on ${actual}; this Agent Intent ${intentType} needs ` +
+        `${MAINNET_ACCOUNT[network]}.`,
     );
   }
-  return parseEvmAddress(descriptor.address, "account");
+  return network === "ethereum"
+    ? parseEvmAddress(descriptor.address, "account")
+    : descriptor.address;
 }
