@@ -13,9 +13,9 @@ jest.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { language: "en" } }),
 }));
 
-jest.mock("~/renderer/hooks/useNetworkStatus", () => ({
-  ...jest.requireActual("~/renderer/hooks/useNetworkStatus"),
-  useNetworkStatus: () => ({ networkStatus: "online" }),
+jest.mock("@shared/network-status", () => ({
+  ...jest.requireActual("@shared/network-status"),
+  useNetworkState: () => ({ isConnected: true, isInternetReachable: true }),
 }));
 
 jest.mock("~/renderer/hooks/useTheme", () => ({
