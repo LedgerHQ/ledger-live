@@ -5,26 +5,22 @@ down, where a `package.json` lint cannot see it — so the check reads what pnpm
 
 ## How it runs
 
-[`.pnpmfile.cjs`](../../.pnpmfile.cjs) calls `assertDependencyChecks` from pnpm's
-`afterAllResolved` hook, which receives the lockfile object pnpm is about to write. The error
+[`check-lockfile.ts`](./check-lockfile.ts) parses the committed `pnpm-lock.yaml` and passes it to
+`assertDependencyChecks`. It runs from the `dependency-checks` step of the `hk` pre-commit hook and
+from Danger ([`validation/dependency-checks.ts`](../validation/dependency-checks.ts)), which fails the required
+"Validate PR conventions" job. To run it by hand: `node tools/danger/dependency-checks/cli.ts`. The error
 names the group and, for allowlists, the dependency chain:
 
 ```console
-$ pnpm install
+$ node tools/danger/dependency-checks/cli.ts
 1 dependency check violation(s):
 
 secp256k1 — The monorepo converges on @noble/curves for secp256k1 (LIVE-37372).
   tiny-secp256k1 entered the tree: libs/coin-modules/coin-bitcoin > ecpair > tiny-secp256k1
 ```
 
-The hook runs when pnpm resolves, which is any `pnpm install` that is not a frozen install
-against an already matching lockfile. That is the interesting case: adding a dependency updates
-the lockfile and re-resolves, so the guard sees the new graph.
-
-`--ignore-pnpmfile` is still caught. The lockfile stores a `pnpmfileChecksum` of `.pnpmfile.cjs`;
-a frozen install whose checksum does not match fails with `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH`.
-Hand-editing `pnpm-lock.yaml` while leaving that checksum alone is not covered — frozen CI would
-skip resolution and never call the hook.
+It reads the file rather than hooking into `pnpm install`, so it also covers lockfiles regenerated
+by Renovate (which runs pnpm with `--ignore-pnpmfile`) and hand edits.
 
 ## Config
 

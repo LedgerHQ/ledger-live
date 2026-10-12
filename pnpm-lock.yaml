@@ -660,8 +660,6 @@ overrides:
   expect: 30.5.0
   pretty-format@^30.0.0: 30.5.0
 
-pnpmfileChecksum: sha256-JyE64KwSjZ7Ykvi+y4PoBd1Pk100XNhr0fI7RUun0QE=
-
 patchedDependencies:
   '@bunli/core@0.9.1':
     hash: fbe5c853111cb92eab35c575f445da139fd7664c9be9bbca5ebbadfb0f292565
@@ -19359,6 +19357,9 @@ importers:
       danger:
         specifier: 13.0.10
         version: 13.0.10
+      yaml:
+        specifier: 2.8.3
+        version: 2.8.3
 
   tools/nx-plugins/generators:
     devDependencies:
@@ -47015,7 +47016,7 @@ snapshots:
       ora: 5.4.1
       semver: 7.8.1
       wcwidth: 1.0.1
-      yaml: 2.8.1
+      yaml: 2.8.3
     transitivePeerDependencies:
       - typescript
 
@@ -58449,7 +58450,7 @@ snapshots:
       metro-cache: 0.83.3
       metro-core: 0.83.3
       metro-runtime: 0.83.3
-      yaml: 2.8.1
+      yaml: 2.8.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -58464,7 +58465,7 @@ snapshots:
       metro-cache: 0.83.7
       metro-core: 0.83.7
       metro-runtime: 0.83.7
-      yaml: 2.8.1
+      yaml: 2.8.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color

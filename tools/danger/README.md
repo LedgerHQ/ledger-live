@@ -12,8 +12,9 @@ We validate that a PR follows the repository conventions:
 
 - [pr-title.ts](./validation/pr-title.ts) – the PR title is a conventional commit
 - [commits.ts](./validation/commits.ts) – every commit in the PR is a conventional commit
+- [dependency-checks.ts](./validation/dependency-checks.ts) – the resolved dependency graph in `pnpm-lock.yaml` follows the rules in [dependency-checks](./dependency-checks/README.md)
 
-A third validation, [node-modules-size.ts](./validation/node-modules-size.ts), is informational: when a PR changes `pnpm-lock.yaml`, it estimates the `node_modules` size delta from the lockfile diff ([engine](./node-modules-size.ts), no install) and, above 50 MB, comments it and adds the `deps-size` label. It never fails the check.
+A last validation, [node-modules-size.ts](./validation/node-modules-size.ts), is informational: when a PR changes `pnpm-lock.yaml`, it estimates the `node_modules` size delta from the lockfile diff ([engine](./node-modules-size.ts), no install) and, above 50 MB, comments it and adds the `deps-size` label. It never fails the check.
 
 Both title and commit checks read the repo-root [commitlint.config.js](../../commitlint.config.js) via
 [commitlint.ts](./commitlint.ts), but **they are deliberately not equally strict**:
