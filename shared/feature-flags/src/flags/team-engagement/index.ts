@@ -9,7 +9,6 @@ export * from "./lwmAnalyticsConsentOnboarding";
 export * from "./lwmBackupHub";
 export * from "./lwmGenericAwarenessModal";
 export * from "./lwmOnboardingCounterfeitWarning";
-export * from "./lwmOnboardingSeededDevice";
 export * from "./lldAnalyticsOptInPrompt";
 export * from "./lwdAnalyticsOptInScreenV2";
 export * from "./lldOnboardingEnableSync";

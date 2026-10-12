@@ -317,7 +317,6 @@ export type Features = CurrencyFeatures & {
   lwmAnalyticsConsentOnboarding: DefaultFeature;
   lwmGenericAwarenessModal: DefaultFeature;
   lwmOnboardingCounterfeitWarning: DefaultFeature;
-  lwmOnboardingSeededDevice: DefaultFeature;
   lwmNotificationsOptIn: DefaultFeature;
   lwmProductTour: DefaultFeature;
   lwmBackupHub: DefaultFeature;
