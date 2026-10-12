@@ -4,4 +4,5 @@ export const checksTestIds = {
   continue: "device-onboarding-checks-continue",
   quit: "device-onboarding-checks-quit",
   allowSheet: "device-onboarding-checks-allow-sheet",
+  updateSheet: "device-onboarding-checks-update-sheet",
 } as const;

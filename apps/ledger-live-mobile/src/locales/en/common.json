@@ -2543,25 +2543,18 @@
     "checks": {
       "close": "Close",
       "idle": {
-        "title": "Check my device",
-        "description": "We'll confirm this device is genuine and that its operating system is up to date.",
+        "title": "Check your device",
+        "description": "Let's confirm that your Ledger device is genuine and up-to-date.",
         "cta": "Check my device"
       },
       "checking": {
-        "title": "Checking your device",
-        "description": "Keep your device nearby. This can take a moment."
+        "title": "Check your device",
+        "description": "Confirming your Ledger signer is safe to use and up-to-date.",
+        "cta": "Checking..."
       },
       "succeeded": {
-        "title": "Your device is genuine and up to date",
-        "description": "You can continue.",
+        "title": "Device genuine and up-to-date",
         "cta": "Continue"
-      },
-      "updating": {
-        "title": "Updating your device"
-      },
-      "allow": {
-        "title": "Allow the secure connection",
-        "description": "Confirm on your device to continue the check."
       }
     }
   },

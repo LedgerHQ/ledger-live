@@ -92,12 +92,6 @@ export default function DebugSettings({
         onPress={() => navigate(ScreenName.DebugDevTools)}
       />
       <SettingsRow
-        title="Device onboarding"
-        desc="Preview the checks screen states"
-        iconLeft={<IconsLegacy.NanoXFoldedMedium size={24} color="black" />}
-        onPress={() => navigate(ScreenName.DebugDeviceOnboarding)}
-      />
-      <SettingsRow
         title="Analytics consent QA"
         desc="Policy bumps, consent state, drawer preview"
         iconLeft={<IconsLegacy.ChartNetworkMedium size={24} color="black" />}

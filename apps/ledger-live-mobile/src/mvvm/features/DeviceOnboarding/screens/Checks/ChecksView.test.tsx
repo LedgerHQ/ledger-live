@@ -50,6 +50,7 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 
 const device = {
   deviceId: "device-id",
+  deviceName: "Lily's Stax",
   modelId: DeviceModelId.stax,
   wired: false,
 };
@@ -93,11 +94,9 @@ describe("ChecksView", () => {
     const { user, onStart, onContinue } = renderChecks("idle");
 
     expect(
-      screen.getByText(
-        "We'll confirm this device is genuine and that its operating system is up to date.",
-      ),
+      screen.getByText("Let's confirm that your Ledger device is genuine and up-to-date."),
     ).toBeVisible();
-    expect(screen.queryByText("Allow the secure connection")).toBeNull();
+    expect(screen.queryByText("Tap on “Allow” to start Ledger Genuine Check")).toBeNull();
 
     await user.press(screen.getByRole("button", { name: "Check my device" }));
 
@@ -108,9 +107,17 @@ describe("ChecksView", () => {
   it("should leave the flow from the header while the check is running", async () => {
     const { user, onQuit, onStart, onContinue } = renderChecks("checking");
 
-    expect(screen.getByText("Checking your device")).toBeVisible();
+    expect(screen.getByText("Check your device")).toBeVisible();
+    expect(
+      screen.getByText("Confirming your Ledger signer is safe to use and up-to-date."),
+    ).toBeVisible();
     expect(screen.queryByRole("button", { name: "Check my device" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Continue" })).toBeNull();
+
+    await user.press(screen.getByText("Checking..."));
+
+    expect(onStart).not.toHaveBeenCalled();
+    expect(onContinue).not.toHaveBeenCalled();
 
     await user.press(screen.getByRole("button", { name: "Close" }));
 
@@ -122,9 +129,9 @@ describe("ChecksView", () => {
   it("should close the allow prompt without leaving the check", async () => {
     const { user, onCloseSheet, onQuit, onStart } = renderChecks("awaitingAllow");
 
-    expect(screen.getByText("Checking your device")).toBeVisible();
-    expect(screen.getByText("Allow the secure connection")).toBeVisible();
-    expect(screen.getByText("Confirm on your device to continue the check.")).toBeVisible();
+    expect(screen.getByText("Check your device")).toBeVisible();
+    expect(screen.getByText("Tap on “Allow” to start Ledger Genuine Check")).toBeVisible();
+    expect(screen.getByText("Lily's Stax")).toBeVisible();
 
     await user.press(screen.getByTestId(`${checksTestIds.allowSheet}-dismiss`));
 
@@ -140,7 +147,7 @@ describe("ChecksView", () => {
   it("should continue only after the device is genuine and up to date", async () => {
     const { user, onContinue, onStart } = renderChecks("succeeded");
 
-    expect(screen.getByText("Your device is genuine and up to date")).toBeVisible();
+    expect(screen.getByText("Device genuine and up-to-date")).toBeVisible();
 
     await user.press(screen.getByRole("button", { name: "Continue" }));
 
@@ -148,14 +155,21 @@ describe("ChecksView", () => {
     expect(onStart).not.toHaveBeenCalled();
   });
 
-  it("should expose no pressable control while the operating system is updating", () => {
-    const { onQuit, onStart, onContinue, onCloseSheet } = renderChecks("updating");
+  it("should offer the existing OS update sheet while the device needs an update", async () => {
+    const { user, onAcceptUpdate, onDeclineUpdate, onCloseSheet, onQuit, onStart } =
+      renderChecks("updating");
 
-    expect(screen.getByText("Updating your device")).toBeVisible();
-    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.getByText("Ledger OS update required")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+
+    await user.press(screen.getByText("Update Ledger OS"));
+    await user.press(screen.getByText("Cancel operation"));
+    await user.press(screen.getByTestId(`${checksTestIds.updateSheet}-dismiss`));
+
+    expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
+    expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
+    expect(onCloseSheet).toHaveBeenCalledTimes(1);
     expect(onQuit).not.toHaveBeenCalled();
     expect(onStart).not.toHaveBeenCalled();
-    expect(onContinue).not.toHaveBeenCalled();
-    expect(onCloseSheet).not.toHaveBeenCalled();
   });
 });

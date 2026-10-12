@@ -469,7 +469,7 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugDeviceOnboarding}
         component={DebugDeviceOnboarding}
         options={{
-          title: "Device onboarding",
+          headerShown: false,
         }}
       />
       <Stack.Screen
