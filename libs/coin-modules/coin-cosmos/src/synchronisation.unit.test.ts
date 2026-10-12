@@ -129,7 +129,7 @@ describe("getAccountShape", () => {
       delegations: [{ amount: new BigNumber(1) }, { amount: new BigNumber(2) }],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account as CosmosAccount).cosmosResources.delegatedBalance).toEqual(new BigNumber(3));
+    expect((account as CosmosAccount).cosmosResources?.delegatedBalance).toEqual(new BigNumber(3));
   });
 
   it("should sum up unbondings to balance", async () => {
@@ -172,7 +172,7 @@ describe("getAccountShape", () => {
       ],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account as CosmosAccount).cosmosResources.pendingRewardsBalance).toEqual(
+    expect((account as CosmosAccount).cosmosResources?.pendingRewardsBalance).toEqual(
       new BigNumber(3),
     );
   });
@@ -238,7 +238,7 @@ describe("getAccountShape", () => {
       } as AccountShapeInfo<CosmosAccount>,
       syncConfig,
     );
-    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("02ab");
+    expect((account as CosmosAccount).cosmosResources?.publicKey).toEqual("02ab");
   });
 
   it("falls back to the previously-persisted publicKey on a deviceless re-sync", async () => {
@@ -250,13 +250,13 @@ describe("getAccountShape", () => {
       },
       syncConfig,
     );
-    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("0399");
+    expect((account as CosmosAccount).cosmosResources?.publicKey).toEqual("0399");
   });
 
   it("defaults publicKey to empty string when neither device nor initial account has it", async () => {
     mockAccountInfo({});
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("");
+    expect((account as CosmosAccount).cosmosResources?.publicKey).toEqual("");
     expect(account.xpub).toEqual("address");
     expect(account.sequence).toBe(0);
   });
@@ -284,7 +284,7 @@ describe("getAccountShape", () => {
       syncConfig,
     );
     expect(account.xpub).toEqual("02persisted");
-    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("02persisted");
+    expect((account as CosmosAccount).cosmosResources?.publicKey).toEqual("02persisted");
   });
 
   it("should get the memo correctly", async () => {
