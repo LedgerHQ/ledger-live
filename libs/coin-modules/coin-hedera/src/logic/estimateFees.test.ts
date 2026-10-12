@@ -244,7 +244,14 @@ describe("getEstimatedFees", () => {
     });
   });
 
-  it("returns zero tinybars early when asset has no assetReference (native asset for ContractCall)", async () => {
+  it.each([
+    ["asset has no assetReference", recipientAddress, { type: "native" as const }],
+    [
+      "recipient is empty",
+      "",
+      { type: "erc20" as const, assetReference: mockedTokenCurrencyERC20.contractAddress },
+    ],
+  ])("returns zero tinybars early without network calls when %s", async (_, recipient, asset) => {
     const result = await estimateFees({
       configOrCurrencyId: mockedAccount.currency.id,
       operationType: HEDERA_OPERATION_TYPES.ContractCall,
@@ -252,14 +259,15 @@ describe("getEstimatedFees", () => {
         intentType: "transaction",
         type: HEDERA_TRANSACTION_MODES.Send,
         sender: senderAddress,
-        recipient: recipientAddress,
+        recipient,
         amount: BigInt(1000000),
-        asset: { type: "native" },
+        asset,
       },
     });
 
     expect(result).toMatchObject({ tinybars: new BigNumber(0) });
     expect(apiClient.getNetworkFees).not.toHaveBeenCalled();
+    expect(apiClient.getAccount).not.toHaveBeenCalled();
   });
 
   it("uses DEFAULT_GAS_PRICE_TINYBARS when ContractCall fee type is absent from network fees", async () => {
