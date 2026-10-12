@@ -1,7 +1,8 @@
 import React from "react";
-import { getEnv } from "@shared/env";
-import { server, HttpResponse, http } from "tests/server";
+import { delay } from "msw";
+import { server, http } from "tests/server";
 import { waitFor, render, cleanup } from "tests/testSetup";
+import { MARKET_ENDPOINT, mockMarket } from "tests/utils/assetDetailMocks";
 import createStore from "~/state-manager/configureStore";
 import { LiftSplashOnAppAvailability } from "../index";
 
@@ -11,8 +12,6 @@ const windowApi = {
   reloadRenderer: jest.fn(),
   openWindow: jest.fn(),
 };
-
-const OFAC_ENDPOINT = `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/markets`;
 
 describe("LiftSplashOnAppAvailability", () => {
   beforeEach(() => {
@@ -32,21 +31,31 @@ describe("LiftSplashOnAppAvailability", () => {
   });
 
   it("should call appLoaded when the check reports geo-blocked", async () => {
-    server.use(
-      http.get(OFAC_ENDPOINT, () => {
-        return HttpResponse.json({}, { status: 451 });
-      }),
-    );
+    mockMarket.fail(451);
     const store = createStore({});
     render(<LiftSplashOnAppAvailability />, { store });
     await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
   });
 
   it("should call appLoaded when the check fails open", async () => {
-    server.use(http.get(OFAC_ENDPOINT, () => HttpResponse.error()));
+    mockMarket.networkError();
     const store = createStore({});
     render(<LiftSplashOnAppAvailability />, { store });
     await waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled());
+  });
+
+  it("should not call appLoaded while the availability check is pending", async () => {
+    server.use(
+      http.get(MARKET_ENDPOINT, async () => {
+        await delay("infinite");
+      }),
+    );
+    const store = createStore({});
+    render(<LiftSplashOnAppAvailability />, { store });
+
+    await expect(
+      waitFor(() => expect(windowApi.appLoaded).toHaveBeenCalled(), { timeout: 300 }),
+    ).rejects.toThrow();
   });
 
   it("should not throw if window.api is undefined", async () => {
