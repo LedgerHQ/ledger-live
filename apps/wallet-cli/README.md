@@ -112,7 +112,7 @@ pnpm start -- <command> [args]
 - In `apps/wallet-cli`: `pnpm build` (Bunli native bundle → `dist/`)
 - From repo root: `pnpm build:wallet-cli`
 
-Locally, `pnpm build` compiles your own platform only. On CI (`CI` set), it compiles every release target, which needs the OpenTUI runtime packages of every platform: CI declares `supportedArchitectures` through the `pnpm-cross-platform-optional-deps` composite.
+Locally, `pnpm build` compiles your own platform only. With `CI=true` (set by GitHub Actions), it compiles every release target, which needs the OpenTUI runtime packages of every platform: CI declares `supportedArchitectures` through the `pnpm-cross-platform-optional-deps` composite. `prepare:npm`, `pack:check` and `smoke:npm` package every target, so they need that `CI=true` build.
 
 ## Tests
 

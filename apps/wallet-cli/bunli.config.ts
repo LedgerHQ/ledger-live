@@ -14,9 +14,10 @@ export default defineConfig({
     outdir: "./dist",
     minify: true,
     // Local installs only fetch the current platform's optional deps, so cross-compiling is CI-only.
-    targets: process.env.CI
-      ? ["darwin-arm64", "linux-arm64", "linux-x64", "windows-x64"]
-      : ["native"],
+    targets:
+      process.env.CI === "true"
+        ? ["darwin-arm64", "linux-arm64", "linux-x64", "windows-x64"]
+        : ["native"],
     // The `usb` native addon is embedded via a direct require() in src/embed-usb-native.ts.
     // node-gyp-build uses dynamic resolution that Bun can't detect; the explicit require() fixes that.
     // With minify, process.platform branches are dead-code-eliminated per target.
