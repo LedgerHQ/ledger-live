@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { cardanoCoinConfig as config } from "../fixtures/config";
 import { isTestnet } from "../logic";
 import { fetchLatestBlock } from "./getLatestBlock";
 
@@ -9,8 +9,7 @@ jest.mock("../logic", () => ({ isTestnet: jest.fn() }));
 const mockNetwork = jest.mocked(network);
 const mockIsTestnet = jest.mocked(isTestnet);
 
-// isTestnet is mocked, so the concrete currency value is irrelevant to routing.
-const currency = { id: "cardano" } as CryptoCurrency;
+// isTestnet is mocked, so the concrete config value is irrelevant to routing.
 
 describe("fetchLatestBlock", () => {
   afterEach(() => {
@@ -21,7 +20,7 @@ describe("fetchLatestBlock", () => {
     mockIsTestnet.mockReturnValue(false);
     mockNetwork.mockResolvedValue({ data: { blockHeight: 13494170 } } as never);
 
-    const result = await fetchLatestBlock(currency);
+    const result = await fetchLatestBlock(config);
 
     expect(result).toEqual({ blockHeight: 13494170 });
     const call = mockNetwork.mock.calls[0][0];
@@ -34,9 +33,9 @@ describe("fetchLatestBlock", () => {
     mockIsTestnet.mockReturnValue(true);
     mockNetwork.mockResolvedValue({ data: { blockHeight: 1 } } as never);
 
-    await fetchLatestBlock(currency);
+    await fetchLatestBlock(config);
 
-    expect(mockIsTestnet).toHaveBeenCalledWith(currency);
+    expect(mockIsTestnet).toHaveBeenCalledWith(config);
     expect(mockNetwork.mock.calls[0][0].url).toContain("cardanoscan");
   });
 });

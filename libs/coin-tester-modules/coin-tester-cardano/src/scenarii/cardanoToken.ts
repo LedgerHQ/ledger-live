@@ -46,6 +46,7 @@ export const scenarioCardanoToken: Scenario<GenericTransaction, Account> = {
           unit: { name: "ada", code: "ADA", magnitude: 6 },
           maxFeesWarning: 0,
           maxFeesError: 0,
+          testnet: false,
         },
       },
     });

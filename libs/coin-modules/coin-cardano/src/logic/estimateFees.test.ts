@@ -3,7 +3,7 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { cardanoCoinConfig as config } from "../fixtures/config";
 import { APITransaction } from "../api/api-types";
 import { getAllTransactionsByKeys } from "../api/fetchTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
@@ -25,7 +25,6 @@ const mockFetchNetworkInfo = jest.mocked(fetchNetworkInfo);
 // transaction list, so wrap a plain list with a dummy blockHeight in the tests.
 const paged = (transactions: APITransaction[]) => ({ transactions, blockHeight: 1 });
 
-const currency = getCryptoCurrencyById("cardano");
 const SENDER =
   "addr1q8mgw8geggkl2hs0m6rq3pgt69uxttpqcgu6euxje5tt6plxjtjrnskhhtt03g6l3sr98p9t8mtlajr26vmwjzep77pqxn8cms";
 const RECIPIENT =
@@ -72,7 +71,7 @@ beforeEach(() => {
 
 describe("estimateFees", () => {
   it("returns the fee Typhon computes for a native send", async () => {
-    const { value } = await estimateFees(currency, sendIntent());
+    const { value } = await estimateFees(config, "cardano", sendIntent());
 
     expect(typeof value).toBe("bigint");
     expect(value).toBeGreaterThan(0n);
@@ -81,7 +80,7 @@ describe("estimateFees", () => {
   it("computes the exact deterministic fee for a fixed native send", async () => {
     // Pins the lovelace fee for a stable mocked tx so a fee regression that affects the shared
     // build path (not just estimate-vs-craft parity) is caught.
-    const { value } = await estimateFees(currency, sendIntent());
+    const { value } = await estimateFees(config, "cardano", sendIntent());
 
     expect(value).toBe(166865n);
   });
@@ -97,7 +96,8 @@ describe("estimateFees", () => {
     );
 
     const { value } = await estimateFees(
-      currency,
+      config,
+      "cardano",
       sendIntent({ amount: 100n, asset: { type: "token", assetReference: `${POLICY_ID}abcd` } }),
     );
 
@@ -116,7 +116,7 @@ describe("estimateFees", () => {
       valAddress: POOL_HASH,
     } as StakingTransactionIntent<StringMemo>;
 
-    const { value } = await estimateFees(currency, intent);
+    const { value } = await estimateFees(config, "cardano", intent);
 
     expect(value).toBeGreaterThan(0n);
   });
@@ -124,8 +124,8 @@ describe("estimateFees", () => {
   it("matches the fee craftTransaction reports for the same intent (no custom fee)", async () => {
     const intent = sendIntent();
 
-    const { value } = await estimateFees(currency, intent);
-    const crafted = await craftTransaction(currency, intent);
+    const { value } = await estimateFees(config, "cardano", intent);
+    const crafted = await craftTransaction(config, "cardano", intent);
 
     expect(value.toString()).toBe(crafted.details?.fees);
   });
@@ -133,7 +133,7 @@ describe("estimateFees", () => {
   it("propagates errors when the transaction cannot be built", async () => {
     mockFetchTxs.mockResolvedValue(paged([]));
 
-    await expect(estimateFees(currency, sendIntent())).rejects.toThrow(
+    await expect(estimateFees(config, "cardano", sendIntent())).rejects.toThrow(
       "No spendable UTXOs for sender address",
     );
   });

@@ -6,6 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { fetchNetworkInfo } from "./api/getNetworkInfo";
 import { buildTransaction } from "./buildTransaction";
 import { CardanoAccount, Transaction } from "./types";
+import coinConfig from "./config";
 
 /**
  * Prepare transaction before checking status
@@ -20,7 +21,7 @@ export const prepareTransaction: AccountBridge<
   let patch = {};
 
   if (!transaction.protocolParams) {
-    const networkInfo = await fetchNetworkInfo(account.currency);
+    const networkInfo = await fetchNetworkInfo(coinConfig.getCoinConfig(account.currency.id));
     transaction = updateTransaction(transaction, {
       protocolParams: networkInfo.protocolParams,
     });

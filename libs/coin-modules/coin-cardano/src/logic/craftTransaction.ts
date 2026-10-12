@@ -6,7 +6,7 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CardanoCoinConfig } from "../config";
 import {
   Transaction as TyphonTransaction,
   address as TyphonAddress,
@@ -94,7 +94,7 @@ function stakeHashCredential(stakeKey: string): TyphonTypes.HashCredential {
  */
 function addAccountObligations(
   typhonTx: TyphonTransaction,
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
   stakeKey: string,
   delegation: CardanoDelegation,
 ): void {
@@ -102,7 +102,7 @@ function addAccountObligations(
   if (rewards.lte(0)) return;
 
   const stakeCredential = stakeHashCredential(stakeKey);
-  const networkId = isTestnet(currency)
+  const networkId = isTestnet(config)
     ? TyphonTypes.NetworkId.TESTNET
     : TyphonTypes.NetworkId.MAINNET;
 
@@ -289,7 +289,8 @@ function applyCustomFee(
  * downstream, not part of this body — so no xpub/account sync is needed here.
  */
 export async function buildUnsignedTransaction(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
+  currencyId: string,
   intent: TransactionIntent<StringMemo>,
   customFees?: FeeEstimation,
 ): Promise<TyphonTransaction> {
@@ -303,15 +304,15 @@ export async function buildUnsignedTransaction(
   // Protocol params, the sender's tx history (for UTXOs) and the delegation state are independent
   // network calls — fetch them in parallel rather than serially.
   const [{ protocolParams }, { transactions }, delegation] = await Promise.all([
-    fetchNetworkInfo(currency),
-    getAllTransactionsByKeys([paymentKey], 0, currency),
-    stakeKey ? getDelegationInfo(currency, stakeKey) : Promise.resolve(undefined),
+    fetchNetworkInfo(config),
+    getAllTransactionsByKeys(config, [paymentKey], 0),
+    stakeKey ? getDelegationInfo(config, stakeKey) : Promise.resolve(undefined),
   ]);
 
   const typhonTx = new TyphonTransaction({
     protocolParams: toTyphonProtocolParams(protocolParams),
   });
-  typhonTx.setTTL(getTTL(currency.id));
+  typhonTx.setTTL(getTTL(currencyId));
 
   const memo = "memo" in intent && intent.memo?.type === "string" ? intent.memo.value : undefined;
   if (memo) {
@@ -341,7 +342,7 @@ export async function buildUnsignedTransaction(
     if (!stakeKey) throw new Error("Sender address has no stake credential");
     // Account-level reward/vote obligations (Conway) belong to the staking flows only.
     if (delegation) {
-      addAccountObligations(typhonTx, currency, stakeKey, delegation);
+      addAccountObligations(typhonTx, config, stakeKey, delegation);
     }
     addStakingCertificates(
       typhonTx,
@@ -411,11 +412,12 @@ export async function buildUnsignedTransaction(
  * payload (ready for the downstream device-signing step) and the resolved fee.
  */
 export async function craftTransaction(
-  currency: CryptoCurrency,
+  config: CardanoCoinConfig,
+  currencyId: string,
   intent: TransactionIntent<StringMemo>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const tx = await buildUnsignedTransaction(currency, intent, customFees);
+  const tx = await buildUnsignedTransaction(config, currencyId, intent, customFees);
   const { payload } = tx.buildTransaction();
   return {
     transaction: payload,
