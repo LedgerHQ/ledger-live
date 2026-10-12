@@ -1,6 +1,6 @@
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { CURRENCIES_LIST } from "@ledgerhq/live-common/currencies/mock";
-import { CosmosAccount, CosmosResources } from "@ledgerhq/live-common/families/cosmos/types";
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { RenderResult } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import React from "react";
@@ -18,14 +18,6 @@ describe("Cosmos Delegations Component", () => {
     type: "Account",
     currency: CURRENCIES_LIST.find(c => c.id === "cosmos")!,
     spendableBalance: BigNumber(0),
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    cosmosResources: {
-      delegations: [],
-      pendingRewardsBalance: BigNumber(0),
-      unbondings: [],
-      delegatedBalance: BigNumber(0),
-      unbondingBalance: BigNumber(0),
-    } as unknown as CosmosResources,
     stakingResources: {
       delegations: [],
       pendingRewardsBalance: BigNumber(0),
@@ -121,5 +113,19 @@ describe("Cosmos Delegations Component", () => {
     }) as unknown as RenderResult;
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("throws when the account has no staking resources", () => {
+    (getCurrencyConfiguration as jest.Mock).mockReturnValue({ disableDelegation: false });
+    jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const noStaking = {
+      type: "Account",
+      currency: CURRENCIES_LIST.find(c => c.id === "cosmos")!,
+      spendableBalance: BigNumber(0),
+    } as unknown as CosmosAccount;
+
+    expect(() => render(<Delegations account={noStaking} />)).toThrow(
+      "cosmos staking account required",
+    );
   });
 });

@@ -3,7 +3,7 @@ import {
   CosmosValidatorItem,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { Account } from "@ledgerhq/types-live";
+import { Account, isStakingAccount } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
@@ -16,6 +16,7 @@ import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFam
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { prepareCurrency } from "~/renderer/bridge/cache";
+import invariant from "invariant";
 
 type Props = {
   t: TFunction;
@@ -25,11 +26,13 @@ type Props = {
   chosenVoteAccAddr: string;
 };
 const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
+  invariant(isStakingAccount(account), "cosmos staking account required");
+
   const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
   const unit = useAccountUnit(account);
   const currencyId = account.currency.id;
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, account.stakingResources.validators, search);
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
@@ -48,7 +51,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
 
   useEffect(() => {
     if (validators.length > 0 || account.type !== "Account" || search !== "") return;
-    prepareCurrency(account.currency).catch(() => {});
+    prepareCurrency(account.currency).catch(() => { });
   }, [account.type, account.currency, validators.length, search]);
 
   const chosenValidator = useMemo(() => {
