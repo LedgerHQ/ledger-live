@@ -5,6 +5,7 @@ import {
   hasNewCountervaluesToExport,
   importCountervalues,
   inferCurrencyAPIID,
+  setCountervaluesState,
   type CounterValuesState,
   type CounterValuesStateRaw,
   type CountervaluesSettings,
@@ -22,16 +23,17 @@ import type {
   StartCountervaluesSyncPayload,
 } from "../middleware";
 import {
-  countervaluesPollingIsPollingSelector,
-  countervaluesPollingTriggerLoadSelector,
-  countervaluesStatePendingSelector,
   countervaluesStateSelector,
+  countervaluesSyncIsPollingSelector,
+  countervaluesSyncPendingSelector,
+  countervaluesSyncTriggerLoadSelector,
+  type CountervaluesStoreState,
+} from "../reducer";
+import {
   setCountervaluesPollingIsPolling,
   setCountervaluesPollingTriggerLoad,
-  setCountervaluesState,
   setCountervaluesStateError,
   setCountervaluesStatePending,
-  type CountervaluesState,
 } from "../slice";
 import { log } from "../../utils/internals/logger";
 
@@ -419,7 +421,7 @@ function reconcileSessionWithStore<S>(context: SyncContext<S>, session: Session)
   }
 
   const state = context.getState();
-  if (countervaluesPollingTriggerLoadSelector(state) && !countervaluesStatePendingSelector(state)) {
+  if (countervaluesSyncTriggerLoadSelector(state) && !countervaluesSyncPendingSelector(state)) {
     loadRates(context, session.rates, countervaluesStateSelector(state), settings);
   }
 
@@ -485,7 +487,7 @@ function loadRates<S>(
  * The session holding the timer.
  */
 function syncPollingTimer<S>(context: SyncContext<S>, session: Session): void {
-  const isPolling = countervaluesPollingIsPollingSelector(context.getState());
+  const isPolling = countervaluesSyncIsPollingSelector(context.getState());
   const { refreshRate } = readSettings(context, session);
   if (session.polling?.isPolling === isPolling && session.polling.refreshRate === refreshRate) {
     return;
@@ -661,7 +663,7 @@ export type Session = {
 };
 
 /** The part of the store state the sync reads besides the app's own settings. */
-type CountervaluesRootState = { countervalues: CountervaluesState };
+type CountervaluesRootState = { countervalues: CountervaluesStoreState };
 
 /** The supported crypto ids query, as far as the sync reads it. */
 type SupportedIdsResult = { data?: string[]; error?: unknown };

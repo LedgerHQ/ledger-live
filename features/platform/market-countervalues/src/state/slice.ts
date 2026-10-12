@@ -1,31 +1,24 @@
-import { createAction, type UnknownAction } from "@reduxjs/toolkit";
-import { initialState, type CounterValuesState } from "@domain/entity-market-countervalues";
+import { createAction, createSlice } from "@reduxjs/toolkit";
+import { wipeCountervalues } from "@domain/entity-market-countervalues";
 
-// The Redux slice both apps mount at the `countervalues` store key. Its action types are plain
-// strings because listeners outside the slice match them by value.
+// The countervalues loop's own state, mounted next to the rates by `countervaluesReducer`. The action
+// types are plain strings because listeners outside the slice match them by value.
 
-export type CountervaluesState = {
-  countervalues: {
-    state: CounterValuesState;
-    pending: boolean;
-    error: Error | null;
-  };
-  polling: {
-    isPolling: boolean;
-    triggerLoad: boolean;
-  };
+export type CountervaluesSyncState = {
+  /** A load is in flight. */
+  pending: boolean;
+  /** The last load's error, cleared when the next load starts. */
+  error: Error | null;
+  isPolling: boolean;
+  /** A load is asked for; the middleware runs it once no load is pending. */
+  triggerLoad: boolean;
 };
 
-export const countervaluesInitialState: CountervaluesState = {
-  countervalues: {
-    state: initialState,
-    pending: false,
-    error: null,
-  },
-  polling: {
-    isPolling: true,
-    triggerLoad: false,
-  },
+export const countervaluesSyncInitialState: CountervaluesSyncState = {
+  pending: false,
+  error: null,
+  isPolling: true,
+  triggerLoad: false,
 };
 
 export const setCountervaluesPollingIsPolling = createAction<boolean>(
@@ -34,70 +27,35 @@ export const setCountervaluesPollingIsPolling = createAction<boolean>(
 export const setCountervaluesPollingTriggerLoad = createAction<boolean>(
   "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD",
 );
-export const setCountervaluesState = createAction<CounterValuesState>("COUNTERVALUES_STATE_SET");
 export const setCountervaluesStateError = createAction<Error>("COUNTERVALUES_STATE_SET_ERROR");
 export const setCountervaluesStatePending = createAction<boolean>(
   "COUNTERVALUES_STATE_SET_PENDING",
 );
-export const wipeCountervalues = createAction("COUNTERVALUES_WIPE");
 
-/**
- * Not `createSlice` nor `createReducer`: immer would deep-freeze the stored rate `Map`s, which
- * `loadCountervalues` mutates in place on the next poll.
- */
-export function countervaluesReducer(
-  state: CountervaluesState = countervaluesInitialState,
-  action: UnknownAction,
-): CountervaluesState {
-  if (setCountervaluesPollingIsPolling.match(action)) {
-    return { ...state, polling: { ...state.polling, isPolling: action.payload } };
-  }
-  if (setCountervaluesPollingTriggerLoad.match(action)) {
-    return { ...state, polling: { ...state.polling, triggerLoad: action.payload } };
-  }
-  if (setCountervaluesState.match(action)) {
-    return { ...state, countervalues: { ...state.countervalues, state: action.payload } };
-  }
-  if (setCountervaluesStateError.match(action)) {
-    return {
-      ...state,
-      countervalues: { ...state.countervalues, error: action.payload, pending: false },
-    };
-  }
-  if (setCountervaluesStatePending.match(action)) {
-    return {
-      ...state,
-      countervalues: {
-        ...state.countervalues,
-        pending: action.payload,
+export const countervaluesSyncSlice = createSlice({
+  name: "countervaluesSync",
+  initialState: countervaluesSyncInitialState,
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(setCountervaluesPollingIsPolling, (state, { payload }) => {
+        state.isPolling = payload;
+      })
+      .addCase(setCountervaluesPollingTriggerLoad, (state, { payload }) => {
+        state.triggerLoad = payload;
+      })
+      .addCase(setCountervaluesStatePending, (state, { payload }) => {
+        state.pending = payload;
         // a new load clears the previous error
-        error: action.payload ? null : state.countervalues.error,
-      },
-    };
-  }
-  if (wipeCountervalues.match(action)) {
-    return {
-      ...state,
-      countervalues: { ...state.countervalues, state: initialState, pending: false, error: null },
-    };
-  }
-  return state;
-}
-
-type RootState = { countervalues: CountervaluesState };
-
-export function countervaluesPollingIsPollingSelector(s: RootState): boolean {
-  return s.countervalues.polling.isPolling;
-}
-export function countervaluesPollingTriggerLoadSelector(s: RootState): boolean {
-  return s.countervalues.polling.triggerLoad;
-}
-export function countervaluesStateSelector(s: RootState): CounterValuesState {
-  return s.countervalues.countervalues.state;
-}
-export function countervaluesStatePendingSelector(s: RootState): boolean {
-  return s.countervalues.countervalues.pending;
-}
-export function countervaluesStateErrorSelector(s: RootState): Error | null {
-  return s.countervalues.countervalues.error;
-}
+        if (payload) state.error = null;
+      })
+      .addCase(setCountervaluesStateError, (state, { payload }) => {
+        state.error = payload;
+        state.pending = false;
+      })
+      .addCase(wipeCountervalues, state => {
+        state.pending = false;
+        state.error = null;
+      });
+  },
+});

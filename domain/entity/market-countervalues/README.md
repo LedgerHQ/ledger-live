@@ -19,6 +19,11 @@ turning accounts into pairs to track lives in the app layer.
 - `logic.ts` — `calculate` and `calculateMany`, the `lenseRate*` lookups, `initialState`,
   `importCountervalues` / `exportCountervalues`, the tracking-pair resolution, and `applyRatePatches`,
   which folds freshly fetched rates into the state.
+- `slice.ts`, `actions.ts` — the rates slice (`countervaluesRatesSlice`) and its actions
+  (`setCountervaluesState`, `wipeCountervalues`). `@features/platform-market-countervalues` mounts it
+  inside the store's `countervalues` key and owns the selectors. A stored state is frozen shallowly
+  only: immer's deep freeze would walk every rate entry on each load. Nothing writes into a stored
+  state, because `applyRatePatches` copies each `Map` it patches.
 
 Currencies come from `@domain/entity-currency`; only `type`, `id`, `ticker` and
 `units[0].magnitude` are ever read.

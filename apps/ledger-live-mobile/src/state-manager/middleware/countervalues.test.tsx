@@ -8,12 +8,12 @@ import {
   exportCountervalues,
   importCountervalues,
   pairId,
+  wipeCountervalues,
 } from "@domain/entity-market-countervalues";
 import {
   createCountervaluesMiddleware,
   startCountervaluesSync,
   useCountervaluesState,
-  wipeCountervalues,
 } from "@features/platform-market-countervalues";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { createStore } from "@tests/test-renderer";
@@ -164,6 +164,6 @@ describe("the mobile countervalues middleware", () => {
     await settle();
 
     expect(jest.mocked(importCountervalues).mock.calls.length).toBe(restoresAtBoot + 1);
-    expect(Object.keys(store.getState().countervalues.countervalues.state.data)).toEqual([BTC_USD]);
+    expect(Object.keys(store.getState().countervalues.rates.data)).toEqual([BTC_USD]);
   });
 });

@@ -2,6 +2,7 @@ import type { UnknownAction } from "@reduxjs/toolkit";
 import {
   exportCountervalues,
   initialState,
+  setCountervaluesState,
   type CountervaluesSettings,
   type TrackingPair,
 } from "@domain/entity-market-countervalues";
@@ -10,12 +11,8 @@ import type { RateSource } from "@domain/api-market-countervalues";
 import type { Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import {
-  countervaluesReducer,
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-  setCountervaluesState,
-} from "../slice";
+import { countervaluesReducer } from "../reducer";
+import { setCountervaluesPollingIsPolling, setCountervaluesPollingTriggerLoad } from "../slice";
 import { setCountervaluesLogger } from "../../utils/setCountervaluesLogger";
 import {
   cancelRestart,
@@ -256,7 +253,7 @@ describe("persistNewRates", () => {
 
     persistNewRates(
       context,
-      createSession({ lastPersisted: context.getState().countervalues.countervalues.state }),
+      createSession({ lastPersisted: context.getState().countervalues.rates }),
     );
 
     expect(persist).not.toHaveBeenCalled();
@@ -268,17 +265,14 @@ describe("persistNewRates", () => {
     const session = createSession();
     store.countervalues = {
       ...store.countervalues,
-      countervalues: {
-        ...store.countervalues.countervalues,
-        state: buildCV({ pair: { from: bitcoin, to: usd }, latest: 30_000 }),
-      },
+      rates: buildCV({ pair: { from: bitcoin, to: usd }, latest: 30_000 }),
     };
 
     persistNewRates(context, session);
     persistNewRates(context, session);
 
     expect(persist).toHaveBeenCalledTimes(1);
-    expect(session.lastPersisted).toBe(store.countervalues.countervalues.state);
+    expect(session.lastPersisted).toBe(store.countervalues.rates);
   });
 });
 

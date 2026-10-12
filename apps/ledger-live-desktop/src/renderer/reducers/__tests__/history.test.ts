@@ -18,7 +18,7 @@ import historyReducer, {
   hasUnreadOperationsSelector,
 } from "../history";
 import type { State } from "../index";
-import type { CountervaluesState } from "@features/platform-market-countervalues";
+import type { CountervaluesStoreState } from "@features/platform-market-countervalues";
 
 const settingsUnreadBase = {
   currenciesSettings: {},
@@ -44,14 +44,12 @@ function makeUnreadTestState(lastSeenDate: string | null, accounts: Account[]): 
   } as unknown as State;
 }
 
-function createCountervaluesState(): CountervaluesState {
+function createCountervaluesState(): CountervaluesStoreState {
   return {
-    countervalues: {
-      state: countervaluesInitialState,
+    rates: countervaluesInitialState,
+    sync: {
       pending: false,
       error: null,
-    },
-    polling: {
       isPolling: true,
       triggerLoad: false,
     },

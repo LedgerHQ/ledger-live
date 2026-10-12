@@ -3,23 +3,24 @@ import { act, renderHook } from "@testing-library/react";
 import { configureStore, type Middleware, type UnknownAction } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { BigNumber } from "bignumber.js";
+import { wipeCountervalues } from "@domain/entity-market-countervalues";
 import { buildCV } from "@domain/entity-market-countervalues/mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   useCalculate,
   useCalculateCountervalueCallback,
+  useCountervaluesLoadStatus,
   useCountervaluesPolling,
   useCountervaluesState,
   useSendAmount,
 } from "./countervaluesHooks";
+import { countervaluesInitialState, countervaluesReducer } from "../state/reducer";
 import {
-  countervaluesInitialState,
-  countervaluesReducer,
   setCountervaluesPollingIsPolling,
   setCountervaluesPollingTriggerLoad,
-  wipeCountervalues,
-  type CountervaluesState,
+  setCountervaluesStateError,
+  setCountervaluesStatePending,
 } from "../state/slice";
 
 // Real hooks on a real store. Nothing runs the polling loop, so nothing reaches the network.
@@ -39,13 +40,14 @@ function createTestStore() {
     dispatched.push(action as UnknownAction);
     return next(action);
   };
-  const countervalues: CountervaluesState = {
-    ...countervaluesInitialState,
-    countervalues: { state, pending: true, error: loadError },
-  };
   const store = configureStore({
     reducer: { countervalues: countervaluesReducer },
-    preloadedState: { countervalues },
+    preloadedState: {
+      countervalues: {
+        rates: state,
+        sync: { ...countervaluesInitialState.sync, pending: true, error: loadError },
+      },
+    },
     // The state holds an Error and rate Maps.
     middleware: getDefault =>
       getDefault({ serializableCheck: false, immutableCheck: false }).concat(record),
@@ -65,13 +67,70 @@ describe("countervalues hooks", () => {
     const { result } = renderHook(
       () => ({
         state: useCountervaluesState(),
-        polling: useCountervaluesPolling(),
+        loadStatus: useCountervaluesLoadStatus(),
       }),
       { wrapper: wrapperFor(store) },
     );
 
     expect(result.current.state).toBe(state);
-    expect(result.current.polling).toMatchObject({ pending: true, error: loadError });
+    expect(result.current.loadStatus).toEqual({ pending: true, error: loadError });
+  });
+
+  it("keep the polling controls stable through a load cycle, without re-rendering", () => {
+    const { store } = createTestStore();
+    let renders = 0;
+    const { result } = renderHook(
+      () => {
+        renders++;
+        return useCountervaluesPolling();
+      },
+      { wrapper: wrapperFor(store) },
+    );
+    const controls = result.current;
+
+    act(() => {
+      store.dispatch(setCountervaluesStatePending(false));
+      store.dispatch(setCountervaluesStatePending(true));
+      store.dispatch(setCountervaluesStateError(new Error("again")));
+    });
+
+    expect(renders).toBe(1);
+    expect(result.current).toBe(controls);
+    expect(Object.keys(controls).sort()).toEqual(["poll", "start", "stop", "wipe"]);
+  });
+
+  it("re-render the load status only when pending or the error changes", () => {
+    const { store } = createTestStore();
+    let renders = 0;
+    const { result } = renderHook(
+      () => {
+        renders++;
+        return useCountervaluesLoadStatus();
+      },
+      { wrapper: wrapperFor(store) },
+    );
+    const initial = result.current;
+
+    act(() => {
+      store.dispatch(setCountervaluesPollingTriggerLoad(true));
+      store.dispatch({ type: "UNRELATED" });
+    });
+    expect(renders).toBe(1);
+    expect(result.current).toBe(initial);
+
+    // A load starts: pending stays true and the error clears. Then it fails.
+    const nextError = new Error("again");
+    act(() => {
+      store.dispatch(setCountervaluesStatePending(true));
+    });
+    expect(renders).toBe(2);
+    expect(result.current).toEqual({ pending: true, error: null });
+
+    act(() => {
+      store.dispatch(setCountervaluesStateError(nextError));
+    });
+    expect(renders).toBe(3);
+    expect(result.current).toEqual({ pending: false, error: nextError });
   });
 
   it("calculate from the store's state", () => {

@@ -8,6 +8,8 @@ import {
 import {
   exportCountervalues,
   initialState,
+  setCountervaluesState,
+  wipeCountervalues,
   type CounterValuesState,
   type CountervaluesSettings,
   type TrackingPair,
@@ -18,14 +20,12 @@ import type { Currency } from "@domain/entity-currency";
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
+import { countervaluesInitialState, countervaluesReducer } from "./reducer";
 import {
-  countervaluesReducer,
   setCountervaluesPollingIsPolling,
   setCountervaluesPollingTriggerLoad,
-  setCountervaluesState,
   setCountervaluesStateError,
   setCountervaluesStatePending,
-  wipeCountervalues,
 } from "./slice";
 import {
   createCountervaluesMiddleware,
@@ -124,8 +124,8 @@ function createTestStore({
     },
     preloadedState: {
       countervalues: {
-        ...countervaluesReducer(undefined, { type: "init" }),
-        polling: { isPolling, triggerLoad: false },
+        ...countervaluesInitialState,
+        sync: { ...countervaluesInitialState.sync, isPolling },
       },
     },
     // The state holds an Error and rate Maps.
@@ -454,9 +454,9 @@ describe("createCountervaluesMiddleware", () => {
     await flush();
 
     controls?.stop();
-    expect(store.getState().countervalues.polling.isPolling).toBe(false);
+    expect(store.getState().countervalues.sync.isPolling).toBe(false);
     controls?.start();
-    expect(store.getState().countervalues.polling.isPolling).toBe(true);
+    expect(store.getState().countervalues.sync.isPolling).toBe(true);
     controls?.poll();
     await flush();
     expect(loads()).toBe(2);

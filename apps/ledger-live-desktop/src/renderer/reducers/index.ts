@@ -21,7 +21,7 @@ import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@shared/env";
 import {
   countervaluesReducer,
-  type CountervaluesState,
+  type CountervaluesStoreState,
 } from "@features/platform-market-countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
@@ -78,7 +78,7 @@ export type State = LLDRTKApiState & {
   accountAliases: AccountAliasState;
   accounts: AccountsState;
   application: ApplicationState;
-  countervalues: CountervaluesState;
+  countervalues: CountervaluesStoreState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
   featureFlags: FeatureFlagsState;
