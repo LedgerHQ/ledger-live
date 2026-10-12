@@ -230,9 +230,6 @@ export const urls = {
   memoTag: {
     learnMore: "https://support.ledger.com/article/4409603715217-zd",
   },
-  geoBlock: {
-    learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
-  },
   sanctionCompliance: {
     learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },

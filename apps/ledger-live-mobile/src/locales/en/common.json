@@ -10633,8 +10633,7 @@
   },
   "geoBlocking": {
     "title": "Location unavailable",
-    "description": "Ledger Wallet is not available in this location.",
-    "learnMore": "Learn more"
+    "description": "Ledger Wallet is not available in this location."
   },
   "versionBlocking": {
     "title": "Ledger Wallet Update Required",
