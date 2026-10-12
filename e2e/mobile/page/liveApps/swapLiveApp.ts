@@ -613,4 +613,9 @@ export default class SwapLiveAppPage {
     await waitForWebElementToBeEnabled(this.signPermitButton);
     await tapWebElementByTestId(this.signPermitButton);
   }
+
+  async someSteplessFunction() {
+    // test only - delete me
+    await tapWebElementByTestId(this.giveApprovalButton);
+  }
 }
