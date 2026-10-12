@@ -19,11 +19,9 @@ jest.mock("../../../../context/SendFlowContext", () => ({
 
 const mockCraftRent = jest.fn((_approvedFee: bigint | null) => Promise.resolve());
 const mockStartRentPayment = jest.fn(() => Promise.resolve());
-const mockSetContractDataFailure = jest.fn();
 const mockActions = {
   craftRent: mockCraftRent,
   startRentPayment: mockStartRentPayment,
-  setContractDataFailure: mockSetContractDataFailure,
   onTransferSuccess: jest.fn(),
   onTransferError: jest.fn(),
   retry: jest.fn(),
@@ -139,27 +137,26 @@ describe("useSponsoredRentSignatureViewModel", () => {
     expect(mockStartRentPayment).toHaveBeenCalledWith(combinedSignature, "tx-a-id");
   });
 
-  it("routes a contract-data-disabled refusal to setContractDataFailure and never starts the rent payment", () => {
+  it("surfaces a device status error for a retry and never starts the rent payment", () => {
     mockSponsoredState.order = makeOrder();
     mockSponsoredState.toSign = rawDataHex;
     mockSponsoredState.paymentTxId = "tx-a-id";
     const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
 
-    const contractDataError = Object.assign(new Error("contract data disabled"), {
+    const incorrectData = Object.assign(new Error("incorrect data"), {
       name: "TransportStatusError",
       statusCode: 0x6a80,
     });
 
     act(() => {
-      result.current.onResult({ transactionSignError: contractDataError });
+      result.current.onResult({ transactionSignError: incorrectData });
     });
 
-    expect(mockSetContractDataFailure).toHaveBeenCalledTimes(1);
-    expect(mockSetContractDataFailure).toHaveBeenCalledWith(contractDataError, "tx-a-id");
+    expect(result.current.signError).toBe(incorrectData);
     expect(mockStartRentPayment).not.toHaveBeenCalled();
   });
 
-  it("surfaces any other sign error for a retry (no contract-data failure, no rent payment)", () => {
+  it("surfaces any other sign error for a retry (no rent payment)", () => {
     mockSponsoredState.order = makeOrder();
     const { result } = renderHook(() => useSponsoredRentSignatureViewModel());
 
@@ -172,7 +169,6 @@ describe("useSponsoredRentSignatureViewModel", () => {
     });
 
     expect(result.current.signError).toBe(refusedOnDevice);
-    expect(mockSetContractDataFailure).not.toHaveBeenCalled();
     expect(mockStartRentPayment).not.toHaveBeenCalled();
 
     act(() => {

@@ -14,6 +14,7 @@ import {
   mergeExtra,
   nextSequenceWithPending,
   optionalNumeric,
+  sumBalance,
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
@@ -1525,6 +1526,30 @@ describe("coin-framework utils", () => {
     it("generates an empty balance for a missing type", () => {
       expect(extractBalance([{ value: 4n, asset: { type: "type1" } }], "type2")).toEqual({
         value: 0n,
+        asset: { type: "type2" },
+      });
+    });
+  });
+
+  describe("sumBalance", () => {
+    it("sums value and locked over every entry of the type", () => {
+      expect(
+        sumBalance(
+          [
+            { value: 60n, asset: { type: "native" } },
+            { value: 30n, locked: 30n, asset: { type: "native" } },
+            { value: 10n, locked: 10n, asset: { type: "native" } },
+            { value: 500n, asset: { type: "fa2", assetReference: "KT1:0" } },
+          ],
+          "native",
+        ),
+      ).toEqual({ value: 100n, locked: 40n, asset: { type: "native" } });
+    });
+
+    it("generates an empty balance for a missing type", () => {
+      expect(sumBalance([{ value: 4n, asset: { type: "type1" } }], "type2")).toEqual({
+        value: 0n,
+        locked: 0n,
         asset: { type: "type2" },
       });
     });

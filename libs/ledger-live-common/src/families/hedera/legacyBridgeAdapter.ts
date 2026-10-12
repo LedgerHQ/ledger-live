@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/coin-hedera/constants";
 import type {
   HederaAccount,
@@ -51,23 +52,33 @@ export function toLegacyTransaction(tx: BridgeInput, token?: TokenCurrency): Leg
   }
 }
 
+/** The legacy status and signing read the association token from `properties`, the generic shape has only its address. */
+async function findAssociationToken(
+  tx: BridgeInput & { assetReference?: string },
+  currencyId: string,
+): Promise<TokenCurrency | undefined> {
+  if (toLegacyMode(tx.mode) !== HEDERA_TRANSACTION_MODES.TokenAssociate) return undefined;
+  if (!tx.assetReference) return undefined;
+  // A prepared transaction keeps its `properties.token` after the user picks another token.
+  if (tx.properties?.token?.contractAddress === tx.assetReference) return undefined;
+
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+    tx.assetReference,
+    currencyId,
+  );
+
+  invariant(token, `hedera: unknown token ${tx.assetReference}`);
+
+  return token;
+}
+
 /** Lets the legacy bridge take the generic transaction shape, so the apps write only that shape. */
 export function withGenericTransactionSupport(bridge: LegacyAccountBridge): LegacyAccountBridge {
   return {
     ...bridge,
     prepareTransaction: async (account, tx) => {
-      const input: BridgeInput & { assetReference?: string } = tx;
-      // The legacy status reads the association token from `properties`, the generic shape has only its address.
-      const token =
-        toLegacyMode(input.mode) === HEDERA_TRANSACTION_MODES.TokenAssociate &&
-        !input.properties?.token &&
-        input.assetReference
-          ? await getCryptoAssetsStore().findTokenByAddressInCurrency(
-              input.assetReference,
-              account.currency.id,
-            )
-          : undefined;
-      return bridge.prepareTransaction(account, toLegacyTransaction(input, token));
+      const token = await findAssociationToken(tx, account.currency.id);
+      return bridge.prepareTransaction(account, toLegacyTransaction(tx, token));
     },
     getTransactionStatus: (account, tx) =>
       bridge.getTransactionStatus(account, toLegacyTransaction(tx)),

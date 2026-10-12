@@ -1,8 +1,4 @@
-import {
-  ApduResponse,
-  CommandResultFactory,
-  type DeviceManagementKit,
-} from "@ledgerhq/device-management-kit";
+import { ApduResponse, CommandResultFactory } from "@ledgerhq/device-management-kit";
 import {
   EarlyCheckToggle,
   ToggleEarlyCheckCommand,
@@ -10,7 +6,11 @@ import {
 } from "../device/toggleEarlyCheckCommand";
 import { runActor, settle } from "../tests/actorHarness";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
-import { toggleEarlyCheck, type ToggleEarlyCheckEvent } from "./toggleEarlyCheck";
+import {
+  toggleEarlyCheck,
+  type ToggleEarlyCheckEvent,
+  type ToggleEarlyCheckInput,
+} from "./toggleEarlyCheck";
 
 describe("toggleEarlyCheck", () => {
   it.each([
@@ -78,6 +78,9 @@ function deviceRefuses(...statusCode: number[]): ScriptedCommand<void, ToggleEar
   );
 }
 
-function start(dmk: DeviceManagementKit, toggle: EarlyCheckToggle = EarlyCheckToggle.Enter) {
+function start(
+  dmk: ToggleEarlyCheckInput["dmk"],
+  toggle: EarlyCheckToggle = EarlyCheckToggle.Enter,
+) {
   return runActor<ToggleEarlyCheckEvent>(toggleEarlyCheck, { dmk, sessionId: "session", toggle });
 }

@@ -13,6 +13,7 @@ import { perCoinLogic } from "./logic";
 import { SignerContext } from "./signer";
 import { fromAsyncOperation } from "./observable";
 import { getChainAdapter } from "./chain-adapters/registry";
+import { isZcashCurrencyId } from "./chain-adapters/zcash/currency";
 import type { BitcoinContext } from "./config";
 import { resolveAccountConfig } from "./explorer";
 
@@ -22,13 +23,15 @@ type SignOperationObserverEvent =
   | { type: "device-streaming"; progress: number; index: number; total: number }
   | { type: "signed"; signedOperation: { operation: Operation; signature: string } };
 
-function buildAdditionals(
+export function buildAdditionals(
   currencyId: string,
   derivationMode: string,
   transaction: Transaction,
 ): string[] {
   const perCoin = perCoinLogic[currencyId];
-  let additionals: string[] = [currencyId];
+  // The signer recognises Zcash by the "zcash" marker alone, so every Zcash
+  // network carries it instead of its own currency id.
+  let additionals: string[] = [isZcashCurrencyId(currencyId) ? "zcash" : currencyId];
 
   if (derivationMode === "native_segwit") {
     additionals.push("bech32");

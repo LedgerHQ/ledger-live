@@ -53,10 +53,6 @@ on:
 permissions:
   contents: read
 
-env:
-  SMOKE_SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:v0.26.5
-  SMOKE_SPECULOS_FIRMWARE_VERSION: 1.6.0
-
 jobs:
   codechecks:
     name: "Desktop Code Check"
@@ -123,10 +119,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
-      CI_OS: ledger-live-linux-16CPU-64RAM
-      JEST_MAX_WORKERS: "95%"
+      CI_OS: ledger-wallet-16cpu-aws-public
+      JEST_MAX_WORKERS: "12"
       JEST_CACHE_DIRECTORY: /tmp/jest-cache
-    runs-on: [ledger-live-linux-16CPU-64RAM]
+    runs-on: [ledger-wallet-16cpu-aws-public]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:

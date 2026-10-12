@@ -4,12 +4,15 @@ import type {
   DeviceModelId as DmkDeviceModelId,
 } from "@ledgerhq/device-management-kit";
 import type { DevToolsConfig } from "@devtools/shell";
-import { useDeviceOnboardingActor, type OnboardingActorSnapshot } from "@devtools/bindings";
+import {
+  useDeviceOnboardingActor,
+  type DeviceOnboardingSession,
+  type OnboardingActorSnapshot,
+} from "@devtools/bindings";
 import {
   createSessionEventsActor,
   stateValueToString,
   type DeviceOnboardingOutput,
-  type DeviceOnboardingSession,
 } from "@ledgerhq/device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
@@ -230,18 +233,20 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
         discardActor();
       }
 
+      const keepsRun = actorRef.current !== null;
+      // The machine takes the new session first: `rememberDevice` starts the lock listener, a
+      // locked device reports LOCKED at once, and unlock polling must start on this session.
+      if (keepsRun) send({ type: "SESSION_CHANGED" });
       rememberDevice(session);
       setError(null);
 
-      if (!actorRef.current) {
+      if (!keepsRun) {
         startSessionActor(session);
         return;
       }
 
       setSessionReady(true);
-      if (autoResume && actorRef.current.getSnapshot().can({ type: "SESSION_READY" })) {
-        sendToActor({ type: "SESSION_READY" });
-      }
+      if (autoResume) send({ type: "SESSION_READY" });
       setStatus("running");
     },
     [
@@ -249,7 +254,7 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
       discardActor,
       releaseFirmwareDrawer,
       rememberDevice,
-      sendToActor,
+      send,
       setSessionReady,
       startSessionActor,
       stopLockListener,

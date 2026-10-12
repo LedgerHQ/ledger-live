@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { base64ToUrlSafeBase64 } from "@ledgerhq/coin-hedera/logic/utils";
 import type { HederaAccount } from "@ledgerhq/coin-hedera/types";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
-import type { Account, AccountRaw, OperationExtra } from "@ledgerhq/types-live";
+import type { Account, AccountRaw, OperationExtra, SwapOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getAccountRawAssignHooks } from "../../bridge/generic-coin-framework/accountRawAssign";
 import { adaptCoreOperationToLiveOperation } from "../../bridge/generic-coin-framework/utils";
@@ -149,5 +150,45 @@ describe("hedera accountRawAssign", () => {
       new BigNumber("21083322293"),
     );
     expect(operation.extra).toMatchObject({ ledgerOpType: "DELEGATE", targetStakingNodeId: 3 });
+  });
+
+  describe("swap operation ids", () => {
+    const accountId = "js:2:hedera:0.0.1234:hederaBip44";
+    const standardHash = Buffer.alloc(48, 0xfb).toString("base64");
+    const urlSafeHash = base64ToUrlSafeBase64(standardHash);
+
+    async function loadSwapOperationIds(...operationIds: string[]) {
+      const { assignFromAccountRaw } = await getAccountRawAssignHooks("hedera");
+      const account = {
+        id: accountId,
+        swapHistory: operationIds.map(operationId => ({ operationId }) as SwapOperation),
+      } as Account;
+
+      assignFromAccountRaw?.({} as AccountRaw, account);
+
+      return account.swapHistory.map(swap => swap.operationId);
+    }
+
+    it("converts a URL-safe hash saved by the legacy bridge to standard base64", async () => {
+      expect(await loadSwapOperationIds(`${accountId}-${urlSafeHash}-OUT`)).toEqual([
+        `${accountId}-${standardHash}-OUT`,
+      ]);
+    });
+
+    it("leaves a standard base64 hash unchanged", async () => {
+      const operationId = `${accountId}-${standardHash}-OUT`;
+
+      expect(await loadSwapOperationIds(operationId)).toEqual([operationId]);
+    });
+
+    it("leaves ids of another account or without a hash unchanged", async () => {
+      const otherAccountId = `js:2:hedera:0.0.4321:hederaBip44-${urlSafeHash}-OUT`;
+      const withoutHash = `${accountId}--OUT`;
+
+      expect(await loadSwapOperationIds(otherAccountId, withoutHash)).toEqual([
+        otherAccountId,
+        withoutHash,
+      ]);
+    });
   });
 });

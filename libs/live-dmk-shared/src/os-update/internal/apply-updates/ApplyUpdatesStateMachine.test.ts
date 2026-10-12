@@ -592,12 +592,12 @@ describe("ApplyUpdatesStateMachine", () => {
       await completeDeviceAction(flashed(MCU_FLASH_TARGET));
       await completeWaitForDeviceReady();
 
-      await completeDeviceAction([SIMPLE_UPDATE]);
+      await completeDeviceAction([]);
       expect(actor.getSnapshot().status).toBe("done");
     });
 
-    it("should install the final firmware a recovery flash left pending", async () => {
-      nextOsVersion(IN_BOOTLOADER, ON_OS);
+    it("should install the final firmware a recovery flash left pending in OSU mode", async () => {
+      nextOsVersion(IN_BOOTLOADER, IN_OSU);
       await start();
       await completeDeviceAction(flashed(MCU_FLASH_TARGET));
       await completeWaitForDeviceReady();
@@ -605,6 +605,58 @@ describe("ApplyUpdatesStateMachine", () => {
       await completeDeviceAction([UPDATE_WITH_FINAL_FIRMWARE]);
 
       expect(actor.getSnapshot().value).toBe("InstallFinalFirmware");
+      expect(latestDeviceActionInput<InstallOsUpdateDAInput>()).toEqual({
+        osUpdate: UPDATE_WITH_FINAL_FIRMWARE,
+        unlockTimeout: 0,
+      });
+    });
+
+    it("should install the next update from its OSU firmware after the pending final firmware", async () => {
+      nextOsVersion(IN_BOOTLOADER, IN_OSU, ON_OS);
+      await start();
+      await completeDeviceAction(flashed(MCU_FLASH_TARGET));
+      await completeWaitForDeviceReady();
+      await completeDeviceAction([UPDATE_WITH_FINAL_FIRMWARE, SIMPLE_UPDATE]);
+
+      await completeDeviceAction(undefined);
+      await completeWaitForDeviceReady();
+
+      expect(actor.getSnapshot().value).toBe("InstallOsu");
+      expect(latestDeviceActionInput<InstallOsUpdateDAInput>()).toEqual({
+        osUpdate: SIMPLE_UPDATE,
+        unlockTimeout: 0,
+      });
+    });
+
+    it("should install the first update of the path from its OSU firmware when the recovery flash leaves the device on an OS", async () => {
+      nextOsVersion(IN_BOOTLOADER, ON_OS);
+      await start();
+      await completeDeviceAction(flashed(MCU_FLASH_TARGET));
+      await completeWaitForDeviceReady();
+
+      await completeDeviceAction([UPDATE_WITH_FINAL_FIRMWARE, SIMPLE_UPDATE]);
+
+      expect(actor.getSnapshot().value).toBe("InstallOsu");
+      expect(latestDeviceActionInput<InstallOsUpdateDAInput>()).toEqual({
+        osUpdate: UPDATE_WITH_FINAL_FIRMWARE,
+        unlockTimeout: 0,
+      });
+    });
+
+    it("should count the first update of the path as the first when the recovery flash leaves the device on an OS", async () => {
+      nextOsVersion(IN_BOOTLOADER, ON_OS);
+      await start();
+      await completeDeviceAction(flashed(MCU_FLASH_TARGET));
+      await completeWaitForDeviceReady();
+      await completeDeviceAction([UPDATE_WITH_FINAL_FIRMWARE, SIMPLE_UPDATE]);
+
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        progress: 0.5,
+      });
+
+      const updating = sentStatesOfType(ApplyUpdatesStateType.UPDATING);
+      expect(updating[updating.length - 1]).toMatchObject({ updateIndex: 1, updateCount: 2 });
     });
 
     it("should report AWAITING_UPDATE_COMPLETE once a recovery flash installs the MCU", async () => {

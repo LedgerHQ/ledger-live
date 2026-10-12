@@ -11,7 +11,13 @@ export function FreezeAction({ status, isActionDisabled, onOpenConfirm }: Freeze
   const { t } = useTranslation();
 
   return (
-    <TileButton icon={Snow} onPress={onOpenConfirm} disabled={isActionDisabled} isFull>
+    <TileButton
+      icon={Snow}
+      onPress={onOpenConfirm}
+      disabled={isActionDisabled}
+      isFull
+      testID="card-details-freeze-tile"
+    >
       {t(freezeCopy(status).tile)}
     </TileButton>
   );

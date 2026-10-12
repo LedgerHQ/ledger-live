@@ -17,6 +17,12 @@ jest.mock("~/context/Locale", () => ({
       params ? `${key} ${JSON.stringify(params)}` : key,
   }),
 }));
+jest.mock("~/context/hooks", () => ({
+  useSelector: (selector: () => unknown) => selector(),
+}));
+jest.mock("~/reducers/settings", () => ({
+  localeSelector: () => "en-GB",
+}));
 jest.mock("../../../../context/SendFlowContext", () => ({
   useSendFlowData: () => ({
     state: {
@@ -66,6 +72,8 @@ const failed = (failureKind: string, overrides: Record<string, unknown> = {}) =>
   failureError: new Error("boom"),
   paymentTxId: null,
   rentPayment: RENT_PAYMENT,
+  rentOrderRejection: null,
+  retryLockedUntil: null,
   ...overrides,
 });
 
@@ -78,7 +86,6 @@ beforeEach(() => {
 describe("useSponsoredFailureViewModel", () => {
   it.each([
     [SPONSORED_FAILURE_KIND.RENT_PAYMENT, "send.newSendFlow.sponsoredFailure.rentPayment"],
-    [SPONSORED_FAILURE_KIND.CONTRACT_DATA, "send.newSendFlow.sponsoredFailure.contractData"],
     [SPONSORED_FAILURE_KIND.TRANSFER, "send.newSendFlow.sponsoredFailure.transfer"],
   ])("explains a %s failure and offers a plain retry", (failureKind, messageKey) => {
     mockSponsoredState = failed(failureKind);
@@ -102,17 +109,105 @@ describe("useSponsoredFailureViewModel", () => {
   });
 
   it("reports a short fee-token balance from the craft as insufficient funds", () => {
-    const insufficient = Object.assign(new Error("short"), {
-      name: "EnergyRentInsufficientBalance",
-    });
     mockSponsoredState = failed(SPONSORED_FAILURE_KIND.RENT_PAYMENT, {
-      failureError: insufficient,
+      rentOrderRejection: { reason: "insufficientBalance" },
     });
 
     const { result } = renderHook(() => useSponsoredFailureViewModel());
 
     expect(result.current.message).toContain("send.newSendFlow.feePayment.insufficientFunds");
     expect(result.current.retryBlockedMessage).toBeNull();
+  });
+
+  describe("an order priced above the approved fee", () => {
+    const priceRose = failed(SPONSORED_FAILURE_KIND.RENT_PAYMENT, {
+      rentPayment: null,
+      rentOrderRejection: {
+        reason: "priceAboveApproved",
+        offered: { ...RENT_PAYMENT, amount: 3_500_000n },
+      },
+    });
+
+    it("shows the new price and offers to accept it", () => {
+      mockSponsoredState = priceRose;
+
+      const { result } = renderHook(() => useSponsoredFailureViewModel());
+      act(() => result.current.onRetry());
+
+      expect(result.current.message).toContain("send.newSendFlow.sponsoredFailure.priceIncreased");
+      expect(result.current.message).toMatch(/"fee":"3\.5\sUSDT"/);
+      expect(result.current.retryLabel).toBe("send.newSendFlow.sponsoredFailure.acceptPrice");
+      expect(mockRetry).toHaveBeenCalled();
+    });
+
+    it("keeps Accept off when the balance can't pay the new price next to the amount", () => {
+      mockMainAccount = holdingUsdt(4_400_000);
+      mockSponsoredState = priceRose;
+
+      const { result } = renderHook(() => useSponsoredFailureViewModel());
+      act(() => result.current.onRetry());
+
+      expect(result.current.retryDisabled).toBe(true);
+      expect(result.current.retryBlockedMessage).toContain(
+        "send.newSendFlow.feePayment.insufficientFunds",
+      );
+      expect(mockRetry).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("while the first payment may still land", () => {
+    beforeEach(() => jest.useFakeTimers());
+    afterEach(() => jest.useRealTimers());
+
+    it.each([SPONSORED_FAILURE_KIND.DELIVERY_FAILED, SPONSORED_FAILURE_KIND.RENT_PAYMENT])(
+      "keeps Retry off after %s until the payment expires, and says until when",
+      failureKind => {
+        const lockedUntil = new Date("2026-10-08T14:32:10").getTime();
+        jest.setSystemTime(lockedUntil - 60_000);
+        mockSponsoredState = failed(failureKind, { retryLockedUntil: lockedUntil });
+        const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+        act(() => result.current.onRetry());
+        expect(result.current.retryDisabled).toBe(true);
+        expect(result.current.retryBlockedMessage).toBe(
+          'send.newSendFlow.sponsoredFailure.retryLocked {"time":"14:33"}',
+        );
+        expect(mockRetry).not.toHaveBeenCalled();
+
+        act(() => jest.advanceTimersByTime(60_000));
+        act(() => result.current.onRetry());
+
+        expect(result.current.retryDisabled).toBe(false);
+        expect(result.current.retryBlockedMessage).toBeNull();
+        expect(mockRetry).toHaveBeenCalled();
+      },
+    );
+
+    it("says a payment the provider reported failed may still go through", () => {
+      mockSponsoredState = failed(SPONSORED_FAILURE_KIND.RENT_PAYMENT, {
+        retryLockedUntil: Date.now() + 60_000,
+      });
+
+      const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+      expect(result.current.message).toContain(
+        "send.newSendFlow.sponsoredFailure.rentPaymentReportedFailed",
+      );
+      expect(result.current.message).toContain('"provider":"Provider"');
+    });
+
+    it("names the short balance rather than the lock when both block the retry", () => {
+      mockMainAccount = holdingUsdt(4_000_000);
+      mockSponsoredState = failed(SPONSORED_FAILURE_KIND.DELIVERY_FAILED, {
+        retryLockedUntil: Date.now() + 60_000,
+      });
+
+      const { result } = renderHook(() => useSponsoredFailureViewModel());
+
+      expect(result.current.retryBlockedMessage).toContain(
+        "send.newSendFlow.feePayment.insufficientFunds",
+      );
+    });
   });
 
   // The live quote drops its fee asset once the option is withdrawn; the paid rent keeps it.

@@ -10,6 +10,7 @@ import React, {
 import { cn } from "LLD/utils/cn";
 import {
   isAnimatedHeightCapped,
+  isStackedHeightTarget,
   measureStackedHeight,
   readAvailableHeight,
   resolveAnimatedHeight,
@@ -80,7 +81,7 @@ export function AnimatedHeight({ header, children, duration = 300 }: AnimatedHei
 
     const observer = new ResizeObserver(syncHeight);
     const observeTree = (element: HTMLElement) => {
-      observer.observe(element);
+      if (isStackedHeightTarget(element)) observer.observe(element);
       for (const child of element.children) {
         if (child instanceof HTMLElement) observeTree(child);
       }

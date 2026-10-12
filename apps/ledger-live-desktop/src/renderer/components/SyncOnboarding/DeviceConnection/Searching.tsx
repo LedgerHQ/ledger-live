@@ -47,7 +47,7 @@ const SyncOnboardingDeviceConnectionSearching = ({
       <OnboardingNavHeader onClickPrevious={() => navigate("/onboarding/select-device")} />
       <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
         <Animation
-          animation={getDeviceAnimation(deviceModelId, theme.theme, "plugAndPinCode") as object}
+          animation={getDeviceAnimation(deviceModelId, theme.theme, "plugAndPinCode")}
           width={"200px"}
         />
         <Text variant="h3Inter" color="neutral.c100" mt={6} maxWidth={480} textAlign="center">

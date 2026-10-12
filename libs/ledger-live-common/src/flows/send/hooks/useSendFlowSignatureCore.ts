@@ -5,6 +5,7 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getMainAccount } from "../../../account/index";
 import { sendFeatures } from "../../../bridge/descriptor/send/features";
 import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
+import { presentBroadcastError } from "../presentBroadcastError";
 import { saveRecentSendRecipient } from "../utils";
 import { SEND_FLOW_COMPLETION, type SendFlowCompletion } from "../types";
 
@@ -185,14 +186,13 @@ export function useSendFlowSignatureCore({
         .catch(error => {
           try {
             if (runIdRef.current !== runId) return;
-            const normalizedError = error instanceof Error ? error : new Error(String(error));
-            finishWithError(normalizedError);
+            finishWithError(presentBroadcastError(error, account, parentAccount));
           } catch (e) {
             console.error("Unhandled error during broadcast error handling", e);
           }
         });
     },
-    [broadcast, finishWithError, finishWithSuccess, operation],
+    [account, broadcast, finishWithError, finishWithSuccess, operation, parentAccount],
   );
 
   return { request, finishWithError, finishWithSuccess, onDeviceActionResult };

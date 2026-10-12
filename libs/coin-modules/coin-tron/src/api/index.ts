@@ -41,6 +41,7 @@ import {
   awaitEnergyDelivery,
   broadcastEnergyRentTransaction,
   buildSignedEnergyRentTransaction,
+  classifyRentOrderError,
   craftEnergyRentTransaction,
   getEnergyProvider,
   getEnergyRentSignaturePayload,
@@ -184,6 +185,7 @@ export function createSponsoredSendApi(context: TronContext) {
     ) => buildEnergyRentRequest(context.logger, await context.config(), intent, approvedFee),
     craftEnergyRentTransaction: async (request: EnergyRentRequest) =>
       craftEnergyRentTransaction(context.logger, await context.config(), request),
+    classifyRentOrderError,
     submitEnergyRentPayment: async (payment: {
       orderId: string;
       signedTransaction: EnergyRentSignedTransaction;

@@ -59,6 +59,10 @@ Each layer may only import from layers below it. `shared`, `domain`, and `featur
 import from `libs/` — the new-arch core stays legacy-free. Enforced by
 [`tools/nx-plugins/enforce-boundaries`](../tools/nx-plugins/enforce-boundaries).
 
+Third-party libraries follow the same direction (convention, not yet enforced by lint): apps do not declare new ones (framework singletons, the design system and tooling excepted), the lowest valid package
+wraps each one (e.g. `@shared/ui-qr-code`). See the
+[wrap-third-party-libs](../.agents/skills/wrap-third-party-libs/SKILL.md) skill.
+
 ---
 
 ## Legacy `libs/`

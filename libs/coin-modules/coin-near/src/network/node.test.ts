@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import * as nearAPI from "near-api-js";
 import { setCoinConfig } from "../config";
 import { mockNearConfig } from "../test/context";
 import {
@@ -84,6 +85,118 @@ const mockRpc = (views: Record<string, unknown> = {}): void => {
 
 const mockStats = (data: { gas_price: string | null } | null): void => {
   mockServer.use(http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () => HttpResponse.json({ data })));
+};
+
+// The shape Ledger's node (nearcore 2.13.4) answers a timed-out `send_tx` with: no `info` saying
+// whether the transaction was seen, which only exists from nearcore 2.14.
+const timeoutError = () => ({
+  name: "HANDLER_ERROR",
+  cause: { name: "TIMEOUT_ERROR" },
+  code: -32000,
+  message: "Server error",
+  data: "Timeout",
+});
+
+const unknownTransactionError = (hash: string) => ({
+  name: "HANDLER_ERROR",
+  cause: { name: "UNKNOWN_TRANSACTION", info: { requested_transaction_hash: hash } },
+  code: -32000,
+  message: "Server error",
+  data: `Transaction ${hash} doesn't exist`,
+});
+
+const rpcReply = (body: Record<string, unknown>, status = 200) =>
+  HttpResponse.json({ jsonrpc: "2.0", id: "id", ...body }, { status });
+
+// Replies to every request with the given HTTP status and JSON-RPC error, counting attempts.
+const mockAlwaysFailing = (status: number, error: unknown): { attempts: () => number } => {
+  let attempts = 0;
+  mockServer.use(
+    http.post(NEAR_BASE_URL_MOCKED, () => {
+      attempts += 1;
+      return rpcReply({ error }, status);
+    }),
+  );
+  return { attempts: () => attempts };
+};
+
+type MockedNode = {
+  sendTxCalls: () => number;
+  sendTxTimes: () => number[];
+  lookups: () => Record<string, unknown>[];
+};
+
+// Answers `send_tx` and the `tx` lookup separately, recording the calls made to each. `sendTx`
+// is given the 1-based number of the attempt, and may take as long as it likes to answer.
+const mockNode = ({
+  sendTx,
+  lookup,
+}: {
+  sendTx: (attempt: number) => Response | Promise<Response>;
+  lookup: () => Response;
+}): MockedNode => {
+  const sendTxTimes: number[] = [];
+  const lookups: Record<string, unknown>[] = [];
+
+  mockServer.use(
+    http.post(NEAR_BASE_URL_MOCKED, async ({ request }) => {
+      const body = (await request.json()) as { method: string; params: Record<string, unknown> };
+
+      if (body.method === "tx") {
+        lookups.push(body.params);
+        return lookup();
+      }
+
+      sendTxTimes.push(Date.now());
+      return sendTx(sendTxTimes.length);
+    }),
+  );
+
+  return {
+    sendTxCalls: () => sendTxTimes.length,
+    sendTxTimes: () => sendTxTimes,
+    lookups: () => lookups,
+  };
+};
+
+// Retries without any delay, so tests that run the retries out do not wait for the backoff.
+const NO_DELAY = {
+  retryBudgetMs: 30_000,
+  attemptTimeoutMs: 15_000,
+  retryDelayMs: 0,
+  maxRetryDelayMs: 0,
+};
+
+// A request the node never answers: it stays open until released, which a test does when done so
+// that no timer is left running behind it.
+const holdOpen = (): { held: Promise<void>; release: () => void } => {
+  const state: { resolve?: () => void } = {};
+  const held = new Promise<void>(resolve => {
+    state.resolve = resolve;
+  });
+
+  return { held, release: () => state.resolve?.() };
+};
+
+// The expected hash comes from near-api-js's own signer, independent of the code under test.
+const signTransaction = async (): Promise<{ signedTx: string; hash: string }> => {
+  const keyPair = nearAPI.KeyPair.fromRandom("ed25519");
+  const transaction = nearAPI.createTransaction(
+    "sender.near",
+    keyPair.getPublicKey(),
+    "recipient.near",
+    42,
+    [nearAPI.actions.transfer(1000000000000000000000000n)],
+    nearAPI.baseDecode("6ykMPuAsmyPvVMSLKvfg7DBUZP9tYcgKNzVLrLxSnLpj"),
+  );
+  const { txHash, signedTransaction } = await new nearAPI.KeyPairSigner(keyPair).signTransaction(
+    transaction,
+  );
+
+  return {
+    signedTx: Buffer.from(signedTransaction.encode()).toString("base64"),
+    hash: nearAPI.baseEncode(txHash),
+  };
 };
 
 describe("node api (indexer-backed calls)", () => {
@@ -365,8 +478,314 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      await expect(broadcastTransaction(mockNearConfig, "signed-tx")).resolves.toBe("retried-hash");
+      await expect(
+        broadcastTransaction(mockNearConfig, "signed-tx", undefined, NO_DELAY),
+      ).resolves.toBe("retried-hash");
       expect(attempts).toBe(2);
+    });
+
+    describe("HTTP error statuses", () => {
+      it("retries an HTTP 408 timeout then returns the hash", async () => {
+        let attempts = 0;
+        mockServer.use(
+          http.post(NEAR_BASE_URL_MOCKED, () => {
+            attempts += 1;
+            if (attempts === 1) {
+              return HttpResponse.json(
+                { jsonrpc: "2.0", id: "id", error: timeoutError() },
+                { status: 408 },
+              );
+            }
+            return HttpResponse.json({
+              jsonrpc: "2.0",
+              id: "id",
+              result: { transaction: { hash: "retried-hash" } },
+            });
+          }),
+        );
+
+        await expect(
+          broadcastTransaction(mockNearConfig, "signed-tx", undefined, NO_DELAY),
+        ).resolves.toBe("retried-hash");
+        expect(attempts).toBe(2);
+      });
+
+      describe("timeout without details once retries run out", () => {
+        it("looks the transaction up by hash and returns it when the node has it", async () => {
+          const { signedTx, hash } = await signTransaction();
+          const node = mockNode({
+            sendTx: () => rpcReply({ error: timeoutError() }, 408),
+            lookup: () => rpcReply({ result: { transaction: { hash } } }),
+          });
+
+          await expect(
+            broadcastTransaction(mockNearConfig, signedTx, undefined, NO_DELAY),
+          ).resolves.toBe(hash);
+          expect(node.sendTxCalls()).toBe(7);
+          expect(node.lookups()).toEqual([
+            { tx_hash: hash, sender_account_id: "sender.near", wait_until: "NONE" },
+          ]);
+        });
+
+        it("prefers the hash the node reports over the derived one", async () => {
+          const { signedTx } = await signTransaction();
+          mockNode({
+            sendTx: () => rpcReply({ error: timeoutError() }, 408),
+            lookup: () => rpcReply({ result: { transaction: { hash: "node-hash" } } }),
+          });
+
+          await expect(
+            broadcastTransaction(mockNearConfig, signedTx, undefined, NO_DELAY),
+          ).resolves.toBe("node-hash");
+        });
+
+        it("accepts a transaction the node has not produced an outcome for yet", async () => {
+          const { signedTx, hash } = await signTransaction();
+          mockNode({
+            sendTx: () => rpcReply({ error: timeoutError() }, 408),
+            lookup: () => rpcReply({ result: { final_execution_status: "INCLUDED" } }),
+          });
+
+          await expect(
+            broadcastTransaction(mockNearConfig, signedTx, undefined, NO_DELAY),
+          ).resolves.toBe(hash);
+        });
+
+        it("reports the timeout when the node does not know the transaction", async () => {
+          const { signedTx, hash } = await signTransaction();
+          const node = mockNode({
+            sendTx: () => rpcReply({ error: timeoutError() }, 408),
+            lookup: () => rpcReply({ error: unknownTransactionError(hash) }),
+          });
+
+          await expect(
+            broadcastTransaction(mockNearConfig, signedTx, undefined, NO_DELAY),
+          ).rejects.toThrow("TIMEOUT_ERROR: Timeout");
+          expect(node.lookups()).toHaveLength(1);
+        });
+
+        it("reports the timeout, not the lookup failure, when the lookup itself fails", async () => {
+          const { signedTx } = await signTransaction();
+          mockNode({
+            sendTx: () => rpcReply({ error: timeoutError() }, 408),
+            lookup: () => new HttpResponse("Bad Gateway", { status: 502 }),
+          });
+
+          await expect(
+            broadcastTransaction(mockNearConfig, signedTx, undefined, NO_DELAY),
+          ).rejects.toThrow("TIMEOUT_ERROR: Timeout");
+        });
+
+        it("does not look anything up when the payload cannot be decoded", async () => {
+          const node = mockNode({
+            sendTx: () => rpcReply({ error: timeoutError() }, 408),
+            lookup: () => rpcReply({ result: { transaction: { hash: "unexpected" } } }),
+          });
+
+          await expect(
+            broadcastTransaction(mockNearConfig, "signed-tx", undefined, NO_DELAY),
+          ).rejects.toThrow("TIMEOUT_ERROR: Timeout");
+          expect(node.lookups()).toHaveLength(0);
+        });
+      });
+
+      it("stops retrying once the time budget is spent, then falls back to the lookup", async () => {
+        // Each timed-out attempt is held open ~10s by the node; fake the clock to follow suit.
+        let clock = 1_700_000_000_000;
+        const dateNow = jest.spyOn(Date, "now").mockImplementation(() => clock);
+        const { signedTx, hash } = await signTransaction();
+
+        try {
+          const node = mockNode({
+            sendTx: () => {
+              clock += 10_000;
+              return rpcReply({ error: timeoutError() }, 408);
+            },
+            lookup: () => rpcReply({ result: { transaction: { hash } } }),
+          });
+
+          await expect(
+            broadcastTransaction(mockNearConfig, signedTx, undefined, NO_DELAY),
+          ).resolves.toBe(hash);
+          expect(node.sendTxCalls()).toBe(3);
+          expect(node.lookups()).toHaveLength(1);
+        } finally {
+          dateNow.mockRestore();
+        }
+      });
+
+      describe("spacing out the retries", () => {
+        it("waits longer before each retry, up to the cap", async () => {
+          const { signedTx } = await signTransaction();
+          const node = mockNode({
+            sendTx: () => rpcReply({ error: timeoutError() }, 408),
+            lookup: () => rpcReply({ error: unknownTransactionError("unknown") }),
+          });
+
+          await expect(
+            broadcastTransaction(mockNearConfig, signedTx, undefined, {
+              ...NO_DELAY,
+              retryDelayMs: 20,
+              maxRetryDelayMs: 80,
+            }),
+          ).rejects.toThrow("TIMEOUT_ERROR: Timeout");
+
+          const times = node.sendTxTimes();
+          const gaps = times.slice(1).map((time, index) => time - (times[index] ?? 0));
+
+          expect(gaps).toHaveLength(6);
+          // Lower bounds only: a timer may fire a little late, never meaningfully early.
+          [20, 40, 80, 80, 80, 80].forEach((expected, index) => {
+            expect(gaps[index]).toBeGreaterThanOrEqual(expected - 5);
+          });
+        });
+
+        it("does not start a retry it has no budget left to wait for", async () => {
+          const { signedTx, hash } = await signTransaction();
+          const node = mockNode({
+            sendTx: () => rpcReply({ error: timeoutError() }, 408),
+            lookup: () => rpcReply({ result: { transaction: { hash } } }),
+          });
+
+          await expect(
+            broadcastTransaction(mockNearConfig, signedTx, undefined, {
+              ...NO_DELAY,
+              retryBudgetMs: 100,
+              retryDelayMs: 500,
+              maxRetryDelayMs: 500,
+            }),
+          ).resolves.toBe(hash);
+          expect(node.sendTxCalls()).toBe(1);
+          expect(node.lookups()).toHaveLength(1);
+        });
+      });
+
+      describe("attempts the node never answers", () => {
+        it("gives up on the attempt and retries it", async () => {
+          const hold = holdOpen();
+          const node = mockNode({
+            sendTx: async attempt => {
+              if (attempt === 1) await hold.held;
+              return rpcReply({ result: { transaction: { hash: "retried-hash" } } });
+            },
+            lookup: () => rpcReply({ error: unknownTransactionError("unused") }),
+          });
+
+          try {
+            await expect(
+              broadcastTransaction(mockNearConfig, "signed-tx", undefined, {
+                ...NO_DELAY,
+                attemptTimeoutMs: 50,
+              }),
+            ).resolves.toBe("retried-hash");
+            expect(node.sendTxCalls()).toBe(2);
+          } finally {
+            hold.release();
+          }
+        });
+
+        it("falls back to the lookup when no attempt is ever answered", async () => {
+          const { signedTx, hash } = await signTransaction();
+          const hold = holdOpen();
+          const node = mockNode({
+            sendTx: async () => {
+              await hold.held;
+              return rpcReply({ error: timeoutError() }, 408);
+            },
+            lookup: () => rpcReply({ result: { transaction: { hash } } }),
+          });
+
+          try {
+            await expect(
+              broadcastTransaction(mockNearConfig, signedTx, 2, {
+                ...NO_DELAY,
+                attemptTimeoutMs: 50,
+              }),
+            ).resolves.toBe(hash);
+            expect(node.sendTxCalls()).toBe(3);
+            expect(node.lookups()).toHaveLength(1);
+          } finally {
+            hold.release();
+          }
+        });
+
+        it("never lets an attempt outlast what is left of the budget", async () => {
+          const { signedTx, hash } = await signTransaction();
+          const hold = holdOpen();
+          const node = mockNode({
+            // Without the cap this attempt is given the full 10 s and Jest's own limit hits first.
+            sendTx: async () => {
+              await hold.held;
+              return rpcReply({ error: timeoutError() }, 408);
+            },
+            lookup: () => rpcReply({ result: { transaction: { hash } } }),
+          });
+
+          try {
+            await expect(
+              broadcastTransaction(mockNearConfig, signedTx, undefined, {
+                ...NO_DELAY,
+                retryBudgetMs: 100,
+                attemptTimeoutMs: 10_000,
+              }),
+            ).resolves.toBe(hash);
+            expect(node.lookups()).toHaveLength(1);
+          } finally {
+            hold.release();
+          }
+        });
+      });
+
+      it("reports the nested error text of an HTTP 400 instead of [object Object]", async () => {
+        mockAlwaysFailing(400, {
+          name: "REQUEST_VALIDATION_ERROR",
+          cause: {
+            name: "PARSE_ERROR",
+            info: { error_message: "Failed parsing args: invalid transaction version tag: 105" },
+          },
+          code: -32700,
+          message: "Parse error",
+          data: "Failed parsing args: invalid transaction version tag: 105",
+        });
+
+        const error = await broadcastTransaction(mockNearConfig, "signed-tx").catch(
+          (e: Error) => e,
+        );
+
+        expect(error).toBeInstanceOf(Error);
+        expect((error as Error).message).toBe(
+          "PARSE_ERROR: Failed parsing args: invalid transaction version tag: 105",
+        );
+      });
+
+      it("falls back to the message when the error data is an object", async () => {
+        mockAlwaysFailing(200, {
+          name: "HANDLER_ERROR",
+          cause: { name: "INVALID_TRANSACTION", info: {} },
+          code: -32000,
+          message: "Server error",
+          data: { TxExecutionError: { InvalidTxError: "Expired" } },
+        });
+
+        const error = await broadcastTransaction(mockNearConfig, "signed-tx").catch(
+          (e: Error) => e,
+        );
+
+        expect((error as Error).message).toBe("INVALID_TRANSACTION: Server error");
+      });
+
+      it("names the HTTP status when a failing response is not a JSON-RPC body", async () => {
+        mockServer.use(
+          http.post(
+            NEAR_BASE_URL_MOCKED,
+            () => new HttpResponse("Internal Server Error", { status: 500 }),
+          ),
+        );
+
+        await expect(broadcastTransaction(mockNearConfig, "signed-tx")).rejects.toThrow(
+          "Near: send_tx failed with HTTP 500",
+        );
+      });
     });
   });
 

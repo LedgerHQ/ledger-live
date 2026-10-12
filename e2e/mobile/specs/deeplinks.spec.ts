@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { swapSetup } from "@e2e/bridge/server";
-import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { escapeHtml, setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { allure } from "jest-allure2-reporter/api";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
@@ -73,7 +73,7 @@ describe("Deeplinks", () => {
   (isSmokeTestRun ? it.skip : it)(
     "should open the Discover page and search for a live app",
     async () => {
-      allure.description(`Live app: ${randomLiveApp}`);
+      allure.descriptionHtml(`<p>Live app: ${escapeHtml(randomLiveApp)}</p>`);
       await app.discover.openViaDeeplink();
       await app.discover.typeInCatalogSearchBar(randomLiveApp);
       await app.discover.expectCatalogAppCard(randomLiveApp);
@@ -83,7 +83,7 @@ describe("Deeplinks", () => {
   );
 
   (isSmokeTestRun ? it.skip : it)("should open discovery to a live App", async () => {
-    allure.description(`Live app: ${randomLiveApp}`);
+    allure.descriptionHtml(`<p>Live app: ${escapeHtml(randomLiveApp)}</p>`);
     await app.discover.openViaDeeplink(randomLiveApp);
     await app.discover.expectApp(randomLiveApp);
   });

@@ -4,7 +4,6 @@ import { reportSponsoredTransferOutcome } from "./transferOutcome";
 const makeActions = () => ({
   onTransferSuccess: jest.fn(),
   onTransferError: jest.fn(),
-  setContractDataFailure: jest.fn(),
 });
 
 describe("reportSponsoredTransferOutcome", () => {
@@ -21,12 +20,9 @@ describe("reportSponsoredTransferOutcome", () => {
     expect(actions.onTransferError).not.toHaveBeenCalled();
   });
 
-  it("routes a contract-data refusal to its recovery", () => {
+  it("reports a failure as a transfer error, with its error", () => {
     const actions = makeActions();
-    const refusal = Object.assign(new Error("refused"), {
-      name: "TransportStatusError",
-      statusCode: 0x6a80,
-    });
+    const refusal = new Error("refused");
 
     reportSponsoredTransferOutcome({
       actions,
@@ -35,11 +31,11 @@ describe("reportSponsoredTransferOutcome", () => {
       error: refusal,
     });
 
-    expect(actions.setContractDataFailure).toHaveBeenCalledWith(refusal, "txA");
-    expect(actions.onTransferError).not.toHaveBeenCalled();
+    expect(actions.onTransferError).toHaveBeenCalledWith(refusal, "txA");
+    expect(actions.onTransferSuccess).not.toHaveBeenCalled();
   });
 
-  it("reports any other failure as a transfer error, with an error even when none was given", () => {
+  it("reports a failure without an error as a transfer error all the same", () => {
     const actions = makeActions();
 
     reportSponsoredTransferOutcome({
@@ -49,6 +45,5 @@ describe("reportSponsoredTransferOutcome", () => {
     });
 
     expect(actions.onTransferError).toHaveBeenCalledWith(expect.any(Error), "txA");
-    expect(actions.setContractDataFailure).not.toHaveBeenCalled();
   });
 });

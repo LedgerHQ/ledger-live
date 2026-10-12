@@ -1,17 +1,16 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import Lottie from "react-lottie";
+import { Lottie } from "@shared/lottie";
 import { Animation } from "./Animation.web";
 
-jest.mock("react-lottie", () => ({
-  __esModule: true,
-  default: jest.fn(() => <div data-testid="lottie" />),
+jest.mock("@shared/lottie", () => ({
+  Lottie: jest.fn(() => <div data-testid="lottie" />),
 }));
 
 const mockedLottie = jest.mocked(Lottie);
 
-function lastOptions() {
-  return mockedLottie.mock.calls.at(-1)?.[0]?.options;
+function lastProps() {
+  return mockedLottie.mock.calls.at(-1)?.[0];
 }
 
 // Typed off globalThis, mirroring Animation.web.tsx: this package deliberately avoids Node types.
@@ -38,7 +37,7 @@ describe("Animation (web)", () => {
     render(<Animation animation={{ v: "5" }} />);
 
     expect(screen.getByTestId("lottie")).toBeInTheDocument();
-    expect(lastOptions()).toEqual(expect.objectContaining({ autoplay: true, loop: true }));
+    expect(lastProps()).toEqual(expect.objectContaining({ autoPlay: true, loop: true }));
   });
 
   it("does not autoplay under Playwright, so e2e runs stay deterministic", () => {
@@ -46,12 +45,12 @@ describe("Animation (web)", () => {
 
     render(<Animation animation={{ v: "5" }} />);
 
-    expect(lastOptions()).toEqual(expect.objectContaining({ autoplay: false }));
+    expect(lastProps()).toEqual(expect.objectContaining({ autoPlay: false }));
   });
 
   it("honours an explicit autoplay opt-out", () => {
     render(<Animation animation={{ v: "5" }} autoplay={false} />);
 
-    expect(lastOptions()).toEqual(expect.objectContaining({ autoplay: false }));
+    expect(lastProps()).toEqual(expect.objectContaining({ autoPlay: false }));
   });
 });

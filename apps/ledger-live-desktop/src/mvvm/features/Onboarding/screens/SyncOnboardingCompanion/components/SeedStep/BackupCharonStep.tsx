@@ -54,7 +54,7 @@ const BackupCharonStep = ({ productName, deviceIcon }: Props) => {
               marginBottom: 24,
             }}
           >
-            <StyledAnimation animation={CHARON as object} />
+            <StyledAnimation animation={CHARON} />
           </Flex>
           <StepText mb={24} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
             {t("syncOnboarding.manual.seedContent.backupCharonTitle")}

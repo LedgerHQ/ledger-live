@@ -484,11 +484,15 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    it("should reject an order other than desc", async () => {
-      await expect(
-        api.listOperations(context, "aleo1test", { minHeight: 0, order: "asc" }),
-      ).rejects.toThrow('aleo: listOperations does not support order "asc"');
-      expect(mockedListOperations).not.toHaveBeenCalled();
+    it.each(["asc", "desc"] as const)("should pass order %s to the logic layer", async order => {
+      const api = createApi("aleo");
+      mockedListOperations.mockResolvedValue({ items: [], next: undefined });
+
+      await api.listOperations(context, "aleo1test", { minHeight: 0, order });
+
+      expect(mockedListOperations).toHaveBeenCalledWith(
+        expect.objectContaining({ options: { minHeight: 0, order } }),
+      );
     });
 
     it("should reject without touching the logic layer when the context carries no private pair", async () => {

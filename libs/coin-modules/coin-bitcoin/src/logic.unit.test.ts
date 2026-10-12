@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
+  perCoinLogic,
   mapTxToOperations,
   inferTransactionSequenceNumberFromInputs,
   isValidRecipient,
@@ -275,4 +276,16 @@ describe("Test isValidRecipient", () => {
   // TODO Enable once fixed in wallet-btc
   test.skip("Success on valid bch address", () =>
     t("qr6m7j9njldwwzlg9v7v53unlr4jkmx6eylep8ekg2", "bitcoin_cash", true));
+});
+
+describe("perCoinLogic for Zcash", () => {
+  it("applies the zcash logic to zcash_testnet", () => {
+    expect(perCoinLogic.zcash_testnet).toEqual(perCoinLogic.zcash);
+    expect(perCoinLogic.zcash_testnet?.hasExtraData).toBe(true);
+    expect(perCoinLogic.zcash_testnet?.hasExpiryHeight).toBe(true);
+  });
+
+  it("does not apply it to zcash_regtest", () => {
+    expect(perCoinLogic.zcash_regtest).toBeUndefined();
+  });
 });

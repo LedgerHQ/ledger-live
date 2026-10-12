@@ -1,5 +1,6 @@
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { getEnv } from "@shared/env";
+import { subscribeToNetworkState, type NetworkState } from "@shared/network-status";
 import {
   createRateSource,
   marketCountervaluesApi,
@@ -142,19 +143,24 @@ function usePollingManager() {
       start();
       poll();
     };
-    const handleOnline = () => {
-      if (document.hasFocus()) {
+    let isInitialNetworkState = true;
+    const handleNetworkChange = ({ isConnected }: NetworkState) => {
+      if (isInitialNetworkState) {
+        isInitialNetworkState = false;
+        return;
+      }
+      if (isConnected && document.hasFocus()) {
         poll();
       }
     };
 
     window.addEventListener("blur", stop);
     window.addEventListener("focus", handleFocus);
-    window.addEventListener("online", handleOnline);
+    const unsubscribeNetwork = subscribeToNetworkState(handleNetworkChange);
     return () => {
       window.removeEventListener("blur", stop);
       window.removeEventListener("focus", handleFocus);
-      window.removeEventListener("online", handleOnline);
+      unsubscribeNetwork();
     };
   }, [poll, start, stop]);
 }

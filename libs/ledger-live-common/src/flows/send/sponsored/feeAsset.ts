@@ -1,7 +1,17 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getPendingTokenSpent } from "../../../bridge/generic-coin-framework/utils";
-import type { SponsoredFeeAsset } from "../../../bridge/generic-coin-framework/sponsored";
+import type {
+  RentPayment,
+  SponsoredFeeAsset,
+} from "../../../bridge/generic-coin-framework/sponsored";
+import { formatFeeCurrencyAmount } from "../utils/networkFeesDisplay";
+
+export function formatRentPayment(payment: RentPayment, locale: string): string | null {
+  const { unit } = payment.asset;
+  if (!unit) return null;
+  return formatFeeCurrencyAmount(unit, new BigNumber(payment.amount.toString()), locale);
+}
 
 /** The sub-account holding the token a sponsored fee is paid in; null for a native fee asset. */
 export function findFeeTokenAccount(

@@ -30,7 +30,7 @@ const transformIncludePatterns = [
   "react-native-worklets",
   "react-native-reanimated",
   "react-native-modal",
-  "@hashgraph/sdk",
+  "@hiero-ledger/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",
   "expo-crypto",
@@ -196,11 +196,14 @@ module.exports = {
     // expo-crypto needs a native runtime, and pnpm gives the app and the workspace
     // packages it renders separate copies; map both to one stub.
     "^expo-crypto$": "<rootDir>/__mocks__/expo-crypto.ts",
+    // Mirror the rspack alias: Segment, hiero and coin-evm import it, and 2.x can't be parsed by Jest.
+    "^react-native-get-random-values$": "<rootDir>/src/getRandomValuesPolyfill.ts",
     // expo-file-system needs a native runtime; map every copy to one stub.
     "^expo-file-system$": "<rootDir>/__mocks__/expo-file-system.ts",
     "^expo-web-browser$": "<rootDir>/__mocks__/expo-web-browser.ts",
     "^expo-clipboard$": "<rootDir>/__mocks__/expo-clipboard.js",
     "^expo-image-picker$": "<rootDir>/__mocks__/expo-image-picker.ts",
+    "^@shared/network-status$": "<rootDir>/__mocks__/@shared/network-status.ts",
     // react-native-fast-crypto ships ESM and needs a native runtime; one stub for every copy.
     "^react-native-fast-crypto$": "<rootDir>/__mocks__/react-native-fast-crypto.ts",
     // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)

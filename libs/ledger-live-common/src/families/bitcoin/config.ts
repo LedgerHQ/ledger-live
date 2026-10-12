@@ -180,6 +180,20 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
     },
   },
+  config_currency_zcash_testnet: {
+    type: "object",
+    default: {
+      explorerId: "zec_testnet",
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      name: "Zcash Testnet",
+      unit: { name: "zcash", code: "𝚝ZEC", magnitude: 8 },
+      zaino: { url: "https://testnet.zec.rocks:443" },
+      explorer: { url: "https://explorers.api.live.ledger-test.com" },
+    },
+  },
   config_currency_zencash: {
     type: "object",
     default: {

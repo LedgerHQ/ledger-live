@@ -238,7 +238,7 @@ describe("listOperations", () => {
 
       const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
 
-      expect(result.items[0]).toMatchObject({ type: "FEES", value: 5000n });
+      expect(result.items[0]).toMatchObject({ type: "FEES", value: 0n });
     });
 
     it("ignores a memo when counting instructions", async () => {
@@ -468,8 +468,7 @@ describe("listOperations", () => {
     const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
 
     expect(result.items).toHaveLength(1);
-    expect(result.items[0].type).toBe("FEES");
-    expect(result.items[0].value).toBe(5000n);
+    expect(result.items[0]).toMatchObject({ type: "FEES", value: 0n });
   });
 
   it("should pass cursor as before parameter", async () => {
@@ -1515,7 +1514,6 @@ describe("listOperations", () => {
         assetAmount: "1000000",
         assetSenders: [],
         assetRecipients: [TEST_ADDRESS],
-        internal: true,
       });
     });
 
@@ -1684,7 +1682,7 @@ describe("listOperations", () => {
       expect(tokenOps[0].recipients).toEqual([TEST_RECIPIENT]);
     });
 
-    it("should include internal: true in token operation details", async () => {
+    it("should not flag token operations as internal", async () => {
       const blockTime = 1700000000;
       mockGetSignaturesForAddress.mockResolvedValue([
         { signature: "sig1", slot: 100, blockTime, err: null },
@@ -1709,7 +1707,7 @@ describe("listOperations", () => {
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
-      expect(tokenOps[0].details).toEqual(expect.objectContaining({ internal: true }));
+      expect(tokenOps[0].details).not.toHaveProperty("internal");
     });
 
     it("keeps each mint's counterparties to its own operation on a swap", async () => {

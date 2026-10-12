@@ -31,6 +31,14 @@ export type ListedDevice = {
 /** Returns the same key for the same device in every discovery update. */
 export type ConnectNewDeviceGetDiscoveredDeviceKey = (discoveredDevice: DiscoveredDevice) => string;
 
+/**
+ * Returns the listed devices that `Discovering` shows. The machine keeps the devices that it hides
+ * in its list, so that a hidden device keeps its position when it shows again.
+ */
+export type ConnectNewDeviceFilterListedDevices = (
+  listedDevices: Array<ListedDevice>,
+) => Array<ListedDevice>;
+
 export type ConnectNewDeviceMapConnectionError<
   TConnectionError extends BaseConnectionError = BaseConnectionError,
 > = (error: unknown) => TConnectionError;
@@ -46,6 +54,7 @@ export type ConnectNewDeviceStateMachineInput<
   onClose: () => void;
   mapConnectionError: ConnectNewDeviceMapConnectionError<TConnectionError>;
   getDiscoveredDeviceKey: ConnectNewDeviceGetDiscoveredDeviceKey;
+  filterListedDevices?: ConnectNewDeviceFilterListedDevices;
   buildCompatDeviceId?: (device: ConnectedDevice) => string;
   deviceNotFoundDelay?: number;
   successDelay?: number;

@@ -1,12 +1,17 @@
 import { useCallback } from "react";
 import {
   SPONSORED_FAILURE_MESSAGE,
+  formatSponsoredOfferedFee,
+  formatSponsoredRetryTime,
   getSponsoredFailureFeeTicker,
   getSponsoredFailureMessage,
   isSponsoredRetryUnaffordable,
   type SponsoredFailureMessage,
 } from "@ledgerhq/live-common/flows/send/sponsored/failure";
+import { useSponsoredRetryLocked } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredRetryLocked";
+import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
+import { localeSelector } from "~/reducers/settings";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useSponsoredSend } from "../../../context/SponsoredSendContext";
 
@@ -25,25 +30,35 @@ const FAILURE_MESSAGE_KEYS: Record<
   Exclude<SponsoredFailureMessage, typeof SPONSORED_FAILURE_MESSAGE.INSUFFICIENT_FUNDS>,
   string
 > = {
+  [SPONSORED_FAILURE_MESSAGE.PRICE_INCREASED]: "send.newSendFlow.sponsoredFailure.priceIncreased",
   [SPONSORED_FAILURE_MESSAGE.RENT_PAYMENT]: "send.newSendFlow.sponsoredFailure.rentPayment",
+  [SPONSORED_FAILURE_MESSAGE.RENT_PAYMENT_REPORTED_FAILED]:
+    "send.newSendFlow.sponsoredFailure.rentPaymentReportedFailed",
   [SPONSORED_FAILURE_MESSAGE.DELIVERY_FAILED]: "send.newSendFlow.sponsoredFailure.deliveryFailed",
-  [SPONSORED_FAILURE_MESSAGE.CONTRACT_DATA]: "send.newSendFlow.sponsoredFailure.contractData",
   [SPONSORED_FAILURE_MESSAGE.TRANSFER]: "send.newSendFlow.sponsoredFailure.transfer",
+};
+
+const RETRY_LABEL_KEYS: Partial<Record<SponsoredFailureMessage, string>> = {
+  [SPONSORED_FAILURE_MESSAGE.PRICE_INCREASED]: "send.newSendFlow.sponsoredFailure.acceptPrice",
+  [SPONSORED_FAILURE_MESSAGE.DELIVERY_FAILED]: "send.newSendFlow.sponsoredFailure.retryPaying",
 };
 
 /** actions.retry() re-enters the right phase and the overlay hosts render it: no navigation here. */
 export function useSponsoredFailureViewModel(): SponsoredFailureViewModel {
   const { t } = useTranslation();
+  const locale = useSelector(localeSelector);
   const { state: flowState } = useSendFlowData();
   const { close, operation, status } = useSendFlowActions();
   const { state, actions, mainAccount, providerName, feeCurrencyTicker } = useSponsoredSend();
 
-  const retryDisabled = isSponsoredRetryUnaffordable({
+  const retryUnaffordable = isSponsoredRetryUnaffordable({
     state,
     mainAccount,
     account: flowState.account.account,
     transaction: flowState.transaction.transaction,
   });
+  const retryLocked = useSponsoredRetryLocked(state.retryLockedUntil);
+  const retryDisabled = retryUnaffordable || retryLocked;
 
   // A failed TX-C leaves the flow status on ERROR; clear it before signing again.
   const onRetry = useCallback(() => {
@@ -65,17 +80,27 @@ export function useSponsoredFailureViewModel(): SponsoredFailureViewModel {
     message = t(FAILURE_MESSAGE_KEYS[failureMessage], {
       provider: providerName,
       txidSuffix: state.paymentTxId ? ` (${state.paymentTxId})` : "",
+      fee: formatSponsoredOfferedFee(state, locale),
     });
   }
 
-  const retryLabel =
-    failureMessage === SPONSORED_FAILURE_MESSAGE.DELIVERY_FAILED
-      ? t("send.newSendFlow.sponsoredFailure.retryPaying")
-      : t("send.newSendFlow.sponsoredFailure.retry");
+  const retryLabel = t(
+    (failureMessage && RETRY_LABEL_KEYS[failureMessage]) ??
+      "send.newSendFlow.sponsoredFailure.retry",
+  );
+
+  let retryBlockedMessage: string | null = null;
+  if (retryUnaffordable) {
+    retryBlockedMessage = insufficientFunds;
+  } else if (retryLocked && state.retryLockedUntil !== null) {
+    retryBlockedMessage = t("send.newSendFlow.sponsoredFailure.retryLocked", {
+      time: formatSponsoredRetryTime(state.retryLockedUntil, locale),
+    });
+  }
 
   return {
     message,
-    retryBlockedMessage: retryDisabled ? insufficientFunds : null,
+    retryBlockedMessage,
     retryLabel,
     retryDisabled,
     cancelLabel: t("send.newSendFlow.sponsoredFailure.cancel"),

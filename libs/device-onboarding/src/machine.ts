@@ -36,6 +36,15 @@ function stepIs(...steps: OnboardingStep[]) {
 
 const stopsHere = {};
 
+/** A final state. The host's `leaveOnboarding` runs once, when the machine enters it. */
+function exitWith(reason: ExitOutput["reason"]) {
+  return {
+    type: "final",
+    entry: { type: "leaveOnboarding", params: { reason } },
+    output: { reason } satisfies ExitOutput,
+  } as const;
+}
+
 export const deviceOnboardingMachine = setup({
   types: {
     context: {} as DeviceOnboardingContext,
@@ -51,7 +60,11 @@ export const deviceOnboardingMachine = setup({
     seedPolling,
     unlockPolling,
   },
-  actions: contextActions,
+  actions: {
+    ...contextActions,
+    // The host provides it: the lib does not know the app's store or navigation.
+    leaveOnboarding: (_args, _params: ExitOutput) => undefined,
+  },
   guards: {
     requiresLegacyFlow: ({ context }) =>
       context.firmwareVersion === null ||
@@ -59,6 +72,7 @@ export const deviceOnboardingMachine = setup({
         currentVersion: context.firmwareVersion,
         deviceModelId: context.deviceModelId,
       }),
+    seedSetupNotHosted: ({ context }) => !context.isOnboarded && !context.hostsSeedSetup,
     deviceNotGenuine: ({ context }) => currentVerdict(context)?.isGenuine === false,
     awaitsStart: ({ context }) => !context.hasStarted,
     canShowEarlyCheck: ({ context }) =>
@@ -71,11 +85,11 @@ export const deviceOnboardingMachine = setup({
     shouldRunFirmwareCheck: ({ context }) =>
       !context.checksPaused &&
       currentVerdict(context)?.isGenuine === true &&
-      !context.firmwareChecked,
+      context.firmware?.kind !== "checked",
     updateAwaitingAnswer: ({ context }) =>
-      !context.checksPaused && context.availableFirmwareUpdate !== null && !context.firmwareChecked,
+      !context.checksPaused && context.firmware?.kind === "offered",
     checksAlreadyPassed: ({ context }) =>
-      currentVerdict(context)?.isGenuine === true && context.firmwareChecked,
+      currentVerdict(context)?.isGenuine === true && context.firmware?.kind === "checked",
     onEarlyCheckScreen: ({ context }) => context.onEarlyCheckScreen,
     isOnboarded: ({ context }) => context.isOnboarded,
     onboardedOnEntry: ({ context }) => context.onboardedOnEntry === true,
@@ -115,13 +129,15 @@ export const deviceOnboardingMachine = setup({
     LOCKED: ".deviceLocked",
     TRANSPORT_LOST: ".awaitingSession",
     QUIT: ".quitting",
+    // Also here, not only in awaitingSession: the device can lock before SESSION_READY.
+    SESSION_CHANGED: { actions: "startNewSession" },
   },
   output: ({ context, event }) => exitContract(context, event.output),
   states: {
     readingState: {
       invoke: {
         src: "readDeviceState",
-        input: ({ context }) => ({ dmk: context.dmk, sessionId: context.ports.currentSessionId() }),
+        input: ({ context }) => ({ dmk: context.dmk, sessionId: context.sessionId }),
       },
       on: {
         DEVICE_STATE_READ: { target: "routing", actions: "rememberDeviceState" },
@@ -136,6 +152,7 @@ export const deviceOnboardingMachine = setup({
       always: [
         { guard: "deviceNotGenuine", target: "checks.notGenuineSupport" },
         { guard: "requiresLegacyFlow", target: "legacyFallback" },
+        { guard: "seedSetupNotHosted", target: "legacyFallback" },
         { guard: "awaitsStart", target: "awaitingStart" },
         { guard: "canShowEarlyCheck", target: "checks.enteringEarlyCheckScreen" },
         { target: "checks.checksIdle" },
@@ -154,7 +171,7 @@ export const deviceOnboardingMachine = setup({
             src: "toggleEarlyCheck",
             input: ({ context }) => ({
               dmk: context.dmk,
-              sessionId: context.ports.currentSessionId(),
+              sessionId: context.sessionId,
               toggle: EarlyCheckToggle.Enter,
             }),
           },
@@ -179,12 +196,16 @@ export const deviceOnboardingMachine = setup({
             src: "genuineCheck",
             input: ({ context }) => ({
               dmk: context.dmk,
-              sessionId: context.ports.currentSessionId(),
+              sessionId: context.sessionId,
             }),
           },
-          exit: "forgetSecureConnectionRequested",
+          // The check keeps running while the device asks to allow the secure connection.
+          initial: "running",
+          states: {
+            running: { on: { ALLOW_SECURE_CONNECTION_REQUESTED: "awaitingApproval" } },
+            awaitingApproval: { on: { SECURE_CONNECTION_ALLOWED: "running" } },
+          },
           on: {
-            ALLOW_SECURE_CONNECTION_REQUESTED: { actions: "rememberSecureConnectionRequested" },
             GENUINE_CHECK_PASSED: { target: "checksIdle", actions: "rememberGenuineChecked" },
             GENUINE_CHECK_REFUSED: { target: "genuineFailed", actions: "rememberGenuineFailure" },
             GENUINE_CHECK_FAILED: { target: "genuineFailed", actions: "rememberGenuineFailure" },
@@ -207,7 +228,7 @@ export const deviceOnboardingMachine = setup({
             src: "firmwareCheck",
             input: ({ context }) => ({
               dmk: context.dmk,
-              sessionId: context.ports.currentSessionId(),
+              sessionId: context.sessionId,
             }),
           },
           on: {
@@ -259,7 +280,7 @@ export const deviceOnboardingMachine = setup({
             src: "toggleEarlyCheck",
             input: ({ context }) => ({
               dmk: context.dmk,
-              sessionId: context.ports.currentSessionId(),
+              sessionId: context.sessionId,
               toggle: EarlyCheckToggle.Exit,
             }),
           },
@@ -291,7 +312,7 @@ export const deviceOnboardingMachine = setup({
         src: "seedPolling",
         input: ({ context }) => ({
           dmk: context.dmk,
-          sessionId: context.ports.currentSessionId(),
+          sessionId: context.sessionId,
         }),
       },
       on: {
@@ -339,22 +360,19 @@ export const deviceOnboardingMachine = setup({
         restoreRecoveryKey: {},
       },
     },
-    syncOffer: { type: "final", output: { reason: "offerLedgerSync" } satisfies ExitOutput },
-    done: { type: "final", output: { reason: "completed" } satisfies ExitOutput },
+    syncOffer: exitWith("offerLedgerSync"),
+    done: exitWith("completed"),
 
     deviceLocked: {
       invoke: {
         src: "unlockPolling",
-        input: ({ context }) => ({ dmk: context.dmk, sessionId: context.ports.currentSessionId() }),
+        input: ({ context }) => ({ dmk: context.dmk, sessionId: context.sessionId }),
       },
       on: { UNLOCKED: "readingState" },
     },
     awaitingSession: {
       on: {
-        SESSION_READY: {
-          target: "readingState",
-          actions: ["forgetFirmwareCheck", "forgetGenuineFailure", "resumeChecks"],
-        },
+        SESSION_READY: { target: "readingState", actions: "startNewSession" },
       },
     },
 
@@ -370,7 +388,7 @@ export const deviceOnboardingMachine = setup({
         src: "toggleEarlyCheck",
         input: ({ context }) => ({
           dmk: context.dmk,
-          sessionId: context.ports.currentSessionId(),
+          sessionId: context.sessionId,
           toggle: EarlyCheckToggle.Exit,
         }),
       },
@@ -380,11 +398,8 @@ export const deviceOnboardingMachine = setup({
       },
     },
 
-    legacyFallback: { type: "final", output: { reason: "legacyFallback" } satisfies ExitOutput },
-    bootloaderRecovery: {
-      type: "final",
-      output: { reason: "resumeFirmwareUpdate" } satisfies ExitOutput,
-    },
-    exitOnboarding: { type: "final", output: { reason: "userQuit" } satisfies ExitOutput },
+    legacyFallback: exitWith("legacyFallback"),
+    bootloaderRecovery: exitWith("resumeFirmwareUpdate"),
+    exitOnboarding: exitWith("userQuit"),
   },
 });

@@ -13,7 +13,6 @@ export interface MainTabBarViewProps {
   readonly hideTabBar: boolean;
   readonly bottomInset: number;
   readonly bottomOffset: number;
-  readonly gradientColors: [string, string, string];
 }
 
 export interface MainTabBarProps extends BottomTabBarProps {

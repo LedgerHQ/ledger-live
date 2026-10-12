@@ -57,8 +57,7 @@ export function runSwapDexNativeFlow(
       await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
-      await app.send.summaryContinue();
-      await app.send.dismissHighFeeModal();
+      await app.walletApiSignatureDrawer.expectVisible();
 
       await app.swap.verifyAmountsAndAcceptSwap(swap, Number(amountToSwap).toFixed(8));
       await app.swapLiveApp.expectExecuteSwapOnStepApproval();

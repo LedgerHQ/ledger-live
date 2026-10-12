@@ -5,14 +5,17 @@ import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
 import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import NetInfo from "@react-native-community/netinfo";
 import reducers from "~/reducers";
+import { subscribeToNetworkState } from "@shared/network-status";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 import { setupCryptoAssetsStore, setupRateLookups } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
+import { syncFirmwareDistributionSalt } from "@ledgerhq/live-dmk-shared";
+import { setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-mobile";
+import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistributionSalt";
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
@@ -141,17 +144,18 @@ configureCardSessionRenewal({
   },
 });
 
-setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
-  const unsubscribe = NetInfo.addEventListener(state => {
+setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) =>
+  subscribeToNetworkState(state => {
     if (state.isConnected) {
       dispatch(onOnline());
     } else {
       dispatch(onOffline());
     }
-  });
-  return unsubscribe;
-});
+  }),
+);
 connectRecentAddressesStore(store, recentAddressesSelector);
 setupCryptoAssetsStore(store);
 setupRateLookups();
 setSwapQuotesStore(store.dispatch);
+syncFirmwareDistributionSalt(store, setFirmwareDistributionSalt);
+setIdentitiesStore(store);

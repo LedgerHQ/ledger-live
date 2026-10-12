@@ -1,4 +1,4 @@
-import { PublicKey } from "@hashgraph/sdk";
+import { PublicKey } from "@hiero-ledger/sdk";
 import invariant from "invariant";
 import { deserializeSignature, deserializeTransaction, serializeTransaction } from "./utils";
 

@@ -174,7 +174,10 @@ const createConnectNewDeviceStateMachine = <
       emitDiscovering: ({ context, self }) => {
         context.observer.next({
           type: ConnectNewDeviceUIStateTypes.Discovering,
-          devices: buildSelectableDevices(context.listedDevices, self.send),
+          devices: buildSelectableDevices(
+            context.filterListedDevices?.(context.listedDevices) ?? context.listedDevices,
+            self.send,
+          ),
           scanningTransports: getScanningTransports(
             context.deviceDiscoveryService.transportIds,
             context.skipTransportIds,

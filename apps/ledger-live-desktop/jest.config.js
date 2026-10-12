@@ -25,7 +25,7 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
 
 const testPathIgnorePatterns = [
   "benchmark/",
-  "tools/",
+  "tools/(?!rspack/)",
   "mobile-test-app/",
   "lib/",
   "lib-es/",
@@ -164,7 +164,7 @@ module.exports = {
         ...testPathIgnorePatterns,
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
-      testMatch: ["**/src/**/*.test.(ts|tsx)"],
+      testMatch: ["**/src/**/*.test.(ts|tsx)", "**/tools/rspack/*.test.ts"],
       setupFilesAfterEnv: [
         ...commonConfig.setupFilesAfterEnv,
         "@ledgerhq/test-quarantine/jest-retries",

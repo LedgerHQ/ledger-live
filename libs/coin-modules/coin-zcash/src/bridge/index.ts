@@ -93,8 +93,7 @@ export function createBridges(signerContext: SignerContext, context: ZcashContex
     assignToAccountRaw,
     formatAccountSpecifics: () => "",
     getSerializedAddressParameters,
-    validateAddress: (address: string) =>
-      validateAddress(address, { currencyId: "zcash", networkId: 0 }),
+    validateAddress,
     // Placeholder recipient for the flows that price a transaction before the
     // user has typed one (swap max estimation, quote fee context). Without it
     // live-common's default extension throws.

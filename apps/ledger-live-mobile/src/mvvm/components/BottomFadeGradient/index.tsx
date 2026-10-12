@@ -1,14 +1,24 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { useBottomFadeGradientViewModel } from "./useBottomFadeGradientViewModel";
+import { Platform, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Box, LinearGradient } from "@ledgerhq/lumen-ui-rnative";
+import type { LumenStyleSheetTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 
 export const GRADIENT_HEIGHT = 80;
-export const GRADIENT_LOCATIONS: number[] = [0, 0.35, 0.7, 1];
+export const GRADIENT_STOPS = [
+  { color: "base", offset: 0, opacity: 0 },
+  { color: "base", offset: 0.35, opacity: 0.3 },
+  { color: "base", offset: 0.7, opacity: 0.75 },
+  { color: "base", offset: 1, opacity: 1 },
+] satisfies {
+  color: keyof LumenStyleSheetTheme["colors"]["bg"];
+  offset: number;
+  opacity: number;
+}[];
 
 export function BottomFadeGradient() {
-  const { colors, bottomInset } = useBottomFadeGradientViewModel();
+  const { bottom } = useSafeAreaInsets();
+  const bottomInset = Platform.OS === "ios" ? bottom : 0;
 
   return (
     <Box
@@ -17,8 +27,7 @@ export function BottomFadeGradient() {
       style={[styles.container, { height: GRADIENT_HEIGHT + bottomInset }]}
     >
       <LinearGradient
-        colors={colors}
-        locations={GRADIENT_LOCATIONS}
+        stops={GRADIENT_STOPS}
         style={StyleSheet.absoluteFillObject}
         pointerEvents="none"
       />

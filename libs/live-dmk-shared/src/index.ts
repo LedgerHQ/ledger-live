@@ -40,11 +40,13 @@ export {
 } from "./connectDevice/connectDeviceUseCase";
 export { ConnectNewDeviceUIStateTypes } from "./connectNewDevice/types";
 export type {
+  ConnectNewDeviceFilterListedDevices,
   ConnectNewDeviceGetDiscoveredDeviceKey,
   ConnectNewDeviceMapConnectionError,
   ConnectNewDeviceStateMachineInput,
   ConnectNewDeviceUIState,
   ConnectNewDeviceUIStateType,
+  ListedDevice,
   SelectableDevice,
 } from "./connectNewDevice/types";
 export {
@@ -91,6 +93,7 @@ export { AddressBookProvider } from "./services/AddressBookProvider";
 export type { AddressBookSource } from "./services/AddressBookProvider";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";
 export { UserHashService } from "./services/UserHashService";
+export { syncFirmwareDistributionSalt } from "./services/syncFirmwareDistributionSalt";
 export {
   LiveBlindSigningReporter,
   liveBlindSigningReporter,

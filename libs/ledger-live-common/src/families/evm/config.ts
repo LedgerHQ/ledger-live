@@ -51,30 +51,6 @@ function overridesDefaultsWithEnv(
 }
 
 const evmCurrencies: CurrencyLiveConfigDefinition = {
-  config_currency_akroma: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 200625,
-      name: "Akroma",
-      unit: { name: "AKA", code: "AKA", magnitude: 8 },
-    },
-  },
-  config_currency_atheios: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1620,
-      name: "Atheios",
-      unit: { name: "ATH", code: "ATH", magnitude: 8 },
-    },
-  },
   config_currency_avalanche_c_chain: {
     type: "object",
     default: {
@@ -162,42 +138,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_callisto: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 820,
-      name: "Callisto",
-      unit: { name: "CLO", code: "CLO", magnitude: 8 },
-    },
-  },
-  config_currency_dexon: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 237,
-      name: "DEXON",
-      unit: { name: "dexon", code: "DXN", magnitude: 6 },
-    },
-  },
-  config_currency_ellaism: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 64,
-      name: "Ellaism",
-      unit: { name: "ELLA", code: "ELLA", magnitude: 8 },
-    },
-  },
   config_currency_ethereum: {
     type: "object",
     default: {
@@ -263,126 +203,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_ether1: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1313114,
-      name: "Ether1",
-      unit: { name: "ETHO", code: "ETHO", magnitude: 18 },
-    },
-  },
-  config_currency_ethergem: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 1987,
-      name: "EtherGem",
-      unit: { name: "EGEM", code: "EGEM", magnitude: 18 },
-    },
-  },
-  config_currency_ethersocial: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 31102,
-      name: "Ethersocial",
-      unit: { name: "ESN", code: "ESN", magnitude: 18 },
-    },
-  },
-  config_currency_expanse: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 2,
-      name: "Expanse",
-      unit: { name: "EXP", code: "EXP", magnitude: 8 },
-    },
-  },
-  config_currency_gochain: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 60,
-      name: "GoChain",
-      unit: { name: "GO", code: "GO", magnitude: 8 },
-    },
-  },
-  config_currency_hpb: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 269,
-      name: "High Performance Blockchain",
-      unit: { name: "hpb", code: "HPB", magnitude: 18 },
-    },
-  },
-  config_currency_mix: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 76,
-      name: "MIX Blockchain",
-      unit: { name: "MIX", code: "MIX", magnitude: 8 },
-    },
-  },
-  config_currency_musicoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 7762959,
-      name: "Musicoin",
-      unit: { name: "MUSIC", code: "MUSIC", magnitude: 8 },
-    },
-  },
-  config_currency_pirl: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 3125659152,
-      name: "Pirl",
-      unit: { name: "PIRL", code: "PIRL", magnitude: 8 },
-    },
-  },
-  config_currency_poa: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 99,
-      name: "POA",
-      unit: { name: "POA", code: "POA", magnitude: 8 },
-    },
-  },
   config_currency_polygon: {
     type: "object",
     default: {
@@ -407,66 +227,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         explorerId: "matic",
       },
       minGasPrice: "25000000000",
-    },
-  },
-  config_currency_reosc: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 2894,
-      name: "REOSC",
-      unit: { name: "REOSC", code: "REOSC", magnitude: 16 },
-    },
-  },
-  config_currency_thundercore: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 108,
-      name: "Thundercore",
-      unit: { name: "TT", code: "TT", magnitude: 18 },
-    },
-  },
-  config_currency_tomo: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 88,
-      name: "TomoChain",
-      unit: { name: "TOMO", code: "TOMO", magnitude: 18 },
-    },
-  },
-  config_currency_ubiq: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 8,
-      name: "Ubiq",
-      unit: { name: "ubiq", code: "UBQ", magnitude: 18 },
-    },
-  },
-  config_currency_wanchain: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 888,
-      name: "Wanchain",
-      unit: { name: "WAN", code: "WAN", magnitude: 8 },
     },
   },
   config_currency_arbitrum: {

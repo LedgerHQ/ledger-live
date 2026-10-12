@@ -1,4 +1,4 @@
-import { test } from "tests/fixtures/common";
+import { test, type CliCommand } from "tests/fixtures/common";
 import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
@@ -11,7 +11,6 @@ import {
   pickMinaValidator,
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { getEnv } from "@shared/env";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
@@ -23,172 +22,193 @@ import {
   FF_MINA_STAKING_ENABLED,
   FF_STAKE_PROGRAMS_MODAL,
 } from "tests/utils/featureFlagUtils";
+import type { Application } from "tests/page";
+import type { DelegateTxType } from "tests/page/drawer/delegate.drawer";
 import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 
-function setupEnv(disableBroadcast?: boolean) {
+const DISABLE_BROADCAST_ENV = { DISABLE_TRANSACTION_BROADCAST: "1" };
+// `getEnv` does not read process.env in the test runner, so it would always return the default here.
+// The app broadcasts only when the run sets "0" (see the electronApp fixture).
+const IS_BROADCAST_RUN = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
+
+function useDelegateFixtures(
+  currency: Currency,
+  {
+    cliCommands,
+    featureFlags,
+    disableBroadcast = false,
+  }: { cliCommands: CliCommand[]; featureFlags?: PartialFeatures; disableBroadcast?: boolean },
+) {
   test.use({
-    env: disableBroadcast ? { DISABLE_TRANSACTION_BROADCAST: "1" } : {},
+    teamOwner: delegateTeamOwner(currency.id),
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: currency.speculosApp,
+    cliCommands,
+    featureFlags,
+    ...(disableBroadcast && { env: DISABLE_BROADCAST_ENV }),
   });
 }
 
-const e2eDelegationAccounts: Array<{
+function ticketAnnotations({ xrayTicket, bugTicket }: { xrayTicket: string; bugTicket?: string }) {
+  return [
+    { type: "TMS", description: xrayTicket },
+    ...(bugTicket ? [{ type: "BUG", description: bugTicket }] : []),
+  ];
+}
+
+/** Lock name shared by tests that broadcast from `account`, so they never race on its nonce. */
+function accountLock(account: Account) {
+  return `account:${account.currency.id}:${account.accountPath}`;
+}
+
+async function openAccount(app: Application, account: Account) {
+  await app.mainNavigation.openTargetFromMainNavigation("accounts");
+  await app.accounts.navigateToAccountByName(account.accountName);
+}
+
+/**
+ * How the provider step of a delegation is completed.
+ * - preselected: the first provider is already selected, only its name is checked.
+ * - search: the provider is searched, then picked by name.
+ * - pickByName: the provider is picked by name from the visible list.
+ */
+type ProviderStep = "preselected" | "search" | "pickByName";
+
+type DelegateScenario = {
   delegate: Delegate;
   xrayTicket: string;
-  transactionType: string;
+  transactionType: DelegateTxType;
+  providerStep: ProviderStep;
+  /** The flow opens on a step that only needs Continue before the provider list. */
+  hasIntroStep?: boolean;
   requiresExpertMode?: boolean;
   supportsLNS?: boolean;
+  disableBroadcast?: boolean;
   bugTicket?: string;
-  requiresValidatorSelection?: boolean;
   featureFlags?: PartialFeatures;
-}> = [
+};
+
+const delegateScenarios: DelegateScenario[] = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
     xrayTicket: "B2CQA-2740",
     transactionType: "Delegated",
+    providerStep: "preselected",
   },
   {
     delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
     xrayTicket: "B2CQA-2741",
     transactionType: "Staked",
+    providerStep: "preselected",
   },
   {
     delegate: new Delegate(Account.INJ_1, "0.0000001", "Ledger by Bitwise"),
     xrayTicket: "B2CQA-3021",
     transactionType: "Delegated",
+    providerStep: "preselected",
     requiresExpertMode: true,
   },
   {
     delegate: new Delegate(Account.OSMO_1, "0.0001", "Ledger by Figment"),
     xrayTicket: "B2CQA-3022",
     transactionType: "Delegated",
-    requiresValidatorSelection: true,
+    providerStep: "search",
   },
   {
     delegate: new Delegate(Account.BABY_1, "0.001", "Figment"),
     xrayTicket: "B2CQA-6679",
     transactionType: "Delegated",
-    requiresValidatorSelection: true,
+    providerStep: "search",
     featureFlags: FF_BABYLON_STAKING_ENABLED,
   },
   {
     delegate: new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG"),
     xrayTicket: "B2CQA-6115",
     transactionType: "Delegated",
+    providerStep: "preselected",
     supportsLNS: false,
   },
-];
-
-const CURRENCIES_WITHOUT_PRESELECTED_VALIDATOR = new Set([Currency.OSMO.id, Currency.BABY.id]);
-
-const validators: Array<{
-  delegate: Delegate;
-  xrayTicket: string;
-  bugTicket?: string;
-  featureFlags?: PartialFeatures;
-}> = [
   {
-    delegate: new Delegate(Account.ATOM_2, "0.001", "Ledger"),
-    xrayTicket: "B2CQA-2731",
+    delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Figment"),
+    xrayTicket: "B2CQA-3020",
+    transactionType: "Delegated",
+    providerStep: "search",
+    hasIntroStep: true,
+    supportsLNS: false,
+    disableBroadcast: true,
   },
   {
-    delegate: new Delegate(Account.SOL_3, "0.001", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2764",
-  },
-  {
-    delegate: new Delegate(Account.NEAR_2, "0.01", "ledgerbyfigment.poolv1.near"),
-    xrayTicket: "B2CQA-2732, B2CQA-2765",
-  },
-  {
-    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2766",
-  },
-  {
-    delegate: new Delegate(Account.MULTIVERS_X_2, "1", "1"),
-    xrayTicket: "B2CQA-2767",
-  },
-  {
-    delegate: new Delegate(Account.OSMO_2, "1", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2768",
-  },
-  {
-    delegate: new Delegate(Account.BABY_2, "1", "Figment"),
-    xrayTicket: "B2CQA-6678",
-    featureFlags: FF_BABYLON_STAKING_ENABLED,
+    delegate: new Delegate(Account.SOL_2, "1", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2742",
+    transactionType: "Delegated",
+    providerStep: "pickByName",
+    hasIntroStep: true,
+    disableBroadcast: true,
   },
 ];
 
-const liveApps = [
-  {
-    delegate: new Delegate(Account.TRX_1, "1", "yield.xyz"),
-    xrayTicket: "B2CQA-3025",
-  },
-  {
-    delegate: new Delegate(Account.DOT_1, "1", "yield.xyz"),
-    xrayTicket: "B2CQA-3026",
-  },
-];
+async function completeProviderStep(app: Application, provider: string, step: ProviderStep) {
+  switch (step) {
+    case "preselected":
+      await app.delegate.verifyFirstProviderName(provider);
+      break;
+    case "search":
+      await app.delegate.inputProvider(provider);
+      await app.delegate.selectProviderByName(provider);
+      break;
+    case "pickByName":
+      await app.delegate.selectProviderByName(provider);
+      break;
+  }
+}
 
-for (const account of e2eDelegationAccounts) {
+for (const scenario of delegateScenarios) {
+  const { delegate } = scenario;
+  const { currency } = delegate.account;
+
   test.describe("Delegate", () => {
-    test.use({
-      teamOwner: delegateTeamOwner(account.delegate.account.currency.id),
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: account.delegate.account.currency.speculosApp,
-      cliCommands: [liveDataCommand(account.delegate.account)],
-      featureFlags: account.featureFlags,
+    useDelegateFixtures(currency, {
+      cliCommands: [liveDataCommand(delegate.account)],
+      featureFlags: scenario.featureFlags,
+      disableBroadcast: scenario.disableBroadcast,
     });
 
     test(
-      `[${account.delegate.account.currency.testLabel}] - Delegate`,
+      `[${currency.testLabel}] - Delegate`,
       {
-        tag: buildTags({
-          currencyId: account.delegate.account.currency.id,
-          skipLNS: account.supportsLNS === false,
-        }),
-        annotation: [
-          { type: "TMS", description: account.xrayTicket },
-          ...(account.bugTicket ? [{ type: "BUG", description: account.bugTicket }] : []),
-        ],
+        tag: buildTags({ currencyId: currency.id, skipLNS: scenario.supportsLNS === false }),
+        annotation: ticketAnnotations(scenario),
       },
       async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
+        await openAccount(app, delegate.account);
 
-        if (account.requiresExpertMode) {
+        if (scenario.requiresExpertMode) {
           await app.speculos.activateExpertMode();
         }
 
         await app.account.startStakingFlowFromMainStakeButton();
-        if (account.requiresValidatorSelection) {
-          await app.delegate.inputProvider(account.delegate.provider);
-          await app.delegate.selectProviderByName(account.delegate.provider);
-        } else {
-          await app.delegate.verifyFirstProviderName(account.delegate.provider);
+        if (scenario.hasIntroStep) {
+          await app.delegate.continue();
         }
+        await completeProviderStep(app, delegate.provider, scenario.providerStep);
         await app.delegate.continue();
-        await app.delegate.fillAmount(account.delegate.amount);
+        await app.delegate.fillAmount(delegate.amount);
         await app.delegate.continue();
 
-        await app.speculos.signDelegationTransaction(account.delegate);
+        await app.speculos.signDelegationTransaction(delegate);
         await app.delegate.verifySuccessMessage();
         await app.delegate.clickViewDetailsButton();
 
-        await app.drawer.waitForDrawerToBeVisible();
-        await app.delegateDrawer.verifyTxTypeIsVisible();
-        await app.delegateDrawer.verifyTxTypeIs(account.transactionType);
-
-        await app.delegateDrawer.providerIsVisible(account.delegate);
-        await app.delegateDrawer.amountValueIsVisible(account.delegate.account.currency.ticker);
-        await app.delegateDrawer.operationTypeIsCorrect(account.transactionType);
+        await app.delegateDrawer.verifyDelegationSummary(delegate, scenario.transactionType);
         await app.drawer.closeDrawer();
 
-        if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+        if (IS_BROADCAST_RUN && !scenario.disableBroadcast) {
           await app.layout.syncAccounts();
           await app.account.clickOnLastOperationAndReturnStatus();
-          await app.delegateDrawer.expectDelegationInfos(account.delegate);
-          await app.delegateDrawer.verifyTxTypeIs(account.transactionType);
-          await app.delegateDrawer.operationTypeIsCorrect(account.transactionType);
+          await app.delegateDrawer.expectDelegationInfos(delegate);
+          await app.delegateDrawer.verifyTxTypeIs(scenario.transactionType);
+          await app.delegateDrawer.operationTypeIsCorrect(scenario.transactionType);
         }
       },
     );
@@ -196,348 +216,42 @@ for (const account of e2eDelegationAccounts) {
 }
 
 test.describe("Delegate", () => {
-  const account = new Delegate(Account.ADA_1, "0.01", "Ledger by Figment 3");
-  setupEnv(true);
-  test.use({
-    teamOwner: delegateTeamOwner(account.account.currency.id),
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
+  const delegation = new Delegate(Account.ADA_1, "0.01", "Ledger by Figment 3");
+  const { currency } = delegation.account;
+  useDelegateFixtures(currency, {
+    cliCommands: [liveDataCommand(delegation.account)],
+    disableBroadcast: true,
   });
 
   test(
-    `[${account.account.currency.testLabel}] - Delegate`,
+    `[${currency.testLabel}] - Delegate`,
     {
-      tag: buildTags({ currencyId: account.account.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-3023" },
+      tag: buildTags({ currencyId: currency.id }),
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-3023" }),
     },
     async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
+      await openAccount(app, delegation.account);
       await app.account.startStakingFlowFromMainStakeButton();
 
       await app.delegate.continue();
       await app.delegate.openSearchProviderModal();
-      await app.delegate.inputProvider(account.provider);
-      await app.delegate.selectProviderByName(account.provider);
+      await app.delegate.inputProvider(delegation.provider);
+      await app.delegate.selectProviderByName(delegation.provider);
       await app.delegate.continue();
       await app.delegate.verifyValidatorName("Ledger by Figment 3 [LBF3]");
       await app.delegate.verifyFeesVisible();
       await app.delegate.continue();
 
-      await app.speculos.signDelegationTransaction(account);
+      await app.speculos.signDelegationTransaction(delegation);
       await app.delegate.verifySuccessMessage();
     },
   );
 });
 
 test.describe("Delegate", () => {
-  const account = new Delegate(Account.MULTIVERS_X_1, "1", "Figment");
-  setupEnv(true);
-  test.use({
-    teamOwner: delegateTeamOwner(account.account.currency.id),
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
-  });
-
-  test(
-    `[${account.account.currency.testLabel}] - Delegate`,
-    {
-      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-3020" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton();
-
-      await app.delegate.continue();
-      await app.delegate.inputProvider(account.provider);
-      await app.delegate.selectProviderByName(account.provider);
-      await app.delegate.continue();
-      await app.delegate.fillAmount(account.amount);
-      await app.delegate.continue();
-
-      await app.speculos.signDelegationTransaction(account);
-      await app.delegate.verifySuccessMessage();
-      await app.delegate.clickViewDetailsButton();
-
-      await app.drawer.waitForDrawerToBeVisible();
-      await app.delegateDrawer.verifyTxTypeIsVisible();
-      await app.delegateDrawer.verifyTxTypeIs("Delegated");
-      await app.delegateDrawer.providerIsVisible(account);
-      await app.delegateDrawer.amountValueIsVisible(account.account.currency.ticker);
-      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
-      await app.drawer.closeDrawer();
-    },
-  );
-});
-
-test.describe("Delegate", () => {
-  const account = new Delegate(Account.SOL_2, "1", "Ledger by Figment");
-  setupEnv(true);
-  test.use({
-    teamOwner: delegateTeamOwner(account.account.currency.id),
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
-  });
-
-  test(
-    `[${account.account.currency.testLabel}] - Delegate`,
-    {
-      tag: buildTags({ currencyId: account.account.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-2742" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton();
-      await app.delegate.continue();
-
-      await app.delegate.selectProviderByName(account.provider);
-      await app.delegate.continue();
-      await app.delegate.fillAmount(account.amount);
-      await app.delegate.continue();
-
-      await app.speculos.signDelegationTransaction(account);
-      await app.delegate.verifySuccessMessage();
-      await app.delegate.clickViewDetailsButton();
-
-      await app.drawer.waitForDrawerToBeVisible();
-      await app.delegateDrawer.verifyTxTypeIsVisible();
-      await app.delegateDrawer.verifyTxTypeIs("Delegated");
-      await app.delegateDrawer.providerIsVisible(account);
-      await app.delegateDrawer.amountValueIsVisible(account.account.currency.ticker);
-      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
-      await app.drawer.closeDrawer();
-    },
-  );
-});
-
-test.describe("Delegate", () => {
-  const account = new Delegate(Account.CELO_1, "0.001", "N/A");
-  test.use({
-    teamOwner: delegateTeamOwner(account.account.currency.id),
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
-  });
-
-  test(
-    `[${account.account.currency.testLabel}] - Lock`,
-    {
-      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-3042",
-      },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton();
-      await app.delegate.checkCeloManageAssetModal();
-      await app.delegate.clickCeloLockButton();
-      await app.delegate.fillAmount(account.amount);
-      await app.delegate.verifyLockInfoCeloWarning();
-      await app.delegate.continue();
-      await app.speculos.signDelegationTransaction(account);
-      await app.delegate.verifySuccessMessage();
-      await app.delegate.clickViewDetailsButton();
-      await app.drawer.waitForDrawerToBeVisible();
-      await app.delegateDrawer.verifyTxTypeIsVisible();
-      await app.delegateDrawer.verifyTxTypeIs("Locked");
-      await app.delegateDrawer.providerIsVisible(account);
-      await app.delegateDrawer.operationTypeIsCorrect("Locked");
-      await app.drawer.closeDrawer();
-    },
-  );
-
-  test(
-    `[${account.account.currency.testLabel}] - Vote`,
-    {
-      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-201",
-      },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton();
-      await app.delegate.checkCeloManageAssetModal();
-      await app.delegate.clickCeloVoteButton();
-      const provider = await app.delegate.selectProviderOnRow(1);
-      await app.delegate.continue();
-      await app.delegate.fillAmount(account.amount);
-      await app.delegate.continue();
-      await app.speculos.signDelegationTransaction(account);
-      await app.delegate.verifySuccessMessage();
-      await app.delegate.clickViewDetailsButton();
-      await app.drawer.waitForDrawerToBeVisible();
-      await app.delegateDrawer.verifyTxTypeIsVisible();
-      await app.delegateDrawer.verifyTxTypeIs("Voted");
-      await app.delegateDrawer.validatorGroupIsVisible(provider);
-      await app.delegateDrawer.operationTypeIsCorrect("Voted");
-      await app.drawer.closeDrawer();
-    },
-  );
-});
-
-for (const validator of validators) {
-  test.describe("Select a validator", () => {
-    test.use({
-      teamOwner: delegateTeamOwner(validator.delegate.account.currency.id),
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: validator.delegate.account.currency.speculosApp,
-      cliCommands: [liveDataCommand(validator.delegate.account)],
-      featureFlags: validator.featureFlags,
-    });
-
-    test(
-      `[${validator.delegate.account.currency.testLabel}] - Select validator`,
-      {
-        tag: buildTags({
-          currencyId: validator.delegate.account.currency.id,
-          skipLNS: validator.delegate.account.currency.id === Currency.MULTIVERS_X.id,
-        }),
-        annotation: [
-          { type: "TMS", description: validator.xrayTicket },
-          ...(validator.bugTicket ? [{ type: "BUG", description: validator.bugTicket }] : []),
-        ],
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
-
-        await app.account.startStakingFlowFromMainStakeButton();
-        await app.delegate.continue();
-
-        const hasNoPreselectedValidator = CURRENCIES_WITHOUT_PRESELECTED_VALIDATOR.has(
-          validator.delegate.account.currency.id,
-        );
-
-        if (validator.delegate.account.currency.name == Currency.MULTIVERS_X.name) {
-          await app.delegate.verifyContinueDisabled();
-          await app.delegate.checkValidatorListIsVisible();
-          await app.delegate.selectProviderOnRow(Number.parseInt(validator.delegate.provider, 10));
-          await app.delegate.closeProviderList(Number.parseInt(validator.delegate.provider, 10));
-        } else if (validator.delegate.account.currency.name == Currency.SOL.name) {
-          await app.delegate.verifyContinueDisabled();
-          await app.delegate.selectProviderByName(validator.delegate.provider);
-          await app.delegate.verifyProviderTC(validator.delegate.provider);
-        } else if (validator.delegate.account.currency.name == Currency.ADA.name) {
-          // Cardano auto-selects the first validator asynchronously and only enables Continue
-          // once the bridge finishes recomputing the transaction status. The provider row renders
-          // before that recompute settles, so asserting Continue right after the name is flaky.
-          // Explicitly (re)select the provider to force a clean, settled transaction update.
-          await app.delegate.verifyFirstProviderName(validator.delegate.provider);
-          await app.delegate.selectProviderByName(validator.delegate.provider);
-        } else if (hasNoPreselectedValidator) {
-          // Osmosis and Babylon have no Ledger validator pre-selection: the full list is already
-          // expanded and Continue stays disabled until a validator is explicitly picked.
-          await app.delegate.verifyContinueDisabled();
-          await app.delegate.checkValidatorListIsVisible();
-          await app.delegate.inputProvider(validator.delegate.provider);
-          await app.delegate.selectProviderByName(validator.delegate.provider);
-        } else {
-          await app.delegate.verifyFirstProviderName(validator.delegate.provider);
-          await app.delegate.verifyContinueEnabled();
-        }
-        await app.delegate.verifyProvider(1);
-        if (hasNoPreselectedValidator) {
-          await app.delegate.clearProviderSearch();
-        } else {
-          await app.delegate.openSearchProviderModal();
-        }
-        await app.delegate.checkValidatorListIsVisible();
-        await app.delegate.selectProviderOnRow(2);
-        await app.delegate.closeProviderList(2);
-      },
-    );
-  });
-}
-
-test.describe("Select a validator", () => {
-  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Bitwise");
-  test.use({
-    teamOwner: delegateTeamOwner(delegateAccount.account.currency.id),
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: delegateAccount.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(delegateAccount.account)],
-  });
-
-  test(
-    `[${delegateAccount.account.currency.testLabel}] - Delegate from market entry point`,
-    {
-      tag: buildTags({ currencyId: delegateAccount.account.currency.id }),
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2771",
-      },
-    },
-    async ({ app }) => {
-      await app.marketBanner.clickExploreMarketHeader();
-      // The asset-discoverability Market has no search input and no per-row stake CTA: staking is
-      // reached by opening the asset detail page. Both entry points open the same stake flow.
-      if (await app.market.isLegacyMarketList()) {
-        await app.market.search(delegateAccount.account.currency.ticker);
-        await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
-      } else {
-        await app.market.openCoinPage(delegateAccount.account.currency.ticker);
-        await app.assetDetail(delegateAccount.account.currency.id).startEarnFlow();
-      }
-
-      const selector = await getModularSelector(app, "ACCOUNT");
-      if (selector) {
-        await selector.selectAccount(delegateAccount.account);
-      } else {
-        await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
-      }
-
-      await app.delegate.verifyFirstProviderName(delegateAccount.provider);
-      await app.delegate.continue();
-    },
-  );
-});
-
-for (const currency of liveApps) {
-  test.describe("Select a validator", () => {
-    test.use({
-      teamOwner: delegateTeamOwner(currency.delegate.account.currency.id),
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: currency.delegate.account.currency.speculosApp,
-      cliCommands: [liveDataCommand(currency.delegate.account)],
-    });
-
-    test(
-      `[${currency.delegate.account.currency.testLabel}] - Select validator`,
-      {
-        tag: buildTags({ currencyId: currency.delegate.account.currency.id }),
-        annotation: { type: "TMS", description: currency.xrayTicket },
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(currency.delegate.account.accountName);
-
-        await app.account.startStakingFlowFromMainStakeButton();
-        await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
-      },
-    );
-  });
-}
-
-test.describe("Delegate", () => {
-  const seiDelegationAmount = "1";
-  const seiDelegation = new Delegate(Account.SEI_EVM_1, seiDelegationAmount, "first-available");
-
-  test.use({
-    teamOwner: delegateTeamOwner(seiDelegation.account.currency.id),
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: seiDelegation.account.currency.speculosApp,
+  const seiDelegation = new Delegate(Account.SEI_EVM_1, "1", "first-available");
+  const { currency } = seiDelegation.account;
+  useDelegateFixtures(currency, {
     cliCommands: [liveDataWithAddressCommand(seiDelegation.account, { currency: "sei_evm" })],
     featureFlags: {
       evmNativeStaking: {
@@ -549,24 +263,20 @@ test.describe("Delegate", () => {
   });
 
   test(
-    `[${seiDelegation.account.currency.testLabel}] - Delegate`,
+    `[${currency.testLabel}] - Delegate`,
     {
       tag: [...deviceTagsWithoutLNS(), "@sei_evm", "@family-evm"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-5740",
-      },
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-5740" }),
     },
     async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(seiDelegation.account.accountName);
+      await openAccount(app, seiDelegation.account);
 
       await app.account.startStakingFlowFromMainStakeButton();
       await app.evmDelegate.continueFromRewardsInfoIfPresent();
       await app.evmDelegate.expectValidatorListVisible();
       await app.evmDelegate.selectFirstValidator();
       await app.evmDelegate.continueValidatorStep();
-      await app.evmDelegate.setAmountAndContinue(seiDelegationAmount);
+      await app.evmDelegate.setAmountAndContinue(seiDelegation.amount);
 
       await app.speculos.acceptEnableTransactionCheck();
 
@@ -579,12 +289,284 @@ test.describe("Delegate", () => {
       await app.delegateDrawer.verifyTxTypeIsVisible();
 
       await app.delegateDrawer.providerIsVisible(seiDelegation);
-      await app.delegateDrawer.amountValueIsVisible(seiDelegation.account.currency.ticker);
+      await app.delegateDrawer.amountValueIsVisible(currency.ticker);
       await app.delegateDrawer.operationTypeIsCorrect("Delegated");
       await app.drawer.closeDrawer();
     },
   );
 });
+
+const celoStaking = new Delegate(Account.CELO_1, "0.001", "N/A");
+
+// Lock and Vote spend from the same account, and the Celo bridge reads its nonce from the latest
+// block: run in parallel, the second transaction reuses the first one's nonce and is rejected.
+test.describe("Lock and vote - CELO", { lock: accountLock(celoStaking.account) }, () => {
+  const { currency } = celoStaking.account;
+  useDelegateFixtures(currency, { cliCommands: [liveDataCommand(celoStaking.account)] });
+
+  test(
+    `[${currency.testLabel}] - Lock`,
+    {
+      tag: buildTags({ currencyId: currency.id, skipLNS: true }),
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-3042" }),
+    },
+    async ({ app }) => {
+      await openAccount(app, celoStaking.account);
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.delegate.checkCeloManageAssetModal();
+      await app.delegate.clickCeloLockButton();
+      await app.delegate.fillAmount(celoStaking.amount);
+      await app.delegate.verifyLockInfoCeloWarning();
+      await app.delegate.continue();
+
+      await app.speculos.signDelegationTransaction(celoStaking);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+
+      await app.delegateDrawer.verifyOperationType("Locked");
+      await app.delegateDrawer.providerIsVisible(celoStaking);
+      await app.drawer.closeDrawer();
+    },
+  );
+
+  test(
+    `[${currency.testLabel}] - Vote`,
+    {
+      tag: buildTags({ currencyId: currency.id, skipLNS: true }),
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-201" }),
+    },
+    async ({ app }) => {
+      await openAccount(app, celoStaking.account);
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.delegate.checkCeloManageAssetModal();
+      await app.delegate.clickCeloVoteButton();
+      const validatorGroup = await app.delegate.selectProviderOnRow(1);
+      await app.delegate.continue();
+      await app.delegate.fillAmount(celoStaking.amount);
+      await app.delegate.continue();
+
+      await app.speculos.signDelegationTransaction(celoStaking);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+
+      await app.delegateDrawer.verifyOperationType("Voted");
+      await app.delegateDrawer.validatorGroupIsVisible(validatorGroup);
+      await app.drawer.closeDrawer();
+    },
+  );
+});
+
+/**
+ * How the validator list behaves when the staking flow opens, which drives how the test selects one.
+ * - preselected: the first provider is already chosen and Continue is enabled.
+ * - listedByRow: Continue is disabled and the list is picked by row (the provider is the row number).
+ * - listedByName: Continue is disabled and the list is picked by provider name.
+ * - searchable: the full list is expanded, Continue is disabled until a validator is searched and picked
+ *   (Osmosis, Babylon).
+ * - asyncPreselected: the first provider is auto-selected asynchronously (Cardano).
+ */
+type ValidatorSelection =
+  | "preselected"
+  | "listedByRow"
+  | "listedByName"
+  | "searchable"
+  | "asyncPreselected";
+
+type ValidatorSelectionScenario = {
+  delegate: Delegate;
+  xrayTicket: string;
+  selection: ValidatorSelection;
+  supportsLNS?: boolean;
+  bugTicket?: string;
+  featureFlags?: PartialFeatures;
+};
+
+const validatorSelectionScenarios: ValidatorSelectionScenario[] = [
+  {
+    delegate: new Delegate(Account.ATOM_2, "0.001", "Ledger"),
+    xrayTicket: "B2CQA-2731",
+    selection: "preselected",
+  },
+  {
+    delegate: new Delegate(Account.SOL_3, "0.001", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2764",
+    selection: "listedByName",
+  },
+  {
+    delegate: new Delegate(Account.NEAR_2, "0.01", "ledgerbyfigment.poolv1.near"),
+    xrayTicket: "B2CQA-2732, B2CQA-2765",
+    selection: "preselected",
+  },
+  {
+    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2766",
+    selection: "asyncPreselected",
+  },
+  {
+    delegate: new Delegate(Account.MULTIVERS_X_2, "1", "1"),
+    xrayTicket: "B2CQA-2767",
+    selection: "listedByRow",
+    supportsLNS: false,
+  },
+  {
+    delegate: new Delegate(Account.OSMO_2, "1", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2768",
+    selection: "searchable",
+  },
+  {
+    delegate: new Delegate(Account.BABY_2, "1", "Figment"),
+    xrayTicket: "B2CQA-6678",
+    selection: "searchable",
+    featureFlags: FF_BABYLON_STAKING_ENABLED,
+  },
+];
+
+async function selectValidator(
+  app: Application,
+  { provider }: Delegate,
+  selection: ValidatorSelection,
+) {
+  switch (selection) {
+    case "listedByRow": {
+      const row = Number.parseInt(provider, 10);
+      await app.delegate.verifyContinueDisabled();
+      await app.delegate.checkValidatorListIsVisible();
+      await app.delegate.selectProviderOnRow(row);
+      await app.delegate.closeProviderList(row);
+      break;
+    }
+    case "listedByName":
+      await app.delegate.verifyContinueDisabled();
+      await app.delegate.selectProviderByName(provider);
+      await app.delegate.verifyProviderTC(provider);
+      break;
+    case "asyncPreselected":
+      // Cardano auto-selects the first validator asynchronously and only enables Continue
+      // once the bridge finishes recomputing the transaction status. The provider row renders
+      // before that recompute settles, so asserting Continue right after the name is flaky.
+      // Explicitly (re)select the provider to force a clean, settled transaction update.
+      await app.delegate.verifyFirstProviderName(provider);
+      await app.delegate.selectProviderByName(provider);
+      break;
+    case "searchable":
+      await app.delegate.verifyContinueDisabled();
+      await app.delegate.checkValidatorListIsVisible();
+      await app.delegate.inputProvider(provider);
+      await app.delegate.selectProviderByName(provider);
+      break;
+    case "preselected":
+      await app.delegate.verifyFirstProviderName(provider);
+      await app.delegate.verifyContinueEnabled();
+      break;
+  }
+}
+
+for (const scenario of validatorSelectionScenarios) {
+  const { delegate } = scenario;
+  const { currency } = delegate.account;
+
+  test.describe("Select a validator", () => {
+    useDelegateFixtures(currency, {
+      cliCommands: [liveDataCommand(delegate.account)],
+      featureFlags: scenario.featureFlags,
+    });
+
+    test(
+      `[${currency.testLabel}] - Select validator`,
+      {
+        tag: buildTags({ currencyId: currency.id, skipLNS: scenario.supportsLNS === false }),
+        annotation: ticketAnnotations(scenario),
+      },
+      async ({ app }) => {
+        await openAccount(app, delegate.account);
+
+        await app.account.startStakingFlowFromMainStakeButton();
+        await app.delegate.continue();
+
+        await selectValidator(app, delegate, scenario.selection);
+        await app.delegate.verifyProvider(1);
+        if (scenario.selection === "searchable") {
+          await app.delegate.clearProviderSearch();
+        } else {
+          await app.delegate.openSearchProviderModal();
+        }
+        await app.delegate.checkValidatorListIsVisible();
+        await app.delegate.selectProviderOnRow(2);
+        await app.delegate.closeProviderList(2);
+      },
+    );
+  });
+}
+
+test.describe("Delegate from market", () => {
+  const delegation = new Delegate(Account.ATOM_1, "0.001", "Ledger by Bitwise");
+  const { currency } = delegation.account;
+  useDelegateFixtures(currency, { cliCommands: [liveDataCommand(delegation.account)] });
+
+  test(
+    `[${currency.testLabel}] - Delegate from market entry point`,
+    {
+      tag: buildTags({ currencyId: currency.id }),
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-2771" }),
+    },
+    async ({ app }) => {
+      await app.marketBanner.clickExploreMarketHeader();
+      // The asset-discoverability Market has no search input and no per-row stake CTA: staking is
+      // reached by opening the asset detail page. Both entry points open the same stake flow.
+      if (await app.market.isLegacyMarketList()) {
+        await app.market.search(currency.ticker);
+        await app.market.stakeButtonClick(currency.ticker);
+      } else {
+        await app.market.openCoinPage(currency.ticker);
+        await app.assetDetail(currency.id).startEarnFlow();
+      }
+
+      const selector = await getModularSelector(app, "ACCOUNT");
+      if (selector) {
+        await selector.selectAccount(delegation.account);
+      } else {
+        await app.assetDrawer.selectAccountByIndex(delegation.account);
+      }
+
+      await app.delegate.verifyFirstProviderName(delegation.provider);
+      await app.delegate.continue();
+    },
+  );
+});
+
+const stakingLiveAppScenarios = [
+  {
+    delegate: new Delegate(Account.TRX_1, "1", "yield.xyz"),
+    xrayTicket: "B2CQA-3025",
+  },
+  {
+    delegate: new Delegate(Account.DOT_1, "1", "yield.xyz"),
+    xrayTicket: "B2CQA-3026",
+  },
+];
+
+for (const scenario of stakingLiveAppScenarios) {
+  const { delegate } = scenario;
+  const { currency } = delegate.account;
+
+  test.describe("Staking live app", () => {
+    useDelegateFixtures(currency, { cliCommands: [liveDataCommand(delegate.account)] });
+
+    test(
+      `[${currency.testLabel}] - Open staking live app`,
+      {
+        tag: buildTags({ currencyId: currency.id }),
+        annotation: ticketAnnotations(scenario),
+      },
+      async ({ app }) => {
+        await openAccount(app, delegate.account);
+
+        await app.account.startStakingFlowFromMainStakeButton();
+        await app.liveApp.verifyLiveAppTitle(delegate.provider);
+      },
+    );
+  });
+}
 
 // Tests are skipped while waiting for LIVE-37757 to be done
 test.describe.skip("Delegate - MINA", () => {
@@ -593,10 +575,7 @@ test.describe.skip("Delegate - MINA", () => {
 
   // Broadcasting is left to the nightly policy: this flow delegates the free account of the pair,
   // which the undelegate flow replaces.
-  test.use({
-    teamOwner: delegateTeamOwner(Currency.MINA.id),
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: Currency.MINA.speculosApp,
+  useDelegateFixtures(Currency.MINA, {
     // Either account of the pair can be the free one, so both are seeded. Seeding also resolves
     // their address, which the picker reads back rather than deriving it from the device itself.
     cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataWithAddressCommand(account)),
@@ -608,7 +587,7 @@ test.describe.skip("Delegate - MINA", () => {
     {
       // The Nano S build of the Mina app stops at 1.4.2, before the delegation flow.
       tag: buildTags({ currencyId: Currency.MINA.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-6626" },
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-6626" }),
     },
     async ({ app }) => {
       const { account } = await pickMinaAccountToDelegate();
@@ -616,8 +595,7 @@ test.describe.skip("Delegate - MINA", () => {
       // Mina delegates the whole balance, so the flow carries no amount.
       const delegation = new Delegate(account, "N/A", validator.name, validator.address);
 
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.accountName);
+      await openAccount(app, account);
 
       await app.account.startStakingFlowFromMainStakeButton({
         timeout: MINA_PAIR_SYNC_TIMEOUT_MS,
@@ -631,10 +609,7 @@ test.describe.skip("Delegate - MINA", () => {
       await app.delegate.verifySuccessMessage();
       await app.delegate.clickViewDetailsButton();
 
-      await app.drawer.waitForDrawerToBeVisible();
-      await app.delegateDrawer.verifyTxTypeIsVisible();
-      await app.delegateDrawer.verifyTxTypeIs("Delegated");
-      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+      await app.delegateDrawer.verifyOperationType("Delegated");
       await app.delegateDrawer.verifyAccountName(account.accountName);
       // A mina delegation moves no value: the amount shown is the fee.
       await app.delegateDrawer.amountValueIsVisible(Currency.MINA.ticker);
@@ -650,10 +625,7 @@ test.describe.skip("Redelegate - MINA", () => {
 
   // Broadcasting is left to the nightly policy: moving a delegation leaves the account delegated,
   // so this flow reproduces its own precondition on an account no other flow touches.
-  test.use({
-    teamOwner: delegateTeamOwner(Currency.MINA.id),
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: Currency.MINA.speculosApp,
+  useDelegateFixtures(Currency.MINA, {
     cliCommands: [liveDataWithAddressCommand(MINA_REDELEGATION_ACCOUNT)],
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
@@ -663,15 +635,14 @@ test.describe.skip("Redelegate - MINA", () => {
     {
       // The Nano S build of the Mina app stops at 1.4.2, before the delegation flow.
       tag: buildTags({ currencyId: Currency.MINA.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-6627" },
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-6627" }),
     },
     async ({ app }) => {
       const { account, validatorAddress } = await pickMinaRedelegation();
       const validator = await pickMinaValidator(validatorAddress);
       const delegation = new Delegate(account, "N/A", validator.name, validator.address);
 
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.accountName);
+      await openAccount(app, account);
 
       await app.layout.waitForSyncButtonToBeEnabled({ slowSync: true });
       await app.delegate.openRedelegateFromManageMenu(Currency.MINA.id);
@@ -684,10 +655,7 @@ test.describe.skip("Redelegate - MINA", () => {
       await app.delegate.verifySuccessMessage();
       await app.delegate.clickViewDetailsButton();
 
-      await app.drawer.waitForDrawerToBeVisible();
-      await app.delegateDrawer.verifyTxTypeIsVisible();
-      await app.delegateDrawer.verifyTxTypeIs("Redelegated");
-      await app.delegateDrawer.operationTypeIsCorrect("Redelegated");
+      await app.delegateDrawer.verifyOperationType("Redelegated");
       await app.delegateDrawer.verifyAccountName(account.accountName);
       await app.delegateDrawer.amountValueIsVisible(Currency.MINA.ticker);
       await app.drawer.closeDrawer();

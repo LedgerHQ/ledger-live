@@ -20,7 +20,14 @@ export type EnergyRentOrder = {
   transaction: unknown;
   payCoinCode: string;
   payCoinAmt: string;
+  /** When the payment stops being valid on-chain, in ms since epoch, read from its verified bytes. */
+  paymentExpiresAt: number;
 };
+
+/** A failed rent order the Send flow explains instead of reporting a generic payment failure. */
+export type RentOrderRejection =
+  | Readonly<{ reason: "insufficientBalance" }>
+  | Readonly<{ reason: "priceAboveApproved"; offered: RentPayment }>;
 
 export type EnergyRentOrderRef = { orderId: string; payerAddress: string };
 
@@ -54,6 +61,8 @@ export interface SponsoredCoinApi {
    * bound to it. */
   buildEnergyRentRequest(intent: unknown, approvedFee: bigint): Promise<EnergyRentRequest>;
   craftEnergyRentTransaction(request: EnergyRentRequest): Promise<EnergyRentOrder>;
+  /** Null for a failure the flow reports as a generic payment failure. */
+  classifyRentOrderError(error: unknown): RentOrderRejection | null;
   submitEnergyRentPayment(payment: { orderId: string; signedTransaction: unknown }): Promise<void>;
   getEnergyRentStatus(ref: EnergyRentOrderRef): Promise<EnergyRentStatus>;
   awaitEnergyDelivery(

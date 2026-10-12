@@ -2,7 +2,7 @@ import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-import {
+import tezosBridgeApi, {
   computeIntentType,
   getAccountReadiness,
   getAssetFromToken,
@@ -268,5 +268,11 @@ describe("getAccountReadiness", () => {
       reason: "unrevealed",
     });
     expect(getAccountInfoMock).toHaveBeenCalledWith(expect.anything(), "tz1unrevealed");
+  });
+});
+
+describe("bridge api", () => {
+  it("sums the native balance partitions coin-tezos returns", () => {
+    expect(tezosBridgeApi.partitionsNativeBalance).toBe(true);
   });
 });

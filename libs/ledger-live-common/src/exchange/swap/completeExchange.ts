@@ -6,14 +6,11 @@ import {
   WrongDeviceForAccountRefund,
 } from "../../errors";
 import {
-  classifySwapNgSignature,
   createExchange,
   ExchangeTypes,
   findSwapPayloadSpecViolation,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
-  type SwapNgPartnerPublicKey,
-  type SwapNgSignatureClassification,
 } from "@ledgerhq/hw-app-exchange";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
 import { getDefaultAccountName } from "@domain/entity-account-name";
@@ -254,84 +251,6 @@ export function enrichSwapDeserializationError(
   return new CompleteExchangeError(step, errorName, violation.message);
 }
 
-/**
- * Stable, privacy-safe classification of a device SIGN_VERIFICATION_FAIL (0x9d1a). Every value
- * is a fixed enum string that carries no user data (no payload, signature, key, address or hash),
- * so it can be forwarded verbatim to `/swap/cancelled` and Datadog.
- */
-type SwapSignatureDiagnostic =
-  // Signature is mathematically valid over the exact input the device hashes, yet the device
-  // still rejected it. The `_leading_zero_*` variants flag the suspected firmware R/S-to-DER
-  // edge case (a 32-byte r/s starting with 0x00 becomes a 31-byte DER integer).
-  | "device_mismatch"
-  | "device_mismatch_leading_zero_r"
-  | "device_mismatch_leading_zero_s"
-  | "device_mismatch_leading_zero_rs"
-  // Backend signed the base64url payload but omitted the JWS "." prefix the device expects.
-  | "backend_signed_without_dot_prefix"
-  // Backend signed the decoded protobuf bytes instead of the base64url payload string.
-  | "backend_signed_raw_protobuf"
-  // Signature verifies against none of the known inputs: a genuine payload/signature mismatch.
-  | "signature_invalid_all_inputs";
-
-const SWAP_SIGNATURE_DIAGNOSTICS: Record<
-  SwapNgSignatureClassification,
-  SwapSignatureDiagnostic | undefined
-> = {
-  valid: "device_mismatch",
-  valid_leading_zero_r: "device_mismatch_leading_zero_r",
-  valid_leading_zero_s: "device_mismatch_leading_zero_s",
-  valid_leading_zero_rs: "device_mismatch_leading_zero_rs",
-  signed_without_dot_prefix: "backend_signed_without_dot_prefix",
-  signed_raw_protobuf: "backend_signed_raw_protobuf",
-  invalid: "signature_invalid_all_inputs",
-  // Left to the device error so we don't invent misleading diagnostics.
-  signature_malformed: undefined,
-};
-
-/**
- * Device stays the source of truth: only once it rejects the partner signature with a generic
- * SIGN_VERIFICATION_FAIL (0x9d1a) do we re-verify locally to explain why. The device error's title
- * (a translation key) is preserved so the user-facing copy is unchanged; we only enrich the message
- * with a stable diagnostic code for logs/analytics and the `/swap/cancelled` report.
- * Returns undefined for unrelated errors, legacy swaps, missing key, malformed inputs or when no
- * diagnostic applies, so callers fall back to the device error.
- */
-export function enrichSwapSignatureVerificationError({
-  step,
-  isSwapNg,
-  binaryPayload,
-  signature,
-  publicKey,
-  error,
-}: {
-  step: CompleteExchangeStep;
-  isSwapNg: boolean;
-  binaryPayload: string;
-  signature: string;
-  publicKey: SwapNgPartnerPublicKey | undefined;
-  error: unknown;
-}): CompleteExchangeError | undefined {
-  const transportErr = error as { name?: string; statusCode?: number } | null | undefined;
-  if (
-    transportErr?.name !== "TransportStatusError" ||
-    transportErr?.statusCode !== ErrorStatus.SIGN_VERIFICATION_FAIL ||
-    step !== "CHECK_TRANSACTION_SIGNATURE"
-  ) {
-    return undefined;
-  }
-
-  // Diagnostics only cover Swap NG, whose compact JWS signature we can reconstruct locally.
-  if (!isSwapNg || !publicKey) return undefined;
-
-  const diagnostic =
-    SWAP_SIGNATURE_DIAGNOSTICS[classifySwapNgSignature(binaryPayload, signature, publicKey)];
-  if (!diagnostic) return undefined;
-
-  const { errorName, errorMessage } = getExchangeErrorMessage(transportErr.statusCode, step);
-  return new CompleteExchangeError(step, errorName, `${errorMessage} [diagnostic=${diagnostic}]`);
-}
-
 const completeExchange = (
   input: CompleteExchangeInputSwap,
 ): Observable<CompleteExchangeRequestEvent> => {
@@ -354,10 +273,6 @@ const completeExchange = (
     let unsubscribed = false;
     let ignoreTransportError = false;
     let currentStep: CompleteExchangeStep = "INIT";
-    // Captured for the failure path so signature diagnostics can re-verify the partner signature
-    // outside the device transport scope. Undefined until the partner config is resolved.
-    let partnerPublicKey: SwapNgPartnerPublicKey | undefined;
-    let isSwapNgTransaction = false;
 
     const confirmExchange = async () => {
       if (deviceId === undefined) {
@@ -369,12 +284,8 @@ const completeExchange = (
         if (providerConfig.useInExchangeApp === false) {
           throw new Error(`Unsupported provider type ${providerConfig.type}`);
         }
-        // Narrow on the discriminant instead of casting: only CEX providers expose a partner
-        // public key. A DEX provider leaves it undefined, so diagnostics safely no-op.
-        partnerPublicKey = providerConfig.type === "CEX" ? providerConfig.publicKey : undefined;
 
         const exchange = createExchange(transport, exchangeType, rateType, providerConfig.version);
-        isSwapNgTransaction = exchange.transactionType === ExchangeTypes.SwapNg;
 
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
@@ -664,16 +575,6 @@ const completeExchange = (
 
         const enrichedError = enrichSwapDeserializationError(currentStep, binaryPayload, e);
         if (enrichedError) throw enrichedError;
-
-        const enrichedSignatureError = enrichSwapSignatureVerificationError({
-          step: currentStep,
-          isSwapNg: isSwapNgTransaction,
-          binaryPayload,
-          signature,
-          publicKey: partnerPublicKey,
-          error: e,
-        });
-        if (enrichedSignatureError) throw enrichedSignatureError;
 
         throw convertTransportError(currentStep, e);
       });

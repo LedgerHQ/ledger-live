@@ -936,6 +936,7 @@ describe("Send Flow Integration", () => {
       },
       payCoinCode: "USDT",
       payCoinAmt: "3.2",
+      paymentExpiresAt: Date.now() + 6 * 60_000,
     };
     const RENT_PAYMENT = { asset: TRON_USDT_FEE_ASSET, amount: 3_200_000n };
 
@@ -1108,9 +1109,7 @@ describe("Send Flow Integration", () => {
         setMockOrchestrationState({
           phase: SPONSORED_PHASE.FAILED,
           failureKind: SPONSORED_FAILURE_KIND.DELIVERY_FAILED,
-          failureError: Object.assign(new Error("energy delivery timed out"), {
-            name: "EnergyDelegationTimeoutError",
-          }),
+          failureError: new Error("energy delivery timed out"),
         });
       });
 
@@ -1132,9 +1131,8 @@ describe("Send Flow Integration", () => {
         setMockOrchestrationState({
           phase: SPONSORED_PHASE.FAILED,
           failureKind: SPONSORED_FAILURE_KIND.RENT_PAYMENT,
-          failureError: Object.assign(new Error("not enough USDT"), {
-            name: "EnergyRentInsufficientBalance",
-          }),
+          failureError: new Error("not enough USDT"),
+          rentOrderRejection: { reason: "insufficientBalance" },
         });
       });
 
@@ -1144,6 +1142,72 @@ describe("Send Flow Integration", () => {
           /You don't have enough USDT to cover the amount and the Tronify energy rental fee/,
         ),
       ).toBeVisible();
+    });
+
+    it("shows the new price when the rent went up, and retries once the user accepts it", async () => {
+      mockTronifySeam();
+
+      renderSendFlow(tronAccount, {}, [], { flags: { gasSponsorship: { enabled: true } } });
+      const user = setupFakeTimersUser();
+
+      await navigateToRentSignature(user);
+
+      await act(async () => {
+        setMockOrchestrationState({
+          phase: SPONSORED_PHASE.FAILED,
+          failureKind: SPONSORED_FAILURE_KIND.RENT_PAYMENT,
+          failureError: new Error("too dear"),
+          rentOrderRejection: {
+            reason: "priceAboveApproved",
+            offered: { asset: TRON_USDT_FEE_ASSET, amount: 3_500_000n },
+          },
+        });
+      });
+
+      expect(await screen.findByTestId("send-sponsored-failure")).toBeVisible();
+      expect(screen.getByText(/The energy rental price went up to 3\.5\sUSDT/)).toBeVisible();
+      const acceptButton = screen.getByTestId("send-sponsored-failure-retry");
+      expect(acceptButton).toHaveTextContent("Accept new price");
+
+      await user.click(acceptButton);
+
+      expect(mockSponsoredOrchestrationActions.retry).toHaveBeenCalledTimes(1);
+    });
+
+    it("keeps Retry off while a sent payment may still land, then turns it on", async () => {
+      mockTronifySeam();
+
+      renderSendFlow(tronAccount, {}, [], { flags: { gasSponsorship: { enabled: true } } });
+      const user = setupFakeTimersUser();
+
+      await navigateToRentSignature(user);
+
+      await act(async () => {
+        setMockOrchestrationState({
+          phase: SPONSORED_PHASE.FAILED,
+          failureKind: SPONSORED_FAILURE_KIND.RENT_PAYMENT,
+          failureError: new Error("reported failed"),
+          retryLockedUntil: Date.now() + 60_000,
+        });
+      });
+
+      expect(await screen.findByTestId("send-sponsored-failure")).toBeVisible();
+      expect(
+        screen.getByText(
+          "Tronify reported the fee payment as failed, but it may still go through.",
+        ),
+      ).toBeVisible();
+      expect(screen.getByTestId("send-sponsored-failure-retry-blocked")).toHaveTextContent(
+        /you can retry after/,
+      );
+      expect(screen.getByTestId("send-sponsored-failure-retry")).toBeDisabled();
+
+      await act(async () => {
+        jest.advanceTimersByTime(60_000);
+      });
+
+      expect(screen.getByTestId("send-sponsored-failure-retry")).toBeEnabled();
+      expect(screen.queryByTestId("send-sponsored-failure-retry-blocked")).toBeNull();
     });
 
     it("disables the sponsored option and says why when the USDT balance can't cover the rent", async () => {

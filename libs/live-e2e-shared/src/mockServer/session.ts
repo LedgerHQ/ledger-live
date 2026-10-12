@@ -12,12 +12,11 @@ import {
   withCharonState,
   withOnboardingFlags,
 } from "./onboardingFlags";
+import { isApprovalLabel, touchApprovalTarget, type ScreenEvent } from "./touchApproval";
 
 const REQUEST_TIMEOUT_MS = 10_000;
 const PROMPT_POLL_MS = 500;
 const STUCK_BUTTON_SCREEN_MS = 2_000;
-
-type ScreenEvent = Readonly<{ text: string; x: number; y: number }>;
 
 type PromptProgress = {
   lastScreen: string;
@@ -25,13 +24,9 @@ type PromptProgress = {
   lastAdvancedAt: number;
 };
 
-const APPROVAL_LABEL = /^(confirm|approve|accept|continue)\b/i;
-
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const isIdleScreen = (text: string) => text.trim() === "" || /is ready/i.test(text);
-
-const isApproval = (text: string) => APPROVAL_LABEL.test(text.trim());
 
 /** Status the device shows after the host already has the result. It lingers until a button or its timer. */
 const isCompletionStatus = (text: string) =>
@@ -287,15 +282,16 @@ export class MockServerSessionHandle {
 
   private async advanceScreen(events: ScreenEvent[], confirmStuckScreen: boolean): Promise<void> {
     const device = await this.firstDevice();
-    const approval = events.find(event => isApproval(event.text));
+    const approval = events.find(event => isApprovalLabel(event.text));
 
     if (isTouchModel(device.device_type)) {
       if (confirmStuckScreen) return;
-      if (!approval) {
+      const target = touchApprovalTarget(events);
+      if (!target) {
         await this.pageTouchScreen(device.id);
         return;
       }
-      await this.client.touchScreen(device.id, approval.x, approval.y, "press-and-release");
+      await this.client.touchScreen(device.id, target.x, target.y, "press-and-release");
       return;
     }
 

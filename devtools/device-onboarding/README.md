@@ -39,7 +39,8 @@ A host offers only events it owns and has already made valid. `SESSION_READY` in
 "the session I re-opened is ready": offering it before calling `openSession` again lets the machine
 re-read a device that is no longer there. When the transport goes away mid-run the host sets
 `device` to null, which re-enables Connect — that is where the session gets re-opened, and only
-then does `SESSION_READY` belong in `sendableEvents`.
+then does `SESSION_READY` belong in `sendableEvents`. The tool sends it with no session id: the host adds
+the live one (`stampSession`), because only the host knows it.
 
 `context` takes primitives under the closed list of names exported as `watchedContextFields`, and
 the view renders nothing outside that list. `verdictMatchesSession` is the row to watch: the

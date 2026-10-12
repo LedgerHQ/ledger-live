@@ -38,6 +38,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "dogecoin",
       "dash",
       "zcash",
+      "zcash_testnet",
       "decred",
       "digibyte",
       "qtum",
@@ -258,6 +259,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadBridgeApi: () => import("../families/hedera/bridge/api").then(m => m.default),
     loadAccountRawAssign: () => import("../families/hedera/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/hedera/bridgeExtensions").then(m => m.default),
+    loadWalletApiAdapter: () => import("../families/hedera/walletApiAdapter").then(m => m.default),
   },
   {
     // HyperCore (generic framework): eth-format address, no send. setup/signer only derive the

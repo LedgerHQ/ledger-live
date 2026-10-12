@@ -24,7 +24,9 @@ export const getTransactionStatus: AccountBridge<
     throw new AccountAwaitingSendPendingOperations();
   }
 
-  if (account.cardanoResources.utxos.length === 0) {
+  const isStakingWithoutUtxo =
+    account.cardanoResources.utxos.length === 0 && transaction.mode !== "send";
+  if (isStakingWithoutUtxo) {
     const errors = {
       amount: new CardanoNotEnoughFunds(),
     };
