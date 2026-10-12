@@ -26,14 +26,14 @@ import {
   setCountervaluesStateError,
   setCountervaluesStatePending,
   wipeCountervalues,
-} from "./countervaluesSlice";
+} from "./slice";
 import {
   createCountervaluesMiddleware,
   startCountervaluesSync,
   stopCountervaluesSync,
   type CountervaluesMiddlewareConfig,
-} from "./countervaluesMiddleware";
-import { setCountervaluesLogger } from "./setCountervaluesLogger";
+} from "./middleware";
+import { setCountervaluesLogger } from "../utils/setCountervaluesLogger";
 
 jest.mock("@domain/api-market-countervalues", () => {
   const actual = jest.requireActual("@domain/api-market-countervalues");

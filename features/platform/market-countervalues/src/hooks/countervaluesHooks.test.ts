@@ -20,7 +20,7 @@ import {
   setCountervaluesPollingTriggerLoad,
   wipeCountervalues,
   type CountervaluesState,
-} from "./countervaluesSlice";
+} from "../state/slice";
 
 // Real hooks on a real store. Nothing runs the polling loop, so nothing reaches the network.
 

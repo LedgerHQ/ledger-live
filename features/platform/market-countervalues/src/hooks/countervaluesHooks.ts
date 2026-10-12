@@ -11,7 +11,7 @@ import {
   setCountervaluesPollingIsPolling,
   setCountervaluesPollingTriggerLoad,
   wipeCountervalues,
-} from "./countervaluesSlice";
+} from "../state/slice";
 
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
 export type Polling = {

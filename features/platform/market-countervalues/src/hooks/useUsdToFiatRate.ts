@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useGetUsdToFiatRateQuery } from "@domain/api-market-countervalues";
-import { log } from "./internals/logger";
+import { log } from "../utils/internals/logger";
 
 const USD_FIAT_RATE_POLLING_MS = 60_000;
 

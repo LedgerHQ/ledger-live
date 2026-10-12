@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
-import { setCountervaluesLogger } from "./setCountervaluesLogger";
+import { setCountervaluesLogger } from "../utils/setCountervaluesLogger";
 import { useUsdToFiatRate } from "./useUsdToFiatRate";
 
 const mockUseQuery = jest
