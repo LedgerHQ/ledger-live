@@ -26,6 +26,9 @@ const USDC = toChecksumAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
 // The 0x11 × 32 and 0x22 × 32 keys of agent-intent-service ADR-0002's Solana vectors.
 const SOL_SENDER = "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2";
 const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
+// USDC is a classic SPL Token mint, PYUSD a Token-2022 one.
+const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const PYUSD_MINT = "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo";
 
 const DEEPLINK = "https://agent-intent.ledger-test.com/intents/intent-123";
 
@@ -61,6 +64,7 @@ let clientOptions: Array<Record<string, unknown>>;
 let makeClient: ((options: Record<string, unknown>) => unknown) | undefined;
 let stdout: string[];
 let stderr: string[];
+let mintPrograms: Record<string, string | undefined>;
 
 beforeAll(() =>
   activateAgentIntentMocks({
@@ -92,6 +96,12 @@ beforeAll(() =>
         contract.toLowerCase() === USDC.toLowerCase()
           ? { ticker: "USDC", decimals: 6, contract: USDC }
           : null,
+      findSolanaToken: async (mint: string) =>
+        ({
+          [USDC_MINT]: { ticker: "USDC", decimals: 6, mint: USDC_MINT },
+          [PYUSD_MINT]: { ticker: "PYUSD", decimals: 6, mint: PYUSD_MINT },
+        })[mint] ?? null,
+      findSolanaMintProgram: async (mint: string) => mintPrograms[mint],
     },
   }),
 );
@@ -145,6 +155,7 @@ describe("agent-intent send", () => {
     makeClient = undefined;
     stdout = [];
     stderr = [];
+    mintPrograms = { [USDC_MINT]: "spl-token", [PYUSD_MINT]: "spl-token-2022" };
     restore = installOutputCapture({
       stdout: chunk => stdout.push(chunk),
       stderr: chunk => stderr.push(chunk),
@@ -309,6 +320,79 @@ describe("agent-intent send", () => {
       expect(text).toContain("Amount:  0.5 SOL");
       expect(text).toContain("Memo:    Invoice 42");
       expect(text).not.toContain("Fee:");
+    });
+  });
+
+  describe("SPL token", () => {
+    const spl = (overrides: Partial<SendFlags> = {}) =>
+      runSend({
+        from: SOL_SENDER,
+        to: SOL_RECIPIENT,
+        amount: "25.5 USDC",
+        token: USDC_MINT,
+        "fee-strategy": undefined,
+        output: "json",
+        ...overrides,
+      });
+
+    it("proposes a Solana send of the mint in the token's base units", async () => {
+      await spl({ memo: "Invoice 42" });
+
+      expect(submittedIntents).toEqual([
+        {
+          type: "send",
+          network: "solana",
+          sender: SOL_SENDER,
+          recipient: SOL_RECIPIENT,
+          amount: "25500000",
+          asset: { type: "spl-token", assetReference: USDC_MINT },
+          memo: "Invoice 42",
+        },
+      ]);
+      expect(jsonResult()).toMatchObject({
+        network: "solana:main",
+        asset: { type: "spl-token", ticker: "USDC", decimals: 6, mint: USDC_MINT },
+        amount: "25500000",
+        displayAmount: "25.5",
+      });
+    });
+
+    it("picks Solana from a base58 --token, so an Ethereum account is refused", async () => {
+      await expect(
+        spl({ from: undefined, account: "ethereum-1", output: undefined }),
+      ).rejects.toThrow(/on ethereum; this Agent Intent send needs a Solana mainnet account/);
+    });
+
+    it("names the token and its mint in human output", async () => {
+      await spl({ output: undefined, "dry-run": true });
+
+      expect(stdout.join("")).toContain(`Amount:  25.5 USDC (${USDC_MINT})`);
+    });
+
+    it.each([
+      [
+        { amount: "1 PYUSD", token: PYUSD_MINT },
+        `--token ${PYUSD_MINT} (PYUSD) is a Token-2022 mint, which Agent Intent can't send yet.`,
+      ],
+      [
+        { amount: "1 XYZ", token: SOL_RECIPIENT },
+        `--token ${SOL_RECIPIENT} is not a known SPL token on Solana mainnet.`,
+      ],
+      [{ amount: "25 USDT" }, `--amount is in USDT, but --token ${USDC_MINT} is USDC.`],
+      [{ amount: "1.0000001 USDC" }, "7 decimal places, but USDC supports at most 6"],
+      [{ "fee-strategy": "fast" as const }, "--fee-strategy is Ethereum only"],
+    ])("refuses %j", async (overrides, message) => {
+      await expect(spl({ ...overrides, output: undefined })).rejects.toThrow(message);
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it("refuses a mint the node can't confirm as a classic SPL Token mint", async () => {
+      mintPrograms = {};
+
+      await expect(spl({ output: undefined })).rejects.toThrow(
+        `--token ${USDC_MINT} (USDC) isn't a mint of the SPL Token program on Solana mainnet.`,
+      );
+      expect(submittedIntents).toEqual([]);
     });
   });
 

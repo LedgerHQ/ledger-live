@@ -11,9 +11,18 @@ type _FeeStrategiesExhaustive = AssertTrue<
 /** The networks `agent-intent send` proposes on: always mainnet, whatever the profile's environment. */
 export type IntentNetwork = "ethereum" | "solana";
 
-export type IntentAsset =
-  | { type: "native"; ticker: string; decimals: number }
+type NativeAsset = { type: "native"; ticker: string; decimals: number };
+export type EthereumAsset =
+  | NativeAsset
   | { type: "erc20"; ticker: string; decimals: number; contract: string };
+export type SolanaAsset =
+  | NativeAsset
+  | { type: "spl-token"; ticker: string; decimals: number; mint: string };
+
+/** A network with an asset it can send, so an ERC-20 never reaches Solana or an SPL token Ethereum. */
+export type NetworkAsset =
+  | { network: "ethereum"; asset: EthereumAsset }
+  | { network: "solana"; asset: SolanaAsset };
 
 /** Everything `agent-intent send` validated, before (or without, for --dry-run) submitting it. */
 export type SendIntentSummary = {
@@ -21,16 +30,15 @@ export type SendIntentSummary = {
   environment: "staging" | "production";
   sender: string;
   recipient: string;
-  asset: IntentAsset;
   /** Exact base-unit integer, as decimal digits (never a JS number). */
   amount: string;
   /** The amount as the user typed it, for display only. */
   displayAmount: string;
   description?: string;
 } & (
-  | { network: "ethereum"; feeStrategy: FeeStrategy }
+  | { network: "ethereum"; asset: EthereumAsset; feeStrategy: FeeStrategy }
   /** No fee strategy: on Solana the service sets the priority fee. The memo goes on chain. */
-  | { network: "solana"; memo?: string }
+  | { network: "solana"; asset: SolanaAsset; memo?: string }
 );
 
 export const NETWORK_LABELS: Record<IntentNetwork, string> = {
@@ -46,7 +54,10 @@ export function toSdkSendIntent(summary: SendIntentSummary): SendIntent {
       sender: summary.sender,
       recipient: summary.recipient,
       amount: summary.amount,
-      asset: { type: "native" },
+      asset:
+        summary.asset.type === "native"
+          ? { type: "native" }
+          : { type: "spl-token", assetReference: summary.asset.mint },
       ...(summary.memo ? { memo: summary.memo } : {}),
       ...(summary.description ? { description: summary.description } : {}),
     };

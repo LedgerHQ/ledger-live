@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/swap/intents — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose EVM payments and swaps for human review and list the intents it proposed, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/swap/intents — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose Ethereum and Solana payments and Ethereum swaps for human review and list the intents it proposed, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -431,6 +431,10 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --from 0xSende
 pnpm --silent wallet-cli start agent-intent send --profile my-bot --account solana-1 \
   --to RecipientBase58 --amount '0.5 SOL' --memo "Invoice 42"
 
+# SPL token: a base58 --token is the mint, so the send is on Solana:
+pnpm --silent wallet-cli start agent-intent send --profile my-bot --account solana-1 \
+  --to RecipientBase58 --amount '25 USDC' --token EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+
 # Validate everything and print the proposal without submitting (no keychain, no sign-in):
 pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
   --to 0xRecipient --amount '0.01 ETH' --dry-run
@@ -439,16 +443,17 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
 - **Enrolled profile only** (its `agent-intent enroll` approval went through). It uses the
   profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
   `--bff-url`/`--keycloak-url` override carries over), and its key in the OS keychain.
-- **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL. The `--amount` ticker picks the
-  network (`SOL` without `--token` → Solana; an ERC-20 whose ticker is SOL, with `--token`, stays on
-  Ethereum), and a `--account` label must be a mainnet account of that network. The
-  Agent Intent SDK has no testnet, so a staging profile also proposes a mainnet transfer.
+- **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL and SPL tokens. `--token` picks
+  the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana); without it, `SOL`
+  → Solana and any other ticker → Ethereum. A `--account` label must be a mainnet account of that
+  network. The Agent Intent SDK has no testnet, so a staging profile also proposes a mainnet transfer.
 - **Addresses:** on Ethereum, `--from`, `--to` and `--token` must be `0x` + 40 hex characters, and
   mixed-case input must pass its EIP-55 checksum, which catches a typo in a copied address. On
   Solana, `--from` and `--to` must be canonical base58 32-byte addresses.
-- **Solana is native SOL only** (no SPL tokens) and takes no `--fee-strategy`, because the service
-  sets the priority fee. `--memo` (1-280 characters, an emoji counts as two; Solana only) goes on
-  chain with the transfer.
+- **Tokens** are looked up in CAL (`assets token ethereum|solana <address>`), and the `--amount`
+  ticker must match. Token-2022 mints are refused, because Agent Intent can't send them yet.
+- **Solana** takes no `--fee-strategy`, because the service sets the priority fee. `--memo` (1-280
+  characters, an emoji counts as two; Solana only) goes on chain with the transfer.
 - **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount
   above uint256 (u64 lamports on Solana) is an error. JSON output gives `amount` in base units
   (wei, token units or lamports) as a string, and the envelope's `network` as `ethereum:main` or

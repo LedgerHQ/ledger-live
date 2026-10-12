@@ -18,6 +18,60 @@ const RECIPIENT = "0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359";
 // The 0x11 × 32 and 0x22 × 32 keys of agent-intent-service ADR-0002's Solana vectors.
 const SOL_SENDER = "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2";
 const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
+// USDC is a classic SPL Token mint, PYUSD a Token-2022 one.
+const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const PYUSD_MINT = "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo";
+const MINT_PROGRAMS: Record<string, { program: string; owner: string }> = {
+  [USDC_MINT]: { program: "spl-token", owner: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
+  [PYUSD_MINT]: { program: "spl-token-2022", owner: "TokenzQdBNbLqP5VEhdkAS6EPFLC1PxnBkcEnZF9pp7" },
+};
+
+function splCalResponse(mint: string, ticker: string) {
+  return [
+    {
+      id: `solana/spl/${mint.toLowerCase()}`,
+      contract_address: mint,
+      standard: "spl",
+      decimals: 6,
+      delisted: false,
+      name: ticker,
+      ticker,
+      units: [{ code: ticker, name: ticker, magnitude: 6 }],
+    },
+  ];
+}
+
+/** Answers the node's jsonParsed `getAccountInfo` for a mint, with the program that owns it. */
+async function mintAccountInfo(request: Request): Promise<Response> {
+  const { id, params } = (await request.json()) as { id: unknown; params: [string] };
+  const mint = MINT_PROGRAMS[params[0]];
+  const value = mint && {
+    data: {
+      program: mint.program,
+      parsed: {
+        type: "mint",
+        info: {
+          decimals: 6,
+          freezeAuthority: null,
+          isInitialized: true,
+          mintAuthority: null,
+          supply: "1",
+        },
+      },
+      space: 82,
+    },
+    executable: false,
+    lamports: 1461600,
+    owner: mint.owner,
+    rentEpoch: 0,
+    space: 82,
+  };
+  return Response.json({
+    jsonrpc: "2.0",
+    id,
+    result: { context: { slot: 1 }, value: value ?? null },
+  });
+}
 
 const profile = {
   profileId: "bot",
@@ -39,7 +93,19 @@ describe("agent-intent send (CLI, --dry-run)", () => {
       match: new RegExp(`contract_address=${USDT_CONTRACT}`, "i"),
       response: USDT_API_RESPONSE,
     },
+    {
+      method: "GET",
+      match: new RegExp(`contract_address=${USDC_MINT}`),
+      response: splCalResponse(USDC_MINT, "USDC"),
+    },
+    {
+      method: "GET",
+      match: new RegExp(`contract_address=${PYUSD_MINT}`),
+      response: splCalResponse(PYUSD_MINT, "PYUSD"),
+    },
     { method: "GET", match: /\/v1\/tokens/i, response: [] },
+    // The Solana node, asked which program owns a mint.
+    { method: "POST", match: /.*/, response: null, onRequest: mintAccountInfo },
   ]);
   // makeSessionDir only writes accounts; the profile is added to the same file right after.
   const fixture = makeSessionDir([]);
@@ -183,6 +249,50 @@ describe("agent-intent send (CLI, --dry-run)", () => {
       memo: "Invoice 42",
     });
     expect(result).not.toHaveProperty("feeStrategy");
+  });
+
+  const splSend = (amount: string, mint: string) =>
+    runCli(
+      [
+        "agent-intent",
+        "send",
+        "--profile",
+        "bot",
+        "--account",
+        "solana-1",
+        "--to",
+        SOL_RECIPIENT,
+        "--amount",
+        amount,
+        "--token",
+        mint,
+        "--dry-run",
+        "--output",
+        "json",
+      ],
+      env,
+    );
+
+  it("resolves an SPL mint through CAL and checks its program on chain", async () => {
+    const { stdout, exitCode, stderr } = await splSend("25.5 USDC", USDC_MINT);
+
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    expect(JSON.parse(stdout)).toMatchObject({
+      status: "success",
+      network: "solana:main",
+      sender: SOL_SENDER,
+      asset: { type: "spl-token", ticker: "USDC", decimals: 6, mint: USDC_MINT },
+      amount: "25500000",
+    });
+  });
+
+  it("refuses a Token-2022 mint, which CAL also types as SPL", async () => {
+    const { stdout, exitCode } = await splSend("1 PYUSD", PYUSD_MINT);
+
+    expect(exitCode).toBe(1);
+    expect(JSON.parse(stdout).error.message).toBe(
+      `--token ${PYUSD_MINT} (PYUSD) is a Token-2022 mint, which Agent Intent can't send yet.`,
+    );
   });
 
   it("rejects --account and --from together", async () => {

@@ -11,8 +11,9 @@ import SyncCommand from "./sync";
 export default defineGroup({
   name: "agent-intent",
   description:
-    "Enroll and manage Agent Intent profiles for AI agents proposing EVM payments and swaps for " +
-    "human review, list the intents they proposed, and sync their Ledger Sync accounts.",
+    "Enroll and manage Agent Intent profiles for AI agents proposing Ethereum and Solana " +
+    "payments and Ethereum swaps for human review, list the intents they proposed, and sync " +
+    "their Ledger Sync accounts.",
   commands: [
     EnrollCommand,
     RecoverCommand,

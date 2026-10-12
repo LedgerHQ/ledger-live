@@ -9,11 +9,17 @@ import { parseAmountWithTicker, parseDecimalAmount, parseEvmAddress } from "../.
 import {
   FEE_STRATEGIES,
   toSdkSendIntent,
-  type IntentAsset,
+  type EthereumAsset,
   type IntentNetwork,
+  type NetworkAsset,
   type SendIntentSummary,
+  type SolanaAsset,
 } from "../../agent-intent/send-intent";
-import { findEthereumToken } from "../../agent-intent/token-lookup";
+import {
+  findEthereumToken,
+  findSolanaMintProgram,
+  findSolanaToken,
+} from "../../agent-intent/token-lookup";
 import { resolveSenderFromAccount } from "../../agent-intent/sender";
 import {
   assertSdkAcceptsIntent,
@@ -33,12 +39,13 @@ function parseSenderInput(flags: {
 }
 
 /**
- * Native SOL (the SOL ticker without `--token`) proposes a Solana send; anything else, including
- * an ERC-20 whose ticker is SOL, an Ethereum one. Read before the output is set up, so it never
- * throws: a malformed `--amount` is reported by the full parse inside the command.
+ * `--token` picks the network by its shape: a `0x` contract is an ERC-20 on Ethereum, anything else
+ * an SPL mint on Solana. Without it, the SOL ticker proposes a native Solana send and any other an
+ * Ethereum one. Read before the output is set up, so it never throws: a malformed `--amount` is
+ * reported by the full parse inside the command.
  */
 function networkOf(flags: { amount: string; token?: string }): IntentNetwork {
-  if (flags.token) return "ethereum";
+  if (flags.token) return /^0x/i.test(flags.token) ? "ethereum" : "solana";
   try {
     const { ticker } = parseAmountWithTicker(flags.amount);
     return ticker.toUpperCase() === solanaAsset().ticker.toUpperCase() ? "solana" : "ethereum";
@@ -60,13 +67,13 @@ function assertNetworkFlags(
 
 /** Adds what only one network carries: a fee level on Ethereum, a memo on Solana. */
 function withNetworkFields(
-  common: Omit<SendIntentSummary, "network" | "feeStrategy" | "memo">,
-  network: IntentNetwork,
+  common: Omit<SendIntentSummary, "network" | "asset" | "feeStrategy" | "memo">,
+  networkAsset: NetworkAsset,
   flags: { "fee-strategy"?: FeeStrategy; memo?: string },
 ): SendIntentSummary {
-  if (network === "solana")
-    return { ...common, network, ...(flags.memo ? { memo: flags.memo } : {}) };
-  return { ...common, network, feeStrategy: flags["fee-strategy"] ?? "medium" };
+  if (networkAsset.network === "solana")
+    return { ...common, ...networkAsset, ...(flags.memo ? { memo: flags.memo } : {}) };
+  return { ...common, ...networkAsset, feeStrategy: flags["fee-strategy"] ?? "medium" };
 }
 
 type SendParties = {
@@ -95,15 +102,15 @@ async function resolveParties(
   return { sender, recipient, senderField: "--from" };
 }
 
-function solanaAsset(): IntentAsset {
+function solanaAsset(): SolanaAsset {
   const sol = getCryptoCurrencyById("solana");
   return { type: "native", ticker: sol.ticker, decimals: sol.units[0].magnitude };
 }
 
-async function resolveAsset(
+async function resolveEthereumAsset(
   ticker: string,
   tokenContract: string | undefined,
-): Promise<IntentAsset> {
+): Promise<EthereumAsset> {
   if (!tokenContract) {
     const eth = getCryptoCurrencyById("ethereum");
     if (ticker.toUpperCase() !== eth.ticker.toUpperCase()) {
@@ -131,22 +138,49 @@ async function resolveAsset(
   return { type: "erc20", ticker: token.ticker, decimals: token.decimals, contract };
 }
 
-/** Native SOL on Solana; on Ethereum, ETH or the ERC-20 that `--token` names. */
-function resolveNetworkAsset(
+async function resolveSplToken(ticker: string, mint: string): Promise<SolanaAsset> {
+  const token = await findSolanaToken(mint);
+  if (!token) {
+    throw new Error(
+      `--token ${mint} is not a known SPL token on Solana mainnet. Check the mint address with ` +
+        "`wallet-cli assets token solana <mint>`.",
+    );
+  }
+  if (ticker.toUpperCase() !== token.ticker.toUpperCase()) {
+    throw new Error(
+      `--amount is in ${ticker}, but --token ${mint} is ${token.ticker}. Fix whichever one is wrong.`,
+    );
+  }
+  // Fails closed: a mint the node can't confirm as a classic SPL token is refused too.
+  const program = await findSolanaMintProgram(token.mint);
+  if (program !== "spl-token") {
+    throw new Error(
+      program === "spl-token-2022"
+        ? `--token ${mint} (${token.ticker}) is a Token-2022 mint, which Agent Intent can't send yet.`
+        : `--token ${mint} (${token.ticker}) isn't a mint of the SPL Token program on Solana mainnet.`,
+    );
+  }
+  return { type: "spl-token", ticker: token.ticker, decimals: token.decimals, mint: token.mint };
+}
+
+/** On Solana, SOL or the SPL token that `--token` names; on Ethereum, ETH or the ERC-20 it names. */
+async function resolveNetworkAsset(
   network: IntentNetwork,
   ticker: string,
-  tokenContract: string | undefined,
-): Promise<IntentAsset> {
-  return network === "solana"
-    ? Promise.resolve(solanaAsset())
-    : resolveAsset(ticker, tokenContract);
+  token: string | undefined,
+): Promise<NetworkAsset> {
+  if (network === "ethereum") {
+    return { network, asset: await resolveEthereumAsset(ticker, token) };
+  }
+  return { network, asset: token ? await resolveSplToken(ticker, token) : solanaAsset() };
 }
 
 export default defineCommand({
   name: "send",
   description:
-    "Propose an Ethereum send (ETH or ERC-20) or a Solana send (SOL) for human review in the " +
-    "Agent Intent frontend. Never signs or broadcasts a transaction, and needs no device.",
+    "Propose an Ethereum send (ETH or ERC-20) or a Solana send (SOL or SPL token) for human " +
+    "review in the Agent Intent frontend. Never signs or broadcasts a transaction, and needs no " +
+    "device.",
   options: {
     ...proposalOptions,
     account: option(z.string().min(1).optional(), {
@@ -167,7 +201,9 @@ export default defineCommand({
         "Never rounded.",
     }),
     token: option(z.string().min(1).optional(), {
-      description: "ERC-20 contract address on Ethereum mainnet (omit for native ETH or SOL).",
+      description:
+        "Token to send: an ERC-20 contract (0x…, Ethereum mainnet) or an SPL token mint (base58, " +
+        "Solana mainnet). Omit for native ETH or SOL.",
     }),
     "fee-strategy": option(z.enum(FEE_STRATEGIES).optional(), {
       description:
@@ -198,7 +234,8 @@ export default defineCommand({
         flags.to,
       );
       const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
-      const asset = await resolveNetworkAsset(network, ticker, flags.token);
+      const networkAsset = await resolveNetworkAsset(network, ticker, flags.token);
+      const { asset } = networkAsset;
       const amount = parseDecimalAmount(displayAmount, asset.decimals, asset.ticker);
 
       const common = {
@@ -206,12 +243,11 @@ export default defineCommand({
         environment: profile.environment,
         sender,
         recipient,
-        asset,
         amount: amount.toString(),
         displayAmount,
         description: flags.description,
       };
-      const summary = withNetworkFields(common, network, flags);
+      const summary = withNetworkFields(common, networkAsset, flags);
 
       const intent = toSdkSendIntent(summary);
       assertSdkAcceptsIntent(() => encodeSendIntentTlv(intent, createNonce()), {

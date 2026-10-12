@@ -987,10 +987,11 @@ function swapIntentSummaryLines(summary: SwapIntentSummary): string[] {
 }
 
 function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
+  const { asset: sent } = summary;
   const asset =
-    summary.asset.type === "native"
-      ? summary.asset.ticker
-      : `${summary.asset.ticker} (${summary.asset.contract})`;
+    sent.type === "native"
+      ? sent.ticker
+      : `${sent.ticker} (${sent.type === "erc20" ? sent.contract : sent.mint})`;
   return [
     `Profile: ${summary.profileId} (${summary.environment})`,
     `From:    ${summary.sender}`,
