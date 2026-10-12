@@ -11111,7 +11111,7 @@
     "contacts" : {
       "title" : "Ödeme yapın",
       "pay" : "Yeni",
-      "seeAllTitle" : "Kişiye ödeme yapın",
+      "seeAllTitle" : "Ödeme kişisi",
       "me" : "Ben",
       "addressPicker" : {
         "title" : "{{name}} için adres seçin",
