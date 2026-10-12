@@ -61,9 +61,6 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
 
   const rewards = delegation?.rewards ?? new BigNumber(0);
 
-  // total / spendable share one definition with account sync (computeAdaBalance): the locked
-  // (non-spendable) part is min-ADA backing the held tokens plus rewards that aren't yet
-  // withdrawable (no dRep delegation). Only fetch network info for min-ADA when tokens exist.
   const minAdaForTokens = tokens.length
     ? await computeMinAdaForTokens(currency, address, tokens)
     : new BigNumber(0);
@@ -71,7 +68,6 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
     utxosSum,
     minAdaForTokens,
     rewards,
-    delegatedToDRep: !!delegation?.dRepHex,
   });
   const locked = nativeValue.minus(spendable);
 
