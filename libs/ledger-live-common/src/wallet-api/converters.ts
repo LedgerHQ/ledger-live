@@ -121,13 +121,15 @@ export const getWalletAPITransactionSignFlowInfos = async ({
   liveTx: Partial<Transaction>;
 }> => {
   // A live app names the currency's family ("bitcoin" for Zcash); the adapter is the one of
-  // the module that serves the account, which for Zcash is coin-zcash.
+  // the module that serves the account, which for Zcash is coin-zcash. A transaction of
+  // another family keeps its own adapter, so the family check that follows rejects it.
+  const incomingFamily =
+    FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family;
   const mainCurrency = isTokenAccount(account) ? undefined : account.currency;
-  const routedFamily = mainCurrency ? resolveFamily(mainCurrency) : undefined;
   const liveFamily =
-    routedFamily && routedFamily !== mainCurrency?.family
-      ? routedFamily
-      : (FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family);
+    mainCurrency && incomingFamily === mainCurrency.family
+      ? resolveFamily(mainCurrency)
+      : incomingFamily;
 
   const familyModule = await loadWalletApiAdapterForFamily(liveFamily);
 

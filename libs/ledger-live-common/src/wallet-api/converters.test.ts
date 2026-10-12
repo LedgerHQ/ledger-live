@@ -82,6 +82,16 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     },
   );
 
+  it("keeps the adapter of another family's transaction on a zcash account", async () => {
+    await getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: { family: "ethereum", amount: new BigNumber(1), recipient: "0x01" },
+      account: { type: "Account", currency: getCryptoCurrencyById("zcash") } as Account,
+    });
+
+    expect(evmBridge).toHaveBeenCalledTimes(1);
+    expect(zcashBridge).not.toHaveBeenCalled();
+  });
+
   it("keeps the bitcoin adapter for a bitcoin account", async () => {
     await getWalletAPITransactionSignFlowInfos({
       walletApiTransaction: { family: "bitcoin", amount: new BigNumber(1), recipient: "bc1" },

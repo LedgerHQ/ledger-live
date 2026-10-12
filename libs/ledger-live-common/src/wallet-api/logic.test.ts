@@ -448,6 +448,48 @@ describe("completeExchangeLogic", () => {
     });
   });
 
+  describe("when a zcash Account receives a transaction of another family", () => {
+    beforeEach(() => uiNavigation.mockResolvedValueOnce("Function called"));
+
+    it("returns an error", async () => {
+      // Given
+      const fromAccountId = "js:2:zcash:0x019:";
+      const toAccountId = "js:2:ethereum:0x042:";
+      const fromAccount = createFixtureAccount("19", getCryptoCurrencyById("zcash"));
+      context.accounts = [...context.accounts, fromAccount];
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f1",
+        toAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f2",
+        transaction: {
+          family: "ripple",
+          amount: BigNumber(1000000),
+          recipient: "rRecipient",
+          fee: BigNumber(10),
+          tag: 1,
+        } as WalletAPITransaction,
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+        swapId: "1234",
+        rate: 1,
+      };
+
+      mockedGetAccountIdFromWalletAccountId
+        .mockReturnValueOnce(fromAccountId)
+        .mockReturnValueOnce(toAccountId);
+
+      // When
+      await expect(async () => {
+        await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
+      }).rejects.toThrow("Account and transaction must be from the same family");
+
+      // Then
+      expect(uiNavigation).toHaveBeenCalledTimes(0);
+    });
+  });
+
   describe("when Account is from a different family than the transaction", () => {
     // Given
     const expectedResult = "Function called";
