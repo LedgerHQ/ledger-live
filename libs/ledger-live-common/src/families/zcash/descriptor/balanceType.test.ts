@@ -40,7 +40,7 @@ function account({
   return {
     id: "js:2:zcash:xpub:",
     type: "Account",
-    currency: { id: currencyId },
+    currency: { id: currencyId, family: currencyId.startsWith("zcash") ? "zcash" : "bitcoin" },
     freshAddress,
     blockHeight: REFERENCE_HEIGHT,
     pendingOperations: [],
