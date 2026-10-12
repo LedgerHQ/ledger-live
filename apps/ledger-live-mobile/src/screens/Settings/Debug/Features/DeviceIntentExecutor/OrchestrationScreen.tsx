@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
-import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import { DEMO_INTENT_DEFS } from "./intents/registry";
 import type { DemoIntentDefinitions } from "./intents/orchestrationTypes";
 import { useDemoIntentOrchestration } from "./useDemoIntentOrchestration";
@@ -87,7 +87,7 @@ export default function DebugDeviceIntentExecutorOrchestration() {
 
       {/* --- Executor --- */}
       {orchestration.enabled && (
-        <DeviceIntentExecutorLWM sourceFlow="debug" {...orchestration.executorProps} />
+        <DeviceIntentExecutor sourceFlow="debug" {...orchestration.executorProps} />
       )}
     </ScrollView>
   );

@@ -143,7 +143,7 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const { BottomSheetHeader } = jest.requireActual("@ledgerhq/lumen-ui-rnative");
   const { QueuedBottomSheet } = jest.requireActual("@shared/ui-queued-bottom-sheet");
 
-  function MockDeviceIntentExecutorLWM(props: ExecutorProps) {
+  function MockDeviceIntentExecutor(props: ExecutorProps) {
     const kind: ExecutorKind =
       typeof props.intent.input.transaction === "string" ? "rent" : "transfer";
     React.useEffect(() => {
@@ -161,7 +161,7 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
     );
   }
 
-  return { ...actual, DeviceIntentExecutorLWM: MockDeviceIntentExecutorLWM };
+  return { ...actual, DeviceIntentExecutor: MockDeviceIntentExecutor };
 });
 
 jest.mock("expo-keep-awake", () => ({

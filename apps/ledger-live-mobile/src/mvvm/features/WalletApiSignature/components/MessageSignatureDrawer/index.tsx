@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import { useMessageSignatureDrawerViewModel } from "./useMessageSignatureDrawerViewModel";
 import type { WalletApiDeviceIntentSignMessageRequest } from "./types";
 
@@ -44,7 +44,7 @@ function MessageSignatureDrawer({ request, onClose }: Props) {
       pointerEvents="box-none"
       testID="wallet-api-message-signature-step"
     >
-      <DeviceIntentExecutorLWM
+      <DeviceIntentExecutor
         enabled
         sourceFlow="wallet_api"
         analyticsProperties={analyticsProperties}
