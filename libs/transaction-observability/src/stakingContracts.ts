@@ -11,8 +11,9 @@ type StakingContract = {
   /** Set where the contract identifies the product more precisely than the manifest can. */
   method?: StakingMethod;
   /**
-   * Whether this address is the receipt token itself, rather than a pool that mints it.
-   * Only these can be checked against CAL, which lists tokens and not pool contracts.
+   * Set only for a receipt token that CAL lists: the drift guard checks each one against CAL.
+   * Leave it unset for a pool contract, and for a receipt token that CAL does not list, such as
+   * stk-USDe. Its `outputCurrency` is still reported, but nothing checks it.
    */
   isReceiptToken?: boolean;
 };
@@ -114,11 +115,9 @@ export function stakingMethodOfContract(contract: string | undefined): StakingMe
 }
 
 /**
- * Only the addresses that are receipt tokens, with the ticker they should resolve to.
- *
- * The drift guard checks these against CAL. A pool contract such as Stader's is deliberately
- * excluded: CAL lists tokens, so asking it about a pool returns nothing and would fail a guard
- * that assumed every entry were a token.
+ * The receipt tokens that CAL lists, with the ticker they should resolve to. The drift guard
+ * checks these against CAL. Pools and unlisted receipt tokens are left out: CAL returns nothing
+ * for them, so the guard would fail.
  */
 export function tokenBackedContracts(): Array<[string, string]> {
   return Object.entries(STAKING_CONTRACTS).flatMap(([address, c]) =>
