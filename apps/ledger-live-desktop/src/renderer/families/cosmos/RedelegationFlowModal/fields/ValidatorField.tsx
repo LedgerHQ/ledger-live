@@ -35,7 +35,11 @@ export default function ValidatorField({
 
   const currencyId = account.currency.id.toLowerCase();
   const [search, setSearch] = useState("");
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, account.stakingResources.validators, search);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    currencyId,
+    account.stakingResources.validators,
+    search,
+  );
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],

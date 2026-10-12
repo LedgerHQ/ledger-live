@@ -284,6 +284,10 @@ export const txToMessages = (
 export function resolveTransactionValidators(
   transaction: CosmosLikeTransaction,
 ): CosmosDelegationInfo[] {
+  if (transaction.mode === "send") return [];
+  const modeAddress =
+    transaction.mode === "redelegate" ? transaction.dstValAddress : transaction.valAddress;
+  if (!modeAddress && transaction.validators?.length) return transaction.validators;
   const address =
     transaction.mode === "redelegate" ? getDstValAddress(transaction) : getValAddress(transaction);
   return address ? [{ address, amount: transaction.amount }] : [];
@@ -305,7 +309,7 @@ export function getDstValAddress(transaction: CosmosLikeTransaction): string {
 }
 
 export function resolveSourceValidator(transaction: CosmosLikeTransaction): string | undefined {
-  return transaction.mode === "redelegate" ? transaction.valAddress : undefined;
+  return transaction.mode === "redelegate" ? getValAddress(transaction) || undefined : undefined;
 }
 
 export function normalizeCosmosOperationMode(mode: CosmosOperationMode): CosmosOperationMode {

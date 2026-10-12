@@ -35,11 +35,11 @@ export function useCosmosFamilyPreloadData(currencyId?: string): CosmosPreloadDa
   }, [getCurrent, getUpdates]);
   return currencyId
     ? (state[currencyId] ?? {
-      validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
-    })
+        validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
+      })
     : {
-      validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
-    };
+        validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
+      };
 }
 
 export function useCosmosFamilyMappedDelegations(
@@ -47,9 +47,7 @@ export function useCosmosFamilyMappedDelegations(
   mode?: CosmosOperationMode,
 ): CosmosMappedDelegation[] {
   invariant(isStakingAccount(account), "cosmos staking account required");
-  const validators = isStakingAccount(account) && account.stakingResources.validators ? account.stakingResources.validators : [];
-
-  const { delegations } = account.stakingResources;
+  const { delegations, validators = [] } = account.stakingResources;
   const unit = getAccountCurrency(account).units[0];
   return useMemo(() => {
     const mappedDelegations = mapDelegations(delegations, validators, unit);

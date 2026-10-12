@@ -75,10 +75,10 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
       isCroAccount
         ? goToStakekit()
         : dispatch(
-          openModal("MODAL_COSMOS_REWARDS_INFO", {
-            account,
-          }),
-        ),
+            openModal("MODAL_COSMOS_REWARDS_INFO", {
+              account,
+            }),
+          ),
     [account, dispatch, isCroAccount, goToStakekit],
   );
 
@@ -87,10 +87,10 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
       isCroAccount
         ? goToStakekit()
         : dispatch(
-          openModal("MODAL_COSMOS_DELEGATE", {
-            account,
-          }),
-        ),
+            openModal("MODAL_COSMOS_DELEGATE", {
+              account,
+            }),
+          ),
     [account, dispatch, isCroAccount, goToStakekit],
   );
   const onClaimRewards = useCallback(
@@ -98,10 +98,10 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
       isCroAccount
         ? goToStakekit()
         : dispatch(
-          openModal("MODAL_COSMOS_CLAIM_REWARDS", {
-            account,
-          }),
-        ),
+            openModal("MODAL_COSMOS_CLAIM_REWARDS", {
+              account,
+            }),
+          ),
     [account, dispatch, isCroAccount, goToStakekit],
   );
 
