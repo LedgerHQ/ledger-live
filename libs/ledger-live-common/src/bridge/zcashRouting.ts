@@ -28,6 +28,10 @@ export const isZcashShieldedEnabled = (): boolean => shieldedEnabled;
 
 const ZCASH_CURRENCY_IDS = new Set(["zcash", "zcash_testnet"]);
 
+/** Whether `currencyId` is one of the Zcash currencies @ledgerhq/coin-zcash serves. */
+export const isZcashCurrencyId = (currencyId: string): boolean =>
+  ZCASH_CURRENCY_IDS.has(currencyId);
+
 /**
  * `zcash` for a Zcash currency, else `currency.family`. A host that registers a
  * reduced set of coin modules without `zcash` (wallet-cli) keeps `currency.family`,
