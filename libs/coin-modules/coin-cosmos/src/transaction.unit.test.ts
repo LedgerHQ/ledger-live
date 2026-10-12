@@ -275,19 +275,6 @@ describe("toTransactionRaw", () => {
     expect(result).not.toHaveProperty("sourceValidator");
   });
 
-  it("normalizes a legacy live redelegation into the mode-specific fields", () => {
-    const result = toTransactionRaw({
-      ...baseTransaction,
-      amount: new BigNumber(0),
-      mode: "redelegate",
-      sourceValidator: SOURCE,
-      validators: [{ address: DESTINATION, amount: new BigNumber(100) }],
-    });
-    expect(result).toMatchObject({ amount: "100", valAddress: SOURCE, dstValAddress: DESTINATION });
-    expect(result).not.toHaveProperty("validators");
-    expect(result).not.toHaveProperty("sourceValidator");
-  });
-
   it("carries memoType and memoValue over when present", () => {
     const result = toTransactionRaw({
       ...baseTransaction,

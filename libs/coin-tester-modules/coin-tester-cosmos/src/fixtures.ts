@@ -6,13 +6,13 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { TokenAccount } from "@ledgerhq/types-live";
+import { StakingAccount, TokenAccount } from "@ledgerhq/types-live";
 
 export const makeAccount = (
   address: string,
   currency: CryptoCurrency,
   subAccounts: TokenAccount[] = [],
-): CosmosAccount => {
+): CosmosAccount & StakingAccount => {
   // Empty derivation-mode suffix matches the cosmos convention seen in
   // coin-cosmos/src/synchronisation.integ.test.ts (`js:2:cosmos:<addr>:`).
   const id = `js:2:${currency.id}:${address}:`;
