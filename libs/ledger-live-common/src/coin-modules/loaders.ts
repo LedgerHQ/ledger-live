@@ -495,14 +495,13 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   },
   {
     // Bespoke loader for the standalone @ledgerhq/coin-zcash coin-module (not
-    // added to genericCoinFrameworkFamilies.json). Every Zcash account is served
-    // by it (bridge/zcashRouting.ts), although the currencies keep
-    // `family: "bitcoin"`.
+    // added to genericCoinFrameworkFamilies.json).
     family: "zcash",
     supportedCoins: ["zcash", "zcash_testnet"],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/zcash/setup"),
     loadWalletApiAdapter: () => import("../families/zcash/walletApiAdapter").then(m => m.default),
+    loadPlatformAdapter: () => import("../families/zcash/platformAdapter").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),

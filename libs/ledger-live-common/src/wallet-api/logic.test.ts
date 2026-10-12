@@ -1462,6 +1462,74 @@ describe("bitcoinFamilyAccountGetXPubLogic", () => {
   });
 });
 
+// Zcash is presented to live apps as a bitcoin-family currency: the bitcoin-family methods
+// serve its accounts the same way.
+describe("bitcoin-family methods on a zcash account", () => {
+  const tracking = {
+    bitcoinFamilyAccountAddressRequested: jest.fn(),
+    bitcoinFamilyAccountAddressFail: jest.fn(),
+    bitcoinFamilyAccountAddressSuccess: jest.fn(),
+    bitcoinFamilyAccountPublicKeyRequested: jest.fn(),
+    bitcoinFamilyAccountPublicKeyFail: jest.fn(),
+    bitcoinFamilyAccountPublicKeySuccess: jest.fn(),
+    bitcoinFamilyAccountXpubRequested: jest.fn(),
+    bitcoinFamilyAccountXpubFail: jest.fn(),
+    bitcoinFamilyAccountXpubSuccess: jest.fn(),
+    bitcoinFamilyAccountAddressesRequested: jest.fn(),
+    bitcoinFamilyAccountAddressesFail: jest.fn(),
+    bitcoinFamilyAccountAddressesSuccess: jest.fn(),
+  };
+
+  const context = createContextContainingAccountId({
+    tracking,
+    accountsParams: [{ id: "14", currency: getCryptoCurrencyById("zcash") }],
+  });
+
+  const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce("js:2:zcash:0x014:");
+  });
+
+  it("returns the address", async () => {
+    await expect(bitcoinFamilyAccountGetAddressLogic(context, walletAccountId)).resolves.toEqual(
+      "0x01",
+    );
+    expect(tracking.bitcoinFamilyAccountAddressSuccess).toHaveBeenCalledTimes(1);
+    expect(tracking.bitcoinFamilyAccountAddressFail).not.toHaveBeenCalled();
+  });
+
+  it("returns the public key", async () => {
+    await expect(bitcoinFamilyAccountGetPublicKeyLogic(context, walletAccountId)).resolves.toEqual(
+      Buffer.from("testPubkey").toString("hex"),
+    );
+    expect(tracking.bitcoinFamilyAccountPublicKeySuccess).toHaveBeenCalledTimes(1);
+    expect(tracking.bitcoinFamilyAccountPublicKeyFail).not.toHaveBeenCalled();
+  });
+
+  it("returns the xpub", async () => {
+    await expect(bitcoinFamilyAccountGetXPubLogic(context, walletAccountId)).resolves.toEqual(
+      "testxpub",
+    );
+    expect(tracking.bitcoinFamilyAccountXpubSuccess).toHaveBeenCalledTimes(1);
+    expect(tracking.bitcoinFamilyAccountXpubFail).not.toHaveBeenCalled();
+  });
+
+  it("returns the payment addresses", async () => {
+    const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId);
+
+    expect(result.find((r: { path?: string }) => r.path === "m/84'/0'/0'/0/0")).toEqual({
+      address: "bc1qfirst",
+      publicKey: Buffer.from("testPubkey").toString("hex"),
+      path: "m/84'/0'/0'/0/0",
+      intention: "payment",
+    });
+    expect(tracking.bitcoinFamilyAccountAddressesSuccess).toHaveBeenCalledTimes(1);
+    expect(tracking.bitcoinFamilyAccountAddressesFail).not.toHaveBeenCalled();
+  });
+});
+
 describe("protectStorageLogic", () => {
   const manifestBase = {
     id: "my-live-app",

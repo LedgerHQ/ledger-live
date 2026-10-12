@@ -101,7 +101,7 @@ export function createFixtureAccount(
     creationDate: new Date(),
     blockHeight: 8168983,
     currency,
-    xpub: currency.family === "bitcoin" ? "testxpub" : undefined,
+    xpub: currency.family === "bitcoin" || currency.family === "zcash" ? "testxpub" : undefined,
     operationsCount: 0,
     operations: [],
     pendingOperations: [],

@@ -997,6 +997,7 @@ test.describe("New Send Flow", () => {
                 "stellar",
                 "xrp",
                 "bitcoin",
+                "zcash",
                 "kaspa",
               ],
             },
@@ -1031,11 +1032,9 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    // With the shielded path inactive, resolveFamily() falls back to the Bitcoin
-    // descriptor (fees.hasPresets/hasCustom/hasCoinControl all true), so fee
-    // presets/custom fees/coin control are expected to be reachable here, exactly
-    // as for any Bitcoin-family send. The "no fee affordance" assertion only
-    // holds once the shielded path is active and the Zcash descriptor applies.
+    // Zcash is its own family, so the new send flow needs "zcash" in its families. With the
+    // shielded path inactive the Zcash descriptor is transparent-only (no balance-type step);
+    // with it active, the balance-type step offers both pools.
     test.describe("Shielded path active", () => {
       test.use({
         userdata: "1AccountZEC",
@@ -1054,6 +1053,7 @@ test.describe("New Send Flow", () => {
                 "stellar",
                 "xrp",
                 "bitcoin",
+                "zcash",
                 "kaspa",
               ],
             },
