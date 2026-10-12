@@ -8,6 +8,9 @@ type _FeeStrategiesExhaustive = AssertTrue<
   FeeStrategy extends (typeof FEE_STRATEGIES)[number] ? true : false
 >;
 
+/** The networks `agent-intent send` proposes on: always mainnet, whatever the profile's environment. */
+export type IntentNetwork = "ethereum" | "solana";
+
 export type IntentAsset =
   | { type: "native"; ticker: string; decimals: number }
   | { type: "erc20"; ticker: string; decimals: number; contract: string };
@@ -23,11 +26,31 @@ export type SendIntentSummary = {
   amount: string;
   /** The amount as the user typed it, for display only. */
   displayAmount: string;
-  feeStrategy: FeeStrategy;
   description?: string;
+} & (
+  | { network: "ethereum"; feeStrategy: FeeStrategy }
+  /** No fee strategy: on Solana the service sets the priority fee. The memo goes on chain. */
+  | { network: "solana"; memo?: string }
+);
+
+export const NETWORK_LABELS: Record<IntentNetwork, string> = {
+  ethereum: "Ethereum mainnet",
+  solana: "Solana mainnet",
 };
 
 export function toSdkSendIntent(summary: SendIntentSummary): SendIntent {
+  if (summary.network === "solana") {
+    return {
+      type: "send",
+      network: "solana",
+      sender: summary.sender,
+      recipient: summary.recipient,
+      amount: summary.amount,
+      asset: { type: "native" },
+      ...(summary.memo ? { memo: summary.memo } : {}),
+      ...(summary.description ? { description: summary.description } : {}),
+    };
+  }
   return {
     type: "send",
     network: "ethereum",

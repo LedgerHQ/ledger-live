@@ -321,7 +321,7 @@ describe("agent-intent swap", () => {
 
     it("rejects a label on a network Agent Intent doesn't support", async () => {
       await expect(runSwap({ sender: undefined, account: "bitcoin-native-1" })).rejects.toThrow(
-        /on bitcoin; Agent Intent swap intents support Ethereum mainnet accounts only/,
+        /on bitcoin; this Agent Intent swap needs an Ethereum mainnet account/,
       );
     });
 

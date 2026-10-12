@@ -40,7 +40,7 @@ import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from
 import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
-import type { SendIntentSummary } from "./agent-intent/send-intent";
+import { NETWORK_LABELS, type SendIntentSummary } from "./agent-intent/send-intent";
 import type { IntentListEntry } from "./agent-intent/intent-list";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
@@ -995,8 +995,10 @@ function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
     `Profile: ${summary.profileId} (${summary.environment})`,
     `From:    ${summary.sender}`,
     `To:      ${summary.recipient}`,
+    `Network: ${NETWORK_LABELS[summary.network]}`,
     `Amount:  ${summary.displayAmount} ${asset}`,
-    `Fee:     ${summary.feeStrategy}`,
+    ...(summary.network === "ethereum" ? [`Fee:     ${summary.feeStrategy}`] : []),
+    ...(summary.network === "solana" && summary.memo ? [`Memo:    ${summary.memo}`] : []),
     ...(summary.description ? [`Note:    ${summary.description}`] : []),
   ];
 }
@@ -1465,7 +1467,8 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
     asset: summary.asset,
     amount: summary.amount,
     displayAmount: summary.displayAmount,
-    feeStrategy: summary.feeStrategy,
+    ...(summary.network === "ethereum" ? { feeStrategy: summary.feeStrategy } : {}),
+    ...(summary.network === "solana" && summary.memo ? { memo: summary.memo } : {}),
     ...(summary.description ? { description: summary.description } : {}),
   };
 }

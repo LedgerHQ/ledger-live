@@ -26,12 +26,20 @@ export const proposalOptions = {
 };
 
 /** Runs the SDK's own encoding (description length after NFC normalization, TLV) without a key
- * or network, so `--dry-run` rejects exactly what a real submit would. */
-export function assertSdkAcceptsIntent(encode: () => unknown): void {
+ * or network, so `--dry-run` rejects exactly what a real submit would. `fields` names the flag
+ * behind the SDK's leading `sender`/`recipient`, for addresses only the SDK checks. */
+export function assertSdkAcceptsIntent(
+  encode: () => unknown,
+  fields: Partial<Record<"sender" | "recipient", string>> = {},
+): void {
   try {
     encode();
   } catch (e) {
-    throw new Error(`Invalid intent: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
+    const message = (e instanceof Error ? e.message : String(e)).replace(
+      /^(sender|recipient)\b/,
+      field => fields[field as "sender" | "recipient"] ?? field,
+    );
+    throw new Error(`Invalid intent: ${message}`, { cause: e });
   }
 }
 
