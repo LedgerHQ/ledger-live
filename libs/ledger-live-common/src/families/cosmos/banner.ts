@@ -1,8 +1,7 @@
 import { isStakingAccount, type Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import { getCurrentCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
-import { canDelegate, canRedelegate } from "./logic";
+import { accountValidators, canDelegate, canRedelegate } from "./logic";
 import type { CosmosValidatorItem } from "./types";
 
 export interface AccountBannerState {
@@ -25,10 +24,7 @@ export function getAccountBannerState(account: Account): AccountBannerState {
   const validatorAdresses = [...delegationAddresses, ...redelegationAddresses];
 
   const LEDGER_VALIDATOR_ADDRESS = cryptoFactory(account.currency.id).ledgerValidator;
-  // Get ledger validator data
-  const { validators } = getCurrentCosmosPreloadData()[account.currency.id] ?? {
-    validators: [],
-  };
+  const validators = accountValidators(account);
   const ledgerValidator = validators.find(
     validator => validator.validatorAddress === LEDGER_VALIDATOR_ADDRESS,
   );

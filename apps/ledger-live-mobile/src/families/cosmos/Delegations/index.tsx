@@ -5,10 +5,7 @@ import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import {
-  useCosmosFamilyMappedDelegations,
-  useCosmosFamilyPreloadData,
-} from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 import type {
   CosmosAccount,
   CosmosMappedDelegation,
@@ -80,11 +77,13 @@ function Delegations({ account }: Props) {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
-
   const { stakingResources } = mainAccount;
 
-  const undelegations = mapUnbondings(stakingResources.unbondings, validators, unit);
+  const undelegations = mapUnbondings(
+    stakingResources.unbondings,
+    stakingResources.validators ?? [],
+    unit,
+  );
   const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
   const { transaction } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);

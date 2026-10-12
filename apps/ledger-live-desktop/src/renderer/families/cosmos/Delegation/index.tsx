@@ -4,10 +4,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { isStakingAccount, TokenAccount } from "@ledgerhq/types-live";
-import {
-  useCosmosFamilyPreloadData,
-  useCosmosFamilyMappedDelegations,
-} from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapUnbondings, canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { urls } from "~/config/urls";

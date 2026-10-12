@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 import { getAccountBannerState } from "./banner";
-import * as preloadedData from "@ledgerhq/coin-cosmos/preloadedData";
 import type { StakingAccount } from "@ledgerhq/types-live";
 import type {
   CosmosAccount,
@@ -53,6 +52,9 @@ const unbondings: CosmosUnbonding[] = [];
 const delegatedBalance = new BigNumber("0");
 const pendingRewardsBalance = new BigNumber("0");
 const unbondingBalance = new BigNumber("0");
+const validators = [expensiveValidator, cheapValidator, ledgerValidator].filter(
+  (validator): validator is CosmosValidatorItem => validator !== undefined,
+);
 
 const account: CosmosAccount & StakingAccount = {
   type: "Account",
@@ -107,13 +109,7 @@ const account: CosmosAccount & StakingAccount = {
     delegatedBalance,
     pendingRewardsBalance,
     unbondingBalance,
-  },
-};
-
-const validators = [expensiveValidator, cheapValidator, ledgerValidator];
-const validatorsMap = {
-  cosmos: { validators } as {
-    validators: CosmosValidatorItem[];
+    validators,
   },
 };
 
@@ -136,7 +132,6 @@ describe("cosmos/banner", () => {
     });
 
     it("should not display the banner", async () => {
-      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(false);
       require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(false);
       const result = getAccountBannerState(account);
@@ -148,7 +143,6 @@ describe("cosmos/banner", () => {
       });
     });
     it("should return display delegate mode", async () => {
-      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(true);
       require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(false);
       const result = getAccountBannerState(account);
@@ -160,7 +154,6 @@ describe("cosmos/banner", () => {
       });
     });
     it("should return display redelegate mode", async () => {
-      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(false);
       require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(true);
       account.stakingResources.redelegations.push({
@@ -182,7 +175,6 @@ describe("cosmos/banner", () => {
       });
     });
     it("should return not display redelegate mode", async () => {
-      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(false);
       require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(false);
       account.stakingResources.redelegations.push({
@@ -201,7 +193,6 @@ describe("cosmos/banner", () => {
     });
 
     it("should guard the banner CTA from shared staking resources", () => {
-      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(false);
       require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(true);
       const genericAccount = {
@@ -220,6 +211,7 @@ describe("cosmos/banner", () => {
           delegatedBalance: new BigNumber("50000"),
           pendingRewardsBalance: new BigNumber("112"),
           unbondingBalance: new BigNumber(0),
+          validators,
         },
       } satisfies CosmosAccount & StakingAccount;
 
@@ -235,7 +227,6 @@ describe("cosmos/banner", () => {
     });
 
     it("should ignore expired redelegations when selecting the banner CTA source", () => {
-      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       require("@ledgerhq/coin-cosmos/logic").canDelegate.mockReturnValue(false);
       require("@ledgerhq/coin-cosmos/logic").canRedelegate.mockReturnValue(true);
       const genericAccount = {
@@ -254,6 +245,7 @@ describe("cosmos/banner", () => {
           delegatedBalance: new BigNumber(0),
           pendingRewardsBalance: new BigNumber(0),
           unbondingBalance: new BigNumber(0),
+          validators,
         },
       } satisfies CosmosAccount & StakingAccount;
 

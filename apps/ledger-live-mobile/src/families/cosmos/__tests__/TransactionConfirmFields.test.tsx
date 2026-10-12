@@ -14,21 +14,20 @@ jest.mock("@react-navigation/native", () => ({
 jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ATOM", name: "Cosmos", magnitude: 6 }),
 }));
-jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
-  useCosmosFamilyPreloadData: () => ({
-    validators: [
-      { validatorAddress: "cosmosvaloper1src", name: "Source Val" },
-      { validatorAddress: "cosmosvaloper1dst", name: "Dest Val" },
-    ],
-  }),
-}));
-
 const { fieldComponents } = TransactionConfirmFields;
 const DelegateValidatorsField = fieldComponents["cosmos.delegateValidators"];
 const ValidatorNameField = fieldComponents["cosmos.validatorName"];
 const SourceValidatorNameField = fieldComponents["cosmos.sourceValidatorName"];
 
-const account = { currency: getCryptoCurrencyById("cosmos") } as unknown as Account;
+const account = {
+  currency: getCryptoCurrencyById("cosmos"),
+  stakingResources: {
+    validators: [
+      { validatorAddress: "cosmosvaloper1src", name: "Source Val" },
+      { validatorAddress: "cosmosvaloper1dst", name: "Dest Val" },
+    ],
+  },
+} as unknown as Account;
 const field = { type: "cosmos.validatorName", label: "Validator" };
 
 const baseTx = {

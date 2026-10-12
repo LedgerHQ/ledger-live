@@ -4,8 +4,7 @@ import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { isStakingAccount, type Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { mapDelegations, mapRedelegations, mapUnbondings } from "./logic";
-import { getCurrentCosmosPreloadData } from "./preloadedData";
+import { accountValidators, mapDelegations, mapRedelegations, mapUnbondings } from "./logic";
 import { CosmosOperation } from "./types";
 
 function formatOperationSpecifics(op: CosmosOperation, unit: Unit | null | undefined): string {
@@ -28,9 +27,7 @@ function formatOperationSpecifics(op: CosmosOperation, unit: Unit | null | undef
 export function formatAccountSpecifics(account: Account): string {
   invariant(isStakingAccount(account), "cosmos staking account required");
   const { stakingResources } = account;
-  const { validators } = getCurrentCosmosPreloadData()[account.currency.id] ?? {
-    validators: [],
-  };
+  const validators = accountValidators(account);
   const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,

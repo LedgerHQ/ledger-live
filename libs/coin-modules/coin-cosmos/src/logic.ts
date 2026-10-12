@@ -32,6 +32,11 @@ export const COSMOS_MIN_SAFE = new BigNumber(100000); // 100000 uAtom
 
 export const COSMOS_MIN_FEES = new BigNumber(6000); // 6000 uAtom
 
+export function accountValidators(account: Account): CosmosValidatorItem[] {
+  if (!isStakingAccount(account)) return [];
+  return account.stakingResources.validators ?? [];
+}
+
 const DUMMY_PAYLOAD = Buffer.from("28ff5c6d57d8cfd492b6fb42614536ed648e01fd", "hex");
 
 // croeseid testnet has no own cryptoFactory entry; it reuses crypto_org's params.

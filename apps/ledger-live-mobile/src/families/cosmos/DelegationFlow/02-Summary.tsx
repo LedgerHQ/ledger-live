@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import cosmosBase from "@ledgerhq/live-common/families/cosmos/cosmosBase";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, isStakingAccount } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -52,7 +52,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
   invariant(account, "account must be defined");
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(mainAccount.currency.id);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    mainAccount.currency.id,
+    isStakingAccount(mainAccount) ? mainAccount.stakingResources.validators : undefined,
+  );
   const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
 
   const chosenValidator = useMemo(() => {

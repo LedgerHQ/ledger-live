@@ -32,10 +32,6 @@ jest.mock("@shared/analytics-react", () => ({
 const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A" };
 const VALIDATOR_B = { validatorAddress: "validatorB", name: "Validator B" };
 
-jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
-  useCosmosFamilyPreloadData: () => ({ validators: [VALIDATOR_A, VALIDATOR_B] }),
-}));
-
 let selectorOnChange: ((delegation?: CosmosMappedDelegation | null) => void) | null = null;
 jest.mock("../fields/RedelegationSelectorField", () => ({
   __esModule: true,
@@ -63,6 +59,7 @@ const buildAccount = (): CosmosAccount =>
       delegations: [
         { validatorAddress: "validatorA", amount: BigNumber(100), pendingRewards: BigNumber(0) },
       ],
+      validators: [VALIDATOR_A, VALIDATOR_B],
     },
   }) as unknown as CosmosAccount;
 

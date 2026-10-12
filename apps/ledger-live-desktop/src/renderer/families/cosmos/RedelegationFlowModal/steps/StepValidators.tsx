@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { TrackPage } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button, { Base } from "~/renderer/components/Button";
@@ -108,8 +108,7 @@ export default function StepValidators({
     [updateRedelegation, transaction],
   );
   const amount = transaction.amount;
-  const currencyId = account.currency.id;
-  const { validators } = useCosmosFamilyPreloadData(currencyId);
+  const validators = accountValidators(account);
   const selectedValidatorData = useMemo(
     () =>
       dstValAddress
