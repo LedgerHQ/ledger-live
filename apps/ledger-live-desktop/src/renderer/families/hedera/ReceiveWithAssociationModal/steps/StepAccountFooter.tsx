@@ -16,7 +16,7 @@ export function StepAccountFooter({
 }: StepProps) {
   const error = account ? getReceiveFlowError(account, parentAccount) : null;
   const isMissingToken = receiveTokenMode && !token;
-  const isTransactionError = Object.keys(status.errors).length > 0;
+  const isTransactionError = isAssociationFlow && Object.keys(status.errors).length > 0;
 
   const redirectToDeviceStep = () => {
     const deviceStepId: StepId = isAssociationFlow ? "associationDevice" : "device";
