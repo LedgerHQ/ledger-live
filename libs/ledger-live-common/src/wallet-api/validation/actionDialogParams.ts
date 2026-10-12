@@ -1,4 +1,4 @@
-const ALLOWED_ICONS = ["info", "warning", "success"] as const;
+const ALLOWED_ICONS = ["info", "warning", "success", "withdraw"] as const;
 
 export type ActionDialogIcon = (typeof ALLOWED_ICONS)[number];
 

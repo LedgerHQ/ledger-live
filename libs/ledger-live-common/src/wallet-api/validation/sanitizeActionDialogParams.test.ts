@@ -51,7 +51,7 @@ describe("sanitizeActionDialogParams", () => {
   });
 
   it("should accept all allowed icon values", () => {
-    for (const icon of ["info", "warning", "success"] as const) {
+    for (const icon of ["info", "warning", "success", "withdraw"] as const) {
       const result = sanitizeActionDialogParams(
         { title: "T", description: "D", ctaLabel: "OK", icon },
         HANDLER,

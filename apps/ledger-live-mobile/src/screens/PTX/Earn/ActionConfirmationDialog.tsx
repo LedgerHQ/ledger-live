@@ -7,6 +7,8 @@ import {
   Text,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
+import { Download } from "@ledgerhq/lumen-ui-rnative/symbols";
+import type { ActionDialogIcon } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import { useSelector } from "~/context/hooks";
 import { earnActionDialogSelector } from "~/reducers/earn";
 import { resolveActionDialog } from "~/components/WebPTXPlayer/actionDialogStore";
@@ -17,6 +19,13 @@ const SPOT_APPEARANCE = {
   warning: "warning",
   success: "check",
 } as const;
+
+function ConfirmationSpot({ icon }: { icon: ActionDialogIcon }) {
+  if (icon === "withdraw") {
+    return <Spot appearance="icon" icon={Download} size={72} />;
+  }
+  return <Spot appearance={SPOT_APPEARANCE[icon]} size={72} />;
+}
 
 export function ActionConfirmationDialog() {
   const dialog = useSelector(earnActionDialogSelector);
@@ -67,7 +76,6 @@ export function ActionConfirmationDialog() {
   }
 
   const { title, description, ctaLabel, icon } = dialog;
-  const spotAppearance = SPOT_APPEARANCE[icon ?? "info"] ?? "info";
 
   return (
     <QueuedBottomSheet
@@ -78,7 +86,7 @@ export function ActionConfirmationDialog() {
       <BottomSheetView>
         <BottomSheetHeader />
         <Box lx={{ alignItems: "center", padding: "s16", paddingBottom: "s24", gap: "s24" }}>
-          <Spot appearance={spotAppearance} size={72} />
+          <ConfirmationSpot icon={icon ?? "info"} />
           <Box lx={{ alignItems: "center", gap: "s8" }}>
             <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "center" }}>
               {title}
