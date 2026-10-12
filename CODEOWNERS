@@ -598,6 +598,11 @@ mise.toml                                             @ledgerhq/platform
 # Platform — Agent files
 /.agents/                          @ledgerhq/platform
 .agents/skills/ledger-wallet-cli/                                             @ledgerhq/agentic-core
+# e2e skills live under /.agents/, so /e2e/ never matches them
+.agents/skills/e2e-desktop-add-or-update/      @ledgerhq/qaa
+.agents/skills/e2e-earn/                       @ledgerhq/qaa
+.agents/skills/e2e-mobile-add-or-update/       @ledgerhq/qaa
+.agents/skills/e2e-swap/                       @ledgerhq/qaa
 .claude/                           @ledgerhq/platform
 .codex                             @ledgerhq/platform
 .cursor/                           @ledgerhq/platform
