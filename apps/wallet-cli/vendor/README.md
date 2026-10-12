@@ -4,14 +4,13 @@
 
 `ledgerhq-agent-intent-sdk-0.0.0.tgz` is a temporary packed artifact from
 [`LedgerHQ/agent-intent-sdk`](https://github.com/LedgerHQ/agent-intent-sdk) at
-`main` merge commit `3f27d3d`
-([LedgerHQ/agent-intent-sdk#15](https://github.com/LedgerHQ/agent-intent-sdk/pull/15):
-recovery for every agent source).
+`main` commit `8618d38` (list, get and cancel intents, swap and native SOL send intents,
+and the agentic User-Agent).
 
 SHA-256:
 
 ```text
-14cf25de7b8b0a8265d1bbe831241eda9be1e229f0df7c89e9da09dff0d8866a
+646f7b372c262af3a853c934c8440d000a861bfa973b0b7273cd43b1fc3bb263
 ```
 
 The tarball contains compiled JavaScript and declarations, not another editable

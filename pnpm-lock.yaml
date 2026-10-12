@@ -23279,7 +23279,7 @@ packages:
     engines: {node: '>= 8.0.0'}
 
   '@ledgerhq/agent-intent-sdk@file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz':
-    resolution: {integrity: sha512-eelNw3js86Z2l6QLV/Z5cWRAHVqAaA75yFtDRv/RJV1rpegFXKGuqYlERX6ajOc/AqxEupcHgB+nwq3MB461yw==, tarball: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz}
+    resolution: {integrity: sha512-6XSLjWfaby7HgFf3+WkufkSSsQat1cI+M6K0dNTrNESmkyp6hSDqy/H3eEu62f3vTqBoleWVQTOt5wZqilVpNg==, tarball: file:apps/wallet-cli/vendor/ledgerhq-agent-intent-sdk-0.0.0.tgz}
     version: 0.0.0
     engines: {node: '>=24.0.0'}
 
@@ -44635,6 +44635,7 @@ snapshots:
     dependencies:
       '@noble/curves': 2.4.0
       '@noble/hashes': 2.4.0
+      bs58: 4.0.1
 
   '@ledgerhq/auth@0.1.0':
     dependencies:
