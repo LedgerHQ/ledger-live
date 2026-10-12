@@ -402,7 +402,10 @@ export type BalanceTypeConfig = Readonly<{
    * `selfTransfer`, which locks the recipient) never infer it from the recipient value,
    * so the flow has to declare it both ways; return `{}` when the recipient says it all.
    */
-  buildSelfTransferPatch: (params: { isSelfTransfer: boolean }) => TransactionPatch;
+  buildSelfTransferPatch: (params: {
+    isSelfTransfer: boolean;
+    transaction?: unknown;
+  }) => TransactionPatch;
   /**
    * Balance the amount step may spend from this pool, bounded by the pool's transaction
    * input ceiling (e.g. Zcash's 32-action / 32-UTXO limit). Distinct from
