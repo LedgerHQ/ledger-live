@@ -30,7 +30,7 @@ const transformIncludePatterns = [
   "react-native-worklets",
   "react-native-reanimated",
   "react-native-modal",
-  "@hashgraph/sdk",
+  "@hiero-ledger/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",
   "expo-crypto",

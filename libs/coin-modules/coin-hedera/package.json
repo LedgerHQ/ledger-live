@@ -88,7 +88,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@hashgraph/sdk": "2.78.0",
+    "@hiero-ledger/sdk": "2.84.0",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
