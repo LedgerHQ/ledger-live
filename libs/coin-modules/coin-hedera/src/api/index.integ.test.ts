@@ -800,55 +800,61 @@ describe("createApi", () => {
       };
       const erc20TxHash = "givnas3WAL3fiGeap+oSRIYOqUbqE0Ig2XIMTWgTDQzTMc8g7aOC1vxc8hQy7wZX";
       const filteredTransactions = data.transactions.filter(tx => tx.hash === erc20TxHash);
+      const expectedOperations = [
+        {
+          type: "transfer",
+          address: "0.0.802",
+          asset: {
+            type: "native",
+          },
+          amount: 26596592n,
+        },
+        {
+          type: "transfer",
+          address: "0.0.10067136",
+          asset: {
+            type: "native",
+          },
+          amount: 0n,
+        },
+        {
+          type: "transfer",
+          address: "0.0.6145236",
+          asset: erc20Asset,
+          amount: 2863838n,
+        },
+        {
+          type: "transfer",
+          address: "0x0000000000000000000000000000000000000000",
+          asset: erc20Asset,
+          amount: -2863838n,
+        },
+        {
+          type: "transfer",
+          address: "0.0.10067136",
+          asset: erc20Asset,
+          amount: 148440n,
+        },
+        {
+          type: "transfer",
+          address: "0x0000000000000000000000000000000000000000",
+          asset: erc20Asset,
+          amount: -148440n,
+        },
+      ];
 
+      // Hgraph sorts ERC20 transfers by consensus timestamp only, so the transfers
+      // of one transaction come back in any order.
       expect(filteredTransactions).toEqual([
         expect.objectContaining({
-          operations: [
-            {
-              type: "transfer",
-              address: "0.0.802",
-              asset: {
-                type: "native",
-              },
-              amount: 26596592n,
-            },
-            {
-              type: "transfer",
-              address: "0.0.10067136",
-              asset: {
-                type: "native",
-              },
-              amount: 0n,
-            },
-            {
-              type: "transfer",
-              address: "0.0.6145236",
-              asset: erc20Asset,
-              amount: 2863838n,
-            },
-            {
-              type: "transfer",
-              address: "0x0000000000000000000000000000000000000000",
-              asset: erc20Asset,
-              amount: -2863838n,
-            },
-            {
-              type: "transfer",
-              address: "0.0.10067136",
-              asset: erc20Asset,
-              amount: 148440n,
-            },
-            {
-              type: "transfer",
-              address: "0x0000000000000000000000000000000000000000",
-              asset: erc20Asset,
-              amount: -148440n,
-            },
-          ],
+          operations: expect.arrayContaining(expectedOperations),
           fees: 26596592n,
           feesPayer: "0.0.10067136",
         }),
       ]);
+      expect(filteredTransactions.flatMap(tx => tx.operations)).toHaveLength(
+        expectedOperations.length,
+      );
     });
 
     it("filters out ERC20 operations with null sender or recipient address", async () => {

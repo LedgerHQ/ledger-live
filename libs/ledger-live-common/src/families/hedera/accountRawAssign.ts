@@ -30,7 +30,7 @@ function toStandardSwapOperationIds(account: Account): void {
     if (!operationId.startsWith(prefix) || typeStart <= prefix.length) continue;
 
     const hash = operationId.slice(prefix.length, typeStart);
-    const standardHash = hash.replace(/-/g, "+").replace(/_/g, "/");
+    const standardHash = hash.replaceAll("-", "+").replaceAll("_", "/");
     swap.operationId = `${prefix}${standardHash}${operationId.slice(typeStart)}`;
   }
 }

@@ -28,6 +28,7 @@ describe("Hedera ReceiveConfirmationTokenAlert", () => {
 
     await user.press(screen.getByText("click here"));
 
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.HederaAssociateTokenFlow, {
       screen: ScreenName.HederaAssociateTokenSummary,
       params: { accountId: HEDERA_ACCOUNT_1.id, token: htsToken },
@@ -41,6 +42,7 @@ describe("Hedera ReceiveConfirmationTokenAlert", () => {
 
     await user.press(screen.getByText("click here"));
 
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.HederaAssociateTokenFlow, {
       screen: ScreenName.HederaAssociateTokenSelectToken,
       params: { accountId: HEDERA_ACCOUNT_1.id },
