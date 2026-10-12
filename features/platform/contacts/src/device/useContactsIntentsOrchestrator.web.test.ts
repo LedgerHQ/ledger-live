@@ -119,7 +119,7 @@ describe("useContactsIntentsOrchestrator", () => {
     expect(result.current.dieProps).toBeUndefined();
   });
 
-  it("GIVEN retainUntilSheetDismissed WHEN success THEN the DIE stays until the sheet is dismissed", async () => {
+  it("GIVEN retainUntilSheetDismissed WHEN success THEN the executor stays until the sheet is dismissed", async () => {
     jest.useFakeTimers();
     try {
       // GIVEN
@@ -138,27 +138,31 @@ describe("useContactsIntentsOrchestrator", () => {
         dieProps.intent.onJobComplete?.();
       });
 
-      // THEN the promise resolves, but the executor stays so its sheet can finish closing.
+      // THEN the promise resolves and the sheet is no longer requested, but the executor
+      // stays enabled so a presented sheet is not emptied and then unmounted underneath iOS.
       await expect(request.promise).resolves.toEqual({
         deviceCredentials: request.credentials,
         addressDeviceContext: request.address.device,
       });
-      expect(result.current.dieProps?.enabled).toBe(false);
+      expect(result.current.dieProps?.enabled).toBe(true);
+      expect(result.current.isDeviceSheetRequested).toBe(false);
 
       act(() => {
         result.current.dieProps?.onUserCancel();
       });
-      expect(result.current.dieProps?.enabled).toBe(false);
+      expect(result.current.dieProps?.enabled).toBe(true);
+      expect(result.current.isDeviceSheetRequested).toBe(false);
+
+      act(() => {
+        jest.advanceTimersByTime(700);
+      });
+      expect(result.current.dieProps?.enabled).toBe(true);
 
       act(() => {
         result.current.dismissDeviceSheet();
       });
       expect(result.current.dieProps).toBeUndefined();
-
-      act(() => {
-        jest.advanceTimersByTime(700);
-      });
-      expect(result.current.dieProps).toBeUndefined();
+      expect(result.current.isDeviceSheetRequested).toBe(false);
       unmount();
     } finally {
       jest.clearAllTimers();

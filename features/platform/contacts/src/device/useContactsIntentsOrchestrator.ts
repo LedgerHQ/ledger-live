@@ -40,12 +40,14 @@ type ActiveIntent = Readonly<{
   status: "running" | "closing";
 }>;
 
-/** Covers the queued sheet's own dismiss fallback, so a sheet that never presented still clears. */
-const SHEET_DISMISS_WAIT_MS = 700;
-
 export type ContactsIntentsOrchestrator = Readonly<{
   deviceIntents: ContactDeviceIntentsPort;
   dieProps: ContactsDeviceIntentExecutorProps | undefined;
+  /**
+   * Whether the device sheet should be on screen. Turns false on success while the executor
+   * stays enabled, so a sheet that has not opened is never presented empty.
+   */
+  isDeviceSheetRequested: boolean;
   /** Clears an executor kept up after success until its sheet has left the screen. */
   dismissDeviceSheet: () => void;
 }>;
@@ -68,12 +70,17 @@ export type UseContactsIntentsOrchestratorParams = Readonly<{
   getLiveConfigMinVersion?: ContactsGetMinVersion;
 
   /**
-   * After success, leave the executor mounted with `enabled: false` until
-   * `dismissDeviceSheet`. Unmounting during the sheet's open animation leaves
-   * the native modal on screen.
+   * After success, leave the executor mounted until `dismissDeviceSheet`. The sheet stops
+   * being requested immediately, but it is not unmounted while it is open. Unmounting it
+   * mid-open leaves the native modal on screen.
    */
   retainUntilSheetDismissed?: boolean;
 }>;
+
+function closingIntent(current: ActiveIntent | undefined): ActiveIntent | undefined {
+  if (current === undefined || current.status === "closing") return current;
+  return { ...current, status: "closing" };
+}
 
 export function useContactsIntentsOrchestrator({
   intents,
@@ -137,14 +144,12 @@ export function useContactsIntentsOrchestrator({
             }
             hasSettled = true;
             resolve(result);
-            // Success is the only outcome with nothing left to show. Hosts that
-            // present a sheet keep the executor until that sheet has closed:
-            // unmounting it mid-open leaves the native modal up.
+            // Success has nothing left to show. Stop requesting the sheet, but keep the
+            // executor enabled: disabling it renders the sheet empty, and unmounting that
+            // empty sheet while iOS is still presenting it leaves the modal up.
             if (retainUntilSheetDismissedRef.current) {
               isClosingRef.current = true;
-              setActiveIntent(current =>
-                current === undefined ? current : { ...current, status: "closing" },
-              );
+              setActiveIntent(closingIntent);
               return;
             }
             setActiveIntent(undefined);
@@ -157,6 +162,7 @@ export function useContactsIntentsOrchestrator({
           onJobError: fail,
         });
 
+        isClosingRef.current = false;
         setActiveIntent({
           intent: intent as unknown as ContactDeviceIntent,
           initializationInput: operation.initializationInput,
@@ -202,12 +208,6 @@ export function useContactsIntentsOrchestrator({
   }, [activeIntent]);
 
   useEffect(() => {
-    if (activeIntent?.status !== "closing") return;
-    const timeoutId = setTimeout(dismissDeviceSheet, SHEET_DISMISS_WAIT_MS);
-    return () => clearTimeout(timeoutId);
-  }, [activeIntent, dismissDeviceSheet]);
-
-  useEffect(() => {
     if (activeIntent === undefined) {
       return;
     }
@@ -220,7 +220,7 @@ export function useContactsIntentsOrchestrator({
     }
 
     return {
-      enabled: activeIntent.status === "running",
+      enabled: true,
       deviceConnectionParams: DEVICE_CONNECTION_PARAMS,
       deviceInitializationInput: activeIntent.initializationInput,
       intent: activeIntent.intent,
@@ -232,5 +232,12 @@ export function useContactsIntentsOrchestrator({
     };
   }, [activeIntent, cancel, getMinVersion]);
 
-  return { deviceIntents, dieProps, dismissDeviceSheet };
+  const isDeviceSheetRequested = activeIntent?.status === "running";
+
+  return {
+    deviceIntents,
+    dieProps,
+    isDeviceSheetRequested,
+    dismissDeviceSheet,
+  };
 }

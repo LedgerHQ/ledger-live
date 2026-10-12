@@ -43,6 +43,7 @@ export function ContactDetailScreen(): React.JSX.Element | null {
         <DeviceIntentExecutorLWM
           sourceFlow="contacts"
           {...viewModel.dieProps}
+          isRequestingToBeOpened={viewModel.isDeviceSheetRequested}
           onDeviceSheetDismissed={viewModel.onDeviceSheetDismissed}
         />
       )}

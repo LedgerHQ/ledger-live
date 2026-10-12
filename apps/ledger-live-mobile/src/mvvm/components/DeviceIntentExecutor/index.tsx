@@ -51,6 +51,11 @@ type Props<JobState, Input, ExtraProps, Result = undefined> = DeviceIntentExecut
    * flow.
    */
   analyticsProperties?: DeviceIntentTrackingProperties;
+  /**
+   * Overrides `enabled` as the sheet's open request. Contacts keeps the executor enabled
+   * after success so its content stays put, and drops this flag only once the sheet has opened.
+   */
+  isRequestingToBeOpened?: boolean;
   /** Fires once the sheet has left the screen, including when it never opened. */
   onDeviceSheetDismissed?: () => void;
 };
@@ -73,6 +78,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps, Result = un
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   // Lumen's static preset can force Android dynamic sheets full height, so use the live window cap.
   const maxDynamicContentSize = Platform.OS === "ios" ? "fullWithOffset" : windowHeight - topInset;
+  const { isRequestingToBeOpened, onDeviceSheetDismissed, ...executorProps } = props;
   const {
     wrappedProps,
     hasHeaderOverride,
@@ -80,12 +86,11 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps, Result = un
     trackingContextValue,
     onHeaderClosePressed,
     onBackdropPress,
-  } = useDeviceIntentExecutorLWMViewModel(props);
-  const { onDeviceSheetDismissed } = props;
+  } = useDeviceIntentExecutorLWMViewModel(executorProps);
 
   return (
     <QueuedBottomSheet
-      isRequestingToBeOpened={wrappedProps.enabled}
+      isRequestingToBeOpened={isRequestingToBeOpened ?? wrappedProps.enabled}
       onClose={wrappedProps.onUserCancel}
       onModalHide={onDeviceSheetDismissed}
       onHeaderClosePressed={onHeaderClosePressed}
