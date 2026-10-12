@@ -1,97 +1,71 @@
 import * as $protobuf from "protobufjs";
 import Long = require("long");
+
 /** Namespace ledger_trade. */
 export namespace ledger_trade {
-  /** Properties of a NewTransactionResponse. */
-  interface INewTransactionResponse {
-    /** NewTransactionResponse payinAddress */
-    payinAddress?: string | null;
-
-    /** NewTransactionResponse payinExtraId */
-    payinExtraId?: string | null;
-
-    /** NewTransactionResponse refundAddress */
-    refundAddress?: string | null;
-
-    /** NewTransactionResponse refundExtraId */
-    refundExtraId?: string | null;
-
-    /** NewTransactionResponse payoutAddress */
-    payoutAddress?: string | null;
-
-    /** NewTransactionResponse payoutExtraId */
-    payoutExtraId?: string | null;
-
-    /** NewTransactionResponse currencyFrom */
-    currencyFrom?: string | null;
-
-    /** NewTransactionResponse currencyTo */
-    currencyTo?: string | null;
-
-    /** NewTransactionResponse amountToProvider */
-    amountToProvider?: Uint8Array | null;
-
-    /** NewTransactionResponse amountToWallet */
-    amountToWallet?: Uint8Array | null;
-
-    /** NewTransactionResponse deviceTransactionId */
-    deviceTransactionId?: string | null;
-
-    /** NewTransactionResponse deviceTransactionIdNg */
-    deviceTransactionIdNg?: Uint8Array | null;
-  }
+  /**
+   * Properties of a NewTransactionResponse.
+   * @deprecated Use ledger_trade.NewTransactionResponse.$Properties instead.
+   */
+  interface INewTransactionResponse extends ledger_trade.NewTransactionResponse.$Properties {}
 
   /** Represents a NewTransactionResponse. */
-  class NewTransactionResponse implements INewTransactionResponse {
+  class NewTransactionResponse {
     /**
      * Constructs a new NewTransactionResponse.
      * @param [properties] Properties to set
      */
-    constructor(properties?: ledger_trade.INewTransactionResponse);
+    constructor(properties?: ledger_trade.NewTransactionResponse.$Properties);
+
+    /** Unknown fields preserved while decoding */
+    $unknowns?: Uint8Array[];
 
     /** NewTransactionResponse payinAddress. */
-    public payinAddress: string;
+    payinAddress: string;
 
     /** NewTransactionResponse payinExtraId. */
-    public payinExtraId: string;
+    payinExtraId: string;
 
     /** NewTransactionResponse refundAddress. */
-    public refundAddress: string;
+    refundAddress: string;
 
     /** NewTransactionResponse refundExtraId. */
-    public refundExtraId: string;
+    refundExtraId: string;
 
     /** NewTransactionResponse payoutAddress. */
-    public payoutAddress: string;
+    payoutAddress: string;
 
     /** NewTransactionResponse payoutExtraId. */
-    public payoutExtraId: string;
+    payoutExtraId: string;
 
     /** NewTransactionResponse currencyFrom. */
-    public currencyFrom: string;
+    currencyFrom: string;
 
     /** NewTransactionResponse currencyTo. */
-    public currencyTo: string;
+    currencyTo: string;
 
     /** NewTransactionResponse amountToProvider. */
-    public amountToProvider: Uint8Array;
+    amountToProvider: Uint8Array;
 
     /** NewTransactionResponse amountToWallet. */
-    public amountToWallet: Uint8Array;
+    amountToWallet: Uint8Array;
 
     /** NewTransactionResponse deviceTransactionId. */
-    public deviceTransactionId: string;
+    deviceTransactionId: string;
 
     /** NewTransactionResponse deviceTransactionIdNg. */
-    public deviceTransactionIdNg: Uint8Array;
+    deviceTransactionIdNg: Uint8Array;
 
     /**
      * Creates a new NewTransactionResponse instance using the specified properties.
      * @param [properties] Properties to set
      * @returns NewTransactionResponse instance
      */
-    public static create(
-      properties?: ledger_trade.INewTransactionResponse,
+    static create(
+      properties: ledger_trade.NewTransactionResponse.$Shape,
+    ): ledger_trade.NewTransactionResponse & ledger_trade.NewTransactionResponse.$Shape;
+    static create(
+      properties?: ledger_trade.NewTransactionResponse.$Properties,
     ): ledger_trade.NewTransactionResponse;
 
     /**
@@ -100,8 +74,8 @@ export namespace ledger_trade {
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encode(
-      message: ledger_trade.INewTransactionResponse,
+    static encode(
+      message: ledger_trade.NewTransactionResponse.$Properties,
       writer?: $protobuf.Writer,
     ): $protobuf.Writer;
 
@@ -111,8 +85,8 @@ export namespace ledger_trade {
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encodeDelimited(
-      message: ledger_trade.INewTransactionResponse,
+    static encodeDelimited(
+      message: ledger_trade.NewTransactionResponse.$Properties,
       writer?: $protobuf.Writer,
     ): $protobuf.Writer;
 
@@ -120,39 +94,39 @@ export namespace ledger_trade {
      * Decodes a NewTransactionResponse message from the specified reader or buffer.
      * @param reader Reader or buffer to decode from
      * @param [length] Message length if known beforehand
-     * @returns NewTransactionResponse
+     * @returns {ledger_trade.NewTransactionResponse & ledger_trade.NewTransactionResponse.$Shape} NewTransactionResponse
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decode(
+    static decode(
       reader: $protobuf.Reader | Uint8Array,
       length?: number,
-    ): ledger_trade.NewTransactionResponse;
+    ): ledger_trade.NewTransactionResponse & ledger_trade.NewTransactionResponse.$Shape;
 
     /**
      * Decodes a NewTransactionResponse message from the specified reader or buffer, length delimited.
      * @param reader Reader or buffer to decode from
-     * @returns NewTransactionResponse
+     * @returns {ledger_trade.NewTransactionResponse & ledger_trade.NewTransactionResponse.$Shape} NewTransactionResponse
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decodeDelimited(
+    static decodeDelimited(
       reader: $protobuf.Reader | Uint8Array,
-    ): ledger_trade.NewTransactionResponse;
+    ): ledger_trade.NewTransactionResponse & ledger_trade.NewTransactionResponse.$Shape;
 
     /**
      * Verifies a NewTransactionResponse message.
      * @param message Plain object to verify
      * @returns `null` if valid, otherwise the reason why it is not
      */
-    public static verify(message: { [k: string]: any }): string | null;
+    static verify(message: { [k: string]: any }): string | null;
 
     /**
      * Creates a NewTransactionResponse message from a plain object. Also converts values to their respective internal types.
      * @param object Plain object
      * @returns NewTransactionResponse
      */
-    public static fromObject(object: { [k: string]: any }): ledger_trade.NewTransactionResponse;
+    static fromObject(object: { [k: string]: any }): ledger_trade.NewTransactionResponse;
 
     /**
      * Creates a plain object from a NewTransactionResponse message. Also converts values to other types if specified.
@@ -160,7 +134,7 @@ export namespace ledger_trade {
      * @param [options] Conversion options
      * @returns Plain object
      */
-    public static toObject(
+    static toObject(
       message: ledger_trade.NewTransactionResponse,
       options?: $protobuf.IConversionOptions,
     ): { [k: string]: any };
@@ -169,45 +143,95 @@ export namespace ledger_trade {
      * Converts this NewTransactionResponse to JSON.
      * @returns JSON object
      */
-    public toJSON(): { [k: string]: any };
+    toJSON(): { [k: string]: any };
 
     /**
-     * Gets the default type url for NewTransactionResponse
-     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-     * @returns The default type url
+     * Gets the type url for NewTransactionResponse
+     * @param [prefix] Custom type url prefix, defaults to `"type.googleapis.com"`
+     * @returns The type url
      */
-    public static getTypeUrl(typeUrlPrefix?: string): string;
+    static getTypeUrl(prefix?: string): string;
   }
 
-  /** Properties of a UDecimal. */
-  interface IUDecimal {
-    /** UDecimal coefficient */
-    coefficient?: Uint8Array | null;
+  namespace NewTransactionResponse {
+    /** Properties of a NewTransactionResponse. */
+    interface $Properties {
+      /** NewTransactionResponse payinAddress */
+      payinAddress?: string | null;
 
-    /** UDecimal exponent */
-    exponent?: number | null;
+      /** NewTransactionResponse payinExtraId */
+      payinExtraId?: string | null;
+
+      /** NewTransactionResponse refundAddress */
+      refundAddress?: string | null;
+
+      /** NewTransactionResponse refundExtraId */
+      refundExtraId?: string | null;
+
+      /** NewTransactionResponse payoutAddress */
+      payoutAddress?: string | null;
+
+      /** NewTransactionResponse payoutExtraId */
+      payoutExtraId?: string | null;
+
+      /** NewTransactionResponse currencyFrom */
+      currencyFrom?: string | null;
+
+      /** NewTransactionResponse currencyTo */
+      currencyTo?: string | null;
+
+      /** NewTransactionResponse amountToProvider */
+      amountToProvider?: Uint8Array | null;
+
+      /** NewTransactionResponse amountToWallet */
+      amountToWallet?: Uint8Array | null;
+
+      /** NewTransactionResponse deviceTransactionId */
+      deviceTransactionId?: string | null;
+
+      /** NewTransactionResponse deviceTransactionIdNg */
+      deviceTransactionIdNg?: Uint8Array | null;
+
+      /** Unknown fields preserved while decoding */
+      $unknowns?: Uint8Array[];
+    }
+
+    /** Shape of a NewTransactionResponse. */
+    type $Shape = ledger_trade.NewTransactionResponse.$Properties;
   }
+
+  /**
+   * Properties of a UDecimal.
+   * @deprecated Use ledger_trade.UDecimal.$Properties instead.
+   */
+  interface IUDecimal extends ledger_trade.UDecimal.$Properties {}
 
   /** Represents a UDecimal. */
-  class UDecimal implements IUDecimal {
+  class UDecimal {
     /**
      * Constructs a new UDecimal.
      * @param [properties] Properties to set
      */
-    constructor(properties?: ledger_trade.IUDecimal);
+    constructor(properties?: ledger_trade.UDecimal.$Properties);
+
+    /** Unknown fields preserved while decoding */
+    $unknowns?: Uint8Array[];
 
     /** UDecimal coefficient. */
-    public coefficient: Uint8Array;
+    coefficient: Uint8Array;
 
     /** UDecimal exponent. */
-    public exponent: number;
+    exponent: number;
 
     /**
      * Creates a new UDecimal instance using the specified properties.
      * @param [properties] Properties to set
      * @returns UDecimal instance
      */
-    public static create(properties?: ledger_trade.IUDecimal): ledger_trade.UDecimal;
+    static create(
+      properties: ledger_trade.UDecimal.$Shape,
+    ): ledger_trade.UDecimal & ledger_trade.UDecimal.$Shape;
+    static create(properties?: ledger_trade.UDecimal.$Properties): ledger_trade.UDecimal;
 
     /**
      * Encodes the specified UDecimal message. Does not implicitly {@link ledger_trade.UDecimal.verify|verify} messages.
@@ -215,8 +239,8 @@ export namespace ledger_trade {
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encode(
-      message: ledger_trade.IUDecimal,
+    static encode(
+      message: ledger_trade.UDecimal.$Properties,
       writer?: $protobuf.Writer,
     ): $protobuf.Writer;
 
@@ -226,8 +250,8 @@ export namespace ledger_trade {
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encodeDelimited(
-      message: ledger_trade.IUDecimal,
+    static encodeDelimited(
+      message: ledger_trade.UDecimal.$Properties,
       writer?: $protobuf.Writer,
     ): $protobuf.Writer;
 
@@ -235,37 +259,39 @@ export namespace ledger_trade {
      * Decodes a UDecimal message from the specified reader or buffer.
      * @param reader Reader or buffer to decode from
      * @param [length] Message length if known beforehand
-     * @returns UDecimal
+     * @returns {ledger_trade.UDecimal & ledger_trade.UDecimal.$Shape} UDecimal
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decode(
+    static decode(
       reader: $protobuf.Reader | Uint8Array,
       length?: number,
-    ): ledger_trade.UDecimal;
+    ): ledger_trade.UDecimal & ledger_trade.UDecimal.$Shape;
 
     /**
      * Decodes a UDecimal message from the specified reader or buffer, length delimited.
      * @param reader Reader or buffer to decode from
-     * @returns UDecimal
+     * @returns {ledger_trade.UDecimal & ledger_trade.UDecimal.$Shape} UDecimal
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decodeDelimited(reader: $protobuf.Reader | Uint8Array): ledger_trade.UDecimal;
+    static decodeDelimited(
+      reader: $protobuf.Reader | Uint8Array,
+    ): ledger_trade.UDecimal & ledger_trade.UDecimal.$Shape;
 
     /**
      * Verifies a UDecimal message.
      * @param message Plain object to verify
      * @returns `null` if valid, otherwise the reason why it is not
      */
-    public static verify(message: { [k: string]: any }): string | null;
+    static verify(message: { [k: string]: any }): string | null;
 
     /**
      * Creates a UDecimal message from a plain object. Also converts values to their respective internal types.
      * @param object Plain object
      * @returns UDecimal
      */
-    public static fromObject(object: { [k: string]: any }): ledger_trade.UDecimal;
+    static fromObject(object: { [k: string]: any }): ledger_trade.UDecimal;
 
     /**
      * Creates a plain object from a UDecimal message. Also converts values to other types if specified.
@@ -273,7 +299,7 @@ export namespace ledger_trade {
      * @param [options] Conversion options
      * @returns Plain object
      */
-    public static toObject(
+    static toObject(
       message: ledger_trade.UDecimal,
       options?: $protobuf.IConversionOptions,
     ): { [k: string]: any };
@@ -282,81 +308,85 @@ export namespace ledger_trade {
      * Converts this UDecimal to JSON.
      * @returns JSON object
      */
-    public toJSON(): { [k: string]: any };
+    toJSON(): { [k: string]: any };
 
     /**
-     * Gets the default type url for UDecimal
-     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-     * @returns The default type url
+     * Gets the type url for UDecimal
+     * @param [prefix] Custom type url prefix, defaults to `"type.googleapis.com"`
+     * @returns The type url
      */
-    public static getTypeUrl(typeUrlPrefix?: string): string;
+    static getTypeUrl(prefix?: string): string;
   }
 
-  /** Properties of a NewSellResponse. */
-  interface INewSellResponse {
-    /** NewSellResponse traderEmail */
-    traderEmail?: string | null;
+  namespace UDecimal {
+    /** Properties of a UDecimal. */
+    interface $Properties {
+      /** UDecimal coefficient */
+      coefficient?: Uint8Array | null;
 
-    /** NewSellResponse inCurrency */
-    inCurrency?: string | null;
+      /** UDecimal exponent */
+      exponent?: number | null;
 
-    /** NewSellResponse inAmount */
-    inAmount?: Uint8Array | null;
+      /** Unknown fields preserved while decoding */
+      $unknowns?: Uint8Array[];
+    }
 
-    /** NewSellResponse inAddress */
-    inAddress?: string | null;
-
-    /** NewSellResponse outCurrency */
-    outCurrency?: string | null;
-
-    /** NewSellResponse outAmount */
-    outAmount?: ledger_trade.IUDecimal | null;
-
-    /** NewSellResponse deviceTransactionId */
-    deviceTransactionId?: Uint8Array | null;
-
-    /** NewSellResponse inExtraId */
-    inExtraId?: string | null;
+    /** Shape of a UDecimal. */
+    type $Shape = ledger_trade.UDecimal.$Properties;
   }
+
+  /**
+   * Properties of a NewSellResponse.
+   * @deprecated Use ledger_trade.NewSellResponse.$Properties instead.
+   */
+  interface INewSellResponse extends ledger_trade.NewSellResponse.$Properties {}
 
   /** Represents a NewSellResponse. */
-  class NewSellResponse implements INewSellResponse {
+  class NewSellResponse {
     /**
      * Constructs a new NewSellResponse.
      * @param [properties] Properties to set
      */
-    constructor(properties?: ledger_trade.INewSellResponse);
+    constructor(properties?: ledger_trade.NewSellResponse.$Properties);
+
+    /** Unknown fields preserved while decoding */
+    $unknowns?: Uint8Array[];
 
     /** NewSellResponse traderEmail. */
-    public traderEmail: string;
+    traderEmail: string;
 
     /** NewSellResponse inCurrency. */
-    public inCurrency: string;
+    inCurrency: string;
 
     /** NewSellResponse inAmount. */
-    public inAmount: Uint8Array;
+    inAmount: Uint8Array;
 
     /** NewSellResponse inAddress. */
-    public inAddress: string;
+    inAddress: string;
 
     /** NewSellResponse outCurrency. */
-    public outCurrency: string;
+    outCurrency: string;
 
     /** NewSellResponse outAmount. */
-    public outAmount?: ledger_trade.IUDecimal | null;
+    outAmount?: ledger_trade.UDecimal.$Properties | null;
 
     /** NewSellResponse deviceTransactionId. */
-    public deviceTransactionId: Uint8Array;
+    deviceTransactionId: Uint8Array;
 
     /** NewSellResponse inExtraId. */
-    public inExtraId: string;
+    inExtraId: string;
 
     /**
      * Creates a new NewSellResponse instance using the specified properties.
      * @param [properties] Properties to set
      * @returns NewSellResponse instance
      */
-    public static create(properties?: ledger_trade.INewSellResponse): ledger_trade.NewSellResponse;
+    static create(
+      properties: ledger_trade.NewSellResponse.$Shape,
+    ): ledger_trade.NewSellResponse & ledger_trade.NewSellResponse.$Shape;
+    static create(
+      properties?: ledger_trade.NewSellResponse.$Properties,
+    ): ledger_trade.NewSellResponse;
 
     /**
      * Encodes the specified NewSellResponse message. Does not implicitly {@link ledger_trade.NewSellResponse.verify|verify} messages.
@@ -364,8 +394,8 @@ export namespace ledger_trade {
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encode(
-      message: ledger_trade.INewSellResponse,
+    static encode(
+      message: ledger_trade.NewSellResponse.$Properties,
       writer?: $protobuf.Writer,
     ): $protobuf.Writer;
 
@@ -375,8 +405,8 @@ export namespace ledger_trade {
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encodeDelimited(
-      message: ledger_trade.INewSellResponse,
+    static encodeDelimited(
+      message: ledger_trade.NewSellResponse.$Properties,
       writer?: $protobuf.Writer,
     ): $protobuf.Writer;
 
@@ -384,39 +414,39 @@ export namespace ledger_trade {
      * Decodes a NewSellResponse message from the specified reader or buffer.
      * @param reader Reader or buffer to decode from
      * @param [length] Message length if known beforehand
-     * @returns NewSellResponse
+     * @returns {ledger_trade.NewSellResponse & ledger_trade.NewSellResponse.$Shape} NewSellResponse
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decode(
+    static decode(
       reader: $protobuf.Reader | Uint8Array,
       length?: number,
-    ): ledger_trade.NewSellResponse;
+    ): ledger_trade.NewSellResponse & ledger_trade.NewSellResponse.$Shape;
 
     /**
      * Decodes a NewSellResponse message from the specified reader or buffer, length delimited.
      * @param reader Reader or buffer to decode from
-     * @returns NewSellResponse
+     * @returns {ledger_trade.NewSellResponse & ledger_trade.NewSellResponse.$Shape} NewSellResponse
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decodeDelimited(
+    static decodeDelimited(
       reader: $protobuf.Reader | Uint8Array,
-    ): ledger_trade.NewSellResponse;
+    ): ledger_trade.NewSellResponse & ledger_trade.NewSellResponse.$Shape;
 
     /**
      * Verifies a NewSellResponse message.
      * @param message Plain object to verify
      * @returns `null` if valid, otherwise the reason why it is not
      */
-    public static verify(message: { [k: string]: any }): string | null;
+    static verify(message: { [k: string]: any }): string | null;
 
     /**
      * Creates a NewSellResponse message from a plain object. Also converts values to their respective internal types.
      * @param object Plain object
      * @returns NewSellResponse
      */
-    public static fromObject(object: { [k: string]: any }): ledger_trade.NewSellResponse;
+    static fromObject(object: { [k: string]: any }): ledger_trade.NewSellResponse;
 
     /**
      * Creates a plain object from a NewSellResponse message. Also converts values to other types if specified.
@@ -424,7 +454,7 @@ export namespace ledger_trade {
      * @param [options] Conversion options
      * @returns Plain object
      */
-    public static toObject(
+    static toObject(
       message: ledger_trade.NewSellResponse,
       options?: $protobuf.IConversionOptions,
     ): { [k: string]: any };
@@ -433,75 +463,100 @@ export namespace ledger_trade {
      * Converts this NewSellResponse to JSON.
      * @returns JSON object
      */
-    public toJSON(): { [k: string]: any };
+    toJSON(): { [k: string]: any };
 
     /**
-     * Gets the default type url for NewSellResponse
-     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-     * @returns The default type url
+     * Gets the type url for NewSellResponse
+     * @param [prefix] Custom type url prefix, defaults to `"type.googleapis.com"`
+     * @returns The type url
      */
-    public static getTypeUrl(typeUrlPrefix?: string): string;
+    static getTypeUrl(prefix?: string): string;
   }
 
-  /** Properties of a NewFundResponse. */
-  interface INewFundResponse {
-    /** NewFundResponse userId */
-    userId?: string | null;
+  namespace NewSellResponse {
+    /** Properties of a NewSellResponse. */
+    interface $Properties {
+      /** NewSellResponse traderEmail */
+      traderEmail?: string | null;
 
-    /** NewFundResponse accountName */
-    accountName?: string | null;
+      /** NewSellResponse inCurrency */
+      inCurrency?: string | null;
 
-    /** NewFundResponse inCurrency */
-    inCurrency?: string | null;
+      /** NewSellResponse inAmount */
+      inAmount?: Uint8Array | null;
 
-    /** NewFundResponse inAmount */
-    inAmount?: Uint8Array | null;
+      /** NewSellResponse inAddress */
+      inAddress?: string | null;
 
-    /** NewFundResponse inAddress */
-    inAddress?: string | null;
+      /** NewSellResponse outCurrency */
+      outCurrency?: string | null;
 
-    /** NewFundResponse deviceTransactionId */
-    deviceTransactionId?: Uint8Array | null;
+      /** NewSellResponse outAmount */
+      outAmount?: ledger_trade.UDecimal.$Properties | null;
 
-    /** NewFundResponse inExtraId */
-    inExtraId?: string | null;
+      /** NewSellResponse deviceTransactionId */
+      deviceTransactionId?: Uint8Array | null;
+
+      /** NewSellResponse inExtraId */
+      inExtraId?: string | null;
+
+      /** Unknown fields preserved while decoding */
+      $unknowns?: Uint8Array[];
+    }
+
+    /** Shape of a NewSellResponse. */
+    type $Shape = ledger_trade.NewSellResponse.$Properties;
   }
+
+  /**
+   * Properties of a NewFundResponse.
+   * @deprecated Use ledger_trade.NewFundResponse.$Properties instead.
+   */
+  interface INewFundResponse extends ledger_trade.NewFundResponse.$Properties {}
 
   /** Represents a NewFundResponse. */
-  class NewFundResponse implements INewFundResponse {
+  class NewFundResponse {
     /**
      * Constructs a new NewFundResponse.
      * @param [properties] Properties to set
      */
-    constructor(properties?: ledger_trade.INewFundResponse);
+    constructor(properties?: ledger_trade.NewFundResponse.$Properties);
+
+    /** Unknown fields preserved while decoding */
+    $unknowns?: Uint8Array[];
 
     /** NewFundResponse userId. */
-    public userId: string;
+    userId: string;
 
     /** NewFundResponse accountName. */
-    public accountName: string;
+    accountName: string;
 
     /** NewFundResponse inCurrency. */
-    public inCurrency: string;
+    inCurrency: string;
 
     /** NewFundResponse inAmount. */
-    public inAmount: Uint8Array;
+    inAmount: Uint8Array;
 
     /** NewFundResponse inAddress. */
-    public inAddress: string;
+    inAddress: string;
 
     /** NewFundResponse deviceTransactionId. */
-    public deviceTransactionId: Uint8Array;
+    deviceTransactionId: Uint8Array;
 
     /** NewFundResponse inExtraId. */
-    public inExtraId: string;
+    inExtraId: string;
 
     /**
      * Creates a new NewFundResponse instance using the specified properties.
      * @param [properties] Properties to set
      * @returns NewFundResponse instance
      */
-    public static create(properties?: ledger_trade.INewFundResponse): ledger_trade.NewFundResponse;
+    static create(
+      properties: ledger_trade.NewFundResponse.$Shape,
+    ): ledger_trade.NewFundResponse & ledger_trade.NewFundResponse.$Shape;
+    static create(
+      properties?: ledger_trade.NewFundResponse.$Properties,
+    ): ledger_trade.NewFundResponse;
 
     /**
      * Encodes the specified NewFundResponse message. Does not implicitly {@link ledger_trade.NewFundResponse.verify|verify} messages.
@@ -509,8 +564,8 @@ export namespace ledger_trade {
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encode(
-      message: ledger_trade.INewFundResponse,
+    static encode(
+      message: ledger_trade.NewFundResponse.$Properties,
       writer?: $protobuf.Writer,
     ): $protobuf.Writer;
 
@@ -520,8 +575,8 @@ export namespace ledger_trade {
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encodeDelimited(
-      message: ledger_trade.INewFundResponse,
+    static encodeDelimited(
+      message: ledger_trade.NewFundResponse.$Properties,
       writer?: $protobuf.Writer,
     ): $protobuf.Writer;
 
@@ -529,39 +584,39 @@ export namespace ledger_trade {
      * Decodes a NewFundResponse message from the specified reader or buffer.
      * @param reader Reader or buffer to decode from
      * @param [length] Message length if known beforehand
-     * @returns NewFundResponse
+     * @returns {ledger_trade.NewFundResponse & ledger_trade.NewFundResponse.$Shape} NewFundResponse
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decode(
+    static decode(
       reader: $protobuf.Reader | Uint8Array,
       length?: number,
-    ): ledger_trade.NewFundResponse;
+    ): ledger_trade.NewFundResponse & ledger_trade.NewFundResponse.$Shape;
 
     /**
      * Decodes a NewFundResponse message from the specified reader or buffer, length delimited.
      * @param reader Reader or buffer to decode from
-     * @returns NewFundResponse
+     * @returns {ledger_trade.NewFundResponse & ledger_trade.NewFundResponse.$Shape} NewFundResponse
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decodeDelimited(
+    static decodeDelimited(
       reader: $protobuf.Reader | Uint8Array,
-    ): ledger_trade.NewFundResponse;
+    ): ledger_trade.NewFundResponse & ledger_trade.NewFundResponse.$Shape;
 
     /**
      * Verifies a NewFundResponse message.
      * @param message Plain object to verify
      * @returns `null` if valid, otherwise the reason why it is not
      */
-    public static verify(message: { [k: string]: any }): string | null;
+    static verify(message: { [k: string]: any }): string | null;
 
     /**
      * Creates a NewFundResponse message from a plain object. Also converts values to their respective internal types.
      * @param object Plain object
      * @returns NewFundResponse
      */
-    public static fromObject(object: { [k: string]: any }): ledger_trade.NewFundResponse;
+    static fromObject(object: { [k: string]: any }): ledger_trade.NewFundResponse;
 
     /**
      * Creates a plain object from a NewFundResponse message. Also converts values to other types if specified.
@@ -569,7 +624,7 @@ export namespace ledger_trade {
      * @param [options] Conversion options
      * @returns Plain object
      */
-    public static toObject(
+    static toObject(
       message: ledger_trade.NewFundResponse,
       options?: $protobuf.IConversionOptions,
     ): { [k: string]: any };
@@ -578,13 +633,45 @@ export namespace ledger_trade {
      * Converts this NewFundResponse to JSON.
      * @returns JSON object
      */
-    public toJSON(): { [k: string]: any };
+    toJSON(): { [k: string]: any };
 
     /**
-     * Gets the default type url for NewFundResponse
-     * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-     * @returns The default type url
+     * Gets the type url for NewFundResponse
+     * @param [prefix] Custom type url prefix, defaults to `"type.googleapis.com"`
+     * @returns The type url
      */
-    public static getTypeUrl(typeUrlPrefix?: string): string;
+    static getTypeUrl(prefix?: string): string;
+  }
+
+  namespace NewFundResponse {
+    /** Properties of a NewFundResponse. */
+    interface $Properties {
+      /** NewFundResponse userId */
+      userId?: string | null;
+
+      /** NewFundResponse accountName */
+      accountName?: string | null;
+
+      /** NewFundResponse inCurrency */
+      inCurrency?: string | null;
+
+      /** NewFundResponse inAmount */
+      inAmount?: Uint8Array | null;
+
+      /** NewFundResponse inAddress */
+      inAddress?: string | null;
+
+      /** NewFundResponse deviceTransactionId */
+      deviceTransactionId?: Uint8Array | null;
+
+      /** NewFundResponse inExtraId */
+      inExtraId?: string | null;
+
+      /** Unknown fields preserved while decoding */
+      $unknowns?: Uint8Array[];
+    }
+
+    /** Shape of a NewFundResponse. */
+    type $Shape = ledger_trade.NewFundResponse.$Properties;
   }
 }

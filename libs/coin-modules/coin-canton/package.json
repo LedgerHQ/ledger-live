@@ -141,7 +141,7 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "protobufjs-cli": "1.1.2",
+    "protobufjs-cli": "2.4.1",
     "typescript": "catalog:"
   },
   "scripts": {

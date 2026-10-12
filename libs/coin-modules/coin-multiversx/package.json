@@ -63,7 +63,7 @@
     "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "catalog:",
-    "protobufjs": "^7.2.6",
+    "protobufjs": "^8.0.0",
     "rxjs": "catalog:"
   },
   "devDependencies": {

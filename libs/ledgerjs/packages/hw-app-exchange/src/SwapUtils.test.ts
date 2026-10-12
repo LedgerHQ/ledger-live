@@ -47,7 +47,7 @@ describe("decodePayloadProtobuf function", () => {
     );
     expect(decodedPayload).toHaveProperty("currencyFrom", "ETH");
     expect(decodedPayload).toHaveProperty("currencyTo", "BTC");
-    expect(decodedPayload).toHaveProperty("deviceTransactionId", "");
+    expect(decodedPayload.deviceTransactionId).toBeUndefined();
     expect(decodedPayload).toHaveProperty(
       "deviceTransactionIdNg",
       "081ceb30cbf82b1d57e5349eb18311e2565b575d6a8419245b2a033586957755",

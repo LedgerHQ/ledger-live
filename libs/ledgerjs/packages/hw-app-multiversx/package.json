@@ -32,7 +32,7 @@
     "axios": "catalog:",
     "bignumber.js": "^9.0.1",
     "bip32-path": "^0.4.2",
-    "protobufjs": "^7.2.6"
+    "protobufjs": "^8.0.0"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",
