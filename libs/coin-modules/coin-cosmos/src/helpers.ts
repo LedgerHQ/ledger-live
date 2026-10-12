@@ -28,5 +28,5 @@ export function isAccountEmpty({
   sequence?: number;
   cosmosResources?: { sequence?: number };
 }) {
-  return (sequence ?? cosmosResources?.sequence ?? 0) === 0 && balance.isZero();
+  return (sequence ?? cosmosResources?.sequence) === 0 && balance.isZero();
 }

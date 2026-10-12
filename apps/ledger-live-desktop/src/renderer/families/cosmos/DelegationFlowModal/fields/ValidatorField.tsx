@@ -32,7 +32,11 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const [search, setSearch] = useState("");
   const unit = useAccountUnit(account);
   const currencyId = account.currency.id;
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, account.stakingResources.validators, search);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    currencyId,
+    account.stakingResources.validators,
+    search,
+  );
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
@@ -49,7 +53,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
 
   useEffect(() => {
     if (validators.length > 0 || account.type !== "Account" || search !== "") return;
-    prepareCurrency(account.currency).catch(() => { });
+    prepareCurrency(account.currency).catch(() => {});
   }, [account.type, account.currency, validators.length, search]);
 
   const chosenValidator = useMemo(() => {

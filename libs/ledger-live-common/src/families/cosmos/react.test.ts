@@ -196,7 +196,10 @@ describe("cosmos/react", () => {
     it("should return a list of Validators with Ledger first", async () => {
       const { account } = await setup();
       const { result } = renderHook(() =>
-        hooks.useLedgerFirstShuffledValidatorsCosmosFamily("cosmos", account.stakingResources.validators),
+        hooks.useLedgerFirstShuffledValidatorsCosmosFamily(
+          "cosmos",
+          account.stakingResources.validators,
+        ),
       );
       const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledgerValidator;
       expect(result.current[0].validatorAddress).toBe(LEDGER_VALIDATOR_ADDRESS);
@@ -226,7 +229,7 @@ async function setup(): Promise<{
       commission: 0.1,
       tokens: "15924774423713",
       votingPower: 0,
-      estimatedYearlyRewardsRate: 0
+      estimatedYearlyRewardsRate: 0,
     },
     {
       validatorAddress: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -234,7 +237,7 @@ async function setup(): Promise<{
       commission: 0.075,
       tokens: "9751517505298",
       votingPower: 0,
-      estimatedYearlyRewardsRate: 0
+      estimatedYearlyRewardsRate: 0,
     },
     {
       validatorAddress: "cosmosvaloper18ruzecmqj9pv8ac0gvkgryuc7u004te9rh7w5s",
@@ -242,8 +245,8 @@ async function setup(): Promise<{
       commission: 0.05,
       tokens: "9307007776417",
       votingPower: 0,
-      estimatedYearlyRewardsRate: 0
-    }
+      estimatedYearlyRewardsRate: 0,
+    },
   ];
   const currencyBridge = await getCurrencyBridge(currency);
   const bridge = await getAccountBridge(account);

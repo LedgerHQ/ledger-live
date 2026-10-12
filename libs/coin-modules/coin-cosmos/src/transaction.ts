@@ -9,7 +9,12 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { resolveSourceValidator, resolveTransactionValidators } from "./buildTransaction";
+import {
+  getDstValAddress,
+  getValAddress,
+  resolveSourceValidator,
+  resolveTransactionValidators,
+} from "./buildTransaction";
 import type { Transaction, TransactionRaw } from "./types";
 
 export const formatTransaction = (transaction: Transaction, account: Account): string => {
@@ -63,8 +68,21 @@ function legacyValidatorFields(tr: TransactionRaw): {
   return { valAddress: tr.valAddress ?? tr.validators?.[0]?.address ?? "" };
 }
 
+/** Legacy staking transactions carry their amount on the validator entry, not the top-level one. */
+function legacyAmountRaw(tr: TransactionRaw): string | undefined {
+  if (tr.mode === "send" || tr.valAddress || tr.dstValAddress) return undefined;
+  const amount = tr.validators?.[0]?.amount;
+  return amount && new BigNumber(tr.amount).isZero() ? amount : undefined;
+}
+
+function effectiveAmount(t: Transaction): BigNumber {
+  const [validator] = resolveTransactionValidators(t);
+  return t.amount.isZero() && validator ? validator.amount : t.amount;
+}
+
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
-  const common = fromTransactionCommonRaw(tr);
+  const legacyAmount = legacyAmountRaw(tr);
+  const common = fromTransactionCommonRaw(legacyAmount ? { ...tr, amount: legacyAmount } : tr);
   const { networkInfo } = tr;
 
   // A `null` memo field is kept as `null`: the generic `createTransaction` creates it that way, and
@@ -105,7 +123,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
 };
 
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
-  const common = toTransactionCommonRaw(t);
+  const common = toTransactionCommonRaw({ ...t, amount: effectiveAmount(t) });
   const { networkInfo } = t;
   return {
     ...common,
@@ -120,8 +138,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     memo: t.memo,
     ...(t.memoType !== undefined ? { memoType: t.memoType } : {}),
     ...(t.memoValue !== undefined ? { memoValue: t.memoValue } : {}),
-    ...(t.mode !== "send" ? { valAddress: t.valAddress } : {}),
-    ...(t.mode === "redelegate" ? { dstValAddress: t.dstValAddress } : {}),
+    ...(t.mode !== "send" ? { valAddress: getValAddress(t) } : {}),
+    ...(t.mode === "redelegate" ? { dstValAddress: getDstValAddress(t) } : {}),
   };
 };
 

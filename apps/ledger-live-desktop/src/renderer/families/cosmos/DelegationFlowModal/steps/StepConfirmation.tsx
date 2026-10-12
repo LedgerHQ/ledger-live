@@ -23,7 +23,7 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "neutral.c100",
-})) <{
+}))<{
   shouldSpace?: boolean;
 }>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
@@ -41,7 +41,10 @@ function StepConfirmation({
 
   const voteAccAddress = transaction ? getValAddress(transaction) : "";
   const currencyId = account.currency.id;
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, account.stakingResources.validators);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    currencyId,
+    account.stakingResources.validators,
+  );
 
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {

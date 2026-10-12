@@ -5,10 +5,17 @@ import {
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
-import { Transaction } from "@ledgerhq/coin-cosmos/types/index";
+import { CosmosOperationMode, Transaction } from "@ledgerhq/coin-cosmos/types/index";
 import { cosmosMemoPatch } from "../../bridge/descriptor/send/memo";
 
 const CAN_EDIT_FEES = true;
+
+// Wallet API callers put the moved stake on the validator entry for these modes, not on `amount`.
+const VALIDATOR_AMOUNT_MODES: ReadonlySet<CosmosOperationMode> = new Set([
+  "undelegate",
+  "redelegate",
+  "claimRewardCompound",
+]);
 
 const areFeesProvided: AreFeesProvided<WalletAPICosmosTransaction> = tx => !!tx.fees;
 
@@ -42,15 +49,24 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
     Object.assign(liveTx, cosmosMemoPatch(walletApiTransaction.memo));
   }
 
-  if (walletApiTransaction.sourceValidator) {
-    liveTx.sourceValidator = walletApiTransaction.sourceValidator;
+  if (liveTx.mode === "send") {
+    return liveTx;
   }
 
-  if (walletApiTransaction.validators) {
-    liveTx.validators = walletApiTransaction.validators;
+  const validator = walletApiTransaction.validators?.[0];
+  if (validator && VALIDATOR_AMOUNT_MODES.has(liveTx.mode)) {
+    liveTx.amount = validator.amount;
   }
 
-  return liveTx;
+  if (liveTx.mode === "redelegate") {
+    return {
+      ...liveTx,
+      valAddress: walletApiTransaction.sourceValidator ?? "",
+      dstValAddress: validator?.address ?? "",
+    };
+  }
+
+  return { ...liveTx, valAddress: validator?.address ?? "" };
 };
 
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
