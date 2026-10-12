@@ -58,9 +58,7 @@ export function SelectDevice() {
 
   const handleDeviceSelect = useCallback(
     (deviceModelId: DeviceModelId) => {
-      // TODO: use a feature flag to do this properly
       track("Onboarding Device - Selection", { deviceModelId, flow: "Onboarding" });
-      // Nanos are gated later, on the use-case screen.
       if (isTouchscreenCounterfeitWarningEnabled && isSyncOnboardingSupported(deviceModelId)) {
         setPendingDeviceModelId(deviceModelId);
         return;
