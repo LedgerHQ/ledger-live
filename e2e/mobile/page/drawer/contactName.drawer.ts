@@ -21,8 +21,8 @@ export default class ContactNameDrawer {
 
   @Step("Type contact name: {{0}} and confirm")
   async typeAndConfirm(name: string) {
-    // LIVE-37168 - confirm button should remain interactable when the keyboard is open
     await typeTextByElement(this.nameInput(), name, false);
+    await waitForFullyVisibleById(`${this.testIDPrefix}-confirm`);
     await tapByElement(this.confirmButton());
   }
 }

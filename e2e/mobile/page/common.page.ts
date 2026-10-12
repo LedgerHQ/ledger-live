@@ -68,6 +68,7 @@ export default class CommonPage {
 
   @Step("Go to previous page")
   async goToPreviousPage() {
+    await waitForFullyVisibleById("navigation-header-back-button");
     await tapByElement(this.backButton());
   }
 
