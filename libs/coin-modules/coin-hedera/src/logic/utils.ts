@@ -61,15 +61,23 @@ export const deserializeTransaction = (tx: string) => {
 export const getOperationValue = ({
   asset,
   operation,
+  accountAddress,
+  feesPayer,
 }: {
   asset: AssetInfo;
   operation: LiveOperation<HederaOperationExtra>;
+  accountAddress: string;
+  feesPayer?: string;
 }) => {
   if (operation.type === "FEES") {
     return BigInt(0);
   }
 
-  if (asset.type === "native" && OP_TYPES_EXCLUDING_FEES.includes(operation.type)) {
+  if (
+    asset.type === "native" &&
+    OP_TYPES_EXCLUDING_FEES.includes(operation.type) &&
+    feesPayer === accountAddress
+  ) {
     return BigInt(operation.value.toFixed(0)) - BigInt(operation.fee.toFixed(0));
   }
 

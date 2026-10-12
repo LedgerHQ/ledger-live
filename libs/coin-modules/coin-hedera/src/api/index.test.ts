@@ -631,6 +631,36 @@ describe("createApi", () => {
       expect(result.items[0].tx).not.toHaveProperty("feesPayer");
     });
 
+    it("should pass the synchronized account and external fee payer when mapping an OUT operation", async () => {
+      const accountAddress = "0.0.453351";
+      const feesPayer = "0.0.356354";
+      const operation = getMockedOperation({
+        type: "OUT",
+        value: new BigNumber(10000),
+        fee: new BigNumber(1056079),
+        senders: [accountAddress, feesPayer],
+        recipients: ["0.0.306412", "0.0.14"],
+        extra: {
+          transactionId: "0.0.356354-1639485212-058094606",
+          feesPayer,
+        },
+      });
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [operation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      await api.listOperations(mockContext, accountAddress, mockOptions);
+
+      expect(mockGetOperationValue).toHaveBeenCalledWith({
+        asset: { type: "native" },
+        operation,
+        accountAddress,
+        feesPayer,
+      });
+    });
+
     it("should prefer feesPayer from operation extra over transactionId", async () => {
       const explicitFeesPayer = "0.0.9999";
       const operationWithExplicitFeesPayer = getMockedOperation({

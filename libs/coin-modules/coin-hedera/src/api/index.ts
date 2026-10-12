@@ -220,7 +220,12 @@ export function createApi(currencyId: string) {
           type: liveOp.type,
           senders: liveOp.senders,
           recipients: liveOp.recipients,
-          value: getOperationValue({ asset, operation: liveOp }),
+          value: getOperationValue({
+            asset,
+            operation: liveOp,
+            accountAddress: address,
+            feesPayer,
+          }),
           asset,
           details: {
             ...(memo && { memo }),
