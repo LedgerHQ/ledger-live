@@ -59,7 +59,8 @@ import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage
 import { useSuppressQ2TourForNewUsers } from "LLD/features/Q2Tour/hooks/useSuppressQ2TourForNewUsers";
 import { useSuppressQ3TourForNewUsers } from "LLD/features/Q3Tour/hooks/useSuppressQ3TourForNewUsers";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
-import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
+import { AppAvailability } from "@features/flow-app-availability";
+import { LiftSplashOnAppAvailability } from "LLD/features/AppBlockers/components/LiftSplashOnAppAvailability";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import {
   setSolanaLdmkEnabled,
@@ -462,11 +463,12 @@ export default function Default() {
   return (
     <>
       <TriggerAppReady />
+      <LiftSplashOnAppAvailability />
       <ExportLogsButton hookToShortcut />
       <TrackAppStart />
       <Idler />
       {process.platform === "darwin" ? <AppRegionDrag /> : null}
-      <AppGeoBlocker>
+      <AppAvailability>
         <AppVersionBlocker>
           <IsUnlocked>
             <BridgeSyncProvider>
@@ -543,7 +545,7 @@ export default function Default() {
             </BridgeSyncProvider>
           </IsUnlocked>
         </AppVersionBlocker>
-      </AppGeoBlocker>
+      </AppAvailability>
 
       {analyticsConsoleActive ? <AnalyticsConsole /> : null}
       {themeConsoleActive || process.env.DEBUG_THEME ? <ThemeConsole /> : null}

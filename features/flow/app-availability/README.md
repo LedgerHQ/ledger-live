@@ -1,7 +1,7 @@
 # @features/flow-app-availability
 
 > [!CAUTION]
-> **Status: UNSTABLE** — New package; not yet wired into a host application, and its API may change.
+> **Status: UNSTABLE** — Wired into Ledger Wallet Desktop; Mobile still pending. API may change.
 
 Owns the launch availability check for Ledger Wallet. Apps wrap the tree with `AppAvailability`
 and read `useAppAvailability` from splash gates. Unavailable states render
