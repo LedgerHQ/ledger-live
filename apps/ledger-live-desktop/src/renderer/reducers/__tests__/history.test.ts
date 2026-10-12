@@ -48,10 +48,9 @@ function createCountervaluesState(): CountervaluesStoreState {
   return {
     rates: countervaluesInitialState,
     sync: {
-      pending: false,
+      load: "idle",
       error: null,
       isPolling: true,
-      triggerLoad: false,
     },
   };
 }

@@ -11,13 +11,13 @@ import {
   countervaluesSyncErrorSelector,
   countervaluesSyncIsPollingSelector,
   countervaluesSyncPendingSelector,
-  countervaluesSyncTriggerLoadSelector,
   type CountervaluesStoreState,
 } from "./reducer";
 import {
   setCountervaluesPollingIsPolling,
   setCountervaluesStateError,
   setCountervaluesStatePending,
+  type CountervaluesLoad,
 } from "./slice";
 
 function loadedState(): CounterValuesState {
@@ -71,12 +71,7 @@ describe("countervaluesReducer", () => {
     const wiped = countervaluesReducer(state, wipeCountervalues());
 
     expect(wiped.rates).toBe(initialState);
-    expect(wiped.sync).toEqual({
-      pending: false,
-      error: null,
-      isPolling: false,
-      triggerLoad: false,
-    });
+    expect(wiped.sync).toEqual({ load: "idle", error: null, isPolling: false });
   });
 
   it("reads every field through its selector", () => {
@@ -84,7 +79,7 @@ describe("countervaluesReducer", () => {
     const error = new Error("network");
     const countervalues: CountervaluesStoreState = {
       rates,
-      sync: { pending: true, error, isPolling: false, triggerLoad: true },
+      sync: { load: "loadingThenRequested", error, isPolling: false },
     };
     const root = { countervalues };
 
@@ -92,6 +87,21 @@ describe("countervaluesReducer", () => {
     expect(countervaluesSyncPendingSelector(root)).toBe(true);
     expect(countervaluesSyncErrorSelector(root)).toBe(error);
     expect(countervaluesSyncIsPollingSelector(root)).toBe(false);
-    expect(countervaluesSyncTriggerLoadSelector(root)).toBe(true);
+  });
+
+  it.each<[CountervaluesLoad, boolean]>([
+    ["idle", false],
+    ["requested", false],
+    ["loading", true],
+    ["loadingThenRequested", true],
+  ])("reads %s as pending: %s", (load, pending) => {
+    const root = {
+      countervalues: {
+        ...countervaluesInitialState,
+        sync: { ...countervaluesInitialState.sync, load },
+      },
+    };
+
+    expect(countervaluesSyncPendingSelector(root)).toBe(pending);
   });
 });

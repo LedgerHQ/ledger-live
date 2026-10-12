@@ -25,8 +25,6 @@ import type {
 import {
   countervaluesStateSelector,
   countervaluesSyncIsPollingSelector,
-  countervaluesSyncPendingSelector,
-  countervaluesSyncTriggerLoadSelector,
   type CountervaluesStoreState,
 } from "../reducer";
 import {
@@ -34,6 +32,7 @@ import {
   setCountervaluesPollingTriggerLoad,
   setCountervaluesStateError,
   setCountervaluesStatePending,
+  type CountervaluesLoad,
 } from "../slice";
 import { log } from "../../utils/internals/logger";
 
@@ -421,7 +420,7 @@ function reconcileSessionWithStore<S>(context: SyncContext<S>, session: Session)
   }
 
   const state = context.getState();
-  if (countervaluesSyncTriggerLoadSelector(state) && !countervaluesSyncPendingSelector(state)) {
+  if (readLoad(state) === "requested") {
     loadRates(context, session.rates, countervaluesStateSelector(state), settings);
   }
 
@@ -545,6 +544,17 @@ function readSettings<S>(context: SyncContext<S>, session: Session): Countervalu
  */
 function readSupportedIdsOrDefault<S>(context: SyncContext<S>): string[] {
   return context.readSupportedIds().data ?? defaultCounterValueIdsSortedByMarketCap;
+}
+
+/**
+ * Where the loop stands with loads. Only the middleware reads it, so it stays out of the
+ * package's selectors.
+ *
+ * @param state
+ * The store's state.
+ */
+function readLoad(state: CountervaluesRootState): CountervaluesLoad {
+  return state.countervalues.sync.load;
 }
 
 /**

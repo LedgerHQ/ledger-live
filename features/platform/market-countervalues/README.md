@@ -23,9 +23,9 @@ and the hooks that read it. The rates, their slice and their logic live in
 | `useGetCounterValueIdsPolling` | Currency ids sorted by market cap, polled every 30 minutes, with a default list |
 | `setCountervaluesLogger` | Registers the app logger |
 | `countervaluesReducer`, `CountervaluesStoreState`, `countervaluesInitialState` | What each app mounts at the `countervalues` store key: `{ rates, sync }` |
-| `countervaluesSyncSlice`, `CountervaluesSyncState`, `countervaluesSyncInitialState` | The loop's slice, mounted at `sync` |
+| `countervaluesSyncSlice`, `CountervaluesSyncState`, `CountervaluesLoad`, `countervaluesSyncInitialState` | The loop's slice, mounted at `sync` |
 | `setCountervaluesStatePending`, `setCountervaluesStateError`, `setCountervaluesPollingIsPolling`, `setCountervaluesPollingTriggerLoad` | The loop slice's action creators |
-| `countervaluesStateSelector`, `countervaluesSyncPendingSelector`, `countervaluesSyncErrorSelector`, `countervaluesSyncIsPollingSelector`, `countervaluesSyncTriggerLoadSelector` | The selectors, typed on `{ countervalues: CountervaluesStoreState }` |
+| `countervaluesStateSelector`, `countervaluesSyncPendingSelector`, `countervaluesSyncErrorSelector`, `countervaluesSyncIsPollingSelector` | The selectors, typed on `{ countervalues: CountervaluesStoreState }` |
 
 The hooks read the store through `react-redux`, so they need a Redux store holding
 `countervaluesReducer` at the `countervalues` key. The middleware, `useUsdToFiatRate` and `useGetCounterValueIdsPolling` also need
@@ -81,9 +81,12 @@ combineReducers({ countervalues: countervaluesReducer /* , ... */ });
 ```
 
 - `countervalues.rates` is the entity's rates slice (`countervaluesRatesSlice`, holding a
-  `CounterValuesState`). `countervalues.sync` is this package's slice, the loop's state: `pending`,
-  `error`, `isPolling` and `triggerLoad`. A wipe clears the rates, `pending` and `error`, and keeps
-  the polling flags.
+  `CounterValuesState`). `countervalues.sync` is this package's slice, the loop's state: `load`,
+  `error` and `isPolling`. A wipe clears the rates and `error`, ends the load, and keeps a request
+  and the polling flag.
+- `load` is `idle`, `requested`, `loading` or `loadingThenRequested`. A poll asked for while a load
+  is in flight waits for it to land, so loads never overlap. `countervaluesSyncPendingSelector` reads
+  it as a boolean: a load is in flight.
 - Read them through the selectors and hooks, never through the path: only this package knows where
   the rates are mounted.
 - The action types are plain strings such as `COUNTERVALUES_WIPE`, not `countervalues/wipe`. Other

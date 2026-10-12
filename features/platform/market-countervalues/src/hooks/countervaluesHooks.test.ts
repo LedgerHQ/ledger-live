@@ -45,7 +45,7 @@ function createTestStore() {
     preloadedState: {
       countervalues: {
         rates: state,
-        sync: { ...countervaluesInitialState.sync, pending: true, error: loadError },
+        sync: { ...countervaluesInitialState.sync, load: "loading" as const, error: loadError },
       },
     },
     // The state holds an Error and rate Maps.
