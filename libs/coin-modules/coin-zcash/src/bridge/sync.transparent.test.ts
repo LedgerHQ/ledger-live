@@ -1075,6 +1075,32 @@ describe("buildSyncObservables", () => {
     expect(shielded.privateInfo).toMatchObject({ syncState: "complete", lastProcessedBlock: 3 });
   });
 
+  it("keeps the mode it started with when the host flips it during the sync", async () => {
+    getAccountUnspentUtxos.mockResolvedValue([output()]);
+    const isShieldedEnabled = jest.fn().mockReturnValueOnce(false).mockReturnValue(true);
+    const eligible = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ ironwoodBalance: new BigNumber(5_000), lastProcessedBlock: 1 }),
+      },
+    });
+
+    const { syncs } = buildSyncObservables(
+      eligible,
+      { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
+      signerContext,
+      testContext,
+      isShieldedEnabled,
+    );
+
+    expect(syncs).toHaveLength(1);
+    expect(await firstValueFrom(syncs[0])).toMatchObject({ balance: new BigNumber(70_000) });
+    expect(getZCashClient).not.toHaveBeenCalled();
+    expect(isShieldedEnabled).toHaveBeenCalledTimes(1);
+  });
+
   it("keeps the transparent leg intact when the shielded leg fails", async () => {
     getAccountUnspentUtxos.mockResolvedValue([output()]);
     getZCashClient.mockResolvedValue({

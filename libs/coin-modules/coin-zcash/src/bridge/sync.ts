@@ -1186,6 +1186,10 @@ export function buildSyncObservables(
 ): { syncs: Observable<Partial<ZcashAccount>>[]; syncType: number } {
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
   const syncs: Observable<Partial<ZcashAccount>>[] = [];
+  // The host can flip the mode while a sync runs: read it once, so the legs, the recipient
+  // recovery and the balance of one sync all agree on it.
+  const shieldedEnabled = isShieldedEnabled();
+  const syncMode = () => shieldedEnabled;
 
   const initialOps = (info.initialAccount?.operations || []) as BtcOperation[];
   const latest = {
@@ -1195,14 +1199,14 @@ export function buildSyncObservables(
 
   if (syncType & SYNC_TYPE_TRANSPARENT) {
     syncs.push(
-      createTransparentSyncObservable(info, signerContext, context, isShieldedEnabled).pipe(
+      createTransparentSyncObservable(info, signerContext, context, syncMode).pipe(
         map(result => reconcileLegOperations(latest, "transparent", result)),
       ),
     );
   }
 
   // No shielded leg without the engine that scans it.
-  const extraSync = isShieldedEnabled()
+  const extraSync = shieldedEnabled
     ? buildExtraSyncObservable(info, syncConfig, context)
     : undefined;
   if (extraSync) {
