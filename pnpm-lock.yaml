@@ -11508,7 +11508,7 @@ importers:
         specifier: 'catalog:'
         version: 4.17.21
       protobufjs:
-        specifier: ^8.0.0
+        specifier: ^8.4.1
         version: 8.4.1
       rxjs:
         specifier: 'catalog:'
@@ -15624,7 +15624,7 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2
       protobufjs:
-        specifier: ^8.0.0
+        specifier: ^8.4.1
         version: 8.4.1
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
