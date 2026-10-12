@@ -69,6 +69,7 @@ export default class PortfolioPage {
   stocksSectionHeaderId = "portfolio-stocks-section-header";
   stocksDiscoveryId = "portfolio-stocks-discovery";
   stocksDiscoveryHeaderId = "portfolio-stocks-discovery-header";
+  shouldBePrivate = "make-me-private";
   sectionAssetItemRegExp = (sectionId: string) => new RegExp(String.raw`^${sectionId}-item-\d+$`);
   sectionAssetItemId = (sectionId: string, index: number) => `${sectionId}-item-${index}`;
 
