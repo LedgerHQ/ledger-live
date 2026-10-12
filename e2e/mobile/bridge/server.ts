@@ -221,7 +221,11 @@ export async function addKnownSpeculos(address: string) {
   postMessage({
     type: "addKnownSpeculos",
     id: uniqueId(),
-    payload: JSON.stringify({ address, model: getSpeculosModel() }),
+    payload: JSON.stringify({
+      address,
+      model: getSpeculosModel(),
+      sessionToken: process.env.SPECULOS_SESSION_TOKEN,
+    }),
   });
 }
 

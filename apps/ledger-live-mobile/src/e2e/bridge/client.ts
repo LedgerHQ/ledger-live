@@ -47,7 +47,7 @@ import {
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import { setSpeculosDeviceModel } from "~/services/registerTransports";
+import { setSpeculosDeviceModel, setSpeculosSessionToken } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 
 export const e2eBridgeClient = new Subject<MessageData>();
@@ -138,7 +138,9 @@ async function onMessage(event: WebSocketMessageEvent) {
     const msg: MessageData = JSON.parse(event.data);
     invariant(msg.type, "[E2E Bridge Client]: type is missing");
 
-    log(`Message recieved\n${JSON.stringify(msg, null, 2)}`);
+    // addKnownSpeculos carries the Speculinho session token.
+    const loggedMsg = msg.type === "addKnownSpeculos" ? { ...msg, payload: "[redacted]" } : msg;
+    log(`Message recieved\n${JSON.stringify(loggedMsg, null, 2)}`);
 
     e2eBridgeClient.next(msg);
 
@@ -258,10 +260,15 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "addKnownSpeculos": {
-        const { address, model }: { address: string; model: DeviceModelId } = JSON.parse(
+        const {
+          address,
+          model,
+          sessionToken,
+        }: { address: string; model: DeviceModelId; sessionToken?: string } = JSON.parse(
           msg.payload,
         );
         setSpeculosDeviceModel(model);
+        setSpeculosSessionToken(sessionToken);
         await disconnectAllSpeculosSessions();
         const speculosDeviceId = buildSpeculosLegacyDeviceId(address);
         const knownSpeculosIds = bleDevicesSelector(store.getState())
@@ -286,7 +293,11 @@ async function onMessage(event: WebSocketMessageEvent) {
           }),
         );
         // Device intents only offer DMK-known devices, so Speculos is registered here too.
-        speculosTargetSubject.next({ url: address, deviceModelId: ledgerToDmkDeviceIdMap[model] });
+        speculosTargetSubject.next({
+          url: address,
+          deviceModelId: ledgerToDmkDeviceIdMap[model],
+          bearerToken: sessionToken,
+        });
         removeKnownSpeculosDevices();
         store.dispatch(
           addKnownDevice({
@@ -302,6 +313,7 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "removeKnownSpeculos": {
         const address = msg.payload;
         setSpeculosDeviceModel(undefined);
+        setSpeculosSessionToken(undefined);
         await disconnectAllSpeculosSessions();
         store.dispatch(removeKnownBleDevice(buildSpeculosLegacyDeviceId(address)));
         speculosTargetSubject.next(null);

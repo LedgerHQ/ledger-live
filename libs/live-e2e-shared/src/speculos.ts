@@ -581,6 +581,12 @@ export function getSpeculosAddress(): string {
   return speculosAddress || "http://127.0.0.1";
 }
 
+/** Authenticates against a protected Speculinho session; empty for any other Speculos. */
+export function getSpeculosHeaders(): Record<string, string> {
+  const token = process.env.SPECULOS_SESSION_TOKEN;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 const _capturedSpeculosScreenshots = new Map<number, Buffer[]>();
 
 export function drainSpeculosScreenshots(port: number): Buffer[] {
@@ -732,6 +738,7 @@ export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<
   const response = await retryAxiosRequest(() =>
     axios.get<ResponseData>(
       `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+      { headers: getSpeculosHeaders() },
     ),
   );
   return response.data.events.map(event => event.text).join(" ");
@@ -745,6 +752,7 @@ export async function getDeviceLabelCoordinates(
   const response = await retryAxiosRequest(() =>
     axios.get<ResponseData>(
       `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+      { headers: getSpeculosHeaders() },
     ),
   );
   const event = response.data.events.find(e => e.text === label);
@@ -762,6 +770,7 @@ async function pressFirstLabelFoundOnScreen(labels: string[]): Promise<string> {
   const response = await retryAxiosRequest(() =>
     axios.get<ResponseData>(
       `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+      { headers: getSpeculosHeaders() },
     ),
   );
 
@@ -784,6 +793,7 @@ export async function fetchAllEvents(speculosApiPort: number): Promise<string[]>
   const response = await retryAxiosRequest(() =>
     axios.get<ResponseData>(
       `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+      { headers: getSpeculosHeaders() },
     ),
   );
   return response.data.events.map(event => event.text);
@@ -892,6 +902,7 @@ export async function takeScreenshot(port?: number): Promise<Buffer | undefined>
   try {
     const response = await retryAxiosRequest(() =>
       axios.get(`${speculosAddress}:${speculosApiPort}/screenshot`, {
+        headers: getSpeculosHeaders(),
         responseType: "arraybuffer",
       }),
     );
