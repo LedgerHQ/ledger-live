@@ -1,0 +1,68 @@
+{
+  "name": "@shared/ui-app-unavailable",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Full-screen app unavailable view for web (Desktop) and React Native (Mobile)",
+  "main": "src/index.web.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.web.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.web.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt --check src",
+    "lint": "oxlint -c ../../libs/oxc-live-libs/.oxlintrc.json ./src",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../.. -c shared/ui-app-unavailable/knip.web.config.mjs -W shared/ui-app-unavailable --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/ui-app-unavailable/knip.native.config.mjs -W shared/ui-app-unavailable --tsConfig tsconfig.native.json"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-native": ">=0.70.0",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest-shared": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
+    "typescript": "catalog:"
+  }
+}

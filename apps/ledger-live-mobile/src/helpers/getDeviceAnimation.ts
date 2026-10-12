@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { LottieViewProps } from "lottie-react-native";
+import type { LottieSource } from "@shared/lottie";
 import { ViewStyle } from "react-native";
 import {
   getDeviceActionAnimation,
@@ -31,7 +31,7 @@ import NanoSOpenAppLight from "../animations/device/nanoS/6OpenApp/light.json";
 import NanoSValidateDark from "../animations/device/nanoS/7Validate/dark.json";
 import NanoSValidateLight from "../animations/device/nanoS/7Validate/light.json";
 
-export type AnimationSource = LottieViewProps["source"];
+export type AnimationSource = LottieSource;
 export type AnimationRecord = Record<"light" | "dark", AnimationSource>;
 
 /**

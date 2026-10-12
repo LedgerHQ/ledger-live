@@ -15,19 +15,6 @@ export function resolveCoingeckoIdForIdsQuery(marketApiId: string | undefined): 
   return isCoingeckoStyleMarketId(converted) ? converted : undefined;
 }
 
-/**
- * Prefer the legacy `ids` filter whenever a CoinGecko-style id can be derived
- * (including from DADA URNs). Fall back to `ledgerIds` only when `ids` cannot
- * resolve the asset (e.g. token ledger ids like `ethereum/erc20/shiba_inu`).
- */
-export function shouldFetchMarketByLedgerIds(
-  marketApiId: string | undefined,
-  knownLedgerIds: readonly string[] | undefined,
-): boolean {
-  if (!knownLedgerIds?.length) return false;
-  return resolveCoingeckoIdForIdsQuery(marketApiId) == null;
-}
-
 export function getMarketLedgerIdsForQuery(knownLedgerIds: readonly string[]): string[] {
   return [...knownLedgerIds].slice(0, MAX_MARKET_LEDGER_IDS);
 }
@@ -47,19 +34,14 @@ export function buildMarketCurrencyQueryArgs({
   knownLedgerIds?: readonly string[];
   counterCurrency: string;
 }): { args: MarketCurrencyQueryArgs; skip: boolean } {
-  const fetchByLedgerIds = shouldFetchMarketByLedgerIds(marketApiId, knownLedgerIds);
-  const idsQueryId = resolveCoingeckoIdForIdsQuery(marketApiId);
-
-  if (fetchByLedgerIds && knownLedgerIds?.length) {
+  if (knownLedgerIds?.length) {
     return {
-      args: {
-        ledgerIds: getMarketLedgerIdsForQuery(knownLedgerIds),
-        counterCurrency,
-      },
+      args: { ledgerIds: getMarketLedgerIdsForQuery(knownLedgerIds), counterCurrency },
       skip: false,
     };
   }
 
+  const idsQueryId = resolveCoingeckoIdForIdsQuery(marketApiId);
   return {
     args: { id: idsQueryId ?? marketApiId ?? "", counterCurrency },
     skip: !idsQueryId && !marketApiId,

@@ -117,4 +117,14 @@ describe("useContactsDevToolViewModel", () => {
 
     expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
   });
+
+  it("should summarize the flag value for the preview", () => {
+    const { result } = renderHook(() => useContactsDevToolViewModel());
+
+    act(() => {
+      result.current.handleToggleEnabled();
+    });
+
+    expect(JSON.parse(result.current.featureFlagSummary)).toMatchObject({ enabled: true });
+  });
 });

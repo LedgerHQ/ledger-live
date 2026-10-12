@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { BigNumber } from "bignumber.js";
-import { formatFeeCurrencyAmount } from "../utils/networkFeesDisplay";
+import { formatRentPayment } from "./feeAsset";
 import { SPONSORED_PHASE, type SponsoredState } from "./types";
 import type { SponsoredSendActions } from "./useSponsoredSendOrchestration";
 
@@ -46,11 +45,10 @@ export function useSponsoredRentPayment({
     [order, actions, paymentTxId],
   );
 
-  const feeAmountLabel = useMemo(() => {
-    const unit = rentPayment?.asset.unit;
-    if (!rentPayment || !unit) return null;
-    return formatFeeCurrencyAmount(unit, new BigNumber(rentPayment.amount.toString()), locale);
-  }, [rentPayment, locale]);
+  const feeAmountLabel = useMemo(
+    () => (rentPayment ? formatRentPayment(rentPayment, locale) : null),
+    [rentPayment, locale],
+  );
 
   return { isCrafting: !order, feeAmountLabel, submitSignature };
 }

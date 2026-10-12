@@ -393,7 +393,8 @@ function detectAccountOperation(
  * Classifies the native transfer direction from a lamport balance delta.
  *
  *   - Fee payer: fee is added back before classification.
- *     delta < 0 → OUT, delta > 0 → IN, delta == 0 → FEES (only fees were paid).
+ *     delta < 0 → OUT, delta > 0 → IN, delta == 0 → FEES (only fees were paid, value 0
+ *     because the generic-coin-framework adapter adds the fee to native FEES values).
  *   - Other accounts: raw delta determines the type (IN / OUT / NONE).
  */
 function classifyNativeTransfer(
@@ -405,7 +406,7 @@ function classifyNativeTransfer(
     const deltaWithoutFee = balanceDelta + txFee;
     if (deltaWithoutFee < 0n) return { opType: "OUT", value: -deltaWithoutFee };
     if (deltaWithoutFee > 0n) return { opType: "IN", value: deltaWithoutFee };
-    return { opType: "FEES", value: txFee };
+    return { opType: "FEES", value: 0n };
   }
 
   if (balanceDelta > 0n) return { opType: "IN", value: balanceDelta };
@@ -582,9 +583,9 @@ function makeDelegateResult(
  * Zero-delta tokens are silently skipped.
  * operationIndex starts at 1 (0 is reserved for the native operation).
  *
- * Token operations are marked `internal: true` in their details so that the
- * generic-coin-framework bridge (`getAccountShape`) excludes them from the parent
- * account's operations list — they only surface as sub-account operations.
+ * Token operations carry no `internal` flag (same convention as coin-evm token
+ * events): they surface as sub-account operations only, and never as native
+ * internal operations of the parent account.
  */
 function parseTokenOperations(
   address: string,
@@ -657,7 +658,6 @@ function buildTokenOperation(
       assetAmount: value.toString(),
       assetSenders: senders,
       assetRecipients: recipients,
-      internal: true,
     },
   });
 }

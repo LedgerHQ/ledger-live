@@ -53,7 +53,6 @@
     "@ledgerhq/device-transport-kit-web-hid": "catalog:",
     "@ledgerhq/domain-service": "catalog:",
     "@ledgerhq/hw-app-eth": "workspace:^",
-    "@ledgerhq/hw-app-exchange": "workspace:^",
     "@ledgerhq/hw-ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",

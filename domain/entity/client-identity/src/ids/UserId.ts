@@ -30,7 +30,7 @@ export class UserId {
     return this[USER_ID_SYMBOL];
   }
 
-  /** For Segment and analytics display (live-common-setup USER_ID, segment, Developer). Allowlisted in export-rules.json. */
+  /** For Segment and analytics display (segment, Developer). Allowlisted in export-rules.json. */
   exportUserIdForAnalytics(): string {
     return this[USER_ID_SYMBOL];
   }
@@ -57,6 +57,11 @@ export class UserId {
 
   /** For Chainwatch / transaction-alerts backend API (account path segment). Allowlisted in export-rules.json. */
   exportUserIdForChainwatch(): string {
+    return this[USER_ID_SYMBOL];
+  }
+
+  /** For the firmware distribution salt of the progressive OS rollout (hashed, sent to the Manager API). Allowlisted in export-rules.json. */
+  exportUserIdForFirmwareSalt(): string {
     return this[USER_ID_SYMBOL];
   }
 

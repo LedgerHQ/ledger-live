@@ -83,9 +83,12 @@ test.describe("Swap - entry points", () => {
     },
     async ({ app }) => {
       await app.marketBanner.clickExploreMarketHeader();
-      await app.swap.goAndWaitForSwapToBeReady(() =>
-        app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
-      );
+      await app.swap.goAndWaitForSwapToBeReady(async () => {
+        await app.market.startSwapForSelectedTicker(
+          swapEntryPoint.swap.accountToDebit.currency.ticker,
+        );
+        await app.modularDialog.selectAccountByName(swapEntryPoint.swap.accountToDebit);
+      });
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
       await app.swap.checkAssetToAccountNameContains(
         swapEntryPoint.swap.accountToDebit.accountName,

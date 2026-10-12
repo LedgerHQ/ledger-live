@@ -61,6 +61,12 @@ export type EnergyRentOrder = {
   payCoinAmt: string;
 };
 
+/** An order whose payment passed the checks run before signing. */
+export type VerifiedEnergyRentOrder = EnergyRentOrder & {
+  /** When the payment stops being valid on-chain, in ms since epoch: the `expiration` of its bytes. */
+  paymentExpiresAt: number;
+};
+
 // Tron-shaped payment tx; aliased at the logic layer so callers don't import from network/.
 export type EnergyRentUnsignedTransaction = TronifyUnsignedTransaction;
 export type EnergyRentSignedTransaction = TronifySignedTransaction;

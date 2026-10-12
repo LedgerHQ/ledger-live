@@ -17,9 +17,17 @@ function getStore(): Store {
 
 const CARD_SESSION_BOOTSTRAP = "CARD_SESSION_BOOTSTRAP";
 
+const isCardSessionKey = (key: string) => key.toUpperCase() === CARD_SESSION_BOOTSTRAP;
+
+// At module load, before any child process inherits the environment.
+const cardSessionBootstrap = process.env[CARD_SESSION_BOOTSTRAP] || null;
+for (const key of Object.keys(process.env)) {
+  if (isCardSessionKey(key)) delete process.env[key];
+}
+
 export function buildBootstrap(): Bootstrap {
   const env = Object.fromEntries(
-    Object.entries(process.env).filter(([key]) => key.toUpperCase() !== CARD_SESSION_BOOTSTRAP),
+    Object.entries(process.env).filter(([key]) => !isCardSessionKey(key)),
   );
   return {
     version: BOOTSTRAP_VERSION,
@@ -55,5 +63,5 @@ ipcMain.on(CHANNELS.storeClear, () => {
 // Same gate as bootstrapCardSession in the renderer.
 ipcMain.handle(CHANNELS.cardSessionBootstrap, () => {
   if (!__DEV__ && !isPlaywrightRun()) return null;
-  return process.env[CARD_SESSION_BOOTSTRAP] || null;
+  return cardSessionBootstrap;
 });

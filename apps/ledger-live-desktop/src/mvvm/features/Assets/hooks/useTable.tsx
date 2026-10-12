@@ -33,6 +33,10 @@ export type UseAssetTableOptions = {
   readonly showTrendColumnTooltip?: boolean;
 };
 
+function columnHeader(label: string) {
+  return () => <TruncatedText as="span" text={label} />;
+}
+
 export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOptions) => {
   const showTrendColumnTooltip = options?.showTrendColumnTooltip ?? true;
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
@@ -48,7 +52,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
     () => [
       {
         accessorKey: "currency",
-        header: t("assets.columns.name"),
+        header: columnHeader(t("assets.columns.name")),
         enableSorting: false,
         cell: ({ row }) => {
           const assetTestId = sanitizeAssetNameForTestId(
@@ -79,7 +83,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
       },
       {
         accessorKey: "price",
-        header: t("assets.columns.price"),
+        header: columnHeader(t("assets.columns.price")),
         enableSorting: false,
         cell: ({ row }) => (
           <PriceCell currency={row.original.currency} marketPrice={row.original.marketPrice} />
@@ -88,7 +92,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
       },
       {
         accessorKey: "balance",
-        header: t("assets.columns.balance"),
+        header: columnHeader(t("assets.columns.balance")),
         enableSorting: false,
         cell: ({ row }) => (
           <BalanceCell currency={row.original.currency} balance={row.original.balance} />
@@ -97,7 +101,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
       },
       {
         accessorKey: "value",
-        header: t("assets.columns.value"),
+        header: columnHeader(t("assets.columns.value")),
         enableSorting: false,
         cell: ({ row }) => {
           const assetValueTestId = sanitizeAssetNameForTestId(
@@ -121,7 +125,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
       },
       {
         accessorKey: "trend",
-        header: t("assets.columns.trend"),
+        header: columnHeader(t("assets.columns.trend")),
         enableSorting: false,
         cell: ({ row }) =>
           row.original.isPlaceholder ? (

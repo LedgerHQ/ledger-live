@@ -35,10 +35,8 @@ const RECIPIENT = genAccount("sponsored-recipient", {
 }).freshAddress;
 const SPONSORED_FEE_OPTION_ID = "tronify";
 const ONE_USDT = 1_000_000;
-const contractDataError = Object.assign(new Error("refused"), {
-  name: "TransportStatusError",
-  statusCode: 0x6a80,
-});
+const PAYMENT_VALIDITY_MS = 6 * 60_000;
+const RETRY_LOCK_MS = PAYMENT_VALIDITY_MS + 30_000;
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
@@ -230,8 +228,10 @@ function makeSeam(payer: Account): SponsoredCoinApi {
         transaction: { raw: `0a0${crafted}`, paymentTxId: `txA-${crafted}` },
         payCoinCode: "USDT",
         payCoinAmt: "3.2",
+        paymentExpiresAt: Date.now() + PAYMENT_VALIDITY_MS,
       };
     }),
+    classifyRentOrderError: jest.fn().mockReturnValue(null),
     submitEnergyRentPayment: jest.fn().mockResolvedValue(undefined),
     getEnergyRentStatus: jest.fn().mockResolvedValue("paid"),
     awaitEnergyDelivery: jest.fn(() => {
@@ -407,7 +407,7 @@ describe("Sponsored send flow integration tests", () => {
     expect(seam.craftEnergyRentTransaction).toHaveBeenCalledTimes(2);
   });
 
-  it("should offer to pay again and craft a new order when the energy is not delivered", async () => {
+  it("should offer to pay again once the first payment expired, and craft a new order", async () => {
     const { user } = renderSponsoredSend(100 * ONE_USDT);
 
     await reviewHalfTheBalance(user);
@@ -419,6 +419,13 @@ describe("Sponsored send flow integration tests", () => {
     await flushTimers();
 
     expect(await screen.findByTestId("send-sponsored-failure")).toBeOnTheScreen();
+    expect(screen.getByText(/you can retry after/)).toBeOnTheScreen();
+    await user.press(screen.getByText("Pay again and retry"));
+    await flushTimers();
+    expect(seam.craftEnergyRentTransaction).toHaveBeenCalledTimes(1);
+
+    await flushTimers(RETRY_LOCK_MS);
+    expect(screen.queryByText(/you can retry after/)).not.toBeOnTheScreen();
     await user.press(screen.getByText("Pay again and retry"));
     await flushTimers();
 
@@ -427,28 +434,29 @@ describe("Sponsored send flow integration tests", () => {
     expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
   });
 
-  it("should reopen the transfer when contract data was off and the user retries", async () => {
+  it("should show the new price of an order above the approved fee, and order at it once accepted", async () => {
     const { user } = renderSponsoredSend(100 * ONE_USDT);
+    const tooDear = new Error("ceiling");
+    jest.mocked(seam.craftEnergyRentTransaction).mockRejectedValueOnce(tooDear);
+    jest.mocked(seam.classifyRentOrderError).mockImplementation(error =>
+      error === tooDear
+        ? {
+            reason: "priceAboveApproved",
+            offered: { ...USDT_RENT_PAYMENT, amount: 3_500_000n },
+          }
+        : null,
+    );
 
     await reviewHalfTheBalance(user);
-    await signRent();
-    await screen.findByTestId("send-sponsored-polling");
-    await deliverEnergy();
-    await screen.findByTestId("device-intent-executor-transfer");
-
-    await act(async () => {
-      executor("transfer").onIntentJobError(contractDataError);
-    });
     await flushTimers();
 
     expect(await screen.findByTestId("send-sponsored-failure")).toBeOnTheScreen();
-    expect(screen.queryByTestId("device-intent-executor-transfer")).not.toBeOnTheScreen();
-
-    await user.press(screen.getByTestId("send-sponsored-failure-retry"));
+    expect(screen.getByText(/The energy rental price went up to 3\.5\sUSDT/)).toBeOnTheScreen();
+    await user.press(screen.getByText("Accept new price"));
     await flushTimers();
 
-    expect(await screen.findByTestId("device-intent-executor-transfer")).toBeOnTheScreen();
-    expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
+    expect(await screen.findByTestId("device-intent-executor-rent")).toBeOnTheScreen();
+    expect(seam.buildEnergyRentRequest).toHaveBeenLastCalledWith(expect.anything(), 3_500_000n);
   });
 
   it("should fall back to the standard fee when the USDT balance can't cover the amount and the rent", async () => {

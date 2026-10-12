@@ -52,6 +52,7 @@
       "require": "./lib/index.js",
       "default": "./lib/index.js"
     },
+    "./testing": "./src/tests/index.ts",
     "./lib-es/*": "./lib-es/*.js",
     "./lib/*": "./lib/*.js",
     "./package.json": "./package.json"

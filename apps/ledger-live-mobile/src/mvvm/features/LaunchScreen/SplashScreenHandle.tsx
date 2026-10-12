@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, View } from "react-native";
-import SplashScreen from "react-native-splash-screen";
+import * as SplashScreen from "expo-splash-screen";
 
 /**
  * Native splash screen handle that just fades screen directly

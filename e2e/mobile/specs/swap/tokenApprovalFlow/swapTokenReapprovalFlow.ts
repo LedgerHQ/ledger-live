@@ -77,11 +77,11 @@ export function runSwapTokenReapprovalFlow(
         await app.swapLiveApp.tapExecuteSwap(provider.uiName);
         await app.swapLiveApp.expectResetApprovalScreen();
         await app.swapLiveApp.tapRevokeApprovalButton();
-        await app.send.summaryContinue();
+        await app.walletApiSignatureDrawer.expectVisible();
         await app.speculos.signTokenApproval();
         await app.swapLiveApp.expectTwoStepApprovalScreen();
         await app.swapLiveApp.tapGiveApprovalButton();
-        await app.send.summaryContinue();
+        await app.walletApiSignatureDrawer.expectVisible();
         await app.speculos.signTokenApproval();
         await app.swapLiveApp.expectExecuteSwapOnStepApproval({ isTokenApproval: true });
       },

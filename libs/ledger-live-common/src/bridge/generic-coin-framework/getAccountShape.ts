@@ -26,6 +26,7 @@ import {
   cleanedOperation,
   extractBalance,
   optionalNumeric,
+  sumBalance,
 } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
@@ -538,7 +539,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       chainSpecificShapePromise,
     ]);
 
-    const nativeAsset = extractBalance(balanceRes, "native");
+    const nativeAsset = bridgeApi.partitionsNativeBalance
+      ? sumBalance(balanceRes, "native")
+      : extractBalance(balanceRes, "native");
     const freshTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
 
     // A token account fully swept to zero can disappear entirely from the balance response
@@ -593,9 +596,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const nativeBalance = nativeAsset?.value ?? 0n;
     const nativeLocked = nativeAsset?.locked ?? 0n;
-
-    // balance reflects only the native available balance.
-    // Staked/unbonding amounts are tracked separately (stakingResources or stakingPositions).
     const spendableBalance = nativeBalance - nativeLocked;
 
     let stakingResources: StakingResources | undefined;

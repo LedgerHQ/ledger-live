@@ -1,16 +1,10 @@
 import React from "react";
 import { Platform, StyleSheet } from "react-native";
 import { render } from "@tests/test-renderer";
-import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import { rgba } from "@ledgerhq/native-ui/styles/helpers";
-import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { BottomFadeGradient, GRADIENT_HEIGHT, GRADIENT_LOCATIONS } from "../index";
+import { BottomFadeGradient, GRADIENT_HEIGHT } from "../index";
 
 const TEST_ID = "bottom-fade-gradient";
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const linearGradientMock = LinearGradient as unknown as jest.Mock;
 
 function renderWithBottomInset(bottom: number) {
   return render(
@@ -33,24 +27,11 @@ describe("BottomFadeGradient", () => {
   const platform = Platform.OS;
 
   beforeEach(() => {
-    linearGradientMock.mockClear();
     Platform.OS = "ios";
   });
 
   afterEach(() => {
     Platform.OS = platform;
-  });
-
-  it("feeds LinearGradient theme fade colors and stop positions", () => {
-    const base = ledgerLiveThemes.dark.colors.bg.base;
-    renderWithBottomInset(0);
-
-    const gradientProps = linearGradientMock.mock.calls.at(-1)?.[0];
-    expect(gradientProps).toMatchObject({
-      colors: [rgba(base, 0), rgba(base, 0.3), rgba(base, 0.75), rgba(base, 1)],
-      locations: GRADIENT_LOCATIONS,
-      pointerEvents: "none",
-    });
   });
 
   it("extends container height with bottom inset on iOS", () => {

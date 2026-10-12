@@ -15,7 +15,6 @@ import {
 } from "LLM/components/DeviceIntentExecutor";
 import { broadcastLogger } from "~/datadog";
 import { SPONSORED_PHASE } from "@ledgerhq/live-common/flows/send/sponsored/types";
-import { isContractDataDisabledError } from "@ledgerhq/live-common/flows/send/sponsored/failure";
 import { reportSponsoredTransferOutcome } from "@ledgerhq/live-common/flows/send/sponsored/transferOutcome";
 import {
   SEND_FLOW_COMPLETION,
@@ -183,23 +182,6 @@ export function useSignatureViewModel() {
     [onDeviceActionResult, trackDeviceConfirmation],
   );
 
-  // On a signing failure the executor keeps the sheet open and renders its native
-  // IntentError screen (Retry / Close). We deliberately do not navigate away here so
-  // the user stays on the sheet, as opposed to the success path which broadcasts and
-  // moves to the confirmation screen.
-  // Exception: Contract Data disabled during a sponsored TRANSFER routes into the orchestration,
-  // so the user gets the dedicated recovery screen.
-  const onIntentJobError = useCallback(
-    (error: unknown) => {
-      trackSignatureError(error);
-      if (isSponsoredTransfer && isContractDataDisabledError(error)) {
-        handedToSponsoredFlowRef.current = true;
-        sponsoredActions.setContractDataFailure(error, signedPaymentTxId);
-      }
-    },
-    [trackSignatureError, isSponsoredTransfer, sponsoredActions, signedPaymentTxId],
-  );
-
   // Explicit dismiss of the sheet (close button / backdrop) closes the overlay and leaves the user
   // on the underlying review screen. The sheet also calls this when it unmounts, so it must not
   // stop signing once the failure screen took over: its Retry reopens TX-C.
@@ -219,7 +201,11 @@ export function useSignatureViewModel() {
     signatureIntent,
     isSigningCompleted,
     onIntentJobStateChanged,
-    onIntentJobError,
+    // On a signing failure the executor keeps the sheet open and renders its native
+    // IntentError screen (Retry / Close). We deliberately do not navigate away here so
+    // the user stays on the sheet, as opposed to the success path which broadcasts and
+    // moves to the confirmation screen.
+    onIntentJobError: trackSignatureError,
     onUserCancel,
   };
 }

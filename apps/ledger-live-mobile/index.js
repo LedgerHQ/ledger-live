@@ -1,4 +1,4 @@
-import "react-native-get-random-values";
+import "./src/getRandomValuesPolyfill";
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native
 import "node-libs-react-native/globals";
@@ -21,9 +21,12 @@ if (process.env.MSW_ENABLED === "true") {
 }
 
 import { AppRegistry } from "react-native";
+import { preventAutoHideAsync, setOptions } from "expo-splash-screen";
 import App from "./src";
 import logReport from "./src/log-report";
 import { initDevServerAutoReload } from "./src/hooks/useDevServerAutoReload";
+preventAutoHideAsync();
+setOptions({ fade: true, duration: 250 });
 logReport.logReportInit();
 initDevServerAutoReload();
 

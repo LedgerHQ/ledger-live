@@ -63,7 +63,7 @@ export class ContactDetailPage extends AppPage {
     await expect(this.assetSearchInput).toBeVisible();
   }
 
-  @step("Enter address $0.addressInput for $0.networkName")
+  @step("Enter contact address")
   async enterAddress(data: ContactAddressTestData) {
     await expect(this.addAddressInput).toBeVisible();
     await this.addAddressInput.fill(data.addressInput);

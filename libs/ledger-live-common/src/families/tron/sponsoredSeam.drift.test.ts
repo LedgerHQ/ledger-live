@@ -14,6 +14,7 @@ const SEAM_MEMBERS: Record<keyof SponsoredCoinApi, true> = {
   estimateSponsoredFeeQuote: true,
   buildEnergyRentRequest: true,
   craftEnergyRentTransaction: true,
+  classifyRentOrderError: true,
   submitEnergyRentPayment: true,
   getEnergyRentStatus: true,
   awaitEnergyDelivery: true,

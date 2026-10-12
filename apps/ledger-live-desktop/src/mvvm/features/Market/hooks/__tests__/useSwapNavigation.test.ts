@@ -3,7 +3,7 @@ import { useSwapNavigation } from "../useSwapNavigation";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 const mockNavigate = jest.fn();
@@ -20,10 +20,17 @@ jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () 
 }));
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum");
+const arbitrum = getCryptoCurrencyById("arbitrum");
 
-function createBitcoinAccount(id: string): Account {
-  const account = genAccount(id, { currency: bitcoin });
-  return { ...account, id };
+function renderNavigation(accounts: Account[]) {
+  return renderHook(() => useSwapNavigation(), { initialState: { accounts } }).result;
+}
+
+function pickInDrawer(account: AccountLike, parentAccount?: Account) {
+  act(() => {
+    mockOpenAssetAndAccount.mock.calls[0][0].onSuccess(account, parentAccount);
+  });
 }
 
 describe("useSwapNavigation (Market actions)", () => {
@@ -31,131 +38,103 @@ describe("useSwapNavigation (Market actions)", () => {
     jest.clearAllMocks();
   });
 
-  test("should navigate to swap with defaultAccountId when one account exists for currency", () => {
-    const account = createBitcoinAccount("account-1");
-    const { result } = renderHook(() => useSwapNavigation(), {
-      initialState: { accounts: [account] },
+  describe("without an account", () => {
+    test("opens swap on the crypto currency right away", () => {
+      const result = renderNavigation([]);
+
+      act(() => result.current.navigateToSwap(bitcoin as CryptoOrTokenCurrency));
+
+      expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
+      const { state } = mockNavigate.mock.calls[0][1];
+      expect(state).toEqual(
+        expect.objectContaining({
+          defaultCurrency: { toCurrencyId: bitcoin.id },
+          from: "/market",
+          defaultAmountFrom: "0",
+        }),
+      );
+      expect(state.defaultAccountId).toBeUndefined();
     });
 
-    act(() => {
-      result.current.navigateToSwap(bitcoin as CryptoOrTokenCurrency);
-    });
+    test("opens swap on the token right away", () => {
+      const result = renderNavigation([]);
 
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith("/swap", {
-      state: expect.objectContaining({
-        defaultCurrency: { toCurrencyId: bitcoin.id },
-        from: "/market",
-        defaultAccountId: account.id,
-        defaultAmountFrom: "0",
-      }),
+      act(() => result.current.navigateToSwap(usdcToken as CryptoOrTokenCurrency));
+
+      expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
+      expect(mockNavigate.mock.calls[0][1].state).toEqual(
+        expect.objectContaining({
+          defaultCurrency: { toCurrencyId: usdcToken.id },
+          defaultToken: { toTokenId: usdcToken.id },
+        }),
+      );
     });
-    expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
   });
 
-  test("should navigate to swap with tokenId and defaultAccountId when one account exists for token", () => {
-    const ethereum = getCryptoCurrencyById("ethereum");
-    const ethAccount = genAccount("eth-1", { currency: ethereum });
-    const tokenAccount = genTokenAccount(0, ethAccount, usdcToken);
-    ethAccount.subAccounts = [tokenAccount];
+  describe("with an account", () => {
+    // Swap opens only once the network and account are picked, even for a single account.
+    test("waits for the drawer pick before opening swap", () => {
+      const account = genAccount("btc-1", { currency: bitcoin });
+      const result = renderNavigation([account]);
 
-    const { result } = renderHook(() => useSwapNavigation(), {
-      initialState: { accounts: [ethAccount] },
+      act(() => result.current.navigateToSwap(bitcoin as CryptoOrTokenCurrency));
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencies: [bitcoin.id],
+          areCurrenciesFiltered: true,
+          useCase: "swap",
+        }),
+      );
+
+      pickInDrawer(account);
+
+      expect(mockNavigate).toHaveBeenCalledWith("/swap", {
+        state: expect.objectContaining({
+          defaultCurrency: { toCurrencyId: bitcoin.id },
+          defaultAccountId: account.id,
+        }),
+      });
     });
 
-    act(() => {
-      result.current.navigateToSwap(usdcToken as CryptoOrTokenCurrency);
+    test("swaps from the picked token account and its parent", () => {
+      const ethAccount = genAccount("eth-1", { currency: ethereum });
+      const tokenAccount = genTokenAccount(0, ethAccount, usdcToken);
+      ethAccount.subAccounts = [tokenAccount];
+      const result = renderNavigation([ethAccount]);
+
+      act(() => result.current.navigateToSwap(usdcToken as CryptoOrTokenCurrency));
+      pickInDrawer(tokenAccount, ethAccount);
+
+      const { state } = mockNavigate.mock.calls[0][1];
+      expect(state.defaultAccountId).toBe(tokenAccount.id);
+      expect(state.defaultParentAccountId).toBe(ethAccount.id);
+      expect(state.defaultCurrency).toEqual({ toCurrencyId: usdcToken.id });
     });
 
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    const callState = mockNavigate.mock.calls[0][1].state;
-    expect(callState.defaultAccountId).toBe(tokenAccount.id);
-    expect(callState.defaultParentAccountId).toBe(ethAccount.id);
-    expect(callState.defaultCurrency).toEqual({ toCurrencyId: usdcToken.id });
-    expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
-  });
+    test("offers every network of the asset and swaps from the picked one", () => {
+      const arbitrumAccount = genAccount("arb-1", { currency: arbitrum });
+      const result = renderNavigation([arbitrumAccount]);
 
-  test("should navigate to swap webview with toTokenId only when no account exists for token", () => {
-    const { result } = renderHook(() => useSwapNavigation(), {
-      initialState: { accounts: [] },
+      act(() =>
+        result.current.navigateToSwap(ethereum as CryptoOrTokenCurrency, {
+          currencyIds: [ethereum.id, arbitrum.id],
+        }),
+      );
+
+      expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
+        expect.objectContaining({ currencies: [ethereum.id, arbitrum.id] }),
+      );
+
+      pickInDrawer(arbitrumAccount);
+
+      expect(mockNavigate).toHaveBeenCalledWith("/swap", {
+        state: expect.objectContaining({
+          defaultCurrency: { toCurrencyId: arbitrum.id },
+          defaultAccountId: arbitrumAccount.id,
+        }),
+      });
     });
-
-    act(() => {
-      result.current.navigateToSwap(usdcToken as CryptoOrTokenCurrency);
-    });
-
-    expect(mockNavigate).toHaveBeenCalledWith("/swap", {
-      state: expect.objectContaining({
-        defaultCurrency: { toCurrencyId: usdcToken.id },
-        from: "/market",
-        defaultToken: { toTokenId: usdcToken.id },
-        defaultAmountFrom: "0",
-      }),
-    });
-    expect(mockNavigate.mock.calls[0][1].state.defaultAccountId).toBeUndefined();
-    expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
-  });
-
-  test("should navigate to swap webview with defaultCurrency only when no account exists for crypto currency", () => {
-    const { result } = renderHook(() => useSwapNavigation(), {
-      initialState: { accounts: [] },
-    });
-
-    act(() => {
-      result.current.navigateToSwap(bitcoin as CryptoOrTokenCurrency);
-    });
-
-    expect(mockNavigate).toHaveBeenCalledWith("/swap", {
-      state: expect.objectContaining({
-        defaultCurrency: { toCurrencyId: bitcoin.id },
-        from: "/market",
-        defaultAmountFrom: "0",
-      }),
-    });
-    expect(mockNavigate.mock.calls[0][1].state.defaultToken).toBeUndefined();
-    expect(mockNavigate.mock.calls[0][1].state.defaultAccountId).toBeUndefined();
-    expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
-  });
-
-  test("should auto-select and navigate when only one account exists for currency", () => {
-    const account = createBitcoinAccount("single-btc");
-    const { result } = renderHook(() => useSwapNavigation(), {
-      initialState: { accounts: [account] },
-    });
-
-    act(() => {
-      result.current.navigateToSwap(bitcoin as CryptoOrTokenCurrency);
-    });
-
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith("/swap", {
-      state: expect.objectContaining({
-        defaultAccountId: account.id,
-        defaultCurrency: { toCurrencyId: bitcoin.id },
-      }),
-    });
-    expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
-  });
-
-  test("should open drawer for account selection when more than one account exists for currency", () => {
-    const account1 = createBitcoinAccount("btc-1");
-    const account2 = createBitcoinAccount("btc-2");
-    const { result } = renderHook(() => useSwapNavigation(), {
-      initialState: { accounts: [account1, account2] },
-    });
-
-    act(() => {
-      result.current.navigateToSwap(bitcoin as CryptoOrTokenCurrency);
-    });
-
-    expect(mockOpenAssetAndAccount).toHaveBeenCalledTimes(1);
-    expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
-      expect.objectContaining({
-        currencies: [bitcoin.id],
-        areCurrenciesFiltered: true,
-        useCase: "swap",
-      }),
-    );
-    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

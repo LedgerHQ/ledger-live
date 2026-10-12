@@ -1,7 +1,7 @@
 // Bundled into the preload: keep it to types and constants.
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 4;
+export const BRIDGE_VERSION = 5;
 export const BOOTSTRAP_VERSION = 2;
 
 export type Serializable =
@@ -108,6 +108,11 @@ export type SystemBridge = {
   getResourceUsage(): Electron.ResourceUsage | undefined;
 };
 
+export type ZcashBridge = {
+  invoke(channel: string, args: unknown): Promise<unknown>;
+  subscribe(channel: string, callback: (payload: unknown) => void): Unsubscribe;
+};
+
 /** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
 export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
@@ -118,6 +123,7 @@ export type LedgerBridge = {
   bootstrap: Bootstrap;
   shell: ShellBridge;
   system: SystemBridge;
+  zcash: ZcashBridge;
   db: DbBridge;
   updater: UpdaterBridge;
   deeplink: DeeplinkBridge;

@@ -49,9 +49,14 @@ describe("parseAccountDescriptor", () => {
     expect(parseAccountDescriptor(serializeAccountDescriptor(descriptor))).toEqual(descriptor);
   });
 
-  it("rejects the apostrophe notation", () => {
-    expect(() => parseAccountDescriptor(`account:1:utxo:bitcoin:main:${XPUB}:m/84'/0'/0'`)).toThrow(
-      InvalidAccountDescriptorError,
+  it.each([
+    { descriptor: UTXO, path: "m/84'/0'/0'" },
+    { descriptor: UTXO, path: "m/84H/0H/0H" },
+    { descriptor: ETH, path: "m/44'/60'/0'/0/0" },
+    { descriptor: ETH, path: "m/44H/60H/0H/0/0" },
+  ])("reads the hardened marker of $descriptor.type $path as h", ({ descriptor, path }) => {
+    expect(parseAccountDescriptor(serializeAccountDescriptor({ ...descriptor, path }))).toEqual(
+      descriptor,
     );
   });
 

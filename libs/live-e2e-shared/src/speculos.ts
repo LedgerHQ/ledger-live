@@ -662,15 +662,46 @@ function appReadyLabel(appName: string): string {
 }
 
 /**
+ * Status pages an app draws after answering a command, before it redraws its idle screen.
+ */
+const STATUS_SCREEN_LABELS = [DeviceLabels.ADDRESS_VERIFIED].map(label => label.toLowerCase());
+
+/**
+ * The firmware times a status page at 3s, but Speculos on touch models runs it past 5s on CI
+ * (LIVE-37792), so the bound sits well above both.
+ */
+const STATUS_SCREEN_MAX_ATTEMPTS = Math.ceil(15_000 / SCREEN_POLL_INTERVAL_MS);
+
+/**
  * Waits for the device to return to its app-ready screen after a status page
  * that answers a command and then draws its own screen -- during that
  * window, the app's own APDU loop can drop an incoming command instead of
- * queuing it (LIVE-37178). The default maxAttempts (9 x the 500ms poll
- * interval = 4.5s) is an upper bound on that screen's own duration, not a
- * guess about CI load.
+ * queuing it (LIVE-37178). Polls spent on the status page don't count
+ * against maxAttempts (9 x the 500ms poll interval = 4.5s), which covers
+ * only the screens around it: the status page may not be drawn yet when
+ * polling starts, so it can't be waited out up front.
  */
 export async function waitForAppReady(speculosApp: AppInfos, maxAttempts = 9): Promise<string> {
-  return waitFor(appReadyLabel(speculosApp.name), maxAttempts);
+  const port = getEnv("SPECULOS_API_PORT");
+  const readyLabel = appReadyLabel(speculosApp.name);
+  let texts = "";
+  let attempts = 0;
+  let statusPolls = 0;
+
+  while (attempts < maxAttempts) {
+    texts = await fetchCurrentScreenTexts(port);
+    const screen = texts.toLowerCase();
+    if (screen.includes(readyLabel.toLowerCase())) return texts;
+
+    const onStatusScreen = STATUS_SCREEN_LABELS.some(label => screen.includes(label));
+    if (onStatusScreen && statusPolls < STATUS_SCREEN_MAX_ATTEMPTS) statusPolls++;
+    else attempts++;
+    await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+
+  throw new Error(
+    `Text "${readyLabel}" not found on device screen after ${attempts + statusPolls} attempts. Last screen text: "${texts}"`,
+  );
 }
 
 const SWAP_INIT_STALL_HINT =
@@ -990,12 +1021,18 @@ export const activateContractData = withDeviceController(({ getButtonsController
 /** Every app's idle screen reads "<app> is ready", so this matches without naming the app. */
 const IDLE_SCREEN_LABEL = "is ready";
 
+const TOUCH_SETTLE_MS = 1_000;
+
 /**
  * Turns on the Ethereum app's "Blind signing" setting, without which the app answers `6a80` to
- * calldata it cannot describe. Reads the toggle before pressing it, and ends back on the idle
- * screen where a review can arrive.
+ * calldata it cannot describe, and ends back on the app's home screen where a review can arrive.
  *
- * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1.
+ * A button device reports the setting's state as text and so is only pressed when it is off. A
+ * touch device renders the switch as a graphic with no such text, so the tap is unconditional and
+ * calling this twice on one container would turn the setting back off; every caller gets a fresh
+ * container, whose NVRAM starts with it disabled.
+ *
+ * Menu verified against Ethereum 1.22.3 on nanos+ 1.6.1, flex, stax and nanoGen5.
  */
 export const enableBlindSigning = withDeviceController(({ getButtonsController }) => async () => {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
@@ -1004,15 +1041,17 @@ export const enableBlindSigning = withDeviceController(({ getButtonsController }
   if (isTouchDevice()) {
     await goToSettings();
     await waitFor(DeviceLabels.BLIND_SIGNING);
-
-    if (!(await isEnabled())) {
-      const toggle = getDeviceCoordinates("settingsToggle1");
-      await pressAndRelease(DeviceLabels.SETTINGS_TOGGLE_1, toggle.x, toggle.y);
-    }
-
+    // The switch sits in a fixed column to the right of its row, and Blind signing is not the
+    // first row, so take the column from the toggle coordinates and the row from the label.
+    const { x } = getDeviceCoordinates("settingsToggle1");
+    const { y } = await getDeviceLabelCoordinates(DeviceLabels.BLIND_SIGNING, speculosApiPort);
+    await pressAndRelease(DeviceLabels.BLIND_SIGNING, x, y);
+    // A tap landing during the switch animation is dropped.
+    await sleep(TOUCH_SETTLE_MS);
     const back = getDeviceCoordinates("arrowBack");
     await pressAndRelease(DeviceLabels.BACK, back.x, back.y);
-    await waitFor(IDLE_SCREEN_LABEL);
+    // Touch home reads "<app> ... Quit app", never the Nano's "<app> is ready".
+    await waitFor(DeviceLabels.QUIT_APP);
     return;
   }
 

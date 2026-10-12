@@ -6,11 +6,10 @@ import type { Contact } from "@domain/entity-contact";
 
 type ContactTileProps = Readonly<{
   contact: Contact;
-  index: number;
   onPress?: (contact: Contact) => void;
 }>;
 
-export function ContactTile({ contact, index, onPress }: ContactTileProps): React.JSX.Element {
+export function ContactTile({ contact, onPress }: ContactTileProps): React.JSX.Element {
   const handlePress = useCallback(() => onPress?.(contact), [contact, onPress]);
   const getDisplayName = usePayContactDisplayName();
 
@@ -18,7 +17,7 @@ export function ContactTile({ contact, index, onPress }: ContactTileProps): Reac
     <Tile
       onPress={onPress ? handlePress : undefined}
       lx={{ width: "s96", flexGrow: 1, marginLeft: "-s8" }}
-      testID={`pay-contacts-tile-${index}`}
+      testID={`pay-contacts-tile-${contact.id}`}
       accessibilityRole={onPress ? "button" : undefined}
       accessibilityLabel={getDisplayName(contact)}
     >

@@ -4,7 +4,6 @@ import { createIntent } from "@features/platform-device-intent";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import type { EnergyRentOrder } from "@ledgerhq/live-common/bridge/generic-coin-framework/sponsored";
-import { isContractDataDisabledError } from "@ledgerhq/live-common/flows/send/sponsored/failure";
 import { useSponsoredRentPayment } from "@ledgerhq/live-common/flows/send/sponsored/useSponsoredRentPayment";
 import type {
   SignRawTransactionIntent,
@@ -132,19 +131,10 @@ export function useSponsoredRentSignatureViewModel(): SponsoredRentSignatureView
     [submitSignature],
   );
 
-  // Other errors stay on the executor's own error screen, which offers a retry.
-  const signingPaymentTxId = state.paymentTxId;
-  const onIntentJobError = useCallback(
-    (error: unknown) => {
-      if (isContractDataDisabledError(error)) {
-        handedOffRef.current = true;
-        actions.setContractDataFailure(error, signingPaymentTxId);
-        return;
-      }
-      log(LOG_TYPE, "TX-A signing failed", { error });
-    },
-    [actions, signingPaymentTxId],
-  );
+  // The error stays on the executor's own error screen, which offers a retry.
+  const onIntentJobError = useCallback((error: unknown) => {
+    log(LOG_TYPE, "TX-A signing failed", { error });
+  }, []);
 
   const onUserCancel = useCallback(() => {
     if (handedOffRef.current) return;

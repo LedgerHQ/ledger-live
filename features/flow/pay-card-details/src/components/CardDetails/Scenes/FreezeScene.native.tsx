@@ -12,7 +12,7 @@ export function FreezeScene({ viewModel }: FreezeSceneProps) {
   const isPending = viewModel.confirmState === "pending";
 
   return (
-    <Box testID="card-details-freeze-content">
+    <Box collapsable={false} testID="card-details-freeze-content">
       {viewModel.confirmState === "error" ? (
         <ConfirmError
           status={viewModel.status}

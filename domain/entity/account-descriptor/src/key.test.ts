@@ -22,6 +22,12 @@ const address = (addr: string, network = { name: "ethereum", env: "main" }): Acc
 });
 
 describe("accountDescriptorKey", () => {
+  it("collapses the hardened marker", () => {
+    const key = accountDescriptorKey(utxo("m/84h/0h/0h"));
+    expect(accountDescriptorKey(utxo("m/84'/0'/0'"))).toBe(key);
+    expect(accountDescriptorKey(utxo("m/84H/0H/0H"))).toBe(key);
+  });
+
   it("collapses EVM address case", () => {
     expect(accountDescriptorKey(address(ETH_ADDR.toLowerCase()))).toBe(
       accountDescriptorKey(address(ETH_ADDR)),

@@ -1,4 +1,6 @@
-import type { DeviceOnboardingPorts } from "./ports";
+import type { SnapshotFrom } from "xstate";
+import type { deviceOnboardingMachine } from "./machine";
+import type { DeviceSessionId } from "@ledgerhq/device-management-kit";
 import type {
   DeviceOnboardingContext,
   OnboardingEvent,
@@ -45,22 +47,12 @@ function readSessionId(read: () => string | null | undefined): string | null {
   }
 }
 
-function verdictMatchesLiveSession(
-  verdict: DeviceOnboardingContext["genuineVerdict"],
-  ports: DeviceOnboardingPorts,
-): boolean | null {
-  if (verdict === null) return null;
-
-  const sessionId = readSessionId(() => ports.currentSessionId());
-  if (sessionId === null) return null;
-
-  return verdict.sessionId === sessionId;
-}
-
 export function flattenDeviceOnboardingContext(
-  context: DeviceOnboardingContext,
+  snapshot: SnapshotFrom<typeof deviceOnboardingMachine>,
 ): WatchedOnboardingContext {
+  const { context } = snapshot;
   const verdict = context.genuineVerdict;
+  const firmware = context.firmware;
 
   return {
     deviceModelId: context.deviceModelId,
@@ -73,12 +65,13 @@ export function flattenDeviceOnboardingContext(
     recoveryKeyStatus: context.lastDeviceState?.recoveryKeyStatus ?? null,
     currentSetupStep: context.currentSetupStep,
     firmwareVersion: context.firmwareVersion,
-    availableFirmwareVersion: context.availableFirmwareUpdate?.finalFirmware.version ?? null,
-    firmwareChecked: context.firmwareChecked,
+    availableFirmwareVersion:
+      firmware?.kind === "offered" ? firmware.update.finalFirmware.version : null,
+    firmwareChecked: firmware?.kind === "checked",
     onEarlyCheckScreen: context.onEarlyCheckScreen,
-    secureConnectionRequested: context.secureConnectionRequested,
+    secureConnectionRequested: snapshot.matches({ checks: { genuineCheck: "awaitingApproval" } }),
     isGenuine: verdict?.isGenuine ?? null,
-    verdictMatchesSession: verdictMatchesLiveSession(verdict, context.ports),
+    verdictMatchesSession: verdict === null ? null : verdict.sessionId === context.sessionId,
     genuineFailureKind: context.lastGenuineFailure?.kind ?? null,
     checksPaused: context.checksPaused,
   };
@@ -119,30 +112,38 @@ export function toolEvent(event: OnboardingEvent, id: string, sessionId: string)
     detail = { kind: "step", step: event.state.currentOnboardingStep };
   } else if (event.type === "FIRMWARE_UPDATE_AVAILABLE") {
     detail = { kind: "firmware", version: event.update.finalFirmware.version };
-  } else if (event.type === "SESSION_READY" || event.type === "TRANSPORT_LOST") {
+  } else if (
+    event.type === "SESSION_READY" ||
+    event.type === "SESSION_CHANGED" ||
+    event.type === "TRANSPORT_LOST"
+  ) {
     detail = { kind: "session", sessionId };
   }
 
   return { id, type: event.type, at: Date.now(), detail };
 }
 
-export function createDelegatedPorts(
-  readPorts: () => DeviceOnboardingPorts | null,
-  missingSessionMessage: string,
-): DeviceOnboardingPorts {
-  const requirePorts = () => {
-    const ports = readPorts();
-    if (!ports) {
-      throw new Error(missingSessionMessage);
-    }
-    return ports;
-  };
+type SessionEvent = { type: "SESSION_READY" | "SESSION_CHANGED" | "FIRMWARE_UPDATE_FLOW_CLOSED" };
 
-  return {
-    openSession: () => requirePorts().openSession(),
-    currentSessionId: () => requirePorts().currentSessionId(),
-    closeSession: () => readPorts()?.closeSession() ?? Promise.resolve(),
-  };
+const sessionEventTypes = new Set<string>([
+  "SESSION_READY",
+  "SESSION_CHANGED",
+  "FIRMWARE_UPDATE_FLOW_CLOSED",
+]);
+
+/** What a host or the devtool sends. The session events have no id: only the host knows it. */
+export type HostOnboardingEvent = Exclude<OnboardingEvent, SessionEvent> | SessionEvent;
+
+function isSessionEvent(event: HostOnboardingEvent): event is SessionEvent {
+  return sessionEventTypes.has(event.type);
+}
+
+/** Adds the live session id to the session events. `sessionId` is read only for them. */
+export function stampSession(
+  event: HostOnboardingEvent,
+  sessionId: () => DeviceSessionId,
+): OnboardingEvent {
+  return isSessionEvent(event) ? { type: event.type, sessionId: sessionId() } : event;
 }
 
 function loggedStepKey(event: OnboardingEvent): string | null {

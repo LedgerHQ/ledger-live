@@ -3,8 +3,8 @@ import {
   type DeviceActionIntermediateValue,
   type DeviceActionState,
 } from "@ledgerhq/device-management-kit";
-import { Subject } from "rxjs";
 import { createDeviceActionRunner, DeviceActionStoppedError } from "./deviceAction";
+import { createTestStream } from "../tests/testStream";
 
 type Verdict = { isGenuine: boolean };
 type States = DeviceActionState<Verdict, Error, DeviceActionIntermediateValue>;
@@ -23,19 +23,19 @@ describe("createDeviceActionRunner", () => {
     const { states, runner } = start();
     const run = runner.run();
 
-    states.complete();
+    states.end();
 
     await expect(run).rejects.toBeInstanceOf(DeviceActionStoppedError);
   });
 });
 
 function start() {
-  const states = new Subject<States>();
+  const states = createTestStream<States>();
 
   const runner = createDeviceActionRunner<Verdict, Error, DeviceActionIntermediateValue>(() => ({
-    observable: states.asObservable(),
+    observable: states.events,
     // DMK pushes the stopped state from `cancel` itself, which the shared fake does not reproduce.
-    cancel: () => states.next({ status: DeviceActionStatus.Stopped }),
+    cancel: () => states.push({ status: DeviceActionStatus.Stopped }),
   }));
 
   return { states, runner };

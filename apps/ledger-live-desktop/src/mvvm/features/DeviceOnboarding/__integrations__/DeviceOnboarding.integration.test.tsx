@@ -21,6 +21,7 @@ let sessionState = new BehaviorSubject<SessionState>({
   deviceStatus: DeviceStatus.CONNECTED,
 });
 const getDeviceSessionState = jest.fn(() => sessionState.asObservable());
+const sendCommand = jest.fn((_input: { sessionId: string }) => new Promise(() => undefined));
 
 jest.mock("@ledgerhq/live-dmk-desktop", () => ({
   DeviceManagementKitTransport: {
@@ -29,12 +30,13 @@ jest.mock("@ledgerhq/live-dmk-desktop", () => ({
   getDeviceManagementKit: () => ({
     getConnectedDevice: (input: { sessionId: string }) => getConnectedDevice(input),
     getDeviceSessionState: () => getDeviceSessionState(),
-    sendCommand: () => new Promise(() => undefined),
+    sendCommand: (input: { sessionId: string }) => sendCommand(input),
     executeDeviceAction: () => ({
       observable: of({
         status: DeviceActionStatus.Completed,
         output: {
           isGenuine: true,
+          firmwareVersion: { os: "1.4.0", mcu: "1.0", bootloader: "1.0" },
           firmwareUpdateContext: {
             availableUpdate: { finalFirmware: { version: "1.5.0" } },
           },
@@ -405,6 +407,12 @@ describe("DeviceOnboarding desktop integration", () => {
 
     await waitFor(() => expect(result.current.state).toBe("deviceLocked"));
     expect(getDeviceSessionState).toHaveBeenCalledTimes(2);
+    // Unlock polling must ask the new session, not the lost one.
+    await waitFor(() =>
+      expect(sendCommand).toHaveBeenLastCalledWith(
+        expect.objectContaining({ sessionId: "session-2" }),
+      ),
+    );
   });
 
   it("should wait for a new session when the session state disconnects", async () => {

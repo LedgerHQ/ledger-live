@@ -17,7 +17,7 @@ const SoftwareCheckAllowSecureChannelDrawer = ({ deviceModelId }: Props) => {
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" height="100%">
-      <Animation animation={getDeviceAnimation(deviceModelId, theme, "allowManager") as object} />
+      <Animation animation={getDeviceAnimation(deviceModelId, theme, "allowManager")} />
       <Text variant="h5Inter" fontWeight="semiBold" mt={6}>
         {t("syncOnboarding.manual.softwareCheckAllowSecureChannelDrawer.title")}
       </Text>

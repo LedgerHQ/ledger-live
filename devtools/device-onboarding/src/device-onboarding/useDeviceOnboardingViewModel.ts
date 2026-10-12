@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { OnboardingEvent } from "@ledgerhq/device-onboarding";
+import type { HostOnboardingEvent } from "@ledgerhq/device-onboarding";
 import {
   watchedContextFields,
   type DeviceOnboardingStatus,
@@ -33,7 +33,7 @@ export interface EventRow {
 export interface SendableRow {
   readonly key: string;
   readonly label: string;
-  readonly event: OnboardingEvent;
+  readonly event: HostOnboardingEvent;
 }
 
 export type StateKind =
@@ -98,7 +98,7 @@ export interface DeviceOnboardingViewModel {
   readonly canSend: boolean;
   readonly canReset: boolean;
   readonly connect: () => void;
-  readonly send: (event: OnboardingEvent) => void;
+  readonly send: (event: HostOnboardingEvent) => void;
   readonly reset: () => void;
 }
 

@@ -18,7 +18,7 @@ Mobile-specific integration of the Ledger Device Management Kit (DMK) for Ledger
 - `transport/` — BLE and USB transport adapters implementing the DMK interface
 - `deviceConnectivity/` — mobile device discovery (BLE, USB and Speculos sources, BLE preflight checks) and the mobile discovery and connection error types
 - `connectDevice/` — mobile connection orchestration for known devices
-- `connectNewDevice/` — mobile connection orchestration for a device the user has not connected before. It discovers on RN_BLE and Speculos on iOS, and also on RN_HID on Android
+- `connectNewDevice/` — mobile connection orchestration for a device the user has not connected before. It discovers on RN_BLE and Speculos on iOS, and also on RN_HID on Android. When a USB device is available, the device list shows only the available USB devices. Otherwise, it shows only the devices on the other transports
 - `hooks/` — React hooks for device connection state
 - `errors.ts` — mobile-specific error types extending DMK base errors
 - `utils/` — platform helpers (permissions, reconnection logic)

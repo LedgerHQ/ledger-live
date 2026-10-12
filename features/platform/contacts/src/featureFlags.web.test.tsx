@@ -14,6 +14,7 @@ import {
   DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
   isContactsEnabledForCurrency,
   parseEligibleAddressFamiliesInput,
+  parseExcludedCurrencyIdsInput,
   resolveContactsFeatureConfig,
   resolveContactsFeatureParams,
   updateContactsFeatureValue,
@@ -181,6 +182,19 @@ describe("parseEligibleAddressFamiliesInput", () => {
 
   it("falls back to the default families for empty input", () => {
     expect(parseEligibleAddressFamiliesInput(" , ")).toEqual(["evm"]);
+  });
+});
+
+describe("parseExcludedCurrencyIdsInput", () => {
+  it("trims, drops empty entries and dedupes a comma-separated input", () => {
+    expect(parseExcludedCurrencyIdsInput(" ethereum, bitcoin,, ethereum ")).toEqual([
+      "ethereum",
+      "bitcoin",
+    ]);
+  });
+
+  it("returns no ids for empty input", () => {
+    expect(parseExcludedCurrencyIdsInput(" , ")).toEqual([]);
   });
 });
 

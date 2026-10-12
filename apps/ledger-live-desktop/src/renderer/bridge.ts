@@ -30,4 +30,5 @@ export const power = bridge.power;
 export const store = bridge.store;
 export const shell = bridge.shell;
 export const system = bridge.system;
+export const zcash = bridge.zcash;
 export const cardSession = bridge.cardSession;

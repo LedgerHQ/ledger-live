@@ -11,6 +11,8 @@ import {
   type WireField,
 } from "./PayloadCheckerShared";
 
+const longVarint = (length: number, last: number) => [...new Array(length - 1).fill(0xff), last];
+
 describe("runPayloadCheck", () => {
   const partnerPublicKey = {
     curve: "secp256k1" as const,
@@ -242,8 +244,6 @@ describe("scanWireFields", () => {
       ),
     ).toEqual(["name", "data"]);
   });
-
-  const longVarint = (length: number, last: number) => [...new Array(length - 1).fill(0xff), last];
 
   it.each([
     ["a 10-byte varint ending with 0x01", longVarint(10, 0x01)],

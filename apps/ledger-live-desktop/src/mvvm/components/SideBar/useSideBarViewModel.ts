@@ -10,13 +10,12 @@ import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/a
 import { sidebarCollapsedSelector, lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { isNavigationLocked } from "~/renderer/reducers/application";
 import { openModal } from "~/renderer/actions/modals";
-import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import { setTrackingSource, track } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
-import { HIDE_BAR_THRESHOLD } from "~/renderer/screens/dashboard/AssetDistribution/constants";
 import { BAANX_APP_ID } from "~/renderer/screens/card/CardPlatformApp";
+import { useSideBarAutoCollapse } from "./useSideBarAutoCollapse";
 import {
   pathnameToActive,
   SIDEBAR_VALUE_TO_PATH,
@@ -145,8 +144,8 @@ export function useSideBarViewModel(): SideBarViewModel {
     useWalletFeaturesConfig("desktop");
   const accountsSidebarPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
-  const wasNarrowRef = useRef<boolean | null>(null);
   const navRef = useRef<HTMLElement>(null);
+  const handleCollapsedChange = useSideBarAutoCollapse(collapsed);
 
   useEffect(() => {
     const dropSideBarFocus = () => {
@@ -159,31 +158,6 @@ export function useSideBarViewModel(): SideBarViewModel {
     window.addEventListener("blur", dropSideBarFocus);
     return () => window.removeEventListener("blur", dropSideBarFocus);
   }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const isNarrow = window.innerWidth <= HIDE_BAR_THRESHOLD;
-
-      if (wasNarrowRef.current !== isNarrow) {
-        wasNarrowRef.current = isNarrow;
-        if (isNarrow) {
-          dispatch(setSidebarCollapsed(true));
-        }
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [dispatch]);
-
-  const handleCollapsedChange = useCallback(
-    (newCollapsed: boolean) => {
-      dispatch(setSidebarCollapsed(newCollapsed));
-    },
-    [dispatch],
-  );
 
   // Legacy Main SideBar collapse handler
   const handleCollapse = useCallback(() => {

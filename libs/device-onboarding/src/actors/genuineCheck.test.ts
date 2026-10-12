@@ -1,5 +1,4 @@
 import {
-  DeviceActionStatus,
   GenuineCheckDeviceAction,
   RefusedByUserDAError,
   SecureChannelError,
@@ -39,7 +38,10 @@ describe("mapGenuineCheckFailure", () => {
     ["a secure channel error", new SecureChannelError(new Error("closed"))],
     ["a websocket error", webSocketConnectionError],
   ])("reports %s as a lost secure channel", (_, error) => {
-    expect(mapGenuineCheckFailure(error)).toEqual({ type: "SECURE_CHANNEL_LOST", failure: error });
+    expect(mapGenuineCheckFailure(error)).toEqual({
+      type: "SECURE_CHANNEL_LOST",
+      failure: error,
+    });
   });
 
   it.each([
@@ -47,7 +49,10 @@ describe("mapGenuineCheckFailure", () => {
     ["an unreachable catalogue", catalogueUnreachable],
     ["an error without a tag", new Error("boom")],
   ])("reports %s as a failure", (_, error) => {
-    expect(mapGenuineCheckFailure(error)).toEqual({ type: "GENUINE_CHECK_FAILED", failure: error });
+    expect(mapGenuineCheckFailure(error)).toEqual({
+      type: "GENUINE_CHECK_FAILED",
+      failure: error,
+    });
   });
 
   it.each([
@@ -108,6 +113,51 @@ describe("genuineCheck", () => {
     stop();
   });
 
+  it("stays on the prompt when the device repeats the same request", async () => {
+    const fake = createFake();
+    const { received, stop } = start(fake);
+
+    pending(fake, UserInteractionRequired.AllowSecureConnection);
+    pending(fake, UserInteractionRequired.AllowSecureConnection);
+    pending(fake, UserInteractionRequired.AllowSecureConnection);
+    await settle();
+
+    expect(received).toEqual([{ type: "ALLOW_SECURE_CONNECTION_REQUESTED" }]);
+    stop();
+  });
+
+  it("records the allow when the prompt goes away", async () => {
+    const fake = createFake();
+    const { received, stop } = start(fake);
+
+    pending(fake, UserInteractionRequired.AllowSecureConnection);
+    pending(fake, UserInteractionRequired.None);
+    await settle();
+
+    expect(received).toEqual([
+      { type: "ALLOW_SECURE_CONNECTION_REQUESTED" },
+      { type: "SECURE_CONNECTION_ALLOWED" },
+    ]);
+    stop();
+  });
+
+  it("asks again after the prompt has gone away", async () => {
+    const fake = createFake();
+    const { received, stop } = start(fake);
+
+    pending(fake, UserInteractionRequired.AllowSecureConnection);
+    pending(fake, UserInteractionRequired.None);
+    pending(fake, UserInteractionRequired.AllowSecureConnection);
+    await settle();
+
+    expect(received).toEqual([
+      { type: "ALLOW_SECURE_CONNECTION_REQUESTED" },
+      { type: "SECURE_CONNECTION_ALLOWED" },
+      { type: "ALLOW_SECURE_CONNECTION_REQUESTED" },
+    ]);
+    stop();
+  });
+
   it.each([
     ["a refusal on the device", "GENUINE_CHECK_REFUSED", new RefusedByUserDAError()],
     ["a lost secure channel", "SECURE_CHANNEL_LOST", new SecureChannelError(new Error("closed"))],
@@ -128,11 +178,14 @@ describe("genuineCheck", () => {
     const fake = createFake();
     const { received, stop } = start(fake);
 
-    fake.lastExecution().states.next({ status: DeviceActionStatus.Stopped });
+    fake.lastExecution().stop();
     await settle();
 
     expect(received).toEqual([
-      { type: "GENUINE_CHECK_FAILED", failure: expect.any(DeviceActionStoppedError) },
+      {
+        type: "GENUINE_CHECK_FAILED",
+        failure: expect.any(DeviceActionStoppedError),
+      },
     ]);
     stop();
   });
@@ -191,14 +244,14 @@ describe("genuineCheck", () => {
   it("cancels the device action and unsubscribes when the actor stops", () => {
     const fake = createFake();
     const { stop } = start(fake);
-    const { states, cancel } = fake.lastExecution();
+    const execution = fake.lastExecution();
 
-    expect(states.observed).toBe(true);
+    expect(execution.watched).toBe(true);
 
     stop();
 
-    expect(states.observed).toBe(false);
-    expect(cancel).toHaveBeenCalledTimes(1);
+    expect(execution.watched).toBe(false);
+    expect(execution.cancel).toHaveBeenCalledTimes(1);
   });
 
   it("reports nothing once the actor is stopped", async () => {
@@ -207,7 +260,7 @@ describe("genuineCheck", () => {
     const execution = fake.lastExecution();
 
     stop();
-    execution.states.next({ status: DeviceActionStatus.Completed, output: { isGenuine: true } });
+    execution.complete({ isGenuine: true });
     await settle();
 
     expect(received).toEqual([]);
@@ -231,21 +284,15 @@ function start(fake: FakeGenuineCheckDmk) {
 }
 
 function complete(fake: FakeGenuineCheckDmk, isGenuine: boolean) {
-  fake.lastExecution().states.next({
-    status: DeviceActionStatus.Completed,
-    output: { isGenuine },
-  });
+  fake.lastExecution().complete({ isGenuine });
 }
 
 function pending(fake: FakeGenuineCheckDmk, requiredUserInteraction: UserInteractionRequired) {
-  fake.lastExecution().states.next({
-    status: DeviceActionStatus.Pending,
-    intermediateValue: {
-      requiredUserInteraction,
-    } as GenuineCheckDAIntermediateValue,
-  });
+  fake.lastExecution().pending({
+    requiredUserInteraction,
+  } as GenuineCheckDAIntermediateValue);
 }
 
 function fail(fake: FakeGenuineCheckDmk, error: GenuineCheckDAError) {
-  fake.lastExecution().states.next({ status: DeviceActionStatus.Error, error });
+  fake.lastExecution().fail(error);
 }

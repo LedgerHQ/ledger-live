@@ -1,7 +1,7 @@
 import { Track } from "@shared/analytics-react";
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
-import NetInfo from "@react-native-community/netinfo";
+import { getNetworkState } from "@shared/network-status";
 import { useNavigation } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -50,8 +50,8 @@ const WebViewScreen = ({
   const [hasNetwork, setHasNetwork] = useState(true);
 
   useEffect(() => {
-    NetInfo.fetch().then(state => {
-      if (!state.isConnected) setHasNetwork(false);
+    getNetworkState().then(state => {
+      if (state.isConnected === false) setHasNetwork(false);
     });
   }, []);
 
