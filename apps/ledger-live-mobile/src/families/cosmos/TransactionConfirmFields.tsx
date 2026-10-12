@@ -5,17 +5,16 @@ import { useTranslation } from "~/context/Locale";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
+import { accountValidators, mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import {
   resolveSourceValidator,
   resolveTransactionValidators,
-} from "@ledgerhq/coin-cosmos/buildTransaction";
+} from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import { useTheme } from "@react-navigation/native";
 import LText from "~/components/LText";
 import { DataRow, TextValueField } from "~/components/ValidateOnDeviceDataRow";
 import Info from "~/icons/Info";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
 type FieldProps = {
@@ -30,7 +29,7 @@ type FieldProps = {
 function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
-  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
+  const validators = accountValidators(account);
   const mappedDelegations = mapDelegationInfo(
     resolveTransactionValidators(transaction),
     validators,
@@ -63,7 +62,7 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
 }
 
 function CosmosValidatorNameField({ account, field, transaction: tx }: FieldProps) {
-  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
+  const validators = accountValidators(account);
   const address = resolveTransactionValidators(tx)[0]?.address;
   if (!address) return null;
   const validator = validators.find(v => v.validatorAddress === address);
@@ -71,7 +70,7 @@ function CosmosValidatorNameField({ account, field, transaction: tx }: FieldProp
 }
 
 function CosmosSourceValidatorNameField({ account, field, transaction }: FieldProps) {
-  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
+  const validators = accountValidators(account);
   const sourceValidator = resolveSourceValidator(transaction);
 
   if (!sourceValidator) {
