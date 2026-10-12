@@ -7,7 +7,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
-import { getBridgeApi } from "./bridge";
+import { getBridgeApi, getBridgeApiResolver } from "./bridge";
 import { getSigner } from "./signer";
 import { genericPrepareTransaction } from "./prepareTransaction";
 import { genericGetTransactionStatus } from "./getTransactionStatus";
@@ -35,10 +35,12 @@ export async function getCoinFrameworkAccountBridge(
     fromOperationExtraRaw,
     toOperationExtraRaw,
   } = await getAccountRawAssignHooks(network);
+  const resolveBridgeApi = await getBridgeApiResolver(network);
   return {
     sync: makeSync({
-      getAccountShape: genericGetAccountShape(network, kind),
-      postSync,
+      getAccountShape: genericGetAccountShape(network, kind, signer),
+      postSync: (initial, synced) =>
+        (resolveBridgeApi(synced.currency).accountLayer?.postSync ?? postSync)(initial, synced),
       shouldMergeOps: async account => {
         const bridgeApi = await getBridgeApi(account.currency, network);
         return bridgeApi.shouldMergeOps ?? true;
@@ -64,7 +66,14 @@ export async function getCoinFrameworkAccountBridge(
     assignToTokenAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
-    getSerializedAddressParameters, // NOTE: check whether it should be exposed by coin-module's api instead?
+    // NOTE: check whether it should be exposed by coin-module's api instead?
+    getSerializedAddressParameters: (account, addressFormat) => {
+      const fromFamily =
+        resolveBridgeApi(account.currency).accountLayer?.getSerializedAddressParameters;
+      return fromFamily
+        ? fromFamily(account, addressFormat)
+        : getSerializedAddressParameters(account);
+    },
     validateAddress: genericValidateAddress(network, kind),
   } satisfies Partial<AccountBridge<GenericTransaction>>;
 }

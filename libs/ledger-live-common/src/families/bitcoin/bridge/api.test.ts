@@ -1,69 +1,67 @@
-import network from "@ledgerhq/live-network";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
-import { getBitcoinCoinConfig } from "../coinConfig";
-import { getFeeItems } from "./api";
-
-jest.mock("@ledgerhq/live-network", () => ({
-  __esModule: true,
-  default: jest.fn(),
+const signRawOperation = jest.fn();
+jest.mock("../signRawOperation", () => ({
+  buildSignRawOperation: jest.fn(() => signRawOperation),
 }));
+jest.mock("../signer", () => ({ __esModule: true, default: { context: "signer-context" } }));
 
-jest.mock("../coinConfig", () => ({
-  getBitcoinCoinConfig: jest.fn(),
-}));
+import { bitcoinAccountLayer, computeIntentType } from "../accountLayer";
+import { buildSignRawOperation } from "../signRawOperation";
+import bitcoinBridgeApi, { buildIntentData } from "./api";
 
-const mockedNetwork = jest.mocked(network);
-const mockedGetBitcoinCoinConfig = jest.mocked(getBitcoinCoinConfig);
+describe("buildIntentData", () => {
+  it("forwards the rate set without a preset strategy", () => {
+    expect(
+      buildIntentData({ feesStrategy: "custom", familySpecificData: { feePerByte: "12" } }),
+    ).toEqual({
+      type: "bitcoin",
+      feePerByte: "12",
+    });
+    expect(
+      buildIntentData({ feesStrategy: null, familySpecificData: { feePerByte: "12" } }),
+    ).toEqual({
+      type: "bitcoin",
+      feePerByte: "12",
+    });
+  });
 
-const configWith = (url: string, explorerId = "btc"): BitcoinCoinConfig => ({
-  status: { type: "active" },
-  name: "Bitcoin",
-  unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
-  explorerId,
-  explorer: { url },
+  it("leaves the rate to the preset strategy", () => {
+    expect(
+      buildIntentData({ feesStrategy: "fast", familySpecificData: { feePerByte: "12" } }),
+    ).toEqual({
+      type: "bitcoin",
+    });
+  });
+
+  it("ignores an empty rate and forwards the OP_RETURN data", () => {
+    expect(
+      buildIntentData({
+        feesStrategy: "custom",
+        familySpecificData: { feePerByte: "", opReturnData: "6869" },
+      }),
+    ).toEqual({ type: "bitcoin", opReturnData: "6869" });
+    expect(buildIntentData({})).toEqual({ type: "bitcoin" });
+  });
 });
 
-describe("getFeeItems", () => {
-  // Each test uses its own currency so the module-level fee-rate cache starts cold.
-  beforeEach(() => {
-    mockedNetwork.mockReset();
-    mockedNetwork.mockResolvedValue({
-      data: { "1": 3000, "3": 2000, "6": 1000 },
-      status: 200,
-    } as any);
+describe("bitcoin BridgeApi", () => {
+  it("plugs the account layer in", () => {
+    expect(bitcoinBridgeApi).toMatchObject({
+      computeIntentType,
+      buildIntentData,
+      forwardsFeeParametersToCraft: true,
+      shouldMergeOps: false,
+      accountLayer: bitcoinAccountLayer,
+      signRawOperation,
+    });
+    expect(buildSignRawOperation).toHaveBeenCalledWith("signer-context");
   });
 
-  it("serves cached fee rates while the explorer is unchanged", async () => {
-    const currency = getCryptoCurrencyById("litecoin");
-    mockedGetBitcoinCoinConfig.mockReturnValue(configWith("https://first.test.invalid", "ltc"));
-
-    await getFeeItems(currency);
-    await getFeeItems(currency);
-
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-  });
-
-  it("fetches from the new explorer when its endpoint changes with an unchanged TTL", async () => {
-    const currency = getCryptoCurrencyById("dogecoin");
-    mockedGetBitcoinCoinConfig.mockReturnValue(configWith("https://first.test.invalid", "doge"));
-    await getFeeItems(currency);
-
-    mockedGetBitcoinCoinConfig.mockReturnValue(configWith("https://second.test.invalid", "doge"));
-    await getFeeItems(currency);
-
-    expect(mockedNetwork).toHaveBeenCalledTimes(2);
-    expect(mockedNetwork).toHaveBeenLastCalledWith(
-      expect.objectContaining({ url: "https://second.test.invalid/blockchain/v4/doge/fees" }),
-    );
-  });
-
-  it("returns the default fee rate for the medium block target", async () => {
-    mockedGetBitcoinCoinConfig.mockReturnValue(configWith("https://explorer.test.invalid"));
-
-    const { defaultFeePerByte, items } = await getFeeItems(getCryptoCurrencyById("bitcoin"));
-
-    expect(defaultFeePerByte.toNumber()).toBe(2);
-    expect(items.map(item => item.speed)).toEqual(["fast", "medium", "slow"]);
+  it("signs with the app of the account's currency", () => {
+    expect(
+      bitcoinBridgeApi.getDeviceSignOptions?.(
+        {} as never,
+        { currency: { id: "litecoin" } } as never,
+      ),
+    ).toEqual({ currencyId: "litecoin" });
   });
 });

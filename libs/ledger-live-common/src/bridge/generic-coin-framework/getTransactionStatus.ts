@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { completeIntent } from "./accountLayer";
 import {
   addAccountToBuyLinks,
   bigNumberToBigIntDeep,
@@ -52,17 +53,24 @@ export function genericGetTransactionStatus(
     }
 
     const buildIntentData = bridgeApi.buildIntentData;
-    const intent = transactionToIntent(
+    const intent = await completeIntent(
+      bridgeApi,
+      transactionToIntent(
+        account,
+        draftTransaction,
+        bridgeApi.computeIntentType,
+        intent => coinModuleApi.craftTransactionData(context, intent),
+        // The real transaction, not the draft: the draft is a field-by-field allowlist, so a field it
+        // omits reads as `undefined` inside the hook with no type error, and this path would validate
+        // an intent whose `data` differs from the one `signOperation` hands the device. Everything the
+        // framework itself derives keeps using the draft, so families that declare no hook are
+        // untouched.
+        buildIntentData && (() => buildIntentData(transaction)),
+      ),
       account,
-      draftTransaction,
-      bridgeApi.computeIntentType,
-      intent => coinModuleApi.craftTransactionData(context, intent),
-      // The real transaction, not the draft: the draft is a field-by-field allowlist, so a field it
-      // omits reads as `undefined` inside the hook with no type error, and this path would validate
-      // an intent whose `data` differs from the one `signOperation` hands the device. Everything the
-      // framework itself derives keeps using the draft, so families that declare no hook are
-      // untouched.
-      buildIntentData && (() => buildIntentData(transaction)),
+      transaction,
+      coinModuleApi,
+      context,
     );
 
     const customFees = bigNumberToBigIntDeep({

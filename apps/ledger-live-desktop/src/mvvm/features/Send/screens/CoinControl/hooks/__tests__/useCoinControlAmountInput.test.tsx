@@ -31,9 +31,11 @@ function createBitcoinTransaction(overrides?: Partial<Transaction>): Transaction
     amount: new BigNumber(0),
     recipient: "",
     useAllAmount: false,
-    utxoStrategy: {
-      strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
-      excludeUTXOs: [],
+    familySpecificData: {
+      utxoStrategy: {
+        strategy: bitcoinPickingStrategy.MERGE_OUTPUTS,
+        excludeUTXOs: [],
+      },
     },
     ...overrides,
   } as Transaction;
@@ -46,7 +48,6 @@ function createTransactionStatus(overrides?: Partial<TransactionStatus>): Transa
     estimatedFees: new BigNumber(0),
     amount: new BigNumber(0),
     totalSpent: new BigNumber(0),
-    txInputs: [],
     ...overrides,
   } as TransactionStatus;
 }

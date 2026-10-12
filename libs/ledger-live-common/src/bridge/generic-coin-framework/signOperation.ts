@@ -4,6 +4,7 @@ import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledg
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { completeIntent } from "./accountLayer";
 import {
   bigNumberToBigIntDeep,
   buildOptimisticOperation,
@@ -11,6 +12,8 @@ import {
   transactionToIntent,
 } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
+import type { AccountLayerDeviceEvents } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { CraftedTransaction } from "@ledgerhq/coin-module-framework/api/types";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -60,6 +63,18 @@ export const genericSignOperation =
             additionalFees: transaction.additionalFees,
           },
         });
+        // A family signer that drives several device steps reports them itself, in the order the
+        // device goes through them (bitcoin streams the previous transactions before asking for
+        // the signature), so the framework does not emit its own requested/granted events for it.
+        const deviceEvents: AccountLayerDeviceEvents | undefined = bridgeApi.accountLayer
+          ? {
+              onDeviceStreaming: ({ progress, index, total }) =>
+                o.next({ type: "device-streaming", progress, index, total }),
+              onDeviceSignatureRequested: () => o.next({ type: "device-signature-requested" }),
+              onDeviceSignatureGranted: () => o.next({ type: "device-signature-granted" }),
+            }
+          : undefined;
+
         // amount is already finalized by prepareTransaction; sign it as-is
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
@@ -68,12 +83,19 @@ export const genericSignOperation =
             derivationMode: account.derivationMode,
           })) as GetAddressResult;
 
-          const transactionIntent = transactionToIntent(
+          const transactionIntent = await completeIntent(
+            bridgeApi,
+            transactionToIntent(
+              account,
+              { ...transaction },
+              bridgeApi.computeIntentType,
+              intent => coinModuleApi.craftTransactionData(context, intent),
+              bridgeApi.buildIntentData,
+            ),
             account,
-            { ...transaction },
-            bridgeApi.computeIntentType,
-            intent => coinModuleApi.craftTransactionData(context, intent),
-            bridgeApi.buildIntentData,
+            transaction,
+            coinModuleApi,
+            context,
           );
           transactionIntent.senderPublicKey = publicKey;
 
@@ -91,21 +113,24 @@ export const genericSignOperation =
           }
 
           /* Craft unsigned blob via coin-framework */
-          const { transaction: unsigned } = await coinModuleApi.craftTransaction(
+          const crafted: CraftedTransaction = await coinModuleApi.craftTransaction(
             context,
             transactionIntent,
             { customFees },
           );
+          const unsigned = crafted.transaction;
 
           /* Notify UI that the device is now showing the tx */
-          o.next({ type: "device-signature-requested" });
+          if (!deviceEvents) o.next({ type: "device-signature-requested" });
           /* Sign on Ledger device */
           const txnSig = await signer.signTransaction(derivationPath, unsigned, {
             ...transaction.recipientDomain,
             ...bridgeApi.getDeviceSignOptions?.(transaction, account),
+            ...deviceEvents,
             derivationMode: account.derivationMode,
           });
           return {
+            crafted,
             unsigned,
             txnSig,
             publicKey,
@@ -115,7 +140,7 @@ export const genericSignOperation =
 
         /* If the user cancelled inside signerContext */
         if (!signedInfo) return;
-        o.next({ type: "device-signature-granted" });
+        if (!deviceEvents) o.next({ type: "device-signature-granted" });
 
         /* Combine payload + signature for broadcast */
         const combined = await coinModuleApi.combine(
@@ -126,12 +151,16 @@ export const genericSignOperation =
             pubkey: signedInfo.publicKey,
           },
         );
-        const operation = buildOptimisticOperation(
+        const optimistic = buildOptimisticOperation(
           account,
           transaction,
           signedInfo.sequence,
           bridgeApi.describeOptimisticOperation,
         );
+        const decorate = bridgeApi.accountLayer?.decorateOptimisticOperation;
+        const operation = decorate
+          ? decorate(optimistic, signedInfo.crafted, account, { ...transaction })
+          : optimistic;
         if (!operation.id) {
           log("Generic coin-framework", "buildOptimisticOperation", operation);
         }

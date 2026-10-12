@@ -19,6 +19,11 @@ import {
   setTransactionMemo,
   undelegateTransaction,
 } from "@ledgerhq/live-common/families/solana/transactions";
+import {
+  getFamilySpecificData,
+  type BitcoinFamilySpecificData,
+  type Transaction as BitcoinTransaction,
+} from "@ledgerhq/live-common/families/bitcoin/types";
 import { BigNumber } from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
@@ -29,6 +34,20 @@ import { parseAmountWithTicker } from "../intents/parse-amount";
 type SendOptions = { deviceId: string; deviceModelId: DeviceModelId };
 
 type SolanaTransactionIntent = Extract<TransactionIntent, { family: "solana" }>;
+type BitcoinTransactionIntent = Extract<TransactionIntent, { family: "bitcoin" }>;
+
+// The generic bridge reads the bitcoin user choices from `familySpecificData`, and updateTransaction
+// merges shallowly: the bag is rebuilt over the one createTransaction seeded (coin selection).
+export function buildBitcoinFamilySpecificData(
+  intent: BitcoinTransactionIntent,
+  tx: Pick<BitcoinTransaction, "familySpecificData">,
+): BitcoinFamilySpecificData {
+  return {
+    ...getFamilySpecificData(tx),
+    ...(intent.feePerByte ? { feePerByte: intent.feePerByte } : {}),
+    ...(intent.rbf != null ? { rbf: intent.rbf } : {}),
+  };
+}
 
 export function buildSolanaTransactionPatch(
   intent: SolanaTransactionIntent,
@@ -257,13 +276,16 @@ export class BridgeAdapter {
     subscriber.complete();
   }
 
-  private buildTxExtras(intent: TransactionIntent, tokenAccount: TokenAccount | undefined) {
+  private buildTxExtras(
+    intent: TransactionIntent,
+    tokenAccount: TokenAccount | undefined,
+    tx: Pick<BitcoinTransaction, "familySpecificData">,
+  ) {
     const patch: Record<string, unknown> = {};
     if (tokenAccount) patch.subAccountId = tokenAccount.id;
     switch (intent.family) {
       case "bitcoin":
-        if (intent.feePerByte) patch.feePerByte = new BigNumber(intent.feePerByte);
-        if (intent.rbf != null) patch.rbf = intent.rbf;
+        patch.familySpecificData = buildBitcoinFamilySpecificData(intent, tx);
         break;
       case "evm":
         if (intent.data) {
@@ -294,7 +316,7 @@ export class BridgeAdapter {
     tx = bridge.updateTransaction(tx, {
       recipient: intent.recipient,
       amount: parsed.amount,
-      ...this.buildTxExtras(intent, tokenAccount),
+      ...this.buildTxExtras(intent, tokenAccount, tx),
     });
     tx = await bridge.prepareTransaction(account, tx);
     applyEvmGasLimitMultiplier(tx, intent);

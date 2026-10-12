@@ -3,10 +3,12 @@ import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "../../errors";
 import { log } from "@ledgerhq/logs";
 import { Resolver } from "./types";
 import { loadSetupForFamily } from "../../coin-modules/registry";
+import { resolveFamily } from "../../bridge/zcashRouting";
 
 const dispatch: Resolver = async (transport, opts) => {
   const { currency, verify } = opts;
-  const setup = await loadSetupForFamily(currency.family);
+  // the family that serves the currency, as the bridges resolve it (Zcash: coin-zcash)
+  const setup = await loadSetupForFamily(resolveFamily(currency));
   const getAddress = setup.resolver;
   invariant(getAddress, `getAddress is not implemented for ${currency.id}`);
   return getAddress(transport, opts)

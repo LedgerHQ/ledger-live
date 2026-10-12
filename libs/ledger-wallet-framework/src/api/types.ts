@@ -2,9 +2,15 @@ import type {
   AccountInfo,
   AssetInfo,
   BalanceOptions,
+  CoinModuleApi,
+  CraftedTransaction,
+  TransactionIntent,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import type { GetAddressResult } from "../derivation";
+import type { AccountShapeInfo } from "../bridge/jsHelpers";
+import type { SignerContext } from "../signer";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import type {
   Account,
@@ -13,6 +19,7 @@ import type {
   OperationType,
   SignRawOperationFnSignature,
   StakingResources,
+  SyncConfig,
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
 
@@ -56,6 +63,65 @@ export type AddressLookup = {
   getAddresses: (derived: GetAddressResult) => Promise<string[]>;
   /** Lets `receive()` verify the device offline. */
   keyControlsAccount: (publicKey: string, account: Account) => boolean;
+};
+
+/** What the generic bridge hands an {@link AccountLayer}: the coin module and its call context. */
+export type AccountLayerDependencies = {
+  /** The coin module, as the generic bridge resolves it (defaults backfilled). */
+  api: CoinModuleApi<any, any, any>;
+  context: Context<any>;
+};
+
+/** Device events a family signer reports while signing (bitcoin streams the previous transactions). */
+export type AccountLayerDeviceEvents = {
+  onDeviceStreaming: (event: { progress: number; index: number; total: number }) => void;
+  onDeviceSignatureRequested: () => void;
+  onDeviceSignatureGranted: () => void;
+};
+
+/**
+ * For families whose account is not one address — a UTXO account is an extended public key whose
+ * funds sit on many discovered addresses (ADR-065).
+ *
+ * `CoinModuleApi` answers per address. With this hook the generic bridge hands the account-wide
+ * work to the family: the account shape (address discovery, history merge, balance), the account
+ * context of each intent (coin selection, change, signing paths), and the pending operations rule.
+ * Families without it are untouched.
+ *
+ * Interim: ADR-064 Option 1's account layer replaces this seam.
+ */
+export type AccountLayer = {
+  /**
+   * The whole account shape, keyed on the account key (the xpub), never on the fresh address. It
+   * replaces the generic single-address sync, so it returns the full operation list
+   * (`shouldMergeOps: false`).
+   */
+  getAccountShape: (
+    info: AccountShapeInfo,
+    syncConfig: SyncConfig,
+    dependencies: AccountLayerDependencies & { signerContext: SignerContext<any> },
+  ) => Promise<Partial<Account>>;
+  /**
+   * Adds what the intent needs from the whole account — for a UTXO family the selected inputs, the
+   * change and the signing paths — before the generic bridge estimates, validates or crafts it.
+   */
+  completeIntent: (
+    intent: TransactionIntent<any, any>,
+    account: Account,
+    transaction: Record<string, unknown>,
+    dependencies: AccountLayerDependencies,
+  ) => Promise<TransactionIntent<any, any>>;
+  /** Replaces the generic post-sync, whose pending operations rule assumes an account nonce. */
+  postSync: (initial: Account, synced: Account) => Account;
+  /** Completes the optimistic operation from the crafted transaction (real senders, spent inputs). */
+  decorateOptimisticOperation?: (
+    operation: LiveOperation,
+    crafted: CraftedTransaction,
+    account: Account,
+    transaction: Record<string, unknown>,
+  ) => LiveOperation;
+  /** Address parameters of the swap/exchange flow, when the family's differ from the default. */
+  getSerializedAddressParameters?: (account: Account, addressFormat?: string) => Buffer;
 };
 
 export type BridgeApi = {
@@ -214,4 +280,6 @@ export type BridgeApi = {
    * keyed on the device's public key, so moving to the generic bridge never re-keys an account.
    */
   accountIdFromPublicKey?: boolean;
+  /** @see AccountLayer */
+  accountLayer?: AccountLayer;
 };

@@ -2,6 +2,7 @@ import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { completeIntent } from "./accountLayer";
 import {
   bigNumberToBigIntDeep,
   computeUseAllAmount,
@@ -128,17 +129,24 @@ export function genericPrepareTransaction(
     // This includes `assetOwner` and `assetReference` that are not used by some apps that only rely on `subAccountId`
     // TODO Remove `assetOwner` and `assetReference` in order to maintain one unique way of identifying the type of asset
     // https://ledgerhq.atlassian.net/browse/LIVE-24044
-    const intent = transactionToIntent(
+    const intent = await completeIntent(
+      bridgeApi,
+      transactionToIntent(
+        account,
+        {
+          ...transaction,
+          assetOwner,
+          assetReference,
+          amount,
+        },
+        bridgeApi.computeIntentType,
+        intent => coinModuleApi.craftTransactionData(context, intent),
+        bridgeApi.buildIntentData,
+      ),
       account,
-      {
-        ...transaction,
-        assetOwner,
-        assetReference,
-        amount,
-      },
-      bridgeApi.computeIntentType,
-      intent => coinModuleApi.craftTransactionData(context, intent),
-      bridgeApi.buildIntentData,
+      transaction,
+      coinModuleApi,
+      context,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
       feesStrategy: transaction.feesStrategy ?? undefined,

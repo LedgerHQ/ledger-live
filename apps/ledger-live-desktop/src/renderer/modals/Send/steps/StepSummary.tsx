@@ -78,13 +78,14 @@ const StepSummary = (props: StepProps) => {
   }
 
   const { estimatedFees, amount, totalSpent, warnings } = status;
-  const txInputs = "txInputs" in status ? status.txInputs : undefined;
+  // the inputs a UTXO-based estimation selected
+  const txInputs = "feeParameters" in transaction ? transaction.feeParameters?.inputs : undefined;
   const { feeTooHigh, tooManyUtxos } = warnings;
   const currency = getAccountCurrency(account);
 
   const feesCurrency = getFeesCurrency(feeCurrencyAccount ?? mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
-  const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
+  const utxoLag = Array.isArray(txInputs) ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
   const hasNonEmptySubAccounts =
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));

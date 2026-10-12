@@ -1,46 +1,29 @@
 import BigNumber from "bignumber.js";
 import { listCryptoCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { BitcoinAccount, BitcoinResources, NetworkInfoRaw } from "../types";
-import {
-  AddressFormat,
-  BitcoinAddress,
-  BitcoinSignature,
-  BitcoinSigner,
-  BitcoinXPub,
-  CreateTransaction,
-  SignerTransaction,
-} from "../signer";
+import type { Account } from "@ledgerhq/types-live";
 
-export const networkInfo: NetworkInfoRaw = {
-  family: "bitcoin",
-  feeItems: {
-    items: [
-      {
-        key: "0",
-        speed: "high",
-        feePerByte: "3",
-      },
-      {
-        key: "1",
-        speed: "standard",
-        feePerByte: "2",
-      },
-      {
-        key: "2",
-        speed: "low",
-        feePerByte: "1",
-      },
-    ],
-    defaultFeePerByte: "1",
-  },
+/** The resources of a bitcoin account, as Ledger Wallet keeps them (spendable outputs). */
+type FixtureBitcoinResources = {
+  utxos: Array<{
+    hash: string;
+    outputIndex: number;
+    blockHeight: number | null | undefined;
+    address: string | null | undefined;
+    value: BigNumber;
+    rbf: boolean;
+    isChange: boolean;
+  }>;
 };
 
-export function createFixtureAccount(account?: Partial<BitcoinAccount>): BitcoinAccount {
+type FixtureBitcoinAccount = Account & { bitcoinResources: FixtureBitcoinResources };
+
+export function createFixtureAccount(
+  account?: Partial<FixtureBitcoinAccount>,
+): FixtureBitcoinAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
 
-  const bitcoinResources: BitcoinResources = account?.bitcoinResources || {
+  const bitcoinResources: FixtureBitcoinResources = account?.bitcoinResources || {
     utxos: [],
   };
 
@@ -73,71 +56,3 @@ export function createFixtureAccount(account?: Partial<BitcoinAccount>): Bitcoin
     bitcoinResources,
   };
 }
-
-export const mockXpubPubKey = {
-  xpub: [
-    "xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy",
-  ],
-  pubKey: [
-    {
-      publicKey:
-        "xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy",
-      bitcoinAddress: "bc1qhh568mfmwu7ymvwhu5e4mttpfg4ehxfpvhjs64",
-      chainCode: "",
-    },
-  ],
-};
-
-export const mockSigner: BitcoinSigner = {
-  getWalletXpub: (_arg: { path: string; xpubVersion: number }): Promise<BitcoinXPub> =>
-    Promise.resolve(""),
-  getWalletPublicKey: (
-    _path: string,
-    _opts?: {
-      verify?: boolean;
-      format?: AddressFormat;
-    },
-  ): Promise<BitcoinAddress> => {
-    return Promise.resolve({
-      publicKey: "",
-      bitcoinAddress: "",
-      chainCode: "",
-    });
-  },
-  signMessage: (_path: string, _messageHex: string): Promise<BitcoinSignature> =>
-    Promise.resolve({
-      v: 0,
-      r: "123",
-      s: "456",
-    }),
-  splitTransaction: (
-    _transactionHex: string,
-    _isSegwitSupported: boolean | null | undefined,
-    _hasExtraData: boolean | null | undefined,
-    _additionals: Array<string> | null | undefined,
-  ): SignerTransaction => ({
-    version: Buffer.from(""),
-    inputs: [
-      {
-        prevout: Buffer.from(""),
-        script: Buffer.from(""),
-        sequence: Buffer.from(""),
-      },
-    ],
-  }),
-  createPaymentTransaction: (_arg: CreateTransaction): Promise<string> =>
-    Promise.resolve("createPaymentTransactionReturn"),
-  signPsbtBuffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx?: string }> {
-    return Promise.resolve({ psbt: Buffer.from(""), tx: "" });
-  },
-};
-
-export const mockSignerContext = <T>(
-  _deviceId: string,
-  _crypto: CryptoCurrency,
-  fn: (signer: BitcoinSigner) => Promise<T>,
-): Promise<T> =>
-  fn({
-    ...mockSigner,
-    createPaymentTransaction: (_arg: CreateTransaction): Promise<string> => Promise.resolve(""),
-  });

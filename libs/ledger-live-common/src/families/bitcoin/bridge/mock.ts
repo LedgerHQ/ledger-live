@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import isEqual from "lodash/isEqual";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -7,7 +8,13 @@ import {
   AmountRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DustLimit } from "@ledgerhq/coin-bitcoin/errors";
-import type { FeeItems, Transaction } from "@ledgerhq/coin-bitcoin/types";
+import {
+  defaultUtxoStrategy,
+  getFamilySpecificData,
+  getFeePerByte,
+  type BitcoinFeeParametersJson,
+  type Transaction,
+} from "../types";
 import {
   makeAccountBridgeReceive,
   scanAccounts,
@@ -23,29 +30,28 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { getBitcoinEstimationRecipient } from "@ledgerhq/coin-bitcoin/constants";
+import { getBitcoinEstimationRecipient } from "@ledgerhq/coin-bitcoin/api";
 import cryptoFactory from "@ledgerhq/wallet-btc/crypto/factory";
-import { Currency } from "@ledgerhq/wallet-btc/index";
+import type { Currency } from "@ledgerhq/wallet-btc/crypto/types";
 import { computeDustAmount } from "@ledgerhq/wallet-btc/utils";
 import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
-const defaultGetFees = (a, t: any) => (t.feePerByte || new BigNumber(0)).times(250);
+const defaultGetFees = (_account: Account, t: Transaction) =>
+  (getFeePerByte(t) ?? new BigNumber(0)).times(250);
 
 const createTransaction = (): Transaction => ({
   family: "bitcoin",
+  mode: "send",
   amount: new BigNumber(0),
   recipient: "",
-  feePerByte: new BigNumber(10),
-  networkInfo: null,
   useAllAmount: false,
-  rbf: false,
-  utxoStrategy: {
-    strategy: 0,
-    excludeUTXOs: [],
-  },
+  feesStrategy: "medium",
+  familySpecificData: { utxoStrategy: defaultUtxoStrategy(), feePerByte: "10" },
 });
+
+const FEE_RATES = { fast: "4", medium: "3", slow: "2" } as const;
 
 const estimateMaxSpendable = ({ account, parentAccount, transaction }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -76,8 +82,9 @@ const getTransactionStatus = (account, t) => {
     errors.amount = new NotEnoughBalance();
   }
 
-  if (t.feePerByte) {
-    const txSize = Math.ceil(estimatedFees.toNumber() / t.feePerByte.toNumber());
+  const feePerByte = getFeePerByte(t);
+  if (feePerByte) {
+    const txSize = Math.ceil(estimatedFees.toNumber() / feePerByte.toNumber());
     const crypto = cryptoFactory(account.currency.id as Currency);
 
     if (amount.gt(0) && amount.lt(computeDustAmount(crypto, txSize))) {
@@ -107,39 +114,16 @@ const prepareTransaction = async (
   _account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  // TODO it needs to set the fee if not in t as well
-  let nextTx = transaction;
-
-  if (!nextTx.networkInfo) {
-    const feeItems: FeeItems = {
-      items: [
-        { key: "1", speed: "fast", feePerByte: new BigNumber(4) },
-        { key: "3", speed: "medium", feePerByte: new BigNumber(3) },
-        { key: "6", speed: "slow", feePerByte: new BigNumber(2) },
-      ],
-      defaultFeePerByte: new BigNumber(0),
-    };
-    nextTx = {
-      ...nextTx,
-      networkInfo: {
-        family: "bitcoin",
-        feeItems,
-        relayFeePerByte: new BigNumber(1),
-      },
-    };
-  }
-
-  const { feesStrategy } = nextTx;
-  if (feesStrategy && feesStrategy !== "custom") {
-    const feeItems = nextTx.networkInfo?.feeItems;
-    const match = feeItems?.items.find(i => i.speed === feesStrategy);
-    const feePerByte = match?.feePerByte ?? feeItems?.defaultFeePerByte;
-    if (feePerByte && feePerByte.gt(0)) {
-      nextTx = { ...nextTx, feePerByte };
-    }
-  }
-
-  return nextTx;
+  const { feesStrategy } = transaction;
+  const preset = feesStrategy && feesStrategy !== "custom" ? FEE_RATES[feesStrategy] : undefined;
+  const feePerByte = preset ?? getFamilySpecificData(transaction).feePerByte ?? FEE_RATES.medium;
+  const feeParameters: BitcoinFeeParametersJson = {
+    feePerByte,
+    feeRates: { ...FEE_RATES },
+    relayFeePerByte: "1",
+  };
+  const next = { ...transaction, fees: new BigNumber(feePerByte).times(250), feeParameters };
+  return isEqual(next, transaction) ? transaction : next;
 };
 
 const accountBridge: AccountBridge<Transaction> = {

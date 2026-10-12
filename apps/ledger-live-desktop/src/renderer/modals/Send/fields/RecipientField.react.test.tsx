@@ -90,11 +90,8 @@ const bitcoinMockTransaction: Transaction = {
   recipient: "",
   useAllAmount: false,
   family: "bitcoin",
-  utxoStrategy: { strategy: 0, excludeUTXOs: [] },
-  rbf: false,
-  feePerByte: null,
-  networkInfo: null,
-} as unknown as Transaction;
+  familySpecificData: { rbf: false, utxoStrategy: { strategy: 0, excludeUTXOs: [] } },
+};
 
 const baseMockTransaction: Transaction = {
   amount: new BigNumber(0),

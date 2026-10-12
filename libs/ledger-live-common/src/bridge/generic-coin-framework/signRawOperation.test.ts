@@ -2,6 +2,7 @@ import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 import { genericSignRawOperation } from "./signRawOperation";
+import { Observable } from "rxjs";
 
 jest.mock("./api", () => ({ getCoinModuleApi: jest.fn() }));
 jest.mock("./api/context", () => ({ buildContext: jest.fn(() => ({})) }));
@@ -42,5 +43,25 @@ describe("genericSignRawOperation", () => {
     expect(getCoinModuleApi).toHaveBeenCalledWith("ethereum", "local");
     expect(buildContext).toHaveBeenCalledWith("ethereum");
     expect(coinModuleApi.craftRawTransaction).toHaveBeenCalled();
+  });
+
+  it("hands the family's raw signing the whole request, broadcast flag included", async () => {
+    const familySignRaw = jest.fn(() => new Observable(o => o.complete()));
+    (getBridgeApi as jest.Mock).mockResolvedValue({ signRawOperation: familySignRaw });
+    const arg = {
+      account: { currency: { id: "bitcoin", family: "bitcoin" } },
+      transaction: "cHNidP8=",
+      deviceId: "device",
+      broadcast: true,
+    } as any;
+
+    await new Promise<void>((resolve, reject) => {
+      genericSignRawOperation("bitcoin", "local")(jest.fn() as any)(arg).subscribe({
+        error: reject,
+        complete: () => resolve(),
+      });
+    });
+
+    expect(familySignRaw).toHaveBeenCalledWith(arg);
   });
 });

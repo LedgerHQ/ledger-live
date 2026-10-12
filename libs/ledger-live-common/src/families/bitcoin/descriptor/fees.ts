@@ -1,13 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { FeeDescriptor } from "../../../bridge/descriptor/types";
+import type { BitcoinFamilySpecificData, BitcoinFeeParametersJson } from "../types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
-}
-
-function isBigNumber(value: unknown): value is BigNumber {
-  return BigNumber.isBigNumber(value);
 }
 
 function getFeePerVByteUnit(currency: CryptoOrTokenCurrency): string | undefined {
@@ -15,36 +12,31 @@ function getFeePerVByteUnit(currency: CryptoOrTokenCurrency): string | undefined
   return unit ? `${unit.code}/vbyte` : undefined;
 }
 
-type BitcoinFeeItem = {
-  speed: string;
-  feePerByte: BigNumber;
+// Read defensively: the descriptor is handed an `unknown` transaction.
+const feeParametersOf = (transaction: unknown): BitcoinFeeParametersJson =>
+  isRecord(transaction) && isRecord(transaction.feeParameters)
+    ? (transaction.feeParameters as BitcoinFeeParametersJson)
+    : {};
+
+const familySpecificDataOf = (transaction: unknown): BitcoinFamilySpecificData =>
+  isRecord(transaction) && isRecord(transaction.familySpecificData)
+    ? (transaction.familySpecificData as BitcoinFamilySpecificData)
+    : {};
+
+const toRate = (value: unknown): BigNumber | null => {
+  if (typeof value !== "string" || value === "") return null;
+  const rate = new BigNumber(value);
+  return rate.isFinite() ? rate : null;
 };
 
-function getSuggestedFeePerByteRange(
-  transaction: Record<string, unknown>,
-): { min: string; max: string } | null {
-  const networkInfo = transaction.networkInfo;
-  if (!isRecord(networkInfo)) return null;
-
-  const feeItems = networkInfo.feeItems;
-  if (!isRecord(feeItems) || !Array.isArray(feeItems.items)) return null;
-
-  const items = feeItems.items
-    .filter((item): item is BitcoinFeeItem => {
-      if (!isRecord(item)) return false;
-      return typeof item.speed === "string" && isBigNumber(item.feePerByte);
-    })
-    .map(item => item.feePerByte);
-
-  if (items.length === 0) return null;
-
-  const min = BigNumber.min(...items);
-  const max = BigNumber.max(...items);
-
-  return {
-    min: min.toFixed(),
-    max: max.toFixed(),
-  };
+/** The network presets of the last estimation, fastest first. */
+function feeRatesOf(transaction: unknown): Array<{ speed: string; feePerByte: BigNumber }> {
+  const rates = feeParametersOf(transaction).feeRates;
+  if (!isRecord(rates)) return [];
+  return (["fast", "medium", "slow"] as const).flatMap(speed => {
+    const feePerByte = toRate(rates[speed]);
+    return feePerByte ? [{ speed, feePerByte }] : [];
+  });
 }
 
 export const fees: FeeDescriptor = {
@@ -54,37 +46,10 @@ export const fees: FeeDescriptor = {
   presets: {
     legend: { type: "feeRate", unit: getFeePerVByteUnit, valueFrom: "presetAmount" },
     strategyLabelInAmount: "legend",
-    getOptions: transaction => {
-      if (!isRecord(transaction)) {
-        return [];
-      }
-
-      const networkInfo = transaction.networkInfo;
-      if (!isRecord(networkInfo)) {
-        return [];
-      }
-
-      const feeItems = networkInfo.feeItems;
-      if (!isRecord(feeItems) || !Array.isArray(feeItems.items)) {
-        return [];
-      }
-
-      const items = feeItems.items
-        .filter((item): item is BitcoinFeeItem => {
-          if (!isRecord(item)) return false;
-          return typeof item.speed === "string" && isBigNumber(item.feePerByte);
-        })
-        .map(item => ({ speed: item.speed, feePerByte: item.feePerByte }));
-
-      if (items.length === 0) {
-        return [];
-      }
-
-      return [...items].reverse().map(item => ({
-        id: item.speed,
-        amount: item.feePerByte,
-      }));
-    },
+    getOptions: transaction =>
+      [...feeRatesOf(transaction)]
+        .reverse()
+        .map(item => ({ id: item.speed, amount: item.feePerByte })),
     shouldEstimateWithBridge: () => true,
   },
   custom: {
@@ -95,55 +60,46 @@ export const fees: FeeDescriptor = {
         unitLabel: getFeePerVByteUnit,
         suggestedRange: {
           getRange: transaction => {
-            if (!isRecord(transaction)) return null;
-            return getSuggestedFeePerByteRange(transaction);
+            const rates = feeRatesOf(transaction).map(item => item.feePerByte);
+            if (rates.length === 0) return null;
+            return {
+              min: BigNumber.min(...rates).toFixed(),
+              max: BigNumber.max(...rates).toFixed(),
+            };
           },
         },
         minValue: {
           getValue: transaction => {
-            if (!isRecord(transaction)) return null;
-            const networkInfo = transaction.networkInfo;
-            const relayFeePerByte = isRecord(networkInfo) ? networkInfo.relayFeePerByte : undefined;
-            return isBigNumber(relayFeePerByte) && relayFeePerByte.gt(0)
-              ? relayFeePerByte.toFixed()
-              : null;
+            const relay = toRate(feeParametersOf(transaction).relayFeePerByte);
+            return relay?.gt(0) ? relay.toFixed() : null;
           },
         },
       },
     ],
     getInitialValues: (transaction): Record<string, string> => {
-      const empty: Record<string, string> = {};
-      if (!isRecord(transaction)) return empty;
-
-      const feePerByte = transaction.feePerByte;
-      if (isBigNumber(feePerByte) && feePerByte.gt(0)) {
-        return {
-          feePerByte: feePerByte.toFixed(),
-        };
-      }
-
-      const networkInfo = transaction.networkInfo;
-      if (isRecord(networkInfo) && isRecord(networkInfo.feeItems)) {
-        const medium = networkInfo.feeItems.medium;
-        if (isBigNumber(medium) && medium.gt(0)) {
-          return {
-            feePerByte: medium.toFixed(),
-          };
-        }
-      }
-
-      return {
-        feePerByte: "",
-      };
+      // a rate in familySpecificData is in use with the custom strategy (or none) only: one left
+      // over from before a preset was picked is not
+      const strategy = isRecord(transaction) ? transaction.feesStrategy : undefined;
+      const custom =
+        !strategy || strategy === "custom"
+          ? toRate(familySpecificDataOf(transaction).feePerByte)
+          : null;
+      if (custom?.gt(0)) return { feePerByte: custom.toFixed() };
+      const estimated = toRate(feeParametersOf(transaction).feePerByte);
+      if (estimated?.gt(0)) return { feePerByte: estimated.toFixed() };
+      const medium = feeRatesOf(transaction).find(item => item.speed === "medium");
+      return { feePerByte: medium ? medium.feePerByte.toFixed() : "" };
     },
-    buildTransactionPatch: values => {
+    buildTransactionPatch: (values, transaction) => {
       const feePerByte = new BigNumber(values.feePerByte);
+      const rate =
+        feePerByte.isNaN() || feePerByte.isNegative()
+          ? new BigNumber(0)
+          : feePerByte.integerValue(BigNumber.ROUND_DOWN);
       return {
         feesStrategy: "custom",
-        feePerByte:
-          feePerByte.isNaN() || feePerByte.isNegative()
-            ? new BigNumber(0)
-            : feePerByte.integerValue(BigNumber.ROUND_DOWN),
+        // the patch is merged shallowly: keep the other user choices (coin control, OP_RETURN…)
+        familySpecificData: { ...familySpecificDataOf(transaction), feePerByte: rate.toFixed() },
       };
     },
   },

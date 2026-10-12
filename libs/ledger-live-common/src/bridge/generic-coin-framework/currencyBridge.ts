@@ -1,6 +1,6 @@
 import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { CurrencyBridge } from "@ledgerhq/types-live";
-import { getBridgeApi } from "./bridge";
+import { getBridgeApi, getBridgeApiResolver } from "./bridge";
 import { genericGetAccountShape } from "./getAccountShape";
 import { getSigner } from "./signer";
 import type { CoinFrameworkSigner } from "./types";
@@ -12,15 +12,17 @@ export async function getCoinFrameworkCurrencyBridge(
   customSigner?: CoinFrameworkSigner,
 ): Promise<CurrencyBridge> {
   const signer = customSigner ?? (await getSigner(network));
+  const resolveBridgeApi = await getBridgeApiResolver(network);
   return {
     scanAccounts: makeScanAccounts({
-      getAccountShape: genericGetAccountShape(network, kind),
+      getAccountShape: genericGetAccountShape(network, kind, signer),
       getAddressFn: signer.getAddress.bind(signer),
       getAddressLookup: async currency => {
         const bridgeApi = await getBridgeApi(currency, network);
         return bridgeApi.addressLookup;
       },
-      postSync,
+      postSync: (initial, synced) =>
+        (resolveBridgeApi(synced.currency).accountLayer?.postSync ?? postSync)(initial, synced),
     }),
   };
 }

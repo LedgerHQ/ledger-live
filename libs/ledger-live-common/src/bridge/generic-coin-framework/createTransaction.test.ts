@@ -165,6 +165,25 @@ describe("createTransaction", () => {
     });
   });
 
+  it("returns the Bitcoin default native send transaction, with the default coin selection", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("bitcoin"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "bitcoin",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+      feesStrategy: "medium",
+      nonce: new BigNumber(0),
+      familySpecificData: { utxoStrategy: { strategy: 0, excludeUTXOs: [] } },
+    });
+  });
+
   it("returns the Casper default native send transaction", () => {
     const account = {
       type: "Account",

@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { DerivationMode } from "@ledgerhq/types-live";
-import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
+import type { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 
 export const makeAccount = (
   xpub: string,

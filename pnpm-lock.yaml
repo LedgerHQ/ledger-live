@@ -10240,15 +10240,12 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: 'catalog:'
-        version: 4.1.0
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
-      '@ledgerhq/live-signer-zcash':
-        specifier: workspace:^
-        version: link:../../live-signer-zcash
+      '@ledgerhq/logs':
+        specifier: 'catalog:'
+        version: 6.19.0
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.0
@@ -10258,9 +10255,6 @@ importers:
       '@ledgerhq/wallet-btc':
         specifier: workspace:^
         version: link:../../wallet-btc
-      '@noble/hashes':
-        specifier: 'catalog:'
-        version: 1.8.0
       axios:
         specifier: 'catalog:'
         version: 1.20.0
@@ -10270,24 +10264,9 @@ importers:
       bitcoinjs-lib:
         specifier: ^6.1.7
         version: 6.1.7
-      bs58:
-        specifier: 'catalog:'
-        version: 4.0.1
       cashaddrjs:
         specifier: ^0.4.4
         version: 0.4.4
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
-      lodash:
-        specifier: 'catalog:'
-        version: 4.17.21
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-      utility-types:
-        specifier: ^3.10.0
-        version: 3.11.0
     devDependencies:
       '@bitcoinerlab/secp256k1':
         specifier: 1.2.0
@@ -12573,6 +12552,9 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../ledger-live-common
       '@ledgerhq/live-config':
         specifier: 'catalog:'
         version: 3.9.0
@@ -24130,7 +24112,6 @@ packages:
     resolution: {integrity: sha512-dPrQbmvAYfTcSvP1tWC1+ulF8TMMtLTdngP4KeMjsm5JMGCNK2fMPOB4/Pk1ayQ9L352mYUhbohBdififRvnfA==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@nx/nx-linux-x64-musl@22.7.12':
     resolution: {integrity: sha512-j+BJLz72JYprTKJUJukVdDhX4BIw3sARah4pRs4lLs8KPAEIbISFY70lT4MWwyMJWQuQ2vaaOih1PpFvVQphsQ==}

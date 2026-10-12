@@ -13,6 +13,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
 const getBridgeApiMock = jest.fn();
 jest.mock("../bridge", () => ({
   getBridgeApi: (...a: unknown[]) => getBridgeApiMock(...a),
+  getBridgeApiResolver: async () => () => ({}),
 }));
 
 const assignFromAccountRawMock = jest.fn();

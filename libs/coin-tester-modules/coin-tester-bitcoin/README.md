@@ -7,8 +7,8 @@ This package contains the deterministic testing infrastructure for Bitcoin in Le
 
 ## Features
 
-- Deterministic testing scenarios for Bitcoin
-- Local signer written in Typescript
+- Deterministic testing scenarios for Bitcoin, run on the bitcoin family's generic coin framework bridge (ADR-065)
+- Local signer written in Typescript, standing in for the device signer
 - Integration with Atlas for local blockchain simulation
 
 ## Usage
@@ -30,3 +30,4 @@ await executeScenario(scenarioBitcoin);
 
 - @ledgerhq/coin-tester
 - @ledgerhq/coin-bitcoin
+- @ledgerhq/live-common

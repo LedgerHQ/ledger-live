@@ -107,7 +107,7 @@ export function useBridgeFeeEstimation({
     queueMicrotask(async () => {
       try {
         const bridge = await getAccountBridge(account, parentAccount ?? undefined);
-        const patch = customFeeConfig.buildTransactionPatch(values);
+        const patch = customFeeConfig.buildTransactionPatch(values, transaction);
         const nextTransaction = bridge.updateTransaction(
           transaction,
           patch as Partial<Transaction>,

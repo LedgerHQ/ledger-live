@@ -3,7 +3,12 @@ import { BigNumber } from "bignumber.js";
 import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { BigNumberStrSchema } from "@shared/schema-primitives";
-import { applyEvmGasLimitMultiplier, BridgeAdapter, buildSolanaTransactionPatch } from "./bridge";
+import {
+  applyEvmGasLimitMultiplier,
+  BridgeAdapter,
+  buildBitcoinFamilySpecificData,
+  buildSolanaTransactionPatch,
+} from "./bridge";
 import type { TransactionIntent } from "../intents";
 import type { AccountDescriptor } from "../models";
 
@@ -76,6 +81,63 @@ describe("applyEvmGasLimitMultiplier", () => {
       customGasLimit: new BigNumber(1_300_000),
     } as EvmTransaction;
     expect(getGasLimit(tx).toFixed()).toBe("1300000");
+  });
+});
+
+describe("buildBitcoinFamilySpecificData", () => {
+  const btcIntent = (extra: { feePerByte?: string; rbf?: boolean } = {}) => ({
+    family: "bitcoin" as const,
+    recipient: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
+    amount: "0.001 BTC",
+    ...extra,
+  });
+  // what createTransaction seeds for a bitcoin account
+  const seeded = {
+    familySpecificData: { utxoStrategy: { strategy: 0 as const, excludeUTXOs: [] } },
+  };
+
+  it("adds the fee rate and the rbf choice over the seeded coin selection", () => {
+    expect(
+      buildBitcoinFamilySpecificData(btcIntent({ feePerByte: "12", rbf: true }), seeded),
+    ).toEqual({
+      utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+      feePerByte: "12",
+      rbf: true,
+    });
+  });
+
+  it("keeps an explicit rbf false", () => {
+    expect(buildBitcoinFamilySpecificData(btcIntent({ rbf: false }), seeded)).toEqual({
+      utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+      rbf: false,
+    });
+  });
+
+  it("leaves the bag untouched when neither option is set", () => {
+    expect(buildBitcoinFamilySpecificData(btcIntent({ feePerByte: "" }), seeded)).toEqual({
+      utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+    });
+  });
+
+  it("starts from an empty bag when the transaction carries none", () => {
+    expect(buildBitcoinFamilySpecificData(btcIntent({ feePerByte: "3" }), {})).toEqual({
+      feePerByte: "3",
+    });
+  });
+
+  it("is what buildTxExtras patches for a bitcoin intent", () => {
+    const adapter = new BridgeAdapter() as unknown as {
+      buildTxExtras: (intent: TransactionIntent, tokenAccount: undefined, tx: unknown) => unknown;
+    };
+    expect(
+      adapter.buildTxExtras(btcIntent({ feePerByte: "7", rbf: true }), undefined, seeded),
+    ).toEqual({
+      familySpecificData: {
+        utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+        feePerByte: "7",
+        rbf: true,
+      },
+    });
   });
 });
 

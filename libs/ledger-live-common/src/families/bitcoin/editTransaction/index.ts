@@ -12,3 +12,4 @@ export { hasMinimumFundsToCancel, hasMinimumFundsToSpeedUp } from "./hasMinimumF
 export { isStrategyDisabled } from "./isStrategyDisabled";
 export { isTransactionConfirmed } from "./isTransactionConfirmed";
 export { getOriginalTxFeeRateSatVb } from "./rbfValidation";
+export { getEditableTransactionRaw } from "./editableTransaction";

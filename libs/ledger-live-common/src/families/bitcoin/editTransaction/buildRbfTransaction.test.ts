@@ -1,106 +1,298 @@
 import { BigNumber } from "bignumber.js";
-import { getAmountAndRecipient, getRbfContext } from "@ledgerhq/coin-bitcoin/rbfContext";
-import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
+import type { Account } from "@ledgerhq/types-live";
+import { bitcoinPickingStrategy, type BitcoinOutput } from "../types";
+import { getNextChangeAddress, getOwnDisplayAddresses } from "../accountLayer/selection";
+import { getReplacementEstimate } from "./replacement";
 import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";
 
-jest.mock("../coinConfig", () => ({
-  getBoundWalletAccount: jest.fn(() => ({ config: {}, walletAccount: {} })),
+jest.mock("./replacement", () => ({
+  getReplacementEstimate: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-bitcoin/rbfContext", () => ({
-  getRbfContext: jest.fn(),
-  getAmountAndRecipient: jest.fn(),
+jest.mock("../accountLayer/selection", () => ({
+  getNextChangeAddress: jest.fn(),
+  getOwnDisplayAddresses: jest.fn(),
 }));
 
-const mockedGetRbfContext = getRbfContext as jest.Mock;
-const mockedGetAmountAndRecipient = getAmountAndRecipient as jest.Mock;
+const mockedGetReplacementEstimate = getReplacementEstimate as jest.Mock;
+const mockedGetNextChangeAddress = getNextChangeAddress as jest.Mock;
+const mockedGetOwnDisplayAddresses = getOwnDisplayAddresses as jest.Mock;
 
-const baseContext = () => ({
-  walletAccount: {},
-  originalTx: { outs: [{ value: 50000 }] },
-  feePerByte: new BigNumber(13),
-  networkInfo: {
-    feeItems: {
-      items: [{ speed: "fast", feePerByte: new BigNumber(13) }],
-    },
-  },
-  changeAddress: { address: "change-addr" },
-  excludeUTXOs: [{ hash: "h1", outputIndex: 0 }],
+const ORIGINAL_TXID = "orig-txid";
+const EXTERNAL = "external-1";
+const OTHER_EXTERNAL = "external-2";
+const OWN = "own-1";
+const CHANGE = "change-addr";
+
+const feeRates = { slow: 5n, medium: 10n, fast: 20n };
+
+const utxo = (hash: string, overrides: Partial<BitcoinOutput> = {}): BitcoinOutput => ({
+  hash,
+  outputIndex: 0,
+  blockHeight: 10,
+  address: OWN,
+  value: new BigNumber(1000),
+  rbf: false,
+  isChange: false,
+  ...overrides,
 });
+
+const makeAccount = (overrides: Record<string, unknown> = {}): Account =>
+  ({
+    currency: { id: "bitcoin" },
+    pendingOperations: [{ hash: ORIGINAL_TXID, recipients: [EXTERNAL] }],
+    bitcoinResources: {
+      utxos: [
+        utxo("pending-change", { blockHeight: null, isChange: true }),
+        utxo("confirmed-change", { isChange: true }),
+        utxo("pending-receive", { blockHeight: null }),
+        utxo("pending-change-2", { blockHeight: undefined, isChange: true, outputIndex: 1 }),
+      ],
+    },
+    ...overrides,
+  }) as unknown as Account;
+
+const sendOutputs = [
+  { address: EXTERNAL, value: 50_000n },
+  { address: OWN, value: 40_000n },
+];
 
 describe("buildRbfTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedGetRbfContext.mockResolvedValue(baseContext());
-    mockedGetAmountAndRecipient.mockResolvedValue({ amountSent: 50000, recipient: "external-1" });
+    mockedGetNextChangeAddress.mockResolvedValue({ address: CHANGE, path: "84'/0'/0'/1/3" });
+    mockedGetOwnDisplayAddresses.mockReturnValue(new Set([OWN, CHANGE]));
+    mockedGetReplacementEstimate.mockResolvedValue({
+      feeRates,
+      minReplacementFeePerByte: 12n,
+      replacedOutputs: sendOutputs,
+    });
   });
 
   describe("buildRbfSpeedUpTx", () => {
-    test("builds a speedup transaction keeping recipient, amount and excluded UTXOs", async () => {
-      const result = await buildRbfSpeedUpTx({ pendingOperations: [] } as any, "orig-txid");
+    it("keeps the recipient and amount of the replaced send, at the network fast rate", async () => {
+      const account = makeAccount();
 
-      expect(result.recipient).toBe("external-1");
-      expect(result.amount.isEqualTo(50000)).toBe(true);
-      expect(result.feePerByte?.isEqualTo(13)).toBe(true);
-      expect(result.feesStrategy).toBe("fast");
-      expect(result.replaceTxId).toBe("orig-txid");
-      expect(result.rbf).toBe(true);
-      expect(result.changeAddress).toBe("change-addr");
-      expect(result.utxoStrategy.strategy).toBe(bitcoinPickingStrategy.OPTIMIZE_SIZE);
-      expect(result.utxoStrategy.excludeUTXOs).toEqual([{ hash: "h1", outputIndex: 0 }]);
-    });
+      const result = await buildRbfSpeedUpTx(account, ORIGINAL_TXID);
 
-    test("passes the pending operation recipient to getAmountAndRecipient", async () => {
-      const account = {
-        pendingOperations: [{ hash: "orig-txid", recipients: ["known-recipient"] }],
-      };
-
-      await buildRbfSpeedUpTx(account as any, "orig-txid");
-
-      expect(mockedGetAmountAndRecipient).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.anything(),
-        "known-recipient",
-      );
-    });
-
-    test("falls back to a custom fees strategy when feePerByte differs from the fast fee", async () => {
-      mockedGetRbfContext.mockResolvedValue({
-        ...baseContext(),
-        networkInfo: {
-          feeItems: {
-            items: [{ speed: "fast", feePerByte: new BigNumber(99) }],
+      expect(mockedGetReplacementEstimate).toHaveBeenCalledWith(account, ORIGINAL_TXID);
+      expect(mockedGetNextChangeAddress).toHaveBeenCalledWith(account);
+      expect(result).toEqual({
+        family: "bitcoin",
+        mode: "send",
+        amount: new BigNumber(50_000),
+        recipient: EXTERNAL,
+        useAllAmount: false,
+        feesStrategy: "fast",
+        familySpecificData: {
+          utxoStrategy: {
+            strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
+            // pending change only: confirmed change and pending receives stay spendable
+            excludeUTXOs: [
+              { hash: "pending-change", outputIndex: 0 },
+              { hash: "pending-change-2", outputIndex: 1 },
+            ],
           },
+          rbf: true,
+          replaceTxId: ORIGINAL_TXID,
+          changeAddress: CHANGE,
         },
       });
+      expect(result.familySpecificData).not.toHaveProperty("feePerByte");
+    });
 
-      const result = await buildRbfSpeedUpTx({ pendingOperations: [] } as any, "orig-txid");
+    it("uses a custom rate when the minimum replacement rate is above the fast rate", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({
+        feeRates,
+        minReplacementFeePerByte: 25n,
+        replacedOutputs: sendOutputs,
+      });
+
+      const result = await buildRbfSpeedUpTx(makeAccount(), ORIGINAL_TXID);
 
       expect(result.feesStrategy).toBe("custom");
+      expect(result.familySpecificData?.feePerByte).toBe("25");
+    });
+
+    it("sums the external outputs when the known recipient is not among them", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({
+        feeRates,
+        minReplacementFeePerByte: 12n,
+        replacedOutputs: [
+          { address: null, value: 0n }, // OP_RETURN
+          { address: OTHER_EXTERNAL, value: 30_000n },
+          { address: OWN, value: 10_000n },
+          { address: EXTERNAL, value: 20_000n },
+        ],
+      });
+      const account = makeAccount({
+        pendingOperations: [{ hash: ORIGINAL_TXID, recipients: ["somewhere-else"] }],
+      });
+
+      const result = await buildRbfSpeedUpTx(account, ORIGINAL_TXID);
+
+      expect(mockedGetOwnDisplayAddresses).toHaveBeenCalledWith(account);
+      expect(result.amount).toEqual(new BigNumber(50_000));
+      expect(result.recipient).toBe(OTHER_EXTERNAL);
+    });
+
+    it.each([
+      ["no pending operation for the replaced transaction", []],
+      ["a pending operation without recipients", [{ hash: ORIGINAL_TXID }]],
+    ])("detects the recipient from the outputs with %s", async (_, pendingOperations) => {
+      const result = await buildRbfSpeedUpTx(makeAccount({ pendingOperations }), ORIGINAL_TXID);
+
+      expect(result.amount).toEqual(new BigNumber(50_000));
+      expect(result.recipient).toBe(EXTERNAL);
+    });
+
+    it("matches the known recipient in its displayed form (bitcoin cash)", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({
+        feeRates,
+        minReplacementFeePerByte: 12n,
+        replacedOutputs: [
+          { address: "bitcoincash:qrecipient", value: 7_000n },
+          { address: "bitcoincash:qchange", value: 1_000n },
+        ],
+      });
+      const account = makeAccount({
+        currency: { id: "bitcoin_cash" },
+        pendingOperations: [{ hash: ORIGINAL_TXID, recipients: ["qrecipient"] }],
+      });
+
+      const result = await buildRbfSpeedUpTx(account, ORIGINAL_TXID);
+
+      expect(result.recipient).toBe("qrecipient");
+      expect(result.amount).toEqual(new BigNumber(7_000));
+      expect(mockedGetOwnDisplayAddresses).not.toHaveBeenCalled();
+    });
+
+    it("shows the detected recipient in its displayed form (bitcoin cash)", async () => {
+      mockedGetOwnDisplayAddresses.mockReturnValue(new Set(["qchange"]));
+      mockedGetReplacementEstimate.mockResolvedValue({
+        feeRates,
+        minReplacementFeePerByte: 12n,
+        replacedOutputs: [
+          { address: "bitcoincash:qrecipient", value: 7_000n },
+          { address: "bitcoincash:qchange", value: 1_000n },
+        ],
+      });
+      const account = makeAccount({ currency: { id: "bitcoin_cash" }, pendingOperations: [] });
+
+      const result = await buildRbfSpeedUpTx(account, ORIGINAL_TXID);
+
+      expect(result.recipient).toBe("qrecipient");
+      expect(result.amount).toEqual(new BigNumber(7_000));
+    });
+
+    it("sends nothing to nobody when every output is the account's own", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({
+        feeRates,
+        minReplacementFeePerByte: 12n,
+        replacedOutputs: [{ address: OWN, value: 40_000n }],
+      });
+
+      const result = await buildRbfSpeedUpTx(makeAccount({ pendingOperations: [] }), ORIGINAL_TXID);
+
+      expect(result.amount).toEqual(new BigNumber(0));
+      expect(result.recipient).toBe("");
+    });
+
+    it("falls back to zero rates, no output and no exclusion when nothing is known", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({});
+
+      const result = await buildRbfSpeedUpTx(
+        makeAccount({ pendingOperations: [], bitcoinResources: undefined }),
+        ORIGINAL_TXID,
+      );
+
+      expect(result.amount).toEqual(new BigNumber(0));
+      expect(result.recipient).toBe("");
+      // a zero rate is the (zero) fast rate
+      expect(result.feesStrategy).toBe("fast");
+      expect(result.familySpecificData?.utxoStrategy?.excludeUTXOs).toEqual([]);
+    });
+
+    it("uses the network fast rate when the minimum replacement rate is unknown", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({ feeRates, replacedOutputs: sendOutputs });
+
+      const result = await buildRbfSpeedUpTx(makeAccount(), ORIGINAL_TXID);
+
+      expect(result.feesStrategy).toBe("fast");
+    });
+
+    it("propagates a failed replacement estimation", async () => {
+      mockedGetReplacementEstimate.mockRejectedValue(new Error("Transaction is not RBF-enabled"));
+
+      await expect(buildRbfSpeedUpTx(makeAccount(), ORIGINAL_TXID)).rejects.toThrow(
+        "Transaction is not RBF-enabled",
+      );
     });
   });
 
   describe("buildRbfCancelTx", () => {
-    test("builds a cancel transaction sending back to the change address", async () => {
-      const result = await buildRbfCancelTx({ pendingOperations: [] } as any, "orig-txid");
+    it("sends the amount of the replaced send back to the next change address", async () => {
+      const result = await buildRbfCancelTx(makeAccount(), ORIGINAL_TXID);
 
-      expect(result.recipient).toBe("change-addr");
-      expect(result.amount.isEqualTo(50000)).toBe(true);
-      expect(result.replaceTxId).toBe("orig-txid");
-      expect(result.rbf).toBe(true);
-      expect(result.utxoStrategy.strategy).toBe(bitcoinPickingStrategy.OPTIMIZE_SIZE);
+      expect(result).toEqual({
+        family: "bitcoin",
+        mode: "send",
+        amount: new BigNumber(50_000),
+        recipient: CHANGE,
+        useAllAmount: false,
+        feesStrategy: "fast",
+        familySpecificData: {
+          utxoStrategy: {
+            strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
+            excludeUTXOs: [
+              { hash: "pending-change", outputIndex: 0 },
+              { hash: "pending-change-2", outputIndex: 1 },
+            ],
+          },
+          rbf: true,
+          replaceTxId: ORIGINAL_TXID,
+          changeAddress: CHANGE,
+        },
+      });
     });
 
-    test("falls back to the first spendable output amount when none is detected", async () => {
-      mockedGetRbfContext.mockResolvedValue({
-        ...baseContext(),
-        originalTx: { outs: [{ value: 0 }, { value: 4321 }] },
+    it("uses a custom rate when the minimum replacement rate is above the fast rate", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({
+        feeRates,
+        minReplacementFeePerByte: 31n,
+        replacedOutputs: sendOutputs,
       });
-      mockedGetAmountAndRecipient.mockResolvedValue({ amountSent: 0, recipient: "" });
 
-      const result = await buildRbfCancelTx({ pendingOperations: [] } as any, "orig-txid");
+      const result = await buildRbfCancelTx(makeAccount(), ORIGINAL_TXID);
 
-      expect(result.amount.isEqualTo(4321)).toBe(true);
+      expect(result.feesStrategy).toBe("custom");
+      expect(result.familySpecificData?.feePerByte).toBe("31");
+      expect(result.recipient).toBe(CHANGE);
+    });
+
+    it("keeps the first non-empty output amount when cancelling a cancel (no external output)", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({
+        feeRates,
+        minReplacementFeePerByte: 12n,
+        replacedOutputs: [
+          { address: null, value: 0n },
+          { address: OWN, value: 4_321n },
+        ],
+      });
+
+      const result = await buildRbfCancelTx(makeAccount({ pendingOperations: [] }), ORIGINAL_TXID);
+
+      expect(result.amount).toEqual(new BigNumber(4_321));
+      expect(result.recipient).toBe(CHANGE);
+    });
+
+    it("cancels with a zero amount when the replaced transaction has no output", async () => {
+      mockedGetReplacementEstimate.mockResolvedValue({ feeRates, replacedOutputs: [] });
+
+      const result = await buildRbfCancelTx(makeAccount({ pendingOperations: [] }), ORIGINAL_TXID);
+
+      expect(result.amount).toEqual(new BigNumber(0));
+      expect(result.recipient).toBe(CHANGE);
     });
   });
 });

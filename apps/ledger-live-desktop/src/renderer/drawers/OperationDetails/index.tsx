@@ -18,6 +18,7 @@ import {
   isConfirmedOperation,
 } from "@ledgerhq/live-common/operation";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { getEditableTransactionRaw } from "@ledgerhq/live-common/families/bitcoin/editTransaction/editableTransaction";
 import { getEnv } from "@shared/env";
 import { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
@@ -324,32 +325,14 @@ const OperationD = (props: Props) => {
 
     setDrawer(undefined);
 
-    // For Bitcoin, we can edit even when operation.transactionRaw is missing by constructing
-    // a minimal transactionRaw here (ensuring replaceTxId targets this operation's hash).
-    // For EVM, transactionRaw is required.
+    // For Bitcoin, we can edit even when operation.transactionRaw is missing (a minimal one is
+    // built, its replaceTxId targeting this operation's hash). For EVM, transactionRaw is required.
     if (currencyFamily === "bitcoin") {
-      // replaceTxId must always be the tx we are replacing (this operation's hash).
-      // When re-canceling a cancel, the conflicting tx is the cancel, not the original send,
-      // so we must beat the cancel's fee — never use a stored replaceTxId from a previous replacement.
-      const transactionRaw =
-        operation.transactionRaw === undefined
-          ? {
-              family: "bitcoin" as const,
-              amount: "0",
-              recipient: mainAccount.freshAddress,
-              rbf: true,
-              replaceTxId: operation.hash,
-              utxoStrategy: { strategy: 0, excludeUTXOs: [] },
-              feePerByte: null,
-              networkInfo: null,
-            }
-          : { ...operation.transactionRaw, replaceTxId: operation.hash };
-
       dispatch(
         openModal(editConfig.modalName, {
           account,
           parentAccount,
-          transactionRaw,
+          transactionRaw: getEditableTransactionRaw(operation, mainAccount),
           transactionHash: operation.hash,
         }),
       );
@@ -364,16 +347,7 @@ const OperationD = (props: Props) => {
         }),
       );
     }
-  }, [
-    dispatch,
-    mainAccount.freshAddress,
-    editConfig,
-    currencyFamily,
-    account,
-    parentAccount,
-    operation.transactionRaw,
-    operation.hash,
-  ]);
+  }, [dispatch, mainAccount, editConfig, currencyFamily, account, parentAccount, operation]);
 
   const isStuck = bridge.isStuckOperation(operation);
   // Fee currency/amount can be overridden by the family-specific

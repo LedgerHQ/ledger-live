@@ -46,7 +46,6 @@ const createStatus = (
     estimatedFees: overrides?.estimatedFees ?? new BigNumber(10),
     amount: new BigNumber(0),
     totalSpent: new BigNumber(0),
-    txInputs: [],
   }) as TransactionStatus;
 
 const mockLabels = {

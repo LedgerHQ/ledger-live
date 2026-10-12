@@ -2,7 +2,13 @@ import invariant from "invariant";
 import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
+import {
+  getFamilySpecificData,
+  getFeeParameters,
+  getFeePerByte,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/bitcoin/types";
 import { Account } from "@ledgerhq/types-live";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import InputCurrency from "~/renderer/components/InputCurrency";
@@ -25,7 +31,13 @@ const InputRight = styled(Box).attrs(() => ({
 export const FeesField = ({ transaction, account, onChange, status }: Props) => {
   invariant(transaction.family === "bitcoin", "FeeField: bitcoin family expected");
   const bridge = useAccountBridge<Transaction>(account);
-  const { feePerByte, networkInfo } = transaction;
+  const { feeRates } = getFeeParameters(transaction);
+  const customFeePerByte = getFamilySpecificData(transaction).feePerByte;
+  // without a preset, the rate the user set is the one the transaction uses
+  const feePerByte =
+    (!transaction.feesStrategy || transaction.feesStrategy === "custom") && customFeePerByte
+      ? new BigNumber(customFeePerByte)
+      : getFeePerByte(transaction);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { units } = account.currency;
   const satoshi = units[units.length - 1];
@@ -33,8 +45,11 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
     (item: { feePerByte: BigNumber }) => {
       onChange(
         bridge.updateTransaction(transaction, {
-          feePerByte: item.feePerByte,
-          feesStrategy: null,
+          feesStrategy: "custom",
+          familySpecificData: {
+            ...getFamilySpecificData(transaction),
+            feePerByte: item.feePerByte.toFixed(),
+          },
         }),
       );
     },
@@ -46,7 +61,7 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
     });
   const { errors } = status;
   const { feePerByte: feePerByteError } = errors;
-  const showError = networkInfo && feePerByteError;
+  const showError = feeRates && feePerByteError;
   return (
     <Box horizontal flow={5}>
       <Label

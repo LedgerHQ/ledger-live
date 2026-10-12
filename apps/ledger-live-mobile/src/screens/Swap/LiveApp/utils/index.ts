@@ -1,4 +1,5 @@
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { getFamilySpecificData, getFeePerByte } from "@ledgerhq/live-common/families/bitcoin/types";
 
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -58,9 +59,10 @@ export const getCustomFeesPerFamily = (transaction: Transaction) => {
       };
     }
     case "bitcoin": {
+      // the swap live app is handed the legacy shape
       return {
-        feePerByte: transaction.feePerByte,
-        utxoStrategy: transaction.utxoStrategy,
+        feePerByte: getFeePerByte(transaction),
+        utxoStrategy: getFamilySpecificData(transaction).utxoStrategy,
       };
     }
     default:

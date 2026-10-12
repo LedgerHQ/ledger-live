@@ -7,7 +7,7 @@ export function useInitialTransactionPreparation(params: {
   bridgePending: boolean;
   updateTransactionWithPatch: (patch: Record<string, unknown>) => void;
 }): void {
-  // Trigger initial transaction preparation to fetch fee estimates (networkInfo for Bitcoin).
+  // Trigger initial transaction preparation to fetch fee estimates (fee rates for Bitcoin).
   // Scheduled as a microtask to avoid render-phase side effects while maintaining deterministic order.
   const lastPreparedKeyRef = useRef<string | null>(null);
   const prepareKey = params.shouldPrepare

@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BigNumber } from "bignumber.js";
 import { act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { bitcoinCoinControlConfig } from "@ledgerhq/live-common/families/bitcoin/descriptor/coinControl";
 import { mockContact } from "@domain/entity-contact/schema.mock";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { useSendHeaderModel } from "../useSendHeaderModel";
@@ -45,6 +46,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
     hasMemoForRecipient: jest.fn(() => true),
     getBalanceTypeConfig: jest.fn(() => null),
     getTrackingAttributes: jest.fn(() => ({})),
+    getCoinControlConfig: jest.fn(() => null),
   },
 }));
 jest.mock("../../context/RecipientContactSelectionContext", () => ({
@@ -546,6 +548,7 @@ describe("useSendHeaderModel", () => {
     it("runs COIN_CONTROL cleanup then calls goToPreviousStep on COIN_CONTROL step", () => {
       const { goToPreviousStep } = mockNavigation();
       const { updateTransaction } = mockActions();
+      jest.mocked(sendFeatures.getCoinControlConfig).mockReturnValueOnce(bitcoinCoinControlConfig);
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.COIN_CONTROL,
         currentStepConfig: {},
@@ -563,14 +566,17 @@ describe("useSendHeaderModel", () => {
       const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
       const txWithUtxo = {
         family: "bitcoin",
-        utxoStrategy: {
-          strategy: 0,
-          excludeUTXOs: [{ hash: "a", outputIndex: 0 }],
+        familySpecificData: {
+          rbf: true,
+          utxoStrategy: {
+            strategy: 2,
+            excludeUTXOs: [{ hash: "a", outputIndex: 0 }],
+          },
         },
       };
       expect(updater(txWithUtxo)).toEqual({
         ...txWithUtxo,
-        utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+        familySpecificData: { rbf: true, utxoStrategy: { strategy: 2, excludeUTXOs: [] } },
       });
       expect(goToPreviousStep).toHaveBeenCalled();
     });
@@ -1043,9 +1049,21 @@ describe("useSendHeaderModel", () => {
       expect(calls).toEqual(["resetViewState", "updateTransaction"]);
     });
 
-    it("leaves transaction unchanged when COIN_CONTROL step but tx has no utxoStrategy", () => {
+    it.each([
+      ["the currency has no coin control", null],
+      ["the transaction has no picking strategy", bitcoinCoinControlConfig],
+      [
+        "the descriptor builds no patch",
+        {
+          ...bitcoinCoinControlConfig,
+          getStrategyValue: () => 0,
+          buildStrategyChangePatch: () => null,
+        },
+      ],
+    ])("leaves transaction unchanged on COIN_CONTROL step when %s", (_, coinControlConfig) => {
       const { goToPreviousStep } = mockNavigation();
       const { updateTransaction } = mockActions();
+      jest.mocked(sendFeatures.getCoinControlConfig).mockReturnValueOnce(coinControlConfig);
       (useFlowWizard as jest.Mock).mockReturnValue({
         currentStep: SEND_FLOW_STEP.COIN_CONTROL,
         currentStepConfig: {},

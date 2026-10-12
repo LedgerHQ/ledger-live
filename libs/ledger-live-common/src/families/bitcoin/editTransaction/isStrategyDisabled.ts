@@ -1,6 +1,7 @@
 import type { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { getMinFees } from "./getMinEditTransactionFees";
+import { getFamilySpecificData, getFeePerByte, type Transaction } from "../types";
 
 /**
  * A strategy is disabled if its fee rate is lower than the minimum fee rate
@@ -12,14 +13,20 @@ export const isStrategyDisabled = ({
   feesStrategy,
 }: {
   mainAccount: Account;
-  transaction: { feePerByte?: BigNumber | null; rbf?: boolean };
+  transaction: Pick<Transaction, "familySpecificData" | "feeParameters">;
   feesStrategy: BigNumber;
 }): boolean => {
+  const feePerByte = getFeePerByte(transaction);
   // If RBF is explicitly disabled or the original fee rate is unknown, a replacement tx shouldn't be possible.
-  if (!transaction.rbf || !transaction.feePerByte || !feesStrategy || feesStrategy.lte(0)) {
+  if (
+    !getFamilySpecificData(transaction).rbf ||
+    !feePerByte ||
+    !feesStrategy ||
+    feesStrategy.lte(0)
+  ) {
     return true;
   }
 
-  const minFees = getMinFees({ mainAccount, feePerByte: transaction.feePerByte });
+  const minFees = getMinFees({ mainAccount, feePerByte });
   return feesStrategy.isLessThan(minFees.feePerByte);
 };

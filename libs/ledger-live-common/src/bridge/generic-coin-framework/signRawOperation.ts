@@ -1,6 +1,12 @@
 import { defer, Observable, switchMap, type Subscriber } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
+import type {
+  Account,
+  DeviceId,
+  SignOperationEvent,
+  SignRawOperationArg0,
+  AccountBridge,
+} from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
@@ -89,19 +95,13 @@ async function signRawAndEmit(o: Subscriber<SignOperationEvent>, deps: SignRawDe
 export const genericSignRawOperation =
   (network: string, kind: string) =>
   (signerContext: RawSignerContext): AccountBridge<GenericTransaction>["signRawOperation"] =>
-  ({
-    account,
-    transaction,
-    deviceId,
-  }: {
-    account: Account;
-    transaction: string;
-    deviceId: DeviceId;
-  }): Observable<SignOperationEvent> =>
-    defer(() => getBridgeApi(account.currency, network)).pipe(
+  (arg: SignRawOperationArg0<Account>): Observable<SignOperationEvent> => {
+    const { account, transaction, deviceId } = arg;
+    return defer(() => getBridgeApi(account.currency, network)).pipe(
       switchMap(
         bridgeApi =>
-          bridgeApi.signRawOperation?.({ account, transaction, deviceId }) ??
+          // The whole argument: a family signing a PSBT needs `broadcast` (whether to finalize it).
+          bridgeApi.signRawOperation?.(arg) ??
           new Observable<SignOperationEvent>(o => {
             signRawAndEmit(o, {
               network,
@@ -117,3 +117,4 @@ export const genericSignRawOperation =
           }),
       ),
     );
+  };

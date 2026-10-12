@@ -549,7 +549,7 @@ function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOper
 // Use the framework's memo union — `{ type: memoType, value }` without `kind` is silently dropped by coin modules (LIVE-35735).
 type GenericCoinFrameworkMemo = MemoNotSupported | StringMemo<string> | MapMemo<string, string>;
 type GenericCoinFrameworkTxData = { type: string; value?: unknown };
-type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
+export type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
   memo?: GenericCoinFrameworkMemo;
   data?: GenericCoinFrameworkTxData;
   mode?: StakingOperation;

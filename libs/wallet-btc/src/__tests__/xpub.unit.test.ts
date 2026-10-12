@@ -199,6 +199,7 @@ describe("Xpub", () => {
         crypto: mockCrypto,
         derivationMode: DERIVATION_MODE,
         excludedUTXOs: [],
+        selectFromUtxos: jest.fn(),
         selectUnspentUtxosToUse: jest.fn().mockResolvedValue({
           totalValue: new BigNumber(2000),
           unspentUtxos: [

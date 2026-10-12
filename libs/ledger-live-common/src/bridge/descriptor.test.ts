@@ -364,19 +364,13 @@ describe("sendFeatures", () => {
   it("should expose fee preset options for bitcoin from descriptor", () => {
     const bitcoin = getCryptoCurrencyById("bitcoin");
     const options = sendFeatures.getFeePresetOptions(bitcoin, {
-      networkInfo: {
-        feeItems: {
-          items: [
-            { speed: "slow", feePerByte: new BigNumber(1) },
-            { speed: "medium", feePerByte: new BigNumber(2) },
-          ],
-        },
-      },
+      feeParameters: { feeRates: { slow: "1", medium: "2", fast: "3" } },
     });
 
     expect(options).toEqual([
-      { id: "medium", amount: new BigNumber(2) },
       { id: "slow", amount: new BigNumber(1) },
+      { id: "medium", amount: new BigNumber(2) },
+      { id: "fast", amount: new BigNumber(3) },
     ]);
   });
 

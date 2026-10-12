@@ -3,10 +3,11 @@ import {
   isStuckOperation,
   getStuckAccountAndOperation,
 } from "./editTransaction/operation";
+import { getBitcoinEstimationRecipient } from "@ledgerhq/coin-bitcoin/api";
 import type {
   Transaction as BitcoinTransaction,
   TransactionStatus as BitcoinTransactionStatus,
-} from "@ledgerhq/coin-bitcoin/types";
+} from "./types";
 import type { AccountBridgeExtensions, Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { defaultClearAccount } from "../../bridge/defaultBridgeExtensions";
@@ -22,6 +23,7 @@ import {
 } from "./editTransaction";
 
 const extensions: AccountBridgeExtensions<BitcoinTransaction> = {
+  getEstimationRecipient: account => getBitcoinEstimationRecipient(account.currency.id),
   clearAccount: <A extends AccountLike>(account: A): A =>
     defaultClearAccount(account, bitcoinClearAccount as (account: Account) => void),
   isEditableOperation,

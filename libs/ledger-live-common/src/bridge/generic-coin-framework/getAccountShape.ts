@@ -32,7 +32,7 @@ import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serializat
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { paginateOperations } from "./paginateOperations";
 import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
-import type { OperationCommon } from "./types";
+import type { CoinFrameworkSigner, OperationCommon } from "./types";
 import type {
   Account,
   AccountIdParams,
@@ -456,12 +456,26 @@ export function publicKeyAccountIdBasis(
   return { xpubOrAddress: publicKey || address };
 }
 
-export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
+export function genericGetAccountShape(
+  network: string,
+  kind: string,
+  signer?: CoinFrameworkSigner,
+): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode, rest } = info;
     const coinModuleApi = await getCoinModuleApi(currency.id, kind);
     const context = buildContext(currency.id);
     const bridgeApi = await getBridgeApi(currency, network);
+
+    // The account is not an address: the family builds the whole shape (ADR-065).
+    if (bridgeApi.accountLayer) {
+      if (!signer) throw new Error(`No signer to sync a ${network} account`);
+      return bridgeApi.accountLayer.getAccountShape(info, syncConfig, {
+        api: coinModuleApi,
+        context,
+        signerContext: signer.context,
+      });
+    }
 
     const chainSpecificValidation = bridgeApi.getChainSpecificRules;
     if (chainSpecificValidation) {

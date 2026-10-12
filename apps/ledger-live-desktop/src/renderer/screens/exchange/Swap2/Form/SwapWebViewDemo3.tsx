@@ -13,6 +13,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import {
   convertToAtomicUnit,
   convertToNonAtomicUnit,
+  getBitcoinCustomFeesPatch,
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
@@ -188,7 +189,7 @@ const SwapWebView = ({
           fromAmount: string;
           feeStrategy: string;
           openDrawer: boolean;
-          customFeeConfig: object;
+          customFeeConfig: Record<string, unknown>;
           SWAP_VERSION: string;
           gasLimit?: string;
           data?: string;
@@ -248,7 +249,10 @@ const SwapWebView = ({
           data: (params.data && Buffer.from(params.data.replace("0x", ""), "hex")) || undefined,
           feesStrategy: params.feeStrategy || "medium",
           customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
-          ...transformToBigNumbers(params.customFeeConfig),
+          // bitcoin fee settings are user choices, carried in familySpecificData
+          ...(transaction.family === "bitcoin"
+            ? getBitcoinCustomFeesPatch(transaction, params.customFeeConfig)
+            : transformToBigNumbers(params.customFeeConfig)),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
         const statusInit = status;

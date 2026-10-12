@@ -7,6 +7,7 @@ import type { CoinFrameworkSigner } from "../types";
 const getBridgeApiMock = jest.fn();
 jest.mock("../bridge", () => ({
   getBridgeApi: (...a: unknown[]) => getBridgeApiMock(...a),
+  getBridgeApiResolver: async () => () => ({}),
 }));
 
 jest.mock("../getAccountShape", () => ({

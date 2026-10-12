@@ -86,7 +86,10 @@ describe("Bitcoin EditTransaction StepMethod", () => {
       updater(tx);
     };
     const transitionTo = jest.fn();
-    const patch = { feePerByte: new BigNumber(15) };
+    const patch = {
+      feesStrategy: "custom",
+      familySpecificData: { feePerByte: "15", replaceTxId: "tx-hash" },
+    };
 
     const getEditTransactionPatch = jest.fn().mockResolvedValue(patch);
     const bridge = { updateTransaction: bridgeUpdateTransaction, getEditTransactionPatch };
@@ -116,7 +119,10 @@ describe("Bitcoin EditTransaction StepMethod", () => {
       updater(tx);
     };
     const transitionTo = jest.fn();
-    const patch = { feePerByte: new BigNumber(15) };
+    const patch = {
+      feesStrategy: "custom",
+      familySpecificData: { feePerByte: "15", replaceTxId: "tx-hash" },
+    };
 
     const getEditTransactionPatch = jest.fn().mockResolvedValue(patch);
     const bridge2 = { updateTransaction: bridgeUpdateTransaction, getEditTransactionPatch };
