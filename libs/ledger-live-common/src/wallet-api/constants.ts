@@ -10,14 +10,30 @@ export const FAMILIES_MAPPING_WAPI_TO_LL = {
   elrond: "multiversx",
 } as const;
 
-export const FAMILIES_MAPPING_LL_TO_WAPI = reverseRecord(FAMILIES_MAPPING_WAPI_TO_LL);
+/**
+ * Ledger Wallet families the Wallet API has no family for, presented to live apps as the one
+ * whose transactions and account model they share. Not reversible: a live app's "bitcoin" is
+ * bitcoin, and the adapter for a Zcash account is picked from the account (see converters).
+ */
+const LL_ONLY_FAMILIES_MAPPING_TO_WAPI = {
+  zcash: "bitcoin",
+} as const;
+
+export const FAMILIES_MAPPING_LL_TO_WAPI = {
+  ...reverseRecord(FAMILIES_MAPPING_WAPI_TO_LL),
+  ...LL_ONLY_FAMILIES_MAPPING_TO_WAPI,
+};
 
 /**
  * FIXME
  * This is not robust, we should have an explicit adapter between the wallet API currencies (families) and live currencies (families)
  * For example here, the `ethereum` family on `wallet-api` should be mapped to the `evm` family on LL
  */
-export const WALLET_API_FAMILIES = [...FAMILIES, ...Object.values(FAMILIES_MAPPING_WAPI_TO_LL)];
+export const WALLET_API_FAMILIES = [
+  ...FAMILIES,
+  ...Object.values(FAMILIES_MAPPING_WAPI_TO_LL),
+  ...Object.keys(LL_ONLY_FAMILIES_MAPPING_TO_WAPI),
+];
 
 export const WALLET_API_VERSION = "2.0.0";
 
