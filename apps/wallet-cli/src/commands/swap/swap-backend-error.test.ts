@@ -34,6 +34,14 @@ describe("toSwapBackendError", () => {
     },
   );
 
+  it("reports a 5xx as a temporary outage even when the body carries a known error code", () => {
+    const error = mapped(httpError(500, { errorCode: 500, errorMessage: "internal error" }));
+
+    expect(error).toBeInstanceOf(SwapBackendError);
+    expect(error).toMatchObject({ httpStatus: 500 });
+    expect(error.message).toBe("The swap service is temporarily unavailable, try again later.");
+  });
+
   it("keeps the HTTP error as the cause", () => {
     const original = httpError(401);
 

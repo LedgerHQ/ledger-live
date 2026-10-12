@@ -37,9 +37,11 @@ function backendMessageOf(body: unknown): string | undefined {
 const PROVIDER_REJECTED = "The swap provider rejected the request";
 const SERVICE_UNAVAILABLE = "The swap service is temporarily unavailable, try again later.";
 
-function messageFor(status: number, backendMessage: string | undefined): string {
-  const isTransient = status === 429 || status >= 500;
-  if (isTransient) return SERVICE_UNAVAILABLE;
+function isTransientStatus(status: number): boolean {
+  return status === 429 || status >= 500;
+}
+
+function rejectionMessage(backendMessage: string | undefined): string {
   return backendMessage ? `${PROVIDER_REJECTED}: ${backendMessage}` : `${PROVIDER_REJECTED}.`;
 }
 
@@ -47,7 +49,11 @@ export function toSwapBackendError(error: unknown): Error | undefined {
   const response = httpResponseOf(error);
   if (!response) return undefined;
 
-  const body = response.data;
+  const { status, data: body } = response;
+  if (isTransientStatus(status)) {
+    return new SwapBackendError(SERVICE_UNAVAILABLE, status, { cause: error });
+  }
+
   const backendMessage = backendMessageOf(body);
   if (isRecord(body) && typeof body.errorCode === "number") {
     const mapped = getSwapAPIError(body.errorCode, backendMessage);
@@ -57,7 +63,5 @@ export function toSwapBackendError(error: unknown): Error | undefined {
     }
   }
 
-  return new SwapBackendError(messageFor(response.status, backendMessage), response.status, {
-    cause: error,
-  });
+  return new SwapBackendError(rejectionMessage(backendMessage), status, { cause: error });
 }
