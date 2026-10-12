@@ -18,11 +18,11 @@ import { liveConfig } from "../../config/sharedConfig";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import * as hooks from "./react";
+import type { StakingAccount } from "@ledgerhq/types-live";
 import type {
   CosmosAccount,
   CosmosDelegation,
   CosmosMappedDelegation,
-  CosmosResources,
   CosmosValidatorItem,
   Transaction,
 } from "./types";
@@ -64,9 +64,9 @@ describe("cosmos/react", () => {
       const { account, prepare } = await setup();
       await prepare();
       const { result } = renderHook(() => hooks.useCosmosFamilyMappedDelegations(account));
-      const delegations = account.cosmosResources?.delegations;
+      const delegations = account.stakingResources.delegations;
       invariant(delegations, "cosmos: delegations is required");
-      expect(account.cosmosResources?.delegations?.some(d => d.amount[0] === 0)).toBe(false);
+      expect(account.stakingResources.delegations.some(d => d.amount[0] === 0)).toBe(false);
       expect(Array.isArray(result.current)).toBe(true);
       expect(result.current.length).toBe((delegations as CosmosDelegation[]).length);
       const { code } = getAccountCurrency(account).units[0];
@@ -78,10 +78,20 @@ describe("cosmos/react", () => {
       );
     });
 
+    it("should throw for an account without staking resources", async () => {
+      const { account } = await setup();
+      const { stakingResources: _stakingResources, ...nonStakingAccount } = account;
+      expect(() =>
+        renderHook(() =>
+          hooks.useCosmosFamilyMappedDelegations(nonStakingAccount as CosmosAccount),
+        ),
+      ).toThrow("cosmos staking account required");
+    });
+
     it("should return an empty list when there are no delegations instead of throwing", async () => {
       const { account, prepare } = await setup();
       await prepare();
-      const accountWithoutDelegations: CosmosAccount = {
+      const accountWithoutDelegations: CosmosAccount & StakingAccount = {
         ...account,
         stakingResources: { ...account.stakingResources, delegations: [] },
       };
@@ -107,18 +117,11 @@ describe("cosmos/react", () => {
     it("should return delegations filtered by query as options", async () => {
       const { account, transaction, prepare } = await setup();
       await prepare();
-      invariant(account.cosmosResources, "cosmos: account and cosmos resources required");
-      if (!account.cosmosResources)
-        throw new Error("cosmos: account and cosmos resources required");
-
-      const delegations = account.cosmosResources.delegations || [];
+      const { delegations } = account.stakingResources;
       const newTx = {
         ...transaction,
         mode: "delegate",
-        validators: delegations.map(({ validatorAddress, amount }) => ({
-          address: validatorAddress,
-          amount,
-        })),
+        valAddress: delegations[0].validatorAddress,
       };
       const { result } = renderHook(() =>
         hooks.useCosmosFamilyDelegationsQuerySelector(account, newTx as Transaction),
@@ -132,15 +135,11 @@ describe("cosmos/react", () => {
     it("should return the first delegation as value", async () => {
       const { account, transaction, prepare } = await setup();
       await prepare();
-      invariant(account.cosmosResources, "cosmos: account and cosmos resources required");
-      const delegations = (account.cosmosResources as CosmosResources).delegations || [];
+      const { delegations } = account.stakingResources;
       const newTx = {
         ...transaction,
         mode: "delegate",
-        validators: delegations.map(({ validatorAddress, amount }) => ({
-          address: validatorAddress,
-          amount,
-        })),
+        valAddress: delegations[0].validatorAddress,
       };
       const { result } = renderHook(() =>
         hooks.useCosmosFamilyDelegationsQuerySelector(account, newTx as Transaction),
@@ -150,20 +149,16 @@ describe("cosmos/react", () => {
           .validatorAddress,
       ).toBe(delegations[0].validatorAddress);
     });
-    it("should find delegation by sourceValidator field and return as value for redelegate", async () => {
+    it("should find delegation by valAddress field and return as value for redelegate", async () => {
       const { account, transaction, prepare } = await setup();
       await prepare();
-      invariant(account.cosmosResources, "cosmos: account and cosmos resources required");
-      const delegations = (account.cosmosResources as CosmosResources).delegations || [];
+      const { delegations } = account.stakingResources;
       const sourceValidator = delegations[delegations.length - 1].validatorAddress;
       const newTx = {
         ...transaction,
         mode: "redelegate",
-        validators: delegations.map(({ validatorAddress, amount }) => ({
-          address: validatorAddress,
-          amount,
-        })),
-        sourceValidator,
+        valAddress: sourceValidator,
+        dstValAddress: delegations[0].validatorAddress,
       };
       const { result } = renderHook(() =>
         hooks.useCosmosFamilyDelegationsQuerySelector(account, newTx as Transaction),
@@ -183,7 +178,7 @@ describe("cosmos/react", () => {
         hooks.useCosmosFamilyPreloadData("cosmos"),
       );
       const { validators } = preloadDataResult.current;
-      const delegations = (account.cosmosResources?.delegations || []).map(
+      const delegations = (account.stakingResources.delegations || []).map(
         ({ validatorAddress, amount }) => ({
           address: validatorAddress,
           amount,
@@ -198,9 +193,10 @@ describe("cosmos/react", () => {
     });
   });
   describe("reorderValidators", () => {
-    it("should return a list of Validators with Ledger first", () => {
+    it("should return a list of Validators with Ledger first", async () => {
+      const { account } = await setup();
       const { result } = renderHook(() =>
-        hooks.useLedgerFirstShuffledValidatorsCosmosFamily("cosmos"),
+        hooks.useLedgerFirstShuffledValidatorsCosmosFamily("cosmos", account.stakingResources.validators),
       );
       const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledgerValidator;
       expect(result.current[0].validatorAddress).toBe(LEDGER_VALIDATOR_ADDRESS);
@@ -209,7 +205,7 @@ describe("cosmos/react", () => {
 });
 
 async function setup(): Promise<{
-  account: CosmosAccount;
+  account: CosmosAccount & StakingAccount;
   currencyBridge: CurrencyBridge;
   transaction: Transaction;
   prepare: () => Promise<any>;
@@ -220,7 +216,35 @@ async function setup(): Promise<{
   const a = genAccount(seed, {
     currency,
   });
-  const account = (await genAddingOperationsInAccount(a, 3, seed)) as CosmosAccount;
+  const account = (await genAddingOperationsInAccount(a, 3, seed)) as CosmosAccount &
+    StakingAccount;
+  account.stakingResources.validators = [
+    ...(account.stakingResources.validators ?? []),
+    {
+      validatorAddress: "cosmosvaloper1qe2s0gguw2khnpfteqy8mhsh5qtmmujfa6fas9",
+      name: "Kraken03",
+      commission: 0.1,
+      tokens: "15924774423713",
+      votingPower: 0,
+      estimatedYearlyRewardsRate: 0
+    },
+    {
+      validatorAddress: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+      name: "Ledger by Bitwise",
+      commission: 0.075,
+      tokens: "9751517505298",
+      votingPower: 0,
+      estimatedYearlyRewardsRate: 0
+    },
+    {
+      validatorAddress: "cosmosvaloper18ruzecmqj9pv8ac0gvkgryuc7u004te9rh7w5s",
+      name: "Binance Node",
+      commission: 0.05,
+      tokens: "9307007776417",
+      votingPower: 0,
+      estimatedYearlyRewardsRate: 0
+    }
+  ];
   const currencyBridge = await getCurrencyBridge(currency);
   const bridge = await getAccountBridge(account);
   const transaction = bridge.createTransaction(account);

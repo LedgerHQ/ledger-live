@@ -7,7 +7,7 @@ import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("@ledgerhq/live-common/currencies/index");
@@ -16,8 +16,8 @@ jest.mock("@ledgerhq/live-common/config/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/config/index"),
 }));
 // keep the real factory (real alias + per-chain params) but spy on the calls
-jest.mock("@ledgerhq/coin-cosmos/chain/chain", () => {
-  const actual = jest.requireActual("@ledgerhq/coin-cosmos/chain/chain");
+jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/families/cosmos/chain");
   return { __esModule: true, default: jest.fn(actual.default) };
 });
 
@@ -30,16 +30,18 @@ describe("AccountBalanceSummaryFooter", () => {
     const DELEGATE_UNBONDING_BALANCE_TEXT =
       "unbounding balance for test: " + DELEGATE_UNBONDING_BALANCE;
 
+    const STAKING_RESOURCES = {
+      delegatedBalance: DELEGATE_BALANCE,
+      unbondingBalance: DELEGATE_UNBONDING_BALANCE,
+    };
+
     const ACCOUNT = {
       type: "Account",
-      stakingResources: {
-        delegatedBalance: DELEGATE_BALANCE,
-        unbondingBalance: DELEGATE_UNBONDING_BALANCE,
-      },
+      stakingResources: STAKING_RESOURCES,
       currency: {
         id: "babylon",
       } as unknown as CryptoCurrency,
-    } as CosmosAccount;
+    } as unknown as CosmosAccount;
 
     beforeEach(() => {
       jest.clearAllMocks();
@@ -48,8 +50,8 @@ describe("AccountBalanceSummaryFooter", () => {
     it("should display delegated balance and unbound balance when disableDelegation flag is false and unbound balance is greater than 0", () => {
       mockGetCurrencyConfiguration({ disableDelegation: false });
       mockFormatCurrencyUnit(
-        ACCOUNT.stakingResources.delegatedBalance,
-        ACCOUNT.stakingResources.unbondingBalance,
+        STAKING_RESOURCES.delegatedBalance,
+        STAKING_RESOURCES.unbondingBalance,
       );
 
       render(<AccountBalanceSummaryFooter account={ACCOUNT} />);
@@ -62,8 +64,8 @@ describe("AccountBalanceSummaryFooter", () => {
     it("looks up the undelegation timelock from the chain factory by currency id, not a hardcoded constant", () => {
       mockGetCurrencyConfiguration({ disableDelegation: false });
       mockFormatCurrencyUnit(
-        ACCOUNT.stakingResources.delegatedBalance,
-        ACCOUNT.stakingResources.unbondingBalance,
+        STAKING_RESOURCES.delegatedBalance,
+        STAKING_RESOURCES.unbondingBalance,
       );
 
       render(<AccountBalanceSummaryFooter account={ACCOUNT} />);
@@ -76,14 +78,12 @@ describe("AccountBalanceSummaryFooter", () => {
       unboundBalance => {
         mockGetCurrencyConfiguration({ disableDelegation: false });
 
-        const account = {
-          ...ACCOUNT,
-        } as CosmosAccount;
-        account.stakingResources.unbondingBalance = unboundBalance;
+        const stakingResources = { ...STAKING_RESOURCES, unbondingBalance: unboundBalance };
+        const account = { ...ACCOUNT, stakingResources } as unknown as CosmosAccount;
 
         mockFormatCurrencyUnit(
-          account.stakingResources.delegatedBalance,
-          account.stakingResources.unbondingBalance,
+          stakingResources.delegatedBalance,
+          stakingResources.unbondingBalance,
         );
 
         render(<AccountBalanceSummaryFooter account={account} />);
@@ -97,8 +97,8 @@ describe("AccountBalanceSummaryFooter", () => {
     it("should not display delegated balance and unbound balance when disableDelegation flag is true", () => {
       mockGetCurrencyConfiguration({ disableDelegation: true });
       mockFormatCurrencyUnit(
-        ACCOUNT.stakingResources.delegatedBalance,
-        ACCOUNT.stakingResources.unbondingBalance,
+        STAKING_RESOURCES.delegatedBalance,
+        STAKING_RESOURCES.unbondingBalance,
       );
 
       render(<AccountBalanceSummaryFooter account={ACCOUNT} />);
@@ -121,11 +121,23 @@ describe("AccountBalanceSummaryFooter", () => {
         currency: {
           id: "babylon",
         } as unknown as CryptoCurrency,
-      } as CosmosAccount;
+      } as unknown as CosmosAccount;
 
       expect(() => render(<AccountBalanceSummaryFooter account={account} />)).not.toThrow();
       // no delegated resources → the undelegating section must not be shown
       expect(screen.queryByText("Undelegating")).not.toBeInTheDocument();
+    });
+
+    it("throws when the account has no staking resources", () => {
+      jest.spyOn(console, "error").mockImplementation(() => undefined);
+      const account = {
+        type: "Account",
+        currency: { id: "babylon" } as unknown as CryptoCurrency,
+      } as unknown as CosmosAccount;
+
+      expect(() => render(<AccountBalanceSummaryFooter account={account} />)).toThrow(
+        "cosmos staking account required",
+      );
     });
 
     it("should render the undelegating tooltip without throwing for a testnet id that aliases to a mainnet chain (crypto_org_croeseid)", () => {
@@ -133,18 +145,15 @@ describe("AccountBalanceSummaryFooter", () => {
 
       const account = {
         type: "Account",
-        stakingResources: {
-          delegatedBalance: DELEGATE_BALANCE,
-          unbondingBalance: DELEGATE_UNBONDING_BALANCE,
-        },
+        stakingResources: STAKING_RESOURCES,
         currency: {
           id: "crypto_org_croeseid",
         } as unknown as CryptoCurrency,
-      } as CosmosAccount;
+      } as unknown as CosmosAccount;
 
       mockFormatCurrencyUnit(
-        account.stakingResources.delegatedBalance,
-        account.stakingResources.unbondingBalance,
+        STAKING_RESOURCES.delegatedBalance,
+        STAKING_RESOURCES.unbondingBalance,
       );
 
       expect(() => render(<AccountBalanceSummaryFooter account={account} />)).not.toThrow();

@@ -12,7 +12,7 @@ import { Track } from "@shared/analytics-react";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepId, StepProps, St } from "./types";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account, isStakingAccount, Operation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -91,6 +91,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   } = useBridgeTransaction(bridge, () => {
     const { account, validatorAddress } = params;
     invariant(account, "cosmos: account required");
+    invariant(isStakingAccount(account), "cosmos staking account required");
 
     // preselect validator either one from params or the first one available on the list
     const preselected = account.stakingResources.delegations.find(delegation =>

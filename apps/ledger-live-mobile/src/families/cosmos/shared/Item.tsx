@@ -9,7 +9,7 @@ import type {
 } from "@ledgerhq/live-common/families/cosmos/types";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useTheme } from "@react-navigation/native";
-import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/cosmosBase";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import ArrowRight from "~/icons/ArrowRight";
