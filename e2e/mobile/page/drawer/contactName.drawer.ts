@@ -22,7 +22,6 @@ export default class ContactNameDrawer {
   @Step("Type contact name: {{0}} and confirm")
   async typeAndConfirm(name: string) {
     await typeTextByElement(this.nameInput(), name, false);
-    await waitForFullyVisibleById(`${this.testIDPrefix}-confirm`);
     await tapByElement(this.confirmButton());
   }
 }

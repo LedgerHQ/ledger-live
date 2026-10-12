@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import { Platform, View } from "react-native";
 import {
   ContactDetailActionsMenu,
   ContactsEditSignerMismatchDialog,
@@ -8,11 +7,9 @@ import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-cont
 import {
   ContactsRenameContactDrawer,
   ContactsRenameContactFooter,
-  type ContactsRenameContactFooterProps,
 } from "@features/flow-contacts-edit-contact";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet, useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
-import { resolveKeyboardBottomOffset, useKeyboardVisible } from "~/logic/keyboardVisible";
 import type { ContactDetailEditDeleteFlowProps } from "../../hooks/useContactDetailEditDeleteAdapter";
 
 type ContactDetailEditDeleteSheetsProps = ContactDetailEditDeleteFlowProps;
@@ -53,7 +50,7 @@ export function ContactDetailEditDeleteSheets({
         // Fixed height, so raising the keyboard over the name field cannot re-snap the sheet
         // mid-animation. The two then animate up together.
         snapPoints="fullWithOffset"
-        footer={renameDrawer.isOpen ? <RenameContactFooter {...renameDrawer} /> : null}
+        footer={renameDrawer.isOpen ? <ContactsRenameContactFooter {...renameDrawer} /> : null}
       >
         <RenameContactDrawer {...renameDrawer} />
       </QueuedBottomSheet>
@@ -77,28 +74,6 @@ export function ContactDetailEditDeleteSheets({
       </QueuedBottomSheet>
     </>
   );
-}
-
-function RenameContactFooter(props: ContactsRenameContactFooterProps): React.JSX.Element {
-  const lift = useIosKeyboardLift();
-  return (
-    <View style={{ transform: [{ translateY: -lift }] }}>
-      <ContactsRenameContactFooter {...props} />
-    </View>
-  );
-}
-
-function useIosKeyboardLift(): number {
-  const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
-    eventTiming: "will",
-  });
-  if (Platform.OS !== "ios") return 0;
-  return resolveKeyboardBottomOffset({
-    isKeyboardVisible,
-    keyboardHeight,
-    platform: Platform.OS,
-    version: Platform.Version,
-  });
 }
 
 function RenameContactDrawer(
