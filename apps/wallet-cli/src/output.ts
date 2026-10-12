@@ -16,7 +16,14 @@ import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
-import { spinner, colors, writeStdout, writeStderr, isInteractive } from "./shared/ui";
+import {
+  spinner,
+  colors,
+  writeStdout,
+  writeStderr,
+  isInteractive,
+  stripControlChars,
+} from "./shared/ui";
 import {
   formatSwapQuoteHuman,
   type SwapQuoteLine,
@@ -909,13 +916,16 @@ class HumanCommandOutput implements CommandOutput {
     if (intents.length === 0) {
       writeStdout(colors.dim(`No intents for profile "${profileId}".`));
     } else {
-      const rows = intents.map(i => [
-        i.createdAt.replace("T", " ").slice(0, 16),
-        i.status,
-        i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
-        i.recipient ?? "—",
-        i.id,
-      ]);
+      // Every cell comes from the service, so none may carry terminal control sequences.
+      const rows = intents.map(i =>
+        [
+          i.createdAt.replace("T", " ").slice(0, 16),
+          i.status,
+          i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
+          i.recipient ?? "—",
+          i.id,
+        ].map(stripControlChars),
+      );
       const headers = ["CREATED", "STATUS", "AMOUNT", "TO", "ID"];
       const widths = headers.map((h, c) => Math.max(h.length, ...rows.map(r => r[c].length)));
       const format = (cells: string[]) =>
@@ -924,7 +934,9 @@ class HumanCommandOutput implements CommandOutput {
       for (const row of rows) writeStdout(format(row));
     }
     if (nextCursor) {
-      writeStdout(colors.dim(`More intents: re-run with --cursor ${nextCursor}`));
+      writeStdout(
+        colors.dim(`More intents: re-run with --cursor ${stripControlChars(nextCursor)}`),
+      );
     }
   }
 }

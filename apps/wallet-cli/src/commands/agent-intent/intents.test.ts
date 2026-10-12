@@ -229,6 +229,50 @@ describe("agent-intent intents", () => {
     expect(text).toContain("re-run with --cursor next-token");
   });
 
+  it("strips terminal control characters from service values in the table and hint", async () => {
+    listImpl = async () => ({
+      intents: [
+        record({
+          id: "id-\u001b[2J",
+          status: "signed\u0007",
+          intent: { recipient: "0xfB69\u001b]0;pwned\u0007", amount: "7\u001b[31m" },
+        }),
+      ],
+      nextCursor: "next-\u001b[2Jtoken",
+    });
+
+    await runIntents();
+
+    const text = stdout.join("");
+    for (const sequence of ["\u001b[2J", "\u001b]0", "\u0007", "\u001b[31m"]) {
+      expect(text).not.toContain(sequence);
+    }
+    expect(text).toContain("id-[2J");
+    expect(text).toContain("re-run with --cursor next-[2Jtoken");
+  });
+
+  it.each(["abc", "0x10", "-5", "1.5"])(
+    "lists an intent whose amount %p isn't a base-unit integer, with no display amount",
+    async amount => {
+      listImpl = async () => ({
+        intents: [record({ id: "odd", intent: { amount } }), record({ id: "plain" })],
+      });
+
+      await runIntents({ output: "json" });
+
+      expect(
+        (jsonResult().intents as Array<Record<string, unknown>>).map(i => [
+          i.id,
+          i.amount,
+          i.displayAmount,
+        ]),
+      ).toEqual([
+        ["odd", amount, null],
+        ["plain", "10000000000000000", "0.01 ETH"],
+      ]);
+    },
+  );
+
   it("reports an empty page as success", async () => {
     listImpl = async () => ({ intents: [] });
 

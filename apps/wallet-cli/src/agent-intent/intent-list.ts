@@ -77,9 +77,11 @@ export async function toIntentListEntries(
         ? { type: intent.asset.type, assetReference: intent.asset.assetReference ?? null }
         : null;
       let displayAmount: string | null = null;
-      if (amount !== null && intent.network === "ethereum" && asset?.type === "native") {
+      // BigInt would throw on a malformed amount and fail the whole page, or read hex.
+      const formattable = amount !== null && /^\d+$/.test(amount);
+      if (formattable && intent.network === "ethereum" && asset?.type === "native") {
         displayAmount = `${formatBaseUnits(amount, ETH_DECIMALS)} ETH`;
-      } else if (amount !== null && intent.network === "ethereum" && asset?.assetReference) {
+      } else if (formattable && intent.network === "ethereum" && asset?.assetReference) {
         const known = await token(asset.assetReference);
         if (known) displayAmount = `${formatBaseUnits(amount, known.decimals)} ${known.ticker}`;
       }
