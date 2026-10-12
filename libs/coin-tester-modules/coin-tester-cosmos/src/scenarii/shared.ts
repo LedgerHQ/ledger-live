@@ -101,6 +101,7 @@ export function makeCosmosScenario(
   const coinConfig = {
     lcd: LOCAL_LCD,
     minGasPrice,
+    denom: currency.units[1].code,
     status: { type: "active" as const },
     name: currency.name,
     unit,

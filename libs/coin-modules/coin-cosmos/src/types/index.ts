@@ -313,6 +313,7 @@ export type CosmosCurrencyConfig = {
   lcd: string;
   minGasPrice: number;
   ledgerValidator?: string;
+  denom: string;
 };
 
 export const RETURN_CODES = {
