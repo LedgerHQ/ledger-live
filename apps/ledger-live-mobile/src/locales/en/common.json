@@ -2539,6 +2539,32 @@
       "skipped": "Not yet available for {{ productName }}"
     }
   },
+  "deviceOnboarding": {
+    "checks": {
+      "close": "Close",
+      "idle": {
+        "title": "Check my device",
+        "description": "We'll confirm this device is genuine and that its operating system is up to date.",
+        "cta": "Check my device"
+      },
+      "checking": {
+        "title": "Checking your device",
+        "description": "Keep your device nearby. This can take a moment."
+      },
+      "succeeded": {
+        "title": "Your device is genuine and up to date",
+        "description": "You can continue.",
+        "cta": "Continue"
+      },
+      "updating": {
+        "title": "Updating your device"
+      },
+      "allow": {
+        "title": "Allow the secure connection",
+        "description": "Confirm on your device to continue the check."
+      }
+    }
+  },
   "onboarding": {
     "stepWelcome": {
       "title": "Welcome to Ledger",
