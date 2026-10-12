@@ -72,6 +72,15 @@ export const getBlankOperation = (
   hasFailed: false,
 });
 
+const getFeesOperation = (op: Operation, accountId: string, tx: AptosTransaction): Operation => ({
+  ...op,
+  id: encodeOperationId(accountId, tx.hash, OP_TYPE.OUT),
+  accountId,
+  senders: [getFeesPayer(tx)],
+  value: op.fee,
+  type: "FEES",
+});
+
 export const txsToOps = async (
   info: { address: string },
   id: string,
@@ -123,8 +132,12 @@ export const txsToOps = async (
         ops.push(op);
         opsStaking.push(op);
       } else if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
+        const paidFees = compareAddress(getFeesPayer(tx), address);
         if (coin_id === APTOS_ASSET_ID || coin_id === APTOS_ASSET_FUNGIBLE_ID) {
           ops.push(op);
+          if (paidFees && op.type === OP_TYPE.IN) {
+            ops.push(getFeesOperation(op, id, tx));
+          }
         } else {
           const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
             coin_id.toLowerCase(),
@@ -135,18 +148,8 @@ export const txsToOps = async (
             op.accountId = tokenAccountId;
             opsTokens.push(op);
 
-            if (compareAddress(getFeesPayer(tx), address)) {
-              const accountId = tokenAccountId.split("+")[0];
-              // Create FEES operation with decoded main account ID
-              const feesOp = {
-                ...op,
-                id: encodeOperationId(id, tx.hash, OP_TYPE.OUT),
-                accountId,
-                senders: [getFeesPayer(tx)],
-                value: op.fee,
-                type: "FEES" as const,
-              };
-              ops.push(feesOp);
+            if (paidFees) {
+              ops.push(getFeesOperation(op, tokenAccountId.split("+")[0], tx));
             }
           }
         }

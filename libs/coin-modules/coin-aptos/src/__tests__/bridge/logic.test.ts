@@ -360,7 +360,7 @@ describe("Aptos sync logic", () => {
         });
       });
 
-      it("is an incoming operation of the signing owner when the owner is the recipient", async () => {
+      it("is an incoming operation of the signing owner, plus the gas it paid, when the owner is the recipient", async () => {
         const toOwner = {
           ...multisigTx,
           payload: {
@@ -392,11 +392,17 @@ describe("Aptos sync logic", () => {
 
         const [result] = await txsToOps({ address: "0x31" }, "test_id", [toOwner]);
 
-        expect(result).toHaveLength(1);
+        expect(result).toHaveLength(2);
         expect(result[0]).toMatchObject({
           type: OP_TYPE.IN,
           value: new BigNumber(100),
           senders: ["0x21"],
+        });
+        expect(result[1]).toMatchObject({
+          id: "test_id-0x456-OUT",
+          type: "FEES",
+          value: new BigNumber(20000),
+          senders: ["0x31"],
         });
       });
 
@@ -469,7 +475,7 @@ describe("Aptos sync logic", () => {
           expect(tokenOps[0]).toMatchObject({ type: OP_TYPE.IN, value: new BigNumber(100) });
           expect(ops).toHaveLength(1);
           expect(ops[0]).toMatchObject({
-            id: "test_id-0x456-OUT",
+            id: "main_account_id-0x456-OUT",
             type: "FEES",
             value: new BigNumber(20000),
             accountId: "main_account_id",
