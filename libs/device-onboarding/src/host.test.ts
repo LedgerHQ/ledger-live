@@ -1,28 +1,19 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import {
-  createDelegatedPorts,
   createOnboardingEventLog,
   flattenDeviceOnboardingContext,
   recordOnboardingToolEvent,
+  stampSession,
   stateValueToString,
   toolEvent,
   type HostToolEvent,
 } from "./host";
-import type { DeviceOnboardingPorts } from "./ports";
 import type {
   AvailableFirmwareUpdate,
   DeviceOnboardingContext,
   DeviceOnboardingState,
 } from "./types";
 import { OnboardingStep, RecoveryKeyStatus } from "./types";
-
-function ports(sessionId = "session-1"): DeviceOnboardingPorts {
-  return {
-    openSession: jest.fn(),
-    currentSessionId: () => sessionId,
-    closeSession: jest.fn(async () => undefined),
-  };
-}
 
 function deviceState(step: OnboardingStep): DeviceOnboardingState {
   return {
@@ -39,7 +30,7 @@ function deviceState(step: OnboardingStep): DeviceOnboardingState {
 function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboardingContext {
   return {
     dmk: {} as DeviceOnboardingContext["dmk"],
-    ports: ports(),
+    sessionId: "session-1",
     deviceId: "device",
     deviceModelId: DeviceModelId.NANO_X,
     offerSync: true,
@@ -49,77 +40,58 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
     isOnboarded: false,
     onboardedOnEntry: false,
     genuineVerdict: null,
-    secureConnectionRequested: false,
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
-    firmwareChecked: false,
     checksPaused: false,
-    availableFirmwareUpdate: null,
+    firmware: null,
     currentSetupStep: null,
     ...overrides,
     recoveryKeyBackupOpen: overrides.recoveryKeyBackupOpen ?? false,
   };
 }
 
+function snapshot(
+  overrides: Partial<DeviceOnboardingContext> = {},
+  awaitingApproval = false,
+): Parameters<typeof flattenDeviceOnboardingContext>[0] {
+  return {
+    context: context(overrides),
+    matches: () => awaitingApproval,
+  } as unknown as Parameters<typeof flattenDeviceOnboardingContext>[0];
+}
+
 describe("flattenDeviceOnboardingContext", () => {
-  it("should leave verdict fields empty when the machine has no verdict", () => {
-    const flattened = flattenDeviceOnboardingContext(context());
+  it("should leave verdict and firmware fields empty when the machine has none", () => {
+    const flattened = flattenDeviceOnboardingContext(snapshot());
 
     expect(flattened.isGenuine).toBeNull();
     expect(flattened.verdictMatchesSession).toBeNull();
-    expect(flattened.genuineFailureKind).toBeNull();
-    expect(flattened.isInRecoveryMode).toBeNull();
     expect(flattened.availableFirmwareVersion).toBeNull();
+    expect(flattened.firmwareChecked).toBe(false);
+    expect(flattened.secureConnectionRequested).toBe(false);
   });
 
-  it("should compare the verdict session with the live session id", () => {
-    const flattened = flattenDeviceOnboardingContext(
-      context({
-        lastDeviceState: deviceState(OnboardingStep.Pin),
-        genuineVerdict: { sessionId: "session-1", isGenuine: true },
-        lastGenuineFailure: { kind: "GENUINE_CHECK_FAILED", failure: null },
-        availableFirmwareUpdate: {
-          finalFirmware: { version: "2.3.0" },
-        } as unknown as DeviceOnboardingContext["availableFirmwareUpdate"],
-        currentSetupStep: OnboardingStep.Pin,
-      }),
+  it("should compare the verdict session with the machine session", () => {
+    const matching = flattenDeviceOnboardingContext(
+      snapshot({ genuineVerdict: { sessionId: "session-1", isGenuine: true } }),
+    );
+    const moved = flattenDeviceOnboardingContext(
+      snapshot({ genuineVerdict: { sessionId: "other-session", isGenuine: false } }),
     );
 
-    expect(flattened.verdictMatchesSession).toBe(true);
-    expect(flattened.isGenuine).toBe(true);
-    expect(flattened.genuineFailureKind).toBe("GENUINE_CHECK_FAILED");
-    expect(flattened.currentOnboardingStep).toBe(OnboardingStep.Pin);
+    expect(matching.verdictMatchesSession).toBe(true);
+    expect(moved.verdictMatchesSession).toBe(false);
+  });
+
+  it("should read the offered firmware and the secure connection prompt", () => {
+    const update = { finalFirmware: { version: "2.3.0" } } as AvailableFirmwareUpdate;
+    const flattened = flattenDeviceOnboardingContext(
+      snapshot({ firmware: { kind: "offered", update } }, true),
+    );
+
     expect(flattened.availableFirmwareVersion).toBe("2.3.0");
-    expect(flattened.managerAllowed).toBe(true);
-  });
-
-  it("should leave the verdict unmatched when the live session is missing", () => {
-    const flattened = flattenDeviceOnboardingContext(
-      context({
-        genuineVerdict: { sessionId: "session-1", isGenuine: true },
-        ports: {
-          openSession: jest.fn(),
-          currentSessionId: () => {
-            throw new Error("No desktop onboarding session");
-          },
-          closeSession: jest.fn(async () => undefined),
-        },
-      }),
-    );
-
-    expect(flattened.verdictMatchesSession).toBeNull();
-    expect(flattened.isGenuine).toBe(true);
-  });
-
-  it("should report a mismatch when the verdict belongs to another session", () => {
-    const flattened = flattenDeviceOnboardingContext(
-      context({
-        genuineVerdict: { sessionId: "other-session", isGenuine: false },
-      }),
-    );
-
-    expect(flattened.verdictMatchesSession).toBe(false);
-    expect(flattened.isGenuine).toBe(false);
+    expect(flattened.firmwareChecked).toBe(false);
+    expect(flattened.secureConnectionRequested).toBe(true);
   });
 });
 
@@ -183,7 +155,9 @@ describe("toolEvent", () => {
   });
 
   it("should attach the session id when the session is ready or the transport is lost", () => {
-    expect(toolEvent({ type: "SESSION_READY" }, "3", "session-1").detail).toEqual({
+    expect(
+      toolEvent({ type: "SESSION_READY", sessionId: "session-1" }, "3", "session-1").detail,
+    ).toEqual({
       kind: "session",
       sessionId: "session-1",
     });
@@ -287,25 +261,24 @@ describe("createOnboardingEventLog", () => {
   });
 });
 
-describe("createDelegatedPorts", () => {
-  it("should throw when the host has no session", () => {
-    const delegated = createDelegatedPorts(() => null, "No onboarding session");
-
-    expect(() => delegated.openSession()).toThrow("No onboarding session");
-    expect(() => delegated.currentSessionId()).toThrow("No onboarding session");
+describe("stampSession", () => {
+  it("should give the session events the host's session id", () => {
+    expect(stampSession({ type: "SESSION_READY" }, () => "session-2")).toEqual({
+      type: "SESSION_READY",
+      sessionId: "session-2",
+    });
+    expect(stampSession({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" }, () => "session-2")).toEqual({
+      type: "FIRMWARE_UPDATE_FLOW_CLOSED",
+      sessionId: "session-2",
+    });
   });
 
-  it("should close without a session and forward calls when one exists", async () => {
-    const current = ports();
-    const delegated = createDelegatedPorts(() => current, "No onboarding session");
+  it("should leave the other events as they are", () => {
+    const event = { type: "RETRY" } as const;
 
-    await expect(
-      createDelegatedPorts(() => null, "missing").closeSession(),
-    ).resolves.toBeUndefined();
-    await delegated.openSession();
-    expect(current.openSession).toHaveBeenCalledTimes(1);
-    expect(delegated.currentSessionId()).toBe("session-1");
-    await delegated.closeSession();
-    expect(current.closeSession).toHaveBeenCalledTimes(1);
+    const sessionId = jest.fn(() => "session-2");
+
+    expect(stampSession(event, sessionId)).toBe(event);
+    expect(sessionId).not.toHaveBeenCalled();
   });
 });
