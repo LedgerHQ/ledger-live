@@ -1,25 +1,15 @@
 import React from "react";
 import { Text } from "react-native";
-import { render, screen } from "@tests/test-renderer";
+import { act, render, screen } from "@tests/test-renderer";
+import { useAppAvailability } from "@features/flow-app-availability";
 import { State } from "~/reducers/types";
 import { WaitForAppReady } from "../WaitForAppReady";
 
-jest.mock("@ledgerhq/live-common/api/ofacGeoBlockApi", () => {
-  const actual = jest.requireActual<typeof import("@ledgerhq/live-common/api/ofacGeoBlockApi")>(
-    "@ledgerhq/live-common/api/ofacGeoBlockApi",
-  );
-  return {
-    ...actual,
-    ofacGeoBlockApi: {
-      ...actual.ofacGeoBlockApi,
-      useCheckQuery: jest.fn(() => ({ isLoading: false })),
-    },
-  };
-});
+jest.mock("@features/flow-app-availability", () => ({
+  useAppAvailability: jest.fn(() => ({ status: "available" })),
+}));
 
-const { ofacGeoBlockApi: mockedOfacApi } = jest.requireMock(
-  "@ledgerhq/live-common/api/ofacGeoBlockApi",
-) as { ofacGeoBlockApi: { useCheckQuery: jest.Mock } };
+const mockedUseAppAvailability = jest.mocked(useAppAvailability);
 
 function renderApp(currencyInitialized: boolean, overrideInitialState?: (state: State) => State) {
   return render(
@@ -32,21 +22,22 @@ function renderApp(currencyInitialized: boolean, overrideInitialState?: (state: 
 
 describe("WaitForAppReady", () => {
   beforeEach(() => {
-    mockedOfacApi.useCheckQuery.mockReturnValue({ isLoading: false });
+    mockedUseAppAvailability.mockReturnValue({ status: "available" });
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.useRealTimers();
   });
 
   it("renders children when app is fully ready", () => {
-    // Default test state: remoteFlagsReady=true; OFAC not loading; currency initialized
+    // Default test state: remoteFlagsReady=true; availability settled; currency initialized
     renderApp(true);
     expect(screen.getByText("App is Ready")).toBeTruthy();
   });
 
-  it("hides children while OFAC check is loading", () => {
-    mockedOfacApi.useCheckQuery.mockReturnValue({ isLoading: true });
+  it("hides children while availability check is pending", () => {
+    mockedUseAppAvailability.mockReturnValue({ status: "pending" });
     renderApp(true);
     expect(screen.queryByText("App is Ready")).toBeNull();
   });
@@ -62,5 +53,19 @@ describe("WaitForAppReady", () => {
   it("hides children while currency is not initialized", () => {
     renderApp(false);
     expect(screen.queryByText("App is Ready")).toBeNull();
+  });
+
+  it("renders children after the one second timeout while still waiting", () => {
+    jest.useFakeTimers();
+    mockedUseAppAvailability.mockReturnValue({ status: "pending" });
+
+    renderApp(false);
+    expect(screen.queryByText("App is Ready")).toBeNull();
+
+    act(() => {
+      jest.advanceTimersByTime(1_000);
+    });
+
+    expect(screen.getByText("App is Ready")).toBeTruthy();
   });
 });
