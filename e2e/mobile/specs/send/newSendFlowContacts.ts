@@ -8,6 +8,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import { declareBroadcastAccounts } from "@e2e/helpers/broadcastLock";
 import { importContacts } from "@e2e/bridge/server";
 import { FF_LWM_CONTACTS_ENABLED, FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
@@ -89,6 +90,7 @@ export function runNewSendFlowContactsTest(
   tmsLinks: string[],
   tags: string[],
 ) {
+  declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));

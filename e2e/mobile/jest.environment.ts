@@ -1,4 +1,6 @@
 import "@shared/env";
+import { mkdir, rm, writeFile } from "node:fs/promises";
+import { basename, dirname, join, resolve } from "node:path";
 import {
   cleanupAllSpeculos,
   attachSpeculinhoLogsToAllure,
@@ -22,7 +24,7 @@ import {
   captureNativeViewHierarchy,
   setupEnvironment,
 } from "@e2e/helpers/commonHelpers";
-import { config as detoxConfig } from "detox/internals";
+import { config as detoxConfig, session as detoxSession } from "detox/internals";
 import { Subject } from "rxjs";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
@@ -47,6 +49,13 @@ import type { ServerData } from "~/e2e/bridge/types";
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "@e2e/utils/withTimeout";
 import { armWorkerWatchdog, setWatchdogState, watchdogPhase } from "@e2e/helpers/workerWatchdog";
+import {
+  BROADCAST_DEFERRALS_DIR,
+  BROADCAST_LOCK_WAITS_DIR,
+  deferralMarkerName,
+  SPEC_BROADCAST_LOCK,
+  type SpecBroadcastLock,
+} from "@e2e/utils/broadcastDeferrals";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
@@ -59,6 +68,9 @@ const GET_LOGS_TIMEOUT_MS = BRIDGE_RESPONSE_TIMEOUT + 2_000;
 const retryTestNames = process.env.E2E_RETRY_TEST_NAMES
   ? new Set<string>(JSON.parse(process.env.E2E_RETRY_TEST_NAMES))
   : undefined;
+
+// Unlike E2E_RETRY_TEST_NAMES, also set when Detox retries whole files.
+const isDetoxRetry = () => (detoxSession.testSessionIndex ?? 0) > 0;
 
 /**
  * Mark every test that is not in `names` (so passed in the previous attempt) as skipped.
@@ -99,6 +111,23 @@ function failureLeavesDetoxBusy(failure: unknown): boolean {
   const message = failure instanceof Error ? failure.message : String(failure);
   return JEST_TIMEOUT_PATTERN.test(message) || isUnansweredDetoxRequestError(failure);
 }
+
+const skipWholeFile = (root: Circus.DescribeBlock) => skipToRetrySet(root, new Set());
+
+const hasEnabledTest = (block: Circus.DescribeBlock): boolean =>
+  block.mode !== "skip" &&
+  block.children.some(child =>
+    child.type === "describeBlock"
+      ? hasEnabledTest(child)
+      : child.mode !== "skip" && child.mode !== "todo",
+  );
+
+const isSpecBroadcastLock = (value: unknown): value is SpecBroadcastLock =>
+  typeof value === "object" &&
+  value !== null &&
+  "tryLock" in value &&
+  "release" in value &&
+  "takeWaitedMs" in value;
 
 async function captureFailureDiagnostics(
   mergedFeatureFlags: OptionalFeatureMap | undefined,
@@ -196,6 +225,7 @@ function installSpeculosTerminationHandlers() {
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
   declare readonly testPath: string;
+  private deferred = false;
 
   async setup() {
     await armWorkerWatchdog();
@@ -375,6 +405,46 @@ export default class TestEnvironment extends DetoxEnvironment {
     setWatchdogState({ spec: "<idle>", phase: "idle" });
   }
 
+  private specBroadcastLock(): SpecBroadcastLock | undefined {
+    const specLock: unknown = Reflect.get(this.global, SPEC_BROADCAST_LOCK);
+    return isSpecBroadcastLock(specLock) ? specLock : undefined;
+  }
+
+  private specMarker(dir: string) {
+    // Detox makes testPath relative to the worker's cwd; markers are looked up by absolute path.
+    const specPath = resolve(this.testPath);
+    return { specPath, path: join(__dirname, dir, deferralMarkerName(specPath)) };
+  }
+
+  /** Skips the whole file, before the app starts, when its broadcast accounts are busy. */
+  private async deferIfBroadcastAccountsBusy(state: Circus.State): Promise<boolean> {
+    const specLock = this.specBroadcastLock();
+    if (!specLock || !hasEnabledTest(state.rootDescribeBlock)) return false;
+    try {
+      if ((await specLock.tryLock()) !== "busy") return false;
+    } catch (error) {
+      console.warn(`[broadcastLock] could not check the spec's accounts: ${sanitizeError(error)}`);
+      return false;
+    }
+    skipWholeFile(state.rootDescribeBlock);
+    const marker = this.specMarker(BROADCAST_DEFERRALS_DIR);
+    await mkdir(dirname(marker.path), { recursive: true });
+    await writeFile(marker.path, marker.specPath);
+    console.warn(
+      `[broadcastLock] ${basename(this.testPath)} moved to a later pass: its broadcast accounts are busy`,
+    );
+    return true;
+  }
+
+  /** Only the first attempt is timed: Detox retries write no results. */
+  private async recordBroadcastLockWait() {
+    const waitedMs = this.specBroadcastLock()?.takeWaitedMs() ?? 0;
+    if (isDetoxRetry() || this.deferred || waitedMs === 0) return;
+    const marker = this.specMarker(BROADCAST_LOCK_WAITS_DIR);
+    await mkdir(dirname(marker.path), { recursive: true });
+    await writeFile(marker.path, JSON.stringify({ spec: marker.specPath, waitedMs }));
+  }
+
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
     const phase = watchdogPhase(event, state);
     if (phase) setWatchdogState({ phase });
@@ -391,22 +461,45 @@ export default class TestEnvironment extends DetoxEnvironment {
       await captureFailureDiagnostics(this.global.mergedFeatureFlags, event.error);
     }
 
-    if (event.name === "run_start") {
-      if (retryTestNames) {
-        const kept = skipToRetrySet(state.rootDescribeBlock, retryTestNames);
-        // Detox only retries spec files that failed, and narrowing is all-or-nothing, so every
-        // retried file contributed at least one name. Matching none means the names and the tree
-        // disagree — fail loudly rather than skip the whole file and report a green pass.
-        if (kept === 0) {
-          throw new Error(
-            `E2E_RETRY_TEST_NAMES matched no test in this file, so the retry would run nothing. ` +
-              `Expected one of: ${[...retryTestNames].join(" | ")}`,
-          );
-        }
+    if (event.name === "run_start") await this.onRunStart(state);
+    if (event.name === "run_finish") await this.onRunFinish();
+  }
+
+  private async onRunStart(state: Circus.State) {
+    this.specBroadcastLock()?.takeWaitedMs();
+    this.deferred =
+      !isDetoxRetry() &&
+      process.env.E2E_BROADCAST_LOCK_DEFER === "1" &&
+      (await this.deferIfBroadcastAccountsBusy(state));
+    // A marker left by an earlier attempt of this file in the same Detox run must not outlive it.
+    if (!this.deferred) await rm(this.specMarker(BROADCAST_DEFERRALS_DIR).path, { force: true });
+    if (retryTestNames) {
+      const kept = skipToRetrySet(state.rootDescribeBlock, retryTestNames);
+      // Detox only retries spec files that failed, and narrowing is all-or-nothing, so every
+      // retried file contributed at least one name. Matching none means the names and the tree
+      // disagree — fail loudly rather than skip the whole file and report a green pass.
+      if (kept === 0) {
+        throw new Error(
+          `E2E_RETRY_TEST_NAMES matched no test in this file, so the retry would run nothing. ` +
+            `Expected one of: ${[...retryTestNames].join(" | ")}`,
+        );
       }
-      resetStderrCaptureForCurrentTest();
-      installConsoleCapture();
-      await logMemoryUsage();
+    }
+    resetStderrCaptureForCurrentTest();
+    installConsoleCapture();
+    await logMemoryUsage();
+  }
+
+  private async onRunFinish() {
+    try {
+      await this.specBroadcastLock()?.release();
+    } catch (error) {
+      console.warn(`[broadcastLock] ${sanitizeError(error)}`);
+    }
+    try {
+      await this.recordBroadcastLockWait();
+    } catch (error) {
+      console.warn(`[broadcastLock] could not record the lock wait: ${sanitizeError(error)}`);
     }
   }
 }
