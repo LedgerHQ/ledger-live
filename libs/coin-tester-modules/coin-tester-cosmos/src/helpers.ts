@@ -37,10 +37,8 @@ export interface CosmosBridges {
 /**
  * Map a GenericTransaction onto the legacy Cosmos transaction.
  *
- * The legacy `delegate` build path reads `transaction.amount`, but undelegate/
- * redelegate/claimReward/compoundReward read `validators[0].amount` — so both are
- * set to the stake amount. Redelegate: `sourceValidator` = source (`valAddress`),
- * `validators[0].address` = destination (`dstValAddress`).
+ * Staking modes carry the validator in `valAddress`; redelegate also carries the
+ * destination in `dstValAddress`.
  */
 export function genericToCosmosTransaction(gt: GenericTransaction): CosmosTransaction {
   const amount = gt.amount ?? new BigNumber(0);
@@ -60,7 +58,6 @@ export function genericToCosmosTransaction(gt: GenericTransaction): CosmosTransa
       ...base,
       mode: "send",
       recipient: gt.recipient,
-      validators: [],
     } as unknown as CosmosTransaction;
 
   if (mode === "redelegate")
@@ -68,8 +65,8 @@ export function genericToCosmosTransaction(gt: GenericTransaction): CosmosTransa
       ...base,
       mode,
       recipient: "",
-      sourceValidator: gt.valAddress,
-      validators: [{ address: gt.dstValAddress ?? "", amount }],
+      valAddress: gt.valAddress ?? "",
+      dstValAddress: gt.dstValAddress ?? "",
     } as unknown as CosmosTransaction;
 
   // delegate / undelegate / claimReward / compoundReward
@@ -77,8 +74,7 @@ export function genericToCosmosTransaction(gt: GenericTransaction): CosmosTransa
     ...base,
     mode,
     recipient: "",
-    sourceValidator: undefined,
-    validators: [{ address: gt.valAddress ?? "", amount }],
+    valAddress: gt.valAddress ?? "",
   } as unknown as CosmosTransaction;
 }
 

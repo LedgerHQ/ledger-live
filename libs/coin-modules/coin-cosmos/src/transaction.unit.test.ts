@@ -4,6 +4,9 @@ import { BigNumber } from "bignumber.js";
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
 import type { Transaction, TransactionRaw } from "./types";
 
+const SOURCE = "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2";
+const DESTINATION = "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d";
+
 const baseRaw = {
   family: "cosmos",
   mode: "send",
@@ -14,13 +17,6 @@ const baseRaw = {
   fees: "0.123456",
   gas: "7890",
   memo: "test memo",
-  sourceValidator: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-  validators: [
-    {
-      address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-      amount: "12345.67890",
-    },
-  ],
   amount: new BigNumber("1000000"),
   recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
   recipientDomain: {
@@ -29,8 +25,6 @@ const baseRaw = {
     address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
     type: "forward",
   },
-  valAddress: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-  dstValAddress: "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d",
 } as unknown as TransactionRaw;
 
 const baseTransaction = {
@@ -45,13 +39,6 @@ const baseTransaction = {
   memo: "test memo",
   memoType: "text",
   memoValue: "test memo",
-  sourceValidator: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-  validators: [
-    {
-      address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-      amount: "12345.67890",
-    },
-  ],
   amount: new BigNumber("1000000"),
   recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
   recipientDomain: {
@@ -60,15 +47,13 @@ const baseTransaction = {
     address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
     type: "forward",
   },
-  valAddress: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-  dstValAddress: "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d",
 } as unknown as Transaction;
 
 const currency = getCryptoCurrencyById("cosmos");
 const account = { type: "Account", currency } as unknown as Account;
 
 describe("fromTransactionRaw", () => {
-  it("should convert into a transaction", () => {
+  it("should convert a send transaction without validator fields", () => {
     const result = fromTransactionRaw(baseRaw);
     expect(result).toEqual({
       family: "cosmos",
@@ -82,13 +67,6 @@ describe("fromTransactionRaw", () => {
       memo: "test memo",
       memoType: "text",
       memoValue: "test memo",
-      sourceValidator: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-      validators: [
-        {
-          address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-          amount: new BigNumber("12345.67890"),
-        },
-      ],
       amount: new BigNumber("1000000"),
       recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
       recipientDomain: {
@@ -97,9 +75,78 @@ describe("fromTransactionRaw", () => {
         address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
         type: "forward",
       },
-      valAddress: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-      dstValAddress: "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d",
     });
+  });
+
+  it("ignores validator fields on a send transaction", () => {
+    const result = fromTransactionRaw({ ...baseRaw, valAddress: SOURCE, sourceValidator: SOURCE });
+    expect(result).not.toHaveProperty("valAddress");
+    expect(result).not.toHaveProperty("dstValAddress");
+    expect(result).not.toHaveProperty("validators");
+    expect(result).not.toHaveProperty("sourceValidator");
+  });
+
+  it("keeps valAddress on a staking transaction", () => {
+    const result = fromTransactionRaw({ ...baseRaw, mode: "delegate", valAddress: SOURCE });
+    expect(result).toMatchObject({ mode: "delegate", valAddress: SOURCE });
+    expect(result).not.toHaveProperty("dstValAddress");
+  });
+
+  it("keeps valAddress and dstValAddress on a redelegate transaction", () => {
+    const result = fromTransactionRaw({
+      ...baseRaw,
+      mode: "redelegate",
+      valAddress: SOURCE,
+      dstValAddress: DESTINATION,
+    });
+    expect(result).toMatchObject({
+      mode: "redelegate",
+      valAddress: SOURCE,
+      dstValAddress: DESTINATION,
+    });
+  });
+
+  it("migrates the legacy validators of a staking transaction to valAddress", () => {
+    const result = fromTransactionRaw({
+      ...baseRaw,
+      mode: "undelegate",
+      validators: [{ address: SOURCE, amount: "12345.6789" }],
+    });
+    expect(result).toMatchObject({ mode: "undelegate", valAddress: SOURCE });
+    expect(result).not.toHaveProperty("validators");
+  });
+
+  it("falls back to an empty valAddress when a legacy staking transaction has no validator", () => {
+    expect(fromTransactionRaw({ ...baseRaw, mode: "delegate" })).toMatchObject({ valAddress: "" });
+    expect(
+      fromTransactionRaw({ ...baseRaw, mode: "delegate", validators: [] } as TransactionRaw),
+    ).toMatchObject({ valAddress: "" });
+  });
+
+  it("migrates the legacy sourceValidator and validators of a redelegate transaction", () => {
+    const result = fromTransactionRaw({
+      ...baseRaw,
+      mode: "redelegate",
+      sourceValidator: SOURCE,
+      validators: [{ address: DESTINATION, amount: "1" }],
+    });
+    expect(result).toMatchObject({
+      mode: "redelegate",
+      valAddress: SOURCE,
+      dstValAddress: DESTINATION,
+    });
+    expect(result).not.toHaveProperty("sourceValidator");
+    expect(result).not.toHaveProperty("validators");
+  });
+
+  it("falls back to empty addresses when a legacy redelegate transaction has none", () => {
+    expect(fromTransactionRaw({ ...baseRaw, mode: "redelegate" })).toMatchObject({
+      valAddress: "",
+      dstValAddress: "",
+    });
+    expect(
+      fromTransactionRaw({ ...baseRaw, mode: "redelegate", validators: [] } as TransactionRaw),
+    ).toMatchObject({ dstValAddress: "" });
   });
 
   it("carries memoType and memoValue over when present", () => {
@@ -131,13 +178,19 @@ describe("fromTransactionRaw", () => {
     expect(result.memoType).toEqual("text");
   });
 
-  it("omits memo fields when memo, memoValue and memoType are all null", () => {
+  it("keeps null memoValue and memoType as null, like the generic createTransaction makes them", () => {
     const result = fromTransactionRaw({
       ...baseRaw,
       memo: null,
       memoValue: null,
       memoType: null,
     } as unknown as TransactionRaw);
+    expect(result.memoType).toBeNull();
+    expect(result.memoValue).toBeNull();
+  });
+
+  it("adds no memoType or memoValue when an old raw transaction only has a null memo", () => {
+    const result = fromTransactionRaw({ ...baseRaw, memo: null } as unknown as TransactionRaw);
     expect(result).not.toHaveProperty("memoType");
     expect(result).not.toHaveProperty("memoValue");
   });
@@ -148,21 +201,15 @@ describe("fromTransactionRaw", () => {
       networkInfo: undefined,
       fees: null,
       gas: null,
-      validators: undefined,
-      valAddress: undefined,
-      dstValAddress: undefined,
     } as unknown as TransactionRaw);
     expect(result.networkInfo).toBeUndefined();
     expect(result.fees).toBeNull();
     expect(result.gas).toBeNull();
-    expect(result.validators).toEqual([]);
-    expect(result).not.toHaveProperty("valAddress");
-    expect(result).not.toHaveProperty("dstValAddress");
   });
 });
 
 describe("toTransactionRaw", () => {
-  it("should convert into a transaction raw", () => {
+  it("should convert a send transaction into a raw without validator fields", () => {
     const result = toTransactionRaw(baseTransaction);
     expect(result).toEqual({
       family: "cosmos",
@@ -176,13 +223,6 @@ describe("toTransactionRaw", () => {
       memo: "test memo",
       memoType: "text",
       memoValue: "test memo",
-      sourceValidator: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-      validators: [
-        {
-          address: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-          amount: "12345.67890",
-        },
-      ],
       amount: "1000000",
       recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
       recipientDomain: {
@@ -191,9 +231,28 @@ describe("toTransactionRaw", () => {
         address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
         type: "forward",
       },
-      valAddress: "cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-      dstValAddress: "cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d",
     });
+  });
+
+  it("writes only valAddress for a staking transaction", () => {
+    const result = toTransactionRaw({ ...baseTransaction, mode: "delegate", valAddress: SOURCE });
+    expect(result.valAddress).toBe(SOURCE);
+    expect(result).not.toHaveProperty("dstValAddress");
+    expect(result).not.toHaveProperty("validators");
+    expect(result).not.toHaveProperty("sourceValidator");
+  });
+
+  it("writes valAddress and dstValAddress for a redelegate transaction", () => {
+    const result = toTransactionRaw({
+      ...baseTransaction,
+      mode: "redelegate",
+      valAddress: SOURCE,
+      dstValAddress: DESTINATION,
+    });
+    expect(result.valAddress).toBe(SOURCE);
+    expect(result.dstValAddress).toBe(DESTINATION);
+    expect(result).not.toHaveProperty("validators");
+    expect(result).not.toHaveProperty("sourceValidator");
   });
 
   it("carries memoType and memoValue over when present", () => {
@@ -222,16 +281,10 @@ describe("toTransactionRaw", () => {
       networkInfo: undefined,
       fees: null,
       gas: null,
-      validators: undefined,
-      valAddress: undefined,
-      dstValAddress: undefined,
     } as unknown as Transaction);
     expect(result.networkInfo).toBeUndefined();
     expect(result.fees).toBeNull();
     expect(result.gas).toBeNull();
-    expect(result.validators).toEqual([]);
-    expect(result).not.toHaveProperty("valAddress");
-    expect(result).not.toHaveProperty("dstValAddress");
   });
 });
 
@@ -255,47 +308,26 @@ describe("formatTransaction", () => {
     expect(formatted).not.toContain("memo=");
   });
 
-  it("formats the legacy validators/sourceValidator shape", () => {
+  it("prints the destination and source validators on redelegate", () => {
     const transaction: Transaction = {
       ...baseTransaction,
       mode: "redelegate",
-      sourceValidator: "cosmosvaloper1source",
-      validators: [{ address: "cosmosvaloper1dest", amount: new BigNumber(1000) }],
-    };
-    delete transaction.dstValAddress;
-    delete transaction.valAddress;
-
-    const formatted = formatTransaction(transaction, account);
-
-    expect(formatted).toContain("0.001 -> cosmosvaloper1dest");
-    expect(formatted).toContain("source validator=cosmosvaloper1source");
-  });
-
-  it("resolves validators/sourceValidator via valAddress/dstValAddress on redelegate", () => {
-    const transaction: Transaction = {
-      ...baseTransaction,
-      mode: "redelegate",
-      sourceValidator: null,
-      validators: [],
+      valAddress: SOURCE,
+      dstValAddress: DESTINATION,
     };
 
     const formatted = formatTransaction(transaction, account);
 
-    expect(formatted).toContain("1 -> cosmosvaloper1n229vhepft6wnkt5tjpwmxdmcnfz55jv3vp77d");
-    expect(formatted).toContain(
-      "source validator=cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-    );
+    expect(formatted).toContain(`1 -> ${DESTINATION}`);
+    expect(formatted).toContain(`source validator=${SOURCE}`);
   });
 
-  it("resolves a single validator via valAddress on delegate (no dstValAddress)", () => {
+  it("prints a single validator on delegate", () => {
     const transaction: Transaction = {
       ...baseTransaction,
       mode: "delegate",
-      validators: [],
       valAddress: "cosmosvaloper1single",
-      sourceValidator: undefined,
     };
-    delete transaction.dstValAddress;
 
     const formatted = formatTransaction(transaction, account);
 
@@ -303,30 +335,95 @@ describe("formatTransaction", () => {
     expect(formatted).not.toContain("source validator=");
   });
 
-  it("omits the source validator line when there is none", () => {
-    const transaction: Transaction = {
-      ...baseTransaction,
-      mode: "send",
-      validators: [],
-      sourceValidator: undefined,
-    };
-
-    const formatted = formatTransaction(transaction, account);
-
-    expect(formatted).not.toContain("source validator=");
-  });
-
-  it("should format correctly a transaction", () => {
+  it("prints no validator on send", () => {
     const formatted = formatTransaction(baseTransaction, account);
-    expect(formatted).toContain("SEND  1 ATOM");
+
+    expect(formatted).toMatch(/SEND\s+1\s+ATOM/);
     expect(formatted).toContain(
       "TO cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5lfh8mc2yatfu6jg3vcy94rk6",
     );
-    expect(formatted).toContain("1 -> cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2");
-    expect(formatted).toContain(
-      "source validator=cosmosvaloper1gf3dm2mvqhymts6ksrstlyuu2m8pw6dhfp9md2",
-    );
+    expect(formatted).not.toContain("->");
+    expect(formatted).not.toContain("source validator=");
     expect(formatted).toContain("with fees=0");
     expect(formatted).toContain("memo=test memo");
+  });
+});
+
+describe("transaction raw round trip", () => {
+  const roundTrip = (t: Transaction) => fromTransactionRaw(toTransactionRaw(t));
+
+  // What the generic `createTransaction` gives for cosmos: no `gas`, no `memo`, null memo fields.
+  const genericEmpty = {
+    family: "cosmos",
+    mode: "send",
+    amount: new BigNumber(0),
+    recipient: "",
+    fees: null,
+    useAllAmount: false,
+    memoType: null,
+    memoValue: null,
+    networkInfo: null,
+  } as unknown as Transaction;
+
+  // What the legacy `createTransaction` gives.
+  const legacyEmpty = {
+    family: "cosmos",
+    mode: "send",
+    amount: new BigNumber(0),
+    recipient: "",
+    fees: null,
+    gas: null,
+    useAllAmount: false,
+    networkInfo: null,
+    memo: null,
+  } as unknown as Transaction;
+
+  it("gives back an empty transaction made by the generic bridge", () => {
+    expect(roundTrip(genericEmpty)).toEqual(genericEmpty);
+  });
+
+  it("keeps the null memo fields of the generic transaction as null", () => {
+    const result = roundTrip(genericEmpty);
+
+    expect(result.memoType).toBeNull();
+    expect(result.memoValue).toBeNull();
+    expect(result.gas).toBeUndefined();
+  });
+
+  it("gives back an empty transaction made by the legacy bridge", () => {
+    expect(roundTrip(legacyEmpty)).toEqual(legacyEmpty);
+  });
+
+  it("gives back a transaction with a memo, a gas value and fees", () => {
+    const transaction = {
+      ...genericEmpty,
+      amount: new BigNumber(1000),
+      recipient: "cosmos1recipient",
+      fees: new BigNumber(500),
+      gas: new BigNumber(200000),
+      memoType: "text",
+      memoValue: "invoice 42",
+    } as unknown as Transaction;
+
+    expect(roundTrip(transaction)).toEqual(transaction);
+  });
+
+  it("gives back a staking transaction", () => {
+    const transaction = {
+      ...genericEmpty,
+      mode: "redelegate",
+      valAddress: SOURCE,
+      dstValAddress: DESTINATION,
+    } as unknown as Transaction;
+
+    expect(roundTrip(transaction)).toEqual(transaction);
+  });
+
+  it("still reads a raw transaction that only has the old memo field", () => {
+    const raw = { ...baseRaw, memo: "old memo" } as TransactionRaw;
+    const result = fromTransactionRaw(raw);
+
+    expect(result.memoType).toBe("text");
+    expect(result.memoValue).toBe("old memo");
   });
 });
