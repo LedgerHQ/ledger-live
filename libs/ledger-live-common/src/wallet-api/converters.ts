@@ -8,7 +8,6 @@ import {
   type AccountNamesState,
 } from "@domain/entity-account-name";
 import { loadWalletApiAdapterForFamily } from "../coin-modules/registry";
-import { resolveFamily } from "../bridge/zcashRouting";
 import type { Transaction } from "../coin-modules/transaction-types";
 import { isTokenAccount } from "../account";
 import { getAccountBridge } from "../bridge";
@@ -124,7 +123,7 @@ export const getWalletAPITransactionSignFlowInfos = async ({
   // ("bitcoin" for Zcash too). The adapter is the one of the family that serves the account,
   // whenever the transaction's family is that family's Wallet API name.
   const servedFamily =
-    isTokenAccount(account) || !account.currency ? undefined : resolveFamily(account.currency);
+    isTokenAccount(account) || !account.currency ? undefined : account.currency.family;
   const servedFamilyWapiName = servedFamily
     ? (FAMILIES_MAPPING_LL_TO_WAPI[servedFamily] ?? servedFamily)
     : undefined;

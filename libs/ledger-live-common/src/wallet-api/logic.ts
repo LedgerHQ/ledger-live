@@ -24,7 +24,6 @@ import {
 import { Transaction } from "../coin-modules/transaction-types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
-import { resolveFamily } from "../bridge/zcashRouting";
 import { Exchange } from "../exchange/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { type AccountNamesState } from "@domain/entity-account-name";
@@ -125,9 +124,9 @@ export async function signTransactionLogic(
     const parentAccount = getParentAccount(account, accounts);
 
     // The family of the bridge that serves the account, which the converted transaction
-    // carries: `zcash` for Zcash, whose currency family is `bitcoin`.
+    // carries: `zcash` for Zcash, whose live apps name it `bitcoin`.
     const accountCurrency = isTokenAccount(account) ? parentAccount?.currency : account.currency;
-    const accountFamily = accountCurrency && resolveFamily(accountCurrency);
+    const accountFamily = accountCurrency?.family;
 
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = tokenCurrency
@@ -673,7 +672,7 @@ export async function completeExchangeLogic(
 
   const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-  const mainFromAccountFamily = resolveFamily(mainFromAccount.currency);
+  const mainFromAccountFamily = mainFromAccount.currency.family;
 
   const { liveTx } = await getWalletAPITransactionSignFlowInfos({
     walletApiTransaction: transaction,

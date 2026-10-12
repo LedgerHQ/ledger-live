@@ -13,7 +13,7 @@ const { OperationDetailsExtra, addressCell } = operationDetails;
 
 // Preload so useLLDCoinFamily resolves synchronously on first render instead of suspending.
 beforeAll(async () => {
-  await importLLDCoinFamily("bitcoin");
+  await Promise.all([importLLDCoinFamily("bitcoin"), importLLDCoinFamily("zcash")]);
 });
 
 const mockT = ((key: string) => key) as TFunction;
