@@ -408,7 +408,7 @@
     "jotai-family": "1.0.1",
     "json-rpc-2.0": "^0.2.19",
     "lodash": "catalog:",
-    "minimatch": "^5.1.0",
+    "minimatch": "^10.0.0",
     "numeral": "^2.0.6",
     "pako": "^2.0.4",
     "prando": "^6.0.1",
