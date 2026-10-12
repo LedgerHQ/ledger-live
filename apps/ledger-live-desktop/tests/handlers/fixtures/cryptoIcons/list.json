@@ -194,9 +194,6 @@
   "elrond/esdt/555344432d633736663166": {
     "icon": "USDC.png"
   },
-  "moonbeam/erc20/usd_coin": {
-    "icon": "USDC.png"
-  },
   "optimism/erc20/usd_coin": {
     "icon": "USDC.png"
   },
@@ -300,9 +297,6 @@
     "icon": "MATIC.png"
   },
   "ethereum/erc20/matic": {
-    "icon": "MATIC.png"
-  },
-  "moonbeam/erc20/matic": {
     "icon": "MATIC.png"
   },
   "polygon/erc20/matic_token": {
@@ -728,9 +722,6 @@
   "fantom/erc20/frax": {
     "icon": "FRAX.png"
   },
-  "moonbeam/erc20/frax": {
-    "icon": "FRAX.png"
-  },
   "optimism/erc20/frax": {
     "icon": "FRAX.png"
   },
@@ -858,9 +849,6 @@
     "icon": "FRXETH.png"
   },
   "fantom/erc20/frax_ether": {
-    "icon": "FRXETH.png"
-  },
-  "moonbeam/erc20/frax_ether": {
     "icon": "FRXETH.png"
   },
   "optimism/erc20/frax_ether": {
@@ -1202,9 +1190,6 @@
   "linea/erc20/frax_share": {
     "icon": "FXS.png"
   },
-  "moonriver/erc20/frax_share_0x6f1d1ee50846fcbc3de91723e61cb68cfa6d0e98": {
-    "icon": "FXS.png"
-  },
   "polygon/erc20/frax_share": {
     "icon": "FXS.png"
   },
@@ -1219,12 +1204,6 @@
   },
   "ethereum/erc20/gamma": {
     "icon": "GAMMA.png"
-  },
-  "bsc/bep20/moonbeam": {
-    "icon": "GLMR.png"
-  },
-  "moonbeam": {
-    "icon": "GLMR.png"
   },
   "arbitrum/erc20/gmx": {
     "icon": "GMX.png"

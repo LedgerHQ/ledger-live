@@ -53,8 +53,6 @@ function declareDep(name: string, dep: string): void {
   ["kUSD", "Ethereum"],
   ["Lido", "Ethereum"],
   ["Morpho", "Ethereum"],
-  ["Moonbeam", "Ethereum"],
-  ["Moonriver", "Ethereum"],
   ["Nested", "Ethereum"],
   ["Oasys", "Ethereum"],
   ["OlympusDAO", "Ethereum"],
