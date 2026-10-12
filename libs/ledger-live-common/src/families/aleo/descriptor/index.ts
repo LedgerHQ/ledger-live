@@ -1,7 +1,7 @@
 import type { CoinDescriptor } from "../../../bridge/descriptor/types";
 import { TRANSACTION_TYPE } from "../constants";
 import type { Transaction as AleoTransaction } from "../types";
-import { aleoBalanceTypeConfig, isAleoTransaction } from "./balanceType";
+import { aleoBalanceTypeConfig, isAleoFlowTransaction } from "./balanceType";
 
 type AleoTransferFlow =
   | "public-to-public"
@@ -41,7 +41,7 @@ const PRIVACY_BY_MODE: Partial<Record<AleoTransaction["mode"], AleoPrivacyAttrib
 };
 
 export function getPrivacyAttributes(transaction: unknown): AleoPrivacyAttributes | undefined {
-  if (!isAleoTransaction(transaction)) return undefined;
+  if (!isAleoFlowTransaction(transaction)) return undefined;
   return PRIVACY_BY_MODE[transaction.mode];
 }
 

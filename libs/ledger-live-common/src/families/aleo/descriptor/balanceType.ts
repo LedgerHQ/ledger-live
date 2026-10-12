@@ -39,7 +39,7 @@ function isAleoTokenAccount(account: AccountLike): account is AleoTokenAccount {
   );
 }
 
-export function isAleoTransaction(transaction: unknown): transaction is AleoTransaction {
+export function isAleoFlowTransaction(transaction: unknown): transaction is AleoTransaction {
   return (
     typeof transaction === "object" &&
     transaction !== null &&
@@ -93,7 +93,7 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
 }
 
 function getSelectedOptionId(transaction: unknown): string | null {
-  return isAleoTransaction(transaction) ? resolveSource(transaction) : null;
+  return isAleoFlowTransaction(transaction) ? resolveSource(transaction) : null;
 }
 
 function buildSelectionPatch(optionId: string): TransactionPatch {
@@ -115,7 +115,7 @@ function getSelfTransferTarget({
   account: AccountLike;
   transaction: unknown;
 }): BalanceTypeSelfTransferTarget | null {
-  if (!isAleoMainAccount(account) || !isAleoTransaction(transaction)) return null;
+  if (!isAleoMainAccount(account) || !isAleoFlowTransaction(transaction)) return null;
   if (!account.freshAddress || account.aleoResources?.privateBalance == null) return null;
 
   if (resolveSource(transaction) === PUBLIC) {
@@ -140,7 +140,7 @@ function buildSelfTransferPatch({
   isSelfTransfer: boolean;
   transaction?: unknown;
 }): TransactionPatch {
-  if (!isAleoTransaction(transaction)) return {};
+  if (!isAleoFlowTransaction(transaction)) return {};
   if (isSelfTransferTransaction(transaction) === isSelfTransfer) return {};
 
   const isTokenTx = Boolean(transaction.subAccountId);
