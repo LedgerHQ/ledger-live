@@ -475,6 +475,44 @@ describe("Aptos sync logic", () => {
           });
         });
 
+        it("does not debit the gas to the sender of a sponsored token transfer", async () => {
+          const sponsoredTokenTransfer = {
+            ...tokenToOwner,
+            sender: "0x31",
+            signature: { type: "fee_payer_signature", fee_payer_address: "0x41" },
+            payload: {
+              type: "entry_function_payload",
+              function: "0x1::coin::transfer",
+              type_arguments: ["0xd111::staked_coin::StakedAptos"],
+              arguments: ["0x12", "100"],
+            },
+            events: [
+              { ...multisigTx.events[0], guid: { account_address: "0x31", creation_number: "1" } },
+              multisigTx.events[1],
+            ],
+            changes: [
+              {
+                type: "write_resource",
+                data: {
+                  type: tokenStore,
+                  data: {
+                    withdraw_events: { guid: { id: { addr: "0x31", creation_num: "1" } } },
+                    deposit_events: { guid: { id: { addr: "0x12", creation_num: "2" } } },
+                  },
+                },
+              },
+            ],
+          } as unknown as AptosTransaction;
+
+          const [ops, tokenOps] = await txsToOps({ address: "0x31" }, "test_id", [
+            sponsoredTokenTransfer,
+          ]);
+
+          expect(tokenOps).toHaveLength(1);
+          expect(tokenOps[0]).toMatchObject({ type: OP_TYPE.OUT, value: new BigNumber(100) });
+          expect(ops).toHaveLength(0);
+        });
+
         it("does not debit the gas to the multisig account, which did not pay it", async () => {
           const [ops, tokenOps] = await txsToOps({ address: "0x21" }, "test_id", [tokenToOwner]);
 

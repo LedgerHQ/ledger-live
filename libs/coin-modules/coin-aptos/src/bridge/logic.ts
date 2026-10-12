@@ -28,6 +28,7 @@ import {
   convertFunctionPayloadResponseToInputEntryFunctionData,
   getTransactionSender,
 } from "../logic/transactionsToOperations";
+import { getFeesPayer } from "../logic/transactionPayload";
 import type { AptosAccount, AptosTransaction, Transaction } from "../types";
 
 export const getMaxSendBalance = (
@@ -134,7 +135,7 @@ export const txsToOps = async (
             op.accountId = tokenAccountId;
             opsTokens.push(op);
 
-            if (compareAddress(tx.sender, address)) {
+            if (compareAddress(getFeesPayer(tx), address)) {
               const accountId = tokenAccountId.split("+")[0];
               // Create FEES operation with decoded main account ID
               const feesOp = {
