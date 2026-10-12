@@ -536,7 +536,8 @@ pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <n
 the id `agent-intent send` printed (or `agent-intent intents` lists).
 
 ```bash
-pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent 0192f7a4-0000-7000-8000-000000000001
+ID=0192f7a4-0000-7000-8000-000000000001
+pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID"
 
 # Poll while the intent is known to be in progress; stop on a final state (terminal: true),
 # an unknown one (terminal: null) or an error, then read the status:
