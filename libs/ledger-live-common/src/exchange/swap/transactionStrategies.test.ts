@@ -4,8 +4,12 @@ import {
   cosmosTransaction,
   hederaTransaction,
   solanaTransaction,
+  transactionStrategy,
   TransactionWithCustomFee,
+  zcashTransaction,
 } from "./transactionStrategies";
+import { coinModuleLoaders } from "../../coin-modules/loaders";
+import { isSendDisabledForFamily } from "../../account/support";
 import BigNumber from "bignumber.js";
 import type { GetFeatureFn } from "../../wallet-api/FeatureFlags/resolver";
 import type { Account } from "@ledgerhq/types-live";
@@ -25,6 +29,39 @@ function makeGetFeature(enabled: boolean = true): GetFeatureFn {
 }
 
 describe("transactionStrategies", () => {
+  describe("transactionStrategy", () => {
+    const sendableFamilies = [...new Set(coinModuleLoaders.map(loader => loader.family))].filter(
+      family => !isSendDisabledForFamily(family),
+    );
+
+    it.each(sendableFamilies)("has a strategy for the %s family", family => {
+      expect(transactionStrategy[family as keyof typeof transactionStrategy]).toBeDefined();
+    });
+  });
+
+  describe("zcashTransaction", () => {
+    const transaction: TransactionWithCustomFee = {
+      family: "zcash",
+      amount: BigNumber(100000),
+      recipient: "t1dn9Ch4DMBKEgBMUz6e2RvsMD3wXxUsvgD",
+      customFeeConfig: { feePerByte: BigNumber(5) },
+    };
+
+    it("should return a zcash transaction to the payin address, without the fee override", () => {
+      expect(zcashTransaction(transaction)).toEqual({
+        family: "zcash",
+        amount: transaction.amount,
+        recipient: transaction.recipient,
+      });
+    });
+
+    it("should refuse extra transaction parameters it cannot carry", () => {
+      expect(() =>
+        zcashTransaction({ ...transaction, extraTransactionParameters: "=:ETH.ETH:0xabc" }),
+      ).toThrow(expect.objectContaining({ name: "PayloadStepError" }));
+    });
+  });
+
   describe("solanaTransaction", () => {
     it("should return a Solana transaction with extra parameters when LIFI feature flag is enabled", () => {
       const extraTransactionParameters = {
