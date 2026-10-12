@@ -330,6 +330,23 @@ describe("performTransparentSync", () => {
     );
   });
 
+  it("counts only the transparent UTXOs when the shielded engine is not available", async () => {
+    getAccountUnspentUtxos.mockResolvedValue([output()]);
+    const shielded = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ ironwoodBalance: new BigNumber(5_000) }),
+      },
+    });
+
+    const shape = await performTransparentSync(shielded, signerContext, testContext, () => false);
+
+    expect(shape.balance).toEqual(new BigNumber(70_000));
+    expect(shape.spendableBalance).toEqual(new BigNumber(70_000));
+  });
+
   it("reuses the wallet account the previous sync left behind", async () => {
     const previous = walletAccount();
     const existing = info({

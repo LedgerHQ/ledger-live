@@ -603,7 +603,11 @@ export async function performTransparentSync(
     new BigNumber(0),
   );
 
-  const balance = computeZcashBalance(transparentBalance, initialAccount?.privateInfo);
+  // Without the shielded engine the notes a previous sync recorded can be neither refreshed nor
+  // spent, so only the transparent UTXOs count.
+  const balance = isShieldedEnabled()
+    ? computeZcashBalance(transparentBalance, initialAccount?.privateInfo)
+    : transparentBalance;
 
   return {
     id: accountId,
