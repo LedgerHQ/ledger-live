@@ -2,6 +2,7 @@ import {
   getDeviceManagementKit,
   useDeviceManagementKit,
   DeviceManagementKitProvider,
+  setFirmwareDistributionSalt,
 } from "./useDeviceManagementKit";
 import React from "react";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
@@ -28,6 +29,40 @@ describe("useDeviceManagementKit", () => {
       const dmk = getDeviceManagementKit();
       // then
       expect(dmk).toBeInstanceOf(DeviceManagementKit);
+    });
+  });
+  describe("setFirmwareDistributionSalt", () => {
+    it("updates the salt of a DMK that already exists", () => {
+      // given
+      const dmk = getDeviceManagementKit();
+      // when
+      setFirmwareDistributionSalt("a1b2c3");
+      // then
+      expect(dmk.getFirmwareDistributionSalt()).toBe("a1b2c3");
+    });
+    it("builds the next DMK with the salt set before", async () => {
+      await jest.isolateModulesAsync(async () => {
+        // given
+        const module = await import("./useDeviceManagementKit");
+        module.setFirmwareDistributionSalt("a1b2c3");
+        // when
+        const dmk = module.getDeviceManagementKit();
+        // then
+        expect(dmk.getFirmwareDistributionSalt()).toBe("a1b2c3");
+      });
+    });
+    it("does not build a DMK when none exists yet", async () => {
+      await jest.isolateModulesAsync(async () => {
+        // given
+        const { DeviceManagementKitBuilder } = await import("@ledgerhq/device-management-kit");
+        const build = jest.spyOn(DeviceManagementKitBuilder.prototype, "build");
+        const module = await import("./useDeviceManagementKit");
+        // when
+        module.setFirmwareDistributionSalt("a1b2c3");
+        // then
+        expect(build).not.toHaveBeenCalled();
+        build.mockRestore();
+      });
     });
   });
   describe("<DeviceManagementKitProvider />", () => {

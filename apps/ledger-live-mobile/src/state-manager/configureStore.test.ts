@@ -35,6 +35,7 @@ jest.mock(
   "@ledgerhq/live-dmk-mobile",
   () => ({
     findMatchingOldDevice: jest.fn(() => null),
+    setFirmwareDistributionSalt: jest.fn(),
   }),
   { virtual: true },
 );

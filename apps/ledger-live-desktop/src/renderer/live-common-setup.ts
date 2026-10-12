@@ -2,15 +2,11 @@ import "./live-common-setup-renderer";
 import "~/live-common-set-supported-currencies";
 import "./families";
 
-import { Store } from "redux";
-import { userIdSelector } from "@domain/entity-client-identity";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { getEnv } from "@shared/env";
 import { retry } from "@ledgerhq/live-common/promise";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
-import { setEnvOnAllThreads } from "./../helpers/env";
 import logger from "./logger";
-import type { State } from "~/renderer/reducers";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
@@ -47,10 +43,7 @@ function getSpeculosDmkModel() {
  * This logic allows all transports to be registered at initialization time,
  * and then depending on a set of conditions, the right transport will be used.
  */
-export function registerTransportModules(store: Store<State>) {
-  const userId = userIdSelector(store.getState());
-  setEnvOnAllThreads("USER_ID", userId.exportUserIdForAnalytics());
-
+export function registerTransportModules() {
   listenLogs(({ id, date, ...log }) => {
     if (log.type === "hid-frame") return;
     logger.debug(log);
