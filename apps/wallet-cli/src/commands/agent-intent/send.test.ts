@@ -527,7 +527,7 @@ describe("agent-intent send", () => {
       // The SDK rebases the service's link onto the environment's own frontend.
       expect(jsonResult()).toMatchObject({
         intentId: "wire-1",
-        deeplink: "https://agent-intent.ledger-test.com/intents/wire-1",
+        deeplink: "https://app.agents.ledger-test.com/intents/wire-1",
       });
     });
 
