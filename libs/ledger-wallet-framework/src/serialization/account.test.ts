@@ -42,3 +42,29 @@ describe("account serialization — readiness", () => {
     expect(back.readiness).toBeUndefined();
   });
 });
+
+describe("account serialization — sequence", () => {
+  it("round-trips a sequence of zero", async () => {
+    const account = genAccount("sequence-acc", { currency: ethereum });
+    account.subAccounts = [];
+    account.sequence = 0;
+
+    const raw = toAccountRaw(account);
+    expect(raw.sequence).toBe(0);
+
+    const back = await fromAccountRaw(raw);
+    expect(back.sequence).toBe(0);
+  });
+
+  it("leaves sequence undefined when absent", async () => {
+    const account = genAccount("no-sequence-acc", { currency: ethereum });
+    account.subAccounts = [];
+    delete account.sequence;
+
+    const raw = toAccountRaw(account);
+    expect(raw.sequence).toBeUndefined();
+
+    const back = await fromAccountRaw(raw);
+    expect(back.sequence).toBeUndefined();
+  });
+});

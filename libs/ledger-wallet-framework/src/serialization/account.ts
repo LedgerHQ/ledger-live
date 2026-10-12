@@ -61,6 +61,7 @@ export async function fromAccountRaw(
     syncHash,
     nfts,
     readiness,
+    sequence,
   } = rawAccount;
 
   const store = getCryptoAssetsStore();
@@ -149,6 +150,10 @@ export async function fromAccountRaw(
     res.readiness = readiness;
   }
 
+  if (sequence !== undefined) {
+    res.sequence = sequence;
+  }
+
   if (fromRaw?.assignFromAccountRaw) {
     fromRaw.assignFromAccountRaw(rawAccount, res);
   }
@@ -196,6 +201,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     syncHash,
     nfts,
     readiness,
+    sequence,
   } = account;
 
   const convertOperation = (op: Operation) =>
@@ -260,6 +266,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
   if (readiness) {
     res.readiness = readiness;
+  }
+
+  if (sequence !== undefined) {
+    res.sequence = sequence;
   }
 
   return res;
