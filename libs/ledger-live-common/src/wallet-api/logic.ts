@@ -34,6 +34,10 @@ import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/logic-public";
 import { AccountPublicKeyUnavailable } from "../errors";
 
+// Zcash shares bitcoin's account model (xpub, transparent addresses), so live apps reach it
+// through the same bitcoin-family methods.
+const BITCOIN_LIKE_FAMILIES = new Set(["bitcoin", "zcash"]);
+
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
   return content[locale] || content.en;
@@ -279,7 +283,7 @@ export const bitcoinFamilyAccountGetAddressLogic = (
     return Promise.reject(new Error("account not found"));
   }
 
-  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+  if (!isAccount(account) || !BITCOIN_LIKE_FAMILIES.has(account.currency.family)) {
     tracking.bitcoinFamilyAccountAddressFail(manifest);
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
@@ -333,7 +337,7 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
     return Promise.reject(new Error("account not found"));
   }
 
-  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+  if (!isAccount(account) || !BITCOIN_LIKE_FAMILIES.has(account.currency.family)) {
     tracking.bitcoinFamilyAccountPublicKeyFail(manifest);
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
@@ -438,7 +442,7 @@ export const bitcoinFamilyAccountGetXPubLogic = (
     return Promise.reject(new Error("account not found"));
   }
 
-  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+  if (!isAccount(account) || !BITCOIN_LIKE_FAMILIES.has(account.currency.family)) {
     tracking.bitcoinFamilyAccountXpubFail(manifest);
     return Promise.reject(new Error("account requested is not a bitcoin family account"));
   }
@@ -480,7 +484,7 @@ export const bitcoinFamilyAccountGetAddressesLogic = async (
     throw new Error("account not found");
   }
 
-  if (!isAccount(account) || account.currency.family !== "bitcoin") {
+  if (!isAccount(account) || !BITCOIN_LIKE_FAMILIES.has(account.currency.family)) {
     tracking.bitcoinFamilyAccountAddressesFail(manifest);
     throw new Error("account requested is not a bitcoin family account");
   }
