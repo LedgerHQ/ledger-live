@@ -473,6 +473,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "zcash",
     supportedCoins: ["zcash", "zcash_testnet"],
     loadSetup: () => import("../families/zcash/setup"),
+    loadWalletApiAdapter: () => import("../families/zcash/walletApiAdapter").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),
