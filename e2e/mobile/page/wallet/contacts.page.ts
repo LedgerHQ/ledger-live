@@ -1,3 +1,4 @@
+import { waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import ContactDetailPage from "@e2e/page/wallet/contactDetail.page";
 
