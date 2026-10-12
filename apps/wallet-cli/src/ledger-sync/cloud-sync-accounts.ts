@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { getAllDerivationModes } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
   CloudSyncSDK,
   type UpdateEvent,
@@ -12,7 +13,6 @@ import type { AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
 import { CLOUD_SYNC_API_URLS } from "../key-ring/constants";
 import {
   toV1,
-  networkFromCurrencyId,
   serializeNetwork,
   UnsupportedFamilyError,
   UnknownNetworkError,
@@ -133,6 +133,9 @@ function entryId(raw: unknown): string {
 // much smaller set) but would be unusable the moment any other command tried to act on it.
 const SUPPORTED_FAMILIES = new Set<string>(SUPPORTED_TRANSACTION_FAMILIES);
 
+// Not `isDerivationMode`: it checks `mode in modes`, so inherited keys such as "toString" pass it.
+const KNOWN_DERIVATION_MODES = new Set<string>(getAllDerivationModes());
+
 function issues(error: { issues: ReadonlyArray<{ message: string }> }): string {
   return error.issues.map(i => i.message).join("; ");
 }
@@ -156,11 +159,17 @@ function unsupportedFamily(currencyId: string): string | undefined {
  * BridgeAdapter.toDescriptor for accounts discovered on the device.
  */
 function withSeedIdentifierFromId(descriptor: AccountDescriptorV0): AccountDescriptorV0 {
-  const { currencyId, derivationMode, xpubOrAddress } = decodeAccountId(descriptor.id);
+  let decoded;
+  try {
+    decoded = decodeAccountId(descriptor.id);
+  } catch (cause) {
+    throw new Error(`Invalid account id "${descriptor.id}": ${errMessage(cause)}.`, { cause });
+  }
+  const { currencyId, derivationMode, xpubOrAddress } = decoded;
   if (currencyId !== descriptor.currencyId || derivationMode !== descriptor.derivationMode) {
     throw new Error(
-      `Account id (${currencyId}, "${derivationMode}") does not match its currencyId and ` +
-        `derivationMode (${descriptor.currencyId}, "${descriptor.derivationMode}").`,
+      `Invalid account id "${descriptor.id}": it names (${currencyId}, "${derivationMode}") but ` +
+        `the entry has (${descriptor.currencyId}, "${descriptor.derivationMode}").`,
     );
   }
   return { ...descriptor, seedIdentifier: xpubOrAddress };
@@ -191,11 +200,18 @@ function convertSyncedAccount(
     };
   }
 
+  // A newer Ledger Wallet may sync a derivation mode this version can't decode: skip it rather
+  // than report it as invalid, which would keep every later sync re-pulling it.
+  if (!KNOWN_DERIVATION_MODES.has(descriptor.derivationMode)) {
+    return {
+      status: "skipped",
+      id: descriptor.id,
+      reason: `Derivation mode "${descriptor.derivationMode}" is not supported by this wallet-cli version.`,
+    };
+  }
+
   let v1: unknown;
   try {
-    // Resolved first, as toV1() does, so an unknown currency stays "skipped" even when its id
-    // carries a derivation mode this version can't decode.
-    networkFromCurrencyId(descriptor.currencyId);
     v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {
     return e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError
