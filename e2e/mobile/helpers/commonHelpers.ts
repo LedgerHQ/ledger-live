@@ -102,6 +102,8 @@ function createDetoxURLBlacklistRegex(): string {
   return `\\("${patterns.join('","')}"\\)`;
 }
 
+export const isAppBroadcastDisabled = () => Boolean(getEnv("DISABLE_TRANSACTION_BROADCAST"));
+
 export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) {
   const cardSession = isPaytabSpec()
     ? { [CARD_SESSION_BOOTSTRAP_ENV]: await resolveCardSessionBootstrap() }
@@ -117,7 +119,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       wsToken,
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
-      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
+      disable_broadcast: isAppBroadcastDisabled() ? 1 : 0,
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
       ...cardSession,
