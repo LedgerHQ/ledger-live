@@ -13,6 +13,8 @@ import { Left, Right, type Either } from "purify-ts";
 export type SpeculosSessionTarget = Readonly<{
   url: string;
   deviceModelId?: DeviceModelId;
+  /** Token of a protected Speculinho session. */
+  bearerToken?: string;
 }>;
 
 type SpeculosDelegate = {
@@ -32,7 +34,7 @@ export class SpeculosTransportSession {
       return null;
     }
 
-    const key = `${target.url}|${target.deviceModelId ?? ""}`;
+    const key = `${target.url}|${target.deviceModelId ?? ""}|${target.bearerToken ?? ""}`;
     if (this.delegate?.key === key) return this.delegate.transport;
 
     this.delegate?.transport.stopDiscovering();
