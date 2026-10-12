@@ -16,7 +16,7 @@ const noRetryOptions = { maxRetries: 0 };
  */
 export const ofacApi = countervaluesApi.injectEndpoints({
   endpoints: build => ({
-    check: build.query<boolean, void>({
+    checkOfacGeoBlock: build.query<boolean, void>({
       query: () => ({
         url: "/v3/markets",
         responseHandler: "text",
@@ -29,6 +29,6 @@ export const ofacApi = countervaluesApi.injectEndpoints({
   }),
 });
 
-export const { useCheckQuery } = ofacApi;
+export const { useCheckOfacGeoBlockQuery } = ofacApi;
 
 export type OfacApi = typeof ofacApi;
