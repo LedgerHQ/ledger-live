@@ -5,7 +5,7 @@ description: Write or update Swap E2E tests for Ledger Live Desktop (Playwright)
 
 # Swap E2E Skill
 
-Writing rules: [E2E conventions](../../../e2e/docs/e2e-conventions.md). When editing desktop, also read [Desktop E2E conventions](../../../e2e/desktop/docs/e2e-desktop-conventions.md). When editing mobile, also read [Mobile E2E conventions](../../../e2e/mobile/docs/e2e-mobile-conventions.md).
+Writing rules: when editing desktop, follow [Desktop E2E](../../../e2e/desktop/AGENTS.md). When editing mobile, follow [Mobile E2E](../../../e2e/mobile/AGENTS.md).
 
 ## Use this skill when
 

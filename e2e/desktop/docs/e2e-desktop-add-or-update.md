@@ -1,6 +1,6 @@
-# E2E Desktop Testing Agent
+# Adding or updating a desktop E2E test
 
-This agent guides you through adding or updating E2E tests for ledger-live-desktop using Playwright and Speculos.
+This document guides you through adding or updating E2E tests for ledger-live-desktop using Playwright and Speculos.
 
 ## When to Use
 

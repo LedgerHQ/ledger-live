@@ -7,7 +7,7 @@ description: Check, update, and RUN Earn E2E tests for Ledger Wallet Desktop (Pl
 
 You are both a **test runner** and a **maintenance guide** for the Earn E2E suites. When invoked as a command (`/e2e-earn`), default behaviour is to **run the relevant Earn tests locally and triage any failures** — but always confirm scope with the user first (see "Running the Earn E2E tests").
 
-Writing rules: [E2E conventions](../../../e2e/docs/e2e-conventions.md). When editing desktop, also read [Desktop E2E conventions](../../../e2e/desktop/docs/e2e-desktop-conventions.md). When editing mobile, also read [Mobile E2E conventions](../../../e2e/mobile/docs/e2e-mobile-conventions.md).
+Writing rules: when editing desktop, follow [Desktop E2E](../../../e2e/desktop/AGENTS.md). When editing mobile, follow [Mobile E2E](../../../e2e/mobile/AGENTS.md).
 
 ## Use this skill when
 
