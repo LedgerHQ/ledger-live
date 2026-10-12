@@ -10,6 +10,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CheckmarkCircleFill, Close, ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import { UnsupportedFirmwareVersionView } from "LLM/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/components/UnsupportedFirmwareVersion/UnsupportedFirmwareVersionView";
@@ -62,6 +63,8 @@ export function ChecksView({
   allowSheet,
   updateSheet,
 }: ChecksViewProps) {
+  const { bottom: bottomInset } = useSafeAreaInsets();
+
   return (
     <Box testID={checksTestIds.screen} lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}>
       <NavBar density="compact">
@@ -109,7 +112,7 @@ export function ChecksView({
           testID={checksTestIds.allowSheet}
           enableDynamicSizing
         >
-          <BottomSheetView>
+          <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
             <BottomSheetHeader />
             <Box lx={{ paddingHorizontal: "s16" }}>
               <DeviceActionContent
@@ -129,7 +132,7 @@ export function ChecksView({
           testID={checksTestIds.updateSheet}
           enableDynamicSizing
         >
-          <BottomSheetView>
+          <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
             <BottomSheetHeader />
             <UnsupportedFirmwareVersionView
               onUpdateLedgerOs={updateSheet.onUpdate}

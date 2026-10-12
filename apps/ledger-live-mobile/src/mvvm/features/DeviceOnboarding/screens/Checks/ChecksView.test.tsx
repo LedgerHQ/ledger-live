@@ -1,5 +1,4 @@
 import React from "react";
-import { Pressable, View } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen } from "@tests/test-renderer";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
@@ -20,33 +19,11 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   };
 });
 
-function mockQueuedBottomSheet({
-  children,
-  isRequestingToBeOpened,
-  onClose,
-  testID = "queued-bottom-sheet",
-}: {
-  children: React.ReactNode;
-  isRequestingToBeOpened?: boolean;
-  onClose?: () => void;
-  testID?: string;
-}) {
-  if (!isRequestingToBeOpened) return null;
-  return (
-    <View testID={testID}>
-      {onClose ? <Pressable testID={`${testID}-dismiss`} onPress={onClose} /> : null}
-      {children}
-    </View>
-  );
-}
-
-jest.mock("@shared/ui-queued-bottom-sheet", () => {
-  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
-  return {
-    ...actual,
-    QueuedBottomSheet: mockQueuedBottomSheet,
-  };
-});
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
+  QueuedBottomSheet: jest.requireActual("@shared/ui-queued-bottom-sheet/testing/module-mock")
+    .QueuedBottomSheet,
+}));
 
 const device = {
   deviceId: "device-id",
