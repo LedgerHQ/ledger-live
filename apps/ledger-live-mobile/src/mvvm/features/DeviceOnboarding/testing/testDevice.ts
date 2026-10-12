@@ -36,6 +36,8 @@ export type TestDevice = {
   isWatching(sessionId: string): boolean;
   /** The session of each command sent, in order. */
   readonly sentTo: readonly string[];
+  /** Each command sent, in order. */
+  readonly commands: readonly unknown[];
 };
 
 /** A Bluetooth Stax that connects and reports its session state, but never answers a command. */
@@ -45,6 +47,7 @@ export function createTestDevice(): TestDevice {
   let sessionId = "session-1";
   let deviceId = "device-id";
   const sentTo: string[] = [];
+  const commands: unknown[] = [];
   const locked = new Set<string>();
 
   const dmk = createDeviceManagementKit({
@@ -66,8 +69,9 @@ export function createTestDevice(): TestDevice {
             startWith({ deviceStatus: DeviceStatus.LOCKED } as DeviceSessionState),
           )
         : getSession(id).events,
-    sendCommand: ({ sessionId: id }) => {
+    sendCommand: ({ sessionId: id, command }) => {
       sentTo.push(id);
+      commands.push(command);
       return new Promise(() => undefined);
     },
   });
@@ -101,6 +105,7 @@ export function createTestDevice(): TestDevice {
       getSession(sessionId).set(DeviceStatus.LOCKED);
     },
     sentTo,
+    commands,
     isWatching(id: string) {
       return sessions.get(id)?.watched === true;
     },

@@ -1,4 +1,9 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
+import {
+  EarlyCheckToggle,
+  OnboardingStep,
+  ToggleEarlyCheckCommand,
+} from "@ledgerhq/device-onboarding";
 import { activeHidDeviceSessionSubject } from "@ledgerhq/live-dmk-mobile";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
@@ -159,6 +164,41 @@ describe("useDeviceOnboarding", () => {
 
     act(() => result.current.reset());
     expect(deactivateKeepAwake).toHaveBeenCalledTimes(1);
+  });
+
+  // Reset drops the machine. The device must still leave its early-check screen,
+  // and the app must not leave onboarding.
+  it("takes the device off the early-check screen on reset", async () => {
+    const device = createTestDevice();
+    const { result } = renderHook(() =>
+      useDeviceOnboarding({ dmk: device.dmk, knownDevices: [knownStax], offerSync: false }),
+    );
+
+    await connectStax(result, device);
+    act(() =>
+      result.current.send({
+        type: "DEVICE_STATE_READ",
+        firmwareVersion: "1.8.0",
+        state: {
+          isOnboarded: false,
+          isInRecoveryMode: false,
+          managerAllowed: false,
+          currentOnboardingStep: OnboardingStep.WelcomeScreen1,
+          seedWordIndex: 0,
+          seedPhraseWordCount: 24,
+          recoveryKeyStatus: null,
+        },
+      }),
+    );
+    act(() => result.current.send({ type: "CONTINUE" }));
+    act(() => result.current.send({ type: "EARLY_CHECK_TOGGLED" }));
+    expect(result.current.context?.onEarlyCheckScreen).toBe(true);
+
+    act(() => result.current.reset());
+
+    expect(device.commands.at(-1)).toEqual(new ToggleEarlyCheckCommand(EarlyCheckToggle.Exit));
+    expect(device.sentTo.at(-1)).toBe(device.sessionId);
+    expect(leaveOnboarding).not.toHaveBeenCalled();
   });
 
   // A new run must drop the old exit. Otherwise the next screen can open again.
