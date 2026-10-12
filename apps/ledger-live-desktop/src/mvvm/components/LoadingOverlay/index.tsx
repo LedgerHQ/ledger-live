@@ -1,7 +1,7 @@
 import React from "react";
 import { getEnv } from "@shared/env";
 import { Box } from "@ledgerhq/react-ui";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { Lottie } from "@shared/lottie";
 
 import loaderLottie from "~/renderer/animations/common/loader.lottie";
 
@@ -21,11 +21,12 @@ export const LoadingOverlay = ({ theme }: { theme: "light" | "dark" }) => {
         }}
       />
 
-      <DotLottieReact
-        src={loaderLottie}
+      <Lottie
+        source={loaderLottie}
         loop
-        autoplay={!isPlaywright}
-        layout={{ fit: "cover", align: [1, 1] }}
+        autoPlay={!isPlaywright}
+        fit="cover"
+        align={[1, 1]}
         style={{ width: "100%", height: "100%" }}
       />
     </Box>

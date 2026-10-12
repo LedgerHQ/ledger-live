@@ -1,27 +1,20 @@
 import React from "react";
-import Lottie from "lottie-react-native";
-import { type AnimationObject } from "lottie-react-native";
+import { Lottie, type LottieProps } from "@shared/lottie";
 import Config from "react-native-config";
-import type { StyleProp, ViewStyle } from "react-native";
 import { StyleSheet, View } from "react-native";
 
-// Type predicate function because AnimationObject is only defined as an interface
-// and cannot be checked with `maybeAnimation instanceof AnimationObject` for ex.
+type AnimationObject = Readonly<{ w: number; h: number }>;
+
 function isAnimationObject(maybeAnimation: unknown): maybeAnimation is AnimationObject {
   return (
-    (maybeAnimation as AnimationObject).w !== undefined &&
-    (maybeAnimation as AnimationObject).h !== undefined
+    typeof maybeAnimation === "object" &&
+    maybeAnimation !== null &&
+    "w" in maybeAnimation &&
+    "h" in maybeAnimation
   );
 }
 
-export type LottieProps = Lottie["props"];
-
-export function Animation({
-  style,
-  ...lottieProps
-}: LottieProps & {
-  style?: StyleProp<ViewStyle>;
-}) {
+export function Animation({ style, ...lottieProps }: LottieProps) {
   const { source } = lottieProps;
 
   if (!source) return null;

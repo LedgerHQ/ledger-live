@@ -9,12 +9,11 @@ jest.mock("react-native-config", () => ({
   default: { DETOX: false },
 }));
 
-jest.mock("lottie-react-native", () => {
+jest.mock("@shared/lottie", () => {
   const React = require("react");
   const { View } = require("react-native");
   return {
-    __esModule: true,
-    default: function MockLottie({ testID }: { testID?: string }) {
+    Lottie: function MockLottie({ testID }: { testID?: string }) {
       return React.createElement(View, { testID });
     },
   };

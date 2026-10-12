@@ -2,7 +2,7 @@ import { renderHook, waitFor } from "tests/testSetup";
 import { useAnimationData, type AnimationLoader, type AnimationSource } from "..";
 
 const loaderOf =
-  (data: object): AnimationLoader =>
+  (data: Record<string, unknown>): AnimationLoader =>
   () =>
     Promise.resolve({ default: data });
 
@@ -62,8 +62,8 @@ describe("useAnimationData", () => {
 
   it("shows an animation that another consumer finished loading", async () => {
     const data = { nm: "shared" };
-    let resolveFirstLoad: ((module: { default: unknown }) => void) | undefined;
-    const firstLoad = new Promise<{ default: unknown }>(resolve => {
+    let resolveFirstLoad: ((module: { default: Record<string, unknown> }) => void) | undefined;
+    const firstLoad = new Promise<{ default: Record<string, unknown> }>(resolve => {
       resolveFirstLoad = resolve;
     });
     const loader = jest
