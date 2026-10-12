@@ -29,6 +29,12 @@ describe("parseIntentId", () => {
   it.each(["intent-123", "", "0192f7a4-0000-7000-8000", "../stats"])("rejects %p", value => {
     expect(() => parseIntentId(value)).toThrow(/is not an intent id/);
   });
+
+  it("echoes a bad value without control characters, truncated", () => {
+    expect(() => parseIntentId(`\u001b[2J${"x".repeat(100)}`)).toThrow(
+      `--intent "[2J${"x".repeat(61)}…" is not an intent id`,
+    );
+  });
 });
 
 describe("parseStatusFilter", () => {

@@ -138,7 +138,7 @@ function lookupErrorMessage(e: AgentIntentHttpError, profileId: string, intentId
   if (e.status === 400) {
     return `The Agent Intent service rejected intent id ${intentId} (${redactServiceText(e.message)}).`;
   }
-  // A service from before agent point reads answers an agent token with this, not 404.
+  // Services that predate agent single-intent reads (agent-intent-service#172) return this, not 404.
   if (e.type === "unexpected_caller") {
     return (
       "This Agent Intent service doesn't let agents read a single intent yet. Use " +

@@ -4,6 +4,7 @@ import {
   type AgentIntentRecord,
   type AgentIntentStatus,
 } from "@ledgerhq/agent-intent-sdk";
+import { stripControlChars } from "../shared/ui";
 import { formatBaseUnits } from "./evm";
 import type { EthereumToken } from "./token-lookup";
 
@@ -71,8 +72,10 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export function parseIntentId(value: string): string {
   const id = value.trim();
   if (!UUID_RE.test(id)) {
+    const printable = stripControlChars(value);
+    const shown = printable.length > 64 ? `${printable.slice(0, 64)}…` : printable;
     throw new Error(
-      `--intent "${value}" is not an intent id (a UUID such as 0192f7a4-…). Copy it from ` +
+      `--intent "${shown}" is not an intent id (a UUID such as 0192f7a4-…). Copy it from ` +
         "`agent-intent intents` or from the `agent-intent send` output.",
     );
   }
@@ -117,6 +120,7 @@ async function toEntry(
   { id, status, intent, createdAt, updatedAt, failureReason }: AgentIntentRecord,
   token: (contract: string) => Promise<EthereumToken | null>,
 ): Promise<IntentListEntry> {
+  // TODO(NTTVS-1028): narrow with isSendOperation once the vendored SDK types listed operations.
   const amount = text(intent.amount);
   const asset = intent.asset
     ? { type: intent.asset.type, assetReference: intent.asset.assetReference ?? null }

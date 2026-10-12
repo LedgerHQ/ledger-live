@@ -986,6 +986,7 @@ class HumanCommandOutput implements CommandOutput {
     const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
     const baseUnits = i.amount ? `${i.amount} (base units)` : undefined;
     const amount = i.displayAmount ?? baseUnits;
+    // Every field comes from the service, and an agent's note could carry terminal escapes.
     writeStdout(
       [
         `Intent:  ${i.id}`,
@@ -999,7 +1000,9 @@ class HumanCommandOutput implements CommandOutput {
         ...(i.failureReason ? [`Failure: ${i.failureReason}`] : []),
         `Created: ${i.createdAt}`,
         `Updated: ${i.updatedAt}`,
-      ].join("\n"),
+      ]
+        .map(stripControlChars)
+        .join("\n"),
     );
   }
 }

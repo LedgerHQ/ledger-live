@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/agent-intent-sdk";
 import { installOutputCapture } from "../../shared/ui";
 import { toChecksumAddress } from "../../agent-intent/evm";
+import { isTerminalIntentStatus } from "../../agent-intent/intent-list";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -154,7 +155,7 @@ describe("agent-intent status", () => {
 
       await runStatus({ output: "json" });
       expect(jsonResult()).toMatchObject({
-        terminal: ["success", "failed", "rejected", "cancelled", "expired"].includes(status),
+        terminal: isTerminalIntentStatus(status),
         intent: { status },
       });
 
@@ -192,6 +193,36 @@ describe("agent-intent status", () => {
     expect(jsonResult()).toMatchObject({ intent: { displayAmount: "2.5 USDC" } });
   });
 
+  it("falls back to base units for an ERC-20 contract CAL doesn't know", async () => {
+    getImpl = async () =>
+      record({
+        intent: {
+          amount: "2500000",
+          asset: { type: "erc20", assetReference: "0x0000000000000000000000000000000000000001" },
+        },
+      });
+
+    await runStatus();
+
+    expect(stdout.join("")).toContain("Amount:  2500000 (base units)");
+  });
+
+  it("strips terminal control sequences from what the service returns", async () => {
+    getImpl = async () =>
+      record({
+        status: "failed",
+        failureReason: "out of \u001b]0;pwned\u0007gas",
+        intent: { description: "Pay \u001b[2Jsupplier\u009b" },
+      });
+
+    await runStatus();
+
+    const text = stdout.join("");
+    expect(text).toContain("Note:    Pay [2Jsupplier");
+    expect(text).toContain("Failure: out of ]0;pwnedgas");
+    for (const control of ["\u001b", "\u0007", "\u009b"]) expect(text).not.toContain(control);
+  });
+
   it("normalizes the id and rejects a malformed one before touching the keychain", async () => {
     await runStatus({ intent: ` ${INTENT_ID.toUpperCase()} ` });
     expect(lookups).toEqual([INTENT_ID]);
@@ -210,6 +241,7 @@ describe("agent-intent status", () => {
 
   it.each([
     [404, undefined, /has no intent .*doesn't exist, or another agent created it/],
+    [400, undefined, /rejected intent id/],
     [403, "unexpected_caller", /doesn't let agents read a single intent yet/],
     [403, "not_a_member", /not an active agent on its Trustchain/],
     [401, "token_expired", /Authentication with the Agent Intent service failed/],
