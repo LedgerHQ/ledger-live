@@ -114,13 +114,34 @@ describe("IosBleDiscoveryPreflightChecks", () => {
     });
   });
 
-  it("GIVEN unknown state, WHEN running preflight, THEN it should return check-only Bluetooth state error", async () => {
+  it("GIVEN Bluetooth is starting, WHEN running preflight, THEN it should wait for the powered-on state", async () => {
+    // GIVEN
+    jest.mocked(getBluetoothHelperModule).mockReturnValue(undefined);
+    jest
+      .spyOn(BlePlxManager, "state")
+      .mockResolvedValue(BlePlxState.PoweredOn)
+      .mockResolvedValueOnce(BlePlxState.Unknown)
+      .mockResolvedValueOnce(BlePlxState.Unknown);
+
+    // WHEN
+    const result = await runWithFakeTimers(() =>
+      new IosBleDiscoveryPreflightChecks().getPreflight(),
+    );
+
+    // THEN
+    expect(result).toEqual({ success: true });
+    expect(BlePlxManager.state).toHaveBeenCalledTimes(3);
+  });
+
+  it("GIVEN Bluetooth stays in an unknown state, WHEN running preflight, THEN it should return check-only Bluetooth state error", async () => {
     // GIVEN
     jest.mocked(getBluetoothHelperModule).mockReturnValue(undefined);
     jest.spyOn(BlePlxManager, "state").mockResolvedValue(BlePlxState.Unknown);
 
     // WHEN
-    const result = await new IosBleDiscoveryPreflightChecks().getPreflight();
+    const result = await runWithFakeTimers(() =>
+      new IosBleDiscoveryPreflightChecks().getPreflight(),
+    );
 
     // THEN
     expect(result).toMatchObject({
@@ -132,7 +153,7 @@ describe("IosBleDiscoveryPreflightChecks", () => {
         resolution: { type: "check-only" },
       },
     });
-    await expect(callRetry(result)).resolves.toMatchObject({
+    await expect(runWithFakeTimers<unknown>(() => callRetry(result))).resolves.toMatchObject({
       type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
     });
   });
@@ -161,6 +182,17 @@ describe("IosBleDiscoveryPreflightChecks", () => {
     });
   });
 });
+
+const runWithFakeTimers = async <T>(run: () => Promise<T>): Promise<T> => {
+  jest.useFakeTimers();
+  try {
+    const promise = run();
+    await jest.runAllTimersAsync();
+    return await promise;
+  } finally {
+    jest.useRealTimers();
+  }
+};
 
 const callRetry = (result: DiscoveryPreflightResult) => {
   if (result.success || !result.discoveryError.resolution) {

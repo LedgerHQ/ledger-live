@@ -6,6 +6,7 @@ import {
   buildBluetoothStateError,
   buildUnknownDiscoveryError,
 } from "../discoveryErrorBuilders";
+import { getSettledBleState } from "../getSettledBleState";
 import { getBluetoothHelperModule } from "../nativeModules";
 import {
   mapDiscoveryErrorToPreflightResult,
@@ -30,7 +31,7 @@ export class IosBleDiscoveryPreflightChecks implements DiscoveryPreflightChecks 
 
   private async checkBluetoothState(): Promise<DiscoveryPreflightResult> {
     try {
-      const state = await BlePlxManager.state();
+      const state = await getSettledBleState(() => BlePlxManager.state());
 
       if (state === BlePlxState.PoweredOn) {
         return successPreflightResult;

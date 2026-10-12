@@ -46,8 +46,9 @@ const errorCases = [
   },
   {
     type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
-    title: "Checking Bluetooth...",
-    description: undefined,
+    title: "Bluetooth isn’t responding",
+    description:
+      "We couldn’t check if Bluetooth is on. Wait a few seconds, then try again. If this continues, turn Bluetooth off and on again.",
   },
   {
     type: DiscoveryErrorTypes.BluetoothUnsupported,
@@ -114,6 +115,7 @@ const primaryCtaCases = [
   },
   { type: DiscoveryErrorTypes.LocationDisabledPromptable, label: "Enable Location" },
   { type: DiscoveryErrorTypes.LocationDisabledManualAction, label: "I enabled it, try again" },
+  { type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly, label: "Try again" },
   { type: DiscoveryErrorTypes.LocationServicePermissionMissing, label: "Try again" },
   { type: BaseDiscoveryErrorTypes.Unknown, label: "Try again" },
 ] as const;
@@ -204,6 +206,27 @@ describe("DiscoveryErrorState", () => {
     await user.press(screen.getByText("Continue with USB instead"));
 
     expect(ignore).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN an unsettled Bluetooth state on Android WHEN the USB CTA is pressed THEN it calls ignore", async () => {
+    // GIVEN
+    const { user, ignore } = renderState({
+      type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
+    });
+
+    // WHEN
+    await user.press(screen.getByText("Continue with USB instead"));
+
+    // THEN
+    expect(ignore).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN an unsettled Bluetooth state on iOS WHEN rendering THEN it hides the USB CTA", () => {
+    // GIVEN / WHEN
+    renderState({ type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly, platform: "ios" });
+
+    // THEN
+    expect(screen.queryByText("Continue with USB instead")).toBeNull();
   });
 
   it("should hide Android USB fallback on iOS-only discovery errors", () => {
