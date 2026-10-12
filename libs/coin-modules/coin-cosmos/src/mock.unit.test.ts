@@ -47,18 +47,18 @@ describe("mock genAccountEnhanceOperations", () => {
     // genAccountEnhanceOperations delegates, redelegates, claims and undelegates in sequence —
     // by the end cosmosResources has gone through several setCosmosResources calls, and
     // stakingResources must track it exactly at every step, not just on the first write.
-    expect(account.stakingResources.delegations).toEqual(account.cosmosResources.delegations);
-    expect(account.stakingResources.redelegations).toEqual(account.cosmosResources.redelegations);
-    expect(account.stakingResources.unbondings).toEqual(account.cosmosResources.unbondings);
-    expect(account.stakingResources.delegatedBalance).toEqual(
-      account.cosmosResources.delegatedBalance,
-    );
+    const cosmosResources = account.cosmosResources;
+    if (!cosmosResources) {
+      throw new Error("expected cosmosResources");
+    }
+    expect(account.stakingResources.delegations).toEqual(cosmosResources.delegations);
+    expect(account.stakingResources.redelegations).toEqual(cosmosResources.redelegations);
+    expect(account.stakingResources.unbondings).toEqual(cosmosResources.unbondings);
+    expect(account.stakingResources.delegatedBalance).toEqual(cosmosResources.delegatedBalance);
     expect(account.stakingResources.pendingRewardsBalance).toEqual(
-      account.cosmosResources.pendingRewardsBalance,
+      cosmosResources.pendingRewardsBalance,
     );
-    expect(account.stakingResources.unbondingBalance).toEqual(
-      account.cosmosResources.unbondingBalance,
-    );
+    expect(account.stakingResources.unbondingBalance).toEqual(cosmosResources.unbondingBalance);
 
     // The redelegate/claim/undelegate steps only run once there are delegations to act on.
     expect(account.stakingResources.delegations.length).toBeGreaterThan(0);
@@ -90,9 +90,11 @@ describe("mock genAccountEnhanceOperations", () => {
     mock.genAccountEnhanceOperations(account, rng);
 
     expect(account.stakingResources.unbondingBalance.gte(firstUnbondingBalance)).toBe(true);
-    expect(account.stakingResources.unbondingBalance).toEqual(
-      account.cosmosResources.unbondingBalance,
-    );
+    const cosmosResources = account.cosmosResources;
+    if (!cosmosResources) {
+      throw new Error("expected cosmosResources");
+    }
+    expect(account.stakingResources.unbondingBalance).toEqual(cosmosResources.unbondingBalance);
   });
 });
 
