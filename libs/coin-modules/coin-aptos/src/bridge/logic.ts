@@ -1,4 +1,3 @@
-import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   encodeTokenAccountId,
@@ -25,7 +24,11 @@ import { calculateAmount } from "../logic/calculateAmount";
 import { compareAddress, getCoinAndAmounts } from "../logic/getCoinAndAmounts";
 import { getFunctionAddress } from "../logic/getFunctionAddress";
 import { processRecipients } from "../logic/processRecipients";
-import { convertFunctionPayloadResponseToInputEntryFunctionData } from "../logic/transactionsToOperations";
+import {
+  convertFunctionPayloadResponseToInputEntryFunctionData,
+  getTransactionSender,
+} from "../logic/transactionsToOperations";
+import { getFeesPayer } from "../logic/transactionPayload";
 import type { AptosAccount, AptosTransaction, Transaction } from "../types";
 
 export const getMaxSendBalance = (
@@ -69,6 +72,15 @@ export const getBlankOperation = (
   hasFailed: false,
 });
 
+const getFeesOperation = (op: Operation, accountId: string, tx: AptosTransaction): Operation => ({
+  ...op,
+  id: encodeOperationId(accountId, tx.hash, OP_TYPE.OUT),
+  accountId,
+  senders: [getFeesPayer(tx)],
+  value: op.fee,
+  type: "FEES",
+});
+
 export const txsToOps = async (
   info: { address: string },
   id: string,
@@ -81,12 +93,11 @@ export const txsToOps = async (
 
   for (const tx of txs) {
     if (tx !== null) {
-      const op: Operation = getBlankOperation(tx, id);
-      op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
+      const payload = convertFunctionPayloadResponseToInputEntryFunctionData(tx.payload);
 
-      const payload = convertFunctionPayloadResponseToInputEntryFunctionData(
-        tx.payload as EntryFunctionPayloadResponse,
-      );
+      if (!payload) {
+        continue;
+      }
 
       const function_address = getFunctionAddress(payload);
 
@@ -94,15 +105,15 @@ export const txsToOps = async (
         continue; // skip transaction without functions in payload
       }
 
+      const op: Operation = getBlankOperation(tx, id);
+      op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
+
       const { coin_id, amount_in, amount_out, type } = getCoinAndAmounts(tx, address);
-      op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
-      op.type =
-        type !== OP_TYPE.UNKNOWN
-          ? type
-          : compareAddress(tx.sender, address)
-            ? OP_TYPE.OUT
-            : OP_TYPE.IN;
-      op.senders.push(tx.sender);
+      const sender = getTransactionSender(tx, address, amount_in);
+      op.value = calculateAmount(sender, address, amount_in, amount_out);
+      const direction = compareAddress(sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
+      op.type = type === OP_TYPE.UNKNOWN ? direction : type;
+      op.senders.push(sender);
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(op.accountId, tx.hash, op.type);
 
@@ -121,8 +132,12 @@ export const txsToOps = async (
         ops.push(op);
         opsStaking.push(op);
       } else if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
+        const paidFees = compareAddress(getFeesPayer(tx), address);
         if (coin_id === APTOS_ASSET_ID || coin_id === APTOS_ASSET_FUNGIBLE_ID) {
           ops.push(op);
+          if (paidFees && op.type === OP_TYPE.IN) {
+            ops.push(getFeesOperation(op, id, tx));
+          }
         } else {
           const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
             coin_id.toLowerCase(),
@@ -133,16 +148,8 @@ export const txsToOps = async (
             op.accountId = tokenAccountId;
             opsTokens.push(op);
 
-            if (op.type === OP_TYPE.OUT) {
-              const accountId = tokenAccountId.split("+")[0];
-              // Create FEES operation with decoded main account ID
-              const feesOp = {
-                ...op,
-                accountId,
-                value: op.fee,
-                type: "FEES" as const,
-              };
-              ops.push(feesOp);
+            if (paidFees) {
+              ops.push(getFeesOperation(op, tokenAccountId.split("+")[0], tx));
             }
           }
         }
