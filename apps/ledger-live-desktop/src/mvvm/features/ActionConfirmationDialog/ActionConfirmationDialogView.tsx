@@ -10,7 +10,7 @@ const SPOT_APPEARANCE = {
   success: "check",
 } as const;
 
-function ConfirmationSpot({ icon }: { icon: ActionDialogIcon }) {
+function ConfirmationSpot({ icon }: Readonly<{ icon: ActionDialogIcon }>) {
   if (icon === "withdraw") {
     return <Spot appearance="icon" icon={Download} size={72} />;
   }
