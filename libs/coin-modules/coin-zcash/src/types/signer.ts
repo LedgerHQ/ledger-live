@@ -1,5 +1,6 @@
 import type { SignerContext as FrameworkSignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type {
+  BitcoinCreateTransactionLike,
   PcztTransaction,
   SignPcztTransactionResult,
   ZcashAddress,
@@ -30,6 +31,8 @@ export interface BitcoinSigner {
   getFullViewingKey(path: string): Promise<ZcashViewKey>;
   getShieldedAddress(path: string, display?: boolean): Promise<ZcashShieldedAddress>;
   signPcztTransaction(pczt: PcztTransaction): Promise<SignPcztTransactionResult>;
+  /** Transparent send signed by the device, for hosts without the shielded engine (`src/legacy`). */
+  createPaymentTransaction(arg: BitcoinCreateTransactionLike): Promise<string>;
 }
 
 export type SignerContext = FrameworkSignerContext<BitcoinSigner>;

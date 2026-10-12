@@ -424,6 +424,17 @@ describe("performTransparentSync", () => {
     ]);
   });
 
+  it("keeps the explorer's view without reaching the engine when it is not available", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [outgoingTx()] });
+
+    const operations =
+      (await performTransparentSync(info(), signerContext, testContext, () => false)).operations ??
+      [];
+
+    expect(getZCashClient).not.toHaveBeenCalled();
+    expect(operations[0].recipients).toEqual([THEIRS]);
+  });
+
   it("cannot recover a payee before the account's viewing key is known", async () => {
     getAccountTransactions.mockResolvedValue({ txs: [outgoingTx()] });
     const transactionDetails = jest.fn(async () => [
