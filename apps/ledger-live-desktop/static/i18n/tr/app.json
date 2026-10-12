@@ -1074,7 +1074,7 @@
       }
     },
     "contacts" : {
-      "title" : "Kişiye ödeme yapın",
+      "title" : "Ödeme kişisi",
       "me" : "Ben",
       "empty" : {
         "info" : "Henüz bir kişiniz yok",
