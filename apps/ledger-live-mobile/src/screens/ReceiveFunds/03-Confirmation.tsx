@@ -310,7 +310,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       <NavigationScrollView
         testID="receive-screen-scrollView"
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 80 }}
+        contentContainerStyle={{ paddingBottom: 80 + insets.bottom }}
       >
         <TrackScreen
           category="Deposit"
