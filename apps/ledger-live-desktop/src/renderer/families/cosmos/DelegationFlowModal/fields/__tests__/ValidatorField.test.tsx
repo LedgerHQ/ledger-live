@@ -4,6 +4,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import * as cosmosReact from "@ledgerhq/live-common/families/cosmos/react";
 import type {
+  CosmosAccount,
   CosmosValidatorItem,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cosmos/types";
@@ -31,11 +32,15 @@ function renderValidatorField(currencyId: string) {
   const { useAccountUnit } = jest.requireMock("~/renderer/hooks/useAccountUnit");
   useAccountUnit.mockReturnValue(currency.units[0]);
   const onChangeValidator = jest.fn();
+  const account = {
+    ...genAccount(`${currencyId}-test`, { currency }),
+    stakingResources: { delegations: [], validators },
+  } as unknown as CosmosAccount;
 
   render(
     <ValidatorField
       t={jest.fn() as unknown as TFunction}
-      account={genAccount(`${currencyId}-test`, { currency })}
+      account={account}
       status={{ errors: {}, warnings: {} } as unknown as TransactionStatus}
       onChangeValidator={onChangeValidator}
       chosenVoteAccAddr=""

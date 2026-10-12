@@ -1,17 +1,20 @@
-import React, { useState, useCallback } from "react";
-import styled from "styled-components";
+import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
-import Box from "~/renderer/components/Box";
-import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
-import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
-import { Trans } from "react-i18next";
-import Text from "~/renderer/components/Text";
-import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 import type {
   CosmosAccount,
   CosmosValidatorItem,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
+import { isStakingAccount } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import React, { useCallback, useState } from "react";
+import { Trans } from "react-i18next";
+import styled from "styled-components";
+import Box from "~/renderer/components/Box";
+import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
+import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
+import Text from "~/renderer/components/Text";
+import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const ValidatorsSection = styled(Box)`
@@ -28,15 +31,17 @@ export default function ValidatorField({
   transaction: Transaction;
   onChange: (a: { address: string }) => void;
 }) {
+  invariant(isStakingAccount(account), "cosmos staking account required");
+
   const currencyId = account.currency.id.toLowerCase();
   const [search, setSearch] = useState("");
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, account.stakingResources.validators, search);
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
   const unit = useAccountUnit(account);
-  const fromValidatorAddress = transaction.valAddress;
+  const fromValidatorAddress = getValAddress(transaction);
   const sortedFilteredValidators = validators.filter(
     v => v.validatorAddress !== fromValidatorAddress,
   );
