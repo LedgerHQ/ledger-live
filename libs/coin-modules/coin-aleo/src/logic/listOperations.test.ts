@@ -443,7 +443,7 @@ describe("listOperations", () => {
     expect(items).toEqual([expect.objectContaining({ recipients: [recipient] })]);
   });
 
-  it("should leave the recipient blank when the transition inputs cannot be read", async () => {
+  it("should return no recipient when the transition inputs cannot be read", async () => {
     mockedFetchTransitionPage.mockResolvedValue({
       transitions: [
         getMockedPublicTransaction({
@@ -459,7 +459,7 @@ describe("listOperations", () => {
 
     const { items } = await run({ minHeight: 0 });
 
-    expect(items).toEqual([expect.objectContaining({ recipients: [""] })]);
+    expect(items).toEqual([expect.objectContaining({ recipients: [] })]);
   });
 
   it("should resume above the block a cursor already emitted whole when ascending", async () => {
@@ -494,6 +494,35 @@ describe("listOperations", () => {
     const { items } = await run({ minHeight: 0 });
 
     expect(items.map(op => op.id)).toEqual(["at1high", "at1low"]);
+  });
+
+  describe("hidden addresses", () => {
+    // The coin framework lists addresses as `string[]`: a hidden side is an empty list, never an empty string.
+    it("should return no sender when the sender of an incoming unshield is private", async () => {
+      mockedFetchTransitionPage.mockResolvedValue({
+        transitions: [
+          getMockedPublicTransaction({
+            transaction_id: "at1unshield",
+            block_number: 500,
+            function_id: "transfer_private_to_public",
+            sender_address: "",
+            recipient_address: address,
+          }),
+        ],
+        next: null,
+      });
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(items).toEqual([
+        expect.objectContaining({
+          id: "at1unshield",
+          type: "IN",
+          senders: [],
+          recipients: [address],
+        }),
+      ]);
+    });
   });
 
   describe("fees", () => {
@@ -562,7 +591,7 @@ describe("listOperations", () => {
 
       expect(items).toEqual([
         expect.objectContaining({
-          senders: [""],
+          senders: [],
           tx: expect.objectContaining({ feesPayer: address, fees: mockedFeePrivateBase }),
         }),
       ]);
