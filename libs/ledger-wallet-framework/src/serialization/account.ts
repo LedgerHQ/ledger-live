@@ -35,7 +35,7 @@ export type FromFamiliyRaw = {
 
 // Old account data that didn't have the field yet: an account is "used" iff it isn't empty.
 function resolveUsed(used: boolean | undefined, res: Account): boolean {
-  return typeof used === "undefined" ? !isAccountEmpty(res) : used;
+  return used === undefined ? !isAccountEmpty(res) : used;
 }
 
 // Isolated so the nested `forEach`/`if` doesn't add to `fromAccountRaw`'s own complexity --
