@@ -3,7 +3,7 @@ import { makeLRUCache, minutes, type CacheRes } from "@ledgerhq/live-network/cac
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
 import { encodeFunctionData, erc20Abi } from "viem";
-import { HEDERA_TRANSACTION_NAMES } from "../constants";
+import { CONTRACT_CALL_TRANSACTION_NAMES } from "../constants";
 import { HederaAddAccountError } from "../errors";
 import { resolveConfig } from "../logic/utils";
 import type {
@@ -332,11 +332,11 @@ const findTransactionByContractCallV2: CacheRes<
       url: `${config.apiUrls.mirrorNode}/api/v1/transactions?${params.toString()}`,
     });
 
-    // try to find main CONTRACT_CALL transaction related to the given address
+    // try to find main contract call transaction related to the given address
     const relatedTx = res.data.transactions.find(tx => {
       return (
-        tx.name === HEDERA_TRANSACTION_NAMES.ContractCall &&
-        tx.transaction_id.startsWith(payerAddress) &&
+        CONTRACT_CALL_TRANSACTION_NAMES.includes(tx.name) &&
+        tx.transaction_id.startsWith(`${payerAddress}-`) &&
         tx.parent_consensus_timestamp === null
       );
     });

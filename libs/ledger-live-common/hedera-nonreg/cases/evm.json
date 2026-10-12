@@ -1,0 +1,258 @@
+{
+  "accounts": [
+    {
+      "account": "0.0.10171350",
+      "since": 1772538080,
+      "txCountSince": 503,
+      "notes": "ED25519 user, created 1765228812 (665 txs total). Relayed wBTC in/out via 0.0.10561221 with USDC HTS legs, 4-row wBTC receive, vault exits paying HBAR, HBAR->ERC20 mint, SaucerSwap HTS->HBAR, fee-only control."
+    },
+    {
+      "account": "0.0.10574239",
+      "since": 1781204375,
+      "txCountSince": 116,
+      "notes": "ED25519 user, created 1781200971 (150 txs total). Smallest account: relayed WETH/wBTC outgoing (incl. 2 rows to different receivers), SaucerSwap V2 HTS->HBAR, approve-like control on WETH contract."
+    },
+    {
+      "account": "0.0.1404223",
+      "since": 1781621595,
+      "txCountSince": 622,
+      "notes": "ED25519 user on lending contract 0.0.10230659: WETH out+in in the same tx, wBTC out + other ERC20 in, ERC20 -> HBAR exits, HBAR -> ERC20 mint. Most ERC20s besides WETH/wBTC are not Ledger-listed."
+    },
+    {
+      "account": "0.0.7949179",
+      "since": 1785403435,
+      "txCountSince": 118,
+      "notes": "ED25519 user. Relayed tx with 3 wBTC rows to the user, SaucerSwap V2 HTS->HBAR, fee-only control."
+    },
+    {
+      "account": "0.0.10633605",
+      "since": 1790337690,
+      "txCountSince": 469,
+      "notes": "ED25519 user. Bridge mints of WETH/wBTC in ETHEREUMTRANSACTIONs paid by 0.0.3286580 / 0.0.6319439 (user pays nothing), HTS->HBAR contract payout, approve-like control on wBTC contract."
+    },
+    {
+      "account": "0.0.5956928",
+      "since": 1787485265,
+      "txCountSince": 13,
+      "notes": "ED25519 user. Tiny window. Single interesting tx: WETH receive where the positive HBAR net comes from a staking reward (0.0.800)."
+    }
+  ],
+  "cases": [
+    {
+      "category": "E1",
+      "account": "0.0.10171350",
+      "consensus_timestamp": "1782440293.263884446",
+      "transaction_id": "0.0.10561221-1782440284-708812731",
+      "evm_hash": "0xc806a89390cc95345c6d93de9441c53a3f9cb5c82f3b490feed72ae67549ffa9",
+      "why": "Relayed ETHEREUMTRANSACTION (payer 0.0.10561221, user HBAR net 0). Incoming ERC20: 1 row wBTC +342643. Child record debits user -201190000 USDC (HTS 0.0.456858): USDC->wBTC swap."
+    },
+    {
+      "category": "E1",
+      "account": "0.0.10171350",
+      "consensus_timestamp": "1783732098.312163000",
+      "transaction_id": "0.0.10561221-1783732087-748870175",
+      "evm_hash": "0x1dca9dd4733b4f9746da6a65d1e7237bcbf76ad0e4faad1367a2b5cbe7b39c5b",
+      "why": "Relayed ETHEREUMTRANSACTION (relayer 0.0.10561221 signs+pays, user HBAR net 0, user pays no fee). Outgoing ERC20: 1 hgraph row wBTC -537000 (user -> 0x0c73...). Same tx also credits user +518972219 USDC (HTS 0.0.456858) in a child record: wBTC->USDC swap."
+    },
+    {
+      "category": "E1",
+      "account": "0.0.10574239",
+      "consensus_timestamp": "1781204382.016563000",
+      "transaction_id": "0.0.10561221-1781204371-967175966",
+      "evm_hash": "0x3f39cab6426c002385d730d2bb46a60485fc3eed74e7eb98dbb0912734ddb032",
+      "why": "Relayed ETHEREUMTRANSACTION (payer 0.0.10561221, user HBAR net 0). Outgoing wBTC in 2 rows to DIFFERENT receivers: 10000 to 0x463f..., 12 to 0xa2c2... (total -10012). Child record credits user +6334800 USDC (HTS 0.0.456858)."
+    },
+    {
+      "category": "E1",
+      "account": "0.0.10574239",
+      "consensus_timestamp": "1781207597.648906000",
+      "transaction_id": "0.0.10561214-1781207587-241275831",
+      "evm_hash": "0xbaecf3a62af464e0e6f2cc9ac13738e12fd20707f083341c0149a58efe2dbc26",
+      "why": "Relayed ETHEREUMTRANSACTION (payer 0.0.10561214, user HBAR net 0). Outgoing ERC20 WETH -2800000000000000. Child record credits user +5177303 USDC (HTS 0.0.456858)."
+    },
+    {
+      "category": "E1",
+      "account": "0.0.10574239",
+      "consensus_timestamp": "1781225540.072214701",
+      "transaction_id": "0.0.10561214-1781225530-046429214",
+      "evm_hash": "0xfd4f77066cfad4a77349f7e5cb9451aae56d6e50445c951a0c0948106f8c8ee5",
+      "why": "Relayed ETHEREUMTRANSACTION (payer 0.0.10561214, user HBAR net 0). Outgoing ERC20: 1 row WETH -2500000000000000 (user -> 0x463f...). Child record credits user +5000100 USDC (HTS 0.0.456858)."
+    },
+    {
+      "category": "E1",
+      "account": "0.0.10633605",
+      "consensus_timestamp": "1790587851.091378294",
+      "transaction_id": "0.0.3286580-1790587843-185353516",
+      "evm_hash": "0x9595c7945339833e563134af8970f07c9faa8bc47199efcf41149e17cd929eb2",
+      "why": "Relayed ETHEREUMTRANSACTION paid by 0.0.3286580 (signer 0.0.7184542, contract 0.0.7195881). User HBAR net 0. Incoming ERC20 mint WETH +2700000000000000000. Single record, no HTS moves."
+    },
+    {
+      "category": "E1",
+      "account": "0.0.10633605",
+      "consensus_timestamp": "1790614170.176691104",
+      "transaction_id": "0.0.6319439-1790614144-062945578",
+      "evm_hash": "0x90a1690585336a133c6c9cfd6370f5ce40d16239b5afd7c8c39558f93d97004c",
+      "why": "Relayed ETHEREUMTRANSACTION paid by 0.0.6319439 (signer 0.0.7184542). User HBAR net 0. Incoming ERC20 mint wBTC +3584538. Single record."
+    },
+    {
+      "category": "E3",
+      "account": "0.0.10171350",
+      "consensus_timestamp": "1772538089.853713000",
+      "transaction_id": "0.0.10171350-1772538077-228439479",
+      "evm_hash": "0x5b913fdabe9aa2b1f15dced8285e079dd89330df36cc5b34e90bef5e334d82b2",
+      "why": "User CONTRACTCALL to 0.0.4544591, pays HBAR to get ERC20: HBAR net -26272922186 (fee 91389205 included). ERC20 mint 0x79a18b7d... (not listed) +1605279036823 to user."
+    },
+    {
+      "category": "E3",
+      "account": "0.0.10171350",
+      "consensus_timestamp": "1782389214.090216614",
+      "transaction_id": "0.0.10171350-1782389189-977871000",
+      "evm_hash": "0x182278d913e08caf2014d4a40a80d89e21b4ae41ce3750cf505b8108cf58c9ca",
+      "why": "User CONTRACTCALL to 0.0.4544591, fee 125576496. HBAR net +221341709510. ERC20 0xdf1a9905... (not listed) -18071466742; HTS USDC 0.0.456858 +447477518."
+    },
+    {
+      "category": "E3",
+      "account": "0.0.10171350",
+      "consensus_timestamp": "1782389294.784089000",
+      "transaction_id": "0.0.10171350-1782389280-728238697",
+      "evm_hash": "0xc484c6b0494fb7343fb2639415b134e0d6075388c2efaef603a8cdc94840adb9",
+      "why": "User CONTRACTCALL to 0.0.4544591 (0x1b0e...), fee 125563620 paid by user. HBAR net +24587269264 (positive beyond fee). ERC20 0x79a18b7d... (not Ledger-listed) -2739385768580; HTS 0.0.3716059 +455473017441. Exit/withdraw paying HBAR."
+    },
+    {
+      "category": "E3",
+      "account": "0.0.1404223",
+      "consensus_timestamp": "1783429231.558131000",
+      "transaction_id": "0.0.1404223-1783429217-879670422",
+      "evm_hash": "0x1bea13513f3bbf392b89e871057223ca997cded31787d4ac2f7bfd66b7d420c9",
+      "why": "User CONTRACTCALL to 0.0.10071466, pays HBAR to get ERC20: HBAR net -1108516798 (fee 208516798 included). ERC20 mint 0x6e96a607... (not listed) +900000000."
+    },
+    {
+      "category": "E3",
+      "account": "0.0.1404223",
+      "consensus_timestamp": "1786472965.617683104",
+      "transaction_id": "0.0.1404223-1786472955-968510677",
+      "evm_hash": "0x839042a4332c129475fe14b1455063107ccec9552707d861040357811cf119b3",
+      "why": "User CONTRACTCALL to 0.0.10230659, fee 140762624. ERC20 0xebafabbd... (not listed) -4062146458. HBAR net +4629820864. HTS USDC 0.0.456858 +219979."
+    },
+    {
+      "category": "E4",
+      "account": "0.0.10171350",
+      "consensus_timestamp": "1782831165.339814000",
+      "transaction_id": "0.0.10561221-1782831154-693466741",
+      "evm_hash": "0x0bc9886d121ca571d07f307223d587699b5134ae1a05f2e4259af04b23d4324e",
+      "why": "Relayed ETHEREUMTRANSACTION (payer 0.0.10561221, user HBAR net 0). 4 hgraph rows wBTC from same sender 0xcf06... to user (60000+40000+53000+43000 = +196000). Child record debits user -116490331 USDC (HTS 0.0.456858)."
+    },
+    {
+      "category": "E4",
+      "account": "0.0.7949179",
+      "consensus_timestamp": "1785403489.498778785",
+      "transaction_id": "0.0.10561221-1785403479-997540950",
+      "evm_hash": "0x9ee320f6fb710bb767a47bdf14306665a14403d455ff10755780da99f9aa7e83",
+      "why": "Relayed ETHEREUMTRANSACTION (payer 0.0.10561221, user HBAR net 0). 3 rows wBTC from same sender 0xcf06... to user: 52000+59000+37000 = +148000. Child record debits user -94443632 USDC (HTS 0.0.456858). Also an E1 incoming case."
+    },
+    {
+      "category": "E5",
+      "account": "0.0.10171350",
+      "consensus_timestamp": "1788803042.133135080",
+      "transaction_id": "0.0.10171350-1788803021-233271358",
+      "evm_hash": "0x1efa3359c9c0c0241e5ebafbea4f5072ce73178aa75861f811bbf6822b6f1834",
+      "why": "User CONTRACTCALL to 0.0.6755814, no ERC20 rows. HBAR net +4235534441 (fee 107967195). HTS 0.0.731861 -247000000 (child record)."
+    },
+    {
+      "category": "E5",
+      "account": "0.0.10171350",
+      "consensus_timestamp": "1790802743.533155741",
+      "transaction_id": "0.0.10171350-1790802733-272315731",
+      "evm_hash": "0xf465326f5c1c775cad1f293df8cae9ee780af5d09244a6807d1d3366d4f2fdbf",
+      "why": "User CONTRACTCALL to SaucerSwap V2 router 0.0.3949434, no ERC20 rows. HBAR net +6079965730 (fee 71730984 paid by user). HTS USDC 0.0.456858 -6710000 (child record). HTS->HBAR swap."
+    },
+    {
+      "category": "E5",
+      "account": "0.0.10574239",
+      "consensus_timestamp": "1781555482.238083000",
+      "transaction_id": "0.0.10574239-1781555472-751967905",
+      "evm_hash": "0x5a6635ebbf7a97fa67f6a89499bd74f3a253ec50392f2e8c482dbab3c8c51a0c",
+      "why": "User CONTRACTCALL to SaucerSwap V2 router 0.0.3949434, no ERC20 rows. HBAR net +5360831954 (fee 94759020 paid by user; WHBAR 0.0.1456985 pays out). HTS 0.0.9770617 -250000 in child record nonce 3 (approval transfer)."
+    },
+    {
+      "category": "E5",
+      "account": "0.0.10633605",
+      "consensus_timestamp": "1790337696.302199104",
+      "transaction_id": "0.0.10633605-1790337684-179554777",
+      "evm_hash": "0x207c931df6c5afb9ca67bd9dca7053a9a1b9c65a17884534b891ca6328e74a98",
+      "why": "User CONTRACTCALL to 0.0.10628061, no ERC20 rows. HBAR net +1054553802375 (fee 131237197). HTS USDC 0.0.456858 -1005552700. 32 records."
+    },
+    {
+      "category": "E5",
+      "account": "0.0.5956928",
+      "consensus_timestamp": "1787485271.951477104",
+      "transaction_id": "0.0.5956928-1787485253-704547669",
+      "evm_hash": "0xf167da37ea2938a0839bd0a5f01dde1dd4dbbcf67d35de9571136e7ae8c8c275",
+      "why": "Variant: user CONTRACTCALL to 0.0.9675688, fee 8705939. HBAR net +80506908, but the positive part is a STAKING REWARD from 0.0.800 (+89212847), not a contract payout. Also ERC20 WETH +1000000000000 (from 0.0.9675688) and HTS 0.0.9770617 -100 wiped (child TOKENWIPE)."
+    },
+    {
+      "category": "E5",
+      "account": "0.0.7949179",
+      "consensus_timestamp": "1786466641.132047936",
+      "transaction_id": "0.0.7949179-1786466633-217718881",
+      "evm_hash": "0xaa073957ef760a1e127cddc5a33b6fc4be0bf4ac30aa84122a33ecf64304e225",
+      "why": "User CONTRACTCALL to SaucerSwap V2 router 0.0.3949434, no ERC20 rows. HBAR net +7555779821 (fee 117008512). HTS 0.0.4794920 -1220289954."
+    },
+    {
+      "category": "E6",
+      "account": "0.0.10171350",
+      "consensus_timestamp": "1790616312.886037104",
+      "transaction_id": "0.0.10171350-1790616295-623214887",
+      "evm_hash": "0x50d38d81cb1cf5775af3c902db8fd2b39a982567573070ae598c69bb38b44a65",
+      "why": "Control. User CONTRACTCALL to 0.0.10527448, no ERC20 rows, no token transfers. HBAR net = -fee = -8992800."
+    },
+    {
+      "category": "E6",
+      "account": "0.0.10574239",
+      "consensus_timestamp": "1781555461.175029000",
+      "transaction_id": "0.0.10574239-1781555450-946641660",
+      "evm_hash": "0x9caa5dccecdd48b7455fa431cc96c01edb42dfd163d6dc60d531503e1b07d55e",
+      "why": "Control. User CONTRACTCALL to the WETH contract 0.0.9470869 with no transfer (no ERC20 rows, likely approve). HBAR net = -fee = -4700160. Single record."
+    },
+    {
+      "category": "E6",
+      "account": "0.0.10633605",
+      "consensus_timestamp": "1790614254.713851104",
+      "transaction_id": "0.0.10633605-1790614245-111476899",
+      "evm_hash": "0xee2648d92e471db3138c1880e11eb50049425f9f111fb944177afdce354d8ec7",
+      "why": "Control. User CONTRACTCALL to the wBTC contract 0.0.10047837 with no transfer (no ERC20 rows, likely approve). HBAR net = -fee = -3324312."
+    },
+    {
+      "category": "E6",
+      "account": "0.0.7949179",
+      "consensus_timestamp": "1785403473.059784104",
+      "transaction_id": "0.0.7949179-1785403441-856043167",
+      "evm_hash": "0xedd2f613a3b4bc44efce420786fb9a2367c7090a2b43f3c8ca80e23725ed7250",
+      "why": "Control. User CONTRACTCALL to 0.0.10527448, no ERC20/token transfers. HBAR net = -fee = -15617000. Happens 16s before the relayed E4 tx."
+    },
+    {
+      "category": "E7",
+      "account": "0.0.1404223",
+      "consensus_timestamp": "1781621604.470171000",
+      "transaction_id": "0.0.1404223-1781621594-073596144",
+      "evm_hash": "0xd508632317602041c589d528caa2971a8debecb1755f385fb3357668d578742b",
+      "why": "User CONTRACTCALL to 0.0.10230659 (0xcec8...), HBAR net = -fee = -108764640. 3 ERC20 rows: WETH out 464648303012322 and WETH back in 8303012322 (user is both sender and receiver of WETH, net -464640000000000), plus mint 0x31403d08... (not listed) +52004."
+    },
+    {
+      "category": "E7",
+      "account": "0.0.1404223",
+      "consensus_timestamp": "1783429026.828112278",
+      "transaction_id": "0.0.1404223-1783429018-870060425",
+      "evm_hash": "0x4b1e94f2cfd37271a3a274e6c32df4f2f66593aaf6840efea467b9e1468fc967",
+      "why": "User CONTRACTCALL to 0.0.10230659, HBAR net = -fee = -123496080. Sends wBTC -1129, receives mint 0x4431a822... (not listed) +486: one ERC20 out, another in."
+    },
+    {
+      "category": "E7",
+      "account": "0.0.1404223",
+      "consensus_timestamp": "1786473023.033879104",
+      "transaction_id": "0.0.1404223-1786473009-409359767",
+      "evm_hash": "0xa0b96448938a2ed23a7e5c47a212d2b4f3d28e983be2e44a528274f490b623db",
+      "why": "User CONTRACTCALL to 0.0.10230659, fee 236623488. Sends ERC20 0xe716bb7c... (not listed) -16479, receives wBTC +11 (from 0.0.9675688). HBAR net +3522304892 (WHBAR 0.0.1456985 payout). Covers E7 and E3 at once."
+    }
+  ]
+}

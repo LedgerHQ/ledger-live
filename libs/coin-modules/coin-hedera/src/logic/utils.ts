@@ -21,7 +21,7 @@ import {
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
   TINYBAR_SCALE,
   OP_TYPES_EXCLUDING_FEES,
-  HEDERA_TRANSACTION_NAMES,
+  CONTRACT_CALL_TRANSACTION_NAMES,
   STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import type {
@@ -574,7 +574,7 @@ export const mergeTransactionsFromDifferentSources = ({
   const isERC20Delayed = merged.some(
     i =>
       i.type === "mirror" &&
-      i.data.name === HEDERA_TRANSACTION_NAMES.ContractCall &&
+      CONTRACT_CALL_TRANSACTION_NAMES.includes(i.data.name) &&
       new BigNumber(i.data.consensus_timestamp).gt(latestHgraphIndexedTimestampSeconds),
   );
 

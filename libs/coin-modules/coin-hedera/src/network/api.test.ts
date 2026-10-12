@@ -530,6 +530,50 @@ describe("apiClient", () => {
       expect(result).toEqual(null);
     });
 
+    it("finds the ETHEREUMTRANSACTION a relayer submitted for an EVM wallet", async () => {
+      const parent = {
+        name: "ETHEREUMTRANSACTION",
+        transaction_id: "0.0.1234-1758733200-632122898",
+        parent_consensus_timestamp: null,
+      };
+      const child = {
+        name: "CONTRACTCALL",
+        transaction_id: "0.0.1234-1758733200-632122898",
+        parent_consensus_timestamp: "1758733200.632122898",
+      };
+      mockedNetwork.mockResolvedValueOnce(getMockResponse({ transactions: [child, parent] }));
+
+      const result = await apiClient.findTransactionByContractCallV2({
+        configOrCurrencyId: mockConfig,
+        timestamp: "1758733200.632122898",
+        payerAddress: "0.0.1234",
+      });
+
+      expect(result).toEqual(parent);
+    });
+
+    it("ignores a payer whose account id only starts with the given one", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [
+            {
+              name: "CONTRACTCALL",
+              transaction_id: "0.0.12345-1758733200-632122898",
+              parent_consensus_timestamp: null,
+            },
+          ],
+        }),
+      );
+
+      const result = await apiClient.findTransactionByContractCallV2({
+        configOrCurrencyId: mockConfig,
+        timestamp: "1758733200.632122898",
+        payerAddress: "0.0.1234",
+      });
+
+      expect(result).toBeNull();
+    });
+
     it("should call the correct endpoint and return null for empty transactions list", async () => {
       const mockConsensusTimestamp = "1758733200.632122898";
       const mockPayerAddress = "0.0.1234";

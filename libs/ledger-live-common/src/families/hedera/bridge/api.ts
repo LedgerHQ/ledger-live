@@ -169,7 +169,8 @@ function feesOperationForTokenTransfer(
   const tokenOperation = transactionOperations.find(isTokenOperation);
   const nativeOperations = transactionOperations.filter(op => !isTokenOperation(op));
   if (!tokenOperation) return undefined;
-  if (nativeOperations.some(op => !op.fee.isZero())) return undefined;
+  // an IN only shows the tx fee: its value never carries it
+  if (nativeOperations.some(op => op.type !== "IN" && !op.fee.isZero())) return undefined;
 
   const tokenExtra = getOperationExtra(tokenOperation);
   if (tokenExtra.feePayer !== address || tokenOperation.fee.isZero()) return undefined;

@@ -407,6 +407,23 @@ describe("hedera bridge", () => {
       expect(adaptOperations(address, operations)).toEqual(operations);
     });
 
+    it("adds a native FEES operation next to an incoming native operation, whose fee is only shown", () => {
+      const incoming = operation({ type: "IN", hash: "tx1", fee: 629386, feePayer: address });
+      const tokenTransfer = operation({
+        type: "OUT",
+        hash: "tx1",
+        fee: 629386,
+        feePayer: address,
+        token: true,
+      });
+
+      expect(adaptOperations(address, [incoming, tokenTransfer]).map(op => op.type)).toEqual([
+        "IN",
+        "OUT",
+        "FEES",
+      ]);
+    });
+
     it("adds a native FEES operation sent to the token recipient for a token-only transaction", () => {
       const tokenTransfer = operation({
         type: "OUT",

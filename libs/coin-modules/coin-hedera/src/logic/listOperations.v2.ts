@@ -2,6 +2,7 @@ import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import countBy from "lodash/countBy";
 import {
   HARDCODED_BLOCK_HEIGHT,
   HEDERA_TRANSACTION_NAMES,
@@ -130,22 +131,21 @@ function getOperationTypeFromERC20Details({
   return senderEvmAddress.toLowerCase() === evmAddress.toLowerCase() ? "OUT" : "IN";
 }
 
-async function processERC20TokenTransfer({
-  enrichedERC20Transfer,
-  evmAddress,
-  ledgerAccountId,
-  commonData,
-}: {
-  enrichedERC20Transfer: EnrichedERC20Transfer;
-  evmAddress: string;
-  ledgerAccountId: string;
-  commonData: ReturnType<typeof getCommonMirrorOperationData>;
-}): Promise<{
-  coinOperation: Operation<HederaOperationExtra> | undefined;
-  tokenOperations: Operation<HederaOperationExtra>[];
-}> {
-  let coinOperation: Operation<HederaOperationExtra> | undefined;
-  const tokenOperations: Operation<HederaOperationExtra>[] = [];
+type ERC20Movement = {
+  tokenEvmAddress: string;
+  type: OperationType;
+  senderAddress: string;
+  recipientAddress: string;
+  amount: BigNumber;
+};
+
+/** hgraph lists one row per Transfer log, so a contract can move the same token to the same
+ *  counterparty several times in one tx: those rows are summed, like the HTS path nets per account */
+function sumERC20Movements(
+  enrichedERC20Transfer: EnrichedERC20Transfer,
+  evmAddress: string,
+): ERC20Movement[] {
+  const movements = new Map<string, ERC20Movement>();
 
   for (const transfer of enrichedERC20Transfer.transfers) {
     const tokenEvmAddress = transfer.token_evm_address;
@@ -160,65 +160,125 @@ async function processERC20TokenTransfer({
     // meaningful operation cannot be created without correct addresses, so we skip it
     if (!tokenEvmAddress || !senderEvmAddress || !senderAddress || !recipientAddress) continue;
 
-    const commonFields = {
-      ...commonData,
-      type: getOperationTypeFromERC20Details({
-        transferType: transfer.transfer_type,
-        senderEvmAddress,
-        evmAddress,
-      }),
-      contract: tokenEvmAddress,
-      standard: "erc20",
-      blockHeight: commonData.blockHeight,
-      blockHash: commonData.blockHash,
-      senders: [senderAddress],
-      recipients: [recipientAddress],
-      fee: new BigNumber(enrichedERC20Transfer.mirrorTransaction.charged_tx_fee),
-      value: new BigNumber(transfer.amount),
-      extra: {
-        ...commonData.extra,
-        gasConsumed: enrichedERC20Transfer.contractCallResult.gas_consumed,
-        gasLimit: enrichedERC20Transfer.contractCallResult.gas_limit,
-        gasUsed: enrichedERC20Transfer.contractCallResult.gas_used,
-      },
-    } satisfies Partial<Operation<HederaOperationExtra>>;
+    const type = getOperationTypeFromERC20Details({
+      transferType: transfer.transfer_type,
+      senderEvmAddress,
+      evmAddress,
+    });
+    const counterparty = type === "OUT" ? recipientAddress : senderAddress;
+    const key = `${tokenEvmAddress}:${type}:${counterparty}`;
+    const movement = movements.get(key);
 
-    const tokenOperation = {
-      ...commonFields,
-      id: `${commonFields.hash}:${commonFields.type}:${tokenEvmAddress}`,
-      accountId: ledgerAccountId,
-    } satisfies Operation<HederaOperationExtra>;
-
-    tokenOperations.push(tokenOperation);
+    if (movement) {
+      movement.amount = movement.amount.plus(transfer.amount);
+    } else {
+      movements.set(key, {
+        tokenEvmAddress,
+        type,
+        senderAddress,
+        recipientAddress,
+        amount: new BigNumber(transfer.amount),
+      });
+    }
   }
 
-  // create FEES operation for outgoing ERC20 transfer
-  const outgoingTransfer = tokenOperations.find(transfer => transfer.type === "OUT");
-  if (outgoingTransfer) {
-    const { mirrorTransaction } = enrichedERC20Transfer;
-    const feeRecipient =
-      mirrorTransaction.node ?? findFeeRecipient(mirrorTransaction.transfers ?? []);
-    coinOperation = {
+  return [...movements.values()];
+}
+
+function processERC20TokenTransfer({
+  enrichedERC20Transfer,
+  address,
+  evmAddress,
+  ledgerAccountId,
+  commonData,
+  stakingRewards,
+}: {
+  enrichedERC20Transfer: EnrichedERC20Transfer;
+  address: string;
+  evmAddress: string;
+  ledgerAccountId: string;
+  commonData: ReturnType<typeof getCommonMirrorOperationData>;
+  stakingRewards: Map<string, BigNumber>;
+}): {
+  coinOperations: Operation<HederaOperationExtra>[];
+  tokenOperations: Operation<HederaOperationExtra>[];
+} {
+  const { mirrorTransaction, contractCallResult } = enrichedERC20Transfer;
+  const fee = new BigNumber(mirrorTransaction.charged_tx_fee);
+  const extra = {
+    ...commonData.extra,
+    gasConsumed: contractCallResult.gas_consumed,
+    gasLimit: contractCallResult.gas_limit,
+    gasUsed: contractCallResult.gas_used,
+  };
+
+  const movements = sumERC20Movements(enrichedERC20Transfer, evmAddress);
+  const movementsPerTokenAndType = countBy(movements, m => `${m.tokenEvmAddress}:${m.type}`);
+
+  const tokenOperations = movements.map(movement => {
+    const { tokenEvmAddress, type } = movement;
+    // several counterparties of one token and direction each need their own id
+    const isOneOfSeveral = movementsPerTokenAndType[`${tokenEvmAddress}:${type}`] > 1;
+    const counterparty = type === "OUT" ? movement.recipientAddress : movement.senderAddress;
+
+    return {
+      ...commonData,
+      id: `${commonData.hash}:${type}:${tokenEvmAddress}${isOneOfSeveral ? `:${counterparty}` : ""}`,
+      accountId: ledgerAccountId,
+      type,
+      contract: tokenEvmAddress,
+      standard: "erc20",
+      senders: [movement.senderAddress],
+      recipients: [movement.recipientAddress],
+      fee,
+      value: movement.amount,
+      extra,
+    } satisfies Operation<HederaOperationExtra>;
+  });
+
+  const coinOperations: Operation<HederaOperationExtra>[] = [];
+  const transfers = mirrorTransaction.transfers ?? [];
+  const parsed = parseTransfers(transfers, address, stakingRewards);
+  // a relayer often pays for an EVM wallet's tx, and then the account owes no fee
+  const isPayer = commonData.extra.feesPayer === address;
+  const ownFee = isPayer ? fee : new BigNumber(0);
+  // HBAR the contract call moved besides the fee, e.g. the HBAR side of a token swap
+  const valueDelta = (parsed.netAmount ?? new BigNumber(0)).plus(ownFee);
+
+  if (!valueDelta.isZero()) {
+    coinOperations.push(
+      buildCoinOperation({
+        commonData,
+        ledgerAccountId,
+        type: valueDelta.isPositive() ? "IN" : "OUT",
+        value: valueDelta.abs(),
+        fee: new BigNumber(0),
+        senders: parsed.senders,
+        recipients: parsed.recipients,
+        extra: { ...commonData.extra },
+      }),
+    );
+  }
+
+  if (isPayer && fee.gt(0)) {
+    const feeRecipient = mirrorTransaction.node ?? findFeeRecipient(transfers);
+    const feeToken =
+      tokenOperations.find(tokenOperation => tokenOperation.type === "OUT") ?? tokenOperations[0];
+    coinOperations.push({
       ...commonData,
       id: `${commonData.hash}:FEES`,
       accountId: ledgerAccountId,
       type: "FEES",
-      ...(outgoingTransfer.contract && { contract: outgoingTransfer.contract }),
-      ...(outgoingTransfer.standard && { standard: outgoingTransfer.standard }),
-      blockHeight: outgoingTransfer.blockHeight,
-      blockHash: outgoingTransfer.blockHash,
-      senders: commonData.extra.feesPayer ? [commonData.extra.feesPayer] : [],
+      ...(feeToken && { contract: feeToken.contract, standard: feeToken.standard }),
+      senders: [address],
       recipients: feeRecipient ? [feeRecipient] : [],
-      fee: outgoingTransfer.fee,
-      value: outgoingTransfer.fee,
-      extra: outgoingTransfer.extra,
-    } satisfies Operation<HederaOperationExtra>;
+      fee,
+      value: fee,
+      extra,
+    } satisfies Operation<HederaOperationExtra>);
   }
 
-  return {
-    coinOperation,
-    tokenOperations,
-  };
+  return { coinOperations, tokenOperations };
 }
 
 type RecipientAmount = { recipient: string; amount: BigNumber };
@@ -401,6 +461,7 @@ function buildCustomOrStakingOperation({
   ownFee,
   senders,
   recipients,
+  feeRecipient,
 }: {
   rawTx: HederaMirrorTransaction;
   ledgerAccountId: string;
@@ -412,6 +473,7 @@ function buildCustomOrStakingOperation({
   ownFee: BigNumber;
   senders: string[];
   recipients: string[];
+  feeRecipient: string | null;
 }): Operation<HederaOperationExtra> {
   const extra = { ...commonData.extra };
   let operationType: OperationType = customType ?? toOperationTypeFromNetAmount(netAmount);
@@ -441,7 +503,7 @@ function buildCustomOrStakingOperation({
     value: netAmount.abs(),
     fee: ownFee,
     senders,
-    recipients: recipients.length === 0 && rawTx.node ? [rawTx.node] : recipients,
+    recipients: recipients.length === 0 && feeRecipient ? [feeRecipient] : recipients,
     extra,
   });
 }
@@ -474,16 +536,23 @@ function processCoinTransfers({
   const netAmount = parsed.netAmount ?? new BigNumber(0);
   const fee = commonData.fee;
   const isPayer = commonData.extra.feesPayer === address;
+  const payerFee = isPayer ? fee : new BigNumber(0);
+  // A failed tx moves nothing but fees, and they are not always `charged_tx_fee` on the payer: an
+  // atomic batch's failed inner tx can debit more, an EVM tx splits gas between payer and signer.
+  const failedTxDebit = BigNumber.max(netAmount.negated(), 0);
   // an op's `fee` must match what is baked into its `value`, or getOperationValue subtracts it twice
-  const ownFee = isPayer ? fee : new BigNumber(0);
+  const ownFee = commonData.hasFailed ? failedTxDebit : payerFee;
 
   // the network collects the fee, so a FEES op is addressed to the node that submitted the tx;
   // child records carry no node, so the transfers are the only trace of where the fee went
   const feeRecipient = rawTx.node ?? findFeeRecipient(transfers);
 
   const customType = MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE[rawTx.name];
+  // mirror nets the payer's row as value+fee, so add the fee back to recover the transfer amount
+  const valueDelta = netAmount.plus(ownFee);
 
-  if (customType || stakingAnalysis) {
+  // custom types count as outgoing, so HBAR a contract call pays out to the account stays an IN
+  if (stakingAnalysis || (customType && valueDelta.lte(0))) {
     return [
       buildCustomOrStakingOperation({
         rawTx,
@@ -496,6 +565,7 @@ function processCoinTransfers({
         ownFee,
         senders,
         recipients,
+        feeRecipient,
       }),
     ];
   }
@@ -519,13 +589,13 @@ function processCoinTransfers({
       value,
       fee: ownFee,
       senders,
-      recipients: recipients.length === 0 && rawTx.node ? [rawTx.node] : recipients,
+      recipients: recipients.length === 0 && feeRecipient ? [feeRecipient] : recipients,
       extra: { ...commonData.extra },
     });
 
   const zeroValueOperations = (): Operation<HederaOperationExtra>[] => {
     // a failed send only has fee transfers, but it stays an OUT so it still reads as a send
-    if (commonData.hasFailed && isPayer) {
+    if (commonData.hasFailed && ownFee.gt(0)) {
       return [buildNettedOperation("OUT", netAmount.abs())];
     }
 
@@ -578,9 +648,6 @@ function processCoinTransfers({
       ? [buildFeesOperation(), ...perRecipientOperations]
       : perRecipientOperations;
   };
-
-  // mirror nets the payer's row as value+fee, so add the fee back to recover the transfer amount
-  const valueDelta = netAmount.plus(ownFee);
 
   if (valueDelta.isZero()) return zeroValueOperations();
   if (valueDelta.isPositive()) return incomingOperations(valueDelta);
@@ -656,14 +723,16 @@ async function processTransactionItem(
     });
     newCoinOperations.push(...coinOps);
   } else {
-    const erc20TokenResult = await processERC20TokenTransfer({
+    const erc20TokenResult = processERC20TokenTransfer({
       enrichedERC20Transfer: mergedTx.data,
+      address,
       evmAddress,
       ledgerAccountId,
       commonData,
+      stakingRewards,
     });
 
-    if (erc20TokenResult.coinOperation) newCoinOperations.push(erc20TokenResult.coinOperation);
+    newCoinOperations.push(...erc20TokenResult.coinOperations);
     newTokenOperations.push(...erc20TokenResult.tokenOperations);
   }
 

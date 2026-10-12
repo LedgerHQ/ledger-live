@@ -9,7 +9,11 @@ import { makeLRUCache, minutes, seconds } from "@ledgerhq/live-network/cache";
 import type { FiatCurrency, Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { HEDERA_VALIDATORS_CACHE_MINUTES, STAKING_REWARD_ACCOUNT_ID } from "../constants";
+import {
+  FEE_COLLECTION_ACCOUNT_ID,
+  HEDERA_VALIDATORS_CACHE_MINUTES,
+  STAKING_REWARD_ACCOUNT_ID,
+} from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import {
   getChecksum,
@@ -85,9 +89,9 @@ function sumNetByAccount(
   return netByAccount;
 }
 
-/** First network account credited by these transfers: a consensus node, or the fee collection
- *  account. Nodes take a fee share on every transaction, so a credited one is never a transfer's
- *  real recipient — it only says where the fee went. */
+/** First consensus node credited by these transfers. Before HIP-1259 nodes took a fee share on
+ *  every transaction, so a credited one is never a transfer's real recipient — it only says where
+ *  the fee went. */
 function findCreditedNetworkAccount(netByAccount: Map<string, BigNumber>): string | null {
   for (const [account, net] of netByAccount) {
     if (!net.isPositive()) continue;
@@ -103,7 +107,13 @@ function findCreditedNetworkAccount(netByAccount: Map<string, BigNumber>): strin
 export function findFeeRecipient(
   mirrorTransfers: (HederaMirrorCoinTransfer | HederaMirrorTokenTransfer)[],
 ): string | null {
-  return findCreditedNetworkAccount(sumNetByAccount(mirrorTransfers));
+  const netByAccount = sumNetByAccount(mirrorTransfers);
+  const node = findCreditedNetworkAccount(netByAccount);
+  if (node) return node;
+
+  // since HIP-1259 no node is credited: the whole fee goes to the fee collection account
+  const collected = netByAccount.get(FEE_COLLECTION_ACCOUNT_ID);
+  return collected?.isPositive() ? FEE_COLLECTION_ACCOUNT_ID : null;
 }
 
 type TransferRole = "sender" | "recipient" | "ignored";

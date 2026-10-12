@@ -1,0 +1,323 @@
+{
+  "accounts": [
+    {
+      "account": "0.0.10903142",
+      "since": 1791760830,
+      "txCountSince": 22,
+      "notes": "H1: pulls HBAR from 0.0.700278 via an allowance it holds and pays the fee itself (fee to 0.0.802)."
+    },
+    {
+      "account": "0.0.10352175",
+      "since": 1791750770,
+      "txCountSince": 32,
+      "notes": "H1: pulls HBAR via an allowance (approval spend from 0.0.8042044) and pays the fee. Same pattern repeats at 1791787157.466363224 and 1791807332.481329468."
+    },
+    {
+      "account": "0.0.634576",
+      "since": 1790427860,
+      "txCountSince": 45,
+      "notes": "H1: scheduled CRYPTOTRANSFER whose transaction_id starts with this account (it sent SCHEDULECREATE at 1790427871.959565804), but the schedule payer 0.0.514792 pays the fee. Also receives 1.23572866 HBAR in an EtaSwap multi-send at 1791384453.432802104."
+    },
+    {
+      "account": "0.0.10490943",
+      "since": 1791480450,
+      "txCountSince": 6,
+      "notes": "H2: receives 8 HBAR from 2 senders in one scheduled CRYPTOTRANSFER paid by 0.0.9538191. Happens twice."
+    },
+    {
+      "account": "0.0.10759344",
+      "since": 1787422480,
+      "txCountSince": 94,
+      "notes": "H2: one CRYPTOTRANSFER brings HBAR + 4 tokens (USDC, DOVU, 0.0.9770617, 0.0.10082597) from 0.0.10759541. Third party 0.0.10599238 pays the fee."
+    },
+    {
+      "account": "0.0.10855528",
+      "since": 1789270820,
+      "txCountSince": 181,
+      "notes": "H2: receives USDC + SAUCE + PACK in one CRYPTOTRANSFER from 0.0.10276473, who pays a 2.01297603 HBAR fee."
+    },
+    {
+      "account": "0.0.10067807",
+      "since": 1782483670,
+      "txCountSince": 18,
+      "notes": "H3: MOUTH 0.0.4929186 has 6 fractional fees (6% total, net_of_transfers=false). The receiver bears the fee. Receives net of fee once and sends once."
+    },
+    {
+      "account": "0.0.4929181",
+      "since": 1782483670,
+      "txCountSince": 23,
+      "notes": "H3: collector of one MOUTH fractional fee (1.25%). Credited in transfers paid by other accounts. Key is a key list (ProtobufEncoded), not a contract."
+    },
+    {
+      "account": "0.0.7982665",
+      "since": 1791728190,
+      "txCountSince": 5,
+      "notes": "H4: DEATHN 0.0.8023834 airdrop from 0.0.8075310, pending since 1736852000.367188000 (the airdrop tx is not in this account's history). Claimed (with a staking reward), then rejected back to treasury 0.0.7891970."
+    },
+    {
+      "account": "0.0.10303363",
+      "since": 1783173320,
+      "txCountSince": 48,
+      "notes": "H4: 20 USDC airdrop from 0.0.961733 at 1783172273.432792431 stayed pending (not in this account's history). Claimed ~18 min later by the recipient."
+    },
+    {
+      "account": "0.0.7840494",
+      "since": 1734081040,
+      "txCountSince": 108,
+      "notes": "H5 (pre-2025): explicit 11 HBAR sends to node accounts. Each tx was submitted to the same node, so the explicit amount and node fee merge into one 1100001383 transfer. Also 1 HBAR to 0.0.12 at 1734081154.022768000 and to 0.0.20 / 0.0.6 / 0.0.4 nearby."
+    },
+    {
+      "account": "0.0.7137125",
+      "since": 1729575150,
+      "txCountSince": 10,
+      "notes": "H5 + H7 (pre-2025): funded with 10 HBAR, sends 10 HBAR to node 0.0.18 via node 0.0.18 (merged with node fee), then a failed CRYPTOTRANSFER (INSUFFICIENT_ACCOUNT_BALANCE) 2 s later."
+    },
+    {
+      "account": "0.0.1505996",
+      "since": 1730131010,
+      "txCountSince": 54,
+      "notes": "H6 old (Oct 2024, fee to node + 0.0.98 + 0.0.800). 'Otaru DAO' distribution: ~12 multi-recipient HBAR sends in 60 s (1730131022-1730131079)."
+    },
+    {
+      "account": "0.0.3745833",
+      "since": 1791384440,
+      "txCountSince": 72,
+      "notes": "H6 recent (fee to 0.0.802). 'EtaSwapEarlyAdopter reward' sends 1.23572866 HBAR each to 8 recipients, then to 4. Account memo 'EtaSwap fee', ntok=1000."
+    },
+    {
+      "account": "0.0.9113854",
+      "since": 1790781210,
+      "txCountSince": 22,
+      "notes": "H7: failed standalone CONTRACTCALL (CONTRACT_REVERT_EXECUTED) to SaucerSwap 0.0.3045981. User pays the fee."
+    },
+    {
+      "account": "0.0.4093645",
+      "since": 1791227880,
+      "txCountSince": 17,
+      "notes": "H7: ATOMICBATCH INNER_TRANSACTION_FAILED. Inner txs, all paid by this account: CRYPTOAPPROVEALLOWANCE (REVERTED_SUCCESS, fee 49611213), CONTRACTCALL (CONTRACT_REVERT_EXECUTED, fee 14098224), plus 2 child CONTRACTCALL REVERTED_SUCCESS with fee 0. A successful batch follows at 1791231147.486584104."
+    },
+    {
+      "account": "0.0.1073000",
+      "since": 1730131070,
+      "txCountSince": 9,
+      "notes": "H8 old: receives a 2.62 HBAR distribution from 0.0.1505996 plus a 0.45730298 HBAR staking reward, all in one transfer."
+    },
+    {
+      "account": "0.0.692862",
+      "since": 1791368010,
+      "txCountSince": 8,
+      "notes": "H8 recent: 0.0.1986041 'Daily staking rewards' sends 1 tinybar to trigger the reward payout. The account gets 1 tinybar + reward. Happens twice."
+    },
+    {
+      "account": "0.0.773269",
+      "since": 1790013900,
+      "txCountSince": 6,
+      "notes": "H8 recent: receives 2805.14 HBAR from 0.0.55980 in a 7-recipient send, plus a 0.01890758 HBAR staking reward."
+    }
+  ],
+  "cases": [
+    {
+      "category": "H1",
+      "account": "0.0.10903142",
+      "consensus_timestamp": "1791760842.426612431",
+      "transaction_id": "0.0.10903142-1791760835-500132737",
+      "why": "Account is payer. 0.0.700278 sends 142934740 tinybar (is_approval=true). Account nets +139618784 after paying the 3315956 fee (fee to 0.0.802). No tokens."
+    },
+    {
+      "category": "H1",
+      "account": "0.0.10352175",
+      "consensus_timestamp": "1791750777.613815397",
+      "transaction_id": "0.0.10352175-1791750773-521600903",
+      "why": "Account is payer. 0.0.8042044 sends 10200000000 (is_approval=true). Account nets +10199892347 after the 107653 fee (to 0.0.802)."
+    },
+    {
+      "category": "H1",
+      "account": "0.0.634576",
+      "consensus_timestamp": "1790427893.663931743",
+      "transaction_id": "0.0.634576-1790427867-455228311",
+      "why": "Scheduled CRYPTOTRANSFER. transaction_id payer is this account, but it pays no fee here. Account gets +95000000 HBAR. The 2125616 fee is paid by schedule payer 0.0.514792. That payer also sends 0.01 / 0.04 HBAR to 0.0.665353 / 0.0.694236 and gets a 391900150 staking reward (0.0.800 -391900150). The SCHEDULECREATE (paid by this account, fee 10628083) is at 1790427871.959565804."
+    },
+    {
+      "category": "H2",
+      "account": "0.0.10490943",
+      "consensus_timestamp": "1791480462.285505105",
+      "transaction_id": "0.0.9538191-1791480334-644655841",
+      "why": "Scheduled CRYPTOTRANSFER. Account gets +800000000 from 2 senders: 0.0.1645615 (-400000000) and 0.0.8848758 (-400000000). Fee 2467252 paid by 0.0.9538191. No tokens."
+    },
+    {
+      "category": "H2",
+      "account": "0.0.10490943",
+      "consensus_timestamp": "1791485886.496179210",
+      "transaction_id": "0.0.9538191-1791482954-242297194",
+      "why": "Scheduled CRYPTOTRANSFER. Account gets +800000000 from 2 senders: 0.0.3851685 and 0.0.8182572 (-400000000 each). Fee 2788788 paid by 0.0.9538191."
+    },
+    {
+      "category": "H2",
+      "account": "0.0.10759344",
+      "consensus_timestamp": "1787422488.994053876",
+      "transaction_id": "0.0.10599238-1787422475-314760744",
+      "why": "Account gets +375662150004 HBAR and 4 tokens from 0.0.10759541: USDC 0.0.456858 +285101954, DOVU 0.0.3716059 +944889834, 0.0.9770617 +7220984, 0.0.10082597 +185688. Fee 1806023 paid by third party 0.0.10599238 (to 0.0.802)."
+    },
+    {
+      "category": "H2",
+      "account": "0.0.10855528",
+      "consensus_timestamp": "1789270827.364813503",
+      "transaction_id": "0.0.10276473-1789270818-102925752",
+      "why": "Token-only transfer, HBAR delta 0. Account gets USDC 0.0.456858 +1332115, SAUCE 0.0.731861 +12938368, PACK 0.0.4794920 +24751136 from 0.0.10276473. Sender pays the 201297603 fee."
+    },
+    {
+      "category": "H3",
+      "account": "0.0.10067807",
+      "consensus_timestamp": "1782483685.674882694",
+      "transaction_id": "0.0.4598937-1782483680-997035827",
+      "why": "Payer side, as receiver. 0.0.4598937 sends 10000000000 MOUTH 0.0.4929186. Account gets +9399900000 (6% fractional fee taken off). Collectors: 0.0.4929179 +400000000, 0.0.4929181 +125000000, 0.0.4929182/84/85 +25000000 each, 0.0.4910691 +100000. Account's HBAR delta is 0. Sender pays the 2768382 fee and gets a 287266319 staking reward."
+    },
+    {
+      "category": "H3",
+      "account": "0.0.10067807",
+      "consensus_timestamp": "1782497116.413322000",
+      "transaction_id": "0.0.10067807-1782497110-220776458",
+      "why": "Account sends 100000000 MOUTH to 0.0.10509747 and pays the 2727345 HBAR fee (to 0.0.802). The receiver gets 93999000 net. Collectors get 6001000 total. assessed_custom_fee effective payer is the receiver."
+    },
+    {
+      "category": "H3",
+      "account": "0.0.4929181",
+      "consensus_timestamp": "1782483685.674882694",
+      "transaction_id": "0.0.4598937-1782483680-997035827",
+      "why": "Collector side: +125000000 MOUTH (1.25% fractional fee). Neither payer nor sender. HBAR delta 0."
+    },
+    {
+      "category": "H3",
+      "account": "0.0.4929181",
+      "consensus_timestamp": "1782497116.413322000",
+      "transaction_id": "0.0.10067807-1782497110-220776458",
+      "why": "Collector side: +1250000 MOUTH fee on a 100000000 MOUTH transfer between 0.0.10067807 and 0.0.10509747. HBAR delta 0."
+    },
+    {
+      "category": "H4",
+      "account": "0.0.7982665",
+      "consensus_timestamp": "1791728201.251718301",
+      "transaction_id": "0.0.7982665-1791728191-498150822",
+      "why": "TOKENCLAIMAIRDROP by the recipient. +1000000000 DEATHN 0.0.8023834 from 0.0.8075310 (pending since 1736852000.367188000). HBAR net +4618361 = staking reward 5708455 - fee 1090094 (to 0.0.802)."
+    },
+    {
+      "category": "H4",
+      "account": "0.0.7982665",
+      "consensus_timestamp": "1791728395.985711104",
+      "transaction_id": "0.0.7982665-1791728386-517884430",
+      "why": "TOKENREJECT of the just-claimed token: -1000000000 DEATHN 0.0.8023834 back to treasury 0.0.7891970. HBAR -1090094 (fee, account pays)."
+    },
+    {
+      "category": "H4",
+      "account": "0.0.10303363",
+      "consensus_timestamp": "1783173333.326389687",
+      "transaction_id": "0.0.10303363-1783173324-333313011",
+      "why": "TOKENCLAIMAIRDROP: +20000000 USDC 0.0.456858 (20 USDC) from 0.0.961733. The pending TOKENAIRDROP 0.0.961733-1783172244-326284741 at 1783172273.432792431 is not in this account's history. HBAR -1364149 (fee, account pays)."
+    },
+    {
+      "category": "H5",
+      "account": "0.0.7840494",
+      "consensus_timestamp": "1734081053.858590000",
+      "transaction_id": "0.0.7840494-1734081042-683064766",
+      "why": "Pre-2025. Explicit 11 HBAR to node 0.0.17, submitted via node 0.0.17. Mirror shows one merged 0.0.17 +1100001383 (11 HBAR + 1383 node fee), plus 0.0.98 +26224, 0.0.800 +3277, 0.0.801 +3277. Account -1100034161 (fee 34161)."
+    },
+    {
+      "category": "H5",
+      "account": "0.0.7840494",
+      "consensus_timestamp": "1734081602.889506000",
+      "transaction_id": "0.0.7840494-1734081589-859049292",
+      "why": "Pre-2025. Explicit 11 HBAR to node 0.0.12, submitted via node 0.0.12. Merged 0.0.12 +1100001383. Account -1100034161 (fee 34161)."
+    },
+    {
+      "category": "H5",
+      "account": "0.0.7137125",
+      "consensus_timestamp": "1729575169.841707000",
+      "transaction_id": "0.0.7137125-1729575156-934035514",
+      "why": "Pre-2025. Explicit 10 HBAR to node 0.0.18, submitted via node 0.0.18. Merged 0.0.18 +1000007694, plus 0.0.98 +164044, 0.0.800 +18227. Account -1000189965 (fee 189965)."
+    },
+    {
+      "category": "H6",
+      "account": "0.0.1505996",
+      "consensus_timestamp": "1730131022.868843000",
+      "transaction_id": "0.0.1505996-1730131012-199397853",
+      "why": "Pre-2025. One sender, 9 recipients (0.0.1048446, 0.0.1049144, 0.0.1073706, 0.0.1109949, 0.0.1268046, 0.0.1291686, 0.0.1739901, 0.0.2966637, 0.0.4363669). Account -87994223002 incl. fee 223002 (node 0.0.23 +9142, 0.0.98 +192474). 0.0.800 -32673743 pays staking rewards to 4 recipients."
+    },
+    {
+      "category": "H6",
+      "account": "0.0.1505996",
+      "consensus_timestamp": "1730131079.186329990",
+      "transaction_id": "0.0.1505996-1730131069-580894452",
+      "why": "Pre-2025. One sender, 5 recipients (0.0.555599 +1833000000, 0.0.898319 +524000000, 0.0.1073000 +307730298, 0.0.4823871 +412526875, 0.0.5715080 +262000000). Account -3143216298 incl. fee 216298 (node 0.0.16 +8823, 0.0.98 +186728). 0.0.800 -196236426 = rewards to 0.0.4823871 and 0.0.1073000."
+    },
+    {
+      "category": "H6",
+      "account": "0.0.3745833",
+      "consensus_timestamp": "1791384449.115559117",
+      "transaction_id": "0.0.3745833-1791384441-414315102",
+      "why": "Recent. One sender, 8 recipients x 123572866 (0.0.378107, 0.0.688890, 0.0.921997, 0.0.1640537, 0.0.2256746, 0.0.3927125, 0.0.4125686, 0.0.6769320). Account -989434436 incl. fee 851508, all to 0.0.802."
+    },
+    {
+      "category": "H6",
+      "account": "0.0.3745833",
+      "consensus_timestamp": "1791384453.432802104",
+      "transaction_id": "0.0.3745833-1791384449-071210580",
+      "why": "Recent. One sender, 4 recipients x 123572866 (0.0.53416, 0.0.634576, 0.0.1052677, 0.0.4968728). Account -494717217 incl. fee 425753, to 0.0.802."
+    },
+    {
+      "category": "H7",
+      "account": "0.0.7137125",
+      "consensus_timestamp": "1729575171.003481000",
+      "transaction_id": "0.0.7137125-1729575158-837511493",
+      "why": "Pre-2025. Failed CRYPTOTRANSFER (INSUFFICIENT_ACCOUNT_BALANCE) paid by the account. Only the fee moves: -189965 (node 0.0.29 + 0.0.98 + 0.0.800)."
+    },
+    {
+      "category": "H7",
+      "account": "0.0.9113854",
+      "consensus_timestamp": "1790781223.393045104",
+      "transaction_id": "0.0.9113854-1790781213-538798671",
+      "why": "Failed CONTRACTCALL (CONTRACT_REVERT_EXECUTED) to 0.0.3045981. Only the fee moves: -3848025 to 0.0.802. No tokens."
+    },
+    {
+      "category": "H7",
+      "account": "0.0.4093645",
+      "consensus_timestamp": "1791227907.938079035",
+      "transaction_id": "0.0.4093645-1791227892-358580307",
+      "why": "ATOMICBATCH INNER_TRANSACTION_FAILED paid by the account. Batch fee -992223 (to 0.0.802). Inner txs at .036 (CRYPTOAPPROVEALLOWANCE REVERTED_SUCCESS, -49611213) and .037 (CONTRACTCALL CONTRACT_REVERT_EXECUTED, -14098224). Children .038/.039 are REVERTED_SUCCESS with fee 0. All have parent_consensus_timestamp set. No value moves."
+    },
+    {
+      "category": "H7",
+      "account": "0.0.4093645",
+      "consensus_timestamp": "1791227907.938079037",
+      "transaction_id": "0.0.4093645-1791227893-655364462",
+      "why": "Inner CONTRACTCALL of the failed batch above. Result CONTRACT_REVERT_EXECUTED, own fee -14098224 to 0.0.802, parent_consensus_timestamp 1791227907.938079035, batch_key set."
+    },
+    {
+      "category": "H8",
+      "account": "0.0.1073000",
+      "consensus_timestamp": "1730131079.186329990",
+      "transaction_id": "0.0.1505996-1730131069-580894452",
+      "why": "Pre-2025. Incoming 2.62 HBAR from 0.0.1505996 (payer). staking_reward_transfers has the account +45730298, so 'transfers' shows +307730298 (262000000 + reward)."
+    },
+    {
+      "category": "H8",
+      "account": "0.0.692862",
+      "consensus_timestamp": "1791368019.479425021",
+      "transaction_id": "0.0.1986041-1791368005-318664615",
+      "why": "Recent. 0.0.1986041 pays and sends 1 tinybar. Account's 'transfers' is +361675 = 1 + staking reward 361674. 0.0.800 -4172169384."
+    },
+    {
+      "category": "H8",
+      "account": "0.0.692862",
+      "consensus_timestamp": "1791713179.975806104",
+      "transaction_id": "0.0.1986041-1791713169-786631132",
+      "why": "Recent. Same pattern: transfers +366409 = 1 tinybar + reward 366408. Fee 326465 paid by 0.0.1986041 (to 0.0.802)."
+    },
+    {
+      "category": "H8",
+      "account": "0.0.773269",
+      "consensus_timestamp": "1790013907.476234104",
+      "transaction_id": "0.0.55980-1790013900-000000000",
+      "why": "Recent. Incoming 280514000000 from 0.0.55980 (payer, 7 recipients). Reward +1890758, so 'transfers' shows +280515890758. Fee 1307840 to 0.0.802 paid by 0.0.55980."
+    }
+  ]
+}

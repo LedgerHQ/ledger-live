@@ -19,9 +19,16 @@ export enum HEDERA_TRANSACTION_MODES {
  */
 export enum HEDERA_TRANSACTION_NAMES {
   ContractCall = "CONTRACTCALL",
+  EthereumTransaction = "ETHEREUMTRANSACTION",
   UpdateAccount = "CRYPTOUPDATEACCOUNT",
   TokenAssociate = "TOKENASSOCIATE",
 }
+
+// an EVM wallet's call reaches the network as an ETHEREUMTRANSACTION, often submitted by a relayer
+export const CONTRACT_CALL_TRANSACTION_NAMES: string[] = [
+  HEDERA_TRANSACTION_NAMES.ContractCall,
+  HEDERA_TRANSACTION_NAMES.EthereumTransaction,
+];
 
 /**
  * Enum representing the supported Hedera operation types for fee estimation
@@ -134,6 +141,13 @@ export const STAKING_REWARD_HASH_SUFFIX = "-staking-reward";
  * https://docs.hedera.com/learn/core-concepts/staking/staking#staking-reward-account
  */
 export const STAKING_REWARD_ACCOUNT_ID = "0.0.800";
+
+/**
+ * Network account credited with the whole fee of every transaction since HIP-1259, on mainnet and
+ * testnet. It has no keys and accepts no deposits, so it is never a transfer's real recipient.
+ * https://docs.hedera.com/learn/core-concepts/accounts/network-accounts
+ */
+export const FEE_COLLECTION_ACCOUNT_ID = "0.0.802";
 
 export const CLAIM_REWARDS_TRIGGER_TINYBARS = 1;
 

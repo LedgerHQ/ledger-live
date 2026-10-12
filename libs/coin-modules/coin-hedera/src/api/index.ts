@@ -149,21 +149,34 @@ export function createApi(currencyId: string) {
       const finalizedUntil = getDateRangeFromBlockHeight(lastFinalizedBlock.height).end;
       const pageCursor =
         cursor ?? (isAscending ? undefined : (finalizedUntil.getTime() / 1000).toFixed(9));
-      const latestAccountOperations = await logicListOperationsV2(coinConfig, {
-        currencyId,
-        address,
-        evmAddress: account.evm_address,
-        mirrorTokens,
-        ...(typeof pageCursor === "string" && { cursor: pageCursor }),
-        ...(typeof limit === "number" && { limit }),
-        ...(typeof order === "string" && { order }),
-        ...(minTimestamp && { minTimestamp }),
-        tokenEvmAddresses: erc20TokenBalances.map(t => t.contractAddress.toLowerCase()),
-        fetchAllPages: false,
-        skipFeesForTokenOperations: true,
-        useEncodedHash: false,
-        useSyntheticBlocks: true,
-      });
+      const listPage = (startCursor: string | undefined) =>
+        logicListOperationsV2(coinConfig, {
+          currencyId,
+          address,
+          evmAddress: account.evm_address,
+          mirrorTokens,
+          ...(typeof startCursor === "string" && { cursor: startCursor }),
+          ...(typeof limit === "number" && { limit }),
+          ...(typeof order === "string" && { order }),
+          ...(minTimestamp && { minTimestamp }),
+          tokenEvmAddresses: erc20TokenBalances.map(t => t.contractAddress.toLowerCase()),
+          fetchAllPages: false,
+          skipFeesForTokenOperations: true,
+          useEncodedHash: false,
+          useSyntheticBlocks: true,
+        });
+
+      let latestAccountOperations = await listPage(pageCursor);
+      // An empty page that still has a cursor ends generic-coin-framework's paginateOperations walk,
+      // but a page can hold only records that move nothing for the account (e.g. a bot's
+      // DUPLICATE_TRANSACTION retries), so keep reading until there is something to return.
+      while (
+        latestAccountOperations.coinOperations.length === 0 &&
+        latestAccountOperations.tokenOperations.length === 0 &&
+        latestAccountOperations.nextCursor
+      ) {
+        latestAccountOperations = await listPage(latestAccountOperations.nextCursor);
+      }
 
       const liveOperations = [
         ...latestAccountOperations.coinOperations,

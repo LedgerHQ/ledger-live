@@ -1,0 +1,4601 @@
+[
+ {
+  "name": "multi-recipient HBAR send, several senders and recipients",
+  "account": "0.0.8835924",
+  "evmAddress": "0x000000000000000000000000000000000086d354",
+  "records": [
+   {
+    "consensus_timestamp": "1783694033.247135884",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.8835924-1783694029-331861801",
+    "transaction_hash": "wk/s8LdNVmY9QlZ+GLt62Mpx7xy2DF01h8+DK9jsU/M34O8fMST/xsYxcpaKno/6",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 1980169,
+    "node": "0.0.22",
+    "entity_id": null,
+    "memo_base64": "aGVkZXJhLXdlaXJkLXR4ICNNSU1PIG11bHRpLWluLW11bHRpLW91dA==",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 1980169,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.8835924",
+      "amount": -201980169,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9124531",
+      "amount": -200000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9169746",
+      "amount": -200000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9203294",
+      "amount": 200000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9213430",
+      "amount": 200000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9214782",
+      "amount": 200000000,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [
+     {
+      "token_id": "0.0.3716059",
+      "account": "0.0.8835924",
+      "amount": -200000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.3716059",
+      "account": "0.0.9124531",
+      "amount": -200000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.3716059",
+      "account": "0.0.9169746",
+      "amount": -200000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.3716059",
+      "account": "0.0.9203294",
+      "amount": 200000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.3716059",
+      "account": "0.0.9213430",
+      "amount": 200000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.3716059",
+      "account": "0.0.9214782",
+      "amount": 200000000,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "HBAR to two recipients plus two tokens in one transfer",
+  "account": "0.0.8835924",
+  "evmAddress": "0x000000000000000000000000000000000086d354",
+  "records": [
+   {
+    "consensus_timestamp": "1760510879.300860000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.8835924-1760510873-321619819",
+    "transaction_hash": "OoaJ/10qHN/97Zaxj8vxGIJfL9UhrGKaJBwclsL4wUeqbegBAXhdmw+/6/dB6mow",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 1176695,
+    "node": "0.0.15",
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.15",
+      "amount": 55631,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.801",
+      "amount": 1121064,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.8835924",
+      "amount": -3176695,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9124531",
+      "amount": 1000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9169746",
+      "amount": 1000000,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.8835924",
+      "amount": -10000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.9124531",
+      "amount": 10000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.5022567",
+      "account": "0.0.8835924",
+      "amount": -2,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.5022567",
+      "account": "0.0.9124531",
+      "amount": 1,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.5022567",
+      "account": "0.0.9169746",
+      "amount": 1,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "HTS swap paid by the account that pays HBAR out to it",
+  "account": "0.0.8835924",
+  "evmAddress": "0x000000000000000000000000000000000086d354",
+  "records": [
+   {
+    "consensus_timestamp": "1748002889.845379013",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "4++vNdwB0dbWWQRg0ika/TGByAeSu9DqstK2qV+0dnfsAeZuagHK2kdNn45B9nNH",
+    "nonce": 13,
+    "name": "TOKENBURN",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.1456986",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.1456985",
+      "amount": -927084758,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379012",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "JI5dbx11CUB3pIVAuB4cXR2xo17qU2gKuXtr1NHqJps/UH0JQzCL5iHTy8pvTZNO",
+    "nonce": 12,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.1456985",
+      "amount": 927084758,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.3045981",
+      "amount": -927084758,
+      "is_approval": true
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379011",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "uqeRcSqJZD6bavuLHI+2Hb5Yqk3dDNmfn33kqZ1kVz0oBUsrkV8a0uqEpJS7V/dC",
+    "nonce": 11,
+    "name": "CRYPTOAPPROVEALLOWANCE",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379010",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "l9yAiseRJqh1vDPx8Z0OEiUmgYyGzpSgi/3mAnUw7yc2WZ30ocus/RF2kvhY9W1f",
+    "nonce": 10,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379009",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "RuvyaZTGIA1EqWuTrTqrRiKMAexNq2Y12+SNMaB5w+WRtYISZy2flH9hRJjb+s3L",
+    "nonce": 9,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379008",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "AyRR37Paa+5Wx+KIU1oz4uoF5+8eXHnpPbyTdMfcEYCm9tFKXqD8WoMsIiLKPh3M",
+    "nonce": 8,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.3045981",
+      "amount": 927084758,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.4817029",
+      "amount": -927084758,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379007",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "S1Xf6iZn91hCm846f752VKwPt78d+u2YpfX4UkTbL1do+a1a1WCZwY54hRbkJJyJ",
+    "nonce": 7,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379006",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "DWgbYT9FrSGeQPcLdXyqYSpz/aL/DL9qsoyc33Osr2pYXvpqE6xwYutrfN2WkExd",
+    "nonce": 6,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379005",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "+cZaITxe+SwwvMkqqCCVsEf+vtjjX4o8m+jW++b9Boa3J29MwUPVM0SJvseusF2l",
+    "nonce": 5,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.4816828",
+      "account": "0.0.4817029",
+      "amount": 118230,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4816828",
+      "account": "0.0.5007313",
+      "amount": -118230,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379004",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "jxOqdsZEZRoPBXekTLirI7Ux8gFKM2JGME5CC/xt+gdyJFQQkpEL+/bUJKH+G5C0",
+    "nonce": 4,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379003",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "yi6TzIY8ANU3nUqGEcYlRxEQuFy06CN46yZE1ZTec1N0Ya/eXDdQxig5VPVNXUrg",
+    "nonce": 3,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379002",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "jXhLGz+anmv1YX7aeOVbschtetd2U7JDpV6A1EUaoxs35wTA8vUt0HMxZ3ICx7fV",
+    "nonce": 2,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.4811916",
+      "account": "0.0.4916681",
+      "amount": -201161809937,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4811916",
+      "account": "0.0.5007313",
+      "amount": 201161809937,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379001",
+    "parent_consensus_timestamp": "1748002889.845379000",
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "SD1c5ePa4kPRvuGL7vB3bww1F3zqbbnZHNklCnJJWZ5dXA8u6Y5Zs4XAzgCXsCD6",
+    "nonce": 1,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.731861",
+      "account": "0.0.4916681",
+      "amount": 42812397,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.731861",
+      "account": "0.0.8835924",
+      "amount": -42812397,
+      "is_approval": true
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1748002889.845379000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.8835924-1748002885-926403473",
+    "transaction_hash": "lvSbEGikpuwxJtuoB01JIEayGS7nwLio0IAtmVOwXQbpCt+E1MjBtR2gUl2tNj7S",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 41138744,
+    "node": "0.0.9",
+    "entity_id": "0.0.3045981",
+    "memo_base64": "SGFzaFBhY2sgc3dhcCBTQVVDRSB0byBIQkFS",
+    "transfers": [
+     {
+      "account": "0.0.98",
+      "amount": 41138744,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1456985",
+      "amount": -927084758,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.8835924",
+      "amount": 885946014,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "relayed EVM tx: wBTC rows to the same recipient, USDC back in child records",
+  "account": "0.0.10608795",
+  "evmAddress": "0x0000000000000000000000000000000000a1e09b",
+  "records": [
+   {
+    "consensus_timestamp": "1784131963.496425014",
+    "parent_consensus_timestamp": "1784131963.496425000",
+    "transaction_id": "0.0.10561221-1784131952-300919517",
+    "transaction_hash": "c4VfqOX6v1Voq4sMKPR52eC6NmE/cFSB1KdWs30T1PcPIp3noAWqaaro16aeGuT4",
+    "nonce": 14,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10580184",
+      "amount": -15662664,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10608795",
+      "amount": 15662664,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1784131963.496425011",
+    "parent_consensus_timestamp": "1784131963.496425000",
+    "transaction_id": "0.0.10561221-1784131952-300919517",
+    "transaction_hash": "PjZLRXUbKG4cIu9m25ER24+9f8pq95bms+xfS2skfL2UQUlyA8RY/1cs8WZj8tkZ",
+    "nonce": 11,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10580184",
+      "amount": -29403540,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10608795",
+      "amount": 29403540,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1784131963.496425008",
+    "parent_consensus_timestamp": "1784131963.496425000",
+    "transaction_id": "0.0.10561221-1784131952-300919517",
+    "transaction_hash": "su91VL5KRnwdaeHAODUC5JoNGYruWjEKKsOe53awSH0Efs8Bn5EnnVal177AfQzm",
+    "nonce": 8,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10580184",
+      "amount": -23559336,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10608795",
+      "amount": 23559336,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1784131963.496425005",
+    "parent_consensus_timestamp": "1784131963.496425000",
+    "transaction_id": "0.0.10561221-1784131952-300919517",
+    "transaction_hash": "oDzR8/LPwNWqXGkSRISDBHdHHVSWyty0wudDf3j+imhgOOx5gtZSvvTVbkyrMA2M",
+    "nonce": 5,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10580184",
+      "amount": -30795340,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10608795",
+      "amount": 30795340,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ],
+  "erc20": {
+   "parent": {
+    "consensus_timestamp": "1784131963.496425000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10561221-1784131952-300919517",
+    "transaction_hash": "pKNm47A60ZOS2CzFPYoj1gDCkd9uYzuLqcnIzBGNwyuiQueswmdARO+ZeCE+gZFl",
+    "nonce": 0,
+    "name": "ETHEREUMTRANSACTION",
+    "result": "SUCCESS",
+    "charged_tx_fee": 68764076,
+    "node": "0.0.20",
+    "entity_id": "0.0.10580242",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 68764076,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10561221",
+      "amount": -68764076,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   "contractCallResult": {
+    "contract_id": "0.0.10580242",
+    "timestamp": "1784131963.496425000",
+    "block_hash": "0x8e79e791628fef704c8e9bcb87dd1ac05e79498067cef985f6ccb28183c074cb62b2052476cfd03124f982312eb49a4a",
+    "block_gas_used": 554549,
+    "gas_consumed": 554549,
+    "gas_limit": 12622500,
+    "gas_used": 554549
+   },
+   "transfers": [
+    {
+     "amount": 47000,
+     "consensus_timestamp": 1784131963496425000,
+     "log_index": 2,
+     "payer_account_id": 10561221,
+     "sender_account_id": 10608795,
+     "sender_evm_address": "0x0000000000000000000000000000000000a1e09b",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0xcf06472d164f4fe2cc18b39f18cbace9440e8cc3",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x4641150f9c0634b3b26cd0793784c0f6f517d24d361d5854df97540abd9f82af",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 36000,
+     "consensus_timestamp": 1784131963496425000,
+     "log_index": 5,
+     "payer_account_id": 10561221,
+     "sender_account_id": 10608795,
+     "sender_evm_address": "0x0000000000000000000000000000000000a1e09b",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0xcf06472d164f4fe2cc18b39f18cbace9440e8cc3",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x4641150f9c0634b3b26cd0793784c0f6f517d24d361d5854df97540abd9f82af",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 45000,
+     "consensus_timestamp": 1784131963496425000,
+     "log_index": 8,
+     "payer_account_id": 10561221,
+     "sender_account_id": 10608795,
+     "sender_evm_address": "0x0000000000000000000000000000000000a1e09b",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0xcf06472d164f4fe2cc18b39f18cbace9440e8cc3",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x4641150f9c0634b3b26cd0793784c0f6f517d24d361d5854df97540abd9f82af",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 24000,
+     "consensus_timestamp": 1784131963496425000,
+     "log_index": 11,
+     "payer_account_id": 10561221,
+     "sender_account_id": 10608795,
+     "sender_evm_address": "0x0000000000000000000000000000000000a1e09b",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0xcf06472d164f4fe2cc18b39f18cbace9440e8cc3",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x4641150f9c0634b3b26cd0793784c0f6f517d24d361d5854df97540abd9f82af",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 182,
+     "consensus_timestamp": 1784131963496425000,
+     "log_index": 13,
+     "payer_account_id": 10561221,
+     "sender_account_id": 10608795,
+     "sender_evm_address": "0x0000000000000000000000000000000000a1e09b",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0xa2c2713e82b47dcb3b0bae75199c81fcd185b86c",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x4641150f9c0634b3b26cd0793784c0f6f517d24d361d5854df97540abd9f82af",
+     "transfer_type": "transfer"
+    }
+   ]
+  }
+ },
+ {
+  "name": "ERC20 sold for HBAR in one contract call",
+  "account": "0.0.9337684",
+  "evmAddress": "0x00000000000000000000000000000000008e7b54",
+  "records": [
+   {
+    "consensus_timestamp": "1785752373.949418115",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "7FH//4DFG7g/hc3c+2MI6GAMcM9msU949/qZphbKb6Kpz8gvkxMcM71q228r7tP3",
+    "nonce": 11,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.9337684",
+      "amount": 228651741,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10230659",
+      "amount": -228651741,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418114",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "nsLRmPneIPWwqjgk+24rxs4i2PxJIyP4qm/OpJ1OoMU+ZpvtYnl8IhszQL/SpvNB",
+    "nonce": 10,
+    "name": "TOKENBURN",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.1456986",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.1456985",
+      "amount": -95138768148,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418113",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "3Qw9qvpYFccdwrm87ij486HXR8wYAWI2+qrq4CXnJtBYFNiVydi2x1LJYWX8jOOj",
+    "nonce": 9,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.1456985",
+      "amount": 95138768148,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.10230659",
+      "amount": -95138768148,
+      "is_approval": true
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418112",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "qWaTbaOzq1Pzr6qHRNnHy48lg9cqq4tHG/MQIZtkp15Ybe0gHYUHj9VdP+fCAjlJ",
+    "nonce": 8,
+    "name": "CRYPTOAPPROVEALLOWANCE",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418111",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "VYMGFJe8/Of6pYYW+K/qv3zYFGMC5T/3zeVUxjnQ/IXlo7M/QRjD0rp0HKUFDRG6",
+    "nonce": 7,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.9707528",
+      "amount": -127888,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.10230659",
+      "amount": 127888,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418110",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "2tpq0KbFCpRApSM3uMAHURjYYef0EyTvLNQ6xUnRKJnHYMMFHLyCVet7Rz9kj67r",
+    "nonce": 6,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.9707528",
+      "amount": -224,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10230659",
+      "amount": 224,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418109",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "AeMOml/LHLydpAP2wby7Uns/ET8FMo/O7bdYf0+73FCCoIYc94SI4DfTjiXqj7ue",
+    "nonce": 5,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418108",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "hylUYh+hZ0cO9HajZMk8iWesqR2SFSugdy1nT5RddVjkigpOaYB1DObLgW003IeS",
+    "nonce": 4,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418107",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "jE1cmyiTD/vLvCzUYvSBJN207r0HMCtOyMrQrfr4zmuCULAk4Oymgf2iWaSVNAtd",
+    "nonce": 3,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.3964804",
+      "amount": -93666755750,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.10230659",
+      "amount": 93666755750,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418106",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "RywCdPEbPlWl970uGdOBtaVxaqZ/yyuk1yz1YHTaoG9GuKNvj3PtLgWhyo+N+tdc",
+    "nonce": 2,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.3964804",
+      "amount": -1471884510,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.10230659",
+      "amount": 1471884510,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418105",
+    "parent_consensus_timestamp": "1785752373.949418104",
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "xb1NM0sQsTd1JaEbQ9QY3P11ZoylRyEpJET/cfI/XI6coraF3S5rL6bAzWXUvFdN",
+    "nonce": 1,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.3964804",
+      "amount": -228651517,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10230659",
+      "amount": 228651517,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1785752373.949418104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "xZ3Rxr0P3yXJTKcBqsGnnc71ahtG8xW+J0sJt3eiiaeedM91+K/L1MINjGDx4U/c",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 139069348,
+    "node": "0.0.7",
+    "entity_id": "0.0.10230659",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 139069348,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1456985",
+      "amount": -95138768148,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9337684",
+      "amount": 94999698800,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ],
+  "erc20": {
+   "parent": {
+    "consensus_timestamp": "1785752373.949418104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.9337684-1785752360-391942259",
+    "transaction_hash": "xZ3Rxr0P3yXJTKcBqsGnnc71ahtG8xW+J0sJt3eiiaeedM91+K/L1MINjGDx4U/c",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 139069348,
+    "node": "0.0.7",
+    "entity_id": "0.0.10230659",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 139069348,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1456985",
+      "amount": -95138768148,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9337684",
+      "amount": 94999698800,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   "contractCallResult": {
+    "contract_id": "0.0.10230659",
+    "timestamp": "1785752373.949418104",
+    "block_hash": "0xaa7b255f859c7b7a373e8e1ba7f79b98bee99d833996c5cd134a3bdb65e958cc54a4c9928d4fc091280875af73610f6b",
+    "block_gas_used": 1121527,
+    "gas_consumed": 1121527,
+    "gas_limit": 2400000,
+    "gas_used": 1121527
+   },
+   "transfers": [
+    {
+     "amount": 116858897016,
+     "consensus_timestamp": 1785752373949418104,
+     "log_index": 0,
+     "payer_account_id": 9337684,
+     "sender_account_id": 9337684,
+     "sender_evm_address": "0x00000000000000000000000000000000008e7b54",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0xcec8716cdd60856eacaa74d499abd14ae34b7da8",
+     "token_evm_address": "0x1b90b8f8ab3059cf40924338d5292ffbaed79089",
+     "token_id": 9707528,
+     "transaction_hash": "0xc59dd1c6bd0fdf25c94ca701aac1a79dcef56a1b46f315be274b09b777a289a7",
+     "transfer_type": "transfer"
+    }
+   ]
+  }
+ },
+ {
+  "name": "failed atomic batch whose inner contract call debits beyond its charged fee",
+  "account": "0.0.10340822",
+  "evmAddress": "0x1b4761d9f0470e6a2bf4de6033ad955c6f309eb1",
+  "records": [
+   {
+    "consensus_timestamp": "1773417398.396207001",
+    "parent_consensus_timestamp": "1773417398.396207000",
+    "transaction_id": "0.0.10340822-1773417393-681782246",
+    "transaction_hash": "drwya9151kHzinohnDaUYoALLp8pfBw2u9uV6h/lKjDfbivgTcLoXr6YbAOP6p7W",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "CONTRACT_REVERT_EXECUTED",
+    "charged_tx_fee": 2485145,
+    "node": null,
+    "entity_id": "0.0.10310973",
+    "memo_base64": "U2VudFggTWFya2V0IEJ1eSAoRVJDLTcyMSB0cmFuc2ZlckZyb20gYmF0Y2gp",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 12750000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10340822",
+      "amount": -12750000,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1773417398.396207000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10340822-1773417391-321048740",
+    "transaction_hash": "vAjhbf/zMzWkKwUgzmQunQVnavgF6JkhYe5/SiHA7ib3/lkUzB9vxqMiWtt2mOgK",
+    "nonce": 0,
+    "name": "ATOMICBATCH",
+    "result": "INNER_TRANSACTION_FAILED",
+    "charged_tx_fee": 1005553,
+    "node": "0.0.32",
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 1005553,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10340822",
+      "amount": -1005553,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "failed EVM tx, payer side of the split gas",
+  "account": "0.0.6319439",
+  "evmAddress": "0xe17e75ffc75519faa49beaf9e17c37eb426127b6",
+  "records": [
+   {
+    "consensus_timestamp": "1791816556.279897674",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.6319439-1791816551-741710650",
+    "transaction_hash": "sgOaqjq3cBH8zS8yEpE4kEIB2BZ7oA3H3112uOAgLrKiH2if6tWqmSSC0ZHjLDiU",
+    "nonce": 0,
+    "name": "ETHEREUMTRANSACTION",
+    "result": "CONTRACT_REVERT_EXECUTED",
+    "charged_tx_fee": 5505725,
+    "node": "0.0.15",
+    "entity_id": "0.0.10516977",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 5505725,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.6319439",
+      "amount": -1324325,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10604709",
+      "amount": -4181400,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "failed EVM tx, signer side of the split gas",
+  "account": "0.0.10604709",
+  "evmAddress": "0x139007f54ce6602b185866692aa37ed32684b186",
+  "records": [
+   {
+    "consensus_timestamp": "1791816556.279897674",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.6319439-1791816551-741710650",
+    "transaction_hash": "sgOaqjq3cBH8zS8yEpE4kEIB2BZ7oA3H3112uOAgLrKiH2if6tWqmSSC0ZHjLDiU",
+    "nonce": 0,
+    "name": "ETHEREUMTRANSACTION",
+    "result": "CONTRACT_REVERT_EXECUTED",
+    "charged_tx_fee": 5505725,
+    "node": "0.0.15",
+    "entity_id": "0.0.10516977",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 5505725,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.6319439",
+      "amount": -1324325,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10604709",
+      "amount": -4181400,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "scheduled transfer to three recipients, fee charged to the schedule payer",
+  "account": "0.0.4948455",
+  "evmAddress": "0x00000000000000000000000000000000004b81e7",
+  "records": [
+   {
+    "consensus_timestamp": "1791771088.018032105",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.1116059-1791771008-208722506",
+    "transaction_hash": "0amJYW+K2lOLX51zdtc2hHVPwAop3IRfeiuWVkUZVpk7rctsa9s2LiQ+pokYdPJy",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 2016928,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "U2VudCB2aWEgSGFzaFBhY2sgU2VjdXJlIFRyYWRl",
+    "transfers": [
+     {
+      "account": "0.0.800",
+      "amount": -94831792,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.802",
+      "amount": 2016928,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.724573",
+      "amount": 50000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.981350",
+      "amount": 50000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.2277861",
+      "amount": 100000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.4948455",
+      "amount": -107185136,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.4948455",
+      "amount": 94831792
+     }
+    ],
+    "nft_transfers": [
+     {
+      "is_approval": false,
+      "receiver_account_id": "0.0.4948455",
+      "sender_account_id": "0.0.1116059",
+      "serial_number": 401,
+      "token_id": "0.0.10586603"
+     }
+    ],
+    "scheduled": true
+   }
+  ]
+ },
+ {
+  "name": "allowance: the owner's HBAR moved by a spender who pays the fee",
+  "account": "0.0.2148853",
+  "evmAddress": "0x000000000000000000000000000000000020c9f5",
+  "records": [
+   {
+    "consensus_timestamp": "1791695812.887236105",
+    "parent_consensus_timestamp": "1791695812.887236104",
+    "transaction_id": "0.0.10340822-1791695807-424802179",
+    "transaction_hash": "+5zFBPYzH1P82UZPP6lbtx7r9YuzJDZAGPkc4syhFb66kiGVncma46PAVxnfvrnS",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 549247,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "U2VudFggRVZNIE5GVCBQdXJjaGFzZTogMC4wLjEwNDIxODQxICMxMjkw",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 549247,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1223480",
+      "amount": 6250000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.2148853",
+      "amount": -2500000000,
+      "is_approval": true
+     },
+     {
+      "account": "0.0.10012071",
+      "amount": 2450000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10340822",
+      "amount": -549247,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10466510",
+      "amount": 10000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10489694",
+      "amount": 33750000,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "account receives HBAR, sends a token and pays the fee",
+  "account": "0.0.1404223",
+  "evmAddress": "0x0000000000000000000000000000000000156d3f",
+  "records": [
+   {
+    "consensus_timestamp": "1781622385.356656000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.1404223-1781622372-347818886",
+    "transaction_hash": "zad7moDe7Hlqoye1+C/NF4XGukvFD5fvOEstodJ2YtIUQmn8JJGeTX2RxxcGdv0T",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 2083987,
+    "node": "0.0.35",
+    "entity_id": null,
+    "memo_base64": "W1NJTEtTV0FQXSBTSUxLU1VJVEUgREVYIC0gU3dhcCBKRUVUIHRvIEhCQVIgLSAxIEpFRVQgPSAwLjAwMTMgSEJBUg==",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 2083987,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1404223",
+      "amount": 509592317,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1786674",
+      "amount": 66000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10283476",
+      "amount": -577676304,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [
+     {
+      "token_id": "0.0.9632905",
+      "account": "0.0.1404223",
+      "amount": -432300000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.9632905",
+      "account": "0.0.10477034",
+      "amount": 432300000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.10174655",
+      "account": "0.0.10283476",
+      "amount": 31385165722,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.10174655",
+      "account": "0.0.10477034",
+      "amount": -31385165722,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "DUPLICATE_TRANSACTION record that moves nothing",
+  "account": "0.0.10176974",
+  "evmAddress": "0x956ddc68107184ccba0899e7d80ae7f47ae28a7a",
+  "records": [
+   {
+    "consensus_timestamp": "1791815933.333449586",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "7iC8EacVKqQ1wmwAaaJ+HsSWP46gtwktv0kCIbao9SGnUJ2f8kOd0FFuTVkIwfgf",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.9",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.290298957",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "Uvn7cCHygMc5A2nY9xPEebb+Ta/Q88d6ctSX+k2YRzabPk5+z+fyjQx7lGiXBmJL",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.7",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.231227104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "8FcxsuNUnkHNqmUNl1C0Ef6AX4dUCVZ2WtzUjvJIg/xd2of5+aw20iX4ySw7ccWV",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.28",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.190244104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "lEg07EJw7fEVRCdp2baRdk5DbDR9ZJjFI32g1rK734KnKLc5OdHUQGnQ5yU6ykQt",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.33",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.168385070",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "JId1vZQO9uy3VGJCOLFvc7zVDfaxv0hJ2lOAt8hoOSzstFmyzrZ2msKVlK5fPEGi",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.23",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.163018104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "pE4CwlSP++HYn5cA2UJgENK2iVgGkUzSS7UIkM80A3lh6x9LGdOavNQaFOMzBLsO",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.4",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.162342104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "phIJPG1NZzSbOVyi5hhyg3urRGaZf0NNsgmSedyNdJ10ARTtXGM8UB7/BgSNwbOG",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.8",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.150058104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "xCDenmPAMHZ3l+5FAINz0jrXYgoyxHAQNEkOH1L2Uw6Cq5GjoShnpWdcXFoNaIt9",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.12",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.121563104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "kRu8ZXdkXTC/xov9m6uDLMVTnU5hfInEd63Txo0uwhKEarBvhwPg0a2/XJdA4ySR",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.25",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.121554104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "TZAvmEct1rVkx5Samm9AqsIKqfRVhMyZ8y6gcDJn0SdPAEiRyzvtFOmGCXZEhXqt",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.21",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.121544104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "IG/5ks7ifTqzLI1KvD8XakrpiS9Dc8Eyq0r2qVdtmPenDFjEjv6ykCtNZJ2PWKxi",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.13",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791815933.121531297",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10176974-1791815930-941000796",
+    "transaction_hash": "C4wQAPFUMtszT9dU7RbfWrEXVyxwk3Z7T/Ukg9XNHpLRvEIDGKEZjyTMO4i4UZOL",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "DUPLICATE_TRANSACTION",
+    "charged_tx_fee": 0,
+    "node": "0.0.18",
+    "entity_id": "0.0.10888630",
+    "memo_base64": "c29mOmNvbnRyYWN0",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "child record whose fee goes to the fee collection account",
+  "account": "0.0.10340822",
+  "evmAddress": "0x1b4761d9f0470e6a2bf4de6033ad955c6f309eb1",
+  "records": [
+   {
+    "consensus_timestamp": "1791807904.440533105",
+    "parent_consensus_timestamp": "1791807904.440533104",
+    "transaction_id": "0.0.10340822-1791807894-815026791",
+    "transaction_hash": "oS/Uoagw34man1+q8OE+glubmaxfDlvO/19m/kLRdZ7Gt4Qw6nh+I6gE+dfh9doi",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 536238,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "U2VudFggRVZNIE5GVCBQdXJjaGFzZTogMC4wLjEwNDIxODQxICM2OTcw",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 536238,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1223480",
+      "amount": 3750000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10339715",
+      "amount": -1500000000,
+      "is_approval": true
+     },
+     {
+      "account": "0.0.10340822",
+      "amount": -536238,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10443912",
+      "amount": 1470000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10466510",
+      "amount": 6000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10489694",
+      "amount": 20250000,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "relayed EVM tx: incoming wBTC",
+  "account": "0.0.10171350",
+  "evmAddress": "0x00000000000000000000000000000000009b33d6",
+  "records": [
+   {
+    "consensus_timestamp": "1782440293.263884449",
+    "parent_consensus_timestamp": "1782440293.263884446",
+    "transaction_id": "0.0.10561221-1782440284-708812731",
+    "transaction_hash": "zU/b3XoRjxb8BePEZeFKL+xopENRnOkJmQcJrZXvYZguY5DqgvuFUpOZ/D7zEr6+",
+    "nonce": 3,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10171350",
+      "amount": -201190000,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10580242",
+      "amount": 201190000,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ],
+  "erc20": {
+   "parent": {
+    "consensus_timestamp": "1782440293.263884446",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10561221-1782440284-708812731",
+    "transaction_hash": "eKGgi6MUZygJ9iztmNVnIorVgky2ZtL38RKDstrcVmDIRiKalgIfGMwbjp6EoYSE",
+    "nonce": 0,
+    "name": "ETHEREUMTRANSACTION",
+    "result": "SUCCESS",
+    "charged_tx_fee": 59028340,
+    "node": "0.0.13",
+    "entity_id": "0.0.10580242",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 59028340,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10561221",
+      "amount": -59028340,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   "contractCallResult": {
+    "contract_id": "0.0.10580242",
+    "timestamp": "1782440293.263884446",
+    "block_hash": "0x7e2a6623050d3464d404d70987f56b0439e9bad36edf167596739c0a1dae6b7070ea451d558b5e1d4fcbb805747f869c",
+    "block_gas_used": 706864,
+    "gas_consumed": 508865,
+    "gas_limit": 6922500,
+    "gas_used": 508865
+   },
+   "transfers": [
+    {
+     "amount": 342643,
+     "consensus_timestamp": 1782440293263884446,
+     "log_index": 16,
+     "payer_account_id": 10561221,
+     "sender_account_id": null,
+     "sender_evm_address": "0x0c739921db6a06db8eed7934832a6117f8e5d409",
+     "receiver_account_id": 10171350,
+     "receiver_evm_address": "0x00000000000000000000000000000000009b33d6",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0xc806a89390cc95345c6d93de9441c53a3f9cb5c82f3b490feed72ae67549ffa9",
+     "transfer_type": "transfer"
+    }
+   ]
+  }
+ },
+ {
+  "name": "relayed EVM tx: outgoing wBTC to two receivers",
+  "account": "0.0.10574239",
+  "evmAddress": "0x0000000000000000000000000000000000a1599f",
+  "records": [
+   {
+    "consensus_timestamp": "1781204382.016563005",
+    "parent_consensus_timestamp": "1781204382.016563000",
+    "transaction_id": "0.0.10561221-1781204371-967175966",
+    "transaction_hash": "4Ox680vnG5BPtP8rEyeziDcn9rRz5r/9L6wlrinHjKocCqxLKpvtD6fxRPtH7f6l",
+    "nonce": 5,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10574172",
+      "amount": -6334800,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10574239",
+      "amount": 6334800,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ],
+  "erc20": {
+   "parent": {
+    "consensus_timestamp": "1781204382.016563000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10561221-1781204371-967175966",
+    "transaction_hash": "2hgDDWm1JbJcH5NN+DJo3rm1mIS0Gh4vauZbpcQ7DdukQqUAEg7JGPaxltvwHMBC",
+    "nonce": 0,
+    "name": "ETHEREUMTRANSACTION",
+    "result": "SUCCESS",
+    "charged_tx_fee": 56706980,
+    "node": "0.0.15",
+    "entity_id": "0.0.10527651",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 56706980,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10561221",
+      "amount": -56706980,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   "contractCallResult": {
+    "contract_id": "0.0.10527651",
+    "timestamp": "1781204382.016563000",
+    "block_hash": "0xbfa25a4498ae87af8127a39f98d9704971c27223dca8671f43f69144f4a8649485b7f4d49b528c9ea22a2ffe288c0872",
+    "block_gas_used": 838825,
+    "gas_consumed": 515518,
+    "gas_limit": 4972500,
+    "gas_used": 515518
+   },
+   "transfers": [
+    {
+     "amount": 10000,
+     "consensus_timestamp": 1781204382016563000,
+     "log_index": 2,
+     "payer_account_id": 10561221,
+     "sender_account_id": 10574239,
+     "sender_evm_address": "0x0000000000000000000000000000000000a1599f",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0x463f51cf605f98520957333068088dc82f182325",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x3f39cab6426c002385d730d2bb46a60485fc3eed74e7eb98dbb0912734ddb032",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 12,
+     "consensus_timestamp": 1781204382016563000,
+     "log_index": 4,
+     "payer_account_id": 10561221,
+     "sender_account_id": 10574239,
+     "sender_evm_address": "0x0000000000000000000000000000000000a1599f",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0xa2c2713e82b47dcb3b0bae75199c81fcd185b86c",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x3f39cab6426c002385d730d2bb46a60485fc3eed74e7eb98dbb0912734ddb032",
+     "transfer_type": "transfer"
+    }
+   ]
+  }
+ },
+ {
+  "name": "relayed EVM tx: four wBTC rows from the same sender",
+  "account": "0.0.10171350",
+  "evmAddress": "0x00000000000000000000000000000000009b33d6",
+  "records": [
+   {
+    "consensus_timestamp": "1782831165.339814015",
+    "parent_consensus_timestamp": "1782831165.339814000",
+    "transaction_id": "0.0.10561221-1782831154-693466741",
+    "transaction_hash": "3qya5OEAw0b3d93VUCCBL2gA/7gA3uwVqW7LCtdtRNk2ABXbQOqVE+8uvZoPjd7+",
+    "nonce": 15,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10171350",
+      "amount": -137295,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10527650",
+      "amount": 137295,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782831165.339814014",
+    "parent_consensus_timestamp": "1782831165.339814000",
+    "transaction_id": "0.0.10561221-1782831154-693466741",
+    "transaction_hash": "bDGgVAWhLumFaeNdxf+ctwFH9CiDH9DNQpsIMJ0WEDysHD0yUoAvvsV7ve7M3xGK",
+    "nonce": 14,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10171350",
+      "amount": -25603830,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10580184",
+      "amount": 25603830,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782831165.339814011",
+    "parent_consensus_timestamp": "1782831165.339814000",
+    "transaction_id": "0.0.10561221-1782831154-693466741",
+    "transaction_hash": "hwjIYpuJPK9vLOzbbM+XKfspV5D83rLRWlSOlzrAVn/bNYJdINKoovsxYtduClZW",
+    "nonce": 11,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10171350",
+      "amount": -31497522,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10580184",
+      "amount": 31497522,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782831165.339814008",
+    "parent_consensus_timestamp": "1782831165.339814000",
+    "transaction_id": "0.0.10561221-1782831154-693466741",
+    "transaction_hash": "j4hY31xJDEB/ETOJpB66PT3HDFOpOaIyoF8mxfZ1mYpJr/bsAl0iYEht6jZt7n6S",
+    "nonce": 8,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10171350",
+      "amount": -23721674,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10580184",
+      "amount": 23721674,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782831165.339814005",
+    "parent_consensus_timestamp": "1782831165.339814000",
+    "transaction_id": "0.0.10561221-1782831154-693466741",
+    "transaction_hash": "f5V2sXB8HVAvEkfV0Pnel1LFlWqCNy9VRIJvfJgjzJxAiiu8dio90JeSxsJcJT/s",
+    "nonce": 5,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10171350",
+      "amount": -35530010,
+      "is_approval": true
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10580184",
+      "amount": 35530010,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ],
+  "erc20": {
+   "parent": {
+    "consensus_timestamp": "1782831165.339814000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10561221-1782831154-693466741",
+    "transaction_hash": "AW7mEthY7zNuwkRwUg6Z+V+dPUPZGAH7nVJngc4AL/3pFLsW3G4r2IVWnlLo+Jly",
+    "nonce": 0,
+    "name": "ETHEREUMTRANSACTION",
+    "result": "SUCCESS",
+    "charged_tx_fee": 80075066,
+    "node": "0.0.15",
+    "entity_id": "0.0.10580242",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 80075066,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10561221",
+      "amount": -80075066,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   "contractCallResult": {
+    "contract_id": "0.0.10580242",
+    "timestamp": "1782831165.339814000",
+    "block_hash": "0xfb461d2a3b48c39f1d19728cbf1c2a54523a4673f84ab3673ac7cd0e41771925daf12ddd38fff426f7753fd1ddaa07a7",
+    "block_gas_used": 709007,
+    "gas_consumed": 656353,
+    "gas_limit": 12622500,
+    "gas_used": 656353
+   },
+   "transfers": [
+    {
+     "amount": 60000,
+     "consensus_timestamp": 1782831165339814000,
+     "log_index": 1,
+     "payer_account_id": 10561221,
+     "sender_account_id": null,
+     "sender_evm_address": "0xcf06472d164f4fe2cc18b39f18cbace9440e8cc3",
+     "receiver_account_id": 10171350,
+     "receiver_evm_address": "0x00000000000000000000000000000000009b33d6",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x0bc9886d121ca571d07f307223d587699b5134ae1a05f2e4259af04b23d4324e",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 40000,
+     "consensus_timestamp": 1782831165339814000,
+     "log_index": 4,
+     "payer_account_id": 10561221,
+     "sender_account_id": null,
+     "sender_evm_address": "0xcf06472d164f4fe2cc18b39f18cbace9440e8cc3",
+     "receiver_account_id": 10171350,
+     "receiver_evm_address": "0x00000000000000000000000000000000009b33d6",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x0bc9886d121ca571d07f307223d587699b5134ae1a05f2e4259af04b23d4324e",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 53000,
+     "consensus_timestamp": 1782831165339814000,
+     "log_index": 7,
+     "payer_account_id": 10561221,
+     "sender_account_id": null,
+     "sender_evm_address": "0xcf06472d164f4fe2cc18b39f18cbace9440e8cc3",
+     "receiver_account_id": 10171350,
+     "receiver_evm_address": "0x00000000000000000000000000000000009b33d6",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x0bc9886d121ca571d07f307223d587699b5134ae1a05f2e4259af04b23d4324e",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 43000,
+     "consensus_timestamp": 1782831165339814000,
+     "log_index": 10,
+     "payer_account_id": 10561221,
+     "sender_account_id": null,
+     "sender_evm_address": "0xcf06472d164f4fe2cc18b39f18cbace9440e8cc3",
+     "receiver_account_id": 10171350,
+     "receiver_evm_address": "0x00000000000000000000000000000000009b33d6",
+     "token_evm_address": "0xd7d4d91d64a6061fa00a94e2b3a2d2a5fb677849",
+     "token_id": 10047837,
+     "transaction_hash": "0x0bc9886d121ca571d07f307223d587699b5134ae1a05f2e4259af04b23d4324e",
+     "transfer_type": "transfer"
+    }
+   ]
+  }
+ },
+ {
+  "name": "contract call: ERC20 out, HBAR in",
+  "account": "0.0.10171350",
+  "evmAddress": "0x00000000000000000000000000000000009b33d6",
+  "records": [
+   {
+    "consensus_timestamp": "1782389214.090216623",
+    "parent_consensus_timestamp": "1782389214.090216614",
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "/Vncgi06Rp89Y0ma0GK3s2wqJ/w+Spb0RcNid5OMRAw7RgrcRew42uTewm8CBqF3",
+    "nonce": 9,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.4544591",
+      "amount": -447477518,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10171350",
+      "amount": 447477518,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782389214.090216622",
+    "parent_consensus_timestamp": "1782389214.090216614",
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "QCcDBBO2y3vU8kUUwnEmMZ/6h88F/G+fZPjZcn1fxoDn805v92+bHCcmOOJHZ0xy",
+    "nonce": 8,
+    "name": "TOKENBURN",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.1456986",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.1456985",
+      "amount": -221467286006,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782389214.090216621",
+    "parent_consensus_timestamp": "1782389214.090216614",
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "cJnBg8f9MVAUoYSpShGC5dAL6vbRDn7hOauL0FFB0iw6wzpaQtKBiXbfGQsjwVoB",
+    "nonce": 7,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.1456985",
+      "amount": 221467286006,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.4544591",
+      "amount": -221467286006,
+      "is_approval": true
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782389214.090216620",
+    "parent_consensus_timestamp": "1782389214.090216614",
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "lSQHRY2A46M2DeLCYUkNIleh3bqXkTcBGW6nuq6HRq2pDUmFBCg1a3Eh73nee8Xu",
+    "nonce": 6,
+    "name": "CRYPTOAPPROVEALLOWANCE",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782389214.090216619",
+    "parent_consensus_timestamp": "1782389214.090216614",
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "JbFRkvm/CU/eR/++cIUoiwRvxoJz/vszOTH1D93aDyPlSh4rziquRRtcjGHuSKtB",
+    "nonce": 5,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782389214.090216618",
+    "parent_consensus_timestamp": "1782389214.090216614",
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "J1xljDTzsARDCZx6v/kZ3jInoHw0Ov1gpzKMN3QBqgqWMuhx6Zh4vUlioNHREIcg",
+    "nonce": 4,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782389214.090216617",
+    "parent_consensus_timestamp": "1782389214.090216614",
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "Th9weFAE4CPP3rtXTJgAfUhYA3hjWCgGNLOG/KYwpqHbiE/Iy1WcOJcQR+NeQ7gr",
+    "nonce": 3,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.3964804",
+      "amount": -220386704279,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.4544591",
+      "amount": 220386704279,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782389214.090216616",
+    "parent_consensus_timestamp": "1782389214.090216614",
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "gJGqIe0h/fC5ei7yQe3UBMBR3vx5gXWXKqhpT2HZ62XOgDnX0W8nkjATXG9s4+vV",
+    "nonce": 2,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.3964804",
+      "amount": -1080581727,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.4544591",
+      "amount": 1080581727,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782389214.090216615",
+    "parent_consensus_timestamp": "1782389214.090216614",
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "6oqHVphd7bCprelA3GEoSi/EZBsT4bbZl0AF6GtqRIXPUKR7NbvN13QoPLhIMmTM",
+    "nonce": 1,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.3964804",
+      "amount": -447477518,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.4544591",
+      "amount": 447477518,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1782389214.090216614",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "GCJ42RPgjK8gFNSkCoDYniG0rkHON1DPUFuBCM9Yycq5GUg9E4uJlZyz2sqywi1z",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 125576496,
+    "node": "0.0.23",
+    "entity_id": "0.0.4544591",
+    "memo_base64": "c2F1Y2Vyc3dhcGxhYnMtdWk=",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 125576496,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1456985",
+      "amount": -221467286006,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10171350",
+      "amount": 221341709510,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ],
+  "erc20": {
+   "parent": {
+    "consensus_timestamp": "1782389214.090216614",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10171350-1782389189-977871000",
+    "transaction_hash": "GCJ42RPgjK8gFNSkCoDYniG0rkHON1DPUFuBCM9Yycq5GUg9E4uJlZyz2sqywi1z",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 125576496,
+    "node": "0.0.23",
+    "entity_id": "0.0.4544591",
+    "memo_base64": "c2F1Y2Vyc3dhcGxhYnMtdWk=",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 125576496,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1456985",
+      "amount": -221467286006,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10171350",
+      "amount": 221341709510,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   "contractCallResult": {
+    "contract_id": "0.0.4544591",
+    "timestamp": "1782389214.090216614",
+    "block_hash": "0x04df030e6d1e20a0e0dc117fc56f66ac205216786e9c00ef2f7439707523bc543c72f0402d093e8f33ca7e0175868cf4",
+    "block_gas_used": 1187864,
+    "gas_consumed": 1082556,
+    "gas_limit": 1400000,
+    "gas_used": 1082556
+   },
+   "transfers": [
+    {
+     "amount": 18071466742,
+     "consensus_timestamp": 1782389214090216614,
+     "log_index": 0,
+     "payer_account_id": 10171350,
+     "sender_account_id": 10171350,
+     "sender_evm_address": "0x00000000000000000000000000000000009b33d6",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0x1b0ef045830466171d617dd0f1142ad699a4cd63",
+     "token_evm_address": "0xdf1a9905087d7b62fbad6684bc10a62ccc2fac32",
+     "token_id": 4558572,
+     "transaction_hash": "0x182278d913e08caf2014d4a40a80d89e21b4ae41ce3750cf505b8108cf58c9ca",
+     "transfer_type": "transfer"
+    }
+   ]
+  }
+ },
+ {
+  "name": "lending call: WETH out and back in one tx",
+  "account": "0.0.1404223",
+  "evmAddress": "0x0000000000000000000000000000000000156d3f",
+  "records": [
+   {
+    "consensus_timestamp": "1781621604.470171007",
+    "parent_consensus_timestamp": "1781621604.470171000",
+    "transaction_id": "0.0.1404223-1781621594-073596144",
+    "transaction_hash": "J/u3L86h9dUAgQswSc9iS0cxZsGg6A7TUl9Y1tWmtbUDBQK5iGOpcMNpIzq4a2vC",
+    "nonce": 7,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.10033160",
+      "amount": 46464,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.10230659",
+      "amount": -46464,
+      "is_approval": true
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781621604.470171006",
+    "parent_consensus_timestamp": "1781621604.470171000",
+    "transaction_id": "0.0.1404223-1781621594-073596144",
+    "transaction_hash": "xTGVbq2DzYOoYj+wq1k3i8lmpDu8FV8ObHEIHqIP212ptmXH8wM+HzKHEkhkZQUb",
+    "nonce": 6,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781621604.470171005",
+    "parent_consensus_timestamp": "1781621604.470171000",
+    "transaction_id": "0.0.1404223-1781621594-073596144",
+    "transaction_hash": "9KAkfi6192TRG7/yN3p1Sw4TLbzDofVQZ89Voc2DlW+0rFx5iDJcPU4dqaIJZdvk",
+    "nonce": 5,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781621604.470171004",
+    "parent_consensus_timestamp": "1781621604.470171000",
+    "transaction_id": "0.0.1404223-1781621594-073596144",
+    "transaction_hash": "E8o3hahxZfUAjYpG+IhRDj/zm2Twwjv0epqsQmke38Fith5zh3Us5UNsuJRd5qPi",
+    "nonce": 4,
+    "name": "CRYPTOAPPROVEALLOWANCE",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781621604.470171003",
+    "parent_consensus_timestamp": "1781621604.470171000",
+    "transaction_id": "0.0.1404223-1781621594-073596144",
+    "transaction_hash": "JH+tKEDBHNINe3qp/rK9GqFLfrHOChzfMoMP5bvbBKLQMMAL6enFMcdn/OtHJ2Zc",
+    "nonce": 3,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781621604.470171002",
+    "parent_consensus_timestamp": "1781621604.470171000",
+    "transaction_id": "0.0.1404223-1781621594-073596144",
+    "transaction_hash": "sWKVRR4TLzNg6tRE+1h5fXFuj0zXTzvJhdEjZ4RO60SzDgvpCYwKIpogn5e2nhcN",
+    "nonce": 2,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.9675688",
+      "amount": -46464,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.10230659",
+      "amount": 46464,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781621604.470171001",
+    "parent_consensus_timestamp": "1781621604.470171000",
+    "transaction_id": "0.0.1404223-1781621594-073596144",
+    "transaction_hash": "1gQp55XdowxGx0FzqXRcgK/2T5iQOX5MgsZSMIT9+GAC4ApGrNkaqkWkBRJQdRlP",
+    "nonce": 1,
+    "name": "TOKENMINT",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.9770617",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.9675688",
+      "amount": 46464,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781621604.470171000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.1404223-1781621594-073596144",
+    "transaction_hash": "1QhjIxdgIEHFidUoyqKXGo3r7LF1XzhfszV2aNV4dCvkGwffdroWbNDiW78dyxTL",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 108764640,
+    "node": "0.0.4",
+    "entity_id": "0.0.10230659",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 108764640,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1404223",
+      "amount": -108764640,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ],
+  "erc20": {
+   "parent": {
+    "consensus_timestamp": "1781621604.470171000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.1404223-1781621594-073596144",
+    "transaction_hash": "1QhjIxdgIEHFidUoyqKXGo3r7LF1XzhfszV2aNV4dCvkGwffdroWbNDiW78dyxTL",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 108764640,
+    "node": "0.0.4",
+    "entity_id": "0.0.10230659",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 108764640,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1404223",
+      "amount": -108764640,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   "contractCallResult": {
+    "contract_id": "0.0.10230659",
+    "timestamp": "1781621604.470171000",
+    "block_hash": "0x32e949ff1179553db40b609c7f449a5e89ab9b1aae0359801e79b4579cf82ed0ef0698ef0968003eb186897b087bcfb0",
+    "block_gas_used": 1066320,
+    "gas_consumed": 1066320,
+    "gas_limit": 2295924,
+    "gas_used": 1066320
+   },
+   "transfers": [
+    {
+     "amount": 464648303012322,
+     "consensus_timestamp": 1781621604470171000,
+     "log_index": 2,
+     "payer_account_id": 1404223,
+     "sender_account_id": 1404223,
+     "sender_evm_address": "0x0000000000000000000000000000000000156d3f",
+     "receiver_account_id": null,
+     "receiver_evm_address": "0xcec8716cdd60856eacaa74d499abd14ae34b7da8",
+     "token_evm_address": "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+     "token_id": 9470869,
+     "transaction_hash": "0xd508632317602041c589d528caa2971a8debecb1755f385fb3357668d578742b",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 8303012322,
+     "consensus_timestamp": 1781621604470171000,
+     "log_index": 8,
+     "payer_account_id": 1404223,
+     "sender_account_id": null,
+     "sender_evm_address": "0xcec8716cdd60856eacaa74d499abd14ae34b7da8",
+     "receiver_account_id": 1404223,
+     "receiver_evm_address": "0x0000000000000000000000000000000000156d3f",
+     "token_evm_address": "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+     "token_id": 9470869,
+     "transaction_hash": "0xd508632317602041c589d528caa2971a8debecb1755f385fb3357668d578742b",
+     "transfer_type": "transfer"
+    },
+    {
+     "amount": 52004,
+     "consensus_timestamp": 1781621604470171000,
+     "log_index": 13,
+     "payer_account_id": 1404223,
+     "sender_account_id": 0,
+     "sender_evm_address": "0x0000000000000000000000000000000000000000",
+     "receiver_account_id": 1404223,
+     "receiver_evm_address": "0x0000000000000000000000000000000000156d3f",
+     "token_evm_address": "0x31403d085c601f49b9644a4c9a493403fa14abfe",
+     "token_id": 10033160,
+     "transaction_hash": "0xd508632317602041c589d528caa2971a8debecb1755f385fb3357668d578742b",
+     "transfer_type": "mint"
+    }
+   ]
+  }
+ },
+ {
+  "name": "SaucerSwap token to HBAR swap paid by the account",
+  "account": "0.0.10574239",
+  "evmAddress": "0x0000000000000000000000000000000000a1599f",
+  "records": [
+   {
+    "consensus_timestamp": "1781555482.238083008",
+    "parent_consensus_timestamp": "1781555482.238083000",
+    "transaction_id": "0.0.10574239-1781555472-751967905",
+    "transaction_hash": "kNG9tKKDM7Rn6uxOwbA3IVANfIJYIRYXpLOj+n71T/DjtwuE621xNI/r20/6J8nU",
+    "nonce": 8,
+    "name": "TOKENBURN",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.1456986",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.1456985",
+      "amount": -5477500977,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781555482.238083007",
+    "parent_consensus_timestamp": "1781555482.238083000",
+    "transaction_id": "0.0.10574239-1781555472-751967905",
+    "transaction_hash": "eGEh2tQkpyghZws4Em+I8QtTRhTS4YkDkIhlpDSR2jodxngEaCljWxQsrFOXNVnG",
+    "nonce": 7,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.1456985",
+      "amount": 5477500977,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.3949434",
+      "amount": -5477500977,
+      "is_approval": true
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781555482.238083006",
+    "parent_consensus_timestamp": "1781555482.238083000",
+    "transaction_id": "0.0.10574239-1781555472-751967905",
+    "transaction_hash": "6oKkSIB0rWOr8cxhNDcnjfAj0frpoN8YKCcNMWRUaYZ20foNaeyDj7fpbSCCBqoi",
+    "nonce": 6,
+    "name": "CRYPTOAPPROVEALLOWANCE",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781555482.238083005",
+    "parent_consensus_timestamp": "1781555482.238083000",
+    "transaction_id": "0.0.10574239-1781555472-751967905",
+    "transaction_hash": "eDFztVIzsfp/ftrTLLgQkrn4MQoN6lyGIWscitc4oybJgTkLOg8RT1/bR9ImzplA",
+    "nonce": 5,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781555482.238083004",
+    "parent_consensus_timestamp": "1781555482.238083000",
+    "transaction_id": "0.0.10574239-1781555472-751967905",
+    "transaction_hash": "q275n5OZScieFrXNmWKIm+gsl4aXlQoCTa3WeaLOiraC7t4l/E8Kn4GTxlcCwVY0",
+    "nonce": 4,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781555482.238083003",
+    "parent_consensus_timestamp": "1781555482.238083000",
+    "transaction_id": "0.0.10574239-1781555472-751967905",
+    "transaction_hash": "H9WDhgf/Fhj6ISqCkvXkq7jMsoZY7xMmSlmTtlX3Ava/+lp2gtN0iVezPwj6iV9K",
+    "nonce": 3,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.10018365",
+      "amount": 250000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.10574239",
+      "amount": -250000,
+      "is_approval": true
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781555482.238083002",
+    "parent_consensus_timestamp": "1781555482.238083000",
+    "transaction_id": "0.0.10574239-1781555472-751967905",
+    "transaction_hash": "b78ZXh5V1V4Vn8VlEzf4BiCeLyNujyZA7CpKhx+M5u8hNCW6KI11T3TOcarbyRdg",
+    "nonce": 2,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781555482.238083001",
+    "parent_consensus_timestamp": "1781555482.238083000",
+    "transaction_id": "0.0.10574239-1781555472-751967905",
+    "transaction_hash": "Jn/XscYIBpK5S8ZUv3DFuoTDGooKuYoXDW/L3Ro7C4D3ONwAI4Q6KrVpKiHZyDP9",
+    "nonce": 1,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.3949434",
+      "amount": 5477500977,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.1456986",
+      "account": "0.0.10018365",
+      "amount": -5477500977,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1781555482.238083000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10574239-1781555472-751967905",
+    "transaction_hash": "WmY16796l/pn9qiUmb1086JT7FA5Ly6MSC26s8jFGgxwbhkDUWGh1C/Ms/kNEm07",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 94759020,
+    "node": "0.0.4",
+    "entity_id": "0.0.3949434",
+    "memo_base64": "c2F1Y2Vyc3dhcGxhYnMtdWk=",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 94759020,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1456985",
+      "amount": -5477500977,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.3946530",
+      "amount": 21910003,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10574239",
+      "amount": 5360831954,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "staking reward inside a WETH-receive contract call",
+  "account": "0.0.5956928",
+  "evmAddress": "0x00000000000000000000000000000000005ae540",
+  "records": [
+   {
+    "consensus_timestamp": "1787485271.951477105",
+    "parent_consensus_timestamp": "1787485271.951477104",
+    "transaction_id": "0.0.5956928-1787485253-704547669",
+    "transaction_hash": "dUYGSJ+C+5HLrhRbrL5OBIDrzACeAYIcrvvBDyKYD0o0Q0/YdNY618QoGFWgR5YB",
+    "nonce": 1,
+    "name": "TOKENWIPE",
+    "result": "SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.9770617",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.5956928",
+      "amount": -100,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1787485271.951477104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.5956928-1787485253-704547669",
+    "transaction_hash": "8WfaN+opOKCDm9Cl8B3eHdTbvPZ9Nd6VcRNueujIwnWuJTdtFtFFXR3J+SSqL9bK",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 8705939,
+    "node": "0.0.24",
+    "entity_id": "0.0.9675688",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.800",
+      "amount": -89212847,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.802",
+      "amount": 8705939,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.5956928",
+      "amount": 80506908,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.5956928",
+      "amount": 89212847
+     }
+    ],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ],
+  "erc20": {
+   "parent": {
+    "consensus_timestamp": "1787485271.951477104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.5956928-1787485253-704547669",
+    "transaction_hash": "8WfaN+opOKCDm9Cl8B3eHdTbvPZ9Nd6VcRNueujIwnWuJTdtFtFFXR3J+SSqL9bK",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "SUCCESS",
+    "charged_tx_fee": 8705939,
+    "node": "0.0.24",
+    "entity_id": "0.0.9675688",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.800",
+      "amount": -89212847,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.802",
+      "amount": 8705939,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.5956928",
+      "amount": 80506908,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.5956928",
+      "amount": 89212847
+     }
+    ],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   "contractCallResult": {
+    "contract_id": "0.0.9675688",
+    "timestamp": "1787485271.951477104",
+    "block_hash": "0xcc421926b5d557e9feacc10cc51b17c2b6683057ba287d2bd30a5e84e5d2f52151e50cfee9e795da43ed0d52ff3bd870",
+    "block_gas_used": 192759,
+    "gas_consumed": 79871,
+    "gas_limit": 100000,
+    "gas_used": 79871
+   },
+   "transfers": [
+    {
+     "amount": 1000000000000,
+     "consensus_timestamp": 1787485271951477104,
+     "log_index": 0,
+     "payer_account_id": 5956928,
+     "sender_account_id": 9675688,
+     "sender_evm_address": "0x000000000000000000000000000000000093a3a8",
+     "receiver_account_id": 5956928,
+     "receiver_evm_address": "0x00000000000000000000000000000000005ae540",
+     "token_evm_address": "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+     "token_id": 9470869,
+     "transaction_hash": "0xf167da37ea2938a0839bd0a5f01dde1dd4dbbcf67d35de9571136e7ae8c8c275",
+     "transfer_type": "transfer"
+    }
+   ]
+  }
+ },
+ {
+  "name": "allowance pull: the receiver pays the fee",
+  "account": "0.0.10352175",
+  "evmAddress": "0x00000000000000000000000000000000009df62f",
+  "records": [
+   {
+    "consensus_timestamp": "1791750777.613815397",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10352175-1791750773-521600903",
+    "transaction_hash": "PpMb3SV9/YdZuhh9z6c9pTaYbUC9/2Hbq0L2FmpMvdT1lc/fNNA9ja8AOprLXY0l",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 107653,
+    "node": "0.0.7",
+    "entity_id": null,
+    "memo_base64": "W0hhc2hmbGlwXSBQdWxsIENvaW5mbGlwIDEwMi4wIDAuMC44MDQyMDQ0QA==",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 107653,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.8042044",
+      "amount": -10200000000,
+      "is_approval": true
+     },
+     {
+      "account": "0.0.10352175",
+      "amount": 10199892347,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "scheduled transfer whose transaction id names an account that pays nothing",
+  "account": "0.0.634576",
+  "evmAddress": "0x000000000000000000000000000000000009aed0",
+  "records": [
+   {
+    "consensus_timestamp": "1790427893.663931743",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.634576-1790427867-455228311",
+    "transaction_hash": "NYE77z9wsYtOfPWiud8iBXTdKOE8SdiztKFsHpjHHCk+D1CCMMN0GykNE4xW4qAA",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 2125616,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "U2VudCB2aWEgSGFzaFBhY2sgU2VjdXJlIFRyYWRl",
+    "transfers": [
+     {
+      "account": "0.0.800",
+      "amount": -391900150,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.802",
+      "amount": 2125616,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.514792",
+      "amount": 289774534,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.634576",
+      "amount": 95000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.665353",
+      "amount": 1000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.694236",
+      "amount": 4000000,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.514792",
+      "amount": 391900150
+     }
+    ],
+    "nft_transfers": [
+     {
+      "is_approval": false,
+      "receiver_account_id": "0.0.514792",
+      "sender_account_id": "0.0.634576",
+      "serial_number": 73,
+      "token_id": "0.0.751194"
+     },
+     {
+      "is_approval": false,
+      "receiver_account_id": "0.0.514792",
+      "sender_account_id": "0.0.634576",
+      "serial_number": 129,
+      "token_id": "0.0.751194"
+     }
+    ],
+    "scheduled": true
+   },
+   {
+    "consensus_timestamp": "1790427871.959565804",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.634576-1790427867-455228311",
+    "transaction_hash": "E4NbhUtgRSWZMkzX/qlp9+Rybs0U+N5jeurrr6hlW9jZXOt3J3ICHGZbs0Xqj0+o",
+    "nonce": 0,
+    "name": "SCHEDULECREATE",
+    "result": "SUCCESS",
+    "charged_tx_fee": 10628083,
+    "node": "0.0.23",
+    "entity_id": "0.0.10890068",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 10628083,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.634576",
+      "amount": -10628083,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "scheduled transfer from two senders",
+  "account": "0.0.10490943",
+  "evmAddress": "0x0000000000000000000000000000000000a0143f",
+  "records": [
+   {
+    "consensus_timestamp": "1791480462.285505105",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.9538191-1791480334-644655841",
+    "transaction_hash": "5XTgyYlF95Wl5QthFRbqi88lXhwBVw5x5RpPZjMlAfE32KgmIm1VUXmgSA2v7LPj",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 2467252,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "UmFyZVN3YXAgT2ZmZXIgIzUwODMgfCAwLjAuMTA2MTUyMDEjMjgwOSDihpQgMC4wLjEwODE4MzQ5IzEzNjcsIzE2MDg=",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 2467252,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1645615",
+      "amount": -400000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.8848758",
+      "amount": -400000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9538191",
+      "amount": -2467252,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10490943",
+      "amount": 800000000,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [
+     {
+      "is_approval": false,
+      "receiver_account_id": "0.0.8848758",
+      "sender_account_id": "0.0.1645615",
+      "serial_number": 2809,
+      "token_id": "0.0.10615201"
+     },
+     {
+      "is_approval": false,
+      "receiver_account_id": "0.0.1645615",
+      "sender_account_id": "0.0.8848758",
+      "serial_number": 1367,
+      "token_id": "0.0.10818349"
+     },
+     {
+      "is_approval": false,
+      "receiver_account_id": "0.0.1645615",
+      "sender_account_id": "0.0.8848758",
+      "serial_number": 1608,
+      "token_id": "0.0.10818349"
+     }
+    ],
+    "scheduled": true
+   }
+  ]
+ },
+ {
+  "name": "HBAR and four tokens received in one transfer",
+  "account": "0.0.10759344",
+  "evmAddress": "0x0000000000000000000000000000000000a42cb0",
+  "records": [
+   {
+    "consensus_timestamp": "1787422488.994053876",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10599238-1787422475-314760744",
+    "transaction_hash": "0NLqCgVHYDOv7OOioyYSBavPTzeSNtt5g1c5tNRCeCDaRN77V3TCarN6AqQIQ+Ld",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 1806023,
+    "node": "0.0.13",
+    "entity_id": null,
+    "memo_base64": "TFBYOmJ3ZDoxOjg1Y2RhNDZhLTllYmYtNDIyZC04ZmJhLTNhZGU3NWI2NDkxZTpkOGViYzlhZDlhOWI1Y2FhMzQ3ZDRmNmM3MmU2ZWFiOQ==",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 1806023,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10599238",
+      "amount": -1806023,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10759344",
+      "amount": 375662150004,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10759541",
+      "amount": -375662150004,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10759344",
+      "amount": 285101954,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.456858",
+      "account": "0.0.10759541",
+      "amount": -285101954,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.3716059",
+      "account": "0.0.10759344",
+      "amount": 944889834,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.3716059",
+      "account": "0.0.10759541",
+      "amount": -944889834,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.10759344",
+      "amount": 7220984,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.9770617",
+      "account": "0.0.10759541",
+      "amount": -7220984,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.10082597",
+      "account": "0.0.10759344",
+      "amount": 185688,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.10082597",
+      "account": "0.0.10759541",
+      "amount": -185688,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "fractional custom fee taken from the received amount",
+  "account": "0.0.10067807",
+  "evmAddress": "0x0000000000000000000000000000000000999f5f",
+  "records": [
+   {
+    "consensus_timestamp": "1782483685.674882694",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.4598937-1782483680-997035827",
+    "transaction_hash": "dS5YolZ4tzYZftPHCBOFLQJPoG3Lim7dwHSVhpRxdDTOEY+CkYv4DV4CrvH99nN+",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 2768382,
+    "node": "0.0.34",
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.800",
+      "amount": -287266319,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.802",
+      "amount": 2768382,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.4598937",
+      "amount": 284497937,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4598937",
+      "amount": -10000000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4910691",
+      "amount": 100000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929179",
+      "amount": 400000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929181",
+      "amount": 125000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929182",
+      "amount": 25000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929184",
+      "amount": 25000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929185",
+      "amount": 25000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.10067807",
+      "amount": 9399900000,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.4598937",
+      "amount": 287266319
+     }
+    ],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "fractional custom fee, collector side",
+  "account": "0.0.4929181",
+  "evmAddress": "0x00000000000000000000000000000000004b369d",
+  "records": [
+   {
+    "consensus_timestamp": "1782483685.674882694",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.4598937-1782483680-997035827",
+    "transaction_hash": "dS5YolZ4tzYZftPHCBOFLQJPoG3Lim7dwHSVhpRxdDTOEY+CkYv4DV4CrvH99nN+",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 2768382,
+    "node": "0.0.34",
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.800",
+      "amount": -287266319,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.802",
+      "amount": 2768382,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.4598937",
+      "amount": 284497937,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4598937",
+      "amount": -10000000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4910691",
+      "amount": 100000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929179",
+      "amount": 400000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929181",
+      "amount": 125000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929182",
+      "amount": 25000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929184",
+      "amount": 25000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929185",
+      "amount": 25000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.10067807",
+      "amount": 9399900000,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.4598937",
+      "amount": 287266319
+     }
+    ],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "token send paying a fractional custom fee",
+  "account": "0.0.10067807",
+  "evmAddress": "0x0000000000000000000000000000000000999f5f",
+  "records": [
+   {
+    "consensus_timestamp": "1782497116.413322000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.10067807-1782497110-220776458",
+    "transaction_hash": "pQQ9sb966tPs2E3bcVshhnlcCRTixMh50GTz2CSTD83qEeX3yovsSHQeLBy9Ejzm",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 2727345,
+    "node": "0.0.33",
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 2727345,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10067807",
+      "amount": -2727345,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4910691",
+      "amount": 1000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929179",
+      "amount": 4000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929181",
+      "amount": 1250000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929182",
+      "amount": 250000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929184",
+      "amount": 250000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.4929185",
+      "amount": 250000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.10067807",
+      "amount": -100000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.4929186",
+      "account": "0.0.10509747",
+      "amount": 93999000,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "airdrop claimed by the recipient",
+  "account": "0.0.7982665",
+  "evmAddress": "0x000000000000000000000000000000000079ce49",
+  "records": [
+   {
+    "consensus_timestamp": "1791728201.251718301",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.7982665-1791728191-498150822",
+    "transaction_hash": "BlRDunf0zXlcZw31WBZMjZhD29fmLW+Ri3WYUpeRiOw0ZwIu4/JYY+Q1zRxTATKQ",
+    "nonce": 0,
+    "name": "TOKENCLAIMAIRDROP",
+    "result": "SUCCESS",
+    "charged_tx_fee": 1090094,
+    "node": "0.0.28",
+    "entity_id": null,
+    "memo_base64": "SGFzaFBhY2sgYWlyZHJvcCBjbGFpbSAxMCBERUFUSA==",
+    "transfers": [
+     {
+      "account": "0.0.800",
+      "amount": -5708455,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.802",
+      "amount": 1090094,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.7982665",
+      "amount": 4618361,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [
+     {
+      "token_id": "0.0.8023834",
+      "account": "0.0.7982665",
+      "amount": 1000000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.8023834",
+      "account": "0.0.8075310",
+      "amount": -1000000000,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.7982665",
+      "amount": 5708455
+     }
+    ],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "claimed airdrop rejected back to the treasury",
+  "account": "0.0.7982665",
+  "evmAddress": "0x000000000000000000000000000000000079ce49",
+  "records": [
+   {
+    "consensus_timestamp": "1791728395.985711104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.7982665-1791728386-517884430",
+    "transaction_hash": "dfH4VmEYveNHBtLGlcNMgbGwgxewfWq0SVVMIzEPFiYPDDAhA4/XjWVaZP4l3CpG",
+    "nonce": 0,
+    "name": "TOKENREJECT",
+    "result": "SUCCESS",
+    "charged_tx_fee": 1090094,
+    "node": "0.0.15",
+    "entity_id": "0.0.7982665",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 1090094,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.7982665",
+      "amount": -1090094,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [
+     {
+      "token_id": "0.0.8023834",
+      "account": "0.0.7891970",
+      "amount": 1000000000,
+      "is_approval": false
+     },
+     {
+      "token_id": "0.0.8023834",
+      "account": "0.0.7982665",
+      "amount": -1000000000,
+      "is_approval": false
+     }
+    ],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "explicit send to the node that also collects the fee (pre HIP-1259)",
+  "account": "0.0.7840494",
+  "evmAddress": "0x536a652bc9f5eafe8662e212d20e46e3c8230ff5",
+  "records": [
+   {
+    "consensus_timestamp": "1734081053.858590000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.7840494-1734081042-683064766",
+    "transaction_hash": "5xY3IkZCLEWMIdK7hUn1/+rn4c9NUcA9KlRON3APGC8bWP5U1oq51JQh3QijdXol",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 34161,
+    "node": "0.0.17",
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.17",
+      "amount": 1100001383,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.98",
+      "amount": 26224,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.800",
+      "amount": 3277,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.801",
+      "amount": 3277,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.7840494",
+      "amount": -1100034161,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "explicit send to a node through another node (pre HIP-1259)",
+  "account": "0.0.1059024",
+  "evmAddress": "0x00000000000000000000000000000000001028d0",
+  "records": [
+   {
+    "consensus_timestamp": "1731924506.898656329",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.1059024-1731924491-606221687",
+    "transaction_hash": "ncPMt7Pm1FSGidp6tYGHlKyqIW2W2O3bVgHG3wnnowew5/30KOvignI+ygZMA4lV",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 94106,
+    "node": "0.0.3",
+    "entity_id": null,
+    "memo_base64": "MTM1Mjky",
+    "transfers": [
+     {
+      "account": "0.0.3",
+      "amount": 3813,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.15",
+      "amount": 1500000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.98",
+      "amount": 81264,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.800",
+      "amount": 9029,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1059024",
+      "amount": -1500094106,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "send to nine recipients, fee split across node and network accounts (pre HIP-1259)",
+  "account": "0.0.1505996",
+  "evmAddress": "0x000000000000000000000000000000000016facc",
+  "records": [
+   {
+    "consensus_timestamp": "1730131022.868843000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.1505996-1730131012-199397853",
+    "transaction_hash": "te3af19OpyasjWaTBZHR2KJtmEzkn2A3r99uRY8ftqgsJfL/iXTW62U0mHZatwHe",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 223002,
+    "node": "0.0.23",
+    "entity_id": null,
+    "memo_base64": "VGhhbmtzIGEgbG90IGZvciB0aGUgdHJ1c3QgLSBPdGFydSBEQU8=",
+    "transfers": [
+     {
+      "account": "0.0.23",
+      "amount": 9142,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.98",
+      "amount": 192474,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.800",
+      "amount": -32673743,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1048446",
+      "amount": 2619000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1049144",
+      "amount": 4722038250,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1073706",
+      "amount": 42425000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1109949",
+      "amount": 13618946540,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1268046",
+      "amount": 6285000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1291686",
+      "amount": 5523680603,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1505996",
+      "amount": -87994223002,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1739901",
+      "amount": 2357000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.2966637",
+      "amount": 5238000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.4363669",
+      "amount": 5238029736,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.1049144",
+      "amount": 8038250
+     },
+     {
+      "account": "0.0.4363669",
+      "amount": 29736
+     },
+     {
+      "account": "0.0.1109949",
+      "amount": 946540
+     },
+     {
+      "account": "0.0.1291686",
+      "amount": 23680603
+     }
+    ],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "send to eight recipients, fee to the fee collection account",
+  "account": "0.0.3745833",
+  "evmAddress": "0x0000000000000000000000000000000000392829",
+  "records": [
+   {
+    "consensus_timestamp": "1791384449.115559117",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.3745833-1791384441-414315102",
+    "transaction_hash": "u/CX0s8mRPVl8OiJ+GTDj3228U1e4lA+MUwwCG/cDW/nHhhmzsyUy+QeXer6z6je",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 851508,
+    "node": "0.0.33",
+    "entity_id": null,
+    "memo_base64": "RXRhU3dhcEVhcmx5QWRvcHRlciByZXdhcmQgMSUgZnJvbSAyNDcxIEhCQVIgKFNlcHRlbWJlciAyMDI2KQ==",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 851508,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.378107",
+      "amount": 123572866,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.688890",
+      "amount": 123572866,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.921997",
+      "amount": 123572866,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1640537",
+      "amount": 123572866,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.2256746",
+      "amount": 123572866,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.3745833",
+      "amount": -989434436,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.3927125",
+      "amount": 123572866,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.4125686",
+      "amount": 123572866,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.6769320",
+      "amount": 123572866,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "failed transfer paid by the account (pre HIP-1259)",
+  "account": "0.0.7137125",
+  "evmAddress": "0x00000000000000000000000000000000006ce765",
+  "records": [
+   {
+    "consensus_timestamp": "1729575171.003481000",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.7137125-1729575158-837511493",
+    "transaction_hash": "4NauuGc6cg+xkJmQ3wcT5VJcNLTHTeGQ/yoQMpbwwgBufciQF0ti7+ReiMQq+esR",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "INSUFFICIENT_ACCOUNT_BALANCE",
+    "charged_tx_fee": 189965,
+    "node": "0.0.29",
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.29",
+      "amount": 7694,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.98",
+      "amount": 164044,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.800",
+      "amount": 18227,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.7137125",
+      "amount": -189965,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "failed atomic batch with its failed inner contract call",
+  "account": "0.0.4093645",
+  "evmAddress": "0x00000000000000000000000000000000003e76cd",
+  "records": [
+   {
+    "consensus_timestamp": "1791227907.938079039",
+    "parent_consensus_timestamp": "1791227907.938079037",
+    "transaction_id": "0.0.4093645-1791227893-655364462",
+    "transaction_hash": "IM/YLfZUTG0vAcoCnzDhfLxZtj+4c9kwlcfczW/435s7qZVmXA2xZHCZbNOOO/gP",
+    "nonce": 2,
+    "name": "CONTRACTCALL",
+    "result": "REVERTED_SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791227907.938079038",
+    "parent_consensus_timestamp": "1791227907.938079037",
+    "transaction_id": "0.0.4093645-1791227893-655364462",
+    "transaction_hash": "KRKiSEEuVFDCd/dGnBF21MUxGN1hTDI/S3AAAAci03Ar99hABDIWDKV5eMvHQd4X",
+    "nonce": 1,
+    "name": "CONTRACTCALL",
+    "result": "REVERTED_SUCCESS",
+    "charged_tx_fee": 0,
+    "node": null,
+    "entity_id": "0.0.359",
+    "memo_base64": "",
+    "transfers": [],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791227907.938079037",
+    "parent_consensus_timestamp": "1791227907.938079035",
+    "transaction_id": "0.0.4093645-1791227893-655364462",
+    "transaction_hash": "p0SlBKpV8RBYJ2BNc51SnMeO4XP2UYzWPPKyfUMKREpwW8c+E5XcXAShYWeC/gsd",
+    "nonce": 0,
+    "name": "CONTRACTCALL",
+    "result": "CONTRACT_REVERT_EXECUTED",
+    "charged_tx_fee": 14098224,
+    "node": null,
+    "entity_id": "0.0.6070118",
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 14098224,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.4093645",
+      "amount": -14098224,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791227907.938079036",
+    "parent_consensus_timestamp": "1791227907.938079035",
+    "transaction_id": "0.0.4093645-1791227893-927893977",
+    "transaction_hash": "lm6NK3AjPszHl0Je7UoEQyABTXvBYguKOXyN9RB6dYdY8OJTTfZ3NuqWGZUuMN+n",
+    "nonce": 0,
+    "name": "CRYPTOAPPROVEALLOWANCE",
+    "result": "REVERTED_SUCCESS",
+    "charged_tx_fee": 49611213,
+    "node": null,
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 49611213,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.4093645",
+      "amount": -49611213,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   },
+   {
+    "consensus_timestamp": "1791227907.938079035",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.4093645-1791227892-358580307",
+    "transaction_hash": "CXXdKOax1lOrxpgx6Z/I2GKzYFiXZIN3FrLLCRRlFfF5aiXRlYusmOlAmhXNqKxg",
+    "nonce": 0,
+    "name": "ATOMICBATCH",
+    "result": "INNER_TRANSACTION_FAILED",
+    "charged_tx_fee": 992223,
+    "node": "0.0.10",
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 992223,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.4093645",
+      "amount": -992223,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "staking reward on an incoming transfer someone else paid",
+  "account": "0.0.773269",
+  "evmAddress": "0x00000000000000000000000000000000000bcc95",
+  "records": [
+   {
+    "consensus_timestamp": "1790013907.476234104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.55980-1790013900-000000000",
+    "transaction_hash": "PbKe8M6e+Rhm9/I0OsmkQRnZPKwpo6rBmlkL3hu0zcfoMgSbFxLMLdvHDodwL8Rd",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 1307840,
+    "node": "0.0.24",
+    "entity_id": null,
+    "memo_base64": "",
+    "transfers": [
+     {
+      "account": "0.0.800",
+      "amount": -217030438,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.802",
+      "amount": 1307840,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.44275",
+      "amount": 307806000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.55980",
+      "amount": -8369280307840,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.773269",
+      "amount": 280515890758,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1113108",
+      "amount": 280514000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9871531",
+      "amount": 280514000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9942610",
+      "amount": 1402784139680,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10161261",
+      "amount": 3954749000000,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.10233422",
+      "amount": 1862613000000,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.9942610",
+      "amount": 215139680
+     },
+     {
+      "account": "0.0.773269",
+      "amount": 1890758
+     }
+    ],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "one tinybar sent only to trigger a staking reward",
+  "account": "0.0.692862",
+  "evmAddress": "0x00000000000000000000000000000000000a927e",
+  "records": [
+   {
+    "consensus_timestamp": "1791368019.479425021",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.1986041-1791368005-318664615",
+    "transaction_hash": "SQAepQjPlvtYaTHLcNRo1rnYBpn2cOm5q91y6QJUfVwGukpq5kw/Wyp2XTu+2o44",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "SUCCESS",
+    "charged_tx_fee": 315453,
+    "node": "0.0.7",
+    "entity_id": null,
+    "memo_base64": "RGFpbHkgc3Rha2luZyByZXdhcmRz",
+    "transfers": [
+     {
+      "account": "0.0.800",
+      "amount": -4172169384,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.802",
+      "amount": 315453,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.692862",
+      "amount": 361675,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1874003",
+      "amount": 2466326323,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1902464",
+      "amount": 1705481389,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.1986041",
+      "amount": -315456,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [
+     {
+      "account": "0.0.1902464",
+      "amount": 1705481388
+     },
+     {
+      "account": "0.0.1874003",
+      "amount": 2466326322
+     },
+     {
+      "account": "0.0.692862",
+      "amount": 361674
+     }
+    ],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ },
+ {
+  "name": "transfer to the fee collection account rejected",
+  "account": "0.0.9753627",
+  "evmAddress": "0x000000000000000000000000000000000094d41b",
+  "records": [
+   {
+    "consensus_timestamp": "1790780492.711197104",
+    "parent_consensus_timestamp": null,
+    "transaction_id": "0.0.9753627-1790780472-268629074",
+    "transaction_hash": "ruY9RQleO2ettphRUl4dTbs7p4lA+vHKdkHQmElPIKe+O9Dg2srbLRVpx8ua70ie",
+    "nonce": 0,
+    "name": "CRYPTOTRANSFER",
+    "result": "TRANSFER_TO_FEE_COLLECTION_ACCOUNT_NOT_ALLOWED",
+    "charged_tx_fee": 88996,
+    "node": "0.0.35",
+    "entity_id": null,
+    "memo_base64": "TVRjd05URTBNVEE1Tnc9PQ==",
+    "transfers": [
+     {
+      "account": "0.0.802",
+      "amount": 88996,
+      "is_approval": false
+     },
+     {
+      "account": "0.0.9753627",
+      "amount": -88996,
+      "is_approval": false
+     }
+    ],
+    "token_transfers": [],
+    "staking_reward_transfers": [],
+    "nft_transfers": [],
+    "scheduled": false
+   }
+  ]
+ }
+]

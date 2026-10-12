@@ -741,6 +741,24 @@ describe("createApi", () => {
       expect(result.next).toBeUndefined();
     });
 
+    it("reads past pages that hold no operation for the account instead of returning them empty", async () => {
+      mockListOperationsV2
+        .mockResolvedValueOnce({ coinOperations: [], tokenOperations: [], nextCursor: "200.0" })
+        .mockResolvedValueOnce({
+          coinOperations: [mockOperation],
+          tokenOperations: [],
+          nextCursor: "100.0",
+        });
+
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
+
+      // the generic sync stops at an empty page, which would drop every older operation
+      expect(mockListOperationsV2).toHaveBeenCalledTimes(2);
+      expect(mockListOperationsV2.mock.calls[1][1]).toMatchObject({ cursor: "200.0" });
+      expect(result.items).toHaveLength(1);
+      expect(result.next).toBe("100.0");
+    });
+
     it("should use HARDCODED_BLOCK_HEIGHT and getBlockHash when blockHeight is missing", async () => {
       mockListOperationsV2.mockResolvedValue({
         coinOperations: [mockOperation],
