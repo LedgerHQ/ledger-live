@@ -3,10 +3,13 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { TokenAccount, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import {
+  type LiveDataCommandOptions,
+  liveDataWithRecipientAddressCommand,
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { buildTags } from "tests/utils/tagsUtils";
+import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
 
 function getRequiredFamily(currencyId: string): string {
   const family = getFamilyByCurrencyId(currencyId);
@@ -20,6 +23,7 @@ export const NEW_SEND_FLOW_FAMILIES = Array.from(
   new Set(
     [
       Currency.ADA,
+      Currency.ALEO,
       Currency.ALGO,
       Currency.APT,
       Currency.ATOM,
@@ -80,6 +84,9 @@ export type NewSendFlowEntry = {
    * entry, on entries that have actually been run.
    */
   verifyOperationAmount?: boolean;
+  /** Pool picked on the balance-type step, for currencies whose descriptor declares one. */
+  balanceType?: string;
+  postSeedHook?: LiveDataCommandOptions["postSeedHook"];
 };
 
 export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
@@ -95,7 +102,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
         teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
-        cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+        cliCommands: [
+          liveDataWithRecipientAddressCommand(tx, { postSeedHook: entry.postSeedHook }),
+        ],
         featureFlags: {
           ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
           newSendFlow: {
@@ -110,7 +119,10 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           tx.accountToDebit.derivationMode ? ` - ${tx.accountToDebit.derivationMode}` : ""
         }${validMemoTag ? " with memo" : ""}`,
         {
-          tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
+          tag: buildTags({
+            currencyId: tx.accountToDebit.currency.id,
+            skipLNS: shouldSkipLNSTag(tx.accountToDebit.currency.id),
+          }),
           annotation: [
             { type: "TMS", description: entry.xrayTicket },
             ...(entry.bugTicket ? [{ type: "BUG", description: entry.bugTicket }] : []),
@@ -132,6 +144,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
 
           await app.account.clickSend();
           await app.newSendFlow.waitForDialog();
+          if (entry.balanceType) {
+            await app.newSendFlow.selectBalanceType(entry.balanceType);
+          }
 
           const recipientAddress = tx.accountToCredit.address;
           if (!recipientAddress) {

@@ -45,6 +45,21 @@ export class NewSendModal extends Modal {
   readonly viewDetailsButton = this.dialog.getByTestId("send-confirmation-view-details-button");
   readonly deviceActionLoader = this.page.getByTestId("device-action-loader");
   readonly signaturePrompt = this.dialog.getByTestId("send-signature-prompt");
+  readonly balanceTypeScreen = this.dialog.getByTestId("balance-type-screen");
+  readonly selfTransferButton = this.dialog.getByTestId("self-transfer-button");
+  readonly aleoPrivateSync = this.dialog.getByTestId("aleo-private-sync");
+  readonly estimatedTimeRow = this.dialog.getByTestId("send-estimated-time-row");
+  readonly estimatedTimeValue = this.dialog.getByTestId("send-estimated-time-value");
+  readonly estimatedTimeInfoButton = this.dialog.getByTestId("send-estimated-time-info-button");
+  // Nested dialog: while it is open `this.dialog` matches two elements, so stay page-scoped.
+  readonly estimatedTimeInfoDialog = this.page.getByTestId("send-estimated-time-info-dialog");
+  readonly estimatedTimeInfoConfirmButton = this.page.getByTestId(
+    "send-estimated-time-info-confirm",
+  );
+
+  getBalanceTypeOption(optionId: string) {
+    return this.dialog.getByTestId(`balance-type-${optionId}`);
+  }
 
   getFeePreset(preset: Fee) {
     return this.page.getByTestId(`send-fees-preset-${preset.toLowerCase()}`);
@@ -66,6 +81,57 @@ export class NewSendModal extends Modal {
   @step("Wait for send flow dialog to open")
   async waitForDialog() {
     await this.dialog.waitFor({ state: "visible" });
+  }
+
+  @step("Verify balance type options: $0")
+  async expectBalanceTypeOptions(optionIds: string[]) {
+    await expect(this.balanceTypeScreen).toBeVisible();
+    for (const optionId of optionIds) {
+      await expect(this.getBalanceTypeOption(optionId)).toBeVisible();
+    }
+  }
+
+  @step("Select balance type: $0")
+  async selectBalanceType(optionId: string) {
+    await this.getBalanceTypeOption(optionId).click();
+  }
+
+  @step("Go back to the previous send step")
+  async goBack() {
+    await this.dialog
+      .getByTestId("send-dialog-header")
+      .getByRole("button", { name: "Go back" })
+      .click();
+  }
+
+  @step("Send to the account's other balance")
+  async clickSelfTransfer() {
+    await this.selfTransferButton.click();
+  }
+
+  @step("Wait for the Aleo private sync to complete")
+  async waitForAleoPrivateSync() {
+    await expect(this.aleoPrivateSync.or(this.recipientInput)).toBeVisible();
+    // Record scanning against the network; the screen announces up to a minute.
+    await expect(this.aleoPrivateSync).toBeHidden({ timeout: 120_000 });
+  }
+
+  @step("Verify estimated time is displayed: $0")
+  async expectEstimatedTime(value: string) {
+    await expect(this.estimatedTimeRow).toBeVisible();
+    await expect(this.estimatedTimeValue).toHaveText(value);
+  }
+
+  @step("Open estimated time info")
+  async openEstimatedTimeInfo() {
+    await this.estimatedTimeInfoButton.click();
+    await expect(this.estimatedTimeInfoDialog).toBeVisible();
+  }
+
+  @step("Close estimated time info")
+  async closeEstimatedTimeInfo() {
+    await this.estimatedTimeInfoConfirmButton.click();
+    await expect(this.estimatedTimeInfoDialog).toBeHidden();
   }
 
   @step("Type address in search input: $0")

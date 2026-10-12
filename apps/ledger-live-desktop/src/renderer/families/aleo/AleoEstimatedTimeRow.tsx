@@ -42,7 +42,13 @@ function EstimatedTimeInfoDialog({ info }: EstimatedTimeInfoDialogProps) {
           </div>
         </DialogBody>
         <DialogFooter className="flex flex-col gap-8">
-          <Button appearance="base" size="lg" isFull onClick={info.onClose}>
+          <Button
+            appearance="base"
+            size="lg"
+            isFull
+            onClick={info.onClose}
+            data-testid="send-estimated-time-info-confirm"
+          >
             {info.confirmLabel}
           </Button>
           <Button
