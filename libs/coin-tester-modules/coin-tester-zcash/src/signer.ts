@@ -190,6 +190,11 @@ export function buildSigner(accountIndex = 0): ZcashTestSigner {
         ),
       };
     },
+    // The scenarios run the shielded engine, which signs PCZTs; the transparent-only
+    // path that signs this way is never reached here.
+    createPaymentTransaction: async () => {
+      throw new Error("createPaymentTransaction is not used by the Zcash coin-tester");
+    },
   };
 
   return { signer, mnemonic, ufvk, xpub, accountIndex };
