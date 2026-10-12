@@ -310,10 +310,12 @@ export class NodeWebUsbTransport implements Transport {
   }): TransportConnectedDevice {
     const deviceId = row.id;
 
-    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = async (...args) => {
+    const sendApduToMachine: TransportConnectedDevice["sendApdu"] = (...args) => {
       if (!this.isConnectionMachineRoutable(machine)) {
-        return Left(
-          new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
+        return Promise.resolve(
+          Left(
+            new DeviceDisconnectedBeforeSendingApdu(`${deviceId} is no longer active or pending`),
+          ),
         );
       }
       return machine.sendApdu(...args);
@@ -777,7 +779,13 @@ export class NodeWebUsbTransport implements Transport {
     try {
       this._deviceConnectionsPendingReconnection.delete(machine);
       machine.setDependencies({ device: web, interfaceNumber });
-      await machine.setupConnection();
+      // Recorded like the initial connect: re-claiming the interface after an app switch is where a
+      // host refusal can first appear mid-run, and only this step's outcome says anything about USB.
+      await machine.setupConnection().catch((e: unknown) => {
+        recordUsbAccessFailure(e);
+        throw e;
+      });
+      recordUsbAccessSuccess();
       this.setActiveConnection(web, machine);
       machine.eventDeviceConnected();
     } catch (e) {

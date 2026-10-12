@@ -171,14 +171,41 @@ export function resolveUsbTimeoutLikelyCause(
  * attribution. `unknown` is the envelope's default, so the field is omitted rather than asserted.
  */
 export function usbTimeoutState(ctx: ClassifyContext, error?: unknown): DeviceState {
-  const likelyCause = resolveUsbTimeoutLikelyCause(ctx, error);
+  return timeoutStateFor(resolveUsbTimeoutLikelyCause(ctx, error));
+}
+
+function timeoutStateFor(likelyCause: UsbTimeoutLikelyCause): DeviceState {
   return likelyCause === "unknown" ? { code: "timeout" } : { code: "timeout", likelyCause };
+}
+
+/**
+ * An APDU timeout, or a garbled APDU. The latter is surfaced as a timeout since the root cause is
+ * typically lock / busy and the fix is the same: retry.
+ */
+function isUsbTimeoutError(error: unknown): boolean {
+  return (
+    error instanceof SendApduTimeoutError ||
+    hasTag(error, "SendApduTimeoutError") ||
+    hasAnyTag(error, TRANSPORT_FRAMING_TAGS)
+  );
 }
 
 function isUsbUnreachableError(error: unknown): boolean {
   const name = (error as { name?: unknown })?.name;
   if (typeof name === "string" && USB_UNREACHABLE_NAMES.has(name)) return true;
   return hasAnyTag(error, USB_UNREACHABLE_TAGS);
+}
+
+/**
+ * Discovery gave up, or opening the connection failed. Both used to land on `unknown`
+ * (LIVE-31394). `disconnected` keeps its own exit code (3) and message but still carries the
+ * attribution, so the JSON envelope can publish `likely_cause` and `docs` for the commonest
+ * failure of all — nothing plugged in.
+ */
+function usbUnreachableState(ctx: ClassifyContext, error: unknown): DeviceState {
+  const likelyCause = resolveUsbTimeoutLikelyCause(ctx, error);
+  if (likelyCause === "device_not_present") return { code: "disconnected", likelyCause };
+  return timeoutStateFor(likelyCause);
 }
 
 export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): DeviceState {
@@ -199,13 +226,7 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
     }
   }
 
-  if (error instanceof SendApduTimeoutError || hasTag(error, "SendApduTimeoutError")) {
-    return usbTimeoutState(ctx, error);
-  }
-
-  // Garbled APDU. Surfaced as a timeout since the root cause is typically lock / busy and the fix
-  // is the same: retry.
-  if (hasAnyTag(error, TRANSPORT_FRAMING_TAGS)) {
+  if (isUsbTimeoutError(error)) {
     return usbTimeoutState(ctx, error);
   }
 
@@ -225,15 +246,8 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
     };
   }
 
-  // Discovery gave up, or opening the connection failed. Both used to land on `unknown`
-  // (LIVE-31394). `disconnected` keeps its own exit code (3) and message but still carries the
-  // attribution, so the JSON envelope can publish `likely_cause` and `docs` for the commonest
-  // failure of all — nothing plugged in.
   if (isUsbUnreachableError(error)) {
-    const likelyCause = resolveUsbTimeoutLikelyCause(ctx, error);
-    return likelyCause === "device_not_present"
-      ? { code: "disconnected", likelyCause }
-      : { code: "timeout", ...(likelyCause === "unknown" ? {} : { likelyCause }) };
+    return usbUnreachableState(ctx, error);
   }
 
   return { code: "unknown", cause: error };
