@@ -112,6 +112,27 @@ describe("buildLegacyPrepareTransaction", () => {
 
     expect((await prepare(account, tx({}))).zcashFee).toBeUndefined();
   });
+
+  it.each([
+    ["the balance cannot cover it", { recipient: T1 }],
+    ["the recipient is refused", { recipient: UA_ORCHARD }],
+  ])("drops a resolved send-all amount when %s", async (_label, fields) => {
+    mockBuild.mockRejectedValue(new NotEnoughBalance());
+
+    const prepared = await prepare(
+      account,
+      tx({ ...fields, useAllAmount: true, amount: new BigNumber(140_000) }),
+    );
+
+    expect(prepared.amount.toNumber()).toBe(0);
+    expect(prepared.zcashFee).toBeUndefined();
+  });
+
+  it("keeps the amount typed in when the balance cannot cover it", async () => {
+    mockBuild.mockRejectedValue(new NotEnoughBalance());
+
+    expect((await prepare(account, tx({}))).amount.toNumber()).toBe(100_000);
+  });
 });
 
 describe("buildLegacyGetTransactionStatus", () => {

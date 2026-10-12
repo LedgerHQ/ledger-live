@@ -6,10 +6,15 @@ import { computeRecipientError } from "../bridge/statusHelpers";
 import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
 
 // Strip any stale fee/change from a prior prepare so the UI never shows an amount
-// without a matching fee.
+// without a matching fee. A send-all amount is the one a prior build resolved, so it
+// goes too.
 function resetPreparedTransaction(tx: Transaction): Transaction {
   const { zcashFee: _fee, changeAmount: _change, ...rest } = tx;
-  return { ...rest, selectedNotes: [] };
+  return {
+    ...rest,
+    ...(tx.useAllAmount && { amount: new BigNumber(0) }),
+    selectedNotes: [],
+  };
 }
 
 /**
