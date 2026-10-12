@@ -6,17 +6,12 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
-import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
-import { useFeature } from "@features/platform-feature-flags";
 import React from "react";
 import { connect } from "react-redux";
 import Alert from "~/renderer/components/Alert";
-import Box from "~/renderer/components/Box";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { State } from "~/renderer/reducers";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
-import ZcashSyncStateBanner from "./ZcashSyncStateBanner";
-import ZcashMemoField from "./ZcashMemoField";
 
 // FIXME: ConfirmationNB seems to be specific.
 // So we can't do
@@ -31,17 +26,12 @@ type Props = {
 };
 
 const SendRecipientFields = (props: Props) => {
-  const { confirmationsNb, account, transaction, status, onChange, autoFocus } = props;
-  const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
-  const isZcash = account.currency.id === "zcash";
+  const { confirmationsNb, account } = props;
   const pendingOperationError = new PendingOperation();
   const operations = account.pendingOperations.concat(account.operations);
   const incomingTransactionPending = operations.some(
     op => op.type === "IN" && !isConfirmedOperation(op, account, confirmationsNb),
   );
-  // Memo can only be delivered to a shielded (private) recipient.
-  const zcashTx = transaction as unknown as Partial<ZcashTransaction>;
-  const showMemo = isZcash && shieldedEnabled && zcashTx.recipientType === "private";
   return (
     <>
       {incomingTransactionPending && (
@@ -49,20 +39,6 @@ const SendRecipientFields = (props: Props) => {
           <TranslatedError error={pendingOperationError} field="description" />
         </Alert>
       )}
-      {isZcash ? (
-        <ZcashSyncStateBanner account={account as ZcashAccount} sender={zcashTx.sender} />
-      ) : null}
-      {showMemo ? (
-        <Box mt={2}>
-          <ZcashMemoField
-            account={account}
-            transaction={transaction}
-            status={status}
-            onChange={onChange}
-            autoFocus={autoFocus}
-          />
-        </Box>
-      ) : null}
     </>
   );
 };
@@ -90,5 +66,5 @@ const m = connect(
 )(SendRecipientFields);
 export default {
   component: m,
-  fields: ["memo"],
+  fields: [],
 };

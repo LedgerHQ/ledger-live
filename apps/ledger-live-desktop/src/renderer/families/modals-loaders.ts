@@ -13,7 +13,7 @@ import type { Props as AptosRewardsInfoProps } from "./aptos/StakingFlowModal/In
 import type { Data as AptosUnstakeData } from "./aptos/UnstakingFlowModal/Body";
 import type { Data as AptosWithdrawData } from "./aptos/WithdrawingFlowModal/Body";
 import type { Data as AptosRestakeData } from "./aptos/RestakingFlowModal/Body";
-import type { Data as BitcoinZcashExportKeyData } from "./bitcoin/ZCashExportKeyFlowModal/Body";
+import type { Data as ZcashExportKeyData } from "./zcash/ZCashExportKeyFlowModal/Body";
 import type { EditTransactionModalProps as BitcoinEditTransactionProps } from "./bitcoin/EditTransaction/Modal";
 import type { UserProps as CantonOnboardProps } from "./canton/OnboardModal";
 import type { Props as CantonTooManyUtxosProps } from "./canton/TooManyUtxosModal";
@@ -99,7 +99,7 @@ export type CoinModalsData = {
   MODAL_APTOS_UNSTAKE: AptosUnstakeData;
   MODAL_APTOS_WITHDRAW: AptosWithdrawData;
   MODAL_APTOS_RESTAKE: AptosRestakeData;
-  MODAL_ZCASH_EXPORT_KEY: BitcoinZcashExportKeyData;
+  MODAL_ZCASH_EXPORT_KEY: ZcashExportKeyData;
   MODAL_BITCOIN_EDIT_TRANSACTION: BitcoinEditTransactionProps;
   MODAL_CANTON_ONBOARD_ACCOUNT: CantonOnboardProps;
   MODAL_CANTON_TOO_MANY_UTXOS: CantonTooManyUtxosProps;
@@ -194,7 +194,7 @@ export const coinModalImports: Record<CoinModalKey, CoinModalImport> = {
   MODAL_APTOS_UNSTAKE: () => import("./aptos/UnstakingFlowModal"),
   MODAL_APTOS_WITHDRAW: () => import("./aptos/WithdrawingFlowModal"),
   MODAL_APTOS_RESTAKE: () => import("./aptos/RestakingFlowModal"),
-  MODAL_ZCASH_EXPORT_KEY: () => import("./bitcoin/ZCashExportKeyFlowModal"),
+  MODAL_ZCASH_EXPORT_KEY: () => import("./zcash/ZCashExportKeyFlowModal"),
   MODAL_BITCOIN_EDIT_TRANSACTION: () =>
     import("./bitcoin/EditTransaction/Modal").then(m => ({ default: m.EditTransactionModal })),
   MODAL_CANTON_ONBOARD_ACCOUNT: () => import("./canton/OnboardModal"),
