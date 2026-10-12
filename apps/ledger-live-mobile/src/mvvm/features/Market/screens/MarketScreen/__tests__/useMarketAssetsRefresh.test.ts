@@ -2,6 +2,12 @@ import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import type { HashMapBody } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketAssetsRefresh } from "../useMarketAssetsRefresh";
 
+const mockUseIsFocused = jest.fn();
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useIsFocused: () => mockUseIsFocused(),
+}));
+
 const ONE_MINUTE = 60 * 1000;
 const NOW = new Date("2026-10-12T10:00:00Z").getTime();
 
@@ -19,13 +25,14 @@ function createMetadataMap(entries: Record<string, ReturnType<typeof createPageM
 describe("useMarketAssetsRefresh", () => {
   beforeEach(() => {
     jest.useFakeTimers({ now: NOW });
+    mockUseIsFocused.mockReturnValue(true);
   });
 
   afterEach(() => {
     jest.useRealTimers();
   });
 
-  it("refetches the visible page every 3 minutes by default once it is stale", () => {
+  it("refetches the visible page every 3 minutes by default", () => {
     const firstPage = createPageMetadata(NOW);
     const cachedMetadataMap = createMetadataMap({ "0": firstPage });
 
@@ -35,9 +42,6 @@ describe("useMarketAssetsRefresh", () => {
     expect(firstPage.refetchMock).not.toHaveBeenCalled();
 
     act(() => jest.advanceTimersByTime(1));
-    expect(firstPage.refetchMock).not.toHaveBeenCalled();
-
-    act(() => jest.advanceTimersByTime(3 * ONE_MINUTE));
     expect(firstPage.refetchMock).toHaveBeenCalledTimes(1);
   });
 
@@ -74,20 +78,15 @@ describe("useMarketAssetsRefresh", () => {
 
   it("does not refetch the visible page while it is still fresh", () => {
     const firstPage = createPageMetadata(NOW);
-    let cachedMetadataMap = createMetadataMap({ "0": firstPage });
+    const cachedMetadataMap = createMetadataMap({ "0": firstPage });
 
-    const { rerender } = renderHook(() =>
-      useMarketAssetsRefresh({ cachedMetadataMap, visiblePage: 1, enabled: true }),
-    );
+    renderHook(() => useMarketAssetsRefresh({ cachedMetadataMap, visiblePage: 1, enabled: true }));
+
+    act(() => jest.advanceTimersByTime(ONE_MINUTE));
+    cachedMetadataMap.set("0", { updatedAt: Date.now(), refetch: firstPage.refetch });
 
     act(() => jest.advanceTimersByTime(2 * ONE_MINUTE));
-    const refreshedPage = createPageMetadata(Date.now());
-    cachedMetadataMap = createMetadataMap({ "0": refreshedPage });
-    rerender(undefined);
-
-    act(() => jest.advanceTimersByTime(3 * ONE_MINUTE));
     expect(firstPage.refetchMock).not.toHaveBeenCalled();
-    expect(refreshedPage.refetchMock).not.toHaveBeenCalled();
   });
 
   it("only refetches the visible page", () => {
@@ -123,5 +122,24 @@ describe("useMarketAssetsRefresh", () => {
 
     act(() => jest.advanceTimersByTime(10 * ONE_MINUTE));
     expect(firstPage.refetchMock).not.toHaveBeenCalled();
+  });
+
+  it("pauses while the screen is not focused and resumes on focus", () => {
+    const firstPage = createPageMetadata(NOW - 10 * ONE_MINUTE);
+    const cachedMetadataMap = createMetadataMap({ "0": firstPage });
+    mockUseIsFocused.mockReturnValue(false);
+
+    const { rerender } = renderHook(() =>
+      useMarketAssetsRefresh({ cachedMetadataMap, visiblePage: 1, enabled: true }),
+    );
+
+    act(() => jest.advanceTimersByTime(10 * ONE_MINUTE));
+    expect(firstPage.refetchMock).not.toHaveBeenCalled();
+
+    mockUseIsFocused.mockReturnValue(true);
+    rerender(undefined);
+
+    act(() => jest.advanceTimersByTime(3 * ONE_MINUTE));
+    expect(firstPage.refetchMock).toHaveBeenCalledTimes(1);
   });
 });
