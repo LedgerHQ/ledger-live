@@ -1,5 +1,7 @@
+const { withEsmDeps } = require("@support/jest-shared");
+
 /** @type {import('jest').Config} */
-module.exports = {
+const config = {
   testEnvironment: "node",
   setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   testRegex: ".integ.test.ts$",
@@ -18,3 +20,5 @@ module.exports = {
     ],
   },
 };
+
+module.exports = withEsmDeps(config);

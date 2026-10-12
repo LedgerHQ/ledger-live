@@ -1,7 +1,7 @@
 import ecc from "@bitcoinerlab/secp256k1";
 import BIP32Factory from "bip32";
 import { mnemonicToSeed } from "bip39";
-import { schnorr, secp256k1 } from "@noble/curves/secp256k1";
+import { schnorr, secp256k1 } from "@noble/curves/secp256k1.js";
 import { blake2b } from "@noble/hashes/blake2b";
 import type { KaspaSigner } from "@ledgerhq/coin-kaspa/types/signer";
 import type { KaspaAddress } from "@ledgerhq/coin-kaspa/types/signer";
