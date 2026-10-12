@@ -224,7 +224,7 @@ export function createApi(currencyId: string) {
             asset,
             operation: liveOp,
             accountAddress: address,
-            feesPayer,
+            ...(feesPayer && { feesPayer }),
           }),
           asset,
           details: {
