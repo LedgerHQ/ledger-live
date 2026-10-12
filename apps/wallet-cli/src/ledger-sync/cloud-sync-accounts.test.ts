@@ -242,8 +242,16 @@ describe("mergeSyncedAccounts", () => {
     },
   );
 
-  // The mode check is global and toV1() reads only the address from an EVM id, so a mode another
-  // family uses still imports the account.
+  it("skips an unknown derivation mode even when its id is also malformed", () => {
+    const session = Session.from([]);
+    const newer = { ...ETH_RAW, id: `js:2:ethereum:${ETH_ADDR}`, derivationMode: "ethFuture" };
+    const report = mergeSyncedAccounts(session, [newer]);
+
+    expect(report.invalid).toEqual([]);
+    expect(report.skipped).toEqual([expect.objectContaining({ status: "skipped", id: newer.id })]);
+  });
+
+  // toV1() reads only the address from an EVM id, so the global mode check is all that applies.
   it("imports an EVM account whose known mode belongs to another family", () => {
     const session = Session.from([]);
     const foreign = {
