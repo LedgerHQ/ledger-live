@@ -579,10 +579,11 @@ pnpm --silent wallet-cli start agent-intent cancel --profile my-bot --intent 019
   terminal (scripts, AI agents, piped input) it refuses unless `--yes` is given, before signing in.
   As an agent, only pass `--yes` when the user asked to cancel this intent.
 - **Repeats:** cancelling an already cancelled intent succeeds and reports
-  `alreadyCancelled: true`. If the user signs it in the meantime, the command fails and reports
-  the new state.
-- **JSON** (`--output json`): `profileId`, `cancelled: true`, `alreadyCancelled`, and `intent`
-  as the service reports it after the cancellation (same fields as `agent-intent status`). A
+  `alreadyCancelled: true`, also when another cancel gets there first. If the user signs it in the
+  meantime, the command fails and reports the new state.
+- **JSON** (`--output json`): `profileId`, `cancelled: true`, `alreadyCancelled`, `readBack` and
+  `intent` as the service reports it after the cancellation (same fields as `agent-intent status`).
+  `readBack: false` means that read failed: `intent` is the earlier read marked `cancelled`. A
   declined prompt prints `cancelled: false` and `declined: true` with the `intentId` (unlike
   `ring destroy`, where `cancelled: true` means the prompt was declined).
 - **Not found:** an unknown id and another agent's intent get the same answer, as for

@@ -41,7 +41,7 @@ import { APP_NAME } from "./session/session-store";
 import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-store";
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
 import { NETWORK_LABELS, type SendIntentSummary } from "./agent-intent/send-intent";
-import type { IntentListEntry } from "./agent-intent/intent-list";
+import { isTerminalIntentStatus, type IntentListEntry } from "./agent-intent/intent-list";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
@@ -301,6 +301,9 @@ export type AgentIntentCancelResult = {
   intent: IntentListEntry;
   /** The intent was cancelled before this run, so this run changed nothing. */
   alreadyCancelled: boolean;
+  /** `false` when the state couldn't be read back after cancelling: `intent` is then the earlier
+   * read with status `cancelled`, and its `updatedAt` is stale. */
+  readBack: boolean;
 };
 
 export type AgentIntentEnrollmentPending = {
@@ -1005,7 +1008,8 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   agentIntentCancelPreview({ profileId, intent }: AgentIntentCancelPreview): void {
-    writeStderr(`${intentDetailLines(profileId, intent, false).join("\n")}\n`);
+    const terminal = isTerminalIntentStatus(intent.status);
+    writeStderr(`${intentDetailLines(profileId, intent, terminal).join("\n")}\n`);
   }
 
   agentIntentCancelAborted({ intentId }: { profileId: string; intentId: string }): void {
@@ -1013,10 +1017,12 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   agentIntentCancel({ profileId, intent, alreadyCancelled }: AgentIntentCancelResult): void {
+    const id = stripControlChars(intent.id);
     const headline = alreadyCancelled
-      ? `Intent ${intent.id} was already cancelled.`
-      : `${colors.green("✔")} Intent ${intent.id} cancelled. The user can no longer sign it.`;
-    writeStdout([headline, ...intentDetailLines(profileId, intent, true)].join("\n"));
+      ? `Intent ${id} was already cancelled.`
+      : `${colors.green("✔")} Intent ${id} cancelled. The user can no longer sign it.`;
+    const terminal = isTerminalIntentStatus(intent.status);
+    writeStdout([headline, ...intentDetailLines(profileId, intent, terminal)].join("\n"));
   }
 }
 
@@ -1517,15 +1523,23 @@ class JsonCommandOutput implements CommandOutput {
 
   agentIntentCancelPreview({ profileId, intent }: AgentIntentCancelPreview): void {
     // Stdout carries only the final envelope; the prompt and what it is about go to stderr.
-    writeStderr(`${intentDetailLines(profileId, intent, false).join("\n")}\n`);
+    const terminal = isTerminalIntentStatus(intent.status);
+    writeStderr(`${intentDetailLines(profileId, intent, terminal).join("\n")}\n`);
   }
 
   agentIntentCancelAborted({ profileId, intentId }: { profileId: string; intentId: string }): void {
     this._writeNdjson(this._envelope({ profileId, cancelled: false, declined: true, intentId }));
   }
 
-  agentIntentCancel({ profileId, intent, alreadyCancelled }: AgentIntentCancelResult): void {
-    this._writeNdjson(this._envelope({ profileId, cancelled: true, alreadyCancelled, intent }));
+  agentIntentCancel({
+    profileId,
+    intent,
+    alreadyCancelled,
+    readBack,
+  }: AgentIntentCancelResult): void {
+    this._writeNdjson(
+      this._envelope({ profileId, cancelled: true, alreadyCancelled, readBack, intent }),
+    );
   }
 }
 

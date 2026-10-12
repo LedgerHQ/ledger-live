@@ -30,7 +30,7 @@ const enrolledProfile = {
 
 function record(status: string): AgentIntentRecord {
   return {
-    id: INTENT_ID,
+    id: serviceId ?? INTENT_ID,
     agentPubkey: agent.publicKey,
     status,
     createdAt: "2026-10-07T10:00:00Z",
@@ -55,6 +55,8 @@ let readStatuses: (string | Error)[];
 let reads: string[];
 let readError: Error | undefined;
 let description: string | undefined;
+/** The id the service echoes back, when a test needs it to differ from the one asked for. */
+let serviceId: string | undefined;
 let cancelImpl: (intentId: string) => Promise<void>;
 let cancels: string[];
 let canAsk: boolean;
@@ -125,6 +127,7 @@ describe("agent-intent cancel", () => {
     reads = [];
     readError = undefined;
     description = undefined;
+    serviceId = undefined;
     cancelImpl = async () => {};
     cancels = [];
     canAsk = false;
@@ -152,6 +155,7 @@ describe("agent-intent cancel", () => {
       profileId: "bot",
       cancelled: true,
       alreadyCancelled: false,
+      readBack: true,
       intent: { id: INTENT_ID, status: "cancelled", amount: "10000000000000000" },
     });
   });
@@ -301,8 +305,52 @@ describe("agent-intent cancel", () => {
     await runCancel({ output: "json" });
 
     expect(cancels).toEqual([INTENT_ID]);
-    expect(jsonResult()).toMatchObject({ cancelled: true, intent: { status: "cancelled" } });
+    expect(jsonResult()).toMatchObject({
+      cancelled: true,
+      readBack: false,
+      intent: { status: "cancelled" },
+    });
     expect(stderr.join("")).toContain("Cancelled, but its new state could not be read back.");
+  });
+
+  it("reports success when another cancel got there first", async () => {
+    readStatuses = ["crafted", "cancelled"];
+    cancelImpl = async () => {
+      throw new AgentIntentHttpError("Illegal transition", 400);
+    };
+
+    await runCancel({ output: "json" });
+
+    expect(cancels).toEqual([INTENT_ID]);
+    expect(jsonResult()).toMatchObject({
+      status: "success",
+      cancelled: true,
+      alreadyCancelled: true,
+      intent: { status: "cancelled" },
+    });
+  });
+
+  it("flags a state this version doesn't know in the preview and the result", async () => {
+    canAsk = true;
+    answer = true;
+    readStatuses = ["archived", "archived"];
+
+    await runCancel({ yes: false });
+
+    expect(stderr.join("")).toContain("Status:  archived (unknown to this wallet-cli version)");
+    expect(stdout.join("")).toContain("Status:  archived (unknown to this wallet-cli version)");
+    expect(stdout.join("")).not.toContain("(final)");
+  });
+
+  it("strips terminal control characters from the id the service echoes back", async () => {
+    serviceId = `${INTENT_ID}\u001b[2K\r`;
+
+    await runCancel();
+
+    const text = stdout.join("");
+    expect(text).toContain(`Intent ${INTENT_ID}[2K cancelled.`);
+    expect(text).not.toContain("\u001b");
+    expect(text).not.toContain("\r");
   });
 
   it("answers a 404 while reading like an unknown id", async () => {

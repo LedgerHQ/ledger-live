@@ -20,7 +20,7 @@ import {
 import { parseIntentId, toIntentListEntry } from "../../agent-intent/intent-list";
 import { askToConfirm, canAskToConfirm } from "../../agent-intent/confirm-prompt";
 import { findEthereumToken } from "../../agent-intent/token-lookup";
-import { createCommandOutput } from "../../output";
+import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
 
 /** States the service lets the agent cancel: before the user signs. */
@@ -55,12 +55,7 @@ export default defineCommand({
     await out.run(async () => {
       const intentId = parseIntentId(flags.intent);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
-      if (!flags.yes && !canAskToConfirm()) {
-        throw new Error(
-          "Cancelling an intent can't be undone, and there is no terminal to confirm it. " +
-            "Re-run with --yes to cancel without a prompt.",
-        );
-      }
+      if (!flags.yes) assertCanConfirm();
       const client = createAgentIntentClient({
         bffBaseUrl: profile.bffBaseUrl,
         identity: await loadProfileIdentity(profile),
@@ -68,61 +63,34 @@ export default defineCommand({
         environment: profile.environment,
         ...keycloakOverride(profile.environment, profile.keycloakBaseUrl),
       });
-      const read = () => readIntent(client, profile.profileId, intentId);
+      const { profileId } = profile;
+      const read = () => readIntent(client, profileId, intentId);
+      const reportCancelled = async (
+        record: AgentIntentRecord,
+        alreadyCancelled: boolean,
+        readBack = true,
+      ) =>
+        out.agentIntentCancel({
+          profileId,
+          intent: await toIntentListEntry(record, findEthereumToken),
+          alreadyCancelled,
+          readBack,
+        });
 
       const before = await read();
-      if (before.status === "cancelled") {
-        out.agentIntentCancel({
-          profileId: profile.profileId,
-          intent: await toIntentListEntry(before, findEthereumToken),
-          alreadyCancelled: true,
-        });
+      if (before.status === "cancelled") return reportCancelled(before, true);
+      assertCancellable(intentId, before.status);
+
+      if (!flags.yes && !(await confirmCancel(out, profileId, before))) {
+        out.agentIntentCancelAborted({ profileId, intentId });
         return;
       }
-      // A state this version doesn't know may be cancellable on a newer service: let it decide.
-      if (isAgentIntentStatus(before.status) && !CANCELLABLE_STATUSES.has(before.status)) {
-        throw new Error(notCancellableMessage(intentId, before.status));
-      }
 
-      if (!flags.yes) {
-        out.agentIntentCancelPreview({
-          profileId: profile.profileId,
-          intent: await toIntentListEntry(before, findEthereumToken),
-        });
-        if (!(await askToConfirm("Cancel this intent? This can't be undone. [y/N] "))) {
-          out.agentIntentCancelAborted({ profileId: profile.profileId, intentId });
-          return;
-        }
-      }
+      const cancelledMeanwhile = await cancelOrExplain(client, read, profileId, intentId);
+      if (cancelledMeanwhile) return reportCancelled(cancelledMeanwhile, true);
 
-      try {
-        await client.cancelIntent(intentId);
-      } catch (e) {
-        if (isHttpError(e) && e.status === 400) {
-          // A bare 400 on an intent now in a known final or signed state means it moved on.
-          const now = await read().catch(() => undefined);
-          if (
-            now &&
-            isAgentIntentStatus(now.status) &&
-            now.status !== "cancelled" &&
-            !CANCELLABLE_STATUSES.has(now.status)
-          ) {
-            throw new Error(notCancellableMessage(intentId, now.status));
-          }
-        }
-        throw describeAgentIntentCancelError(e, profile.profileId, intentId);
-      }
-
-      // The service has cancelled it: a failed read now must not report the cancel as failed.
-      const after = await read().catch(() => {
-        writeStderr("Cancelled, but its new state could not be read back.\n");
-        return { ...before, status: "cancelled" };
-      });
-      out.agentIntentCancel({
-        profileId: profile.profileId,
-        intent: await toIntentListEntry(after, findEthereumToken),
-        alreadyCancelled: false,
-      });
+      const after = await readBack(read, before);
+      await reportCancelled(after.record, false, after.readBack);
     });
   },
 });
@@ -136,6 +104,72 @@ async function readIntent(
     return await client.getIntent(intentId);
   } catch (e) {
     throw describeAgentIntentLookupError(e, profileId, intentId);
+  }
+}
+
+function assertCanConfirm(): void {
+  if (!canAskToConfirm()) {
+    throw new Error(
+      "Cancelling an intent can't be undone, and there is no terminal to confirm it. " +
+        "Re-run with --yes to cancel without a prompt.",
+    );
+  }
+}
+
+async function confirmCancel(
+  out: CommandOutput,
+  profileId: string,
+  intent: AgentIntentRecord,
+): Promise<boolean> {
+  out.agentIntentCancelPreview({
+    profileId,
+    intent: await toIntentListEntry(intent, findEthereumToken),
+  });
+  return askToConfirm("Cancel this intent? This can't be undone. [y/N] ");
+}
+
+/** A state this version doesn't know may be cancellable on a newer service: it lets it decide. */
+function assertCancellable(intentId: string, status: string): void {
+  if (isAgentIntentStatus(status) && !CANCELLABLE_STATUSES.has(status)) {
+    throw new Error(notCancellableMessage(intentId, status));
+  }
+}
+
+/**
+ * Cancels the intent, or explains why the service refused. Returns the intent when it turns out
+ * to be cancelled already, by another process or a retry: the cancel is harmless to repeat.
+ */
+async function cancelOrExplain(
+  client: AgentIntentClient,
+  read: () => Promise<AgentIntentRecord>,
+  profileId: string,
+  intentId: string,
+): Promise<AgentIntentRecord | undefined> {
+  try {
+    await client.cancelIntent(intentId);
+    return undefined;
+  } catch (e) {
+    if (!isHttpError(e) || e.status !== 400) {
+      throw describeAgentIntentCancelError(e, profileId, intentId);
+    }
+    // A bare 400 on an intent now cancelled, signed or final means it moved on meanwhile.
+    const now = await read().catch(() => undefined);
+    if (now?.status === "cancelled") return now;
+    if (now) assertCancellable(intentId, now.status);
+    throw describeAgentIntentCancelError(e, profileId, intentId);
+  }
+}
+
+/** The service has cancelled it: a failed read now must not report the cancel as failed. */
+async function readBack(
+  read: () => Promise<AgentIntentRecord>,
+  before: AgentIntentRecord,
+): Promise<{ record: AgentIntentRecord; readBack: boolean }> {
+  try {
+    return { record: await read(), readBack: true };
+  } catch {
+    writeStderr("Cancelled, but its new state could not be read back.\n");
+    return { record: { ...before, status: "cancelled" }, readBack: false };
   }
 }
 
