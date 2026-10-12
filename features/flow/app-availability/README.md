@@ -24,7 +24,7 @@ service-unavailable check will compose in later.
 ```tsx
 import { AppAvailability, useAppAvailability } from "@features/flow-app-availability";
 
-<AppAvailability title={title} description={description}>
+<AppAvailability>
   <App />
 </AppAvailability>
 ```
@@ -34,5 +34,6 @@ const availability = useAppAvailability();
 const pendingAvailabilityCheck = availability.status === "pending";
 ```
 
-The host supplies translated `title` and `description`. The flow does not own i18n, URLs, or the
-loading splash.
+Unavailable copy is resolved in the flow through `@shared/i18n`. Geo-block uses the existing
+`geoBlocking.title` and `geoBlocking.description` keys. The flow does not own URLs or the loading
+splash.
