@@ -1390,7 +1390,9 @@ function verifySwapData(swap: Swap, events: string[], amount: string) {
       expectSpeculosEventsContain(swapPair, events, "Swap pair not found on the device screen");
     }
   }
-  expectSpeculosEventsContain(amount, events, `Amount ${amount} not found on the device screen`);
+  if (swap.provider?.amountAlwaysShownOnDevice !== false) {
+    expectSpeculosEventsContain(amount, events, `Amount ${amount} not found on the device screen`);
+  }
 }
 
 export const exportUfvk = withDeviceController(
