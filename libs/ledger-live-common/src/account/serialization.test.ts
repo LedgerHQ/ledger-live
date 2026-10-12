@@ -69,8 +69,8 @@ describe("serialization", () => {
     expect(deserializedAcc.readiness).toBeUndefined();
   });
 
-  // getAccountBridge() rejected on an unsupported account before the bridge was resolved via
-  // resolveSerializationFamily instead; toAccountRaw re-runs that same check up front. An
+  // getAccountBridge() rejects on an unsupported account before the bridge is resolved;
+  // toAccountRaw resolves it by family, so it re-runs that same check up front. An
   // unregistered family isn't a discriminating case for this: getAccountBridgeByFamily ->
   // loadSetupForFamily -> the registry's own getLoader() throws the identical "No coin module
   // registered" message independently, so that scenario passes with or without this guard. The
@@ -83,16 +83,11 @@ describe("serialization", () => {
     await expect(toAccountRaw(acc)).rejects.toThrow(/derivation not supported/);
   });
 
-  // Zcash declares `family: "bitcoin"`, and coin-bitcoin's real bridge already round-trips
-  // the shielded `privateInfo` unconditionally via its Zcash chain-adapter, flag-independent
-  // by design (accounts are deserialized at startup, before the host app mirrors the flag, so
-  // a flag-gated router would drop the viewing key on every boot regardless). Only a `mock:`
-  // account id needs special routing: coin-bitcoin's *mock* bridge declares no assign hooks at
-  // all, so a mock id has to go through the standalone zcash module's mock bridge instead, or
-  // both `privateInfo` and `bitcoinResources` are dropped.
-  describe("zcash with the shielded flag off", () => {
-    const zcashAccountRaw = (): any => ({
-      id: "mock:1:zcash:zcash_1:",
+  // Zcash accounts belong to the `zcash` family, served by coin-zcash whatever the shielded
+  // flag says: the flag only switches coin-zcash's engine, not where accounts are persisted.
+  describe("zcash", () => {
+    const zcashAccountRaw = (id = "mock:1:zcash:zcash_1:"): any => ({
+      id,
       seedIdentifier: "mock",
       derivationMode: "",
       index: 0,
@@ -129,40 +124,40 @@ describe("serialization", () => {
       },
     });
 
-    beforeEach(() => {
-      setZcashShieldedEnabled(false);
-    });
+    afterEach(() => setZcashShieldedEnabled(false));
 
-    test("privateInfo survives deserialization", async () => {
-      const deserializedAcc: any = await fromAccountRaw(zcashAccountRaw());
+    // Accounts are deserialized at startup, before the host app mirrors the flag: whatever its
+    // value, the shielded state and the transparent coins come back.
+    test.each([
+      ["a mock", "mock:1:zcash:zcash_1:", false],
+      ["a mock", "mock:1:zcash:zcash_1:", true],
+      ["a real", "js:2:zcash:xpub6zcashtest:", false],
+      ["a real", "js:2:zcash:xpub6zcashtest:", true],
+    ])(
+      "%s account id round-trips privateInfo and bitcoinResources (shielded flag %s)",
+      async (_kind, id, shielded) => {
+        setZcashShieldedEnabled(shielded);
+        const initialRaw = zcashAccountRaw(id);
 
-      expect(deserializedAcc.privateInfo?.ufvk).toBe("uview1test");
-      expect(deserializedAcc.bitcoinResources?.utxos).toHaveLength(1);
-    });
+        const account: any = await fromAccountRaw(initialRaw);
+        expect(account.privateInfo?.ufvk).toBe("uview1test");
+        expect(account.bitcoinResources?.utxos).toHaveLength(1);
 
-    // The save side of the same trap: the mock account id routes `toAccountRaw` to a mock
-    // bridge, and coin-bitcoin's declares no assign hooks at all -- so a flag-gated router
-    // here would drop `privateInfo` *and* the transparent `bitcoinResources` on persist,
-    // silently undoing what deserialization just restored.
-    test("privateInfo and bitcoinResources survive a full round-trip", async () => {
-      const initialRaw = zcashAccountRaw();
+        const reserializedRaw: any = await toAccountRaw(account);
+        expect(reserializedRaw.privateInfo).toEqual({
+          ...initialRaw.privateInfo,
+          // The fixture omits `lastSyncError`, as an account persisted before that field
+          // existed does; reading one back fills it with `null`, so the round-trip writes
+          // it out. Everything else has to come back byte-identical.
+          lastSyncError: null,
+        });
+        expect(reserializedRaw.bitcoinResources).toEqual(initialRaw.bitcoinResources);
+      },
+    );
 
-      const account: any = await fromAccountRaw(initialRaw);
-      const reserializedRaw: any = await toAccountRaw(account);
-
-      expect(reserializedRaw.privateInfo).toEqual({
-        ...initialRaw.privateInfo,
-        // The fixture omits `lastSyncError`, as an account persisted before that field
-        // existed does; reading one back fills it with `null`, so the round-trip writes
-        // it out. Everything else has to come back byte-identical.
-        lastSyncError: null,
-      });
-      expect(reserializedRaw.bitcoinResources).toEqual(initialRaw.bitcoinResources);
-    });
-
-    // wallet-cli registers bitcoin, evm and solana only, so there is no "zcash" family
-    // registered here.
-    describe("on a host without the standalone zcash module", () => {
+    // wallet-cli registers bitcoin, evm and solana only: a Zcash account has no family to
+    // load there, and says so rather than loading as something else.
+    describe("on a host without the zcash module", () => {
       beforeEach(() => {
         resetCoinModulesForTests();
         registerCoinModules(coinModuleLoaders.filter(l => l.family === "bitcoin"));
@@ -175,28 +170,10 @@ describe("serialization", () => {
         clearBridgeCache();
       });
 
-      // A real (non-mock) account id takes the bitcoin family here. coin-bitcoin no longer
-      // carries any Zcash code, so it restores the transparent resources it shares with
-      // Zcash and nothing reads the shielded state.
-      test("a real account id deserializes through the bitcoin family without its shielded state", async () => {
-        const raw = { ...zcashAccountRaw(), id: "js:2:zcash:xpub6zcashtest:" };
-
-        const account: any = await fromAccountRaw(raw);
-
-        expect(account.currency.id).toBe("zcash");
-        expect(account.privateInfo).toBeUndefined();
-        expect(account.bitcoinResources?.utxos).toHaveLength(1);
-      });
-
-      // This is the guard `isCoinModuleRegistered("zcash")` actually covers: a *mock* id has
-      // nowhere to fall but coin-bitcoin's mock bridge, which declares no assign hooks at all.
-      // The fallback keeps resolution from throwing `CurrencyNotSupported`.
-      test("a mock account id deserializes through the bitcoin family without throwing, though shielded data is lost", async () => {
-        const account: any = await fromAccountRaw(zcashAccountRaw());
-
-        expect(account.currency.id).toBe("zcash");
-        expect(account.privateInfo).toBeUndefined();
-        expect(account.bitcoinResources).toBeUndefined();
+      test("refuses to deserialize a zcash account", async () => {
+        await expect(fromAccountRaw(zcashAccountRaw("js:2:zcash:xpub6zcashtest:"))).rejects.toThrow(
+          /zcash/,
+        );
       });
     });
   });
