@@ -26,8 +26,12 @@ export default class ContactsPage {
   savedContactAddressCount = (rowId: string) => getElementById(`${rowId}-address-count`);
 
   @Step("Expect Contacts screen visible")
-  async expectScreenVisible() {
-    await detoxExpect(this.contactsContent()).toBeVisible();
+  async expectScreenVisible(timeout?: number) {
+    if (timeout === undefined) {
+      await detoxExpect(this.contactsContent()).toBeVisible();
+      return;
+    }
+    await waitFor(this.contactsContent()).toBeVisible().withTimeout(timeout);
   }
 
   @Step("Expect Me contact displayed")
