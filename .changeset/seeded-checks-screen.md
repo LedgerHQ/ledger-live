@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-Add the seeded-device checks screen with idle, checking, and succeeded layouts
+Add the seeded-device checks screen and a debug preview of its states
