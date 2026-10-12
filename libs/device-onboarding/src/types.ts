@@ -190,6 +190,7 @@ export type DeviceOnboardingInput = {
   deviceId: string;
   deviceModelId: DeviceModelId;
   offerSync: boolean;
+  hostsSeedSetup?: boolean;
 };
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
@@ -199,7 +200,8 @@ export type FirmwareCheck =
   | { kind: "checked" }
   | { kind: "offered"; update: AvailableFirmwareUpdate };
 
-export type DeviceOnboardingContext = DeviceOnboardingInput & {
+export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetup"> & {
+  hostsSeedSetup: boolean;
   lastDeviceState: DeviceOnboardingState | null;
   firmwareVersion: string | null;
   hasStarted: boolean;

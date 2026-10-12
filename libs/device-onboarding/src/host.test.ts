@@ -34,6 +34,7 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
     deviceId: "device",
     deviceModelId: DeviceModelId.NANO_X,
     offerSync: true,
+    hostsSeedSetup: false,
     lastDeviceState: null,
     firmwareVersion: "2.2.0",
     hasStarted: true,
