@@ -3,12 +3,12 @@
  */
 import { renderHook } from "@testing-library/react";
 import { useAssetChartDataInCounterValue } from "../useAssetChartDataInCounterValue";
-import { useAssetChartData } from "../useMarketDataProvider";
+import { useAssetChartData } from "../useAssetChartData";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useSupportedCounterCurrencies } from "../../../cg-client/hooks/useCoingeckoDataProvider";
 import type { MarketCoinDataChart } from "../../utils/types";
 
-jest.mock("../useMarketDataProvider", () => ({ useAssetChartData: jest.fn() }));
+jest.mock("../useAssetChartData", () => ({ useAssetChartData: jest.fn() }));
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: jest.fn(),

@@ -10,6 +10,7 @@ import {
   MarketItemResponse,
 } from "../utils/types";
 import { getChartRangeSegment, getRange } from "../utils";
+import { buildMarketListParams, getNextMarketListPage } from "../utils/marketListQueryArg";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import {
   GlobalMarketData,
@@ -17,13 +18,14 @@ import {
   GlobalMarketDataResponseSchema,
   MarketChartApiResponseSchema,
   MarketDataTags,
+  MarketListQueryArg,
   MarketPerformersQueryParams,
   MarketTrendingCategory,
   TrendingCategoriesResponseSchema,
   TrendingCurrenciesResponseSchema,
   TrendingPerformersQueryParams,
 } from "./types";
-import { format, formatPerformer } from "../utils/currencyFormatter";
+import { currencyFormatter, format, formatPerformer } from "../utils/currencyFormatter";
 
 const MAX_TRENDING_CATEGORIES = 5;
 
@@ -42,8 +44,23 @@ export const marketApi = createApi({
     MarketDataTags.GlobalData,
     MarketDataTags.TrendingCategories,
     MarketDataTags.TrendingPerformers,
+    MarketDataTags.MarketList,
   ],
   endpoints: build => ({
+    getMarketList: build.infiniteQuery<MarketCurrencyData[], MarketListQueryArg, number>({
+      query: ({ queryArg, pageParam }) => ({
+        url: "/v3/markets",
+        params: buildMarketListParams({ queryArg, page: pageParam }),
+      }),
+      transformResponse: (response: MarketItemResponse[]) => currencyFormatter(response),
+      providesTags: [MarketDataTags.MarketList],
+      infiniteQueryOptions: {
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages, lastPageParam, _allPageParams, queryArg) =>
+          getNextMarketListPage(lastPage, allPages, lastPageParam, queryArg),
+      },
+      keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
+    }),
     getMarketPerformers: build.query<MarketItemPerformer[], MarketPerformersQueryParams>({
       query: ({ counterCurrency, range, limit = 5, top = 50, sort, supported }) => {
         const sortParam = `${sort === "asc" ? "positive" : "negative"}-price-change-${getRange(range)}`;
@@ -205,6 +222,7 @@ export const marketApi = createApi({
 });
 
 export const {
+  useGetMarketListInfiniteQuery,
   useGetMarketPerformersQuery,
   useGetCurrencyDataQuery,
   useGetAssetChartDataQuery,
