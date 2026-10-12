@@ -21,6 +21,8 @@ import { withGenericTransactionSupport } from "./legacyBridgeAdapter";
 
 let _hederaLdmkFFEnabled: boolean = false;
 
+// temporary solution to dynamically enable/disable the Hedera DMK signer,
+// to be removed together with useFeature("ldmkHederaSigner")
 export const setHederaLdmkEnabled = (enabled: boolean): void => {
   _hederaLdmkFFEnabled = enabled;
 };

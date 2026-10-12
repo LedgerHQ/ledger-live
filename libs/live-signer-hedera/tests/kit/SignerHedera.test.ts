@@ -44,7 +44,7 @@ describe("SignerHedera", () => {
     expect(input.skipOpenApp).toBe(false);
   });
 
-  it("should read the public key silently by default", () => {
+  it("should skip opening the app when skipOpenApp is set", () => {
     signer.getPublicKey(3, { skipOpenApp: true });
 
     const input = lastAction();
