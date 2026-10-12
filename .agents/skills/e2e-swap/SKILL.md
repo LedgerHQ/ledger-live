@@ -69,7 +69,7 @@ description: Write or update Swap E2E tests for Ledger Live Desktop (Playwright)
 
 ### Swap partner payload check
 
-`tests/utils/swapPayloadCheck.ts` checks the partner payload of every desktop swap without spec changes:
+`tests/utils/swapPayloadCheck.ts` checks the partner payload of every desktop swap that reaches an accept device step, without spec changes. Rejected swaps are not checked:
 
 - `app.swap.clickExchangeButton(...)` starts a pass-through watch of the app `POST ${SWAP_API_BASE}/swap` call (traffic is never modified, one watch per page, stopped by the device steps, the reject step and the `page` fixture).
 - `app.speculos.verifyAmountsAndAcceptSwap*` run `checkSwapPayload` (`@ledgerhq/hw-app-exchange`) on the latest 2xx `/swap` answer, with the partner key and format from `getSwapProvider`, comparing the nonce, payout and refund addresses and amount with the request.
