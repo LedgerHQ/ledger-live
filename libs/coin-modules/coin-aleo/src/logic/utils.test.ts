@@ -629,12 +629,12 @@ describe("toPublicOperation", () => {
     expect(result.type).toBe("OUT");
   });
 
-  it("should leave blank addresses alone when no record is owned", () => {
+  it("should return an empty list for a blank address when no record is owned", () => {
     const rawTx = getMockedPublicTransaction({ recipient_address: "" });
 
     const result = toPublicOperation({ ...publicOpArgs, rawTx, address: senderAddress });
 
-    expect(result.recipients).toEqual([""]);
+    expect(result.recipients).toEqual([]);
   });
 
   it("should set type to IN for a self-transfer, as the classic bridge does", () => {
