@@ -240,7 +240,7 @@ describe("useOpenSendFlow", () => {
           ...withFlagOverrides({
             newSendFlow: {
               enabled: true,
-              params: { families: ["bitcoin"], excludedCurrencyIds: ["zcash"] },
+              params: { families: ["zcash"], excludedCurrencyIds: ["zcash"] },
             },
           }),
           accounts: [account],
