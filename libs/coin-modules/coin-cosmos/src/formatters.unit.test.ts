@@ -1,24 +1,24 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { BigNumber } from "bignumber.js";
 import { formatAccountSpecifics } from "./formatters";
-import type { CosmosAccount } from "./types";
+import type { Account, StakingAccount } from "@ledgerhq/types-live";
 
 const currency = getCryptoCurrencyById("cosmos");
 
 function makeAccount(
-  stakingResources: CosmosAccount["stakingResources"],
+  stakingResources: StakingAccount["stakingResources"],
   spendableBalance = new BigNumber(1_000_000),
-): CosmosAccount {
+): StakingAccount {
   return {
     type: "Account",
     currency,
     spendableBalance,
     stakingResources,
-  } as unknown as CosmosAccount;
+  } as unknown as StakingAccount;
 }
 
 describe("formatAccountSpecifics", () => {
-  it("reads delegations/unbondings/redelegations from stakingResources, not cosmosResources", () => {
+  it("reads delegations/unbondings/redelegations from stakingResources", () => {
     const account = makeAccount({
       delegations: [
         {
@@ -47,9 +47,6 @@ describe("formatAccountSpecifics", () => {
       pendingRewardsBalance: new BigNumber(0),
       unbondingBalance: new BigNumber(200_000),
     });
-    // cosmosResources is intentionally absent — formatAccountSpecifics must not read it.
-    delete (account as unknown as { cosmosResources?: unknown }).cosmosResources;
-
     const str = formatAccountSpecifics(account);
 
     expect(str).toContain("delegated");
@@ -79,5 +76,13 @@ describe("formatAccountSpecifics", () => {
     expect(str).not.toContain("DELEGATIONS");
     expect(str).not.toContain("UNDELEGATIONS");
     expect(str).not.toContain("REDELEGATIONS");
+  });
+});
+
+describe("formatAccountSpecifics guard", () => {
+  it("throws for an account without staking resources", () => {
+    expect(() => formatAccountSpecifics({ currency } as unknown as Account)).toThrow(
+      "cosmos staking account required",
+    );
   });
 });
