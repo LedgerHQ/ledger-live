@@ -106,6 +106,57 @@ describe("withGenericTransactionSupport", () => {
     );
   });
 
+  it("resolves the new token when a prepared association switches to another address", async () => {
+    const newToken = getMockedHTSTokenCurrency({ contractAddress: "0.0.2002" });
+    findTokenByAddressInCurrency.mockResolvedValueOnce(newToken);
+    const prepared = toLegacyTransaction(
+      generic({ mode: "tokenAssociate", assetReference: token.contractAddress }),
+      token,
+    );
+
+    await bridge.prepareTransaction(account, {
+      ...prepared,
+      assetReference: newToken.contractAddress,
+    } as never);
+
+    expect(findTokenByAddressInCurrency).toHaveBeenCalledTimes(1);
+    expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(newToken.contractAddress, "hedera");
+    expect(legacyBridge.prepareTransaction).toHaveBeenCalledTimes(1);
+    expect(legacyBridge.prepareTransaction).toHaveBeenCalledWith(
+      account,
+      expect.objectContaining({ properties: { token: newToken } }),
+    );
+  });
+
+  it("throws instead of keeping the previous token when the new address is unknown", async () => {
+    findTokenByAddressInCurrency.mockResolvedValueOnce(undefined as never);
+    const prepared = toLegacyTransaction(
+      generic({ mode: "tokenAssociate", assetReference: token.contractAddress }),
+      token,
+    );
+
+    await expect(
+      bridge.prepareTransaction(account, { ...prepared, assetReference: "0.0.9999" } as never),
+    ).rejects.toThrow("hedera: unknown token 0.0.9999");
+    expect(legacyBridge.prepareTransaction).not.toHaveBeenCalled();
+  });
+
+  it("keeps the resolved token while the address is unchanged", async () => {
+    const prepared = toLegacyTransaction(
+      generic({ mode: "tokenAssociate", assetReference: token.contractAddress }),
+      token,
+    );
+
+    await bridge.prepareTransaction(account, prepared);
+
+    expect(findTokenByAddressInCurrency).not.toHaveBeenCalled();
+    expect(legacyBridge.prepareTransaction).toHaveBeenCalledTimes(1);
+    expect(legacyBridge.prepareTransaction).toHaveBeenCalledWith(
+      account,
+      expect.objectContaining({ properties: { token } }),
+    );
+  });
+
   it("converts the transaction for status, max spendable and signing", () => {
     const tx = generic({ mode: "delegate", valId: "5" });
     const converted = expect.objectContaining({ properties: { stakingNodeId: 5 } });
