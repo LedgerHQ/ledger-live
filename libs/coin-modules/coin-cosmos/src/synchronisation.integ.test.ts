@@ -4,6 +4,7 @@ import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import cryptoFactory from "./chain/chain";
 import { getAccountShape } from "./synchronisation";
+import type { StakingAccount } from "@ledgerhq/types-live";
 import { CosmosAccount } from "./types";
 
 // Mock the cryptoFactory module
@@ -44,7 +45,7 @@ const testAccounts = [
 
 describe.each(testAccounts)("Testing synchronisation", testAccount => {
   const { id, unit, address, lcd, version, epochedStaking } = testAccount;
-  let result: Partial<CosmosAccount>;
+  let result: Partial<CosmosAccount & StakingAccount>;
 
   beforeEach(async () => {
     (cryptoFactory as jest.Mock).mockReturnValue({
@@ -87,19 +88,19 @@ describe.each(testAccounts)("Testing synchronisation", testAccount => {
     expect(result.blockHeight).toBeGreaterThanOrEqual(0);
     expect(result.id).toEqual(`js:2:${id}:${address}:`);
 
-    if (!result.cosmosResources) {
+    if (!result.stakingResources) {
       fail();
     }
-    const { cosmosResources } = result;
-    expect(cosmosResources.delegatedBalance).toEqual(
-      sumOf(cosmosResources.delegations.map(d => d.amount)),
+    const { stakingResources } = result;
+    expect(stakingResources.delegatedBalance).toEqual(
+      sumOf(stakingResources.delegations.map(d => d.amount)),
     );
 
-    expect(cosmosResources.pendingRewardsBalance.isGreaterThanOrEqualTo(0)).toBe(true);
-    expect(cosmosResources.sequence).toBeGreaterThanOrEqual(0);
+    expect(stakingResources.pendingRewardsBalance.isGreaterThanOrEqualTo(0)).toBe(true);
+    expect(result.sequence).toBeGreaterThanOrEqual(0);
 
-    expect(cosmosResources.unbondingBalance).toEqual(
-      sumOf(cosmosResources.unbondings.map(d => d.amount)),
+    expect(stakingResources.unbondingBalance).toEqual(
+      sumOf(stakingResources.unbondings.map(d => d.amount)),
     );
 
     if (result.operations) {
