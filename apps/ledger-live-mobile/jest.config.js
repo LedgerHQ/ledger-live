@@ -196,6 +196,8 @@ module.exports = {
     // expo-crypto needs a native runtime, and pnpm gives the app and the workspace
     // packages it renders separate copies; map both to one stub.
     "^expo-crypto$": "<rootDir>/__mocks__/expo-crypto.ts",
+    // Mirror the rspack alias: Segment, hiero and coin-evm import it, and 2.x can't be parsed by Jest.
+    "^react-native-get-random-values$": "<rootDir>/src/getRandomValuesPolyfill.ts",
     // expo-file-system needs a native runtime; map every copy to one stub.
     "^expo-file-system$": "<rootDir>/__mocks__/expo-file-system.ts",
     "^expo-web-browser$": "<rootDir>/__mocks__/expo-web-browser.ts",
