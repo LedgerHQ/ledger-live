@@ -19,7 +19,7 @@ const SECRET_KEY = agent.exportSecretKey();
 
 // EIP-55 specification vector, so the checksum is known-good.
 const SENDER = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed";
-const DEEPLINK = "https://agent-intent.ledger-test.com/intents/intent-456";
+const DEEPLINK = "https://app.agents.ledger-test.com/intents/intent-456";
 
 const ETH: SwapAsset = { id: "ethereum", ticker: "ETH", decimals: 18 };
 const USDC: SwapAsset = { id: "ethereum/erc20/usd__coin", ticker: "USDC", decimals: 6 };
