@@ -37,7 +37,9 @@ export function mapRawOperationToApiOperation(op: RawOperation, address: string)
       },
     },
     type: op.type,
-    value: BigInt(op.value),
+    // Net of fees, unlike `op.value`: the fee is already on `tx.fees`, and the
+    // generic adapter adds it back for a native OUT.
+    value: BigInt(op.amount),
     // A fee-only or rejected operation names no counterparty, and `[""]` would
     // publish an address the chain never saw.
     senders: op.sender ? [op.sender] : [],
