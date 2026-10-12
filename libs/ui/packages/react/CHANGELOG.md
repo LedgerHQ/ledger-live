@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.56.0-next.0
+
+### Minor Changes
+
+- [#23024](https://github.com/LedgerHQ/ledger-live/pull/23024) [`c037aa8`](https://github.com/LedgerHQ/ledger-live/commit/c037aa854190763e8654b7bb38a4486f4207caa8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate desktop Add Account off pre-ldls onto Lumen and remove the React pre-ldls entry
+
+- [#22896](https://github.com/LedgerHQ/ledger-live/pull/22896) [`a663e23`](https://github.com/LedgerHQ/ledger-live/commit/a663e23f97df77ee25be5c9b5f7abfa3649bcde1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove unused react-ui components and switch the desktop token list checkbox to Lumen
+
 ## 0.55.0
 
 ### Minor Changes

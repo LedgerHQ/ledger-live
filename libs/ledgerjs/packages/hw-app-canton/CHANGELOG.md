@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-canton
 
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#23225](https://github.com/LedgerHQ/ledger-live/pull/23225) [`1731458`](https://github.com/LedgerHQ/ledger-live/commit/17314582789efaad9ba35a5cf5e434a3140d6132) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `protobufjs` to 8.4.1 and `protobufjs-cli` to 2.4.1 (security), regenerate hw-app-exchange protobuf bindings. Absent protobuf string fields now decode as `undefined` instead of `""`.
+
 ## 0.14.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@shared/clipboard",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "Cross-platform copy and paste: expo-clipboard on mobile, navigator.clipboard on web",
   "main": "src/index.ts",

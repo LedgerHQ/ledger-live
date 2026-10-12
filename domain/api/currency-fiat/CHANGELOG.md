@@ -1,5 +1,13 @@
 # @domain/api-currency-fiat
 
+## 0.4.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c)]:
+  - @shared/api-services@0.10.0-next.0
+  - @domain/entity-currency-fiat@0.4.0
+
 ## 0.4.6
 
 ### Patch Changes

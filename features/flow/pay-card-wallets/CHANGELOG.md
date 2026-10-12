@@ -1,5 +1,17 @@
 # @features/flow-pay-card-wallets
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#22649](https://github.com/LedgerHQ/ledger-live/pull/22649) [`514d6f9`](https://github.com/LedgerHQ/ledger-live/commit/514d6f937e082fa8b86d87bcf170cc2ec57d51e0) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Show a newly linked Card asset when the user comes back to Pay from Baanx.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.4.6-next.0
+  - @domain/api-card-management@0.8.1-next.0
+
 ## 0.5.0
 
 ### Minor Changes

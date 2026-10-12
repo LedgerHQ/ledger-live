@@ -1,5 +1,25 @@
 # @features/flow-pay-contact
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#22866](https://github.com/LedgerHQ/ledger-live/pull/22866) [`52747b3`](https://github.com/LedgerHQ/ledger-live/commit/52747b3d876e34712619bd17206cd4aa23e07636) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Name the default Me contact "Me" in the Pay tab contacts list instead of "My addresses (Me)"
+
+- [#23011](https://github.com/LedgerHQ/ledger-live/pull/23011) [`a99d63a`](https://github.com/LedgerHQ/ledger-live/commit/a99d63a75a8d02a14bdfef0eaaa249c3f92d1ced) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wrap long Pay contact names inside the desktop tooltip
+
+- [#22754](https://github.com/LedgerHQ/ledger-live/pull/22754) [`4aa7793`](https://github.com/LedgerHQ/ledger-live/commit/4aa77939cec43fd1aac459689c372868dece3496) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cover paying a contact from the mobile Pay tab, selecting the native tile by contact id
+
+### Patch Changes
+
+- Updated dependencies [[`4101467`](https://github.com/LedgerHQ/ledger-live/commit/4101467e60d17f1facfae9c71e5b684bcf9f48e3), [`20bf9b0`](https://github.com/LedgerHQ/ledger-live/commit/20bf9b0c8694e9a3c873da1e81fd6b310410205c), [`8376d49`](https://github.com/LedgerHQ/ledger-live/commit/8376d497d552cd4644e806afdfbd5323bf10a695), [`48874b3`](https://github.com/LedgerHQ/ledger-live/commit/48874b3b33c83b40f7c2c389f7a84ebe96d58816), [`5f07a43`](https://github.com/LedgerHQ/ledger-live/commit/5f07a4399d54e6ebccb953045324d8ec5b571ad3), [`8783545`](https://github.com/LedgerHQ/ledger-live/commit/87835456704c2322a25339ef27ef92a320d02025), [`dad0153`](https://github.com/LedgerHQ/ledger-live/commit/dad01537ce5e0263964adcfaf762246003c527b4)]:
+  - @domain/entity-contact@0.12.0-next.0
+  - @features/platform-contacts@0.10.0-next.0
+  - @features/flow-contacts@0.14.0-next.0
+  - @features/flow-contacts-add-contact@0.7.2-next.0
+  - @shared/i18n@0.2.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

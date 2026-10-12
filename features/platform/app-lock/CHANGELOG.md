@@ -1,5 +1,19 @@
 # @features/platform-app-lock
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#22648](https://github.com/LedgerHQ/ledger-live/pull/22648) [`15491fb`](https://github.com/LedgerHQ/ledger-live/commit/15491fb3b72f27c41e24f076d23c4c83dc69abe5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the app lock UI shared by several journeys into `@features/platform-app-lock`.
+
+  `PasswordField` and the password draft (`PasswordDraftProvider`, `usePasswordDraft`) leave `@features/flow-app-lock`, which no longer exports them, for `@features/platform-app-lock`, exported from its native entry only. This is the first step of splitting the app lock flow into one package per journey: unlock, password setup and removal, longer password and the protection prompt each need these pieces, and none of them should depend on another journey to get them. No behaviour changes.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/i18n@0.2.0
+  - @shared/password-verifier@0.3.0
+
 ## 0.5.0
 
 ### Minor Changes

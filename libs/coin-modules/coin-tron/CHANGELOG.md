@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tron
 
+## 10.1.0-next.0
+
+### Minor Changes
+
+- [#22760](https://github.com/LedgerHQ/ledger-live/pull/22760) [`abf8d33`](https://github.com/LedgerHQ/ledger-live/commit/abf8d33f65a4177d2ab8c727c2b53c2b4439c676) Thanks [@ishaba](https://github.com/ishaba)! - Pay the Tronify energy rent in USDT instead of TRX: coin-tron offers it on USDT transfers only and rejects a rent payment that stays valid past the delivery window, and the default Tron config points at the Ledger Tronify proxy.
+
+- [#21731](https://github.com/LedgerHQ/ledger-live/pull/21731) [`99f7c87`](https://github.com/LedgerHQ/ledger-live/commit/99f7c87afc8029eca9bf574df03123bf07ca7810) Thanks [@ishaba](https://github.com/ishaba)! - feat(tron): sponsored-send energy-rent logic and the SponsoredCoinApi seam
+
+- [#23026](https://github.com/LedgerHQ/ledger-live/pull/23026) [`ef32df5`](https://github.com/LedgerHQ/ledger-live/commit/ef32df54a788270d9d01e84f05868902e82ef3c0) Thanks [@amaslakov](https://github.com/amaslakov)! - Check the Tronify rent payment before signing: it must pay an address from the remote `paymentAddresses` list (the option stays hidden without one) and cost at most the fee approved on Review plus `rentPriceMargin` (5%), capped at `maxRentAmount` (10 USDT); `buildEnergyRentRequest` now takes that approved fee.
+
+- [#23112](https://github.com/LedgerHQ/ledger-live/pull/23112) [`7f0d867`](https://github.com/LedgerHQ/ledger-live/commit/7f0d867cc9f8715b9244979e42a035babe43d2ab) Thanks [@amaslakov](https://github.com/amaslakov)! - Harden the Tronify rent payment: Retry stays locked until a payment that may still land has expired, a rent price rise is shown and must be accepted before ordering again, a signed payment about to expire is refused before broadcast, and the unreachable contract-data failure is removed.
+
+- [#23110](https://github.com/LedgerHQ/ledger-live/pull/23110) [`3ac5d88`](https://github.com/LedgerHQ/ledger-live/commit/3ac5d880557971ef69834eeccbdef83d381cd801) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(coin-tron): surface TronGrid error messages instead of empty or querystring-encoded ones
+
 ## 10.0.0
 
 ### Major Changes

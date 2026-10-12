@@ -1,5 +1,12 @@
 # @ledgerhq/ledger-trust-service
 
+## 0.8.20-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`c9b7594`](https://github.com/LedgerHQ/ledger-live/commit/c9b75949c8f01cade6b061bd5b6ecb0af5b0ec5f), [`f45fc80`](https://github.com/LedgerHQ/ledger-live/commit/f45fc8027562e53cdbd3500a2884084df6a4af8e)]:
+  - @shared/env@0.10.0-next.0
+
 ## 0.8.19
 
 ### Patch Changes

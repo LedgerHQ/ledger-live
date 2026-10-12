@@ -1,5 +1,36 @@
 # @ledgerhq/coin-hedera
 
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#22757](https://github.com/LedgerHQ/ledger-live/pull/22757) [`63a0ec8`](https://github.com/LedgerHQ/ledger-live/commit/63a0ec8c8d20ace5ed278f21d72286dd8d75094b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: extract hgraph queries and variables
+
+- [#22609](https://github.com/LedgerHQ/ledger-live/pull/22609) [`826a87c`](https://github.com/LedgerHQ/ledger-live/commit/826a87c08f3757ed3b1fd63f217ed9493082811d) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat(hedera): persist hederaResources on the generic adapter
+
+- [#23054](https://github.com/LedgerHQ/ledger-live/pull/23054) [`e294828`](https://github.com/LedgerHQ/ledger-live/commit/e294828087e36263fd917c7514d8a4583063b2b6) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Nest Hedera extras under `familyExtra` in `getBlock`, as `listOperations` already does, so a transaction gets the same details from both paths
+
+- [#22939](https://github.com/LedgerHQ/ledger-live/pull/22939) [`c59fbf4`](https://github.com/LedgerHQ/ledger-live/commit/c59fbf41212398e3d0c1000c776d33c6344290a3) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - chore(hedera): migrate from @hashgraph/sdk 2.78.0 to @hiero-ledger/sdk 2.84.0
+  fix(hedera): keep the nonce when serializing generic transactions
+
+- [#22610](https://github.com/LedgerHQ/ledger-live/pull/22610) [`dd2d1f8`](https://github.com/LedgerHQ/ledger-live/commit/dd2d1f8965897befc6e49f041eeccc51deb9578c) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat(hedera): restore legacy prepare-transaction parity on the generic adapter
+
+- [#22608](https://github.com/LedgerHQ/ledger-live/pull/22608) [`b8fc9af`](https://github.com/LedgerHQ/ledger-live/commit/b8fc9af53fc59427695bb0fe81d11d46ef74742e) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat(hedera): add the tokenAssociate mode to the generic adapter
+
+- [#22762](https://github.com/LedgerHQ/ledger-live/pull/22762) [`569dceb`](https://github.com/LedgerHQ/ledger-live/commit/569dceb7cdfbd97844c6a426fe421a89128b584e) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - fix(coin-hedera): fix incorrect handling of MirrorNode responses when stake is null or absent
+
+- [#22985](https://github.com/LedgerHQ/ledger-live/pull/22985) [`4182256`](https://github.com/LedgerHQ/ledger-live/commit/4182256c2213208e330861b904a6d8859d1b3e60) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix(hedera): generic adapter fixes for fee estimation, wallet API memo, token association wording, token receive and swap history saved by the legacy bridge
+
+- [#22704](https://github.com/LedgerHQ/ledger-live/pull/22704) [`339d174`](https://github.com/LedgerHQ/ledger-live/commit/339d17482fba108dfca790c2500c697a818f7a1c) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Support minHeight in Hedera listOperations for incremental sync, return finalized operations only and revive stakedAmount as BigNumber on the generic adapter
+
+- [#22906](https://github.com/LedgerHQ/ledger-live/pull/22906) [`c5c2815`](https://github.com/LedgerHQ/ledger-live/commit/c5c2815ec53dbf88804e558952f1451f13c37bb4) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: hedera legacy bridge adapter with fixes and optimizations
+
+### Patch Changes
+
+- Updated dependencies [[`20484ff`](https://github.com/LedgerHQ/ledger-live/commit/20484ff8d7cc0aab2e4b8448c7e8ce9ebf6840fe), [`f047501`](https://github.com/LedgerHQ/ledger-live/commit/f047501381efde857b48c1314d2de637fdce8ade), [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`3347eb8`](https://github.com/LedgerHQ/ledger-live/commit/3347eb88f282e2286b43493dadb0a9dd3d1f81d5), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`9c9cae5`](https://github.com/LedgerHQ/ledger-live/commit/9c9cae5ab492b74d52b13e0a5b0673bd681f8d9d), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9), [`18166fb`](https://github.com/LedgerHQ/ledger-live/commit/18166fbe8719d50c911aa0ab349e68c414f8fc62), [`dce4fb6`](https://github.com/LedgerHQ/ledger-live/commit/dce4fb6a4ec291153cc5b4d5a0d5000f777007e1), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`6d744e0`](https://github.com/LedgerHQ/ledger-live/commit/6d744e0d30b4480282d35c359d096f3f6d6602af), [`bcd25fd`](https://github.com/LedgerHQ/ledger-live/commit/bcd25fd87bda9e7e8b7c3ee2a243d3e241adc0b0), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`f482212`](https://github.com/LedgerHQ/ledger-live/commit/f48221278738b5b3accf7199c23e6dd84c48c27e), [`8312d68`](https://github.com/LedgerHQ/ledger-live/commit/8312d6818aa5fa37f523352f81f51a61dd502bf2), [`c5c2815`](https://github.com/LedgerHQ/ledger-live/commit/c5c2815ec53dbf88804e558952f1451f13c37bb4)]:
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.0
+  - @ledgerhq/types-live@6.127.0-next.0
+
 ## 2.6.0
 
 ### Minor Changes

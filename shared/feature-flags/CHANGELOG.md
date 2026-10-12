@@ -1,5 +1,36 @@
 # @shared/feature-flags
 
+## 0.26.0-next.0
+
+### Minor Changes
+
+- [#23043](https://github.com/LedgerHQ/ledger-live/pull/23043) [`4028b7e`](https://github.com/LedgerHQ/ledger-live/commit/4028b7e53019ef07b2e94a6559c5f8a6ba54b82f) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Hold back a per-currency fee buffer when depositing the max of a native coin into perps, configured by the new `ptxTradeMaxConstant` flag (`feature_ptx_trade_max_constant`). Only the MAX ratio is reduced; token accounts and other ratios are unchanged.
+
+- [#23071](https://github.com/LedgerHQ/ledger-live/pull/23071) [`eb23867`](https://github.com/LedgerHQ/ledger-live/commit/eb23867603dc4e80723cdfe5486c28bc88d57014) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Offer Ledger Sync during device onboarding from the single `deviceOnboarding` feature flag
+
+- [#22936](https://github.com/LedgerHQ/ledger-live/pull/22936) [`f3b3c1c`](https://github.com/LedgerHQ/ledger-live/commit/f3b3c1c8479c2ae12d6a57eef030b04b2e665483) Thanks [@benruseau](https://github.com/benruseau)! - Add the `ldmkOsUpdates` feature flag, disabled by default.
+
+- [#22869](https://github.com/LedgerHQ/ledger-live/pull/22869) [`eb65ce4`](https://github.com/LedgerHQ/ledger-live/commit/eb65ce49ea0fa2d2c44f79fd2b0f8de365ae5e53) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add feature-flag scenarios for the native Pay card, Card live app login, and CL Card disclaimer
+
+- [#23044](https://github.com/LedgerHQ/ledger-live/pull/23044) [`dce4fb6`](https://github.com/LedgerHQ/ledger-live/commit/dce4fb6a4ec291153cc5b4d5a0d5000f777007e1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove the lwmQuickActionsCtasVariant feature flag and its Receive/Send quick action CTAs variant
+
+- [#23221](https://github.com/LedgerHQ/ledger-live/pull/23221) [`91ad9a0`](https://github.com/LedgerHQ/ledger-live/commit/91ad9a0e481e3935f80089a800293a4733aef450) Thanks [@sarneijim](https://github.com/sarneijim)! - Add `connectSeededDevice` to the `deviceOnboarding` flag and send a non-seeded device to legacy onboarding unless the host can run seed setup
+
+- [#22958](https://github.com/LedgerHQ/ledger-live/pull/22958) [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove leftovers of the dropped Sentry integration: the unused `llmSentry` feature flag and `DatadogId.exportDatadogIdForSentry`.
+
+- [#23032](https://github.com/LedgerHQ/ledger-live/pull/23032) [`bcd25fd`](https://github.com/LedgerHQ/ledger-live/commit/bcd25fd87bda9e7e8b7c3ee2a243d3e241adc0b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - chore(live-dmk): remove the ldmkTransport feature flag
+
+  `DeviceManagementKitProvider` on desktop no longer takes `ldmkTransportEnabled` and always provides
+  the Device Management Kit. `useDeviceManagementKit` now returns a non-null `DeviceManagementKit` and
+  throws outside the provider. The PayTab address verification always uses the Device Intent Executor,
+  and the `isLDMKTransportEnabled` analytics property is removed.
+
+- [#22953](https://github.com/LedgerHQ/ledger-live/pull/22953) [`f482212`](https://github.com/LedgerHQ/ledger-live/commit/f48221278738b5b3accf7199c23e6dd84c48c27e) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - chore(device): remove the legacy connectApp and the ldmkConnectApp feature flag
+
+  `connectApp` and `connectManager` now always use the Device Management Kit device actions and fail
+  with `DmkTransportRequired` on a non-DMK transport. `apps/inlineAppInstall`, `hw/isUpdateAvailable`
+  and `DeviceManagementKitTransport.listenLegacyConnectApp` are removed.
+
 ## 0.25.0
 
 ### Minor Changes

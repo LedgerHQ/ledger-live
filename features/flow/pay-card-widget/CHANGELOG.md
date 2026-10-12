@@ -1,5 +1,17 @@
 # @features/flow-pay-card-widget
 
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`514d6f9`](https://github.com/LedgerHQ/ledger-live/commit/514d6f937e082fa8b86d87bcf170cc2ec57d51e0)]:
+  - @features/flow-pay-card-wallets@0.6.0-next.0
+  - @domain/entity-currency@0.4.6-next.0
+  - @domain/api-card-management@0.8.1-next.0
+  - @shared/i18n@0.2.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+  - @features/platform-pay-analytics@0.3.0
+
 ## 0.5.0
 
 ### Minor Changes

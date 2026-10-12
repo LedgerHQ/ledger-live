@@ -1,5 +1,20 @@
 # @features/flow-pay-request
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#23035](https://github.com/LedgerHQ/ledger-live/pull/23035) [`20bf9b0`](https://github.com/LedgerHQ/ledger-live/commit/20bf9b0c8694e9a3c873da1e81fd6b310410205c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Route every copy/paste through the new @shared/clipboard package (expo-clipboard replaces @react-native-clipboard/clipboard on mobile) and enforce it with lint rules; copy feedback now only shows once the copy succeeded
+
+### Patch Changes
+
+- Updated dependencies [[`d31fbca`](https://github.com/LedgerHQ/ledger-live/commit/d31fbca35991fc58c8e61156761c5004393fe1cc)]:
+  - @shared/ui-qr-code@0.5.0-next.0
+  - @shared/i18n@0.2.0
+  - @shared/ui-queued-bottom-sheet@0.6.0
+  - @features/platform-pay-analytics@0.3.0
+  - @features/platform-style@0.4.0
+
 ## 0.7.0
 
 ### Minor Changes

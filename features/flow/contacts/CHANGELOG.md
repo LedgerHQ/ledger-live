@@ -1,5 +1,32 @@
 # @features/flow-contacts
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#23035](https://github.com/LedgerHQ/ledger-live/pull/23035) [`20bf9b0`](https://github.com/LedgerHQ/ledger-live/commit/20bf9b0c8694e9a3c873da1e81fd6b310410205c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Route every copy/paste through the new @shared/clipboard package (expo-clipboard replaces @react-native-clipboard/clipboard on mobile) and enforce it with lint rules; copy feedback now only shows once the copy succeeded
+
+- [#22418](https://github.com/LedgerHQ/ledger-live/pull/22418) [`48874b3`](https://github.com/LedgerHQ/ledger-live/commit/48874b3b33c83b40f7c2c389f7a84ebe96d58816) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add desktop E2E coverage for creating a contact, registering Ethereum addresses on the device and deleting both, and let device intents discover Speculos.
+
+- [#22930](https://github.com/LedgerHQ/ledger-live/pull/22930) [`5f07a43`](https://github.com/LedgerHQ/ledger-live/commit/5f07a4399d54e6ebccb953045324d8ec5b571ad3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Keep the Ledger Wallet addresses entry at full height in the desktop contact detail on small windows, and let the empty detail scroll with the custom scrollbar (LIVE-38297).
+
+- [#22943](https://github.com/LedgerHQ/ledger-live/pull/22943) [`dad0153`](https://github.com/LedgerHQ/ledger-live/commit/dad01537ce5e0263964adcfaf762246003c527b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix(my-wallet): show Help and Referral as tiles and Wallet backups as a list item (LIVE-38059)
+
+### Patch Changes
+
+- Updated dependencies [[`4101467`](https://github.com/LedgerHQ/ledger-live/commit/4101467e60d17f1facfae9c71e5b684bcf9f48e3), [`20bf9b0`](https://github.com/LedgerHQ/ledger-live/commit/20bf9b0c8694e9a3c873da1e81fd6b310410205c), [`8376d49`](https://github.com/LedgerHQ/ledger-live/commit/8376d497d552cd4644e806afdfbd5323bf10a695), [`75e55ba`](https://github.com/LedgerHQ/ledger-live/commit/75e55ba31bb763cfae2e0d850fb76930854abb39), [`87de6a7`](https://github.com/LedgerHQ/ledger-live/commit/87de6a72f75df73aab99da6c420de00004bf7692), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`8783545`](https://github.com/LedgerHQ/ledger-live/commit/87835456704c2322a25339ef27ef92a320d02025), [`d31fbca`](https://github.com/LedgerHQ/ledger-live/commit/d31fbca35991fc58c8e61156761c5004393fe1cc), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9)]:
+  - @domain/entity-contact@0.12.0-next.0
+  - @features/platform-contacts@0.10.0-next.0
+  - @shared/clipboard@0.1.0-next.0
+  - @features/flow-contacts-introduction@1.4.0-next.0
+  - @domain/entity-currency-crypto@0.15.0-next.0
+  - @shared/ui-qr-code@0.5.0-next.0
+  - @features/flow-contacts-add-contact@0.7.2-next.0
+  - @features/flow-contacts-delete-contact@0.2.5-next.0
+  - @features/flow-contacts-edit-address@0.4.2-next.0
+  - @features/flow-contacts-edit-contact@0.6.2-next.0
+  - @features/flow-contacts-list@0.9.1-next.0
+
 ## 0.13.0
 
 ### Minor Changes

@@ -1,5 +1,32 @@
 # @ledgerhq/wallet-cli
 
+## 2.10.0-next.0
+
+### Minor Changes
+
+- [#23033](https://github.com/LedgerHQ/ledger-live/pull/23033) [`c53df5b`](https://github.com/LedgerHQ/ledger-live/commit/c53df5b3975babf217153bf3d9a5029411a15097) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): add agent-intent intents to list an agent's own intents
+
+  `agent-intent intents --profile <id>` lists the intents an enrolled profile proposed, most recent first, with `--status` filters, `--page-size` and `--cursor` pagination, using the profile's own key. The service scopes the list to that agent. Human output is a table with a next-page hint; `--output json` has stable fields, exact base-unit amounts as strings and `nextCursor`.
+
+- [#22688](https://github.com/LedgerHQ/ledger-live/pull/22688) [`d7571c8`](https://github.com/LedgerHQ/ledger-live/commit/d7571c8da8ab4e5a4b4900d0d77c4ac645a477af) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - feat(wallet-cli): default agent-intent enroll --source to other and recover every source
+
+  `agent-intent enroll` used to default `--source` to `openclaw`, so every agent that didn't pass it
+  showed up as OpenClaw in the Agent Intent frontend. When `--source` is omitted it now defaults to
+  `other`; pass `--source openclaw` to keep the previous value. The accepted values are unchanged (the
+  SDK's controlled list), and the skill and README now tell agents to always pass the runtime they run
+  in. The value is self-declared and not verified. `agent-intent recover` now works for profiles of
+  every source, not only `openclaw` and `hermes`, using the updated vendored Agent Intent SDK.
+
+- [#23116](https://github.com/LedgerHQ/ledger-live/pull/23116) [`5f6f6cb`](https://github.com/LedgerHQ/ledger-live/commit/5f6f6cbceb9cd330e828532e614056fd031cb412) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Use the shared account descriptor package for the V1 schema, string form and network mapping
+
+- [#23083](https://github.com/LedgerHQ/ledger-live/pull/23083) [`4c28d72`](https://github.com/LedgerHQ/ledger-live/commit/4c28d726d50493ed3967c1a7eb84392442dfbeb9) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@ledgerhq/ledger-key-ring-protocol`, `@ledgerhq/hw-ledger-key-ring-protocol` to 1.0.0 and `@ledgerhq/evm-tools` to 2.0.0 (ts-libs). No API change.
+
+- [#22582](https://github.com/LedgerHQ/ledger-live/pull/22582) [`973a17c`](https://github.com/LedgerHQ/ledger-live/commit/973a17c0676d9b81ca7368c0ebfeab01b1a6e5e1) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Authenticate swap quote requests with a dedicated per-profile API key stored in the OS keychain
+
+- [#22980](https://github.com/LedgerHQ/ledger-live/pull/22980) [`a055b5e`](https://github.com/LedgerHQ/ledger-live/commit/a055b5e1d7b6b50d7fc3c73022707608c06b079e) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - Fix `agent-intent sync` importing the seed public key instead of the account address for Ethereum and Solana accounts
+
+- [#22992](https://github.com/LedgerHQ/ledger-live/pull/22992) [`ba3682a`](https://github.com/LedgerHQ/ledger-live/commit/ba3682a915168083c073b57879bc57e80606c0b4) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - Report Ledger Sync accounts that use a derivation mode this wallet-cli version doesn't know as skipped instead of invalid, so `agent-intent sync` doesn't re-pull every time
+
 ## 2.9.0
 
 ### Minor Changes

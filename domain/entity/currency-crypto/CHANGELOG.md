@@ -1,5 +1,24 @@
 # @domain/entity-currency-crypto
 
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#23189](https://github.com/LedgerHQ/ledger-live/pull/23189) [`87de6a7`](https://github.com/LedgerHQ/ledger-live/commit/87de6a72f75df73aab99da6c420de00004bf7692) Thanks [@cted-ledger](https://github.com/cted-ledger)! - add the zcash_testnet currency
+
+- [#22938](https://github.com/LedgerHQ/ledger-live/pull/22938) [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519) Thanks [@qperrot](https://github.com/qperrot)! - Rename BNB Chain to BNB Smart Chain
+
+- [#23194](https://github.com/LedgerHQ/ledger-live/pull/23194) [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Remove 20 dead EVM chains (akroma, atheios, callisto, dexon, ellaism, ether1, ethergem, ethersocial, expanse, gochain, hpb, mix, musicoin, pirl, poa, reosc, thundercore, tomo, ubiq, wanchain)
+
+- [#22750](https://github.com/LedgerHQ/ledger-live/pull/22750) [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(currency): drop `CryptoCurrency#ethereumLikeInfo`
+
+  The EVM `chainId` is now read from the coin config. The unused `ethereumLikeInfo` field (and `EthereumLikeInfoSchema`) is removed from the currency types and registry.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency-unit@0.3.0
+
 ## 0.14.0
 
 ### Minor Changes

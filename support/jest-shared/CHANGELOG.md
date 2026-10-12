@@ -1,5 +1,11 @@
 # @support/jest-shared
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#22998](https://github.com/LedgerHQ/ledger-live/pull/22998) [`8e94dd6`](https://github.com/LedgerHQ/ledger-live/commit/8e94dd65e2ecb5056fe2ed9e83a1c9b463ca41a8) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add `withEsmDeps` so jest configs can transform ESM-only `@noble/*` dependencies
+
 ## 0.4.0
 
 ### Minor Changes

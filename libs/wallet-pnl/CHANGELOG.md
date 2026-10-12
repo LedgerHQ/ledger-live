@@ -1,5 +1,49 @@
 # @ledgerhq/wallet-pnl
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#22786](https://github.com/LedgerHQ/ledger-live/pull/22786) [`e80d009`](https://github.com/LedgerHQ/ledger-live/commit/e80d009b57fbec125c43649fcc0b21edc60cb473) Thanks [@ysitbon](https://github.com/ysitbon)! - Docs and comments only: stop naming `@ledgerhq/live-countervalues`, which has been removed. READMEs and comments now point at `@domain/entity-market-countervalues`, or at live-common for `getPortfolio`. No code change.
+
+- [#22383](https://github.com/LedgerHQ/ledger-live/pull/22383) [`33094bc`](https://github.com/LedgerHQ/ledger-live/commit/33094bc31d9d8cd7a80b8eae3cf2b4afe3afa500) Thanks [@ysitbon](https://github.com/ysitbon)! - Let wallet-pnl declare the countervalues interface it needs
+
+  The package computed profit and loss straight against the countervalues implementation, which
+  tied a pure pricing calculation to a concrete state shape. It now declares the three operations
+  it uses as a `RateLookup` interface, treats the state as an opaque snapshot, and drops
+  `@ledgerhq/live-countervalues` from its dependencies. The apps fill the interface at startup,
+  beside the crypto-assets store and the two lookups already registered there.
+
+  The exported signatures keep their arity and the state argument is assignable as before, so no
+  caller needs a change for the interface.
+
+  The third operation is a cache key. `getCostBasis` memoises against a fingerprint of the rate
+  history relevant to a pair, which it used to compute inline from three countervalues helpers.
+  That computation moves to `@domain/entity-market-countervalues` as `historyKey`, beside the
+  `lenseRateMap` it is built on, so the three apps share one copy instead of each carrying its own
+  and risking drift. A drifted key serves a stale cost basis silently. The key string is unchanged,
+  and the existing cache tests pin it without being modified.
+
+  The synthetic state builder moves with it. `buildCV`, `buildMultiCV` and `dailyHistory`
+  construct countervalues state rather than reading it, so they cannot work against an opaque
+  snapshot; they now live behind `@domain/entity-market-countervalues/mock`, and
+  `@ledgerhq/wallet-pnl/scenarios` no longer exports them. The web-tools pnl-calculator imports them
+  from the entity directly.
+
+  web-tools registers the interface too. It renders profit and loss through the same package but
+  was never a consumer of the two lookups registered previously, so it needed wiring of its own.
+
+### Patch Changes
+
+- Updated dependencies [[`87de6a7`](https://github.com/LedgerHQ/ledger-live/commit/87de6a72f75df73aab99da6c420de00004bf7692), [`20484ff`](https://github.com/LedgerHQ/ledger-live/commit/20484ff8d7cc0aab2e4b8448c7e8ce9ebf6840fe), [`f047501`](https://github.com/LedgerHQ/ledger-live/commit/f047501381efde857b48c1314d2de637fdce8ade), [`23455ab`](https://github.com/LedgerHQ/ledger-live/commit/23455abfdc26b44eedd77a1c990a6721dadd3f5c), [`bf29f88`](https://github.com/LedgerHQ/ledger-live/commit/bf29f888316e5d8d9049b763a8c77ce9850f07df), [`7a2505b`](https://github.com/LedgerHQ/ledger-live/commit/7a2505bd21cc2401e1e887cb5b9713281cb11519), [`3347eb8`](https://github.com/LedgerHQ/ledger-live/commit/3347eb88f282e2286b43493dadb0a9dd3d1f81d5), [`9ddaa97`](https://github.com/LedgerHQ/ledger-live/commit/9ddaa970d609f4b54f0cdbbda0609242cca54cf7), [`e80d009`](https://github.com/LedgerHQ/ledger-live/commit/e80d009b57fbec125c43649fcc0b21edc60cb473), [`90e805d`](https://github.com/LedgerHQ/ledger-live/commit/90e805d9c1b0ef536d1e53489c73b88056731993), [`9c9cae5`](https://github.com/LedgerHQ/ledger-live/commit/9c9cae5ab492b74d52b13e0a5b0673bd681f8d9d), [`6f2ecf8`](https://github.com/LedgerHQ/ledger-live/commit/6f2ecf89dd1d978038f573738d6e85fe1805b5d9), [`18166fb`](https://github.com/LedgerHQ/ledger-live/commit/18166fbe8719d50c911aa0ab349e68c414f8fc62), [`dce4fb6`](https://github.com/LedgerHQ/ledger-live/commit/dce4fb6a4ec291153cc5b4d5a0d5000f777007e1), [`2b2eee6`](https://github.com/LedgerHQ/ledger-live/commit/2b2eee6a4abfb86615f3e5a628f518b5a9c58dad), [`6d744e0`](https://github.com/LedgerHQ/ledger-live/commit/6d744e0d30b4480282d35c359d096f3f6d6602af), [`bcd25fd`](https://github.com/LedgerHQ/ledger-live/commit/bcd25fd87bda9e7e8b7c3ee2a243d3e241adc0b0), [`91ac227`](https://github.com/LedgerHQ/ledger-live/commit/91ac22740fbf677ca481382eb55d2e4e12336d2a), [`f482212`](https://github.com/LedgerHQ/ledger-live/commit/f48221278738b5b3accf7199c23e6dd84c48c27e), [`8312d68`](https://github.com/LedgerHQ/ledger-live/commit/8312d6818aa5fa37f523352f81f51a61dd502bf2), [`c5c2815`](https://github.com/LedgerHQ/ledger-live/commit/c5c2815ec53dbf88804e558952f1451f13c37bb4), [`33094bc`](https://github.com/LedgerHQ/ledger-live/commit/33094bc31d9d8cd7a80b8eae3cf2b4afe3afa500)]:
+  - @domain/entity-currency-crypto@0.15.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.0
+  - @domain/entity-market-countervalues@0.3.0-next.0
+  - @ledgerhq/types-live@6.127.0-next.0
+  - @domain/entity-currency@0.4.6-next.0
+  - @domain/entity-currency-token@0.5.5-next.0
+  - @domain/entity-currency-fiat@0.4.0
+
 ## 0.7.13
 
 ### Patch Changes
