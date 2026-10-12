@@ -30,24 +30,27 @@ interface TxOpEntry {
   fee?: BigNumber;
 }
 
-function promoteCoinOpToFees({
+function promoteCoinOpToFees<T extends AleoOperation>({
   coinOp,
   fee,
   ledgerAccountId,
   txHash,
 }: {
-  coinOp: AleoOperation;
+  coinOp: T;
   fee: BigNumber;
   ledgerAccountId: string;
   txHash: string;
-}): void {
-  coinOp.id = encodeOperationId(ledgerAccountId, txHash, "FEES");
-  coinOp.type = "FEES";
-  coinOp.value = fee;
-  coinOp.fee = fee;
-  coinOp.recipients = [];
-  // Mark as patched so patchPublicOperations skips this op on subsequent syncs.
-  coinOp.extra = { ...coinOp.extra, patched: true };
+}): T {
+  return {
+    ...coinOp,
+    id: encodeOperationId(ledgerAccountId, txHash, "FEES"),
+    type: "FEES",
+    value: fee,
+    fee,
+    recipients: [],
+    // Mark as patched so patchPublicOperations skips this op on subsequent syncs.
+    extra: { ...coinOp.extra, patched: true },
+  };
 }
 
 function getAleoSubAccounts({
@@ -178,12 +181,15 @@ export async function prepareTokenOperations({
     // account history shows the fee cost rather than a valueless NONE entry.
     // Only promotes once per hash — idempotent if multiple OUT sub-ops share a hash.
     if (type === "OUT" && parentCoinOp.type !== "FEES") {
-      promoteCoinOpToFees({
-        coinOp: parentCoinOp,
-        fee: tokenOp.fee,
-        ledgerAccountId,
-        txHash: tokenOp.hash,
-      });
+      Object.assign(
+        parentCoinOp,
+        promoteCoinOpToFees({
+          coinOp: parentCoinOp,
+          fee: tokenOp.fee,
+          ledgerAccountId,
+          txHash: tokenOp.hash,
+        }),
+      );
     }
 
     parentCoinOp.subOperations = appendUniqueOperation(parentCoinOp.subOperations, subAccountOp);
@@ -567,31 +573,26 @@ export function patchTokenSubAccountOps(subAccounts: TokenAccount[]): TokenAccou
 }
 
 /**
- * For each private token OUT op, ensures a FEES parent coin op exists in `operations`:
+ * Returns the FEES parent coin op of a private token OUT op:
  * - creates one if missing (private fee paid off-chain, no public coin op exists)
  * - promotes an existing non-FEES op to FEES type
  * - fills in empty senders (fee_public ops from the public API lack sender data)
- * Then attaches every private token op as a subOperation of its parent.
- *
- * Mutates `operations` in place (may push new FEES ops) and returns the parent coin operation.
  */
 function ensureFeesParentCoinOp({
   privateOp,
-  coinOpsByHash,
-  operations,
+  coinOp,
   ledgerAccountId,
   address,
 }: {
   privateOp: AleoOperation;
-  coinOpsByHash: Map<string, AleoOperation>;
-  operations: AleoOperation[];
+  coinOp: AleoOperation | undefined;
   ledgerAccountId: string;
   address: string;
 }): AleoOperation {
-  let coinOp = coinOpsByHash.get(privateOp.hash);
+  let feesOp: AleoOperation;
 
   if (!coinOp) {
-    coinOp = {
+    feesOp = {
       ...privateOp,
       id: encodeOperationId(ledgerAccountId, privateOp.hash, "FEES"),
       accountId: ledgerAccountId,
@@ -608,24 +609,21 @@ function ensureFeesParentCoinOp({
       nftOperations: [],
       internalOperations: [],
     };
-    operations.push(coinOp);
-    coinOpsByHash.set(privateOp.hash, coinOp);
   } else if (coinOp.type !== "FEES") {
-    promoteCoinOpToFees({
+    feesOp = promoteCoinOpToFees({
       coinOp,
       fee: privateOp.fee,
       ledgerAccountId,
       txHash: privateOp.hash,
     });
+  } else {
+    feesOp = coinOp;
   }
 
-  if (coinOp.senders.every(sender => !sender)) {
-    coinOp.senders = [address];
-  }
-
-  return coinOp;
+  return feesOp.senders.every(sender => !sender) ? { ...feesOp, senders: [address] } : feesOp;
 }
 
+/** Never writes to `operations`: only the ops it changes are returned as new objects. */
 export function attachPrivateTokenOpsToParent({
   operations,
   privateTokenOpsByAccountId,
@@ -636,29 +634,39 @@ export function attachPrivateTokenOpsToParent({
   privateTokenOpsByAccountId: Map<string, AleoOperation[]>;
   ledgerAccountId: string;
   address: string;
-}): void {
-  const coinOpsByHash = new Map<string, AleoOperation>(operations.map(op => [op.hash, op]));
+}): AleoOperation[] {
+  const originalCoinOpsByHash = new Map(operations.map(op => [op.hash, op]));
+  const coinOpsByHash = new Map(originalCoinOpsByHash);
 
   for (const privateOps of privateTokenOpsByAccountId.values()) {
     for (const privateOp of privateOps) {
+      const coinOp = coinOpsByHash.get(privateOp.hash);
       const parentCoinOp =
         privateOp.type === "OUT"
-          ? ensureFeesParentCoinOp({
-              privateOp,
-              coinOpsByHash,
-              operations,
-              ledgerAccountId,
-              address,
-            })
-          : coinOpsByHash.get(privateOp.hash);
+          ? ensureFeesParentCoinOp({ privateOp, coinOp, ledgerAccountId, address })
+          : coinOp;
 
       if (!parentCoinOp) continue;
 
-      if (!(parentCoinOp.subOperations ?? []).some(so => so.id === privateOp.id)) {
-        parentCoinOp.subOperations = [...(parentCoinOp.subOperations ?? []), privateOp];
-      }
+      const subOperations = parentCoinOp.subOperations ?? [];
+      coinOpsByHash.set(
+        privateOp.hash,
+        subOperations.some(so => so.id === privateOp.id)
+          ? parentCoinOp
+          : { ...parentCoinOp, subOperations: [...subOperations, privateOp] },
+      );
     }
   }
+
+  const updatedOperations = operations.map(op => {
+    const isParentForItsHash = originalCoinOpsByHash.get(op.hash) === op;
+    return isParentForItsHash ? (coinOpsByHash.get(op.hash) ?? op) : op;
+  });
+  const createdOperations = [...coinOpsByHash.values()].filter(
+    op => !originalCoinOpsByHash.has(op.hash),
+  );
+
+  return [...updatedOperations, ...createdOperations];
 }
 
 function upsertTxEntry({

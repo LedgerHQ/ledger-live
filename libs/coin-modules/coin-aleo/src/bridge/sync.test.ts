@@ -31,6 +31,7 @@ import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import type { AleoAccount, AleoTokenAccount } from "../types";
 import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
+import { deepFreeze } from "../__tests__/helpers/freeze";
 import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
 import coinConfig from "../config";
 import {
@@ -1858,6 +1859,50 @@ describe("sync.ts", () => {
       expect(result?.aleoResources?.hasMigratedPrivateTokens).toBe(true);
       expect(result?.aleoResources?.hasMigratedPublicTokens).toBe(true);
       expect(result?.subAccounts).toHaveLength(1);
+    });
+
+    it("should attach private token ops to a frozen account's operations without writing to them", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const parentOp = getMockedOperation({
+        hash: tokenPrivateRecord.transaction_id,
+        type: "NONE",
+        accountId: mockLedgerAccountId,
+        subOperations: [],
+      });
+      const unrelatedOp = getMockedOperation({
+        hash: "tx-unrelated",
+        accountId: mockLedgerAccountId,
+      });
+      const frozenAccount = deepFreeze({
+        ...mockInitialAccount,
+        operations: [parentOp, unrelatedOp],
+      });
+      mockFetchAllOwnedRecords
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([tokenPrivateRecord])
+        .mockResolvedValueOnce([]);
+      mockPatchPublicOperations.mockResolvedValueOnce(frozenAccount.operations);
+
+      const result = await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: frozenAccount,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: frozenAccount.operations,
+      });
+
+      const syncedParentOp = result?.operations?.find(op => op.hash === parentOp.hash);
+      expect(syncedParentOp?.subOperations).toEqual([
+        expect.objectContaining({ hash: tokenPrivateRecord.transaction_id, type: "IN" }),
+      ]);
+      expect(result?.operations).toContain(unrelatedOp);
+      expect(parentOp.subOperations).toEqual([]);
     });
 
     it("should strip sub-operations from operations when tokens are disabled during private sync", async () => {
