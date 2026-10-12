@@ -42,6 +42,7 @@ import type { SessionEntry, AgentIntentProfileMeta } from "./session/session-sto
 import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/profile-format";
 import type { SendIntentSummary } from "./agent-intent/send-intent";
 import type { IntentListEntry } from "./agent-intent/intent-list";
+import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
@@ -261,6 +262,12 @@ export interface CommandOutput {
   /** One page of `agent-intent intents` (human: table + next-page hint; json: envelope with
    * `intents`, `count` and `nextCursor`, `null` on the last page). */
   agentIntentIntents(result: AgentIntentIntentsPage): void;
+  /** Output a submitted `agent-intent swap` proposal (human: review link first; json: envelope). */
+  agentIntentSwap(
+    result: SwapIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void;
+  /** Output a quoted and validated `agent-intent swap --dry-run` proposal that was not submitted. */
+  agentIntentSwapDryRun(summary: SwapIntentSummary): void;
 }
 
 export type AgentIntentIntentsPage = {
@@ -939,6 +946,44 @@ class HumanCommandOutput implements CommandOutput {
       );
     }
   }
+  agentIntentSwap(
+    result: SwapIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
+    writeStdout(
+      `${colors.green("✔")} Intent proposed for human review — no transaction was signed or broadcast.`,
+    );
+    if (result.deeplink) writeStdout(result.deeplink);
+    writeStdout("");
+    writeStdout(
+      [
+        ...(result.intentId ? [`Intent:   ${result.intentId}`] : []),
+        ...swapIntentSummaryLines(result),
+      ].join("\n"),
+    );
+    writeStdout(
+      colors.dim(
+        "Open the link to review it; the frontend fetches a fresh quote, and the swap only " +
+          "executes once approved on a Ledger device.",
+      ),
+    );
+  }
+
+  agentIntentSwapDryRun(summary: SwapIntentSummary): void {
+    writeStdout(`Dry run — intent validated, nothing was submitted.`);
+    writeStdout(swapIntentSummaryLines(summary).join("\n"));
+  }
+}
+
+function swapIntentSummaryLines(summary: SwapIntentSummary): string[] {
+  const source = summary.quoted ? "quoted" : "from --to-amount";
+  return [
+    `Profile:  ${summary.profileId} (${summary.environment})`,
+    `Sender:   ${summary.sender}`,
+    `Sell:     ${summary.fromAmount} ${summary.from.ticker} (${summary.from.id})`,
+    `Receive:  ${summary.toAmount} ${summary.to.ticker} (${summary.to.id}, ${source})`,
+    `Provider: ${summary.provider}`,
+    ...(summary.description ? [`Note:     ${summary.description}`] : []),
+  ];
 }
 
 function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
@@ -1374,6 +1419,40 @@ class JsonCommandOutput implements CommandOutput {
   agentIntentIntents({ profileId, intents, nextCursor }: AgentIntentIntentsPage): void {
     this._writeNdjson(this._envelope({ profileId, count: intents.length, intents, nextCursor }));
   }
+  agentIntentSwap(
+    result: SwapIntentSummary & { intentId: string | null; deeplink: string | null },
+  ): void {
+    this._writeNdjson(
+      this._envelope({
+        intentId: result.intentId,
+        deeplink: result.deeplink,
+        ...swapIntentSummaryJson(result),
+        submitted: true,
+      }),
+    );
+  }
+
+  agentIntentSwapDryRun(summary: SwapIntentSummary): void {
+    this._writeNdjson(
+      this._envelope({ ...swapIntentSummaryJson(summary), submitted: false, dryRun: true }),
+    );
+  }
+}
+
+/** Amounts stay the human-unit decimal strings the intent signs, never JSON numbers. */
+function swapIntentSummaryJson(summary: SwapIntentSummary): Record<string, unknown> {
+  return {
+    profileId: summary.profileId,
+    environment: summary.environment,
+    sender: summary.sender,
+    from: summary.from,
+    to: summary.to,
+    fromAmount: summary.fromAmount,
+    toAmount: summary.toAmount,
+    provider: summary.provider,
+    quoted: summary.quoted,
+    ...(summary.description ? { description: summary.description } : {}),
+  };
 }
 
 /** `amount` stays a base-unit decimal string: a JSON number would lose precision past 2^53. */
