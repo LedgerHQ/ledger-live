@@ -8,7 +8,7 @@ import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
 import { getFunctionAddress } from "./getFunctionAddress";
 import { normalizeAddress } from "./normalizeAddress";
 import { processRecipients } from "./processRecipients";
-import { getEntryFunctionPayload, getFundsOwner } from "./transactionPayload";
+import { getEntryFunctionPayload, getFeesPayer, getFundsOwner } from "./transactionPayload";
 
 export const convertFunctionPayloadResponseToInputEntryFunctionData = (
   payload: TransactionPayloadResponse | undefined,
@@ -97,7 +97,7 @@ export function transactionsToOperations(
           time: new Date(parseInt(tx.timestamp) / 1000),
         },
         fees: BigInt(0),
-        feesPayer: normalizeAddress(tx.sender),
+        feesPayer: normalizeAddress(getFeesPayer(tx)),
         date: new Date(parseInt(tx.timestamp) / 1000),
         failed: !tx.success,
       },

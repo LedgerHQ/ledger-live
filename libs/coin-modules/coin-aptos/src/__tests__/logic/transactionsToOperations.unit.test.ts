@@ -156,6 +156,18 @@ describe("transactionsToOperations", () => {
     }
   });
 
+  it("names the sponsor as the fees payer of a sponsored transaction", () => {
+    const SPONSOR = "0x41";
+    const sponsoredTx = {
+      ...multisigTransfer(multisigPayload(transferPayload)),
+      signature: { type: "fee_payer_signature", fee_payer_address: SPONSOR },
+    } as unknown as AptosTransaction;
+
+    const [op] = transactionsToOperations(RECIPIENT, [sponsoredTx]);
+
+    expect(op.tx.feesPayer).toBe(normalizeAddress(SPONSOR));
+  });
+
   it("lists a multisig APT transfer as received from the multisig account", () => {
     const [op] = transactionsToOperations(RECIPIENT, [
       multisigTransfer(multisigPayload(transferPayload)),
