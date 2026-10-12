@@ -75,6 +75,8 @@ export const expectedToFieldForTokenTransfer = (recipient: string) => {
 
 const BASE32_ALPHABET = "abcdefghijklmnopqrstuvwxyz234567";
 const CID_V1 = 0x01;
+const DAG_CBOR = 0x71;
+const BLAKE2B_256 = 0xb220;
 const DIGEST_LENGTH = 32;
 
 const decodeBase32 = (input: string): Uint8Array | undefined => {
@@ -114,7 +116,7 @@ const readVarint = (bytes: Uint8Array, offset: number): [number, number] | undef
 /**
  * Filecoin explorers built on the Ethereum JSON-RPC (Blockscout) identify a native message by
  * its multihash digest (`EthHashFromCid` in Lotus), not by its CID. FEVM operations already carry
- * a `0x` hash, and anything unparseable is returned unchanged.
+ * a `0x` hash, and anything that is not a dag-cbor / blake2b-256 message CID is returned unchanged.
  */
 export const messageCidToEthHash = (hash: string): string => {
   if (!hash.startsWith("b")) {
@@ -127,7 +129,7 @@ export const messageCidToEthHash = (hash: string): string => {
   const codec = readVarint(bytes, 1);
   const hashFunction = codec && readVarint(bytes, codec[1]);
   const digestLength = hashFunction && readVarint(bytes, hashFunction[1]);
-  if (!digestLength) {
+  if (!digestLength || codec?.[0] !== DAG_CBOR || hashFunction?.[0] !== BLAKE2B_256) {
     return hash;
   }
   const [length, digestOffset] = digestLength;

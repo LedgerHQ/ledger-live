@@ -3,6 +3,7 @@
 "@ledgerhq/coin-filecoin": patch
 "ledger-live-desktop": patch
 "live-mobile": patch
+"@ledgerhq/web-tools": patch
 ---
 
 fix(filecoin): open transactions on Blockscout from operation details

@@ -39,6 +39,16 @@ describe("messageCidToEthHash", () => {
 
   test("maps a message CID to its Ethereum transaction hash", () => {
     expect(messageCidToEthHash(cid)).toBe(ethHash);
+    expect(
+      messageCidToEthHash("bafy2bzacecuz47oz52y5guqc6a2crimqknnpplzi7bmny5m57fk7e66xuvs6a"),
+    ).toBe("0xa99e7dd9eeb1d35202f03428a190535af7af28f858dc759df955f27bd7a565e0");
+  });
+
+  test("keeps a CID that is not a dag-cbor / blake2b-256 message unchanged", () => {
+    const rawSha256 = "bafkreied3tw5lzlxedlg7cw4otxymkgqcn3gi33k5pfh2tozytnec4z7nu";
+    const dagCborSha256 = "bafyreied3tw5lzlxedlg7cw4otxymkgqcn3gi33k5pfh2tozytnec4z7nu";
+    expect(messageCidToEthHash(rawSha256)).toBe(rawSha256);
+    expect(messageCidToEthHash(dagCborSha256)).toBe(dagCborSha256);
   });
 
   test("keeps an Ethereum transaction hash unchanged", () => {

@@ -41,6 +41,7 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
+import { messageCidToEthHash } from "@ledgerhq/live-common/families/filecoin/utils";
 import { syncAccount } from "../logic/syncAccount";
 
 type App = {
@@ -124,7 +125,9 @@ function explorerUrlFor(currency: CryptoCurrency, xpubOrAddress: string): string
 }
 
 function explorerTxUrlFor(currency: CryptoCurrency, hash: string): string | null {
-  return getTransactionExplorer(getDefaultExplorerView(currency), hash) ?? null;
+  // Blockscout indexes native Filecoin messages by the digest of their CID
+  const txHash = currency.family === "filecoin" ? messageCidToEthHash(hash) : hash;
+  return getTransactionExplorer(getDefaultExplorerView(currency), txHash) ?? null;
 }
 
 async function copyText(text: string) {
