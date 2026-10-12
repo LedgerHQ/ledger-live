@@ -9,5 +9,6 @@
   "solana": true,
   "hedera": true,
   "near": true,
-  "stacks": true
+  "stacks": true,
+  "cosmos": true
 }

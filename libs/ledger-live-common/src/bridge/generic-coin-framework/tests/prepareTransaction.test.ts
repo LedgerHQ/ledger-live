@@ -7,6 +7,7 @@ import { GenericTransaction } from "../types";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 jest.mock("../api", () => ({
   getCoinModuleApi: jest.fn(),
@@ -834,6 +835,113 @@ describe("genericPrepareTransaction", () => {
         expect.any(Function),
         undefined,
       );
+    });
+  });
+
+  describe("Cosmos: memo and validator addresses reach the fee estimation", () => {
+    const cosmos = getCryptoCurrencyById("cosmos");
+    const cosmosAccount = {
+      ...account,
+      freshAddress: "cosmos1sender",
+      currency: cosmos,
+    } as any;
+    const cosmosTransaction = {
+      amount: new BigNumber(1_000_000),
+      fees: new BigNumber(1),
+      recipient: "cosmos1recipient",
+      family: "cosmos",
+    };
+    const craftTransactionData = () => ({ type: "none" });
+
+    const setupCosmos = async (fee: bigint) => {
+      const { default: cosmosBridge } = await import("../../../families/cosmos/bridge/api");
+      const estimateFees = jest.fn().mockResolvedValue({ value: fee });
+      (getBridgeApi as jest.Mock).mockResolvedValue(cosmosBridge(cosmos));
+      (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees, craftTransactionData });
+      // run the real intent builder so the intent handed to estimateFees is the one a coin module sees
+      (transactionToIntent as jest.Mock).mockImplementation(
+        jest.requireActual("../utils").transactionToIntent,
+      );
+      return estimateFees;
+    };
+
+    it("passes the text memo to estimateFees and applies the estimated fee", async () => {
+      const estimateFees = await setupCosmos(7_500n);
+
+      const prepareTransaction = genericPrepareTransaction("cosmos", "cosmos");
+      const result = await prepareTransaction(cosmosAccount, {
+        ...cosmosTransaction,
+        mode: "send",
+        memoType: "text",
+        memoValue: "hello cosmos",
+      } as GenericTransaction);
+
+      expect(estimateFees).toHaveBeenCalledWith(
+        expect.anything(), // context
+        expect.objectContaining({
+          type: "send",
+          intentType: "transaction",
+          sender: "cosmos1sender",
+          recipient: "cosmos1recipient",
+          amount: 1_000_000n,
+          memo: { type: "string", kind: "text", value: "hello cosmos" },
+        }),
+        { customFeesParameters: {} },
+      );
+      expect((result as any).fees.toString()).toBe("7500");
+      expect((result as any).memoValue).toBe("hello cosmos");
+    });
+
+    it("passes valAddress to estimateFees for a delegation", async () => {
+      const estimateFees = await setupCosmos(9_000n);
+
+      const prepareTransaction = genericPrepareTransaction("cosmos", "cosmos");
+      const result = await prepareTransaction(cosmosAccount, {
+        ...cosmosTransaction,
+        mode: "delegate",
+        valAddress: "cosmosvaloper1validator",
+        memoType: "text",
+        memoValue: "staking memo",
+      } as GenericTransaction);
+
+      expect(estimateFees).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          type: "delegate",
+          intentType: "staking",
+          mode: "delegate",
+          valAddress: "cosmosvaloper1validator",
+          memo: { type: "string", kind: "text", value: "staking memo" },
+        }),
+        { customFeesParameters: {} },
+      );
+      expect((result as any).fees.toString()).toBe("9000");
+    });
+
+    it("passes valAddress and dstValAddress to estimateFees for a redelegation", async () => {
+      const estimateFees = await setupCosmos(11_000n);
+
+      const prepareTransaction = genericPrepareTransaction("cosmos", "cosmos");
+      const result = await prepareTransaction(cosmosAccount, {
+        ...cosmosTransaction,
+        mode: "redelegate",
+        valAddress: "cosmosvaloper1source",
+        dstValAddress: "cosmosvaloper1destination",
+      } as GenericTransaction);
+
+      expect(estimateFees).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          type: "redelegate",
+          intentType: "staking",
+          mode: "redelegate",
+          valAddress: "cosmosvaloper1source",
+          dstValAddress: "cosmosvaloper1destination",
+          memo: { type: "none" },
+        }),
+        { customFeesParameters: {} },
+      );
+      expect((result as any).fees.toString()).toBe("11000");
     });
   });
 });
