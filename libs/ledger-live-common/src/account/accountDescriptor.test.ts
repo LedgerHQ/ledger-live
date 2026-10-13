@@ -3,6 +3,7 @@ import { networkFromCurrencyId, type AccountDescriptor } from "@domain/entity-ac
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import {
+  MissingAccountXpubError,
   UnsupportedDescriptorPathError,
   fromLegacyAccount,
   toLegacyAccount,
@@ -16,11 +17,30 @@ import {
   runAccountDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
+import {
+  getAccountDescriptorType,
+  getRegisteredFamilies,
+  isCoinModuleRegistered,
+  registerCoinModules,
+  resetCoinModulesForTests,
+} from "../coin-modules/registry";
+import { coinModuleLoaders } from "../coin-modules/loaders";
+import { registerAllCoins } from "../coin-modules/load-all-coins";
+import { CurrencyNotSupported } from "../errors";
+import { resolveFamily } from "../bridge/zcashRouting";
 
 const XPUB =
   "xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSE1S2G4UrqdKFNvJx3bR7MNfYTc4FXnAFzBVNMcJYHx5ENKnG9WNzh";
 const BTC_ADDR = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq";
 const ETH_ADDR = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
+
+const descriptorTypeOf = (currencyId: string) =>
+  getAccountDescriptorType(resolveFamily(getCryptoCurrencyById(currencyId)));
+
+// a currency without a registered coin module cannot hold an account
+const ACCOUNT_CURRENCY_IDS = listCryptoCurrencies(true)
+  .filter(c => isCoinModuleRegistered(resolveFamily(c)))
+  .map(c => c.id);
 
 const account = (
   currencyId: string,
@@ -75,18 +95,47 @@ describe("fromLegacyAccount classification", () => {
     });
     expect(descriptor).toMatchObject({ type: "address", address: ETH_ADDR });
   });
+
+  const utxoCases: Array<[string, DerivationMode, string]> = [
+    ["cardano", "cardano", "m/1852h/1815h/0h"],
+    ["kaspa", "", "m/44h/111111h/0h"],
+    ["zcash", "", "m/44h/133h/0h"],
+  ];
+  it.each(utxoCases)("builds a utxo descriptor for %s", (currencyId, mode, path) => {
+    const descriptor = fromLegacyAccount({
+      ...account(currencyId, mode, 0, { xpub: XPUB }),
+      freshAddress: BTC_ADDR,
+    });
+    expect(descriptor).toMatchObject({ type: "utxo", xpub: XPUB, path });
+  });
+
+  it("is utxo exactly for the families identified by an extended public key", () => {
+    const utxoFamilies = getRegisteredFamilies().filter(
+      family => getAccountDescriptorType(family) === "utxo",
+    );
+    expect(utxoFamilies.sort()).toEqual(["bitcoin", "cardano", "kaspa", "zcash"]);
+  });
+
+  describe("without the coin module of the currency", () => {
+    beforeEach(() => {
+      resetCoinModulesForTests();
+      registerCoinModules(coinModuleLoaders.filter(loader => loader.family !== "evm"));
+    });
+    afterEach(registerAllCoins);
+
+    it("rejects the account", () => {
+      expect(() =>
+        fromLegacyAccount(account("ethereum", "", 0, { freshAddress: ETH_ADDR })),
+      ).toThrow(CurrencyNotSupported);
+    });
+  });
 });
 
 describe("fromLegacyAccount without xpub", () => {
-  it("falls back to an address descriptor for a bitcoin account", () => {
-    const descriptor = fromLegacyAccount(
-      account("bitcoin", "native_segwit", 0, { freshAddress: BTC_ADDR }),
-    );
-    expect(descriptor).toMatchObject({
-      type: "address",
-      address: BTC_ADDR,
-      path: "m/84h/0h/0h/0/0",
-    });
+  it("rejects a utxo account, whose fresh address is not a stable identity", () => {
+    expect(() =>
+      fromLegacyAccount(account("bitcoin", "native_segwit", 0, { freshAddress: BTC_ADDR })),
+    ).toThrow(MissingAccountXpubError);
   });
 });
 
@@ -107,9 +156,10 @@ const supportsIndex = (mode: DerivationMode, scheme: string, index: number) =>
   (index === 0 || scheme.includes("<account>"));
 
 describe("round trip over every currency, derivation mode and index", () => {
-  it.each(listCryptoCurrencies(true).map(c => c.id))("%s", currencyId => {
+  it.each(ACCOUNT_CURRENCY_IDS)("%s", currencyId => {
     const currency = getCryptoCurrencyById(currencyId);
-    const subject = currency.family === "bitcoin" ? { xpub: XPUB } : { freshAddress: ETH_ADDR };
+    const subject =
+      descriptorTypeOf(currencyId) === "utxo" ? { xpub: XPUB } : { freshAddress: ETH_ADDR };
     const mismatches: string[] = [];
     for (const mode of getDerivationModesForCurrency(currency)) {
       const scheme = getDerivationScheme({ derivationMode: mode, currency });
@@ -129,10 +179,10 @@ describe("round trip over every currency, derivation mode and index", () => {
 const toPath = (scheme: string) => `m/${scheme.replaceAll("'", "h")}`;
 
 describe("descriptor -> legacy -> descriptor over generated descriptors", () => {
-  it.each(listCryptoCurrencies(true).map(c => c.id))("%s", currencyId => {
+  it.each(ACCOUNT_CURRENCY_IDS)("%s", currencyId => {
     const currency = getCryptoCurrencyById(currencyId);
     const network = networkFromCurrencyId(currencyId);
-    const isUtxo = currency.family === "bitcoin";
+    const isUtxo = descriptorTypeOf(currencyId) === "utxo";
     const problems: string[] = [];
     for (const mode of getDerivationModesForCurrency(currency)) {
       const scheme = getDerivationScheme({ derivationMode: mode, currency });
@@ -236,9 +286,10 @@ const REAL_ACCOUNTS: Array<LegacyAccountIdentity & { restoredMode?: DerivationMo
 describe("legacy -> descriptor -> legacy over real accounts", () => {
   it.each(REAL_ACCOUNTS)("$currency.id $derivationMode", real => {
     const back = toLegacyAccount(fromLegacyAccount(real));
-    const identity = real.currency.id.startsWith("bitcoin")
-      ? { xpub: real.xpub }
-      : { freshAddress: real.freshAddress };
+    const identity =
+      descriptorTypeOf(real.currency.id) === "utxo"
+        ? { xpub: real.xpub }
+        : { freshAddress: real.freshAddress };
     expect(back).toEqual({
       currencyId: real.currency.id,
       derivationMode: real.restoredMode ?? real.derivationMode,
@@ -268,7 +319,20 @@ describe("toLegacyAccount", () => {
     expect(back).toMatchObject({ derivationMode: "", index: 2 });
   });
 
-  it("rejects a utxo descriptor of a non-bitcoin currency", () => {
+  it("rejects an address descriptor of a utxo currency", () => {
+    expect(() =>
+      toLegacyAccount({
+        purpose: "account",
+        version: "1",
+        type: "address",
+        network: { name: "bitcoin", env: "main" },
+        address: BTC_ADDR,
+        path: "m/84h/0h/0h/0/0",
+      }),
+    ).toThrow(UnsupportedDescriptorPathError);
+  });
+
+  it("rejects a utxo descriptor of an address-based currency", () => {
     expect(() =>
       toLegacyAccount({
         purpose: "account",

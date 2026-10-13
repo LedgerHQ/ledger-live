@@ -44,6 +44,7 @@ const walletCliLoaders: CoinModuleLoader[] = [
   {
     family: "bitcoin",
     supportedCoins: ["bitcoin"],
+    accountDescriptorType: "utxo",
     loadSetup: () => import("@ledgerhq/live-common/families/bitcoin/setup"),
     loadTransaction: () => import("@ledgerhq/coin-bitcoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
@@ -57,6 +58,7 @@ const walletCliLoaders: CoinModuleLoader[] = [
   {
     family: "evm",
     supportedCoins: ["ethereum"],
+    accountDescriptorType: "address",
     loadSetup: () => import("@ledgerhq/live-common/families/evm/setup"),
     loadTransaction: () =>
       import("@ledgerhq/live-common/families/evm/transaction").then(m => m.default),
@@ -79,6 +81,7 @@ const walletCliLoaders: CoinModuleLoader[] = [
   {
     family: "solana",
     supportedCoins: ["solana"],
+    accountDescriptorType: "address",
     loadSetup: () =>
       import("@ledgerhq/live-common/families/solana/setup").then(setup => {
         // Set on the resolved instance lazily rather than eagerly at startup,

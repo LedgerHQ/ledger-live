@@ -1,5 +1,6 @@
 import { CurrencyNotSupported } from "../errors";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CoinModuleLoader, MockAccountModule } from "./types";
 import type { AccountBridgeExtensions } from "@ledgerhq/types-live";
@@ -73,6 +74,10 @@ export function getRegisteredFamilies(): string[] {
 
 export function isCoinModuleRegistered(family: string): boolean {
   return loaders.has(family);
+}
+
+export function getAccountDescriptorType(family: string): AccountDescriptor["type"] {
+  return getLoader(family).accountDescriptorType;
 }
 
 export function isCurrencySupported(currency: CryptoCurrency): boolean {
