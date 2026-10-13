@@ -14,6 +14,7 @@ type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.OsUpdat
 export default function OsUpdateFlow({ route }: Props) {
   const { whatsNew, orchestratorRun, onConfirmStart, onClose } = useOsUpdateFlowViewModel(
     route.params.device,
+    route.params.mode,
   );
 
   if (orchestratorRun) {

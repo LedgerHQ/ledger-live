@@ -105,4 +105,28 @@ describe("useOsUpdateFlowViewModel", () => {
 
     expect(mockReset).toHaveBeenCalledTimes(1);
   });
+  describe("bootloader repair", () => {
+    it("starts the orchestrator right away with no update, without What's new", () => {
+      const { result } = renderHook(
+        () => useOsUpdateFlowViewModel(device, "bootloaderRepair"),
+        withOsUpdates([osUpdate]),
+      );
+
+      expect(result.current.whatsNew).toBeNull();
+      expect(result.current.orchestratorRun).toMatchObject({ connectedDevice, osUpdates: [] });
+      expect(mockReset).not.toHaveBeenCalled();
+    });
+
+    it("leaves My Ledger with no device selected when stopped", () => {
+      const { result } = renderHook(
+        () => useOsUpdateFlowViewModel(device, "bootloaderRepair"),
+        withOsUpdates([]),
+      );
+
+      act(() => result.current.orchestratorRun?.onStop());
+
+      expect(mockReset).toHaveBeenCalledTimes(1);
+      expect(JSON.stringify(mockReset.mock.calls[0][0])).not.toContain('"device"');
+    });
+  });
 });
