@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Alert from "~/renderer/components/Alert";
 import { useFeature } from "@features/platform-feature-flags";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { StepProps } from "~/renderer/modals/Receive/Body";
 import { ZcashShieldedReceiveBlock } from "./ZcashShieldedReceiveBlock";
 

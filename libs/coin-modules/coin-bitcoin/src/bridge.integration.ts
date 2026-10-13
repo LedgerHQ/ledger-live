@@ -12,7 +12,6 @@ import digibyte from "./datasets/digibyte";
 import dogecoin from "./datasets/dogecoin";
 import zencash from "./datasets/zencash";
 import litecoin from "./datasets/litecoin";
-import zcash from "./datasets/zcash";
 
 // NOTE: overrides polyfill set here libs/ledger-live-common/jest.polyfills.js
 Object.defineProperty(globalThis, "Buffer", {
@@ -48,7 +47,6 @@ export const dataset: DatasetTest<Transaction> = {
     dogecoin,
     zencash,
     litecoin,
-    zcash,
   },
 };
 

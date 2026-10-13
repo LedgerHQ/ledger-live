@@ -38,7 +38,7 @@ import {
 /**
  * `getFullViewingKey` is not part of `AccountBridge`: the UFVK export flow is
  * Zcash-only, so the host app reaches it through this widened type (LLD's
- * ZCashExportKeyFlowModal). Mirrors coin-bitcoin's `BitcoinAccountBridge`.
+ * ZCashExportKeyFlowModal).
  */
 export type ZcashAccountBridge = AccountBridge<Transaction, ZcashAccount, TransactionStatus> & {
   getFullViewingKey: (

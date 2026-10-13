@@ -10252,9 +10252,6 @@ importers:
       '@ledgerhq/live-network':
         specifier: 'catalog:'
         version: 3.2.0(axios@1.20.0)
-      '@ledgerhq/live-signer-zcash':
-        specifier: workspace:^
-        version: link:../../live-signer-zcash
       '@ledgerhq/psbtv2':
         specifier: 'catalog:'
         version: 0.6.0

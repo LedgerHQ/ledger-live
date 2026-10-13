@@ -1,7 +1,7 @@
 # @ledgerhq/coin-zcash
 
 > [!CAUTION]
-> **Status: UNSTABLE** — new standalone Zcash coin-module; API under active development; the coin-bitcoin Zcash adapter it replaces stays in the tree until its removal.
+> **Status: UNSTABLE** — new standalone Zcash coin-module; API under active development.
 
 Standalone Zcash coin-module, following the [`coin-module-boilerplate`](../coin-module-boilerplate) layout.
 
@@ -18,9 +18,8 @@ from the `zcashShielded` feature flag (see `libs/ledger-live-common/src/bridge/z
   off): syncs and sends transparent funds only, through `@ledgerhq/wallet-btc` and the
   device's legacy transaction signing (`src/legacy`). A shielded recipient is refused.
 
-Either way this module owns the transparent (UTXO) path itself rather than falling back to
-the Bitcoin bridge. The Zcash chain-adapter in `@ledgerhq/coin-bitcoin` no longer serves any
-account.
+Either way this module owns the transparent (UTXO) path itself; `@ledgerhq/coin-bitcoin` no
+longer carries any Zcash code.
 
 Two of those flows do not complete on a NU6.3 chain, where newly shielded value goes to
 the Ironwood pool: a shielded send to a third party (z→z) has no builder at all, because it

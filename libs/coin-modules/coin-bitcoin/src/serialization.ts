@@ -11,7 +11,6 @@ import type {
 } from "./types";
 import wallet from "@ledgerhq/wallet-btc/index";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import { getChainAdapter } from "./chain-adapters/registry";
 import { walletBtcCurrencyById, type ExplorerConfig } from "./walletBtcCurrency";
 
 export function toBitcoinInputRaw({
@@ -96,14 +95,10 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
       bitcoinAccount.bitcoinResources,
     );
   }
-
-  getChainAdapter(account.currency?.id ?? "").assignToAccountRaw?.(account, accountRaw);
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
   const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw).bitcoinResources;
   if (bitcoinResourcesRaw)
     (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(bitcoinResourcesRaw);
-
-  getChainAdapter(account.currency?.id ?? "").assignFromAccountRaw?.(accountRaw, account);
 }

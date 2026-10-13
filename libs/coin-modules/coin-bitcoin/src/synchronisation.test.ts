@@ -28,7 +28,6 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import type { Operation, SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import { firstValueFrom } from "rxjs";
-import { registerChainAdapter } from "./chain-adapters/registry";
 import { contextWith, testContext } from "./__tests__/fixtures/coinConfig";
 
 describe("removeReplaced", () => {
@@ -472,9 +471,6 @@ describe("removeReplaced", () => {
   });
 });
 
-// Zcash-specific tests (getTxType, convertShieldedTransactionsToOperations, reduceShieldedSyncResult,
-// createShieldedSyncObservable) migrated to chain-adapters/zcash/__tests__/sync.test.ts
-
 describe("createTransparentSyncObservable and performTransparentSync", () => {
   const mockSignerContext = jest.fn();
   let wallet: ReturnType<typeof jest.fn> & {
@@ -514,7 +510,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
     rbf: false,
   };
 
-  const shieldingTransaction = (overrides: Partial<TX>) =>
+  const spendingTransaction = (overrides: Partial<TX>) =>
     ({
       id: "76ec3b38",
       account: 0,
@@ -536,7 +532,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
       ...overrides,
     }) as unknown as TX;
 
-  const shieldingInfo: any = {
+  const testnetInfo: any = {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
     address: "tb1test",
     index: 0,
@@ -601,222 +597,25 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
     expect(Array.isArray(result.operations)).toBe(true);
   });
 
-  // A chain whose funds are not all held in transparent UTXOs must be able to say
-  // so, otherwise every transparent pass reports zero spendable and overwrites what
-  // the chain-specific sync had computed.
-  it("counts the adapter's off-transparent funds as spendable, not just as balance", async () => {
-    registerChainAdapter({
-      id: "bitcoin_testnet",
-      computeAccountBalance: (_account, transparentBalance) => transparentBalance.plus(943_170),
-    });
-
-    const info: any = {
-      currency: getCryptoCurrencyById("bitcoin_testnet"),
-      address: "tb1test",
-      index: 0,
-      derivationPath: "44'/1'/0'/0/0",
-      derivationMode: "" as any,
-      deviceId: "device-1",
-      initialAccount: {
-        id: "js:2:bitcoin_testnet:xpub-test:",
-        xpub: "xpub-test",
-        operations: [],
-        bitcoinResources: { walletAccount: null },
-      },
-    };
-
-    const result = await performTransparentSync(info, mockSignerContext, testContext);
-
-    expect(result.balance).toEqual(new BigNumber(943_170));
-    expect(result.spendableBalance).toEqual(new BigNumber(943_170));
-  });
-
-  // The explorer cannot always compute a fee (on Zcash it folds shielded value
-  // into it), so a chain may correct it. The corrected fee has to reach the
-  // operations, not just the transaction it was set on.
-  it("derives operations from the fees the chain corrected, not the reported ones", async () => {
-    registerChainAdapter({
-      id: "bitcoin_testnet",
-      resolveTransactionDetails: async (transactions: TX[]) => ({
-        transactions: transactions.map(tx => ({ ...tx, fees: 55_000 })),
-        payeesByTxId: new Map<string, string[]>(),
-      }),
-    });
-
-    wallet.getAccountTransactions.mockResolvedValueOnce({
-      txs: [
-        {
-          id: "76ec3b38",
-          account: 0,
-          index: 0,
-          address: "tb1test",
-          received_at: "2026-07-26T12:00:00Z",
-          block: { height: 90, hash: "blockhash", time: "2026-07-26T12:00:00Z" },
-          inputs: [
-            {
-              value: "10100000",
-              address: "bc1addr",
-              output_hash: "2a84cff0",
-              output_index: 0,
-              sequence: 0,
-            },
-          ],
-          outputs: [{ value: "45000", address: "tb1recipient", output_index: 0, rbf: false }],
-          fees: 10_055_000,
-        },
-      ],
-    });
-
-    const info: any = {
-      currency: getCryptoCurrencyById("bitcoin_testnet"),
-      address: "tb1test",
-      index: 0,
-      derivationPath: "44'/1'/0'/0/0",
-      derivationMode: "" as any,
-      deviceId: "device-1",
-      initialAccount: {
-        id: "js:2:bitcoin_testnet:xpub-test:",
-        xpub: "xpub-test",
-        operations: [],
-        bitcoinResources: { walletAccount: null },
-      },
-    };
-
-    const result = await performTransparentSync(info, mockSignerContext, testContext);
-
-    expect(result.operations?.[0].fee).toEqual(new BigNumber(55_000));
-  });
-
-  // A transaction paying only into a shielded pool leaves no transparent output
-  // but its own change, which is what gets reported as the destination for want
-  // of anything better.
-  it("reports the recovered payee instead of the change address it fell back on", async () => {
-    registerChainAdapter({
-      id: "bitcoin_testnet",
-      resolveTransactionDetails: async (transactions: TX[]) => ({
-        transactions,
-        payeesByTxId: new Map([["76ec3b38", ["u1theactualpayee"]]]),
-      }),
-    });
-
-    wallet.getAccountTransactions.mockResolvedValueOnce({
-      txs: [shieldingTransaction({ outputs: [changeOutput] })],
-    });
-
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
-
-    expect(result.operations?.[0].recipients).toEqual(["u1theactualpayee"]);
-  });
-
   it("drops unconfirmed operations past the expiry of the coin config", async () => {
-    registerChainAdapter({ id: "bitcoin_testnet" });
     const halfAnHourAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
     const pendingTransaction = () =>
-      shieldingTransaction({ block: null, received_at: halfAnHourAgo, outputs: [changeOutput] });
+      spendingTransaction({ block: null, received_at: halfAnHourAgo, outputs: [changeOutput] });
 
     wallet.getAccountTransactions.mockResolvedValueOnce({ txs: [pendingTransaction()] });
-    const withDefault = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
+    const withDefault = await performTransparentSync(testnetInfo, mockSignerContext, testContext);
     expect(withDefault.operations).toHaveLength(1);
 
     wallet.getAccountTransactions.mockResolvedValueOnce({ txs: [pendingTransaction()] });
     const withShortExpiry = await performTransparentSync(
-      shieldingInfo,
+      testnetInfo,
       mockSignerContext,
       contextWith({ sync: { replacedOperationExpiryMs: 10 * 60 * 1000 } }),
     );
     expect(withShortExpiry.operations).toEqual([]);
   });
 
-  it("keeps a genuine transparent recipient alongside the recovered payee", async () => {
-    registerChainAdapter({
-      id: "bitcoin_testnet",
-      resolveTransactionDetails: async (transactions: TX[]) => ({
-        transactions,
-        payeesByTxId: new Map([["76ec3b38", ["u1theactualpayee"]]]),
-      }),
-    });
-
-    wallet.getAccountTransactions.mockResolvedValueOnce({
-      txs: [
-        shieldingTransaction({
-          outputs: [
-            {
-              value: "45000",
-              address: "tb1someoneelse",
-              output_index: 0,
-              output_hash: "76ec3b38",
-              block_height: 90,
-              rbf: false,
-            },
-            changeOutput,
-          ],
-        }),
-      ],
-    });
-
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
-
-    expect(result.operations?.[0].recipients).toEqual(["tb1someoneelse", "u1theactualpayee"]);
-  });
-
-  // The same transaction can debit the account and credit it back on one of its
-  // own addresses. Who we paid in the shielded pool belongs to the leg that
-  // spent, not to the one that received.
-  it("leaves the incoming leg of the same transaction pointing at our own address", async () => {
-    registerChainAdapter({
-      id: "bitcoin_testnet",
-      resolveTransactionDetails: async (transactions: TX[]) => ({
-        transactions,
-        payeesByTxId: new Map([["76ec3b38", ["u1theactualpayee"]]]),
-      }),
-    });
-
-    wallet.getAccountTransactions.mockResolvedValueOnce({
-      txs: [
-        shieldingTransaction({
-          outputs: [
-            {
-              value: "45000",
-              address: "bc1addr",
-              output_index: 0,
-              output_hash: "76ec3b38",
-              block_height: 90,
-              rbf: false,
-            },
-            changeOutput,
-          ] as unknown as TX["outputs"],
-        }),
-      ],
-    });
-
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
-
-    const incoming = result.operations?.find(op => op.type === "IN");
-    const outgoing = result.operations?.find(op => op.type === "OUT");
-    expect(incoming?.recipients).toEqual(["bc1addr"]);
-    expect(outgoing?.recipients).toEqual(["bc1addr", "u1theactualpayee"]);
-  });
-
-  // Recovering fees and payees goes over the network. It refines what the
-  // explorer said; it cannot be what decides whether the sync happened at all.
-  it("still syncs on the explorer's terms when the chain cannot be reached", async () => {
-    registerChainAdapter({
-      id: "bitcoin_testnet",
-      resolveTransactionDetails: async () => {
-        throw new Error("grpc unavailable");
-      },
-    });
-
-    wallet.getAccountTransactions.mockResolvedValueOnce({
-      txs: [shieldingTransaction({ outputs: [changeOutput] })],
-    });
-
-    const result = await performTransparentSync(shieldingInfo, mockSignerContext, testContext);
-
-    expect(result.operations?.[0].recipients).toEqual(["bc1change"]);
-  });
-
-  it("falls back to the transparent balance when the chain has no balance hook", async () => {
+  it("reports the whole balance as spendable", async () => {
     const info: any = {
       currency: getCryptoCurrencyById("bitcoin"),
       address: "bc1test",
@@ -843,36 +642,33 @@ describe("postSync", () => {
 
   const makeOperation = (hash: string, type: Operation["type"]): Operation =>
     ({
-      id: `js:2:zcash:xpub:-${hash}-${type}`,
+      id: `js:2:bitcoin:xpub:-${hash}-${type}`,
       hash,
       type,
       value: new BigNumber(515_000),
       fee: new BigNumber(15_000),
-      senders: type === "OUT" ? ["t1sender"] : [],
+      senders: type === "OUT" ? ["bc1sender"] : [],
       recipients: [],
       blockHeight: type === "OUT" ? null : 3_425_862,
       blockHash: null,
-      accountId: "js:2:zcash:xpub:",
+      accountId: "js:2:bitcoin:xpub:",
       date: new Date(),
       extra: {},
     }) as Operation;
 
   const makeAccount = (operations: Operation[], pendingOperations: Operation[]): BitcoinAccount =>
     ({
-      id: "js:2:zcash:xpub:",
-      currency: getCryptoCurrencyById("zcash"),
-      freshAddress: "t1fresh",
+      id: "js:2:bitcoin:xpub:",
+      currency: getCryptoCurrencyById("bitcoin"),
+      freshAddress: "bc1fresh",
       operations,
       pendingOperations,
       balance: new BigNumber(0),
       spendableBalance: new BigNumber(0),
     }) as unknown as BitcoinAccount;
 
-  // The optimistic operation is an "OUT" while the confirmed shielded one carries a
-  // SHIELDED_TX_* type, so their ids differ and the retention check never pairs
-  // them. The transaction hash is the same on both.
-  it("drops an optimistic operation once its transaction is confirmed under another type", () => {
-    const confirmed = makeOperation("932c99c7837d", "SHIELDED_TX_ORCHARD_OUT");
+  it("drops an optimistic operation once its transaction is confirmed", () => {
+    const confirmed = makeOperation("932c99c7837d", "OUT");
     const pending = makeOperation("932c99c7837d", "OUT");
 
     const result = postSync(makeAccount([], [pending]), makeAccount([confirmed], [pending]));
@@ -882,7 +678,7 @@ describe("postSync", () => {
 
   it("keeps an optimistic operation while its transaction is still unconfirmed", () => {
     const pending = makeOperation("932c99c7837d", "OUT");
-    const unrelated = makeOperation("4b5815f95f5d", "SHIELDED_TX_ORCHARD_IN");
+    const unrelated = makeOperation("4b5815f95f5d", "IN");
 
     const result = postSync(makeAccount([], [pending]), makeAccount([unrelated], [pending]));
 
@@ -890,43 +686,40 @@ describe("postSync", () => {
   });
 
   it("leaves the account untouched when there is nothing pending", () => {
-    const account = makeAccount([makeOperation("932c99c7837d", "SHIELDED_TX_ORCHARD_OUT")], []);
+    const account = makeAccount([makeOperation("932c99c7837d", "OUT")], []);
     expect(postSync(account, account)).toBe(account);
   });
 
-  // The address the user entered is the most faithful one: a destination
-  // recovered from the transaction is only the receiver found inside it, which
-  // for a unified address is the same payee written differently.
   it("keeps the address the user entered when the optimistic operation is resolved", () => {
-    const confirmed = makeOperation("932c99c7837d", "SHIELDED_TX_ORCHARD_OUT");
-    confirmed.recipients = ["u1recovered"];
+    const confirmed = makeOperation("932c99c7837d", "OUT");
+    confirmed.recipients = ["bc1recovered"];
     const pending = makeOperation("932c99c7837d", "OUT");
-    pending.recipients = ["u1exactly-what-was-typed"];
+    pending.recipients = ["bc1exactly-what-was-typed"];
 
     const result = postSync(makeAccount([], [pending]), makeAccount([confirmed], [pending]));
 
-    expect(result.operations[0].recipients).toEqual(["u1exactly-what-was-typed"]);
+    expect(result.operations[0].recipients).toEqual(["bc1exactly-what-was-typed"]);
   });
 
   it("does not put the entered address on the incoming side of the same transaction", () => {
-    const received = makeOperation("932c99c7837d", "SHIELDED_TX_ORCHARD_IN");
-    received.recipients = ["u1ours"];
+    const received = makeOperation("932c99c7837d", "IN");
+    received.recipients = ["bc1ours"];
     const pending = makeOperation("932c99c7837d", "OUT");
-    pending.recipients = ["u1exactly-what-was-typed"];
+    pending.recipients = ["bc1exactly-what-was-typed"];
 
     const result = postSync(makeAccount([], [pending]), makeAccount([received], [pending]));
 
-    expect(result.operations[0].recipients).toEqual(["u1ours"]);
+    expect(result.operations[0].recipients).toEqual(["bc1ours"]);
   });
 
   it("leaves recipients alone when the optimistic operation had none", () => {
-    const confirmed = makeOperation("932c99c7837d", "SHIELDED_TX_ORCHARD_OUT");
-    confirmed.recipients = ["u1recovered"];
+    const confirmed = makeOperation("932c99c7837d", "OUT");
+    confirmed.recipients = ["bc1recovered"];
     const pending = makeOperation("932c99c7837d", "OUT");
 
     const result = postSync(makeAccount([], [pending]), makeAccount([confirmed], [pending]));
 
-    expect(result.operations[0].recipients).toEqual(["u1recovered"]);
+    expect(result.operations[0].recipients).toEqual(["bc1recovered"]);
   });
 });
 
@@ -943,7 +736,7 @@ describe("buildSyncObservables", () => {
     paginationConfig: {},
   };
 
-  it("should return only transparent sync for non-Zcash currency", () => {
+  it("should return only the transparent sync", () => {
     const signerContext = jest.fn();
     const { syncs, syncType } = buildSyncObservables(
       baseInfo,
@@ -959,6 +752,6 @@ describe("buildSyncObservables", () => {
   it("buildSyncObservables for bitcoin produces only transparent sync (isolation test)", () => {
     const signerContext = jest.fn();
     const { syncs } = buildSyncObservables(baseInfo, defaultSyncConfig, signerContext, testContext);
-    expect(syncs).toHaveLength(1); // only transparent, no shielded
+    expect(syncs).toHaveLength(1);
   });
 });

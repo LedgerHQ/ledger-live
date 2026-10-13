@@ -82,7 +82,7 @@ function toPaymentArg(
 
 /**
  * Builds the transparent transaction with wallet-btc and has the device sign it
- * (`createPaymentTransaction`), the way coin-bitcoin does for Zcash. No PCZT, no
+ * (`createPaymentTransaction`), the way coin-bitcoin did for Zcash. No PCZT, no
  * engine.
  */
 export const buildLegacySignOperation =
