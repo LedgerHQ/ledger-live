@@ -478,6 +478,15 @@ async function init() {
       store.dispatch(resetDevices());
     },
     getMockServerSessionToken,
+    // E2E: a relaunched remote Speculos comes back on a new URL with a new session token.
+    setSpeculosTarget: (address: string, sessionToken?: string) => {
+      process.env.SPECULOS_ADDRESS = address;
+      if (sessionToken) {
+        process.env.SPECULOS_SESSION_TOKEN = sessionToken;
+      } else {
+        delete process.env.SPECULOS_SESSION_TOKEN;
+      }
+    },
   };
 }
 const root = rootNode ? createRoot(rootNode) : null;

@@ -105,6 +105,10 @@ export function registerTransportModules() {
         () =>
           DeviceManagementKitTransportSpeculos.open({
             apiPort: speculosApiPort ? String(speculosApiPort) : undefined,
+            // Read at each open: relaunching a remote Speculos moves it to a new URL and session
+            // token (see `window.ledger.setSpeculosTarget`).
+            baseURL: process.env.SPECULOS_ADDRESS,
+            bearerToken: process.env.SPECULOS_SESSION_TOKEN,
             timeout: timeoutMs,
             model: getSpeculosDmkModel(),
           }),
