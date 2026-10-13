@@ -4,8 +4,13 @@ import type { TrackingPair } from "@domain/entity-market-countervalues";
 function trackingPairsHash(pairs: readonly TrackingPair[]): string {
   return pairs
     .map(p => `${p.from.ticker}:${p.to.ticker}:${p.startDate.toISOString().slice(0, 10) || ""}`)
-    .sort((x, y) => (x < y ? -1 : x > y ? 1 : 0))
+    .sort(compareCodeUnits)
     .join("|");
+}
+
+function compareCodeUnits(x: string, y: string): number {
+  if (x < y) return -1;
+  return x > y ? 1 : 0;
 }
 
 /**

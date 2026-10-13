@@ -29,7 +29,7 @@ export function countervaluesExtraSessionTrackingReducer(
   action: UnknownAction,
 ): TrackingPair[] {
   if (!addExtraSessionTrackingPairs.match(action)) return state;
-  const tracked = new Set(state.map(pairId));
+  const tracked = new Set(state.map(trackingPair => pairId(trackingPair)));
   const missing = action.payload.filter(trackingPair => !tracked.has(pairId(trackingPair)));
   return missing.length === 0 ? state : state.concat(missing);
 }

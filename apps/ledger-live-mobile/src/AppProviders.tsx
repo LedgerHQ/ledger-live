@@ -17,7 +17,7 @@ type AppProvidersProps = {
 
 const queryClient = new QueryClient();
 
-function AppProviders({ children }: AppProvidersProps) {
+function AppProviders({ children }: Readonly<AppProvidersProps>) {
   logStartupEvent("AppProviders render");
 
   return (

@@ -18,8 +18,6 @@ export type Polling = {
   // completely wipe all countervalues
   wipe: () => void;
   // one shot poll function
-  // TODO: is there any usecases returning promise here?
-  // It's a bit tricky to return Promise with current impl
   poll: () => void;
   // start background polling
   start: () => void;
