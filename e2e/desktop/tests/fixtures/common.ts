@@ -23,6 +23,13 @@ import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import type { SharedResource } from "@ledgerhq/live-e2e-shared/broadcastLock";
+import {
+  BROADCAST_LOCK_FIXTURE_TIMEOUT,
+  deleteBroadcastLockEnv,
+  lockDeclaredTargets,
+} from "tests/utils/broadcastLock";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import {
   canSkipSpeculosLaunch,
@@ -77,6 +84,9 @@ type TestFixtures = {
   annotationLinks: void;
   speculos: SpeculosFixtureHandle;
   speculosForSetupOnly?: boolean;
+  broadcastAccounts: readonly Account[];
+  sharedResources: readonly SharedResource[];
+  broadcastLock: void;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -101,6 +111,22 @@ export const test = base.extend<TestFixtures>({
   localManifestOverride: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
+  broadcastAccounts: [],
+  sharedResources: [],
+
+  // Automatic fixtures are set up before the others, so the lock is held before Speculos and the
+  // app start, and released after they stop.
+  broadcastLock: [
+    async ({ broadcastAccounts, sharedResources }, use, testInfo) => {
+      const lease = await lockDeclaredTargets({ broadcastAccounts, sharedResources }, testInfo);
+      try {
+        await use();
+      } finally {
+        await lease?.release();
+      }
+    },
+    { auto: true, timeout: BROADCAST_LOCK_FIXTURE_TIMEOUT },
+  ],
 
   teamOwnerLabel: [
     async ({ teamOwner }, use) => {
@@ -253,6 +279,7 @@ export const test = base.extend<TestFixtures>({
       env,
     );
     delete env[CARD_SESSION_BOOTSTRAP_ENV];
+    deleteBroadcastLockEnv(env);
 
     if (testInfo.file.replaceAll("\\", "/").includes(`/${PAYTAB_SPECS_DIR}/`)) {
       const { BAANX_TEST_API_URL, BAANX_TEST_CLIENT_KEY } = process.env;

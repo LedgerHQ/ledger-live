@@ -14,6 +14,8 @@ export type DistributedLockOptions = {
   readonly pollMs: number;
   readonly acquireTimeoutMs: number;
   readonly giveUpWhenHeld?: boolean;
+  /** Waiters spread their claims over it when a settle window ends, the longest-waiting first. */
+  readonly settleClaimSpreadMs?: number;
   readonly log: LockLogger;
   readonly onLost?: () => void;
   readonly now?: () => number;
@@ -29,6 +31,8 @@ type ClaimResult =
 const RELEASE_ATTEMPTS = 3;
 const UNCHANGED_ETAG_REJECTIONS_BEFORE_FATAL = 3;
 const RELEASE_RETRY_DELAY_MS = 1_000;
+// A waiter that has waited this long claims as soon as a settle window ends.
+const FIRST_IN_LINE_AFTER_MS = 10 * 60_000;
 
 const defaultSleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
@@ -270,7 +274,15 @@ class Acquisition {
       return;
     }
     this.throwIfTimedOut();
-    await this.sleep(settling ? settleLeftMs(settling) : this.pollDelayMs());
+    await this.sleep(
+      settling ? settleLeftMs(settling) + this.settleClaimDelayMs() : this.pollDelayMs(),
+    );
+  }
+
+  private settleClaimDelayMs() {
+    const spreadMs = this.options.settleClaimSpreadMs ?? 0;
+    const waitedShare = Math.min(1, (this.now() - this.startedAt) / FIRST_IN_LINE_AFTER_MS);
+    return Math.round(spreadMs * (1 - waitedShare));
   }
 
   private settleCountsDown(settling: StoredLock) {

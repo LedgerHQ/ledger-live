@@ -27,6 +27,7 @@ import {
 import { config as detoxConfig, session as detoxSession } from "detox/internals";
 import { Subject } from "rxjs";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import { isBroadcastLockDeferralPass } from "@ledgerhq/live-e2e-shared/broadcastLock/deferralPasses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -469,7 +470,7 @@ export default class TestEnvironment extends DetoxEnvironment {
     this.specBroadcastLock()?.takeWaitedMs();
     this.deferred =
       !isDetoxRetry() &&
-      process.env.E2E_BROADCAST_LOCK_DEFER === "1" &&
+      isBroadcastLockDeferralPass() &&
       (await this.deferIfBroadcastAccountsBusy(state));
     // A marker left by an earlier attempt of this file in the same Detox run must not outlive it.
     if (!this.deferred) await rm(this.specMarker(BROADCAST_DEFERRALS_DIR).path, { force: true });

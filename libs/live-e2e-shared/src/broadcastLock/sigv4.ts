@@ -35,8 +35,11 @@ const canonicalPath = (url: URL) =>
 
 const canonicalQuery = (url: URL) =>
   [...url.searchParams.entries()]
-    .map(([name, value]) => `${encodeRfc3986(name)}=${encodeRfc3986(value)}`)
-    .sort(byCodeUnit)
+    .map(([name, value]) => [encodeRfc3986(name), encodeRfc3986(value)] as const)
+    .sort(
+      ([nameA, valueA], [nameB, valueB]) => byCodeUnit(nameA, nameB) || byCodeUnit(valueA, valueB),
+    )
+    .map(([name, value]) => `${name}=${value}`)
     .join("&");
 
 /**
