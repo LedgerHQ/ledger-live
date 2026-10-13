@@ -10,25 +10,29 @@ import { deviceBackupStorage } from "../../storage/deviceBackupStorage";
 import { clearOsUpdates, osUpdatesSelector } from "../../state/osUpdateSlice";
 import { resetToMyLedger } from "../../utils/myLedgerNavigation";
 
-export function useOsUpdateFlowViewModel(device: Device, mode?: "bootloaderRepair") {
+export type OsUpdateFlowMode = "bootloaderRepair" | "restoreBackup";
+
+export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode) {
   const isBootloaderRepair = mode === "bootloaderRepair";
+  // Both modes run the orchestrator without a resolved OS update, as soon as the screen opens.
+  const hasNoResolvedUpdate = mode !== undefined;
   const navigation = useNavigation<BaseNavigation>();
   const dispatch = useDispatch();
   const dmk = useDeviceManagementKit();
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   const resolvedOsUpdates = useSelector(osUpdatesSelector);
-  const [osUpdates] = useState(isBootloaderRepair ? [] : resolvedOsUpdates);
+  const [osUpdates] = useState(hasNoResolvedUpdate ? [] : resolvedOsUpdates);
   const connectedDevice = useMemo(
     () => (dmk ? getActiveConnectedDevice(dmk, device) : undefined),
     [dmk, device],
   );
 
-  const [isStarted, setIsStarted] = useState(isBootloaderRepair);
+  const [isStarted, setIsStarted] = useState(hasNoResolvedUpdate);
   useKeepScreenAwake(isStarted);
 
   const latestOsUpdate = osUpdates.at(-1);
-  const canRun = Boolean(dmk && connectedDevice && (latestOsUpdate || isBootloaderRepair));
+  const canRun = Boolean(dmk && connectedDevice && (latestOsUpdate || hasNoResolvedUpdate));
 
   const reconnectToMyLedger = useCallback(
     () =>

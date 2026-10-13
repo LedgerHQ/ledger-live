@@ -1,5 +1,5 @@
 import type { Backup } from "@ledgerhq/dmk-ledger-wallet";
-import { ENGLISH_LANGUAGE_ID } from "../constants";
+import { ENGLISH_LANGUAGE_ID } from "../../internal/restore-backup/constants";
 
 export const hasAnythingToRestore = (backup: Backup | undefined): boolean => {
   if (backup === undefined) {
