@@ -13,6 +13,15 @@ export type { AbandonableLease, Lease } from "./exclusiveLock/types";
 
 export const EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS = 30 * 60_000;
 export const EXCLUSIVE_LOCK_NESTED_DRAIN_MS = 60_000;
+
+/** "1" locks the accounts tests declare even when the app does not broadcast, to test the lock. */
+const EXCLUSIVE_LOCK_WITHOUT_BROADCAST_ENV = "E2E_EXCLUSIVE_LOCK_WITHOUT_BROADCAST";
+
+export const shouldLockBroadcastAccounts = (
+  appBroadcasts: boolean,
+  env: Readonly<Record<string, string | undefined>> = process.env,
+): boolean => appBroadcasts || env[EXCLUSIVE_LOCK_WITHOUT_BROADCAST_ENV] === "1";
+
 const LEASE_MS = 120_000;
 // A lease of failed requests: by then every holder has lost its lock too.
 const STORE_OUTAGE_MS = LEASE_MS;

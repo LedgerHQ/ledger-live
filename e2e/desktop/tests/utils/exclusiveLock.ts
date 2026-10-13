@@ -5,6 +5,7 @@ import {
   EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS,
   EXCLUSIVE_LOCK_NESTED_DRAIN_MS,
   lockKeys,
+  shouldLockBroadcastAccounts,
   tryAcquireExclusiveLock,
   type AbandonableLease,
   type Lease,
@@ -29,7 +30,10 @@ export const withoutExclusiveLockEnv = (env: Record<string, string>): Record<str
   );
 
 export type LockDeclaration = {
-  /** Accounts the app broadcasts from in the test, locked unless app broadcast is disabled. */
+  /**
+   * Accounts the app broadcasts from in the test, locked unless app broadcast is disabled (and
+   * E2E_EXCLUSIVE_LOCK_WITHOUT_BROADCAST is not "1").
+   */
   readonly broadcastAccounts?: readonly Account[];
   /** Accounts the test broadcasts from with the CLI, e.g. token approvals, locked on every run. */
   readonly cliBroadcastAccounts?: readonly Account[];
@@ -44,7 +48,7 @@ const isAppBroadcastEnabled = (env: TestEnv) =>
   (env?.DISABLE_TRANSACTION_BROADCAST ?? process.env.DISABLE_TRANSACTION_BROADCAST ?? "1") === "0";
 
 const lockedBroadcastAccounts = ({ broadcastAccounts = [] }: LockDeclaration, env: TestEnv) =>
-  isAppBroadcastEnabled(env) ? broadcastAccounts : [];
+  shouldLockBroadcastAccounts(isAppBroadcastEnabled(env)) ? broadcastAccounts : [];
 
 const targetsToLock = (declaration: LockDeclaration, env: TestEnv): LockTarget[] => [
   ...lockedBroadcastAccounts(declaration, env),

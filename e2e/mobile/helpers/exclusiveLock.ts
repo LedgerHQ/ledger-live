@@ -4,6 +4,7 @@ import {
   EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS,
   EXCLUSIVE_LOCK_NESTED_DRAIN_MS,
   refuseExclusiveLocks,
+  shouldLockBroadcastAccounts,
   takeExclusiveLockWaitedMs,
   tryAcquireExclusiveLock,
   type AbandonableLease,
@@ -25,7 +26,8 @@ const declaredResources: SharedResource[] = [];
 let lease: Lease | undefined;
 let specFinished = false;
 
-const accountsToLock = () => (isAppBroadcastDisabled() ? [] : declaredAccounts);
+const accountsToLock = () =>
+  shouldLockBroadcastAccounts(!isAppBroadcastDisabled()) ? declaredAccounts : [];
 const targetsToLock = (): LockTarget[] => [
   ...accountsToLock(),
   ...declaredCliAccounts,
@@ -46,10 +48,10 @@ const lockOptions = { allowNested: true };
 
 /**
  * Declares, while the spec file is collected, an account the app broadcasts from.
- * setup.ts locks them before the app starts, unless app broadcast is disabled, and releases
- * them once the spec's describe blocks have run, so no other worker or CI machine broadcasts
- * from them in between. A spec's file-level afterAll runs after that release, so a cleanup that
- * broadcasts goes in a describe.
+ * setup.ts locks them before the app starts, unless app broadcast is disabled (and
+ * E2E_EXCLUSIVE_LOCK_WITHOUT_BROADCAST is not "1"), and releases them once the spec's describe
+ * blocks have run, so no other worker or CI machine broadcasts from them in between. A spec's
+ * file-level afterAll runs after that release, so a cleanup that broadcasts goes in a describe.
  */
 export function declareBroadcastAccounts(...accounts: Account[]): void {
   declaredAccounts.push(...accounts);
