@@ -198,7 +198,16 @@ export default defineCommand({
       pullSpin?.stop();
       if (rotated) await persistRotation(profile, expected);
 
-      if (pulled.status === "up-to-date") {
+      // Sent without a version, a forced pull of a deleted document reads as up-to-date.
+      const deletedOnForcedPull =
+        pulled.status === "up-to-date" &&
+        pulledFromVersion === undefined &&
+        cachedVersion !== undefined;
+      if (deletedOnForcedPull) {
+        out.agentIntentSync(
+          await mergeUnderLock({ status: "deleted" }, profile, expected, cachedVersion),
+        );
+      } else if (pulled.status === "up-to-date") {
         out.agentIntentSync(EMPTY_REPORT);
       } else if (pulled.status === "malformed") {
         out.agentIntentSync({
