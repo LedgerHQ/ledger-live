@@ -21,6 +21,7 @@ import {
 } from "~/reducers/settings";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useDeviceIntentSignAssignment } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
+import { useDeviceIntentExchangeAssignment } from "LLM/features/WalletApiExchange/hooks/useDeviceIntentExchangeEnabled";
 import { useSwapCustomHandlers } from "../customHandlers";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
 import { useTranslateToSwapAccount } from "./useTranslateToSwapAccount";
@@ -63,6 +64,7 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
   const isLlmModularDrawer = llmModularDrawerFF?.enabled && llmModularDrawerFF?.params?.live_app;
 
   const deviceIntentSign = useDeviceIntentSignAssignment(manifest.id);
+  const deviceIntentExchange = useDeviceIntentExchangeAssignment(manifest.id);
 
   const insets = useAdjustedSafeAreaInsets();
 
@@ -89,6 +91,8 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
       isModularDrawer: isLlmModularDrawer ? "true" : "false",
       llmWalletApiDeviceIntentSignVariant: deviceIntentSign.variantId,
       llmWalletApiDeviceIntentSignEnabled: deviceIntentSign.enabled ? "true" : "false",
+      llmWalletApiDeviceIntentExchangeVariant: deviceIntentExchange.variantId,
+      llmWalletApiDeviceIntentExchangeEnabled: deviceIntentExchange.enabled ? "true" : "false",
       discreetMode: discreetMode ? "true" : "false",
       lwm40enabled: "true",
       safeAreaTop: insets.top.toString(),
@@ -111,6 +115,8 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
       hasSeenAnalyticsOptInPrompt,
       isLlmModularDrawer,
       deviceIntentSign,
+      deviceIntentExchange.variantId,
+      deviceIntentExchange.enabled,
       discreetMode,
       insets.top,
       insets.bottom,

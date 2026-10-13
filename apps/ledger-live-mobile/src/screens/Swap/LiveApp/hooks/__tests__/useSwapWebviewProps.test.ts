@@ -229,6 +229,50 @@ describe("useSwapWebviewProps", () => {
     expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("false");
   });
 
+  it("should pass device-intent exchange variant and enabled state to the live app", () => {
+    const { result } = renderHook(
+      () =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          llmWalletApiDeviceIntentExchange: {
+            enabled: true,
+            params: { variantId: "variant_a", enabledManifestIds: [STUB_MANIFEST.id] },
+          },
+        }),
+      },
+    );
+
+    expect(result.current.inputs.llmWalletApiDeviceIntentExchangeVariant).toBe("variant_a");
+    expect(result.current.inputs.llmWalletApiDeviceIntentExchangeEnabled).toBe("true");
+  });
+
+  it("should pass the exchange variant when that flag is disabled", () => {
+    const { result } = renderHook(
+      () =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          llmWalletApiDeviceIntentExchange: {
+            enabled: false,
+            params: { variantId: "control", enabledManifestIds: [STUB_MANIFEST.id] },
+          },
+        }),
+      },
+    );
+
+    expect(result.current.inputs.llmWalletApiDeviceIntentExchangeVariant).toBe("control");
+    expect(result.current.inputs.llmWalletApiDeviceIntentExchangeEnabled).toBe("false");
+  });
+
   describe("swapApiEnv", () => {
     afterEach(() => {
       mockSwapApiBase = "https://swap.ledger.com/v5";
