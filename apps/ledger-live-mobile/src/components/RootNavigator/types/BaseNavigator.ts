@@ -412,6 +412,7 @@ export type BaseNavigatorStackParamList = {
   };
   [ScreenName.OsUpdate]: {
     device: Device;
+    mode?: "bootloaderRepair";
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
   [ScreenName.Portfolio]: undefined;
