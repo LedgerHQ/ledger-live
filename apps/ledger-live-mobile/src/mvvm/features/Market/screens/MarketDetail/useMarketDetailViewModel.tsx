@@ -62,7 +62,6 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
   const swapCurrencyIds = useMemo(() => {
     const swappable = new Set(currenciesForSwapAll);
-    // Feature flags gate networks, so check a token's parent network (`arbitrum/erc20/…`).
     return currency?.ledgerIds.filter(
       id => swappable.has(id) && !deactivatedCurrencyIds.has(id.split("/")[0]),
     );
