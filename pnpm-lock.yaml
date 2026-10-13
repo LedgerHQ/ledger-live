@@ -1333,6 +1333,9 @@ importers:
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../shared/api-services
+      '@shared/app-config':
+        specifier: workspace:*
+        version: link:../../shared/app-config
       '@shared/auth':
         specifier: workspace:*
         version: link:../../shared/auth
@@ -2264,6 +2267,9 @@ importers:
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../shared/api-services
+      '@shared/app-config':
+        specifier: workspace:*
+        version: link:../../shared/app-config
       '@shared/auth':
         specifier: workspace:*
         version: link:../../shared/auth
@@ -19116,6 +19122,43 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  shared/app-config:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
