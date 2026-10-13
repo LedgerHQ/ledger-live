@@ -15,6 +15,7 @@ import {
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import type { Application } from "tests/page";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
+import { isInLocalNodeRun } from "tests/utils/localNodeUtils";
 
 function getRequiredFamily(currencyId: string): string {
   const family = getFamilyByCurrencyId(currencyId);
@@ -101,7 +102,10 @@ export async function reachAmountStep(app: Application, tx: Transaction) {
 }
 
 export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
-  for (const entry of entries) {
+  const runEntries = entries.filter(({ transaction }) =>
+    isInLocalNodeRun(transaction.accountToDebit.currency.id),
+  );
+  for (const entry of runEntries) {
     const tx = entry.transaction;
     const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
     const currency = tx.accountToDebit.currency;

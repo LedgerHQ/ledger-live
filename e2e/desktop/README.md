@@ -135,3 +135,25 @@ Or use the "Choose a feature flag set" options dropdown on the Github workflow.
 Soft assertions can be useful for gathering more feedback in a single test run.
 
 Read the [soft-expect docs](./docs/soft-expect.md) for examples and more.
+### 9. Run against local nodes (coin-sandbox)
+
+`LEDGER_LOCAL_NODE` (comma-separated currency ids) points those currencies at the chains of a local
+[coin-sandbox](https://github.com/LedgerHQ/coin-sandbox), both in the app and in the CLI that seeds
+accounts. Every other currency keeps its usual network.
+
+```bash
+# in coin-sandbox
+deno task chain ethereum up
+deno task server            # port 8000, which Ledger Wallet expects
+
+# in ledger-live
+LEDGER_LOCAL_NODE=ethereum pnpm e2e:desktop test:playwright send.tx.spec.ts
+```
+
+Only the tests of those currencies are registered (see `isInLocalNodeRun`; `newSendFlow.tx.spec.ts`
+uses it so far). The app and the CLI refuse to start when the server is down or runs no chain for a
+selected currency, rather than falling back to the real network.
+
+A local chain only knows what happened since it started, so before seeding an account the CLI
+helpers airdrop it 10 native units from the server, and skip the pre-generated userdata, which was
+synced on the real network.

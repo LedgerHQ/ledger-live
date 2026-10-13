@@ -30,6 +30,7 @@ import {
 } from "./generatedUserdata";
 import { getCachedAddress, isUtxoBasedCurrency } from "./addressCache";
 import { getCachedUtxoAddress } from "./utxoAddressCache";
+import { runsOnLocalNode, seedOnLocalNode } from "./localNode";
 
 export type LiveDataCommandOptions = {
   readonly useScheme?: boolean;
@@ -82,24 +83,40 @@ export const getAccountAddress = async (account: Account | TokenAccount): Promis
   return address;
 };
 
+/**
+ * Adds `account` to the app.json at `userdataPath`. On a local node, the pre-generated userdata
+ * (synced on the real network) does not apply: the account is funded there, then synced.
+ */
+async function seedAccount(
+  account: Account | TokenAccount,
+  userdataPath: string | undefined,
+  options: LiveDataCommandOptions | undefined,
+) {
+  if (userdataPath && runsOnLocalNode(account)) {
+    const address = await getAccountAddress(account.parentAccount ?? account);
+    await seedOnLocalNode(account, address, userdataPath);
+  } else if (!applyGeneratedUserdata(account, userdataPath)) {
+    await runCliLiveData({
+      currency: options?.currency ?? account.currency.speculosApp.name,
+      index: account.index,
+      ...(options?.useScheme && account.derivationMode ? { scheme: account.derivationMode } : {}),
+      add: true,
+      appjson: userdataPath,
+    });
+  }
+}
+
 export const liveDataCommand = (
   account: Account | TokenAccount,
   options?: LiveDataCommandOptions,
 ) => {
   const cmd = async (userdataPath?: string) => {
-    if (!applyGeneratedUserdata(account, userdataPath)) {
-      await runCliLiveData({
-        currency: options?.currency ?? account.currency.speculosApp.name,
-        index: account.index,
-        ...(options?.useScheme && account.derivationMode ? { scheme: account.derivationMode } : {}),
-        add: true,
-        appjson: userdataPath,
-      });
-    }
+    await seedAccount(account, userdataPath, options);
 
     await options?.postSeedHook?.(userdataPath);
   };
-  cmd.canUseGeneratedUserdata = () => !options?.postSeedHook && hasGeneratedUserdata(account);
+  cmd.canUseGeneratedUserdata = () =>
+    !options?.postSeedHook && !runsOnLocalNode(account) && hasGeneratedUserdata(account);
   return named("liveDataCommand", cmd);
 };
 
@@ -279,6 +296,7 @@ export const liveDataWithAddressCommand = (
   };
   cmd.canUseGeneratedUserdata = () =>
     !options?.postSeedHook &&
+    !runsOnLocalNode(account) &&
     hasGeneratedUserdata(account) &&
     !isUtxoBasedCurrency(account.currency.id);
   return named("liveDataWithAddressCommand", cmd);
@@ -289,14 +307,7 @@ export const liveDataWithParentAddressCommand = (
   accountToAssign: TokenAccount,
 ) => {
   const cmd = async (userdataPath?: string) => {
-    if (!applyGeneratedUserdata(liveDataAccount, userdataPath)) {
-      await runCliLiveData({
-        currency: liveDataAccount.currency.speculosApp.name,
-        index: liveDataAccount.index,
-        add: true,
-        appjson: userdataPath,
-      });
-    }
+    await seedAccount(liveDataAccount, userdataPath, undefined);
 
     if (!accountToAssign.parentAccount) {
       throw new Error("Parent account is required");
@@ -308,6 +319,7 @@ export const liveDataWithParentAddressCommand = (
     return address;
   };
   cmd.canUseGeneratedUserdata = () =>
+    !runsOnLocalNode(liveDataAccount) &&
     hasGeneratedUserdata(liveDataAccount) &&
     !!accountToAssign.parentAccount &&
     hasGeneratedUserdata(accountToAssign.parentAccount) &&
@@ -320,17 +332,7 @@ export const liveDataWithRecipientAddressCommand = (
   options?: LiveDataCommandOptions,
 ) => {
   return named("liveDataWithRecipientAddressCommand", async (userdataPath?: string) => {
-    if (!applyGeneratedUserdata(tx.accountToDebit, userdataPath)) {
-      await runCliLiveData({
-        currency: tx.accountToDebit.currency.speculosApp.name,
-        index: tx.accountToDebit.index,
-        ...(options?.useScheme && tx.accountToDebit.derivationMode
-          ? { scheme: tx.accountToDebit.derivationMode }
-          : {}),
-        add: true,
-        appjson: userdataPath,
-      });
-    }
+    await seedAccount(tx.accountToDebit, userdataPath, options);
 
     await options?.postSeedHook?.(userdataPath);
 

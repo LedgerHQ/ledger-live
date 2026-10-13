@@ -1,6 +1,7 @@
 import "@shared/env";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
+import { loadLocalNodes, setLocalNodeCurrencies } from "@ledgerhq/live-common/localNode/index";
 import { closeAllDevices } from "./live-common-setup";
 import commandsMain from "./commands-index";
 
@@ -88,6 +89,14 @@ process.on("SIGINT", () => {
   const argv = mainOptions._unknown || [];
   const args = await cmd.args;
   const options = commandLineArgs(args, { argv, stopAtFirstUnknown: true });
+  // Same LEDGER_LOCAL_NODE as Ledger Wallet Desktop, so e2e accounts sync against the same chains
+  setLocalNodeCurrencies(
+    (process.env.LEDGER_LOCAL_NODE ?? "")
+      .split(",")
+      .map(id => id.trim())
+      .filter(Boolean),
+  );
+  await loadLocalNodes();
   from(cmd.job(options)).subscribe({
     next: log => {
       if (log !== undefined) console.log(log);

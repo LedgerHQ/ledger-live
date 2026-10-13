@@ -39,6 +39,8 @@ export type LedgerSyncOpts = {
 
 export type LiveDataOpts = {
   currency?: string;
+  /** Syncs this exact account instead of scanning the device for one. */
+  id?: string;
   index?: number;
   scheme?: string;
   appjson?: string;
@@ -222,6 +224,7 @@ export async function runCliCommandWithRetry(
 export function runCliLiveData(opts: LiveDataOpts): Promise<string> {
   const cliOpts = ["liveData"];
   if (opts.currency) cliOpts.push(`--currency+${opts.currency}`);
+  if (opts.id) cliOpts.push(`--id+${opts.id}`);
   if (opts.index !== undefined) cliOpts.push(`--index+${opts.index}`);
   if (opts.appjson) cliOpts.push(`--appjson+${opts.appjson}`);
   if (opts.scheme) cliOpts.push(`--scheme+${opts.scheme}`);

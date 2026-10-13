@@ -307,9 +307,16 @@ function setUserDataPath() {
 }
 
 // A run on local nodes gets a profile of its own, emptied at each launch (see localNodeProfile);
-// an explicit LEDGER_CONFIG_DIRECTORY is left as is. Returns whether it switched.
+// an explicit LEDGER_CONFIG_DIRECTORY or --user-data-dir (Playwright's per-test userdata) is left
+// as is. Returns whether it switched.
 function setLocalNodeUserDataPath(): boolean {
-  if (process.env.LEDGER_CONFIG_DIRECTORY || LOCAL_NODE_CURRENCIES.length === 0) return false;
+  if (
+    process.env.LEDGER_CONFIG_DIRECTORY ||
+    app.commandLine.hasSwitch("user-data-dir") ||
+    LOCAL_NODE_CURRENCIES.length === 0
+  ) {
+    return false;
+  }
   app.setPath("userData", localNodeProfilePath(app.getPath("userData"), LOCAL_NODE_CURRENCIES));
   return true;
 }
