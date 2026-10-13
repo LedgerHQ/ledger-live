@@ -5848,6 +5848,24 @@
     }
   },
   "osUpdates": {
+    "backupBanner": {
+      "title": "Backup found",
+      "description": "Apps and settings were not fully restored on your device.",
+      "restore": "Restore",
+      "delete": "Delete backup"
+    },
+    "restoreConfirmation": {
+      "title": "Restore your previous configuration?",
+      "description": "I confirm I want to restore apps & settings from my previous configuration and any app & data created since will be lost.",
+      "confirm": "Restore",
+      "cancel": "Cancel"
+    },
+    "deleteConfirmation": {
+      "title": "Delete your backup?",
+      "description": "I am aware previous configuration and app & data from my last backup, including Security Key credentials, will be lost.",
+      "confirm": "Delete backup",
+      "cancel": "Cancel"
+    },
     "actions": {
       "retry": "Retry",
       "cancel": "Cancel",

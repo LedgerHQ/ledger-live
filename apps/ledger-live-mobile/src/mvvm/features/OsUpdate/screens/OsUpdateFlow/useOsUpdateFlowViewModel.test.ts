@@ -28,7 +28,10 @@ const osUpdate = {
 } as OsUpdate;
 
 const withOsUpdates = (osUpdates: OsUpdate[]) => ({
-  overrideInitialState: (state: State): State => ({ ...state, osUpdate: { osUpdates } }),
+  overrideInitialState: (state: State): State => ({
+    ...state,
+    osUpdate: { osUpdates, hasBackup: false },
+  }),
 });
 
 describe("useOsUpdateFlowViewModel", () => {
@@ -127,6 +130,31 @@ describe("useOsUpdateFlowViewModel", () => {
 
       expect(mockReset).toHaveBeenCalledTimes(1);
       expect(JSON.stringify(mockReset.mock.calls[0][0])).not.toContain('"device"');
+    });
+  });
+
+  describe("restore backup", () => {
+    it("starts the orchestrator right away with no update, without What's new", () => {
+      const { result } = renderHook(
+        () => useOsUpdateFlowViewModel(device, "restoreBackup"),
+        withOsUpdates([]),
+      );
+
+      expect(result.current.whatsNew).toBeNull();
+      expect(result.current.orchestratorRun).toMatchObject({ connectedDevice, osUpdates: [] });
+      expect(mockReset).not.toHaveBeenCalled();
+    });
+
+    it("goes back to My Ledger with the device, so the backup is checked again", () => {
+      const { result } = renderHook(
+        () => useOsUpdateFlowViewModel(device, "restoreBackup"),
+        withOsUpdates([]),
+      );
+
+      act(() => result.current.orchestratorRun?.onStop());
+
+      expect(mockReset).toHaveBeenCalledTimes(1);
+      expect(JSON.stringify(mockReset.mock.calls[0][0])).toContain('"device"');
     });
   });
 });
