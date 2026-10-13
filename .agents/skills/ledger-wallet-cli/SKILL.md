@@ -464,7 +464,11 @@ that link and approves it on their Ledger device.
 pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
   --to 0xRecipient --amount '0.01 ETH' --description "Invoice #42"
 
-# ERC-20: pass the token contract; the ticker in --amount must match it:
+# ERC-20: the ticker picks the token (see Tokens below):
+pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
+  --to 0xRecipient --amount '25 USDC'
+
+# ERC-20 named by its contract; the ticker in --amount must match it:
 pnpm --silent wallet-cli start agent-intent send --profile my-bot --from 0xSender \
   --to 0xRecipient --amount '25 USDC' --token 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
 
@@ -485,14 +489,19 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
   profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
   `--bff-url`/`--keycloak-url` override carries over), and its agent key (OS keychain or key file).
 - **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL and SPL tokens. `--token` picks
-  the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana); without it, `SOL`
-  → Solana and any other ticker → Ethereum. A `--account` label must be a mainnet account of that
-  network. The Agent Intent SDK has no testnet, so a staging profile also proposes a mainnet transfer.
+  the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana); without it, `ETH`
+  and `SOL` are native sends, and any other ticker is a token on the sender's network (the
+  `--account`'s; for `--from`, `0x` → Ethereum, base58 → Solana). A `--account` label must be a
+  mainnet account of that network. The Agent Intent SDK has no testnet, so a staging profile also proposes a mainnet transfer.
 - **Addresses:** on Ethereum, `--from`, `--to` and `--token` must be `0x` + 40 hex characters, and
   mixed-case input must pass its EIP-55 checksum, which catches a typo in a copied address. On
   Solana, `--from` and `--to` must be canonical base58 32-byte addresses.
 - **Tokens** are looked up in CAL (`assets token ethereum|solana <address>`), and the `--amount`
   ticker must match. Token-2022 mints are refused, because Agent Intent can't send them yet.
+  Without `--token`, the ticker resolves to the one token of that ticker the `--account` holds
+  (this syncs the account), else to the one listed CAL token with it, and stderr names the address
+  picked. Tickers aren't unique: several matches is an error listing the candidates (pick one with
+  `--token`), and so is a ticker CAL doesn't list on that network.
 - **Solana** takes no `--fee-strategy`, because the service sets the priority fee. `--memo` (1-280
   characters, an emoji counts as two; Solana only) goes on chain with the transfer.
 - **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount

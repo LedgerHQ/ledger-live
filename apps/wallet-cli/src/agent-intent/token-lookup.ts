@@ -5,6 +5,12 @@ import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { getMaybeTokenMint } from "@ledgerhq/coin-solana/network/chain/web3";
 import { endpointByCurrencyId } from "@ledgerhq/coin-solana/utils";
+import { HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
+import { getEnv } from "@shared/env";
+import { z } from "zod";
+import { resolveAccountDescriptor } from "../commands/inputs";
+import { ledgerClientVersion } from "../shared/client-version";
+import { WalletAdapter } from "../wallet";
 
 export type EthereumToken = { ticker: string; decimals: number; contract: string };
 export type SolanaToken = { ticker: string; decimals: number; mint: string };
@@ -58,4 +64,68 @@ export async function findSolanaMintProgram(mint: string): Promise<string | unde
   const mintAccount = await getMaybeTokenMint(mint, api);
   if (mintAccount instanceof Error) throw mintAccount;
   return mintAccount?.onChainAcc.data.program;
+}
+
+/** A token a ticker can resolve to: `address` is its ERC-20 contract or SPL mint. */
+export type TokenCandidate = { ticker: string; name: string; address: string };
+
+const TOKEN_STANDARD = { ethereum: "erc20", solana: "spl" } as const;
+const MAX_CANDIDATES = 20;
+
+const CalTokenSchema = z.object({
+  name: z.string(),
+  ticker: z.string(),
+  contract_address: z.string(),
+  standard: z.string(),
+  delisted: z.boolean(),
+});
+
+async function fetchCalTokens(network: string, ticker: string) {
+  const url = new URL(`${getEnv("CAL_SERVICE_URL")}/v1/tokens`);
+  url.searchParams.set("network", network);
+  url.searchParams.set("ticker", ticker);
+  url.searchParams.set("output", Object.keys(CalTokenSchema.shape).join(","));
+  url.searchParams.set("limit", String(MAX_CANDIDATES));
+  const response = await fetch(url, {
+    headers: { Accept: "application/json", [HEADER_X_LEDGER_CLIENT_VERSION]: ledgerClientVersion },
+  });
+  if (!response.ok) {
+    throw new Error(`CAL answered ${response.status} when looking up the ${ticker} ticker.`);
+  }
+  return z.array(CalTokenSchema).parse(await response.json());
+}
+
+/** The listed tokens CAL knows on the network's mainnet under `ticker`, ignoring case. CAL matches
+ * tickers case-sensitively, so the uppercase spelling is looked up too. */
+export async function findTokensByTicker(
+  network: keyof typeof TOKEN_STANDARD,
+  ticker: string,
+): Promise<TokenCandidate[]> {
+  const spellings = [...new Set([ticker, ticker.toUpperCase()])];
+  const tokens = (await Promise.all(spellings.map(t => fetchCalTokens(network, t)))).flat();
+  const candidates = new Map<string, TokenCandidate>();
+  for (const token of tokens) {
+    if (token.delisted || token.standard !== TOKEN_STANDARD[network]) continue;
+    if (token.ticker.toUpperCase() !== ticker.toUpperCase()) continue;
+    candidates.set(token.contract_address, {
+      ticker: token.ticker,
+      name: token.name,
+      address: token.contract_address,
+    });
+  }
+  return [...candidates.values()];
+}
+
+/** The CAL tokens a session account has a token account for. Syncs the account. */
+export async function findAccountTokens(label: string): Promise<TokenCandidate[]> {
+  const descriptor = await resolveAccountDescriptor(label);
+  const balances = await new WalletAdapter().getAccountBalances(descriptor);
+  const tokens = await Promise.all(
+    balances
+      .filter(({ assetId }) => assetId !== descriptor.currencyId)
+      .map(({ assetId }) => getCryptoAssetsStore().findTokenById(assetId)),
+  );
+  return tokens.flatMap(token =>
+    token ? [{ ticker: token.ticker, name: token.name, address: token.contractAddress }] : [],
+  );
 }
