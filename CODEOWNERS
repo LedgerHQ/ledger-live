@@ -576,15 +576,12 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 
 # Platform — monorepo / toolchain (before cross-team opt-out so opt-out patterns win on overlapping paths)
 # codeowners-check: allow-override
-**/.oxlintrc.*                                        @ledgerhq/platform
-**/oxlint.config.*                                    @ledgerhq/platform
-**/oxfmt.config.*                                     @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
-**/tsconfig*                                          @ledgerhq/platform
-**/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
 mise.toml                                             @ledgerhq/platform
 /nx.json                                              @ledgerhq/platform
+/tsconfig.base.json                                   @ledgerhq/platform
+/oxfmt.config.mts                                     @ledgerhq/platform
 
 # Platform — Agent files
 /.agents/                          @ledgerhq/platform
