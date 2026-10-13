@@ -42,6 +42,8 @@ import NoResultsFound from "~/icons/NoResultsFound";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "~/components/Search";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
+import { hasOsUpdatesSelector } from "LLM/features/OsUpdate/state/osUpdateSlice";
+import { useFeature } from "@features/platform-feature-flags";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import ProviderWarning from "./ProviderWarning";
@@ -167,8 +169,10 @@ const AppsScreen = ({
   );
 
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
-  const showFwUpdateBanner = Boolean(latestFirmware);
+  const isOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
+  const hasOsUpdates = useSelector(hasOsUpdatesSelector);
+  const latestFirmware = useLatestFirmware(isOsUpdatesEnabled ? null : lastSeenDevice?.deviceInfo);
+  const showFwUpdateBanner = isOsUpdatesEnabled ? hasOsUpdates : Boolean(latestFirmware);
 
   const appsToUpdate = getEnv("MOCK_APP_UPDATE") ? deviceApps : update;
   const showAppUpdate = appsToUpdate.length > 0;
