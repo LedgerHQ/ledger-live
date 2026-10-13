@@ -48,7 +48,12 @@ export default defineCommand({
       account: flags.profile,
     });
     await out.run(async () => {
-      const status = parseStatusFilter(flags.status);
+      // A cursor carries the first page's filters, so the flags are not even validated.
+      const status = flags.cursor ? undefined : parseStatusFilter(flags.status);
+      const pageSize =
+        flags.cursor || !flags["page-size"]
+          ? undefined
+          : (Number(flags["page-size"]) as AgentIntentPageSize);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
       const client = createAgentIntentClient({
         bffBaseUrl: profile.bffBaseUrl,
@@ -60,13 +65,7 @@ export default defineCommand({
 
       let page: AgentIntentPage;
       try {
-        page = await client.listIntents({
-          status,
-          pageSize: flags["page-size"]
-            ? (Number(flags["page-size"]) as AgentIntentPageSize)
-            : undefined,
-          cursor: flags.cursor,
-        });
+        page = await client.listIntents({ status, pageSize, cursor: flags.cursor });
       } catch (e) {
         throw describeAgentIntentListError(e, profile.profileId);
       }

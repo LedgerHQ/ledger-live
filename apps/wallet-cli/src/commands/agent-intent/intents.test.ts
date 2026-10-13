@@ -195,6 +195,20 @@ describe("agent-intent intents", () => {
     expect(queries).toEqual([{ status: undefined, pageSize: undefined, cursor: "next-token" }]);
   });
 
+  it("neither checks nor sends --status and --page-size with a cursor", async () => {
+    await runIntents({ cursor: "next-token", status: "archived", "page-size": "50" });
+
+    expect(queries).toEqual([{ status: undefined, pageSize: undefined, cursor: "next-token" }]);
+  });
+
+  it("shows the creation time in UTC whatever offset the service sent", async () => {
+    listImpl = async () => ({ intents: [record({ createdAt: "2026-10-07T12:30:00+02:00" })] });
+
+    await runIntents();
+
+    expect(stdout.join("")).toContain("2026-10-07 10:30");
+  });
+
   it("shows ERC-20 amounts in token units only when the token is known", async () => {
     listImpl = async () => ({
       intents: [
@@ -222,11 +236,11 @@ describe("agent-intent intents", () => {
     await runIntents();
 
     const text = stdout.join("");
-    expect(text).toContain("CREATED");
+    expect(text).toContain("CREATED (UTC)");
     expect(text).toContain("2026-10-07 10:00");
     expect(text).toContain("0.01 ETH");
     expect(text).toContain(RECIPIENT);
-    expect(text).toContain("re-run with --cursor next-token");
+    expect(text).toContain("re-run with --cursor 'next-token'");
   });
 
   it("strips terminal control characters from service values in the table and hint", async () => {
@@ -248,7 +262,7 @@ describe("agent-intent intents", () => {
       expect(text).not.toContain(sequence);
     }
     expect(text).toContain("id-[2J");
-    expect(text).toContain("re-run with --cursor next-[2Jtoken");
+    expect(text).toContain("re-run with --cursor 'next-[2Jtoken'");
   });
 
   it.each(["abc", "0x10", "-5", "1.5"])(
