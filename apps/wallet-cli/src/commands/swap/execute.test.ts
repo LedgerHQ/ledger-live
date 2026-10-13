@@ -525,6 +525,15 @@ describe("swap execute command", () => {
       expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
     });
 
+    it("leaves the bridge's error untouched when rewording it", async () => {
+      const bridgeNotEnoughBalance = bridgeError("NotEnoughBalance");
+      transactionStatusErrors = { amount: bridgeNotEnoughBalance };
+
+      await runFailingExecuteSwapCommand({ ...baseFlags, amount: "1" });
+
+      expect(bridgeNotEnoughBalance.message).toBe("NotEnoughBalance");
+    });
+
     it("checks the amount the user asked to swap, in atomic units", async () => {
       await runExecuteSwapCommand();
 

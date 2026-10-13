@@ -29,6 +29,10 @@ function formatAmount(account: AccountLike, value: BigNumber): string | undefine
   return formatted.replaceAll(NON_BREAKING_SPACE, " ");
 }
 
+function withMessage(error: Error, message: string): Error {
+  return Object.assign(new Error(message, { cause: error }), { name: error.name });
+}
+
 function rewordForSwap(
   error: Error,
   {
@@ -53,9 +57,16 @@ function rewordForSwap(
     const spent = feesPaidFromSameBalance
       ? `${swapAmount} plus ${networkFees} network fees`
       : swapAmount;
-    error.message = `Insufficient balance: swapping ${spent} exceeds the spendable ${spendable}.`;
-  } else if (error.name === "NotEnoughGas") {
-    error.message = `Not enough ${mainAccount.currency.ticker} to pay the ${networkFees} network fees for this swap.`;
+    return withMessage(
+      error,
+      `Insufficient balance: swapping ${spent} exceeds the spendable ${spendable}.`,
+    );
+  }
+  if (error.name === "NotEnoughGas") {
+    return withMessage(
+      error,
+      `Not enough ${mainAccount.currency.ticker} to pay the ${networkFees} network fees for this swap.`,
+    );
   }
   return error;
 }
@@ -63,6 +74,8 @@ function rewordForSwap(
 /**
  * Throws the bridge's amount/fee error before any device or swap API call.
  * The payin address only exists after the swap API call, so the check sends to self and ignores `recipient` errors.
+ * Fees are those of a plain transfer, lower than a DEX swap's or one with extra transaction parameters,
+ * so `checked: true` only rules out clear-cut shortfalls.
  */
 export async function checkSwapAffordability({
   account,

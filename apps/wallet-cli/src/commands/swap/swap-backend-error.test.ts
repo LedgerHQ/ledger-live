@@ -64,6 +64,18 @@ describe("toSwapBackendError", () => {
     expect(error.message).toBe("The swap provider rejected the request: invalid refund address");
   });
 
+  it("surfaces a plain-text body as the backend message", () => {
+    const error = mapped(httpError(400, "  invalid refund address\n"));
+
+    expect(error.message).toBe("The swap provider rejected the request: invalid refund address");
+  });
+
+  it("does not surface an HTML body as the backend message", () => {
+    const error = mapped(httpError(403, "<html><body>Forbidden</body></html>"));
+
+    expect(error.message).toBe("The swap provider rejected the request.");
+  });
+
   it("maps a known swap API error code to its live-common error class", () => {
     const error = mapped(
       httpError(400, { errorCode: 300, errorMessage: "ethereum not supported" }),
@@ -71,6 +83,7 @@ describe("toSwapBackendError", () => {
 
     expect(error.name).toBe("CurrencyNotSupportedError");
     expect(error.message).toBe("ethereum not supported");
+    expect(error).toMatchObject({ httpStatus: 400 });
   });
 
   it("keeps the HTTP error as the cause of a mapped live-common error", () => {

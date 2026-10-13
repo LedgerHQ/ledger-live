@@ -26,6 +26,10 @@ function httpResponseOf(error: unknown): HttpErrorResponse | undefined {
 }
 
 function backendMessageOf(body: unknown): string | undefined {
+  if (typeof body === "string") {
+    const text = body.trim();
+    return text && !text.startsWith("<") ? text : undefined;
+  }
   if (!isRecord(body)) return undefined;
   if (typeof body.error === "string") return body.error;
   if (isRecord(body.error) && typeof body.error.message === "string") return body.error.message;
@@ -58,8 +62,7 @@ export function toSwapBackendError(error: unknown): Error | undefined {
   if (isRecord(body) && typeof body.errorCode === "number") {
     const mapped = getSwapAPIError(body.errorCode, backendMessage);
     if (mapped.name !== "Error") {
-      mapped.cause = error;
-      return mapped;
+      return Object.assign(mapped, { cause: error, httpStatus: status });
     }
   }
 
