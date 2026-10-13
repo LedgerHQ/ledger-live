@@ -27,27 +27,11 @@ import type {
 } from "./types";
 import {
   assertUnreachable,
-  DUMMY_SIGNATURE,
-  ZERO_FILLED_DUMMY_SIGNATURE,
   endpointByCurrencyId,
+  transactionHasNonPlaceholderSignatures,
 } from "./utils";
 import coinConfig from "./config";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
-
-function transactionHasNonPlaceholderSignatures(
-  signatures: ReadonlyArray<Uint8Array | Buffer>,
-): boolean {
-  if (signatures.length === 0) {
-    return false;
-  }
-  for (const sig of signatures) {
-    const sigBuf = Buffer.from(sig);
-    if (!sigBuf.equals(ZERO_FILLED_DUMMY_SIGNATURE) && !sigBuf.equals(DUMMY_SIGNATURE)) {
-      return true;
-    }
-  }
-  return false;
-}
 
 const buildOptimisticOperation = (account: Account, transaction: Transaction): SolanaOperation => {
   if (transaction.model.commandDescriptor === undefined) {

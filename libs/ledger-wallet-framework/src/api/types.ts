@@ -98,6 +98,17 @@ export type BridgeApi = {
     transaction: Record<string, unknown>,
     account: Account,
   ) => Record<string, unknown> | undefined;
+  /**
+   * Rewrites the crafted unsigned payload once the device has signed, for a family whose device
+   * options let it sign something other than what was crafted — Solana refreshes the blockhash after
+   * the review, so the user's time on the device never expires it. The result is what gets combined
+   * with the signature. `options` is the very object `getDeviceSignOptions` returned for this
+   * signature, not a copy, so a family can keep per-signature state keyed on it.
+   */
+  applyDeviceSignResult?: (
+    unsigned: string,
+    options: Record<string, unknown> | undefined,
+  ) => string;
   /** Replaces the generic raw signing (craft, sign, combine) with the family's own. */
   signRawOperation?: SignRawOperationFnSignature<Account>;
   /**

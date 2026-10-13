@@ -18,6 +18,21 @@ export const DUMMY_SIGNATURE = Buffer.alloc(SIGNATURE_SIZE, DUMMY_SIGNATURE_FILL
 // signatures provided by Solana are filled with 0
 export const ZERO_FILLED_DUMMY_SIGNATURE = Buffer.alloc(DUMMY_SIGNATURE.length, 0);
 
+export function transactionHasNonPlaceholderSignatures(
+  signatures: ReadonlyArray<Uint8Array | Buffer>,
+): boolean {
+  if (signatures.length === 0) {
+    return false;
+  }
+  for (const sig of signatures) {
+    const sigBuf = Buffer.from(sig);
+    if (!sigBuf.equals(ZERO_FILLED_DUMMY_SIGNATURE) && !sigBuf.equals(DUMMY_SIGNATURE)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Hardcoding the Ledger validators info as backup,
 // because backend is flaky and sometimes doesn't return it anymore
 export const LEDGER_VALIDATOR_BY_FIGMENT: ValidatorsAppValidator = {
