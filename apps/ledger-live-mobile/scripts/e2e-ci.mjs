@@ -1,4 +1,5 @@
 #!/usr/bin/env zx
+import { createRequire } from "module";
 import { basename } from "path";
 
 let platform, test, build, bundle;
@@ -83,24 +84,14 @@ const test_android = (args, env) =>
       --retries 1 \\
       ${args}`.nothrow();
 
-// Detox's --cleanup would shut the devices down after every pass, so they are shut down once at the end.
-const shutdown_ios = () => $`xcrun simctl shutdown all`.nothrow();
-
-const shutdown_android = async () => {
-  const { stdout } = await $`adb devices`.nothrow();
-  const emulators = stdout
-    .split("\n")
-    .map(line => line.split("\t")[0])
-    .filter(serial => serial.startsWith("emulator-"));
-  await Promise.all(emulators.map(serial => $`adb -s ${serial} emu kill`.nothrow()));
-};
-
 const E2E_DIR = "e2e/mobile";
 // Mirror BROADCAST_DEFERRALS_DIR and BROADCAST_LOCK_WAITS_DIR in e2e/mobile/utils/broadcastDeferrals.ts.
 const BROADCAST_DEFERRALS_DIR = path.join(E2E_DIR, "artifacts/broadcast-deferrals");
 const BROADCAST_LOCK_WAITS_DIR = path.join(E2E_DIR, "artifacts/broadcast-lock-waits");
-// Passes in which a spec whose broadcast accounts are busy is moved to the next one; the last pass waits for them.
-const BROADCAST_DEFERRAL_PASSES = 2;
+
+// Loaded only to run tests: the build and bundle tasks run before the lib is built.
+const loadDeferralPasses = () =>
+  createRequire(import.meta.url)("@ledgerhq/live-e2e-shared/broadcastLock/deferralPasses");
 
 const takeDeferredSpecs = async () => {
   const markers = await fs.readdir(BROADCAST_DEFERRALS_DIR).catch(() => []);
@@ -175,44 +166,40 @@ const foldPassOutput = async (pass, deferredSpecs, lockWaits) => {
   });
 };
 
-const testWithBroadcastDeferrals = async (runTests, shutdownDevices) => {
+const testWithBroadcastDeferrals = async runTests => {
+  const { broadcastDeferralPasses, runWithDeferralPasses } = loadDeferralPasses();
   await fs.remove(BROADCAST_DEFERRALS_DIR);
   await fs.remove(BROADCAST_LOCK_WAITS_DIR);
-  const lastPass = testType === "e2e" ? BROADCAST_DEFERRAL_PASSES + 1 : 1;
-  let exitCode = 0;
-  let specs = filteredArgs;
-  try {
-    for (let pass = 1; pass <= lastPass && (pass === 1 || specs.length > 0); pass++) {
-      const mayDefer = pass < lastPass;
-      if (pass > 1) {
-        console.log(`Pass ${pass}: ${specs.length} spec(s) whose broadcast accounts were busy`);
-      }
-      const outputArgs = outputFile ? ["--json", `--outputFile=${passOutputFile(pass)}`] : [];
-      const result = await runTests([...specs, ...outputArgs], {
-        ...process.env,
-        E2E_BROADCAST_LOCK_DEFER: mayDefer ? "1" : "0",
-      });
-      exitCode ||= result.exitCode;
-      specs = mayDefer ? await takeDeferredSpecs() : [];
-      const lockWaits = await takeBroadcastLockWaits();
-      if (outputFile) await foldPassOutput(pass, specs, lockWaits);
+  const runPass = async ({ number, mayDefer, items, env }) => {
+    if (items) {
+      console.log(`Pass ${number}: ${items.length} spec(s) whose broadcast accounts were busy`);
     }
-  } finally {
-    await shutdownDevices();
-  }
-  process.exitCode = exitCode;
+    const outputArgs = outputFile ? ["--json", `--outputFile=${passOutputFile(number)}`] : [];
+    const result = await runTests([...(items ?? filteredArgs), ...outputArgs], {
+      ...process.env,
+      ...env,
+    });
+    const deferred = mayDefer ? await takeDeferredSpecs() : [];
+    const lockWaits = await takeBroadcastLockWaits();
+    if (outputFile) await foldPassOutput(number, deferred, lockWaits);
+    return { exitCode: result.exitCode, deferred };
+  };
+  process.exitCode = await runWithDeferralPasses(
+    runPass,
+    testType === "e2e" ? broadcastDeferralPasses() : 0,
+  );
 };
 
 const getTasksFrom = {
   ios: {
     build: build_ios,
     bundle: async () => (cache ? await bundle_ios_with_cache() : await bundle_ios()),
-    test: () => testWithBroadcastDeferrals(test_ios, shutdown_ios),
+    test: () => testWithBroadcastDeferrals(test_ios),
   },
   android: {
     build: build_android,
     bundle: async () => await bundle_android(),
-    test: () => testWithBroadcastDeferrals(test_android, shutdown_android),
+    test: () => testWithBroadcastDeferrals(test_android),
   },
 };
 

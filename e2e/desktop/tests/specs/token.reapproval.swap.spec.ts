@@ -14,8 +14,10 @@ import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommand
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
+import { broadcastLockFor } from "tests/utils/broadcastLock";
 
 const fromAccount = TokenAccount.ETH_USDT_3;
+const reapprovalLock = broadcastLockFor({ broadcastAccounts: [fromAccount] });
 const toAccount = Account.ETH_3;
 const eligibleProviders = [
   SwapProvider.THORCHAIN,
@@ -25,7 +27,7 @@ const eligibleProviders = [
   SwapProvider.VELORA,
 ];
 
-test.describe("Swap - token reapproval", () => {
+test.describe("Swap - token reapproval", { lock: reapprovalLock.names }, () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Token re-approval (bigger amount) flow requires broadcast to be enabled — runs on Monday nightly only",
@@ -37,6 +39,7 @@ test.describe("Swap - token reapproval", () => {
     teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: fromAccount.currency.speculosApp ?? AppInfos.ETHEREUM,
+    ...reapprovalLock.fixtures,
 
     cliCommandsOnApp: [
       [

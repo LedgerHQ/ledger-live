@@ -11,9 +11,11 @@ import {
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
+import { broadcastLockFor } from "tests/utils/broadcastLock";
 
 const xrayTicket = "B2CQA-5632";
 const fromAccount = TokenAccount.ETH_USDC_1;
+const approvalLock = broadcastLockFor({ broadcastAccounts: [fromAccount] });
 const toAccount = Account.ETH_1;
 const eligibleProviders = [
   SwapProvider.THORCHAIN,
@@ -24,7 +26,7 @@ const eligibleProviders = [
   SwapProvider.VELORA,
 ];
 
-test.describe("Swap - token approval", () => {
+test.describe("Swap - token approval", { lock: approvalLock.names }, () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Token approval flow requires broadcast to be enabled — runs on Monday nightly only",
@@ -36,6 +38,7 @@ test.describe("Swap - token approval", () => {
     teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: fromAccount.currency.speculosApp,
+    ...approvalLock.fixtures,
 
     cliCommandsOnApp: [
       [

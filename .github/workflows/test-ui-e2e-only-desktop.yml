@@ -93,6 +93,11 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
+      broadcast_deferral_passes:
+        description: "Passes that move a test whose broadcast lock is busy to the next one (default 2)"
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -453,6 +458,11 @@ jobs:
           BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
           BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
           BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
+          E2E_BROADCAST_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          E2E_BROADCAST_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
+          E2E_BROADCAST_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_BROADCAST_LOCK_DEFERRAL_PASSES: ${{ inputs.broadcast_deferral_passes }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}

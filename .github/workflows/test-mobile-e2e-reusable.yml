@@ -104,6 +104,11 @@ on:
         required: false
         type: string
         default: ""
+      broadcast_deferral_passes:
+        description: "Passes that move a spec whose broadcast lock is busy to the next one (default 2)"
+        required: false
+        type: string
+        default: ""
 
   workflow_call:
     inputs:
@@ -941,6 +946,7 @@ jobs:
           E2E_BROADCAST_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
           E2E_BROADCAST_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_BROADCAST_LOCK_DEFERRAL_PASSES: ${{ inputs.broadcast_deferral_passes }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Add workflow inputs to Allure environment
@@ -1288,6 +1294,7 @@ jobs:
           E2E_BROADCAST_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
           E2E_BROADCAST_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_BROADCAST_LOCK_DEFERRAL_PASSES: ${{ inputs.broadcast_deferral_passes }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Stop emulator watchdog
