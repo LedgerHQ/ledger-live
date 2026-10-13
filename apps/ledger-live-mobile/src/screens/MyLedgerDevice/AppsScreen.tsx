@@ -42,7 +42,8 @@ import NoResultsFound from "~/icons/NoResultsFound";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "~/components/Search";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
-import { hasOsUpdatesSelector } from "LLM/features/OsUpdate/state/osUpdateSlice";
+import { BackupBanner } from "LLM/features/OsUpdate/BackupBanner";
+import { hasBackupSelector, hasOsUpdatesSelector } from "LLM/features/OsUpdate/state/osUpdateSlice";
 import { useFeature } from "@features/platform-feature-flags";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
@@ -172,6 +173,8 @@ const AppsScreen = ({
   const isOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
   const hasOsUpdates = useSelector(hasOsUpdatesSelector);
   const latestFirmware = useLatestFirmware(isOsUpdatesEnabled ? null : lastSeenDevice?.deviceInfo);
+  const hasBackup = useSelector(hasBackupSelector);
+  const showBackupBanner = isOsUpdatesEnabled && !hasOsUpdates && hasBackup;
   const showFwUpdateBanner = isOsUpdatesEnabled ? hasOsUpdates : Boolean(latestFirmware);
 
   const appsToUpdate = getEnv("MOCK_APP_UPDATE") ? deviceApps : update;
@@ -220,6 +223,11 @@ const AppsScreen = ({
             <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
           </Flex>
         ) : null}
+        {showBackupBanner ? (
+          <Flex pb={16} testID="backup-banner-container">
+            <BackupBanner device={device} />
+          </Flex>
+        ) : null}
         <DeviceCard
           distribution={distribution}
           state={state}
@@ -233,7 +241,7 @@ const AppsScreen = ({
           appList={deviceApps}
           onLanguageChange={onLanguageChange}
         >
-          {!showAppUpdate && !showFwUpdateBanner ? (
+          {!showAppUpdate && !showFwUpdateBanner && !showBackupBanner ? (
             <Flex m={6} mb={0}>
               <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} page="Manager" />
               <LNUpsellBanner location="manager" />
@@ -268,6 +276,7 @@ const AppsScreen = ({
       result,
       showAppUpdate,
       showFwUpdateBanner,
+      showBackupBanner,
       state,
       updateModalOpened,
     ],
