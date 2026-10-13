@@ -492,16 +492,18 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
   the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana); without it, `ETH`
   and `SOL` are native sends, and any other ticker is a token on the sender's network (the
   `--account`'s; for `--from`, `0x` → Ethereum, base58 → Solana). A `--account` label must be a
-  mainnet account of that network. The Agent Intent SDK has no testnet, so a staging profile also proposes a mainnet transfer.
+  mainnet account of that network. The Agent Intent SDK has no testnet, so a staging profile also
+  proposes a mainnet transfer.
 - **Addresses:** on Ethereum, `--from`, `--to` and `--token` must be `0x` + 40 hex characters, and
   mixed-case input must pass its EIP-55 checksum, which catches a typo in a copied address. On
   Solana, `--from` and `--to` must be canonical base58 32-byte addresses.
 - **Tokens** are looked up in CAL (`assets token ethereum|solana <address>`), and the `--amount`
   ticker must match. Token-2022 mints are refused, because Agent Intent can't send them yet.
-  Without `--token`, the ticker resolves to the one token of that ticker the `--account` holds
-  (this syncs the account), else to the one listed CAL token with it, and stderr names the address
-  picked. Tickers aren't unique: several matches is an error listing the candidates (pick one with
-  `--token`), and so is a ticker CAL doesn't list on that network.
+  Without `--token`, the ticker resolves to the one listed token of that ticker the `--account`
+  holds a balance of (this syncs the account), else to the one listed CAL token with it, and stderr
+  names the address picked. Tickers aren't unique: several matches is an error listing the
+  candidates (pick one with `--token`), and so is a ticker CAL doesn't list on that network. CAL
+  matches tickers case-sensitively: type mixed-case ones as listed (`USDe`, `stETH`).
 - **Solana** takes no `--fee-strategy`, because the service sets the priority fee. `--memo` (1-280
   characters, an emoji counts as two; Solana only) goes on chain with the transfer.
 - **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount

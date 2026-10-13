@@ -66,18 +66,21 @@ export async function findSolanaMintProgram(mint: string): Promise<string | unde
   return mintAccount?.onChainAcc.data.program;
 }
 
+export function sameTicker(a: string, b: string): boolean {
+  return a.toUpperCase() === b.toUpperCase();
+}
+
 /** A token a ticker can resolve to: `address` is its ERC-20 contract or SPL mint. */
 export type TokenCandidate = { ticker: string; name: string; address: string };
 
 const TOKEN_STANDARD = { ethereum: "erc20", solana: "spl" } as const;
 /** Enough to tell one match from several and to list them; CAL filters before it applies. */
-const MAX_CANDIDATES = 20;
+export const MAX_CANDIDATES = 20;
+const CAL_TIMEOUT_MS = 10_000;
 
-const CalTokenSchema = z.object({
-  name: z.string(),
-  ticker: z.string(),
-  contract_address: z.string(),
-});
+const CalTokensSchema = z.array(
+  z.object({ name: z.string(), ticker: z.string(), contract_address: z.string() }),
+);
 
 async function fetchCalTokens(network: keyof typeof TOKEN_STANDARD, ticker: string) {
   const url = new URL(`${calApiConfig.calServiceUrl}/v1/tokens`);
@@ -85,22 +88,30 @@ async function fetchCalTokens(network: keyof typeof TOKEN_STANDARD, ticker: stri
   url.searchParams.set("ticker", ticker);
   url.searchParams.set("standard", TOKEN_STANDARD[network]);
   url.searchParams.set("delisted", "false");
-  url.searchParams.set("output", Object.keys(CalTokenSchema.shape).join(","));
+  url.searchParams.set("output", "name,ticker,contract_address");
   url.searchParams.set("limit", String(MAX_CANDIDATES));
   const response = await fetch(url, {
     headers: {
       Accept: "application/json",
       [HEADER_X_LEDGER_CLIENT_VERSION]: calApiConfig.ledgerClientVersion,
     },
+    signal: AbortSignal.timeout(CAL_TIMEOUT_MS),
+  }).catch((error: unknown) => {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new Error(`CAL didn't answer the ${ticker} ticker lookup: ${reason}`, { cause: error });
   });
   if (!response.ok) {
     throw new Error(`CAL answered ${response.status} when looking up the ${ticker} ticker.`);
   }
-  return z.array(CalTokenSchema).parse(await response.json());
+  const tokens = CalTokensSchema.safeParse(await response.json().catch(() => undefined));
+  if (!tokens.success) {
+    throw new Error(`CAL sent an unexpected response when looking up the ${ticker} ticker.`);
+  }
+  return tokens.data;
 }
 
-/** The listed tokens CAL knows on the network's mainnet under `ticker`, ignoring case. CAL matches
- * tickers case-sensitively, so the uppercase spelling is looked up too. */
+/** CAL matches tickers case-sensitively: this finds the ticker as typed or uppercase, not `USDe`
+ * from `usde`. */
 export async function findTokensByTicker(
   network: keyof typeof TOKEN_STANDARD,
   ticker: string,
@@ -109,7 +120,7 @@ export async function findTokensByTicker(
   const tokens = (await Promise.all(spellings.map(t => fetchCalTokens(network, t)))).flat();
   const candidates = new Map<string, TokenCandidate>();
   for (const token of tokens) {
-    if (token.ticker.toUpperCase() !== ticker.toUpperCase()) continue;
+    if (!sameTicker(token.ticker, ticker)) continue;
     candidates.set(token.contract_address, {
       ticker: token.ticker,
       name: token.name,
@@ -119,7 +130,7 @@ export async function findTokensByTicker(
   return [...candidates.values()];
 }
 
-/** The CAL tokens a session account holds a non-zero balance of. Syncs the account. */
+/** The listed CAL tokens a session account holds a non-zero balance of. Syncs the account. */
 export async function findAccountTokens(label: string): Promise<TokenCandidate[]> {
   const descriptor = await resolveAccountDescriptor(label);
   const balances = await new WalletAdapter().getAccountBalances(descriptor);
@@ -131,6 +142,8 @@ export async function findAccountTokens(label: string): Promise<TokenCandidate[]
       .map(({ assetId }) => getCryptoAssetsStore().findTokenById(assetId)),
   );
   return tokens.flatMap(token =>
-    token ? [{ ticker: token.ticker, name: token.name, address: token.contractAddress }] : [],
+    token && !token.delisted
+      ? [{ ticker: token.ticker, name: token.name, address: token.contractAddress }]
+      : [],
   );
 }
