@@ -27,6 +27,9 @@ export function mapRawOperationToApiOperation(op: RawOperation, address: string)
     asset: toAssetInfo(op, address),
     tx: {
       hash: op.hash,
+      // The fee this account paid, unlike `getBlock`, which reports the full cost.
+      // The proxy omits `cost` on a row another account paid for, so an IN row
+      // reports 0 and `feesPayer` names the account that was charged.
       fees: BigInt(op.fee),
       ...(op.feesPayer ? { feesPayer: op.feesPayer } : {}),
       date,
