@@ -104,7 +104,7 @@ jobs:
 
       - name: publish release (JFrog)
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish
 
       #NPM publishing - to be removed when all is migrated
       - name: authenticate with npm
@@ -118,6 +118,9 @@ jobs:
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+          # pnpm 11 ignores npm_config_* and only falls back to NPM_CONFIG_USERCONFIG when ~/.npmrc is absent
+          pnpm_config_userconfig: ${{ env.NPM_CONFIG_USERCONFIG }}
+          pnpm_config_registry: "https://registry.npmjs.org/"
 
       - name: check if desktop versions are different
         if: ${{ inputs.caller == 'release-prepare' || inputs.caller == 'release-prepare-hotfix' }}

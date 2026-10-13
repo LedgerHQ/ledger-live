@@ -71,7 +71,10 @@ try {
     JSON.stringify({ private: true, type: "module" }, null, 2),
   );
 
-  run("pnpm", ["add", platformTarball, mainTarball], { cwd: installDir });
+  // The tarballs' optional platform deps are our own fresh releases, which minimumReleaseAge would hold back
+  run("pnpm", ["add", "--config.minimum-release-age=0", platformTarball, mainTarball], {
+    cwd: installDir,
+  });
   run("pnpm", ["exec", "wallet-cli", "--version"], { cwd: installDir });
 
   // --version loads no command module; a lazily loaded command proves the binary embeds them.

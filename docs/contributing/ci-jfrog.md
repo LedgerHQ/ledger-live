@@ -54,6 +54,7 @@ Reference: [`test-boundaries-reusable.yml`](../../.github/workflows/test-boundar
 | macOS builds and tests | self-hosted macOS | Same reason; GitHub-hosted macOS is not allow-listed. |
 | Resolves nothing (labeling, notifications, `github-script` only) | `ubuntu-*` GitHub-hosted | Moving it costs money and buys no compliance. |
 | Fork PRs | `ubuntu-*` GitHub-hosted, public npm | See below. |
+| `pnpm dedupe --check` (`danger.yml`) | `ubuntu-*` GitHub-hosted, public npm | Resolves like local installs; JFrog lists only the `@ledgerhq/*` versions published to it. Installs nothing. |
 
 **Never put fork code on our runners.** Fork PRs run contributor-controlled code, and our runners
 hold the JFrog OIDC token and AWS cache credentials. The fork pipeline (`*-external-reusable.yml`,

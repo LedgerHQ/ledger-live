@@ -263,9 +263,13 @@ minimumReleaseAgeExclude:
 autoInstallPeers: false
 enablePrePostScripts: true
 saveExact: true
+# pnpm 11 defaults to `install`: a run after a filtered CI install would reinstall the whole workspace
+verifyDepsBeforeRun: false
 # Workaround for Prefab 2.1.0 / Clikt bug splitting paths at '='
 # See: https://github.com/google/prefab/issues/187
 virtualStoreDirMaxLength: 80
+# @electron/node-gyp is a git dependency of electron-builder
+blockExoticSubdeps: false
 
 overrides:
   # Older npm-only releases of our own libs: JFrog does not list them, so CI re-resolution fails
@@ -325,23 +329,28 @@ patchedDependencies:
   "usb@2.17.0": "patches/usb@2.17.0.patch"
   "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
 
-onlyBuiltDependencies:
-  - "@apollo/protobufjs"
-  - "@datadog/mobile-react-native"
-  - "@swc/core"
-  - "@taquito/taquito"
-  - "bigint-buffer"
-  - "bufferutil"
-  - "core-js"
-  - "core-js-pure"
-  - "detox"
-  - "dtrace-provider"
-  - "electron"
-  - "esbuild"
-  - "keccak"
-  - "msw"
-  - "nx"
-  - "protobufjs"
-  - "sqlite3"
-  - "utf-8-validate"
-  - "usb"
+allowBuilds:
+  "@apollo/protobufjs": true
+  "@datadog/mobile-react-native": true
+  "@swc/core": true
+  "@taquito/taquito": true
+  bigint-buffer: true
+  bufferutil: true
+  core-js: true
+  core-js-pure: true
+  detox: true
+  dtrace-provider: true
+  electron: true
+  esbuild: true
+  keccak: true
+  msw: true
+  nx: true
+  protobufjs: true
+  sqlite3: true
+  utf-8-validate: true
+  usb: true
+  # Skipped as with pnpm 10, where unlisted builds were silently ignored
+  "@parcel/watcher": false
+  "@sentry/node-native-stacktrace": false
+  secp256k1: false
+  unrs-resolver: false
