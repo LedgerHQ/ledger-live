@@ -10,28 +10,33 @@ import { deviceBackupStorage } from "../../storage/deviceBackupStorage";
 import { clearOsUpdates, osUpdatesSelector } from "../../state/osUpdateSlice";
 import { resetToMyLedger } from "../../utils/myLedgerNavigation";
 
-export function useOsUpdateFlowViewModel(device: Device) {
+export function useOsUpdateFlowViewModel(device: Device, mode?: "bootloaderRepair") {
+  const isBootloaderRepair = mode === "bootloaderRepair";
   const navigation = useNavigation<BaseNavigation>();
   const dispatch = useDispatch();
   const dmk = useDeviceManagementKit();
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   const resolvedOsUpdates = useSelector(osUpdatesSelector);
-  const [osUpdates] = useState(resolvedOsUpdates);
+  const [osUpdates] = useState(isBootloaderRepair ? [] : resolvedOsUpdates);
   const connectedDevice = useMemo(
     () => (dmk ? getActiveConnectedDevice(dmk, device) : undefined),
     [dmk, device],
   );
 
-  const [isStarted, setIsStarted] = useState(false);
+  const [isStarted, setIsStarted] = useState(isBootloaderRepair);
   useKeepScreenAwake(isStarted);
 
   const latestOsUpdate = osUpdates.at(-1);
-  const canRun = Boolean(dmk && connectedDevice && latestOsUpdate);
+  const canRun = Boolean(dmk && connectedDevice && (latestOsUpdate || isBootloaderRepair));
 
   const reconnectToMyLedger = useCallback(
-    () => resetToMyLedger(navigation, { device, shouldDisplayMyWallet }),
-    [navigation, device, shouldDisplayMyWallet],
+    () =>
+      resetToMyLedger(navigation, {
+        device: isBootloaderRepair ? undefined : device,
+        shouldDisplayMyWallet,
+      }),
+    [navigation, device, shouldDisplayMyWallet, isBootloaderRepair],
   );
 
   useEffect(() => {
