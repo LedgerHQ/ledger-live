@@ -330,9 +330,12 @@ describe("zcash balance-type config", () => {
     it.each([true, false])(
       "records a self-transfer of %s, which the bridge never infers from the recipient",
       isSelfTransfer => {
-        expect(zcashBalanceTypeConfig.buildSelfTransferPatch({ isSelfTransfer })).toEqual({
-          selfTransfer: isSelfTransfer,
-        });
+        expect(
+          zcashBalanceTypeConfig.buildSelfTransferPatch({
+            isSelfTransfer,
+            transaction: transaction("public"),
+          }),
+        ).toEqual({ selfTransfer: isSelfTransfer });
       },
     );
   });

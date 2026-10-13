@@ -16,18 +16,25 @@ describe("aleo send descriptor", () => {
   describe("getPrivacyAttributes", () => {
     it.each([
       [TRANSACTION_TYPE.TRANSFER_PUBLIC, "public", "public-to-public"],
+      [TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC, "public", "public-to-public"],
       [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, "public", "public-to-private"],
+      [TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE, "public", "public-to-private"],
       [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, "private", "private-to-public"],
+      [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC, "private", "private-to-public"],
       [TRANSACTION_TYPE.TRANSFER_PRIVATE, "private", "private-to-private"],
       [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE, "private", "private-to-private"],
     ])("reports %s as %s / %s", (mode, privacy, transferFlow) => {
-      expect(getPrivacyAttributes({ family: "aleo", mode })).toEqual({ privacy, transferFlow });
+      expect(getPrivacyAttributes({ family: "aleo", mode, recipient: "aleo1recipient" })).toEqual({
+        privacy,
+        transferFlow,
+      });
     });
 
-    it("reports nothing for a staking transaction", () => {
-      expect(
-        getPrivacyAttributes({ family: "aleo", mode: TRANSACTION_TYPE.BOND_PUBLIC }),
-      ).toBeUndefined();
+    it.each([
+      [TRANSACTION_TYPE.TRANSFER_PUBLIC, "public"],
+      [TRANSACTION_TYPE.TRANSFER_PRIVATE, "private"],
+    ])("reports only the %s source privacy until the recipient is known", (mode, privacy) => {
+      expect(getPrivacyAttributes({ family: "aleo", mode, recipient: "" })).toEqual({ privacy });
     });
 
     it("reports nothing for a non-Aleo transaction", () => {
@@ -40,6 +47,7 @@ describe("aleo send descriptor", () => {
       descriptor.send.getTrackingAttributes?.({
         family: "aleo",
         mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        recipient: "aleo1recipient",
       }),
     ).toEqual({ privacy: "private", transferFlow: "private-to-private" });
   });

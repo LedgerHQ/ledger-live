@@ -71,21 +71,18 @@ describe("BalanceTypeScreenInner", () => {
     expect(screen.getByText("Shielded")).toBeVisible();
   });
 
-  it("should render no subtitle for a pool without one", () => {
+  it("should render no subtitle for a pool that hides it", () => {
     render(
       <BalanceTypeScreenInner
         viewModel={readyViewModel({
-          options: [
-            { ...PUBLIC_OPTION, translationKey: "balanceType.aleoPublic" },
-            { ...PRIVATE_OPTION, translationKey: "balanceType.aleoPrivate" },
-          ],
+          options: [{ ...PUBLIC_OPTION, hideSubtitle: true }, PRIVATE_OPTION],
         })}
       />,
     );
 
     expect(screen.getByText("Public balance")).toBeVisible();
-    expect(screen.getByText("Private balance")).toBeVisible();
-    expect(screen.queryByText(/\.subtitle$/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Transparent")).not.toBeInTheDocument();
+    expect(screen.getByText("Shielded")).toBeVisible();
   });
 
   it("should mark the matching pool as selected when returning to the step", () => {

@@ -2,24 +2,36 @@ import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { createTransaction } from "@ledgerhq/coin-aleo/bridge/createTransaction";
 import { TRANSACTION_TYPE } from "../constants";
-import type { AleoAccount, AleoTokenAccount, Transaction } from "../types";
+import type { AleoAccount, AleoTokenAccount, AleoUnspentRecord, Transaction } from "../types";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { aleoBalanceTypeConfig } from "./balanceType";
 
 const RECORDS = { amountRecordCommitments: ["commitment"], feeRecordCommitment: "fee" };
 const EMPTY_RECORDS = { amountRecordCommitments: [], feeRecordCommitment: null };
 
+function records(...microcredits: number[]): AleoUnspentRecord[] {
+  return microcredits.map(
+    (value, index) =>
+      ({ commitment: `commitment-${index}`, microcredits: String(value) }) as AleoUnspentRecord,
+  );
+}
+
 function account({
   transparentBalance = 100,
   privateBalance = 40,
-}: { transparentBalance?: number; privateBalance?: number | null } = {}): AleoAccount {
+  unspentPrivateRecords = privateBalance === null ? [] : records(privateBalance),
+}: {
+  transparentBalance?: number;
+  privateBalance?: number | null;
+  unspentPrivateRecords?: AleoUnspentRecord[];
+} = {}): AleoAccount {
   return {
     ...ALEO_ACCOUNT_1,
     freshAddress: "aleo1self",
     aleoResources: {
       transparentBalance: new BigNumber(transparentBalance),
       privateBalance: privateBalance === null ? null : new BigNumber(privateBalance),
-      unspentPrivateRecords: [],
+      unspentPrivateRecords,
       provableApi: null,
       lastPrivateSyncDate: null,
     },
@@ -28,13 +40,18 @@ function account({
 
 function tokenAccount({
   privateBalance = 3,
-}: { privateBalance?: number | null } = {}): AleoTokenAccount {
+  unspentPrivateRecords = privateBalance === null ? [] : records(privateBalance),
+}: {
+  privateBalance?: number | null;
+  unspentPrivateRecords?: AleoUnspentRecord[];
+} = {}): AleoTokenAccount {
   return {
     id: "aleo-token",
     type: "TokenAccount",
+    token: { parentCurrencyId: "aleo" },
     transparentBalance: new BigNumber(7),
     privateBalance: privateBalance === null ? null : new BigNumber(privateBalance),
-    unspentPrivateRecords: [],
+    unspentPrivateRecords,
   } as unknown as AleoTokenAccount;
 }
 
@@ -69,6 +86,7 @@ describe("aleo balance-type config", () => {
       expect(options.map(option => option.icon)).toEqual(["check", "lock"]);
       expect(options.map(option => option.balance.toNumber())).toEqual([100, 40]);
       expect(options.map(option => option.hasPendingBalance)).toEqual([false, false]);
+      expect(options.map(option => option.hideSubtitle)).toEqual([true, true]);
     });
 
     it("offers the private balance at zero with no pending banner before the first private sync", () => {
@@ -108,6 +126,15 @@ describe("aleo balance-type config", () => {
       const bitcoin = { type: "Account", currency: { family: "bitcoin" } } as AccountLike;
 
       expect(aleoBalanceTypeConfig.getOptions({ account: bitcoin })).toEqual([]);
+    });
+
+    it("offers nothing for a token account of another chain", () => {
+      const erc20 = {
+        ...tokenAccount(),
+        token: { parentCurrencyId: "ethereum" },
+      } as unknown as AccountLike;
+
+      expect(aleoBalanceTypeConfig.getOptions({ account: erc20 })).toEqual([]);
     });
   });
 
@@ -236,8 +263,7 @@ describe("aleo balance-type config", () => {
       ).toEqual({});
     });
 
-    it("leaves a non-Aleo or missing transaction untouched", () => {
-      expect(aleoBalanceTypeConfig.buildSelfTransferPatch({ isSelfTransfer: true })).toEqual({});
+    it("leaves a non-Aleo transaction untouched", () => {
       expect(
         aleoBalanceTypeConfig.buildSelfTransferPatch({
           isSelfTransfer: true,
@@ -275,6 +301,32 @@ describe("aleo balance-type config", () => {
           .getSelectableBalance({ account: tokenAccount(), optionId })
           .toNumber(),
       ).toBe(expected);
+    });
+
+    it("caps the private balance at the records one transaction can spend", () => {
+      const fifteenRecords = records(...Array.from({ length: 15 }, (_, index) => index + 1));
+
+      expect(
+        aleoBalanceTypeConfig
+          .getSelectableBalance({
+            account: account({ privateBalance: 120, unspentPrivateRecords: fifteenRecords }),
+            optionId: "private",
+          })
+          .toNumber(),
+      ).toBe(119);
+    });
+
+    it("caps the token private balance at the records one token transaction can spend", () => {
+      const fifteenRecords = records(...Array.from({ length: 15 }, (_, index) => index + 1));
+
+      expect(
+        aleoBalanceTypeConfig
+          .getSelectableBalance({
+            account: tokenAccount({ privateBalance: 120, unspentPrivateRecords: fifteenRecords }),
+            optionId: "private",
+          })
+          .toNumber(),
+      ).toBe(117);
     });
   });
 });

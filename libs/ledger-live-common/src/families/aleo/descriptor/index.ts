@@ -1,48 +1,22 @@
 import type { CoinDescriptor } from "../../../bridge/descriptor/types";
-import { TRANSACTION_TYPE } from "../constants";
-import type { Transaction as AleoTransaction } from "../types";
+import { isPrivateDestination, isPrivateTransaction } from "../utils";
 import { aleoBalanceTypeConfig, isAleoFlowTransaction } from "./balanceType";
 
-type AleoTransferFlow =
-  | "public-to-public"
-  | "public-to-private"
-  | "private-to-public"
-  | "private-to-private";
+type AleoPrivacy = "public" | "private";
 
 export type AleoPrivacyAttributes = Readonly<{
-  privacy: "public" | "private";
-  transferFlow: AleoTransferFlow;
+  privacy: AleoPrivacy;
+  transferFlow?: `${AleoPrivacy}-to-${AleoPrivacy}`;
 }>;
-
-const PRIVACY_BY_MODE: Partial<Record<AleoTransaction["mode"], AleoPrivacyAttributes>> = {
-  [TRANSACTION_TYPE.TRANSFER_PUBLIC]: { privacy: "public", transferFlow: "public-to-public" },
-  [TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC]: { privacy: "public", transferFlow: "public-to-public" },
-  [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: {
-    privacy: "public",
-    transferFlow: "public-to-private",
-  },
-  [TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE]: {
-    privacy: "public",
-    transferFlow: "public-to-private",
-  },
-  [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: {
-    privacy: "private",
-    transferFlow: "private-to-public",
-  },
-  [TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC]: {
-    privacy: "private",
-    transferFlow: "private-to-public",
-  },
-  [TRANSACTION_TYPE.TRANSFER_PRIVATE]: { privacy: "private", transferFlow: "private-to-private" },
-  [TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE]: {
-    privacy: "private",
-    transferFlow: "private-to-private",
-  },
-};
 
 export function getPrivacyAttributes(transaction: unknown): AleoPrivacyAttributes | undefined {
   if (!isAleoFlowTransaction(transaction)) return undefined;
-  return PRIVACY_BY_MODE[transaction.mode];
+
+  const source: AleoPrivacy = isPrivateTransaction(transaction) ? "private" : "public";
+  if (!transaction.recipient) return { privacy: source };
+
+  const destination: AleoPrivacy = isPrivateDestination(transaction) ? "private" : "public";
+  return { privacy: source, transferFlow: `${source}-to-${destination}` };
 }
 
 export const descriptor: CoinDescriptor = {

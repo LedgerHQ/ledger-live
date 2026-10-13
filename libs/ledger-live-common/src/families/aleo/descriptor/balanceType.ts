@@ -1,12 +1,16 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { TRANSACTION_TYPE } from "../constants";
-import type { AleoAccount, AleoTokenAccount, Transaction as AleoTransaction } from "../types";
+import type { AleoUnspentRecord, Transaction as AleoTransaction } from "../types";
 import {
   derivePrivateTransactionMode,
   derivePublicTransactionMode,
+  getMaxPrivateRecordsForAccount,
+  isAleoAccount,
   isPrivateTransaction,
   isSelfTransferTransaction,
+  selectPrivateRecordsForAmount,
+  sumPrivateRecords,
 } from "../utils";
 import type {
   BalanceTypeConfig,
@@ -25,19 +29,9 @@ const EMPTY_PRIVATE_PROPERTIES = { amountRecordCommitments: [], feeRecordCommitm
 type AleoBalances = Readonly<{
   transparentBalance: BigNumber;
   privateBalance: BigNumber | null;
+  unspentPrivateRecords: AleoUnspentRecord[];
+  maxPrivateRecords: number;
 }>;
-
-function isAleoMainAccount(account: AccountLike): account is AleoAccount {
-  return account.type === "Account" && account.currency.family === "aleo";
-}
-
-function isAleoTokenAccount(account: AccountLike): account is AleoTokenAccount {
-  return (
-    account.type === "TokenAccount" &&
-    "transparentBalance" in account &&
-    BigNumber.isBigNumber(account.transparentBalance)
-  );
-}
 
 export function isAleoFlowTransaction(transaction: unknown): transaction is AleoTransaction {
   return (
@@ -49,21 +43,25 @@ export function isAleoFlowTransaction(transaction: unknown): transaction is Aleo
 }
 
 function getBalances(account: AccountLike): AleoBalances | null {
-  if (isAleoTokenAccount(account)) {
+  if (!isAleoAccount(account)) return null;
+
+  if (account.type === "TokenAccount") {
     return {
       transparentBalance: account.transparentBalance,
       privateBalance: account.privateBalance,
+      unspentPrivateRecords: account.unspentPrivateRecords ?? [],
+      maxPrivateRecords: getMaxPrivateRecordsForAccount(account),
     };
   }
 
-  if (isAleoMainAccount(account) && account.aleoResources) {
-    return {
-      transparentBalance: account.aleoResources.transparentBalance,
-      privateBalance: account.aleoResources.privateBalance,
-    };
-  }
+  if (!account.aleoResources) return null;
 
-  return null;
+  return {
+    transparentBalance: account.aleoResources.transparentBalance,
+    privateBalance: account.aleoResources.privateBalance,
+    unspentPrivateRecords: account.aleoResources.unspentPrivateRecords ?? [],
+    maxPrivateRecords: getMaxPrivateRecordsForAccount(account),
+  };
 }
 
 function resolveSource(transaction: AleoTransaction): AleoBalanceSource {
@@ -81,6 +79,7 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
       balance: balances.transparentBalance,
       hasPendingBalance: false,
       icon: "check",
+      hideSubtitle: true,
     },
     {
       id: PRIVATE,
@@ -88,6 +87,7 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
       balance: balances.privateBalance ?? new BigNumber(0),
       hasPendingBalance: false,
       icon: "lock",
+      hideSubtitle: true,
     },
   ];
 }
@@ -115,7 +115,8 @@ function getSelfTransferTarget({
   account: AccountLike;
   transaction: unknown;
 }): BalanceTypeSelfTransferTarget | null {
-  if (!isAleoMainAccount(account) || !isAleoFlowTransaction(transaction)) return null;
+  if (!isAleoAccount(account) || account.type !== "Account") return null;
+  if (!isAleoFlowTransaction(transaction)) return null;
   if (!account.freshAddress || account.aleoResources?.privateBalance == null) return null;
 
   if (resolveSource(transaction) === PUBLIC) {
@@ -138,7 +139,7 @@ function buildSelfTransferPatch({
   transaction,
 }: {
   isSelfTransfer: boolean;
-  transaction?: unknown;
+  transaction: unknown;
 }): TransactionPatch {
   if (!isAleoFlowTransaction(transaction)) return {};
   if (isSelfTransferTransaction(transaction) === isSelfTransfer) return {};
@@ -162,7 +163,15 @@ function getSelectableBalance({
   const balances = getBalances(account);
   if (!balances) return new BigNumber(0);
   if (optionId === PUBLIC) return balances.transparentBalance;
-  if (optionId === PRIVATE) return balances.privateBalance ?? new BigNumber(0);
+  if (optionId === PRIVATE) {
+    return sumPrivateRecords(
+      selectPrivateRecordsForAmount({
+        unspentRecords: balances.unspentPrivateRecords,
+        targetAmount: null,
+        maxRecords: balances.maxPrivateRecords,
+      }),
+    );
+  }
   return new BigNumber(0);
 }
 

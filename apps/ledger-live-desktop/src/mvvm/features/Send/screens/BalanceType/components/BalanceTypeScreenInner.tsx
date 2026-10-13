@@ -30,9 +30,8 @@ type OptionItemProps = {
 };
 
 function BalanceTypeOptionItem({ option, selected, onSelect }: Readonly<OptionItemProps>) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const IconComponent = option.icon === "lock" ? UserLock : UserCheck;
-  const subtitleKey = `newSendFlow.${option.translationKey}.subtitle`;
 
   return (
     <ListItem
@@ -44,9 +43,11 @@ function BalanceTypeOptionItem({ option, selected, onSelect }: Readonly<OptionIt
         <Spot appearance="icon" icon={IconComponent} />
         <ListItemContent>
           <ListItemTitle>{t(`newSendFlow.${option.translationKey}.title`)}</ListItemTitle>
-          {i18n.exists(subtitleKey) ? (
-            <ListItemDescription>{t(subtitleKey)}</ListItemDescription>
-          ) : null}
+          {option.hideSubtitle ? null : (
+            <ListItemDescription>
+              {t(`newSendFlow.${option.translationKey}.subtitle`)}
+            </ListItemDescription>
+          )}
           {option.isZero ? (
             <ListItemDescription
               className="text-warning"
