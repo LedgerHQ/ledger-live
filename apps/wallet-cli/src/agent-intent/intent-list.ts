@@ -2,14 +2,22 @@ import {
   AGENT_INTENT_STATUSES,
   isAgentIntentStatus,
   isSendOperation,
+  isSwapOperation,
   type AgentIntentRecord,
+  type AgentIntentSendOperation,
   type AgentIntentStatus,
+  type AgentIntentSwapOperation,
 } from "@ledgerhq/agent-intent-sdk";
 import { stripControlChars } from "../shared/ui";
 import { formatBaseUnits } from "./evm";
-import type { EthereumToken } from "./token-lookup";
-
-const ETH_DECIMALS = 18;
+import {
+  findEthereumSwapAsset,
+  findEthereumToken,
+  findSolanaToken,
+  type EthereumToken,
+  type SolanaToken,
+  type SwapAsset,
+} from "./token-lookup";
 
 /** One listed intent as `agent-intent intents` reports it. Field set and names are stable. */
 export type IntentListEntry = {
@@ -19,12 +27,23 @@ export type IntentListEntry = {
   network: string | null;
   sender: string | null;
   recipient: string | null;
-  /** Exact base-unit decimal string; `null` for intent types without a single amount. */
+  /** A send's exact base-unit decimal string; `null` for other intent types. */
   amount: string | null;
-  /** `amount` in the asset's unit with its ticker (e.g. "0.01 ETH"), when the asset is known. */
+  /** A send's `amount` in its asset's unit (e.g. "0.01 ETH") when the asset is known, or a swap's
+   * pair (e.g. "0.5 ETH → 1250 USDC"). */
   displayAmount: string | null;
   asset: { type: string; assetReference: string | null } | null;
   feeStrategy: string | null;
+  /** A Solana send's on-chain memo. */
+  memo: string | null;
+  /** A swap as signed, with human-unit amounts; `null` for other intent types. */
+  swap: {
+    fromAsset: string;
+    toAsset: string;
+    fromAmount: string;
+    toAmount: string;
+    provider: string;
+  } | null;
   description: string | null;
   failureReason: string | null;
   createdAt: string;
@@ -87,54 +106,76 @@ function text(value: unknown): string | null {
   return typeof value === "string" ? value : null;
 }
 
+/** Names an asset in its own unit; each lookup resolves `null` for an asset it doesn't know. */
+export type AssetLookups = {
+  ethereumToken: (contract: string) => Promise<EthereumToken | null>;
+  solanaToken: (mint: string) => Promise<SolanaToken | null>;
+  swapAsset: (id: string) => Promise<SwapAsset | null>;
+};
+
+// Read at call time, so a test's module mock of token-lookup applies.
+const CAL_LOOKUPS: AssetLookups = {
+  ethereumToken: contract => findEthereumToken(contract),
+  solanaToken: mint => findSolanaToken(mint),
+  swapAsset: id => findEthereumSwapAsset(id),
+};
+
+const NATIVE_ASSETS: Record<string, { ticker: string; decimals: number }> = {
+  ethereum: { ticker: "ETH", decimals: 18 },
+  solana: { ticker: "SOL", decimals: 9 },
+};
+
+/** Each asset is looked up once per call, and a failed lookup counts as unknown. */
+function memo<T>(lookup: (key: string) => Promise<T | null>): (key: string) => Promise<T | null> {
+  const results = new Map<string, Promise<T | null>>();
+  return key => {
+    if (!results.has(key))
+      results.set(
+        key,
+        lookup(key).catch(() => null),
+      );
+    return results.get(key)!;
+  };
+}
+
+function cached(lookups: AssetLookups): AssetLookups {
+  return {
+    ethereumToken: memo(lookups.ethereumToken),
+    solanaToken: memo(lookups.solanaToken),
+    swapAsset: memo(lookups.swapAsset),
+  };
+}
+
 /**
- * Converts listed records to stable entries. ERC-20 amounts on Ethereum are shown in token units
- * when `lookupToken` knows the contract; anything else keeps only the exact base-unit `amount`.
+ * Converts listed records to stable entries. A send's amount is shown in its asset's unit when the
+ * asset is known (native ETH or SOL, or a token CAL knows), a swap's as its pair; anything else
+ * keeps only the exact fields the service returned.
  */
 export async function toIntentListEntries(
   records: readonly AgentIntentRecord[],
-  lookupToken: (contract: string) => Promise<EthereumToken | null>,
+  lookups: AssetLookups = CAL_LOOKUPS,
 ): Promise<IntentListEntry[]> {
-  const tokens = new Map<string, Promise<EthereumToken | null>>();
-  const token = (contract: string) => {
-    const key = contract.toLowerCase();
-    if (!tokens.has(key))
-      tokens.set(
-        key,
-        lookupToken(contract).catch(() => null),
-      );
-    return tokens.get(key)!;
-  };
-
-  return Promise.all(records.map(record => toEntry(record, token)));
+  const known = cached(lookups);
+  return Promise.all(records.map(record => toEntry(record, known)));
 }
 
 /** Like {@link toIntentListEntries}, for a single intent. */
 export async function toIntentListEntry(
   record: AgentIntentRecord,
-  lookupToken: (contract: string) => Promise<EthereumToken | null>,
+  lookups: AssetLookups = CAL_LOOKUPS,
 ): Promise<IntentListEntry> {
-  return toEntry(record, contract => lookupToken(contract).catch(() => null));
+  return toEntry(record, cached(lookups));
 }
 
 async function toEntry(
   { id, status, intent, createdAt, updatedAt, failureReason }: AgentIntentRecord,
-  token: (contract: string) => Promise<EthereumToken | null>,
+  lookups: AssetLookups,
 ): Promise<IntentListEntry> {
   const send = isSendOperation(intent) ? intent : null;
-  const amount = send?.amount ?? null;
-  const asset = send
-    ? { type: send.asset.type, assetReference: send.asset.assetReference ?? null }
-    : null;
+  const swap = isSwapOperation(intent) ? intent : null;
   let displayAmount: string | null = null;
-  // BigInt would throw on a malformed amount and fail the whole page, or read hex.
-  const formattable = amount !== null && /^\d+$/.test(amount);
-  if (formattable && intent.network === "ethereum" && asset?.type === "native") {
-    displayAmount = `${formatBaseUnits(amount, ETH_DECIMALS)} ETH`;
-  } else if (formattable && intent.network === "ethereum" && asset?.assetReference) {
-    const known = await token(asset.assetReference);
-    if (known) displayAmount = `${formatBaseUnits(amount, known.decimals)} ${known.ticker}`;
-  }
+  if (send) displayAmount = await sendDisplayAmount(send, lookups);
+  else if (swap) displayAmount = await swapDisplayAmount(swap, lookups);
   return {
     id,
     status,
@@ -142,13 +183,63 @@ async function toEntry(
     network: text(intent.network),
     sender: text(intent.sender),
     recipient: send?.recipient ?? null,
-    amount,
+    amount: send?.amount ?? null,
     displayAmount,
-    asset,
+    asset: send
+      ? { type: send.asset.type, assetReference: send.asset.assetReference ?? null }
+      : null,
     feeStrategy: send?.feeStrategy ?? null,
+    memo: send?.memo ?? null,
+    swap: swap
+      ? {
+          fromAsset: swap.fromAsset,
+          toAsset: swap.toAsset,
+          fromAmount: swap.fromAmount,
+          toAmount: swap.toAmount,
+          provider: swap.provider,
+        }
+      : null,
     description: text(intent.description),
     failureReason: failureReason ?? null,
     createdAt,
     updatedAt,
   };
+}
+
+async function sendDisplayAmount(
+  send: AgentIntentSendOperation,
+  lookups: AssetLookups,
+): Promise<string | null> {
+  // BigInt would throw on a malformed amount and fail the whole page, or read hex.
+  if (!/^\d+$/.test(send.amount)) return null;
+  const unit = await sendUnit(send, lookups);
+  return unit ? `${formatBaseUnits(send.amount, unit.decimals)} ${unit.ticker}` : null;
+}
+
+async function sendUnit(
+  { network, asset }: AgentIntentSendOperation,
+  lookups: AssetLookups,
+): Promise<{ ticker: string; decimals: number } | null> {
+  if (asset.type === "native") return NATIVE_ASSETS[network] ?? null;
+  if (!asset.assetReference) return null;
+  if (network === "ethereum") return lookups.ethereumToken(asset.assetReference);
+  if (network === "solana" && asset.type === "spl-token") {
+    return lookups.solanaToken(asset.assetReference);
+  }
+  return null;
+}
+
+/** Swap amounts are already in human units; an asset CAL doesn't know keeps its id. */
+async function swapDisplayAmount(
+  swap: AgentIntentSwapOperation,
+  lookups: AssetLookups,
+): Promise<string> {
+  const [from, to] = await Promise.all([
+    lookups.swapAsset(swap.fromAsset),
+    lookups.swapAsset(swap.toAsset),
+  ]);
+  return (
+    `${swap.fromAmount} ${from?.ticker ?? swap.fromAsset} → ` +
+    `${swap.toAmount} ${to?.ticker ?? swap.toAsset}`
+  );
 }
