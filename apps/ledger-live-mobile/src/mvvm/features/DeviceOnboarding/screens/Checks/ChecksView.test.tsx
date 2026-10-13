@@ -124,7 +124,9 @@ describe("ChecksView", () => {
     expect(screen.getByText("Tap on “Allow” to start Ledger Genuine Check")).toBeVisible();
     expect(screen.getByText("Lily's Stax")).toBeVisible();
 
-    await user.press(screen.getByTestId(`${checksTestIds.allowSheet}-dismiss`));
+    expect(screen.queryByTestId(`${checksTestIds.allowSheet}-dismiss`)).toBeNull();
+
+    await user.press(screen.getByTestId(`${checksTestIds.allowSheet}-header-close`));
 
     expect(onCloseSheet).toHaveBeenCalledTimes(1);
     expect(onStart).not.toHaveBeenCalled();
@@ -155,7 +157,9 @@ describe("ChecksView", () => {
 
     await user.press(screen.getByText("Update Ledger OS"));
     await user.press(screen.getByText("Cancel operation"));
-    await user.press(screen.getByTestId(`${checksTestIds.updateSheet}-dismiss`));
+    expect(screen.queryByTestId(`${checksTestIds.updateSheet}-dismiss`)).toBeNull();
+
+    await user.press(screen.getByTestId(`${checksTestIds.updateSheet}-header-close`));
 
     expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
     expect(onDeclineUpdate).toHaveBeenCalledTimes(1);

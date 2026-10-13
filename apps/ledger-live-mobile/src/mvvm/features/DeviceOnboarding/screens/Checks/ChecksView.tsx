@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
-import { UnsupportedFirmwareVersionView } from "LLM/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/components/UnsupportedFirmwareVersion/UnsupportedFirmwareVersionView";
+import { UnsupportedFirmwareVersionView } from "LLM/components/DeviceIntentExecutor/ContextInitializer/components/UnsupportedFirmwareVersion/UnsupportedFirmwareVersionView";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { ChecksIllustration, ChecksViewProps } from "./useChecksScreenViewModel";
 import loadingAnimation from "./animations/loading.lottie";
@@ -108,7 +108,9 @@ export function ChecksView({
       {allowSheet ? (
         <QueuedBottomSheet
           isRequestingToBeOpened
-          onClose={allowSheet.onClose}
+          onHeaderClosePressed={allowSheet.onClose}
+          preventBackdropClick
+          enablePanDownToClose={false}
           testID={checksTestIds.allowSheet}
           enableDynamicSizing
         >
@@ -128,7 +130,9 @@ export function ChecksView({
       {updateSheet ? (
         <QueuedBottomSheet
           isRequestingToBeOpened
-          onClose={updateSheet.onClose}
+          onHeaderClosePressed={updateSheet.onClose}
+          preventBackdropClick
+          enablePanDownToClose={false}
           testID={checksTestIds.updateSheet}
           enableDynamicSizing
         >
