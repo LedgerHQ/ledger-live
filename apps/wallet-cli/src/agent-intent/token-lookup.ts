@@ -6,10 +6,10 @@ import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { getMaybeTokenMint } from "@ledgerhq/coin-solana/network/chain/web3";
 import { endpointByCurrencyId } from "@ledgerhq/coin-solana/utils";
 import { HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
-import { getEnv } from "@shared/env";
+import { BigNumber } from "bignumber.js";
 import { z } from "zod";
 import { resolveAccountDescriptor } from "../commands/inputs";
-import { ledgerClientVersion } from "../shared/client-version";
+import { calApiConfig } from "../live-common-setup";
 import { WalletAdapter } from "../wallet";
 
 export type EthereumToken = { ticker: string; decimals: number; contract: string };
@@ -70,24 +70,28 @@ export async function findSolanaMintProgram(mint: string): Promise<string | unde
 export type TokenCandidate = { ticker: string; name: string; address: string };
 
 const TOKEN_STANDARD = { ethereum: "erc20", solana: "spl" } as const;
+/** Enough to tell one match from several and to list them; CAL filters before it applies. */
 const MAX_CANDIDATES = 20;
 
 const CalTokenSchema = z.object({
   name: z.string(),
   ticker: z.string(),
   contract_address: z.string(),
-  standard: z.string(),
-  delisted: z.boolean(),
 });
 
-async function fetchCalTokens(network: string, ticker: string) {
-  const url = new URL(`${getEnv("CAL_SERVICE_URL")}/v1/tokens`);
+async function fetchCalTokens(network: keyof typeof TOKEN_STANDARD, ticker: string) {
+  const url = new URL(`${calApiConfig.calServiceUrl}/v1/tokens`);
   url.searchParams.set("network", network);
   url.searchParams.set("ticker", ticker);
+  url.searchParams.set("standard", TOKEN_STANDARD[network]);
+  url.searchParams.set("delisted", "false");
   url.searchParams.set("output", Object.keys(CalTokenSchema.shape).join(","));
   url.searchParams.set("limit", String(MAX_CANDIDATES));
   const response = await fetch(url, {
-    headers: { Accept: "application/json", [HEADER_X_LEDGER_CLIENT_VERSION]: ledgerClientVersion },
+    headers: {
+      Accept: "application/json",
+      [HEADER_X_LEDGER_CLIENT_VERSION]: calApiConfig.ledgerClientVersion,
+    },
   });
   if (!response.ok) {
     throw new Error(`CAL answered ${response.status} when looking up the ${ticker} ticker.`);
@@ -105,7 +109,6 @@ export async function findTokensByTicker(
   const tokens = (await Promise.all(spellings.map(t => fetchCalTokens(network, t)))).flat();
   const candidates = new Map<string, TokenCandidate>();
   for (const token of tokens) {
-    if (token.delisted || token.standard !== TOKEN_STANDARD[network]) continue;
     if (token.ticker.toUpperCase() !== ticker.toUpperCase()) continue;
     candidates.set(token.contract_address, {
       ticker: token.ticker,
@@ -116,13 +119,15 @@ export async function findTokensByTicker(
   return [...candidates.values()];
 }
 
-/** The CAL tokens a session account has a token account for. Syncs the account. */
+/** The CAL tokens a session account holds a non-zero balance of. Syncs the account. */
 export async function findAccountTokens(label: string): Promise<TokenCandidate[]> {
   const descriptor = await resolveAccountDescriptor(label);
   const balances = await new WalletAdapter().getAccountBalances(descriptor);
   const tokens = await Promise.all(
     balances
-      .filter(({ assetId }) => assetId !== descriptor.currencyId)
+      .filter(
+        ({ assetId, balance }) => assetId !== descriptor.currencyId && new BigNumber(balance).gt(0),
+      )
       .map(({ assetId }) => getCryptoAssetsStore().findTokenById(assetId)),
   );
   return tokens.flatMap(token =>
