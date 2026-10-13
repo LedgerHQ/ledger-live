@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
-import { UnsupportedFirmwareVersionView } from "LLM/components/DeviceIntentExecutor/ContextInitializer/components/UnsupportedFirmwareVersion/UnsupportedFirmwareVersionView";
+import { UnsupportedFirmwareVersionView } from "LLM/components/UnsupportedFirmwareVersion";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { ChecksIllustration, ChecksViewProps } from "./useChecksScreenViewModel";
 import darkLoadingAnimation from "./animations/dark/loading.lottie";
