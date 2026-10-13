@@ -374,8 +374,9 @@ describe("agent-intent swap", () => {
     });
 
     it("requires exactly one of --account and --sender", async () => {
-      await expect(runSwap({ sender: undefined })).rejects.toThrow(/exactly one sender/);
-      await expect(runSwap({ account: "ethereum-1" })).rejects.toThrow(/exactly one sender/);
+      const message = "Pass exactly one sender: --account <session-label> or --sender <address>.";
+      await expect(runSwap({ sender: undefined })).rejects.toThrow(message);
+      await expect(runSwap({ account: "ethereum-1" })).rejects.toThrow(message);
     });
 
     it("rejects an asset that isn't ETH or an Ethereum ERC-20", async () => {

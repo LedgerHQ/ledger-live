@@ -16,7 +16,7 @@ import {
 } from "../../agent-intent/swap-intent";
 import { fetchAgentSwapQuote } from "../../agent-intent/swap-quote";
 import { findEthereumSwapAsset, type SwapAsset } from "../../agent-intent/token-lookup";
-import { resolveSenderFromAccount } from "../../agent-intent/sender";
+import { parseSenderInput, resolveSenderFromAccount } from "../../agent-intent/sender";
 import {
   assertSdkAcceptsIntent,
   proposalOptions,
@@ -24,15 +24,6 @@ import {
   warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
 import { createCommandOutput, type CommandOutput } from "../../output";
-
-function parseSenderInput(flags: {
-  account?: string;
-  sender?: string;
-}): { account: string } | { sender: string } {
-  if (flags.account && !flags.sender) return { account: flags.account };
-  if (flags.sender && !flags.account) return { sender: flags.sender };
-  throw new Error("Pass exactly one sender: --account <session-label> or --sender <address>.");
-}
 
 async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAsset> {
   const asset = await findEthereumSwapAsset(id);
@@ -133,12 +124,15 @@ export default defineCommand({
       network: "ethereum",
     });
     await out.run(async () => {
-      const senderInput = parseSenderInput(flags);
+      const senderInput = parseSenderInput(
+        { account: flags.account, address: flags.sender },
+        "sender",
+      );
       const provider = flags.provider ? resolveAgentSwapProvider(flags.provider) : undefined;
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
       const sender =
-        "sender" in senderInput
-          ? parseEvmAddress(senderInput.sender, "sender")
+        "address" in senderInput
+          ? parseEvmAddress(senderInput.address, "sender")
           : await resolveSenderFromAccount(senderInput.account, "swap", "ethereum");
       const from = await resolveSwapAsset(flags.from, "from");
       const to = await resolveSwapAsset(flags.to, "to");
