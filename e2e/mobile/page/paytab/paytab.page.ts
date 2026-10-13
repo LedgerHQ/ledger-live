@@ -99,10 +99,14 @@ export default class PayTabPage {
 
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
-    await tapById(this.bankTransferCloseId);
-    if (!(await waitForElementNotVisible(this.bankTransferContentId))) {
-      throw new Error(`${this.bankTransferContentId} stayed visible`);
+    const maxAttempts = 5;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      await tapById(this.bankTransferCloseId);
+      if (await waitForElementNotVisible(this.bankTransferContentId)) return;
     }
+    throw new Error(
+      `${this.bankTransferContentId} stayed visible after ${maxAttempts} close attempts`,
+    );
   }
 
   @Step("Open request")
