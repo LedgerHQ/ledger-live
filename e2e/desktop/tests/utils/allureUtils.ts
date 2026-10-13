@@ -112,15 +112,13 @@ function serializeCliError(error: unknown) {
 }
 
 export async function addTmsLink(ids: string[]) {
-  for (const id of ids) {
-    await allure.tms(id);
-  }
+  await allure.links(...ids.map(id => ({ url: id, type: "tms" })));
+  await allure.tags(...ids.map(id => `tms:${id}`));
 }
 
 export async function addBugLink(ids: string[]) {
-  for (const id of ids) {
-    await allure.issue(id);
-  }
+  await allure.links(...ids.map(id => ({ url: id, type: "issue" })));
+  await allure.tags(...ids.map(id => `issue:${id}`));
 }
 
 export async function addAnnotationLinks(annotations: TestInfo["annotations"]) {
