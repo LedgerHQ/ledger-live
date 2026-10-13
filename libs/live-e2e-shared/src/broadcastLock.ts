@@ -13,6 +13,15 @@ export type { AbandonableLease, Lease } from "./broadcastLock/types";
 
 export const BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS = 30 * 60_000;
 export const BROADCAST_LOCK_NESTED_DRAIN_MS = 60_000;
+
+/** "1" locks the accounts tests declare even when the app does not broadcast, to test the lock. */
+const BROADCAST_LOCK_WITHOUT_BROADCAST_ENV = "E2E_BROADCAST_LOCK_WITHOUT_BROADCAST";
+
+export const shouldLockBroadcastAccounts = (
+  appBroadcasts: boolean,
+  env: Readonly<Record<string, string | undefined>> = process.env,
+): boolean => appBroadcasts || env[BROADCAST_LOCK_WITHOUT_BROADCAST_ENV] === "1";
+
 const LEASE_MS = 120_000;
 const HEARTBEAT_MS = 20_000;
 const POLL_MS = 5_000;
