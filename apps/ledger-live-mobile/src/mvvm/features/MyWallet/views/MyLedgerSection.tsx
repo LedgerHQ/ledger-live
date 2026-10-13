@@ -28,7 +28,7 @@ type MyLedgerSectionProps = {
 };
 
 function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps) {
-  const action = useManagerDeviceAction();
+  const action = useManagerDeviceAction({ resolveOsUpdates: true });
   const [device, setDevice] = useState<Device>();
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
 
