@@ -52,18 +52,22 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledTimes(1);
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
-        screen: NavigatorName.Swap,
-        params: {
-          screen: ScreenName.SwapTab,
-          params: expect.objectContaining({
-            defaultCurrency: bitcoin,
-            fromPath: SOURCE_SCREEN,
-            defaultAccount: account,
-            defaultParentAccount: undefined,
-          }),
+      expect(mockNavigate).toHaveBeenCalledWith(
+        NavigatorName.Main,
+        {
+          screen: NavigatorName.Swap,
+          params: {
+            screen: ScreenName.SwapTab,
+            params: expect.objectContaining({
+              defaultCurrency: bitcoin,
+              fromPath: SOURCE_SCREEN,
+              defaultAccount: account,
+              defaultParentAccount: undefined,
+            }),
+          },
         },
-      });
+        { pop: true },
+      );
       expect(mockOpenDrawer).not.toHaveBeenCalled();
     });
 
@@ -82,16 +86,20 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
         result.current.handleOpenSwap();
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
-        screen: NavigatorName.Swap,
-        params: {
-          screen: ScreenName.SwapTab,
-          params: expect.objectContaining({
-            defaultCurrency: bitcoin,
-            fromPath: SOURCE_SCREEN,
-          }),
+      expect(mockNavigate).toHaveBeenCalledWith(
+        NavigatorName.Main,
+        {
+          screen: NavigatorName.Swap,
+          params: {
+            screen: ScreenName.SwapTab,
+            params: expect.objectContaining({
+              defaultCurrency: bitcoin,
+              fromPath: SOURCE_SCREEN,
+            }),
+          },
         },
-      });
+        { pop: true },
+      );
       expect(mockNavigate.mock.calls[0][1].params.params.defaultAccount).toBeUndefined();
       expect(mockOpenDrawer).not.toHaveBeenCalled();
     });
@@ -111,17 +119,21 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
         result.current.handleOpenSwap();
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
-        screen: NavigatorName.Swap,
-        params: {
-          screen: ScreenName.SwapTab,
-          params: expect.objectContaining({
-            defaultCurrency: usdcToken,
-            fromPath: SOURCE_SCREEN,
-            toTokenId: usdcToken.id,
-          }),
+      expect(mockNavigate).toHaveBeenCalledWith(
+        NavigatorName.Main,
+        {
+          screen: NavigatorName.Swap,
+          params: {
+            screen: ScreenName.SwapTab,
+            params: expect.objectContaining({
+              defaultCurrency: usdcToken,
+              fromPath: SOURCE_SCREEN,
+              toTokenId: usdcToken.id,
+            }),
+          },
         },
-      });
+        { pop: true },
+      );
       expect(mockOpenDrawer).not.toHaveBeenCalled();
     });
 
