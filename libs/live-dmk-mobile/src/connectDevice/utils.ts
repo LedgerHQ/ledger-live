@@ -71,7 +71,9 @@ export const buildMobileCompatDeviceId = (device: ConnectedDevice): string => {
     return target ? buildSpeculosLegacyDeviceId(target.url) : device.id;
   }
 
-  if (device.type === "USB") {
+  // Only native RN HID devices use the `usb|` prefix in the legacy transport registry;
+  // HTTP proxy devices also report `type: "USB"` but already carry their `httpdebug|` id.
+  if (device.transport === rnHidTransportIdentifier) {
     return buildUsbCompatDeviceId(device.id);
   }
 
