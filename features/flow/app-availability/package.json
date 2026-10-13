@@ -43,6 +43,7 @@
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",

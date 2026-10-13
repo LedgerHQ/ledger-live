@@ -6,13 +6,19 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 import { LinkingProvider } from "@shared/linking";
 import { mockOfacCheckQuery } from "../test/mockOfacCheckQuery";
 import { urls } from "../urls";
+import { useCalCheck } from "../hooks/useCalCheck";
 import { AppAvailability } from "./AppAvailability";
 
 jest.mock("@domain/api-ofac", () => ({
   useCheckOfacGeoBlockQuery: jest.fn(),
 }));
 
+jest.mock("../hooks/useCalCheck", () => ({
+  useCalCheck: jest.fn(),
+}));
+
 const mockedUseCheckQuery = jest.mocked(useCheckOfacGeoBlockQuery);
+const mockedUseCalCheck = jest.mocked(useCalCheck);
 const openExternal = jest.fn();
 
 const COPY = {
@@ -21,25 +27,38 @@ const COPY = {
       "geoBlocking.title": "Location unavailable",
       "geoBlocking.description": "Ledger Wallet is not available in this location.",
       "geoBlocking.learnMore": "Learn more",
+      "serviceUnavailable.title": "Ledger Wallet is currently unavailable",
+      "serviceUnavailable.description": "This does not impact your assets. Please try again later.",
     },
   },
 };
 
-const TITLE = COPY.en.translation["geoBlocking.title"];
-const DESCRIPTION = COPY.en.translation["geoBlocking.description"];
+const GEO_TITLE = COPY.en.translation["geoBlocking.title"];
+const GEO_DESCRIPTION = COPY.en.translation["geoBlocking.description"];
 const LEARN_MORE = COPY.en.translation["geoBlocking.learnMore"];
+const SERVICE_TITLE = COPY.en.translation["serviceUnavailable.title"];
+const SERVICE_DESCRIPTION = COPY.en.translation["serviceUnavailable.description"];
+
+const CAL_URL = "https://cal.test";
+const CLIENT_VERSION = "1.2.3";
 
 function renderGate(children: React.ReactNode) {
   return render(
     <LinkingProvider config={{ openExternal }}>
       <I18nTestProvider resources={COPY}>
-        <AppAvailability>{children}</AppAvailability>
+        <AppAvailability calServiceUrl={CAL_URL} ledgerClientVersion={CLIENT_VERSION}>
+          {children}
+        </AppAvailability>
       </I18nTestProvider>
     </LinkingProvider>,
   );
 }
 
 describe("AppAvailability (native)", () => {
+  beforeEach(() => {
+    mockedUseCalCheck.mockReturnValue({ status: "available" });
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -74,8 +93,8 @@ describe("AppAvailability (native)", () => {
     renderGate(<Text>Allowed</Text>);
 
     expect(screen.queryByText("Allowed")).toBeNull();
-    expect(screen.getByText(TITLE)).toBeTruthy();
-    expect(screen.getByText(DESCRIPTION)).toBeTruthy();
+    expect(screen.getByText(GEO_TITLE)).toBeTruthy();
+    expect(screen.getByText(GEO_DESCRIPTION)).toBeTruthy();
     expect(screen.getByText(LEARN_MORE)).toBeTruthy();
     expect(screen.getByTestId("app-availability-learn-more")).toBeTruthy();
   });
@@ -89,6 +108,21 @@ describe("AppAvailability (native)", () => {
 
     expect(openExternal).toHaveBeenCalledTimes(1);
     expect(openExternal).toHaveBeenCalledWith(urls.geoBlockLearnMore);
+  });
+
+  it("should render service-unavailable copy when CAL failed", () => {
+    mockOfacCheckQuery(mockedUseCheckQuery, { data: false, isLoading: false });
+    mockedUseCalCheck.mockReturnValue({
+      status: "unavailable",
+      reason: "serviceUnavailable",
+    });
+
+    renderGate(<Text>Allowed</Text>);
+
+    expect(screen.queryByText("Allowed")).toBeNull();
+    expect(screen.getByText(SERVICE_TITLE)).toBeTruthy();
+    expect(screen.getByText(SERVICE_DESCRIPTION)).toBeTruthy();
+    expect(screen.queryByText(GEO_TITLE)).toBeNull();
   });
 
   it("should render custom children when not blocked", () => {

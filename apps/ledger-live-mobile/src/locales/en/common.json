@@ -10654,6 +10654,10 @@
     "description": "Ledger Wallet is not available in this location.",
     "learnMore": "Learn more"
   },
+  "serviceUnavailable": {
+    "title": "Ledger Wallet is currently unavailable",
+    "description": "This does not impact your assets. Please try again later."
+  },
   "versionBlocking": {
     "title": "Ledger Wallet Update Required",
     "description": "This version of Ledger Wallet is not compatible with the latest device operating system. Update now to enjoy improved connectivity.",

@@ -9848,6 +9848,10 @@
     "description": "Ledger Wallet is not available in this location.",
     "learnMore": "Learn more"
   },
+  "serviceUnavailable": {
+    "title": "Ledger Wallet is currently unavailable",
+    "description": "This does not impact your assets. Please try again later."
+  },
   "versionBlocking": {
     "title": "Ledger Wallet Update Required",
     "errorTitle": "Update failed",

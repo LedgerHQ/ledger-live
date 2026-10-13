@@ -11,20 +11,31 @@ const UNAVAILABLE_COPY = {
     titleKey: "geoBlocking.title",
     descriptionKey: "geoBlocking.description",
   },
-} as const satisfies Partial<
-  Record<
-    Extract<AppAvailabilityStatus, { status: "unavailable" }>["reason"],
-    { titleKey: string; descriptionKey: string }
-  >
+  serviceUnavailable: {
+    titleKey: "serviceUnavailable.title",
+    descriptionKey: "serviceUnavailable.description",
+  },
+} as const satisfies Record<
+  Extract<AppAvailabilityStatus, { status: "unavailable" }>["reason"],
+  { titleKey: string; descriptionKey: string }
 >;
 
 export type AppAvailabilityProps = Readonly<{
   children: React.ReactNode;
+  /** CAL base URL already selected by the host, the same value injected into calApi. */
+  calServiceUrl: string;
+  /** Client version the host already sends as `X-Ledger-Client-Version` on CAL requests. */
+  ledgerClientVersion: string;
   testID?: string;
 }>;
 
-export function AppAvailability({ children, testID }: AppAvailabilityProps): React.JSX.Element {
-  const availability = useAppAvailability();
+export function AppAvailability({
+  children,
+  calServiceUrl,
+  ledgerClientVersion,
+  testID,
+}: AppAvailabilityProps): React.JSX.Element {
+  const availability = useAppAvailability(calServiceUrl, ledgerClientVersion);
   const { t } = useTranslation();
   const openLink = useOpenLink();
   const learnMoreUrl = useLocalizedUrl(urls.geoBlockLearnMore);
@@ -32,22 +43,26 @@ export function AppAvailability({ children, testID }: AppAvailabilityProps): Rea
     openLink(learnMoreUrl);
   }, [learnMoreUrl, openLink]);
 
-  if (availability.status === "unavailable" && availability.reason === "geoBlocked") {
-    const copy = UNAVAILABLE_COPY.geoBlocked;
+  if (availability.status !== "unavailable") {
+    return <>{children}</>;
+  }
 
-    return (
-      <AppUnavailable
-        title={t(copy.titleKey)}
-        description={t(copy.descriptionKey)}
-        action={{
+  const copy = UNAVAILABLE_COPY[availability.reason];
+  const action =
+    availability.reason === "geoBlocked"
+      ? {
           label: t("geoBlocking.learnMore"),
           onPress: openLearnMore,
           testID: "app-availability-learn-more",
-        }}
-        testID={testID}
-      />
-    );
-  }
+        }
+      : undefined;
 
-  return <>{children}</>;
+  return (
+    <AppUnavailable
+      title={t(copy.titleKey)}
+      description={t(copy.descriptionKey)}
+      action={action}
+      testID={testID}
+    />
+  );
 }

@@ -4,5 +4,4 @@ export type AppAvailabilityStatus =
   | {
       status: "unavailable";
       reason: "geoBlocked" | "serviceUnavailable";
-      retry?: () => void;
     };
