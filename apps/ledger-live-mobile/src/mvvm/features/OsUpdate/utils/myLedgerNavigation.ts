@@ -3,7 +3,7 @@ import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 
 type MyLedgerNavigationParams = {
-  device: Device;
+  device?: Device;
   shouldDisplayMyWallet: boolean;
   /** Ask My Ledger to open the OS update "What's new" once the updates are resolved. */
   firmwareUpdate?: boolean;
@@ -19,7 +19,10 @@ export function navigateToMyLedger(
 ) {
   const params = { device, firmwareUpdate };
   if (shouldDisplayMyWallet) {
-    navigation.navigate(NavigatorName.MyWallet, { screen: ScreenName.MyWallet, params });
+    navigation.navigate(NavigatorName.MyWallet, {
+      screen: ScreenName.MyWallet,
+      params,
+    });
   } else {
     navigation.navigate(NavigatorName.MyLedger, {
       screen: ScreenName.MyLedgerChooseDevice,
@@ -28,7 +31,10 @@ export function navigateToMyLedger(
   }
 }
 
-/** Same as `navigateToMyLedger`, but drops the current stack (e.g. when leaving the OS update). */
+/**
+ * Same as `navigateToMyLedger`, but drops the current stack (e.g. when leaving the OS update).
+ * Without a `device`, My Ledger opens with no device selected.
+ */
 export function resetToMyLedger(
   navigation: BaseNavigation,
   { device, shouldDisplayMyWallet }: MyLedgerNavigationParams,
@@ -40,7 +46,9 @@ export function resetToMyLedger(
         { name: NavigatorName.Main },
         {
           name: NavigatorName.MyWallet,
-          state: { routes: [{ name: ScreenName.MyWallet, params: { device } }] },
+          state: {
+            routes: [{ name: ScreenName.MyWallet, params: device ? { device } : {} }],
+          },
         },
       ],
     });
@@ -53,7 +61,14 @@ export function resetToMyLedger(
       { name: NavigatorName.Main },
       {
         name: NavigatorName.MyLedger,
-        state: { routes: [{ name: ScreenName.MyLedgerChooseDevice, params: { device } }] },
+        state: {
+          routes: [
+            {
+              name: ScreenName.MyLedgerChooseDevice,
+              params: device ? { device } : {},
+            },
+          ],
+        },
       },
     ],
   });
