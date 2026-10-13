@@ -31,7 +31,6 @@ type MarketActionsProps = {
   page?: Page;
 };
 
-// Feature flags gate networks, so a token (`arbitrum/erc20/…`) follows its parent network.
 const getNetworkId = (ledgerId: string) => ledgerId.split("/")[0];
 
 export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
