@@ -1,8 +1,7 @@
 import React from "react";
-import { delay } from "msw";
-import { server, http } from "tests/server";
+import { server } from "tests/server";
 import { waitFor, render, cleanup } from "tests/testSetup";
-import { MARKET_ENDPOINT, mockMarket } from "tests/utils/assetDetailMocks";
+import { mockMarket } from "tests/utils/assetDetailMocks";
 import createStore from "~/state-manager/configureStore";
 import { LiftSplashOnAppAvailability } from "../index";
 
@@ -45,11 +44,7 @@ describe("LiftSplashOnAppAvailability", () => {
   });
 
   it("should not call appLoaded while the availability check is pending", async () => {
-    server.use(
-      http.get(MARKET_ENDPOINT, async () => {
-        await delay("infinite");
-      }),
-    );
+    mockMarket.hang();
     const store = createStore({});
     render(<LiftSplashOnAppAvailability />, { store });
 
