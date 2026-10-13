@@ -372,7 +372,14 @@ export async function fetchA4Operations(
     a4AccountId,
     address,
     chain,
-    () => paginateOperations(fetchAdaptedPage, maxOperations, op => op.blockHeight ?? undefined),
+    () =>
+      paginateOperations(
+        fetchAdaptedPage,
+        maxOperations,
+        op => op.blockHeight ?? undefined,
+        // The adapter stores epoch 0 for a row with no block time: not a time to group on.
+        op => op.date.getTime() || undefined,
+      ),
     maxDcRoamRetries,
   );
   return { operations: items, bounded };

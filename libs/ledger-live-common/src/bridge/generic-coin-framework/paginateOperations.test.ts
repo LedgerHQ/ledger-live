@@ -6,6 +6,10 @@ jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 const logMock = jest.mocked(log);
 
 const op = (hash: string) => ({ tx: { hash } }) as unknown as Operation;
+const timed = (hash: string, height: number, time: number) =>
+  ({ tx: { hash, block: { height }, date: new Date(time) } }) as unknown as Operation;
+const hashes = (items: Operation[]) => items.map(i => i.tx.hash);
+const timeOf = (item: Operation) => item.tx.date?.getTime();
 
 const pages =
   (...responses: Page<Operation>[]) =>
@@ -54,6 +58,36 @@ describe("paginateOperations", () => {
     );
 
     expect(heights(items)).toEqual([9, 9, 9]);
+  });
+
+  describe("a module that sorts by date rather than height", () => {
+    it("drops every block sharing the last row's time, not just the last row's block", async () => {
+      // Blocks 100 and 101 share a timestamp, and a date sort keeps their rows in input order. The
+      // last row is in 101, but the rest of block 100 can sit on the page never fetched as well.
+      const { items } = await paginateOperations(
+        pages({
+          items: [timed("x", 102, 6), timed("n", 100, 5), timed("t", 101, 5)],
+          next: "c1",
+        }),
+        3,
+        blockOf,
+        timeOf,
+      );
+
+      expect(hashes(items)).toEqual(["x"]);
+    });
+
+    it("cuts at the last row's block too when times do not group it", async () => {
+      // Sorted by height with distinct times: the last row's block is wider than its time run.
+      const { items } = await paginateOperations(
+        pages({ items: [timed("a", 9, 9), timed("b", 8, 8), timed("c", 8, 7)], next: "c1" }),
+        3,
+        blockOf,
+        timeOf,
+      );
+
+      expect(hashes(items)).toEqual(["a"]);
+    });
   });
 
   it("walks past the bound rather than retaining nothing when the bound is smaller than a block", async () => {

@@ -826,7 +826,7 @@ describe("fetchA4Operations", () => {
           },
           {
             ...makeA4Op("0xtx-b"),
-            block: { hash: "0xblock", height: 99, time: "2024-01-01T00:00:00Z" },
+            block: { hash: "0xblock-99", height: 99, time: "2023-12-31T23:59:48Z" },
             assets: {
               "token.erc20.0xa": "10",
               "token.erc20.0xb": "20",

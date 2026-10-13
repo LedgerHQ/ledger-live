@@ -895,6 +895,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
             .then(page => ({ ...page, items: page.items.filter(isUsable) })),
         maxOperations,
         op => op.tx.block?.height,
+        op => op.tx.date?.getTime(),
       );
       // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation
       // ends up in the shape a restored one has — the family's `fromOperationExtraRaw` is the

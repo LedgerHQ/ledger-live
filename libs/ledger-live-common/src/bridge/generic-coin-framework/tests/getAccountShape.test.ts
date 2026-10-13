@@ -3977,6 +3977,27 @@ describe("genericGetAccountShape", () => {
       expect(result.operationsCount).toBe(9);
     });
 
+    test("a bounded stop drops every block sharing the last row's time, for a module that sorts by date", async () => {
+      resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 3 });
+      const timedOp = (hash: string, height: number, time: number) => ({
+        ...coreOp(hash, height),
+        tx: { failed: false, block: { height }, date: new Date(time) },
+      });
+      // Blocks 100 and 101 share a timestamp: the rest of block 100 can be on the next page too.
+      listOperationsMock.mockResolvedValueOnce({
+        items: [timedOp("h102", 102, 6000), timedOp("h100", 100, 5000), timedOp("h101", 101, 5000)],
+        next: "c1",
+      });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.operations?.map(op => op.blockHeight)).toEqual([102]);
+    });
+
     test("stability across syncs: the stored count never exceeds the bound, no gap reappears, and the resume position derives from the newest retained operation", async () => {
       resolveOperationHistoryBoundMock.mockReturnValue({ maxOperations: 3 });
 

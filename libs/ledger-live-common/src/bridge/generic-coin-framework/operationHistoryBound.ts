@@ -67,17 +67,16 @@ const MaxOperationsSchema = z
  *
  * 200 is the smallest ceiling among the modules currently routed here, so it is the only value
  * safe for all of them. It is a floor-of-ceilings, not a measurement, and it is the wrong shape of
- * answer: the right one is for a module to declare what it can serve, which is what rule 5 of the
- * pagination-contract ADR proposes. Until that exists, clamping here keeps a remote value from
- * breaking a family.
+ * answer: the right one is for a module to declare what it can serve. Until that exists, clamping
+ * here keeps a remote value from breaking a family.
  */
 const MAX_PAGE_SIZE = 200;
 
 // Same shape of validation as above, but a page size never degrades to "no limit" -- an absent or
-// hostile value falls back to `DEFAULT_PAGE_SIZE` instead, since sending no limit at all is exactly
-// the legacy exhaustive-fetch behaviour this bound exists to avoid. A value above what every routed
-// module can serve is clamped rather than rejected: the intent ("use large pages") is honourable and
-// worth honouring as far as it safely can be.
+// hostile value falls back to the family's `DEFAULT_PAGE_SIZE_BY_FAMILY` entry instead, since
+// sending no limit at all is exactly the legacy exhaustive-fetch behaviour this bound exists to
+// avoid. A value above what every routed module can serve is clamped rather than rejected: the
+// intent ("use large pages") is honourable and worth honouring as far as it safely can be.
 const PageSizeSchema = z
   .number()
   .int()
@@ -157,16 +156,6 @@ export const operationHistoryConfig: ConfigSchema = {
   },
 };
 
-/**
- * Applied whenever a bound is set (`maxOperations` defined) but no explicit `pageSize` is
- * configured, globally or per currency. Sized from measurements taken against the production EVM
- * explorer (2026-09-10, address 0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe): pages of 500 records
- * reach roughly 117 MB each in the dense region of the history and drew HTTP 503/504 within about
- * 30 requests, while pages of 100 records (roughly 24 MB each) completed a 325-page walk with
- * 325x HTTP 200 and zero errors. 100 is the order of magnitude that stays inside both the
- * peak-memory budget and what the explorer tolerates; an absent or hostile configured value must
- * degrade to this constant, never to something larger.
- */
 /**
  * Shipped page size per coin-framework family, and the list of families we will send a `limit` to
  * at all. A family absent here receives no `limit`, which is exactly today's behaviour for it.

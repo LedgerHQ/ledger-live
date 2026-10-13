@@ -24,6 +24,12 @@ export const PAGE_BUDGET = 1000;
 // yields one operation resets the run: this can never fire on a walk that is making progress.
 export const EMPTY_PAGE_BUDGET = 1000;
 
+export interface PaginateOperationsResult<T> {
+  items: T[];
+  // See the docstring above `paginateOperations`: true only for the bound-triggered stop.
+  bounded: boolean;
+}
+
 /**
  * Walks a module's `listOperations` cursor chain within one sync. End of stream is a *falsy* `next`:
  * several modules send `""` rather than omitting it. Errors are not caught on purpose - we walk
@@ -45,9 +51,10 @@ export const EMPTY_PAGE_BUDGET = 1000;
  * identical to today's behaviour). The bound is a parameter, never read from config here, so this
  * stays a pure function. A page is never trimmed to fit it exactly: rows of one transaction
  * interleave inside a block, so the walk stops after the page that reaches the bound and drops the
- * lowest block fetched -- the only one the page it will never fetch can continue. If that leaves
- * nothing, the bound is smaller than a single block and the bound gives way: the walk goes on until
- * a whole block can be kept, because an empty result is not a short history, it is no watermark.
+ * lowest block fetched, with any block sharing its time -- the only ones the page it will never
+ * fetch can continue. If that leaves nothing, the bound is smaller than a single block and the
+ * bound gives way: the walk goes on until a whole block can be kept, because an empty result is
+ * not a short history, it is no watermark.
  *
  * `maxOperations` is the only stop that *returns* a partial list: it is an intended, contiguous
  * window from the tip, known and accepted by the caller. Every other stop below the falsy-`next`
@@ -72,16 +79,11 @@ export const EMPTY_PAGE_BUDGET = 1000;
  * finite without needing a ceiling on pages at all -- which is why it does not have one, and why
  * `PAGE_BUDGET` applies only when `maxOperations` is unset, the one case with no other net.
  */
-export interface PaginateOperationsResult<T> {
-  items: T[];
-  // See the docstring above `paginateOperations`: true only for the bound-triggered stop.
-  bounded: boolean;
-}
-
 export async function paginateOperations<T>(
   fetchPage: (cursor: string | undefined) => Promise<Page<T>>,
   maxOperations?: number,
   blockOf?: (item: T) => number | undefined,
+  timeOf?: (item: T) => number | undefined,
 ): Promise<PaginateOperationsResult<T>> {
   const items: T[] = [];
   const followed = new Set<string>();
@@ -104,7 +106,7 @@ export async function paginateOperations<T>(
     assertCursorNotCycled(followed, cursor, next, items.length);
 
     if (maxOperations !== undefined && items.length >= maxOperations) {
-      const stopped = tryBoundedStop(items, maxOperations, blockOf, pagesPastBoundRef);
+      const stopped = tryBoundedStop(items, maxOperations, blockOf, timeOf, pagesPastBoundRef);
       if (stopped) return stopped;
     }
 
@@ -152,16 +154,17 @@ function tryBoundedStop<T>(
   items: T[],
   maxOperations: number,
   blockOf: ((item: T) => number | undefined) | undefined,
+  timeOf: ((item: T) => number | undefined) | undefined,
   pagesPastBoundRef: { count: number },
 ): PaginateOperationsResult<T> | undefined {
   // A page boundary can fall inside a block, and `Page<T>` promises nothing about the rows of one
   // transaction staying together -- every operation in a block carries that block's date, so they
-  // interleave. Pages descend by height, so the *lowest block fetched* is the only one that can
-  // continue onto the page this stop will never fetch; everything above it is whole. That block is
-  // dropped: a missing block is a truncation from the tail, contiguous and harmless, while half a
-  // transaction is a hole the next watermark seals. Only a bound-triggered stop needs this -- a
-  // falsy `next` means there was no next page.
-  const kept = blockOf ? dropTrailingBlock(items, blockOf) : items;
+  // interleave. Only the trailing blocks -- the lowest one fetched, and any sharing its time when a
+  // module sorts by date -- can continue onto the page this stop will never fetch; everything above
+  // them is whole. Those are dropped: a missing block is a truncation from the tail, contiguous and
+  // harmless, while half a transaction is a hole the next watermark seals. Only a bound-triggered
+  // stop needs this -- a falsy `next` means there was no next page.
+  const kept = blockOf ? dropTrailingBlock(items, blockOf, timeOf) : items;
 
   if (kept.length > 0 || kept === items) {
     log("generic-coin-framework", "listOperations walk stopped: operation-history bound reached", {
@@ -229,18 +232,31 @@ function assertPageBudgetNotExceeded(
  * cut in half. Rows of other transactions inside that block go with it: the result has to stay a
  * contiguous prefix, and losing them is a truncation from the tail.
  *
+ * With `timeOf`, every row sharing the last row's time goes too. A module that sorts by date
+ * rather than height (`coin-evm` does) can interleave blocks with an equal timestamp, so any of
+ * them can continue on the page never fetched, not only the one the last row belongs to. A
+ * block's rows share its time, so that run is still a suffix of whole blocks.
+ *
  * An item whose block height is unknown is not counted as the boundary -- without a height there
  * is nothing to reason about, so the very list passed in is returned rather than cut arbitrarily,
  * which is how the caller tells "nothing to cut" from "the cut kept nothing". The latter, an empty
  * result, means the lowest block starts at the head: the bound is smaller than one block.
  */
-function dropTrailingBlock<T>(items: T[], blockOf: (item: T) => number | undefined): T[] {
+function dropTrailingBlock<T>(
+  items: T[],
+  blockOf: (item: T) => number | undefined,
+  timeOf: ((item: T) => number | undefined) | undefined,
+): T[] {
   const lastItem = items.at(-1);
   const lastHeight = lastItem === undefined ? undefined : blockOf(lastItem);
-  if (lastHeight === undefined) return items;
+  if (lastItem === undefined || lastHeight === undefined) return items;
+  const lastTime = timeOf?.(lastItem);
 
   return items.slice(
     0,
-    items.findIndex(item => blockOf(item) === lastHeight),
+    items.findIndex(
+      item =>
+        blockOf(item) === lastHeight || (lastTime !== undefined && timeOf?.(item) === lastTime),
+    ),
   );
 }
