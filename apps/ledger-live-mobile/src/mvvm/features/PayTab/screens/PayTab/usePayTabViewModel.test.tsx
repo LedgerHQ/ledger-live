@@ -354,6 +354,20 @@ describe("usePayTabViewModel", () => {
     );
   });
 
+  it("should drop the redirect once the card session is signed in", async () => {
+    renderViewModel(
+      { code: "auth-code", app_id: "LEDGERUS" },
+      {
+        overrideInitialState: state => ({
+          ...state,
+          payCardAuth: { ...state.payCardAuth, status: "signedIn" },
+        }),
+      },
+    );
+
+    await waitFor(() => expect(screen.getByTestId("oauth-callback")).toHaveTextContent("null"));
+  });
+
   it.each([
     ["there are no params", undefined],
     ["the code is missing", {}],
