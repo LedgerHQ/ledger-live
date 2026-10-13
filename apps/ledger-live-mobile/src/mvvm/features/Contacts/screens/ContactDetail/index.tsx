@@ -6,7 +6,7 @@ import { ContactAddressDetailDialogSheet } from "./components/ContactAddressDeta
 import { ContactDetailEditDeleteSheets } from "./components/ContactDetailEditDeleteSheets";
 import { ContactsLedgerSyncActivationDrawer } from "LLM/features/Contacts/components/ContactsLedgerSyncActivationDrawer";
 import { ContactsLedgerSyncIntroductionSheet } from "LLM/features/Contacts/components/ContactsLedgerSyncIntroductionSheet";
-import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import { useContactDetailNavigationViewModel } from "./hooks/useContactDetailNavigationViewModel";
 import { useContactDetailScreenViewModel } from "./useContactDetailScreenViewModel";
 
@@ -40,7 +40,7 @@ export function ContactDetailScreen(): React.JSX.Element | null {
       <ContactsLedgerSyncIntroductionSheet {...viewModel.ledgerSyncIntroduction} />
       <ContactsLedgerSyncActivationDrawer {...viewModel.ledgerSyncActivationDrawer} />
       {viewModel.dieProps === undefined ? null : (
-        <DeviceIntentExecutorLWM sourceFlow="contacts" {...viewModel.dieProps} />
+        <DeviceIntentExecutor sourceFlow="contacts" {...viewModel.dieProps} />
       )}
     </>
   );
