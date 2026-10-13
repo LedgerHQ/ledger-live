@@ -42,8 +42,6 @@ function SwapWebviewContent({
       customHandlers={customHandlers}
       onStateChange={setWebviewState}
       inputs={inputs}
-      // Back is handled by the header; the iOS swipe gesture walks stale webview history.
-      allowsBackForwardNavigationGestures={false}
     />
   );
 }
