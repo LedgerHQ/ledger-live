@@ -10,7 +10,7 @@ type Props = {
   handleClose: () => void;
   openSync: () => void;
   skipSync: () => void;
-  seedConfiguration: React.RefObject<SeedOriginType | undefined>;
+  seedConfiguration?: React.RefObject<SeedOriginType | undefined>;
 };
 
 function SkipLedgerSyncDrawer({
@@ -27,7 +27,7 @@ function SkipLedgerSyncDrawer({
       <TrackScreen
         category="Drawer : Skip Ledger sync confirmation"
         flow="onboarding"
-        seedConfiguration={seedConfiguration.current}
+        seedConfiguration={seedConfiguration?.current}
       />
       <Flex maxHeight={"90%"}>
         <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={22}>

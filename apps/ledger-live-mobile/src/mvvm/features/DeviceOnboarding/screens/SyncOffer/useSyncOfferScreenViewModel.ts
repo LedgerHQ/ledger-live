@@ -1,4 +1,12 @@
+import { useState } from "react";
 import { useTranslation } from "~/context/Locale";
+
+type SkipDrawerProps = Readonly<{
+  isOpen: boolean;
+  onClose: () => void;
+  onSkip: () => void;
+  onActivate: () => void;
+}>;
 
 export type SyncOfferViewProps = Readonly<{
   title: string;
@@ -8,9 +16,10 @@ export type SyncOfferViewProps = Readonly<{
   skipLabel: string;
   closeLabel: string;
   onActivate: () => void;
-  onSkip: () => void;
+  onOpenSkip: () => void;
   onLearnMore: () => void;
   onQuit: () => void;
+  skipDrawer: SkipDrawerProps;
 }>;
 
 export type SyncOfferScreenProps = Readonly<{
@@ -27,6 +36,8 @@ export function useSyncOfferScreenViewModel({
   onQuit,
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
+  const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
+  const closeSkipDrawer = () => setIsSkipDrawerOpen(false);
 
   return {
     title: t("deviceOnboarding.syncOffer.title"),
@@ -36,8 +47,20 @@ export function useSyncOfferScreenViewModel({
     skipLabel: t("deviceOnboarding.syncOffer.skip"),
     closeLabel: t("deviceOnboarding.checks.close"),
     onActivate,
-    onSkip,
+    onOpenSkip: () => setIsSkipDrawerOpen(true),
     onLearnMore,
     onQuit,
+    skipDrawer: {
+      isOpen: isSkipDrawerOpen,
+      onClose: closeSkipDrawer,
+      onSkip: () => {
+        closeSkipDrawer();
+        onSkip();
+      },
+      onActivate: () => {
+        closeSkipDrawer();
+        onActivate();
+      },
+    },
   };
 }
