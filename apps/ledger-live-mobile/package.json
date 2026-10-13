@@ -238,6 +238,7 @@
     "@shared/analytics": "workspace:*",
     "@shared/analytics-react": "workspace:*",
     "@shared/api-services": "workspace:^",
+    "@shared/app-config": "workspace:*",
     "@shared/auth": "workspace:*",
     "@shared/clipboard": "workspace:*",
     "@shared/cloud-sync": "workspace:^",

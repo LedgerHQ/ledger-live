@@ -93,6 +93,7 @@ import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
 import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import { loadAppConfig } from "~/setup";
 
 const rootNode = document.getElementById("react-root");
 
@@ -132,6 +133,7 @@ async function init() {
   });
 
   expectOperatingSystemSupportStatus();
+  let configStorage;
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
     each(spectronData.localStorage, (value, key) => {
@@ -147,10 +149,12 @@ async function init() {
         dateString: require("../../tests/time.js").default,
       });
     }
+    configStorage = { getAll: () => spectronData.appConfig, set() {}, clear() {} };
   }
   const store = createStore({
     dbMiddleware,
     countervalues: appCountervaluesSources,
+    appConfig: loadAppConfig(configStorage),
   });
   const dispatch: AppDispatch = store.dispatch;
 
