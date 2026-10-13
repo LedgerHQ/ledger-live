@@ -2,6 +2,20 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import DeviceOnboardingDebug from "./index";
 
+jest.mock("~/components/QueuedDrawer", () => {
+  const { View } = jest.requireActual("react-native");
+
+  return function QueuedDrawerMock({
+    isRequestingToBeOpened,
+    children,
+  }: {
+    isRequestingToBeOpened?: boolean;
+    children?: React.ReactNode;
+  }) {
+    return isRequestingToBeOpened ? <View>{children}</View> : null;
+  };
+});
+
 const mockGoBack = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
@@ -48,6 +62,19 @@ describe("DeviceOnboardingDebug", () => {
     await user.press(screen.getByRole("button", { name: "Back" }));
 
     expect(mockGoBack).toHaveBeenCalledTimes(1);
+  });
+
+  it("should open the declined error over the checking screen", async () => {
+    const { user } = render(<DeviceOnboardingDebug />);
+
+    await user.press(screen.getByRole("button", { name: "Close" }));
+
+    expect(screen.getByText("Errors")).toBeVisible();
+
+    await user.press(screen.getByRole("button", { name: "declined" }));
+
+    expect(screen.getByText("Check your device")).toBeVisible();
+    expect(screen.getByText("Ledger Genuine Check error")).toBeVisible();
   });
 
   it("should move to the checking screen when the call to action is pressed", async () => {

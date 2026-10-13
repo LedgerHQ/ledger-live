@@ -5,7 +5,11 @@ import { Box, Button, NavBar, NavBarBackButton, Text } from "@ledgerhq/lumen-ui-
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
 import { SyncOfferScreen } from "LLM/features/DeviceOnboarding/screens/SyncOffer";
 import type { SyncOfferScreenProps } from "LLM/features/DeviceOnboarding/screens/SyncOffer/useSyncOfferScreenViewModel";
-import type { ChecksScreenProps, ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
+import type {
+  ChecksScreenProps,
+  ChecksScreenState,
+  GenuineErrorKind,
+} from "LLM/features/DeviceOnboarding/types";
 
 const checkPreviews: readonly ChecksScreenState[] = [
   "synchronizing",
@@ -18,7 +22,15 @@ const checkPreviews: readonly ChecksScreenState[] = [
 
 const syncPreviews = ["offer"] as const;
 
-type Preview = ChecksScreenState | (typeof syncPreviews)[number];
+const errorPreviews: readonly GenuineErrorKind[] = [
+  "declined",
+  "notGenuine",
+  "provider",
+  "network",
+  "unknown",
+];
+
+type Preview = ChecksScreenState | (typeof syncPreviews)[number] | GenuineErrorKind;
 
 type DeviceOnboardingDebugViewProps = Readonly<{
   preview: Preview;
@@ -64,6 +76,12 @@ export function DeviceOnboardingDebugView({
         <PreviewGroup
           title="Ledger Sync"
           options={syncPreviews}
+          selected={preview}
+          onSelect={onSelectPreview}
+        />
+        <PreviewGroup
+          title="Errors"
+          options={errorPreviews}
           selected={preview}
           onSelect={onSelectPreview}
         />

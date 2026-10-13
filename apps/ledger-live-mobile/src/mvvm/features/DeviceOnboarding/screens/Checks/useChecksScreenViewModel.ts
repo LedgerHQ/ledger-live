@@ -1,6 +1,11 @@
+import { getDeviceModel } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "~/context/Locale";
-import type { ChecksScreenProps, ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
+import type {
+  ChecksScreenProps,
+  ChecksScreenState,
+  GenuineErrorKind,
+} from "LLM/features/DeviceOnboarding/types";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 
 type AllowSheetProps = Readonly<{
@@ -13,6 +18,18 @@ type AllowSheetProps = Readonly<{
 type UpdateSheetProps = Readonly<{
   onUpdate: () => void;
   onCancel: () => void;
+  onClose: () => void;
+}>;
+
+type ErrorDrawerProps = Readonly<{
+  kind: Exclude<GenuineErrorKind, "notGenuine">;
+  productName: string;
+  onRetry: () => void;
+  onClose: () => void;
+}>;
+
+type NotGenuineDrawerProps = Readonly<{
+  productName: string;
   onClose: () => void;
 }>;
 
@@ -30,6 +47,8 @@ export type ChecksViewProps = Readonly<{
   closeLabel: string;
   allowSheet?: AllowSheetProps;
   updateSheet?: UpdateSheetProps;
+  errorDrawer?: ErrorDrawerProps;
+  notGenuineDrawer?: NotGenuineDrawerProps;
 }>;
 
 type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow" | "updating">;
@@ -44,7 +63,9 @@ function checksLayout(state: ChecksScreenState): ChecksLayout {
 export function useChecksScreenViewModel({
   device,
   state,
+  error,
   onStart,
+  onRetry,
   onCloseSheet,
   onContinue,
   onQuit,
@@ -53,6 +74,7 @@ export function useChecksScreenViewModel({
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
   const layout = checksLayout(state);
+  const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
   const layouts: Record<ChecksLayout, LayoutProps> = {
     synchronizing: {
@@ -101,6 +123,22 @@ export function useChecksScreenViewModel({
         ? {
             onUpdate: onAcceptUpdate,
             onCancel: onDeclineUpdate,
+            onClose: onCloseSheet,
+          }
+        : undefined,
+    errorDrawer:
+      error && error.kind !== "notGenuine"
+        ? {
+            kind: error.kind,
+            productName,
+            onRetry,
+            onClose: onCloseSheet,
+          }
+        : undefined,
+    notGenuineDrawer:
+      error?.kind === "notGenuine"
+        ? {
+            productName,
             onClose: onCloseSheet,
           }
         : undefined,

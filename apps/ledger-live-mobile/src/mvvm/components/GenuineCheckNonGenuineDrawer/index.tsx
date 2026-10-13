@@ -10,22 +10,11 @@ import { urls } from "~/utils/urls";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 
 export type Props = {
-  /**
-   * State to trigger the opening/closing of the drawer
-   */
   isOpen: boolean;
-
-  /**
-   * Callback when the user wants to close the drawer and press on the close button
-   */
   onClose: () => void;
-
   productName: string;
 };
 
-/**
- * Drawer displayed when the device was found as non genuine.
- */
 const GenuineCheckNonGenuineDrawer: React.FC<Props> = ({ isOpen, onClose, productName }) => {
   const { t } = useTranslation();
   const { locale } = useLocale();

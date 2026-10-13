@@ -1,7 +1,19 @@
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { ChecksScreenProps, ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
+import type {
+  ChecksScreenProps,
+  ChecksScreenState,
+  GenuineErrorKind,
+} from "LLM/features/DeviceOnboarding/types";
+
+const errorPreviews = ["declined", "notGenuine", "provider", "network", "unknown"] as const;
+
+export type DeviceOnboardingPreview = ChecksScreenState | "offer" | GenuineErrorKind;
+
+function isErrorPreview(preview: DeviceOnboardingPreview): preview is GenuineErrorKind {
+  return (errorPreviews as readonly string[]).includes(preview);
+}
 
 const previewDevice = {
   deviceId: "preview",
@@ -12,7 +24,7 @@ const previewDevice = {
 
 export function useDeviceOnboardingDebugViewModel() {
   const navigation = useNavigation();
-  const [preview, setPreview] = useState<ChecksScreenState | "offer">("idle");
+  const [preview, setPreview] = useState<DeviceOnboardingPreview>("idle");
   const [isScreenOpen, setIsScreenOpen] = useState(true);
 
   const closePreview = () => {
@@ -22,8 +34,8 @@ export function useDeviceOnboardingDebugViewModel() {
 
   const screenProps: ChecksScreenProps = {
     device: previewDevice,
-    state: preview === "offer" ? "idle" : preview,
-    error: null,
+    state: preview === "offer" ? "idle" : isErrorPreview(preview) ? "checking" : preview,
+    error: isErrorPreview(preview) ? { kind: preview } : null,
     update: null,
     onStart: () => setPreview("checking"),
     onRetry: () => undefined,
@@ -37,7 +49,7 @@ export function useDeviceOnboardingDebugViewModel() {
   return {
     preview,
     isScreenOpen,
-    onSelectPreview: (next: ChecksScreenState | "offer") => {
+    onSelectPreview: (next: DeviceOnboardingPreview) => {
       setPreview(next);
       setIsScreenOpen(true);
     },
