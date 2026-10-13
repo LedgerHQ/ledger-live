@@ -208,7 +208,7 @@ export default function hederaBridge(currency: CryptoCurrency): BridgeApi {
       getAddresses: derived => getAddressesForPublicKey(currency, derived.publicKey),
       keyControlsAccount,
     },
-    getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
+    getTokenFromAsset: asset => getTokenFromAsset(currency.id, asset),
     getAssetFromToken,
     buildAccountShape,
     computeIntentType,

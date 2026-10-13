@@ -1,9 +1,9 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 export async function getTokenFromAsset(
-  currency: CryptoCurrency,
+  currencyId: string,
   asset: AssetInfo,
 ): Promise<TokenCurrency | undefined> {
   const tokenId =
@@ -13,5 +13,5 @@ export async function getTokenFromAsset(
     return;
   }
 
-  return getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currency.id);
+  return getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currencyId);
 }

@@ -1,4 +1,3 @@
-import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import hederaCoinConfig from "../config";
@@ -95,10 +94,7 @@ describe("toEVMAddress", () => {
 
 describe("getCurrencyToUSDRate", () => {
   it("returns a live, plausible HBAR/USD rate rather than falling back to null", async () => {
-    const currency = findCryptoCurrencyById("hedera");
-    invariant(currency, "hedera currency should be registered");
-
-    const rate = await getCurrencyToUSDRate(currency);
+    const rate = await getCurrencyToUSDRate("hedera");
 
     expect(rate).not.toBeNull();
     expect(BigNumber.isBigNumber(rate)).toBe(true);
