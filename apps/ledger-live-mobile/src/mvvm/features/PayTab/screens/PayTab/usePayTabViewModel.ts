@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
   useNavigation,
   useRoute,
@@ -18,6 +18,7 @@ import {
   buildCashbackPath,
   openHostedCardPathSafely,
   openHostedUrlInSecureBrowser,
+  useIsCardSignedIn,
   type CardAssetPathBuilder,
   type OpenCardHostedPage,
 } from "@features/flow-pay-card-auth";
@@ -108,6 +109,13 @@ export function usePayTabViewModel() {
         : null,
     [params?.code, params?.app_id],
   );
+
+  const isCardSignedIn = useIsCardSignedIn();
+  useEffect(() => {
+    if (isCardSignedIn && params?.code) {
+      navigation.setParams({ code: undefined, app_id: undefined });
+    }
+  }, [isCardSignedIn, navigation, params?.code]);
 
   const refreshCardWallets = useRefreshCardWalletsOnReturn();
 
