@@ -38,7 +38,7 @@ function withOsUpdatesState({
 } = {}) {
   return withFlagOverrides({ ldmkOsUpdates: { enabled: true } }, (state: State): State => ({
     ...state,
-    osUpdate: { osUpdates },
+    osUpdate: { osUpdates, hasBackup: false },
     appstate: { ...state.appstate, hasConnectedDevice },
     settings: {
       ...state.settings,

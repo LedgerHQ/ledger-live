@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { ResolveOsUpdatePathUseCase, type OsUpdate } from "@ledgerhq/live-dmk-shared";
+import {
+  hasAnythingToRestore,
+  ledgerToDmkDeviceIdMap,
+  ResolveOsUpdatePathUseCase,
+  type OsUpdate,
+} from "@ledgerhq/live-dmk-shared";
 import { getActiveConnectedDevice, useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch } from "~/context/hooks";
 import { isOsUpdateSupported } from "../../utils/isOsUpdateSupported";
-import { setOsUpdates } from "../../state/osUpdateSlice";
+import { setHasBackup, setOsUpdates } from "../../state/osUpdateSlice";
+import { deviceBackupStorage } from "../../storage/deviceBackupStorage";
 
 type UseResolveOsUpdatesParams = {
   enabled: boolean;
@@ -32,9 +38,20 @@ async function resolveOsUpdates(
   }
 }
 
+async function hasStoredBackup(modelId: Device["modelId"] | undefined): Promise<boolean> {
+  if (modelId === undefined) return false;
+  try {
+    return hasAnythingToRestore(
+      await deviceBackupStorage.getBackup(ledgerToDmkDeviceIdMap[modelId]),
+    );
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Resolves the OS update path of the connected device once it is ready, and stores it in the
- * `osUpdate` slice. Never fails: an unsupported device or a resolve error stores an empty list.
+ * `osUpdate` slice, along with whether a backup of the device model is waiting to be restored. Never fails: an unsupported device or a resolve error stores an empty list.
  *
  * @returns true while the path is being resolved
  */
@@ -68,12 +85,13 @@ export function useResolveOsUpdates({
       canResolve && wired !== undefined && modelId !== undefined
         ? resolveOsUpdates(dmk, { wired })
         : Promise.resolve([]);
-    const settle = (osUpdates: OsUpdate[]) => {
+    const settle = ([osUpdates, hasBackup]: [OsUpdate[], boolean]) => {
       if (cancelled) return;
       dispatch(setOsUpdates(osUpdates));
+      dispatch(setHasBackup(hasBackup));
       setSettled(true);
     };
-    resolving.then(settle, () => settle([]));
+    Promise.all([resolving, hasStoredBackup(modelId)]).then(settle, () => settle([[], false]));
 
     return () => {
       cancelled = true;
