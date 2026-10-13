@@ -112,7 +112,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
         teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
-        cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+        cliCommands: [liveDataWithRecipientAddressCommand(tx, { useScheme: true })],
         featureFlags: {
           ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
           ...FF_NEW_SEND_FLOW_ENABLED,

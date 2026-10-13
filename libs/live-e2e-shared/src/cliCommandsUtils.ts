@@ -91,7 +91,9 @@ export const liveDataCommand = (
       await runCliLiveData({
         currency: options?.currency ?? account.currency.speculosApp.name,
         index: account.index,
-        ...(options?.useScheme && account.derivationMode ? { scheme: account.derivationMode } : {}),
+        ...(options?.useScheme && account.derivationMode !== undefined
+          ? { scheme: account.derivationMode }
+          : {}),
         add: true,
         appjson: userdataPath,
       });
@@ -324,7 +326,7 @@ export const liveDataWithRecipientAddressCommand = (
       await runCliLiveData({
         currency: tx.accountToDebit.currency.speculosApp.name,
         index: tx.accountToDebit.index,
-        ...(options?.useScheme && tx.accountToDebit.derivationMode
+        ...(options?.useScheme && tx.accountToDebit.derivationMode !== undefined
           ? { scheme: tx.accountToDebit.derivationMode }
           : {}),
         add: true,
