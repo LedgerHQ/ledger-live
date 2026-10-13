@@ -14,7 +14,7 @@ import {
   warnIfTokenApprovalNeeded,
   type SwapIntentSummary,
 } from "../../agent-intent/swap-intent";
-import { fetchAgentSwapQuote } from "../../agent-intent/swap-quote";
+import { fetchAgentSwapQuote, type AgentSwapQuote } from "../../agent-intent/swap-quote";
 import { findEthereumSwapAsset, type SwapAsset } from "../../agent-intent/token-lookup";
 import { parseSenderInput, resolveSenderFromAccount } from "../../agent-intent/sender";
 import {
@@ -42,16 +42,16 @@ async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAs
  * fresh quote, never this amount. */
 const TO_AMOUNT_WARNING_RATIO = 1.05;
 
-/** A warning, not an error: the agent may know better than the quote. */
+/** A warning, not an error: the agent may know better than the quote. Compared with the unrounded
+ * quote, so rounding it to the asset's precision can't trigger it. */
 function warnIfAboveQuote(
   typed: string,
+  { provider, receiveAmount }: AgentSwapQuote,
   quoted: string | null,
-  provider: string,
   to: SwapAsset,
 ): void {
-  if (quoted && new BigNumber(typed).lte(new BigNumber(quoted).times(TO_AMOUNT_WARNING_RATIO))) {
-    return;
-  }
+  const limit = new BigNumber(receiveAmount).times(TO_AMOUNT_WARNING_RATIO);
+  if (limit.isFinite() && new BigNumber(typed).lte(limit)) return;
   const quote = quoted
     ? `more than 5% above the ${provider} quote (${quoted} ${to.ticker})`
     : `above the ${provider} quote, which rounds to nothing in ${to.ticker}`;
@@ -94,7 +94,7 @@ async function expectedReceive(input: {
   const { needsTokenApproval } = quote;
   const quoted = quotedReceiveAmount(quote.receiveAmount, to);
   if (typed) {
-    warnIfAboveQuote(typed, quoted, quote.provider, to);
+    warnIfAboveQuote(typed, quote, quoted, to);
     return { toAmount: typed, provider: quote.provider, quoted: false, needsTokenApproval };
   }
 

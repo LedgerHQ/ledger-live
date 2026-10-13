@@ -343,6 +343,18 @@ describe("agent-intent swap", () => {
       expect(stderr.join("")).not.toContain("--to-amount");
     });
 
+    it("compares with the unrounded quote, not one rounded to the asset's precision", async () => {
+      quoteImpl = async () => ({
+        provider: "velora",
+        receiveAmount: 1000.000000999,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1050.000001" });
+
+      expect(stderr.join("")).not.toContain("--to-amount");
+    });
+
     it("says so when the quote rounds to nothing in the bought asset", async () => {
       quoteImpl = async () => ({
         provider: "lifi",
