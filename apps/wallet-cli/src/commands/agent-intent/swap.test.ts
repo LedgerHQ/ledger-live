@@ -309,6 +309,35 @@ describe("agent-intent swap", () => {
         expect.objectContaining({ toAmount: "1250.50", provider: "velora" }),
       ]);
       expect(jsonResult()).toMatchObject({ toAmount: "1250.50", quoted: false });
+      expect(stderr.join("")).not.toContain("above the");
+    });
+
+    it("warns on stderr, and still submits, when the amount is more than 5% above the quote", async () => {
+      quoteImpl = async () => ({
+        provider: "velora",
+        receiveAmount: 1000,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1050.01", output: "json" });
+
+      expect(submittedIntents).toEqual([expect.objectContaining({ toAmount: "1050.01" })]);
+      expect(jsonResult()).toMatchObject({ toAmount: "1050.01", submitted: true });
+      expect(stderr.join("")).toContain(
+        "--to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC)",
+      );
+    });
+
+    it("doesn't warn at exactly 5% above the quote", async () => {
+      quoteImpl = async () => ({
+        provider: "velora",
+        receiveAmount: 1000,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1050" });
+
+      expect(stderr.join("")).not.toContain("above the");
     });
 
     it("still refuses when no quote can be prepared", async () => {

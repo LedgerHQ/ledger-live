@@ -24,6 +24,8 @@ import {
   warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
 import { createCommandOutput, type CommandOutput } from "../../output";
+import { writeStderr } from "../../shared/ui";
+import { BigNumber } from "bignumber.js";
 
 async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAsset> {
   const asset = await findEthereumSwapAsset(id);
@@ -34,6 +36,25 @@ async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAs
     );
   }
   return asset;
+}
+
+/** How far `--to-amount` may exceed the quote before the review is likely to refuse the swap. */
+const TO_AMOUNT_WARNING_RATIO = 1.05;
+
+/** A warning, not an error: the agent may know better than the quote. */
+function warnIfAboveQuote(
+  typed: string,
+  quoted: string | null,
+  provider: string,
+  to: SwapAsset,
+): void {
+  if (quoted && new BigNumber(typed).lte(new BigNumber(quoted).times(TO_AMOUNT_WARNING_RATIO))) {
+    return;
+  }
+  writeStderr(
+    `⚠ --to-amount ${typed} ${to.ticker} is more than 5% above the ${provider} quote ` +
+      `(${quoted ?? "0"} ${to.ticker}), so the swap will likely fail review.\n`,
+  );
 }
 
 /** The provider and amount the intent signs: the best quote the frontend can prepare, with
@@ -67,11 +88,12 @@ async function expectedReceive(input: {
   });
   spinner?.success(`Quoted by ${quote.provider}`);
   const { needsTokenApproval } = quote;
+  const quoted = quotedReceiveAmount(quote.receiveAmount, to);
   if (typed) {
+    warnIfAboveQuote(typed, quoted, quote.provider, to);
     return { toAmount: typed, provider: quote.provider, quoted: false, needsTokenApproval };
   }
 
-  const quoted = quotedReceiveAmount(quote.receiveAmount, to);
   if (!quoted) {
     throw new Error(
       `The ${quote.provider} quote receives less than the smallest unit of ${to.ticker}. ` +
