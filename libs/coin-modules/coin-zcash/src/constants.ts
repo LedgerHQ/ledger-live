@@ -42,11 +42,6 @@ export const sanitizeEndpointForLog = (url: string): string => {
   }
 };
 
-// Whether a Zcash account is served by this module or by coin-bitcoin's Zcash
-// chain-adapter is decided upstream, by the `zcashShielded` feature flag the host
-// app mirrors into live-common (`bridge/zcashRouting.ts`). This module never has
-// to ask: it is only ever reached when the answer is yes.
-
 // Ironwood (NU6.3) activation, not Orchard/NU5 -- Ledger's shielded balance
 // covers the Ironwood pool only. The earliest block a Ledger-created
 // shielded account can hold a note, and so the default birthday a scan starts from.
