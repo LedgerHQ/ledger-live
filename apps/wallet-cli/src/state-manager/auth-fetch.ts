@@ -5,17 +5,43 @@ import type { FetchFn } from "@ledgerhq/auth";
 // A stalled token fetch must fail fast, so the shared base query can still send the quote.
 const AUTH_REQUEST_TIMEOUT_MS = 10_000;
 let authRequestTimeoutMs = AUTH_REQUEST_TIMEOUT_MS;
-// Deadline of the current token fetch, shared by the Keycloak and LKRP calls.
-let authDeadline: AbortSignal | undefined;
+// Deadline of the current token fetch on the `performance.now()` clock, which system clock changes do
+// not move. Shared by the Keycloak and LKRP calls.
+let authDeadlineAt: number | undefined;
 
 /** @internal Test seam — shortens the auth timeout; `null` restores it. */
 export function _setTestAuthRequestTimeoutMs(ms: number | null): void {
   authRequestTimeoutMs = ms ?? AUTH_REQUEST_TIMEOUT_MS;
 }
 
+function untilAuthDeadline(deadlineAt: number): AbortSignal {
+  return AbortSignal.timeout(Math.max(0, deadlineAt - performance.now()));
+}
+
+type NotPromise<T> = T extends PromiseLike<unknown> ? never : T;
+
+/**
+ * Keeps `load` out of the deadline: reading the auth key can show a keychain dialog, which waits for
+ * the user and blocks the process. The LKRP calls after it get the time that was left. `load` must
+ * block synchronously: the time it takes is measured around the call and added to the deadline.
+ */
+export function excludeFromAuthDeadline<T>(load: () => T & NotPromise<T>): () => T {
+  return () => {
+    const startedAt = performance.now();
+    const loaded = load();
+    if (loaded instanceof Promise) {
+      throw new TypeError("excludeFromAuthDeadline: load must be synchronous");
+    }
+    if (authDeadlineAt !== undefined) authDeadlineAt += performance.now() - startedAt;
+    return loaded;
+  };
+}
+
 // LKRP sends its OIDC calls through live-network's axios, which only times out GETs.
 axios.interceptors.request.use(config => {
-  if (config.url?.includes("/openid/v1/")) config.signal ??= authDeadline;
+  if (config.url?.includes("/openid/v1/") && authDeadlineAt !== undefined) {
+    config.signal ??= untilAuthDeadline(authDeadlineAt);
+  }
   return config;
 });
 
@@ -28,11 +54,11 @@ export function createAuthFetch(): FetchFn {
   const cookieFetch = makeFetchCookie((input: RequestInfo | URL, init?: RequestInit) =>
     globalThis.fetch(input, init),
   );
-  authDeadline = undefined;
+  authDeadlineAt = undefined;
   // Every token fetch starts with this challenge request, so its deadline also bounds the redirect
   // hops and the LKRP calls after it.
   return (input, init) => {
-    authDeadline = AbortSignal.timeout(authRequestTimeoutMs);
-    return cookieFetch(input, { ...init, signal: authDeadline });
+    authDeadlineAt = performance.now() + authRequestTimeoutMs;
+    return cookieFetch(input, { ...init, signal: untilAuthDeadline(authDeadlineAt) });
   };
 }

@@ -7,7 +7,7 @@ import { authApiExtra } from "@shared/auth";
 import { getEnv } from "@shared/env";
 import { loadApiAuthIdentity } from "../key-ring/api-auth-identity";
 import { ledgerClientVersion } from "../shared/client-version";
-import { createAuthFetch } from "./auth-fetch";
+import { createAuthFetch, excludeFromAuthDeadline } from "./auth-fetch";
 
 /**
  * Builds the Redux store behind `getQuotes` and registers its dispatch. Called once per CLI run, so
@@ -41,7 +41,7 @@ export function setupWalletCliStore() {
               authProvider: new AuthSDK(
                 { ...auth, disablePkce: true },
                 {
-                  provider: new LkrpIdentityProvider(loadApiAuthIdentity),
+                  provider: new LkrpIdentityProvider(excludeFromAuthDeadline(loadApiAuthIdentity)),
                   fetch: createAuthFetch(),
                 },
               ),
