@@ -3,6 +3,7 @@ import test from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { runWithAccountBroadcastLock } from "@ledgerhq/live-e2e-shared/broadcastLock";
 import {
   DEFAULT_LOAN,
   ensureRepayTestPrecondition,
@@ -15,6 +16,7 @@ import {
   FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
 } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
+import { BROADCAST_LOCK_FIXTURE_TIMEOUT, broadcastLockFor } from "tests/utils/broadcastLock";
 
 test.describe.configure({ mode: "default" });
 
@@ -22,8 +24,15 @@ const coldStartAccount = Account.ETH_1;
 const openLoanAccount = Account.ETH_4;
 const NANO_APP_CATALOG = resolvePath(__dirname, "../artifacts/appVersion/nano-app-catalog.json");
 
-const BORROW_HOOK_TIMEOUT_MS = 600_000;
+const BORROW_HOOK_TIMEOUT_MS = 600_000 + BROADCAST_LOCK_FIXTURE_TIMEOUT;
 const BORROW_TEST_TIMEOUT_MS = 480_000;
+
+// This file runs in default mode, so Playwright holds the loan lock for the whole file.
+const loanLock = broadcastLockFor({ broadcastAccounts: [openLoanAccount] });
+
+// Hooks run outside the per-test broadcast lock, so the loan setup they broadcast takes it itself.
+const withLoanAccountLocked = (setup: () => Promise<void>) =>
+  runWithAccountBroadcastLock([openLoanAccount], "desktop borrow loan setup", setup);
 
 const coldStartTags = buildTags({ currencyId: coldStartAccount.currency.id });
 
@@ -39,6 +48,7 @@ const borrowOnChainFixture = {
   },
   userdata: "skip-onboarding-with-last-seen-device",
   speculosApp: openLoanAccount.currency.speculosApp,
+  ...loanLock.fixtures,
   featureFlags: {
     ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
     ...FF_BORROW_DESKTOP,
@@ -100,17 +110,17 @@ test.describe("Borrow", () => {
   );
 });
 
-test.describe("Borrow", () => {
+test.describe("Borrow", { lock: loanLock.names }, () => {
   useBorrowOnChain("Open loan flow");
 
   test.beforeAll(async () => {
     test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
-    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
+    await withLoanAccountLocked(() => resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG }));
   });
 
   test.afterAll(async () => {
     test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
-    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
+    await withLoanAccountLocked(() => resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG }));
   });
 
   test(
@@ -163,17 +173,19 @@ test.describe("Borrow", () => {
   );
 });
 
-test.describe("Borrow", () => {
+test.describe("Borrow", { lock: loanLock.names }, () => {
   useBorrowOnChain("Repay flow");
 
   test.beforeAll(async () => {
     test.setTimeout(BORROW_HOOK_TIMEOUT_MS * 2);
-    await ensureRepayTestPrecondition({ nanoAppCatalogPath: NANO_APP_CATALOG });
+    await withLoanAccountLocked(() =>
+      ensureRepayTestPrecondition({ nanoAppCatalogPath: NANO_APP_CATALOG }),
+    );
   });
 
   test.afterAll(async () => {
     test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
-    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
+    await withLoanAccountLocked(() => resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG }));
   });
 
   test(
@@ -223,17 +235,19 @@ test.describe("Borrow", () => {
   );
 });
 
-test.describe("Borrow", () => {
+test.describe("Borrow", { lock: loanLock.names }, () => {
   useBorrowOnChain("Withdraw flow");
 
   test.beforeAll(async () => {
     test.setTimeout(BORROW_HOOK_TIMEOUT_MS * 2);
-    await ensureWithdrawReadyForUi({ nanoAppCatalogPath: NANO_APP_CATALOG });
+    await withLoanAccountLocked(() =>
+      ensureWithdrawReadyForUi({ nanoAppCatalogPath: NANO_APP_CATALOG }),
+    );
   });
 
   test.afterAll(async () => {
     test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
-    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
+    await withLoanAccountLocked(() => resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG }));
   });
 
   test(

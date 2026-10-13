@@ -19,6 +19,8 @@ const POLL_MS = 5_000;
 const TRY_LOCK_STORE_RETRY_MS = 30_000;
 // Long enough for the last transaction to reach the nodes the next holder reads its nonce from.
 const SETTLE_MS = 45_000;
+// Under POLL_MS minus the lock store's 1 s age rounding, so waiters still claim before try-locks.
+const SETTLE_CLAIM_SPREAD_MS = 3_500;
 const R2_KEY_PREFIX = "e2e-broadcast-locks/";
 const HOLDER_PREFIX = `${os.hostname()}:${process.pid}:`;
 const LIVE_HOLDS = Symbol.for("@ledgerhq/live-e2e-shared/broadcastLock/liveHolds");
@@ -68,7 +70,7 @@ export const PAY_CARD: SharedResource = { lockKey: "pay-card" };
 
 export type LockTarget = Account | SharedResource;
 
-const lockKeyOf = (target: LockTarget) =>
+export const lockTargetKey = (target: LockTarget): string =>
   "lockKey" in target ? target.lockKey : accountLockKey(target);
 
 const waitedMsSoFar = (): number => {
@@ -204,6 +206,7 @@ async function acquireKey(
           ? Math.min(TRY_LOCK_STORE_RETRY_MS, acquireTimeoutMs)
           : acquireTimeoutMs,
         giveUpWhenHeld: giveUpIfHeld,
+        settleClaimSpreadMs: SETTLE_CLAIM_SPREAD_MS,
         log: consoleLogger,
         onLost: forget,
       })
@@ -282,7 +285,7 @@ async function lockTargets(
   label: string,
   options: Omit<KeyLockOptions, "deadline">,
 ): Promise<Lease> {
-  const keys = [...new Set(targets.map(lockKeyOf))].sort(byCodeUnit);
+  const keys = [...new Set(targets.map(target => lockTargetKey(target)))].sort(byCodeUnit);
   const startedAt = Date.now();
   const deadline = startedAt + BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS;
   const leases: AbandonableLease[] = [];
@@ -306,7 +309,7 @@ async function lockTargets(
 export function refuseAccountBroadcastLocks(targets: readonly LockTarget[], reason: string): Lease {
   const holds = liveHolds();
   const refusal: LiveHold = { nested: 0, refusedBecause: reason };
-  const keys = [...new Set(targets.map(lockKeyOf))];
+  const keys = [...new Set(targets.map(target => lockTargetKey(target)))];
   for (const key of keys) holds[key] = refusal;
   return {
     release: () => {
