@@ -1,6 +1,5 @@
-import { setCountervaluesState, wipeCountervalues } from "./actions";
 import { initialState } from "./logic";
-import { countervaluesRatesSlice } from "./slice";
+import { countervaluesRatesSlice, setCountervaluesState, wipeCountervalues } from "./slice";
 import type { CounterValuesState } from "./types";
 
 const { reducer } = countervaluesRatesSlice;
@@ -17,6 +16,13 @@ function loadedState(): CounterValuesState {
 describe("countervaluesRatesSlice", () => {
   it("starts from the entity's initial state", () => {
     expect(reducer(undefined, { type: "@@INIT" })).toBe(initialState);
+  });
+
+  it.each([
+    [setCountervaluesState, "countervaluesRates/set"],
+    [wipeCountervalues, "countervaluesRates/wipe"],
+  ])("names action %# %s", (creator, type) => {
+    expect(creator.type).toBe(type);
   });
 
   it("returns the same state for an unrelated action", () => {

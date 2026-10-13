@@ -1,6 +1,6 @@
-import { createSlice, freeze } from "@reduxjs/toolkit";
-import { setCountervaluesState, wipeCountervalues } from "./actions";
+import { createSlice, freeze, type PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./logic";
+import type { CounterValuesState } from "./types";
 
 /**
  * The rates. `@features/platform-market-countervalues` mounts this slice at `countervalues.rates`.
@@ -12,10 +12,13 @@ import { initialState } from "./logic";
 export const countervaluesRatesSlice = createSlice({
   name: "countervaluesRates",
   initialState,
-  reducers: {},
-  extraReducers: builder => {
-    builder
-      .addCase(setCountervaluesState, (_state, { payload }) => freeze(payload))
-      .addCase(wipeCountervalues, () => initialState);
+  reducers: {
+    /** Replaces the stored rates with a freshly loaded or restored state. */
+    set: (_state, { payload }: PayloadAction<CounterValuesState>) => freeze(payload),
+    /** Drops every stored rate. */
+    wipe: () => initialState,
   },
 });
+
+export const { set: setCountervaluesState, wipe: wipeCountervalues } =
+  countervaluesRatesSlice.actions;

@@ -28,10 +28,11 @@ import {
   type CountervaluesStoreState,
 } from "../reducer";
 import {
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-  setCountervaluesStateError,
-  setCountervaluesStatePending,
+  countervaluesLoadFailed,
+  countervaluesLoadRequested,
+  countervaluesLoadStarted,
+  countervaluesLoadSucceeded,
+  countervaluesPollingSet,
   type CountervaluesLoad,
 } from "../slice";
 import { log } from "../../utils/internals/logger";
@@ -182,9 +183,9 @@ export function createPollingControls(
   dispatch: (action: UnknownAction) => unknown,
 ): CountervaluesPollingControls {
   return {
-    poll: () => dispatch(setCountervaluesPollingTriggerLoad(true)),
-    start: () => dispatch(setCountervaluesPollingIsPolling(true)),
-    stop: () => dispatch(setCountervaluesPollingIsPolling(false)),
+    poll: () => dispatch(countervaluesLoadRequested()),
+    start: () => dispatch(countervaluesPollingSet(true)),
+    stop: () => dispatch(countervaluesPollingSet(false)),
   };
 }
 
@@ -266,7 +267,7 @@ export function debounceReload<S>(context: SyncContext<S>, session: Session): vo
   session.debounceTimer = setTimeout(() => {
     session.debounceTimer = undefined;
     tryStep("reload", () => {
-      if (session.status === "open") context.dispatch(setCountervaluesPollingTriggerLoad(true));
+      if (session.status === "open") context.dispatch(countervaluesLoadRequested());
     });
   }, context.config.debounceDelay);
 }
@@ -388,7 +389,7 @@ function openSession<S>(
  */
 function startSession<S>(context: SyncContext<S>, session: Session): void {
   session.lastSupportedSettings = readSupportedSettings(context, session);
-  context.dispatch(setCountervaluesPollingTriggerLoad(true));
+  context.dispatch(countervaluesLoadRequested());
   tryStep("restore", () => {
     restoreSavedState(context, session.savedState, readSettings(context, session));
     // Disk already holds what was just restored: only a load adding to it is worth a save.
@@ -451,8 +452,7 @@ function loadRates<S>(
   settings: CountervaluesSettings,
 ): void {
   const { dispatch } = context;
-  dispatch(setCountervaluesPollingTriggerLoad(false));
-  dispatch(setCountervaluesStatePending(true));
+  dispatch(countervaluesLoadStarted());
   const supportedIds = readSupportedIdsOrDefault(context);
   loadCountervalues(currentState, settings, {
     rates,
@@ -465,11 +465,10 @@ function loadRates<S>(
   }).then(
     next => {
       dispatch(setCountervaluesState(next));
-      dispatch(setCountervaluesStatePending(false));
+      dispatch(countervaluesLoadSucceeded());
     },
     error => {
-      dispatch(setCountervaluesStateError(error));
-      dispatch(setCountervaluesStatePending(false));
+      dispatch(countervaluesLoadFailed(error));
     },
   );
 }
@@ -499,7 +498,7 @@ function syncPollingTimer<S>(context: SyncContext<S>, session: Session): void {
   /** Asks for a load, then schedules the next poll. */
   function pollingLoop() {
     tryStep("poll", () => {
-      context.dispatch(setCountervaluesPollingTriggerLoad(true));
+      context.dispatch(countervaluesLoadRequested());
     });
     session.pollingTimer = setTimeout(pollingLoop, refreshRate);
   }

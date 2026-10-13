@@ -17,10 +17,11 @@ import {
 } from "./countervaluesHooks";
 import { countervaluesInitialState, countervaluesReducer } from "../state/reducer";
 import {
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-  setCountervaluesStateError,
-  setCountervaluesStatePending,
+  countervaluesLoadFailed,
+  countervaluesLoadRequested,
+  countervaluesLoadStarted,
+  countervaluesLoadSucceeded,
+  countervaluesPollingSet,
 } from "../state/slice";
 
 // Real hooks on a real store. Nothing runs the polling loop, so nothing reaches the network.
@@ -89,9 +90,9 @@ describe("countervalues hooks", () => {
     const controls = result.current;
 
     act(() => {
-      store.dispatch(setCountervaluesStatePending(false));
-      store.dispatch(setCountervaluesStatePending(true));
-      store.dispatch(setCountervaluesStateError(new Error("again")));
+      store.dispatch(countervaluesLoadSucceeded());
+      store.dispatch(countervaluesLoadStarted());
+      store.dispatch(countervaluesLoadFailed(new Error("again")));
     });
 
     expect(renders).toBe(1);
@@ -112,7 +113,7 @@ describe("countervalues hooks", () => {
     const initial = result.current;
 
     act(() => {
-      store.dispatch(setCountervaluesPollingTriggerLoad(true));
+      store.dispatch(countervaluesLoadRequested());
       store.dispatch({ type: "UNRELATED" });
     });
     expect(renders).toBe(1);
@@ -121,13 +122,13 @@ describe("countervalues hooks", () => {
     // A load starts: pending stays true and the error clears. Then it fails.
     const nextError = new Error("again");
     act(() => {
-      store.dispatch(setCountervaluesStatePending(true));
+      store.dispatch(countervaluesLoadStarted());
     });
     expect(renders).toBe(2);
     expect(result.current).toEqual({ pending: true, error: null });
 
     act(() => {
-      store.dispatch(setCountervaluesStateError(nextError));
+      store.dispatch(countervaluesLoadFailed(nextError));
     });
     expect(renders).toBe(3);
     expect(result.current).toEqual({ pending: false, error: nextError });
@@ -171,12 +172,11 @@ describe("countervalues hooks", () => {
       result.current.wipe();
     });
 
-    expect(
-      dispatched.filter(setCountervaluesPollingTriggerLoad.match).map(a => [a.payload]),
-    ).toEqual([[true]]);
-    expect(dispatched.filter(setCountervaluesPollingIsPolling.match).map(a => [a.payload])).toEqual(
-      [[true], [false]],
-    );
+    expect(dispatched.filter(countervaluesLoadRequested.match)).toHaveLength(1);
+    expect(dispatched.filter(countervaluesPollingSet.match).map(a => [a.payload])).toEqual([
+      [true],
+      [false],
+    ]);
     expect(dispatched.filter(wipeCountervalues.match)).toHaveLength(1);
   });
 

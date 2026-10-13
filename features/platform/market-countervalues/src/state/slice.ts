@@ -1,4 +1,4 @@
-import { createAction, createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { wipeCountervalues } from "@domain/entity-market-countervalues";
 
 /**
@@ -28,52 +28,63 @@ export const countervaluesSyncInitialState: CountervaluesSyncState = {
   isPolling: true,
 };
 
-// The action types are plain strings because listeners outside the slice match them by value.
-
-export const setCountervaluesPollingIsPolling = createAction<boolean>(
-  "COUNTERVALUES_POLLING_SET_IS_POLLING",
-);
-/** `true` asks for a load; `false` takes the request, as the load starts. */
-export const setCountervaluesPollingTriggerLoad = createAction<boolean>(
-  "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD",
-);
-export const setCountervaluesStateError = createAction<Error>("COUNTERVALUES_STATE_SET_ERROR");
-/** `true` when a load starts, `false` when it lands. */
-export const setCountervaluesStatePending = createAction<boolean>(
-  "COUNTERVALUES_STATE_SET_PENDING",
-);
-
 /**
- * The loop's slice. Each action moves `load` along one of the transition tables below; a wipe
- * and an error end the load like `setCountervaluesStatePending(false)`.
+ * The loop's slice. Each load event moves `load` along one of the transition tables below; a wipe
+ * ends the load like `countervaluesLoadSucceeded`.
+ *
+ * `countervaluesReducer` mounts it at `countervalues.sync`, not at its name, so its `selectors`
+ * are read through the root selectors `reducer.ts` binds.
  */
 export const countervaluesSyncSlice = createSlice({
   name: "countervaluesSync",
   initialState: countervaluesSyncInitialState,
-  reducers: {},
+  reducers: {
+    /** A poll, a reconnect or a settings change asks for a load. */
+    loadRequested(state) {
+      state.load = onRequest[state.load];
+    },
+    /** The middleware takes the request and starts the load. */
+    loadStarted(state) {
+      state.load = onLoadStart[state.load];
+      state.error = null;
+    },
+    /** The load landed, right after its rates. */
+    loadSucceeded(state) {
+      state.load = onLoadEnd[state.load];
+    },
+    /** The load failed with this error. */
+    loadFailed(state, { payload }: PayloadAction<Error>) {
+      state.error = payload;
+      state.load = onLoadEnd[state.load];
+    },
+    /** The polling timer starts (`true`) or stops (`false`). */
+    pollingSet(state, { payload }: PayloadAction<boolean>) {
+      state.isPolling = payload;
+    },
+  },
   extraReducers: builder => {
-    builder
-      .addCase(setCountervaluesPollingIsPolling, (state, { payload }) => {
-        state.isPolling = payload;
-      })
-      .addCase(setCountervaluesPollingTriggerLoad, (state, { payload }) => {
-        state.load = (payload ? onRequest : onRequestTaken)[state.load];
-      })
-      .addCase(setCountervaluesStatePending, (state, { payload }) => {
-        state.load = (payload ? onLoadStart : onLoadEnd)[state.load];
-        // a new load clears the previous error
-        if (payload) state.error = null;
-      })
-      .addCase(setCountervaluesStateError, (state, { payload }) => {
-        state.error = payload;
-        state.load = onLoadEnd[state.load];
-      })
-      .addCase(wipeCountervalues, state => {
-        state.load = onLoadEnd[state.load];
-        state.error = null;
-      });
+    builder.addCase(wipeCountervalues, state => {
+      state.load = onLoadEnd[state.load];
+      state.error = null;
+    });
+  },
+  selectors: {
+    /** Whether a load is in flight, as a boolean so that a request made meanwhile re-renders nothing. */
+    selectPending: state => state.load === "loading" || state.load === "loadingThenRequested",
+    /** The last load's error. */
+    selectError: state => state.error,
+    /** Whether the polling timer runs. */
+    selectIsPolling: state => state.isPolling,
   },
 });
+
+export const {
+  loadRequested: countervaluesLoadRequested,
+  loadStarted: countervaluesLoadStarted,
+  loadSucceeded: countervaluesLoadSucceeded,
+  loadFailed: countervaluesLoadFailed,
+  pollingSet: countervaluesPollingSet,
+} = countervaluesSyncSlice.actions;
 
 /** A load is asked for. */
 const onRequest: LoadTransition = {
@@ -83,20 +94,12 @@ const onRequest: LoadTransition = {
   loadingThenRequested: "loadingThenRequested",
 };
 
-/** The middleware takes the request, right before it starts the load. */
-const onRequestTaken: LoadTransition = {
-  idle: "idle",
-  requested: "idle",
-  loading: "loading",
-  loadingThenRequested: "loading",
-};
-
-/** A load starts. */
+/** The request is taken and the load starts, in one step. */
 const onLoadStart: LoadTransition = {
   idle: "loading",
-  requested: "loadingThenRequested",
+  requested: "loading",
   loading: "loading",
-  loadingThenRequested: "loadingThenRequested",
+  loadingThenRequested: "loading",
 };
 
 /** A load lands, with rates or an error, or the rates are wiped. A request made meanwhile stays. */

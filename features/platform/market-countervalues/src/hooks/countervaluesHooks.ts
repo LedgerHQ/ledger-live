@@ -13,10 +13,7 @@ import {
   countervaluesSyncErrorSelector,
   countervaluesSyncPendingSelector,
 } from "../state/reducer";
-import {
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-} from "../state/slice";
+import { countervaluesLoadRequested, countervaluesPollingSet } from "../state/slice";
 
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
 export type Polling = {
@@ -48,9 +45,9 @@ export function useCountervaluesPolling(): Polling {
   const dispatch = useDispatch();
   return useMemo(
     () => ({
-      poll: () => dispatch(setCountervaluesPollingTriggerLoad(true)),
-      start: () => dispatch(setCountervaluesPollingIsPolling(true)),
-      stop: () => dispatch(setCountervaluesPollingIsPolling(false)),
+      poll: () => dispatch(countervaluesLoadRequested()),
+      start: () => dispatch(countervaluesPollingSet(true)),
+      stop: () => dispatch(countervaluesPollingSet(false)),
       wipe: () => dispatch(wipeCountervalues()),
     }),
     [dispatch],

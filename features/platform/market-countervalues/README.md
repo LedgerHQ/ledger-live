@@ -24,8 +24,8 @@ and the hooks that read it. The rates, their slice and their logic live in
 | `setCountervaluesLogger` | Registers the app logger |
 | `countervaluesReducer`, `CountervaluesStoreState`, `countervaluesInitialState` | What each app mounts at the `countervalues` store key: `{ rates, sync }` |
 | `countervaluesSyncSlice`, `CountervaluesSyncState`, `CountervaluesLoad`, `countervaluesSyncInitialState` | The loop's slice, mounted at `sync` |
-| `setCountervaluesStatePending`, `setCountervaluesStateError`, `setCountervaluesPollingIsPolling`, `setCountervaluesPollingTriggerLoad` | The loop slice's action creators |
-| `countervaluesStateSelector`, `countervaluesSyncPendingSelector`, `countervaluesSyncErrorSelector`, `countervaluesSyncIsPollingSelector` | The selectors, typed on `{ countervalues: CountervaluesStoreState }` |
+| `countervaluesLoadRequested`, `countervaluesLoadStarted`, `countervaluesLoadSucceeded`, `countervaluesLoadFailed`, `countervaluesPollingSet` | The loop slice's events, typed `countervaluesSync/loadRequested` and so on |
+| `countervaluesStateSelector`, `countervaluesSyncPendingSelector`, `countervaluesSyncErrorSelector`, `countervaluesSyncIsPollingSelector` | The selectors, typed on `{ countervalues: CountervaluesStoreState }`. The sync ones are the slice's `selectors`, bound to `countervalues.sync` |
 
 The hooks read the store through `react-redux`, so they need a Redux store holding
 `countervaluesReducer` at the `countervalues` key. The middleware, `useUsdToFiatRate` and `useGetCounterValueIdsPolling` also need
@@ -89,8 +89,10 @@ combineReducers({ countervalues: countervaluesReducer /* , ... */ });
   it as a boolean: a load is in flight.
 - Read them through the selectors and hooks, never through the path: only this package knows where
   the rates are mounted.
-- The action types are plain strings such as `COUNTERVALUES_WIPE`, not `countervalues/wipe`. Other
-  reducers listen to them, so match on the action creators (`builder.addCase(wipeCountervalues, ...)`)
-  rather than on the strings, and never rename one without updating every listener.
+- Each slice declares its own actions, so their types carry the slice name:
+  `countervaluesRates/wipe`, `countervaluesSync/loadStarted`. Match on the action creators
+  (`builder.addCase(wipeCountervalues, ...)`), never on the strings.
+- The slice is mounted at `countervalues.sync`, not at its name, so `countervaluesSyncSlice.selectors`
+  cannot read the store. Use the exported root selectors.
 - Neither slice holds user settings. Each app computes its `CountervaluesSettings` from its own state,
   in the selector it gives the middleware.

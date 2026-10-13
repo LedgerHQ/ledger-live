@@ -8,11 +8,12 @@ import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { setCountervaluesState } from "@domain/entity-market-countervalues";
 import {
+  countervaluesLoadFailed,
+  countervaluesLoadRequested,
+  countervaluesLoadStarted,
+  countervaluesLoadSucceeded,
+  countervaluesPollingSet,
   countervaluesReducer,
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-  setCountervaluesStateError,
-  setCountervaluesStatePending,
 } from "@features/platform-market-countervalues";
 import { useSyncSources, type WalletSyncUserState } from "../useSyncSources";
 import * as context from "../context";
@@ -69,20 +70,20 @@ describe("useSyncSources on a countervalues store", () => {
     expect(result.current).toMatchObject({ isPending: false, cvPending: false });
 
     act(() => {
-      store.dispatch(setCountervaluesStatePending(true));
+      store.dispatch(countervaluesLoadStarted());
     });
     expect(result.current).toMatchObject({ isPending: true, cvPending: true });
     expect(result.current.hasCvOrBridgeError).toBe(false);
 
     act(() => {
-      store.dispatch(setCountervaluesStateError(new Error("countervalues down")));
+      store.dispatch(countervaluesLoadFailed(new Error("countervalues down")));
     });
     expect(result.current).toMatchObject({ isPending: false, cvPending: false });
     expect(result.current.hasCvOrBridgeError).toBe(true);
 
     act(() => {
-      store.dispatch(setCountervaluesStatePending(true));
-      store.dispatch(setCountervaluesStatePending(false));
+      store.dispatch(countervaluesLoadStarted());
+      store.dispatch(countervaluesLoadSucceeded());
     });
     expect(result.current.hasCvOrBridgeError).toBe(false);
   });
@@ -92,15 +93,15 @@ describe("useSyncSources on a countervalues store", () => {
     const mounted = renders();
 
     act(() => {
-      store.dispatch(setCountervaluesPollingTriggerLoad(true));
-      store.dispatch(setCountervaluesPollingIsPolling(false));
+      store.dispatch(countervaluesLoadRequested());
+      store.dispatch(countervaluesPollingSet(false));
       store.dispatch(setCountervaluesState({ data: {}, status: {}, cache: {} }));
       store.dispatch({ type: "UNRELATED" });
     });
     expect(renders()).toBe(mounted);
 
     act(() => {
-      store.dispatch(setCountervaluesStatePending(true));
+      store.dispatch(countervaluesLoadStarted());
     });
     expect(renders()).toBeGreaterThan(mounted);
   });

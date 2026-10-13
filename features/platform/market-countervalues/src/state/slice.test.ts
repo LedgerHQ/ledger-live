@@ -1,12 +1,13 @@
 import type { UnknownAction } from "@reduxjs/toolkit";
 import { setCountervaluesState, wipeCountervalues } from "@domain/entity-market-countervalues";
 import {
+  countervaluesLoadFailed,
+  countervaluesLoadRequested,
+  countervaluesLoadStarted,
+  countervaluesLoadSucceeded,
+  countervaluesPollingSet,
   countervaluesSyncInitialState,
   countervaluesSyncSlice,
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-  setCountervaluesStateError,
-  setCountervaluesStatePending,
   type CountervaluesLoad,
   type CountervaluesSyncState,
 } from "./slice";
@@ -23,32 +24,23 @@ const loads: CountervaluesLoad[] = ["idle", "requested", "loading", "loadingThen
 // Each row: an action, then the next `load` from idle, requested, loading, loadingThenRequested.
 const transitions: [string, () => UnknownAction, CountervaluesLoad[]][] = [
   [
-    "a poll",
-    () => setCountervaluesPollingTriggerLoad(true),
+    "a request",
+    () => countervaluesLoadRequested(),
     ["requested", "requested", "loadingThenRequested", "loadingThenRequested"],
   ],
+  ["a load start", () => countervaluesLoadStarted(), ["loading", "loading", "loading", "loading"]],
   [
-    "the request taken",
-    () => setCountervaluesPollingTriggerLoad(false),
-    ["idle", "idle", "loading", "loading"],
-  ],
-  [
-    "a load start",
-    () => setCountervaluesStatePending(true),
-    ["loading", "loadingThenRequested", "loading", "loadingThenRequested"],
-  ],
-  [
-    "a load end",
-    () => setCountervaluesStatePending(false),
+    "a load success",
+    () => countervaluesLoadSucceeded(),
     ["idle", "requested", "idle", "requested"],
   ],
   [
-    "a load error",
-    () => setCountervaluesStateError(new Error("network")),
+    "a load failure",
+    () => countervaluesLoadFailed(new Error("network")),
     ["idle", "requested", "idle", "requested"],
   ],
   ["a wipe", () => wipeCountervalues(), ["idle", "requested", "idle", "requested"]],
-  ["a polling flag", () => setCountervaluesPollingIsPolling(true), loads],
+  ["a polling flag", () => countervaluesPollingSet(true), loads],
   ["new rates", () => setCountervaluesState({ data: {}, status: {}, cache: {} }), loads],
 ];
 
@@ -70,11 +62,12 @@ describe("countervaluesSyncSlice", () => {
   });
 
   it.each([
-    [setCountervaluesPollingIsPolling, "COUNTERVALUES_POLLING_SET_IS_POLLING"],
-    [setCountervaluesPollingTriggerLoad, "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD"],
-    [setCountervaluesStateError, "COUNTERVALUES_STATE_SET_ERROR"],
-    [setCountervaluesStatePending, "COUNTERVALUES_STATE_SET_PENDING"],
-  ])("keeps the action type string %#: %s", (creator, type) => {
+    [countervaluesLoadRequested, "countervaluesSync/loadRequested"],
+    [countervaluesLoadStarted, "countervaluesSync/loadStarted"],
+    [countervaluesLoadSucceeded, "countervaluesSync/loadSucceeded"],
+    [countervaluesLoadFailed, "countervaluesSync/loadFailed"],
+    [countervaluesPollingSet, "countervaluesSync/pollingSet"],
+  ])("names action %# %s", (creator, type) => {
     expect(creator.type).toBe(type);
   });
 
@@ -86,35 +79,35 @@ describe("countervaluesSyncSlice", () => {
 
     expect(result.load).toBe(next);
     // Nothing else changes, so an unchanged load is the very same object.
-    if (next === load && !setCountervaluesStateError.match(dispatched)) {
+    if (next === load && !countervaluesLoadFailed.match(dispatched)) {
       expect(result).toBe(state);
     }
   });
 
   it("sets the polling flag and leaves the load", () => {
-    const state = reducer(countervaluesSyncInitialState, setCountervaluesPollingIsPolling(false));
+    const state = reducer(countervaluesSyncInitialState, countervaluesPollingSet(false));
 
     expect(state).toEqual({ load: "idle", error: null, isPolling: false });
   });
 
   it("stores the very error given and ends the load", () => {
-    const loading = reducer(countervaluesSyncInitialState, setCountervaluesStatePending(true));
+    const loading = reducer(countervaluesSyncInitialState, countervaluesLoadStarted());
     const error = new Error("network");
-    const state = reducer(loading, setCountervaluesStateError(error));
+    const state = reducer(loading, countervaluesLoadFailed(error));
 
     expect(state.error).toBe(error);
     expect(state.load).toBe("idle");
   });
 
   it("clears the error when a load starts", () => {
-    const state = reducer(errored, setCountervaluesStatePending(true));
+    const state = reducer(errored, countervaluesLoadStarted());
 
     expect(state.load).toBe("loading");
     expect(state.error).toBeNull();
   });
 
-  it("keeps the error when a load ends", () => {
-    const state = reducer(errored, setCountervaluesStatePending(false));
+  it("keeps the error when a load succeeds", () => {
+    const state = reducer(errored, countervaluesLoadSucceeded());
 
     expect(state).toBe(errored);
   });

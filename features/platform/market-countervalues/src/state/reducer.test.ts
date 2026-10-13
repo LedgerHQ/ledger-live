@@ -14,9 +14,9 @@ import {
   type CountervaluesStoreState,
 } from "./reducer";
 import {
-  setCountervaluesPollingIsPolling,
-  setCountervaluesStateError,
-  setCountervaluesStatePending,
+  countervaluesLoadFailed,
+  countervaluesLoadStarted,
+  countervaluesPollingSet,
   type CountervaluesLoad,
 } from "./slice";
 
@@ -52,7 +52,7 @@ describe("countervaluesReducer", () => {
       countervaluesInitialState,
       setCountervaluesState(loadedState()),
     );
-    const state = countervaluesReducer(loaded, setCountervaluesPollingIsPolling(false));
+    const state = countervaluesReducer(loaded, countervaluesPollingSet(false));
 
     expect(state.rates).toBe(loaded.rates);
     expect(state.sync.isPolling).toBe(false);
@@ -63,10 +63,10 @@ describe("countervaluesReducer", () => {
       countervaluesInitialState,
       setCountervaluesState(loadedState()),
     );
-    state = countervaluesReducer(state, setCountervaluesPollingIsPolling(false));
-    state = countervaluesReducer(state, setCountervaluesStatePending(true));
-    state = countervaluesReducer(state, setCountervaluesStateError(new Error("network")));
-    state = countervaluesReducer(state, setCountervaluesStatePending(true));
+    state = countervaluesReducer(state, countervaluesPollingSet(false));
+    state = countervaluesReducer(state, countervaluesLoadStarted());
+    state = countervaluesReducer(state, countervaluesLoadFailed(new Error("network")));
+    state = countervaluesReducer(state, countervaluesLoadStarted());
 
     const wiped = countervaluesReducer(state, wipeCountervalues());
 

@@ -12,7 +12,7 @@ import type { Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { countervaluesReducer } from "../reducer";
-import { setCountervaluesPollingIsPolling, setCountervaluesPollingTriggerLoad } from "../slice";
+import { countervaluesLoadRequested, countervaluesPollingSet } from "../slice";
 import { setCountervaluesLogger } from "../../utils/setCountervaluesLogger";
 import {
   cancelRestart,
@@ -141,9 +141,9 @@ describe("createPollingControls", () => {
     controls.stop();
 
     expect(dispatched).toEqual([
-      setCountervaluesPollingTriggerLoad(true),
-      setCountervaluesPollingIsPolling(true),
-      setCountervaluesPollingIsPolling(false),
+      countervaluesLoadRequested(),
+      countervaluesPollingSet(true),
+      countervaluesPollingSet(false),
     ]);
   });
 });
@@ -230,7 +230,7 @@ describe("debounceReload", () => {
     expect(dispatched).toEqual([]);
 
     jest.advanceTimersByTime(100);
-    expect(dispatched).toEqual([setCountervaluesPollingTriggerLoad(true)]);
+    expect(dispatched).toEqual([countervaluesLoadRequested()]);
   });
 
   it("asks for nothing once the session is closed", () => {
