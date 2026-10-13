@@ -40,6 +40,10 @@ describe("cosmos bridge", () => {
     it("marks staking supported", () => {
       expect(cosmosBridge(cosmos).stakingSupported).toBe(true);
     });
+
+    it("marks the account sequence as synced", () => {
+      expect(cosmosBridge(cosmos).accountSequenceSupported).toBe(true);
+    });
   });
 
   describe("enrichStakingResources", () => {

@@ -13,10 +13,11 @@ exports[`babylon currency bridge scanAccounts babylon seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "03cd9e27aa78eddce3fda5f8050db35196b188d80d10bd04aab15e5669defee8b0",
     "spendableBalance": "1000006",
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1f4ff6d1",
     "used": true,
-    "xpub": "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n",
+    "xpub": "03cd9e27aa78eddce3fda5f8050db35196b188d80d10bd04aab15e5669defee8b0",
   },
   {
     "balance": "0",
@@ -29,10 +30,11 @@ exports[`babylon currency bridge scanAccounts babylon seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "03cd9e27aa78eddce3fda5f8050db35196b188d80d10bd04aab15e5669defee8b0",
     "spendableBalance": "0",
+    "subAccounts": [],
     "swapHistory": [],
-    "syncHash": undefined,
+    "syncHash": "0x1f4ff6d1",
     "used": false,
-    "xpub": "bbn1jy28znlkp4x7gf8cxlj6n2ngkrkxh2yy7t2m9y",
+    "xpub": "02b3c7368432b998240a2806eb08a00becd359867ca9cdc94f3eb4ba29a6eb0d7a",
   },
 ]
 `;
