@@ -4,6 +4,7 @@ import type { WalletAdapter } from "../index";
 import type { AccountDescriptor } from "../models";
 import type { TransactionIntent } from "../intents";
 import type { CommandOutput } from "../../output";
+import { SolanaStakeAmountError } from "./errors";
 import type { SolanaStakeLimits } from "./types";
 import { depositSolana, describeStakeAmountError, withdrawSolana } from "./sol-stake";
 
@@ -112,17 +113,10 @@ function limits(
   };
 }
 
-function namedError(name: string): Error {
-  const err = new Error(name);
-  err.name = name;
-  return err;
-}
+const namedError = <N extends string>(name: N) => Object.assign(new Error(name), { name });
 
-function makeFailingWallet(error: unknown, stakeLimits: () => Promise<SolanaStakeLimits>) {
-  return {
-    prepareSend: () => Promise.reject(error),
-    getSolanaStakeLimits: stakeLimits,
-  } as unknown as WalletAdapter;
+function makeFailingWallet(error: unknown) {
+  return { prepareSend: () => Promise.reject(error) } as unknown as WalletAdapter;
 }
 
 const depositDryRun = (wallet: WalletAdapter, amount: string) =>
@@ -244,34 +238,23 @@ describe("describeStakeAmountError", () => {
 });
 
 describe("depositSolana stake amount errors", () => {
-  it.each(["SolanaStakeAccountAmountTooLow", "NotEnoughBalance"])(
+  it.each(["SolanaStakeAccountAmountTooLow", "NotEnoughBalance"] as const)(
     "restates %s with the stake limits and keeps its name",
     async name => {
       const cause = namedError(name);
-      const wallet = makeFailingWallet(cause, () => Promise.resolve(limits()));
+      const wallet = makeFailingWallet(new SolanaStakeAmountError(cause, limits()));
       await expect(depositDryRun(wallet, "0.01 SOL")).rejects.toMatchObject({
         name,
         cause,
+        limits: limits(),
         message: expect.stringContaining("Requested 0.01 SOL."),
       });
     },
   );
 
-  it("rethrows the original error when the limits lookup fails", async () => {
-    const cause = namedError("SolanaStakeAccountAmountTooLow");
-    const wallet = makeFailingWallet(cause, () => Promise.reject(new Error("rpc down")));
-    await expect(depositDryRun(wallet, "0.01 SOL")).rejects.toBe(cause);
-  });
-
-  it("leaves unrelated errors untouched", async () => {
-    const cause = namedError("SolanaInvalidValidator");
-    let lookedUp = false;
-    const wallet = makeFailingWallet(cause, () => {
-      lookedUp = true;
-      return Promise.resolve(limits());
-    });
-    await expect(depositDryRun(wallet, "1 SOL")).rejects.toBe(cause);
-    expect(lookedUp).toBe(false);
+  it("leaves errors without stake limits untouched", async () => {
+    const cause = namedError("NotEnoughBalance");
+    await expect(depositDryRun(makeFailingWallet(cause), "1 SOL")).rejects.toBe(cause);
   });
 });
 

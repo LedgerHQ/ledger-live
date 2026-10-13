@@ -32,6 +32,8 @@ import type { TransactionIntent } from "../intents";
 import { prepareIntentDryRun, signAndBroadcastIntent } from "../sign-and-broadcast";
 import type { CommandOutput } from "../../output";
 import type { EarnDeviceContext } from "./device-context";
+import { SolanaStakeAmountError } from "./errors";
+import type { StakeAmountErrorName } from "./errors";
 import type {
   EarnDepositResult,
   EarnTransaction,
@@ -132,23 +134,6 @@ function zeroAmount(currencyId: string): string {
   return `0 ${getCryptoCurrencyById(currencyId).ticker}`;
 }
 
-type StakeAmountErrorName = "SolanaStakeAccountAmountTooLow" | "NotEnoughBalance";
-const STAKE_AMOUNT_ERROR_NAMES = new Set<string>([
-  "SolanaStakeAccountAmountTooLow",
-  "NotEnoughBalance",
-] satisfies StakeAmountErrorName[]);
-
-function isStakeAmountError(err: unknown): err is Error & { name: StakeAmountErrorName } {
-  return err instanceof Error && STAKE_AMOUNT_ERROR_NAMES.has(err.name);
-}
-
-class SolanaStakeAmountError extends Error {
-  constructor(name: StakeAmountErrorName, message: string, cause: Error) {
-    super(message, { cause });
-    this.name = name;
-  }
-}
-
 export function describeStakeAmountError(
   errorName: StakeAmountErrorName,
   requested: string,
@@ -193,20 +178,11 @@ export function describeStakeAmountError(
   return `${message} This account cannot stake until it receives about ${fmt(missing)} more.`;
 }
 
-async function explainStakeAmountError(
-  err: unknown,
-  params: { wallet: WalletAdapter; descriptor: AccountDescriptor; amount: string },
-): Promise<unknown> {
-  if (!isStakeAmountError(err)) return err;
-  const { wallet, descriptor, amount } = params;
-  let limits: SolanaStakeLimits;
-  try {
-    limits = await wallet.getSolanaStakeLimits(descriptor);
-  } catch {
-    return err;
-  }
-  const message = describeStakeAmountError(err.name, amount, limits, descriptor.currencyId);
-  return new SolanaStakeAmountError(err.name, message, err);
+/** Restates a bridge stake amount error with the limits it carries; other errors pass through. */
+function explainStakeAmountError(err: unknown, requested: string, currencyId: string): unknown {
+  if (!(err instanceof SolanaStakeAmountError)) return err;
+  const message = describeStakeAmountError(err.name, requested, err.limits, currencyId);
+  return new SolanaStakeAmountError(err.cause, err.limits, message);
 }
 
 /**
@@ -245,7 +221,7 @@ export async function depositSolana(params: DepositSolanaParams): Promise<EarnDe
       out,
     });
   } catch (err) {
-    throw await explainStakeAmountError(err, { wallet, descriptor, amount });
+    throw explainStakeAmountError(err, amount, descriptor.currencyId);
   }
 
   return {
