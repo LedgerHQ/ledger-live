@@ -28,6 +28,7 @@ export function mapRawOperationToApiOperation(op: RawOperation, address: string)
     tx: {
       hash: op.hash,
       fees: BigInt(op.fee),
+      ...(op.feesPayer ? { feesPayer: op.feesPayer } : {}),
       date,
       failed: op.failed,
       block: {

@@ -47,10 +47,69 @@ describe("parseTransaction", () => {
       recipient: VALID_ADDRESS_2,
       amount: "1000000",
       fee: "500",
+      feesPayer: VALID_ADDRESS,
       failed: false,
       id: 42,
     });
     expect(result!.value).toBe(String(BigInt(1000000) + BigInt(500)));
+  });
+
+  // The send and receive cancel, so the fee is the only net effect on-chain.
+  it("names the account as fee payer on a self-transfer", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      total: -500,
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS,
+        transferAmount: "1000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      fee: "500",
+      feesPayer: VALID_ADDRESS,
+    });
+  });
+
+  it("names the sender as fee payer on an incoming transfer", () => {
+    const { cost: _omitted, ...withoutCost } = baseTx;
+    const tx: WalletProxyTransaction = {
+      ...withoutCost,
+      origin: { type: "account", address: VALID_ADDRESS_2 },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: VALID_ADDRESS,
+        transferAmount: "2000000",
+      },
+    };
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      fee: "0",
+      feesPayer: VALID_ADDRESS_2,
+    });
+  });
+
+  it("names no fee payer when the origin carries no address", () => {
+    const tx = {
+      ...baseTx,
+      origin: { type: "account" },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: VALID_ADDRESS,
+        transferAmount: "2000000",
+      },
+    } as WalletProxyTransaction;
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).not.toHaveProperty("feesPayer");
   });
 
   it("should parse an incoming transfer", () => {
@@ -116,6 +175,7 @@ describe("parseTransaction", () => {
       failed: true,
       value: "300",
       fee: "300",
+      feesPayer: VALID_ADDRESS,
       amount: "0",
       recipient: "",
     });
@@ -206,6 +266,7 @@ describe("parseTransaction, PLT", () => {
       recipient: VALID_ADDRESS_2,
       amount: "3000000",
       fee: "595400",
+      feesPayer: VALID_ADDRESS,
       tokenId: "trUSDT",
       decimals: 6,
       failed: false,
@@ -221,6 +282,7 @@ describe("parseTransaction, PLT", () => {
       type: "IN",
       value: "20000000",
       fee: "0",
+      feesPayer: VALID_ADDRESS_2,
       tokenId: "trUSDT",
     });
   });
@@ -269,6 +331,7 @@ describe("parseTransaction, PLT", () => {
       type: "OUT",
       value: "595400",
       fee: "595400",
+      feesPayer: VALID_ADDRESS,
       failed: false,
     });
     expect(parseTransaction(nonTransfer, VALID_ADDRESS)).not.toHaveProperty("tokenId");
