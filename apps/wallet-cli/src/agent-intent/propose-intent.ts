@@ -85,8 +85,7 @@ export function warnIfReviewLinkUnusable({ deeplink, intentId }: SubmittedIntent
   }
 }
 
-/** The service answers with `<frontend>/intents/<id>`; returns that id, or null for any other
- * shape (the intent exists either way). */
+/** The id in the service's `<frontend>/intents/<id>` link; null for any other shape. */
 function intentIdFromDeeplink(deeplink: string): string | null {
   try {
     const match = /\/intents\/([^/]+)\/?$/.exec(new URL(deeplink).pathname);
