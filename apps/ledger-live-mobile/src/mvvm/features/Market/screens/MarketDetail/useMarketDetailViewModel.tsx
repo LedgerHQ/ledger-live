@@ -17,6 +17,7 @@ import { assetsDataApi } from "@domain/api-aggregated-assets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import useEnv from "@features/platform-env";
+import { getSwapCurrencyIds } from "LLM/features/Market/utils/getSwapCurrencyIds";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
@@ -60,12 +61,10 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
 
   const { data: currenciesForSwapAll } = useFetchCurrencyAll();
   const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
-  const swapCurrencyIds = useMemo(() => {
-    const swappable = new Set(currenciesForSwapAll);
-    return currency?.ledgerIds.filter(
-      id => swappable.has(id) && !deactivatedCurrencyIds.has(id.split("/")[0]),
-    );
-  }, [currency?.ledgerIds, currenciesForSwapAll, deactivatedCurrencyIds]);
+  const swapCurrencyIds = useMemo(
+    () => getSwapCurrencyIds(currency?.ledgerIds, currenciesForSwapAll, deactivatedCurrencyIds),
+    [currency?.ledgerIds, currenciesForSwapAll, deactivatedCurrencyIds],
+  );
 
   useEffect(() => {
     if (name) {
