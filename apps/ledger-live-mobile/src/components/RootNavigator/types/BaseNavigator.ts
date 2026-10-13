@@ -409,6 +409,9 @@ export type BaseNavigatorStackParamList = {
     onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
     isBeforeOnboarding?: boolean;
   };
+  [ScreenName.OsUpdate]: {
+    device: Device;
+  };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
   [ScreenName.Portfolio]: undefined;
   [NavigatorName.DeviceSelection]?: Partial<
