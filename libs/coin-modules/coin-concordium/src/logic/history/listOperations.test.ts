@@ -613,6 +613,46 @@ describe("listOperations", () => {
     expect(result.next).toBe("101");
   });
 
+  it("returns a cursor when the proxy caps the requested limit", async () => {
+    // The proxy serves at most 1000 rows and echoes the capped limit, so a full
+    // page is measured against that, not against what was asked for.
+    const txs = Array.from({ length: 1000 }, (_, i) => ({
+      id: 2000 - i,
+      blockTime: Date.now() / 1000,
+      blockHash: "aabb",
+      blockHeight: 1000,
+      transactionHash: `${"cc".repeat(30)}${String(i).padStart(4, "0")}`,
+      cost: 100,
+      origin: { type: "self" as const },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS,
+        transferDestination: VALID_ADDRESS_2,
+        transferAmount: "1000",
+      },
+      total: -1100,
+    }));
+
+    getTransactionsMock.mockResolvedValue({
+      transactions: txs,
+      count: 1000,
+      limit: 1000,
+      order: "descending",
+    });
+
+    const result = await listOperations(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0, limit: 2000 },
+      "concordium_testnet",
+    );
+
+    expect(getTransactionsMock.mock.calls[0][3]).toMatchObject({ limit: 2000 });
+    expect(result.items).toHaveLength(1000);
+    expect(result.next).toBe("1001");
+  });
+
   it("should filter non-transfer transactions", async () => {
     getTransactionsMock.mockResolvedValue({
       transactions: [
