@@ -309,7 +309,7 @@ describe("agent-intent swap", () => {
         expect.objectContaining({ toAmount: "1250.50", provider: "velora" }),
       ]);
       expect(jsonResult()).toMatchObject({ toAmount: "1250.50", quoted: false });
-      expect(stderr.join("")).not.toContain("above the");
+      expect(stderr.join("")).not.toContain("--to-amount");
     });
 
     it("warns on stderr, and still submits, when the amount is more than 5% above the quote", async () => {
@@ -322,9 +322,12 @@ describe("agent-intent swap", () => {
       await runSwap({ "to-amount": "1050.01", output: "json" });
 
       expect(submittedIntents).toEqual([expect.objectContaining({ toAmount: "1050.01" })]);
-      expect(jsonResult()).toMatchObject({ toAmount: "1050.01", submitted: true });
+      // stdout stays the one JSON envelope; the warning is on stderr only.
+      const lines = stdout.join("").trim().split("\n");
+      expect(lines).toHaveLength(1);
+      expect(JSON.parse(lines[0]!)).toMatchObject({ toAmount: "1050.01", submitted: true });
       expect(stderr.join("")).toContain(
-        "--to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC)",
+        "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the reviewer will see the lower, refreshed quote.\n",
       );
     });
 
@@ -337,7 +340,37 @@ describe("agent-intent swap", () => {
 
       await runSwap({ "to-amount": "1050" });
 
-      expect(stderr.join("")).not.toContain("above the");
+      expect(stderr.join("")).not.toContain("--to-amount");
+    });
+
+    it("says so when the quote rounds to nothing in the bought asset", async () => {
+      quoteImpl = async () => ({
+        provider: "lifi",
+        receiveAmount: 0.0000001,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1" });
+
+      expect(stderr.join("")).toContain(
+        "⚠ --to-amount 1 USDC is above the lifi quote, which rounds to nothing in USDC; the " +
+          "reviewer will see the lower, refreshed quote.\n",
+      );
+    });
+
+    it("warns under --dry-run too", async () => {
+      quoteImpl = async () => ({
+        provider: "velora",
+        receiveAmount: 1000,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1050.01", "dry-run": true });
+
+      expect(stderr.join("")).toContain(
+        "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the reviewer will see the lower, refreshed quote.\n",
+      );
+      expect(submittedIntents).toEqual([]);
     });
 
     it("still refuses when no quote can be prepared", async () => {

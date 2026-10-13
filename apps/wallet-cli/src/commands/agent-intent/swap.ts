@@ -38,7 +38,8 @@ async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAs
   return asset;
 }
 
-/** How far `--to-amount` may exceed the quote before the review is likely to refuse the swap. */
+/** How far `--to-amount` may exceed the quote before it's worth a warning: the review shows a
+ * fresh quote, never this amount. */
 const TO_AMOUNT_WARNING_RATIO = 1.05;
 
 /** A warning, not an error: the agent may know better than the quote. */
@@ -51,9 +52,12 @@ function warnIfAboveQuote(
   if (quoted && new BigNumber(typed).lte(new BigNumber(quoted).times(TO_AMOUNT_WARNING_RATIO))) {
     return;
   }
+  const quote = quoted
+    ? `more than 5% above the ${provider} quote (${quoted} ${to.ticker})`
+    : `above the ${provider} quote, which rounds to nothing in ${to.ticker}`;
   writeStderr(
-    `⚠ --to-amount ${typed} ${to.ticker} is more than 5% above the ${provider} quote ` +
-      `(${quoted ?? "0"} ${to.ticker}), so the swap will likely fail review.\n`,
+    `⚠ --to-amount ${typed} ${to.ticker} is ${quote}; the reviewer will see the lower, ` +
+      "refreshed quote.\n",
   );
 }
 
