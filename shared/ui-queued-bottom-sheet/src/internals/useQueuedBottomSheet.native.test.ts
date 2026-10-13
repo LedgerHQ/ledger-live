@@ -962,6 +962,32 @@ describe("useQueuedBottomSheet", () => {
       expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
     });
 
+    it("serves the held request through the fallback when onDismiss never arrives", () => {
+      jest.useFakeTimers();
+      try {
+        const { result, signalOpen } = renderReopenableHook();
+
+        act(() => {
+          result.current.hook.handleHeaderClosePressed();
+        });
+        act(() => {
+          result.current.setIsOpen(true);
+        });
+        expect(result.current.hook.isAwaitingNextPresentation).toBe(true);
+
+        act(() => {
+          jest.advanceTimersByTime(1000);
+        });
+        expect(result.current.hook.isAwaitingNextPresentation).toBe(false);
+        expect(mockPresent).toHaveBeenCalledTimes(1);
+
+        signalOpen();
+        expect(mockPresent).toHaveBeenCalledTimes(2);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
     it.each([
       ["a pan-down close", (hook: HookResult) => hook.handleAnimate(0, -1)],
       ["a queue close", (_hook: HookResult, signalClose: () => void) => signalClose()],
