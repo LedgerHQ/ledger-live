@@ -8,7 +8,8 @@ export type ChecksScreenState =
   | "awaitingAllow"
   | "checking"
   | "updating"
-  | "succeeded";
+  | "succeeded"
+  | "error";
 
 export type ChecksScreenProps = {
   device: Device;

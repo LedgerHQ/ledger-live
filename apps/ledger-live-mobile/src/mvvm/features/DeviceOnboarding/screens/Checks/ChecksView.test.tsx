@@ -67,6 +67,12 @@ function renderChecks(state: ChecksScreenState) {
 }
 
 describe("ChecksView", () => {
+  it("should not render the error state until its view is implemented", () => {
+    renderChecks("error");
+
+    expect(screen.queryByTestId(checksTestIds.screen)).toBeNull();
+  });
+
   it("should only let the user leave while the device is synchronizing", async () => {
     const { user, onQuit, onStart, onContinue } = renderChecks("synchronizing");
 

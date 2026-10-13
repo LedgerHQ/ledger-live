@@ -5,5 +5,7 @@ import { useChecksScreenViewModel } from "./useChecksScreenViewModel";
 
 export function ChecksScreen(props: ChecksScreenProps) {
   const viewModel = useChecksScreenViewModel(props);
+  if (!viewModel) return null;
+
   return <ChecksView {...viewModel} />;
 }

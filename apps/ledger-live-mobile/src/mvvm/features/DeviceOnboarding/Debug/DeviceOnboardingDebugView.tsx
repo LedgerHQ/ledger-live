@@ -1,5 +1,6 @@
 import React from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Box, Button, NavBar, NavBarBackButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
 import { SyncOfferScreen } from "LLM/features/DeviceOnboarding/screens/SyncOffer";

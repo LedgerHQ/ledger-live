@@ -127,6 +127,7 @@ export function ChecksView({
           enablePanDownToClose={false}
           testID={checksTestIds.allowSheet}
           enableDynamicSizing
+          contentHasBottomSpace
         >
           <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
             <BottomSheetHeader />
@@ -149,6 +150,7 @@ export function ChecksView({
           enablePanDownToClose={false}
           testID={checksTestIds.updateSheet}
           enableDynamicSizing
+          contentHasBottomSpace
         >
           <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
             <BottomSheetHeader />

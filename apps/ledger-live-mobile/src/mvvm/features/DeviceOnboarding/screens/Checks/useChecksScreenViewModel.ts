@@ -32,11 +32,11 @@ export type ChecksViewProps = Readonly<{
   updateSheet?: UpdateSheetProps;
 }>;
 
-type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow" | "updating">;
+type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow" | "updating" | "error">;
 
 type LayoutProps = Omit<ChecksViewProps, "onQuit" | "closeLabel" | "allowSheet" | "updateSheet">;
 
-function checksLayout(state: ChecksScreenState): ChecksLayout {
+function checksLayout(state: Exclude<ChecksScreenState, "error">): ChecksLayout {
   if (state === "awaitingAllow" || state === "updating") return "checking";
   return state;
 }
@@ -50,8 +50,10 @@ export function useChecksScreenViewModel({
   onQuit,
   onAcceptUpdate,
   onDeclineUpdate,
-}: ChecksScreenProps): ChecksViewProps {
+}: ChecksScreenProps): ChecksViewProps | null {
   const { t } = useTranslation();
+  if (state === "error") return null;
+
   const layout = checksLayout(state);
 
   const layouts: Record<ChecksLayout, LayoutProps> = {
