@@ -1,5 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { u8aConcat } from "@polkadot/util";
 import BigNumber from "bignumber.js";
@@ -32,8 +30,8 @@ jest.mock("../network", () => ({
     callData: string,
     includedInExtrinsic: string,
     includedInSignedData: string,
-    currency?: CryptoCurrency,
-  ) => getMetadataMock(callData, includedInExtrinsic, includedInSignedData, currency),
+    currencyId?: string,
+  ) => getMetadataMock(callData, includedInExtrinsic, includedInSignedData, currencyId),
 }));
 
 type ShortenMetadataResult = { metadataBlob: string; metadataHash: string };
@@ -70,7 +68,7 @@ describe("signOperation", () => {
     getMetadataMock.mockClear();
   });
 
-  it("should call getMetadata with callData, includedInExtrinsic, includedInSignedData and currency", done => {
+  it("should call getMetadata with callData, includedInExtrinsic, includedInSignedData and currency id", done => {
     // GIVEN
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction({ fees: new BigNumber(0) });
@@ -80,7 +78,7 @@ describe("signOperation", () => {
       complete: () => {
         try {
           expect(getMetadataMock).toHaveBeenCalledTimes(2);
-          const [callData, includedInExtrinsic, includedInSignedData, currency] =
+          const [callData, includedInExtrinsic, includedInSignedData, currencyId] =
             getMetadataMock.mock.lastCall!;
 
           // callData should be a 0x-prefixed hex string (the encoded method call)
@@ -101,8 +99,8 @@ describe("signOperation", () => {
           // Should contain the block hash from fixture params
           expect(includedInSignedData).toContain(fixtureTransactionParams.blockHash.slice(2));
 
-          // currency should be the account currency
-          expect(currency).toEqual(getCryptoCurrencyById(account.currency.id));
+          // currency id should be the account currency id
+          expect(currencyId).toEqual(account.currency.id);
 
           done();
         } catch (err) {
@@ -169,8 +167,7 @@ describe("signOperation", () => {
 
         if (eventIdx === expectedEvent.length) {
           expect(getMetadataMock).toHaveBeenCalledTimes(2);
-          const currency = getCryptoCurrencyById(account.currency.id);
-          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(account.currency.id);
           done();
         }
       } catch (err) {
@@ -239,8 +236,7 @@ describe("signOperation", () => {
         (e: SignOperationEvent) => {
           if (e.type === "device-signature-granted") {
             expect(getMetadataMock).toHaveBeenCalledTimes(2);
-            const currency = getCryptoCurrencyById(account.currency.id);
-            expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
+            expect(getMetadataMock.mock.lastCall[3]).toEqual(account.currency.id);
           } else if (e.type === "signed") {
             const { operation } = e.signedOperation;
             expect(operation.recipients[0]).toEqual(transaction.recipient);
@@ -269,8 +265,7 @@ describe("signOperation", () => {
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
           expect(getMetadataMock).toHaveBeenCalledTimes(2);
-          const currency = getCryptoCurrencyById(account.currency.id);
-          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(account.currency.id);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
@@ -298,8 +293,7 @@ describe("signOperation", () => {
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
           expect(getMetadataMock).toHaveBeenCalledTimes(2);
-          const currency = getCryptoCurrencyById(account.currency.id);
-          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(account.currency.id);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
@@ -331,8 +325,7 @@ describe("signOperation", () => {
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
           expect(getMetadataMock).toHaveBeenCalledTimes(2);
-          const currency = getCryptoCurrencyById(account.currency.id);
-          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(account.currency.id);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
@@ -364,8 +357,7 @@ describe("signOperation", () => {
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
           expect(getMetadataMock).toHaveBeenCalledTimes(2);
-          const currency = getCryptoCurrencyById(account.currency.id);
-          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(account.currency.id);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({
@@ -399,8 +391,7 @@ describe("signOperation", () => {
       (e: SignOperationEvent) => {
         if (e.type === "device-signature-granted") {
           expect(getMetadataMock).toHaveBeenCalledTimes(2);
-          const currency = getCryptoCurrencyById(account.currency.id);
-          expect(getMetadataMock.mock.lastCall[3]).toEqual(currency);
+          expect(getMetadataMock.mock.lastCall[3]).toEqual(account.currency.id);
         } else if (e.type === "signed") {
           const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
           expect(extra).toEqual({

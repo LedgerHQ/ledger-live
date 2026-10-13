@@ -1,5 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { createMockPolkadotContext } from "../test/config.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
@@ -12,14 +10,11 @@ const stubVerifyValidatorAddresses = jest.fn();
 
 jest.mock("../network", () => {
   return {
-    isNewAccount: (_config: unknown, addr: string, currency: CryptoCurrency | undefined) =>
-      stubIsNewAccount(addr, currency),
+    isNewAccount: (_config: unknown, addr: string, currencyId: string | undefined) =>
+      stubIsNewAccount(addr, currencyId),
     isElectionClosed: () => stubIsElectionClosed(),
-    isControllerAddress: (
-      _config: unknown,
-      address: string,
-      currency: CryptoCurrency | undefined,
-    ) => stubIsControllerAddress(address, currency),
+    isControllerAddress: (_config: unknown, address: string, currencyId: string | undefined) =>
+      stubIsControllerAddress(address, currencyId),
     verifyValidatorAddresses: () => stubVerifyValidatorAddresses(),
   };
 });
@@ -46,8 +41,7 @@ describe("getTransactionStatus", () => {
 
       expect(stubIsNewAccount).toHaveBeenCalledTimes(1);
       expect(stubIsNewAccount.mock.lastCall[0]).toEqual(transaction.recipient);
-      const currency = getCryptoCurrencyById(account.currency.id);
-      expect(stubIsNewAccount.mock.lastCall[1]).toEqual(currency);
+      expect(stubIsNewAccount.mock.lastCall[1]).toEqual(account.currency.id);
 
       expect(stubIsElectionClosed).not.toHaveBeenCalled();
       expect(stubIsControllerAddress).not.toHaveBeenCalled();

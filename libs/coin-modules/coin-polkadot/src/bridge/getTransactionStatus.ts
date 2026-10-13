@@ -1,5 +1,4 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -9,7 +8,6 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   FeeNotLoaded,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { isValidAddress } from "../common";
@@ -65,7 +63,6 @@ const getSendTransactionStatus = async (
     });
   }
 
-  const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
   const config = await context.config(account.currency.id);
 
   const estimatedFees = transaction.fees || new BigNumber(0);
@@ -100,7 +97,7 @@ const getSendTransactionStatus = async (
   if (
     !errors.recipient &&
     amount.lt(EXISTENTIAL_DEPOSIT) &&
-    (await polkadotAPI.isNewAccount(config, transaction.recipient, currency))
+    (await polkadotAPI.isNewAccount(config, transaction.recipient, account.currency.id))
   ) {
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
       minimalAmount: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
@@ -135,7 +132,6 @@ export const buildGetTransactionStatus =
     const warnings: {
       amount?: Error;
     } = {};
-    const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
     const config = await context.config(account.currency.id);
 
     if (transaction.mode === "send") {
@@ -146,9 +142,9 @@ export const buildGetTransactionStatus =
       // Fall back to a safe default (election closed) when staking info is
       // unavailable (e.g. on networks without staking such as AssetHub).
       polkadotAPI
-        .getStakingProgress(context.logger, config, currency)
+        .getStakingProgress(context.logger, config, account.currency.id)
         .catch(() => DEFAULT_STAKING_PROGRESS),
-      polkadotAPI.getMinimumBondBalance(config, currency).catch(() => new BigNumber(0)),
+      polkadotAPI.getMinimumBondBalance(config, account.currency.id).catch(() => new BigNumber(0)),
     ]);
 
     if (!staking.electionClosed) {
@@ -186,7 +182,11 @@ export const buildGetTransactionStatus =
               currencyName: account.currency.name,
             });
           } else if (
-            await polkadotAPI.isControllerAddress(config, transaction.recipient, currency)
+            await polkadotAPI.isControllerAddress(
+              config,
+              transaction.recipient,
+              account.currency.id,
+            )
           ) {
             errors.recipient = new PolkadotUnauthorizedOperation(
               "Recipient is already a controller",
@@ -260,7 +260,7 @@ export const buildGetTransactionStatus =
           const notValidators = await polkadotAPI.verifyValidatorAddresses(
             config,
             transaction.validators || [],
-            currency,
+            account.currency.id,
           );
 
           if (notValidators.length) {
