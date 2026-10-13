@@ -31,6 +31,9 @@ type MarketActionsProps = {
   page?: Page;
 };
 
+// Feature flags gate networks, so a token (`arbitrum/erc20/…`) follows its parent network.
+const getNetworkId = (ledgerId: string) => ledgerId.split("/")[0];
+
 export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   const location = useLocation();
   const { data: currenciesAll } = useFetchCurrencyAll();
@@ -48,7 +51,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
 
   const isCurrencySupported =
-    currency?.ledgerIds.some(lrId => !deactivatedCurrencyIds.has(lrId)) || false;
+    currency?.ledgerIds.some(lrId => !deactivatedCurrencyIds.has(getNetworkId(lrId))) || false;
   const { getLedgerCurrency } = useLazyLedgerCurrency(
     {
       product: "lld",
@@ -113,7 +116,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
       navigateToSwap(ledgerCurrency, {
         currencyIds: currency?.ledgerIds.filter(
-          id => currenciesForSwapAllSet.has(id) && !deactivatedCurrencyIds.has(id),
+          id => currenciesForSwapAllSet.has(id) && !deactivatedCurrencyIds.has(getNetworkId(id)),
         ),
       });
     },
