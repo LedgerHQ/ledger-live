@@ -7,12 +7,13 @@ run-name: >
 # NB: test_filter is intentionally reduced to a bounded "filtered"/"all" token rather than embedded verbatim.
 # It is free-text and can be very long; the concurrency group name must stay under 400 characters.
 concurrency:
-  # Broadcast runs (enable_broadcast, and the Wednesday/Friday broadcast nightlies) share ONE group
-  # regardless of tests_type, so separate iOS-Only / Android-Only dispatches QUEUE instead of
-  # overlapping — they would otherwise race on the same on-chain accounts across machines, which no
-  # per-run mechanism can prevent. Non-broadcast runs keep the original per-ref/tests_type group.
+  # Broadcast runs (enable_broadcast, lock_without_broadcast, and the Wednesday/Friday broadcast
+  # nightlies) share ONE group regardless of tests_type, so separate iOS-Only / Android-Only
+  # dispatches QUEUE instead of overlapping — they would otherwise race on the same on-chain
+  # accounts across machines, which no per-run mechanism can prevent. Non-broadcast runs keep the
+  # original per-ref/tests_type group.
   group: >-
-    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, (inputs.test_filter || (inputs.team && inputs.team != 'all')) && 'filtered' || 'all') }}
+    ${{ (inputs.enable_broadcast || inputs.lock_without_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, (inputs.test_filter || (inputs.team && inputs.team != 'all')) && 'filtered' || 'all') }}
   cancel-in-progress: false
 
 on:
@@ -119,6 +120,11 @@ on:
         default: remote
       lock_high_priority:
         description: "Exclusive lock: high priority, as release and hotfix runs get"
+        required: false
+        type: boolean
+        default: false
+      lock_without_broadcast:
+        description: "Lock and queue as a broadcast run would, without broadcasting, to test the lock"
         required: false
         type: boolean
         default: false
@@ -940,7 +946,7 @@ jobs:
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         # A broadcast run can also wait up to 30 minutes for each busy exclusive lock.
-        timeout-minutes: ${{ env.IOS_BROADCAST_ENABLED == 'true' && 120 || fromJSON(needs.determine-builds.outputs.ios_timeout) }}
+        timeout-minutes: ${{ (env.IOS_BROADCAST_ENABLED == 'true' || inputs.lock_without_broadcast) && 120 || fromJSON(needs.determine-builds.outputs.ios_timeout) }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
@@ -966,6 +972,7 @@ jobs:
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
+          E2E_EXCLUSIVE_LOCK_WITHOUT_BROADCAST: ${{ inputs.lock_without_broadcast && '1' || '' }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Add workflow inputs to Allure environment
@@ -1321,6 +1328,7 @@ jobs:
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
+          E2E_EXCLUSIVE_LOCK_WITHOUT_BROADCAST: ${{ inputs.lock_without_broadcast && '1' || '' }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Stop emulator watchdog
