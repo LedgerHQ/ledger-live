@@ -6080,7 +6080,12 @@
               }
             },
             "bluetoothStateUnknownCheckOnly": {
-              "title": "Checking Bluetooth..."
+              "title": "Bluetooth isn’t responding",
+              "description": "We couldn’t check if Bluetooth is on. Wait a few seconds, then try again. If this continues, turn Bluetooth off and on again.",
+              "cta": {
+                "retry": "Try again",
+                "ignore": "Continue with USB instead"
+              }
             },
             "bluetoothUnsupported": {
               "title": "Bluetooth not supported",
