@@ -1,11 +1,14 @@
 import { Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 export default class AppLockPage {
+  private readonly unlockScreenId = "app-lock-unlock-screen";
+
   getSetupPasswordField = () => getElementById("app-lock-setup-password-field");
   getSetupPasswordContinue = () => getElementById("app-lock-setup-password-continue");
   getConfirmPasswordField = () => getElementById("app-lock-confirm-password-field");
   getConfirmPasswordButton = () => getElementById("app-lock-confirm-password-confirm");
-  getUnlockScreen = () => getElementById("app-lock-unlock-screen");
+  getUnlockScreen = () => getElementById(this.unlockScreenId);
   getUnlockField = () => getElementById("app-lock-unlock-field");
   getUnlockSubmit = () => getElementById("app-lock-unlock-submit");
 
@@ -44,6 +47,7 @@ export default class AppLockPage {
 
   @Step("Expect no lock")
   async expectNoLock() {
+    await waitForElementNotVisible(this.unlockScreenId, TIMEOUT.medium);
     await detoxExpect(this.getUnlockScreen()).not.toBeVisible();
   }
 }
