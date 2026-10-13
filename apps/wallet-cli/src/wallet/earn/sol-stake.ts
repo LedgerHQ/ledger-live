@@ -209,20 +209,17 @@ export async function depositSolana(params: DepositSolanaParams): Promise<EarnDe
     validator,
   });
 
-  let tx: EarnTransaction;
-  try {
-    tx = await runSolanaStakeIntent({
-      wallet,
-      descriptor,
-      intent,
-      kind: "stake.createAccount",
-      dryRun,
-      device,
-      out,
-    });
-  } catch (err) {
+  const tx = await runSolanaStakeIntent({
+    wallet,
+    descriptor,
+    intent,
+    kind: "stake.createAccount",
+    dryRun,
+    device,
+    out,
+  }).catch((err: unknown) => {
     throw explainStakeAmountError(err, amount, descriptor.currencyId);
-  }
+  });
 
   return {
     family: "solana",
