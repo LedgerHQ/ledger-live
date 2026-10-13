@@ -22,6 +22,30 @@ const RECIPIENT = "0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359";
 const USDC = toChecksumAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
 const INTENT_ID = "0192f7a4-0000-7000-8000-000000000001";
 
+const SWAP_INTENT = {
+  type: "swap",
+  network: "ethereum",
+  sender: SENDER,
+  fromAsset: "ethereum",
+  toAsset: "ethereum/erc20/usd__coin",
+  fromAmount: "0.5",
+  toAmount: "1250",
+  provider: "velora",
+};
+// The 0x11 × 32 and 0x22 × 32 keys of agent-intent-service ADR-0002's Solana vectors.
+const SOL_SENDER = "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2";
+const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
+const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const SOLANA_SEND = {
+  type: "send",
+  network: "solana",
+  sender: SOL_SENDER,
+  recipient: SOL_RECIPIENT,
+  amount: "2500000",
+  asset: { type: "spl-token", assetReference: USDC_MINT },
+  memo: "Invoice 42",
+};
+
 const enrolledProfile = {
   profileId: "bot",
   displayName: "Bot",
@@ -88,6 +112,13 @@ beforeAll(() =>
         contract.toLowerCase() === USDC.toLowerCase()
           ? { ticker: "USDC", decimals: 6, contract: USDC }
           : null,
+      findEthereumSwapAsset: async (id: string) =>
+        ({
+          ethereum: { id, ticker: "ETH", decimals: 18 },
+          "ethereum/erc20/usd__coin": { id, ticker: "USDC", decimals: 6 },
+        })[id] ?? null,
+      findSolanaToken: async (mint: string) =>
+        mint === USDC_MINT ? { ticker: "USDC", decimals: 6, mint: USDC_MINT } : null,
     },
   }),
 );
@@ -174,6 +205,30 @@ describe("agent-intent status", () => {
     stdout = [];
     await runStatus();
     expect(stdout.join("")).toContain("archived (unknown to this wallet-cli version)");
+  });
+
+  it("shows a swap's pair and provider", async () => {
+    getImpl = async () => ({ ...record(), intent: SWAP_INTENT }) as AgentIntentRecord;
+
+    await runStatus({ output: "json" });
+    expect(jsonResult()).toMatchObject({
+      intent: { displayAmount: "0.5 ETH → 1250 USDC", swap: { provider: "velora" } },
+    });
+
+    stdout = [];
+    await runStatus();
+    expect(stdout.join("")).toContain("Amount:  0.5 ETH → 1250 USDC via velora");
+  });
+
+  it("shows a Solana SPL send in token units, with its memo", async () => {
+    getImpl = async () => ({ ...record(), intent: SOLANA_SEND }) as AgentIntentRecord;
+
+    await runStatus();
+
+    const text = stdout.join("");
+    expect(text).toContain("Amount:  2.5 USDC");
+    expect(text).toContain("Network: solana");
+    expect(text).toContain("Memo:    Invoice 42");
   });
 
   it("shows why a failed intent failed", async () => {

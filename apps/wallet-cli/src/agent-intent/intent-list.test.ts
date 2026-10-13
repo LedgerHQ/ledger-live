@@ -6,6 +6,7 @@ import {
   parseIntentId,
   parseStatusFilter,
   toIntentListEntries,
+  type AssetLookups,
 } from "./intent-list";
 
 describe("isTerminalIntentStatus", () => {
@@ -71,6 +72,10 @@ describe("formatBaseUnits", () => {
 
 describe("toIntentListEntries", () => {
   const SENDER = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed";
+  const SOL_SENDER = "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2";
+  const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
+  const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+  const USDC_ID = "ethereum/erc20/usd__coin";
   const record = (intent: AgentIntentRecord["intent"]): AgentIntentRecord => ({
     id: "0192f7a4-0000-7000-8000-000000000001",
     agentPubkey: "pubkey",
@@ -79,41 +84,108 @@ describe("toIntentListEntries", () => {
     updatedAt: "2026-10-07T10:05:00Z",
     intent,
   });
-  const noTokenLookup = () => {
-    throw new Error("token lookup is only for sends");
+  const lookups: AssetLookups = {
+    ethereumToken: async () => null,
+    solanaToken: async mint =>
+      mint === USDC_MINT ? { ticker: "USDC", decimals: 6, mint: USDC_MINT } : null,
+    swapAsset: async id =>
+      ({
+        ethereum: { id, ticker: "ETH", decimals: 18 },
+        [USDC_ID]: { id, ticker: "USDC", decimals: 6 },
+      })[id] ?? null,
   };
   const sendOnlyFields = {
     recipient: null,
     amount: null,
-    displayAmount: null,
     asset: null,
     feeStrategy: null,
+    memo: null,
+  };
+  const swapIntent = {
+    type: "swap",
+    network: "ethereum",
+    sender: SENDER,
+    fromAsset: "ethereum",
+    toAsset: USDC_ID,
+    fromAmount: "0.5",
+    toAmount: "1250",
+    provider: "velora",
+    description: "Rebalance",
+  };
+  const solanaSend = {
+    type: "send",
+    network: "solana",
+    sender: SOL_SENDER,
+    recipient: SOL_RECIPIENT,
+    amount: "500000000",
+    asset: { type: "native" },
+    memo: "Invoice 42",
   };
 
-  it("keeps a swap's common fields and leaves send-only fields empty", async () => {
-    const [entry] = await toIntentListEntries(
-      [
-        record({
-          type: "swap",
-          network: "ethereum",
-          sender: SENDER,
-          fromAsset: "ETH",
-          toAsset: "USDC",
-          fromAmount: "0.01",
-          toAmount: "25",
-          provider: "paraswap",
-          description: "Swap ETH to USDC",
-        }),
-      ],
-      noTokenLookup,
-    );
+  it("shows a swap's pair, amounts and provider, and leaves send-only fields empty", async () => {
+    const [entry] = await toIntentListEntries([record(swapIntent)], lookups);
+
     expect(entry).toMatchObject({
       type: "swap",
       network: "ethereum",
       sender: SENDER,
-      description: "Swap ETH to USDC",
+      displayAmount: "0.5 ETH → 1250 USDC",
+      swap: {
+        fromAsset: "ethereum",
+        toAsset: USDC_ID,
+        fromAmount: "0.5",
+        toAmount: "1250",
+        provider: "velora",
+      },
+      description: "Rebalance",
       ...sendOnlyFields,
     });
+  });
+
+  it("keeps the currency id of a swap asset CAL doesn't know", async () => {
+    const [entry] = await toIntentListEntries(
+      [record({ ...swapIntent, toAsset: "ethereum/erc20/unknown" })],
+      lookups,
+    );
+
+    expect(entry?.displayAmount).toBe("0.5 ETH → 1250 ethereum/erc20/unknown");
+  });
+
+  it("shows a Solana send in SOL, with its memo", async () => {
+    const [entry] = await toIntentListEntries([record(solanaSend)], lookups);
+
+    expect(entry).toMatchObject({
+      network: "solana",
+      amount: "500000000",
+      displayAmount: "0.5 SOL",
+      memo: "Invoice 42",
+      swap: null,
+    });
+  });
+
+  it("shows an SPL send in token units when CAL knows the mint, and base units otherwise", async () => {
+    const spl = (mint: string) =>
+      record({
+        ...solanaSend,
+        amount: "2500000",
+        asset: { type: "spl-token", assetReference: mint },
+      });
+
+    const [known, unknown] = await toIntentListEntries(
+      [spl(USDC_MINT), spl(SOL_RECIPIENT)],
+      lookups,
+    );
+
+    expect(known).toMatchObject({ displayAmount: "2.5 USDC", amount: "2500000" });
+    expect(unknown).toMatchObject({ displayAmount: null, amount: "2500000" });
+  });
+
+  it("treats a failed lookup as an unknown asset instead of failing the page", async () => {
+    const failing = { ...lookups, swapAsset: () => Promise.reject(new Error("CAL down")) };
+
+    const [entry] = await toIntentListEntries([record(swapIntent)], failing);
+
+    expect(entry?.displayAmount).toBe(`0.5 ethereum → 1250 ${USDC_ID}`);
   });
 
   it("ignores send-like fields on an operation type the SDK doesn't know", async () => {
@@ -129,12 +201,14 @@ describe("toIntentListEntries", () => {
           feeStrategy: "medium",
         }),
       ],
-      noTokenLookup,
+      lookups,
     );
     expect(entry).toMatchObject({
       type: "stake",
       network: "ethereum",
       sender: SENDER,
+      displayAmount: null,
+      swap: null,
       description: null,
       ...sendOnlyFields,
     });
