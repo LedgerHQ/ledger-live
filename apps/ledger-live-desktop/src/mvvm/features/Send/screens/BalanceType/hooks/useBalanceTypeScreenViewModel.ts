@@ -28,6 +28,7 @@ export type BalanceTypeOption = {
   isZero: boolean;
   hasPendingBalance: boolean;
   icon: "lock" | "check";
+  hideSubtitle?: boolean;
 };
 
 export type BalanceTypeScreenViewModel =
@@ -84,14 +85,13 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       const poolChanged = balanceTypeConfig.getSelectedOptionId(transaction) !== optionId;
       if (poolChanged) {
         resetRecipient();
+        transactionActions.updateTransaction(currentTransaction =>
+          bridge.updateTransaction(
+            currentTransaction,
+            balanceTypeConfig.buildSelectionPatch(optionId) as Partial<FlowTransaction>,
+          ),
+        );
       }
-
-      transactionActions.updateTransaction(currentTransaction =>
-        bridge.updateTransaction(
-          currentTransaction,
-          balanceTypeConfig.buildSelectionPatch(optionId) as Partial<FlowTransaction>,
-        ),
-      );
       navigation.goToStep(SEND_FLOW_STEP.RECIPIENT);
     },
     [
@@ -128,6 +128,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       isZero: option.balance.isZero(),
       hasPendingBalance: option.hasPendingBalance,
       icon: option.icon,
+      hideSubtitle: option.hideSubtitle,
     };
   });
 

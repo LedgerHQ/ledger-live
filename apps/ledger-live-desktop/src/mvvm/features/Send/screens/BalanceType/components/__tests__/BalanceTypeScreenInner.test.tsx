@@ -64,6 +64,27 @@ describe("BalanceTypeScreenInner", () => {
     expect(screen.getByText("2 ZEC")).toBeVisible();
   });
 
+  it("should render a pool's subtitle when it has one", () => {
+    render(<BalanceTypeScreenInner viewModel={readyViewModel()} />);
+
+    expect(screen.getByText("Transparent")).toBeVisible();
+    expect(screen.getByText("Shielded")).toBeVisible();
+  });
+
+  it("should render no subtitle for a pool that hides it", () => {
+    render(
+      <BalanceTypeScreenInner
+        viewModel={readyViewModel({
+          options: [{ ...PUBLIC_OPTION, hideSubtitle: true }, PRIVATE_OPTION],
+        })}
+      />,
+    );
+
+    expect(screen.getByText("Public balance")).toBeVisible();
+    expect(screen.queryByText("Transparent")).not.toBeInTheDocument();
+    expect(screen.getByText("Shielded")).toBeVisible();
+  });
+
   it("should mark the matching pool as selected when returning to the step", () => {
     render(<BalanceTypeScreenInner viewModel={readyViewModel({ selectedOptionId: "private" })} />);
 

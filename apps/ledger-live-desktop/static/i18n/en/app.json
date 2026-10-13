@@ -3065,6 +3065,12 @@
         "pendingNoticeTitle": "Funds maturing",
         "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
+      "aleoPublic": {
+        "title": "Public balance"
+      },
+      "aleoPrivate": {
+        "title": "Private balance"
+      },
       "zeroBalance": {
         "warning": "No available balance"
       }

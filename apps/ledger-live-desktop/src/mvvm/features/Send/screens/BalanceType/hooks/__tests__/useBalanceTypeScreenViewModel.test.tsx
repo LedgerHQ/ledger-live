@@ -197,6 +197,18 @@ describe("useBalanceTypeScreenViewModel", () => {
     }
   });
 
+  test("propagates the hidden-subtitle flag of a pool", () => {
+    stubBalanceTypeConfig([PUBLIC_POOL, { ...PRIVATE_POOL, hideSubtitle: true }]);
+
+    const vm = renderViewModel();
+
+    expect(vm?.ready).toBe(true);
+    if (vm?.ready) {
+      expect(vm.options[0].hideSubtitle).toBeUndefined();
+      expect(vm.options[1].hideSubtitle).toBe(true);
+    }
+  });
+
   test.each([
     ["no pool is selected yet", undefined, null],
     ["the first pool is selected", "public", "public"],
@@ -239,7 +251,7 @@ describe("useBalanceTypeScreenViewModel", () => {
     },
   );
 
-  test("keeps the recipient when the same pool is selected again", () => {
+  test("keeps the recipient and the transaction when the same pool is selected again", () => {
     stubBalanceTypeConfig([PUBLIC_POOL, PRIVATE_POOL]);
     mockState.transaction.transaction = { id: "tx1", sender: "public" };
 
@@ -251,7 +263,7 @@ describe("useBalanceTypeScreenViewModel", () => {
     }
 
     expect(mockResetRecipient).not.toHaveBeenCalled();
-    expect(mockUpdateTransactionAction).toHaveBeenCalledTimes(1);
+    expect(mockUpdateTransactionAction).not.toHaveBeenCalled();
     expect(mockGoToStep).toHaveBeenCalledWith(SEND_FLOW_STEP.RECIPIENT);
   });
 

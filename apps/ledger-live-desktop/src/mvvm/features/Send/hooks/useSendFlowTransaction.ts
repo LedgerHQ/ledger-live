@@ -79,6 +79,7 @@ export function useSendFlowTransaction({
         // set by the shortcut that prefills its own pool and cleared by anything else.
         ...balanceTypeConfig?.buildSelfTransferPatch({
           isSelfTransfer: recipient.isSelfTransfer === true,
+          transaction,
         }),
       } as Partial<Transaction>;
 
