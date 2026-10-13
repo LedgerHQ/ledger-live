@@ -7,12 +7,12 @@ import type {
   GenuineErrorKind,
 } from "LLM/features/DeviceOnboarding/types";
 
-const errorPreviews = ["declined", "notGenuine", "provider", "network", "unknown"] as const;
+const errorPreviews = new Set<string>(["declined", "notGenuine", "provider", "network", "unknown"]);
 
 export type DeviceOnboardingPreview = ChecksScreenState | "offer" | GenuineErrorKind;
 
 function isErrorPreview(preview: DeviceOnboardingPreview): preview is GenuineErrorKind {
-  return (errorPreviews as readonly string[]).includes(preview);
+  return errorPreviews.has(preview);
 }
 
 const previewDevice = {
