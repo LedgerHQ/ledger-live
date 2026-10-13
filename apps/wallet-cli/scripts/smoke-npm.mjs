@@ -71,7 +71,9 @@ try {
     JSON.stringify({ private: true, type: "module" }, null, 2),
   );
 
-  run("pnpm", ["add", platformTarball, mainTarball], { cwd: installDir });
+  run("pnpm", ["add", platformTarball, mainTarball, "--config.minimum-release-age=0"], {
+    cwd: installDir,
+  });
   run("pnpm", ["exec", "wallet-cli", "--version"], { cwd: installDir });
 
   console.log(`Installed and executed @ledgerhq/wallet-cli for ${platformKey}.`);

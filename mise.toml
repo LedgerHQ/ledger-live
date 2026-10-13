@@ -1,4 +1,4 @@
-min_version = '2026.4.8'
+min_version = '2026.9.1'
 
 [settings]
 experimental = true
@@ -19,7 +19,7 @@ lockfile_platforms = [
 
 [tools]
 node = '24.14.0'
-pnpm = '10.24.0'
+pnpm = '10.34.6'
 bun = '1.4.2'
 gitleaks = '8.30.1'
 hk = '1.40.0'
