@@ -20,9 +20,17 @@ export function DetailRow({ row }: DetailRowProps) {
       </DescriptionItemLeading>
       <DescriptionItemTrailing>
         {row.statusAppearance ? (
-          <Tag appearance={row.statusAppearance} size="sm" label={row.value} />
+          <Tag
+            appearance={row.statusAppearance}
+            size="sm"
+            label={row.value}
+            accessibilityLabel={row.value}
+            testID={`card-transaction-detail-value-${row.id}`}
+          />
         ) : (
-          <DescriptionItemValue>{row.value}</DescriptionItemValue>
+          <DescriptionItemValue testID={`card-transaction-detail-value-${row.id}`}>
+            {row.value}
+          </DescriptionItemValue>
         )}
         {row.infoLabel ? (
           <InfoTooltip
