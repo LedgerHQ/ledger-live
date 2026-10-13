@@ -1,14 +1,19 @@
 import React from "react";
 import { Box, Button, IconButton, NavBar, NavBarTrailing, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Lottie, resolveLottieSource } from "LLM/components/Lottie";
 import { offerTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { OfferViewProps } from "./useOfferScreenViewModel";
-import cloudSyncAnimation from "./animations/cloud-sync.lottie";
+import darkCloudSyncAnimation from "./animations/dark/cloud-sync.lottie";
+import lightCloudSyncAnimation from "./animations/light/cloud-sync.lottie";
 
 const illustrationHeight = 200;
 const illustrationSize = 96;
-const cloudSyncSource = resolveLottieSource(cloudSyncAnimation);
+const cloudSyncSources = {
+  light: resolveLottieSource(lightCloudSyncAnimation),
+  dark: resolveLottieSource(darkCloudSyncAnimation),
+};
 
 export function OfferView({
   title,
@@ -22,6 +27,9 @@ export function OfferView({
   onLearnMore,
   onQuit,
 }: OfferViewProps) {
+  const { colorScheme } = useTheme();
+  const theme = colorScheme === "dark" ? "dark" : "light";
+
   return (
     <Box testID={offerTestIds.screen} lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}>
       <NavBar density="compact">
@@ -41,7 +49,8 @@ export function OfferView({
         style={{ height: illustrationHeight }}
       >
         <Lottie
-          source={cloudSyncSource}
+          key={theme}
+          source={cloudSyncSources[theme]}
           loop
           style={{ width: illustrationSize, height: illustrationSize }}
         />

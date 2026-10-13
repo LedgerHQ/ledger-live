@@ -10,6 +10,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
@@ -17,19 +18,32 @@ import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import { UnsupportedFirmwareVersionView } from "LLM/components/DeviceIntentExecutor/ContextInitializer/components/UnsupportedFirmwareVersion/UnsupportedFirmwareVersionView";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { ChecksIllustration, ChecksViewProps } from "./useChecksScreenViewModel";
-import loadingAnimation from "./animations/loading.lottie";
-import scanAnimation from "./animations/security-check.lottie";
-import successAnimation from "./animations/success.lottie";
+import darkLoadingAnimation from "./animations/dark/loading.lottie";
+import darkScanAnimation from "./animations/dark/security-check.lottie";
+import darkSuccessAnimation from "./animations/dark/success.lottie";
+import lightLoadingAnimation from "./animations/light/loading.lottie";
+import lightScanAnimation from "./animations/light/security-check.lottie";
+import lightSuccessAnimation from "./animations/light/success.lottie";
 
 const illustrationHeight = 200;
 const illustrationSize = 96;
-const illustrationSources: Record<ChecksIllustration, LottieSource> = {
-  loading: resolveLottieSource(loadingAnimation),
-  scan: resolveLottieSource(scanAnimation),
-  success: resolveLottieSource(successAnimation),
+const illustrationSources: Record<"light" | "dark", Record<ChecksIllustration, LottieSource>> = {
+  light: {
+    loading: resolveLottieSource(lightLoadingAnimation),
+    scan: resolveLottieSource(lightScanAnimation),
+    success: resolveLottieSource(lightSuccessAnimation),
+  },
+  dark: {
+    loading: resolveLottieSource(darkLoadingAnimation),
+    scan: resolveLottieSource(darkScanAnimation),
+    success: resolveLottieSource(darkSuccessAnimation),
+  },
 };
 
 function Illustration({ kind }: Readonly<{ kind: ChecksIllustration }>) {
+  const { colorScheme } = useTheme();
+  const theme = colorScheme === "dark" ? "dark" : "light";
+
   return (
     <Box
       lx={{
@@ -41,8 +55,8 @@ function Illustration({ kind }: Readonly<{ kind: ChecksIllustration }>) {
       style={{ height: illustrationHeight }}
     >
       <Lottie
-        key={kind}
-        source={illustrationSources[kind]}
+        key={`${theme}-${kind}`}
+        source={illustrationSources[theme][kind]}
         loop
         style={{ width: illustrationSize, height: illustrationSize }}
       />
