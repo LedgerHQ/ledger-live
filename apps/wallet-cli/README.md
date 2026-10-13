@@ -13,7 +13,7 @@ wallet-cli send --account ethereum-1 --to 0x… --amount "0.01 ETH" --dry-run
 wallet-cli <command> --help                 # exact flags and defaults
 ```
 
-Most commands accept `--output json`. `send`, `earn deposit`, `earn withdraw`, `agent-intent send` and `agent-intent swap` accept `--dry-run`, which validates without signing or submitting.
+Most commands accept `--output json`. `send`, `earn deposit`, `earn withdraw`, `agent-intent send` and `agent-intent swap` accept `--dry-run`, which validates without signing or submitting and needs no device.
 
 ## Commands
 
@@ -21,16 +21,16 @@ Most commands accept `--output json`. `send`, `earn deposit`, `earn withdraw`, `
 | --- | --- | --- |
 | Accounts | `account discover`, `session view`, `session reset` | discover only |
 | Read | `balances`, `operations`, `assets token`, `assets token-by-id` | no |
-| Transfer | `receive` (`--verify` on device), `send` | yes |
+| Transfer | `receive`, `send` | yes, except `receive --no-verify` and `send --dry-run` |
 | Swap | `swap quote`, `swap status`, `swap execute` | execute only |
-| Earn | `earn yields`, `earn positions`, `earn deposit`, `earn withdraw` | deposit / withdraw |
+| Earn | `earn yields`, `earn positions`, `earn deposit`, `earn withdraw` | deposit / withdraw, except with `--dry-run` |
 | Device | `genuine-check` | yes |
 | Key Ring | `ring init`, `ring encrypt`, `ring decrypt`, `ring keys`, `ring destroy` | init only |
 | Agent Intent | `agent-intent enroll`, `recover`, `list`, `show`, `sync`, `send`, `swap`, `intents`, `status`, `cancel` | no |
 | Agent skill | `skill list`, `skill retrieve`, `skill install`, `skill doctor` | no |
 
 - **Key Ring** encrypts files or text (AES-256-GCM) under named keys backed by Ledger Key Ring (LKRP). After `ring init`, it needs network access but no device.
-- **Agent Intent** gives a remote agent its own software identity. The agent proposes Ethereum and Solana sends and Ethereum swaps, and a human reviews them in the Agent Intent frontend. It never signs or broadcasts, and its trust model is separate from `ring`. It needs a working OS keychain (on Linux, a Secret Service provider such as gnome-keyring).
+- **Agent Intent** gives a remote agent its own software identity. The agent proposes Ethereum and Solana sends and Ethereum swaps, and a human reviews them in the Agent Intent frontend. It signs each proposal with the agent's own key but never signs or broadcasts a transaction, and its trust model is separate from `ring`. It needs a working OS keychain (on Linux, a Secret Service provider such as gnome-keyring).
 
 The [ledger-wallet-cli skill](../../.agents/skills/ledger-wallet-cli/SKILL.md) documents each command, the safety rules and the Agent Intent flow in detail.
 
@@ -50,7 +50,7 @@ wallet-cli skill doctor --fix             # reinstall outdated or missing skills
 ## Prerequisites
 
 - [Bun](https://bun.sh) ≥ 1.1.0
-- A Ledger on USB for the commands listed above
+- A Ledger on USB for the commands marked in the Device column
 - On Linux, the USB/HID libraries: `sudo apt-get install libudev-dev libusb-1.0-0-dev`
 
 ## Environment and storage
