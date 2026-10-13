@@ -1,4 +1,5 @@
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { buildSwapNavigationState } from "../swapNavigation";
@@ -69,6 +70,22 @@ describe("buildSwapNavigationState", () => {
 
     expect(state.defaultAccountId).toBe(tokenAccount.id);
     expect(state.defaultParentAccountId).toBe(ethAccount.id);
+  });
+
+  it("hands over the parent account for a token the user doesn't hold yet", () => {
+    const ethAccount = genAccount("eth-1", { currency: ethereum });
+    const emptyTokenAccount = makeEmptyTokenAccount(ethAccount, usdcToken);
+
+    const state = buildSwapNavigationState({
+      defaultCurrency: usdcToken,
+      fromPath: "/market",
+      account: emptyTokenAccount,
+      parentAccount: ethAccount,
+    });
+
+    expect(state.defaultAccountId).toBe(ethAccount.id);
+    expect(state.defaultParentAccountId).toBeUndefined();
+    expect(state.defaultToken).toEqual({ toTokenId: usdcToken.id });
   });
 
   it("never passes a raw currency object as defaultCurrency", () => {

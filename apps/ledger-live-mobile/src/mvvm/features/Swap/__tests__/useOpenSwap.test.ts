@@ -2,6 +2,7 @@ import { act, renderHook } from "@tests/test-renderer";
 import { useOpenSwap } from "../index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
@@ -21,6 +22,7 @@ jest.mock("../../ModularDrawer", () => ({
 }));
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum");
 
 function createBitcoinAccount(id: string): Account {
   const account = genAccount(id, { currency: bitcoin });
@@ -121,6 +123,75 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
         },
       });
       expect(mockOpenDrawer).not.toHaveBeenCalled();
+    });
+
+    describe("account picked in the drawer for a token the user doesn't hold", () => {
+      const openDrawerAndSelect = (
+        select: (params: { onAccountSelected: (a: unknown, p?: unknown) => void }) => void,
+        accounts: Account[],
+      ) => {
+        const { result } = renderHook(
+          () =>
+            useOpenSwap({
+              currency: usdcToken,
+              currencyIds: [usdcToken.id, "arbitrum/erc20/usd__coin"],
+              sourceScreenName: SOURCE_SCREEN,
+            }),
+          {
+            overrideInitialState: state => ({
+              ...state,
+              accounts: { ...state.accounts, active: accounts },
+            }),
+          },
+        );
+
+        act(() => {
+          result.current.handleOpenSwap();
+        });
+
+        expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
+        select(mockOpenDrawer.mock.calls[0][0]);
+      };
+
+      test("should hand the parent account and the token to Swap for an empty token account", () => {
+        const parent = { ...genAccount("eth-1", { currency: ethereum }), id: "js:2:ethereum:0x1:" };
+        const emptyTokenAccount = makeEmptyTokenAccount(parent, usdcToken);
+
+        openDrawerAndSelect(
+          params => act(() => params.onAccountSelected(emptyTokenAccount, parent)),
+          [parent],
+        );
+
+        const swapParams = mockNavigate.mock.calls[0][1].params.params;
+        expect(swapParams.defaultAccount).toBe(parent);
+        expect(swapParams.defaultCurrency).toBe(usdcToken);
+        expect(swapParams.fromPath).toBe(SOURCE_SCREEN);
+      });
+
+      test("should resolve the parent from the store when the drawer doesn't provide it", () => {
+        const parent = { ...genAccount("eth-2", { currency: ethereum }), id: "js:2:ethereum:0x2:" };
+        const emptyTokenAccount = makeEmptyTokenAccount(parent, usdcToken);
+
+        openDrawerAndSelect(
+          params => act(() => params.onAccountSelected(emptyTokenAccount)),
+          [parent],
+        );
+
+        const swapParams = mockNavigate.mock.calls[0][1].params.params;
+        expect(swapParams.defaultAccount).toBe(parent);
+        expect(swapParams.defaultCurrency).toBe(usdcToken);
+      });
+
+      test("should fall back to toTokenId when the parent account can't be resolved", () => {
+        const parent = { ...genAccount("eth-3", { currency: ethereum }), id: "js:2:ethereum:0x3:" };
+        const emptyTokenAccount = makeEmptyTokenAccount(parent, usdcToken);
+
+        openDrawerAndSelect(params => act(() => params.onAccountSelected(emptyTokenAccount)), []);
+
+        const swapParams = mockNavigate.mock.calls[0][1].params.params;
+        expect(swapParams.defaultAccount).toBeUndefined();
+        expect(swapParams.toTokenId).toBe(usdcToken.id);
+      });
     });
 
     test("should open drawer for account selection when multiple accounts (no direct nav)", () => {
