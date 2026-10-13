@@ -6,12 +6,16 @@ import { renderHook, waitFor } from "@tests/test-renderer";
 import { useResolveOsUpdates } from "./index";
 
 const mockExecute = jest.fn();
+const mockGetBackup = jest.fn();
 const mockGetActiveConnectedDevice = jest.fn();
 const mockDmk = { listConnectedDevices: jest.fn() };
 
 jest.mock("@ledgerhq/live-dmk-mobile", () => ({
   useDeviceManagementKit: () => mockDmk,
   getActiveConnectedDevice: (...args: unknown[]) => mockGetActiveConnectedDevice(...args),
+}));
+jest.mock("../../storage/deviceBackupStorage", () => ({
+  deviceBackupStorage: { getBackup: (...args: unknown[]) => mockGetBackup(...args) },
 }));
 jest.mock("@ledgerhq/live-dmk-shared", () => ({
   ...jest.requireActual("@ledgerhq/live-dmk-shared"),
@@ -44,6 +48,7 @@ describe("useResolveOsUpdates", () => {
     jest.clearAllMocks();
     mockGetActiveConnectedDevice.mockReturnValue({ sessionId: "session-1" });
     mockExecute.mockResolvedValue([osUpdate]);
+    mockGetBackup.mockResolvedValue(undefined);
   });
 
   it("stores the resolved updates and stops resolving", async () => {
@@ -118,5 +123,51 @@ describe("useResolveOsUpdates", () => {
 
     expect(mockExecute).not.toHaveBeenCalled();
     expect(store.getState().osUpdate.osUpdates).toEqual([]);
+  });
+
+  describe("backup", () => {
+    const backup = {
+      languageId: 0,
+      installedApps: [{ appName: "Bitcoin" }],
+      createdAt: new Date(),
+    };
+
+    it("stores that a backup of the device model is waiting to be restored", async () => {
+      mockExecute.mockResolvedValue([]);
+      mockGetBackup.mockResolvedValue(backup);
+      const { result, store } = render();
+
+      await waitFor(() => expect(result.current).toBe(false));
+
+      expect(mockGetBackup).toHaveBeenCalledWith("stax");
+      expect(store.getState().osUpdate.hasBackup).toBe(true);
+    });
+
+    it("ignores a backup with nothing to restore", async () => {
+      mockGetBackup.mockResolvedValue({ ...backup, installedApps: [] });
+      const { result, store } = render();
+
+      await waitFor(() => expect(result.current).toBe(false));
+
+      expect(store.getState().osUpdate.hasBackup).toBe(false);
+    });
+
+    it("still looks for the backup when the OS update path cannot be resolved", async () => {
+      mockGetBackup.mockResolvedValue(backup);
+      const { result, store } = render({ deviceInfo: { ...deviceInfo, isBootloader: true } });
+
+      await waitFor(() => expect(result.current).toBe(false));
+
+      expect(store.getState().osUpdate.hasBackup).toBe(true);
+    });
+
+    it("stores no backup when the storage fails", async () => {
+      mockGetBackup.mockRejectedValue(new Error("storage"));
+      const { result, store } = render();
+
+      await waitFor(() => expect(result.current).toBe(false));
+
+      expect(store.getState().osUpdate.hasBackup).toBe(false);
+    });
   });
 });
