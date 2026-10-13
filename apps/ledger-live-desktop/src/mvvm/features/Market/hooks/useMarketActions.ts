@@ -20,6 +20,7 @@ import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useSwapNavigation } from "./useSwapNavigation";
 import { useBuyNavigation } from "./useBuyNavigation";
 import { useSellNavigation } from "./useSellNavigation";
+import { getNetworkId, getSwapCurrencyIds } from "../utils/getSwapCurrencyIds";
 
 export enum Page {
   Market = "Page Market",
@@ -30,8 +31,6 @@ type MarketActionsProps = {
   currency?: MarketCurrencyData | null;
   page?: Page;
 };
-
-const getNetworkId = (ledgerId: string) => ledgerId.split("/")[0];
 
 export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   const location = useLocation();
@@ -114,9 +113,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       setTrackingSource(page);
 
       navigateToSwap(ledgerCurrency, {
-        currencyIds: currency?.ledgerIds.filter(
-          id => currenciesForSwapAllSet.has(id) && !deactivatedCurrencyIds.has(getNetworkId(id)),
-        ),
+        currencyIds: getSwapCurrencyIds(currency?.ledgerIds, currenciesAll, deactivatedCurrencyIds),
       });
     },
     [
@@ -126,7 +123,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       page,
       swapDefaultTrack,
       navigateToSwap,
-      currenciesForSwapAllSet,
+      currenciesAll,
       deactivatedCurrencyIds,
     ],
   );
