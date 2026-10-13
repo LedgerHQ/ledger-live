@@ -7,7 +7,6 @@ import type { EnrolledAgentIntentProfile } from "./enrolled-profile";
 import { PROFILE_ID_MESSAGE, PROFILE_ID_RE } from "./profile-format";
 import { loadProfileIdentity } from "./profile-identity";
 import { keycloakOverride } from "./relay";
-import { intentIdFromDeeplink } from "./send-intent";
 import { describeAgentIntentError, isAcceptedWithoutReviewLink } from "./service-errors";
 
 /** Options every `agent-intent` proposal command (`send`, `swap`) takes. */
@@ -83,5 +82,16 @@ export function warnIfReviewLinkUnusable({ deeplink, intentId }: SubmittedIntent
       "⚠ The review link has an unexpected shape, so no intent id could be extracted. " +
         "The intent was created — use the review link to find it.\n",
     );
+  }
+}
+
+/** The service answers with `<frontend>/intents/<id>`; returns that id, or null for any other
+ * shape (the intent exists either way). */
+function intentIdFromDeeplink(deeplink: string): string | null {
+  try {
+    const match = /\/intents\/([^/]+)\/?$/.exec(new URL(deeplink).pathname);
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch {
+    return null;
   }
 }

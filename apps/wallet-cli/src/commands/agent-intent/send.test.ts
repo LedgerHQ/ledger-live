@@ -429,8 +429,9 @@ describe("agent-intent send", () => {
     });
 
     it("requires exactly one of --account and --from", async () => {
-      await expect(runSend({ from: undefined })).rejects.toThrow(/exactly one sender/);
-      await expect(runSend({ account: "ethereum-1" })).rejects.toThrow(/exactly one sender/);
+      const message = "Pass exactly one sender: --account <session-label> or --from <address>.";
+      await expect(runSend({ from: undefined })).rejects.toThrow(message);
+      await expect(runSend({ account: "ethereum-1" })).rejects.toThrow(message);
     });
 
     it("validates explicit sender and recipient addresses", async () => {

@@ -76,14 +76,3 @@ export function toSdkSendIntent(summary: SendIntentSummary): SendIntent {
     ...(summary.description ? { description: summary.description } : {}),
   };
 }
-
-/** The service answers with `<frontend>/intents/<id>`; returns that id, or null for any other
- * shape (the intent exists either way — see `agent-intent send`). */
-export function intentIdFromDeeplink(deeplink: string): string | null {
-  try {
-    const match = /\/intents\/([^/]+)\/?$/.exec(new URL(deeplink).pathname);
-    return match ? decodeURIComponent(match[1]) : null;
-  } catch {
-    return null;
-  }
-}
