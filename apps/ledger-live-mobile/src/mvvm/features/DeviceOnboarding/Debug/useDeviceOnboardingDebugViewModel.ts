@@ -15,6 +15,12 @@ function isErrorPreview(preview: DeviceOnboardingPreview): preview is GenuineErr
   return errorPreviews.has(preview);
 }
 
+function checksStateForPreview(preview: DeviceOnboardingPreview): ChecksScreenState {
+  if (preview === "offer") return "idle";
+  if (isErrorPreview(preview)) return "checking";
+  return preview;
+}
+
 const previewDevice = {
   deviceId: "preview",
   deviceName: "Lily's Stax",
@@ -34,7 +40,7 @@ export function useDeviceOnboardingDebugViewModel() {
 
   const screenProps: ChecksScreenProps = {
     device: previewDevice,
-    state: preview === "offer" ? "idle" : isErrorPreview(preview) ? "checking" : preview,
+    state: checksStateForPreview(preview),
     error: isErrorPreview(preview) ? { kind: preview } : null,
     update: null,
     onStart: () => setPreview("checking"),

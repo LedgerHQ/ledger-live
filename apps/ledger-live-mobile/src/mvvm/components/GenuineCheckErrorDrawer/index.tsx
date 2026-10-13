@@ -66,11 +66,13 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
 
   let content;
 
-  const screenName = isNotFoundEntity
-    ? "Error: Device OS version not recognized"
-    : error
-      ? `Error: ${isDmkError(error) ? error._tag : eName}`
-      : "Error: unknown error";
+  let screenName = "Error: unknown error";
+  if (isNotFoundEntity) {
+    screenName = "Error: Device OS version not recognized";
+  } else if (error) {
+    const errorLabel = isDmkError(error) ? error._tag : eName;
+    screenName = `Error: ${errorLabel}`;
+  }
 
   const handleRetry = () => {
     track("button_clicked", {
