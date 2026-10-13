@@ -1,6 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import { decorateOptimisticOperation, postSync } from "./pending";
+import { decorateOptimisticOperation } from "./pending";
+import { bitcoinAccountLayer } from "./index";
+
+// the multi-address engine settles by hash; the bitcoin hooks settle replaced sends and keep the
+// entered recipient
+const postSync = bitcoinAccountLayer.postSync;
 
 const op = (overrides: Partial<Operation>): Operation =>
   ({

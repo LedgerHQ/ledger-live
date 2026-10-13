@@ -138,7 +138,8 @@ describe("buildSignRawOperation", () => {
   });
 
   it("needs a resync without an account state", async () => {
-    await expect(sign(account(undefined))).rejects.toThrow("AccountNeedResync");
+    // `undefined` would take the fixture's default state
+    await expect(sign(account(null))).rejects.toThrow("AccountNeedResync");
     expect(signer.signPsbtBuffer).not.toHaveBeenCalled();
   });
 

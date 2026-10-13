@@ -14,10 +14,10 @@ import { AccountNeedResync } from "@ledgerhq/wallet-btc/errors";
 import { buildKnownAddressDerivations, feeFromPsbt, parsePsbt } from "@ledgerhq/coin-bitcoin/api";
 import type { BitcoinAccount, BitcoinAccountAddress } from "./types";
 import type { AddressFormat, BitcoinDeviceSigner } from "./signer";
+import { accountPathOf } from "../../bridge/generic-coin-framework/multiAddressAccountLayer";
 import {
   CHANGE_CHAIN,
   RECEIVE_CHAIN,
-  accountPathOf,
   addressDeriver,
   toWalletDerivationMode,
 } from "./accountLayer/derivation";
@@ -44,7 +44,7 @@ async function accountAddresses(account: BitcoinAccount): Promise<BitcoinAccount
           .reduce((max, a) => Math.max(max, a.index), -1) + 1;
       return Array.from({ length: LOOKAHEAD }, async (_, i) => ({
         address: await derive(chain, next + i),
-        chain: chain as 0 | 1,
+        chain,
         index: next + i,
       }));
     }),

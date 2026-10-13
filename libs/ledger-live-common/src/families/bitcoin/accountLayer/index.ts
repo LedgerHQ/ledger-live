@@ -1,16 +1,7 @@
-import type { AccountLayer } from "@ledgerhq/ledger-wallet-framework/api/types";
-import { getSerializedAddressParameters } from "./exchange";
-import { decorateOptimisticOperation, postSync } from "./pending";
-import { completeIntent } from "./selection";
-import { getAccountShape } from "./sync";
+import { createMultiAddressAccountLayer } from "../../../bridge/generic-coin-framework/multiAddressAccountLayer";
+import { bitcoinFamily } from "./family";
 
-/** The bitcoin family's account layer on the generic bridge (ADR-065). */
-export const bitcoinAccountLayer: AccountLayer = {
-  getAccountShape: (info, _syncConfig, dependencies) => getAccountShape(info, dependencies),
-  completeIntent,
-  postSync,
-  decorateOptimisticOperation,
-  getSerializedAddressParameters,
-};
+/** The bitcoin family's account layer on the generic bridge: the multi-address engine (ADR-065). */
+export const bitcoinAccountLayer = createMultiAddressAccountLayer(bitcoinFamily);
 
 export { computeIntentType } from "./selection";

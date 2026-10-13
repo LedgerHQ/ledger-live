@@ -5,7 +5,16 @@ import { getNetworkParameters } from "@ledgerhq/coin-bitcoin/api";
 import type { BitcoinAccount, BitcoinAccountState } from "../types";
 import { cryptoFor } from "./derivation";
 import { emptyAccountState } from "./state";
-import { getAccountShape, REWIND_BLOCKS } from "./sync";
+import { GAP, REWIND_BLOCKS, bitcoinFamily } from "./family";
+import { bitcoinAccountLayer } from "./index";
+
+// the bitcoin family through the multi-address engine, as the generic bridge runs it
+const getAccountShape = (info: unknown, dependencies: unknown) =>
+  bitcoinAccountLayer.getAccountShape(
+    info as never,
+    { paginationConfig: {} },
+    dependencies as never,
+  ) as Promise<Partial<BitcoinAccount>>;
 
 const XPUB =
   "xpub6BkvrczwoUfLGaNPQFdWXaNFCLzojvw7jFqmKPffS3up21H9uWvo6PcBsQn151ZaffZnyMSZahKfHJSGu7bUViQYDGw3YaEHTM7AjqPhqXC";
@@ -70,6 +79,19 @@ const deps = (api: ReturnType<typeof fakeApi>) => ({
 
 beforeEach(() => jest.clearAllMocks());
 
+describe("bitcoinFamily", () => {
+  it("walks a receive and a change chain with a gap of 20, re-reading 6 blocks", () => {
+    expect(bitcoinFamily).toMatchObject({
+      chains: [0, 1],
+      receiveChain: 0,
+      gapLimit: 20,
+      rewindBlocks: 6,
+    });
+    expect(GAP).toBe(20);
+    expect(bitcoinFamily.resyncError()).toMatchObject({ name: "AccountNeedResync" });
+  });
+});
+
 describe("getAccountShape", () => {
   it("scans a new account: xpub from the device, gap walk on both chains", async () => {
     const receive0 = await address(0, 0);
@@ -127,6 +149,8 @@ describe("getAccountShape", () => {
         info(),
         deps(fakeApi({ [receive0]: [{ txs: [funding] }] })),
       );
+      // the first sync of a new account reads the xpub; the next ones must not
+      signer.getWalletXpub.mockClear();
       return { receive0, account: { id: ACCOUNT_ID, ...first } as BitcoinAccount };
     }
 

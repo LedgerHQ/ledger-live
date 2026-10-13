@@ -28,8 +28,15 @@ import {
 import { removeReplaced } from "@ledgerhq/wallet-btc/operations";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { cryptoFor } from "../accountLayer/derivation";
-import { postSync } from "../accountLayer/pending";
-import { completeIntent, computeIntentType } from "../accountLayer/selection";
+import { bitcoinAccountLayer } from "../accountLayer";
+import { computeIntentType } from "../accountLayer/selection";
+
+// the account layer as the generic bridge runs it: the multi-address engine and the bitcoin family
+const { postSync } = bitcoinAccountLayer;
+const completeIntent = (...args: Parameters<typeof bitcoinAccountLayer.completeIntent>) =>
+  bitcoinAccountLayer.completeIntent(...args) as Promise<
+    TransactionIntent<any, any> & { data?: BitcoinTxData }
+  >;
 import { emptyAccountState } from "../accountLayer/state";
 import { fromTransactionRaw } from "../transaction";
 import {

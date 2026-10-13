@@ -31,19 +31,6 @@ export function cryptoFor(currencyId: string): ICrypto {
   return crypto;
 }
 
-/** "84'/0'" (or a full path, the CLI passes one) and an account index → "84'/0'/3'". */
-export function accountPathFrom(derivationPath: string, index: number): string {
-  const rootPath = derivationPath.split("/", 2).join("/");
-  return `${rootPath}/${index}'`;
-}
-
-/** The account path of an account, from its fresh address path "84'/0'/3'/0/12". */
-export const accountPathOf = (freshAddressPath: string): string =>
-  freshAddressPath.split("/").slice(0, 3).join("/");
-
-export const addressPath = (accountPath: string, chain: number, index: number): string =>
-  `${accountPath}/${chain}/${index}`;
-
 export type AddressDeriver = (chain: number, index: number) => Promise<string>;
 
 /** Addresses of an extended public key (wallet-btc caches them). */
@@ -55,3 +42,10 @@ export function addressDeriver(
   const crypto = cryptoFor(currencyId);
   return (chain, index) => crypto.getAddress(derivationMode, xpub, chain, index);
 }
+
+/** `addressDeriver` from a Ledger Wallet derivation mode, as the multi-address engine asks it. */
+export const bitcoinAddressDeriver = (
+  currencyId: string,
+  derivationMode: DerivationMode,
+  xpub: string,
+): AddressDeriver => addressDeriver(currencyId, toWalletDerivationMode(derivationMode), xpub);

@@ -1,8 +1,6 @@
 import {
-  accountPathFrom,
-  accountPathOf,
   addressDeriver,
-  addressPath,
+  bitcoinAddressDeriver,
   cryptoFor,
   toWalletDerivationMode,
 } from "./derivation";
@@ -21,13 +19,6 @@ describe("derivation", () => {
     expect(toWalletDerivationMode(mode)).toBe(expected);
   });
 
-  it("builds account and address paths", () => {
-    expect(accountPathFrom("84'/0'", 3)).toBe("84'/0'/3'");
-    expect(accountPathFrom("84'/0'/0'/0/0", 1)).toBe("84'/0'/1'");
-    expect(accountPathOf("84'/0'/3'/0/12")).toBe("84'/0'/3'");
-    expect(addressPath("84'/0'/3'", 1, 7)).toBe("84'/0'/3'/1/7");
-  });
-
   it("caches the currency rules", () => {
     expect(cryptoFor("bitcoin")).toBe(cryptoFor("bitcoin"));
   });
@@ -38,5 +29,11 @@ describe("derivation", () => {
       await cryptoFor("bitcoin").getAddress("Native SegWit", XPUB, 0, 0),
     );
     expect(await derive(0, 0)).not.toBe(await derive(1, 0));
+  });
+
+  it("derives from a Ledger Wallet derivation mode, as the multi-address engine asks", async () => {
+    expect(await bitcoinAddressDeriver("bitcoin", "native_segwit", XPUB)(1, 2)).toBe(
+      await addressDeriver("bitcoin", "Native SegWit", XPUB)(1, 2),
+    );
   });
 });

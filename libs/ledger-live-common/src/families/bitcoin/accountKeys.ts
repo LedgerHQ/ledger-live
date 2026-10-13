@@ -2,7 +2,8 @@ import type { Account } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountNeedResync } from "@ledgerhq/wallet-btc/errors";
 import type { BitcoinAccount } from "./types";
-import { accountPathOf, cryptoFor, toWalletDerivationMode } from "./accountLayer/derivation";
+import { accountPathOf } from "../../bridge/generic-coin-framework/multiAddressAccountLayer";
+import { cryptoFor, toWalletDerivationMode } from "./accountLayer/derivation";
 import { displayAddress } from "./accountLayer/interpret";
 import { readAccountState } from "./accountLayer/state";
 

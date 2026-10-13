@@ -1,9 +1,3 @@
-const zcashSignMessage = jest.fn(async () => ({ signature: "zcash-sig" }));
-const zcashResolver = jest.fn(async () => ({ address: "t1zcash" }));
-jest.mock("./zcashLegacy/setup", () => ({
-  createMessageSigner: () => zcashSignMessage,
-  resolver: (...args: unknown[]) => (zcashResolver as jest.Mock)(...args),
-}));
 const deviceSigner = {
   signMessage: jest.fn(async () => ({ v: 1, r: "aa", s: "bb" })),
   getAddress: jest.fn(async () => ({ address: "bc1q", publicKey: "k", path: "p" })),
@@ -54,23 +48,17 @@ describe("signMessage", () => {
 });
 
 describe("messageSigner", () => {
-  it("signs on the given transport, Zcash through its legacy flow", async () => {
+  it("signs on the given transport with the app of the account's currency, Zcash included", async () => {
     expect(
       await messageSigner.signMessage("t" as never, account(), { message: "hi" } as never),
-    ).toMatchObject({
-      signature: `${(1 + 27 + 4).toString(16)}aabb`,
-    });
-    expect(
-      await messageSigner.signMessage("t" as never, account(zcash), { message: "hi" } as never),
-    ).toEqual({
-      signature: "zcash-sig",
-    });
-    expect(zcashSignMessage).toHaveBeenCalledWith("t", account(zcash), { message: "hi" });
+    ).toMatchObject({ signature: `${(1 + 27 + 4).toString(16)}aabb` });
+    await messageSigner.signMessage("t" as never, account(zcash), { message: "hi" } as never);
+    expect(deviceSigner.signMessage).toHaveBeenLastCalledWith("zcash", "84'/0'/0'/0/1", "6869");
   });
 });
 
 describe("resolver", () => {
-  it("resolves on the given transport, Zcash through its legacy flow", async () => {
+  it("resolves on the given transport", async () => {
     expect(
       await resolver("t" as never, {
         currency: bitcoin,
@@ -78,15 +66,5 @@ describe("resolver", () => {
         derivationMode: "native_segwit",
       }),
     ).toMatchObject({ address: "bc1q" });
-    expect(
-      await resolver("t" as never, { currency: zcash, path: "p", derivationMode: "" }),
-    ).toEqual({
-      address: "t1zcash",
-    });
-    expect(zcashResolver).toHaveBeenCalledWith("t", {
-      currency: zcash,
-      path: "p",
-      derivationMode: "",
-    });
   });
 });

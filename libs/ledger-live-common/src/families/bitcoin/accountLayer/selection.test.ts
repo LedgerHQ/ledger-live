@@ -5,12 +5,12 @@ import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/type
 import { bitcoinPickingStrategy, type BitcoinAccount, type BitcoinOutput } from "../types";
 import { cryptoFor } from "./derivation";
 import { emptyAccountState } from "./state";
-import {
-  completeIntent,
-  computeIntentType,
-  getNextChangeAddress,
-  getOwnDisplayAddresses,
-} from "./selection";
+import { computeIntentType, getNextChangeAddress, getOwnDisplayAddresses } from "./selection";
+import { bitcoinAccountLayer } from "./index";
+
+// through the account layer: the multi-address engine hands the family the account's addresses
+const completeIntent = (...args: Parameters<typeof bitcoinAccountLayer.completeIntent>) =>
+  bitcoinAccountLayer.completeIntent(...args) as Promise<Intent>;
 
 jest.mock("@ledgerhq/wallet-btc/pickingstrategies/Merge", () => {
   const actual = jest.requireActual("@ledgerhq/wallet-btc/pickingstrategies/Merge");
@@ -213,6 +213,35 @@ describe("completeIntent", () => {
         deps,
       ),
     ).rejects.toThrow("boom");
+  });
+
+  it("ignores a pending operation without spent inputs, and an intent without data", async () => {
+    const result = await completeIntent(
+      intent({ data: undefined }),
+      await account({ pendingOperations: [{ hash: "p", extra: {} }] as never }),
+      tx(),
+      deps,
+    );
+    expect(result.data).toMatchObject({ type: "bitcoin", derivationMode: "Native SegWit" });
+    expect(result.data?.inputs?.length).toBeGreaterThan(0);
+  });
+
+  it("refuses to spend an output without an address it holds the key of", async () => {
+    const base = await account();
+    await expect(
+      completeIntent(
+        intent({ amount: 1_000n }),
+        {
+          ...base,
+          bitcoinResources: {
+            ...base.bitcoinResources,
+            utxos: [utxo("nokey", 90_000, null as never)],
+          },
+        } as BitcoinAccount,
+        tx(),
+        deps,
+      ),
+    ).rejects.toThrow("Input nokey:0 is not controlled by the account ()");
   });
 
   it("refuses a change address that is not the account's next one", async () => {

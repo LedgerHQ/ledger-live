@@ -1,12 +1,15 @@
-const signRawOperation = jest.fn();
-jest.mock("../signRawOperation", () => ({
-  buildSignRawOperation: jest.fn(() => signRawOperation),
-}));
+// built while api.ts loads: the mock lives in the factory
+jest.mock("../signRawOperation", () => {
+  const signRawOperation = jest.fn();
+  return { buildSignRawOperation: jest.fn(() => signRawOperation) };
+});
 jest.mock("../signer", () => ({ __esModule: true, default: { context: "signer-context" } }));
 
 import { bitcoinAccountLayer, computeIntentType } from "../accountLayer";
 import { buildSignRawOperation } from "../signRawOperation";
 import bitcoinBridgeApi, { buildIntentData } from "./api";
+
+const signRawOperation = (buildSignRawOperation as jest.Mock).mock.results[0].value;
 
 describe("buildIntentData", () => {
   it("forwards the rate set without a preset strategy", () => {

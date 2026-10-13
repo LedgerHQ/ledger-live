@@ -14,6 +14,10 @@ import type {
   Account as WalletAccount,
   SerializedAccount as WalletAccountRaw,
 } from "@ledgerhq/wallet-btc/account";
+import type {
+  AccountAddress,
+  MultiAddressAccountState,
+} from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { JsonSafeRecord } from "../../bridge/generic-coin-framework/types";
 
 // Zcash accounts are served by coin-zcash; its account types stay reachable here for the apps
@@ -118,7 +122,7 @@ export type BitcoinOutputRaw = [
 ];
 
 /** An address of the account that holds history. `chain` 0 receives, 1 is change. */
-export type BitcoinAccountAddress = { address: string; chain: 0 | 1; index: number };
+export type BitcoinAccountAddress = AccountAddress;
 
 export type BitcoinStateUtxo = {
   txid: string;
@@ -134,17 +138,12 @@ export type BitcoinStateUtxo = {
 export const BITCOIN_ACCOUNT_STATE_VERSION = 1;
 
 /**
- * What the account layer keeps between syncs (ADR-065 D7): small, versioned and rebuildable from
- * the network. It replaces the full transaction store `walletAccount` used to persist.
+ * What the account layer keeps between syncs (ADR-065 D7): the multi-address engine's state and the
+ * confirmed UTXO set. Small, versioned and rebuildable from the network; it replaces the full
+ * transaction store `walletAccount` used to persist.
  */
-export type BitcoinAccountState = {
+export type BitcoinAccountState = MultiAddressAccountState & {
   version: typeof BITCOIN_ACCOUNT_STATE_VERSION;
-  /** Chain tip at the last sync; the next sync resumes from a few blocks below it. */
-  syncedHeight: number;
-  /** Highest block holding a transaction of the account, to detect reorgs. */
-  anchor: { height: number; hash: string } | null;
-  /** Every address of the account that holds history. */
-  addresses: BitcoinAccountAddress[];
   /** Outputs of confirmed transactions that no confirmed transaction spends. */
   confirmedUtxos: BitcoinStateUtxo[];
 };

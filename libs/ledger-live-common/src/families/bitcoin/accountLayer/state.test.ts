@@ -1,5 +1,11 @@
 import type { SerializedAccount } from "@ledgerhq/wallet-btc/account";
-import { emptyAccountState, migrateWalletAccount, readAccountState } from "./state";
+import {
+  bitcoinResyncError,
+  emptyAccountState,
+  migrateWalletAccount,
+  readAccountState,
+  readBitcoinState,
+} from "./state";
 
 const walletAccount = (txs: unknown[], extra: Record<string, unknown> = {}): SerializedAccount =>
   ({
@@ -149,5 +155,41 @@ describe("migrateWalletAccount", () => {
         0,
       ),
     ).toEqual(emptyAccountState());
+  });
+});
+
+describe("readBitcoinState", () => {
+  const inMemoryWalletAccount = (txs: unknown[]) => {
+    const { params, xpub } = walletAccount(txs);
+    return { params, xpub: { xpub: xpub.xpub, storage: { exportSync: () => xpub.data } } };
+  };
+
+  it("reads the persisted state, or none", () => {
+    const accountState = emptyAccountState();
+    expect(readBitcoinState({ bitcoinResources: { utxos: [], accountState } } as never)).toBe(
+      accountState,
+    );
+    expect(readBitcoinState({ bitcoinResources: { utxos: [] } } as never)).toBeUndefined();
+    expect(readBitcoinState(undefined)).toBeUndefined();
+  });
+
+  it("converts the legacy store an account still carries, at its synced height or from 0", () => {
+    const funding = walletTx({
+      outputs: [{ output_hash: "t", output_index: 0, value: "1000", address: "me0" }],
+    });
+    const withHeight = readBitcoinState({
+      blockHeight: 150,
+      bitcoinResources: { utxos: [], walletAccount: inMemoryWalletAccount([funding]) },
+    } as never);
+    expect(withHeight).toMatchObject({ syncedHeight: 150 });
+    expect(
+      readBitcoinState({
+        bitcoinResources: { utxos: [], walletAccount: inMemoryWalletAccount([funding]) },
+      } as never),
+    ).toMatchObject({ syncedHeight: 0 });
+  });
+
+  it("asks for a resync with wallet-btc's error", () => {
+    expect(bitcoinResyncError()).toMatchObject({ name: "AccountNeedResync" });
   });
 });

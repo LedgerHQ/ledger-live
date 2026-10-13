@@ -164,6 +164,18 @@ describe("txToOperations", () => {
     expect(ops[0].date).toEqual(new Date("2026-01-01T00:00:00Z"));
   });
 
+  it("is an OUT of everything spent for a transaction without outputs", () => {
+    const ops = txToOperations(
+      tx({ inputs: [{ txid: "p", vout: 0, address: "recv1", value: "1000", sequence: 0 }] }),
+      "bitcoin",
+      ACCOUNT,
+      own,
+      change,
+    );
+    expect(ops).toHaveLength(1);
+    expect(ops[0]).toMatchObject({ type: "OUT", value: new BigNumber(1000), senders: ["recv1"] });
+  });
+
   it("reports nothing for a transaction that does not involve the account", () => {
     expect(txToOperations(tx({ outputs: [] }), "bitcoin", ACCOUNT, own, change)).toEqual([]);
   });

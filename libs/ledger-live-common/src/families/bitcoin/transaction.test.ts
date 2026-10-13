@@ -132,7 +132,7 @@ describe("formatters", () => {
       "TX INPUTS (0):\n\nTX OUTPUTS (0):",
     );
     expect(formatTransaction(transaction(), account)).toBe(`
-SEND 0.00001 BTC
+SEND 0.00001\u00a0BTC
 TO bc1qrecipient
 with feePerByte=? (network info not loaded)
 DEEP_OUTPUTS_FIRST`);

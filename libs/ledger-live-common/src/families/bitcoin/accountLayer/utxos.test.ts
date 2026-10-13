@@ -83,6 +83,14 @@ describe("withMempool", () => {
       ["p1", 0, true],
     ]);
   });
+  it("spends nothing for an input without previous transaction (coinbase)", () => {
+    const coinbase = tx("cb", {
+      block: null,
+      inputs: [{ vout: 0, value: "0", sequence: 0 }],
+      outputs: [{ index: 0, address: "me", value: "625" }],
+    });
+    expect(withMempool([utxo("c1")], [coinbase], own).map(u => u.txid)).toEqual(["c1", "cb"]);
+  });
 });
 
 describe("reconcile", () => {

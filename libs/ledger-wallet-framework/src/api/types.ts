@@ -4,6 +4,7 @@ import type {
   BalanceOptions,
   CoinModuleApi,
   CraftedTransaction,
+  Operation as CoinOperation,
   TransactionIntent,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -15,6 +16,7 @@ import type { CryptoCurrency, TokenCurrency } from "../types";
 import type {
   Account,
   AccountReadiness,
+  DerivationMode,
   Operation as LiveOperation,
   OperationType,
   SignRawOperationFnSignature,
@@ -122,6 +124,124 @@ export type AccountLayer = {
   ) => LiveOperation;
   /** Address parameters of the swap/exchange flow, when the family's differ from the default. */
   getSerializedAddressParameters?: (account: Account, addressFormat?: string) => Buffer;
+};
+
+/** An address of a multi-address account, on its HD chain (BIP44: 0 receives, 1 is change). */
+export type AccountAddress = { address: string; chain: number; index: number };
+
+/** What the multi-address engine keeps between syncs; a family extends it with its own part. */
+export type MultiAddressAccountState = {
+  /** Version of the family's state schema: a state of another version is not trusted. */
+  version: number;
+  /** Chain tip at the last sync; the next one resumes `rewindBlocks` below it. */
+  syncedHeight: number;
+  /** Highest block holding a transaction of the account, to detect reorgs. */
+  anchor: { height: number; hash: string } | null;
+  /** Every address of the account that holds history. */
+  addresses: AccountAddress[];
+};
+
+/** A transaction of the account, as the family reads it from a `listOperations` operation. */
+export type AccountTransaction = {
+  id: string;
+  /** `null` while in the mempool. */
+  block: { height: number; hash: string } | null;
+};
+
+/** The addresses of an account, as a family needs them to build a transaction. */
+export type AccountAddressBook = {
+  /** e.g. "84'/0'/0'". */
+  accountPath: string;
+  addresses: AccountAddress[];
+  pathOf: (address: Pick<AccountAddress, "chain" | "index">) => string;
+  /** The first address of `chain` above the highest one holding history. */
+  next: (chain: number) => Promise<{ address: string; path: string }>;
+};
+
+/**
+ * A family whose account is an extended public key with its funds on many addresses (ADR-065).
+ *
+ * The generic multi-address engine owns what any such account needs: the account key and id,
+ * the gap walk over its address chains, the history of each address (`listOperations`), the
+ * reorg anchor, the generic state and the fresh address. The family brings what its chain means:
+ * deriving addresses, reading a transaction, interpreting it into operations, its accounting
+ * (UTXOs for bitcoin) and what an intent needs from the whole account.
+ *
+ * Interim: it maps onto ADR-064 Option 1's `AccountApi`, which replaces it.
+ */
+export type MultiAddressAccountFamily<
+  Tx extends AccountTransaction = AccountTransaction,
+  State extends MultiAddressAccountState = MultiAddressAccountState,
+> = {
+  /** Address chains walked at sync. */
+  chains: readonly number[];
+  /** The chain the fresh (receive) address comes from. */
+  receiveChain: number;
+  /** Unused addresses walked past the last used one, per chain. */
+  gapLimit: number;
+  /** Blocks re-read below the last synced tip, so a replaced block is not missed. */
+  rewindBlocks: number;
+
+  /** The key the account is built on, read on the device: its extended public key. */
+  getAccountKey: (
+    request: { currencyId: string; accountPath: string; deviceId: string | undefined },
+    signerContext: SignerContext<any>,
+  ) => Promise<string>;
+  /** The addresses of an account key. */
+  addressDeriver: (
+    currencyId: string,
+    derivationMode: DerivationMode,
+    key: string,
+  ) => (chain: number, index: number) => Promise<string>;
+  /** An address as the account shows it. Default: unchanged. */
+  displayAddress?: (currencyId: string, address: string) => string;
+
+  /** The transaction a `listOperations` operation carries (in its `details`). */
+  transactionOf: (operation: CoinOperation<any>) => Tx;
+
+  /** The state persisted with the account, validated (or migrated); `undefined` when there is none. */
+  readState: (account: Account | undefined) => State | undefined;
+  emptyState: () => State;
+  /** The error a transaction of an account without state raises. */
+  resyncError: () => Error;
+
+  /** The operations of the account, each transaction interpreted against all its addresses. */
+  interpret: (
+    transactions: Tx[],
+    context: { currencyId: string; accountId: string; addresses: AccountAddress[] },
+  ) => LiveOperation[];
+  /**
+   * The family's accounting of a sync. `state` already carries this sync's engine fields;
+   * `operations` is the merged list. Returns the family's state, the operations it keeps, the
+   * balances and the account fields that persist the state.
+   */
+  settle: (input: {
+    currencyId: string;
+    state: State;
+    confirmed: Tx[];
+    pending: Tx[];
+    operations: LiveOperation[];
+  }) => {
+    state: State;
+    operations: LiveOperation[];
+    balance: BigNumber;
+    spendableBalance: BigNumber;
+    accountFields: Partial<Account>;
+  };
+
+  /** Adds what the intent needs from the whole account (inputs, change, signing paths). */
+  completeIntent: (
+    intent: TransactionIntent<any, any>,
+    account: Account,
+    transaction: Record<string, unknown>,
+    dependencies: AccountLayerDependencies & { addressBook: AccountAddressBook },
+  ) => Promise<TransactionIntent<any, any>>;
+  /** A pending operation settled although its own transaction is not on chain (replaced). */
+  isPendingSettled?: (pending: LiveOperation, synced: Account) => boolean;
+  /** The synced operation of a sent transaction, completed from its optimistic one. */
+  mergeSentOperation?: (synced: LiveOperation, optimistic: LiveOperation) => LiveOperation;
+  decorateOptimisticOperation?: AccountLayer["decorateOptimisticOperation"];
+  getSerializedAddressParameters?: AccountLayer["getSerializedAddressParameters"];
 };
 
 export type BridgeApi = {

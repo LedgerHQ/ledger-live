@@ -87,22 +87,6 @@ const toBitcoinOutput = (
   isChange: changeAddresses.has(utxo.address),
 });
 
-const getInputsKey = (op: BtcOperation): string | null => {
-  const inputs = op.extra?.inputs;
-  if (!Array.isArray(inputs) || inputs.length === 0) return null;
-  return [...inputs].sort().join("|");
-};
-
-const isBetterCandidate = (candidate: BtcOperation, existing: BtcOperation): boolean => {
-  const candidateConfirmed = typeof candidate.blockHeight === "number";
-  const existingConfirmed = typeof existing.blockHeight === "number";
-  if (candidateConfirmed !== existingConfirmed) return candidateConfirmed;
-  const candidateHeight = candidate.blockHeight ?? -1;
-  const existingHeight = existing.blockHeight ?? -1;
-  if (candidateHeight !== existingHeight) return candidateHeight > existingHeight;
-  return new Date(candidate.date).getTime() > new Date(existing.date).getTime();
-};
-
 /**
  * Spendable UTXOs and the operations shown, from the merged operations and the raw UTXO set —
  * coin-bitcoin's sync rules, unchanged: RBF-replaced pending transactions and their outputs go,
@@ -126,21 +110,12 @@ export function reconcile(
     .filter(utxo => !utxo.pending || !utxo.rbf || !removedHashes.has(utxo.txid))
     .map(utxo => toBitcoinOutput(utxo, currencyId, changeAddresses));
 
+  // `removeReplaced(…, true)` keeps one operation per spent input (confirmed, then higher, then
+  // latest), so the outputs kept are those of the surviving operations
   const utxoHashes = new Set(utxos.map(u => u.hash));
-  const operationsOfUtxos = balanceOperations.filter(op => utxoHashes.has(op.hash));
-
-  const bestOpByInputsKey = new Map<string, BtcOperation>();
-  for (const op of operationsOfUtxos) {
-    const key = getInputsKey(op);
-    if (!key) continue;
-    const existing = bestOpByInputsKey.get(key);
-    if (!existing || isBetterCandidate(op, existing)) bestOpByInputsKey.set(key, op);
-  }
-  const finalOperationsOfUtxos = operationsOfUtxos.filter(op => {
-    const key = getInputsKey(op);
-    return !key || bestOpByInputsKey.get(key)?.hash === op.hash;
-  });
-  const finalHashes = new Set(finalOperationsOfUtxos.map(op => op.hash));
+  const finalHashes = new Set(
+    balanceOperations.filter(op => utxoHashes.has(op.hash)).map(op => op.hash),
+  );
 
   return {
     operations,

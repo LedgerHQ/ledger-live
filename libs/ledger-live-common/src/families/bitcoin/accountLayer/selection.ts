@@ -1,9 +1,10 @@
 import { BigNumber } from "bignumber.js";
-import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import type { AccountLayerDependencies } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type {
+  AccountAddressBook,
+  AccountLayerDependencies,
+} from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import { AccountNeedResync } from "@ledgerhq/wallet-btc/errors";
 import { CoinSelect } from "@ledgerhq/wallet-btc/pickingstrategies/CoinSelect";
 import { Custom } from "@ledgerhq/wallet-btc/pickingstrategies/Custom";
 import { DeepFirst } from "@ledgerhq/wallet-btc/pickingstrategies/DeepFirst";
@@ -31,16 +32,15 @@ import {
   type Transaction,
   type UtxoStrategy,
 } from "../types";
+import { addressBookOf } from "../../../bridge/generic-coin-framework/multiAddressAccountLayer";
 import {
   CHANGE_CHAIN,
-  accountPathOf,
-  addressDeriver,
-  addressPath,
+  bitcoinAddressDeriver,
   cryptoFor,
   toWalletDerivationMode,
 } from "./derivation";
 import { displayAddress } from "./interpret";
-import { readAccountState } from "./state";
+import { bitcoinResyncError, readBitcoinState } from "./state";
 
 type Intent = TransactionIntent<any, any> & { data?: BitcoinTxData };
 
@@ -74,7 +74,8 @@ function committedInputs(operations: Operation[]): Set<string> {
  */
 function candidates(account: BitcoinAccount, utxoStrategy: UtxoStrategy): BitcoinOutput[] {
   const committed = committedInputs(account.pendingOperations);
-  return (account.bitcoinResources?.utxos ?? []).filter(
+  // the account has a state (the address book was built from it), hence its resources
+  return account.bitcoinResources.utxos.filter(
     utxo =>
       (!!utxo.blockHeight || utxo.isChange) &&
       !utxoStrategy.excludeUTXOs.some(
@@ -97,24 +98,21 @@ type AccountContext = {
   account: BitcoinAccount;
   currencyId: string;
   derivationMode: BitcoinDerivationMode;
-  accountPath: string;
+  addressBook: AccountAddressBook;
   /** Display address (what `BitcoinOutput.address` holds) → address of the account. */
   addressByDisplay: Map<string, BitcoinAccountAddress>;
 };
 
-function accountContext(
-  account: BitcoinAccount,
-): AccountContext & { addresses: BitcoinAccountAddress[] } {
-  const state = readAccountState(account.bitcoinResources?.accountState);
-  if (!state) throw new AccountNeedResync();
+function accountContext(account: BitcoinAccount, addressBook: AccountAddressBook): AccountContext {
   const currencyId = account.currency.id;
   return {
     account,
     currencyId,
     derivationMode: toWalletDerivationMode(account.derivationMode),
-    accountPath: accountPathOf(account.freshAddressPath),
-    addresses: state.addresses,
-    addressByDisplay: new Map(state.addresses.map(a => [displayAddress(currencyId, a.address), a])),
+    addressBook,
+    addressByDisplay: new Map(
+      addressBook.addresses.map(a => [displayAddress(currencyId, a.address), a]),
+    ),
   };
 }
 
@@ -126,7 +124,7 @@ function toIntentInput(
     value,
     address,
     blockHeight,
-  }: { txid: string; vout: number; value?: string; address: string; blockHeight?: number | null },
+  }: { txid: string; vout: number; value: string; address: string; blockHeight?: number | null },
 ): BitcoinIntentInput {
   const owner = ctx.addressByDisplay.get(displayAddress(ctx.currencyId, address));
   if (!owner) {
@@ -136,37 +134,31 @@ function toIntentInput(
     txid,
     vout,
     address: owner.address,
-    path: addressPath(ctx.accountPath, owner.chain, owner.index),
-    ...(value === undefined ? {} : { value }),
+    path: ctx.addressBook.pathOf(owner),
+    value,
     ...(blockHeight === undefined ? {} : { blockHeight }),
   };
 }
 
-/** The next change address, after the highest one holding history (wallet-btc `getNewAddress(1, 1)`). */
-async function nextChange(
-  ctx: AccountContext & { addresses: BitcoinAccountAddress[] },
-): Promise<{ address: string; path: string }> {
-  const highest = ctx.addresses
-    .filter(a => a.chain === CHANGE_CHAIN)
-    .reduce((max, a) => Math.max(max, a.index), -1);
-  const index = highest + 1;
-  const xpub = decodeAccountId(ctx.account.id).xpubOrAddress;
-  const address = await addressDeriver(
-    ctx.currencyId,
-    ctx.derivationMode,
-    xpub,
-  )(CHANGE_CHAIN, index);
-  return { address, path: addressPath(ctx.accountPath, CHANGE_CHAIN, index) };
-}
+/** The addresses of a bitcoin account, outside the account layer (replace-by-fee flows). */
+const bitcoinAddressBookOf = (account: BitcoinAccount): AccountAddressBook =>
+  addressBookOf(
+    {
+      readState: readBitcoinState,
+      resyncError: bitcoinResyncError,
+      addressDeriver: bitcoinAddressDeriver,
+    },
+    account,
+  );
 
 /** The account's next change address — where a cancel sends the funds back. */
 export const getNextChangeAddress = (
   account: BitcoinAccount,
-): Promise<{ address: string; path: string }> => nextChange(accountContext(account));
+): Promise<{ address: string; path: string }> => bitcoinAddressBookOf(account).next(CHANGE_CHAIN);
 
 /** The addresses of the account, as shown (`BitcoinOutput.address`). */
 export function getOwnDisplayAddresses(account: BitcoinAccount): Set<string> {
-  return new Set(accountContext(account).addressByDisplay.keys());
+  return new Set(accountContext(account, bitcoinAddressBookOf(account)).addressByDisplay.keys());
 }
 
 function selectInputs(
@@ -260,11 +252,11 @@ export async function completeIntent(
   intent: Intent,
   account: Account,
   transaction: Record<string, unknown>,
-  { api, context }: AccountLayerDependencies,
+  { api, context, addressBook }: AccountLayerDependencies & { addressBook: AccountAddressBook },
 ): Promise<Intent> {
-  const ctx = accountContext(account as BitcoinAccount);
+  const ctx = accountContext(account as BitcoinAccount, addressBook);
   const familyData = getFamilySpecificData(transaction as Transaction);
-  const change = await nextChange(ctx);
+  const change = await addressBook.next(CHANGE_CHAIN);
   if (familyData.changeAddress && familyData.changeAddress !== change.address) {
     throw new Error("Invalid change address");
   }

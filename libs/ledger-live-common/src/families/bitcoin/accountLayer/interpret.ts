@@ -64,8 +64,7 @@ export function txToOperations(
   const hasSpentNothing = value.eq(0);
 
   // Change output is always the last one
-  const changeOutputIndex =
-    tx.outputs.length === 0 ? 0 : tx.outputs.map(o => o.index).reduce((p, c) => (p > c ? p : c));
+  const changeOutputIndex = tx.outputs.reduce((max, o) => Math.max(max, o.index), 0);
 
   for (const output of tx.outputs) {
     // the explorer reports "unknown" for OP_RETURN outputs, which is not an address

@@ -1,8 +1,11 @@
+import type { Account } from "@ledgerhq/types-live";
 import type { BitcoinTxDetails } from "@ledgerhq/coin-bitcoin/api";
+import { AccountNeedResync } from "@ledgerhq/wallet-btc/errors";
 import type { SerializedAccount as WalletAccountRaw } from "@ledgerhq/wallet-btc/account";
 import type { TX as WalletTx } from "@ledgerhq/wallet-btc/storage/types";
 import {
   BITCOIN_ACCOUNT_STATE_VERSION,
+  type BitcoinAccount,
   type BitcoinAccountAddress,
   type BitcoinAccountState,
 } from "../types";
@@ -99,3 +102,23 @@ export function migrateWalletAccount(
     confirmedUtxos: applyConfirmedTxs([], confirmedTxs, new Set(addresses.keys())),
   };
 }
+
+/**
+ * The state of an account: the persisted one, or — for an account still carrying the legacy
+ * bridge's transaction store in memory — the one converted from it, without a resync (M1).
+ */
+export function readBitcoinState(account: Account | undefined): BitcoinAccountState | undefined {
+  const resources = (account as BitcoinAccount | undefined)?.bitcoinResources;
+  const persisted = readAccountState(resources?.accountState);
+  if (persisted || !resources?.walletAccount) return persisted;
+  const { walletAccount } = resources;
+  return migrateWalletAccount(
+    {
+      params: walletAccount.params,
+      xpub: { xpub: walletAccount.xpub.xpub, data: walletAccount.xpub.storage.exportSync() },
+    },
+    account?.blockHeight ?? 0,
+  );
+}
+
+export const bitcoinResyncError = (): Error => new AccountNeedResync();
