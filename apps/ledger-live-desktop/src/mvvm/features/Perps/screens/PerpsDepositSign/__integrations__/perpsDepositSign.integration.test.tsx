@@ -73,4 +73,15 @@ describe("PerpsDepositSign integration", () => {
     expect(screen.getByRole("dialog", { name: "Deposit signing" })).toBeVisible();
     expect(screen.queryByTestId("device-action-loader")).not.toBeInTheDocument();
   });
+
+  it("should offer a retry when the deposit fails, and restart it on retry", async () => {
+    mockExecuteSwap.mockRejectedValueOnce(new Error("Device disconnected"));
+    const { user } = render(<PerpsDepositSignRoot />);
+
+    act(() => openPerpsDepositSign(signData));
+
+    await user.click(await screen.findByTestId("perps-deposit-sign-retry"));
+
+    expect(mockExecuteSwap).toHaveBeenCalledTimes(2);
+  });
 });
