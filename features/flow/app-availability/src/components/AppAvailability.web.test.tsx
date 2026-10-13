@@ -38,16 +38,11 @@ const LEARN_MORE = COPY.en.translation["geoBlocking.learnMore"];
 const SERVICE_TITLE = COPY.en.translation["serviceUnavailable.title"];
 const SERVICE_DESCRIPTION = COPY.en.translation["serviceUnavailable.description"];
 
-const CAL_URL = "https://cal.test";
-const CLIENT_VERSION = "1.2.3";
-
 function renderGate(children: React.ReactNode) {
   return render(
     <LinkingProvider config={{ openExternal }}>
       <I18nTestProvider resources={COPY}>
-        <AppAvailability calServiceUrl={CAL_URL} ledgerClientVersion={CLIENT_VERSION}>
-          {children}
-        </AppAvailability>
+        <AppAvailability>{children}</AppAvailability>
       </I18nTestProvider>
     </LinkingProvider>,
   );
@@ -152,7 +147,7 @@ describe("AppAvailability (web)", () => {
     rerender(
       <LinkingProvider config={{ openExternal }}>
         <I18nTestProvider resources={COPY}>
-          <AppAvailability calServiceUrl={CAL_URL} ledgerClientVersion={CLIENT_VERSION}>
+          <AppAvailability>
             <div data-testid="child">Visible</div>
           </AppAvailability>
         </I18nTestProvider>

@@ -12,8 +12,6 @@ jest.mock("./useCalCheck", () => ({
   useCalCheck: jest.fn(),
 }));
 
-const CAL_URL = "https://cal.test";
-const CLIENT_VERSION = "1.2.3";
 const mockedUseCheckQuery = jest.mocked(useCheckOfacGeoBlockQuery);
 const mockedUseCalCheck = jest.mocked(useCalCheck);
 
@@ -26,10 +24,10 @@ describe("useAppAvailability", () => {
     mockOfacCheckQuery(mockedUseCheckQuery, { data: true, isLoading: false });
     mockedUseCalCheck.mockReturnValue({ status: "available" });
 
-    const { result } = renderHook(() => useAppAvailability(CAL_URL, CLIENT_VERSION));
+    const { result } = renderHook(() => useAppAvailability());
 
     expect(result.current).toEqual({ status: "unavailable", reason: "geoBlocked" });
-    expect(mockedUseCalCheck).toHaveBeenCalledWith(CAL_URL, CLIENT_VERSION);
+    expect(mockedUseCalCheck).toHaveBeenCalledWith();
   });
 
   it("should expose a CAL serviceUnavailable result", () => {
@@ -39,7 +37,7 @@ describe("useAppAvailability", () => {
       reason: "serviceUnavailable",
     });
 
-    const { result } = renderHook(() => useAppAvailability(CAL_URL, CLIENT_VERSION));
+    const { result } = renderHook(() => useAppAvailability());
 
     expect(result.current).toEqual({
       status: "unavailable",
@@ -51,7 +49,7 @@ describe("useAppAvailability", () => {
     mockOfacCheckQuery(mockedUseCheckQuery, { data: false, isLoading: false });
     mockedUseCalCheck.mockReturnValue({ status: "pending" });
 
-    const { result } = renderHook(() => useAppAvailability(CAL_URL, CLIENT_VERSION));
+    const { result } = renderHook(() => useAppAvailability());
 
     expect(result.current).toEqual({ status: "pending" });
   });

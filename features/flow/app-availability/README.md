@@ -27,18 +27,19 @@ service). The first unavailable check wins.
 ```tsx
 import { AppAvailability, useAppAvailability } from "@features/flow-app-availability";
 
-<AppAvailability calServiceUrl={calServiceUrl} ledgerClientVersion={ledgerClientVersion}>
+<AppAvailability>
   <App />
 </AppAvailability>
 ```
 
 ```ts
-const availability = useAppAvailability(calServiceUrl, ledgerClientVersion);
+const availability = useAppAvailability();
 const pendingAvailabilityCheck = availability.status === "pending";
 ```
 
-Pass the CAL base URL and client version the host already injects into `calApi`. The flow does not
-choose a host.
+The probe reads `calServiceUrl` and `ledgerClientVersion` from the store `extraArgument` the host
+already passes to `calApi`. Its fetch does not use the shared CAL base query, so that query's retry
+does not apply. The flow does not choose a host.
 
 Unavailable copy is resolved in the flow through `@shared/i18n`. Geo-block uses the existing
 `geoBlocking.title`, `geoBlocking.description`, and `geoBlocking.learnMore` keys. Service-unavailable

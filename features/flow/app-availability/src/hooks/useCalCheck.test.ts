@@ -1,12 +1,35 @@
+import React from "react";
+import { configureStore } from "@reduxjs/toolkit";
+import { calApi, calApiExtra } from "@shared/api-services";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { delay, http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { Provider } from "react-redux";
 import { CAL_HEALTHCHECK_TIMEOUT_MS } from "./calHealth.internals";
 import { useCalCheck } from "./useCalCheck";
 
 const CAL_URL = "https://cal.test";
 const CLIENT_VERSION = "1.2.3";
 const server = setupServer();
+
+function renderUseCalCheck(
+  extraArgument: unknown = calApiExtra({
+    calServiceUrl: CAL_URL,
+    ledgerClientVersion: CLIENT_VERSION,
+  }),
+) {
+  const store = configureStore({
+    reducer: { [calApi.reducerPath]: calApi.reducer },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        thunk: { extraArgument },
+      }).concat(calApi.middleware),
+  });
+
+  return renderHook(() => useCalCheck(), {
+    wrapper: ({ children }) => React.createElement(Provider, { store, children }),
+  });
+}
 
 describe("useCalCheck", () => {
   beforeAll(() => {
@@ -33,7 +56,7 @@ describe("useCalCheck", () => {
       }),
     );
 
-    const { result } = renderHook(() => useCalCheck(CAL_URL, CLIENT_VERSION));
+    const { result } = renderUseCalCheck();
 
     expect(result.current).toEqual({ status: "pending" });
 
@@ -43,37 +66,54 @@ describe("useCalCheck", () => {
   });
 
   it("should return available when CAL is healthy", async () => {
-    server.use(http.get(`${CAL_URL}/v1/currencies`, () => HttpResponse.json([{ id: "bitcoin" }])));
+    let clientVersion: string | null = null;
+    server.use(
+      http.get(`${CAL_URL}/v1/currencies`, ({ request }) => {
+        clientVersion = request.headers.get("X-Ledger-Client-Version");
+        return HttpResponse.json([{ id: "bitcoin" }]);
+      }),
+    );
 
-    const { result } = renderHook(() => useCalCheck(CAL_URL, CLIENT_VERSION));
+    const { result } = renderUseCalCheck();
 
     await waitFor(() => {
       expect(result.current).toEqual({ status: "available" });
     });
+    expect(clientVersion).toBe(CLIENT_VERSION);
   });
 
   it("should return available when the device is offline", async () => {
     const onlineDescriptor = Object.getOwnPropertyDescriptor(navigator, "onLine");
     Object.defineProperty(navigator, "onLine", { configurable: true, value: false });
 
-    const { result } = renderHook(() => useCalCheck(CAL_URL, CLIENT_VERSION));
+    const { result } = renderUseCalCheck();
 
     await waitFor(() => {
       expect(result.current).toEqual({ status: "available" });
     });
 
     if (onlineDescriptor === undefined) {
-      // jsdom always defines onLine; restore to true if we cannot restore the descriptor.
       Object.defineProperty(navigator, "onLine", { configurable: true, value: true });
     } else {
       Object.defineProperty(navigator, "onLine", onlineDescriptor);
     }
   });
 
+  it("should return serviceUnavailable when the store has no CAL config", async () => {
+    const { result } = renderUseCalCheck({});
+
+    await waitFor(() => {
+      expect(result.current).toEqual({
+        status: "unavailable",
+        reason: "serviceUnavailable",
+      });
+    });
+  });
+
   it("should return unavailable with serviceUnavailable when CAL fails", async () => {
     server.use(http.get(`${CAL_URL}/v1/currencies`, () => new HttpResponse(null, { status: 503 })));
 
-    const { result } = renderHook(() => useCalCheck(CAL_URL, CLIENT_VERSION));
+    const { result } = renderUseCalCheck();
 
     await waitFor(() => {
       expect(result.current).toEqual({
@@ -92,7 +132,7 @@ describe("useCalCheck", () => {
       }),
     );
 
-    const { result } = renderHook(() => useCalCheck(CAL_URL, CLIENT_VERSION));
+    const { result } = renderUseCalCheck();
 
     expect(result.current).toEqual({ status: "pending" });
 

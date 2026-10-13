@@ -6387,6 +6387,9 @@ importers:
       '@domain/api-ofac':
         specifier: workspace:*
         version: link:../../../domain/api/ofac
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -6397,6 +6400,9 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/ui-app-unavailable
     devDependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow

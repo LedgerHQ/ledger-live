@@ -3,11 +3,8 @@ import { composeAvailability } from "./composeAvailability.internals";
 import { useCalCheck } from "./useCalCheck";
 import { useOfacGeoBlockCheck } from "./useOfacGeoBlockCheck";
 
-export function useAppAvailability(
-  calServiceUrl: string,
-  ledgerClientVersion: string,
-): AppAvailabilityStatus {
+export function useAppAvailability(): AppAvailabilityStatus {
   const ofac = useOfacGeoBlockCheck();
-  const cal = useCalCheck(calServiceUrl, ledgerClientVersion);
+  const cal = useCalCheck();
   return composeAvailability(ofac, cal);
 }
