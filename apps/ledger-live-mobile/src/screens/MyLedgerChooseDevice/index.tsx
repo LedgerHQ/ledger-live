@@ -40,7 +40,7 @@ type ChooseDeviceProps = Props & {
 };
 
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
-  const action = useManagerDeviceAction();
+  const action = useManagerDeviceAction({ resolveOsUpdates: true });
   const [device, setDevice] = useState<Device | null>();
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
