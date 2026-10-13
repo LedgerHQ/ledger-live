@@ -13,7 +13,7 @@ wallet-cli send --account ethereum-1 --to 0x… --amount "0.01 ETH" --dry-run
 wallet-cli <command> --help                 # exact flags and defaults
 ```
 
-Most commands accept `--output json`. `send`, `earn deposit`, `earn withdraw`, `agent-intent send` and `agent-intent swap` accept `--dry-run`, which validates without signing or submitting and needs no device.
+Most commands accept `--output json`. `send`, `earn deposit`, `earn withdraw`, `agent-intent send` and `agent-intent swap` accept `--dry-run`, which validates without signing or submitting and needs no device. On a first deposit into an Ethereum vault, it validates only the `approve` step: the deposit itself can't be simulated until the allowance is on-chain.
 
 ## Commands
 
