@@ -27,6 +27,13 @@ import { updateTransaction } from "./updateTransaction";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import formatters from "./transaction";
 import { getZCashClient } from "../logic/engineClient";
+import {
+  buildLegacyBroadcast,
+  buildLegacyEstimateMaxSpendable,
+  buildLegacyGetTransactionStatus,
+  buildLegacyPrepareTransaction,
+  buildLegacySignOperation,
+} from "../legacy";
 
 /**
  * `getFullViewingKey` is not part of `AccountBridge`: the UFVK export flow is
@@ -45,6 +52,17 @@ export type ZcashAccountBridge = AccountBridge<Transaction, ZcashAccount, Transa
   ) => Promise<{ address: string }>;
 };
 
+export type ZcashBridgeOptions = {
+  /**
+   * Whether the host runs the shielded engine, read each time a bridge method is
+   * called (the host's feature flag can change at runtime). When it answers false
+   * the bridge is transparent-only: sync skips the shielded leg and every send
+   * goes through `src/legacy`, so nothing reaches the native engine.
+   * @default () => false
+   */
+  isShieldedEnabled?: () => boolean;
+};
+
 /**
  * Assembles the thin `AccountBridge`/`CurrencyBridge` (LL device path) -- every
  * method here delegates to a sibling module, or to `logic/` for what the
@@ -52,11 +70,24 @@ export type ZcashAccountBridge = AccountBridge<Transaction, ZcashAccount, Transa
  * broadcast). The only bespoke residue is `signOperation` (PCZT device
  * orchestration).
  */
-export function createBridges(signerContext: SignerContext, context: ZcashContext) {
+export function createBridges(
+  signerContext: SignerContext,
+  context: ZcashContext,
+  options: ZcashBridgeOptions = {},
+) {
+  const isShieldedEnabled = options.isShieldedEnabled ?? (() => false);
+  // Picks the implementation at call time, so a flag flip applies to the next call.
+  const byMode =
+    <A extends unknown[], R>(
+      shielded: (...args: A) => R,
+      transparentOnly: (...args: A) => R,
+    ): ((...args: A) => R) =>
+    (...args) =>
+      (isShieldedEnabled() ? shielded : transparentOnly)(...args);
   const getAddressFn = getAddress(signerContext);
   const getFullViewingKeyFn = getFullViewingKeyResolver(signerContext);
   const getShieldedAddressFn = getShieldedAddressResolver(signerContext);
-  const getAccountShape = makeGetAccountShape(signerContext, context);
+  const getAccountShape = makeGetAccountShape(signerContext, context, isShieldedEnabled);
 
   const scanAccounts = makeScanAccounts<ZcashAccount>({
     getAccountShape,
@@ -79,16 +110,19 @@ export function createBridges(signerContext: SignerContext, context: ZcashContex
   const accountBridge: ZcashAccountBridge = {
     createTransaction,
     updateTransaction,
-    prepareTransaction,
-    getTransactionStatus,
-    estimateMaxSpendable,
+    prepareTransaction: byMode(prepareTransaction, buildLegacyPrepareTransaction(context)),
+    getTransactionStatus: byMode(getTransactionStatus, buildLegacyGetTransactionStatus(context)),
+    estimateMaxSpendable: byMode(estimateMaxSpendable, buildLegacyEstimateMaxSpendable(context)),
     sync,
     receive,
-    signOperation: buildSignOperation(signerContext, context),
+    signOperation: byMode(
+      buildSignOperation(signerContext, context),
+      buildLegacySignOperation(signerContext, context),
+    ),
     signRawOperation: () => {
       throw new Error("signRawOperation is not supported");
     },
-    broadcast: buildBroadcast(context),
+    broadcast: byMode(buildBroadcast(context), buildLegacyBroadcast(context)),
     assignFromAccountRaw,
     assignToAccountRaw,
     formatAccountSpecifics: () => "",
