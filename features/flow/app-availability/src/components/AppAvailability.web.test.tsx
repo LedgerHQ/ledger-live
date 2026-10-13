@@ -1,8 +1,10 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { useCheckOfacGeoBlockQuery } from "@domain/api-ofac";
 import { I18nTestProvider } from "@shared/i18n/testing";
+import { LinkingProvider } from "@shared/linking";
 import { mockOfacCheckQuery } from "../test/mockOfacCheckQuery";
+import { urls } from "../urls";
 import { AppAvailability } from "./AppAvailability";
 
 jest.mock("@domain/api-ofac", () => ({
@@ -10,24 +12,29 @@ jest.mock("@domain/api-ofac", () => ({
 }));
 
 const mockedUseCheckQuery = jest.mocked(useCheckOfacGeoBlockQuery);
+const openExternal = jest.fn();
 
 const COPY = {
   en: {
     translation: {
       "geoBlocking.title": "Location unavailable",
       "geoBlocking.description": "Ledger Wallet is not available in this location.",
+      "geoBlocking.learnMore": "Learn more",
     },
   },
 };
 
 const TITLE = COPY.en.translation["geoBlocking.title"];
 const DESCRIPTION = COPY.en.translation["geoBlocking.description"];
+const LEARN_MORE = COPY.en.translation["geoBlocking.learnMore"];
 
 function renderGate(children: React.ReactNode) {
   return render(
-    <I18nTestProvider resources={COPY}>
-      <AppAvailability>{children}</AppAvailability>
-    </I18nTestProvider>,
+    <LinkingProvider config={{ openExternal }}>
+      <I18nTestProvider resources={COPY}>
+        <AppAvailability>{children}</AppAvailability>
+      </I18nTestProvider>
+    </LinkingProvider>,
   );
 }
 
@@ -81,6 +88,18 @@ describe("AppAvailability (web)", () => {
     expect(screen.queryByTestId("child")).toBeNull();
     expect(screen.getByRole("heading", { name: TITLE })).toBeVisible();
     expect(screen.getByText(DESCRIPTION)).toBeVisible();
+    expect(screen.getByRole("button", { name: LEARN_MORE })).toBeVisible();
+  });
+
+  it("should open the learn more URL when the action is pressed", () => {
+    mockOfacCheckQuery(mockedUseCheckQuery, { data: true, isLoading: false });
+
+    renderGate(<div data-testid="child">Should not be visible</div>);
+
+    fireEvent.click(screen.getByRole("button", { name: LEARN_MORE }));
+
+    expect(openExternal).toHaveBeenCalledTimes(1);
+    expect(openExternal).toHaveBeenCalledWith(urls.geoBlockLearnMore);
   });
 
   it("should render nothing when children is null and not blocked", () => {

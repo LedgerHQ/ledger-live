@@ -1,11 +1,11 @@
 import React from "react";
-import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
-import { Globe } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Box, Button, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
+import { ExternalLink, Globe } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CONTENT_MAX_WIDTH_PX, SPOT_SIZE } from "./internals/layout";
-import { columnStyle, copyStyle, rootStyle } from "./styles.native";
+import { actionStyle, columnStyle, copyStyle, rootStyle } from "./styles.native";
 import type { AppUnavailableProps } from "./types";
 
-export function AppUnavailable({ title, description, testID }: AppUnavailableProps) {
+export function AppUnavailable({ title, description, action, testID }: AppUnavailableProps) {
   return (
     <Box lx={rootStyle} testID={testID}>
       <Box lx={columnStyle} style={{ maxWidth: CONTENT_MAX_WIDTH_PX }}>
@@ -22,6 +22,20 @@ export function AppUnavailable({ title, description, testID }: AppUnavailablePro
             {description}
           </Text>
         </Box>
+        {action ? (
+          <Box lx={actionStyle}>
+            <Button
+              appearance="base"
+              size="lg"
+              isFull
+              icon={ExternalLink}
+              onPress={action.onPress}
+              testID={action.testID}
+            >
+              {action.label}
+            </Button>
+          </Box>
+        ) : null}
       </Box>
     </Box>
   );

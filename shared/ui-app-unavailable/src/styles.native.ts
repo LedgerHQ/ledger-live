@@ -21,3 +21,7 @@ export const copyStyle: LumenViewStyle = {
   gap: "s8",
   width: "full",
 };
+
+export const actionStyle: LumenViewStyle = {
+  width: "full",
+};

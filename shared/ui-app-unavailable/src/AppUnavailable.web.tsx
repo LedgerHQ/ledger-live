@@ -1,10 +1,10 @@
 import React from "react";
-import { Spot } from "@ledgerhq/lumen-ui-react";
-import { Globe } from "@ledgerhq/lumen-ui-react/symbols";
+import { Button, Spot } from "@ledgerhq/lumen-ui-react";
+import { ExternalLink, Globe } from "@ledgerhq/lumen-ui-react/symbols";
 import { CONTENT_MAX_WIDTH_PX, SPOT_SIZE } from "./internals/layout";
 import type { AppUnavailableProps } from "./types";
 
-export function AppUnavailable({ title, description, testID }: AppUnavailableProps) {
+export function AppUnavailable({ title, description, action, testID }: AppUnavailableProps) {
   return (
     <div
       className="bg-canvas flex h-full w-full flex-1 items-center justify-center px-16"
@@ -19,6 +19,18 @@ export function AppUnavailable({ title, description, testID }: AppUnavailablePro
           <h1 className="heading-4-semi-bold text-base">{title}</h1>
           <p className="body-2 text-muted">{description}</p>
         </div>
+        {action ? (
+          <Button
+            appearance="base"
+            size="lg"
+            isFull
+            icon={ExternalLink}
+            onClick={action.onPress}
+            data-testid={action.testID}
+          >
+            {action.label}
+          </Button>
+        ) : null}
       </div>
     </div>
   );

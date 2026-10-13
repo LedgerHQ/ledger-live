@@ -6139,6 +6139,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
+      '@shared/linking':
+        specifier: workspace:*
+        version: link:../../../shared/linking
       '@shared/ui-app-unavailable':
         specifier: workspace:*
         version: link:../../../shared/ui-app-unavailable
