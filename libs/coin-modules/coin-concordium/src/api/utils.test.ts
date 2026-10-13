@@ -97,6 +97,18 @@ describe("mapRawOperationToApiOperation", () => {
     expect(result.tx.failed).toBe(true);
   });
 
+  it("carries the fee payer onto the transaction", () => {
+    const raw = createRawOperation({ feesPayer: ADDRESS });
+
+    expect(mapRawOperationToApiOperation(raw, ADDRESS).tx.feesPayer).toBe(ADDRESS);
+  });
+
+  it("omits the fee payer when none is known", () => {
+    expect(mapRawOperationToApiOperation(createRawOperation(), ADDRESS).tx).not.toHaveProperty(
+      "feesPayer",
+    );
+  });
+
   it("names no counterparty when the chain named none, rather than an empty address", () => {
     const raw = createRawOperation({ recipient: "", failed: true });
 
