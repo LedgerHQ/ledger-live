@@ -199,6 +199,31 @@ describe("genericSignOperation", () => {
     );
   });
 
+  it("combines the signature with the payload the device signed, not the crafted one", async () => {
+    const getDeviceSignOptions = jest.fn().mockImplementation(() => ({}));
+    const applyDeviceSignResult = jest.fn().mockReturnValue("resignedTx");
+    (getBridgeApi as jest.Mock).mockResolvedValue({ getDeviceSignOptions, applyDeviceSignResult });
+    const combine = jest.fn().mockResolvedValue("signedTx");
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      craftTransaction,
+      craftTransactionData,
+      combine,
+      getNextSequence: jest.fn().mockResolvedValue(1n),
+    });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
+
+    expect(getDeviceSignOptions).toHaveBeenCalledTimes(1);
+    expect(applyDeviceSignResult).toHaveBeenCalledWith(
+      "unsignedTx",
+      getDeviceSignOptions.mock.results[0].value,
+    );
+    expect(combine).toHaveBeenCalledWith(expect.anything(), "resignedTx", ["sig"], {
+      pubkey: "pubKey",
+    });
+  });
+
   it("crafts from the family's own intent data", async () => {
     const buildIntentData = jest.fn().mockReturnValue({ type: "familyx" });
     (getBridgeApi as jest.Mock).mockResolvedValue({ buildIntentData });
