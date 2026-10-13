@@ -2,7 +2,7 @@
  * Pure helpers for the webview hardening layer. Kept free of any `electron`
  * imports so they can be unit-tested without mocking the Electron runtime.
  */
-import path from "path";
+import path from "node:path";
 
 const WEBVIEW_PRELOADS: ReadonlySet<string> = new Set([
   "webviewPreloader.bundle.js",
