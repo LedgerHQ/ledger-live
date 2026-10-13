@@ -63,5 +63,11 @@ export function sanitizeActionMenuDialogParams(
     );
   }
 
-  return { options: params.options.map(option => sanitizeOption(option, handlerName)) };
+  const options = params.options.map(option => sanitizeOption(option, handlerName));
+
+  if (new Set(options.map(({ id }) => id)).size !== options.length) {
+    throw new Error(`Invalid params for ${handlerName}: option 'id' values must be unique.`);
+  }
+
+  return { options };
 }

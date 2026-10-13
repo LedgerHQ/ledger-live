@@ -1,4 +1,6 @@
 import React from "react";
+import { Title as DialogTitle } from "@radix-ui/react-dialog";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +26,8 @@ const ActionMenuDialogView = ({
   onSelect,
   onDismiss,
 }: Readonly<ActionMenuDialogViewProps>) => {
+  const { t } = useTranslation();
+
   const handleOpenChange = (open: boolean) => {
     if (!open) onDismiss();
   };
@@ -33,6 +37,7 @@ const ActionMenuDialogView = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent aria-describedby={undefined}>
+        <DialogTitle className="sr-only">{t("actionMenuDialog.a11yTitle")}</DialogTitle>
         <DialogHeader density="compact" onClose={onDismiss} className="mb-0!" />
         <div className="flex flex-col px-16">
           {options.map(({ id, label, icon }) => (

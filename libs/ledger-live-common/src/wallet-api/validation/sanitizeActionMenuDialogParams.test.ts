@@ -41,6 +41,15 @@ describe("sanitizeActionMenuDialogParams", () => {
     expect(() => sanitizeActionMenuDialogParams({ options }, HANDLER)).toThrow("between 1 and 5");
   });
 
+  it("throws when option ids are duplicated once trimmed", () => {
+    const options = [
+      { id: "withdraw", label: "A", icon: "withdraw" as const },
+      { id: " withdraw ", label: "B", icon: "deposit" as const },
+    ];
+
+    expect(() => sanitizeActionMenuDialogParams({ options }, HANDLER)).toThrow("must be unique");
+  });
+
   it.each([
     [{ id: 1, label: "L", icon: "deposit" }],
     [{ id: "  ", label: "L", icon: "deposit" }],
