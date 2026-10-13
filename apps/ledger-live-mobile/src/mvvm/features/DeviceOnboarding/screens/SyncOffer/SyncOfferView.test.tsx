@@ -75,7 +75,7 @@ describe("SyncOfferView", () => {
 
     await user.press(screen.getByRole("button", { name: "Skip for now" }));
 
-    expect(screen.getByText("Activate synchronisation")).toBeVisible();
+    expect(screen.getByText("Sync your wallet")).toBeVisible();
     expect(screen.getByText("Are you sure?")).toBeVisible();
     expect(onSkip).not.toHaveBeenCalled();
     expect(onActivate).not.toHaveBeenCalled();
