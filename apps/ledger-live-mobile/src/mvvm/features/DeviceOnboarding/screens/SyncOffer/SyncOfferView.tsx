@@ -3,8 +3,8 @@ import { Box, Button, IconButton, NavBar, NavBarTrailing, Text } from "@ledgerhq
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Lottie, resolveLottieSource } from "LLM/components/Lottie";
-import { offerTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import type { OfferViewProps } from "./useOfferScreenViewModel";
+import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
+import type { SyncOfferViewProps } from "./useSyncOfferScreenViewModel";
 import darkCloudSyncAnimation from "./animations/dark/cloud-sync.lottie";
 import lightCloudSyncAnimation from "./animations/light/cloud-sync.lottie";
 
@@ -15,7 +15,7 @@ const cloudSyncSources = {
   dark: resolveLottieSource(darkCloudSyncAnimation),
 };
 
-export function OfferView({
+export function SyncOfferView({
   title,
   description,
   learnMoreLabel,
@@ -26,12 +26,12 @@ export function OfferView({
   onSkip,
   onLearnMore,
   onQuit,
-}: OfferViewProps) {
+}: SyncOfferViewProps) {
   const { colorScheme } = useTheme();
   const theme = colorScheme === "dark" ? "dark" : "light";
 
   return (
-    <Box testID={offerTestIds.screen} lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}>
+    <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}>
       <NavBar density="compact">
         <NavBarTrailing>
           <IconButton
@@ -39,7 +39,7 @@ export function OfferView({
             size="md"
             icon={Close}
             accessibilityLabel={closeLabel}
-            testID={offerTestIds.quit}
+            testID={syncOfferTestIds.quit}
             onPress={onQuit}
           />
         </NavBarTrailing>
@@ -65,7 +65,7 @@ export function OfferView({
           <Text
             typography="body2"
             accessibilityRole="link"
-            testID={offerTestIds.learnMore}
+            testID={syncOfferTestIds.learnMore}
             onPress={onLearnMore}
             style={{ textDecorationLine: "underline" }}
           >
@@ -78,7 +78,7 @@ export function OfferView({
           appearance="base"
           size="lg"
           isFull
-          testID={offerTestIds.activate}
+          testID={syncOfferTestIds.activate}
           onPress={onActivate}
         >
           {activateLabel}
@@ -87,7 +87,7 @@ export function OfferView({
           appearance="transparent"
           size="lg"
           isFull
-          testID={offerTestIds.skip}
+          testID={syncOfferTestIds.skip}
           onPress={onSkip}
         >
           {skipLabel}

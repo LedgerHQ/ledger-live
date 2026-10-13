@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { OfferScreen } from "./index";
+import { SyncOfferScreen } from "./index";
 
-function renderOffer() {
+function renderSyncOffer() {
   const onActivate = jest.fn();
   const onSkip = jest.fn();
   const onLearnMore = jest.fn();
@@ -10,7 +10,7 @@ function renderOffer() {
 
   return {
     ...render(
-      <OfferScreen
+      <SyncOfferScreen
         onActivate={onActivate}
         onSkip={onSkip}
         onLearnMore={onLearnMore}
@@ -24,9 +24,9 @@ function renderOffer() {
   };
 }
 
-describe("OfferView", () => {
+describe("SyncOfferView", () => {
   it("should activate synchronisation from the primary action", async () => {
-    const { user, onActivate, onSkip } = renderOffer();
+    const { user, onActivate, onSkip } = renderSyncOffer();
 
     expect(screen.getByText("Activate synchronisation")).toBeVisible();
     expect(
@@ -40,7 +40,7 @@ describe("OfferView", () => {
   });
 
   it("should skip without activating", async () => {
-    const { user, onSkip, onActivate } = renderOffer();
+    const { user, onSkip, onActivate } = renderSyncOffer();
 
     await user.press(screen.getByRole("button", { name: "Skip for now" }));
 
@@ -49,7 +49,7 @@ describe("OfferView", () => {
   });
 
   it("should open learn more and leave from the header", async () => {
-    const { user, onLearnMore, onQuit, onActivate } = renderOffer();
+    const { user, onLearnMore, onQuit, onActivate } = renderSyncOffer();
 
     await user.press(screen.getByRole("link", { name: "Learn more" }));
     await user.press(screen.getByRole("button", { name: "Close" }));

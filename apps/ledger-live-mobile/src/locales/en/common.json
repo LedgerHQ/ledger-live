@@ -2560,7 +2560,7 @@
         "cta": "Continue"
       }
     },
-    "offer": {
+    "syncOffer": {
       "title": "Activate synchronisation",
       "description": "Make sure that your balance and portfolio remain up-to-date across all platforms.",
       "learnMore": "Learn more",

@@ -1,6 +1,6 @@
 import { useTranslation } from "~/context/Locale";
 
-export type OfferViewProps = Readonly<{
+export type SyncOfferViewProps = Readonly<{
   title: string;
   description: string;
   learnMoreLabel: string;
@@ -13,27 +13,27 @@ export type OfferViewProps = Readonly<{
   onQuit: () => void;
 }>;
 
-export type OfferScreenProps = Readonly<{
+export type SyncOfferScreenProps = Readonly<{
   onActivate: () => void;
   onSkip: () => void;
   onLearnMore: () => void;
   onQuit: () => void;
 }>;
 
-export function useOfferScreenViewModel({
+export function useSyncOfferScreenViewModel({
   onActivate,
   onSkip,
   onLearnMore,
   onQuit,
-}: OfferScreenProps): OfferViewProps {
+}: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
 
   return {
-    title: t("deviceOnboarding.offer.title"),
-    description: t("deviceOnboarding.offer.description"),
-    learnMoreLabel: t("deviceOnboarding.offer.learnMore"),
-    activateLabel: t("deviceOnboarding.offer.activate"),
-    skipLabel: t("deviceOnboarding.offer.skip"),
+    title: t("deviceOnboarding.syncOffer.title"),
+    description: t("deviceOnboarding.syncOffer.description"),
+    learnMoreLabel: t("deviceOnboarding.syncOffer.learnMore"),
+    activateLabel: t("deviceOnboarding.syncOffer.activate"),
+    skipLabel: t("deviceOnboarding.syncOffer.skip"),
     closeLabel: t("deviceOnboarding.checks.close"),
     onActivate,
     onSkip,

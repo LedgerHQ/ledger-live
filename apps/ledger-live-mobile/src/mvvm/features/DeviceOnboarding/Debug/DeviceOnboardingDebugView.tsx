@@ -1,12 +1,12 @@
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-import { Box, Button, NavBar, NavBarBackButton } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, NavBar, NavBarBackButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
-import { OfferScreen } from "LLM/features/DeviceOnboarding/screens/Offer";
-import type { OfferScreenProps } from "LLM/features/DeviceOnboarding/screens/Offer/useOfferScreenViewModel";
+import { SyncOfferScreen } from "LLM/features/DeviceOnboarding/screens/SyncOffer";
+import type { SyncOfferScreenProps } from "LLM/features/DeviceOnboarding/screens/SyncOffer/useSyncOfferScreenViewModel";
 import type { ChecksScreenProps, ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
 
-const states: readonly ChecksScreenState[] = [
+const checkPreviews: readonly ChecksScreenState[] = [
   "synchronizing",
   "idle",
   "checking",
@@ -15,9 +15,9 @@ const states: readonly ChecksScreenState[] = [
   "updating",
 ];
 
-const previews = [...states, "offer"] as const;
+const syncPreviews = ["offer"] as const;
 
-type Preview = (typeof previews)[number];
+type Preview = ChecksScreenState | (typeof syncPreviews)[number];
 
 type DeviceOnboardingDebugViewProps = Readonly<{
   preview: Preview;
@@ -25,7 +25,7 @@ type DeviceOnboardingDebugViewProps = Readonly<{
   onSelectPreview: (preview: Preview) => void;
   onBack: () => void;
   screenProps: ChecksScreenProps;
-  offerProps: OfferScreenProps;
+  syncOfferProps: SyncOfferScreenProps;
 }>;
 
 export function DeviceOnboardingDebugView({
@@ -34,12 +34,16 @@ export function DeviceOnboardingDebugView({
   onSelectPreview,
   onBack,
   screenProps,
-  offerProps,
+  syncOfferProps,
 }: DeviceOnboardingDebugViewProps) {
   if (isScreenOpen) {
     return (
       <SafeAreaView style={styles.screen}>
-        {preview === "offer" ? <OfferScreen {...offerProps} /> : <ChecksScreen {...screenProps} />}
+        {preview === "offer" ? (
+          <SyncOfferScreen {...syncOfferProps} />
+        ) : (
+          <ChecksScreen {...screenProps} />
+        )}
       </SafeAreaView>
     );
   }
@@ -49,19 +53,53 @@ export function DeviceOnboardingDebugView({
       <NavBar density="compact">
         <NavBarBackButton onPress={onBack} accessibilityLabel="Back" />
       </NavBar>
-      <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8", padding: "s16" }}>
-        {previews.map(option => (
+      <Box lx={{ gap: "s16", padding: "s16" }}>
+        <PreviewGroup
+          title="Checks"
+          options={checkPreviews}
+          selected={preview}
+          onSelect={onSelectPreview}
+        />
+        <PreviewGroup
+          title="Ledger Sync"
+          options={syncPreviews}
+          selected={preview}
+          onSelect={onSelectPreview}
+        />
+      </Box>
+    </SafeAreaView>
+  );
+}
+
+function PreviewGroup({
+  title,
+  options,
+  selected,
+  onSelect,
+}: Readonly<{
+  title: string;
+  options: readonly Preview[];
+  selected: Preview;
+  onSelect: (preview: Preview) => void;
+}>) {
+  return (
+    <Box lx={{ gap: "s8" }}>
+      <Text typography="body2SemiBold" lx={{ color: "base" }}>
+        {title}
+      </Text>
+      <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8" }}>
+        {options.map(option => (
           <Button
             key={option}
             size="sm"
-            appearance={option === preview ? "base" : "gray"}
-            onPress={() => onSelectPreview(option)}
+            appearance={option === selected ? "base" : "gray"}
+            onPress={() => onSelect(option)}
           >
             {option}
           </Button>
         ))}
       </Box>
-    </SafeAreaView>
+    </Box>
   );
 }
 

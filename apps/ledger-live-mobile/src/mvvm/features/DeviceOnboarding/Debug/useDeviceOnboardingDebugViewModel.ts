@@ -43,7 +43,7 @@ export function useDeviceOnboardingDebugViewModel() {
     },
     onBack: () => navigation.goBack(),
     screenProps,
-    offerProps: {
+    syncOfferProps: {
       onActivate: () => undefined,
       onSkip: () => undefined,
       onLearnMore: () => undefined,

@@ -31,6 +31,10 @@ describe("DeviceOnboardingDebug", () => {
     const { user } = render(<DeviceOnboardingDebug />);
 
     await user.press(screen.getByRole("button", { name: "Close" }));
+
+    expect(screen.getByText("Checks")).toBeVisible();
+    expect(screen.getByText("Ledger Sync")).toBeVisible();
+
     await user.press(screen.getByRole("button", { name: "offer" }));
 
     expect(screen.getByText("Activate synchronisation")).toBeVisible();
