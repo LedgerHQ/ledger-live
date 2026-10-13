@@ -23,7 +23,6 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     isOnboarded: false,
     onboardedOnEntry: null,
     genuineVerdict: null,
-    genuineCheckedThisVisit: false,
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
     checksPaused: false,
@@ -94,12 +93,10 @@ export const contextActions = {
     };
   }),
   rememberStart: update({ hasStarted: true }),
-  beginChecks: update({ genuineCheckedThisVisit: false }),
   enterEarlyCheckScreen: update({ onEarlyCheckScreen: true }),
   leaveEarlyCheckScreen: update({ onEarlyCheckScreen: false }),
   rememberGenuineChecked: update(({ context }) => ({
     genuineVerdict: { sessionId: context.sessionId, isGenuine: true },
-    genuineCheckedThisVisit: true,
     lastGenuineFailure: null,
   })),
   rememberGenuineFailure: update(({ context, event }) => {
@@ -140,18 +137,13 @@ export const contextActions = {
       checksPaused: false,
     };
   }),
-  // The update reboots the device onto a new session, but this app ran it: the verdict still holds.
-  carryAttestationThroughReboot: update(({ context, event }) => {
+  // The update reboots the device onto a new session: it goes through the genuine check again.
+  forgetAttestationAfterUpdate: update(({ event }) => {
     if (event.type !== "FIRMWARE_UPDATE_FLOW_CLOSED") {
       return {};
     }
 
-    const { genuineVerdict } = context;
-
-    return {
-      sessionId: event.sessionId,
-      genuineVerdict: genuineVerdict && { ...genuineVerdict, sessionId: event.sessionId },
-    };
+    return { sessionId: event.sessionId, genuineVerdict: null };
   }),
   pauseChecks: update({ checksPaused: true }),
   resumeChecks: update({ checksPaused: false }),

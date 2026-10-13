@@ -78,9 +78,12 @@ export const deviceOnboardingMachine = setup({
     deviceNotGenuine: ({ context }) => currentVerdict(context)?.isGenuine === false,
     awaitsStart: ({ context }) => !context.hasStarted,
     canShowEarlyCheck: ({ context }) =>
-      !context.checksPaused && isTouchscreen(context.deviceModelId) && !context.isOnboarded,
+      !context.checksPaused &&
+      isTouchscreen(context.deviceModelId) &&
+      !context.isOnboarded &&
+      currentVerdict(context) === null,
     shouldRunGenuineCheck: ({ context }) =>
-      !context.checksPaused && !context.genuineCheckedThisVisit,
+      !context.checksPaused && currentVerdict(context) === null,
     shouldRunFirmwareCheck: ({ context }) =>
       !context.checksPaused &&
       currentVerdict(context)?.isGenuine === true &&
@@ -163,7 +166,6 @@ export const deviceOnboardingMachine = setup({
     },
 
     checks: {
-      entry: "beginChecks",
       initial: "checksIdle",
       states: {
         enteringEarlyCheckScreen: {
@@ -263,7 +265,7 @@ export const deviceOnboardingMachine = setup({
             QUIT: stopsHere,
             FIRMWARE_UPDATE_FLOW_CLOSED: {
               target: "#deviceOnboarding.readingState",
-              actions: ["forgetFirmwareCheck", "carryAttestationThroughReboot"],
+              actions: ["forgetFirmwareCheck", "forgetAttestationAfterUpdate"],
             },
           },
         },

@@ -51,6 +51,9 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   const [isESCMandatoryDrawerOpen, setIsESCMandatoryDrawerOpen] = useState<boolean>(false);
   const [isLockedDeviceDrawerOpen, setLockedDeviceDrawerOpen] = useState<boolean>(false);
 
+  // Used to know if a first genuine check already happened and to pass the information to the ESC
+  const [isAlreadyGenuine, setIsAlreadyGenuine] = useState<boolean>(false);
+
   const [isPreviousUpdateCancelled, setIsPreviousUpdateCancelled] = useState<boolean>(false);
 
   // True when the device reported isOnboarded=true during polling. Used to bypass
@@ -156,13 +159,19 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   // Called when the device seems not to be in the correct state anymore.
   // Probably because the device restarted.
+  // If the caller knows that the device is already genuine, save this information.
   const notifyEarlySecurityCheckShouldReset = useCallback(
     (
-      { isPreviousUpdateCancelled }: { isPreviousUpdateCancelled: boolean } = {
+      {
+        isAlreadyGenuine,
+        isPreviousUpdateCancelled,
+      }: { isAlreadyGenuine: boolean; isPreviousUpdateCancelled: boolean } = {
+        isAlreadyGenuine: false,
         isPreviousUpdateCancelled: false,
       },
     ) => {
       setIsPreviousUpdateCancelled(isPreviousUpdateCancelled);
+      setIsAlreadyGenuine(isAlreadyGenuine);
       setCurrentStep("loading");
       // Resets the polling state because it could return the same result object (and so no state has changed)
       // but we want to re-trigger the useEffect handling the polling result
@@ -324,6 +333,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         navigation={navigation}
         route={route}
         device={device}
+        isAlreadyGenuine={isAlreadyGenuine}
         isPreviousUpdateCancelled={isPreviousUpdateCancelled}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
         notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
