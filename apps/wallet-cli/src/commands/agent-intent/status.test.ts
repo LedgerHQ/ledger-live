@@ -223,12 +223,37 @@ describe("agent-intent status", () => {
   it("shows a Solana SPL send in token units, with its memo", async () => {
     getImpl = async () => ({ ...record(), intent: SOLANA_SEND }) as AgentIntentRecord;
 
+    await runStatus({ output: "json" });
+    expect(jsonResult()).toMatchObject({
+      intent: {
+        network: "solana",
+        amount: "2500000",
+        displayAmount: "2.5 USDC",
+        memo: "Invoice 42",
+      },
+    });
+
+    stdout = [];
     await runStatus();
 
     const text = stdout.join("");
     expect(text).toContain("Amount:  2.5 USDC");
     expect(text).toContain("Network: solana");
     expect(text).toContain("Memo:    Invoice 42");
+  });
+
+  it("shows an intent type this version doesn't know with its common fields", async () => {
+    getImpl = async () =>
+      ({
+        ...record(),
+        intent: { type: "stake", network: "ethereum", sender: SENDER },
+      }) as AgentIntentRecord;
+
+    await runStatus({ output: "json" });
+
+    expect(jsonResult()).toMatchObject({
+      intent: { id: INTENT_ID, type: "stake", status: "signed", displayAmount: null, swap: null },
+    });
   });
 
   it("shows why a failed intent failed", async () => {
