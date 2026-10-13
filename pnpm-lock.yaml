@@ -2449,8 +2449,8 @@ importers:
         specifier: 'catalog:'
         version: 4.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       react-native-share:
-        specifier: 12.2.0
-        version: 12.2.0
+        specifier: 12.2.6
+        version: 12.2.6
       react-native-startup-time:
         specifier: 2.1.0
         version: 2.1.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
@@ -36155,8 +36155,8 @@ packages:
       react: 19.1.4
       react-native: '*'
 
-  react-native-share@12.2.0:
-    resolution: {integrity: sha512-f6MB9BsKa9xVvu0DKbxq5jw4IyYHqQeqUlCNkD8eAFoJx6SD31ObPAn7SQ6NG9AOuhCy6aYuSJYJvx25DaoMZQ==}
+  react-native-share@12.2.6:
+    resolution: {integrity: sha512-K9jZCQaTIqSNG37kMVygU1rflVMJm2g0ikslnbbmQ7EgsckYpw7ipePyp01E64hG+HrWNl+z9ZnFWLCC6H+Tiw==}
     engines: {node: '>=16'}
 
   react-native-sse@1.2.1:
@@ -61082,7 +61082,7 @@ snapshots:
       react-native-is-edge-to-edge: 1.3.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@5.0.10))(react@19.1.4)
       warn-once: 0.1.1
 
-  react-native-share@12.2.0: {}
+  react-native-share@12.2.6: {}
 
   react-native-sse@1.2.1: {}
 
