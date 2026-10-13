@@ -2542,6 +2542,9 @@
   "deviceOnboarding": {
     "checks": {
       "close": "Close",
+      "synchronizing": {
+        "title": "Synchronizing..."
+      },
       "idle": {
         "title": "Check your device",
         "description": "Let's confirm that your Ledger device is genuine and up-to-date.",
@@ -2556,6 +2559,13 @@
         "title": "Device genuine and up-to-date",
         "cta": "Continue"
       }
+    },
+    "offer": {
+      "title": "Activate synchronisation",
+      "description": "Make sure that your balance and portfolio remain up-to-date across all platforms.",
+      "learnMore": "Learn more",
+      "activate": "Activate",
+      "skip": "Skip for now"
     }
   },
   "onboarding": {

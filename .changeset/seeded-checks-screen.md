@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-Add the seeded-device checks screen and a debug preview of its states
+Add the seeded-device checks screen, its animations, and a sync offer preview

@@ -2,9 +2,12 @@ import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { Box, Button, NavBar, NavBarBackButton } from "@ledgerhq/lumen-ui-rnative";
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
+import { OfferScreen } from "LLM/features/DeviceOnboarding/screens/Offer";
+import type { OfferScreenProps } from "LLM/features/DeviceOnboarding/screens/Offer/useOfferScreenViewModel";
 import type { ChecksScreenProps, ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
 
 const states: readonly ChecksScreenState[] = [
+  "synchronizing",
   "idle",
   "checking",
   "awaitingAllow",
@@ -12,25 +15,31 @@ const states: readonly ChecksScreenState[] = [
   "updating",
 ];
 
+const previews = [...states, "offer"] as const;
+
+type Preview = (typeof previews)[number];
+
 type DeviceOnboardingDebugViewProps = Readonly<{
-  state: ChecksScreenState;
+  preview: Preview;
   isScreenOpen: boolean;
-  onSelectState: (state: ChecksScreenState) => void;
+  onSelectPreview: (preview: Preview) => void;
   onBack: () => void;
   screenProps: ChecksScreenProps;
+  offerProps: OfferScreenProps;
 }>;
 
 export function DeviceOnboardingDebugView({
-  state,
+  preview,
   isScreenOpen,
-  onSelectState,
+  onSelectPreview,
   onBack,
   screenProps,
+  offerProps,
 }: DeviceOnboardingDebugViewProps) {
   if (isScreenOpen) {
     return (
       <SafeAreaView style={styles.screen}>
-        <ChecksScreen {...screenProps} />
+        {preview === "offer" ? <OfferScreen {...offerProps} /> : <ChecksScreen {...screenProps} />}
       </SafeAreaView>
     );
   }
@@ -41,12 +50,12 @@ export function DeviceOnboardingDebugView({
         <NavBarBackButton onPress={onBack} accessibilityLabel="Back" />
       </NavBar>
       <Box lx={{ flexDirection: "row", flexWrap: "wrap", gap: "s8", padding: "s16" }}>
-        {states.map(option => (
+        {previews.map(option => (
           <Button
             key={option}
             size="sm"
-            appearance={option === state ? "base" : "gray"}
-            onPress={() => onSelectState(option)}
+            appearance={option === preview ? "base" : "gray"}
+            onPress={() => onSelectPreview(option)}
           >
             {option}
           </Button>

@@ -16,7 +16,7 @@ type UpdateSheetProps = Readonly<{
   onClose: () => void;
 }>;
 
-export type ChecksIllustration = "scan" | "success";
+export type ChecksIllustration = "loading" | "scan" | "success";
 
 export type ChecksViewProps = Readonly<{
   illustration?: ChecksIllustration;
@@ -55,6 +55,10 @@ export function useChecksScreenViewModel({
   const layout = checksLayout(state);
 
   const layouts: Record<ChecksLayout, LayoutProps> = {
+    synchronizing: {
+      illustration: "loading",
+      title: t("deviceOnboarding.checks.synchronizing.title"),
+    },
     idle: {
       illustration: "scan",
       title: t("deviceOnboarding.checks.idle.title"),

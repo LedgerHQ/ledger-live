@@ -67,6 +67,20 @@ function renderChecks(state: ChecksScreenState) {
 }
 
 describe("ChecksView", () => {
+  it("should only let the user leave while the device is synchronizing", async () => {
+    const { user, onQuit, onStart, onContinue } = renderChecks("synchronizing");
+
+    expect(screen.getByText("Synchronizing...")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Check my device" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Continue" })).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Close" }));
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(onStart).not.toHaveBeenCalled();
+    expect(onContinue).not.toHaveBeenCalled();
+  });
+
   it("should start the check from the idle call to action", async () => {
     const { user, onStart, onContinue } = renderChecks("idle");
 

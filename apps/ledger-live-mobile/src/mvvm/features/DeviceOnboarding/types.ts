@@ -2,7 +2,13 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export type GenuineErrorKind = "declined" | "notGenuine" | "provider" | "network" | "unknown";
 
-export type ChecksScreenState = "idle" | "awaitingAllow" | "checking" | "updating" | "succeeded";
+export type ChecksScreenState =
+  | "synchronizing"
+  | "idle"
+  | "awaitingAllow"
+  | "checking"
+  | "updating"
+  | "succeeded";
 
 export type ChecksScreenProps = {
   device: Device;

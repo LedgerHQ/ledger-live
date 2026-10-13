@@ -27,6 +27,16 @@ describe("DeviceOnboardingDebug", () => {
     expect(screen.getByText("Device genuine and up-to-date")).toBeVisible();
   });
 
+  it("should show the sync offer when that preview is selected", async () => {
+    const { user } = render(<DeviceOnboardingDebug />);
+
+    await user.press(screen.getByRole("button", { name: "Close" }));
+    await user.press(screen.getByRole("button", { name: "offer" }));
+
+    expect(screen.getByText("Activate synchronisation")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Skip for now" })).toBeVisible();
+  });
+
   it("should leave the preview from the state list back button", async () => {
     const { user } = render(<DeviceOnboardingDebug />);
 

@@ -9,15 +9,25 @@ import {
   NavBarTrailing,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
-import { CheckmarkCircleFill, Close, ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import { UnsupportedFirmwareVersionView } from "LLM/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/components/UnsupportedFirmwareVersion/UnsupportedFirmwareVersionView";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { ChecksIllustration, ChecksViewProps } from "./useChecksScreenViewModel";
+import loadingAnimation from "./animations/loading.lottie";
+import scanAnimation from "./animations/security-check.lottie";
+import successAnimation from "./animations/success.lottie";
 
 const illustrationHeight = 200;
+const illustrationSize = 96;
+const illustrationSources: Record<ChecksIllustration, LottieSource> = {
+  loading: resolveLottieSource(loadingAnimation),
+  scan: resolveLottieSource(scanAnimation),
+  success: resolveLottieSource(successAnimation),
+};
 
 function Illustration({ kind }: Readonly<{ kind: ChecksIllustration }>) {
   return (
@@ -30,22 +40,12 @@ function Illustration({ kind }: Readonly<{ kind: ChecksIllustration }>) {
       }}
       style={{ height: illustrationHeight }}
     >
-      <Box
-        lx={{
-          width: "s96",
-          height: "s96",
-          borderRadius: "full",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "mutedTransparent",
-        }}
-      >
-        {kind === "success" ? (
-          <CheckmarkCircleFill size={48} color="success" />
-        ) : (
-          <ShieldLock size={32} color="base" />
-        )}
-      </Box>
+      <Lottie
+        key={kind}
+        source={illustrationSources[kind]}
+        loop
+        style={{ width: illustrationSize, height: illustrationSize }}
+      />
     </Box>
   );
 }

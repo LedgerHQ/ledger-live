@@ -12,34 +12,42 @@ const previewDevice = {
 
 export function useDeviceOnboardingDebugViewModel() {
   const navigation = useNavigation();
-  const [state, setState] = useState<ChecksScreenState>("idle");
+  const [preview, setPreview] = useState<ChecksScreenState | "offer">("idle");
   const [isScreenOpen, setIsScreenOpen] = useState(true);
+
+  const closePreview = () => {
+    setPreview("idle");
+    setIsScreenOpen(false);
+  };
 
   const screenProps: ChecksScreenProps = {
     device: previewDevice,
-    state,
+    state: preview === "offer" ? "idle" : preview,
     error: null,
     update: null,
-    onStart: () => setState("checking"),
+    onStart: () => setPreview("checking"),
     onRetry: () => undefined,
-    onAcceptUpdate: () => setState("checking"),
-    onDeclineUpdate: () => setState("checking"),
-    onCloseSheet: () => setState("checking"),
-    onContinue: () => setState("idle"),
-    onQuit: () => {
-      setState("idle");
-      setIsScreenOpen(false);
-    },
+    onAcceptUpdate: () => setPreview("checking"),
+    onDeclineUpdate: () => setPreview("checking"),
+    onCloseSheet: () => setPreview("checking"),
+    onContinue: () => setPreview("idle"),
+    onQuit: closePreview,
   };
 
   return {
-    state,
+    preview,
     isScreenOpen,
-    onSelectState: (next: ChecksScreenState) => {
-      setState(next);
+    onSelectPreview: (next: ChecksScreenState | "offer") => {
+      setPreview(next);
       setIsScreenOpen(true);
     },
     onBack: () => navigation.goBack(),
     screenProps,
+    offerProps: {
+      onActivate: () => undefined,
+      onSkip: () => undefined,
+      onLearnMore: () => undefined,
+      onQuit: closePreview,
+    },
   };
 }
