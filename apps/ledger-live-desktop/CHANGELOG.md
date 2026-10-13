@@ -1,5 +1,35 @@
 # ledger-live-desktop
 
+## 4.24.0-next.1
+
+### Minor Changes
+
+- [#23297](https://github.com/LedgerHQ/ledger-live/pull/23297) [`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(solana): refresh the blockhash after the device review to avoid "Blockhash not found"
+
+### Patch Changes
+
+- Updated dependencies [[`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef)]:
+  - @ledgerhq/live-common@38.3.0-next.1
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.1
+  - @ledgerhq/asset-detail@0.12.0-next.1
+  - @ledgerhq/live-dmk-desktop@0.24.0-next.1
+  - @ledgerhq/live-send@0.1.3-next.1
+  - @ledgerhq/asset-aggregation@0.18.0-next.1
+  - @ledgerhq/coin-bitcoin@0.55.0-next.1
+  - @ledgerhq/coin-canton@1.4.0-next.1
+  - @ledgerhq/coin-cardano@2.0.0-next.1
+  - @ledgerhq/coin-casper@3.5.1-next.1
+  - @ledgerhq/coin-concordium@1.5.1-next.1
+  - @ledgerhq/coin-cosmos@1.6.0-next.1
+  - @ledgerhq/coin-filecoin@2.4.0-next.1
+  - @ledgerhq/coin-stacks@0.33.0-next.1
+  - @ledgerhq/coin-zcash@0.11.0-next.1
+  - @ledgerhq/live-signer-evm@0.24.1-next.1
+  - @ledgerhq/live-wallet@1.1.6-next.1
+  - @ledgerhq/wallet-analytics@0.5.1-next.1
+  - @ledgerhq/wallet-pnl@0.8.0-next.1
+  - @ledgerhq/wallet-btc@0.7.0-next.0
+
 ## 4.24.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/wallet-analytics
 
+## 0.5.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef)]:
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.1
+
 ## 0.5.1-next.0
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/coin-solana
 
+## 2.4.0-next.1
+
+### Minor Changes
+
+- [#23297](https://github.com/LedgerHQ/ledger-live/pull/23297) [`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(solana): refresh the blockhash after the device review to avoid "Blockhash not found"
+
+### Patch Changes
+
+- Updated dependencies [[`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef)]:
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.1
+
 ## 2.4.0-next.0
 
 ### Minor Changes

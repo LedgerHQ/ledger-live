@@ -1,5 +1,14 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.36.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef)]:
+  - @ledgerhq/live-common@38.3.0-next.1
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.1
+  - @ledgerhq/live-signer-evm@0.24.1-next.1
+
 ## 1.36.0-next.0
 
 ### Minor Changes

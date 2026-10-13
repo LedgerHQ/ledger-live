@@ -1,5 +1,53 @@
 # @ledgerhq/live-common
 
+## 38.3.0-next.1
+
+### Minor Changes
+
+- [#23297](https://github.com/LedgerHQ/ledger-live/pull/23297) [`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(solana): refresh the blockhash after the device review to avoid "Blockhash not found"
+
+### Patch Changes
+
+- Updated dependencies [[`2989e37`](https://github.com/LedgerHQ/ledger-live/commit/2989e37b80b8bfcaae549cc02aa6de189a69dfef)]:
+  - @ledgerhq/ledger-wallet-framework@3.7.0-next.1
+  - @ledgerhq/coin-solana@2.4.0-next.1
+  - @ledgerhq/asset-aggregation@0.18.0-next.1
+  - @ledgerhq/coin-aleo@2.7.0-next.1
+  - @ledgerhq/coin-algorand@2.3.1-next.1
+  - @ledgerhq/coin-aptos@4.4.0-next.1
+  - @ledgerhq/coin-bitcoin@0.55.0-next.1
+  - @ledgerhq/coin-canton@1.4.0-next.1
+  - @ledgerhq/coin-cardano@2.0.0-next.1
+  - @ledgerhq/coin-casper@3.5.1-next.1
+  - @ledgerhq/coin-celo@3.5.0-next.1
+  - @ledgerhq/coin-concordium@1.5.1-next.1
+  - @ledgerhq/coin-cosmos@1.6.0-next.1
+  - @ledgerhq/coin-filecoin@2.4.0-next.1
+  - @ledgerhq/coin-hedera@2.7.0-next.1
+  - @ledgerhq/coin-icon@0.31.1-next.1
+  - @ledgerhq/coin-internet_computer@1.32.1-next.1
+  - @ledgerhq/coin-kaspa@2.5.0-next.1
+  - @ledgerhq/coin-mina@1.24.2-next.1
+  - @ledgerhq/coin-multiversx@1.4.0-next.1
+  - @ledgerhq/coin-near@1.4.0-next.1
+  - @ledgerhq/coin-polkadot@8.0.0-next.1
+  - @ledgerhq/coin-stacks@0.33.0-next.1
+  - @ledgerhq/coin-sui@2.1.0-next.1
+  - @ledgerhq/coin-ton@0.39.1-next.1
+  - @ledgerhq/coin-vechain@4.3.2-next.1
+  - @ledgerhq/coin-zcash@0.11.0-next.1
+  - @ledgerhq/live-signer-evm@0.24.1-next.1
+  - @ledgerhq/live-signer-icp@0.1.9-next.1
+  - @ledgerhq/live-signer-solana@0.22.1-next.1
+  - @ledgerhq/live-signer-aleo@0.19.14-next.1
+  - @ledgerhq/live-signer-canton@0.9.23-next.1
+  - @ledgerhq/live-signer-celo@1.2.10-next.1
+  - @ledgerhq/live-signer-concordium@0.9.2-next.1
+  - @ledgerhq/live-signer-cosmos@0.6.1-next.1
+  - @ledgerhq/live-signer-polkadot@0.1.1-next.1
+  - @ledgerhq/coin-tron@10.1.0-next.0
+  - @ledgerhq/wallet-btc@0.7.0-next.0
+
 ## 38.3.0-next.0
 
 ### Minor Changes
