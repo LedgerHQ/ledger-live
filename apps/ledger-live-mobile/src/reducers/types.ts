@@ -40,6 +40,7 @@ import type { AccountsState as AccountEntriesState } from "@domain/entity-accoun
 import type { AppLockState } from "@features/platform-app-lock";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
+import type { OsUpdateState } from "LLM/features/OsUpdate/state/osUpdateSlice";
 import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
 import type { CurrencyRegionRestrictedDrawerState } from "./currencyRegionRestrictedDrawer";
 import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
@@ -479,6 +480,7 @@ export type State = LLMRTKApiState & {
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
   rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;
   transferDrawer: TransferDrawerState;
+  osUpdate: OsUpdateState;
   swapTransactionStatusDrawer: SwapTransactionStatusDrawerState;
   currencyRegionRestrictedDrawer: CurrencyRegionRestrictedDrawerState;
   notifications: NotificationsState;
