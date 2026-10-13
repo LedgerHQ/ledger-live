@@ -972,7 +972,7 @@ class HumanCommandOutput implements CommandOutput {
     }
     if (nextCursor) {
       writeStdout(
-        colors.dim(`More intents: re-run with --cursor '${stripControlChars(nextCursor)}'`),
+        colors.dim(`More intents: re-run with --cursor ${stripControlChars(nextCursor)}`),
       );
     }
   }
@@ -1026,7 +1026,6 @@ class HumanCommandOutput implements CommandOutput {
   }
 }
 
-/** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
 /** "2026-10-07 10:00" in UTC, whatever offset the service sent; unparsable text is kept. */
 function utcMinute(timestamp: string): string {
   const date = new Date(timestamp);
@@ -1034,6 +1033,7 @@ function utcMinute(timestamp: string): string {
   return date.toISOString().replace("T", " ").slice(0, 16);
 }
 
+/** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
 function intentDetailLines(
   profileId: string,
   i: IntentListEntry,

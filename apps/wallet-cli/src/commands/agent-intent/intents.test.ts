@@ -195,10 +195,21 @@ describe("agent-intent intents", () => {
     expect(queries).toEqual([{ status: undefined, pageSize: undefined, cursor: "next-token" }]);
   });
 
-  it("neither checks nor sends --status and --page-size with a cursor", async () => {
-    await runIntents({ cursor: "next-token", status: "archived", "page-size": "50" });
+  it.each([{ status: "signed" }, { "page-size": "50" }])(
+    "refuses %j with a cursor before touching the keychain",
+    async flags => {
+      await expect(runIntents({ cursor: "next-token", ...flags })).rejects.toThrow(
+        "--cursor continues with the filters and page size of the listing that returned it: drop --status and --page-size.",
+      );
+      expect(queries).toEqual([]);
+      expect(secretKeyReads).toBe(0);
+    },
+  );
 
-    expect(queries).toEqual([{ status: undefined, pageSize: undefined, cursor: "next-token" }]);
+  it.each(["7", "10.0", "abc"])("rejects --page-size %p", async pageSize => {
+    await expect(runIntents({ "page-size": pageSize })).rejects.toThrow(
+      "--page-size must be one of 1, 5, 10, 50, 100.",
+    );
   });
 
   it("shows the creation time in UTC whatever offset the service sent", async () => {
@@ -207,6 +218,14 @@ describe("agent-intent intents", () => {
     await runIntents();
 
     expect(stdout.join("")).toContain("2026-10-07 10:30");
+  });
+
+  it("shows a creation time it can't parse as the service sent it", async () => {
+    listImpl = async () => ({ intents: [record({ createdAt: "yesterday" })] });
+
+    await runIntents();
+
+    expect(stdout.join("")).toContain("yesterday");
   });
 
   it("shows ERC-20 amounts in token units only when the token is known", async () => {
@@ -240,7 +259,7 @@ describe("agent-intent intents", () => {
     expect(text).toContain("2026-10-07 10:00");
     expect(text).toContain("0.01 ETH");
     expect(text).toContain(RECIPIENT);
-    expect(text).toContain("re-run with --cursor 'next-token'");
+    expect(text).toContain("re-run with --cursor next-token");
   });
 
   it("strips terminal control characters from service values in the table and hint", async () => {
@@ -262,7 +281,7 @@ describe("agent-intent intents", () => {
       expect(text).not.toContain(sequence);
     }
     expect(text).toContain("id-[2J");
-    expect(text).toContain("re-run with --cursor 'next-[2Jtoken'");
+    expect(text).toContain("re-run with --cursor next-[2Jtoken");
   });
 
   it.each(["abc", "0x10", "-5", "1.5"])(
