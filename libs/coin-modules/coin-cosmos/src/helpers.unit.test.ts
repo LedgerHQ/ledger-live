@@ -65,28 +65,16 @@ describe("getMainMessage", () => {
 });
 
 describe("isAccountEmpty", () => {
-  it("returns false when cosmosResources is undefined instead of throwing", () => {
-    expect(isAccountEmpty({ cosmosResources: undefined, balance: new BigNumber(0) } as never)).toBe(
-      false,
-    );
-  });
-
-  it("returns true when resources are present, sequence is 0 and balance is zero", () => {
-    expect(
-      isAccountEmpty({
-        cosmosResources: { sequence: 0 },
-        balance: new BigNumber(0),
-      } as never),
-    ).toBe(true);
+  it("returns true when the sequence is 0 and the balance is zero", () => {
+    expect(isAccountEmpty({ sequence: 0, balance: new BigNumber(0) })).toBe(true);
   });
 
   it("returns false when balance is not zero", () => {
-    expect(
-      isAccountEmpty({
-        cosmosResources: { sequence: 0 },
-        balance: new BigNumber(1),
-      } as never),
-    ).toBe(false);
+    expect(isAccountEmpty({ sequence: 0, balance: new BigNumber(1) })).toBe(false);
+  });
+
+  it("returns false when the account already sent transactions", () => {
+    expect(isAccountEmpty({ sequence: 3, balance: new BigNumber(0) })).toBe(false);
   });
 });
 

@@ -5,7 +5,7 @@ import ToggleButton from "~/renderer/components/ToggleButton";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Text from "~/renderer/components/Text";
 import Popover from "~/renderer/components/Popover";
-import type { CosmosLikeTransaction } from "@ledgerhq/coin-cosmos/types/index";
+import type { CosmosLikeTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 const options = [
   {
     value: "compoundReward",

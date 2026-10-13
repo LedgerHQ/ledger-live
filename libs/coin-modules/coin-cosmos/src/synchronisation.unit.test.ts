@@ -5,6 +5,7 @@ import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CosmosAPI } from "./network/Cosmos";
 import { getAccountShape } from "./synchronisation";
+import type { StakingAccount } from "@ledgerhq/types-live";
 import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 
 jest.mock("./network/Cosmos");
@@ -124,12 +125,12 @@ describe("getAccountShape", () => {
     expect(account.balance).toEqual(new BigNumber(3));
   });
 
-  it("should sum up delegation balances and assign it in cosmosResources delegatedBalances", async () => {
+  it("should sum up delegation balances and assign it in stakingResources delegatedBalance", async () => {
     mockAccountInfo({
       delegations: [{ amount: new BigNumber(1) }, { amount: new BigNumber(2) }],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account as CosmosAccount).cosmosResources.delegatedBalance).toEqual(new BigNumber(3));
+    expect((account as StakingAccount).stakingResources.delegatedBalance).toEqual(new BigNumber(3));
   });
 
   it("should sum up unbondings to balance", async () => {
@@ -160,7 +161,7 @@ describe("getAccountShape", () => {
     expect(account.spendableBalance).toEqual(new BigNumber(0));
   });
 
-  it("should sum up pendingRewards and insert it in cosmosResources", async () => {
+  it("should sum up pendingRewards and insert it in stakingResources", async () => {
     mockAccountInfo({
       delegations: [
         {
@@ -172,7 +173,7 @@ describe("getAccountShape", () => {
       ],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account as CosmosAccount).cosmosResources.pendingRewardsBalance).toEqual(
+    expect((account as StakingAccount).stakingResources.pendingRewardsBalance).toEqual(
       new BigNumber(3),
     );
   });
@@ -228,35 +229,55 @@ describe("getAccountShape", () => {
     ]);
   });
 
-  it("persists the device-scanned publicKey, taking precedence over a persisted one", async () => {
+  it("persists the device-scanned publicKey in xpub, taking precedence over a persisted one", async () => {
     mockAccountInfo({});
     const account = await getAccountShape(
       {
         ...infoMock,
         rest: { publicKey: "02ab" },
-        initialAccount: { cosmosResources: { publicKey: "0399" } } as CosmosAccount,
+        initialAccount: { xpub: "0399" } as CosmosAccount,
       } as AccountShapeInfo<CosmosAccount>,
       syncConfig,
     );
-    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("02ab");
+    expect(account.xpub).toEqual("02ab");
   });
 
-  it("falls back to the previously-persisted publicKey on a deviceless re-sync", async () => {
+  it("falls back to the previously-persisted xpub on a deviceless re-sync", async () => {
     mockAccountInfo({});
     const account = await getAccountShape(
       {
         ...infoMock,
-        initialAccount: { cosmosResources: { publicKey: "0399" } } as CosmosAccount,
+        initialAccount: { xpub: "0399" } as CosmosAccount,
       },
       syncConfig,
     );
-    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("0399");
+    expect(account.xpub).toEqual("0399");
   });
 
-  it("defaults publicKey to empty string when neither device nor initial account has it", async () => {
+  it("defaults xpub to the address when neither device nor initial account has it", async () => {
     mockAccountInfo({});
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("");
+    expect(account.xpub).toEqual("address");
+  });
+
+  it("exposes the account sequence and uses it to flag an empty account as unused", async () => {
+    mockAccountInfo({});
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect(account.sequence).toEqual(0);
+    expect(account.used).toBe(false);
+  });
+
+  it("flags an account with a non-zero sequence as used", async () => {
+    // @ts-expect-error mocked
+    CosmosAPI.mockReturnValueOnce({
+      getAccountInfo: jest.fn().mockResolvedValue({
+        ...baseAccountInfoMock,
+        accountInfo: { sequence: 4, accountNumber: 0 },
+      }),
+    });
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect(account.sequence).toEqual(4);
+    expect(account.used).toBe(true);
   });
 
   it("should get the memo correctly", async () => {

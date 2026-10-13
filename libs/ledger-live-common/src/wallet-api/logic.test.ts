@@ -1112,7 +1112,6 @@ describe("accountGetPublicKeyLogic (cosmos)", () => {
     const account = context.accounts.find(a => a.id === cosmosAccountId);
     if (account?.type === "Account") {
       account.xpub = publicKey;
-      Object.assign(account, { cosmosResources: undefined });
     }
   };
 
@@ -1132,17 +1131,6 @@ describe("accountGetPublicKeyLogic (cosmos)", () => {
     expect(result).toEqual(cosmosPublicKey);
     expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(0);
     expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(1);
-  });
-
-  it("returns the legacy account's key, not the address its xpub holds", async () => {
-    setCosmosPublicKey(cosmosAddress);
-    const account = context.accounts.find(a => a.id === cosmosAccountId);
-    Object.assign(account ?? {}, { cosmosResources: { publicKey: cosmosPublicKey } });
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(cosmosAccountId);
-
-    await expect(accountGetPublicKeyLogic(context, walletAccountId)).resolves.toEqual(
-      cosmosPublicKey,
-    );
   });
 
   it.each([

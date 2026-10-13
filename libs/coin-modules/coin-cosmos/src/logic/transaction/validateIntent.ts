@@ -2,6 +2,7 @@ import {
   Balance,
   FeeEstimation,
   MemoNotSupported,
+  Stake,
   StakingTransactionIntent,
   StringMemo,
   TransactionIntent,
@@ -22,10 +23,12 @@ import {
   ClaimRewardsFeesWarning,
   CosmosDelegateAllFundsWarning,
   CosmosMemoTooLong,
+  CosmosTooManyUnbondings,
+  NotEnoughDelegationBalance,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "../../errors";
-import { COSMOS_MAX_MEMO_LENGTH } from "../../logic";
+import { COSMOS_MAX_MEMO_LENGTH, COSMOS_MAX_UNBONDINGS } from "../../logic";
 import { validateAddress } from "../validateAddress";
 
 function clampPositive(value: bigint): bigint {
@@ -48,9 +51,9 @@ function validateMemoLength(intent: TransactionIntent<StringMemo | MemoNotSuppor
 /**
  * Validate a transfer or staking intent in the Alpaca `TransactionValidation` shape. A leaner
  * reimplementation of the bridge `getTransactionStatus`, not a full mirror: it covers the core
- * recipient/amount/fee rules (plus `feeTooHigh` and claim-reward-fee warnings) but omits the
- * bridge's cosmosResources-based checks (delegation/redelegation/unbonding limits,
- * redelegation-in-progress) — the Alpaca inputs don't carry that data. Staking →
+ * recipient/amount/fee rules (plus `feeTooHigh` and claim-reward-fee warnings) and, for staking, the
+ * delegation and unbonding rules read from the `stake` positions the balances carry. It omits the
+ * redelegation rules (too many, in progress): redelegations are not part of the balances. Staking →
  * {@link validateStakingIntent}.
  */
 export async function validateIntent(
@@ -123,6 +126,40 @@ export async function validateIntent(
   return { errors, warnings, estimatedFees, amount, totalSpent };
 }
 
+const isDelegation = (stake: Stake) => stake.state === "active" || stake.state === "activating";
+const isUnbonding = (stake: Stake) =>
+  stake.state === "deactivating" || stake.state === "withdrawable";
+
+/**
+ * The account-state rules the bridge `getTransactionStatus` enforced from `stakingResources`, read
+ * here from the `stake` positions the framework appends to the balances: an undelegate or redelegate
+ * cannot exceed what is delegated to the source validator, and an undelegate needs a free unbonding
+ * slot. As in the bridge, a validator with no delegation is not flagged here.
+ */
+function validateAccountStakingRules(
+  intent: StakingTransactionIntent,
+  balances: Balance[],
+): Record<string, Error> {
+  const errors: Record<string, Error> = {};
+  const stakes = balances.flatMap(balance => (balance.stake ? [balance.stake] : []));
+
+  if (intent.mode === "undelegate" || intent.mode === "redelegate") {
+    const delegation = stakes.find(
+      stake => isDelegation(stake) && stake.delegate === intent.valAddress,
+    );
+    if (delegation && delegation.amount < intent.amount) {
+      errors[intent.mode === "undelegate" ? "unbonding" : "redelegation"] =
+        new NotEnoughDelegationBalance();
+    }
+  }
+
+  if (intent.mode === "undelegate" && stakes.filter(isUnbonding).length >= COSMOS_MAX_UNBONDINGS) {
+    errors.unbonding = new CosmosTooManyUnbondings();
+  }
+
+  return errors;
+}
+
 /**
  * Validate a staking intent: the validator address must be present and carry the chain's valoper
  * prefix (and a destination validator for redelegate); `claimReward` carries no amount and must not
@@ -155,6 +192,8 @@ function validateStakingIntent(
       errors.dstValAddress = new InvalidAddress();
     }
   }
+
+  Object.assign(errors, validateAccountStakingRules(intent, balances));
 
   const native = balances.find(b => b.asset.type === "native");
   const available = (native?.value ?? 0n) - (native?.locked ?? 0n);

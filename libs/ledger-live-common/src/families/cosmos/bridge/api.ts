@@ -18,6 +18,7 @@ export function getDeviceSignOptions(
 export default function cosmosBridge(_currency: CryptoCurrency): BridgeApi {
   return {
     stakingSupported: true,
+    accountSequenceSupported: true,
     computeIntentType: (transaction: Record<string, unknown>) => {
       const mode = transaction.mode as string | undefined;
       switch (mode) {
