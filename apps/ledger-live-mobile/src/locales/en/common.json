@@ -2561,8 +2561,8 @@
       }
     },
     "syncOffer": {
-      "title": "Activate synchronisation",
-      "description": "Make sure that your balance and portfolio remain up-to-date across all platforms.",
+      "title": "Sync your wallet",
+      "description": "Keep your balance and portfolio in sync when switching phones or using a computer.",
       "learnMore": "Learn more",
       "activate": "Activate",
       "skip": "Skip for now"

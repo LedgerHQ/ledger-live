@@ -28,9 +28,11 @@ describe("SyncOfferView", () => {
   it("should activate synchronisation from the primary action", async () => {
     const { user, onActivate, onSkip } = renderSyncOffer();
 
-    expect(screen.getByText("Activate synchronisation")).toBeVisible();
+    expect(screen.getByText("Sync your wallet")).toBeVisible();
     expect(
-      screen.getByText(/Make sure that your balance and portfolio remain up-to-date/),
+      screen.getByText(
+        /Keep your balance and portfolio in sync when switching phones or using a computer\./,
+      ),
     ).toBeVisible();
 
     await user.press(screen.getByRole("button", { name: "Activate" }));

@@ -37,7 +37,7 @@ describe("DeviceOnboardingDebug", () => {
 
     await user.press(screen.getByRole("button", { name: "offer" }));
 
-    expect(screen.getByText("Activate synchronisation")).toBeVisible();
+    expect(screen.getByText("Sync your wallet")).toBeVisible();
     expect(screen.getByRole("button", { name: "Skip for now" })).toBeVisible();
   });
 
