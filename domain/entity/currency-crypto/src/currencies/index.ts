@@ -137,6 +137,7 @@ export * from "./quicksilver";
 export * from "./ravencoin";
 export * from "./resistance";
 export * from "./ripple";
+export * from "./ripple_testnet";
 export * from "./rise";
 export * from "./robinhood";
 export * from "./robinhood_testnet";
