@@ -8,6 +8,8 @@ import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
 import TransactionSignatureDrawer from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
 import MessageSignatureDrawer from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
+import ExchangeDeviceDrawer from "LLM/features/WalletApiExchange/components/ExchangeDeviceDrawer";
+import { useDeviceIntentExchangeEnabled } from "LLM/features/WalletApiExchange/hooks/useDeviceIntentExchangeEnabled";
 import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { useFeature } from "@features/platform-feature-flags";
@@ -39,6 +41,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     ref,
   ) => {
     const manifestDomainCheckEnabled = useFeature("llmWebviewManifestDomainCheck")?.enabled;
+    const deviceIntentExchangeEnabled = useDeviceIntentExchangeEnabled(manifest.id);
 
     const {
       onMessage,
@@ -161,6 +164,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             onClose={clearDeviceIntentSignMessageRequest}
           />
         )}
+        {deviceIntentExchangeEnabled && <ExchangeDeviceDrawer manifestId={manifest.id} />}
         <GenericErrorBottomModal
           error={publicKeyUnavailableError}
           onClose={clearPublicKeyUnavailableError}

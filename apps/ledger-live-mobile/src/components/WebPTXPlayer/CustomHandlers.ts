@@ -54,12 +54,13 @@ import {
 } from "~/reducers/settings";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig, useFeatureFlags } from "@features/platform-feature-flags";
+import { exchangeDeviceSession } from "LLM/features/WalletApiExchange/session/exchangeDeviceSession";
+import { DrawerClosedError } from "LLM/features/WalletApiExchange/session/errors";
+import { useDeviceIntentExchangeEnabled } from "LLM/features/WalletApiExchange/hooks/useDeviceIntentExchangeEnabled";
 import type { Feature, FeatureId } from "@shared/feature-flags";
 
-class DrawerClosedError extends Error {
-  override name = "DrawerClosedError";
-}
-const drawerClosedError = new DrawerClosedError("User closed the drawer");
+const drawerClosedError = new DrawerClosedError();
+
 const unknownSwapError = new Error("Unknown swap error");
 
 type CustomExchangeHandlersHookType = {
@@ -105,6 +106,9 @@ export function useCustomExchangeHandlers({
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const route = useRoute();
+  // When on, the device steps run in the Device Intent Executor drawer of the webview (see
+  // WalletApiExchange) instead of the PlatformStartExchange / PlatformCompleteExchange screens.
+  const deviceIntentExchangeEnabled = useDeviceIntentExchangeEnabled(manifest.id);
   const [device, setDevice] = useState<Device>();
   const deviceRef = useRef<Device | undefined>(undefined);
   const syncAccountById = useSyncAccountById();
@@ -346,7 +350,18 @@ export function useCustomExchangeHandlers({
         counterValueCurrency: counterValueCurrency.ticker,
         deviceModelId: lastSeenDevice?.modelId,
         uiHooks: {
-          "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
+          "custom.exchange.start": ({ exchangeParams, continuesOnDevice, onSuccess, onCancel }) => {
+            if (deviceIntentExchangeEnabled) {
+              void exchangeDeviceSession.requestStart({
+                manifest: { id: manifest.id, name: manifest.name },
+                exchangeParams,
+                continuesOnDevice: continuesOnDevice ?? false,
+                onSuccess,
+                onCancel,
+              });
+              return;
+            }
+
             const promiseId = `start-${Date.now()}`;
 
             navigation.navigate(NavigatorName.PlatformExchange, {
@@ -393,6 +408,20 @@ export function useCustomExchangeHandlers({
             });
           },
           "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+            if (deviceIntentExchangeEnabled) {
+              void exchangeDeviceSession.requestComplete({
+                manifest: { id: manifest.id, name: manifest.name },
+                exchangeParams,
+                onSuccess: operation => {
+                  onCompleteResult?.(exchangeParams, operation.hash);
+                  onSuccess(operation.hash);
+                },
+                // The drawer tells the user what went wrong: no error screen on top of it.
+                onCancel,
+              });
+              return;
+            }
+
             if (handleLoaderDrawer) {
               navigation.pop();
             }
@@ -441,7 +470,11 @@ export function useCustomExchangeHandlers({
             });
           },
           "custom.exchange.error": ({ error }) => {
-            if (handleLoaderDrawer) {
+            if (deviceIntentExchangeEnabled) {
+              // The drawer that is open tells the user. No loader screen was pushed, so there is
+              // nothing to pop either way. Without a drawer to show it, the error screen does.
+              if (exchangeDeviceSession.showError(manifest.id, error ?? unknownSwapError)) return;
+            } else if (handleLoaderDrawer) {
               navigation.pop();
             }
 
@@ -462,9 +495,6 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-            if (handleLoaderDrawer) {
-              navigation.pop();
-            }
             let cancelCalled = false;
 
             const safeOnCancel = (error: Error) => {
@@ -473,6 +503,44 @@ export function useCustomExchangeHandlers({
                 onCancel(error);
               }
             };
+
+            if (deviceIntentExchangeEnabled) {
+              void exchangeDeviceSession.requestComplete({
+                manifest: { id: manifest.id, name: manifest.name },
+                exchangeParams,
+                onSuccess: operation => {
+                  const { swapId } = exchangeParams;
+                  if (!swapId) return;
+
+                  syncAccountById(exchangeParams.exchange.fromAccount.id);
+                  onCompleteResult?.(exchangeParams, operation.hash);
+
+                  const params = getUpdateAccountWithUpdaterParams({
+                    result: { operation, swapId },
+                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                    exchange: exchangeParams.exchange as ExchangeSwap,
+                    transaction: exchangeParams.transaction,
+                    magnitudeAwareRate: exchangeParams.magnitudeAwareRate!,
+                    provider: exchangeParams.provider,
+                  });
+                  if (params.length) {
+                    dispatch(
+                      updateAccountWithUpdater({ accountId: params[0], updater: params[1] }),
+                    );
+                  }
+
+                  // The operation is broadcast: report it even when there is no account to update.
+                  onSuccess({ operationHash: operation.hash, swapId });
+                },
+                // The drawer tells the user what went wrong: no error screen on top of it.
+                onCancel: safeOnCancel,
+              });
+              return;
+            }
+
+            if (handleLoaderDrawer) {
+              navigation.pop();
+            }
 
             const currentDevice = deviceRef.current || device;
 
@@ -558,6 +626,7 @@ export function useCustomExchangeHandlers({
     dispatch,
     route.name,
     returnToPreviousScreenOnClose,
+    deviceIntentExchangeEnabled,
   ]);
 }
 

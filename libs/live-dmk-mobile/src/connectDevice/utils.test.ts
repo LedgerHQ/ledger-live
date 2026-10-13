@@ -21,6 +21,7 @@ import {
   buildSpeculosLegacyDeviceId,
   speculosTargetSubject,
 } from "../transport/SpeculosDmkTransport";
+import { HTTP_PROXY_TRANSPORT_IDENTIFIER } from "../transport/HttpProxyDmkTransport";
 
 const knownDeviceA: KnownDevice = {
   transport: rnBleTransportIdentifier,
@@ -315,6 +316,18 @@ describe("mobile connectDevice utils", () => {
           }),
         ),
       ).toBe("SpeculosID");
+    });
+
+    it("should keep HTTP proxy device ids unchanged even though they report type USB", () => {
+      expect(
+        buildMobileCompatDeviceId(
+          makeConnectedDevice({
+            id: "httpdebug|http://10.10.131.99:8435",
+            type: "USB",
+            transport: HTTP_PROXY_TRANSPORT_IDENTIFIER,
+          }),
+        ),
+      ).toBe("httpdebug|http://10.10.131.99:8435");
     });
   });
 });
