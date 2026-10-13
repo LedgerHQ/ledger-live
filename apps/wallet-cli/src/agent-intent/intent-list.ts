@@ -120,29 +120,40 @@ const CAL_LOOKUPS: AssetLookups = {
   swapAsset: id => findEthereumSwapAsset(id),
 };
 
+// CAL lists Token-2022 mints as SPL too, so both programs resolve the same way.
+const SOLANA_TOKEN_TYPES: ReadonlySet<string> = new Set(["spl-token", "spl-token-2022"]);
+
 const NATIVE_ASSETS: Record<string, { ticker: string; decimals: number }> = {
   ethereum: { ticker: "ETH", decimals: 18 },
   solana: { ticker: "SOL", decimals: 9 },
 };
 
 /** Each asset is looked up once per call, and a failed lookup counts as unknown. */
-function memo<T>(lookup: (key: string) => Promise<T | null>): (key: string) => Promise<T | null> {
+function lookupOnce<T>(
+  lookup: (key: string) => Promise<T | null>,
+  normalize: (key: string) => string = key => key,
+): (key: string) => Promise<T | null> {
   const results = new Map<string, Promise<T | null>>();
   return key => {
-    if (!results.has(key))
+    const id = normalize(key);
+    if (!results.has(id)) {
       results.set(
-        key,
-        lookup(key).catch(() => null),
+        id,
+        Promise.resolve()
+          .then(() => lookup(key))
+          .catch(() => null),
       );
-    return results.get(key)!;
+    }
+    return results.get(id)!;
   };
 }
 
 function cached(lookups: AssetLookups): AssetLookups {
   return {
-    ethereumToken: memo(lookups.ethereumToken),
-    solanaToken: memo(lookups.solanaToken),
-    swapAsset: memo(lookups.swapAsset),
+    // EVM addresses are case-insensitive; base58 mints and currency ids are not.
+    ethereumToken: lookupOnce(lookups.ethereumToken, contract => contract.toLowerCase()),
+    solanaToken: lookupOnce(lookups.solanaToken),
+    swapAsset: lookupOnce(lookups.swapAsset),
   };
 }
 
@@ -223,7 +234,7 @@ async function sendUnit(
   if (asset.type === "native") return NATIVE_ASSETS[network] ?? null;
   if (!asset.assetReference) return null;
   if (network === "ethereum") return lookups.ethereumToken(asset.assetReference);
-  if (network === "solana" && asset.type === "spl-token") {
+  if (network === "solana" && SOLANA_TOKEN_TYPES.has(asset.type)) {
     return lookups.solanaToken(asset.assetReference);
   }
   return null;

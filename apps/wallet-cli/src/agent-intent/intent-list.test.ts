@@ -180,12 +180,81 @@ describe("toIntentListEntries", () => {
     expect(unknown).toMatchObject({ displayAmount: null, amount: "2500000" });
   });
 
+  it("shows a Token-2022 send in token units like an SPL one", async () => {
+    const [entry] = await toIntentListEntries(
+      [
+        record({
+          ...solanaSend,
+          amount: "2500000",
+          asset: { type: "spl-token-2022", assetReference: USDC_MINT },
+        }),
+      ],
+      lookups,
+    );
+
+    expect(entry?.displayAmount).toBe("2.5 USDC");
+  });
+
+  it("looks each asset up once per page, an EVM contract whatever its case", async () => {
+    const calls: string[] = [];
+    const counting: AssetLookups = {
+      ethereumToken: async contract => (calls.push(`eth:${contract}`), null),
+      solanaToken: async mint => (calls.push(`sol:${mint}`), null),
+      swapAsset: async id => (calls.push(`swap:${id}`), null),
+    };
+    const erc20 = (contract: string) =>
+      record({
+        type: "send",
+        network: "ethereum",
+        sender: SENDER,
+        recipient: SENDER,
+        amount: "1",
+        asset: { type: "erc20", assetReference: contract },
+      });
+    const spl = record({ ...solanaSend, asset: { type: "spl-token", assetReference: USDC_MINT } });
+
+    await toIntentListEntries(
+      [
+        erc20(SENDER),
+        erc20(SENDER.toLowerCase()),
+        spl,
+        spl,
+        record(swapIntent),
+        record(swapIntent),
+      ],
+      counting,
+    );
+
+    expect(calls.sort()).toEqual(
+      [`eth:${SENDER}`, `sol:${USDC_MINT}`, "swap:ethereum", `swap:${USDC_ID}`].sort(),
+    );
+  });
+
   it("treats a failed lookup as an unknown asset instead of failing the page", async () => {
-    const failing = { ...lookups, swapAsset: () => Promise.reject(new Error("CAL down")) };
+    const failing: AssetLookups = {
+      ethereumToken: () => Promise.reject(new Error("CAL down")),
+      solanaToken: () => {
+        throw new Error("CAL down");
+      },
+      swapAsset: () => Promise.reject(new Error("CAL down")),
+    };
+    const erc20 = record({
+      type: "send",
+      network: "ethereum",
+      sender: SENDER,
+      recipient: SENDER,
+      amount: "1",
+      asset: { type: "erc20", assetReference: SENDER },
+    });
+    const spl = record({ ...solanaSend, asset: { type: "spl-token", assetReference: USDC_MINT } });
 
-    const [entry] = await toIntentListEntries([record(swapIntent)], failing);
+    const entries = await toIntentListEntries([record(swapIntent), erc20, spl], failing);
 
-    expect(entry?.displayAmount).toBe(`0.5 ethereum → 1250 ${USDC_ID}`);
+    expect(entries.map(entry => entry.displayAmount)).toEqual([
+      `0.5 ethereum → 1250 ${USDC_ID}`,
+      null,
+      null,
+    ]);
   });
 
   it("ignores send-like fields on an operation type the SDK doesn't know", async () => {
