@@ -12,7 +12,9 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     ...actual,
     BottomSheetView: ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>,
     BottomSheetHeader: () => <RN.View testID="bottom-sheet-header" />,
-    Spot: ({ appearance }: { appearance: string }) => <RN.View testID={`spot-${appearance}`} />,
+    Spot: ({ appearance, icon }: { appearance: string; icon?: { displayName?: string } }) => (
+      <RN.View testID={`spot-${appearance}`} accessibilityLabel={icon?.displayName} />
+    ),
   };
 });
 
@@ -132,6 +134,18 @@ describe("ActionConfirmationDialog", () => {
     });
 
     expect(screen.getByTestId("spot-check")).toBeTruthy();
+  });
+
+  it("renders the Download symbol when the icon is withdraw", () => {
+    renderDialog({
+      title: "Withdraw USD Coin",
+      description: "Your position will be closed",
+      ctaLabel: "Withdraw in full",
+      icon: "withdraw",
+    });
+
+    expect(screen.getByTestId("spot-icon")).toBeTruthy();
+    expect(screen.getByLabelText("Download")).toBeTruthy();
   });
 
   it("calls resolveActionDialog(false) when close is pressed", async () => {
