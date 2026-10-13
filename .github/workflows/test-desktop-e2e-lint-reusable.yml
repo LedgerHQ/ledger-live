@@ -24,7 +24,7 @@ jobs:
   test-desktop-e2e-lint:
     name: "Desktop E2E Lint & Typecheck"
     runs-on: ledger-wallet-2cpu-aws-public-cached
-    timeout-minutes: 5
+    timeout-minutes: 6
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
