@@ -1016,6 +1016,9 @@ importers:
       '@features/flow-analytics-consent':
         specifier: workspace:*
         version: link:../../features/flow/analytics-consent
+      '@features/flow-app-availability':
+        specifier: workspace:^
+        version: link:../../features/flow/app-availability
       '@features/flow-contacts':
         specifier: workspace:^
         version: link:../../features/flow/contacts

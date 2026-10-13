@@ -133,7 +133,7 @@ interface Window {
 
 declare var api: Window["api"] | undefined; // eslint-disable-line no-var
 
-// Allow custom properties on global/globalThis (tests, AppGeoBlocker, etc.)
+// Allow custom properties on global/globalThis (tests, splash lift, etc.)
 declare global {
   interface GlobalThis {
     [key: string]: any;
