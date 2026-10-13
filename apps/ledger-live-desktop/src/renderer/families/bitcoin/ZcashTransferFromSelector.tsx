@@ -5,8 +5,8 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { getTransparentBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
 import {
   getSpendableIronwoodBalance,

@@ -1,10 +1,6 @@
 import React, { useEffect } from "react";
-import type {
-  BitcoinAccount,
-  Transaction,
-  ZcashAccount,
-} from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import type { BitcoinAccount, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction as ZcashTransaction, ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "LLD/hooks/redux";
 import { accountSelector } from "~/renderer/reducers/accounts";

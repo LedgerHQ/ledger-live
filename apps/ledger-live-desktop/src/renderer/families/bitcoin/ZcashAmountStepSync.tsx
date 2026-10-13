@@ -1,10 +1,6 @@
 import React, { useEffect } from "react";
-import type {
-  BitcoinAccount,
-  Transaction,
-  ZcashAccount,
-} from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import type { BitcoinAccount, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount, Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 
 type Props = Readonly<{

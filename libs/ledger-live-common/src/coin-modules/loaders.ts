@@ -37,8 +37,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "bitcoin_cash",
       "dogecoin",
       "dash",
-      "zcash",
-      "zcash_testnet",
       "decred",
       "digibyte",
       "qtum",
@@ -469,8 +467,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     // Bespoke loader for the standalone @ledgerhq/coin-zcash coin-module (not
     // added to genericCoinFrameworkFamilies.json). Every Zcash account is served
-    // by it (bridge/zcashRouting.ts); the "bitcoin" loader still lists the Zcash
-    // ids because the currencies keep `family: "bitcoin"`.
+    // by it (bridge/zcashRouting.ts), although the currencies keep
+    // `family: "bitcoin"`.
     family: "zcash",
     supportedCoins: ["zcash", "zcash_testnet"],
     loadSetup: () => import("../families/zcash/setup"),
