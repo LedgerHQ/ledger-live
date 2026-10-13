@@ -208,6 +208,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-analytics": "workspace:^",
     "@ledgerhq/wallet-pnl": "workspace:^",
+    "@lottiefiles/dotlottie-react": "0.17.13",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/slider": "5.1.1",
     "@react-native-firebase/app": "22.2.0",
