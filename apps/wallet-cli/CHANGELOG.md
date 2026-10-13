@@ -1,5 +1,19 @@
 # @ledgerhq/wallet-cli
 
+## 2.11.1
+
+### Patch Changes
+
+- [#23282](https://github.com/LedgerHQ/ledger-live/pull/23282) [`2313b36`](https://github.com/LedgerHQ/ledger-live/commit/2313b36146cf2cc04eee1dabdfb9697b6c0da8fd) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-cli): keep agent-intent enrollment sessions open past 5 minutes
+
+  Re-vendor `@ledgerhq/agent-intent-sdk` from `main` `00d6830`. `agent-intent enroll` and `recover` no longer lose the session when the user takes more than 5 minutes to open the link or approve on the device.
+
+- [#22437](https://github.com/LedgerHQ/ledger-live/pull/22437) [`58c1bd3`](https://github.com/LedgerHQ/ledger-live/commit/58c1bd3c42d7698822c7308b8a9cfb06a28744f0) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Fail `swap status` when `--provider` does not own the swap id.
+
+  The swap API answers `unknown` for a swap id queried under the wrong provider, and the command used to print that as a successful `UNKNOWN` status. It now exits with code 1, and the error names the other allowed provider(s) that know the swap id, so the command can be re-run with the right `--provider`.
+
+  A swap that its own provider still reports as `unknown` (for example, not yet registered by the partner) now also exits with code 1 instead of printing `UNKNOWN`. Callers that poll `swap status` should treat exit code 1 as "maybe not registered yet, retry" rather than a permanent failure.
+
 ## 2.11.0
 
 ### Minor Changes
