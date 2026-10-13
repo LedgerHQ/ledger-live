@@ -24,7 +24,9 @@ export const getTransactionStatus: AccountBridge<
     throw new AccountAwaitingSendPendingOperations();
   }
 
-  if (account.cardanoResources.utxos.length === 0) {
+  const isStakingWithoutUtxo =
+    account.cardanoResources.utxos.length === 0 && transaction.mode !== "send";
+  if (isStakingWithoutUtxo) {
     const errors = {
       amount: new CardanoNotEnoughFunds(),
     };
@@ -57,8 +59,9 @@ export const getTransactionStatus: AccountBridge<
   }
 
   const txStatus = await getTransactionStatusByTransactionMode(account, transaction);
-  const MAX_FEES_WARN = coinConfig.getCoinConfig().maxFeesWarning;
-  const MAX_FEES_THROW = coinConfig.getCoinConfig().maxFeesError;
+  const { maxFeesWarning: MAX_FEES_WARN, maxFeesError: MAX_FEES_THROW } = coinConfig.getCoinConfig(
+    account.currency.id,
+  );
 
   if (txStatus.estimatedFees.gt(MAX_FEES_THROW)) {
     throw new CardanoFeeTooHigh();

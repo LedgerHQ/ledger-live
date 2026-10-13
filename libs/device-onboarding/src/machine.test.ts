@@ -162,6 +162,33 @@ describe("routing", () => {
 
     expect(exitOf(actor)).toMatchObject({ reason: "legacyFallback" });
   });
+
+  it.each([
+    ["the host says nothing", { omitHostsSeedSetup: true }],
+    ["the host cannot set the seed up", { hostsSeedSetup: false }],
+  ] as const)(
+    "sends an unseeded device to legacy before any check when %s",
+    async (_case, overrides) => {
+      const { actor, fake } = await launch(
+        { osVersion: [os(unseeded)], ...passingChecks },
+        overrides,
+      );
+
+      expect(exitOf(actor)).toMatchObject({ reason: "legacyFallback" });
+      expect(fake.genuineCheckRuns()).toBe(0);
+      expect(fake.earlyCheckToggles()).toEqual([]);
+    },
+  );
+
+  it("keeps a seeded device on the checks when the host cannot set the seed up", async () => {
+    const { actor, fake } = await start(
+      { osVersion: [os(seeded)], ...passingChecks },
+      { hostsSeedSetup: false },
+    );
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(fake.earlyCheckToggles()).toEqual([]);
+  });
 });
 
 describe("the on-device waiting screen", () => {
@@ -1317,6 +1344,8 @@ async function launch(
   overrides: Partial<{
     deviceModelId: DeviceModelId;
     offerSync: boolean;
+    hostsSeedSetup: boolean;
+    omitHostsSeedSetup: boolean;
     leaveOnboarding: (reason: string) => void;
   }> = {},
 ): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
@@ -1332,6 +1361,7 @@ async function launch(
       deviceId: "device",
       deviceModelId: overrides.deviceModelId ?? DeviceModelId.FLEX,
       offerSync: overrides.offerSync ?? false,
+      ...(overrides.omitHostsSeedSetup ? {} : { hostsSeedSetup: overrides.hostsSeedSetup ?? true }),
     },
   }).start();
 

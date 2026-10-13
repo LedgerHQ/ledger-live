@@ -8,7 +8,7 @@ let onJobStateChanged: (state: { type: string }) => void;
 
 jest.mock("LLD/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(),
-  DeviceIntentExecutorLWD: (props: { onIntentJobStateChanged: typeof onJobStateChanged }) => {
+  DeviceIntentExecutor: (props: { onIntentJobStateChanged: typeof onJobStateChanged }) => {
     onJobStateChanged = props.onIntentJobStateChanged;
     return <div data-testid="device-intent-executor" />;
   },

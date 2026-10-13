@@ -29,8 +29,8 @@
     "@ledgerhq/hw-transport": "catalog:",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",
-    "protobufjs": "7.2.5",
-    "protobufjs-cli": "1.1.2"
+    "protobufjs": "8.4.1",
+    "protobufjs-cli": "2.4.1"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",

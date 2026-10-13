@@ -25,7 +25,7 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useNavigate } from "react-router";
 import { NetworkDown } from "@ledgerhq/live-common/errors";
-import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
+import { useNetworkState } from "@shared/network-status";
 import { urls } from "~/config/urls";
 import { normalizeGenuineCheckError } from "./normalizeGenuineCheckError";
 import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
@@ -123,7 +123,7 @@ const EarlySecurityChecks = ({
     deviceName: device.deviceName ?? null,
   });
 
-  const { networkStatus } = useNetworkStatus();
+  const { isConnected } = useNetworkState();
 
   const {
     state: {
@@ -423,10 +423,7 @@ const EarlySecurityChecks = ({
         },
         commonDrawerProps,
       );
-    } else if (
-      networkStatus === NetworkStatus.OFFLINE &&
-      genuineCheckStatus !== SoftwareCheckStatus.inactive
-    ) {
+    } else if (isConnected === false && genuineCheckStatus !== SoftwareCheckStatus.inactive) {
       setDrawer(
         ErrorDrawer,
         {
@@ -475,7 +472,7 @@ const EarlySecurityChecks = ({
     productName,
     resetGenuineCheckState,
     navigate,
-    networkStatus,
+    isConnected,
     genuineCheckStatus,
   ]);
 

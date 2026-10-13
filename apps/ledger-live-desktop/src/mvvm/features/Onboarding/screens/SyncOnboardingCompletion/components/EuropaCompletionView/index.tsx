@@ -1,5 +1,5 @@
 import React from "react";
-import Lottie from "react-lottie";
+import { Lottie } from "@shared/lottie";
 import { getEnv } from "@shared/env";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -26,17 +26,12 @@ export default function EuropaCompletionView() {
       <Flex style={confettiLayerStyle}>
         {animation ? (
           <Lottie
+            source={animation}
             style={{ width: "100%", height: "100%" }}
-            isClickToPauseDisabled
-            ariaRole="presentation"
-            options={{
-              loop: true,
-              autoplay: !isPlaywright,
-              animationData: animation,
-              rendererSettings: {
-                preserveAspectRatio: "xMidYMid slice",
-              },
-            }}
+            role="presentation"
+            loop
+            autoPlay={!isPlaywright}
+            fit="cover"
           />
         ) : null}
       </Flex>

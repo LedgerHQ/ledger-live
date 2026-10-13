@@ -51,6 +51,14 @@ describe("zcash bridgeExtensions", () => {
       expect(result).toEqual(new BigNumber(4_590_920));
     });
 
+    it("answers for a zcash testnet account", () => {
+      const result = extensions.getWalletApiSpendableBalance?.(
+        makeAccount({ currency: { id: "zcash_testnet" } }),
+      );
+
+      expect(result).toEqual(new BigNumber(4_590_920));
+    });
+
     it("throws when the account is not a zcash account", () => {
       const account = makeAccount({ currency: { id: "bitcoin" } });
 

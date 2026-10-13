@@ -16,6 +16,7 @@ export type ExitOutput = { reason: DeviceOnboardingExitReason };
 export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingContext {
   return {
     ...input,
+    hostsSeedSetup: input.hostsSeedSetup ?? false,
     lastDeviceState: null,
     firmwareVersion: null,
     hasStarted: false,

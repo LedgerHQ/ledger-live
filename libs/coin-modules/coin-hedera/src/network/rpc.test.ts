@@ -1,4 +1,4 @@
-import { Client, Transaction, TransactionResponse } from "@hashgraph/sdk";
+import { Client, Transaction, TransactionResponse } from "@hiero-ledger/sdk";
 import coinConfig from "../config";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
@@ -21,7 +21,7 @@ const createMockClient = (): Client =>
 const mockClient = createMockClient();
 const mockTestnetClient = createMockClient();
 
-jest.mock("@hashgraph/sdk", () => {
+jest.mock("@hiero-ledger/sdk", () => {
   return {
     Transaction: jest.fn(),
     Client: {

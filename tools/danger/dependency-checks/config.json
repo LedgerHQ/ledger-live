@@ -1,0 +1,139 @@
+{
+  "singletons": {
+    "react": {
+      "why": "The workspace must resolve a single React copy.",
+      "maxVersions": 1
+    },
+    "react-dom": {
+      "why": "The workspace must resolve a single React DOM copy.",
+      "maxVersions": 1
+    },
+    "react-native": {
+      "why": "The mobile app bundles a single React Native runtime.",
+      "maxVersions": 1
+    },
+    "electron": {
+      "why": "The desktop app ships a single Electron runtime.",
+      "maxVersions": 1
+    },
+    "lodash": {
+      "why": "Lodash versions were uniformized through the pnpm catalog (LIVE-35624).",
+      "maxVersions": 1
+    },
+    "@solana/web3.js": {
+      "why": "The Solana signer and coin module must share one web3.js.",
+      "maxVersions": 1
+    }
+  },
+  "denylists": {
+    "replaced": {
+      "why": "Dependencies we replaced with a better alternative. Re-adding one needs a new decision.",
+      "packages": {
+        "rn-fetch-blob": {
+          "reason": "Replaced on mobile (LIVE-37839).",
+          "use": "expo-file-system"
+        },
+        "react-native-haptic-feedback": {
+          "reason": "Replaced on mobile.",
+          "use": "expo-haptics"
+        },
+        "@react-native-clipboard/clipboard": {
+          "reason": "Replaced on mobile (LIVE-37327).",
+          "use": "expo-clipboard, through @shared/clipboard"
+        },
+        "react-native-image-picker": {
+          "reason": "Replaced on mobile (LIVE-37312).",
+          "use": "expo-image-picker"
+        },
+        "react-native-device-info": {
+          "reason": "Replaced on mobile (LIVE-37311).",
+          "use": "expo-device, or expo-application for app version"
+        },
+        "react-native-version-number": {
+          "reason": "Replaced on mobile (LIVE-37311).",
+          "use": "expo-application, through LLM/utils/appVersion"
+        },
+        "react-native-linear-gradient": {
+          "reason": "Replaced on mobile (LIVE-37310).",
+          "use": "LinearGradient from @ledgerhq/lumen-ui-rnative"
+        },
+        "expo-linear-gradient": {
+          "reason": "Adds a native module for what Lumen draws with react-native-svg (LIVE-37310).",
+          "use": "LinearGradient from @ledgerhq/lumen-ui-rnative"
+        },
+        "react-native-splash-screen": {
+          "reason": "Unmaintained since 2021, replaced on mobile (LIVE-37328).",
+          "use": "expo-splash-screen"
+        },
+        "@react-native-community/netinfo": {
+          "reason": "Replaced on mobile (LIVE-38981).",
+          "use": "@shared/network-status"
+        },
+        "unimported": {
+          "reason": "Mishandles dynamic import(), so every package needs an exception list to suppress its false positives. Pulls typescript@4.9.5 and @typescript-eslint@5 into node_modules.",
+          "use": "knip"
+        }
+      }
+    }
+  },
+  "allowlists": {
+    "secp256k1": {
+      "why": "The monorepo converges on @noble/curves for secp256k1 (LIVE-37372).",
+      "patterns": ["*secp256k1*", "@noble/curves", "elliptic", "ecurve", "bcrypto"],
+      "packages": {
+        "@noble/curves": {
+          "target": true,
+          "reason": "The implementation we converge on. Catalogued in pnpm-workspace.yaml."
+        },
+        "@bitcoinerlab/secp256k1": {
+          "reason": "bitcoinjs `ecc` adapter. Depends on @noble/curves, no curve arithmetic of its own."
+        },
+        "@dfinity/identity-secp256k1": {
+          "reason": "@dfinity signing identity. Depends on @noble/curves, no curve arithmetic of its own."
+        },
+        "elliptic": {
+          "tolerated": true,
+          "reason": "Legacy pure-JS curve library reached only through third-party SDKs, and the fallback secp256k1 uses when its bindings are missing. Pinned to 6.6.1 by a root pnpm override.",
+          "exit": "LIVE-37448 the SDKs stop pinning it, or we stop shipping them."
+        },
+        "secp256k1": {
+          "tolerated": true,
+          "reason": "Native bindings, reached only through icon-sdk-js.",
+          "exit": "LIVE-37372 coin-icon drops icon-sdk-js, or the SDK stops depending on it."
+        },
+        "@noble/secp256k1": {
+          "tolerated": true,
+          "reason": "Standalone noble package superseded by @noble/curves. Pinned exactly by every SDK.",
+          "exit": "LIVE-37448 the SDKs move to @noble/curves, or we stop shipping them."
+        }
+      }
+    },
+    "secure-random": {
+      "why": "Mobile installs crypto.getRandomValues from expo-crypto (LIVE-37309).",
+      "patterns": [
+        "*get-random-values*",
+        "react-native-randombytes",
+        "react-native-securerandom",
+        "react-native-quick-crypto",
+        "expo-random",
+        "expo-crypto"
+      ],
+      "packages": {
+        "expo-crypto": {
+          "target": true,
+          "reason": "The implementation we converge on. Backs the global crypto.getRandomValues through src/getRandomValuesPolyfill.ts."
+        },
+        "react-native-get-random-values": {
+          "tolerated": true,
+          "reason": "Imported by @hiero-ledger/cryptography, @ledgerhq/coin-evm@10.1.0 and @segment/analytics-react-native. Mobile aliases it to the expo-crypto shim in rspack.config.mjs and excludes it from autolinking.",
+          "exit": "Those packages stop importing it."
+        },
+        "react-native-randombytes": {
+          "tolerated": true,
+          "reason": "Native module reached through node-libs-react-native's crypto shim (react-native-crypto).",
+          "exit": "node-libs-react-native is replaced, or its crypto shim no longer pulls it."
+        }
+      }
+    }
+  }
+}

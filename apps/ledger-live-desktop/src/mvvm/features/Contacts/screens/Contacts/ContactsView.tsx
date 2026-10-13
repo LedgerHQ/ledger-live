@@ -17,7 +17,7 @@ import {
   type ContactsAddAddressFlowDialogProps,
 } from "./components/ContactsAddAddressFlowDialog";
 import type { ContactsDeviceIntentExecutorProps } from "@features/platform-contacts/device";
-import { DeviceIntentExecutorLWD } from "LLD/components/DeviceIntentExecutor";
+import { DeviceIntentExecutor } from "LLD/components/DeviceIntentExecutor";
 import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import type { ContactDetailEditDeleteDialogProps } from "./useContactDetailEditDeleteAdapter";
 
@@ -59,7 +59,7 @@ export function ContactsView({
         </>
       )}
       {dieProps?.enabled === true ? (
-        <DeviceIntentExecutorLWD sourceFlow="contacts" {...dieProps} />
+        <DeviceIntentExecutor sourceFlow="contacts" {...dieProps} />
       ) : null}
     </>
   );

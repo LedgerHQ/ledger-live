@@ -413,6 +413,38 @@ describe("useAddressValidation", () => {
     expect(result.current.result.accountName).toBe("Private balance");
   });
 
+  it("validates the account's own self-transfer target address as a self-transfer", () => {
+    mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("free");
+    mockedSendFeatures.getBalanceTypeConfig.mockReturnValue({
+      getSelfTransferTarget: () => ({
+        address: mockAccount.freshAddress,
+        translationKey: "recipient.selfTransfer.toPrivate",
+        isDestinationPublic: false,
+      }),
+      buildSelfTransferPatch: ({ isSelfTransfer }: { isSelfTransfer: boolean }) => ({
+        mode: isSelfTransfer ? "convert_public_to_private" : "transfer_public",
+      }),
+    } as never);
+    const transaction = { family: "aleo", mode: "transfer_public" } as unknown as Transaction;
+
+    renderHook(() =>
+      useAddressValidation({
+        searchValue: mockAccount.freshAddress,
+        currency: mockAccount.currency,
+        account: mockAccount,
+        transaction,
+        currentAccountId: mockAccount.id,
+      }),
+    );
+
+    expect(mockedUseBridgeRecipientValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        recipient: mockAccount.freshAddress,
+        transaction: { family: "aleo", mode: "convert_public_to_private" },
+      }),
+    );
+  });
+
   it("keeps the account name when a self-match is not the self-transfer target address", () => {
     mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("free");
     mockedUseMaybeAccountName.mockReturnValue("My Account");

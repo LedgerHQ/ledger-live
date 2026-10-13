@@ -50,6 +50,22 @@ describe("hedera transaction serialization", () => {
     expect(fromTransactionRaw(raw)).toEqual(transaction);
   });
 
+  it("round-trips the nonce", () => {
+    const transaction: HederaGenericTransaction = {
+      family: "hedera",
+      mode: "send",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      nonce: new BigNumber(0),
+    };
+
+    const raw = toTransactionRaw(transaction);
+
+    expect(raw).toMatchObject({ nonce: "0" });
+    expect(fromTransactionRaw(raw)).toEqual(transaction);
+  });
+
   it("revives missing fees as null", () => {
     const revived = fromTransactionRaw(
       toTransactionRaw({

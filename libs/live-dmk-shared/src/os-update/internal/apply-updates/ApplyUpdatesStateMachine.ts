@@ -743,7 +743,8 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
         ],
       },
     },
-    // A recovery flash can leave nothing to install, hence the check the OSU branch skips.
+    // A recovery flash can leave the device in OSU mode with a final firmware to install, or back
+    // on an OS with nothing under way, which is why this branches on the mode, unlike the OSU one.
     ResolveAfterFlash: {
       entry: assign({
         lastAction: ApplyUpdatesStateMachineLastAction.ResolveAfterFlash,
@@ -781,7 +782,10 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
             actions: assign({ error: ({ event }) => event.output.extract() }),
             target: "CheckErrorCause",
           },
+          // The device came back in OSU mode, so the first update of the path is the one that was
+          // under way and only its final firmware is left.
           {
+            guard: "isOsu",
             actions: assign({
               osUpdates: ({ event, context }) =>
                 event.output.toMaybe().orDefault(context.osUpdates),
@@ -790,8 +794,30 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
             }),
             target: "CheckFinalFirmware",
           },
+          // The device came back on an OS, so the update under way is over and the first update of
+          // the path is the next one, to be installed from its OSU firmware.
+          {
+            actions: assign({
+              osUpdates: ({ event, context }) =>
+                event.output.toMaybe().orDefault(context.osUpdates),
+              updateIndex: 0,
+              osuProgress: 0,
+            }),
+            target: "CheckResolvedUpdates",
+          },
         ],
       },
+    },
+    CheckResolvedUpdates: {
+      always: [
+        {
+          guard: ({ context }) => context.osUpdates.length > 0,
+          target: "InstallOsu",
+        },
+        {
+          target: "CheckNextUpdate",
+        },
+      ],
     },
     CheckFinalFirmware: {
       always: [

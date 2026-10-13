@@ -1,19 +1,15 @@
 import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoCoinConfig, type CardanoConfig } from "../config";
+import type { CardanoCoinConfig } from "../config";
+import { cardanoCoinConfig } from "../fixtures/config";
 import { getBalance } from "../logic/getBalance";
 
 jest.mock("../logic/getBalance");
 const mockGetBalance = jest.mocked(getBalance);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const config = cardanoCoinConfig;
 const mockCtx: Context<CardanoCoinConfig> = {
-  config: async () => ({
-    ...config,
-    status: { type: "active" },
-    name: "Cardano",
-    unit: { name: "ada", code: "ADA", magnitude: 6 },
-  }),
+  config: async () => config,
   logger: () => {},
 };
 
@@ -22,7 +18,7 @@ describe("getBalance", () => {
     jest.clearAllMocks();
   });
 
-  it("delegates to logic getBalance with the resolved currency and address", async () => {
+  it("delegates to logic getBalance with the resolved config and address", async () => {
     const balances = [{ value: 1n, asset: { type: "native" as const } }];
     mockGetBalance.mockResolvedValue(balances);
 
@@ -31,7 +27,7 @@ describe("getBalance", () => {
 
     expect(result).toBe(balances);
     expect(mockGetBalance).toHaveBeenCalledTimes(1);
-    expect(mockGetBalance.mock.calls[0][0].id).toBe("cardano");
+    expect(mockGetBalance.mock.calls[0][0]).toBe(config);
     expect(mockGetBalance.mock.calls[0][1]).toBe("addr1xxx");
   });
 

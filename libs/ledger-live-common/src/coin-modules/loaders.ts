@@ -38,6 +38,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "dogecoin",
       "dash",
       "zcash",
+      "zcash_testnet",
       "decred",
       "digibyte",
       "qtum",
@@ -258,6 +259,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadBridgeApi: () => import("../families/hedera/bridge/api").then(m => m.default),
     loadAccountRawAssign: () => import("../families/hedera/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/hedera/bridgeExtensions").then(m => m.default),
+    loadWalletApiAdapter: () => import("../families/hedera/walletApiAdapter").then(m => m.default),
   },
   {
     // HyperCore (generic framework): eth-format address, no send. setup/signer only derive the
@@ -452,7 +454,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   },
   {
     family: "xrp",
-    supportedCoins: ["ripple"],
+    supportedCoins: ["ripple", "ripple_testnet"],
     loadSetup: () => import("../families/xrp/setup"),
     loadLocalApi: () => import("../families/xrp/coinModuleApi").then(m => m.createLocalXrpApi),
     loadTransaction: () => import("../families/xrp/transaction").then(m => m.default),
@@ -466,14 +468,13 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   },
   {
     // Bespoke loader for the standalone @ledgerhq/coin-zcash coin-module (not
-    // added to genericCoinFrameworkFamilies.json). Routing between this family
-    // and the "bitcoin" family's Zcash chain-adapter is decided in
-    // bridge/impl.ts's resolveFamily, gated on the `zcashShielded` feature
-    // flag -- the "bitcoin" loader's supportedCoins still lists "zcash" so the
-    // flag-OFF path keeps resolving to coin-bitcoin unchanged.
+    // added to genericCoinFrameworkFamilies.json). Every Zcash account is served
+    // by it (bridge/zcashRouting.ts); the "bitcoin" loader still lists the Zcash
+    // ids because the currencies keep `family: "bitcoin"`.
     family: "zcash",
-    supportedCoins: ["zcash"],
+    supportedCoins: ["zcash", "zcash_testnet"],
     loadSetup: () => import("../families/zcash/setup"),
+    loadWalletApiAdapter: () => import("../families/zcash/walletApiAdapter").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),

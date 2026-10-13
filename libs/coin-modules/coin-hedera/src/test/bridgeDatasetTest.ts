@@ -14,6 +14,8 @@ export const hedera: CurrenciesData<Transaction> = {
     "syncHash",
     // pending rewards change on a daily basis
     "hederaResources.delegation.pendingReward",
+    // network-wide node list: staked amounts and reward rates change daily
+    "stakingResources.validators",
     // balance of ERC20 token account may change without any operation (e.g. Bonzo aUSDC)
     "balance",
     "spendableBalance",

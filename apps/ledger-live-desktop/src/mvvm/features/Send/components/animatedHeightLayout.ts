@@ -1,5 +1,11 @@
 const HEIGHT_EPSILON_PX = 1;
 
+const SELF_RESIZING_CONTROLS = new Set(["INPUT", "TEXTAREA"]);
+
+export function isStackedHeightTarget(element: HTMLElement): boolean {
+  return !SELF_RESIZING_CONTROLS.has(element.tagName);
+}
+
 function readPx(value: string): number {
   const parsed = Number.parseFloat(value);
   return Number.isFinite(parsed) ? parsed : 0;

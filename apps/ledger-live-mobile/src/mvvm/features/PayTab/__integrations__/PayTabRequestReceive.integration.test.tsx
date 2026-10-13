@@ -45,7 +45,7 @@ let capturedExecutor: CapturedExecutor | undefined;
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(),
-  DeviceIntentExecutorLWM: (props: CapturedExecutor) => {
+  DeviceIntentExecutor: (props: CapturedExecutor) => {
     capturedExecutor = props;
     return <Text>Ledger Secure Screen</Text>;
   },

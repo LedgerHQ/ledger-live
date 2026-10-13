@@ -5,8 +5,8 @@ import type {
   Page,
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { CardanoCoinConfig, CardanoConfig } from "../config";
+import type { CardanoCoinConfig } from "../config";
+import { cardanoCoinConfig } from "../fixtures/config";
 import { listOperations } from "../logic/listOperations";
 import { createApi } from ".";
 
@@ -16,15 +16,9 @@ jest.mock("../logic/listOperations", () => ({
 
 const mockListOperations = jest.mocked(listOperations);
 
-const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
-const currency = getCryptoCurrencyById("cardano");
+const config = cardanoCoinConfig;
 const mockCtx: Context<CardanoCoinConfig> = {
-  config: async () => ({
-    ...config,
-    status: { type: "active" },
-    name: "Cardano",
-    unit: { name: "ada", code: "ADA", magnitude: 6 },
-  }),
+  config: async () => config,
   logger: () => {},
 };
 
@@ -52,7 +46,7 @@ describe("api.listOperations", () => {
     jest.clearAllMocks();
   });
 
-  it("delegates to the logic listOperations with the resolved currency, address and options", async () => {
+  it("delegates to the logic listOperations with the resolved config, address and options", async () => {
     const page: Page<Operation<MemoNotSupported>> = { items: [], next: undefined };
     mockListOperations.mockResolvedValue(page);
 
@@ -60,7 +54,7 @@ describe("api.listOperations", () => {
     const result = await api.listOperations(mockCtx, "addr1_me", options);
 
     expect(mockListOperations).toHaveBeenCalledTimes(1);
-    expect(mockListOperations).toHaveBeenCalledWith(currency, "addr1_me", options);
+    expect(mockListOperations).toHaveBeenCalledWith(config, "cardano", "addr1_me", options);
     expect(result).toBe(page);
   });
 

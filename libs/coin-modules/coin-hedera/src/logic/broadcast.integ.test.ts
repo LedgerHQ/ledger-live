@@ -1,4 +1,4 @@
-import { AccountId, Hbar, PrivateKey, TransactionId, TransferTransaction } from "@hashgraph/sdk";
+import { AccountId, Hbar, PrivateKey, TransactionId, TransferTransaction } from "@hiero-ledger/sdk";
 import { broadcast } from "./broadcast";
 import { serializeTransaction } from "./utils";
 import { rpcClient } from "../network/rpc";

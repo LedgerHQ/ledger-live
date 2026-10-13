@@ -20,6 +20,7 @@ import {
   calculateSpendableBalance,
   createTokenAccount,
   getAccountShape,
+  shouldMergeOps,
 } from "./synchronization";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
@@ -678,6 +679,12 @@ describe("getAccountShape", () => {
     expect(result.stakingPositions).toEqual([]);
   });
 
+  it("clears the generic bridge's sync hash, so the history is this bridge's again", async () => {
+    const result = await getAccountShape(info, { paginationConfig: {} });
+
+    expect(result).toHaveProperty("syncHash", undefined);
+  });
+
   it("excludes the locked (staked) STX from spendableBalance, while `balance` keeps the full total", async () => {
     (fetchBalances as jest.Mock).mockResolvedValue({ balance: "1000000", locked: "400000" });
 
@@ -805,6 +812,16 @@ describe("getAccountShape", () => {
 
     expect(getAddressFromPublicKey).not.toHaveBeenCalled();
     expect(result.freshAddress).toBe(knownAddress);
+  });
+});
+
+describe("shouldMergeOps", () => {
+  it("merges into a history this bridge synced", async () => {
+    await expect(shouldMergeOps({} as Account)).resolves.toBe(true);
+  });
+
+  it("rebuilds a history the generic bridge synced", async () => {
+    await expect(shouldMergeOps({ syncHash: "0xb26fad6e" } as Account)).resolves.toBe(false);
   });
 });
 

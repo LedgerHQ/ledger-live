@@ -95,6 +95,7 @@ Rules:
 - `type` and `scope` are required.
 - `description` is imperative, lowercase and has no trailing period.
 - Keep the subject line at or below 72 characters.
+- Keep each body and footer line at or below 100 characters.
 - Do not use gitmoji.
 - Keep commits small, isolated and meaningful.
 - Never mix refactor, fix and feature work in a single commit.

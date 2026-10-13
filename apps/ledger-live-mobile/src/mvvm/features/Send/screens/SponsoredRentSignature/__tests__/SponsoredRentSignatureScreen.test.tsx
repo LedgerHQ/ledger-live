@@ -6,14 +6,14 @@ import {
   type SponsoredRentSignatureViewModel,
 } from "../hooks/useSponsoredRentSignatureViewModel";
 
-const mockDeviceIntentExecutorLWM = jest.fn();
+const mockDeviceIntentExecutor = jest.fn();
 
 jest.mock("../hooks/useSponsoredRentSignatureViewModel", () => ({
   useSponsoredRentSignatureViewModel: jest.fn(),
 }));
 jest.mock("LLM/components/DeviceIntentExecutor", () => ({
-  DeviceIntentExecutorLWM: (props: unknown) => {
-    mockDeviceIntentExecutorLWM(props);
+  DeviceIntentExecutor: (props: unknown) => {
+    mockDeviceIntentExecutor(props);
     return null;
   },
 }));
@@ -45,7 +45,7 @@ describe("SponsoredRentSignatureScreen", () => {
     expect(screen.getByText("3.2 USDT")).toBeOnTheScreen();
     await user.press(screen.getByTestId("send-sponsored-rent-signature-cancel"));
     expect(viewModel.onUserCancel).toHaveBeenCalled();
-    expect(mockDeviceIntentExecutorLWM).not.toHaveBeenCalled();
+    expect(mockDeviceIntentExecutor).not.toHaveBeenCalled();
   });
 
   it("shows a device setup failure with a Cancel", async () => {
@@ -69,7 +69,7 @@ describe("SponsoredRentSignatureScreen", () => {
 
     render(<SponsoredRentSignatureScreen />);
 
-    expect(mockDeviceIntentExecutorLWM).toHaveBeenCalledWith(
+    expect(mockDeviceIntentExecutor).toHaveBeenCalledWith(
       expect.objectContaining({
         intent: signIntent,
         deviceInitializationInput,

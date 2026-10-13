@@ -32,13 +32,17 @@ const makeTokenAccount = (parentAccount: Account): TokenAccount =>
 
 const evmBridge = jest.fn();
 const bitcoinBridge = jest.fn();
+const zcashBridge = jest.fn();
 jest.mock("../coin-modules/registry", () => ({
+  isCoinModuleRegistered: () => true,
   loadWalletApiAdapterForFamily: (family: string) => {
     switch (family) {
       case "evm":
         return { getWalletAPITransactionSignFlowInfos: () => evmBridge() };
       case "bitcoin":
         return { getWalletAPITransactionSignFlowInfos: () => bitcoinBridge() };
+      case "zcash":
+        return { getWalletAPITransactionSignFlowInfos: () => zcashBridge() };
       default:
         return undefined;
     }
@@ -61,6 +65,41 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
   beforeEach(() => {
     evmBridge.mockClear();
     bitcoinBridge.mockClear();
+    zcashBridge.mockClear();
+  });
+
+  // A live app names Zcash's currency family, "bitcoin"; coin-zcash serves the account.
+  it.each(["zcash", "zcash_testnet"])(
+    "uses the zcash adapter for a bitcoin-family transaction on a %s account",
+    async currencyId => {
+      await getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: { family: "bitcoin", amount: new BigNumber(1), recipient: "t1" },
+        account: { type: "Account", currency: getCryptoCurrencyById(currencyId) } as Account,
+      });
+
+      expect(zcashBridge).toHaveBeenCalledTimes(1);
+      expect(bitcoinBridge).not.toHaveBeenCalled();
+    },
+  );
+
+  it("keeps the adapter of another family's transaction on a zcash account", async () => {
+    await getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: { family: "ethereum", amount: new BigNumber(1), recipient: "0x01" },
+      account: { type: "Account", currency: getCryptoCurrencyById("zcash") } as Account,
+    });
+
+    expect(evmBridge).toHaveBeenCalledTimes(1);
+    expect(zcashBridge).not.toHaveBeenCalled();
+  });
+
+  it("keeps the bitcoin adapter for a bitcoin account", async () => {
+    await getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: { family: "bitcoin", amount: new BigNumber(1), recipient: "bc1" },
+      account: { type: "Account", currency: getCryptoCurrencyById("bitcoin") } as Account,
+    });
+
+    expect(bitcoinBridge).toHaveBeenCalledTimes(1);
+    expect(zcashBridge).not.toHaveBeenCalled();
   });
 
   it("should call the bridge if the implementation exists", async () => {

@@ -194,12 +194,9 @@ export function runRevampedPasswordUnlockTest(tmsLinks: string[], tags: string[]
       await app.appLock.expectPasswordTooShort();
     });
 
-    it("Turns the password on and locks the app once it leaves", async () => {
+    it(`[${Account.ETH_1.currency.testLabel}] - Unlock the app with the correct password`, async () => {
       await app.settingsGeneral.setupRevampedPasswordAndLock(CORRECT_PASSWORD);
       await app.appLock.expectLock();
-    });
-
-    it(`[${Account.ETH_1.currency.testLabel}] - Unlock the app with the correct password`, async () => {
       await app.appLock.enterUnlockPassword(CORRECT_PASSWORD);
       await app.appLock.unlock();
       await app.appLock.expectNoLock();

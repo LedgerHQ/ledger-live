@@ -26,7 +26,10 @@ import { t } from "~/renderer/i18n/init";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useLLDCoinFamily } from "~/renderer/families";
-import { getAccountSelfTransferTarget } from "../../../utils/selfTransferTarget";
+import {
+  applyRecipientSelfTransferState,
+  getAccountSelfTransferTarget,
+} from "../../../utils/selfTransferTarget";
 import { useFormattedAccountBalance } from "./useFormattedAccountBalance";
 
 function isDomainLoading(domain: DomainServiceStatus): boolean {
@@ -163,12 +166,20 @@ export function useAddressValidation({
   }, [ensResolution?.address, matchedContact?.address, searchValue]);
   const validationKey = `${sanctionCurrency?.id ?? ""}:${addressForBridgeValidation}`;
 
+  const transactionForBridgeValidation = useMemo(
+    () =>
+      account && transaction
+        ? applyRecipientSelfTransferState(account, transaction, addressForBridgeValidation)
+        : transaction,
+    [account, transaction, addressForBridgeValidation],
+  );
+
   // Bridge validation for recipient/sender errors and warnings
   const bridgeValidation = useBridgeRecipientValidation({
     recipient: addressForBridgeValidation,
     account: account ?? null,
     parentAccount: parentAccount ?? null,
-    transaction,
+    transaction: transactionForBridgeValidation,
     enabled: Boolean(
       addressForBridgeValidation &&
       account &&

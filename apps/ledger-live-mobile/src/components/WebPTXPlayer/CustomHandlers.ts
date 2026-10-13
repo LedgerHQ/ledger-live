@@ -33,6 +33,7 @@ import {
   decodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { getIsSwapRetryPending } from "@ledgerhq/live-common/exchange/error";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
@@ -494,7 +495,9 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     safeOnCancel(result.error);
                     navigation.pop();
-                    onCompleteError?.(result.error);
+                    if (!getIsSwapRetryPending(exchangeParams, result.error)) {
+                      onCompleteError?.(result.error);
+                    }
                   }
                   if (result.operation && exchangeParams.swapId) {
                     syncAccountById(exchangeParams.exchange.fromAccount.id);

@@ -1,4 +1,4 @@
-import * as sdk from "@hashgraph/sdk";
+import * as sdk from "@hiero-ledger/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import invariant from "invariant";
 import {

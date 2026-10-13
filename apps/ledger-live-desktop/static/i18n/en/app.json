@@ -3065,6 +3065,12 @@
         "pendingNoticeTitle": "Funds maturing",
         "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
+      "aleoPublic": {
+        "title": "Public balance"
+      },
+      "aleoPrivate": {
+        "title": "Private balance"
+      },
       "zeroBalance": {
         "warning": "No available balance"
       }
@@ -6931,6 +6937,7 @@
       "claimRewardCompound": "validator that will receive the rewards",
       "compoundReward": "validator that will receive the rewards",
       "optIn": "recipient",
+      "tokenAssociate": "recipient",
       "nominate": "validator",
       "stake": "validator",
       "unstake": "validator",

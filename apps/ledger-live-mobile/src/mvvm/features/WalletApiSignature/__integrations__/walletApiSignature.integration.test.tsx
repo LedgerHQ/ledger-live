@@ -26,7 +26,7 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
   return {
     __esModule: true,
     buildDeviceInitializationInput: jest.fn(() => Promise.resolve({ appName: "Ethereum" })),
-    DeviceIntentExecutorLWM: (props: ExecutorProps) => {
+    DeviceIntentExecutor: (props: ExecutorProps) => {
       mockExecutorProps = props;
       return ReactModule.createElement(View, { testID: "device-intent-executor" });
     },

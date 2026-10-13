@@ -58,6 +58,8 @@ export const useTranslateToSwapAccount = (
       if (isTokenAccount(defaultAccount)) {
         const currency = getAccountCurrency(defaultAccount);
         newParams.toTokenId = walletApi.currencyToWalletAPICurrency(currency).id;
+      } else if (defaultCurrency && isTokenCurrency(defaultCurrency)) {
+        newParams.toTokenId = defaultCurrency.id;
       }
       return newParams;
     }

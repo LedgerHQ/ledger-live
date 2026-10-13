@@ -1,6 +1,10 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 
 export const stacksConfig: Record<string, ConfigInfo> = {
+  config_stacks_generic_bridge: {
+    type: "boolean",
+    default: true,
+  },
   config_currency_stacks: {
     type: "object",
     default: {

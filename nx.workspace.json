@@ -8,7 +8,6 @@
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/.npmrc",
-      "{workspaceRoot}/.pnpmfile.cjs",
       "{workspaceRoot}/patches/**/*"
     ],
     "default": [
@@ -52,9 +51,6 @@
       },
       {
         "env": "BRAZE_CUSTOM_ENDPOINT"
-      },
-      {
-        "env": "BYPASS_CORS"
       },
       {
         "env": "CI_KEYCHAIN_NAME"

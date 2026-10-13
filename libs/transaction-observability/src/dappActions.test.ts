@@ -24,6 +24,7 @@ const STAKE_NO_ARGS = "0x3a4b66f1"; // keccak256("stake()")
 const UNMAPPED = "0xdeadbeef";
 const REQUEST_EXIT = "0x721c6513"; // requestExit()
 const ERC4626_DEPOSIT = "0x6e553f65"; // keccak256("deposit(uint256,address)")
+const ERC4626_REDEEM = "0xba087652"; // keccak256("redeem(uint256,address,address)")
 
 const LIDO_STETH = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 const KILN_PSETH = "0x5DB5235b5C7e247488784986e58019fFFd98FdA4";
@@ -704,6 +705,56 @@ describe("stakePrograms redirects", () => {
     });
     expect(common.stakingMethod).toBeUndefined();
     expect(common.outputCurrency).toBeUndefined();
+  });
+
+  it.each([
+    ["POL", "0x2ea3c215daeacc1c90b51443ab5d08a9ad816138", BUY_VOUCHER_POL, "pol"],
+    ["USDe", "0x2d152fb171353e70e45322d32bc748f8a61d9971", ERC4626_DEPOSIT, "usde"],
+  ])("reports the staked token for a StakeKit %s stake", (_, recipient, selector, token) => {
+    const mapped = failed(
+      signEvent({
+        manifestId: "stakekit",
+        transaction: { family: "evm", mode: "send", recipient, data: callData(selector) },
+      }),
+    );
+
+    expect(mapped!.properties).toMatchObject({ input_currency: token, network: "ethereum" });
+  });
+
+  it("reports the position's token on a StakeKit USDe redeem", () => {
+    const mapped = failed(
+      signEvent({
+        manifestId: "stakekit",
+        transaction: {
+          family: "evm",
+          mode: "send",
+          recipient: "0x2d152fb171353e70e45322d32bc748f8a61d9971",
+          data: callData(ERC4626_REDEEM),
+        },
+      }),
+    );
+
+    expect(mapped!.properties).toMatchObject({
+      transaction_type: "redeem",
+      input_currency: "usde",
+    });
+  });
+
+  it("keeps the network coin for a contract with no input token", () => {
+    const mapped = failed(
+      signEvent({
+        account: account("avalanche_c_chain", "evm", "AVAX"),
+        manifestId: "stakekit",
+        transaction: {
+          family: "evm",
+          mode: "send",
+          recipient: SAVAX,
+          data: callData(SUBMIT_NO_ARGS),
+        },
+      }),
+    );
+
+    expect(mapped!.properties.input_currency).toBe("avax");
   });
 
   it("keeps the family vocabulary for a native StakeKit stake", () => {

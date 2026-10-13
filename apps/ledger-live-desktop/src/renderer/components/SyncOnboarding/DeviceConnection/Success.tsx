@@ -27,7 +27,7 @@ const SyncOnboardingDeviceConnectionSuccess = ({
       <OnboardingNavHeader onClickPrevious={() => navigate("/onboarding/select-device")} />
       <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
         <Animation
-          animation={getDeviceAnimation(device.modelId, theme.theme, "connectionSuccess") as object}
+          animation={getDeviceAnimation(device.modelId, theme.theme, "connectionSuccess")}
           width={"200px"}
         />
         <Text variant="h3Inter" color="neutral.c100" mt={6} maxWidth={480}>

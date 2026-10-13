@@ -5,9 +5,8 @@ import {
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
+import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
-import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
 import { httpProxyTransportFactory, httpProxyUrlSubject } from "../transport/HttpProxyDmkTransport";
 import {
@@ -19,10 +18,14 @@ const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManageme
 
 let instance: DeviceManagementKit | null = null;
 
+/**
+ * Firmware distribution salt of the current user, which selects their progressive OS rollout.
+ * The app sets it whenever the user ID is known or changes, via {@link setFirmwareDistributionSalt}.
+ */
+let firmwareDistributionSalt: string | undefined;
+
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
-    const userId = getEnv("USER_ID");
-    const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
     tracer.trace("Initialize DeviceManagementKit", {
       firmwareDistributionSalt,
     });
@@ -32,10 +35,16 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
       .addTransport(httpProxyTransportFactory(httpProxyUrlSubject))
       .addTransport(speculosDmkTransportFactory(speculosTargetSubject))
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
-      .addConfig({ firmwareDistributionSalt })
+      .addConfig(firmwareDistributionSalt ? { firmwareDistributionSalt } : {})
       .build();
   }
   return instance;
+};
+
+/** Applies to the DMK built next, and to the current one if it already exists. */
+export const setFirmwareDistributionSalt = (salt: string): void => {
+  firmwareDistributionSalt = salt;
+  instance?.setFirmwareDistributionSalt(salt);
 };
 
 const DeviceManagementKitContext = createContext<DeviceManagementKit | null>(null);

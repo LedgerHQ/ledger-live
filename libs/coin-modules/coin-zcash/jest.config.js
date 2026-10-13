@@ -22,6 +22,7 @@ module.exports = {
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
+    "!src/__tests__/**/*.ts",
     // Type declarations and re-export barrels compile to nothing executable, so
     // istanbul cannot build a coverage object for them and drops them from the
     // report with an error. Left in, they only add noise.
@@ -35,6 +36,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
+  modulePathIgnorePatterns: ["__tests__/fixtures"],
   workerThreads: true,
   reporters: [
     "default",

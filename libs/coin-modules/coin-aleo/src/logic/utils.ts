@@ -447,6 +447,13 @@ function getStakeDetails(
 }
 
 /**
+ * Hidden sides of a transaction (a private sender, an unresolved recipient) are an empty string upstream.
+ * The coin framework lists addresses as `string[]` and only allows an empty string for a block hash, so a
+ * hidden side is an empty list, like the staking operations.
+ */
+const toAddressList = (address: string | undefined): string[] => (address ? [address] : []);
+
+/**
  * The account's own view of a public transaction, merged with what its private records reveal.
  *
  * `hasOwnedRecord` means a record the account owns shares this transaction, so an address the
@@ -494,8 +501,8 @@ export const toPublicOperation = ({
   return {
     id: hash,
     type,
-    senders: stakingType ? [] : [sender],
-    recipients: stakingType ? [] : [recipient],
+    senders: stakingType ? [] : toAddressList(sender),
+    recipients: stakingType ? [] : toAddressList(recipient),
     value,
     asset: toOperationAsset(rawTx.program_id, tokenTypeByProgramName),
     details: {
@@ -537,8 +544,8 @@ export const toPrivateOperation = ({
   return {
     id: hash,
     type,
-    senders: [enrichedRecord.sender],
-    recipients: [enrichedRecord.recipient],
+    senders: toAddressList(enrichedRecord.sender),
+    recipients: toAddressList(enrichedRecord.recipient),
     value: BigInt(enrichedRecord.value.toFixed(0)),
     asset: toOperationAsset(rawRecord.program_name, tokenTypeByProgramName),
     details: {

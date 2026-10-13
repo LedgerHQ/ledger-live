@@ -72,6 +72,7 @@ export const deviceOnboardingMachine = setup({
         currentVersion: context.firmwareVersion,
         deviceModelId: context.deviceModelId,
       }),
+    seedSetupNotHosted: ({ context }) => !context.isOnboarded && !context.hostsSeedSetup,
     deviceNotGenuine: ({ context }) => currentVerdict(context)?.isGenuine === false,
     awaitsStart: ({ context }) => !context.hasStarted,
     canShowEarlyCheck: ({ context }) =>
@@ -151,6 +152,7 @@ export const deviceOnboardingMachine = setup({
       always: [
         { guard: "deviceNotGenuine", target: "checks.notGenuineSupport" },
         { guard: "requiresLegacyFlow", target: "legacyFallback" },
+        { guard: "seedSetupNotHosted", target: "legacyFallback" },
         { guard: "awaitsStart", target: "awaitingStart" },
         { guard: "canShowEarlyCheck", target: "checks.enteringEarlyCheckScreen" },
         { target: "checks.checksIdle" },

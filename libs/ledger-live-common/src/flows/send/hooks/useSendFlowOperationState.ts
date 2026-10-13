@@ -16,7 +16,7 @@ function operationReducer(
     case "SET_OPERATION":
       return { optimisticOperation: action.operation, transactionError: null, signed: true };
     case "SET_ERROR":
-      return { ...state, transactionError: action.error, signed: false };
+      return { ...state, transactionError: action.error };
     case "SET_SIGNED":
       return { ...state, signed: true };
     case "RESET":

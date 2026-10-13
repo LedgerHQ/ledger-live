@@ -33,6 +33,7 @@ import {
 import { customWrapper, RPCHandler } from "@ledgerhq/wallet-api-server";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
+import { resolveFamily } from "../../bridge/zcashRouting";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import { FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
@@ -257,7 +258,7 @@ export const handlers = ({
         }
 
         const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-        const mainFromAccountFamily = mainFromAccount.currency.family;
+        const mainFromAccountFamily = resolveFamily(mainFromAccount.currency);
 
         const transaction = deserializeTransaction(params.rawTransaction);
 

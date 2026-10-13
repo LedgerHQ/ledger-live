@@ -41,7 +41,7 @@ module.exports = {
          * TODO(LIVE-29434): drop this entry once the polished, translated DIE
          * initializer view ships and replaces this debug-quality view.
          */
-        "src/mvvm/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/DeviceContextInitializerComponentLWMView.tsx",
+        "src/mvvm/components/DeviceIntentExecutor/ContextInitializer/ContextInitializerView.tsx",
         "**/*Mock*",
         "__tests__/**/*",
         "src/**/__integrations__/**/*",

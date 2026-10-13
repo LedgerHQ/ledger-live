@@ -1,4 +1,4 @@
-import type { LottieProps } from "./Animation.native";
+import type { LottieProps } from "@shared/lottie";
 import type {
   DeviceActionAnimationTheme,
   DeviceActionContentAction,

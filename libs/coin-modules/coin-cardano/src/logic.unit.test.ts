@@ -63,7 +63,6 @@ describe("computeAdaBalance", () => {
       utxosSum: bn(5_000_000),
       minAdaForTokens: bn(0),
       rewards: bn(0),
-      delegatedToDRep: false,
     });
     expect(total.toFixed()).toBe("5000000");
     expect(spendable.toFixed()).toBe("5000000");
@@ -74,38 +73,28 @@ describe("computeAdaBalance", () => {
       utxosSum: bn(5_000_000),
       minAdaForTokens: bn(1_500_000),
       rewards: bn(0),
-      delegatedToDRep: false,
     });
     expect(total.toFixed()).toBe("5000000");
     expect(spendable.toFixed()).toBe("3500000"); // locked = 1,500,000
   });
 
-  it("keeps rewards out of spendable until delegated to a dRep", () => {
-    const args = {
+  it("counts rewards in the total but never as spendable", () => {
+    const { total, spendable } = computeAdaBalance({
       utxosSum: bn(5_000_000),
       minAdaForTokens: bn(0),
       rewards: bn(1_500_000),
-    };
-    const withoutDRep = computeAdaBalance({ ...args, delegatedToDRep: false });
-    expect(withoutDRep.total.toFixed()).toBe("6500000");
-    expect(withoutDRep.spendable.toFixed()).toBe("5000000"); // rewards locked
-
-    const withDRep = computeAdaBalance({ ...args, delegatedToDRep: true });
-    expect(withDRep.total.toFixed()).toBe("6500000");
-    expect(withDRep.spendable.toFixed()).toBe("6500000"); // rewards now spendable
+    });
+    expect(total.toFixed()).toBe("6500000");
+    expect(spendable.toFixed()).toBe("5000000");
   });
 
   it("never reports negative spendable when min-ADA exceeds the UTXO ADA", () => {
-    // Edge case: tokens require more backing ADA than the address holds. spendable floors at 0
-    // (the dRep rewards are still added on top), so locked never exceeds the total.
     const { total, spendable } = computeAdaBalance({
       utxosSum: bn(1_000_000),
       minAdaForTokens: bn(1_500_000),
       rewards: bn(800_000),
-      delegatedToDRep: true,
     });
     expect(total.toFixed()).toBe("1800000");
-    expect(spendable.toFixed()).toBe("800000"); // max(0, 1,000,000 - 1,500,000) + 800,000
-    expect(total.minus(spendable).gte(0)).toBe(true);
+    expect(spendable.toFixed()).toBe("0");
   });
 });

@@ -1,4 +1,4 @@
-import { classifyZcashRecipient } from "@ledgerhq/coin-zcash/logic/address";
+import { classifyZcashRecipientShape } from "@ledgerhq/coin-zcash/logic/address";
 import type { InputDescriptor } from "../../../bridge/descriptor/types";
 
 // ZIP-302 caps a shielded-output memo at 512 bytes, while `maxLength` caps characters.
@@ -12,7 +12,7 @@ export const memo: InputDescriptor = {
   // shielded output at all. This mirrors the legacy send flow, which showed the
   // memo field only for `recipientType === "private"`.
   appliesToRecipient: recipient => {
-    const cls = classifyZcashRecipient(recipient);
+    const cls = classifyZcashRecipientShape(recipient);
     return "recipientType" in cls && cls.recipientType === "private";
   },
 };

@@ -5,6 +5,12 @@ import { CardanoMinAmountError } from "./errors";
 import { getCardanoAccountFixture } from "./fixtures/accounts";
 import { getProtocolParamsFixture } from "./fixtures/protocolParams";
 import { Transaction } from "./types";
+import coinConfig from "./config";
+import { cardanoTestnetCoinConfig } from "./fixtures/config";
+
+beforeAll(() => {
+  coinConfig.setCoinConfig(() => cardanoTestnetCoinConfig);
+});
 
 describe("buildTransaction", () => {
   const txPayload: Transaction = {
