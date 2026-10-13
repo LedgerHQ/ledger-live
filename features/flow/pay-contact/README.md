@@ -55,7 +55,7 @@ a contact is pressed so the user can pick which address to pay. `useContactAddre
 builds the presentation groups (addresses segmented by network with asset-aware icons and truncated
 display), owns visibility and the selected contact, and resolves its own copy through
 `@shared/i18n`. The host injects behavior only — no labels. Grouping, icon resolution and
-truncation are shared from [`@features/flow-contacts`](../contacts).
+truncation are shared from [`@features/flow-contacts-detail`](../flow-contacts-detail).
 
 ```tsx
 import { ContactAddressPicker, useContactAddressPickerViewModel } from "@features/flow-pay-contact";

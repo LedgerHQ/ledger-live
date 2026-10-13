@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
-import type { ContactAddressDetailDialogNativeProps } from "@features/flow-contacts";
+import type { ContactAddressDetailDialogNativeProps } from "@features/flow-contacts-detail";
 import { ContactAddressDetailDialogSheet } from ".";
 
 const queuedBottomSheetProps = jest.fn();

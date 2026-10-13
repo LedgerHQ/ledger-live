@@ -20,8 +20,8 @@ import {
 import {
   buildContactsSaveAddressClickProperties,
   CONTACTS_EVENT_SOURCE,
-  resolveContactAddressSupportsDomain,
 } from "@features/flow-contacts";
+import { resolveContactAddressSupportsDomain } from "@features/flow-contacts-detail";
 import {
   buildContactsGlobalProperties,
   useContacts,

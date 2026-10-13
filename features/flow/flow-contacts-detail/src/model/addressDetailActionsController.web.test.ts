@@ -1,5 +1,5 @@
 import { ContactAddressIdSchema, ContactIdSchema } from "@domain/entity-contact";
-import { createMockContactSignerValidationPort } from "../../../platform/contactSignerValidationPort";
+import { createMockContactSignerValidationPort } from "../platform/contactSignerValidationPort";
 import { createContactAddressDetailActionsController } from "./addressDetailActionsController";
 import type { ContactAddressDetailActionsPorts } from "./ports";
 

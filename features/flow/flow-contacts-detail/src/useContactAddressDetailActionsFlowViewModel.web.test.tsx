@@ -15,7 +15,7 @@ import {
 import {
   createMockContactSignerValidationPort,
   type ContactSignerValidationPort,
-} from "../../platform/contactSignerValidationPort";
+} from "./platform/contactSignerValidationPort";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";
 import { useContactAddressDetailActionsFlowViewModel } from "./useContactAddressDetailActionsFlowViewModel";
 

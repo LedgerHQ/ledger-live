@@ -8,7 +8,7 @@ import {
   mockContactWithAddress,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
-import { createMockContactSignerValidationPort } from "../../platform/contactSignerValidationPort";
+import { createMockContactSignerValidationPort } from "./platform/contactSignerValidationPort";
 import type { ContactDetailActionsPorts } from "./model/ports";
 import { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
 

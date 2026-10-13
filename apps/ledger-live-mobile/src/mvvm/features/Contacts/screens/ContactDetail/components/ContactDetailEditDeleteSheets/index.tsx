@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import {
   ContactDetailActionsMenu,
   ContactsEditSignerMismatchDialog,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
 import {
   ContactsRenameContactDrawer,

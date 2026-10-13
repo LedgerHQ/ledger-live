@@ -7,7 +7,7 @@ import {
 import {
   createMockContactSignerValidationPort,
   type ContactSignerValidationPort,
-} from "../../../platform/contactSignerValidationPort";
+} from "../platform/contactSignerValidationPort";
 import { makeContactsWrapper } from "../__tests__/contactsStoreTestUtils";
 import type { ContactDetailActionsPorts } from "../model/ports";
 import { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";

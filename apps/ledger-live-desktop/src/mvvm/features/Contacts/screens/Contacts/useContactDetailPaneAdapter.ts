@@ -9,6 +9,13 @@ import {
   type ContactDeviceIntentsPort,
 } from "@features/platform-contacts";
 import {
+  type ContactsViewProps,
+  CONTACTS_EVENT_SOURCE,
+  CONTACTS_PAGE_EVENTS,
+  trackContactsAddAddressClick,
+  trackContactsListContactOpen,
+} from "@features/flow-contacts";
+import {
   useContactDetailSharedState,
   useEmptyContactDetail,
   usePopulatedContactDetail,
@@ -17,12 +24,7 @@ import {
   type ContactAddressDetailDialogProps,
   type ContactDetailLabels,
   type ContactDetailViewProps,
-  type ContactsViewProps,
-  CONTACTS_EVENT_SOURCE,
-  CONTACTS_PAGE_EVENTS,
-  trackContactsAddAddressClick,
-  trackContactsListContactOpen,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import type { AddAddressContact } from "@features/flow-contacts-add-address";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useContactsAnalytics } from "../../analytics";

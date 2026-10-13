@@ -1,10 +1,10 @@
 import {
   CONTACT_SIGNER_MISMATCH_ERROR,
+  ContactAddressIdSchema,
   resolveContactSignerValidationResult,
   type ContactAddressId,
   type ContactId,
 } from "@domain/entity-contact";
-import { ContactAddressIdSchema } from "@domain/entity-contact";
 import { useCallback, useEffect, useState } from "react";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";
 import type { ContactAddressDetailSendIntent } from "./types";

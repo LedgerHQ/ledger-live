@@ -2,7 +2,7 @@ import type { ContactAddress, ContactAddressId, ContactId } from "@domain/entity
 import type { ContactAddressEditPort, ContactEditPort } from "@features/platform-contacts";
 import type { ContactDeletionPort } from "@features/flow-contacts-delete-contact";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { ContactSignerValidationPort } from "../../../platform/contactSignerValidationPort";
+import type { ContactSignerValidationPort } from "../platform/contactSignerValidationPort";
 import type { ContactAddressDetailAsset, ContactAddressDetailNetwork } from "../types";
 
 export type ContactAddressCurrencyPort = Readonly<{

@@ -1,23 +1,25 @@
 import { ContactIdSchema, type ContactAddressId, type ContactId } from "@domain/entity-contact";
 import {
-  type ContactAddressDetailSendIntent,
-  type ContactsDeleteAddressDrawerProps,
-  type ContactsEditSignerMismatchDrawerProps,
-  type ContactAddressDetailDialogNativeProps,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
+  useContactAddressEditAnalytics,
+  useContactsAddressDetailActionsPorts,
+  trackContactAddressDetailQuickAction,
+} from "@features/flow-contacts";
+import {
+  type ContactAddressDetailSendIntent,
+  type ContactsDeleteAddressDrawerProps,
+  type ContactsEditSignerMismatchDrawerProps,
+  type ContactAddressDetailDialogNativeProps,
   createActiveContactAddressDetailActionsUiState,
   createInactiveContactAddressDetailActionsUiState,
   resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
-  useContactAddressEditAnalytics,
-  useContactsAddressDetailActionsPorts,
-  trackContactAddressDetailQuickAction,
   resolveContactAddressSupportsDomain,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-detail";
 import type {
   ContactAddressEditSavePayload,
   ContactsRenameAddressDrawerProps,

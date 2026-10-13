@@ -9,7 +9,7 @@ import {
   mockContactWithMultipleAddresses,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
-import { createMockContactSignerValidationPort } from "../../platform/contactSignerValidationPort";
+import { createMockContactSignerValidationPort } from "./platform/contactSignerValidationPort";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";
 import { useContactAddressDetailActionsFlowBindings } from "./useContactAddressDetailActionsFlowBindings";
 
