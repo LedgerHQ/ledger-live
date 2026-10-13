@@ -78,7 +78,7 @@ jobs:
           ref: ${{ inputs.ref || (inputs.repository == '' && github.sha || '') }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@cf2141425c9d1cde6603d26be9c510a5d36e6c46 # develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@5222956ebca7b0eb03e6a4ccf433fc228f8f9f92 # develop
         id: setup-caches
         with:
           use-mise: true
@@ -91,7 +91,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@cf2141425c9d1cde6603d26be9c510a5d36e6c46 # develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@5222956ebca7b0eb03e6a4ccf433fc228f8f9f92 # develop
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -144,7 +144,7 @@ jobs:
 
       - name: Codechecks
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-codechecks@cf2141425c9d1cde6603d26be9c510a5d36e6c46 # develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-codechecks@5222956ebca7b0eb03e6a4ccf433fc228f8f9f92 # develop
         with:
           projects: "tag:scope:${{ inputs.scope }}"
           parallel: "3"
