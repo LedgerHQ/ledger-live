@@ -30,7 +30,7 @@ Most commands accept `--output json`. `send`, `earn deposit`, `earn withdraw`, `
 | Agent skill | `skill list`, `skill retrieve`, `skill install`, `skill doctor` | no |
 
 - **Key Ring** encrypts files or text (AES-256-GCM) under named keys backed by Ledger Key Ring (LKRP). After `ring init`, it needs network access but no device.
-- **Agent Intent** gives a remote agent its own software identity. The agent proposes Ethereum and Solana sends and Ethereum swaps, and a human reviews them in the Agent Intent frontend. It signs each proposal with the agent's own key but never signs or broadcasts a transaction, and its trust model is separate from `ring`. It needs a working OS keychain (on Linux, a Secret Service provider such as gnome-keyring).
+- **Agent Intent** gives a remote agent its own software identity. The agent proposes Ethereum and Solana sends and Ethereum swaps, and a human reviews them in the Agent Intent frontend. It needs no device or signer and never broadcasts, and its trust model is separate from `ring`. It needs a working OS keychain (on Linux, a Secret Service provider such as gnome-keyring).
 
 The [ledger-wallet-cli skill](../../.agents/skills/ledger-wallet-cli/SKILL.md) documents each command, the safety rules and the Agent Intent flow in detail.
 
