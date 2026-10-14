@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { setEnv } from "@shared/env";
+import { track } from "@shared/analytics";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -281,9 +282,19 @@ async function flushTimers(ms = 600): Promise<void> {
   });
 }
 
+const sponsoredEvents = () =>
+  jest
+    .mocked(track)
+    .mock.calls.filter(([event]) => event.startsWith("gas_sponsorship_"))
+    .map(([event, properties]) => ({ event, properties }));
+
 describe("Sponsored send flow integration tests", () => {
   let account: Account;
   let seam: SponsoredCoinApi;
+
+  beforeEach(() => {
+    jest.mocked(track).mockClear();
+  });
 
   beforeAll(() => {
     setEnv("MOCK", "1");
@@ -386,6 +397,23 @@ describe("Sponsored send flow integration tests", () => {
     expect(await screen.findByTestId("send-confirmation-success")).toBeOnTheScreen();
     expect(seam.craftEnergyRentTransaction).toHaveBeenCalledTimes(1);
     expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
+
+    const delivered = expect.objectContaining({ order_status: "delivered" });
+    expect(sponsoredEvents()).toEqual([
+      {
+        event: "gas_sponsorship_order_created",
+        properties: expect.objectContaining({
+          provider: SPONSORED_FEE_OPTION_ID,
+          order_status: "created",
+          energy_ordered: 65_000,
+          fee_amount: 3.2,
+          fee_currency: "USDT",
+          flow_session_id: expect.any(String),
+        }),
+      },
+      { event: "gas_sponsorship_energy_delivered", properties: delivered },
+      { event: "gas_sponsorship_send_success", properties: delivered },
+    ]);
   });
 
   it("should return to the amount and craft a new order when the rent sheet is closed before signing", async () => {
@@ -432,6 +460,28 @@ describe("Sponsored send flow integration tests", () => {
     expect(await screen.findByTestId("device-intent-executor-rent")).toBeOnTheScreen();
     expect(seam.craftEnergyRentTransaction).toHaveBeenCalledTimes(2);
     expect(seam.submitEnergyRentPayment).toHaveBeenCalledTimes(1);
+
+    expect(sponsoredEvents()).toEqual([
+      {
+        event: "gas_sponsorship_order_created",
+        properties: expect.objectContaining({ order_status: "created" }),
+      },
+      {
+        event: "gas_sponsorship_send_failed",
+        properties: expect.objectContaining({
+          order_status: "submitted",
+          failure_kind: "DELIVERY_FAILED",
+        }),
+      },
+      {
+        event: "gas_sponsorship_order_created",
+        properties: expect.objectContaining({ order_status: "created" }),
+      },
+    ]);
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "retry", failure_kind: "DELIVERY_FAILED" }),
+    );
   });
 
   it("should show the new price of an order above the approved fee, and order at it once accepted", async () => {
