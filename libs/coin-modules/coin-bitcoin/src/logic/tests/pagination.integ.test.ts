@@ -1,8 +1,10 @@
 import { createApi } from "../../api";
 import type { BitcoinContext } from "../../config";
+import { CURRENCY_FORMATS } from "./helpers/fixtures";
 
 const context = (explorerId: string): BitcoinContext => ({
-  config: async () => ({
+  config: async currencyId => ({
+    ...CURRENCY_FORMATS[currencyId ?? ""],
     status: { type: "active" },
     name: explorerId,
     unit: { name: explorerId, code: explorerId.toUpperCase(), magnitude: 8 },

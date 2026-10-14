@@ -1,6 +1,7 @@
 import type { TransactionIntent, TxData } from "@ledgerhq/coin-module-framework/api/types";
 import { OpReturnDataSizeLimit } from "../errors";
-import { OP_RETURN_DATA_SIZE_LIMIT, type ICrypto } from "./selectUtxos";
+import type { ICrypto } from "./selectUtxos";
+import { OP_RETURN_DATA_SIZE_LIMIT } from "./selectUtxos";
 
 /**
  * Bitcoin-specific transaction fields, carried in the intent's `data` (the framework's `TxData`

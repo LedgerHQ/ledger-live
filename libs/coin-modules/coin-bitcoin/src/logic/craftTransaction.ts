@@ -1,20 +1,20 @@
 import type { CraftedTransaction, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Psbt, payments } from "bitcoinjs-lib";
-import { coinTraits } from "./coinTraits";
 import type { BitcoinContext } from "../config";
 import { DustLimit, FeeTooLow } from "../errors";
 import { fetchTxHex } from "../network/explorer";
+import type { SigningRequest } from "./signingRequest";
 import {
   SIGNING_REQUEST_TYPE,
-  type SigningRequest,
   craftsSigningRequest,
   deviceParameters,
   serializeOutputs,
 } from "./signingRequest";
 import { getFeeRate } from "./getFeeRate";
 import { getSpendableUtxos } from "./getSpendableUtxos";
-import { type BitcoinIntent, opReturnScript } from "./intent";
+import type { BitcoinIntent } from "./intent";
+import { opReturnScript } from "./intent";
 import { compressPublicKey } from "./publicKey";
 import {
   DerivationModes,
@@ -82,9 +82,10 @@ function nestedSegwitRedeemScript(
  * builds itself (Komodo, Decred: see `craftsSigningRequest`) get a {@link SigningRequest} (JSON):
  * the same inputs and outputs, with the device-protocol parameters the bridge uses.
  *
- * As the bridge builds them: inputs signal replace-by-fee where the currency's transactions do
- * (bitcoin and its test networks), and the transaction version is the one the currency's Ledger app
- * builds (2 for app-bitcoin-new, 1 otherwise). The outputs are the recipient's, then the OP_RETURN
+ * As the bridge builds them, from the currency's config (`transaction`): inputs signal
+ * replace-by-fee where the currency's transactions do (bitcoin and its test networks), and the
+ * transaction version is the one the currency's Ledger app builds (2 for app-bitcoin-new, 1
+ * otherwise). The outputs are the recipient's, then the OP_RETURN
  * output when the intent carries data (`intent.data.opReturnData`), then the change.
  *
  * The outputs spent are selected as `estimateFees` selects them, the change goes back to the
@@ -162,9 +163,8 @@ export async function craftTransaction(
   const dust = dustThreshold(crypto, size, derivationMode, relayFeePerByte);
   if (selection.amount < dust) throw new DustLimit();
 
-  const signingRequest = craftsSigningRequest(currencyId);
-  const traits = coinTraits[currencyId];
-  const sequence = traits?.signalsRbf ? RBF_SEQUENCE : FINAL_SEQUENCE;
+  const signingRequest = craftsSigningRequest(config);
+  const sequence = config.transaction?.signalsRbf ? RBF_SEQUENCE : FINAL_SEQUENCE;
   // Every input carries its previous transaction, Taproot included: the trusted-input flow every
   // Ledger app but app-bitcoin-new uses verifies spent amounts from it (`deviceSigningParameters`).
   const previousTxs = await fetchPreviousTransactions(
@@ -195,7 +195,13 @@ export async function craftTransaction(
   };
 
   if (signingRequest) {
-    const parameters = deviceParameters(currencyId, derivationMode, intent.recipient, new Date());
+    const parameters = deviceParameters(
+      config,
+      currencyId,
+      derivationMode,
+      intent.recipient,
+      new Date(),
+    );
     const request: SigningRequest = {
       type: SIGNING_REQUEST_TYPE,
       version: 1,
@@ -219,7 +225,7 @@ export async function craftTransaction(
   }
 
   const psbt = new Psbt();
-  psbt.setVersion(traits?.signsPsbt ? 2 : 1);
+  psbt.setVersion(config.transaction?.version ?? 1);
   psbt.setLocktime(0);
   selection.inputs.forEach(utxo => {
     psbt.addInput({

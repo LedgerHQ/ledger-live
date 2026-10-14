@@ -1,4 +1,5 @@
-import { http, HttpResponse, type JsonBodyType } from "msw";
+import type { JsonBodyType } from "msw";
+import { http, HttpResponse } from "msw";
 import { broadcast } from "../broadcast";
 import { REAL_TXS, buildSignedTxHex } from "./helpers/fixtures";
 import { BROADCAST_REJECTION, explorerUrl, server, testContext, useMswServer } from "./helpers/msw";

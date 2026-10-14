@@ -12,7 +12,8 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DustLimit } from "../errors";
 import { validateAddress } from "./validateAddress";
-import { type BitcoinIntent, opReturnScript } from "./intent";
+import type { BitcoinIntent } from "./intent";
+import { opReturnScript } from "./intent";
 import { cryptoFor, paymentDustThreshold } from "./selectUtxos";
 
 /**

@@ -6,6 +6,7 @@ import type {
 import type { BitcoinContext } from "../config";
 import { fetchAddressTxs } from "../network/explorer";
 import type { ExplorerTx } from "../network/types";
+import { explorerAddress } from "./cashaddr";
 import { sumByAddress } from "./txMovements";
 
 const distinct = (values: (string | null | undefined)[]): string[] => [
@@ -89,14 +90,16 @@ export async function listOperations(
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
   const config = await context.config(currencyId);
-  const page = await fetchAddressTxs(config, currencyId, address, {
+  // The explorer answers in the form it was queried with: the same form is compared below.
+  const queried = explorerAddress(config, address);
+  const page = await fetchAddressTxs(config, currencyId, queried, {
     minHeight: options.minHeight,
     order: options.order ?? "desc",
     ...(options.limit === undefined ? {} : { limit: options.limit }),
     ...(options.cursor ? { token: options.cursor } : {}),
   });
   const items = (page.data ?? [])
-    .map(tx => toOperation(tx, address))
+    .map(tx => toOperation(tx, queried))
     .filter((operation): operation is Operation => operation !== undefined);
   return { items, next: page.token ?? undefined };
 }

@@ -2,11 +2,13 @@ import network from "@ledgerhq/live-network";
 import { createApi } from "../../api";
 import type { BitcoinContext } from "../../config";
 import type { ExplorerTx } from "../../network/types";
+import { CURRENCY_FORMATS } from "./helpers/fixtures";
 
 const EXPLORER = "https://explorers.api.live.ledger.com";
 
 const context = (explorerId: string): BitcoinContext => ({
-  config: async () => ({
+  config: async currencyId => ({
+    ...CURRENCY_FORMATS[currencyId ?? ""],
     status: { type: "active" },
     name: explorerId,
     unit: { name: explorerId, code: explorerId.toUpperCase(), magnitude: 8 },

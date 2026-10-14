@@ -3,6 +3,7 @@ import cashaddr from "cashaddrjs";
 import { cryptoFor } from "../selectUtxos";
 import { deviceSigningParameters } from "../signingRequest";
 import { ADDRESSES, fundingTransaction } from "./helpers/keys";
+import { testConfig } from "./helpers/msw";
 
 // A Bitcoin Cash P2PKH address, in its legacy and cashaddr forms (same key hash).
 const BCH_LEGACY = "1mW6fDEMjKrDHvLvoEsaeLxSCzZBf3Bfg";
@@ -26,22 +27,24 @@ describe("deviceSigningParameters", () => {
   it("gives Bitcoin Cash the cashaddr flag of the recipient's format", () => {
     const tx = psbt("bitcoin_cash", BCH_LEGACY, BCH_CASHADDR);
     // Without a recipient: the cashaddr format Ledger Wallet shows a P2PKH recipient in.
-    expect(deviceSigningParameters("bitcoin_cash", tx).additionals).toEqual([
-      "bitcoin_cash",
-      "bip143",
-      "cashaddr",
-    ]);
     expect(
-      deviceSigningParameters("bitcoin_cash", tx, { recipient: BCH_CASHADDR }).additionals,
+      deviceSigningParameters(testConfig("bitcoin_cash"), "bitcoin_cash", tx).additionals,
     ).toEqual(["bitcoin_cash", "bip143", "cashaddr"]);
     expect(
-      deviceSigningParameters("bitcoin_cash", tx, { recipient: BCH_LEGACY }).additionals,
+      deviceSigningParameters(testConfig("bitcoin_cash"), "bitcoin_cash", tx, {
+        recipient: BCH_CASHADDR,
+      }).additionals,
+    ).toEqual(["bitcoin_cash", "bip143", "cashaddr"]);
+    expect(
+      deviceSigningParameters(testConfig("bitcoin_cash"), "bitcoin_cash", tx, {
+        recipient: BCH_LEGACY,
+      }).additionals,
     ).toEqual(["bitcoin_cash", "bip143"]);
   });
 
   it("describes the inputs from their previous transactions", () => {
     const tx = psbt("bitcoin", ADDRESSES.legacy, ADDRESSES.legacy);
-    const [input] = deviceSigningParameters("bitcoin", tx).inputs;
+    const [input] = deviceSigningParameters(testConfig("bitcoin"), "bitcoin", tx).inputs;
     const funding = fundingTransaction(
       cryptoFor("bitcoin").toOutputScript(ADDRESSES.legacy),
       100_000,
@@ -62,7 +65,7 @@ describe("deviceSigningParameters", () => {
       .addInput({ hash: "aa".repeat(32), index: 0, witnessUtxo: { script, value: 10_000 } })
       .addOutput({ script, value: 9_000 })
       .toBase64();
-    expect(() => deviceSigningParameters("bitcoin", tx)).toThrow(
+    expect(() => deviceSigningParameters(testConfig("bitcoin"), "bitcoin", tx)).toThrow(
       "input 0 does not carry its previous transaction",
     );
   });

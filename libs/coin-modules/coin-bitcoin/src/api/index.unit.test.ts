@@ -106,53 +106,6 @@ describe("createApi", () => {
     expect(combine).toHaveBeenCalledWith("bitcoin", "psbt", ["sig"], "02ab");
   });
 
-  it.each([
-    ["zcash", "coin-zcash"],
-    ["zencash", "legacy bridge"],
-  ])("refuses %s, which the coin module API does not serve", (currencyId, where) => {
-    expect(() => createApi(currencyId)).toThrow(`unsupported currency ${currencyId}`);
-    expect(() => createApi(currencyId)).toThrow(where);
-  });
-
-  describe("Bitcoin Cash addresses", () => {
-    // Ledger Wallet stores them as cashaddr without the prefix, which the explorer does not answer for.
-    const PREFIXLESS = "qzf9ax7we6swngffah3e9gr4mgh0qw3zcy6kq5afau";
-    const PREFIXED = `bitcoincash:${PREFIXLESS}`;
-    const LEGACY = "1ELvzXiviKRJ54rMqEEDxJbVU6bYnfFrVY";
-
-    it("queries the explorer with the prefixed form of a prefixless cashaddr address", async () => {
-      jest.mocked(getBalance).mockImplementation(async () => []);
-      jest.mocked(listOperations).mockImplementation(async () => ({ items: [] }));
-      jest.mocked(craftTransaction).mockImplementation(async () => ({ transaction: "psbt" }));
-      const api = createApi("bitcoin_cash");
-      await api.getBalance(context, PREFIXLESS);
-      await api.listOperations(context, PREFIXLESS, { minHeight: 0 });
-      await api.craftTransaction(context, { ...intent, sender: PREFIXLESS });
-      expect(getBalance).toHaveBeenCalledWith(context, "bitcoin_cash", PREFIXED);
-      expect(listOperations).toHaveBeenCalledWith(context, "bitcoin_cash", PREFIXED, {
-        minHeight: 0,
-      });
-      expect(craftTransaction).toHaveBeenCalledWith(
-        context,
-        "bitcoin_cash",
-        { ...intent, sender: PREFIXED },
-        undefined,
-      );
-    });
-
-    it("keeps prefixed and legacy addresses as given, and other currencies untouched", async () => {
-      jest.mocked(getBalance).mockImplementation(async () => []);
-      await createApi("bitcoin_cash").getBalance(context, PREFIXED);
-      await createApi("bitcoin_cash").getBalance(context, LEGACY);
-      await createApi("litecoin").getBalance(context, PREFIXLESS);
-      expect(jest.mocked(getBalance).mock.calls.map(call => call[2])).toEqual([
-        PREFIXED,
-        LEGACY,
-        PREFIXLESS,
-      ]);
-    });
-  });
-
   it("rejects getBalance options", async () => {
     await expect(
       createApi("bitcoin").getBalance(context, "addr", { assetFilter: [] } as never),

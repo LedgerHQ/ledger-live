@@ -1,8 +1,10 @@
 import { setNetworkState } from "@ledgerhq/live-network";
-import { http, HttpResponse, type JsonBodyType } from "msw";
+import type { JsonBodyType } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import type { BitcoinCoinConfig, BitcoinContext } from "../../../config";
 import type { ExplorerBlock, ExplorerTx } from "../../../network/types";
+import { CURRENCY_FORMATS } from "./fixtures";
 
 /** Host every MSW handler answers on; the context below points the explorer at it. */
 export const TEST_EXPLORER = "https://explorer.test";
@@ -31,10 +33,21 @@ const DEFAULT_CONFIG: BitcoinCoinConfig = {
   explorerId: "btc",
 };
 
-/** A {@link BitcoinContext} whose config targets {@link TEST_EXPLORER}. */
+/** The config {@link testContext} resolves for `currencyId`. */
+export function testConfig(
+  currencyId = "bitcoin",
+  overrides: Partial<BitcoinCoinConfig> = {},
+): BitcoinCoinConfig {
+  return { ...DEFAULT_CONFIG, ...CURRENCY_FORMATS[currencyId], ...overrides };
+}
+
+/**
+ * A {@link BitcoinContext} whose config targets {@link TEST_EXPLORER}, with the transaction and
+ * address formats Ledger Live configures for the requested currency ({@link CURRENCY_FORMATS}).
+ */
 export function testContext(overrides: Partial<BitcoinCoinConfig> = {}): BitcoinContext {
   return {
-    config: async () => ({ ...DEFAULT_CONFIG, ...overrides }),
+    config: async currencyId => testConfig(currencyId ?? "bitcoin", overrides),
     logger: () => {},
   };
 }

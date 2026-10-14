@@ -17,7 +17,6 @@ const EXPLORER_IDS: Record<string, string> = {
   litecoin: "ltc",
   digibyte: "dgb",
   dogecoin: "doge",
-  zcash: "zec",
 };
 
 const liveContext: BitcoinContext = {

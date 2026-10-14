@@ -17,7 +17,8 @@ import type { Transaction as BridgeTransaction } from "../../types";
 import { craftTransaction } from "../../logic/craftTransaction";
 import type { BitcoinIntent } from "../../logic/intent";
 import { cryptoFor } from "../../logic/selectUtxos";
-import { type DeviceSigningParameters, deviceSigningParameters } from "../../logic/signingRequest";
+import type { DeviceSigningParameters } from "../../logic/signingRequest";
+import { deviceSigningParameters } from "../../logic/signingRequest";
 import { PRISTINE_P2PKH } from "../../logic/tests/helpers/fixtures";
 import { ADDRESSES, PUBLIC_KEY, fundingTransaction } from "../../logic/tests/helpers/keys";
 import {
@@ -26,6 +27,7 @@ import {
   networkHandler,
   pendingUtxosHandler,
   server,
+  testConfig,
   testContext,
   useMswServer,
   utxosHandler,
@@ -204,7 +206,8 @@ async function bridgeArguments(
     btc,
     fromAccount,
     txInfo,
-    ...(perCoin?.hasInterestLockTime ? { lockTime: Math.floor(Date.now() / 1000) - 777 } : {}),
+    // signOperation.ts: Komodo claims its interest with a locktime 777 s before signing.
+    ...(c.currencyId === "komodo" ? { lockTime: Math.floor(Date.now() / 1000) - 777 } : {}),
     sigHashType: getNetworkParameters(c.currencyId).sigHash,
     segwit: isSegwitDerivationMode(c.derivationMode as never),
     additionals: buildAdditionals(c.currencyId, c.derivationMode, transaction),
@@ -234,9 +237,14 @@ describe.each(CASES)("deviceSigningParameters for $currencyId ($derivationMode)"
     fund(c);
     const crafted = await craftTransaction(context, c.currencyId, intent(overrides));
     // The recipient as entered: Bitcoin Cash's `cashaddr` device flag depends on its format.
-    const ours = deviceSigningParameters(c.currencyId, crafted.transaction, {
-      recipient: c.recipient,
-    });
+    const ours = deviceSigningParameters(
+      testConfig(c.currencyId),
+      c.currencyId,
+      crafted.transaction,
+      {
+        recipient: c.recipient,
+      },
+    );
 
     const crypto = cryptoFor(c.currencyId);
     const opReturnData =

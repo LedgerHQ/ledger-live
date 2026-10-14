@@ -4,6 +4,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin: {
     type: "object",
     default: {
+      transaction: { version: 2, signalsRbf: true },
       explorerId: "btc",
       status: {
         type: "active",
@@ -17,6 +18,8 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin_cash: {
     type: "object",
     default: {
+      transaction: { additionals: ["bip143"] },
+      addressFormat: "cashaddr",
       explorerId: "bch",
       status: {
         type: "active",
@@ -30,6 +33,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin_gold: {
     type: "object",
     default: {
+      transaction: { additionals: ["bip143"] },
       explorerId: "btg",
       status: {
         type: "active",
@@ -43,6 +47,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin_regtest: {
     type: "object",
     default: {
+      transaction: { version: 2, signalsRbf: true },
       explorerId: "btc_regtest",
       status: {
         type: "active",
@@ -56,6 +61,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_bitcoin_testnet: {
     type: "object",
     default: {
+      transaction: { version: 2, signalsRbf: true },
       explorerId: "btc_testnet",
       status: {
         type: "active",
@@ -81,6 +87,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_decred: {
     type: "object",
     default: {
+      transaction: { expiryHeight: true },
       explorerId: "dcr",
       status: {
         type: "active",
@@ -120,6 +127,12 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_komodo: {
     type: "object",
     default: {
+      transaction: {
+        expiryHeight: true,
+        extraData: true,
+        interestLockTime: true,
+        additionals: ["sapling"],
+      },
       explorerId: "kmd",
       status: {
         type: "active",
@@ -146,6 +159,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
   config_currency_qtum: {
     type: "object",
     default: {
+      transaction: { version: 2 },
       status: {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],

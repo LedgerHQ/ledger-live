@@ -4,7 +4,8 @@ import { combine } from "../combine";
 import { craftTransaction, FINAL_SEQUENCE } from "../craftTransaction";
 import { estimateFees } from "../estimateFees";
 import { cryptoFor } from "../selectUtxos";
-import { type SigningRequest, serializeOutputs } from "../signingRequest";
+import type { SigningRequest } from "../signingRequest";
+import { serializeOutputs } from "../signingRequest";
 import {
   explorerUrl,
   feesHandler,

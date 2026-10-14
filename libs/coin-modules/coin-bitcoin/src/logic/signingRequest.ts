@@ -1,18 +1,19 @@
 import { Psbt, Transaction } from "bitcoinjs-lib";
-import { coinTraits } from "./coinTraits";
+import type { BitcoinCoinConfig } from "../config";
 import { getNetworkParameters } from "../networks";
+import { isCashaddrRecipient, shownRecipient } from "./cashaddr";
 import { DerivationModes, derivationModeOf } from "./selectUtxos";
 
 /**
  * Whether the currency's transactions are crafted as a PSBT (Bitcoin serialization, read and
  * written by bitcoinjs-lib) or as a {@link SigningRequest} for the device to build.
  *
- * Read from the currency's traits: the formats carrying an expiry height (Komodo's
+ * Read from the currency's config: the formats carrying an expiry height (Komodo's
  * Overwinter/Sapling transactions, Decred's) are not Bitcoin serialization, so the Ledger app
  * builds them from a signing request, as the bridge has it build every transaction.
  */
-export function craftsSigningRequest(currencyId: string): boolean {
-  return coinTraits[currencyId]?.hasExpiryHeight === true;
+export function craftsSigningRequest(config: BitcoinCoinConfig): boolean {
+  return config.transaction?.expiryHeight === true;
 }
 
 /**
@@ -95,10 +96,11 @@ export function serializeOutputs(
 
 /**
  * The device-protocol parameters of a currency, as the bridge derives them (`signOperation.ts`):
- * the currency id and its format flags, the address format, the expiry height, the extra-data flag,
- * the sighash type and, for Komodo, the interest locktime.
+ * the currency id and the format flags of its config, the address format, the expiry height, the
+ * extra-data flag, the sighash type and, for Komodo, the interest locktime.
  */
 export function deviceParameters(
+  config: BitcoinCoinConfig,
   currencyId: string,
   derivationMode: DerivationModes,
   recipient: string,
@@ -107,18 +109,22 @@ export function deviceParameters(
   DeviceSigningParameters,
   "additionals" | "hasExtraData" | "sigHashType" | "segwit" | "lockTime" | "expiryHeight"
 > {
-  const traits = coinTraits[currencyId];
+  const format = config.transaction;
   const additionals = [currencyId];
   if (derivationMode === DerivationModes.NATIVE_SEGWIT) additionals.push("bech32");
   if (derivationMode === DerivationModes.TAPROOT) additionals.push("bech32m");
-  if (traits?.additionals) additionals.push(...traits.additionals(recipient));
+  additionals.push(...(format?.additionals ?? []));
+  // As the bridge: the device shows a cashaddr P2PKH recipient as cashaddr.
+  if (config.addressFormat === "cashaddr" && isCashaddrRecipient(recipient)) {
+    additionals.push("cashaddr");
+  }
   return {
     additionals,
-    hasExtraData: traits?.hasExtraData === true,
+    hasExtraData: format?.extraData === true,
     sigHashType: getNetworkParameters(currencyId).sigHash,
     segwit: derivationMode !== DerivationModes.LEGACY,
-    ...(traits?.hasExpiryHeight ? { expiryHeight: "00000000" } : {}),
-    ...(traits?.hasInterestLockTime ? { lockTime: Math.floor(now.getTime() / 1000) - 777 } : {}),
+    ...(format?.expiryHeight ? { expiryHeight: "00000000" } : {}),
+    ...(format?.interestLockTime ? { lockTime: Math.floor(now.getTime() / 1000) - 777 } : {}),
   };
 }
 
@@ -204,6 +210,7 @@ const inputTxid = (hash: Buffer) => Buffer.from(hash).reverse().toString("hex");
  * previous transaction (`nonWitnessUtxo`), which the device's trusted-input flow verifies.
  */
 function psbtSigningParameters(
+  config: BitcoinCoinConfig,
   currencyId: string,
   psbtBase64: string,
   { recipient, now = new Date() }: { recipient?: string | undefined; now?: Date | undefined },
@@ -231,11 +238,12 @@ function psbtSigningParameters(
   );
   // Some device flags depend on the recipient's format (Bitcoin Cash's `cashaddr`): the caller's
   // recipient, or the one Ledger Wallet would show.
-  const shownRecipient =
+  const displayed =
     recipient ??
-    coinTraits[currencyId]?.displayedRecipient?.(outputs[0]?.script ?? Buffer.alloc(0)) ??
-    "";
-  const parameters = deviceParameters(currencyId, derivationMode, shownRecipient, now);
+    (config.addressFormat === "cashaddr"
+      ? shownRecipient(outputs[0]?.script ?? Buffer.alloc(0))
+      : "");
+  const parameters = deviceParameters(config, currencyId, derivationMode, displayed, now);
   return {
     currencyId,
     inputs: psbt.txInputs.map((input, index) => ({
@@ -260,9 +268,11 @@ function psbtSigningParameters(
  *
  * `options.recipient` is the recipient as the user entered it: some device flags depend on its
  * format (Bitcoin Cash's `cashaddr`, which makes the device show a cashaddr address). Without it,
- * the format Ledger Wallet shows is assumed.
+ * the format Ledger Wallet shows is assumed. `config` is the currency's coin config, as for every
+ * other method.
  */
 export function deviceSigningParameters(
+  config: BitcoinCoinConfig,
   currencyId: string,
   tx: string,
   options: { recipient?: string; now?: Date } = {},
@@ -272,5 +282,5 @@ export function deviceSigningParameters(
     const { type: _type, version: _version, outputs: _outputs, ...parameters } = request;
     return parameters;
   }
-  return psbtSigningParameters(currencyId, tx, options);
+  return psbtSigningParameters(config, currencyId, tx, options);
 }

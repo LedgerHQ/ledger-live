@@ -7,6 +7,7 @@ import {
 } from "../signingRequest";
 import { DerivationModes } from "../selectUtxos";
 import { REAL_TXS } from "./helpers/fixtures";
+import { testConfig } from "./helpers/msw";
 
 const NOW = new Date("2026-10-06T00:00:00Z");
 
@@ -22,11 +23,10 @@ describe("craftsSigningRequest", () => {
     "bitcoin_cash",
     "bitcoin_gold",
     "dash",
-    "zencash",
   ])("crafts a PSBT for %s, whose real transactions the bitcoin parser reads", currencyId => {
     const { hex, inputs, txid } = REAL_TXS[currencyId];
     const tx = Transaction.fromHex(hex);
-    expect(craftsSigningRequest(currencyId)).toBe(false);
+    expect(craftsSigningRequest(testConfig(currencyId))).toBe(false);
     expect(tx.getId()).toBe(txid);
     expect(
       tx.ins.map(input => ({
@@ -39,7 +39,7 @@ describe("craftsSigningRequest", () => {
   it.each(["komodo", "decred"])(
     "crafts a signing request for %s, whose transactions the bitcoin parser cannot read",
     currencyId => {
-      expect(craftsSigningRequest(currencyId)).toBe(true);
+      expect(craftsSigningRequest(testConfig(currencyId))).toBe(true);
       expect(() => Transaction.fromHex(REAL_TXS[currencyId].hex)).toThrow(/./);
     },
   );
@@ -105,7 +105,9 @@ describe("serializeOutputs on real transactions", () => {
 
 describe("deviceParameters", () => {
   it("gives Komodo its sapling flag, extra data, expiry height and interest locktime", () => {
-    expect(deviceParameters("komodo", DerivationModes.LEGACY, "R…", NOW)).toEqual({
+    expect(
+      deviceParameters(testConfig("komodo"), "komodo", DerivationModes.LEGACY, "R…", NOW),
+    ).toEqual({
       additionals: ["komodo", "sapling"],
       hasExtraData: true,
       sigHashType: 1,
@@ -116,7 +118,9 @@ describe("deviceParameters", () => {
   });
 
   it("gives Decred its expiry height, without extra data or locktime", () => {
-    expect(deviceParameters("decred", DerivationModes.LEGACY, "Ds…", NOW)).toEqual({
+    expect(
+      deviceParameters(testConfig("decred"), "decred", DerivationModes.LEGACY, "Ds…", NOW),
+    ).toEqual({
       additionals: ["decred"],
       hasExtraData: false,
       sigHashType: 1,
@@ -127,7 +131,13 @@ describe("deviceParameters", () => {
 
   it("flags the address format of a native SegWit sender", () => {
     expect(
-      deviceParameters("bitcoin", DerivationModes.NATIVE_SEGWIT, "bc1q…", NOW).additionals,
+      deviceParameters(
+        testConfig("bitcoin"),
+        "bitcoin",
+        DerivationModes.NATIVE_SEGWIT,
+        "bc1q…",
+        NOW,
+      ).additionals,
     ).toEqual(["bitcoin", "bech32"]);
   });
 });

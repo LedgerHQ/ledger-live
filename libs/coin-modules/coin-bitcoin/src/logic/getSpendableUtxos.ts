@@ -1,6 +1,7 @@
 import type { BitcoinCoinConfig } from "../config";
 import { fetchPendingUtxos, fetchTx, fetchUtxos } from "../network/explorer";
 import type { ExplorerTx, ExplorerUtxo } from "../network/types";
+import { explorerAddress } from "./cashaddr";
 
 const outpoint = (hash: string, outputIndex: number) => `${hash}:${outputIndex}`;
 
@@ -40,9 +41,10 @@ export async function getSpendableUtxos(
   currencyId: string,
   address: string,
 ): Promise<ExplorerUtxo[]> {
+  const queried = explorerAddress(config, address);
   const [confirmed, pending] = await Promise.all([
-    fetchUtxos(config, currencyId, address),
-    fetchPendingUtxos(config, currencyId, address),
+    fetchUtxos(config, currencyId, queried),
+    fetchPendingUtxos(config, currencyId, queried),
   ]);
   const spent = new Set(pending.spent.map(utxo => outpoint(utxo.hash, utxo.outputIndex)));
 

@@ -2,12 +2,11 @@ import { Psbt, address as btcAddress } from "bitcoinjs-lib";
 import cashaddr from "cashaddrjs";
 import { http, HttpResponse } from "msw";
 import { createApi } from "../../api";
-import { coinTraits } from "../coinTraits";
 import { OpReturnDataSizeLimit } from "../../errors";
 import { FINAL_SEQUENCE, RBF_SEQUENCE, craftTransaction } from "../craftTransaction";
 import type { BitcoinIntent } from "../intent";
 import { cryptoFor, derivationModeOf } from "../selectUtxos";
-import { type SigningRequest } from "../signingRequest";
+import type { SigningRequest } from "../signingRequest";
 import { validateIntent } from "../validateIntent";
 import { CURRENCY_ADDRESSES } from "./helpers/fixtures";
 import { fundingTransaction } from "./helpers/keys";
@@ -214,20 +213,13 @@ describe("craftTransaction across the bitcoin family", () => {
 describe("every currency coin-bitcoin serves", () => {
   const currencies = Object.entries(CURRENCY_ADDRESSES);
 
-  it.each(currencies.filter(([id]) => !coinTraits[id]?.notServedByCoinModuleApi))(
+  it.each(currencies)(
     "%s: the API is created and reads the address type of %s",
     (currencyId, address) => {
       expect(() => createApi(currencyId)).not.toThrow();
       const crypto = cryptoFor(currencyId);
       expect(crypto.validateAddress(address)).toBe(true);
       expect(() => derivationModeOf(crypto.toOutputScript(address))).not.toThrow();
-    },
-  );
-
-  it.each(currencies.filter(([id]) => coinTraits[id]?.notServedByCoinModuleApi))(
-    "%s is refused",
-    currencyId => {
-      expect(() => createApi(currencyId)).toThrow(`unsupported currency ${currencyId}`);
     },
   );
 });

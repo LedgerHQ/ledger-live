@@ -1,6 +1,7 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type { BitcoinContext } from "../config";
 import { fetchAddressBalance } from "../network/explorer";
+import { explorerAddress } from "./cashaddr";
 
 /**
  * Confirmed native balance of a single address (`address/{a}/balance`). Unconfirmed transactions
@@ -12,6 +13,6 @@ export async function getBalance(
   address: string,
 ): Promise<Balance[]> {
   const config = await context.config(currencyId);
-  const value = await fetchAddressBalance(config, currencyId, address);
+  const value = await fetchAddressBalance(config, currencyId, explorerAddress(config, address));
   return [{ value, asset: { type: "native" } }];
 }

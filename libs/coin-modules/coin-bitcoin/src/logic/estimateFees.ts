@@ -2,7 +2,8 @@ import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import type { BitcoinContext } from "../config";
 import { getFeeRate } from "./getFeeRate";
 import { getSpendableUtxos } from "./getSpendableUtxos";
-import { type BitcoinIntent, opReturnScript } from "./intent";
+import type { BitcoinIntent } from "./intent";
+import { opReturnScript } from "./intent";
 import { cryptoFor, derivationModeOf, selectUtxos } from "./selectUtxos";
 
 /**
