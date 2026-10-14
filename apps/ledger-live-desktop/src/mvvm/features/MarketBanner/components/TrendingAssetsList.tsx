@@ -7,7 +7,9 @@ import { TrendingAssetTile } from "./TrendingAssetTile";
 import SkeletonList from "./SkeletonList";
 import GenericError from "./GenericError";
 import { setTrackingSource, track } from "@shared/analytics";
-import FearAndGreed from "LLD/features/FearAndGreed";
+import { FearAndGreed, isMoodIndexAvailable } from "@features/flow-fear-and-greed";
+import { ArcGaugeIndicator } from "LLD/components/ArcGaugeIndicator";
+import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 import { HorizontalScroll } from "LLD/components/HorizontalScroll";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
@@ -22,6 +24,7 @@ type TrendingAssetsListProps = {
 export const TrendingAssetsList = ({ items, isLoading, isError }: TrendingAssetsListProps) => {
   const navigate = useNavigate();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
+  const { region } = getParsedSystemDeviceLocale();
 
   const onAssetClick = useCallback(
     (item: MarketItemPerformer) => () => {
@@ -61,7 +64,7 @@ export const TrendingAssetsList = ({ items, isLoading, isError }: TrendingAssets
       scrollContainerClassName="flex flex-col py-2"
     >
       <div className="flex w-max items-stretch gap-8">
-        <FearAndGreed />
+        {isMoodIndexAvailable(region) ? <FearAndGreed Gauge={ArcGaugeIndicator} /> : null}
         {assets}
       </div>
     </HorizontalScroll>

@@ -1,8 +1,8 @@
-import { useMemo } from "react";
 import { isMoodIndexAvailable } from "@features/flow-fear-and-greed";
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 
-export const useMoodIndexAvailability = (): boolean => {
+export function useMoodIndexCardViewModel() {
   const { region } = getParsedSystemDeviceLocale();
-  return useMemo(() => isMoodIndexAvailable(region), [region]);
-};
+
+  return { moodIndexAvailable: isMoodIndexAvailable(region) };
+}
