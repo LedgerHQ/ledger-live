@@ -285,8 +285,8 @@ export type CosmosAccount = Account & {
 };
 
 export type CosmosAccountRaw = AccountRaw & {
-  cosmosResources: CosmosResourcesRaw;
-  stakingResources: StakingResourcesRaw & LegacyCosmosResourcesFields;
+  cosmosResources?: CosmosResourcesRaw;
+  stakingResources?: StakingResourcesRaw & LegacyCosmosResourcesFields;
 };
 export type TransactionStatus = TransactionStatusCommon;
 
