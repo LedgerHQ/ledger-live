@@ -60,6 +60,11 @@ on:
           - nanoGen5
           - nanoSP and stax
         default: nanoSP
+      remote_speculos:
+        description: "Run on Speculinho instead of Docker"
+        required: false
+        type: boolean
+        default: false
       smoke_tests:
         description: "Run smoke tests"
         required: false
@@ -121,6 +126,11 @@ on:
         description: "Device to be used"
         required: true
         type: string
+      remote_speculos:
+        description: "Run on Speculinho instead of Docker"
+        required: false
+        type: boolean
+        default: false
       smoke_tests:
         description: "Run smoke tests"
         required: false
@@ -220,8 +230,9 @@ jobs:
       npm_config_loglevel: warn
       DO_NOT_TRACK: 1
       SPECULOS_DEVICE: ${{ matrix.device }}
-      # Speculinho (remote Speculos): its image ships the coin apps, so no Docker or coin-apps here.
-      REMOTE_SPECULOS: "true"
+      REMOTE_SPECULOS: ${{ inputs.remote_speculos }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || (inputs.remote_speculos && 'speculos-38ccc68068db-coinapps-85c7e5c' || '1be65b91a8e0691866f880fd437ac05fce78af9d') }}
+      COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
@@ -240,6 +251,7 @@ jobs:
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           repositories: |
             ledger-live
+            coin-apps
           permission-contents: read
 
       - name: Checkout ledger-live monorepo (shallow clone)
@@ -249,6 +261,17 @@ jobs:
           repository: LedgerHQ/ledger-live
           token: ${{ steps.generate-token.outputs.token }}
           fetch-depth: 1
+
+      - name: Checkout coin-apps (device firmware binaries)
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: LedgerHQ/coin-apps
+          ref: master
+          token: ${{ steps.generate-token.outputs.token }}
+          path: coin-apps
+          fetch-depth: 1
+          persist-credentials: false
 
       - name: Setup caches
         id: caches
@@ -281,6 +304,11 @@ jobs:
             --runner playwright \
             --github-output >> "$GITHUB_OUTPUT"
 
+      - name: Pull Speculos docker image
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
+        run: docker pull "$SPECULOS_IMAGE_TAG"
+        shell: bash
+
       - name: JFrog npm auth
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:
@@ -291,6 +319,17 @@ jobs:
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
+
+      - name: Verify Speculos Docker image is ready
+        if: ${{ env.REMOTE_SPECULOS != 'true' }}
+        run: |
+          while ! docker image inspect "$SPECULOS_IMAGE_TAG" > /dev/null 2>&1; do
+            echo "Waiting for Speculos image pull to complete..."
+            sleep 2
+          done
+          echo "Speculos image ready: $SPECULOS_IMAGE_TAG"
+          docker image inspect "$SPECULOS_IMAGE_TAG" --format '{{.Size}}' | numfmt --to=iec
+        shell: bash
 
       - name: Configure test environment (API endpoints, broadcast settings)
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
@@ -309,6 +348,7 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
+          SPECULOS_MODE: ${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
         run: |
           DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
@@ -328,6 +368,7 @@ jobs:
             echo "- **Triggered branch:** $TRIGGERED_BRANCH"
             echo "- **Commit SHA:** $COMMIT_SHA"
             echo "- **Device selected:** $DEVICE"
+            echo "- **Speculos:** $SPECULOS_MODE"
             echo "- **Team:** $TEAM_INPUT"
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
