@@ -34,6 +34,7 @@ import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
 import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
 import DebugContacts from "~/screens/Settings/Debug/Debugging/Contacts";
 import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";
+import DebugDeviceOnboarding from "LLM/features/DeviceOnboarding/Debug";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
 import DebugPayContactSuccess from "~/screens/Settings/Debug/Features/PayContactSuccess";
@@ -460,6 +461,13 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugDevTools}
         component={DebugDevTools}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceOnboarding}
+        component={DebugDeviceOnboarding}
         options={{
           headerShown: false,
         }}

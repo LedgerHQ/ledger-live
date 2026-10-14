@@ -2539,6 +2539,35 @@
       "skipped": "Not yet available for {{ productName }}"
     }
   },
+  "deviceOnboarding": {
+    "checks": {
+      "close": "Close",
+      "synchronizing": {
+        "title": "Synchronizing..."
+      },
+      "idle": {
+        "title": "Check your device",
+        "description": "Let's confirm that your Ledger device is genuine and up-to-date.",
+        "cta": "Check my device"
+      },
+      "checking": {
+        "title": "Check your device",
+        "description": "Confirming your Ledger signer is safe to use and up-to-date.",
+        "cta": "Checking..."
+      },
+      "succeeded": {
+        "title": "Device genuine and up-to-date",
+        "cta": "Continue"
+      }
+    },
+    "syncOffer": {
+      "title": "Sync your wallet",
+      "description": "Keep your balance and portfolio in sync when switching phones or using a computer.",
+      "learnMore": "Learn more",
+      "activate": "Activate",
+      "skip": "Skip for now"
+    }
+  },
   "onboarding": {
     "stepWelcome": {
       "title": "Welcome to Ledger",

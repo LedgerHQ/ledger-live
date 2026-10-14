@@ -3,7 +3,7 @@ import { BlockingStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-
 import { TrackDIEScreen } from "../../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../../utils/trackDeviceIntent";
 import type { BaseInitializerStateProps } from "../../types";
-import { UnsupportedFirmwareVersionView } from "./UnsupportedFirmwareVersionView";
+import { UnsupportedFirmwareVersionView } from "LLM/components/UnsupportedFirmwareVersion";
 import { useUnsupportedFirmwareVersionViewModel } from "./useUnsupportedFirmwareVersionViewModel";
 
 type UnsupportedFirmwareVersionProps = BaseInitializerStateProps<
