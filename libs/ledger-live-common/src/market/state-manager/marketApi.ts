@@ -20,6 +20,7 @@ import {
   MarketDataTags,
   MarketListQueryArg,
   MarketPerformersQueryParams,
+  MarketsByLedgerIdsQueryParams,
   MarketTrendingCategory,
   TrendingCategoriesResponseSchema,
   TrendingCurrenciesResponseSchema,
@@ -29,8 +30,57 @@ import { currencyFormatter, format, formatPerformer } from "../utils/currencyFor
 
 const MAX_TRENDING_CATEGORIES = 5;
 
-// The /v3/markets endpoint only accepts pageSize 1 / 5 / 20 / 50; 50 covers the trending list.
-const TRENDING_MARKETS_PAGE_SIZE = 50;
+// /v3/markets only accepts these pageSize values.
+const ALLOWED_MARKET_PAGE_SIZES = [1, 5, 20, 50] as const;
+const MAX_MARKETS_PAGE_SIZE = ALLOWED_MARKET_PAGE_SIZES.at(-1) ?? 50;
+
+function marketPageSize(count: number): (typeof ALLOWED_MARKET_PAGE_SIZES)[number] {
+  return ALLOWED_MARKET_PAGE_SIZES.find(size => size >= count) ?? MAX_MARKETS_PAGE_SIZE;
+}
+
+function chunkLedgerIds(ledgerIds: string[]): string[][] {
+  const chunks: string[][] = [];
+  for (let start = 0; start < ledgerIds.length; start += MAX_MARKETS_PAGE_SIZE) {
+    chunks.push(ledgerIds.slice(start, start + MAX_MARKETS_PAGE_SIZE));
+  }
+  return chunks;
+}
+
+function isMarketItemList(data: unknown): data is MarketItemResponse[] {
+  return Array.isArray(data);
+}
+
+function marketsFromPages(
+  pages: readonly { error?: unknown; data?: unknown }[],
+): MarketItemResponse[] | undefined {
+  const markets: MarketItemResponse[] = [];
+  let succeeded = false;
+  for (const page of pages) {
+    if (page.error || !isMarketItemList(page.data)) continue;
+    succeeded = true;
+    markets.push(...page.data);
+  }
+  return succeeded ? markets : undefined;
+}
+
+function orderMarketsByLedgerIds(
+  markets: MarketItemResponse[],
+  ledgerIds: string[],
+): MarketItemResponse[] {
+  const marketByLedgerId = new Map<string, MarketItemResponse>();
+  for (const market of markets) {
+    for (const ledgerId of market.ledgerIds) {
+      if (!marketByLedgerId.has(ledgerId)) {
+        marketByLedgerId.set(ledgerId, market);
+      }
+    }
+  }
+
+  return ledgerIds.flatMap(ledgerId => {
+    const market = marketByLedgerId.get(ledgerId);
+    return market ? [market] : [];
+  });
+}
 
 export const marketApi = createApi({
   reducerPath: "marketApi",
@@ -79,6 +129,36 @@ export const marketApi = createApi({
       providesTags: [MarketDataTags.Performers],
       transformResponse: (response: MarketItemResponse[]) => response.map(formatPerformer),
       keepUnusedDataFor: REFETCH_TIME_ONE_MINUTE / 1000,
+    }),
+    getMarketsByLedgerIds: build.query<MarketItemResponse[], MarketsByLedgerIdsQueryParams>({
+      async queryFn({ ledgerIds, counterCurrency }, _api, _extra, fetchWithBQ) {
+        const pages = await Promise.all(
+          chunkLedgerIds(ledgerIds).map(chunk =>
+            fetchWithBQ({
+              url: "/v3/markets",
+              params: {
+                to: counterCurrency,
+                ledgerIds: chunk.join(","),
+                pageSize: marketPageSize(chunk.length),
+              },
+            }),
+          ),
+        );
+
+        const markets = marketsFromPages(pages);
+        if (!markets) {
+          return {
+            error: pages.find(page => page.error)?.error ?? {
+              status: "CUSTOM_ERROR",
+              error: "Invalid markets response",
+            },
+          };
+        }
+
+        return { data: orderMarketsByLedgerIds(markets, ledgerIds) };
+      },
+      providesTags: [MarketDataTags.CurrencyData],
+      keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
     }),
     getCurrencyData: build.query<MarketCurrencyData | undefined, MarketCurrencyRequestParams>({
       query: ({ id, ledgerIds, counterCurrency }) => ({
@@ -199,7 +279,7 @@ export const marketApi = createApi({
           params: {
             to: counterCurrency,
             ids: supportedIds.join(","),
-            pageSize: TRENDING_MARKETS_PAGE_SIZE,
+            pageSize: MAX_MARKETS_PAGE_SIZE,
           },
         });
         if (marketsResult.error) return { error: marketsResult.error };
@@ -224,6 +304,7 @@ export const marketApi = createApi({
 export const {
   useGetMarketListInfiniteQuery,
   useGetMarketPerformersQuery,
+  useGetMarketsByLedgerIdsQuery,
   useGetCurrencyDataQuery,
   useGetAssetChartDataQuery,
   useGetGlobalMarketDataQuery,

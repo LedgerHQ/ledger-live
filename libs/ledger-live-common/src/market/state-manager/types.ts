@@ -31,6 +31,11 @@ export type MarketPerformersQueryParams = Omit<MarketPerformersParams, "refreshR
 
 export type TrendingPerformersQueryParams = Omit<TrendingPerformersParams, "refreshRate">;
 
+export interface MarketsByLedgerIdsQueryParams {
+  ledgerIds: string[];
+  counterCurrency: string;
+}
+
 export const MarketChartApiResponseSchema = z.object({
   values: z.array(z.tuple([z.number(), z.number()])),
 });
