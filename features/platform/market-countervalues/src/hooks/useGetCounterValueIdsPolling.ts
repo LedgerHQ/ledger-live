@@ -3,7 +3,7 @@ import {
   useGetCounterValueIdsSortedByMarketCapQuery,
 } from "@domain/api-market-countervalues";
 import { useEffect } from "react";
-import { log } from "./internals/logger";
+import { log } from "../utils/internals/logger";
 
 export const useGetCounterValueIdsPolling = () => {
   const { data, error } = useGetCounterValueIdsSortedByMarketCapQuery(undefined, {

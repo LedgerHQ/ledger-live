@@ -21,7 +21,7 @@ import {
   setCountervaluesStatePending,
   wipeCountervalues,
   type CountervaluesState,
-} from ".";
+} from "./slice";
 
 const settings: CountervaluesSettings = {
   trackingPairs: [

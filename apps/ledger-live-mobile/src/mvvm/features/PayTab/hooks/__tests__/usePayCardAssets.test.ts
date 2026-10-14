@@ -25,8 +25,10 @@ jest.mock("@features/platform-currencies", () => ({
   useCurrenciesByIds: jest.fn(),
 }));
 
-jest.mock("~/actions/general", () => {
-  const actual = jest.requireActual<typeof import("~/actions/general")>("~/actions/general");
+jest.mock("~/reducers/countervaluesExtraSessionTracking", () => {
+  const actual = jest.requireActual<typeof import("~/reducers/countervaluesExtraSessionTracking")>(
+    "~/reducers/countervaluesExtraSessionTracking",
+  );
 
   return { ...actual, addExtraSessionTrackingPairs: jest.fn(actual.addExtraSessionTrackingPairs) };
 });
@@ -39,7 +41,8 @@ jest.mock("@features/flow-pay-card-auth", () => ({
 import { useCurrenciesByIds } from "@features/platform-currencies";
 import { useIsCardSignedIn } from "@features/flow-pay-card-auth";
 import { BAANX_LEDGER_CURRENCY_IDS } from "@domain/entity-card-asset-mapping";
-import { addExtraSessionTrackingPairs, useExtraSessionTrackingPair } from "~/actions/general";
+import { useExtraSessionTrackingPair } from "~/actions/general";
+import { addExtraSessionTrackingPairs } from "~/reducers/countervaluesExtraSessionTracking";
 import { usePayCardAssets } from "../usePayCardAssets";
 
 function withRates(state: State): State {

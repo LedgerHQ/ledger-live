@@ -3,7 +3,7 @@
  */
 import { renderHook } from "@testing-library/react";
 import { defaultCounterValueIdsSortedByMarketCap } from "@domain/api-market-countervalues";
-import { setCountervaluesLogger } from "./setCountervaluesLogger";
+import { setCountervaluesLogger } from "../utils/setCountervaluesLogger";
 import { useGetCounterValueIdsPolling } from "./useGetCounterValueIdsPolling";
 
 const idsMock = ["bitcoin", "ethereum"];
