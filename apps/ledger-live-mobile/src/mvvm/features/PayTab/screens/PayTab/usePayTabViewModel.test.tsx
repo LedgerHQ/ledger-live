@@ -40,6 +40,8 @@ const HOSTED_MANIFEST = { id: "baanx-hosted-url", url: "https://ledger.baanxapi.
 
 const HOSTED_UI = "https://hosted.test";
 
+const recordCallback = jest.fn();
+
 const CARD_ASSET: CardAssetRow = {
   id: "wallet-btc",
   currency: "btc",
@@ -64,6 +66,7 @@ function PayTabViewModelProbe() {
     formatters,
   } = viewModel.card;
   const { oauthConfig, callback } = login;
+  recordCallback(callback);
   const formatted = formatters?.countervalue?.(1250);
 
   return (
@@ -177,6 +180,7 @@ async function expectSecureBrowser(url: string) {
 describe("usePayTabViewModel", () => {
   beforeEach(() => {
     mockedOpenSecureBrowser.mockClear();
+    recordCallback.mockClear();
     setEnv("CARD_BAANX_HOSTED_UI", HOSTED_UI);
     mockedReadCardUsEnv.mockResolvedValue(false);
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -339,9 +343,7 @@ describe("usePayTabViewModel", () => {
   it("should hand the login flow the redirect the deep link carried", () => {
     renderViewModel({ code: "auth-code" });
 
-    expect(screen.getByTestId("oauth-callback")).toHaveTextContent(
-      JSON.stringify({ code: "auth-code" }),
-    );
+    expect(recordCallback).toHaveBeenCalledWith({ code: "auth-code" });
   });
 
   it("should hand the login flow the provider app the redirect named", () => {
@@ -349,9 +351,13 @@ describe("usePayTabViewModel", () => {
     // silently stop every US request from carrying `x-us-env`.
     renderViewModel({ code: "auth-code", app_id: "LEDGERUS" });
 
-    expect(screen.getByTestId("oauth-callback")).toHaveTextContent(
-      JSON.stringify({ code: "auth-code", appId: "LEDGERUS" }),
-    );
+    expect(recordCallback).toHaveBeenCalledWith({ code: "auth-code", appId: "LEDGERUS" });
+  });
+
+  it("should clear the redirect once it was handed over, so a later remount cannot replay it", async () => {
+    renderViewModel({ code: "auth-code", app_id: "LEDGERUS" });
+
+    await waitFor(() => expect(screen.getByTestId("oauth-callback")).toHaveTextContent("null"));
   });
 
   it.each([
