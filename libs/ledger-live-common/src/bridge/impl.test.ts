@@ -32,10 +32,13 @@ describe("wrapAccountBridge — extension routing", () => {
       utxos: [{ hash: "deadbeef" } as unknown as BitcoinAccount["bitcoinResources"]["utxos"][0]],
       accountState: {
         version: 1,
-        syncedHeight: 999,
-        anchor: { height: 990, hash: "00ff" },
-        addresses: [{ address: "bc1qtest", chain: 0, index: 0 }],
-        confirmedUtxos: [],
+        data: {
+          syncedHeight: 999,
+          anchor: { height: 990, hash: "00ff" },
+          addresses: [{ address: "bc1qtest", chain: 0, index: 0 }],
+          confirmedUtxos: [],
+          utxos: [],
+        },
       },
       walletAccount: {
         foo: "bar",

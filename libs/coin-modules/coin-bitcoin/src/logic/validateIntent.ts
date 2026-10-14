@@ -20,6 +20,7 @@ import type { Explorer } from "../network/explorer";
 import { DustLimit, FeeTooLow, OpReturnDataSizeLimit } from "../errors";
 import { cryptoFor } from "./currency";
 import {
+  derivationModeOf,
   feeInputs,
   isCancel,
   opReturnBuffer,
@@ -107,7 +108,8 @@ export async function validateIntent(
   if (shape && amount > 0n && feePerByte.gt(0)) {
     const txSize = Math.ceil(Number(fee) / feePerByte.toNumber());
     const dust = computeDustAmount(cryptoFor(currencyId), txSize, {
-      derivationMode: resolved.data.derivationMode,
+      derivationMode:
+        resolved.data.derivationMode === undefined ? undefined : derivationModeOf(resolved.data),
       relayFeePerByteSatVb: rates.relay.gt(0) ? rates.relay : undefined,
     });
     if (new BigNumber(amount.toString()).lt(dust)) {

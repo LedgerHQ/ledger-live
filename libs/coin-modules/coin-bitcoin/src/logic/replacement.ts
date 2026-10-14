@@ -83,7 +83,8 @@ function safeAddress(script: Buffer, crypto: ICrypto): string | null {
   }
 }
 
-export const isReplaceable = (tx: OriginalTx): boolean =>
+/** BIP125: one input signals replaceability. */
+export const isReplaceable = (tx: { inputs: ReadonlyArray<{ sequence: number }> }): boolean =>
   tx.inputs.some(i => i.sequence < RBF_SEQUENCE_THRESHOLD);
 
 /**

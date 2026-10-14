@@ -28,8 +28,11 @@ export type BitcoinIntentInput = {
  */
 export interface BitcoinTxData extends TxData {
   type: "bitcoin";
-  /** Derivation mode of the account. Drives sizes, the change script and the signing flags. */
-  derivationMode?: BitcoinDerivationMode;
+  /**
+   * Derivation mode of the account, as wallet-btc names it ({@link BitcoinDerivationMode}) or as
+   * Ledger Wallet does ("native_segwit", ...). Drives sizes, the change script and the signing flags.
+   */
+  derivationMode?: string;
   /** The inputs to spend. Absent: the module only prices a nominal one-input transaction. */
   inputs?: BitcoinIntentInput[];
   /** Where the change goes, when the transaction has some. */
@@ -123,6 +126,35 @@ export type BitcoinSigningEnvelope = {
   /** Current tip height. */
   blockHeight: number;
 };
+
+/** A whole transaction of an address, as the account-module primitives list it. */
+export type BitcoinUtxoTransaction = BitcoinTxDetails & {
+  /** Signals BIP125 replaceability. */
+  replaceable: boolean;
+};
+
+/** An output the coin selection may spend. */
+export type BitcoinUtxoCandidate = {
+  txid: string;
+  vout: number;
+  /** Satoshis, decimal string. */
+  value: string;
+  address: string;
+  /** `null` while pending. */
+  height: number | null;
+  replaceable: boolean;
+};
+
+/** wallet-btc picking strategies, what `selectInputs` takes as `strategy`. */
+export const BITCOIN_PICKING_STRATEGY = {
+  DEEP_OUTPUTS_FIRST: 0,
+  OPTIMIZE_SIZE: 1,
+  MERGE_OUTPUTS: 2,
+  CUSTOM: 3,
+} as const;
+
+export type BitcoinPickingStrategy =
+  (typeof BITCOIN_PICKING_STRATEGY)[keyof typeof BITCOIN_PICKING_STRATEGY];
 
 /** `FeeEstimation.parameters` of `estimateFees`. */
 export type BitcoinFeeParameters = {

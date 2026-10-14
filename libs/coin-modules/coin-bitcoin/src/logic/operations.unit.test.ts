@@ -1,5 +1,12 @@
 import { explorerTx, fakeExplorer } from "../test/fakeExplorer";
-import { getBalance, listOperations, toAddressOperation, toTxDetails } from "./operations";
+import {
+  getBalance,
+  listAddressTransactions,
+  listOperations,
+  toAddressOperation,
+  toTxDetails,
+  toUtxoTransaction,
+} from "./operations";
 import type { BitcoinOperationDetails } from "./types";
 
 const ME = "me";
@@ -173,5 +180,115 @@ describe("getBalance", () => {
       },
     });
     expect(await getBalance(explorer, ME)).toEqual([{ value: 2050n, asset: { type: "native" } }]);
+  });
+});
+
+describe("toUtxoTransaction", () => {
+  const COINBASE = "0".repeat(64);
+
+  it("is the whole transaction, replaceable when an input signals BIP125", () => {
+    const tx = explorerTx({
+      id: "t",
+      inputs: [
+        { value: "10", address: OTHER, output_hash: "p", output_index: 1, sequence: 0xfffffffd },
+        { value: "20", address: ME, output_hash: "q", output_index: 0, sequence: 0xffffffff },
+      ],
+      outputs: [{ value: "25", address: ME, output_index: 0 }],
+      fees: 5,
+    });
+    expect(toUtxoTransaction(tx)).toEqual({ ...toTxDetails(tx), replaceable: true });
+  });
+
+  it("is final when every input sequence opts out", () => {
+    const tx = explorerTx({
+      id: "t",
+      inputs: [
+        { value: "10", address: ME, output_hash: "p", output_index: 0, sequence: 0xfffffffe },
+      ],
+    });
+    expect(toUtxoTransaction(tx).replaceable).toBe(false);
+  });
+
+  it("leaves out the address the explorer reports as unknown", () => {
+    const tx = explorerTx({
+      id: "t",
+      inputs: [
+        { value: "10", address: "<unknown>", output_hash: "p", output_index: 0, sequence: 0 },
+      ],
+      outputs: [
+        { value: "0", address: "unknown", output_index: 0 },
+        { value: "9", address: ME, output_index: 1 },
+      ],
+    });
+    const { inputs, outputs } = toUtxoTransaction(tx);
+    expect(inputs).toEqual([{ txid: "p", vout: 0, value: "10", sequence: 0 }]);
+    expect(outputs).toEqual([
+      { index: 0, value: "0" },
+      { index: 1, address: ME, value: "9" },
+    ]);
+  });
+
+  it("gives no previous transaction to a coinbase input", () => {
+    const tx = explorerTx({
+      id: "cb",
+      inputs: [
+        { value: "0", output_hash: COINBASE, output_index: 0xffffffff, sequence: 0xffffffff },
+        { value: "0", output_hash: null, output_index: 0, sequence: 0xffffffff },
+      ],
+      outputs: [{ value: "625000000", address: ME, output_index: 0 }],
+    });
+    expect(toUtxoTransaction(tx).inputs).toEqual([
+      { vout: 0xffffffff, value: "0", sequence: 0xffffffff },
+      { vout: 0, value: "0", sequence: 0xffffffff },
+    ]);
+  });
+});
+
+describe("listAddressTransactions", () => {
+  const confirmed = explorerTx({
+    id: "c1",
+    outputs: [{ value: "5", address: ME, output_index: 0 }],
+  });
+  const later = explorerTx({
+    id: "c2",
+    outputs: [{ value: "6", address: ME, output_index: 0 }],
+  });
+  const pending = explorerTx({
+    id: "p1",
+    block: null,
+    inputs: [{ value: "9", address: OTHER, output_hash: "x", output_index: 0, sequence: 0 }],
+    outputs: [{ value: "7", address: ME, output_index: 0 }],
+  });
+
+  it("pages whole transactions as listOperations does, the mempool on the first page", async () => {
+    const explorer = fakeExplorer({
+      pages: {
+        [ME]: [
+          { data: [confirmed], token: "page-1" },
+          { data: [later], token: null },
+        ],
+      },
+      pending: { [ME]: [pending, { ...confirmed, block: null }] },
+    });
+
+    const first = await listAddressTransactions(explorer, ME, { minHeight: 0 });
+    expect(first).toEqual({
+      items: [toUtxoTransaction(confirmed), toUtxoTransaction(pending)],
+      next: "page-1",
+    });
+    expect(first.items.map(tx => tx.replaceable)).toEqual([false, true]);
+
+    const second = await listAddressTransactions(explorer, ME, { minHeight: 0, cursor: "page-1" });
+    expect(second).toEqual({ items: [toUtxoTransaction(later)], next: undefined });
+    expect(explorer.getAddressPendingTxs).toHaveBeenCalledTimes(1);
+  });
+
+  it("puts the mempool first in descending order", async () => {
+    const explorer = fakeExplorer({
+      pages: { [ME]: [{ data: [confirmed], token: null }] },
+      pending: { [ME]: [pending] },
+    });
+    const page = await listAddressTransactions(explorer, ME, { minHeight: 0, order: "desc" });
+    expect(page.items.map(tx => tx.id)).toEqual(["p1", "c1"]);
   });
 });

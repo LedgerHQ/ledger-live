@@ -6,10 +6,12 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { Explorer } from "../network/explorer";
 import type { ExplorerTx } from "../network/types";
+import { isReplaceable } from "./replacement";
 import {
   BITCOIN_OPERATION_DETAILS_VERSION,
   type BitcoinOperationDetails,
   type BitcoinTxDetails,
+  type BitcoinUtxoTransaction,
 } from "./types";
 
 /** Explorer page size; must exceed the number of transactions of one address in a single block. */
@@ -97,14 +99,14 @@ export function toAddressOperation(details: BitcoinTxDetails, address: string): 
 }
 
 /**
- * Operations of one address. The first page (no cursor) also carries the mempool transactions;
- * a transaction both pending and confirmed is reported confirmed only.
+ * Transactions of one address. The first page (no cursor) also carries the mempool ones; a
+ * transaction both pending and confirmed is reported confirmed only.
  */
-export async function listOperations(
+async function listAddressTxs(
   explorer: Explorer,
   address: string,
   options: ListOperationsOptions,
-): Promise<Page<Operation>> {
+): Promise<Page<ExplorerTx>> {
   const batchSize = options.limit ?? explorer.batchSize;
   const order = options.order === "desc" ? "descending" : "ascending";
 
@@ -119,16 +121,60 @@ export async function listOperations(
   ]);
 
   const confirmedIds = new Set(page.data.map(tx => tx.id));
-  const pending = pendingTxs
-    .filter(tx => !tx.block && !confirmedIds.has(tx.id))
-    .map(tx => toAddressOperation(toTxDetails(tx), address));
-  const confirmed = page.data.map(tx => toAddressOperation(toTxDetails(tx), address));
+  const pending = pendingTxs.filter(tx => !tx.block && !confirmedIds.has(tx.id));
 
   const next = page.token && page.token !== options.cursor ? page.token : undefined;
   return {
-    items: order === "descending" ? [...pending, ...confirmed] : [...confirmed, ...pending],
+    items: order === "descending" ? [...pending, ...page.data] : [...page.data, ...pending],
     next,
   };
+}
+
+/** Operations of one address, paged as {@link listAddressTxs}. */
+export async function listOperations(
+  explorer: Explorer,
+  address: string,
+  options: ListOperationsOptions,
+): Promise<Page<Operation>> {
+  const { items, next } = await listAddressTxs(explorer, address, options);
+  return { items: items.map(tx => toAddressOperation(toTxDetails(tx), address)), next };
+}
+
+const COINBASE_PREVIOUS_TXID = "0".repeat(64);
+
+/** The explorer names the script of an OP_RETURN or non-standard output "unknown". */
+const knownAddress = (address: string | undefined): { address?: string } =>
+  address && !address.includes("unknown") ? { address } : {};
+
+/**
+ * {@link toTxDetails} with its replaceability, keeping real addresses only; a coinbase input has
+ * no previous transaction.
+ */
+export function toUtxoTransaction(tx: ExplorerTx): BitcoinUtxoTransaction {
+  const details = toTxDetails(tx);
+  return {
+    ...details,
+    replaceable: isReplaceable(details),
+    inputs: details.inputs.map(({ txid, address, ...input }) => ({
+      ...(txid && txid !== COINBASE_PREVIOUS_TXID ? { txid } : {}),
+      ...input,
+      ...knownAddress(address),
+    })),
+    outputs: details.outputs.map(({ address, ...output }) => ({
+      ...output,
+      ...knownAddress(address),
+    })),
+  };
+}
+
+/** Whole transactions of one address, paged as {@link listAddressTxs}. */
+export async function listAddressTransactions(
+  explorer: Explorer,
+  address: string,
+  options: ListOperationsOptions,
+): Promise<Page<BitcoinUtxoTransaction>> {
+  const { items, next } = await listAddressTxs(explorer, address, options);
+  return { items: items.map(toUtxoTransaction), next };
 }
 
 /** Every transaction of an address, mempool included, confirmed preferred. */

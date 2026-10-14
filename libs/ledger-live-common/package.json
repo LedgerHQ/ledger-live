@@ -282,6 +282,8 @@
     "@features/platform-feature-flags": "workspace:^",
     "@features/platform-feature-flags-firebase": "workspace:^",
     "@features/platform-market-countervalues": "workspace:*",
+    "@ledgerhq/account-module-framework": "workspace:*",
+    "@ledgerhq/account-module-utxo": "workspace:*",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",

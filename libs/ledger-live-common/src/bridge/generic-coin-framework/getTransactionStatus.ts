@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
-import { completeIntent } from "./accountLayer";
+import { intentApiFor } from "./accountModule";
 import {
   addAccountToBuyLinks,
   bigNumberToBigIntDeep,
@@ -53,25 +53,19 @@ export function genericGetTransactionStatus(
     }
 
     const buildIntentData = bridgeApi.buildIntentData;
-    const intent = await completeIntent(
-      bridgeApi,
-      transactionToIntent(
-        account,
-        draftTransaction,
-        bridgeApi.computeIntentType,
-        intent => coinModuleApi.craftTransactionData(context, intent),
-        // The real transaction, not the draft: the draft is a field-by-field allowlist, so a field it
-        // omits reads as `undefined` inside the hook with no type error, and this path would validate
-        // an intent whose `data` differs from the one `signOperation` hands the device. Everything the
-        // framework itself derives keeps using the draft, so families that declare no hook are
-        // untouched.
-        buildIntentData && (() => buildIntentData(transaction)),
-      ),
+    const intent = transactionToIntent(
       account,
-      transaction,
-      coinModuleApi,
-      context,
+      draftTransaction,
+      bridgeApi.computeIntentType,
+      intent => coinModuleApi.craftTransactionData(context, intent),
+      // The real transaction, not the draft: the draft is a field-by-field allowlist, so a field it
+      // omits reads as `undefined` inside the hook with no type error, and this path would validate
+      // an intent whose `data` differs from the one `signOperation` hands the device. Everything the
+      // framework itself derives keeps using the draft, so families that declare no hook are
+      // untouched.
+      buildIntentData && (() => buildIntentData(transaction)),
     );
+    const intentApi = intentApiFor(bridgeApi, coinModuleApi, account, { ...transaction });
 
     const customFees = bigNumberToBigIntDeep({
       value: transaction.fees ?? new BigNumber(0),
@@ -97,7 +91,7 @@ export function genericGetTransactionStatus(
     });
 
     const { errors, warnings, estimatedFees, amount, totalSpent, totalFees } =
-      await coinModuleApi.validateIntent(
+      await intentApi.validateIntent(
         context,
         intent,
         extractBalances(account, bridgeApi.getAssetFromToken),

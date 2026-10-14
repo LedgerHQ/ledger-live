@@ -99,6 +99,22 @@ describe("validateIntent", () => {
     expect(res.errors.dustLimit?.name).toBe("DustLimit");
   });
 
+  it("reads a Ledger Wallet derivation mode as wallet-btc's", async () => {
+    const [ledgerWallet, walletBtc] = await Promise.all([
+      validate(intent({ amount: 100n }, { derivationMode: "native_segwit" })),
+      validate(intent({ amount: 100n })),
+    ]);
+    expect(ledgerWallet).toEqual(walletBtc);
+    expect(ledgerWallet.errors.dustLimit?.name).toBe("DustLimit");
+  });
+
+  it("lays out an intent without derivation mode as legacy", async () => {
+    const { derivationMode: _, ...data } = intent().data;
+    const res = await validate({ ...intent(), data });
+    expect(res.errors).toEqual({});
+    expect(res.estimatedFees).toBeGreaterThan((await validate(intent())).estimatedFees);
+  });
+
   it("warns about a fee over a tenth of the amount", async () => {
     const res = await validate(intent({ amount: 10_000n }));
     expect(res.warnings.feeTooHigh?.name).toBe("FeeTooHigh");

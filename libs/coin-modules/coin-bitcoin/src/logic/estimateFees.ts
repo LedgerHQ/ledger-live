@@ -3,6 +3,7 @@ import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import type { Explorer } from "../network/explorer";
 import { cryptoFor } from "./currency";
 import {
+  derivationModeOf,
   feeInputs,
   opReturnBuffer,
   recipientScript,
@@ -66,9 +67,7 @@ function nominalFee(currencyId: string, intent: BitcoinIntent, resolved: Resolve
   ].filter((s): s is Buffer => s !== undefined);
   const inputCount = Math.max(1, data.inputs?.length ?? 0);
   const rate = Math.max(1, Math.ceil(feePerByte.toNumber()));
-  return BigInt(
-    rate * maxTxVBytesCeil(inputCount, scripts, true, crypto, data.derivationMode ?? "Legacy"),
-  );
+  return BigInt(rate * maxTxVBytesCeil(inputCount, scripts, true, crypto, derivationModeOf(data)));
 }
 
 function shapeParameters(shape: TxShape, useAllAmount: boolean): Partial<BitcoinFeeParameters> {

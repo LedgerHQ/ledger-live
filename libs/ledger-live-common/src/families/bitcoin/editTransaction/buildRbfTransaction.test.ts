@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { bitcoinPickingStrategy, type BitcoinOutput } from "../types";
-import { getNextChangeAddress, getOwnDisplayAddresses } from "../accountLayer/selection";
+import { getNextChangeAddress, getOwnDisplayAddresses } from "../accountModule/account";
 import { getReplacementEstimate } from "./replacement";
 import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";
 
@@ -9,7 +9,7 @@ jest.mock("./replacement", () => ({
   getReplacementEstimate: jest.fn(),
 }));
 
-jest.mock("../accountLayer/selection", () => ({
+jest.mock("../accountModule/account", () => ({
   getNextChangeAddress: jest.fn(),
   getOwnDisplayAddresses: jest.fn(),
 }));

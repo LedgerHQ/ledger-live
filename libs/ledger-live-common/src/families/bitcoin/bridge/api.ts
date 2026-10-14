@@ -1,13 +1,13 @@
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { BitcoinTxData } from "@ledgerhq/coin-bitcoin/api";
-import { bitcoinAccountLayer, computeIntentType } from "../accountLayer";
+import { bitcoinAccountModuleBinding, computeIntentType } from "../accountModule";
 import { getFamilySpecificData, type Transaction } from "../types";
 import { buildSignRawOperation } from "../signRawOperation";
 import signer from "../signer";
 
 /**
  * Maps the user's choices (`familySpecificData`, ADR-047) onto the coin module's `BitcoinTxData`.
- * The account context — inputs, change, paths — is added by the account layer.
+ * The account context — inputs, change, paths — is added by the account module.
  */
 export function buildIntentData(transaction: Record<string, unknown>): BitcoinTxData {
   const tx = transaction as Partial<Transaction>;
@@ -28,9 +28,9 @@ const bitcoinBridgeApi: BridgeApi = {
   // the device app depends on the currency
   getDeviceSignOptions: (_transaction, account) => ({ currencyId: account.currency.id }),
   signRawOperation: buildSignRawOperation(signer.context),
-  // the account layer returns the whole operation list, RBF-replaced ones removed
+  // the account module returns the whole operation list, RBF-replaced ones removed
   shouldMergeOps: false,
-  accountLayer: bitcoinAccountLayer,
+  accountModule: bitcoinAccountModuleBinding,
 };
 
 export default bitcoinBridgeApi;

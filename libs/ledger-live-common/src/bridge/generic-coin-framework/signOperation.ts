@@ -4,7 +4,7 @@ import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledg
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
-import { completeIntent } from "./accountLayer";
+import { decorateWithAccountModule, intentApiFor } from "./accountModule";
 import {
   bigNumberToBigIntDeep,
   buildOptimisticOperation,
@@ -12,7 +12,8 @@ import {
   transactionToIntent,
 } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
-import type { AccountLayerDeviceEvents } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { SignerDeviceEvents } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { CraftedAccountTransaction } from "@ledgerhq/account-module-framework";
 import type { CraftedTransaction } from "@ledgerhq/coin-module-framework/api/types";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
@@ -40,6 +41,7 @@ export const genericSignOperation =
         const context = buildContext(account.currency.id);
         const bridgeApi = await getBridgeApi(account.currency, network);
         if (!transaction.fees) throw new FeeNotLoaded();
+        const intentApi = intentApiFor(bridgeApi, coinModuleApi, account, { ...transaction });
         const customFees = bigNumberToBigIntDeep({
           value: transaction.fees ?? new BigNumber(0),
           parameters: {
@@ -66,7 +68,8 @@ export const genericSignOperation =
         // A family signer that drives several device steps reports them itself, in the order the
         // device goes through them (bitcoin streams the previous transactions before asking for
         // the signature), so the framework does not emit its own requested/granted events for it.
-        const deviceEvents: AccountLayerDeviceEvents | undefined = bridgeApi.accountLayer
+        const binding = bridgeApi.accountModule;
+        const deviceEvents: SignerDeviceEvents | undefined = binding
           ? {
               onDeviceStreaming: ({ progress, index, total }) =>
                 o.next({ type: "device-streaming", progress, index, total }),
@@ -83,23 +86,20 @@ export const genericSignOperation =
             derivationMode: account.derivationMode,
           })) as GetAddressResult;
 
-          const transactionIntent = await completeIntent(
-            bridgeApi,
-            transactionToIntent(
-              account,
-              { ...transaction },
-              bridgeApi.computeIntentType,
-              intent => coinModuleApi.craftTransactionData(context, intent),
-              bridgeApi.buildIntentData,
-            ),
+          const transactionIntent = transactionToIntent(
             account,
-            transaction,
-            coinModuleApi,
-            context,
+            { ...transaction },
+            bridgeApi.computeIntentType,
+            intent => coinModuleApi.craftTransactionData(context, intent),
+            bridgeApi.buildIntentData,
           );
           transactionIntent.senderPublicKey = publicKey;
 
-          if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
+          // An account module sequences its own transactions (a UTXO account has no nonce).
+          if (
+            !binding &&
+            (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n)
+          ) {
             // The network sequence source lags behind a just-broadcast tx, so combine it with
             // locally-tracked pending operations to avoid reusing a nonce on rapid consecutive sends.
             const networkSequence = await coinModuleApi.getNextSequence(
@@ -113,7 +113,7 @@ export const genericSignOperation =
           }
 
           /* Craft unsigned blob via coin-framework */
-          const crafted: CraftedTransaction = await coinModuleApi.craftTransaction(
+          const crafted: CraftedTransaction = await intentApi.craftTransaction(
             context,
             transactionIntent,
             { customFees },
@@ -143,7 +143,7 @@ export const genericSignOperation =
         if (!deviceEvents) o.next({ type: "device-signature-granted" });
 
         /* Combine payload + signature for broadcast */
-        const combined = await coinModuleApi.combine(
+        const combined = await intentApi.combine(
           context,
           signedInfo.unsigned,
           [signedInfo.txnSig],
@@ -157,9 +157,14 @@ export const genericSignOperation =
           signedInfo.sequence,
           bridgeApi.describeOptimisticOperation,
         );
-        const decorate = bridgeApi.accountLayer?.decorateOptimisticOperation;
-        const operation = decorate
-          ? decorate(optimistic, signedInfo.crafted, account, { ...transaction })
+        const operation = binding
+          ? decorateWithAccountModule(
+              binding,
+              optimistic,
+              signedInfo.crafted as CraftedAccountTransaction,
+              account,
+              { ...transaction },
+            )
           : optimistic;
         if (!operation.id) {
           log("Generic coin-framework", "buildOptimisticOperation", operation);

@@ -5,6 +5,7 @@ import { genericGetAccountShape } from "./getAccountShape";
 import { getSigner } from "./signer";
 import type { CoinFrameworkSigner } from "./types";
 import { postSync } from "./postSync";
+import { accountModulePostSync } from "./accountModule";
 
 export async function getCoinFrameworkCurrencyBridge(
   network: string,
@@ -21,8 +22,10 @@ export async function getCoinFrameworkCurrencyBridge(
         const bridgeApi = await getBridgeApi(currency, network);
         return bridgeApi.addressLookup;
       },
-      postSync: (initial, synced) =>
-        (resolveBridgeApi(synced.currency).accountLayer?.postSync ?? postSync)(initial, synced),
+      postSync: (initial, synced) => {
+        const binding = resolveBridgeApi(synced.currency).accountModule;
+        return binding ? accountModulePostSync(binding, synced) : postSync(initial, synced);
+      },
     }),
   };
 }

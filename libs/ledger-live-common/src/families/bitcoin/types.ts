@@ -14,10 +14,8 @@ import type {
   Account as WalletAccount,
   SerializedAccount as WalletAccountRaw,
 } from "@ledgerhq/wallet-btc/account";
-import type {
-  AccountAddress,
-  MultiAddressAccountState,
-} from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { Versioned } from "@ledgerhq/account-module-framework";
+import type { UtxoAccountState } from "@ledgerhq/account-module-utxo";
 import type { JsonSafeRecord } from "../../bridge/generic-coin-framework/types";
 
 // Zcash accounts are served by coin-zcash; its account types stay reachable here for the apps
@@ -121,45 +119,18 @@ export type BitcoinOutputRaw = [
   number,
 ];
 
-/** An address of the account that holds history. `chain` 0 receives, 1 is change. */
-export type BitcoinAccountAddress = AccountAddress;
-
-export type BitcoinStateUtxo = {
-  txid: string;
-  vout: number;
-  /** Satoshis, decimal string. */
-  value: string;
-  address: string;
-  blockHeight: number;
-  /** The transaction holding it signals BIP125. */
-  rbf: boolean;
-};
-
-export const BITCOIN_ACCOUNT_STATE_VERSION = 1;
-
-/**
- * What the account layer keeps between syncs (ADR-065 D7): the multi-address engine's state and the
- * confirmed UTXO set. Small, versioned and rebuildable from the network; it replaces the full
- * transaction store `walletAccount` used to persist.
- */
-export type BitcoinAccountState = MultiAddressAccountState & {
-  version: typeof BITCOIN_ACCOUNT_STATE_VERSION;
-  /** Outputs of confirmed transactions that no confirmed transaction spends. */
-  confirmedUtxos: BitcoinStateUtxo[];
-};
-
 export type BitcoinResources = {
   /** Spendable outputs, mempool included — what coin control shows. */
   utxos: BitcoinOutput[];
-  /** Account layer state (generic bridge). */
-  accountState?: BitcoinAccountState | undefined;
+  /** State of the UTXO account module (generic bridge). */
+  accountState?: Versioned<UtxoAccountState> | undefined;
   /** wallet-btc storage of the Zcash legacy bridge; migrated away from everywhere else. */
   walletAccount?: WalletAccount | undefined;
 };
 
 export type BitcoinResourcesRaw = {
   utxos: BitcoinOutputRaw[];
-  accountState?: BitcoinAccountState | undefined;
+  accountState?: Versioned<UtxoAccountState> | undefined;
   walletAccount?: WalletAccountRaw | undefined;
 };
 

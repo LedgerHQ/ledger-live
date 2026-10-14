@@ -2,10 +2,10 @@ import type { Account } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountNeedResync } from "@ledgerhq/wallet-btc/errors";
 import type { BitcoinAccount } from "./types";
-import { accountPathOf } from "../../bridge/generic-coin-framework/multiAddressAccountLayer";
-import { cryptoFor, toWalletDerivationMode } from "./accountLayer/derivation";
-import { displayAddress } from "./accountLayer/interpret";
-import { readAccountState } from "./accountLayer/state";
+import { toBitcoinDerivationMode } from "@ledgerhq/coin-bitcoin/api";
+import { accountPathOf } from "../../bridge/generic-coin-framework/accountModule";
+import { cryptoFor } from "./accountModule/derivation";
+import { readAccountState } from "./accountModule/state";
 
 export type BitcoinAccountKeys = {
   /** "84'/0'" */
@@ -19,7 +19,7 @@ export type BitcoinAccountKeys = {
 
 /**
  * Keys and addresses of a bitcoin-family account, for the live apps that ask for them (wallet API).
- * Zcash accounts still carry the legacy bridge's store; the others the account layer's state.
+ * Zcash accounts still carry the legacy bridge's store; the others the account module's state.
  */
 export function getBitcoinAccountKeys(account: Account): BitcoinAccountKeys {
   const bitcoinAccount = account as BitcoinAccount;
@@ -42,13 +42,12 @@ export function getBitcoinAccountKeys(account: Account): BitcoinAccountKeys {
     };
   }
 
-  const state = readAccountState(bitcoinAccount.bitcoinResources?.accountState);
+  const state = readAccountState(bitcoinAccount.bitcoinResources?.accountState)?.data;
   if (account.id.startsWith("libcore") || !state) throw new AccountNeedResync();
-  const currencyId = account.currency.id;
-  const crypto = cryptoFor(currencyId);
-  const derivationMode = toWalletDerivationMode(account.derivationMode);
+  const crypto = cryptoFor(account.currency.id);
+  const derivationMode = toBitcoinDerivationMode(account.derivationMode);
   const xpub = decodeAccountId(account.id).xpubOrAddress;
-  const withUtxo = new Set((bitcoinAccount.bitcoinResources?.utxos ?? []).map(u => u.address));
+  const withUtxo = new Set(state.utxos.map(u => u.address));
   return {
     rootPath: accountPathOf(account.freshAddressPath).split("/").slice(0, 2).join("/"),
     accountIndex: account.index,
@@ -59,7 +58,7 @@ export function getBitcoinAccountKeys(account: Account): BitcoinAccountKeys {
         address: a.address,
         chain: a.chain,
         index: a.index,
-        hasUtxo: withUtxo.has(displayAddress(currencyId, a.address)),
+        hasUtxo: withUtxo.has(a.address),
       })),
   };
 }

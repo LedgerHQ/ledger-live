@@ -123,6 +123,20 @@ describe("estimateFees", () => {
     );
   });
 
+  it("reads a Ledger Wallet derivation mode as wallet-btc's", async () => {
+    const explorer = fakeExplorer();
+    const [ledgerWallet, walletBtc] = await Promise.all([
+      estimateFees(explorer, "bitcoin", intent({}, { derivationMode: "taproot" })),
+      estimateFees(explorer, "bitcoin", intent({}, { derivationMode: "Taproot" })),
+    ]);
+    expect(ledgerWallet).toEqual(walletBtc);
+    expect(ledgerWallet.value).toBe(
+      BigInt(
+        10 * maxTxVBytesCeil(1, [crypto.toOutputScript(BTC_RECIPIENT)], true, crypto, "Taproot"),
+      ),
+    );
+  });
+
   it("describes the replaced transaction of a replacement", async () => {
     (getReplacementContext as jest.Mock).mockResolvedValue({
       original: {

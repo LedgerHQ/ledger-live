@@ -3,14 +3,17 @@ import type {
   AssetInfo,
   BalanceOptions,
   CoinModuleApi,
-  CraftedTransaction,
-  Operation as CoinOperation,
-  TransactionIntent,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
+import type {
+  AccountData,
+  AccountModuleApi,
+  AccountOperation,
+  CraftedAccountTransaction,
+  Versioned,
+} from "@ledgerhq/account-module-framework";
 import type { GetAddressResult } from "../derivation";
-import type { AccountShapeInfo } from "../bridge/jsHelpers";
 import type { SignerContext } from "../signer";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import type {
@@ -21,7 +24,6 @@ import type {
   OperationType,
   SignRawOperationFnSignature,
   StakingResources,
-  SyncConfig,
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
 
@@ -67,181 +69,61 @@ export type AddressLookup = {
   keyControlsAccount: (publicKey: string, account: Account) => boolean;
 };
 
-/** What the generic bridge hands an {@link AccountLayer}: the coin module and its call context. */
-export type AccountLayerDependencies = {
-  /** The coin module, as the generic bridge resolves it (defaults backfilled). */
-  api: CoinModuleApi<any, any, any>;
-  context: Context<any>;
-};
-
 /** Device events a family signer reports while signing (bitcoin streams the previous transactions). */
-export type AccountLayerDeviceEvents = {
+export type SignerDeviceEvents = {
   onDeviceStreaming: (event: { progress: number; index: number; total: number }) => void;
   onDeviceSignatureRequested: () => void;
   onDeviceSignatureGranted: () => void;
 };
 
+/** What a binding reads once an account is synced, to fill the family fields of the account. */
+export type SyncedAccountModule = {
+  module: AccountModuleApi<any>;
+  context: Context<any>;
+  account: AccountData<any>;
+};
+
 /**
- * For families whose account is not one address — a UTXO account is an extended public key whose
- * funds sit on many discovered addresses (ADR-065).
- *
- * `CoinModuleApi` answers per address. With this hook the generic bridge hands the account-wide
- * work to the family: the account shape (address discovery, history merge, balance), the account
- * context of each intent (coin selection, change, signing paths), and the pending operations rule.
- * Families without it are untouched.
- *
- * Interim: ADR-064 Option 1's account layer replaces this seam.
+ * A family whose accounts are served by an account module (ADR-064 Option 1): the generic bridge
+ * syncs, completes intents and crafts through the module, which owns the account (every address,
+ * its history, its state) and delegates the chain to the coin module. What stays here is the
+ * Ledger Wallet side of the family: the device, the persistence and the presentation.
  */
-export type AccountLayer = {
-  /**
-   * The whole account shape, keyed on the account key (the xpub), never on the fresh address. It
-   * replaces the generic single-address sync, so it returns the full operation list
-   * (`shouldMergeOps: false`).
-   */
-  getAccountShape: (
-    info: AccountShapeInfo,
-    syncConfig: SyncConfig,
-    dependencies: AccountLayerDependencies & { signerContext: SignerContext<any> },
-  ) => Promise<Partial<Account>>;
-  /**
-   * Adds what the intent needs from the whole account — for a UTXO family the selected inputs, the
-   * change and the signing paths — before the generic bridge estimates, validates or crafts it.
-   */
-  completeIntent: (
-    intent: TransactionIntent<any, any>,
-    account: Account,
-    transaction: Record<string, unknown>,
-    dependencies: AccountLayerDependencies,
-  ) => Promise<TransactionIntent<any, any>>;
-  /** Replaces the generic post-sync, whose pending operations rule assumes an account nonce. */
-  postSync: (initial: Account, synced: Account) => Account;
-  /** Completes the optimistic operation from the crafted transaction (real senders, spent inputs). */
+export type AccountModuleBinding = {
+  /** The account module of a currency, on the coin module the generic bridge resolves. */
+  create: (coinModuleApi: CoinModuleApi<any, any, any>, currencyId: string) => AccountModuleApi<any>;
+  /** The account key read on the device (the extended public key of a UTXO account). */
+  getAccountKey: (
+    request: {
+      currencyId: string;
+      /** Account level, e.g. "84'/0'/0'". */
+      derivationPath: string;
+      derivationMode: DerivationMode;
+      deviceId: string | undefined;
+    },
+    signerContext: SignerContext<any>,
+  ) => Promise<string>;
+  /** The module state the account persists; `undefined` when it has none. */
+  readState: (account: Account | undefined) => Versioned | undefined;
+  /** The family fields of a synced account (its resources, the state to persist, ...). */
+  accountFields: (synced: SyncedAccountModule) => Promise<Partial<Account>>;
+  /** Module options of the write path, from the family transaction (coin control, replacement). */
+  accountOptions?: (transaction: Record<string, unknown>) => unknown;
+  /** Completes the generic mapping of an account operation to a Ledger Wallet operation. */
+  toLiveOperation?: (operation: AccountOperation, live: LiveOperation) => LiveOperation;
+  /** A pending operation settled although its own transaction is not on chain (replaced). */
+  isPendingSettled?: (pending: LiveOperation, synced: Account) => boolean;
+  /** The synced operation of a sent transaction, completed from its optimistic one. */
+  mergeSentOperation?: (synced: LiveOperation, optimistic: LiveOperation) => LiveOperation;
+  /** Completes the optimistic operation with what only the family shows. */
   decorateOptimisticOperation?: (
     operation: LiveOperation,
-    crafted: CraftedTransaction,
+    crafted: CraftedAccountTransaction,
     account: Account,
     transaction: Record<string, unknown>,
   ) => LiveOperation;
   /** Address parameters of the swap/exchange flow, when the family's differ from the default. */
   getSerializedAddressParameters?: (account: Account, addressFormat?: string) => Buffer;
-};
-
-/** An address of a multi-address account, on its HD chain (BIP44: 0 receives, 1 is change). */
-export type AccountAddress = { address: string; chain: number; index: number };
-
-/** What the multi-address engine keeps between syncs; a family extends it with its own part. */
-export type MultiAddressAccountState = {
-  /** Version of the family's state schema: a state of another version is not trusted. */
-  version: number;
-  /** Chain tip at the last sync; the next one resumes `rewindBlocks` below it. */
-  syncedHeight: number;
-  /** Highest block holding a transaction of the account, to detect reorgs. */
-  anchor: { height: number; hash: string } | null;
-  /** Every address of the account that holds history. */
-  addresses: AccountAddress[];
-};
-
-/** A transaction of the account, as the family reads it from a `listOperations` operation. */
-export type AccountTransaction = {
-  id: string;
-  /** `null` while in the mempool. */
-  block: { height: number; hash: string } | null;
-};
-
-/** The addresses of an account, as a family needs them to build a transaction. */
-export type AccountAddressBook = {
-  /** e.g. "84'/0'/0'". */
-  accountPath: string;
-  addresses: AccountAddress[];
-  pathOf: (address: Pick<AccountAddress, "chain" | "index">) => string;
-  /** The first address of `chain` above the highest one holding history. */
-  next: (chain: number) => Promise<{ address: string; path: string }>;
-};
-
-/**
- * A family whose account is an extended public key with its funds on many addresses (ADR-065).
- *
- * The generic multi-address engine owns what any such account needs: the account key and id,
- * the gap walk over its address chains, the history of each address (`listOperations`), the
- * reorg anchor, the generic state and the fresh address. The family brings what its chain means:
- * deriving addresses, reading a transaction, interpreting it into operations, its accounting
- * (UTXOs for bitcoin) and what an intent needs from the whole account.
- *
- * Interim: it maps onto ADR-064 Option 1's `AccountApi`, which replaces it.
- */
-export type MultiAddressAccountFamily<
-  Tx extends AccountTransaction = AccountTransaction,
-  State extends MultiAddressAccountState = MultiAddressAccountState,
-> = {
-  /** Address chains walked at sync. */
-  chains: readonly number[];
-  /** The chain the fresh (receive) address comes from. */
-  receiveChain: number;
-  /** Unused addresses walked past the last used one, per chain. */
-  gapLimit: number;
-  /** Blocks re-read below the last synced tip, so a replaced block is not missed. */
-  rewindBlocks: number;
-
-  /** The key the account is built on, read on the device: its extended public key. */
-  getAccountKey: (
-    request: { currencyId: string; accountPath: string; deviceId: string | undefined },
-    signerContext: SignerContext<any>,
-  ) => Promise<string>;
-  /** The addresses of an account key. */
-  addressDeriver: (
-    currencyId: string,
-    derivationMode: DerivationMode,
-    key: string,
-  ) => (chain: number, index: number) => Promise<string>;
-  /** An address as the account shows it. Default: unchanged. */
-  displayAddress?: (currencyId: string, address: string) => string;
-
-  /** The transaction a `listOperations` operation carries (in its `details`). */
-  transactionOf: (operation: CoinOperation<any>) => Tx;
-
-  /** The state persisted with the account, validated (or migrated); `undefined` when there is none. */
-  readState: (account: Account | undefined) => State | undefined;
-  emptyState: () => State;
-  /** The error a transaction of an account without state raises. */
-  resyncError: () => Error;
-
-  /** The operations of the account, each transaction interpreted against all its addresses. */
-  interpret: (
-    transactions: Tx[],
-    context: { currencyId: string; accountId: string; addresses: AccountAddress[] },
-  ) => LiveOperation[];
-  /**
-   * The family's accounting of a sync. `state` already carries this sync's engine fields;
-   * `operations` is the merged list. Returns the family's state, the operations it keeps, the
-   * balances and the account fields that persist the state.
-   */
-  settle: (input: {
-    currencyId: string;
-    state: State;
-    confirmed: Tx[];
-    pending: Tx[];
-    operations: LiveOperation[];
-  }) => {
-    state: State;
-    operations: LiveOperation[];
-    balance: BigNumber;
-    spendableBalance: BigNumber;
-    accountFields: Partial<Account>;
-  };
-
-  /** Adds what the intent needs from the whole account (inputs, change, signing paths). */
-  completeIntent: (
-    intent: TransactionIntent<any, any>,
-    account: Account,
-    transaction: Record<string, unknown>,
-    dependencies: AccountLayerDependencies & { addressBook: AccountAddressBook },
-  ) => Promise<TransactionIntent<any, any>>;
-  /** A pending operation settled although its own transaction is not on chain (replaced). */
-  isPendingSettled?: (pending: LiveOperation, synced: Account) => boolean;
-  /** The synced operation of a sent transaction, completed from its optimistic one. */
-  mergeSentOperation?: (synced: LiveOperation, optimistic: LiveOperation) => LiveOperation;
-  decorateOptimisticOperation?: AccountLayer["decorateOptimisticOperation"];
-  getSerializedAddressParameters?: AccountLayer["getSerializedAddressParameters"];
 };
 
 export type BridgeApi = {
@@ -400,6 +282,6 @@ export type BridgeApi = {
    * keyed on the device's public key, so moving to the generic bridge never re-keys an account.
    */
   accountIdFromPublicKey?: boolean;
-  /** @see AccountLayer */
-  accountLayer?: AccountLayer;
+  /** @see AccountModuleBinding */
+  accountModule?: AccountModuleBinding;
 };

@@ -20,6 +20,7 @@ import { logA4 } from "./a4/log";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { getAccountModuleShape } from "./accountModule";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
 import {
   adaptCoreOperationToLiveOperation,
@@ -467,10 +468,10 @@ export function genericGetAccountShape(
     const context = buildContext(currency.id);
     const bridgeApi = await getBridgeApi(currency, network);
 
-    // The account is not an address: the family builds the whole shape (ADR-065).
-    if (bridgeApi.accountLayer) {
+    // The account is served by an account module, which owns its addresses (ADR-064 Option 1).
+    if (bridgeApi.accountModule) {
       if (!signer) throw new Error(`No signer to sync a ${network} account`);
-      return bridgeApi.accountLayer.getAccountShape(info, syncConfig, {
+      return getAccountModuleShape(bridgeApi.accountModule, info, {
         api: coinModuleApi,
         context,
         signerContext: signer.context,

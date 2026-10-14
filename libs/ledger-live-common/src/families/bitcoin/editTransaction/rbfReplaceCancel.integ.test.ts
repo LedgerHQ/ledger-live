@@ -1,8 +1,8 @@
 /**
  * Integration tests for Bitcoin RBF (Replace-By-Fee) cancel and speedup on the generic bridge
- * stack (ADR-065): the edit transaction helpers, the account layer (change address, own addresses,
- * replacement intent) and coin-bitcoin's fee estimation, against an explorer serving fixture
- * transactions (no network). Only the coin module resolution is mocked.
+ * stack: the edit transaction helpers, the UTXO account module (change address, own addresses,
+ * replacement intent) and coin-bitcoin's primitives and fee estimation, against an explorer
+ * serving fixture transactions (no network). Only the coin module resolution is mocked.
  *
  * Covers:
  * - Speed up / cancel of a pending send: recipient, amount, rate, change, excluded pending change.
@@ -20,6 +20,9 @@ import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/ind
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { REPLACE_CANCEL, REPLACE_SPEEDUP, type BitcoinTxData } from "@ledgerhq/coin-bitcoin/api";
 import { estimateFees } from "@ledgerhq/coin-bitcoin/logic/estimateFees";
+import { getTransaction } from "@ledgerhq/coin-bitcoin/logic/getTransaction";
+import { deriveAddress } from "@ledgerhq/coin-bitcoin/logic/derivation";
+import { emptyState, versioned, type UtxoCoinModuleApi } from "@ledgerhq/account-module-utxo";
 import {
   buildRbfFixtureTxs,
   buildRbfFixtureTxsWithTwoUtxos,
@@ -27,17 +30,16 @@ import {
 } from "@ledgerhq/coin-bitcoin/fixtures/rbf.fixtures";
 import { removeReplaced } from "@ledgerhq/wallet-btc/operations";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
-import { cryptoFor } from "../accountLayer/derivation";
-import { bitcoinAccountLayer } from "../accountLayer";
-import { computeIntentType } from "../accountLayer/selection";
+import { accountModulePostSync } from "../../../bridge/generic-coin-framework/accountModule";
+import { cryptoFor } from "../accountModule/derivation";
+import { bitcoinAccountModuleBinding, computeIntentType } from "../accountModule";
+import { bitcoinAccountData } from "../accountModule/account";
+import { accountOptions } from "../accountModule/intent";
+import { bitcoinAccountModule } from "../accountModule/module";
 
-// the account layer as the generic bridge runs it: the multi-address engine and the bitcoin family
-const { postSync } = bitcoinAccountLayer;
-const completeIntent = (...args: Parameters<typeof bitcoinAccountLayer.completeIntent>) =>
-  bitcoinAccountLayer.completeIntent(...args) as Promise<
-    TransactionIntent<any, any> & { data?: BitcoinTxData }
-  >;
-import { emptyAccountState } from "../accountLayer/state";
+// the pending operations rule of the generic bridge for an account-module family
+const postSync = (_initial: BitcoinAccount, synced: BitcoinAccount) =>
+  accountModulePostSync(bitcoinAccountModuleBinding, synced);
 import { fromTransactionRaw } from "../transaction";
 import {
   bitcoinPickingStrategy,
@@ -101,7 +103,7 @@ function createMockExplorer(txHexMap: TxHexMap) {
 
 type MockExplorer = ReturnType<typeof createMockExplorer>;
 
-/** The local coin module, estimating against the mock explorer. */
+/** The local coin module, its primitives and estimation against the mock explorer. */
 function serveCoinModule(explorer: MockExplorer) {
   const api = {
     estimateFees: jest.fn(
@@ -111,15 +113,20 @@ function serveCoinModule(explorer: MockExplorer) {
         options?: { customFeesParameters?: Record<string, unknown> },
       ) => estimateFees(explorer as never, "bitcoin", intent, options?.customFeesParameters),
     ),
+    getTransaction: (_context: unknown, txid: string) =>
+      getTransaction(explorer as never, "bitcoin", txid),
+    deriveAddress: (_context: unknown, request: Parameters<typeof deriveAddress>[1]) =>
+      deriveAddress("bitcoin", request),
+    craftTransactionData: () => ({ type: "bitcoin" }),
   };
   (getCoinModuleApi as jest.Mock).mockResolvedValue(api);
   return api;
 }
 
-/** The coin module's estimation of an intent the account layer completed. */
+/** The coin module's estimation of an intent the account module completed. */
 const estimateCompleted = (
   explorer: MockExplorer,
-  intent: Awaited<ReturnType<typeof completeIntent>>,
+  intent: Intent,
   parameters?: Record<string, unknown>,
 ) =>
   estimateFees(
@@ -197,19 +204,19 @@ function createBitcoinAccount(
     swapHistory: [],
     bitcoinResources: {
       utxos,
-      accountState: {
-        ...emptyAccountState(),
+      accountState: versioned({
+        ...emptyState(),
         syncedHeight: 100_000,
         addresses: [
           { address: addresses.receive0, chain: 0, index: 0 },
           { address: addresses.change0, chain: 1, index: 0 },
         ],
-      },
+      }),
     },
   } as BitcoinAccount;
 }
 
-/** The intent the generic bridge builds for a transaction, before the account layer completes it. */
+/** The intent the generic bridge builds for a transaction, before the account module completes it. */
 const intentOf = (account: BitcoinAccount, transaction: BtcTransaction): Intent => {
   const { feePerByte } = transaction.familySpecificData ?? {};
   return {
@@ -223,17 +230,19 @@ const intentOf = (account: BitcoinAccount, transaction: BtcTransaction): Intent 
   };
 };
 
-const completeReplacement = (
+/** The intent the account module hands the coin module for a replacement transaction. */
+const completeReplacement = async (
   account: BitcoinAccount,
   transaction: BtcTransaction,
   api: ReturnType<typeof serveCoinModule>,
-) =>
-  completeIntent(
-    intentOf(account, transaction),
-    account,
-    transaction as unknown as Record<string, unknown>,
-    { api: api as never, context: {} as never },
-  );
+): Promise<Intent> => {
+  const module = bitcoinAccountModule(api as unknown as UtxoCoinModuleApi, "bitcoin");
+  await module.estimateFees({} as never, bitcoinAccountData(account), {
+    ...intentOf(account, transaction),
+    accountOptions: accountOptions(transaction as unknown as Record<string, unknown>),
+  });
+  return api.estimateFees.mock.calls[api.estimateFees.mock.calls.length - 1][1];
+};
 
 const makeStatus = () => ({
   errors: {},
@@ -415,7 +424,7 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
 
     expect(intent.type).toBe(REPLACE_SPEEDUP);
     expect(intent.data).toMatchObject({
-      derivationMode: "Legacy",
+      derivationMode: "",
       feePerByte: "94",
       change: { address: addresses.change1, path: "44'/0'/0'/1/1" },
       inputs: [

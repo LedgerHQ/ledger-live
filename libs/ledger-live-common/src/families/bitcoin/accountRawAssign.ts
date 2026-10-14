@@ -1,6 +1,6 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type { AccountRawAssignHooks } from "../../bridge/generic-coin-framework/types";
-import { migrateWalletAccount, readAccountState } from "./accountLayer/state";
+import { migrateWalletAccount, readAccountState } from "./accountModule/state";
 import { fromBitcoinOutputRaw, toBitcoinOutputRaw } from "./serialization";
 import type { BitcoinAccount, BitcoinAccountRaw } from "./types";
 

@@ -3,7 +3,8 @@ import type { CraftedTransaction, FeeEstimation } from "@ledgerhq/coin-module-fr
 import type { Explorer } from "../network/explorer";
 import { getTxHex } from "./txHex";
 import { inputSequence, signingRules } from "./currency";
-import { feeInputs, resolveIntent, shapeOf, type BitcoinIntent } from "./intent";
+import { isReplaceable } from "./replacement";
+import { derivationModeOf, feeInputs, resolveIntent, shapeOf, type BitcoinIntent } from "./intent";
 import type { ShapeOutput } from "./shape";
 import { BITCOIN_SIGNING_ENVELOPE_VERSION, type BitcoinSigningEnvelope } from "./types";
 
@@ -40,6 +41,8 @@ export type CraftedDetails = {
   amount: bigint;
   senders: string[];
   recipients: string[];
+  /** Signals BIP125 replaceability. */
+  replaceable: boolean;
 };
 
 /** Lays out the transaction and returns the device signing request (see {@link BitcoinSigningEnvelope}). */
@@ -65,7 +68,7 @@ export async function craftTransaction(
   ]);
   const hexById = new Map(prevTxIds.map((txid, i) => [txid, prevTxHexes[i]]));
 
-  const rules = signingRules(currencyId, data.derivationMode ?? "Legacy", intent.recipient);
+  const rules = signingRules(currencyId, derivationModeOf(data), intent.recipient);
   const sequence = inputSequence(currencyId);
   const lastOutput = shape.outputs[shape.outputs.length - 1];
 
@@ -106,6 +109,7 @@ export async function craftTransaction(
     recipients: shape.outputs
       .filter(o => !o.isChange && o.address !== null)
       .map(o => o.address as string),
+    replaceable: isReplaceable(envelope),
   };
 
   return { transaction: JSON.stringify(envelope), details };

@@ -1,14 +1,14 @@
 import type { Account } from "@ledgerhq/types-live";
 import {
   REPLACE_SPEEDUP,
+  toBitcoinDerivationMode,
   type BitcoinFeeParameters,
   type BitcoinTxData,
 } from "@ledgerhq/coin-bitcoin/api";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
-import { toWalletDerivationMode } from "../accountLayer/derivation";
-import { conflictingTxIds } from "../accountLayer/selection";
+import { conflictingTxIds } from "../accountModule/account";
 
 /**
  * What the network says about a pending transaction to replace: its inputs and outputs, its fee and
@@ -33,7 +33,7 @@ export async function getReplacementEstimate(
       asset: { type: "native" },
       data: {
         type: "bitcoin",
-        derivationMode: toWalletDerivationMode(account.derivationMode),
+        derivationMode: toBitcoinDerivationMode(account.derivationMode),
         replacement,
       },
     };

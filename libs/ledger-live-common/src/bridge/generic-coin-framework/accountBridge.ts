@@ -17,6 +17,7 @@ import { genericBroadcast } from "./broadcast";
 import { genericSignOperation } from "./signOperation";
 import { genericSignRawOperation } from "./signRawOperation";
 import { postSync } from "./postSync";
+import { accountModulePostSync } from "./accountModule";
 import { genericValidateAddress } from "./validateAddress";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
 import type { GenericTransaction, CoinFrameworkSigner } from "./types";
@@ -39,8 +40,10 @@ export async function getCoinFrameworkAccountBridge(
   return {
     sync: makeSync({
       getAccountShape: genericGetAccountShape(network, kind, signer),
-      postSync: (initial, synced) =>
-        (resolveBridgeApi(synced.currency).accountLayer?.postSync ?? postSync)(initial, synced),
+      postSync: (initial, synced) => {
+        const binding = resolveBridgeApi(synced.currency).accountModule;
+        return binding ? accountModulePostSync(binding, synced) : postSync(initial, synced);
+      },
       shouldMergeOps: async account => {
         const bridgeApi = await getBridgeApi(account.currency, network);
         return bridgeApi.shouldMergeOps ?? true;
@@ -69,7 +72,7 @@ export async function getCoinFrameworkAccountBridge(
     // NOTE: check whether it should be exposed by coin-module's api instead?
     getSerializedAddressParameters: (account, addressFormat) => {
       const fromFamily =
-        resolveBridgeApi(account.currency).accountLayer?.getSerializedAddressParameters;
+        resolveBridgeApi(account.currency).accountModule?.getSerializedAddressParameters;
       return fromFamily
         ? fromFamily(account, addressFormat)
         : getSerializedAddressParameters(account);

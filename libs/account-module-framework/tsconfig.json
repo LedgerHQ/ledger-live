@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "lib": ["es2022", "dom"],
+    "types": ["node", "jest"],
+    "outDir": "lib",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"]
+}

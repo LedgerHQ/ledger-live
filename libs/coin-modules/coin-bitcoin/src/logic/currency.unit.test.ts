@@ -3,11 +3,28 @@ jest.mock("./networks", () => {
   return { ...actual, getNetworkParameters: jest.fn(actual.getNetworkParameters) };
 });
 import { getNetworkParameters } from "./networks";
-import { cryptoFor, inputSequence, isRbfCurrency, signingRules } from "./currency";
+import { cryptoFor, displayAddress, inputSequence, isRbfCurrency, signingRules } from "./currency";
 
 describe("cryptoFor", () => {
   it("builds the currency rules once", () => {
     expect(cryptoFor("litecoin")).toBe(cryptoFor("litecoin"));
+  });
+});
+
+describe("displayAddress", () => {
+  it("shows a Bitcoin Cash address without its cashaddr prefix", () => {
+    expect(
+      displayAddress("bitcoin_cash", "bitcoincash:qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a"),
+    ).toBe("qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a");
+    expect(displayAddress("bitcoin_cash", "qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a")).toBe(
+      "qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a",
+    );
+  });
+
+  it("shows any other address as is", () => {
+    expect(displayAddress("bitcoin", "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs")).toBe(
+      "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs",
+    );
   });
 });
 

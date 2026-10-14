@@ -1,3 +1,4 @@
+import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { REPLACE_SPEEDUP } from "@ledgerhq/coin-bitcoin/api";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
@@ -96,7 +97,17 @@ describe("getReplacementEstimate", () => {
       .mockResolvedValueOnce({ value: 0n, parameters: replaced })
       .mockResolvedValueOnce({ value: 0n, parameters: withConflicts });
     const pending = (hash: string, inputs: string[], blockHeight: number | null = null) =>
-      ({ hash, blockHeight, extra: { inputs } }) as never;
+      ({
+        hash,
+        type: "OUT",
+        value: new BigNumber(1),
+        fee: new BigNumber(0),
+        senders: [],
+        recipients: [],
+        date: new Date(),
+        blockHeight,
+        extra: { inputs },
+      }) as never;
 
     const result = await getReplacementEstimate(
       account("native_segwit", "bitcoin", {

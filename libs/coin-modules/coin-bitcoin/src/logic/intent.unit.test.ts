@@ -1,5 +1,6 @@
 import { BTC_RECIPIENT } from "../test/fakeExplorer";
 import {
+  derivationModeOf,
   explorerFor,
   feeInputs,
   intentData,
@@ -8,6 +9,7 @@ import {
   recipientScript,
   shapeInputs,
   type BitcoinIntent,
+  withNormalizedRecipient,
 } from "./intent";
 import type { ReplacementContext } from "./replacement";
 import type { BitcoinContext } from "./types";
@@ -74,6 +76,14 @@ describe("intent helpers", () => {
     expect(intentData(intent())).toEqual({ type: "bitcoin" });
   });
 
+  it("reads the derivation mode in either naming, Legacy when absent", () => {
+    expect(derivationModeOf({ type: "bitcoin", derivationMode: "native_segwit" })).toBe(
+      "Native SegWit",
+    );
+    expect(derivationModeOf({ type: "bitcoin", derivationMode: "Taproot" })).toBe("Taproot");
+    expect(derivationModeOf({ type: "bitcoin" })).toBe("Legacy");
+  });
+
   it("tells a cancel", () => {
     expect(isCancel(intent({ type: "replace-cancel" }))).toBe(true);
     expect(isCancel(intent())).toBe(false);
@@ -101,6 +111,23 @@ describe("intent helpers", () => {
       feePerByte: undefined,
       feesStrategy: "slow",
     });
+  });
+});
+
+describe("withNormalizedRecipient", () => {
+  it("lowercases a bech32 recipient typed in uppercase", () => {
+    const intent = { recipient: "BC1QAR0SRRR7XFKVY5L643LYDNW9RE59GTZZWF5MDQ", amount: 1n };
+    expect(withNormalizedRecipient(intent)).toEqual({
+      recipient: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
+      amount: 1n,
+    });
+  });
+
+  it("keeps any other recipient as given", () => {
+    const lowercase = { recipient: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq" };
+    const legacy = { recipient: "1BKWjmA9swxRKMH9NgXpSz8YZfVMnWWU9D" };
+    expect(withNormalizedRecipient(lowercase)).toBe(lowercase);
+    expect(withNormalizedRecipient(legacy)).toBe(legacy);
   });
 });
 

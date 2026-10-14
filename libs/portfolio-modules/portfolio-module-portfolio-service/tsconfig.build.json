@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "customConditions": [],
+    "types": [
+      "node"
+    ]
+  },
+  "exclude": [
+    "**/*.test.ts",
+    "**/__tests__/**/*",
+    "**/test/**/*"
+  ]
+}

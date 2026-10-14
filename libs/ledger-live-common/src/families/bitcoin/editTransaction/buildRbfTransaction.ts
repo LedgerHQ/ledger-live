@@ -6,24 +6,24 @@ import {
   type Transaction as BtcTransaction,
   type UtxoStrategy,
 } from "../types";
-import { getNextChangeAddress, getOwnDisplayAddresses } from "../accountLayer/selection";
-import { displayAddress } from "../accountLayer/interpret";
+import { bitcoinDisplayAddress } from "@ledgerhq/coin-bitcoin/api";
+import { getNextChangeAddress, getOwnDisplayAddresses } from "../accountModule/account";
 import { getReplacementEstimate } from "./replacement";
 
 type Output = { address: string | null; value: bigint };
 
 /** What the replaced transaction sends out of the account, and to whom. */
-function amountAndRecipient(
+async function amountAndRecipient(
   account: BitcoinAccount,
   outputs: Output[],
   knownRecipient: string | undefined,
-): { amountSent: bigint; recipient: string } {
-  const show = (address: string) => displayAddress(account.currency.id, address);
+): Promise<{ amountSent: bigint; recipient: string }> {
+  const show = (address: string) => bitcoinDisplayAddress(account.currency.id, address);
   if (knownRecipient) {
     const output = outputs.find(o => o.address && show(o.address) === knownRecipient);
     if (output) return { amountSent: output.value, recipient: knownRecipient };
   }
-  const own = getOwnDisplayAddresses(account);
+  const own = await getOwnDisplayAddresses(account);
   const external = outputs.filter(o => o.address && !own.has(show(o.address)));
   if (external.length === 0) return { amountSent: 0n, recipient: "" };
   return {
@@ -49,7 +49,11 @@ async function buildReplacement(
   const knownRecipient = account.pendingOperations.find(op => op.hash === originalTxId)
     ?.recipients?.[0];
   const outputs = parameters.replacedOutputs ?? [];
-  const { amountSent, recipient } = amountAndRecipient(bitcoinAccount, outputs, knownRecipient);
+  const { amountSent, recipient } = await amountAndRecipient(
+    bitcoinAccount,
+    outputs,
+    knownRecipient,
+  );
 
   // Not only what replaces it, but not below the network either, or the replacement is stuck too.
   const fast = new BigNumber((parameters.feeRates?.fast ?? 0n).toString());

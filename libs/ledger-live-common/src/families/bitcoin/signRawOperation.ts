@@ -11,31 +11,30 @@ import type {
   SignRawOperationFnSignature,
 } from "@ledgerhq/types-live";
 import { AccountNeedResync } from "@ledgerhq/wallet-btc/errors";
-import { buildKnownAddressDerivations, feeFromPsbt, parsePsbt } from "@ledgerhq/coin-bitcoin/api";
-import type { BitcoinAccount, BitcoinAccountAddress } from "./types";
-import type { AddressFormat, BitcoinDeviceSigner } from "./signer";
-import { accountPathOf } from "../../bridge/generic-coin-framework/multiAddressAccountLayer";
 import {
-  CHANGE_CHAIN,
-  RECEIVE_CHAIN,
-  addressDeriver,
-  toWalletDerivationMode,
-} from "./accountLayer/derivation";
-import { readAccountState } from "./accountLayer/state";
+  buildKnownAddressDerivations,
+  feeFromPsbt,
+  parsePsbt,
+  toBitcoinDerivationMode,
+} from "@ledgerhq/coin-bitcoin/api";
+import type { UtxoAddressState } from "@ledgerhq/account-module-utxo";
+import type { BitcoinAccount } from "./types";
+import type { AddressFormat, BitcoinDeviceSigner } from "./signer";
+import { accountPathOf } from "../../bridge/generic-coin-framework/accountModule";
+import { CHANGE_CHAIN, RECEIVE_CHAIN, cryptoFor } from "./accountModule/derivation";
+import { readAccountState } from "./accountModule/state";
 
 // A PSBT sending to a fresh address — WalletConnect and live apps use the next ones — must still be
 // recognized as the account's: the derivations cover two addresses ahead on each chain.
 const LOOKAHEAD = 2;
 
-async function accountAddresses(account: BitcoinAccount): Promise<BitcoinAccountAddress[]> {
-  const state = readAccountState(account.bitcoinResources?.accountState);
+async function accountAddresses(account: BitcoinAccount): Promise<UtxoAddressState[]> {
+  const state = readAccountState(account.bitcoinResources?.accountState)?.data;
   if (!state) throw new AccountNeedResync();
   const xpub = decodeAccountId(account.id).xpubOrAddress;
-  const derive = addressDeriver(
-    account.currency.id,
-    toWalletDerivationMode(account.derivationMode),
-    xpub,
-  );
+  const crypto = cryptoFor(account.currency.id);
+  const mode = toBitcoinDerivationMode(account.derivationMode);
+  const derive = (chain: number, index: number) => crypto.getAddress(mode, xpub, chain, index);
   const ahead = await Promise.all(
     [RECEIVE_CHAIN, CHANGE_CHAIN].flatMap(chain => {
       const next =

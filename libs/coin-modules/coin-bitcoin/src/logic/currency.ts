@@ -29,6 +29,10 @@ export const isRbfCurrency = (currencyId: string): boolean => RBF_CURRENCIES.has
 export const inputSequence = (currencyId: string): number =>
   isRbfCurrency(currencyId) ? 0 : 0xffffffff;
 
+/** The address as Ledger Wallet shows it: Bitcoin Cash cashaddr without its "bitcoincash:" prefix. */
+export const displayAddress = (currencyId: string, address: string): string =>
+  currencyId === "bitcoin_cash" ? address.slice(address.indexOf(":") + 1) : address;
+
 const EXTRA_DATA_CURRENCIES: ReadonlySet<string> = new Set(["zencash", "zcash", "komodo"]);
 const EXPIRY_HEIGHT_CURRENCIES: ReadonlySet<string> = new Set(["zcash", "komodo", "decred"]);
 

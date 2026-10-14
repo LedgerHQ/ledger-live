@@ -96,6 +96,31 @@ describe("craftTransaction", () => {
     expect(details.inputs).toEqual([`${txid}-0`]);
     expect(details.recipients).toEqual([BTC_RECIPIENT]);
     expect(details.senders).toEqual([BTC_CHANGE]);
+    expect(details.replaceable).toBe(true);
+  });
+
+  it("reads a Ledger Wallet derivation mode as wallet-btc's", async () => {
+    const { txid, hex } = prevTx(BTC_CHANGE);
+    const explorer = fakeExplorer({ txHex: { [txid]: hex } });
+    const base = intent({}, txid);
+    const craftWith = async (derivationMode: string) =>
+      parseEnvelope(
+        (
+          await craftTransaction(
+            explorer,
+            "bitcoin",
+            { ...base, data: { ...base.data, derivationMode } },
+            { value: 0n, parameters: { feePerByte: "10" } },
+          )
+        ).transaction,
+      );
+
+    const [ledgerWallet, walletBtc] = await Promise.all([
+      craftWith("native_segwit"),
+      craftWith("Native SegWit"),
+    ]);
+    expect(ledgerWallet).toEqual(walletBtc);
+    expect(ledgerWallet).toMatchObject({ segwit: true, additionals: ["bitcoin", "bech32"] });
   });
 
   it("does not opt in to replacement where the network does not relay it", async () => {
@@ -135,6 +160,7 @@ describe("craftTransaction", () => {
     expect(envelope.inputs[0].sequence).toBe(0xffffffff);
     expect(envelope.segwit).toBe(false);
     expect(envelope.changePath).toBeUndefined();
+    expect((crafted.details as CraftedDetails).replaceable).toBe(false);
   });
 
   it("rejects an envelope of another version", () => {

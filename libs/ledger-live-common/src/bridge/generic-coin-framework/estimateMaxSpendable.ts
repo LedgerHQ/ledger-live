@@ -13,7 +13,7 @@ import {
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 import { getBridgeApi } from "./bridge";
-import { completeIntent } from "./accountLayer";
+import { intentApiFor } from "./accountModule";
 
 export function genericEstimateMaxSpendable(
   network,
@@ -35,21 +35,19 @@ export function genericEstimateMaxSpendable(
       useAllAmount: true,
     };
 
-    const estimated = await coinModuleApi.estimateFees(
+    const estimated = await intentApiFor(
+      bridgeApi,
+      coinModuleApi,
+      mainAccount,
+      draftTransaction,
+    ).estimateFees(
       context,
-      await completeIntent(
-        bridgeApi,
-        transactionToIntent(
-          mainAccount,
-          draftTransaction,
-          bridgeApi.computeIntentType,
-          intent => coinModuleApi.craftTransactionData(context, intent),
-          bridgeApi.buildIntentData,
-        ),
+      transactionToIntent(
         mainAccount,
         draftTransaction,
-        coinModuleApi,
-        context,
+        bridgeApi.computeIntentType,
+        intent => coinModuleApi.craftTransactionData(context, intent),
+        bridgeApi.buildIntentData,
       ),
     );
     const estimation: FeeEstimation = {

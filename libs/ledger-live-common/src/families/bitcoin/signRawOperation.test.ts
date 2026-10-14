@@ -2,36 +2,39 @@ const parsePsbt = jest.fn((_psbt: string) => Buffer.from("psbt"));
 const feeFromPsbt = jest.fn((_psbt: Buffer): unknown => undefined);
 const buildKnownAddressDerivations = jest.fn(async (..._args: unknown[]) => new Map([["k", "v"]]));
 jest.mock("@ledgerhq/coin-bitcoin/api", () => ({
+  toBitcoinDerivationMode: (mode: string) => (mode === "native_segwit" ? "Native SegWit" : mode),
   parsePsbt: (psbt: string) => parsePsbt(psbt),
   feeFromPsbt: (psbt: Buffer) => feeFromPsbt(psbt),
   buildKnownAddressDerivations: (...args: unknown[]) => buildKnownAddressDerivations(...args),
 }));
-const derive = jest.fn(async (chain: number, index: number) => `addr-${chain}-${index}`);
-const addressDeriver = jest.fn((..._args: unknown[]) => derive);
-jest.mock("./accountLayer/derivation", () => ({
-  ...jest.requireActual("./accountLayer/derivation"),
-  addressDeriver: (...args: unknown[]) => addressDeriver(...args),
+const getAddress = jest.fn(
+  async (_mode: string, _xpub: string, chain: number, index: number) => `addr-${chain}-${index}`,
+);
+const cryptoFor = jest.fn((_currencyId: string) => ({ getAddress }));
+jest.mock("./accountModule/derivation", () => ({
+  ...jest.requireActual("./accountModule/derivation"),
+  cryptoFor: (currencyId: string) => cryptoFor(currencyId),
 }));
 
 import { BigNumber } from "bignumber.js";
 import { lastValueFrom, toArray } from "rxjs";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
-import { emptyAccountState } from "./accountLayer/state";
+import { emptyState, versioned } from "@ledgerhq/account-module-utxo";
 import { buildSignRawOperation } from "./signRawOperation";
 import type { BitcoinAccount } from "./types";
 
 const XPUB = "xpub-of-the-account";
 
 const account = (
-  accountState: unknown = {
-    ...emptyAccountState(),
+  accountState: unknown = versioned({
+    ...emptyState(),
     addresses: [
       { address: "addr-0-0", chain: 0, index: 0 },
       { address: "addr-0-4", chain: 0, index: 4 },
       { address: "addr-1-1", chain: 1, index: 1 },
     ],
-  },
+  }),
 ) =>
   ({
     id: `js:2:bitcoin:${XPUB}:native_segwit`,
@@ -72,7 +75,8 @@ describe("buildSignRawOperation", () => {
     feeFromPsbt.mockReturnValueOnce(new BigNumber(300));
     const events = await sign(account());
 
-    expect(addressDeriver).toHaveBeenCalledWith("bitcoin", "Native SegWit", XPUB);
+    expect(cryptoFor).toHaveBeenCalledWith("bitcoin");
+    expect(getAddress).toHaveBeenCalledWith("Native SegWit", XPUB, 0, 5);
     expect(buildKnownAddressDerivations).toHaveBeenCalledWith("bitcoin", XPUB, "84'/0'/2'", [
       { address: "addr-0-0", chain: 0, index: 0 },
       { address: "addr-0-4", chain: 0, index: 4 },
@@ -122,7 +126,7 @@ describe("buildSignRawOperation", () => {
 
   it("returns the finalized transaction when broadcasting, and a zero fee it cannot read", async () => {
     signer.signPsbtBuffer.mockResolvedValueOnce({ psbt: Buffer.from("signed"), tx: "0200hex" });
-    const events = await sign(account({ ...emptyAccountState() }), true);
+    const events = await sign(account(versioned(emptyState())), true);
 
     expect(signer.signPsbtBuffer.mock.calls[0][2]).toMatchObject({ finalizePsbt: true });
     expect(buildKnownAddressDerivations.mock.calls[0][3]).toEqual([

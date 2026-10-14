@@ -1,13 +1,16 @@
-const migrated = { version: 1, syncedHeight: 90, anchor: null, addresses: [], confirmedUtxos: [] };
+const migrated = {
+  version: 1,
+  data: { syncedHeight: 90, anchor: null, addresses: [], confirmedUtxos: [], utxos: [] },
+};
 const migrateWalletAccount = jest.fn((..._args: unknown[]) => migrated);
-jest.mock("./accountLayer/state", () => ({
-  ...jest.requireActual("./accountLayer/state"),
+jest.mock("./accountModule/state", () => ({
+  ...jest.requireActual("./accountModule/state"),
   migrateWalletAccount: (...args: unknown[]) => migrateWalletAccount(...args),
 }));
 
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { emptyAccountState } from "./accountLayer/state";
+import { emptyState, versioned } from "@ledgerhq/account-module-utxo";
 import accountRawAssign from "./accountRawAssign";
 import { fromBitcoinOutputRaw, toBitcoinOutputRaw } from "./serialization";
 import type { BitcoinAccount, BitcoinAccountRaw, BitcoinOutput } from "./types";
@@ -44,7 +47,7 @@ describe("output codec", () => {
 describe("assignToAccountRaw", () => {
   it("writes the UTXOs and the account state, never the legacy store", () => {
     const accountRaw = {} as AccountRaw;
-    const accountState = emptyAccountState();
+    const accountState = versioned(emptyState());
     accountRawAssign.assignToAccountRaw(
       {
         bitcoinResources: { utxos: [utxo], accountState, walletAccount: { legacy: true } },
@@ -78,7 +81,7 @@ describe("assignFromAccountRaw", () => {
   };
 
   it("restores the UTXOs and a state of the current version", () => {
-    const accountState = emptyAccountState();
+    const accountState = versioned(emptyState());
     expect(
       assign({ bitcoinResources: { utxos: [toBitcoinOutputRaw(utxo)], accountState } })
         .bitcoinResources,

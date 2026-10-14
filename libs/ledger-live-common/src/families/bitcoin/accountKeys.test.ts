@@ -1,11 +1,15 @@
 import type { Account } from "@ledgerhq/types-live";
 import { AccountNeedResync } from "@ledgerhq/wallet-btc/errors";
 import { getBitcoinAccountKeys } from "./accountKeys";
-import { cryptoFor } from "./accountLayer/derivation";
-import { BITCOIN_ACCOUNT_STATE_VERSION, type BitcoinAccountState } from "./types";
+import {
+  UTXO_ACCOUNT_STATE_VERSION,
+  type UtxoAccountState,
+  type UtxoAddressState,
+} from "@ledgerhq/account-module-utxo";
+import { cryptoFor } from "./accountModule/derivation";
 
-jest.mock("./accountLayer/derivation", () => ({
-  ...jest.requireActual("./accountLayer/derivation"),
+jest.mock("./accountModule/derivation", () => ({
+  ...jest.requireActual("./accountModule/derivation"),
   cryptoFor: jest.fn(),
 }));
 
@@ -16,22 +20,22 @@ const crypto = {
   getPubkeyAt: jest.fn(),
 };
 
-const accountState = (addresses: BitcoinAccountState["addresses"]): BitcoinAccountState => ({
-  version: BITCOIN_ACCOUNT_STATE_VERSION,
-  syncedHeight: 100,
-  anchor: null,
-  addresses,
-  confirmedUtxos: [],
-});
-
-const utxo = (address: string) => ({
-  hash: "txid",
-  outputIndex: 0,
-  blockHeight: 1,
-  address,
-  value: "1000",
-  rbf: false,
-  isChange: false,
+const accountState = (addresses: UtxoAddressState[], unspentOn: string[] = []) => ({
+  version: UTXO_ACCOUNT_STATE_VERSION,
+  data: {
+    syncedHeight: 100,
+    anchor: null,
+    addresses,
+    confirmedUtxos: [],
+    utxos: unspentOn.map(address => ({
+      txid: "txid",
+      vout: 0,
+      value: "1000",
+      address,
+      height: 1,
+      replaceable: false,
+    })),
+  } satisfies UtxoAccountState,
 });
 
 const createAccount = (overrides: Record<string, unknown> = {}): Account =>
@@ -151,11 +155,14 @@ describe("getBitcoinAccountKeys", () => {
       const keys = getBitcoinAccountKeys(
         createAccount({
           bitcoinResources: {
-            utxos: [utxo("bc1qused")],
-            accountState: accountState([
-              { address: "bc1qused", chain: 0, index: 0 },
-              { address: "bc1qempty", chain: 1, index: 2 },
-            ]),
+            utxos: [],
+            accountState: accountState(
+              [
+                { address: "bc1qused", chain: 0, index: 0 },
+                { address: "bc1qempty", chain: 1, index: 2 },
+              ],
+              ["bc1qused"],
+            ),
           },
         }),
       );
@@ -166,7 +173,7 @@ describe("getBitcoinAccountKeys", () => {
       ]);
     });
 
-    it("matches Bitcoin Cash outputs on their displayed cashaddr form", () => {
+    it("matches Bitcoin Cash outputs on the address form the state keeps", () => {
       const keys = getBitcoinAccountKeys(
         createAccount({
           id: "js:2:bitcoin_cash:xpubBCH:",
@@ -174,8 +181,11 @@ describe("getBitcoinAccountKeys", () => {
           derivationMode: "",
           freshAddressPath: "145'/145'/0'/0/0",
           bitcoinResources: {
-            utxos: [utxo("qpcashaddr")],
-            accountState: accountState([{ address: "bitcoincash:qpcashaddr", chain: 0, index: 0 }]),
+            utxos: [],
+            accountState: accountState(
+              [{ address: "bitcoincash:qpcashaddr", chain: 0, index: 0 }],
+              ["bitcoincash:qpcashaddr"],
+            ),
           },
         }),
       );
@@ -210,7 +220,7 @@ describe("getBitcoinAccountKeys", () => {
         {
           bitcoinResources: {
             utxos: [],
-            accountState: { ...accountState([]), version: BITCOIN_ACCOUNT_STATE_VERSION + 1 },
+            accountState: { ...accountState([]), version: UTXO_ACCOUNT_STATE_VERSION + 1 },
           },
         },
       ],

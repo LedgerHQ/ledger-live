@@ -5,7 +5,7 @@ import { UnsupportedDerivation } from "@ledgerhq/ledger-wallet-framework/errors"
 import { getAddressFormatDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
-import type { AccountLayerDeviceEvents } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { SignerDeviceEvents } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { BitcoinSigningEnvelope } from "@ledgerhq/coin-bitcoin/api";
 import { BITCOIN_SIGNING_ENVELOPE_VERSION } from "@ledgerhq/coin-bitcoin/api";
@@ -41,7 +41,7 @@ export type BitcoinDeviceSigner = {
   signTransaction(
     path: string,
     envelope: string,
-    options?: Partial<AccountLayerDeviceEvents>,
+    options?: Partial<SignerDeviceEvents>,
   ): Promise<string>;
   getWalletXpub(args: { currencyId: string; path: string; xpubVersion: number }): Promise<string>;
   signPsbtBuffer(

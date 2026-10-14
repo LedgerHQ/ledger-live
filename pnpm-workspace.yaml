@@ -8,6 +8,8 @@ packages:
   - "libs/*"
   - "tests/*"
   - "libs/coin-modules/*"
+  - "libs/account-modules/*"
+  - "libs/portfolio-modules/*"
   - "libs/coin-tester-modules/*"
   - "libs/ledgerjs/**"
   - "libs/ledger-services/**"

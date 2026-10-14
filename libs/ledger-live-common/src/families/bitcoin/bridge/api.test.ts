@@ -5,7 +5,7 @@ jest.mock("../signRawOperation", () => {
 });
 jest.mock("../signer", () => ({ __esModule: true, default: { context: "signer-context" } }));
 
-import { bitcoinAccountLayer, computeIntentType } from "../accountLayer";
+import { bitcoinAccountModuleBinding, computeIntentType } from "../accountModule";
 import { buildSignRawOperation } from "../signRawOperation";
 import bitcoinBridgeApi, { buildIntentData } from "./api";
 
@@ -47,13 +47,13 @@ describe("buildIntentData", () => {
 });
 
 describe("bitcoin BridgeApi", () => {
-  it("plugs the account layer in", () => {
+  it("plugs the account module in", () => {
     expect(bitcoinBridgeApi).toMatchObject({
       computeIntentType,
       buildIntentData,
       forwardsFeeParametersToCraft: true,
       shouldMergeOps: false,
-      accountLayer: bitcoinAccountLayer,
+      accountModule: bitcoinAccountModuleBinding,
       signRawOperation,
     });
     expect(buildSignRawOperation).toHaveBeenCalledWith("signer-context");

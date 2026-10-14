@@ -3,10 +3,16 @@ import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/type
 import type { MemoNotSupported } from "@ledgerhq/coin-module-framework/api/types";
 import { explorer as makeExplorer, type Explorer } from "../network/explorer";
 import { cryptoFor } from "./currency";
+import { toBitcoinDerivationMode } from "./derivation";
 import { getFeeRates, resolveFeePerByte, type FeeRates } from "./fees";
 import { getReplacementContext, type ReplacementContext } from "./replacement";
 import { computeShape, type ShapeInput, type TxShape } from "./shape";
-import { REPLACE_CANCEL, type BitcoinContext, type BitcoinTxData } from "./types";
+import {
+  REPLACE_CANCEL,
+  type BitcoinContext,
+  type BitcoinDerivationMode,
+  type BitcoinTxData,
+} from "./types";
 
 export type BitcoinIntent = TransactionIntent<MemoNotSupported, BitcoinTxData>;
 
@@ -24,7 +30,19 @@ export async function explorerFor(context: BitcoinContext, currencyId: string): 
 export const intentData = (intent: BitcoinIntent): BitcoinTxData =>
   intent.data && intent.data.type === "bitcoin" ? intent.data : { type: "bitcoin" };
 
+/** Bech32 recipients are typed in any case by users, but only their lowercase form is valid. */
+export function withNormalizedRecipient<T extends { recipient: string }>(intent: T): T {
+  const lowercase = intent.recipient.toLowerCase();
+  return lowercase.startsWith("bc1") && lowercase !== intent.recipient
+    ? { ...intent, recipient: lowercase }
+    : intent;
+}
+
 export const isCancel = (intent: BitcoinIntent): boolean => intent.type === REPLACE_CANCEL;
+
+/** The account's derivation mode, whichever naming the intent uses; Legacy when absent. */
+export const derivationModeOf = (data: BitcoinTxData): BitcoinDerivationMode =>
+  toBitcoinDerivationMode(data.derivationMode ?? "Legacy");
 
 /** The recipient as bytes, or `undefined` while it is not a valid address of the currency. */
 export function recipientScript(currencyId: string, recipient: string): Buffer | undefined {
@@ -103,7 +121,7 @@ export function shapeOf(
   const { data, feePerByte, rates, replacement } = resolved;
   return computeShape({
     crypto: cryptoFor(currencyId),
-    derivationMode: data.derivationMode ?? "Legacy",
+    derivationMode: derivationModeOf(data),
     inputs: shapeInputs(data, replacement),
     recipient: intent.recipient,
     amount: intent.amount,
