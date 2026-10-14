@@ -257,6 +257,7 @@ export const test = base.extend<TestFixtures>({
 
     // launch app
     const windowSize = { width: 1024, height: 768 };
+    const isRetryOfFailedTest = testInfo.retry > 0;
 
     const electronApp: ElectronApplication = await launchApp({
       env,
@@ -265,7 +266,7 @@ export const test = base.extend<TestFixtures>({
       userdataDestinationPath,
       simulateCamera,
       windowSize,
-      recordVideo: isLastRetry(testInfo),
+      recordVideo: isRetryOfFailedTest && isLastRetry(testInfo),
     });
 
     await use(electronApp);
