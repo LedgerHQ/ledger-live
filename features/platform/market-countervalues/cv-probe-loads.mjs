@@ -25,7 +25,18 @@ if (!file) {
 }
 
 const effects = [];
+let summary = null;
 for (const line of readFileSync(file, "utf8").split("\n")) {
+  const atSummary = line.indexOf("cv-probe {");
+  if (atSummary !== -1) {
+    try {
+      const sm = JSON.parse(line.slice(atSummary + "cv-probe ".length));
+      if (sm.elapsedMs <= to) summary = sm;
+    } catch {
+      // a truncated logcat line
+    }
+    continue;
+  }
   const at = line.indexOf("cv-probe-event {");
   if (at === -1) continue;
   let e;
@@ -191,4 +202,46 @@ if (perLoad) {
       ].join(" "),
     );
   }
+}
+
+// Cumulative since launch, from the last summary in range: which actions produced the state each
+// hook-driven render read, and what the selectors cost.
+if (summary?.drivenBy) {
+  const isCountervalues = type => /^countervalues(Rates|Sync)\//.test(type);
+  const isStoreSetup = type => type.startsWith("@@redux/");
+  console.log(
+    `\n## Attribution, launch to ${Math.round(summary.elapsedMs / 1000)} s (${summary.actions.total} actions)`,
+  );
+  for (const [hookName, byType] of Object.entries(summary.drivenBy)) {
+    const total = Object.values(byType).reduce((n, v) => n + v, 0);
+    const outside = Object.entries(byType).filter(([type]) => !isCountervalues(type));
+    console.log(`  ${hookName}: ${total} hook-driven renders`);
+    for (const [type, n] of Object.entries(byType).sort((a, b) => b[1] - a[1])) {
+      const flag = isCountervalues(type)
+        ? ""
+        : isStoreSetup(type)
+          ? "  (store setup)"
+          : "  <-- FINDING";
+      console.log(`    ${String(n).padStart(6)}  ${type}${flag}`);
+    }
+    if (outside.length === 0) console.log("    all after a countervalues action");
+  }
+  const changes = (label, byType) => {
+    const other = Object.entries(byType).filter(([t]) => !isCountervalues(t) && !isStoreSetup(t));
+    console.log(`  ${label}: ${JSON.stringify(byType)}${other.length ? "  <-- FINDING" : ""}`);
+  };
+  changes("rates replaced by", summary.ratesChangedBy);
+  changes("sync replaced by", summary.syncChangedBy);
+  console.log("\nSelector and reconcile cost (calls, ms incl. the timer itself, ms per call)");
+  let totalMs = 0;
+  for (const [name, t] of Object.entries(summary.timed)) {
+    // The settings selector mostly runs inside a reconcile tick: not added twice.
+    if (name !== "settingsSelector") totalMs += t.ms;
+    console.log(
+      `  ${name.padEnd(36)} ${String(t.calls).padStart(8)} ${t.ms.toFixed(1).padStart(9)} ms ${((t.ms / Math.max(t.calls, 1)) * 1000).toFixed(2).padStart(8)} us`,
+    );
+  }
+  console.log(
+    `  total ${totalMs.toFixed(1)} ms vs whole-app render ${summary.renderMs.toFixed(0)} ms (${pct(totalMs, summary.renderMs)})`,
+  );
 }

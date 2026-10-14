@@ -117,7 +117,17 @@ function emit(kind: "cv-probe" | "cv-probe-event", payload: Record<string, unkno
 }
 
 export function emitProbeSummary(reason: string, extra: Record<string, unknown> = {}): void {
-  emit("cv-probe", { reason, ...extra, ...loop, hooks });
+  emit("cv-probe", {
+    reason,
+    ...extra,
+    ...loop,
+    hooks,
+    actions,
+    ratesChangedBy,
+    syncChangedBy,
+    drivenBy,
+    timed,
+  });
 }
 
 function emitProbeEvent(event: string, fields: Record<string, unknown>): void {
@@ -191,9 +201,17 @@ export function probeHook<Args extends unknown[], Result>(
       if (last.rates !== rates) {
         stats.storeDriven++;
         if (unchanged) stats.storeDrivenSame++;
+        attributeRender(
+          name,
+          rates === ratesProduced
+            ? (lastRatesChange ?? "unknown")
+            : "not from countervaluesReducer",
+        );
       } else if (last.arg !== args[0]) {
         stats.newArgSameRates++;
       }
+    } else if (last && !unchanged) {
+      attributeRender(name, lastSyncChange ?? "unknown");
     }
     previous.current = { value, rates, arg: args[0] };
     useEffect(() => {
@@ -359,6 +377,61 @@ export function probeAction(state: ProbedStoreState | undefined, action: { type:
     if (pairsWithLatestNow > 0) emitProbeEvent("wipe", { from: pairsWithLatestNow });
     pairsWithLatestNow = 0;
   }
+}
+
+// Every action reaches the reducer mounted at `countervalues`: counted there. ratesChangedBy and
+// syncChangedBy: the action types that produced a new rates or sync object. drivenBy: for each hook,
+// the action type that produced what a hook-driven render read.
+const actions = { total: 0 };
+const ratesChangedBy: Record<string, number> = {};
+const syncChangedBy: Record<string, number> = {};
+const drivenBy: Record<string, Record<string, number>> = {};
+let ratesProduced: unknown;
+let lastRatesChange: string | null = null;
+let lastSyncChange: string | null = null;
+
+function attributeRender(hook: string, actionType: string): void {
+  const byType = (drivenBy[hook] ??= {});
+  byType[actionType] = (byType[actionType] ?? 0) + 1;
+}
+
+/** Call in the reducer mounted at `countervalues` with what it returned for the action. */
+export function probeStateChange(
+  previous: { rates?: unknown; sync?: unknown } | undefined,
+  next: { rates: unknown; sync: unknown },
+  action: { type: string },
+): void {
+  actions.total++;
+  if (previous?.rates !== next.rates) {
+    ratesChangedBy[action.type] = (ratesChangedBy[action.type] ?? 0) + 1;
+    lastRatesChange = action.type;
+  }
+  if (previous?.sync !== next.sync) {
+    syncChangedBy[action.type] = (syncChangedBy[action.type] ?? 0) + 1;
+    lastSyncChange = action.type;
+  }
+  ratesProduced = next.rates;
+}
+
+// calls and ms (performance.now, so each call also counts the timer's own cost: an upper bound).
+const timed: Record<string, { calls: number; ms: number }> = {};
+
+export function probeTimed<T>(name: string, run: () => T): T {
+  const stats = (timed[name] ??= { calls: 0, ms: 0 });
+  const t0 = now();
+  try {
+    return run();
+  } finally {
+    stats.calls++;
+    stats.ms += now() - t0;
+  }
+}
+
+export function probeSelector<Args extends unknown[], Result>(
+  name: string,
+  selector: (...args: Args) => Result,
+): (...args: Args) => Result {
+  return (...args) => probeTimed(name, () => selector(...args));
 }
 
 type RateMapOf = CounterValuesState["data"][string];

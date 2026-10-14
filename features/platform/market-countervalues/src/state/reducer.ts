@@ -1,5 +1,5 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import { probeAction } from "../utils/internals/renderProbe";
+import { probeAction, probeSelector, probeStateChange } from "../utils/internals/renderProbe";
 import {
   countervaluesRatesSlice,
   initialState,
@@ -23,7 +23,9 @@ const combinedCountervaluesReducer = combineReducers({
 // MEASUREMENT BUILD ONLY, NEVER MERGE.
 export const countervaluesReducer: typeof combinedCountervaluesReducer = (state, action) => {
   probeAction(state, action);
-  return combinedCountervaluesReducer(state, action);
+  const next = combinedCountervaluesReducer(state, action);
+  probeStateChange(state, next, action);
+  return next;
 };
 
 export type CountervaluesStoreState = {
@@ -38,12 +40,23 @@ export const countervaluesInitialState: CountervaluesStoreState = {
 
 type RootState = { countervalues: CountervaluesStoreState };
 
-export function countervaluesStateSelector(s: RootState): CounterValuesState {
+function readRates(s: RootState): CounterValuesState {
   return s.countervalues.rates;
 }
+const syncSelectors = countervaluesSyncSlice.getSelectors((s: RootState) => s.countervalues.sync);
+
+// MEASUREMENT BUILD ONLY, NEVER MERGE. Timed selectors.
+export const countervaluesStateSelector = probeSelector("countervaluesStateSelector", readRates);
 /** The sync selectors, read from the root state. */
-export const {
-  selectPending: countervaluesSyncPendingSelector,
-  selectError: countervaluesSyncErrorSelector,
-  selectIsPolling: countervaluesSyncIsPollingSelector,
-} = countervaluesSyncSlice.getSelectors((s: RootState) => s.countervalues.sync);
+export const countervaluesSyncPendingSelector = probeSelector(
+  "countervaluesSyncPendingSelector",
+  syncSelectors.selectPending,
+);
+export const countervaluesSyncErrorSelector = probeSelector(
+  "countervaluesSyncErrorSelector",
+  syncSelectors.selectError,
+);
+export const countervaluesSyncIsPollingSelector = probeSelector(
+  "countervaluesSyncIsPollingSelector",
+  syncSelectors.selectIsPolling,
+);

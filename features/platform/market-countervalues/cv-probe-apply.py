@@ -136,9 +136,15 @@ export function probeHook<Args extends unknown[], Result>(
       if (last.rates !== rates) {
         stats.storeDriven++;
         if (unchanged) stats.storeDrivenSame++;
+        attributeRender(
+          name,
+          rates === ratesProduced ? (lastRatesChange ?? "unknown") : "not from countervaluesReducer",
+        );
       } else if (last.arg !== args[0]) {
         stats.newArgSameRates++;
       }
+    } else if (last && !unchanged) {
+      attributeRender(name, lastSyncChange ?? "unknown");
     }
     previous.current = { value, rates, arg: args[0] };
     useEffect(() => {
@@ -174,6 +180,65 @@ const now: () => number =
     ? () => performance.now()
     : () => Date.now();
 """)
+probe = sub(probe, "  emit(\"cv-probe\", { reason, ...extra, ...loop, hooks });",
+            "  emit(\"cv-probe\", {\n    reason,\n    ...extra,\n    ...loop,\n    hooks,\n"
+            "    actions,\n    ratesChangedBy,\n    syncChangedBy,\n    drivenBy,\n    timed,\n  });")
+probe += '''
+// Every action reaches the reducer mounted at `countervalues`: counted there. ratesChangedBy and
+// syncChangedBy: the action types that produced a new rates or sync object. drivenBy: for each hook,
+// the action type that produced what a hook-driven render read.
+const actions = { total: 0 };
+const ratesChangedBy: Record<string, number> = {};
+const syncChangedBy: Record<string, number> = {};
+const drivenBy: Record<string, Record<string, number>> = {};
+let ratesProduced: unknown;
+let lastRatesChange: string | null = null;
+let lastSyncChange: string | null = null;
+
+function attributeRender(hook: string, actionType: string): void {
+  const byType = (drivenBy[hook] ??= {});
+  byType[actionType] = (byType[actionType] ?? 0) + 1;
+}
+
+/** Call in the reducer mounted at `countervalues` with what it returned for the action. */
+export function probeStateChange(
+  previous: { rates?: unknown; sync?: unknown } | undefined,
+  next: { rates: unknown; sync: unknown },
+  action: { type: string },
+): void {
+  actions.total++;
+  if (previous?.rates !== next.rates) {
+    ratesChangedBy[action.type] = (ratesChangedBy[action.type] ?? 0) + 1;
+    lastRatesChange = action.type;
+  }
+  if (previous?.sync !== next.sync) {
+    syncChangedBy[action.type] = (syncChangedBy[action.type] ?? 0) + 1;
+    lastSyncChange = action.type;
+  }
+  ratesProduced = next.rates;
+}
+
+// calls and ms (performance.now, so each call also counts the timer's own cost: an upper bound).
+const timed: Record<string, { calls: number; ms: number }> = {};
+
+export function probeTimed<T>(name: string, run: () => T): T {
+  const stats = (timed[name] ??= { calls: 0, ms: 0 });
+  const t0 = now();
+  try {
+    return run();
+  } finally {
+    stats.calls++;
+    stats.ms += now() - t0;
+  }
+}
+
+export function probeSelector<Args extends unknown[], Result>(
+  name: string,
+  selector: (...args: Args) => Result,
+): (...args: Args) => Result {
+  return (...args) => probeTimed(name, () => selector(...args));
+}
+'''
 probe += '''
 type RateMapOf = CounterValuesState["data"][string];
 type HookCounters = Pick<
@@ -358,7 +423,7 @@ write(f"{PKG}/src/index.ts", s)
 p = f"{PKG}/src/state/reducer.ts"
 rep(p, 'import { combineReducers } from "@reduxjs/toolkit";\n',
     'import { combineReducers } from "@reduxjs/toolkit";\n'
-    'import { probeAction } from "../utils/internals/renderProbe";\n')
+    'import {\n  probeAction,\n  probeSelector,\n  probeStateChange,\n} from "../utils/internals/renderProbe";\n')
 rep(p, """export const countervaluesReducer = combineReducers({
   rates: countervaluesRatesSlice.reducer,
   sync: countervaluesSyncSlice.reducer,
@@ -371,20 +436,57 @@ rep(p, """export const countervaluesReducer = combineReducers({
 // MEASUREMENT BUILD ONLY, NEVER MERGE.
 export const countervaluesReducer: typeof combinedCountervaluesReducer = (state, action) => {
   probeAction(state, action);
-  return combinedCountervaluesReducer(state, action);
+  const next = combinedCountervaluesReducer(state, action);
+  probeStateChange(state, next, action);
+  return next;
 };
+""")
+rep(p, """export function countervaluesStateSelector(s: RootState): CounterValuesState {
+  return s.countervalues.rates;
+}
+/** The sync selectors, read from the root state. */
+export const {
+  selectPending: countervaluesSyncPendingSelector,
+  selectError: countervaluesSyncErrorSelector,
+  selectIsPolling: countervaluesSyncIsPollingSelector,
+} = countervaluesSyncSlice.getSelectors((s: RootState) => s.countervalues.sync);
+""", """function readRates(s: RootState): CounterValuesState {
+  return s.countervalues.rates;
+}
+const syncSelectors = countervaluesSyncSlice.getSelectors((s: RootState) => s.countervalues.sync);
+
+// MEASUREMENT BUILD ONLY, NEVER MERGE. Timed selectors.
+export const countervaluesStateSelector = probeSelector("countervaluesStateSelector", readRates);
+/** The sync selectors, read from the root state. */
+export const countervaluesSyncPendingSelector = probeSelector(
+  "countervaluesSyncPendingSelector",
+  syncSelectors.selectPending,
+);
+export const countervaluesSyncErrorSelector = probeSelector(
+  "countervaluesSyncErrorSelector",
+  syncSelectors.selectError,
+);
+export const countervaluesSyncIsPollingSelector = probeSelector(
+  "countervaluesSyncIsPollingSelector",
+  syncSelectors.selectIsPolling,
+);
 """)
 
 # 4. The loop.
 p = f"{PKG}/src/state/internals/middleware.ts"
 rep(p, 'import { log } from "../../utils/internals/logger";\n',
     'import { log } from "../../utils/internals/logger";\n'
-    "import {\n  markLoopStart,\n  probeLoad,\n  probeRates,\n  probeRestore,\n  probeSettings,\n"
+    "import {\n  markLoopStart,\n  probeLoad,\n  probeRates,\n  probeRestore,\n  probeSelector,\n  probeSettings,\n  probeTimed,\n"
     '} from "../../utils/internals/renderProbe";\n')
 rep(p, "  context.dispatch(setCountervaluesState(importCountervalues(savedState, settings)));\n",
     "  const restored = importCountervalues(savedState, settings);\n"
     "  probeRestore(savedState, restored);\n"
     "  context.dispatch(setCountervaluesState(restored));\n")
+rep(p, "  const selectSettings = settings ? () => settings : config.createSettingsSelector();\n",
+    "  const selectSettings = probeSelector(\n    \"settingsSelector\",\n"
+    "    settings ? () => settings : config.createSettingsSelector(),\n  );\n")
+rep(p, '    tryStep("reconcile", () => reconcileSessionWithStore(context, session));\n',
+    '    tryStep("reconcile", () =>\n      probeTimed("reconcileTick", () => reconcileSessionWithStore(context, session)),\n    );\n')
 rep(p, "  const rates = config.createRates(dispatch);\n",
     "  const rates = probeRates(config.createRates(dispatch));\n")
 rep(p, """  session.lastSupportedSettings = readSupportedSettings(context, session);

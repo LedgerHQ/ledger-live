@@ -41,7 +41,9 @@ import {
   probeLoad,
   probeRates,
   probeRestore,
+  probeSelector,
   probeSettings,
+  probeTimed,
 } from "../../utils/internals/renderProbe";
 
 /** Before the first start: no session, no tick queued. */
@@ -334,7 +336,9 @@ function runTick<S>(context: SyncContext<S>, ref: SyncStateRef): void {
     const { savedState, pinnedSettings } = session;
     tryStep("restart", () => startSync(context, ref, { savedState, settings: pinnedSettings }));
   } else if (queuedTick === "reconcile") {
-    tryStep("reconcile", () => reconcileSessionWithStore(context, session));
+    tryStep("reconcile", () =>
+      probeTimed("reconcileTick", () => reconcileSessionWithStore(context, session)),
+    );
   }
 }
 
@@ -356,7 +360,10 @@ function openSession<S>(
   { savedState, settings }: StartCountervaluesSyncPayload,
 ): Session {
   const { config, dispatch, getState } = context;
-  const selectSettings = settings ? () => settings : config.createSettingsSelector();
+  const selectSettings = probeSelector(
+    "settingsSelector",
+    settings ? () => settings : config.createSettingsSelector(),
+  );
   selectSettings(getState());
   const rates = probeRates(config.createRates(dispatch));
   const subscription = dispatch(
