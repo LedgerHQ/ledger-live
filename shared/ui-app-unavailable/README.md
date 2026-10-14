@@ -31,5 +31,6 @@ import { AppUnavailable } from "@shared/ui-app-unavailable";
 ```
 
 Wide layouts cap the column at 376px. Narrow layouts keep 16px side padding and let the
-description wrap. The globe spot is fixed. When `action` is set, a full-width Lumen button with an
-external-link icon is shown below the copy.
+description wrap. The globe spot sits 24px above the copy, and the action sits 32px below that
+block. When `action` is set, a gray large Lumen button with an external-link icon is shown, sized
+to its label.

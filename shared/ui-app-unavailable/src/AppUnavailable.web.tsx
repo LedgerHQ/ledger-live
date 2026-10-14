@@ -11,20 +11,23 @@ export function AppUnavailable({ title, description, action, testID }: AppUnavai
       data-testid={testID}
     >
       <div
-        className="flex w-full flex-col items-center gap-24"
+        className="flex w-full flex-col items-center gap-32"
         style={{ maxWidth: CONTENT_MAX_WIDTH_PX }}
       >
-        <Spot appearance="icon" icon={Globe} size={SPOT_SIZE} />
-        <div className="flex w-full flex-col items-center gap-8 text-center">
-          <h1 className="heading-4-semi-bold text-base">{title}</h1>
-          <p className="body-2 text-muted">{description}</p>
+        <div className="flex w-full flex-col items-center gap-24">
+          <Spot appearance="icon" icon={Globe} size={SPOT_SIZE} />
+          <div className="flex w-full flex-col items-center gap-8 text-center">
+            <h1 className="heading-4-semi-bold text-base">{title}</h1>
+            <p className="body-2 text-muted">{description}</p>
+          </div>
         </div>
         {action ? (
           <Button
+            appearance="gray"
             icon={ExternalLink}
             onClick={action.onPress}
             data-testid={action.testID}
-            size="sm"
+            size="lg"
           >
             {action.label}
           </Button>

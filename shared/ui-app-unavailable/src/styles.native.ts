@@ -12,6 +12,12 @@ export const rootStyle: LumenViewStyle = {
 
 export const columnStyle: LumenViewStyle = {
   alignItems: "center",
+  gap: "s32",
+  width: "full",
+};
+
+export const contentStyle: LumenViewStyle = {
+  alignItems: "center",
   gap: "s24",
   width: "full",
 };
@@ -19,9 +25,5 @@ export const columnStyle: LumenViewStyle = {
 export const copyStyle: LumenViewStyle = {
   alignItems: "center",
   gap: "s8",
-  width: "full",
-};
-
-export const actionStyle: LumenViewStyle = {
   width: "full",
 };
