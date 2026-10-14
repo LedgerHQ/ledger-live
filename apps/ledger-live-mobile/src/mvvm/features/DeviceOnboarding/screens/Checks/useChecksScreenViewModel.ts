@@ -59,7 +59,10 @@ export type ChecksViewProps = Readonly<{
 
 type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow" | "updating">;
 
-type LayoutProps = Omit<ChecksViewProps, "onQuit" | "closeLabel" | "allowSheet" | "updateSheet">;
+type LayoutProps = Omit<
+  ChecksViewProps,
+  "onQuit" | "closeLabel" | "allowSheet" | "updateSheet" | "errorDrawer" | "notGenuineDrawer"
+>;
 
 function recoverableKindOf(error: ChecksScreenProps["error"]): RecoverableErrorKind | null {
   if (!error || error.kind === "notGenuine") return null;
