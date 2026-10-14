@@ -27,7 +27,7 @@ describe("PerpsMigrationDiscovery", () => {
 
     render(<PerpsMigrationDiscovery requestId={getMigrationRequestId()} currency={currency} />);
 
-    expect(screen.getByTestId("add-account-flow")).toBeInTheDocument();
+    expect(screen.getByTestId("add-account-flow")).toBeVisible();
   });
 
   it("cancels the request when the flow is closed before anything was added", async () => {

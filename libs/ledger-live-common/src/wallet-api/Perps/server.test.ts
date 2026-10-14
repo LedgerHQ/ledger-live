@@ -305,7 +305,7 @@ describe("Perps handlers", () => {
 
   describe("custom.perps.migrateAccount", () => {
     const hypercoreCurrency = getCryptoCurrencyById("hypercore");
-    const legacyAccount = createFixtureAccount("legacy");
+    const legacyAccount = createFixtureAccount("legacy", getCryptoCurrencyById("arbitrum"));
     const newAccount = {
       ...createFixtureAccount("hc-new", hypercoreCurrency),
       freshAddress: legacyAccount.freshAddress,
@@ -454,6 +454,18 @@ describe("Perps handlers", () => {
       await expect(
         handlersWithoutMigration["custom.perps.migrateAccount"](migrationParams),
       ).rejects.toThrow("ServerError");
+    });
+
+    it("throws a ServerError when the legacy account is not on Arbitrum", async () => {
+      const ethereumAccount = createFixtureAccount("legacy-eth", getCryptoCurrencyById("ethereum"));
+      const migrationHandlers = buildHandlers([ethereumAccount]);
+
+      await expect(
+        migrationHandlers["custom.perps.migrateAccount"]({
+          legacyAccountId: `wallet:${ethereumAccount.id}`,
+        }),
+      ).rejects.toThrow("ServerError");
+      expect(mockUiMigrationExecute).not.toHaveBeenCalled();
     });
 
     it("throws a ServerError when the legacy account is not found", async () => {
