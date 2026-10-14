@@ -113,6 +113,22 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     },
   );
 
+  it("should resume the machine when the lost session is ready again", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "awaitingSession",
+        liveDevice: null,
+        sendableEvents: [
+          { event: { type: "SESSION_READY" } },
+        ] as DeviceOnboardingSession["sendableEvents"],
+      }),
+    );
+
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(send).toHaveBeenCalledWith({ type: "SESSION_READY" });
+  });
+
   it("should resume a paused check with RETRY", () => {
     useSession.mockReturnValue(
       session({

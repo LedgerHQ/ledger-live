@@ -45,6 +45,14 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     onboarding.connect();
   }, [onboarding]);
 
+  const sessionReady = onboarding.sendableEvents.some(
+    ({ event }) => event.type === "SESSION_READY",
+  );
+  useEffect(() => {
+    if (!sessionReady) return;
+    onboarding.send({ type: "SESSION_READY" });
+  }, [onboarding.send, sessionReady]);
+
   const leave = useCallback(() => {
     onboarding.reset();
     navigation.goBack();

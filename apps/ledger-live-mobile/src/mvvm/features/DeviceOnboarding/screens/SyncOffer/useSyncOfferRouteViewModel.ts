@@ -41,7 +41,8 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     completedOnSync.current = true;
     allowLeave.current = true;
     complete();
-  }, [complete, handoverStarted, hasTrustchain]);
+    resetToPortfolio(navigation);
+  }, [complete, handoverStarted, hasTrustchain, navigation]);
 
   const leaveToPortfolio = useCallback(() => {
     complete();

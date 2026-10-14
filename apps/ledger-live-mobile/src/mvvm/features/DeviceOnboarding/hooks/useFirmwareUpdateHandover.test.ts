@@ -73,6 +73,28 @@ describe("useFirmwareUpdateHandover", () => {
     expect(mockCurrentPush).not.toHaveBeenCalled();
   });
 
+  it("opens the update on the current navigator when Base is not mounted", async () => {
+    mockGetParent.mockImplementation(() => undefined);
+    const send = jest.fn();
+    const { rerender } = renderDelegated(send);
+
+    reportFirmware("available-firmware", deviceInfo, firmwareUpdateContext);
+    rerender({ machineState: delegated });
+
+    await waitFor(() =>
+      expect(mockCurrentPush).toHaveBeenCalledWith(
+        ScreenName.FirmwareUpdate,
+        expect.objectContaining({ device, isBeforeOnboarding: true }),
+      ),
+    );
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+    mockGetParent.mockImplementation(() => ({
+      push: mockPush,
+      goBack: mockGoBack,
+    }));
+  });
+
   it("closes the handover exactly once when callback and focus both report the return", async () => {
     const send = jest.fn();
     const { rerender } = renderDelegated(send);

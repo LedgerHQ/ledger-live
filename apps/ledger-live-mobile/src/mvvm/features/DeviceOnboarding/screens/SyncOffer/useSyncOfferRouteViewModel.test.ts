@@ -92,7 +92,7 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
     expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(false);
-    expect(reset).not.toHaveBeenCalled();
+    expect(reset).toHaveBeenCalledTimes(1);
   });
 
   it("should keep the offer in place when Ledger Sync is abandoned", () => {
