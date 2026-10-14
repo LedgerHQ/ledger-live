@@ -44,7 +44,7 @@ export function useDeviceOnboardingDebugViewModel() {
     error: isErrorPreview(preview) ? { kind: preview } : null,
     update: null,
     onStart: () => setPreview("checking"),
-    onRetry: () => undefined,
+    onRetry: () => setPreview("checking"),
     onAcceptUpdate: () => setPreview("checking"),
     onDeclineUpdate: () => setPreview("checking"),
     onCloseSheet: () => setPreview("checking"),

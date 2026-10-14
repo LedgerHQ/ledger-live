@@ -19,7 +19,7 @@ describe("resolveGenuineErrorKind", () => {
       kind: "provider",
     },
     { failure: "GENUINE_CHECK_FAILED", tag: "FetchError", kind: "network" },
-    { failure: "GENUINE_CHECK_FAILED", tag: "WebSocketConnectionError", kind: "network" },
+    { failure: "SECURE_CHANNEL_LOST", tag: "WebSocketConnectionError", kind: "network" },
     { failure: "GENUINE_CHECK_FAILED", tag: "UnmappedError", kind: "unknown" },
   ])("maps $failure ($tag) to $kind", ({ failure, tag, hasForcedProvider = false, kind }) => {
     expect(resolveGenuineErrorKind(failure, tag ? { _tag: tag } : null, hasForcedProvider)).toBe(

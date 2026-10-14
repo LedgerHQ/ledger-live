@@ -77,6 +77,17 @@ describe("DeviceOnboardingDebug", () => {
     expect(screen.getByText("Ledger Genuine Check error")).toBeVisible();
   });
 
+  it("should return to the checking screen when retry is pressed", async () => {
+    const { user } = render(<DeviceOnboardingDebug />);
+
+    await user.press(screen.getByRole("button", { name: "Close" }));
+    await user.press(screen.getByRole("button", { name: "declined" }));
+    await user.press(screen.getByText("Try again"));
+
+    expect(screen.getByText("Check your device")).toBeVisible();
+    expect(screen.queryByText("Ledger Genuine Check error")).toBeNull();
+  });
+
   it("should move to the checking screen when the call to action is pressed", async () => {
     const { user } = render(<DeviceOnboardingDebug />);
 
