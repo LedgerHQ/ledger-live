@@ -6,7 +6,12 @@ import type {
   BridgeApi,
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { Account, OperationType } from "@ledgerhq/types-live";
+import type {
+  Account,
+  OperationType,
+  StakingDelegation,
+  StakingUnbonding,
+} from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -196,9 +201,19 @@ export function getDeviceSignOptions(
   return Object.keys(options).length > 0 ? options : undefined;
 }
 
+export function getHeldNativeAmount(position: StakingDelegation | StakingUnbonding): BigNumber {
+  const reserve = position.lockedReserve ?? 0;
+  if (position.activeAmount && position.inactiveAmount) {
+    return position.activeAmount.plus(position.inactiveAmount).plus(reserve);
+  }
+  return position.amount.plus(reserve);
+}
+
 export default function solanaBridge(currency: CryptoCurrency): BridgeApi {
   return {
     stakingSupported: true,
+    partitionsNativeBalance: true,
+    getHeldNativeAmount,
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
