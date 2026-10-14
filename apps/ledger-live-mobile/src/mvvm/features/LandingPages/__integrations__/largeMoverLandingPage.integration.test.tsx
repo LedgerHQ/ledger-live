@@ -174,6 +174,17 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     expect(screen.queryByText("ETH")).toBeNull();
   });
 
+  it("keeps Optimism's price when Ethereum also lists that ledger id", async () => {
+    renderLargeMover({ params: { ledgerIds: "optimism,ethereum" } });
+
+    expect(await screen.findByText("$2.81")).toBeOnTheScreen();
+    expect(screen.queryByText("$2,966.26")).toBeNull();
+
+    adjustCoin("OP Mainnet", "increment");
+    expect(await screen.findByText("$2,966.26")).toBeOnTheScreen();
+    expect(screen.queryByText("$2.81")).toBeNull();
+  });
+
   it("handles time range changes via Card component", async () => {
     const { user } = renderLargeMover();
 

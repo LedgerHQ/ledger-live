@@ -280,6 +280,34 @@ describe("marketApi", () => {
       expect(url.searchParams.get("pageSize")).toBe("5");
     });
 
+    it("keeps a requested ledger id on its own market when another row lists that id", async () => {
+      server.use(
+        http.get("*/v3/markets", () =>
+          HttpResponse.json([
+            createMockMarketItemResponse({
+              id: "ethereum",
+              ledgerIds: ["base", "arbitrum", "ethereum", "boba", "optimism", "linea"],
+              ticker: "ETH",
+            }),
+            createMockMarketItemResponse({
+              id: "optimism",
+              ledgerIds: ["optimism", "ethereum/erc20/optimism"],
+              ticker: "OP",
+            }),
+          ]),
+        ),
+      );
+
+      const result = await store.dispatch(
+        getMarketsByLedgerIds.initiate({
+          ledgerIds: ["optimism", "ethereum"],
+          counterCurrency: "usd",
+        }),
+      );
+
+      expect(result.data?.map(item => item.id)).toEqual(["optimism", "ethereum"]);
+    });
+
     it.each([
       ["1", 1],
       ["20", 6],

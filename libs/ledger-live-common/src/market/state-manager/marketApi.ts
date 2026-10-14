@@ -63,23 +63,39 @@ function marketsFromPages(
   return succeeded ? markets : undefined;
 }
 
+export type RequestedLedgerMarket = {
+  ledgerId: string;
+  market: MarketItemResponse;
+};
+
+function marketForRequestedLedgerId(
+  markets: MarketItemResponse[],
+  ledgerId: string,
+): MarketItemResponse | undefined {
+  let fallback: MarketItemResponse | undefined;
+  for (const market of markets) {
+    if (!market.ledgerIds.includes(ledgerId)) continue;
+    if (market.id === ledgerId) return market;
+    fallback ??= market;
+  }
+  return fallback;
+}
+
+export function pairMarketsWithRequestedLedgerIds(
+  markets: MarketItemResponse[],
+  ledgerIds: string[],
+): RequestedLedgerMarket[] {
+  return ledgerIds.flatMap(ledgerId => {
+    const market = marketForRequestedLedgerId(markets, ledgerId);
+    return market ? [{ ledgerId, market }] : [];
+  });
+}
+
 function orderMarketsByLedgerIds(
   markets: MarketItemResponse[],
   ledgerIds: string[],
 ): MarketItemResponse[] {
-  const marketByLedgerId = new Map<string, MarketItemResponse>();
-  for (const market of markets) {
-    for (const ledgerId of market.ledgerIds) {
-      if (!marketByLedgerId.has(ledgerId)) {
-        marketByLedgerId.set(ledgerId, market);
-      }
-    }
-  }
-
-  return ledgerIds.flatMap(ledgerId => {
-    const market = marketByLedgerId.get(ledgerId);
-    return market ? [market] : [];
-  });
+  return pairMarketsWithRequestedLedgerIds(markets, ledgerIds).map(({ market }) => market);
 }
 
 export const marketApi = createApi({

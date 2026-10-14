@@ -73,12 +73,7 @@ export const LargeMoverLandingPage = ({ route }: Readonly<LargeMoverLandingPageP
   const currenciesWithId = useMemo(() => {
     if (!currencies?.cryptoOrTokenCurrencies) return [];
 
-    const marketByLedgerId = new Map<string, (typeof markets)[number]>();
-    for (const market of markets) {
-      for (const ledgerId of market.ledgerIds) {
-        marketByLedgerId.set(ledgerId, market);
-      }
-    }
+    const marketByLedgerId = new Map(markets.map(({ ledgerId, market }) => [ledgerId, market]));
 
     return currenciesIds.flatMap((currencyId, index) => {
       const currency = currencies.cryptoOrTokenCurrencies[currencyId];

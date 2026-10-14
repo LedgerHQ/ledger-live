@@ -1,6 +1,9 @@
 import { useMemo } from "react";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
-import { useGetMarketsByLedgerIdsQuery } from "../state-manager/api";
+import {
+  pairMarketsWithRequestedLedgerIds,
+  useGetMarketsByLedgerIdsQuery,
+} from "../state-manager/api";
 import { applyUsdRateToMarketItem } from "../utils/applyUsdRateToMarket";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
 import { useResolveMarketCounterCurrency } from "./useResolveMarketCounterCurrency";
@@ -43,8 +46,11 @@ export const useLargeMoverCurrencies = ({
   const rate = needsUsdFallback ? usdToCounterValueRate : 1;
   const markets = useMemo(() => {
     if (rate == null || !currentData) return [];
-    return currentData.map(market => applyUsdRateToMarketItem(market, rate));
-  }, [currentData, rate]);
+    return pairMarketsWithRequestedLedgerIds(
+      currentData.map(market => applyUsdRateToMarketItem(market, rate)),
+      ledgerIds,
+    );
+  }, [currentData, ledgerIds, rate]);
 
   return {
     markets,
