@@ -14,7 +14,7 @@ export function ChainIntegratorNotice({ currency }: ChainIntegratorNoticeProps) 
       testID="chain-integrator-notice"
     >
       <Information size={16} color="muted" />
-      <Text typography="body2" lx={{ color: "muted" }}>
+      <Text typography="body2" lx={{ flexShrink: 1, color: "muted" }}>
         {label}
       </Text>
     </Box>
