@@ -64,7 +64,8 @@ const marketsResolver = ({ request }: { request: Request }) => {
   }
 
   const page = parseInt(searchParams.get("page") || "0");
-  const pageSize = 10;
+  const requestedPageSize = Number(searchParams.get("pageSize"));
+  const pageSize = requestedPageSize > 0 ? requestedPageSize : 10;
   const startIndex = page * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedData = filteredData.slice(startIndex, endIndex);

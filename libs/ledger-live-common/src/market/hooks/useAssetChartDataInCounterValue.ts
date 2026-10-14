@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { scaleMarketChartData } from "../utils/scaleMarketChartData";
 import type { MarketAssetChartDataRequestParams, MarketCoinDataChart } from "../utils/types";
-import { useAssetChartData } from "./useMarketDataProvider";
+import { useAssetChartData } from "./useAssetChartData";
 import { useResolveMarketCounterCurrency } from "./useResolveMarketCounterCurrency";
 
 type UseAssetChartDataInCounterValueParams = MarketAssetChartDataRequestParams & {

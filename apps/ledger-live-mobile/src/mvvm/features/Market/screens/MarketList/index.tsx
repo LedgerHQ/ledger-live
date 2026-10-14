@@ -34,16 +34,13 @@ interface ViewProps {
   starredMarketCoins: string[];
   search?: string;
   loading: boolean;
+  refreshing: boolean;
   updateMarketParams: (param?: MarketListRequestParams) => void;
   counterCurrency?: string;
   range?: string;
   onEndReached?: () => void;
-  refetchData: (pageToRefetch: number) => void;
   refetchAllPages: () => void;
-  resetMarketPageToInital: (page: number) => void;
-  refreshRate: number;
-  marketParams: MarketListRequestParams;
-  marketCurrentPage: number;
+  resetMarketPage: () => void;
   viewabilityConfigCallbackPairs: RefObject<
     {
       onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken[] }) => void;
@@ -59,17 +56,14 @@ function View({
   starredMarketCoins,
   search,
   loading,
+  refreshing,
   updateMarketParams,
   counterCurrency,
   range,
   onEndReached,
-  refreshRate,
-  marketCurrentPage,
-  refetchData,
   refetchAllPages,
   viewabilityConfigCallbackPairs,
-  resetMarketPageToInital,
-  marketParams,
+  resetMarketPage,
 }: ViewProps) {
   const { colors } = useTheme();
 
@@ -81,7 +75,7 @@ function View({
   const headerSpacerHeight = Math.max(0, fullHeaderHeight - insets.top);
 
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({
-    loading,
+    loading: refreshing,
     refetch: refetchAllPages,
   });
 
@@ -112,7 +106,7 @@ function View({
    * Reset the page to 1 when the component mounts to only refetch first page
    * */
   useEffect(() => {
-    resetMarketPageToInital(marketParams.page ?? 1);
+    resetMarketPage();
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -122,15 +116,6 @@ function View({
     });
     ddAddViewLoadingTime();
   }, []);
-  /**
-   * Try to Refetch data every REFRESH_RATE time
-   */
-  useEffect(() => {
-    const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), refreshRate);
-
-    return () => clearInterval(intervalId);
-  }, [marketCurrentPage, refetchData, refreshRate]);
-
   const listProps = {
     contentContainerStyle: {
       paddingHorizontal: 16,
