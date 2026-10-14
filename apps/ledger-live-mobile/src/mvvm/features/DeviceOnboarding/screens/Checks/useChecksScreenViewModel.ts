@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -102,6 +102,11 @@ export function useChecksScreenViewModel({
   const eligibility = update ? firmwareEligibility(device, update.current) : null;
   const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
 
+  useEffect(() => {
+    if (suppressOfferCloseFor.current === updateKey) return;
+    suppressOfferCloseFor.current = null;
+  }, [updateKey]);
+
   const layouts: Record<ChecksLayout, LayoutProps> = {
     synchronizing: {
       illustration: "loading",
@@ -151,6 +156,7 @@ export function useChecksScreenViewModel({
       onUpdate: () => {
         if (!update || !eligibility) return;
         if (eligibility.canUpdate) {
+          suppressOfferCloseFor.current = updateKey;
           onAcceptUpdate();
           return;
         }

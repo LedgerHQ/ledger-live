@@ -99,9 +99,10 @@ function renderChecks(state: ChecksScreenState, overrides: Partial<ChecksScreenP
     onQuit,
     ...overrides,
   };
+  const view = render(<ChecksScreen {...props} />);
 
   return {
-    ...render(<ChecksScreen {...props} />),
+    ...view,
     onStart,
     onRetry,
     onAcceptUpdate,
@@ -109,6 +110,10 @@ function renderChecks(state: ChecksScreenState, overrides: Partial<ChecksScreenP
     onCloseSheet,
     onContinue,
     onQuit,
+    rerender(next: Partial<ChecksScreenProps> = {}) {
+      Object.assign(props, next);
+      view.rerender(<ChecksScreen {...props} />);
+    },
   };
 }
 
@@ -257,27 +262,40 @@ describe("ChecksView", () => {
   });
 
   it("should accept the update from the primary action on a Nano X at 2.4.0", async () => {
-    const { user, onAcceptUpdate, onDeclineUpdate } = renderChecks("updating", {
+    const { user, onAcceptUpdate, onDeclineUpdate, rerender } = renderChecks("updating", {
       device: nanoX,
       update: { current: "2.4.0", available: "2.5.0" },
+    });
+    onAcceptUpdate.mockImplementation(() => {
+      rerender({ update: null, state: "checking" });
     });
 
     await user.press(screen.getByText("Update now"));
 
     expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
     expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(screen.queryByText("Update now")).toBeNull();
+
+    rerender({ update: { current: "2.4.0", available: "2.5.0" }, state: "updating" });
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
   });
 
   it("should accept the update from the release notes action on a Nano X at 2.4.0", async () => {
-    const { user, onAcceptUpdate, onDeclineUpdate } = renderChecks("updating", {
+    const { user, onAcceptUpdate, onDeclineUpdate, rerender } = renderChecks("updating", {
       device: nanoX,
       update: { current: "2.4.0", available: "2.5.0" },
+    });
+    onAcceptUpdate.mockImplementation(() => {
+      rerender({ update: null, state: "checking" });
     });
 
     await user.press(screen.getByText("See what's in the update"));
 
     expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
     expect(onDeclineUpdate).not.toHaveBeenCalled();
+    expect(screen.queryByText("See what's in the update")).toBeNull();
   });
 
   it("should still decline the offer after the unsupported update drawer is closed", async () => {
