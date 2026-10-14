@@ -307,6 +307,10 @@ export const NativeElementHelpers = {
     return await withHardTimeout(NativeElementHelpers.getElementById(id, index).tap());
   },
 
+  async longPressById(id: string | RegExp, index = 0) {
+    return await withHardTimeout(NativeElementHelpers.getElementById(id, index).longPress());
+  },
+
   async tapByText(text: string | RegExp, index = 0) {
     return await withHardTimeout(NativeElementHelpers.getElementByText(text, index).tap());
   },

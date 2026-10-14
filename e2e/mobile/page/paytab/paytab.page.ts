@@ -1,4 +1,7 @@
-import { Step } from "jest-allure2-reporter/api";
+import { execFileSync } from "child_process";
+import { device } from "detox";
+import { allure, Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 const DEPOSIT_OPTION_IDS = ["bankTransfer", "swap", "receive", "buy"] as const;
 
@@ -100,15 +103,82 @@ export default class PayTabPage {
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
     const maxAttempts = 5;
-    const closeButtonCounts: number[] = [];
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      closeButtonCounts.push(await countElementsById(this.bankTransferCloseId));
-      await tapById(this.bankTransferCloseId);
-      if (await waitForElementNotVisible(this.bankTransferContentId)) return;
+    const attempts: string[] = [];
+
+    try {
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        const center = await this.bankTransferCloseCenter();
+        const at = `pixels (${center.pixels.x}, ${center.pixels.y}), dp (${center.x}, ${center.y})`;
+
+        await device.tap({ x: center.x, y: center.y }, false);
+        if (await this.bankTransferIntroDismissed()) {
+          attempts.push(`attempt ${attempt}: coordinate tap at ${at} closed the sheet`);
+          return;
+        }
+        attempts.push(
+          `attempt ${attempt}: coordinate tap at ${at} left ${this.bankTransferContentId} visible`,
+        );
+
+        await device.longPress({ x: center.x, y: center.y }, false);
+        if (await this.bankTransferIntroDismissed()) {
+          attempts.push(`attempt ${attempt}: coordinate long press at ${at} closed the sheet`);
+          return;
+        }
+        attempts.push(
+          `attempt ${attempt}: coordinate long press at ${at} left ${this.bankTransferContentId} visible`,
+        );
+      }
+
+      throw new Error(
+        `${this.bankTransferContentId} stayed visible after ${maxAttempts} close attempts. ${attempts.join("; ")}`,
+      );
+    } finally {
+      await allure.attachment(
+        "Bank transfer intro close attempts",
+        attempts.join("\n"),
+        "text/plain",
+      );
     }
-    throw new Error(
-      `${this.bankTransferContentId} stayed visible after ${maxAttempts} close attempts; visible ${this.bankTransferCloseId} counts: ${closeButtonCounts.join(", ")}`,
-    );
+  }
+
+  private async bankTransferIntroDismissed() {
+    await device.disableSynchronization();
+    try {
+      return await waitForElementNotVisible(this.bankTransferContentId, TIMEOUT.medium);
+    } finally {
+      await device.enableSynchronization();
+    }
+  }
+
+  private async bankTransferCloseCenter() {
+    const attributes = await getElementById(this.bankTransferCloseId).getAttributes();
+    if ("elements" in attributes) {
+      throw new Error(
+        `Expected one ${this.bankTransferCloseId}, found ${attributes.elements.length}`,
+      );
+    }
+
+    const { x, y, width, height } = attributes.frame;
+    const pixels = {
+      x: Math.round(x + width / 2),
+      y: Math.round(y + height / 2),
+    };
+    const density = this.androidScreenDensity();
+    return {
+      pixels,
+      x: Math.round(pixels.x / density),
+      y: Math.round(pixels.y / density),
+    };
+  }
+
+  private androidScreenDensity() {
+    const adb = process.env.ANDROID_HOME ? `${process.env.ANDROID_HOME}/platform-tools/adb` : "adb";
+    const output = execFileSync(adb, ["shell", "wm", "density"], { encoding: "utf8" });
+    const dpi = Number(output.trim().match(/(\d+)\s*$/)?.[1]);
+    if (!Number.isFinite(dpi) || dpi <= 0) {
+      throw new Error(`Could not read Android screen density from adb: ${output.trim()}`);
+    }
+    return dpi / 160;
   }
 
   @Step("Open request")

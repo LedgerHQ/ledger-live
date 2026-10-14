@@ -83,6 +83,7 @@ declare global {
   var scrollToText: typeof NativeElementHelpers.scrollToText;
   var tapByElement: typeof NativeElementHelpers.tapByElement;
   var tapById: typeof NativeElementHelpers.tapById;
+  var longPressById: typeof NativeElementHelpers.longPressById;
   var tapByIdAndExpectToDisappear: typeof NativeElementHelpers.tapByIdAndExpectToDisappear;
   var tapByText: typeof NativeElementHelpers.tapByText;
   var typeTextByElement: typeof NativeElementHelpers.typeTextByElement;
