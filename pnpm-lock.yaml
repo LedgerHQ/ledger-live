@@ -6396,6 +6396,9 @@ importers:
       '@shared/linking':
         specifier: workspace:*
         version: link:../../../shared/linking
+      '@shared/network-status':
+        specifier: workspace:*
+        version: link:../../../shared/network-status
       '@shared/ui-app-unavailable':
         specifier: workspace:*
         version: link:../../../shared/ui-app-unavailable

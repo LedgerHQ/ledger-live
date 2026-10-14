@@ -71,7 +71,7 @@ export async function checkCalHealth({
         [LEDGER_CLIENT_VERSION_HEADER]: ledgerClientVersion,
       },
     });
-    if (!response.ok) {
+    if (response.status >= 500) {
       return "failed";
     }
     return "ok";

@@ -25,6 +25,7 @@
     "@shared/api-services": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*",
+    "@shared/network-status": "workspace:*",
     "@shared/ui-app-unavailable": "workspace:*"
   },
   "peerDependencies": {

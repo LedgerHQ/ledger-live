@@ -33,6 +33,12 @@ describe("checkCalHealth", () => {
     await expect(probe({ fetchImpl })).resolves.toBe("failed");
   });
 
+  it("should return ok on a 4xx response", async () => {
+    const fetchImpl = jest.fn().mockResolvedValue({ ok: false, status: 404 });
+
+    await expect(probe({ fetchImpl })).resolves.toBe("ok");
+  });
+
   it("should return failed when the request times out", async () => {
     jest.useFakeTimers();
     const fetchImpl = jest.fn(
