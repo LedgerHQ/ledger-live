@@ -3,6 +3,7 @@ import { Box, Button, IconButton, NavBar, NavBarTrailing, Text } from "@ledgerhq
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Lottie, resolveLottieSource } from "LLM/components/Lottie";
+import SkipLedgerSyncDrawer from "LLM/components/SkipLedgerSyncDrawer";
 import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { SyncOfferViewProps } from "./useSyncOfferScreenViewModel";
 import darkCloudSyncAnimation from "./animations/dark/cloud-sync.lottie";
@@ -23,9 +24,10 @@ export function SyncOfferView({
   skipLabel,
   closeLabel,
   onActivate,
-  onSkip,
+  onOpenSkip,
   onLearnMore,
   onQuit,
+  skipDrawer,
 }: SyncOfferViewProps) {
   const { colorScheme } = useTheme();
   const theme = colorScheme === "dark" ? "dark" : "light";
@@ -88,11 +90,17 @@ export function SyncOfferView({
           size="lg"
           isFull
           testID={syncOfferTestIds.skip}
-          onPress={onSkip}
+          onPress={onOpenSkip}
         >
           {skipLabel}
         </Button>
       </Box>
+      <SkipLedgerSyncDrawer
+        isOpen={skipDrawer.isOpen}
+        handleClose={skipDrawer.onClose}
+        openSync={skipDrawer.onActivate}
+        skipSync={skipDrawer.onSkip}
+      />
     </Box>
   );
 }
