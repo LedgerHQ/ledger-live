@@ -17,6 +17,12 @@ import { checkIsBtcLegacy, getAppAndVersion } from "./getAppAndVersion";
 export type { AddressFormat };
 
 /**
+ * Names of device apps derived from the Bitcoin app (app-bitcoin `baseapp`).
+ * They only implement the new protocol (CLA 0xE1), whatever their version.
+ */
+const BITCOIN_DERIVED_APP_NAMES: readonly string[] = ["Hashi", "Hashi Test"];
+
+/**
  * @class Btc
  * @description Bitcoin API.
  * @param transport The transport layer used for communication.
@@ -360,7 +366,7 @@ export default class Btc {
           // we use the legacy protocol for versions below 3.0.0 of the Qtum app.
           return semver.lt(version, "3.0.0");
         default:
-          return true;
+          return !BITCOIN_DERIVED_APP_NAMES.includes(name);
       }
     })();
 

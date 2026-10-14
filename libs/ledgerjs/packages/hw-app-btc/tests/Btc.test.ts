@@ -780,6 +780,41 @@ describe("Btc", () => {
       expect(impl).toBeInstanceOf(BtcOld);
     });
 
+    it.each([
+      // [app name, app version, currency, Exchange legacy check, expected implementation]
+      ["Bitcoin", "2.0.0", "bitcoin", false, BtcOld],
+      ["Bitcoin", "2.1.0", "bitcoin", false, BtcNew],
+      ["Bitcoin Test", "2.0.5", "bitcoin_testnet", false, BtcOld],
+      ["Bitcoin Test", "2.2.0", "bitcoin_testnet", false, BtcNew],
+      ["Bitcoin Recovery", "1.0.0", "bitcoin", false, BtcNew],
+      ["Bitcoin Legacy", "2.5.0", "bitcoin", false, BtcOld],
+      ["Bitcoin Test Legacy", "2.5.0", "bitcoin_testnet", false, BtcOld],
+      ["Exchange", "1.0.0", "bitcoin", true, BtcOld],
+      ["Exchange", "1.0.0", "bitcoin", false, BtcNew],
+      ["Qtum", "2.9.0", "qtum", false, BtcOld],
+      ["Qtum", "3.0.0", "qtum", false, BtcNew],
+      ["Unknown App", "1.0.0", "bitcoin", false, BtcOld],
+      ["Btcext Boilerplate", "0.1.3", "bitcoin", false, BtcOld],
+      ["Hashi", "0.1.3", "bitcoin_testnet", false, BtcNew],
+      ["Hashi", "0.0.1", "bitcoin", false, BtcNew],
+      ["Hashi Test", "0.1.3", "bitcoin_testnet", false, BtcNew],
+      ["hashi", "0.1.3", "bitcoin", false, BtcOld],
+      ["Hashi Testnet", "0.1.3", "bitcoin_testnet", false, BtcOld],
+    ])(
+      "should pick the implementation for %s %s on %s",
+      async (name, version, currency, exchangeIsLegacy, expected) => {
+        const transport = await openTransportReplayer(RecordStore.fromString(""));
+        btc = new Btc({ transport, currency });
+
+        mockedGetAppAndVersion.mockResolvedValue(mockAppAndVersion(name, version));
+        mockedCheckIsBtcLegacy.mockResolvedValue(exchangeIsLegacy);
+
+        const impl = await btc.changeImplIfNecessary();
+
+        expect(impl).toBeInstanceOf(expected);
+      },
+    );
+
     it("should cache the implementation decision", async () => {
       const transport = await openTransportReplayer(RecordStore.fromString(""));
       btc = new Btc({ transport, currency: "bitcoin" });
