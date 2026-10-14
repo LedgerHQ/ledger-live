@@ -69,6 +69,232 @@ export function probeAction(state: ProbedStoreState | undefined, action: { type:
 }
 '''
 probe = probe.replace(old_action, new_action)
+
+
+def sub(text, old, new):
+    assert text.count(old) == 1, (old, text.count(old))
+    return text.replace(old, new)
+
+
+# 1b. Per-load root cause: what each stored load changed, and which hook renders it caused.
+probe = sub(probe, "type HookStats = { renders: number; wasted: number; mounted: number; peak: number };\n",
+            """// storeDriven: renders where the rates this instance read changed since its previous render;
+// storeDrivenSame: those of them where the hook still returned the same value; newArgSameRates:
+// renders with the same rates but a new first argument (useCalculate: a memo miss); ms: time spent
+// in the hook itself.
+type HookStats = {
+  renders: number;
+  wasted: number;
+  mounted: number;
+  peak: number;
+  storeDriven: number;
+  storeDrivenSame: number;
+  newArgSameRates: number;
+  ms: number;
+};
+""")
+old_hook = probe[probe.index("/**\n * Wraps a hook: counts") : probe.index("const onProbeCommit")]
+probe = probe.replace(old_hook, '''function noStoreRates(): undefined {
+  return undefined;
+}
+
+/**
+ * Wraps a hook: counts its renders, its wasted renders (value equal to the one this same component
+ * instance got on its previous render), and its mounted instances with their peak. With
+ * `useStoreRates`, also tells renders driven by a change of the stored rates apart.
+ */
+export function probeHook<Args extends unknown[], Result>(
+  name: string,
+  hook: (...args: Args) => Result,
+  same: (a: Result, b: Result) => boolean = Object.is,
+  useStoreRates?: () => unknown,
+): (...args: Args) => Result {
+  // Same hook on every render of a given wrapper, so the call order never changes.
+  const useRates = useStoreRates ?? noStoreRates;
+  return function useProbedHook(...args: Args): Result {
+    const rates = useRates();
+    const t0 = now();
+    const value = hook(...args);
+    const ms = now() - t0;
+    const previous = useRef<{ value: Result; rates: unknown; arg: unknown } | null>(null);
+    const stats = (hooks[name] ??= {
+      renders: 0,
+      wasted: 0,
+      mounted: 0,
+      peak: 0,
+      storeDriven: 0,
+      storeDrivenSame: 0,
+      newArgSameRates: 0,
+      ms: 0,
+    });
+    stats.renders++;
+    stats.ms += ms;
+    const last = previous.current;
+    const unchanged = last !== null && same(last.value, value);
+    if (unchanged) stats.wasted++;
+    if (last && useStoreRates) {
+      if (last.rates !== rates) {
+        stats.storeDriven++;
+        if (unchanged) stats.storeDrivenSame++;
+      } else if (last.arg !== args[0]) {
+        stats.newArgSameRates++;
+      }
+    }
+    previous.current = { value, rates, arg: args[0] };
+    useEffect(() => {
+      stats.mounted++;
+      stats.peak = Math.max(stats.peak, stats.mounted);
+      ensureTimer();
+      return () => {
+        stats.mounted--;
+      };
+    }, [stats]);
+    return value;
+  };
+}
+
+''')
+probe = sub(probe, """    result => {
+      done("ok");
+      return result;""", """    result => {
+      done("ok");
+      expectLoadSet(stats.load);
+      return result;""")
+probe = sub(probe, "type ProbedStoreState = { sync?: { isPolling: boolean } };",
+            "type ProbedStoreState = { rates?: CounterValuesState; sync?: { isPolling: boolean } };")
+probe = sub(probe, """  } else if (action.type === "countervaluesRates/set") {
+    const next = pairsWithLatest(payload as CounterValuesState);""", """  } else if (action.type === "countervaluesRates/set") {
+    onRatesSet(state?.rates, payload as CounterValuesState);
+    const next = pairsWithLatest(payload as CounterValuesState);""")
+probe = sub(probe, "const DAY_MS = 24 * 60 * 60 * 1000;\n", """const DAY_MS = 24 * 60 * 60 * 1000;
+// How long after a load is stored its renders are attributed to it. Loads are 32 s apart on staging.
+const LOAD_EFFECT_MS = 1_000;
+const now: () => number =
+  typeof performance !== "undefined" && typeof performance.now === "function"
+    ? () => performance.now()
+    : () => Date.now();
+""")
+probe += '''
+type RateMapOf = CounterValuesState["data"][string];
+type HookCounters = Pick<
+  HookStats,
+  "renders" | "wasted" | "storeDriven" | "storeDrivenSame" | "newArgSameRates" | "ms"
+>;
+
+let loadAwaitingSet: number | null = null;
+
+// The middleware stores a load's result as soon as it resolves: nothing stored by the next
+// macrotask means the result was dropped.
+function expectLoadSet(load: number): void {
+  loadAwaitingSet = load;
+  setTimeout(() => {
+    if (loadAwaitingSet !== load) return;
+    loadAwaitingSet = null;
+    emitProbeEvent("load-effect", { load, stored: false });
+  }, 0);
+}
+
+function historySize(map: RateMapOf): number {
+  return map.size - (map.has("latest") ? 1 : 0);
+}
+
+function sameHistory(a: RateMapOf, b: RateMapOf): boolean {
+  if (historySize(a) !== historySize(b)) return false;
+  for (const [key, value] of b) if (key !== "latest" && !Object.is(a.get(key), value)) return false;
+  return true;
+}
+
+/** What a stored load changed, by content and by object identity, pair by pair. */
+function diffRates(previous: CounterValuesState | undefined, next: CounterValuesState) {
+  const before = previous ?? { data: {}, cache: {}, status: {} };
+  const ids = new Set([...Object.keys(before.data), ...Object.keys(next.data)]);
+  const diff = {
+    stateReplaced: previous !== next,
+    pairs: ids.size,
+    pairsAdded: 0,
+    pairsRemoved: 0,
+    latestMoved: 0,
+    historyChanged: 0,
+    dataReplaced: 0,
+    dataReplacedSameContent: 0,
+    cacheReplaced: 0,
+    statusChanged: JSON.stringify(before.status) !== JSON.stringify(next.status),
+    checkHolesChanged: previous?.checkHolesOnNextLoad !== next.checkHolesOnNextLoad,
+    noop: false,
+    noopExceptStatus: false,
+  };
+  for (const id of ids) {
+    const a = before.data[id];
+    const b = next.data[id];
+    if (!a) diff.pairsAdded++;
+    else if (!b) diff.pairsRemoved++;
+    else {
+      const latestMoved = !Object.is(a.get("latest"), b.get("latest"));
+      const historyChanged = a !== b && !sameHistory(a, b);
+      if (latestMoved) diff.latestMoved++;
+      if (historyChanged) diff.historyChanged++;
+      if (a !== b) {
+        diff.dataReplaced++;
+        if (!latestMoved && !historyChanged) diff.dataReplacedSameContent++;
+      }
+      if (before.cache[id] !== next.cache[id]) diff.cacheReplaced++;
+    }
+  }
+  diff.noopExceptStatus =
+    diff.pairsAdded === 0 &&
+    diff.pairsRemoved === 0 &&
+    diff.latestMoved === 0 &&
+    diff.historyChanged === 0 &&
+    !diff.checkHolesChanged;
+  diff.noop = diff.noopExceptStatus && !diff.statusChanged;
+  return diff;
+}
+
+function snapshotHooks(): Record<string, HookCounters> {
+  const out: Record<string, HookCounters> = {};
+  for (const [name, s] of Object.entries(hooks)) {
+    const { renders, wasted, storeDriven, storeDrivenSame, newArgSameRates, ms } = s;
+    out[name] = { renders, wasted, storeDriven, storeDrivenSame, newArgSameRates, ms };
+  }
+  return out;
+}
+
+function hookDeltas(
+  before: Record<string, HookCounters>,
+  after: Record<string, HookCounters>,
+): Record<string, HookCounters> {
+  const out: Record<string, HookCounters> = {};
+  for (const [name, a] of Object.entries(after)) {
+    const b = before[name];
+    const delta = {} as HookCounters;
+    for (const key of Object.keys(a) as (keyof HookCounters)[]) delta[key] = a[key] - (b?.[key] ?? 0);
+    delta.ms = Math.round(delta.ms * 100) / 100;
+    if (delta.renders > 0) out[name] = delta;
+  }
+  return out;
+}
+
+/** Called with each stored rates object: logs, for the load that produced it, what changed and what re-rendered. */
+function onRatesSet(previous: CounterValuesState | undefined, next: CounterValuesState): void {
+  if (loadAwaitingSet === null) return;
+  const load = loadAwaitingSet;
+  loadAwaitingSet = null;
+  const diff = diffRates(previous, next);
+  const before = snapshotHooks();
+  const { commits, renderMs } = loop;
+  setTimeout(() => {
+    emitProbeEvent("load-effect", {
+      load,
+      stored: true,
+      ...diff,
+      windowMs: LOAD_EFFECT_MS,
+      commits: loop.commits - commits,
+      renderMs: Math.round((loop.renderMs - renderMs) * 10) / 10,
+      hooks: hookDeltas(before, snapshotHooks()),
+    });
+  }, LOAD_EFFECT_MS);
+}
+'''
 write(f"{PKG}/src/utils/internals/renderProbe.ts", probe)
 write(f"{PKG}/cv-probe-parse.mjs", git("show", f"{PROBE_HEAD}:{PKG}/cv-probe-parse.mjs"))
 
@@ -96,6 +322,8 @@ function sameSendAmount(a: SendAmount, b: SendAmount): boolean {
 export const useCountervaluesState = probeHook(
   "useCountervaluesState",
   Hooks.useCountervaluesState,
+  Object.is,
+  Hooks.useCountervaluesState,
 );
 export const useCountervaluesPolling = probeHook(
   "useCountervaluesPolling",
@@ -105,12 +333,24 @@ export const useCountervaluesLoadStatus = probeHook(
   "useCountervaluesLoadStatus",
   Hooks.useCountervaluesLoadStatus,
 );
-export const useCalculate = probeHook("useCalculate", Hooks.useCalculate);
+export const useCalculate = probeHook(
+  "useCalculate",
+  Hooks.useCalculate,
+  Object.is,
+  Hooks.useCountervaluesState,
+);
 export const useCalculateCountervalueCallback = probeHook(
   "useCalculateCountervalueCallback",
   Hooks.useCalculateCountervalueCallback,
+  Object.is,
+  Hooks.useCountervaluesState,
 );
-export const useSendAmount = probeHook("useSendAmount", Hooks.useSendAmount, sameSendAmount);
+export const useSendAmount = probeHook(
+  "useSendAmount",
+  Hooks.useSendAmount,
+  sameSendAmount,
+  Hooks.useCountervaluesState,
+);
 """
 write(f"{PKG}/src/index.ts", s)
 

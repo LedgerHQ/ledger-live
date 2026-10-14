@@ -28,6 +28,8 @@ function sameSendAmount(a: SendAmount, b: SendAmount): boolean {
 export const useCountervaluesState = probeHook(
   "useCountervaluesState",
   Hooks.useCountervaluesState,
+  Object.is,
+  Hooks.useCountervaluesState,
 );
 export const useCountervaluesPolling = probeHook(
   "useCountervaluesPolling",
@@ -37,9 +39,21 @@ export const useCountervaluesLoadStatus = probeHook(
   "useCountervaluesLoadStatus",
   Hooks.useCountervaluesLoadStatus,
 );
-export const useCalculate = probeHook("useCalculate", Hooks.useCalculate);
+export const useCalculate = probeHook(
+  "useCalculate",
+  Hooks.useCalculate,
+  Object.is,
+  Hooks.useCountervaluesState,
+);
 export const useCalculateCountervalueCallback = probeHook(
   "useCalculateCountervalueCallback",
   Hooks.useCalculateCountervalueCallback,
+  Object.is,
+  Hooks.useCountervaluesState,
 );
-export const useSendAmount = probeHook("useSendAmount", Hooks.useSendAmount, sameSendAmount);
+export const useSendAmount = probeHook(
+  "useSendAmount",
+  Hooks.useSendAmount,
+  sameSendAmount,
+  Hooks.useCountervaluesState,
+);
