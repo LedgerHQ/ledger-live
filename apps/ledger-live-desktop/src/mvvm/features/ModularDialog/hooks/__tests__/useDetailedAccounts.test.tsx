@@ -72,6 +72,22 @@ describe("useDetailedAccounts", () => {
     );
   });
 
+  it("should hand Add account over to the dialog's onAddAccount when one is set", () => {
+    jest.mocked(setDrawer).mockClear();
+    const onAddAccount = jest.fn();
+    const { result } = renderHook(() => useDetailedAccounts(ethereumCurrency), {
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDialog: { dialogParams: { onAddAccount } },
+      },
+    });
+
+    result.current.onAddAccountClick();
+
+    expect(onAddAccount).toHaveBeenCalledTimes(1);
+    expect(setDrawer).not.toHaveBeenCalled();
+  });
+
   it("should return accounts for a token currency", () => {
     const asset = ethereumCurrency;
     const { result } = renderHook(() => useDetailedAccounts(asset), {

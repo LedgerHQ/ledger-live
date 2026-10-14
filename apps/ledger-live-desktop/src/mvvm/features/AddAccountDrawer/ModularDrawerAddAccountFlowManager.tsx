@@ -30,6 +30,12 @@ export const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 export type ModularDrawerAddAccountFlowManagerProps = {
   currency: CryptoOrTokenCurrency;
   onAccountSelected?: (account: Account | TokenAccount, parentAccount?: Account) => void;
+  /** When false, the scan step leaves every discovered account unchecked. Defaults to true. */
+  autoSelect?: boolean;
+  /** Replaces the success step's CTAs with a single Done, called with the added accounts. */
+  onDone?: (accounts: Account[]) => void;
+  /** Called once the selected accounts are in the wallet, before the success step is shown. */
+  onAccountsAdded?: (accounts: Account[]) => void;
 };
 
 export const Title = styled(Text)`
@@ -51,6 +57,9 @@ const StepContainer = styled(Flex)`
 const ModularDrawerAddAccountFlowManager = ({
   currency,
   onAccountSelected,
+  autoSelect,
+  onDone,
+  onAccountsAdded,
 }: ModularDrawerAddAccountFlowManagerProps) => {
   const { t } = useTranslation();
 
@@ -127,8 +136,10 @@ const ModularDrawerAddAccountFlowManager = ({
             <ScanAccounts
               currency={cryptoCurrency}
               deviceId={connectAppResult.device.deviceId}
+              autoSelect={autoSelect}
               onRetry={navigateToConnectDevice}
               onComplete={accounts => {
+                onAccountsAdded?.(accounts);
                 setSelectedAccounts(accounts);
                 navigateToAccountsAdded();
               }}
@@ -146,6 +157,7 @@ const ModularDrawerAddAccountFlowManager = ({
               navigateToFundAccount={navigateToFundAccount}
               navigateToSelectAccount={navigateToSelectAccount}
               isAccountSelectionFlow={isAccountSelectionFlow}
+              onDone={onDone}
             />
           </StepContainer>
         );

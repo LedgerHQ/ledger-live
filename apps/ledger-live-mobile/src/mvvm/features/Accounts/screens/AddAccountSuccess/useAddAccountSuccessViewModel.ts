@@ -1,8 +1,13 @@
 import { track } from "@shared/analytics";
 import { useNavigation } from "@react-navigation/core";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import {
+  BaseComposite,
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { AddAccountContexts } from "../AddAccount/enums";
@@ -13,7 +18,8 @@ export type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsSuccess>
 >;
 export default function useAddAccountSuccessViewModel({ route }: Props) {
-  const { currency, accountsToAdd, context, onCloseNavigation } = route.params || {};
+  const { currency, accountsToAdd, context, onCloseNavigation, onDone, navigationDepth } =
+    route.params || {};
   const { colors, space } = useTheme();
   const navigation = useNavigation();
   const { analyticsMetadata } = useAnalytics(context);
@@ -44,6 +50,21 @@ export default function useAddAccountSuccessViewModel({ route }: Props) {
     [navigation, route.params, context, analyticsMetadata],
   );
 
+  // Done hands the accounts over, then pops back to the screen that started the flow instead
+  // of the stack's root, which would unmount the origin (e.g. the Perps live app).
+  const onDonePress = useMemo(
+    () =>
+      onDone
+        ? () => {
+            onDone(accountsToAdd);
+            navigation
+              .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
+              ?.pop(navigationDepth ?? 2);
+          }
+        : onCloseNavigation,
+    [onDone, accountsToAdd, navigation, navigationDepth, onCloseNavigation],
+  );
+
   return {
     space,
     currency,
@@ -51,6 +72,7 @@ export default function useAddAccountSuccessViewModel({ route }: Props) {
     statusColor,
     goToAccounts,
     keyExtractor,
-    onCloseNavigation,
+    onCloseNavigation: onDonePress,
+    isDoneFlow: !!onDone,
   };
 }

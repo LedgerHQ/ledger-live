@@ -60,6 +60,8 @@ type CurrencyDrawerCompletion = {
 export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
   (AccountOrDeviceDrawerCompletion | CurrencyDrawerCompletion) & {
     onCancel?: () => void;
+    /** Replaces the default add account flow opened from the account selection step. */
+    onAddAccount?: () => void;
   } & TExtras;
 
 type AccountOrDeviceDrawerRemoteCompletion = {
@@ -77,6 +79,7 @@ type CurrencyDrawerRemoteCompletion = {
 export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
   (AccountOrDeviceDrawerRemoteCompletion | CurrencyDrawerRemoteCompletion) & {
     cancelCallbackId?: string;
+    addAccountCallbackId?: string;
   } & TExtras;
 
 export type OpenDrawer<TExtras extends object = DrawerExtras> = (

@@ -5,10 +5,11 @@ import { AddAccountContexts } from "../AddAccount/enums";
 import useAddAccountSuccessViewModel, { Props } from "./useAddAccountSuccessViewModel";
 
 const navigate = jest.fn();
+const pop = jest.fn();
 
 jest.mock("@react-navigation/core", () => ({
   ...jest.requireActual("@react-navigation/core"),
-  useNavigation: () => ({ navigate }),
+  useNavigation: () => ({ navigate, getParent: () => ({ pop }) }),
 }));
 
 const makeProps = (params?: Record<string, unknown>) => ({ route: { params } }) as unknown as Props;
@@ -58,5 +59,45 @@ describe("useAddAccountSuccessViewModel", () => {
     expect(result.current.accountsToAdd).toBe(accountsToAdd);
     expect(result.current.currency).toBe(currency);
     expect(result.current.onCloseNavigation).toBe(onCloseNavigation);
+  });
+
+  it("hands the added accounts to onDone, then pops back to the screen that started the flow", () => {
+    const accountsToAdd = [{ id: "a" }];
+    const onDone = jest.fn();
+    const onCloseNavigation = jest.fn();
+    const { result } = renderHook(() =>
+      useAddAccountSuccessViewModel(makeProps({ accountsToAdd, onDone, onCloseNavigation })),
+    );
+
+    result.current.onCloseNavigation?.();
+
+    expect(onDone).toHaveBeenCalledWith(accountsToAdd);
+    expect(pop).toHaveBeenCalledWith(2);
+    expect(onDone.mock.invocationCallOrder[0]).toBeLessThan(pop.mock.invocationCallOrder[0]);
+    expect(onCloseNavigation).not.toHaveBeenCalled();
+    expect(result.current.isDoneFlow).toBe(true);
+  });
+
+  it("honours a custom navigationDepth when popping back", () => {
+    const { result } = renderHook(() =>
+      useAddAccountSuccessViewModel(
+        makeProps({ accountsToAdd: [], onDone: jest.fn(), navigationDepth: 3 }),
+      ),
+    );
+
+    result.current.onCloseNavigation?.();
+
+    expect(pop).toHaveBeenCalledWith(3);
+  });
+
+  it("keeps the default close behaviour when no onDone is given", () => {
+    const onCloseNavigation = jest.fn();
+    const { result } = renderHook(() =>
+      useAddAccountSuccessViewModel(makeProps({ onCloseNavigation })),
+    );
+
+    expect(result.current.onCloseNavigation).toBe(onCloseNavigation);
+    expect(result.current.isDoneFlow).toBe(false);
+    expect(pop).not.toHaveBeenCalled();
   });
 });

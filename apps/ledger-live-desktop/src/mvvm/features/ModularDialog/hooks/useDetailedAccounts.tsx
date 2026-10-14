@@ -18,7 +18,10 @@ import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
-import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
+import {
+  modularDialogOnAddAccountSelector,
+  modularDialogSourceSelector,
+} from "~/renderer/reducers/modularDialog";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
 export const useDetailedAccounts = (
@@ -29,6 +32,7 @@ export const useDetailedAccounts = (
   const counterValuesState = useCountervaluesCache();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const source = useSelector(modularDialogSourceSelector);
+  const onAddAccount = useSelector(modularDialogOnAddAccountSelector);
   const { openAddAccountFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     source,
@@ -84,8 +88,12 @@ export const useDetailedAccounts = (
       button: "Add a new account",
       page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
     });
+    if (onAddAccount) {
+      onAddAccount();
+      return;
+    }
     openAddAccountFlow(asset, wrappedOnAccountSelected);
-  }, [asset, openAddAccountFlow, trackModularDialogEvent, wrappedOnAccountSelected]);
+  }, [asset, onAddAccount, openAddAccountFlow, trackModularDialogEvent, wrappedOnAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };
