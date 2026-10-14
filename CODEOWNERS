@@ -605,16 +605,24 @@ mise.toml                                             @ledgerhq/platform
 /nx.json                                              @ledgerhq/platform
 
 # Platform — Agent files
-/.agents/                          @ledgerhq/platform
-.agents/skills/ledger-wallet-cli/                                             @ledgerhq/agentic-core
-.claude/                           @ledgerhq/platform
-.codex                             @ledgerhq/platform
-.cursor/                           @ledgerhq/platform
-.github/copilot-instructions.md    @ledgerhq/platform
-.koda/                             @ledgerhq/platform
-/CLAUDE.md                         @ledgerhq/platform
-/docs/                             @ledgerhq/platform
-AGENTS.md                          @ledgerhq/platform
+/.agents/                                      @ledgerhq/platform
+.agents/skills/ledger-wallet-cli/              @ledgerhq/agentic-core
+.claude/                                       @ledgerhq/platform
+.codex                                         @ledgerhq/platform
+.cursor/                                       @ledgerhq/platform
+.github/copilot-instructions.md                @ledgerhq/platform
+.koda/                                         @ledgerhq/platform
+/CLAUDE.md                                     @ledgerhq/platform
+/docs/                                         @ledgerhq/platform
+/AGENTS.md                                     @ledgerhq/platform
+
+# e2e skills live under /.agents/, so /e2e/ never matches them
+.agents/skills/e2e-desktop-add-or-update/      @ledgerhq/qaa
+.agents/skills/e2e-desktop-onboard/            @ledgerhq/qaa
+.agents/skills/e2e-earn/                       @ledgerhq/qaa
+.agents/skills/e2e-mobile-add-or-update/       @ledgerhq/qaa
+.agents/skills/e2e-mobile-onboard/             @ledgerhq/qaa
+.agents/skills/e2e-swap/                       @ledgerhq/qaa
 
 # Monitoring
 apps/ledger-live-desktop/src/datadog/                 @ledgerhq/platform
