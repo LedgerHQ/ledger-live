@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
 import {
   ServiceUnavailable,
   useAppAvailability,
@@ -25,6 +26,13 @@ export function WaitForAppReady({
   const isLoaded = currencyInitialized && !pendingAvailabilityCheck && remoteFlagsReady;
 
   const timedOut = useWait<boolean>(resolve => setTimeout(() => resolve(true), MAX_WAIT)) ?? false;
+  const unavailableWithoutNavigator =
+    availability.status === "unavailable" || (timedOut && cal.status === "pending");
+
+  useEffect(() => {
+    if (!unavailableWithoutNavigator) return;
+    void SplashScreen.hide();
+  }, [unavailableWithoutNavigator]);
 
   if (availability.status === "unavailable") {
     return children;

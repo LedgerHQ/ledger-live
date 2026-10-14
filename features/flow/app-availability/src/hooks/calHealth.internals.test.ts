@@ -12,7 +12,7 @@ function probe(overrides: Partial<Parameters<typeof checkCalHealth>[0]> = {}) {
 
 describe("checkCalHealth", () => {
   it("should return ok when CAL answers successfully", async () => {
-    const fetchImpl = jest.fn().mockResolvedValue({ ok: true });
+    const fetchImpl = jest.fn().mockResolvedValue({ ok: true, status: 200 });
 
     await expect(probe({ fetchImpl })).resolves.toBe("ok");
 
