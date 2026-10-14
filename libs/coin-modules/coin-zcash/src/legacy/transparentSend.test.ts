@@ -175,7 +175,13 @@ describe("buildLegacyEstimateMaxSpendable", () => {
     const max = await estimate({ account, transaction: tx({}) });
 
     expect(max.toNumber()).toBe(123_000);
-    expect(estimateAccountMaxSpendable).toHaveBeenCalledWith(expect.anything(), 40, [], [T1]);
+    expect(estimateAccountMaxSpendable).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      40,
+      [],
+      [T1],
+    );
   });
 
   it("never reports a negative max", async () => {

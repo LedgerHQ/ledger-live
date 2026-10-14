@@ -26,18 +26,28 @@ describe("testing estimateMaxSpendable", () => {
   });
 
   it("should estimate max spendable correctly", async () => {
-    await wallet.syncAccount(account);
-    const maxSpendableAtMinFee = await wallet.estimateAccountMaxSpendable(account, 0, []);
+    await wallet.syncAccount(jest.fn(), account);
+    const maxSpendableAtMinFee = await wallet.estimateAccountMaxSpendable(
+      jest.fn(),
+      account,
+      0,
+      [],
+    );
     const balance = 109088;
     expect(maxSpendableAtMinFee.toNumber()).toEqual(
       balance - utils.maxTxSizeCeil(2, [], true, account.xpub.crypto, account.xpub.derivationMode),
     );
-    const maxSpendableExcludeUtxo = await wallet.estimateAccountMaxSpendable(account, 0, [
-      {
-        hash: "f80246be50064bb254d2cad82fb0d4ce7768582b99c113694e72411f8032fd7a",
-        outputIndex: 0,
-      },
-    ]);
+    const maxSpendableExcludeUtxo = await wallet.estimateAccountMaxSpendable(
+      jest.fn(),
+      account,
+      0,
+      [
+        {
+          hash: "f80246be50064bb254d2cad82fb0d4ce7768582b99c113694e72411f8032fd7a",
+          outputIndex: 0,
+        },
+      ],
+    );
     expect(maxSpendableExcludeUtxo.toNumber()).toEqual(
       balance -
         1000 -
@@ -45,6 +55,7 @@ describe("testing estimateMaxSpendable", () => {
     );
     let feesPerByte = 100;
     const maxSpendableAtMediumFee = await wallet.estimateAccountMaxSpendable(
+      jest.fn(),
       account,
       feesPerByte,
       [],
@@ -53,6 +64,7 @@ describe("testing estimateMaxSpendable", () => {
     expect(maxSpendableAtMediumFee.lt(maxSpendableAtMinFee)).toBe(true);
     feesPerByte = 10000;
     const maxSpendableAtHighFee = await wallet.estimateAccountMaxSpendable(
+      jest.fn(),
       account,
       feesPerByte,
       [],
@@ -81,18 +93,28 @@ describe("testing estimateMaxSpendable", () => {
 
   it("should estimate max spendable correctly with utxo rbf set to true", async () => {
     // TODO: fix a more stable account, as this one had some activity recently
-    await wallet.syncAccount(account);
-    const maxSpendableAtMinFee = await wallet.estimateAccountMaxSpendable(account, 0, []);
+    await wallet.syncAccount(jest.fn(), account);
+    const maxSpendableAtMinFee = await wallet.estimateAccountMaxSpendable(
+      jest.fn(),
+      account,
+      0,
+      [],
+    );
     const balance = 12835640;
     expect(maxSpendableAtMinFee.toNumber()).toEqual(
       balance - utils.maxTxSizeCeil(24, [], true, account.xpub.crypto, account.xpub.derivationMode),
     );
-    const maxSpendableExcludeUtxo = await wallet.estimateAccountMaxSpendable(account, 0, [
-      {
-        hash: "a24445474a9a7c0698e8db221ad2cae06792a899e9bc7f5a590687c3c810c480",
-        outputIndex: 0,
-      },
-    ]);
+    const maxSpendableExcludeUtxo = await wallet.estimateAccountMaxSpendable(
+      jest.fn(),
+      account,
+      0,
+      [
+        {
+          hash: "a24445474a9a7c0698e8db221ad2cae06792a899e9bc7f5a590687c3c810c480",
+          outputIndex: 0,
+        },
+      ],
+    );
     expect(maxSpendableExcludeUtxo.toNumber()).toEqual(
       balance -
         1000 -
@@ -100,6 +122,7 @@ describe("testing estimateMaxSpendable", () => {
     );
     let feesPerByte = 100;
     const maxSpendableAtMediumFee = await wallet.estimateAccountMaxSpendable(
+      jest.fn(),
       account,
       feesPerByte,
       [],
@@ -108,6 +131,7 @@ describe("testing estimateMaxSpendable", () => {
     expect(maxSpendableAtMediumFee.lt(maxSpendableAtMinFee)).toBe(true);
     feesPerByte = 10000;
     const maxSpendableAtHighFee = await wallet.estimateAccountMaxSpendable(
+      jest.fn(),
       account,
       feesPerByte,
       [],

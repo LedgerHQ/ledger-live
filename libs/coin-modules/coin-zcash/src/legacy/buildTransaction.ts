@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import wallet, { Merge, type Account as WalletAccount } from "@ledgerhq/wallet-btc/index";
 import type { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { ZcashContext } from "../config";
 import type { Transaction, ZcashAccount } from "../types/bridge";
 import { bindExplorer } from "../bridge/explorer";
@@ -29,6 +30,7 @@ export async function resolveWalletAccount(
  * coin-bitcoin does. Zcash spends P2PKH only: no RBF, no custom picking.
  */
 async function buildAtRate(
+  logger: Logger,
   walletAccount: WalletAccount,
   transaction: Transaction,
   feePerByte: BigNumber,
@@ -37,10 +39,10 @@ async function buildAtRate(
   const rate = feePerByte.toNumber(); //!\ wallet-btc handles fees as a JS number
 
   const amount = useAllAmount
-    ? await wallet.estimateAccountMaxSpendable(walletAccount, rate, [], [recipient])
+    ? await wallet.estimateAccountMaxSpendable(logger, walletAccount, rate, [], [recipient])
     : transaction.amount;
 
-  return walletAccount.xpub.buildTx({
+  return walletAccount.xpub.buildTx(logger, {
     destAddress: recipient,
     amount,
     feePerByte: rate,
@@ -56,11 +58,12 @@ async function buildAtRate(
 
 /** Builds the transaction at the rate that makes it pay exactly what ZIP-317 asks. */
 export function buildLegacyTransaction(
+  logger: Logger,
   walletAccount: WalletAccount,
   transaction: Transaction,
 ): Promise<PricedBuild> {
   return buildAtZip317Rate(
     zcashSafeFeePerByte(walletAccount.xpub.crypto, walletAccount.xpub.derivationMode),
-    feePerByte => buildAtRate(walletAccount, transaction, feePerByte),
+    feePerByte => buildAtRate(logger, walletAccount, transaction, feePerByte),
   );
 }

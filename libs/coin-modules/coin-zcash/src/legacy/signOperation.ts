@@ -94,7 +94,7 @@ export const buildLegacySignOperation =
     new Observable<SignOperationEvent>(subscriber => {
       (async () => {
         const walletAccount = await resolveWalletAccount(context, account);
-        const { txInfo } = await buildLegacyTransaction(walletAccount, transaction);
+        const { txInfo } = await buildLegacyTransaction(context.logger, walletAccount, transaction);
 
         const signature = await signerContext(deviceId, signer =>
           signer.createPaymentTransaction(

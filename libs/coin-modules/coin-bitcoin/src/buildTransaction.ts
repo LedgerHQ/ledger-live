@@ -130,6 +130,7 @@ export const buildTransaction = async (
   const utxoPickingStrategy = selectUtxoPickingStrategy(walletAccount, effectiveUtxoStrategy);
 
   const maxSpendable = await wallet.estimateAccountMaxSpendable(
+    logger,
     walletAccount,
     feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     utxoStrategy.excludeUTXOs,
@@ -152,7 +153,7 @@ export const buildTransaction = async (
     ? true
     : false;
 
-  const txInfo = await buildAccountTx(config, {
+  const txInfo = await buildAccountTx(logger, config, {
     fromAccount: walletAccount,
     dest: transaction.recipient,
     amount: transaction.useAllAmount ? maxSpendable : transaction.amount,

@@ -72,10 +72,11 @@ beforeEach(() => jest.clearAllMocks());
 describe("buildAccountTx", () => {
   it("resolves change address and forwards the params to xpub.buildTx", async () => {
     const account = makeAccount();
-    const txInfo = await buildAccountTx(TEST_CONFIG, baseBuildParams(account));
+    const txInfo = await buildAccountTx(jest.fn(), TEST_CONFIG, baseBuildParams(account));
 
     expect(account.xpub.getNewAddress).toHaveBeenCalledWith(1, 1);
     expect(account.xpub.buildTx).toHaveBeenCalledWith(
+      expect.any(Function),
       expect.objectContaining({
         destAddress: "dest-addr",
         amount: new BigNumber(15000),
@@ -90,7 +91,10 @@ describe("buildAccountTx", () => {
   it("throws when a mismatching change address is provided", async () => {
     const account = makeAccount();
     await expect(
-      buildAccountTx(TEST_CONFIG, { ...baseBuildParams(account), changeAddress: "wrong-addr" }),
+      buildAccountTx(jest.fn(), TEST_CONFIG, {
+        ...baseBuildParams(account),
+        changeAddress: "wrong-addr",
+      }),
     ).rejects.toThrow("Invalid change address");
   });
 
@@ -99,9 +103,13 @@ describe("buildAccountTx", () => {
     mockedGetTxInputOutpoints.mockResolvedValue(new Set(["hash-in:0"]));
     mockedGetMinReplacementFeeSat.mockResolvedValue(new BigNumber(1234));
 
-    await buildAccountTx(TEST_CONFIG, { ...baseBuildParams(account), originalTxId: "orig-tx" });
+    await buildAccountTx(jest.fn(), TEST_CONFIG, {
+      ...baseBuildParams(account),
+      originalTxId: "orig-tx",
+    });
 
     expect(account.xpub.buildTx).toHaveBeenCalledWith(
+      expect.any(Function),
       expect.objectContaining({ originalTxId: "orig-tx", minReplacementFeeSat: 1234 }),
     );
   });
@@ -111,20 +119,24 @@ describe("buildAccountTx", () => {
     mockedGetTxInputOutpoints.mockResolvedValue(new Set<string>());
     mockedGetMinReplacementFeeSat.mockResolvedValue(new BigNumber(0));
 
-    await buildAccountTx(TEST_CONFIG, { ...baseBuildParams(account), originalTxId: "orig-tx" });
+    await buildAccountTx(jest.fn(), TEST_CONFIG, {
+      ...baseBuildParams(account),
+      originalTxId: "orig-tx",
+    });
 
-    const call = account.xpub.buildTx.mock.calls[0][0];
+    const call = account.xpub.buildTx.mock.calls[0][1];
     expect(call.originalTxId).toBe("orig-tx");
     expect(call).not.toHaveProperty("minReplacementFeeSat");
   });
 
   it("forwards a relay fee floor when provided", async () => {
     const account = makeAccount();
-    await buildAccountTx(TEST_CONFIG, {
+    await buildAccountTx(jest.fn(), TEST_CONFIG, {
       ...baseBuildParams(account),
       relayFeePerByteSatVb: new BigNumber(2),
     });
     expect(account.xpub.buildTx).toHaveBeenCalledWith(
+      expect.any(Function),
       expect.objectContaining({ relayFeePerByteSatVb: new BigNumber(2) }),
     );
   });

@@ -12,6 +12,11 @@ import wallet, { DerivationModes } from "@ledgerhq/wallet-btc/index";
 
 const zcash = getCryptoCurrencyById("zcash");
 
+const serialization = {
+  assignFromAccountRaw: zcashSerialization.makeAssignFromAccountRaw(jest.fn()),
+  assignToAccountRaw: zcashSerialization.assignToAccountRaw,
+};
+
 async function persistedAccount(): Promise<AccountRaw> {
   const walletAccount = await wallet.generateAccount(
     {
@@ -102,7 +107,7 @@ describe("Zcash account persistence", () => {
   it("reads what coin-bitcoin persisted and writes it back unchanged", async () => {
     const raw = await persistedAccount();
 
-    expect(readThenWrite(raw, zcashSerialization, zcashSerialization)).toEqual(
+    expect(readThenWrite(raw, serialization, serialization)).toEqual(
       JSON.parse(JSON.stringify(raw)),
     );
   });
