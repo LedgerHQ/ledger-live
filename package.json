@@ -229,6 +229,7 @@
   },
   "pnpm": {
     "overrides": {
+      "@ledgerhq/coin-xrp": "link:../coin-modules/libs/coin-modules/coin-xrp",
       "react": "catalog:",
       "react-dom": "catalog:",
       "@types/react": "catalog:",

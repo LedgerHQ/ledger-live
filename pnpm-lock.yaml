@@ -66,9 +66,6 @@ catalogs:
     '@ledgerhq/coin-tezos':
       specifier: 13.0.2
       version: 13.0.2
-    '@ledgerhq/coin-xrp':
-      specifier: 12.0.1
-      version: 12.0.1
     '@ledgerhq/crypto-icons':
       specifier: 2.0.6
       version: 2.0.6
@@ -629,6 +626,7 @@ catalogs:
       version: 4.4.3
 
 overrides:
+  '@ledgerhq/coin-xrp': link:../coin-modules/libs/coin-modules/coin-xrp
   react: 19.1.4
   react-dom: 19.1.4
   '@types/react': 19.0.14
@@ -14581,8 +14579,8 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
-        specifier: 'catalog:'
-        version: 12.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+        specifier: link:../../../coin-modules/libs/coin-modules/coin-xrp
+        version: link:../../../coin-modules/libs/coin-modules/coin-xrp
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -23578,11 +23576,6 @@ packages:
 
   '@ledgerhq/coin-tezos@13.0.2':
     resolution: {integrity: sha512-tqYpEs8gqlFAee3Q2+JsEq1ibZn4Kkh9zZY2laibrbcuM1IU7T1LYNJeE09eaxg25HtpCQkNS8YEkTLlaUdI4A==}
-    peerDependencies:
-      '@ledgerhq/live-network': ^3.1.0
-
-  '@ledgerhq/coin-xrp@12.0.1':
-    resolution: {integrity: sha512-7chs5ATn08Szlh0lzHmsfh4lLFUVTcrxUxqwkV4U8SFUbTY20iOOunHGhFDpUsquKAb9nxCr8QoXV3ZmsRQ3Vw==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -44967,18 +44960,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@ledgerhq/coin-xrp@12.0.1(@ledgerhq/live-network@3.2.0(axios@1.20.0))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@ledgerhq/coin-module-framework': 10.0.0
-      '@ledgerhq/live-network': 3.2.0(axios@1.20.0)
-      bignumber.js: 9.1.2
-      invariant: 2.2.4
-      ripple-address-codec: 5.0.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      ripple-binary-codec: 1.11.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@ledgerhq/context-module@2.6.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
@@ -52069,15 +52050,6 @@ snapshots:
       tslib: 2.6.2
 
   '@xmldom/xmldom@0.8.10': {}
-
-  '@xrplf/isomorphic@1.0.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@noble/hashes': 1.8.0
-      eventemitter3: 5.0.1
-      ws: 8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   '@xrplf/isomorphic@1.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
@@ -61860,14 +61832,6 @@ snapshots:
     dependencies:
       base-x: 3.0.9
       create-hash: 1.2.0
-
-  ripple-address-codec@5.0.0(bufferutil@4.1.0)(utf-8-validate@5.0.10):
-    dependencies:
-      '@scure/base': 1.1.6
-      '@xrplf/isomorphic': 1.0.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   ripple-address-codec@5.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     dependencies:

@@ -18,6 +18,7 @@
       "*": ["./*"],
       "react": ["./../../../node_modules/@types/react"],
       "@types/react": ["./../../../node_modules/@types/react"],
+      "bignumber.js": ["./../node_modules/bignumber.js"],
       "@tests/*": ["./__tests__/*"]
     }
   },

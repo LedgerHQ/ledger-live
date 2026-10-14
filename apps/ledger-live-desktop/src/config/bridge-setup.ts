@@ -1,6 +1,7 @@
 import { buildCryptoAssetsStore } from "@features/platform-currencies";
 import { setCountervaluesLogger } from "@features/platform-market-countervalues";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { withXrpDevTokens } from "@ledgerhq/live-common/families/xrp/devTokens";
 import { log } from "@ledgerhq/logs";
 import { setRateLookup as setAssetAggregationRateLookup } from "@ledgerhq/asset-aggregation/rateLookup";
 import { setRateLookup as setWalletAnalyticsRateLookup } from "@ledgerhq/wallet-analytics";
@@ -20,7 +21,7 @@ export function setupCryptoAssetsStore(store: ReduxStore): void {
   const getTokensSyncHash = cryptoAssetsStore.getTokensSyncHash;
   cryptoAssetsStore.getTokensSyncHash = async currencyId =>
     currencyId === "ripple_testnet" ? "" : getTokensSyncHash(currencyId);
-  setCryptoAssetsStore(cryptoAssetsStore);
+  setCryptoAssetsStore(withXrpDevTokens(cryptoAssetsStore));
 }
 
 /**
