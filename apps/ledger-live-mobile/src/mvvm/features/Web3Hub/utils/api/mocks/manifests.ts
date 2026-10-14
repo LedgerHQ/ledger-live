@@ -123,7 +123,6 @@ export const mocks: AppManifest[] = [
       "metis",
       "boba",
       "moonriver",
-      "velas_evm",
       "syscoin",
       "klaytn",
       "polygon_zk_evm",

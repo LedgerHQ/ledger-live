@@ -182,7 +182,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "mantle_sepolia",
       "boba",
       "moonriver",
-      "velas_evm",
       "syscoin",
       "bitlayer",
       "klaytn",

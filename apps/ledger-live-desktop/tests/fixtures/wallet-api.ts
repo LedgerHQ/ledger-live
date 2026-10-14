@@ -800,15 +800,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "velas_evm",
-    ticker: "VLX",
-    name: "Velas EVM",
-    family: "ethereum",
-    color: "#000000",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
     id: "syscoin",
     ticker: "SYS",
     name: "Syscoin",
