@@ -97,8 +97,10 @@ export function useChecksScreenViewModel({
   const updateKey = update ? `${update.current}|${update.available}` : "";
   const [unsupportedFor, setUnsupportedFor] = useState<string | null>(null);
   const declinedFor = useRef<string | null>(null);
+  const suppressOfferCloseFor = useRef<string | null>(null);
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
   const eligibility = update ? firmwareEligibility(device, update.current) : null;
+  const isUnsupportedUpdateOpen = unsupportedFor === updateKey && updateKey !== "";
 
   const layouts: Record<ChecksLayout, LayoutProps> = {
     synchronizing: {
@@ -143,7 +145,7 @@ export function useChecksScreenViewModel({
           }
         : undefined,
     firmwareUpdate: {
-      isOpen: update !== null,
+      isOpen: update !== null && !isUnsupportedUpdateOpen,
       firmwareVersion: update?.available ?? "",
       productName,
       onUpdate: () => {
@@ -152,19 +154,24 @@ export function useChecksScreenViewModel({
           onAcceptUpdate();
           return;
         }
+        suppressOfferCloseFor.current = updateKey;
         setUnsupportedFor(updateKey);
       },
       onClose: () => {
+        if (suppressOfferCloseFor.current === updateKey) return;
         if (declinedFor.current === updateKey) return;
         declinedFor.current = updateKey;
         onDeclineUpdate();
       },
     },
     unsupportedUpdate: {
-      isOpen: unsupportedFor === updateKey && updateKey !== "",
+      isOpen: isUnsupportedUpdateOpen,
       isUsbRequired: eligibility?.isUsbRequired ?? false,
       productName,
-      onClose: () => setUnsupportedFor(null),
+      onClose: () => {
+        suppressOfferCloseFor.current = null;
+        setUnsupportedFor(null);
+      },
     },
   };
 }

@@ -20,6 +20,14 @@ jest.mock("LLM/components/QueuedDrawer", () => {
     noCloseButton?: boolean;
     children?: React.ReactNode;
   }) {
+    const onCloseRef = React.useRef(onClose);
+    onCloseRef.current = onClose;
+    React.useEffect(() => {
+      return () => {
+        onCloseRef.current?.();
+      };
+    }, []);
+
     if (!isRequestingToBeOpened) return null;
 
     return (
@@ -218,7 +226,9 @@ describe("ChecksView", () => {
     await user.press(screen.getByText("Update now"));
 
     expect(screen.getByText("Firmware Update")).toBeVisible();
+    expect(screen.queryByText("Update now")).toBeNull();
     expect(onAcceptUpdate).not.toHaveBeenCalled();
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
 
     await user.press(screen.getByRole("button", { name: "Close" }));
     await user.press(screen.getByText("See what's in the update"));
@@ -277,7 +287,11 @@ describe("ChecksView", () => {
     });
 
     await user.press(screen.getByText("Update now"));
+    expect(onDeclineUpdate).not.toHaveBeenCalled();
+
     await user.press(screen.getByRole("button", { name: "Close" }));
+    expect(screen.getByText("Update now")).toBeVisible();
+
     await user.press(screen.getByTestId("modal-close-button"));
 
     expect(onDeclineUpdate).toHaveBeenCalledTimes(1);
