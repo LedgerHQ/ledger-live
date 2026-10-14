@@ -1,3 +1,7 @@
+jest.mock("../coinConfig", () => ({
+  getBitcoinCoinConfig: jest.fn(() => ({ sync: { replacedOperationExpiryMs: 7_200_000 } })),
+}));
+
 import { BigNumber } from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { BitcoinTxDetails } from "@ledgerhq/coin-bitcoin/api";

@@ -1,3 +1,6 @@
+jest.mock("../coinConfig", () => ({ getBitcoinCoinConfig: jest.fn(() => ({})) }));
+
+import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ReplacementTransactionUnderpriced } from "../../../errors";
@@ -11,6 +14,9 @@ import {
   type Transaction as BtcTransaction,
   type TransactionStatus,
 } from "../types";
+
+// the replacement bump ratio is read from the coin config of the account's currency
+const mainAccount = { currency: { id: "bitcoin" } } as Account;
 
 /**
  * A bitcoin transaction whose user choices are `familySpecificData` (the custom rate as a string);
@@ -60,6 +66,7 @@ const expectUnderpriced = (errors: Record<string, Error>) =>
 describe("validateEditTransaction", () => {
   it("returns empty errors and warnings when editType is undefined", () => {
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "10" }),
       transactionToUpdate: makeTransaction({ rbf: false, feePerByte: "5" }),
       editType: undefined as unknown as EditType,
@@ -71,6 +78,7 @@ describe("validateEditTransaction", () => {
 
   it("sets error when original transaction is not replaceable (rbf = false)", () => {
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "10" }),
       transactionToUpdate: makeTransaction({ rbf: false, feePerByte: "5" }),
       editType: "speedup",
@@ -82,6 +90,7 @@ describe("validateEditTransaction", () => {
 
   it("sets error when original transaction carries no familySpecificData (rbf unknown)", () => {
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "10" }),
       transactionToUpdate: makeTransaction(null),
       editType: "speedup",
@@ -98,6 +107,7 @@ describe("validateEditTransaction", () => {
     } as unknown as BtcTransaction;
 
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "10" }),
       transactionToUpdate,
       editType: "speedup",
@@ -108,6 +118,7 @@ describe("validateEditTransaction", () => {
 
   it("sets error when new feePerByte is missing (replacement must have a fee)", () => {
     const result = validateEditTransaction({
+      mainAccount,
       transaction: withoutFeePerByte(),
       transactionToUpdate: makeTransaction({ feePerByte: "5" }),
       editType: "speedup",
@@ -120,6 +131,7 @@ describe("validateEditTransaction", () => {
     "sets error when new feePerByte is %p (no usable rate)",
     feePerByte => {
       const result = validateEditTransaction({
+        mainAccount,
         transaction: makeTransaction({ feePerByte }),
         transactionToUpdate: makeTransaction({ feePerByte: "5" }),
         editType: "speedup",
@@ -131,6 +143,7 @@ describe("validateEditTransaction", () => {
 
   it("returns empty errors when only original feePerByte is missing and no replaceTxId", () => {
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "10" }),
       transactionToUpdate: withoutFeePerByte(),
       editType: "speedup",
@@ -141,6 +154,7 @@ describe("validateEditTransaction", () => {
 
   it("sets error when replaceTxId is set and the original rate is neither stored nor provided", () => {
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "11" }),
       transactionToUpdate: withoutFeePerByte({ replaceTxId: "orig-txid" }),
       editType: "cancel",
@@ -152,6 +166,7 @@ describe("validateEditTransaction", () => {
 
   it("sets error when replaceTxId is set and the provided original rate is null", () => {
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "11" }),
       transactionToUpdate: withoutFeePerByte({ replaceTxId: "orig-txid" }),
       editType: "speedup",
@@ -166,6 +181,7 @@ describe("validateEditTransaction", () => {
 
     expect(
       validateEditTransaction({
+        mainAccount,
         transaction: makeTransaction({ feePerByte: "12" }),
         transactionToUpdate,
         editType: "speedup",
@@ -175,6 +191,7 @@ describe("validateEditTransaction", () => {
 
     expectUnderpriced(
       validateEditTransaction({
+        mainAccount,
         transaction: makeTransaction({ feePerByte: "10" }),
         transactionToUpdate,
         editType: "speedup",
@@ -186,6 +203,7 @@ describe("validateEditTransaction", () => {
   it("prefers the rate stored in the transaction to update over the provided one", () => {
     // stored 10 → min 11: 5 is underpriced even though it beats the provided 2
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "5" }),
       transactionToUpdate: makeTransaction({ feePerByte: "10", replaceTxId: "orig-txid" }),
       editType: "speedup",
@@ -198,6 +216,7 @@ describe("validateEditTransaction", () => {
   it("reads the estimated rate (feeParameters) before the custom one", () => {
     // estimated 12 beats the original 10, the stale custom 5 does not matter
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "5" }, { feePerByte: "12" }),
       transactionToUpdate: makeTransaction({ feePerByte: "10" }),
       editType: "speedup",
@@ -210,6 +229,7 @@ describe("validateEditTransaction", () => {
     // getMinFees rule of thumb: >= +10% and >= +1 sat/vB, ceil.
     // Original 10 => min is ceil(max(11, 11)) = 11.
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "10" }),
       transactionToUpdate: makeTransaction({ feePerByte: "10" }),
       editType: "speedup",
@@ -222,6 +242,7 @@ describe("validateEditTransaction", () => {
   it("sets error when new feePerByte does not exceed a fractional original rate", () => {
     // Original 0.5 => min is ceil(max(0.55, 1.5)) = 2; 0.5 is both below the min and not above.
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "0.5" }),
       transactionToUpdate: makeTransaction({ feePerByte: "0.5" }),
       editType: "speedup",
@@ -233,6 +254,7 @@ describe("validateEditTransaction", () => {
   it("returns empty errors when new feePerByte meets or exceeds minimum required (RBF bump rule)", () => {
     // Original 10 => min is 11. New 12 is OK.
     const result = validateEditTransaction({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "12" }),
       transactionToUpdate: makeTransaction({ feePerByte: "10" }),
       editType: "speedup",
@@ -250,6 +272,7 @@ describe("getEditTransactionStatus", () => {
     });
 
     const result = getEditTransactionStatus({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "10" }),
       transactionToUpdate: makeTransaction({ rbf: false, feePerByte: "5" }),
       status: baseStatus,
@@ -269,6 +292,7 @@ describe("getEditTransactionStatus", () => {
     });
 
     const result = getEditTransactionStatus({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "10" }),
       transactionToUpdate: makeTransaction({ feePerByte: "5" }),
       status: baseStatus,
@@ -280,6 +304,7 @@ describe("getEditTransactionStatus", () => {
 
   it("validates without an edit type when none is given", () => {
     const result = getEditTransactionStatus({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "10" }),
       transactionToUpdate: makeTransaction({ rbf: false }),
       status: makeStatus(),
@@ -292,6 +317,7 @@ describe("getEditTransactionStatus", () => {
     const baseStatus = makeStatus({ errors: { amount: new AmountRequired() } });
 
     const result = getEditTransactionStatus({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "12" }),
       transactionToUpdate: makeTransaction({ feePerByte: "10" }),
       status: baseStatus,
@@ -306,6 +332,7 @@ describe("getEditTransactionStatus", () => {
     const amountError = new NotEnoughBalance();
 
     const result = getEditTransactionStatus({
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "12" }),
       transactionToUpdate: makeTransaction({ feePerByte: "10" }),
       status: makeStatus({ errors: { amount: amountError } }),
@@ -317,6 +344,7 @@ describe("getEditTransactionStatus", () => {
 
   it("forwards the original rate fetched for a transaction to update without one", () => {
     const params = {
+      mainAccount,
       transaction: makeTransaction({ feePerByte: "12" }),
       transactionToUpdate: withoutFeePerByte({ replaceTxId: "orig-txid" }),
       status: makeStatus(),
@@ -325,7 +353,10 @@ describe("getEditTransactionStatus", () => {
 
     expectUnderpriced(getEditTransactionStatus(params).errors);
     expect(
-      getEditTransactionStatus({ ...params, originalFeePerByte: new BigNumber(10) }).errors,
+      getEditTransactionStatus({
+        ...params,
+        originalFeePerByte: new BigNumber(10),
+      }).errors,
     ).toEqual({});
   });
 });

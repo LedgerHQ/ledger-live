@@ -1,20 +1,7 @@
-import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { TxData } from "@ledgerhq/coin-module-framework/api/types";
 
-export type BitcoinCoinConfig = CurrencyConfig & {
-  /** Ledger explorer id, e.g. "btc". Defaults to the currency id. */
-  explorerId?: string;
-};
-
-export type BitcoinContext = Context<BitcoinCoinConfig>;
-
-/** What the consumer injects when creating the API (dependency inversion, as for wallet-btc). */
-export type BitcoinApiOptions = {
-  /** Ledger explorer endpoint, e.g. https://explorers.api.live.ledger.com */
-  explorerEndpoint: string;
-  /** Overrides the explorer id of the currency config (e.g. "btc_regtest"). */
-  explorerId?: string;
-};
+// The `config_currency_<id>` coin config, read from the context at call time (ADR-019).
+export type { BitcoinConfig, BitcoinCoinConfig, BitcoinContext } from "../config";
 
 /** wallet-btc derivation modes (`DerivationModes` values). */
 export type BitcoinDerivationMode = "Legacy" | "SegWit" | "Native SegWit" | "Taproot";

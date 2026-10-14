@@ -20,17 +20,16 @@ import { createApi } from "./index";
 
 const explorer = { baseUrl: "fake" };
 const context = { config: jest.fn(), logger: jest.fn() };
-const options = { explorerEndpoint: "https://e" };
 const intent = { recipient: "r" } as never;
 
 beforeEach(() => (logic.explorerFor as jest.Mock).mockResolvedValue(explorer));
 
 describe("createApi", () => {
-  const api = createApi(options, "bitcoin");
+  const api = createApi("bitcoin");
 
   it("resolves the explorer of the currency from the context", async () => {
     await api.lastBlock(context);
-    expect(logic.explorerFor).toHaveBeenCalledWith(context, options, "bitcoin");
+    expect(logic.explorerFor).toHaveBeenCalledWith(context, "bitcoin");
   });
 
   it.each([

@@ -152,6 +152,17 @@ describe("reconcile", () => {
     expect(utxos.map(u => u.hash)).toEqual(["repl"]);
   });
 
+  it("drops an unconfirmed operation once past the configured expiry", () => {
+    const now = Date.now();
+    const stale = op("s", {
+      blockHeight: undefined,
+      date: new Date(now - 10_000),
+      extra: { inputs: ["q-0"] },
+    });
+    expect(reconcile([stale], [], "bitcoin", change, now, 5_000).operations).toEqual([]);
+    expect(reconcile([stale], [], "bitcoin", change, now, 60_000).operations).toEqual([stale]);
+  });
+
   it("keeps one operation's outputs among those spending the same inputs", () => {
     const a = op("a", { extra: { inputs: ["x-0"] }, blockHeight: 6 });
     const b = op("b", { extra: { inputs: ["x-0"] }, blockHeight: 5 });

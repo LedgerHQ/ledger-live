@@ -13,7 +13,6 @@ import {
 } from "./types";
 
 /** Explorer page size; must exceed the number of transactions of one address in a single block. */
-export const DEFAULT_BATCH_SIZE = 1000;
 
 export function toTxDetails(tx: ExplorerTx): BitcoinTxDetails {
   return {
@@ -106,7 +105,7 @@ export async function listOperations(
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  const batchSize = options.limit ?? DEFAULT_BATCH_SIZE;
+  const batchSize = options.limit ?? explorer.batchSize;
   const order = options.order === "desc" ? "descending" : "ascending";
 
   const [pendingTxs, page] = await Promise.all([

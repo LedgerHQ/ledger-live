@@ -57,6 +57,27 @@ describe("getFeeRates", () => {
     expect(explorer.getFees).toHaveBeenCalledTimes(1);
   });
 
+  it("reads the rates again once their lifetime is over", async () => {
+    const explorer = { ...fakeExplorer(), feeRatesCacheTtlMs: 1_000 };
+    const now = jest.spyOn(Date, "now").mockReturnValue(10_000);
+    await getFeeRates("bitcoin", explorer);
+    now.mockReturnValue(10_999);
+    await getFeeRates("bitcoin", explorer);
+    expect(explorer.getFees).toHaveBeenCalledTimes(1);
+    now.mockReturnValue(11_000);
+    await getFeeRates("bitcoin", explorer);
+    expect(explorer.getFees).toHaveBeenCalledTimes(2);
+    now.mockRestore();
+  });
+
+  it("does not keep a failed read", async () => {
+    const explorer = fakeExplorer();
+    (explorer.getFees as jest.Mock).mockRejectedValueOnce(new Error("down"));
+    await expect(getFeeRates("bitcoin", explorer)).rejects.toThrow("down");
+    await expect(getFeeRates("bitcoin", explorer)).resolves.toMatchObject({});
+    expect(explorer.getFees).toHaveBeenCalledTimes(2);
+  });
+
   it("does not fail when the network endpoint does", async () => {
     const explorer = fakeExplorer();
     (explorer.getNetwork as jest.Mock).mockRejectedValue(new Error("down"));

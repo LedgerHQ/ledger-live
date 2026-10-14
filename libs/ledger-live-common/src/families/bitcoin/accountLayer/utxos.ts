@@ -98,9 +98,11 @@ export function reconcile(
   currencyId: string,
   changeAddresses: ReadonlySet<string>,
   now: number = Date.now(),
+  /** Age after which an unconfirmed operation is dropped (`sync.replacedOperationExpiryMs`). */
+  replacedOperationExpiryMs?: number,
 ): { operations: BtcOperation[]; utxos: BitcoinOutput[] } {
-  const operations = removeReplaced(mergedOperations, now);
-  const balanceOperations = removeReplaced(mergedOperations, now, true);
+  const operations = removeReplaced(mergedOperations, now, false, replacedOperationExpiryMs);
+  const balanceOperations = removeReplaced(mergedOperations, now, true, replacedOperationExpiryMs);
   const keptHashes = new Set(balanceOperations.map(op => op.hash));
   const removedHashes = new Set(
     mergedOperations.filter(op => !keptHashes.has(op.hash)).map(op => op.hash),

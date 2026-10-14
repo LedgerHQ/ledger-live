@@ -6,26 +6,19 @@ import { cryptoFor } from "./currency";
 import { getFeeRates, resolveFeePerByte, type FeeRates } from "./fees";
 import { getReplacementContext, type ReplacementContext } from "./replacement";
 import { computeShape, type ShapeInput, type TxShape } from "./shape";
-import {
-  REPLACE_CANCEL,
-  type BitcoinApiOptions,
-  type BitcoinContext,
-  type BitcoinTxData,
-} from "./types";
+import { REPLACE_CANCEL, type BitcoinContext, type BitcoinTxData } from "./types";
 
 export type BitcoinIntent = TransactionIntent<MemoNotSupported, BitcoinTxData>;
 
-export async function explorerFor(
-  context: BitcoinContext,
-  options: BitcoinApiOptions,
-  currencyId: string,
-): Promise<Explorer> {
-  let explorerId = options.explorerId;
-  if (!explorerId) {
-    const config = await context.config(currencyId).catch(() => undefined);
-    explorerId = config?.explorerId ?? currencyId;
-  }
-  return makeExplorer({ endpoint: options.explorerEndpoint, explorerId });
+/** The explorer of the currency's coin config, read at each call so a remote change applies. */
+export async function explorerFor(context: BitcoinContext, currencyId: string): Promise<Explorer> {
+  const config = await context.config(currencyId);
+  return makeExplorer({
+    endpoint: config.explorer.url,
+    explorerId: config.explorerId ?? currencyId,
+    batchSize: config.explorer.batchSize,
+    feeRatesCacheTtlMs: config.fees?.feeRatesCacheTtlMs,
+  });
 }
 
 export const intentData = (intent: BitcoinIntent): BitcoinTxData =>

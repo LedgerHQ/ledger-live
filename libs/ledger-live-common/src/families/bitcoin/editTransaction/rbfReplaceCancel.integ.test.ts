@@ -55,6 +55,8 @@ import { hasMinimumFundsToCancel } from "./hasMinimumFunds";
 import { getAdditionalFeeRequiredForRbf, getOriginalTxFeeRateSatVb } from "./rbfValidation";
 import { getReplacementEstimate } from "./replacement";
 
+// the replacement bump ratio: the module default (no `fees.rbfMinBumpRatio` in the config)
+jest.mock("../coinConfig", () => ({ getBitcoinCoinConfig: jest.fn(() => ({})) }));
 jest.mock("../../../bridge/generic-coin-framework/api", () => ({
   getCoinModuleApi: jest.fn(),
 }));
@@ -461,6 +463,7 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
       account: bitcoinAccount,
     });
     const params = {
+      mainAccount: bitcoinAccount,
       transactionToUpdate,
       status: makeStatus(),
       editType: "speedup" as const,
@@ -634,6 +637,7 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
     const prepared = { ...tx, feeParameters: { feePerByte: "20" } };
     expect(
       getEditTransactionStatus({
+        mainAccount: account,
         transaction: prepared,
         transactionToUpdate: {
           ...tx,

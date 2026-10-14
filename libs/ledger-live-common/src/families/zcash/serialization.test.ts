@@ -1,12 +1,9 @@
 /**
- * A Zcash account persisted by coin-bitcoin must read back identically through
- * coin-zcash, and the other way round: moving every Zcash account to coin-zcash
- * must neither lose nor rewrite what users already have on disk (UTXOs, the
- * wallet-btc account, the shielded state with its notes), and going back must
- * read what coin-zcash wrote.
+ * A Zcash account persisted by coin-bitcoin (the fixture below is that shape) must read back
+ * identically through coin-zcash: moving every Zcash account to coin-zcash must neither lose nor
+ * rewrite what users already have on disk (UTXOs, the wallet-btc account, the shielded state with
+ * its notes). coin-bitcoin no longer serves Zcash (ADR-065), so there is no way back to check.
  */
-import "@ledgerhq/coin-bitcoin/chain-adapters/zcash/index";
-import * as bitcoinSerialization from "@ledgerhq/coin-bitcoin/serialization";
 import * as zcashSerialization from "@ledgerhq/coin-zcash/bridge/serialization";
 import { toWalletBtcCurrency } from "@ledgerhq/coin-zcash/walletBtcCurrency";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
@@ -101,23 +98,7 @@ function readThenWrite(raw: AccountRaw, reader: Serialization, writer: Serializa
   return JSON.parse(JSON.stringify(out));
 }
 
-describe("Zcash account persistence across coin-bitcoin and coin-zcash", () => {
-  it("reads what coin-bitcoin persisted and writes it back unchanged", async () => {
-    const raw = await persistedAccount();
-    const asPersisted = readThenWrite(raw, bitcoinSerialization, bitcoinSerialization);
-
-    expect(readThenWrite(raw, zcashSerialization, zcashSerialization)).toEqual(asPersisted);
-  });
-
-  it("writes what coin-bitcoin reads back unchanged", async () => {
-    const raw = await persistedAccount();
-    const writtenByZcash = readThenWrite(raw, zcashSerialization, zcashSerialization);
-
-    expect(readThenWrite(writtenByZcash, bitcoinSerialization, bitcoinSerialization)).toEqual(
-      readThenWrite(raw, bitcoinSerialization, bitcoinSerialization),
-    );
-  });
-
+describe("Zcash account persistence from coin-bitcoin to coin-zcash", () => {
   it("keeps every field of the persisted account", async () => {
     const raw = await persistedAccount();
 

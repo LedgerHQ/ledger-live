@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/coin-bitcoin/api";
 import type { BitcoinAccount, BitcoinAccountState, BtcOperation } from "../types";
 import type { BitcoinDeviceSigner } from "../signer";
+import { getBitcoinCoinConfig } from "../coinConfig";
 import { CHANGE_CHAIN, RECEIVE_CHAIN, bitcoinAddressDeriver } from "./derivation";
 import { getSerializedAddressParameters } from "./exchange";
 import { displayAddress, txToOperations } from "./interpret";
@@ -83,6 +84,8 @@ export const bitcoinFamily: MultiAddressAccountFamily<BitcoinTxDetails, BitcoinA
       withMempool(confirmedUtxos, pending, own),
       currencyId,
       ownAddresses(state, CHANGE_CHAIN),
+      Date.now(),
+      getBitcoinCoinConfig(currencyId).sync?.replacedOperationExpiryMs,
     );
     const balance = reconciled.utxos.reduce(
       (total, utxo) => total.plus(utxo.value),

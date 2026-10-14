@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import type { Explorer } from "../network/explorer";
 import type { ExplorerFees, ExplorerNetwork } from "../network/types";
 import { BitcoinInfrastructureError } from "../errors";
@@ -74,20 +73,33 @@ export function feeRatesFrom(
   };
 }
 
-const cachedFeeRates = makeLRUCache(
-  async (currencyId: string, explorer: Explorer): Promise<FeeRates> => {
-    const [fees, networkInfo] = await Promise.all([
-      explorer.getFees(),
-      explorer.getNetwork().catch(() => undefined),
-    ]);
-    return feeRatesFrom(currencyId, fees, networkInfo);
-  },
-  (currencyId, explorer) => `${currencyId}:${explorer.baseUrl}`,
-  seconds(30),
-);
+async function fetchFeeRates(currencyId: string, explorer: Explorer): Promise<FeeRates> {
+  const [fees, networkInfo] = await Promise.all([
+    explorer.getFees(),
+    explorer.getNetwork().catch(() => undefined),
+  ]);
+  return feeRatesFrom(currencyId, fees, networkInfo);
+}
 
-export const getFeeRates = (currencyId: string, explorer: Explorer): Promise<FeeRates> =>
-  cachedFeeRates(currencyId, explorer);
+const feeRatesCache = new Map<string, { expiresAt: number; rates: Promise<FeeRates> }>();
+
+/**
+ * The fee rates of the currency, read once per explorer for `explorer.feeRatesCacheTtlMs` (the coin
+ * config's `fees.feeRatesCacheTtlMs`). A failed read is not kept.
+ */
+export function getFeeRates(currencyId: string, explorer: Explorer): Promise<FeeRates> {
+  const key = `${currencyId}:${explorer.baseUrl}`;
+  const now = Date.now();
+  const cached = feeRatesCache.get(key);
+  if (cached && cached.expiresAt > now) return cached.rates;
+  const rates = fetchFeeRates(currencyId, explorer);
+  const entry = { expiresAt: now + explorer.feeRatesCacheTtlMs, rates };
+  feeRatesCache.set(key, entry);
+  rates.catch(() => {
+    if (feeRatesCache.get(key) === entry) feeRatesCache.delete(key);
+  });
+  return rates;
+}
 
 const toBigNumber = (value: unknown): BigNumber | undefined => {
   if (typeof value !== "string" && typeof value !== "number" && typeof value !== "bigint") {

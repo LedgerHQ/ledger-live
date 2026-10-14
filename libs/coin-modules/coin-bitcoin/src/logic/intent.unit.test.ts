@@ -21,35 +21,35 @@ const context = (config: Record<string, unknown> | Error): BitcoinContext => ({
 });
 
 describe("explorerFor", () => {
-  const endpoint = "https://explorers.example";
+  const url = "https://explorers.example";
 
-  it("uses the explorer id of the currency config", async () => {
+  it("reads the explorer of the currency's coin config", async () => {
     const explorer = await explorerFor(
-      context({ explorerId: "btc" }),
-      { explorerEndpoint: endpoint },
+      context({
+        explorerId: "btc",
+        explorer: { url, batchSize: 50 },
+        fees: { feeRatesCacheTtlMs: 7 },
+      }),
       "bitcoin",
     );
-    expect(explorer.baseUrl).toBe(`${endpoint}/blockchain/v4/btc`);
+    expect(explorer).toMatchObject({
+      baseUrl: `${url}/blockchain/v4/btc`,
+      batchSize: 50,
+      feeRatesCacheTtlMs: 7,
+    });
   });
 
-  it("lets the creator override it", async () => {
-    const explorer = await explorerFor(
-      context({ explorerId: "btc" }),
-      { explorerEndpoint: endpoint, explorerId: "btc_regtest" },
-      "bitcoin_regtest",
-    );
-    expect(explorer.baseUrl).toBe(`${endpoint}/blockchain/v4/btc_regtest`);
+  it("falls back to the currency id and the module defaults", async () => {
+    const explorer = await explorerFor(context({ explorer: { url } }), "litecoin");
+    expect(explorer).toMatchObject({
+      baseUrl: `${url}/blockchain/v4/litecoin`,
+      batchSize: 1000,
+      feeRatesCacheTtlMs: 300_000,
+    });
   });
 
-  it("falls back to the currency id without config", async () => {
-    const explorer = await explorerFor(
-      context(new Error("no config")),
-      { explorerEndpoint: endpoint },
-      "litecoin",
-    );
-    expect(explorer.baseUrl).toBe(`${endpoint}/blockchain/v4/litecoin`);
-    const empty = await explorerFor(context({}), { explorerEndpoint: endpoint }, "dash");
-    expect(empty.baseUrl).toBe(`${endpoint}/blockchain/v4/dash`);
+  it("needs the coin config: it names the explorer", async () => {
+    await expect(explorerFor(context(new Error("no config")), "dash")).rejects.toThrow("no config");
   });
 });
 

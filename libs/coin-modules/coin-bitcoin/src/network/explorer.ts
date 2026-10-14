@@ -1,5 +1,6 @@
 import network from "@ledgerhq/live-network/network";
 import type { TransactionSource } from "@ledgerhq/coin-module-framework/api/types";
+import { DEFAULT_EXPLORER_BATCH_SIZE, DEFAULT_FEE_RATES_CACHE_TTL_MS } from "../constants";
 import type {
   ExplorerBlock,
   ExplorerFees,
@@ -16,6 +17,10 @@ export type ExplorerTarget = {
   endpoint: string;
   /** Ledger explorer id, e.g. "btc" */
   explorerId: string;
+  /** Transactions requested per page. @default DEFAULT_EXPLORER_BATCH_SIZE */
+  batchSize?: number | undefined;
+  /** Lifetime of the fee rates read from this explorer. @default DEFAULT_FEE_RATES_CACHE_TTL_MS */
+  feeRatesCacheTtlMs?: number | undefined;
 };
 
 export const explorerBaseUrl = ({ endpoint, explorerId }: ExplorerTarget): string =>
@@ -38,6 +43,8 @@ export const explorer = (target: ExplorerTarget) => {
 
   return {
     baseUrl,
+    batchSize: target.batchSize ?? DEFAULT_EXPLORER_BATCH_SIZE,
+    feeRatesCacheTtlMs: target.feeRatesCacheTtlMs ?? DEFAULT_FEE_RATES_CACHE_TTL_MS,
 
     async getCurrentBlock(): Promise<ExplorerBlock> {
       const { data } = await network<ExplorerBlock>({

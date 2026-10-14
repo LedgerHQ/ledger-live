@@ -26,7 +26,6 @@ import {
   lastBlock,
   listOperations,
   validateIntent,
-  type BitcoinApiOptions,
   type BitcoinCoinConfig,
   type BitcoinContext,
   type BitcoinTxData,
@@ -64,8 +63,9 @@ type Intent = TransactionIntent<MemoNotSupported, BitcoinTxData>;
  *  - `craftRawTransaction` — raw (PSBT) signing goes through the family's own signing flow.
  *  - `getStakes`, `getRewards`, `getValidators`, `call`, `register` — not applicable.
  */
-export function createApi(options: BitcoinApiOptions, currencyId: string) {
-  const explorerOf = (context: BitcoinContext) => explorerFor(context, options, currencyId);
+export function createApi(currencyId: string) {
+  // the coin config is read at each call (ADR-019): a remote change of the explorer applies at once
+  const explorerOf = (context: BitcoinContext) => explorerFor(context, currencyId);
 
   return {
     lastBlock: async (context: BitcoinContext): Promise<BlockInfo> =>

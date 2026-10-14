@@ -27,6 +27,8 @@ export function fakeExplorer(setup: FakeExplorerSetup = {}): Explorer & {
   const tip = setup.tip ?? { height: 800_000, hash: "tip-hash", time: "2026-01-01T00:00:00Z" };
   return {
     baseUrl: `fake://${Math.random()}`,
+    batchSize: 1000,
+    feeRatesCacheTtlMs: 300_000,
     broadcasted,
     getCurrentBlock: jest.fn(async () => tip),
     getBlockByHeight: jest.fn(async (height: number) =>

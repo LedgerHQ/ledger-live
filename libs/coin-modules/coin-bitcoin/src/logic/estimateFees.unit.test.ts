@@ -49,12 +49,13 @@ describe("estimateFees", () => {
     });
   });
 
-  it("prices the selected inputs", async () => {
+  it("prices the selected inputs, the surplus going to the change", async () => {
     const estimation = await estimateFees(
       fakeExplorer(),
       "bitcoin",
-      intent({}, { inputs: [input] }),
+      intent({}, { inputs: [input], change: { address: BTC_CHANGE, path: "c" } }),
     );
+    // the size of a transaction with change (`includeChange`) — the change script is added by it
     const scripts = [crypto.toOutputScript(BTC_RECIPIENT)];
     const fee = BigInt(10 * maxTxVBytesCeil(1, scripts, true, crypto, MODE));
     expect(estimation.value).toBe(fee);
@@ -63,8 +64,18 @@ describe("estimateFees", () => {
     ]);
     expect(params(estimation.parameters).outputs).toEqual([
       { address: BTC_RECIPIENT, value: 50_000n, isChange: false },
+      { address: BTC_CHANGE, value: 50_000n - fee, isChange: true },
     ]);
     expect(params(estimation.parameters).amount).toBeUndefined();
+  });
+
+  it("pays the whole surplus as fee without a change address", async () => {
+    const estimation = await estimateFees(
+      fakeExplorer(),
+      "bitcoin",
+      intent({}, { inputs: [input] }),
+    );
+    expect(estimation.value).toBe(50_000n);
   });
 
   it("gives the send-max amount, priced with the estimation recipient while it is being typed", async () => {
