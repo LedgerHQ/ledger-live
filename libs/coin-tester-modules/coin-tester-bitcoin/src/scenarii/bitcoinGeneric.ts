@@ -76,6 +76,8 @@ export const scenarioBitcoinGeneric: Scenario<GenericTransaction, Account> = {
       unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
       explorerId: "btc_regtest",
       explorer: { url: "http://localhost:9876" },
+      // As Ledger Live configures regtest: app-bitcoin-new's version 2, RBF-signalling inputs.
+      transaction: { version: 2, signalsRbf: true },
     };
     LiveConfig.setConfig({
       config_currency_bitcoin_regtest: { type: "object", default: coinConfig },
