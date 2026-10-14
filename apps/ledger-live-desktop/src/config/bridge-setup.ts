@@ -16,6 +16,10 @@ import type { ReduxStore } from "~/state-manager/configureStore";
 
 export function setupCryptoAssetsStore(store: ReduxStore): void {
   const cryptoAssetsStore = buildCryptoAssetsStore({ dispatch: store.dispatch });
+  // TEMP local bypass: CAL has no ripple_testnet entry, so its sync hash lookup throws.
+  const getTokensSyncHash = cryptoAssetsStore.getTokensSyncHash;
+  cryptoAssetsStore.getTokensSyncHash = async currencyId =>
+    currencyId === "ripple_testnet" ? "" : getTokensSyncHash(currencyId);
   setCryptoAssetsStore(cryptoAssetsStore);
 }
 
