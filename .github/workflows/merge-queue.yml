@@ -253,6 +253,22 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
+  build-wallet-cli:
+    name: "Build Wallet CLI"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'wallet-cli') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
   # Stubs for required checks whose real workflow only runs on pull_request.
   check-sync: # mirrors test-workflows-sync.yml
     runs-on: ubuntu-22.04
@@ -285,6 +301,7 @@ jobs:
       - test-additional
       - test-mobile-e2e-lint
       - test-desktop-e2e-lint
+      - build-wallet-cli
     runs-on: ubuntu-22.04
     # always(), never !cancelled(): a required check that reports nothing holds the merge group
     # open until check_response_timeout_minutes and then fails it. Reporting a failure is cheaper

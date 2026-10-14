@@ -41,7 +41,6 @@ jobs:
     name: "Build (all platforms)"
     runs-on: ledger-wallet-4cpu-aws-public
     timeout-minutes: 30
-    continue-on-error: true
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
@@ -79,11 +78,18 @@ jobs:
         run: pnpm exec nx run @ledgerhq/wallet-cli:format:check
 
       - name: Build, lint, typecheck and test wallet-cli
+        if: github.event_name != 'merge_group'
         run: |
           mkdir -p apps/wallet-cli/coverage
           pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate,lint:ci,typecheck,build,coverage
 
+      # The merge gate typechecks and compiles. Tests stay on the pull request, same as the other lanes.
+      - name: Build, lint and typecheck wallet-cli
+        if: github.event_name == 'merge_group'
+        run: pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate,lint:ci,typecheck,build
+
       - name: Prepare and validate wallet-cli npm packages
+        if: github.event_name != 'merge_group'
         run: |
           pnpm --filter "@ledgerhq/wallet-cli" prepare:npm
           pnpm --filter "@ledgerhq/wallet-cli" pack:check
@@ -91,31 +97,35 @@ jobs:
 
       - name: Upload wallet-cli unit test coverage
         id: generate_coverage
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && github.event_name != 'merge_group' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: coverage-wallet-cli
           path: ${{ github.workspace }}/apps/wallet-cli/coverage
 
       - name: Upload darwin-arm64 binary
+        if: github.event_name != 'merge_group'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: wallet-cli-darwin-arm64
           path: ${{ github.workspace }}/apps/wallet-cli/npm/darwin-arm64/bin/wallet-cli
 
       - name: Upload linux-x64 binary
+        if: github.event_name != 'merge_group'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: wallet-cli-linux-x64
           path: ${{ github.workspace }}/apps/wallet-cli/npm/linux-x64/bin/wallet-cli
 
       - name: Upload linux-arm64 binary
+        if: github.event_name != 'merge_group'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: wallet-cli-linux-arm64
           path: ${{ github.workspace }}/apps/wallet-cli/npm/linux-arm64/bin/wallet-cli
 
       - name: Upload windows-x64 binary
+        if: github.event_name != 'merge_group'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: wallet-cli-windows-x64
