@@ -3,7 +3,7 @@ import {
   JWT,
   MemberCredentials,
   Trustchain,
-  TrustchainDeviceCallbacks,
+  GetOrCreateTrustchainCallbacks,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { useTrustchainSDK } from "../context";
@@ -19,7 +19,7 @@ export function AppGetOrCreateTrustchain({
   memberCredentials: MemberCredentials | null;
   trustchain: Trustchain | null;
   setTrustchain: (trustchain: Trustchain | null) => void;
-  callbacks?: TrustchainDeviceCallbacks;
+  callbacks?: GetOrCreateTrustchainCallbacks;
 }) {
   const sdk = useTrustchainSDK();
 

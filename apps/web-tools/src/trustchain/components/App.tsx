@@ -24,6 +24,7 @@ import { TrustchainSDKContext, defaultContext } from "../context";
 import { DeviceInteractionVisibleContext } from "../deviceInteractionContext";
 import { AppQRCodeHost } from "./AppQRCodeHost";
 import { AppMemberRow } from "./AppMemberRow";
+import { AGENT_INTENT_MEMBER_PERMISSIONS, AppAgentIntentMembers } from "./AppAgentIntentMembers";
 import { AppDecryptUserData } from "./AppDecryptUserData";
 import { AppEncryptUserData } from "./AppEncryptUserData";
 import { AppDestroyTrustchain } from "./AppDestroyTrustchain";
@@ -53,6 +54,8 @@ const initialState: State = {
     recentAddresses: {},
   },
 };
+
+const AGENT_INTENT_APPLICATION_ID = 18;
 
 // applicationPath is m/0'/<applicationId>'/<index>'
 const applicationIdOfPath = (applicationPath: string): number =>
@@ -150,6 +153,8 @@ const App = () => {
 
   // Cloud Sync and Accounts Sync are Ledger Sync-only; other apps (e.g. ring) use the Trustchain SDK only.
   const isLedgerSync = applicationId === defaultContext.applicationId;
+  // Agent Intent: the software member cannot add blocks, so its mutations are device-signed.
+  const isAgentIntent = applicationId === AGENT_INTENT_APPLICATION_ID;
 
   const [deviceInteractionVisible, setDeviceInteractionVisible] = useState(false);
   const callbacks = useMemo(
@@ -158,6 +163,13 @@ const App = () => {
       onEndRequestUserInteraction: () => setDeviceInteractionVisible(false),
     }),
     [],
+  );
+  const getOrCreateCallbacks = useMemo(
+    () =>
+      isAgentIntent
+        ? { ...callbacks, softwareMemberPermissions: AGENT_INTENT_MEMBER_PERMISSIONS }
+        : callbacks,
+    [isAgentIntent, callbacks],
   );
 
   return (
@@ -237,7 +249,7 @@ const App = () => {
                 memberCredentials={memberCredentials}
                 trustchain={trustchain}
                 setTrustchain={setTrustchain}
-                callbacks={callbacks}
+                callbacks={getOrCreateCallbacks}
               />
 
               <AppRestoreTrustchain
@@ -253,18 +265,28 @@ const App = () => {
                 setMembers={setMembers}
               />
 
-              {members?.map(member => (
-                <AppMemberRow
-                  key={member.id}
+              {isAgentIntent ? (
+                <AppAgentIntentMembers
                   deviceId={deviceId}
                   trustchain={trustchain}
                   memberCredentials={memberCredentials}
-                  member={member}
                   setTrustchain={setTrustchain}
-                  setMembers={setMembers}
                   callbacks={callbacks}
                 />
-              ))}
+              ) : (
+                members?.map(member => (
+                  <AppMemberRow
+                    key={member.id}
+                    deviceId={deviceId}
+                    trustchain={trustchain}
+                    memberCredentials={memberCredentials}
+                    member={member}
+                    setTrustchain={setTrustchain}
+                    setMembers={setMembers}
+                    callbacks={callbacks}
+                  />
+                ))
+              )}
 
               <AppEncryptUserData trustchain={trustchain} />
 
