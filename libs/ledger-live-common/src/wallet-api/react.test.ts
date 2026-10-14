@@ -597,6 +597,65 @@ describe("account.getPublicKey handler", () => {
   });
 });
 
+describe("bitcoin.signPsbt handler", () => {
+  const getHandler = () => getRegisteredHandler("bitcoin.signPsbt");
+  const signedOperation = {
+    operation: {},
+    signature: "signed",
+    rawData: { psbtSigned: "cHNidP8signed" },
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  function renderWithSignRaw() {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    const uiTxSignRaw = jest.fn(({ onSuccess }) => {
+      onSuccess(signedOperation);
+    });
+    renderHook(() =>
+      useWalletAPIServer(
+        createDefaultOptions({
+          accounts: [account],
+          uiHook: { "transaction.signRaw": uiTxSignRaw },
+        }),
+      ),
+    );
+    return { account, uiTxSignRaw };
+  }
+
+  it("forwards the request options to the raw signing UI", async () => {
+    const { account, uiTxSignRaw } = renderWithSignRaw();
+    const options = { hwAppId: "Hashi Test" };
+
+    await expect(
+      getHandler()({ accountId: "wallet-account-id", psbt: "cHNidP8", options }),
+    ).resolves.toEqual({ psbtSigned: "cHNidP8signed" });
+
+    expect(uiTxSignRaw).toHaveBeenCalledTimes(1);
+    expect(uiTxSignRaw).toHaveBeenCalledWith(
+      expect.objectContaining({ account, transaction: "cHNidP8", options }),
+    );
+  });
+
+  it("passes no options to the raw signing UI when the request has none", async () => {
+    const { uiTxSignRaw } = renderWithSignRaw();
+
+    await expect(
+      getHandler()({ accountId: "wallet-account-id", psbt: "cHNidP8" }),
+    ).resolves.toEqual({ psbtSigned: "cHNidP8signed" });
+
+    expect(uiTxSignRaw).toHaveBeenCalledTimes(1);
+    expect(uiTxSignRaw.mock.calls[0][0].options).toBeUndefined();
+  });
+});
+
 function createMockTracking(): TrackingAPI {
   return {
     load: jest.fn(),

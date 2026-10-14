@@ -772,7 +772,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiTxSignRaw) return;
 
-    server.setHandler("bitcoin.signPsbt", async ({ accountId, psbt, broadcast }) => {
+    server.setHandler("bitcoin.signPsbt", async ({ accountId, psbt, broadcast, options }) => {
       const signedOperation = await signRawTransactionLogic(
         { manifest, accounts, tracking },
         accountId,
@@ -785,7 +785,7 @@ export function useWalletAPIServer({
               parentAccount,
               transaction: tx,
               broadcast,
-              options: undefined,
+              options,
               onSuccess: signedOperation => {
                 if (done) return;
                 done = true;
