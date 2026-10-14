@@ -22,7 +22,10 @@ export type Lease = {
   release(): Promise<void>;
 };
 
-/** A lease nothing was broadcast under yet, so it can be handed back without the settle window. */
+/**
+ * A lease that can be handed back without the settle window when nothing was broadcast under it,
+ * or only transactions already confirmed.
+ */
 export type AbandonableLease = Lease & {
   abandon(): Promise<void>;
 };

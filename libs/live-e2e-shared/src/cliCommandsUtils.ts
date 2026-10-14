@@ -507,8 +507,11 @@ async function broadcastTokenApproval(
 ): Promise<string> {
   // Before the CLI starts: once its approve reaches the device, the setting can no longer change.
   await enableBlindSigningOnNanoS();
-  return runWithAccountBroadcastLock([account], `token ${opts.mode}`, () =>
-    runTokenApprovalWithRetry(opts),
+  return runWithAccountBroadcastLock(
+    [account],
+    `token ${opts.mode}`,
+    () => runTokenApprovalWithRetry(opts),
+    { waitsForConfirmation: opts.waitConfirmation === true },
   );
 }
 

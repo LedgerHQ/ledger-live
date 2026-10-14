@@ -2,13 +2,13 @@ import { randomUUID } from "node:crypto";
 import os from "node:os";
 import { byCodeUnit } from "./broadcastLock/byCodeUnit";
 import { acquireDistributedLock } from "./broadcastLock/distributedLock";
-import { BroadcastLockRefusedError } from "./errors";
+import { BroadcastLockConfigError, BroadcastLockRefusedError } from "./errors";
 import { createR2LockStore } from "./broadcastLock/r2LockStore";
-import { runWithCrossProcessLock } from "./crossProcessLock";
+import { acquireCrossProcessLock } from "./crossProcessLock";
 import type { AbandonableLease, Lease, LockLogger, LockStore } from "./broadcastLock/types";
 import type { Account } from "./enum/Account";
 
-export type { Lease } from "./broadcastLock/types";
+export type { AbandonableLease, Lease } from "./broadcastLock/types";
 
 export const BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS = 30 * 60_000;
 export const BROADCAST_LOCK_NESTED_DRAIN_MS = 60_000;
@@ -32,10 +32,15 @@ const consoleLogger: LockLogger = {
   warn: message => console.warn(message),
 };
 
-type LiveHold = { nested: number; onNestedDone?: () => void; refusedBecause?: string };
+type LiveHold = {
+  nested: number;
+  nestedBroadcast?: boolean;
+  onNestedDone?: () => void;
+  refusedBecause?: string;
+};
 type LiveHolds = Record<string, LiveHold>;
 
-export type AccountBroadcastLockOptions = { readonly allowNested?: boolean };
+type AccountBroadcastLockOptions = { readonly allowNested?: boolean };
 
 const isLiveHolds = (value: unknown): value is LiveHolds =>
   typeof value === "object" && value !== null;
@@ -62,7 +67,10 @@ export function accountLockKey(account: Account): string {
   return `${owner.currency.id}:${owner.accountPath}`;
 }
 
-/** Off-chain state that tests on several machines change, locked like an on-chain account. */
+/**
+ * Off-chain state that tests on several machines change, locked like an on-chain account but
+ * handed back without the settle window: it has no nonce to propagate.
+ */
 export type SharedResource = { readonly lockKey: string };
 
 /** The card of the Baanx sandbox user every Pay tab suite signs in as, which freeze tests toggle. */
@@ -70,8 +78,14 @@ export const PAY_CARD: SharedResource = { lockKey: "pay-card" };
 
 export type LockTarget = Account | SharedResource;
 
-export const lockTargetKey = (target: LockTarget): string =>
-  "lockKey" in target ? target.lockKey : accountLockKey(target);
+const isSharedResource = (target: LockTarget): target is SharedResource => "lockKey" in target;
+
+const lockTargetKey = (target: LockTarget): string =>
+  isSharedResource(target) ? target.lockKey : accountLockKey(target);
+
+/** The distinct keys of `targets`, in the order every holder takes them, so none deadlock. */
+export const lockKeys = (targets: readonly LockTarget[]): string[] =>
+  [...new Set(targets.map(target => lockTargetKey(target)))].sort(byCodeUnit);
 
 const waitedMsSoFar = (): number => {
   const waited: unknown = Reflect.get(os, WAITED_MS);
@@ -95,7 +109,7 @@ function remoteLockStoreFromEnv(): LockStore | undefined {
   const secretAccessKey = process.env.E2E_BROADCAST_LOCK_SECRET_ACCESS_KEY;
   if (!endpoint && !bucket && !accessKeyId && !secretAccessKey) return undefined;
   if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
-    throw new Error(
+    throw new BroadcastLockConfigError(
       "[broadcastLock] E2E_BROADCAST_LOCK_ENDPOINT, _BUCKET, _ACCESS_KEY_ID and _SECRET_ACCESS_KEY must be set together",
     );
   }
@@ -109,77 +123,65 @@ function remoteLockStoreFromEnv(): LockStore | undefined {
 
 let warnedMachineLocal = false;
 
-function acquireMachineLocalLock(key: string, acquireTimeoutMs: number): Promise<AbandonableLease> {
+async function acquireMachineLocalLock(
+  key: string,
+  acquireTimeoutMs: number,
+): Promise<AbandonableLease> {
+  if (process.env.CI) {
+    throw new BroadcastLockConfigError(
+      `[broadcastLock] E2E_BROADCAST_LOCK_* must be set on CI: a machine-local lock on "${key}" does not stop other CI machines from broadcasting from it`,
+    );
+  }
   if (!warnedMachineLocal) {
     warnedMachineLocal = true;
     console.warn(
       "[broadcastLock] E2E_BROADCAST_LOCK_* is not set: broadcasts are only serialized between processes on this machine",
     );
   }
-  return new Promise<AbandonableLease>((resolve, reject) => {
-    let endHold = () => {};
-    const holding = new Promise<void>(resolveHolding => {
-      endHold = resolveHolding;
-    });
-    const settled = runWithCrossProcessLock(
-      key,
-      async () => {
-        const release = async () => {
-          endHold();
-          await settled;
-        };
-        resolve({ release, abandon: release });
-        await holding;
-      },
-      { acquireTimeoutMs },
-    );
-    settled.catch(reject);
-  });
+  const release = await acquireCrossProcessLock(key, { acquireTimeoutMs });
+  return { release, abandon: release };
 }
 
 function joinHold(outer: LiveHold): AbandonableLease {
   outer.nested++;
   let left = false;
-  const leave = () => {
+  const leave = (mayHaveBroadcast: boolean) => {
     if (!left) {
       left = true;
+      if (mayHaveBroadcast) outer.nestedBroadcast = true;
       outer.nested--;
       if (outer.nested === 0) outer.onNestedDone?.();
     }
     return Promise.resolve();
   };
-  return { release: leave, abandon: leave };
+  return { release: () => leave(true), abandon: () => leave(false) };
 }
 
+/** Keeps the lease, and its heartbeat, until every broadcast nested in it ends, however long. */
 async function waitForNestedHolds(key: string, hold: LiveHold): Promise<void> {
   if (hold.nested === 0) return;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const allNestedDone = await Promise.race([
-    new Promise<boolean>(resolve => {
-      hold.onNestedDone = () => resolve(true);
-    }),
-    new Promise<boolean>(resolve => {
-      timer = setTimeout(() => resolve(false), BROADCAST_LOCK_NESTED_DRAIN_MS);
-    }),
-  ]);
-  clearTimeout(timer);
-  if (!allNestedDone) {
+  const slowDrainWarning = setTimeout(() => {
     console.warn(
-      `[broadcastLock] releasing "${key}" while a broadcast nested in it still runs after ${BROADCAST_LOCK_NESTED_DRAIN_MS}ms`,
+      `[broadcastLock] keeping "${key}" locked while a broadcast nested in it still runs after ${BROADCAST_LOCK_NESTED_DRAIN_MS}ms`,
     );
-  }
+  }, BROADCAST_LOCK_NESTED_DRAIN_MS);
+  await new Promise<void>(resolve => {
+    hold.onNestedDone = resolve;
+  });
+  clearTimeout(slowDrainWarning);
 }
 
 type KeyLockOptions = {
   readonly allowNested: boolean;
   readonly deadline: number;
   readonly giveUpIfHeld: boolean;
+  readonly sharedResourceKeys: ReadonlySet<string>;
 };
 
 async function acquireKey(
   key: string,
   label: string,
-  { allowNested, deadline, giveUpIfHeld }: KeyLockOptions,
+  { allowNested, deadline, giveUpIfHeld, sharedResourceKeys }: KeyLockOptions,
 ): Promise<AbandonableLease> {
   const holds = liveHolds();
   const outer = holds[key];
@@ -199,7 +201,7 @@ async function acquireKey(
         holder: `${HOLDER_PREFIX}${randomUUID()}`,
         label,
         leaseMs: LEASE_MS,
-        settleMs: SETTLE_MS,
+        settleMs: sharedResourceKeys.has(key) ? 0 : SETTLE_MS,
         heartbeatMs: HEARTBEAT_MS,
         pollMs: POLL_MS,
         acquireTimeoutMs: giveUpIfHeld
@@ -213,21 +215,31 @@ async function acquireKey(
     : await acquireMachineLocalLock(key, acquireTimeoutMs);
   if (allowNested) holds[key] = hold;
 
-  return {
-    release: async () => {
-      forget();
+  // Calls made while nested ones still run can join, e.g. a nested call locking the account
+  // again. The hold stops taking them in the same step that finds none left.
+  const forgetOnceNestedHoldsEnd = async (): Promise<void> => {
+    if (hold.nested > 0) {
       await waitForNestedHolds(key, hold);
-      await lease.release();
-    },
-    abandon: async () => {
-      forget();
-      await lease.abandon();
-    },
+      return forgetOnceNestedHoldsEnd();
+    }
+    forget();
   };
+
+  const end = async (settle: boolean) => {
+    await forgetOnceNestedHoldsEnd();
+    // A call that joined the hold and released it may have broadcast under it, so the hold keeps
+    // its settle window.
+    await (settle || hold.nestedBroadcast ? lease.release() : lease.abandon());
+  };
+
+  return { release: () => end(true), abandon: () => end(false) };
 }
 
-async function releaseAll(leases: readonly Lease[]): Promise<void> {
-  const results = await Promise.allSettled(leases.map(lease => lease.release()));
+async function endAll(
+  leases: readonly AbandonableLease[],
+  end: (lease: AbandonableLease) => Promise<void>,
+): Promise<void> {
+  const results = await Promise.allSettled(leases.map(end));
   const failure = results.find(
     (result): result is PromiseRejectedResult => result.status === "rejected",
   );
@@ -239,13 +251,14 @@ async function releaseAll(leases: readonly Lease[]): Promise<void> {
  * when E2E_BROADCAST_LOCK_* points at an R2 bucket, otherwise across this machine only.
  * Calls made while an `allowNested` lock is held, e.g. a CLI token approval inside a spec, run
  * under it instead of waiting for it, and its release waits for them. Releasing a lease another
- * holder took over throws.
+ * holder took over throws. Abandoning it instead, when nothing was broadcast under it, spares the
+ * next holder the settle window.
  */
 export function acquireAccountBroadcastLock(
   targets: readonly LockTarget[],
   label: string,
   { allowNested = false }: AccountBroadcastLockOptions = {},
-): Promise<Lease> {
+): Promise<AbandonableLease> {
   return lockTargets(targets, label, { allowNested, giveUpIfHeld: false });
 }
 
@@ -257,7 +270,7 @@ export async function tryAcquireAccountBroadcastLock(
   targets: readonly LockTarget[],
   label: string,
   { allowNested = false }: AccountBroadcastLockOptions = {},
-): Promise<Lease | undefined> {
+): Promise<AbandonableLease | undefined> {
   try {
     return await lockTargets(targets, label, { allowNested, giveUpIfHeld: true });
   } catch (error) {
@@ -283,14 +296,17 @@ async function acquireInOrder(
 async function lockTargets(
   targets: readonly LockTarget[],
   label: string,
-  options: Omit<KeyLockOptions, "deadline">,
-): Promise<Lease> {
-  const keys = [...new Set(targets.map(target => lockTargetKey(target)))].sort(byCodeUnit);
+  options: Pick<KeyLockOptions, "allowNested" | "giveUpIfHeld">,
+): Promise<AbandonableLease> {
+  const keys = lockKeys(targets);
+  const sharedResourceKeys = new Set(
+    targets.filter(isSharedResource).map(({ lockKey }) => lockKey),
+  );
   const startedAt = Date.now();
   const deadline = startedAt + BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS;
   const leases: AbandonableLease[] = [];
   try {
-    await acquireInOrder(keys, label, { ...options, deadline }, leases);
+    await acquireInOrder(keys, label, { ...options, deadline, sharedResourceKeys }, leases);
   } catch (error) {
     await Promise.allSettled(leases.map(lease => lease.abandon()));
     throw error;
@@ -298,8 +314,11 @@ async function lockTargets(
     Reflect.set(os, WAITED_MS, waitedMsSoFar() + Date.now() - startedAt);
   }
 
-  let releasing: Promise<void> | undefined;
-  return { release: () => (releasing ??= releaseAll(leases)) };
+  let ending: Promise<void> | undefined;
+  return {
+    release: () => (ending ??= endAll(leases, lease => lease.release())),
+    abandon: () => (ending ??= endAll(leases, lease => lease.abandon())),
+  };
 }
 
 /**
@@ -309,7 +328,7 @@ async function lockTargets(
 export function refuseAccountBroadcastLocks(targets: readonly LockTarget[], reason: string): Lease {
   const holds = liveHolds();
   const refusal: LiveHold = { nested: 0, refusedBecause: reason };
-  const keys = [...new Set(targets.map(target => lockTargetKey(target)))];
+  const keys = lockKeys(targets);
   for (const key of keys) holds[key] = refusal;
   return {
     release: () => {
@@ -321,15 +340,23 @@ export function refuseAccountBroadcastLocks(targets: readonly LockTarget[], reas
   };
 }
 
+/**
+ * Runs `fn` under the lock of `targets`. With `waitsForConfirmation`, `fn` only returns once its
+ * transactions are confirmed, so on success the targets are handed back without the settle window.
+ */
 export async function runWithAccountBroadcastLock<T>(
   targets: readonly LockTarget[],
   label: string,
   fn: () => Promise<T>,
+  { waitsForConfirmation = false }: { readonly waitsForConfirmation?: boolean } = {},
 ): Promise<T> {
   const lease = await acquireAccountBroadcastLock(targets, label);
+  let confirmed = false;
   try {
-    return await fn();
+    const result = await fn();
+    confirmed = waitsForConfirmation;
+    return result;
   } finally {
-    await lease.release();
+    await (confirmed ? lease.abandon() : lease.release());
   }
 }

@@ -1,8 +1,8 @@
 /** How many passes may move a test whose broadcast lock is busy on to the next pass. */
-export const BROADCAST_DEFERRAL_PASSES_ENV = "E2E_BROADCAST_LOCK_DEFERRAL_PASSES";
+const BROADCAST_DEFERRAL_PASSES_ENV = "E2E_BROADCAST_LOCK_DEFERRAL_PASSES";
 
 /** "1" on the passes that may defer; the pass after them waits for busy locks instead. */
-export const BROADCAST_LOCK_DEFER_ENV = "E2E_BROADCAST_LOCK_DEFER";
+const BROADCAST_LOCK_DEFER_ENV = "E2E_BROADCAST_LOCK_DEFER";
 
 const DEFAULT_DEFERRAL_PASSES = 2;
 

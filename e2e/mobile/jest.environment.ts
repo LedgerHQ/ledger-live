@@ -399,7 +399,7 @@ export default class TestEnvironment extends DetoxEnvironment {
     const specLock = this.specBroadcastLock();
     if (!specLock || !hasEnabledTest(state.rootDescribeBlock)) return false;
     try {
-      if ((await specLock.tryLock()) !== "busy") return false;
+      if (await specLock.tryLock()) return false;
     } catch (error) {
       console.warn(`[broadcastLock] could not check the spec's accounts: ${sanitizeError(error)}`);
       return false;
@@ -470,14 +470,10 @@ export default class TestEnvironment extends DetoxEnvironment {
 
   private async onRunFinish() {
     try {
-      await this.specBroadcastLock()?.release();
-    } catch (error) {
-      console.warn(`[broadcastLock] ${sanitizeError(error)}`);
-    }
-    try {
       await this.recordBroadcastLockWait();
     } catch (error) {
       console.warn(`[broadcastLock] could not record the lock wait: ${sanitizeError(error)}`);
     }
+    await this.specBroadcastLock()?.release();
   }
 }

@@ -1,5 +1,8 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { ensureTokenApproval, performSwapUntilQuoteSelectionStep } from "@e2e/utils/swapUtils";
+import {
+  ensureTokenApprovalUnderLock,
+  performSwapUntilQuoteSelectionStep,
+} from "@e2e/utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
@@ -12,7 +15,10 @@ import { TIMEOUT } from "@e2e/utils/timeouts";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-/** The CLI approval broadcasts despite the flag above, so it may first wait for the account's broadcast lock. */
+/**
+ * The allowance check waits for the account's broadcast lock, since the CLI approval broadcasts
+ * despite the flag above.
+ */
 const TOKEN_APPROVAL_HOOK_TIMEOUT = BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS + TIMEOUT.xxxxlarge;
 
 export function runSwapDexNativeFlow(
@@ -49,7 +55,7 @@ export function runSwapDexNativeFlow(
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
       }
       amountToSwap = amount;
-      await ensureTokenApproval(fromAccount, provider, amountToSwap.toString());
+      await ensureTokenApprovalUnderLock(fromAccount, provider, amountToSwap.toString());
     }, TOKEN_APPROVAL_HOOK_TIMEOUT);
 
     setTeamOwner(Team.SWAP);

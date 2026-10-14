@@ -6,6 +6,7 @@ import {
   refuseAccountBroadcastLocks,
   takeBroadcastLockWaitedMs,
   tryAcquireAccountBroadcastLock,
+  type AbandonableLease,
   type Lease,
   type LockTarget,
   type SharedResource,
@@ -13,6 +14,7 @@ import {
 import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { isAppBroadcastDisabled } from "@e2e/helpers/commonHelpers";
 import { SPEC_BROADCAST_LOCK, type SpecBroadcastLock } from "@e2e/utils/broadcastDeferrals";
+import { isPaytabSpec, paytabCardSession } from "@e2e/utils/paytab";
 
 export const BROADCAST_LOCK_ACQUIRE_HOOK_TIMEOUT = BROADCAST_LOCK_ACQUIRE_TIMEOUT_MS + 2 * 60_000;
 export const BROADCAST_LOCK_RELEASE_HOOK_TIMEOUT = BROADCAST_LOCK_NESTED_DRAIN_MS + 60_000;
@@ -25,16 +27,20 @@ let specFinished = false;
 const accountsToLock = () => (isAppBroadcastDisabled() ? [] : declaredAccounts);
 const targetsToLock = (): LockTarget[] => [...accountsToLock(), ...declaredResources];
 
-const holderLabel = () => {
+export const holderLabel = () => {
   const platform = process.env.DETOX_CONFIGURATION?.startsWith("ios") ? "ios" : "android";
   const specFile = path.basename(expect.getState().testPath ?? "unknown spec");
   return `${platform} ${specFile}`;
 };
 
+const lockOptions = { allowNested: true };
+
 /**
  * Declares, while the spec file is collected, an account the app broadcasts from.
  * setup.ts locks them before the app starts, unless app broadcast is disabled, and releases
- * them once every afterAll has run, so no other worker or CI machine broadcasts from them in between.
+ * them once the spec's describe blocks have run, so no other worker or CI machine broadcasts
+ * from them in between. A spec's file-level afterAll runs after that release, so a cleanup that
+ * broadcasts goes in a describe.
  */
 export function declareBroadcastAccounts(...accounts: Account[]): void {
   declaredAccounts.push(...accounts);
@@ -48,24 +54,37 @@ export function declareSharedResources(...resources: SharedResource[]): void {
   declaredResources.push(...resources);
 }
 
-async function tryLockDeclaredBroadcastAccounts(): Promise<"none" | "held" | "busy"> {
+/**
+ * A Pay tab spec gets its card session before waiting for its locks, or right after trying them,
+ * so a Baanx failure never holds them and a spec deferred for busy locks does not log in.
+ */
+const resolvePaytabCardSession = async () => {
+  if (isPaytabSpec()) await paytabCardSession();
+};
+
+async function tryLockDeclaredBroadcastAccounts(): Promise<boolean> {
   const targets = targetsToLock();
-  if (targets.length === 0 || lease) return "none";
-  const acquired = await tryAcquireAccountBroadcastLock(targets, holderLabel(), {
-    allowNested: true,
-  });
-  if (!acquired) return "busy";
+  if (targets.length === 0 || lease) return true;
+  const acquired = await tryAcquireAccountBroadcastLock(targets, holderLabel(), lockOptions);
+  if (!acquired) return false;
+  try {
+    await resolvePaytabCardSession();
+  } catch (error) {
+    await acquired.abandon();
+    throw error;
+  }
   lease = acquired;
-  return "held";
+  return true;
 }
 
 export async function lockDeclaredBroadcastAccounts(): Promise<void> {
   const targets = targetsToLock();
   if (targets.length === 0 || lease) return;
+  await resolvePaytabCardSession();
   const label = holderLabel();
-  let acquired: Lease;
+  let acquired: AbandonableLease;
   try {
-    acquired = await acquireAccountBroadcastLock(targets, label, { allowNested: true });
+    acquired = await acquireAccountBroadcastLock(targets, label, lockOptions);
   } catch (error) {
     if (!specFinished) {
       lease = refuseAccountBroadcastLocks(targets, `could not be locked by ${label}`);
@@ -73,7 +92,7 @@ export async function lockDeclaredBroadcastAccounts(): Promise<void> {
     throw error;
   }
   if (specFinished) {
-    await acquired.release();
+    await acquired.abandon();
     return;
   }
   lease = acquired;

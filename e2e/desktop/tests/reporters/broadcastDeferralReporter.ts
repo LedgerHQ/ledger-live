@@ -57,7 +57,8 @@ const countOutcomes = (tests: readonly TestCase[]) => {
 
 /**
  * Writes, for scripts/playwrightWithDeferrals.mjs, the tests this pass deferred because their
- * broadcast locks were busy, every test it selected, and the outcome counts of the others.
+ * broadcast locks were busy, every test it selected, the outcome counts of the others, and the
+ * output directory that holds Playwright's .last-run.json.
  */
 class BroadcastDeferralReporter implements Reporter {
   private rootDir = "";
@@ -79,6 +80,7 @@ class BroadcastDeferralReporter implements Reporter {
         deferred: [...new Map(deferred.map(test => [test.id, test])).values()],
         selected: tests.map(test => testIdOf(this.rootDir, test)),
         counts: countOutcomes(tests.filter(test => !isDeferred(test))),
+        outputDir: this.suite.suites[0]?.project()?.outputDir,
       }),
     );
   }
