@@ -1,4 +1,3 @@
-import { execFileSync } from "child_process";
 import { device } from "detox";
 import { allure, Step } from "jest-allure2-reporter/api";
 import { TIMEOUT } from "@e2e/utils/timeouts";
@@ -107,25 +106,29 @@ export default class PayTabPage {
 
     try {
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        const center = await this.bankTransferCloseCenter();
-        const at = `pixels (${center.pixels.x}, ${center.pixels.y}), dp (${center.x}, ${center.y})`;
+        const closeButton = getElementById(this.bankTransferCloseId);
+        const insideButton = { x: 1, y: 1 };
 
-        await device.tap({ x: center.x, y: center.y }, false);
+        await closeButton.tap(insideButton);
         if (await this.bankTransferIntroDismissed()) {
-          attempts.push(`attempt ${attempt}: coordinate tap at ${at} closed the sheet`);
+          attempts.push(
+            `attempt ${attempt}: element tap 1dp inside the close button closed the sheet`,
+          );
           return;
         }
         attempts.push(
-          `attempt ${attempt}: coordinate tap at ${at} left ${this.bankTransferContentId} visible`,
+          `attempt ${attempt}: element tap 1dp inside the close button left ${this.bankTransferContentId} visible`,
         );
 
-        await device.longPress({ x: center.x, y: center.y }, false);
+        await closeButton.longPress(insideButton);
         if (await this.bankTransferIntroDismissed()) {
-          attempts.push(`attempt ${attempt}: coordinate long press at ${at} closed the sheet`);
+          attempts.push(
+            `attempt ${attempt}: element long press 1dp inside the close button closed the sheet`,
+          );
           return;
         }
         attempts.push(
-          `attempt ${attempt}: coordinate long press at ${at} left ${this.bankTransferContentId} visible`,
+          `attempt ${attempt}: element long press 1dp inside the close button left ${this.bankTransferContentId} visible`,
         );
       }
 
@@ -148,37 +151,6 @@ export default class PayTabPage {
     } finally {
       await device.enableSynchronization();
     }
-  }
-
-  private async bankTransferCloseCenter() {
-    const attributes = await getElementById(this.bankTransferCloseId).getAttributes();
-    if ("elements" in attributes) {
-      throw new Error(
-        `Expected one ${this.bankTransferCloseId}, found ${attributes.elements.length}`,
-      );
-    }
-
-    const { x, y, width, height } = attributes.frame;
-    const pixels = {
-      x: Math.round(x + width / 2),
-      y: Math.round(y + height / 2),
-    };
-    const density = this.androidScreenDensity();
-    return {
-      pixels,
-      x: Math.round(pixels.x / density),
-      y: Math.round(pixels.y / density),
-    };
-  }
-
-  private androidScreenDensity() {
-    const adb = process.env.ANDROID_HOME ? `${process.env.ANDROID_HOME}/platform-tools/adb` : "adb";
-    const output = execFileSync(adb, ["shell", "wm", "density"], { encoding: "utf8" });
-    const dpi = Number(output.trim().match(/(\d+)\s*$/)?.[1]);
-    if (!Number.isFinite(dpi) || dpi <= 0) {
-      throw new Error(`Could not read Android screen density from adb: ${output.trim()}`);
-    }
-    return dpi / 160;
   }
 
   @Step("Open request")
