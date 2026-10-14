@@ -3,6 +3,7 @@ import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
+  type DeviceOnboardingContext,
   type OnboardingEvent,
   type SessionEvent,
 } from "@features/platform-device-onboarding";
@@ -29,9 +30,18 @@ type UseDeviceOnboardingInput = {
   knownDevices: KnownDevice[];
   offerSync: boolean;
   navigateOnExit?: boolean;
+  wasReadOnlyAtEntry?: boolean;
+};
+
+type GenuineActor = {
+  getSnapshot(): { context: DeviceOnboardingContext };
 };
 
 type StoppableActor = { stop(): void };
+
+export type DeviceOnboardingSession = DeviceOnboardingToolProps & {
+  liveDevice: Device | null;
+};
 
 function statusWithActor(
   actor: { getSnapshot(): unknown } | null,
@@ -44,12 +54,20 @@ export function useDeviceOnboarding({
   knownDevices,
   offerSync,
   navigateOnExit = true,
-}: UseDeviceOnboardingInput): DeviceOnboardingToolProps {
+  wasReadOnlyAtEntry = false,
+}: UseDeviceOnboardingInput): DeviceOnboardingSession {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
-  const leaveOnboarding = useLeaveOnboarding({ device: liveDevice, navigateOnExit });
+  const actorBridge = useRef<{ current: GenuineActor | null } | null>(null);
+  const leaveOnboarding = useLeaveOnboarding({
+    device: liveDevice,
+    navigateOnExit,
+    wasReadOnlyAtEntry,
+    isGenuine: () =>
+      actorBridge.current?.current?.getSnapshot().context.genuineVerdict?.isGenuine === true,
+  });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
@@ -86,6 +104,10 @@ export function useDeviceOnboarding({
     onDone: handleDone,
     leaveOnboarding,
   });
+
+  useEffect(() => {
+    actorBridge.current = actorRef;
+  }, [actorRef]);
 
   const dropLostTransport = useCallback(() => {
     setSessionReady(false);
@@ -294,6 +316,7 @@ export function useDeviceOnboarding({
   return {
     status,
     device,
+    liveDevice,
     state,
     context,
     events,

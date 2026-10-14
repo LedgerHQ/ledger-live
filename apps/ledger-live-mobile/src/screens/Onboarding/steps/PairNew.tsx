@@ -28,6 +28,7 @@ import Button from "~/components/PreventDoubleClickButton";
 import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { OnboardingType } from "~/reducers/types";
 import { useFeature } from "@features/platform-feature-flags";
+import { isSeededDeviceFunnelOn } from "LLM/features/DeviceOnboarding/utils/seededFunnel";
 
 const StyledContainerView = styled(Flex)`
   padding-left: 16px;
@@ -83,12 +84,22 @@ export default memo(function () {
   const dispatch = useDispatch();
   const { notifyFlowCompleted } = useNotificationsPrompt();
 
-  const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet, isRestoreSeed } =
-    route.params;
+  const {
+    deviceModelId,
+    showSeedWarning,
+    isProtectFlow,
+    fromAccessExistingWallet,
+    isRestoreSeed,
+    connectSeededDevice,
+  } = route.params;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
 
   const isFundWalletEnabled = Boolean(useFeature("llmNanoOnboardingFundWallet")?.enabled);
+  const seededFunnel = isSeededDeviceFunnelOn(
+    Boolean(useFeature("deviceOnboarding")?.enabled),
+    connectSeededDevice === true,
+  );
   const isFundWalletNewSetup = isFundWalletEnabled && onboardingType === OnboardingType.setupNew;
 
   const seedConfiguration = useMemo(() => {
@@ -107,6 +118,10 @@ export default memo(function () {
       navigation.navigate(ScreenName.OnboardingProtectFlow, {
         deviceModelId,
       });
+      return;
+    }
+    if (seededFunnel) {
+      navigation.navigate(ScreenName.DeviceOnboardingFunnel);
       return;
     }
     dispatch(setIsReborn(false));
@@ -152,6 +167,7 @@ export default memo(function () {
     notifyFlowCompleted,
     isFundWalletNewSetup,
     seedConfiguration,
+    seededFunnel,
   ]);
 
   return (
