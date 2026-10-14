@@ -1,55 +1,59 @@
-import { applyUsdRateToMarket } from "../applyUsdRateToMarket";
-import { createMockMarketCurrencyData } from "../fixtures";
+import { applyUsdRateToMarket, applyUsdRateToMarketItem } from "../applyUsdRateToMarket";
+import { createMockMarketCurrencyData, createMockMarketItemResponse } from "../fixtures";
+
+const scale = (value: number, rate: number) => value * rate;
 
 describe("applyUsdRateToMarket", () => {
-  it("returns the input unchanged when rate === 1 (USD)", () => {
+  it("returns the same reference when the rate is 1", () => {
     const data = createMockMarketCurrencyData();
     expect(applyUsdRateToMarket(data, 1)).toBe(data);
   });
 
-  describe("rate !== 1", () => {
+  it("scales USD amounts and keeps every other field", () => {
     const data = createMockMarketCurrencyData();
     const rate = 0.9;
-    const out = applyUsdRateToMarket(data, rate);
 
-    it("multiplies every USD-denominated field by the rate", () => {
-      expect(out.price).toBe(data.price * rate);
-      expect(out.marketcap).toBe((data.marketcap as number) * rate);
-      expect(out.totalVolume).toBe(data.totalVolume * rate);
-      expect(out.high24h).toBe(data.high24h * rate);
-      expect(out.low24h).toBe(data.low24h * rate);
-      expect(out.ath).toBe(data.ath * rate);
-      expect(out.atl).toBe(data.atl * rate);
-    });
-
-    it("preserves non-USD numeric fields verbatim", () => {
-      expect(out.marketcapRank).toBe(data.marketcapRank);
-      expect(out.marketCapChangePercentage24h).toBe(data.marketCapChangePercentage24h);
-      expect(out.circulatingSupply).toBe(data.circulatingSupply);
-      expect(out.totalSupply).toBe(data.totalSupply);
-      expect(out.maxSupply).toBe(data.maxSupply);
-    });
-
-    it("preserves percentages, dates, sparkline and chartData verbatim", () => {
-      expect(out.priceChangePercentage).toEqual(data.priceChangePercentage);
-      expect(out.athDate).toBe(data.athDate);
-      expect(out.atlDate).toBe(data.atlDate);
-      expect(out.sparklineIn7d).toBe(data.sparklineIn7d);
-      expect(out.chartData).toBe(data.chartData);
-    });
-
-    it("preserves identity fields (id, name, ticker, image, ledgerIds)", () => {
-      expect(out.id).toBe(data.id);
-      expect(out.name).toBe(data.name);
-      expect(out.ticker).toBe(data.ticker);
-      expect(out.image).toBe(data.image);
-      expect(out.ledgerIds).toBe(data.ledgerIds);
+    expect(applyUsdRateToMarket(data, rate)).toEqual({
+      ...data,
+      price: scale(data.price, rate),
+      marketcap: scale(data.marketcap as number, rate),
+      totalVolume: scale(data.totalVolume, rate),
+      high24h: scale(data.high24h, rate),
+      low24h: scale(data.low24h, rate),
+      ath: scale(data.ath, rate),
+      atl: scale(data.atl, rate),
     });
   });
 
-  it("keeps `marketcap` as undefined when it is undefined on the input", () => {
+  it("keeps marketcap undefined when the input has none", () => {
     const data = createMockMarketCurrencyData({ marketcap: undefined });
-    const out = applyUsdRateToMarket(data, 2);
-    expect(out.marketcap).toBeUndefined();
+    expect(applyUsdRateToMarket(data, 2).marketcap).toBeUndefined();
+  });
+});
+
+describe("applyUsdRateToMarketItem", () => {
+  it("returns the same reference when the rate is 1", () => {
+    const item = createMockMarketItemResponse();
+    expect(applyUsdRateToMarketItem(item, 1)).toBe(item);
+  });
+
+  it("scales USD amounts and the sparkline, and keeps every other field", () => {
+    const item = createMockMarketItemResponse();
+    const rate = 0.5;
+
+    expect(applyUsdRateToMarketItem(item, rate)).toEqual({
+      ...item,
+      price: scale(item.price, rate),
+      high24h: scale(item.high24h, rate),
+      low24h: scale(item.low24h, rate),
+      marketCap: scale(item.marketCap, rate),
+      marketCapChange24h: scale(item.marketCapChange24h, rate),
+      fullyDilutedValuation: scale(item.fullyDilutedValuation, rate),
+      totalVolume: scale(item.totalVolume, rate),
+      allTimeHigh: scale(item.allTimeHigh, rate),
+      allTimeLow: scale(item.allTimeLow, rate),
+      priceChange24h: scale(item.priceChange24h, rate),
+      sparkline: item.sparkline.map(value => scale(value, rate)),
+    });
   });
 });
