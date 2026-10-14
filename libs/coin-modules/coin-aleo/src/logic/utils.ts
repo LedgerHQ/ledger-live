@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
-import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type {
   Account,
   AccountLike,
@@ -1513,11 +1512,13 @@ export function getStrategyConfig(
   };
 }
 
+const ALEO_CURRENCY_IDS: ReadonlySet<string> = new Set(["aleo", "aleo_testnet"]);
+
 export function isAleoAccount(acc: AccountLike): acc is AleoAccount | AleoTokenAccount {
   if (acc.type === "Account") {
     return acc.currency.family === "aleo";
   }
-  return findCryptoCurrencyById(acc.token.parentCurrencyId)?.family === "aleo";
+  return ALEO_CURRENCY_IDS.has(acc.token.parentCurrencyId);
 }
 
 export const getNextSequenceNumber = (account: AleoAccount): BigNumber => {

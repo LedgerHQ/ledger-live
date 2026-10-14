@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import aleoConfig from "../config";
 import {
   EXPLORER_TRANSFER_TYPES,
@@ -3394,6 +3395,16 @@ describe("isAleoAccount", () => {
 
   it("returns true for an Aleo token account", () => {
     expect(isAleoAccount(getMockedTokenAccount())).toBe(true);
+  });
+
+  it("returns true for an Aleo testnet token account", () => {
+    const testnetTokenAccount = getMockedTokenAccount(undefined, {
+      token: {
+        ...getMockedTokenCurrency(),
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("aleo_testnet"),
+      },
+    });
+    expect(isAleoAccount(testnetTokenAccount)).toBe(true);
   });
 
   it("returns false for an account of another family", () => {
