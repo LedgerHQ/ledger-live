@@ -3,10 +3,12 @@ import { View } from "react-native";
 import { render, screen } from "@testing-library/react-native";
 import { AccountDetailLayout } from "./AccountDetailLayout.native";
 
+type LayoutChild = ReturnType<typeof screen.getByTestId> | string;
+
 const slotIds = () =>
   screen
     .getByTestId("account-detail-layout")
-    .children.map(child => (typeof child === "string" ? child : child.props.testID));
+    .children.map((child: LayoutChild) => (typeof child === "string" ? child : child.props.testID));
 
 describe("AccountDetailLayout (Native)", () => {
   it("renders the sections in page order", () => {

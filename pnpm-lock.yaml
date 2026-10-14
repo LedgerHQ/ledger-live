@@ -1013,9 +1013,6 @@ importers:
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
-      '@features/flow-account-detail':
-        specifier: workspace:^
-        version: link:../../features/flow/account-detail
       '@features/flow-analytics-consent':
         specifier: workspace:*
         version: link:../../features/flow/analytics-consent
@@ -1869,9 +1866,6 @@ importers:
       '@domain/entity-wallet-sync':
         specifier: workspace:^
         version: link:../../domain/entity/wallet-sync
-      '@features/flow-account-detail':
-        specifier: workspace:^
-        version: link:../../features/flow/account-detail
       '@features/flow-analytics-consent':
         specifier: workspace:*
         version: link:../../features/flow/analytics-consent

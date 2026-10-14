@@ -98,7 +98,6 @@
     "@domain/entity-starred-account": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",
     "@electron/fuses": "2.0.0",
-    "@features/flow-account-detail": "workspace:^",
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-app-availability": "workspace:^",
     "@features/flow-contacts": "workspace:^",
