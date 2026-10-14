@@ -84,8 +84,9 @@ export function QueuedBottomSheet({
     restoreOnFocus,
   });
 
-  // The outgoing sheet keeps what it showed, so a consumer that renders its content at all times
-  // does not see it vanish mid-close. Recorded on commit, so an abandoned render cannot leak in.
+  // While a re-made request waits for the next presentation, the outgoing sheet keeps rendering
+  // what it last committed instead of the new `children`/`footer`. Recorded on commit, so an
+  // abandoned render cannot leak in.
   const committedContentRef = useRef({ children, footer });
   useLayoutEffect(() => {
     if (!isAwaitingNextPresentation) {
