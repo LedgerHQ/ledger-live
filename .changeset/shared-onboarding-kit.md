@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/device-onboarding": patch
+"@features/platform-device-onboarding": patch
 ---
 
 Build the device onboarding test kit in one place and export it from `./testing`

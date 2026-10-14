@@ -1,4 +1,4 @@
-# @ledgerhq/device-onboarding
+# @features/platform-device-onboarding
 
 > [!CAUTION]
 > **Status: UNSTABLE** — The shared onboarding API is under active development.
@@ -130,15 +130,16 @@ The session stays open after the exit, so the app can keep using it.
 
 ## Usage context
 
-Consumed by `apps/ledger-live-desktop` and `apps/ledger-live-mobile`, which open the session, send
-its events, give `leaveOnboarding` and render the screens. The package imports neither app, nor `live-dmk-desktop`, `live-dmk-mobile`, or
+Consumed by `apps/ledger-live-desktop`, `apps/ledger-live-mobile`, `@devtools/device-onboarding`, and `@devtools/bindings`.
+The apps open the session, send its events, give `leaveOnboarding` and render the screens. The package
+imports neither app, nor `live-dmk-desktop`, `live-dmk-mobile`, or
 any legacy onboarding flow.
 
 ## Validation
 
 ```sh
-pnpm nx run @ledgerhq/device-onboarding:build
-pnpm nx run @ledgerhq/device-onboarding:typecheck
-pnpm nx run @ledgerhq/device-onboarding:test
-pnpm nx run @ledgerhq/device-onboarding:lint
+pnpm nx run @features/platform-device-onboarding:build
+pnpm nx run @features/platform-device-onboarding:typecheck
+pnpm nx run @features/platform-device-onboarding:test
+pnpm nx run @features/platform-device-onboarding:lint
 ```

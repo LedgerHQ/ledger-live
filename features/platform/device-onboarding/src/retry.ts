@@ -15,7 +15,7 @@ export function createRetryPolicy(isRetryable: (error: unknown) => boolean): Ret
   };
 }
 
-export type RetryOptions = {
+type RetryOptions = {
   /**
    * Consulted after each delay: an actor stopped during a backoff must not reach the device again.
    */

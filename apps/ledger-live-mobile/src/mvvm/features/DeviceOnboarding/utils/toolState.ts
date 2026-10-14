@@ -10,4 +10,4 @@ export {
   stateValueToString,
   toolEvent,
   userEvents,
-} from "@ledgerhq/device-onboarding";
+} from "@features/platform-device-onboarding";
