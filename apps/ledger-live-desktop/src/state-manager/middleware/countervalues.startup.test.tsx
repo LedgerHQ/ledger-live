@@ -126,7 +126,7 @@ describe("countervalues sync at startup", () => {
         .mocked(loadCountervalues)
         .mock.calls.map(([, settings]) => settings.trackingPairs.map(pairId)),
       savedKeys: countervaluesSaves().map(Object.keys),
-      restoredPairs: Object.keys(store.getState().countervalues.countervalues.state.data),
+      restoredPairs: Object.keys(store.getState().countervalues.rates.data),
     };
 
     expect(boot).toEqual({

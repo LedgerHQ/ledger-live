@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { pairId } from "@domain/entity-market-countervalues";
-import { setCountervaluesPollingTriggerLoad } from "@features/platform-market-countervalues";
+import { countervaluesLoadRequested } from "@features/platform-market-countervalues";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
@@ -59,7 +59,7 @@ describe("createCountervaluesSettingsSelector", () => {
 
     rerender();
     act(() => {
-      store.dispatch(setCountervaluesPollingTriggerLoad(true));
+      store.dispatch(countervaluesLoadRequested());
       // a resync hands back new account objects tracking the same pairs
       store.dispatch(replaceAccounts([{ ...btcAccount }]));
     });

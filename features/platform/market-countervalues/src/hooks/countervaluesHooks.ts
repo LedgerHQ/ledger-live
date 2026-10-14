@@ -1,17 +1,19 @@
-import { calculate, type CounterValuesState } from "@domain/entity-market-countervalues";
+import {
+  calculate,
+  wipeCountervalues,
+  type CounterValuesState,
+} from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import type { Unit } from "@domain/entity-currency-unit";
 import { BigNumber } from "bignumber.js";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  countervaluesStateErrorSelector,
-  countervaluesStatePendingSelector,
   countervaluesStateSelector,
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-  wipeCountervalues,
-} from "../state/slice";
+  countervaluesSyncErrorSelector,
+  countervaluesSyncPendingSelector,
+} from "../state/reducer";
+import { countervaluesLoadRequested, countervaluesPollingSet } from "../state/slice";
 
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
 export type Polling = {
@@ -23,10 +25,14 @@ export type Polling = {
   start: () => void;
   // stop background polling
   stop: () => void;
-  // true when the polling is in progress
+};
+
+/** Where the loop stands, from {@link useCountervaluesLoadStatus}. */
+export type CountervaluesLoadStatus = {
+  // true while a load is in flight
   pending: boolean;
-  // if the last polling failed, there will be an error
-  error: Error | null | undefined;
+  // the last load's error, cleared when the next load starts
+  error: Error | null;
 };
 
 /** Returns the full countervalues state. */
@@ -34,22 +40,25 @@ export function useCountervaluesState(): CounterValuesState {
   return useSelector(countervaluesStateSelector);
 }
 
-/** Allows consumer to access the countervalues polling control object */
+/** The countervalues polling controls. Stable, and selects nothing: it never re-renders its caller. */
 export function useCountervaluesPolling(): Polling {
   const dispatch = useDispatch();
-  const pending = useSelector(countervaluesStatePendingSelector);
-  const error = useSelector(countervaluesStateErrorSelector);
   return useMemo(
     () => ({
-      poll: () => dispatch(setCountervaluesPollingTriggerLoad(true)),
-      start: () => dispatch(setCountervaluesPollingIsPolling(true)),
-      stop: () => dispatch(setCountervaluesPollingIsPolling(false)),
+      poll: () => dispatch(countervaluesLoadRequested()),
+      start: () => dispatch(countervaluesPollingSet(true)),
+      stop: () => dispatch(countervaluesPollingSet(false)),
       wipe: () => dispatch(wipeCountervalues()),
-      pending,
-      error,
     }),
-    [dispatch, error, pending],
+    [dispatch],
   );
+}
+
+/** Whether a load is in flight and the last load's error. Re-renders only when either changes. */
+export function useCountervaluesLoadStatus(): CountervaluesLoadStatus {
+  const pending = useSelector(countervaluesSyncPendingSelector);
+  const error = useSelector(countervaluesSyncErrorSelector);
+  return useMemo(() => ({ pending, error }), [pending, error]);
 }
 
 /**

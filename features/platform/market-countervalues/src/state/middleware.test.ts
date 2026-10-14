@@ -8,6 +8,8 @@ import {
 import {
   exportCountervalues,
   initialState,
+  setCountervaluesState,
+  wipeCountervalues,
   type CounterValuesState,
   type CountervaluesSettings,
   type TrackingPair,
@@ -18,14 +20,13 @@ import type { Currency } from "@domain/entity-currency";
 import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
+import { countervaluesInitialState, countervaluesReducer } from "./reducer";
 import {
-  countervaluesReducer,
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-  setCountervaluesState,
-  setCountervaluesStateError,
-  setCountervaluesStatePending,
-  wipeCountervalues,
+  countervaluesLoadFailed,
+  countervaluesLoadRequested,
+  countervaluesLoadStarted,
+  countervaluesLoadSucceeded,
+  countervaluesPollingSet,
 } from "./slice";
 import {
   createCountervaluesMiddleware,
@@ -124,8 +125,8 @@ function createTestStore({
     },
     preloadedState: {
       countervalues: {
-        ...countervaluesReducer(undefined, { type: "init" }),
-        polling: { isPolling, triggerLoad: false },
+        ...countervaluesInitialState,
+        sync: { ...countervaluesInitialState.sync, isPolling },
       },
     },
     // The state holds an Error and rate Maps.
@@ -192,12 +193,11 @@ describe("createCountervaluesMiddleware", () => {
 
     expect(types(dispatched)).toEqual([
       "countervaluesSync/start",
-      setCountervaluesPollingTriggerLoad.type,
+      countervaluesLoadRequested.type,
       setCountervaluesState.type,
-      setCountervaluesPollingTriggerLoad.type,
-      setCountervaluesStatePending.type,
+      countervaluesLoadStarted.type,
       setCountervaluesState.type,
-      setCountervaluesStatePending.type,
+      countervaluesLoadSucceeded.type,
     ]);
     const restored = dispatched.filter(setCountervaluesState.match)[0].payload;
     expect(restored.checkHolesOnNextLoad).toBe(true);
@@ -270,10 +270,8 @@ describe("createCountervaluesMiddleware", () => {
     store.dispatch(startCountervaluesSync());
     await flush();
 
-    expect(dispatched.filter(setCountervaluesStateError.match).map(a => a.payload)).toEqual([
-      failure,
-    ]);
-    expect(dispatched.filter(setCountervaluesStatePending.match).at(-1)?.payload).toBe(false);
+    expect(dispatched.filter(countervaluesLoadFailed.match).map(a => a.payload)).toEqual([failure]);
+    expect(store.getState().countervalues.sync.load).toBe("idle");
     expect(dispatched.filter(setCountervaluesState.match)).toHaveLength(0);
   });
 
@@ -323,13 +321,13 @@ describe("createCountervaluesMiddleware", () => {
     store.dispatch(startCountervaluesSync());
     await flush();
 
-    store.dispatch(setCountervaluesPollingIsPolling(false));
+    store.dispatch(countervaluesPollingSet(false));
     await flush();
     jest.advanceTimersByTime(120_000);
     await flush();
     expect(loads()).toBe(1);
 
-    store.dispatch(setCountervaluesPollingIsPolling(true));
+    store.dispatch(countervaluesPollingSet(true));
     await flush();
     jest.advanceTimersByTime(3_000);
     await flush();
@@ -348,9 +346,9 @@ describe("createCountervaluesMiddleware", () => {
         }),
     );
 
-    store.dispatch(setCountervaluesPollingTriggerLoad(true));
+    store.dispatch(countervaluesLoadRequested());
     await flush();
-    store.dispatch(setCountervaluesPollingTriggerLoad(true));
+    store.dispatch(countervaluesLoadRequested());
     await flush();
     expect(loads()).toBe(2);
 
@@ -439,7 +437,7 @@ describe("createCountervaluesMiddleware", () => {
     expect(mockSupportedIdsSubscriptions.active).toBe(0);
     expect(unsubscribe).toHaveBeenCalledTimes(1);
     expect(loads()).toBe(1);
-    expect(dispatched.filter(setCountervaluesStatePending.match).at(-1)?.payload).toBe(false);
+    expect(store.getState().countervalues.sync.load).toBe("idle");
   });
 
   it("hands polling controls to the app's event subscription", async () => {
@@ -454,9 +452,9 @@ describe("createCountervaluesMiddleware", () => {
     await flush();
 
     controls?.stop();
-    expect(store.getState().countervalues.polling.isPolling).toBe(false);
+    expect(store.getState().countervalues.sync.isPolling).toBe(false);
     controls?.start();
-    expect(store.getState().countervalues.polling.isPolling).toBe(true);
+    expect(store.getState().countervalues.sync.isPolling).toBe(true);
     controls?.poll();
     await flush();
     expect(loads()).toBe(2);
@@ -478,12 +476,11 @@ describe("createCountervaluesMiddleware", () => {
     expect(types(dispatched)).toEqual([
       "test/reboot",
       wipeCountervalues.type,
-      setCountervaluesPollingTriggerLoad.type,
+      countervaluesLoadRequested.type,
       setCountervaluesState.type,
-      setCountervaluesPollingTriggerLoad.type,
-      setCountervaluesStatePending.type,
+      countervaluesLoadStarted.type,
       setCountervaluesState.type,
-      setCountervaluesStatePending.type,
+      countervaluesLoadSucceeded.type,
     ]);
     const restored = dispatched.filter(setCountervaluesState.match)[0].payload;
     expect(Object.keys(restored.data)).toEqual(Object.keys(savedState).filter(k => k !== "status"));

@@ -1,103 +1,114 @@
-import { createAction, type UnknownAction } from "@reduxjs/toolkit";
-import { initialState, type CounterValuesState } from "@domain/entity-market-countervalues";
-
-// The Redux slice both apps mount at the `countervalues` store key. Its action types are plain
-// strings because listeners outside the slice match them by value.
-
-export type CountervaluesState = {
-  countervalues: {
-    state: CounterValuesState;
-    pending: boolean;
-    error: Error | null;
-  };
-  polling: {
-    isPolling: boolean;
-    triggerLoad: boolean;
-  };
-};
-
-export const countervaluesInitialState: CountervaluesState = {
-  countervalues: {
-    state: initialState,
-    pending: false,
-    error: null,
-  },
-  polling: {
-    isPolling: true,
-    triggerLoad: false,
-  },
-};
-
-export const setCountervaluesPollingIsPolling = createAction<boolean>(
-  "COUNTERVALUES_POLLING_SET_IS_POLLING",
-);
-export const setCountervaluesPollingTriggerLoad = createAction<boolean>(
-  "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD",
-);
-export const setCountervaluesState = createAction<CounterValuesState>("COUNTERVALUES_STATE_SET");
-export const setCountervaluesStateError = createAction<Error>("COUNTERVALUES_STATE_SET_ERROR");
-export const setCountervaluesStatePending = createAction<boolean>(
-  "COUNTERVALUES_STATE_SET_PENDING",
-);
-export const wipeCountervalues = createAction("COUNTERVALUES_WIPE");
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { wipeCountervalues } from "@domain/entity-market-countervalues";
 
 /**
- * Not `createSlice` nor `createReducer`: immer would deep-freeze the stored rate `Map`s, which
- * `loadCountervalues` mutates in place on the next poll.
+ * Where the loop stands with loads: whether one is asked for, whether one is in flight.
+ *
+ * - `idle`: no load is asked for, none is in flight.
+ * - `requested`: a load is asked for; the middleware starts it on its next tick.
+ * - `loading`: a load is in flight, and no other is asked for.
+ * - `loadingThenRequested`: a load is in flight, and another is asked for. It starts once the
+ *   first one lands, so loads never overlap.
  */
-export function countervaluesReducer(
-  state: CountervaluesState = countervaluesInitialState,
-  action: UnknownAction,
-): CountervaluesState {
-  if (setCountervaluesPollingIsPolling.match(action)) {
-    return { ...state, polling: { ...state.polling, isPolling: action.payload } };
-  }
-  if (setCountervaluesPollingTriggerLoad.match(action)) {
-    return { ...state, polling: { ...state.polling, triggerLoad: action.payload } };
-  }
-  if (setCountervaluesState.match(action)) {
-    return { ...state, countervalues: { ...state.countervalues, state: action.payload } };
-  }
-  if (setCountervaluesStateError.match(action)) {
-    return {
-      ...state,
-      countervalues: { ...state.countervalues, error: action.payload, pending: false },
-    };
-  }
-  if (setCountervaluesStatePending.match(action)) {
-    return {
-      ...state,
-      countervalues: {
-        ...state.countervalues,
-        pending: action.payload,
-        // a new load clears the previous error
-        error: action.payload ? null : state.countervalues.error,
-      },
-    };
-  }
-  if (wipeCountervalues.match(action)) {
-    return {
-      ...state,
-      countervalues: { ...state.countervalues, state: initialState, pending: false, error: null },
-    };
-  }
-  return state;
-}
+export type CountervaluesLoad = "idle" | "requested" | "loading" | "loadingThenRequested";
 
-type RootState = { countervalues: CountervaluesState };
+/** The countervalues loop's own state, mounted next to the rates by `countervaluesReducer`. */
+export type CountervaluesSyncState = {
+  /** Where the loop stands with loads. */
+  load: CountervaluesLoad;
+  /** The last load's error, cleared when the next load starts. */
+  error: Error | null;
+  /** Whether the polling timer runs. */
+  isPolling: boolean;
+};
 
-export function countervaluesPollingIsPollingSelector(s: RootState): boolean {
-  return s.countervalues.polling.isPolling;
-}
-export function countervaluesPollingTriggerLoadSelector(s: RootState): boolean {
-  return s.countervalues.polling.triggerLoad;
-}
-export function countervaluesStateSelector(s: RootState): CounterValuesState {
-  return s.countervalues.countervalues.state;
-}
-export function countervaluesStatePendingSelector(s: RootState): boolean {
-  return s.countervalues.countervalues.pending;
-}
-export function countervaluesStateErrorSelector(s: RootState): Error | null {
-  return s.countervalues.countervalues.error;
-}
+export const countervaluesSyncInitialState: CountervaluesSyncState = {
+  load: "idle",
+  error: null,
+  isPolling: true,
+};
+
+/**
+ * The loop's slice. Each load event moves `load` along one of the transition tables below; a wipe
+ * ends the load like `countervaluesLoadSucceeded`.
+ *
+ * `countervaluesReducer` mounts it at `countervalues.sync`, not at its name, so its `selectors`
+ * are read through the root selectors `reducer.ts` binds.
+ */
+export const countervaluesSyncSlice = createSlice({
+  name: "countervaluesSync",
+  initialState: countervaluesSyncInitialState,
+  reducers: {
+    /** A poll, a reconnect or a settings change asks for a load. */
+    loadRequested(state) {
+      state.load = onRequest[state.load];
+    },
+    /** The middleware takes the request and starts the load. */
+    loadStarted(state) {
+      state.load = onLoadStart[state.load];
+      state.error = null;
+    },
+    /** The load landed, right after its rates. */
+    loadSucceeded(state) {
+      state.load = onLoadEnd[state.load];
+    },
+    /** The load failed with this error. */
+    loadFailed(state, { payload }: PayloadAction<Error>) {
+      state.error = payload;
+      state.load = onLoadEnd[state.load];
+    },
+    /** The polling timer starts (`true`) or stops (`false`). */
+    pollingSet(state, { payload }: PayloadAction<boolean>) {
+      state.isPolling = payload;
+    },
+  },
+  extraReducers: builder => {
+    builder.addCase(wipeCountervalues, state => {
+      state.load = onLoadEnd[state.load];
+      state.error = null;
+    });
+  },
+  selectors: {
+    /** Whether a load is in flight, as a boolean so that a request made meanwhile re-renders nothing. */
+    selectPending: state => state.load === "loading" || state.load === "loadingThenRequested",
+    /** The last load's error. */
+    selectError: state => state.error,
+    /** Whether the polling timer runs. */
+    selectIsPolling: state => state.isPolling,
+  },
+});
+
+export const {
+  loadRequested: countervaluesLoadRequested,
+  loadStarted: countervaluesLoadStarted,
+  loadSucceeded: countervaluesLoadSucceeded,
+  loadFailed: countervaluesLoadFailed,
+  pollingSet: countervaluesPollingSet,
+} = countervaluesSyncSlice.actions;
+
+/** A load is asked for. */
+const onRequest: LoadTransition = {
+  idle: "requested",
+  requested: "requested",
+  loading: "loadingThenRequested",
+  loadingThenRequested: "loadingThenRequested",
+};
+
+/** The request is taken and the load starts, in one step. */
+const onLoadStart: LoadTransition = {
+  idle: "loading",
+  requested: "loading",
+  loading: "loading",
+  loadingThenRequested: "loading",
+};
+
+/** A load lands, with rates or an error, or the rates are wiped. A request made meanwhile stays. */
+const onLoadEnd: LoadTransition = {
+  idle: "idle",
+  requested: "requested",
+  loading: "idle",
+  loadingThenRequested: "requested",
+};
+
+/** The next `load` for each current one. */
+type LoadTransition = Record<CountervaluesLoad, CountervaluesLoad>;

@@ -28,7 +28,7 @@ import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
 import type { BorrowState } from "./borrow";
-import type { CountervaluesState } from "@features/platform-market-countervalues";
+import type { CountervaluesStoreState } from "@features/platform-market-countervalues";
 import type { TrackingPair } from "@domain/entity-market-countervalues";
 import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
@@ -454,7 +454,7 @@ export type State = LLMRTKApiState & {
   auth: AuthState;
   ble: BleState;
   borrow: BorrowState;
-  countervalues: CountervaluesState;
+  countervalues: CountervaluesStoreState;
   countervaluesExtraSessionTracking: TrackingPair[];
   deeplinkInstallApp: DeeplinkInstallAppState;
   dynamicContent: DynamicContentState;

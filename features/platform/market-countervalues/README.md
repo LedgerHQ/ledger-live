@@ -3,8 +3,8 @@
 > [!CAUTION]
 > **Status: UNSTABLE**. The API may still change.
 
-The countervalues Redux glue: the slice both apps mount, the middleware that polls rates into it,
-and the hooks that read it. The rate state and its logic live in
+The countervalues Redux glue: the reducer both apps mount, the middleware that polls rates into it,
+and the hooks that read it. The rates, their slice and their logic live in
 `@domain/entity-market-countervalues`; fetching lives in `@domain/api-market-countervalues`.
 
 ## Exports
@@ -15,18 +15,20 @@ and the hooks that read it. The rate state and its logic live in
 | `startCountervaluesSync`, `stopCountervaluesSync` | Start the loop with the saved state, and stop it |
 | `haveSameTrackingPairs` | Result equality check for a settings selector: same pairs while accounts resynchronize |
 | `useCountervaluesState` | The full `CounterValuesState` |
-| `useCountervaluesPolling` | Polling controls and status (`Polling`) |
+| `useCountervaluesPolling` | Polling controls (`Polling`): `poll`, `start`, `stop`, `wipe`. Selects nothing |
+| `useCountervaluesLoadStatus` | Whether a load is in flight and the last load's error (`CountervaluesLoadStatus`) |
 | `useCalculate`, `useCalculateCountervalueCallback` | Convert an amount with the current rates |
 | `useSendAmount` | Fiat amount and reverse calculation for the send flow |
 | `useUsdToFiatRate` | USD to fiat spot rate, polled every 60 seconds; `1` for USD without a request |
 | `useGetCounterValueIdsPolling` | Currency ids sorted by market cap, polled every 30 minutes, with a default list |
 | `setCountervaluesLogger` | Registers the app logger |
-| `countervaluesReducer`, `CountervaluesState`, `countervaluesInitialState` | The Redux slice each app mounts at the `countervalues` store key |
-| `setCountervaluesState`, `setCountervaluesStatePending`, `setCountervaluesStateError`, `setCountervaluesPollingIsPolling`, `setCountervaluesPollingTriggerLoad`, `wipeCountervalues` | The slice's action creators |
-| `countervaluesStateSelector`, `countervaluesStatePendingSelector`, `countervaluesStateErrorSelector`, `countervaluesPollingIsPollingSelector`, `countervaluesPollingTriggerLoadSelector` | The slice's selectors, typed on `{ countervalues: CountervaluesState }` |
+| `countervaluesReducer`, `CountervaluesStoreState`, `countervaluesInitialState` | What each app mounts at the `countervalues` store key: `{ rates, sync }` |
+| `countervaluesSyncSlice`, `CountervaluesSyncState`, `CountervaluesLoad`, `countervaluesSyncInitialState` | The loop's slice, mounted at `sync` |
+| `countervaluesLoadRequested`, `countervaluesLoadStarted`, `countervaluesLoadSucceeded`, `countervaluesLoadFailed`, `countervaluesPollingSet` | The loop slice's events, typed `countervaluesSync/loadRequested` and so on |
+| `countervaluesStateSelector`, `countervaluesSyncPendingSelector`, `countervaluesSyncErrorSelector`, `countervaluesSyncIsPollingSelector` | The selectors, typed on `{ countervalues: CountervaluesStoreState }`. The sync ones are the slice's `selectors`, bound to `countervalues.sync` |
 
-The hooks read the slice through `react-redux`, so they need a Redux store holding it at the
-`countervalues` key. The middleware, `useUsdToFiatRate` and `useGetCounterValueIdsPolling` also need
+The hooks read the store through `react-redux`, so they need a Redux store holding
+`countervaluesReducer` at the `countervalues` key. The middleware, `useUsdToFiatRate` and `useGetCounterValueIdsPolling` also need
 the countervalues API from `@domain/api-market-countervalues` in that store.
 
 ## Setup
@@ -68,10 +70,9 @@ store.dispatch(startCountervaluesSync({ savedState }));
 - A failing step is logged and never reaches the dispatch that triggered it. A start whose settings
   cannot be computed starts nothing.
 
-## Redux slice
+## Redux state
 
-Each app mounts the reducer at the `countervalues` key and keeps its own `useSelector` hooks and
-persistence:
+Each app mounts the reducer at the `countervalues` key and keeps its own persistence:
 
 ```ts
 import { countervaluesReducer } from "@features/platform-market-countervalues";
@@ -79,10 +80,19 @@ import { countervaluesReducer } from "@features/platform-market-countervalues";
 combineReducers({ countervalues: countervaluesReducer /* , ... */ });
 ```
 
-- The action types are plain strings such as `COUNTERVALUES_WIPE`, not `countervalues/wipe`. Other
-  reducers listen to them, so match on the action creators (`builder.addCase(wipeCountervalues, ...)`)
-  rather than on the strings, and never rename one without updating every listener.
-- The slice holds no user settings. Each app computes its `CountervaluesSettings` from its own state,
+- `countervalues.rates` is the entity's rates slice (`countervaluesRatesSlice`, holding a
+  `CounterValuesState`). `countervalues.sync` is this package's slice, the loop's state: `load`,
+  `error` and `isPolling`. A wipe clears the rates and `error`, ends the load, and keeps a request
+  and the polling flag.
+- `load` is `idle`, `requested`, `loading` or `loadingThenRequested`. A poll asked for while a load
+  is in flight waits for it to land, so loads never overlap. `countervaluesSyncPendingSelector` reads
+  it as a boolean: a load is in flight.
+- Read them through the selectors and hooks, never through the path: only this package knows where
+  the rates are mounted.
+- Each slice declares its own actions, so their types carry the slice name:
+  `countervaluesRates/wipe`, `countervaluesSync/loadStarted`. Match on the action creators
+  (`builder.addCase(wipeCountervalues, ...)`), never on the strings.
+- The slice is mounted at `countervalues.sync`, not at its name, so `countervaluesSyncSlice.selectors`
+  cannot read the store. Use the exported root selectors.
+- Neither slice holds user settings. Each app computes its `CountervaluesSettings` from its own state,
   in the selector it gives the middleware.
-- The reducer is a plain function, not `createSlice` or `createReducer`: immer would deep-freeze the
-  stored rate `Map`s, and `loadCountervalues` updates them in place on the next poll.

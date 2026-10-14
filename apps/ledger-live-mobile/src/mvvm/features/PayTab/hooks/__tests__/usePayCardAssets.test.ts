@@ -50,17 +50,14 @@ function withRates(state: State): State {
     ...state,
     countervalues: {
       ...state.countervalues,
-      countervalues: {
-        ...state.countervalues.countervalues,
-        state: importCountervalues(
-          {
-            status: {},
-            [pairId({ from: usdc, to: USD })]: { latest: 1 },
-            [pairId({ from: BITCOIN, to: USD })]: { latest: 100_000 },
-          },
-          countervaluesTestUserSettings,
-        ),
-      },
+      rates: importCountervalues(
+        {
+          status: {},
+          [pairId({ from: usdc, to: USD })]: { latest: 1 },
+          [pairId({ from: BITCOIN, to: USD })]: { latest: 100_000 },
+        },
+        countervaluesTestUserSettings,
+      ),
     },
   };
 }

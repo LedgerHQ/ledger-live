@@ -62,13 +62,10 @@ function withUsdcHoldings(state: State): State {
     accounts: { active: [{ ...payTabEthAccount, subAccounts: [payTabUsdcAccount] }] },
     countervalues: {
       ...state.countervalues,
-      countervalues: {
-        ...state.countervalues.countervalues,
-        state: importCountervalues(
-          { status: {}, [pairId({ from: usdc, to: usd })]: { latest: 1 } },
-          countervaluesTestUserSettings,
-        ),
-      },
+      rates: importCountervalues(
+        { status: {}, [pairId({ from: usdc, to: usd })]: { latest: 1 } },
+        countervaluesTestUserSettings,
+      ),
     },
   };
 }

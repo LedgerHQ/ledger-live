@@ -1,186 +1,136 @@
+import type { UnknownAction } from "@reduxjs/toolkit";
+import { setCountervaluesState, wipeCountervalues } from "@domain/entity-market-countervalues";
 import {
-  initialState,
-  type CountervaluesSettings,
-  type CounterValuesState,
-} from "@domain/entity-market-countervalues";
-import { loadCountervalues, type RateSource } from "@domain/api-market-countervalues";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import {
-  countervaluesInitialState,
-  countervaluesPollingIsPollingSelector,
-  countervaluesPollingTriggerLoadSelector,
-  countervaluesReducer,
-  countervaluesStateErrorSelector,
-  countervaluesStatePendingSelector,
-  countervaluesStateSelector,
-  setCountervaluesPollingIsPolling,
-  setCountervaluesPollingTriggerLoad,
-  setCountervaluesState,
-  setCountervaluesStateError,
-  setCountervaluesStatePending,
-  wipeCountervalues,
-  type CountervaluesState,
+  countervaluesLoadFailed,
+  countervaluesLoadRequested,
+  countervaluesLoadStarted,
+  countervaluesLoadSucceeded,
+  countervaluesPollingSet,
+  countervaluesSyncInitialState,
+  countervaluesSyncSlice,
+  type CountervaluesLoad,
+  type CountervaluesSyncState,
 } from "./slice";
 
-const settings: CountervaluesSettings = {
-  trackingPairs: [
-    {
-      from: getCryptoCurrencyById("bitcoin"),
-      to: getFiatCurrencyByTicker("USD"),
-      startDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    },
+const { reducer } = countervaluesSyncSlice;
+
+const errored: CountervaluesSyncState = {
+  ...countervaluesSyncInitialState,
+  error: new Error("network"),
+};
+
+const loads: CountervaluesLoad[] = ["idle", "requested", "loading", "loadingThenRequested"];
+
+// Each row: an action, then the next `load` from idle, requested, loading, loadingThenRequested.
+const transitions: [string, () => UnknownAction, CountervaluesLoad[]][] = [
+  [
+    "a request",
+    () => countervaluesLoadRequested(),
+    ["requested", "requested", "loadingThenRequested", "loadingThenRequested"],
   ],
-  autofillGaps: true,
-  refreshRate: 60000,
-  marketCapBatchingAfterRank: 100,
-};
+  ["a load start", () => countervaluesLoadStarted(), ["loading", "loading", "loading", "loading"]],
+  [
+    "a load success",
+    () => countervaluesLoadSucceeded(),
+    ["idle", "requested", "idle", "requested"],
+  ],
+  [
+    "a load failure",
+    () => countervaluesLoadFailed(new Error("network")),
+    ["idle", "requested", "idle", "requested"],
+  ],
+  ["a wipe", () => wipeCountervalues(), ["idle", "requested", "idle", "requested"]],
+  ["a polling flag", () => countervaluesPollingSet(true), loads],
+  ["new rates", () => setCountervaluesState({ data: {}, status: {}, cache: {} }), loads],
+];
 
-const loadedState: CounterValuesState = {
-  data: { "bitcoin USD": new Map([["latest", 1]]) },
-  status: {},
-  cache: {},
-};
+const cells = transitions.flatMap(([name, action, next]) =>
+  loads.map((load, i) => ({ name, action, load, next: next[i] })),
+);
 
-const errored: CountervaluesState = {
-  ...countervaluesInitialState,
-  countervalues: { state: loadedState, pending: false, error: new Error("network") },
-};
-
-describe("countervaluesReducer", () => {
+describe("countervaluesSyncSlice", () => {
   it("starts from the initial state", () => {
-    const state = countervaluesReducer(undefined, { type: "@@INIT" });
-
-    expect(state).toBe(countervaluesInitialState);
-    expect(state.countervalues.state).toBe(initialState);
+    expect(reducer(undefined, { type: "@@INIT" })).toEqual({
+      load: "idle",
+      error: null,
+      isPolling: true,
+    });
   });
 
   it("returns the same state for an unrelated action", () => {
-    expect(countervaluesReducer(errored, { type: "UNRELATED" })).toBe(errored);
+    expect(reducer(errored, { type: "UNRELATED" })).toBe(errored);
   });
 
   it.each([
-    [setCountervaluesPollingIsPolling, "COUNTERVALUES_POLLING_SET_IS_POLLING"],
-    [setCountervaluesPollingTriggerLoad, "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD"],
-    [setCountervaluesState, "COUNTERVALUES_STATE_SET"],
-    [setCountervaluesStateError, "COUNTERVALUES_STATE_SET_ERROR"],
-    [setCountervaluesStatePending, "COUNTERVALUES_STATE_SET_PENDING"],
-    [wipeCountervalues, "COUNTERVALUES_WIPE"],
-  ])("keeps the action type string %#: %s", (creator, type) => {
+    [countervaluesLoadRequested, "countervaluesSync/loadRequested"],
+    [countervaluesLoadStarted, "countervaluesSync/loadStarted"],
+    [countervaluesLoadSucceeded, "countervaluesSync/loadSucceeded"],
+    [countervaluesLoadFailed, "countervaluesSync/loadFailed"],
+    [countervaluesPollingSet, "countervaluesSync/pollingSet"],
+  ])("names action %# %s", (creator, type) => {
     expect(creator.type).toBe(type);
   });
 
-  it("sets polling flags", () => {
-    let state = countervaluesReducer(
-      countervaluesInitialState,
-      setCountervaluesPollingIsPolling(false),
-    );
-    state = countervaluesReducer(state, setCountervaluesPollingTriggerLoad(true));
+  it.each(cells)("moves $load to $next on $name", ({ action, load, next }) => {
+    const state: CountervaluesSyncState = { ...countervaluesSyncInitialState, load };
+    const dispatched = action();
 
-    expect(state.polling).toEqual({ isPolling: false, triggerLoad: true });
-    expect(state.countervalues).toBe(countervaluesInitialState.countervalues);
+    const result = reducer(state, dispatched);
+
+    expect(result.load).toBe(next);
+    // Nothing else changes, so an unchanged load is the very same object.
+    if (next === load && !countervaluesLoadFailed.match(dispatched)) {
+      expect(result).toBe(state);
+    }
   });
 
-  it("sets the rate state", () => {
-    const state = countervaluesReducer(
-      countervaluesInitialState,
-      setCountervaluesState(loadedState),
-    );
+  it("sets the polling flag and leaves the load", () => {
+    const state = reducer(countervaluesSyncInitialState, countervaluesPollingSet(false));
 
-    expect(state.countervalues.state).toBe(loadedState);
-    expect(state.polling).toBe(countervaluesInitialState.polling);
+    expect(state).toEqual({ load: "idle", error: null, isPolling: false });
   });
 
-  it("stores an error and stops pending", () => {
-    const pending = countervaluesReducer(
-      countervaluesInitialState,
-      setCountervaluesStatePending(true),
-    );
+  it("stores the very error given and ends the load", () => {
+    const loading = reducer(countervaluesSyncInitialState, countervaluesLoadStarted());
     const error = new Error("network");
-    const state = countervaluesReducer(pending, setCountervaluesStateError(error));
+    const state = reducer(loading, countervaluesLoadFailed(error));
 
-    expect(state.countervalues.error).toBe(error);
-    expect(state.countervalues.pending).toBe(false);
+    expect(state.error).toBe(error);
+    expect(state.load).toBe("idle");
   });
 
   it("clears the error when a load starts", () => {
-    const state = countervaluesReducer(errored, setCountervaluesStatePending(true));
+    const state = reducer(errored, countervaluesLoadStarted());
 
-    expect(state.countervalues.pending).toBe(true);
-    expect(state.countervalues.error).toBeNull();
+    expect(state.load).toBe("loading");
+    expect(state.error).toBeNull();
   });
 
-  it("keeps the error when pending ends", () => {
-    const state = countervaluesReducer(errored, setCountervaluesStatePending(false));
-
-    expect(state.countervalues.error).toBe(errored.countervalues.error);
-  });
-
-  // Each app computes its settings and hands them to the provider; the store never holds them.
-  it("holds no user settings and ignores the former settings action", () => {
-    const state = countervaluesReducer(errored, {
-      type: "COUNTERVALUES_USER_SETTINGS_SET",
-      payload: settings,
-    });
+  it("keeps the error when a load succeeds", () => {
+    const state = reducer(errored, countervaluesLoadSucceeded());
 
     expect(state).toBe(errored);
-    expect(Object.keys(countervaluesInitialState)).toEqual(["countervalues", "polling"]);
   });
 
-  it("wipes rates, pending and error but keeps polling", () => {
-    const populated: CountervaluesState = {
-      countervalues: { state: loadedState, pending: true, error: new Error("network") },
-      polling: { isPolling: false, triggerLoad: true },
-    };
-    const state = countervaluesReducer(populated, wipeCountervalues());
-
-    expect(state.countervalues).toEqual({ state: initialState, pending: false, error: null });
-    expect(state.polling).toBe(populated.polling);
-  });
-
-  it("reads every field through its selector", () => {
-    const root = { countervalues: errored };
-
-    expect(countervaluesStateSelector(root)).toBe(loadedState);
-    expect(countervaluesStatePendingSelector(root)).toBe(false);
-    expect(countervaluesStateErrorSelector(root)).toBe(errored.countervalues.error);
-    expect(countervaluesPollingIsPollingSelector(root)).toBe(true);
-    expect(countervaluesPollingTriggerLoadSelector(root)).toBe(false);
-  });
-
-  it("does not freeze the stored rates", () => {
-    const rateMap = new Map([["latest", 1]]);
-    const stored = countervaluesReducer(
-      countervaluesInitialState,
-      setCountervaluesState({ data: { "bitcoin USD": rateMap }, status: {}, cache: {} }),
+  // Each app computes its settings and hands them to the middleware; the store never holds them.
+  it("holds no user settings and ignores the former settings action", () => {
+    expect(reducer(errored, { type: "COUNTERVALUES_USER_SETTINGS_SET", payload: {} })).toBe(
+      errored,
     );
-
-    expect(Object.isFrozen(stored.countervalues.state)).toBe(false);
-    expect(Object.isFrozen(initialState)).toBe(false);
-    expect(() => rateMap.set("latest", 2)).not.toThrow();
+    expect(Object.keys(countervaluesSyncInitialState)).toEqual(["load", "error", "isPolling"]);
   });
 
-  // loadCountervalues updates the rate Maps of the state it is given in place.
-  it("lets loadCountervalues update a stored state twice", async () => {
-    let latest = 100;
-    const rates: RateSource = {
-      fetchHistorical: async () => ({}),
-      fetchLatest: async pairs => pairs.map(() => ++latest),
+  it("wipes the error, ends the load and keeps a request and the polling flag", () => {
+    const populated: CountervaluesSyncState = {
+      load: "loadingThenRequested",
+      error: new Error("network"),
+      isPolling: false,
     };
-    let store = countervaluesReducer(undefined, { type: "@@INIT" });
 
-    for (let poll = 0; poll < 2; poll++) {
-      const next = await loadCountervalues(
-        countervaluesStateSelector({ countervalues: store }),
-        settings,
-        {
-          rates,
-        },
-      );
-      store = countervaluesReducer(store, setCountervaluesState(next));
-    }
-
-    const [pair] = Object.values(countervaluesStateSelector({ countervalues: store }).data);
-    expect(pair.get("latest")).toBe(102);
+    expect(reducer(populated, wipeCountervalues())).toEqual({
+      load: "requested",
+      error: null,
+      isPolling: false,
+    });
   });
 });

@@ -2,6 +2,7 @@ export * from "./hooks/countervaluesHooks";
 export * from "./hooks/useGetCounterValueIdsPolling";
 export * from "./hooks/useUsdToFiatRate";
 export * from "./state/middleware";
+export * from "./state/reducer";
 export * from "./state/slice";
 export * from "./utils/haveSameTrackingPairs";
 export * from "./utils/setCountervaluesLogger";
