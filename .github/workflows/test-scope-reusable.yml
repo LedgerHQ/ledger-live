@@ -26,6 +26,11 @@ on:
         type: string
         required: false
         default: ""
+      fetch-depth:
+        description: "Number of commits to fetch on checkout; 0 fetches all history."
+        type: number
+        required: false
+        default: 1
       runs-on:
         description: "Runner label for the job."
         type: string
@@ -76,6 +81,7 @@ jobs:
         with:
           repository: ${{ inputs.repository || github.repository }}
           ref: ${{ inputs.ref || (inputs.repository == '' && github.sha || '') }}
+          fetch-depth: ${{ inputs.fetch-depth }}
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@5222956ebca7b0eb03e6a4ccf433fc228f8f9f92 # develop
