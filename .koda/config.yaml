@@ -1,4 +1,10 @@
 snapshot: ledger-live-desktop-agent-cde
+sandbox:
+  coder:
+    image: ledger-live-desktop-agent-cde:main
+    cpu: 4
+    memory: 16Gi
+    disk: 50Gi
 setup: |
   mise install
   pnpm i --frozen-lockfile
