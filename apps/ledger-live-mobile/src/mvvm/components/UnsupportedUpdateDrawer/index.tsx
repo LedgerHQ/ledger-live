@@ -13,13 +13,13 @@ type UnsupportedUpdateDrawerProps = {
   noCloseButton?: boolean;
 };
 
-const UnsupportedUpdateDrawer = ({
+function UnsupportedUpdateDrawer({
   isOpen,
   onClose,
   isUsbRequired,
   productName,
   noCloseButton,
-}: UnsupportedUpdateDrawerProps) => {
+}: Readonly<UnsupportedUpdateDrawerProps>) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
 
@@ -64,6 +64,6 @@ const UnsupportedUpdateDrawer = ({
       </BottomSheetView>
     </QueuedBottomSheet>
   );
-};
+}
 
 export default UnsupportedUpdateDrawer;
