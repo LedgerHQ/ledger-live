@@ -22,13 +22,13 @@ export type Props = {
   firmwareVersion: string;
 };
 
-const FirmwareUpdateAvailableDrawer: React.FC<Props> = ({
+function FirmwareUpdateAvailableDrawer({
   isOpen,
   onUpdate,
   onClose,
   productName,
   firmwareVersion,
-}) => {
+}: Readonly<Props>) {
   const { t } = useTranslation();
 
   return (
@@ -57,6 +57,6 @@ const FirmwareUpdateAvailableDrawer: React.FC<Props> = ({
       </Link>
     </QueuedDrawer>
   );
-};
+}
 
 export default FirmwareUpdateAvailableDrawer;
