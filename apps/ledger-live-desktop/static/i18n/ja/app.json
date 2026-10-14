@@ -2989,6 +2989,46 @@
       "feesAmount" : "手数料金額 ({{unit}})",
       "payFeesIn" : "手数料の支払い："
     },
+    "feePayment" : {
+      "title" : "手数料の支払い方法を選択",
+      "regular" : "通常送金",
+      "sponsored" : "{{provider}}で支払う",
+      "payIn" : "{{feeCurrency}}でネットワーク手数料を支払う",
+      "paidIn" : "{{currency}}で支払い済み",
+      "nudge" : "{{provider}}で{{amount}}を節約できます",
+      "saved" : "{{provider}}で保存されました",
+      "confirm" : "確認",
+      "disclaimer" : "サードパーティのエネルギープロバイダーである{{provider}}では、手数料は{{feeCurrency}}で支払われます。",
+      "insufficientFunds" : "数量と{{provider}}のエネルギーレンタル手数料を支払うのに必要な{{feeCurrency}}が不足しています。"
+    },
+    "sponsoredRentSignature" : {
+      "title" : "ステップ 1/2",
+      "strategy" : "エネルギーレンタル - {{provider}}",
+      "crafting" : "エネルギーレンタルを準備中…",
+      "submitting" : "エネルギーレンタルの支払いを送信中…",
+      "feeLabel" : "レンタル手数料"
+    },
+    "sponsoredTransferSignature" : {
+      "title" : "ステップ 2/2"
+    },
+    "sponsoredPolling" : {
+      "title" : "エネルギーの提供を待機中",
+      "waiting" : "{{provider}}はレンタルされたエネルギーを提供しています。少々お時間がかかる場合があります。",
+      "elapsed" : "経過時間：{{time}}"
+    },
+    "sponsoredFailure" : {
+      "title" : "問題が発生しました。",
+      "rentPayment" : "手数料の支払いに失敗しました — 資金は移動されませんでした。",
+      "rentPaymentReportedFailed" : "{{provider}}は手数料の支払いに失敗したと報告しましたが、まだ処理される可能性があります。",
+      "priceIncreased" : "エネルギーレンタル料が{{fee}}に上昇しました。資金は移動されませんでした。",
+      "deliveryFailed" : "エネルギーが提供されませんでした。レンタル手数料の支払いは送信されました — 返金については{{provider}}サポートにお問い合わせください{{txidSuffix}}。",
+      "transfer" : "送金に失敗しましたが、レンタルしたエネルギーはまだ有効です — 送金を再試行できます。",
+      "retryLocked" : "レンタル料を二重に支払わないよう、{{time}}以降に再試行できます。",
+      "retry" : "再試行",
+      "retryPaying" : "再度支払って再試行する",
+      "acceptPrice" : "新しい料金を承認する",
+      "cancel" : "キャンセル"
+    },
     "coinControl" : {
       "title" : "コインコントロール",
       "strategy" : "戦略",
@@ -5127,6 +5167,62 @@
       "OUT" : "出金"
     }
   },
+  "stacks" : {
+    "stake" : {
+      "flow" : {
+        "title" : "ステーキング",
+        "preparingTransaction" : "トランザクションを準備中…",
+        "steps" : {
+          "validator" : {
+            "title" : "プール",
+            "description" : "STXをステーキングするために、デリゲート先のプールを選択してください。",
+            "poolAddressLabel" : "プールアドレス",
+            "numCyclesLabel" : "サイクル数"
+          },
+          "amount" : {
+            "title" : "数量",
+            "disclaimer" : "STXは、ステーキングプールによって解放されるまでロックされます。"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "{{amount}}をステーキングしました。ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "アカウントダッシュボードを開く"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "ステーキング解除",
+        "preparingTransaction" : "トランザクションを準備中…",
+        "steps" : {
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "broadcastError" : "ステーキング解除のトランザクションをネットワークに送信できませんでした。もう一度お試しください。",
+            "success" : {
+              "title" : "ステーキング解除が送信されました。",
+              "text" : "STXのデリゲート解除が正常にブロードキャストされました。",
+              "cta" : "詳細を表示"
+            }
+          }
+        }
+      }
+    },
+    "account" : {
+      "staked" : "ステーキング済み",
+      "unlockCycle" : "ロック解除サイクル"
+    }
+  },
   "tezos" : {
     "operationTypes" : {
       "UNSTAKE" : "ステーキング解除",
@@ -5642,7 +5738,10 @@
         "eligibleAddressFamilies" : "対象アドレスファミリー",
         "customFamiliesHint" : "カスタムマルチファミリーテスト用のカンマ区切りファミリー。",
         "customFamiliesPlaceholder" : "evm、stellar、aptos",
-        "applyFamilies" : "適用",
+        "apply" : "適用",
+        "newBadge" : "新しいバッジ",
+        "excludedCurrencyIds" : "除外された通貨ID",
+        "excludedCurrencyIdsPlaceholder" : "例：Ethereum、ビットコイン",
         "contactsData" : "連絡先データ",
         "loadPopulatedContacts" : "入力済みの連絡先を読み込む",
         "loadFromSendHistory" : "送信履歴から連絡先を読み込む",
@@ -5751,6 +5850,9 @@
       "featureFlagsOverride" : "上書き",
       "featureFlagsRestoreAll" : "すべてのフラグ値を復元する",
       "flagHint" : "対象のFirebase環境で機能フラグが定義されている\n一方で、次のリストにない場合は、**exact**（完全一致）の名前を\n検索窓に入力すると、リストに表示されます。フラグ名を\n「feature」プレフィックスを付けずにキャメルケース（camelCase）で入力します。",
+      "contentAbTests" : {
+        "invalidPayload" : "ペイロードが無効です。\"enabled\"はブール値である必要があり、\"copy\"はキーを文字列にマッピングする必要があります。"
+      },
       "showButtonDesc" : "サイドバーに常に機能フラグボタンを表示する",
       "buttonTitle" : "フラグがローカルでオーバーライドされています",
       "overridden" : {
@@ -6770,6 +6872,7 @@
       "undelegate" : "操作を完了するために、デバイスで確認してください。",
       "redelegate" : "操作を完了するために、デバイスで確認してください。",
       "claimRewardCompound" : "操作を完了するために、デバイスで確認してください。",
+      "compoundReward" : "操作を完了するために、デバイスで確認してください。",
       "nominate" : "操作を完了するために、デバイスで確認してください。",
       "chill" : "操作を完了するために、デバイスで確認してください。",
       "bond" : "操作を完了するために、デバイスで確認してください。",
@@ -6796,7 +6899,9 @@
       "undelegate" : "バリデーター",
       "claimReward" : "報酬受取先",
       "claimRewardCompound" : "報酬を受け取るバリデーター",
+      "compoundReward" : "報酬を受け取るバリデーター",
       "optIn" : "受取先",
+      "tokenAssociate" : "送付先",
       "nominate" : "バリデーター",
       "stake" : "バリデーター",
       "unstake" : "バリデーター",
@@ -7248,6 +7353,10 @@
     "CosmosDelegateAllFundsWarning" : {
       "title" : "今後のトランザクション手数料に十分な残高を確保してください"
     },
+    "CosmosMemoTooLong" : {
+      "title" : "メモが最大文字数を超えています",
+      "description" : "メモのサイズは{{memoLength}}バイトですが、許容される最大サイズは{{maxLength}}バイトです。メモの内容を短くしてください。"
+    },
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} には対応していません。",
       "description" : "この暗号資産には、未対応です。Ledgerサポートにお問合せください。"
@@ -7606,6 +7715,10 @@
     "TransactionRefusedOnDevice" : {
       "title" : "デバイス上で操作が却下されました。",
       "description" : "再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
+    },
+    "TransferOfferExpiredError" : {
+      "title" : "このオファーは期限切れです。",
+      "description" : "送金オファーは承諾される前に期限切れになりました。送信者に新しいオファーの送信を依頼してください。"
     },
     "UserRefusedAddress" : {
       "title" : "受取アドレスが却下されました。",
@@ -8133,6 +8246,10 @@
     },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
+    },
+    "StacksStakeInPreparePhase" : {
+      "title" : "ステーキングは次の報酬サイクルまで一時停止されます",
+      "description" : "Stacksネットワークは、次の報酬サイクルの準備中、新規のステーキングを受け付けません。ステーキングは{{blocksUntilReopen}}ビットコインブロック後に再開されます。"
     },
     "StellarWrongMemoFormat" : {
       "title" : "メモのフォーマットに誤りがあります。"
@@ -9528,7 +9645,7 @@
   "marketBanner" : {
     "title" : "マーケット",
     "genericError" : "接続に失敗",
-    "cta" : "すべて表示",
+    "cta" : "詳細",
     "ranking" : {
       "trending" : "トレンド",
       "gainers" : "上昇",
