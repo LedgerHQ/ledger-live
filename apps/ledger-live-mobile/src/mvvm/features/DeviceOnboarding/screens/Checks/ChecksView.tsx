@@ -165,24 +165,20 @@ export function ChecksView({
           </BottomSheetView>
         </QueuedBottomSheet>
       ) : null}
-      {errorDrawer ? (
-        <GenuineCheckErrorDrawer
-          isOpen
-          error={null}
-          showProviderSettings={errorDrawer.kind === "provider"}
-          productName={errorDrawer.productName}
-          onRetry={errorDrawer.onRetry}
-          onCancel={errorDrawer.onClose}
-          onClose={errorDrawer.onClose}
-        />
-      ) : null}
-      {notGenuineDrawer ? (
-        <GenuineCheckNonGenuineDrawer
-          isOpen
-          productName={notGenuineDrawer.productName}
-          onClose={notGenuineDrawer.onClose}
-        />
-      ) : null}
+      <GenuineCheckErrorDrawer
+        isOpen={errorDrawer.isOpen}
+        error={null}
+        showProviderSettings={errorDrawer.kind === "provider"}
+        productName={errorDrawer.productName}
+        onRetry={errorDrawer.onRetry}
+        onCancel={errorDrawer.onCancel}
+        onClose={errorDrawer.onClose}
+      />
+      <GenuineCheckNonGenuineDrawer
+        isOpen={notGenuineDrawer.isOpen}
+        productName={notGenuineDrawer.productName}
+        onClose={notGenuineDrawer.onClose}
+      />
     </Box>
   );
 }

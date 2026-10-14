@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "~/context/Locale";
@@ -21,14 +22,19 @@ type UpdateSheetProps = Readonly<{
   onClose: () => void;
 }>;
 
+type RecoverableErrorKind = Exclude<GenuineErrorKind, "notGenuine">;
+
 type ErrorDrawerProps = Readonly<{
-  kind: Exclude<GenuineErrorKind, "notGenuine">;
+  isOpen: boolean;
+  kind: RecoverableErrorKind;
   productName: string;
   onRetry: () => void;
+  onCancel: () => void;
   onClose: () => void;
 }>;
 
 type NotGenuineDrawerProps = Readonly<{
+  isOpen: boolean;
   productName: string;
   onClose: () => void;
 }>;
@@ -47,13 +53,18 @@ export type ChecksViewProps = Readonly<{
   closeLabel: string;
   allowSheet?: AllowSheetProps;
   updateSheet?: UpdateSheetProps;
-  errorDrawer?: ErrorDrawerProps;
-  notGenuineDrawer?: NotGenuineDrawerProps;
+  errorDrawer: ErrorDrawerProps;
+  notGenuineDrawer: NotGenuineDrawerProps;
 }>;
 
 type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow" | "updating">;
 
 type LayoutProps = Omit<ChecksViewProps, "onQuit" | "closeLabel" | "allowSheet" | "updateSheet">;
+
+function recoverableKindOf(error: ChecksScreenProps["error"]): RecoverableErrorKind | null {
+  if (!error || error.kind === "notGenuine") return null;
+  return error.kind;
+}
 
 function checksLayout(state: ChecksScreenState): ChecksLayout {
   if (state === "awaitingAllow" || state === "updating") return "checking";
@@ -75,6 +86,12 @@ export function useChecksScreenViewModel({
   const { t } = useTranslation();
   const layout = checksLayout(state);
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
+  const recoverableKind = recoverableKindOf(error);
+  const [retainedRecoverableKind, setRetainedRecoverableKind] = useState(recoverableKind);
+  if (recoverableKind && recoverableKind !== retainedRecoverableKind) {
+    setRetainedRecoverableKind(recoverableKind);
+  }
+  const errorDrawerKind = recoverableKind ?? retainedRecoverableKind ?? "unknown";
 
   const layouts: Record<ChecksLayout, LayoutProps> = {
     synchronizing: {
@@ -126,21 +143,24 @@ export function useChecksScreenViewModel({
             onClose: onCloseSheet,
           }
         : undefined,
-    errorDrawer:
-      error && error.kind !== "notGenuine"
-        ? {
-            kind: error.kind,
-            productName,
-            onRetry,
-            onClose: onCloseSheet,
-          }
-        : undefined,
-    notGenuineDrawer:
-      error?.kind === "notGenuine"
-        ? {
-            productName,
-            onClose: onCloseSheet,
-          }
-        : undefined,
+    errorDrawer: {
+      isOpen: recoverableKind !== null,
+      kind: errorDrawerKind,
+      productName,
+      onRetry,
+      onCancel: onCloseSheet,
+      onClose: () => {
+        if (!recoverableKind) return;
+        onCloseSheet();
+      },
+    },
+    notGenuineDrawer: {
+      isOpen: error?.kind === "notGenuine",
+      productName,
+      onClose: () => {
+        if (error?.kind !== "notGenuine") return;
+        onCloseSheet();
+      },
+    },
   };
 }

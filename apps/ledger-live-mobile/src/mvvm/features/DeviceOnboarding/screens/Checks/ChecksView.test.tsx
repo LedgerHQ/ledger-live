@@ -23,6 +23,15 @@ jest.mock("~/components/QueuedDrawer", () => {
     noCloseButton?: boolean;
     children?: React.ReactNode;
   }) {
+    const onCloseRef = React.useRef(onClose);
+    onCloseRef.current = onClose;
+    React.useEffect(() => {
+      if (!isRequestingToBeOpened) return undefined;
+      return () => {
+        onCloseRef.current?.();
+      };
+    }, [isRequestingToBeOpened]);
+
     if (!isRequestingToBeOpened) return null;
 
     return (
@@ -86,9 +95,10 @@ function renderChecks(state: ChecksScreenState, error: ChecksScreenProps["error"
     onContinue,
     onQuit,
   };
+  const view = render(<ChecksScreen {...props} />);
 
   return {
-    ...render(<ChecksScreen {...props} />),
+    ...view,
     onStart,
     onRetry,
     onAcceptUpdate,
@@ -96,6 +106,10 @@ function renderChecks(state: ChecksScreenState, error: ChecksScreenProps["error"
     onCloseSheet,
     onContinue,
     onQuit,
+    rerender(next: Partial<ChecksScreenProps> = {}) {
+      Object.assign(props, next);
+      view.rerender(<ChecksScreen {...props} />);
+    },
   };
 }
 
@@ -209,7 +223,10 @@ describe("ChecksView", () => {
   ])(
     "should open the $kind drawer over the current check",
     async ({ kind, title, showsSettings }) => {
-      const { user, onCloseSheet, onQuit } = renderChecks("checking", { kind });
+      const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", { kind });
+      onCloseSheet.mockImplementation(() => {
+        rerender({ error: null });
+      });
 
       expect(screen.getByText("Check your device")).toBeVisible();
       expect(screen.getByText(title)).toBeVisible();
@@ -223,16 +240,28 @@ describe("ChecksView", () => {
   );
 
   it("should retry the genuine check from the error drawer", async () => {
-    const { user, onRetry, onQuit } = renderChecks("checking", { kind: "network" });
+    const { user, onRetry, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
+      kind: "network",
+    });
+    onRetry.mockImplementation(() => {
+      rerender({ error: null });
+    });
 
     await user.press(screen.getByText("Try again"));
 
     expect(onRetry).toHaveBeenCalledTimes(1);
+    expect(onCloseSheet).not.toHaveBeenCalled();
+    expect(screen.queryByText("Try again")).toBeNull();
     expect(onQuit).not.toHaveBeenCalled();
   });
 
   it("should close the non genuine drawer without leaving onboarding", async () => {
-    const { user, onCloseSheet, onQuit } = renderChecks("checking", { kind: "notGenuine" });
+    const { user, onCloseSheet, onQuit, rerender } = renderChecks("checking", {
+      kind: "notGenuine",
+    });
+    onCloseSheet.mockImplementation(() => {
+      rerender({ error: null });
+    });
 
     expect(screen.getByText("Check your device")).toBeVisible();
     expect(screen.getByText("This Ledger Stax failed the Ledger Genuine Check")).toBeVisible();
