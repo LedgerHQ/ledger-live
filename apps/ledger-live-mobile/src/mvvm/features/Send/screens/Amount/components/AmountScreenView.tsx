@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View } from "react-native";
-import { Button, Divider } from "@ledgerhq/lumen-ui-rnative";
+import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { AmountInputSection } from "./AmountInputSection";
@@ -66,7 +66,6 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
 
       <View style={styles.middleSection}>
         <NetworkFeesRow viewModel={viewModel.networkFees} />
-        <Divider />
 
         {viewModel.quickActions.show && (
           <QuickActionsRow actions={viewModel.quickActions.actions} />
