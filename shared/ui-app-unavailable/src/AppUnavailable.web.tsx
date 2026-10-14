@@ -21,12 +21,10 @@ export function AppUnavailable({ title, description, action, testID }: AppUnavai
         </div>
         {action ? (
           <Button
-            appearance="base"
-            size="lg"
-            isFull
             icon={ExternalLink}
             onClick={action.onPress}
             data-testid={action.testID}
+            size="sm"
           >
             {action.label}
           </Button>
