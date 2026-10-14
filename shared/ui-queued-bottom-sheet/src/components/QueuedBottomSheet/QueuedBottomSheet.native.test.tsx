@@ -1,6 +1,6 @@
-import React from "react";
-import { Platform, Text, View } from "react-native";
-import { render, screen } from "@testing-library/react-native";
+import React, { useState } from "react";
+import { Platform, Pressable, Text, View } from "react-native";
+import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import { QueuedBottomSheet } from ".";
 import { QueuedBottomSheetsProvider } from "../QueuedBottomSheetsProvider";
 import { useBottomSheetBottomInset } from "../../contexts/BottomSheetBottomInsetContext";
@@ -11,6 +11,18 @@ const BOTTOM_INSET = 48;
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({ top: 0, bottom: BOTTOM_INSET, left: 0, right: 0 }),
 }));
+
+// Lumen hands back the same ref across renders. The shared passthrough mock returns a new one per
+// call, which would change the identity of every callback built from it and re-run the open/close
+// effect on each rerender.
+const mockBottomSheetRef = { current: { present: jest.fn(), dismiss: jest.fn() } };
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const passthrough = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+  return new Proxy(passthrough, {
+    get: (target, prop) =>
+      prop === "useBottomSheetRef" ? () => mockBottomSheetRef : target[prop as keyof typeof target],
+  });
+});
 
 describe("QueuedBottomSheet (native)", () => {
   it("renders its children inside the bottom sheet", () => {
@@ -147,6 +159,105 @@ describe("QueuedBottomSheet (native)", () => {
       renderSheet({ enableDynamicSizing: true });
 
       expect(screen.getByTestId("queued-bottom-sheet-bottom-space")).toBeVisible();
+    });
+  });
+
+  describe("content handed over while the previous presentation is still closing", () => {
+    // Mirrors a consumer that drops its request on close and re-requests on the next tap.
+    function ReopenableSheet({ keepContentWhileClosed = false }) {
+      const [isOpen, setIsOpen] = useState(true);
+      const showContent = isOpen || keepContentWhileClosed;
+
+      return (
+        <QueuedBottomSheetsProvider>
+          <Pressable testID="reopen" onPress={() => setIsOpen(true)} />
+          <QueuedBottomSheet
+            testID="sheet"
+            isRequestingToBeOpened={isOpen}
+            onClose={() => setIsOpen(false)}
+            footer={showContent ? <View testID="cta" /> : null}
+          >
+            {showContent ? <View testID="sheet-content" /> : null}
+          </QueuedBottomSheet>
+        </QueuedBottomSheetsProvider>
+      );
+    }
+
+    it("waits for the next presentation to mount it, footer included", () => {
+      render(<ReopenableSheet />);
+      expect(screen.getByTestId("sheet-content")).toBeTruthy();
+
+      act(() => {
+        screen.getByTestId("sheet").props.onHeaderClosePressed();
+      });
+      expect(screen.queryByTestId("sheet-content")).toBeNull();
+
+      // Re-tapped while gorhom is still animating the outgoing sheet closed.
+      fireEvent.press(screen.getByTestId("reopen"));
+      expect(screen.queryByTestId("sheet-content")).toBeNull();
+      expect(screen.getByTestId("sheet").props.footerComponent).toBeUndefined();
+
+      act(() => {
+        screen.getByTestId("sheet").props.onDismiss();
+      });
+      expect(screen.getByTestId("sheet-content")).toBeTruthy();
+      expect(screen.getByTestId("sheet").props.footerComponent).toEqual(expect.any(Function));
+    });
+
+    it("keeps the content of a sheet closed from the backdrop until it is gone", () => {
+      render(<ReopenableSheet />);
+
+      act(() => {
+        screen.getByTestId("sheet").props.onBackdropPress();
+      });
+
+      expect(screen.getByTestId("sheet-content")).toBeTruthy();
+      expect(screen.getByTestId("sheet").props.footerComponent).toEqual(expect.any(Function));
+    });
+
+    it("leaves content the consumer keeps through a close alone", () => {
+      render(<ReopenableSheet keepContentWhileClosed />);
+
+      act(() => {
+        screen.getByTestId("sheet").props.onHeaderClosePressed();
+      });
+
+      expect(screen.getByTestId("sheet-content")).toBeTruthy();
+      expect(screen.getByTestId("sheet").props.footerComponent).toEqual(expect.any(Function));
+    });
+
+    it("keeps what the outgoing sheet shows until the next presentation", () => {
+      function AlwaysRenderedSheet() {
+        const [isOpen, setIsOpen] = useState(true);
+
+        return (
+          <QueuedBottomSheetsProvider>
+            <Pressable testID="reopen" onPress={() => setIsOpen(true)} />
+            <QueuedBottomSheet
+              testID="sheet"
+              isRequestingToBeOpened={isOpen}
+              onClose={() => setIsOpen(false)}
+              footer={<View testID="cta" />}
+            >
+              <View testID={isOpen ? "sheet-content" : "closed-content"} />
+            </QueuedBottomSheet>
+          </QueuedBottomSheetsProvider>
+        );
+      }
+      render(<AlwaysRenderedSheet />);
+
+      act(() => {
+        screen.getByTestId("sheet").props.onHeaderClosePressed();
+      });
+      fireEvent.press(screen.getByTestId("reopen"));
+      expect(screen.getByTestId("closed-content")).toBeTruthy();
+      expect(screen.queryByTestId("sheet-content")).toBeNull();
+      expect(screen.getByTestId("sheet").props.footerComponent).toEqual(expect.any(Function));
+
+      act(() => {
+        screen.getByTestId("sheet").props.onDismiss();
+      });
+      expect(screen.getByTestId("sheet-content")).toBeTruthy();
     });
   });
 
