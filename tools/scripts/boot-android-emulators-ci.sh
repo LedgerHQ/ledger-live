@@ -30,11 +30,11 @@ wait_boot_completed() {
   adb -s "$serial" wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
 }
 
-disable_ui_animations() {
+enable_ui_animations() {
   local serial=$1
-  adb -s "$serial" shell settings put global window_animation_scale 0
-  adb -s "$serial" shell settings put global transition_animation_scale 0
-  adb -s "$serial" shell settings put global animator_duration_scale 0
+  adb -s "$serial" shell settings put global window_animation_scale 1
+  adb -s "$serial" shell settings put global transition_animation_scale 1
+  adb -s "$serial" shell settings put global animator_duration_scale 1
 }
 
 : "${AVD_NAME:?AVD_NAME is required}"
@@ -70,5 +70,5 @@ done
 log "✅ All $_EXPECTED_EMULATOR_COUNT emulators are fully booted"
 
 for serial in "${SERIALS[@]}"; do
-  disable_ui_animations "$serial"
+  enable_ui_animations "$serial"
 done
