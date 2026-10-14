@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, within } from "@tests/test-renderer";
-import { FearAndGreed } from "../index";
+import { FearAndGreed } from "@features/flow-fear-and-greed";
+import ArcGaugeIndicator from "LLM/components/ArcGaugeIndicator";
 import { server } from "@tests/server";
 import { http, HttpResponse } from "msw";
 
@@ -30,7 +31,7 @@ describe("FearAndGreed Integration", () => {
     it("should render nothing when API fails", () => {
       server.use(http.get(API_ENDPOINT, () => new HttpResponse(null, { status: 500 })));
 
-      const { queryByTestId } = render(<FearAndGreed />);
+      const { queryByTestId } = render(<FearAndGreed Gauge={ArcGaugeIndicator} />);
 
       expect(queryByTestId("fear-and-greed-card")).toBeNull();
     });
@@ -38,7 +39,7 @@ describe("FearAndGreed Integration", () => {
     it("should render an isolated error placeholder when expanded API fails", async () => {
       server.use(http.get(API_ENDPOINT, () => new HttpResponse(null, { status: 500 })));
 
-      render(<FearAndGreed appearance="expanded" width={276} />);
+      render(<FearAndGreed appearance="expanded" width={276} Gauge={ArcGaugeIndicator} />);
 
       expect(await screen.findByTestId("fear-and-greed-card-error")).toBeVisible();
       expect(screen.getByTestId("fear-and-greed-card-error-icon")).toBeVisible();
@@ -59,7 +60,7 @@ describe("FearAndGreed Integration", () => {
         http.get(API_ENDPOINT, () => HttpResponse.json(createMockResponse(value, classification))),
       );
 
-      render(<FearAndGreed />);
+      render(<FearAndGreed Gauge={ArcGaugeIndicator} />);
 
       expect(await screen.findByText(label)).toBeVisible();
     });
@@ -67,7 +68,7 @@ describe("FearAndGreed Integration", () => {
     it("should render the expanded card with the full mood index title", async () => {
       server.use(http.get(API_ENDPOINT, () => HttpResponse.json(createMockResponse(70, "Greed"))));
 
-      render(<FearAndGreed appearance="expanded" width={276} />);
+      render(<FearAndGreed appearance="expanded" width={276} Gauge={ArcGaugeIndicator} />);
 
       // Scope to the card: the definition drawer header also renders "Mood index".
       const card = within(await screen.findByTestId("fear-and-greed-card"));
@@ -82,7 +83,7 @@ describe("FearAndGreed Integration", () => {
         http.get(API_ENDPOINT, () => HttpResponse.json(createMockResponse(50, "Neutral"))),
       );
 
-      const { user } = render(<FearAndGreed />);
+      const { user } = render(<FearAndGreed Gauge={ArcGaugeIndicator} />);
 
       const card = await screen.findByText("Neutral");
       await user.press(card);

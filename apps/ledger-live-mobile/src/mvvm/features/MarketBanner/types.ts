@@ -24,6 +24,7 @@ export interface SkeletonTileProps {
 export interface UseMarketBannerViewModelResult {
   showFilter: boolean;
   bannerFilter: MarketBannerFilterController;
+  moodIndexAvailable: boolean;
   range: PortfolioRange;
   onTilePress: (item: MarketItemPerformer) => void;
   onViewAllPress: () => void;

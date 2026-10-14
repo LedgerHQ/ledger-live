@@ -20,11 +20,11 @@
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
-    "typecheck": "tsc --noEmit -p tsconfig.web.json",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/fear-and-greed/knip.web.config.mjs -W features/flow/fear-and-greed --tsConfig tsconfig.web.json"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/fear-and-greed/knip.web.config.mjs -W features/flow/fear-and-greed --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/fear-and-greed/knip.native.config.mjs -W features/flow/fear-and-greed --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@domain/api-market-index-fear-and-greed": "workspace:*",
