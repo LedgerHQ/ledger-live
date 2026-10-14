@@ -3,7 +3,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
-import { getMaybeTokenMintProgram } from "@ledgerhq/coin-solana/network/chain/web3";
+import { getMaybeTokenMint } from "@ledgerhq/coin-solana/network/chain/web3";
 import { endpointByCurrencyId } from "@ledgerhq/coin-solana/utils";
 
 export type EthereumToken = { ticker: string; decimals: number; contract: string };
@@ -50,7 +50,7 @@ export async function findSolanaToken(mint: string): Promise<SolanaToken | null>
 export async function findSolanaMintProgram(mint: string): Promise<string | undefined> {
   const config = getCurrencyConfiguration<SolanaCoinConfig>("solana");
   const api = getChainAPI({ endpoint: endpointByCurrencyId(config, "solana") });
-  const program = await getMaybeTokenMintProgram(mint, api);
-  if (program instanceof Error) throw program;
-  return program;
+  const mintAccount = await getMaybeTokenMint(mint, api);
+  if (mintAccount instanceof Error) throw mintAccount;
+  return mintAccount?.onChainAcc.data.program;
 }
