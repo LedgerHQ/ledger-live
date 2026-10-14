@@ -267,6 +267,7 @@ export class DmkSignerZcash implements ZcashSigner {
       ...(arg.blockHeight !== undefined ? { blockHeight: arg.blockHeight } : {}),
       ...(arg.sigHashType !== undefined ? { sigHashType: arg.sigHashType } : {}),
       ...(arg.expiryHeight !== undefined ? { expiryHeight: arg.expiryHeight } : {}),
+      ...(arg.network !== undefined ? { network: arg.network } : {}),
     };
 
     // `onDeviceStreaming` (declared on the arg for legacy parity) is intentionally

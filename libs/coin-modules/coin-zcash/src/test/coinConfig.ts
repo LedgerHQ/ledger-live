@@ -15,7 +15,7 @@ export const testContext: ZcashContext = {
   logger: () => {},
 };
 
-export const TEST_ZAINO_ENDPOINT = zainoEndpoint(TEST_CONFIG.zaino.url);
+export const TEST_ZAINO_ENDPOINT = zainoEndpoint(TEST_CONFIG.zaino.url, "zcash");
 
 /** A {@link testContext} whose Zaino server is `url`. */
 export const contextWithZaino = (url: string): ZcashContext => ({

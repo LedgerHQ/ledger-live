@@ -333,7 +333,7 @@ export const scenarioZcash: Scenario<ZcashTransaction, ZcashAccount> = {
     setZcashShieldedEnabled(true);
 
     // The local zaino node and explorer. Zaino is addressed as "mainnet" (the
-    // network inferred from this URL), like every zcash-utils call here, to match
+    // network coin-zcash gives zcash_regtest), like every zcash-utils call here, to match
     // the mainnet-prefixed addresses coin-zcash's own classifier requires -- see
     // zcash_regtest.ts and signer.ts for the full rationale.
     const coinConfig: ZcashCoinConfig = {

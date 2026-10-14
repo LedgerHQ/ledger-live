@@ -317,6 +317,28 @@ describe("DmkSignerZcash", () => {
       expect(result).toBe("0500008001deadbeef");
     });
 
+    it("leaves the network out when none is given, so the kit applies mainnet", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction(baseArg);
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      expect(legacyArg).not.toHaveProperty("network");
+    });
+
+    it("forwards the network to the kit", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction({ ...baseArg, network: "testnet" });
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      expect(legacyArg.network).toBe("testnet");
+    });
+
     it("maps multiple inputs preserving order and per-input fields", async () => {
       mockSignerZcash.signTransaction.mockReturnValue({
         observable: createCompletedObservable("00signed"),

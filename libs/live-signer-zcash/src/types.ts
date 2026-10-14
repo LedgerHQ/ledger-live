@@ -102,6 +102,11 @@ export type BitcoinCreateTransactionLike = {
   segwit?: boolean;
   additionals: string[];
   expiryHeight?: Uint8Array;
+  /**
+   * Network the transaction belongs to; the signer picks the consensus branch id
+   * from that network's activation heights. Mainnet when omitted.
+   */
+  network?: "mainnet" | "testnet";
   onDeviceStreaming?: (arg: { progress: number; total: number; index: number }) => void;
   onDeviceSignatureRequested?: () => void;
   onDeviceSignatureGranted?: () => void;

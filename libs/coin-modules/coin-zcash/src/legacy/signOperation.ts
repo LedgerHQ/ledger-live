@@ -10,6 +10,7 @@ import type { ZcashContext } from "../config";
 import type { BtcInputRef, Transaction, ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import { buildLegacyTransaction, resolveWalletAccount } from "./buildTransaction";
+import { zcashNetworkOf, type ZcashNetwork } from "../logic/network";
 
 // The signer recognises Zcash by the "zcash" marker alone (both networks), and "sapling"
 // selects the post-Sapling transaction layout.
@@ -55,6 +56,7 @@ function toDeviceInputs(txInfo: TransactionInfo): BitcoinCreateTransactionLike["
 function toPaymentArg(
   walletAccount: WalletAccount,
   txInfo: TransactionInfo,
+  network: ZcashNetwork,
   callbacks: Pick<
     BitcoinCreateTransactionLike,
     "onDeviceSignatureRequested" | "onDeviceSignatureGranted"
@@ -76,6 +78,7 @@ function toPaymentArg(
       changePath: `${path}/${index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
     }),
     additionals: ZCASH_ADDITIONALS,
+    network,
     ...callbacks,
   };
 }
@@ -98,7 +101,7 @@ export const buildLegacySignOperation =
 
         const signature = await signerContext(deviceId, signer =>
           signer.createPaymentTransaction(
-            toPaymentArg(walletAccount, txInfo, {
+            toPaymentArg(walletAccount, txInfo, zcashNetworkOf(account.currency.id), {
               onDeviceSignatureRequested: () =>
                 subscriber.next({ type: "device-signature-requested" }),
               onDeviceSignatureGranted: () => subscriber.next({ type: "device-signature-granted" }),
