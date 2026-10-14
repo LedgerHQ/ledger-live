@@ -152,6 +152,24 @@ type ParsedLogsPayload = {
   webviewLoadErrors?: unknown[];
 };
 
+/** `QueuedDrawer` lines, oldest first. Empty when drawer logging was off or no sheet logged. */
+export function formatQueuedDrawerLogs(logsPayload: string): string {
+  let appLogs: unknown;
+  try {
+    appLogs = JSON.parse(logsPayload).appLogs;
+  } catch {
+    return "Could not parse app logs";
+  }
+
+  const lines = appLogsAsEntries(appLogs).filter(entry => entry.level === "QueuedDrawer");
+  if (lines.length === 0) return "(none — Header close pressed was not recorded)";
+  return lines
+    .slice()
+    .reverse()
+    .map(entry => `${entry.timestamp ?? ""} ${entry.text}`.trim())
+    .join("\n");
+}
+
 /** Parse a serialized logs payload and attach each section it carries to Allure. */
 export async function attachFailureLogsToAllure(logsPayload: string): Promise<void> {
   let parsed: ParsedLogsPayload;

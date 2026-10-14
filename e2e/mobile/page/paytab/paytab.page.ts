@@ -1,8 +1,18 @@
+import { getLogs } from "@e2e/bridge/server";
 import { device } from "detox";
 import { allure, Step } from "jest-allure2-reporter/api";
+import { formatQueuedDrawerLogs } from "@e2e/utils/loggingUtils";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
 const DEPOSIT_OPTION_IDS = ["bankTransfer", "swap", "receive", "buy"] as const;
+
+async function queuedDrawerLogText() {
+  try {
+    return formatQueuedDrawerLogs(await getLogs());
+  } catch (error) {
+    return `Could not read drawer logs: ${error instanceof Error ? error.message : String(error)}`;
+  }
+}
 
 export type PayDepositOptionId = (typeof DEPOSIT_OPTION_IDS)[number];
 
@@ -141,6 +151,7 @@ export default class PayTabPage {
         attempts.join("\n"),
         "text/plain",
       );
+      await allure.attachment("Queued drawer logs", await queuedDrawerLogText(), "text/plain");
     }
   }
 
